@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.BpmGlobalConfigDao" >
+    <sql id="Base_Column_List">
+        CONFIG_ID as configId, BPM_ADMIN_NAME as bpmAdminName, BPM_ADMIN_PSW as bpmAdminPsw, BPM_CLIENT_TIMEOUT as bpmClientTimeout,
+        BPM_SERVER_HOST as bpmServerHost, BPMFORMS_HOST as bpmformsHost, BPMFORMS_WEB_CONTEXT as bpmformsWebContext,
+        CONFIG_NAME as configName, CONFIG_STATUS as configStatus, CREATE_TIME as createTime, GMT_TIME_ZONE as gmtTimeZone,
+        HTTP_MAX_CONNECTION as httpMaxConnection, PRE_ROUTE_MAX_CONNECTION as preRouteMaxConnection, SCHEDULER_HOST as schedulerHost,
+        UPDATE_TIME as updateTime, BPM_API_HOST as bpmApiHost
+    </sql>
+
+    <select id="queryActiveConfig" resultType="com.desmart.desmartbpm.enetity.BpmGlobalConfig">
+        select <include refid="Base_Column_List"/> from BPM_GLOBAL_CONFIG
+        where config_status = 'on'
+    </select>
+
+
+</mapper>
