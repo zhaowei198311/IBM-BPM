@@ -6,7 +6,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.util.HttpClientConnPoolUtils;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;

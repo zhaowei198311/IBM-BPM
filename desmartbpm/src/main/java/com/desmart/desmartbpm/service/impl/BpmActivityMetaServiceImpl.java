@@ -1,6 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
-import com.desmart.desmartbpm.enetity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;

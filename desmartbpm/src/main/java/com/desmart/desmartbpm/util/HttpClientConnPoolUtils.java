@@ -1,9 +1,10 @@
 package com.desmart.desmartbpm.util;
 
 
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
 public class HttpClientConnPoolUtils {
     public HttpClientConnPoolUtils() {

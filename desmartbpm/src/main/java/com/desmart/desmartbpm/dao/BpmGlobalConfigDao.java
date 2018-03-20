@@ -1,7 +1,8 @@
 package com.desmart.desmartbpm.dao;
 
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
 import org.springframework.stereotype.Repository;
+
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
 import java.util.List;
 

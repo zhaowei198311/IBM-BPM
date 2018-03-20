@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 @Controller
-public class UserController {
+public class UserController extends BaseWebController {
 
 
 

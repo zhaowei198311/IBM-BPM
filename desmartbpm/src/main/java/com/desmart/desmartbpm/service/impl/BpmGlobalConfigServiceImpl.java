@@ -1,7 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
 import com.desmart.desmartbpm.dao.BpmGlobalConfigDao;
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.desmart.desmartbpm.service;
 
-import com.desmart.desmartbpm.enetity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 
 public interface BpmActivityMetaService {
     BpmActivityMeta getBpmActivityMeta(String activityBpdId, String activityName, String snapshotId, String bpdId, String type,

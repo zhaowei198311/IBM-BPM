@@ -1,7 +1,8 @@
 package com.desmart.desmartbpm.util;
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 @Controller
-public class TestController {
+public class TestController extends BaseWebController {
     @Autowired
     private TestService testService;
     @Autowired

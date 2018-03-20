@@ -1,7 +1,5 @@
 package com.desmart.desmartbpm.service.impl;
 
-import com.desmart.desmartbpm.enetity.BpmActivityMeta;
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
@@ -9,6 +7,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.BpmActivityMetaDao;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.util.BpmClientUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
+    @Autowired
+    private BpmActivityMetaDao bpmActivityMetaDao;
 
 
     public void startSysncActivityMeta(HttpServletRequest request, List<String> snapshotIds) {
@@ -100,12 +103,29 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
         // 解析step中的元素
         if (diagram.containsKey("step")) {
             JSONArray step = diagram.getJSONArray("step");
-
             for(int i = 0; i < step.size(); ++i) {
                 newActivityMetas.addAll(parseActivityMeta(request, step.getJSONObject(i), snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId));
             }
         }
-
+        
+        // todo 删除老的环节配置
+        // 根据版本号查询出对应的环节
+        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryByBpmProcessSnapshotId(bpmProcessSnapshotId);
+        List<BpmActivityMeta> delActivityMetas = new ArrayList();
+        // 要删除的环节
+        delActivityMetas.addAll(oldActivityMetas);
+        
+        for (BpmActivityMeta newMeta : newActivityMetas) {
+        	String bpdid = newMeta.getActivityBpdId();
+        	for(int i = 0; i < oldActivityMetas.size(); ++i) {
+                BpmActivityMeta oldMeta = (BpmActivityMeta)oldActivityMetas.get(i);
+                if (bpdid.equalsIgnoreCase(oldMeta.getActivityBpdId())) {
+                    delActivityMetas.remove(oldMeta);
+                }
+            }
+        }
+        
+        
 
 
     }

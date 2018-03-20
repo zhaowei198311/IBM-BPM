@@ -1,6 +1,6 @@
 package com.desmart.desmartbpm.service;
 
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
 /**
  * 全局配置服务
