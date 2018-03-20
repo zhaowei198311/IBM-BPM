@@ -1,21 +1,25 @@
 package com.desmart.desmartbpm.dao;
 
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class EmpMapperTest {
-    private EmpDao empMapper;
-
-    @Before
-    public void init() {
+public class BpmActivityMetaDaoTest {
+	BpmActivityMetaDao dao;
+	
+	
+	@Before
+    public void setUp() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        empMapper = ac.getBean(EmpDao.class);
+        dao = ac.getBean(BpmActivityMetaDao.class);
     }
+	
+	@Test
+	public void testQueryByBpmProcessSnapshotId() {
+		dao.queryByBpmProcessSnapshotId("");
+	}
 
-    @Test
-    public void queryByPrimaryKey() {
-        System.out.println(empMapper.queryByPrimaryKey(7369));
-    }
 }

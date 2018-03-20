@@ -1,10 +1,11 @@
 package com.desmart.desmartbpm.dao;
 
-import com.desmart.desmartbpm.enetity.BpmGlobalConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
 import java.util.List;
 
