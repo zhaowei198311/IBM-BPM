@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.util;
+package com.desmart.desmartbpm.util.http;
 
 
 import org.apache.http.config.SocketConfig;

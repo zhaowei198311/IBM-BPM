@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.util;
+package com.desmart.desmartbpm.util.http;
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;

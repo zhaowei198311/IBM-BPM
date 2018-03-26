@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.util;
+package com.desmart.desmartbpm.util.http;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

@@ -14,10 +14,91 @@
         UPLOAD_FILE_LABEL, AUTO_COMMIT, ACTIVITY_ALT_NAME, ON_TIME_NOTIFY, ON_TIME_TEMPLATE_ID, COMMIT_TASK_EVENT_CLS, COMMIT_DELAY_CLS
     </sql>
 
-    <select id="queryByBpmProcessSnapshotId" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-    	select <include refid="Base_Column_List"></include> from BPM_ACTIVITY_META
+    <insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+      insert into BPM_ACTIVITY_META (ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_COST_PREHOUR,
+      ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_RUNTIME,
+      ACTIVITY_RUNTIME_UNIT, ACTIVITY_TO, ACTIVITY_TYPE,
+      ALLOW_CANCEL, ALLOW_DELFILE, ALLOW_OVERSIGN,
+      ALLOW_PASSBY, ALLOW_REJECT, ALLOW_ROLLBACK,
+      ALLOW_TRANSFER, ALLOW_UPLOAD, ASSIGN_VARNAME,
+      BPD_ID, BPM_TASK_TYPE, COMPLETE_RATE,
+      CREATE_TIME, CREATOR, CUSTOM_RULE_PARAMS,
+      DEEP_LEVEL, DEFAULT_OWNER_TYPE, 
+      DEFAULT_PASS_BY, DOWNLOAD_FILE_LABEL, EMAIL_NOTIFICATION,
+      EXTERNAL_ID, FORM_PATH, HANDLE_SIGN_TYPE,
+      LIMIT_CANDIATE, LOOP_NOTIFY_EVENT, LOOP_START_TIME_SPAN,
+      LOOP_START_TIME_UNIT, LOOP_TIME_SPAN, LOOP_TIME_UNIT,
+      LOOP_TYPE, MI_ORDER, NOTE_TYPE,
+      OVERTIME_DEADLINE, OVERTIME_DEADLINE_EVENT,
+      OVERTIME_DEADLINE_UNIT, OVERTIME_LOOP_TPL_ID,
+      OVERTIME_NOTIFY_EVENT, OVERTIME_NOTIFY_IS_LOOP,
+      OVERTIME_TEMPLATE_ID, PARENT_ACTIVITY_BPD_ID,
+      PO_ID, ROLLBACK_GROUP_STRATEGY, ROUTE_VARNAME,
+      SIGN_COUNT_VARNAME, SNAPSHOT_ID, SNAPSHOT_UID,
+      SORT_NUM, STEP_ID, SUBMIT_MAN_COUNT,
+      TYPE, UPDATE_BY, UPDATE_TIME,
+      UPLOAD_FILE_LABEL, AUTO_COMMIT, ACTIVITY_ALT_NAME,
+      ON_TIME_NOTIFY, ON_TIME_TEMPLATE_ID, COMMIT_TASK_EVENT_CLS,
+      COMMIT_DELAY_CLS)
+    values (#{activityId,jdbcType=VARCHAR}, #{activityBpdId,jdbcType=VARCHAR}, #{activityCostPrehour,jdbcType=DECIMAL},
+      #{activityGroupName,jdbcType=VARCHAR}, #{activityName,jdbcType=VARCHAR}, #{activityRuntime,jdbcType=DECIMAL},
+      #{activityRuntimeUnit,jdbcType=VARCHAR}, #{activityTo,jdbcType=VARCHAR}, #{activityType,jdbcType=VARCHAR},
+      #{allowCancel,jdbcType=VARCHAR}, #{allowDelfile,jdbcType=VARCHAR}, #{allowOversign,jdbcType=VARCHAR},
+      #{allowPassby,jdbcType=VARCHAR}, #{allowReject,jdbcType=VARCHAR}, #{allowRollback,jdbcType=VARCHAR},
+      #{allowTransfer,jdbcType=VARCHAR}, #{allowUpload,jdbcType=VARCHAR}, #{assignVarName,jdbcType=VARCHAR},
+      #{bpdId,jdbcType=VARCHAR}, #{bpmTaskType,jdbcType=VARCHAR}, #{completeRate,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{customRuleParams,jdbcType=VARCHAR},
+      #{deepLevel,jdbcType=DECIMAL}, #{defaultOwnerType,jdbcType=VARCHAR}, 
+      #{defaultPassBy,jdbcType=VARCHAR}, #{downloadFileLabel,jdbcType=VARCHAR}, #{emailNotification,jdbcType=VARCHAR},
+      #{externalID,jdbcType=VARCHAR}, #{formPath,jdbcType=VARCHAR}, #{handleSignType,jdbcType=VARCHAR},
+      #{limitCandidate,jdbcType=VARCHAR}, #{loopNotifyEvent,jdbcType=VARCHAR}, #{loopStartTimeSpan,jdbcType=DECIMAL},
+      #{loopStartTimeUnit,jdbcType=VARCHAR}, #{loopTimeSpan,jdbcType=DECIMAL}, #{loopTimeUnit,jdbcType=VARCHAR},
+      #{loopType,jdbcType=VARCHAR}, #{miOrder,jdbcType=VARCHAR}, #{noteType,jdbcType=VARCHAR},
+      #{overTimeDeadline,jdbcType=DECIMAL}, #{overTimeDeadlineEvent,jdbcType=VARCHAR},
+      #{overTimeDeadlineUnit,jdbcType=VARCHAR}, #{overtimeLoopTplId,jdbcType=VARCHAR},
+      #{overtimeNotifyEvent,jdbcType=VARCHAR}, #{overtimeNotifyIsLoop,jdbcType=VARCHAR},
+      #{overtimeTemplateId,jdbcType=VARCHAR}, #{parentActivityBpdId,jdbcType=VARCHAR},
+      #{poId,jdbcType=VARCHAR}, #{rollbackGroupStrategy,jdbcType=VARCHAR}, #{routeVarName,jdbcType=VARCHAR},
+      #{signCountVarName,jdbcType=VARCHAR}, #{snapshotId,jdbcType=VARCHAR}, #{snapshotUid,jdbcType=VARCHAR},
+      #{sortNum,jdbcType=DECIMAL}, #{stepId,jdbcType=VARCHAR}, #{submitManCount,jdbcType=DECIMAL},
+      #{type,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+      #{uploadFileLabel,jdbcType=VARCHAR}, #{autoCommit,jdbcType=VARCHAR}, #{activityAltName,jdbcType=VARCHAR},
+      #{onTimeNotify,jdbcType=VARCHAR}, #{onTimeTemplateId,jdbcType=VARCHAR}, #{commitTaskEventCls,jdbcType=VARCHAR},
+      #{commitDelayCls,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="queryBySnapshotUid" parameterType="string" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    	select <include refid="Base_Column_List"/> from BPM_ACTIVITY_META
     	where SNAPSHOT_UID = #{bpmProcessSnapshotId}
     </select>
 
+    <select id="queryByActivityBpdIdAndSnapshotUid" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+        select <include refid="Base_Column_List"/> from BPM_ACTIVITY_META
+        where activity_bpd_id = #{activityBpdId} and SNAPSHOT_UID = #{snapshotUid}
+    </select>
 
+	<delete id="batchRemoveByPrimaryKey" parameterType="list">
+		delete from BPM_ACTIVITY_META 
+		where activity_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item.activityId}
+		</foreach>
+	</delete>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		update BPM_ACTIVITY_META
+		<set >
+		  update_time = now(),
+	      <if test="categoryId != null" >
+	        category_id = #{categoryId,jdbcType=INTEGER},
+	      </if>
+	      <if test="name != null and !name.trim().isEmpty()" >
+	        name = #{name,jdbcType=VARCHAR},
+	      </if>
+	      <if test="subtitle != null and !sutitle.trim().isEmpty()" >
+	        subtitle = #{subtitle,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+	    where activity_id = #{activityId}
+	</update>
 </mapper>

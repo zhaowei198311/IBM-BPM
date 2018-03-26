@@ -8,7 +8,8 @@ import javax.servlet.ServletContextListener;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
-import com.desmart.desmartbpm.util.HttpClientConnPoolUtils;
+import com.desmart.desmartbpm.util.http.HttpClientConnPoolUtils;
+
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +32,14 @@ public class HttpClientConnPoolListener implements ServletContextListener {
 
     }
 
-    public void contextInitialized(ServletContextEvent ctxevt) {
-        ApplicationContext appctx = WebApplicationContextUtils.getWebApplicationContext(ctxevt.getServletContext());
-        BpmGlobalConfigService bpmGlobalConfigService = appctx.getBean(BpmGlobalConfigService.class);
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
+        BpmGlobalConfigService bpmGlobalConfigService = applicationContext.getBean(BpmGlobalConfigService.class);
         BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
         PoolingHttpClientConnectionManager poolmgr = new PoolingHttpClientConnectionManager();
         HttpClientConnPoolUtils.setHttpPoolCfg(poolmgr, bpmcfg);
-        ServletContext srvctx = ctxevt.getServletContext();
-        srvctx.setAttribute(Const.HTTP_CLIENT_CONNECTION_POOL, poolmgr);
+        ServletContext servletContext = servletContextEvent.getServletContext();
+        servletContext.setAttribute(Const.HTTP_CLIENT_CONNECTION_POOL, poolmgr);
     }
 }
+

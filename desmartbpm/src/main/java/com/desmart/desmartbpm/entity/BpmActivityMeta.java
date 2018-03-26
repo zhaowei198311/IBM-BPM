@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BpmActivityMeta implements Serializable {
-    private String activityId;
+    private String activityId;  // 主键
     private String allowReject;
     private String allowRollback;
     private String allowTransfer;
@@ -31,22 +31,22 @@ public class BpmActivityMeta implements Serializable {
     private Integer sortNum;
     private String formPath;
     private String nextactivities;
-    private String activityName;
-    private String snapshotId;
-    private String activityBpdId;
-    private String bpdId;
-    private String type;
-    private String activityType;
-    private String activityTo;
-    private String parentActivityBpdId;
-    private String externalID;
-    private String bpmTaskType;
-    private String loopType;
-    private String miOrder;
-    private String snapshotUid;
+    private String activityName;   // 环节名
+    private String snapshotId;   // bpm引擎中快照id
+    private String activityBpdId;  // 流程图上的元素id
+    private String bpdId;   // 流程图id
+    private String type;    // 类型
+    private String activityType;  // 活动类型 start  end gateway  gatewayAnd getwayOr
+    private String activityTo;  // 下个元素  用, 分隔多个元素
+    private String parentActivityBpdId;  // 父元素id
+    private String externalID;  // 外接流程的bpdId
+    private String bpmTaskType;  // UserTask SubProcess ServiceTask
+    private String loopType;  // simpleLoop MultiInstanceLoop none  null
+    private String miOrder; 
+    private String snapshotUid;  // 版本主键
     private String stepId;
     private String assignVarName;
-    private String handleSignType;
+    private String handleSignType;  // alone  count  是否多人
     private String emailNotification;
     private String limitCandidate;
     private String signCountVarName;
@@ -79,7 +79,7 @@ public class BpmActivityMeta implements Serializable {
     //private BpmEmailNotification bpmEmailNotification;
     //private List<BpmActivityBizPanel> bpmActivityBizPanel;
     private String rollbackGroupStrategy;
-    private Integer deepLevel;
+    private Integer deepLevel;   // 流程深度，层级
     private String autoCommit;
     private String customRuleParams;
     private String onTimeTemplateId;

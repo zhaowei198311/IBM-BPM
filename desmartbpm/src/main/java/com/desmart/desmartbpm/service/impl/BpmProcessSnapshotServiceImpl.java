@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.service.impl;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -10,12 +11,13 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaDao;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.util.BpmClientUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -32,12 +34,10 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
     @Autowired
     private BpmActivityMetaDao bpmActivityMetaDao;
 
-
     public void startSysncActivityMeta(HttpServletRequest request, List<String> snapshotIds) {
-
+    	
     }
-
-
+    
     public void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId, String bpmProcessSnapshotId) {
         // 获得所有活动节点（事件节点、网关、人工活动...）和泳道对象
         JSONArray visualModelData = processVisualModel(request, bpdId, snapshotId, processAppId);
@@ -50,14 +50,14 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
             params = params + "&snapshotId=" + snapshotId;
         }
         url = MessageFormat.format(url, bpdId, params);
-        Map<String, Object> pmap = new HashMap();
+        Map<String, Object> pmap = new HashMap<>();
         HttpReturnStatus result = (new BpmClientUtils(gcfg, true)).doGet(request, url, pmap);
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if (datas.containsKey("data")) {
                 JSONObject data = datas.getJSONObject("data");
                 if (data.containsKey("Diagram")) {
-                    // 元素的二分类细化
+                    // 元素的信息（包含连接线信息）
                     JSONObject diagram = data.getJSONObject("Diagram");
                     parseDiagram(request, diagram, snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId);
                 }
@@ -77,7 +77,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
             params = params + "&snapshotId=" + snapshotId;
         }
         url = MessageFormat.format(url, bpdId, params);
-        Map<String, Object> pmap = new HashMap();
+        Map<String, Object> pmap = new HashMap<>();
         HttpReturnStatus result = (new BpmClientUtils(gcfg, true)).doGet(request, url, pmap);
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
@@ -96,36 +96,74 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
         return results;
     }
 
+    @Transactional
+    /**
+     * 根据rest 返回的流程图信息解析为 环节表
+     * @param request
+     * @param diagram  图信息
+     * @param snapshotId 快照版本
+     * @param bpdId  流程图ID
+     * @param visualModelData  元素信息
+     * @param processAppId  流程应用id
+     * @param bpmProcessSnapshotId   流程版本主键
+     */
     public void parseDiagram(HttpServletRequest request, JSONObject diagram, String snapshotId, String bpdId,
                              JSONArray visualModelData, String processAppId, String bpmProcessSnapshotId) {
-        List<BpmActivityMeta> newActivityMetas = new ArrayList();
+        List<BpmActivityMeta> newActivityMetas = new ArrayList<BpmActivityMeta>();
 
-        // 解析step中的元素
+        // 解析step中的每个元素
         if (diagram.containsKey("step")) {
             JSONArray step = diagram.getJSONArray("step");
-            for(int i = 0; i < step.size(); ++i) {
+            for (int i = 0; i < step.size(); ++i) {
                 newActivityMetas.addAll(parseActivityMeta(request, step.getJSONObject(i), snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId));
             }
-        }
+        }// 至此newActivityMetas中已经是此流程全部的环节
         
-        // todo 删除老的环节配置
+        
         // 根据版本号查询出对应的环节
-        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryByBpmProcessSnapshotId(bpmProcessSnapshotId);
-        List<BpmActivityMeta> delActivityMetas = new ArrayList();
-        // 要删除的环节
+        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryBySnapshotUid(bpmProcessSnapshotId);
+        List<BpmActivityMeta> delActivityMetas = new ArrayList<BpmActivityMeta>();
+        // 需要删除的环节
         delActivityMetas.addAll(oldActivityMetas);
         
         for (BpmActivityMeta newMeta : newActivityMetas) {
-        	String bpdid = newMeta.getActivityBpdId();
+        	String activityBpdId = newMeta.getActivityBpdId();
         	for(int i = 0; i < oldActivityMetas.size(); ++i) {
                 BpmActivityMeta oldMeta = (BpmActivityMeta)oldActivityMetas.get(i);
-                if (bpdid.equalsIgnoreCase(oldMeta.getActivityBpdId())) {
+                if (activityBpdId.equalsIgnoreCase(oldMeta.getActivityBpdId())) {
                     delActivityMetas.remove(oldMeta);
                 }
             }
+
+        	List<BpmActivityMeta> activityMetaExists = bpmActivityMetaDao.queryByActivityBpdIdAndSnapshotUid(activityBpdId, bpmProcessSnapshotId);
+        	
+            if (activityMetaExists.size() > 0) {
+            	BpmActivityMeta bpmActivityMeta = activityMetaExists.get(0);
+                bpmActivityMeta.setSnapshotId(newMeta.getSnapshotId());
+                bpmActivityMeta.setBpdId(newMeta.getBpdId());
+                bpmActivityMeta.setActivityName(newMeta.getActivityName());
+                bpmActivityMeta.setType(newMeta.getType());
+                bpmActivityMeta.setActivityType(newMeta.getActivityType());
+                bpmActivityMeta.setActivityTo(newMeta.getActivityTo());
+                bpmActivityMeta.setParentActivityBpdId(newMeta.getParentActivityBpdId());
+                bpmActivityMeta.setExternalID(newMeta.getExternalID());
+                bpmActivityMeta.setBpmTaskType(newMeta.getBpmTaskType());
+                bpmActivityMeta.setLoopType(newMeta.getLoopType());
+                bpmActivityMeta.setMiOrder(newMeta.getMiOrder());
+                bpmActivityMeta.setHandleSignType(newMeta.getHandleSignType());
+                bpmActivityMeta.setPoId(newMeta.getPoId());
+                bpmActivityMeta.setDeepLevel(newMeta.getDeepLevel());
+                // todo update
+                
+            } else {
+            	bpmActivityMetaDao.save(newMeta);
+            }
         }
-        
-        
+
+        if (delActivityMetas.size() > 0) {
+        	// todo 删除多余的meta
+        	
+        }
 
 
     }
@@ -133,7 +171,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
     /**
      * 解析活动节点
      * @param request
-     * @param step
+     * @param stepElement
      * @param snapshotId
      * @param bpdId
      * @param visualModelData
@@ -141,29 +179,31 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
      * @param bpmProcessSnapshotId
      * @return
      */
-    public List<BpmActivityMeta> parseActivityMeta(HttpServletRequest request, JSONObject step, String snapshotId, String bpdId,
+    public List<BpmActivityMeta> parseActivityMeta(HttpServletRequest request, JSONObject stepElement, String snapshotId, String bpdId,
                                                    JSONArray visualModelData, String processAppId, String bpmProcessSnapshotId) {
-        List<BpmActivityMeta> bpmActivityMetas = new ArrayList();
-        String type = step.getString("type");
-        String activityType = step.getString("activityType");
-        String id = step.getString("ID");
-        String name = step.getString("name");
+        List<BpmActivityMeta> bpmActivityMetas = new ArrayList<BpmActivityMeta>();
+        String type = stepElement.getString("type");
+        String activityType = stepElement.getString("activityType");
+        String id = stepElement.getString("ID"); // 元素id
+        String name = stepElement.getString("name");  // 活动命名
         String activityTo = "";
         String externalID = null;
         String loopType = null;
         String bpmTaskType = null;
         String miOrder = null;
-        JSONArray lines = step.getJSONArray("lines");
+        JSONArray lines = stepElement.getJSONArray("lines");  // 连接线信息
         Object obj;
         Iterator var20;
         JSONObject tmp;
+        
+        // 设置 activityTo
         if (lines != null) {
             for(var20 = lines.iterator(); var20.hasNext(); activityTo = activityTo + tmp.getString("to") + ",") {
                 obj = var20.next();
                 tmp = (JSONObject)obj;
             }
 
-            if (activityTo.indexOf(",") > 0) {
+            if (activityTo.indexOf(",") > 0) { // 去除多余的","
                 activityTo = activityTo.substring(0, activityTo.length() - 1);
             }
         }
@@ -174,19 +214,19 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
                 String poId = "";
                 Iterator var29 = visualModelData.iterator();
 
-                while(var29.hasNext()) {
+                while (var29.hasNext()) {
                     JSONObject tmpObj = (JSONObject)var29.next();
                     if (id.equals(tmpObj.getString("id"))) {
                         poId = tmpObj.getString("poId");
                     }
                 }
 
-                if (step.containsKey("diagram")) { // 解析子流程的环节
-                    JSONObject diagram = step.getJSONObject("diagram");
+                if (stepElement.containsKey("diagram")) { // 子流程自己的图信息
+                    JSONObject diagram = stepElement.getJSONObject("diagram");
                     List<BpmActivityMeta> subBpmActivityMetas = parseSubProcess(request, processAppId, snapshotId,
                             bpdId, poId, id, diagram, bpmProcessSnapshotId, 1);
                     Iterator var23 = subBpmActivityMetas.iterator();
-
+                    // 为子流程中的环节设置poId
                     while(var23.hasNext()) {
                         BpmActivityMeta actyMeta = (BpmActivityMeta)var23.next();
                         actyMeta.setPoId(poId);
@@ -194,14 +234,14 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
 
                     bpmActivityMetas.addAll(subBpmActivityMetas);
                 }
-            } else if ("subBpd".equals(activityType)) {
-                externalID = step.getString("externalID");
+            } else if ("subBpd".equals(activityType)) { // 如果是外链流程，设置外联流程的bpdId
+                externalID = stepElement.getString("externalID");
             }
         }
 
         var20 = visualModelData.iterator();
 
-        while(var20.hasNext()) {
+        while (var20.hasNext()) {
             obj = var20.next();
             tmp = (JSONObject)obj;
             if (id.equals(tmp.getString("id"))) {
@@ -322,6 +362,17 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
 
         }
         return subBpmActivityMetas;
+    }
+
+    /**
+     * 根据活动的bpdId,和版本的主键查看数据库中是否已有此环节
+     * @param bpdId
+     * @param snapshotUid
+     * @return
+     */
+    private boolean isActivityMetaExists(String bpdId, String snapshotUid) {
+        List<BpmActivityMeta> list = bpmActivityMetaDao.queryByActivityBpdIdAndSnapshotUid(bpdId, snapshotUid);
+        return list.size() > 0;
     }
 
 }

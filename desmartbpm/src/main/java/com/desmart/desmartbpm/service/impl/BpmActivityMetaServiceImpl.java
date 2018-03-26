@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,9 @@ import java.util.UUID;
 @Service
 public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 
+	/**
+	 * 根据条件创建一个环节配置
+	 */
     public BpmActivityMeta getBpmActivityMeta(String activityBpdId, String activityName, String snapshotId, String bpdId,
                                               String type, String activityType, String parentActivityBpdId, String activityTo,
                                               String externalID, String loopType, String bpmTaskType, String bpmProcessSnapshotId,
@@ -44,10 +48,11 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 
         bpmActivityMeta.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         bpmActivityMeta.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        // todo 创建人信息
         String employeeNum = (String) SecurityUtils.getSubject().getSession().getAttribute("_currUserNum");
         bpmActivityMeta.setCreator(employeeNum);
         bpmActivityMeta.setUpdateBy(employeeNum);
-        bpmActivityMeta.setActivityId("bpm_actymeta:" + UUID.randomUUID().toString());
+        bpmActivityMeta.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
         bpmActivityMeta.setMiOrder(miOrder);
         bpmActivityMeta.setDeepLevel(deepLevel);
         return bpmActivityMeta;
