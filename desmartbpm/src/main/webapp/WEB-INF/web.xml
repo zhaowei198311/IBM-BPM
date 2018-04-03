@@ -56,4 +56,9 @@
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+  <listener>  
+    <listener-class>com.desmart.desmartbpm.webload.HttpClientConnPoolListener</listener-class>  
+  </listener>
+    
 </web-app>

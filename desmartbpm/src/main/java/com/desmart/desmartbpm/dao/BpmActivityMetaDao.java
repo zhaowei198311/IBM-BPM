@@ -24,10 +24,20 @@ public interface BpmActivityMetaDao {
 	 */
     List<BpmActivityMeta> queryByActivityBpdIdAndSnapshotUid(@Param("activityBpdId") String activityBpdId, @Param("snapshotUid") String snapshotUid);
 
+    /**
+     * 新增一条记录
+     * @param bpmActivityMeta
+     * @return
+     */
     int save(BpmActivityMeta bpmActivityMeta);
 
-    /** 根据activityId批量 */
+    /** 根据activityId批量删除  */
     int batchRemoveByPrimaryKey(List<BpmActivityMeta> bpmActivityMetaList);
     
+    /**
+     * 根据主键选择性的更新字段
+     * @param bpmActivityMeta
+     * @return
+     */
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
 }

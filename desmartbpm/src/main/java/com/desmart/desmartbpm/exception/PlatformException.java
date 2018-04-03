@@ -1,7 +1,7 @@
 package com.desmart.desmartbpm.exception;
 
 /**
- * 平台统一异常
+ * 平台统一异常类
  */
 public class PlatformException extends RuntimeException {
 

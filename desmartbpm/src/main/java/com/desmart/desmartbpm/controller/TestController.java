@@ -1,28 +1,42 @@
 package com.desmart.desmartbpm.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.service.TestService;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.entity.BpmCommonBusObject;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
+import com.desmart.desmartbpm.mq.MqSendUtil;
+import com.desmart.desmartbpm.service.BpmGlobalConfigService;
+import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.service.TestService;
+import com.desmart.desmartbpm.util.http.BpmTaskUtils;
 
 @Controller
 public class TestController extends BaseWebController {
     @Autowired
     private TestService testService;
     @Autowired
+    private BpmGlobalConfigService bpmGlobalConfigService; 
+    @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
-
+    @Autowired
+    private MqSendUtil mqSendUtil;
+    
     @RequestMapping(value = "/error.do")
     @ResponseBody
     public String error(String username, String password) {
@@ -108,10 +122,61 @@ public class TestController extends BaseWebController {
         return "Success";
     }
     
+    // localhost:8088/desmartbpm/generateActivity.do?bpdid=25.96218c34-781b-4992-b335-3504146e69eb&snapshoutId=2064.59bc92f1-80fc-44f7-9379-7785ff7c3643&processAppid=2066.49fe4fdc-8488-4663-92d1-d1befcb671c2&newVersionId=v1.0
     @RequestMapping(value = "/generateActivity.do")
     @ResponseBody
-    public Object test(HttpServletRequest request, String bpdid, String snapshoutId, String processAppid, String newVersionId) {
+    public String test(HttpServletRequest request, String bpdid, String snapshoutId, String processAppid, String newVersionId) {
     	bpmProcessSnapshotService.processModel(request, bpdid, snapshoutId, processAppid, newVersionId);
-        return null;
+        return "success";
     }
+    
+    @RequestMapping(value = "/getManger")
+    @ResponseBody
+    public String getManager(HttpServletRequest request) {
+    	Object obj = request.getServletContext().getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
+    	System.out.println(obj);
+    	return "done";
+    }
+    
+    @RequestMapping(value = "/testgetTaskData")
+    @ResponseBody
+    public String testGetData(String taskId, HttpServletRequest request) {
+    	BpmGlobalConfig config = bpmGlobalConfigService.getFirstActConfig();
+    	BpmTaskUtils taskUtils = new BpmTaskUtils(config, request.getServletContext());
+    	HttpReturnStatus status = taskUtils.getTaskData(request, "1861");
+    	System.out.println(status.getMsg());
+        JSONObject jsonResult = new JSONObject(status.getMsg());
+        JSONObject temp = jsonResult.getJSONObject("data").getJSONObject("resultMap").getJSONObject("pubBo");
+        
+        System.out.println("instanceName: " + temp.optString("instanceName", ""));
+        System.out.println("taskOwner: " + temp.optString("taskOwner", ""));
+    	return temp.toString();
+    }
+    
+    
+    @RequestMapping(value = "/testSetTaskData")
+    @ResponseBody
+    public Map testSetTaskData(String taskId, HttpServletRequest request) {
+    	BpmGlobalConfig config = bpmGlobalConfigService.getFirstActConfig();
+    	BpmTaskUtils taskUtils = new BpmTaskUtils(config, request.getServletContext());
+    	
+    	BpmCommonBusObject pubBo = new BpmCommonBusObject();
+		pubBo.setCreatorId("changeMessage");
+    	BpmRouteConditionResult routeBo = new BpmRouteConditionResult();
+		routeBo.setResult_0("true");
+		routeBo.setUsed(true);
+    	
+		Map<String, HttpReturnStatus> map = taskUtils.setTaskData(request, taskId, pubBo, routeBo);
+    	
+    	return map;
+    }
+    
+    
+    @RequestMapping(value = "/testSendMessage")
+    @ResponseBody
+    public String testSendMessage() {
+        mqSendUtil.sendMessage("GOGOGO");
+    	return "success";
+    }
+    
 }

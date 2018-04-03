@@ -10,5 +10,16 @@ import java.util.List;
 public interface BpmGlobalConfigDao {
 
     List<BpmGlobalConfig> queryActiveConfig();
+    
+    int deleteByPrimaryKey(String configId);
 
+    int insert(BpmGlobalConfig record);
+
+    int insertSelective(BpmGlobalConfig record);
+
+    BpmGlobalConfig selectByPrimaryKey(String configId);
+
+    int updateByPrimaryKeySelective(BpmGlobalConfig record);
+
+    int updateByPrimaryKey(BpmGlobalConfig record);
 }

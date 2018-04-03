@@ -13,7 +13,7 @@ public interface BpmProcessSnapshotService {
     void startSysncActivityMeta(HttpServletRequest request, List<String> snapshotIds);
 
     /**
-     *
+     * 同步环节
      * @param request  httpRequest
      * @param bpdId  流程图ID
      * @param snapshotId 引擎中快照版本

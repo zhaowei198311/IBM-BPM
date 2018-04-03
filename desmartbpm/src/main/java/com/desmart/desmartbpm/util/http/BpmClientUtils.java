@@ -68,6 +68,24 @@ public class BpmClientUtils {
     private boolean isAdmin;
     private int reLoginNum;
 
+    public BpmClientUtils(BpmGlobalConfig bpmGlobalConfig) {
+    	this(false, bpmGlobalConfig, true, false, (ServletContext)null);
+    }
+    
+    /**
+     * 以管理员身份发起连接，使用连接池
+     * @param bpmGlobalConfig
+     * @param servletContext
+     */
+    public BpmClientUtils(BpmGlobalConfig bpmGlobalConfig, ServletContext servletContext) {
+    	this(false, bpmGlobalConfig, true, true, servletContext);
+    }
+    
+    /**
+     * 
+     * @param bpmGlobalConfig  全局配置
+     * @param isAdmin 是否是管理员
+     */
     public BpmClientUtils(BpmGlobalConfig bpmGlobalConfig, boolean isAdmin) {
         this(false, bpmGlobalConfig, isAdmin, false, (ServletContext)null);
     }
@@ -687,7 +705,7 @@ public class BpmClientUtils {
     }
 
     /**
-     * 验证token是否有效
+     * 验证httpSession中是否保存了管理员token，如果有，则加入cookieStore
      * @param request
      */
     public void verifyToken(HttpServletRequest request) {
@@ -715,6 +733,10 @@ public class BpmClientUtils {
 
     }
 
+    /**
+     * 通过全局配置中的管理员账号登录，成功后将管理员的Token保存在用户Session中
+     * @param request
+     */
     public void adminLogin(HttpServletRequest request) {
         ArrayList nameValuePairs = new ArrayList();
 

@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientUtils {
-    //public static final String CONNECTION_POOL_NAME = Const.HTTP_CLIENT_CONNECTION_POOL;
+    
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
 
     public HttpClientUtils() {

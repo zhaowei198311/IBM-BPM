@@ -19,9 +19,11 @@ public class HttpClientConnPoolUtils {
         Integer maxConnNum = bpmcfg.getHttpMaxConnection();
         maxConnNum = maxConnNum == null ? 200 : Math.abs(maxConnNum);
         poolmgr.setMaxTotal(maxConnNum);
+        
         Integer preRouteConnNum = bpmcfg.getPreRouteMaxConnection();
         preRouteConnNum = preRouteConnNum == null ? 200 : Math.abs(preRouteConnNum);
         poolmgr.setDefaultMaxPerRoute(preRouteConnNum);
+        
         Integer socketTimeout = bpmcfg.getBpmClientTimeout();
         socketTimeout = socketTimeout == null ? '\uea60' : Math.abs(socketTimeout);
         socketTimeout = socketTimeout < 3000 ? 3000 : socketTimeout;

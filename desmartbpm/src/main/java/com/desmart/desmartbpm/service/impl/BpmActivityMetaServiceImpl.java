@@ -1,24 +1,28 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.Date;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.util.UUID;
 
 @Service
 public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
-
+	private static final Logger LOG = LoggerFactory.getLogger(BpmActivityMetaServiceImpl.class);
+	
 	/**
 	 * 根据条件创建一个环节配置
 	 */
     public BpmActivityMeta getBpmActivityMeta(String activityBpdId, String activityName, String snapshotId, String bpdId,
                                               String type, String activityType, String parentActivityBpdId, String activityTo,
-                                              String externalID, String loopType, String bpmTaskType, String bpmProcessSnapshotId,
+                                              String externalId, String loopType, String bpmTaskType, String bpmProcessSnapshotId,
                                               String miOrder, Integer deepLevel) throws Exception {
         BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
         bpmActivityMeta.setActivityBpdId(activityBpdId);
@@ -28,7 +32,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         bpmActivityMeta.setActivityType(activityType);
         bpmActivityMeta.setParentActivityBpdId(parentActivityBpdId);
         bpmActivityMeta.setActivityTo(activityTo);
-        bpmActivityMeta.setExternalID(externalID);
+        bpmActivityMeta.setExternalId(externalId);
         bpmActivityMeta.setLoopType(loopType);
         if (StringUtils.isBlank(loopType)) {
             bpmActivityMeta.setHandleSignType("alone");
@@ -46,8 +50,8 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             bpmActivityMeta.setSnapshotId(snapshotId);
         }
 
-        bpmActivityMeta.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        bpmActivityMeta.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        bpmActivityMeta.setUpdateTime(new Date());
+        bpmActivityMeta.setCreateTime(new Date());
         // todo 创建人信息
         String employeeNum = (String) SecurityUtils.getSubject().getSession().getAttribute("_currUserNum");
         bpmActivityMeta.setCreator(employeeNum);

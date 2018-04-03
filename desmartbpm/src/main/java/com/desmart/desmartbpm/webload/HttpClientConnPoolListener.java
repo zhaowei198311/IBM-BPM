@@ -11,6 +11,7 @@ import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.util.http.HttpClientConnPoolUtils;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,24 @@ public class HttpClientConnPoolListener implements ServletContextListener {
     public HttpClientConnPoolListener() {
     }
 
+    /**
+     * 初始化
+     */
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
+        BpmGlobalConfigService bpmGlobalConfigService = applicationContext.getBean(BpmGlobalConfigService.class);
+        BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
+        PoolingHttpClientConnectionManager poolmgr = new PoolingHttpClientConnectionManager();
+        HttpClientConnPoolUtils.setHttpPoolCfg(poolmgr, bpmcfg);
+        ServletContext servletContext = servletContextEvent.getServletContext();
+        System.out.println("=====   设置Manager      ==========");
+        servletContext.setAttribute(Const.HTTP_CLIENT_CONNECTION_POOL, poolmgr);
+    }
+    
+    
+    /**
+     * 关闭
+     */
     public void contextDestroyed(ServletContextEvent ctxevt) {
         ServletContext sctx = ctxevt.getServletContext();
         PoolingHttpClientConnectionManager poolmgr = (PoolingHttpClientConnectionManager)sctx.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
@@ -32,14 +51,6 @@ public class HttpClientConnPoolListener implements ServletContextListener {
 
     }
 
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContextEvent.getServletContext());
-        BpmGlobalConfigService bpmGlobalConfigService = applicationContext.getBean(BpmGlobalConfigService.class);
-        BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
-        PoolingHttpClientConnectionManager poolmgr = new PoolingHttpClientConnectionManager();
-        HttpClientConnPoolUtils.setHttpPoolCfg(poolmgr, bpmcfg);
-        ServletContext servletContext = servletContextEvent.getServletContext();
-        servletContext.setAttribute(Const.HTTP_CLIENT_CONNECTION_POOL, poolmgr);
-    }
+
 }
 

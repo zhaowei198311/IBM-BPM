@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 流程平台全局配置
@@ -14,8 +15,8 @@ public class BpmGlobalConfig implements Serializable {
     private String bpmAdminName;   // 管理员账号
     private String bpmAdminPsw;    // 管理员密码
     private String configStatus;   // 配置状态 on 启用  off 停用
-    private Timestamp createTime;
-    private Timestamp updateTime;
+    private Date createTime;     // 创建时间
+    private Date updateTime;     // 更新时间
     private String gmtTimeZone;   // 时区
     private String bpmformsHost;  // 平台host
     private Integer bpmClientTimeout;  // 超时时间
@@ -30,7 +31,27 @@ public class BpmGlobalConfig implements Serializable {
 
     }
 
-
+    public BpmGlobalConfig(String configId, String bpmAdminName, String bpmAdminPsw, Integer bpmClientTimeout, String bpmServerHost, String bpmformsHost, 
+    		String bpmformsWebContext, String configName, String configStatus, Date createTime, String gmtTimeZone, Integer httpMaxConnection, 
+    		Integer preRouteMaxConnection, String schedulerHost, Date updateTime, String bpmApiHost) {
+        this.configId = configId;
+        this.bpmAdminName = bpmAdminName;
+        this.bpmAdminPsw = bpmAdminPsw;
+        this.bpmClientTimeout = bpmClientTimeout;
+        this.bpmServerHost = bpmServerHost;
+        this.bpmformsHost = bpmformsHost;
+        this.bpmformsWebContext = bpmformsWebContext;
+        this.configName = configName;
+        this.configStatus = configStatus;
+        this.createTime = createTime;
+        this.gmtTimeZone = gmtTimeZone;
+        this.httpMaxConnection = httpMaxConnection;
+        this.preRouteMaxConnection = preRouteMaxConnection;
+        this.schedulerHost = schedulerHost;
+        this.updateTime = updateTime;
+        this.bpmApiHost = bpmApiHost;
+    }
+    
     public String getConfigId() {
         return configId;
     }
@@ -79,7 +100,7 @@ public class BpmGlobalConfig implements Serializable {
         this.configStatus = configStatus;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
@@ -87,7 +108,7 @@ public class BpmGlobalConfig implements Serializable {
         this.createTime = createTime;
     }
 
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 

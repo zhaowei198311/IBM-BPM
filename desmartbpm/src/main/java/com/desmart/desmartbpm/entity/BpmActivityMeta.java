@@ -1,11 +1,8 @@
 package com.desmart.desmartbpm.entity;
 
-import org.w3c.dom.Document;
-
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BpmActivityMeta implements Serializable {
@@ -20,13 +17,13 @@ public class BpmActivityMeta implements Serializable {
     private String noteType;
     private Integer submitManCount;
     private String defaultOwnerType;
-    private Document defaultOwners;
+    private String defaultOwners;
     private String defaultOwnersName;
     private String uploadFileLabel;
     private String downloadFileLabel;
-    private Timestamp createTime;
+    private Date createTime;
     private String creator;
-    private Timestamp updateTime;
+    private Date updateTime;
     private String updateBy;
     private Integer sortNum;
     private String formPath;
@@ -39,17 +36,17 @@ public class BpmActivityMeta implements Serializable {
     private String activityType;  // 活动类型 start  end gateway  gatewayAnd getwayOr
     private String activityTo;  // 下个元素  用, 分隔多个元素
     private String parentActivityBpdId;  // 父元素id
-    private String externalID;  // 外接流程的bpdId
+    private String externalId;  // 外接流程的bpdId
     private String bpmTaskType;  // UserTask SubProcess ServiceTask
     private String loopType;  // simpleLoop MultiInstanceLoop none  null
     private String miOrder; 
     private String snapshotUid;  // 版本主键
     private String stepId;
-    private String assignVarName;
+    private String assignVarname;
     private String handleSignType;  // alone  count  是否多人
     private String emailNotification;
     private String limitCandidate;
-    private String signCountVarName;
+    private String signCountVarname;
     private String completeRate;
     private String defaultPassBy;
     private String allowCancel;
@@ -69,13 +66,13 @@ public class BpmActivityMeta implements Serializable {
     private String loopTimeUnit;
     private String overtimeNotifyEvent;
     private String loopNotifyEvent;
-    private String routeVarName;
-    private Integer overTimeDeadline;
-    private String overTimeDeadlineUnit;
-    private String overTimeDeadlineEvent;
+    private String routeVarname;
+    private Integer overtimeDeadline;
+    private String overtimeDeadlineUnit;
+    private String overtimeDeadlineEvent;
     private String activityGroupName;
     private String poId;
-    private Map<String, String> informed = new HashMap();
+    private Map<String, String> informed = new HashMap<>();
     //private BpmEmailNotification bpmEmailNotification;
     //private List<BpmActivityBizPanel> bpmActivityBizPanel;
     private String rollbackGroupStrategy;
@@ -177,11 +174,11 @@ public class BpmActivityMeta implements Serializable {
         this.defaultOwnerType = defaultOwnerType;
     }
 
-    public Document getDefaultOwners() {
+    public String getDefaultOwners() {
         return defaultOwners;
     }
 
-    public void setDefaultOwners(Document defaultOwners) {
+    public void setDefaultOwners(String defaultOwners) {
         this.defaultOwners = defaultOwners;
     }
 
@@ -209,11 +206,11 @@ public class BpmActivityMeta implements Serializable {
         this.downloadFileLabel = downloadFileLabel;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -225,11 +222,11 @@ public class BpmActivityMeta implements Serializable {
         this.creator = creator;
     }
 
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -329,12 +326,12 @@ public class BpmActivityMeta implements Serializable {
         this.parentActivityBpdId = parentActivityBpdId;
     }
 
-    public String getExternalID() {
-        return externalID;
+    public String getExternalId() {
+        return externalId;
     }
 
-    public void setExternalID(String externalID) {
-        this.externalID = externalID;
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public String getBpmTaskType() {
@@ -377,12 +374,12 @@ public class BpmActivityMeta implements Serializable {
         this.stepId = stepId;
     }
 
-    public String getAssignVarName() {
-        return assignVarName;
+    public String getAssignVarname() {
+        return assignVarname;
     }
 
-    public void setAssignVarName(String assignVarName) {
-        this.assignVarName = assignVarName;
+    public void setAssignVarname(String assignVarname) {
+        this.assignVarname = assignVarname;
     }
 
     public String getHandleSignType() {
@@ -409,12 +406,12 @@ public class BpmActivityMeta implements Serializable {
         this.limitCandidate = limitCandidate;
     }
 
-    public String getSignCountVarName() {
-        return signCountVarName;
+    public String getSignCountVarname() {
+        return signCountVarname;
     }
 
-    public void setSignCountVarName(String signCountVarName) {
-        this.signCountVarName = signCountVarName;
+    public void setSignCountVarname(String signCountVarName) {
+        this.signCountVarname = signCountVarName;
     }
 
     public String getCompleteRate() {
@@ -569,36 +566,36 @@ public class BpmActivityMeta implements Serializable {
         this.loopNotifyEvent = loopNotifyEvent;
     }
 
-    public String getRouteVarName() {
-        return routeVarName;
+    public String getRouteVarname() {
+        return routeVarname;
     }
 
-    public void setRouteVarName(String routeVarName) {
-        this.routeVarName = routeVarName;
+    public void setRouteVarname(String routeVarname) {
+        this.routeVarname = routeVarname;
     }
 
-    public Integer getOverTimeDeadline() {
-        return overTimeDeadline;
+    public Integer getOvertimeDeadline() {
+        return overtimeDeadline;
     }
 
-    public void setOverTimeDeadline(Integer overTimeDeadline) {
-        this.overTimeDeadline = overTimeDeadline;
+    public void setOvertimeDeadline(Integer overTimeDeadline) {
+        this.overtimeDeadline = overTimeDeadline;
     }
 
-    public String getOverTimeDeadlineUnit() {
-        return overTimeDeadlineUnit;
+    public String getOvertimeDeadlineUnit() {
+        return overtimeDeadlineUnit;
     }
 
-    public void setOverTimeDeadlineUnit(String overTimeDeadlineUnit) {
-        this.overTimeDeadlineUnit = overTimeDeadlineUnit;
+    public void setOvertimeDeadlineUnit(String overTimeDeadlineUnit) {
+        this.overtimeDeadlineUnit = overTimeDeadlineUnit;
     }
 
-    public String getOverTimeDeadlineEvent() {
-        return overTimeDeadlineEvent;
+    public String getOvertimeDeadlineEvent() {
+        return overtimeDeadlineEvent;
     }
 
-    public void setOverTimeDeadlineEvent(String overTimeDeadlineEvent) {
-        this.overTimeDeadlineEvent = overTimeDeadlineEvent;
+    public void setOvertimeDeadlineEvent(String overtimeDeadlineEvent) {
+        this.overtimeDeadlineEvent = overtimeDeadlineEvent;
     }
 
     public String getActivityGroupName() {

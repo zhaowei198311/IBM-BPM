@@ -24,7 +24,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 @Service
-public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
+public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService {
     private static final Logger LOG = LoggerFactory.getLogger(BpmProcessSnapshotService.class);
 
     @Autowired
@@ -51,7 +51,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
         }
         url = MessageFormat.format(url, bpdId, params);
         Map<String, Object> pmap = new HashMap<>();
-        HttpReturnStatus result = (new BpmClientUtils(gcfg, true)).doGet(request, url, pmap);
+        BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
+        HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
+        bpmClientUtil.closeClient();
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if (datas.containsKey("data")) {
@@ -78,7 +80,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
         }
         url = MessageFormat.format(url, bpdId, params);
         Map<String, Object> pmap = new HashMap<>();
-        HttpReturnStatus result = (new BpmClientUtils(gcfg, true)).doGet(request, url, pmap);
+        BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
+        HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
+        bpmClientUtil.closeClient();
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if ("200".equalsIgnoreCase(datas.getString("status"))) {
@@ -146,14 +150,15 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
                 bpmActivityMeta.setActivityType(newMeta.getActivityType());
                 bpmActivityMeta.setActivityTo(newMeta.getActivityTo());
                 bpmActivityMeta.setParentActivityBpdId(newMeta.getParentActivityBpdId());
-                bpmActivityMeta.setExternalID(newMeta.getExternalID());
+                bpmActivityMeta.setExternalId(newMeta.getExternalId());
                 bpmActivityMeta.setBpmTaskType(newMeta.getBpmTaskType());
                 bpmActivityMeta.setLoopType(newMeta.getLoopType());
                 bpmActivityMeta.setMiOrder(newMeta.getMiOrder());
                 bpmActivityMeta.setHandleSignType(newMeta.getHandleSignType());
                 bpmActivityMeta.setPoId(newMeta.getPoId());
                 bpmActivityMeta.setDeepLevel(newMeta.getDeepLevel());
-                // todo update
+                
+                bpmActivityMetaDao.updateByPrimaryKeySelective(bpmActivityMeta);
                 
             } else {
             	bpmActivityMetaDao.save(newMeta);
@@ -161,8 +166,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService{
         }
 
         if (delActivityMetas.size() > 0) {
-        	// todo 删除多余的meta
-        	
+        	bpmActivityMetaDao.batchRemoveByPrimaryKey(delActivityMetas);
         }
 
 

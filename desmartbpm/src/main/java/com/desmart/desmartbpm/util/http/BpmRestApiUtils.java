@@ -12,6 +12,12 @@ public class BpmRestApiUtils {
     protected BpmClientUtils clientUtils;
     protected BpmGlobalConfig bpmGlobalConfig;
 
+    
+    public BpmRestApiUtils(BpmGlobalConfig bpmGlobalConfig, ServletContext servletContext) {
+        this.bpmGlobalConfig = bpmGlobalConfig;
+        this.clientUtils = new BpmClientUtils(bpmGlobalConfig, servletContext);
+    }
+    
     /**
      * 创建一个BpmRestApiUtils
      * @param bpmGlobalConfig  全局配置

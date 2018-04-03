@@ -5,7 +5,11 @@ package com.desmart.desmartbpm.common;
  * 一般规则：前缀 + uuid
  */
 public class EntityIdPrefix {
+	/** 环节前缀 */
+	public static final String BPM_ACTIVITY_META = "act_meta:";
 	
-	public static final String BPM_ACTIVITY_META = "bpm_actymeta:";
+	
+	
+	
 
 }

@@ -84,6 +84,13 @@ public class HttpRequestUtils {
         return recieveData.toString();
     }
 
+    /**
+     * 检查指定对象的类型
+     * @param webobj
+     * @return HttpRequest对象返回1<br/>
+     *         Cookie对象返回2<br/>
+     *         其他返回3
+     */
     public static int isRequestOrCookieType(Object webobj) {
         int result = 1;
         

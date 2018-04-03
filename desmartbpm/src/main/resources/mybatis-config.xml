@@ -7,5 +7,6 @@
 	<settings>
 		<!-- 启用下划线与驼峰式命名规则的映射 -->
 		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="jdbcTypeForNull" value="NULL"/> 
 	</settings>
 </configuration>
