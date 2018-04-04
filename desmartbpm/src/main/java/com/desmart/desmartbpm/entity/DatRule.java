@@ -5,35 +5,35 @@ import java.util.Date;
 
 public class DatRule {
     
-    private String ruleId;
+    private String ruleId; // 规则id
     
-    private String ruleName;
+    private String ruleName; // 规则名 eg: gateway_rule_bpm_actymeta:5494a548-d5b9-44eb-b017-4372ace67adc_result_0
     
-    private String parentRuleId;
+    private String parentRuleId;  // 父规则id
     
-    private Date startTime;
+    private Date startTime; // 开始时间
    
-    private Date endTime;
+    private Date endTime;  // 结束时间
     
-    private String ruleType;
+    private String ruleType; // 规则类型  text
     
-    private String ruleProcess;
+    private String ruleProcess;  // 规则内容 Map ( (this['amount'] > 444   &&  this['amount'] >= 10000 ) || (this['amount'] == '12'    ||  this['amount'] > 1 )  )
     
-    private String ruleStatus;
+    private String ruleStatus; // 规则状态
     
-    private String returnType;
+    private String returnType; // 返回类型  "PARAMS"
     
-    private int ruleVersion;
+    private int ruleVersion;   // 规则版本
     
-    private Timestamp createTime;
+    private Timestamp createTime; // 创建时间
     
-    private String creator;
+    private String creator;  // 创建人
+     
+    private String isActivate; // 是否启用
     
-    private String isActivate;
+    private String editMode; // "STD"
     
-    private String editMode;
-    
-    private String bizType;
+    private String bizType;  // "wfCondCtrl"  "advAuditAuth"  高级授权
 
 	public String getRuleId() {
 		return ruleId;
