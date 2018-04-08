@@ -25,7 +25,7 @@ import com.rabbitmq.client.MessageProperties;
 /**
  * 提供向队列发送消息的服务
  */
-@Service
+//@Service
 public class MqSendUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(MqSendUtil.class);
 	

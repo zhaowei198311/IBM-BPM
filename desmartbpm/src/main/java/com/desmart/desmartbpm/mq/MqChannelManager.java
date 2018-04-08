@@ -12,7 +12,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-@Component
+//@Component
 public class MqChannelManager {
 	private static final Logger LOG = LoggerFactory.getLogger(MqChannelManager.class);
 	private Connection connection;

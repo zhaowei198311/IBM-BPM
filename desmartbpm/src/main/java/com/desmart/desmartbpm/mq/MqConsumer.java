@@ -26,7 +26,7 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-@Service
+//@Service
 public class MqConsumer {
 	private static final Logger LOG = LoggerFactory.getLogger(MqConsumer.class);
 	

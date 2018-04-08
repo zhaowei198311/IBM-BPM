@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.enginedao.LswSnapshotDao" >
+   <sql id="base_cloumn">
+    SNAPSHOT_ID,REPOSITORY_BRANCH_ID,CREATED_BY_USER_ID,CREATED_ON,NAME,ACRONYM,DESCRIPTION,BRANCH_ID,
+    PROJECT_ID,SEQ_NUM,IS_ACTIVE,IS_BLA_ACTIVE,IS_STARTED,IS_INSTALLED,IS_BLA_INSTALLED,IS_TIP_DEPLOYED,
+    IS_DEFAULT,ERROR_COUNTER,CHANGE_DATA,TIP_DEPLOYMENT_IN_PROGRESS,ORIG_CREATED_ON,ACTIVATED_ON,
+    HAS_SUSPENDED_ALL_INSTANCES,STATUS,CAPABILITY,IS_ARCHIVED,ARCHIVED_ON,LAST_MODIFIED,LAST_MODIFIED_BY_USER_ID 
+   </sql>
+
+
+
+    <select id="listAll" resultType="com.desmart.desmartbpm.entity.engine.LswSnapshot">
+        select <include refid="base_cloumn"/>  from LSW_SNAPSHOT
+    </select>
+    
+
+</mapper>

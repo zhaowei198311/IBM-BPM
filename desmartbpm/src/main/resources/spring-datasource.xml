@@ -55,6 +55,7 @@
 
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.desmart.desmartbpm.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
     </bean>
 
     <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
@@ -63,6 +64,7 @@
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
         <property name="rollbackOnCommitFailure" value="true"/>
+        <qualifier value="oracleTx" />
     </bean>
 
 </beans>

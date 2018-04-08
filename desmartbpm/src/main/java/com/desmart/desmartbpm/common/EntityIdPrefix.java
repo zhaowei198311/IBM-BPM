@@ -8,6 +8,9 @@ public class EntityIdPrefix {
 	/** 环节前缀 */
 	public static final String BPM_ACTIVITY_META = "act_meta:";
 	
+	/** 流程定义分类前缀 */
+	public static final String BPM_PROCESS_CATEGORY = "pro_cate:";
+	
 	
 	
 	

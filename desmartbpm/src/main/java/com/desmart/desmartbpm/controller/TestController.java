@@ -34,7 +34,7 @@ public class TestController extends BaseWebController {
     private BpmGlobalConfigService bpmGlobalConfigService; 
     @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
-    @Autowired
+    //@Autowired
     private MqSendUtil mqSendUtil;
     
     @RequestMapping(value = "/error.do")
@@ -175,7 +175,7 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/testSendMessage")
     @ResponseBody
     public String testSendMessage() {
-        mqSendUtil.sendMessage("GOGOGO");
+       // mqSendUtil.sendMessage("GOGOGO");
     	return "success";
     }
     
