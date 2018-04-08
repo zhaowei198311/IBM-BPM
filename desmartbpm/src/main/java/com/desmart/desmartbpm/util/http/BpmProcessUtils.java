@@ -26,6 +26,11 @@ public class BpmProcessUtils extends BpmRestApiUtils {
         super(bpmGlobalConfig, isAdmin, servletContext);
     }
 
+    /**
+     * 获得所有公开的流程
+     * @param request
+     * @return
+     */
     public HttpReturnStatus getAllExposedProcess(HttpServletRequest request) {
         String host = this.bpmGlobalConfig.getBpmServerHost();
         host = host.endsWith("/") ? host : host + "/";

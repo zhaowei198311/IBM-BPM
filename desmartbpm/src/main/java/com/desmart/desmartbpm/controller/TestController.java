@@ -17,12 +17,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmCommonBusObject;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
 import com.desmart.desmartbpm.mq.MqSendUtil;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.service.DhProcessService;
 import com.desmart.desmartbpm.service.TestService;
 import com.desmart.desmartbpm.util.http.BpmTaskUtils;
 
@@ -36,6 +38,18 @@ public class TestController extends BaseWebController {
     private BpmProcessSnapshotService bpmProcessSnapshotService;
     //@Autowired
     private MqSendUtil mqSendUtil;
+    @Autowired
+    private DhProcessService dhProcessService;
+    
+    
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public String test3(HttpServletRequest request, Integer page, Integer rows) {
+        
+        
+        return "OK";
+    }
+    
     
     @RequestMapping(value = "/error.do")
     @ResponseBody
@@ -108,11 +122,7 @@ public class TestController extends BaseWebController {
         return "hello," + _curruser + " this is  unauthorizedUrl ";
     }
 
-    @RequestMapping(value = "/test")
-    @ResponseBody
-    public String test3() {
-    	return "OK";
-    }
+
     
     @RequestMapping(value = "/test.do")
     @ResponseBody
@@ -178,5 +188,7 @@ public class TestController extends BaseWebController {
        // mqSendUtil.sendMessage("GOGOGO");
     	return "success";
     }
+    
+    
     
 }
