@@ -1,23 +1,314 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartbpm.dao.BpmActivityMetaDao" >
-    <sql id="Base_Column_List">
-        ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_COST_PREHOUR, ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_RUNTIME, 
-        ACTIVITY_RUNTIME_UNIT, ACTIVITY_TO, ACTIVITY_TYPE, ALLOW_CANCEL, ALLOW_DELFILE, ALLOW_OVERSIGN, ALLOW_PASSBY, 
-        ALLOW_REJECT, ALLOW_ROLLBACK, ALLOW_TRANSFER, ALLOW_UPLOAD, ASSIGN_VARNAME, BPD_ID, BPM_TASK_TYPE, COMPLETE_RATE, 
-        CREATE_TIME, CREATOR, CUSTOM_RULE_PARAMS, DEEP_LEVEL, DEFAULT_OWNER_TYPE, DEFAULT_OWNERS, DEFAULT_PASS_BY, 
-        DOWNLOAD_FILE_LABEL, EMAIL_NOTIFICATION, EXTERNAL_ID, FORM_PATH, HANDLE_SIGN_TYPE, LIMIT_CANDIATE, LOOP_NOTIFY_EVENT, 
-        LOOP_START_TIME_SPAN, LOOP_START_TIME_UNIT, LOOP_TIME_SPAN, LOOP_TIME_UNIT, LOOP_TYPE, MI_ORDER, NOTE_TYPE, 
-        OVERTIME_DEADLINE, OVERTIME_DEADLINE_EVENT, OVERTIME_DEADLINE_UNIT, OVERTIME_LOOP_TPL_ID, OVERTIME_NOTIFY_EVENT, 
-        OVERTIME_NOTIFY_IS_LOOP, OVERTIME_TEMPLATE_ID, PARENT_ACTIVITY_BPD_ID, PO_ID, ROLLBACK_GROUP_STRATEGY, ROUTE_VARNAME, 
-        SIGN_COUNT_VARNAME, SNAPSHOT_ID, SNAPSHOT_UID, SORT_NUM, STEP_ID, SUBMIT_MAN_COUNT, TYPE, UPDATE_BY, UPDATE_TIME, 
-        UPLOAD_FILE_LABEL, AUTO_COMMIT, ACTIVITY_ALT_NAME, ON_TIME_NOTIFY, ON_TIME_TEMPLATE_ID, COMMIT_TASK_EVENT_CLS, COMMIT_DELAY_CLS
-    </sql>
+<mapper namespace="com.desmart.desmartbpm.dao.BpmActivityMetaDao">
+	<sql id="Base_Column_List">
+		ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_COST_PREHOUR, ACTIVITY_GROUP_NAME,
+		ACTIVITY_NAME, ACTIVITY_RUNTIME,
+		ACTIVITY_RUNTIME_UNIT, ACTIVITY_TO, ACTIVITY_TYPE, ALLOW_CANCEL, ALLOW_DELFILE,
+		ALLOW_OVERSIGN, ALLOW_PASSBY,
+		ALLOW_REJECT, ALLOW_ROLLBACK, ALLOW_TRANSFER, ALLOW_UPLOAD, ASSIGN_VARNAME, BPD_ID,
+		BPM_TASK_TYPE, COMPLETE_RATE,
+		CREATE_TIME, CREATOR, CUSTOM_RULE_PARAMS, DEEP_LEVEL, DEFAULT_OWNER_TYPE,
+		DEFAULT_OWNERS, DEFAULT_PASS_BY,
+		DOWNLOAD_FILE_LABEL, EMAIL_NOTIFICATION, EXTERNAL_ID, FORM_PATH, HANDLE_SIGN_TYPE,
+		LIMIT_CANDIDATE, LOOP_NOTIFY_EVENT,
+		LOOP_START_TIME_SPAN, LOOP_START_TIME_UNIT, LOOP_TIME_SPAN, LOOP_TIME_UNIT, LOOP_TYPE,
+		MI_ORDER, NOTE_TYPE,
+		OVERTIME_DEADLINE, OVERTIME_DEADLINE_EVENT, OVERTIME_DEADLINE_UNIT,
+		OVERTIME_LOOP_TPL_ID, OVERTIME_NOTIFY_EVENT,
+		OVERTIME_NOTIFY_IS_LOOP, OVERTIME_TEMPLATE_ID, PARENT_ACTIVITY_BPD_ID, PO_ID,
+		ROLLBACK_GROUP_STRATEGY, ROUTE_VARNAME,
+		SIGN_COUNT_VARNAME, SNAPSHOT_ID, SNAPSHOT_UID, SORT_NUM, STEP_ID, SUBMIT_MAN_COUNT, TYPE,
+		UPDATE_BY, UPDATE_TIME,
+		UPLOAD_FILE_LABEL, AUTO_COMMIT, ACTIVITY_ALT_NAME, ON_TIME_NOTIFY, ON_TIME_TEMPLATE_ID,
+		COMMIT_TASK_EVENT_CLS, COMMIT_DELAY_CLS
+	</sql>
 
-    <select id="queryByBpmProcessSnapshotId" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-    	select <include refid="Base_Column_List"></include> from BPM_ACTIVITY_META
-    	where SNAPSHOT_UID = #{bpmProcessSnapshotId}
-    </select>
+	<insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		insert into BPM_ACTIVITY_META (ACTIVITY_ID, ACTIVITY_BPD_ID,
+		ACTIVITY_COST_PREHOUR,
+		ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_RUNTIME,
+		ACTIVITY_RUNTIME_UNIT, ACTIVITY_TO, ACTIVITY_TYPE,
+		ALLOW_CANCEL, ALLOW_DELFILE, ALLOW_OVERSIGN,
+		ALLOW_PASSBY, ALLOW_REJECT, ALLOW_ROLLBACK,
+		ALLOW_TRANSFER, ALLOW_UPLOAD, ASSIGN_VARNAME,
+		BPD_ID, BPM_TASK_TYPE, COMPLETE_RATE,
+		CREATE_TIME, CREATOR, CUSTOM_RULE_PARAMS,
+		DEEP_LEVEL, DEFAULT_OWNERS, DEFAULT_OWNER_TYPE,
+		DEFAULT_PASS_BY, DOWNLOAD_FILE_LABEL, EMAIL_NOTIFICATION,
+		EXTERNAL_ID, FORM_PATH, HANDLE_SIGN_TYPE,
+		LIMIT_CANDIDATE, LOOP_NOTIFY_EVENT, LOOP_START_TIME_SPAN,
+		LOOP_START_TIME_UNIT, LOOP_TIME_SPAN, LOOP_TIME_UNIT,
+		LOOP_TYPE, MI_ORDER, NOTE_TYPE,
+		OVERTIME_DEADLINE, OVERTIME_DEADLINE_EVENT,
+		OVERTIME_DEADLINE_UNIT, OVERTIME_LOOP_TPL_ID,
+		OVERTIME_NOTIFY_EVENT, OVERTIME_NOTIFY_IS_LOOP,
+		OVERTIME_TEMPLATE_ID, PARENT_ACTIVITY_BPD_ID,
+		PO_ID, ROLLBACK_GROUP_STRATEGY, ROUTE_VARNAME,
+		SIGN_COUNT_VARNAME, SNAPSHOT_ID, SNAPSHOT_UID,
+		SORT_NUM, STEP_ID, SUBMIT_MAN_COUNT,
+		TYPE, UPDATE_BY, UPDATE_TIME,
+		UPLOAD_FILE_LABEL, AUTO_COMMIT, ACTIVITY_ALT_NAME,
+		ON_TIME_NOTIFY, ON_TIME_TEMPLATE_ID, COMMIT_TASK_EVENT_CLS,
+		COMMIT_DELAY_CLS)
+		values (#{activityId}, #{activityBpdId}, #{activityCostPrehour},
+		#{activityGroupName}, #{activityName}, #{activityRuntime},
+		#{activityRuntimeUnit}, #{activityTo}, #{activityType},
+		#{allowCancel}, #{allowDelfile}, #{allowOversign},
+		#{allowPassby}, #{allowReject}, #{allowRollback},
+		#{allowTransfer}, #{allowUpload}, #{assignVarname},
+		#{bpdId}, #{bpmTaskType}, #{completeRate},
+		sysdate, #{creator}, #{customRuleParams},
+		#{deepLevel}, #{defaultOwners}, #{defaultOwnerType},
+		#{defaultPassBy}, #{downloadFileLabel}, #{emailNotification},
+		#{externalId}, #{formPath}, #{handleSignType},
+		#{limitCandidate}, #{loopNotifyEvent}, #{loopStartTimeSpan},
+		#{loopStartTimeUnit}, #{loopTimeSpan}, #{loopTimeUnit},
+		#{loopType}, #{miOrder}, #{noteType},
+		#{overtimeDeadline}, #{overtimeDeadlineEvent},
+		#{overtimeDeadlineUnit}, #{overtimeLoopTplId},
+		#{overtimeNotifyEvent}, #{overtimeNotifyIsLoop},
+		#{overtimeTemplateId}, #{parentActivityBpdId},
+		#{poId}, #{rollbackGroupStrategy}, #{routeVarname},
+		#{signCountVarname}, #{snapshotId}, #{snapshotUid},
+		#{sortNum}, #{stepId}, #{submitManCount},
+		#{type}, #{updateBy}, #{updateTime},
+		#{uploadFileLabel}, #{autoCommit}, #{activityAltName},
+		#{onTimeNotify}, #{onTimeTemplateId}, #{commitTaskEventCls},
+		#{commitDelayCls})
+	</insert>
 
+	<select id="queryBySnapshotUid" parameterType="string"
+		resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		select
+		<include refid="Base_Column_List" />
+		from BPM_ACTIVITY_META
+		where SNAPSHOT_UID = #{bpmProcessSnapshotId}
+	</select>
 
+	<select id="queryByActivityBpdIdAndSnapshotUid" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		select
+		<include refid="Base_Column_List" />
+		from BPM_ACTIVITY_META
+		where activity_bpd_id = #{activityBpdId} and SNAPSHOT_UID = #{snapshotUid}
+	</select>
+
+	<delete id="batchRemoveByPrimaryKey" parameterType="list">
+		delete from BPM_ACTIVITY_META
+		where activity_id in
+		<foreach collection="list" item="item" index="index" open="("
+			separator="," close=")">
+			#{item.activityId}
+		</foreach>
+	</delete>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		update BPM_ACTIVITY_META
+		<set>
+			<if test="activityBpdId != null">
+				ACTIVITY_BPD_ID = #{activityBpdId},
+			</if>
+			<if test="activityCostPrehour != null">
+				ACTIVITY_COST_PREHOUR = #{activityCostPrehour},
+			</if>
+			<if test="activityGroupName != null">
+				ACTIVITY_GROUP_NAME = #{activityGroupName},
+			</if>
+			<if test="activityName != null">
+				ACTIVITY_NAME = #{activityName},
+			</if>
+			<if test="activityRuntime != null">
+				ACTIVITY_RUNTIME = #{activityRuntime},
+			</if>
+			<if test="activityRuntimeUnit != null">
+				ACTIVITY_RUNTIME_UNIT = #{activityRuntimeUnit},
+			</if>
+			<if test="activityTo != null">
+				ACTIVITY_TO = #{activityTo},
+			</if>
+			<if test="activityType != null">
+				ACTIVITY_TYPE = #{activityType},
+			</if>
+			<if test="allowCancel != null">
+				ALLOW_CANCEL = #{allowCancel},
+			</if>
+			<if test="allowDelfile != null">
+				ALLOW_DELFILE = #{allowDelfile},
+			</if>
+			<if test="allowOversign != null">
+				ALLOW_OVERSIGN = #{allowOversign},
+			</if>
+			<if test="allowPassby != null">
+				ALLOW_PASSBY = #{allowPassby},
+			</if>
+			<if test="allowReject != null">
+				ALLOW_REJECT = #{allowReject},
+			</if>
+			<if test="allowRollback != null">
+				ALLOW_ROLLBACK = #{allowRollback},
+			</if>
+			<if test="allowTransfer != null">
+				ALLOW_TRANSFER = #{allowTransfer},
+			</if>
+			<if test="allowUpload != null">
+				ALLOW_UPLOAD = #{allowUpload},
+			</if>
+			<if test="assignVarname != null">
+				ASSIGN_VARNAME = #{assignVarname},
+			</if>
+			<if test="bpdId != null">
+				BPD_ID = #{bpdId},
+			</if>
+			<if test="bpmTaskType != null">
+				BPM_TASK_TYPE = #{bpmTaskType},
+			</if>
+			<if test="completeRate != null">
+				COMPLETE_RATE = #{completeRate},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime},
+			</if>
+			<if test="creator != null">
+				CREATOR = #{creator},
+			</if>
+			<if test="customRuleParams != null">
+				CUSTOM_RULE_PARAMS = #{customRuleParams},
+			</if>
+			<if test="deepLevel != null">
+				DEEP_LEVEL = #{deepLevel},
+			</if>
+			<if test="defaultOwnerType != null">
+				DEFAULT_OWNER_TYPE = #{defaultOwnerType},
+			</if>
+			<if test="defaultOwners != null">
+				DEFAULT_OWNERS = #{defaultOwners},
+			</if>
+			<if test="defaultPassBy != null">
+				DEFAULT_PASS_BY = #{defaultPassBy},
+			</if>
+			<if test="downloadFileLabel != null">
+				DOWNLOAD_FILE_LABEL = #{downloadFileLabel},
+			</if>
+			<if test="emailNotification != null">
+				EMAIL_NOTIFICATION = #{emailNotification},
+			</if>
+			<if test="externalId != null">
+				EXTERNAL_ID = #{externalId},
+			</if>
+			<if test="formPath != null">
+				FORM_PATH = #{formPath},
+			</if>
+			<if test="handleSignType != null">
+				HANDLE_SIGN_TYPE = #{handleSignType},
+			</if>
+			<if test="limitCandidate != null">
+				LIMIT_CANDIDATE = #{limitCandidate},
+			</if>
+			<if test="loopNotifyEvent != null">
+				LOOP_NOTIFY_EVENT = #{loopNotifyEvent},
+			</if>
+			<if test="loopStartTimeSpan != null">
+				LOOP_START_TIME_SPAN = #{loopStartTimeSpan},
+			</if>
+			<if test="loopStartTimeUnit != null">
+				LOOP_START_TIME_UNIT = #{loopStartTimeUnit},
+			</if>
+			<if test="loopTimeSpan != null">
+				LOOP_TIME_SPAN = #{loopTimeSpan},
+			</if>
+			<if test="loopTimeUnit != null">
+				LOOP_TIME_UNIT = #{loopTimeUnit},
+			</if>
+			<if test="loopType != null">
+				LOOP_TYPE = #{loopType},
+			</if>
+			<if test="miOrder != null">
+				MI_ORDER = #{miOrder},
+			</if>
+			<if test="noteType != null">
+				NOTE_TYPE = #{noteType},
+			</if>
+			<if test="overtimeDeadline != null">
+				OVERTIME_DEADLINE = #{overtimeDeadline},
+			</if>
+			<if test="overtimeDeadlineEvent != null">
+				OVERTIME_DEADLINE_EVENT = #{overtimeDeadlineEvent},
+			</if>
+			<if test="overtimeDeadlineUnit != null">
+				OVERTIME_DEADLINE_UNIT = #{overtimeDeadlineUnit},
+			</if>
+			<if test="overtimeLoopTplId != null">
+				OVERTIME_LOOP_TPL_ID = #{overtimeLoopTplId},
+			</if>
+			<if test="overtimeNotifyEvent != null">
+				OVERTIME_NOTIFY_EVENT = #{overtimeNotifyEvent},
+			</if>
+			<if test="overtimeNotifyIsLoop != null">
+				OVERTIME_NOTIFY_IS_LOOP = #{overtimeNotifyIsLoop},
+			</if>
+			<if test="overtimeTemplateId != null">
+				OVERTIME_TEMPLATE_ID = #{overtimeTemplateId},
+			</if>
+			<if test="parentActivityBpdId != null">
+				PARENT_ACTIVITY_BPD_ID = #{parentActivityBpdId},
+			</if>
+			<if test="poId != null">
+				PO_ID = #{poId},
+			</if>
+			<if test="rollbackGroupStrategy != null">
+				ROLLBACK_GROUP_STRATEGY = #{rollbackGroupStrategy},
+			</if>
+			<if test="routeVarname != null">
+				ROUTE_VARNAME = #{routeVarname},
+			</if>
+			<if test="signCountVarname != null">
+				SIGN_COUNT_VARNAME = #{signCountVarname},
+			</if>
+			<if test="snapshotId != null">
+				SNAPSHOT_ID = #{snapshotId},
+			</if>
+			<if test="snapshotUid != null">
+				SNAPSHOT_UID = #{snapshotUid},
+			</if>
+			<if test="sortNum != null">
+				SORT_NUM = #{sortNum},
+			</if>
+			<if test="stepId != null">
+				STEP_ID = #{stepId},
+			</if>
+			<if test="submitManCount != null">
+				SUBMIT_MAN_COUNT = #{submitManCount},
+			</if>
+			<if test="type != null">
+				TYPE = #{type},
+			</if>
+			<if test="updateBy != null">
+				UPDATE_BY = #{updateBy},
+			</if>
+			<if test="uploadFileLabel != null">
+				UPLOAD_FILE_LABEL = #{uploadFileLabel},
+			</if>
+			<if test="autoCommit != null">
+				AUTO_COMMIT = #{autoCommit},
+			</if>
+			<if test="activityAltName != null">
+				ACTIVITY_ALT_NAME = #{activityAltName},
+			</if>
+			<if test="onTimeNotify != null">
+				ON_TIME_NOTIFY = #{onTimeNotify},
+			</if>
+			<if test="onTimeTemplateId != null">
+				ON_TIME_TEMPLATE_ID = #{onTimeTemplateId},
+			</if>
+			<if test="commitTaskEventCls != null">
+				COMMIT_TASK_EVENT_CLS = #{commitTaskEventCls},
+			</if>
+			<if test="commitDelayCls != null">
+				COMMIT_DELAY_CLS = #{commitDelayCls},
+			</if>
+			UPDATE_TIME = sysdate
+		</set>
+
+		where ACTIVITY_ID = #{activityId}
+	</update>
 </mapper>

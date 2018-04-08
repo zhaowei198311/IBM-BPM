@@ -13,7 +13,12 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,6 +28,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -33,250 +39,314 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientUtils {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
 
-    public HttpClientUtils() {
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
 
+	private static final String USERNAME = "deadmin";
 
-    public static RequestConfig getRequestConfig(Integer timeout) {
-        int itimeout = timeout == null ? '\uea60' : Math.abs(timeout);
-        itimeout = itimeout < 3000 ? 3000 : itimeout;
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(itimeout).setConnectionRequestTimeout(itimeout).setSocketTimeout(itimeout).build();
-        return requestConfig;
-    }
+	private static final String PASSWORD = "passw0rd";
 
-    /**
-     * 从httpclient连接池中获取连接
-     * @param servletContext servlet上下文
-     * @return
-     */
-    public static CloseableHttpClient getConnectionInPool(ServletContext servletContext) {
-        PoolingHttpClientConnectionManager poolmgr = null;
-        if (servletContext != null) {
-            poolmgr = (PoolingHttpClientConnectionManager)servletContext.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
-        }
+	private static final String URL = "http://10.0.4.201:9080/rest/bpm/wle/v1/exposed/process/";
 
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(poolmgr).setConnectionManagerShared(true).build();
-        return httpClient;
-    }
+	public HttpClientUtils() {
+	}
 
-    public static CloseableHttpClient getConnectionInPool(ServletContext servletContext, CookieStore cookieStore) {
-        PoolingHttpClientConnectionManager poolmgr = null;
-        if (servletContext != null) {
-            poolmgr = (PoolingHttpClientConnectionManager)servletContext.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
-        }
+	public static RequestConfig getRequestConfig(Integer timeout) {
+		int itimeout = timeout == null ? '\uea60' : Math.abs(timeout);
+		itimeout = itimeout < 3000 ? 3000 : itimeout;
+		RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(itimeout)
+				.setConnectionRequestTimeout(itimeout).setSocketTimeout(itimeout).build();
+		return requestConfig;
+	}
 
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(poolmgr).setConnectionManagerShared(true)
-                .setDefaultCookieStore(cookieStore).build();
-        return httpClient;
-    }
+	/**
+	 * 从httpclient连接池中获取连接
+	 * 
+	 * @param servletContext
+	 *            servlet上下文
+	 * @return
+	 */
+	public static CloseableHttpClient getConnectionInPool(ServletContext servletContext) {
+		PoolingHttpClientConnectionManager poolmgr = null;
+		if (servletContext != null) {
+			poolmgr = (PoolingHttpClientConnectionManager) servletContext
+					.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
+		}
 
-    public static PoolingHttpClientConnectionManager getConnectionPool(ServletContext servletContext) {
-        PoolingHttpClientConnectionManager poolmgr = null;
-        if (servletContext != null) {
-            poolmgr = (PoolingHttpClientConnectionManager)servletContext.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
-        }
+		CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(poolmgr)
+				.setConnectionManagerShared(true).build();
+		return httpClient;
+	}
 
-        return poolmgr;
-    }
+	public static CloseableHttpClient getConnectionInPool(ServletContext servletContext, CookieStore cookieStore) {
+		PoolingHttpClientConnectionManager poolmgr = null;
+		if (servletContext != null) {
+			poolmgr = (PoolingHttpClientConnectionManager) servletContext
+					.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
+		}
 
-    public static HttpReturnStatus doPost(String url, String postContent, List<Exception> exceptions) {
-        HttpReturnStatus result = new HttpReturnStatus();
-        HttpPost httpPost = new HttpPost(url);
-        RequestConfig reqcfg = getRequestConfig(10000);
-        httpPost.setConfig(reqcfg);
-        CloseableHttpClient httpClient = HttpClients.custom().build();
+		CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(poolmgr)
+				.setConnectionManagerShared(true).setDefaultCookieStore(cookieStore).build();
+		return httpClient;
+	}
 
-        try {
-            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-Language", "zh-CN");
-            httpPost.setEntity(new StringEntity(postContent, "UTF-8"));
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
-            result.setCode(response.getStatusLine().getStatusCode());
-            result.setMsg(msg);
-            response.close();
-        } catch (Exception var9) {
-            LOG.error("POST请求发生错误！", var9);
-            result.setCode(-1);
-            result.setMsg(var9.toString());
-            if (exceptions != null) {
-                exceptions.add(var9);
-            }
-        }
+	public static PoolingHttpClientConnectionManager getConnectionPool(ServletContext servletContext) {
+		PoolingHttpClientConnectionManager poolmgr = null;
+		if (servletContext != null) {
+			poolmgr = (PoolingHttpClientConnectionManager) servletContext
+					.getAttribute(Const.HTTP_CLIENT_CONNECTION_POOL);
+		}
 
-        return result;
-    }
+		return poolmgr;
+	}
 
-    public static HttpReturnStatus doPost(String url, String postContent, Map<String, String> headers, List<Exception> exceptions) {
-        HttpReturnStatus result = new HttpReturnStatus();
-        HttpPost httpPost = new HttpPost(url);
-        RequestConfig reqcfg = getRequestConfig(10000);
-        httpPost.setConfig(reqcfg);
-        CloseableHttpClient httpClient = HttpClients.custom().build();
+	public static HttpReturnStatus doPost(String url, String postContent, List<Exception> exceptions) {
+		HttpReturnStatus result = new HttpReturnStatus();
+		HttpPost httpPost = new HttpPost(url);
+		RequestConfig reqcfg = getRequestConfig(10000);
+		httpPost.setConfig(reqcfg);
+		CloseableHttpClient httpClient = HttpClients.custom().build();
 
-        try {
-            Iterator var9 = headers.keySet().iterator();
+		try {
+			httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+			httpPost.setHeader("Accept", "application/json");
+			httpPost.setHeader("Content-Language", "zh-CN");
+			httpPost.setEntity(new StringEntity(postContent, "UTF-8"));
+			CloseableHttpResponse response = httpClient.execute(httpPost);
+			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+			result.setCode(response.getStatusLine().getStatusCode());
+			result.setMsg(msg);
+			response.close();
+		} catch (Exception var9) {
+			LOG.error("POST请求发生错误！", var9);
+			result.setCode(-1);
+			result.setMsg(var9.toString());
+			if (exceptions != null) {
+				exceptions.add(var9);
+			}
+		}
 
-            while(var9.hasNext()) {
-                String head = (String)var9.next();
-                httpPost.setHeader(head, (String)headers.get(head));
-            }
+		return result;
+	}
 
-            httpPost.setEntity(new StringEntity(postContent, "UTF-8"));
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
-            result.setCode(response.getStatusLine().getStatusCode());
-            result.setMsg(msg);
-            response.close();
-        } catch (Exception var10) {
-            LOG.error("POST请求发生错误！", var10);
-            result.setCode(-1);
-            result.setMsg(var10.getMessage());
-            if (exceptions != null) {
-                exceptions.add(var10);
-            }
-        }
+	public static HttpReturnStatus doPost(String url, String postContent, Map<String, String> headers,
+			List<Exception> exceptions) {
+		HttpReturnStatus result = new HttpReturnStatus();
+		HttpPost httpPost = new HttpPost(url);
+		RequestConfig reqcfg = getRequestConfig(10000);
+		httpPost.setConfig(reqcfg);
+		CloseableHttpClient httpClient = HttpClients.custom().build();
 
-        return result;
-    }
+		try {
+			Iterator var9 = headers.keySet().iterator();
 
-    public static HttpReturnStatus doPut(String url, String postContent) {
-        HttpReturnStatus result = new HttpReturnStatus();
-        HttpPut httpPut = new HttpPut(url);
-        RequestConfig reqcfg = getRequestConfig(10000);
-        httpPut.setConfig(reqcfg);
-        CloseableHttpClient httpClient = HttpClients.custom().build();
+			while (var9.hasNext()) {
+				String head = (String) var9.next();
+				httpPost.setHeader(head, (String) headers.get(head));
+			}
 
-        try {
-            httpPut.setHeader("Content-Type", "application/json;charset=UTF-8");
-            httpPut.setHeader("Accept", "application/json");
-            httpPut.setHeader("Content-Language", "zh-CN");
-            httpPut.setEntity(new StringEntity(postContent, "UTF-8"));
-            CloseableHttpResponse response = httpClient.execute(httpPut);
-            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
-            result.setCode(response.getStatusLine().getStatusCode());
-            result.setMsg(msg);
-            response.close();
-        } catch (Exception var8) {
-            result.setCode(-1);
-            result.setMsg(var8.getMessage());
-        }
+			httpPost.setEntity(new StringEntity(postContent, "UTF-8"));
+			CloseableHttpResponse response = httpClient.execute(httpPost);
+			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+			result.setCode(response.getStatusLine().getStatusCode());
+			result.setMsg(msg);
+			response.close();
+		} catch (Exception var10) {
+			LOG.error("POST请求发生错误！", var10);
+			result.setCode(-1);
+			result.setMsg(var10.getMessage());
+			if (exceptions != null) {
+				exceptions.add(var10);
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    public static void main(String[] args) {
-        HttpReturnStatus httpReturnStatus = doDel("http://192.168.2.127:9200/code");
-        System.out.println(httpReturnStatus.getMsg());
-    }
+	public static HttpReturnStatus doPut(String url, String postContent) {
+		HttpReturnStatus result = new HttpReturnStatus();
+		HttpPut httpPut = new HttpPut(url);
+		RequestConfig reqcfg = getRequestConfig(10000);
+		httpPut.setConfig(reqcfg);
+		CloseableHttpClient httpClient = HttpClients.custom().build();
 
-    public static HttpReturnStatus doDel(String url) {
-        HttpReturnStatus result = new HttpReturnStatus();
-        HttpDelete httpDelete = new HttpDelete(url);
-        RequestConfig reqcfg = getRequestConfig(10000);
-        httpDelete.setConfig(reqcfg);
-        CloseableHttpClient httpClient = HttpClients.custom().build();
+		try {
+			httpPut.setHeader("Content-Type", "application/json;charset=UTF-8");
+			httpPut.setHeader("Accept", "application/json");
+			httpPut.setHeader("Content-Language", "zh-CN");
+			httpPut.setEntity(new StringEntity(postContent, "UTF-8"));
+			CloseableHttpResponse response = httpClient.execute(httpPut);
+			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+			result.setCode(response.getStatusLine().getStatusCode());
+			result.setMsg(msg);
+			response.close();
+		} catch (Exception var8) {
+			result.setCode(-1);
+			result.setMsg(var8.getMessage());
+		}
 
-        try {
-            httpDelete.setHeader("Content-Type", "application/json;charset=UTF-8");
-            httpDelete.setHeader("Accept", "application/json");
-            httpDelete.setHeader("Content-Language", "zh-CN");
-            CloseableHttpResponse response = httpClient.execute(httpDelete);
-            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
-            result.setCode(response.getStatusLine().getStatusCode());
-            result.setMsg(msg);
-            response.close();
-            httpClient.close();
-        } catch (Exception var7) {
-            ;
-        }
+		return result;
+	}
 
-        return result;
-    }
+	public static void main(String[] args) {
+		HttpReturnStatus httpReturnStatus = doDel("http://192.168.2.127:9200/code");
+		System.out.println(httpReturnStatus.getMsg());
+	}
 
-    public static HttpReturnStatus doGet(String url, Map<String, Object> params) {
-        HttpReturnStatus result = new HttpReturnStatus();
-        List<NameValuePair> nameValuePairs = new ArrayList();
-        Iterator var5 = params.keySet().iterator();
+	public static HttpReturnStatus doDel(String url) {
+		HttpReturnStatus result = new HttpReturnStatus();
+		HttpDelete httpDelete = new HttpDelete(url);
+		RequestConfig reqcfg = getRequestConfig(10000);
+		httpDelete.setConfig(reqcfg);
+		CloseableHttpClient httpClient = HttpClients.custom().build();
 
-        while(var5.hasNext()) {
-            String key = (String)var5.next();
-            String val = (String)params.get(key);
-            val = val == null ? "" : val;
-            NameValuePair nkv = new BasicNameValuePair(key, val);
-            nameValuePairs.add(nkv);
-        }
+		try {
+			httpDelete.setHeader("Content-Type", "application/json;charset=UTF-8");
+			httpDelete.setHeader("Accept", "application/json");
+			httpDelete.setHeader("Content-Language", "zh-CN");
+			CloseableHttpResponse response = httpClient.execute(httpDelete);
+			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+			result.setCode(response.getStatusLine().getStatusCode());
+			result.setMsg(msg);
+			response.close();
+			httpClient.close();
+		} catch (Exception var7) {
+			;
+		}
 
-        CloseableHttpClient httpClient = null;
+		return result;
+	}
 
-        try {
-            String args = EntityUtils.toString(new UrlEncodedFormEntity(nameValuePairs, Charset.forName("UTF-8")));
-            if (StringUtils.isNotBlank(args)) {
-                if (url.indexOf("?") == -1) {
-                    url = url + "?" + args;
-                } else {
-                    url = url.endsWith("&") ? url : url + "&";
-                    url = url + args;
-                }
-            }
+	public static HttpReturnStatus doGet(String url, Map<String, Object> params) {
+		HttpReturnStatus result = new HttpReturnStatus();
+		List<NameValuePair> nameValuePairs = new ArrayList();
+		Iterator var5 = params.keySet().iterator();
 
-            httpClient = HttpClients.custom().build();
-            HttpGet httpGet = new HttpGet(url);
-            RequestConfig reqcfg = getRequestConfig(10000);
-            httpGet.setConfig(reqcfg);
-            httpGet.setHeader("Content-Type", "application/json");
-            httpGet.setHeader("Content-Language", "zh-CN");
-            HttpContext httpCtx = HttpClientContext.create();
-            CloseableHttpResponse httpResponse = httpClient.execute(httpGet, httpCtx);
-            LOG.debug("return code: " + httpResponse.getStatusLine().getStatusCode());
-            String msg = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-            LOG.debug("return content: " + msg);
-            result.setCode(httpResponse.getStatusLine().getStatusCode());
-            result.setMsg(msg);
-            httpResponse.close();
-        } catch (Exception var19) {
-            LOG.error("get请求失败！", var19);
-        } finally {
-            try {
-                httpClient.close();
-            } catch (IOException var18) {
-                LOG.error("关闭HttpClient时发生异常！", var18);
-            }
+		while (var5.hasNext()) {
+			String key = (String) var5.next();
+			String val = (String) params.get(key);
+			val = val == null ? "" : val;
+			NameValuePair nkv = new BasicNameValuePair(key, val);
+			nameValuePairs.add(nkv);
+		}
 
-        }
+		CloseableHttpClient httpClient = null;
 
-        return result;
-    }
+		try {
+			String args = EntityUtils.toString(new UrlEncodedFormEntity(nameValuePairs, Charset.forName("UTF-8")));
+			if (StringUtils.isNotBlank(args)) {
+				if (url.indexOf("?") == -1) {
+					url = url + "?" + args;
+				} else {
+					url = url.endsWith("&") ? url : url + "&";
+					url = url + args;
+				}
+			}
 
-    public static Map<String, String> getCommonHttpHeaders(String headerType) {
-        Map<String, String> headers = new HashMap();
-        String htype = StringUtils.isBlank(headerType) ? "json" : headerType.toLowerCase();
-        switch(htype.hashCode()) {
-            case 118807:
-                if (!htype.equals("xml")) {
-                    return headers;
-                }
-                break;
-            case 3271912:
-                if (htype.equals("json")) {
-                    headers.put("Content-Type", "application/json;charset=UTF-8");
-                    headers.put("Accept", "application/json");
-                    headers.put("Content-Language", "zh-CN");
-                    break;
-                }
+			httpClient = HttpClients.custom().build();
+			HttpGet httpGet = new HttpGet(url);
+			RequestConfig reqcfg = getRequestConfig(10000);
+			httpGet.setConfig(reqcfg);
+			httpGet.setHeader("Content-Type", "application/json");
+			httpGet.setHeader("Content-Language", "zh-CN");
+			HttpContext httpCtx = HttpClientContext.create();
+			CloseableHttpResponse httpResponse = httpClient.execute(httpGet, httpCtx);
+			LOG.debug("return code: " + httpResponse.getStatusLine().getStatusCode());
+			String msg = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+			LOG.debug("return content: " + msg);
+			result.setCode(httpResponse.getStatusLine().getStatusCode());
+			result.setMsg(msg);
+			httpResponse.close();
+		} catch (Exception var19) {
+			LOG.error("get请求失败！", var19);
+		} finally {
+			try {
+				httpClient.close();
+			} catch (IOException var18) {
+				LOG.error("关闭HttpClient时发生异常！", var18);
+			}
 
-                return headers;
-            default:
-                return headers;
-        }
+		}
 
-        headers.put("Content-Type", "text/xml;charset=UTF-8");
-        headers.put("Accept", "text/xml");
-        headers.put("Content-Language", "zh-CN");
-        return headers;
-    }
+		return result;
+	}
+
+	public static Map<String, String> getCommonHttpHeaders(String headerType) {
+		Map<String, String> headers = new HashMap();
+		String htype = StringUtils.isBlank(headerType) ? "json" : headerType.toLowerCase();
+		switch (htype.hashCode()) {
+		case 118807:
+			if (!htype.equals("xml")) {
+				return headers;
+			}
+			break;
+		case 3271912:
+			if (htype.equals("json")) {
+				headers.put("Content-Type", "application/json;charset=UTF-8");
+				headers.put("Accept", "application/json");
+				headers.put("Content-Language", "zh-CN");
+				break;
+			}
+
+			return headers;
+		default:
+			return headers;
+		}
+
+		headers.put("Content-Type", "text/xml;charset=UTF-8");
+		headers.put("Accept", "text/xml");
+		headers.put("Content-Language", "zh-CN");
+		return headers;
+	}
+
+	/**
+	 * 公用的 请求 api 方法
+	 * 
+	 * @throws ParseException
+	 * @throws IOException
+	 *             文件异常
+	 */
+
+	public String IbmApi(String method, String action) {
+		// 解析用户名与密码
+		LOG.info("请求IBM API 开始...");
+		CloseableHttpClient httpClient = HttpClients.custom().build();
+		HttpClientContext context = HttpClientContext.create();
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		Credentials credentials = new UsernamePasswordCredentials(USERNAME, PASSWORD);
+		//
+		CloseableHttpResponse httpResponse = null;
+		String msg = null;
+		try {
+			credsProvider.setCredentials(AuthScope.ANY, credentials);
+			context.setCredentialsProvider(credsProvider);
+			// method方法 判断 请求方法 然后 使用拼接参数
+			switch (method) {
+			case "post":
+				HttpPost httpPost = new HttpPost(URL);
+				httpResponse = httpClient.execute(httpPost, context);
+				break;
+			case "get":
+				HttpGet httpget = new HttpGet(URL);
+				httpResponse = httpClient.execute(httpget, context);
+				break;
+			case "put":
+				HttpPut httpPut = new HttpPut(URL);
+				httpResponse = httpClient.execute(httpPut, context);
+				break;
+			case "delete":
+				HttpDelete httpdelete = new HttpDelete(URL);
+				httpResponse = httpClient.execute(httpdelete, context);
+			default:
+				break;
+			}
+			msg = org.apache.http.util.EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		LOG.info("status-code: " + httpResponse.getStatusLine().getStatusCode());
+		LOG.info("response-info: " + msg);
+		LOG.info("请求IBM API 结束...");
+		return msg;
+	}
 }

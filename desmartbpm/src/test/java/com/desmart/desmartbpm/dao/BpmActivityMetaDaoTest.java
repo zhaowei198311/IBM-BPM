@@ -17,9 +17,6 @@ public class BpmActivityMetaDaoTest {
         dao = ac.getBean(BpmActivityMetaDao.class);
     }
 	
-	@Test
-	public void testQueryByBpmProcessSnapshotId() {
-		dao.queryByBpmProcessSnapshotId("");
-	}
+
 
 }
