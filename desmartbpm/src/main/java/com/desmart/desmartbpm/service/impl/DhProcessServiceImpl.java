@@ -25,6 +25,7 @@ import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhProcessService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.http.BpmProcessUtils;
+import com.desmart.desmartbpm.util.rest.RestUtil;
 
 @Service
 public class DhProcessServiceImpl implements DhProcessService {
@@ -39,12 +40,16 @@ public class DhProcessServiceImpl implements DhProcessService {
         pageSize = pageSize == null ? 0 : Math.abs(pageSize);
         
         BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
-        BpmProcessUtils procUtils = new BpmProcessUtils(bpmcfg, true);
-        HttpReturnStatus procStatus = procUtils.getAllExposedProcess(request);
-        procUtils.closeClient();
+        String url = bpmcfg.getBpmServerHost() + "rest/bpm/wle/v1/exposed/process";
+        
+        //BpmProcessUtils procUtils = new BpmProcessUtils(bpmcfg, true);
+        //HttpReturnStatus procStatus = procUtils.getAllExposedProcess(request);
+        //procUtils.closeClient();
+        RestUtil restUtil = new RestUtil(bpmcfg);
+        HttpReturnStatus procStatus = restUtil.doGet(url, new HashMap<String, Object>());
+        restUtil.close();
         
         Map<String, Object> results = new HashMap();
-        
         List<Map<String, Object>> exposeItemList = new ArrayList();
         int total = 0;
         if (!BpmClientUtils.isErrorResult(procStatus)) {

@@ -132,7 +132,7 @@ public class TestController extends BaseWebController {
         return "Success";
     }
     
-    // localhost:8088/desmartbpm/generateActivity.do?bpdid=25.96218c34-781b-4992-b335-3504146e69eb&snapshoutId=2064.59bc92f1-80fc-44f7-9379-7785ff7c3643&processAppid=2066.49fe4fdc-8488-4663-92d1-d1befcb671c2&newVersionId=v1.0
+    // localhost:8088/desmartbpm/generateActivity.do?bpdid=25.96218c34-781b-4992-b335-3504146e69eb&snapshoutId=2064.9303b288-e202-465f-9742-f042b5521fa5&processAppid=2066.49fe4fdc-8488-4663-92d1-d1befcb671c2&newVersionId=v1.0
     @RequestMapping(value = "/generateActivity.do")
     @ResponseBody
     public String test(HttpServletRequest request, String bpdid, String snapshoutId, String processAppid, String newVersionId) {

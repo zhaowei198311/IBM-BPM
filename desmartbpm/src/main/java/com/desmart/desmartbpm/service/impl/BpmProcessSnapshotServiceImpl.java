@@ -4,6 +4,7 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
+import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -51,9 +52,12 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }
         url = MessageFormat.format(url, bpdId, params);
         Map<String, Object> pmap = new HashMap<>();
-        BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
-        HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
-        bpmClientUtil.closeClient();
+        //BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
+        //HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
+        RestUtil restUtil = new RestUtil(gcfg);
+        HttpReturnStatus result = restUtil.doGet(url, pmap);
+        restUtil.close();
+        
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if (datas.containsKey("data")) {
@@ -80,9 +84,13 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }
         url = MessageFormat.format(url, bpdId, params);
         Map<String, Object> pmap = new HashMap<>();
-        BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
-        HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
-        bpmClientUtil.closeClient();
+        //BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
+        //HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
+        //bpmClientUtil.closeClient();
+        RestUtil restUtil = new RestUtil(gcfg);
+        HttpReturnStatus result = restUtil.doGet(url, pmap);
+        restUtil.close();
+        
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if ("200".equalsIgnoreCase(datas.getString("status"))) {
