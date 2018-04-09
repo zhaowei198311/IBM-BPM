@@ -46,7 +46,7 @@ public class HttpClientUtils {
 
 	private static final String PASSWORD = "passw0rd";
 
-	private static final String URL = "http://10.0.4.201:9080/rest/bpm/wle/v1/exposed/process/";
+	private static final String URL = "http://10.0.4.201:9080/rest/bpm/wle/v1/";
 
 	public HttpClientUtils() {
 	}
@@ -298,22 +298,31 @@ public class HttpClientUtils {
 		headers.put("Content-Language", "zh-CN");
 		return headers;
 	}
-
+	
 	/**
-	 * 公用的 请求 api 方法
 	 * 
-	 * @throws ParseException
-	 * @throws IOException
-	 *             文件异常
+	 * @param method 请求方法(get,post,delete,put)
+	 * @param action 调用api执行的动作 (删除,暂挂,恢复 等)
+	 * @param type 调用类型 (process,task)
+	 * @param id 流程id/任务标识 (在IBM 引擎中可查到当前流程实例id 或者说当前任务tas标识)
+	 * @param taskIDs 任务标识 (选填参数)
+	 * @return
 	 */
-
-	public String IbmApi(String method, String action) {
+	public String IbmApi(String method, String action, String type, String id, String taskIDs) {
 		// 解析用户名与密码
 		LOG.info("请求IBM API 开始...");
 		CloseableHttpClient httpClient = HttpClients.custom().build();
 		HttpClientContext context = HttpClientContext.create();
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		Credentials credentials = new UsernamePasswordCredentials(USERNAME, PASSWORD);
+		// 追加拼接 url 链接路径
+		StringBuffer buffer = new StringBuffer(URL);
+		buffer.append(type);
+		buffer.append("/"+id);
+		buffer.append("?action="+action);
+		buffer.append("&parts=all");
+		// 转换为string类型 方便后面请求调用
+		String url = buffer.toString();
 		//
 		CloseableHttpResponse httpResponse = null;
 		String msg = null;
@@ -323,19 +332,19 @@ public class HttpClientUtils {
 			// method方法 判断 请求方法 然后 使用拼接参数
 			switch (method) {
 			case "post":
-				HttpPost httpPost = new HttpPost(URL);
+				HttpPost httpPost = new HttpPost(url);
 				httpResponse = httpClient.execute(httpPost, context);
 				break;
 			case "get":
-				HttpGet httpget = new HttpGet(URL);
+				HttpGet httpget = new HttpGet(url);
 				httpResponse = httpClient.execute(httpget, context);
 				break;
 			case "put":
-				HttpPut httpPut = new HttpPut(URL);
+				HttpPut httpPut = new HttpPut(url);
 				httpResponse = httpClient.execute(httpPut, context);
 				break;
 			case "delete":
-				HttpDelete httpdelete = new HttpDelete(URL);
+				HttpDelete httpdelete = new HttpDelete(url);
 				httpResponse = httpClient.execute(httpdelete, context);
 			default:
 				break;
@@ -348,5 +357,14 @@ public class HttpClientUtils {
 		LOG.info("response-info: " + msg);
 		LOG.info("请求IBM API 结束...");
 		return msg;
+	}
+	
+	/**
+	 * 调用
+	 * @return
+	 */
+	public String Reject() {
+		
+		return "";
 	}
 }
