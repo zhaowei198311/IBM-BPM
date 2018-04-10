@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.service.DhProcessService;
+import com.desmart.desmartbpm.service.DhProcessMetaService;
 
 @Controller
 @RequestMapping(value = "/process")
-public class DhProcessController {
+public class DhProcessMetaController {
     @Autowired
-    private DhProcessService dhProcessService;
+    private DhProcessMetaService dhProcessMetaService;
     
     
     @RequestMapping(value = "/index")
@@ -26,16 +26,23 @@ public class DhProcessController {
     
     /**
      * 获得公开的流程
-     * @param page
-     * @param size
-     * @param request
+     * @param pageNum 
+     * @param pageSize 
+     * @param request 
+     * @param processAppName  应用库名
+     * @param processAppAcronym  应用库名缩略
+     * @param display 流程名
      * @return
      */
-    @RequestMapping(value = "/getPublicProcess")
+    @RequestMapping(value = "/getExposedProcess")
     @ResponseBody
-    public ServerResponse getPublicProcess(Integer page, Integer size, HttpServletRequest request) {
+    public ServerResponse getExposedProcess(Integer pageNum, Integer pageSize, HttpServletRequest request,
+            String processAppName, String processAppAcronym, String display) {
         
-        return dhProcessService.getExposedProcess(request, page, size);
+        return dhProcessMetaService.getExposedProcess(pageNum, pageSize, processAppName, processAppAcronym, display);
     }
+    
+    
+    
     
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhProcessMetaDao" >
+    <sql id="base_column">
+        PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, LAST_UPDATE_TIME, CATEGORY_UID  
+    </sql>
+    
+    <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        insert into dh_process_meta (<include refid="base_column"/>)
+        values(
+            #{proMetaUid}, #{proAppId}, #{proUid}, #{proName}, #{creator}, sysdate, 
+            #{updateUser}, #{lastUpdateTime}, #{categoryUid}
+        )
+    </insert>
+    
+    <select id="countByProAppIdAndProUid" resultType="int">
+        select count(1) from dh_process_meta 
+        where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid}
+    </select>
+    
+    <select id="queryByProMetaUid" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        select <include refid="base_column"/> 
+        from dh_process_meta 
+        where PRO_META_UID = #{proMetaUid}
+    </select>
+    
+    <select id="listAll" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        select <include refid="base_column"/> 
+        from dh_process_meta
+    </select>
+
+
+</mapper>

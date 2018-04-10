@@ -10,8 +10,8 @@
 
 <!-- 引入css -->
 <link href="<%=basePath%>/resources/css/layui.css" rel="stylesheet">
-<link href="<%=basePath%>/resources/css/my.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/css/modules/laydate/default/laydate.css" rel="stylesheet">
+<link href="<%=basePath%>/resources/css/my.css" rel="stylesheet">
 
 <!-- 全局js -->
 <script src="<%=basePath%>/resources/js/jquery-3.3.1.js"></script>

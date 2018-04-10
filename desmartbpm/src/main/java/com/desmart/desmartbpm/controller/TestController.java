@@ -24,7 +24,7 @@ import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
 import com.desmart.desmartbpm.mq.MqSendUtil;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.service.DhProcessService;
+import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.service.TestService;
 import com.desmart.desmartbpm.util.http.BpmTaskUtils;
 
@@ -39,7 +39,7 @@ public class TestController extends BaseWebController {
     //@Autowired
     private MqSendUtil mqSendUtil;
     @Autowired
-    private DhProcessService dhProcessService;
+    private DhProcessMetaService dhProcessService;
     
     
     @RequestMapping(value = "/test")
@@ -50,6 +50,10 @@ public class TestController extends BaseWebController {
         return "OK";
     }
     
+    @RequestMapping
+    public ModelAndView toIndex() {
+        return new ModelAndView("index");
+    }
     
     @RequestMapping(value = "/error.do")
     @ResponseBody
@@ -66,9 +70,10 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public String login(String username, String password, HttpServletRequest request) {
         Subject user = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
         user.login(token);
         Session session = SecurityUtils.getSubject().getSession();
+        session.setAttribute(Const.CURRENT_USER, "deadmin");
         session.setTimeout(17200000L);
 
         return "hello " + username;

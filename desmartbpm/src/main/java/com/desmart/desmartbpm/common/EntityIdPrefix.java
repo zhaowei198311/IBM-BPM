@@ -11,8 +11,7 @@ public class EntityIdPrefix {
 	/** 流程定义分类前缀 */
 	public static final String BPM_PROCESS_CATEGORY = "pro_cate:";
 	
-	
-	
-	
+	/** 流程元数据前缀 */
+	public static final String DH_PROCESS_META = "pro_meta:";
 
 }

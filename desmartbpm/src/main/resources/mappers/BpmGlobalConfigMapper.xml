@@ -38,7 +38,7 @@
 		values (#{configId}, #{bpmAdminName}, #{bpmAdminPsw},
 		#{bpmClientTimeout}, #{bpmServerHost}, #{bpmformsHost},
 		#{bpmformsWebContext}, #{configName}, #{configStatus},
-		#{createTime}, #{gmtTimeZone}, #{httpMaxConnection},
+		sysdate, #{gmtTimeZone}, #{httpMaxConnection},
 		#{preRouteMaxConnection}, #{schedulerHost}, #{updateTime},
 		#{bpmApiHost})
 	</insert>

@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.util.rest;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -75,10 +76,13 @@ public class RestUtil {
     /**
      * 调用Get方法
      * @param url  访问的路径
-     * @param params  如果有参数采用Map传递，没有参数传递new HashMap<String, Object>()
+     * @param params  如果有参数采用Map传递，没有参数传递new HashMap<String, Object>() 或 null
      * @return
      */
     public HttpReturnStatus doGet(String url, Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<String, Object>();
+        }
         HttpReturnStatus result = new HttpReturnStatus();
         List<NameValuePair> nameValuePairs = new ArrayList<>();
         Iterator iterator = params.keySet().iterator();

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -52,8 +53,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 
         bpmActivityMeta.setUpdateTime(new Date());
         bpmActivityMeta.setCreateTime(new Date());
-        // todo 创建人信息
-        String employeeNum = (String) SecurityUtils.getSubject().getSession().getAttribute("_currUserNum");
+        String employeeNum = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         bpmActivityMeta.setCreator(employeeNum);
         bpmActivityMeta.setUpdateBy(employeeNum);
         bpmActivityMeta.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());

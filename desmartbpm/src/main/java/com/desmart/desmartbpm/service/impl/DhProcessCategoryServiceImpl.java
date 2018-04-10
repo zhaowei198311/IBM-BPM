@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,5 +41,8 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
         }
     }
     
-    
+    public List<DhProcessCategory> listAll() {
+        List<DhProcessCategory> categoryList = dhProcessCategoryDao.listAll();
+        return categoryList;
+    }
 }

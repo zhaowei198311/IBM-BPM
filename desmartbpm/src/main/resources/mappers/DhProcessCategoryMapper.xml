@@ -28,4 +28,8 @@
         where category_parent = #{categoryParent} and category_name = #{categoryName}
     </select>
     
+    <select id="listAll" resultType="com.desmart.desmartbpm.entity.DhProcessCategory">
+        select <include refid="base_column"/> from DH_PROCESS_CATEGORY
+    </select>
+    
 </mapper>

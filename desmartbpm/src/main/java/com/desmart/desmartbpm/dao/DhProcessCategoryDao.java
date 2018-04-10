@@ -21,5 +21,7 @@ public interface DhProcessCategoryDao {
     List<DhProcessCategory> listByCategoryParent(String categoryParent);
     
     int countByCategoryParentAndCategoryName(@Param("categoryParent")String categoryParent, @Param("categoryName")String categoryName);
+
+    List<DhProcessCategory> listAll();
     
 }
