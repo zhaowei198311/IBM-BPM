@@ -5,6 +5,10 @@
         PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, LAST_UPDATE_TIME, CATEGORY_UID  
     </sql>
     
+    <sql id="relation_column">
+        pm.PRO_META_UID, pm.PRO_APP_ID, pm.PRO_UID, pm.PRO_NAME, pm.CREATOR, pm.CREATE_TIME, pm.UPDATE_USER, pm.LAST_UPDATE_TIME, pm.CATEGORY_UID  
+    </sql>
+    
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta">
         insert into dh_process_meta (<include refid="base_column"/>)
         values(
@@ -35,6 +39,28 @@
         <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
             #{item.categoryUid}
         </foreach>
+    </select>
+    
+    <select id="listByCategoryListAndProName" resultType="com.desmart.desmartbpm.entity.DhProcessMeta" parameterType="map">
+        select <include refid="relation_column"/>,u1.user_name creatorFullName, u2.user_name updatorFullName 
+        from dh_process_meta pm
+	        left join sys_user u1 on pm.creator = u1.user_uid
+	        left join sys_user u2 on pm.update_user = u2.user_uid
+        where pm.category_uid in 
+        <foreach collection="categoryList" item="item" index="index" open="(" separator="," close=")">
+            #{item.categoryUid}
+        </foreach>
+        <if test="proName != null and !proName.trim().isEmpty()">
+            and pm.pro_name like '%' || #{proName} || '%' 
+        </if>
+    </select>
+    
+    <select id="queryByProAppIdAndProUid" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        select <include refid="relation_column"/>,u1.user_name creatorFullName, u2.user_name updatorFullName 
+        from dh_process_meta pm
+            left join sys_user u1 on pm.creator = u1.user_uid
+            left join sys_user u2 on pm.update_user = u2.user_uid
+        where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid}
     </select>
 
 </mapper>

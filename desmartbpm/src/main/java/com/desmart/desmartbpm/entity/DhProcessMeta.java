@@ -17,6 +17,10 @@ public class DhProcessMeta {
     private Date lastUpdateTime;
     private String categoryUid;  // 流程分类
     
+    // 不再此表中
+    private String creatorFullName;
+    private String updatorFullName;
+    
     public String getProMetaUid() {
         return proMetaUid;
     }
@@ -72,14 +76,30 @@ public class DhProcessMeta {
         this.categoryUid = categoryUid;
     }
     
+    public String getCreatorFullName() {
+        return creatorFullName;
+    }
+    public void setCreatorFullName(String creatorFullName) {
+        this.creatorFullName = creatorFullName;
+    }
+    public String getUpdatorFullName() {
+        return updatorFullName;
+    }
+    public void setUpdatorFullName(String updatorFullName) {
+        this.updatorFullName = updatorFullName;
+    }
     @Override
     public String toString() {
         return "DhProcessMeta [proMetaUid=" + proMetaUid + ", proAppId="
                 + proAppId + ", proUid=" + proUid + ", proName=" + proName
                 + ", creator=" + creator + ", createTime=" + createTime
                 + ", updateUser=" + updateUser + ", lastUpdateTime="
-                + lastUpdateTime + ", categoryUid=" + categoryUid + "]";
+                + lastUpdateTime + ", categoryUid=" + categoryUid
+                + ", creatorFullName=" + creatorFullName + ", updatorFullName="
+                + updatorFullName + "]";
     }
+
+    
    
     
     

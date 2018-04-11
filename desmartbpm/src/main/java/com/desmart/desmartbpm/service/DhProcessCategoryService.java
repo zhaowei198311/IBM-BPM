@@ -19,6 +19,13 @@ public interface DhProcessCategoryService {
      */
     List<DhProcessCategory> getChildrenCategory(String categoryUid);
     
+    /**
+     * 列出此分类和所有子分类
+     * @param categoryUid
+     * @return
+     */
+    ServerResponse<List<DhProcessCategory>> listChildrenCategoryAndThisCategory(String categoryUid);
+    
     /** 删除指定分类 */
     ServerResponse removeDhProcessCategory(String categoryUid);
     

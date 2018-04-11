@@ -35,25 +35,24 @@
                     <div class="search_area">
                         <div class="layui-row layui-form">
                             <div class="layui-col-md2">
-                                <input type="text" placeholder="流程名称"  class="layui-input">
+                                <input id="proName_input" type="text" placeholder="流程名称"  class="layui-input">
                             </div>
                             <div class="layui-col-md3" style="text-align:right;">
-                                    <button class="layui-btn" >查询</button>
-                                    <button class="layui-btn create_btn">添加</button>
+                                    <button class="layui-btn" id="searchMeat_btn">查询</button>
+                                    <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
                                     <button class="layui-btn delete_btn">删除</button>
                                     <button onclick="test();">test</button>
                             </div>
                         </div>
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
-                        <table class="layui-table backlog_table link_table" lay-even lay-skin="nob" style="width:2000px;">
+                        <table id="proMet_table" class="layui-table backlog_table link_table" lay-even lay-skin="nob" style="width:2000px;">
                             <colgroup>
                                 <col>
                                 <col>
                                 <col>
                                 <col>
                                 <col>
-                                <col> 
                                 <col>
                                 <col>
                                 <col>
@@ -64,79 +63,16 @@
                                   <th>流程名称</th>
                                   <th>流程应用库id</th>
                                   <th>流程图id</th>
-                                  <th>流程编号</th>
-                                  <th>表单页面路径</th>
                                   <th>创建者</th>
                                   <th>创建时间</th>
                                   <th>更新者</th>
                                   <th>更新时间</th>
                                 </tr> 
                             </thead>
-                            <tbody>
-                                <tr>
-                                  <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
-                                  <td>流程名称</td>
-                                  <td>2066.f5d9e3c6-2fa7-49fe-82bb-f17694b36b10</td>
-                                  <td>25.64765b13-286b-4b91-8c19-4234c6e05e6d</td>
-                                  <td>编号01</td>
-                                  <td></td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-                                  <td>流程名称</td>
-                                  <td>2066.f5d9e3c6-2fa7-49fe-82bb-f17694b36b10</td>
-                                  <td>25.64765b13-286b-4b91-8c19-4234c6e05e6d</td>
-                                  <td>编号01</td>
-                                  <td></td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-                                  <td>流程名称</td>
-                                  <td>2066.f5d9e3c6-2fa7-49fe-82bb-f17694b36b10</td>
-                                  <td>25.64765b13-286b-4b91-8c19-4234c6e05e6d</td>
-                                  <td>编号01</td>
-                                  <td></td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-                                  <td>流程名称</td>
-                                  <td>2066.f5d9e3c6-2fa7-49fe-82bb-f17694b36b10</td>
-                                  <td>25.64765b13-286b-4b91-8c19-4234c6e05e6d</td>
-                                  <td>编号01</td>
-                                  <td></td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
-                                  <td>流程名称</td>
-                                  <td>2066.f5d9e3c6-2fa7-49fe-82bb-f17694b36b10</td>
-                                  <td>25.64765b13-286b-4b91-8c19-4234c6e05e6d</td>
-                                  <td>编号01</td>
-                                  <td></td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                </tr>
-                            </tbody>
+                            <tbody id="proMet_table_tbody" ></tbody>
                         </table>                        
                     </div>
-                    <div id="demo7"></div>
+                    <div id="lay_page"></div>
                 </div>
             </div>
         </div>
@@ -185,8 +121,8 @@
             </div>
         </div>
     </div>
-        <div class="display_container3">
-            <div class="display_content3">
+        <div class="display_container3" id="exposed_table_container">
+            <div class="display_content3" >
                 <div class="top">
                     新增流程元数据
                 </div>
@@ -206,47 +142,14 @@
                               <th>流程图id</th>
                             </tr> 
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="exposed_table_tbody"></tbody>
                     </table>
                 </div>
-                <div id="demo8"></div>
+                <div id="lay_page2"></div>
                 <div class="foot">
-                    <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                    <button class="layui-btn layui-btn sure_btn" id="bind_meta_btn">确定</button>
+                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="cancel_bind_btn">取消</button>
                 </div>
-                
-                
             </div>
         </div>
         <div class="display_container" id="addCategory_container">
@@ -258,6 +161,18 @@
                  <div class="foot">
                      <button class="layui-btn layui-btn sure_btn" id="addCategorySure_btn">确定</button>
                      <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="addCategoryCancel_btn">取消</button>
+                 </div>
+              </div>
+         </div>
+        <div class="display_container" id="addMeta_container">
+             <div class="display_content">
+                 <div class="top">请命名流程元数据</div>
+                 <div class="middle1">
+                     <input type="text"  class="layui-input" id="addMetaName_input"/>
+                 </div>
+                 <div class="foot">
+                     <button class="layui-btn layui-btn sure_btn" id="addMetaSure_btn">确定</button>
+                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="addMetaCancel_btn">取消</button>
                  </div>
               </div>
          </div>
@@ -273,14 +188,32 @@
         var parentNodeTId = ""; // 父节点的zTree唯一id
         var tempRemoveTreeNode; // 记录要被删除的节点
         var tempRemoveParentTreeNode; // 记录要被删除的节点的父节点
+        // 准备新建的对象
+        var newMeta = {
+            categoryUid: "rootCategory",
+            categoryName: "流程分类",
+            proAppId: "",
+            proUid: "",
+            proName: ""
+        }
+        
         
         // 为翻页提供支持
         var pageConfig = {
         	pageNum: 1,
         	pageSize: 10,
+        	total: 0,
         	categoryUid: "rootCategory",
         	proName: ""
-        	
+        }
+        // 为弹出框的分页控件服务
+        var pageConfig2 = {
+            pageNum: 1,
+            pageSize: 5,
+            total: 0,
+            processAppName: "",
+            processAppAcronym: "",
+            display: ""
         }
         
         //tree
@@ -323,10 +256,12 @@
         var zNodes = ${zNodes};
         
         function zTreeOnClick(event, treeId, treeNode) {
-        	//console.log("treeId:" + treeId);
-        	//console.log("treeNode:" + treeNode);
-        	console.log(treeNode.categoryUid);
-        	//console.log(treeNode.categoryName);
+        	newMeta.categoryUid = treeNode.categoryUid;
+        	newMeta.categoryName = treeNode.categoryName;
+        	pageConfig.categoryUid = treeNode.categoryUid;
+        	pageConfig.pageNum = 1;
+        	$("#proName_input").val('');
+        	getMetaInfo();
         }
         
         var log, className = "dark";
@@ -475,52 +410,88 @@
             var zTree = $.fn.zTree.getZTreeObj("category_tree");
             zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
         }
-        //分页
-        layui.use(['laypage', 'layer'], function(){
-            var laypage = layui.laypage,layer = layui.layer;  
-              //完整功能
-            laypage.render({
-                elem: 'demo7',
-                count: 50,
-                limit: 10,
-                layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
-                jump: function(obj){
-                    console.log(obj);
-                }
-            }); 
-            laypage.render({
-                elem: 'demo8'
-                ,count: 50
-                ,limit: 5
-                ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
-                ,jump: function(obj){
-                  console.log(obj)
-                }
-            }); 
-        });
-        
+
         $(document).ready(function(){
             $.fn.zTree.init($("#category_tree"), setting, zNodes);
             
-            getInfo();
+            getMetaInfo();
             
-            
-            $("#selectAll").bind("click", selectAll);
-            
-            $(".create_btn").click(function(){
-                $(".display_container3").css("display","block");
+            // “添加”按钮
+            $("#show_expose_btn").click(function(){
+                getExposedInfo();
+            	$("#exposed_table_container").css("display","block");
             })
+            
+            // 确认添加
+            $('#bind_meta_btn').click(function() {
+            	// 被勾选的复选框
+            	var checkedItems = $("[name='unbindMeta_checkbox']:checked");
+            	if (!checkedItems.length) {
+            		alert("请选择要添加的流程元数据");
+            		return;
+            	}
+            	if (checkedItems.length > 1) {
+            		alert("请选择一个要添加流程元数据，不能选择多个");
+                    return;
+            	}
+            	newMeta.proAppId = checkedItems.eq(0).data('processappid');
+            	newMeta.proUid = checkedItems.eq(0).data('bpdid');
+            	var orginName = checkedItems.eq(0).parent().next().html();
+            	$('#addMeta_container').css("display", "block");
+            	$('#addMetaName_input').val(orginName);
+            	$('#addMetaName_input').focus();
+            	
+            });
+            
+            // 取消添加
+            $('#cancel_bind_btn').click(function() {
+            	$('#exposed_table_container').css("display", "none");
+            });
+            
+            // 取消命名
+            $('#addMetaCancel_btn').click(function() {
+                $('#addMeta_container').css("display", "none");
+            });
+            
+            // 命名后再次确认添加元数据
+            $('#addMetaSure_btn').click(function(){
+            	var inputVal = $('#addMetaName_input').val().trim();
+            	if (!inputVal) {
+            		alert("请输入元数据名称");
+            		return;
+            	}
+            	if (inputVal.length > 50) {
+            		alert("元数据名称过长");
+            		return;
+            	}
+                $.ajax({
+                    url: common.getPath() + "/processMeta/create",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "categoryUid": newMeta.categoryUid,
+                        "proAppId": newMeta.proAppId,
+                        "proUid": newMeta.proUid,
+                        "proName": inputVal
+                    },
+                    success: function(result) {
+                        if (result.status == 0) {
+                        	$('#addMeta_container').css('display', 'none');
+                        	alert("添加成功");
+                        } else {
+                        	alert(result.msg);
+                        }
+                    },
+                    error: function() {
+                        
+                    }
+                });
+            });
+            
             $(".link_table tr td").dblclick(function(){
                 $(".display_container4").css("display","block");
             })
-            $(".sure_btn").click(function(){
-                $(".display_container3").css("display","none");
-                $(".display_container4").css("display","none");
-            })
-            $(".cancel_btn").click(function(){
-                $(".display_container3").css("display","none");
-                $(".display_container4").css("display","none");
-            })
+
             
             // 确认新建分类
             $("#addCategorySure_btn").click(function(){
@@ -558,21 +529,170 @@
             	$("#addCategory_container").css("display","none")
             });
             
+            $("#searchMeat_btn").click(function() {
+            	pageConfig.pageNum = 1;
+            	pageConfig.total = 0;
+            	getMetaInfo();
+            });
             
         });
         function test() {
         	$("#addCategory_container").css("display","block");
         }
         
-        function getInfo() {
+        /* 向服务器请求流程元数据   */
+        function getMetaInfo() {
         	$.ajax({
-        		url: common.getPath() + "/processCategory/addCategory",
+        		url: common.getPath() + "/processMeta/listByCategoryUid",
         		type: "post",
         		dataType: "json",
         		data: {
-        			"pageNum": pageNum1,
-        			"pageSize": pageSize1
+        			"pageNum": pageConfig.pageNum,
+        			"pageSize": pageConfig.pageSize,
+        			"categoryUid": pageConfig.categoryUid,
+        			"proName": $('#proName_input').val().trim()
+        		},
+        		success: function(result) {
+        			if (result.status == 0) {
+        				drawTable(result.data);
+        			}
         		}
         	});
         }
+        
+        
+        // 请求数据成功
+        function drawTable(pageInfo) {
+        	pageConfig.pageNum = pageInfo.pageNum;
+        	pageConfig.pageSize = pageInfo.pageSize;
+        	pageConfig.total = pageInfo.total;
+        	doPage();
+        	// 渲染数据
+        	$("#proMet_table_tbody").html('');
+        	if (pageInfo.total == 0) {
+        		return;
+        	}
+        	
+        	var list = pageInfo.list;
+        	var startSort = pageInfo.startRow;//开始序号
+        	var trs = "";
+        	for(var i=0; i<list.length; i++) {
+        		console.log($("#proMet_table_tbody").find('tr').length)
+        		var meta = list[i];
+        		var sortNum = startSort + i;
+        		var createTime = "";
+                var updateTime = "";
+                if (meta.createTime) {
+                	createTime = common.dateToString(new Date(meta.createTime));
+                }
+                if (meta.lastUpdateTime) {
+                    updateTime = common.dateToString(new Date(meta.lastUpdateTime));
+                }
+        		trs += '<tr><td><input type="checkbox" name="pro_check" value="' + meta.categoryUid + '" lay-skin="primary">'+ sortNum +'</td>'
+        		            + '<td>'+meta.proName+'</td>'
+        		            + '<td>'+meta.proAppId+'</td>'
+        		            + '<td>'+meta.proUid+'</td>'
+        		            + '<td>'+meta.creatorFullName+'</td>'
+        		            + '<td>'+createTime+'</td>'
+        		            + '<td>'+meta.updatorFullName+'</td>'
+        		            + '<td>'+updateTime+'</td>'
+        		            + '</tr>';
+        	}
+        	$("#proMet_table_tbody").append(trs);
+        	
+        }
+        
+        // 分页
+        function doPage() {
+            layui.use(['laypage', 'layer'], function(){
+                var laypage = layui.laypage,layer = layui.layer;  
+                  //完整功能
+                laypage.render({
+                    elem: 'lay_page',
+                    curr: pageConfig.pageNum,
+                    count: pageConfig.total,
+                    limit: pageConfig.pageSize,
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    jump: function(obj, first){
+                    	// obj包含了当前分页的所有参数  
+                    	pageConfig.pageNum = obj.curr;
+                    	pageConfig.pageSize = obj.limit;
+                    	if (!first) {
+                    		getMetaInfo();
+                    	}
+                    }
+                }); 
+            });
+        }
+        // 获取公开的流程数据
+        function getExposedInfo() {
+            $.ajax({
+                url: common.getPath() + "/processMeta/getExposedProcess",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "pageNum": pageConfig2.pageNum,
+                    "pageSize": pageConfig2.pageSize,
+                    "processAppName": "",
+                    "processAppAcronym": "",
+                    "display": ""
+                },
+                success: function(result) {
+                    if (result.status == 0) {
+                        drawExposedTable(result.data);
+                    }
+                }
+            });
+        }
+        // 渲染公开流程表
+        function drawExposedTable(pageInfo) {
+        	pageConfig2.pageNum = pageInfo.pageNum;
+            pageConfig2.pageSize = pageInfo.pageSize;
+            pageConfig2.total = pageInfo.total;
+            
+            $("#exposed_table_tbody").html('');
+            doPage2();
+            if (pageInfo.total == 0) {
+                return;
+            }
+            
+            var list = pageInfo.list;
+            var startSort = pageInfo.startRow;// 开始序号
+            var trs = "";
+            for(var i=0; i<list.length; i++) {
+            	var item = list[i];
+            	var sortNum = startSort + i;
+            	trs += '<tr>' 
+            	         + '<td><input type="checkbox" name="unbindMeta_checkbox"  lay-skin="primary" data-processAppId="'+item.processAppId+'" data-bpdId="'+item.bpdId+'">'+sortNum+'</td>'
+            	         + '<td>'+item.display+'</td>'
+            	         + '<td>'+item.processAppName+'</td>'
+            	         + '<td>'+item.processAppAcronym+'</td>'
+            	    +  '</tr>';
+            }
+            $("#exposed_table_tbody").html(trs);
+        }
+        
+        // 分页
+        function doPage2() {
+            layui.use(['laypage', 'layer'], function(){
+                var laypage = layui.laypage,layer = layui.layer;  
+                  //完整功能
+                laypage.render({
+                    elem: 'lay_page2',
+                    curr: pageConfig2.pageNum,
+                    count: pageConfig2.total,
+                    limit: pageConfig2.pageSize,
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    jump: function(obj, first){
+                        // obj包含了当前分页的所有参数  
+                        pageConfig2.pageNum = obj.curr;
+                        pageConfig2.pageSize = obj.limit;
+                        if (!first) {
+                        	getExposedInfo();
+                        }
+                    }
+                }); 
+            });
+        }
+        
   </script>

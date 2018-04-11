@@ -7,24 +7,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartbpm.dao.DhProcessCategoryDao;
 import com.desmart.desmartbpm.dao.DhProcessMetaDao;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class DhProcessMetaServiceImpl implements DhProcessMetaService {
@@ -34,6 +43,8 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
     private DhProcessMetaDao dhProcessMetaDao;
+    @Autowired
+    private DhProcessCategoryDao dhProcessCategoryDao;
     
     
     public ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize) {
@@ -100,7 +111,6 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         RestUtil restUtil = new RestUtil(bpmcfg);
         HttpReturnStatus procStatus = restUtil.doGet(url, new HashMap<String, Object>());
         restUtil.close();
-        Map<String, Object> results = new HashMap<>();
         
         // 满足条件的结果
         List<Map<String, Object>> exposeItemList = new ArrayList<>();
@@ -190,11 +200,13 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
                 break;
             }
         }
+        PageInfo pageInfo = new PageInfo(itemToShow);
+        pageInfo.setStartRow(startRow+1);
+        pageInfo.setTotal(total);
+        pageInfo.setPageNum(++pageNum);
+        pageInfo.setPageSize(pageSize);
         
-        results.put("total", total);
-        results.put("list", itemToShow);
-        
-        return ServerResponse.createBySuccess(results);
+        return ServerResponse.createBySuccess(pageInfo);
     }
     
     /**
@@ -210,11 +222,49 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         return identifyList;
     }
     
-    public static void main(String[] args) {
-        System.out.println(StringUtils.contains("defg", "ef"));
-        System.out.println(StringUtils.contains("defg", "fg"));
-        System.out.println(StringUtils.contains("defg", "dg"));
-        System.out.println(StringUtils.containsIgnoreCase("defg", "ef"));
+
+    public ServerResponse<PageInfo<List<DhProcessMeta>>> listDhProcessMetaByCategoryList(List<DhProcessCategory> categoryList, String proName, 
+            Integer pageNum, Integer pageSize) {
+        if (categoryList == null || categoryList.isEmpty()) {
+            return ServerResponse.createByErrorMessage("列表参数错误");
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        
+        // 获取所有的子分类
+        List<DhProcessMeta> metalist = dhProcessMetaDao.listByCategoryListAndProName(categoryList, proName);
+        PageInfo<List<DhProcessMeta>> pageInfo = new PageInfo(metalist);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+    
+    
+    public ServerResponse createDhProcessMeta(DhProcessMeta dhProcessMeta) {
+        if (StringUtils.isBlank(dhProcessMeta.getCategoryUid()) || StringUtils.isBlank(dhProcessMeta.getProAppId())
+                || StringUtils.isBlank(dhProcessMeta.getProUid()) || StringUtils.isBlank(dhProcessMeta.getProName())) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        
+        DhProcessCategory category = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta.getCategoryUid());
+        if (category == null) {
+            return ServerResponse.createByErrorMessage("此分类不存在");
+        }
+        
+        int countRow = dhProcessMetaDao.countByProAppIdAndProUid(dhProcessMeta.getProAppId(), dhProcessMeta.getProUid());
+        if (countRow > 0) {
+            return ServerResponse.createByErrorMessage("流程元数据已经设置了分类，不能重复配置");
+        }
+        if (dhProcessMeta.getProName().length() > 50) {
+            return ServerResponse.createByErrorMessage("流程名过长");
+        }    
+        dhProcessMeta.setProMetaUid(EntityIdPrefix.DH_PROCESS_META + UUID.randomUUID().toString());
+        String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhProcessMeta.setCreator(currUser);
+        countRow = dhProcessMetaDao.save(dhProcessMeta);
+        if (countRow > 0) {
+            return ServerResponse.createBySuccess();
+        } else {
+            return ServerResponse.createByErrorMessage("添加失败");
+        }
+        
     }
     
 }

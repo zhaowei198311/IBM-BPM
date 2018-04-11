@@ -52,7 +52,22 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
         return categoryList;
     }
     
-    // 根据父分类查询所有的子分类
+    public ServerResponse<List<DhProcessCategory>> listChildrenCategoryAndThisCategory(String categoryUid) {
+        if (StringUtils.isBlank(categoryUid)) {
+            return ServerResponse.createByErrorMessage("此分类不存在");
+        }
+        
+        DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(categoryUid);
+        if (dhProcessCategory == null) {
+            return ServerResponse.createByErrorMessage("此分类不存在");
+        }
+        
+        List<DhProcessCategory> list = getChildrenCategory(categoryUid);
+        list.add(dhProcessCategory);
+        return ServerResponse.createBySuccess(list);
+    }
+    
+    
     public List<DhProcessCategory> getChildrenCategory(String categoryUid) {
         List<DhProcessCategory> result = new ArrayList<>();
         List<DhProcessCategory> childrens = dhProcessCategoryDao.listByCategoryParent(categoryUid);
