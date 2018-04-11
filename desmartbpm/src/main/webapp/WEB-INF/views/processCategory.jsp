@@ -276,9 +276,10 @@
         
         // 为翻页提供支持
         var pageConfig = {
-        	pageNum = 1;
-        	pageSize = 10;
-        	categoryUid = rootCategory;
+        	pageNum: 1,
+        	pageSize: 10,
+        	categoryUid: "rootCategory",
+        	proName: ""
         	
         }
         
