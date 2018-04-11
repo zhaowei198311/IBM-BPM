@@ -116,6 +116,7 @@ public class RestUtil {
             String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
             result.setCode(response.getStatusLine().getStatusCode());
             result.setMsg(msg);
+            LOG.info(msg);
         } catch (ParseException | IOException e) {
             LOG.error("GET请求发生错误！", e);
             result.setCode(-1);
@@ -166,6 +167,8 @@ public class RestUtil {
         }
         return result;
     }
+    
+    
     
 
     /**
@@ -239,5 +242,128 @@ public class RestUtil {
 
         return result;
     }
-
+    
+    
+    
+    /**
+     * sendPost 方法
+     * @param url  访问的路径
+     * @param params  如果有参数采用Map传递，没有参数传递new HashMap<String, Object>() 或 null
+     * @return
+     */
+    public HttpReturnStatus sendPost(String url, Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<String, Object>();
+        }
+        HttpReturnStatus result = new HttpReturnStatus();
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        Iterator iterator = params.keySet().iterator();
+        String args;
+        while(iterator.hasNext()) {
+            args = (String)iterator.next();
+            String val = (String)params.get(args);
+            val = val == null ? "" : val;
+            NameValuePair nkv = new BasicNameValuePair(args, val);
+            nameValuePairs.add(nkv);
+        }
+        
+        CloseableHttpResponse response = null;
+        try {
+            args = EntityUtils.toString(new UrlEncodedFormEntity(nameValuePairs, Charset.forName("UTF-8")));
+            if (StringUtils.isNotBlank(args)) {
+                if (url.indexOf("?") == -1) {
+                    url = url + "?" + args;
+                } else {
+                    url = url.endsWith("&") ? url : url + "&";
+                    url = url + args;
+                }
+            }
+            HttpPost httpPost = new HttpPost(url);
+            RequestConfig reqcfg = HttpClientUtils.getRequestConfig(this.bpmGlobalConfig.getBpmClientTimeout());
+            httpPost.setConfig(reqcfg);
+            httpPost.setHeader("Content-Type", "application/json");
+            httpPost.setHeader("Content-Language", "zh-CN");
+            response = httpClient.execute(httpPost, context);
+            
+            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+            result.setCode(response.getStatusLine().getStatusCode());
+            result.setMsg(msg);
+            LOG.info(msg);
+        } catch (ParseException | IOException e) {
+            LOG.error("Post请求发生错误！", e);
+            result.setCode(-1);
+            result.setMsg(e.toString());
+        } finally {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    
+    
+    /**
+     * sendPut 方法
+     * @param url  访问的路径
+     * @param params  如果有参数采用Map传递，没有参数传递new HashMap<String, Object>() 或 null
+     * @return
+     */
+    public HttpReturnStatus sendPut(String url, Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<String, Object>();
+        }
+        HttpReturnStatus result = new HttpReturnStatus();
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
+        Iterator iterator = params.keySet().iterator();
+        String args;
+        while(iterator.hasNext()) {
+            args = (String)iterator.next();
+            String val = (String)params.get(args);
+            val = val == null ? "" : val;
+            NameValuePair nkv = new BasicNameValuePair(args, val);
+            nameValuePairs.add(nkv);
+        }
+        
+        CloseableHttpResponse response = null;
+        try {
+            args = EntityUtils.toString(new UrlEncodedFormEntity(nameValuePairs, Charset.forName("UTF-8")));
+            if (StringUtils.isNotBlank(args)) {
+                if (url.indexOf("?") == -1) {
+                    url = url + "?" + args;
+                } else {
+                    url = url.endsWith("&") ? url : url + "&";
+                    url = url + args;
+                }
+            }
+            HttpPut httpPut = new HttpPut(url);
+            RequestConfig reqcfg = HttpClientUtils.getRequestConfig(this.bpmGlobalConfig.getBpmClientTimeout());
+            httpPut.setConfig(reqcfg);
+            httpPut.setHeader("Content-Type", "application/json");
+            httpPut.setHeader("Content-Language", "zh-CN");
+            response = httpClient.execute(httpPut, context);
+            
+            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+            result.setCode(response.getStatusLine().getStatusCode());
+            result.setMsg(msg);
+            LOG.info(msg);
+        } catch (ParseException | IOException e) {
+            LOG.error("Put请求发生错误！", e);
+            result.setCode(-1);
+            result.setMsg(e.toString());
+        } finally {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    
 }

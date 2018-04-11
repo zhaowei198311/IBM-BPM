@@ -9,8 +9,13 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartbpm.util.rest.RestUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -35,6 +40,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.apache.tools.ant.taskdefs.condition.Http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +53,10 @@ public class HttpClientUtils {
 	private static final String PASSWORD = "passw0rd";
 
 	private static final String URL = "http://10.0.4.201:9080/rest/bpm/wle/v1/";
-
+	
+	// 全局任务标识
+	private int tkiid = 0;
+	
 	public HttpClientUtils() {
 	}
 
@@ -298,17 +307,22 @@ public class HttpClientUtils {
 		headers.put("Content-Language", "zh-CN");
 		return headers;
 	}
-	
+
 	/**
 	 * 
-	 * @param method 请求方法(get,post,delete,put)
-	 * @param action 调用api执行的动作 (删除,暂挂,恢复 等)
-	 * @param type 调用类型 (process,task)
-	 * @param id 流程id/任务标识 (在IBM 引擎中可查到当前流程实例id 或者说当前任务tas标识)
-	 * @param taskIDs 任务标识 (选填参数)
+	 * @param method
+	 *            请求方法(get,post,delete,put)
+	 * @param action
+	 *            调用api执行的动作 (删除,暂挂,恢复 等)
+	 * @param type
+	 *            调用类型 (process,task)
+	 * @param id
+	 *            流程id/任务标识 (在IBM 引擎中可查到当前流程实例id 或者说当前任务tas标识)
+	 * @param taskIDs
+	 *            任务标识 (选填参数)
 	 * @return
 	 */
-	public String IbmApi(String method, String action, String type, String id, String taskIDs) {
+	public String IbmApi(Map<String, Object> params) {
 		// 解析用户名与密码
 		LOG.info("请求IBM API 开始...");
 		CloseableHttpClient httpClient = HttpClients.custom().build();
@@ -317,11 +331,12 @@ public class HttpClientUtils {
 		Credentials credentials = new UsernamePasswordCredentials(USERNAME, PASSWORD);
 		// 追加拼接 url 链接路径
 		StringBuffer buffer = new StringBuffer(URL);
-		buffer.append(type);
-		buffer.append("/"+id);
-		buffer.append("?action="+action);
+		buffer.append(params.get("type"));
+		buffer.append("/" + params.get("id"));
+		buffer.append("?action=" + params.get("action"));
 		buffer.append("&parts=all");
 		// 转换为string类型 方便后面请求调用
+		String metod = String.valueOf(params.get("method"));
 		String url = buffer.toString();
 		//
 		CloseableHttpResponse httpResponse = null;
@@ -330,7 +345,7 @@ public class HttpClientUtils {
 			credsProvider.setCredentials(AuthScope.ANY, credentials);
 			context.setCredentialsProvider(credsProvider);
 			// method方法 判断 请求方法 然后 使用拼接参数
-			switch (method) {
+			switch (metod) {
 			case "post":
 				HttpPost httpPost = new HttpPost(url);
 				httpResponse = httpClient.execute(httpPost, context);
@@ -358,13 +373,126 @@ public class HttpClientUtils {
 		LOG.info("请求IBM API 结束...");
 		return msg;
 	}
+
+	/**
+	 *  驳回通用服务
+	 * @param instansId  当前流程实例标识id
+	 * @param flowobjectId 需要驳回到哪一个节点的标识id
+	 * @param user 将任务分配给某个用户标识id
+	 */
+	public void Reject(String instansId,String flowobjectId, String user) {
+		LOG.info("驳回服务  开始...");
+		String msg = "";
+		try {
+			// 这一步操作 是调用API 获取当前流程实例信息数据
+			Map<String, Object> params = new HashMap<>();
+			params.put("parts", "data|header|executionTree");
+			HttpReturnStatus result =checkApiLogin("get","http://10.0.4.201:9080/rest/bpm/wle/v1/process/"+instansId, params);
+			msg = result.getMsg();
+			// 判断当前状态如果服务器返回200 才让执行回退任务
+			if(result.getCode()==200) {
+				// JSON 转换当前信息 获取 flowobjectid 和 分配给 某个用户
+				JSONObject jsonobject = JSONObject.parseObject(msg);		
+				// 获取data内容·
+				JSONObject data = (JSONObject) jsonobject.get("data");
+				JSONObject executionTree = (JSONObject) data.get("executionTree");
+				JSONObject root = (JSONObject) executionTree.get("root");
+				// 拿取tokenid 当前token
+				JSONArray jsonArray = root.getJSONArray("children");
+				// 拿取当前 tkiid 任务标识  操作 是 分配任务
+				JSONArray jsonArray2 = data.getJSONArray("tasks");
+				String tokenId = "" ;
+				for (int i = 0; i < jsonArray.size(); i++) {
+					JSONObject object = jsonArray.getJSONObject(i);
+					// 获取到当前tokenId 节点id 回退起始位置
+					tokenId = object.getString("tokenId");
+				}
+				for (int j = jsonArray2.size()-1; j < jsonArray2.size(); j++) {
+					JSONObject tasks = jsonArray2.getJSONObject(j);
+					tkiid = tasks.getInteger("tkiid");
+					System.err.println(tkiid);
+					System.err.println("任务标识:" + tasks.getInteger("tkiid"));
+				}
+				// 第二次请求 带入参数 注意 第二次请求 是以post 请求方式 去执行一个动作 moveToken  移动token
+				Map<String, Object> params2 = new HashMap<>();
+				params2.put("action", "moveToken");
+				params2.put("resume", "true");
+				params2.put("parts", "data|header|executionTree");
+				params2.put("target", flowobjectId);
+				params2.put("tokenId", tokenId);
+				HttpReturnStatus result2 =checkApiLogin("post","http://10.0.4.201:9080/rest/bpm/wle/v1/process/"+instansId, params2);				
+				// 将当前用户分配给user 
+				int taskid = tkiid+1;
+				Map<String, Object> params3 = new HashMap<>();
+				params3.put("action", "assign");
+				params3.put("toUser", user);
+				params3.put("parts", "all");
+				HttpReturnStatus result3 =checkApiLogin("put","http://10.0.4.201:9080/rest/bpm/wle/v1/task/"+taskid, params3);				
+				if(result3.getCode()==200) {
+					LOG.info("驳回成功");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		LOG.info("驳回服务 结束...");
+	}
+	
 	
 	/**
-	 * 调用
-	 * @return
+	 * 通用加签服务
+	 * @param user 
+	 * @param message
 	 */
-	public String Reject() {
-		
-		return "";
+	public void addSign(String user,String message) {
+		LOG.info("加签服务 开始...");
+		try {
+			// 首先邀请某一个用户参与任务协作 （组织架构树 选择）
+			// 调用 api
+		Map<String, Object> params = new HashMap<>();	
+		params.put("action", "invite");
+		params.put("user", user);
+		params.put("message", message);
+		HttpReturnStatus result = checkApiLogin("post", "http://10.0.4.201:9080/rest/bpm/wle/v1/task/74", params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		LOG.info("加签服务 结束...");
+	}
+	
+	/**
+	 * 减签 通用服务
+	 */
+	public void minusSign() {
+		LOG.info("减签服务 开始...");
+		try {
+			// 首先邀请某一个用户参与任务协作 （组织架构树 选择）
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		LOG.info("减签服务 结束...");
+	}
+	
+	/**
+	 * 每次调用api 验证的方法
+	 */
+	public HttpReturnStatus checkApiLogin(String method,String url, Map<String, Object> params) {
+		BpmGlobalConfig bpmGlobalConfig = new BpmGlobalConfig();
+		bpmGlobalConfig.setBpmAdminName("deadmin");
+		bpmGlobalConfig.setBpmAdminPsw("passw0rd");
+		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+		switch (method) {
+		case "get":
+			return restUtil.doGet(url, params);
+		case "post":
+			return restUtil.sendPost(url, params);
+		case "put":
+			return restUtil.sendPut(url, params);
+		default:
+			break;
+		}
+		return null;
 	}
 }
