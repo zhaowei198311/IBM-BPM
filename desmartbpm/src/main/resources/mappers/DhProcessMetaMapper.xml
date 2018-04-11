@@ -28,6 +28,13 @@
         select <include refid="base_column"/> 
         from dh_process_meta
     </select>
-
+    
+    <select id="listByCategoryList" resultType="com.desmart.desmartbpm.entity.DhProcessMeta" parameterType="list">
+        select <include refid="base_column"/> from dh_process_meta 
+        where category_uid in 
+        <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
+            #{item.categoryUid}
+        </foreach>
+    </select>
 
 </mapper>

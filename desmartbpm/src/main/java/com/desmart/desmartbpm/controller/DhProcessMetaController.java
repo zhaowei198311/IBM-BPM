@@ -12,7 +12,7 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 
 @Controller
-@RequestMapping(value = "/process")
+@RequestMapping(value = "/processMeta")
 public class DhProcessMetaController {
     @Autowired
     private DhProcessMetaService dhProcessMetaService;
@@ -22,6 +22,16 @@ public class DhProcessMetaController {
     public ModelAndView index() {
         return new ModelAndView("processIndex");
     }
+    
+    
+    /**
+     * 根据分类id列出下面的所有流程
+     */
+    @RequestMapping(value = "")
+    public void listProcessMetaByCategoryUid(String categoryUid, Integer pageNum, Integer pageSize) {
+        // todo
+    }
+    
     
     
     /**

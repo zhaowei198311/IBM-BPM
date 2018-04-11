@@ -12,4 +12,16 @@ public interface DhProcessCategoryService {
     
     List<DhProcessCategory> listAll();
 
+    /**
+     * 根据父分类查询所有的子分类(不包含作为参数的那个分类)
+     * @param categoryUid
+     * @return
+     */
+    List<DhProcessCategory> getChildrenCategory(String categoryUid);
+    
+    /** 删除指定分类 */
+    ServerResponse removeDhProcessCategory(String categoryUid);
+    
+    /** 重命名分类*/
+    ServerResponse renameDhProcessCategory(String categoryUid, String newName);
 }

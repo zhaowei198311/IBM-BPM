@@ -26,6 +26,19 @@ public class DhProcessCategoryController {
         return mv;
     }
     
+    // 删除指定的分类
+    @RequestMapping(value = "/removeCategory")
+    @ResponseBody
+    public ServerResponse removeDhProceeeCategory(String categoryUid) {
+        
+        return dhProcessCategoryService.removeDhProcessCategory(categoryUid);
+    }
+    
+    @RequestMapping(value = "/renameCategory")
+    @ResponseBody
+    public ServerResponse renameDhProceeeCategory(String categoryUid, String newName) {
+        return dhProcessCategoryService.renameDhProcessCategory(categoryUid, newName);
+    }
     
     /**
      * 增加流程分类

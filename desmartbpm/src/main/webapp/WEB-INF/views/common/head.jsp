@@ -16,6 +16,7 @@
 <!-- 全局js -->
 <script src="<%=basePath%>/resources/js/jquery-3.3.1.js"></script>
 <script src="<%=basePath%>/resources/js/layui.all.js"></script>
+<script src="<%=basePath%>/resources/js/common.js"></script>
 
 
 

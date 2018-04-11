@@ -24,4 +24,9 @@ public interface DhProcessCategoryDao {
 
     List<DhProcessCategory> listAll();
     
+    int updateByCategoryUidSelective(DhProcessCategory dhProcessCategory);
+    
+    int removeBatchByCategoryList(List<DhProcessCategory> categoryList);
+    
+    
 }

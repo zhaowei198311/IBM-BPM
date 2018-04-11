@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhProcessCategory;
 
 @Repository
 public interface BpmActivityMetaDao {
@@ -40,4 +41,6 @@ public interface BpmActivityMetaDao {
      * @return
      */
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
+    
+
 }

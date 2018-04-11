@@ -20,6 +20,7 @@
             .display_container3 .layui-laypage select{
                 display:none;
             }
+            
             .layui-form-label{width:100px;}
             .layui-input-block{margin-left:130px;}
         </style>
@@ -28,7 +29,7 @@
         <div class="layui-container" style="margin-top:20px;width:100%;">  
             <div class="layui-row">
                 <div class="layui-col-md2" style="text-align: left;">
-                    <ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
+                    <ul id="category_tree" class="ztree" style="width:auto;height:500px;"></ul>
                 </div>
                 <div class="layui-col-md10">
                     <div class="search_area">
@@ -40,6 +41,7 @@
                                     <button class="layui-btn" >查询</button>
                                     <button class="layui-btn create_btn">添加</button>
                                     <button class="layui-btn delete_btn">删除</button>
+                                    <button onclick="test();">test</button>
                             </div>
                         </div>
                     </div>
@@ -244,11 +246,21 @@
                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
                 </div>
                 
-                <div id="demo">
-                    
-                </div>
+                
             </div>
         </div>
+        <div class="display_container" id="addCategory_container">
+             <div class="display_content">
+                 <div class="top">填写分类名</div>
+                 <div class="middle1">
+                     <input type="text"  class="layui-input" id="categoryName_input"/>
+                 </div>
+                 <div class="foot">
+                     <button class="layui-btn layui-btn sure_btn" id="addCategorySure_btn">确定</button>
+                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="addCategoryCancel_btn">取消</button>
+                 </div>
+              </div>
+         </div>
     </body>
     
 </html>
@@ -256,6 +268,20 @@
         <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.excheck.js"></script>
         <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.exedit.js"></script>
     <script>
+        var oldCategoryName = "";// 记录重命名分类的原名字
+        var parentNode = "";  // 记录往哪个节点下新建分类
+        var parentNodeTId = ""; // 父节点的zTree唯一id
+        var tempRemoveTreeNode; // 记录要被删除的节点
+        var tempRemoveParentTreeNode; // 记录要被删除的节点的父节点
+        
+        // 为翻页提供支持
+        var pageConfig = {
+        	pageNum = 1;
+        	pageSize = 10;
+        	categoryUid = rootCategory;
+        	
+        }
+        
         //tree
         var setting = {
             view: {
@@ -267,7 +293,9 @@
                 enable: true,
                 editNameSelectAll: true,
                 showRemoveBtn: showRemoveBtn,               
-                showRenameBtn: showRenameBtn,           
+                showRenameBtn: showRenameBtn, 
+                renameTitle: '重命名分类',
+                removeTitile: '删除分类',
             },
             data: {
             	key: {
@@ -283,7 +311,7 @@
             callback: {
             	onClick: zTreeOnClick,// 点击回调
                 beforeDrag: beforeDrag,
-                beforeEditName: beforeEditName,
+                beforeEditName: beforeEditName, // 改名前函数
                 beforeRemove: beforeRemove,
                 beforeRename: beforeRename,
                 onRemove: onRemove,
@@ -293,25 +321,27 @@
 
         var zNodes = ${zNodes};
         
-        
         function zTreeOnClick(event, treeId, treeNode) {
         	//console.log("treeId:" + treeId);
         	//console.log("treeNode:" + treeNode);
         	console.log(treeNode.categoryUid);
-        	console.log(treeNode.categoryName);
+        	//console.log(treeNode.categoryName);
         }
         
         var log, className = "dark";
         function beforeDrag(treeId, treeNodes) {
             return false;
         }
+        // 编辑节点名前
         function beforeEditName(treeId, treeNode) {
+        	// 全局变量中记录修改前的名字，用于还原
+        	oldCategoryName = treeNode.categoryName;
             className = (className === "dark" ? "":"dark");
             showLog("[ "+getTime()+" beforeEditName ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var zTree = $.fn.zTree.getZTreeObj("category_tree");
             zTree.selectNode(treeNode);
             setTimeout(function() {
-                if (confirm("进入节点 -- " + treeNode.name + " 的编辑状态吗？")) {
+                if (confirm("进入分类" + treeNode.categoryName + " 的编辑状态吗？")) {
                     setTimeout(function() {
                         zTree.editName(treeNode);
                     }, 0);
@@ -323,20 +353,43 @@
         	console.log(treeId);
         	console.log(treeNode);
             className = (className === "dark" ? "":"dark");
-            showLog("[ "+getTime()+" beforeRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var zTree = $.fn.zTree.getZTreeObj("category_tree");
             zTree.selectNode(treeNode);
-            return confirm("确认删除 节点 -- " + treeNode.name + " 吗？");
+            tempRemoveTreeNode = treeNode;
+            tempRemoveParentTreeNode = treeNode.getParentNode();
+            return confirm("确认删除分类" + treeNode.categoryName + " 吗？");
         }
         function onRemove(e, treeId, treeNode) {
-            showLog("[ "+getTime()+" onRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
+        	$.ajax({
+        		url: common.getPath() + "/processCategory/removeCategory",
+        		dataType: "json",
+        		type: "post",
+        		data: {
+        			"categoryUid": tempRemoveTreeNode.categoryUid
+        		},
+        		success: function(result) {
+        			if (result.status == 0) {
+        				
+        			} else {
+        				var zTree = $.fn.zTree.getZTreeObj("category_tree");
+        	            zTree.addNodes(tempRemoveParentTreeNode,  tempRemoveTreeNode);
+        				alert(result.msg);
+        			}
+        		},
+        		error: function() {
+        			var zTree = $.fn.zTree.getZTreeObj("category_tree");
+                    zTree.addNodes(tempRemoveParentTreeNode,  tempRemoveTreeNode);
+        		}
+        	});
         }
+        
+        // 用户确认修改分类名
         function beforeRename(treeId, treeNode, newName, isCancel) {
             className = (className === "dark" ? "":"dark");
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" beforeRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
             if (newName.length == 0) {
                 setTimeout(function() {
-                    var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+                    var zTree = $.fn.zTree.getZTreeObj("category_tree");
                     zTree.cancelEditName();
                     alert("节点名称不能为空.");
                 }, 0);
@@ -344,14 +397,41 @@
             }
             return true;
         }
+        
         function onRename(e, treeId, treeNode, isCancel) {
             showLog((isCancel ? "<span style='color:red'>":"") + "[ "+getTime()+" onRename ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name + (isCancel ? "</span>":""));
+            $.ajax({
+                url: common.getPath() + "/processCategory/renameCategory",
+                type: "post",
+                data: {
+                    "categoryUid": treeNode.categoryUid,
+                    "newName": treeNode.categoryName
+                },
+                dataType: "json",
+                success : function(result) {
+                    if (result.status == 0 ){// 修改成功
+                    } else {// 修改失败，还原名字
+                    	var zTree = $.fn.zTree.getZTreeObj(treeId);
+                    	treeNode.categoryName = oldCategoryName; 
+                    	zTree.updateNode(treeNode);
+                    	alert(result.msg);
+                    }
+                }
+            });
         }
+        // 是否显示删除按钮
         function showRemoveBtn(treeId, treeNode) {
-            return !treeNode.isFirstNode;
+        	if (treeNode.categoryUid == 'rootCategory') {
+                return false;
+            }
+            return true;
         }
+        // 是否显示改名按钮
         function showRenameBtn(treeId, treeNode) {
-            return !treeNode.isLastNode;
+        	if (treeNode.categoryUid == 'rootCategory') {
+        		return false;
+        	}
+            return true;
         }
         function showLog(str) {
             if (!log) log = $("#log");
@@ -374,12 +454,16 @@
             var sObj = $("#" + treeNode.tId + "_span");
             if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
             var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
-                + "' title='add node' onfocus='this.blur();'></span>";
+                + "' title='新增分类' onfocus='this.blur();'></span>";
             sObj.after(addStr);
             var btn = $("#addBtn_"+treeNode.tId);
             if (btn) btn.bind("click", function(){
-                var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-                zTree.addNodes(treeNode, {id:(100 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
+            	parentNode = treeNode.categoryUid;
+            	parentNodeTId = treeNode.tId;
+                // ajax新建一个分类，再加一个节点
+                $("#categoryName_input").val('');
+            	$("#addCategory_container").css("display","block");
+            	$("#categoryName_input").focus();
                 return false;
             });
         };
@@ -387,7 +471,7 @@
             $("#addBtn_"+treeNode.tId).unbind().remove();
         };
         function selectAll() {
-            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var zTree = $.fn.zTree.getZTreeObj("category_tree");
             zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
         }
         //分页
@@ -395,12 +479,12 @@
             var laypage = layui.laypage,layer = layui.layer;  
               //完整功能
             laypage.render({
-                elem: 'demo7'
-                ,count: 50
-                ,limit: 10
-                ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
-                ,jump: function(obj){
-                  console.log(obj)
+                elem: 'demo7',
+                count: 50,
+                limit: 10,
+                layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                jump: function(obj){
+                    console.log(obj);
                 }
             }); 
             laypage.render({
@@ -415,7 +499,11 @@
         });
         
         $(document).ready(function(){
-            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+            $.fn.zTree.init($("#category_tree"), setting, zNodes);
+            
+            getInfo();
+            
+            
             $("#selectAll").bind("click", selectAll);
             
             $(".create_btn").click(function(){
@@ -432,6 +520,58 @@
                 $(".display_container3").css("display","none");
                 $(".display_container4").css("display","none");
             })
+            
+            // 确认新建分类
+            $("#addCategorySure_btn").click(function(){
+            	var newName = $("#categoryName_input").val().trim();
+            	
+            	console.log(newName);
+            	if (!newName) {
+            		alert("分类名不能为空");
+            		return;
+            	}
+            	$.ajax({
+            		url: common.getPath() + "/processCategory/addCategory",
+            		type: "post",
+            		dataType: "json",
+            		data: {
+            			"categoryParent": parentNode,
+            			"categoryName": newName
+            		},
+            		success: function(result) {
+            			if (result.status == 0) {
+            				$("#addCategory_container").css("display","none");
+            				// 在tree上加入新节点
+            				var zTree = $.fn.zTree.getZTreeObj("category_tree");
+            				var treeNode = zTree.getNodeByTId(parentNodeTId);
+            				zTree.addNodes(treeNode, {"categoryUid": result.data.categoryUid, "categoryParent": result.data.categoryParent, "categoryName": result.data.categoryName });
+            			} else {
+            				alert(result.msg);
+            			}
+            		}
+            	});
+            });
+            
+            // 取消新建分类
+            $("#addCategoryCancel_btn").click(function(){
+            	$("#addCategory_container").css("display","none")
+            });
+            
+            
         });
+        function test() {
+        	$("#addCategory_container").css("display","block");
+        }
         
+        function getInfo() {
+        	$.ajax({
+        		url: common.getPath() + "/processCategory/addCategory",
+        		type: "post",
+        		dataType: "json",
+        		data: {
+        			"pageNum": pageNum1,
+        			"pageSize": pageSize1
+        		}
+        	});
+        }
   </script>
