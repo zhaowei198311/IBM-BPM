@@ -5,11 +5,11 @@
   
   <servlet-mapping>    
     <servlet-name>default</servlet-name>    
-    <url-pattern>/resources/*</url-pattern>  
+    <url-pattern>/resources/*</url-pattern>
     <url-pattern>/images/*</url-pattern>
     <url-pattern>/scripts/*</url-pattern>  
     <url-pattern>/styles/*</url-pattern> 
-    <url-pattern>/tree/*</url-pattern>   
+    <url-pattern>/tree/*</url-pattern>    
   </servlet-mapping> 
 
 
