@@ -56,8 +56,8 @@
 	</body>
 	
 </html>
-	<script type="text/javascript" src="scripts/js//jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="scripts/js//layui.all.js"></script>	
+	<script type="text/javascript" src="scripts/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="scripts/js/layui.all.js"></script>	
 	<script>
         function changeFrameHeight(){
 	        var ifm= document.getElementById("iframe_1"); 
