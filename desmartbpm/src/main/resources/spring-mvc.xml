@@ -34,6 +34,15 @@
 	    </mvc:message-converters>
 	</mvc:annotation-driven>
 	
+	<mvc:resources location="/images/" mapping="/images/**"/>  
+    <mvc:resources location="/scripts/" mapping="/scripts/**"/>  
+    <mvc:resources location="/styles/" mapping="/styles/**"/>  
+    <mvc:resources location="/views/" mapping="/views/**"/>
+    
+    <mvc:resources location="/tree/" mapping="/tree/**"/>
+    
+    
+	
 	<!-- from smartforms
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
@@ -41,7 +50,6 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
     -->
-
     <!-- 配置视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"></property>
