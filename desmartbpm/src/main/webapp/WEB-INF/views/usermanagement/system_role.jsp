@@ -127,14 +127,38 @@
 	<div class="display_container2">
 		<div class="display_content2">
 			<div class="top">
-				授权菜单
+				群组人员分配
+				<div class="query_user">
+					<div>
+						<table>
+							<tbody>
+								<tr>
+									<td>员工编码:</td>
+									<td>员工姓名:</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td><input type="text" id="user_code" autocomplete="off" class="layui-input" /></td>
+									<td><input type="text" id="user_name" autocomplete="off" class="layui-input" /></td>
+									<td><input type="button" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
-			<div class="middle">
-				<ul id="treeDemo" class="ztree" style="width:auto;height:200px;"></ul>
+			<div class="middle_temp">	
+				<div id="temp_left"></div>
+				<div id="temp_middle"></div>
+				<div id="temp_button">
+					<button class="layui-btn layui-btn" id="add_temp_btn">增加</button>
+					<button class="layui-btn layui-btn" id="delete_temp_btn">删除</button>
+				</div>
+				<div id="temp_right"></div>
 			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn">确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+			<div class="foot_temp">
+				<button class="layui-btn layui-btn sure_btn" style="float:left;">确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" style="float:left;">取消</button>
 			</div>
 		</div>
 	</div>
@@ -223,7 +247,7 @@
 	         	str+='<td>' + this.roleName + '</td>';
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user">&#xe654;</i>';
+		        str+='<i class="layui-icon add_user" onclick=addRoleTema();>&#xe654;</i>';
 		        str+='<i class="layui-icon jurisdiction_btn">&#xe6b2;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
