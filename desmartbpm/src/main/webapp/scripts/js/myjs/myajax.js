@@ -155,6 +155,25 @@ function adddialog(){
 	$('form',$dailogs).find("input, select, textarea").removeClass('error');
 }
 
+function opendialog(cls){
+	var $dailogs=$('.'+cls);
+	$dailogs.css("display","block");
+	$('form',$dailogs)[0].reset();
+	$('form',$dailogs).validate().resetForms();
+	$('form',$dailogs).find("input, select, textarea").removeClass('error');
+}
+
+
+function returnSuccess(data,cls){
+	if(data.msg=='success'){
+		alert(language.add_success);
+		dgclose(cls);
+		pageBreak();
+	}else{
+		alert(language.add_failed);
+	}
+}
+
 //点修改打开dialog
 function edit(data){
 	var $dailogs=$('.'+dialogs.edit_dialog);
