@@ -133,7 +133,7 @@
 
 <script type="text/javascript" src="<%=basePath%>/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/layui.all.js"></script>
-<script>a'a'a'a'a'a'a'a'a'a'a'a'a'a'a'a'a'a'a
+<script>
 	//分页
 	layui.use(['laypage', 'layer'], function() {
 		var laypage = layui.laypage,
