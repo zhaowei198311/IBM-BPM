@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
+  		<link href="css/my.css" rel="stylesheet" />
+  		<style>
+			.layui-form-label{width:140px;}
+			.layui-input-block{margin-left:170px;}
+  		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="search_area">
+				<div class="search_area top_btn">
+					<a href="set.html"><button class="layui-btn layui-btn-primary layui-btn-sm">返回</button></a>
+					<span style="float:right;">
+						<button class="layui-btn layui-btn-primary layui-btn-sm">保存</button>
+					</span>
+				</div>
+			</div>
+			<div>
+				<p class="title_p">快照SLA配置</p>
+				<form class="layui-form" action="">
+	    		  	<div class="layui-row">
+					    <div class="layui-col-md6">
+					     	<div class="layui-form-item">
+							    <label class="layui-form-label">超时通知触发事件类</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">流程实例启动事件</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">实例消息推送事件</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+							    </div>
+							</div>
+					    </div>
+					    <div class="layui-col-md6">
+					     	<div class="layui-form-item">
+							    <label class="layui-form-label">重复通知触发事件类</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">流程实例结束事件类</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+							    </div>
+							</div>
+					    </div>
+					</div>
+				</form>
+				<p class="title_p">快照事件</p>
+				<form class="layui-form" action="">
+	    		  	<div class="layui-row">
+					    <div class="layui-col-md6">
+					     	<div class="layui-form-item">
+							    <label class="layui-form-label">流程管理员</label>
+							        <div class="layui-input-inline">
+								      	<input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+								    </div>
+								    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">流程缺省读者</label>
+							    <div class="layui-input-block">
+							      	<div class="layui-input-inline">
+								      	<input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+								    </div>
+								    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">流程实际每小时成本</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">实例运行时长</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">实例运行时间单位</label>
+							    <div class="layui-input-block">
+							      	<select name="" lay-verify="required">
+								        <option value=""></option>
+								        <option value="0">分钟</option>
+								        <option value="1">小时</option>
+								        <option value="2">天</option>
+								    </select>
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">超时通知内容模板</label>
+							    <div class="layui-input-block">
+									<select name="" lay-verify="required">
+								        <option value="">（空）</option>
+								    </select>										    
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">超时通知人员</label>
+							    <div class="layui-input-block">
+							      	<div class="layui-input-inline">
+								      	<input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+								    </div>
+								    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">申请人催办内容模板</label>
+							    <div class="layui-input-block">
+							      	<select name="" lay-verify="required">
+								        <option value="">（空）</option>
+								    </select>
+							    </div>
+							</div>
+					    </div>
+					    <div class="layui-col-md6">
+					     	<div class="layui-form-item">
+							    <label class="layui-form-label">是否重复通知</label>
+							    <div class="layui-input-block">
+							      	<select name="" lay-verify="required">
+								        <option value="">是</option>
+								        <option value="">否</option>
+								    </select>
+							    </div>
+							</div>
+							<div class="layui-form-item">
+						    <label class="layui-form-label">重复超市通知人员</label>
+						   		<div class="layui-input-inline">
+							      	<input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+							    </div>
+							    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">重复初始时间</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">重复初始时间单位</label>
+							    <div class="layui-input-block">
+									<select name="" lay-verify="required">
+								        <option value=""></option>
+								        <option value="">分钟</option>
+								        <option value="">小时</option>
+								        <option value="">天</option>
+								    </select>										    
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">重复时间间隔</label>
+							    <div class="layui-input-block">
+							      	<input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">重复时间间隔单位</label>
+							    <div class="layui-input-block">
+									<select name="" lay-verify="required">
+								        <option value=""></option>
+								        <option value="">分钟</option>
+								        <option value="">小时</option>
+								        <option value="">天</option>
+								    </select>										    
+							    </div>
+							</div>
+							<div class="layui-form-item">
+							    <label class="layui-form-label">超时重复通知内容模板</label>
+							    <div class="layui-input-block">
+							      	<select name="" lay-verify="required">
+								        <option value="">（空）</option>
+								    </select>
+							    </div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>		
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>
+	<script>
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#test1'
+			});
+		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#test2'
+			});
+		});
+		$(function(){
+			$(".choose_user").click(function(){
+				window.location.href="choose_user2.html";
+			})
+			
+		})
+	</script>

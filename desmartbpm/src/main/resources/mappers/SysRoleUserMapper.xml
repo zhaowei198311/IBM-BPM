@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.SysRoleUserMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.SysRoleUser" >
+    <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
+    <result column="MAP_TYPE" property="mapType" jdbcType="DECIMAL" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+    <result column="ROLE_UID" property="roleUid" jdbcType="VARCHAR" />
+    <result column="IS_MANAGER" property="isManager" jdbcType="DECIMAL" />
+    <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MAP_UID, MAP_TYPE, USER_UID, DEPART_UID, ROLE_UID, IS_MANAGER, IS_SHOW
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_ROLE_USER
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_ROLE_USER
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SYS_ROLE_USER
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.SysRoleUser" >
+    insert into SYS_ROLE_USER (MAP_UID, MAP_TYPE, USER_UID, 
+      DEPART_UID, ROLE_UID, IS_MANAGER, 
+      IS_SHOW)
+    values (#{mapUid,jdbcType=VARCHAR}, #{mapType,jdbcType=DECIMAL}, #{userUid,jdbcType=VARCHAR}, 
+      #{departUid,jdbcType=VARCHAR}, #{roleUid,jdbcType=VARCHAR}, #{isManager,jdbcType=DECIMAL}, 
+      #{isShow,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.SysRoleUser" >
+    insert into SYS_ROLE_USER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mapUid != null" >
+        MAP_UID,
+      </if>
+      <if test="mapType != null" >
+        MAP_TYPE,
+      </if>
+      <if test="userUid != null" >
+        USER_UID,
+      </if>
+      <if test="departUid != null" >
+        DEPART_UID,
+      </if>
+      <if test="roleUid != null" >
+        ROLE_UID,
+      </if>
+      <if test="isManager != null" >
+        IS_MANAGER,
+      </if>
+      <if test="isShow != null" >
+        IS_SHOW,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mapUid != null" >
+        #{mapUid,jdbcType=VARCHAR},
+      </if>
+      <if test="mapType != null" >
+        #{mapType,jdbcType=DECIMAL},
+      </if>
+      <if test="userUid != null" >
+        #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="departUid != null" >
+        #{departUid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleUid != null" >
+        #{roleUid,jdbcType=VARCHAR},
+      </if>
+      <if test="isManager != null" >
+        #{isManager,jdbcType=DECIMAL},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.SysRoleUser" >
+    update SYS_ROLE_USER
+    <set >
+      <if test="mapType != null" >
+        MAP_TYPE = #{mapType,jdbcType=DECIMAL},
+      </if>
+      <if test="userUid != null" >
+        USER_UID = #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="departUid != null" >
+        DEPART_UID = #{departUid,jdbcType=VARCHAR},
+      </if>
+      <if test="roleUid != null" >
+        ROLE_UID = #{roleUid,jdbcType=VARCHAR},
+      </if>
+      <if test="isManager != null" >
+        IS_MANAGER = #{isManager,jdbcType=DECIMAL},
+      </if>
+      <if test="isShow != null" >
+        IS_SHOW = #{isShow,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.SysRoleUser" >
+    update SYS_ROLE_USER
+    set MAP_TYPE = #{mapType,jdbcType=DECIMAL},
+      USER_UID = #{userUid,jdbcType=VARCHAR},
+      DEPART_UID = #{departUid,jdbcType=VARCHAR},
+      ROLE_UID = #{roleUid,jdbcType=VARCHAR},
+      IS_MANAGER = #{isManager,jdbcType=DECIMAL},
+      IS_SHOW = #{isShow,jdbcType=DECIMAL}
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

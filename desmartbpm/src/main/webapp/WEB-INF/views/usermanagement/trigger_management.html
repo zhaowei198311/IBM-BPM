@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
+  		<link rel="stylesheet" href="tree/css/demo.css" type="text/css">
+		<link rel="stylesheet" href="tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  		<link href="css/my.css" rel="stylesheet" />
+  		<style>
+			ul.ztree{
+				border:0;
+			}
+  		</style>
+	</head>
+	<body>
+		<div class="layui-container" style="margin-top:20px;width:100%;">  
+		  	<div class="layui-row">
+			    <div class="layui-col-md2" style="text-align: left;">
+					<ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
+			    </div>
+			    <div class="layui-col-md10">
+					<div class="search_area">
+						<div class="layui-row layui-form">
+							<div class="layui-col-md2">
+						    	<input type="text" placeholder="触发器名称"  class="layui-input">
+							</div>
+							<div class="layui-col-md2" style="text-align:right;">
+						        <button class="layui-btn layui-btn-sm" >查询</button>
+						        <button class="layui-btn layui-btn-sm create_btn">新增</button>
+						        <button class="layui-btn layui-btn-sm delete_btn">删除</button>
+							</div>
+						</div>
+					</div>
+					<div style="width:100%;overflow-x:auto;">				
+						<table class="layui-table backlog_table" lay-even lay-skin="nob">
+							<colgroup>
+								<col>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							    <tr>
+							      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+							      <th>触发器名称</th>
+							      <th>类型</th>
+							      <th>脚本</th>
+							      <th>创建时间</th>
+							      <th>创建人</th>
+							    </tr> 
+							</thead>
+							<tbody>
+							    <tr>
+							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
+							      <td>触发器名称</td>
+							      <td>类型1</td>
+							      <td></td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
+							      <td>触发器名称</td>
+							      <td>类型1</td>
+							      <td></td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
+							      <td>触发器名称</td>
+							      <td>类型1</td>
+							      <td></td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
+							      <td>触发器名称</td>
+							      <td>类型1</td>
+							      <td></td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
+							      <td>触发器名称</td>
+							      <td>类型1</td>
+							      <td></td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							</tbody>
+						</table>				
+					</div>
+					<div id="demo7"></div>
+			    </div>
+		  	</div>
+		</div>
+		<div class="display_container">
+			<div class="display_content">
+				<div class="top">
+					新增触发器
+				</div>
+				<div class="middle">
+					<form class="layui-form" action="" style="margin-top:30px;">
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">触发器名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">类型</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">脚本</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>	
+					</form>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>		
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.exedit.js"></script>
+	<script>
+		//tree
+		var setting = {	};
+
+		var zNodes =[
+			{ name:"父节点1 - 展开", open:true,
+				children: [
+					{ name:"父节点11 - 折叠",
+						children: [
+							{ name:"叶子节点111"},
+							{ name:"叶子节点112"},
+							{ name:"叶子节点113"},
+							{ name:"叶子节点114"}
+						]},
+					{ name:"父节点12 - 折叠",
+						children: [
+							{ name:"叶子节点121"},
+							{ name:"叶子节点122"},
+							{ name:"叶子节点123"},
+							{ name:"叶子节点124"}
+						]},
+					{ name:"父节点13 - 没有子节点", isParent:true}
+				]},
+			{ name:"父节点2 - 折叠",
+				children: [
+					{ name:"父节点21 - 展开", open:true,
+						children: [
+							{ name:"叶子节点211"},
+							{ name:"叶子节点212"},
+							{ name:"叶子节点213"},
+							{ name:"叶子节点214"}
+						]},
+					{ name:"父节点22 - 折叠",
+						children: [
+							{ name:"叶子节点221"},
+							{ name:"叶子节点222"},
+							{ name:"叶子节点223"},
+							{ name:"叶子节点224"}
+						]},
+					{ name:"父节点23 - 折叠",
+						children: [
+							{ name:"叶子节点231"},
+							{ name:"叶子节点232"},
+							{ name:"叶子节点233"},
+							{ name:"叶子节点234"}
+						]}
+				]},
+			{ name:"父节点3 - 没有子节点", isParent:true}
+
+		];
+		//分页
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage,layer = layui.layer;  
+			  //完整功能
+			laypage.render({
+			    elem: 'demo7'
+			    ,count: 50
+			    ,limit: 10
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			      console.log(obj)
+			    }
+			}); 
+			laypage.render({
+			    elem: 'demo8'
+			    ,count: 50
+			    ,limit: 5
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			      console.log(obj)
+			    }
+			}); 
+		});
+		
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			
+			$(".create_btn").click(function(){
+				$(".display_container").css("display","block");
+			})
+			$(".copy_btn").click(function(){
+				$(".display_container3").css("display","block");
+			})
+			$(".sure_btn").click(function(){
+				$(".display_container").css("display","none");
+				$(".display_container3").css("display","none");
+			})
+			$(".cancel_btn").click(function(){
+				$(".display_container").css("display","none");
+				$(".display_container3").css("display","none");
+			})
+		});
+		
+  </script>

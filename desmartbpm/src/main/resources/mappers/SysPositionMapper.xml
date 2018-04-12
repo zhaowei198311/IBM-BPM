@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.SysPositionMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.SysPosition" >
+    <result column="POSITION_UID" property="positionUid" jdbcType="VARCHAR" />
+    <result column="POSITION_NAME" property="positionName" jdbcType="VARCHAR" />
+    <result column="ORDER_INDEX" property="orderIndex" jdbcType="DECIMAL" />
+    <result column="POSITION_NO" property="positionNo" jdbcType="VARCHAR" />
+    <result column="POSITION_LAYER" property="positionLayer" jdbcType="VARCHAR" />
+    <result column="POSITION_DESC" property="positionDesc" jdbcType="VARCHAR" />
+    <result column="EXT1" property="ext1" jdbcType="VARCHAR" />
+    <result column="EXT2" property="ext2" jdbcType="VARCHAR" />
+    <result column="EXT3" property="ext3" jdbcType="VARCHAR" />
+    <result column="EXT4" property="ext4" jdbcType="VARCHAR" />
+    <result column="EXT5" property="ext5" jdbcType="VARCHAR" />
+    <result column="IS_CLOSED" property="isClosed" jdbcType="DECIMAL" />
+    <result column="CLOSE_DATE" property="closeDate" jdbcType="TIMESTAMP" />
+    <result column="BEGIN_DATE" property="beginDate" jdbcType="TIMESTAMP" />
+    <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.SysPosition" >
+    insert into SYS_POSITION (POSITION_UID, POSITION_NAME, ORDER_INDEX, 
+      POSITION_NO, POSITION_LAYER, POSITION_DESC, 
+      EXT1, EXT2, EXT3, EXT4, 
+      EXT5, IS_CLOSED, CLOSE_DATE, 
+      BEGIN_DATE, END_DATE, CREATE_DATE, 
+      UPDATE_DATE)
+    values (#{positionUid,jdbcType=VARCHAR}, #{positionName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, 
+      #{positionNo,jdbcType=VARCHAR}, #{positionLayer,jdbcType=VARCHAR}, #{positionDesc,jdbcType=VARCHAR}, 
+      #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, 
+      #{ext5,jdbcType=VARCHAR}, #{isClosed,jdbcType=DECIMAL}, #{closeDate,jdbcType=TIMESTAMP}, 
+      #{beginDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.SysPosition" >
+    insert into SYS_POSITION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="positionUid != null" >
+        POSITION_UID,
+      </if>
+      <if test="positionName != null" >
+        POSITION_NAME,
+      </if>
+      <if test="orderIndex != null" >
+        ORDER_INDEX,
+      </if>
+      <if test="positionNo != null" >
+        POSITION_NO,
+      </if>
+      <if test="positionLayer != null" >
+        POSITION_LAYER,
+      </if>
+      <if test="positionDesc != null" >
+        POSITION_DESC,
+      </if>
+      <if test="ext1 != null" >
+        EXT1,
+      </if>
+      <if test="ext2 != null" >
+        EXT2,
+      </if>
+      <if test="ext3 != null" >
+        EXT3,
+      </if>
+      <if test="ext4 != null" >
+        EXT4,
+      </if>
+      <if test="ext5 != null" >
+        EXT5,
+      </if>
+      <if test="isClosed != null" >
+        IS_CLOSED,
+      </if>
+      <if test="closeDate != null" >
+        CLOSE_DATE,
+      </if>
+      <if test="beginDate != null" >
+        BEGIN_DATE,
+      </if>
+      <if test="endDate != null" >
+        END_DATE,
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE,
+      </if>
+      <if test="updateDate != null" >
+        UPDATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="positionUid != null" >
+        #{positionUid,jdbcType=VARCHAR},
+      </if>
+      <if test="positionName != null" >
+        #{positionName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null" >
+        #{orderIndex,jdbcType=DECIMAL},
+      </if>
+      <if test="positionNo != null" >
+        #{positionNo,jdbcType=VARCHAR},
+      </if>
+      <if test="positionLayer != null" >
+        #{positionLayer,jdbcType=VARCHAR},
+      </if>
+      <if test="positionDesc != null" >
+        #{positionDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="ext1 != null" >
+        #{ext1,jdbcType=VARCHAR},
+      </if>
+      <if test="ext2 != null" >
+        #{ext2,jdbcType=VARCHAR},
+      </if>
+      <if test="ext3 != null" >
+        #{ext3,jdbcType=VARCHAR},
+      </if>
+      <if test="ext4 != null" >
+        #{ext4,jdbcType=VARCHAR},
+      </if>
+      <if test="ext5 != null" >
+        #{ext5,jdbcType=VARCHAR},
+      </if>
+      <if test="isClosed != null" >
+        #{isClosed,jdbcType=DECIMAL},
+      </if>
+      <if test="closeDate != null" >
+        #{closeDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginDate != null" >
+        #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

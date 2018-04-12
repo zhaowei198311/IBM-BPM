@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.dao.SysDepartmentDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.SysDepartment">
+		<result column="DEPART_UID" property="departUid" />
+		<result column="DEPART_PARENT" property="departParent" />
+		<result column="DEPART_NAME" property="departName" />
+		<result column="ORDER_INDEX" property="orderIndex" />
+		<result column="DEPART_DESC" property="departDesc" />
+		<result column="DEPART_NO" property="departNo" />
+		<result column="DEPART_LAYER" property="departLayer" />
+		<result column="DEPART_ADMINS" property="departAdmins" />
+		<result column="DEPART_ZONE" property="departZone" />
+		<result column="COMPANY_UID" property="companyUid" />
+		<result column="EXT1" property="ext1" />
+		<result column="EXT2" property="ext2" />
+		<result column="WORK_CALENDAR" property="workCalendar" />
+		<result column="EXT3" property="ext3" />
+		<result column="EXT4" property="ext4" />
+		<result column="EXT5" property="ext5" />
+		<result column="DEPART_TYPE" property="departType" />
+		<result column="IS_CLOSED" property="isClosed" />
+		<result column="CLOSE_DATE" property="closeDate" />
+		<result column="BEGIN_DATE" property="beginDate" />
+		<result column="END_DATE" property="endDate" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	
+	<select id="selectAll" parameterType="SysDepartment"  resultMap="BaseResultMap">
+	 		select * from Sys_Department where 1=1 
+	 		<if test="departName!= null and departName!='' ">
+	 			and DEPART_NAME=#{departName}
+	 		</if>
+	  </select>
+	  
+	  <select id="select" parameterType="SysDepartment"  resultMap="BaseResultMap">
+	  		select * from Sys_Department
+	  </select>
+		
+	 <insert id="insert" parameterType="SysDepartment" >
+	 </insert>
+	  
+	  <select id="findById" parameterType="SysDepartment" resultMap="BaseResultMap" >
+	  		select * from Sys_Department u where u.DEPART_UID=#{departUid}
+	  </select>
+	  
+	  <select id="selectTree" parameterType="TreeNode" resultType="TreeNode">
+	  		select depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
+			select  d.depart_name,d.depart_no,d.depart_parent,1 lvl,'true' isParent from Sys_Department  d  
+			union all 
+			select u.user_name,u.user_id,u.depart_uid  depart_parent,2 lvl,'false' isParent from sys_user u  
+			) where
+			<choose>
+				<when test="id!=null and id!='' ">
+					 depart_parent=#{id}
+				</when>  
+             	<otherwise>
+             		depart_no='10000000'
+             	</otherwise>
+			</choose>
+	  </select>
+	  
+	  <delete id="delete" parameterType="SysDepartment">
+	  		DELETE FROM SYS_RESOURCE where RESOUCE_UID=#{resouceUid}
+	  </delete>
+	  
+	  <update id="update" parameterType="SysDepartment" >
+	  </update>
+
+</mapper>

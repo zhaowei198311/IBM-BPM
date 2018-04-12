@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.dao.SysResourceDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.SysResource">
+		<result column="RESOUCE_UID" property="resouceUid" />
+		<result column="RESOUCE_NAME" property="resouceName" />
+		<result column="ORDER_INDEX" property="orderIndex" />
+		<result column="PARENT_ID" property="parentId" />
+		<result column="RESOUCE_NO" property="resouceNo" />
+		<result column="RESOUCE_DESC" property="resouceDesc" />
+		<result column="RESOUCE_TYPE" property="resouceType" />
+		<result column="EXT1" property="ext1" />
+		<result column="EXT2" property="ext2" />
+		<result column="EXT3" property="ext3" />
+		<result column="EXT4" property="ext4" />
+		<result column="EXT5" property="ext5" />
+		<result column="IS_CLOSED" property="isClosed" />
+		<result column="CLOSE_DATE" property="closeDate" />
+		<result column="BEGIN_DATE" property="beginDate" />
+		<result column="END_DATE" property="endDate" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    RESOUCE_UID, RESOUCE_NAME, ORDER_INDEX, PARENT_ID, RESOUCE_NO, RESOUCE_DESC, RESOUCE_TYPE, 
+    EXT1, EXT2, EXT3, EXT4, EXT5, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
+    UPDATE_DATE
+  </sql>
+  
+	<select id="selectAll" parameterType="SysResource"  resultMap="BaseResultMap">
+	 		select <include refid="Base_Column_List" />  from SYS_RESOURCE where 1=1
+	 		
+			<if test="resouceName != null" >
+	        	and RESOUCE_NAME CONCAT(CONCAT('%',#{resouceName}),'%') 
+	      	</if>
+	      	<if test="resouceUid != null" >
+			      and resouce_Uid=#{resouceUid}
+			 </if>
+	      	
+	      	 <if test="parentId != null" >
+			      and PARENT_ID=#{parentId}
+			 </if>
+	  </select>
+	  
+	  <select id="select" parameterType="SysResource"  resultMap="BaseResultMap">
+	  </select>
+		
+	 <insert id="insert" parameterType="SysResource" >
+	 		 insert into SYS_RESOURCE (RESOUCE_UID, RESOUCE_NAME, ORDER_INDEX, 
+      PARENT_ID, RESOUCE_NO, RESOUCE_DESC, 
+      RESOUCE_TYPE, EXT1, EXT2, 
+      EXT3, EXT4, EXT5, IS_CLOSED, 
+      CLOSE_DATE, BEGIN_DATE, END_DATE, 
+      CREATE_DATE, UPDATE_DATE)
+    values (#{resouceUid,jdbcType=VARCHAR}, #{resouceName,jdbcType=VARCHAR}, #{orderIndex}, 
+      #{parentId,jdbcType=VARCHAR}, #{resouceNo,jdbcType=VARCHAR}, #{resouceDesc,jdbcType=VARCHAR}, 
+      #{resouceType}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
+      #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{isClosed}, 
+      #{closeDate,jdbcType=DATE}, #{beginDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},sysdate,sysdate)
+	 </insert>
+	  
+	  <select id="findById" parameterType="SysResource" resultMap="BaseResultMap" >
+		  	select 
+    <include refid="Base_Column_List" />
+    from SYS_RESOURCE
+    where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR}
+	  </select>
+	  
+	  <delete id="delete" parameterType="SysResource">
+	  	  delete from SYS_RESOURCE
+    where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR}
+	  </delete>
+	  
+	  <update id="update" parameterType="SysResource" >
+	  		 update SYS_RESOURCE
+    set RESOUCE_NAME = #{resouceName,jdbcType=VARCHAR},
+      ORDER_INDEX = #{orderIndex},
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      RESOUCE_NO = #{resouceNo,jdbcType=VARCHAR},
+      RESOUCE_DESC = #{resouceDesc,jdbcType=VARCHAR},
+      RESOUCE_TYPE = #{resouceType},
+      EXT1 = #{ext1,jdbcType=VARCHAR},
+      EXT2 = #{ext2,jdbcType=VARCHAR},
+      EXT3 = #{ext3,jdbcType=VARCHAR},
+      EXT4 = #{ext4,jdbcType=VARCHAR},
+      EXT5 = #{ext5,jdbcType=VARCHAR},
+      IS_CLOSED = #{isClosed},
+      CLOSE_DATE = #{closeDate,jdbcType=DATE},
+      BEGIN_DATE = #{beginDate,jdbcType=DATE},
+      END_DATE = #{endDate,jdbcType=DATE},
+      UPDATE_DATE =sysdate
+    where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR}
+	  </update>
+</mapper>

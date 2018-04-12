@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
+  		<link href="css/my.css" rel="stylesheet" />
+  		
+	</head>
+	<body>
+		<div class="container">
+			<div class="search_area">
+				<div class="search_area top_btn">
+					<a href="user.html"><button class="layui-btn layui-btn-primary layui-btn-sm">返回</button></a>
+					<!--<span style="float:right;">
+						<button class="layui-btn layui-btn-primary layui-btn-sm">保存</button><button class="layui-btn layui-btn-sm">提交</button><button class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
+					</span>-->
+				</div>
+			</div>
+			<div>	
+				<p class="title_p">常规信息</p>
+				<div class="layui-container">  
+					<div class="layui-row">
+						<form class="layui-form">
+					    	<div class="layui-col-md6">					    	
+						  		<div class="layui-form-item">
+								    <label class="layui-form-label">部门</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" placeholder="" class="layui-input">
+								    </div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">用户名</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" placeholder=""  class="layui-input">
+								    </div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">姓名</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" placeholder=""  class="layui-input">
+								    </div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">部门管理者</label>
+								    <div class="layui-input-block">
+								      <select name="city" lay-verify="required">
+								        <option value=""></option>
+								        <option value="0">是</option>
+								        <option value="1">否</option>
+								      </select>
+								    </div>
+								</div>
+						    </div>
+						    <div class="layui-col-md6">
+						    	<div class="layui-form-item">
+								    <label class="layui-form-label">类型</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" placeholder="" class="layui-input">
+								    </div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">创建日期</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" value="2019-04-02" disabled="disabled" class="layui-input">
+								    </div>
+								</div>
+								<div class="layui-form-item">
+								    <label class="layui-form-label">更新日期</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" value="2019-04-02" disabled="disabled" class="layui-input">
+								    </div>
+								</div>
+						    </div>
+						</form>
+					</div>
+				</div>
+				<p class="title_p">有效性</p>
+				<div class="layui-container">  
+					<div class="layui-row">
+						<form class="layui-form">
+					    	<div class="layui-col-md6">									
+								<div class="layui-form-item">
+								    <label class="layui-form-label">是否注销</label>
+								    <div class="layui-input-block">
+								      <input type="checkbox" name="switch" lay-skin="switch">
+								    </div>
+								</div>
+						    </div>
+						    <div class="layui-col-md6">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">注销日期</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required" value="2019-04-02" disabled="disabled" class="layui-input">
+								    </div>
+								</div>
+						    </div>
+						</form>
+					</div>
+				</div>
+				<p class="title_p">个人信息</p>
+				<div class="layui-container">  
+					<div class="layui-row">
+						<form class="layui-form">
+					    	<div class="layui-col-md6">									
+								<div class="layui-form-item">
+								    <label class="layui-form-label">电话</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required"  class="layui-input">
+								    </div>
+								</div>
+						    </div>
+						    <div class="layui-col-md6">
+								<div class="layui-form-item">
+								    <label class="layui-form-label">传真</label>
+								    <div class="layui-input-block">
+								      <input type="text" name="title" required  lay-verify="required"  class="layui-input">
+								    </div>
+								</div>
+						    </div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>
+	<script>
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#test1'
+			});
+		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#test2'
+			});
+		});
+		$(function(){
+			$("create_btn").click(function(){
+				window.location.href="new_user.html";
+			})
+			
+		})
+	</script>

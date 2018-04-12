@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.dao.SysUserDao">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.SysUser">
+		<result column="USER_UID" property="userUid" />
+		<result column="USER_NO" property="userNo" />
+		<result column="USER_ID" property="userId" />
+		<result column="USER_NAME" property="userName" />
+		<result column="ORDER_INDEX" property="orderIndex" />
+		<result column="PASSWORD" property="password" />
+		<result column="DEPART_UID" property="departUid" />
+		<result column="IS_MANAGER" property="isManager" />
+		<result column="WORK_CALENDAR" property="workCalendar" />
+		<result column="OFFICE_TEL" property="officeTel" />
+		<result column="OFFICE_FAX" property="officeFax" />
+		<result column="MOBILE" property="mobile" />
+		<result column="EMAIL" property="email" />
+		<result column="USER_IP" property="userIp" />
+		<result column="IS_SINGLE_LOGIN" property="isSingleLogin" />
+		<result column="WORK_STATUS" property="workStatus" />
+		<result column="SESSION_TIME" property="sessionTime" />
+		<result column="WECHAT" property="wechat" />
+		<result column="EXT1" property="ext1" />
+		<result column="EXT2" property="ext2" />
+		<result column="EXT3" property="ext3" />
+		<result column="EXT4" property="ext4" />
+		<result column="EXT5" property="ext5" />
+		<result column="REPORT_TO" property="reportTo" />
+		<result column="IS_CLOSED" property="isClosed" />
+		<result column="CLOSE_DATE" property="closeDate" />
+		<result column="BEGIN_DATE" property="beginDate" />
+		<result column="END_DATE" property="endDate" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	
+	 <select id="selectAll" parameterType="SysUser"  resultMap="BaseResultMap">
+	 		select * from Sys_User
+	  </select>
+	  
+	  <select id="select" parameterType="SysUser"  resultMap="BaseResultMap">
+	  		select * from Sys_User
+	  </select>
+		
+	 <insert id="insert" parameterType="SysUser" >
+	 </insert>
+	  
+	  <select id="findById" parameterType="SysUser" resultMap="BaseResultMap" >
+	  		select * from SysUser u where u.USER_UID=#{userUid}
+	  </select>
+	  
+	  <delete id="delete" parameterType="SysUser">
+	  </delete>
+	  
+	  <update id="update" parameterType="SysUser" >
+	  		
+	  </update>
+	
+</mapper>
