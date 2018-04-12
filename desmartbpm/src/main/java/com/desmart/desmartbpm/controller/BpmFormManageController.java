@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.entity.DhProcess;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 
 /**
@@ -38,15 +39,15 @@ public class BpmFormManageController {
 			@RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
 			@RequestParam(value="pageSize",defaultValue="10") Integer pageSize) {
 		
-		List<DhProcess> dhProcessList = new ArrayList<>();
-		DhProcess dhProcess1 = new DhProcess();
+		List<DhProcessDefinition> dhProcessList = new ArrayList<>();
+		DhProcessDefinition dhProcess1 = new DhProcessDefinition();
 		dhProcess1.setProUid("0001");
 		dhProcessList.add(dhProcess1);
-		DhProcess dhProcess2 = new DhProcess();
+		DhProcessDefinition dhProcess2 = new DhProcessDefinition();
 		dhProcess2.setProUid("0002");
 		dhProcessList.add(dhProcess2);
 		//获得该流程所有子流程(包含自身)
-		ServerResponse<List<DhProcess>> serverResponse = ServerResponse.createBySuccess(dhProcessList);
+		ServerResponse<List<DhProcessDefinition>> serverResponse = ServerResponse.createBySuccess(dhProcessList);
 		if(!serverResponse.isSuccess()) {
 			return serverResponse; 
 		}

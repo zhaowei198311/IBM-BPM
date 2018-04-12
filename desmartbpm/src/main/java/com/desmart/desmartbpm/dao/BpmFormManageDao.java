@@ -6,11 +6,11 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.DhProcess;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
 @Repository
 public interface BpmFormManageDao {
 
-	List<BpmForm> listForm(@Param("dhProcessList")List<DhProcess> dhProcessList, @Param("formTitle")String formTitle);
+	List<BpmForm> listForm(@Param("dhProcessList")List<DhProcessDefinition> dhProcessList, @Param("formTitle")String formTitle);
 
 }
