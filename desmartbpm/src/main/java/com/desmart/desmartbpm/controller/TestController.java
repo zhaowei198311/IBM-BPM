@@ -195,5 +195,11 @@ public class TestController extends BaseWebController {
     }
     
     
+    @RequestMapping(value = "/interfaceMessage")
+    public String interfaceMessage() {
+    	//
+    	return "interfaceManagement";
+    }
+    
     
 }

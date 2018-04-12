@@ -444,7 +444,7 @@ public class HttpClientUtils {
 	 * @param user 
 	 * @param message
 	 */
-	public void addSign(String user,String message) {
+	public void addSign(String user,String message,String tkiid) {
 		LOG.info("加签服务 开始...");
 		try {
 			// 首先邀请某一个用户参与任务协作 （组织架构树 选择）
@@ -453,7 +453,7 @@ public class HttpClientUtils {
 		params.put("action", "invite");
 		params.put("user", user);
 		params.put("message", message);
-		HttpReturnStatus result = checkApiLogin("post", "http://10.0.4.201:9080/rest/bpm/wle/v1/task/74", params);
+		HttpReturnStatus result = checkApiLogin("post", "http://10.0.4.201:9080/rest/bpm/wle/v1/task/"+tkiid, params);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -461,14 +461,17 @@ public class HttpClientUtils {
 	}
 	
 	/**
-	 * 减签 通用服务
+	 * 加签通用服务完成之后 将任务分配给原始所有者
 	 */
-	public void minusSign() {
+	public void minusSign(String tkiid) {
 		LOG.info("减签服务 开始...");
 		try {
 			// 首先邀请某一个用户参与任务协作 （组织架构树 选择）
-			
-			
+			Map<String, Object> paramsMap = new HashMap<>();
+			paramsMap.put("action", "assign");
+			paramsMap.put("back", "true");
+			paramsMap.put("parts", "all");
+			HttpReturnStatus result = checkApiLogin("put", "http://10.0.4.201:9080/rest/bpm/wle/v1/task/"+tkiid, paramsMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

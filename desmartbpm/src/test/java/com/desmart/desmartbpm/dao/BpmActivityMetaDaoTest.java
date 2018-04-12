@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,11 +41,16 @@ public class BpmActivityMetaDaoTest {
 	
 	private static void B() {
 		HttpClientUtils httputils = new HttpClientUtils();
-		httputils.Reject("25","bpdid:06560963b419b917:6da5adb9:1621e277375:-7feb","deadmin");
+		httputils.Reject("26","bpdid:06560963b419b917:6da5adb9:1621e277375:-7feb","deadmin");
 	}
 	
 	private static void C() {
 		HttpClientUtils httputils = new HttpClientUtils();
-		httputils.addSign("celladmin", "加签给第二个人看看");
+		httputils.addSign("celladmin", "加签给第二个人看看","");
+	}
+	
+	private static void D() {
+		HttpClientUtils httputils = new HttpClientUtils();
+		httputils.minusSign("");
 	}
 }
