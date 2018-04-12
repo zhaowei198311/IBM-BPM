@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.BpmFormManageDao" >
+
+    <sql id="base_column">
+        DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_TYPE,DYN_FILENAME,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME
+    </sql>
+    
+    <select id="listForm" resultType="com.desmart.desmartbpm.entity.BpmForm" parameterType="map">
+    	select <include refid="base_column"/>,u.user_name creatorFullName 
+    	from bpm_form bmf 
+    		left join sys_user u on bmf.creator = u.user_uid
+    	where pro_uid in
+    	<foreach collection="dhProcessList" item="item" index="index" open="(" separator="," close=")">
+            #{item.proUid}
+        </foreach>
+        and pro_version in
+        <foreach collection="dhProcessList" item="item" index="index" open="(" separator="," close=")">
+            #{item.proVerUid}
+        </foreach>
+        <if test="formTitle != null and !formTitle.trim().isEmpty()">
+        	and dyn_title = #{formTitle}
+        </if>
+    </select> 
+</mapper> 
