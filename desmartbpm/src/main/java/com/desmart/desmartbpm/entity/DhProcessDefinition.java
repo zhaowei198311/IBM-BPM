@@ -3,12 +3,14 @@ package com.desmart.desmartbpm.entity;
 import java.util.Date;
 
 /**
- * 流程
+ * 流程定义
  * @author yaoyunqing
  *
  */
-public class DhProcess {
+public class DhProcessDefinition {
     private String proUid;// 流程id(引擎中流程图id)
+    
+    private String proAppId; // 流程应用库id
 
     private String proVerUid;// 流程版本id（引擎中流程快照id）
     
@@ -338,29 +340,39 @@ public class DhProcess {
         this.proDerivationScreenTpl = proDerivationScreenTpl;
     }
 
+    public String getProAppId() {
+        return proAppId;
+    }
+
+    public void setProAppId(String proAppId) {
+        this.proAppId = proAppId;
+    }
+
     @Override
     public String toString() {
-        return "DhProcess [proUid=" + proUid + ", proVerUid=" + proVerUid
-                + ", proParent=" + proParent + ", proTime=" + proTime
-                + ", proTimeUnit=" + proTimeUnit + ", proStatus=" + proStatus
-                + ", proTypeDay=" + proTypeDay + ", proType=" + proType
-                + ", proAssignment=" + proAssignment + ", proShowMap="
-                + proShowMap + ", proShowMessage=" + proShowMessage
-                + ", proSubprocess=" + proSubprocess + ", proTriStart="
-                + proTriStart + ", proTriDeleted=" + proTriDeleted
-                + ", proTriCanceled=" + proTriCanceled + ", proTriPaused="
-                + proTriPaused + ", proTriUnpaused=" + proTriUnpaused
-                + ", proTriReassigned=" + proTriReassigned + ", proTypeProcess="
-                + proTypeProcess + ", proShowDelegate=" + proShowDelegate
-                + ", proShowDynaform=" + proShowDynaform + ", proCategory="
-                + proCategory + ", lastModifiedDate=" + lastModifiedDate
-                + ", lastModifiedUser=" + lastModifiedUser + ", createDate="
-                + createDate + ", createUser=" + createUser + ", proHeight="
-                + proHeight + ", proWidth=" + proWidth + ", proTitleX="
-                + proTitleX + ", proTitleY=" + proTitleY + ", proDebug="
-                + proDebug + ", proDynaforms=" + proDynaforms
+        return "DhProcess [proUid=" + proUid + ", proAppId=" + proAppId
+                + ", proVerUid=" + proVerUid + ", proParent=" + proParent
+                + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit
+                + ", proStatus=" + proStatus + ", proTypeDay=" + proTypeDay
+                + ", proType=" + proType + ", proAssignment=" + proAssignment
+                + ", proShowMap=" + proShowMap + ", proShowMessage="
+                + proShowMessage + ", proSubprocess=" + proSubprocess
+                + ", proTriStart=" + proTriStart + ", proTriDeleted="
+                + proTriDeleted + ", proTriCanceled=" + proTriCanceled
+                + ", proTriPaused=" + proTriPaused + ", proTriUnpaused="
+                + proTriUnpaused + ", proTriReassigned=" + proTriReassigned
+                + ", proTypeProcess=" + proTypeProcess + ", proShowDelegate="
+                + proShowDelegate + ", proShowDynaform=" + proShowDynaform
+                + ", proCategory=" + proCategory + ", lastModifiedDate="
+                + lastModifiedDate + ", lastModifiedUser=" + lastModifiedUser
+                + ", createDate=" + createDate + ", createUser=" + createUser
+                + ", proHeight=" + proHeight + ", proWidth=" + proWidth
+                + ", proTitleX=" + proTitleX + ", proTitleY=" + proTitleY
+                + ", proDebug=" + proDebug + ", proDynaforms=" + proDynaforms
                 + ", proDerivationScreenTpl=" + proDerivationScreenTpl + "]";
     }
+
+    
     
     
 }

@@ -28,6 +28,7 @@ import com.desmart.desmartbpm.dao.DhProcessMetaDao;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
@@ -254,7 +255,16 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         }
         if (dhProcessMeta.getProName().length() > 50) {
             return ServerResponse.createByErrorMessage("流程名过长");
-        }    
+        }
+        
+        // 查找分类下有没有重名的元数据
+        DhProcessMeta metaSelective = new DhProcessMeta();
+        metaSelective.setProName(dhProcessMeta.getProName());
+        metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
+        if (dhProcessMetaDao.listByDhProcessMetaSelective(metaSelective).size() > 0) {
+            return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
+        }
+        
         dhProcessMeta.setProMetaUid(EntityIdPrefix.DH_PROCESS_META + UUID.randomUUID().toString());
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessMeta.setCreator(currUser);
@@ -265,6 +275,61 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
             return ServerResponse.createByErrorMessage("添加失败");
         }
         
+    }
+    
+    public ServerResponse renameDhProcessMeta(String metaUid, String newName) {
+        if (StringUtils.isBlank(metaUid) || StringUtils.isBlank(newName)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        newName = newName.trim();
+        
+        DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProMetaUid(metaUid);
+        if (dhProcessMeta == null) {
+            return ServerResponse.createByErrorMessage("此流程元数据不存在");
+        } 
+        
+        if (newName.equals(dhProcessMeta.getProName())) {
+            return ServerResponse.createBySuccess();
+        }
+        
+        DhProcessMeta metaSelective = new DhProcessMeta();
+        metaSelective.setProName(newName);
+        metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
+        if (dhProcessMetaDao.listByDhProcessMetaSelective(metaSelective).size() > 0) {
+            return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
+        }
+        
+        String updator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhProcessMeta.setUpdateUser(updator);
+        dhProcessMeta.setProName(newName);
+        int countRow = dhProcessMetaDao.updateByProMetaUidSelective(dhProcessMeta);
+        
+        if (countRow > 0) {
+            return ServerResponse.createBySuccess();
+        } else {
+            return ServerResponse.createByErrorMessage("修改失败");
+        }
+    }
+    
+    @Transactional
+    public ServerResponse removeProcessMeta(String uids) {
+        String[] uidArr = uids.split(";");
+        // todo 判断能否删除元数据
+        for (String uid : uidArr) {
+            DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProMetaUid(uid);
+            if (dhProcessMeta == null) {
+                throw new PlatformException("找不到指定的元数据");
+            }
+            int countRow = dhProcessMetaDao.removeByProMetaUid(uid);
+        }
+        return ServerResponse.createBySuccess();
+    }
+
+
+    @Override
+    public List<DhProcessMeta> listAll() {
+        
+        return dhProcessMetaDao.listAll();
     }
     
 }

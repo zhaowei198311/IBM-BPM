@@ -47,4 +47,25 @@ public interface DhProcessMetaDao {
      * @return
      */
     List<DhProcessMeta> listByCategoryListAndProName(@Param("categoryList")List<DhProcessCategory> categoryList, @Param("proName")String proName);
+    
+    /**
+     * 根据传入的条件查找
+     * @param dhProcessMeta
+     * @return
+     */
+    List<DhProcessMeta> listByDhProcessMetaSelective(DhProcessMeta dhProcessMeta);
+    
+    /**
+     * 更新指定内容
+     * @param dhProcessMeta
+     * @return
+     */
+    int updateByProMetaUidSelective(DhProcessMeta dhProcessMeta);
+    
+    /**
+     * 删除指定元数据id的元数据
+     * @param proceeMetaUid
+     * @return
+     */
+    int removeByProMetaUid(String proceeMetaUid);
 }

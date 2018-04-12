@@ -32,4 +32,22 @@ public interface DhProcessMetaService {
      * @return
      */
     ServerResponse createDhProcessMeta(DhProcessMeta dhProcessMeta);
+    
+    /**
+     * 重命名流程元数据
+     * @param metaUid 元数据主键
+     * @param newName 新名
+     * @return
+     */
+    ServerResponse renameDhProcessMeta(String metaUid, String newName);
+    
+    /**
+     * 删除指定的流程元数据
+     * @param uids 要删除的一条或多条流程元数据
+     * @return
+     */
+    ServerResponse removeProcessMeta(String uids);
+    
+    List<DhProcessMeta> listAll();
+    
 }

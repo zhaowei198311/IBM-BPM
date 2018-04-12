@@ -128,7 +128,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
         
         List<DhProcessMeta> metaList = dhProcessMetaDao.listByCategoryList(list);
         if (metaList.size() > 0) {
-            return ServerResponse.createByErrorMessage("此分类或其子分类下绑定了流程，请先解除绑定的流程");
+            return ServerResponse.createByErrorMessage("此分类或其子分类下有流程元数据，请先删除流程元数据");
         }
         int countRow = dhProcessCategoryDao.removeBatchByCategoryList(list);
         if (countRow > 0) {

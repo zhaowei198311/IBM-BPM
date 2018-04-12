@@ -16,6 +16,7 @@ public class DhProcessMeta {
     private String updateUser;
     private Date lastUpdateTime;
     private String categoryUid;  // 流程分类
+    private String proDisplay; // 流程引擎中流程名
     
     // 不再此表中
     private String creatorFullName;
@@ -87,6 +88,14 @@ public class DhProcessMeta {
     }
     public void setUpdatorFullName(String updatorFullName) {
         this.updatorFullName = updatorFullName;
+    }
+    
+    
+    public String getProDisplay() {
+        return proDisplay;
+    }
+    public void setProDisplay(String proDisplay) {
+        this.proDisplay = proDisplay;
     }
     @Override
     public String toString() {

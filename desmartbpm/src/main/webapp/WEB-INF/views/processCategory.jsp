@@ -40,8 +40,8 @@
                             <div class="layui-col-md3" style="text-align:right;">
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
-                                    <button class="layui-btn delete_btn">删除</button>
-                                    <button onclick="test();">test</button>
+                                    <button class="layui-btn delete_btn" id="meta_del_btn">删除</button>
+                                    
                             </div>
                         </div>
                     </div>
@@ -56,13 +56,15 @@
                                 <col>
                                 <col>
                                 <col>
+                                <col>
                             </colgroup>
                             <thead>
                                 <tr>
-                                  <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
-                                  <th>流程名称</th>
+                                  <th><input type="checkbox" id="select_all_check" name="" title='全选' lay-skin="primary"> 序号</th>
+                                  <th>流程元数据名称</th>
                                   <th>流程应用库id</th>
                                   <th>流程图id</th>
+                                  <th>源流程名</th>
                                   <th>创建者</th>
                                   <th>创建时间</th>
                                   <th>更新者</th>
@@ -76,48 +78,42 @@
                 </div>
             </div>
         </div>
-        <div class="display_container4">
+        <div class="display_container4" id="editMeta_container">
         <div class="display_content4">
             <div class="top">
-                编辑流程元数据
+                重命名流程元数据
             </div>
             <div class="middle2">
                 <form class="layui-form" action="" style="margin-top:30px;">
                   <div class="layui-form-item">
                     <label class="layui-form-label">流程名称</label>
                     <div class="layui-input-block">
-                      <input type="text" name="title" required  lay-verify="required" value="流程名称1" autocomplete="off" class="layui-input">
+                      <input type="text" name="title" id="metarename_input" required  lay-verify="required" value="流程名称1" autocomplete="off" class="layui-input">
                     </div>
                   </div>
                   <div class="layui-form-item">
                     <label class="layui-form-label">流程应用库</label>
                     <div class="layui-input-block">
-                      <input type="text" name="title" required  lay-verify="required" value="2066.c2c0dc07-39c9-41de-8581-729ec9ce28a3" autocomplete="off" class="layui-input" disabled="disabled">
+                      <input type="text" id="eidtMeta_appIdShow" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
                     </div>
                   </div>
                   <div class="layui-form-item">
                     <label class="layui-form-label">流程图id</label>
                     <div class="layui-input-block">
-                      <input type="text" name="title" required  lay-verify="required" value="2066.c2c0dc07-39c9-41de-8581-729ec9ce28a3" autocomplete="off" class="layui-input" disabled="disabled">
+                      <input type="text" name="title" id="eidtMet_bpdIdShow" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
                     </div>
                   </div>
                   <div class="layui-form-item">
-                    <label class="layui-form-label">表单页面路径</label>
+                    <label class="layui-form-label">源流程名</label>
                     <div class="layui-input-block">
-                      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                    </div>
-                  </div>
-                  <div class="layui-form-item">
-                    <label class="layui-form-label">流程编号</label>
-                    <div class="layui-input-block">
-                      <input type="text" name="title" required  lay-verify="required" value="编号01" autocomplete="off" class="layui-input" disabled="disabled">
+                      <input type="text" name="title" id="eidtMet_displayShow" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
                     </div>
                   </div>
                 </form>
             </div>
             <div class="foot">
-                <button class="layui-btn layui-btn sure_btn">确定</button>
-                <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                <button class="layui-btn layui-btn sure_btn" id="editMeta_sureBtn">确定</button>
+                <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="editMeta_cancelBtn">取消</button>
             </div>
         </div>
     </div>
@@ -136,7 +132,7 @@
                         </colgroup>
                         <thead>
                             <tr>
-                              <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+                              <th>序号</th>
                               <th>流程名称</th>
                               <th>流程应用库id</th>
                               <th>流程图id</th>
@@ -188,13 +184,15 @@
         var parentNodeTId = ""; // 父节点的zTree唯一id
         var tempRemoveTreeNode; // 记录要被删除的节点
         var tempRemoveParentTreeNode; // 记录要被删除的节点的父节点
+        var metaToEdit = ""; // 编辑的元数据
         // 准备新建的对象
         var newMeta = {
             categoryUid: "rootCategory",
             categoryName: "流程分类",
             proAppId: "",
             proUid: "",
-            proName: ""
+            proName: "",
+            proDisplay: ""
         }
         
         
@@ -216,7 +214,6 @@
             display: ""
         }
         
-        //tree
         var setting = {
             view: {
                 addHoverDom: addHoverDom,
@@ -422,6 +419,15 @@
             	$("#exposed_table_container").css("display","block");
             })
             
+            // 全选当页元数据 
+            $('#select_all_check').click(function() {
+            	if ($(this).prop('checked') == true) {
+            		$("[name='proMeta_check']").prop('checked', true);
+            	} else {
+            		$("[name='proMeta_check']").prop('checked', false);
+            	}
+            });
+            
             // 确认添加
             $('#bind_meta_btn').click(function() {
             	// 被勾选的复选框
@@ -437,14 +443,52 @@
             	newMeta.proAppId = checkedItems.eq(0).data('processappid');
             	newMeta.proUid = checkedItems.eq(0).data('bpdid');
             	var orginName = checkedItems.eq(0).parent().next().html();
+                newMeta.proDisplay = orginName;
             	$('#addMeta_container').css("display", "block");
             	$('#addMetaName_input').val(orginName);
             	$('#addMetaName_input').focus();
             	
             });
             
+            $('#meta_del_btn').click(function() {
+            	// todo
+            	var cks = $("[name='proMeta_check']:checked");
+            	if (!cks.length) {
+            		alert("请选择要删除的流程元数据");
+            		return;
+            	}
+            	var uids = "";
+            	cks.each(function(index, element){
+            		uids += $(element).parent().parent().data('metauid') + ";";
+            	});
+            	uids = uids.substring(0, uids.length -1);
+            	if (confirm("确认删除元数据？")) {
+            		$.ajax({
+            			url: common.getPath() + "/processMeta/remove",
+            			type: "post",
+            			dataType: "json",
+            			data: {
+            				"uids": uids
+            			},
+            			success: function(result) {
+            				if (result.status == 0) {
+            					getMetaInfo();
+                                alert('删除成功');
+            				} else {
+            					alert(result.msg);
+            				}
+            			},
+            			error: function() {
+            				alert("删除失败，请稍后再试");
+            			}
+            		});
+            	}
+            	
+            });
+            
             // 取消添加
             $('#cancel_bind_btn').click(function() {
+            	getMetaInfo();
             	$('#exposed_table_container').css("display", "none");
             });
             
@@ -452,6 +496,43 @@
             $('#addMetaCancel_btn').click(function() {
                 $('#addMeta_container').css("display", "none");
             });
+            
+            // 取消修改
+            $('#editMeta_cancelBtn').click(function() {
+            	$('#editMeta_container').css("display", "none");
+            });
+            
+            // 确认修改元数据名称
+            $('#editMeta_sureBtn').click(function() {
+            	var newName = $('#metarename_input').val();
+            	if (!newName.trim()) {
+            		alert('请输入新名称');
+            		return;
+            	}
+            	$.ajax({
+            		url: common.getPath() + "/processMeta/rename",
+            		type: "post",
+            		dataType: "json",
+            		data: {
+            			"metaUid": metaToEdit,
+            			"newName": newName
+            		},
+            		success: function(result) {
+            			if (result.status == 0) {
+            				$('#editMeta_container').hide();
+            				getMetaInfo();
+            				alert('修改成功');
+            			} else {
+            				alert(result.msg);
+            			}
+            		},
+            		error: function() {
+            			alert('修改失败，请稍后再试');
+            		}
+            		
+            	});
+            });
+            
             
             // 命名后再次确认添加元数据
             $('#addMetaSure_btn').click(function(){
@@ -472,11 +553,13 @@
                         "categoryUid": newMeta.categoryUid,
                         "proAppId": newMeta.proAppId,
                         "proUid": newMeta.proUid,
-                        "proName": inputVal
+                        "proName": inputVal,
+                        "proDisplay": newMeta.proDisplay
                     },
                     success: function(result) {
                         if (result.status == 0) {
                         	$('#addMeta_container').css('display', 'none');
+                        	getExposedInfo();
                         	alert("添加成功");
                         } else {
                         	alert(result.msg);
@@ -487,11 +570,6 @@
                     }
                 });
             });
-            
-            $(".link_table tr td").dblclick(function(){
-                $(".display_container4").css("display","block");
-            })
-
             
             // 确认新建分类
             $("#addCategorySure_btn").click(function(){
@@ -536,9 +614,7 @@
             });
             
         });
-        function test() {
-        	$("#addCategory_container").css("display","block");
-        }
+        
         
         /* 向服务器请求流程元数据   */
         function getMetaInfo() {
@@ -588,10 +664,11 @@
                 if (meta.lastUpdateTime) {
                     updateTime = common.dateToString(new Date(meta.lastUpdateTime));
                 }
-        		trs += '<tr><td><input type="checkbox" name="pro_check" value="' + meta.categoryUid + '" lay-skin="primary">'+ sortNum +'</td>'
+        		trs += '<tr data-metauid="'+meta.proMetaUid+'" ondblclick="showEditDiv(this);"><td><input type="checkbox" name="proMeta_check" value="' + meta.categoryUid + '" lay-skin="primary">'+ sortNum +'</td>'
         		            + '<td>'+meta.proName+'</td>'
         		            + '<td>'+meta.proAppId+'</td>'
         		            + '<td>'+meta.proUid+'</td>'
+        		            + '<td>'+meta.proDisplay+'</td>'
         		            + '<td>'+meta.creatorFullName+'</td>'
         		            + '<td>'+createTime+'</td>'
         		            + '<td>'+meta.updatorFullName+'</td>'
@@ -694,5 +771,14 @@
                 }); 
             });
         }
-        
+        // 展示重命名流程表
+        function showEditDiv(tr){
+        	metaToEdit = $(tr).data('metauid');
+        	$('#metarename_input').val($(tr).find('td').eq(1).html());
+        	$('#eidtMeta_appIdShow').val($(tr).find('td').eq(2).html());
+        	$('#eidtMet_bpdIdShow').val($(tr).find('td').eq(3).html());
+        	$('#eidtMet_displayShow').val($(tr).find('td').eq(4).html());
+        	$('#editMeta_container').show();
+        	$('#metarename_input').focus();
+        }
   </script>
