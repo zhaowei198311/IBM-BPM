@@ -99,7 +99,7 @@
 				<div class="top">
 					绑定系统角色
 				</div>
-				<form class="form-horizontal" action="sysRoleUser/addSysRoleUser"  onsubmit="return validateCallback(this,addsuccess);">
+				<form class="form-horizontal" action="sysRoleUser/addSysRoleUser"  onsubmit="return validateCallback(this,addsuccess1);">
 				<div class="middle">
 					<table class="layui-table backlog_table" lay-even  lay-skin="nob">
 						<colgroup>
@@ -144,7 +144,7 @@
 				<div class="top">
 					绑定业务角色
 				</div>
-				<form class="form-horizontal" action="sysResource/addSysResource"  onsubmit="return validateCallback(this,addsuccess);">
+				<form class="form-horizontal" action="sysResource/addSysResource"  onsubmit="return validateCallback(this,addsuccess2);">
 				<div class="middle">
 					<table class="layui-table backlog_table" lay-even lay-skin="nob">
 						<colgroup>
@@ -239,7 +239,9 @@
 		function openBusinessRoleBindings(userUid,departUid){
 			$('.userUid').val(userUid);
 			$('.departUid').val(departUid);
-			$(".display_container1").css("display","block");
+			
+			opendialog('display_container');
+			
 			$("#systemRoleTable").empty();
 			$.ajax({
 				type:'POST',
@@ -258,6 +260,12 @@
 			});
 		}
 		
+		function addsuccess1(data){
+			returnSuccess(data,'display_container');
+		}
+		function addsuccess2(data){
+			returnSuccess(data,'display_container1');
+		}
 		
 		function check_all(){
 			var chknum = $("#systemRoleTable :checkbox").length;//选项总个数
@@ -281,7 +289,9 @@
 		function openSystemRoleBinding(userUid,departUid){
 			$('#userUid').val(userUid);
 			$('#departUid').val(departUid);
-			$(".display_container1").css("display","block");
+			
+			opendialog('display_container1');
+			
 			$("#systemRoleTable").empty();
 			$.ajax({
 				type:'POST',
