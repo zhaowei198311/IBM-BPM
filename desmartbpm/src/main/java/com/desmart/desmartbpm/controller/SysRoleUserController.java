@@ -54,10 +54,11 @@ public class SysRoleUserController {
 	@ResponseBody
 	public String addSysRoleUser(SysRoleUser sysRoleUser) {
 		try {	
-			String[]  roleUser=sysRoleUser.getUserUid().split(",");
+			String[]  roleUser=sysRoleUser.getRoleUid().split(",");
 			for (String string : roleUser) {
 				sysRoleUser.setMapUid("sysRoleUser:"+UUIDTool.getUUID());
-				sysRoleUser.setUserUid(string);
+				sysRoleUser.setRoleUid(string);
+				sysRoleUser.setMapType(1);
 				sysRoleUserService.insert(sysRoleUser);
 			}
 			return "{\"msg\":\"success\"}";
