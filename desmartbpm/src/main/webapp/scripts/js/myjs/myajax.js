@@ -142,7 +142,8 @@ function selectoptions(url,select){
 
 var dialogs = {
 	add_dialog:'display_container',
-	edit_dialog:'display_container1'
+	edit_dialog:'display_container1',
+	add_team_dialog:'display_container2'
 };
 
 //点新增打开dialog
@@ -160,6 +161,15 @@ function edit(data){
 	$dailogs.css("display","block");
 	$('form',$dailogs)[0].reset();
 	$('form',$dailogs).formEdit(data);
+	$('form',$dailogs).validate().resetForms();
+	$('form',$dailogs).find("input, select, textarea").removeClass('error');
+}
+
+//群组人员分配
+function addRoleTema(){
+	var $dailogs=$('.'+dialogs.add_team_dialog);
+	$dailogs.css("display","block");
+	$('form',$dailogs)[0].reset();
 	$('form',$dailogs).validate().resetForms();
 	$('form',$dailogs).find("input, select, textarea").removeClass('error');
 }
