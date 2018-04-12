@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class SysRoleUser {
     private String mapUid;
 
-    private BigDecimal mapType;
+    private Integer mapType;
 
     private String userUid;
 
@@ -25,11 +25,11 @@ public class SysRoleUser {
         this.mapUid = mapUid == null ? null : mapUid.trim();
     }
 
-    public BigDecimal getMapType() {
+    public Integer getMapType() {
         return mapType;
     }
 
-    public void setMapType(BigDecimal mapType) {
+    public void setMapType(Integer mapType) {
         this.mapType = mapType;
     }
 
