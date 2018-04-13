@@ -13,5 +13,8 @@ public class EntityIdPrefix {
 	
 	/** 流程元数据前缀 */
 	public static final String DH_PROCESS_META = "pro_meta:";
+	
+	/** 接口数据前缀 */
+	public static final String DH_INTERFACE_META = "int_meta";
 
 }
