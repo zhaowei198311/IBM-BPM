@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.controller;
 
 import java.util.List;
 
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class DhProcessDefinitionController {
     private DhProcessCategoryService dhProcessCategoryService;
     @Autowired
     private DhProcessMetaService dhProcessMetaService;
+    @Autowired
+    private DhProcessDefinitionService dhProcessDefinitionService;
     
     
     @RequestMapping(value = "/index")

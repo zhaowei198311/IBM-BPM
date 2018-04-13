@@ -76,6 +76,12 @@ public class DhProcessDefinition {
 
     private String proDerivationScreenTpl;// 发送邮件通知的模板
 
+    // 以下不属于表字段
+    private String creatorFullName;
+
+    private String updatorFullName;
+
+
     public String getProUid() {
         return proUid;
     }
@@ -348,31 +354,61 @@ public class DhProcessDefinition {
         this.proAppId = proAppId;
     }
 
-    @Override
-    public String toString() {
-        return "DhProcess [proUid=" + proUid + ", proAppId=" + proAppId
-                + ", proVerUid=" + proVerUid + ", proParent=" + proParent
-                + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit
-                + ", proStatus=" + proStatus + ", proTypeDay=" + proTypeDay
-                + ", proType=" + proType + ", proAssignment=" + proAssignment
-                + ", proShowMap=" + proShowMap + ", proShowMessage="
-                + proShowMessage + ", proSubprocess=" + proSubprocess
-                + ", proTriStart=" + proTriStart + ", proTriDeleted="
-                + proTriDeleted + ", proTriCanceled=" + proTriCanceled
-                + ", proTriPaused=" + proTriPaused + ", proTriUnpaused="
-                + proTriUnpaused + ", proTriReassigned=" + proTriReassigned
-                + ", proTypeProcess=" + proTypeProcess + ", proShowDelegate="
-                + proShowDelegate + ", proShowDynaform=" + proShowDynaform
-                + ", proCategory=" + proCategory + ", lastModifiedDate="
-                + lastModifiedDate + ", lastModifiedUser=" + lastModifiedUser
-                + ", createDate=" + createDate + ", createUser=" + createUser
-                + ", proHeight=" + proHeight + ", proWidth=" + proWidth
-                + ", proTitleX=" + proTitleX + ", proTitleY=" + proTitleY
-                + ", proDebug=" + proDebug + ", proDynaforms=" + proDynaforms
-                + ", proDerivationScreenTpl=" + proDerivationScreenTpl + "]";
+    public String getCreatorFullName() {
+        return creatorFullName;
     }
 
-    
-    
-    
+    public void setCreatorFullName(String creatorFullName) {
+        this.creatorFullName = creatorFullName;
+    }
+
+    public String getUpdatorFullName() {
+        return updatorFullName;
+    }
+
+    public void setUpdatorFullName(String updatorFullName) {
+        this.updatorFullName = updatorFullName;
+    }
+
+    @Override
+    public String toString() {
+        return "DhProcessDefinition{" +
+                "proUid='" + proUid + '\'' +
+                ", proAppId='" + proAppId + '\'' +
+                ", proVerUid='" + proVerUid + '\'' +
+                ", proParent='" + proParent + '\'' +
+                ", proTime=" + proTime +
+                ", proTimeUnit='" + proTimeUnit + '\'' +
+                ", proStatus='" + proStatus + '\'' +
+                ", proTypeDay='" + proTypeDay + '\'' +
+                ", proType='" + proType + '\'' +
+                ", proAssignment='" + proAssignment + '\'' +
+                ", proShowMap='" + proShowMap + '\'' +
+                ", proShowMessage='" + proShowMessage + '\'' +
+                ", proSubprocess='" + proSubprocess + '\'' +
+                ", proTriStart='" + proTriStart + '\'' +
+                ", proTriDeleted='" + proTriDeleted + '\'' +
+                ", proTriCanceled='" + proTriCanceled + '\'' +
+                ", proTriPaused='" + proTriPaused + '\'' +
+                ", proTriUnpaused='" + proTriUnpaused + '\'' +
+                ", proTriReassigned='" + proTriReassigned + '\'' +
+                ", proTypeProcess='" + proTypeProcess + '\'' +
+                ", proShowDelegate='" + proShowDelegate + '\'' +
+                ", proShowDynaform='" + proShowDynaform + '\'' +
+                ", proCategory='" + proCategory + '\'' +
+                ", lastModifiedDate=" + lastModifiedDate +
+                ", lastModifiedUser='" + lastModifiedUser + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", proHeight=" + proHeight +
+                ", proWidth=" + proWidth +
+                ", proTitleX=" + proTitleX +
+                ", proTitleY=" + proTitleY +
+                ", proDebug='" + proDebug + '\'' +
+                ", proDynaforms='" + proDynaforms + '\'' +
+                ", proDerivationScreenTpl='" + proDerivationScreenTpl + '\'' +
+                ", creatorFullName='" + creatorFullName + '\'' +
+                ", updatorFullName='" + updatorFullName + '\'' +
+                '}';
+    }
 }
