@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
+import java.util.Date;
+
 /**
  * 表单
  * @author loser_wu
@@ -14,11 +16,15 @@ public class BpmForm {
 	private String dynContent;
 	private String proUid;
 	private String proVersion;
+	private String creator;
+	private String creatorFullName;//不是本表，连接查询得到
+	private Date createTime;
 	
 	public BpmForm() {}
-	
+
 	public BpmForm(String dynUid, String dynTitle, String dynDescription, String dynType, String dynFilename,
-			String dynContent, String proUid, String proVersion) {
+			String dynContent, String proUid, String proVersion, String creator, String creatorFullName,
+			Date createTime) {
 		super();
 		this.dynUid = dynUid;
 		this.dynTitle = dynTitle;
@@ -28,6 +34,9 @@ public class BpmForm {
 		this.dynContent = dynContent;
 		this.proUid = proUid;
 		this.proVersion = proVersion;
+		this.creator = creator;
+		this.creatorFullName = creatorFullName;
+		this.createTime = createTime;
 	}
 
 	public String getDynUid() {
@@ -78,11 +87,30 @@ public class BpmForm {
 	public void setProVersion(String proVersion) {
 		this.proVersion = proVersion;
 	}
-	
+	public String getCreatorFullName() {
+		return creatorFullName;
+	}
+	public void setCreatorFullName(String creatorFullName) {
+		this.creatorFullName = creatorFullName;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getCreator() {
+		return creator;
+	}
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
 	@Override
 	public String toString() {
 		return "BpmForm [dynUid=" + dynUid + ", dynTitle=" + dynTitle + ", dynDescription=" + dynDescription
 				+ ", dynType=" + dynType + ", dynFilename=" + dynFilename + ", dynContent=" + dynContent + ", proUid="
-				+ proUid + ", proVersion=" + proVersion + "]";
+				+ proUid + ", proVersion=" + proVersion + ", creator=" + creator + ", creatorFullName="
+				+ creatorFullName + ", createTime=" + createTime + "]";
 	}
 }
