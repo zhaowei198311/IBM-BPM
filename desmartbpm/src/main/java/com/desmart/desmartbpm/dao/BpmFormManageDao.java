@@ -11,6 +11,10 @@ import com.desmart.desmartbpm.entity.DhProcessDefinition;
 @Repository
 public interface BpmFormManageDao {
 
-	List<BpmForm> listForm(@Param("dhProcessList")List<DhProcessDefinition> dhProcessList, @Param("formTitle")String formTitle);
+	List<BpmForm> listFormByProcessCategory(@Param("dhProcessList")List<DhProcessDefinition> dhProcessList,
+			@Param("formTitle")String formTitle);
+
+	List<BpmForm> listFormByProDefinition(@Param("formTitle")String formTitle, 
+			@Param("proUid")String proUid, @Param("proVerUid")String proVerUid);
 
 }
