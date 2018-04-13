@@ -1,9 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +10,8 @@ import com.desmart.desmartbpm.dao.BpmFormManageDao;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class BpmFormManageServiceImpl implements BpmFormManageService{
@@ -19,12 +19,22 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	private BpmFormManageDao bpmFormManageDao;
 	
 	@Override
-	public ServerResponse listForm(List<DhProcessDefinition> dhProcessList, String formTitle, Integer pageNum, Integer pageSize) {
-		pageNum = pageNum == null ? pageNum : 0;
-		pageSize = pageSize == null ? pageSize : Math.abs(pageSize);
+	public ServerResponse<PageInfo<List<BpmForm>>> listFormByProcessCategory(List<DhProcessDefinition> dhProcessList, String formTitle, Integer pageNum, Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
 		//获得的数据
-		List<BpmForm> exposeItemList = bpmFormManageDao.listForm(dhProcessList,formTitle);
-		return null;
+		List<BpmForm> formList = bpmFormManageDao.listFormByProcessCategory(dhProcessList,formTitle);
+		PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public ServerResponse listFormByProDefinition(String formTitle, String proUid, String proVerUid, Integer pageNum,
+			Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		//获得的数据
+		List<BpmForm> formList = bpmFormManageDao.listFormByProDefinition(formTitle,proUid,proVerUid);
+		PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
+		return ServerResponse.createBySuccess(pageInfo);
 	}
 
 }

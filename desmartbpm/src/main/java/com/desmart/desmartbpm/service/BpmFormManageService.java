@@ -8,9 +8,14 @@ import com.desmart.desmartbpm.entity.DhProcessDefinition;
 public interface BpmFormManageService {
 
 	/**
-	 * 获得所有的表单
-	 * @param object 
+	 * 获得某流程分类下所有流程定义的所有表单
 	 */
-	ServerResponse listForm(List<DhProcessDefinition> dhProcessList, String formTitle, Integer pageNum, Integer pageSize);
+	ServerResponse listFormByProcessCategory(List<DhProcessDefinition> dhProcessList, String formTitle, Integer pageNum, Integer pageSize);
+
+	/**
+	 * 获得某版本的流程下的所有表单
+	 */
+	ServerResponse listFormByProDefinition(String formTitle, String proUid, String proVerUid, Integer pageNum,
+			Integer pageSize);
 	
 }
