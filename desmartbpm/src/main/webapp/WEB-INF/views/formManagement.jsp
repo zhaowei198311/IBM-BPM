@@ -26,7 +26,7 @@
 						    	<input id="formTitle" type="text" placeholder="表单名称"  class="layui-input">
 							</div>
 							<div class="layui-col-md3" style="text-align:right;">
-						        <button class="layui-btn layui-btn-sm" >查询</button>
+						        <button class="layui-btn layui-btn-sm" id="searchForm_btn">查询</button>
 						        <button class="layui-btn layui-btn-sm create_btn">新增</button>
 						        <button class="layui-btn layui-btn-sm delete_btn">删除</button>
 						        <button class="layui-btn layui-btn-sm copy_btn">复制快照</button>
@@ -47,46 +47,13 @@
 							      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
 							      <th>表单名称</th>
 							      <th>表单描述</th>
+							      <!-- <th>表单文件名</th> -->
 							      <th>创建时间</th>
 							      <th>创建人</th>
 							    </tr> 
 							</thead>
-							<tbody>
-							    <tr>
-							      <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
-							      <td>表单名称</td>
-							      <td>描述内容...</td>
-							      <td>2018-04-10 10：00：00</td>
-							      <td>zhangsan</td>
-							    </tr>
-							    <tr>
-							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-							      <td>表单名称</td>
-							      <td>描述内容...</td>
-							      <td>2018-04-10 10：00：00</td>
-							      <td>zhangsan</td>
-							    </tr>
-							    <tr>
-							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-							      <td>表单名称</td>
-							      <td>描述内容...</td>
-							      <td>2018-04-10 10：00：00</td>
-							      <td>zhangsan</td>
-							    </tr>
-							    <tr>
-							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-							      <td>表单名称</td>
-							      <td>描述内容...</td>
-							      <td>2018-04-10 10：00：00</td>
-							      <td>zhangsan</td>
-							    </tr>
-							    <tr>
-							      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
-							      <td>表单名称</td>
-							      <td>描述内容...</td>
-							      <td>2018-04-10 10：00：00</td>
-							      <td>zhangsan</td>
-							    </tr>
+							<tbody id="formInfo-table-tbody">
+							    
 							</tbody>
 						</table>				
 					</div>
@@ -229,8 +196,9 @@
 	    	pageNum: 1,
 	    	pageSize: 10,
 	    	total: 0,
-	    	processUid: "",
-	    	proVerUid: ""
+	    	proCategoryUid:"rootCategory",
+	    	proUid:"",
+	    	proVerUid:""
 	    }
 	    // 为弹出框的分页控件服务
 	    /* var pageConfig2 = {
@@ -244,46 +212,54 @@
 	
 		//tree
 		var setting = {
-			data : {
-				key : {
-					name : "categoryName"
-				},
-				simpleData : {
-					enable : true,
-					idKey : "categoryUid",
-					pIdKey : "categoryParent",
-					rootPId : "rootCategory"
-				}
-			},
-			callback : {
-				onClick : zTreeOnClick
-			} 
-		};
+            view: {
+                selectedMulti: false
+            },
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "pid",
+                    rootPId: "rootCategory"
+                }
+            },
+            callback: {
+                onClick: zTreeOnClick// 点击回调 ，自己定义
+            }
+    	};
 
-		
-		var zNodes = [
-				{
-					"categoryUid" : "rootCategory",
-					"categoryParent" : "null",
-					"categoryName" : "流程分类",
-					"categoryIcon" : "icon"
-				},{
-					"categoryUid" : "uid1",
-					"categoryParent" : "rootCategory",
-					"categoryName" : "分类1",
-					"categoryIcon" : "icon"
-				},{
-					"categoryUid" : "uid2",
-					"categoryParent" : "rootCategory",
-					"categoryName" : "分类2",
-					"categoryIcon" : "icon"
-				}/* ,{
-					"categoryUid" : "pro1",
-					"categoryParent" : "rootCategory",
-					"categoryName" : "分类1",
-					"categoryIcon" : null
-				} */
-				]
+	    function zTreeOnClick(event, treeId, treeNode) {
+	    	switch(treeNode.itemType){
+	    		case "category":{
+	    			pageConfig.proCategoryUid = treeNode.id;
+	    			getFormInfoByProCategory();
+	    			break;
+	    		}
+	    		case "processMeta":{//根据流程元获得流程定义-->得到表单数据
+	    			break;
+	    		}
+	    		case "processDefinition":{//根据流程定义的ID以及版本ID获得表单数据
+	    			pageConfig.proUid = "0001";
+	    			pageConfig.proVerUid = "0002";
+	    			getFormInfoByProDefinition();
+	    			break;
+	    		}
+	    	}
+	    	/* if (treeNode.itemType == "processMeta") {
+	    		// 查询
+	    		$.ajax({
+	    			url: common.getPath() + "/processDefinition/listDefinitionByProcessMeta",
+	    			dataType: "json",
+	    			data: {
+	    				"metaUid": treeNode.id
+	    			},
+	    			type: "post",
+	    			success: function(result) {
+	    				
+	    			}
+	    		});
+	    	} */
+	    };
 
 		// 分页
         function doPage() {
@@ -301,16 +277,34 @@
                     	pageConfig.pageNum = obj.curr;
                     	pageConfig.pageSize = obj.limit;
                     	if (!first) {
-                    		getMetaInfo();
+                    		getFormInfoByProCategory();
                     	}
                     }
                 }); 
             });
         }
 
+		//模糊查询
+        $("#searchForm_btn").click(function() {
+        	pageConfig.pageNum = 1;
+        	pageConfig.total = 0;
+        	getFormInfoByProCategory();
+        });
+		
 		$(document).ready(function() {
-			$.fn.zTree.init($("#category_tree"), setting, zNodes);
-
+			//获得流程树的数据
+			$.ajax({
+				 url: common.getPath() + "/formManage/getTreeData",
+				 type: "post",
+				 data: {},
+				 dataType: "json",
+				 success: function(result) {
+					 $.fn.zTree.init($("#category_tree"), setting, result);
+				 }
+			 });
+			
+			getFormInfoByProCategory();
+			
 			$(".create_btn").click(function() {
 				$(".display_container").css("display", "block");
 			})
@@ -327,17 +321,35 @@
 			})
 		});
 
-		//获得表单数据
-		function getFormInfo(){
+		//根据流程定义(proUid,proVerUid)
+		function getFormInfoByProDefinition(){
 			$.ajax({
-				url:common.getPath()+"/",
-				method:"",
+				url:common.getPath() + "/formManage/listFormByProDefinition",
+				type:"post",
 				dataType:"json",
 				data:{
 					"pageNum":pageConfig.pageNum,
 					"pageSize":pageConfig.pageSize,
-					"processUid":pageConfig.processUid,
+					"proUid":pageConfig.proUid,
 					"proVerUid":pageConfig.proVerUid,
+					"formTitle":$("#formTitle").val().trim()
+				},
+				success:function(result){
+					
+				}
+			});
+		}
+		
+		//根据流程分类获得表单数据
+		function getFormInfoByProCategory(){
+			$.ajax({
+				url:common.getPath() + "/formManage/listFormByProcessCategory",
+				type:"post",
+				dataType:"json",
+				data:{
+					"pageNum":pageConfig.pageNum,
+					"pageSize":pageConfig.pageSize,
+					"proCategoryUid":pageConfig.proCategoryUid,
 					"formTitle":$("#formTitle").val().trim()
 				},
 				success:function(result){
@@ -348,7 +360,45 @@
 			});
 		};
 		
-		function zTreeOnClick(event, treeId, treeNode) {
-			//alert(treeNode.tId + ", " + treeNode.categoryName);
-		};
+		// 渲染表格
+        function drawTable(pageInfo) {
+        	pageConfig.pageNum = pageInfo.pageNum;
+        	pageConfig.pageSize = pageInfo.pageSize;
+        	pageConfig.total = pageInfo.total;
+        	doPage();
+        	// 渲染数据
+        	$("#formInfo-table-tbody").html('');
+        	if (pageInfo.total == 0) {
+        		return;
+        	}
+        	
+        	var list = pageInfo.list;
+        	var startSort = pageInfo.startRow;//开始序号
+        	var trs = "";
+        	for(var i=0; i<list.length; i++) {
+        		console.log($("#formInfo-table-tbody").find('tr').length)
+        		var formInfo = list[i];
+        		var sortNum = startSort + i;
+        		var createTime = "";
+                var updateTime = "";
+                if (formInfo.createTime) {
+                	createTime = common.dateToString(new Date(formInfo.createTime));
+                }
+        		trs += '<tr data-formuid="'+formInfo.dynUid+'" ondblclick="showEditDiv(this);">'
+        					+ '<td><input type="checkbox" name="formInfo_check" value="' + formInfo.dynUid + '" lay-skin="primary">'+ sortNum +'</td>'
+        		            + '<td>'+formInfo.dynTitle+'</td>'
+        		            + '<td>'+formInfo.dynDescription+'</td>'
+        		            /* + '<td>'+formInfo.dynFilename+'</td>' */
+        		            + '<td>'+createTime+'</td>'
+        		            + '<td>'+formInfo.creatorFullName+'</td>'
+        		            + '</tr>';
+        	}
+        	$("#formInfo-table-tbody").append(trs);
+        	
+        }
+		
+		function showEditDiv(tr){
+			var formuid = $(tr).data('formuid');
+			alert(formuid);
+		}
 	</script>
