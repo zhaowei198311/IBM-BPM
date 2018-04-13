@@ -6,20 +6,26 @@
         DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_TYPE,DYN_FILENAME,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME
     </sql>
     
-    <select id="listForm" resultType="com.desmart.desmartbpm.entity.BpmForm" parameterType="map">
+    <select id="listFormByProcessCategory" resultType="com.desmart.desmartbpm.entity.BpmForm" parameterType="map">
     	select <include refid="base_column"/>,u.user_name creatorFullName 
-    	from bpm_form bmf 
+    	from bpm_form bmf
     		left join sys_user u on bmf.creator = u.user_uid
-    	where pro_uid in
+    	where bmf.pro_uid in
     	<foreach collection="dhProcessList" item="item" index="index" open="(" separator="," close=")">
             #{item.proUid}
         </foreach>
-        and pro_version in
-        <foreach collection="dhProcessList" item="item" index="index" open="(" separator="," close=")">
-            #{item.proVerUid}
-        </foreach>
         <if test="formTitle != null and !formTitle.trim().isEmpty()">
-        	and dyn_title = #{formTitle}
+        	and dyn_title like '%${formTitle}%' 
         </if>
-    </select> 
-</mapper> 
+    </select>
+    
+    <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    	select <include refid="base_column"/>,u.user_name creatorFullName
+    	from bpm_form bmf
+    		left join sys_user u on bmf.creator = u.user_uid
+    	where bmf.pro_uid = #{proUid} and bmf.pro_version = #{proVerUid}
+    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
+        	and dyn_title like '%${formTitle}%' 
+        </if>
+    </select>
+</mapper>
