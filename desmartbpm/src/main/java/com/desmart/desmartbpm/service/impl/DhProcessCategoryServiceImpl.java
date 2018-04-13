@@ -49,6 +49,9 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     
     public List<DhProcessCategory> listAll() {
         List<DhProcessCategory> categoryList = dhProcessCategoryDao.listAll();
+        for (DhProcessCategory dhProcessCategory : categoryList) {
+            dhProcessCategory.setCategoryIcon("../resources/images/1.png");
+        }
         return categoryList;
     }
     

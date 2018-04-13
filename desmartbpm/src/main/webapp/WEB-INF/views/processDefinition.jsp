@@ -32,7 +32,7 @@
                                     <button class="layui-btn layui-btn-sm" >查询</button>
                                     <button class="layui-btn layui-btn-sm create_btn">添加</button>
                                     <button class="layui-btn layui-btn-sm delete_btn">删除</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm ">环节同步</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">同步快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">快照流程图</button>
                                     <a href="progress_set.html"><button class="layui-btn layui-btn-primary layui-btn-sm ">流程配置</button></a>
@@ -62,73 +62,17 @@
                                   <th>流程名称</th>
                                   <th>快照号</th>
                                   <th>快照名称</th>
-                                  <th>状态</th>
+                                  <th>激活状态</th>
                                   <th>快照创建时间</th>
-                                  <th>配置完成情况</th>
-                                  <th>配置时间</th>
-                                  <th>配置人</th>
+                                  <th>流程定义状态</th>
+                                  <th>修改时间</th>
+                                  <th>修改人</th>
                                 </tr> 
                             </thead>
-                            <tbody>
-                                <tr>
-                                  <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
-                                  <td>流程名称</td>
-                                  <td>快照01</td>
-                                  <td>快照名称1</td>
-                                  <td>激活</td>
-                                  <td>2018-04-10 10：00：00</td>
-                                  <td>进行中</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name=""  lay-skin="primary"> 2</td>
-                                  <td>流程名称</td>
-                                  <td>快照01</td>
-                                  <td>快照名称1</td>
-                                  <td>激活</td>
-                                  <td>2018-04-10 10：00：00</td>
-                                  <td>进行中</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" lay-skin="primary"> 3</td>
-                                  <td>流程名称</td>
-                                  <td>快照01</td>
-                                  <td>快照名称1</td>
-                                  <td>激活</td>
-                                  <td>2018-04-10 10：00：00</td>
-                                  <td>进行中</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name="" lay-skin="primary"> 4</td>
-                                  <td>流程名称</td>
-                                  <td>快照01</td>
-                                  <td>快照名称1</td>
-                                  <td>激活</td>
-                                  <td>2018-04-10 10：00：00</td>
-                                  <td>进行中</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                  <td>流程名称</td>
-                                  <td>快照01</td>
-                                  <td>快照名称1</td>
-                                  <td>激活</td>
-                                  <td>2018-04-10 10：00：00</td>
-                                  <td>进行中</td>
-                                  <td>2018-04-09 10:00:00</td>
-                                  <td>zhangsan</td>
-                                </tr>
-                            </tbody>
+                            <tbody id="definitionList_tbody"></tbody>
                         </table>                
                     </div>
-                    <div id="demo7"></div>
+                    <div id="lay_page"></div>
                 </div>
             </div>
         </div>
@@ -208,7 +152,8 @@
 	var pageConfig = {
 	    pageNum: 1,
 	    pageSize: 10,
-	    total: 0
+	    total: 0,
+        metaUid: ""
 	};
 
     var setting = {

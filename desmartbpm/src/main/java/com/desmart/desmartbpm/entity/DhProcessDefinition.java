@@ -52,8 +52,6 @@ public class DhProcessDefinition {
 
     private String proShowDynaform;// 是否有表单
 
-    private String proCategory;// 流程分类id
-
     private Date lastModifiedDate;// 最后更新时间
 
     private String lastModifiedUser;// 最后更新人
@@ -250,13 +248,6 @@ public class DhProcessDefinition {
         this.proShowDynaform = proShowDynaform;
     }
 
-    public String getProCategory() {
-        return proCategory;
-    }
-
-    public void setProCategory(String proCategory) {
-        this.proCategory = proCategory;
-    }
 
     public Date getLastModifiedDate() {
         return lastModifiedDate;
@@ -395,7 +386,6 @@ public class DhProcessDefinition {
                 ", proTypeProcess='" + proTypeProcess + '\'' +
                 ", proShowDelegate='" + proShowDelegate + '\'' +
                 ", proShowDynaform='" + proShowDynaform + '\'' +
-                ", proCategory='" + proCategory + '\'' +
                 ", lastModifiedDate=" + lastModifiedDate +
                 ", lastModifiedUser='" + lastModifiedUser + '\'' +
                 ", createDate='" + createDate + '\'' +

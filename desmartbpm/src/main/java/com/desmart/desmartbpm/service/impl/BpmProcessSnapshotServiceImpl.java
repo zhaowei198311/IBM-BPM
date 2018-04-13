@@ -35,11 +35,10 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     @Autowired
     private BpmActivityMetaDao bpmActivityMetaDao;
 
-    public void startSysncActivityMeta(HttpServletRequest request, List<String> snapshotIds) {
-    	
-    }
+
     
-    public void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId, String bpmProcessSnapshotId) {
+    public void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId) {
+        String bpmProcessSnapshotId = "";
         // 获得所有活动节点（事件节点、网关、人工活动...）和泳道对象
         JSONArray visualModelData = processVisualModel(request, bpdId, snapshotId, processAppId);
         BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
@@ -132,8 +131,12 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }// 至此newActivityMetas中已经是此流程全部的环节
         
         
-        // 根据版本号查询出对应的环节
-        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryBySnapshotUid(bpmProcessSnapshotId);
+        // 查询出表中已存在的此版本信息
+        BpmActivityMeta metaSelective = new BpmActivityMeta();
+        metaSelective.setBpdId(bpdId);
+        metaSelective.setProAppId(processAppId);
+        metaSelective.setSnapshotId(snapshotId);
+        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryByBpmActivityMetaSelective(metaSelective);
         List<BpmActivityMeta> delActivityMetas = new ArrayList<BpmActivityMeta>();
         // 需要删除的环节
         delActivityMetas.addAll(oldActivityMetas);
@@ -146,8 +149,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                     delActivityMetas.remove(oldMeta);
                 }
             }
-
-        	List<BpmActivityMeta> activityMetaExists = bpmActivityMetaDao.queryByActivityBpdIdAndSnapshotUid(activityBpdId, bpmProcessSnapshotId);
+            // 查看这个节点是否存在
+            metaSelective.setActivityBpdId(activityBpdId);
+        	List<BpmActivityMeta> activityMetaExists = bpmActivityMetaDao.queryByBpmActivityMetaSelective(metaSelective);
         	
             if (activityMetaExists.size() > 0) {
             	BpmActivityMeta bpmActivityMeta = activityMetaExists.get(0);
@@ -266,7 +270,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }
 
         try {
-            BpmActivityMeta temp = bpmActivityMetaService.getBpmActivityMeta(id, name, snapshotId, bpdId, type, activityType, "0", activityTo, externalID, loopType, bpmTaskType, bpmProcessSnapshotId, miOrder, 0);
+            BpmActivityMeta temp = bpmActivityMetaService.getBpmActivityMeta(id, name, snapshotId, bpdId, type, activityType, "0", activityTo, externalID, loopType, bpmTaskType, bpmProcessSnapshotId, miOrder, 0, processAppId);
             bpmActivityMetas.add(temp);
         } catch (Exception var24) {
             LOG.error(var24.getMessage(), var24);
@@ -365,7 +369,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 try {
                     BpmActivityMeta tmp2 = bpmActivityMetaService.getBpmActivityMeta(id, name, snapshotId, bpdId, type,
                             activityType, parentActivityBpdId, activityTo, externalID, loopType, bpmTaskType, bpmProcessSnapshotId,
-                            miOrder, deepLevel);
+                            miOrder, deepLevel, processAppId);
                     subBpmActivityMetas.add(tmp2);
                 } catch (Exception var29) {
                     LOG.error(var29.getMessage(), var29);

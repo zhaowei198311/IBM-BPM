@@ -24,7 +24,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
     public BpmActivityMeta getBpmActivityMeta(String activityBpdId, String activityName, String snapshotId, String bpdId,
                                               String type, String activityType, String parentActivityBpdId, String activityTo,
                                               String externalId, String loopType, String bpmTaskType, String bpmProcessSnapshotId,
-                                              String miOrder, Integer deepLevel) throws Exception {
+                                              String miOrder, Integer deepLevel, String proAppId) throws Exception {
         BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
         bpmActivityMeta.setActivityBpdId(activityBpdId);
         bpmActivityMeta.setActivityName(activityName);
@@ -59,6 +59,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         bpmActivityMeta.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
         bpmActivityMeta.setMiOrder(miOrder);
         bpmActivityMeta.setDeepLevel(deepLevel);
+        bpmActivityMeta.setProAppId(proAppId);
         return bpmActivityMeta;
     }
 }

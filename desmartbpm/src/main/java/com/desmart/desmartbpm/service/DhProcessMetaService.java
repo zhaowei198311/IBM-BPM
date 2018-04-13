@@ -20,8 +20,6 @@ public interface DhProcessMetaService {
 
     /**
      * 根据分类id列出所有此分类和其子分类下的流程元数据
-     * @param categoryUid 分类id
-     * @param proName 检索条件
      * @return
      */
     ServerResponse<PageInfo<List<DhProcessMeta>>> listDhProcessMetaByCategoryList(List<DhProcessCategory> categoryList, String proName, Integer pageNum, Integer pageSize);

@@ -10,7 +10,6 @@ import java.util.List;
  */
 public interface BpmProcessSnapshotService {
 
-    void startSysncActivityMeta(HttpServletRequest request, List<String> snapshotIds);
 
     /**
      * 同步环节
@@ -18,9 +17,9 @@ public interface BpmProcessSnapshotService {
      * @param bpdId  流程图ID
      * @param snapshotId 引擎中快照版本
      * @param processAppId  流程应用id
-     * @param bpmProcessSnapshotId  快照版本的id，快照版本的主键
+     *
      */
-    void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId, String bpmProcessSnapshotId);
+    void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
 
     /** 获得虚拟节点  */
     JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);

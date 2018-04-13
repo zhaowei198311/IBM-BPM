@@ -32,6 +32,7 @@ public class LswSnapshot {
     private Date activatedOn;
     private String hasSuspendedAllInstances;
     private String status;
+    private String isActive;
     private String capability;
     private String isArchived;
     private Date archivedOn;
@@ -204,27 +205,47 @@ public class LswSnapshot {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+
+    public String getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public String toString() {
-        return "LswSnapshot [snapshotId=" + snapshotId + ", repositoryBranchId="
-                + repositoryBranchId + ", createdByUserId=" + createdByUserId
-                + ", createdOn=" + createdOn + ", name=" + name + ", acronym="
-                + acronym + ", description=" + description + ", branchId="
-                + branchId + ", projectId=" + projectId + ", seqNum=" + seqNum
-                + ", isSctive=" + isSctive + ", isBlaActive=" + isBlaActive
-                + ", isStarted=" + isStarted + ", isInstalled=" + isInstalled
-                + ", isBlaInstalled=" + isBlaInstalled + ", isTipDeployed="
-                + isTipDeployed + ", isDefault=" + isDefault + ", errorCounter="
-                + errorCounter + ", changeData=" + changeData
-                + ", tipDeploymentInProgress=" + tipDeploymentInProgress
-                + ", origCreatedOn=" + origCreatedOn + ", activatedOn="
-                + activatedOn + ", hasSuspendedAllInstances="
-                + hasSuspendedAllInstances + ", status=" + status
-                + ", capability=" + capability + ", isArchived=" + isArchived
-                + ", archivedOn=" + archivedOn + ", lastModified="
-                + lastModified + "]";
+        return "LswSnapshot{" +
+                "snapshotId='" + snapshotId + '\'' +
+                ", repositoryBranchId='" + repositoryBranchId + '\'' +
+                ", createdByUserId=" + createdByUserId +
+                ", createdOn=" + createdOn +
+                ", name='" + name + '\'' +
+                ", acronym='" + acronym + '\'' +
+                ", description='" + description + '\'' +
+                ", branchId='" + branchId + '\'' +
+                ", projectId='" + projectId + '\'' +
+                ", seqNum=" + seqNum +
+                ", isSctive='" + isSctive + '\'' +
+                ", isBlaActive='" + isBlaActive + '\'' +
+                ", isStarted='" + isStarted + '\'' +
+                ", isInstalled='" + isInstalled + '\'' +
+                ", isBlaInstalled='" + isBlaInstalled + '\'' +
+                ", isTipDeployed='" + isTipDeployed + '\'' +
+                ", isDefault='" + isDefault + '\'' +
+                ", errorCounter=" + errorCounter +
+                ", changeData='" + changeData + '\'' +
+                ", tipDeploymentInProgress='" + tipDeploymentInProgress + '\'' +
+                ", origCreatedOn=" + origCreatedOn +
+                ", activatedOn=" + activatedOn +
+                ", hasSuspendedAllInstances='" + hasSuspendedAllInstances + '\'' +
+                ", status='" + status + '\'' +
+                ", isActive='" + isActive + '\'' +
+                ", capability='" + capability + '\'' +
+                ", isArchived='" + isArchived + '\'' +
+                ", archivedOn=" + archivedOn +
+                ", lastModified=" + lastModified +
+                '}';
     }
-    
-    
-    
 }

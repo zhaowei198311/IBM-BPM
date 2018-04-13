@@ -230,7 +230,8 @@
             },
             data: {
             	key: {
-            		name: "categoryName"
+            		name: "categoryName",
+                    icon: "categoryIcon"
             	},
                 simpleData: {
                     enable: true,
@@ -594,7 +595,7 @@
             				// 在tree上加入新节点
             				var zTree = $.fn.zTree.getZTreeObj("category_tree");
             				var treeNode = zTree.getNodeByTId(parentNodeTId);
-            				zTree.addNodes(treeNode, {"categoryUid": result.data.categoryUid, "categoryParent": result.data.categoryParent, "categoryName": result.data.categoryName });
+            				zTree.addNodes(treeNode, {"categoryUid": result.data.categoryUid, "categoryParent": result.data.categoryParent, "categoryName": result.data.categoryName, "categoryIcon": "../resources/images/1.png" });
             			} else {
             				alert(result.msg);
             			}
@@ -653,7 +654,6 @@
         	var startSort = pageInfo.startRow;//开始序号
         	var trs = "";
         	for(var i=0; i<list.length; i++) {
-        		console.log($("#proMet_table_tbody").find('tr').length)
         		var meta = list[i];
         		var sortNum = startSort + i;
         		var createTime = "";

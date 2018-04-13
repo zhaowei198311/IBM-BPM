@@ -136,7 +136,7 @@ public class DhProcessMetaController {
             node.setName(category.getCategoryName());
             node.setPid(category.getCategoryParent());
             node.setItemType("category");
-            node.setIcon("http://localhost:8088/desmartbpm/resources/images/face/60.gif");
+            node.setIcon("../resources/images/1.png");
             nodesToShow.add(node);
         }
         
@@ -146,7 +146,7 @@ public class DhProcessMetaController {
             node.setName(meta.getProName());
             node.setPid(meta.getCategoryUid());
             node.setItemType("processMeta");
-            node.setIcon("http://localhost:8088/desmartbpm/resources/images/face/47.gif");
+            node.setIcon("../resources/images/2.png");
             nodesToShow.add(node);
         }
         

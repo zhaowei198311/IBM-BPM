@@ -15,7 +15,7 @@ public interface BpmActivityMetaDao {
 	 * @param bpmProcessSnapshotId
 	 * @return
 	 */
-	List<BpmActivityMeta> queryBySnapshotUid(String snapshotUid);
+	List<BpmActivityMeta> queryByBpmActivityMetaSelective(BpmActivityMeta bpmActivityMeta);
 
 	/**
 	 * 根据流程图上的元素id和快照版本

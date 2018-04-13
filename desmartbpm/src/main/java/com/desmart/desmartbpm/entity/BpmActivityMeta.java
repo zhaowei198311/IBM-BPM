@@ -7,26 +7,11 @@ import java.util.Map;
 
 public class BpmActivityMeta implements Serializable {
     private String activityId;  // 主键
-    private String allowReject;
-    private String allowRollback;
-    private String allowTransfer;
-    private String allowOversign;
-    private String allowPassby;
-    private String allowDelfile;
-    private String allowUpload;
     private String noteType;
-    private Integer submitManCount;
-    private String defaultOwnerType;
-    private String defaultOwners;
-    private String defaultOwnersName;
-    private String uploadFileLabel;
-    private String downloadFileLabel;
     private Date createTime;
     private String creator;
     private Date updateTime;
     private String updateBy;
-    private Integer sortNum;
-    private String formPath;
     private String nextactivities;
     private String activityName;   // 环节名
     private String snapshotId;   // bpm引擎中快照id
@@ -42,49 +27,21 @@ public class BpmActivityMeta implements Serializable {
     private String miOrder; 
     private String snapshotUid;  // 版本主键
     private String stepId;
-    private String assignVarname;
     private String handleSignType;  // alone  count  是否多人
-    private String emailNotification;
-    private String limitCandidate;
-    private String signCountVarname;
-    private String completeRate;
-    private String defaultPassBy;
-    private String allowCancel;
-    private Double activityCostPrehour;
-    private Integer activityRuntime;
-    private String activityRuntimeUnit;
-    private String overtimeTemplateId;
-    private String overtimeNotifyIsLoop;
-    private String overtimeNotifyPeople;
-    private Map<String, String> overtimeNotifyPeopleMap = new HashMap();
-    private String overtimeLoopTplId;
-    private String overtimeLoopNotifyPeople;
-    private Map<String, String> overtimeLoopNotifyPeopleMap = new HashMap();
-    private Integer loopStartTimeSpan;
-    private String loopStartTimeUnit;
-    private Integer loopTimeSpan;
-    private String loopTimeUnit;
-    private String overtimeNotifyEvent;
-    private String loopNotifyEvent;
-    private String routeVarname;
-    private Integer overtimeDeadline;
-    private String overtimeDeadlineUnit;
-    private String overtimeDeadlineEvent;
     private String activityGroupName;
     private String poId;
-    private Map<String, String> informed = new HashMap<>();
-    //private BpmEmailNotification bpmEmailNotification;
-    //private List<BpmActivityBizPanel> bpmActivityBizPanel;
-    private String rollbackGroupStrategy;
     private Integer deepLevel;   // 流程深度，层级
-    private String autoCommit;
-    private String customRuleParams;
-    private String onTimeTemplateId;
-    private String onTimeNotify;
     private String activityAltName;
-    private String commitTaskEventCls;
-    private String commitDelayCls;
+    private String proAppId;
 
+
+    public String getProAppId() {
+        return proAppId;
+    }
+
+    public void setProAppId(String proAppId) {
+        this.proAppId = proAppId;
+    }
 
     public String getActivityId() {
         return activityId;
@@ -94,116 +51,12 @@ public class BpmActivityMeta implements Serializable {
         this.activityId = activityId;
     }
 
-    public String getAllowReject() {
-        return allowReject;
-    }
-
-    public void setAllowReject(String allowReject) {
-        this.allowReject = allowReject;
-    }
-
-    public String getAllowRollback() {
-        return allowRollback;
-    }
-
-    public void setAllowRollback(String allowRollback) {
-        this.allowRollback = allowRollback;
-    }
-
-    public String getAllowTransfer() {
-        return allowTransfer;
-    }
-
-    public void setAllowTransfer(String allowTransfer) {
-        this.allowTransfer = allowTransfer;
-    }
-
-    public String getAllowOversign() {
-        return allowOversign;
-    }
-
-    public void setAllowOversign(String allowOversign) {
-        this.allowOversign = allowOversign;
-    }
-
-    public String getAllowPassby() {
-        return allowPassby;
-    }
-
-    public void setAllowPassby(String allowPassby) {
-        this.allowPassby = allowPassby;
-    }
-
-    public String getAllowDelfile() {
-        return allowDelfile;
-    }
-
-    public void setAllowDelfile(String allowDelfile) {
-        this.allowDelfile = allowDelfile;
-    }
-
-    public String getAllowUpload() {
-        return allowUpload;
-    }
-
-    public void setAllowUpload(String allowUpload) {
-        this.allowUpload = allowUpload;
-    }
-
     public String getNoteType() {
         return noteType;
     }
 
     public void setNoteType(String noteType) {
         this.noteType = noteType;
-    }
-
-    public Integer getSubmitManCount() {
-        return submitManCount;
-    }
-
-    public void setSubmitManCount(Integer submitManCount) {
-        this.submitManCount = submitManCount;
-    }
-
-    public String getDefaultOwnerType() {
-        return defaultOwnerType;
-    }
-
-    public void setDefaultOwnerType(String defaultOwnerType) {
-        this.defaultOwnerType = defaultOwnerType;
-    }
-
-    public String getDefaultOwners() {
-        return defaultOwners;
-    }
-
-    public void setDefaultOwners(String defaultOwners) {
-        this.defaultOwners = defaultOwners;
-    }
-
-    public String getDefaultOwnersName() {
-        return defaultOwnersName;
-    }
-
-    public void setDefaultOwnersName(String defaultOwnersName) {
-        this.defaultOwnersName = defaultOwnersName;
-    }
-
-    public String getUploadFileLabel() {
-        return uploadFileLabel;
-    }
-
-    public void setUploadFileLabel(String uploadFileLabel) {
-        this.uploadFileLabel = uploadFileLabel;
-    }
-
-    public String getDownloadFileLabel() {
-        return downloadFileLabel;
-    }
-
-    public void setDownloadFileLabel(String downloadFileLabel) {
-        this.downloadFileLabel = downloadFileLabel;
     }
 
     public Date getCreateTime() {
@@ -236,22 +89,6 @@ public class BpmActivityMeta implements Serializable {
 
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
-    }
-
-    public Integer getSortNum() {
-        return sortNum;
-    }
-
-    public void setSortNum(Integer sortNum) {
-        this.sortNum = sortNum;
-    }
-
-    public String getFormPath() {
-        return formPath;
-    }
-
-    public void setFormPath(String formPath) {
-        this.formPath = formPath;
     }
 
     public String getNextactivities() {
@@ -374,228 +211,12 @@ public class BpmActivityMeta implements Serializable {
         this.stepId = stepId;
     }
 
-    public String getAssignVarname() {
-        return assignVarname;
-    }
-
-    public void setAssignVarname(String assignVarname) {
-        this.assignVarname = assignVarname;
-    }
-
     public String getHandleSignType() {
         return handleSignType;
     }
 
     public void setHandleSignType(String handleSignType) {
         this.handleSignType = handleSignType;
-    }
-
-    public String getEmailNotification() {
-        return emailNotification;
-    }
-
-    public void setEmailNotification(String emailNotification) {
-        this.emailNotification = emailNotification;
-    }
-
-    public String getLimitCandidate() {
-        return limitCandidate;
-    }
-
-    public void setLimitCandidate(String limitCandidate) {
-        this.limitCandidate = limitCandidate;
-    }
-
-    public String getSignCountVarname() {
-        return signCountVarname;
-    }
-
-    public void setSignCountVarname(String signCountVarName) {
-        this.signCountVarname = signCountVarName;
-    }
-
-    public String getCompleteRate() {
-        return completeRate;
-    }
-
-    public void setCompleteRate(String completeRate) {
-        this.completeRate = completeRate;
-    }
-
-    public String getDefaultPassBy() {
-        return defaultPassBy;
-    }
-
-    public void setDefaultPassBy(String defaultPassBy) {
-        this.defaultPassBy = defaultPassBy;
-    }
-
-    public String getAllowCancel() {
-        return allowCancel;
-    }
-
-    public void setAllowCancel(String allowCancel) {
-        this.allowCancel = allowCancel;
-    }
-
-    public Double getActivityCostPrehour() {
-        return activityCostPrehour;
-    }
-
-    public void setActivityCostPrehour(Double activityCostPrehour) {
-        this.activityCostPrehour = activityCostPrehour;
-    }
-
-    public Integer getActivityRuntime() {
-        return activityRuntime;
-    }
-
-    public void setActivityRuntime(Integer activityRuntime) {
-        this.activityRuntime = activityRuntime;
-    }
-
-    public String getActivityRuntimeUnit() {
-        return activityRuntimeUnit;
-    }
-
-    public void setActivityRuntimeUnit(String activityRuntimeUnit) {
-        this.activityRuntimeUnit = activityRuntimeUnit;
-    }
-
-    public String getOvertimeTemplateId() {
-        return overtimeTemplateId;
-    }
-
-    public void setOvertimeTemplateId(String overtimeTemplateId) {
-        this.overtimeTemplateId = overtimeTemplateId;
-    }
-
-    public String getOvertimeNotifyIsLoop() {
-        return overtimeNotifyIsLoop;
-    }
-
-    public void setOvertimeNotifyIsLoop(String overtimeNotifyIsLoop) {
-        this.overtimeNotifyIsLoop = overtimeNotifyIsLoop;
-    }
-
-    public String getOvertimeNotifyPeople() {
-        return overtimeNotifyPeople;
-    }
-
-    public void setOvertimeNotifyPeople(String overtimeNotifyPeople) {
-        this.overtimeNotifyPeople = overtimeNotifyPeople;
-    }
-
-    public Map<String, String> getOvertimeNotifyPeopleMap() {
-        return overtimeNotifyPeopleMap;
-    }
-
-    public void setOvertimeNotifyPeopleMap(Map<String, String> overtimeNotifyPeopleMap) {
-        this.overtimeNotifyPeopleMap = overtimeNotifyPeopleMap;
-    }
-
-    public String getOvertimeLoopTplId() {
-        return overtimeLoopTplId;
-    }
-
-    public void setOvertimeLoopTplId(String overtimeLoopTplId) {
-        this.overtimeLoopTplId = overtimeLoopTplId;
-    }
-
-    public String getOvertimeLoopNotifyPeople() {
-        return overtimeLoopNotifyPeople;
-    }
-
-    public void setOvertimeLoopNotifyPeople(String overtimeLoopNotifyPeople) {
-        this.overtimeLoopNotifyPeople = overtimeLoopNotifyPeople;
-    }
-
-    public Map<String, String> getOvertimeLoopNotifyPeopleMap() {
-        return overtimeLoopNotifyPeopleMap;
-    }
-
-    public void setOvertimeLoopNotifyPeopleMap(Map<String, String> overtimeLoopNotifyPeopleMap) {
-        this.overtimeLoopNotifyPeopleMap = overtimeLoopNotifyPeopleMap;
-    }
-
-    public Integer getLoopStartTimeSpan() {
-        return loopStartTimeSpan;
-    }
-
-    public void setLoopStartTimeSpan(Integer loopStartTimeSpan) {
-        this.loopStartTimeSpan = loopStartTimeSpan;
-    }
-
-    public String getLoopStartTimeUnit() {
-        return loopStartTimeUnit;
-    }
-
-    public void setLoopStartTimeUnit(String loopStartTimeUnit) {
-        this.loopStartTimeUnit = loopStartTimeUnit;
-    }
-
-    public Integer getLoopTimeSpan() {
-        return loopTimeSpan;
-    }
-
-    public void setLoopTimeSpan(Integer loopTimeSpan) {
-        this.loopTimeSpan = loopTimeSpan;
-    }
-
-    public String getLoopTimeUnit() {
-        return loopTimeUnit;
-    }
-
-    public void setLoopTimeUnit(String loopTimeUnit) {
-        this.loopTimeUnit = loopTimeUnit;
-    }
-
-    public String getOvertimeNotifyEvent() {
-        return overtimeNotifyEvent;
-    }
-
-    public void setOvertimeNotifyEvent(String overtimeNotifyEvent) {
-        this.overtimeNotifyEvent = overtimeNotifyEvent;
-    }
-
-    public String getLoopNotifyEvent() {
-        return loopNotifyEvent;
-    }
-
-    public void setLoopNotifyEvent(String loopNotifyEvent) {
-        this.loopNotifyEvent = loopNotifyEvent;
-    }
-
-    public String getRouteVarname() {
-        return routeVarname;
-    }
-
-    public void setRouteVarname(String routeVarname) {
-        this.routeVarname = routeVarname;
-    }
-
-    public Integer getOvertimeDeadline() {
-        return overtimeDeadline;
-    }
-
-    public void setOvertimeDeadline(Integer overTimeDeadline) {
-        this.overtimeDeadline = overTimeDeadline;
-    }
-
-    public String getOvertimeDeadlineUnit() {
-        return overtimeDeadlineUnit;
-    }
-
-    public void setOvertimeDeadlineUnit(String overTimeDeadlineUnit) {
-        this.overtimeDeadlineUnit = overTimeDeadlineUnit;
-    }
-
-    public String getOvertimeDeadlineEvent() {
-        return overtimeDeadlineEvent;
-    }
-
-    public void setOvertimeDeadlineEvent(String overtimeDeadlineEvent) {
-        this.overtimeDeadlineEvent = overtimeDeadlineEvent;
     }
 
     public String getActivityGroupName() {
@@ -614,60 +235,12 @@ public class BpmActivityMeta implements Serializable {
         this.poId = poId;
     }
 
-    public Map<String, String> getInformed() {
-        return informed;
-    }
-
-    public void setInformed(Map<String, String> informed) {
-        this.informed = informed;
-    }
-
-    public String getRollbackGroupStrategy() {
-        return rollbackGroupStrategy;
-    }
-
-    public void setRollbackGroupStrategy(String rollbackGroupStrategy) {
-        this.rollbackGroupStrategy = rollbackGroupStrategy;
-    }
-
     public Integer getDeepLevel() {
         return deepLevel;
     }
 
     public void setDeepLevel(Integer deepLevel) {
         this.deepLevel = deepLevel;
-    }
-
-    public String getAutoCommit() {
-        return autoCommit;
-    }
-
-    public void setAutoCommit(String autoCommit) {
-        this.autoCommit = autoCommit;
-    }
-
-    public String getCustomRuleParams() {
-        return customRuleParams;
-    }
-
-    public void setCustomRuleParams(String customRuleParams) {
-        this.customRuleParams = customRuleParams;
-    }
-
-    public String getOnTimeTemplateId() {
-        return onTimeTemplateId;
-    }
-
-    public void setOnTimeTemplateId(String onTimeTemplateId) {
-        this.onTimeTemplateId = onTimeTemplateId;
-    }
-
-    public String getOnTimeNotify() {
-        return onTimeNotify;
-    }
-
-    public void setOnTimeNotify(String onTimeNotify) {
-        this.onTimeNotify = onTimeNotify;
     }
 
     public String getActivityAltName() {
@@ -678,19 +251,36 @@ public class BpmActivityMeta implements Serializable {
         this.activityAltName = activityAltName;
     }
 
-    public String getCommitTaskEventCls() {
-        return commitTaskEventCls;
-    }
-
-    public void setCommitTaskEventCls(String commitTaskEventCls) {
-        this.commitTaskEventCls = commitTaskEventCls;
-    }
-
-    public String getCommitDelayCls() {
-        return commitDelayCls;
-    }
-
-    public void setCommitDelayCls(String commitDelayCls) {
-        this.commitDelayCls = commitDelayCls;
+    @Override
+    public String toString() {
+        return "BpmActivityMeta{" +
+                "activityId='" + activityId + '\'' +
+                ", noteType='" + noteType + '\'' +
+                ", createTime=" + createTime +
+                ", creator='" + creator + '\'' +
+                ", updateTime=" + updateTime +
+                ", updateBy='" + updateBy + '\'' +
+                ", nextactivities='" + nextactivities + '\'' +
+                ", activityName='" + activityName + '\'' +
+                ", snapshotId='" + snapshotId + '\'' +
+                ", activityBpdId='" + activityBpdId + '\'' +
+                ", bpdId='" + bpdId + '\'' +
+                ", type='" + type + '\'' +
+                ", activityType='" + activityType + '\'' +
+                ", activityTo='" + activityTo + '\'' +
+                ", parentActivityBpdId='" + parentActivityBpdId + '\'' +
+                ", externalId='" + externalId + '\'' +
+                ", bpmTaskType='" + bpmTaskType + '\'' +
+                ", loopType='" + loopType + '\'' +
+                ", miOrder='" + miOrder + '\'' +
+                ", snapshotUid='" + snapshotUid + '\'' +
+                ", stepId='" + stepId + '\'' +
+                ", handleSignType='" + handleSignType + '\'' +
+                ", activityGroupName='" + activityGroupName + '\'' +
+                ", poId='" + poId + '\'' +
+                ", deepLevel=" + deepLevel +
+                ", activityAltName='" + activityAltName + '\'' +
+                ", proAppId='" + proAppId + '\'' +
+                '}';
     }
 }

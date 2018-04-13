@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,6 +17,8 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 流程定义控制器
@@ -37,8 +40,6 @@ public class DhProcessDefinitionController {
     @ResponseBody
     public ModelAndView toIndex() {
         ModelAndView mv = new ModelAndView("processDefinition");
-        
-        
         return mv;
     }
     
@@ -49,9 +50,23 @@ public class DhProcessDefinitionController {
      */
     @RequestMapping(value = "/listDefinitionByProcessMeta")
     @ResponseBody
-    public ServerResponse listDefinitionByProcessMeta(String metaUid) {
-        System.out.println(metaUid);
-        return null;
+    public ServerResponse listDefinitionByProcessMeta(String metaUid,
+                                                      @RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
+                                                      @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+
+        return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronized(metaUid, pageNum, pageSize);
+    }
+
+    @RequestMapping(value = "/create")
+    @ResponseBody
+    public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
+
+        try {
+            return dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
+        } catch (Exception e) {
+            LOG.error("创建流程定义失败", e);
+            return ServerResponse.createByErrorMessage("创建流程定义失败");
+        }
     }
     
 }
