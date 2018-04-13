@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhInterfaceDao">
+
+	<resultMap type="java.util.Map" id="interfaceMap">
+		<result column="INTERFACE_ID"  			property="interfaceId"/>
+		<result column="INTERFACE_NAME"  			property="interfaceName"/>
+		<result column="INTERFACE_DESCRIBE"  			property="interfaceDescribe"/>
+		<result column="INTERFACE_TYPE"  			property="interfaceType"/>
+		<result column="INTERFACE_CREATEDATE"  			property="interfaceCreateDate"/>
+		<result column="INTERFACE_CREATEUSER"  			property="interfaceCreateUser"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		INTERFACE_ID, INTERFACE_NAME, INTERFACE_DESCRIBE,
+		INTERFACE_TYPE, INTERFACE_CREATEDATE, INTERFACE_CREATEUSER
+	</sql>
+
+	<select id="listAll" resultType="com.desmart.desmartbpm.entity.DhInterface">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM DH_INTERFACE
+	</select>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="INTERFACE_ID" parameterType="com.desmart.desmartbpm.entity.DhInterface">
+		INSERT INTO
+		DH_INTERFACE
+		(<include refid="Base_Column_List"/>) 
+		VALUES
+		(
+			#{interfaceId},
+			#{interfaceName},
+			#{interfaceDescribe},
+			#{interfaceType},
+			sysdate,
+			#{interfaceCreateUser}
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM DH_INTERFACE 
+		<where>
+			INTERFACE_ID = #{interfaceId}
+		</where>
+	</delete>
+	
+</mapper>

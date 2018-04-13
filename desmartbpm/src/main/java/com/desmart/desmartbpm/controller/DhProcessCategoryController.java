@@ -49,8 +49,6 @@ public class DhProcessCategoryController {
     @ResponseBody
     public ServerResponse addCategory(DhProcessCategory dhProcessCategory) {
         return dhProcessCategoryService.save(dhProcessCategory);
-    }
-    
-    
+    } 
     
 }

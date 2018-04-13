@@ -15,5 +15,20 @@ import com.desmart.desmartbpm.entity.DhInterface;
 */
 public interface DhInterfaceService {
 	
+	/**
+	 * 
+	 * @return 返回一个list 所有的接口数据
+	 */
 	List<DhInterface> listDhInterface();
+
+	/**
+	 * @param Interfaceid 需要删除的接口类
+	 */
+	void delDhInterface(int Interfaceid);
+
+	/**
+	 * @param dhInterface 接口实体
+	 * @return
+	 */
+	int saveDhInterface(DhInterface dhInterface);
 }

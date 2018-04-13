@@ -9,7 +9,7 @@ package com.desmart.desmartbpm.entity;
  */
 public class DhInterface {
 
-	private int interfaceId;
+	private String interfaceId;
 	
 	private String interfaceName;
 	
@@ -24,15 +24,15 @@ public class DhInterface {
 	/**
 	 * @return the interfaceId
 	 */
-	public int getInterfaceId() {
+	public String getInterfaceId() {
 		return interfaceId;
 	}
 
 	/**
 	 * @param interfaceId the interfaceId to set
 	 */
-	public void setInterfaceId(int interfaceId) {
-		this.interfaceId = interfaceId;
+	public void setInterfaceId(String interfaceId) {
+		 this.interfaceId = interfaceId;
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class DhInterface {
 	 * @param interfaceCreateDate
 	 * @param interfaceCreateUser
 	 */
-	public DhInterface(int interfaceId, String interfaceName, String interfaceDescribe, String interfaceType,
+	public DhInterface(String interfaceId, String interfaceName, String interfaceDescribe, String interfaceType,
 			String interfaceCreateDate, String interfaceCreateUser) {
 		super();
 		this.interfaceId = interfaceId;
