@@ -19,7 +19,7 @@ public class SysDepartment implements Serializable {
     /**
      * 组织ID   
      */
-	private String departUid;
+	private String departUid; 
     /**
      * 上级组织ID 
      */
