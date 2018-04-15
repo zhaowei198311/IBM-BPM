@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartbpm.entity.SysRoleUser;
+import com.desmart.desmartbpm.entity.SysUser;
 import com.desmart.desmartbpm.service.SysRoleUserService;
 import com.desmart.desmartbpm.util.PagedResult;
 import com.desmart.desmartbpm.util.UUIDTool;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -32,11 +35,6 @@ public class SysRoleUserController {
 	
 	
 	
-	@RequestMapping("/getSysRoleUser")
-	@ResponseBody
-	public SysRoleUser getSysRoleUser(SysRoleUser sysRoleUser) {
-		return sysRoleUserService.selectByPrimaryKey(sysRoleUser.getRoleUid());
-	}
 	
 	@RequestMapping("/updateSysRoleUser")
 	@ResponseBody
@@ -54,12 +52,57 @@ public class SysRoleUserController {
 	@ResponseBody
 	public String addSysRoleUser(SysRoleUser sysRoleUser) {
 		try {	
-			String[]  roleUser=sysRoleUser.getRoleUid().split(",");
-			for (String string : roleUser) {
-				sysRoleUser.setMapUid("sysRoleUser:"+UUIDTool.getUUID());
-				sysRoleUser.setRoleUid(string);
-				sysRoleUser.setMapType(1);
-				sysRoleUserService.insert(sysRoleUser);
+			sysRoleUserService.delete(sysRoleUser);
+			String roleUid =sysRoleUser.getRoleUid();
+			if(StringUtils.isNotBlank(roleUid)) {
+				String[]  roleUser=roleUid.split(",");
+				for (String string : roleUser) {
+					sysRoleUser.setMapUid("sysRoleUser:"+UUIDTool.getUUID());
+					sysRoleUser.setRoleUid(string);
+					sysRoleUserService.insert(sysRoleUser);
+				}
+			}
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
+
+	@RequestMapping("/addRoleUser")
+	@ResponseBody
+	public String addRoleUser(SysRoleUser sysRoleUser) {
+		try {	
+			sysRoleUserService.delete(sysRoleUser);
+			String roleUid =sysRoleUser.getRoleUid();
+			if(StringUtils.isNotBlank(roleUid)) {
+				String[]  roleUser=roleUid.split(",");
+				for (String string : roleUser) {
+					sysRoleUser.setRoleUid(string);
+					sysRoleUserService.insert(sysRoleUser);
+				}
+			}
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
+	@RequestMapping("/insertRoleUser")
+	@ResponseBody
+	public String insertRoleUser(SysRoleUser sysRoleUser) {
+		try {	
+			sysRoleUserService.delete(sysRoleUser);
+			
+			List<SysUser> userList=sysRoleUser.getUsers();
+			if(userList!=null && userList.size()>0) {
+				for (SysUser sysUser : userList) {
+					sysRoleUser.setDepartUid(sysUser.getDepartUid());
+					sysRoleUser.setUserUid(sysUser.getUserUid());
+					sysRoleUserService.insert(sysRoleUser);
+				}
 			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
@@ -80,5 +123,20 @@ public class SysRoleUserController {
 		}
 	}
 	
+	@RequestMapping(value="/allSysRoleUser")
+	@ResponseBody
+	public List<SysRoleUser> allSysRoleUser(SysRoleUser sysRoleUser){
+		return sysRoleUserService.selectAll(sysRoleUser); 
+	}
 
+	@RequestMapping("/getSysRoleUser")
+	@ResponseBody
+	public SysRoleUser getSysRoleUser(SysRoleUser sysRoleUser) {
+		SysRoleUser sysRoleUser1=sysRoleUserService.selectByPrimaryKey(sysRoleUser.getRoleUid());
+		if(sysRoleUser1==null) {
+			return sysRoleUser;
+		}
+		return sysRoleUser1;
+	}
+	
 }
