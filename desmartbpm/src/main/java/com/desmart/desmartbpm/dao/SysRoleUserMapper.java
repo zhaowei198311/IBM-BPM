@@ -2,10 +2,13 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import com.desmart.desmartbpm.entity.SysRole;
 import com.desmart.desmartbpm.entity.SysRoleUser;
 
 public interface SysRoleUserMapper {
     int deleteByPrimaryKey(String mapUid);
+    
+    int delete(SysRoleUser eneity); 
 
     int insert(SysRoleUser record);
 
@@ -17,5 +20,6 @@ public interface SysRoleUserMapper {
 
     int updateByPrimaryKey(SysRoleUser record);
     
-    public List<SysRoleUser> selectAll(SysRoleUser entity);
+    
+    List<SysRoleUser> selectAll(SysRoleUser entity);
 }
