@@ -3,10 +3,14 @@ package com.desmart.desmartbpm.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.entity.SysUser;
 import com.desmart.desmartbpm.service.SysUserService;
 import com.desmart.desmartbpm.util.PagedResult;
+import com.desmart.desmartbpm.util.UUIDTool;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +45,6 @@ public class SysUserController {
 		return "usermanagement/user";
 	}
 	
-	
 	@RequestMapping(value="/allSysUser")
 	@ResponseBody
 	public PagedResult<SysUser> allSysUser(SysUser sysUser,Integer pageNo,Integer pageSize){
@@ -49,9 +52,20 @@ public class SysUserController {
 		return queryByPage; 
 	}
 	
+	@RequestMapping(value="/userList")
+	@ResponseBody
+	public List<SysUser> userList(SysUser sysUser){
+		return sysUserService.selectAll(sysUser);
+	}
 	
 	
-	
+	@RequestMapping(value = "/userDetail")
+    public ModelAndView userDetail(SysUser sysUser) {
+		ModelAndView moAndView=new ModelAndView("usermanagement/edit_user");
+		moAndView.addObject("sysUser",sysUserService.findById(sysUser));
+        return moAndView;
+    }
+ 	
 	@RequestMapping("/getSysUser")
 	@ResponseBody
 	public SysUser getSysUser(SysUser sysUser) {
@@ -63,6 +77,19 @@ public class SysUserController {
 	public String updateSysUser(SysUser sysUser) {
 		try {	
 			sysUserService.update(sysUser);
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
+	@RequestMapping("/addSysUser")
+	@ResponseBody
+	public String addSysUser(SysUser sysUser) {
+		try {	
+			sysUser.setUserUid("sysUser"+UUIDTool.getUUID());
+			sysUserService.insert(sysUser);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();

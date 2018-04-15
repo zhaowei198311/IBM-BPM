@@ -77,9 +77,9 @@ public class SysTeamController {
 	
 	@RequestMapping("/deleteSysTeam")
 	@ResponseBody
-	public String deleteSysTeam(String roleUid) {
+	public String deleteSysTeam(String teamUid) {
 		try {	
-			sysTeamService.deleteByPrimaryKey(roleUid);
+			sysTeamService.deleteByPrimaryKey(teamUid);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();
