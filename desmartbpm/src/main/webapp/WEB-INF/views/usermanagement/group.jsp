@@ -133,7 +133,7 @@
 	         	}
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysTeam/getSysTeam?teamUid='+this.teamUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon jurisdiction_btn">&#xe6b2;</i>';
+		        str+='<i class="layui-icon jurisdiction_btn">&#xe654;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysTeam/deleteSysTeam?teamUid='+this.teamUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);
