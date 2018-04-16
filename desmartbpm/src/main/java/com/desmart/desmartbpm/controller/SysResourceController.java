@@ -1,6 +1,8 @@
 package com.desmart.desmartbpm.controller;
 
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.entity.SysResource;
+import com.desmart.desmartbpm.entity.TreeNode;
 import com.desmart.desmartbpm.service.SysResourceService;
 import com.desmart.desmartbpm.util.PagedResult;
 import com.desmart.desmartbpm.util.UUIDTool;
@@ -28,7 +31,7 @@ public class SysResourceController {
 	@Autowired
 	private SysResourceService sysResourceService;
 	
-	@RequestMapping(value="/resource_list")
+	@RequestMapping(value="/resource_list") 
 	public String index(){
 		return "usermanagement/resource_list";
 	}
@@ -47,6 +50,12 @@ public class SysResourceController {
 		return queryByPage; 
 	}
 	
+	
+	@RequestMapping(value="/resourceTree")
+	@ResponseBody
+	public List<TreeNode> resourceTree(){
+		return sysResourceService.resourceTree(); 
+	}
 	
 	
 	

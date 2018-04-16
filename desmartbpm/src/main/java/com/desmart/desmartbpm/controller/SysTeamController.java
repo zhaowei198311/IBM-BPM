@@ -9,6 +9,8 @@ import com.desmart.desmartbpm.service.SysTeamService;
 import com.desmart.desmartbpm.util.PagedResult;
 import com.desmart.desmartbpm.util.UUIDTool;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -42,6 +44,11 @@ public class SysTeamController {
 	}
 	
 	
+	@RequestMapping(value="/sysTeamList")
+	@ResponseBody
+	public List<SysTeam> sysTeamList(SysTeam sysTeam){
+		return sysTeamService.selectAll(sysTeam);
+	}
 	
 	
 	@RequestMapping("/getSysTeam")
