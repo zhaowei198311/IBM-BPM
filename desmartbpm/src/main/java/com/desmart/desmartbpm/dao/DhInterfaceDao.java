@@ -5,8 +5,10 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhInterface;
 
 /**  
@@ -30,7 +32,7 @@ public interface DhInterfaceDao {
 	 * @param Interfaceid 接口id
 	 * @return
 	 */
-	int delete(int Interfaceid);
+	int delete(String Interfaceid);
 	
 	/**
 	 * 查询所有接口
@@ -38,6 +40,11 @@ public interface DhInterfaceDao {
 	 */
 	List <DhInterface> listAll();
 	
-	
+	/**
+	 * 根据id模糊查询 
+	 * @return list返回界面
+	 */
+	List<DhInterface> listById(String Interfaceid);
+
 	
 }
