@@ -3,17 +3,21 @@
 <mapper namespace="com.desmart.desmartbpm.dao.DhInterfaceDao">
 
 	<resultMap type="java.util.Map" id="interfaceMap">
-		<result column="INTERFACE_ID"  			property="interfaceId"/>
-		<result column="INTERFACE_NAME"  			property="interfaceName"/>
-		<result column="INTERFACE_DESCRIBE"  			property="interfaceDescribe"/>
-		<result column="INTERFACE_TYPE"  			property="interfaceType"/>
-		<result column="INTERFACE_CREATEDATE"  			property="interfaceCreateDate"/>
-		<result column="INTERFACE_CREATEUSER"  			property="interfaceCreateUser"/>
+		<result column="INT_UID"  					property="intUid"/>
+		<result column="INT_TITLE"  			property="intTitle"/>
+		<result column="INT_DESCRIPTION"  			property="intDescription"/>
+		<result column="INT_TYPE"  			property="intType"/>
+		<result column="INT_URL"  			property="intUrl"/>
+		<result column="INT_CALL_METHOD"  			property="intCallMethod"/>
+		<result column="INT_LOGIN_USER"  			property="intLoginUser"/>
+		<result column="INT_LOGIN_PWD"  			property="intLoginPwd"/>
+		<result column="INT_STATUS"  			property="intStatus"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		INTERFACE_ID, INTERFACE_NAME, INTERFACE_DESCRIBE,
-		INTERFACE_TYPE, INTERFACE_CREATEDATE, INTERFACE_CREATEUSER
+		INT_UID, INT_TITLE, INT_DESCRIPTION,
+		INT_TYPE, INT_URL, INT_CALL_METHOD,
+		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartbpm.entity.DhInterface">
@@ -22,26 +26,41 @@
 		FROM DH_INTERFACE
 	</select>
 	
-	<insert id="save" useGeneratedKeys="true" keyProperty="INTERFACE_ID" parameterType="com.desmart.desmartbpm.entity.DhInterface">
+	<insert id="save" useGeneratedKeys="true" keyProperty="INT_UID" parameterType="com.desmart.desmartbpm.entity.DhInterface">
 		INSERT INTO
 		DH_INTERFACE
 		(<include refid="Base_Column_List"/>) 
 		VALUES
 		(
-			#{interfaceId},
-			#{interfaceName},
-			#{interfaceDescribe},
+			#{intUid},
+			#{intTitle},
+			#{intDescription},
 			#{interfaceType},
-			sysdate,
-			#{interfaceCreateUser}
+			#{intType},
+			#{intUrl},
+			#{intCallMethod},
+			#{intLoginUser},
+			#{intLoginPwd},
+			#{intStatus}
 		)
 	</insert>
 	
-	<delete id="delete" parameterType="java.lang.Integer">
+	<delete id="delete" parameterType="java.lang.String">
 		DELETE FROM DH_INTERFACE 
 		<where>
-			INTERFACE_ID = #{interfaceId}
+			INT_UID = #{intUid}
 		</where>
 	</delete>
+	
+	<select id="listById" resultType="com.desmart.desmartbpm.entity.DhInterface" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM DH_INTERFACE
+		<where>
+			<if test="interfaceId != null">
+				INT_UID like '%' || #{intUid} || '%'
+			</if>
+		</where>
+	</select>
 	
 </mapper>
