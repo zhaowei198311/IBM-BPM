@@ -33,7 +33,7 @@ public class SysRoleResourceServiceImpl  implements SysRoleResourceService {
 	@Override
 	public int insert(SysRoleResource entity) {
 		// TODO Auto-generated method stub
-		sysRoleResourceMapper.deleteByPrimaryKey(entity.getRoleUid());
+		//sysRoleResourceMapper.deleteByPrimaryKey(entity.getRoleUid());
 		entity.setMapUid("sysRoleResource"+UUIDTool.getUUID());
 		return sysRoleResourceMapper.insert(entity);
 	}
