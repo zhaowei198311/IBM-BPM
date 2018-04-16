@@ -9,6 +9,7 @@
     <result column="ROLE_UID" property="roleUid" jdbcType="VARCHAR" />
     <result column="IS_MANAGER" property="isManager" jdbcType="DECIMAL" />
     <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+    <result column="USER_NAME" property="userName"  />
     
     <collection property="users" column="USER_UID" ofType="SysUser"> 
     	<result column="USER_UID" property="userUid" /> 
@@ -29,14 +30,19 @@
   
    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    <include refid="Base_Column_List" />
-    from SYS_ROLE_USER  where 1=1 
+    <include refid="RoleUser_Column_List" />
+    from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID where 1=1 
+     
+     <if test="roleUid!=null">
+     		and r.role_Uid=#{roleUid}
+     </if>
+     
      <if test="userUid != null" >
-         and USER_UID=#{userUid}
+         and r.USER_UID=#{userUid}
       </if>
       
       <if test="mapType != null" >
-         and MAP_TYPE=#{mapType}
+         and r.MAP_TYPE=#{mapType}
       </if>
   </select>
   
