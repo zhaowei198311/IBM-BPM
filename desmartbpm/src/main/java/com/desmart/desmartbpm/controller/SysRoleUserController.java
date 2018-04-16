@@ -60,7 +60,6 @@ public class SysRoleUserController {
 			if(StringUtils.isNotBlank(roleUid)) {
 				String[]  roleUser=roleUid.split(",");
 				for (String string : roleUser) {
-					sysRoleUser.setMapUid("sysRoleUser:"+UUIDTool.getUUID());
 					sysRoleUser.setRoleUid(string);
 					sysRoleUserService.insert(sysRoleUser);
 				}
