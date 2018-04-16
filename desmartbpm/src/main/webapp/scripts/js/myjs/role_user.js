@@ -14,7 +14,7 @@ function openResourceDialog(roleUid){
 		        dataType: "json",  
 		        success: function (data1) {
 		        	opendialog('display_container6');
-					$('#roleUid').val(roleUid);
+					$('#roleUid1').val(roleUid);
 					var treeObjs = $.fn.zTree.getZTreeObj("resourceTree");
 					$.each(data1,function(i,value){
 						var node = treeObjs.getNodeByParam("id",value.resourceUid);
@@ -74,12 +74,19 @@ function onClick(e, treeId, treeNode) {
 	ajaxTodo('sysUser/userList?departUid='+departUid,'setUserList');
 }
 
+
+var ruleUids='';
 //群组人员分配
 function addRoleTema(data){
 	opendialog(dialogs.add_team_dialog);
-	$('#roleUid').val(data.roleUid);
 	var $ul=$("#user_add");
-	user_add_li(data.users,$ul);
+	user_add_li(data,$ul,'addUserRole');
+	$('#roleUid').val(ruleUids);
+}
+
+function openRoleUsers(roleUid){
+	ruleUids=roleUid;
+	ajaxTodo("sysRoleUser/allSysRoleUser?roleUid="+roleUid,"addRoleTema");
 }
 
 function setUserList(data){
@@ -87,13 +94,20 @@ function setUserList(data){
 	user_add_li(data,$ul);
 }
 
-function user_add_li(data,element){
+function user_add_li(data,element,type){
 	var $ul=element;
 	$ul.empty();
 	$("#usersul").empty();
 	$(data).each(function(index){
 		var str='';
-		str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+		if(type=='addUserRole'){
+			str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName;
+			str+="<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
+			str+="<input type='hidden' name='departUid' value='"+this.departUid+"'/>";
+			str+="</li>";
+		}else{
+			str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+		}
 		$ul.append(str);
 	});
 };
@@ -112,14 +126,12 @@ function add_user(){
 			var userUid=$userLi.attr('value');//用ID
 			var departUid=$userLi.attr('departUid');//部门
 			var roleUid=$userLi.attr('roleUid');
-			
-			
 			var name=$userLi.text();
 			if($.inArray(userUid, userids)==-1){
 				var str='';
 				str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
-				str+="<input type='hidden' name='users["+index+"].userUid' value='"+userUid+"'/>";
-				str+="<input type='hidden' name='users["+index+"].departUid' value='"+departUid+"'/>";
+				str+="<input type='hidden' name='userUid' value='"+userUid+"'/>";
+				str+="<input type='hidden' name='departUid' value='"+departUid+"'/>";
 				str+="</li>";
 				$("#user_add").append(str);
 				index++;
