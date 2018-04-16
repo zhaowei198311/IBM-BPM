@@ -1,8 +1,11 @@
 package com.desmart.desmartbpm.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.SysResource;
+import com.desmart.desmartbpm.entity.TreeNode;
 
 /**
  * <p>
@@ -14,5 +17,5 @@ import com.desmart.desmartbpm.entity.SysResource;
  */
 @Repository
 public interface SysResourceDao extends BaseMapper<SysResource> {
-
+	List<TreeNode>	resourceTree();	
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import com.desmart.desmartbpm.entity.SysRoleResource;
 
 public interface SysRoleResourceMapper {
-    int deleteByPrimaryKey(String mapUid);
+    int deleteByPrimaryKey(String roleUid);
 
     int insert(SysRoleResource record);
 

@@ -12,6 +12,5 @@ import com.desmart.desmartbpm.entity.SysUser;
  * @author xsf
  * @since 2018-04-08
  */
-@Repository
 public interface SysUserDao extends BaseMapper<SysUser> {
 }

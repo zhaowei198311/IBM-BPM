@@ -2,11 +2,10 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
-import com.desmart.desmartbpm.entity.SysTeam;
 import com.desmart.desmartbpm.entity.SysTeamMember;
 
 public interface SysTeamMemberMapper {
-    int deleteByPrimaryKey(String memberUid);
+    int deleteByPrimaryKey(String teamUid);
 
     int insert(SysTeamMember record);
 
@@ -18,5 +17,5 @@ public interface SysTeamMemberMapper {
 
     int updateByPrimaryKey(SysTeamMember record);
     
-    public List<SysTeam> selectAll(SysTeamMember entity);
+    public List<SysTeamMember> selectAll(SysTeamMember entity);
 }
