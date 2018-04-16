@@ -75,8 +75,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				      <input type="radio" name="isClosed" value="1" title="显示">
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+				      <input type="radio" name="isClosed" value="1" title="显示" checked>
+				      <input type="radio" name="isClosed" value="0" title="隐藏" >
 				    </div>
 				  </div>	
 				   <input type="hidden" id="submit_add" />	
@@ -111,8 +111,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				      <input type="radio" name="isClosed" value="1" title="显示">
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+				      <input type="radio" name="isClosed" value="1" title="显示" checked>
+				      <input type="radio" name="isClosed" value="0" title="隐藏" >
 				    </div>
 				  <input type="hidden" id="submit_upd" />
 				   <input type="hidden" name="resouceUid" />

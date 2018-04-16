@@ -81,8 +81,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				        <input type="radio" name="isClosed" value="1" title="显示" />
-				       <input type="radio" name="isClosed" value="0" title="隐藏" checked />
+				        <input type="radio" name="isClosed" value="1" title="显示" checked />
+				       <input type="radio" name="isClosed" value="0" title="隐藏"  />
 				    </div>
 				  </div>		
 				  <input type="hidden" name="orderIndex" value="1" />
@@ -114,7 +114,7 @@
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
 				      <input type="radio" name="isClosed" value="1" title="显示" />
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked />
+				      <input type="radio" name="isClosed" value="0" title="隐藏"  />
 				    </div>
 				  </div>
 				  	<input type="hidden" name="roleUid" / >
@@ -146,7 +146,7 @@
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 				</div>
 				<div id="resource"></div>
-				<input type="hidden" name="roleUid" id="roleUid" />
+				<input type="hidden" name="roleUid" id="roleUid1" />
 			</form>
 		</div>
 	</div>
@@ -192,8 +192,8 @@
 					if($.inArray(userUid, userids)==-1){
 						var str='';
 						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
-						str+="<input type='hidden' name='users["+index+"].userUid' value='"+userUid+"'/>";
-						str+="<input type='hidden' name='users["+index+"].departUid' value='"+departUid+"'/>";
+						str+="<input type='hidden' name='userUid' value='"+userUid+"'/>";
+						str+="<input type='hidden' name='departUid' value='"+departUid+"'/>";
 						str+="</li>";
 						$("#user_add").append(str);
 						index++;
@@ -212,13 +212,21 @@
 			user_add_li(data,$ul);
 		}
 		
-		function user_add_li(data,element){
+		function user_add_li(data,element,type){
 			var $ul=element;
 			$ul.empty();
 			$("#usersul").empty();
 			$(data).each(function(index){
+				//$('#roleUid').val(this.roleUid);
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				if(type=='addUserRole'){
+					str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName;
+					str+="<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
+					str+="<input type='hidden' name='departUid' value='"+this.departUid+"'/>";
+					str+="</li>";
+				}else{
+					str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				}
 				$ul.append(str);
 			});
 		};
@@ -264,14 +272,20 @@
 			ajaxTodo('sysUser/userList?departUid='+departUid,'setUserList');
 		}
 		
+		
+		var ruleUids='';
 		//群组人员分配
 		function addRoleTema(data){
 			opendialog(dialogs.add_team_dialog);
-			$('#roleUid').val(data.roleUid);
 			var $ul=$("#user_add");
-			user_add_li(data.users,$ul);
+			user_add_li(data,$ul,'addUserRole');
+			$('#roleUid').val(ruleUids);
 		}
 		
+		function openRoleUsers(roleUid){
+			ruleUids=roleUid;
+			ajaxTodo("sysRoleUser/allSysRoleUser?roleUid="+roleUid,"addRoleTema");
+		}
 		
 		var settingResource = {
 			check: {
@@ -297,7 +311,7 @@
 				        dataType: "json",  
 				        success: function (data1) {
 				        	opendialog('display_container6');
-							$('#roleUid').val(roleUid);
+							$('#roleUid1').val(roleUid);
 							var treeObjs = $.fn.zTree.getZTreeObj("resourceTree");
 							$.each(data1,function(i,value){
 								var node = treeObjs.getNodeByParam("id",value.resourceUid);
@@ -317,6 +331,8 @@
 			returnSuccess(data,'display_container6');
 		}
 		
+		
+		
 		function tabledata(dataList,data){
 			 $(dataList).each(function(i){//重新生成
 				var str='<tr>';
@@ -329,7 +345,7 @@
 	         	}
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysRoleUser/getSysRoleUser?roleUid='+this.roleUid+'","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon add_user" onclick=openRoleUsers("'+this.roleUid+'")  >&#xe654;</i>';
 		        str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';

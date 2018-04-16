@@ -79,8 +79,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				     <input type="radio" name="isClosed" value="1" title="显示">
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+				     <input type="radio" name="isClosed" value="1" title="显示" checked>
+				      <input type="radio" name="isClosed" value="0" title="隐藏" >
 				    </div>
 				  </div>		
 				   <input type="hidden" id="submit_add" />	
@@ -118,7 +118,7 @@
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
 				      <input type="radio" name="isClosed" value="1" title="显示">
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+				      <input type="radio" name="isClosed" value="0" title="隐藏">
 				    </div>
 				  </div>	
 				  <input type="hidden" name="teamUid" />
@@ -181,6 +181,8 @@
 							<ul id="user_add" style="width:240px;display:inline;"></ul>
 						</div>
 						<input type="hidden" name="teamUid" id="teamUid"  />
+						
+						<input type="hidden" name="memberType" value="user" />
 					</form>
 				</div>
 				<div class="foot_temp">
@@ -323,16 +325,23 @@
 			opendialog(dialogs.add_team_dialog);
 			$('#teamUid').val(data.teamUid);
 			var $ul=$("#user_add");
-			user_add_li(data.members,$ul);
+			user_add_li(data.members,$ul,'addUserRole');
 		}
 
-		function user_add_li(data,element){
+		function user_add_li(data,element,type){
+			console.log(data);
 			var $ul=element;
 			$ul.empty();
 			$("#usersul").empty();
 			$(data).each(function(index){
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				if(type=='addUserRole'){
+					str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName;
+					str+="<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
+					str+="</li>";
+				}else{
+					str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				}
 				$ul.append(str);
 			});
 		};

@@ -79,8 +79,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				      <input type="radio" name="isClosed" value="1" title="显示" />
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked />
+				      <input type="radio" name="isClosed" value="1" title="显示" checked />
+				      <input type="radio" name="isClosed" value="0" title="隐藏"  />
 				    </div>
 				  </div>	
 				  
@@ -113,7 +113,7 @@
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
 				        <input type="radio" name="isClosed" value="1" title="显示" />
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked />
+				      <input type="radio" name="isClosed" value="0" title="隐藏"  />
 				    </div>
 				  </div>				  
 				   <input type="hidden" name="roleUid" / >
@@ -143,7 +143,7 @@
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 				</div>
 				<div id="resource"></div>
-				<input type="hidden" name="roleUid" id="roleUid" />
+				<input type="hidden" name="roleUid" id="roleUid1" />
 			</form>
 		</div>
 	</div>
@@ -180,6 +180,7 @@
 			});
 		})
 		
+		
 		function tabledata(dataList,data){
 			 $(dataList).each(function(i){//重新生成
 				var str='<tr>';
@@ -192,7 +193,7 @@
 	         	}
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysRoleUser/getSysRoleUser?roleUid='+this.roleUid+'","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon add_user" onclick=openRoleUsers("'+this.roleUid+'")  >&#xe654;</i>';
 		        str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';

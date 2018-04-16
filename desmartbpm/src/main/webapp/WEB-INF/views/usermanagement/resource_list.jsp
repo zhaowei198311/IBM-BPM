@@ -18,6 +18,7 @@
 	<body>
 		<form class="form-inline" method="post" action="sysResource/allSysResource"  onsubmit="return search(this);">
 			<input type="hidden" name="pageNo" id="pageNo" value="1" >
+			<input type="hidden" name="parentId" value="0" >
 		</form>
 		<div class="container">
 			<div class="search_area">
@@ -38,6 +39,7 @@
 					    <tr>
 					      <th>序号</th>
 					      <th>目录</th>
+					      <th>状态</th>
 					      <th>操作</th>
 					    </tr> 
 					</thead>
@@ -63,8 +65,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
-				      <input type="radio" name="isClosed" value="1" title="显示">
-				      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+				      <input type="radio" name="isClosed" value="1" title="显示" checked>
+				      <input type="radio" name="isClosed" value="0" title="隐藏">
 				    </div>
 				  </div>
 				  <input type="hidden" id="submit_add" />
@@ -94,7 +96,7 @@
 					    <label class="layui-form-label">状态</label>
 					    <div class="layui-input-block">
 					      <input type="radio" name="isClosed" value="1" title="显示">
-					      <input type="radio" name="isClosed" value="0" title="隐藏" checked>
+					      <input type="radio" name="isClosed" value="0" title="隐藏" >
 					    </div>
 					  </div>	
 					   <input type="hidden" id="submit_upd" />
@@ -126,6 +128,11 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.resouceName + '</td>';
+	         	if(this.isClosed==1){
+	         		str+='<td>显示</td>';
+	         	}else{
+	         		str+='<td>隐藏</td>';
+	         	}
 		        str+='<td>';
 		        str+='<i class="layui-icon detail" onclick=detail("'+this.resouceUid+'")>&#xe60a;</i>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysResource/getSysResource?resouceUid='+this.resouceUid+'","edit") >&#xe642;</i>';

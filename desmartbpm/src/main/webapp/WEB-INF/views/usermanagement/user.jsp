@@ -71,7 +71,7 @@
 			<div id="pagination"></div>
 		</div>
 		
-		<div class="display_container">
+		<!-- <div class="display_container">
 		<div class="display_content">
 			<div class="top">
 				新建用户
@@ -92,7 +92,7 @@
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	
 	<div class="display_container3">
 		<div class="display_content3">
@@ -100,7 +100,7 @@
 				新建用户
 			</div>
 				<form  action="sysUser/addSysUser" method="post"   onsubmit="return validateCallback(this,addsuccess3);">
-			<div class="middle" style="height: 520px;">
+			<div class="middle" style="height: 460px;">
 				   <div class="layui-form-item" style="margin-top:30px;">
 				    <label class="layui-form-label">工号</label>
 				    <div class="layui-input-block">
@@ -159,8 +159,8 @@
 				修改用户
 			</div>
 				<form  action="sysUser/updateSysUser" method="post"   onsubmit="return validateCallback(this,updatesuccess1);">
-			<div class="middle" style="height: 520px;">
-				   <div class="layui-form-item" style="margin-top:30px;">
+			<div class="middle" style="height: 500px;">
+				   <div class="layui-form-item" style="margin-top:20px;">
 				    <label class="layui-form-label">工号</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="userNo" required  readonly="readonly" lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input" />
@@ -224,11 +224,7 @@
 				<div class="top">
 					绑定系统角色
 				</div>
-<<<<<<< .mine
-				<form class="form-horizontal" action="sysRoleUser/addSysRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess1);">
-=======
-				<form class="form-horizontal" action="sysRoleUser/addSysRoleUser"  onsubmit="return validateCallback(this,addsuccess1);">
->>>>>>> .r54
+				<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess1);">
 				<div class="middle">
 					<table class="layui-table backlog_table" lay-even  lay-skin="nob">
 						<colgroup>
@@ -274,11 +270,7 @@
 				<div class="top">
 					绑定业务角色
 				</div>
-<<<<<<< .mine
-				<form class="form-horizontal" action="sysRoleUser/addSysRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-=======
-				<form class="form-horizontal" action="sysResource/addSysResource"  onsubmit="return validateCallback(this,addsuccess2);">
->>>>>>> .r54
+				<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
 				<div class="middle">
 					<table class="layui-table backlog_table" lay-even lay-skin="nob">
 						<colgroup>
@@ -408,15 +400,6 @@
 		}
 		
 		
-		//系统角色绑定成功
-		function addsuccess1(data){
-			returnSuccess(data,'display_container1');
-		}
-		//业务角色绑定成功
-		function addsuccess2(data){
-			returnSuccess(data,'display_container');
-		}
-		
 		//table数据显示
 		function tabledata(dataList,data){
 				$(dataList).each(function(i){//重新生成
@@ -458,11 +441,8 @@
 		
 		//打开业务角色绑定
 		function openBusinessRoleBindings(userUid,departUid){
-			
 			var xz = document.getElementById('checkAll_a');
 			 xz.checked=false;
-			
-			
 			$('.userUid').val(userUid);
 			$('.departUid').val(departUid);
 			$(".display_container").css("display","block");
@@ -471,7 +451,7 @@
 			$("#systemRoleTable").empty();*/
 			$.ajax({
 				type:'POST',
-				url:'sysRoleUser/allSysRoleUser?mapType=1',
+				url:'sysRoleUser/allSysRoleUser?mapType=1&userUid='+userUid,
 				dataType:"json",
 				cache: false,
 				success: function(data1){
@@ -507,10 +487,10 @@
 		}
 		
 		function addsuccess1(data){
-			returnSuccess(data,'display_container');
+			returnSuccess(data,'display_container1');
 		}
 		function addsuccess2(data){
-			returnSuccess(data,'display_container1');
+			returnSuccess(data,'display_container');
 		}
 		
 		function check_all(){
@@ -544,7 +524,7 @@
 			
 			$.ajax({
 				type:'POST',
-				url:'sysRoleUser/allSysRoleUser?mapType=0',
+				url:'sysRoleUser/allSysRoleUser?mapType=0&userUid='+userUid,
 				dataType:"json",
 				cache: false,
 				success: function(data1){
