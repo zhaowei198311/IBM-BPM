@@ -9,27 +9,62 @@
     <result column="ROLE_UID" property="roleUid" jdbcType="VARCHAR" />
     <result column="IS_MANAGER" property="isManager" jdbcType="DECIMAL" />
     <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+    
+    <collection property="users" column="USER_UID" ofType="SysUser"> 
+    	<result column="USER_UID" property="userUid" /> 
+    	<result column="USER_NAME" property="userName" /> 
+     </collection> 
   </resultMap>
   <sql id="Base_Column_List" >
     MAP_UID, MAP_TYPE, USER_UID, DEPART_UID, ROLE_UID, IS_MANAGER, IS_SHOW
   </sql>
+  
+  <sql id="RoleUser_Column_List" >
+    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID
+  </sql>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from SYS_ROLE_USER
-    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+    	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r left join Sys_USER u on u.USER_UID=r.USER_UID where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
   
    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from SYS_ROLE_USER
+    from SYS_ROLE_USER  where 1=1 
+     <if test="userUid != null" >
+         and USER_UID=#{userUid}
+      </if>
+      
+      <if test="mapType != null" >
+         and MAP_TYPE=#{mapType}
+      </if>
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_ROLE_USER
-    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+    where USER_UID = #{userUid,jdbcType=VARCHAR}
   </delete>
+  
+  <delete id="delete" parameterType="SysRoleUser" >
+    delete from SYS_ROLE_USER
+    where 1=1
+    <if test="userUid!=null and userUid!='' ">
+    	and USER_UID = #{userUid}
+    </if>
+    
+     <if test="mapType!=null and mapType!='' ">
+    	and MAP_TYPE = #{mapType}
+    </if>
+    
+     <if test="roleUid!=null and roleUid!='' ">
+    	and ROLE_UID = #{roleUid}
+    </if>
+    
+    
+  </delete>
+  
+  
+  
   <insert id="insert" parameterType="com.desmart.desmartbpm.entity.SysRoleUser" >
     insert into SYS_ROLE_USER (MAP_UID, MAP_TYPE, USER_UID, 
       DEPART_UID, ROLE_UID, IS_MANAGER, 

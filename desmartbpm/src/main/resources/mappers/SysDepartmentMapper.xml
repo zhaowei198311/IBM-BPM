@@ -30,10 +30,40 @@
 	</resultMap>
 	
 	<select id="selectAll" parameterType="SysDepartment"  resultMap="BaseResultMap">
-	 		select * from Sys_Department where 1=1 
+			select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE,
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    from Sys_Department d where 1=1 
 	 		<if test="departName!= null and departName!='' ">
-	 			and DEPART_NAME=#{departName}
+	 			and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%') 
 	 		</if>
+	 		
+	 		<if test="departParent!= null and departParent!='' ">
+	 			and d.DEPART_PARENT=#{departParent}
+	 		</if>
+	 		
 	  </select>
 	  
 	  <select id="select" parameterType="SysDepartment"  resultMap="BaseResultMap">
@@ -44,14 +74,37 @@
 	 </insert>
 	  
 	  <select id="findById" parameterType="SysDepartment" resultMap="BaseResultMap" >
-	  		select * from Sys_Department u where u.DEPART_UID=#{departUid}
+	  		select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE,
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    from  Sys_Department d where d.DEPART_UID=#{departUid}
 	  </select>
 	  
 	  <select id="selectTree" parameterType="TreeNode" resultType="TreeNode">
-	  		select depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
-			select  d.depart_name,d.depart_no,d.depart_parent,1 lvl,'true' isParent from Sys_Department  d  
-			union all 
-			select u.user_name,u.user_id,u.depart_uid  depart_parent,2 lvl,'false' isParent from sys_user u  
+	  		select depart_uid as code,depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
+			select  d.depart_uid,d.depart_name,d.depart_no,d.depart_parent,1 lvl,case when (select count(*) from Sys_Department cd where d.depart_no=cd.depart_parent)>0 then 'true' else 'false' end  isParent from Sys_Department  d  
 			) where
 			<choose>
 				<when test="id!=null and id!='' ">

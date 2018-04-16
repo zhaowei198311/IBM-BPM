@@ -45,6 +45,14 @@
 			 </if>
 	  </select>
 	  
+	  <select id="resourceTree" parameterType="TreeNode" resultType="TreeNode">
+	  		select r.resouce_uid id,r.resouce_name name,r.parent_id pId,
+			case when 
+			(select count(1) from SYS_RESOURCE  re where re.parent_id=r.resouce_uid) >0
+			 then 'true' else 'false' end 
+			isParent from SYS_RESOURCE  r
+	  </select>
+	  
 	  <select id="select" parameterType="SysResource"  resultMap="BaseResultMap">
 	  </select>
 		
@@ -71,7 +79,7 @@
 	  
 	  <delete id="delete" parameterType="SysResource">
 	  	  delete from SYS_RESOURCE
-    where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR}
+    where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR} or PARENT_ID = #{resouceUid,jdbcType=VARCHAR}
 	  </delete>
 	  
 	  <update id="update" parameterType="SysResource" >

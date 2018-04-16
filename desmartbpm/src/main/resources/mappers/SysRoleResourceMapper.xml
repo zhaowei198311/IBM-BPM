@@ -16,9 +16,17 @@
     from SYS_ROLE_RESOURCE
     where MAP_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
+  
+  <select id="selectAll" parameterType="SysRoleResource"  resultMap="BaseResultMap">
+ 		select <include refid="Base_Column_List" />  from SYS_ROLE_RESOURCE where 1=1
+      	<if test="roleUid != null" >
+		      and ROLE_UID=#{roleUid}
+		 </if>
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_ROLE_RESOURCE
-    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+    where ROLE_UID = #{roleUid,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.desmart.desmartbpm.entity.SysRoleResource" >
     insert into SYS_ROLE_RESOURCE (MAP_UID, ROLE_UID, RESOURCE_UID, 

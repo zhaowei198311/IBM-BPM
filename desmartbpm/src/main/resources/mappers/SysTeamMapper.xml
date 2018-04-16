@@ -21,17 +21,29 @@
     <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP" />
     <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
     <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+    
+    <collection property="members" column="TEAM_UID" ofType="SysTeamMember"> 
+    	<id column="MEMBER_UID" property="memberUid" jdbcType="VARCHAR" />
+	  <!--   <result column="TEAM_UID" property="teamUid" jdbcType="VARCHAR" /> -->
+	    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+	    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+     </collection> 
+     
   </resultMap>
   <sql id="Base_Column_List" >
     TEAM_UID, TEAM_NAME, ORDER_INDEX, TEAM_TYPE, CREATOR, PARENT_ID, TEAM_DESC, EXT1, 
     EXT2, EXT3, EXT4, EXT5, REPORT_TO, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
     UPDATE_DATE
   </sql>
+  
+  <sql id="Team_TeamMember_List" >
+    t.TEAM_UID, t.TEAM_NAME, t.ORDER_INDEX, t.TEAM_TYPE, t.CREATOR, t.PARENT_ID, t.TEAM_DESC, t.EXT1, 
+    t.EXT2, t.EXT3, t.EXT4, t.EXT5, t.REPORT_TO, t.IS_CLOSED, t.CLOSE_DATE, t.BEGIN_DATE, t.END_DATE, t.CREATE_DATE, 
+    t.UPDATE_DATE,tm.MEMBER_UID,tm.TEAM_UID,tm.USER_UID,tm.MEMBER_TYPE,tm.ORDER_INDEX,u.user_name
+  </sql>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from SYS_TEAM
-    where TEAM_UID = #{teamUid,jdbcType=VARCHAR}
+    select <include refid="Team_TeamMember_List" /> from sys_team t left join sys_team_member tm on t.team_uid=tm.team_uid left join sys_user u on tm.user_uid=u.user_uid where t.TEAM_UID = #{teamUid,jdbcType=VARCHAR}
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
