@@ -52,8 +52,8 @@
 						<tbody>
 							<c:forEach items="${listAll}" var="interfaces">
 								<tr>
-									<td><input type="checkbox" name="" title='全选'
-										lay-skin="primary"> ${interfaces.interfaceId}</td>
+									<td><input id="interfaceIdCheckbox" type="checkbox" title='全选'
+										lay-skin="primary" > ${interfaces.interfaceId}</td>
 									<td>${interfaces.interfaceName}</td>
 									<td>${interfaces.interfaceDescribe}</td>
 									<td>${interfaces.interfaceType}</td>
@@ -119,7 +119,7 @@
 </html>
 
 <script type="text/javascript" src="<%=basePath%>/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/layui.js"></script>
 <script>
 	layui.use(['laypage', 'layer'], function() {
 		var laypage = layui.laypage,
@@ -201,8 +201,39 @@
 			})
 		})
 	})
-
-	// 分页
+	
+	// table 监听
+	layui.use(['table','layer'], function (){
+		var table = layui.table , layer = layui.layer;
+		// 监听表格复选框
+		  table.on('checkbox(demo)', function(obj){
+			    console.log(obj)
+			  });
+	})
+	
+	  	// 删除 行 监听表格	
+ 	$(".delete_btn").click(function() {
+ 		var chk = document.getElementById('interfaceIdCheckbox');
+ 		if(chk.checked==true){    
+ 			// ajax请求
+ 		<%-- 	$.ajax({
+				url : '<%=basePath%>/interfaces/del',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					interfaceId : $("#interfaceIdCheckbox").val(),
+				},
+				success : function(data){
+					// 添加成功后 ajxa跳转 查询controller
+					layer.msg('删除成功'); 
+					window.location.href="<%=basePath%>/interfaces/index";
+				}
+			}) --%>
+ 		}else{    
+ 			alert("未选中数据");
+ 		} 
+	})
+	
 	// 分页
 	function doPage() {
 		layui.use([ 'laypage', 'layer' ], function() {
