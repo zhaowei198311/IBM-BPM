@@ -1,6 +1,9 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.desmartbpm.entity.SysResource;
+import com.desmart.desmartbpm.entity.TreeNode;
 import com.desmart.desmartbpm.util.PagedResult;
 
 /**
@@ -13,4 +16,5 @@ import com.desmart.desmartbpm.util.PagedResult;
  */
 public interface SysResourceService extends BaseService<SysResource> {
 	PagedResult<SysResource> queryByPage(SysResource entity,Integer pageNo,Integer pageSize);
+	List<TreeNode>	resourceTree();
 }

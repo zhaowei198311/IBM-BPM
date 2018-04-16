@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.desmartbpm.entity.SysUser;
 import com.desmart.desmartbpm.util.PagedResult;
 
@@ -14,4 +16,6 @@ import com.desmart.desmartbpm.util.PagedResult;
  */
 public interface SysUserService extends BaseService<SysUser> {
 	PagedResult<SysUser> queryByPage(SysUser entity,Integer pageNo,Integer pageSize);
+	
+	List<SysUser> selectAll(SysUser entity);
 }	

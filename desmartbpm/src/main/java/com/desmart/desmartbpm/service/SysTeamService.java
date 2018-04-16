@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.desmartbpm.entity.SysTeam;
 import com.desmart.desmartbpm.util.PagedResult;
 
@@ -13,4 +15,6 @@ import com.desmart.desmartbpm.util.PagedResult;
  */
 public interface SysTeamService extends IService<SysTeam,String> {
 	PagedResult<SysTeam> queryByPage(SysTeam entity,Integer pageNo,Integer pageSize);
+	
+	List<SysTeam> selectAll(SysTeam entity);
 }
