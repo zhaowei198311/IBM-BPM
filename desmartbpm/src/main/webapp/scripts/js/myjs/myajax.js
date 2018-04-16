@@ -36,13 +36,19 @@ var setting = {
 };
 
 //属性菜单展示
-function treeDisplay(url,id){
+function treeDisplay(url,ids){
 	$.ajax({ 
         url: url,    //后台webservice里的方法名称  
         type: "post",  
         dataType: "json",  
         success: function (data) {
-			$.fn.zTree.init($("#"+id), setting, data);
+        	if(typeof(ids)=='string'){
+        		$.fn.zTree.init($("#"+ids), setting, data);
+        	}else{
+        		for (var i = 0; i < ids.length; i++) {
+    				$.fn.zTree.init($("#"+ids[i]), setting, data);
+    			}
+        	}
         }
     });
 }
@@ -82,7 +88,8 @@ function treeDisplay(url,id){
 	                	theSelected(input,data[name]);
 	                break;
 	                case "button": break;
-	                default:input.value = data[name];
+	                default:
+	                	input.value = data[name];
 	            }
 	        }
 	    });
@@ -116,34 +123,15 @@ function selectoption(url,select){
     });
 }
 
-function selectoptions(url,select){
-	$.ajax({  
-        url: url,    //后台webservice里的方法名称  
-        type: "post",  
-        dataType: "json",  
-        success: function (data) {
-        	for (var i = 0; i < select.length; i++) {
-        		$("."+select[i]).empty();
-            	var optionstring="";
-            	$(data).each(function(){
-            		if(select[i]==this.type){
-            			optionstring+="<option value=\"" + this.code.trim() + "\" >" + this.name + "</option>";
-            		}
-            	});
-            	$("."+select[i]).prepend(optionstring);
-            	if(select[i]=='managerid'){
-            		$("."+select[i]).first().prepend("<option value='' selected='selected'>"+language.please_select+"</option>");
-            		$('.managerid').comboSelect();
-            	}
-			}
-        }
-    });
-}
+
 
 var dialogs = {
 	add_dialog:'display_container',
 	edit_dialog:'display_container1',
-	add_team_dialog:'display_container2'
+	add_team_dialog:'display_container2',
+	user_dialog:'display_container3',
+	userEditDialog:'display_container4',
+	//userEditDialog:'display_container5',
 };
 
 //点新增打开dialog
@@ -166,11 +154,11 @@ function opendialog(cls){
 
 function returnSuccess(data,cls){
 	if(data.msg=='success'){
-		alert(language.add_success);
+		layer.alert(language.add_success);
 		dgclose(cls);
 		pageBreak();
 	}else{
-		alert(language.add_failed);
+		layer.alert(language.add_failed);
 	}
 }
 
@@ -184,17 +172,9 @@ function edit(data){
 	$('form',$dailogs).find("input, select, textarea").removeClass('error');
 }
 
-//群组人员分配
-function addRoleTema(){
-	var $dailogs=$('.'+dialogs.add_team_dialog);
-	$dailogs.css("display","block");
-	$('form',$dailogs)[0].reset();
-	$('form',$dailogs).validate().resetForms();
-	$('form',$dailogs).find("input, select, textarea").removeClass('error');
-}
+
 
 //添加和修改
-
 function validateCallback(form, callback) {
 	var $form = $(form);
 	if (!$form.valid()) {
@@ -217,7 +197,7 @@ function validateCallback(form, callback) {
 		    },
 			error: function(e){
 	 	       //alert("添加或修改失败");
-	 	       alert("失败");
+				layer.alert("失败");
 		    }
 		});
 	}
@@ -235,11 +215,11 @@ function validateCallback_file(form, callback) {
 	var file = $ele.val();
 	if(file!=''){
 		if(!/.(gif|jpg|jpeg|png|GIF|JPG|bmp)$/.test(file.toLowerCase())){
-			alert(language.image_types);
+			layer.alert(language.image_types);
 			return false;
 		}else{
 		    if((($ele.get(0).files[0].size).toFixed(2))>=(1024*200)){
-		    	 alert(language.please_upload_pictures);
+		    	layer.alert(language.please_upload_pictures);
 		         return false;
 		     }
 		}
@@ -255,7 +235,7 @@ function validateCallback_file(form, callback) {
 			complete: function () {//完成响应
 			   $('.btn-primary',$form).removeAttr("disabled");
 		    },
-			error: function (error) { alert(language.error); }
+			error: function (error) { layer.alert(language.error); }
 		}); 
 	}
 	_submitFn();
@@ -264,22 +244,32 @@ function validateCallback_file(form, callback) {
 
 function ajaxTodo(url, callback){
 	if(callback=='del'){
-		if(!confirm(language.determine_to_perform)){
-			return;
-		}
+		layer.confirm(language.determine_to_perform, {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            layer.close(index);
+            var $callback = callback;
+        	if (! $.isFunction($callback)) $callback = eval('(' + callback + ')');
+        	$.ajax({
+        		type:'POST',
+        		url:url,
+        		dataType:"json",
+        		cache: false,
+        		success: $callback
+        	});
+        }); 
+		return;
 	}
+	
 	var $callback = callback;
-	if (! $.isFunction($callback)) $callback = eval('(' + callback + ')');
-	$.ajax({
-		type:'POST',
-		url:url,
-		dataType:"json",
-		cache: false,
-		success: $callback,
-		error: function(e){
-//			alert(language.operation_failed);
-	    }
-	});
+ 	if (! $.isFunction($callback)) $callback = eval('(' + callback + ')');
+ 	$.ajax({
+ 		type:'POST',
+ 		url:url,
+ 		dataType:"json",
+ 		cache: false,
+ 		success: $callback
+ 	});
 }
 
 
@@ -295,7 +285,7 @@ function dishajaxTodos(url,form,prompting){
 			if(data==false){
 				$form.submit();
         	}else{
-        		alert(prompting);
+        		layer.alert(prompting);
         		return false;
         	}
 		},error: function(e){
@@ -307,22 +297,22 @@ function dishajaxTodos(url,form,prompting){
 //添加成功关闭dialog
 function addsuccess(data){
 	if(data.msg=='success'){
-		alert(language.add_success);
+		layer.alert(language.add_success);
 		dgclose(dialogs.add_dialog);
 		pageBreak();
 	}else{
-		alert(language.add_failed);
+		layer.alert(language.add_failed);
 	}
 }
 
 //修改成功关闭dialog
 function updatesuccess(data){
 	if(data.msg=='success'){
-		alert(language.modify_successfully);
+		layer.alert(language.modify_successfully);
 		dgclose(dialogs.edit_dialog);
 		pageBreak();
 	}else{
-		alert(language.modify_failed);
+		layer.alert(language.modify_failed);
 	}
 }
 
@@ -334,11 +324,11 @@ function dgclose(dlgid){
 //修改操作状态
 function del(data){
 	if(data.msg=='success'){
-		alert(language.delete_success);
+		layer.alert(language.delete_success);
 		pageBreak();
 	}else{
 		
-		alert(language.delete_failed);
+		layer.alert(language.delete_failed);
 	}
 }
 
@@ -370,6 +360,25 @@ function search(form){
 	return false;
 }
 
+
+//自定定义查询回掉
+function searchReturn(form,methods){
+	var $form = $(form);
+	var _submitFn = function(){
+		$.ajax({
+			type: form.method || 'POST',
+			url:$form.attr("action"),
+			data:$form.serializeArray(),
+			dataType:"json",
+			success: methods,
+			error: function(e){
+	 	        //alert("查询失败");
+		    }
+		});
+	}
+	_submitFn();
+	return false;
+}
 
 
 
@@ -421,12 +430,20 @@ function table(data) {
 var locat = (window.location+'').split('/'); 
 locat =  locat[0]+'//'+locat[2]+'/'+locat[3];
 
+function isEmpty(val){
+	if(val==null){
+		return "";
+	}
+	return val;
+}
+
+
 //修改操作状态
 function status(data){
 	if(data.msg=='success'){
-		alert(language.successful_operation);
+		layer.alert(language.successful_operation);
 		pageBreak();
 	}else{
-		alert(language.operation_failed);
+		layer.alert(language.operation_failed);
 	}
 }
