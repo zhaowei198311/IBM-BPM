@@ -10,6 +10,7 @@ import com.desmart.desmartbpm.service.SysRoleUserService;
 import com.desmart.desmartbpm.util.PagedResult;
 import com.desmart.desmartbpm.util.UUIDTool;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +52,10 @@ public class SysRoleUserController {
 	@ResponseBody
 	public String addSysRoleUser(SysRoleUser sysRoleUser) {
 		try {	
-			sysRoleUserService.delete(sysRoleUser);
+			SysRoleUser sysRoleUser1=new SysRoleUser();
+			sysRoleUser1.setUserUid(sysRoleUser.getUserUid());
+			sysRoleUser1.setMapType(sysRoleUser.getMapType());
+			sysRoleUserService.delete(sysRoleUser1);
 			String roleUid =sysRoleUser.getRoleUid();
 			if(StringUtils.isNotBlank(roleUid)) {
 				String[]  roleUser=roleUid.split(",");
@@ -93,15 +97,31 @@ public class SysRoleUserController {
 	@ResponseBody
 	public String insertRoleUser(SysRoleUser sysRoleUser) {
 		try {	
-			sysRoleUserService.delete(sysRoleUser);
 			
-			List<SysUser> userList=sysRoleUser.getUsers();
-			if(userList!=null && userList.size()>0) {
-				for (SysUser sysUser : userList) {
-					sysRoleUser.setDepartUid(sysUser.getDepartUid());
-					sysRoleUser.setUserUid(sysUser.getUserUid());
-					sysRoleUserService.insert(sysRoleUser);
-				}
+			SysRoleUser sys = new SysRoleUser();
+			sys.setRoleUid(sysRoleUser.getRoleUid());
+			
+			sysRoleUserService.delete(sys);
+			String userUid =sysRoleUser.getUserUid();
+			String departUid =sysRoleUser.getDepartUid();
+			if(StringUtils.isNotBlank(userUid)) {
+			String[]  roleUser=userUid.split(",");
+			String[]  departUids=departUid.split(",");
+			
+			for (int i = 0; i < roleUser.length; i++) {
+				sysRoleUser.setUserUid(roleUser[i]);
+				sysRoleUser.setDepartUid(departUids[i]);
+				sysRoleUserService.insert(sysRoleUser);
+			}
+			
+			
+//			List<SysUser> userList=sysRoleUser.getUsers();
+//			if(userList!=null && userList.size()>0) {
+//				for (SysUser sysUser : userList) {
+//					sysRoleUser.setDepartUid(sysUser.getDepartUid());
+//					sysRoleUser.setUserUid(sysUser.getUserUid());
+//					sysRoleUserService.insert(sysRoleUser);
+//				}
 			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
