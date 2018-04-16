@@ -13,6 +13,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
   		<%@ include file="common/common.jsp" %>
+  		<style>
+ 			#usersul li, #user_add li{list-style-type:none;padding-left:12px;padding-top:2px;padding-bottom:2px;border-bottom:1px solid #CCC;}
+ 			#usersul , #user_add{list-style-type:none;padding-left:0px;width:100%;}
+ 			.colorli{background-color:#9DA5EC;color: white;}
+ 			ul{ width:200px;}
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -41,7 +47,7 @@
 					      <th>序号</th>
 					      <th>角色名称</th>
 					      <th>状态</th>
-					      <th>菜单权限</th>
+<!-- 					      <th>菜单权限</th> -->
 					      <th>操作</th>
 					    </tr> 
 					</thead>
@@ -65,7 +71,7 @@
 				新建角色
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysRole/addSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
+				<form class="layui-form form-horizontal" method="post"  action="sysRole/addSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
@@ -92,12 +98,12 @@
 		</div>
 	</div>
 	<div class="display_container1">
-		<div class="display_content1">
+		<div class="display_content6">
 			<div class="top">
 				编辑角色
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysRole/updateSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
+				<form class="layui-form form-horizontal"  method="post"  action="sysRole/updateSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
@@ -124,131 +130,207 @@
 			</div>
 		</div>
 	</div>
-	<div class="display_container2">
-		<div class="display_content2">
+	
+	
+	<div class="display_container6">
+		<div class="display_content6">
 			<div class="top">
-				群组人员分配
-				<div class="query_user">
-					<div>
-						<table>
-							<tbody>
-								<tr>
-									<td>员工编码:</td>
-									<td>员工姓名:</td>
-									<td></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="user_code" autocomplete="off" class="layui-input" /></td>
-									<td><input type="text" id="user_name" autocomplete="off" class="layui-input" /></td>
-									<td><input type="button" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+				授权菜单
+			</div>
+			<form method="post"  action="sysRoleResource/adSysRoleResource"   onsubmit="return validateCallback(this,closeResourceDialog);">
+				<div class="middle" style="padding: 0px;">
+					<ul id="resourceTree" class="ztree" style="width:auto;height:189px;"></ul>
 				</div>
-			</div>
-			<div class="middle_temp">	
-				<div id="temp_left"></div>
-				<div id="temp_middle"></div>
-				<div id="temp_button">
-					<button class="layui-btn layui-btn" id="add_temp_btn">增加</button>
-					<button class="layui-btn layui-btn" id="delete_temp_btn">删除</button>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" type="button" id="addresource">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 				</div>
-				<div id="temp_right"></div>
-			</div>
-			<div class="foot_temp">
-				<button class="layui-btn layui-btn sure_btn" style="float:left;">确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" style="float:left;">取消</button>
-			</div>
+				<div id="resource"></div>
+				<input type="hidden" name="roleUid" id="roleUid" />
+			</form>
 		</div>
 	</div>
+	
+	<jsp:include page="common/role_user.jsp" >
+	    <jsp:param name="mapType" value="0"/>  
+	</jsp:include>
 </html>
 	<script>
-		var setting = {
-				check: {
-					enable: true
-				},
-				data: {
-					simpleData: {
-						enable: true
+		
+		function addUserRoleSuccess(data){
+			returnSuccess(data,dialogs.add_team_dialog);
+		}
+		
+		function selectClick(_this){
+			if($(_this).hasClass("colorli")){
+				$(_this).removeClass("colorli");
+			}else{
+				$(_this).addClass("colorli");
+			}
+		}
+		
+		
+		
+		
+		function add_user(){
+			var userids = [];
+			$("#user_add li").each(function(){//遍历 右边栏目的ID 
+				userids.push($(this).attr('value'));//获取 所有 已添加人员
+			});
+			
+			var index=0;
+			$("#usersul li").each(function(){
+				var $userLi=$(this);
+				if($userLi.hasClass('colorli')){
+					//判断 已添加人员
+					var userUid=$userLi.attr('value');//用ID
+					var departUid=$userLi.attr('departUid');//部门
+					var roleUid=$userLi.attr('roleUid');
+					
+					
+					var name=$userLi.text();
+					if($.inArray(userUid, userids)==-1){
+						var str='';
+						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
+						str+="<input type='hidden' name='users["+index+"].userUid' value='"+userUid+"'/>";
+						str+="<input type='hidden' name='users["+index+"].departUid' value='"+departUid+"'/>";
+						str+="</li>";
+						$("#user_add").append(str);
+						index++;
 					}
 				}
-			};
-	
-			var zNodes =[						
-				{ id:1, pId:0, name:"全部", open:true},				
-				{ id:11, pId:1, name:"待办任务"},				
-				{ id:12, pId:1, name:"未阅通知"},
-				{ id:13, pId:1, name:"已办任务"},				
-				{ id:14, pId:1, name:"通知查询"},
-				{ id:15, pId:1, name:"草稿箱"},
-				{ id:16, pId:1, name:"发起跟踪"},
-				{ id:17, pId:1, name:"委托设置"},
-				{ id:18, pId:1, name:"高级选项"},
-			];
-			
-			var code;
-			
-			function setCheck() {
-				var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-				py = $("#py").attr("checked")? "p":"",
-				sy = $("#sy").attr("checked")? "s":"",
-				pn = $("#pn").attr("checked")? "p":"",
-				sn = $("#sn").attr("checked")? "s":"",
-				type = { "Y":py + sy, "N":pn + sn};
-				zTree.setting.check.chkboxType = type;
-				showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
-			}
-			function showCode(str) {
-				if (!code) code = $("#code");
-				code.empty();
-				code.append("<li>"+str+"</li>");
-			}
+			});
+		}
+		
+		function delete_user(){
+			$("#user_add .colorli").remove();
+		}
+		
+		
+		function setUserList(data){
+			var $ul=$("#usersul");
+			user_add_li(data,$ul);
+		}
+		
+		function user_add_li(data,element){
+			var $ul=element;
+			$ul.empty();
+			$("#usersul").empty();
+			$(data).each(function(index){
+				var str='';
+				str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				$ul.append(str);
+			});
+		};
+		
 		$(function(){
+			var url='sysDepartment/treeDisplay';
+			//tree展示
+			setting.callback={onClick: onClick}
+			treeDisplay(url,'treeDemo');
+			
 			
 			pageBreak($('#pageNo').val());
-			
-			/* $(".create_btn").click(function(){
-				$(".display_container").css("display","block");
-			})
-			$(".edit_user").click(function(){
-				$(".display_container1").css("display","block");
-			})
-			$(".jurisdiction_btn").click(function(){
-				$(".display_container2").css("display","block");
-			})
-			$(".sure_btn").click(function(){
-				$(".display_container").css("display","none");
-				$(".display_container1").css("display","none");
-				$(".display_container2").css("display","none");
-			})
 			$(".cancel_btn").click(function(){
 				$(".display_container").css("display","none");
 				$(".display_container1").css("display","none");
 				$(".display_container2").css("display","none");
+				$(".display_container6").css("display","none");
 			})
-			$(".add_user").click(function(){
-				window.location.href="add_user.html";
-			})
-			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
-				setCheck(); */
 			
+			
+			//新增保存
+			$("#addresource").click(function(){
+				var treeObj = $.fn.zTree.getZTreeObj("resourceTree");
+				var nodes = treeObj.getCheckedNodes();
+				var str="";
+				for(var i=0;i<nodes.length;i++){
+					str+="<input type='hidden' name='resourceUid' value='"+nodes[i].id+"'/>";
+				}
+				$("#resource").html(str);
+				$(this).submit();
+			});
 		})
+		
+		
+		function onClick(e, treeId, treeNode) {
+			var departUid='';
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var sNodes = treeObj.getSelectedNodes();
+			for (var i = 0; i < sNodes.length; i++) {
+				departUid=sNodes[i].code;
+			}
+			departUid=departUid.replace(/\s/g, "")
+			ajaxTodo('sysUser/userList?departUid='+departUid,'setUserList');
+		}
+		
+		//群组人员分配
+		function addRoleTema(data){
+			opendialog(dialogs.add_team_dialog);
+			$('#roleUid').val(data.roleUid);
+			var $ul=$("#user_add");
+			user_add_li(data.users,$ul);
+		}
+		
+		
+		var settingResource = {
+			check: {
+				enable: true
+			},data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		function openResourceDialog(roleUid){
+			$('#resource').empty();
+			$.ajax({  
+		        url: 'sysResource/resourceTree',    //后台webservice里的方法名称  
+		        type: "post",  
+		        dataType: "json",  
+		        success: function (data) {
+					$.fn.zTree.init($("#resourceTree"), settingResource, data);
+					$.ajax({  
+				        url: 'sysRoleResource/allSysRoleResource?roleUid='+roleUid,    //后台webservice里的方法名称  
+				        type: "post",  
+				        dataType: "json",  
+				        success: function (data1) {
+				        	opendialog('display_container6');
+							$('#roleUid').val(roleUid);
+							var treeObjs = $.fn.zTree.getZTreeObj("resourceTree");
+							$.each(data1,function(i,value){
+								var node = treeObjs.getNodeByParam("id",value.resourceUid);
+								if(node!=null){
+									if(node.isParent==false){
+										treeObjs.checkNode(node, true, true);
+									}
+								}
+							});
+				        }
+					});
+		        }
+		    });
+		}
+		
+		function closeResourceDialog(data){
+			returnSuccess(data,'display_container6');
+		}
 		
 		function tabledata(dataList,data){
 			 $(dataList).each(function(i){//重新生成
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
+	         	str+='<td>' + this.roleName + '</td>';
 				if(this.isClosed==1){
 	         		str+='<td>显示</td>';
 	         	}else{
 	         		str+='<td>隐藏</td>';
 	         	}
-	         	str+='<td>' + this.roleName + '</td>';
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user" onclick=addRoleTema();>&#xe654;</i>';
-		        str+='<i class="layui-icon jurisdiction_btn">&#xe6b2;</i>';
+		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysRoleUser/getSysRoleUser?roleUid='+this.roleUid+'","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);

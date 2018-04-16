@@ -59,7 +59,7 @@
 				新建模块资源
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysResource/addSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
+				<form class="layui-form form-horizontal" method="post"  action="sysResource/addSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">模块资源名称</label>
 				    <div class="layui-input-block">
@@ -95,7 +95,7 @@
 				编辑模块资源
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysResource/updateSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
+				<form class="layui-form form-horizontal" method="post"  action="sysResource/updateSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				   <div class="layui-form-item">
 				    <label class="layui-form-label">模块资源名称</label>
 				    <div class="layui-input-block">

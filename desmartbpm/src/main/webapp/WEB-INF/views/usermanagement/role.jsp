@@ -13,12 +13,18 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
   		<%@ include file="common/common.jsp" %>
+  		<style>
+ 			#usersul li, #user_add li{list-style-type:none;padding-left:12px;padding-top:2px;padding-bottom:2px;border-bottom:1px solid #CCC;}
+ 			#usersul , #user_add{list-style-type:none;padding-left:0px;width:100%;}
+ 			.colorli{background-color:#9DA5EC;color: white;}
+ 			ul{ width:200px;}
+		</style>
 	</head>
 	<body>
 		<div class="container">
 			<form class="form-inline" method="post" action="sysRole/allSysRole"  onsubmit="return search(this);">
 				<input type="hidden" name="pageNo" id="pageNo" value="1" >
-				<input type="hidden" name="roleType" value="0" >
+				<input type="hidden" name="roleType" value="1" >
 			</form>
 			<div class="search_area">
 				<div class="layui-row layui-form">					
@@ -41,7 +47,6 @@
 					      <th>序号</th>
 					      <th>角色名称</th>
 					      <th>状态</th>
-					      <th>菜单权限</th>
 					      <th>操作</th>
 					    </tr> 
 					</thead>
@@ -58,14 +63,13 @@
 			</div>
 			<div id="pagination"></div>
 		</div>
-	</body>
-	<div class="display_container">
+		<div class="display_container">
 		<div class="display_content">
 			<div class="top">
 				新建角色
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysRole/addSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
+				<form class="layui-form form-horizontal" action="sysRole/addSysRole" method="post" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
@@ -98,7 +102,7 @@
 				编辑角色
 			</div>
 			<div class="middle">
-				<form class="layui-form form-horizontal" action="sysRole/updateSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
+				<form class="layui-form form-horizontal" action="sysRole/updateSysRole"  method="post" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
@@ -125,90 +129,76 @@
 			</div>
 		</div>
 	</div>
-	<div class="display_container2">
-		<div class="display_content2">
+	<div class="display_container6">
+		<div class="display_content6">
 			<div class="top">
 				授权菜单
 			</div>
-			<div class="middle">
-				<ul id="treeDemo" class="ztree" style="width:auto;height:200px;"></ul>
-			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn">确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
-			</div>
+			<form method="post"  action="sysRoleResource/adSysRoleResource"   onsubmit="return validateCallback(this,closeResourceDialog);">
+				<div class="middle" style="padding: 0px;">
+					<ul id="resourceTree" class="ztree" style="width:auto;height:189px;"></ul>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" type="button" id="addresource">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+				</div>
+				<div id="resource"></div>
+				<input type="hidden" name="roleUid" id="roleUid" />
+			</form>
 		</div>
 	</div>
-</html>
-	<script>
-		var setting = {
-				check: {
-					enable: true
-				},
-				data: {
-					simpleData: {
-						enable: true
-					}
-				}
-			};
+	<jsp:include page="common/role_user.jsp" >
+	    <jsp:param name="mapType" value="1"/>  
+	</jsp:include>
 	
-			var zNodes =[						
-				{ id:1, pId:0, name:"全部", open:true},				
-				{ id:11, pId:1, name:"待办任务"},				
-				{ id:12, pId:1, name:"未阅通知"},
-				{ id:13, pId:1, name:"已办任务"},				
-				{ id:14, pId:1, name:"通知查询"},
-				{ id:15, pId:1, name:"草稿箱"},
-				{ id:16, pId:1, name:"发起跟踪"},
-				{ id:17, pId:1, name:"委托设置"},
-				{ id:18, pId:1, name:"高级选项"},
-			];
-			
-			var code;
-			
-			function setCheck() {
-				var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-				py = $("#py").attr("checked")? "p":"",
-				sy = $("#sy").attr("checked")? "s":"",
-				pn = $("#pn").attr("checked")? "p":"",
-				sn = $("#sn").attr("checked")? "s":"",
-				type = { "Y":py + sy, "N":pn + sn};
-				zTree.setting.check.chkboxType = type;
-				showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
-			}
-			function showCode(str) {
-				if (!code) code = $("#code");
-				code.empty();
-				code.append("<li>"+str+"</li>");
-			}
+	<script src="scripts/js/myjs/role_user.js" type="text/javascript"></script>
+	<script type="text/javascript" >
 		$(function(){
+			var url='sysDepartment/treeDisplay';
+			//tree展示
+			setting.callback={onClick: onClick}
+			treeDisplay(url,'treeDemo');
 			pageBreak($('#pageNo').val());
 			$(".cancel_btn").click(function(){
 				$(".display_container").css("display","none");
 				$(".display_container1").css("display","none");
 				$(".display_container2").css("display","none");
-			})
+				$(".display_container6").css("display","none");
+			});
+			
+			
+			//新增保存
+			$("#addresource").click(function(){
+				var treeObj = $.fn.zTree.getZTreeObj("resourceTree");
+				var nodes = treeObj.getCheckedNodes();
+				var str="";
+				for(var i=0;i<nodes.length;i++){
+					str+="<input type='hidden' name='resourceUid' value='"+nodes[i].id+"'/>";
+				}
+				$("#resource").html(str);
+				$(this).submit();
+			});
 		})
 		
 		function tabledata(dataList,data){
 			 $(dataList).each(function(i){//重新生成
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
+				str+='<td>' + this.roleName + '</td>';
 				if(this.isClosed==1){
 	         		str+='<td>显示</td>';
 	         	}else{
 	         		str+='<td>隐藏</td>';
 	         	}
-				str+='<td>' + this.roleName + '</td>';
-				str+='<td></td>';
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user">&#xe654;</i>';
-		        str+='<i class="layui-icon jurisdiction_btn">&#xe6b2;</i>';
+		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysRoleUser/getSysRoleUser?roleUid='+this.roleUid+'","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);
 	         });
 		}
-		
 	</script>
+	</body>
+</html>
