@@ -8,123 +8,174 @@ package com.desmart.desmartbpm.entity;
 * @date 2018年4月12日
  */
 public class DhInterface {
-
-	private String interfaceId;
 	
-	private String interfaceName;
+	private String intUid; // 接口id
 	
-	private String interfaceDescribe;
+	private String intTitle; // 接口名
 	
-	private String interfaceType;
+	private String intDescription; // 接口描述 
 	
-	private String interfaceCreateDate;
+	private String intType; // 接口类型
 	
-	private String interfaceCreateUser;
+	private String intUrl; // 接口访问地址
+	
+	private String intCallMethod; // 接口访问方法名
+	
+	private String intLoginUser; // 登陆用户操作
+	
+	private String intLoginPwd; // 登陆用户密码
+	
+	private String intStatus; // 接口状态
 
 	/**
-	 * @return the interfaceId
+	 * @return the intUid
 	 */
-	public String getInterfaceId() {
-		return interfaceId;
+	public String getIntUid() {
+		return intUid;
 	}
 
 	/**
-	 * @param interfaceId the interfaceId to set
+	 * @param intUid the intUid to set
 	 */
-	public void setInterfaceId(String interfaceId) {
-		 this.interfaceId = interfaceId;
+	public void setIntUid(String intUid) {
+		this.intUid = intUid;
 	}
 
 	/**
-	 * @return the interfaceName
+	 * @return the intTitle
 	 */
-	public String getInterfaceName() {
-		return interfaceName;
+	public String getIntTitle() {
+		return intTitle;
 	}
 
 	/**
-	 * @param interfaceName the interfaceName to set
+	 * @param intTitle the intTitle to set
 	 */
-	public void setInterfaceName(String interfaceName) {
-		this.interfaceName = interfaceName;
+	public void setIntTitle(String intTitle) {
+		this.intTitle = intTitle;
 	}
 
 	/**
-	 * @return the interfaceDescribe
+	 * @return the intDescription
 	 */
-	public String getInterfaceDescribe() {
-		return interfaceDescribe;
+	public String getIntDescription() {
+		return intDescription;
 	}
 
 	/**
-	 * @param interfaceDescribe the interfaceDescribe to set
+	 * @param intDescription the intDescription to set
 	 */
-	public void setInterfaceDescribe(String interfaceDescribe) {
-		this.interfaceDescribe = interfaceDescribe;
+	public void setIntDescription(String intDescription) {
+		this.intDescription = intDescription;
 	}
 
 	/**
-	 * @return the interfaceType
+	 * @return the intType
 	 */
-	public String getInterfaceType() {
-		return interfaceType;
+	public String getIntType() {
+		return intType;
 	}
 
 	/**
-	 * @param interfaceType the interfaceType to set
+	 * @param intType the intType to set
 	 */
-	public void setInterfaceType(String interfaceType) {
-		this.interfaceType = interfaceType;
+	public void setIntType(String intType) {
+		this.intType = intType;
 	}
 
 	/**
-	 * @return the interfaceCreateDate
+	 * @return the intUrl
 	 */
-	public String getInterfaceCreateDate() {
-		return interfaceCreateDate;
+	public String getIntUrl() {
+		return intUrl;
 	}
 
 	/**
-	 * @param interfaceCreateDate the interfaceCreateDate to set
+	 * @param intUrl the intUrl to set
 	 */
-	public void setInterfaceCreateDate(String interfaceCreateDate) {
-		this.interfaceCreateDate = interfaceCreateDate;
+	public void setIntUrl(String intUrl) {
+		this.intUrl = intUrl;
 	}
 
 	/**
-	 * @return the interfaceCreateUser
+	 * @return the intCallMethod
 	 */
-	public String getInterfaceCreateUser() {
-		return interfaceCreateUser;
+	public String getIntCallMethod() {
+		return intCallMethod;
 	}
 
 	/**
-	 * @param interfaceCreateUser the interfaceCreateUser to set
+	 * @param intCallMethod the intCallMethod to set
 	 */
-	public void setInterfaceCreateUser(String interfaceCreateUser) {
-		this.interfaceCreateUser = interfaceCreateUser;
+	public void setIntCallMethod(String intCallMethod) {
+		this.intCallMethod = intCallMethod;
+	}
+
+	/**
+	 * @return the intLoginUser
+	 */
+	public String getIntLoginUser() {
+		return intLoginUser;
+	}
+
+	/**
+	 * @param intLoginUser the intLoginUser to set
+	 */
+	public void setIntLoginUser(String intLoginUser) {
+		this.intLoginUser = intLoginUser;
+	}
+
+	/**
+	 * @return the intLoginPwd
+	 */
+	public String getIntLoginPwd() {
+		return intLoginPwd;
+	}
+
+	/**
+	 * @param intLoginPwd the intLoginPwd to set
+	 */
+	public void setIntLoginPwd(String intLoginPwd) {
+		this.intLoginPwd = intLoginPwd;
+	}
+
+	/**
+	 * @return the intStatus
+	 */
+	public String getIntStatus() {
+		return intStatus;
+	}
+
+	/**
+	 * @param intStatus the intStatus to set
+	 */
+	public void setIntStatus(String intStatus) {
+		this.intStatus = intStatus;
 	}
 	
-	public DhInterface() {
-		
-	}
-
 	/**
-	 * @param interfaceId
-	 * @param interfaceName
-	 * @param interfaceDescribe
-	 * @param interfaceType
-	 * @param interfaceCreateDate
-	 * @param interfaceCreateUser
+	 * @param intId
+	 * @param intTitle
+	 * @param intDescription
+	 * @param intType
+	 * @param intUrl
+	 * @param intCallMethod
+	 * @param intLoginUser
+	 * @param intLoginPwd
+	 * @param intStatus
 	 */
-	public DhInterface(String interfaceId, String interfaceName, String interfaceDescribe, String interfaceType,
-			String interfaceCreateDate, String interfaceCreateUser) {
+	public DhInterface(String intUid, String intTitle, String intDescription, String intType, String intUrl,
+			String intCallMethod, String intLoginUser, String intLoginPwd, String intStatus) {
 		super();
-		this.interfaceId = interfaceId;
-		this.interfaceName = interfaceName;
-		this.interfaceDescribe = interfaceDescribe;
-		this.interfaceType = interfaceType;
-		this.interfaceCreateDate = interfaceCreateDate;
-		this.interfaceCreateUser = interfaceCreateUser;
+		this.intUid = intUid;
+		this.intTitle = intTitle;
+		this.intDescription = intDescription;
+		this.intType = intType;
+		this.intUrl = intUrl;
+		this.intCallMethod = intCallMethod;
+		this.intLoginUser = intLoginUser;
+		this.intLoginPwd = intLoginPwd;
+		this.intStatus = intStatus;
 	}
+
 }
