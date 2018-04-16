@@ -5,7 +5,7 @@
     <id column="MEMBER_UID" property="memberUid" jdbcType="VARCHAR" />
     <result column="TEAM_UID" property="teamUid" jdbcType="VARCHAR" />
     <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
-    <result column="MEMBER_TYPE" property="memberType" jdbcType="DECIMAL" />
+    <result column="MEMBER_TYPE" property="memberType" jdbcType="VARCHAR" />
     <result column="ORDER_INDEX" property="orderIndex" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -33,7 +33,7 @@
     insert into SYS_TEAM_MEMBER (MEMBER_UID, TEAM_UID, USER_UID, 
       MEMBER_TYPE, ORDER_INDEX)
     values (#{memberUid,jdbcType=VARCHAR}, #{teamUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, 
-      #{memberType,jdbcType=DECIMAL}, #{orderIndex,jdbcType=DECIMAL})
+      #{memberType,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.SysTeamMember" >
     insert into SYS_TEAM_MEMBER
@@ -82,7 +82,7 @@
         USER_UID = #{userUid,jdbcType=VARCHAR},
       </if>
       <if test="memberType != null" >
-        MEMBER_TYPE = #{memberType,jdbcType=DECIMAL},
+        MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
       </if>
       <if test="orderIndex != null" >
         ORDER_INDEX = #{orderIndex,jdbcType=DECIMAL},
@@ -94,7 +94,7 @@
     update SYS_TEAM_MEMBER
     set TEAM_UID = #{teamUid,jdbcType=VARCHAR},
       USER_UID = #{userUid,jdbcType=VARCHAR},
-      MEMBER_TYPE = #{memberType,jdbcType=DECIMAL},
+      MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
       ORDER_INDEX = #{orderIndex,jdbcType=DECIMAL}
     where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
   </update>
