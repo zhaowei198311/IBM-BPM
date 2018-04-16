@@ -11,7 +11,7 @@ public class SysTeamMember {
     
     private String userName;
 
-    private BigDecimal memberType;
+    private String memberType;
 
     private Integer orderIndex;
 
@@ -48,11 +48,11 @@ public class SysTeamMember {
         this.userUid = userUid == null ? null : userUid.trim();
     }
 
-    public BigDecimal getMemberType() {
+    public String getMemberType() {
         return memberType;
     }
 
-    public void setMemberType(BigDecimal memberType) {
+    public void setMemberType(String memberType) {
         this.memberType = memberType;
     }
 
