@@ -42,7 +42,7 @@ public class SysTeamServiceImpl implements SysTeamService {
 		// TODO Auto-generated method stub
 			entity.getIsClosed();
 		Date date=new Date();
-		if(entity.getIsClosed().intValue()==1) {
+		if(entity.getIsClosed().intValue()==0) {
 			entity.setCloseDate(date);
 		}
 		entity.setCreateDate(date);
@@ -66,7 +66,7 @@ public class SysTeamServiceImpl implements SysTeamService {
 	public int updateByPrimaryKeySelective(SysTeam entity) {
 		// TODO Auto-generated method stub
 		Date date=new Date();
-		if(entity.getIsClosed().intValue()==1) {
+		if(entity.getIsClosed().intValue()==0) {
 			entity.setCloseDate(date);
 		}
 		entity.setCreateDate(date);
