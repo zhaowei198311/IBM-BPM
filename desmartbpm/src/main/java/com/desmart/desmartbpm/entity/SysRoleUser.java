@@ -20,6 +20,8 @@ public class SysRoleUser {
     
     private List<SysUser> users;
     
+    private String userName;
+    
     
 
     public List<SysUser> getUsers() {
@@ -85,4 +87,14 @@ public class SysRoleUser {
     public void setIsShow(BigDecimal isShow) {
         this.isShow = isShow;
     }
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+    
+    
 }
