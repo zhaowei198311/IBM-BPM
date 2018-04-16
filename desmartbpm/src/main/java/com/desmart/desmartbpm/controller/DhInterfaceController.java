@@ -42,4 +42,10 @@ public class DhInterfaceController {
 	public void addDhInterface(DhInterface dhInterface) {
 		dhInterfaceService.saveDhInterface(dhInterface);
 	}
+	
+	@RequestMapping(value = "/del")
+	@ResponseBody
+	public void deleteDhInterface(@RequestParam(value="interfaceId") String interfaceId) {
+		System.err.println(interfaceId);
+	}
 }
