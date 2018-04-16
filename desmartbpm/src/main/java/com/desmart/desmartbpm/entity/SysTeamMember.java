@@ -4,16 +4,27 @@ import java.math.BigDecimal;
 
 public class SysTeamMember {
     private String memberUid;
-
+ 
     private String teamUid;
 
     private String userUid;
+    
+    private String userName;
 
     private BigDecimal memberType;
 
     private Integer orderIndex;
 
-    public String getMemberUid() {
+    
+    public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getMemberUid() {
         return memberUid;
     }
 

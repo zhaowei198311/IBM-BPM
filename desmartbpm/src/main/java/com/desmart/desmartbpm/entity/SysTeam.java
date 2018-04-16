@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class SysTeam {
     private String teamUid;
@@ -41,8 +42,20 @@ public class SysTeam {
     private Date createDate;
 
     private Date updateDate;
+    
+    private List<SysTeamMember> members;  
+    
+    
 
-    public String getTeamUid() {
+    public List<SysTeamMember> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<SysTeamMember> members) {
+		this.members = members;
+	}
+
+	public String getTeamUid() {
         return teamUid;
     }
 

@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class SysRoleUser {
     private String mapUid;
@@ -16,8 +17,20 @@ public class SysRoleUser {
     private BigDecimal isManager;
 
     private BigDecimal isShow;
+    
+    private List<SysUser> users;
+    
+    
 
-    public String getMapUid() {
+    public List<SysUser> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<SysUser> users) {
+		this.users = users;
+	}
+
+	public String getMapUid() {
         return mapUid;
     }
 
