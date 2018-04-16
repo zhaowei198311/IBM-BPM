@@ -1,11 +1,14 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.dao.SysRoleUserMapper;
 import com.desmart.desmartbpm.entity.SysRoleUser;
 import com.desmart.desmartbpm.service.SysRoleUserService;
+import com.desmart.desmartbpm.util.UUIDTool;
 
 /**
  * <p>
@@ -31,6 +34,7 @@ public class SysRoleUserServiceImpl implements SysRoleUserService {
 	@Override
 	public int insert(SysRoleUser entity) {
 		// TODO Auto-generated method stub
+		entity.setMapUid("sysRoleUser:"+UUIDTool.getUUID());
 		return sysRoleUserMapper.insert(entity);
 	}
 
@@ -56,6 +60,18 @@ public class SysRoleUserServiceImpl implements SysRoleUserService {
 	public int updateByPrimaryKey(SysRoleUser entity) {
 		// TODO Auto-generated method stub
 		return sysRoleUserMapper.updateByPrimaryKey(entity);
+	}
+
+	@Override
+	public int delete(SysRoleUser eneity) {
+		// TODO Auto-generated method stub
+		return sysRoleUserMapper.delete(eneity);
+	}
+
+	@Override
+	public List<SysRoleUser> selectAll(SysRoleUser entity) {
+		// TODO Auto-generated method stub
+		return sysRoleUserMapper.selectAll(entity);
 	}	
 	
 }

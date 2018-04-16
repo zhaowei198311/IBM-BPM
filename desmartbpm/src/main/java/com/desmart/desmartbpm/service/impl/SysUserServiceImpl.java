@@ -7,6 +7,8 @@ import com.desmart.desmartbpm.util.BeanUtil;
 import com.desmart.desmartbpm.util.PagedResult;
 import com.github.pagehelper.PageHelper;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +63,13 @@ public class SysUserServiceImpl implements SysUserService {
 		pageSize = pageSize == null?10:pageSize;
 		PageHelper.startPage(pageNo,pageSize);  //startPage是告诉拦截器说我要开始分页了。分页参数是这两个。
 		return BeanUtil.toPagedResult(sysUserDao.selectAll(entity));
+	}
+
+	@Override
+	public List<SysUser> selectAll(SysUser entity) {
+		// TODO Auto-generated method stub
+		//System.out.println("adsfs");
+		return sysUserDao.selectAll(entity);
 	}
 	
 }

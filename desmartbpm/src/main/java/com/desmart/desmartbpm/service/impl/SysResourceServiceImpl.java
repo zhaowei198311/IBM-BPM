@@ -1,10 +1,13 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.dao.SysResourceDao;
 import com.desmart.desmartbpm.entity.SysResource;
+import com.desmart.desmartbpm.entity.TreeNode;
 import com.desmart.desmartbpm.service.SysResourceService;
 import com.desmart.desmartbpm.util.BeanUtil;
 import com.desmart.desmartbpm.util.PagedResult;
@@ -62,6 +65,12 @@ public class SysResourceServiceImpl implements SysResourceService {
 		pageSize = pageSize == null?10:pageSize;
 		PageHelper.startPage(pageNo,pageSize);  //startPage是告诉拦截器说我要开始分页了。分页参数是这两个。
 		return BeanUtil.toPagedResult(sysResourceDao.selectAll(entity));
+	}
+
+	@Override
+	public List<TreeNode> resourceTree() {
+		// TODO Auto-generated method stub
+		return sysResourceDao.resourceTree();
 	}
 	
 }

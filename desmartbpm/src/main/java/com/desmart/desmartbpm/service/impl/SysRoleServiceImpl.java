@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.dao.SysRoleMapper;
+import com.desmart.desmartbpm.dao.SysRoleResourceMapper;
+import com.desmart.desmartbpm.dao.SysRoleUserMapper;
 import com.desmart.desmartbpm.entity.SysRole;
 import com.desmart.desmartbpm.entity.SysRole;
 import com.desmart.desmartbpm.service.SysRoleService;
@@ -27,9 +29,17 @@ public class SysRoleServiceImpl  implements SysRoleService {
 	@Autowired
 	private SysRoleMapper sysRoleMapper;
 	
+	@Autowired
+	private SysRoleResourceMapper sysRoleResourceMapper;
+	
+	@Autowired
+	private SysRoleUserMapper sysRoleUserMapper;
+	
 	@Override
 	public int deleteByPrimaryKey(String id) {
 		// TODO Auto-generated method stub
+		sysRoleResourceMapper.deleteByPrimaryKey(id);
+		sysRoleUserMapper.deleteByPrimaryKey(id);
 		return sysRoleMapper.deleteByPrimaryKey(id);
 	}
 

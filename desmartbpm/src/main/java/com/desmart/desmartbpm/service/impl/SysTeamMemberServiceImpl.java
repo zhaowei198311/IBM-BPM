@@ -4,6 +4,9 @@ import com.desmart.desmartbpm.dao.SysTeamMemberMapper;
 import com.desmart.desmartbpm.entity.SysTeamMember;
 import com.desmart.desmartbpm.entity.SysTeamMember;
 import com.desmart.desmartbpm.service.SysTeamMemberService;
+import com.desmart.desmartbpm.util.UUIDTool;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class SysTeamMemberServiceImpl implements SysTeamMemberService {
 	@Override
 	public int insert(SysTeamMember entity) {
 		// TODO Auto-generated method stub
+		entity.setMemberUid(UUIDTool.getUUID());
 		return sysTeamMemberMapper.insert(entity);
 	}
 
@@ -55,5 +59,11 @@ public class SysTeamMemberServiceImpl implements SysTeamMemberService {
 	public int updateByPrimaryKey(SysTeamMember entity) {
 		// TODO Auto-generated method stub
 		return sysTeamMemberMapper.updateByPrimaryKey(entity);
+	}
+
+	@Override
+	public List<SysTeamMember> selectAll(SysTeamMember entity) {
+		// TODO Auto-generated method stub
+		return sysTeamMemberMapper.selectAll(entity);
 	}	
 }
