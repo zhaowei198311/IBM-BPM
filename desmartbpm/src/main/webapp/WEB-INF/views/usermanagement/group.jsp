@@ -192,6 +192,39 @@
 			</div>
 	</div>
 	
+		<div class="display_container4">
+			<div class="display_content4">
+				<div class="top">
+					绑定业务角色
+				</div>
+				<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
+				<div class="middle" style="height: 420px;">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+							<col>
+						    <col>
+						</colgroup>
+						<thead>
+						    <tr>
+						      <th><input type="checkbox" name=""  id="checkAll_a"  title='全选' lay-skin="primary"> 序号</th>
+						      <th>角色名称</th>
+						    </tr> 
+						</thead>
+						<tbody id="businessRoleTable"></tbody>
+					</table>		
+				</div>
+				<input  type="hidden" name="memberType" value="role"/>
+				<input type="hidden" name="teamUid" class="teamUid" />
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+				</div>
+				
+				</form>
+			</div>
+		</div>
+	
+	
 </html>
 	<script>
 		$(function(){
@@ -200,11 +233,24 @@
 				$(".display_container").css("display","none");
 				$(".display_container1").css("display","none");
 				$(".display_container2").css("display","none");
+				$(".display_container4").css("display","none");
 			})
 			var url='sysDepartment/treeDisplay';
 			setting.callback={onClick: onClick}
 			treeDisplay(url,'treeDemo');
+			
+			$("#checkAll_a").click(function(){   
+			    if(this.checked){   
+			        $("#businessRoleTable :checkbox").prop("checked", true);  
+			    }else{   
+					$("#businessRoleTable :checkbox").prop("checked", false);
+			    }   
+			});
 		})
+		
+		function addsuccess2(data){
+			returnSuccess(data,'display_container4');
+		}
 		
 		
 		function adddialog1(){
@@ -290,11 +336,54 @@
 	         	}
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysTeam/getSysTeam?teamUid='+this.teamUid+'","edit1") >&#xe642;</i>';
-		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysTeam/getSysTeam?teamUid='+this.teamUid+'","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon add_user" onclick=ajaxTodo("sysTeam/getSysTeamRole?teamUid='+this.teamUid+'&ext1=user","addRoleTema")  >&#xe654;</i>';
+		        str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.teamUid+'"); >&#xe612;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysTeam/deleteSysTeam?teamUid='+this.teamUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);
 	         });
+		}
+		
+		
+		//打开业务角色绑定
+		function openBusinessRoleBindings(teamUid){
+			var xz = document.getElementById('checkAll_a');
+			 xz.checked=false;
+			$('.teamUid').val(teamUid);
+			$(".display_container4").css("display","block");
+			$("#businessRoleTable").empty();
+			$.ajax({
+				type:'POST',
+				url:'sysTeamMember/allSysTeamMember?memberType=role&teamUid='+teamUid,
+				dataType:"json",
+				cache: false,
+				success: function(data1){
+					$.ajax({
+						type:'POST',
+						url:'sysRole/roleList?roleType=1',
+						dataType:"json",
+						cache: false,
+						success: function(data){
+							$(data).each(function(i){
+								var str='<tr>';
+								var roleUid=this.roleUid
+								var checkbox='<td><input type="checkbox" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'+   (i+1)+'</td>';
+								for(var i=0,l=data1.length;i<l;i++){
+									for(var key in data1[i]){
+										if(data1[i][key]==roleUid){
+											checkbox='<td><input type="checkbox" checked="checked" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'+   (i+1)+'</td>';
+										}
+									}
+								}
+								str+=checkbox;
+								str+='<td>'+this.roleName+'</td>';
+								str+='</tr>';
+								$("#businessRoleTable").append(str);
+							});
+						}
+					});
+				}
+			});
 		}
 
 		function addUserRoleSuccess(data){
