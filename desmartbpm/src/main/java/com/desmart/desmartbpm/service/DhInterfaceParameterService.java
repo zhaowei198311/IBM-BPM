@@ -30,7 +30,8 @@ public interface DhInterfaceParameterService {
 
 	/**
 	 * @param DhInterfaceParameter 接口参数实体
+	 * @param intUid 接口定义id
 	 * @return 
 	 */
-	int saveDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter);
+	int saveDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter,String intUid);
 }
