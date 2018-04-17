@@ -44,7 +44,7 @@
 		
 		
 
-		<association property="sysDepartment"  javaType="SysDepartment">
+		<association property="sysDepartment"  javaType="com.desmart.desmart_systemmanagement.entity.SysDepartment">
 			<result column="DEPART_UID" property="departUid" />
 			<result column="DEPART_PARENT" property="departParent" />
 			<result column="DEPART_NAME" property="departName" />
@@ -61,7 +61,7 @@
 	
 	
 	
-	 <select id="selectAll" parameterType="SysUser"  resultMap="BaseResultMap">
+	 <select id="selectAll" parameterType="com.desmart.desmart_systemmanagement.entity.SysUser"  resultMap="BaseResultMap">
 	 		select * from sys_user u left join sys_department d on  u.departmentNumber=d.depart_no  where 1=1
 	 		<if test="userName!=null and userName!='' ">
 	 			and u.USER_NAME LIKE CONCAT(CONCAT('%',#{userName}),'%') 
@@ -83,11 +83,11 @@
 	 		 order by u.UPDATE_DATE
 	  </select>
 	  
-	  <select id="select" parameterType="SysUser"  resultMap="BaseResultMap">
+	  <select id="select" parameterType="com.desmart.desmart_systemmanagement.entity.SysUser"  resultMap="BaseResultMap">
 	  		select * from Sys_User
 	  </select>
 		
-	 <insert id="insert" parameterType="SysUser" >
+	 <insert id="insert" parameterType="com.desmart.desmart_systemmanagement.entity.SysUser" >
     insert into SYS_USER (USER_UID, USER_NO, USER_ID, 
       USER_NAME, USER_NAME_US, SN, 
       GIVENNAME, SEX, HOMEPLACE, 
@@ -257,11 +257,11 @@
     </set>
     where USER_UID = #{userUid,jdbcType=VARCHAR}
   </update>
-	  <select id="findById" parameterType="SysUser" resultMap="BaseResultMap" >
+	  <select id="findById" parameterType="com.desmart.desmart_systemmanagement.entity.SysUser" resultMap="BaseResultMap" >
 	  		select u.*,d.* from sys_user u left join sys_department d on u.departmentnumber=d.depart_no where u.USER_UID=#{userUid}
 	  </select>
 	  
-	  <delete id="delete" parameterType="SysUser">
+	  <delete id="delete" parameterType="com.desmart.desmart_systemmanagement.entity.SysUser">
 	  		DELETE FROM SYS_USER WHERE USER_UID = #{userUid}
 	  </delete>
 	  

@@ -29,7 +29,7 @@
 		<result column="UPDATE_DATE" property="updateDate" />
 	</resultMap>
 	
-	<select id="selectAll" parameterType="SysDepartment"  resultMap="BaseResultMap">
+	<select id="selectAll" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment"  resultMap="BaseResultMap">
 			select 
 			DEPART_UID,
 		    DEPART_PARENT,
@@ -66,14 +66,14 @@
 	 		
 	  </select>
 	  
-	  <select id="select" parameterType="SysDepartment"  resultMap="BaseResultMap">
+	  <select id="select" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment"  resultMap="BaseResultMap">
 	  		select * from Sys_Department
 	  </select>
 		
-	 <insert id="insert" parameterType="SysDepartment" >
+	 <insert id="insert" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment" >
 	 </insert>
 	  
-	  <select id="findById" parameterType="SysDepartment" resultMap="BaseResultMap" >
+	  <select id="findById" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment" resultMap="BaseResultMap" >
 	  		select 
 			DEPART_UID,
 		    DEPART_PARENT,
@@ -102,7 +102,7 @@
 		    from  Sys_Department d where d.DEPART_UID=#{departUid}
 	  </select>
 	  
-	  <select id="selectTree" parameterType="TreeNode" resultType="TreeNode">
+	  <select id="selectTree" parameterType="com.desmart.desmart_systemmanagement.entity.TreeNode" resultType="TreeNode">
 	  		select depart_uid as code,depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
 			select  d.depart_uid,d.depart_name,d.depart_no,d.depart_parent,1 lvl,case when (select count(*) from Sys_Department cd where d.depart_no=cd.depart_parent)>0 then 'true' else 'false' end  isParent from Sys_Department  d  
 			) where
@@ -116,11 +116,11 @@
 			</choose>
 	  </select>
 	  
-	  <delete id="delete" parameterType="SysDepartment">
+	  <delete id="delete" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment">
 	  		DELETE FROM SYS_RESOURCE where RESOUCE_UID=#{resouceUid}
 	  </delete>
 	  
-	  <update id="update" parameterType="SysDepartment" >
+	  <update id="update" parameterType="com.desmart.desmart_systemmanagement.entity.SysDepartment" >
 	  </update>
 
 </mapper>

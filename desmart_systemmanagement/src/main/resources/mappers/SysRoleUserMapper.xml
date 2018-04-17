@@ -28,7 +28,7 @@
     	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r left join Sys_USER u on u.USER_UID=r.USER_UID where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
   
-   <select id="selectAll" resultMap="BaseResultMap" parameterType="SysRoleUser" >
+   <select id="selectAll" resultMap="BaseResultMap" parameterType="com.desmart.desmart_systemmanagement.entity.SysRoleUser" >
     select 
     <include refid="RoleUser_Column_List" />
     from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID where 1=1 

@@ -18,7 +18,7 @@
     where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
   </select>
   
-   <select id="selectAll" parameterType="SysTeamMember"  resultMap="BaseResultMap">
+   <select id="selectAll" parameterType="com.desmart.desmart_systemmanagement.entity.SysTeamMember"  resultMap="BaseResultMap">
  		select <include refid="Base_Column_List" />  from SYS_TEAM_MEMBER where 1=1
       	<if test="teamUid != null" >
 		      and TEAM_UID=#{teamUid}
