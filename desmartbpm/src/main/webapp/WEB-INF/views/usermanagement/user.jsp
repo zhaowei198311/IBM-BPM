@@ -483,7 +483,6 @@
 					
 				}
 			});
-			
 		}
 		
 		function addsuccess1(data){
