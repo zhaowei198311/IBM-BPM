@@ -57,7 +57,18 @@ public class SysTeamController {
 		return sysTeamService.selectByPrimaryKey(sysTeam.getTeamUid());
 	}
 	
-	@RequestMapping("/updateSysTeam")
+	
+	@RequestMapping("/getSysTeamRole")
+	@ResponseBody
+	public SysTeam getSysTeamRole(SysTeam sysTeam) {
+		SysTeam  sysTeam1=sysTeamService.selectByPrimary(sysTeam);
+		if(sysTeam1==null) {
+			return sysTeam;
+		}
+		return sysTeamService.selectByPrimary(sysTeam);
+	}
+	
+	@RequestMapping("/updateSysTeam") 
 	@ResponseBody
 	public String updateSysTeam(SysTeam sysTeam) {
 		try {	
