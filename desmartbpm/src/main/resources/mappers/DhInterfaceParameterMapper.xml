@@ -55,3 +55,4 @@
 			PARA_UID = #{paraUid}
 		</where>
 	</delete>
+</mapper>	
