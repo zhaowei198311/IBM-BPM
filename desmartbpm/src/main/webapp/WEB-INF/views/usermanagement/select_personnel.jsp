@@ -104,8 +104,7 @@
 			var name = window.opener.document.getElementById(id+"_view").value.split(';');
 			for (var i = 0; i < name.length; i++) {
 				var str='';
-				str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i];
-				str+="</li>";
+				str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i];str+="</li>";
 				$user_li.append(str);
 			}
 		})
