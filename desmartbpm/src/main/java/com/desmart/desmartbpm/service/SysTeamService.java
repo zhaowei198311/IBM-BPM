@@ -17,4 +17,6 @@ public interface SysTeamService extends IService<SysTeam,String> {
 	PagedResult<SysTeam> queryByPage(SysTeam entity,Integer pageNo,Integer pageSize);
 	
 	List<SysTeam> selectAll(SysTeam entity);
+	
+	public SysTeam selectByPrimary(SysTeam sysTeam);
 }
