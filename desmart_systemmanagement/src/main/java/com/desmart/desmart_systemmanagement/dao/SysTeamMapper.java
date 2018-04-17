@@ -2,8 +2,11 @@ package com.desmart.desmart_systemmanagement.dao;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.desmart.desmart_systemmanagement.entity.SysTeam;
 
+@Repository
 public interface SysTeamMapper {
     int deleteByPrimaryKey(String teamUid);
 
