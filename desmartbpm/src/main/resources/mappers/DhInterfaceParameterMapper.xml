@@ -25,6 +25,9 @@
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM DH_INTERFACE_PARAMETER
+		<where>
+			INT_UID = #{intUid}
+		</where>
 	</select>
 	
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhInterfaceParameter">
