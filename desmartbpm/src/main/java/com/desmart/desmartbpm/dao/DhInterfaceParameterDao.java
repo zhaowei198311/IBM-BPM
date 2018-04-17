@@ -5,6 +5,8 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.desmart.desmartbpm.entity.DhInterfaceParameter;
 
 /**  
@@ -13,6 +15,7 @@ import com.desmart.desmartbpm.entity.DhInterfaceParameter;
 * @author shenlan  
 * @date 2018年4月17日  
 */
+@Repository
 public interface DhInterfaceParameterDao {
 	
 	/**
