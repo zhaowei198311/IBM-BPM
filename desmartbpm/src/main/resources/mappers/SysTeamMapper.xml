@@ -42,11 +42,19 @@
     t.UPDATE_DATE,tm.MEMBER_UID,tm.TEAM_UID,tm.USER_UID,tm.MEMBER_TYPE,tm.ORDER_INDEX,u.user_name
   </sql>
   
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  
+  <select id="selectByPrimary" resultMap="BaseResultMap" parameterType="SysTeam" >
     select <include refid="Team_TeamMember_List" /> from sys_team t left join sys_team_member tm on t.team_uid=tm.team_uid left join sys_user u on tm.user_uid=u.user_uid where t.TEAM_UID = #{teamUid,jdbcType=VARCHAR}
+    <if test="ext1!=null">
+    	and tm.MEMBER_TYPE=#{ext1}
+    </if>
   </select>
   
-  <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="SysTeam" >
+    select <include refid="Base_Column_List" /> from sys_team t where t.TEAM_UID = #{teamUid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="SysTeam" >
     select 
     <include refid="Base_Column_List" />  from SYS_TEAM
     
