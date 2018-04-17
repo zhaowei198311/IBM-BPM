@@ -35,6 +35,14 @@ public class SysUserController {
 		return "usermanagement/index";
 	}
 	
+	@RequestMapping(value="/select_personnel")
+	public ModelAndView select_personnel(String id, String isSingle){
+		ModelAndView model = new ModelAndView("usermanagement/select_personnel");
+		model.addObject("id","a");
+		model.addObject("isSingle","false");
+		return model;
+	}
+	
 	@RequestMapping(value="/organization")
 	public String organization(){
 		return "usermanagement/organization";
