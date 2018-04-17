@@ -12,6 +12,8 @@ public interface SysTeamMapper {
     int insertSelective(SysTeam record);
 
     SysTeam selectByPrimaryKey(String teamUid);
+    
+    SysTeam selectByPrimary(SysTeam sysTeam);
 
     int updateByPrimaryKeySelective(SysTeam record);
 
