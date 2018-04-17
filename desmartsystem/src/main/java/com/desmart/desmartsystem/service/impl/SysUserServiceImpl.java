@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartsystem.dao.SysUserDao;
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.SysUserService;
 import com.desmart.desmartsystem.util.BeanUtil;
@@ -24,7 +24,7 @@ import com.github.pagehelper.PageHelper;
 public class SysUserServiceImpl implements SysUserService {
 
 	@Autowired
-	SysUserDao sysUserDao;
+	SysUserMapper sysUserDao;
 	
 	@Override
 	public int insert(SysUser entity) throws Exception {

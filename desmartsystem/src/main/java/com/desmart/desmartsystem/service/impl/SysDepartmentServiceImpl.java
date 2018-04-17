@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartsystem.dao.SysDepartmentDao;
+import com.desmart.desmartsystem.dao.SysDepartmentMapper;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.SysDepartmentService;
@@ -25,7 +25,7 @@ import com.github.pagehelper.PageHelper;
 public class SysDepartmentServiceImpl   implements SysDepartmentService {
 
 	@Autowired
-	public SysDepartmentDao sysDepartmentDao;
+	public SysDepartmentMapper sysDepartmentDao;
 	
 	@Override
 	public int insert(SysDepartment entity) throws Exception {

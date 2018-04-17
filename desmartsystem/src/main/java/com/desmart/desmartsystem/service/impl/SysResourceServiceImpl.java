@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartsystem.dao.SysResourceDao;
+import com.desmart.desmartsystem.dao.SysResourceMapper;
 import com.desmart.desmartsystem.entity.SysResource;
 import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.SysResourceService;
@@ -26,7 +26,7 @@ import com.github.pagehelper.PageHelper;
 public class SysResourceServiceImpl implements SysResourceService {
 	
 	@Autowired
-	SysResourceDao sysResourceDao;
+	SysResourceMapper sysResourceDao;
 	
 	@Override
 	public int insert(SysResource entity) throws Exception {
