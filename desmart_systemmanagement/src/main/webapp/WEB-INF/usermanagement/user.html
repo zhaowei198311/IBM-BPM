@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
+  		<link href="css/my.css" rel="stylesheet" />
+  		
+	</head>
+	<body>
+		<div class="container">
+			<div class="search_area">
+				<div class="layui-row layui-form">
+					<div class="layui-col-md2">
+				    	<input type="text" placeholder="姓名"  class="layui-input">
+					</div>
+					<div class="layui-col-md2">
+						<input type="text" placeholder="账户"  class="layui-input">
+					</div>
+					<div class="layui-col-md2">
+						<input type="text"  placeholder="部门"  class="layui-input" >
+					</div>
+					<div class="layui-col-md2">
+					    <input type="text"  placeholder="类型"  class="layui-input">				    
+					</div>
+					<div class="layui-col-md1" style="text-align:right;">
+					        <button class="layui-btn" >查询</button>
+					</div>
+					<!--<div class="layui-col-md1" style="text-align:right;">
+					        <button class="layui-btn create_btn" >新建</button>
+					</div>-->
+				</div>
+			</div>
+			<div>				
+				<table class="layui-table backlog_table" lay-even lay-skin="nob">
+					<colgroup>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col> 
+					    <col>
+					    <col>
+					</colgroup>
+					<thead>
+					    <tr>
+					      <th>序号</th>
+					      <th>姓名</th>
+					      <th>用户名</th>
+					      <th>部门</th>
+					      <th>类型</th>
+					      <th>联系电话</th>
+					      <th>操作</th>
+					    </tr> 
+					</thead>
+					<tbody>
+					    <tr>
+					      <td>1</td>
+					      <td>张三</td>
+					      <td>zhangsan</td>
+					      <td>营运部</td>
+					      <td>前台用户</td>
+					      <td>13700000010</td>
+					      <td><i class="layui-icon link_role" title="绑定业务角色">&#xe612;</i><i class="layui-icon link_system" title="绑定系统角色">&#xe614;</i> <i class="layui-icon edit_user" title="查看详情">&#xe60a;</i><i class="layui-icon delete_btn">&#xe640;</i></td>
+					    </tr>
+					    <tr>
+					      <td>2</td>
+					      <td>张三</td>
+					      <td>zhangsan</td>
+					      <td>营运部</td>
+					      <td>前台用户</td>
+					      <td>13700000010</td>
+					      <td><i class="layui-icon link_role" title="绑定业务角色">&#xe612;</i><i class="layui-icon link_system" title="绑定系统角色">&#xe614;</i> <i class="layui-icon edit_user" title="查看详情">&#xe60a;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
+					    </tr>
+					    <tr>
+					      <td>3</td>
+					      <td>张三</td>
+					      <td>zhangsan</td>
+					      <td>营运部</td>
+					      <td>前台用户</td>
+					      <td>13700000010</td>
+					      <td><i class="layui-icon link_role" title="绑定业务角色">&#xe612;</i><i class="layui-icon link_system" title="绑定系统角色">&#xe614;</i> <i class="layui-icon edit_user" title="查看详情">&#xe60a;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
+					    </tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="display_container1">
+			<div class="display_content1">
+				<div class="top">
+					绑定系统角色
+				</div>
+				<div class="middle">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+							<col>
+						    <col>
+						</colgroup>
+						<thead>
+						    <tr>
+						      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+						      <th>角色名称</th>
+						    </tr> 
+						</thead>
+						<tbody>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
+						      <td>系统管理员</td>
+						    </tr>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
+						      <td>流程管理员</td>
+						    </tr>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
+						      <td>普通用户</td>
+						    </tr>
+						    <tr>
+						</tbody>
+					</table>		
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>
+		<div class="display_container">
+			<div class="display_content">
+				<div class="top">
+					绑定业务角色
+				</div>
+				<div class="middle">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+							<col>
+						    <col>
+						</colgroup>
+						<thead>
+						    <tr>
+						      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+						      <th>角色名称</th>
+						    </tr> 
+						</thead>
+						<tbody>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
+						      <td>店长</td>
+						    </tr>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
+						      <td>经理</td>
+						    </tr>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
+						      <td>区域经理</td>
+						    </tr>
+						    <tr>
+						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
+						      <td>总监</td>
+						    </tr>
+						    <tr>
+						</tbody>
+					</table>		
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>
+	<script>
+		$(function(){
+			$(".create_btn").click(function(){
+				window.location.href="new_user.html";
+			})
+			$(".edit_user").click(function(){
+				window.location.href="edit_user.html";
+			})
+			$(".link_role").click(function(){
+				$(".display_container").css("display","block");
+			})
+			$(".link_system").click(function(){
+				$(".display_container1").css("display","block");
+			})
+			$(".sure_btn").click(function(){
+				$(".display_container").css("display","none");
+				$(".display_container1").css("display","none");
+			})
+			$(".cancel_btn").click(function(){
+				$(".display_container").css("display","none");
+				$(".display_container1").css("display","none");
+			})
+
+		})
+
+	</script>

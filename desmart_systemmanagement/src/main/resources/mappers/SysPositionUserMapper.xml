@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmart_systemmanagement.dao.SysPositionUserMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmart_systemmanagement.entity.SysPositionUser" >
+    <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+    <result column="POSITION_UID" property="positionUid" jdbcType="VARCHAR" />
+    <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MAP_UID, USER_UID, DEPART_UID, POSITION_UID, IS_SHOW
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_POSITION_USER
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SYS_POSITION_USER
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmart_systemmanagement.entity.SysPositionUser" >
+    insert into SYS_POSITION_USER (MAP_UID, USER_UID, DEPART_UID, 
+      POSITION_UID, IS_SHOW)
+    values (#{mapUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{departUid,jdbcType=VARCHAR}, 
+      #{positionUid,jdbcType=VARCHAR}, #{isShow,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmart_systemmanagement.entity.SysPositionUser" >
+    insert into SYS_POSITION_USER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mapUid != null" >
+        MAP_UID,
+      </if>
+      <if test="userUid != null" >
+        USER_UID,
+      </if>
+      <if test="departUid != null" >
+        DEPART_UID,
+      </if>
+      <if test="positionUid != null" >
+        POSITION_UID,
+      </if>
+      <if test="isShow != null" >
+        IS_SHOW,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mapUid != null" >
+        #{mapUid,jdbcType=VARCHAR},
+      </if>
+      <if test="userUid != null" >
+        #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="departUid != null" >
+        #{departUid,jdbcType=VARCHAR},
+      </if>
+      <if test="positionUid != null" >
+        #{positionUid,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmart_systemmanagement.entity.SysPositionUser" >
+    update SYS_POSITION_USER
+    <set >
+      <if test="userUid != null" >
+        USER_UID = #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="departUid != null" >
+        DEPART_UID = #{departUid,jdbcType=VARCHAR},
+      </if>
+      <if test="positionUid != null" >
+        POSITION_UID = #{positionUid,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        IS_SHOW = #{isShow,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmart_systemmanagement.entity.SysPositionUser" >
+    update SYS_POSITION_USER
+    set USER_UID = #{userUid,jdbcType=VARCHAR},
+      DEPART_UID = #{departUid,jdbcType=VARCHAR},
+      POSITION_UID = #{positionUid,jdbcType=VARCHAR},
+      IS_SHOW = #{isShow,jdbcType=DECIMAL}
+    where MAP_UID = #{mapUid,jdbcType=VARCHAR}
+  </update>
+</mapper>
