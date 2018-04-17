@@ -162,6 +162,33 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
 
     /**
+     * 查看指定的流程定义是否存在
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    @Override
+    public ServerResponse isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        DhProcessDefinition definitionSelective = new DhProcessDefinition();
+        definitionSelective.setProVerUid(proVerUid);
+        definitionSelective.setProAppId(proAppId);
+        definitionSelective.setProUid(proUid);
+        List<DhProcessDefinition> list = dhProcessDefinitionDao.listBySelective(definitionSelective);
+        if (list.size() == 0) {
+            return ServerResponse.createByErrorMessage("流程定义不存在");
+        } else if (list.size() == 1) {
+            return ServerResponse.createBySuccess(list.get(0));
+        } else {
+            return ServerResponse.createByErrorMessage("异常，存在一个以上此流程定义");
+        }
+
+    }
+
+    /**
      * 获得所有公开的流程信息
      * @return Map中的属性 procAppName, procAppId, bpdName, bpdId, snapshotId, snapshotCreated, branchId
      */

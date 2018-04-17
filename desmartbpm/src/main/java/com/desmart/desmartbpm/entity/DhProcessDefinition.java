@@ -76,8 +76,13 @@ public class DhProcessDefinition {
 
     // 以下不属于表字段
     private String creatorFullName;
-
     private String updatorFullName;
+    private String proTriStartTitle;
+    private String proTriDeletedTitle;
+    private String proTriCanceledTitle;
+    private String proTriPausedTitle;
+    private String proTriUnpausedTitle;
+    private String proTriReassignedTitle;
 
 
     public String getProUid() {
@@ -361,6 +366,54 @@ public class DhProcessDefinition {
         this.updatorFullName = updatorFullName;
     }
 
+    public String getProTriStartTitle() {
+        return proTriStartTitle;
+    }
+
+    public void setProTriStartTitle(String proTriStartTitle) {
+        this.proTriStartTitle = proTriStartTitle;
+    }
+
+    public String getProTriDeletedTitle() {
+        return proTriDeletedTitle;
+    }
+
+    public void setProTriDeletedTitle(String proTriDeletedTitle) {
+        this.proTriDeletedTitle = proTriDeletedTitle;
+    }
+
+    public String getProTriCanceledTitle() {
+        return proTriCanceledTitle;
+    }
+
+    public void setProTriCanceledTitle(String proTriCanceledTitle) {
+        this.proTriCanceledTitle = proTriCanceledTitle;
+    }
+
+    public String getProTriPausedTitle() {
+        return proTriPausedTitle;
+    }
+
+    public void setProTriPausedTitle(String proTriPausedTitle) {
+        this.proTriPausedTitle = proTriPausedTitle;
+    }
+
+    public String getProTriUnpausedTitle() {
+        return proTriUnpausedTitle;
+    }
+
+    public void setProTriUnpausedTitle(String proTriUnpausedTitle) {
+        this.proTriUnpausedTitle = proTriUnpausedTitle;
+    }
+
+    public String getProTriReassignedTitle() {
+        return proTriReassignedTitle;
+    }
+
+    public void setProTriReassignedTitle(String proTriReassignedTitle) {
+        this.proTriReassignedTitle = proTriReassignedTitle;
+    }
+
     @Override
     public String toString() {
         return "DhProcessDefinition{" +
@@ -399,6 +452,12 @@ public class DhProcessDefinition {
                 ", proDerivationScreenTpl='" + proDerivationScreenTpl + '\'' +
                 ", creatorFullName='" + creatorFullName + '\'' +
                 ", updatorFullName='" + updatorFullName + '\'' +
+                ", proTriStartTitle='" + proTriStartTitle + '\'' +
+                ", proTriDeletedTitle='" + proTriDeletedTitle + '\'' +
+                ", proTriCanceledTitle='" + proTriCanceledTitle + '\'' +
+                ", proTriPausedTitle='" + proTriPausedTitle + '\'' +
+                ", proTriUnpausedTitle='" + proTriUnpausedTitle + '\'' +
+                ", proTriReassignedTitle='" + proTriReassignedTitle + '\'' +
                 '}';
     }
 }

@@ -128,6 +128,11 @@ public class DhProcessMetaController {
     @ResponseBody
     public String getTreeData() {
         List<DhProcessCategory> categoryList = dhProcessCategoryService.listAll();
+        DhProcessCategory dhProcessCategory = new DhProcessCategory();
+        dhProcessCategory.setCategoryUid("rootCategory");
+        dhProcessCategory.setCategoryName("流程分类");
+        dhProcessCategory.setCategoryParent("0");
+        categoryList.add(dhProcessCategory);
         List<DhProcessMeta> metaList = dhProcessMetaService.listAll();
         List<ZTreeNode> nodesToShow = new ArrayList<ZTreeNode>();
         for (DhProcessCategory category : categoryList) {

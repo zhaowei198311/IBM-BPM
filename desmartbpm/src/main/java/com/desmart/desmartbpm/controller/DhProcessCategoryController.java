@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.controller;
 
+import com.desmart.desmartbpm.entity.ZTreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,9 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.util.JsonUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/processCategory")
@@ -49,6 +53,29 @@ public class DhProcessCategoryController {
     @ResponseBody
     public ServerResponse addCategory(DhProcessCategory dhProcessCategory) {
         return dhProcessCategoryService.save(dhProcessCategory);
-    } 
+    }
+
+
+    @RequestMapping(value = "/getTreeData")
+    @ResponseBody
+    public String getTreeData() {
+        List<DhProcessCategory> categoryList = dhProcessCategoryService.listAll();
+        DhProcessCategory dhProcessCategory = new DhProcessCategory();
+        dhProcessCategory.setCategoryUid("rootCategory");
+        dhProcessCategory.setCategoryName("流程分类");
+        dhProcessCategory.setCategoryParent("0");
+        categoryList.add(dhProcessCategory);
+        List<ZTreeNode> nodesToShow = new ArrayList<ZTreeNode>();
+        for (DhProcessCategory category : categoryList) {
+            ZTreeNode node = new ZTreeNode();
+            node.setId(category.getCategoryUid());
+            node.setName(category.getCategoryName());
+            node.setPid(category.getCategoryParent());
+            node.setItemType("category");
+            node.setIcon("../resources/images/1.png");
+            nodesToShow.add(node);
+        }
+        return JsonUtil.obj2String(nodesToShow);
+    }
     
 }

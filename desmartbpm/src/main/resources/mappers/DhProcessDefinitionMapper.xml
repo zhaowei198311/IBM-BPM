@@ -50,10 +50,18 @@
 
 
     <select id="listBySelective" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
-        select <include refid="relation_column"/>, u1.user_name creatorFullName, u2.user_name updatorFullName
+        select <include refid="relation_column"/>, u1.user_name creatorFullName, u2.user_name updatorFullName,
+        tri1.tri_title proTriStartTitle, tri2.tri_title proTriDeletedTitle, tri3.tri_title proTriCanceledTitle, tri4.tri_title proTriPausedTitle,
+        tri5.tri_title proTriUnpausedTitle, tri6.tri_title proTriReassignedTitle
         from dh_process_definition pd
         left join sys_user u1 on pd.CREATE_USER = u1.user_uid
         left join sys_user u2 on pd.LAST_MODIFIED_USER = u2.user_uid
+        left join dh_trigger tri1 on pd.pro_tri_start = tri1.tri_uid
+        left join dh_trigger tri2 on pd.pro_tri_deleted = tri2.tri_uid
+        left join dh_trigger tri3 on pd.pro_tri_canceled = tri3.tri_uid
+        left join dh_trigger tri4 on pd.pro_tri_paused = tri4.tri_uid
+        left join dh_trigger tri5 on pd.pro_tri_unpaused = tri5.tri_uid
+        left join dh_trigger tri6 on pd.pro_tri_reassigned = tri6.tri_uid
         <where>
             <if test="proUid != null">
                 pd.pro_uid = #{proUid}

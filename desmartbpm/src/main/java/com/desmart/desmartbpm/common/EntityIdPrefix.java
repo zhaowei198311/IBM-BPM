@@ -19,4 +19,7 @@ public class EntityIdPrefix {
 	/** 接口数据前缀 */
 	public static final String DH_INTERFACE_META = "int_meta";
 
+	/** 触发器前缀 */
+	public static final String DH_TRIGGER = "trigger:";
+
 }

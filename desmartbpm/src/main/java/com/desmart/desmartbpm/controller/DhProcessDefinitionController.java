@@ -1,7 +1,5 @@
 package com.desmart.desmartbpm.controller;
 
-import java.util.List;
-
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.entity.DhProcessCategory;
-import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 
@@ -68,5 +64,32 @@ public class DhProcessDefinitionController {
             return ServerResponse.createByErrorMessage("创建流程定义失败");
         }
     }
-    
+
+    /**
+     * 查看指定的流程定义是否存在
+     * @return
+     */
+    @RequestMapping(value = "/tryEditDefinition")
+    @ResponseBody
+    public ServerResponse tryEditDefinition(String proAppId, String proUid, String proVerUid) {
+        return dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
+    }
+
+    /**
+     * 配置流程定义
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    @RequestMapping(value = "/editDefinition")
+    public ModelAndView editDefinition(String proAppId, String proUid, String proVerUid) {
+        ModelAndView mv = new ModelAndView("processDefinitionSet");
+        ServerResponse serverResponse = dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
+        if (serverResponse.isSuccess()) {
+            mv.addObject("definition", serverResponse.getData());
+        }
+        return mv;
+    }
+
 }

@@ -23,5 +23,5 @@ public interface DhProcessDefinitionService {
      */
     ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request);
 
-
+    ServerResponse isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid);
 }

@@ -175,9 +175,10 @@
     </body>
     
 </html>
-        <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
-        <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.excheck.js"></script>
-        <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.exedit.js"></script>
+<script src="<%=basePath%>/resources/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.exedit.js"></script>
     <script>
         var oldCategoryName = "";// 记录重命名分类的原名字
         var parentNode = "";  // 记录往哪个节点下新建分类
@@ -230,13 +231,12 @@
             },
             data: {
             	key: {
-            		name: "categoryName",
-                    icon: "categoryIcon"
+            		name: "name",
             	},
                 simpleData: {
                     enable: true,
-                    idKey: "categoryUid",
-                    pIdKey: "categoryParent",
+                    idKey: "id",
+                    pIdKey: "pid",
                     rootPId: "rootCategory"
                 }
             },
@@ -251,12 +251,11 @@
             }
         };
 
-        var zNodes = ${zNodes};
-        
+
         function zTreeOnClick(event, treeId, treeNode) {
-        	newMeta.categoryUid = treeNode.categoryUid;
-        	newMeta.categoryName = treeNode.categoryName;
-        	pageConfig.categoryUid = treeNode.categoryUid;
+        	newMeta.categoryUid = treeNode.id;
+        	newMeta.categoryName = treeNode.name;
+        	pageConfig.categoryUid = treeNode.id;
         	pageConfig.pageNum = 1;
         	$("#proName_input").val('');
         	getMetaInfo();
@@ -269,13 +268,13 @@
         // 编辑节点名前
         function beforeEditName(treeId, treeNode) {
         	// 全局变量中记录修改前的名字，用于还原
-        	oldCategoryName = treeNode.categoryName;
+        	oldCategoryName = treeNode.name;
             className = (className === "dark" ? "":"dark");
             showLog("[ "+getTime()+" beforeEditName ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
             var zTree = $.fn.zTree.getZTreeObj("category_tree");
             zTree.selectNode(treeNode);
             setTimeout(function() {
-                if (confirm("进入分类" + treeNode.categoryName + " 的编辑状态吗？")) {
+                if (confirm("进入分类" + treeNode.name + " 的编辑状态吗？")) {
                     setTimeout(function() {
                         zTree.editName(treeNode);
                     }, 0);
@@ -291,7 +290,7 @@
             zTree.selectNode(treeNode);
             tempRemoveTreeNode = treeNode;
             tempRemoveParentTreeNode = treeNode.getParentNode();
-            return confirm("确认删除分类" + treeNode.categoryName + " 吗？");
+            return confirm("确认删除分类" + treeNode.name + " 吗？");
         }
         function onRemove(e, treeId, treeNode) {
         	$.ajax({
@@ -299,7 +298,7 @@
         		dataType: "json",
         		type: "post",
         		data: {
-        			"categoryUid": tempRemoveTreeNode.categoryUid
+        			"categoryUid": tempRemoveTreeNode.id
         		},
         		success: function(result) {
         			if (result.status == 0) {
@@ -307,7 +306,7 @@
         			} else {
         				var zTree = $.fn.zTree.getZTreeObj("category_tree");
         	            zTree.addNodes(tempRemoveParentTreeNode,  tempRemoveTreeNode);
-        				alert(result.msg);
+        				layer.alert(result.msg);
         			}
         		},
         		error: function() {
@@ -325,7 +324,7 @@
                 setTimeout(function() {
                     var zTree = $.fn.zTree.getZTreeObj("category_tree");
                     zTree.cancelEditName();
-                    alert("节点名称不能为空.");
+                    layer.alert("节点名称不能为空.");
                 }, 0);
                 return false;
             }
@@ -338,31 +337,31 @@
                 url: common.getPath() + "/processCategory/renameCategory",
                 type: "post",
                 data: {
-                    "categoryUid": treeNode.categoryUid,
-                    "newName": treeNode.categoryName
+                    "categoryUid": treeNode.id,
+                    "newName": treeNode.name
                 },
                 dataType: "json",
                 success : function(result) {
                     if (result.status == 0 ){// 修改成功
                     } else {// 修改失败，还原名字
                     	var zTree = $.fn.zTree.getZTreeObj(treeId);
-                    	treeNode.categoryName = oldCategoryName; 
+                    	treeNode.name = oldCategoryName;
                     	zTree.updateNode(treeNode);
-                    	alert(result.msg);
+                    	layer.alert(result.msg);
                     }
                 }
             });
         }
         // 是否显示删除按钮
         function showRemoveBtn(treeId, treeNode) {
-        	if (treeNode.categoryUid == 'rootCategory') {
+        	if (treeNode.id == 'rootCategory') {
                 return false;
             }
             return true;
         }
         // 是否显示改名按钮
         function showRenameBtn(treeId, treeNode) {
-        	if (treeNode.categoryUid == 'rootCategory') {
+        	if (treeNode.id == 'rootCategory') {
         		return false;
         	}
             return true;
@@ -392,7 +391,7 @@
             sObj.after(addStr);
             var btn = $("#addBtn_"+treeNode.tId);
             if (btn) btn.bind("click", function(){
-            	parentNode = treeNode.categoryUid;
+            	parentNode = treeNode.id;
             	parentNodeTId = treeNode.tId;
                 // ajax新建一个分类，再加一个节点
                 $("#categoryName_input").val('');
@@ -410,9 +409,19 @@
         }
 
         $(document).ready(function(){
-            $.fn.zTree.init($("#category_tree"), setting, zNodes);
-            
-            getMetaInfo();
+            // 加载树
+            $.ajax({
+                url: common.getPath() + "/processCategory/getTreeData",
+                type: "post",
+                data: {},
+                dataType: "json",
+                success: function(result) {
+                    $.fn.zTree.init($("#category_tree"), setting, result);
+                }
+            });
+
+            doPage();
+
             
             // “添加”按钮
             $("#show_expose_btn").click(function(){
@@ -434,11 +443,11 @@
             	// 被勾选的复选框
             	var checkedItems = $("[name='unbindMeta_checkbox']:checked");
             	if (!checkedItems.length) {
-            		alert("请选择要添加的流程元数据");
+            		layer.alert("请选择要添加的流程元数据");
             		return;
             	}
             	if (checkedItems.length > 1) {
-            		alert("请选择一个要添加流程元数据，不能选择多个");
+            		layer.alert("请选择一个要添加流程元数据，不能选择多个");
                     return;
             	}
             	newMeta.proAppId = checkedItems.eq(0).data('processappid');
@@ -455,7 +464,7 @@
             	// todo
             	var cks = $("[name='proMeta_check']:checked");
             	if (!cks.length) {
-            		alert("请选择要删除的流程元数据");
+            		layer.alert("请选择要删除的流程元数据");
             		return;
             	}
             	var uids = "";
@@ -463,28 +472,28 @@
             		uids += $(element).parent().parent().data('metauid') + ";";
             	});
             	uids = uids.substring(0, uids.length -1);
-            	if (confirm("确认删除元数据？")) {
-            		$.ajax({
-            			url: common.getPath() + "/processMeta/remove",
-            			type: "post",
-            			dataType: "json",
-            			data: {
-            				"uids": uids
-            			},
-            			success: function(result) {
-            				if (result.status == 0) {
-            					getMetaInfo();
-                                alert('删除成功');
-            				} else {
-            					alert(result.msg);
-            				}
-            			},
-            			error: function() {
-            				alert("删除失败，请稍后再试");
-            			}
-            		});
-            	}
-            	
+            	layer.confirm("确认删除元数据？", function () {
+                    $.ajax({
+                        url: common.getPath() + "/processMeta/remove",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "uids": uids
+                        },
+                        success: function(result) {
+                            if (result.status == 0) {
+                                getMetaInfo();
+                                layer.alert('删除成功');
+                            } else {
+                                layer.alert(result.msg);
+                            }
+                        },
+                        error: function() {
+                            layer.alert("删除失败，请稍后再试");
+                        }
+                    });
+                })
+
             });
             
             // 取消添加
@@ -507,7 +516,7 @@
             $('#editMeta_sureBtn').click(function() {
             	var newName = $('#metarename_input').val();
             	if (!newName.trim()) {
-            		alert('请输入新名称');
+            		layer.alert('请输入新名称');
             		return;
             	}
             	$.ajax({
@@ -522,13 +531,13 @@
             			if (result.status == 0) {
             				$('#editMeta_container').hide();
             				getMetaInfo();
-            				alert('修改成功');
+            				layer.alert('修改成功');
             			} else {
-            				alert(result.msg);
+            				layer.alert(result.msg);
             			}
             		},
             		error: function() {
-            			alert('修改失败，请稍后再试');
+            			layer.alert('修改失败，请稍后再试');
             		}
             		
             	});
@@ -539,11 +548,11 @@
             $('#addMetaSure_btn').click(function(){
             	var inputVal = $('#addMetaName_input').val().trim();
             	if (!inputVal) {
-            		alert("请输入元数据名称");
+            		layer.alert("请输入元数据名称");
             		return;
             	}
             	if (inputVal.length > 50) {
-            		alert("元数据名称过长");
+            		layer.alert("元数据名称过长");
             		return;
             	}
                 $.ajax({
@@ -561,9 +570,9 @@
                         if (result.status == 0) {
                         	$('#addMeta_container').css('display', 'none');
                         	getExposedInfo();
-                        	alert("添加成功");
+                        	layer.alert("添加成功");
                         } else {
-                        	alert(result.msg);
+                        	layer.alert(result.msg);
                         }
                     },
                     error: function() {
@@ -578,7 +587,7 @@
             	
             	console.log(newName);
             	if (!newName) {
-            		alert("分类名不能为空");
+            		layer.alert("分类名不能为空");
             		return;
             	}
             	$.ajax({
@@ -595,9 +604,9 @@
             				// 在tree上加入新节点
             				var zTree = $.fn.zTree.getZTreeObj("category_tree");
             				var treeNode = zTree.getNodeByTId(parentNodeTId);
-            				zTree.addNodes(treeNode, {"categoryUid": result.data.categoryUid, "categoryParent": result.data.categoryParent, "categoryName": result.data.categoryName, "categoryIcon": "../resources/images/1.png" });
+            				zTree.addNodes(treeNode, {"id": result.data.categoryUid, "pid": result.data.categoryParent, "name": result.data.categoryName, "icon": "../resources/images/1.png" });
             			} else {
-            				alert(result.msg);
+            				layer.alert(result.msg);
             			}
             		}
             	});
