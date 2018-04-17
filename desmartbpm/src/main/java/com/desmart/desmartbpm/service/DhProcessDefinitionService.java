@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service;
 
 import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,5 +24,19 @@ public interface DhProcessDefinitionService {
      */
     ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request);
 
+    /**
+     * 指定的流程定义是否存在，存在的话将满足条件的第一个元素返回在data中
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
     ServerResponse isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 更新流程定义
+     * @param definition
+     * @return
+     */
+    ServerResponse updateDhProcessDefinition(DhProcessDefinition definition);
 }

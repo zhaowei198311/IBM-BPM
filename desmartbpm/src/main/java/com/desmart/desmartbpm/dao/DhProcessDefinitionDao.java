@@ -12,5 +12,5 @@ public interface DhProcessDefinitionDao {
 
     List<DhProcessDefinition> listBySelective(DhProcessDefinition dhProcessDefinition);
 
-    int updateByProUidAndProVerUidSelective(DhProcessDefinition dhProcessDefinition);
+    int updateByProAppIdAndProUidAndProVerUidSelective(DhProcessDefinition dhProcessDefinition);
 }

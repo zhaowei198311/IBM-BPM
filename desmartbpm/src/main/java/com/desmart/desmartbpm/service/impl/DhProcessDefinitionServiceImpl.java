@@ -260,5 +260,26 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
     }
 
+    @Transactional
+    public ServerResponse updateDhProcessDefinition(DhProcessDefinition definition) {
+        if (StringUtils.isBlank(definition.getProAppId()) || StringUtils.isBlank(definition.getProUid())
+                || StringUtils.isBlank(definition.getProVerUid())) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
 
+        ServerResponse serverResponse = this.isDhProcessDefinitionExist(definition.getProAppId(), definition.getProUid(), definition.getProVerUid());
+        if (!serverResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("找不到此流程定义");
+        }
+        String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        definition.setLastModifiedUser(user);
+        int countRow = dhProcessDefinitionDao.updateByProAppIdAndProUidAndProVerUidSelective(definition);
+        if (countRow > 0) {
+            return ServerResponse.createBySuccess();
+        } else {
+            return ServerResponse.createByErrorMessage("更新流程定义失败");
+        }
+
+
+    }
 }

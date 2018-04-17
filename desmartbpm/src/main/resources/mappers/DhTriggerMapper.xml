@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhTriggerDao" >
+    <sql id="base_column">
+        TRI_UID,
+        TRI_TITLE,
+        TRI_DESCRIPTION,
+        TRI_TYPE,
+        TRI_WEBBOT,
+        TRI_PARAM,
+        CREATOR,
+        CREATE_TIME,
+        UPDATOR,
+        UPDATE_TIME
+    </sql>
+    <sql id="relation_column">
+        tri.TRI_UID,
+        tri.TRI_TITLE,
+        tri.TRI_DESCRIPTION,
+        tri.TRI_TYPE,
+        tri.TRI_WEBBOT,
+        tri.TRI_PARAM,
+        tri.CREATOR,
+        tri.CREATE_TIME,
+        tri.UPDATOR,
+        tri.UPDATE_TIME
+    </sql>
+
+    <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTrigger">
+        insert into dh_trigger (<include refid="base_column"/>)
+        values (
+            #{triUid},
+            #{triTitle},
+            #{triDescription},
+            #{triType},
+            #{triWebbot},
+            #{triParam},
+            #{creator},
+            sysdate,
+            #{creator},
+            sysdate
+        )
+    </insert>
+    
+    <select id="getByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTrigger">
+        select <include refid="base_column"/> from dh_trigger
+        where triUid = #{triUid}
+    </select>
+
+    <select id="searchBySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger" resultType="com.desmart.desmartbpm.entity.DhTrigger">
+        select <include refid="base_column"/> from dh_trigger
+        <where>
+            <if test="triTitle != null and !triTitle.trim().isEmpty()" >
+                tri_title like '%' || #{triTitle} || '%'
+            </if>
+            <if test="triType != null and !triType.trim().isEmpty()" >
+                and tri_type = #{triType}
+            </if>
+        </where>
+
+    </select>
+
+</mapper>

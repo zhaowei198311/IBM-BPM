@@ -77,9 +77,11 @@
         order by pd.create_date desc
     </select>
 
-    <update id="updateByProUidAndProVerUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+    <update id="updateByProAppIdAndProUidAndProVerUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
         update DH_PROCESS_DEFINITION
         <set>
+            LAST_MODIFIED_USER = #{lastModifiedUser},
+            LAST_MODIFIED_DATE = sysdate,
             <if test="proParent != null">
                 PRO_PARENT = #{proParent},
             </if>
@@ -137,19 +139,6 @@
             <if test="proShowDynaform != null">
                 PRO_SHOW_DYNAFORM = #{proShowDynaform},
             </if>
-
-            <if test="lastModifiedDate != null">
-                LAST_MODIFIED_DATE = #{lastModifiedDate},
-            </if>
-            <if test="lastModifiedUser != null">
-                LAST_MODIFIED_USER = #{lastModifiedUser},
-            </if>
-            <if test="createDate != null">
-                CREATE_DATE = #{createDate},
-            </if>
-            <if test="createUser != null">
-                CREATE_USER = #{createUser},
-            </if>
             <if test="proHeight != null">
                 PRO_HEIGHT = #{proHeight},
             </if>
@@ -172,7 +161,7 @@
                 PRO_DERIVATION_SCREEN_TPL = #{proDerivationScreenTpl},
             </if>
         </set>
-        where PRO_UID = #{proUid} and PRO_VER_UID = #{proVerUid}
+        where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid} and PRO_VER_UID = #{proVerUid}
     </update>
 
 </mapper>

@@ -1,4 +1,41 @@
+var triggerToEdit;
+var pageConfig = {
+    pageNum: 1,
+    pageSize: 5,
+    total: 0,
+    triTitle: "",
+    triType: ""
+}
 $(function() {
+    $('#form1').validate({
+        rules : {
+            proTime : {
+                number : true
+            },
+            proDynaforms: {
+                max: 100
+            },
+            proDerivationScreenTpl: {
+                max: 128
+            }
+        }
+    });
+    $("#form4").validate({
+        rules : {
+            proHeight : {
+                digits : true
+            },
+            proWidth : {
+                digits : true
+            },
+            proTitleX: {
+                digits : true
+            },
+            proTitleY: {
+                digits : true
+            }
+        }
+    });
     // “返回”按钮
     $("#back_btn").click(function () {
         window.history.back();
@@ -6,14 +43,28 @@ $(function() {
 
     // “保存”按钮
     $("#save_btn").click(function () {
-        var data = getData();
-        console.log(data);
-        if (!data.isOk) {
-            layer.alert(data.msg);
+        if (!$("#form1").valid() || !$("#form4").valid()) {
+            return;
+        }
+
+        var dataToSend = getData();
+        console.log(dataToSend);
+        if (!dataToSend.isOk) {
+            layer.alert(dataToSend.msg);
             return;
         }
         $.ajax({
-
+            url: common.getPath() + "/processDefinition/update",
+            type: "post",
+            dataType: "json",
+            data: dataToSend,
+            success: function (result) {
+                if (result.status == 0) {
+                    layer.alert("保存成功");
+                } else {
+                    layer.alert(result.msg);
+                }
+            }
         });
 
     });
@@ -22,6 +73,48 @@ $(function() {
     $("#finish_btn").click(function () {
 
     });
+
+    // 点击选择触发器
+    $(".choose_tri").click(function () {
+        triggerToEdit = $(this).data('identify');
+        getInfo();
+        $("#chooseTrigger_container").show();
+    });
+
+    // “确认”选择触发器
+    $("#chooseTrigger_sureBtn").click(function () {
+        var cks = $("[name='tri_check']:checked");
+        if (!cks.length) {
+            $("#" + triggerToEdit).val('');
+            $("#" + triggerToEdit + "Title").val('');
+            $("#chooseTrigger_container").hide();
+            return;
+        }
+        if (cks.length > 1) {
+            layer.alert("请选择一个触发器，不能选择多个");
+            return;
+        }
+        var ck = cks.eq(0);
+        var triUid = ck.val();
+        var triTitle = ck.parent().next().html();
+
+        $("#" + triggerToEdit).val(triUid);
+        $("#" + triggerToEdit + "Title").val(triTitle);
+        $("#chooseTrigger_container").hide();
+    });
+
+    // “取消”选择触发器
+    $("#chooseTrigger_cancelBtn").click(function () {
+        $("#chooseTrigger_container").hide();
+    });
+
+    // “查询”按钮
+    $("#searchTrigger_btn").click(function () {
+        pageConfig.triTitle = $("#triTitle_input").val().trim();
+        pageConfig.triType = $("#triType_sel").val();
+        pageConfig.pageNum = 1;
+        getInfo();
+    })
 
 });
 
@@ -49,10 +142,91 @@ function getData() {
     data.proTitleY = $('[name="proTitleY"]').val();
 
 
-    if(!/^[0-9]*[1-9][0-9]*$/.test(data.proHeight) || !/^[0-9]*[1-9][0-9]*$/.test(data.proWidth)
-        || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleX) || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleY)){
-        data.isOk = false;
-        data.msg = "流程图信息，需要输入正整数";
-    }
+    // if(!/^[0-9]*[1-9][0-9]*$/.test(data.proHeight) || !/^[0-9]*[1-9][0-9]*$/.test(data.proWidth)
+    //     || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleX) || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleY)){
+    //     data.isOk = false;
+    //     data.msg = "流程图信息，需要输入正整数";
+    // }
     return data;
+}
+
+/* 向服务器请求数据   */
+function getInfo() {
+    $.ajax({
+        url: common.getPath() + "/trigger/search",
+        type: "post",
+        dataType: "json",
+        data: {
+            "pageNum": pageConfig.pageNum,
+            "pageSize": pageConfig.pageSize,
+            "triTitle": pageConfig.triTitle,
+            "triType": pageConfig.triType
+        },
+        success: function(result) {
+            if (result.status == 0) {
+                drawTable(result.data);
+            }
+        }
+    });
+}
+
+function drawTable(pageInfo) {
+    pageConfig.pageNum = pageInfo.pageNum;
+    pageConfig.pageSize = pageInfo.pageSize;
+    pageConfig.total = pageInfo.total;
+    doPage();
+    $("#chooseTrigger_tbody").html("");
+    if (pageInfo.total == 0) {
+        return;
+    }
+
+    var list = pageInfo.list;
+    var startSort = pageInfo.startRow;//开始序号
+    var trs = "";
+    for(var i=0; i<list.length; i++) {
+        var trigger = list[i];
+        var sortNum = startSort + i;
+        var tempWebbot;
+        var tempParam;
+        if (trigger.triWebbot.length > 20) {
+            tempWebbot = trigger.triWebbot.substring(0, 20) + "...";
+        } else {
+            tempWebbot = trigger.triWebbot;
+        }
+        if (trigger.triParam.length > 20) {
+            tempParam = trigger.triParam.substring(0, 20) + "...";
+        } else {
+            tempParam = trigger.triParam;
+        }
+        console.log(tempWebbot)
+        trs += '<tr><td><input type="checkbox" name="tri_check" value="' + trigger.triUid + '" lay-skin="primary">'+ sortNum +'</td>'
+            + '<td>'+trigger.triTitle+'</td>'
+            + '<td>'+trigger.triType+'</td>'
+            + '<td title="'+trigger.triWebbot+'">'+tempWebbot+'</td>'
+            + '<td title="'+trigger.triParam+'">'+tempParam+'</td>'
+            + '</tr>';
+    }
+    $("#chooseTrigger_tbody").append(trs);
+}
+// 分页插件刷新
+function doPage() {
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage,layer = layui.layer;
+        //完整功能
+        laypage.render({
+            elem: 'lay_page',
+            curr: pageConfig.pageNum,
+            count: pageConfig.total,
+            limit: pageConfig.pageSize,
+            layout: ['count', 'prev', 'page', 'next', 'skip'],
+            jump: function(obj, first){
+                // 点击新页码进入此方法，obj包含了点击的页数的信息
+                pageConfig.pageNum = obj.curr;
+                pageConfig.pageSize = obj.limit;
+                if (!first) {
+                    getInfo();
+                }
+            }
+        });
+    });
 }

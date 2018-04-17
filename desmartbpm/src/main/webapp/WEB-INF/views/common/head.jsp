@@ -15,6 +15,8 @@
 
 <!-- 全局js -->
 <script src="<%=basePath%>/resources/js/jquery-3.3.1.js"></script>
+<script src="<%=basePath%>/resources/js/jquery.validate.min.js"></script>
+<script src="<%=basePath%>/resources/js/dwz.regional.zh_CN.js"></script>
 <script src="<%=basePath%>/resources/js/common.js"></script>
 
 

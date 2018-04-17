@@ -1,4 +1,5 @@
 *{margin:0;padding:0;}
+body{font-family: "Microsoft Yahei"}
 .left{float:left;width:220px;}
 .logo{text-align:center;}
 .logo img{margin:20px;}
@@ -63,7 +64,25 @@
 .layui-anim.layui-icon{vertical-align: -8px;}
 .display_container3{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
 .display_content3{overflow-y:auto;color:#717171;padding:20px;width:750px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -375px;left:50%;box-shadow:0 0 10px #ccc;}
-.middle1{height:250px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;}
-.middle2{height:300px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;}
+.middle1{height:250px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;overflow-y:auto;}
+.middle2{height:300px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;overflow-y:auto;}
 .display_container4{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
 .display_content4{overflow-y:auto;color:#717171;padding:20px;width:600px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
+.choose_user{cursor:pointer;}
+.user_container{height:500px;}
+.user_left{height:100%;overflow-y:auto;border:1px solid #ccc;padding:20px 10px 0;}
+.user_middle{height:100%;text-align:center;}
+.user_middle button{margin:10px auto;}
+.user_right{height:100%;border:1px solid #ccc;}
+.choose_user_list{padding-top:20px;}
+.choose_user_list li{height:30px;line-height:30px;list-style:none;padding-left:20px;color:#666;cursor:pointer;}
+.link_list li{height:40px;line-height:40px;font-size:16px;text-align:center;border-bottom:1px solid #ccc;cursor:pointer;}
+.link_list{list-style:none;color:#666;border:1px solid #b6b6b6;}
+.link_active{background:#ccc;}
+.link_title{height:25px;line-height:25px;padding-left:10px;background:#eee;color:#666;border:1px solid #b6b6b6;margin-top:10px;}
+.set_detail{padding-left:10px;}
+.trigger_table{display:none;}
+.radio_div{height:40px;line-height:40px;padding-left:20px;}
+.display_container5{display:none;position:fixed;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_content5{overflow-y:auto;color:#717171;padding:20px;width:600px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
+.error{color:red;}

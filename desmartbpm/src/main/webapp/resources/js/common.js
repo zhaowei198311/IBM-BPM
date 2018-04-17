@@ -7,13 +7,22 @@ var common = {
 		var projectName = pathName.substring(0, pathName.substr(1).indexOf("/")+1);
 		return (localhostPaht + projectName);
 	},
-	getRootPath: function() {
+	// 个人工作台项目路径
+	getPortalPath: function() {
         var curWwwPath = window.document.location.href;
         var pathName = window.document.location.pathname;
         var pos = curWwwPath.indexOf(pathName);
         var localhostPaht = curWwwPath.substring(0, pos);
-        return localhostPaht;
+        return localhostPaht + "/portal";
 	},
+    // 管理项目路径
+    getPortalPath: function() {
+        var curWwwPath = window.document.location.href;
+        var pathName = window.document.location.pathname;
+        var pos = curWwwPath.indexOf(pathName);
+        var localhostPaht = curWwwPath.substring(0, pos);
+        return localhostPaht + "/management";
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;

@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.controller;
 
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public class DhProcessDefinitionController {
     }
 
     /**
-     * 配置流程定义
+     * 跳转到配置流程定义
      * @param proAppId
      * @param proUid
      * @param proVerUid
@@ -92,4 +93,15 @@ public class DhProcessDefinitionController {
         return mv;
     }
 
+    @RequestMapping(value = "/update")
+    @ResponseBody
+    public ServerResponse updateDhProcessDefinition(DhProcessDefinition definition) {
+
+        try {
+            return dhProcessDefinitionService.updateDhProcessDefinition(definition);
+        } catch(Exception e) {
+            LOG.error("更新流程定义失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+        }
+    }
 }
