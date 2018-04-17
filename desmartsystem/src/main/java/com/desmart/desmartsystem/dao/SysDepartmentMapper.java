@@ -1,10 +1,11 @@
 package com.desmart.desmartsystem.dao;
 
+
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.desmart.desmartsystem.entity.SysResource;
+import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
 
 /**
@@ -13,9 +14,9 @@ import com.desmart.desmartsystem.entity.TreeNode;
  * </p>
  *
  * @author xsf
- * @since 2018-04-11
+ * @since 2018-04-09
  */
 @Repository
-public interface SysResourceDao extends BaseMapper<SysResource> {
-	List<TreeNode>	resourceTree();	
+public interface SysDepartmentMapper extends BaseMapper<SysDepartment> {
+	public List<TreeNode> selectTree(TreeNode entity);
 }

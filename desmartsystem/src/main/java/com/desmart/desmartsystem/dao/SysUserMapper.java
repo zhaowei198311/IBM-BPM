@@ -13,5 +13,5 @@ import com.desmart.desmartsystem.entity.SysUser;
  * @since 2018-04-08
  */
 @Repository
-public interface SysUserDao extends BaseMapper<SysUser> {
+public interface SysUserMapper extends BaseMapper<SysUser> {
 }
