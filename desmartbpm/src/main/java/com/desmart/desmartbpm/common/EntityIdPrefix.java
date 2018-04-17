@@ -17,7 +17,10 @@ public class EntityIdPrefix {
 	public static final String DH_PROCESS_META = "pro_meta:";
 	
 	/** 接口数据前缀 */
-	public static final String DH_INTERFACE_META = "int_meta";
+	public static final String DH_INTERFACE_META = "int_meta:";
+	
+	/** 接口参数前缀 */
+	public static final String DH_INTERFACE_PARAMETER = "para_meta:";
 
 	/** 触发器前缀 */
 	public static final String DH_TRIGGER = "trigger:";
