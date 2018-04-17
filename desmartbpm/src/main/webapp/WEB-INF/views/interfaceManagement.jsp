@@ -380,15 +380,29 @@
 		
 	}
 	// 按钮事件
-	function normal(btn) {
+	function normal(intUid) {
+		$.ajax({
+			url : '<%=basePath%>/interfaceParamers/index',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				intUid : intUid,
+				pageNum : pageConfig.pageNum,
+				pageSize : pageConfig.pageSize
+			},
+			success : function(result) {
+				if (result.status == 0) {
+					alert('success')
+				}
+			}
+		})
+	}
+	
+	function warm(intUid) {
 		
 	}
 	
-	function warm(btn) {
-		
-	}
-	
-	function danger(btn) {
+	function danger(intUid) {
 		
 	}
 </script>
