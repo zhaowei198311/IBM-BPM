@@ -153,8 +153,12 @@ public class DhInterface {
 		this.intStatus = intStatus;
 	}
 	
+	public DhInterface(){
+		
+	}
+
 	/**
-	 * @param intId
+	 * @param intUid
 	 * @param intTitle
 	 * @param intDescription
 	 * @param intType

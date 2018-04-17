@@ -19,9 +19,10 @@ public interface DhInterfaceService {
 	
 	/**
 	 * 
+	 * @param intTitle 
 	 * @return 返回一个list 所有的接口数据
 	 */
-	List<DhInterface> listDhInterface();
+	ServerResponse<PageInfo<List<DhInterface>>> listDhInterface(Integer pageNum, Integer pageSize);
 
 	/**
 	 * @param Interfaceid 需要删除的接口类
@@ -35,13 +36,12 @@ public interface DhInterfaceService {
 	int saveDhInterface(DhInterface dhInterface);
 
 	/**
-	 * 根据id 进行模糊查询
+	 * 根据接口名称 进行模糊查询
 	 * @param dhProcessList
 	 * @param formTitle
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
 	 */
-	ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceById(String id,
-			Integer pageNum, Integer pageSize);
+	ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(String intTitle,Integer pageNum, Integer pageSize);
 }

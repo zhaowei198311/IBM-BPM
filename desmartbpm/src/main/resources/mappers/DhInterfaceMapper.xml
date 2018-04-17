@@ -26,7 +26,7 @@
 		FROM DH_INTERFACE
 	</select>
 	
-	<insert id="save" useGeneratedKeys="true" keyProperty="INT_UID" parameterType="com.desmart.desmartbpm.entity.DhInterface">
+	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhInterface">
 		INSERT INTO
 		DH_INTERFACE
 		(<include refid="Base_Column_List"/>) 
@@ -35,7 +35,6 @@
 			#{intUid},
 			#{intTitle},
 			#{intDescription},
-			#{interfaceType},
 			#{intType},
 			#{intUrl},
 			#{intCallMethod},
@@ -52,14 +51,12 @@
 		</where>
 	</delete>
 	
-	<select id="listById" resultType="com.desmart.desmartbpm.entity.DhInterface" parameterType="java.lang.String">
+	<select id="listByTitle" resultType="com.desmart.desmartbpm.entity.DhInterface" parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM DH_INTERFACE
 		<where>
-			<if test="interfaceId != null">
-				INT_UID like '%' || #{intUid} || '%'
-			</if>
+			INT_TITLE like '%' || #{intTitle} || '%'
 		</where>
 	</select>
 	

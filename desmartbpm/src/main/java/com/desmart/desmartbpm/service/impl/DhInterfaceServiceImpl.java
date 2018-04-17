@@ -18,6 +18,7 @@ import com.desmart.desmartbpm.dao.DhInterfaceDao;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhInterface;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhInterfaceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -47,12 +48,14 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 * @see com.desmart.desmartbpm.service.DhInterfaceService#listDhInterface()
 	 */
 	@Override
-	public List<DhInterface> listDhInterface() {
+	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterface(Integer pageNum, Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
 		List<DhInterface> interfacelist = dhInterfaceDao.listAll();
 		if (null == interfacelist || interfacelist.size() == 0) {
 			LOG.info("查询接口出错,出错类为{}", DhInterfaceServiceImpl.class);
 		}
-		return interfacelist;
+		PageInfo<List<DhInterface>> pageInfo = new PageInfo(interfacelist);
+		return  ServerResponse.createBySuccess(pageInfo);
 	}
 
 	/*
@@ -87,11 +90,10 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 * @see com.desmart.desmartbpm.service.DhInterfaceService#listDhInterfaceById()
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceById(String Interfaceid, Integer pageNum, Integer pageSize) {
+	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(String InterfaceTitle, Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhInterface> DhInterfaceList = dhInterfaceDao.listById(Interfaceid);
+		List<DhInterface> DhInterfaceList = dhInterfaceDao.listByTitle(InterfaceTitle);
 		PageInfo<List<DhInterface>> pageInfo = new PageInfo(DhInterfaceList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
-
 }

@@ -41,10 +41,10 @@ public interface DhInterfaceDao {
 	List <DhInterface> listAll();
 	
 	/**
-	 * 根据id模糊查询 
+	 * 根据接口名称模糊查询 
 	 * @return list返回界面
 	 */
-	List<DhInterface> listById(String Interfaceid);
+	List<DhInterface> listByTitle(String InterfaceTitle);
 
 	
 }

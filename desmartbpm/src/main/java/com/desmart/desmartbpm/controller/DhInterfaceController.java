@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.DhInterface;
+import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhInterfaceService;
 
@@ -38,12 +39,16 @@ public class DhInterfaceController {
 	private DhInterfaceService dhInterfaceService;
 
 	@RequestMapping(value = "/index")
-	public ModelAndView queryDhInterface() {
+	public ModelAndView index() {
 		ModelAndView modev = new ModelAndView("interfaceManagement");
-		modev.addObject("listAll", dhInterfaceService.listDhInterface());
-		modev.addObject("pageNum", "1");
-		modev.addObject("pageSize", "10");
 		return modev;
+	}
+	
+	@RequestMapping(value = "/queryDhInterfaceList")
+	@ResponseBody
+	public ServerResponse queryDhInterface(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+        // todo
+        return  dhInterfaceService.listDhInterface(pageNum, pageSize);
 	}
 
 	@RequestMapping(value = "/add")
@@ -54,15 +59,15 @@ public class DhInterfaceController {
 
 	@RequestMapping(value = "/del")
 	@ResponseBody
-	public void deleteDhInterface(@RequestParam(value = "interfaceId") String interfaceId) {
+	public void deleteDhInterface(@RequestParam(value = "intUid") String interfaceId) {
 		dhInterfaceService.delDhInterface(interfaceId);
 	}
 
-	@RequestMapping(value = "/queryDhInterfaceById")
+	@RequestMapping(value = "/queryDhInterfaceByTitle")
 	@ResponseBody
-	public ServerResponse queryDhInterfaceById(@RequestParam(value = "interfaceId") String interfaceId,
+	public ServerResponse listDhInterfaceByTitle(@RequestParam(value = "intTitle") String intTitle,
 			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		return dhInterfaceService.listDhInterfaceById(interfaceId, pageNum, pageSize);
+		return dhInterfaceService.listDhInterfaceByTitle(intTitle, pageNum, pageSize);
 	}
 }
