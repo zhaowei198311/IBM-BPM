@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartsystem.dao.SysTeamMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysTeamMember" >
+    <id column="MEMBER_UID" property="memberUid" jdbcType="VARCHAR" />
+    <result column="TEAM_UID" property="teamUid" jdbcType="VARCHAR" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="MEMBER_TYPE" property="memberType" jdbcType="VARCHAR" />
+    <result column="ORDER_INDEX" property="orderIndex" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MEMBER_UID, TEAM_UID, USER_UID, MEMBER_TYPE, ORDER_INDEX
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_TEAM_MEMBER
+    where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultMap="BaseResultMap">
+ 		select <include refid="Base_Column_List" />  from SYS_TEAM_MEMBER where 1=1
+      	<if test="teamUid != null" >
+		      and TEAM_UID=#{teamUid}
+		</if>
+		<if test="memberType != null" >
+			and MEMBER_TYPE=#{memberType}
+		</if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SYS_TEAM_MEMBER
+    where TEAM_UID = #{teamUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
+    insert into SYS_TEAM_MEMBER (MEMBER_UID, TEAM_UID, USER_UID, 
+      MEMBER_TYPE, ORDER_INDEX)
+    values (#{memberUid,jdbcType=VARCHAR}, #{teamUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, 
+      #{memberType,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
+    insert into SYS_TEAM_MEMBER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="memberUid != null" >
+        MEMBER_UID,
+      </if>
+      <if test="teamUid != null" >
+        TEAM_UID,
+      </if>
+      <if test="userUid != null" >
+        USER_UID,
+      </if>
+      <if test="memberType != null" >
+        MEMBER_TYPE,
+      </if>
+      <if test="orderIndex != null" >
+        ORDER_INDEX,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="memberUid != null" >
+        #{memberUid,jdbcType=VARCHAR},
+      </if>
+      <if test="teamUid != null" >
+        #{teamUid,jdbcType=VARCHAR},
+      </if>
+      <if test="userUid != null" >
+        #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="memberType != null" >
+        #{memberType,jdbcType=DECIMAL},
+      </if>
+      <if test="orderIndex != null" >
+        #{orderIndex,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
+    update SYS_TEAM_MEMBER
+    <set >
+      <if test="teamUid != null" >
+        TEAM_UID = #{teamUid,jdbcType=VARCHAR},
+      </if>
+      <if test="userUid != null" >
+        USER_UID = #{userUid,jdbcType=VARCHAR},
+      </if>
+      <if test="memberType != null" >
+        MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null" >
+        ORDER_INDEX = #{orderIndex,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
+    update SYS_TEAM_MEMBER
+    set TEAM_UID = #{teamUid,jdbcType=VARCHAR},
+      USER_UID = #{userUid,jdbcType=VARCHAR},
+      MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
+      ORDER_INDEX = #{orderIndex,jdbcType=DECIMAL}
+    where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

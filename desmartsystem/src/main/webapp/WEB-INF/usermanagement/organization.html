@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />  		
+  		<link rel="stylesheet" href="tree/css/demo.css" type="text/css">
+		<link rel="stylesheet" href="tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  		<link href="css/my.css" rel="stylesheet" />
+  		<style>
+			ul.ztree{
+				border:0;
+			}
+  		</style>
+	</head>
+	<body>
+		<div class="layui-container" style="margin-top:20px;width:100%;">  
+		  	<div class="layui-row">
+			    <div class="layui-col-md2" style="text-align: left;">
+					<div class="tree" id="demo">
+						<ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
+					</div>
+			    </div>
+			    <div class="layui-col-md10">
+					<div class="search_area">
+						<div class="layui-row layui-form">
+							<div class="layui-col-md2">
+						    	<input type="text" placeholder="组织名称"  class="layui-input">
+							</div>
+							<div class="layui-col-md1" style="text-align:right;">
+							        <button class="layui-btn" >查询</button>
+							</div>
+						</div>
+					</div>
+					<div>				
+						<table class="layui-table backlog_table" lay-even lay-skin="nob">
+							<colgroup>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col> 
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							    <tr>
+							      <th>序号</th>
+							      <th>组织名称</th>
+							      <th>操作</th>
+							    </tr> 
+							</thead>
+							<tbody>
+							    <tr>
+							      <td>1</td>
+							      <td>营运部</td>
+							      <td> <i class="layui-icon delete_btn">&#xe640;</i></td>
+							    </tr>
+							    <tr>
+							      <td>2</td>
+							       <td>营运部</td>
+							      <td> <i class="layui-icon delete_btn">&#xe640;</i></td>
+							    </tr>
+							    <tr>
+							      <td>3</td>
+							      <td>营运部</td>
+							      <td> <i class="layui-icon delete_btn">&#xe640;</i></td>
+							    </tr>
+							</tbody>
+						</table>
+					</div>
+			    </div>
+		  	</div>
+		</div>
+	</div>	
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>	
+	<script type="text/javascript" src="tree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.exedit.js"></script>
+	<script>
+		var setting = {	};
+
+		var zNodes =[
+			{ name:"父节点1 - 展开", open:true,
+				children: [
+					{ name:"父节点11 - 折叠",
+						children: [
+							{ name:"叶子节点111"},
+							{ name:"叶子节点112"},
+							{ name:"叶子节点113"},
+							{ name:"叶子节点114"}
+						]},
+					{ name:"父节点12 - 折叠",
+						children: [
+							{ name:"叶子节点121"},
+							{ name:"叶子节点122"},
+							{ name:"叶子节点123"},
+							{ name:"叶子节点124"}
+						]},
+					{ name:"父节点13 - 没有子节点", isParent:true}
+				]},
+			{ name:"父节点2 - 折叠",
+				children: [
+					{ name:"父节点21 - 展开", open:true,
+						children: [
+							{ name:"叶子节点211"},
+							{ name:"叶子节点212"},
+							{ name:"叶子节点213"},
+							{ name:"叶子节点214"}
+						]},
+					{ name:"父节点22 - 折叠",
+						children: [
+							{ name:"叶子节点221"},
+							{ name:"叶子节点222"},
+							{ name:"叶子节点223"},
+							{ name:"叶子节点224"}
+						]},
+					{ name:"父节点23 - 折叠",
+						children: [
+							{ name:"叶子节点231"},
+							{ name:"叶子节点232"},
+							{ name:"叶子节点233"},
+							{ name:"叶子节点234"}
+						]}
+				]},
+			{ name:"父节点3 - 没有子节点", isParent:true}
+
+		];
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		});
+		
+  </script>

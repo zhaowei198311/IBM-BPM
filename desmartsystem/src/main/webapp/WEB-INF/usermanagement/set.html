@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  		<title>待办任务</title>
+  		<link href="css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
+  		<link rel="stylesheet" href="tree/css/demo.css" type="text/css">
+		<link rel="stylesheet" href="tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  		<link href="css/my.css" rel="stylesheet" />
+  		<style>
+			ul.ztree{
+				border:0;
+			}
+			.display_container3 .layui-laypage select{
+				display:none;
+			}
+  		</style>
+	</head>
+	<body>
+		<div class="layui-container" style="margin-top:20px;width:100%;">  
+		  	<div class="layui-row">
+			    <div class="layui-col-md2" style="text-align: left;">
+					<ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
+			    </div>
+			    <div class="layui-col-md10">
+					<div class="search_area">
+						<div class="layui-row layui-form">
+							<div class="layui-col-md2">
+						    	<input type="text" placeholder="流程名称"  class="layui-input">
+							</div>
+							<div class="layui-col-md10" style="text-align:right;">
+							        <button class="layui-btn layui-btn-sm" >查询</button>
+							        <button class="layui-btn layui-btn-sm create_btn">添加</button>
+							        <button class="layui-btn layui-btn-sm delete_btn">删除</button>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm ">环节同步</button>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm">同步快照流程图</button>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm">快照流程图</button>
+							        <a href="progress_set.html"><button class="layui-btn layui-btn-primary layui-btn-sm ">流程配置</button></a>
+							        <a href="link_set.html"><button class="layui-btn layui-btn-primary layui-btn-sm ">环节配置</button></a>
+							        <a href="draft.html"><button class="layui-btn layui-btn-primary layui-btn-sm">起草权限配置</button></a>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm">拷贝</button>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>
+							        <button class="layui-btn layui-btn-primary layui-btn-sm">导入</button>
+							</div>
+						</div>
+					</div>
+					<div style="width:100%;overflow-x:auto;">				
+						<table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:2000px;">
+							<colgroup>
+								<col>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col> 
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							    <tr>
+							      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+							      <th>流程名称</th>
+							      <th>快照号</th>
+							      <th>快照名称</th>
+							      <th>状态</th>
+							      <th>快照创建时间</th>
+							      <th>配置完成情况</th>
+							      <th>配置时间</th>
+							      <th>配置人</th>
+							    </tr> 
+							</thead>
+							<tbody>
+							    <tr>
+							      <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
+							      <td>流程名称</td>
+							      <td>快照01</td>
+							      <td>快照名称1</td>
+							      <td>激活</td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>进行中</td>
+							      <td>2018-04-09 10:00:00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name=""  lay-skin="primary"> 2</td>
+							      <td>流程名称</td>
+							      <td>快照01</td>
+							      <td>快照名称1</td>
+							      <td>激活</td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>进行中</td>
+							      <td>2018-04-09 10:00:00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" lay-skin="primary"> 3</td>
+							      <td>流程名称</td>
+							      <td>快照01</td>
+							      <td>快照名称1</td>
+							      <td>激活</td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>进行中</td>
+							      <td>2018-04-09 10:00:00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name="" lay-skin="primary"> 4</td>
+							      <td>流程名称</td>
+							      <td>快照01</td>
+							      <td>快照名称1</td>
+							      <td>激活</td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>进行中</td>
+							      <td>2018-04-09 10:00:00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							    <tr>
+							      <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+							      <td>流程名称</td>
+							      <td>快照01</td>
+							      <td>快照名称1</td>
+							      <td>激活</td>
+							      <td>2018-04-10 10：00：00</td>
+							      <td>进行中</td>
+							      <td>2018-04-09 10:00:00</td>
+							      <td>zhangsan</td>
+							    </tr>
+							</tbody>
+						</table>				
+					</div>
+					<div id="demo7"></div>
+			    </div>
+		  	</div>
+		</div>
+		<div class="display_container3">
+			<div class="display_content3">
+				<div class="top">
+					新增流程元数据
+				</div>
+				<div class="middle1">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						</colgroup>
+						<thead>
+						    <tr>
+						      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+						      <th>流程名称</th>
+						      <th>流程应用库id</th>
+						      <th>流程图id</th>
+						    </tr> 
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
+							    <td>流程名称</td>
+							    <td>2066.f5d9e3c6-2fa7...</td>
+							    <td>25.64765b13-286b-4...</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
+							    <td>流程名称</td>
+							    <td>2066.f5d9e3c6-2fa7...</td>
+							    <td>25.64765b13-286b-4...</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
+							    <td>流程名称</td>
+							    <td>2066.f5d9e3c6-2fa7...</td>
+							    <td>25.64765b13-286b-4...</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
+							    <td>流程名称</td>
+							    <td>2066.f5d9e3c6-2fa7...</td>
+							    <td>25.64765b13-286b-4...</td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
+							    <td>流程名称</td>
+							    <td>2066.f5d9e3c6-2fa7...</td>
+							    <td>25.64765b13-286b-4...</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div id="demo8"></div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+</html>
+	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="js/layui.all.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="tree/js/jquery.ztree.exedit.js"></script>
+	<script>
+		//tree
+		var setting = {	};
+
+		var zNodes =[
+			{ name:"父节点1 - 展开", open:true,
+				children: [
+					{ name:"父节点11 - 折叠",
+						children: [
+							{ name:"叶子节点111"},
+							{ name:"叶子节点112"},
+							{ name:"叶子节点113"},
+							{ name:"叶子节点114"}
+						]},
+					{ name:"父节点12 - 折叠",
+						children: [
+							{ name:"叶子节点121"},
+							{ name:"叶子节点122"},
+							{ name:"叶子节点123"},
+							{ name:"叶子节点124"}
+						]},
+					{ name:"父节点13 - 没有子节点", isParent:true}
+				]},
+			{ name:"父节点2 - 折叠",
+				children: [
+					{ name:"父节点21 - 展开", open:true,
+						children: [
+							{ name:"叶子节点211"},
+							{ name:"叶子节点212"},
+							{ name:"叶子节点213"},
+							{ name:"叶子节点214"}
+						]},
+					{ name:"父节点22 - 折叠",
+						children: [
+							{ name:"叶子节点221"},
+							{ name:"叶子节点222"},
+							{ name:"叶子节点223"},
+							{ name:"叶子节点224"}
+						]},
+					{ name:"父节点23 - 折叠",
+						children: [
+							{ name:"叶子节点231"},
+							{ name:"叶子节点232"},
+							{ name:"叶子节点233"},
+							{ name:"叶子节点234"}
+						]}
+				]},
+			{ name:"父节点3 - 没有子节点", isParent:true}
+
+		];
+		//分页
+		layui.use(['laypage', 'layer'], function(){
+			var laypage = layui.laypage,layer = layui.layer;  
+			  //完整功能
+			laypage.render({
+			    elem: 'demo7'
+			    ,count: 50
+			    ,limit: 10
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			      console.log(obj)
+			    }
+			}); 
+			laypage.render({
+			    elem: 'demo8'
+			    ,count: 50
+			    ,limit: 5
+			    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+			    ,jump: function(obj){
+			      console.log(obj)
+			    }
+			}); 
+		});
+		
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			
+			$(".create_btn").click(function(){
+				$(".display_container3").css("display","block");
+			})
+			$(".edit_user").click(function(){
+				$(".display_container4").css("display","block");
+			})
+			$(".sure_btn").click(function(){
+				$(".display_container3").css("display","none");
+				$(".display_container4").css("display","none");
+			})
+			$(".cancel_btn").click(function(){
+				$(".display_container3").css("display","none");
+				$(".display_container4").css("display","none");
+			})
+		});
+		
+  </script>
