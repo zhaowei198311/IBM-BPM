@@ -95,4 +95,10 @@ public class SysTeamServiceImpl implements SysTeamService {
 		// TODO Auto-generated method stub
 		return sysTeamMapper.selectAll(entity);
 	}
+
+	@Override
+	public SysTeam selectByPrimary(SysTeam sysTeam) {
+		// TODO Auto-generated method stub
+		return sysTeamMapper.selectByPrimary(sysTeam);
+	}
 }
