@@ -85,7 +85,7 @@
 	  
 	  
 	  
-	  <select id="listParameter" parameterType="java.util.List"  resultMap="BaseResultMap">
+	  <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
 	  		select * from sys_user u 
 	  		WHERE user_uid in
 			<foreach item="item" collection="list" open="(" separator="," close=")">

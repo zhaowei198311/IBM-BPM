@@ -50,6 +50,14 @@
     </if>
   </select>
   
+   <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
+  		select * from SYS_TEAM u 
+  		WHERE team_uid in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+  </select>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.desmart.desmartsystem.entity.SysTeam" >
     select <include refid="Base_Column_List" /> from sys_team t where t.TEAM_UID = #{teamUid,jdbcType=VARCHAR}
   </select>
