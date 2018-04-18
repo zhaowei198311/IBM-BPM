@@ -17,7 +17,7 @@
     where MAP_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
   
-  <select id="selectAll" parameterType="SysRoleResource"  resultMap="BaseResultMap">
+  <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysRoleResource"  resultMap="BaseResultMap">
  		select <include refid="Base_Column_List" />  from SYS_ROLE_RESOURCE where 1=1
       	<if test="roleUid != null" >
 		      and ROLE_UID=#{roleUid}

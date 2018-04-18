@@ -45,7 +45,7 @@
 			 </if>
 	  </select>
 	  
-	  <select id="resourceTree" parameterType="com.desmart.desmartsystem.entity.TreeNode" resultType="TreeNode">
+	  <select id="resourceTree" parameterType="com.desmart.desmartsystem.entity.TreeNode" resultType="com.desmart.desmartsystem.entity.TreeNode">
 	  		select r.resouce_uid id,r.resouce_name name,r.parent_id pId,
 			case when 
 			(select count(1) from SYS_RESOURCE  re where re.parent_id=r.resouce_uid) >0

@@ -22,7 +22,7 @@
     <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
     <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
     
-    <collection property="members" column="TEAM_UID" ofType="SysTeamMember"> 
+    <collection property="members" column="TEAM_UID" ofType="com.desmart.desmartsystem.entity.SysTeamMember"> 
     	<id column="MEMBER_UID" property="memberUid" jdbcType="VARCHAR" />
 	  <!--   <result column="TEAM_UID" property="teamUid" jdbcType="VARCHAR" /> -->
 	    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
