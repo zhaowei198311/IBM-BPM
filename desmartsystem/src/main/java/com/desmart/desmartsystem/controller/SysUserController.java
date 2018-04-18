@@ -37,8 +37,8 @@ public class SysUserController {
 	@RequestMapping(value="/select_personnel")
 	public ModelAndView select_personnel(String id, String isSingle){
 		ModelAndView model = new ModelAndView("usermanagement/select_personnel");
-		model.addObject("id","a");
-		model.addObject("isSingle","false");
+		model.addObject("id",id);
+		model.addObject("isSingle",isSingle);
 		return model;
 	}
 	
