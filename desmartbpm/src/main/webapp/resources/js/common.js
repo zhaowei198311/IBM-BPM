@@ -22,7 +22,7 @@ var common = {
         // var pos = curWwwPath.indexOf(pathName);
         // var localhostPaht = curWwwPath.substring(0, pos);
         // return localhostPaht + "/desmartsystem";
-		return "http://localhost:8089/desmartsystem"
+		return "http://localhost:8088/desmartsystem"
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();

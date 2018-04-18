@@ -7,16 +7,17 @@ var pageConfig = {
     triType: ""
 }
 $(function() {
+	getPermissionStart();
     $('#form1').validate({
         rules : {
             proTime : {
                 number : true
             },
             proDynaforms: {
-                max: 100
+            	maxlength: 100
             },
             proDerivationScreenTpl: {
-                max: 128
+            	maxlength: 128
             }
         }
     });
@@ -146,7 +147,12 @@ function getData() {
     data.proWidth = $('[name="proWidth"]').val();
     data.proTitleX = $('[name="proTitleX"]').val();
     data.proTitleY = $('[name="proTitleY"]').val();
-
+//    data.permissionStartUser = $('[name="permissionStartUser"]').val();
+    data.permissionStartUser = 'sysuser:b2b13adbbab843b8b12c9846f2679304;sysuser:ad422a5498644915a7cdc8eb0e2bcef2;';
+//    data.permissionStartRole = $('[name="permissionStartRole"]').val();
+    data.permissionStartRole = 'sysRole:3a12abbad2dc4215baf9f5c09130eb13;sysRole:3ed567ed57b540a9b34b6e2c1c4d5f43;sysRole:410dc3f4c2cd4408b6d2e8af2139fbe2;';
+//    data.permissionStartTeam = $('[name="permissionStartTeam"]').val();
+    data.permissionStartTeam = 'sysTeam:683dd3e055e0436d9c4ecb9a0a8fc4b7';
 
     // if(!/^[0-9]*[1-9][0-9]*$/.test(data.proHeight) || !/^[0-9]*[1-9][0-9]*$/.test(data.proWidth)
     //     || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleX) || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleY)){
@@ -235,4 +241,31 @@ function doPage() {
             }
         });
     });
+}
+
+// 获得该流程的发起权限
+function getPermissionStart() {
+	$.ajax({
+		url: common.getPath() + "/permission/processStart",
+		dataType: "json",
+		type: "post",
+		data: {
+			"proAppId": $('[name="proAppId"]').val(),
+			"proUid": $('[name="proUid"]').val(),
+		    "proVerUid": $('[name="proVerUid"]').val()
+		},
+		success: function(result) {
+			if (result.status == 0) {
+				var map = result.data;
+		        $("#permissionStartUser").val(map.permissionStartUser);
+		        $("#permissionStartUser_view").val(map.permissionStartUserView);
+		        $("#permissionStartRole").val(map.permissionStartRole);
+		        $("#permissionStartRole_view").val(map.permissionStartRoleView);
+		        $("#permissionStartTeam").val(map.permissionStartTeam);
+		        $("#permissionStartTeam_view").val(map.permissionStartTeamView);
+			} else {
+				layer.alert(result.msg);
+			}
+		}
+	});
 }

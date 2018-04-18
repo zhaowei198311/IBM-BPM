@@ -24,5 +24,8 @@ public class EntityIdPrefix {
 
 	/** 触发器前缀 */
 	public static final String DH_TRIGGER = "trigger:";
+	
+	/** 对象权限 */
+	public static final String DH_OBJECT_PERMISSION = "obj_perm:";
 
 }

@@ -10,14 +10,20 @@ import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
+import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
 import com.desmart.desmartbpm.enums.DhProcessDefinitionStatus;
+import com.desmart.desmartbpm.exception.PermissionException;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -46,6 +52,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private LswSnapshotMapper lswSnapshotMapper;
     @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
+    @Autowired
+    private SysUserMapper sysUserMapper;
+    @Autowired
+    private DhObjectPermissionService dhObjectPermissionService;
 
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
@@ -273,6 +283,33 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         definition.setLastModifiedUser(user);
+        
+        // 人员发起权限
+        String permissionStartUser = definition.getPermissionStartUser();
+        ServerResponse response = dhObjectPermissionService.updatePermissionOfProcess(definition, permissionStartUser, 
+                DhObjectPermissionParticipateType.USER.getCode(), DhObjectPermissionAction.START.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+       
+        
+        // 角色发起权限
+        String permissionStartRole = definition.getPermissionStartRole();
+        response = dhObjectPermissionService.updatePermissionOfProcess(definition, permissionStartRole, 
+                DhObjectPermissionParticipateType.ROLE.getCode(), DhObjectPermissionAction.START.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+        
+        // 角色组发起权限
+        String permissionStartTeam = definition.getPermissionStartTeam();
+        response = dhObjectPermissionService.updatePermissionOfProcess(definition, permissionStartTeam, 
+                DhObjectPermissionParticipateType.TEAM.getCode(), DhObjectPermissionAction.START.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+        
+                
         int countRow = dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(definition);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
@@ -282,4 +319,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
 
     }
+    
+    
 }

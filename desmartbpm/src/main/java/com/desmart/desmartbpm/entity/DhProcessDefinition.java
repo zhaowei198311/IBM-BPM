@@ -83,7 +83,10 @@ public class DhProcessDefinition {
     private String proTriPausedTitle;
     private String proTriUnpausedTitle;
     private String proTriReassignedTitle;
-
+    
+    private String permissionStartUser; // 人员发起权限
+    private String permissionStartRole; // 角色发起权限
+    private String permissionStartTeam; // 角色组发起权限
 
     public String getProUid() {
         return proUid;
@@ -412,6 +415,30 @@ public class DhProcessDefinition {
 
     public void setProTriReassignedTitle(String proTriReassignedTitle) {
         this.proTriReassignedTitle = proTriReassignedTitle;
+    }
+
+    public String getPermissionStartUser() {
+        return permissionStartUser;
+    }
+
+    public void setPermissionStartUser(String permissionStartUser) {
+        this.permissionStartUser = permissionStartUser;
+    }
+
+    public String getPermissionStartRole() {
+        return permissionStartRole;
+    }
+
+    public void setPermissionStartRole(String permissionStartRole) {
+        this.permissionStartRole = permissionStartRole;
+    }
+
+    public String getPermissionStartTeam() {
+        return permissionStartTeam;
+    }
+
+    public void setPermissionStartTeam(String permissionStartTeam) {
+        this.permissionStartTeam = permissionStartTeam;
     }
 
     @Override
