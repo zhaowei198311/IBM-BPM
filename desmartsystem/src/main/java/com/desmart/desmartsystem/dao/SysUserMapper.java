@@ -17,6 +17,6 @@ import com.desmart.desmartsystem.entity.SysUser;
 @Repository
 public interface SysUserMapper extends BaseMapper<SysUser> {
 	
-	public List<SysUser> listParameter(List<String> list);
+	public List<SysUser> listByPrimaryKeyList(List<String> list);
 	
 }

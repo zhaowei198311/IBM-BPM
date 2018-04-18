@@ -23,4 +23,6 @@ public interface SysTeamMapper {
     int updateByPrimaryKey(SysTeam record);
     
     public List<SysTeam> selectAll(SysTeam entity);
+    
+    List<SysTeam>	listByPrimaryKeyList(List<String> list);
 }

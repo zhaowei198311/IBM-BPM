@@ -21,4 +21,6 @@ public interface SysRoleMapper {
     int updateByPrimaryKey(SysRole record);
     
     List<SysRole> selectAll(SysRole entity);
+    
+    List<SysRole> listByPrimaryKeyList(List<String> list);
 }
