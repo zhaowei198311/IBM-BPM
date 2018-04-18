@@ -1,5 +1,7 @@
 package com.desmart.desmartsystem.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysUser;
@@ -14,4 +16,7 @@ import com.desmart.desmartsystem.entity.SysUser;
  */
 @Repository
 public interface SysUserMapper extends BaseMapper<SysUser> {
+	
+	public List<SysUser> listParameter(List<String> list);
+	
 }
