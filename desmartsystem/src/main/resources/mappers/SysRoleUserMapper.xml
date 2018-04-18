@@ -11,7 +11,7 @@
     <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
     <result column="USER_NAME" property="userName"  />
     
-    <collection property="users" column="USER_UID" ofType="SysUser"> 
+    <collection property="users" column="USER_UID" ofType="com.desmart.desmartsystem.entity.SysUser"> 
     	<result column="USER_UID" property="userUid" /> 
     	<result column="USER_NAME" property="userName" /> 
      </collection> 

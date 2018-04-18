@@ -56,7 +56,7 @@
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysResource"  resultMap="BaseResultMap">
 	  </select>
 		
-	 <insert id="insert" parameterType="SysResource" >
+	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysResource" >
 	 		 insert into SYS_RESOURCE (RESOUCE_UID, RESOUCE_NAME, ORDER_INDEX, 
       PARENT_ID, RESOUCE_NO, RESOUCE_DESC, 
       RESOUCE_TYPE, EXT1, EXT2, 
