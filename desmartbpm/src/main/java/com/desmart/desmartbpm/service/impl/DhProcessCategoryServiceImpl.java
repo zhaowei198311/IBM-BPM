@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhProcessCategoryDao;
-import com.desmart.desmartbpm.dao.DhProcessMetaDao;
+import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
@@ -24,22 +24,22 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     private static final Logger LOG = LoggerFactory.getLogger(DhProcessCategoryServiceImpl.class);
     
     @Autowired
-    private DhProcessCategoryDao dhProcessCategoryDao; 
+    private DhProcessCategoryMapper dhProcessCategoryMapper;
     @Autowired
-    private DhProcessMetaDao dhProcessMetaDao;
+    private DhProcessMetaMapper dhProcessMetaMapper;
     
     
     public ServerResponse save(DhProcessCategory dhProcessCategory) {
         if (StringUtils.isBlank(dhProcessCategory.getCategoryName()) || StringUtils.isBlank(dhProcessCategory.getCategoryParent())) {
             return ServerResponse.createByErrorMessage("缺少必须要的参数");
         }
-        int count = dhProcessCategoryDao.countByCategoryParentAndCategoryName(dhProcessCategory.getCategoryParent(), dhProcessCategory.getCategoryName());
+        int count = dhProcessCategoryMapper.countByCategoryParentAndCategoryName(dhProcessCategory.getCategoryParent(), dhProcessCategory.getCategoryName());
         if (count > 0) {
             return ServerResponse.createByErrorMessage("父分类下已存在同名的分类");
         }
         
         dhProcessCategory.setCategoryUid(EntityIdPrefix.BPM_PROCESS_CATEGORY + UUID.randomUUID().toString());
-        int resultCount = dhProcessCategoryDao.save(dhProcessCategory);
+        int resultCount = dhProcessCategoryMapper.save(dhProcessCategory);
         if (resultCount > 0) {
             return ServerResponse.createBySuccess(dhProcessCategory);
         } else {
@@ -48,7 +48,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     }
     
     public List<DhProcessCategory> listAll() {
-        List<DhProcessCategory> categoryList = dhProcessCategoryDao.listAll();
+        List<DhProcessCategory> categoryList = dhProcessCategoryMapper.listAll();
         for (DhProcessCategory dhProcessCategory : categoryList) {
             dhProcessCategory.setCategoryIcon("../resources/images/1.png");
         }
@@ -60,7 +60,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
             return ServerResponse.createByErrorMessage("此分类不存在");
         }
         
-        DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(categoryUid);
+        DhProcessCategory dhProcessCategory = dhProcessCategoryMapper.queryByCategoryUid(categoryUid);
         if (dhProcessCategory == null) {
             return ServerResponse.createByErrorMessage("此分类不存在");
         }
@@ -73,13 +73,13 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     
     public List<DhProcessCategory> getChildrenCategory(String categoryUid) {
         List<DhProcessCategory> result = new ArrayList<>();
-        List<DhProcessCategory> childrens = dhProcessCategoryDao.listByCategoryParent(categoryUid);
+        List<DhProcessCategory> childrens = dhProcessCategoryMapper.listByCategoryParent(categoryUid);
         
         result.addAll(childrens);
         Iterator<DhProcessCategory> it = childrens.iterator();
         while (it.hasNext()) {
             DhProcessCategory dhProcessCategory = it.next();
-            List<DhProcessCategory> tmp = dhProcessCategoryDao.listByCategoryParent(dhProcessCategory.getCategoryUid());
+            List<DhProcessCategory> tmp = dhProcessCategoryMapper.listByCategoryParent(dhProcessCategory.getCategoryUid());
             if (!tmp.isEmpty()) {
                 result.addAll(getChildrenCategory(dhProcessCategory.getCategoryUid()));
             }
@@ -95,7 +95,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         }
         newName = newName.trim();
-        DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(categoryUid);
+        DhProcessCategory dhProcessCategory = dhProcessCategoryMapper.queryByCategoryUid(categoryUid);
         if (dhProcessCategory == null) {
             return ServerResponse.createByErrorMessage("该分类不存在");
         } 
@@ -104,12 +104,12 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
             return ServerResponse.createBySuccess();
         }
         // 父分类下有没有同名的分类
-        int count = dhProcessCategoryDao.countByCategoryParentAndCategoryName(dhProcessCategory.getCategoryParent(), newName);
+        int count = dhProcessCategoryMapper.countByCategoryParentAndCategoryName(dhProcessCategory.getCategoryParent(), newName);
         if (count > 0) {
             return ServerResponse.createByErrorMessage("父分类下已经有此名称的分类");
         }
         dhProcessCategory.setCategoryName(newName);
-        int countRow = dhProcessCategoryDao.updateByCategoryUidSelective(dhProcessCategory);
+        int countRow = dhProcessCategoryMapper.updateByCategoryUidSelective(dhProcessCategory);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
         } else {
@@ -119,7 +119,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 
     @Override
     public ServerResponse removeDhProcessCategory(String categoryUid) {
-        DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(categoryUid);
+        DhProcessCategory dhProcessCategory = dhProcessCategoryMapper.queryByCategoryUid(categoryUid);
         if (dhProcessCategory == null) {
             return ServerResponse.createByErrorMessage("该分类不存在");
         }
@@ -129,11 +129,11 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
         List<DhProcessCategory> list = getChildrenCategory(categoryUid);
         list.add(dhProcessCategory);
         
-        List<DhProcessMeta> metaList = dhProcessMetaDao.listByCategoryList(list);
+        List<DhProcessMeta> metaList = dhProcessMetaMapper.listByCategoryList(list);
         if (metaList.size() > 0) {
             return ServerResponse.createByErrorMessage("此分类或其子分类下有流程元数据，请先删除流程元数据");
         }
-        int countRow = dhProcessCategoryDao.removeBatchByCategoryList(list);
+        int countRow = dhProcessCategoryMapper.removeBatchByCategoryList(list);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
         } else {

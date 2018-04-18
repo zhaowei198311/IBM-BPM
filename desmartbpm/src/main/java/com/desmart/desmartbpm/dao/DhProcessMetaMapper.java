@@ -9,7 +9,7 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 
 @Repository
-public interface DhProcessMetaDao {
+public interface DhProcessMetaMapper {
     
     int save(DhProcessMeta dhProcessMeta);
     

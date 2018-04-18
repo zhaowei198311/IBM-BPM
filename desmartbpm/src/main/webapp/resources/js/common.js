@@ -16,12 +16,13 @@ var common = {
         return localhostPaht + "/portal";
 	},
     // 管理项目路径
-    getPortalPath: function() {
-        var curWwwPath = window.document.location.href;
-        var pathName = window.document.location.pathname;
-        var pos = curWwwPath.indexOf(pathName);
-        var localhostPaht = curWwwPath.substring(0, pos);
-        return localhostPaht + "/management";
+    getSystemPath: function() {
+        // var curWwwPath = window.document.location.href;
+        // var pathName = window.document.location.pathname;
+        // var pos = curWwwPath.indexOf(pathName);
+        // var localhostPaht = curWwwPath.substring(0, pos);
+        // return localhostPaht + "/desmartsystem";
+		return "http://localhost:8089/desmartsystem"
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();

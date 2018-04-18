@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DhProcessDefinitionDao {
+public interface DhProcessDefinitionMapper {
 
     int save(DhProcessDefinition dhProcessDefinition);
 

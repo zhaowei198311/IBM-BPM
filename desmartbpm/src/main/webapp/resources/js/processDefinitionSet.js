@@ -116,6 +116,12 @@ $(function() {
         getInfo();
     })
 
+    // 选择人员
+    $("#chooseUser_btn").click(function () {
+        var url = common.getSystemPath() + "/sysUser/select_personnel?id=permission_start_user&isSingle=false";
+        window.open(url);
+    });
+
 });
 
 // 获取页面上的数据

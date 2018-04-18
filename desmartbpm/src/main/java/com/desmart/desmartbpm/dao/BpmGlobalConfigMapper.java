@@ -7,7 +7,7 @@ import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import java.util.List;
 
 @Repository
-public interface BpmGlobalConfigDao {
+public interface BpmGlobalConfigMapper {
 
     List<BpmGlobalConfig> queryActiveConfig();
     

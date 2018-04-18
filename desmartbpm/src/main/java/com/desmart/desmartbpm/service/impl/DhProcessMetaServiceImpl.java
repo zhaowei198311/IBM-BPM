@@ -23,8 +23,8 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhProcessCategoryDao;
-import com.desmart.desmartbpm.dao.DhProcessMetaDao;
+import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -43,9 +43,9 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
-    private DhProcessMetaDao dhProcessMetaDao;
+    private DhProcessMetaMapper dhProcessMetaMapper;
     @Autowired
-    private DhProcessCategoryDao dhProcessCategoryDao;
+    private DhProcessCategoryMapper dhProcessCategoryMapper;
     
     
     public ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize) {
@@ -215,7 +215,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
      * @return
      */
     private Set<String> getBindedProcessMetaIdentify() {
-        List<DhProcessMeta> metaListInDb = dhProcessMetaDao.listAll();
+        List<DhProcessMeta> metaListInDb = dhProcessMetaMapper.listAll();
         Set<String> identifyList = new HashSet<>();
         for (DhProcessMeta meta : metaListInDb) {
             identifyList.add(meta.getProAppId() + meta.getProUid());
@@ -232,7 +232,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         PageHelper.startPage(pageNum, pageSize);
         
         // 获取所有的子分类
-        List<DhProcessMeta> metalist = dhProcessMetaDao.listByCategoryListAndProName(categoryList, proName);
+        List<DhProcessMeta> metalist = dhProcessMetaMapper.listByCategoryListAndProName(categoryList, proName);
         PageInfo<List<DhProcessMeta>> pageInfo = new PageInfo(metalist);
         return ServerResponse.createBySuccess(pageInfo);
     }
@@ -244,12 +244,12 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
             return ServerResponse.createByErrorMessage("参数异常");
         }
         
-        DhProcessCategory category = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta.getCategoryUid());
+        DhProcessCategory category = dhProcessCategoryMapper.queryByCategoryUid(dhProcessMeta.getCategoryUid());
         if (category == null) {
             return ServerResponse.createByErrorMessage("此分类不存在");
         }
         
-        int countRow = dhProcessMetaDao.countByProAppIdAndProUid(dhProcessMeta.getProAppId(), dhProcessMeta.getProUid());
+        int countRow = dhProcessMetaMapper.countByProAppIdAndProUid(dhProcessMeta.getProAppId(), dhProcessMeta.getProUid());
         if (countRow > 0) {
             return ServerResponse.createByErrorMessage("流程元数据已经设置了分类，不能重复配置");
         }
@@ -261,14 +261,14 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         DhProcessMeta metaSelective = new DhProcessMeta();
         metaSelective.setProName(dhProcessMeta.getProName());
         metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
-        if (dhProcessMetaDao.listByDhProcessMetaSelective(metaSelective).size() > 0) {
+        if (dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective).size() > 0) {
             return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
         }
         
         dhProcessMeta.setProMetaUid(EntityIdPrefix.DH_PROCESS_META + UUID.randomUUID().toString());
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessMeta.setCreator(currUser);
-        countRow = dhProcessMetaDao.save(dhProcessMeta);
+        countRow = dhProcessMetaMapper.save(dhProcessMeta);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
         } else {
@@ -283,7 +283,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         }
         newName = newName.trim();
         
-        DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProMetaUid(metaUid);
+        DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
         if (dhProcessMeta == null) {
             return ServerResponse.createByErrorMessage("此流程元数据不存在");
         } 
@@ -295,14 +295,14 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         DhProcessMeta metaSelective = new DhProcessMeta();
         metaSelective.setProName(newName);
         metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
-        if (dhProcessMetaDao.listByDhProcessMetaSelective(metaSelective).size() > 0) {
+        if (dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective).size() > 0) {
             return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
         }
         
         String updator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessMeta.setUpdateUser(updator);
         dhProcessMeta.setProName(newName);
-        int countRow = dhProcessMetaDao.updateByProMetaUidSelective(dhProcessMeta);
+        int countRow = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
         
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
@@ -316,11 +316,11 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         String[] uidArr = uids.split(";");
         // todo 判断能否删除元数据
         for (String uid : uidArr) {
-            DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProMetaUid(uid);
+            DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(uid);
             if (dhProcessMeta == null) {
                 throw new PlatformException("找不到指定的元数据");
             }
-            int countRow = dhProcessMetaDao.removeByProMetaUid(uid);
+            int countRow = dhProcessMetaMapper.removeByProMetaUid(uid);
         }
         return ServerResponse.createBySuccess();
     }
@@ -329,7 +329,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     @Override
     public List<DhProcessMeta> listAll() {
         
-        return dhProcessMetaDao.listAll();
+        return dhProcessMetaMapper.listAll();
     }
     
 }

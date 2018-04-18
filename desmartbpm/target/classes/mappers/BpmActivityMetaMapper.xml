@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartbpm.dao.BpmActivityMetaDao">
+<mapper namespace="com.desmart.desmartbpm.dao.BpmActivityMetaMapper">
 	<sql id="Base_Column_List">
 		ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_TO, ACTIVITY_TYPE, BPD_ID,
 		BPM_TASK_TYPE, CREATE_TIME, CREATOR, DEEP_LEVEL, EXTERNAL_ID, HANDLE_SIGN_TYPE, LOOP_TYPE, MI_ORDER,

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 
 @Repository
-public interface DhProcessCategoryDao {
+public interface DhProcessCategoryMapper {
     
     DhProcessCategory queryByCategoryUid(String categoryUid);
     

@@ -9,7 +9,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 
 @Repository
-public interface BpmActivityMetaDao {
+public interface BpmActivityMetaMapper {
 	/** 
 	 * 查询出某流程版本的所有环节配置
 	 * @param bpmProcessSnapshotId

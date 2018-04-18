@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartbpm.dao.DhProcessMetaDao" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhProcessMetaMapper" >
     <sql id="base_column">
         PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, LAST_UPDATE_TIME, CATEGORY_UID, PRO_DISPLAY  
     </sql>

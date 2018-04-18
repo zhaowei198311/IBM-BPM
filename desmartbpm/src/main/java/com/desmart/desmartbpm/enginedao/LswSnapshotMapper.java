@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 
 @Repository
-public interface LswSnapshotDao {
+public interface LswSnapshotMapper {
     
     List<LswSnapshot> listAll();
     

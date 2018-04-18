@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +15,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhProcessCategoryDao;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.ZTreeNode;
-import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.service.impl.DhProcessMetaServiceImpl;
 import com.desmart.desmartbpm.util.JsonUtil;
-import com.github.pagehelper.PageInfo;
 
 @Controller
 @RequestMapping(value = "/processMeta")

@@ -45,9 +45,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>ojdbc6</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>1.6</version>
+			<groupId>com.desmart</groupId>
+			<artifactId>desmartsystem</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.rabbitmq</groupId>

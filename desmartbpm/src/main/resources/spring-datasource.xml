@@ -37,11 +37,11 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations">
         	 <array>
-			   <value>classpath:mappers/*Mapper.xml</value>
-			   <value>classpath:mappers/*Dao.xml</value>
-			  </array>
+			     <value>classpath*:mappers/*Mapper.xml</value>
+			     <value>classpath*:resources/mappers/*.xml</value>
+             </array>
         </property>
-		<property name="typeAliasesPackage" value="com.desmart.desmartbpm.entity"></property>
+
 		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
         <!-- 分页插件 -->
         <property name="plugins">
@@ -59,7 +59,7 @@
     </bean>
 
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.desmart.desmartbpm.dao"/>
+        <property name="basePackage" value="com.desmart.**.dao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
     </bean>
 

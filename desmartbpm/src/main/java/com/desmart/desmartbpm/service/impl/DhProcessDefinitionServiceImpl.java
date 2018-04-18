@@ -3,9 +3,9 @@ package com.desmart.desmartbpm.service.impl;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhProcessDefinitionDao;
-import com.desmart.desmartbpm.dao.DhProcessMetaDao;
-import com.desmart.desmartbpm.enginedao.LswSnapshotDao;
+import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -37,13 +37,13 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private static final Logger LOG = LoggerFactory.getLogger(DhProcessDefinitionServiceImpl.class);
 
     @Autowired
-    private DhProcessDefinitionDao dhProcessDefinitionDao;
+    private DhProcessDefinitionMapper dhProcessDefinitionMapper;
     @Autowired
-    private DhProcessMetaDao dhProcessMetaDao;
+    private DhProcessMetaMapper dhProcessMetaMapper;
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
-    private LswSnapshotDao lswSnapshotDao;
+    private LswSnapshotMapper lswSnapshotMapper;
     @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
 
@@ -53,14 +53,14 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("参数异常");
         }
 
-        DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProMetaUid(metaUid);
+        DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
         if (dhProcessMeta == null) {
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
 
         DhProcessDefinition selective = new DhProcessDefinition();
         selective.setProUid(dhProcessMeta.getProUid());
-        List<DhProcessDefinition> definitionInDb = dhProcessDefinitionDao.listBySelective(selective);
+        List<DhProcessDefinition> definitionInDb = dhProcessDefinitionMapper.listBySelective(selective);
         Set<String> versionInDb = new HashSet<>();
         for (DhProcessDefinition definition : definitionInDb) {
             versionInDb.add(definition.getProVerUid());
@@ -139,7 +139,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         definitionSelective.setProVerUid(proVerUid);
         definitionSelective.setProAppId(proAppId);
         definitionSelective.setProUid(proUid);
-        List<DhProcessDefinition> list = dhProcessDefinitionDao.listBySelective(definitionSelective);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
         if (list.size() > 0) {
             return ServerResponse.createBySuccess();
         }
@@ -153,7 +153,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessDefinition.setCreateUser(creator);
         dhProcessDefinition.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
-        int countRow = dhProcessDefinitionDao.save(dhProcessDefinition);
+        int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
         } else {
@@ -177,7 +177,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         definitionSelective.setProVerUid(proVerUid);
         definitionSelective.setProAppId(proAppId);
         definitionSelective.setProUid(proUid);
-        List<DhProcessDefinition> list = dhProcessDefinitionDao.listBySelective(definitionSelective);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
         if (list.size() == 0) {
             return ServerResponse.createByErrorMessage("流程定义不存在");
         } else if (list.size() == 1) {
@@ -243,7 +243,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      *
      */
     private void assembleSnapshotInfo(List<DhProcessDefinitionVo> volist) {
-        List<LswSnapshot> snapshotList = lswSnapshotDao.listAll();
+        List<LswSnapshot> snapshotList = lswSnapshotMapper.listAll();
         Map<String, LswSnapshot> map = new HashMap<>();
         for (LswSnapshot lswSnapshot : snapshotList) {
             map.put(lswSnapshot.getSnapshotId(), lswSnapshot);
@@ -273,7 +273,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         definition.setLastModifiedUser(user);
-        int countRow = dhProcessDefinitionDao.updateByProAppIdAndProUidAndProVerUidSelective(definition);
+        int countRow = dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(definition);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();
         } else {

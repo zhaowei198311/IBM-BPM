@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartbpm.dao.BpmGlobalConfigDao;
+import com.desmart.desmartbpm.dao.BpmGlobalConfigMapper;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 
@@ -16,10 +16,10 @@ public class BpmGlobalConfigServiceImpl implements BpmGlobalConfigService {
 	private static final Logger LOG = LoggerFactory.getLogger(BpmGlobalConfigServiceImpl.class);
 	
     @Autowired
-    private BpmGlobalConfigDao bpmGlobalConfigDao;
+    private BpmGlobalConfigMapper bpmGlobalConfigMapper;
 
     public BpmGlobalConfig getFirstActConfig() {
-        List<BpmGlobalConfig> configList = bpmGlobalConfigDao.queryActiveConfig();
+        List<BpmGlobalConfig> configList = bpmGlobalConfigMapper.queryActiveConfig();
         return configList.size() > 0 ? configList.get(0) : null;
     }
 }

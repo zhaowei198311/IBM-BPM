@@ -137,21 +137,24 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">个人</label>
                         <div class="layui-input-inline">
-                            <input type="text"  name=""  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="text"  name="a_view" id="a_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="hidden" name="a" id="a"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">部门</label>
-                        <div class="layui-input-inline" >
-                            <input type="text"    lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
-                        </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseUser_btn">&#xe612;</i> </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">角色</label>
+                        <div class="layui-input-inline" >
+                            <input type="text"  name="permission_start_role_view" id="permission_start_role_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="hidden" name="permission_start_role" id="permission_start_role"/>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色组</label>
                         <div class="layui-input-inline">
-                            <input type="text"    lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="text" name="permission_start_team_view" id="permission_start_team_view"   lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="hidden" name="permission_start_team" id="permission_start_team"/>
                         </div>
                         <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
                     </div>

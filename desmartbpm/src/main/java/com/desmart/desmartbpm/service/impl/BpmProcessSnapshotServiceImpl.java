@@ -3,13 +3,12 @@ package com.desmart.desmartbpm.service.impl;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.BpmActivityMetaDao;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
@@ -33,7 +32,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
-    private BpmActivityMetaDao bpmActivityMetaDao;
+    private BpmActivityMetaMapper bpmActivityMetaMapper;
 
 
     
@@ -136,7 +135,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         metaSelective.setBpdId(bpdId);
         metaSelective.setProAppId(processAppId);
         metaSelective.setSnapshotId(snapshotId);
-        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaDao.queryByBpmActivityMetaSelective(metaSelective);
+        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         List<BpmActivityMeta> delActivityMetas = new ArrayList<BpmActivityMeta>();
         // 需要删除的环节
         delActivityMetas.addAll(oldActivityMetas);
@@ -151,7 +150,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
             }
             // 查看这个节点是否存在
             metaSelective.setActivityBpdId(activityBpdId);
-        	List<BpmActivityMeta> activityMetaExists = bpmActivityMetaDao.queryByBpmActivityMetaSelective(metaSelective);
+        	List<BpmActivityMeta> activityMetaExists = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         	
             if (activityMetaExists.size() > 0) {
             	BpmActivityMeta bpmActivityMeta = activityMetaExists.get(0);
@@ -170,15 +169,15 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 bpmActivityMeta.setPoId(newMeta.getPoId());
                 bpmActivityMeta.setDeepLevel(newMeta.getDeepLevel());
                 
-                bpmActivityMetaDao.updateByPrimaryKeySelective(bpmActivityMeta);
+                bpmActivityMetaMapper.updateByPrimaryKeySelective(bpmActivityMeta);
                 
             } else {
-            	bpmActivityMetaDao.save(newMeta);
+            	bpmActivityMetaMapper.save(newMeta);
             }
         }
 
         if (delActivityMetas.size() > 0) {
-        	bpmActivityMetaDao.batchRemoveByPrimaryKey(delActivityMetas);
+        	bpmActivityMetaMapper.batchRemoveByPrimaryKey(delActivityMetas);
         }
 
 
@@ -387,7 +386,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
      * @return
      */
     private boolean isActivityMetaExists(String bpdId, String snapshotUid) {
-        List<BpmActivityMeta> list = bpmActivityMetaDao.queryByActivityBpdIdAndSnapshotUid(bpdId, snapshotUid);
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(bpdId, snapshotUid);
         return list.size() > 0;
     }
 

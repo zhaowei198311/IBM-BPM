@@ -1,7 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
 import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhTriggerDao;
+import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.service.DhTriggerService;
 import com.github.pagehelper.PageHelper;
@@ -21,14 +21,14 @@ public class DhTriggerServiceImpl implements DhTriggerService {
     private static final Logger LOG = LoggerFactory.getLogger(DhTriggerServiceImpl.class);
 
     @Autowired
-    private DhTriggerDao dhTriggerDao;
+    private DhTriggerMapper dhTriggerMapper;
 
 
     @Override
     public ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("update_time desc");
-        List<DhTrigger> list = dhTriggerDao.searchBySelective(dhTrigger);
+        List<DhTrigger> list = dhTriggerMapper.searchBySelective(dhTrigger);
         PageInfo pageInfo = new PageInfo(list);
         return ServerResponse.createBySuccess(pageInfo);
     }
