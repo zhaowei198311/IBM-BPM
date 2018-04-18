@@ -102,7 +102,7 @@
 		    from  Sys_Department d where d.DEPART_UID=#{departUid}
 	  </select>
 	  
-	  <select id="selectTree" parameterType="com.desmart.desmartsystem.entity.TreeNode" resultType="TreeNode">
+	  <select id="selectTree" parameterType="com.desmart.desmartsystem.entity.TreeNode" resultType="com.desmart.desmartsystem.entity.TreeNode">
 	  		select depart_uid as code,depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
 			select  d.depart_uid,d.depart_name,d.depart_no,d.depart_parent,1 lvl,case when (select count(*) from Sys_Department cd where d.depart_no=cd.depart_parent)>0 then 'true' else 'false' end  isParent from Sys_Department  d  
 			) where
