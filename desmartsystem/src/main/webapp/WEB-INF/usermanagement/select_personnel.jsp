@@ -11,7 +11,26 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>选择人员</title>
-<%@ include file="common/common.jsp" %>
+<%-- <%@ include file="common/common.jsp" %> --%>
+<link href="styles/css/layui.css" rel="stylesheet"/>
+<!-- <link rel="stylesheet" href="styles/css/modules/laydate/default/laydate.css" /> -->
+<link href="styles/css/my.css" rel="stylesheet" />
+<link rel="stylesheet" href="tree/css/demo.css" type="text/css">
+<link rel="stylesheet" href="tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<link type="text/css" href="scripts/laypage/1.2/skin/laypage.css">
+<script type="text/javascript" src="scripts/laypage/1.2/laypage.js"></script>
+
+<script type="text/javascript" src="<%=basePath%>scripts/js/jquery-3.3.1.js" /></script>
+<script type="text/javascript" src="scripts/js/layui.all.js"></script>	
+<script type="text/javascript" src="tree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="tree/js/jquery.ztree.excheck.js"></script>
+<script type="scripts/text/javascript" src="scripts/js/validate_util/jquery.form.min.js" ></script>
+<script src="scripts/js/validate_util/jquery.validate.js" type="text/javascript"></script>
+<script src="scripts/js/validate_util/dwz.util.date.js" type="text/javascript"></script>
+<script src="scripts/js/validate_util/dwz.validate.method.js" type="text/javascript"></script>
+<script src="scripts/js/validate_util/dwz.regional.zh_CN.js" type="text/javascript"></script>
+<script src="scripts/js/myjs/myajax.js" type="text/javascript"></script>
 <script src="scripts/js/myjs/role_user.js" type="text/javascript"></script>
 <style>
 	#usersul li, #user_add li{list-style-type:none;padding-left:12px;padding-top:2px;padding-bottom:2px;border-bottom:1px solid #CCC;}
@@ -75,11 +94,14 @@
 	</div>
 	<script type="text/javascript">
 	
-		var id='${id}';
-		var isSingle='${isSingle}';
-		var choosed='${choosed}';
 		
+		var elementId='';
+		var isSingle='';
 		$(function(){
+			
+			elementId='${id}';
+			isSingle='${isSingle}';
+			
 			var url='sysDepartment/treeDisplay';
 			//tree展示
 			setting.callback={onClick: onClick}
@@ -93,15 +115,15 @@
 					useruid+=$(this).attr('value')+";";
 					useruname+=$(this).text()+";";
 				});	
-				window.opener.document.getElementById(id).value=useruid;
-				window.opener.document.getElementById(id+"_view").value=useruname;
+				window.opener.document.getElementById(elementId).value=useruid;
+				window.opener.document.getElementById(elementId+"_view").value=useruname;
 				window.close();
 			});
 			
 			var $user_li=$("#user_add");
 			$user_li.empty();
-			var id = window.opener.document.getElementById(id+'a').value.split(';');
-			var name = window.opener.document.getElementById(id+"_view").value.split(';');
+			var id = window.opener.document.getElementById(elementId).value.split(';');
+			var name = window.opener.document.getElementById(elementId+"_view").value.split(';');
 			for (var i = 0; i < name.length; i++) {
 				var str='';
 				str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i];str+="</li>";
