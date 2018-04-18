@@ -51,7 +51,7 @@
     where USER_UID = #{userUid,jdbcType=VARCHAR}
   </delete>
   
-  <delete id="delete" parameterType="SysRoleUser" >
+  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
     delete from SYS_ROLE_USER
     where 1=1
     <if test="userUid!=null and userUid!='' ">
