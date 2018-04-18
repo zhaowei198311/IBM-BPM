@@ -9,17 +9,17 @@ import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 public class BpmGlobalConfigDaoTest {
-    private BpmGlobalConfigDao dao;
+    private BpmGlobalConfigMapper dao;
 
     @Before
     public void setUp() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        dao = ac.getBean(BpmGlobalConfigDao.class);
+        dao = ac.getBean(BpmGlobalConfigMapper.class);
     }
-
+public static void main(String[] args) {
+    
+}
     @Test
     public void queryActiveConfig() {
         List<BpmGlobalConfig> list = dao.queryActiveConfig();
@@ -28,5 +28,16 @@ public class BpmGlobalConfigDaoTest {
             System.out.println(list.get(0));
         }
 
+    }
+    
+    @Test
+    public void testInsert() {
+    	List<BpmGlobalConfig> list = dao.queryActiveConfig();
+    	if (list.size() > 0) {
+    		BpmGlobalConfig newConfig = list.get(0);
+    		newConfig.setConfigId("test111");
+    		newConfig.setConfigStatus("off");
+    		dao.insert(newConfig);
+        }
     }
 }

@@ -1,16 +1,23 @@
-CONFIG_ID
-BPM_ADMIN_NAME
-BPM_ADMIN_PSW
-BPM_CLIENT_TIMEOUT
-BPM_SERVER_HOST
-BPMFORMS_HOST
-BPMFORMS_WEB_CONTEXT
-CONFIG_NAME
-CONFIG_STATUS
-CREATE_TIME
-GMT_TIME_ZONE
-HTTP_MAX_CONNECTION
-PRE_ROUTE_MAX_CONNECTION
-SCHEDULER_HOST
-UPDATE_TIME
-BPM_API_HOST
+				ACTIVITY_BPD_ID = #{activityBpdId},
+				ACTIVITY_GROUP_NAME = #{activityGroupName},
+				ACTIVITY_NAME = #{activityName},
+				ACTIVITY_TO = #{activityTo},
+				ACTIVITY_TYPE = #{activityType},
+				BPD_ID = #{bpdId},
+				BPM_TASK_TYPE = #{bpmTaskType},
+				CREATE_TIME = #{createTime},
+				CREATOR = #{creator},
+				DEEP_LEVEL = #{deepLevel},
+				EXTERNAL_ID = #{externalId},
+				HANDLE_SIGN_TYPE = #{handleSignType},
+				LOOP_TYPE = #{loopType},
+				MI_ORDER = #{miOrder},
+				NOTE_TYPE = #{noteType},
+				PARENT_ACTIVITY_BPD_ID = #{parentActivityBpdId},
+				PO_ID = #{poId},
+				SNAPSHOT_ID = #{snapshotId},
+				SNAPSHOT_UID = #{snapshotUid},
+				STEP_ID = #{stepId},
+				TYPE = #{type},
+				UPDATE_BY = #{updateBy},
+				ACTIVITY_ALT_NAME = #{activityAltName},
