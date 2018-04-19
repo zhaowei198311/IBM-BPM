@@ -124,10 +124,14 @@
 			$user_li.empty();
 			var id = window.opener.document.getElementById(elementId).value.split(';');
 			var name = window.opener.document.getElementById(elementId+"_view").value.split(';');
+			console.log(name);
+			console.log(id);
 			for (var i = 0; i < name.length; i++) {
-				var str='';
-				str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i];str+="</li>";
-				$user_li.append(str);
+				if(name[i]!=''){
+					var str='';
+					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i]+"</li>";
+					$user_li.append(str);
+				}
 			}
 		})
 	
