@@ -2,8 +2,8 @@ package com.desmart.desmartbpm.enums;
 
 public enum DhProcessDefinitionStatus {
 
-    SETTING("setting", "配置中"),
-    SETTED("setted", "已配置");
+    SETTING("SETTING", "配置中"),
+    SETTED("SETTED", "已配置");
 
     private final String code;
     private final String value;

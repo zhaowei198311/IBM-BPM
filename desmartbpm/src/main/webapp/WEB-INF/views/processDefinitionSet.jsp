@@ -7,8 +7,6 @@
     <%@include file="common/tag.jsp" %>
     <link href="<%=basePath%>/resources/tree/css/demo.css" rel="stylesheet">
     <link href="<%=basePath%>/resources/tree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
-    <script type="text/javascript" src="<%=basePath%>/resources/js/processDefinitionSet.js"></script>
-
     <style>
         .layui-form-label{width:140px;}
         .layui-input-block{margin-left:170px;}
@@ -17,7 +15,13 @@
             height: 600px;
         }
         .layui-form-item .layui-input-inline{width:70%;}
-
+	    .colorli {
+	        background-color: #9DA5EC;
+	        color: white;
+	    }
+	    .show_user_div,.select_ul{border:1px solid #ccc;}
+        .show_user_div ul li,.select_ul li{height:35px;line-height:35px;list-style:none;padding:0 10px}
+        .foot_temp{text-align:right;margin-top:20px}
     </style>
 </head>
 <body>
@@ -148,7 +152,7 @@
                             <input type="text"  name="permissionStartRole_view" id="permissionStartRole_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartRole" id="permissionStartRole"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseRole_btn">&#xe612;</i> </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">角色组</label>
@@ -156,7 +160,7 @@
                             <input type="text" name="permissionStartTeam_view" id="permissionStartTeam_view"   lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartTeam" id="permissionStartTeam"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseTeam_btn">&#xe612;</i> </div>
                     </div>
                 </div>
             </div>
@@ -196,6 +200,7 @@
         </form>
     </div>
 </div>
+<!-- 选择触发器弹框 -->
 <div class="display_container3" id="chooseTrigger_container" >
     <div class="display_content3"  style="height:450px;">
         <div class="top">
@@ -245,10 +250,83 @@
         </div>
     </div>
 </div>
+<!-- 选择角色弹框 -->
+<div class="display_container3"  id="chooseRole_container">
+    <div class="display_content3" style="height:500px;">
+        <div class="top">选择角色</div>
+        <div class="middle_temp">   
+            <div id="temp_left" style="float:left;width:290px;height:350px;margin:10px  0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
+            <div class="layui-row" style="margin-bottom:10px;">
+                    <div class="layui-col-md9">
+                        <input type="text" class="layui-input" style="height:30px;"/>
+                    </div>
+                    <div class="layui-col-md3" style="text-align:right;">
+                        <button  class="layui-btn layui-btn-sm"  >查询</button>
+                    </div>
+                </div>
+                <ul id="waitRole_ul"  style="width:240px;display:inline;"  >
+                </ul>
+            </div>
+            <div id="temp_button"  style="float:left;width:120px;height:350px;text-align:center;">
+                <br></br>
+                <br></br>
+                <button type="button" id="addRole_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+                <br></br>
+                <button type="button" id="removeRole_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+            </div>
+            <div id="temp_right" class="select_ul" style="float:left;width:280px;height:350px;margin-top:10px;padding:10px;overflow-y:scroll;">
+                <ul id="selectedRole_ul"  style="width:240px;display:inline;">
+                </ul>
+            </div>
+            <h1 style="clear:both;"></h1>
+        </div>
+        <div class="foot_temp">
+            <button class="layui-btn layui-btn sure_btn" id="chooseRole_sureBtn">确定</button>
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="chooseRole_cancelBtn">取消</button>
+        </div>
+    </div>
+</div>
+<!-- 选择角色组弹框 -->
+<div class="display_container3"  id="chooseTeam_container">
+    <div class="display_content3" style="height:500px;">
+        <div class="top">选择角色组</div>
+        <div class="middle_temp">   
+            <div id="temp_left" style="float:left;width:290px;height:350px;margin:10px 0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
+                <div class="layui-row" style="margin-bottom:10px;">
+                    <div class="layui-col-md9">
+                        <input type="text" class="layui-input" style="height:30px;"/>
+                    </div>
+                    <div class="layui-col-md3" style="text-align:right;">
+                        <button  class="layui-btn layui-btn-sm"  >查询</button>
+                    </div>
+                </div>
+                <ul id="waitTeam_ul" style="width:240px;display:inline;"  >
+                </ul>
+            </div>
+            <div id="temp_button"  style="float:left;width:120px;height:350px;text-align:center;">
+                <br></br>
+                <br></br>
+                <button type="button" id="addTeam_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+                <br></br>
+                <button type="button" id="removeTeam_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+            </div>
+            <div id="temp_right" class="select_ul" style="float:left;width:280px;height:350px;margin-top:10px;padding:10px;overflow-y:scroll;">
+                <ul id="choosedTeam_ul" style="width:240px;display:inline;">
+                </ul>
+            </div>
+            <h1 style="clear:both;"></h1>
+        </div>
+        <div class="foot_temp">
+            <button class="layui-btn layui-btn sure_btn" id="chooseTeam_sureBtn">确定</button>
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="chooseTeam_cancelBtn">取消</button>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>
 <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/js/processDefinitionSet.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.excheck.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.exedit.js"></script>

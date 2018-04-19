@@ -134,7 +134,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         pageInfo.setPageNum(pageNum);
         pageInfo.setPageSize(pageSize);
 
-
         return ServerResponse.createBySuccess(pageInfo);
 
     }
@@ -308,7 +307,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (!response.isSuccess()) {
             throw new PermissionException(response.getMsg());
         }
-        
                 
         int countRow = dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(definition);
         if (countRow > 0) {

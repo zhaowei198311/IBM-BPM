@@ -20,7 +20,7 @@ public class DhProcessDefinition {
 
     private String proTimeUnit;// 流程所需时间（单位）时，日，月，年
 
-    private String proStatus;// 流程定义状态，草稿、发布
+    private String proStatus;// 流程定义状态，草稿、发布 SETTING SETTED
 
     private String proTypeDay;
 
