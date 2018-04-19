@@ -39,6 +39,7 @@
 			</li>
 		  	<li class="layui-nav-item"><a href="form_management.html" target="iframe0"><i class="layui-icon">&#xe62d;</i> 表单管理</a></li>
 			<li class="layui-nav-item"><a href="trigger_management.html" target="iframe0"><i class="layui-icon">&#xe64c;</i> 触发器管理</a></li>
+			<li class="layui-nav-item"><a href="interfaces/index" target="iframe0"><i class="layui-icon">&#xe614;</i> 接口管理</a></li>
 		</ul>
 		<div id="index_container">
 			<div class="index_top">
