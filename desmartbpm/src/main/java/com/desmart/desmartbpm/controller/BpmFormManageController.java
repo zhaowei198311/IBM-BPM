@@ -56,6 +56,11 @@ public class BpmFormManageController {
 	@ResponseBody
 	public String getTreeData() {
 		List<DhProcessCategory> categoryList = dhProcessCategoryService.listAll();
+        DhProcessCategory dhProcessCategory = new DhProcessCategory();
+        dhProcessCategory.setCategoryUid("rootCategory");
+        dhProcessCategory.setCategoryName("流程分类");
+        dhProcessCategory.setCategoryParent("0");
+        categoryList.add(dhProcessCategory);
         List<DhProcessMeta> metaList = dhProcessMetaService.listAll();
         List<ZTreeNode> nodesToShow = new ArrayList<ZTreeNode>();
         for (DhProcessCategory category : categoryList) {
@@ -64,7 +69,7 @@ public class BpmFormManageController {
             node.setName(category.getCategoryName());
             node.setPid(category.getCategoryParent());
             node.setItemType("category");
-            node.setIcon("http://localhost:8088/desmartbpm/resources/images/face/60.gif");
+            node.setIcon("../resources/images/1.png");
             nodesToShow.add(node);
         }
         
@@ -74,11 +79,10 @@ public class BpmFormManageController {
             node.setName(meta.getProName());
             node.setPid(meta.getCategoryUid());
             node.setItemType("processMeta");
-            node.setIcon("http://localhost:8088/desmartbpm/resources/images/face/47.gif");
+            node.setIcon("../resources/images/2.png");
             nodesToShow.add(node);
         }
-        //同步查询所有流程定义代码，生成所有树 itemType为processDefinition
-        //for() {}
+        
         return JsonUtil.obj2String(nodesToShow);
 	}
 	
