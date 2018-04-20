@@ -28,6 +28,7 @@
 			      <dd><a href="sysResource/resource_list" target="iframe0">模块资源管理</a></dd>
 			      <dd><a href="sysRole/system_role" target="iframe0">系统角色管理</a></dd>
 			      <dd><a href="sysTeam/group" target="iframe0">角色组管理</a></dd>
+			      <dd><a href="http://localhost:8080/ssmquartztest/Quarz/QuarzList.jsp" target="iframe0">定时任务管理</a></dd>
 			    </dl>
 			</li>
 			<li class="layui-nav-item">
