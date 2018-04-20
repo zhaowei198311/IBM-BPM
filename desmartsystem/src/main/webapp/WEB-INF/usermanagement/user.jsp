@@ -16,60 +16,69 @@
   		
 	</head>
 	<body>
-		<div class="container">
-			<div class="search_area">
-				<div class="layui-row layui-form">
-				<form class="form-inline" method="post" action="sysUser/allSysUser"  onsubmit="return search(this);">
-					<input type="hidden" name="pageNo" id="pageNo" value="1" >
-					<div class="layui-col-md2">
-				    	<input type="text"  placeholder="姓名"  name="userName" class="layui-input">
+	
+		<div class="layui-container" style="margin-top:20px;width:100%;">  
+		  	<div class="layui-row">
+			    <div class="layui-col-md2" style="text-align: left;">
+					<div class="tree" id="demo">
+						<ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
 					</div>
-					<div class="layui-col-md2">
-						<input type="text" placeholder="用户名"  name="userNo"  class="layui-input">
+			    </div>
+			    <div class="layui-col-md10">
+			    	<form class="form-inline" method="post" action="sysUser/allSysUser"  onsubmit="return search(this);">
+					<div class="search_area">
+								<input type="hidden" name="pageNo" id="pageNo" value="1" >
+								<div class="layui-col-md2">
+							    	<input type="text"  placeholder="姓名"  name="userName" class="layui-input">
+								</div>
+								<div class="layui-col-md2">
+									<input type="text" placeholder="用户名"  name="userNo"  class="layui-input">
+								</div>
+								<div class="layui-col-md2">
+									<input type="text"  placeholder="部门"  name="departName" class="layui-input" />
+								</div>
+								<div class="layui-col-md2">
+								    <input type="text"  placeholder="类型"  name="employeeType" class="layui-input">				    
+								</div>
+								<div class="layui-col-md1" style="text-align:right;">
+								        <button class="layui-btn" >查询</button>
+								</div>
+								<div class="layui-col-md1" style="text-align:right;">
+								        <button class="layui-btn create_btn" >新建</button>
+								</div>
+						<input type="hidden" name="departUid" id="departParent" >
+						<input type="hidden" name="pageNo" id="pageNo" value="1" >
+					</form>
 					</div>
-					<div class="layui-col-md2">
-						<input type="text"  placeholder="部门"  name="departName" class="layui-input" />
+					<div>				
+						<table class="layui-table backlog_table" lay-even lay-skin="nob">
+							<colgroup>
+							     <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col> 
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							     <tr>
+							      <th>序号</th>
+							      <th>姓名</th>
+							      <th>用户名</th>
+							      <th>部门</th>
+							      <th>类型</th>
+							      <th>联系电话</th>
+							      <th>操作</th>
+							    </tr>  
+							</thead>
+							<tbody id="tabletr"></tbody>
+						</table>
+						<div id="pagination"></div>
 					</div>
-					<div class="layui-col-md2">
-					    <input type="text"  placeholder="类型"  name="employeeType" class="layui-input">				    
-					</div>
-					<div class="layui-col-md1" style="text-align:right;">
-					        <button class="layui-btn" >查询</button>
-					</div>
-					<div class="layui-col-md1" style="text-align:right;">
-					        <button class="layui-btn create_btn" >新建</button>
-					</div>
-				</form>
-				</div>
-			</div>
-			<div>				
-				<table class="layui-table backlog_table" lay-even lay-skin="nob">
-					<colgroup>
-					    <col>
-					    <col>
-					    <col>
-					    <col>
-					    <col> 
-					    <col>
-					    <col>
-					</colgroup>
-					<thead>
-					    <tr>
-					      <th>序号</th>
-					      <th>姓名</th>
-					      <th>用户名</th>
-					      <th>部门</th>
-					      <th>类型</th>
-					      <th>联系电话</th>
-					      <th>操作</th>
-					    </tr> 
-					</thead>
-					<tbody id="tabletr">
-					</tbody>
-				</table>
-			</div>
-			<div id="pagination"></div>
-		</div>
+			    </div>
+		  	</div>
+	
 		
 		<!-- <div class="display_container">
 		<div class="display_content">
@@ -338,6 +347,28 @@
 			    }   
 			});
 			
+			function onClick(e, treeId, treeNode) {
+				var departUid='';
+				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				var sNodes = treeObj.getSelectedNodes();
+				if (sNodes.length > 0) {
+					var node = sNodes[0].getPath();
+					console.log(node);
+					for (var i = 0; i < node.length; i++) {
+						departUid=node[i].code;
+					}
+				}
+				console.log(departUid);
+				departUid=departUid.replace(/\s/g, "")
+				$('#departParent').val(departUid);
+				pageBreak(1);
+			}
+			
+			
+			var url='sysDepartment/treeDisplay';
+			//tree展示
+			setting.callback={onClick: onClick}
+			treeDisplay(url,'treeDemo');
 			
 			pageBreak($('#pageNo').val());
 			
