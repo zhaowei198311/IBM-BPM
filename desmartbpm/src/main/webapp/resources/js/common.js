@@ -24,6 +24,9 @@ var common = {
         // return localhostPaht + "/desmartsystem";
 		return "http://localhost:8088/desmartsystem"
     },
+    choosRolePath : function(id, isSingle) {
+    	return common.getPath() + "/test/chooseRole?id=" + id +"&isSingle=" + isSingle; 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;

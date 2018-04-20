@@ -1,6 +1,7 @@
 var triggerToEdit;
 var firstChooseRole = true;
 var firstChooseTeam = true;
+var index;
 var pageConfig = {
     pageNum: 1,
     pageSize: 5,
@@ -10,7 +11,7 @@ var pageConfig = {
 }
 $(function() {
 	getPermissionStart();
-	getAllRoleList();
+	
 	getAllTeamList();
     $('#form1').validate({
         rules : {
@@ -148,27 +149,20 @@ $(function() {
     // 选择发起人员
     $("#chooseUser_btn").click(function () {
         var url = common.getSystemPath() + "/sysUser/select_personnel?id=permissionStartUser&isSingle=false";
-        window.open(url);
+        window.open(url, 'newwindow', 'height=600, width=1024, top=0,left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
+        
     });
     
     // 选择发起角色
     $("#chooseRole_btn").click(function(){
-    	if (firstChooseRole) {
-    		var choosedRoles = $("#permissionStartRole").val();
-        	var chooseIds = choosedRoles.split(";");
-        	$(".role_wait_li").each(function() {
-        		var $li = $(this);
-    			var roleUid = $li.data("roleuid");
-    			var roleName = $li.data("rolename");
-    			if($.inArray(roleUid, chooseIds) != -1){
-    				var str = '<li class="role_choose_li" data-roleuid="'+roleUid+'" data-rolename="'+roleName+'">'+roleName+'</li>';
-    				$("#selectedRole_ul").append(str);
-    				$li.remove();
-    			}
-        	});
-    		firstChooseRole = false;
-    	}
-    	$("#chooseRole_container").show();
+    	index = layer.open({
+            type: 2,
+            title: '角色选择',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['790px', '580px'],
+            content: "http://localhost:8088/desmartbpm/test/chooseRole?id=permissionStartRole&isSingle=false"//iframe的url
+        }); 
     });
     
     // 选择发起角色组
@@ -190,14 +184,7 @@ $(function() {
     	}
     	$("#chooseTeam_container").show();
     });
-    $("#chooseRole_container").on("click", "li", function(e){
-    	var $li = $(e.target);   // 相当于元素绑定事件的 $(this)
-    	if ($li.hasClass("colorli")) {
-    		$li.removeClass("colorli");
-    	} else {
-    		$li.addClass("colorli");
-    	}
-    });
+
     $("#chooseTeam_container").on("click", "li", function(e){
     	var $li = $(e.target);   // 相当于元素绑定事件的 $(this)
     	if ($li.hasClass("colorli")) {
@@ -206,42 +193,7 @@ $(function() {
     		$li.addClass("colorli");
     	}
     });
-    $("#addRole_btn").click(function() {
-    	var roleIds = [];
-    	$(".role_choose_li").each(function() {
-    		roleIds.push($(this).data("roleuid"));
-    	});
-    	$(".role_wait_li").each(function() {
-    		var $li = $(this);
-    		if ($li.hasClass("colorli")) {
-    			var roleUid = $li.data("roleuid");
-    			var roleName = $li.data("rolename");
-    			if($.inArray(roleUid, roleIds) == -1){
-					var str = '<li class="role_choose_li" data-roleuid="'+roleUid+'" data-rolename="'+roleName+'">'+roleName+'</li>';
-					$("#selectedRole_ul").append(str);
-				}
-    			$li.remove();
-    		}
-    	});
-    });
-    $("#removeRole_btn").click(function() {
-    	var roleIds = [];
-    	$(".role_wait_li").each(function() {
-    		roleIds.push($(this).data("roleuid"));
-    	});
-    	$(".role_choose_li").each(function() {
-    		var $li = $(this);
-    		if ($li.hasClass("colorli")) {
-    			var roleUid = $li.data("roleuid");
-    			var roleName = $li.data("rolename");
-    			if($.inArray(roleUid, roleIds) == -1){
-					var str = '<li class="role_wait_li" data-roleuid="'+roleUid+'" data-rolename="'+roleName+'">'+roleName+'</li>';
-					$("#waitRole_ul").append(str);
-				}
-    			$li.remove();
-    		}
-    	});
-    });
+
     $("#addTeam_btn").click(function() {
     	var teamIds = [];
     	$(".team_choose_li").each(function() {
@@ -278,21 +230,7 @@ $(function() {
             }
         });
     });
-    $("#chooseRole_sureBtn").click(function() {
-    	var permissionStartRole = "";
-    	var permissionStartRole_view = "";
-    	$(".role_choose_li").each(function() {
-    		var $li = $(this);
-    		permissionStartRole += $li.data("roleuid") + ";";
-    		permissionStartRole_view += $li.data("rolename") + ";";
-    	});
-    	$("#permissionStartRole").val(permissionStartRole);
-    	$("#permissionStartRole_view").val(permissionStartRole_view);
-    	$("#chooseRole_container").hide();
-    });
-    $("#chooseRole_cancelBtn").click(function() {
-    	$("#chooseRole_container").hide();
-    });
+
     $("#chooseTeam_sureBtn").click(function() {
     	var permissionStartTeam = "";
     	var permissionStartTeam_view = "";
@@ -451,25 +389,7 @@ function getPermissionStart() {
 		}
 	});
 }
-function getAllRoleList() {
-	$.ajax({
-		url: common.getSystemPath() + "/sysRole/roleList",
-		dataType: "json",
-		type: "post",
-		data: {},
-		success: function(list) {
-			var str = "";
-			for (var i = 0; i < list.length; i++) {
-				var role = list[i];
-				var roleUid = role.roleUid;
-				var roleName = role.roleName;
-				str += '<li class="role_wait_li" data-roleuid="'+roleUid+'" data-rolename="'+roleName+'">'+roleName+'</li>';
-			}
-			$("#waitRole_ul").append(str);
-		}
-		
-	});
-}
+
 function getAllTeamList() {
 	$.ajax({
 		url: common.getSystemPath() + "/sysTeam/sysTeamList",
@@ -485,7 +405,12 @@ function getAllTeamList() {
 				str += '<li class="team_wait_li" data-teamuid="'+teamUid+'" data-teamname="'+teamName+'">'+teamName+'</li>';
 			}
 			$("#waitTeam_ul").append(str);
+			
 		}
 		
 	});
+}
+
+function closeChildWindow() {
+	layer.close(index);
 }

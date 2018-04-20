@@ -195,10 +195,12 @@ public class TestController extends BaseWebController {
     }
     
     
-    @RequestMapping(value = "/interfaceMessage")
-    public String interfaceMessage() {
-    	//
-    	return "interfaceManagement";
+    @RequestMapping(value = "/test/chooseRole")
+    public ModelAndView interfaceMessage(String id, String isSingle) {
+    	ModelAndView mv = new ModelAndView("common/chooseRole");
+    	mv.addObject("id", id);
+    	mv.addObject("isSingle", isSingle);
+    	return mv;
     }
     
     

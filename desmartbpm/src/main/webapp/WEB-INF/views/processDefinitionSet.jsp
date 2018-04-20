@@ -19,9 +19,9 @@
 	        background-color: #9DA5EC;
 	        color: white;
 	    }
-	    .show_user_div,.select_ul{border:1px solid #ccc;}
-        .show_user_div ul li,.select_ul li{height:35px;line-height:35px;list-style:none;padding:0 10px}
-        .foot_temp{text-align:right;margin-top:20px}
+		.show_user_div,.select_ul{border:1px solid #ccc;}
+		.show_user_div ul li,.select_ul li{height:35px;line-height:35px;list-style:none;padding:0 10px}
+		.foot_temp{text-align:right;margin-top:20px}
     </style>
 </head>
 <body>
@@ -256,17 +256,20 @@
         <div class="top">选择角色</div>
         <div class="middle_temp">   
             <div id="temp_left" style="float:left;width:290px;height:350px;margin:10px  0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
+            
             <div class="layui-row" style="margin-bottom:10px;">
                     <div class="layui-col-md9">
                         <input type="text" class="layui-input" style="height:30px;"/>
                     </div>
                     <div class="layui-col-md3" style="text-align:right;">
                         <button  class="layui-btn layui-btn-sm"  >查询</button>
-                    </div>
-                </div>
+                    </div> 
+            </div>
+            
                 <ul id="waitRole_ul"  style="width:240px;display:inline;"  >
                 </ul>
             </div>
+            
             <div id="temp_button"  style="float:left;width:120px;height:350px;text-align:center;">
                 <br></br>
                 <br></br>
@@ -292,6 +295,7 @@
         <div class="top">选择角色组</div>
         <div class="middle_temp">   
             <div id="temp_left" style="float:left;width:290px;height:350px;margin:10px 0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
+                <%--  
                 <div class="layui-row" style="margin-bottom:10px;">
                     <div class="layui-col-md9">
                         <input type="text" class="layui-input" style="height:30px;"/>
@@ -300,6 +304,7 @@
                         <button  class="layui-btn layui-btn-sm"  >查询</button>
                     </div>
                 </div>
+               --%> 
                 <ul id="waitTeam_ul" style="width:240px;display:inline;"  >
                 </ul>
             </div>
