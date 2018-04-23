@@ -2,7 +2,7 @@
 <%@ page language="java"  pageEncoding="UTF-8"%>
 <html>
 <head>
-    <title>请选择角色</title>
+    <title>请选择角色组</title>
     <%@include file="head.jsp" %>
     <%@include file="tag.jsp" %>
     <style>
@@ -29,28 +29,28 @@
 </head>
 <body>
     <div id="my_div">
-        <div class="top">选择角色</div>
-        <div class="middle_temp">   
+        <div class="top">选择角色组</div>
+        <div class="middle_temp">
             <div id="temp_left" style="float:left;width:290px;height:350px;margin:10px  0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
-            
+
             <div class="layui-row" style="margin-bottom:10px;">
                     <div class="layui-col-sm9">
                         <input type="text" class="layui-input" id="search_input" style="height:30px;"/>
                     </div>
                     <div class="layui-col-sm3" style="text-align:right;">
                         <button  class="layui-btn layui-btn-sm"  id="search_btn">查询</button>
-                    </div> 
+                    </div>
             </div>
                 <ul id="left_ul"  style="width:240px;display:inline;"  >
                 </ul>
             </div>
-            
+
             <div id="temp_button"  style="float:left;width:120px;height:350px;text-align:center;">
                 <br></br>
                 <br></br>
-                <button type="button" id="addRole_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+                <button type="button" id="addTeam_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
                 <br></br>
-                <button type="button" id="removeRole_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+                <button type="button" id="removeTeam_btn" class="layui-btn layui-btn-sm" style="font-weight:800;text-align:left;" >&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
             </div>
             <div id="temp_right" class="select_ul" style="float:left;width:280px;height:350px;margin-top:10px;padding:10px;overflow-y:scroll;">
                 <ul id="right_ul"  style="width:240px;display:inline;">
@@ -69,7 +69,7 @@ var elementId = '${id}';
 var isSingle = '${isSingle}';
 $(function () {
     $.ajax({
-        url: common.getSystemPath() + "/sysRole/roleList",
+        url: common.getSystemPath() + "/sysTeam/sysTeamList",
         dataType: "json",
         type: "post",
         data: {},
@@ -88,9 +88,9 @@ $(function () {
         }
         for (var i = 0; i < liList.length; i++) {
             var $li = liList.eq(i);
-            var roleUid = $li.data("roleuid");
-            var roleName = $li.data("rolename") + "";
-            if ((roleName.toUpperCase()).indexOf(inputValue) == -1) {
+            var teamUid = $li.data("teamuid");
+            var teamName = $li.data("teamname") + "";
+            if ((teamName.toUpperCase()).indexOf(inputValue) == -1) {
                 $li.hide();
             } else {
                 $li.show();
@@ -99,20 +99,20 @@ $(function () {
     });
  
     // 移到右侧
-    $("#addRole_btn").click(function () {
-        var roleIds = [];
+    $("#addTeam_btn").click(function () {
+        var teamIds = [];
         $(".right_li").each(function () {
-            roleIds.push($(this).data("roleuid"));
+            teamIds.push($(this).data("teamuid"));
         });
  
         $(".left_li").each(function () {
             var $li = $(this);
             if ($li.hasClass("colorli")) {
-                var roleUid = $li.data("roleuid");
-                var roleName = $li.data("rolename");
-                if ($.inArray(roleUid, roleIds) == -1) {
-                    var str = '<li class="right_li" data-roleuid="' + roleUid + '" data-rolename="' + roleName +
-                        '">' + roleName + '</li>';
+                var teamUid = $li.data("teamuid");
+                var teamName = $li.data("teamname");
+                if ($.inArray(teamUid, teamIds) == -1) {
+                    var str = '<li class="right_li" data-teamuid="' + teamUid + '" data-teamname="' + teamName +
+                        '">' + teamName + '</li>';
                     $("#right_ul").append(str);
                 }
                 $li.remove();
@@ -128,20 +128,19 @@ $(function () {
             $li.addClass("colorli");
         }
     });
-    // 移到左侧
-    $("#removeRole_btn").click(function () {
-        var roleIds = [];
+    $("#removeTeam_btn").click(function () {
+        var teamIds = [];
         $(".left_li").each(function () {
-            roleIds.push($(this).data("roleuid"));
+            teamIds.push($(this).data("teamuid"));
         });
         $(".right_li").each(function () {
             var $li = $(this);
             if ($li.hasClass("colorli")) {
-                var roleUid = $li.data("roleuid");
-                var roleName = $li.data("rolename");
-                if ($.inArray(roleUid, roleIds) == -1) {
-                    var str = '<li class="left_li" data-roleuid="' + roleUid + '" data-rolename="' + roleName +
-                        '">' + roleName + '</li>';
+                var teamUid = $li.data("teamuid");
+                var teamName = $li.data("teamname");
+                if ($.inArray(teamUid, teamIds) == -1) {
+                    var str = '<li class="left_li" data-teamuid="' + teamUid + '" data-teamname="' + teamName +
+                        '">' + teamName + '</li>';
                     $("#left_ul").append(str);
                 }
                 $li.remove();
@@ -149,9 +148,9 @@ $(function () {
         });
     });
     $("#cancel_btn").click(function () {
-        //window.parent.closeChildWindow();
- 
+        // window.parent.closeChildWindow();
     });
+ 
     $("#sure_btn").click(function () {
         var elementValue = "";
         var elementValue_view = "";
@@ -161,8 +160,8 @@ $(function () {
         }
         $(".right_li").each(function () {
             var $li = $(this);
-            elementValue += $li.data("roleuid") + ";";
-            elementValue_view += $li.data("rolename") + ";";
+            elementValue += $li.data("teamuid") + ";";
+            elementValue_view += $li.data("teamname") + ";";
         });
         window.parent.document.getElementById(elementId).value = elementValue;
         window.parent.document.getElementById(elementId + '_view').value = elementValue_view;
@@ -173,13 +172,10 @@ $(function () {
 function init(list) {
     var str = "";
     for (var i = 0; i < list.length; i++) {
-        var role = list[i];
-        if (role.roleType != 1) {
-            continue;
-        }
-        var roleUid = role.roleUid;
-        var roleName = role.roleName;
-        str += '<li class="left_li" data-roleuid="' + roleUid + '" data-rolename="' + roleName + '">' + roleName +
+        var team = list[i];
+        var teamUid = team.teamUid;
+        var teamName = team.teamName;
+        str += '<li class="left_li" data-teamuid="' + teamUid + '" data-teamname="' + teamName + '">' + teamName +
             '</li>';
     }
     $("#left_ul").append(str);
@@ -191,16 +187,17 @@ function init(list) {
     var chooseIds = choosedValue.split(";");
     $(".left_li").each(function () {
         var $li = $(this);
-        var roleUid = $li.data("roleuid");
-        var roleName = $li.data("rolename");
-        if ($.inArray(roleUid, chooseIds) != -1) {
-            var str = '<li class="right_li" data-roleuid="' + roleUid + '" data-rolename="' + roleName + '">' +
-                roleName + '</li>';
+        var teamUid = $li.data("teamuid");
+        var teamName = $li.data("teamname");
+        if ($.inArray(teamUid, chooseIds) != -1) {
+            var str = '<li class="right_li" data-teamuid="' + teamUid + '" data-teamname="' + teamName + '">' +
+                teamName + '</li>';
             $("#right_ul").append(str);
             $li.remove();
         }
     });
-}    
+}
+    
 </script>
 </body>
 </html>

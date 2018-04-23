@@ -25,7 +25,16 @@ public class EntityIdPrefix {
 	/** 触发器前缀 */
 	public static final String DH_TRIGGER = "trigger:";
 	
-	/** 对象权限 */
+	/** 对象权限前缀 */
 	public static final String DH_OBJECT_PERMISSION = "obj_perm:";
+	
+	/** 环节配置前缀 */
+	public static final String DH_ACTIVITY_CONF = "act_conf:";
+	
+	/** 事项分派前缀 */
+    public static final String DH_ACTIVITY_ASSIGN = "acta:";
+    
+    /** 退回环节前缀 */
+    public static final String DH_ACTIVITY_REJECT = "act_rej:";
 
 }

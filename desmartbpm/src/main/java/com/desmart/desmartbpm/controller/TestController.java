@@ -190,17 +190,24 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/testSendMessage")
     @ResponseBody
     public String testSendMessage() {
-       // mqSendUtil.sendMessage("GOGOGO");
+        // mqSendUtil.sendMessage("GOGOGO");
     	return "success";
     }
     
     
     @RequestMapping(value = "/test/chooseRole")
-    public ModelAndView interfaceMessage(String id, String isSingle) {
+    public ModelAndView chooseRole(String id, String isSingle) {
     	ModelAndView mv = new ModelAndView("common/chooseRole");
     	mv.addObject("id", id);
     	mv.addObject("isSingle", isSingle);
     	return mv;
+    }
+    @RequestMapping(value = "/test/chooseTeam")
+    public ModelAndView chooseTeam(String id, String isSingle) {
+        ModelAndView mv = new ModelAndView("common/chooseTeam");
+        mv.addObject("id", id);
+        mv.addObject("isSingle", isSingle);
+        return mv;
     }
     
     

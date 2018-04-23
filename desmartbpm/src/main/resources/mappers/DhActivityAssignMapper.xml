@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhActivityAssignMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhActivityAssign" >
+    <id column="ACTA_UID" property="actaUid" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+    <result column="ACTA_TYPE" property="actaType" jdbcType="VARCHAR" />
+    <result column="ACTA_ASSIGN_TYPE" property="actaAssignType" jdbcType="VARCHAR" />
+    <result column="ACTA_ASSIGN_ID" property="actaAssignId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ACTA_UID, ACTIVITY_ID, ACTA_TYPE, ACTA_ASSIGN_TYPE, ACTA_ASSIGN_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_ACTIVITY_ASSIGN
+    where ACTA_UID = #{actaUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_ACTIVITY_ASSIGN
+    where ACTA_UID = #{actaUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign" >
+    insert into DH_ACTIVITY_ASSIGN (ACTA_UID, ACTIVITY_ID, ACTA_TYPE,
+      ACTA_ASSIGN_TYPE, ACTA_ASSIGN_ID)
+    values (#{actaUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{actaType,jdbcType=VARCHAR},
+      #{actaAssignType,jdbcType=VARCHAR}, #{actaAssignId,jdbcType=VARCHAR})
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign" >
+    update DH_ACTIVITY_ASSIGN
+    <set >
+      <if test="activityId != null" >
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="actaType != null" >
+        ACTA_TYPE = #{actaType,jdbcType=VARCHAR},
+      </if>
+      <if test="actaAssignType != null" >
+        ACTA_ASSIGN_TYPE = #{actaAssignType,jdbcType=VARCHAR},
+      </if>
+      <if test="actaAssignId != null" >
+        ACTA_ASSIGN_ID = #{actaAssignId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ACTA_UID = #{actaUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign" >
+    update DH_ACTIVITY_ASSIGN
+    set ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      ACTA_TYPE = #{actaType,jdbcType=VARCHAR},
+      ACTA_ASSIGN_TYPE = #{actaAssignType,jdbcType=VARCHAR},
+      ACTA_ASSIGN_ID = #{actaAssignId,jdbcType=VARCHAR}
+    where ACTA_UID = #{actaUid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="listByDhActivityAssignSelective" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from DH_ACTIVITY_ASSIGN
+      <where>
+          <if test="actaUid != null">
+              acta_uid = #{actaUid}
+          </if>
+          <if test="activityId != null" >
+              and ACTIVITY_ID = #{activityId,jdbcType=VARCHAR}
+          </if>
+          <if test="actaType != null" >
+              and ACTA_TYPE = #{actaType,jdbcType=VARCHAR}
+          </if>
+          <if test="actaAssignType != null" >
+              and ACTA_ASSIGN_TYPE = #{actaAssignType,jdbcType=VARCHAR}
+          </if>
+          <if test="actaAssignId != null" >
+              and ACTA_ASSIGN_ID = #{actaAssignId,jdbcType=VARCHAR}
+          </if>
+      </where>
+  </select>
+</mapper>

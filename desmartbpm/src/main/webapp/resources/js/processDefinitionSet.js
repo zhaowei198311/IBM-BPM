@@ -1,7 +1,6 @@
 var triggerToEdit;
 var firstChooseRole = true;
 var firstChooseTeam = true;
-var index;
 var pageConfig = {
     pageNum: 1,
     pageSize: 5,
@@ -12,7 +11,6 @@ var pageConfig = {
 $(function() {
 	getPermissionStart();
 	
-	getAllTeamList();
     $('#form1').validate({
         rules : {
             proTime : {
@@ -155,96 +153,44 @@ $(function() {
     
     // 选择发起角色
     $("#chooseRole_btn").click(function(){
-    	index = layer.open({
+    	layer.open({
             type: 2,
             title: '角色选择',
             shadeClose: true,
             shade: 0.8,
             area: ['790px', '580px'],
-            content: "http://localhost:8088/desmartbpm/test/chooseRole?id=permissionStartRole&isSingle=false"//iframe的url
+            content: common.chooseRolePath('permissionStartRole', 'false'),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
         }); 
     });
     
     // 选择发起角色组
     $("#chooseTeam_btn").click(function(){
-    	if (firstChooseTeam) {
-    		var choosedTeams = $("#permissionStartTeam").val();
-        	var chooseIds = choosedTeams.split(";");
-        	$(".team_wait_li").each(function() {
-        		var $li = $(this);
-    			var teamUid = $li.data("teamuid");
-    			var teamName = $li.data("teamname");
-    			if($.inArray(teamUid, chooseIds) != -1){
-    				var str = '<li class="team_choose_li" data-teamuid="'+teamUid+'" data-teamname="'+teamName+'">'+teamName+'</li>';
-    				$("#choosedTeam_ul").append(str);
-    				$li.remove();
-    			}
-        	});
-    		firstChooseTeam = false;
-    	}
-    	$("#chooseTeam_container").show();
-    });
-
-    $("#chooseTeam_container").on("click", "li", function(e){
-    	var $li = $(e.target);   // 相当于元素绑定事件的 $(this)
-    	if ($li.hasClass("colorli")) {
-    		$li.removeClass("colorli");
-    	} else {
-    		$li.addClass("colorli");
-    	}
-    });
-
-    $("#addTeam_btn").click(function() {
-    	var teamIds = [];
-    	$(".team_choose_li").each(function() {
-    		teamIds.push($(this).data("teamuid"));
-    	});
-    	$(".team_wait_li").each(function() {
-    		var $li = $(this);
-    		if ($li.hasClass("colorli")) {
-    			var teamUid = $li.data("teamuid");
-    			var teamName = $li.data("teamname");
-    			if($.inArray(teamUid, teamIds) == -1){
-					var str = '<li class="team_choose_li" data-teamuid="'+teamUid+'" data-teamname="'+teamName+'">'+teamName+'</li>';
-					$("#choosedTeam_ul").append(str);
-				}
-    			$li.remove();
-    		}
-    	});
-    });
-    $("#removeTeam_btn").click(function() {
-        var teamIds = [];
-        $(".team_wait_li").each(function() {
-            teamIds.push($(this).data("teamuid"));
-        });
-        $(".team_choose_li").each(function() {
-            var $li = $(this);
-            if ($li.hasClass("colorli")) {
-                var teamUid = $li.data("teamuid");
-                var teamName = $li.data("teamname");
-                if($.inArray(teamUid, teamIds) == -1){
-                    var str = '<li class="team_wait_li" data-teamuid="'+teamUid+'" data-teamname="'+teamName+'">'+teamName+'</li>';
-                    $("#waitTeam_ul").append(str);
-                }
-                $li.remove();
+        layer.open({
+            type: 2,
+            title: '角色选择',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['790px', '580px'],
+            content: common.chooseTeamPath('permissionStartTeam', 'false'),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
             }
-        });
-    });
-
-    $("#chooseTeam_sureBtn").click(function() {
-    	var permissionStartTeam = "";
-    	var permissionStartTeam_view = "";
-    	$(".team_choose_li").each(function() {
-    		var $li = $(this);
-    		permissionStartTeam += $li.data("teamuid") + ";";
-    		permissionStartTeam_view += $li.data("teamname") + ";";
-    	});
-    	$("#permissionStartTeam").val(permissionStartTeam);
-    	$("#permissionStartTeam_view").val(permissionStartTeam_view);
-    	$("#chooseTeam_container").hide();
-    });
-    $("#chooseTeam_cancelBtn").click(function() {
-    	$("#chooseTeam_container").hide();
+        }); 
     });
     
 });
@@ -390,27 +336,3 @@ function getPermissionStart() {
 	});
 }
 
-function getAllTeamList() {
-	$.ajax({
-		url: common.getSystemPath() + "/sysTeam/sysTeamList",
-		dataType: "json",
-		type: "post",
-		data: {},
-		success: function(list) {
-			var str = "";
-			for (var i = 0; i < list.length; i++) {
-				var team = list[i];
-				var teamUid = team.teamUid;
-				var teamName = team.teamName;
-				str += '<li class="team_wait_li" data-teamuid="'+teamUid+'" data-teamname="'+teamName+'">'+teamName+'</li>';
-			}
-			$("#waitTeam_ul").append(str);
-			
-		}
-		
-	});
-}
-
-function closeChildWindow() {
-	layer.close(index);
-}

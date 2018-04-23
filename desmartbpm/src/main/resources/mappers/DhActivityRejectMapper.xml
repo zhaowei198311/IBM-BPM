@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhActivityRejectMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhActivityReject" >
+    <id column="ACTR_UID" property="actrUid" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+    <result column="ACTR_REJECT_ACTIVITY" property="actrRejectActivity" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ACTR_UID, ACTIVITY_ID, ACTR_REJECT_ACTIVITY
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_ACTIVITY_REJECT
+    where ACTR_UID = #{actrUid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_ACTIVITY_REJECT
+    where ACTR_UID = #{actrUid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhActivityReject" >
+    insert into DH_ACTIVITY_REJECT (ACTR_UID, ACTIVITY_ID, ACTR_REJECT_ACTIVITY
+      )
+    values (#{actrUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{actrRejectActivity,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityReject" >
+    update DH_ACTIVITY_REJECT
+    <set >
+      <if test="activityId != null" >
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="actrRejectActivity != null" >
+        ACTR_REJECT_ACTIVITY = #{actrRejectActivity,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ACTR_UID = #{actrUid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhActivityReject" >
+    update DH_ACTIVITY_REJECT
+    set ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      ACTR_REJECT_ACTIVITY = #{actrRejectActivity,jdbcType=VARCHAR}
+    where ACTR_UID = #{actrUid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="listByActivityId" parameterType="string" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from DH_ACTIVITY_REJECT
+    where activity_id = #{activityId,jdbcType=VARCHAR}
+  </select>
+</mapper>

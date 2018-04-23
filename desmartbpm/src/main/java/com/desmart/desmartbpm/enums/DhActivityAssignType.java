@@ -1,13 +1,16 @@
 package com.desmart.desmartbpm.enums;
 
-public enum DhProcessDefinitionStatus {
-    SETTING("SETTING", "配置中"),
-    SETTED("SETTED", "已配置");
+/**
+ * 分配哪种操作的执行人
+ */
+public enum DhActivityAssignType {
+    PROCESS("process", "处理人"),
+    TIMEOUT_NOTIFY("timeoutNotify", "超时通知人");
 
     private final String code;
     private final String value;
 
-    private DhProcessDefinitionStatus(String code, String value) {
+    private DhActivityAssignType(String code, String value) {
         this.code = code;
         this.value = value;
     }
@@ -25,10 +28,10 @@ public enum DhProcessDefinitionStatus {
      * @param code
      * @return
      */
-    public static DhProcessDefinitionStatus codeOf(String code) {
-        for (DhProcessDefinitionStatus status : values()) {
-            if (status.getCode().equals(code)) {
-                return status;
+    public static DhActivityAssignType codeOf(String code) {
+        for (DhActivityAssignType type : values()) {
+            if (type.getCode().equals(code)) {
+                return type;
             }
         }
         return null;

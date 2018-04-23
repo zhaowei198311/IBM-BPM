@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhActivityConfMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhActivityConf" >
+    <id column="ACTC_UID" property="actcUid" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+    <result column="ACTC_SORT" property="actcSort" jdbcType="INTEGER" />
+    <result column="ACTC_TIME" property="actcTime" jdbcType="FLOAT" />
+    <result column="ACTC_TIMEUNIT" property="actcTimeunit" jdbcType="VARCHAR" />
+    <result column="ACTC_ASSIGN_TYPE" property="actcAssignType" jdbcType="VARCHAR" />
+    <result column="ACTC_ASSIGN_VARIABLE" property="actcAssignVariable" jdbcType="VARCHAR" />
+    <result column="SIGN_COUNT_VARNAME" property="signCountVarname" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_EDIT_ATTACH" property="actcCanEditAttach" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_UPLOAD_ATTACH" property="actcCanUploadAttach" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_DELEGATE" property="actcCanDelegate" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_DELETE_ATTACH" property="actcCanDeleteAttach" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_MESSAGE_NOTIFY" property="actcCanMessageNotify" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_MAIL_NOTIFY" property="actcCanMailNotify" jdbcType="VARCHAR" />
+    <result column="ACTC_MAIL_NOTIFY_TEMPLATE" property="actcMailNotifyTemplate" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_REJECT" property="actcCanReject" jdbcType="VARCHAR" />
+    <result column="ACTC_REJECT_TYPE" property="actcRejectType" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_REVOKE" property="actcCanRevoke" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_AUTOCOMMIT" property="actcCanAutocommit" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_ADD" property="actcCanAdd" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_USER_TO_FIELD" property="actcCanUserToField" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_AUDIT_TO_FIELD" property="actcCanAuditToField" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_APPROVE" property="actcCanApprove" jdbcType="VARCHAR" />
+    <result column="ACTC_USER_TO_FIELD" property="actcUserToField" jdbcType="VARCHAR" />
+    <result column="ACTC_AUDIT_TO_FIELD" property="actcAuditToField" jdbcType="VARCHAR" />
+    <result column="ACTC_OUTTIME_TRIGGER" property="actcOuttimeTrigger" jdbcType="VARCHAR" />
+    <result column="ACTC_OUTTIME_TEMPLATE" property="actcOuttimeTemplate" jdbcType="VARCHAR" />
+    <result column="ACTC_DESCRIPTION" property="actcDescription" jdbcType="VARCHAR" />
+    <result column="ACTC_DEF_TITLE" property="actcDefTitle" jdbcType="VARCHAR" />
+    <result column="ACTC_DEF_SUBJECT_MESSAGE" property="actcDefSubjectMessage" jdbcType="VARCHAR" />
+    <result column="ACTC_DEF_MESSAGE" property="actcDefMessage" jdbcType="VARCHAR" />
+    <result column="ACTC_DEF_DESCRIPTION" property="actcDefDescription" jdbcType="VARCHAR" />
+    <result column="ACTC_ALERT" property="actcAlert" jdbcType="VARCHAR" />
+    <result column="ACTC_PRIORITY_VARIABLE" property="actcPriorityVariable" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_CANCEL" property="actcCanCancel" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_PAUSE" property="actcCanPause" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_SKIP" property="actcCanSkip" jdbcType="VARCHAR" />
+    <result column="UPDATOR" property="updator" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ACTC_UID, ACTIVITY_ID, ACTC_SORT, ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, ACTC_ASSIGN_VARIABLE, 
+    SIGN_COUNT_VARNAME, ACTC_CAN_EDIT_ATTACH, ACTC_CAN_UPLOAD_ATTACH, ACTC_CAN_DELEGATE, 
+    ACTC_CAN_DELETE_ATTACH, ACTC_CAN_MESSAGE_NOTIFY, ACTC_CAN_MAIL_NOTIFY, ACTC_MAIL_NOTIFY_TEMPLATE, 
+    ACTC_CAN_REJECT, ACTC_REJECT_TYPE, ACTC_CAN_REVOKE, ACTC_CAN_AUTOCOMMIT, ACTC_CAN_ADD, 
+    ACTC_CAN_USER_TO_FIELD, ACTC_CAN_AUDIT_TO_FIELD, ACTC_CAN_APPROVE, ACTC_USER_TO_FIELD, 
+    ACTC_AUDIT_TO_FIELD, ACTC_OUTTIME_TRIGGER, ACTC_OUTTIME_TEMPLATE, ACTC_DESCRIPTION, 
+    ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, 
+    ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP, 
+    UPDATOR, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_ACTIVITY_CONF
+    where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_ACTIVITY_CONF
+    where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
+    insert into DH_ACTIVITY_CONF (ACTC_UID, ACTIVITY_ID, ACTC_SORT, 
+      ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, 
+      ACTC_ASSIGN_VARIABLE, SIGN_COUNT_VARNAME, ACTC_CAN_EDIT_ATTACH, 
+      ACTC_CAN_UPLOAD_ATTACH, ACTC_CAN_DELEGATE, ACTC_CAN_DELETE_ATTACH, 
+      ACTC_CAN_MESSAGE_NOTIFY, ACTC_CAN_MAIL_NOTIFY, 
+      ACTC_MAIL_NOTIFY_TEMPLATE, ACTC_CAN_REJECT, 
+      ACTC_REJECT_TYPE, ACTC_CAN_REVOKE, ACTC_CAN_AUTOCOMMIT, 
+      ACTC_CAN_ADD, ACTC_CAN_USER_TO_FIELD, ACTC_CAN_AUDIT_TO_FIELD, 
+      ACTC_CAN_APPROVE, ACTC_USER_TO_FIELD, ACTC_AUDIT_TO_FIELD, 
+      ACTC_OUTTIME_TRIGGER, ACTC_OUTTIME_TEMPLATE, 
+      ACTC_DESCRIPTION, ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, 
+      ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, ACTC_ALERT, 
+      ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, 
+      ACTC_CAN_SKIP, UPDATOR, UPDATE_TIME
+      )
+    values (#{actcUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{actcSort,jdbcType=INTEGER}, 
+      #{actcTime,jdbcType=FLOAT}, #{actcTimeunit,jdbcType=VARCHAR}, #{actcAssignType,jdbcType=VARCHAR}, 
+      #{actcAssignVariable,jdbcType=VARCHAR}, #{signCountVarname,jdbcType=VARCHAR}, #{actcCanEditAttach,jdbcType=VARCHAR}, 
+      #{actcCanUploadAttach,jdbcType=VARCHAR}, #{actcCanDelegate,jdbcType=VARCHAR}, #{actcCanDeleteAttach,jdbcType=VARCHAR}, 
+      #{actcCanMessageNotify,jdbcType=VARCHAR}, #{actcCanMailNotify,jdbcType=VARCHAR}, 
+      #{actcMailNotifyTemplate,jdbcType=VARCHAR}, #{actcCanReject,jdbcType=VARCHAR}, 
+      #{actcRejectType,jdbcType=VARCHAR}, #{actcCanRevoke,jdbcType=VARCHAR}, #{actcCanAutocommit,jdbcType=VARCHAR}, 
+      #{actcCanAdd,jdbcType=VARCHAR}, #{actcCanUserToField,jdbcType=VARCHAR}, #{actcCanAuditToField,jdbcType=VARCHAR}, 
+      #{actcCanApprove,jdbcType=VARCHAR}, #{actcUserToField,jdbcType=VARCHAR}, #{actcAuditToField,jdbcType=VARCHAR}, 
+      #{actcOuttimeTrigger,jdbcType=VARCHAR}, #{actcOuttimeTemplate,jdbcType=VARCHAR}, 
+      #{actcDescription,jdbcType=VARCHAR}, #{actcDefTitle,jdbcType=VARCHAR}, #{actcDefSubjectMessage,jdbcType=VARCHAR}, 
+      #{actcDefMessage,jdbcType=VARCHAR}, #{actcDefDescription,jdbcType=VARCHAR}, #{actcAlert,jdbcType=VARCHAR}, 
+      #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR}, 
+      #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
+    update DH_ACTIVITY_CONF
+    <set >
+      updator = #{updator}, update_time = sysdate,
+      <if test="activityId != null" >
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="actcSort != null" >
+        ACTC_SORT = #{actcSort,jdbcType=INTEGER},
+      </if>
+      <if test="actcTime != null" >
+        ACTC_TIME = #{actcTime,jdbcType=FLOAT},
+      </if>
+      <if test="actcTimeunit != null" >
+        ACTC_TIMEUNIT = #{actcTimeunit,jdbcType=VARCHAR},
+      </if>
+      <if test="actcAssignType != null" >
+        ACTC_ASSIGN_TYPE = #{actcAssignType,jdbcType=VARCHAR},
+      </if>
+      <if test="actcAssignVariable != null" >
+        ACTC_ASSIGN_VARIABLE = #{actcAssignVariable,jdbcType=VARCHAR},
+      </if>
+      <if test="signCountVarname != null" >
+        SIGN_COUNT_VARNAME = #{signCountVarname,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanEditAttach != null" >
+        ACTC_CAN_EDIT_ATTACH = #{actcCanEditAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanUploadAttach != null" >
+        ACTC_CAN_UPLOAD_ATTACH = #{actcCanUploadAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanDelegate != null" >
+        ACTC_CAN_DELEGATE = #{actcCanDelegate,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanDeleteAttach != null" >
+        ACTC_CAN_DELETE_ATTACH = #{actcCanDeleteAttach,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanMessageNotify != null" >
+        ACTC_CAN_MESSAGE_NOTIFY = #{actcCanMessageNotify,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanMailNotify != null" >
+        ACTC_CAN_MAIL_NOTIFY = #{actcCanMailNotify,jdbcType=VARCHAR},
+      </if>
+      <if test="actcMailNotifyTemplate != null" >
+        ACTC_MAIL_NOTIFY_TEMPLATE = #{actcMailNotifyTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanReject != null" >
+        ACTC_CAN_REJECT = #{actcCanReject,jdbcType=VARCHAR},
+      </if>
+      <if test="actcRejectType != null" >
+        ACTC_REJECT_TYPE = #{actcRejectType,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanRevoke != null" >
+        ACTC_CAN_REVOKE = #{actcCanRevoke,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanAutocommit != null" >
+        ACTC_CAN_AUTOCOMMIT = #{actcCanAutocommit,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanAdd != null" >
+        ACTC_CAN_ADD = #{actcCanAdd,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanUserToField != null" >
+        ACTC_CAN_USER_TO_FIELD = #{actcCanUserToField,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanAuditToField != null" >
+        ACTC_CAN_AUDIT_TO_FIELD = #{actcCanAuditToField,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanApprove != null" >
+        ACTC_CAN_APPROVE = #{actcCanApprove,jdbcType=VARCHAR},
+      </if>
+      <if test="actcUserToField != null" >
+        ACTC_USER_TO_FIELD = #{actcUserToField,jdbcType=VARCHAR},
+      </if>
+      <if test="actcAuditToField != null" >
+        ACTC_AUDIT_TO_FIELD = #{actcAuditToField,jdbcType=VARCHAR},
+      </if>
+      <if test="actcOuttimeTrigger != null" >
+        ACTC_OUTTIME_TRIGGER = #{actcOuttimeTrigger,jdbcType=VARCHAR},
+      </if>
+      <if test="actcOuttimeTemplate != null" >
+        ACTC_OUTTIME_TEMPLATE = #{actcOuttimeTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="actcDescription != null" >
+        ACTC_DESCRIPTION = #{actcDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="actcDefTitle != null" >
+        ACTC_DEF_TITLE = #{actcDefTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="actcDefSubjectMessage != null" >
+        ACTC_DEF_SUBJECT_MESSAGE = #{actcDefSubjectMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="actcDefMessage != null" >
+        ACTC_DEF_MESSAGE = #{actcDefMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="actcDefDescription != null" >
+        ACTC_DEF_DESCRIPTION = #{actcDefDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="actcAlert != null" >
+        ACTC_ALERT = #{actcAlert,jdbcType=VARCHAR},
+      </if>
+      <if test="actcPriorityVariable != null" >
+        ACTC_PRIORITY_VARIABLE = #{actcPriorityVariable,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanCancel != null" >
+        ACTC_CAN_CANCEL = #{actcCanCancel,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanPause != null" >
+        ACTC_CAN_PAUSE = #{actcCanPause,jdbcType=VARCHAR},
+      </if>
+      <if test="actcCanSkip != null" >
+        ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
+    update DH_ACTIVITY_CONF
+    set ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      ACTC_SORT = #{actcSort,jdbcType=INTEGER},
+      ACTC_TIME = #{actcTime,jdbcType=FLOAT},
+      ACTC_TIMEUNIT = #{actcTimeunit,jdbcType=VARCHAR},
+      ACTC_ASSIGN_TYPE = #{actcAssignType,jdbcType=VARCHAR},
+      ACTC_ASSIGN_VARIABLE = #{actcAssignVariable,jdbcType=VARCHAR},
+      SIGN_COUNT_VARNAME = #{signCountVarname,jdbcType=VARCHAR},
+      ACTC_CAN_EDIT_ATTACH = #{actcCanEditAttach,jdbcType=VARCHAR},
+      ACTC_CAN_UPLOAD_ATTACH = #{actcCanUploadAttach,jdbcType=VARCHAR},
+      ACTC_CAN_DELEGATE = #{actcCanDelegate,jdbcType=VARCHAR},
+      ACTC_CAN_DELETE_ATTACH = #{actcCanDeleteAttach,jdbcType=VARCHAR},
+      ACTC_CAN_MESSAGE_NOTIFY = #{actcCanMessageNotify,jdbcType=VARCHAR},
+      ACTC_CAN_MAIL_NOTIFY = #{actcCanMailNotify,jdbcType=VARCHAR},
+      ACTC_MAIL_NOTIFY_TEMPLATE = #{actcMailNotifyTemplate,jdbcType=VARCHAR},
+      ACTC_CAN_REJECT = #{actcCanReject,jdbcType=VARCHAR},
+      ACTC_REJECT_TYPE = #{actcRejectType,jdbcType=VARCHAR},
+      ACTC_CAN_REVOKE = #{actcCanRevoke,jdbcType=VARCHAR},
+      ACTC_CAN_AUTOCOMMIT = #{actcCanAutocommit,jdbcType=VARCHAR},
+      ACTC_CAN_ADD = #{actcCanAdd,jdbcType=VARCHAR},
+      ACTC_CAN_USER_TO_FIELD = #{actcCanUserToField,jdbcType=VARCHAR},
+      ACTC_CAN_AUDIT_TO_FIELD = #{actcCanAuditToField,jdbcType=VARCHAR},
+      ACTC_CAN_APPROVE = #{actcCanApprove,jdbcType=VARCHAR},
+      ACTC_USER_TO_FIELD = #{actcUserToField,jdbcType=VARCHAR},
+      ACTC_AUDIT_TO_FIELD = #{actcAuditToField,jdbcType=VARCHAR},
+      ACTC_OUTTIME_TRIGGER = #{actcOuttimeTrigger,jdbcType=VARCHAR},
+      ACTC_OUTTIME_TEMPLATE = #{actcOuttimeTemplate,jdbcType=VARCHAR},
+      ACTC_DESCRIPTION = #{actcDescription,jdbcType=VARCHAR},
+      ACTC_DEF_TITLE = #{actcDefTitle,jdbcType=VARCHAR},
+      ACTC_DEF_SUBJECT_MESSAGE = #{actcDefSubjectMessage,jdbcType=VARCHAR},
+      ACTC_DEF_MESSAGE = #{actcDefMessage,jdbcType=VARCHAR},
+      ACTC_DEF_DESCRIPTION = #{actcDefDescription,jdbcType=VARCHAR},
+      ACTC_ALERT = #{actcAlert,jdbcType=VARCHAR},
+      ACTC_PRIORITY_VARIABLE = #{actcPriorityVariable,jdbcType=VARCHAR},
+      ACTC_CAN_CANCEL = #{actcCanCancel,jdbcType=VARCHAR},
+      ACTC_CAN_PAUSE = #{actcCanPause,jdbcType=VARCHAR},
+      ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR},
+      UPDATOR = #{updator,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

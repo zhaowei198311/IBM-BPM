@@ -24,8 +24,12 @@ var common = {
         // return localhostPaht + "/desmartsystem";
 		return "http://localhost:8088/desmartsystem"
     },
-    choosRolePath : function(id, isSingle) {
+    // 选人弹框的路径
+    chooseRolePath : function(id, isSingle) {
     	return common.getPath() + "/test/chooseRole?id=" + id +"&isSingle=" + isSingle; 
+    },
+    chooseTeamPath : function(id, isSingle) {
+    	return common.getPath() + "/test/chooseTeam?id=" + id +"&isSingle=" + isSingle; 
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
