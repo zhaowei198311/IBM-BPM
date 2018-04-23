@@ -7,4 +7,15 @@ public class Const {
     public static final String HTTP_CLIENT_CONNECTION_POOL = "_httpClientConnectionPool";
     
     public static final String CURRENT_USER = "currentUser";
+    
+    public interface Time {
+        public static final String HOUR = "hour";
+        public static final String DAY = "day";
+        public static final String MONTH = "month";
+    }
+    public interface Boolean {
+        public static final String TRUE = "TRUE";
+        public static final String FALSE = "FALSE";
+    }
+    
 }

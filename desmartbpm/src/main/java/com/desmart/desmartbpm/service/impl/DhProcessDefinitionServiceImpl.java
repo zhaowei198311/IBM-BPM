@@ -144,30 +144,33 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("参数异常");
         }
 
+        bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
+        
         DhProcessDefinition definitionSelective = new DhProcessDefinition();
         definitionSelective.setProVerUid(proVerUid);
         definitionSelective.setProAppId(proAppId);
         definitionSelective.setProUid(proUid);
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
-        if (list.size() > 0) {
-            return ServerResponse.createBySuccess();
-        }
-
-        bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
-        // 插入新记录
-        DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
-        dhProcessDefinition.setProUid(proUid);
-        dhProcessDefinition.setProAppId(proAppId);
-        dhProcessDefinition.setProVerUid(proVerUid);
-        String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        dhProcessDefinition.setCreateUser(creator);
-        dhProcessDefinition.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
-        int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
-        if (countRow > 0) {
-            return ServerResponse.createBySuccess();
+        if (list.size() == 0) { // 如果有环节信息，不再重复生成
+            // 插入新流程定义记录
+            DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
+            dhProcessDefinition.setProUid(proUid);
+            dhProcessDefinition.setProAppId(proAppId);
+            dhProcessDefinition.setProVerUid(proVerUid);
+            String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+            dhProcessDefinition.setCreateUser(creator);
+            dhProcessDefinition.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
+            int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
+            if (countRow > 0) {
+                return ServerResponse.createBySuccess();
+            } else {
+                return ServerResponse.createByErrorMessage("同步失败");
+            }
         } else {
-            return ServerResponse.createByErrorMessage("同步失败");
+            return ServerResponse.createBySuccess();
         }
+        
+        
     }
 
     /**

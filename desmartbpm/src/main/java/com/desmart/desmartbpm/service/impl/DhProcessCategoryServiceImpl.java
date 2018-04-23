@@ -61,7 +61,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
         }
         
         DhProcessCategory dhProcessCategory = dhProcessCategoryMapper.queryByCategoryUid(categoryUid);
-        if (dhProcessCategory == null) {
+        if (dhProcessCategory == null && !"rootCategory".equalsIgnoreCase(categoryUid)) {
             return ServerResponse.createByErrorMessage("此分类不存在");
         }
         

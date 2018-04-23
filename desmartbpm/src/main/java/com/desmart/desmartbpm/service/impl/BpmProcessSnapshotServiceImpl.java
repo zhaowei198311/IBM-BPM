@@ -7,10 +7,16 @@ import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmCommonBusObject;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +39,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhActivityConfMapper dhActivityConfMapper;
 
 
     
@@ -170,10 +178,20 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 bpmActivityMeta.setDeepLevel(newMeta.getDeepLevel());
                 
                 bpmActivityMetaMapper.updateByPrimaryKeySelective(bpmActivityMeta);
-                
+                // 查看环节是否人工环节
+                if (isHumanActivity(bpmActivityMeta)) {
+                    // 查看此活动环节是否有相关配置
+                    if (dhActivityConfMapper.getByActivityId(bpmActivityMeta.getActivityId()) == null) {
+                        dhActivityConfMapper.insert(createDefaultActivityConf(bpmActivityMeta.getActivityId()));
+                    }
+                }
             } else {
             	bpmActivityMetaMapper.save(newMeta);
+            	if (isHumanActivity(newMeta)) {
+                    dhActivityConfMapper.insert(createDefaultActivityConf(newMeta.getActivityId()));
+                }
             }
+            
         }
 
         if (delActivityMetas.size() > 0) {
@@ -389,5 +407,60 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(bpdId, snapshotUid);
         return list.size() > 0;
     }
-
+    
+    /**
+     * 检查这个环节是不是人工环节
+     * @return
+     */
+    private boolean isHumanActivity(BpmActivityMeta bpmActivityMeta) {
+        return "UserTask".equalsIgnoreCase(bpmActivityMeta.getBpmTaskType());
+    }
+    
+    /**
+     * 根据环节id生成一个默认配置
+     * @param activityId 活动id
+     * @return
+     */
+    private DhActivityConf createDefaultActivityConf(String activityId) {
+        DhActivityConf conf = new DhActivityConf();
+        conf.setActcUid(EntityIdPrefix.DH_ACTIVITY_CONF + UUID.randomUUID().toString());
+        conf.setActivityId(activityId);
+        conf.setActcSort(1);
+        conf.setActcTime(null);
+        conf.setActcTimeunit(Const.Time.DAY);
+        conf.setActcAssignType(DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode());
+        conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);
+        conf.setSignCountVarname(BpmCommonBusObject.OWNER_SIGN_COUNT[0]);
+        conf.setActcCanEditAttach(Const.Boolean.TRUE);
+        conf.setActcCanUploadAttach(Const.Boolean.TRUE);
+        conf.setActcCanDelegate(Const.Boolean.TRUE);
+        conf.setActcCanDeleteAttach(Const.Boolean.TRUE);
+        conf.setActcCanMessageNotify(Const.Boolean.TRUE);
+        conf.setActcCanMailNotify(Const.Boolean.TRUE);
+        conf.setActcMailNotifyTemplate(null);
+        conf.setActcCanReject(Const.Boolean.FALSE);
+        conf.setActcRejectType(null);
+        conf.setActcCanRevoke(Const.Boolean.TRUE);
+        conf.setActcCanAutocommit(Const.Boolean.FALSE);
+        conf.setActcCanAdd(Const.Boolean.TRUE);
+        conf.setActcCanUserToField(Const.Boolean.FALSE);
+        conf.setActcUserToField(null);
+        conf.setActcCanAuditToField(Const.Boolean.FALSE);
+        conf.setActcAuditToField(null);
+        conf.setActcCanApprove(Const.Boolean.TRUE);
+        conf.setActcOuttimeTrigger(null);
+        conf.setActcOuttimeTemplate(null);
+        conf.setActcDescription(null);
+        conf.setActcDefTitle(null);
+        conf.setActcDefSubjectMessage(null);
+        conf.setActcDefMessage(null);
+        conf.setActcDefDescription(null);
+        conf.setActcAlert(null);
+        conf.setActcPriorityVariable(null);
+        conf.setActcCanCancel(null);
+        conf.setActcCanPause(null);
+        conf.setActcCanSkip(null);
+        return conf;
+    }
+    
 }

@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 
 public interface BpmActivityMetaService {
@@ -8,5 +10,5 @@ public interface BpmActivityMetaService {
                                        String loopType, String bpmTaskType, String bpmProcessSnapshotId, String miOrder,
                                        Integer deepLevel, String proAppId) throws Exception;
 
-
+    List<BpmActivityMeta> listHumanActivity(String proAppId, String proUid, String proVerUid);
 }

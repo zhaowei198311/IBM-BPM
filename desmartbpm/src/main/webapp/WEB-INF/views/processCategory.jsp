@@ -41,7 +41,6 @@
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
                                     <button class="layui-btn delete_btn" id="meta_del_btn">删除</button>
-                                    
                             </div>
                         </div>
                     </div>

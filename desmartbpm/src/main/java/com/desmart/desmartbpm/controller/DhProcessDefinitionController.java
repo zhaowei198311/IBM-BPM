@@ -54,6 +54,14 @@ public class DhProcessDefinitionController {
         return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronized(metaUid, pageNum, pageSize);
     }
 
+    /**
+     * 创建一个流程定义，并生产相关的环节数据
+     * @param proAppId  应用库id
+     * @param proUid  流程图id
+     * @param proVerUid 版本快照id
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/create")
     @ResponseBody
     public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {

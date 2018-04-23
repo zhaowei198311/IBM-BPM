@@ -1,17 +1,17 @@
 package com.desmart.desmartbpm.enums;
 
 /**
- * 事项分配对应关系，分配给哪种类型的接收人
+ * 采用哪种方式驳回
  */
-public enum DhActivityAssignAssignType {
-    USER("USER", "用户"),
-    TEAM("TEAM", "角色组"),
-    ROLE("ROLE", "角色");
+public enum DhActivityConfRejectType {
+    TO_PROCESS_START("toProcessStart", "驳回到发起人"),
+    TO_PRE_ACTIVITY("toPreActivity", "驳回到上个环节"),
+    TO_ACTIVITIES("toActivities", "驳回到指定环节");
 
     private final String code;
     private final String value;
 
-    private DhActivityAssignAssignType(String code, String value) {
+    private DhActivityConfRejectType(String code, String value) {
         this.code = code;
         this.value = value;
     }
@@ -29,8 +29,8 @@ public enum DhActivityAssignAssignType {
      * @param code
      * @return
      */
-    public static DhActivityAssignAssignType codeOf(String code) {
-        for (DhActivityAssignAssignType type : values()) {
+    public static DhActivityConfRejectType codeOf(String code) {
+        for (DhActivityConfRejectType type : values()) {
             if (type.getCode().equals(code)) {
                 return type;
             }

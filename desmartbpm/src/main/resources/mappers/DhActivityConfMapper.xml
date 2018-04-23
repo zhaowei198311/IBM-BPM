@@ -53,16 +53,26 @@
     ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP, 
     UPDATOR, UPDATE_TIME
   </sql>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from DH_ACTIVITY_CONF
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </select>
+  
+  <select id="getByActivityId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_ACTIVITY_CONF
+    where activity_id = #{activityId,jdbcType=VARCHAR}
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from DH_ACTIVITY_CONF
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </delete>
+  
   <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
     insert into DH_ACTIVITY_CONF (ACTC_UID, ACTIVITY_ID, ACTC_SORT, 
       ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, 

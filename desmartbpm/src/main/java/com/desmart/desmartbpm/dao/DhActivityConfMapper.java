@@ -1,7 +1,10 @@
 package com.desmart.desmartbpm.dao;
 
+import org.springframework.stereotype.Repository;
+
 import com.desmart.desmartbpm.entity.DhActivityConf;
 
+@Repository
 public interface DhActivityConfMapper {
     int deleteByPrimaryKey(String actcUid);
 
@@ -12,4 +15,6 @@ public interface DhActivityConfMapper {
     int updateByPrimaryKeySelective(DhActivityConf selective);
 
     int updateByPrimaryKey(DhActivityConf dhActivityConf);
+    
+    DhActivityConf getByActivityId(String activityId);
 }

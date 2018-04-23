@@ -1,22 +1,28 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 
 @Service
 public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 	private static final Logger LOG = LoggerFactory.getLogger(BpmActivityMetaServiceImpl.class);
+	
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
 	
 	/**
 	 * 根据条件创建一个环节配置
@@ -62,4 +68,17 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         bpmActivityMeta.setProAppId(proAppId);
         return bpmActivityMeta;
     }
+    
+    @Override
+    public List<BpmActivityMeta> listHumanActivity(String proAppId, String proUid, String proVerUid) {
+        BpmActivityMeta selective = new BpmActivityMeta();
+        selective.setProAppId(proAppId);
+        selective.setBpdId(proUid);
+        // todo
+        
+        
+        bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        return null;
+    }
+    
 }

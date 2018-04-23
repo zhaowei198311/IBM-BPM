@@ -176,7 +176,7 @@ $(function() {
     $("#chooseTeam_btn").click(function(){
         layer.open({
             type: 2,
-            title: '角色选择',
+            title: '角色组选择',
             shadeClose: true,
             shade: 0.8,
             area: ['790px', '580px'],

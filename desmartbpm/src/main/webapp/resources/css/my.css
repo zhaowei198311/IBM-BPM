@@ -1,5 +1,5 @@
 *{margin:0;padding:0;}
-body{font-family: "Microsoft Yahei"}
+body{background:#fff;}
 .left{float:left;width:220px;}
 .logo{text-align:center;}
 .logo img{margin:20px;}
@@ -16,8 +16,7 @@ body{font-family: "Microsoft Yahei"}
 .search_detail{position:absolute;left:10px;cursor:pointer;top:4px;font-size:24px;}
 .backlog_table tr td{cursor:pointer;}
 .backlog_img{color:#007DDB;}
-/*.top_btn{position:fixed;}
-.content{margin-top:40px;}*/
+
 
 .layui-table tbody tr:hover{
     background-color: transparent;
@@ -84,5 +83,32 @@ body{font-family: "Microsoft Yahei"}
 .trigger_table{display:none;}
 .radio_div{height:40px;line-height:40px;padding-left:20px;}
 .display_container5{display:none;position:fixed;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.layui-colla-content{padding:0;}
 .display_content5{overflow-y:auto;color:#717171;padding:20px;width:600px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
+
+
+/*2018-04-a9修改框架*/
+.layui-layout-admin .layui-header{background:#f3f3f4;height:60px;line-height:60px;width:100%;color:#999c9e;}
+.layui-layout-admin .layui-body{top:60px;}
+.layui-layout-admin .layui-footer{padding:0;}
+.layui-side-menu .layui-nav{margin-top:0;}
+.layui-side-menu .layui-nav .layui-nav-item > a{padding-left:20px;padding-top:3px;padding-bottom:3px;}
+.layui-footer{border-top:1px solid #e7eaec;height:40px;line-height:40px;text-align:center;width:100%;color:#777;z-index:1000000;}
+.layui-nav-tree .layui-nav-bar{padding-bottom:6px;}
+.layui-side-menu .layui-nav .layui-nav-item .layui-icon{position:static;}
+.layui-side-menu .layui-nav .layui-nav-item >dd > a{padding:3px 0 3px 45px;}
+.layui-side-menu .layui-nav .layui-nav-itemed > .layui-nav-child{padding:0;}
+
+
+/*2018-04-20新增css*/
+.choose_num,.choose_user,.choose_role,.choose_name{position:absolute;right:10px;top:8px;cursor:pointer;z-index:1;}
+.display_container6{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;z-index:2;}
+.display_content6{overflow-y:auto;color:#717171;padding:20px;width:550px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -375px;left:50%;box-shadow:0 0 10px #ccc;}
+.display_container10{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;z-index:2;}
+.middle6{height:300px;width:96%;position:relative;padding:0 10px;overflow-y:auto;}
+.left_div,.middle_div,.right_div{float:left;}
+.left_div,.right_div{width:220px;border:1px solid #ccc;height:280px;}
+.left_div ul li,.right_div ul li{height:25px;line-height:25px;padding-left:20px;}
+.middle_div{width:70px;text-align:center;}
+.user_div,.name_div{display:none;}
 .error{color:red;}
