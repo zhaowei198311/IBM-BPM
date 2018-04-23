@@ -1,6 +1,8 @@
-<!DOCTYPE html>
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
@@ -11,59 +13,66 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="styles/css/layui.css" rel="stylesheet" />
-<link href="styles/css/my.css" rel="stylesheet" />
+<link href="styles/css/layui.css" rel="stylesheet" media="all" />
+<link href="styles/css/my.css" rel="stylesheet" media="all" />
 <title>接口管理</title>
 </head>
 
 <body>
 	<div class="layui-container" style="margin-top: 20px; width: 100%;">
-		<div class="layui-row">
-			<div class="layui-col-md10">
-				<div class="search_area">
-					<div class="layui-row layui-form">
-						<div class="layui-col-md2">
-							<input id="queryInterfaces" type="text" placeholder="接口名称"
-								class="layui-input">
-						</div>
-						<div class="layui-col-md2" style="text-align: right; width: 280px">
-							<button class="layui-btn layui-btn-sm select_btn">查询接口</button>
-							<button id="addInterfaces"
-								class="layui-btn layui-btn-sm create_btn">新增接口</button>
-							<button class="layui-btn layui-btn-sm delete_btn">删除接口</button>
-						</div>
-					</div>
+		<div class="search_area">
+			<div class="layui-row layui-form">
+				<div class="layui-col-md2">
+					<input id="interfaceName" type="text" placeholder="接口名称"
+						class="layui-input">
 				</div>
-				<div style="width: 1350px; overflow-x: auto;">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob"
-						lay-filter="demo">
-						<colgroup>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
-						</colgroup>
-						<thead>
-							<tr>
-								<th><input type="checkbox" name="" title='全选'
-									lay-skin="primary"> 序号</th>
-								<th>接口名称</th>
-								<th>接口描述</th>
-								<th>接口类型</th>
-								<th>接口访问地址</th>
-								<th>接口访问方法名</th>
-								<th>接口状态</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody id="proMet_table_tbody" />
-					</table>
+				<div class="layui-col-md2">
+					<select id="interfaceType" name="interfaceType">
+						<option value="">请选择接口类型</option>
+						<option value="webservice">webservice</option>
+						<option value="restapi">restapi</option>
+					</select>
 				</div>
-				<div id="lay_page"></div>
+				<div class="layui-col-md2">
+					<select id="interfaceState" name="interfaceState">
+						<option value="">请选择接口状态</option>
+						<option value="enabled">启用</option>
+						<option value="disabled">停用</option>
+					</select>
+				</div>
+				<div class="layui-col-md2" style="text-align: right; width: 280px">
+					<button class="layui-btn layui-btn-sm select_btn">查询接口</button>
+					<button id="addInterfaces"
+						class="layui-btn layui-btn-sm create_btn">新增接口</button>
+				</div>
 			</div>
 		</div>
+		<div>
+			<table class="layui-table backlog_table" lay-even lay-skin="nob"
+				lay-filter="demo">
+				<colgroup>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th>接口名称</th>
+						<th>接口描述</th>
+						<th>接口类型</th>
+						<th>接口访问地址</th>
+						<th>接口访问方法名</th>
+						<th>接口状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="proMet_table_tbody" />
+			</table>
+		</div>
+		<div id="lay_page"></div>
 	</div>
 	<div class="display_container3" id="exposed_table_container">
 		<div class="display_content2">
@@ -80,7 +89,6 @@
 					</colgroup>
 					<thead>
 						<tr>
-							<th>序号</th>
 							<th>参数索引</th>
 							<th>参数名称</th>
 							<th>参数描述</th>
@@ -102,103 +110,104 @@
 		</div>
 	</div>
 	<div class="display_container">
-		<div class="display_content2" style="overflow: scroll; height: 580px;">
-			<div class="top">新增接口</div>
-			<label class="layui-form-label" style="color: red;">带*的为必填参数</label>
-			<div class="max">
-				<form class="layui-form" action="" style="margin-top: 30px;">
-					<div class="layui-form-item">
+		<div class="display_content2" style="height: 300px">
+			<div class="top" style="color: red;">新增接口</div>
+			<label class="layui-input-label" style="color: red;">带*为必填参数</label>
+			<form class="layui-form" action="" style="margin-top: 30px;">
+				<div class="layui-form-item">
+					<div class="layui-inline">
 						<label class="layui-form-label">接口名称*:</label>
-						<div class="layui-input-block">
-							<input id="intTitle" type="text" name="intTitle" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+						<div class="layui-input-inline">
+							<input type="text" id="intTitle" name="intTitle"
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
+					<div class="layui-inline">
 						<label class="layui-form-label">接口描述:</label>
-						<div class="layui-input-block">
-							<input id="intDescription" type="text" name="intDescription"
-								required lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+						<div class="layui-input-inline">
+							<input type="text" id="intDescription" name="intDescription"
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
 						<label class="layui-form-label">接口类型*:</label>
-						<div class="layui-input-block">
-							<input id="intType" type="text" name="intType" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+						<div class="layui-input-inline">
+							<select id="intType" name="intType">
+								<option value="">请选择</option>
+								<option value="webservice">webservice</option>
+								<option value="restapi">restapi</option>
+							</select>
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label">接口访问地址*:</label>
-						<div class="layui-input-block">
-							<input id="intUrl" type="text" name="intUrl" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+					<div class="layui-inline">
+						<label class="layui-form-label">接口地址*:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intUrl" name="intUrl" lay-verify="text"
+								autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label">接口访问方法名:</label>
-						<div class="layui-input-block">
-							<input id="intCallMethod" type="text" name="intCallMethod"
-								required lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">接口方法名:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intCallMethod" name="intCallMethod"
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<label class="layui-form-label">登陆用户名:</label>
-						<div class="layui-input-block">
-							<input id="intLoginUser" type="text" name="intLoginUser" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+					<div class="layui-inline">
+						<label class="layui-form-label">登录用户名:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intLoginUser" name="intLoginUser"
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
 						<label class="layui-form-label">登陆密码:</label>
-						<div class="layui-input-block">
-							<input id="intLoginPwd" type="text" name="intLoginPwd" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+						<div class="layui-input-inline">
+							<input type="text" id="intLoginPwd" name="intLoginPwd"
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-form-item">
+					<div class="layui-inline">
 						<label class="layui-form-label">接口状态*:</label>
-						<div class="layui-input-block">
-							<input id="intStatus" type="text" name="intStatus" required
-								lay-verify="required" value="" autocomplete="off"
-								class="layui-input">
+						<div class="layui-input-inline">
+							<input id="intStatus" type="checkbox" name="intStatus"
+								lay-skin="switch" lay-filter="switch1" lay-text="启用|停用"
+								value="disabled">
 						</div>
 					</div>
-				</form>
-			</div>
+				</div>
+			</form>
 			<div class="foot">
 				<button id="sure_btn" class="layui-btn layui-btn sure_btn">确定</button>
-				<button id="cancel_btn"
-					class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
 			</div>
 		</div>
 	</div>
 	<div class="display_container4" id="exposed_table2_container">
 		<div class="display_content2" style="height: 300px">
-			<div class="top">新增接口参数</div>
+			<div class="top" style="color: red;">绑定接口参数</div>
+			<label style="color: red;">带*的参数为必填</label>
 			<form class="layui-form" action="" style="margin-top: 30px;">
-				<input id="intUid" style="display: none;"/>
+				<input id="intUid" style="display: none;" />
 				<div class="layui-form-item">
 					<div class="layui-inline">
-						<label class="layui-form-label">参数索引:</label>
+						<label class="layui-form-label">参数索引*:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraIndex" name="paraIndex"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-inline">
-						<label class="layui-form-label">参数名称:</label>
+						<label class="layui-form-label">参数名称*:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraName" name="paraName"
-								lay-verify="email" autocomplete="off" class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 				</div>
@@ -207,15 +216,14 @@
 						<label class="layui-form-label">参数描述:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraDescription" name="paraDescription"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-inline">
-						<label class="layui-form-label">参数类型:</label>
+						<label class="layui-form-label">参数类型*:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraType" name="paraType"
-								lay-verify="email" autocomplete="off" class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 				</div>
@@ -224,50 +232,132 @@
 						<label class="layui-form-label">参数长度:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraSize" name="paraSize"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label">多值分隔符:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="multiSeparator" name="multiSeparator"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
 					<div class="layui-inline">
-						<label class="layui-form-label">是否多值:</label>
+						<label class="layui-form-label">是否多值*:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="multiValue" name="multiValue"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+							<input id="multiValue" type="checkbox" name="intStatus2"
+								lay-skin="switch" lay-filter="switch3" lay-text="true|false"
+								value="false">
+
 						</div>
 					</div>
 					<div class="layui-inline">
-						<label class="layui-form-label">是否必须:</label>
+						<label class="layui-form-label">是否必须*:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="isMust" name="isMust"
-								lay-verify="required|phone" autocomplete="off"
-								class="layui-input">
+							<input id="isMust" type="checkbox" name="intStatus2"
+								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
+								value="false">
+
 						</div>
 					</div>
 				</div>
 			</form>
 			<div class="foot">
-				<button id="sure_btn" class="layui-btn layui-btn sure3_btn">确定</button>
-				<button id="cancel_btn"
-					class="layui-btn layui-btn layui-btn-primary cancel3_btn">取消</button>
+				<button id="sure3_btn" class="layui-btn layui-btn sure3_btn">确定</button>
+				<button id="cancel3_btn" class="layui-btn layui-btn cancel3_btn">取消</button>
+			</div>
+		</div>
+	</div>
+	<div class="display_container5" id="exposed_table3_container">
+		<div class="display_content2" style="height: 300px">
+			<div class="top" style="color: red;">修改接口</div>
+			<form class="layui-form" action="" style="margin-top: 30px;">
+				<input id="intUid2" style="display: none;" />
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">接口名称:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intTitle2" name="intTitle2"
+								lay-verify="text" autocomplete="off" class="layui-input"
+								value="">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">接口描述:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intDescription2" name="intDescription2"
+								lay-verify="text" autocomplete="off" class="layui-input"
+								value="">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">接口类型:</label>
+						<div class="layui-input-inline">
+							<select id="intType2" name="intType2">
+								<option value="webservice">webservice</option>
+								<option value="restapi">restapi</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">接口地址:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intUrl2" name="intUrl2" lay-verify="text"
+								autocomplete="off" class="layui-input">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">接口方法名:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intCallMethod2" name="intCallMethod2"
+								lay-verify="text" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">登录用户名:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intLoginUser2" name="intLoginUser2"
+								lay-verify="text" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">登陆密码:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="intLoginPwd2" name="intLoginPwd2"
+								lay-verify="text" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">接口状态:</label>
+						<div class="layui-input-inline">
+							<input id="intStatus2" type="checkbox" name="intStatus2"
+								lay-skin="switch" lay-filter="switch2" lay-text="启用|停用"
+								value="disabled">
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="foot">
+				<button id="sure4_btn" class="layui-btn layui-btn sure4_btn">确定</button>
+				<button id="cancel4_btn" class="layui-btn layui-btn cancel4_btn">取消</button>
 			</div>
 		</div>
 	</div>
 	</div>
 </body>
 </html>
-<script type="text/javascript" src="scripts/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="scripts/js/layui.all.js"></script>
+<script type="text/javascript" src="scripts/js/jquery-3.3.1.js"
+	charset="utf-8"></script>
+<script type="text/javascript" src="scripts/js/layui.all.js"
+	charset="utf-8"></script>
 <script>
 	// 为翻页提供支持
 	var pageConfig = {
@@ -318,11 +408,17 @@
 		getInterfaceInfo();
 
 		$(".create_btn").click(function() {
-			$(".display_container").css("display", "block");
+			layui.use([ 'layer', 'form' ], function() {
+				var form = layui.form, layer = layui.layer, $ = layui.jquery;
+				$(".display_container").css("display", "block");
+
+				form.on('switch(switch1)', function(data) {
+					var ckd = this.checked ? 'enabled' : 'disabled';
+					document.getElementById("intStatus").value = ckd;
+				})
+			})
 		})
-		$(".sure_btn").click(function() {
-			$(".display_container").css("display", "none");
-		})
+
 		$(".cancel_btn").click(function() {
 			$(".display_container").css("display", "none");
 		})
@@ -337,37 +433,62 @@
 			$(".display_container4").css("display", "none");
 		})
 		$(".sure3_btn").click(function() {
-			// 确定给 当当前接口 添加新的参数
+			// 确定给 当前接口 添加新的参数
 			addParames();
 		})
+		$(".cancel4_btn").click(function() {
+			$(".display_container5").css("display", "none");
+		})
+		$(".sure4_btn").click(function() {
+			// 修改 当前接口  interfaces/update
+			$.ajax({
+				url : 'interfaces/update',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					intTitle : $("#intTitle2").val(),
+					intDescription : $("#intDescription2").val(),
+					intType : $("#intType2").val(),
+					intUrl : $("#intUrl2").val(),
+					intCallMethod : $("#intCallMethod2").val(),
+					intLoginUser : $("#intLoginUser2").val(),
+					intLoginPwd : $("#intLoginPwd2").val(),
+					intStatus : $("#intStatus2").val(),
+					intUid : $("#intUid2").val()
+				},
+				success : function(result) {
+					window.location.href = "interfaces/index";
+				}
+			})
+		})
 	});
-	
-	function updateParames(){
+
+	function updateParames() {
 		$("input[name='eCheck']:checked").each(function() {
 			$.ajax({
-					url : 'interfaceParamers/update',
-					type : 'POST',
-					dataType : 'text',
-					data : {
-						paraIndex : $("#paraIndex").val(),
-						paraName : $("#paraName").val(),
-						paraDescription : $("#paraDescription").val(),
-						paraType : $("#paraType").val(),
-						paraSize : $("#paraSize").val(),
-						multiSeparator : $("#multiSeparator").val(),
-						multiValue : $("#multiValue").val(),
-						isMust : $("#isMust").val(),
-						paraUid : this.value
-					},
-					success : function(result){
-						window.location.href = "interfaces/index";
-						layer.alert('修改成功')
-					}
-				})
+				url : 'interfaceParamers/update',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					paraIndex : $("#paraIndex").val(),
+					paraName : $("#paraName").val(),
+					paraDescription : $("#paraDescription").val(),
+					paraType : $("#paraType").val(),
+					paraSize : $("#paraSize").val(),
+					multiSeparator : $("#multiSeparator").val(),
+					multiValue : $("#multiValue").val(),
+					isMust : $("#isMust").val(),
+					paraUid : this.value
+				},
+				success : function(result) {
+					window.location.href = "interfaces/index";
+					layer.alert('修改成功')
+				}
+			})
 		})
 	}
-	
-	function addParames(){
+
+	function addParames() {
 		$.ajax({
 			url : 'interfaceParamers/add',
 			type : 'POST',
@@ -383,10 +504,10 @@
 				isMust : $("#isMust").val(),
 				intUid : $("#intUid").val()
 			},
-			success : function(result){
+			success : function(result) {
 				window.location.href = "interfaces/index";
-				
-			}			
+
+			}
 		})
 	}
 
@@ -408,7 +529,6 @@
 	$("#sure_btn").click(function() {
 		layui.use([ 'layer', 'form' ], function() {
 			var form = layui.form, layer = layui.layer, $ = layui.jquery;
-
 			$.ajax({
 				url : 'interfaces/add',
 				type : 'POST',
@@ -450,34 +570,19 @@
 		})
 	})
 
-	// 删除 行 监听表格	
-	$(".delete_btn").click(function() {
-		$("input[name='eCheck']:checked").each(function() {
-			// 请求ajax
-			$.ajax({
-				url : 'interfaces/del',
-				type : 'POST',
-				dataType : 'text',
-				data : {
-					intUid : this.value
-				},
-				success : function(result) {
-					// 删除成功后 ajxa跳转 查询controller
-					window.location.href = "interfaces/index";
-				}
-			})
-		})
-	})
-
 	// 查看
 	$(".select_btn").click(function() {
-		var queryInterfaces = $("#queryInterfaces").val();
+		var interfaceName = $("#interfaceName").val();
+		var interfaceType = $("#interfaceType").val();
+		var interfaceState = $("#interfaceState").val();
 		$.ajax({
 			url : 'interfaces/queryDhInterfaceByTitle',
 			type : 'POST',
 			dataType : 'json',
 			data : {
-				intTitle : queryInterfaces
+				intTitle : interfaceName,
+				intType : interfaceType,
+				intStatus : interfaceState
 			},
 			success : function(result) {
 				// 成功的时候返回json数据 然后 进行展示
@@ -504,9 +609,14 @@
 			}
 		});
 	}
-
+	
+	//
+	function flasher(){
+		document.flash.inputes1.style.color="blue"
+	}
+	
 	// 请求数据成功
-	function drawTable(pageInfo) {
+	function drawTable(pageInfo, data) {
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
 		pageConfig.total = pageInfo.total;
@@ -522,58 +632,125 @@
 		var trs = "";
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
-			var sortNum = startSort + i;
-			var createTime = "";
-			var updateTime = "";
-			if (meta.createTime) {
-				createTime = common.dateToString(new Date(meta.createTime));
-			}
-			if (meta.lastUpdateTime) {
-				updateTime = common.dateToString(new Date(meta.lastUpdateTime));
-			}
-			trs += '<tr><td><input id="listInterface" type="checkbox" name="eCheck" value="' + meta.intUid + '" lay-skin="primary">'
-					+ meta.intUid
-					+ '</td>'
+			trs += '<tr>' 
+					+ '<td>' 
+					+ meta.intTitle 
+					+ '</td>' 
 					+ '<td>'
-					+ meta.intTitle
-					+ '</td>'
-					+ '<td>'
-					+ meta.intDescription
-					+ '</td>'
-					+ '<td>'
+					+ meta.intDescription 
+					+ '</td>' 
+					+ '<td>' 
 					+ meta.intType
-					+ '</td>'
-					+ '<td>'
-					+ meta.intUrl
+					+ '</td>' 
+					+ '<td id="requestUrl" style="color:blue" onclick=urls("'
+					+ meta.intUrl + '")>' 
+					+ meta.intUrl 
 					+ '</td>'
 					+ '<td>'
 					+ meta.intCallMethod
-					+ '</td>'
-					+ '<td>'
+					+ '</td>' 
+					+ '<td>' 
 					+ meta.intStatus
-					+ '</td>'
+					+ '</td>' 
 					+ '<td>'
-					+ '<button class="layui-btn layui-btn-sm layui-btn-danger" onclick=danger("'
-					+ meta.intUid
-					+ '")>参数操作</button>'
-					+ '<button class="layui-btn layui-btn-sm layui-btn-warm" onclick=warm("'
-					+ meta.intUid + '")>添加参数</button>' + '</td>' + '</tr>';
+					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'
+					+ meta.intUid + '") >&#xe642;</i>'
+					+ '<i class="layui-icon"  title="查看详情"  onclick=info("'
+					+ meta.intUid + '")>&#xe60a;</i>'
+					+ '<i class="layui-icon"  title="删除接口"  onclick=del("'
+					+ meta.intUid + '") >&#xe640;</i>'
+					+ '<i class="layui-icon"  title="绑定参数"  onclick=add("'
+					+ meta.intUid + '")>&#xe614;</i>' 
+					+ '</td>' 
+					+ '</tr>'
 		}
 		$("#proMet_table_tbody").append(trs);
 
 	}
+	
+	// url 监听事件
+	function urls(url){		
+		window.open(url);
+	}
+	
 	// 按钮事件
-	function danger(intUid) {
+	function info(intUid) {
 		// “接口参数详情”按钮
-		//	getParamersInfo();
 		$("#exposed_table_container").css("display", "block");
 		getParamersInfo(intUid);
 	}
 
-	function warm(intUid) {
-		// 添加页面
-		$("#exposed_table2_container").css("display", "block");
-		$("#intUid").val(intUid);
+	function add(intUid) {
+		// 绑定参数页面
+		layui.use([ 'layer', 'form' ], function() {
+			var form = layui.form, layer = layui.layer, $ = layui.jquery;
+			form.on('switch(switch3)', function(data) {
+				var ckd = this.checked ? 'true' : 'false';
+				document.getElementById("multiValue").value = ckd;
+			})
+			form.on('switch(switch4)', function(data) {
+				var ckd2 = this.checked ? 'true' : 'false';
+				document.getElementById("isMust").value = ckd2;
+			})
+			$("#exposed_table2_container").css("display", "block");
+			$("#intUid").val(intUid);
+		})
+	}
+
+	function del(intUid) {
+		layer.confirm('是否删除该接口？', {
+			btn : [ '确定', '取消' ], //按钮
+			shade : false
+		//不显示遮罩
+		}, function(index) {
+			// 提交表单的代码，然后用 layer.close 关闭就可以了，取消可以省略 ajax请求
+			$.ajax({
+				url : 'interfaces/del',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					intUid : intUid
+				},
+				success : function(result) {
+					// 删除成功后 ajxa跳转 查询controller
+					window.location.href = "interfaces/index";
+				}
+			})
+			layer.close(index);
+		});
+	}
+
+	function updatate(intUid) {
+		// 修改接口页面
+		layui.use([ 'layer', 'form' ], function() {
+			var form = layui.form, layer = layui.layer, $ = layui.jquery;
+			form.on('switch(switch2)', function(data) {
+				var ckd = this.checked ? 'enabled' : 'disabled';
+				document.getElementById("intStatus2").value = ckd;
+			})
+			$.ajax({
+				url : 'interfaces/queryDhInterfaceById',
+				type : 'POST',
+				dataType : 'json',
+				data : {
+					intUid : intUid
+				},
+				success : function(result) {
+					$("#exposed_table3_container").css("display", "block");
+					$("#intUid2").val(result.intUid);
+					$("#intDescription2").val(result.intDescription);
+					$("#intType2").val(result.intType);
+					$("#intTitle2").val(result.intTitle);
+					$("#intUrl2").val(result.intUrl);
+					$("#intCallMethod2").val(result.intCallMethod);
+					$("#intLoginUser2").val(result.intLoginUser);
+					$("#intLoginPwd2").val(result.intLoginPwd);
+				}
+			})
+		})
+	}
+
+	function getInterfaceById(intUid) {
 	}
 
 	function getParamersInfo(intUid) {
@@ -611,16 +788,7 @@
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			var sortNum = startSort + i;
-			var createTime = "";
-			var updateTime = "";
-			if (meta.createTime) {
-				createTime = common.dateToString(new Date(meta.createTime));
-			}
-			if (meta.lastUpdateTime) {
-				updateTime = common.dateToString(new Date(meta.lastUpdateTime));
-			}
 			trs += '<tr><td><input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">'
-					+ meta.paraUid
 					+ '</td>'
 					+ '<td>'
 					+ '<input id="paraIndex" style="" type="text" value = "'+meta.paraIndex+'" />'
@@ -645,9 +813,7 @@
 					+ '</td>'
 					+ '<td>'
 					+ '<input id="isMust" style="" type="text" value = "'+meta.isMust+'" />'
-					+ '</td>'
-					+ '<td>'
-					+ meta.intUid + '</td>' + '</tr>';
+					+ '</td>' + '<td>' + meta.intUid + '</td>' + '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
 	}
