@@ -40,29 +40,25 @@
 </style>
 </head>
 <body>
-	<div class="display_container2" style="display: block;">
 		<div class="display_content2">
-			<div class="top">
-				群组人员分配
-				<div class="query_user">
-					<div>
-						<form class="form-inline" method="post" action="sysUser/userList"  onsubmit="return searchReturn(this,setUserList);">
-						<table>
-							<tbody>
-								<tr>
-									<td>员工编码:</td>
-									<td>员工姓名:</td>
-									<td></td>
-								</tr>
-								<tr>
-									<td><input type="text" id="user_code" name="userNo" autocomplete="off" class="layui-input" /></td>
-									<td><input type="text" id="user_name" name="userName" autocomplete="off" class="layui-input" /></td>
-									<td><input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
-								</tr>
-							</tbody>
-						</table>
-						</form>
-					</div>
+			<div class="query_user">
+				<div>
+					<form class="form-inline" method="post" action="sysUser/userList"  onsubmit="return searchReturn(this,setUserList);">
+					<table>
+						<tbody>
+							<tr>
+								<td>员工编码:</td>
+								<td>员工姓名:</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td><input type="text" id="user_code" name="userNo" autocomplete="off" class="layui-input" /></td>
+								<td><input type="text" id="user_name" name="userName" autocomplete="off" class="layui-input" /></td>
+								<td><input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
+							</tr>
+						</tbody>
+					</table>
+					</form>
 				</div>
 			</div>
 			<div class="middle_temp">	
@@ -88,10 +84,9 @@
 			</div>
 			<div class="foot_temp">
 				<button class="layui-btn layui-btn sure_btn" style="float:left;" type="button" id="addpersonnel">确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="window.close();" style="float:left;">取消</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="close" style="float:left;">取消</button>
 			</div>
 		</div>
-	</div>
 	<script type="text/javascript">
 	
 		
