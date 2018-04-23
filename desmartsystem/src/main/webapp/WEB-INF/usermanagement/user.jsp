@@ -442,7 +442,7 @@
 	         	str+='<td>' + isEmpty(this.employeeType) + '</td>';
 	         	str+='<td>' + this.mobile + '</td>';
 	         	str+='<td>';
-	         	 str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
+	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定系统角色"  onclick=openSystemRoleBinding("'+this.userUid+'","'+this.departUid+'"); >&#xe614;</i>';
 	         	str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>';
