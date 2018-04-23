@@ -13,5 +13,20 @@ public interface DhTriggerService {
      * @return
      */
     ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize);
+    
+    /**
+     * 根据id 删除触发器
+     * @param triUid
+     * @return
+     */
+    int deleteTrigger(String triUid);
+    
+    
+    /**
+     * 新增触发器
+     * @param dhTrigger
+     * @return
+     */
+    int saveTrigger(DhTrigger dhTrigger);
 
 }

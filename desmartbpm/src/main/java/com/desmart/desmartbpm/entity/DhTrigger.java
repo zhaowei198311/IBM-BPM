@@ -8,14 +8,14 @@ import java.util.Date;
 public class DhTrigger {
     private String triUid;
     private String triTitle;  // 触发器标题
-    private String triDescription; // 触发器执行命令：Java class名；script 内容；SQL内容；接口名称
+    private String triDescription; // 触发器描述：Java class名；script 内容；SQL内容；接口名称
     private String triType; // 触发器类型：script；javaclass；sql；interface
     private String triWebbot; // 触发器执行命令：java class名；script 内容；sql内容；接口名称
     private String triParam; // 触发器参数
-    private String creator;
-    private Date createTime;
-    private String updator;
-    private Date updateTime;
+    private String creator;	// 创建人
+    private Date createTime; // 创建时间
+    private String updator; // 更新人
+    private Date updateTime; // 更新时间
 
 
     public String getTriUid() {

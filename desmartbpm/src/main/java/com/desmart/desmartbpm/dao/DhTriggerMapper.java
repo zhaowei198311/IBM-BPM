@@ -18,4 +18,11 @@ public interface DhTriggerMapper {
      * @return
      */
     List<DhTrigger> searchBySelective(DhTrigger dhTrigger);
+    
+    /**
+     * 根据触发器id 删除触发器
+     * @param triUid
+     * @return 
+     */
+    int delete (String triUid);
 }
