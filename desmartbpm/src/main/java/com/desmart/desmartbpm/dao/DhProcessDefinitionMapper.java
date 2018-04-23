@@ -13,4 +13,6 @@ public interface DhProcessDefinitionMapper {
     List<DhProcessDefinition> listBySelective(DhProcessDefinition dhProcessDefinition);
 
     int updateByProAppIdAndProUidAndProVerUidSelective(DhProcessDefinition dhProcessDefinition);
+    
+    List<DhProcessDefinition> listAll();
 }
