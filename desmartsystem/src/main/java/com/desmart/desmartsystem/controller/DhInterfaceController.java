@@ -3,7 +3,9 @@
  */
 package com.desmart.desmartsystem.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +62,30 @@ public class DhInterfaceController {
 	public void deleteDhInterface(@RequestParam(value = "intUid") String interfaceId) {
 		dhInterfaceService.delDhInterface(interfaceId);
 	}
-
+	
+	@RequestMapping(value = "/update")
+	@ResponseBody
+	public void updateDhInterface(DhInterface dhInterface) {
+		dhInterfaceService.updateDhInterface(dhInterface);
+	}
+	
+	@RequestMapping(value = "/queryDhInterfaceById")
+	@ResponseBody
+	public DhInterface selectDhInterfaceByid(@RequestParam(value = "intUid")String intUid) {
+		return dhInterfaceService.selectDhInterfaceByid(intUid);
+	}
+	
 	@RequestMapping(value = "/queryDhInterfaceByTitle")
 	@ResponseBody
 	public ServerResponse listDhInterfaceByTitle(@RequestParam(value = "intTitle") String intTitle,
+			@RequestParam(value = "intType") String intType,
+			@RequestParam(value = "intStatus") String intStatus,
 			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		return dhInterfaceService.listDhInterfaceByTitle(intTitle, pageNum, pageSize);
+		Map<String, Object> paramsMap = new HashMap<>();
+		paramsMap.put("intTitle", intTitle);
+		paramsMap.put("intType", intType);
+		paramsMap.put("intStatus", intStatus);
+		return dhInterfaceService.listDhInterfaceByTitle(paramsMap, pageNum, pageSize);
 	}
 }

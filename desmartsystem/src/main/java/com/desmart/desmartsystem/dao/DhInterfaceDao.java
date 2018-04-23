@@ -4,6 +4,7 @@
 package com.desmart.desmartsystem.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -39,10 +40,23 @@ public interface DhInterfaceDao {
 	List <DhInterface> listAll();
 	
 	/**
-	 * 根据接口名称模糊查询 
+	 * 根据条件模糊查询 
 	 * @return list返回界面
 	 */
-	List<DhInterface> listByTitle(String InterfaceTitle);
+	List<DhInterface> selectByCondition(Map<String, Object> params);
 
+	/**
+	 * 修改接口数据
+	 * @param dhInterface
+	 * @return
+	 */
+	int update (DhInterface dhInterface);
 	
+	
+	/**
+	 * 根据id查询接口
+	 * @param dhInterface
+	 * @return
+	 */
+	DhInterface selectByintUid (String intUid);
 }

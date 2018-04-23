@@ -4,6 +4,7 @@
 package com.desmart.desmartsystem.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -86,10 +87,27 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 * @see com.desmart.desmartbpm.service.DhInterfaceService#listDhInterfaceById()
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(String InterfaceTitle, Integer pageNum, Integer pageSize) {
+	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(Map<String, Object> params, Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhInterface> DhInterfaceList = dhInterfaceDao.listByTitle(InterfaceTitle);
+		List<DhInterface> DhInterfaceList = dhInterfaceDao.selectByCondition(params);
 		PageInfo<List<DhInterface>> pageInfo = new PageInfo(DhInterfaceList);
 		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.desmart.desmartsystem.service.DhInterfaceService#updateDhInterface(com.desmart.desmartsystem.entity.DhInterface)
+	 */
+	@Override
+	public int updateDhInterface(DhInterface dhInterface) {
+		int result = dhInterfaceDao.update(dhInterface);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.desmart.desmartsystem.service.DhInterfaceService#selectDhInterfaceByid(com.desmart.desmartsystem.entity.DhInterface)
+	 */
+	@Override
+	public DhInterface selectDhInterfaceByid(String intUid) {
+		return dhInterfaceDao.selectByintUid(intUid);
 	}
 }

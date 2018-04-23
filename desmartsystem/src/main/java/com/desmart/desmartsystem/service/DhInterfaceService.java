@@ -4,6 +4,7 @@
 package com.desmart.desmartsystem.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.desmart.desmartsystem.common.ServerResponse;
 import com.desmart.desmartsystem.entity.DhInterface;
@@ -43,5 +44,20 @@ public interface DhInterfaceService {
 	 * @param pageSize
 	 * @return
 	 */
-	ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(String intTitle,Integer pageNum, Integer pageSize);
+	ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(Map<String, Object> params,Integer pageNum, Integer pageSize);
+	
+	
+	/**
+	 * 修改接口
+	 * @param dhInterface 接口实体类
+	 * @return
+	 */
+	int updateDhInterface(DhInterface dhInterface);
+	
+	/**
+	 * 根据id查询接口
+	 * @param dhInterface
+	 * @return
+	 */
+	DhInterface selectDhInterfaceByid (String intUid);
 }

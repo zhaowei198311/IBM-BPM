@@ -51,12 +51,62 @@
 		</where>
 	</delete>
 	
-	<select id="listByTitle" resultType="com.desmart.desmartsystem.entity.DhInterface" parameterType="java.lang.String">
+	<select id="selectByCondition" resultType="com.desmart.desmartsystem.entity.DhInterface" parameterType="java.util.Map">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM DH_INTERFACE
 		<where>
-			INT_TITLE like '%' || #{intTitle} || '%'
+			<if test="intTitle != null and intTitle!=''">
+			INT_TITLE like '%' || #{intTitle} || '%' 
+			</if>
+			<if test="intType != null and intType!=''">
+			AND INT_TYPE = #{intType}
+			</if>
+			<if test="intStatus != null and intStatus!=''">
+			AND INT_STATUS = #{intStatus}
+			</if>
+		</where>
+	</select>
+	
+	<update id="update" parameterType="com.desmart.desmartsystem.entity.DhInterface">
+		UPDATE DH_INTERFACE
+		<set>
+			<if test="intTitle != null and intTitle != ''">
+				INT_TITLE = #{intTitle},
+			</if>
+			<if test="intDescription != null and intDescription != ''">
+				INT_DESCRIPTION = #{intDescription},
+			</if>
+			<if test="intType != null and intType != ''">
+				INT_TYPE = #{intType},
+			</if>
+			<if test="intUrl != null and intUrl != ''">
+				INT_URL = #{intUrl},
+			</if>
+			<if test="intCallMethod != null and intCallMethod != ''">
+				INT_CALL_METHOD = #{intCallMethod},
+			</if>
+			<if test="intLoginUser != null and intLoginUser != ''">
+				INT_LOGIN_USER = #{intLoginUser},
+			</if>
+			<if test="intLoginPwd != null and intLoginPwd != ''">
+				INT_LOGIN_PWD = #{intLoginPwd},
+			</if>
+			<if test="intStatus != null and intStatus != ''">
+				INT_STATUS = #{intStatus}
+			</if>
+			<where>
+				INT_UID = #{intUid}
+			</where>
+		</set>	
+	</update>
+	
+	<select id="selectByintUid" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.DhInterface">
+		SELECT 
+		<include refid="Base_Column_List"></include>
+		FROM DH_INTERFACE
+		<where>
+			INT_UID = #{intUid}
 		</where>
 	</select>
 	
