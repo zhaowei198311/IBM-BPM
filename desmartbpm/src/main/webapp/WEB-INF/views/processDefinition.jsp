@@ -34,7 +34,7 @@
                                     <button class="layui-btn layui-btn-sm delete_btn">删除</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">同步快照流程图</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">快照流程图</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <a href="draft.html"><button class="layui-btn layui-btn-primary layui-btn-sm">起草权限配置</button></a>
