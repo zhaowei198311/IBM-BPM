@@ -113,7 +113,7 @@
 				});	
 				window.opener.document.getElementById(elementId).value=useruid;
 				window.opener.document.getElementById(elementId+"_view").value=useruname;
-				window.close();
+			 	$('#close').click();
 			});
 			
 			var $user_li=$("#user_add");
