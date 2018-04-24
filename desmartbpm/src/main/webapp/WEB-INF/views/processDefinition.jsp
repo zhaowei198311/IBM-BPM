@@ -36,7 +36,7 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">同步快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
-                                    <a href="link_set.html"><button class="layui-btn layui-btn-primary layui-btn-sm ">环节配置</button></a>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <a href="draft.html"><button class="layui-btn layui-btn-primary layui-btn-sm">起草权限配置</button></a>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">拷贝</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>

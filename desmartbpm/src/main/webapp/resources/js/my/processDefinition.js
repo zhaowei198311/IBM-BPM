@@ -167,4 +167,43 @@ $(function () {
            }
        });
    });
+   
+   $("#toEditActivityConf_btn").click(function() {
+	   var cks = $("[name='definition_ck']:checked");
+       if (!cks.length) {
+           layer.alert("请选择一个流程定义");
+           return;
+       }
+       if (cks.length > 1) {
+           layer.alert("请选择一个流程定义，不能选择多个");
+           return;
+       }
+       var ck = cks.eq(0);
+       var proUid = ck.data('prouid');
+       var proVerUid = ck.data('proveruid');
+       var proAppId = ck.data('proappid');
+       $.ajax({
+           url: common.getPath() + "/processDefinition/tryEditDefinition",
+           dataType: "json",
+           type: "post",
+           data: {
+               "proUid": proUid,
+               "proVerUid": proVerUid,
+               "proAppId": proAppId
+           },
+           success: function (result) {
+               if (result.status == 0) {
+                   window.location.href = common.getPath() + "/activityConf/edit?proUid="+proUid+"&proAppId="+proAppId
+                       +"&proVerUid=" + proVerUid;
+               } else {
+                   layer.alert(result.msg);
+               }
+           },
+           error: function () {
+               layer.alert("操作失败，请稍后再试");
+           }
+       });
+       
+   });
+   
 });

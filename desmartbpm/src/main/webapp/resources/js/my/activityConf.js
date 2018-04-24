@@ -1,6 +1,10 @@
 $(function(){
 	initCollapse();
+	getConfData(firstHumanMeteConf);
 	
+	$("#back_btn").click(function() {
+		window.history.back();
+	});
 });
 
 // 初始化折叠菜单
@@ -43,9 +47,9 @@ function printCollapse(list) {
 		for (var j=0; j<children.length; j++) {
 			var meta = children[j];
 			if (meta.activityId == firstHumanMeta) {
-				str += '<li class="link_active">'+meta.activityName+'</li>';
+				str += '<li data-uid="'+meta.actcUid+'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
 			} else {
-				str += '<li>'+meta.activityName+'</li>';
+				str += '<li data-uid="'+meta.actcUid+'" onclick="clickLi(this);">'+meta.activityName+'</li>';
 			}
 		}
 		str +=   '</ul>'
@@ -53,24 +57,47 @@ function printCollapse(list) {
 			+ '</div>';
 	}
 	$("#my_collapse").append(str);
-	layui.use(['element', 'layer'], function(){
-		  var element = layui.element;
-		  var layer = layui.layer;
-		  
-		  //监听折叠
-		  element.on('collapse(demo)', function(data){
-		    layer.msg('展开状态：'+ data.show);
-		  });
+	layui.use('element', function(){
+		var element = layui.element;
+		element.init();
 	});
-	$("#my_collapse li").click(function() {
-		clickLi($(this));
-	});
+	
 }
-function clickLi($li) {
-	alert($li.html());
-	$("#my_collapse li").each(function(){
-		if ($(this).hasClass('')) {
-			
+// 点击 li
+function clickLi(li) {
+	var $li = $(li);
+	if ($li.hasClass('link_active')) {
+		return;
+	} else {
+		$("#my_collapse li").each(function() {
+			$(this).removeClass('link_active');
+		});
+		$li.addClass('link_active');
+		console.log($li.data('uid'));
+	}
+}
+function getConfData(actcUid) {
+	$.ajax({
+		url: common.getPath() + "/activityConf/getData",
+		type: "post",
+		dataType: "json",
+		data: {
+			"actcUid": actcUid
+		},
+		success : function(result){
+			if(result.status == 0){
+			    console.log(result.data);
+			    initConf(result.data);
+			}else{
+				layer.alert(result.msg);
+			}
+		},
+		error : function(){
+			layer.alert('操作失败,请稍后再试');
 		}
 	});
+}
+function initConf(map) {
+	var conf = map.conf;
+	
 }

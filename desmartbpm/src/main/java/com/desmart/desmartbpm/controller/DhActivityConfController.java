@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
@@ -11,6 +12,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.DhActivityConfService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 
 @Controller
@@ -21,7 +23,8 @@ public class DhActivityConfController {
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
-    
+    @Autowired
+    private DhActivityConfService dhActivityConfService;
     
     /**
      * 编辑环节配置
@@ -42,10 +45,16 @@ public class DhActivityConfController {
         } 
         response = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid);
         mv.addObject("firstHumanMeta", ((BpmActivityMeta)response.getData()).getActivityId());
+        mv.addObject("firstHumanMeteConf", ((BpmActivityMeta)response.getData()).getDhActivityConf().getActcUid());
         
         return mv;
     }
     
+    @RequestMapping(value = "/getData")
+    @ResponseBody
+    public ServerResponse getData(String actcUid) {
+        return dhActivityConfService.getActivityConfData(actcUid);
+    }
     
     
 

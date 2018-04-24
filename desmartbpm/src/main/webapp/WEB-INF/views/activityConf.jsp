@@ -17,7 +17,7 @@
         <div class="container">
             <div class="search_area">
                 <div class="search_area top_btn">
-                    <a href="set.html"><button class="layui-btn layui-btn-primary layui-btn-sm">返回</button></a>
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
                     <span style="float:right;">
                         <button class="layui-btn layui-btn-primary layui-btn-sm">保存</button>
                     </span>
@@ -28,15 +28,15 @@
                     <div class="layui-row">
                         <div class="layui-col-md6">                         
                             <div class="layui-form-item">
-                                <label class="layui-form-label"></label>
+                                <label class="layui-form-label">流程名称</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="title" required  lay-verify="required" value="流程名称" autocomplete="off" class="layui-input" disabled="disabled">
+                                    <input type="text" name="title" required  value="${processDefinition.proName}" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
                             </div>
                             <div class="layui-form-item">
                                 <label class="layui-form-label">快照号</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="title" required  lay-verify="required" value="快照号" autocomplete="off" class="layui-input" disabled="disabled">
+                                    <input type="text" name="title" required  value="${processDefinition.proVerUid}" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
                             </div>                          
                         </div>
@@ -44,7 +44,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">快照名称</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="title" required  lay-verify="required" value="快照名称1" autocomplete="off" class="layui-input" disabled="disabled">
+                                    <input type="text" name="title" required  value="${lswSnapshot.name}" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
                             </div>
                         </div>
@@ -60,30 +60,8 @@
                         <div class="layui-tab-item layui-show">
                             <div class="layui-row">
                                 <div class="layui-col-md2">
+                                    <!-- 折叠层 -->
                                     <div class="layui-collapse" lay-accordion id="my_collapse" lay-filter="demo">
-                                        <!--  
-                                        <div class="layui-colla-item">
-                                            <h2 class="layui-colla-title">主流程环节</h2>
-                                            <div class="layui-colla-content layui-show" id="content1">
-                                                <ul class="link_list">
-                                                    <li class="link_active">提交环节</li>
-                                                    <li>审批1</li>
-                                                    <li>审批2</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="layui-colla-item">
-                                            <h2 class="layui-colla-title">子流程环节</h2>
-                                            <div class="layui-colla-content" id="content2">
-                                                <ul class="link_list">
-                                                    <li class="link_active">提交环节</li>
-                                                    <li>审批1</li>
-                                                    <li>审批2</li>
-                                                    <li>审批3</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        -->                                      
                                     </div>                                  
                                 </div>
                                 <div class="layui-col-md10 set_detail" id="set_detail">
@@ -108,13 +86,13 @@
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">默认处理人</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-filter="filter" lay-verify="required">
-                                                                        <option value="select1">角色+部门</option>
-                                                                        <option value="select2">角色+公司编码</option>
-                                                                        <option value="select3">上个环节提交人的上级</option>
-                                                                        <option value="select4">指定人员</option>
-                                                                        <option value="select5">流程发起人</option>
-                                                                        <option value="select6">根据表字段选择</option>
+                                                                    <select name="actcAssignType" lay-filter="filter" lay-verify="required">
+                                                                        <option value="roleAndDepartment">角色+部门</option>
+                                                                        <option value="roleAndCompany">角色+公司编码</option>
+                                                                        <option value="leaderOfPreActivityUser">上个环节提交人的上级</option>
+                                                                        <option value="users">指定人员</option>
+                                                                        <option value="processCreator">流程发起人</option>
+                                                                        <option value="byField">根据表字段选择</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -422,571 +400,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="layui-tab">
-                                        <ul class="layui-tab-title">
-                                            <li class="layui-this">环节属性</li>
-                                            <li>环节SLA配置</li>
-                                            <li>步骤配置</li>
-                                        </ul>
-                                        <div class="layui-tab-content">
-                                            <div class="layui-tab-item layui-show">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">禁止委托办理</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="entrust" value="是" title="是" checked>
-                                                                    <input type="radio" name="entrust" value="否" title="否" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">默认处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="select1">由系统角色计算</option>
-                                                                        <option value="select2">有文档中的域指定</option>
-                                                                        <option value="select3">现在指定</option>
-                                                                        <option value="select4">流程发起人</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否可选</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="range" value="不可选" title="不可选" checked>
-                                                                    <input type="radio" name="range" value="可选" title="可选" >
-                                                                    <!--<input type="radio" name="range" value="指定范围" title="指定范围" >
-                                                                    <input type="radio" name="range" value="指定角色" title="指定角色" >-->
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">驳回方式</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">到指定环节</option>
-                                                                        <option></option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否编辑表单</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="document" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="document" value="不能编辑" title="不能编辑">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">环节自动提交</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="self-motion" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="self-motion" value="禁止" title="禁止">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许取回</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="get-back" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="get-back" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许加签</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="yes" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="yes" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>                                                          
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否可以审批</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="approval" value="可以审批" title="可以审批" checked>
-                                                                    <input type="radio" name="approval" value="不能审批" title="不能审批">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否将当前处理人填写到域中</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="approval_user" value="是" title="是" checked>
-                                                                    <input type="radio" name="approval_user" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否短信通知本环节处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="message" value="是" title="是" checked>
-                                                                    <input type="radio" name="message" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">处理时间</label>
-                                                                <div class="layui-input-inline">
-                                                                    <input name="date" id="test1" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
-                                                                    <input name="date" id="test2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="layui-col-md6">                                                         
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">多对象处理规则</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="more" value="顺序流转" title="顺序流转" checked>
-                                                                    <input type="radio" name="more" value="并发审批（所有审批人必须都通过）" title="并发审批（所有审批人必须都通过）">
-                                                                    <input type="radio" name="more" value="并发审批（只有一个审批人通过即可）" title="并发审批（只有一个审批人通过即可）">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">驳回环节号</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许转签</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="endorse" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="endorse" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">允许上传附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="upload" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="upload" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">能否编辑附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="edit" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="edit" value="不能编辑" title="不能编辑">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">允许删除附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="delete" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="delete" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">能否将意见填写到域中</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="opinion" value="不添加" title="不添加" checked>
-                                                                    <input type="radio" name="opinion" value="添加到域" title="添加到域">
-                                                                    <input type="radio" name="opinion" value="处理人选择" title="处理人选择">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否邮件通知本环节处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="mail" value="是" title="是" checked>
-                                                                    <input type="radio" name="mail" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否部门会签（部门处理）</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="countersign" value="是" title="是" checked>
-                                                                    <input type="radio" name="countersign" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">运行时长</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知内容模板</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">（空）</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知触发事件类</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">运行时间单位</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value=""></option>
-                                                                        <option value="">分钟</option>
-                                                                        <option value="">小时</option>
-                                                                        <option value="">天</option>
-                                                                    </select>                                           
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知人员</label>
-                                                                <div class="layui-input-block">
-                                                                    <div class="layui-input-inline">
-                                                                        <input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                    </div>
-                                                                    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step">新增</button>
-                                                <p class="title_p">第一步</p>
-                                                <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                                                    <colgroup>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                          <th>序号</th>
-                                                          <th>表单名称</th>
-                                                          <th>表单描述</th>
-                                                          <th>操作</th>
-                                                        </tr> 
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>表单名称</td>
-                                                            <td>描述内容...</td>
-                                                            <td><i class="layui-icon delete_btn edit_role" title="权限设置">&#xe654;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>                                                
-                                                <p class="title_p">第二步</p>
-                                                <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                                                    <colgroup>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                          <th>序号</th>
-                                                          <th>触发器名称</th>
-                                                          <th>类型</th>
-                                                          <th>脚本名称</th>
-                                                          <th>操作</th>
-                                                        </tr> 
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>名称</td>
-                                                            <td>类型1</td>
-                                                            <td>脚本名1...</td>
-                                                            <td><i class="layui-icon delete_btn">&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="layui-tab">
-                                        <ul class="layui-tab-title">
-                                            <li class="layui-this">环节属性</li>
-                                            <li>环节SLA配置</li>
-                                            <li>步骤配置</li>
-                                        </ul>
-                                        <div class="layui-tab-content">
-                                            <div class="layui-tab-item layui-show">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">禁止委托办理</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="entrust" value="是" title="是" checked>
-                                                                    <input type="radio" name="entrust" value="否" title="否" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">选择范围</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="range" value="不可选" title="不可选" checked>
-                                                                    <input type="radio" name="range" value="全体员工" title="全体员工" >
-                                                                    <input type="radio" name="range" value="指定范围" title="指定范围" >
-                                                                    <input type="radio" name="range" value="指定角色" title="指定角色" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">驳回方式</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">到指定环节</option>
-                                                                        <option></option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否编辑表单</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="document" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="document" value="不能编辑" title="不能编辑">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">环节自动提交</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="self-motion" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="self-motion" value="禁止" title="禁止">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许取回</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="get-back" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="get-back" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许加签</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="yes" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="yes" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>                                                          
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否可以审批</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="approval" value="可以审批" title="可以审批" checked>
-                                                                    <input type="radio" name="approval" value="不能审批" title="不能审批">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否将当前处理人填写到域中</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="approval_user" value="是" title="是" checked>
-                                                                    <input type="radio" name="approval_user" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否短信通知本环节处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="message" value="是" title="是" checked>
-                                                                    <input type="radio" name="message" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">处理时间</label>
-                                                                <div class="layui-input-inline">
-                                                                    <input name="date" id="test1" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
-                                                                    <input name="date" id="test2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">默认处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">由系统角色计算</option>
-                                                                        <option value="">有文档中的域指定</option>
-                                                                        <option value="">现在指定</option>
-                                                                        <option value="">流程发起人</option>
-                                                                        <option></option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">多对象处理规则</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="more" value="顺序流转" title="顺序流转" checked>
-                                                                    <input type="radio" name="more" value="并发审批（所有审批人必须都通过）" title="并发审批（所有审批人必须都通过）">
-                                                                    <input type="radio" name="more" value="并发审批（只有一个审批人通过即可）" title="并发审批（只有一个审批人通过即可）">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">驳回环节号</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许转签</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="endorse" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="endorse" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">允许上传附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="upload" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="upload" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">能否编辑附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="edit" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="edit" value="不能编辑" title="不能编辑">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">允许删除附件</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="delete" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="delete" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">能否将意见填写到域中</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="opinion" value="不添加" title="不添加" checked>
-                                                                    <input type="radio" name="opinion" value="添加到域" title="添加到域">
-                                                                    <input type="radio" name="opinion" value="处理人选择" title="处理人选择">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否邮件通知本环节处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="mail" value="是" title="是" checked>
-                                                                    <input type="radio" name="mail" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否部门会签（部门处理）</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="countersign" value="是" title="是" checked>
-                                                                    <input type="radio" name="countersign" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">运行时长</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知内容模板</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">（空）</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知触发事件类</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">运行时间单位</label>
-                                                                <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value=""></option>
-                                                                        <option value="">分钟</option>
-                                                                        <option value="">小时</option>
-                                                                        <option value="">天</option>
-                                                                    </select>                                           
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知人员</label>
-                                                                <div class="layui-input-block">
-                                                                    <div class="layui-input-inline">
-                                                                        <input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                    </div>
-                                                                    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step">新增</button>
-                                                <p class="title_p">第一步</p>
-                                                <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                                                    <colgroup>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                          <th>序号</th>
-                                                          <th>表单名称</th>
-                                                          <th>表单描述</th>
-                                                          <th>操作</th>
-                                                        </tr> 
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>表单名称</td>
-                                                            <td>描述内容...</td>
-                                                            <td><i class="layui-icon delete_btn edit_role" title="权限设置">&#xe654;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>                                                
-                                                <p class="title_p">第二步</p>
-                                                <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                                                    <colgroup>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                          <th>序号</th>
-                                                          <th>触发器名称</th>
-                                                          <th>类型</th>
-                                                          <th>脚本名称</th>
-                                                          <th>操作</th>
-                                                        </tr> 
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>名称</td>
-                                                            <td>类型1</td>
-                                                            <td>脚本名1...</td>
-                                                            <td><i class="layui-icon delete_btn">&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -1709,6 +1123,7 @@
         var proUid = '${processDefinition.proUid}';
         var proVerUid = '${processDefinition.proVerUid}';
         var firstHumanMeta = '${firstHumanMeta}';
+        var firstHumanMeteConf = '${firstHumanMeteConf}';
     
         window.onload=function(){
             

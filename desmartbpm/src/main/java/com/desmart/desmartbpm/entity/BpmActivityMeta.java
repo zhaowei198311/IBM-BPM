@@ -34,6 +34,9 @@ public class BpmActivityMeta implements Serializable {
     private String activityAltName;
     private String proAppId;
 
+    // 不在表中
+    private DhActivityConf dhActivityConf;
+    
     public BpmActivityMeta(){
         
     }
@@ -262,6 +265,16 @@ public class BpmActivityMeta implements Serializable {
     public void setActivityAltName(String activityAltName) {
         this.activityAltName = activityAltName;
     }
+
+    public DhActivityConf getDhActivityConf() {
+        return dhActivityConf;
+    }
+
+
+    public void setDhActivityConf(DhActivityConf dhActivityConf) {
+        this.dhActivityConf = dhActivityConf;
+    }
+
 
     @Override
     public String toString() {

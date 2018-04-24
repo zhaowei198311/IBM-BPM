@@ -79,10 +79,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             
         }
-        BpmActivityMeta selective = new BpmActivityMeta();
-        selective.setProAppId(proAppId);
-        selective.setBpdId(proUid);
-        selective.setSnapshotId(proVerUid);
+        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         List<BpmActivityMeta> allMeta = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
         if (allMeta.size() == 0) {
             return ServerResponse.createByErrorMessage("没有匹配的环节，请先同步环节");
@@ -91,7 +88,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         Map<String, Object> mainProcess = new HashMap<>();
         mainProcess.put("name", "主流程环节");
         mainProcess.put("id", "main");
-        List<BpmActivityMeta> children = new ArrayList<>();
+        List<Map<String, Object>> children = new ArrayList<>();
         List<BpmActivityMeta> subProcessList = new ArrayList<>();
         
         Iterator<BpmActivityMeta> iterator = allMeta.iterator();
@@ -104,7 +101,11 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             }
             if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) {
                 if (meta.getDeepLevel() == 0) {
-                    children.add(meta);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("activityName", meta.getActivityName());
+                    map.put("actcUid", meta.getDhActivityConf().getActcUid());
+                    map.put("activityId", meta.getActivityId());
+                    children.add(map);
                     iterator.remove();
                 }
             } else {
@@ -125,7 +126,11 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             while (iterator.hasNext()) {
                 BpmActivityMeta item = iterator.next();
                 if (activityBpdId.equals(item.getParentActivityBpdId())) {
-                    children.add(item);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("activityName", item.getActivityName());
+                    map.put("actcUid", item.getDhActivityConf().getActcUid());
+                    map.put("activityId", item.getActivityId());
+                    children.add(map);
                     iterator.remove();
                 }
             }

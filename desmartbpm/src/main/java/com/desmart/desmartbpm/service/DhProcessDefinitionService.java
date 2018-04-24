@@ -51,5 +51,12 @@ public interface DhProcessDefinitionService {
      */
     ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid);
     
+    /**
+     * 根据快照id，从引擎中获得版本信息
+     * @param snapshotId 如"2064.9303b288-e202-465f-9742-f042b5521fa5"
+     * @return
+     */
     LswSnapshot getLswSnapshotBySnapshotId(String snapshotId);
+    
+    
 }

@@ -7,7 +7,90 @@
 		NOTE_TYPE, PARENT_ACTIVITY_BPD_ID, PO_ID, SNAPSHOT_ID, SNAPSHOT_UID, STEP_ID, TYPE, UPDATE_BY, UPDATE_TIME,
 		ACTIVITY_ALT_NAME, PRO_APP_ID
 	</sql>
-
+	<sql id="relationColumn">
+	    am.ACTIVITY_ID, am.ACTIVITY_BPD_ID, am.ACTIVITY_GROUP_NAME, am.ACTIVITY_NAME, am.ACTIVITY_TO, am.ACTIVITY_TYPE, am.BPD_ID,
+	    am.BPM_TASK_TYPE, am.CREATE_TIME, am.CREATOR, am.DEEP_LEVEL, am.EXTERNAL_ID, am.HANDLE_SIGN_TYPE, am.LOOP_TYPE, am.MI_ORDER,
+	    am.NOTE_TYPE, am.PARENT_ACTIVITY_BPD_ID, am.PO_ID, am.SNAPSHOT_ID, am.SNAPSHOT_UID, am.STEP_ID, am.TYPE, am.UPDATE_BY, am.UPDATE_TIME,
+	    am.ACTIVITY_ALT_NAME, am.PRO_APP_ID,
+	    ac.ACTC_UID, ac.ACTIVITY_ID, ac.ACTC_SORT, ac.ACTC_TIME, ac.ACTC_TIMEUNIT, ac.ACTC_ASSIGN_TYPE, ac.ACTC_ASSIGN_VARIABLE,
+	    ac.SIGN_COUNT_VARNAME, ac.ACTC_CAN_EDIT_ATTACH, ac.ACTC_CAN_UPLOAD_ATTACH, ac.ACTC_CAN_DELEGATE,
+	    ac.ACTC_CAN_DELETE_ATTACH, ac.ACTC_CAN_MESSAGE_NOTIFY, ac.ACTC_CAN_MAIL_NOTIFY, ac.ACTC_MAIL_NOTIFY_TEMPLATE,
+	    ac.ACTC_CAN_REJECT, ac.ACTC_REJECT_TYPE, ac.ACTC_CAN_REVOKE, ac.ACTC_CAN_AUTOCOMMIT, ac.ACTC_CAN_ADD,
+	    ac.ACTC_CAN_USER_TO_FIELD, ac.ACTC_CAN_AUDIT_TO_FIELD, ac.ACTC_CAN_APPROVE, ac.ACTC_USER_TO_FIELD,
+	    ac.ACTC_AUDIT_TO_FIELD, ac.ACTC_OUTTIME_TRIGGER, ac.ACTC_OUTTIME_TEMPLATE, ac.ACTC_DESCRIPTION,
+	    ac.ACTC_DEF_TITLE, ac.ACTC_DEF_SUBJECT_MESSAGE, ac.ACTC_DEF_MESSAGE, ac.ACTC_DEF_DESCRIPTION,
+	    ac.ACTC_ALERT, ac.ACTC_PRIORITY_VARIABLE, ac.ACTC_CAN_CANCEL, ac.ACTC_CAN_PAUSE, ac.ACTC_CAN_SKIP,
+	    ac.UPDATOR, ac.UPDATE_TIME
+	</sql>
+	
+	<resultMap id="mapWithConf" type="com.desmart.desmartbpm.entity.BpmActivityMeta" >
+	    <id column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+	    <result column="ACTIVITY_BPD_ID" property="activityBpdId" jdbcType="VARCHAR" />
+	    <result column="ACTIVITY_GROUP_NAME" property="activityGroupName" jdbcType="VARCHAR" />
+	    <result column="ACTIVITY_NAME" property="activityName" jdbcType="VARCHAR" />
+	    <result column="ACTIVITY_TO" property="activityTo" jdbcType="VARCHAR" />
+	    <result column="ACTIVITY_TYPE" property="activityType" jdbcType="VARCHAR" />
+	    <result column="BPD_ID" property="bpdId" jdbcType="VARCHAR" />
+	    <result column="BPM_TASK_TYPE" property="bpmTaskType" jdbcType="VARCHAR" />
+	    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+	    <result column="DEEP_LEVEL" property="deepLevel" jdbcType="DECIMAL" />
+	    <result column="EXTERNAL_ID" property="externalId" jdbcType="VARCHAR" />
+	    <result column="HANDLE_SIGN_TYPE" property="handleSignType" jdbcType="VARCHAR" />
+	    <result column="LOOP_TYPE" property="loopType" jdbcType="VARCHAR" />
+	    <result column="MI_ORDER" property="miOrder" jdbcType="VARCHAR" />
+	    <result column="NOTE_TYPE" property="noteType" jdbcType="VARCHAR" />
+	    <result column="PARENT_ACTIVITY_BPD_ID" property="parentActivityBpdId" jdbcType="VARCHAR" />
+	    <result column="PO_ID" property="poId" jdbcType="VARCHAR" />
+	    <result column="SNAPSHOT_ID" property="snapshotId" jdbcType="VARCHAR" />
+	    <result column="SNAPSHOT_UID" property="snapshotUid" jdbcType="VARCHAR" />
+	    <result column="STEP_ID" property="stepId" jdbcType="VARCHAR" />
+	    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+	    <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" />
+	    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="ACTIVITY_ALT_NAME" property="activityAltName" jdbcType="VARCHAR" />
+	    <result column="PRO_APP_ID" property="proAppId" jdbcType="VARCHAR" />
+	    <association property="dhActivityConf" javaType="com.desmart.desmartbpm.entity.DhActivityConf">
+	        <id property="actcUid" column="actc_Uid"/>
+	            <result column="ACTIVITY_ID" jdbcType="VARCHAR" property="activityId" />
+			    <result column="ACTC_SORT" jdbcType="INTEGER" property="actcSort" />
+			    <result column="ACTC_TIME" jdbcType="FLOAT" property="actcTime" />
+			    <result column="ACTC_TIMEUNIT" jdbcType="VARCHAR" property="actcTimeunit" />
+			    <result column="ACTC_ASSIGN_TYPE" jdbcType="VARCHAR" property="actcAssignType" />
+			    <result column="ACTC_ASSIGN_VARIABLE" jdbcType="VARCHAR" property="actcAssignVariable" />
+			    <result column="SIGN_COUNT_VARNAME" jdbcType="VARCHAR" property="signCountVarname" />
+			    <result column="ACTC_CAN_EDIT_ATTACH" jdbcType="VARCHAR" property="actcCanEditAttach" />
+			    <result column="ACTC_CAN_UPLOAD_ATTACH" jdbcType="VARCHAR" property="actcCanUploadAttach" />
+			    <result column="ACTC_CAN_DELEGATE" jdbcType="VARCHAR" property="actcCanDelegate" />
+			    <result column="ACTC_CAN_DELETE_ATTACH" jdbcType="VARCHAR" property="actcCanDeleteAttach" />
+			    <result column="ACTC_CAN_MESSAGE_NOTIFY" jdbcType="VARCHAR" property="actcCanMessageNotify" />
+			    <result column="ACTC_CAN_MAIL_NOTIFY" jdbcType="VARCHAR" property="actcCanMailNotify" />
+			    <result column="ACTC_MAIL_NOTIFY_TEMPLATE" jdbcType="VARCHAR" property="actcMailNotifyTemplate" />
+			    <result column="ACTC_CAN_REJECT" jdbcType="VARCHAR" property="actcCanReject" />
+			    <result column="ACTC_REJECT_TYPE" jdbcType="VARCHAR" property="actcRejectType" />
+			    <result column="ACTC_CAN_REVOKE" jdbcType="VARCHAR" property="actcCanRevoke" />
+			    <result column="ACTC_CAN_AUTOCOMMIT" jdbcType="VARCHAR" property="actcCanAutocommit" />
+			    <result column="ACTC_CAN_ADD" jdbcType="VARCHAR" property="actcCanAdd" />
+			    <result column="ACTC_CAN_USER_TO_FIELD" jdbcType="VARCHAR" property="actcCanUserToField" />
+			    <result column="ACTC_CAN_AUDIT_TO_FIELD" jdbcType="VARCHAR" property="actcCanAuditToField" />
+			    <result column="ACTC_CAN_APPROVE" jdbcType="VARCHAR" property="actcCanApprove" />
+			    <result column="ACTC_USER_TO_FIELD" jdbcType="VARCHAR" property="actcUserToField" />
+			    <result column="ACTC_AUDIT_TO_FIELD" jdbcType="VARCHAR" property="actcAuditToField" />
+			    <result column="ACTC_OUTTIME_TRIGGER" jdbcType="VARCHAR" property="actcOuttimeTrigger" />
+			    <result column="ACTC_OUTTIME_TEMPLATE" jdbcType="VARCHAR" property="actcOuttimeTemplate" />
+			    <result column="ACTC_DESCRIPTION" jdbcType="VARCHAR" property="actcDescription" />
+			    <result column="ACTC_DEF_TITLE" jdbcType="VARCHAR" property="actcDefTitle" />
+			    <result column="ACTC_DEF_SUBJECT_MESSAGE" jdbcType="VARCHAR" property="actcDefSubjectMessage" />
+			    <result column="ACTC_DEF_MESSAGE" jdbcType="VARCHAR" property="actcDefMessage" />
+			    <result column="ACTC_DEF_DESCRIPTION" jdbcType="VARCHAR" property="actcDefDescription" />
+			    <result column="ACTC_ALERT" jdbcType="VARCHAR" property="actcAlert" />
+			    <result column="ACTC_PRIORITY_VARIABLE" jdbcType="VARCHAR" property="actcPriorityVariable" />
+			    <result column="ACTC_CAN_CANCEL" jdbcType="VARCHAR" property="actcCanCancel" />
+			    <result column="ACTC_CAN_PAUSE" jdbcType="VARCHAR" property="actcCanPause" />
+			    <result column="ACTC_CAN_SKIP" jdbcType="VARCHAR" property="actcCanSkip" />
+	    </association>
+    </resultMap>
+	  
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
 		insert into BPM_ACTIVITY_META (
 			ACTIVITY_ID,
@@ -68,37 +151,38 @@
 	</insert>
 
 	<select id="queryByBpmActivityMetaSelective" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta"
-		resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+		resultMap="mapWithConf">
 		select
-		<include refid="Base_Column_List" />
-		from BPM_ACTIVITY_META
+		<include refid="relationColumn" />
+		from BPM_ACTIVITY_META am 
+		left join dh_activity_conf ac on am.activity_id = ac.activity_id
 		<where>
 			<if test="proAppId != null">
-			pro_app_id = #{proAppId}
+			    am.pro_app_id = #{proAppId}
 			</if>
 			<if test="bpdId != null">
-				and bpd_id = #{bpdId}
+				and am.bpd_id = #{bpdId}
 			</if>
 			<if test="snapshotId != null">
-				and snapshot_id = #{snapshotId}
+				and am.snapshot_id = #{snapshotId}
 			</if>
 			<if test="activityBpdId != null">
-				and ACTIVITY_BPD_ID = #{activityBpdId}
+				and am.ACTIVITY_BPD_ID = #{activityBpdId}
 			</if>
 			<if test="bpmTaskType != null">
-			    and bpm_task_type = #{bpmTaskType}
+			    and am.bpm_task_type = #{bpmTaskType}
 			</if>
 			<if test="activityType != null">
-			    and activity_type = #{activityType}
+			    and am.activity_type = #{activityType}
 			</if>
 			<if test="type != null">
-			    and type = #{type}
+			    and am.type = #{type}
 			</if>
 			<if test="deepLevel != null">
-			    and deep_level = #{deepLevel}
+			    and am.deep_level = #{deepLevel}
 			</if>
 			<if test="parentActivityBpdId != null">
-			    and parent_activity_bpd_id = #{parentActivityBpdId}
+			    and am.parent_activity_bpd_id = #{parentActivityBpdId}
 			</if>
 		</where>
 	</select>

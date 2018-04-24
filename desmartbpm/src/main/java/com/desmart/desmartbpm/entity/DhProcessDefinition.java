@@ -83,6 +83,8 @@ public class DhProcessDefinition {
     private String proTriPausedTitle;
     private String proTriUnpausedTitle;
     private String proTriReassignedTitle;
+    private String proName; // 流程名
+    private String categoryUid; // 分类id
     
     private String permissionStartUser; // 人员发起权限
     private String permissionStartRole; // 角色发起权限
@@ -451,50 +453,41 @@ public class DhProcessDefinition {
         this.permissionStartTeam = permissionStartTeam;
     }
 
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
+    public String getCategoryUid() {
+        return categoryUid;
+    }
+
+    public void setCategoryUid(String categoryUid) {
+        this.categoryUid = categoryUid;
+    }
+
     @Override
     public String toString() {
-        return "DhProcessDefinition{" +
-                "proUid='" + proUid + '\'' +
-                ", proAppId='" + proAppId + '\'' +
-                ", proVerUid='" + proVerUid + '\'' +
-                ", proParent='" + proParent + '\'' +
-                ", proTime=" + proTime +
-                ", proTimeUnit='" + proTimeUnit + '\'' +
-                ", proStatus='" + proStatus + '\'' +
-                ", proTypeDay='" + proTypeDay + '\'' +
-                ", proType='" + proType + '\'' +
-                ", proAssignment='" + proAssignment + '\'' +
-                ", proShowMap='" + proShowMap + '\'' +
-                ", proShowMessage='" + proShowMessage + '\'' +
-                ", proSubprocess='" + proSubprocess + '\'' +
-                ", proTriStart='" + proTriStart + '\'' +
-                ", proTriDeleted='" + proTriDeleted + '\'' +
-                ", proTriCanceled='" + proTriCanceled + '\'' +
-                ", proTriPaused='" + proTriPaused + '\'' +
-                ", proTriUnpaused='" + proTriUnpaused + '\'' +
-                ", proTriReassigned='" + proTriReassigned + '\'' +
-                ", proTypeProcess='" + proTypeProcess + '\'' +
-                ", proShowDelegate='" + proShowDelegate + '\'' +
-                ", proShowDynaform='" + proShowDynaform + '\'' +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", lastModifiedUser='" + lastModifiedUser + '\'' +
-                ", createDate='" + createDate + '\'' +
-                ", createUser='" + createUser + '\'' +
-                ", proHeight=" + proHeight +
-                ", proWidth=" + proWidth +
-                ", proTitleX=" + proTitleX +
-                ", proTitleY=" + proTitleY +
-                ", proDebug='" + proDebug + '\'' +
-                ", proDynaforms='" + proDynaforms + '\'' +
-                ", proDerivationScreenTpl='" + proDerivationScreenTpl + '\'' +
-                ", creatorFullName='" + creatorFullName + '\'' +
-                ", updatorFullName='" + updatorFullName + '\'' +
-                ", proTriStartTitle='" + proTriStartTitle + '\'' +
-                ", proTriDeletedTitle='" + proTriDeletedTitle + '\'' +
-                ", proTriCanceledTitle='" + proTriCanceledTitle + '\'' +
-                ", proTriPausedTitle='" + proTriPausedTitle + '\'' +
-                ", proTriUnpausedTitle='" + proTriUnpausedTitle + '\'' +
-                ", proTriReassignedTitle='" + proTriReassignedTitle + '\'' +
-                '}';
+        return "DhProcessDefinition [proUid=" + proUid + ", proAppId=" + proAppId + ", proVerUid=" + proVerUid
+                + ", proParent=" + proParent + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit + ", proStatus="
+                + proStatus + ", proTypeDay=" + proTypeDay + ", proType=" + proType + ", proAssignment=" + proAssignment
+                + ", proShowMap=" + proShowMap + ", proShowMessage=" + proShowMessage + ", proSubprocess="
+                + proSubprocess + ", proTriStart=" + proTriStart + ", proTriDeleted=" + proTriDeleted
+                + ", proTriCanceled=" + proTriCanceled + ", proTriPaused=" + proTriPaused + ", proTriUnpaused="
+                + proTriUnpaused + ", proTriReassigned=" + proTriReassigned + ", proTypeProcess=" + proTypeProcess
+                + ", proShowDelegate=" + proShowDelegate + ", proShowDynaform=" + proShowDynaform
+                + ", lastModifiedDate=" + lastModifiedDate + ", lastModifiedUser=" + lastModifiedUser + ", createDate="
+                + createDate + ", createUser=" + createUser + ", proHeight=" + proHeight + ", proWidth=" + proWidth
+                + ", proTitleX=" + proTitleX + ", proTitleY=" + proTitleY + ", proDebug=" + proDebug + ", proDynaforms="
+                + proDynaforms + ", proDerivationScreenTpl=" + proDerivationScreenTpl + ", creatorFullName="
+                + creatorFullName + ", updatorFullName=" + updatorFullName + ", proTriStartTitle=" + proTriStartTitle
+                + ", proTriDeletedTitle=" + proTriDeletedTitle + ", proTriCanceledTitle=" + proTriCanceledTitle
+                + ", proTriPausedTitle=" + proTriPausedTitle + ", proTriUnpausedTitle=" + proTriUnpausedTitle
+                + ", proTriReassignedTitle=" + proTriReassignedTitle + ", proName=" + proName + ", categoryUid="
+                + categoryUid + ", permissionStartUser=" + permissionStartUser + ", permissionStartRole="
+                + permissionStartRole + ", permissionStartTeam=" + permissionStartTeam + "]";
     }
 }
