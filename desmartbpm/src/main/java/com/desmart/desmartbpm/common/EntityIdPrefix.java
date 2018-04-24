@@ -36,5 +36,11 @@ public class EntityIdPrefix {
     
     /** 退回环节前缀 */
     public static final String DH_ACTIVITY_REJECT = "act_rej:";
+    
+    /** 表单前缀 */
+    public static final String BPM_FORM = "form:";
+    
+    /** 表单字段前缀 */
+    public static final String BPM_FORM_FIELD = "form_field:";
 
 }
