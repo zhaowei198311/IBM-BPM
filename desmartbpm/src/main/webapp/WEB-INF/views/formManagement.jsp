@@ -47,7 +47,6 @@
 							      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
 							      <th>表单名称</th>
 							      <th>表单描述</th>
-							      <!-- <th>表单文件名</th> -->
 							      <th>创建时间</th>
 							      <th>创建人</th>
 							    </tr> 
@@ -58,6 +57,10 @@
 						</table>				
 					</div>
 					<div id="lay_page"></div>
+					<div style="display:none;">
+						<input type="hidden" id="proUid" value="${ proUid }"/>
+						<input type="hidden" id="proVersion" value="${ proVersion }"/>
+					</div>
 			    </div>
 		  	</div>
 		</div>
@@ -71,46 +74,19 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="title" required  lay-verify="required" value="表单名称" autocomplete="off" class="layui-input">
+					      <input type="text" id="form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单描述</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="title" required  lay-verify="required" value="描述内容..." autocomplete="off" class="layui-input">
+					      <input type="text" id="form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
 					    </div>
 					  </div>				  
 					</form>
 				</div>
 				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn">确定</button>
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
-				</div>
-			</div>
-		</div>
-		<div class="display_container">
-			<div class="display_content">
-				<div class="top">
-					新增表单
-				</div>
-				<div class="middle">
-					<form class="layui-form" action="" style="margin-top:30px;">
-					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单名称</label>
-					    <div class="layui-input-block">
-					      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
-					    </div>
-					  </div>
-					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单描述</label>
-					    <div class="layui-input-block">
-					      <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
-					    </div>
-					  </div>				  
-					</form>
-				</div>
-				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn sure_btn" onclick="createForm();">确定</button>
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
 				</div>
 			</div>
@@ -211,6 +187,8 @@
 	        display: ""
 	    } */
 	
+	    var createFromFlag = false;//是否可以创建表单的控制变量
+	    
 		//tree
 		var setting = {
             view: {
@@ -232,34 +210,37 @@
 	    function zTreeOnClick(event, treeId, treeNode) {
 	    	switch(treeNode.itemType){
 	    		case "category":{
-	    			pageConfig.proCategoryUid = treeNode.id;
-	    			getFormInfoByProCategory();
+	    			createFromFlag = false;
+	    			if(treeNode.id=="rootCategory"){
+	    				pageConfig.proCategoryUid = "";
+		    			pageConfig.proUid = "";
+		    			pageConfig.proVerUid = "";
+		    			getFormInfoByProDefinition();
+	    			}else{
+	    				pageConfig.proCategoryUid = treeNode.id;
+		    			pageConfig.proUid = "";
+		    			pageConfig.proVerUid = "";
+		    			getFormInfoByProDefinition();
+	    			}
 	    			break;
 	    		}
 	    		case "processMeta":{//根据流程元获得流程定义-->得到表单数据
+	    			createFromFlag = false;
+	    			pageConfig.proCategoryUid = "";
+	    			pageConfig.proUid = treeNode.id;
+	    			pageConfig.proVerUid = "";
+	    			getFormInfoByProDefinition();
 	    			break;
 	    		}
 	    		case "processDefinition":{//根据流程定义的ID以及版本ID获得表单数据
-	    			pageConfig.proUid = "0001";
-	    			pageConfig.proVerUid = "0002";
+	    			createFromFlag = true;
+	    			pageConfig.proCategoryUid = "";
+	    			pageConfig.proUid = treeNode.pid;
+	    			pageConfig.proVerUid = treeNode.id;
 	    			getFormInfoByProDefinition();
 	    			break;
 	    		}
 	    	}
-	    	/* if (treeNode.itemType == "processMeta") {
-	    		// 查询
-	    		$.ajax({
-	    			url: common.getPath() + "/processDefinition/listDefinitionByProcessMeta",
-	    			dataType: "json",
-	    			data: {
-	    				"metaUid": treeNode.id
-	    			},
-	    			type: "post",
-	    			success: function(result) {
-	    				
-	    			}
-	    		});
-	    	} */
 	    };
 
 		// 分页
@@ -278,7 +259,7 @@
                     	pageConfig.pageNum = obj.curr;
                     	pageConfig.pageSize = obj.limit;
                     	if (!first) {
-                    		getFormInfoByProCategory();
+                    		getFormInfoByProDefinition();
                     	}
                     }
                 }); 
@@ -289,39 +270,97 @@
         $("#searchForm_btn").click(function() {
         	pageConfig.pageNum = 1;
         	pageConfig.total = 0;
-        	getFormInfoByProCategory();
+        	getFormInfoByProDefinition();
         });
 		
 		$(document).ready(function() {
-			//获得流程树的数据
-			$.ajax({
-				 url: common.getPath() + "/formManage/getTreeData",
-				 type: "post",
-				 data: {},
-				 dataType: "json",
-				 success: function(result) {
-					 $.fn.zTree.init($("#category_tree"), setting, result);
-				 }
-			 });
-			
-			getFormInfoByProCategory();
+			var proUid = $("#proUid").val();
+			var proVersion = $("#proVersion").val();
+			if(proUid!=null && proUid!="" && proVersion!="" && proVersion!=null){
+				//获得流程树的数据
+				$.ajax({
+					 url: common.getPath() + "/formManage/getTreeData",
+					 type: "post",
+					 async:false,
+					 dataType: "json",
+					 success: function(result) {
+						 $.fn.zTree.init($("#category_tree"), setting, result);
+					 }
+				 });
+				var treeObj = $.fn.zTree.getZTreeObj("category_tree");
+				var parentNode = treeObj.getNodeByParam("id", proUid)
+				var node = treeObj.getNodeByParam("id", proVersion, parentNode);
+				treeObj.selectNode(node,true);
+				pageConfig.proCategoryUid = "";
+				pageConfig.proUid = proUid;
+				pageConfig.proVerUid = proVersion;
+				getFormInfoByProDefinition();
+				createFromFlag = true;
+			}else{
+				//获得流程树的数据
+				$.ajax({
+					 url: common.getPath() + "/formManage/getTreeData",
+					 type: "post",
+					 async:true,
+					 dataType: "json",
+					 success: function(result) {
+						 $.fn.zTree.init($("#category_tree"), setting, result);
+					 }
+				 });
+				pageConfig.proCategoryUid = "";
+				pageConfig.proUid = "";
+				pageConfig.proVerUid = "";
+				getFormInfoByProDefinition();
+			}
 			
 			$(".create_btn").click(function() {
-				$(".display_container").css("display", "block");
+				if(createFromFlag){
+					$(".display_container").css("display", "block");
+				}else{
+					layer.alert("请选择一个流程定义版本");
+				}
 			})
-			$(".copy_btn").click(function() {
+			/* $(".copy_btn").click(function() {
 				$(".display_container3").css("display", "block");
 			})
 			$(".sure_btn").click(function() {
-				$(".display_container").css("display", "none");
 				$(".display_container3").css("display", "none");
-			})
+			}) */
 			$(".cancel_btn").click(function() {
 				$(".display_container").css("display", "none");
 				$(".display_container3").css("display", "none");
 			})
 		});
-
+		
+		//新建表单--跳转到表单设计器页面
+		function createForm(){
+			var formName = $("#form-name").val().trim();
+			if(formName==null || formName==""){
+				layer.alert("请填写表单名");
+			}else{
+				$.ajax({
+					url:common.getPath()+"/formManage/queryFormByName",
+					method:"post",
+					data:{
+						dynTitle:formName
+					},
+					success:function(result){
+						if(result.status==0){
+							var href = "/formManage/designForm?formName="+formName
+									+"&formDescription="+$("#form-description").val().trim()
+									+"&proUid="+pageConfig.proUid
+									+"&proVersion="+pageConfig.proVerUid;
+							window.location.href = common.getPath()+href;
+							$(".display_container").css("display", "none");
+						}else{
+							layer.alert("表单名已存在，不能重复");
+						}
+					}
+				});
+			}
+			return;
+		}
+		
 		//根据流程定义(proUid,proVerUid)
 		function getFormInfoByProDefinition(){
 			$.ajax({
@@ -333,23 +372,6 @@
 					"pageSize":pageConfig.pageSize,
 					"proUid":pageConfig.proUid,
 					"proVerUid":pageConfig.proVerUid,
-					"formTitle":$("#formTitle").val().trim()
-				},
-				success:function(result){
-					
-				}
-			});
-		}
-		
-		//根据流程分类获得表单数据
-		function getFormInfoByProCategory(){
-			$.ajax({
-				url:common.getPath() + "/formManage/listFormByProcessCategory",
-				type:"post",
-				dataType:"json",
-				data:{
-					"pageNum":pageConfig.pageNum,
-					"pageSize":pageConfig.pageSize,
 					"proCategoryUid":pageConfig.proCategoryUid,
 					"formTitle":$("#formTitle").val().trim()
 				},
@@ -359,7 +381,7 @@
 					}
 				}
 			});
-		};
+		}
 		
 		// 渲染表格
         function drawTable(pageInfo) {
@@ -389,7 +411,6 @@
         					+ '<td><input type="checkbox" name="formInfo_check" value="' + formInfo.dynUid + '" lay-skin="primary">'+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		            + '<td>'+formInfo.dynDescription+'</td>'
-        		            /* + '<td>'+formInfo.dynFilename+'</td>' */
         		            + '<td>'+createTime+'</td>'
         		            + '<td>'+formInfo.creatorFullName+'</td>'
         		            + '</tr>';
