@@ -112,4 +112,12 @@ public class DhProcessDefinitionController {
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
     }
+    
+    @RequestMapping(value = "/snapshotFlowChart")
+    public ModelAndView viewFlowChart (String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
+    	LOG.info("请求查看流程图"+proAppId);    	 
+    	ModelAndView mv = new ModelAndView("processView");
+    	mv.addObject("views",dhProcessDefinitionService.snapshotFlowChart(proAppId, proUid, proVerUid));
+    	return mv;
+    }
 }

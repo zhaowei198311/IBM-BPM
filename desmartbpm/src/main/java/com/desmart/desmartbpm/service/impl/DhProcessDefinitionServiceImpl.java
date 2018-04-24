@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,18 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,6 +55,7 @@ import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
+import com.desmart.desmartbpm.util.http.HttpClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -67,7 +81,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
-
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -356,7 +369,32 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         return lswSnapshotMapper.queryBySnapshotId(snapshotId);
     }
-    
+
+	@Override
+	public String snapshotFlowChart(String proAppId, String proUid, String proVerUid) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("snapshotId", proVerUid);
+		
+		CloseableHttpClient httpClient = HttpClients.custom().build();
+		HttpClientContext context = HttpClientContext.create();
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		Credentials credentials = new UsernamePasswordCredentials("deadmin", "passw0rd");
+		credsProvider.setCredentials(AuthScope.ANY, credentials);
+		context.setCredentialsProvider(credsProvider);
+		CloseableHttpResponse response = null;
+		HttpGet httpget = new HttpGet("http://10.0.4.201:9080/WebViewer/image/v1/processModel/25.fb99340a-d6d1-4bc3-85fc-78a1149937e4?snapshotId=2064.bc487f4b-af74-422c-ad9e-ca06e26e9a44");
+		try {
+			response = httpClient.execute(httpget, context);
+			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+			LOG.info(msg);
+			return msg;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	//	httpClientUtils.checkApiLogin("post", "http://10.0.4.201:9080/WebViewer/image/v1/processModel/25.fb99340a-d6d1-4bc3-85fc-78a1149937e4?snapshotId=2064.bc487f4b-af74-422c-ad9e-ca06e26e9a44", null);
+	}
     
     
 }

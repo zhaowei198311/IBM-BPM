@@ -57,6 +57,11 @@ public interface DhProcessDefinitionService {
      * @return
      */
     LswSnapshot getLswSnapshotBySnapshotId(String snapshotId);
+
+    
+    String snapshotFlowChart(String proAppId, String proUid, String proVerUid);
+
     
     
+
 }

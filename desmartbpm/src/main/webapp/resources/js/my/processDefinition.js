@@ -167,6 +167,29 @@ $(function () {
            }
        });
    });
+<<<<<<< .mine
+});
+
+
+$(function() {
+    $("#snapshotFlowChart_btn").click(function (){
+    	var cks = $("[name='definition_ck']:checked")
+        if (!cks.length) {
+            layer.alert("请选择一个流程定义");
+            return;
+        }
+        if (cks.length > 1) {
+            layer.alert("请选择一个流程定义，不能选择多个");
+            return;
+        }
+        var ck = cks.eq(0);
+        var proUid = ck.data('prouid');
+        var proVerUid = ck.data('proveruid');
+        var proAppId = ck.data('proappid');
+        layer.alert(proUid+"~~~~"+proVerUid)
+        window.location.href= common.getPath() + "/processDefinition/snapshotFlowChart";
+    })
+=======
    
    $("#toEditActivityConf_btn").click(function() {
 	   var cks = $("[name='definition_ck']:checked");
@@ -206,4 +229,5 @@ $(function () {
        
    });
    
+>>>>>>> .r209
 });
