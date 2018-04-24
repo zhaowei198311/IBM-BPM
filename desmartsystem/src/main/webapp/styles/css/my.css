@@ -632,3 +632,6 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
+.error{
+	color:red;
+}
