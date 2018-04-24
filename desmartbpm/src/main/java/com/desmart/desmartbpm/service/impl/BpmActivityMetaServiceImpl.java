@@ -90,6 +90,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         List<Map<String, Object>> processList = new ArrayList<>();
         Map<String, Object> mainProcess = new HashMap<>();
         mainProcess.put("name", "主流程环节");
+        mainProcess.put("id", "main");
         List<BpmActivityMeta> children = new ArrayList<>();
         List<BpmActivityMeta> subProcessList = new ArrayList<>();
         
@@ -119,6 +120,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             String activityBpdId = meta.getActivityBpdId();
             String activityName = meta.getActivityName();
             subProcess.put("name", activityName);
+            subProcess.put("id", meta.getActivityId());
             iterator = allMeta.iterator();
             while (iterator.hasNext()) {
                 BpmActivityMeta item = iterator.next();

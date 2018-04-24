@@ -1,30 +1,15 @@
 package com.desmart.desmartbpm.service.impl;
 
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
-import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
-import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.entity.DhProcessMeta;
-import com.desmart.desmartbpm.entity.engine.LswSnapshot;
-import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
-import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
-import com.desmart.desmartbpm.enums.DhProcessDefinitionStatus;
-import com.desmart.desmartbpm.exception.PermissionException;
-import com.desmart.desmartbpm.exception.PlatformException;
-import com.desmart.desmartbpm.service.BpmGlobalConfigService;
-import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.service.DhObjectPermissionService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
-import com.desmart.desmartbpm.util.DateFmtUtils;
-import com.desmart.desmartbpm.util.http.BpmClientUtils;
-import com.desmart.desmartbpm.util.rest.RestUtil;
-import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
-import com.desmart.desmartsystem.dao.SysUserMapper;
-import com.github.pagehelper.PageInfo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
@@ -35,8 +20,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
+import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
+import com.desmart.desmartbpm.enums.DhProcessDefinitionStatus;
+import com.desmart.desmartbpm.exception.PermissionException;
+import com.desmart.desmartbpm.service.BpmGlobalConfigService;
+import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.service.DhObjectPermissionService;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+import com.desmart.desmartbpm.util.DateFmtUtils;
+import com.desmart.desmartbpm.util.http.BpmClientUtils;
+import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionService {
@@ -56,6 +65,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private SysUserMapper sysUserMapper;
     @Autowired
     private DhObjectPermissionService dhObjectPermissionService;
+    @Autowired
+    private BpmActivityMetaMapper bpmActivityMetaMapper;
 
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
@@ -185,10 +196,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
-        DhProcessDefinition definitionSelective = new DhProcessDefinition();
-        definitionSelective.setProVerUid(proVerUid);
-        definitionSelective.setProAppId(proAppId);
-        definitionSelective.setProUid(proUid);
+        DhProcessDefinition definitionSelective = new DhProcessDefinition(proAppId, proUid, proVerUid);
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
         if (list.size() == 0) {
             return ServerResponse.createByErrorMessage("流程定义不存在");
@@ -318,7 +326,35 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("更新流程定义失败");
         }
 
+    }
+    
+    public ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        selective.setActivityType("start");
+        selective.setDeepLevel(0);
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (list.size() != 1) {
+            return ServerResponse.createByErrorMessage("找不到开始环节(start event)");
+        }
+        BpmActivityMeta startMeta = list.get(0);
+        selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        selective.setActivityBpdId(startMeta.getActivityTo());
+        list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (list.size() != 1) {
+            return ServerResponse.createByErrorMessage("找不到开始环节后第一个人工环节");
+        }
+        return ServerResponse.createBySuccess(list.get(0));
+    }
 
+    @Override
+    public LswSnapshot getLswSnapshotBySnapshotId(String snapshotId) {
+        if (snapshotId.startsWith("2064")) {
+            snapshotId = snapshotId.substring(snapshotId.indexOf(".") + 1);
+        }
+        return lswSnapshotMapper.queryBySnapshotId(snapshotId);
     }
     
     

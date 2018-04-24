@@ -1,7 +1,9 @@
 package com.desmart.desmartbpm.service;
 
 import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,4 +41,15 @@ public interface DhProcessDefinitionService {
      * @return
      */
     ServerResponse updateDhProcessDefinition(DhProcessDefinition definition);
+    
+    /**
+     * 获得流程定义的第一个人工活动环节
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid);
+    
+    LswSnapshot getLswSnapshotBySnapshotId(String snapshotId);
 }

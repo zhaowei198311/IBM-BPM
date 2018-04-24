@@ -34,6 +34,18 @@ public class BpmActivityMeta implements Serializable {
     private String activityAltName;
     private String proAppId;
 
+    public BpmActivityMeta(){
+        
+    }
+    
+    
+    public BpmActivityMeta(String proAppId, String bpdId, String snapshotId) {
+        super();
+        this.snapshotId = snapshotId;
+        this.bpdId = bpdId;
+        this.proAppId = proAppId;
+    }
+
 
     public String getProAppId() {
         return proAppId;

@@ -28,7 +28,7 @@
                     <div class="layui-row">
                         <div class="layui-col-md6">                         
                             <div class="layui-form-item">
-                                <label class="layui-form-label">流程名称</label>
+                                <label class="layui-form-label"></label>
                                 <div class="layui-input-block">
                                     <input type="text" name="title" required  lay-verify="required" value="流程名称" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
@@ -60,7 +60,8 @@
                         <div class="layui-tab-item layui-show">
                             <div class="layui-row">
                                 <div class="layui-col-md2">
-                                    <div class="layui-collapse" lay-accordion="">
+                                    <div class="layui-collapse" lay-accordion id="my_collapse" lay-filter="demo">
+                                        <!--  
                                         <div class="layui-colla-item">
                                             <h2 class="layui-colla-title">主流程环节</h2>
                                             <div class="layui-colla-content layui-show" id="content1">
@@ -81,7 +82,8 @@
                                                     <li>审批3</li>
                                                 </ul>
                                             </div>
-                                        </div>                                      
+                                        </div>
+                                        -->                                      
                                     </div>                                  
                                 </div>
                                 <div class="layui-col-md10 set_detail" id="set_detail">
@@ -1700,28 +1702,16 @@
         </div>
     </body>
     
-</html>
     <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
     <script type="text/javascript" src="<%=basePath%>/resources/js/my/activityConf.js"></script>
     <script>
+        var proAppId = '${processDefinition.proAppId}';
+        var proUid = '${processDefinition.proUid}';
+        var proVerUid = '${processDefinition.proVerUid}';
+        var firstHumanMeta = '${firstHumanMeta}';
+    
         window.onload=function(){
-            var tab=document.getElementById("content1");
-            var Div_detail=document.getElementById("set_detail")
-            var divs=Div_detail.getElementsByClassName("layui-tab");            
-            //console.log(divs.length);
-            var lis=tab.getElementsByTagName("li");
-            //console.log(lis.length);
-            for(var i=0;i<lis.length;i++){
-                lis[i].index=i;
-                lis[i].onclick=function(){                      
-                    for(var j=0;j<lis.length;j++){
-                        lis[j].className="";
-                        divs[j].className="layui-tab";
-                    }
-                    this.className="link_active";
-                    divs[this.index].className ="layui-tab"+" "+"divActive";
-                }
-            }
+            
         }
         layui.use('laydate', function(){
             var laydate = layui.laydate;
@@ -1806,3 +1796,4 @@
         }
         
     </script>
+</html>

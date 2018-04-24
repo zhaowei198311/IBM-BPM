@@ -252,7 +252,6 @@
 </div>
 </body>
 
-</html>
 <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/js/my/processDefinitionSet.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
@@ -276,3 +275,4 @@
 
     })
 </script>
+</html>

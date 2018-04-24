@@ -14,5 +14,10 @@
         select <include refid="base_cloumn"/>  from LSW_SNAPSHOT
     </select>
     
+    <select id="queryBySnapshotId" parameterType="string" resultType="com.desmart.desmartbpm.entity.engine.LswSnapshot">
+        select <include refid="base_cloumn"/>  from LSW_SNAPSHOT
+        where snapshot_id = #{snapshotId}
+    </select>
+    
 
 </mapper>

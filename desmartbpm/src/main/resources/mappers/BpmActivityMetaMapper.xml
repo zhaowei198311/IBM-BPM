@@ -94,6 +94,12 @@
 			<if test="type != null">
 			    and type = #{type}
 			</if>
+			<if test="deepLevel != null">
+			    and deep_level = #{deepLevel}
+			</if>
+			<if test="parentActivityBpdId != null">
+			    and parent_activity_bpd_id = #{parentActivityBpdId}
+			</if>
 		</where>
 	</select>
 

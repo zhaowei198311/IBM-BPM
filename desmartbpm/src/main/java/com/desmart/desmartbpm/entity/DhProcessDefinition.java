@@ -87,6 +87,16 @@ public class DhProcessDefinition {
     private String permissionStartUser; // 人员发起权限
     private String permissionStartRole; // 角色发起权限
     private String permissionStartTeam; // 角色组发起权限
+    
+    public DhProcessDefinition() {
+        
+    }
+    
+    public DhProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        this.proAppId = proAppId; 
+        this.proUid = proUid;   
+        this.proVerUid = proVerUid;   
+    }
 
     public String getProUid() {
         return proUid;
