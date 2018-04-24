@@ -48,6 +48,7 @@ $(function() {
     // “保存”按钮
     $("#save_btn").click(function () {
         if (!$("#form1").valid() || !$("#form4").valid()) {
+        	layer.alert("表单填写有异常参数，请检查后再提交");
             return;
         }
 
@@ -146,9 +147,20 @@ $(function() {
 
     // 选择发起人员
     $("#chooseUser_btn").click(function () {
-        var url = common.getSystemPath() + "/sysUser/select_personnel?id=permissionStartUser&isSingle=false";
-        window.open(url, 'newwindow', 'height=600, width=1024, top=0,left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
-        
+    	layer.open({
+    	    type: 2,
+    	    title: '选择人员',
+    	    shadeClose: true,
+    	    shade: 0.8,
+    	    area: ['600px', '540px'],
+    	    content: common.chooseUserPath('permissionStartUser', 'false'),
+    	    success: function (layero, lockIndex) {
+    	        var body = layer.getChildFrame('body', lockIndex);
+    	        body.find('button#close').on('click', function () {
+    	            layer.close(lockIndex);
+    	        });
+    	    }
+    	});        
     });
     
     // 选择发起角色

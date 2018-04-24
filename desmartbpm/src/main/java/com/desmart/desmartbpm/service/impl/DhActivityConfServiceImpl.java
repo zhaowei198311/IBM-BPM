@@ -19,10 +19,5 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
     private DhActivityConfMapper dhActivityConfMapper;
     
     
-    public List<DhActivityConf> listHumanActivity(String proAppId, String proUid, String proVerUid) {
-        //dhActivityConfMapper.
-        
-        return null;
-    }
     
 }

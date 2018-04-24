@@ -1,7 +1,11 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -69,16 +74,64 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return bpmActivityMeta;
     }
     
-    @Override
-    public List<BpmActivityMeta> listHumanActivity(String proAppId, String proUid, String proVerUid) {
+   
+    public ServerResponse<List<Map<String, Object>>> getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            
+        }
         BpmActivityMeta selective = new BpmActivityMeta();
         selective.setProAppId(proAppId);
         selective.setBpdId(proUid);
-        // todo
+        selective.setSnapshotId(proVerUid);
+        List<BpmActivityMeta> allMeta = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (allMeta.size() == 0) {
+            return ServerResponse.createByErrorMessage("没有匹配的环节，请先同步环节");
+        }
+        List<Map<String, Object>> processList = new ArrayList<>();
+        Map<String, Object> mainProcess = new HashMap<>();
+        mainProcess.put("name", "主流程环节");
+        List<BpmActivityMeta> children = new ArrayList<>();
+        List<BpmActivityMeta> subProcessList = new ArrayList<>();
         
+        Iterator<BpmActivityMeta> iterator = allMeta.iterator();
+        while (iterator.hasNext()) {
+            BpmActivityMeta meta = iterator.next();
+            if ("SubProcess".equalsIgnoreCase(meta.getBpmTaskType())) {
+                subProcessList.add(meta);
+                iterator.remove();
+                continue;
+            }
+            if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) {
+                if (meta.getDeepLevel() == 0) {
+                    children.add(meta);
+                    iterator.remove();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+        mainProcess.put("children", children);
+        processList.add(mainProcess); // 主流程环节装配完毕
         
-        bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        return null;
+        for (BpmActivityMeta meta : subProcessList) {
+            Map<String, Object> subProcess = new HashMap<>();
+            children = new ArrayList<>();
+            String activityBpdId = meta.getActivityBpdId();
+            String activityName = meta.getActivityName();
+            subProcess.put("name", activityName);
+            iterator = allMeta.iterator();
+            while (iterator.hasNext()) {
+                BpmActivityMeta item = iterator.next();
+                if (activityBpdId.equals(item.getParentActivityBpdId())) {
+                    children.add(item);
+                    iterator.remove();
+                }
+            }
+            subProcess.put("children", children);
+            processList.add(subProcess);
+        }
+        
+        return ServerResponse.createBySuccess(processList);
     }
     
 }

@@ -427,7 +427,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActivityId(activityId);
         conf.setActcSort(1);
         conf.setActcTime(null);
-        conf.setActcTimeunit(Const.Time.DAY);
+        conf.setActcTimeunit(Const.TimeUnit.DAY);
         conf.setActcAssignType(DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode());
         conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);
         conf.setSignCountVarname(BpmCommonBusObject.OWNER_SIGN_COUNT[0]);

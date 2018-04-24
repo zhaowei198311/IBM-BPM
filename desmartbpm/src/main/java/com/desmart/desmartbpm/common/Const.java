@@ -8,7 +8,7 @@ public class Const {
     
     public static final String CURRENT_USER = "currentUser";
     
-    public interface Time {
+    public interface TimeUnit {
         public static final String HOUR = "hour";
         public static final String DAY = "day";
         public static final String MONTH = "month";

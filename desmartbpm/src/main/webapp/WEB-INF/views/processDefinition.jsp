@@ -146,7 +146,7 @@
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.excheck.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.exedit.js"></script>
-<script type="text/javascript" src="<%=basePath%>/resources/js/processDefinition.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/js/my/processDefinition.js"></script>
 <script>
 	// 为翻页提供支持
 	var pageConfig = {

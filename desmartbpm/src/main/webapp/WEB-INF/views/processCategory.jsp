@@ -148,10 +148,10 @@
             </div>
         </div>
         <div class="display_container" id="addCategory_container">
-             <div class="display_content">
+             <div class="display_content" style="height:350px;">
                  <div class="top">填写分类名</div>
                  <div class="middle1">
-                     <input type="text"  class="layui-input" id="categoryName_input"/>
+                     <input type="text"  class="layui-input" id="categoryName_input" style="margin-top:20px;"/>
                  </div>
                  <div class="foot">
                      <button class="layui-btn layui-btn sure_btn" id="addCategorySure_btn">确定</button>

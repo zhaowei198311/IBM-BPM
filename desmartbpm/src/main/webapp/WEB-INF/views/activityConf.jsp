@@ -1701,8 +1701,8 @@
     </body>
     
 </html>
-    <script type="text/javascript" src="js/layui.all.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/resources/js/activityConf.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/resources/js/my/activityConf.js"></script>
     <script>
         window.onload=function(){
             var tab=document.getElementById("content1");

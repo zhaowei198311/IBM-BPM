@@ -85,6 +85,15 @@
 			<if test="activityBpdId != null">
 				and ACTIVITY_BPD_ID = #{activityBpdId}
 			</if>
+			<if test="bpmTaskType != null">
+			    and bpm_task_type = #{bpmTaskType}
+			</if>
+			<if test="activityType != null">
+			    and activity_type = #{activityType}
+			</if>
+			<if test="type != null">
+			    and type = #{type}
+			</if>
 		</where>
 	</select>
 

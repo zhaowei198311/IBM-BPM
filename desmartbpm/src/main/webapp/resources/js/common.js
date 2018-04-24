@@ -17,20 +17,24 @@ var common = {
 	},
     // 管理项目路径
     getSystemPath: function() {
-        // var curWwwPath = window.document.location.href;
-        // var pathName = window.document.location.pathname;
-        // var pos = curWwwPath.indexOf(pathName);
-        // var localhostPaht = curWwwPath.substring(0, pos);
-        // return localhostPaht + "/desmartsystem";
-		return "http://localhost:8088/desmartsystem"
+    	var curWwwPath = window.document.location.href;
+        var pathName = window.document.location.pathname;
+        var pos = curWwwPath.indexOf(pathName);
+        var localhostPaht = curWwwPath.substring(0, pos);
+        return localhostPaht + "/desmartsystem";
     },
     // 选人弹框的路径
+    chooseUserPath : function(id, isSingle) {
+    	return common.getSystemPath() + "/sysUser/select_personnel?id=" + id +"&isSingle=" + isSingle; 
+    },
+    // 选角色弹框的路径
     chooseRolePath : function(id, isSingle) {
     	return common.getPath() + "/test/chooseRole?id=" + id +"&isSingle=" + isSingle; 
     },
     chooseTeamPath : function(id, isSingle) {
     	return common.getPath() + "/test/chooseTeam?id=" + id +"&isSingle=" + isSingle; 
     },
+    // 选角色组弹框的路径
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
