@@ -481,7 +481,7 @@
 					paraUid : this.value
 				},
 				success : function(result) {
-					window.location.href = "interfaces/index";
+					window.location.href = "trigger/index";
 					layer.alert('修改成功')
 				}
 			})
