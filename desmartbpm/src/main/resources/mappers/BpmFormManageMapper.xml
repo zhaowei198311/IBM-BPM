@@ -6,26 +6,48 @@
         DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_TYPE,DYN_FILENAME,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME
     </sql>
     
-    <select id="listFormByProcessCategory" resultType="com.desmart.desmartbpm.entity.BpmForm" parameterType="map">
-    	select <include refid="base_column"/>,u.user_name creatorFullName 
-    	from bpm_form bmf
-    		left join sys_user u on bmf.creator = u.user_uid
-    	where bmf.pro_uid in
-    	<foreach collection="dhProcessList" item="item" index="index" open="(" separator="," close=")">
-            #{item.proUid}
-        </foreach>
-        <if test="formTitle != null and !formTitle.trim().isEmpty()">
-        	and dyn_title like '%${formTitle}%' 
-        </if>
-    </select>
-    
     <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
     	select <include refid="base_column"/>,u.user_name creatorFullName
     	from bpm_form bmf
     		left join sys_user u on bmf.creator = u.user_uid
-    	where bmf.pro_uid = #{proUid} and bmf.pro_version = #{proVerUid}
-    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
-        	and dyn_title like '%${formTitle}%' 
-        </if>
+    	<where>
+	    	<if test="proUid != null and !proUid.trim().isEmpty()">
+	    		bmf.pro_uid = #{proUid} 
+	    	</if> 
+	    	<if test="proVerUid != null and !proVerUid.trim().isEmpty()">
+	    		and bmf.pro_version = #{proVerUid}
+	    	</if>
+	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
+	        	and dyn_title like '%${formTitle}%' 
+	        </if>
+        </where>
+        order by create_time desc
     </select>
+    
+    <select id="listFormByProUidList" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    	select <include refid="base_column"/>,u.user_name creatorFullName
+    	from bpm_form bmf
+    		left join sys_user u on bmf.creator = u.user_uid
+    	<where>
+    		pro_uid in
+    		<foreach collection="metaList" item="item" index="index" open="(" separator="," close=")">
+	            #{item.proUid}
+	        </foreach>
+	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
+	        	and dyn_title like '%${formTitle}%' 
+	        </if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="queryFormByName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    	select <include refid="base_column"/>
+    	from bpm_form where dyn_title = #{dynTitle}
+    </select>
+    
+    <insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmForm">
+    	insert into bpm_form(<include refid="base_column"/>)
+    	values(#{dynUid},#{dynTitle},#{dynDescription},'html',#{dynFilename},
+    		#{dynContent},#{proUid},#{proVersion},'00035438',sysdate)
+    </insert>
 </mapper>
