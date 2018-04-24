@@ -53,7 +53,10 @@
 							<tr>
 								<td><input type="text" id="user_code" name="userNo" autocomplete="off" class="layui-input" /></td>
 								<td><input type="text" id="user_name" name="userName" autocomplete="off" class="layui-input" /></td>
-								<td><input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
+								<td><!-- <input type="submit" id="query_btn" autocomplete="off" class=".layui-btn sure_btn" value="查询"/> -->
+									<button type="submit" id="query_btn" class="layui-btn layui-btn sure_btn" style="margin-top: -20px;">查询</button>
+									
+								</td>
 							</tr>
 						</tbody>
 					</table>
