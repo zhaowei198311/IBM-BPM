@@ -40,8 +40,7 @@
 </style>
 </head>
 <body>
-		<div class="display_content2">
-			<div class="query_user">
+			<div class="query_user" style="width:85%;margin:10px 5px 0 20px;">
 				<div>
 					<form class="form-inline" method="post" action="sysUser/userList"  onsubmit="return searchReturn(this,setUserList);">
 					<table>
@@ -62,7 +61,7 @@
 				</div>
 			</div>
 			<div class="middle_temp">	
-				<div style="float:left;width:220px;height: 240px;margin:10px 0 10px 10px;">
+				<div style="float:left;width:220px;height: 240px;margin:0 0 10px 10px;">
 					<!-- <ul id="treeDemo" class="ztree" style="height: 100%;width: 96%;" ></ul> -->
 					<ul id="treeDemo" class="ztree" style="width: 220px; height: 250px; -moz-user-select: none;"></ul>
 				</div>
@@ -82,11 +81,10 @@
 						<ul id="user_add" style="width:240px;display:inline;"></ul>
 					</div>
 			</div>
-			<div class="foot_temp">
+			<div class="foot_temp" style="margin:0px 40px 0 0;">
 				<button class="layui-btn layui-btn sure_btn" style="float:left;" type="button" id="addpersonnel">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="close" style="float:left;">取消</button>
 			</div>
-		</div>
 	<script type="text/javascript">
 	
 		
