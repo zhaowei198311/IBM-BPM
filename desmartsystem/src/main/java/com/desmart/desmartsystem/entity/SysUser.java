@@ -437,7 +437,7 @@ public class SysUser implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getCompanynumber() {
+	public String getCompanynumber() { 
 		return companynumber;
 	}
 
