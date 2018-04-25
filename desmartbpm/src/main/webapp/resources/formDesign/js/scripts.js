@@ -384,6 +384,28 @@ $(document).ready(function() {
 	});
 	$("body").css("min-height", $(window).height() - 50);
 	$(".demo").css("min-height", $(window).height() - 130);
+	
+	var formUid = $("#formUid").val();
+	if(formUid!=null && formUid!=""){
+		$.ajax({
+			url:common.getPath()+"/formManage/queryFormByFormUid",
+			method:"post",
+			async:false,
+			data:{
+				formUid:formUid
+			},
+			success:function(result){
+				if(result.status==0){
+					$("#proUid").val(result.data.proUid);
+					$("#proVersion").val(result.data.proVersion);
+					$(".demo").html(result.data.dynContent);
+				}
+			}
+		});
+	}else{
+		clearDemo();
+	}
+	
 	$(".sidebar-nav .lyrow").draggable({
 		connectToSortable: ".demo",
 		helper: "clone",
@@ -584,121 +606,253 @@ function saveHtml() {
 	webpage = $("#downloadModal textarea").val();
 	var subDivArr = $("#download-layout").find(".subDiv");
 	var jsonArr = new Array();
-	
-	$.ajax({
-		url:common.getPath() +"/formManage/saveFormFile",
-		method:"post",
-		data:{"webpage":webpage,"filename":filename},
-		success:function(result){
-			var formParam = {
-				proUid:$("#proUid").val(),
-				proVersion:$("#proVersion").val(),
-				dynTitle:$("#formName").val(),
-				dynDescription:$("#formDescription").val(),
-				dynFilename:result,
-				dynContent:dynContent
-			};
-			$.ajax({//添加表单数据
-				url:common.getPath() +"/formManage/saveForm",
-				method:"post",
-				dataType:"json",
-				contentType:"application/json",
-				data:JSON.stringify(formParam),
-				success:function(result2){
-					if(result2.status == 0){
-						for(var i=0;i<subDivArr.length;i++){
-							var subDivObj = $(subDivArr[i]);
-							var subObj = $($(subDivArr[i]).children()[0]);
-							var filedAttr = {
-								fldIndex:i,//索引
-								formUid:result2.data,//表单Id
-								fldCodeId:"",//字段编码Id
-								fldName:"",//字段名
-								fldDescription:"",//字段描述
-								fldType:"",//字段类型
-								fldSize:"",//字段长度
-								multiSeparator:"",//多值分隔符
-								multiValue:""//是否多值
+	//修改可能比较麻烦，所以先删除在新建
+	var formUid = $("#formUid").val();
+	if(formUid!=null && formUid!=""){
+		var formUids = new Array();
+		formUids.push(formUid);
+		$.ajax({
+			url:common.getPath() +"/formManage/deleteForm",
+			method:"post",
+			traditional: true,//传递数组给后台
+			data:{"formUids":formUids},
+			success:function(result){
+				if(result.status==0){
+					$.ajax({
+						url:common.getPath() +"/formManage/saveFormFile",
+						method:"post",
+						data:{"webpage":webpage,"filename":filename},
+						success:function(result){
+							var formParam = {
+								proUid:$("#proUid").val(),
+								proVersion:$("#proVersion").val(),
+								dynTitle:$("#formName").val(),
+								dynDescription:$("#formDescription").val(),
+								dynFilename:result,
+								dynContent:dynContent
 							};
-							switch(subObj.prop("tagName")){
-								case "INPUT":{
-									filedAttr.fldCodeId = subObj.attr("id");
-									filedAttr.fldName = subDivObj.prev().find("label").text();
-									filedAttr.multiValue = "false";
-									switch(subObj.attr("type")){
-										case "text":{
-											filedAttr.fldType = "string";
-											break;
-										};
-										case "tel":{
-											filedAttr.fldType = "number";
-											break;
-										};
-										case "date":{
-											filedAttr.fldType = "date";
-											break;
-										};
-										case "button":{
-											filedAttr.fldType = "file";
-											break;
-										};
-									}
-									break;
-								};
-								case "TEXTAREA":{//文本域，富文本编辑器
-									filedAttr.fldCodeId = subObj.attr("id");
-									filedAttr.fldName = subDivObj.prev().find("label").text();
-									filedAttr.multiValue = "false";
-									filedAttr.fldType = "string";
-									break;
-								};
-								case "SELECT":{
-									filedAttr.fldCodeId = subObj.attr("id");
-									filedAttr.fldName = subDivObj.prev().find("label").text();
-									filedAttr.multiValue = "true";
-									filedAttr.multiSepar = ",";
-									filedAttr.fldType = "string";
-									break;
-								};
-								case "LABEL":{//多选框、单选框
-									filedAttr.fldCodeId = subObj.find("input").attr("class");
-									filedAttr.fldName = subDivObj.prev().find("label").text();
-									filedAttr.multiValue = "true";
-									filedAttr.multiSeparator = ",";
-									filedAttr.fldType = "string";
-									break;
-								};
-							}
-							jsonArr.push(filedAttr);
-						}
-						if(jsonArr!=null && jsonArr!=""){
-							$.ajax({//添加表单字段数据
-								url:common.getPath() +"/formField/saveFormField",
+							$.ajax({//添加表单数据
+								url:common.getPath() +"/formManage/saveForm",
 								method:"post",
 								dataType:"json",
 								contentType:"application/json",
-								data:JSON.stringify(jsonArr),
-								success:function(result){
+								data:JSON.stringify(formParam),
+								success:function(result2){
 									if(result2.status == 0){
-										clearDemo();
-										window.location.href = common.getPath()
-											+"/formManage/index?proUid="+$("#proUid").val()
-											+"&proVersion="+$("#proVersion").val();
+										for(var i=0;i<subDivArr.length;i++){
+											var subDivObj = $(subDivArr[i]);
+											var subObj = $($(subDivArr[i]).children()[0]);
+											var filedAttr = {
+												fldIndex:i,//索引
+												formUid:result2.data,//表单Id
+												fldCodeId:"",//字段编码Id
+												fldName:"",//字段名
+												fldDescription:"",//字段描述
+												fldType:"",//字段类型
+												fldSize:"",//字段长度
+												multiSeparator:"",//多值分隔符
+												multiValue:""//是否多值
+											};
+											switch(subObj.prop("tagName")){
+												case "INPUT":{
+													filedAttr.fldCodeId = subObj.attr("id");
+													filedAttr.fldName = subDivObj.prev().find("label").text();
+													filedAttr.multiValue = "false";
+													switch(subObj.attr("type")){
+														case "text":{
+															filedAttr.fldType = "string";
+															break;
+														};
+														case "tel":{
+															filedAttr.fldType = "number";
+															break;
+														};
+														case "date":{
+															filedAttr.fldType = "date";
+															break;
+														};
+														case "button":{
+															filedAttr.fldType = "file";
+															break;
+														};
+													}
+													break;
+												};
+												case "TEXTAREA":{//文本域，富文本编辑器
+													filedAttr.fldCodeId = subObj.attr("id");
+													filedAttr.fldName = subDivObj.prev().find("label").text();
+													filedAttr.multiValue = "false";
+													filedAttr.fldType = "string";
+													break;
+												};
+												case "SELECT":{
+													filedAttr.fldCodeId = subObj.attr("id");
+													filedAttr.fldName = subDivObj.prev().find("label").text();
+													filedAttr.multiValue = "true";
+													filedAttr.multiSepar = ",";
+													filedAttr.fldType = "string";
+													break;
+												};
+												case "LABEL":{//多选框、单选框
+													filedAttr.fldCodeId = subObj.find("input").attr("class");
+													filedAttr.fldName = subDivObj.prev().find("label").text();
+													filedAttr.multiValue = "true";
+													filedAttr.multiSeparator = ",";
+													filedAttr.fldType = "string";
+													break;
+												};
+											}
+											jsonArr.push(filedAttr);
+										}
+										if(jsonArr!=null && jsonArr!=""){
+											$.ajax({//添加表单字段数据
+												url:common.getPath() +"/formField/saveFormField",
+												method:"post",
+												dataType:"json",
+												contentType:"application/json",
+												data:JSON.stringify(jsonArr),
+												success:function(result){
+													if(result2.status == 0){
+														clearDemo();
+														window.location.href = common.getPath()
+															+"/formManage/index?proUid="+$("#proUid").val()
+															+"&proVersion="+$("#proVersion").val();
+													}else{
+														layer.alert("添加失败");
+													}
+												}
+											});
+										}else{
+											window.location.href = common.getPath()
+												+"/formManage/index?proUid="+$("#proUid").val()
+												+"&proVersion="+$("#proVersion").val();
+										}
 									}else{
 										layer.alert("添加失败");
 									}
 								}
 							});
-						}else{
-							window.location.href = common.getPath()
-								+"/formManage/index?proUid="+$("#proUid").val()
-								+"&proVersion="+$("#proVersion").val();
 						}
-					}else{
-						layer.alert("添加失败");
-					}
+					});
 				}
-			});
-		}
-	});
+			}
+		});
+	}else{
+		$.ajax({
+			url:common.getPath() +"/formManage/saveFormFile",
+			method:"post",
+			data:{"webpage":webpage,"filename":filename},
+			success:function(result){
+				var formParam = {
+					proUid:$("#proUid").val(),
+					proVersion:$("#proVersion").val(),
+					dynTitle:$("#formName").val(),
+					dynDescription:$("#formDescription").val(),
+					dynFilename:result,
+					dynContent:dynContent
+				};
+				$.ajax({//添加表单数据
+					url:common.getPath() +"/formManage/saveForm",
+					method:"post",
+					dataType:"json",
+					contentType:"application/json",
+					data:JSON.stringify(formParam),
+					success:function(result2){
+						if(result2.status == 0){
+							for(var i=0;i<subDivArr.length;i++){
+								var subDivObj = $(subDivArr[i]);
+								var subObj = $($(subDivArr[i]).children()[0]);
+								var filedAttr = {
+									fldIndex:i,//索引
+									formUid:result2.data,//表单Id
+									fldCodeId:"",//字段编码Id
+									fldName:"",//字段名
+									fldDescription:"",//字段描述
+									fldType:"",//字段类型
+									fldSize:"",//字段长度
+									multiSeparator:"",//多值分隔符
+									multiValue:""//是否多值
+								};
+								switch(subObj.prop("tagName")){
+									case "INPUT":{
+										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldName = subDivObj.prev().find("label").text();
+										filedAttr.multiValue = "false";
+										switch(subObj.attr("type")){
+											case "text":{
+												filedAttr.fldType = "string";
+												break;
+											};
+											case "tel":{
+												filedAttr.fldType = "number";
+												break;
+											};
+											case "date":{
+												filedAttr.fldType = "date";
+												break;
+											};
+											case "button":{
+												filedAttr.fldType = "file";
+												break;
+											};
+										}
+										break;
+									};
+									case "TEXTAREA":{//文本域，富文本编辑器
+										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldName = subDivObj.prev().find("label").text();
+										filedAttr.multiValue = "false";
+										filedAttr.fldType = "string";
+										break;
+									};
+									case "SELECT":{
+										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldName = subDivObj.prev().find("label").text();
+										filedAttr.multiValue = "true";
+										filedAttr.multiSepar = ",";
+										filedAttr.fldType = "string";
+										break;
+									};
+									case "LABEL":{//多选框、单选框
+										filedAttr.fldCodeId = subObj.find("input").attr("class");
+										filedAttr.fldName = subDivObj.prev().find("label").text();
+										filedAttr.multiValue = "true";
+										filedAttr.multiSeparator = ",";
+										filedAttr.fldType = "string";
+										break;
+									};
+								}
+								jsonArr.push(filedAttr);
+							}
+							if(jsonArr!=null && jsonArr!=""){
+								$.ajax({//添加表单字段数据
+									url:common.getPath() +"/formField/saveFormField",
+									method:"post",
+									dataType:"json",
+									contentType:"application/json",
+									data:JSON.stringify(jsonArr),
+									success:function(result){
+										if(result2.status == 0){
+											clearDemo();
+											window.location.href = common.getPath()
+												+"/formManage/index?proUid="+$("#proUid").val()
+												+"&proVersion="+$("#proVersion").val();
+										}else{
+											layer.alert("添加失败");
+										}
+									}
+								});
+							}else{
+								window.location.href = common.getPath()
+									+"/formManage/index?proUid="+$("#proUid").val()
+									+"&proVersion="+$("#proVersion").val();
+							}
+						}else{
+							layer.alert("添加失败");
+						}
+					}
+				});
+			}
+		});
+	}
 }

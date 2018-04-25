@@ -8,10 +8,34 @@
         <link href="<%=basePath%>/resources/tree/css/demo.css" rel="stylesheet">
         <link href="<%=basePath%>/resources/tree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
   		<style>
-			ul.ztree{
-				border:0;
+			ul.ztree {
+				border: 0;
 			}
-  		</style>
+			
+			.display_container_copy {
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 10;
+				background: rgba(255, 255, 255, 0.8);
+				width: 100%;
+				height: 100%;
+			}
+			
+			.display_content_copy {
+				overflow-y: auto;
+				color: #717171;
+				padding: 20px;
+				width: 400px;
+				height: 300px;
+				background: #fff;
+				position: absolute;
+				margin: 100px 0 0 -200px;
+				left: 50%;
+				box-shadow: 0 0 10px #ccc;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="layui-container" style="margin-top:20px;width:100%;">  
@@ -28,7 +52,7 @@
 							<div class="layui-col-md3" style="text-align:right;">
 						        <button class="layui-btn layui-btn-sm" id="searchForm_btn">查询</button>
 						        <button class="layui-btn layui-btn-sm create_btn">新增</button>
-						        <button class="layui-btn layui-btn-sm delete_btn">删除</button>
+						        <button class="layui-btn layui-btn-sm delete_btn" onclick="deleteForm();">删除</button>
 						        <button class="layui-btn layui-btn-sm copy_btn">复制快照</button>
 							</div>
 						</div>
@@ -44,11 +68,12 @@
 							</colgroup>
 							<thead>
 							    <tr>
-							      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+							      <th><input type="checkbox" name="allSel" onclick="onClickHander(this);" title='全选' lay-skin="primary"> 序号</th>
 							      <th>表单名称</th>
 							      <th>表单描述</th>
-							      <th>创建时间</th>
-							      <th>创建人</th>
+							      <th>操作时间</th>
+							      <th>操作人</th>
+							      <th>操作</th>
 							    </tr> 
 							</thead>
 							<tbody id="formInfo-table-tbody">
@@ -91,10 +116,45 @@
 				</div>
 			</div>
 		</div>
+		<div class="display_container2">
+			<div class="display_content">
+				<div class="top">
+					修改表单
+				</div>
+				<div class="middle">
+					<form class="layui-form" action="" style="margin-top:30px;">
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="update-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单描述</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="update-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>				  
+					</form>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" onclick="updateForm();">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>
 		<div class="display_container3">
 			<div class="display_content3">
 				<div class="top">
-					复制快照
+					<div class="layui-col-md12">复制快照</div>
+					<div class="">
+						<div class="layui-col-md3" style="margin:5px 0 ;">
+							<input id="copy_formTitle" type="text" class="layui-input" placeholder="表单名称" style="font-size:15px;">
+						</div>
+						<div class="layui-col-md2 layui-col-md-offset1" style="text-align:center;margin:5px 0;">
+							<button class="layui-btn layui-btn-sm" id="copy_searchForm_btn">查询</button>
+						</div>
+					</div>
 				</div>
 				<div class="middle1">
 					<table class="layui-table backlog_table" lay-even lay-skin="nob">
@@ -107,61 +167,56 @@
 						</colgroup>
 						<thead>
 						    <tr>
-						      <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+						      <th>序号</th>
 						      <th>表单名称</th>
 						      <th>表单描述</th>
-						      <th>创建时间</th>
-						      <th>创建人</th>
+						      <th>操作时间</th>
+							  <th>操作人</th>
 						    </tr> 
 						</thead>
-						<tbody>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
-						      <td>表单名称</td>
-						      <td>描述内容...</td>
-						      <td>2018-04-10 10：00：00</td>
-						      <td>zhangsan</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-						      <td>表单名称</td>
-						      <td>描述内容...</td>
-						      <td>2018-04-10 10：00：00</td>
-						      <td>zhangsan</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-						      <td>表单名称</td>
-						      <td>描述内容...</td>
-						      <td>2018-04-10 10：00：00</td>
-						      <td>zhangsan</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-						      <td>表单名称</td>
-						      <td>描述内容...</td>
-						      <td>2018-04-10 10：00：00</td>
-						      <td>zhangsan</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
-						      <td>表单名称</td>
-						      <td>描述内容...</td>
-						      <td>2018-04-10 10：00：00</td>
-						      <td>zhangsan</td>
-						    </tr>
+						<tbody id="copy_formInfo">
+						    
 						</tbody>
 					</table>			
 				</div>
-				<div id="lay_page"></div>
+				<div id="lay_page_copy"></div>
 				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn">确定</button>
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+					<button class="layui-btn layui-btn sure_btn" id="copy_form_btn">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" 
+						onclick="$('.display_container3').css('display','none');">取消</button>
+				</div>
+			</div>
+		</div>
+		<!-- 复制表单填写信息模态框 -->
+		<div class="display_container_copy">
+			<div class="display_content_copy">
+				<div class="top">
+					请填写复制之后表单信息
+				</div>
+				<div class="middle">
+					<form class="layui-form" action="" style="margin-top:30px;">
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单描述</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>				  
+					</form>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" onclick="">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+						onclick="$('.display_container_copy').css('display','none');">取消</button>
 				</div>
 			</div>
 		</div>
 	</body>
-	
 </html>
 	<script src="<%=basePath%>/resources/js/layui.all.js"></script>
 	<script type="text/javascript" src="<%=basePath%>/resources/tree/js/jquery.ztree.core.js"></script>
@@ -178,17 +233,15 @@
 	    	proVerUid:""
 	    }
 	    // 为弹出框的分页控件服务
-	    /* var pageConfig2 = {
-	        pageNum: 1,
-	        pageSize: 5,
-	        total: 0,
-	        processAppName: "",
-	        processAppAcronym: "",
-	        display: ""
-	    } */
+	    var pageConfigCopy = {
+	    	pageNum: 1,
+		    pageSize: 5,
+		    total: 0
+	    }
 	
 	    var createFromFlag = false;//是否可以创建表单的控制变量
-	    
+	    var oldFormName = "";
+	    var updateFormId = "";
 		//tree
 		var setting = {
             view: {
@@ -265,12 +318,42 @@
                 }); 
             });
         }
+		
+     	// 分页
+        function doPageCopy() {
+            layui.use(['laypage', 'layer'], function(){
+                var laypage = layui.laypage,layer = layui.layer;  
+                  //完整功能
+                laypage.render({
+                    elem: 'lay_page_copy',
+                    curr: pageConfigCopy.pageNum,
+                    count: pageConfigCopy.total,
+                    limit: pageConfigCopy.pageSize,
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    jump: function(obj, first){
+                    	// obj包含了当前分页的所有参数  
+                    	pageConfigCopy.pageNum = obj.curr;
+                    	pageConfigCopy.pageSize = obj.limit;
+                    	if (!first) {
+                    		getFormInfoByProDefinitionCopy();
+                    	}
+                    }
+                }); 
+            });
+        }
 
 		//模糊查询
         $("#searchForm_btn").click(function() {
         	pageConfig.pageNum = 1;
         	pageConfig.total = 0;
         	getFormInfoByProDefinition();
+        });
+		
+      	//复制快照--模糊查询
+        $("#copy_searchForm_btn").click(function() {
+        	pageConfigCopy.pageNum = 1;
+        	pageConfigCopy.total = 0;
+        	getFormInfoByProDefinitionCopy();
         });
 		
 		$(document).ready(function() {
@@ -313,6 +396,9 @@
 				getFormInfoByProDefinition();
 			}
 			
+			//复制快照--表格数据
+			getFormInfoByProDefinitionCopy();
+			
 			$(".create_btn").click(function() {
 				if(createFromFlag){
 					$(".display_container").css("display", "block");
@@ -320,46 +406,79 @@
 					layer.alert("请选择一个流程定义版本");
 				}
 			})
-			/* $(".copy_btn").click(function() {
-				$(".display_container3").css("display", "block");
-			})
-			$(".sure_btn").click(function() {
+			$(".copy_btn").click(function() {
+				if(createFromFlag){
+					$(".display_container3").css("display", "block");
+				}else{
+					layer.alert("请选择一个存放复制快照的流程定义版本");
+				}
+			});
+			
+			$("#copy_form_btn").click(function() {
+				$(".display_container_copy").css("display", "block");
+			});
+			
+			/* $(".sure_btn").click(function() {
 				$(".display_container3").css("display", "none");
 			}) */
 			$(".cancel_btn").click(function() {
 				$(".display_container").css("display", "none");
-				$(".display_container3").css("display", "none");
+				$(".display_container2").css("display", "none");
 			})
 		});
 		
-		//新建表单--跳转到表单设计器页面
-		function createForm(){
-			var formName = $("#form-name").val().trim();
-			if(formName==null || formName==""){
-				layer.alert("请填写表单名");
-			}else{
-				$.ajax({
-					url:common.getPath()+"/formManage/queryFormByName",
-					method:"post",
-					data:{
-						dynTitle:formName
-					},
-					success:function(result){
-						if(result.status==0){
-							var href = "/formManage/designForm?formName="+formName
-									+"&formDescription="+$("#form-description").val().trim()
-									+"&proUid="+pageConfig.proUid
-									+"&proVersion="+pageConfig.proVerUid;
-							window.location.href = common.getPath()+href;
-							$(".display_container").css("display", "none");
-						}else{
-							layer.alert("表单名已存在，不能重复");
-						}
+		//复制快照--根据流程定义(proUid,proVerUid)
+		function getFormInfoByProDefinitionCopy(){
+			$.ajax({
+				url:common.getPath() + "/formManage/listFormByProDefinition",
+				type:"post",
+				dataType:"json",
+				data:{
+					"pageNum":pageConfigCopy.pageNum,
+					"pageSize":pageConfigCopy.pageSize,
+					"formTitle":$("#copy_formTitle").val().trim()
+				},
+				success:function(result){
+					if(result.status==0){
+						drawTableCopy(result.data);
 					}
-				});
-			}
-			return;
+				}
+			});
 		}
+		
+		//复制快照--渲染表格
+		function drawTableCopy(pageInfo) {
+        	pageConfigCopy.pageNum = pageInfo.pageNum;
+        	pageConfigCopy.pageSize = pageInfo.pageSize;
+        	pageConfigCopy.total = pageInfo.total;
+        	doPageCopy();
+        	// 渲染数据
+        	$("#copy_formInfo").html('');
+        	if (pageInfo.total == 0) {
+        		return;
+        	}
+        	
+        	var list = pageInfo.list;
+        	var startSort = pageInfo.startRow;//开始序号
+        	var trs = "";
+        	for(var i=0; i<list.length; i++) {
+        		var formInfo = list[i];
+        		var sortNum = startSort + i;
+        		var createTime = "";
+                var updateTime = "";
+                if (formInfo.createTime) {
+                	createTime = common.dateToString(new Date(formInfo.createTime));
+                }
+        		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
+        					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
+        		            + '<td>'+formInfo.dynTitle+'</td>'
+        		            + '<td>'+formInfo.dynDescription+'</td>'
+        		            + '<td>'+createTime+'</td>'
+        		            + '<td>'+formInfo.creatorFullName+'</td>'
+        		            + '</tr>';
+        	}
+        	$("#copy_formInfo").append(trs);
+        }
 		
 		//根据流程定义(proUid,proVerUid)
 		function getFormInfoByProDefinition(){
@@ -399,7 +518,6 @@
         	var startSort = pageInfo.startRow;//开始序号
         	var trs = "";
         	for(var i=0; i<list.length; i++) {
-        		console.log($("#formInfo-table-tbody").find('tr').length)
         		var formInfo = list[i];
         		var sortNum = startSort + i;
         		var createTime = "";
@@ -407,20 +525,163 @@
                 if (formInfo.createTime) {
                 	createTime = common.dateToString(new Date(formInfo.createTime));
                 }
-        		trs += '<tr data-formuid="'+formInfo.dynUid+'" ondblclick="showEditDiv(this);">'
-        					+ '<td><input type="checkbox" name="formInfo_check" value="' + formInfo.dynUid + '" lay-skin="primary">'+ sortNum +'</td>'
+        		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
+        					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		            + '<td>'+formInfo.dynDescription+'</td>'
         		            + '<td>'+createTime+'</td>'
         		            + '<td>'+formInfo.creatorFullName+'</td>'
+        		            + '<td><i class="layui-icon" onclick="updateFormModal(this);">&#xe642;</i></td>'
         		            + '</tr>';
         	}
         	$("#formInfo-table-tbody").append(trs);
-        	
         }
 		
-		function showEditDiv(tr){
-			var formuid = $(tr).data('formuid');
-			alert(formuid);
+      	//新建表单--跳转到表单设计器页面
+		function createForm(){
+			var formName = $("#form-name").val().trim();
+			if(formName==null || formName==""){
+				layer.alert("请填写表单名");
+			}else{
+				$.ajax({
+					url:common.getPath()+"/formManage/queryFormByName",
+					method:"post",
+					data:{
+						dynTitle:formName
+					},
+					success:function(result){
+						if(result.status==0){
+							var href = "/formManage/designForm?formName="+formName
+									+"&formDescription="+$("#form-description").val().trim()
+									+"&proUid="+pageConfig.proUid
+									+"&proVersion="+pageConfig.proVerUid;
+							window.location.href = common.getPath()+href;
+							$(".display_container").css("display", "none");
+						}else{
+							layer.alert("表单名已存在，不能重复");
+						}
+					}
+				});
+			}
+		}
+		
+		//修改表单
+		function updateForm(){
+			var formName = $("#update-form-name").val().trim();
+			if(formName==null || formName==""){
+				layer.alert("请填写表单名");
+			}else if(oldFormName==formName){
+				//用户未修改表单名，直接跳转页面即可
+				var href = "/formManage/designForm?formUid="+updateFormId
+						+"&formName="+formName
+						+"&formDescription="+$("#update-form-description").val().trim()
+						+"&proUid="+pageConfig.proUid
+						+"&proVersion="+pageConfig.proVerUid;
+				window.location.href = common.getPath()+href;
+				$(".display_container").css("display", "none");
+			}else{
+				$.ajax({
+					url:common.getPath()+"/formManage/queryFormByName",
+					method:"post",
+					data:{
+						dynTitle:formName
+					},
+					success:function(result){
+						if(result.status==0){
+							var href = "/formManage/designForm?formUid="+updateFormId
+									+"&formName="+formName
+									+"&formDescription="+$("#update-form-description").val().trim()
+									+"&proUid="+pageConfig.proUid
+									+"&proVersion="+pageConfig.proVerUid;
+							window.location.href = common.getPath()+href;
+							$(".display_container").css("display", "none");
+						}else{
+							layer.alert("表单名已存在，不能重复");
+						}
+					}
+				});
+			}
+		}
+		
+		//删除表单
+		function deleteForm(){
+			var checkedArr = $("input[name='formInfo_check']:checked");
+			if(checkedArr.length==0){
+				layer.alert("请选中要删除的表单数据");
+			}else{
+				var checkedFormUid = new Array();
+				checkedArr.each(function(){
+					checkedFormUid.push($(this).val());
+				});
+				
+				layer.confirm("确认删除表单数据？", function () {
+					$.ajax({
+						url:common.getPath()+"/formManage/deleteForm",
+						method:"post",
+						data:{"formUids":checkedFormUid},
+						traditional: true,//传递数组给后台
+						success:function(result){
+							if(result.status==0){
+								getFormInfoByProDefinition();
+								//如果有checkbox没有被选中
+								if($("input[name='formInfo_check']:checked").length==0 ||
+										$("input[name='formInfo_check']:checked").length==$("input[name='formInfo_check']").length){
+									$("input[name='allSel']").prop("checked",false);
+								}
+								layer.alert('删除表单数据成功');
+							}else{
+								layer.alert("删除表单数据失败");
+							}
+						}
+					});
+				});
+			}
+		}
+		
+		//点击修改按钮
+		function updateFormModal(obj){
+			var trObj = $(obj).parent().parent();
+			updateFormId = trObj.data("formuid");
+			var dynTitle = $(trObj.find("td")[1]).text().trim();
+			var dynDescription = $(trObj.find("td")[2]).text().trim();
+			oldFormName = dynTitle;
+			$("#update-form-name").val(dynTitle);
+			$("#update-form-description").val(dynDescription);
+			$(".display_container2").css("display", "block");
+		}
+		
+		//复选框全选，取消全选
+		function onClickHander(obj){
+			if(obj.checked){
+				$("input[name='formInfo_check']").prop("checked",true);
+			}else{
+				$("input[name='formInfo_check']").prop("checked",false);
+			}
+		}
+		
+		//复选框分选
+		function onClickSel(obj){
+			if(obj.checked){
+				var allSel = false;
+				$("input[name='formInfo_check']").each(function(){
+					if(!$(this).is(":checked")){
+						allSel = true;
+					}
+				});
+				
+				//如果有checkbox没有被选中
+				if(allSel){
+					$("input[name='allSel']").prop("checked",false);
+				}else{
+					$("input[name='allSel']").prop("checked",true);
+				}
+			}else{
+				$("input[name='allSel']").prop("checked",false);
+			}
+		}
+		
+		//复制快照复选框只能选择一个
+		function onSelOne(obj){
+			$('input[name="copyFormInfo_check"]').not($(obj)).prop("checked", false);
 		}
 	</script>

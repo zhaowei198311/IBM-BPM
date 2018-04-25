@@ -1406,6 +1406,7 @@
 				</p>
 			</div>
 			<div class="modal-footer">
+				<input type="hidden" id="formUid" value="${formUid}"/>
 				<input type="hidden" id="proUid" value="${proUid}"/>
 				<input type="hidden" id="proVersion" value="${proVersion}"/>
 				<input type="hidden" id="formName" value="${formName}"/>
