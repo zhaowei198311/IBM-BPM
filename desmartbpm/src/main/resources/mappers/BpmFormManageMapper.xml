@@ -45,6 +45,15 @@
     	from bpm_form where dyn_title = #{dynTitle}
     </select>
     
+    <select id="queryFormByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    	select <include refid="base_column"/>
+    	from bpm_form where dyn_uid = #{formUid}
+    </select>
+    
+    <delete id="deleteForm" parameterType="String">
+    	delete from bpm_form where dyn_uid = #{formUid}
+    </delete>
+    
     <insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	insert into bpm_form(<include refid="base_column"/>)
     	values(#{dynUid},#{dynTitle},#{dynDescription},'html',#{dynFilename},

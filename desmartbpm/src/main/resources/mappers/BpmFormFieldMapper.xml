@@ -21,4 +21,8 @@
 			from dual
 		</foreach>
 	</insert> 
+	
+	<delete id="deleteFormField" parameterType="String">
+		delete from bpm_form_field where form_uid = #{formUid}
+	</delete>
 </mapper>
