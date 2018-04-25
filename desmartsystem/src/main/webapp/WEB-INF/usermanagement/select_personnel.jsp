@@ -111,15 +111,15 @@
 					useruid+=$(this).attr('value')+";";
 					useruname+=$(this).text()+";";
 				});	
-				window.opener.document.getElementById(elementId).value=useruid;
-				window.opener.document.getElementById(elementId+"_view").value=useruname;
+				window.parent.document.getElementById(elementId).value=useruid;
+				window.parent.document.getElementById(elementId+"_view").value=useruname;
 			 	$('#close').click();
 			});
 			
 			var $user_li=$("#user_add");
 			$user_li.empty();
-			var id = window.opener.document.getElementById(elementId).value.split(';');
-			var name = window.opener.document.getElementById(elementId+"_view").value.split(';');
+			var id = window.parent.document.getElementById(elementId).value.split(';');
+			var name = window.parent.document.getElementById(elementId+"_view").value.split(';');
 			console.log(name);
 			console.log(id);
 			for (var i = 0; i < name.length; i++) {
