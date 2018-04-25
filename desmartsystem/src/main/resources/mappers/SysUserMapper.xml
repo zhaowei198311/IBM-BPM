@@ -36,7 +36,7 @@
 		<result column="SESSION_TIME" property="sessionTime" />
 		
 		<result column="COSTCENTER" property="costCenter" />
-		<result column="COMPANYNUMBER" property="companyNumber" />
+		<result column="COMPANYNUMBER" property="companynumber" />
 		<result column="DEPARTMENTNUMBER" property="departmetNumber" />
 		<result column="EMPLOYEETYPE" property="employeeType" />
 		<result column="DEPART_NAME" property="departName" />
