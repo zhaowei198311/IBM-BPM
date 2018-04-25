@@ -10,6 +10,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +23,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.ZTreeNode;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.JsonUtil;
 
@@ -39,6 +41,7 @@ import com.desmart.desmartbpm.util.JsonUtil;
 @Controller
 @RequestMapping(value = "/formManage")
 public class BpmFormManageController {
+	private static final Logger LOG = LoggerFactory.getLogger(BpmFormManageController.class);
 	@Autowired
 	private BpmFormManageService bpmFormManageService;
 	
@@ -47,6 +50,9 @@ public class BpmFormManageController {
 	
 	@Autowired
 	private DhProcessMetaService dhProcessMetaService; 
+	
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	@RequestMapping(value = "/index")
 	public ModelAndView toIndex(String proUid,String proVersion) {
@@ -60,12 +66,13 @@ public class BpmFormManageController {
 	 * 跳转到表单设计器
 	 */
 	@RequestMapping(value = "/designForm")
-	public ModelAndView designForm(String formName,String formDescription,
+	public ModelAndView designForm(String formName,String formDescription,String formUid,
 			String proUid,String proVersion) {
 		ModelAndView mv = new ModelAndView("common/formDesign");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
 		mv.addObject("proUid", proUid);
+		mv.addObject("formUid", formUid);
 		mv.addObject("proVersion", proVersion);
 		return mv;
 	}
@@ -110,7 +117,10 @@ public class BpmFormManageController {
         	ZTreeNode node = new ZTreeNode();
         	if(metaProUidSet.contains(definition.getProUid())) {
         		node.setId(definition.getProVerUid());
-            	node.setName(definition.getProVerUid());//页面上显示流程下某个版本
+        		String proVerName = dhProcessDefinitionService
+        				.getLswSnapshotBySnapshotId(definition.getProVerUid())
+        				.getName();
+            	node.setName(proVerName);//页面上显示流程下某个版本
                 node.setPid(definition.getProUid());
                 node.setItemType("processDefinition");
                 node.setIcon("../resources/images/3.png");
@@ -132,10 +142,22 @@ public class BpmFormManageController {
 		return bpmFormManageService.listFormByProDefinition(formTitle,proUid,proCategoryUid,proVerUid,pageNum,pageSize);
 	}
 	
+	/**
+	 * 根据表单名查询表单是否存在
+	 */
 	@RequestMapping(value = "/queryFormByName")
 	@ResponseBody
 	public ServerResponse queryFormByName(String dynTitle) {
 		return bpmFormManageService.queryFormByName(dynTitle);
+	}
+	
+	/**
+	 * 根据表单Id查询到表单数据
+	 */
+	@RequestMapping(value = "/queryFormByFormUid")
+	@ResponseBody
+	public ServerResponse queryFormByFormUid(String formUid) {
+		return bpmFormManageService.queryFormByFormUid(formUid);
 	}
 	
 	/**
@@ -145,6 +167,37 @@ public class BpmFormManageController {
 	@ResponseBody
 	public ServerResponse saveForm(@RequestBody BpmForm bpmForm) {
 		return bpmFormManageService.saveForm(bpmForm);
+	}
+	
+	/**
+	 * 保存表单html文件
+	 */
+	@RequestMapping(value = "/saveFormFile")
+	@ResponseBody
+	public String saveFormFile(String webpage,String filename,HttpServletRequest request) throws IllegalStateException, IOException {
+        String path = request.getServletContext().getRealPath("/resources/form/");
+        File file = new File(path+filename);
+        FileOutputStream fop = new FileOutputStream(file);
+        if (!file.exists()) {
+        	file.createNewFile();
+        }
+        byte[] contentInBytes = webpage.getBytes();
+        fop.write(contentInBytes);
+        fop.flush();
+        fop.close();
+        return path+filename;
+	}
+
+	@RequestMapping(value = "/deleteForm")
+	@ResponseBody
+	public ServerResponse deleteForm(String[] formUids,HttpServletRequest request) {
+		String path = request.getServletContext().getRealPath("/resources/form/");
+		try {
+			return bpmFormManageService.deleteForm(formUids,path);
+        } catch (Exception e) {
+            LOG.error("删除表单数据失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+        }
 	}
 	
 	/**
@@ -165,25 +218,6 @@ public class BpmFormManageController {
         //将上传文件保存到一个目标文件当中
         file.transferTo(new File(path + File.separator + filename));
 		return "{\"filename\":\""+filename+"\"}";
-	}
-	
-	/**
-	 * 保存表单html文件
-	 */
-	@RequestMapping(value = "/saveFormFile")
-	@ResponseBody
-	public String saveFormFile(String webpage,String filename,HttpServletRequest request) throws IllegalStateException, IOException {
-        String path = request.getServletContext().getRealPath("/resources/form/");
-        File file = new File(path+filename);
-        FileOutputStream fop = new FileOutputStream(file);
-        if (!file.exists()) {
-        	file.createNewFile();
-        }
-        byte[] contentInBytes = webpage.getBytes();
-        fop.write(contentInBytes);
-        fop.flush();
-        fop.close();
-        return path+filename;
 	}
 	
 	/**

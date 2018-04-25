@@ -24,7 +24,17 @@ public interface BpmFormManageService {
 	ServerResponse saveForm(BpmForm bpmForm);
 
 	/**
-	 * 通过表单名查询表单是否存在
+	 * 通过表单名查询表单
 	 */
 	ServerResponse queryFormByName(String dynTitle);
+
+	/**
+	 * 通过表单ID查询表单
+	 */
+	ServerResponse queryFormByFormUid(String formUid);
+
+	/**
+	 * 删除表单数据
+	 */
+	ServerResponse deleteForm(String[] formUids,String path);
 }
