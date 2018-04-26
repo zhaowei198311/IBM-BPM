@@ -34,7 +34,60 @@ var common = {
     chooseTeamPath : function(id, isSingle) {
     	return common.getPath() + "/test/chooseTeam?id=" + id +"&isSingle=" + isSingle; 
     },
-    // 选角色组弹框的路径
+    chooseUser: function(elementId, isSingle) {
+    	layer.open({
+    	    type: 2,
+    	    title: '选择人员',
+    	    shadeClose: true,
+    	    shade: 0.8,
+    	    area: ['600px', '540px'],
+    	    content: common.chooseUserPath(elementId, isSingle),
+    	    success: function (layero, lockIndex) {
+    	        var body = layer.getChildFrame('body', lockIndex);
+    	        body.find('button#close').on('click', function () {
+    	            layer.close(lockIndex);
+    	        });
+    	    }
+    	}); 
+    },
+    chooseRole: function(elementId, isSingle) {
+    	layer.open({
+            type: 2,
+            title: '角色选择',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['790px', '580px'],
+            content: common.chooseRolePath(elementId, isSingle),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
+    chooseTeam: function(elementId, isSingle) {
+        layer.open({
+            type: 2,
+            title: '角色组选择',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['790px', '580px'],
+            content: common.chooseTeamPath(elementId, isSingle),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;

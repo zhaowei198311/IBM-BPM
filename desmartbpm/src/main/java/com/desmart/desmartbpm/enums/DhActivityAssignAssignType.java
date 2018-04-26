@@ -6,7 +6,8 @@ package com.desmart.desmartbpm.enums;
 public enum DhActivityAssignAssignType {
     USER("USER", "用户"),
     TEAM("TEAM", "角色组"),
-    ROLE("ROLE", "角色");
+    ROLE("ROLE", "角色"),
+    FIELD("FIELD", "表单字段");
 
     private final String code;
     private final String value;

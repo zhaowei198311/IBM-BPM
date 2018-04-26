@@ -41,6 +41,9 @@
     <result column="ACTC_CAN_SKIP" property="actcCanSkip" jdbcType="VARCHAR" />
     <result column="UPDATOR" property="updator" jdbcType="VARCHAR" />
     <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="ACTC_CAN_CHOOSE_USER" property="actcCanChooseUser" jdbcType="VARCHAR" />
+    <result column="ACTC_CAN_TRANSFER" property="actcCanTransfer" jdbcType="VARCHAR" />
+    <result column="ACTC_RESPONSIBILITY" property="actcResponsibility" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     ACTC_UID, ACTIVITY_ID, ACTC_SORT, ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, ACTC_ASSIGN_VARIABLE, 
@@ -51,13 +54,24 @@
     ACTC_AUDIT_TO_FIELD, ACTC_OUTTIME_TRIGGER, ACTC_OUTTIME_TEMPLATE, ACTC_DESCRIPTION, 
     ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, 
     ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP, 
-    UPDATOR, UPDATE_TIME
+    UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY
   </sql>
-  
+  <sql id="relationColumn" >
+    atc.ACTC_UID, atc.ACTIVITY_ID, atc.ACTC_SORT, atc.ACTC_TIME, atc.ACTC_TIMEUNIT, atc.ACTC_ASSIGN_TYPE, atc.ACTC_ASSIGN_VARIABLE,
+    atc.SIGN_COUNT_VARNAME, atc.ACTC_CAN_EDIT_ATTACH, atc.ACTC_CAN_UPLOAD_ATTACH, atc.ACTC_CAN_DELEGATE,
+    atc.ACTC_CAN_DELETE_ATTACH, atc.ACTC_CAN_MESSAGE_NOTIFY, atc.ACTC_CAN_MAIL_NOTIFY, atc.ACTC_MAIL_NOTIFY_TEMPLATE,
+    atc.ACTC_CAN_REJECT, atc.ACTC_REJECT_TYPE, atc.ACTC_CAN_REVOKE, atc.ACTC_CAN_AUTOCOMMIT, atc.ACTC_CAN_ADD,
+    atc.ACTC_CAN_USER_TO_FIELD, atc.ACTC_CAN_AUDIT_TO_FIELD, atc.ACTC_CAN_APPROVE, atc.ACTC_USER_TO_FIELD,
+    atc.ACTC_AUDIT_TO_FIELD, atc.ACTC_OUTTIME_TRIGGER, atc.ACTC_OUTTIME_TEMPLATE, atc.ACTC_DESCRIPTION,
+    atc.ACTC_DEF_TITLE, atc.ACTC_DEF_SUBJECT_MESSAGE, atc.ACTC_DEF_MESSAGE, atc.ACTC_DEF_DESCRIPTION,
+    atc.ACTC_ALERT, atc.ACTC_PRIORITY_VARIABLE, atc.ACTC_CAN_CANCEL, atc.ACTC_CAN_PAUSE, atc.ACTC_CAN_SKIP,
+    atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    <include refid="Base_Column_List" />
-    from DH_ACTIVITY_CONF
+    <include refid="relationColumn" />, tri1.tri_title actcOuttimeTriggerTitle
+    from DH_ACTIVITY_CONF atc
+    left join dh_trigger tri1 on atc.ACTC_OUTTIME_TRIGGER = tri1.tri_uid
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </select>
   
@@ -87,7 +101,7 @@
       ACTC_DESCRIPTION, ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, 
       ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, ACTC_ALERT, 
       ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, 
-      ACTC_CAN_SKIP, UPDATOR, UPDATE_TIME
+      ACTC_CAN_SKIP, UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY
       )
     values (#{actcUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{actcSort,jdbcType=INTEGER}, 
       #{actcTime,jdbcType=FLOAT}, #{actcTimeunit,jdbcType=VARCHAR}, #{actcAssignType,jdbcType=VARCHAR}, 
@@ -102,7 +116,8 @@
       #{actcDescription,jdbcType=VARCHAR}, #{actcDefTitle,jdbcType=VARCHAR}, #{actcDefSubjectMessage,jdbcType=VARCHAR}, 
       #{actcDefMessage,jdbcType=VARCHAR}, #{actcDefDescription,jdbcType=VARCHAR}, #{actcAlert,jdbcType=VARCHAR}, 
       #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR}, 
-      #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{actcCanChooseUser},
+      #{actcCanTransfer}, #{actcResponsibility}
       )
   </insert>
   
@@ -218,6 +233,15 @@
       <if test="actcCanSkip != null" >
         ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR}
       </if>
+      <if test="actcCanChooseUser != null" >
+        ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser,jdbcType=VARCHAR}
+      </if>
+      <if test="actcCanTransfer != null" >
+        actc_Can_Transfer = #{actcCanTransfer,jdbcType=VARCHAR}
+      </if>
+      <if test="actcResponsibility != null" >
+        actc_Responsibility = #{actcResponsibility,jdbcType=VARCHAR}
+      </if>
     </set>
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
@@ -260,7 +284,10 @@
       ACTC_CAN_PAUSE = #{actcCanPause,jdbcType=VARCHAR},
       ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR},
       UPDATOR = #{updator,jdbcType=VARCHAR},
-      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser},
+      ACTC_CAN_TRANSFER = #{actcCanTransfer},
+      ACTC_RESPONSIBILITY = #{actcResponsibility}
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
 </mapper>

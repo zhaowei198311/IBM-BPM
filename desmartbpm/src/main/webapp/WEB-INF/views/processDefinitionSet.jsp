@@ -144,7 +144,7 @@
                             <input type="text"  name="permissionStartUser_view" id="permissionStartUser_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartUser" id="permissionStartUser"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseUser_btn">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user"  style="margin-right:10px;" id="chooseUser_btn">&#xe612;</i> </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">角色</label>
@@ -152,7 +152,7 @@
                             <input type="text"  name="permissionStartRole_view" id="permissionStartRole_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartRole" id="permissionStartRole"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseRole_btn">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" style="margin-right:10px;" id="chooseRole_btn">&#xe612;</i> </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">角色组</label>
@@ -160,7 +160,7 @@
                             <input type="text" name="permissionStartTeam_view" id="permissionStartTeam_view"   lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartTeam" id="permissionStartTeam"/>
                         </div>
-                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" id="chooseTeam_btn">&#xe612;</i> </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" style="margin-right:10px;" id="chooseTeam_btn">&#xe612;</i> </div>
                     </div>
                 </div>
             </div>

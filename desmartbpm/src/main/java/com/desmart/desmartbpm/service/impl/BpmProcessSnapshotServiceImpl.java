@@ -460,6 +460,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanCancel(null);
         conf.setActcCanPause(null);
         conf.setActcCanSkip(null);
+        conf.setActcCanChooseUser(Const.Boolean.FALSE);
+        conf.setActcCanTransfer(Const.Boolean.FALSE);
+        conf.setActcResponsibility(null);
         return conf;
     }
     

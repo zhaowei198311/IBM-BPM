@@ -81,6 +81,16 @@ public class DhActivityConf {
     private String updator;
 
     private Date updateTime;
+    
+    private String actcCanChooseUser;
+    
+    private String actcCanTransfer;
+    
+    private String actcResponsibility;
+    
+    // 不在表中
+    private String actcOuttimeTriggerTitle;
+    
 
     public String getActcUid() {
         return actcUid;
@@ -392,6 +402,38 @@ public class DhActivityConf {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getActcOuttimeTriggerTitle() {
+        return actcOuttimeTriggerTitle;
+    }
+
+    public void setActcOuttimeTriggerTitle(String actcOuttimeTriggerTitle) {
+        this.actcOuttimeTriggerTitle = actcOuttimeTriggerTitle;
+    }
+
+    public String getActcCanChooseUser() {
+        return actcCanChooseUser;
+    }
+
+    public void setActcCanChooseUser(String actcCanChooseUser) {
+        this.actcCanChooseUser = actcCanChooseUser;
+    }
+
+    public String getActcCanTransfer() {
+        return actcCanTransfer;
+    }
+
+    public void setActcCanTransfer(String actcCanTransfer) {
+        this.actcCanTransfer = actcCanTransfer;
+    }
+
+    public String getActcResponsibility() {
+        return actcResponsibility;
+    }
+
+    public void setActcResponsibility(String actcResponsibility) {
+        this.actcResponsibility = actcResponsibility;
     }
 
     @Override

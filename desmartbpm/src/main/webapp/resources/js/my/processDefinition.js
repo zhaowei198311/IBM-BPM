@@ -167,7 +167,6 @@ $(function () {
            }
        });
    });
-<<<<<<< .mine
 });
 
 
@@ -189,7 +188,6 @@ $(function() {
         layer.alert(proUid+"~~~~"+proVerUid)
         window.location.href= common.getPath() + "/processDefinition/snapshotFlowChart";
     })
-=======
    
    $("#toEditActivityConf_btn").click(function() {
 	   var cks = $("[name='definition_ck']:checked");
@@ -229,5 +227,4 @@ $(function() {
        
    });
    
->>>>>>> .r209
 });

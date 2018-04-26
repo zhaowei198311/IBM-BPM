@@ -147,62 +147,17 @@ $(function() {
 
     // 选择发起人员
     $("#chooseUser_btn").click(function () {
-    	layer.open({
-    	    type: 2,
-    	    title: '选择人员',
-    	    shadeClose: true,
-    	    shade: 0.8,
-    	    area: ['600px', '540px'],
-    	    content: common.chooseUserPath('permissionStartUser', 'false'),
-    	    success: function (layero, lockIndex) {
-    	        var body = layer.getChildFrame('body', lockIndex);
-    	        body.find('button#close').on('click', function () {
-    	            layer.close(lockIndex);
-    	        });
-    	    }
-    	});        
+    	common.chooseUser('permissionStartUser', 'false');
     });
     
     // 选择发起角色
     $("#chooseRole_btn").click(function(){
-    	layer.open({
-            type: 2,
-            title: '角色选择',
-            shadeClose: true,
-            shade: 0.8,
-            area: ['790px', '580px'],
-            content: common.chooseRolePath('permissionStartRole', 'false'),
-            success: function(layero, lockIndex) {
-            	var body = layer.getChildFrame('body', lockIndex);
-            	body.find('button#cancel_btn').on('click', function () {
-                    layer.close(lockIndex);
-                });
-            	body.find('button#sure_btn').on('click', function () {
-                    layer.close(lockIndex);
-                });
-            }
-        }); 
+    	common.chooseRole('permissionStartRole', 'false');
     });
     
     // 选择发起角色组
     $("#chooseTeam_btn").click(function(){
-        layer.open({
-            type: 2,
-            title: '角色组选择',
-            shadeClose: true,
-            shade: 0.8,
-            area: ['790px', '580px'],
-            content: common.chooseTeamPath('permissionStartTeam', 'false'),
-            success: function(layero, lockIndex) {
-            	var body = layer.getChildFrame('body', lockIndex);
-            	body.find('button#cancel_btn').on('click', function () {
-                    layer.close(lockIndex);
-                });
-            	body.find('button#sure_btn').on('click', function () {
-                    layer.close(lockIndex);
-                });
-            }
-        }); 
+    	common.chooseTeam('permissionStartTeam', 'false');
     });
     
 });

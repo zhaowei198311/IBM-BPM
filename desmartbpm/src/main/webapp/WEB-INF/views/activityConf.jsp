@@ -72,23 +72,19 @@
                                             <li>步骤配置</li>
                                         </ul>
                                         <div class="layui-tab-content">
+                                            <!-- 环节属性配置开始 -->
                                             <div class="layui-tab-item layui-show">
-                                                <form class="layui-form" action="">
+                                                <form class="layui-form" action="" id="config_form">
                                                     <div class="layui-row">
                                                         <div class="layui-col-md6">
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">禁止委托办理</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="entrust" value="是" title="是" checked>
-                                                                    <input type="radio" name="entrust" value="否" title="否" >
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
                                                                 <label class="layui-form-label">默认处理人</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="actcAssignType" lay-filter="filter" lay-verify="required">
-                                                                        <option value="roleAndDepartment">角色+部门</option>
-                                                                        <option value="roleAndCompany">角色+公司编码</option>
+                                                                    <select name="actcAssignType" lay-filter="assignType" lay-verify="required">
+                                                                        <option value="roleAndDepartment">角色 + 部门</option>
+                                                                        <option value="roleAndCompany">角色 + 公司编码</option>
+                                                                        <option value="teamAndDepartment">角色组 + 部门</option>
+                                                                        <option value="teamAndCompany">角色组 + 公司编码</option>
                                                                         <option value="leaderOfPreActivityUser">上个环节提交人的上级</option>
                                                                         <option value="users">指定人员</option>
                                                                         <option value="processCreator">流程发起人</option>
@@ -96,46 +92,61 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item role_div">
-                                                                <label class="layui-form-label">角色</label>
-                                                                <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
-                                                                    <i class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item user_div">
+                                                            <div class="layui-form-item " id="handleUser_div" style="display:none;">
                                                                 <label class="layui-form-label">人员</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
-                                                                    <i class="layui-icon choose_user" title="选择人员">&#xe612;</i>  
+                                                                    <input type="hidden" id="handleUser" name="handleUser" />
+                                                                    <input type="text" name="handleUser_view"  id="handleUser_view" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+                                                                    <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item name_div">
+                                                            <div class="layui-form-item" id="handleRole_div" style="display:none;">
+                                                                <label class="layui-form-label">角色</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="handleRole" name="handleRole"  value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="handleRole_view" name="handleRole_view"  value="" autocomplete="off" class="layui-input">
+                                                                    <i id="choose_handle_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="handleTeam_div" style="display:none;">
+                                                                <label class="layui-form-label">角色组</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="handleTeam" name="handleTeam"  value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="handleTeam_view" name="handleTeam_view"  value="" autocomplete="off" class="layui-input">
+                                                                    <i id="choose_handle_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>  
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="handleField_div" style="display:none;">
                                                                 <label class="layui-form-label">字段名称</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
-                                                                    <i class="layui-icon choose_name" title="选择字段">&#xe654;</i>  
+                                                                    <input type="text" name="handleField"  value="" autocomplete="off" class="layui-input">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否可选</label>
+                                                                <label class="layui-form-label">是否允许手动选择</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="range" value="不可选" title="不可选" checked>
-                                                                    <input type="radio" name="range" value="可选" title="可选" >
-                                                                    <!--<input type="radio" name="range" value="指定范围" title="指定范围" >
-                                                                    <input type="radio" name="range" value="指定角色" title="指定角色" >-->
+                                                                    <input type="radio" name="actcCanChooseUser" value="TRUE" title="可选" >
+                                                                    <input type="radio" name="actcCanChooseUser" value="FALSE" title="不可选" >
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
+                                                                <label class="layui-form-label">是否可以驳回</label>
+                                                                <div class="layui-input-block">
+                                                                    <input type="radio" name="actcCanReject" lay-filter="canReject" value="TRUE" title="可以驳回">
+                                                                    <input type="radio" name="actcCanReject" lay-filter="canReject" value="FALSE" title="不可以驳回" >
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item" id="rejectType_div" style="display:none;">
                                                                 <label class="layui-form-label">驳回方式</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">到指定环节</option>
-                                                                        <option></option>
+                                                                    <select name="actcRejectType" lay-filter="rejectType" lay-verify="required">
+                                                                        <option value="toPreActivity">驳回到上个环节</option>
+                                                                        <option value="toProcessStart">驳回到发起人</option>
+                                                                        <option value="toActivities">驳回到指定环节</option>
                                                                     </select>
                                                                 </div>
                                                             </div>                                                          
-                                                            <div class="layui-form-item">
+                                                            <div class="layui-form-item" id="rejectActivities_div" style="display:none;">
                                                                 <label class="layui-form-label">驳回环节号</label>
                                                                 <div class="layui-input-block" style="position:relative;">
                                                                     <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
@@ -143,163 +154,168 @@
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否编辑表单</label>
+                                                                <label class="layui-form-label">是否允许自动提交</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="document" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="document" value="不能编辑" title="不能编辑">
+                                                                    <input type="radio" name="actcCanAutocommit" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanAutocommit" value="FALSE" title="禁止">
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">环节自动提交</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="self-motion" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="self-motion" value="禁止" title="禁止">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许取回</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="get-back" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="get-back" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许加签</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="yes" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="yes" value="不允许" title="不允许">
-                                                                </div>
-                                                            </div>                                                          
+                                                         
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否可以审批</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="approval" value="可以审批" title="可以审批" checked>
-                                                                    <input type="radio" name="approval" value="不能审批" title="不能审批">
+                                                                    <input type="radio" name="actcCanApprove" value="TRUE" title="可以审批" >
+                                                                    <input type="radio" name="actcCanApprove" value="FALSE" title="不能审批">
                                                                 </div>
                                                             </div>                                                          
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">流程环节号</label>
+                                                                <label class="layui-form-label">环节排序号</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" name="actcSort" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">分配变量名称</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">NextOwners_0</option>
-                                                                        <option value="">NextOwners_1</option>
-                                                                        <option value="">NextOwners_2</option>
-                                                                        <option value="">NextOwners_3</option>
-                                                                        <option value="">NextOwners_4</option>
+                                                                    <select name="actcAssignVariable" lay-verify="required">
+                                                                        <option value="nextOwners_0">nextOwners_0</option>
+                                                                        <option value="nextOwners_1">nextOwners_1</option>
+                                                                        <option value="nextOwners_2">nextOwners_2</option>
+                                                                        <option value="nextOwners_3">nextOwners_3</option>
+                                                                        <option value="nextOwners_4">nextOwners_4</option>
+                                                                        <option value="nextOwners_5">nextOwners_5</option>
+                                                                        <option value="nextOwners_6">nextOwners_6</option>
+                                                                        <option value="nextOwners_7">nextOwners_7</option>
+                                                                        <option value="nextOwners_8">nextOwners_8</option>
+                                                                        <option value="nextOwners_9">nextOwners_9</option>
+                                                                        <option value="nextOwners_10">nextOwners_10</option>
+                                                                        <option value="nextOwners_11">nextOwners_11</option>
+                                                                        <option value="nextOwners_12">nextOwners_12</option>
+                                                                        <option value="nextOwners_13">nextOwners_13</option>
+                                                                        <option value="nextOwners_14">nextOwners_14</option>
+                                                                        <option value="nextOwners_15">nextOwners_15</option>
+                                                                        <option value="nextOwners_16">nextOwners_16</option>
+                                                                        <option value="nextOwners_17">nextOwners_17</option>
+                                                                        <option value="nextOwners_18">nextOwners_18</option>
+                                                                        <option value="nextOwners_19">nextOwners_19</option>
+                                                                        <option value="nextOwners_20">nextOwners_20</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">会签变量名称</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">signCount_0</option>
-                                                                        <option value="">signCount_1</option>
-                                                                        <option value="">signCount_2</option>
-                                                                        <option value="">signCount_3</option>
-                                                                        <option value="">signCount_4</option>
+                                                                    <select name="signCountVarname" lay-verify="required">
+                                                                        <option value="signCount_0">signCount_0</option>
+                                                                        <option value="signCount_1">signCount_1</option>
+                                                                        <option value="signCount_2">signCount_2</option>
+                                                                        <option value="signCount_3">signCount_3</option>
+                                                                        <option value="signCount_4">signCount_4</option>
+                                                                        <option value="signCount_5">signCount_5</option>
+                                                                        <option value="signCount_6">signCount_6</option>
+                                                                        <option value="signCount_7">signCount_7</option>
+                                                                        <option value="signCount_8">signCount_8</option>
+                                                                        <option value="signCount_9">signCount_9</option>
+                                                                        <option value="signCount_10">signCount_10</option>
+                                                                        <option value="signCount_11">signCount_11</option>
+                                                                        <option value="signCount_12">signCount_12</option>
+                                                                        <option value="signCount_13">signCount_13</option>
+                                                                        <option value="signCount_14">signCount_14</option>
+                                                                        <option value="signCount_15">signCount_15</option>
+                                                                        <option value="signCount_16">signCount_16</option>
+                                                                        <option value="signCount_17">signCount_17</option>
+                                                                        <option value="signCount_18">signCount_18</option>
+                                                                        <option value="signCount_19">signCount_19</option>
+                                                                        <option value="signCount_20">signCount_20</option>
                                                                     </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">处理时间</label>
-                                                                <div class="layui-input-inline">
-                                                                    <input name="date" id="test1" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
-                                                                    <input name="date" id="test2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">多对象处理规则</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="more" value="顺序流转" title="顺序流转" checked>
-                                                                    <input type="radio" name="more" value="并发审批（所有审批人必须都通过）" title="并发审批（所有审批人必须都通过）">
-                                                                    <input type="radio" name="more" value="并发审批（只有一个审批人通过即可）" title="并发审批（只有一个审批人通过即可）">
-                                                                </div>
-                                                            </div>
+                                                            
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否允许转签</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="endorse" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="endorse" value="不允许" title="不允许">
+                                                                    <input type="radio" name="actcCanTransfer" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanTransfer" value="FALSE" title="不允许">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">允许上传附件</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="upload" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="upload" value="不允许" title="不允许">
+                                                                    <input type="radio" name="actcCanUploadAttach" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanUploadAttach" value="FALSE" title="不允许">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">能否编辑附件</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="edit" value="可以编辑" title="可以编辑" checked>
-                                                                    <input type="radio" name="edit" value="不能编辑" title="不能编辑">
+                                                                    <input type="radio" name="actcCanEditAttach" value="TRUE" title="可以编辑" >
+                                                                    <input type="radio" name="actcCanEditAttach" value="FALSE" title="不能编辑">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">允许删除附件</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="delete" value="允许" title="允许" checked>
-                                                                    <input type="radio" name="delete" value="不允许" title="不允许">
+                                                                    <input type="radio" name="actcCanDeleteAttach" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanDeleteAttach" value="FALSE" title="不允许">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否将当前处理人填写到域中</label>
+                                                                <label class="layui-form-label">允许代理</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="approval_user" value="是" title="是" checked>
-                                                                    <input type="radio" name="approval_user" value="否" title="否">
+                                                                    <input type="radio" name="actcCanDelegate" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanDelegate" value="FALSE" title="不允许">
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">能否将意见填写到域中</label>
+                                                                <label class="layui-form-label">是否允许取回</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="opinion" value="不添加" title="不添加" checked>
-                                                                    <input type="radio" name="opinion" value="添加到域" title="添加到域">
-                                                                    <input type="radio" name="opinion" value="处理人选择" title="处理人选择">
+                                                                    <input type="radio" name="actcCanRevoke" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanRevoke" value="FALSE" title="不允许">
                                                                 </div>
                                                             </div>
+                                                            <div class="layui-form-item">
+                                                                <label class="layui-form-label">是否允许加签</label>
+                                                                <div class="layui-input-block">
+                                                                    <input type="radio" name="actcCanAdd" value="TRUE" title="允许" >
+                                                                    <input type="radio" name="actcCanAdd" value="FALSE" title="不允许">
+                                                                </div>
+                                                            </div> 
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否邮件通知本环节处理人</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="mail" value="是" title="是" checked>
-                                                                    <input type="radio" name="mail" value="否" title="否">
+                                                                    <input type="radio" name="actcCanMailNotify" value="TRUE" title="是" >
+                                                                    <input type="radio" name="actcCanMailNotify" value="FALSE" title="否">
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item">
+                                                                <label class="layui-form-label">邮件通知模板</label>
+                                                                <div class="layui-input-block">
+                                                                    <input type="text" name="actcMailNotifyTemplate"  value="" autocomplete="off" class="layui-input" >
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否短信通知本环节处理人</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="message" value="是" title="是" checked>
-                                                                    <input type="radio" name="message" value="否" title="否">
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否部门会签（部门处理）</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" name="countersign" value="是" title="是" checked>
-                                                                    <input type="radio" name="countersign" value="否" title="否">
+                                                                    <input type="radio" name="actcCanMessageNotify" value="TRUE" title="是" >
+                                                                    <input type="radio" name="actcCanMessageNotify" value="FALSE" title="否">
                                                                 </div>
                                                             </div>
                                                         </div>                                                      
                                                     </div>
                                                 </form>
                                             </div>
+                                            
+                                            <!-- 环节SLA配置开始  -->
                                             <div class="layui-tab-item">
-                                                <form class="layui-form" action="">
+                                                <form class="layui-form" action="" id="sla_form">
                                                     <div class="layui-row">
                                                         <div class="layui-col-md6">
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">运行时长</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+                                                                    <input type="text" name="actcTime" value="" autocomplete="off" class="layui-input" >
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
@@ -310,38 +326,50 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">超时通知触发事件类</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
+										                    <div class="layui-form-item ">
+                                                                <label class="layui-form-label">超时触发器</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="actcOuttimeTrigger" name="actcOuttimeTrigger" value=""/>
+                                                                    <input type="text"  id="actcOuttimeTriggerTitle"  name="actcOuttimeTriggerTitle" value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i id="choose_outtimeTri_btn" class="layui-icon choose_role" title="选择触发器">&#xe621;</i>  
                                                                 </div>
-                                                            </div>                                                          
+                                                            </div>                                                        
                                                         </div>
                                                         <div class="layui-col-md6">
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">运行时间单位</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value=""></option>
-                                                                        <option value="">分钟</option>
-                                                                        <option value="">小时</option>
-                                                                        <option value="">天</option>
+                                                                    <select name="actcTimeunit" lay-verify="required">
+                                                                        <option value="hour">小时</option>
+                                                                        <option value="day">天</option>
+                                                                        <option value="month">月</option>
                                                                     </select>                                           
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item">
+                                                            <div class="layui-form-item ">
                                                                 <label class="layui-form-label">超时通知人员</label>
-                                                                <div class="layui-input-block">
-                                                                    <div class="layui-input-inline">
-                                                                        <input type="text" name="text" required lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                    </div>
-                                                                    <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user">&#xe612;</i> </div>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i class="layui-icon choose_role" title="选择人员">&#xe612;</i>  
                                                                 </div>
                                                             </div>                                                          
                                                         </div>
                                                     </div>
+                                                    <div class="layui-row">
+                                                        <div class="layui-col-md12">
+                                                            <div class="layui-form-item ">
+                                                                <label class="layui-form-label">环节职责</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <textarea name="actcResponsibility"  placeholder="" class="layui-textarea" style="height:400px;"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
                                                 </form>
                                             </div>
+                                            
+                                            <!--  步骤配置开始 -->
                                             <div class="layui-tab-item">
                                                 新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step">新增</button>
                                                 <p class="title_p">第一步</p>
@@ -796,7 +824,7 @@
                 </div>
                 <div class="middle1" >
                     <div class="radio_div">选择类型：
-                        <input type="radio" name="type" value="type1" title="表单"  checked onclick="show1()" id="radio1"> <label for="radio1">表单</label>
+                        <input type="radio" name="type" value="type1" title="表单"   onclick="show1()" id="radio1"> <label for="radio1">表单</label>
                         <input type="radio" name="type" value="type2" title="触发器" onclick="show2()" id="radio2"> <label for="radio2">触发器</label>
                     </div>
                     <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
@@ -955,7 +983,7 @@
                 </div>
             </div>
         </div>
-        <div class="display_container10">
+        <div class="display_container10" id="field_permission_container">
             <div class="display_content3">
                 <div class="top">
                     编辑字段权限
@@ -992,15 +1020,13 @@
                 </div>
                 <div class="foot">
                     <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#field_permission_container').hide();">取消</button>
                 </div>
             </div>
         </div>
         <div class="display_container5">
             <div class="display_content5">
-                <div class="top">
-                    新增网关
-                </div>
+                <div class="top">新增网关</div>
                 <div class="middle1">
                     <form class="layui-form" action="">
                         <div class="layui-form-item">
@@ -1075,7 +1101,7 @@
                 </div>
             </div>
         </div>
-        <div class="display_container6">
+        <div class="display_container6" id="choose_activity_container">
             <div class="display_content6">
                 <div class="top">
                     选择退回环节
@@ -1110,10 +1136,59 @@
                 </div>
                 <div class="foot">
                     <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#choose_activity_container').hide();">取消</button>
                 </div>
             </div>
         </div>
+		<!-- 选择触发器弹框 -->
+		<div class="display_container3" id="chooseTrigger_container" >
+		    <div class="display_content3"  style="height:450px;">
+		        <div class="top"> 选择触发器</div>
+		        <div class="middle1" style="height:300px;">
+		            <div class="search_area">
+		                <div class="layui-row layui-form" style="margin-top:10px">
+		                    <div class="layui-col-md5"><input id="triTitle_input" type="text" placeholder="触发器名称"  class="layui-input"></div>
+		                    <div class="layui-col-md5">
+		                        <select lay-verify="required" id="triType_sel">
+		                            <option value="">请选择类型</option>
+		                            <option value="javaclass">javaclass</option>
+		                            <option value="script">script</option>
+		                            <option value="sql">sql</option>
+		                            <option value="interface">interface</option>
+		                        </select>
+		                    </div>
+		                    <div class="layui-col-md2" style="text-align:right"><button class="layui-btn" id="searchTrigger_btn">查询</button></div>
+		
+		                </div>
+		            </div>
+		            <table class="layui-table backlog_table" lay-even lay-skin="nob" text-overflow: ellipsis>
+		                <colgroup>
+		                    <col>
+		                    <col>
+		                    <col>
+		                    <col>
+		                    <col>
+		                </colgroup>
+		                <thead>
+		                <tr>
+		                    <th>序号</th>
+		                    <th>触发器名称</th>
+		                    <th>触发器类型</th>
+		                    <th>触发器内容</th>
+		                    <th>触发器参数</th>
+		                </tr>
+		                </thead>
+		                <tbody id="chooseTrigger_tbody"></tbody>
+		            </table>
+		        </div>
+		        <div id="lay_page"></div>
+		        <div class="foot">
+		            <button class="layui-btn layui-btn sure_btn" id="chooseTrigger_sureBtn">确定</button>
+		            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="chooseTrigger_cancelBtn">取消</button>
+		        </div>
+		    </div>
+		</div>
+		<!-- 选择触发器弹框结束 -->
     </body>
     
     <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
@@ -1156,13 +1231,13 @@
             $(".choose_name").click(function(){
                 $(".display_container10").css("display","block");
             })
-            $(".sure_btn").click(function(){
+            $("#sure_btn").click(function(){
                 $(".display_container3").css("display","none");
                 $(".display_container5").css("display","none");
                 $(".display_container6").css("display","none");
                 $(".display_container10").css("display","none");
             })
-            $(".cancel_btn").click(function(){
+            $("#cancel_btn").click(function(){
                 $(".display_container3").css("display","none");
                 $(".display_container4").css("display","none");
                 $(".display_container5").css("display","none");
@@ -1170,36 +1245,7 @@
                 $(".display_container10").css("display","none");
             })
         })
-        layui.use('form', function(){
-          var form = layui.form;
-          form.on('select(filter)', function(data){         
-                if(data.value=="select1"){ 
-                    $(".role_div").css("display","block");
-                    $(".user_div").css("display","none");
-                    $(".name_div").css("display","none");
-                }else  if(data.value=="select2"){
-                    $(".role_div").css("display","block");
-                    $(".user_div").css("display","none");
-                    $(".name_div").css("display","none");
-                }else if(data.value=="select3"){
-                    $(".role_div").css("display","none");
-                    $(".user_div").css("display","none");
-                    $(".name_div").css("display","none");
-                }else if(data.value=="select4"){
-                    $(".role_div").css("display","none");
-                    $(".user_div").css("display","block");
-                    $(".name_div").css("display","none");
-                }else if(data.value=="select5"){
-                    $(".role_div").css("display","none");
-                    $(".user_div").css("display","none");
-                    $(".name_div").css("display","none");
-                }else if(data.value=="select6"){
-                    $(".role_div").css("display","none");
-                    $(".user_div").css("display","none");
-                    $(".name_div").css("display","block");
-                }           
-            });     
-        });
+
             
         function show1(){
             $(".form_table").css("display","inline-table");

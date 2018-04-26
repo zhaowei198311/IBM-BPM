@@ -97,38 +97,7 @@
                               <th>流程图id</th>
                             </tr> 
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 1</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 5</td>
-                                <td>流程名称</td>
-                                <td>2066.f5d9e3c6-2fa7...</td>
-                                <td>25.64765b13-286b-4...</td>
-                            </tr>
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
                 <div id="demo8"></div>

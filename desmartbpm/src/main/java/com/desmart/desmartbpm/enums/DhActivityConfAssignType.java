@@ -6,6 +6,8 @@ package com.desmart.desmartbpm.enums;
 public enum DhActivityConfAssignType {
     ROLE_AND_DEPARTMENT("roleAndDepartment", "角色+部门"),
     ROLE_AND_COMPANY("roleAndCompany", "角色+公司编码"),
+    TEAM_AND_DEPARTMENT("teamAndDepartment", "角色组+部门"),
+    TEAM_AND_COMPANY("teamAndCompany", "角色组+公司编码"),
     LEADER_OF_PRE_ACTIVITY_USER("leaderOfPreActivityUser", "上个环节提交人的上级"),
     USERS("users", "指定人员"),
     PROCESS_CREATOR("processCreator", "流程发起人"),
