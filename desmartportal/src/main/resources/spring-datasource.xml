@@ -36,7 +36,11 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations">
-			   <value>classpath:mappers/*Mapper.xml</value>
+        	   <array>
+			   <value>classpath*:mappers/*Mapper.xml</value>
+			   <value>classpath*:resources/mappers/*.xml</value>
+			   <value>classpath*:resources/engineMappers/*.xml</value>
+			   </array>
         </property>
 		<property name="typeAliasesPackage" value="com.desmart.desmartportal.entity"></property>
 		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
@@ -56,7 +60,7 @@
     </bean>
 
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.desmart.desmartportal.dao"/>
+        <property name="basePackage" value="com.desmart.**.*dao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
     </bean>
 
