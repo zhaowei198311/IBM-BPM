@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
+import com.desmart.desmartbpm.util.http.HttpClientUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -114,10 +115,13 @@ public class DhProcessDefinitionController {
     }
     
     @RequestMapping(value = "/snapshotFlowChart")
-    public ModelAndView viewFlowChart (String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
+    @ResponseBody
+    public String viewFlowChart (String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
     	LOG.info("请求查看流程图"+proAppId);    	 
-    	ModelAndView mv = new ModelAndView("processView");
-    	mv.addObject("views",dhProcessDefinitionService.snapshotFlowChart(proAppId, proUid, proVerUid));
-    	return mv;
+    	String url = "http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/"+proUid+"?snapshotId="+proVerUid+"&image=true";
+    	HttpClientUtils httpUtils = new HttpClientUtils();
+    	// 验证
+    	String msg = httpUtils.checkLoginIbm(url);
+    	return url;
     }
 }
