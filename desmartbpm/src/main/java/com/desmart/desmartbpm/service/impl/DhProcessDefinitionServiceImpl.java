@@ -369,32 +369,5 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         return lswSnapshotMapper.queryBySnapshotId(snapshotId);
     }
-
-	@Override
-	public String snapshotFlowChart(String proAppId, String proUid, String proVerUid) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("snapshotId", proVerUid);
-		
-		CloseableHttpClient httpClient = HttpClients.custom().build();
-		HttpClientContext context = HttpClientContext.create();
-		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		Credentials credentials = new UsernamePasswordCredentials("deadmin", "passw0rd");
-		credsProvider.setCredentials(AuthScope.ANY, credentials);
-		context.setCredentialsProvider(credsProvider);
-		CloseableHttpResponse response = null;
-		HttpGet httpget = new HttpGet("http://10.0.4.201:9080/WebViewer/image/v1/processModel/25.fb99340a-d6d1-4bc3-85fc-78a1149937e4?snapshotId=2064.bc487f4b-af74-422c-ad9e-ca06e26e9a44");
-		try {
-			response = httpClient.execute(httpget, context);
-			String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
-			LOG.info(msg);
-			return msg;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
-	//	httpClientUtils.checkApiLogin("post", "http://10.0.4.201:9080/WebViewer/image/v1/processModel/25.fb99340a-d6d1-4bc3-85fc-78a1149937e4?snapshotId=2064.bc487f4b-af74-422c-ad9e-ca06e26e9a44", null);
-	}
-    
-    
+   
 }
