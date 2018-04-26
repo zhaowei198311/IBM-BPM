@@ -498,4 +498,27 @@ public class HttpClientUtils {
 		}
 		return null;
 	}
+	
+	/**
+	 * 验证登陆 IBM 引擎方法
+	 */
+	public String checkLoginIbm(String url) {
+		LOG.info("验证IBM登陆开始...");
+		String msg = null;
+		try {
+			CloseableHttpClient httpClient = HttpClients.custom().build();
+			HttpClientContext context = HttpClientContext.create();
+			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			Credentials credentials = new UsernamePasswordCredentials(USERNAME, PASSWORD);
+			credsProvider.setCredentials(AuthScope.ANY, credentials);
+			context.setCredentialsProvider(credsProvider);
+			HttpGet httpget = new HttpGet(url);
+			CloseableHttpResponse httpResponse = httpClient.execute(null, context);
+		//	msg = org.apache.http.util.EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+			return msg;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return msg;
+	}
 }
