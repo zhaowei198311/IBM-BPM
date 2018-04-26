@@ -185,8 +185,20 @@ $(function() {
         var proUid = ck.data('prouid');
         var proVerUid = ck.data('proveruid');
         var proAppId = ck.data('proappid');
-        layer.alert(proUid+"~~~~"+proVerUid)
-        window.location.href= common.getPath() + "/processDefinition/snapshotFlowChart";
+        
+        $.ajax({
+        	url : common.getPath() + "/processDefinition/snapshotFlowChart",
+        	dataType : "text",
+        	type : "POST",
+        	data : {
+        		"proUid" : proUid,
+        		"proVerUid" : proVerUid,
+        		"proAppId" : proAppId
+        	},
+        	success : function(result){
+        		window.location.href= result;
+        	}
+        })
     })
    
    $("#toEditActivityConf_btn").click(function() {
@@ -226,5 +238,5 @@ $(function() {
        });
        
    });
-   
+ 
 });
