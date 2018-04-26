@@ -400,10 +400,16 @@ $(function(){
 	$(".col").number();
 	$(".col").bind('input propertychange', function() {
 		var colVal = $(this).val();
-		if(colVal<1){
-			$(this).val(1);
-		}else if(colVal>12){
+		if(colVal<0){
+			$(this).val(0);
+		}else if(colVal>=12){
 			$(this).val(12);
+		}
+	});
+	$(".col").blur(function(){
+		var colVal = $(this).val();
+		if(colVal==0 || colVal=="" || colVal==null){
+			$(this).val(1);
 		}
 	});
 	var rowWidth = $(".demo").width()-5;
@@ -1007,7 +1013,7 @@ var btnClick = function(obj){
 		}
 		if(flag){
 			$(obj).parent().append(
-					"<div><a class='excelFile' href='excel/"+data.response.filename+"'>"
+					"<div><a class='excelFile' href='"+common.getPath()+"/resources/file/"+data.response.filename+"'>"
 					+data.response.filename
 					+"</a> "
 					+"<a href='javascript:void(0);' class='deleteFile' onclick='aClick(this)'>删除</a></div>");
@@ -1057,11 +1063,12 @@ var fileInput = function(obj) {
 		//minImageHeight: 50,//图片的最小高度
 		//maxImageWidth: 1000,//图片的最大宽度
 		//maxImageHeight: 1000,//图片的最大高度
-		maxFileSize: maxFileSize,//单位为kb，如果为0表示不限制文件大小
+		maxFileSize: maxFileSize*1024,//单位为kb，如果为0表示不限制文件大小
 		minFileCount: 1,
 		maxFileCount : maxFileCount, //表示允许同时上传的最大文件个数
 		enctype : 'multipart/form-data',
 		validateInitialCount : true,
+		msgSizeTooLarge : "文件 {name} (<b>{size} MB</b>) 超过了允许大小 <b>{maxSize} MB</b>！",
 		msgFilesTooMany : "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
 	});
 };

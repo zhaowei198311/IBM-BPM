@@ -371,7 +371,7 @@
 												<input class="btn btn-primary" onclick="btnClick(this);" type="button" value="文件上传"/>
 											</div>
 											<div class="hidden-value" style="display:none">
-												<input type="hidden" class="maxFileSize" value="0"/>
+												<input type="hidden" class="maxFileSize" value="20"/>
 												<input type="hidden" class="maxFileCount" value="10"/>
 												<input type="hidden" class="fileFormat" value="jpg,png,xlsx,xls,exe"/>
 											</div>
@@ -1286,13 +1286,13 @@
 									<div class="arrow"></div>
 									<h3 class="popover-title">帮助</h3>
 									<div class="popover-content">
-										填0默认为无限制，单位kb</div>
+										填0默认为无限制，单位MB</div>
 								</div>
 							</div>
 						</label>
 						<div class="col-xs-7">
 							<input type="text" id="loadFile-maxSize"
-								placeholder="请输入文件最大大小，单位kb"/>
+								placeholder="请输入文件最大大小，单位MB"/>
 						</div>
 					</div>
 					<div class="form-group">

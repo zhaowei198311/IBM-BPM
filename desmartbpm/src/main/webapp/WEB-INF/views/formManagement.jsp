@@ -95,7 +95,7 @@
 					新增表单
 				</div>
 				<div class="middle">
-					<form class="layui-form" action="" style="margin-top:30px;">
+					<form class="layui-form" id="create-form" action="" style="margin-top:30px;">
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
@@ -119,7 +119,7 @@
 		<div class="display_container2">
 			<div class="display_content">
 				<div class="top">
-					修改表单
+					修改表单信息
 				</div>
 				<div class="middle">
 					<form class="layui-form" action="" style="margin-top:30px;">
@@ -146,7 +146,7 @@
 		<div class="display_container3">
 			<div class="display_content3">
 				<div class="top">
-					<div class="layui-col-md12">复制快照</div>
+					<div class="layui-col-md12">请选择一个要复制的表单</div>
 					<div class="">
 						<div class="layui-col-md3" style="margin:5px 0 ;">
 							<input id="copy_formTitle" type="text" class="layui-input" placeholder="表单名称" style="font-size:15px;">
@@ -210,7 +210,7 @@
 					</form>
 				</div>
 				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn" onclick="">确定</button>
+					<button class="layui-btn layui-btn sure_btn" onclick="copyForm();">确定</button>
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
 						onclick="$('.display_container_copy').css('display','none');">取消</button>
 				</div>
@@ -240,8 +240,10 @@
 	    }
 	
 	    var createFromFlag = false;//是否可以创建表单的控制变量
-	    var oldFormName = "";
-	    var updateFormId = "";
+	    var oldFormName = "";//修改表单信息时表单的旧名称
+	    var oldFormDescription = "";//修改表单信息时的旧描述
+	    var updateFormId = "";//修改表单时表单的Id
+	    var copyFormId = "";//复制表单时表单的Id
 		//tree
 		var setting = {
             view: {
@@ -264,6 +266,7 @@
 	    	switch(treeNode.itemType){
 	    		case "category":{
 	    			createFromFlag = false;
+	    			$("input[name='allSel']").prop("checked",false);
 	    			if(treeNode.id=="rootCategory"){
 	    				pageConfig.proCategoryUid = "";
 		    			pageConfig.proUid = "";
@@ -279,6 +282,7 @@
 	    		}
 	    		case "processMeta":{//根据流程元获得流程定义-->得到表单数据
 	    			createFromFlag = false;
+	    			$("input[name='allSel']").prop("checked",false);
 	    			pageConfig.proCategoryUid = "";
 	    			pageConfig.proUid = treeNode.id;
 	    			pageConfig.proVerUid = "";
@@ -287,6 +291,7 @@
 	    		}
 	    		case "processDefinition":{//根据流程定义的ID以及版本ID获得表单数据
 	    			createFromFlag = true;
+	    			$("input[name='allSel']").prop("checked",false);
 	    			pageConfig.proCategoryUid = "";
 	    			pageConfig.proUid = treeNode.pid;
 	    			pageConfig.proVerUid = treeNode.id;
@@ -312,6 +317,7 @@
                     	pageConfig.pageNum = obj.curr;
                     	pageConfig.pageSize = obj.limit;
                     	if (!first) {
+                    		$("input[name='allSel']").prop("checked",false);
                     		getFormInfoByProDefinition();
                     	}
                     }
@@ -323,13 +329,13 @@
         function doPageCopy() {
             layui.use(['laypage', 'layer'], function(){
                 var laypage = layui.laypage,layer = layui.layer;  
-                  //完整功能
+                //完整功能
                 laypage.render({
                     elem: 'lay_page_copy',
                     curr: pageConfigCopy.pageNum,
                     count: pageConfigCopy.total,
                     limit: pageConfigCopy.pageSize,
-                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    layout: ['count', 'prev', 'page', 'next', 'skip'],
                     jump: function(obj, first){
                     	// obj包含了当前分页的所有参数  
                     	pageConfigCopy.pageNum = obj.curr;
@@ -396,18 +402,20 @@
 				getFormInfoByProDefinition();
 			}
 			
-			//复制快照--表格数据
-			getFormInfoByProDefinitionCopy();
-			
 			$(".create_btn").click(function() {
 				if(createFromFlag){
+					$("#create-form")[0].reset();
 					$(".display_container").css("display", "block");
 				}else{
 					layer.alert("请选择一个流程定义版本");
 				}
 			})
+			
 			$(".copy_btn").click(function() {
 				if(createFromFlag){
+					$("#copy_formTitle").val("");
+					//复制快照--表格数据
+					getFormInfoByProDefinitionCopy();
 					$(".display_container3").css("display", "block");
 				}else{
 					layer.alert("请选择一个存放复制快照的流程定义版本");
@@ -415,12 +423,18 @@
 			});
 			
 			$("#copy_form_btn").click(function() {
-				$(".display_container_copy").css("display", "block");
+				var checkSel = $("input[name='copyFormInfo_check']:checked");
+				if(checkSel.length==1){
+					copyFormId = checkSel.val();
+					var copyFormName = checkSel.parent().next().text().trim()+"_copy"+_getRandomString(2);
+					$("#copy-form-name").val(copyFormName);
+					$("#copy-form-description").val(checkSel.parent().next().next().text().trim()+"_copy");
+					$(".display_container_copy").css("display", "block");
+				}else{
+					layer.alert("请选择一个要复制的表单");
+				}
 			});
 			
-			/* $(".sure_btn").click(function() {
-				$(".display_container3").css("display", "none");
-			}) */
 			$(".cancel_btn").click(function() {
 				$(".display_container").css("display", "none");
 				$(".display_container2").css("display", "none");
@@ -531,7 +545,8 @@
         		            + '<td>'+formInfo.dynDescription+'</td>'
         		            + '<td>'+createTime+'</td>'
         		            + '<td>'+formInfo.creatorFullName+'</td>'
-        		            + '<td><i class="layui-icon" onclick="updateFormModal(this);">&#xe642;</i></td>'
+        		            + '<td><i class="layui-icon" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'+
+        		            ' <i class="layui-icon" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
         		            + '</tr>';
         	}
         	$("#formInfo-table-tbody").append(trs);
@@ -565,20 +580,33 @@
 			}
 		}
 		
-		//修改表单
+		//修改表单信息
 		function updateForm(){
 			var formName = $("#update-form-name").val().trim();
+			var formDescription = $("#update-form-description").val().trim();
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
-			}else if(oldFormName==formName){
-				//用户未修改表单名，直接跳转页面即可
-				var href = "/formManage/designForm?formUid="+updateFormId
-						+"&formName="+formName
-						+"&formDescription="+$("#update-form-description").val().trim()
-						+"&proUid="+pageConfig.proUid
-						+"&proVersion="+pageConfig.proVerUid;
-				window.location.href = common.getPath()+href;
-				$(".display_container").css("display", "none");
+			}else if(oldFormName==formName && oldFormDescription==formDescription){
+				$(".display_container2").css("display", "none");
+			}else if(oldFormName==formName && oldFormDescription!=formDescription){
+				$.ajax({
+					url:common.getPath()+"/formManage/updateFormInfo",
+					method:"post",
+					data:{
+						dynUid:updateFormId,
+						dynTitle:formName,
+						dynDescription:formDescription
+					},
+					success:function(result2){
+						if(result2.status==0){
+							layer.alert("表单属性修改成功");
+							getFormInfoByProDefinition();
+							$(".display_container2").css("display", "none");
+						}else{
+							layer.alert("表单属性修改失败");
+						}
+					}
+				});
 			}else{
 				$.ajax({
 					url:common.getPath()+"/formManage/queryFormByName",
@@ -588,19 +616,45 @@
 					},
 					success:function(result){
 						if(result.status==0){
-							var href = "/formManage/designForm?formUid="+updateFormId
-									+"&formName="+formName
-									+"&formDescription="+$("#update-form-description").val().trim()
-									+"&proUid="+pageConfig.proUid
-									+"&proVersion="+pageConfig.proVerUid;
-							window.location.href = common.getPath()+href;
-							$(".display_container").css("display", "none");
+							$.ajax({
+								url:common.getPath()+"/formManage/updateFormInfo",
+								method:"post",
+								data:{
+									dynUid:updateFormId,
+									dynTitle:formName,
+									dynDescription:formDescription
+								},
+								success:function(result2){
+									if(result2.status==0){
+										layer.alert("表单属性修改成功");
+										getFormInfoByProDefinition();
+										$(".display_container2").css("display", "none");
+									}else{
+										layer.alert("表单属性修改失败");
+									}
+								}
+							});
 						}else{
 							layer.alert("表单名已存在，不能重复");
 						}
 					}
 				});
 			}
+		}
+		
+		//修改表单内容
+		function updateFormContent(obj){
+			var trObj = $(obj).parent().parent();
+			var formId = trObj.data("formuid");
+			var dynTitle = $(trObj.find("td")[1]).text().trim();
+			var dynDescription = $(trObj.find("td")[2]).text().trim();
+			var href = "/formManage/designForm?formUid="+formId
+				+"&formName="+dynTitle
+				+"&formDescription="+dynDescription
+				+"&proUid="+pageConfig.proUid	//当用户未点击流程定义时，表单内容中包含了流程定义Id及版本Id
+				+"&proVersion="+pageConfig.proVerUid;
+			window.location.href = common.getPath()+href;
+			$(".display_container2").css("display", "none");
 		}
 		
 		//删除表单
@@ -638,12 +692,55 @@
 			}
 		}
 		
+		//复制表单数据
+		function copyForm(){
+			var proUid = pageConfig.proUid;
+			var proVersion = pageConfig.proVerUid;
+			var formName = $("#copy-form-name").val().trim();
+			var formDescription = $("#copy-form-description").val().trim();
+			
+			$.ajax({
+				url:common.getPath()+"/formManage/queryFormByName",
+				method:"post",
+				data:{
+					dynTitle:formName
+				},
+				success:function(result){
+					if(result.status==0){
+						$.ajax({
+							url:common.getPath()+"/formManage/copyForm",
+							method:"post",
+							data:{
+								dynUid:copyFormId,
+								dynTitle:formName,
+								dynDescription:formDescription,
+								proUid:proUid,
+								proVersion:proVersion
+							},
+							success:function(result2){
+								if(result2.status==0){
+									getFormInfoByProDefinition();
+									$(".display_container_copy").css("display", "none");
+									$(".display_container3").css("display", "none");
+								}else{
+									layer.alert("复制失败");
+								}
+							}
+						});
+					}else{
+						layer.alert("表单名已存在，不能重复");
+					}
+				}
+			});
+		}
+		
 		//点击修改按钮
 		function updateFormModal(obj){
 			var trObj = $(obj).parent().parent();
 			updateFormId = trObj.data("formuid");
 			var dynTitle = $(trObj.find("td")[1]).text().trim();
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
+			oldFormDescription = dynDescription;
 			oldFormName = dynTitle;
 			$("#update-form-name").val(dynTitle);
 			$("#update-form-description").val(dynDescription);
@@ -684,4 +781,16 @@
 		function onSelOne(obj){
 			$('input[name="copyFormInfo_check"]').not($(obj)).prop("checked", false);
 		}
+		
+		//生成随机码的方法
+		function _getRandomString(len) {  
+		    len = len || 32;  
+		    var $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+		    var maxPos = $chars.length;  
+		    var pwd = '';  
+		    for (i = 0; i < len; i++) {  
+		        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));  
+		    }  
+		    return pwd;  
+		} 
 	</script>
