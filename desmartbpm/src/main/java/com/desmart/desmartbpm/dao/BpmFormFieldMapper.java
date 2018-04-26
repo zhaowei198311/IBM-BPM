@@ -18,4 +18,9 @@ public interface BpmFormFieldMapper {
 	 * 删除表单字段信息
 	 */
 	int deleteFormField(String formUid);
+
+	/**
+	 * 根据表单Id获得表单字段集合
+	 */
+	List<BpmFormField> queryFormFieldByFormUid(@Param("dynUid")String dynUid);
 }

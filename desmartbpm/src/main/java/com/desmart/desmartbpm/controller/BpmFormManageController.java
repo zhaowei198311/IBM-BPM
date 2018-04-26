@@ -188,6 +188,23 @@ public class BpmFormManageController {
         return path+filename;
 	}
 
+	/**
+	 * 修改表单基本信息
+	 */
+	@RequestMapping(value = "/updateFormInfo")
+	@ResponseBody
+	public ServerResponse updateFormInfo(BpmForm bpmForm) {
+		try {
+			return bpmFormManageService.updateFormInfo(bpmForm);
+		} catch (Exception e) {
+			LOG.error("修改表单信息失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+		}
+	}
+	
+	/**
+	 * 删除表单文件以及表单信息
+	 */
 	@RequestMapping(value = "/deleteForm")
 	@ResponseBody
 	public ServerResponse deleteForm(String[] formUids,HttpServletRequest request) {
@@ -196,6 +213,21 @@ public class BpmFormManageController {
 			return bpmFormManageService.deleteForm(formUids,path);
         } catch (Exception e) {
             LOG.error("删除表单数据失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+        }
+	}
+	
+	/**
+	 * 表单复制
+	 */
+	@RequestMapping(value = "/copyForm")
+	@ResponseBody
+	public ServerResponse copyForm(BpmForm bpmForm,HttpServletRequest request) {
+		String path = request.getServletContext().getRealPath("/resources/form/");
+		try {
+			return bpmFormManageService.copyForm(bpmForm,path);
+        } catch (Exception e) {
+            LOG.error("复制表单失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
 	}

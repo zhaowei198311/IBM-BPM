@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -96,7 +97,7 @@ public class BpmForm {
 	public Date getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
 	public String getCreator() {

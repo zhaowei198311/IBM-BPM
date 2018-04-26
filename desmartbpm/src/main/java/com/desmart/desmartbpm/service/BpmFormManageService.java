@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.desmart.desmartbpm.common.ServerResponse;
@@ -37,4 +38,14 @@ public interface BpmFormManageService {
 	 * 删除表单数据
 	 */
 	ServerResponse deleteForm(String[] formUids,String path);
+
+	/**
+	 * 复制表单
+	 */
+	ServerResponse copyForm(BpmForm bpmForm, String path) throws IOException;
+
+	/**
+	 * 修改表单基本信息
+	 */
+	ServerResponse updateFormInfo(BpmForm bpmForm) throws IOException;
 }

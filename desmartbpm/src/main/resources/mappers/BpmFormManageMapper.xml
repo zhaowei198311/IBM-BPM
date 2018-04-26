@@ -6,8 +6,13 @@
         DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_TYPE,DYN_FILENAME,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME
     </sql>
     
+    <sql id="select_column">
+        bmf.DYN_UID,bmf.DYN_TITLE,bmf.DYN_DESCRIPTION,bmf.DYN_TYPE,bmf.DYN_FILENAME,
+        bmf.DYN_CONTENT,bmf.PRO_UID,bmf.PRO_VERSION,bmf.CREATOR,bmf.CREATE_TIME
+    </sql>
+    
     <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
-    	select <include refid="base_column"/>,u.user_name creatorFullName
+    	select <include refid="select_column"/>,u.user_name creatorFullName
     	from bpm_form bmf
     		left join sys_user u on bmf.creator = u.user_uid
     	<where>
@@ -25,7 +30,7 @@
     </select>
     
     <select id="listFormByProUidList" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
-    	select <include refid="base_column"/>,u.user_name creatorFullName
+    	select <include refid="select_column"/>,u.user_name creatorFullName
     	from bpm_form bmf
     		left join sys_user u on bmf.creator = u.user_uid
     	<where>
@@ -59,4 +64,16 @@
     	values(#{dynUid},#{dynTitle},#{dynDescription},'html',#{dynFilename},
     		#{dynContent},#{proUid},#{proVersion},'00035438',sysdate)
     </insert>
+    
+    <update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmForm">
+    	update bpm_form 
+    	set dyn_title = #{dynTitle},dyn_description = #{dynDescription}
+    	where dyn_uid = #{dynUid}
+    </update>
+    
+    <update id="updateFormFilenameByFormUid" parameterType="map">
+    	update bpm_form
+    	set dyn_filename = #{filename}
+    	where dyn_uid = #{dynUid}
+    </update>
 </mapper>

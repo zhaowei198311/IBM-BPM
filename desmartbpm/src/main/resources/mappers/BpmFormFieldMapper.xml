@@ -25,4 +25,8 @@
 	<delete id="deleteFormField" parameterType="String">
 		delete from bpm_form_field where form_uid = #{formUid}
 	</delete>
+	
+	<select id="queryFormFieldByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		select <include refid="base_column"/> from bpm_form_field where form_uid = #{dynUid}
+	</select>
 </mapper>

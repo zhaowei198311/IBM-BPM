@@ -41,4 +41,14 @@ public interface BpmFormManageMapper {
 	 * 根据表单Id删除表单数据
 	 */
 	int deleteForm(String formUid);
+	
+	/**
+	 * 修改表单基本信息
+	 */
+	int updateFormInfo(BpmForm bpmForm);
+
+	/**
+	 * 根据表单Id修改表单文件名
+	 */
+	int updateFormFilenameByFormUid(@Param("dynUid")String dynUid,@Param("filename")String filename);
 }
