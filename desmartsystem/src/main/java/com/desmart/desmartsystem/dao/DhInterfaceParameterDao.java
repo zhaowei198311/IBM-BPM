@@ -45,4 +45,11 @@ public interface DhInterfaceParameterDao {
 	 * @return
 	 */
 	int update(DhInterfaceParameter dhInterfaceParameter);
+	
+	/**
+	 * 根据参数id 查询接口参数
+	 * @param paraUid
+	 * @return
+	 */
+	DhInterfaceParameter selectByparaUid(String paraUid);
 }

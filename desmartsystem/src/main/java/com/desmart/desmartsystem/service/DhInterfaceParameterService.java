@@ -41,4 +41,11 @@ public interface DhInterfaceParameterService {
 	 * @return
 	 */
 	ServerResponse updateDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter);
+	
+	/**
+	 * 根据id查询参数
+	 * @param paraUid 参数id
+	 * @return
+	 */
+	DhInterfaceParameter selectByparaUid(String paraUid);
 }

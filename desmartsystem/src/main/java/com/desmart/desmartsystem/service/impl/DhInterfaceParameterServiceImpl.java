@@ -71,5 +71,13 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	public ServerResponse updateDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter) {
 		return ServerResponse.createBySuccess(dhInterfaceParameterDao.update(dhInterfaceParameter));
 	}
+
+	/* (non-Javadoc)
+	 * @see com.desmart.desmartsystem.service.DhInterfaceParameterService#selectByparaUid(java.lang.String)
+	 */
+	@Override
+	public DhInterfaceParameter selectByparaUid(String paraUid) {
+		return dhInterfaceParameterDao.selectByparaUid(paraUid);
+	}
 	
 }

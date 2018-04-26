@@ -88,4 +88,14 @@
 			PARA_UID = #{paraUid}
 		</where>
 	</update>
+	
+	<select id="selectByparaUid" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM DH_INTERFACE_PARAMETER
+		<where>
+			PARA_UID = #{paraUid}
+		</where>
+	</select>
+	
 </mapper>	

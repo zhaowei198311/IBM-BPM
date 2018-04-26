@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartsystem.common.ServerResponse;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
@@ -44,5 +45,19 @@ public class DhInterfaceParameterController {
 	@ResponseBody
 	public ServerResponse updateInterfaceParamers(DhInterfaceParameter dhInterfaceParameter) {
 		return dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
+	}
+	
+	@RequestMapping(value = "/queryByparaId")
+	@ResponseBody
+	public DhInterfaceParameter queryByparaUid(String paraUid) {
+		return dhInterfaceParameterService.selectByparaUid(paraUid);
+	}
+	
+	@RequestMapping(value = "/homePage")
+	public ModelAndView homePage(String intUid) {	
+		System.err.println(intUid);
+		ModelAndView mv = new ModelAndView("index");
+		mv.addObject("intUid", intUid);
+		return mv;
 	}
 }

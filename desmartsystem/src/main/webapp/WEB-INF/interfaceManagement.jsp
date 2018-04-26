@@ -92,7 +92,7 @@
 					</colgroup>
 					<thead>
 						<tr>
-							<th>参数索引</th>
+							<th>序号</th>
 							<th>参数名称</th>
 							<th>参数描述</th>
 							<th>参数类型</th>
@@ -100,15 +100,14 @@
 							<th>多值分隔符</th>
 							<th>是否多值</th>
 							<th>是否必须</th>
-							<th>接口定义ID</th>
 						</tr>
 					</thead>
 					<tbody id="exposed_table_tbody"></tbody>
 				</table>
 			</div>
 			<div class="foot">
-				<button class="layui-btn layui-btn sure2_btn">保存</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel2_btn">取消</button>
+				<button class="layui-btn update2_btn">修改</button>
+				<button class="layui-btn cancel2_btn">取消</button>
 			</div>
 		</div>
 	</div>
@@ -259,7 +258,6 @@
 							<input id="multiValue" type="checkbox" name="multiValue"
 								lay-skin="switch" lay-filter="switch3" lay-text="true|false"
 								value="false">
-
 						</div>
 					</div>
 					<div class="layui-inline">
@@ -268,7 +266,6 @@
 							<input id="isMust" type="checkbox" name="isMust"
 								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
 								value="false">
-
 						</div>
 					</div>
 				</div>
@@ -357,6 +354,94 @@
 			<div class="foot">
 				<button id="sure4_btn" class="layui-btn layui-btn sure4_btn">确定</button>
 				<button id="cancel4_btn" class="layui-btn layui-btn cancel4_btn">取消</button>
+			</div>
+		</div>
+	</div>
+	<div class="display_container6" id="exposed_table3_container">
+		<div class="display_content2" style="height: 300px">
+			<div class="top" style="color: red;">修改接口参数</div>
+			<form class="layui-form" action="" style="margin-top: 30px;">
+				<input id="intUid3" style="display: none;" />
+				<input id="paraUid3" style="display: none;" />
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">参数索引:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="paraIndex3" name="paraIndex"
+								lay-verify="paraIndex" autocomplete="off" class="layui-input"
+								value="">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">参数名称:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="paraName3" name="paraName"
+								lay-verify="paraName" autocomplete="off" class="layui-input"
+								value="">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">参数描述:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="paraDescription3" name="paraDescription"
+								lay-verify="text" autocomplete="off" class="layui-input"
+								value="">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">参数类型:</label>
+						<div class="layui-input-inline">
+							<select id="paraType3" name="paraType">
+								<option value="String">String</option>
+								<option value="Integer">Integer</option>
+								<option value="Double">Double</option>
+								<option value="Boolean">Boolean</option>
+								<option value="Date">Date</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">参数长度:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="paraSize3" name="paraSize"
+								lay-verify="paraSize" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">多值分隔符:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="multiSeparator3" name="multiSeparator"
+								lay-verify="multiSeparator" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+						<label class="layui-form-label">是否多值:</label>
+						<div class="layui-input-inline">
+							<input id="multiValue3" type="checkbox" name="multiValue"
+								lay-skin="switch" lay-filter="switch3" lay-text="true|false"
+								value="false">
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">是否必须:</label>
+						<div class="layui-input-inline">
+							<input id="isMust3" type="checkbox" name="isMust"
+								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
+								value="false">
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="foot">
+				<button id="sure5_btn" class="layui-btn layui-btn sure5_btn">确定</button>
+				<button id="cancel5_btn" class="layui-btn layui-btn cancel5_btn">取消</button>
 			</div>
 		</div>
 	</div>
@@ -474,6 +559,83 @@
 				success : function(result) {
 					window.location.href = "interfaces/index";
 				}
+			})
+		})
+
+		$(".cancel5_btn").click(function() {
+			$(".display_container6").css("display", "none");
+		})
+
+		// 修改接口参数配置
+		$(".sure5_btn").click(function() {
+			$.ajax({
+				url : 'interfaceParamers/update',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					paraUid : $("#paraUid3").val(),
+					paraIndex : $("#paraIndex3").val(),
+					paraName : $("#paraName3").val(),
+					paraDescription : $("#paraDescription3").val(),
+					paraType : $("#paraType3").val(),
+					paraSize : $("#paraSize3").val(),
+					multiSeparator : $("#multiSeparator3").val(),
+					multiValue : $("#multiValue3").val(),
+					isMust : $("#isMust3").val()
+				},
+				success : function(result){
+					layer.alert('修改参数成功')
+					window.location.href = "interfaces/index";
+				}
+			})
+		})
+
+		// 根据id 修改接口参数页面
+		$(".update2_btn").click(function() {
+			layui.use([ 'layer', 'form' ], function() {
+				var form = layui.form, layer = layui.layer, $ = layui.jquery;
+				form.on('switch(switch3)', function(data) {
+					var ckd = this.checked ? 'true' : 'false';
+					document.getElementById("multiValue3").value = ckd;
+				})
+				form.on('switch(switch4)', function(data) {
+					var ckd = this.checked ? 'true' : 'false';
+					document.getElementById("isMust3").value = ckd;
+				})
+
+				$("input[name='eCheck']:checked").each(function() {
+					var cks = $("[name='eCheck']:checked")
+					if (cks.length < 1) {
+						layer.alert("请选择一个接口参数");
+						return;
+					}
+					if (cks.length > 1) {
+						layer.alert("请选择一个接口参数，不能选择多个");
+						return;
+					}
+
+					$.ajax({
+						url : 'interfaceParamers/queryByparaId',
+						type : 'POST',
+						dataType : 'json',
+						data : {
+							paraUid : this.value
+						},
+						success : function(result) {
+							$(".display_container6").css("display", "block");
+							$("#paraUid3").val(result.paraUid);
+							$("#paraIndex3").val(result.paraIndex);
+							$("#paraName3").val(result.paraName);
+							$("#paraDescription3").val(result.paraDescription);
+							$("#paraType3").val(result.paraType);
+							$("#paraSize3").val(result.paraSize);
+							$("#multiSeparator3").val(result.multiSeparator);
+							$("#multiValue3").val(result.multiValue);
+							$("#isMust3").val(result.isMust);
+							$("#intUid3").val(result.intUid);
+						}
+					})
+				})
 			})
 		})
 
@@ -824,31 +986,29 @@
 			var meta = list[i];
 			var sortNum = startSort + i;
 			trs += '<tr><td><input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">'
+					+ sortNum
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="paraIndex" style="" type="text" value = "'+meta.paraIndex+'" />'
+					+ meta.paraName
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="paraName" style="" type="text" value = "'+meta.paraName+'" />'
+					+ meta.paraDescription
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="paraDescription" style="" type="text" value = "'+meta.paraDescription+'" />'
+					+ meta.paraType
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="paraType" style="" type="text" value = "'+meta.paraType+'" />'
+					+ meta.paraSize
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="paraSize" style="" type="text" value = "'+meta.paraSize+'" />'
+					+ meta.multiSeparator
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="multiSeparator" style="" type="text" value = "'+meta.multiSeparator+'" />'
+					+ meta.multiValue
 					+ '</td>'
 					+ '<td>'
-					+ '<input id="multiValue" style="" type="text" value = "'+meta.multiValue+'" />'
-					+ '</td>'
-					+ '<td>'
-					+ '<input id="isMust" style="" type="text" value = "'+meta.isMust+'" />'
-					+ '</td>' + '<td>' + meta.intUid + '</td>' + '</tr>';
+					+ meta.isMust
+					+ '</td>' + '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
 	}
