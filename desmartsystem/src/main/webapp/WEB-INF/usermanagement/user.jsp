@@ -13,15 +13,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
   		<%@ include file="common/common.jsp" %>
-  		
+  		<script src="scripts/js/myjs/department.js" type="text/javascript"></script>
 	</head>
 	<body>
-	
 		<div class="layui-container" style="margin-top:20px;width:100%;">  
 		  	<div class="layui-row">
 			    <div class="layui-col-md2" style="text-align: left;">
 					<div class="tree" id="demo">
-						<ul id="treeDemo" class="ztree" style="width:auto;height:500px;"></ul>
+						<ul id="treeDemo2" class="ztree" style="width:auto;height:500px;"></ul>
 					</div>
 			    </div>
 			    <div class="layui-col-md10">
@@ -46,8 +45,7 @@
 								<div class="layui-col-md1" style="text-align:right;">
 								        <button class="layui-btn create_btn" >新建</button>
 								</div>
-						<input type="hidden" name="departUid" id="departParent" >
-						<input type="hidden" name="pageNo" id="pageNo" value="1" >
+							<input type="hidden" name="departUid" id="departParent" >
 					</form>
 					</div>
 					<div>				
@@ -78,30 +76,7 @@
 					</div>
 			    </div>
 		  	</div>
-	
 		
-		<!-- <div class="display_container">
-		<div class="display_content">
-			<div class="top">
-				新建用户
-			</div>
-			<div class="middle">
-				<form class="layui-form form-horizontal" method="post"  action="sysResource/addSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">用户名称</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="resouceName" required  lay-verify="required" placeholder="请输入模块权限名称" autocomplete="off" class="layui-input">
-				    </div>
-				  </div>
-				   <input type="hidden" id="submit_add" />	
-				</form>
-			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="button" onclick="$('#submit_add').submit();" >确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
-			</div>
-		</div>
-	</div> -->
 	
 	<div class="display_container3">
 		<div class="display_content3">
@@ -202,7 +177,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">部门名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="departName"  id="departName" required  lay-verify="required" placeholder="请输入部门" autocomplete="off" class="layui-input" />
+				      <input type="text" name="departName"  id="departName"  required  lay-verify="required" placeholder="请输入部门" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  
@@ -319,15 +294,93 @@
 				</form>
 			</div>
 		</div>
+		
+		
+		
+		<div class="display_container10">
+			<div class="display_content10">
+				<div class="top">
+					<div class="layui-col-md12">绑定部门</div>
+					<div class="">
+						<div class="layui-col-md3" style="margin:5px 0 ;">
+							<input id="bdbm_departName" type="text" class="layui-input" placeholder="部门名称" style="font-size:15px;">
+						</div>
+						<input type="hidden" name="pageNoDepartmet" id="pageNoDepartmet" value="1" >
+						<div class="layui-col-md2 layui-col-md-offset1" style="text-align:center;margin:5px 0;">
+							<button class="layui-btn layui-btn-sm" id="copy_searchForm_btn">查询</button>
+						</div>
+					</div>
+				</div>
+				<div class="middle1" style="height: 400px;">
+						<form class="form-horizontal" id="sysUserDepartmentForm" action="sysUserDepartment/addSysUserDepartments" method="post"   onsubmit="return validateCallback(this,addSysUserDepartmentsuccess);">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col> 
+						    <col>
+						    <col>
+						</colgroup>
+						<thead>
+						     <tr>
+						      <th>序号</th>
+						      <th>部门名称</th>
+						      <th>部门代码</th>
+						      <th>部门负责人</th>
+						    </tr>  
+						</thead>
+						<tbody id="tabletr1"></tbody>
+					</table>	
+						<input type="hidden" name="userUid" id="bdbm_userUid"/>
+						<input type="hidden" name="isManager" id="bdbm_isManager"/>
+						</form>
+					<div id="pagination1"></div>
+				</div>
+				<div class="middle1" style="width: 400px;height: 30px;">
+					<button  id="bdbm">绑定</button>
+				</div>
+				<div class="middle1" style="height: 400px;">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col> 
+						    <col>
+						    <col>
+						</colgroup>
+						<thead>
+						     <tr>
+						      <th>序号</th>
+						      <th>部门名称</th>
+						      <th>客户</th>
+						      <th>部门负责人</th>
+						      <th>操作</th>
+						    </tr>  
+						</thead>
+						<tbody id="tabletr2"></tbody>
+					</table>	
+				</div>
+				<div id="lay_page_copy"></div>
+				<div class="foot">
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container3').css('display','none');">取消</button>
+				</div>
+			</div>
+		</div>
+		
 	
 		<script>
 		$(function(){
+			
 			$(".create_btn").click(function(){
 				//window.location.href="new_user.html";
 				opendialog(dialogs.user_dialog);
 			})
 			$(".edit_user").click(function(){
-				alert('asdf');
+				//alert('asdf');
 				opendialog(dialogs.userEditDialog);
 			})
 			
@@ -347,33 +400,15 @@
 			    }   
 			});
 			
-			function onClick(e, treeId, treeNode) {
-				var departUid='';
-				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-				var sNodes = treeObj.getSelectedNodes();
-				if (sNodes.length > 0) {
-					var node = sNodes[0].getPath();
-					console.log(node);
-					for (var i = 0; i < node.length; i++) {
-						departUid=node[i].code;
-					}
-				}
-				console.log(departUid);
-				departUid=departUid.replace(/\s/g, "")
-				$('#departParent').val(departUid);
-				pageBreak(1);
-			}
-			
-			
 			var url='sysDepartment/treeDisplay';
 			//tree展示
 			setting.callback={onClick: onClick}
-			treeDisplay(url,'treeDemo');
+			treeDisplay(url,'treeDemo2');
 			
 			pageBreak($('#pageNo').val());
 			
 			var url='sysDepartment/treeDisplay';
-			setting.callback={onClick: onClick}
+			setting.callback={onClick: onClick1}
 			treeDisplay(url,['treeDemo','treeDemo1']);
 			
 			$(".cancel_btn").click(function(){
@@ -382,8 +417,29 @@
 				
 				$("."+dialogs.user_dialog).css("display","none");
 				$("."+dialogs.userEditDialog).css("display","none");
+				
+				$(".display_container10").css("display","none");
 			})
 		})
+		
+		
+		
+		function onClick1(e, treeId, treeNode) {
+			var departUid='';
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo2");
+			var sNodes = treeObj.getSelectedNodes();
+			if (sNodes.length > 0) {
+				var node = sNodes[0].getPath();
+				//console.log(node);
+				for (var i = 0; i < node.length; i++) {
+					departUid=node[i].code;
+				}
+			}
+			//console.log(departUid);
+			departUid=departUid.replace(/\s/g, "")
+			$('#departParent').val(departUid);
+			pageBreak(1);
+		}
 		
 		function addsuccess3(data){
 			returnSuccess(data,dialogs.user_dialog);
@@ -439,12 +495,16 @@
 	         	str+='<td>' + this.userName + '</td>';
 	         	str+='<td>' + this.userNo + '</td>';
 	         	str+='<td>' + this.sysDepartment.departName + '</td>';
+	         	/* str+='<td></td>'; */
 	         	str+='<td>' + isEmpty(this.employeeType) + '</td>';
 	         	str+='<td>' + this.mobile + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定系统角色"  onclick=openSystemRoleBinding("'+this.userUid+'","'+this.departUid+'"); >&#xe614;</i>';
+	         	
+	         	str+='<i class="layui-icon link_system" title="绑定部门"  onclick=departmentOfBinding("'+this.userUid+'"); >&#xe631;</i>';
+	         	
 	         	str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>';
 	         	if(this.accountType=='1'){
 	         		str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysUser/deleteSysUser?userUid='+this.userUid+'","del") >&#xe640;</i>';
@@ -454,6 +514,8 @@
 	         	$("#tabletr").append(str);
 	         });
 		}
+		
+		
 		
 		//打开用户编辑对话框
 		function editUser(data){
