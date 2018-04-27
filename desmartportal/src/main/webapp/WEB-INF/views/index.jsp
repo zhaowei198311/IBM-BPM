@@ -1,73 +1,216 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    isErrorPage="true"
-    pageEncoding="UTF-8"%>
+	isErrorPage="true" pageEncoding="UTF-8"%>
 <%
 	String path = request.getContextPath();
-	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<base href="<%=basePath%>">
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  		<title>首页</title>
-  		<link href="resources/css/layui.css" rel="stylesheet"/>
-  		<link href="resources/css/my.css" rel="stylesheet" />
-  		
-	</head>
-	<body>
-		<ul class="layui-nav layui-nav-tree layui-nav-side">
-			<li class="logo"><img src="resources/images/logo.gif"/></li>
-			<li class="layui-nav-item">
-			     <a href="javascript:;"><i class="layui-icon">&#xe614;</i> 我的待办</a>
-			     <dl class="layui-nav-child">
-			      <dd><a href="" target="iframe0">1</a></dd>
-			      <dd><a href=""  target="iframe0">2</a></dd>
-			    </dl>
-			</li>
-			<li class="layui-nav-item">
-			    <a href="javascript:;"><i class="layui-icon">&#xe609;</i> 我的已办</a>
-			    <dl class="layui-nav-child">
-			      <dd><a href="" target="iframe0">1</a></dd>
-			    </dl>
-			</li>
-		  	<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe62d;</i> 我的待阅</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe64c;</i> 我的已阅</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe614;</i> 草稿箱</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe614;</i> 我发起的流程</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe614;</i> 流程中心列表</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe614;</i> 代理设置</a></li>
-			<li class="layui-nav-item"><a href="" target="iframe0"><i class="layui-icon">&#xe614;</i> 报表</a></li>
-		</ul>
-		<div id="index_container">
-			<div class="index_top">
-				<span class="system_title">来伊份BPM个人工作台</span>
-				<span class="logout"><i class="layui-icon">&#xe60e;</i> 退出</span>
-			</div>
-			<div id="content_main">
-				<iframe  name="iframe0" width="100%" height="100%" src="organization.html" frameborder="0" id="iframe_1"></iframe>
-			</div>
-			<div class="footer">
-				Copyright &copy; 来伊份 2018
-			</div>
-		</div>
-		
-	</body>
-	
-</html>
+<head>
+<base href="<%=basePath%>">
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>首页</title>
+<link href="resources/css/layui.css" rel="stylesheet" />
+<link href="resources/css/my.css" rel="stylesheet" />
+<link href="resources/css/admin.css" rel="stylesheet" />
+</head>
+<body class="layui-layout-body">
+  
+  <div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+      <!--<div class="layui-header">
+        <div class="layui-nav layui-layout-left index_top">
+					
+					
+					<span class="logout"><i class="layui-icon">&#xe60e;</i> 退出</span>
+				</div>
+      </div>-->
+      
+      <!-- 侧边菜单 -->
+      <div class="layui-side layui-side-menu">
+        <div class="layui-side-scroll">
+          <div class="layui-side layui-bg-black">
+			    	<div class="layui-side-scroll">	       
+			        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+			        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+								<li class="logo"><img src="images/logo.png" class="big_logo"/><img src="images/logo.png" class="mini_logo"/></li>
+								<li style="text-align:center;margin-bottom:20px;"><span class="system_title">BPM系统</span></li>
+							 	<li class="layui-nav-item layui-this"><a href="backlog.html" target="iframe0"><i class="layui-icon">&#xe60e;</i><span> 待办任务</span> </a></li>
+							 	<li class="layui-nav-item"><a href="not_read.html" target="iframe0"><i class="layui-icon">&#xe645;</i><span> 未阅通知</span></a></li>
+							    <li class="layui-nav-item"><a href="finished.html" target="iframe0"><i class="layui-icon">&#x1005;</i><span> 已办任务</span></a></li>
+							  <!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>
+							 	<li class="layui-nav-item"><a href="draft.html" target="iframe0"><i class="layui-icon">&#xe624;</i><span>草稿箱</span></a></li>
+							 	<li class="layui-nav-item"><a href="new_tail.html" target="iframe0"><i class="layui-icon">&#xe609;</i> <span> 发起跟踪</span></a></li>-->
+							 	<li class="layui-nav-item"><a href="set.html" target="iframe0"><i class="layui-icon">&#xe6b2;</i><span> 委托设置</span></a></li>
+							 	<li class="layui-nav-item"><a href="javascript:void(0)" target="iframe0" class="detail_menu1"><i class="layui-icon">&#xe68e;</i><span> 门店生命周期</span></a></li>
+							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe629;</i> <span> 加盟管理</span></a></li>
+							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe62c;</i> <span> 主数据管理</span></a></li>
+							 	<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
+							</ul>
+				    </div>
+				</div>
+        </div>
+      </div>
+      <div class="layui-body" id="LAY_app_body" style="margin-bottom:40px;">
+        <div class="layadmin-tabsbody-item layui-show">
+          <iframe src="backlog.html" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
+          <div class="menu_detail1">
+		 			<div class="menu_container">
+		 				<div class="menu_title">新开店流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">目标门店调查表</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">合同用印</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 			<div class="menu_container">
+		 				<div class="menu_title">续租流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">门店续租申请表</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">门店续租相关事项变动确认流程</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 			<div class="menu_container">
+		 				<div class="menu_title">老翻新流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">门店整体翻新流程</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">门店部分翻新流程</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 			<div class="menu_container">
+		 				<div class="menu_title">门店暂闭流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">门店暂闭申请表</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">门店被动暂闭和快速暂闭申请流程</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">门店暂闭重开申请表</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 			<div class="menu_container">
+		 				<div class="menu_title">拆店流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">门店拆店申请表</a></li>
+			 					<li><a href="backlog.html"  target="iframe0">拆店信息移交及相关事项确认流程</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 			<div class="menu_container">
+		 				<div class="menu_title">门店续租转让流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
+			 			<div class="menu_detail">
+			 				<ul>
+			 					<li><a href="backlog.html"  target="iframe0">门店转租转让申请表</a></li>
+			 					<h1 style="clear:both;"></h1>
+			 				</ul>		
+			 			</div>
+		 			</div>
+		 		</div>
+        </div>
+      </div>
+      <div class="layui-footer">
+        <div class="footer">
+					Copyright &copy; 来伊份 2018
+				</div>
+      </div>
+      <!-- 辅助元素，一般用于移动设备下遮罩 -->
+      <div class="layadmin-body-shade" layadmin-event="shade"></div>
+    </div>
+  </div>
 	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="resources/js/layui.all.js"></script>	
-	<script>
-        function changeFrameHeight(){
-	        var ifm= document.getElementById("iframe_1"); 
-	        ifm.height=document.documentElement.clientHeight-105;	
-	    }
-	    window.onresize=function(){  
-	         changeFrameHeight();  	
-	    } 
-		window.onload=function(){
-			var ifm= document.getElementById("iframe_1"); 
-	        ifm.height=document.documentElement.clientHeight-105;
-		}
+  <script src="resources/js/layui.all.js"></script>
+  <script>
+		$(function(){
+			$(".layui-nav-item a").mouseover(function(){
+		        $(".layui-nav-item a").not(".detail_menu1").not(".detail_menu2").each(function() { 
+		            $(".menu_detail1").css("display","none");
+					$(".menu_detail2").css("display","none");
+		        });
+		   });			
+			$(".detail_menu1").mouseover(function(){
+				$(".menu_detail1").css("display","block");
+				$(".menu_detail2").css("display","none");
+			})
+			$(".menu_detail1").click(function(){
+				$(this).css("display","none");
+			})
+			$(".detail_menu2").mouseover(function(){
+				$(".menu_detail2").css("display","block");
+				$(".menu_detail1").css("display","none");
+			})
+			$(".menu_detail2").click(function(){
+				$(this).css("display","none");
+			})
+		})
+
+		 layui.use('element', function(){
+        var element = layui.element;
+   	});
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function(){
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function(){
+            if($(this).is(':hidden')){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if(isShow){
+            $('.layui-side').animate({ 
+				    width: "60px"						   
+			  }); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+						$('.layui-body').animate({ 
+				    left: "60px"
+					  }, function(){
+					  		$(".mini_logo").show();
+					  });
+					  $('.layui-footer').animate({ 
+				    left: "60px"
+					  }, function(){
+					  		$(".mini_logo").show();
+					  });
+            //将二级导航栏隐藏
+            $('dd span').each(function(){
+                $(this).hide();
+            });
+            //修改标志位
+            isShow =false;
+       }else{    
+       			$('.layui-side').animate({ 
+						    width: "220px"						   
+					  },function(){
+					  });
+          	$('.kit-side-fold i').css('margin-right', '10%');
+	            $(".mini_logo").hide();
+	            
+					 	 	$('.layui-body').animate({ 
+						    left: "220px"	
+					 	 	});					 	 	
+					 	 	$('.layui-footer').animate({ 
+						    left: "220px"	
+					 	 	});
+	            $('dd span').each(function(){
+	                $(this).show();
+	            });             
+            isShow =true;
+        }
+    });
 	</script>
+</body>
+</html>
+
