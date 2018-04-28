@@ -15,9 +15,9 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <link rel="stylesheet" href="css/layui.css" media="all">
-  <link rel="stylesheet" href="css/admin.css" media="all">
-  <link rel="stylesheet" href="css/my.css" />
+  <link rel="stylesheet" href="resources/css/layui.css" media="all">
+  <link rel="stylesheet" href="resources/css/admin.css" media="all">
+  <link rel="stylesheet" href="resources/css/my.css" />
   
 </head>
 <body class="layui-layout-body">
@@ -39,7 +39,7 @@
 			    	<div class="layui-side-scroll">	       
 			        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 			        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-								<li class="logo"><img src="images/logo.png" class="big_logo"/><img src="images/logo.png" class="mini_logo"/></li>
+								<li class="logo"><img src="resources/images/logo.png" class="big_logo"/><img src="resources/images/logo.png" class="mini_logo"/></li>
 								<li style="text-align:center;margin-bottom:20px;"><span class="system_title">BPM系统</span></li>
 							 	<li class="layui-nav-item layui-this"><a href="backlog.html" target="iframe0"><i class="layui-icon">&#xe60e;</i><span> 待办任务</span> </a></li>
 							 	<li class="layui-nav-item"><a href="not_read.html" target="iframe0"><i class="layui-icon">&#xe645;</i><span> 未阅通知</span></a></li>
@@ -59,7 +59,7 @@
       </div>
       <div class="layui-body" id="LAY_app_body" style="margin-bottom:40px;">
         <div class="layadmin-tabsbody-item layui-show">
-          <iframe src="backlog.html" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
+          <iframe src="test/backlog" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
           <div class="menu_detail1">
 		 			<div class="menu_container">
 		 				<div class="menu_title">新开店流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
@@ -133,17 +133,8 @@
       <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
   </div>
-	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
-  <script src="js/layui.all.js"></script>
-  <!--IE8只能支持jQuery1.9-->
-	    <!--[if lte IE 8]>
-	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
-	    <![endif]-->
-  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-	<!--[if lt IE 9]>
-	  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-	  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-	<![endif]-->
+  <script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
+  <script type="text/javascript" src="resources/js/layui.all.js"></script>
   <script>
 		$(function(){
 			$(".layui-nav-item a").mouseover(function(){
