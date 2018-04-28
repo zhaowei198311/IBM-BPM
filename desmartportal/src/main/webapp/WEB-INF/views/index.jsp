@@ -47,10 +47,10 @@
 							  <!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>
 							 	<li class="layui-nav-item"><a href="draft.html" target="iframe0"><i class="layui-icon">&#xe624;</i><span>草稿箱</span></a></li>
 							 	<li class="layui-nav-item"><a href="new_tail.html" target="iframe0"><i class="layui-icon">&#xe609;</i> <span> 发起跟踪</span></a></li>-->
-							 	<li class="layui-nav-item"><a href="set.html" target="iframe0"><i class="layui-icon">&#xe6b2;</i><span> 委托设置</span></a></li>
+							 	<li class="layui-nav-item"><a href="set.html" target="iframe0"><i class="layui-icon">&#xe6b2;</i><span> 代理设置</span></a></li>
 							 	<li class="layui-nav-item"><a href="javascript:void(0)" target="iframe0" class="detail_menu1"><i class="layui-icon">&#xe68e;</i><span> 门店生命周期</span></a></li>
-							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe629;</i> <span> 加盟管理</span></a></li>
-							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe62c;</i> <span> 主数据管理</span></a></li>
+							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe640;</i> <span> 草稿箱</span></a></li>
+							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe629;</i> <span> 报表</span></a></li>
 							 	<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
 							</ul>
 				    </div>
