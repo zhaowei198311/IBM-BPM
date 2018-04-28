@@ -16,7 +16,7 @@ import com.desmart.desmartbpm.service.DhObjectPermissionService;
 * @date 2018年4月19日  
 */
 @Controller
-@RequestMapping(value = "/test")
+@RequestMapping(value = "/user")
 public class portalController {
 	
 	@Autowired
