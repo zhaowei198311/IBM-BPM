@@ -52,12 +52,12 @@
 	<div class="display_container">
 		<div class="display_content">
 			<div class="top">
-				新增角色组名称
+				新增模块资源
 			</div>
 			<div class="middle">
 				<form class="layui-form form-horizontal"  method="post"  action="sysResource/addSysResource" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
-				    <label class="layui-form-label">角色组名称</label>
+				    <label class="layui-form-label">模块资源名称</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="resouceName" required  lay-verify="required" autocomplete="off" class="layui-input">
 				    </div>
@@ -82,12 +82,12 @@
 	<div class="display_container1">
 		<div class="display_content1">
 			<div class="top">
-				编辑角色组名称
+				编辑模块资源
 			</div>
 			<div class="middle">
 				<form class="layui-form form-horizontal" action="sysResource/updateSysResource" method="post"  style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 					   <div class="layui-form-item">
-					    <label class="layui-form-label">角色组名称</label>
+					    <label class="layui-form-label">模块资源名称</label>
 					    <div class="layui-input-block">
 					      <input type="text" name="resouceName" required  lay-verify="required" autocomplete="off" class="layui-input">
 					    </div>
