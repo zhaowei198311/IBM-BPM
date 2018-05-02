@@ -284,7 +284,7 @@
       ACTC_CAN_PAUSE = #{actcCanPause,jdbcType=VARCHAR},
       ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR},
       UPDATOR = #{updator,jdbcType=VARCHAR},
-      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_TIME = sysdate,
       ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser},
       ACTC_CAN_TRANSFER = #{actcCanTransfer},
       ACTC_RESPONSIBILITY = #{actcResponsibility}

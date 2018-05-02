@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhObjectPermissionMapper" >
     <sql id="base_column" >
-        OP_UID, PRO_APP_ID, PRO_UID, PRO_VER_UID, TAS_UID, OP_PARTICIPATE_TYPE, OP_PARTICIPATE_UID, 
+        OP_UID, PRO_APP_ID, PRO_UID, PRO_VER_UID, STEP_UID, OP_PARTICIPATE_TYPE, OP_PARTICIPATE_UID, 
         OP_OBJ_TYPE, OP_OBJ_UID, OP_ACTION
     </sql>
   
@@ -10,7 +10,7 @@
         insert into DH_OBJECT_PERMISSION (<include refid="base_column"/>)
         values (
 	        #{opUid}, #{proAppId}, #{proUid}, 
-	        #{proVerUid}, #{tasUid}, #{opParticipateType}, 
+	        #{proVerUid}, #{stepUid}, #{opParticipateType}, 
 	        #{opParticipateUid}, #{opObjType}, #{opObjUid}, 
 	        #{opAction}
         )
@@ -21,7 +21,7 @@
         <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
 	        select
 		        #{item.opUid}, #{item.proAppId}, #{item.proUid},
-				#{item.proVerUid}, #{item.tasUid}, #{item.opParticipateType},
+				#{item.proVerUid}, #{item.stepUid}, #{item.opParticipateType},
 				#{item.opParticipateUid}, #{item.opObjType}, #{item.opObjUid},
 				#{item.opAction}
 	        from dual
@@ -43,8 +43,8 @@
             <if test="proVerUid != null">
                 and pro_ver_uid  = #{proVerUid}
             </if>
-            <if test="tasUid != null">
-                and tas_uid = #{tasUid}
+            <if test="stepUid != null">
+                and STEP_UID = #{stepUid}
             </if>
             <if test="opParticipateType != null">
                 and op_participate_type = #{opParticipateType}
@@ -79,8 +79,8 @@
             <if test="proVerUid != null">
                 and pro_ver_uid  = #{proVerUid}
             </if>
-            <if test="tasUid != null">
-                and tas_uid = #{tasUid}
+            <if test="stepUid != null">
+                and STEP_UID = #{stepUid}
             </if>
             <if test="opParticipateType != null">
                 and op_participate_type = #{opParticipateType}

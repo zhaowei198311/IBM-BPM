@@ -14,7 +14,7 @@ public class DhObjectPermission {
 
     private String proVerUid; 
 
-    private String tasUid;  // 活动id
+    private String stepUid;  // 活动id
 
     private String opParticipateType; // 权限所有者类型：USER，TEAM，ROLE
 
@@ -59,12 +59,12 @@ public class DhObjectPermission {
         this.proVerUid = proVerUid;
     }
 
-    public String getTasUid() {
-        return tasUid;
+    public String getStepUid() {
+        return stepUid;
     }
 
-    public void setTasUid(String tasUid) {
-        this.tasUid = tasUid;
+    public void setStepUid(String stepUid) {
+        this.stepUid = stepUid;
     }
 
     public String getOpParticipateType() {
@@ -111,7 +111,7 @@ public class DhObjectPermission {
     public String toString() {
         return "DhObjectPermission [opUid=" + opUid + ", proAppId=" + proAppId
                 + ", proUid=" + proUid + ", proVerUid=" + proVerUid
-                + ", tasUid=" + tasUid + ", opParticipateType="
+                + ", stepUid=" + stepUid + ", opParticipateType="
                 + opParticipateType + ", opParticipateUid=" + opParticipateUid
                 + ", opObjType=" + opObjType + ", opObjUid=" + opObjUid
                 + ", opAction=" + opAction + "]";

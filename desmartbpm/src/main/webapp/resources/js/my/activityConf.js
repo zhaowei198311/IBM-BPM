@@ -1,105 +1,237 @@
 var triggerToEdit = "";
+var preFormData;
+var editIndex;
 var pageConfig = {
-	    pageNum: 1,
-	    pageSize: 5,
-	    total: 0,
-	    triTitle: "",
-	    triType: ""
-	};
+    pageNum: 1,
+    pageSize: 5,
+    total: 0,
+    triTitle: "",
+    triType: ""
+};
 
 layui.use('form', function(){
     var form = layui.form;
-    form.on('select(assignType)', function(data){         
-          if(data.value=="roleAndDepartment"){ 
-          	$("#handleRole_div").show();
-          	$("#handleTeam_div").hide();
-          	$("#handleUser_div").hide();
-          	$("#handleField_div").hide();
-          }else  if(data.value=="roleAndCompany"){ 
-          	$("#handleRole_div").show();
-              $("#handleTeam_div").hide();
-              $("#handleUser_div").hide();
-              $("#handleField_div").hide();
-          }else  if(data.value=="teamAndDepartment"){ 
-              $("#handleRole_div").hide();
-              $("#handleTeam_div").show();
-              $("#handleRole_div").hide();
-              $("#handleField_div").hide();
-          }else  if(data.value=="teamAndCompany"){ 
-          	$("#handleRole_div").hide();
-              $("#handleTeam_div").show();
-              $("#handleUser_div").hide();
-              $("#handleField_div").hide();
-          }else if(data.value=="leaderOfPreActivityUser"){ 
-          	$("#handleRole_div").hide();
-              $("#handleTeam_div").hide();
-              $("#handleUser_div").hide();
-              $("#handleField_div").hide();
-          }else if(data.value=="users"){ 
-          	$("#handleRole_div").hide();
-              $("#handleTeam_div").hide();
-              $("#handleUser_div").show();
-              $("#handleField_div").hide();
-          }else if(data.value=="processCreator"){ 
-          	$("#handleRole_div").hide();
-              $("#handleTeam_div").hide();
-              $("#handleUser_div").hide();
-              $("#handleField_div").hide();
-          }else if(data.value=="byField"){ 
-          	$("#handleRole_div").hide();
-              $("#handleTeam_div").hide();
-              $("#handleUser_div").hide();
-              $("#handleField_div").show();
-          }           
-      }); 
-    
-      form.on('select(rejectType)', function(data){
-      	if (data.value == "toActivities"){
-      		$("#rejectActivities_div").show();
-        } else {
-        	$("#rejectActivities_div").hide();
+    form.on('select(assignType)', function(data){
+    	if(data.value == "none"){
+    		$("#handleRole_div").hide();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+    	} else if(data.value=="roleAndDepartment"){
+            $("#handleRole_div").show();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+        }else  if(data.value=="roleAndCompany"){
+            $("#handleRole_div").show();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+        }else  if(data.value=="teamAndDepartment"){
+            $("#handleUser_div").hide();
+            $("#handleTeam_div").show();
+            $("#handleRole_div").hide();
+            $("#handleField_div").hide();
+        }else  if(data.value=="teamAndCompany"){
+            $("#handleRole_div").hide();
+            $("#handleTeam_div").show();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+        }else if(data.value=="leaderOfPreActivityUser"){
+            $("#handleRole_div").hide();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+        }else if(data.value=="users"){
+            $("#handleRole_div").hide();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").show();
+            $("#handleField_div").hide();
+        }else if(data.value=="processCreator"){
+            $("#handleRole_div").hide();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").hide();
+        }else if(data.value=="byField"){
+            $("#handleRole_div").hide();
+            $("#handleTeam_div").hide();
+            $("#handleUser_div").hide();
+            $("#handleField_div").show();
         }
-      });   
-      
-      form.on('radio(canReject)', function(data){
-    	  if (data.value == "TRUE") {
-    		  $("#rejectType_div").show();
-    		  if ($('select[name="actcRejectType"]').val() == 'toActivities') {
-    			  $("#rejectActivities_div").show();
-    		  } else {
-    			  $("#rejectActivities_div").hide();
-    		  }
-    	  } else {
-    		  $("#rejectType_div").hide();
-    		  $("#rejectActivities_div").hide();
-    	  }
-      });
-  });
+    });
+
+    form.on('select(rejectType)', function(data){
+        if (data.value == "toActivities"){
+            $("#rejectActivities_div").show();
+        } else {
+            $("#rejectActivities_div").hide();
+        }
+    });
+
+    form.on('radio(canReject)', function(data){
+        if (data.value == "TRUE") {
+            $("#rejectType_div").show();
+            if ($('select[name="actcRejectType"]').val() == 'toActivities') {
+                $("#rejectActivities_div").show();
+            } else {
+                $("#rejectActivities_div").hide();
+            }
+        } else {
+            $("#rejectType_div").hide();
+            $("#rejectActivities_div").hide();
+        }
+    });
+    // 切换是否显示自定义业务字段
+    form.on('radio(stepType)', function(data){
+        if (data.value == "default") {
+            $("#stepBusinessKey_input").hide();
+        } else {
+            $("#stepBusinessKey_input").show();
+        }
+    });
+});
 
 // 页面加载完成
 $(function(){
-	initCollapse();
-	getConfData(firstHumanMeteConf);
-	
-	$('#sla_form').validate({
+    initCollapse();
+    loadActivityConf(firstHumanMeteConf);
+
+    // 校验规则
+    $('#config_form').validate({
         rules : {
-        	actcTime : {
-                number : true
+            actcAssignType : {
+                required: true
+            },
+            handleUser: {
+                required: function(element) {
+                    return $('select[name="actcAssignType"]').val() == 'users';
+                }
+            },
+            handleRole: {
+                required: function(element) {
+                    return $('select[name="actcAssignType"]').val().startsWith('role');
+                }
+            },
+            handleTeam: {
+                required: function(element) {
+                    return $('select[name="actcAssignType"]').val().startsWith('team');
+                }
+            },
+            handleField: {
+                required: function(element) {
+                    return $('select[name="actcAssignType"]').val() == 'byField';
+                }
+            },
+            actcCanChooseUser: {
+                required: true
+            },
+            actcCanReject: {
+                required: true
+            },
+            actcRejectType: {
+                required: function(element) {
+                    return $('input[name="actcCanReject"]').val() == "TRUE";
+                }
+            },
+            rejectActivities: {
+                required: function(element) {
+                    return ($('input[name="actcCanReject"]').val() == "TRUE" && $('select[name="actcRejectType"]').val() == "toActivities");
+                }
+            },
+            actcCanAutocommit: {
+                required: true
+            },
+            actcCanApprove: {
+                required: true
+            },
+            actcCanUploadAttach: {
+                required: true
+            },
+            actcCanEditAttach: {
+                required: true
+            },
+            actcCanDeleteAttach: {
+                required: true
+            },
+            actcCanDelegate: {
+                required: true
+            },
+            actcCanRevoke: {
+                required: true
+            },
+            actcCanAdd: {
+                required: true
+            },
+            actcCanTransfer: {
+                required: true
+            },
+            actcCanMailNotify: {
+                required: true
+            },
+            actcCanMessageNotify: {
+                required: true
+            },
+            actcAssignVariable: {
+                required: true
+            },
+            signCountVarname: {
+                required: true
+            },
+            actcSort: {
+                required: true,
+                digits: true
+            },
+            actcMailNotifyTemplate: {
+                maxlength: 100
             }
-           
         }
     });
-	
-	$("#back_btn").click(function() {
-		window.history.back();
-	});
-	
-	$("#choose_outtimeTri_btn").click(function() {
-		triggerToEdit = 'actcOuttimeTrigger';
-		getTriggerInfo();
-		$("#chooseTrigger_container").show();
-	});
-	
+
+    $('#sla_form').validate({
+        rules: {
+
+            actcResponsibility: {
+                maxlength: 666
+            },
+            actcTime : {
+                number: true
+            },
+            actcTimeunit: {
+                required: function(element) {
+                    return $('input[name="actcMailNotifyTemplate"]').val().trim().length > 0;
+                }
+            },
+            actcOuttimeTrigger: {
+                maxlength: 60
+            },
+            actcOuttimeTemplate: {
+                maxlength: 100,
+                required: function(element) {
+                    if ($('input[name="outtimeUser"]').val() || $('input[name="outtimeRole"]').val() || $('input[name="outtimeTeam"]').val()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        },
+        messages: {
+            actcOuttimeTemplate: {
+                required: "选择了超时通知人，未指定模版"
+            }
+        }
+    });
+
+    $("#back_btn").click(function() {
+        window.history.back();
+    });
+
+    $("#choose_outtimeTri_btn").click(function() {
+        triggerToEdit = 'actcOuttimeTrigger';
+        getTriggerInfo();
+        $("#chooseTrigger_container").show();
+    });
+
     // “确认”选择触发器
     $("#chooseTrigger_sureBtn").click(function () {
         var cks = $("[name='tri_check']:checked");
@@ -123,236 +255,363 @@ $(function(){
     });
     // “取消”选择触发器
     $("#chooseTrigger_cancelBtn").click(function(){
-    	$("#chooseTrigger_container").hide();
+        $("#chooseTrigger_container").hide();
     });
-    
+
     // 选择处理人（人员）
     $("#choose_handle_user").click(function() {
-    	common.chooseUser('handleUser', 'false');
+        common.chooseUser('handleUser', 'false');
     });
     // 选择处理人（角色）
     $("#choose_handle_role").click(function() {
-    	common.chooseRole('handleRole', 'false');
+        common.chooseRole('handleRole', 'false');
     });
     // 选择处理人（角色组）
     $("#choose_handle_team").click(function() {
-    	common.chooseTeam('handleTeam', 'false');
+        common.chooseTeam('handleTeam', 'false');
     });
-    
-    
+
+    // 选择超时通知人（人员）
+    $("#choose_outtime_user").click(function() {
+        common.chooseUser('outtimeUser', 'false');
+    });
+    // 选择超时通知人（角色）
+    $("#choose_outtime_role").click(function() {
+        common.chooseRole('outtimeRole', 'false');
+    });
+    // 选择超时通知人（角色组）
+    $("#choose_outtime_team").click(function() {
+        common.chooseTeam('outtimeTeam', 'false');
+    });
+
+    $("#add_step_btn").click(function(){
+        $("#addStep_container").show();
+    })
+
+    // “选择环节”
+    $("#chooseActivity_i").click(function(){
+        $("#left_activity_ul").empty();
+        $("#right_activity_ul").empty();
+        $("#left_activity_ul").append(activityStr);
+        var choosedValue = $("#rejectActivities").val();
+        if (!choosedValue) {
+            $("#choose_activity_container").show();
+            return;
+        }
+        var chooseIds = choosedValue.split(";");
+        $("#left_activity_ul li").each(function(){
+            var activityId = $(this).data('activityid');
+            if ($.inArray(activityId, chooseIds) != -1) {
+                $(this).appendTo($("#right_activity_ul"));
+            }
+        });
+        $("#choose_activity_container").show();
+    })
+
+    $("#chooseActivities_sureBtn").click(function(){
+        var val = '';
+        var val_view = '';
+        $("#right_activity_ul li").each(function(){
+            val += $(this).data('activityid') + ";";
+            val_view += $(this).html() + ";";
+        });
+        $("#rejectActivities").val(val);
+        $("#rejectActivities_view").val(val_view);
+        console.log(val);
+        console.log(val_view);
+        $("#choose_activity_container").hide();
+    });
+
+    $("#choose_activity_container").on('click', 'li', function(){
+        if ($(this).hasClass('colorli')) {
+            $(this).removeClass('colorli');
+        } else {
+            $(this).addClass('colorli');
+        }
+    });
+
+
+
 });
 
 // 初始化折叠菜单
 function initCollapse() {
-	$.ajax({
-		url : common.getPath() + "/activityMeta/getActivitiyMetasForConfig",
-		type : "post",
-		dataType : "json",
-		data : {
-			"proAppId": proAppId,
-			"proUid": proUid,
-			"proVerUid": proVerUid
-		},
-		success : function(result){
-			if(result.status == 0){
-			    printCollapse(result.data);
-			}else{
-				layer.alert(result.msg);
-			}
-		},
-		error : function(){
-			layer.alert('操作失败');
-		}
-	});
+    $.ajax({
+        url : common.getPath() + "/activityMeta/getActivitiyMetasForConfig",
+        type : "post",
+        dataType : "json",
+        data : {
+            "proAppId": proAppId,
+            "proUid": proUid,
+            "proVerUid": proVerUid
+        },
+        success : function(result){
+            if(result.status == 0){
+                printCollapse(result.data);
+            }else{
+                layer.alert(result.msg);
+            }
+        },
+        error : function(){
+            layer.alert('操作失败');
+        }
+    });
 }
 function printCollapse(list) {
-	var str = '';
-	for (var i=0; i<list.length; i++) {
-		var process = list[i];
-		var name = process.name;
-		var children = process.children;
-		str += '<div class="layui-colla-item">'
-		    +     '<h2 class="layui-colla-title">'+name+'</h2>';
-		if (process.id == 'main') {
-			str += '<div class="layui-colla-content layui-show" id="content'+i+'">';
-		} else {
-			str += '<div class="layui-colla-content " id="content'+i+'">';
-		}
-		str += '<ul class="link_list">';    
-		for (var j=0; j<children.length; j++) {
-			var meta = children[j];
-			if (meta.activityId == firstHumanMeta) {
-				str += '<li data-uid="'+meta.actcUid+'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
-			} else {
-				str += '<li data-uid="'+meta.actcUid+'" onclick="clickLi(this);">'+meta.activityName+'</li>';
-			}
-		}
-		str +=   '</ul>'
-			  + '</div>'
-			+ '</div>';
-	}
-	$("#my_collapse").append(str);
-	layui.use('element', function(){
-		var element = layui.element;
-		element.init();
-	});
-	
+    var str = '';
+    for (var i=0; i<list.length; i++) {
+        var process = list[i];
+        var name = process.name;
+        var children = process.children;
+        str += '<div class="layui-colla-item">'
+            +     '<h2 class="layui-colla-title">'+name+'</h2>';
+        if (process.id == 'main') {
+            str += '<div class="layui-colla-content layui-show" id="content'+i+'">';
+        } else {
+            str += '<div class="layui-colla-content " id="content'+i+'">';
+        }
+        str += '<ul class="link_list">';
+        for (var j=0; j<children.length; j++) {
+            var meta = children[j];
+            if (meta.activityId == firstHumanMeta) {
+                str += '<li data-uid="'+meta.actcUid+'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
+            } else {
+                str += '<li data-uid="'+meta.actcUid+'" onclick="clickLi(this);">'+meta.activityName+'</li>';
+            }
+        }
+        str +=   '</ul>'
+            + '</div>'
+            + '</div>';
+    }
+    $("#my_collapse").append(str);
+    layui.use('element', function(){
+        var element = layui.element;
+        element.init();
+    });
+
 }
 // 点击 li
 function clickLi(li) {
-	var $li = $(li);
-	if ($li.hasClass('link_active')) {
-		return;
-	} else {
-		$("#my_collapse li").each(function() {
-			$(this).removeClass('link_active');
-		});
-		$li.addClass('link_active');
-		console.log($li.data('uid'));
-	}
+    var $li = $(li);
+    if ($li.hasClass('link_active')) {
+        return;
+    } else {
+        var actcUid = $li.data('uid');
+        if (getFormData() != preFormData) {//配置变化了
+            layer.confirm('是否先保存数据再切换环节？', {btn: ['确定','取消'] },
+                function(){
+                    save(actcUid);
+                },
+                function(){
+                    $("#my_collapse li").each(function() {
+                        $(this).removeClass('link_active');
+                    });
+                    $li.addClass('link_active');
+                    loadActivityConf(actcUid);
+                }
+            );
+
+
+        } else {//配置没有变化
+            $("#my_collapse li").each(function() {
+                $(this).removeClass('link_active');
+            });
+            $li.addClass('link_active');
+            loadActivityConf(actcUid);
+        }
+
+    }
 }
-function getConfData(actcUid) {
-	$.ajax({
-		url: common.getPath() + "/activityConf/getData",
-		type: "post",
-		dataType: "json",
-		data: {
-			"actcUid": actcUid
-		},
-		success : function(result){
-			if(result.status == 0){
-			    console.log(result.data);
-			    initConf(result.data);
-			}else{
-				layer.alert(result.msg);
-			}
-		},
-		error : function(){
-			layer.alert('操作失败,请稍后再试');
-		}
-	});
+
+// ajax获取配置文件信息
+function loadActivityConf(actcUid) {
+    $.ajax({
+        url: common.getPath() + "/activityConf/getData",
+        type: "post",
+        dataType: "json",
+        data: {
+            "actcUid": actcUid
+        },
+        success : function(result){
+            if(result.status == 0){
+                console.log(result.data);
+                initConf(result.data);
+            }else{
+                layer.alert(result.msg);
+            }
+        },
+        error : function(){
+            layer.alert('操作失败,请稍后再试');
+        }
+    });
 }
+// 载入配置信息
 function initConf(map) {
-	var conf = map.conf;
-	console.log(conf);
-	$('input[name="actcSort"]').val(conf.actcSort);
-	$('input[name="actcTime"]').val(conf.actcTime);
-	$('input[name="actcMailNotifyTemplate"]').val(conf.actcMailNotifyTemplate);
-	$('input[name="actcOuttimeTrigger"]').val(conf.actcOuttimeTrigger);
-	$('input[name="actcOuttimeTriggerTitle"]').val(conf.actcOuttimeTriggerTitle);
-	
-	$('textarea[name="actcResponsibility"]').val(conf.actcResponsibility);
-	
-	$('select[name="actcTimeunit"]').val(conf.actcTimeunit);
-	$('select[name="actcAssignType"]').val(conf.actcAssignType);
-	showHandleDiv(conf.actcAssignType);
-	
-	$('select[name="actcAssignVariable"]').val(conf.actcAssignVariable);
-	$('select[name="signCountVarname"]').val(conf.signCountVarname);
-	$('select[name="actcRejectType"]').val(conf.actcRejectType);
-	if (conf.actcRejectType == "toActivities") {
-		$("#rejectType_div").show();
-	} else {
-		$("#rejectType_div").hide();
-	}
-	
-	$('input[name="actcCanEditAttach"]').each(function(){
-		if ($(this).val() == conf.actcCanEditAttach) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanUploadAttach"]').each(function(){
-		if ($(this).val() == conf.actcCanUploadAttach) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanDeleteAttach"]').each(function(){
-		if ($(this).val() == conf.actcCanDeleteAttach) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanDelegate"]').each(function(){
-		if ($(this).val() == conf.actcCanDelegate) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanMessageNotify"]').each(function(){
-		if ($(this).val() == conf.actcCanMessageNotify) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanMailNotify"]').each(function(){
-		if ($(this).val() == conf.actcCanMailNotify) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanReject"]').each(function(){
-		if ($(this).val() == conf.actcCanReject) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	
-	
-	$('input[name="actcCanRevoke"]').each(function(){
-		if ($(this).val() == conf.actcCanRevoke) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanAutocommit"]').each(function(){
-		if ($(this).val() == conf.actcCanAutocommit) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanAdd"]').each(function(){
-		if ($(this).val() == conf.actcCanAdd) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanApprove"]').each(function(){
-		if ($(this).val() == conf.actcCanApprove) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanChooseUser"]').each(function(){
-		if ($(this).val() == conf.actcCanChooseUser) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	$('input[name="actcCanTransfer"]').each(function(){
-		if ($(this).val() == conf.actcCanTransfer) {
-			$(this).prop("checked", true);
-		} else {
-			$(this).prop("checked", false);
-		}
-	});
-	
-	
-	
-	layui.form.render();
+    var conf = map.conf;
+    $("#handleUser_div").hide();
+    $("#handleRole_div").hide();
+    $("#handleTeam_div").hide();
+    $("#handleField_div").hide();
+    
+    $('input[name="actcUid"]').val(conf.actcUid);
+    $('input[name="actcSort"]').val(conf.actcSort);
+    $('input[name="actcTime"]').val(conf.actcTime);
+    $('input[name="actcMailNotifyTemplate"]').val(conf.actcMailNotifyTemplate);
+    $('input[name="actcOuttimeTrigger"]').val(conf.actcOuttimeTrigger);
+    $('input[name="actcOuttimeTriggerTitle"]').val(conf.actcOuttimeTriggerTitle);
+    $('input[name="actcOuttimeTemplate"]').val(conf.actcOuttimeTemplate);
+
+    $('textarea[name="actcResponsibility"]').val(conf.actcResponsibility);
+
+    $('select[name="actcTimeunit"]').val(conf.actcTimeunit);
+    $('select[name="actcAssignType"]').val(conf.actcAssignType);
+    showHandleDiv(conf.actcAssignType);
+
+    $('select[name="actcAssignVariable"]').val(conf.actcAssignVariable);
+    $('select[name="signCountVarname"]').val(conf.signCountVarname);
+    $('select[name="actcRejectType"]').val(conf.actcRejectType);
+    if (conf.actcRejectType == "toActivities") {
+        $("#rejectType_div").show();
+    } else {
+        $("#rejectType_div").hide();
+    }
+
+    $('input[name="actcCanEditAttach"]').each(function(){
+        if ($(this).val() == conf.actcCanEditAttach) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanUploadAttach"]').each(function(){
+        if ($(this).val() == conf.actcCanUploadAttach) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanDeleteAttach"]').each(function(){
+        if ($(this).val() == conf.actcCanDeleteAttach) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanDelegate"]').each(function(){
+        if ($(this).val() == conf.actcCanDelegate) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanMessageNotify"]').each(function(){
+        if ($(this).val() == conf.actcCanMessageNotify) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanMailNotify"]').each(function(){
+        if ($(this).val() == conf.actcCanMailNotify) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanReject"]').each(function(){
+        if ($(this).val() == conf.actcCanReject) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+
+
+    $('input[name="actcCanRevoke"]').each(function(){
+        if ($(this).val() == conf.actcCanRevoke) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanAutocommit"]').each(function(){
+        if ($(this).val() == conf.actcCanAutocommit) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanAdd"]').each(function(){
+        if ($(this).val() == conf.actcCanAdd) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanApprove"]').each(function(){
+        if ($(this).val() == conf.actcCanApprove) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanChooseUser"]').each(function(){
+        if ($(this).val() == conf.actcCanChooseUser) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="actcCanTransfer"]').each(function(){
+        if ($(this).val() == conf.actcCanTransfer) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+    $('input[name="handleUser"]').val(conf.handleUser);
+    if (conf.handleUser) {
+        $("#handleUser_div").show();
+    }
+    $('input[name="handleUser_view"]').val(conf.handleUserView);
+    $('input[name="handleRole"]').val(conf.handleRole);
+    if (conf.handleRole) {
+        $("#handleRole_div").show();
+    }
+    $('input[name="handleRole_view"]').val(conf.handleRoleView);
+    $('input[name="handleTeam"]').val(conf.handleTeam);
+    if (conf.handleTeam) {
+        $("#handleTeam_div").show();
+    }
+    $('input[name="handleTeam_view"]').val(conf.handleTeamView);
+    $('input[name="handleField"]').val(conf.handleField);
+    if (conf.handleField) {
+        $("#handleField_div").show();
+    }
+    $('input[name="outtimeUser"]').val(conf.outtimeUser);
+    $('input[name="outtimeUser_view"]').val(conf.outtimeUserView);
+    $('input[name="outtimeRole"]').val(conf.outtimeRole);
+    $('input[name="outtimeRole_view"]').val(conf.outtimeRoleView);
+    $('input[name="outtimeTeam"]').val(conf.outtimeTeam);
+    $('input[name="outtimeTeam_view"]').val(conf.outtimeTeamView);
+    $('input[name="rejectActivities"]').val(conf.rejectActivities);
+    if (conf.rejectActivities) {
+        $("#rejectActivities_div").show();
+    }
+    $('input[name="rejectActivities_view"]').val(conf.rejectActivitiesView);
+
+
+    layui.form.render();
+    layui.use('layedit', function(){
+        var layedit = layui.layedit;
+        editIndex = layedit.build('editDemo', {
+            tool: [
+                'strong','italic','underline','del','|','left','center','right'
+            ]
+        }); //建立编辑器
+    });
+
+    preFormData = getFormData();
 }
 
 /* 向服务器请求数据   */
@@ -443,45 +702,95 @@ $("#searchTrigger_btn").click(function () {
 })
 
 function showHandleDiv(assignType) {
-    if(assignType=="roleAndDepartment"){ 
-    	$("#handleRole_div").show();
-    	$("#handleTeam_div").hide();
-    	$("#handleUser_div").hide();
-    	$("#handleField_div").hide();
-    }else if(assignType=="roleAndCompany"){ 
-    	$("#handleRole_div").show();
+    if(assignType=="roleAndDepartment"){
+        $("#handleRole_div").show();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").hide();
-    }else if(assignType=="teamAndCompany"){ 
+    }else if(assignType=="roleAndCompany"){
+        $("#handleRole_div").show();
+        $("#handleTeam_div").hide();
+        $("#handleUser_div").hide();
+        $("#handleField_div").hide();
+    }else if(assignType=="teamAndCompany"){
         $("#handleRole_div").hide();
         $("#handleTeam_div").show();
         $("#handleRole_div").hide();
         $("#handleField_div").hide();
-    }else  if(assignType=="teamAndCompany"){ 
-    	$("#handleRole_div").hide();
+    }else  if(assignType=="teamAndCompany"){
+        $("#handleRole_div").hide();
         $("#handleTeam_div").show();
         $("#handleUser_div").hide();
         $("#handleField_div").hide();
-    }else if(assignType=="leaderOfPreActivityUser"){ 
-    	$("#handleRole_div").hide();
+    }else if(assignType=="leaderOfPreActivityUser"){
+        $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").hide();
-    }else if(assignType=="users"){ 
-    	$("#handleRole_div").hide();
+    }else if(assignType=="users"){
+        $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").show();
         $("#handleField_div").hide();
-    }else if(assignType=="processCreator"){ 
-    	$("#handleRole_div").hide();
+    }else if(assignType=="processCreator"){
+        $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").hide();
-    }else if(assignType=="byField"){ 
-    	$("#handleRole_div").hide();
+    }else if(assignType=="byField"){
+        $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").show();
-    }  
+    }
+}
+function moveActivityToRight(){
+    $("#left_activity_ul li.colorli").each(function(){
+        $(this).removeClass("colorli");
+        $(this).appendTo($("#right_activity_ul"));
+    });
+}
+function moveActivityToLeft() {
+    $("#right_activity_ul li.colorli").each(function(){
+        $(this).removeClass("colorli");
+        $(this).appendTo($("#left_activity_ul"));
+    });
+}
+// 保存
+function save(actcUid) {
+    layui.layedit.sync(editIndex);
+    if (!$('#config_form').valid() || !$('#sla_form').valid()) {
+        layer.alert("验证失败，请检查后提交");
+        return;
+    }
+    var info = getFormData();
+    $.ajax({
+        url : common.getPath() + "/activityConf/update",
+        type : "post",
+        dataType : "json",
+        data : info,
+        success : function(result){
+            if(result.status == 0){
+                layer.alert('操作成功');
+                if (actcUid) {
+                    $("#my_collapse").each(function(){
+                        if ($(this).data('uid') == actcUid) {
+
+                        }
+                    });
+                    loadActivityConf(actcUid);
+                } else {
+                    loadActivityConf($('input[name="actcUid"]').val());
+                }
+            }else{
+                layer.alert(result.msg);
+            }
+        },
+        error : function(){
+            layer.alert('操作失败');
+        }
+    });
+}
+function getFormData() {
+    return $('#config_form').serialize() + "&" + $('#sla_form').serialize();
 }

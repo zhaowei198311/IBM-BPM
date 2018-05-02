@@ -121,7 +121,7 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         selective.setProVerUid(proVerUid);
         selective.setOpObjType(DhObjectPermissionObjType.PROCESS.getCode());
         selective.setOpAction(DhObjectPermissionAction.START.getCode());
-        // 查人员 todo
+        // 查人员
         selective.setOpParticipateType(DhObjectPermissionParticipateType.USER.getCode());
         List<DhObjectPermission> permissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(selective);
         String userStr = "";

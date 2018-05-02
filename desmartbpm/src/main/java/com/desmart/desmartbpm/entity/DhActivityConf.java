@@ -10,11 +10,11 @@ public class DhActivityConf {
 
     private Integer actcSort;
 
-    private Double actcTime;
+    private Double actcTime;  // 运行时间（数量）
 
-    private String actcTimeunit;
+    private String actcTimeunit; // 运行时间（单位）
 
-    private String actcAssignType;
+    private String actcAssignType;  // 默认处理人类型 （无，角色+部门等）
 
     private String actcAssignVariable;
 
@@ -34,9 +34,9 @@ public class DhActivityConf {
 
     private String actcMailNotifyTemplate;
 
-    private String actcCanReject;
+    private String actcCanReject;  // 是否可以驳回
 
-    private String actcRejectType;
+    private String actcRejectType;  // 驳回类型
 
     private String actcCanRevoke;
 
@@ -88,8 +88,24 @@ public class DhActivityConf {
     
     private String actcResponsibility;
     
-    // 不在表中
-    private String actcOuttimeTriggerTitle;
+    // 非表中字段
+    private String actcOuttimeTriggerTitle; // 超时触发器名称
+    private String handleUser;  // 默认处理人
+    private String handleUserView;
+    private String handleRole;  // 默认处理角色
+    private String handleRoleView;
+    private String handleTeam;  // 默认处理角色组
+    private String handleTeamView;
+    private String handleField; // 默认处理字段
+    private String outtimeUser;
+    private String outtimeUserView;
+    private String outtimeRole;
+    private String outtimeRoleView;
+    private String outtimeTeam;
+    private String outtimeTeamView;
+    private String rejectActivities;
+    private String rejectActivitiesView;
+    
     
 
     public String getActcUid() {
@@ -434,6 +450,126 @@ public class DhActivityConf {
 
     public void setActcResponsibility(String actcResponsibility) {
         this.actcResponsibility = actcResponsibility;
+    }
+
+    public String getHandleUser() {
+        return handleUser;
+    }
+
+    public void setHandleUser(String handleUser) {
+        this.handleUser = handleUser;
+    }
+
+    public String getHandleUserView() {
+        return handleUserView;
+    }
+
+    public void setHandleUserView(String handleUserView) {
+        this.handleUserView = handleUserView;
+    }
+
+    public String getHandleRole() {
+        return handleRole;
+    }
+
+    public void setHandleRole(String handleRole) {
+        this.handleRole = handleRole;
+    }
+
+    public String getHandleRoleView() {
+        return handleRoleView;
+    }
+
+    public void setHandleRoleView(String handleRoleView) {
+        this.handleRoleView = handleRoleView;
+    }
+
+    public String getHandleTeam() {
+        return handleTeam;
+    }
+
+    public void setHandleTeam(String handleTeam) {
+        this.handleTeam = handleTeam;
+    }
+
+    public String getHandleTeamView() {
+        return handleTeamView;
+    }
+
+    public void setHandleTeamView(String handleTeamView) {
+        this.handleTeamView = handleTeamView;
+    }
+
+    public String getHandleField() {
+        return handleField;
+    }
+
+    public void setHandleField(String handleField) {
+        this.handleField = handleField;
+    }
+
+    public String getOuttimeUser() {
+        return outtimeUser;
+    }
+
+    public void setOuttimeUser(String outtimeUser) {
+        this.outtimeUser = outtimeUser;
+    }
+
+    public String getOuttimeUserView() {
+        return outtimeUserView;
+    }
+
+    public void setOuttimeUserView(String outtimeUserView) {
+        this.outtimeUserView = outtimeUserView;
+    }
+
+    public String getOuttimeRole() {
+        return outtimeRole;
+    }
+
+    public void setOuttimeRole(String outtimeRole) {
+        this.outtimeRole = outtimeRole;
+    }
+
+    public String getOuttimeRoleView() {
+        return outtimeRoleView;
+    }
+
+    public void setOuttimeRoleView(String outtimeRoleView) {
+        this.outtimeRoleView = outtimeRoleView;
+    }
+
+    public String getOuttimeTeam() {
+        return outtimeTeam;
+    }
+
+    public void setOuttimeTeam(String outtimeTeam) {
+        this.outtimeTeam = outtimeTeam;
+    }
+
+    public String getOuttimeTeamView() {
+        return outtimeTeamView;
+    }
+
+    public void setOuttimeTeamView(String outtimeTeamView) {
+        this.outtimeTeamView = outtimeTeamView;
+    }
+
+    public String getRejectActivities() {
+        return rejectActivities;
+    }
+
+    public void setRejectActivities(String rejectActivities) {
+        this.rejectActivities = rejectActivities;
+    }
+
+    public String getRejectActivitiesView() {
+        return rejectActivitiesView;
+    }
+
+    public void setRejectActivitiesView(String rejectActivitiesView) {
+        this.rejectActivitiesView = rejectActivitiesView;
     }
 
     @Override

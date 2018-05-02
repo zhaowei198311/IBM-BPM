@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhStepMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhStep" >
+    <id column="STEP_UID" property="stepUid" jdbcType="VARCHAR" />
+    <result column="PRO_UID" property="proUid" jdbcType="VARCHAR" />
+    <result column="PRO_VER_UID" property="proVerUid" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_BPD_ID" property="activityBpdId" jdbcType="VARCHAR" />
+    <result column="STEP_TYPE" property="stepType" jdbcType="VARCHAR" />
+    <result column="STEP_OBJECT_UID" property="stepObjectUid" jdbcType="VARCHAR" />
+    <result column="STEP_CONDITION" property="stepCondition" jdbcType="VARCHAR" />
+    <result column="STEP_SORT" property="stepSort" jdbcType="INTEGER" />
+    <result column="STEP_MODE" property="stepMode" jdbcType="VARCHAR" />
+    <result column="PRO_APP_ID" property="proAppId" jdbcType="VARCHAR" />
+    <result column="STEP_BUSINESS_KEY" property="stepBusinessKey" jdbcType="VARCHAR" />
+    <result column="formName" property="formName" jdbcType="VARCHAR" />
+    <result column="triTitle" property="triTitle" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    STEP_UID, PRO_UID, PRO_VER_UID, ACTIVITY_BPD_ID, STEP_TYPE, STEP_OBJECT_UID, STEP_CONDITION, 
+    STEP_SORT, STEP_MODE, PRO_APP_ID, STEP_BUSINESS_KEY
+  </sql>
+   <sql id="relationColumn" >
+    s.STEP_UID, s.PRO_UID, s.PRO_VER_UID, s.ACTIVITY_BPD_ID, s.STEP_TYPE, s.STEP_OBJECT_UID, s.STEP_CONDITION, 
+    s.STEP_SORT, s.STEP_MODE, s.PRO_APP_ID, s.STEP_BUSINESS_KEY
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="relationColumn" />, tri.tri_title triTitle, f.dyn_title formName
+    from DH_STEP s
+    left join dh_trigger tri on s.STEP_OBJECT_UID = tri.tri_uid
+    left join bpm_form f on s.STEP_OBJECT_UID = f.DYN_UID
+    where s.STEP_UID = #{stepUid,jdbcType=VARCHAR}
+  </select>
+  <select id="listBySelective" resultMap="BaseResultMap" parameterType="com.desmart.desmartbpm.entity.DhStep">
+    select 
+    <include refid="relationColumn" />, tri.tri_title triTitle, f.dyn_title formName
+    from DH_STEP s
+    left join dh_trigger tri on s.STEP_OBJECT_UID = tri.tri_uid
+    left join bpm_form f on s.STEP_OBJECT_UID = f.DYN_UID
+    <where>
+       <if test="stepUid != null" >
+         s.STEP_UID = #{stepUid}
+      </if>
+      <if test="proUid != null" >
+        and s.PRO_UID = #{proUid}
+      </if>
+      <if test="proVerUid != null" >
+        and s.PRO_VER_UID = #{proVerUid}
+      </if>
+      <if test="activityBpdId != null" >
+        and s.ACTIVITY_BPD_ID = #{activityBpdId}
+      </if>
+      <if test="stepType != null" >
+        and s.STEP_TYPE = #{stepType}
+      </if>
+      <if test="stepObjectUid != null" >
+        and s.STEP_OBJECT_UID = #{stepObjectUid}
+      </if>
+      <if test="stepCondition != null" >
+        and s.STEP_CONDITION = #{stepCondition}
+      </if>
+      <if test="stepSort != null" >
+        and s.STEP_SORT = #{stepSort}
+      </if>
+      <if test="stepMode != null" >
+        and s.STEP_MODE = #{stepMode}
+      </if>
+      <if test="proAppId != null" >
+        and s.PRO_APP_ID = #{proAppId}
+      </if>
+      <if test="stepBusinessKey != null" >
+        and s.STEP_BUSINESS_KEY = #{stepBusinessKey}
+      </if>
+    </where>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_STEP
+    where STEP_UID = #{stepUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhStep" >
+    insert into DH_STEP (STEP_UID, PRO_UID, PRO_VER_UID, 
+      ACTIVITY_BPD_ID, STEP_TYPE, STEP_OBJECT_UID, 
+      STEP_CONDITION, STEP_SORT, STEP_MODE, 
+      PRO_APP_ID, STEP_BUSINESS_KEY)
+    values (#{stepUid,jdbcType=VARCHAR}, #{proUid,jdbcType=VARCHAR}, #{proVerUid,jdbcType=VARCHAR}, 
+      #{activityBpdId,jdbcType=VARCHAR}, #{stepType,jdbcType=VARCHAR}, #{stepObjectUid,jdbcType=VARCHAR}, 
+      #{stepCondition,jdbcType=VARCHAR}, #{stepSort,jdbcType=INTEGER}, #{stepMode,jdbcType=VARCHAR}, 
+      #{proAppId,jdbcType=VARCHAR}, #{stepBusinessKey,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhStep" >
+    insert into DH_STEP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stepUid != null" >
+        STEP_UID,
+      </if>
+      <if test="proUid != null" >
+        PRO_UID,
+      </if>
+      <if test="proVerUid != null" >
+        PRO_VER_UID,
+      </if>
+      <if test="activityBpdId != null" >
+        ACTIVITY_BPD_ID,
+      </if>
+      <if test="stepType != null" >
+        STEP_TYPE,
+      </if>
+      <if test="stepObjectUid != null" >
+        STEP_OBJECT_UID,
+      </if>
+      <if test="stepCondition != null" >
+        STEP_CONDITION,
+      </if>
+      <if test="stepSort != null" >
+        STEP_SORT,
+      </if>
+      <if test="stepMode != null" >
+        STEP_MODE,
+      </if>
+      <if test="proAppId != null" >
+        PRO_APP_ID,
+      </if>
+      <if test="stepBusinessKey != null" >
+        STEP_BUSINESS_KEY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stepUid != null" >
+        #{stepUid,jdbcType=VARCHAR},
+      </if>
+      <if test="proUid != null" >
+        #{proUid,jdbcType=VARCHAR},
+      </if>
+      <if test="proVerUid != null" >
+        #{proVerUid,jdbcType=VARCHAR},
+      </if>
+      <if test="activityBpdId != null" >
+        #{activityBpdId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepType != null" >
+        #{stepType,jdbcType=VARCHAR},
+      </if>
+      <if test="stepObjectUid != null" >
+        #{stepObjectUid,jdbcType=VARCHAR},
+      </if>
+      <if test="stepCondition != null" >
+        #{stepCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="stepSort != null" >
+        #{stepSort,jdbcType=INTEGER},
+      </if>
+      <if test="stepMode != null" >
+        #{stepMode,jdbcType=VARCHAR},
+      </if>
+      <if test="proAppId != null" >
+        #{proAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepBusinessKey != null" >
+        #{stepBusinessKey,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhStep" >
+    update DH_STEP
+    <set >
+      <if test="proUid != null" >
+        PRO_UID = #{proUid,jdbcType=VARCHAR},
+      </if>
+      <if test="proVerUid != null" >
+        PRO_VER_UID = #{proVerUid,jdbcType=VARCHAR},
+      </if>
+      <if test="activityBpdId != null" >
+        ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepType != null" >
+        STEP_TYPE = #{stepType,jdbcType=VARCHAR},
+      </if>
+      <if test="stepObjectUid != null" >
+        STEP_OBJECT_UID = #{stepObjectUid,jdbcType=VARCHAR},
+      </if>
+      <if test="stepCondition != null" >
+        STEP_CONDITION = #{stepCondition,jdbcType=VARCHAR},
+      </if>
+      <if test="stepSort != null" >
+        STEP_SORT = #{stepSort,jdbcType=INTEGER},
+      </if>
+      <if test="stepMode != null" >
+        STEP_MODE = #{stepMode,jdbcType=VARCHAR},
+      </if>
+      <if test="proAppId != null" >
+        PRO_APP_ID = #{proAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="stepBusinessKey != null" >
+        STEP_BUSINESS_KEY = #{stepBusinessKey,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where STEP_UID = #{stepUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhStep" >
+    update DH_STEP
+    set PRO_UID = #{proUid,jdbcType=VARCHAR},
+      PRO_VER_UID = #{proVerUid,jdbcType=VARCHAR},
+      ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+      STEP_TYPE = #{stepType,jdbcType=VARCHAR},
+      STEP_OBJECT_UID = #{stepObjectUid,jdbcType=VARCHAR},
+      STEP_CONDITION = #{stepCondition,jdbcType=VARCHAR},
+      STEP_SORT = #{stepSort,jdbcType=INTEGER},
+      STEP_MODE = #{stepMode,jdbcType=VARCHAR},
+      PRO_APP_ID = #{proAppId,jdbcType=VARCHAR},
+      STEP_BUSINESS_KEY = #{stepBusinessKey,jdbcType=VARCHAR}
+    where STEP_UID = #{stepUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

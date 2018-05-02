@@ -141,4 +141,14 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return ServerResponse.createBySuccess(processList);
     }
     
+    public ServerResponse<List<BpmActivityMeta>> getHumanActivitiesOfDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        selective.setBpmTaskType("UserTask");
+        List<BpmActivityMeta> humanMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        return ServerResponse.createBySuccess(humanMetaList);
+    }
+    
 }

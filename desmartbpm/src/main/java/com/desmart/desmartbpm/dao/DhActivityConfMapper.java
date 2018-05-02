@@ -17,4 +17,5 @@ public interface DhActivityConfMapper {
     int updateByPrimaryKey(DhActivityConf dhActivityConf);
     
     DhActivityConf getByActivityId(String activityId);
+    
 }

@@ -19,4 +19,12 @@ public interface DhActivityAssignMapper {
     int updateByPrimaryKey(DhActivityAssign record);
     
     List<DhActivityAssign> listByDhActivityAssignSelective(DhActivityAssign selective);
+    
+    int deleteByActivityId(String activityId);
+    
+    int deleteBySelective(DhActivityAssign dhActivityAssign);
+    
+    int insertBatch(List<DhActivityAssign> list);
+    
+    List<DhActivityAssign> listByActivityId(String activityId);
 }

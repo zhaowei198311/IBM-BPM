@@ -10,6 +10,9 @@
   <sql id="Base_Column_List" >
     ACTR_UID, ACTIVITY_ID, ACTR_REJECT_ACTIVITY
   </sql>
+  <sql id="relationColumn" >
+    ar.ACTR_UID, ar.ACTIVITY_ID, ar.ACTR_REJECT_ACTIVITY
+  </sql>
   
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -51,9 +54,25 @@
   </update>
   
   <select id="listByActivityId" parameterType="string" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from DH_ACTIVITY_REJECT
-    where activity_id = #{activityId,jdbcType=VARCHAR}
+    select  <include refid="relationColumn"/>, am.activity_name
+    from DH_ACTIVITY_REJECT ar
+    left join bpm_activity_meta am on ar.actr_reject_activity = am.activity_id
+    where ar.activity_id = #{activityId,jdbcType=VARCHAR}
   </select>
+  
+    <insert id="insertBatch"  parameterType="list">
+        insert into DH_ACTIVITY_REJECT (<include refid="Base_Column_List"/>) 
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.actrUid},
+            #{item.activityId},
+            #{item.actrRejectActivity}
+            from dual
+        </foreach>
+    </insert>  
+    
+    <delete id="deleteByActivityId" parameterType="string">
+        delete from DH_ACTIVITY_REJECT 
+        where activity_id = #{activityId}
+    </delete>
 </mapper>

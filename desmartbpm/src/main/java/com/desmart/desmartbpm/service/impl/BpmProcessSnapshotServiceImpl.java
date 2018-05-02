@@ -17,6 +17,7 @@ import com.desmart.desmartbpm.entity.BpmCommonBusObject;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
+import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -428,7 +429,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcSort(1);
         conf.setActcTime(null);
         conf.setActcTimeunit(Const.TimeUnit.DAY);
-        conf.setActcAssignType(DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode());
+        conf.setActcAssignType(DhActivityConfAssignType.NONE.getCode());
         conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);
         conf.setSignCountVarname(BpmCommonBusObject.OWNER_SIGN_COUNT[0]);
         conf.setActcCanEditAttach(Const.Boolean.TRUE);
@@ -439,7 +440,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanMailNotify(Const.Boolean.TRUE);
         conf.setActcMailNotifyTemplate(null);
         conf.setActcCanReject(Const.Boolean.FALSE);
-        conf.setActcRejectType(null);
+        conf.setActcRejectType(DhActivityConfRejectType.TO_PRE_ACTIVITY.getCode());
         conf.setActcCanRevoke(Const.Boolean.TRUE);
         conf.setActcCanAutocommit(Const.Boolean.FALSE);
         conf.setActcCanAdd(Const.Boolean.TRUE);

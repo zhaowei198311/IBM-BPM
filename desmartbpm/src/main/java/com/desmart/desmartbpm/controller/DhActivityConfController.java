@@ -1,5 +1,9 @@
 package com.desmart.desmartbpm.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,22 +13,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhActivityConfService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+import com.desmart.desmartbpm.service.impl.DhActivityConfServiceImpl;
 
 @Controller
 @RequestMapping(value = "/activityConf")
 public class DhActivityConfController {
-    
+    private static final Logger LOG = LoggerFactory.getLogger(DhActivityConfController.class);
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
     private DhActivityConfService dhActivityConfService;
+   
     
     /**
      * 编辑环节配置
@@ -46,6 +53,8 @@ public class DhActivityConfController {
         response = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid);
         mv.addObject("firstHumanMeta", ((BpmActivityMeta)response.getData()).getActivityId());
         mv.addObject("firstHumanMeteConf", ((BpmActivityMeta)response.getData()).getDhActivityConf().getActcUid());
+        ServerResponse<List<BpmActivityMeta>> humanActivitiesResponse = bpmActivityMetaService.getHumanActivitiesOfDhProcessDefinition(proAppId, proUid, proVerUid);
+        mv.addObject("humanActivities", humanActivitiesResponse.getData());
         
         return mv;
     }
@@ -56,6 +65,17 @@ public class DhActivityConfController {
         return dhActivityConfService.getActivityConfData(actcUid);
     }
     
-    
+    @RequestMapping(value = "/update")
+    @ResponseBody
+    public ServerResponse updateDhActivityConf(DhActivityConf dhActivityConf) {
+        System.out.println(dhActivityConf);
+        // todo
+        try {
+            return dhActivityConfService.updateDhActivityConf(dhActivityConf);
+        } catch (Exception e) {
+            LOG.error("更新环节失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+        }
+    }
 
 }

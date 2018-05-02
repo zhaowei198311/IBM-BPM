@@ -15,6 +15,11 @@ public class DhActivityAssign {
     private String actaAssignType; // 被分配的对象是什么类型   USER, ROLE, TEAM
 
     private String actaAssignId;  // 被分配的对象ID
+    
+    private String userName;
+    private String roleName;
+    private String teamName;
+    
 
     public String getActaUid() {
         return actaUid;
@@ -56,10 +61,37 @@ public class DhActivityAssign {
         this.actaAssignId = actaAssignId;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
     @Override
     public String toString() {
-        return "DhActivityAssign [actaUid=" + actaUid + ", activityId=" + activityId + ", actaType=" + actaType
-                + ", actaAssignType=" + actaAssignType + ", actaAssignId=" + actaAssignId + "]";
+        return "DhActivityAssign [actaUid=" + actaUid + ", activityId="
+                + activityId + ", actaType=" + actaType + ", actaAssignType="
+                + actaAssignType + ", actaAssignId=" + actaAssignId
+                + ", userName=" + userName + ", roleName=" + roleName
+                + ", teamName=" + teamName + "]";
     }
 
     

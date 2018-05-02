@@ -7,15 +7,23 @@
     <result column="ACTA_TYPE" property="actaType" jdbcType="VARCHAR" />
     <result column="ACTA_ASSIGN_TYPE" property="actaAssignType" jdbcType="VARCHAR" />
     <result column="ACTA_ASSIGN_ID" property="actaAssignId" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="team_name" property="teamName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     ACTA_UID, ACTIVITY_ID, ACTA_TYPE, ACTA_ASSIGN_TYPE, ACTA_ASSIGN_ID
   </sql>
+  <sql id="relationColumn">
+    aa.acta_uid, aa.activity_id, aa.acta_type, aa.acta_assign_type, aa.acta_assign_id
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from DH_ACTIVITY_ASSIGN
-    where ACTA_UID = #{actaUid,jdbcType=VARCHAR}
+    select <include refid="relationColumn" />, u.user_name, r.role_name, t.team_name 
+    from dh_activity_assign aa 
+	left join sys_user u on aa.acta_assign_id = u.user_uid
+	left join sys_role r on aa.acta_assign_id = r.role_uid
+	left join sys_team t on aa.acta_assign_id = t.team_uid
+    where aa.ACTA_UID = #{actaUid,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from DH_ACTIVITY_ASSIGN
@@ -56,7 +64,11 @@
   </update>
   
   <select id="listByDhActivityAssignSelective" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign" resultMap="BaseResultMap">
-      select <include refid="Base_Column_List" /> from DH_ACTIVITY_ASSIGN
+      select <include refid="relationColumn" />, u.user_name, r.role_name, t.team_name 
+	  from dh_activity_assign aa 
+	  left join sys_user u on aa.acta_assign_id = u.user_uid
+	  left join sys_role r on aa.acta_assign_id = r.role_uid
+	  left join sys_team t on aa.acta_assign_id = t.team_uid
       <where>
           <if test="actaUid != null">
               acta_uid = #{actaUid}
@@ -75,4 +87,49 @@
           </if>
       </where>
   </select>
+  
+  <delete id="deleteBySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityAssign">
+    delete from DH_ACTIVITY_ASSIGN
+    <where>
+          <if test="actaUid != null">
+              acta_uid = #{actaUid}
+          </if>
+          <if test="activityId != null" >
+              and ACTIVITY_ID = #{activityId,jdbcType=VARCHAR}
+          </if>
+          <if test="actaType != null" >
+              and ACTA_TYPE = #{actaType,jdbcType=VARCHAR}
+          </if>
+          <if test="actaAssignType != null" >
+              and ACTA_ASSIGN_TYPE = #{actaAssignType,jdbcType=VARCHAR}
+          </if>
+          <if test="actaAssignId != null" >
+              and ACTA_ASSIGN_ID = #{actaAssignId,jdbcType=VARCHAR}
+          </if>
+      </where>
+  </delete>
+  
+  <select id="listByActivityId" parameterType="string" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from DH_ACTIVITY_ASSIGN
+    where activity_id = #{activityId}
+  </select>
+  
+  <delete id="deleteByActivityId" parameterType="string">
+      delete from DH_ACTIVITY_ASSIGN 
+      where activity_id = #{activityId}
+  </delete>
+  
+  <insert id="insertBatch"  parameterType="list">
+        insert into DH_ACTIVITY_ASSIGN (<include refid="Base_Column_List"/>) 
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.actaUid},
+            #{item.activityId},
+            #{item.actaType},
+            #{item.actaAssignType},
+            #{item.actaAssignId}
+            from dual
+        </foreach>
+    </insert>  
+  
 </mapper>

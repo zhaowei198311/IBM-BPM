@@ -12,6 +12,11 @@ public interface DhActivityRejectMapper {
 
     int insert(DhActivityReject record);
 
+    /**
+     * 列出指定活动环节可以驳回的环节（包含环节名）
+     * @param activityId
+     * @return
+     */
     List<DhActivityReject> listByActivityId(String activityId);
 
     DhActivityReject selectByPrimaryKey(String actrUid);
@@ -19,4 +24,9 @@ public interface DhActivityRejectMapper {
     int updateByPrimaryKeySelective(DhActivityReject record);
 
     int updateByPrimaryKey(DhActivityReject record);
+    
+    int insertBatch(List<DhActivityReject> list);
+    
+    int deleteByActivityId(String activityId);
+    
 }

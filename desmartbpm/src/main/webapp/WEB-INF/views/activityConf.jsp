@@ -11,6 +11,10 @@
             .layui-colla-item .layui-icon{font-size:10px;}
             #set_detail>.layui-tab.divActive{display:block;}
             #set_detail>.layui-tab{display:none;}
+            .colorli {
+	            background-color: #9DA5EC;
+	            color: white;
+	        }
         </style>
     </head>
     <body>
@@ -19,7 +23,7 @@
                 <div class="search_area top_btn">
                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
                     <span style="float:right;">
-                        <button class="layui-btn layui-btn-primary layui-btn-sm">保存</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="save('');">保存</button>
                     </span>
                 </div>
             </div>
@@ -53,7 +57,7 @@
                 
                 <div class="layui-tab">
                     <ul class="layui-tab-title">
-                        <li class="layui-this">人工环节</li>
+                        <li class="layui-this" >人工环节</li>
                         <li>网关环节列表</li>
                     </ul>
                     <div class="layui-tab-content">
@@ -75,12 +79,14 @@
                                             <!-- 环节属性配置开始 -->
                                             <div class="layui-tab-item layui-show">
                                                 <form class="layui-form" action="" id="config_form">
+                                                    <input type="hidden" name=actcUid value=""/>
                                                     <div class="layui-row">
                                                         <div class="layui-col-md6">
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">默认处理人</label>
                                                                 <div class="layui-input-block">
                                                                     <select name="actcAssignType" lay-filter="assignType" lay-verify="required">
+                                                                        <option value="none">&nbsp;</option>
                                                                         <option value="roleAndDepartment">角色 + 部门</option>
                                                                         <option value="roleAndCompany">角色 + 公司编码</option>
                                                                         <option value="teamAndDepartment">角色组 + 部门</option>
@@ -96,15 +102,15 @@
                                                                 <label class="layui-form-label">人员</label>
                                                                 <div class="layui-input-block" style="position:relative;">
                                                                     <input type="hidden" id="handleUser" name="handleUser" />
-                                                                    <input type="text" name="handleUser_view"  id="handleUser_view" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" name="handleUser_view"  id="handleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item" id="handleRole_div" style="display:none;">
                                                                 <label class="layui-form-label">角色</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="handleRole" name="handleRole"  value="" autocomplete="off" class="layui-input">
-                                                                    <input type="text" id="handleRole_view" name="handleRole_view"  value="" autocomplete="off" class="layui-input">
+                                                                    <input type="hidden" id="handleRole" name="handleRole"   autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="handleRole_view" name="handleRole_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_handle_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
                                                                 </div>
                                                             </div>
@@ -112,7 +118,7 @@
                                                                 <label class="layui-form-label">角色组</label>
                                                                 <div class="layui-input-block" style="position:relative;">
                                                                     <input type="hidden" id="handleTeam" name="handleTeam"  value="" autocomplete="off" class="layui-input">
-                                                                    <input type="text" id="handleTeam_view" name="handleTeam_view"  value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="handleTeam_view" name="handleTeam_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_handle_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>  
                                                                 </div>
                                                             </div>
@@ -149,8 +155,9 @@
                                                             <div class="layui-form-item" id="rejectActivities_div" style="display:none;">
                                                                 <label class="layui-form-label">驳回环节号</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                    <i class="layui-icon choose_num" title="选择环节" >&#xe615;</i>
+                                                                    <input type="hidden" name="rejectActivities" id="rejectActivities"/>
+                                                                    <input type="text" name="rejectActivities_view" id="rejectActivities_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i class="layui-icon choose_num" id="chooseActivity_i" title="选择环节" >&#xe615;</i>
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
@@ -321,9 +328,7 @@
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">超时通知内容模板</label>
                                                                 <div class="layui-input-block">
-                                                                    <select name="" lay-verify="required">
-                                                                        <option value="">（空）</option>
-                                                                    </select>
+                                                                    <input type="text" name="actcOuttimeTemplate" value="" autocomplete="off" class="layui-input" >
                                                                 </div>
                                                             </div>
 										                    <div class="layui-form-item ">
@@ -346,13 +351,32 @@
                                                                     </select>                                           
                                                                 </div>
                                                             </div>
-                                                            <div class="layui-form-item ">
-                                                                <label class="layui-form-label">超时通知人员</label>
-                                                                <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                    <i class="layui-icon choose_role" title="选择人员">&#xe612;</i>  
-                                                                </div>
-                                                            </div>                                                          
+                                                            <!-- 超时通知 -->
+															<div class="layui-form-item " id="outtimeUser_div" >
+															    <label class="layui-form-label">超时通知人员</label>
+															    <div class="layui-input-block" style="position:relative;">
+															        <input type="hidden" id="outtimeUser" name="outtimeUser" />
+															        <input type="text" name="outtimeUser_view"  id="outtimeUser_view"  value="" autocomplete="off" class="layui-input">
+															        <i class="layui-icon choose_user" id="choose_outtime_user" title="选择人员">&#xe612;</i>
+															    </div>
+															</div>
+															<div class="layui-form-item" id="outtimeRole_div" >
+															    <label class="layui-form-label">超时通知角色</label>
+															    <div class="layui-input-block" style="position:relative;">
+															        <input type="hidden" id="outtimeRole" name="outtimeRole"  value="" autocomplete="off" class="layui-input">
+															        <input type="text" id="outtimeRole_view" name="outtimeRole_view"  value="" autocomplete="off" class="layui-input">
+															        <i id="choose_outtime_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>
+															    </div>
+															</div>
+															<div class="layui-form-item " id="outtimeTeam_div" >
+															    <label class="layui-form-label">超时通知角色组</label>
+															    <div class="layui-input-block" style="position:relative;">
+															        <input type="hidden" id="outtimeTeam" name="outtimeTeam"  value="" autocomplete="off" class="layui-input">
+															        <input type="text" id="outtimeTeam_view" name="outtimeTeam_view"  value="" autocomplete="off" class="layui-input">
+															        <i id="choose_outtime_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>
+															    </div>
+															</div>
+                                                         
                                                         </div>
                                                     </div>
                                                     <div class="layui-row">
@@ -360,7 +384,7 @@
                                                             <div class="layui-form-item ">
                                                                 <label class="layui-form-label">环节职责</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <textarea name="actcResponsibility"  placeholder="" class="layui-textarea" style="height:400px;"></textarea>
+                                                                    <textarea id="editDemo" name="actcResponsibility"  placeholder="" class="layui-textarea" style="height:400px;"></textarea>
                                                                 </div>
                                                             </div>
                                                             
@@ -371,7 +395,9 @@
                                             
                                             <!--  步骤配置开始 -->
                                             <div class="layui-tab-item">
-                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step">新增</button>
+                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增表单步骤</button>
+                                 <button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增服务步骤</button>
+                                                
                                                 <p class="title_p">第一步</p>
                                                 <table class="layui-table backlog_table" lay-even lay-skin="nob">
                                                     <colgroup>
@@ -817,15 +843,28 @@
                 </div>              
             </div>
         </div>
-        <div class="display_container3">
-            <div class="display_content3">
-                <div class="top">
-                    新增步骤
-                </div>
-                <div class="middle1" >
-                    <div class="radio_div">选择类型：
-                        <input type="radio" name="type" value="type1" title="表单"   onclick="show1()" id="radio1"> <label for="radio1">表单</label>
-                        <input type="radio" name="type" value="type2" title="触发器" onclick="show2()" id="radio2"> <label for="radio2">触发器</label>
+        <!-- todo -->
+        <div class="display_container3" id="addStep_container">
+            <div class="display_content3" style="height:500px;width:900px;">
+                <div class="top">新增步骤</div>
+                <div class="middle1" style="height:410px;">
+                    <div class="search_area">
+                        <div class="layui-row layui-form" style="margin-top:10px">
+                            <div class="layui-col-md3">
+                                <input type="radio" name="type" value="type1" title="表单"  checked onclick="show1()" id="radio1" style="margin-left:10px;"> 
+                                <input type="radio" name="type" value="type2" title="触发器" onclick="show2()" id="radio2"> 
+                            </div>
+                            <div class="layui-col-md2">
+	                           <input id="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md4" style="padding-left:5px;">
+                                <input type="radio" name="xx" lay-filter="stepType" value="default" title="默认关键字"  checked > 
+                                <input type="radio" name="xx" lay-filter="stepType" value="custom" title="自定义关键字" >    
+                            </div>
+                            <div class="layui-col-md3">
+                                <input id="stepBusinessKey_input" type="text" placeholder="输入步骤关键字"  class="layui-input" >
+                            </div>
+                        </div>
                     </div>
                     <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
                         <colgroup>
@@ -920,7 +959,7 @@
                 <div id="demo8"></div>
                 <div class="foot">
                     <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
         </div>
@@ -1101,41 +1140,27 @@
                 </div>
             </div>
         </div>
-        <div class="display_container6" id="choose_activity_container">
-            <div class="display_content6">
-                <div class="top">
-                    选择退回环节
-                </div>
-                <div class="middle6">
-                    <div class="left_div">
-                        <ul>
-                            <li>会签</li>
-                            <li>审批01</li>
-                            <li>审批02</li>
-                            <li>审批03</li>
-                            <li>审批04</li>
-                            <li>审批05</li>
+        <div class="display_container6" id="choose_activity_container" >
+            <div class="display_content6" style="height:500px;width:700px;">
+                <div class="top"> 选择退回环节</div>
+                <div class="middle6" style="height:400px;width:700px;">
+                    <div class="left_div" style="float:left;width:290px;height:350px;margin:10px  0 0 10px;padding:10px;overflow-y:scroll;" class="show_user_div">
+                        <ul id="left_activity_ul">
                         </ul>
                     </div>
                     <div class="middle_div">
-                        <button class="layui-btn layui-btn-sm" style="margin-top:100px;"><</button>
+                        <button onclick="moveActivityToRight();" class="layui-btn layui-btn-sm" style="margin-top:150px;">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
                             <br><br>
-                        <button class="layui-btn layui-btn-sm">></button>
+                        <button onclick="moveActivityToLeft();" class="layui-btn layui-btn-sm">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
                     </div>
-                    <div class="right_div">
-                        <ul>
-                            <li>会签</li>
-                            <li>审批01</li>
-                            <li>审批02</li>
-                            <li>审批03</li>
-                            <li>审批04</li>
-                            <li>审批05</li>
+                    <div class="right_div" style="float:left;width:280px;height:350px;margin-top:10px;padding:10px;overflow-y:scroll;">
+                        <ul id="right_activity_ul">
                         </ul>
                     </div>
                     <h1 style="clear:both;"></h1>
                 </div>
                 <div class="foot">
-                    <button class="layui-btn layui-btn sure_btn">确定</button>
+                    <button class="layui-btn layui-btn sure_btn" id="chooseActivities_sureBtn">确定</button>
                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#choose_activity_container').hide();">取消</button>
                 </div>
             </div>
@@ -1199,7 +1224,9 @@
         var proVerUid = '${processDefinition.proVerUid}';
         var firstHumanMeta = '${firstHumanMeta}';
         var firstHumanMeteConf = '${firstHumanMeteConf}';
-    
+        var activityStr = '<c:forEach items="${humanActivities}" var="humanActivity" varStatus="varStatus"><li data-activityid="${humanActivity.activityId}">${humanActivity.activityName}</li></c:forEach>';
+        
+        
         window.onload=function(){
             
         }
@@ -1219,15 +1246,11 @@
             $(".create_net").click(function(){
                 $(".display_container5").css("display","block");
             })
-            $(".add_step").click(function(){
-                $(".display_container3").css("display","block");
-            })
+           
             $(".edit_role").click(function(){
                 $(".display_container4").css("display","block");
             })
-            $(".choose_num").click(function(){
-                $(".display_container6").css("display","block");
-            })
+
             $(".choose_name").click(function(){
                 $(".display_container10").css("display","block");
             })

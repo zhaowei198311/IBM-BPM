@@ -14,12 +14,18 @@ public class BpmActivityMetaController {
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     
+    /**
+     * 给出配置环节所需要的环节折叠栏信息
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
     @RequestMapping(value = "/getActivitiyMetasForConfig")
     @ResponseBody
     public ServerResponse getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid) {
         return bpmActivityMetaService.getActivitiyMetasForConfig(proAppId, proUid, proVerUid);
     }
-    
     
     
 }

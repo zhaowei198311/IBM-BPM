@@ -1,17 +1,16 @@
 package com.desmart.desmartbpm.enums;
 
 /**
- * 分配哪种操作的执行人
+ * 步骤类型
  */
-public enum DhActivityAssignType {
-    DEFAULT_HANDLER("defaultHandler", "默认处理人"),
-    CHOOSE_HANDLER("chooseHandler", "可选处理人"),
-    OUTTIME_NOTIFY("outtimeNotify", "超时通知人");
+public enum DhStepType {
+    FORM("form", "表单"),
+    SERVICE("service", "服务");
 
     private final String code;
     private final String value;
 
-    private DhActivityAssignType(String code, String value) {
+    private DhStepType(String code, String value) {
         this.code = code;
         this.value = value;
     }
@@ -29,8 +28,8 @@ public enum DhActivityAssignType {
      * @param code
      * @return
      */
-    public static DhActivityAssignType codeOf(String code) {
-        for (DhActivityAssignType type : values()) {
+    public static DhStepType codeOf(String code) {
+        for (DhStepType type : values()) {
             if (type.getCode().equals(code)) {
                 return type;
             }

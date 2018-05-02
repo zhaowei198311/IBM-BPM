@@ -4,6 +4,7 @@ package com.desmart.desmartbpm.enums;
  * 人工环节的任务分配规则
  */
 public enum DhActivityConfAssignType {
+    NONE("none", "无"),
     ROLE_AND_DEPARTMENT("roleAndDepartment", "角色+部门"),
     ROLE_AND_COMPANY("roleAndCompany", "角色+公司编码"),
     TEAM_AND_DEPARTMENT("teamAndDepartment", "角色组+部门"),
