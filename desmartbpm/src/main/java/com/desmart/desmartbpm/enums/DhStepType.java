@@ -5,7 +5,7 @@ package com.desmart.desmartbpm.enums;
  */
 public enum DhStepType {
     FORM("form", "表单"),
-    SERVICE("service", "服务");
+    SERVICE("trigger", "服务");
 
     private final String code;
     private final String value;

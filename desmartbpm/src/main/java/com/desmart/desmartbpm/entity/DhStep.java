@@ -11,10 +11,10 @@ public class DhStep {
     private String proUid;
     private String proVerUid;
     private String activityBpdId;
-    private Integer stepSort;
+    private Integer stepSort;  // 步骤序号
     private String stepBusinessKey;
-    private String stepType;
-    private String stepObjectUid;
+    private String stepType;   // form 或 trigger
+    private String stepObjectUid;   // 表单id或触发器id
     private String stepCondition;
     private String stepMode;
     

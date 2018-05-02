@@ -87,6 +87,8 @@
                                                                 <div class="layui-input-block">
                                                                     <select name="actcAssignType" lay-filter="assignType" lay-verify="required">
                                                                         <option value="none">&nbsp;</option>
+                                                                        <option value="role">角色</option>
+                                                                        <option value="team">角色组</option>
                                                                         <option value="roleAndDepartment">角色 + 部门</option>
                                                                         <option value="roleAndCompany">角色 + 公司编码</option>
                                                                         <option value="teamAndDepartment">角色组 + 部门</option>
@@ -395,9 +397,7 @@
                                             
                                             <!--  步骤配置开始 -->
                                             <div class="layui-tab-item">
-                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增表单步骤</button>
-                                 <button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增服务步骤</button>
-                                                
+                                                新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增步骤</button>
                                                 <p class="title_p">第一步</p>
                                                 <table class="layui-table backlog_table" lay-even lay-skin="nob">
                                                     <colgroup>
@@ -844,124 +844,141 @@
             </div>
         </div>
         <!-- todo -->
+        <!-- 新增步骤弹出框 -->
         <div class="display_container3" id="addStep_container">
+            <form id="addStep_form">
             <div class="display_content3" style="height:500px;width:900px;">
                 <div class="top">新增步骤</div>
-                <div class="middle1" style="height:410px;">
-                    <div class="search_area">
+                <div class="middle1" style="height:420px;">
+                    <div class="search_area" style="height:38px;">
                         <div class="layui-row layui-form" style="margin-top:10px">
                             <div class="layui-col-md3">
-                                <input type="radio" name="type" value="type1" title="表单"  checked onclick="show1()" id="radio1" style="margin-left:10px;"> 
-                                <input type="radio" name="type" value="type2" title="触发器" onclick="show2()" id="radio2"> 
+                                <input type="radio" name="stepType" value="form" title="表单"  lay-filter="stepTypeFilter" style="margin-left:10px;"> 
+                                <input type="radio" name="stepType" value="trigger" title="触发器" lay-filter="stepTypeFilter"> 
                             </div>
                             <div class="layui-col-md2">
-	                           <input id="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
+	                           <input id="stepSort" name="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
                             </div>
                             <div class="layui-col-md4" style="padding-left:5px;">
-                                <input type="radio" name="xx" lay-filter="stepType" value="default" title="默认关键字"  checked > 
-                                <input type="radio" name="xx" lay-filter="stepType" value="custom" title="自定义关键字" >    
+                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="default" title="默认关键字"  checked > 
+                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="custom" title="自定义关键字" >    
                             </div>
                             <div class="layui-col-md3">
-                                <input id="stepBusinessKey_input" type="text" placeholder="输入步骤关键字"  class="layui-input" >
+                                <input id="stepBusinessKey_input" name="stepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
                             </div>
                         </div>
                     </div>
-                    <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
-                        <thead>
-                            <tr>
-                              <th>序号</th>
-                              <th>表单名称</th>
-                              <th>表单描述</th>
-                            </tr> 
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 1</td>
-                                <td>表单名称</td>
-                                <td>描述内容...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 2</td>
-                                <td>表单名称</td>
-                                <td>描述内容...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 3</td>
-                                <td>表单名称</td>
-                                <td>描述内容...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 4</td>
-                                <td>表单名称</td>
-                                <td>描述内容...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                <td>表单名称</td>
-                                <td>描述内容...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="layui-table backlog_table trigger_table" lay-even lay-skin="nob">
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
-                        <thead>
-                            <tr>
-                              <th>序号</th>
-                              <th>触发器名称</th>
-                              <th>类型</th>
-                              <th>脚本名称</th>
-                            </tr> 
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 1</td>
-                                <td>名称</td>
-                                <td>类型1</td>
-                                <td>脚本名1...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 2</td>
-                                <td>名称</td>
-                                <td>类型1</td>
-                                <td>脚本名1...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 3</td>
-                                <td>名称</td>
-                                <td>类型1</td>
-                                <td>脚本名1...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 4</td>
-                                <td>名称</td>
-                                <td>类型1</td>
-                                <td>脚本名1...</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                <td>名称</td>
-                                <td>类型1</td>
-                                <td>脚本名1...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div id="form_innerArea" style="height:362px;">
+                        <div style="height:38px;" class="layui-row layui-form">
+                            <div class="layui-col-md6">
+                               <input id="" type="text" placeholder="标题/描述"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md6">
+                               <button class="layui-btn" id="search_form_btn" type="button">查询</button>
+                            </div>
+                        </div>
+                        <div style="height:334px;overflow-y: auto;">
+                            <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
+                                <colgroup>
+                                    <col>
+                                    <col>
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                      <th>序号</th>
+                                      <th>表单名称</th>
+                                      <th>表单描述</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox" name="form_ck" data-uid="form:ca995a73-863c-44b2-9e39-94a464d72d86"  lay-skin="primary"> 1</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name="form_ck"  lay-skin="primary"> 2</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 3</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 4</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
+                                        <td>表单名称</td>
+                                        <td>描述内容...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="trigger_innerArea" style="display:none;padding-top: 30px;padding-right:50px;">
+                          <div class="layui-form-item ">
+                              <label class="layui-form-label">请选择触发器</label>
+                              <div class="layui-input-block" style="position:relative;">
+                                  <input type="hidden" id="trigger_of_step" name="" value=""/>
+                                  <input type="text"  id="trigger_of_stepTitle"  name="" value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                  <i id="choose_stepTri_btn" class="layui-icon choose_role" title="选择触发器">&#xe621;</i>  
+                              </div>
+                          </div>  
+                    </div>
                 </div>
                 <div id="demo8"></div>
                 <div class="foot">
-                    <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
+        </form>
         </div>
         <div class="display_container4">
             <div class="display_content3">

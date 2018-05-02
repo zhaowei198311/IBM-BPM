@@ -130,7 +130,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         if (assignTypeEnum == null) {
             return ServerResponse.createByErrorMessage("处理人类型不符合要求");
         }
-        
+        String activityAssignType = null;  // 分配的类型
         String activityId = dhActivityConf.getActivityId();
         // 删除老的默认处理人记录
         DhActivityAssign selective = new DhActivityAssign();
@@ -142,67 +142,49 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         switch (assignTypeEnum) {
         case NONE:
             break;
+        case ROLE:
+            if (DhActivityConfAssignType.ROLE == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.ROLE.getCode();
+            }
         case ROLE_AND_DEPARTMENT:
-            String handleRole1 = dhActivityConf.getHandleRole();
-            if (StringUtils.isBlank(handleRole1)) {
-                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            if (DhActivityConfAssignType.ROLE_AND_DEPARTMENT == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode();
             }
-            List<String> roleIdList1 = Arrays.asList(handleRole1.split(";"));
-            List<SysRole> roleList1 = sysRoleMapper.listByPrimaryKeyList(roleIdList1); 
-            if (roleIdList1.size() != roleList1.size()) {
-                return ServerResponse.createByErrorMessage("处理人信息错误");
-            }
-            for (SysRole role : roleList1) {
-                DhActivityAssign assign = new DhActivityAssign();
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(activityId);
-                assign.setActaAssignType(DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode());
-                assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
-                assign.setActaAssignId(role.getRoleUid());
-                assignList.add(assign);
-            }
-            break;
         case ROLE_AND_COMPANY:
-            String handleRole2 = dhActivityConf.getHandleRole();
-            if (StringUtils.isBlank(handleRole2)) {
+            if (DhActivityConfAssignType.ROLE_AND_COMPANY == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.ROLE_AND_COMPANY.getCode();
+            }
+            String handleRole = dhActivityConf.getHandleRole();
+            if (StringUtils.isBlank(handleRole)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
             }
-            List<String> roleIdList2 = Arrays.asList(handleRole2.split(";"));
-            List<SysRole> roleList2 = sysRoleMapper.listByPrimaryKeyList(roleIdList2);
-            if (roleIdList2.size() != roleList2.size()) {
+            List<String> roleIdList = Arrays.asList(handleRole.split(";"));
+            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(roleIdList);
+            if (roleIdList.size() != roleList.size()) {
                 return ServerResponse.createByErrorMessage("处理人信息错误");
             }
-            for (SysRole role : roleList2) {
+            for (SysRole role : roleList) {
                 DhActivityAssign assign = new DhActivityAssign();
                 assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
                 assign.setActivityId(activityId);
-                assign.setActaAssignType(DhActivityConfAssignType.ROLE_AND_COMPANY.getCode());
+                assign.setActaAssignType(activityAssignType);
                 assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
                 assign.setActaAssignId(role.getRoleUid());
                 assignList.add(assign);
             }
             break;
+        case TEAM:
+            if (DhActivityConfAssignType.TEAM == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.TEAM.getCode();
+            }
         case TEAM_AND_DEPARTMENT:
-            String handleTeam1 = dhActivityConf.getHandleTeam();
-            if (StringUtils.isBlank(handleTeam1)) {
-                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            if (DhActivityConfAssignType.TEAM_AND_DEPARTMENT == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.TEAM_AND_DEPARTMENT.getCode();
             }
-            List<String> teamIdList1 = Arrays.asList(handleTeam1.split(";"));
-            List<SysTeam> teamList1 = sysTeamMapper.listByPrimaryKeyList(teamIdList1); 
-            if (teamIdList1.size() != teamList1.size()) {
-                return ServerResponse.createByErrorMessage("处理人信息错误");
-            }
-            for (SysTeam team : teamList1) {
-                DhActivityAssign assign = new DhActivityAssign();
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(activityId);
-                assign.setActaAssignType(DhActivityConfAssignType.TEAM_AND_DEPARTMENT.getCode());
-                assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
-                assign.setActaAssignId(team.getTeamUid());
-                assignList.add(assign);
-            }
-            break;
         case TEAM_AND_COMPANY:
+            if (DhActivityConfAssignType.TEAM_AND_COMPANY == assignTypeEnum) {
+                activityAssignType = DhActivityConfAssignType.TEAM_AND_COMPANY.getCode();
+            }
             String handleTeam2 = dhActivityConf.getHandleTeam();
             if (StringUtils.isBlank(handleTeam2)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
@@ -216,7 +198,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
                 DhActivityAssign assign = new DhActivityAssign();
                 assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
                 assign.setActivityId(activityId);
-                assign.setActaAssignType(DhActivityConfAssignType.TEAM_AND_COMPANY.getCode());
+                assign.setActaAssignType(activityAssignType);
                 assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
                 assign.setActaAssignId(team.getTeamUid());
                 assignList.add(assign);
@@ -305,6 +287,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         String str = "";
         String strView = "";
         switch (assignTypeEnum) {
+        case ROLE:
         case ROLE_AND_DEPARTMENT:
         case ROLE_AND_COMPANY:
             List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(idList); 
@@ -315,6 +298,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             dhActivityConf.setHandleRole(str);
             dhActivityConf.setHandleRoleView(strView);
             break;
+        case TEAM:
         case TEAM_AND_DEPARTMENT:
         case TEAM_AND_COMPANY:
             List<SysTeam> sysTeamList = sysTeamMapper.listByPrimaryKeyList(idList); 

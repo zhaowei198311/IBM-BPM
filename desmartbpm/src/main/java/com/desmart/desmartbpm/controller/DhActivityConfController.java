@@ -69,7 +69,6 @@ public class DhActivityConfController {
     @ResponseBody
     public ServerResponse updateDhActivityConf(DhActivityConf dhActivityConf) {
         System.out.println(dhActivityConf);
-        // todo
         try {
             return dhActivityConfService.updateDhActivityConf(dhActivityConf);
         } catch (Exception e) {

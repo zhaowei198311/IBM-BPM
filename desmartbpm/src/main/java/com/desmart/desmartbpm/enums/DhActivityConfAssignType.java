@@ -5,6 +5,8 @@ package com.desmart.desmartbpm.enums;
  */
 public enum DhActivityConfAssignType {
     NONE("none", "无"),
+    ROLE("role", "无"),
+    TEAM("team", "无"),
     ROLE_AND_DEPARTMENT("roleAndDepartment", "角色+部门"),
     ROLE_AND_COMPANY("roleAndCompany", "角色+公司编码"),
     TEAM_AND_DEPARTMENT("teamAndDepartment", "角色组+部门"),

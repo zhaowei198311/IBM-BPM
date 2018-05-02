@@ -12,32 +12,17 @@ var pageConfig = {
 layui.use('form', function(){
     var form = layui.form;
     form.on('select(assignType)', function(data){
-    	if(data.value == "none"){
-    		$("#handleRole_div").hide();
-            $("#handleTeam_div").hide();
-            $("#handleUser_div").hide();
-            $("#handleField_div").hide();
-    	} else if(data.value=="roleAndDepartment"){
+    	if(data.value=="role" || data.value=="roleAndDepartment" || data.value=="roleAndCompany"){
             $("#handleRole_div").show();
             $("#handleTeam_div").hide();
             $("#handleUser_div").hide();
             $("#handleField_div").hide();
-        }else  if(data.value=="roleAndCompany"){
-            $("#handleRole_div").show();
-            $("#handleTeam_div").hide();
-            $("#handleUser_div").hide();
-            $("#handleField_div").hide();
-        }else  if(data.value=="teamAndDepartment"){
+        }else  if(data.value=="team" || data.value=="teamAndDepartment" || data.value=="teamAndCompany"){
             $("#handleUser_div").hide();
             $("#handleTeam_div").show();
             $("#handleRole_div").hide();
             $("#handleField_div").hide();
-        }else  if(data.value=="teamAndCompany"){
-            $("#handleRole_div").hide();
-            $("#handleTeam_div").show();
-            $("#handleUser_div").hide();
-            $("#handleField_div").hide();
-        }else if(data.value=="leaderOfPreActivityUser"){
+        }else if(data.value=="leaderOfPreActivityUser" || data.value=="processCreator" || data.value == "none"){
             $("#handleRole_div").hide();
             $("#handleTeam_div").hide();
             $("#handleUser_div").hide();
@@ -46,11 +31,6 @@ layui.use('form', function(){
             $("#handleRole_div").hide();
             $("#handleTeam_div").hide();
             $("#handleUser_div").show();
-            $("#handleField_div").hide();
-        }else if(data.value=="processCreator"){
-            $("#handleRole_div").hide();
-            $("#handleTeam_div").hide();
-            $("#handleUser_div").hide();
             $("#handleField_div").hide();
         }else if(data.value=="byField"){
             $("#handleRole_div").hide();
@@ -81,8 +61,18 @@ layui.use('form', function(){
             $("#rejectActivities_div").hide();
         }
     });
+    // 切换新增步骤类型
+    form.on('radio(stepTypeFilter)', function(data){
+    	if (data.value == "form") {
+    		$("#form_innerArea").show();
+    		$("#trigger_innerArea").hide();
+    	} else {
+    		$("#form_innerArea").hide();
+    		$("#trigger_innerArea").show();
+    	}
+    });
     // 切换是否显示自定义业务字段
-    form.on('radio(stepType)', function(data){
+    form.on('radio(stepBusinessKey)', function(data){
         if (data.value == "default") {
             $("#stepBusinessKey_input").hide();
         } else {
@@ -222,6 +212,8 @@ $(function(){
         }
     });
 
+    
+    
     $("#back_btn").click(function() {
         window.history.back();
     });
@@ -283,8 +275,32 @@ $(function(){
     $("#choose_outtime_team").click(function() {
         common.chooseTeam('outtimeTeam', 'false');
     });
-
+    // 新增流程中点击选择触发器
+    $("#choose_stepTri_btn").click(function() {
+    	triggerToEdit = 'trigger_of_step';
+    	getTriggerInfo();
+    	$("#chooseTrigger_container").show();
+    });
+    
+    // “新增步骤”按钮
     $("#add_step_btn").click(function(){
+    	$('input[name="stepType"]').each(function(){
+    		if ($(this).val() == 'form') {
+    			$(this).prop("checked", true);
+    		} else {
+    			$(this).prop("checked", false);
+    		}
+    	});
+    	$('input[name="stepSort"]').val("");
+    	$('input[name="stepBusinessKeyType"]').each(function(){
+    		if ($(this).val() == 'default') {
+    			$(this).prop("checked", true);
+    		} else {
+    			$(this).prop("checked", false);
+    		}
+    	});
+    	$("#stepBusinessKey_input").hide();
+    	layui.form.render();
         $("#addStep_container").show();
     })
 
@@ -570,24 +586,14 @@ function initConf(map) {
         }
     });
     $('input[name="handleUser"]').val(conf.handleUser);
-    if (conf.handleUser) {
-        $("#handleUser_div").show();
-    }
+    
     $('input[name="handleUser_view"]').val(conf.handleUserView);
     $('input[name="handleRole"]').val(conf.handleRole);
-    if (conf.handleRole) {
-        $("#handleRole_div").show();
-    }
     $('input[name="handleRole_view"]').val(conf.handleRoleView);
     $('input[name="handleTeam"]').val(conf.handleTeam);
-    if (conf.handleTeam) {
-        $("#handleTeam_div").show();
-    }
     $('input[name="handleTeam_view"]').val(conf.handleTeamView);
     $('input[name="handleField"]').val(conf.handleField);
-    if (conf.handleField) {
-        $("#handleField_div").show();
-    }
+    
     $('input[name="outtimeUser"]').val(conf.outtimeUser);
     $('input[name="outtimeUser_view"]').val(conf.outtimeUserView);
     $('input[name="outtimeRole"]').val(conf.outtimeRole);
@@ -702,27 +708,17 @@ $("#searchTrigger_btn").click(function () {
 })
 
 function showHandleDiv(assignType) {
-    if(assignType=="roleAndDepartment"){
+	if(assignType=="roleAndDepartment" || assignType=="roleAndCompany" || assignType=="role"){
         $("#handleRole_div").show();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").hide();
-    }else if(assignType=="roleAndCompany"){
-        $("#handleRole_div").show();
-        $("#handleTeam_div").hide();
-        $("#handleUser_div").hide();
-        $("#handleField_div").hide();
-    }else if(assignType=="teamAndCompany"){
+    }else if(assignType=="teamAndCompany" || assignType=="teamAndCompany" || assignType=="team"){
         $("#handleRole_div").hide();
         $("#handleTeam_div").show();
         $("#handleRole_div").hide();
         $("#handleField_div").hide();
-    }else  if(assignType=="teamAndCompany"){
-        $("#handleRole_div").hide();
-        $("#handleTeam_div").show();
-        $("#handleUser_div").hide();
-        $("#handleField_div").hide();
-    }else if(assignType=="leaderOfPreActivityUser"){
+    }else if(assignType=="leaderOfPreActivityUser" || assignType=="processCreator" || assignType == 'none'){
         $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
@@ -731,11 +727,6 @@ function showHandleDiv(assignType) {
         $("#handleRole_div").hide();
         $("#handleTeam_div").hide();
         $("#handleUser_div").show();
-        $("#handleField_div").hide();
-    }else if(assignType=="processCreator"){
-        $("#handleRole_div").hide();
-        $("#handleTeam_div").hide();
-        $("#handleUser_div").hide();
         $("#handleField_div").hide();
     }else if(assignType=="byField"){
         $("#handleRole_div").hide();
@@ -793,4 +784,58 @@ function save(actcUid) {
 }
 function getFormData() {
     return $('#config_form').serialize() + "&" + $('#sla_form').serialize();
+}
+// 添加步骤
+function addStep() {
+	var stepObjectUid;
+	var stepSort = $("#stepSort").val();
+	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
+		layer.alert('步骤序号不正确，请填写正整数');
+		return;
+	}
+	var stepBusinesskey = $('input[name="stepBusinessKey"]').val();
+	var stepBusinessKeyType = $('input[name="stepBusinessKeyType"]:checked').val();
+	if (stepBusinessKeyType != 'default') {
+		if (!stepBusinesskey || stepBusinesskey.length > 100 || stepBusinesskey.trim().length == 0) {
+			layer.alert('步骤关键字验证失败，过长或未填写');
+			return;
+		}
+	}
+	var stepType = $('input[name="stepType"]:checked').val();
+	if (stepType == 'form') {
+		
+	} else if (stepType == 'trigger') {
+		stepObjectUid = $("#trigger_of_stepTitle").val();
+		if (!stepObjectUid) {
+			layer.alert('请选择触发器');
+			return;
+		}
+		$.ajax({
+			url : common.getPath() + "/step/create",
+			type : "post",
+			dataType : "json",
+			data : {
+				"proAppId": "",
+				"proUid" : "",
+				"proVerUid": "",
+				"activityBpdId": "",
+				"stepSort": "",
+			    "stepBusinessKey": "",
+			    "stepType": "",
+			    "stepObjectUid": ""
+			},
+			success : function(result){
+				if(result.status == 0){
+				    
+				}else{
+					layer.alert(result.msg);
+				}
+			},
+			error : function(){
+				layer.alert('操作失败');
+			}
+		});
+		
+	}
+	
 }
