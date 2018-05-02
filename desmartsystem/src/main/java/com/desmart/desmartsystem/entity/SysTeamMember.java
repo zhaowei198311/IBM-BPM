@@ -1,6 +1,5 @@
 package com.desmart.desmartsystem.entity;
 
-import java.math.BigDecimal;
 
 public class SysTeamMember {
     private String memberUid;

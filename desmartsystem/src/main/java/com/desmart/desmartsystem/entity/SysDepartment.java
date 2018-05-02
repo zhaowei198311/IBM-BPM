@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.entity;
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -108,6 +109,8 @@ public class SysDepartment implements Serializable {
      * 更新日期   
      */
 	private Date updateDate;
+	
+	private List<SysUserDepartment> sysUserDepartmentList;
 
 
 	public String getDepartUid() {
@@ -293,5 +296,15 @@ public class SysDepartment implements Serializable {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
+
+	public List<SysUserDepartment> getSysUserDepartmentList() {
+		return sysUserDepartmentList;
+	}
+
+	public void setSysUserDepartmentList(List<SysUserDepartment> sysUserDepartmentList) {
+		this.sysUserDepartmentList = sysUserDepartmentList;
+	}
+	
+	
 
 }

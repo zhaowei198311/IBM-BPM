@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.entity;
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -104,6 +105,8 @@ public class SysUser implements Serializable {
 
 	private String accountType;
 	private SysDepartment sysDepartment;
+	
+	private List<SysUserDepartment> sysUserDepartmentList; 
 	
 	private String costCenter;
 
@@ -492,7 +495,13 @@ public class SysUser implements Serializable {
 	public void setCostCenter(String costCenter) {
 		this.costCenter = costCenter;
 	}
-	
-	
+
+	public List<SysUserDepartment> getSysUserDepartmentList() {
+		return sysUserDepartmentList;
+	}
+
+	public void setSysUserDepartmentList(List<SysUserDepartment> sysUserDepartmentList) {
+		this.sysUserDepartmentList = sysUserDepartmentList;
+	}
 	
 }
