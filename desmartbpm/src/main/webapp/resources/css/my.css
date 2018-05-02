@@ -24,6 +24,9 @@ body{background:#fff;}
 .content .layui-table .layui-input{height:30px;}
 .content .layui-table td{padding:5px 15px;}
 .layui-table .list_title{background:#E2E2E2;font-size:16px;text-align:center;font-weight:600;}
+.td_title{text-align:right;position:relative;}
+.tip_span{position:absolute;right:5px;color:red;top:15px;font-size:16px;}
+.tip_span1{padding-right:5px;color:red;top:15px;font-size:16px;vertical-align:-4px;}
 .title_p{border-left:4px solid #ea6000;padding-left:10px;margin:20px 0 10px;}
 .role{color:#007DDB;}
 .txt{border:0;width:100%;color:#777;}
