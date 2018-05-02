@@ -14,4 +14,5 @@ import com.desmart.desmartsystem.entity.SysTeamMember;
  */
 public interface SysTeamMemberService extends IService<SysTeamMember,String> {
 	List<SysTeamMember> selectAll(SysTeamMember entity);
+	int delete(SysTeamMember entity);
 }
