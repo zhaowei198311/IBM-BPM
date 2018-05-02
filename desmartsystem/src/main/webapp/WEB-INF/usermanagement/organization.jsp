@@ -136,12 +136,12 @@
 					var sNodes = treeObj.getSelectedNodes();
 					if (sNodes.length > 0) {
 						var node = sNodes[0].getPath();
-						console.log(node);
+						//console.log(node);
 						for (var i = 0; i < node.length; i++) {
 							departUid=node[i].id;
 						}
 					}
-					departUid=departUid.replace(/\s/g, "")
+					departUid=departUid.replace(/\s/g, "");
 					$('#departParent').val(departUid);
 					pageBreak(1);
 				}
@@ -155,7 +155,7 @@
 			         	str+='<td>' + this.departNo + '</td>';
 			         	str+='<td>' + this.ext1 + '</td>';
 			         	str+='<td>' + this.departParent + '</td>';
-			         	str+='<td>' + this.departAdmins + '</td>';
+			         	str+='<td>' + userName(this.sysUserDepartmentList,this.departAdmins) + '</td>';
 				        str+='<td><i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","edit")>&#xe60a;</i></tr>';
 			         	$("#tabletr").append(str);
 			         });
