@@ -284,6 +284,32 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
+
+
+.display_container10 {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
+
+.display_content10 {
+	overflow-y: auto;
+	color: #717171;
+	padding: 20px;
+	min-width: 900px;
+	min-height: 520px;
+	background: #fff;
+	position: absolute;
+	margin: 20px 0 0 -450px;
+	left: 50%;
+	box-shadow: 0 0 10px #ccc;
+}
+
 .query_user{
 	font-size:15px;
 	margin-top:5px;
