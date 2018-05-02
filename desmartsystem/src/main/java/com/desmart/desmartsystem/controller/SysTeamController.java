@@ -49,6 +49,13 @@ public class SysTeamController {
 		return sysTeamService.selectAll(sysTeam);
 	}
 	
+	@RequestMapping(value="/selectFilterNode")
+	@ResponseBody
+	public List<SysTeam> selectFilterNode(SysTeam sysTeam){
+		return sysTeamService.selectFilterNode(sysTeam);
+	}
+	
+	
 	
 	@RequestMapping("/getSysTeam")
 	@ResponseBody
