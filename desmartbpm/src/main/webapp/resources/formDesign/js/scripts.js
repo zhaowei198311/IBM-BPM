@@ -379,7 +379,7 @@ $(document).ready(function() {
 	restoreData();
 	var contenthandle = CKEDITOR.replace( 'contenteditor' ,{
 		language: 'en',
-		contentsCss: [common.getPath()+'/resources/formDesign/css/bootstrap-combined.min.css'],
+		contentsCss: ['../resources/formDesign/css/bootstrap-combined.min.css'],
 		allowedContent: true
 	});
 	$("body").css("min-height", $(window).height() - 50);
@@ -494,7 +494,7 @@ $(document).ready(function() {
 				if($("#"+inputId).attr("class")=="editor_textarea"){
 					CKEDITOR.replace(inputId ,{
 						language: 'en',
-						contentsCss: [common.getPath()+'/resources/formDesign/css/bootstrap-combined.min.css'],
+						contentsCss: ['../resources/formDesign/css/bootstrap-combined.min.css'],
 						allowedContent: true
 					});
 				}

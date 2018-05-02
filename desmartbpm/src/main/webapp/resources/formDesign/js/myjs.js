@@ -76,17 +76,6 @@ function showDateModal(obj){
 	var label = view.find("label").text();
 	var inputObj = view.find("input");
 	
-	inputObj.parent().datetimepicker({
-	    format: "yyyy-mm-dd",
-	    autoclose: true,
-	    todayBtn: true,
-	    minuteStep: 1,
-	    pickTime: false,
-	    minView: 2,
-	    language:"zh-CN"
-	});
-	
-	var defaultVal = inputObj.val();
 	var id = inputObj.attr("id");
 	var place = inputObj.attr("placeholder");
 	var textWidth = inputObj.width();
@@ -100,17 +89,6 @@ function showDateModal(obj){
 	$("#date-name").val(label);
 	$("#date-id").val(id);
 	
-	$("#date-default-value").parent().datetimepicker({
-	    format: "yyyy-mm-dd",
-	    autoclose: true,
-	    todayBtn: true,
-	    minuteStep: 1,
-	    pickTime: false,
-	    minView: 2,
-	    language:"zh-CN"
-	});
-	
-	$("#date-default-value").val(defaultVal);
 	$("#date-place").val(place);
 	$("#date-width").val(textCol);
 	$("#date-label-width").val(textLabelCol);
@@ -165,7 +143,6 @@ function showSelectModal(obj){
 	view = $(obj).parent().next().next();
 	var label = view.find("label").text();
 	var selectObj = view.find("select");
-	var defaultVal = selectObj.val().trim();
 	var id = selectObj.attr("id");
 	var textWidth = selectObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
@@ -183,24 +160,20 @@ function showSelectModal(obj){
 	
 	$("#selectModal .add-form-obj").remove();
 	var optionValueArr = selectObj.children();
-	if(defaultVal!="---请选择---"){
-		$(".option-value").val(defaultVal);
-	}
-	for(var i=1;i<optionValueArr.length;i++){
-		if(defaultVal!=$(optionValueArr[i]).val()){
-			var html = "<div class='form-group add-form-obj'>" +
-			"<div class='col-xs-7 col-sm-offset-4'>";
-			html += "<input type='text' " +
-					"class='form-control option-value' " +
-					"value='"+$(optionValueArr[i]).val()+ "'"+
-					"placeholder='请输入列表选项值'/>";
-			html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'"+ 
-						"style='font-size:20px;color:#888;cursor:pointer;'></span>"+
-						" <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'"+ 
-						"style='font-size:20px;color:#888;cursor:pointer;'></span>";
-			html += "</div></div>";;
-			$("#selectModal form").append(html);
-		}
+	$(".option-value").val($(optionValueArr[0]).val());
+	for (var i = 1; i < optionValueArr.length; i++) {
+		var html = "<div class='form-group add-form-obj'>"
+				+ "<div class='col-xs-7 col-sm-offset-4'>";
+		html += "<input type='text' " + "class='form-control option-value' "
+				+ "value='" + $(optionValueArr[i]).val() + "'"
+				+ "placeholder='请输入列表选项值'/>";
+		html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'"
+				+ "style='font-size:20px;color:#888;cursor:pointer;'></span>"
+				+ " <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'"
+				+ "style='font-size:20px;color:#888;cursor:pointer;'></span>";
+		html += "</div></div>";
+		;
+		$("#selectModal form").append(html);
 	}
 	
 	var num = view.find(".labelDiv").find("span").length;
@@ -221,19 +194,17 @@ function showRadioModal(obj){
 	var id = inputRadioObj.attr("class");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	var textCol = view.find(".subDiv").attr("col");
-	var defaultVal = $(view.find(".subDiv label input[type='radio']:checked"))
-				.parent().text().trim();
 	
 	$("#radio-id").val(id);
 	$("#radio-name").val(label);
 	$("#radio-label-width").val(textLabelCol);
 	$("#radio-width").val(textCol);
 	
-	$(".radio-value").val(defaultVal);
+	$(".radio-value").val($(view.find(".subDiv label")[0]).text().trim());
 	$("#radioModal .add-form-obj").remove();
 	for(var i=1;i<view.find(".subDiv label").length;i++){
 		var radioLabelObj = $(view.find(".subDiv label")[i]);
-		var radioAddVal = radioLabelObj.text();
+		var radioAddVal = radioLabelObj.text().trim();
 		var html = "<div class='form-group add-form-obj'>" +
 				"<div class='col-xs-7 col-sm-offset-4'>";
 		html += "<input type='text' " +
@@ -453,16 +424,6 @@ $(function(){
 		}
 	}
 	
-	$(".date").datetimepicker({
-	    format: "yyyy-mm-dd",
-	    autoclose: true,
-	    todayBtn: true,
-	    minuteStep: 1,
-	    pickTime: false,
-	    minView: 2,
-	    language:"zh-CN"
-	});
-	
 	$(".demo").css("display","block");
 	
 	//保存单行文本框的属性编辑
@@ -636,18 +597,14 @@ $(function(){
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#select-label-width").val());
 			selectObj.parent().css("width",textWidth-18).attr("col",$("#select-width").val());
-			selectObj.css("width",textWidth+3.5).attr("col",$("#select-width").val());
+			selectObj.css("width",textWidth-3.5).attr("col",$("#select-width").val());
 			selectObj.children().remove();
-			selectObj.append("<option value='---请选择---'>---请选择---</option>");
 			for(var i=0;i<optionObjArr.length;i++){
 				var optionObj = $(optionObjArr[i]);
 				var optionVal = optionObj.val();
 				if(optionVal.trim()!=null && optionVal.trim()!=""){
 					selectObj.append("<option value="+optionVal+">"+optionVal+"</option>");
 				}
-			}
-			if($(optionObjArr[0]).val()!=""){
-				selectObj.val($(optionObjArr[0]).val());
 			}
 			if(isMust){
 				var num = view.find(".labelDiv").find("span").length;
@@ -681,28 +638,13 @@ $(function(){
 			var parentDivObj = view.find(".subDiv");
 			view.find(".radio").remove();
 			for(var i=0;i<radioObjArr.length;i++){
-				if(i==0){
+				if($(radioObjArr[i]).val()!="" && $(radioObjArr[i]).val()!=null){
 					var radioObj = $(radioObjArr[i]);
-					if($(radioObjArr[0]).val()=="" || $(radioObjArr[0]).val()==null){
-						var html = "<label class='radio'>"+
-							"<input type='radio' class='"+id+"' id='"+id+i+"' name='optionsRadios' checked/>radioValue"+
-							"</label>";
-					}else{
-						var html = "<label class='radio'>"+
-							"<input type='radio' class='"+id+"' id='"+id+i+"' name='optionsRadios' checked/>"+
-							radioObj.val()+
-							"</label>";
-					}
+					var html = "<label class='radio'>"+
+								"<input type='radio' class='"+id+"' id='"+id+i+"' name='optionsRadios'/>"+
+								radioObj.val()+
+								"</label>";
 					parentDivObj.append(html);
-				}else{
-					if($(radioObjArr[i]).val()!="" && $(radioObjArr[i]).val()!=null){
-						var radioObj = $(radioObjArr[i]);
-						var html = "<label class='radio'>"+
-									"<input type='radio' class='"+id+"' id='"+id+i+"' name='optionsRadios'/>"+
-									radioObj.val()+
-									"</label>";
-						parentDivObj.append(html);
-					}
 				}
 			}
 			

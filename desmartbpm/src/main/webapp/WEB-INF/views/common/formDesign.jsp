@@ -7,13 +7,13 @@
 <title>Insert title here</title>
 	<%@include file="formDesHead.jsp" %>
 </head>
-<body style="min-height: 660px; cursor: auto;" class="edit">
+<body style="min-height: 660px; cursor: auto; background: url(../resources/formDesign/img/builderBg.png) repeat" class="edit">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container-fluid">
 				<div class="nav-collapse collapse">
 					<ul class="nav" id="menu-layoutit">
-						<li class="divider-vertical"></li>
+						<!-- <li class="divider-vertical"></li> -->
 						<li>
 							<div class="btn-group">
 								<button onclick="resizeCanvas('lg')" class="btn btn-primary">
@@ -409,7 +409,7 @@
 									</span>
 									<div class="preview">文本块</div>
 									<div class="view">
-										<h2 contenteditable="true">标题</h2>
+										<h5 contenteditable="true">标题</h5>
 										<p contenteditable="true">这里是一个段落，可以直接编辑也可以通过点击编辑按钮去富文本编辑器编辑文本</p>
 									</div>
 								</div>
@@ -444,7 +444,7 @@
 						</ul>
 					</div>
 				</div>
-				<div class="demo ui-sortable" style="min-height: 304px;">
+				<div class="demo ui-sortable" style="min-height: 600px;">
 				
 				</div>
 				<div id="download-layout">
@@ -461,7 +461,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="savecontent" class="btn btn-primary" data-dismiss="modal">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 
@@ -555,7 +555,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-text-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		
@@ -649,7 +649,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-number-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		
@@ -744,7 +744,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-date-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		
@@ -838,7 +838,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-textarea-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		<!-- 设置下拉选择框的属性 -->
@@ -916,15 +916,6 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
 							添加选项值
-							<div class="pull-right popover-info">
-								<i class="icon-question-sign "></i>
-								<div class="popover fade right">
-									<div class="arrow"></div>
-									<h3 class="popover-title">帮助</h3>
-									<div class="popover-content">
-										第一个输入框为默认值</div>
-								</div>
-							</div>
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control option-value"
@@ -939,7 +930,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-select-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		<!-- 设置单选框的属性 -->
@@ -1017,15 +1008,6 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
 							添加选项值
-							<div class="pull-right popover-info">
-								<i class="icon-question-sign "></i>
-								<div class="popover fade right">
-									<div class="arrow"></div>
-									<h3 class="popover-title">帮助</h3>
-									<div class="popover-content">
-										第一个输入框为默认选中框值</div>
-								</div>
-							</div>
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control radio-value"
@@ -1040,7 +1022,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-radio-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		<!-- 设置复选框的属性 -->
@@ -1118,15 +1100,6 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
 							添加选项值
-							<div class="pull-right popover-info">
-								<i class="icon-question-sign "></i>
-								<div class="popover fade right">
-									<div class="arrow"></div>
-									<h3 class="popover-title">帮助</h3>
-									<div class="popover-content">
-										勾中输入框后面的复选框，则该复选框的值被默认勾中</div>
-								</div>
-							</div>
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="col-xs-4 checkbox-value"
@@ -1144,7 +1117,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-checkbox-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		<!-- 设置文件上传按钮的属性 -->
@@ -1308,7 +1281,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-loadFile-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		<!-- 设置富文本框的属性 -->
@@ -1372,7 +1345,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-editor-content" class="btn btn-primary">保存</a>
-				<a class="btn" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
 		
@@ -1411,7 +1384,7 @@
 				<input type="hidden" id="proVersion" value="${proVersion}"/>
 				<input type="hidden" id="formName" value="${formName}"/>
 				<input type="hidden" id="formDescription" value="${formDescription}"/>
-				<a class="btn" data-dismiss="modal" onclick="javascript:saveHtml();">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">保存</a>
 			</div>
 		</div>
 	</div>

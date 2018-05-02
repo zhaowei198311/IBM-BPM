@@ -49,7 +49,7 @@ body {
 .edit .demo {
 	margin-left: 0px;
 	margin-top: 10px;
-	/* padding: 30px 15px 15px; */
+	background:#fff;
 	border: 1px solid #DDDDDD;
 	border-radius: 4px;
 	position: relative;
@@ -75,7 +75,7 @@ body {
 	left: 0px;
 	bottom: 0;
 	top: 44px;
-	background: #ccc;
+	background: #4D5367;
 	padding: 9px 0;
 	z-index: 10;
 	-webkit-transition: all 500ms ease;
@@ -147,7 +147,7 @@ body {
 
 .sidebar-nav .preview {
 	display: block;
-	color: #666;
+	color: #f1e4e4;
 	font-size: 12px;
 	line-height: 22px;
 }
@@ -155,9 +155,9 @@ body {
 .sidebar-nav .preview input {
 	width: 90px;
 	padding: 0 10px;
-	background: #bbb;
+	background: #fffdfc;
 	font-size: 10px;
-	color: #999;
+	color: #070303;
 	line-height: 20px;
 	height: 20px;
 	position: relative;
@@ -215,7 +215,7 @@ body {
 }
 
 .edit .demo .lyrow .drag {
-	top: 5px;
+	top: 2px;
 	right: 80px;
 	z-index: 10;
 }
@@ -237,7 +237,7 @@ body {
 
 .edit .demo .remove {
 	position: absolute;
-	top: 5px;
+	top: 2px;
 	right: 5px;
 	z-index: 10;
 }
@@ -363,6 +363,6 @@ a.language-selected {
 	font-weight: bold;
 }
 
-/* .labelDiv{
-	text-align: center;
-} */
+textarea {
+	resize:none;
+}

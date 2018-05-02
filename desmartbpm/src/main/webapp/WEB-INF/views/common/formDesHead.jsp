@@ -11,8 +11,6 @@
 <link rel="stylesheet"
 	href="<%=basePath%>/resources/formDesign/css/font-awesome.min.css">
 <link rel="stylesheet"
-	href="<%=basePath%>/resources/formDesign/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
-<link rel="stylesheet"
 	href="<%=basePath%>/resources/formDesign/fileinput/css/fileinput.min.css">
 
 <script type="text/javascript"
@@ -22,10 +20,6 @@
 	src="<%=basePath%>/resources/formDesign/fileinput/js/fileinput.min.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>/resources/formDesign/js/bootstrap.min.js"></script>
-<script type="text/javascript"
-	src="<%=basePath%>/resources/formDesign/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript"
-	src="<%=basePath%>/resources/formDesign/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>/resources/formDesign/js/jquery-ui.js"></script>
 <script type="text/javascript"
