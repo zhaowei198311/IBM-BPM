@@ -100,4 +100,13 @@ public class SysTeamServiceImpl implements SysTeamService {
 		// TODO Auto-generated method stub
 		return sysTeamMapper.selectByPrimary(sysTeam);
 	}
+
+	@Override
+	public List<SysTeam> selectFilterNode(SysTeam entity) {
+		// TODO Auto-generated method stub
+		
+		
+		
+		return sysTeamMapper.selectFilterNode(entity);
+	}
 }

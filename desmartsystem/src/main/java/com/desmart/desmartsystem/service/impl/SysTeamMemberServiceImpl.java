@@ -64,5 +64,11 @@ public class SysTeamMemberServiceImpl implements SysTeamMemberService {
 	public List<SysTeamMember> selectAll(SysTeamMember entity) {
 		// TODO Auto-generated method stub
 		return sysTeamMemberMapper.selectAll(entity);
+	}
+
+	@Override
+	public int delete(SysTeamMember entity) {
+		// TODO Auto-generated method stub
+		return sysTeamMemberMapper.delete(entity);
 	}	
 }
