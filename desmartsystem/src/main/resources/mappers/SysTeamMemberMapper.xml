@@ -32,6 +32,12 @@
     delete from SYS_TEAM_MEMBER
     where TEAM_UID = #{teamUid,jdbcType=VARCHAR}
   </delete>
+  
+  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
+    delete from SYS_TEAM_MEMBER
+    where TEAM_UID = #{teamUid,jdbcType=VARCHAR} and MEMBER_TYPE=#{memberType}
+  </delete>
+  
   <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >
     insert into SYS_TEAM_MEMBER (MEMBER_UID, TEAM_UID, USER_UID, 
       MEMBER_TYPE, ORDER_INDEX)

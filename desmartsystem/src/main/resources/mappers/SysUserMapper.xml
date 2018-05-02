@@ -41,8 +41,6 @@
 		<result column="EMPLOYEETYPE" property="employeeType" />
 		<result column="DEPART_NAME" property="departName" />
 		<result column="ACCOUNT_TYPE" property="accountType" />
-		
-		
 
 		<association property="sysDepartment"  javaType="com.desmart.desmartsystem.entity.SysDepartment">
 			<result column="DEPART_UID" property="departUid" />
@@ -71,7 +69,7 @@
 	 		</if>
 	 		
 	 		<if test="departUid!=null and departUid!='' ">
-	 			and u.depart_Uid =#{departUid}
+	 			and (U.USER_UID IN (SELECT DU.USER_UID FROM SYS_USER_DEPARTMENT DU WHERE DU.DEPART_UID=#{departUid}) OR U.DEPART_UID=#{departUid})
 	 		</if>
 	 		
 	 		<if test="departName!=null  and departName!='' ">

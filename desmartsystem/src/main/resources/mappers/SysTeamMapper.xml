@@ -50,6 +50,12 @@
     </if>
   </select>
   
+  <select id="selectFilterNode" resultMap="BaseResultMap" parameterType="com.desmart.desmartsystem.entity.SysTeam">
+ 		SELECT * FROM SYS_TEAM WHERE TEAM_UID NOT IN (SELECT t.TEAM_UID FROM SYS_TEAM 	t start with  t.TEAM_UID  = #{teamUid} connect by t.PARENT_ID=prior t.TEAM_UID
+		UNION ALL 
+		SELECT t.TEAM_UID FROM SYS_TEAM 	t start with  t.TEAM_UID  = #{teamUid} connect by t.TEAM_UID=prior t.PARENT_ID)
+  </select>
+  
    <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
   		select * from SYS_TEAM u 
   		WHERE team_uid in
