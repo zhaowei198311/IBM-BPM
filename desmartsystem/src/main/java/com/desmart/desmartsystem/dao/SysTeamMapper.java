@@ -24,5 +24,8 @@ public interface SysTeamMapper {
     
     public List<SysTeam> selectAll(SysTeam entity);
     
-    List<SysTeam>	listByPrimaryKeyList(List<String> list);
+    List<SysTeam> listByPrimaryKeyList(List<String> list);
+    
+    List<SysTeam> selectFilterNode(SysTeam entity);
+    
 }

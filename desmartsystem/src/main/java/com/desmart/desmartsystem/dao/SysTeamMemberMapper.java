@@ -21,4 +21,6 @@ public interface SysTeamMemberMapper {
     int updateByPrimaryKey(SysTeamMember record);
     
     public List<SysTeamMember> selectAll(SysTeamMember entity);
+    
+    int delete(SysTeamMember entity);
 }
