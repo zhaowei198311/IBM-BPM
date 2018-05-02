@@ -298,7 +298,7 @@
 		
 		
 		<div class="display_container10">
-			<div class="display_content10">
+			<div class="display_content10" style="width: 800px;">
 				<div class="top">
 					<div class="layui-col-md12">绑定部门</div>
 					<div class="">
@@ -311,65 +311,73 @@
 						</div>
 					</div>
 				</div>
-				<div class="middle1" style="height: 400px;">
-						<form class="form-horizontal" id="sysUserDepartmentForm" action="sysUserDepartment/addSysUserDepartments" method="post"   onsubmit="return validateCallback(this,addSysUserDepartmentsuccess);">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob">
-						<colgroup>
-						    <col>
-						    <col>
-						    <col>
-						    <col>
-						    <col> 
-						    <col>
-						    <col>
-						</colgroup>
-						<thead>
-						     <tr>
-						      <th>序号</th>
-						      <th>部门名称</th>
-						      <th>部门代码</th>
-						      <th>部门负责人</th>
-						    </tr>  
-						</thead>
-						<tbody id="tabletr1"></tbody>
-					</table>	
-						<input type="hidden" name="userUid" id="bdbm_userUid"/>
-						<input type="hidden" name="isManager" id="bdbm_isManager"/>
-						</form>
-					<div id="pagination1"></div>
+				<br/>
+				<div style="width:50%;float: left;">
+					<div class="middle1" style="height: 400px;width: 100%;">
+							<form class="form-horizontal" id="sysUserDepartmentForm" action="sysUserDepartment/addSysUserDepartments" method="post"   onsubmit="return validateCallback(this,addSysUserDepartmentsuccess);">
+						<table class="layui-table backlog_table" lay-even lay-skin="nob">
+							<colgroup>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col> 
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							     <tr>
+							      <th>序号</th>
+							      <th>部门名称</th>
+							      <th>部门代码</th>
+							      <th>部门负责人</th>
+							    </tr>  
+							</thead>
+							<tbody id="tabletr1"></tbody>
+							
+						</table>	
+							<input type="hidden" name="userUid" id="bdbm_userUid"/>
+							<input type="hidden" name="isManager" id="bdbm_isManager"/>
+							</form>
+						<div id="pagination1"></div>
+					</div>
 				</div>
-				<div class="middle1" style="width: 400px;height: 30px;">
-					<button  id="bdbm">绑定</button>
+				<div style="width:5%;float: left;margin: 0 20px 0 10px;">
+				<div class="middle1" style="height: 400px;width: 100%;">
+					<div style="margin-top:80px;"></div>
+					<button class="layui-btn layui-btn-sm" id="bdbm">绑定</button>
 				</div>
-				<div class="middle1" style="height: 400px;">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob">
-						<colgroup>
-						    <col>
-						    <col>
-						    <col>
-						    <col>
-						    <col> 
-						    <col>
-						    <col>
-						</colgroup>
-						<thead>
-						     <tr>
-						      <th>序号</th>
-						      <th>部门名称</th>
-						      <th>客户</th>
-						      <th>部门负责人</th>
-						      <th>操作</th>
-						    </tr>  
-						</thead>
-						<tbody id="tabletr2"></tbody>
-					</table>	
 				</div>
-				<div id="lay_page_copy"></div>
+				<div style="width:40%;float: left;">
+					<div class="middle1" style="height: 400px;width: 100%;">
+						<table class="layui-table backlog_table" lay-even lay-skin="nob">
+							<colgroup>
+							    <col>
+							    <col>
+							    <col>
+							    <col>
+							    <col> 
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							     <tr>
+							      <th>序号</th>
+							      <th>部门名称</th>
+							      <th>客户</th>
+							      <th>部门负责人</th>
+							      <th>操作</th>
+							    </tr>  
+							</thead>
+							<tbody id="tabletr2"></tbody>
+						</table>	
+					</div>
+				</div>
 				<div class="foot">
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container3').css('display','none');">取消</button>
 				</div>
+				</div>
 			</div>
-		</div>
 		
 	
 		<script>
@@ -494,7 +502,8 @@
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.userName + '</td>';
 	         	str+='<td>' + this.userNo + '</td>';
-	         	str+='<td>' + this.sysDepartment.departName + '</td>';
+	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
+	         	
 	         	/* str+='<td></td>'; */
 	         	str+='<td>' + isEmpty(this.employeeType) + '</td>';
 	         	str+='<td>' + this.mobile + '</td>';
