@@ -41,7 +41,7 @@
 			        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
 								<li class="logo"><img src="resources/images/logo.png" class="big_logo"/><img src="resources/images/logo.png" class="mini_logo"/></li>
 								<li style="text-align:center;margin-bottom:20px;"><span class="system_title">BPM系统</span></li>
-							 	<li class="layui-nav-item layui-this"><a href="backlog.html" target="iframe0"><i class="layui-icon">&#xe60e;</i><span> 待办任务</span> </a></li>
+							 	<li class="layui-nav-item layui-this"><a href="test/backlog" target="iframe0"><i class="layui-icon">&#xe60e;</i><span> 待办任务</span> </a></li>
 							 	<li class="layui-nav-item"><a href="not_read.html" target="iframe0"><i class="layui-icon">&#xe645;</i><span> 未阅通知</span></a></li>
 							    <li class="layui-nav-item"><a href="finished.html" target="iframe0"><i class="layui-icon">&#x1005;</i><span> 已办任务</span></a></li>
 							  <!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>
@@ -49,7 +49,7 @@
 							 	<li class="layui-nav-item"><a href="new_tail.html" target="iframe0"><i class="layui-icon">&#xe609;</i> <span> 发起跟踪</span></a></li>-->
 							 	<li class="layui-nav-item"><a href="set.html" target="iframe0"><i class="layui-icon">&#xe6b2;</i><span> 代理设置</span></a></li>
 							 	<li class="layui-nav-item"><a href="javascript:void(0)" target="iframe0" class="detail_menu1"><i class="layui-icon">&#xe68e;</i><span> 门店生命周期</span></a></li>
-							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe640;</i> <span> 草稿箱</span></a></li>
+							 	<li class="layui-nav-item"><a  href="drafts/index" target="iframe0"><i class="layui-icon">&#xe640;</i> <span> 草稿箱</span></a></li>
 							 	<li class="layui-nav-item"><a  href="javascript:void(0)" target="iframe0"><i class="layui-icon">&#xe629;</i> <span> 报表</span></a></li>
 							 	<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
 							</ul>
@@ -65,8 +65,8 @@
 		 				<div class="menu_title">新开店流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">目标门店调查表</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">合同用印</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">目标门店调查表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">合同用印</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>
@@ -75,8 +75,8 @@
 		 				<div class="menu_title">续租流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">门店续租申请表</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">门店续租相关事项变动确认流程</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店续租申请表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店续租相关事项变动确认流程</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>
@@ -85,8 +85,8 @@
 		 				<div class="menu_title">老翻新流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">门店整体翻新流程</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">门店部分翻新流程</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店整体翻新流程</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店部分翻新流程</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>
@@ -95,9 +95,9 @@
 		 				<div class="menu_title">门店暂闭流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">门店暂闭申请表</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">门店被动暂闭和快速暂闭申请流程</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">门店暂闭重开申请表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店暂闭申请表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店被动暂闭和快速暂闭申请流程</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店暂闭重开申请表</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>
@@ -106,8 +106,8 @@
 		 				<div class="menu_title">拆店流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">门店拆店申请表</a></li>
-			 					<li><a href="backlog.html"  target="iframe0">拆店信息移交及相关事项确认流程</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店拆店申请表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">拆店信息移交及相关事项确认流程</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>
@@ -116,7 +116,7 @@
 		 				<div class="menu_title">门店续租转让流程 <i class="layui-icon" style="font-size:14px;cursor:default;">&#xe602;</i></div>
 			 			<div class="menu_detail">
 			 				<ul>
-			 					<li><a href="backlog.html"  target="iframe0">门店转租转让申请表</a></li>
+			 					<li><a href="test/backlog"  target="iframe0">门店转租转让申请表</a></li>
 			 					<h1 style="clear:both;"></h1>
 			 				</ul>		
 			 			</div>

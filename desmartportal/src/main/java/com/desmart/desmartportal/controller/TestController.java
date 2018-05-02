@@ -25,4 +25,9 @@ public class TestController {
 	public String  backlog() {
 		return "backlog";
 	}
+	
+	@RequestMapping("/backlogDetail")
+	public String backlogDetail() {
+		return "backlog_detail";
+	}
 }

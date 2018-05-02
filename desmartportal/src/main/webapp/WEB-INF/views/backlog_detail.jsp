@@ -13,8 +13,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
-  		<link href="css/layui.css" rel="stylesheet"/>
-  		<link href="css/my.css" rel="stylesheet" />
+  		<link href="resources/css/layui.css" rel="stylesheet"/>
+  		<link href="resources/css/my.css" rel="stylesheet" />
   		<style>
   			.layui-form-label{text-align:left;padding:6px 0;width:60px;}
   			.layui-input-block{margin-left:70px;}
@@ -171,8 +171,8 @@
 				<div class="option_container">
 					<p class="title_p" style="margin-top:10px;">本环节审批要求</p>
 					<div class="layui-form">
-						<p style="margin-bottom:10px;"><img src="images/top_star.png" class="star_img"/>单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。</p>
-						<p><img src="images/top_star.png" class="star_img"/>审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。</p>
+						<p style="margin-bottom:10px;"><img src="resources/images/top_star.png" class="star_img"/>单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。</p>
+						<p><img src="resources/images/top_star.png" class="star_img"/>审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。</p>
 					</div>
 					<p class="title_p">审批意见</p>				
 					<div class="layui-form">
@@ -330,19 +330,10 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
-		<script type="text/javascript" src="js/layui.all.js"></script>
-	    <!--IE8只能支持jQuery1.9-->
-	    <!--[if lte IE 8]>
-	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
-	    <![endif]-->
-		<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-		<!--[if lt IE 9]>
-		  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-		  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
 	</body>	
 </html>
+	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	<script>
 		layui.use('layedit', function(){
 		  var layedit = layui.layedit;
@@ -384,7 +375,7 @@
 			    $(".upload_file").click();			
 			});
 			$(".back_btn").click(function(){
-			    window.location.href="backlog.html";
+			    window.location.href="test/backlog";
 			});
 		})
 	</script>

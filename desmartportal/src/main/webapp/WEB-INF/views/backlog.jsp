@@ -152,7 +152,7 @@
 		});
 		$(function(){
 			$(".backlog_td").click(function(){
-				window.location.href="backlog_detail.html";
+				window.location.href="test/backlogDetail";
 			})
 			
 		})

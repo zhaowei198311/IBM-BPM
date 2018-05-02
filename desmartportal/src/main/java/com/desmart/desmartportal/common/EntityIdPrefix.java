@@ -13,5 +13,7 @@ public class EntityIdPrefix {
 	
 	/** 接口参数前缀 */
 	public static final String DH_INTERFACE_PARAMETER = "para_meta:";
-
+	
+	/** 草稿参数前缀 */
+	public static final String DH_DRAFTS_META = "draft_meta:";
 }
