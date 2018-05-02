@@ -69,12 +69,12 @@
 				    </div>
 				  </div>
 				  
-				  <div class="layui-form-item">
+				  <!-- <div class="layui-form-item">
 				    <label class="layui-form-label">上级团队</label>
 				    <div class="layui-input-block">
 				    	<select class="parentId" name="parentId"  id="parentId" ></select>
 				    </div>
-				  </div>
+				  </div> -->
 				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
@@ -107,12 +107,12 @@
 				    </div>
 				  </div>
 				  
-				   <div class="layui-form-item">
+				  <!--  <div class="layui-form-item">
 				    <label class="layui-form-label">上级团队</label>
 				    <div class="layui-input-block">
 				    	<select class="parentId" name="parentId" id="parentId1" ></select>
 				    </div>
-				  </div>
+				  </div> -->
 				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
@@ -254,16 +254,18 @@
 		
 		
 		function adddialog1(){
-			var select=['parentId'];
-			selectoptions('sysTeam/sysTeamList',select);
+			/* var select=['parentId'];
+			selectoptions('sysTeam/sysTeamList',select); */
 			adddialog();
 		};
 		
 		function edit1(data){
-			var select=['parentId1'];
+			edit(data);
+			/* var select=['parentId1'];
 			$.ajax({  
-		        url: 'sysTeam/sysTeamList',    //后台webservice里的方法名称  
-		        type: "post",  
+		        url: 'sysTeam/selectFilterNode',    //后台webservice里的方法名称  
+		        type: "post",
+		        data:{teamUid:data.teamUid},
 		        dataType: "json",  
 		        success: function (data1) {
 		        	for (var i = 0; i < select.length; i++) {
@@ -277,9 +279,9 @@
 		            	$("#"+select[i]).prepend(optionstring);
 			        	$("#"+select[i]).first().prepend("<option value='' selected='selected'>"+language.please_select+"</option>");
 					}
-		        	edit(data);
+		        	
 		        }
-		    });
+		    }); */
 		};
 		
 		function selectoptions(url,select){
