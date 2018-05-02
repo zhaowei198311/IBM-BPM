@@ -447,3 +447,21 @@ function status(data){
 		layer.alert(language.operation_failed);
 	}
 }
+
+function depart(data,depart){
+	var projectarray=[];
+	//projectarray.push(depart);
+ 	$(data).each(function(index,val){
+ 		projectarray.push(val.departName);
+ 	});
+ 	return projectarray.join(",");
+}
+
+function userName(data,user){
+	var projectarray=[];
+	projectarray.push(user);
+ 	$(data).each(function(index,val){
+ 		projectarray.push(val.userUid);
+ 	});
+ 	return projectarray.join(",");
+}
