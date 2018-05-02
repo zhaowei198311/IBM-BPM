@@ -266,4 +266,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
         }
         return newFormUid;
 	}
+
+	@Override
+	public ServerResponse listBySelective(BpmForm bpmForm) {
+		List<BpmForm> bpmFormList = bpmFormManageMapper.listBySelective(bpmForm);
+		return ServerResponse.createBySuccess(bpmFormList);
+	}
 }

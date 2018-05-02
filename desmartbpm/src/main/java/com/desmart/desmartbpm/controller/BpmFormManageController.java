@@ -266,4 +266,13 @@ public class BpmFormManageController {
 			return "false";
 		}
 	}
+	
+	/**
+	 * 根据传入的组合条件查询表单集合
+	 */
+	@RequestMapping(value = "/queryFormListBySelective")
+	@ResponseBody
+	public ServerResponse queryFormListBySelective(BpmForm bpmForm) {
+		return bpmFormManageService.listBySelective(bpmForm);
+	}
 }

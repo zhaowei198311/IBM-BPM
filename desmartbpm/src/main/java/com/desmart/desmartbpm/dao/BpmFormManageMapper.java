@@ -51,4 +51,9 @@ public interface BpmFormManageMapper {
 	 * 根据表单Id修改表单文件名
 	 */
 	int updateFormFilenameByFormUid(@Param("dynUid")String dynUid,@Param("filename")String filename);
+
+	/**
+	 * 根据传入的组合条件查询表单集合
+	 */
+	List<BpmForm> listBySelective(BpmForm bpmForm);
 }

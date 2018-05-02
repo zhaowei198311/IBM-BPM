@@ -76,4 +76,16 @@
     	set dyn_filename = #{filename}
     	where dyn_uid = #{dynUid}
     </update>
+    
+    <select id="listBySelective" parameterType="com.desmart.desmartbpm.entity.BpmForm" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    	select <include refid="base_column"/> 
+    	from bpm_form
+    	where pro_uid = #{proUid} and pro_version = #{proVersion}
+    	<if test="dynTitle != null and !dynTitle.trim().isEmpty()">
+	    	and dyn_title like '%${dynTitle}%' 
+	    </if>
+	    <if test="dynDescription != null and !dynDescription.trim().isEmpty()">
+	    	and dyn_title like '%${dynDescription}%' 
+	    </if>
+    </select>
 </mapper>
