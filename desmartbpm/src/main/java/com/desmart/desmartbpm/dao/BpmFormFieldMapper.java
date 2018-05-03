@@ -35,4 +35,9 @@ public interface BpmFormFieldMapper {
 	 * 保存某环节上表单字段的权限信息
 	 */
 	int saveFormFieldPermission(DhObjectPermission dhObjectPermission);
+
+	/**
+	 * 根据环节ID和表单字段ID删除字段权限信息
+	 */
+	int deleteFormFieldPermission(DhObjectPermission dhObjectPermission);
 }
