@@ -419,7 +419,7 @@
                                                             <td>1</td>
                                                             <td>表单名称</td>
                                                             <td>描述内容...</td>
-                                                            <td><i class="layui-icon delete_btn edit_role" title="权限设置">&#xe654;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
+                                                            <td><i class="layui-icon delete_btn edit_role" title="权限设置">&#xe654;</i> <i class="layui-icon delete_btn" >&#xe640;</i></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>                                                
@@ -870,10 +870,14 @@
                     </div>
                     <div id="form_innerArea" style="height:362px;">
                         <div style="height:38px;" class="layui-row layui-form">
-                            <div class="layui-col-md6">
-                               <input id="" type="text" placeholder="标题/描述"  class="layui-input">
+                            <div class="layui-col-md2" style="margin-right: 5px;">
+                               <input id="dynTitle" type="text" placeholder="标题"  class="layui-input">
                             </div>
-                            <div class="layui-col-md6">
+                            
+                            <div class="layui-col-md2" style="margin-right: 5px;">
+                               <input id="dynDescription" type="text" placeholder="描述"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md2">
                                <button class="layui-btn" id="search_form_btn" type="button">查询</button>
                             </div>
                         </div>
@@ -891,7 +895,7 @@
                                       <th>表单描述</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="form_tbody">
                                     <tr>
                                         <td><input type="checkbox" name="form_ck" data-uid="form:ca995a73-863c-44b2-9e39-94a464d72d86"  lay-skin="primary"> 1</td>
                                         <td>表单名称</td>
@@ -997,7 +1001,7 @@
                             <th>字段名称</th>
                             <th>状态</th>
                         </thead>
-                        <tbody>
+                        <tbody id="field_permissions_table" >
                             <tr>
                                 <td><input type="checkbox" id="0"/><label for="0"> 1</label></td>
                                 <td>字段1</td>
@@ -1260,12 +1264,40 @@
             });
         });
         $(function(){
+        	
+        	
+        	$(".cancel_btn").click(function(){
+                $(".display_container4").css("display","none");
+                $(".display_container10").css("display","none");
+            })
+        	
             $(".create_net").click(function(){
                 $(".display_container5").css("display","block");
             })
            
             $(".edit_role").click(function(){
                 $(".display_container4").css("display","block");
+                $.ajax({
+                  url: common.getPath() + "/formField/queryFieldByFormUidAndStepId",
+                  type: "post",
+                  dataType: "json",
+                  data:{
+                   		stepUid:stepUid,
+                        formUid:formUid
+                  },
+                  success: function(result) {
+                	  $('#field_permissions_table').empty();
+	           		   var trs='';
+	           		   $(result.data).each(function(index){
+	           			   trs+='<tr>';
+	           			   trs+='<td><input type="checkbox" name="tri_check" value="' + this.dynUid + '" lay-skin="primary">'+ (index+1) +'</td>';
+	           			   trs+='<td>'+this.dynTitle+'</td>'
+	           			   trs+='<td>'+this.dynDescription+'</td>'
+	           			   trs+='</tr>';
+	           		   });
+	           		   $("#field_permissions_table").append(trs);
+                  }
+                 });
             })
 
             $(".choose_name").click(function(){
