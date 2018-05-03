@@ -368,7 +368,7 @@
 												</label>
 											</div>
 											<div class="subDiv" col="1">
-												<input class="btn btn-primary" onclick="btnClick(this);" type="button" value="文件上传"/>
+												<input class="btn btn-primary file" onclick="btnClick(this);" type="button" value="文件上传"/>
 											</div>
 											<div class="hidden-value" style="display:none">
 												<input type="hidden" class="maxFileSize" value="20"/>
