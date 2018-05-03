@@ -444,7 +444,7 @@
 						</ul>
 					</div>
 				</div>
-				<div class="demo ui-sortable" style="min-height: 600px;">
+				<div class="demo ui-sortable" style="padding-bottom: 100px;">
 				
 				</div>
 				<div id="download-layout">
