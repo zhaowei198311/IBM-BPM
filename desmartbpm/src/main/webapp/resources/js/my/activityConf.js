@@ -487,6 +487,9 @@ function loadActivityConf(actcUid) {
             if(result.status == 0){
                 console.log(result.data);
                 initConf(result.data);
+                
+                step_table(result.data.stepList);
+                
             }else{
                 layer.alert(result.msg);
             }
@@ -496,6 +499,44 @@ function loadActivityConf(actcUid) {
         }
     });
 }
+
+//step table数据填充
+function step_table(data){
+	$('#step_table').empty();
+	   var trs='';
+	   $(data).each(function(index,val){
+		   trs+='<tr>';
+		   trs+='<td>'+(index+1)+'</td>';
+		   if(this.stepType=='trigger'){
+			   trs+='<td>触发器</td>'
+		   }else{
+			   trs+='<td>表单</td>'  
+		   }
+		   trs+='<td>'+this.stepBusinessKey+'</td>'
+		   if(this.formName==null){
+			   trs+='<td></td>'
+		   }else{
+			   trs+='<td>'+this.formName+'</td>'
+		   }
+		   if(this.triTitle==null){
+			   trs+='<td></td>'
+		   }else{
+			   trs+='<td>'+this.triTitle+'</td>'
+		   }
+		   var value=encodeURI(JSON.stringify(val));
+		   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
+		   trs+='<i class="layui-icon delete_btn" title="" >&#xe640;</i>';
+		   trs+='</td>';
+		   trs+='</tr>';
+	   });
+	   $("#step_table").append(trs);
+}
+
+function stepEdit(data){
+	var dates=jQuery.parseJSON(decodeURI(data));
+	console.log(dates.activityBpdId);
+}
+
 // 载入配置信息
 function initConf(map) {
     var conf = map.conf;
@@ -874,7 +915,7 @@ function addStep() {
 			},
 			success : function(result){
 				if(result.status == 0){
-				    
+					$('#addStep_container').hide();
 				}else{
 					layer.alert(result.msg);
 				}
