@@ -524,8 +524,12 @@ function step_table(data){
 			   trs+='<td>'+this.triTitle+'</td>'
 		   }
 		   var value=encodeURI(JSON.stringify(val));
-		   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
-		   trs+='<i class="layui-icon" >&#xe654;</i>';
+		   if(this.stepType=='trigger'){
+			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
+		   }else{
+			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
+			   trs+='<i class="layui-icon" >&#xe654;</i>';
+		   }
 		   trs+='</td>';
 		   trs+='</tr>';
 	   });
@@ -535,6 +539,62 @@ function step_table(data){
 function stepEdit(data){
 	var dates=jQuery.parseJSON(decodeURI(data));
 	console.log(dates.activityBpdId);
+}
+
+//修改环节关联表单信息
+var updateFormUid = "";//要修改步骤的关联表单
+$("#update_search_form_btn").click(function(){
+	 updateFormTable(updateFormUid);
+});
+
+function updateFormTable(formUid){
+	$.ajax({
+	    url: common.getPath() + "/formManage/queryFormListBySelective",
+	   type: "post",
+	   data:{
+	    proUid:proUid,
+	    proVersion:proVerUid,
+	    dynTitle:$('#updateDynTitle').val(),
+	    dynDescription:$('#updateDynTitle').val()
+	   },
+	   dataType: "json",
+	   success: function(result) {
+		   $('#update_step_form_tbody').empty();
+		   var trs='';
+		   $(result.data).each(function(index){
+			   trs+='<tr>';
+			   if(formUid==this.dynUid){
+				   trs+='<td><input type="checkbox" name="dynUid_check" value="' + this.dynUid + '" lay-skin="primary" checked>'+ (index+1) +'</td>';
+			   }else{
+				   trs+='<td><input type="checkbox" name="dynUid_check" value="' + this.dynUid + '" lay-skin="primary">'+ (index+1) +'</td>';
+			   }
+			   trs+='<td>'+this.dynTitle+'</td>'
+			   trs+='<td>'+this.dynDescription+'</td>'
+			   trs+='</tr>';
+		   });
+		   $("#update_step_form_tbody").append(trs);
+	   }
+	 });
+}
+
+//修改环节关联表单信息
+function stepFormEdit(data){
+	var dates=jQuery.parseJSON(decodeURI(data));
+	console.log(dates);
+	$("#update_step_form_container").find("input[type='text']").val("");
+	$("#update_step_form_container").css("display","block");
+	$("#updateStepSort").val(dates.stepSort);
+	if(dates.stepBusinessKey=="default"){
+		$("#update_step_form_container").find("input[value='default']").prop("checked",true);
+		$("#update_step_form_container").find("input[value='custom']").prop("checked",false);
+	}else{
+		$("#update_step_form_container").find("input[value='custom']").prop("checked",true);
+		$("#update_step_form_container").find("input[value='default']").prop("checked",false);
+		$("#update_stepBusinessKey_input").val(dates.stepBusinessKey);
+	}
+	layui.form.render();
+	
+	updateFormTable(dates.stepObjectUid);
 }
 
 // 载入配置信息
