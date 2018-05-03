@@ -490,4 +490,47 @@ public class DhProcessDefinition {
                 + categoryUid + ", permissionStartUser=" + permissionStartUser + ", permissionStartRole="
                 + permissionStartRole + ", permissionStartTeam=" + permissionStartTeam + "]";
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((proAppId == null) ? 0 : proAppId.hashCode());
+        result = prime * result + ((proUid == null) ? 0 : proUid.hashCode());
+        result = prime * result
+                + ((proVerUid == null) ? 0 : proVerUid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DhProcessDefinition other = (DhProcessDefinition) obj;
+        if (proAppId == null) {
+            if (other.proAppId != null)
+                return false;
+        } else if (!proAppId.equals(other.proAppId))
+            return false;
+        if (proUid == null) {
+            if (other.proUid != null)
+                return false;
+        } else if (!proUid.equals(other.proUid))
+            return false;
+        if (proVerUid == null) {
+            if (other.proVerUid != null)
+                return false;
+        } else if (!proVerUid.equals(other.proVerUid))
+            return false;
+        return true;
+    }
+
+    
+    
+    
 }
