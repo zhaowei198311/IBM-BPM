@@ -408,49 +408,16 @@
                                                     </colgroup>
                                                     <thead>
                                                         <tr>
-                                                          <th>序号</th>
-                                                          <th>表单名称</th>
-                                                          <th>表单描述</th>
-                                                          <th>操作</th>
+															<th>步骤序号</th>
+															<th>步骤类型</th>
+															<th>步骤关键字</th>
+															<th>表单名</th>
+															<th>触发器名</th>
+															<th>操作</th>
                                                         </tr> 
                                                     </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>表单名称</td>
-                                                            <td>描述内容...</td>
-                                                            <td><i class="layui-icon delete_btn edit_role" title="权限设置">&#xe654;</i> <i class="layui-icon delete_btn" >&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
+                                                    <tbody id="step_table"></tbody>
                                                 </table>                                                
-                                                <p class="title_p">第二步</p>
-                                                <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                                                    <colgroup>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                        <col>
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                          <th>序号</th>
-                                                          <th>触发器名称</th>
-                                                          <th>类型</th>
-                                                          <th>脚本名称</th>
-                                                          <th>操作</th>
-                                                        </tr> 
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>名称</td>
-                                                            <td>类型1</td>
-                                                            <td>脚本名1...</td>
-                                                            <td><i class="layui-icon delete_btn">&#xe640;</i></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -1239,6 +1206,7 @@
     
     <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
     <script type="text/javascript" src="<%=basePath%>/resources/js/my/activityConf.js"></script>
+
     <script>
         var proAppId = '${processDefinition.proAppId}';
         var proUid = '${processDefinition.proUid}';
