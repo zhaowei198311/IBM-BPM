@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 
 @RequestMapping(value = "/formField")
@@ -32,5 +33,14 @@ public class BpmFormFieldController {
 	@ResponseBody
 	public ServerResponse queryFieldByFormUidAndStepId(String stepUid,String formUid) {
 		return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid);
+	}
+	
+	/**
+	 * 保存某环节上表单字段的权限信息
+	 */
+	@RequestMapping(value = "/saveFormFieldPermission")
+	@ResponseBody
+	public ServerResponse saveFormFieldPermission(@RequestBody DhObjectPermission[] dhObjectPermissions) {
+		return bpmFormFieldService.saveFormFieldPermission(dhObjectPermissions);
 	}
 }

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 
 @Repository
 public interface BpmFormFieldMapper {
@@ -29,4 +30,9 @@ public interface BpmFormFieldMapper {
 	 */
 	String queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
 			@Param("fieldUid")String fieldUid);
+
+	/**
+	 * 保存某环节上表单字段的权限信息
+	 */
+	int saveFormFieldPermission(DhObjectPermission dhObjectPermission);
 }

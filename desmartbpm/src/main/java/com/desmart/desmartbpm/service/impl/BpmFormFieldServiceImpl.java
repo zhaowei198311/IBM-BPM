@@ -11,6 +11,8 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 
 @Service
@@ -41,5 +43,22 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			field.setOpAction(opAction);
 		}
 		return ServerResponse.createBySuccess(fieldList);
+	}
+
+	@Override
+	public ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions) {
+		int countRow = 0;
+		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
+			if("EDIT".equals(dhObjectPermission.getOpAction())) {
+				countRow++;
+			}else{
+				dhObjectPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
+				countRow += bpmFormFieldMapper.saveFormFieldPermission(dhObjectPermission);
+			}
+		}
+		if(countRow!=dhObjectPermissions.length) {
+			throw new PlatformException("绑定字段权限失败");
+		}
+		return ServerResponse.createBySuccess();
 	}
 }
