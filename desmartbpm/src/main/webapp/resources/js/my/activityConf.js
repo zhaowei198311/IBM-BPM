@@ -304,6 +304,8 @@ $(function(){
     	$("#form_innerArea").show();
     	$("#trigger_innerArea").hide();
         $("#addStep_container").show();
+        formTable();
+       
     })
 
     // “选择环节”
@@ -325,6 +327,10 @@ $(function(){
         });
         $("#choose_activity_container").show();
     })
+     $("#search_form_btn").click(function(){
+    	 formTable();
+    });
+    
 
     $("#chooseActivities_sureBtn").click(function(){
         var val = '';
@@ -351,6 +357,33 @@ $(function(){
 
 
 });
+
+//新增网关table
+function formTable(){
+	$.ajax({
+	    url: common.getPath() + "/formManage/queryFormListBySelective",
+	   type: "post",
+	   data:{
+	    proUid:proUid,
+	    proVersion:proVerUid,
+	    dynTitle:$('#dynTitle').val(),
+	    dynDescription:$('#dynDescription').val()
+	   },
+	   dataType: "json",
+	   success: function(result) {
+		   $('#form_tbody').empty();
+		   var trs='';
+		   $(result.data).each(function(index){
+			   trs+='<tr>';
+			   trs+='<td><input type="checkbox" name="dynUid_check" value="' + this.dynUid + '" lay-skin="primary">'+ (index+1) +'</td>';
+			   trs+='<td>'+this.dynTitle+'</td>'
+			   trs+='<td>'+this.dynDescription+'</td>'
+			   trs+='</tr>';
+		   });
+		   $("#form_tbody").append(trs);
+	   }
+	 });
+}
 
 // 初始化折叠菜单
 function initCollapse() {
@@ -812,6 +845,44 @@ function addStep() {
 	}
 	var stepType = $('input[name="stepType"]:checked').val();
 	if (stepType == 'form') {
+		var  formCheck=$('#form_tbody input[name="dynUid_check"]:checked');
+		stepObjectUid =formCheck.val();
+		
+		if (!stepObjectUid) {
+			layer.alert('请选择表单');
+			return;
+		}
+		
+		if(formCheck.length>1){
+			layer.alert('请选择一个表单，不能选择多个');
+			return false;
+		}
+		
+		$.ajax({
+			url : common.getPath() + "/step/create",
+			type : "post",
+			dataType : "json",
+			data : {
+				"proAppId": proAppId,
+				"proUid" : proUid,
+				"proVerUid": proVerUid,
+				"activityBpdId": activityBpdId,
+				"stepSort": stepSort,
+			    "stepBusinessKey": stepBusinessKey,
+			    "stepType":stepType,
+			    "stepObjectUid": stepObjectUid
+			},
+			success : function(result){
+				if(result.status == 0){
+				    
+				}else{
+					layer.alert(result.msg);
+				}
+			},
+			error : function(){
+				layer.alert('操作失败');
+			}
+		});
 		
 	} else if (stepType == 'trigger') {
 		stepObjectUid = $("#trigger_of_step").val();
