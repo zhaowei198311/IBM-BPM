@@ -1,6 +1,9 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
 public interface DhObjectPermissionService {
@@ -30,4 +33,12 @@ public interface DhObjectPermissionService {
      *    key: permissionStartTeamView  角色组显示
      */
     ServerResponse getPermissionStartOfProcess(String proAppId, String proUid, String proVerUid);
+    
+    
+    /**
+     * 根据对象属性实体查询 信息
+     * @param dhObjectPermission
+     * @return
+     */
+    List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission);
 }

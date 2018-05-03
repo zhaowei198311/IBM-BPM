@@ -179,4 +179,10 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         }
         return idList;
     }
+
+
+	@Override
+	public List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission) {
+		return dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjectPermission);
+	}
 }
