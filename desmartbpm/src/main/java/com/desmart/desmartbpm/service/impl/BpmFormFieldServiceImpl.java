@@ -49,7 +49,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	public ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions) {
 		int countRow = 0;
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
-			int num = bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
+			bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
 			if("EDIT".equals(dhObjectPermission.getOpAction())) {
 				countRow++;
 			}else{
