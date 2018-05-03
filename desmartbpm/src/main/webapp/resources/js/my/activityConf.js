@@ -390,9 +390,9 @@ function printCollapse(list) {
         for (var j=0; j<children.length; j++) {
             var meta = children[j];
             if (meta.activityId == firstHumanMeta) {
-                str += '<li data-uid="'+meta.actcUid+'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
+                str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
             } else {
-                str += '<li data-uid="'+meta.actcUid+'" onclick="clickLi(this);">'+meta.activityName+'</li>';
+                str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" onclick="clickLi(this);">'+meta.activityName+'</li>';
             }
         }
         str +=   '</ul>'
@@ -764,9 +764,11 @@ function save(actcUid) {
             if(result.status == 0){
                 layer.alert('操作成功');
                 if (actcUid) {
-                    $("#my_collapse").each(function(){
+                    $("#my_collapse li").each(function(){
                         if ($(this).data('uid') == actcUid) {
-
+                        	$(this).addClass('link_active');
+                        } else {
+                        	$(this).removeClass('link_active');
                         }
                     });
                     loadActivityConf(actcUid);
@@ -788,24 +790,29 @@ function getFormData() {
 // 添加步骤
 function addStep() {
 	var stepObjectUid;
+	var $activeLi = $("#my_collapse li.link_active");
+	var activityBpdId = $activeLi.data('activitybpdid');
 	var stepSort = $("#stepSort").val();
 	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
 		layer.alert('步骤序号不正确，请填写正整数');
 		return;
 	}
-	var stepBusinesskey = $('input[name="stepBusinessKey"]').val();
+	var stepBusinessKey;
 	var stepBusinessKeyType = $('input[name="stepBusinessKeyType"]:checked').val();
 	if (stepBusinessKeyType != 'default') {
-		if (!stepBusinesskey || stepBusinesskey.length > 100 || stepBusinesskey.trim().length == 0) {
+		stepBusinessKey = $('input[name="stepBusinessKey"]').val();
+		if (!stepBusinessKey || stepBusinessKey.length > 100 || stepBusinessKey.trim().length == 0) {
 			layer.alert('步骤关键字验证失败，过长或未填写');
 			return;
-		}
+		} 
+	} else {
+		stepBusinessKey = 'default';
 	}
 	var stepType = $('input[name="stepType"]:checked').val();
 	if (stepType == 'form') {
 		
 	} else if (stepType == 'trigger') {
-		stepObjectUid = $("#trigger_of_stepTitle").val();
+		stepObjectUid = $("#trigger_of_step").val();
 		if (!stepObjectUid) {
 			layer.alert('请选择触发器');
 			return;
@@ -815,14 +822,14 @@ function addStep() {
 			type : "post",
 			dataType : "json",
 			data : {
-				"proAppId": "",
-				"proUid" : "",
-				"proVerUid": "",
-				"activityBpdId": "",
-				"stepSort": "",
-			    "stepBusinessKey": "",
-			    "stepType": "",
-			    "stepObjectUid": ""
+				"proAppId": proAppId,
+				"proUid" : proUid,
+				"proVerUid": proVerUid,
+				"activityBpdId": activityBpdId,
+				"stepSort": stepSort,
+			    "stepBusinessKey": stepBusinessKey,
+			    "stepType": stepType,
+			    "stepObjectUid": stepObjectUid
 			},
 			success : function(result){
 				if(result.status == 0){

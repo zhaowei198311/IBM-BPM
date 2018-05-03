@@ -108,6 +108,11 @@ public class DhActivityConf {
     
     
 
+    public DhActivityConf() {
+       
+    }
+    
+
     public String getActcUid() {
         return actcUid;
     }

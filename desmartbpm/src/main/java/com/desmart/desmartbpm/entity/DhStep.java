@@ -27,12 +27,21 @@ public class DhStep {
     }
     
     public DhStep(String proAppId, String proUid, String proVerUid) {
-        super();
         this.proAppId = proAppId;
         this.proUid = proUid;
         this.proVerUid = proVerUid;
     }
 
+    public DhStep(String proAppId, String proUid, String proVerUid, String activityBpdId, Integer stepSort, String stepBusinessKey) {
+        this.proAppId = proAppId;
+        this.proUid = proUid;
+        this.proVerUid = proVerUid;
+        this.activityBpdId = activityBpdId;
+        this.stepSort = stepSort;
+        this.stepBusinessKey = stepBusinessKey;
+    }
+    
+    
     public String getStepUid() {
         return stepUid;
     }

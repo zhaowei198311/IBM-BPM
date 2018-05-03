@@ -46,7 +46,7 @@
     
     <select id="getByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTrigger">
         select <include refid="base_column"/> from dh_trigger
-        where triUid = #{triUid}
+        where tri_Uid = #{triUid}
     </select>
 
     <select id="searchBySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger" resultType="com.desmart.desmartbpm.entity.DhTrigger">

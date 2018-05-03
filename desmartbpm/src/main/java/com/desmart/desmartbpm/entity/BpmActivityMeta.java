@@ -43,12 +43,17 @@ public class BpmActivityMeta implements Serializable {
     
     
     public BpmActivityMeta(String proAppId, String bpdId, String snapshotId) {
-        super();
         this.snapshotId = snapshotId;
         this.bpdId = bpdId;
         this.proAppId = proAppId;
     }
-
+    
+    public BpmActivityMeta(String proAppId, String bpdId, String snapshotId, String activityBpdId) {
+        this.snapshotId = snapshotId;
+        this.bpdId = bpdId;
+        this.proAppId = proAppId;
+        this.activityBpdId = activityBpdId;
+    }
 
     public String getProAppId() {
         return proAppId;
