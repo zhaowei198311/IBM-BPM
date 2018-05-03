@@ -22,11 +22,20 @@ public interface BpmActivityMetaService {
     ServerResponse<List<Map<String, Object>>> getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid);
     
     /**
-     * 获取流程定义的人工环节
+     * 获取流程定义的所有人工环节
      * @param proAppId
      * @param proUid
      * @param proVerUid
      * @return
      */
     ServerResponse<List<BpmActivityMeta>> getHumanActivitiesOfDhProcessDefinition(String proAppId, String proUid, String proVerUid);
+    
+    /**
+     * 获得流程定义的所有排他网关
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse<List<BpmActivityMeta>> getGatewaysOfDhProcessDefinition(String proAppId, String proUid, String proVerUid);
 }

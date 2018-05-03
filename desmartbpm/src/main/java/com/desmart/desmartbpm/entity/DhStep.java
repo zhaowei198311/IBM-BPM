@@ -2,7 +2,6 @@ package com.desmart.desmartbpm.entity;
 
 /**
  * 环节步骤
- * @author yaoyunqing
  *
  */
 public class DhStep {
@@ -108,6 +107,23 @@ public class DhStep {
     public void setStepMode(String stepMode) {
         this.stepMode = stepMode;
     }
+    
+    public String getTriTitle() {
+        return triTitle;
+    }
+
+    public void setTriTitle(String triTitle) {
+        this.triTitle = triTitle;
+    }
+
+    public String getFormName() {
+        return formName;
+    }
+
+    public void setFormName(String formName) {
+        this.formName = formName;
+    }
+
     @Override
     public String toString() {
         return "DhStep [stepUid=" + stepUid + ", proAppId=" + proAppId

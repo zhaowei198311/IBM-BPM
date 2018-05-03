@@ -42,5 +42,5 @@ public interface BpmActivityMetaMapper {
      */
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
     
-
+    BpmActivityMeta queryByPrimaryKey(String activityId);
 }

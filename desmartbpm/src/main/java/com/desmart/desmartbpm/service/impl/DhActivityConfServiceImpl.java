@@ -24,12 +24,14 @@ import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.enums.DhActivityAssignAssignType;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhActivityConfService;
+import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartsystem.dao.SysRoleMapper;
 import com.desmart.desmartsystem.dao.SysTeamMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -54,6 +56,8 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
     private SysTeamMapper sysTeamMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private DhStepService dhStepService;
     
     
     public ServerResponse getActivityConfData(String actcUid) {
@@ -78,6 +82,10 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         
         Map<String, Object> result = new HashMap<>();
         result.put("conf", dhActivityConf);
+        
+        // 获取该环节的所有步骤的信息
+        ServerResponse<List<DhStep>> response = dhStepService.getStepOfDhActivityConf(dhActivityConf);
+        result.put("stepList", response.getData());
         return ServerResponse.createBySuccess(result);
     }
     

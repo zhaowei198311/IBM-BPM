@@ -93,6 +93,12 @@
 	    </association>
     </resultMap>
 	  
+	<select id="queryByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+	   select <include refid="Base_Column_List"></include>
+	   from BPM_ACTIVITY_META
+	   where activity_id = #{activityId}
+	</select> 
+	  
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
 		insert into BPM_ACTIVITY_META (
 			ACTIVITY_ID,

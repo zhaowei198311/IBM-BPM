@@ -153,4 +153,15 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return ServerResponse.createBySuccess(humanMetaList);
     }
     
+    public ServerResponse<List<BpmActivityMeta>> getGatewaysOfDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        selective.setActivityType("gatewayOr");
+        List<BpmActivityMeta> getwayMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        return ServerResponse.createBySuccess(getwayMetaList);
+    }
+    
+    
 }

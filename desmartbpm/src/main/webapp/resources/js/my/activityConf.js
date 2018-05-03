@@ -301,6 +301,8 @@ $(function(){
     	});
     	$("#stepBusinessKey_input").hide();
     	layui.form.render();
+    	$("#form_innerArea").show();
+    	$("#trigger_innerArea").hide();
         $("#addStep_container").show();
     })
 

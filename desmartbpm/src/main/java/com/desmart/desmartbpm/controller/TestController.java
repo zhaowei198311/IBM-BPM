@@ -73,7 +73,7 @@ public class TestController extends BaseWebController {
         UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
         user.login(token);
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute(Const.CURRENT_USER, "deadmin");
+        session.setAttribute(Const.CURRENT_USER, "00011178");
         session.setTimeout(17200000L);
 
         return "hello " + username;
