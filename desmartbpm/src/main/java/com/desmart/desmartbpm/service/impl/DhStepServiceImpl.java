@@ -112,7 +112,7 @@ public class DhStepServiceImpl implements DhStepService {
         if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
             return ServerResponse.createByErrorMessage("触发器不存在");
         }
-        
+        return null;
     }
     
     /**
