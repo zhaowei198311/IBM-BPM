@@ -525,7 +525,7 @@ function step_table(data){
 		   }
 		   var value=encodeURI(JSON.stringify(val));
 		   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
-		   trs+='<i class="layui-icon delete_btn" title="" >&#xe640;</i>';
+		   trs+='<i class="layui-icon" >&#xe654;</i>';
 		   trs+='</td>';
 		   trs+='</tr>';
 	   });
