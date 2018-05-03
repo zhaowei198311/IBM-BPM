@@ -59,12 +59,22 @@ public class DhActivityConfController {
         return mv;
     }
     
+    /**
+     * 获取当前配置环节的信息，包括配置和步骤的信息
+     * @param actcUid
+     * @return
+     */
     @RequestMapping(value = "/getData")
     @ResponseBody
     public ServerResponse getData(String actcUid) {
         return dhActivityConfService.getActivityConfData(actcUid);
     }
     
+    /**
+     * 更新环节配置信息（不包括步骤）
+     * @param dhActivityConf
+     * @return
+     */
     @RequestMapping(value = "/update")
     @ResponseBody
     public ServerResponse updateDhActivityConf(DhActivityConf dhActivityConf) {
@@ -76,5 +86,6 @@ public class DhActivityConfController {
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
     }
-
+    
+    
 }

@@ -32,5 +32,33 @@ public class DhStepController {
         
     }
     
+    @RequestMapping(value = "/updateTriggerStep")
+    @ResponseBody
+    public ServerResponse updateTriggerStep(DhStep dhStep) {
+        try {
+            return dhStepService.updateTriggerStep(dhStep);
+        } catch (Exception e) {
+            LOG.error("更新步骤失败", e);
+            return ServerResponse.createByErrorMessage("更新步骤失败");
+        }
+    }
+    
+    /**
+     * 删除触发器步骤
+     * @param stepUid
+     * @return
+     */
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public ServerResponse deleteStep(String stepUid) {
+        try {
+            return dhStepService.updateTriggerStep(dhStep);
+        } catch (Exception e) {
+            LOG.error("更新步骤失败", e);
+            return ServerResponse.createByErrorMessage("更新步骤失败");
+        }
+        
+    }
+    
     
 }

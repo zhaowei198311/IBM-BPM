@@ -158,7 +158,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             return ServerResponse.createByErrorMessage("参数异常");
         }
         BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
-        selective.setActivityType("gatewayOr");
+        selective.setActivityType("gateway");
         List<BpmActivityMeta> getwayMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
         return ServerResponse.createBySuccess(getwayMetaList);
     }
