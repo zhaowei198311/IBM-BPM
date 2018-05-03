@@ -863,71 +863,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="form_tbody">
-                                    <tr>
-                                        <td><input type="checkbox" name="form_ck" data-uid="form:ca995a73-863c-44b2-9e39-94a464d72d86"  lay-skin="primary"> 1</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name="form_ck"  lay-skin="primary"> 2</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 3</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 4</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" name=""  lay-skin="primary"> 5</td>
-                                        <td>表单名称</td>
-                                        <td>描述内容...</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1010,46 +945,76 @@
                 </div>
             </div>
         </div>
-        <div class="display_container10" id="field_permission_container">
-            <div class="display_content3">
-                <div class="top">
-                    编辑字段权限
+        <!-- 修改步骤关联表单弹出框 -->
+        <div class="display_container10" id="update_step_form_container">
+            <form id="addStep_form">
+            <div class="display_content3" style="height:500px;width:900px;">
+                <div class="top">修改步骤关联表单信息</div>
+                <div class="middle1" style="height:420px;">
+                    <div class="search_area" style="height:38px;">
+                        <div class="layui-row layui-form" style="margin-top:10px">
+                            <div class="layui-col-md2">
+	                           <input id="updateStepSort" name="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md4" style="padding-left:5px;">
+                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="default" title="默认关键字"  checked > 
+                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="custom" title="自定义关键字" >    
+                            </div>
+                            <div class="layui-col-md3">
+                                <input id="update_stepBusinessKey_input" name="stepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
+                            </div>
+                        </div>
+                    </div>
+                    <div id="form_innerArea" style="height:362px;">
+                        <div style="height:38px;" class="layui-row layui-form">
+                            <div class="layui-col-md2" style="margin-right: 5px;">
+                               <input id="updateDynTitle" type="text" placeholder="标题"  class="layui-input">
+                            </div>
+                            
+                            <div class="layui-col-md2" style="margin-right: 5px;">
+                               <input id="updateDynTitle" type="text" placeholder="描述"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md2">
+                               <button class="layui-btn" id="update_search_form_btn" type="button">查询</button>
+                            </div>
+                        </div>
+                        <div style="height:334px;overflow-y: auto;">
+                            <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
+                                <colgroup>
+                                    <col>
+                                    <col>
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                      <th>序号</th>
+                                      <th>表单名称</th>
+                                      <th>表单描述</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="update_step_form_tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="trigger_innerArea" style="display:none;padding-top: 30px;padding-right:50px;">
+                          <div class="layui-form-item ">
+                              <label class="layui-form-label">请选择触发器</label>
+                              <div class="layui-input-block" style="position:relative;">
+                                  <input type="hidden" id="trigger_of_step" name="" value=""/>
+                                  <input type="text"  id="trigger_of_stepTitle"  name="" value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                  <i id="choose_stepTri_btn" class="layui-icon choose_role" title="选择触发器">&#xe621;</i>  
+                              </div>
+                          </div>  
+                    </div>
                 </div>
-                <div class="middle1">
-                    <table class="layui-table" lay-even lay-skin="nob" >
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" id="0"/><label for="0"> 字段1</label></td>
-                                <td><input type="checkbox" id="1"/><label for="1"> 字段2</label></td>
-                                <td><input type="checkbox" id="2"/><label for="2"> 字段3</label></td>
-                                <td><input type="checkbox" id="3"/><label for="3"> 字段4</label></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="0"/><label for="4"> 字段5</label></td>
-                                <td><input type="checkbox" id="1"/><label for="5"> 字段6</label></td>
-                                <td><input type="checkbox" id="2"/><label for="6"> 字段7</label></td>
-                                <td><input type="checkbox" id="3"/><label for="7"> 字段8</label></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="0"/><label for="8"> 字段9</label></td>
-                                <td><input type="checkbox" id="1"/><label for="9"> 字段10</label></td>
-                                <td><input type="checkbox" id="2"/><label for="10"> 字段11</label></td>
-                                <td><input type="checkbox" id="3"/><label for="11"> 字段12</label></td>
-                            </tr>
-                        </tbody>
-                    </table>                
-                </div>
+                <div id="demo8"></div>
                 <div class="foot">
-                    <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#field_permission_container').hide();">取消</button>
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
+        </form>
         </div>
         <div class="display_container5">
             <div class="display_content5">
@@ -1266,10 +1231,6 @@
 	           		   $("#field_permissions_table").append(trs);
                   }
                  });
-            })
-
-            $(".choose_name").click(function(){
-                $(".display_container10").css("display","block");
             })
             $("#sure_btn").click(function(){
                 $(".display_container3").css("display","none");
