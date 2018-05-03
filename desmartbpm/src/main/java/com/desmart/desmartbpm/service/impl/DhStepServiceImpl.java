@@ -32,6 +32,7 @@ public class DhStepServiceImpl implements DhStepService {
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
     
+    @Autowired
     private BpmFormManageMapper bpmFormManageMapper;
     
     @Override
