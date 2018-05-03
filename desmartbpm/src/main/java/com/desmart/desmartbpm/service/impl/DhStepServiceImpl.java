@@ -6,16 +6,19 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
@@ -31,6 +34,8 @@ public class DhStepServiceImpl implements DhStepService {
     private DhStepMapper dhStepMapper;
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
+    @Autowired
+    private DhObjectPermissionMapper dhObjectPermissionMapper;
     
     @Autowired
     private BpmFormManageMapper bpmFormManageMapper;
@@ -93,16 +98,17 @@ public class DhStepServiceImpl implements DhStepService {
         return ServerResponse.createBySuccess(stepList);
     }
 
-    /**
-     * 更新触发器类型的步骤
-     * @return
-     */
+    
     public ServerResponse updateTriggerStep(DhStep dhStep) {
         if (StringUtils.isBlank(dhStep.getStepUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey())
                 || dhStep.getStepSort() == null || dhStep.getStepSort().intValue() < 0 || StringUtils.isBlank(dhStep.getStepObjectUid())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         } 
         DhStep currentStep = dhStepMapper.selectByPrimaryKey(dhStep.getStepUid());
+        if (currentStep == null) {
+            return ServerResponse.createByErrorMessage("找不到此步骤");
+        }
+        
         if (!DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
             return ServerResponse.createByErrorMessage("修改失败，此步骤不是触发器类型");
         }
@@ -113,7 +119,42 @@ public class DhStepServiceImpl implements DhStepService {
         if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
             return ServerResponse.createByErrorMessage("触发器不存在");
         }
+        // 执行更新
+        DhStep updateSelective = new DhStep();
+        updateSelective.setStepUid(currentStep.getStepUid());
+        updateSelective.setStepSort(dhStep.getStepSort());
+        updateSelective.setStepObjectUid(dhStep.getStepObjectUid());
+        dhStepMapper.updateByPrimaryKeySelective(updateSelective);
+        
+        return ServerResponse.createBySuccess();
+    }
+    
+    @Transactional
+    public ServerResponse deleteDhStep(String stepUid) {
+        if (StringUtils.isBlank(stepUid)) {
+            return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+        DhStep currentStep = dhStepMapper.selectByPrimaryKey(stepUid);
+        if (currentStep == null) {
+            return ServerResponse.createByErrorMessage("找不到此步骤");
+        }
+        if (DhStepType.FORM.getCode().equals(currentStep.getStepType())) {
+            // 如果是表单类型，清除权限
+           
+        }
+        dhStepMapper.deleteByPrimaryKey(stepUid);
         return null;
+    }
+    
+    /**
+     * 删除步骤对应的字段权限
+     * @param stepUid
+     */
+    private void removeFieldPremissionOfStep(String stepUid) {
+        DhObjectPermission deleteSelective = new DhObjectPermission();
+        deleteSelective.setStepUid(stepUid);
+//        deleteSelective.setO
+//        dhObjectPermissionMapper.delectByDhObjectPermissionSelective(selective);
     }
     
     /**

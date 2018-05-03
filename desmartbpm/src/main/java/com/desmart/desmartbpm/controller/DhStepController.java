@@ -52,11 +52,12 @@ public class DhStepController {
     @ResponseBody
     public ServerResponse deleteStep(String stepUid) {
         try {
-            return dhStepService.updateTriggerStep(dhStep);
+            
         } catch (Exception e) {
             LOG.error("更新步骤失败", e);
             return ServerResponse.createByErrorMessage("更新步骤失败");
         }
+        return null;
         
     }
     
