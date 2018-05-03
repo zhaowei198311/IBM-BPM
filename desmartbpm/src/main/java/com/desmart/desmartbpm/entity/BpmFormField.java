@@ -21,6 +21,8 @@ public class BpmFormField {
 	private String fldFilter;//是否为过滤字段--报表
 	private String formUid;
 	
+	private String opAction;//字段权限，不是本表字段
+	
 	public String getFldUid() {
 		return fldUid;
 	}
@@ -105,10 +107,20 @@ public class BpmFormField {
 	public void setFormUid(String formUid) {
 		this.formUid = formUid;
 	}
+	public String getOpAction() {
+		return opAction;
+	}
+	public void setOpAction(String opAction) {
+		if(opAction==null || "".equals(opAction)) {
+			this.opAction = "EDIT";
+		}else{
+			this.opAction = opAction;
+		}
+	}
 	public BpmFormField() {}
 	public BpmFormField(String fldUid, String fldCodeId, Integer fldIndex, String fldName, String fldDescription,
 			String fldType, Integer fldSize, String multiSeparator, String multiValue, String fldForeignKeyTable,
-			String fldDynName, String fldDybUid, String fldFilter, String formUid) {
+			String fldDynName, String fldDybUid, String fldFilter, String formUid, String opAction) {
 		super();
 		this.fldUid = fldUid;
 		this.fldCodeId = fldCodeId;
@@ -124,6 +136,7 @@ public class BpmFormField {
 		this.fldDybUid = fldDybUid;
 		this.fldFilter = fldFilter;
 		this.formUid = formUid;
+		this.opAction = opAction;
 	}
 	@Override
 	public String toString() {
@@ -131,6 +144,6 @@ public class BpmFormField {
 				+ fldName + ", fldDescription=" + fldDescription + ", fldType=" + fldType + ", fldSize=" + fldSize
 				+ ", multiSeparator=" + multiSeparator + ", multiValue=" + multiValue + ", fldForeignKeyTable="
 				+ fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDybUid=" + fldDybUid + ", fldFilter="
-				+ fldFilter + ", formUid=" + formUid + "]";
+				+ fldFilter + ", formUid=" + formUid + ", opAction=" + opAction + "]";
 	}
 }

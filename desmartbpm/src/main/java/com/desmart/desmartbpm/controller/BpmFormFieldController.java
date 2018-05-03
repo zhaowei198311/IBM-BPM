@@ -24,4 +24,13 @@ public class BpmFormFieldController {
 	public ServerResponse saveFormField(@RequestBody BpmFormField[] fields) {
 		return bpmFormFieldService.saveFormField(fields);
 	}
+	
+	/**
+	 * 通过表单ID获得所属字段信息及权限信息
+	 */
+	@RequestMapping(value = "/queryFieldByFormUidAndStepId")
+	@ResponseBody
+	public ServerResponse queryFieldByFormUidAndStepId(String stepUid,String formUid) {
+		return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid);
+	}
 }

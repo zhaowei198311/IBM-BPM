@@ -32,4 +32,14 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			return ServerResponse.createByError();
 		}
 	}
+
+	@Override
+	public ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid) {
+		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		for(BpmFormField field:fieldList) {
+			String opAction = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
+			field.setOpAction(opAction);
+		}
+		return ServerResponse.createBySuccess(fieldList);
+	}
 }

@@ -23,4 +23,10 @@ public interface BpmFormFieldMapper {
 	 * 根据表单Id获得表单字段集合
 	 */
 	List<BpmFormField> queryFormFieldByFormUid(@Param("dynUid")String dynUid);
+
+	/**
+	 * 通过字段ID和活动ID获得所属权限信息
+	 */
+	String queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
+			@Param("fieldUid")String fieldUid);
 }
