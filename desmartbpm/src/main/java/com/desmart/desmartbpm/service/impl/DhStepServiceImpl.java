@@ -20,6 +20,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.github.pagehelper.PageHelper;
@@ -56,7 +57,7 @@ public class DhStepServiceImpl implements DhStepService {
         }
         
         // 查看这个step是否已经存在
-        if (!isStepExists(dhStep)) {
+        if (isStepExists(dhStep)) {
             return ServerResponse.createByErrorMessage("步骤序号：" +dhStep.getStepSort() +"，步骤关键字："+dhStep.getStepBusinessKey()+"已经存在，不能重复配置");
         }
         
@@ -109,9 +110,14 @@ public class DhStepServiceImpl implements DhStepService {
             return ServerResponse.createByErrorMessage("找不到此步骤");
         }
         
-        if (!DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
+        if (!DhStepType.TRIGGER.getCode().equals(currentStep.getStepType())) {
             return ServerResponse.createByErrorMessage("修改失败，此步骤不是触发器类型");
         }
+        dhStep.setProAppId(currentStep.getProAppId());
+        dhStep.setProUid(currentStep.getProUid());
+        dhStep.setProVerUid(currentStep.getProVerUid());
+        dhStep.setActivityBpdId(currentStep.getActivityBpdId());
+        dhStep.setStepBusinessKey(currentStep.getStepBusinessKey());
         // 步骤序号变更的话看是否已经有这个序号
         if (!currentStep.getStepSort().equals(dhStep.getStepSort()) && isStepExists(dhStep)) {
             return ServerResponse.createByErrorMessage("修改失败，这个步骤序号已存在相同步骤关键字的步骤");
@@ -125,7 +131,6 @@ public class DhStepServiceImpl implements DhStepService {
         updateSelective.setStepSort(dhStep.getStepSort());
         updateSelective.setStepObjectUid(dhStep.getStepObjectUid());
         dhStepMapper.updateByPrimaryKeySelective(updateSelective);
-        
         return ServerResponse.createBySuccess();
     }
     
@@ -140,21 +145,21 @@ public class DhStepServiceImpl implements DhStepService {
         }
         if (DhStepType.FORM.getCode().equals(currentStep.getStepType())) {
             // 如果是表单类型，清除权限
-           
+            removeFieldPermissionOfStep(stepUid);
         }
         dhStepMapper.deleteByPrimaryKey(stepUid);
-        return null;
+        return ServerResponse.createBySuccess();
     }
     
     /**
      * 删除步骤对应的字段权限
      * @param stepUid
      */
-    private void removeFieldPremissionOfStep(String stepUid) {
+    private void removeFieldPermissionOfStep(String stepUid) {
         DhObjectPermission deleteSelective = new DhObjectPermission();
         deleteSelective.setStepUid(stepUid);
-//        deleteSelective.setO
-//        dhObjectPermissionMapper.delectByDhObjectPermissionSelective(selective);
+        deleteSelective.setOpObjType(DhObjectPermissionObjType.FIELD.getCode());
+        dhObjectPermissionMapper.delectByDhObjectPermissionSelective(deleteSelective);
     }
     
     /**
