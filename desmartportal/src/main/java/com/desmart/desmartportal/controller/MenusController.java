@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 */
 @Controller
 @RequestMapping("/test")
-public class TestController {
+public class MenusController {
 	
 	@RequestMapping("/index")
 	public String  index() {
