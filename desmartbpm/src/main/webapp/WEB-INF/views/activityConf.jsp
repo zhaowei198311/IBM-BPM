@@ -880,7 +880,7 @@
                 </div>
                 <div id="demo8"></div>
                 <div class="foot">
-                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="updateStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
                     <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
@@ -1358,6 +1358,13 @@
 			});
            
         })
+        
+        //
+        function radiocheckAll(){
+        	
+        	var  $("#field_permissions_table").find("input[value='VIEW']").length;
+        	
+        }
         
         
         
