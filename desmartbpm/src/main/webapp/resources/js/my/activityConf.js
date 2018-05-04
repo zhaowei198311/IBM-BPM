@@ -609,8 +609,7 @@ function formFieldEdit(data){
 		      $("#field_permissions_table").append(trs);
 	     }
 	 });
-	
-	$(".form-horizontal").serialize();
+	//$(".form-horizontal").serialize();
 }
 
 function stepEdit(data){
