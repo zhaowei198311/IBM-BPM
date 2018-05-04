@@ -528,12 +528,57 @@ function step_table(data){
 			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
 		   }else{
 			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
-			   trs+='<i class="layui-icon" >&#xe654;</i>';
+			   trs+='<i class="layui-icon" onclick=formFieldEdit("'+value+'"); >&#xe654;</i>';
 		   }
 		   trs+='</td>';
 		   trs+='</tr>';
 	   });
 	   $("#step_table").append(trs);
+}
+
+function formFieldEdit(data){
+	$(".display_container4").css("display","block");
+	//查找该步骤绑定表单的所有字段及权限信息
+	var dates=jQuery.parseJSON(decodeURI(data));
+	$.ajax({
+	     url: common.getPath() + "/formField/queryFieldByFormUidAndStepId",
+	     type: "post",
+	     dataType: "json",
+	     data:{
+	    	 stepUid:dates.stepUid,
+	    	 formUid:dates.stepObjectUid
+	     },
+	     success: function(result) {
+	    	 $("#field_permissions_table").empty();
+	    	 var trs='';
+		      $(result.data).each(function(index,val){
+				   trs+='<tr>';
+				   trs+='<td> <input type="checkbox" name="fldUid_a" lay-skin="primary"> '+(index+1)+'</td>';
+				   trs+='<input type="hidden" name="fldUid" value="' + this.fldUid + '">';
+				   trs+='<input type="hidden" name="stepUid" value="' + dates.stepUid + '">';
+				   //trs+='<input type="hidden" name="opObjType" value="FIELD">';
+				   trs+='</td>';
+				   trs+='<td>'+this.fldName+'</td>';
+				   if(this.opAction=='EDIT'){
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
+				   }else if(this.opAction=='VIEW'){
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
+				   }else if(this.opAction=='HIDDEN'){
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
+				   }
+				   trs+='</tr>';
+			   });
+		      $("#field_permissions_table").append(trs);
+	     }
+	 });
+	
+	$(".form-horizontal").serialize();
 }
 
 function stepEdit(data){
