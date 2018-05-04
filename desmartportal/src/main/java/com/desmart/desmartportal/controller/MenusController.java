@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**  
-* <p>Title: TestController</p>  
+* <p>Title: 跳转WEB-INFO下jsp页面的 控制层</p>  
 * <p>Description: </p>  
 * @author zhaowei 
 * @date 2018年4月27日  
