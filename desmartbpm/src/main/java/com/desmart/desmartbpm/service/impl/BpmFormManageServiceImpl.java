@@ -271,4 +271,14 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		List<BpmForm> bpmFormList = bpmFormManageMapper.listBySelective(bpmForm);
 		return ServerResponse.createBySuccess(bpmFormList);
 	}
+
+	@Override
+	public ServerResponse updateFormContent(BpmForm bpmForm) {
+		int countRow = bpmFormManageMapper.updateFormContent(bpmForm);
+		if(countRow!=1) {
+			throw new PlatformException("表单内容修改失败");
+		}
+		bpmFormFieldMapper.deleteFormField(bpmForm.getDynUid());
+		return ServerResponse.createBySuccess();
+	}
 }

@@ -203,6 +203,20 @@ public class BpmFormManageController {
 	}
 	
 	/**
+	 * 修改表单内容
+	 */
+	@RequestMapping(value = "/upadteFormContent")
+	@ResponseBody
+	public ServerResponse upadteFormContent(@RequestBody BpmForm bpmForm) {
+		try {
+			return bpmFormManageService.updateFormContent(bpmForm);
+		} catch (Exception e) {
+			LOG.error("修改表单内容失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+		}
+	}
+	
+	/**
 	 * 删除表单文件以及表单信息
 	 */
 	@RequestMapping(value = "/deleteForm")

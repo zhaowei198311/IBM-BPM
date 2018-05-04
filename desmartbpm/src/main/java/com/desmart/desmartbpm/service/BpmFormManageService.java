@@ -53,4 +53,9 @@ public interface BpmFormManageService {
 	 * 根据传入的组合条件查询表单集合
 	 */
 	ServerResponse listBySelective(BpmForm bpmForm);
+
+	/**
+	 * 修改表单内容
+	 */
+	ServerResponse updateFormContent(BpmForm bpmForm);
 }

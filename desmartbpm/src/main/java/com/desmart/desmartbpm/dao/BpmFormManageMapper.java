@@ -56,4 +56,9 @@ public interface BpmFormManageMapper {
 	 * 根据传入的组合条件查询表单集合
 	 */
 	List<BpmForm> listBySelective(BpmForm bpmForm);
+
+	/**
+	 * 修改表单内容
+	 */
+	int updateFormContent(BpmForm bpmForm);
 }

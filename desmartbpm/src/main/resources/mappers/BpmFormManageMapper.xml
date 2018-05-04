@@ -71,6 +71,12 @@
     	where dyn_uid = #{dynUid}
     </update>
     
+    <update id="updateFormContent" parameterType="com.desmart.desmartbpm.entity.BpmForm">
+    	update bpm_form 
+    	set dyn_content = #{dynContent}
+    	where dyn_uid = #{dynUid}
+    </update>
+    
     <update id="updateFormFilenameByFormUid" parameterType="map">
     	update bpm_form
     	set dyn_filename = #{filename}
