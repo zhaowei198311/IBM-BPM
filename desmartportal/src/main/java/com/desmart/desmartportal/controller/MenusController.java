@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 * @date 2018年4月27日  
 */
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/menus")
 public class MenusController {
 	
 	@RequestMapping("/index")

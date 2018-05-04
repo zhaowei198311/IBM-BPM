@@ -64,6 +64,6 @@ public class UserController {
 		for (int i = 0; i < resultList.size(); i++) {
 			System.err.println(resultList.get(i));
 		}
-		return "redirect:/test/index";
+		return "redirect:/menus/index";
 	}
 }
