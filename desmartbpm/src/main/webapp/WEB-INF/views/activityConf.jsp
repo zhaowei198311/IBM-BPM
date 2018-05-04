@@ -398,7 +398,7 @@
                                             <!--  步骤配置开始 -->
                                             <div class="layui-tab-item">
                                                 新增步骤：<button class="layui-btn layui-btn-sm layui-btn-primary add_step" id="add_step_btn">新增步骤</button>
-                                                <p class="title_p">第一步</p>
+                                                <!-- <p class="title_p">第一步</p> -->
                                                 <table class="layui-table backlog_table" lay-even lay-skin="nob">
                                                     <colgroup>
                                                         <col>
@@ -880,13 +880,13 @@
                 </div>
                 <div id="demo8"></div>
                 <div class="foot">
-                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="updateStep();">确定</button>
                     <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
         </form>
         </div>
-        <div class="display_container4">
+        <div class="display_container4" id="editFieldPermissions">
             <div class="display_content3" style="width: 950px;height: 500px;">
                 <div class="top">
                     编辑字段权限
@@ -900,7 +900,7 @@
                             <col>
                         </colgroup>
                         <thead>
-                            <th><input type="checkbox"  name="fldUid"  id="field_check" lay-skin="primary">序号</th>
+                            <th><!-- <input type="checkbox"  name="fldUid"  id="field_check" lay-skin="primary"> -->序号</th>
                             <th>字段名称</th>
                             <th><input type="radio" name="radioAll"  lay-skin="primary" onclick="editAllclick(this)">编辑</th>
                             <th><input type="radio" name="radioAll"  lay-skin="primary" id="viewAllclick">只读</th>
@@ -952,21 +952,22 @@
         </div>
         <!-- 修改步骤关联表单弹出框 -->
         <div class="display_container10" id="update_step_form_container">
-            <form id="addStep_form">
+            <form id="edtiStep_form">
             <div class="display_content3" style="height:500px;width:900px;">
                 <div class="top">修改步骤关联表单信息</div>
                 <div class="middle1" style="height:420px;">
+                	<input type="hidden" id="eidtstepUid"/>
                     <div class="search_area" style="height:38px;">
                         <div class="layui-row layui-form" style="margin-top:10px">
                             <div class="layui-col-md2">
 	                           <input id="updateStepSort" name="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
                             </div>
                             <div class="layui-col-md4" style="padding-left:5px;">
-                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="default" title="默认关键字"  checked > 
-                                <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="custom" title="自定义关键字" >    
+                                <input type="radio" name="edtiStepBusinessKeyType" lay-filter="StepBusinessKey" value="default" title="默认关键字"  checked > 
+                                <input type="radio" name="edtiStepBusinessKeyType" lay-filter="edtiStepBusinessKey" value="custom" title="自定义关键字" >    
                             </div>
                             <div class="layui-col-md3">
-                                <input id="update_stepBusinessKey_input" name="stepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
+                                <input id="update_stepBusinessKey_input" name="edtistepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
                             </div>
                         </div>
                     </div>
@@ -1015,7 +1016,7 @@
                 </div>
                 <div id="demo8"></div>
                 <div class="foot">
-                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="updateStep();">确定</button>
                     <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>
             </div>
@@ -1295,9 +1296,12 @@
             
              //表单字段权限  保存   只读 隐藏
              $("#filedSave").click(function(){
+           		var $activeLi = $("#my_collapse li.link_active");
+           		var actcUid = $activeLi.data('uid');
+            	 
             	var jsonArr = new Array();
             	 var radioSelArr = $("#field_permissions_table").find("input[type='radio']:checked");
-            	 console.log(radioSelArr.length);
+            	 //console.log(radioSelArr.length);
             	 radioSelArr.each(function(){
             		 var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
             		 var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
@@ -1319,33 +1323,37 @@
 		            contentType:"application/json",
 		            data:JSON.stringify(jsonArr),
 		            success:function(result){
-		             	
+		            	if(result.status == 0){
+							$('#editFieldPermissions').hide();
+							loadActivityConf(actcUid);
+						}else{
+							layer.alert(result.msg);
+						}
 		            }
                  });
              })
              
              //全选
-             $("#field_check").click(function(){   
+            /*  $("#field_check").click(function(){   
  			    if(this.checked){   
  			        $("#field_permissions_table :checkbox").prop("checked", true);  
  			    }else{   
  					$("#field_permissions_table :checkbox").prop("checked", false);
  			    }   
- 			});
-        	
+ 			}); */
         	
         	
         	//只读
             $("#viewAllclick").click(function(){   
             	if(this.checked){
-            		$("#field_permissions_table").find("input[value='HIDDEN']").prop("checked",true);
+            		$("#field_permissions_table").find("input[value='VIEW']").prop("checked",true);
             	}
 			});
         	
            //隐藏
             $("#hiddenAllclick").click(function(){   
             	if(this.checked){
-            		$("#field_permissions_table").find("input[value='VIEW']").prop("checked",true);
+            		$("#field_permissions_table").find("input[value='HIDDEN']").prop("checked",true);
             	}
 			});
            
