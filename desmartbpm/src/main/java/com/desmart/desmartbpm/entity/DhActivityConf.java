@@ -15,6 +15,8 @@ public class DhActivityConf {
     private String actcTimeunit; // 运行时间（单位）
 
     private String actcAssignType;  // 默认处理人类型 （无，角色+部门等）
+    
+    private String actcChooseableHandlerType; // 可选处理人类型 （全员，不可选，角色）
 
     private String actcAssignVariable;
 
@@ -97,6 +99,13 @@ public class DhActivityConf {
     private String handleTeam;  // 默认处理角色组
     private String handleTeamView;
     private String handleField; // 默认处理字段
+    private String chooseableHandleUser;  // 可选处理人
+    private String chooseableHandleUserView;
+    private String chooseableHandleRole;  // 可选处理角色
+    private String chooseableHandleRoleView;
+    private String chooseableHandleTeam;  // 可选处理角色组
+    private String chooseableHandleTeamView;
+    private String chooseableHandleField; // 可选处理字段
     private String outtimeUser;
     private String outtimeUserView;
     private String outtimeRole;

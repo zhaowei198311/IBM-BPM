@@ -36,7 +36,6 @@ public class DhStepController {
     @ResponseBody
     public ServerResponse updateTriggerStep(DhStep dhStep) {
         try {
-            System.out.println(dhStep.getStepBusinessKey());
             return dhStepService.updateStep(dhStep);
         } catch (Exception e) {
             LOG.error("更新步骤失败", e);
@@ -45,7 +44,7 @@ public class DhStepController {
     }
     
     /**
-     * 删除触发器步骤
+     * 删除步骤
      * @param stepUid
      * @return
      */
@@ -53,13 +52,11 @@ public class DhStepController {
     @ResponseBody
     public ServerResponse deleteStep(String stepUid) {
         try {
-            
+            return dhStepService.deleteDhStep(stepUid);
         } catch (Exception e) {
-            LOG.error("更新步骤失败", e);
+            LOG.error("删除步骤失败", e);
             return ServerResponse.createByErrorMessage("更新步骤失败");
         }
-        return null;
-        
     }
     
     

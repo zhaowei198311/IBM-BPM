@@ -29,4 +29,11 @@ public interface DhStepService {
      * @return
      */
     ServerResponse updateStep(DhStep dhStep);
+    
+    /**
+     * 删除步骤
+     * @param stepUid
+     * @return
+     */
+    ServerResponse deleteDhStep(String stepUid);
 }

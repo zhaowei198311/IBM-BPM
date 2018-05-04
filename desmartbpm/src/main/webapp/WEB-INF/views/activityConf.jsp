@@ -23,7 +23,7 @@
                 <div class="search_area top_btn">
                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
                     <span style="float:right;">
-                        <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="save('');">保存</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="saveFrom='saveBtn';save('');">保存</button>
                     </span>
                 </div>
             </div>
@@ -57,8 +57,8 @@
                 
                 <div class="layui-tab">
                     <ul class="layui-tab-title">
-                        <li class="layui-this" >人工环节</li>
-                        <li>网关环节列表</li>
+                        <li class="layui-this" id="humanActivity_li" >人工环节</li>
+                        <li id="gateway_li">网关环节列表</li>
                     </ul>
                     <div class="layui-tab-content">
                         <div class="layui-tab-item layui-show">
@@ -71,9 +71,9 @@
                                 <div class="layui-col-md10 set_detail" id="set_detail">
                                     <div class="layui-tab divActive">
                                         <ul class="layui-tab-title">
-                                            <li class="layui-this">环节属性</li>
-                                            <li>环节SLA配置</li>
-                                            <li>步骤配置</li>
+                                            <li id="actc_li" class="layui-this">环节属性</li>
+                                            <li >环节SLA配置</li>
+                                            <li id="step_li">步骤配置</li>
                                         </ul>
                                         <div class="layui-tab-content">
                                             <!-- 环节属性配置开始 -->
@@ -131,7 +131,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否允许手动选择</label>
+                                                                <label class="layui-form-label">是否可选处理人</label>
                                                                 <div class="layui-input-block">
                                                                     <input type="radio" name="actcCanChooseUser" value="TRUE" title="可选" >
                                                                     <input type="radio" name="actcCanChooseUser" value="FALSE" title="不可选" >

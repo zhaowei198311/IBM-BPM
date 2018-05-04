@@ -98,7 +98,7 @@ public class DhStepServiceImpl implements DhStepService {
         List<DhStep> stepList = dhStepMapper.listBySelective(selective);
         return ServerResponse.createBySuccess(stepList);
     }
-
+    
     
     @Transactional
     public ServerResponse updateStep(DhStep dhStep) {
@@ -150,9 +150,6 @@ public class DhStepServiceImpl implements DhStepService {
         dhStepMapper.updateByPrimaryKeySelective(updateSelective);
         return ServerResponse.createBySuccess();
     }
-    
-    
-    
     
     @Transactional
     public ServerResponse deleteDhStep(String stepUid) {

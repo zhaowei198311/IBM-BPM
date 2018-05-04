@@ -2,6 +2,7 @@ var triggerToEdit = "";
 var preFormData;
 var stepUidToEdit;
 var editIndex;
+var saveFrom; // 触发保存的元素  saveBtn   activityLi  gatewayLi  stepLi   
 var pageConfig = {
     pageNum: 1,
     pageSize: 5,
@@ -373,7 +374,17 @@ $(function(){
         }
     });
 
-
+    // 点击配置步骤
+    $("#step_li").click(function() {
+    	if (getFormData() != preFormData) { //配置变化了
+    	    layer.confirm('环节配置有变动，是否保存？', {
+    	        btn: ['保存', '不保存']
+    	    }, function () {
+    	    	saveFrom = 'stepLi';
+    	        save('');
+    	    }, function () {});
+    	}
+    });
 
 });
 
@@ -427,6 +438,7 @@ function initCollapse() {
         }
     });
 }
+// 画出折叠栏
 function printCollapse(list) {
     var str = '';
     for (var i=0; i<list.length; i++) {
@@ -460,7 +472,7 @@ function printCollapse(list) {
     });
 
 }
-// 点击 li
+// 点击li
 function clickLi(li) {
     var $li = $(li);
     if ($li.hasClass('link_active')) {
@@ -470,6 +482,7 @@ function clickLi(li) {
         if (getFormData() != preFormData) {//配置变化了
             layer.confirm('是否先保存数据再切换环节？', {btn: ['确定','取消'] },
                 function(){
+            		saveFrom = 'activityLi';
                     save(actcUid);
                 },
                 function(){
@@ -480,7 +493,6 @@ function clickLi(li) {
                     loadActivityConf(actcUid);
                 }
             );
-
 
         } else {//配置没有变化
             $("#my_collapse li").each(function() {
@@ -544,9 +556,9 @@ function step_table(data){
 		   }
 		   var value=encodeURI(JSON.stringify(val));
 		   if(this.stepType=='trigger'){
-			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
+			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
 		   }else{
-			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" >&#xe640;</i>'
+			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
 			   trs+='<i class="layui-icon" onclick=formFieldEdit("'+value+'"); >&#xe654;</i>';
 		   }
 		   trs+='</td>';
@@ -835,7 +847,7 @@ function initConf(map) {
             ]
         }); //建立编辑器
     });
-
+    // 记录当前的数据，用于判断数据是否变动
     preFormData = getFormData();
 }
 
@@ -966,42 +978,53 @@ function moveActivityToLeft() {
         $(this).appendTo($("#left_activity_ul"));
     });
 }
-// 保存
+// “保存”按钮
 function save(actcUid) {
-    layui.layedit.sync(editIndex);
-    if (!$('#config_form').valid() || !$('#sla_form').valid()) {
-        layer.alert("验证失败，请检查后提交");
-        return;
-    }
-    var info = getFormData();
-    $.ajax({
-        url : common.getPath() + "/activityConf/update",
-        type : "post",
-        dataType : "json",
-        data : info,
-        success : function(result){
-            if(result.status == 0){
-                layer.alert('操作成功');
-                if (actcUid) {
-                    $("#my_collapse li").each(function(){
-                        if ($(this).data('uid') == actcUid) {
-                        	$(this).addClass('link_active');
-                        } else {
-                        	$(this).removeClass('link_active');
-                        }
-                    });
-                    loadActivityConf(actcUid);
-                } else {
-                    loadActivityConf($('input[name="actcUid"]').val());
-                }
-            }else{
-                layer.alert(result.msg);
-            }
-        },
-        error : function(){
-            layer.alert('操作失败');
-        }
-    });
+	if ($("#humanActivity_li").hasClass("layui-this")) {
+		// 提交环节配置变更
+	    layui.layedit.sync(editIndex);
+	    if (!$('#config_form').valid() || !$('#sla_form').valid()) {
+	        layer.alert("验证失败，请检查后提交");
+	        return;
+	    }
+	    var info = getFormData();
+	    $.ajax({
+	        url : common.getPath() + "/activityConf/update",
+	        type : "post",
+	        dataType : "json",
+	        data : info,
+	        success : function(result){
+	            if(result.status == 0){
+	                layer.alert('操作成功');
+	                if (actcUid) { // 需要切换环节
+	                    $("#my_collapse li").each(function(){
+	                        if ($(this).data('uid') == actcUid) {
+	                        	$(this).addClass('link_active');
+	                        } else {
+	                        	$(this).removeClass('link_active');
+	                        }
+	                    });
+	                    loadActivityConf(actcUid);
+	                } else {
+	                    loadActivityConf($('input[name="actcUid"]').val());
+	                }
+	            }else{
+	            	// 保存失败的处理
+	                layer.alert(result.msg);
+	                if (saveFrom == 'stepLi') {
+	                	$("#actc_li").click();
+	                }
+	            }
+	        },
+	        error : function(){
+	            layer.alert('操作失败');
+	        }
+	    });
+	} else if ($("#gateway_li").hasClass("layui-this")) {
+		// 提交网关规则配置
+		submitAddDatRule();
+	}
+
 }
 function getFormData() {
     return $('#config_form').serialize() + "&" + $('#sla_form').serialize();
@@ -1061,6 +1084,7 @@ function addStep() {
 			},
 			success : function(result){
 				if(result.status == 0){
+					layer.alert("创建步骤成功");
 					$('#addStep_container').hide();
 					loadActivityConf(actcUid);
 				}else{
@@ -1223,3 +1247,31 @@ function updateTriggerStep() {
 		}
 	});
 }
+// 删除步骤
+function deleteStep(stepUid) {
+	if (!stepUid) {
+		return;
+	}
+	$.ajax({
+		url : common.getPath() + "/step/delete",
+		type : "post",
+		dataType : "json",
+		data : {
+			"stepUid": stepUid
+		},
+		success : function(result){
+			if(result.status == 0){
+				var $activeLi = $("#my_collapse li.link_active");
+				var actcUid = $activeLi.data('uid');
+				layer.alert("删除成功");
+				loadActivityConf(actcUid);
+			}else{
+				layer.alert(result.msg);
+			}
+		},
+		error : function(){
+			layer.alert('操作失败');
+		}
+	});
+}
+function submitAddDatRule(){}

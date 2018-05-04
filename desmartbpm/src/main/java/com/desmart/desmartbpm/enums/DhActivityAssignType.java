@@ -5,7 +5,7 @@ package com.desmart.desmartbpm.enums;
  */
 public enum DhActivityAssignType {
     DEFAULT_HANDLER("defaultHandler", "默认处理人"),
-    CHOOSE_HANDLER("chooseHandler", "可选处理人"),
+    CHOOSEABLE_HANDLER("chooseableHandler", "可选处理人"),
     OUTTIME_NOTIFY("outtimeNotify", "超时通知人");
 
     private final String code;
