@@ -320,6 +320,9 @@ $(function(){
     	$("#form_innerArea").show();
     	$("#trigger_innerArea").hide();
         $("#addStep_container").show();
+        
+        $('#addStep_form')[0].reset();
+        
         formTable();
        
     })
@@ -569,7 +572,8 @@ function formFieldEdit(data){
 	    	 var trs='';
 		      $(result.data).each(function(index,val){
 				   trs+='<tr>';
-				   trs+='<td> <input type="checkbox" name="fldUid_a" lay-skin="primary"> '+(index+1)+'</td>';
+				  // trs+='<td> <input type="checkbox" name="fldUid_a" lay-skin="primary"> '+(index+1)+'</td>';
+				   trs+='<td>'+(index+1)+'</td>';
 				   trs+='<input type="hidden" name="fldUid" value="' + this.fldUid + '">';
 				   trs+='<input type="hidden" name="stepUid" value="' + dates.stepUid + '">';
 				   //trs+='<input type="hidden" name="opObjType" value="FIELD">';
@@ -577,16 +581,16 @@ function formFieldEdit(data){
 				   trs+='<td>'+this.fldName+'</td>';
 				   if(this.opAction=='EDIT'){
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
 				   }else if(this.opAction=='VIEW'){
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
 				   }else if(this.opAction=='HIDDEN'){
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
 					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
 				   }
 				   trs+='</tr>';
 			   });
@@ -660,7 +664,6 @@ function updateFormTable(formUid){
 //修改环节关联表单信息
 function stepFormEdit(data){
 	var dates=jQuery.parseJSON(decodeURI(data));
-	console.log(dates);
 	$("#update_step_form_container").find("input[type='text']").val("");
 	$("#update_step_form_container").css("display","block");
 	$("#updateStepSort").val(dates.stepSort);
@@ -672,8 +675,8 @@ function stepFormEdit(data){
 		$("#update_step_form_container").find("input[value='default']").prop("checked",false);
 		$("#update_stepBusinessKey_input").val(dates.stepBusinessKey);
 	}
+	$('#eidtstepUid').val(dates.stepUid);
 	layui.form.render();
-	
 	updateFormTable(dates.stepObjectUid);
 }
 
@@ -1015,6 +1018,8 @@ function addStep() {
 		return;
 	}
 	var stepBusinessKey;
+	//console.log($('input[name="stepType"]:checked').val());
+	console.log($('input:radio[name=stepType]:checked').val());
 	var stepBusinessKeyType = $('input[name="stepBusinessKeyType"]:checked').val();
 	if (stepBusinessKeyType != 'default') {
 		stepBusinessKey = $('input[name="stepBusinessKey"]').val();
@@ -1103,6 +1108,71 @@ function addStep() {
 	}
 	
 }
+
+//更新步骤关联表单信息
+function updateStep(){
+	var stepObjectUid;
+	var $activeLi = $("#my_collapse li.link_active");
+	var actcUid = $activeLi.data('uid');
+	var activityBpdId = $activeLi.data('activitybpdid');
+	var stepSort = $("#updateStepSort").val();
+	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
+		layer.alert('步骤序号不正确，请填写正整数');
+		return;
+	}
+	var stepBusinessKey;
+	var stepBusinessKeyType = $('input[name="edtiStepBusinessKeyType"]:checked').val();
+	if (stepBusinessKeyType != 'default') {
+		stepBusinessKey = $('input[name="edtistepBusinessKey"]').val();
+		if (!stepBusinessKey || stepBusinessKey.length > 100 || stepBusinessKey.trim().length == 0) {
+			layer.alert('步骤关键字验证失败，过长或未填写');
+			return;
+		} 
+	} else {
+		stepBusinessKey = 'default';
+	}
+		var  formCheck=$('#update_step_form_tbody input[name="dynUid_check"]:checked');
+		stepObjectUid =formCheck.val();
+		
+		if (!stepObjectUid) {
+			layer.alert('请选择表单');
+			return;
+		}
+		
+		if(formCheck.length>1){
+			layer.alert('请选择一个表单，不能选择多个');
+			return false;
+		}
+		
+		$.ajax({
+			url : common.getPath() + "/step/updateStep",
+			type : "post",
+			dataType : "json",
+			data : {
+				"proAppId": proAppId,
+				"proUid" : proUid,
+				"proVerUid": proVerUid,
+				"activityBpdId": activityBpdId,
+				"stepSort": stepSort,
+			    "stepBusinessKey": stepBusinessKey,
+			    "stepType":'form',
+			    "stepObjectUid": stepObjectUid,
+			     stepUid:$('#eidtstepUid').val()
+			},
+			success : function(result){
+				if(result.status == 0){
+					$('#update_step_form_container').hide();
+					loadActivityConf(actcUid);
+				}else{
+					layer.alert(result.msg);
+				}
+			},
+			error : function(){
+				layer.alert('操作失败');
+			}
+		});
+}
+
 // 更新触发器类型的步骤
 function updateTriggerStep() {
 	var stepUid = stepUidToEdit;
