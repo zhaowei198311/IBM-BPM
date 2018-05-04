@@ -21,10 +21,13 @@
    <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultMap="BaseResultMap">
  		select <include refid="Base_Column_List" />  from SYS_TEAM_MEMBER where 1=1
       	<if test="teamUid != null" >
-		      and TEAM_UID=#{teamUid}
+		    and TEAM_UID=#{teamUid}
 		</if>
 		<if test="memberType != null" >
 			and MEMBER_TYPE=#{memberType}
+		</if>
+		<if test="userUid != null" >
+			and USER_UID=#{userUid}
 		</if>
   </select>
   
