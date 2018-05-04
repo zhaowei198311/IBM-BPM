@@ -22,9 +22,11 @@ public interface DhStepService {
      */
     ServerResponse<List<DhStep>> getStepOfDhActivityConf(DhActivityConf conf);
     
+    
     /**
-     * 更新触发器类型的步骤
+     * 更新步骤
+     * @param dhStep
      * @return
      */
-    ServerResponse updateTriggerStep(DhStep dhStep);
+    ServerResponse updateStep(DhStep dhStep);
 }

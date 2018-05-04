@@ -1,5 +1,6 @@
 var triggerToEdit = "";
 var preFormData;
+var stepUidToEdit;
 var editIndex;
 var pageConfig = {
     pageNum: 1,
@@ -79,6 +80,15 @@ layui.use('form', function(){
             $("#stepBusinessKey_input").show();
         }
     });
+    
+    form.on('radio(ETS_stepBusinessKey)', function(data){
+    	 if (data.value == "default") {
+             $("#ETS_stepBusinessKey").hide();
+         } else {
+             $("#ETS_stepBusinessKey").show();
+         }
+    });
+    
 });
 
 // 页面加载完成
@@ -278,6 +288,12 @@ $(function(){
     // 新增流程中点击选择触发器
     $("#choose_stepTri_btn").click(function() {
     	triggerToEdit = 'trigger_of_step';
+    	getTriggerInfo();
+    	$("#chooseTrigger_container").show();
+    });
+    
+    $("#ETS_choose_stepTri_btn").click(function() {
+    	triggerToEdit = 'ETS_trigger_of_step';
     	getTriggerInfo();
     	$("#chooseTrigger_container").show();
     });
@@ -584,6 +600,25 @@ function formFieldEdit(data){
 function stepEdit(data){
 	var dates=jQuery.parseJSON(decodeURI(data));
 	console.log(dates.activityBpdId);
+	if (dates.stepType == 'trigger') {
+		$("#ETS_stepBusinessKey").hide();
+		$("#ETS_stepSort").val(dates.stepSort);
+		
+		if (dates.stepBusinessKey == 'default') {
+			$("#ETS_radio_default").prop("checked", true);
+			$("#ETS_radio_custom").prop("checked", false);
+		} else {
+			$("#ETS_radio_default").prop("checked", false);
+			$("#ETS_radio_custom").prop("checked", true);
+			$("#ETS_stepBusinessKey").val(dates.stepBusinessKey);
+			$("#ETS_stepBusinessKey").show();
+		}
+		$("#ETS_trigger_of_step").val(dates.stepObjectUid);
+		$("#ETS_trigger_of_stepTitle").val(dates.triTitle);
+		layui.form.render();
+		stepUidToEdit = dates.stepUid;
+		$("#ETS_container").show();
+	}
 }
 
 //修改环节关联表单信息
@@ -972,6 +1007,7 @@ function getFormData() {
 function addStep() {
 	var stepObjectUid;
 	var $activeLi = $("#my_collapse li.link_active");
+	var actcUid = $activeLi.data('uid');
 	var activityBpdId = $activeLi.data('activitybpdid');
 	var stepSort = $("#stepSort").val();
 	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
@@ -1021,6 +1057,7 @@ function addStep() {
 			success : function(result){
 				if(result.status == 0){
 					$('#addStep_container').hide();
+					loadActivityConf(actcUid);
 				}else{
 					layer.alert(result.msg);
 				}
@@ -1052,7 +1089,8 @@ function addStep() {
 			},
 			success : function(result){
 				if(result.status == 0){
-				    
+					$('#addStep_container').hide();
+					loadActivityConf(actcUid);
 				}else{
 					layer.alert(result.msg);
 				}
@@ -1064,4 +1102,54 @@ function addStep() {
 		
 	}
 	
+}
+// 更新触发器类型的步骤
+function updateTriggerStep() {
+	var stepUid = stepUidToEdit;
+	var $activeLi = $("#my_collapse li.link_active");
+	var actcUid = $activeLi.data('uid');
+	var stepSort = $("#ETS_stepSort").val();
+	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
+		layer.alert('步骤序号不正确，请填写正整数');
+		return;
+	}
+	var stepBusinessKey;
+	var stepBusinessKeyType = $('input[name="ETS_BusinessKeyType"]:checked').val();
+	if (stepBusinessKeyType != 'default') {
+		stepBusinessKey = $('#ETS_stepBusinessKey').val();
+		if (!stepBusinessKey || stepBusinessKey.length > 100 || stepBusinessKey.trim().length == 0) {
+			layer.alert('步骤关键字验证失败，过长或未填写');
+			return;
+		} 
+	} else {
+		stepBusinessKey = 'default';
+	}
+	var stepObjectUid = $("#ETS_trigger_of_step").val();
+	if (!stepObjectUid) {
+		layer.alert('请选择触发器');
+		return;
+	}
+	$.ajax({
+		url : common.getPath() + "/step/updateStep",
+		type : "post",
+		dataType : "json",
+		data : {
+			"stepUid": stepUid,
+			"stepSort" : stepSort,
+			"stepType": "trigger",
+			"stepBusinessKey": stepBusinessKey,
+			"stepObjectUid": stepObjectUid
+		},
+		success : function(result){
+			if(result.status == 0){
+				$('#ETS_container').hide();
+				loadActivityConf(actcUid);
+			}else{
+				layer.alert(result.msg);
+			}
+		},
+		error : function(){
+			layer.alert('操作失败');
+		}
+	});
 }

@@ -1123,6 +1123,46 @@
                 </div>
             </div>
         </div>
+        <!-- 编辑触发器步骤的表单 -->
+        <div class="display_container3" id="ETS_container">
+            <form id="editStep_form">
+            <div class="display_content3" style="height:500px;width:900px;">
+                <div class="top">编辑触发器步骤</div>
+                <div class="middle1" style="height:420px;">
+                    <div class="search_area" style="height:38px;">
+                        <div class="layui-row layui-form" style="margin-top:10px">
+                            <div class="layui-col-md3">
+                                <input id="ETS_stepSort" name="ETS_stepSort" type="text" placeholder="步骤序号"  class="layui-input">
+                            </div>
+                            <div class="layui-col-md4" style="padding-left:5px;">
+                                <input type="radio" id="ETS_radio_default" name="ETS_BusinessKeyType" lay-filter="ETS_stepBusinessKey" value="default" title="默认关键字"  checked > 
+                                <input type="radio" id="ETS_radio_custom" name="ETS_BusinessKeyType" lay-filter="ETS_stepBusinessKey" value="custom" title="自定义关键字" >    
+                            </div>
+                            <div class="layui-col-md5">
+                                <input id="ETS_stepBusinessKey"  type="text" placeholder="输入步骤关键字"  class="layui-input" >
+                            </div>
+                        </div>
+                    </div>
+                    <div id="trigger_innerArea" style="padding-top: 30px;padding-right:50px;">
+                          <div class="layui-form-item ">
+                              <label class="layui-form-label">请选择触发器</label>
+                              <div class="layui-input-block" style="position:relative;">
+                                  <input type="hidden" id="ETS_trigger_of_step" name="" value=""/>
+                                  <input type="text"  id="ETS_trigger_of_stepTitle"  name="" value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                  <i id="ETS_choose_stepTri_btn" class="layui-icon choose_role" title="选择触发器">&#xe621;</i>  
+                              </div>
+                          </div>  
+                    </div>
+                </div>
+                <div id="demo8"></div>
+                <div class="foot">
+                    <button type="button" class="layui-btn layui-btn sure_btn" onclick="updateTriggerStep();">确定</button>
+                    <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#ETS_container').hide();">取消</button>
+                </div>
+            </div>
+            </form>
+        </div>
+        
 		<!-- 选择触发器弹框 -->
 		<div class="display_container3" id="chooseTrigger_container" >
 		    <div class="display_content3"  style="height:550px;">
@@ -1172,6 +1212,7 @@
 		    </div>
 		</div>
 		<!-- 选择触发器弹框结束 -->
+
     </body>
     
     <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>

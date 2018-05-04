@@ -32,11 +32,12 @@ public class DhStepController {
         
     }
     
-    @RequestMapping(value = "/updateTriggerStep")
+    @RequestMapping(value = "/updateStep")
     @ResponseBody
     public ServerResponse updateTriggerStep(DhStep dhStep) {
         try {
-            return dhStepService.updateTriggerStep(dhStep);
+            System.out.println(dhStep.getStepBusinessKey());
+            return dhStepService.updateStep(dhStep);
         } catch (Exception e) {
             LOG.error("更新步骤失败", e);
             return ServerResponse.createByErrorMessage("更新步骤失败");

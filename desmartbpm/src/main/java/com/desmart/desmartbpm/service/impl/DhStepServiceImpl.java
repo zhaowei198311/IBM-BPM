@@ -100,8 +100,9 @@ public class DhStepServiceImpl implements DhStepService {
     }
 
     
-    public ServerResponse updateTriggerStep(DhStep dhStep) {
-        if (StringUtils.isBlank(dhStep.getStepUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey())
+    @Transactional
+    public ServerResponse updateStep(DhStep dhStep) {
+        if (StringUtils.isBlank(dhStep.getStepUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey()) || StringUtils.isBlank(dhStep.getStepType())
                 || dhStep.getStepSort() == null || dhStep.getStepSort().intValue() < 0 || StringUtils.isBlank(dhStep.getStepObjectUid())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         } 
@@ -109,30 +110,49 @@ public class DhStepServiceImpl implements DhStepService {
         if (currentStep == null) {
             return ServerResponse.createByErrorMessage("找不到此步骤");
         }
-        
-        if (!DhStepType.TRIGGER.getCode().equals(currentStep.getStepType())) {
-            return ServerResponse.createByErrorMessage("修改失败，此步骤不是触发器类型");
-        }
         dhStep.setProAppId(currentStep.getProAppId());
         dhStep.setProUid(currentStep.getProUid());
         dhStep.setProVerUid(currentStep.getProVerUid());
         dhStep.setActivityBpdId(currentStep.getActivityBpdId());
-        dhStep.setStepBusinessKey(currentStep.getStepBusinessKey());
-        // 步骤序号变更的话看是否已经有这个序号
+        // 步骤序号变更的话看是否已经有这个序号同关键字的步骤
         if (!currentStep.getStepSort().equals(dhStep.getStepSort()) && isStepExists(dhStep)) {
             return ServerResponse.createByErrorMessage("修改失败，这个步骤序号已存在相同步骤关键字的步骤");
         }
-        if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
-            return ServerResponse.createByErrorMessage("触发器不存在");
+        
+        if (DhStepType.TRIGGER.getCode().equals(currentStep.getStepType()) && DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
+            if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
+                return ServerResponse.createByErrorMessage("触发器不存在");
+            }
+        } else if (DhStepType.TRIGGER.getCode().equals(currentStep.getStepType()) && DhStepType.FORM.getCode().equals(dhStep.getStepType())) {
+            if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
+                return ServerResponse.createByErrorMessage("表单不存在");
+            }
+        } else if (DhStepType.FORM.getCode().equals(currentStep.getStepType()) && DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
+            if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
+                return ServerResponse.createByErrorMessage("触发器不存在");
+            }
+            removeFieldPermissionOfStep(dhStep.getStepUid());
+        } else if (DhStepType.FORM.getCode().equals(currentStep.getStepType()) && DhStepType.FORM.getCode().equals(dhStep.getStepType())) {
+            if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
+                return ServerResponse.createByErrorMessage("表单不存在");
+            }
+            removeFieldPermissionOfStep(dhStep.getStepUid());
+        } else {
+            return ServerResponse.createByErrorMessage("修改失败, 步骤类型异常");
         }
         // 执行更新
         DhStep updateSelective = new DhStep();
         updateSelective.setStepUid(currentStep.getStepUid());
         updateSelective.setStepSort(dhStep.getStepSort());
         updateSelective.setStepObjectUid(dhStep.getStepObjectUid());
+        updateSelective.setStepType(dhStep.getStepType());
+        updateSelective.setStepBusinessKey(dhStep.getStepBusinessKey());
         dhStepMapper.updateByPrimaryKeySelective(updateSelective);
         return ServerResponse.createBySuccess();
     }
+    
+    
+    
     
     @Transactional
     public ServerResponse deleteDhStep(String stepUid) {
