@@ -506,7 +506,7 @@ function step_table(data){
 	   var trs='';
 	   $(data).each(function(index,val){
 		   trs+='<tr>';
-		   trs+='<td>'+(index+1)+'</td>';
+		   trs+='<td>'+this.stepSort+'</td>';
 		   if(this.stepType=='trigger'){
 			   trs+='<td>触发器</td>'
 		   }else{
