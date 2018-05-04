@@ -1361,9 +1361,7 @@
         
         //
         function radiocheckAll(){
-        	
-        	var  $("#field_permissions_table").find("input[value='VIEW']").length;
-        	
+        	var  view= $("#field_permissions_table").find("input[value='VIEW']").length;
         }
         
         
