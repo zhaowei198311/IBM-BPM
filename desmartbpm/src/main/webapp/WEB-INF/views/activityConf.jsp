@@ -1166,9 +1166,9 @@
         
 		<!-- 选择触发器弹框 -->
 		<div class="display_container3" id="chooseTrigger_container" >
-		    <div class="display_content3"  style="height:550px;">
+		    <div class="display_content3"  style="height:450px;">
 		        <div class="top"> 选择触发器</div>
-		        <div class="middle1" style="height:400px;">
+		        <div class="middle1" style="height:300px;">
 		            <div class="search_area">
 		                <div class="layui-row layui-form" style="margin-top:10px">
 		                    <div class="layui-col-md5"><input id="triTitle_input" type="text" placeholder="触发器名称"  class="layui-input"></div>

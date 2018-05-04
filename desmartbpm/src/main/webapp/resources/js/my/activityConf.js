@@ -301,6 +301,7 @@ $(function(){
     
     // “新增步骤”按钮
     $("#add_step_btn").click(function(){
+    	$('#addStep_form')[0].reset();
     	$('input[name="stepType"]').each(function(){
     		if ($(this).val() == 'form') {
     			$(this).prop("checked", true);
@@ -321,8 +322,6 @@ $(function(){
     	$("#form_innerArea").show();
     	$("#trigger_innerArea").hide();
         $("#addStep_container").show();
-        
-        $('#addStep_form')[0].reset();
         
         formTable();
        
