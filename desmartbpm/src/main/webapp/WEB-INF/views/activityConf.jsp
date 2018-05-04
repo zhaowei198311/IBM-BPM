@@ -887,11 +887,12 @@
         </form>
         </div>
         <div class="display_container4">
-            <div class="display_content3">
+            <div class="display_content3" style="width: 950px;height: 500px;">
                 <div class="top">
                     编辑字段权限
                 </div>
-                <div class="middle1">
+                <div class="middle1" style="height: 400px;">
+                    <form class="form-horizontal"  >
                     <table class="layui-table" lay-even lay-skin="nob" >
                         <colgroup>
                             <col width="100">
@@ -899,10 +900,13 @@
                             <col>
                         </colgroup>
                         <thead>
-                            <th>序号</th>
+                            <th><input type="checkbox"  name="fldUid"  id="field_check" lay-skin="primary">序号</th>
                             <th>字段名称</th>
-                            <th>状态</th>
+                            <th><input type="radio" name="radioAll"  lay-skin="primary" onclick="editAllclick(this)">编辑</th>
+                            <th><input type="radio" name="radioAll"  lay-skin="primary" id="viewAllclick">只读</th>
+                            <th><input type="radio" name="radioAll"  lay-skin="primary" id="hiddenAllclick">隐藏</th>
                         </thead>
+                        
                         <tbody id="field_permissions_table" >
                             <tr>
                                 <td><input type="checkbox" id="0"/><label for="0"> 1</label></td>
@@ -936,11 +940,12 @@
                             </tr>
                         </tbody>
                     </table>                
+	                    </form>
                 </div>
                 <div class="foot">
-                    <button class="layui-btn layui-btn ">编辑</button>
-                    <button class="layui-btn layui-btn ">只读</button>
-                    <button class="layui-btn layui-btn ">隐藏</button>
+                    <button class="layui-btn layui-btn " id="filedSave">保存</button>
+                    <!-- <button class="layui-btn layui-btn " id="filedReadOnly">只读</button> -->
+                    <!-- <button class="layui-btn layui-btn " id="filedHide">隐藏</button> -->
                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
                 </div>
             </div>
@@ -1120,9 +1125,9 @@
         </div>
 		<!-- 选择触发器弹框 -->
 		<div class="display_container3" id="chooseTrigger_container" >
-		    <div class="display_content3"  style="height:450px;">
+		    <div class="display_content3"  style="height:550px;">
 		        <div class="top"> 选择触发器</div>
-		        <div class="middle1" style="height:300px;">
+		        <div class="middle1" style="height:400px;">
 		            <div class="search_area">
 		                <div class="layui-row layui-form" style="margin-top:10px">
 		                    <div class="layui-col-md5"><input id="triTitle_input" type="text" placeholder="触发器名称"  class="layui-input"></div>
@@ -1197,8 +1202,6 @@
             });
         });
         $(function(){
-        	
-        	
         	$(".cancel_btn").click(function(){
                 $(".display_container4").css("display","none");
                 $(".display_container10").css("display","none");
@@ -1232,6 +1235,7 @@
                   }
                  });
             })
+            
             $("#sure_btn").click(function(){
                 $(".display_container3").css("display","none");
                 $(".display_container5").css("display","none");
@@ -1245,8 +1249,74 @@
                 $(".display_container6").css("display","none");
                 $(".display_container10").css("display","none");
             })
+            
+            
+            
+             //表单字段权限  保存   只读 隐藏
+             $("#filedSave").click(function(){
+            	var jsonArr = new Array();
+            	 var radioSelArr = $("#field_permissions_table").find("input[type='radio']:checked");
+            	 console.log(radioSelArr.length);
+            	 radioSelArr.each(function(){
+            		 var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
+            		 var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
+            		 var jsonParam = {
+                          stepUid:stepUid,//步骤ID
+                          opObjUid:opObjUid,//表单字段ID
+                          opObjType:"FIELD",
+                          opAction:""//EDIT，HIDDEN，VIEW
+                     };
+            		var opAction = $(this).val();
+                    jsonParam.opAction = opAction;
+                    jsonArr.push(jsonParam);
+            	 });
+                 //给表单字段添加权限
+                $.ajax({
+		            url:common.getPath() +"/formField/saveFormFieldPermission",
+		            method:"post",
+		            dataType:"json",
+		            contentType:"application/json",
+		            data:JSON.stringify(jsonArr),
+		            success:function(result){
+		             	
+		            }
+                 });
+             })
+             
+             //全选
+             $("#field_check").click(function(){   
+ 			    if(this.checked){   
+ 			        $("#field_permissions_table :checkbox").prop("checked", true);  
+ 			    }else{   
+ 					$("#field_permissions_table :checkbox").prop("checked", false);
+ 			    }   
+ 			});
+        	
+        	
+        	
+        	//只读
+            $("#viewAllclick").click(function(){   
+            	if(this.checked){
+            		$("#field_permissions_table").find("input[value='HIDDEN']").prop("checked",true);
+            	}
+			});
+        	
+           //隐藏
+            $("#hiddenAllclick").click(function(){   
+            	if(this.checked){
+            		$("#field_permissions_table").find("input[value='VIEW']").prop("checked",true);
+            	}
+			});
+           
         })
-
+        
+        
+        
+        function editAllclick(obj){
+        	if(obj.checked){
+        		$("#field_permissions_table").find("input[value='EDIT']").prop("checked",true);
+        	}
+        }
             
         function show1(){
             $(".form_table").css("display","inline-table");
@@ -1256,6 +1326,7 @@
             $(".form_table").css("display","none");
             $(".trigger_table").css("display","inline-table");
         }
+        
         
     </script>
 </html>
