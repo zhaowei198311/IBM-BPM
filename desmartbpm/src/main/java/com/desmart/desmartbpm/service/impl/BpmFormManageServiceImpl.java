@@ -161,7 +161,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			}
 		}
 		//删除原表单
-		System.out.println(file.delete());
+		file.delete();
 	}
 
 	@Override
@@ -235,7 +235,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		List<BpmFormField> oldFields = bpmFormFieldMapper.queryFormFieldByFormUid(newFormUid);
 		int fieldSize = oldFields.size();
 		if(fieldSize!=0) {
-			System.out.println(1);
 			List<BpmFormField> newFields = new ArrayList<>();
 			for(BpmFormField field:oldFields) {
 				field.setFldUid(EntityIdPrefix.BPM_FORM_FIELD+UUID.randomUUID().toString());
