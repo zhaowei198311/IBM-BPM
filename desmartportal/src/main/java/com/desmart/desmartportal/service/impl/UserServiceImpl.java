@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	private Logger log = Logger.getLogger(UserController.class);
 
 	@Override
-	public List<Object> selectMap() {
+	public List<Object> selectByMenusProcess() {
 		log.info("判断---当前用户权限菜单 开始。。。");
 		// 集合创建
 		List<Object> menuList = new ArrayList<>();

@@ -13,5 +13,5 @@ import java.util.List;
 */
 public interface UserService {
 	
-	List<Object> selectMap();
+	List<Object> selectByMenusProcess();
 }

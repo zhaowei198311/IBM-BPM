@@ -60,7 +60,8 @@ public class UserController {
 	
 	@RequestMapping(value = "/menus")
 	public String menus() {
-		List<Object> resultList = userService.selectMap();
+		// 判断用户可以发起那些流程的 权限 菜单等
+		List<Object> resultList = userService.selectByMenusProcess();
 		for (int i = 0; i < resultList.size(); i++) {
 			System.err.println(resultList.get(i));
 		}
