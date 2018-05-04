@@ -37,7 +37,9 @@
 	</delete>
 	
 	<select id="queryFormFieldByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
-		select <include refid="base_column"/> from bpm_form_field where form_uid = #{dynUid}
+		select <include refid="base_column"/> from bpm_form_field 
+		where form_uid = #{dynUid}
+		order by fld_index
 	</select>
 	
 	<select id="queryFieldByFieldIdAndStepId" parameterType="map" resultType="String">
