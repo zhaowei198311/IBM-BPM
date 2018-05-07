@@ -21,6 +21,7 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.github.pagehelper.PageHelper;
 
 @Service
 public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
@@ -80,6 +81,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             
         }
         BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        PageHelper.orderBy("SORT_NUM");
         List<BpmActivityMeta> allMeta = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
         if (allMeta.size() == 0) {
             return ServerResponse.createByErrorMessage("没有匹配的环节，请先同步环节");
@@ -94,12 +96,12 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         Iterator<BpmActivityMeta> iterator = allMeta.iterator();
         while (iterator.hasNext()) {
             BpmActivityMeta meta = iterator.next();
-            if ("SubProcess".equalsIgnoreCase(meta.getBpmTaskType())) {
+            if ("SubProcess".equalsIgnoreCase(meta.getBpmTaskType())) { // 如果类型是子流程，单独做折叠栏
                 subProcessList.add(meta);
                 iterator.remove();
                 continue;
             }
-            if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) {
+            if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) { // 如果是人工节点，并且是主流程下的人工节点，就加入主流程折叠栏
                 if (meta.getDeepLevel() == 0) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("activityName", meta.getActivityName());
@@ -109,7 +111,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     children.add(map);
                     iterator.remove();
                 }
-            } else {
+            } else { // 去除非人工节点，非子流程环节的无关元素
                 iterator.remove();
             }
         }

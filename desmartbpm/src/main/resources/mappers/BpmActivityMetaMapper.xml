@@ -5,13 +5,13 @@
 		ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_TO, ACTIVITY_TYPE, BPD_ID,
 		BPM_TASK_TYPE, CREATE_TIME, CREATOR, DEEP_LEVEL, EXTERNAL_ID, HANDLE_SIGN_TYPE, LOOP_TYPE, MI_ORDER,
 		NOTE_TYPE, PARENT_ACTIVITY_BPD_ID, PO_ID, SNAPSHOT_ID, SNAPSHOT_UID, STEP_ID, TYPE, UPDATE_BY, UPDATE_TIME,
-		ACTIVITY_ALT_NAME, PRO_APP_ID
+		ACTIVITY_ALT_NAME, PRO_APP_ID, SORT_NUM
 	</sql>
 	<sql id="relationColumn">
 	    am.ACTIVITY_ID, am.ACTIVITY_BPD_ID, am.ACTIVITY_GROUP_NAME, am.ACTIVITY_NAME, am.ACTIVITY_TO, am.ACTIVITY_TYPE, am.BPD_ID,
 	    am.BPM_TASK_TYPE, am.CREATE_TIME, am.CREATOR, am.DEEP_LEVEL, am.EXTERNAL_ID, am.HANDLE_SIGN_TYPE, am.LOOP_TYPE, am.MI_ORDER,
 	    am.NOTE_TYPE, am.PARENT_ACTIVITY_BPD_ID, am.PO_ID, am.SNAPSHOT_ID, am.SNAPSHOT_UID, am.STEP_ID, am.TYPE, am.UPDATE_BY, am.UPDATE_TIME,
-	    am.ACTIVITY_ALT_NAME, am.PRO_APP_ID,
+	    am.ACTIVITY_ALT_NAME, am.PRO_APP_ID, am.SORT_NUM,
 	    ac.ACTC_UID, ac.ACTIVITY_ID, ac.ACTC_SORT, ac.ACTC_TIME, ac.ACTC_TIMEUNIT, ac.ACTC_ASSIGN_TYPE, ac.ACTC_ASSIGN_VARIABLE,
 	    ac.SIGN_COUNT_VARNAME, ac.ACTC_CAN_EDIT_ATTACH, ac.ACTC_CAN_UPLOAD_ATTACH, ac.ACTC_CAN_DELEGATE,
 	    ac.ACTC_CAN_DELETE_ATTACH, ac.ACTC_CAN_MESSAGE_NOTIFY, ac.ACTC_CAN_MAIL_NOTIFY, ac.ACTC_MAIL_NOTIFY_TEMPLATE,
@@ -50,6 +50,7 @@
 	    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
 	    <result column="ACTIVITY_ALT_NAME" property="activityAltName" jdbcType="VARCHAR" />
 	    <result column="PRO_APP_ID" property="proAppId" jdbcType="VARCHAR" />
+	    <result column="SORT_NUM" property="sortNum"  />
 	    <association property="dhActivityConf" javaType="com.desmart.desmartbpm.entity.DhActivityConf">
 	        <id property="actcUid" column="actc_Uid"/>
 	            <result column="ACTIVITY_ID" jdbcType="VARCHAR" property="activityId" />
@@ -126,7 +127,8 @@
 			UPDATE_BY,
 			UPDATE_TIME,
 			ACTIVITY_ALT_NAME,
-			PRO_APP_ID
+			PRO_APP_ID,
+			SORT_NUM
 		)
 		values (
 			#{activityId},
@@ -154,7 +156,8 @@
 			#{updateBy},
 			#{updateTime},
 			#{activityAltName},
-			#{proAppId}
+			#{proAppId},
+			#{sortNum}
 		)
 	</insert>
 
@@ -288,6 +291,9 @@
 			</if>
 			<if test="proAppId != null">
 				PRO_APP_ID = #{proAppId},
+			</if>
+			<if test="sortNum != null">
+			    SORT_NUM = #{sortNum},
 			</if>
 			UPDATE_TIME = sysdate
 		</set>

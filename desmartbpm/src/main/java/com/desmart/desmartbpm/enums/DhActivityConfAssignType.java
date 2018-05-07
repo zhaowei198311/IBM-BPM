@@ -5,8 +5,8 @@ package com.desmart.desmartbpm.enums;
  */
 public enum DhActivityConfAssignType {
     NONE("none", "无"),
-    ROLE("role", "无"),
-    TEAM("team", "无"),
+    ROLE("role", "角色"),
+    TEAM("team", "角色组"),
     ROLE_AND_DEPARTMENT("roleAndDepartment", "角色+部门"),
     ROLE_AND_COMPANY("roleAndCompany", "角色+公司编码"),
     TEAM_AND_DEPARTMENT("teamAndDepartment", "角色组+部门"),
@@ -14,7 +14,8 @@ public enum DhActivityConfAssignType {
     LEADER_OF_PRE_ACTIVITY_USER("leaderOfPreActivityUser", "上个环节提交人的上级"),
     USERS("users", "指定人员"),
     PROCESS_CREATOR("processCreator", "流程发起人"),
-    BY_FIELD("byField", "根据表单字段");
+    BY_FIELD("byField", "根据表单字段"),
+    ALL_USER("allUser", "全体人员");
 
     private final String code;
     private final String value;

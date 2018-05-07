@@ -586,6 +586,86 @@ public class DhActivityConf {
         this.rejectActivitiesView = rejectActivitiesView;
     }
 
+    public String getActcChooseableHandlerType() {
+        return actcChooseableHandlerType;
+    }
+
+
+    public void setActcChooseableHandlerType(String actcChooseableHandlerType) {
+        this.actcChooseableHandlerType = actcChooseableHandlerType;
+    }
+
+
+    public String getChooseableHandleUser() {
+        return chooseableHandleUser;
+    }
+
+
+    public void setChooseableHandleUser(String chooseableHandleUser) {
+        this.chooseableHandleUser = chooseableHandleUser;
+    }
+
+
+    public String getChooseableHandleUserView() {
+        return chooseableHandleUserView;
+    }
+
+
+    public void setChooseableHandleUserView(String chooseableHandleUserView) {
+        this.chooseableHandleUserView = chooseableHandleUserView;
+    }
+
+
+    public String getChooseableHandleRole() {
+        return chooseableHandleRole;
+    }
+
+
+    public void setChooseableHandleRole(String chooseableHandleRole) {
+        this.chooseableHandleRole = chooseableHandleRole;
+    }
+
+
+    public String getChooseableHandleRoleView() {
+        return chooseableHandleRoleView;
+    }
+
+
+    public void setChooseableHandleRoleView(String chooseableHandleRoleView) {
+        this.chooseableHandleRoleView = chooseableHandleRoleView;
+    }
+
+
+    public String getChooseableHandleTeam() {
+        return chooseableHandleTeam;
+    }
+
+
+    public void setChooseableHandleTeam(String chooseableHandleTeam) {
+        this.chooseableHandleTeam = chooseableHandleTeam;
+    }
+
+
+    public String getChooseableHandleTeamView() {
+        return chooseableHandleTeamView;
+    }
+
+
+    public void setChooseableHandleTeamView(String chooseableHandleTeamView) {
+        this.chooseableHandleTeamView = chooseableHandleTeamView;
+    }
+
+
+    public String getChooseableHandleField() {
+        return chooseableHandleField;
+    }
+
+
+    public void setChooseableHandleField(String chooseableHandleField) {
+        this.chooseableHandleField = chooseableHandleField;
+    }
+
+
     @Override
     public String toString() {
         return "DhActivityConf [actcUid=" + actcUid + ", activityId=" + activityId + ", actcSort=" + actcSort

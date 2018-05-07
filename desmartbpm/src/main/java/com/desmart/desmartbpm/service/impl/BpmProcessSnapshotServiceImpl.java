@@ -148,9 +148,11 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> delActivityMetas = new ArrayList<BpmActivityMeta>();
         // 需要删除的环节
         delActivityMetas.addAll(oldActivityMetas);
-        
+        int sortNum = 0;
         for (BpmActivityMeta newMeta : newActivityMetas) {
+            LOG.error(newMeta.getActivityName());
         	String activityBpdId = newMeta.getActivityBpdId();
+        	// 如果待删meta里有这个activityBpdId的元素，就移除
         	for(int i = 0; i < oldActivityMetas.size(); ++i) {
                 BpmActivityMeta oldMeta = (BpmActivityMeta)oldActivityMetas.get(i);
                 if (activityBpdId.equalsIgnoreCase(oldMeta.getActivityBpdId())) {
@@ -177,7 +179,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 bpmActivityMeta.setHandleSignType(newMeta.getHandleSignType());
                 bpmActivityMeta.setPoId(newMeta.getPoId());
                 bpmActivityMeta.setDeepLevel(newMeta.getDeepLevel());
-                
+                bpmActivityMeta.setSortNum(sortNum);
                 bpmActivityMetaMapper.updateByPrimaryKeySelective(bpmActivityMeta);
                 // 查看环节是否人工环节
                 if (isHumanActivity(bpmActivityMeta)) {
@@ -187,12 +189,13 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                     }
                 }
             } else {
+                newMeta.setSortNum(sortNum);
             	bpmActivityMetaMapper.save(newMeta);
             	if (isHumanActivity(newMeta)) {
                     dhActivityConfMapper.insert(createDefaultActivityConf(newMeta.getActivityId()));
                 }
             }
-            
+            sortNum++;
         }
 
         if (delActivityMetas.size() > 0) {
@@ -203,7 +206,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     }
 
     /**
-     * 解析活动节点
+     * 将流程图(Diagram)中一个step解析为BpmActivityMeta，可能是一个或多个
      * @param request
      * @param stepElement
      * @param snapshotId
@@ -236,12 +239,10 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 obj = var20.next();
                 tmp = (JSONObject)obj;
             }
-
             if (activityTo.indexOf(",") > 0) { // 去除多余的","
                 activityTo = activityTo.substring(0, activityTo.length() - 1);
             }
         }
-
 
         if ("activity".equals(type)) { // 如果是活动节点
             if ("subProcess".equals(activityType)) {  // 如果是子流程
@@ -299,7 +300,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
 
 
     /**
-     * 解析子流程 返回环节配置
+     * 解析子流程 返回环节配置，可能是一个可能是多个
      * @param request
      * @param processAppId
      * @param snapshotId

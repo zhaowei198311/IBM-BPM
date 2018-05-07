@@ -33,7 +33,8 @@ public class BpmActivityMeta implements Serializable {
     private Integer deepLevel;   // 流程深度，层级
     private String activityAltName;
     private String proAppId;
-
+    private Integer sortNum;  // 记录环节生成的顺序
+    
     // 不在表中
     private DhActivityConf dhActivityConf;
     
@@ -281,36 +282,33 @@ public class BpmActivityMeta implements Serializable {
     }
 
 
+    public Integer getSortNum() {
+        return sortNum;
+    }
+
+
+    public void setSortNum(Integer sortNum) {
+        this.sortNum = sortNum;
+    }
+
+
     @Override
     public String toString() {
-        return "BpmActivityMeta{" +
-                "activityId='" + activityId + '\'' +
-                ", noteType='" + noteType + '\'' +
-                ", createTime=" + createTime +
-                ", creator='" + creator + '\'' +
-                ", updateTime=" + updateTime +
-                ", updateBy='" + updateBy + '\'' +
-                ", nextactivities='" + nextactivities + '\'' +
-                ", activityName='" + activityName + '\'' +
-                ", snapshotId='" + snapshotId + '\'' +
-                ", activityBpdId='" + activityBpdId + '\'' +
-                ", bpdId='" + bpdId + '\'' +
-                ", type='" + type + '\'' +
-                ", activityType='" + activityType + '\'' +
-                ", activityTo='" + activityTo + '\'' +
-                ", parentActivityBpdId='" + parentActivityBpdId + '\'' +
-                ", externalId='" + externalId + '\'' +
-                ", bpmTaskType='" + bpmTaskType + '\'' +
-                ", loopType='" + loopType + '\'' +
-                ", miOrder='" + miOrder + '\'' +
-                ", snapshotUid='" + snapshotUid + '\'' +
-                ", stepId='" + stepId + '\'' +
-                ", handleSignType='" + handleSignType + '\'' +
-                ", activityGroupName='" + activityGroupName + '\'' +
-                ", poId='" + poId + '\'' +
-                ", deepLevel=" + deepLevel +
-                ", activityAltName='" + activityAltName + '\'' +
-                ", proAppId='" + proAppId + '\'' +
-                '}';
+        return "BpmActivityMeta [activityId=" + activityId + ", noteType="
+                + noteType + ", createTime=" + createTime + ", creator="
+                + creator + ", updateTime=" + updateTime + ", updateBy="
+                + updateBy + ", nextactivities=" + nextactivities
+                + ", activityName=" + activityName + ", snapshotId="
+                + snapshotId + ", activityBpdId=" + activityBpdId + ", bpdId="
+                + bpdId + ", type=" + type + ", activityType=" + activityType
+                + ", activityTo=" + activityTo + ", parentActivityBpdId="
+                + parentActivityBpdId + ", externalId=" + externalId
+                + ", bpmTaskType=" + bpmTaskType + ", loopType=" + loopType
+                + ", miOrder=" + miOrder + ", snapshotUid=" + snapshotUid
+                + ", stepId=" + stepId + ", handleSignType=" + handleSignType
+                + ", activityGroupName=" + activityGroupName + ", poId=" + poId
+                + ", deepLevel=" + deepLevel + ", activityAltName="
+                + activityAltName + ", proAppId=" + proAppId + ", sortNum="
+                + sortNum + ", dhActivityConf=" + dhActivityConf + "]";
     }
 }
