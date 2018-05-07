@@ -151,17 +151,9 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         case NONE:
             break;
         case ROLE:
-            if (DhActivityConfAssignType.ROLE == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.ROLE.getCode();
-            }
         case ROLE_AND_DEPARTMENT:
-            if (DhActivityConfAssignType.ROLE_AND_DEPARTMENT == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.ROLE_AND_DEPARTMENT.getCode();
-            }
         case ROLE_AND_COMPANY:
-            if (DhActivityConfAssignType.ROLE_AND_COMPANY == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.ROLE_AND_COMPANY.getCode();
-            }
+            activityAssignType = DhActivityAssignAssignType.ROLE.getCode();
             String handleRole = dhActivityConf.getHandleRole();
             if (StringUtils.isBlank(handleRole)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
@@ -182,17 +174,9 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             }
             break;
         case TEAM:
-            if (DhActivityConfAssignType.TEAM == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.TEAM.getCode();
-            }
         case TEAM_AND_DEPARTMENT:
-            if (DhActivityConfAssignType.TEAM_AND_DEPARTMENT == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.TEAM_AND_DEPARTMENT.getCode();
-            }
         case TEAM_AND_COMPANY:
-            if (DhActivityConfAssignType.TEAM_AND_COMPANY == assignTypeEnum) {
-                activityAssignType = DhActivityConfAssignType.TEAM_AND_COMPANY.getCode();
-            }
+            activityAssignType = DhActivityAssignAssignType.TEAM.getCode();
             String handleTeam2 = dhActivityConf.getHandleTeam();
             if (StringUtils.isBlank(handleTeam2)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
@@ -229,7 +213,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
                 DhActivityAssign assign = new DhActivityAssign();
                 assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
                 assign.setActivityId(activityId);
-                assign.setActaAssignType(DhActivityConfAssignType.USERS.getCode());
+                assign.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
                 assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
                 assign.setActaAssignId(user.getUserUid());
                 assignList.add(assign);
@@ -248,7 +232,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             DhActivityAssign assign = new DhActivityAssign();
             assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
             assign.setActivityId(activityId);
-            assign.setActaAssignType(DhActivityConfAssignType.BY_FIELD.getCode());
+            assign.setActaAssignType(DhActivityAssignAssignType.FIELD.getCode());
             assign.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
             assign.setActaAssignId(handleField.trim());
             assignList.add(assign);

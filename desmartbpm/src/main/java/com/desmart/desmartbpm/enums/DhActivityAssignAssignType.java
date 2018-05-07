@@ -4,10 +4,10 @@ package com.desmart.desmartbpm.enums;
  * 事项分配对应关系，分配给哪种类型的接收人
  */
 public enum DhActivityAssignAssignType {
-    USER("USER", "用户"),
-    TEAM("TEAM", "角色组"),
-    ROLE("ROLE", "角色"),
-    FIELD("FIELD", "表单字段");
+    USER("user", "用户"),
+    TEAM("team", "角色组"),
+    ROLE("role", "角色"),
+    FIELD("field", "表单字段");
 
     private final String code;
     private final String value;
