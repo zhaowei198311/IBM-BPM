@@ -41,6 +41,41 @@ layui.use('form', function(){
             $("#handleField_div").show();
         }
     });
+    
+    form.on('select(chooseableHandlerType)', function(data){
+    	if(data.value=="role" || data.value=="roleAndDepartment" || data.value=="roleAndCompany"){
+            $("#chooseableHandleRole_div").show();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleField_div").hide();
+        }else  if(data.value=="team" || data.value=="teamAndDepartment" || data.value=="teamAndCompany"){
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleTeam_div").show();
+            $("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleField_div").hide();
+        }else if(data.value=="leaderOfPreActivityUser" || data.value=="processCreator" || data.value == "none"){
+            $("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleField_div").hide();
+        }else if(data.value=="users"){
+            $("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").show();
+            $("#chooseableHandleField_div").hide();
+        }else if(data.value=="byField"){
+            $("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleField_div").show();
+        }else if(data.value=="allUser"){
+        	$("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleField_div").hide();
+        }
+    });
+
 
     form.on('select(rejectType)', function(data){
         if (data.value == "toActivities"){
@@ -83,13 +118,20 @@ layui.use('form', function(){
     });
     
     form.on('radio(ETS_stepBusinessKey)', function(data){
-    	 if (data.value == "default") {
+    	 if (data.value == "false") {
              $("#ETS_stepBusinessKey").hide();
          } else {
              $("#ETS_stepBusinessKey").show();
          }
     });
-    
+    //是否为可选处理人
+    form.on('radio(actcCanChooseUser)', function(data){
+   	 if (data.value == "TRUE") {
+   		    $('#actcChooseableHandler').show();
+        } else {
+        	$('#actcChooseableHandler').hide();
+        }
+   });
 });
 
 // 页面加载完成
@@ -121,6 +163,29 @@ $(function(){
             handleField: {
                 required: function(element) {
                     return $('select[name="actcAssignType"]').val() == 'byField';
+                }
+            },
+            actcChooseableHandlerType : {
+                required: true
+            },
+            chooseableHandleUser: {
+                required: function(element) {
+                    return $('select[name="actcChooseableHandlerType"]').val() == 'users';
+                }
+            },
+            chooseableHandleRole: {
+                required: function(element) {
+                    return $('select[name="actcChooseableHandlerType"]').val().startsWith('role');
+                }
+            },
+            chooseableHandleTeam: {
+                required: function(element) {
+                    return $('select[name="actcChooseableHandlerType"]').val().startsWith('team');
+                }
+            },
+            chooseableHandleField: {
+                required: function(element) {
+                    return $('select[name="actcChooseableHandlerType"]').val() == 'byField';
                 }
             },
             actcCanChooseUser: {
@@ -272,6 +337,19 @@ $(function(){
     // 选择处理人（角色组）
     $("#choose_handle_team").click(function() {
         common.chooseTeam('handleTeam', 'false');
+    });
+    
+ // 选择可选处理人（人员）
+    $("#choose_able_handle_user").click(function() {
+        common.chooseUser('chooseableHandleUser', 'false');
+    });
+    // 选择可选处理人（角色）
+    $("#choose_able_handle_role").click(function() {
+        common.chooseRole('chooseableHandleRole', 'false');
+    });
+    // 选择可选处理人（角色组）
+    $("#choose_able_handle_team").click(function() {
+        common.chooseTeam('chooseableHandleTeam', 'false');
     });
 
     // 选择超时通知人（人员）
@@ -697,6 +775,10 @@ function initConf(map) {
     $("#handleRole_div").hide();
     $("#handleTeam_div").hide();
     $("#handleField_div").hide();
+    $("#chooseableHandleUser_div").hide();
+    $("#chooseableHandleRole_div").show();
+    $("#chooseableHandleTeam_div").hide();
+    $("#chooseableHandleField_div").hide();
     
     $('input[name="actcUid"]').val(conf.actcUid);
     $('input[name="actcSort"]').val(conf.actcSort);
@@ -803,8 +885,17 @@ function initConf(map) {
     $('input[name="actcCanChooseUser"]').each(function(){
         if ($(this).val() == conf.actcCanChooseUser) {
             $(this).prop("checked", true);
-        } else {
+            if ($(this).val() == "FALSE") {
+       		    $('#actcChooseableHandler').hide();
+            } else {
+            	$('#actcChooseableHandler').show();
+            }
+        } else if($(this).val() !=null){
             $(this).prop("checked", false);
+        }else{
+        	if ($(this).val() == "false") {
+        		$(this).prop("checked", true);
+        	}
         }
     });
     $('input[name="actcCanTransfer"]').each(function(){
@@ -822,6 +913,25 @@ function initConf(map) {
     $('input[name="handleTeam"]').val(conf.handleTeam);
     $('input[name="handleTeam_view"]').val(conf.handleTeamView);
     $('input[name="handleField"]').val(conf.handleField);
+    
+    //绑定可选处理人信息
+    $('select[name="actcChooseableHandlerType"]').val(conf.actcChooseableHandlerType);
+    showChosseAbleHandleDiv(conf.actcChooseableHandlerType);
+
+    if(conf.actcChooseableHandlerType=="allUser"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
+    }
+    
+    $('input[name="chooseableHandleUser"]').val(conf.chooseableHandleUser);
+    $('input[name="chooseableHandleUser_view"]').val(conf.chooseableHandleUserView);
+    $('input[name="chooseableHandleRole"]').val(conf.chooseableHandleRole);
+    $('input[name="chooseableHandleRole_view"]').val(conf.chooseableHandleRoleView);
+    $('input[name="chooseableHandleTeam"]').val(conf.chooseableHandleTeam);
+    $('input[name="chooseableHandleTeam_view"]').val(conf.chooseableHandleTeamView);
+    $('input[name="chooseableHandleField"]').val(conf.chooseableHandleField);
     
     $('input[name="outtimeUser"]').val(conf.outtimeUser);
     $('input[name="outtimeUser_view"]').val(conf.outtimeUserView);
@@ -945,7 +1055,7 @@ function showHandleDiv(assignType) {
     }else if(assignType=="teamAndCompany" || assignType=="teamAndCompany" || assignType=="team"){
         $("#handleRole_div").hide();
         $("#handleTeam_div").show();
-        $("#handleRole_div").hide();
+        $("#handleUser_div").hide();
         $("#handleField_div").hide();
     }else if(assignType=="leaderOfPreActivityUser" || assignType=="processCreator" || assignType == 'none'){
         $("#handleRole_div").hide();
@@ -962,6 +1072,40 @@ function showHandleDiv(assignType) {
         $("#handleTeam_div").hide();
         $("#handleUser_div").hide();
         $("#handleField_div").show();
+    }
+}
+//绑定可选处理人下拉列表信息
+function showChosseAbleHandleDiv(assignType){
+	if(assignType=="roleAndDepartment" || assignType=="roleAndCompany" || assignType=="role"){
+        $("#chooseableHandleRole_div").show();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
+    }else if(assignType=="teamAndCompany" || assignType=="teamAndCompany" || assignType=="team"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").show();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
+    }else if(assignType=="leaderOfPreActivityUser" || assignType=="processCreator" || assignType == 'none'){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
+    }else if(assignType=="users"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").show();
+        $("#chooseableHandleField_div").hide();
+    }else if(assignType=="byField"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").show();
+    }else if(assignType=="allUser"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
     }
 }
 function moveActivityToRight(){
@@ -1272,4 +1416,5 @@ function deleteStep(stepUid) {
 		}
 	});
 }
+
 function submitAddDatRule(){}
