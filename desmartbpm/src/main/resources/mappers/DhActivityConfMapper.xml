@@ -65,7 +65,8 @@
     atc.ACTC_AUDIT_TO_FIELD, atc.ACTC_OUTTIME_TRIGGER, atc.ACTC_OUTTIME_TEMPLATE, atc.ACTC_DESCRIPTION,
     atc.ACTC_DEF_TITLE, atc.ACTC_DEF_SUBJECT_MESSAGE, atc.ACTC_DEF_MESSAGE, atc.ACTC_DEF_DESCRIPTION,
     atc.ACTC_ALERT, atc.ACTC_PRIORITY_VARIABLE, atc.ACTC_CAN_CANCEL, atc.ACTC_CAN_PAUSE, atc.ACTC_CAN_SKIP,
-    atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY
+    atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY,
+    atc.ACTC_CHOOSEABLE_HANDLER_TYPE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -287,7 +288,8 @@
       UPDATE_TIME = sysdate,
       ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser},
       ACTC_CAN_TRANSFER = #{actcCanTransfer},
-      ACTC_RESPONSIBILITY = #{actcResponsibility}
+      ACTC_RESPONSIBILITY = #{actcResponsibility},
+      ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType}
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
 </mapper>
