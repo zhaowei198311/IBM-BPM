@@ -74,6 +74,9 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         // 加载默认处理人信息
         ServerResponse serverResponse = loadHandleOfActivity(dhActivityConf);
         
+        //加载可选处理人信息
+        loadChosseAbleHandleOfActivity(dhActivityConf);
+        
         // 加载退回环节信息
         loadRejectActivities(dhActivityConf);
         
@@ -89,11 +92,87 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         return ServerResponse.createBySuccess(result);
     }
     
-    
+    /**
+     * 加载可选处理人信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse loadChosseAbleHandleOfActivity(DhActivityConf dhActivityConf) {
+		// TODO Auto-generated method stub
+    	String actcAssignType = dhActivityConf.getActcChooseableHandlerType();
+        DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+        String activityId = dhActivityConf.getActivityId();
+        if (assignTypeEnum == null) {
+            return ServerResponse.createByErrorMessage("处理人类型不符合要求");
+        }
+        /*if (assignTypeEnum == DhActivityConfAssignType.NONE) {
+            return ServerResponse.createBySuccess();
+        }*/
+        DhActivityAssign selective = new DhActivityAssign();
+        selective.setActivityId(activityId);
+        selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+        List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+        if (assignList.size() == 0) {
+            return ServerResponse.createByErrorMessage("缺少处理人信息");
+        }
+        List<String> idList = getIdListFromDhActivityAssignList(assignList);
+        String str = "";
+        String strView = "";
+        switch (assignTypeEnum) {
+        case ROLE:
+        case ROLE_AND_DEPARTMENT:
+        case ROLE_AND_COMPANY:
+            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(idList); 
+            for (SysRole role : roleList) {
+                str += role.getRoleUid() + ";";
+                strView += role.getRoleName() + ";";
+            }
+            dhActivityConf.setChooseableHandleRole(str);
+            dhActivityConf.setChooseableHandleRoleView(strView);
+            break;
+        case TEAM:
+        case TEAM_AND_DEPARTMENT:
+        case TEAM_AND_COMPANY:
+            List<SysTeam> sysTeamList = sysTeamMapper.listByPrimaryKeyList(idList); 
+            for (SysTeam sysTeam : sysTeamList) {
+                str += sysTeam.getTeamUid() + ";";
+                strView += sysTeam.getTeamName() + ";";
+            }
+            dhActivityConf.setChooseableHandleTeam(str);
+            dhActivityConf.setChooseableHandleTeamView(strView);
+            break;
+        case LEADER_OF_PRE_ACTIVITY_USER:
+            
+            break;
+        case USERS:
+            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList); 
+            for (SysUser sysUser : userList) {
+                str += sysUser.getUserUid() + ";";
+                strView += sysUser.getUserName() + ";";
+            }
+            dhActivityConf.setChooseableHandleUser(str);
+            dhActivityConf.setChooseableHandleUserView(strView);
+            break;
+        case PROCESS_CREATOR:
+            
+            break;
+        case BY_FIELD:
+            if (assignList.size() > 0) {
+                String field = assignList.get(0).getActaAssignId();
+                dhActivityConf.setChooseableHandleField(field);
+            }
+            break;
+        default:
+            break; 
+        }
+        return ServerResponse.createBySuccess();
+	}
 
 
 
-    @Transactional
+
+
+	@Transactional
     public ServerResponse updateDhActivityConf(DhActivityConf dhActivityConf) {
         if (StringUtils.isBlank(dhActivityConf.getActcUid())) {
             return ServerResponse.createByErrorMessage("缺少环节唯一id");
@@ -107,6 +186,20 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         ServerResponse serverResponse = updateHandleOfActivity(dhActivityConf);
         if (!serverResponse.isSuccess()) {
             throw new PlatformException(serverResponse.getMsg());
+        }
+        
+        // 判断可选处理人类型并记录
+        if(dhActivityConf.getActcCanChooseUser()=="TRUE") {//判断是可选处理人
+        serverResponse = updateChooseAbleHandleOfActivity(dhActivityConf);
+        if (!serverResponse.isSuccess()) {
+            throw new PlatformException(serverResponse.getMsg());
+        }
+        }else {
+        	DhActivityAssign selective = new DhActivityAssign();
+        	String activityId = dhActivityConf.getActivityId();
+            selective.setActivityId(activityId);
+            selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+            dhActivityAssignMapper.deleteBySelective(selective);
         }
         // 判断回退环节并记录
         serverResponse = updateRejectActivities(dhActivityConf);
@@ -125,8 +218,129 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         
         return ServerResponse.createBySuccess();
     }
-    
-    /**
+
+
+	/**
+     * 为环节更新可选处理人信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse updateChooseAbleHandleOfActivity(DhActivityConf dhActivityConf) {
+		// TODO Auto-generated method stub
+    	String actcChooseableHandlerType = dhActivityConf.getActcChooseableHandlerType();
+        DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcChooseableHandlerType);
+        if (assignTypeEnum == null) {
+            return ServerResponse.createByErrorMessage("处理人类型不符合要求");
+        }
+        String activityAssignType = null;  // 分配的类型
+        String activityId = dhActivityConf.getActivityId();
+        // 删除老的可选处理人记录
+        DhActivityAssign selective = new DhActivityAssign();
+        selective.setActivityId(activityId);
+        selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+        dhActivityAssignMapper.deleteBySelective(selective);
+        List<DhActivityAssign> assignList = new ArrayList<>(); 
+        
+        switch (assignTypeEnum) {
+        case NONE:
+            break;
+        case ROLE:
+        case ROLE_AND_DEPARTMENT:
+        case ROLE_AND_COMPANY:
+            activityAssignType = DhActivityAssignAssignType.ROLE.getCode();
+            String chooseHandleRole = dhActivityConf.getChooseableHandleRole();
+            if (StringUtils.isBlank(chooseHandleRole)) {
+                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            }
+            List<String> roleIdList = Arrays.asList(chooseHandleRole.split(";"));
+            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(roleIdList);
+            if (roleIdList.size() != roleList.size()) {
+                return ServerResponse.createByErrorMessage("处理人信息错误");
+            }
+            for (SysRole role : roleList) {
+                DhActivityAssign assign = new DhActivityAssign();
+                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+                assign.setActivityId(activityId);
+                assign.setActaAssignType(activityAssignType);
+                assign.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+                assign.setActaAssignId(role.getRoleUid());
+                assignList.add(assign);
+            }
+            break;
+        case TEAM:
+        case TEAM_AND_DEPARTMENT:
+        case TEAM_AND_COMPANY:
+            activityAssignType = DhActivityAssignAssignType.TEAM.getCode();
+            String handleTeam2 = dhActivityConf.getHandleTeam();
+            if (StringUtils.isBlank(handleTeam2)) {
+                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            }
+            List<String> teamIdList2 = Arrays.asList(handleTeam2.split(";"));
+            List<SysTeam> teamList2 = sysTeamMapper.listByPrimaryKeyList(teamIdList2);
+            if (teamIdList2.size() != teamList2.size()) {
+                return ServerResponse.createByErrorMessage("处理人信息错误");
+            }
+            for (SysTeam team : teamList2) {
+                DhActivityAssign assign = new DhActivityAssign();
+                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+                assign.setActivityId(activityId);
+                assign.setActaAssignType(activityAssignType);
+                assign.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+                assign.setActaAssignId(team.getTeamUid());
+                assignList.add(assign);
+            }
+            break;
+        case LEADER_OF_PRE_ACTIVITY_USER:
+            
+            break;
+        case USERS:
+            String handleUser = dhActivityConf.getHandleUser();
+            if (StringUtils.isBlank(handleUser)) {
+                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            }
+            List<String> idList = Arrays.asList(handleUser.split(";"));
+            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList); 
+            if (idList.size() != userList.size()) {
+                return ServerResponse.createByErrorMessage("处理人信息错误");
+            }
+            for (SysUser user : userList) {
+                DhActivityAssign assign = new DhActivityAssign();
+                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+                assign.setActivityId(activityId);
+                assign.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
+                assign.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+                assign.setActaAssignId(user.getUserUid());
+                assignList.add(assign);
+            }
+            break;
+        case PROCESS_CREATOR:
+            break;
+        case BY_FIELD:
+            String handleField = dhActivityConf.getHandleField();
+            if (StringUtils.isBlank(handleField)) {
+                return ServerResponse.createByErrorMessage("缺少处理人信息");
+            }
+            if (handleField.length() > 60) {
+                return ServerResponse.createByErrorMessage("处理人字段过长");
+            }
+            DhActivityAssign assign = new DhActivityAssign();
+            assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+            assign.setActivityId(activityId);
+            assign.setActaAssignType(DhActivityAssignAssignType.FIELD.getCode());
+            assign.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+            assign.setActaAssignId(handleField.trim());
+            assignList.add(assign);
+            break;
+        default:
+            break; 
+        }
+        if (assignList.size() > 0) {
+            dhActivityAssignMapper.insertBatch(assignList);
+        }
+        return ServerResponse.createBySuccess();
+	}
+
+	/**
      * 为环节更新默认处理人信息
      * @param dhActivityConf
      * @return
