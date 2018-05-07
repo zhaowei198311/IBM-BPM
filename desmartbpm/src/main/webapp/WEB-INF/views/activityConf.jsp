@@ -24,6 +24,7 @@
                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
                     <span style="float:right;">
                         <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="saveFrom='saveBtn';save('');">保存</button>
+
                     </span>
                 </div>
             </div>
@@ -130,11 +131,63 @@
                                                                     <input type="text" name="handleField"  value="" autocomplete="off" class="layui-input">
                                                                 </div>
                                                             </div>
+                                                            <!-- 可选处理人 (开始)-->
+                                                            <div id="actcChooseableHandler">
+                                                            <div class="layui-form-item">
+                                                                <label class="layui-form-label">可选处理人</label>
+                                                                <div class="layui-input-block">
+                                                                    <select name="actcChooseableHandlerType" lay-filter="chooseableHandlerType" lay-verify="required">
+                                                                        <option value="role">角色</option>
+                                                                        <option value="team">角色组</option>
+                                                                        <option value="roleAndDepartment">角色 + 部门</option>
+                                                                        <option value="roleAndCompany">角色 + 公司编码</option>
+                                                                        <option value="teamAndDepartment">角色组 + 部门</option>
+                                                                        <option value="teamAndCompany">角色组 + 公司编码</option>
+                                                                        <option value="leaderOfPreActivityUser">上个环节提交人的上级</option>
+                                                                        <option value="users">指定人员</option>
+                                                                        <option value="processCreator">流程发起人</option>
+                                                                        <option value="byField">根据表字段选择</option>
+                                                                        <option value="allUser">全体人员</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="chooseableHandleUser_div" style="display:none;">
+                                                                <label class="layui-form-label">人员</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
+                                                                    <input type="text" name="chooseableHandleUser_view"  id="chooseableHandleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i class="layui-icon choose_user" id="choose_able_handle_user" title="选择人员">&#xe612;</i>  
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item" id="chooseableHandleRole_div">
+                                                                <label class="layui-form-label">角色</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="chooseableHandleRole" name="chooseableHandleRole"   autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="chooseableHandleRole_view" name="chooseableHandleRole_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i id="choose_able_handle_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="chooseableHandleTeam_div" style="display:none;">
+                                                                <label class="layui-form-label">角色组</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="hidden" id="chooseableHandleTeam" name="chooseableHandleTeam"  value="" autocomplete="off" class="layui-input">
+                                                                    <input type="text" id="chooseableHandleTeam_view" name="chooseableHandleTeam_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i id="choose_able_handle_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>  
+                                                                </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="chooseableHandleField_div" style="display:none;">
+                                                                <label class="layui-form-label">字段名称</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="text" name="chooseableHandleField"  value="" autocomplete="off" class="layui-input">
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                            <!-- 可选处理人 (结束)-->
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否可选处理人</label>
                                                                 <div class="layui-input-block">
-                                                                    <input type="radio" name="actcCanChooseUser" value="TRUE" title="可选" >
-                                                                    <input type="radio" name="actcCanChooseUser" value="FALSE" title="不可选" >
+                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="TRUE" title="可选" >
+                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="FALSE" title="不可选" >
                                                                 </div>
                                                             </div>
                                                             <div class="layui-form-item">
@@ -426,386 +479,147 @@
                             </div>
                         </div>
                         <div class="layui-tab-item">
-                            <div class="layui-row">
-                                <div class="layui-col-md12">
-                                    <div class="layui-tab">
-                                        <ul class="layui-tab-title">
-                                            <li class="layui-this">并行处理</li>
-                                            <li>根据金额判断</li>
-                                            <li>汇合</li>
-                                        </ul>
-                                        <div class="layui-tab-content">
-                                            <div class="layui-tab-item layui-show">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">                                                         
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关类型</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="并行网关" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关环节序号</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                        <div class="layui-col-md12">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="0"/><label for="0">result_0</label></td>
-                                                                                <td><input type="checkbox" id="1"/><label for="1">result_1</label></td>
-                                                                                <td><input type="checkbox" id="2"/><label for="2">result_2</label></td>
-                                                                                <td><input type="checkbox" id="3"/><label for="3">result_3</label></td>
-                                                                                <td><input type="checkbox" id="4"/><label for="4">result_4</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="5"/><label for="5">result_5</label></td>
-                                                                                <td><input type="checkbox" id="6"/><label for="6">result_6</label></td>
-                                                                                <td><input type="checkbox" id="7"/><label for="7">result_7</label></td>
-                                                                                <td><input type="checkbox" id="8"/><label for="8">result_8</label></td>
-                                                                                <td><input type="checkbox" id="9"/><label for="9">result_9</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="10"/><label for="10">result_10</label></td>
-                                                                                <td><input type="checkbox" id="11"/><label for="11">result_11</label></td>
-                                                                                <td><input type="checkbox" id="12"/><label for="12">result_12</label></td>
-                                                                                <td><input type="checkbox" id="13"/><label for="13">result_13</label></td>
-                                                                                <td><input type="checkbox" id="14"/><label for="14">result_14</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="15"/><label for="15">result_15</label></td>
-                                                                                <td><input type="checkbox" id="16"/><label for="16">result_16</label></td>
-                                                                                <td><input type="checkbox" id="17"/><label for="17">result_17</label></td>
-                                                                                <td><input type="checkbox" id="18"/><label for="18">result_18</label></td>
-                                                                                <td><input type="checkbox" id="19"/><label for="19">result_19</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="20"/><label for="20">result_20</label></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary delete_net">删除</button>
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>                                                                     
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
-                                                                                <th>路由变量</th>
-                                                                                <th>字段名称</th>
-                                                                                <th>比较运算符</th>
-                                                                                <th>字段值</th>
-                                                                                <th>字段值类型</th>
-                                                                                <th>条件组合运算</th>
-                                                                                <th>优先级</th>
-                                                                                <th>条件分组</th>
-                                                                            </tr> 
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
-                                                                                <td>result_0</td>
-                                                                                <td>amount</td>
-                                                                                <td>==</td>
-                                                                                <td>12</td>
-                                                                                <td>text</td>
-                                                                                <td>||</td>
-                                                                                <td>0</td>
-                                                                                <td>1</td>
-                                                                            </tr>                                                                           
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">条件组合预览</label>
-                                                                <div class="layui-input-block">
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">                                                         
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关类型</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="排它网关" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关环节序号</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                        <div class="layui-col-md12">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="0"/><label for="0">result_0</label></td>
-                                                                                <td><input type="checkbox" id="1"/><label for="1">result_1</label></td>
-                                                                                <td><input type="checkbox" id="2"/><label for="2">result_2</label></td>
-                                                                                <td><input type="checkbox" id="3"/><label for="3">result_3</label></td>
-                                                                                <td><input type="checkbox" id="4"/><label for="4">result_4</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="5"/><label for="5">result_5</label></td>
-                                                                                <td><input type="checkbox" id="6"/><label for="6">result_6</label></td>
-                                                                                <td><input type="checkbox" id="7"/><label for="7">result_7</label></td>
-                                                                                <td><input type="checkbox" id="8"/><label for="8">result_8</label></td>
-                                                                                <td><input type="checkbox" id="9"/><label for="9">result_9</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="10"/><label for="10">result_10</label></td>
-                                                                                <td><input type="checkbox" id="11"/><label for="11">result_11</label></td>
-                                                                                <td><input type="checkbox" id="12"/><label for="12">result_12</label></td>
-                                                                                <td><input type="checkbox" id="13"/><label for="13">result_13</label></td>
-                                                                                <td><input type="checkbox" id="14"/><label for="14">result_14</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="15"/><label for="15">result_15</label></td>
-                                                                                <td><input type="checkbox" id="16"/><label for="16">result_16</label></td>
-                                                                                <td><input type="checkbox" id="17"/><label for="17">result_17</label></td>
-                                                                                <td><input type="checkbox" id="18"/><label for="18">result_18</label></td>
-                                                                                <td><input type="checkbox" id="19"/><label for="19">result_19</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="20"/><label for="20">result_20</label></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary delete_net">删除</button>
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>                                                                     
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
-                                                                                <th>路由变量</th>
-                                                                                <th>字段名称</th>
-                                                                                <th>比较运算符</th>
-                                                                                <th>字段值</th>
-                                                                                <th>字段值类型</th>
-                                                                                <th>条件组合运算</th>
-                                                                                <th>优先级</th>
-                                                                                <th>条件分组</th>
-                                                                            </tr> 
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
-                                                                                <td>result_0</td>
-                                                                                <td>amount</td>
-                                                                                <td>==</td>
-                                                                                <td>12</td>
-                                                                                <td>text</td>
-                                                                                <td>||</td>
-                                                                                <td>0</td>
-                                                                                <td>1</td>
-                                                                            </tr>                                                                           
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">条件组合预览</label>
-                                                                <div class="layui-input-block">
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="layui-tab-item">
-                                                <form class="layui-form" action="">
-                                                    <div class="layui-row">
-                                                        <div class="layui-col-md6">                                                         
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关类型</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="包容网关" autocomplete="off" class="layui-input" disabled="disabled">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="layui-col-md6">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">网关环节序号</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="text" name="title" required  lay-verify="required" value="" autocomplete="off" class="layui-input" >
-                                                                </div>
-                                                            </div>                                                          
-                                                        </div>
-                                                        <div class="layui-col-md12">
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="0"/><label for="0">result_0</label></td>
-                                                                                <td><input type="checkbox" id="1"/><label for="1">result_1</label></td>
-                                                                                <td><input type="checkbox" id="2"/><label for="2">result_2</label></td>
-                                                                                <td><input type="checkbox" id="3"/><label for="3">result_3</label></td>
-                                                                                <td><input type="checkbox" id="4"/><label for="4">result_4</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="5"/><label for="5">result_5</label></td>
-                                                                                <td><input type="checkbox" id="6"/><label for="6">result_6</label></td>
-                                                                                <td><input type="checkbox" id="7"/><label for="7">result_7</label></td>
-                                                                                <td><input type="checkbox" id="8"/><label for="8">result_8</label></td>
-                                                                                <td><input type="checkbox" id="9"/><label for="9">result_9</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="10"/><label for="10">result_10</label></td>
-                                                                                <td><input type="checkbox" id="11"/><label for="11">result_11</label></td>
-                                                                                <td><input type="checkbox" id="12"/><label for="12">result_12</label></td>
-                                                                                <td><input type="checkbox" id="13"/><label for="13">result_13</label></td>
-                                                                                <td><input type="checkbox" id="14"/><label for="14">result_14</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="15"/><label for="15">result_15</label></td>
-                                                                                <td><input type="checkbox" id="16"/><label for="16">result_16</label></td>
-                                                                                <td><input type="checkbox" id="17"/><label for="17">result_17</label></td>
-                                                                                <td><input type="checkbox" id="18"/><label for="18">result_18</label></td>
-                                                                                <td><input type="checkbox" id="19"/><label for="19">result_19</label></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" id="20"/><label for="20">result_20</label></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">路由变量名称</label>
-                                                                <div class="layui-input-block">
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
-                                                                    <button class="layui-btn layui-btn-sm layui-btn-primary delete_net">删除</button>
-                                                                    <table class="layui-table" lay-even lay-skin="nob" >
-                                                                        <colgroup>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                            <col>
-                                                                        </colgroup>                                                                     
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
-                                                                                <th>路由变量</th>
-                                                                                <th>字段名称</th>
-                                                                                <th>比较运算符</th>
-                                                                                <th>字段值</th>
-                                                                                <th>字段值类型</th>
-                                                                                <th>条件组合运算</th>
-                                                                                <th>优先级</th>
-                                                                                <th>条件分组</th>
-                                                                            </tr> 
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td><input type="checkbox" name="" lay-skin="primary"> 1</td>
-                                                                                <td>result_0</td>
-                                                                                <td>amount</td>
-                                                                                <td>==</td>
-                                                                                <td>12</td>
-                                                                                <td>text</td>
-                                                                                <td>||</td>
-                                                                                <td>0</td>
-                                                                                <td>1</td>
-                                                                            </tr>                                                                           
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">条件组合预览</label>
-                                                                <div class="layui-input-block">
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+						<div class="layui-row">
+							<div class="layui-col-md12">
+								<div class="layui-tab">
+									<ul id="gatewaySet_tab_title" class="layui-tab-title">
+										
+									</ul>
+									<div class="layui-tab-content">
+									<form class="layui-form" action="">
+										<div id="gatewaySet_tab_row" class="layui-tab-item layui-show">
+										
+												<div class="layui-row">
+													<div class="layui-col-md6">
+														<div class="layui-form-item">
+															<label class="layui-form-label">网关类型</label>
+															<div class="layui-input-block">
+																<input type="text" name="title" required
+																	lay-verify="required" value="并行网关" autocomplete="off"
+																	class="layui-input" disabled="disabled">
+															</div>
+														</div>
+													</div>
+												</div>
+										</div>
+										<div class="layui-col-md12">
+														<div class="layui-form-item">
+															<label class="layui-form-label">路由变量名称</label>
+															<div class="layui-input-block">
+																<table class="layui-table" lay-even lay-skin="nob">
+																	<colgroup>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																	</colgroup>
+																	<tbody class="gatewayTbody">
+																		<tr>
+																			<td><input type="checkbox" id="0" /><label
+																				for="0">result_0</label></td>
+																			<td><input type="checkbox" id="1" /><label
+																				for="1">result_1</label></td>
+																			<td><input type="checkbox" id="2" /><label
+																				for="2">result_2</label></td>
+																			<td><input type="checkbox" id="3" /><label
+																				for="3">result_3</label></td>
+																			<td><input type="checkbox" id="4" /><label
+																				for="4">result_4</label></td>
+																		</tr>
+																		<tr>
+																			<td><input type="checkbox" id="5" /><label
+																				for="5">result_5</label></td>
+																			<td><input type="checkbox" id="6" /><label
+																				for="6">result_6</label></td>
+																			<td><input type="checkbox" id="7" /><label
+																				for="7">result_7</label></td>
+																			<td><input type="checkbox" id="8" /><label
+																				for="8">result_8</label></td>
+																			<td><input type="checkbox" id="9" /><label
+																				for="9">result_9</label></td>
+																		</tr>
+																		<tr>
+																			<td><input type="checkbox" id="10" /><label
+																				for="10">result_10</label></td>
+																			<td><input type="checkbox" id="11" /><label
+																				for="11">result_11</label></td>
+																			<td><input type="checkbox" id="12" /><label
+																				for="12">result_12</label></td>
+																			<td><input type="checkbox" id="13" /><label
+																				for="13">result_13</label></td>
+																			<td><input type="checkbox" id="14" /><label
+																				for="14">result_14</label></td>
+																		</tr>
+																		<tr>
+																			<td><input type="checkbox" id="15" /><label
+																				for="15">result_15</label></td>
+																			<td><input type="checkbox" id="16" /><label
+																				for="16">result_16</label></td>
+																			<td><input type="checkbox" id="17" /><label
+																				for="17">result_17</label></td>
+																			<td><input type="checkbox" id="18" /><label
+																				for="18">result_18</label></td>
+																			<td><input type="checkbox" id="19" /><label
+																				for="19">result_19</label></td>
+																		</tr>
+																		<tr>
+																			<td><input type="checkbox" id="20" /><label
+																				for="20">result_20</label></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<div class="layui-form-item">
+															<label class="layui-form-label">路由变量名称</label>
+															<div class="layui-input-block">
+																<button type="button" value=""
+																	class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
+																<button type="button"
+																	class="layui-btn layui-btn-sm layui-btn-primary delete_net">删除</button>
+																<table id="gatewayTab"  class="layui-table" lay-even lay-skin="nob">
+																	<colgroup>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																		<col>
+																	</colgroup>
+																	<thead>
+																		<tr>
+																			<th><input type="checkbox" name="allChecked" title='全选'
+																			lay-filter="allChoose"	lay-skin="primary"> 序号</th>
+																			<th>路由变量</th>
+																			<th>字段名称</th>
+																			<th>比较运算符</th>
+																			<th>字段值</th>
+																			<th>字段值类型</th>
+																			<th>条件组合运算</th>
+																			<th>优先级</th>
+																			<th>条件分组</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																	
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<div class="layui-form-item">
+															<label class="layui-form-label">条件组合预览</label>
+															<div id="gatewayPredictRule" class="layui-input-block"></div>
+														</div>
+													</div>
+													</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
                     </div>
                 </div>              
             </div>
@@ -1023,82 +837,87 @@
         </form>
         </div>
         <div class="display_container5">
-            <div class="display_content5">
-                <div class="top">新增网关</div>
-                <div class="middle1">
-                    <form class="layui-form" action="">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">路由器变量</label>
-                            <div class="layui-input-block">
-                                <select name="" lay-verify="required">
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">字段名称</label>
-                            <div class="layui-input-block">
-                                <select name="" lay-verify="required">
-                                    <option value="amount">amount</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">值比较运算符</label>
-                            <div class="layui-input-block">
-                             <select name="" lay-verify="required">
-                                    <option value="=">=</option>
-                                    <option value="<"><</option>
-                                    <option value=">">></option>
-                                    <option value=">=">>=</option>
-                                    <option value="<="><=</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">字段值</label>
-                            <div class="layui-input-block">
-                              <input type="text" name="title" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">字段值类型</label>
-                            <div class="layui-input-block">
-                              <select name="" lay-verify="required">
-                                    <option value="字符串">字符串</option>
-                                     <option value="整数">整数</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">条件组合运算符</label>
-                            <div class="layui-input-block">
-                              <select name="" lay-verify="required">
-                                    <option value="与">与</option> 
-                                    <option value="或">或</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">优先级序号</label>
-                            <div class="layui-input-block">
-                              <input type="text" name="title" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">条件分组名称</label>
-                            <div class="layui-input-block">
-                              <input type="text" name="title" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                    </form>                 
-                </div>
-                <div class="foot">
-                    <button class="layui-btn layui-btn sure_btn">确定</button>
-                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
-                </div>
-            </div>
-        </div>
+		<div class="display_content5">
+			<div class="top">新增网关</div>
+			<div class="middle1">
+				<form id="addDatRule" class="layui-form" action="">
+				<!-- <input id="sortNum" name="sortNum" style="display: none;" readonly="readonly"/> -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">路由器变量</label>
+						<div class="layui-input-block">
+							<select id="gateway_result" name="result" lay-verify="required">
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">字段名称</label>
+						<div class="layui-input-block">
+							<!-- <select id="leftValue" name="leftValue" lay-verify="required">
+								<option value="amount">amount</option>
+							</select> -->
+							<input id="leftValue" type="text" name="leftValue" required lay-verify="required"
+								placeholder="请输入字段名称" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">值比较运算符</label>
+						<div class="layui-input-block">
+							<select id="valueOperator" name="valueOperator" lay-verify="required">
+								<option value="==">==</option>
+								<option value="<"><</option>
+								<option value=">">></option>
+								<option value=">=">>=</option>
+								<option value="<="><=</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">字段值</label>
+						<div class="layui-input-block">
+							<input type="text" name="rightValue" required lay-verify="required"
+								placeholder="请输入字段值" value="" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">字段值类型</label>
+						<div class="layui-input-block">
+							<select id="rightValueType" name="rightValueType" lay-verify="required">
+								<option value="String">字符串</option>
+								<option value="Integer">整数</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">条件组合运算符</label>
+						<div class="layui-input-block">
+							<select id="conditionOperator" name="conditionOperator" lay-verify="required">
+								<option value="&&:与">与</option>
+								<option value="||:或">或</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">优先级序号</label>
+						<div class="layui-input-block">
+							<input type="text" name="ruleVersion" required lay-verify="required"
+								placeholder="请输入正整数" autocomplete="off" class="layui-input" onkeyup="doVersion(this)">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">条件分组名称</label>
+						<div class="layui-input-block">
+							<input type="text" name="conditionGroupName" required lay-verify="required"
+								placeholder="请输入大写字母" autocomplete="off" class="layui-input" onKeyUp="dothis(this);">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="foot">
+				<button id="addToArr" type="button" class="layui-btn layui-btn sure_btn" onclick="addToArr()">确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+			</div>
+		</div>
+	</div>
         <div class="display_container6" id="choose_activity_container" >
             <div class="display_content6" style="height:500px;width:700px;">
                 <div class="top"> 选择退回环节</div>
@@ -1218,6 +1037,7 @@
     
     <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
     <script type="text/javascript" src="<%=basePath%>/resources/js/my/activityConf.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/resources/js/my/gatewaySet.js"></script>
 
     <script>
         var proAppId = '${processDefinition.proAppId}';
@@ -1247,11 +1067,12 @@
         	$(".cancel_btn").click(function(){
                 $(".display_container4").css("display","none");
                 $(".display_container10").css("display","none");
+                $(".display_container5").css("display","none");
             })
         	
-            $(".create_net").click(function(){
+            /* $(".create_net").click(function(){
                 $(".display_container5").css("display","block");
-            })
+            }) */
            
             $(".edit_role").click(function(){
                 $(".display_container4").css("display","block");
