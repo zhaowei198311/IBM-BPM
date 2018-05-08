@@ -465,7 +465,7 @@ $(function(){
 
 });
 
-//新增网关table
+//新增步骤table
 function formTable(){
 	$.ajax({
 	    url: common.getPath() + "/formManage/queryFormListBySelective",
@@ -684,6 +684,11 @@ function formFieldEdit(data){
 				   trs+='</tr>';
 			   });
 		      $("#field_permissions_table").append(trs);
+		      radiocheckAll(result.data.length);
+		      $("#field_permissions_table input[type='radio']").bind("click",function(){
+		    	  radiocheckAll(result.data.length);
+		      });
+
 	     }
 	 });
 	//$(".form-horizontal").serialize();
