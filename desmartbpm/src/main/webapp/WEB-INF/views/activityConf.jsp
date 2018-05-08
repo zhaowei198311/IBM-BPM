@@ -716,9 +716,9 @@
                         <thead>
                             <th><!-- <input type="checkbox"  name="fldUid"  id="field_check" lay-skin="primary"> -->序号</th>
                             <th>字段名称</th>
-                            <th><input type="radio" name="radioAll"  lay-skin="primary" onclick="editAllclick(this)">编辑</th>
-                            <th><input type="radio" name="radioAll"  lay-skin="primary" id="viewAllclick">只读</th>
-                            <th><input type="radio" name="radioAll"  lay-skin="primary" id="hiddenAllclick">隐藏</th>
+                            <th><input type="radio" name="radioAll"  id="radioedit" lay-skin="primary" onclick="editAllclick(this)">编辑</th>
+                            <th><input type="radio" name="radioAll"    lay-skin="primary" id="viewAllclick">只读</th>
+                            <th><input type="radio" name="radioAll"   lay-skin="primary" id="hiddenAllclick">隐藏</th>
                         </thead>
                         
                         <tbody id="field_permissions_table" >
@@ -1180,9 +1180,21 @@
            
         })
         
-        //
-        function radiocheckAll(){
-        	var  view= $("#field_permissions_table").find("input[value='VIEW']").length;
+        //编辑 只读  隐藏
+        function radiocheckAll(dataLength){
+        	var $table=$("#field_permissions_table");
+        	var  HIDDEN=$table.find("input[value='HIDDEN']:checked").length;
+        	var  VIEW=$table.find("input[value='VIEW']:checked").length;
+        	var  EDIT=$table.find("input[value='EDIT']:checked").length;
+        	if(HIDDEN==dataLength){
+        		$('#hiddenAllclick').click(); 
+        	}else if(VIEW==dataLength){
+        		$('#viewAllclick').click(); 
+        	}else if(EDIT==dataLength){
+        		$('#radioedit').click();
+        	}else{
+        		$("#editFieldPermissions input[name=radioAll]").prop("checked",false);
+        	}
         }
         
         
