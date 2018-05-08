@@ -8,9 +8,12 @@ function showTextModal(obj){
 	var inputObj = view.find("input");
 	var defaultVal = inputObj.val();
 	var id = inputObj.attr("id");
+	var name = inputObj.prop("name");
 	var place = inputObj.attr("placeholder");
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
+	var regx = inputObj.attr("regx");
+	var regxCue = inputObj.attr("regxCue");
 	
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
@@ -18,10 +21,14 @@ function showTextModal(obj){
 	var textCol = inputObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	
-	$("#text-name").val(label);
+	$("#text-label").val(label);
+	$("#text-name").val(name);
+	$("#text-name").onlyNumAlpha();//只能输入英文
 	$("#text-id").val(id);
 	$("#text-default-value").val(defaultVal);
 	$("#text-place").val(place);
+	$("#text-regx").val(regx);
+	$("#text-regxCue").val(regxCue);
 	$("#text-width").val(textCol);
 	$("#text-label-width").val(textLabelCol);
 	
@@ -43,6 +50,7 @@ function showNumberModal(obj){
 	var defaultVal = inputObj.val();
 	var id = inputObj.attr("id");
 	var place = inputObj.attr("placeholder");
+	var name = inputObj.attr("name");
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
 	
@@ -52,7 +60,9 @@ function showNumberModal(obj){
 	var textCol = inputObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	inputObj.desNumber();
-	$("#number-name").val(label);
+	$("#number-label").val(label);
+	$("#number-name").val(name);
+	$("#number-name").onlyNumAlpha();//只能输入英文
 	$("#number-id").val(id);
 	$("#number-default-value").desNumber();
 	$("#number-default-value").val(defaultVal);
@@ -78,6 +88,7 @@ function showDateModal(obj){
 	
 	var id = inputObj.attr("id");
 	var place = inputObj.attr("placeholder");
+	var name = inputObj.attr("name");
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
 	
@@ -86,7 +97,8 @@ function showDateModal(obj){
 	
 	var textCol = inputObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
-	$("#date-name").val(label);
+	$("#date-label").val(label);
+	$("#date-name").val(name);
 	$("#date-id").val(id);
 	
 	$("#date-place").val(place);
@@ -110,6 +122,7 @@ function showTextareaModal(obj){
 	var textareaObj = view.find("textarea");
 	var defaultVal = textareaObj.val();
 	var id = textareaObj.attr("id");
+	var name = textareaObj.attr("name");
 	var rows = textareaObj.attr("rows");
 	var textWidth = textareaObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
@@ -120,7 +133,9 @@ function showTextareaModal(obj){
 	var textCol = textareaObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	
-	$("#textarea-name").val(label);
+	$("#textarea-label").val(label);
+	$("#textarea-name").val(name);
+	$("#textarea-name").onlyNumAlpha();//只能输入英文
 	$("#textarea-id").val(id);
 	$("#textarea-default-value").val(defaultVal);
 	$("#textarea-width").val(textCol);
@@ -144,6 +159,7 @@ function showSelectModal(obj){
 	var label = view.find("label").text();
 	var selectObj = view.find("select");
 	var id = selectObj.attr("id");
+	var name = selectObj.attr("name");
 	var textWidth = selectObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
 	
@@ -153,7 +169,9 @@ function showSelectModal(obj){
 	var textCol = selectObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	
-	$("#select-name").val(label);
+	$("#select-label").val(label);
+	$("#select-name").val(name);
+	$("#select-name").onlyNumAlpha();//只能输入英文
 	$("#select-id").val(id);
 	$("#select-width").val(textCol);
 	$("#select-label-width").val(textLabelCol);
@@ -192,11 +210,14 @@ function showRadioModal(obj){
 	var label = view.find(".labelDiv label").text();
 	var inputRadioObj = view.find("input[type='radio']");
 	var id = inputRadioObj.attr("class");
+	var name = inputRadioObj.attr("name");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	var textCol = view.find(".subDiv").attr("col");
 	
 	$("#radio-id").val(id);
-	$("#radio-name").val(label);
+	$("#radio-label").val(label);
+	$("#radio-name").val(name);
+	$("#radio-name").onlyNumAlpha();//只能输入英文
 	$("#radio-label-width").val(textLabelCol);
 	$("#radio-width").val(textCol);
 	
@@ -235,11 +256,14 @@ function showCheckboxModal(obj){
 	var label = view.find(".labelDiv label").text();
 	var inputCheckboxObj = view.find(".subDiv input[type='checkbox']");
 	var id = inputCheckboxObj.attr("class");
+	var name = inputCheckboxObj.attr("name");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	var textCol = view.find(".subDiv").attr("col");
 	
 	$("#checkbox-id").val(id);
-	$("#checkbox-name").val(label);
+	$("#checkbox-label").val(label);
+	$("#checkbox-name").val(name);
+	$("#checkbox-name").onlyNumAlpha();//只能输入英文
 	$("#checkbox-label-width").val(textLabelCol);
 	$("#checkbox-width").val(textCol);
 	
@@ -356,12 +380,24 @@ function showEditorModal(obj){
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
-	var textCol = $("#cke_"+id).attr("col");
+	var textCol = textareaObj.attr("col");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	
 	$("#editor-id").val(id);
 	$("#editor-width").val(textCol);
 	$("#editor-label-width").val(textLabelCol);
+}
+
+var nameArr = new Array();
+
+//新建、修改表单组件时判断该组件的name是否重复
+function nameIsRepeat(name){
+	if($.inArray(name, nameArr)==-1){
+		nameArr.push(name);
+		return false;
+	}else{
+		return true;
+	}
 }
 
 //日期控件图标的宽度
@@ -425,43 +461,96 @@ $(function(){
 	}
 	
 	$(".demo").css("display","block");
+	//给name数组赋值
+	nameArr = $("#downloadModal #nameArr").val().split("," );
 	
 	//保存单行文本框的属性编辑
 	$("#save-text-content").click(function(e){
 		e.preventDefault();
 		var id = $("#text-id").val();
-		if(id=="" || id==null){
+		var name = $("#text-name").val().trim();
+		if(id=="" || id==null || name==null || name==""){
+			$("#text-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#text-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#text-warn").modal('show');
 		}else{
-			rowWidth = $(".demo").width()-5;
-			colWidth = rowWidth/12;
-			var label = $("#text-name").val();
-			var defaultVal = $("#text-default-value").val();
-			var place = $("#text-place").val();
-			var isMust = $("#text-must").is(':checked');
-			
-			var textWidth = $("#text-width").val()*colWidth;
-			var textLabelWidth = $("#text-label-width").val()*colWidth;
-			
-			view.find("label").text(label);
-			var inputObj = view.find("input");
-			inputObj.val(defaultVal);
-			inputObj.attr({"id":id,"placeholder":place});
-			
-			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
-			inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
-			inputObj.css("width",textWidth-18).attr("col",$("#text-width").val());
-			
-			if(isMust){
-				var num = view.find(".labelDiv").find("span").length;
-				if(num==0){
-					view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+			var isRegx = true;
+			var regx = $("#text-regx").val();
+			try{  
+			  	new RegExp(regx);
+			}catch(e){  
+				isRegx = false;
+			 	$("#text-warn").html("<strong>警告！</strong>请输入有效正则表达式");
+				$("#text-warn").modal('show');
+			}  
+			if(isRegx){
+				rowWidth = $(".demo").width()-5;
+				colWidth = rowWidth/12;
+				var label = $("#text-label").val();
+				
+				var regxCue = $("#text-regx-cue").val();
+				var defaultVal = $("#text-default-value").val().trim();
+				if(defaultVal!=null && defaultVal!=""){
+					try{
+						regx.test(defaultVal);
+						var place = $("#text-place").val();
+						var isMust = $("#text-must").is(':checked');
+						
+						var textWidth = $("#text-width").val()*colWidth;
+						var textLabelWidth = $("#text-label-width").val()*colWidth;
+						
+						view.find("label").text(label);
+						var inputObj = view.find("input");
+						inputObj.val(defaultVal);
+						inputObj.attr({"id":id,"placeholder":place,"name":name,"regxCue":regxCue});
+						
+						view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
+						inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
+						inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+						
+						if(isMust){
+							var num = view.find(".labelDiv").find("span").length;
+							if(num==0){
+								view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+							}
+						}else{
+							view.find(".labelDiv").find("span").remove();
+						}
+						$("#text-warn").modal('hide');
+						$("#textModal").modal("hide");
+					}catch(e){
+						$("#text-warn").html("<strong>警告！</strong>默认值和正则表达式不匹配");
+						$("#text-warn").modal('show');
+					}
+				}else{
+					var place = $("#text-place").val();
+					var isMust = $("#text-must").is(':checked');
+					
+					var textWidth = $("#text-width").val()*colWidth;
+					var textLabelWidth = $("#text-label-width").val()*colWidth;
+					
+					view.find("label").text(label);
+					var inputObj = view.find("input");
+					inputObj.val(defaultVal);
+					inputObj.attr({"id":id,"placeholder":place,"name":name});
+					
+					view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
+					inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
+					inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+					
+					if(isMust){
+						var num = view.find(".labelDiv").find("span").length;
+						if(num==0){
+							view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+						}
+					}else{
+						view.find(".labelDiv").find("span").remove();
+					}
+					$("#text-warn").modal('hide');
+					$("#textModal").modal("hide");
 				}
-			}else{
-				view.find(".labelDiv").find("span").remove();
 			}
-			$("#text-warn").modal('hide');
-			$("#textModal").modal("hide");
 		}
 	});
 	
@@ -469,10 +558,14 @@ $(function(){
 	$("#save-number-content").click(function(e){
 		e.preventDefault();
 		var id = $("#number-id").val();
-		if(id=="" || id==null){
+		var name = $("#number-name").val().trim();
+		if(id=="" || id==null || name==null || name==""){
+			$("#number-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#number-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#number-warn").modal('show');
 		}else{
-			var label = $("#number-name").val();
+			var label = $("#number-label").val();
 			var defaultVal = $("#number-default-value").val();
 			var place = $("#number-place").val();
 			var isMust = $("#number-must").is(':checked');
@@ -483,7 +576,7 @@ $(function(){
 			view.find("label").text(label);
 			var inputObj = view.find("input");
 			inputObj.val(defaultVal);
-			inputObj.attr({"id":id,"placeholder":place});
+			inputObj.attr({"id":id,"placeholder":place,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#number-label-width").val());
 			inputObj.parent().css("width",textWidth-18).attr("col",$("#number-width").val());
@@ -506,10 +599,14 @@ $(function(){
 	$("#save-date-content").click(function(e){
 		e.preventDefault();
 		var id = $("#date-id").val();
-		if(id=="" || id==null){
+		var name = $("#date-name").val();
+		if(id=="" || id==null || name==null || name==""){
+			$("#date-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#date-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#date-warn").modal('show');
 		}else{
-			var label = $("#date-name").val();
+			var label = $("#date-label").val();
 			var defaultVal = $("#date-default-value").val();
 			var place = $("#date-place").val();
 			var isMust = $("#date-must").is(':checked');
@@ -521,7 +618,7 @@ $(function(){
 			var inputObj = view.find("input");
 			
 			inputObj.val(defaultVal);
-			inputObj.attr({"id":id,"placeholder":place});
+			inputObj.attr({"id":id,"placeholder":place,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#date-label-width").val());
 			inputObj.parent().css("width",textWidth-18).attr("col",$("#date-width").val());
@@ -544,10 +641,14 @@ $(function(){
 	$("#save-textarea-content").click(function(e){
 		e.preventDefault();
 		var id = $("#textarea-id").val();
-		if(id=="" || id==null){
+		var name = $("#textarea-name").val();
+		if(id=="" || id==null || name==null || name==""){
+			$("#textarea-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#textarea-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#textarea-warn").modal('show');
 		}else{
-			var label = $("#textarea-name").val();
+			var label = $("#textarea-label").val();
 			var defaultVal = $("#textarea-default-value").val();
 			var isMust = $("#textarea-must").is(':checked');
 			var rows = $("#textarea-row").val();
@@ -558,7 +659,7 @@ $(function(){
 			view.find("label").text(label);
 			var textareaObj = view.find("textarea");
 			textareaObj.val(defaultVal);
-			textareaObj.attr({"id":id,"rows":rows});
+			textareaObj.attr({"id":id,"rows":rows,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#textarea-label-width").val());
 			textareaObj.parent().css("width",textWidth-18).attr("col",$("#textarea-width").val());
@@ -581,10 +682,15 @@ $(function(){
 	$("#save-select-content").click(function(e){
 		e.preventDefault();
 		var id = $("#select-id").val();
-		if(id=="" || id==null){
+		var name = $("#select-name").val();
+		if(id=="" || id==null || name==null || name==""){
+			$("#select-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#select-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#select-warn").modal('show');
 		}else{
-			var label = $("#select-name").val();
+			var label = $("#select-label").val();
+			var name = $("#select-name").val();
 			var isMust = $("#select-must").is(':checked');
 			var optionObjArr = $(".option-value");//下拉列表添加选项的输入框对象
 			
@@ -593,7 +699,7 @@ $(function(){
 			
 			view.find("label").text(label);
 			var selectObj = view.find("select");
-			selectObj.attr({"id":id});
+			selectObj.attr({"id":id,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#select-label-width").val());
 			selectObj.parent().css("width",textWidth-18).attr("col",$("#select-width").val());
@@ -623,10 +729,14 @@ $(function(){
 	$("#save-radio-content").click(function(e){
 		e.preventDefault();
 		var id = $("#radio-id").val();
-		if(id=="" || id==null){
+		var name = $("#radio-name").val();
+		if(id=="" || id==null || name==null || name==""){
+			$("#radio-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#radio-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#radio-warn").modal('show');
 		}else{
-			var label = $("#radio-name").val();
+			var label = $("#radio-label").val();
 			var isMust = $("#radio-must").is(':checked');
 			var radioObjArr = $(".radio-value");//单选框添加选项的输入框对象
 			
@@ -641,7 +751,7 @@ $(function(){
 				if($(radioObjArr[i]).val()!="" && $(radioObjArr[i]).val()!=null){
 					var radioObj = $(radioObjArr[i]);
 					var html = "<label class='radio'>"+
-								"<input type='radio' class='"+id+"' id='"+id+i+"' name='optionsRadios'/>"+
+								"<input type='radio' class='"+id+"' id='"+id+i+"' name='"+name+"'/>"+
 								radioObj.val()+
 								"</label>";
 					parentDivObj.append(html);
@@ -668,10 +778,14 @@ $(function(){
 	$("#save-checkbox-content").click(function(e){
 		e.preventDefault();
 		var id = $("#checkbox-id").val().trim();
-		if(id=="" || id==null){
+		var name = $("#checkbox-name").val();
+		if(id=="" || id==null || name==null || name==""){
+			$("#checkbox-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#checkbox-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#checkbox-warn").modal('show');
 		}else{
-			var label = $("#checkbox-name").val();
+			var label = $("#checkbox-label").val();
 			var isMust = $("#checkbox-must").is(':checked');
 			var checkboxObjArr = $(".checkbox-value");//单选框添加选项的输入框对象
 			var id = $("#checkbox-id").val();
@@ -689,23 +803,23 @@ $(function(){
 					if(i==0){
 						if(checkboxObj.next().find("input").is(":checked")){
 							html += "<label class='checkbox'>"+
-								"<input type='checkbox' class='"+id+"' id='"+id+i+"' checked/>checkboxValue"+
+								"<input type='checkbox' class='"+id+"' id='"+id+i+"' name='"+name+"' checked/>checkboxValue"+
 								"</label>";
 						}else{
 							html += "<label class='checkbox'>"+
-								"<input type='checkbox' class='"+id+"' id='"+id+i+"'/>checkboxValue"+
+								"<input type='checkbox' class='"+id+"' id='"+id+i+"' name='"+name+"'/>checkboxValue"+
 								"</label>";
 						}
 					}
 				}else{
 					if(checkboxObj.next().find("input").is(":checked")){
 						html += "<label class='checkbox'>"+
-							"<input type='checkbox' class='"+id+"' id='"+id+i+"' checked/>"+
+							"<input type='checkbox' class='"+id+"' id='"+id+i+"' name='"+name+"' checked/>"+
 							checkboxObj.val()+
 							"</label>";
 					}else{
 						html += "<label class='checkbox'>"+
-							"<input type='checkbox' class='"+id+"' id='"+id+i+"'/>"+
+							"<input type='checkbox' class='"+id+"' id='"+id+i+"' name='"+name+"'/>"+
 							checkboxObj.val()+
 							"</label>";
 					}
@@ -793,7 +907,7 @@ $(function(){
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#editor-label-width").val());
 			textareaObj.parent().css("width",textWidth-18).attr("col",$("#editor-width").val());
-			textareaObj.next().css("width",textWidth-18).attr("col",$("#editor-width").val());
+			textareaObj.css("width",textWidth-18).attr("col",$("#editor-width").val());
 			
 			$("#editor-warn").modal('hide');
 			$("#editorAreaModal").modal("hide");

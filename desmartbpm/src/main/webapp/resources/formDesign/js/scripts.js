@@ -300,7 +300,8 @@ function downloadLayoutSrc() {
 			["aria-hidden"],
 			["data-slide-to"],
 			["data-slide"],
-			["col"]
+			["col"],
+			["regx"]
 		]
 	});
 	var formatJs = "<script type='text/javascript'></script>";
@@ -399,6 +400,18 @@ $(document).ready(function() {
 					$("#proUid").val(result.data.proUid);
 					$("#proVersion").val(result.data.proVersion);
 					$(".demo").html(result.data.dynContent);
+					var nameVal = "";
+					$(".demo .subDiv").each(function(){
+						var name = $($(this).children()[0]).attr("name");
+						if(name!=undefined){
+							nameVal += name+",";
+						}
+					});
+					var charStr = nameVal.substring(nameVal.length-1,nameVal.length);
+					if(charStr == ","){
+						nameVal = nameVal.substring(0,nameVal.length-1);
+					}
+					$("#nameArr").val(nameVal);
 				}
 			}
 		});
@@ -491,13 +504,13 @@ $(document).ready(function() {
 				$("#"+temp).parent().parent().find(".subDiv").find("input").attr("class",inputId);
 			}else{
 				$($("#"+temp).parent().parent().find(".subDiv").children()[0]).attr("id",inputId);
-				if($("#"+inputId).attr("class")=="editor_textarea"){
+				/*if($("#"+inputId).attr("class")=="editor_textarea"){
 					CKEDITOR.replace(inputId ,{
 						language: 'en',
 						contentsCss: ['../resources/formDesign/css/bootstrap-combined.min.css'],
 						allowedContent: true
 					});
-				}
+				}*/
 			}
 			$("#"+temp).trigger("click");
 		}

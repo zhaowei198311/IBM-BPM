@@ -40,6 +40,27 @@ jQuery.fn.number = function() {
 		return false;
 	});
 }; 
+//只能输入英文和数字
+$.fn.onlyNumAlpha = function () {
+	$(this).keypress(function (event) {
+		var eventObj = event || e;
+		var keyCode = eventObj.keyCode || eventObj.which;
+		if((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) 
+				|| (keyCode >= 97 && keyCode <= 122) || keyCode == 0x8){
+			return true;
+		}else{
+			this.value=this.value.replace(/([^\u4e00-\u9fa5])/g,"");
+		    return false;
+		}
+	}).bind("paste", function () {
+		var clipboard = window.clipboardData.getData("Text");
+		if (/^(\d|[a-zA-Z])+$/.test(clipboard)){
+			return true;
+		}else{
+			return false;
+		}
+	});
+};
 
 //控制选择器的任意改变大小
 (function($, h, c) {  
