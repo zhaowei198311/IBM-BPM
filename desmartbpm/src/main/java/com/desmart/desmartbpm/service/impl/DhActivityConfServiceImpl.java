@@ -189,7 +189,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         }
         
         // 判断可选处理人类型并记录
-        if(dhActivityConf.getActcCanChooseUser()=="TRUE") {//判断是可选处理人
+        if("TRUE".equals(dhActivityConf.getActcCanChooseUser())) {//判断是可选处理人
         serverResponse = updateChooseAbleHandleOfActivity(dhActivityConf);
         if (!serverResponse.isSuccess()) {
             throw new PlatformException(serverResponse.getMsg());
