@@ -18,5 +18,15 @@ import com.desmart.desmartsystem.entity.TreeNode;
  */
 @Repository
 public interface SysDepartmentMapper extends BaseMapper<SysDepartment> {
+	
+	//部门树形节点
 	public List<TreeNode> selectTree(TreeNode entity);
+	
+	//批量添加所有部门信息
+	int inserBatch(List<SysDepartment> list);
+	
+	//查询所有部门信息
+	public List<SysDepartment> selectDesmarts();
+	
+	
 }
