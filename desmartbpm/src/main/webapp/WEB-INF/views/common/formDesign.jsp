@@ -185,7 +185,7 @@
 												<label>text</label>
 											</div>
 											<div class="subDiv">
-												<input type="text" col="1"/>
+												<input type="text" col="1" class="layui-input"/>
 											</div>
 										</div>
 									</div>
@@ -234,8 +234,8 @@
 											<div class="labelDiv" col="1">
 												<label>date</label>
 											</div>
-											<div class="subDiv input-append date">
-												<input type="date" col="1" readonly/>
+											<div class="subDiv input-append">
+												<input type="date" col="1" class="layui-input date" readonly/>
 												<span class="add-on"><i class="icon-calendar"></i></span>
 											</div>
 										</div>
@@ -410,7 +410,7 @@
 									<div class="preview">文本块</div>
 									<div class="view">
 										<h5 contenteditable="true">标题</h5>
-										<p contenteditable="true">这里是一个段落，可以直接编辑也可以通过点击编辑按钮去富文本编辑器编辑文本</p>
+										<p contenteditable="true">这里是一个段落，可以通过点击编辑按钮去富文本编辑器编辑文本</p>
 									</div>
 								</div>
 
@@ -430,12 +430,10 @@
 									<div class="view">
 										<div class="form-group">
 											<div class="labelDiv" col="1">
-												<label>editor</label>
+												<label>审批意见</label>
 											</div>
 											<div class="subDiv">
-												<textarea class="editor_textarea">  
-												  把编辑器的初始内容放在这textarea即可
-												</textarea>
+												<textarea class="editor_textarea" col="12" style="resize: none;">这里是富文本编辑器，设计时不可见，渲染时可见</textarea>
 											</div>
 										</div>
 									</div>
@@ -473,14 +471,14 @@
 			</div>
 			<div class="modal-body">
 				<div id="text-warn" class="hide alert alert-warning">
-    				<strong>警告！</strong>必须填写组件ID。
+    				<strong>警告！</strong>必须填写标<span style="color:red;">*</span>的属性。
 				</div>
 
 				<form>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="text-name"
+							<input type="text" class="form-control" id="text-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -490,7 +488,16 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="text-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							name<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="text-name"
+								placeholder="请输入组件name">
 						</div>
 					</div>
 					<div class="form-group">
@@ -538,6 +545,42 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							正则表达式
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										请填写该组件需要验证的正则表达式</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="text-regx"
+								placeholder="请输入组件验证的正则表达式">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							错误提示语
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										验证正则表达式不通过时的提示语</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="text-regx-cue"
+								placeholder="验证正则表达式不通过的提示语">
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">默认值</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="text-default-value"
@@ -555,7 +598,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-text-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#text-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		
@@ -574,7 +617,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="number-name"
+							<input type="text" class="form-control" id="number-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -584,9 +627,18 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="number-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="number-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-xs-7">
 							<div class="checkbox">
@@ -649,7 +701,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-number-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#number-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		
@@ -668,7 +720,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="date-name"
+							<input type="text" class="form-control" id="date-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -678,7 +730,16 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="date-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							name<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="date-name"
+								placeholder="请输入组件name">
 						</div>
 					</div>
 					<div class="form-group">
@@ -744,7 +805,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-date-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#date-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		
@@ -763,7 +824,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="textarea-name"
+							<input type="text" class="form-control" id="textarea-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -773,9 +834,18 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="textarea-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="textarea-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-xs-7">
 							<div class="checkbox">
@@ -838,7 +908,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-textarea-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#textarea-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		<!-- 设置下拉选择框的属性 -->
@@ -856,7 +926,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="select-name"
+							<input type="text" class="form-control" id="select-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -866,9 +936,18 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="select-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="select-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-xs-7">
 							<div class="checkbox">
@@ -930,7 +1009,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-select-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#select-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		<!-- 设置单选框的属性 -->
@@ -948,7 +1027,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="radio-name"
+							<input type="text" class="form-control" id="radio-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -958,9 +1037,18 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="radio-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="radio-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-xs-7">
 							<div class="checkbox">
@@ -1022,7 +1110,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-radio-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#radio-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		<!-- 设置复选框的属性 -->
@@ -1040,7 +1128,7 @@
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control" id="checkbox-name"
+							<input type="text" class="form-control" id="checkbox-label"
 								value="text" placeholder="请输入组件标签">
 						</div>
 					</div>
@@ -1050,9 +1138,18 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="checkbox-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="checkbox-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
 					<div class="form-group">
 						<div class="col-sm-offset-4 col-xs-7">
 							<div class="checkbox">
@@ -1117,7 +1214,7 @@
 			</div>
 			<div class="modal-footer">
 				<a id="save-checkbox-content" class="btn btn-primary">保存</a>
-				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#checkbox-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		<!-- 设置文件上传按钮的属性 -->
@@ -1145,7 +1242,7 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="loadFile-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
 					<div class="form-group">
@@ -1302,7 +1399,7 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control" id="editor-id"
-								placeholder="请输入组件ID">
+								placeholder="请输入组件ID" readonly>
 						</div>
 					</div>
 					<div class="form-group">
@@ -1338,7 +1435,7 @@
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control col" id="editor-width"
-								placeholder="请输入组件占列宽">
+								placeholder="请输入组件占列宽" readonly>
 						</div>
 					</div>
 				</form>
@@ -1384,6 +1481,7 @@
 				<input type="hidden" id="proVersion" value="${proVersion}"/>
 				<input type="hidden" id="formName" value="${formName}"/>
 				<input type="hidden" id="formDescription" value="${formDescription}"/>
+				<input type="hidden" id="nameArr" value="">
 				<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">保存</a>
 			</div>
 		</div>
