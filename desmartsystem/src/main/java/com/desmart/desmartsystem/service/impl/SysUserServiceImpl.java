@@ -36,7 +36,7 @@ public class SysUserServiceImpl implements SysUserService {
 	public int update(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
 		return sysUserDao.update(entity);
-	}
+	} 
 
 	@Override
 	public int delete(SysUser entity) throws Exception {
@@ -44,7 +44,7 @@ public class SysUserServiceImpl implements SysUserService {
 		return sysUserDao.delete(entity);
 	}
 
-	@Override
+	@Override 
 	public SysUser select(SysUser entity) {
 		// TODO Auto-generated method stub
 		return sysUserDao.select(entity);
@@ -68,7 +68,6 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
 	public List<SysUser> selectAll(SysUser entity) {
 		// TODO Auto-generated method stub
-		//System.out.println("adsfs");
 		return sysUserDao.selectAll(entity);
 	}
 	
