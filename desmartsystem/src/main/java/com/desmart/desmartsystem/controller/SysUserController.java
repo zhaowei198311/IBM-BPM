@@ -96,13 +96,14 @@ public class SysUserController {
 	@RequestMapping(value="/allSysUser")
 	@ResponseBody
 	public PagedResult<SysUser> allSysUser(SysUser sysUser,Integer pageNo,Integer pageSize){
+		
 		PagedResult<SysUser> queryByPage=sysUserService.queryByPage(sysUser,pageNo,pageSize);
 		
 		List<SysUser> sysUsersList=new ArrayList<SysUser>();
 		List<SysUser> sysUsers=queryByPage.getDataList();
 		for (SysUser sysUser1 : sysUsers) {
 			SysUserDepartment sUserDepartment=new SysUserDepartment();
-			sUserDepartment.setUserUid(sysUser1.getUserId());
+			sUserDepartment.setUserUid(sysUser1.getUserUid());
 			sysUser1.setSysUserDepartmentList(sysUserDepartmentService.selectUserDepartmentView(sUserDepartment));
 			sysUsersList.add(sysUser1);
 		}
@@ -147,13 +148,22 @@ public class SysUserController {
 	@ResponseBody
 	public String addSysUser(SysUser sysUser) {
 		try {	
-			sysUser.setUserUid("sysUser"+UUIDTool.getUUID());
+			//sysUser.setUserUid("sysUser"+UUIDTool.getUUID());
 			sysUserService.insert(sysUser);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "{\"msg\":\"error\"}";
 		}
+	}
+	
+	@ResponseBody  
+	@RequestMapping(value="userexists")
+	public boolean userexists(SysUser cpUser) {
+		if(sysUserService.select(cpUser)!=null){
+			return false;  
+		}
+		return true;  
 	}
 	
 	@RequestMapping("/deleteSysUser")

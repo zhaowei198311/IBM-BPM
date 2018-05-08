@@ -31,8 +31,8 @@ public class SysUserDepartmentController {
 	@RequestMapping(value="/selectAll") 
 	@ResponseBody
 	public List<SysUserDepartment> selectAll(SysUserDepartment sysUserDepartment){
-		return sysUserDepartmentService.selectAll(sysUserDepartment);
-	} 
+		return sysUserDepartmentService.selectAll(sysUserDepartment); 
+	}
 	 
 	
 	@RequestMapping("/addSysUserDepartments")
