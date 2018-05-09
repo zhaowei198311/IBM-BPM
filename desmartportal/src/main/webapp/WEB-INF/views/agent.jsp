@@ -63,12 +63,12 @@
 	</div>
 	
 	<div class="display_container">
-		<div class="display_content" style="height:300px;">
+		<div class="display_content" style="width: 350px;height: 400px;">
 			<div class="top">
 				新增代理
 			</div>
-			<label>带*为必填参数</label>
-			<div class="middle" style="height:200px;">
+			<label style="color: red;">带*为必填参数</label>
+			<div class="middle" style="height:250px;">
 				<form class="layui-form form-horizontal" method="post" action="agent/saveAgent" style="margin-top:30px;">
 				  <div class="layui-form-item">
 					<div class="layui-inline">
