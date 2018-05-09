@@ -63,6 +63,9 @@
 								<li class="layui-nav-item"><a href="javascript:void(0)"
 									target="iframe0" class="detail_menu1"><i class="layui-icon">&#xe68e;</i><span>
 											门店生命周期</span></a></li>
+								<li class="layui-nav-item"><a href="menus/queryProcess"
+									target="iframe0" class=""><i class="layui-icon">&#xe63c;</i><span>
+											发起的流程</span></a></li>
 								<li class="layui-nav-item"><a href="drafts/index"
 									target="iframe0"><i class="layui-icon">&#xe640;</i> <span>
 											草稿箱</span></a></li>
@@ -90,7 +93,7 @@
 								<div class="menu_detail">
 									<ul>
 										<li><a
-											href="menus/process?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
+											href="menus/startProcess?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
 											target="iframe0">${info.proName}</a></li>
 										<h1 style="clear: both;"></h1>
 									</ul>
