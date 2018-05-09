@@ -27,10 +27,10 @@
 	<div class="layui-container" style="margin-top: 20px; width: 100%;">
 		<div class="search_area">
 			<div class="layui-row layui-form">
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 					<input id="agentPerson" type="text" placeholder="请输入代理设置人/代理委托人" class="layui-input" style="width:250px;">
 				</div>
-				<div class="layui-col-md2" style="text-align: right; width: 80px">
+				<div class="layui-col-md3" style="text-align: left; width: 200px">
 					<button class="layui-btn select_btn" onclick="search()">查询</button>
 					<button class="layui-btn select_btn" onclick="add()">新增</button>
 				</div>
