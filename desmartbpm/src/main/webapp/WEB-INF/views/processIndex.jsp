@@ -4,6 +4,7 @@
     <head>
         <%@include file="common/head.jsp" %>
         <%@include file="common/tag.jsp" %>
+        <link rel="stylesheet" href="<%=basePath%>/resources/css/my.css" media="all">
     </head>
     <body>
         <div class="layui-container" style="margin-top:20px;width:100%;">  

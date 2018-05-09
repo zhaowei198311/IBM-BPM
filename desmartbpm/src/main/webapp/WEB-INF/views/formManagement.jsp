@@ -5,6 +5,7 @@
   		<title>表单管理</title>
   		<%@include file="common/head.jsp" %>
         <%@include file="common/tag.jsp" %>
+        <link rel="stylesheet" href="<%=basePath%>/resources/css/my.css" media="all">
         <link href="<%=basePath%>/resources/tree/css/demo.css" rel="stylesheet">
         <link href="<%=basePath%>/resources/tree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
   		<style>

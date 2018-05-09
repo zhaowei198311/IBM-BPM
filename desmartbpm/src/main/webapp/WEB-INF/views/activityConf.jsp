@@ -5,6 +5,7 @@
         <title>环节配置</title>
         <%@include file="common/head.jsp" %>
         <%@include file="common/tag.jsp" %>
+        <link rel="stylesheet" href="<%=basePath%>/resources/css/my.css" media="all">
         <style>
             .layui-form-label{width:140px;}
             .layui-input-block{margin-left:170px;}
