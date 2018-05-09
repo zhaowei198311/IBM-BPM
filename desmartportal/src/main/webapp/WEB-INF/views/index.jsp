@@ -57,7 +57,7 @@
 								<!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>
 							 	<li class="layui-nav-item"><a href="draft.html" target="iframe0"><i class="layui-icon">&#xe624;</i><span>草稿箱</span></a></li>
 							 	<li class="layui-nav-item"><a href="new_tail.html" target="iframe0"><i class="layui-icon">&#xe609;</i> <span> 发起跟踪</span></a></li>-->
-								<li class="layui-nav-item"><a href="set.html"
+								<li class="layui-nav-item"><a href="agent/index"
 									target="iframe0"><i class="layui-icon">&#xe6b2;</i><span>
 											代理设置</span></a></li>
 								<li class="layui-nav-item"><a href="javascript:void(0)"
