@@ -16,4 +16,7 @@ public class EntityIdPrefix {
 	
 	/** 草稿参数前缀 */
 	public static final String DH_DRAFTS_META = "draft_meta:";
+	
+	/** 代理参数前缀 */
+	public static final String DH_AGENT_META = "agent_meta:";
 }
