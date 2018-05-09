@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.dao.DhTaskHandlerMapper">
+    <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhTaskHandler">
+        <id column="HANDLE_UID" jdbcType="VARCHAR" property="handleUid" />
+        <result column="INS_ID" jdbcType="INTEGER" property="insId" />
+        <result column="ACTIVITY_BPD_ID" jdbcType="VARCHAR" property="activityBpdId" />
+        <result column="USER_UID" jdbcType="VARCHAR" property="userUid" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        HANDLE_UID, INS_ID, ACTIVITY_BPD_ID, USER_UID, STATUS
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from DH_TASK_HANDLER
+        where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from DH_TASK_HANDLER
+        where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
+        insert into DH_TASK_HANDLER (HANDLE_UID, INS_ID, ACTIVITY_BPD_ID,
+        USER_UID, STATUS)
+        values (#{handleUid,jdbcType=VARCHAR}, #{insId,jdbcType=INTEGER}, #{activityBpdId,jdbcType=VARCHAR},
+        #{userUid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
+        insert into DH_TASK_HANDLER
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="handleUid != null">
+                HANDLE_UID,
+            </if>
+            <if test="insId != null">
+                INS_ID,
+            </if>
+            <if test="activityBpdId != null">
+                ACTIVITY_BPD_ID,
+            </if>
+            <if test="userUid != null">
+                USER_UID,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="handleUid != null">
+                #{handleUid,jdbcType=VARCHAR},
+            </if>
+            <if test="insId != null">
+                #{insId,jdbcType=INTEGER},
+            </if>
+            <if test="activityBpdId != null">
+                #{activityBpdId,jdbcType=VARCHAR},
+            </if>
+            <if test="userUid != null">
+                #{userUid,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
+        update DH_TASK_HANDLER
+        <set>
+            <if test="insId != null">
+                INS_ID = #{insId,jdbcType=INTEGER},
+            </if>
+            <if test="activityBpdId != null">
+                ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+            </if>
+            <if test="userUid != null">
+                USER_UID = #{userUid,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
+        update DH_TASK_HANDLER
+        set INS_ID = #{insId,jdbcType=INTEGER},
+        ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+        USER_UID = #{userUid,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=VARCHAR}
+        where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
+    </update>
+
+    <select id="listActiveRecordsByInsIdAndActivityBpdId" resultMap="BaseResultMap">
+	    select <include refid="Base_Column_List"/> from dh_task_handler
+	    where ins_id = #{insId} and activity_bpd_id = #{activityBpdId} and status = 'on'
+    </select>
+    
+    <insert id="insertBatch"  parameterType="list">
+        insert into dh_task_handler (<include refid="Base_Column_List"/>)
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.handleUid},
+            #{item.insId},
+            #{item.activityBpdId},
+            #{item.userUid},
+            #{item.status}
+            from dual
+        </foreach>
+    </insert>
+
+</mapper>
