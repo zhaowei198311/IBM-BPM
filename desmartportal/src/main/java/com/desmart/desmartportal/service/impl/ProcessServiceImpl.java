@@ -46,8 +46,12 @@ public class ProcessServiceImpl implements ProcessService {
 		HttpClientUtils httpClientUtils = new HttpClientUtils();
 		result = httpClientUtils.checkApiLogin("post", "http://10.0.4.201:9080/rest/bpm/wle/v1/process", params);
 		log.info("掉用API状态码:"+result.getCode());		
+		// 如果获取API成功  将返回过来的流程数据 保存到 平台
 		log.info("发起流程结束......");
 		if(result.getCode()==200) {
+			// 保存数据信息
+			log.info("掉用API返回过来的数据信息:"+result.getMsg());
+			
 			return ServerResponse.createBySuccess();
 		}else {
 			return ServerResponse.createByError();
