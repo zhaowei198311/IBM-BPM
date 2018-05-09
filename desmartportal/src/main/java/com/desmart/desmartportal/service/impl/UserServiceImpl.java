@@ -69,35 +69,40 @@ public class UserServiceImpl implements UserService {
 		try {
 			String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 			log.info("当前用户为" + user);
-			// 根据用户id 去 查询 角色id
+			// 根据用户id 去 查询 角色id,角色组id
 			SysRoleUser sysRoleUser = new SysRoleUser();
 			sysRoleUser.setUserUid(user);
 			List<SysRoleUser> result = sysRoleUserService.selectAll(sysRoleUser);
 			for (SysRoleUser sysRoleUser2 : result) {
 				log.info("用户id~~~" + sysRoleUser2.getUserUid());
 				log.info("角色id~~~" + sysRoleUser2.getRoleUid());
-				// 查询当前用户所在的角色组织
+				// 定义角色组id
 				String sysTeamMemberid = "";
+				// 根据用户id 去找到 用户所在的角色组织
 				SysTeamMember sysTeamMember = new SysTeamMember();
 				sysTeamMember.setUserUid(sysRoleUser2.getUserUid());
 				List<SysTeamMember> sysTeamList = sysTeamMemberService.selectAll(sysTeamMember);
 				for (SysTeamMember sysTeamMember2 : sysTeamList) {
+					// 获得角色组id  为了方便后续 根据角色组进行查询 发起流程的权限
 					sysTeamMemberid = sysTeamMember2.getTeamUid();
 					log.info("角色组织id~~~" + sysTeamMember2.getTeamUid());
 				}
-				// 根据用户的角色id查询 能发起的流程
+				// 根据用户的角色id查询 能发起的流程 (DhObjectPermission 为关联表数据信息)
 				DhObjectPermission dhObjectPermission = new DhObjectPermission();
 				dhObjectPermission.setOpParticipateUid(sysRoleUser2.getRoleUid()); // RoleUid
 				List<DhObjectPermission> result2 = dhObjectPermissionService
 						.getDhObjectPermissionInfo(dhObjectPermission);
+				// 获取该流程的  三个 必传id (流程库id，流程id，版本id)
 				for (DhObjectPermission dhObjectPermission2 : result2) {
 					String proAppId = dhObjectPermission2.getProAppId();
 					String proUid = dhObjectPermission2.getProUid();
+					// 通过id  去 查询流程元数据表里的 数据信息
 					DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("角色获取的流程:" + dhProcessMeta.getProName());
-					// 通过分类id查询流程分类
+					// 通过 查询元数据 获得的getCategoryUid 流程分类id  去查询流程分类
 					DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta.getCategoryUid());
 					log.info("该流程分类:" + dhProcessCategory.getCategoryName());
+					// 把所有信息 归纳到 一个map里进行保存
 					Map<String, Object> map1 = new HashMap<>();
 					map1.put("proAppId", dhProcessMeta.getProAppId());
 					map1.put("verUid", dhObjectPermission2.getProVerUid());
