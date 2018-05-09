@@ -131,6 +131,13 @@
                                                                     <input type="text" name="handleField"  value="" autocomplete="off" class="layui-input">
                                                                 </div>
                                                             </div>
+                                                            <div class="layui-form-item">
+                                                                <label class="layui-form-label">是否可选处理人</label>
+                                                                <div class="layui-input-block">
+                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="TRUE" title="可选" >
+                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="FALSE" title="不可选" >
+                                                                </div>
+                                                            </div>
                                                             <!-- 可选处理人 (开始)-->
                                                             <div id="actcChooseableHandler">
                                                             <div class="layui-form-item">
@@ -183,13 +190,6 @@
                                                             </div>
                                                             </div>
                                                             <!-- 可选处理人 (结束)-->
-                                                            <div class="layui-form-item">
-                                                                <label class="layui-form-label">是否可选处理人</label>
-                                                                <div class="layui-input-block">
-                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="TRUE" title="可选" >
-                                                                    <input type="radio" lay-filter="actcCanChooseUser" name="actcCanChooseUser" value="FALSE" title="不可选" >
-                                                                </div>
-                                                            </div>
                                                             <div class="layui-form-item">
                                                                 <label class="layui-form-label">是否可以驳回</label>
                                                                 <div class="layui-input-block">
