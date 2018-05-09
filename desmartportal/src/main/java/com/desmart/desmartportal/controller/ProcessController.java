@@ -35,4 +35,11 @@ public class ProcessController {
 		// 发起流程		
 		return processService.startProcess(proUid, proAppId, verUid);
 	}
+	
+	@RequestMapping(value = "/queryProcessByUser")
+	@ResponseBody
+	public ServerResponse queryProcessByUser() {
+		
+		return null;	
+	}
 }
