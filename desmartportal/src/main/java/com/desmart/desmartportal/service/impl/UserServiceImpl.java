@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
+import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
+import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartportal.controller.UserController;
 import com.desmart.desmartportal.service.UserService;
 import com.desmart.desmartsystem.entity.SysRoleUser;
@@ -51,14 +55,17 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private DhProcessMetaMapper dhProcessMetaDao;
+	
+	@Autowired
+	private DhProcessCategoryMapper dhProcessCategoryDao;
 
 	private Logger log = Logger.getLogger(UserController.class);
 
 	@Override
-	public List<Object> selectByMenusProcess() {
+	public List<Map<String, Object>> selectByMenusProcess() {
 		log.info("判断---当前用户权限菜单 开始。。。");
 		// 集合创建
-		List<Object> menuList = new ArrayList<>();
+		List<Map<String, Object>> infoList = new ArrayList<Map<String, Object>>();
 		try {
 			String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 			log.info("当前用户为" + user);
@@ -88,7 +95,17 @@ public class UserServiceImpl implements UserService {
 					String proUid = dhObjectPermission2.getProUid();
 					DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("角色获取的流程:" + dhProcessMeta.getProName());
-					menuList.add(dhProcessMeta.getProName());
+					// 通过分类id查询流程分类
+					DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta.getCategoryUid());
+					log.info("该流程分类:" + dhProcessCategory.getCategoryName());
+					Map<String, Object> map1 = new HashMap<>();
+					map1.put("proAppId", dhProcessMeta.getProAppId());
+					map1.put("verUid", dhObjectPermission2.getProVerUid());
+					map1.put("proUid", dhProcessMeta.getProUid());
+					map1.put("proName", dhProcessMeta.getProName());
+					map1.put("categoryUid", dhProcessCategory.getCategoryUid());
+					map1.put("categoryName", dhProcessCategory.getCategoryName());
+					infoList.add(map1);
 				}
 				// 根据用户id查询 能发起的流程
 				DhObjectPermission dhObjectPermission2 = new DhObjectPermission();
@@ -100,7 +117,17 @@ public class UserServiceImpl implements UserService {
 					String proUid = dhObjectPermission3.getProUid();
 					DhProcessMeta dhProcessMeta2 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("该用户获取的流程:" + dhProcessMeta2.getProName());
-					menuList.add(dhProcessMeta2.getProName());
+					// 通过分类id查询流程分类
+					DhProcessCategory dhProcessCategory2 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta2.getCategoryUid());
+					log.info("该流程分类:" + dhProcessCategory2.getCategoryName());
+					Map<String, Object> map2 = new HashMap<>();
+					map2.put("proAppId", dhProcessMeta2.getProAppId());
+					map2.put("verUid", dhObjectPermission3.getProVerUid());
+					map2.put("proUid", dhProcessMeta2.getProUid());
+					map2.put("proName", dhProcessMeta2.getProName());
+					map2.put("categoryUid", dhProcessCategory2.getCategoryUid());
+					map2.put("categoryName", dhProcessCategory2.getCategoryName());
+					infoList.add(map2);
 				}
 				// 根据用户角色组织查询 能发起的流程
 				DhObjectPermission dhObjectPermission3 = new DhObjectPermission();
@@ -112,23 +139,42 @@ public class UserServiceImpl implements UserService {
 					String proUid = dhObjectPermission4.getProUid();
 					DhProcessMeta dhProcessMeta3 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("用户所在的角色组获取的流程:" + dhProcessMeta3.getProName());
-					menuList.add(dhProcessMeta3.getProName());
+					// 通过分类id查询流程分类
+					DhProcessCategory dhProcessCategory3 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta3.getCategoryUid());
+					log.info("该流程分类:" + dhProcessCategory3.getCategoryName());
+					Map<String, Object> map3 = new HashMap<>();
+					map3.put("proAppId", dhProcessMeta3.getProAppId());
+					map3.put("verUid", dhObjectPermission4.getProVerUid());
+					map3.put("proUid", dhProcessMeta3.getProUid());
+					map3.put("proName", dhProcessMeta3.getProName());
+					map3.put("categoryUid", dhProcessCategory3.getCategoryUid());
+					map3.put("categoryName", dhProcessCategory3.getCategoryName());
+					infoList.add(map3);
 				}
 			}
 			// 去掉重复的流程
-			for (int i = 0; i < menuList.size() - 1; i++) {
-				for (int j = menuList.size() - 1; j > i; j--) {
-					if (menuList.get(j).equals(menuList.get(i))) {
-						menuList.remove(j);
+			for (int i = 0; i < infoList.size() - 1; i++) {
+				for (int j = infoList.size() - 1; j > i; j--) {
+					if (infoList.get(j).equals(infoList.get(i))) {
+						infoList.remove(j);
 					}
 				}
 			}
+			
+			for (Map<String, Object> map : infoList) {
+				for (Map.Entry<String, Object> m : map.entrySet()) {
+					if(m.getValue().equals(m.getValue())) {
+						
+					}
+	            }
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			log.info("判断---当前用户权限菜单 结束。。。");
 		}
-		return menuList;
+		return infoList;
 	}
 
 }

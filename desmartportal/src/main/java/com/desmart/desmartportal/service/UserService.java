@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Map;
 
 /**  
 * <p>Title: 用户接口</p>  
@@ -13,5 +14,5 @@ import java.util.List;
 */
 public interface UserService {
 	
-	List<Object> selectByMenusProcess();
+	List<Map<String, Object>> selectByMenusProcess();
 }

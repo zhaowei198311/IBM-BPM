@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartportal.util.rest.RestUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
