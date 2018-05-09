@@ -42,8 +42,17 @@ public class MenusController {
 		ModelAndView mv = new ModelAndView("backlog_detail");
 		return mv;
 	}
-
-	@RequestMapping("/process")
+	
+	/**
+	 * 发起流程
+	 * @param proUid 流程id
+	 * @param proAppId 流程应用库id
+	 * @param verUid 流程版本id
+	 * @param proName 流程名称
+	 * @param categoryName 流程分类名称
+	 * @return
+	 */
+	@RequestMapping("/startProcess")
 	public ModelAndView startProcess(@RequestParam(value = "proUid") String proUid,
 			@RequestParam(value = "proAppId") String proAppId, @RequestParam(value = "verUid") String verUid,
 			@RequestParam(value = "proName") String proName,
@@ -56,4 +65,12 @@ public class MenusController {
 		mv.addObject("categoryName", categoryName);
 		return mv;
 	}
+	
+	@RequestMapping("queryProcess")
+	public ModelAndView queryProcess() {
+		ModelAndView mv = new ModelAndView("query_process");
+		return mv;
+	}
+	
+	
 }
