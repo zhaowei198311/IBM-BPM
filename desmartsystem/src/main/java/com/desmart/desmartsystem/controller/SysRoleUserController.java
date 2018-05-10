@@ -94,28 +94,14 @@ public class SysRoleUserController {
 			
 			SysRoleUser sys = new SysRoleUser();
 			sys.setRoleUid(sysRoleUser.getRoleUid());
-			
 			sysRoleUserService.delete(sys);
 			String userUid =sysRoleUser.getUserUid();
-			String departUid =sysRoleUser.getDepartUid();
 			if(StringUtils.isNotBlank(userUid)) {
 			String[]  roleUser=userUid.split(",");
-			String[]  departUids=departUid.split(",");
-			
 			for (int i = 0; i < roleUser.length; i++) {
 				sysRoleUser.setUserUid(roleUser[i]);
-				sysRoleUser.setDepartUid(departUids[i]);
 				sysRoleUserService.insert(sysRoleUser);
 			}
-			
-			
-//			List<SysUser> userList=sysRoleUser.getUsers();
-//			if(userList!=null && userList.size()>0) {
-//				for (SysUser sysUser : userList) {
-//					sysRoleUser.setDepartUid(sysUser.getDepartUid());
-//					sysRoleUser.setUserUid(sysUser.getUserUid());
-//					sysRoleUserService.insert(sysRoleUser);
-//				}
 			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
