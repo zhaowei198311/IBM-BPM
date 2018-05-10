@@ -3,6 +3,8 @@
  */
 package com.desmart.desmartportal.service;
 
+import java.util.Map;
+
 /**  
 * <p>Title: 流程表单</p>  
 * <p>Description: </p>  
@@ -11,5 +13,5 @@ package com.desmart.desmartportal.service;
 */
 public interface ProcessFormService {
 	
-	public void  queryProcessForm(String proAppId, String proUid, String verUid);
+	public Map<String, Object>  queryProcessForm(String proAppId, String proUid, String verUid);
 }
