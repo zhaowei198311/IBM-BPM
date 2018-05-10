@@ -88,7 +88,7 @@
 				   <div class="layui-form-item" style="margin-top:30px;">
 				    <label class="layui-form-label">工号</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="userNo" required  lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input" />
+				      <input type="text" name="userUid" required  lay-verify="required" remote="sysUser/userexists" placeholder="请输入工号" data-msg-remote="工号已存在请重新输入!" autocomplete="off" class="layui-input number" minlength="8" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -181,7 +181,7 @@
 				    </div>
 				  </div>
 				  
-				   <div class="layui-form-item">
+				   <!-- <div class="layui-form-item">
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
 				    	<div class="tree" id="demo"  >
@@ -191,7 +191,7 @@
 							<ul id="treeDemo1"  class="ztree" depart="departUid_b" company="companyNumber_b" departmetNumber="departmetNumber_b" style="width:auto;height:130px;"></ul>
 						</div>
 				    </div>
-				  </div>
+				  </div> -->
 			</div>
 			<div class="foot">
 				<input  type="hidden" name="accountType" value="1"/>
@@ -239,7 +239,7 @@
 				</div>
 				<div class="foot">
 					<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancelUserDepartmentBtn" type="button">取消</button>
 				</div>
 				<input  type="hidden" name="userUid" id="userUid"/>
 				<input  type="hidden" name="departUid" id="departUid"/>
@@ -410,14 +410,21 @@
 			
 			var url='sysDepartment/treeDisplay';
 			//tree展示
-			setting.callback={onClick: onClick}
+			setting.callback={onClick: onClick1}
 			treeDisplay(url,'treeDemo2');
 			
 			pageBreak($('#pageNo').val());
 			
 			var url='sysDepartment/treeDisplay';
-			setting.callback={onClick: onClick1}
-			treeDisplay(url,['treeDemo','treeDemo1']);
+			settings.callback={onClick: onClick}
+			/* treeDisplays(url,['treeDemo','treeDemo1']); */
+			treeDisplays(url,['treeDemo']);
+			
+			$(".cancelUserDepartmentBtn").click(function(){
+				$(".display_container1").css("display","none");
+				pageBreak($('#pageNo').val());
+			})
+			
 			
 			$(".cancel_btn").click(function(){
 				$(".display_container").css("display","none");
@@ -430,6 +437,31 @@
 			})
 		})
 		
+		var settings = {
+			async: {
+				enable: true,//是否开启异步加载模式
+				url: "sysDepartment/treeDisplay",
+				autoParam: ["id"]
+			},
+			data: {simpleData: {enable: true}}
+		};
+		
+		function treeDisplays(url,ids){
+				$.ajax({ 
+			        url: url,    //后台webservice里的方法名称  
+			        type: "post",  
+			        dataType: "json",  
+			        success: function (data) {
+			        	if(typeof(ids)=='string'){
+			        		$.fn.zTree.init($("#"+ids), settings, data);
+			        	}else{
+			        		for (var i = 0; i < ids.length; i++) {
+			    				$.fn.zTree.init($("#"+ids[i]), settings, data);
+			    			}
+			        	}
+			        }
+			    });
+			}
 		
 		
 		function onClick1(e, treeId, treeNode) {
@@ -501,7 +533,7 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.userName + '</td>';
-	         	str+='<td>' + this.userNo + '</td>';
+	         	str+='<td>' + this.userUid + '</td>';
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
 	         	
 	         	/* str+='<td></td>'; */
