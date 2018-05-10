@@ -301,7 +301,11 @@ function addsuccess(data){
 		dgclose(dialogs.add_dialog);
 		pageBreak();
 	}else{
-		layer.alert(language.add_failed);
+		if(data.msg != 'error'){
+			layer.alert(data.msg);
+		}else {
+			layer.alert(language.add_failed);
+		}
 	}
 }
 
@@ -312,7 +316,11 @@ function updatesuccess(data){
 		dgclose(dialogs.edit_dialog);
 		pageBreak();
 	}else{
-		layer.alert(language.modify_failed);
+		if(data.meg != 'error'){
+			layer.alert(data.msg);
+		}else {
+			layer.alert(language.modify_failed);
+		}
 	}
 }
 
