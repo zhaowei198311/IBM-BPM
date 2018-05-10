@@ -150,14 +150,9 @@
 			
 		
 		function selectClick(_this){
-			if(isSingle=='false'){
-				if($(_this).hasClass("colorli")){
-					$(_this).removeClass("colorli");
-				}else{
-					$(_this).addClass("colorli");
-				}
+			if($(_this).hasClass("colorli")){
+				$(_this).removeClass("colorli");
 			}else{
-				$('#usersul li').removeClass("colorli");
 				$(_this).addClass("colorli");
 			}
 		}

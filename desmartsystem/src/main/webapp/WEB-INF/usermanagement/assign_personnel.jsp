@@ -89,21 +89,18 @@
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="close" style="float:left;">取消</button>
 			</div>
 	<script type="text/javascript">
-	
-		var elementId='';
-		var isSingle='';
-		
+		var assignPersonnelJson='${assignPersonnel}';
+		var assignPersonnel=JSON.parse(assignPersonnelJson);
+		var elementId=assignPersonnel.id;
+		var isSingle=assignPersonnel.isSingle;
+		var actcCanChooseUser=assignPersonnel.actcCanChooseUser;
+		var actcAssignType=assignPersonnel.actcAssignType;
 		$(function(){
-			var actcCanChooseUser='${actcCanChooseUser}';
 			if(actcCanChooseUser=='show'){
 				$('#treeDemo').show();
-			}else{
+			}else if(actcCanChooseUser=='hide'){
 				$('#treeDemo').hide();
 			}
-			
-			elementId='${id}';
-			isSingle='${isSingle}';
-			
 			var url='sysDepartment/treeDisplay';
 			//tree展示
 			setting.callback={onClick: onClick}
@@ -113,7 +110,14 @@
 			var  useruname='';
 			//新增保存
 			$("#addpersonnel").click(function(){
-				$("#user_add li").each(function(){
+				var $user_add= $("#user_add li");
+				if(isSingle=='true'){
+					if($user_add.length>1){
+						layer.alert('只能保存一个人!');
+						return false;
+					};
+				}
+				$user_add.each(function(){
 					useruid+=$(this).attr('value')+";";
 					useruname+=$(this).text()+";";
 				});	
@@ -124,10 +128,9 @@
 			
 			var $user_li=$("#user_add");
 			$user_li.empty();
+			//之前已配置的人员列表显示			
 			var id = window.parent.document.getElementById(elementId).value.split(';');
 			var name = window.parent.document.getElementById(elementId+"_view").value.split(';');
-			//console.log(name);
-			//console.log(id);
 			for (var i = 0; i < name.length; i++) {
 				if(name[i]!=''){
 					var str='';
@@ -136,23 +139,21 @@
 				}
 			}
 			
-			
-			var actcAssignType='${actcAssignType}';
-			var  dynamicUrl='';
-			if(actcAssignType=='roleAndDepartment'||actcAssignType=='roleAndCompany'){
-				dynamicUrl="sysRoleUser/allSysRoleUser?";
+			if(actcAssignType=='users'||actcAssignType=='leaderOfPreActivityUser'||actcAssignType=='processCreator'){//直接传递用户
+				$.ajax({
+					type:'post',
+					url:'sysUser/userByIds',
+					data:{userIds:assignPersonnel.userIds},
+					dataType:'json',
+					success: function (data){
+						var $ul=$("#usersul");
+						user_add_li(data,$ul);
+					}
+				});	
+			}else if(actcAssignType=='allUsers'){//全部用户
+				$('#treeDemo').show();
 			}
 			
-			
-			
-			$.ajax({
-				type:'post',
-				url:dynamicUrl,
-				dataType:'json',
-				success: function (data){
-					
-				}
-			});
 		})
 	
 		
@@ -167,18 +168,12 @@
 			
 		
 		function selectClick(_this){
-			if(isSingle=='false'){
-				if($(_this).hasClass("colorli")){
-					$(_this).removeClass("colorli");
-				}else{
-					$(_this).addClass("colorli");
-				}
+			if($(_this).hasClass("colorli")){
+				$(_this).removeClass("colorli");
 			}else{
-				$('#usersul li').removeClass("colorli");
 				$(_this).addClass("colorli");
 			}
 		}
-	
 	
 	
 		function onClick(e, treeId, treeNode) {
@@ -204,7 +199,7 @@
 			$("#usersul").empty();
 			$(data).each(function(index){
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				str+='<li type="hidden" value="'+this.userUid+'"  onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
 				$ul.append(str);
 			});
 		};
@@ -215,7 +210,6 @@
 			$("#user_add li").each(function(){//遍历 右边栏目的ID 
 				userids.push($(this).attr('value'));//获取 所有 已添加人员
 			});
-			
 			$("#usersul li").each(function(){
 				var $userLi=$(this);
 				if($userLi.hasClass('colorli')){
@@ -237,6 +231,7 @@
 		function addUserRoleSuccess(data){
 			returnSuccess(data,dialogs.add_team_dialog);
 		}
+
 	</script>
 </body>
 </html>

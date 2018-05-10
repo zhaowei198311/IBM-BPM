@@ -20,6 +20,10 @@
 		
 	<script type="text/javascript">
 	//打开新增按钮
+	
+		
+	   var url='http://localhost:8080/desmartsystem/sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
+		
 	   function openSelectPresonne() {
 		    layer.open({
 		     type: 2,
@@ -27,7 +31,7 @@
 		     shadeClose: true,
 		     shade: 0.8,
 		     area: ['790px', '580px'],
-		     content : [ 'http://localhost:8080/desmartsystem/sysUser/assign_personnel?id=test&isSingle=false&actcCanChooseUser=hide', 'yes'],
+		     content : [ url, 'yes'],
 		     success : function(layero, lockIndex) {
 		      var body = layer.getChildFrame('body', lockIndex);
 		      //绑定解锁按钮的点击事件
