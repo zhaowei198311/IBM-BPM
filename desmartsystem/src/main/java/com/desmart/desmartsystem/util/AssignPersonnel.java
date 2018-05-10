@@ -3,7 +3,7 @@ package com.desmart.desmartsystem.util;
 public class AssignPersonnel {
 	private String id;
 	private String isSingle;
-	private String ctcAssignType;
+	private String actcAssignType;
 	private String roleIds;
 	private String teamIds;
 	private String userIds;
@@ -23,11 +23,12 @@ public class AssignPersonnel {
 	public void setIsSingle(String isSingle) {
 		this.isSingle = isSingle;
 	}
-	public String getCtcAssignType() {
-		return ctcAssignType;
+	
+	public String getActcAssignType() {
+		return actcAssignType;
 	}
-	public void setCtcAssignType(String ctcAssignType) {
-		this.ctcAssignType = ctcAssignType;
+	public void setActcAssignType(String actcAssignType) {
+		this.actcAssignType = actcAssignType;
 	}
 	public String getRoleIds() {
 		return roleIds;
