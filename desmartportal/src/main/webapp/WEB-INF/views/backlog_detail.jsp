@@ -191,6 +191,36 @@
 			      			</div>
 		      			</div>
 					</div>
+					
+					<!-- 开始 -->
+					<p class="title_p">步骤</p>
+				<table class="layui-table">
+					<colgroup>
+					    <col width="150">
+					    <col>
+					    <col width="150">
+					    <col> 
+					    <col width="150">
+					    <col> 
+					</colgroup>
+					<tbody>
+					    <tr>
+					      <td class="td_title">下一步骤:<span class="tip_span"></span>
+					      	<input type="text" name="title" value="" id="" >
+					      	<input type="text" name="title" value="" id="" >
+					      </td>
+					      <td colspan="3"><input type="text" name="title" required  lay-verify="required" readonly="readonly" value="" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">下一步骤处理人:<span class="tip_span"></span></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value=""  readonly="readonly" autocomplete="off" class="layui-input">
+					      </td>
+					      <td colspan="3">
+					      <i class="layui-icon"  onclick="getConductor();" >&#xe612;</i>
+					      </td>
+					    </tr>
+					</tbody>
+				</table>
+					<!-- 结束 -->
+					
 					<div class="layui-tab">
 					  	<ul class="layui-tab-title">
 					  		<li class="layui-this">审批记录</li>
@@ -335,6 +365,27 @@
 	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
 	<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	<script>
+	
+		var url='http://localhost:8080/desmartsystem/sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
+		function getConductor(){
+			layer.open({
+			     type: 2,
+			     title: '选择人员',
+			     shadeClose: true,
+			     shade: 0.8,
+			     area: ['680px', '520px'],
+			     content : [ url, 'yes'],
+			     success : function(layero, lockIndex) {
+				      var body = layer.getChildFrame('body', lockIndex);
+				      //绑定解锁按钮的点击事件
+				      body.find('button#close').on('click', function() {
+				       layer.close(lockIndex);
+				       location.reload();//刷新
+				      });
+			     }
+			 });
+		}
+		
 		layui.use('layedit', function(){
 		  var layedit = layui.layedit;
 		  layedit.build('demo',{
