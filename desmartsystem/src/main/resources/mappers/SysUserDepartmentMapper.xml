@@ -13,67 +13,30 @@
     <result column="IS_MANAGER" property="isManager" jdbcType="VARCHAR" />
     <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
   </resultMap>
-  <!-- <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
-    insert into SYS_USER_DEPARTMENT (UDUID, USER_UID, IS_MANAGER, 
-      DEPART_UID)
-    	values (#{uduid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{isManager,jdbcType=VARCHAR}, 
-      #{departUid,jdbcType=VARCHAR})
-  </insert>
   
-  <insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
-    insert into SYS_USER_DEPARTMENT
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="uduid != null" >
-        UDUID,
-      </if>
-      <if test="userUid != null" >
-        USER_UID,
-      </if>
-      <if test="isManager != null" >
-        IS_MANAGER,
-      </if>
-      <if test="departUid != null" >
-        DEPART_UID,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="uduid != null" >
-        #{uduid,jdbcType=VARCHAR},
-      </if>
-      <if test="userUid != null" >
-        #{userUid,jdbcType=VARCHAR},
-      </if>
-      <if test="isManager != null" >
-        #{isManager,jdbcType=VARCHAR},
-      </if>
-      <if test="departUid != null" >
-        #{departUid,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert> -->
-  
-  <select id="selectUserDepartmentView" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap">
-  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d   union ALL  
-SELECT u.USER_UID,u.DEPART_UID,u.USER_UID FROM SYS_USER u) user_department LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID
-  where 1=1
-		<if test="userUid!=null">
- 			and user_Uid = #{userUid}
- 		</if>
-  </select>
-  
+	  <select id="selectUserDepartmentView" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap">
+	  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d) user_department LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID where 1=1
+			<if test="userUid!=null">
+	 			and user_Uid = #{userUid}
+	 		</if>
+	  </select>
   
   	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
 	 		SELECT	ud.UDUID,ud.USER_UID,d.DEPART_NAME,u.USER_NAME,ud.IS_MANAGER  FROM	 SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID  where 1=1
-	 		<if test="userUid!=null">
+	 		<if test="userUid!=null and userUid!='' ">
 	 			and ud.user_Uid = #{userUid}
 	 		</if>
-	 		<if test="departUid!=null">
-	 			and ud.depart_Uid = #{departUid} and UD.IS_MANAGER='true'
+	 		<if test="departUid!=null and departUid!='' ">
+	 			and ud.depart_Uid = #{departUid} 
+	 			<!-- and UD.IS_MANAGER='true' -->
+	 		</if>
+	 		<if test="isManager!=null and isManager!='' ">
+	 			and UD.IS_MANAGER =#{isManager}
 	 		</if>
 	 </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
-	  		select * from Sys_Department
+	  		select * from SYS_USER_DEPARTMENT d where d.UDUID=#{uduid}
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
@@ -82,17 +45,28 @@ SELECT u.USER_UID,u.DEPART_UID,u.USER_UID FROM SYS_USER u) user_department LEFT 
 	 </insert>
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap" >
-	  		
+	  		select * from SYS_USER_DEPARTMENT u where u.UDUID=#{uduid}
 	  </select>
 	  
-	  
 	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment">
-	  		DELETE FROM SYS_USER_DEPARTMENT where UDUID=#{uduid}
+	  		DELETE FROM SYS_USER_DEPARTMENT where 1=1
+	  		<if test="uduid!=null and uduid!='' ">
+	  			and UDUID=#{uduid}
+	  		</if>
+	  		<if test="departUid!=null and departUid!='' ">
+	  			and DEPART_UID = #{departUid}
+	  		</if>
+	  		<if test="userUid!=null and userUid!='' ">
+	  			and USER_UID = #{userUid}
+	  		</if>
 	  </delete>
 	  
 	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
-	  	
+	  		update SYS_USER_DEPARTMENT set  USER_UID=#{userUid,jdbcType=VARCHAR},IS_MANAGER=#{isManager,jdbcType=VARCHAR},DEPART_UID=#{departUid,jdbcType=VARCHAR} where UDUID=#{uduid}
 	  </update>
-  
+	  
+	  <update id="updateUserDepartment" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
+	  		update SYS_USER_DEPARTMENT set DEPART_UID=#{departUid}   where DEPART_UID=#{departUid} and USER_UID = #{userUid}
+	  </update>
 
 </mapper>

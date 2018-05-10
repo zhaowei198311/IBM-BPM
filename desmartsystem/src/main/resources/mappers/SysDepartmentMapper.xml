@@ -63,7 +63,40 @@
 	 		<if test="departParent!= null and departParent!='' ">
 	 			and d.DEPART_PARENT=#{departParent}
 	 		</if>
-	 		
+	 		<!-- 过滤掉指定人下的部门 -->
+	 		<if test="ext1!= null and ext1!=''" > 
+	 			and d.DEPART_UID not in (SELECT	 ud.DEPART_UID FROM SYS_USER_DEPARTMENT ud where ud.USER_UID=#{ext1})
+	 		</if>
+	  </select>
+	  
+	  
+	  <!-- 查询所有部门信息 -->
+	  <select id="selectDesmarts" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
+			select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE
+		    from Sys_Department d where 1=1 
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
@@ -71,7 +104,52 @@
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
+	 		insert into SYS_DEPARTMENT (DEPART_UID, DEPART_PARENT, DISPLAY_NAME, 
+		      DEPART_NAME, ORDER_INDEX, DEPART_DESC, 
+		      DEPART_NO, DEPART_LAYER, DEPART_ADMINS, 
+		      DEPART_ZONE, COMPANY_UID, EXT1, 
+		      EXT2, WORK_CALENDAR, EXT3, 
+		      EXT4, EXT5, DEPART_TYPE, 
+		      IS_CLOSED, CLOSE_DATE, BEGIN_DATE, 
+		      END_DATE, CREATE_DATE, UPDATE_DATE
+		      )
+		    values (#{departUid,jdbcType=VARCHAR}, #{departParent,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+		      #{departName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, #{departDesc,jdbcType=VARCHAR}, 
+		      #{departNo,jdbcType=VARCHAR}, #{departLayer,jdbcType=DECIMAL}, #{departAdmins,jdbcType=VARCHAR}, 
+		      #{departZone,jdbcType=VARCHAR}, #{companyUid,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, 
+		      #{ext2,jdbcType=VARCHAR}, #{workCalendar,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, 
+		      #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{departType,jdbcType=VARCHAR}, 
+		      #{isClosed,jdbcType=DECIMAL}, #{closeDate,jdbcType=TIMESTAMP}, #{beginDate,jdbcType=TIMESTAMP}, 
+		      #{endDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+		      )
 	 </insert>
+	 
+	 <insert id="inserBatch" parameterType="java.util.List" >  
+	  		INSERT
+			INTO SYS_DEPARTMENT
+			  (
+			    DEPART_UID,
+			    DEPART_PARENT,
+			    DISPLAY_NAME,
+			    DEPART_NAME,
+			    DEPART_NO,
+			    DEPART_ADMINS,
+			    CREATE_DATE,
+			    UPDATE_DATE
+			  )
+	        <foreach collection="list" index="index" item="item" separator=" union all ">  
+	            SELECT
+				   #{item.departUid,jdbcType=VARCHAR},
+				   #{item.departParent,jdbcType=VARCHAR},
+				   #{item.displayName,jdbcType=VARCHAR},
+				   #{item.departName,jdbcType=VARCHAR},
+				   #{item.departNo,jdbcType=VARCHAR},
+				   #{item.departAdmins,jdbcType=VARCHAR},
+				   #{item.createDate,jdbcType=TIMESTAMP},
+				   #{item.updateDate,jdbcType=TIMESTAMP}
+				  FROM DUAL
+	        </foreach>  
+      </insert>
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysDepartment" resultMap="BaseResultMap" >
 	  		select 
@@ -121,6 +199,10 @@
 	  </delete>
 	  
 	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
+	  		 update SYS_DEPARTMENT set DEPART_PARENT=#{departParent,jdbcType=VARCHAR}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR}, 
+		     DEPART_NAME=#{departName,jdbcType=VARCHAR}, ORDER_INDEX=#{orderIndex,jdbcType=DECIMAL}, DEPART_DESC=#{departDesc,jdbcType=VARCHAR}, 
+		     DEPART_NO=#{departNo,jdbcType=VARCHAR}, DEPART_LAYER=#{departLayer,jdbcType=DECIMAL}, DEPART_ADMINS=#{departAdmins,jdbcType=VARCHAR}, 
+		     DEPART_ZONE=#{departZone,jdbcType=VARCHAR}, COMPANY_UID=#{companyUid,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
+		     where DEPART_UID = #{departUid,jdbcType=VARCHAR}
 	  </update>
-
 </mapper>

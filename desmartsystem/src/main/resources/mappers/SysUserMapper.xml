@@ -41,8 +41,9 @@
 		<result column="EMPLOYEETYPE" property="employeeType" />
 		<result column="DEPART_NAME" property="departName" />
 		<result column="ACCOUNT_TYPE" property="accountType" />
+		
 
-		<association property="sysDepartment"  javaType="com.desmart.desmartsystem.entity.SysDepartment">
+		<!-- <association property="sysDepartment"  javaType="com.desmart.desmartsystem.entity.SysDepartment">
 			<result column="DEPART_UID" property="departUid" />
 			<result column="DEPART_PARENT" property="departParent" />
 			<result column="DEPART_NAME" property="departName" />
@@ -53,14 +54,53 @@
 			<result column="DEPART_ADMINS" property="departAdmins" />
 			<result column="DEPART_ZONE" property="departZone" />
 			<result column="COMPANY_UID" property="companyUid" />
-		</association>
+		</association> -->
 	</resultMap>
 	
-	
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT
+		INTO SYS_USER
+		(USER_UID, USER_NO, USER_ID, 
+	      USER_NAME, USER_NAME_US, SN, 
+	      GIVENNAME, SEX, HOMEPLACE, 
+	      PASSPORT, BIRTHDAY, ORDER_INDEX, 
+	      PASSWORD, DEPART_UID, IS_MANAGER, 
+	      WORK_CALENDAR, OFFICE_TEL, OFFICE_FAX, 
+	      MOBILE, EMAIL, USER_IP, 
+	      IS_SINGLE_LOGIN, WORK_STATUS, SESSION_TIME, 
+	      WECHAT, STATION, STATIONCODE, 
+	      MANAGERNUMBER, LEVELS, EXT1, 
+	      EXT2, EXT3, EXT4, EXT5, 
+	      REPORT_TO, IS_CLOSED, CLOSE_DATE, 
+	      BEGIN_DATE, END_DATE, CREATE_DATE, 
+	      UPDATE_DATE, COMPANYNUMBER, DEPARTMENTNUMBER, 
+	      ACCOUNT_TYPE,COSTCENTER
+		)
+		<foreach collection="lists" index="index" item="item"
+			separator=" union all ">
+			SELECT
+			#{item.userUid,jdbcType=VARCHAR}, #{item.userNo,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR}, 
+		      #{item.userName,jdbcType=VARCHAR}, #{item.userNameUs,jdbcType=VARCHAR}, #{item.sn,jdbcType=VARCHAR}, 
+		      #{item.givenname,jdbcType=VARCHAR}, #{item.sex,jdbcType=DECIMAL}, #{item.homeplace,jdbcType=VARCHAR}, 
+		      #{item.passport,jdbcType=VARCHAR}, #{item.birthday,jdbcType=VARCHAR}, #{item.orderIndex,jdbcType=DECIMAL}, 
+		      #{item.password,jdbcType=VARCHAR}, #{item.departUid,jdbcType=VARCHAR}, #{item.isManager,jdbcType=DECIMAL}, 
+		      #{item.workCalendar,jdbcType=VARCHAR}, #{item.officeTel,jdbcType=VARCHAR}, #{item.officeFax,jdbcType=VARCHAR}, 
+		      #{item.mobile,jdbcType=VARCHAR}, #{item.email,jdbcType=VARCHAR}, #{item.userIp,jdbcType=VARCHAR}, 
+		      #{item.isSingleLogin,jdbcType=DECIMAL}, #{item.workStatus,jdbcType=VARCHAR}, #{item.sessionTime,jdbcType=DECIMAL}, 
+		      #{item.wechat,jdbcType=VARCHAR}, #{item.station,jdbcType=VARCHAR}, #{item.stationcode,jdbcType=VARCHAR}, 
+		      #{item.managernumber,jdbcType=VARCHAR}, #{item.levels,jdbcType=VARCHAR}, #{item.ext1,jdbcType=VARCHAR}, 
+		      #{item.ext2,jdbcType=VARCHAR}, #{item.ext3,jdbcType=VARCHAR}, #{item.ext4,jdbcType=VARCHAR}, #{item.ext5,jdbcType=VARCHAR}, 
+		      #{item.reportTo,jdbcType=VARCHAR}, #{item.isClosed,jdbcType=DECIMAL}, #{item.closeDate,jdbcType=TIMESTAMP}, 
+		      #{item.beginDate,jdbcType=TIMESTAMP}, #{item.endDate,jdbcType=TIMESTAMP},#{item.createDate,jdbcType=TIMESTAMP},
+		      #{item.updateDate,jdbcType=TIMESTAMP}, #{item.companynumber,jdbcType=VARCHAR}, #{item.departmetNumber,jdbcType=VARCHAR}, 
+		      #{item.accountType,jdbcType=VARCHAR},#{item.costCenter,jdbcType=VARCHAR}
+			FROM DUAL
+		</foreach>
+	</insert>
 	
 	
 	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
-	 		select * from sys_user u left join sys_department d on  u.departmentNumber=d.depart_no  where 1=1
+	 		select * from sys_user u  where 1=1
 	 		<if test="userName!=null and userName!='' ">
 	 			and u.USER_NAME LIKE CONCAT(CONCAT('%',#{userName}),'%') 
 	 		</if>
@@ -69,12 +109,13 @@
 	 		</if>
 	 		
 	 		<if test="departUid!=null and departUid!='' ">
-	 			and (U.USER_UID IN (SELECT DU.USER_UID FROM SYS_USER_DEPARTMENT DU WHERE DU.DEPART_UID=#{departUid}) OR U.DEPART_UID=#{departUid})
+	 			and U.USER_UID IN (SELECT d.USER_UID from  SYS_USER_DEPARTMENT  d WHERE	d.DEPART_UID=#{departUid})
 	 		</if>
 	 		
 	 		<if test="departName!=null  and departName!='' ">
-	 			and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%') 
+	 			and  EXISTS(SELECT	ud.USER_UID FROM SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID  WHERE ud.USER_UID=u.USER_UID and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%'))
 	 		</if>
+	 		
 	 		<if test="employeeType!=null and employeeType!='' ">
 	 			and u.employeeType LIKE CONCAT(CONCAT('%',#{employeeType}),'%') 
 	 		</if>
@@ -92,7 +133,10 @@
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
-	  		select * from Sys_User
+	  		select * from Sys_User u where 1=1 
+	  		<if test="userUid != null and userUid != '' ">
+	  			and USER_UID = #{userUid}
+	  		</if>
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUser" >
