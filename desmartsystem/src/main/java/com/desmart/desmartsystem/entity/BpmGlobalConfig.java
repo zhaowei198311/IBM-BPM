@@ -10,26 +10,26 @@ import java.util.Date;
 public class BpmGlobalConfig implements Serializable {
 
     private String configId;  // 主键
-    private String configName;  // 配置�?
-    private String bpmServerHost;  // bpm引擎host
-    private String bpmAdminName;   // 管理员账�?
-    private String bpmAdminPsw;    // 管理员密�?
-    private String configStatus;   // 配置状�?? on 启用  off 停用
+    private String configName;  // 配置名
+    private String bpmServerHost;  // 流程引擎ip端口
+    private String bpmAdminName;   // 管理员用户名
+    private String bpmAdminPsw;    // 管理员密码
+    private String configStatus;   // 配置状态  on 启用  off 停用
     private Date createTime;     // 创建时间
     private Date updateTime;     // 更新时间
     private String gmtTimeZone;   // 时区
     private String bpmformsHost;  // 平台host
     private Integer bpmClientTimeout;  // 超时时间
-    private String bpmformsWebContext; // 平台应用上下�?
-    private Integer httpMaxConnection; // �?大http连接
+    private String bpmformsWebContext; // 平台上下文
+    private Integer httpMaxConnection; // 最大http连接
     private Integer preRouteMaxConnection;
     private String schedulerHost;  // 定时任务管理host
-    private String bpmAdminEmail;  // 管理员邮件地�?
+    private String bpmAdminEmail;  // 管理员邮件地址
     private String bpmApiHost;   // 平台api地址
-    private String sftpPath;     //�����ϴ���Ŀ¼
-    private String sftpUserName;  //�����ϴ��û���
-    private String sftpPassword;  //�����ϴ�������
-    private String sftpIp;       //�����ϴ�ip��ַ
+    private String sftpPath;     //附件上传根目录
+    private String sftpUserName;  //附件上传用户名
+    private String sftpPassword;  //附件上传根密码
+    private String sftpIp;       //附件上传IP地址ַ
     public BpmGlobalConfig(String configId, String configName, String bpmServerHost, String bpmAdminName,
 			String bpmAdminPsw, String configStatus, Date createTime, Date updateTime, String gmtTimeZone,
 			String bpmformsHost, Integer bpmClientTimeout, String bpmformsWebContext, Integer httpMaxConnection,
