@@ -11,7 +11,7 @@ import com.github.pagehelper.PageInfo;
  */
 public interface BpmGlobalConfigService {
     /**
-     * 获得�?个启用的全局配置
+     * 获得所有启用的全局配置
      */
 	ServerResponse<PageInfo<List<BpmGlobalConfig>>> getFirstActConfig(Integer pageNum, Integer pageSize);
 	
