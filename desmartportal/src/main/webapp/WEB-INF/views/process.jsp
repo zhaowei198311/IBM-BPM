@@ -49,7 +49,6 @@
 <script type="text/javascript" src="resources/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/js/common.js"></script>
-<script type="text/javascript" src="resources/formDesign/js/my.js"></script>
 <script>
 			function startProcess(){
 				var proUids = $("#proUid").val();
@@ -99,3 +98,4 @@
 				clientSideInclude(document.getElementById('formId').value);
 			})
 </script>
+<script type="text/javascript" src="resources/formDesign/js/my.js"></script>

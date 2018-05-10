@@ -2,7 +2,6 @@ var form = null;
 
 /*动态表单渲染js*/
 $(function(){
-	alert("123");
 	var tableHead = '<table class="layui-table">'
 					+'<colgroup>'
 					+'<col>'
