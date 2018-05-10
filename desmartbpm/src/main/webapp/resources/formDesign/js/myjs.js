@@ -392,10 +392,13 @@ function showEditorModal(obj){
 var nameArr = new Array();
 
 //新建、修改表单组件时判断该组件的name是否重复
-function nameIsRepeat(name,oldName){
+function nameIsRepeat(name){
 	if(oldName==name){
-		return true;
+		return false;
 	}else if($.inArray(name, nameArr)==-1){
+		console.log(nameArr);
+		nameArr.splice($.inArray(oldName,nameArr),1);
+		console.log(nameArr);
 		nameArr.push(name);
 		return false;
 	}else{
@@ -466,6 +469,17 @@ $(function(){
 	$(".demo").css("display","block");
 	//给name数组赋值
 	nameArr = $("#downloadModal #nameArr").val().split("," );
+	
+	$(".demo").delegate(".remove", "click", function(e) {
+		e.preventDefault();
+		var removeName = "";
+		if($(this).parent().find(".subDiv").find("label").length>=1){
+			removeName = $($(this).parent().find(".subDiv label").children[0]).attr("name");
+		}else{
+			removeName = $($(this).parent().find(".subDiv").children[0]).attr("name");
+		}
+		nameArr.splice($.inArray(removeName,nameArr),1);
+	})
 	
 	//保存单行文本框的属性编辑
 	$("#save-text-content").click(function(e){
