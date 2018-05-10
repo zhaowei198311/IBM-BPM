@@ -396,9 +396,7 @@ function nameIsRepeat(name){
 	if(oldName==name){
 		return false;
 	}else if($.inArray(name, nameArr)==-1){
-		console.log(nameArr);
 		nameArr.splice($.inArray(oldName,nameArr),1);
-		console.log(nameArr);
 		nameArr.push(name);
 		return false;
 	}else{
@@ -474,9 +472,9 @@ $(function(){
 		e.preventDefault();
 		var removeName = "";
 		if($(this).parent().find(".subDiv").find("label").length>=1){
-			removeName = $($(this).parent().find(".subDiv label").children[0]).attr("name");
+			removeName = $($(this).parent().find(".subDiv label").children()[0]).attr("name");
 		}else{
-			removeName = $($(this).parent().find(".subDiv").children[0]).attr("name");
+			removeName = $($(this).parent().find(".subDiv").children()[0]).attr("name");
 		}
 		nameArr.splice($.inArray(removeName,nameArr),1);
 	})
