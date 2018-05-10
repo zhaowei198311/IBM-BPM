@@ -20,10 +20,10 @@ import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
- *  ȫ������
+ *  全局变量配置
  * </p>
  *
- * @author ��־ӱ
+ * @author 张志颖
  * @since 2018-05-8
  */
 @Controller
