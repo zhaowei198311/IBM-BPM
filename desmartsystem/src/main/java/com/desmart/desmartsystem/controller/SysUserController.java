@@ -25,7 +25,7 @@ import com.desmart.desmartsystem.util.UUIDTool;
 
 /**
  * <p>
- *  前端控制器
+ *  鍓嶇鎺у埗鍣�
  * </p>
  *
  * @author xsf
@@ -52,6 +52,10 @@ public class SysUserController {
 		return "usermanagement/NewFile";
 	}
 	
+	@RequestMapping(value="/globalConfig")
+	public String globalConfig(){
+		return "usermanagement/globalConfig";
+	}
 	
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){

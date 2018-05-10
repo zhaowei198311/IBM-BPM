@@ -30,6 +30,7 @@
 			      <dd><a href="sysTeam/group" target="iframe0">角色组管理</a></dd>
 			      <dd><a href="sysDictionary/dictionary" target="iframe0">数据字典</a></dd>
 			      <dd><a href="http://localhost:8080/ssmquartztest/Quarz/QuarzList.jsp" target="iframe0">定时任务管理</a></dd>
+			      <dd><a href="sysUser/globalConfig" target="iframe0">全局配置管理</a></dd>
 			    </dl>
 			</li>
 			<li class="layui-nav-item">
