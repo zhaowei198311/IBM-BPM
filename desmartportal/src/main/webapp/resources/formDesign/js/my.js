@@ -1,24 +1,8 @@
 var form = null;
 
-function clientSideInclude(dynUid) {
-	$.ajax({
-		url:common.getPath()+"/formSet/getFormFileByFormUid",
-		method:"post",
-		async:false,
-		data:{
-			dynUid:dynUid//表单Id，唯一主键
-		},
-		success:function(result){
-			if(result.status==0){
-				console.log(result.data);
-				$("#formSet").html(result.data);
-			}
-		}
-	});
-}
 /*动态表单渲染js*/
 $(function(){
-	clientSideInclude("form:7c6a98bf-8267-4529-bfda-9771603e763e");
+	alert("123");
 	var tableHead = '<table class="layui-table">'
 					+'<colgroup>'
 					+'<col>'
