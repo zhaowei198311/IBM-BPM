@@ -1,5 +1,8 @@
 package com.desmart.desmartbpm.service;
 
+import org.springframework.web.context.WebApplicationContext;
+
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.DhTrigger;
 
@@ -28,5 +31,14 @@ public interface DhTriggerService {
      * @return
      */
     int saveTrigger(DhTrigger dhTrigger);
-
+    /**
+     * 
+     * @Title: invokeTrigger  
+     * @Description: 通过反射调用类的方法  
+     * @param @param triUid
+     * @param @return  
+     * @return DhTrigger
+     * @throws
+     */
+    void invokeTrigger(WebApplicationContext wac, String insUid, String triUid);
 }
