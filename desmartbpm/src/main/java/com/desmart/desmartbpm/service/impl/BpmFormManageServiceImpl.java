@@ -2,17 +2,17 @@ package com.desmart.desmartbpm.service.impl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,7 @@ import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.desmart.desmartbpm.util.SFTPUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -117,7 +118,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	@Override
 	public ServerResponse updateFormInfo(BpmForm bpmForm) throws IOException {
 		//修改表单文件名
-		updateFormFilename(bpmForm);
+		if(!updateFormFilename(bpmForm)) {
+			throw new PlatformException("表单名修改异常");
+		}
 		//修改表单基本信息
 		int countRow = bpmFormManageMapper.updateFormInfo(bpmForm);
 		if(countRow!=1) {
@@ -129,43 +132,16 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	/**
 	 * 修改表单文件名
 	 */
-	private void updateFormFilename(BpmForm bpmForm) throws IOException {
+	private boolean updateFormFilename(BpmForm bpmForm) throws IOException {
 		String filename = bpmFormManageMapper.queryFormByFormUid(bpmForm.getDynUid()).getDynFilename();
-		File file = new File(filename);
-		if (!file.exists()) {
-			throw new PlatformException("表单文件不存在");
-		}
-		String path = filename.replaceAll(file.getName(),"");//获得文件路径
-		
-		String updateFilename = path+bpmForm.getDynTitle()+".html";
-		File updateFile = new File(updateFilename);
-		if (!updateFile.exists()) {
-			updateFile.createNewFile();
-	    }
-		FileInputStream fis = new FileInputStream(file);
-		FileOutputStream fos = new FileOutputStream(updateFile);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		BufferedOutputStream bos = new BufferedOutputStream(fos);
-			
-		byte[] b = new byte[20];// 每次运20个，可按照实际文件大小调整
-		int len;
-		while ((len = bis.read(b)) != -1) {
-			bos.write(b, 0, len);
-		}
+		String updateFilename = bpmForm.getDynTitle()+".html";
+		boolean flag = SFTPUtil.renameFile(SFTPUtil.path+"/form",filename, updateFilename);
 		bpmFormManageMapper.updateFormFilenameByFormUid(bpmForm.getDynUid(),updateFilename);
-		
-		if (bos != null) {
-			bos.close();
-			if (bis != null) {
-				bis.close();
-			}
-		}
-		//删除原表单
-		file.delete();
+		return flag;
 	}
 
 	@Override
-	public ServerResponse deleteForm(String[] formUids,String path) {
+	public ServerResponse deleteForm(String[] formUids) {
 		//to do 这里需要判断表单是否可删除--判断条件：所属的流程定义是否已经发布
 		for(String formUid:formUids) {
 			BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(formUid);
@@ -174,15 +150,17 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			}
 			int countRow = bpmFormManageMapper.deleteForm(formUid);
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
-			File file = new File(path,bpmForm.getDynTitle()+".html");
-			file.delete();
+			boolean flag = SFTPUtil.removeFile(SFTPUtil.path+"/form", bpmForm.getDynFilename());
+			if(!flag) {
+				throw new PlatformException("删除表单文件失败");
+			}
 		}
 		return ServerResponse.createBySuccess();
 	}
 
 	@Override
-	public ServerResponse copyForm(BpmForm bpmForm, String path) throws IOException {
-		String newFilename = path+bpmForm.getDynTitle()+".html";
+	public ServerResponse copyForm(BpmForm bpmForm) {
+		String newFilename = bpmForm.getDynTitle()+".html";
 		BpmForm oldBpmForm = bpmFormManageMapper.queryFormByFormUid(bpmForm.getDynUid());
 		if(null==oldBpmForm) {
 			throw new PlatformException("找不到指定的表单数据");
@@ -193,39 +171,11 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		//复制表单字段信息
 		copyFormFieldInfo(newFormUid);
 		//复制表单文件
-		copyFormFile(newFilename,oldFilename);
+		boolean flag = SFTPUtil.copyFile(SFTPUtil.path+"/form",oldFilename,newFilename);
+		if(!flag) {
+			throw new PlatformException("表单文件复制异常");
+		}
 		return ServerResponse.createBySuccess();
-	}
-
-	/**
-	 * 复制表单文件
-	 */
-	private void copyFormFile(String newFilename,String oldFilename) throws IOException {
-		File oldFile = new File(oldFilename);
-		if (!oldFile.exists()) {
-			throw new PlatformException("表单文件不存在");
-		}
-		
-		File newFile = new File(newFilename);
-		if (!newFile.exists()) {
-			newFile.createNewFile();
-	    }
-		FileInputStream fis = new FileInputStream(oldFile);
-		FileOutputStream fos = new FileOutputStream(newFile);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		BufferedOutputStream bos = new BufferedOutputStream(fos);
-			
-		byte[] b = new byte[20];// 每次运20个，可按照实际文件大小调整
-		int len;
-		while ((len = bis.read(b)) != -1) {
-			bos.write(b, 0, len);
-		}
-		if (bos != null) {
-			bos.close();
-			if (bis != null) {
-				bis.close();
-			}
-		}
 	}
 
 	/**
@@ -280,5 +230,11 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		}
 		bpmFormFieldMapper.deleteFormField(bpmForm.getDynUid());
 		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse getFormFileByFormUid(String dynUid) {
+		BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(dynUid);
+		return SFTPUtil.getFileStream(SFTPUtil.path+"/form", bpmForm.getDynFilename());
 	}
 }

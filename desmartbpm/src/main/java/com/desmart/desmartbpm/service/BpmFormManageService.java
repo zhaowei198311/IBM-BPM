@@ -37,13 +37,12 @@ public interface BpmFormManageService {
 	/**
 	 * 删除表单数据
 	 */
-	ServerResponse deleteForm(String[] formUids,String path);
+	ServerResponse deleteForm(String[] formUids);
 
 	/**
 	 * 复制表单
 	 */
-	ServerResponse copyForm(BpmForm bpmForm, String path) throws IOException;
-
+	ServerResponse copyForm(BpmForm bpmForm);
 	/**
 	 * 修改表单基本信息
 	 */
@@ -58,4 +57,9 @@ public interface BpmFormManageService {
 	 * 修改表单内容
 	 */
 	ServerResponse updateFormContent(BpmForm bpmForm);
+
+	/**
+	 * 根据表单Id获得表单文件
+	 */
+	ServerResponse getFormFileByFormUid(String dynUid);
 }
