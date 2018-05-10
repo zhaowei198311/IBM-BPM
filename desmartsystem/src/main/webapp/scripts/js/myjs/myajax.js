@@ -410,12 +410,11 @@ function table(data) {
 //	   });
 //	});
 	
-	
 	laypage({
         cont: 'pagination',
         pages: Math.ceil(data.total / data.pageSize),
         curr: data.pageNo || 1,
-        group: 5,
+        group: 3,
         skip: true,
         jump: function (obj, first) {
             if (!first) {
@@ -467,7 +466,7 @@ function depart(data,depart){
 
 function userName(data,user){
 	var projectarray=[];
-	projectarray.push(user);
+	//projectarray.push(user);
  	$(data).each(function(index,val){
  		projectarray.push(val.userUid);
  	});
