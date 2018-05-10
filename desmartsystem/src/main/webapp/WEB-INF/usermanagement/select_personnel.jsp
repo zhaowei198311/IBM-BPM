@@ -107,7 +107,14 @@
 			var  useruname='';
 			//新增保存
 			$("#addpersonnel").click(function(){
-				$("#user_add li").each(function(){
+				var $user_add= $("#user_add li");
+				if(isSingle=='true'){
+					if($user_add.length>1){
+						layer.alert('只能保存一个人!');
+						return false;
+					};
+				}
+				$user_add.each(function(){
 					useruid+=$(this).attr('value')+";";
 					useruname+=$(this).text()+";";
 				});	
