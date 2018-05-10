@@ -1,6 +1,5 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,18 +11,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +28,6 @@ import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
@@ -49,16 +35,16 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
 import com.desmart.desmartbpm.enums.DhProcessDefinitionStatus;
 import com.desmart.desmartbpm.exception.PermissionException;
-import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
-import com.desmart.desmartbpm.util.http.HttpClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageInfo;
 
 @Service

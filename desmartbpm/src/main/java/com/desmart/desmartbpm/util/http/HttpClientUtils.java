@@ -7,18 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletContext;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.util.rest.RestUtil;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -40,9 +33,15 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.tools.ant.taskdefs.condition.Http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class HttpClientUtils {
 

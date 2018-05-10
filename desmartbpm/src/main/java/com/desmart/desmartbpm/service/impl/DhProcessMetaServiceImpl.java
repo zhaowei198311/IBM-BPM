@@ -25,14 +25,14 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.exception.PlatformException;
-import com.desmart.desmartbpm.service.BpmGlobalConfigService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 

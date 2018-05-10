@@ -1,11 +1,12 @@
 package com.desmart.desmartbpm.util.http;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmRestApiUtils {
 	

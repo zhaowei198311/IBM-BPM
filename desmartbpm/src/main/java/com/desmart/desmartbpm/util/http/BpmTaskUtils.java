@@ -1,11 +1,4 @@
 package com.desmart.desmartbpm.util.http;
-import com.alibaba.fastjson.JSON;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmCommonBusObject;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
-import com.desmart.desmartbpm.util.JSONUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -15,8 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -27,6 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.entity.BpmCommonBusObject;
+import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
+import com.desmart.desmartbpm.util.JSONUtils;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmTaskUtils extends BpmRestApiUtils {
     private static final Logger LOG = LoggerFactory.getLogger(BpmTaskUtils.class);

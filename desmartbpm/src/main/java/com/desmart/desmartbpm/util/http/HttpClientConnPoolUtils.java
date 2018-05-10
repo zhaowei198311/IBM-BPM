@@ -4,7 +4,7 @@ package com.desmart.desmartbpm.util.http;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class HttpClientConnPoolUtils {
     public HttpClientConnPoolUtils() {

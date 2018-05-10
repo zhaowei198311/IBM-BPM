@@ -1,8 +1,5 @@
 package com.desmart.desmartbpm.util.http;
 
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,10 +14,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -56,6 +55,9 @@ import org.apache.shiro.session.Session;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 /**
  * 负责与IBM BPM引擎交互的工具类，内部维护了一个CloseableHttpClient

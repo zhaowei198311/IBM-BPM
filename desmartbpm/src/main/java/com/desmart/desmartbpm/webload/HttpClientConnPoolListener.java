@@ -5,17 +5,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.service.BpmGlobalConfigService;
-import com.desmart.desmartbpm.util.http.HttpClientConnPoolUtils;
-
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.poi.util.SystemOutLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.util.http.HttpClientConnPoolUtils;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 public class HttpClientConnPoolListener implements ServletContextListener {
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientConnPoolListener.class);

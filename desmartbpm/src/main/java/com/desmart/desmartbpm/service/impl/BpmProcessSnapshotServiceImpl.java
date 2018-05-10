@@ -1,9 +1,22 @@
 package com.desmart.desmartbpm.service.impl;
 
-import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.service.BpmGlobalConfigService;
-import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.util.rest.RestUtil;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -14,21 +27,14 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmCommonBusObject;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
-import java.util.*;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
+import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 @Service
 public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService {

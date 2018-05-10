@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -35,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.util.http.HttpClientUtils;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class RestUtil {
     private static final Logger LOG = LoggerFactory.getLogger(RestUtil.class);

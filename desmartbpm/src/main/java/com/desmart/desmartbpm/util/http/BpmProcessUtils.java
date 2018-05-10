@@ -3,17 +3,20 @@ package com.desmart.desmartbpm.util.http;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.cookie.Cookie;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.http.cookie.Cookie;
+
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.BpmCommonBusObject;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
 import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmProcessUtils extends BpmRestApiUtils {
     private static final Logger LOG = LoggerFactory.getLogger(BpmProcessUtils.class);

@@ -1,24 +1,23 @@
 package com.desmart.desmartbpm.util.http;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmGlobalConfig;
-import com.desmart.desmartbpm.util.JSONUtils;
-
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.cookie.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmInstanceUtils extends BpmRestApiUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(BpmInstanceUtils.class);
