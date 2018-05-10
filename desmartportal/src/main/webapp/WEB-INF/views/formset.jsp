@@ -7,6 +7,7 @@
 <title>表单设置</title>
 </head>
 <body>
+	<h1>动态表单</h1>
 	<div id="formSet">
 	
 	</div>
