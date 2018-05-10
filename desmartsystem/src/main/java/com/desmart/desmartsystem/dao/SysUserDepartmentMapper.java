@@ -15,4 +15,6 @@ import com.desmart.desmartsystem.entity.SysUserDepartment;
 public interface SysUserDepartmentMapper extends BaseMapper<SysUserDepartment> {
 	//根据参数查询所有用户下的部门信息
 	public List<SysUserDepartment> selectUserDepartmentView(SysUserDepartment sysUserDepartment);
+	
+	int updateUserDepartment(SysUserDepartment sysUserDepartment);
 }

@@ -2,6 +2,7 @@ package com.desmart.desmartsystem.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysUser;
@@ -18,5 +19,5 @@ import com.desmart.desmartsystem.entity.SysUser;
 public interface SysUserMapper extends BaseMapper<SysUser> {
 	
 	public List<SysUser> listByPrimaryKeyList(List<String> list);
-	
+	int insertBatch(@Param("lists")List<SysUser> lists);
 }
