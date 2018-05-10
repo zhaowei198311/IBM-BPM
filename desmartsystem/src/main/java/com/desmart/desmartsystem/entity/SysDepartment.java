@@ -110,6 +110,8 @@ public class SysDepartment implements Serializable {
      */
 	private Date updateDate;
 	
+	private String displayName;
+	
 	private List<SysUserDepartment> sysUserDepartmentList;
 
 
@@ -304,7 +306,13 @@ public class SysDepartment implements Serializable {
 	public void setSysUserDepartmentList(List<SysUserDepartment> sysUserDepartmentList) {
 		this.sysUserDepartmentList = sysUserDepartmentList;
 	}
-	
-	
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
 }

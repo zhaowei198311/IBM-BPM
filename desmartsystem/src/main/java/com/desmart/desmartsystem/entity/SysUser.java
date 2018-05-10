@@ -73,7 +73,7 @@ public class SysUser implements Serializable {
 
 	private String managernumber;
 
-	private Short userLevel;
+	private String levels;
 
 	private String ext1;
 
@@ -154,6 +154,14 @@ public class SysUser implements Serializable {
 
 	public String getSn() {
 		return sn;
+	}
+
+	public String getLevels() {
+		return levels;
+	}
+
+	public void setLevels(String levels) {
+		this.levels = levels;
 	}
 
 	public void setSn(String sn) {
@@ -336,13 +344,6 @@ public class SysUser implements Serializable {
 		this.managernumber = managernumber == null ? null : managernumber.trim();
 	}
 
-	public Short getUserLevel() {
-		return userLevel;
-	}
-
-	public void setUserLevel(Short userLevel) {
-		this.userLevel = userLevel;
-	}
 
 	public String getExt1() {
 		return ext1;
