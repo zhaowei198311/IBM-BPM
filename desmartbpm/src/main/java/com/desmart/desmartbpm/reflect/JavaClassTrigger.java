@@ -1,8 +1,9 @@
 package com.desmart.desmartbpm.reflect;
 
+import org.json.JSONObject;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.alibaba.fastjson.JSONObject;
+
 
 /**
  * Java类型的Trigger必须实现此方法
