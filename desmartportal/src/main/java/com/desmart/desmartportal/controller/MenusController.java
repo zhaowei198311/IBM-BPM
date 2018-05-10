@@ -57,7 +57,7 @@ public class MenusController {
 			@RequestParam(value = "proAppId") String proAppId, @RequestParam(value = "verUid") String verUid,
 			@RequestParam(value = "proName") String proName,
 			@RequestParam(value = "categoryName") String categoryName) {
-		ModelAndView mv = new ModelAndView("formset");
+		ModelAndView mv = new ModelAndView("process");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("verUid", verUid);
