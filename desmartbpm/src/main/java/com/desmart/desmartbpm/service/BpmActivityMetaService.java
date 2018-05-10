@@ -38,4 +38,21 @@ public interface BpmActivityMetaService {
      * @return
      */
     ServerResponse<List<BpmActivityMeta>> getGatewaysOfDhProcessDefinition(String proAppId, String proUid, String proVerUid);
+    
+    /**
+     * 获得指定人工环节的后续人工环节
+     * @param bpmActivityMeta
+     * @return
+     */
+    List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta);
+    
+    /**
+     * 根据元素id，流程图id和版本id获得BpmActivityMeta
+     * @param bpmActivityId
+     * @param snapshotId
+     * @param bpdId
+     * @return
+     */
+    List<BpmActivityMeta> getBpmActivityMeta(String activityBpdId, String snapshotId, String bpdId);
+    
 }
