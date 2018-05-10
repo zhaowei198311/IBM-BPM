@@ -1,7 +1,5 @@
 package com.desmart.desmartbpm.entity;
 
-import java.sql.Timestamp;
-import java.util.Date;
 
 public class DatRule {
     
@@ -11,21 +9,21 @@ public class DatRule {
     
     private String parentRuleId;  // 父规则id
     
-    private Date startTime; // 开始时间
+    private String startTime; // 开始时间
    
-    private Date endTime;  // 结束时间
+    private String endTime;  // 结束时间
     
-    private String ruleType; // 规则类型  text
+    private String ruleType; // 规则类型   "PARAMS"
     
     private String ruleProcess;  // 规则内容 Map ( (this['amount'] > 444   &&  this['amount'] >= 10000 ) || (this['amount'] == '12'    ||  this['amount'] > 1 )  )
     
     private String ruleStatus; // 规则状态
     
-    private String returnType; // 返回类型  "PARAMS"
+    private String returnType; // 返回类型 text
     
     private int ruleVersion;   // 规则版本
     
-    private Timestamp createTime; // 创建时间
+    private String createTime; // 创建时间
     
     private String creator;  // 创建人
      
@@ -59,19 +57,19 @@ public class DatRule {
 		this.parentRuleId = parentRuleId;
 	}
 
-	public Date getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Date endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 
@@ -115,11 +113,11 @@ public class DatRule {
 		this.ruleVersion = ruleVersion;
 	}
 
-	public Timestamp getCreateTime() {
+	public String getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
 
