@@ -37,7 +37,9 @@
                               <dd><a href="<%=basePath%>/dfkd"  target="iframe0">流程配置</a></dd>
                             </dl>
                         </li>
-                        <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe62d;</i> 表单管理</a></li>
+                        <li class="layui-nav-item">
+                        	<a href="<%=basePath%>/formManage/index" target="iframe0"><i class="layui-icon">&#xe62d;</i> 表单管理</a>
+                        </li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe629;</i> 流程实例管理</a></li>
                     </ul>
