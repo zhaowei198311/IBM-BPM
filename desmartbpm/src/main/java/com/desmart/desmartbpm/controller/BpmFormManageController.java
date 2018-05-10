@@ -1,14 +1,11 @@
 package com.desmart.desmartbpm.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.ServerResponse;
@@ -32,6 +28,7 @@ import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.JsonUtil;
+import com.desmart.desmartbpm.util.SFTPUtil;
 
 /**
  * 表单管理控制器
@@ -174,20 +171,17 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/saveFormFile")
 	@ResponseBody
-	public String saveFormFile(String webpage,String filename,HttpServletRequest request) throws IllegalStateException, IOException {
-        String path = request.getServletContext().getRealPath("/resources/form/");
-        File file = new File(path+filename);
-        FileOutputStream fop = new FileOutputStream(file);
-        if (!file.exists()) {
-        	file.createNewFile();
-        }
-        byte[] contentInBytes = webpage.getBytes();
-        fop.write(contentInBytes);
-        fop.flush();
-        fop.close();
-        return path+filename;
+	public String saveFormFile(String webpage,String filename) {
+        InputStream input = new ByteArrayInputStream(webpage.getBytes());
+        try {
+        	input.close();
+			SFTPUtil.upload(SFTPUtil.path, "/form", filename, input);
+		} catch (Exception e) {
+			LOG.error("保存表单文件失败", e);
+		} 
+        return filename;
 	}
-
+	
 	/**
 	 * 修改表单基本信息
 	 */
@@ -221,10 +215,9 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/deleteForm")
 	@ResponseBody
-	public ServerResponse deleteForm(String[] formUids,HttpServletRequest request) {
-		String path = request.getServletContext().getRealPath("/resources/form/");
+	public ServerResponse deleteForm(String[] formUids) {
 		try {
-			return bpmFormManageService.deleteForm(formUids,path);
+			return bpmFormManageService.deleteForm(formUids);
         } catch (Exception e) {
             LOG.error("删除表单数据失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());
@@ -236,49 +229,13 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/copyForm")
 	@ResponseBody
-	public ServerResponse copyForm(BpmForm bpmForm,HttpServletRequest request) {
-		String path = request.getServletContext().getRealPath("/resources/form/");
+	public ServerResponse copyForm(BpmForm bpmForm) {
 		try {
-			return bpmFormManageService.copyForm(bpmForm,path);
+			return bpmFormManageService.copyForm(bpmForm);
         } catch (Exception e) {
             LOG.error("复制表单失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
-	}
-	
-	/**
-	 * 保存上传文件
-	 */
-	@RequestMapping(value = "/saveFile")
-	@ResponseBody
-	public String saveFile(MultipartFile file,HttpServletRequest request) throws IllegalStateException, IOException {
-		//上传文件路径
-        String path = request.getServletContext().getRealPath("/resources/file/");
-        //上传文件名
-        String filename = file.getOriginalFilename();
-        File filepath = new File(path,filename);
-        //判断路径是否存在，如果不存在就创建一个
-        if (!filepath.getParentFile().exists()) { 
-            filepath.getParentFile().mkdirs();
-        }
-        //将上传文件保存到一个目标文件当中
-        file.transferTo(new File(path + File.separator + filename));
-		return "{\"filename\":\""+filename+"\"}";
-	}
-	
-	/**
-	 * 删除上传文件
-	 */
-	@RequestMapping(value = "/deleteFile")
-	@ResponseBody
-	public String deleteFile(String filename,HttpServletRequest request) {
-		String path = request.getServletContext().getRealPath("/resources/file/");
-		File file = new File(path,filename);
-		if(file.delete()) {
-			return "true";
-		}else {
-			return "false";
-		}
 	}
 	
 	/**
@@ -288,5 +245,18 @@ public class BpmFormManageController {
 	@ResponseBody
 	public ServerResponse queryFormListBySelective(BpmForm bpmForm) {
 		return bpmFormManageService.listBySelective(bpmForm);
+	}
+	
+	/**
+	 * 根据表单Id获得表单文件
+	 */
+	@RequestMapping(value = "/getFormFileByFormUid")
+	@ResponseBody
+	public ServerResponse getFormFileByFormUid(String dynUid) {
+		try {
+			return bpmFormManageService.getFormFileByFormUid(dynUid);
+		}catch (Exception e) {
+			return ServerResponse.createByErrorMessage("获取表单文件失败");
+		}
 	}
 }
