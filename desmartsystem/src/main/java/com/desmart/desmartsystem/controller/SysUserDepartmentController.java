@@ -28,7 +28,7 @@ public class SysUserDepartmentController {
 	@Autowired
 	private SysUserDepartmentService sysUserDepartmentService;
 	
-	@RequestMapping(value="/selectAll") 
+	@RequestMapping(value="/selectAll")
 	@ResponseBody
 	public List<SysUserDepartment> selectAll(SysUserDepartment sysUserDepartment){
 		return sysUserDepartmentService.selectAll(sysUserDepartment); 

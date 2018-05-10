@@ -42,6 +42,7 @@ public class SysDepartmentController {
 		for (SysDepartment sysDepartment1 : sysDepartments) {
 			SysUserDepartment sUserDepartment=new SysUserDepartment();
 			sUserDepartment.setDepartUid(sysDepartment1.getDepartUid());
+			sUserDepartment.setIsManager("true");
 			sysDepartment1.setSysUserDepartmentList(sysUserDepartmentService.selectAll(sUserDepartment));
 			sysDepartmentList.add(sysDepartment1);
 		}

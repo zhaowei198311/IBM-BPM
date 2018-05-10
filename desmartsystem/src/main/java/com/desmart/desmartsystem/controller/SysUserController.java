@@ -56,7 +56,6 @@ public class SysUserController {
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){
 		ModelAndView model = new ModelAndView("usermanagement/assign_personnel");
-		
 		List<SysUser> userList=new ArrayList<SysUser>();
 		//roleAndDepartment 
 		//roleAndCompany
