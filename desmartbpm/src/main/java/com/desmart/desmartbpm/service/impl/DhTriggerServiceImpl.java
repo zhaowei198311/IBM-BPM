@@ -10,12 +10,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import org.apache.shiro.SecurityUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Date;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +30,6 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
-
 
     @Override
     public ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize) {
@@ -63,4 +64,23 @@ public class DhTriggerServiceImpl implements DhTriggerService {
     	// 保存数据
 		return dhTriggerMapper.save(dhTrigger);
 	}
+
+	@Override
+	public void invokeTrigger(WebApplicationContext wac, String insUid, String triUid){
+		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+		if ("javaclass".equals(dhTrigger.getTriType())) {
+			try {
+				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
+				Object obj = clz.newInstance();
+				JSONObject jb = new JSONObject(dhTrigger.getTriParam());
+				Method md = obj.getClass().getDeclaredMethod("execute", 
+						new Class []{WebApplicationContext.class, String.class,
+								org.json.JSONObject.class});
+				md.invoke(obj, new Object[]{wac, insUid, jb});
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
