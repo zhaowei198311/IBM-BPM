@@ -1,4 +1,5 @@
 var view = null;
+var oldName = "";
 //显示设置文本属性的模态框
 function showTextModal(obj){
 	$("#textModal").modal("show");
@@ -14,7 +15,7 @@ function showTextModal(obj){
 	var textLabelWidth = view.find(".labelDiv").width();
 	var regx = inputObj.attr("regx");
 	var regxCue = inputObj.attr("regxCue");
-	
+	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
@@ -53,7 +54,7 @@ function showNumberModal(obj){
 	var name = inputObj.attr("name");
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
-	
+	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
@@ -91,7 +92,7 @@ function showDateModal(obj){
 	var name = inputObj.attr("name");
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
-	
+	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
@@ -126,7 +127,7 @@ function showTextareaModal(obj){
 	var rows = textareaObj.attr("rows");
 	var textWidth = textareaObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
-	
+	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
@@ -162,7 +163,7 @@ function showSelectModal(obj){
 	var name = selectObj.attr("name");
 	var textWidth = selectObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
-	
+	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
 	
@@ -213,7 +214,7 @@ function showRadioModal(obj){
 	var name = inputRadioObj.attr("name");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	var textCol = view.find(".subDiv").attr("col");
-	
+	oldName = name;
 	$("#radio-id").val(id);
 	$("#radio-label").val(label);
 	$("#radio-name").val(name);
@@ -259,7 +260,7 @@ function showCheckboxModal(obj){
 	var name = inputCheckboxObj.attr("name");
 	var textLabelCol = view.find(".labelDiv").attr("col");
 	var textCol = view.find(".subDiv").attr("col");
-	
+	oldName = name;
 	$("#checkbox-id").val(id);
 	$("#checkbox-label").val(label);
 	$("#checkbox-name").val(name);
@@ -391,8 +392,10 @@ function showEditorModal(obj){
 var nameArr = new Array();
 
 //新建、修改表单组件时判断该组件的name是否重复
-function nameIsRepeat(name){
-	if($.inArray(name, nameArr)==-1){
+function nameIsRepeat(name,oldName){
+	if(oldName==name){
+		return true;
+	}else if($.inArray(name, nameArr)==-1){
 		nameArr.push(name);
 		return false;
 	}else{
