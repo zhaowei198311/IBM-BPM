@@ -5,6 +5,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>表单设置</title>
+<%@include file="formset_head.jsp"%>
+<style type="text/css">
+	.layui-form-label {
+		text-align: left;
+		padding: 6px 0;
+		width: 60px;
+	}
+	
+	input[type='date'] {
+		cursor: pointer;
+	}
+</style>
 </head>
 <body>
 	<h1>动态表单</h1>
