@@ -6,10 +6,13 @@ package com.desmart.desmartportal.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.desmart.desmartportal.service.ProcessFormService;
 
 /**
  * <p>
@@ -25,6 +28,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/menus")
 public class MenusController {
+	
+	@Autowired
+	private ProcessFormService processFormService;
 
 	@RequestMapping("/index")
 	public String index() {
@@ -63,6 +69,11 @@ public class MenusController {
 		mv.addObject("verUid", verUid);
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
+		Map<String,Object> resultMap = processFormService.queryProcessForm(proAppId, proUid, verUid);
+		mv.addObject("formId", resultMap.get("formId"));
+		mv.addObject("actcUid", resultMap.get("actcUid"));
+		mv.addObject("activityId", resultMap.get("activityId"));
+		mv.addObject("activityBpdId", resultMap.get("activityBpdId"));
 		return mv;
 	}
 	
