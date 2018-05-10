@@ -210,7 +210,7 @@
 												<label>number</label>
 											</div>
 											<div class="subDiv">
-												<input type="tel" col="1"/>
+												<input type="tel" class="layui-input" col="1"/>
 											</div>
 										</div>
 									</div>
@@ -261,7 +261,7 @@
 												<label>textarea</label>
 											</div>
 											<div class="subDiv">
-												<textarea rows="1" col="1" style="resize:none"></textarea>
+												<textarea rows="1" col="1" class="layui-textarea" style="resize:none"></textarea>
 											</div>
 										</div>
 									</div>
@@ -380,21 +380,22 @@
 								</div>
 							</li>
 						</ul>
-						<!-- 文本组件 -->
+						<!-- 特殊组件 -->
 						<ul class="nav nav-list accordion-group">
 							<li class="nav-header"><i class="icon-plus icon-white"></i>
-								文本组件
+								特殊组件
 								<div class="pull-right popover-info">
 									<i class="icon-question-sign "></i>
 									<div class="popover fade right">
 										<div class="arrow"></div>
 										<h3 class="popover-title">帮助</h3>
 										<div class="popover-content">
-											这里提供了一系列文本组件，你可以通过区块右上角的编辑按钮修改组件属性。</div>
+											这里提供了一系列特殊组件，你可以通过区块右上角的编辑按钮修改组件属性。</div>
 									</div>
 								</div>
 							</li>
 							<li style="display: none;" class="boxes" id="elmBase">
+								<!-- 文本块 -->
 								<div class="box box-element ui-draggable">
 									<a href="#close" class="remove label label-important">
 										<i class="icon-remove icon-white"></i>删除
@@ -413,7 +414,30 @@
 										<p contenteditable="true">这里是一个段落，可以通过点击编辑按钮去富文本编辑器编辑文本</p>
 									</div>
 								</div>
-
+								<!-- 数据表格 -->
+								<div class="box box-element ui-draggable">
+									<a href="#close" class="remove label label-important">
+										<i class="icon-remove icon-white"></i>删除
+									</a> 
+									<span class="drag label">
+										<i class="icon-move"></i>拖动
+									</span> 
+									<span class="configuration">
+										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#editorModal"
+												role="button" data-toggle="modal">编辑
+										</button>  
+									</span>
+									<div class="preview">数据表格</div>
+									<div class="view">
+										<table>
+											<thead>
+												<th></th>
+											</thead>
+											<tr></tr>
+										</table>
+									</div>
+								</div>
+								<!-- 审批意见 -->
 								<div class="box box-element ui-draggable">
 									<a href="#close" class="remove label label-important">
 										<i class="icon-remove icon-white"></i>删除
