@@ -40,10 +40,13 @@ function departmentOfBinding(userUid){
 //}
 
 function pageBreakDepartmet(curr){
+	
+	var  bdbm_userUid=$('#bdbm_userUid').val();
+	
 	$.ajax({
 		type:'POST',
 		url:"sysDepartment/allSysDepartment",
-		data:{departName:$('#bdbm_departName').val(),pageNo:curr},
+		data:{departName:$('#bdbm_departName').val(),ext1:bdbm_userUid,pageNo:curr},
 		dataType:"json",
 		success: function(data){
 			laypage({
