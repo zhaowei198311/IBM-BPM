@@ -316,7 +316,13 @@
 			<artifactId>poi</artifactId>
 			<version>3.11</version>
 		</dependency>
-
+		
+		<!-- sftp文件上传下载 -->
+		<dependency>
+		    <groupId>com.jcraft</groupId>
+		    <artifactId>jsch</artifactId>
+		    <version>0.1.51</version>
+		</dependency>
 
 		<!-- 用于xlsx -->
 
