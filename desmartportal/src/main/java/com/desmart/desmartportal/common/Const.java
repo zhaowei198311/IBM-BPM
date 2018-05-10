@@ -2,7 +2,7 @@ package com.desmart.desmartportal.common;
 
 public class Const {
     /**
-     * ServletContext中保存的http连接池的attributeName
+     * ServletContext中保存的http连接池的 attributeName
      */
     public static final String HTTP_CLIENT_CONNECTION_POOL = "_httpClientConnectionPool";
     
