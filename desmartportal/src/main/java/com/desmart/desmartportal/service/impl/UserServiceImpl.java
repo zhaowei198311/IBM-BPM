@@ -72,9 +72,33 @@ public class UserServiceImpl implements UserService {
 			// 根据用户id 去 查询 角色id,角色组id
 			SysRoleUser sysRoleUser = new SysRoleUser();
 			sysRoleUser.setUserUid(user);
+			// 如果用户没有角色  根据用户查询
+			// 根据用户id查询 能发起的流程
+			DhObjectPermission dhObjectPermission2 = new DhObjectPermission();
+			dhObjectPermission2.setOpParticipateUid(user); // UserUid
+			List<DhObjectPermission> result3 = dhObjectPermissionService
+					.getDhObjectPermissionInfo(dhObjectPermission2);
+			for (DhObjectPermission dhObjectPermission3 : result3) {
+				String proAppId = dhObjectPermission3.getProAppId();
+				String proUid = dhObjectPermission3.getProUid();
+				DhProcessMeta dhProcessMeta2 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
+				log.info("该用户获取的流程:" + dhProcessMeta2.getProName());
+				// 通过分类id查询流程分类
+				DhProcessCategory dhProcessCategory2 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta2.getCategoryUid());
+				log.info("该流程分类:" + dhProcessCategory2.getCategoryName());
+				Map<String, Object> map2 = new HashMap<>();
+				map2.put("proAppId", dhProcessMeta2.getProAppId());
+				map2.put("verUid", dhObjectPermission3.getProVerUid());
+				map2.put("proUid", dhProcessMeta2.getProUid());
+				map2.put("proName", dhProcessMeta2.getProName());
+				map2.put("categoryUid", dhProcessCategory2.getCategoryUid());
+				map2.put("categoryName", dhProcessCategory2.getCategoryName());
+				infoList.add(map2);
+			}
+			
 			List<SysRoleUser> result = sysRoleUserService.selectAll(sysRoleUser);
 			for (SysRoleUser sysRoleUser2 : result) {
-				log.info("用户id~~~" + sysRoleUser2.getUserUid());
+				log.info("用户id~~~" + user);
 				log.info("角色id~~~" + sysRoleUser2.getRoleUid());
 				// 定义角色组id
 				String sysTeamMemberid = "";
@@ -86,16 +110,16 @@ public class UserServiceImpl implements UserService {
 					// 获得角色组id  为了方便后续 根据角色组进行查询 发起流程的权限
 					sysTeamMemberid = sysTeamMember2.getTeamUid();
 					log.info("角色组织id~~~" + sysTeamMember2.getTeamUid());
-				}
+				}			
 				// 根据用户的角色id查询 能发起的流程 (DhObjectPermission 为关联表数据信息)
 				DhObjectPermission dhObjectPermission = new DhObjectPermission();
 				dhObjectPermission.setOpParticipateUid(sysRoleUser2.getRoleUid()); // RoleUid
 				List<DhObjectPermission> result2 = dhObjectPermissionService
 						.getDhObjectPermissionInfo(dhObjectPermission);
 				// 获取该流程的  三个 必传id (流程库id，流程id，版本id)
-				for (DhObjectPermission dhObjectPermission2 : result2) {
-					String proAppId = dhObjectPermission2.getProAppId();
-					String proUid = dhObjectPermission2.getProUid();
+				for (DhObjectPermission dhObjectPermission1 : result2) {
+					String proAppId = dhObjectPermission1.getProAppId();
+					String proUid = dhObjectPermission1.getProUid();
 					// 通过id  去 查询流程元数据表里的 数据信息
 					DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("角色获取的流程:" + dhProcessMeta.getProName());
@@ -105,35 +129,14 @@ public class UserServiceImpl implements UserService {
 					// 把所有信息 归纳到 一个map里进行保存
 					Map<String, Object> map1 = new HashMap<>();
 					map1.put("proAppId", dhProcessMeta.getProAppId());
-					map1.put("verUid", dhObjectPermission2.getProVerUid());
+					map1.put("verUid", dhObjectPermission1.getProVerUid());
 					map1.put("proUid", dhProcessMeta.getProUid());
 					map1.put("proName", dhProcessMeta.getProName());
 					map1.put("categoryUid", dhProcessCategory.getCategoryUid());
 					map1.put("categoryName", dhProcessCategory.getCategoryName());
 					infoList.add(map1);
 				}
-				// 根据用户id查询 能发起的流程
-				DhObjectPermission dhObjectPermission2 = new DhObjectPermission();
-				dhObjectPermission2.setOpParticipateUid(sysRoleUser2.getUserUid()); // UserUid
-				List<DhObjectPermission> result3 = dhObjectPermissionService
-						.getDhObjectPermissionInfo(dhObjectPermission2);
-				for (DhObjectPermission dhObjectPermission3 : result3) {
-					String proAppId = dhObjectPermission3.getProAppId();
-					String proUid = dhObjectPermission3.getProUid();
-					DhProcessMeta dhProcessMeta2 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
-					log.info("该用户获取的流程:" + dhProcessMeta2.getProName());
-					// 通过分类id查询流程分类
-					DhProcessCategory dhProcessCategory2 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta2.getCategoryUid());
-					log.info("该流程分类:" + dhProcessCategory2.getCategoryName());
-					Map<String, Object> map2 = new HashMap<>();
-					map2.put("proAppId", dhProcessMeta2.getProAppId());
-					map2.put("verUid", dhObjectPermission3.getProVerUid());
-					map2.put("proUid", dhProcessMeta2.getProUid());
-					map2.put("proName", dhProcessMeta2.getProName());
-					map2.put("categoryUid", dhProcessCategory2.getCategoryUid());
-					map2.put("categoryName", dhProcessCategory2.getCategoryName());
-					infoList.add(map2);
-				}
+				
 				// 根据用户角色组织查询 能发起的流程
 				DhObjectPermission dhObjectPermission3 = new DhObjectPermission();
 				dhObjectPermission3.setOpParticipateUid(sysTeamMemberid); // DepartUid
