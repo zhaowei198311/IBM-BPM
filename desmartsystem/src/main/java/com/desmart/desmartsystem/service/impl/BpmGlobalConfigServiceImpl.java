@@ -21,6 +21,7 @@ public class BpmGlobalConfigServiceImpl implements BpmGlobalConfigService {
     @Autowired
     private BpmGlobalConfigMapper sysGlobalConfigMapper;
 
+    @Override
     public BpmGlobalConfig getFirstActConfig() {
         List<BpmGlobalConfig> configList = sysGlobalConfigMapper.queryActiveConfig();
         return configList.size() > 0 ? configList.get(0) : null;

@@ -15,6 +15,8 @@ public interface BpmGlobalConfigService {
      */
 	ServerResponse<PageInfo<List<BpmGlobalConfig>>> getFirstActConfig(Integer pageNum, Integer pageSize);
 	
+	BpmGlobalConfig getFirstActConfig();
+	
 	int updateByPrimaryKeySelective(BpmGlobalConfig record);
 
 	int insert(BpmGlobalConfig record);
