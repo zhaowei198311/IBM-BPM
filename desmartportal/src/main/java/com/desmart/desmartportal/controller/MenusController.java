@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartportal.service.ProcessFormService;
 
 /**
@@ -74,6 +75,13 @@ public class MenusController {
 		mv.addObject("actcUid", resultMap.get("actcUid"));
 		mv.addObject("activityId", resultMap.get("activityId"));
 		mv.addObject("activityBpdId", resultMap.get("activityBpdId"));
+		return mv;
+	}
+	
+	@RequestMapping("/processType")
+	public ModelAndView processType(@RequestParam Map<String, String> processMap) {
+		ModelAndView mv = new ModelAndView("processType");
+		mv.addObject("processMap", JSONObject.toJSONString(processMap));
 		return mv;
 	}
 	
