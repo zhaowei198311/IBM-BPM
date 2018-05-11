@@ -30,11 +30,12 @@ public class BpmGlobalConfig implements Serializable {
     private String sftpUserName;  //附件上传用户名
     private String sftpPassword;  //附件上传根密码
     private String sftpIp;       //附件上传IP地址ַ
-    public BpmGlobalConfig(String configId, String configName, String bpmServerHost, String bpmAdminName,
+    private Integer sftpPort;	//附件上传端口号
+	public BpmGlobalConfig(String configId, String configName, String bpmServerHost, String bpmAdminName,
 			String bpmAdminPsw, String configStatus, Date createTime, Date updateTime, String gmtTimeZone,
 			String bpmformsHost, Integer bpmClientTimeout, String bpmformsWebContext, Integer httpMaxConnection,
 			Integer preRouteMaxConnection, String schedulerHost, String bpmAdminEmail, String bpmApiHost,
-			String sftpPath, String sftpUserName, String sftpPassword, String sftpIp) {
+			String sftpPath, String sftpUserName, String sftpPassword, String sftpIp, Integer sftpPort) {
 		super();
 		this.configId = configId;
 		this.configName = configName;
@@ -57,6 +58,7 @@ public class BpmGlobalConfig implements Serializable {
 		this.sftpUserName = sftpUserName;
 		this.sftpPassword = sftpPassword;
 		this.sftpIp = sftpIp;
+		this.sftpPort = sftpPort;
 	}
 
 	public String getSftpPath() {
@@ -231,7 +233,15 @@ public class BpmGlobalConfig implements Serializable {
         this.bpmApiHost = bpmApiHost;
     }
 
-    @Override
+    public Integer getSftpPort() {
+		return sftpPort;
+	}
+
+	public void setSftpPort(Integer sftpPort) {
+		this.sftpPort = sftpPort;
+	}
+
+	@Override
     public String toString() {
         return "BpmGlobalConfig{" +
                 "configId='" + configId + '\'' +
@@ -251,6 +261,7 @@ public class BpmGlobalConfig implements Serializable {
                 ", schedulerHost='" + schedulerHost + '\'' +
                 ", bpmAdminEmail='" + bpmAdminEmail + '\'' +
                 ", bpmApiHost='" + bpmApiHost + '\'' +
+                ", sftpPort='" + sftpPort + '\'' +
                 '}';
     }
 }
