@@ -17,8 +17,8 @@ import com.desmart.desmartportal.service.TaskInstanceService;
 /**  
 * <p>Title: TaskInstanceServiceImpl</p>  
 * <p>Description: </p>  
-* @author zhaowei  
-* @date 2018年5月9日  
+* @author 张志颖  
+* @date 2018年5月11日  
 */
 @Service
 public class TaskInstanceServiceImpl implements TaskInstanceService {
@@ -33,13 +33,13 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	 */
 	@Override
 	public List<TaskInstance> selectAllTask(TaskInstance taskInstance) {
-		log.info("");
+		log.info("查询taskInstance开始==============");
 		try {
-			
+			return taskInstanceDao.selectAllTask(taskInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		log.info("查询taskInstance结束==============");
 		return null;
 	}
 	
