@@ -39,19 +39,11 @@
 					    </div>
 					</div>
 					<div class="layui-col-xs2">
-				    	<input type="text" placeholder="来自"  class="layui-input">
-					</div>
-					<div class="layui-col-xs2">
 						<input type="text" placeholder="标题"  class="layui-input">
 					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="test1">
-					</div>
-					<div class="layui-col-xs2">
-					    <input type="text"  placeholder="结束时间"  class="layui-input" id="test2">				    
-					</div>
-					<div class="layui-col-xs1" style="text-align:right;">
+					<div class="layui-col-xs2" style="text-align: right; width: 200px">
 					        <button class="layui-btn" >查询</button>
+					        <button class="layui-btn" onclick="menus/startProcess?proAppId=${processMap.proAppId}&proUid=${processMap.proUid}&verUid=${processMap.verUid}&proName=${processMap.proName}&categoryName=${processMap.categoryName}">发起新流程</button>
 					</div>
 				</div>
 			</div>
@@ -117,8 +109,5 @@
 			    elem: '#test2'
 			});
 		});
-		$(function(){
-			
-		})
 
 	</script>
