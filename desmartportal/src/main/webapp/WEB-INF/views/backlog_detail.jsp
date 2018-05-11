@@ -206,8 +206,8 @@
 					<tbody>
 					    <tr>
 					      <td class="td_title">下一步骤:<span class="tip_span"></span>
-					      	<input type="text" name="title" value="" id="" >
-					      	<input type="text" name="title" value="" id="" >
+					      	<input type="hidden" name="title" value="" id="" >
+					      	<input type="hidden" name="title" value="" id="" >
 					      </td>
 					      <td colspan="3"><input type="text" name="title" required  lay-verify="required" readonly="readonly" value="" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">下一步骤处理人:<span class="tip_span"></span></td>
