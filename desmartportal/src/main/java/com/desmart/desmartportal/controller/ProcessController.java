@@ -42,4 +42,12 @@ public class ProcessController {
 		
 		return null;	
 	}
+	
+	@RequestMapping(value = "/viewProcess")
+	@ResponseBody
+	public void viewProcess() {
+		// 查看流程图 需要流程实例
+		
+	}
+	
 }

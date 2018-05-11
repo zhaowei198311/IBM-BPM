@@ -54,4 +54,10 @@ public class DraftsController {
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 		return draftsService.selectDraftsBydfsTitle(dfsTitle, pageNum, pageSize);
 	}
+	
+	@RequestMapping(value = "/saveDrafts")
+	@ResponseBody
+	public int saveDrafts(Drafts drafts) {
+		return draftsService.saveDrafts(drafts);
+	}
 }

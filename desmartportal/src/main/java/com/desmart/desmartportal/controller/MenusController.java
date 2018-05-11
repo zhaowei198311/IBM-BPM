@@ -6,12 +6,14 @@ package com.desmart.desmartportal.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.desmartbpm.common.Const;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartportal.service.ProcessFormService;
 
@@ -70,6 +72,8 @@ public class MenusController {
 		mv.addObject("verUid", verUid);
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
+		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		// 表单详细信息设置
 		Map<String,Object> resultMap = processFormService.queryProcessForm(proAppId, proUid, verUid);
 		mv.addObject("formId", resultMap.get("formId"));
 		mv.addObject("actcUid", resultMap.get("actcUid"));
