@@ -29,6 +29,7 @@ import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartbpm.util.SFTPUtil;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**
  * 表单管理控制器
@@ -50,6 +51,9 @@ public class BpmFormManageController {
 	
 	@Autowired
 	private DhProcessDefinitionService dhProcessDefinitionService;
+	
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	
 	@RequestMapping(value = "/index")
 	public ModelAndView toIndex(String proUid,String proVersion) {
@@ -175,7 +179,8 @@ public class BpmFormManageController {
         InputStream input = new ByteArrayInputStream(webpage.getBytes());
         try {
         	input.close();
-			SFTPUtil.upload(SFTPUtil.path, "/form", filename, input);
+        	SFTPUtil sftp = new SFTPUtil();
+        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), "/form", filename, input);
 		} catch (Exception e) {
 			LOG.error("保存表单文件失败", e);
 		} 

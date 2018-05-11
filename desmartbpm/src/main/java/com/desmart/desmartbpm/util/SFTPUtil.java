@@ -3,10 +3,10 @@ package com.desmart.desmartbpm.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
 
 import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -15,24 +15,14 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 public class SFTPUtil {
-	private static ChannelSftp sftp;
+	private ChannelSftp sftp;
 	
-	private static Session session;    
-    /** SFTP 登录用户名*/      
-    private static String username = "root";   
-    /** SFTP 登录密码*/      
-    private static String password = "w0ViZ4VH";    
-    /** SFTP 服务器地址IP地址*/      
-    private static String host = "10.0.4.201";    
-    /** SFTP 端口*/    
-    private static int port = 22;
-    /** SFTP 文件上传地址 */
-    public static String path = "/data/opt/IBM/HTTPServer/htdocs/bpmdata";
-	
+	private Session session;    
+    
 	/**  
      * 连接sftp服务器  
      */    
-    private static void login(){    
+    private void login(String username,String password,String host,int port){    
         try {    
             JSch jsch = new JSch();    
             session = jsch.getSession(username, host, port);    
@@ -58,7 +48,7 @@ public class SFTPUtil {
     /**  
      * 关闭连接 server   
      */    
-    private static void logout(){    
+    private void logout(){    
         if (sftp != null) {    
             if (sftp.isConnected()) {    
                 sftp.disconnect();    
@@ -72,21 +62,21 @@ public class SFTPUtil {
     }    
   
     /**   
-     * 将输入流的数据上传到sftp作为文件。文件完整路径=basePath+directory 
-     * @param basePath  服务器的基础路径  
+     * 将输入流的数据上传到sftp作为文件
+     * @param gcfg 全局变量
      * @param directory  上传到该目录   
      * @param sftpFileName  sftp端文件名   
      * @param in   输入流   
      */    
-    public static void upload(String basePath,String directory, String sftpFileName, InputStream input) throws SftpException{    
-    	login();
+    public void upload(BpmGlobalConfig gcfg,String directory, String sftpFileName, InputStream input) throws SftpException{    
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	try {     
-            sftp.cd(basePath);  
+            sftp.cd(gcfg.getSftpPath());  
             sftp.cd(directory);    
         } catch (SftpException e) {
             //目录不存在，则创建文件夹  
             String [] dirs=directory.split("/");  
-            String tempPath=basePath;  
+            String tempPath=gcfg.getSftpPath();  
             for(String dir:dirs){  
                 if(null== dir || "".equals(dir)) {
                 	continue;  
@@ -106,15 +96,16 @@ public class SFTPUtil {
     
     /** 
      * 改名SFTP上的文件 
-     * @param basePath 要修改文件的路径
+     * @param gcfg 全局变量
+     * @param directory  上传到该目录   
      * @param oldFname 目标文件名
      * @param newFname 新的文件名
      */  
-    public static boolean renameFile(String basePath,String oldFname,String newFname){  
-    	login();
+    public boolean renameFile(BpmGlobalConfig gcfg,String directory,String oldFname,String newFname){  
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	boolean flag = true;
     	try {
-    		sftp.cd(basePath);
+    		sftp.cd(gcfg.getSftpPath()+directory);
 			sftp.rename(oldFname,newFname);
 		} catch (SftpException e) {
 			flag = false;
@@ -125,14 +116,15 @@ public class SFTPUtil {
     
     /**
      * 删除SFTP上的文件
-     * @param basePath 要删除文件的根目录
+     * @param gcfg 全局变量
+     * @param directory  上传到该目录   
      * @param filename 要删除的文件名
      */
-    public static boolean removeFile(String basePath,String filename) {
-    	login();
+    public boolean removeFile(BpmGlobalConfig gcfg,String directory,String filename) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	boolean flag = true;
     	try {
-			sftp.cd(basePath);
+			sftp.cd(gcfg.getSftpPath()+directory);
 			sftp.rm(filename);
 		} catch (SftpException e) {
 			flag = false;
@@ -143,15 +135,16 @@ public class SFTPUtil {
     
     /**
      * 将远程文件夹下的某个文件复制生成另一个文件
-     * @param basePath 目标路径
+     * @param gcfg 全局变量
+     * @param directory 上传到该目录   
      * @param oldFilename 要复制的文件名
      * @param newFilename 新的文件名
      */
-    public static boolean copyFile(String basePath,String oldFilename,String newFilename) {
-    	login();
+    public boolean copyFile(BpmGlobalConfig gcfg,String directory,String oldFilename,String newFilename) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	boolean flag = true;
     	try {
-			sftp.cd(basePath);
+			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(oldFilename);
 			input.close();
 			sftp.put(input, newFilename);
@@ -163,12 +156,17 @@ public class SFTPUtil {
 		return flag;
     }
     
-    
-    public static ServerResponse getFileStream(String basePath,String filename) {
-    	login();
+    /**
+     * 获得文件的输入流
+     * @param gcfg 全局变量
+     * @param directory 上传到该目录 
+     * @param filename 文件名
+     */
+    public ServerResponse getFileStream(BpmGlobalConfig gcfg,String directory,String filename) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	String result = null;
     	try {
-			sftp.cd(basePath);
+			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(filename);
 			result = readInputStream(input);
 			input.close();
@@ -184,7 +182,7 @@ public class SFTPUtil {
     /**
 	 * 获得输入流中的内容
 	 */
-	private static String readInputStream(InputStream inputStream) throws IOException {  
+	private String readInputStream(InputStream inputStream) throws IOException {  
         byte[] buffer = new byte[1024];  
         int len = 0;  
         ByteArrayOutputStream bos = new ByteArrayOutputStream();  
@@ -194,15 +192,4 @@ public class SFTPUtil {
         bos.close();  
         return new String(bos.toByteArray(),"utf-8");
     }  
-    
-    /**   
-     * 将输入流的数据上传到sftp作为文件。文件完整路径=basePath+directory 
-     * @param basePath 服务器的基础路径  
-     * @param directory 上传到该目录   
-     * @param sftpFileName sftp端文件名   
-     * @param out 输出流   
-     */
-    public static void download(String basePath,String directory, String sftpFileName, OutputStream out) {
-    	
-    }
 }

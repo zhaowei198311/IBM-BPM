@@ -33,6 +33,8 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.util.SFTPUtil;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -52,6 +54,11 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	
 	@Autowired
 	private BpmFormFieldMapper bpmFormFieldMapper;
+	
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalCofigService;
+	
+	private SFTPUtil sftp = new SFTPUtil();
 	
 	@Override
 	public ServerResponse queryFormByName(String dynTitle) {
@@ -135,7 +142,8 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	private boolean updateFormFilename(BpmForm bpmForm) throws IOException {
 		String filename = bpmFormManageMapper.queryFormByFormUid(bpmForm.getDynUid()).getDynFilename();
 		String updateFilename = bpmForm.getDynTitle()+".html";
-		boolean flag = SFTPUtil.renameFile(SFTPUtil.path+"/form",filename, updateFilename);
+		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
+		boolean flag = sftp.renameFile(gcfg,"/form",filename, updateFilename);
 		bpmFormManageMapper.updateFormFilenameByFormUid(bpmForm.getDynUid(),updateFilename);
 		return flag;
 	}
@@ -150,7 +158,8 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			}
 			int countRow = bpmFormManageMapper.deleteForm(formUid);
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
-			boolean flag = SFTPUtil.removeFile(SFTPUtil.path+"/form", bpmForm.getDynFilename());
+			BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
+			boolean flag = sftp.removeFile(gcfg,"/form", bpmForm.getDynFilename());
 			if(!flag) {
 				throw new PlatformException("删除表单文件失败");
 			}
@@ -170,8 +179,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		String newFormUid = copyFormInfo(bpmForm,oldBpmForm,newFilename);
 		//复制表单字段信息
 		copyFormFieldInfo(newFormUid);
+		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
 		//复制表单文件
-		boolean flag = SFTPUtil.copyFile(SFTPUtil.path+"/form",oldFilename,newFilename);
+		boolean flag = sftp.copyFile(gcfg,"/form",oldFilename,newFilename);
 		if(!flag) {
 			throw new PlatformException("表单文件复制异常");
 		}
@@ -235,6 +245,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	@Override
 	public ServerResponse getFormFileByFormUid(String dynUid) {
 		BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(dynUid);
-		return SFTPUtil.getFileStream(SFTPUtil.path+"/form", bpmForm.getDynFilename());
+		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
+		return sftp.getFileStream(gcfg,"/form", bpmForm.getDynFilename());
 	}
 }
