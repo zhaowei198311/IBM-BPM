@@ -47,12 +47,20 @@ public interface BpmActivityMetaService {
     List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta);
     
     /**
-     * 根据元素id，流程图id和版本id获得BpmActivityMeta
+     * 根据元素id，流程图id和版本id获得BpmActivityMeta，应该是只有一个
      * @param bpmActivityId
      * @param snapshotId
      * @param bpdId
      * @return
      */
     List<BpmActivityMeta> getBpmActivityMeta(String activityBpdId, String snapshotId, String bpdId);
+    
+    /**
+     * 查找指定节点的下个节点
+     * @param sourceActivityMeta
+     * @param insUid
+     * @return
+     */
+    Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
     
 }

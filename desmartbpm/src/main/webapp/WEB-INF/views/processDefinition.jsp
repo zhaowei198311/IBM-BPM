@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
-                        <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:2000px;">
+                        <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:1300px;">
                             <colgroup>
                                 <col>
                                 <col>
@@ -66,8 +66,8 @@
                                   <th>激活状态</th>
                                   <th>快照创建时间</th>
                                   <th>流程定义状态</th>
-                                  <th>修改时间</th>
                                   <th>修改人</th>
+                                  <th>修改时间</th>
                                 </tr> 
                             </thead>
                             <tbody id="definitionList_tbody"></tbody>

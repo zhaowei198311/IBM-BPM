@@ -161,9 +161,9 @@
               </div>
          </div>
         <div class="display_container" id="addMeta_container">
-             <div class="display_content">
+             <div class="display_content" style="height: 360px;">
                  <div class="top">请命名流程元数据</div>
-                 <div class="middle1">
+                 <div class="middle1" style="padding-top:15px;">
                      <input type="text"  class="layui-input" id="addMetaName_input"/>
                  </div>
                  <div class="foot">
@@ -460,7 +460,6 @@
             });
             
             $('#meta_del_btn').click(function() {
-            	// todo
             	var cks = $("[name='proMeta_check']:checked");
             	if (!cks.length) {
             		layer.alert("请选择要删除的流程元数据");

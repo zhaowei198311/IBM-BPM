@@ -28,6 +28,8 @@ import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmCommonBusObject;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.enums.DhActivityAssignAssignType;
+import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -469,6 +471,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanPause(null);
         conf.setActcCanSkip(null);
         conf.setActcCanChooseUser(Const.Boolean.FALSE);
+        conf.setActcChooseableHandlerType(DhActivityConfAssignType.ALL_USER.getCode());
         conf.setActcCanTransfer(Const.Boolean.FALSE);
         conf.setActcResponsibility(null);
         return conf;

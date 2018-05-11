@@ -213,43 +213,46 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
     }
         
     
-    public Map<String, Object> getNextToActivity(BpmActivityMeta bpmActivityMeta, String insUid) {
+    public Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid) {
         Map<String, Object> results = new HashMap();
-        String activityTo = bpmActivityMeta.getActivityTo();
+        String activityTo = sourceActivityMeta.getActivityTo();
         List<BpmActivityMeta> end = new ArrayList();
         List<BpmActivityMeta> normal = new ArrayList();
         List<BpmActivityMeta> gateAndData = new ArrayList();
         if (StringUtils.isNotBlank(activityTo)) {
-            String[] activityBpdIds = activityTo.split(",");
-            List<BpmActivityMeta> bpmActivityMetas = new ArrayList<>();
-            for (int i=0; i<activityBpdIds.length; i++) {
-                String activityBpdId = activityBpdIds[i];
+            String[] toActivityBpdIds = activityTo.split(",");
+            List<BpmActivityMeta> bpmActivityMetas = new ArrayList<>(); 
+            // 遍历处理source节点的直接连接节点
+            for (int i=0; i<toActivityBpdIds.length; i++) {
+                String activityBpdId = toActivityBpdIds[i];
                 if (StringUtils.isNotBlank(activityBpdId)) {
                     // 获取当前快照版本的这个元素
-                    bpmActivityMetas.addAll(getBpmActivityMeta(activityBpdId, bpmActivityMeta.getSnapshotId(), bpmActivityMeta.getBpdId()));
+                    bpmActivityMetas.addAll(getBpmActivityMeta(activityBpdId, sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId()));
                 }
             }
             Iterator<BpmActivityMeta> iterator = bpmActivityMetas.iterator();
-            
+            // 迭代源节点的后续节点
             while (iterator.hasNext()) {
                 BpmActivityMeta activityMeta = iterator.next();
                 String type = activityMeta.getType();
                 String activityType = activityMeta.getActivityType();
                 String bpmTaskType = activityMeta.getBpmTaskType();
-                String activityId;
                 String[] tos;
-                int var39;
-                int var40;
-                String[] var44;
-                List gateActivityMetas;
+                List<BpmActivityMeta> gateActivityMetas;
                 Map subGateData;
-                List subNormal;
-                List subGateAnd;
-                List subEnd;
+                List<BpmActivityMeta> subNormal;
+                List<BpmActivityMeta> subGateAnd;
+                List<BpmActivityMeta> subEnd;
                 if ("activity".equals(activityType) && "ServiceTask".equals(bpmTaskType) && "activity".equals(type)) {
                     // 系统服务
-                    
-                    
+                    tos = activityMeta.getActivityTo().split(",");
+                    for (int i=0; i<tos.length; i++) {
+                        gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
+                        subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
+                        gateAndData.addAll((List)subGateData.get("normal"));
+                        gateAndData.addAll((List)subGateData.get("gateAnd"));
+                        end.addAll((List)subGateData.get("end"));
+                    }
                 } else if ("activity".equals(activityType) && "UserTask".equals(bpmTaskType) && "activity".equals(type)) {
                     // 人工环节
                     normal.add(activityMeta);
@@ -258,6 +261,10 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     List subMetas;
                     if ("activity".equals(activityType) && "CalledProcess".equals(bpmTaskType) && "activity".equals(type)) {
                         // 外链流程
+                        String externalId = activityMeta.getExternalId(); // 外链的流程的bpdId(流程图id)
+                        // todo
+                        
+                        
                         
                     } else {
                         if ("activity".equals(activityType) && "SubProcess".equals(bpmTaskType) && "activity".equals(type)) {
@@ -268,7 +275,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                             String[] toArr = startMetaOfSubProcess.getActivityTo().split(",");
                             for (int i=0; i<toArr.length; i++) {
                                 String activityBpdId = toArr[i];
-                                subGateAnd = getBpmActivityMeta(activityBpdId, bpmActivityMeta.getSnapshotId(), bpmActivityMeta.getBpdId());
+                                subGateAnd = getBpmActivityMeta(activityBpdId, sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
                                 Map<String, Object> subData = getNowActivity((BpmActivityMeta)subGateAnd.get(0), insUid);
                                 normal.addAll((List)subData.get("normal"));
                                 gateAndData.addAll((List)subData.get("gateAnd"));
@@ -281,7 +288,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                                     // 并行网关
                                     tos = activityMeta.getActivityTo().split(",");
                                     for (int i=0; i<tos.length; i++) {
-                                        gateActivityMetas = getBpmActivityMeta(tos[i], bpmActivityMeta.getSnapshotId(), bpmActivityMeta.getBpdId());
+                                        gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
                                         subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
                                         gateAndData.addAll((List)subGateData.get("normal"));
                                         gateAndData.addAll((List)subGateData.get("gateAnd"));
@@ -289,10 +296,10 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                                     }
                                     
                                 } else if ("gatewayOr".equals(activityType)) {
-                                    // 包容网管
+                                    // 包容网关
                                     tos = activityMeta.getActivityTo().split(",");
                                     for (int i=0; i<tos.length; i++) {
-                                        gateActivityMetas = getBpmActivityMeta(tos[i], bpmActivityMeta.getSnapshotId(), bpmActivityMeta.getBpdId());
+                                        gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
                                         subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
                                         normal.addAll((List)subGateData.get("normal"));
                                         gateAndData.addAll((List)subGateData.get("gateAnd"));
@@ -300,10 +307,10 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                                     }
                                     
                                 } else if ("gateway".equals(activityType)) {
-                                    // 排他网管
+                                    // 排他网关
                                     tos = activityMeta.getActivityTo().split(",");
                                     for (int i=0; i<tos.length; i++) {
-                                        gateActivityMetas = getBpmActivityMeta(tos[i], bpmActivityMeta.getSnapshotId(), bpmActivityMeta.getBpdId());
+                                        gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
                                         subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
                                         normal.addAll((List)subGateData.get("normal"));
                                         gateAndData.addAll((List)subGateData.get("gateAnd"));
@@ -314,6 +321,22 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                             }
                         } else if ("end".equals(activityType) && !activityMeta.getParentActivityBpdId().equals("0")) {
                             // 如果是结束事件，但不是主流程的结束事件
+                            // 找到代表子流程的那个元素
+                            end.add(activityMeta);
+                            BpmActivityMeta nodeIdentifySubProcess = getParentBpmActivityMeta(activityMeta);
+                            if (nodeIdentifySubProcess != null) {
+                                String actToStr = nodeIdentifySubProcess.getActivityTo();
+                                if (StringUtils.isNotBlank(actToStr)) {
+                                    String[] actos = actToStr.split(",");
+                                    for (String acto : actos) {
+                                        List<BpmActivityMeta> metas = getBpmActivityMeta(acto, nodeIdentifySubProcess.getSnapshotId(), nodeIdentifySubProcess.getBpdId());
+                                        Map<String, Object> subEndData = this.getNowActivity(metas.get(0), insUid);
+                                        normal.addAll((List)subEndData.get("normal"));
+                                        gateAndData.addAll((List)subEndData.get("gateAnd"));
+                                        end.addAll((List)subEndData.get("end"));
+                                    }
+                                }
+                            }
                             
                         } else if ("end".equals(activityType) && activityMeta.getParentActivityBpdId().equals("0")) {
                             // 如果是主流程的结束事件
@@ -333,47 +356,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         results.put("end", end);
         return results;
     }
-    
-    /**
-     * 根据代表内连子流程的元素，获得这个子流程的启动事件元素
-     * @return
-     */
-    private BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta bpmActivityMeta) {
-        BpmActivityMeta selective = new BpmActivityMeta();
-        selective.setParentActivityBpdId(bpmActivityMeta.getActivityBpdId());
-        selective.setProAppId(bpmActivityMeta.getProAppId());
-        selective.setBpdId(bpmActivityMeta.getBpdId());
-        selective.setSnapshotId(bpmActivityMeta.getSnapshotId());
-        selective.setActivityType("start");
-        selective.setType("event");
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (CollectionUtils.isEmpty(list)) {
-            return null;
-        } else {
-            return list.get(0);
-        }
-    }
-    
-    /**
-     * 获得指定元素的父元素，例子：主流程上有个元素A代表一个子流程，通过这个子流程中的一个元素找到A
-     * @param bpmActivityMeta
-     * @return
-     */
-    private BpmActivityMeta getParentBpmActivityMeta(BpmActivityMeta bpmActivityMeta) {
-        BpmActivityMeta selective = new BpmActivityMeta();
-        selective.setActivityBpdId(bpmActivityMeta.getParentActivityBpdId());
-        selective.setProAppId(bpmActivityMeta.getProAppId());
-        selective.setBpdId(bpmActivityMeta.getBpdId());
-        selective.setSnapshotId(bpmActivityMeta.getSnapshotId());
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (CollectionUtils.isEmpty(list)) {
-            return null;
-        } else {
-            return list.get(0);
-        }
-        
-    }
-    
+
     
     // 处理与开始节点相连的某个节点（被循环调用）
     private Map<String, Object> getNowActivity(BpmActivityMeta bpmActivityMeta, String insUid) {
@@ -390,8 +373,8 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             normal.add(bpmActivityMeta);
         } else {
             Map unNormal;
-            List subNormal;
-            List subActivityMeta;
+            List<BpmActivityMeta> subNormal;
+            List<BpmActivityMeta> subActivityMeta;
             if ("gateway".equals(type) && "gatewayAnd".equals(activityType)) {
                 // 如果此环节是并行网关
                 unNormal = this.getNextToActivity(bpmActivityMeta, insUid);
@@ -450,11 +433,53 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             }
             
         }
-        
         results.put("normal", normal);
         results.put("end", end);
         results.put("gateAnd", gateAndData);
         return results;
     }
+    
+    /**
+     * 根据代表内连子流程的元素，获得这个子流程的启动事件元素
+     * @return
+     */
+    private BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta bpmActivityMeta) {
+        BpmActivityMeta selective = new BpmActivityMeta();
+        selective.setParentActivityBpdId(bpmActivityMeta.getActivityBpdId());
+        selective.setProAppId(bpmActivityMeta.getProAppId());
+        selective.setBpdId(bpmActivityMeta.getBpdId());
+        selective.setSnapshotId(bpmActivityMeta.getSnapshotId());
+        selective.setActivityType("start");
+        selective.setType("event");
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+    
+    /**
+     * 获得指定元素的父元素，例子：主流程上有个元素A代表一个子流程，通过这个子流程中的一个元素找到A
+     * @param bpmActivityMeta
+     * @return
+     */
+    private BpmActivityMeta getParentBpmActivityMeta(BpmActivityMeta bpmActivityMeta) {
+        BpmActivityMeta selective = new BpmActivityMeta();
+        selective.setActivityBpdId(bpmActivityMeta.getParentActivityBpdId());
+        selective.setProAppId(bpmActivityMeta.getProAppId());
+        selective.setBpdId(bpmActivityMeta.getBpdId());
+        selective.setSnapshotId(bpmActivityMeta.getSnapshotId());
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+        
+    }
+    
+    
+
     
 }
