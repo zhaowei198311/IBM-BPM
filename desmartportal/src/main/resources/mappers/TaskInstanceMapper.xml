@@ -47,7 +47,7 @@
 				AND TASK_ID = #{taskId}
 			</if>
 			<if test="usrUid != null and usrUid != ''">
-				AND USR_UID = #{taskId}
+				AND USR_UID = #{usrUid}
 			</if>
 			<if test="activityBpdId != null and activityBpdId != ''">
 				AND ACTIVITY_BPD_ID = #{activityBpdId}
