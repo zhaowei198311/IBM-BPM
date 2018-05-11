@@ -180,4 +180,54 @@
         left join dh_trigger tri6 on pd.pro_tri_reassigned = tri6.tri_uid
     </select>
     
+    <select id="listById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+    	select 
+    	<include refid="base_column" />
+    	from DH_PROCESS_DEFINITION
+    	where PRO_UID = #{proUid}
+    	and PRO_APP_ID = #{proAppId}
+    	and PRO_VER_UID != #{proVerUid}
+    </select>
+    
+    <select id="getProcessById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+    	select 
+    	<include refid="base_column" />
+    	from DH_PROCESS_DEFINITION
+    	where PRO_UID = #{proUid}
+    	and PRO_VER_UID = #{proVerUid}
+    	and PRO_APP_ID = #{proAppId}
+    </select>
+    
+    <select id="listDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    	select * from DH_OBJECT_PERMISSION
+    	where PRO_UID = #{proUid}   	
+    	and PRO_VER_UID = #{proVerUid} 
+    	and PRO_APP_ID = #{proAppId}
+    </select>
+    
+    <insert id="saveDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    	insert into DH_OBJECT_PERMISSION (
+    		OP_UID,
+    		PRO_APP_ID,
+    		PRO_UID,
+    		PRO_VER_UID,
+    		STEP_UID,
+    		OP_PARTICIPATE_TYPE,
+    		OP_PARTICIPATE_UID,
+    		OP_OBJ_TYPE,
+    		OP_OBJ_UID,
+    		OP_ACTION
+    	)values (
+    		#{opUid},
+    		#{proAppId},
+    		#{proUid},
+    		#{proVerUid},
+    		#{stepUid},
+    		#{opParticipateType},
+    		#{opParticipateUid},
+    		#{opObjType},
+    		#{opObjUid},
+    		#{opAction}   		
+    	)  	
+    </insert>
 </mapper>

@@ -68,8 +68,10 @@ body{background:#fff;}
 .display_content3{overflow-y:auto;color:#717171;padding:20px;width:750px;height:425px;background:#fff;position:absolute;margin:100px 0 0 -375px;left:50%;box-shadow:0 0 10px #ccc;}
 .middle1{height:250px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;overflow-y:auto;}
 .middle2{height:300px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;overflow-y:auto;}
-.display_container4{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_container4{display:none;possition:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
 .display_content4{overflow-y:auto;color:#717171;padding:20px;width:600px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
+.display_container8{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_content8{overflow-y:auto;color:#717171;padding:20px;width:750px;height:425px;background:#fff;position:absolute;margin:100px 0 0 -375px;left:50%;box-shadow:0 0 10px #ccc;}
 .choose_user{cursor:pointer;}
 .user_container{height:500px;}
 .user_left{height:100%;overflow-y:auto;border:1px solid #ccc;padding:20px 10px 0;}

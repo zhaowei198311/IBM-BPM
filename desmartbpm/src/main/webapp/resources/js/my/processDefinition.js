@@ -283,5 +283,117 @@ $(function() {
 				});
 
 			});
-
+	
+	// 查询同类流程
+	$("#querySimilarProcess").click(function(){
+		var checkList = $("[name='definition_ck']:checked");
+		// 只能选择一个流程进行拷贝
+		if (checkList.length != 1) {
+			layer.alert("请只选择一条流程定义！");
+			return;
+		}
+		var ck = checkList.eq(0);
+		var proUid = ck.data('prouid');
+		var proVerUid = ck.data('proveruid');
+		var proAppId = ck.data('proappid');
+		// 判断是否进行环节同步操作
+		$.ajax({
+			async: false,
+			url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
+			type: "post",
+			dataType: "json",
+			data: {
+				"proUid" : proUid,
+				"proVerUid" : proVerUid,
+				"proAppId" : proAppId
+			},
+			success: function(data) {
+				var list = data.data;
+				if (list.length > 0) {
+					$(".display_container8").css("display","block");
+					$.ajax({
+						async: false,
+						url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
+						type: "post",
+						dataType: "json",
+						data: {
+							"proUid" : proUid,
+							"proVerUid" : proVerUid,
+							"proAppId" : proAppId
+						},
+						success: function(data) {
+							similarList(data.data);
+						}
+					})
+				}else {
+					layer.alert("请先进行环节同步！");
+					return;
+				}
+			}
+		})		
+	});
 });
+
+function similarList(data){
+	$("#similar_process").empty();
+	var trs = "";
+	$(data).each(function(i){
+		var sortNum = i + 1;
+		trs += '<tr>'
+			+ '<td><input type="checkbox" name="similar" lay-skin="primary" '
+			+ 'data-prouid="' + this.proUid + '" data-proappid="' + this.proAppId 
+			+ '" data-proveruid="' + this.proVerUid + '" >' + sortNum + '</td>'
+			+ '<td>'+ this.proName + '</td>'
+			+ '<td>'+ this.proVerUid + '</td>'
+			+ '<td>'+ this.verName + '</td>'
+			+ '<td>'+ this.isActive + '</td>'
+			+ '<td>'+ this.verCreateTime + '</td>'
+			+ '<td>'+ this.proStatus + '</td>'
+//			+ '<td>'+ this.updator + '</td>'
+//			+ '<td>'+ this.updateTime + '</td>'
+			+ '</tr>';
+		$("#similar_process").append(trs);
+	})
+}
+// 拷贝同类流程
+function copyProcess(){
+	var checkList = $("[name='similar']:checked");
+	if (checkList.length != 1) {
+		layer.alert("请只选择一条流程定义！");
+		return false;
+	}
+	var ck = checkList.eq(0);
+	var proUid = ck.data('prouid');
+	var proVerUid = ck.data('proveruid');
+	var proAppId = ck.data('proappid');
+	
+	var checkList_1 = $("[name='definition_ck']:checked");
+	var ck_1 = checkList_1.eq(0);
+	var proUidNew = ck_1.data('prouid');
+	var proVerUidNew = ck_1.data('proveruid');
+	var proAppIdNew = ck_1.data('proappid');
+	
+	$.ajax({
+		async: false,
+		url: common.getPath() + "/processDefinition/copySimilarProcess",
+		type: "post",
+		dataType: "json",
+		data: {
+			proUid : proUid,
+			proVerUid : proVerUid,
+			proAppId : proAppId,
+			proUidNew : proUidNew,
+			proVerUidNew : proVerUidNew,
+			proAppIdNew : proAppIdNew
+		},
+		success: function(data) {
+			if (data.status == 0) {
+				layer.alert("拷贝成功！");
+				$(".display_container8").css("display","none");
+			}else {
+				layer.alert("拷贝失败！");
+				console.log(data.msg);
+			}
+		}
+	})
+}

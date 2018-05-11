@@ -5,6 +5,8 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 public interface DhProcessDefinitionService {
@@ -57,7 +59,27 @@ public interface DhProcessDefinitionService {
      * @return
      */
     LswSnapshot getLswSnapshotBySnapshotId(String snapshotId);
-
     
+    /**
+     * 
+     * @Title: listProcessDefinitionById  
+     * @Description: 查询拷贝所需的同类流程信息   
+     * @param @param dhProcessDefinition
+     * @param @return  
+     * @return ServerResponse
+     * @throws
+     */
+    ServerResponse listProcessDefinitionById(DhProcessDefinition dhProcessDefinition);
+    
+    /**
+     * 
+     * @Title: copySimilarProcess  
+     * @Description: 拷贝同类流程  
+     * @param @param dhProcessDefinition
+     * @param @return  
+     * @return ServerResponse
+     * @throws
+     */
+    ServerResponse copySimilarProcess(Map<String, Object> mapId);
 
 }

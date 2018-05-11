@@ -39,7 +39,7 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <a href="draft.html"><button class="layui-btn layui-btn-primary layui-btn-sm">起草权限配置</button></a>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">拷贝</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess"">拷贝</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导入</button>
                             </div>
@@ -108,6 +108,41 @@
                 </div>
             </div>
         </div>
+        
+        <div class="display_container8">
+            <div class="display_content8">
+                <div class="top">
+                    同类流程
+                </div>
+                <div class="middle1" style="height: 300px;">
+                    <table class="layui-table backlog_table" lay-even lay-skin="nob">
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                              <th><input type="checkbox" name="" lay-skin="primary"> 序号</th>
+                              <th>流程名称</th>
+                              <th>快照号</th>
+                              <th>快照名称</th>
+                              <th>激活状态</th>
+                              <th>快照创建时间</th>
+                              <th>流程定义状态</th>
+                            </tr> 
+                        </thead>
+                        <tbody id="similar_process"></tbody>
+                    </table>
+                </div>
+<!--                 <div id="demo9"></div> -->
+                <div class="foot">
+                    <button class="layui-btn layui-btn sure_btn" onclick="copyProcess()">拷贝</button>
+                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+                </div>
+            </div>
+        </div>
     </body>
     
 <script type="text/javascript" src="<%=basePath%>/resources/js/layui.all.js"></script>
@@ -166,7 +201,9 @@
          $(".cancel_btn").click(function(){
              $(".display_container3").css("display","none");
              $(".display_container4").css("display","none");
+             $(".display_container8").css("display","none");
          })
+         $(".display_container8").css("display","none");
      });
 </script>
 </html>

@@ -7,10 +7,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +55,7 @@ import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
@@ -355,5 +383,55 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         return lswSnapshotMapper.queryBySnapshotId(snapshotId);
     }
+
+	@Override
+	public ServerResponse listProcessDefinitionById(DhProcessDefinition dhProcessDefinition) {
+		return ServerResponse.createBySuccess(dhProcessDefinitionMapper.listById(dhProcessDefinition));
+	}
+
+	@Override
+	public ServerResponse copySimilarProcess(Map<String, Object> mapId) {
+		try {
+			// 同类流程Id
+			String proUid = mapId.get("proUid").toString();
+			String proVerUid = mapId.get("proVerUid").toString();
+			String proAppId = mapId.get("proAppId").toString();
+			
+			// 选择新流程Id
+			String proUidNew = mapId.get("proUidNew").toString();
+			String proVerUidNew = mapId.get("proVerUidNew").toString();
+			String proAppIdNew = mapId.get("proAppIdNew").toString();
+			// 同类流程信息
+			DhProcessDefinition similarProcess = new DhProcessDefinition();
+			similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
+			// 新流程
+			DhProcessDefinition processNew = new DhProcessDefinition();
+			processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
+			similarProcess.setProUid(processNew.getProUid());
+			similarProcess.setProVerUid(processNew.getProVerUid());
+			similarProcess.setProAppId(processNew.getProAppId());
+			similarProcess.setProStatus(processNew.getProStatus());
+//			similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
+			similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
+			similarProcess.setCreateDate(processNew.getCreateDate());
+			similarProcess.setCreateUser(processNew.getCreateUser());
+			// 更新DH_PROCESS_DEFINITION表
+			dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
+
+			List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
+			for (DhObjectPermission dop : dhObjectPermissionList) {
+				dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
+				dop.setProUid(proUidNew);
+				dop.setProVerUid(proVerUidNew);
+				dop.setProAppId(proAppIdNew);
+				// 新增 DH_OBJECT_PERMISSION表
+				dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
+			}	
+			return ServerResponse.createBySuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage(e.getMessage());
+		}
+	}
    
 }

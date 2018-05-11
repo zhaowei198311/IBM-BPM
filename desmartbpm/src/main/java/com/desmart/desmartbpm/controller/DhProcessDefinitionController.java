@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +16,9 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.HttpClientUtils;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -123,5 +127,34 @@ public class DhProcessDefinitionController {
     	// 验证
     	String msg = httpUtils.checkLoginIbm(url);
     	return url;
+    }
+    
+    /**
+     * 
+     * @Title: selectSimilarProcessForCopy  
+     * @Description: 查询拷贝所需的同类流程信息  
+     * @param @return  
+     * @return ServerResponse
+     * @throws
+     */
+    @RequestMapping(value = "/selectSimilarProcessForCopy")
+    @ResponseBody
+    public ServerResponse selectSimilarProcessForCopy(DhProcessDefinition dhProcessDefinition){
+    	return dhProcessDefinitionService.listProcessDefinitionById(dhProcessDefinition);
+    }
+    
+    /**
+     * 
+     * @Title: copySimilarProcess  
+     * @Description: 拷贝选定的同类流程信息  
+     * @param @param dhProcessDefinition
+     * @param @return  
+     * @return ServerResponse
+     * @throws
+     */
+    @RequestMapping(value = "/copySimilarProcess")
+    @ResponseBody
+    public ServerResponse copySimilarProcess(@RequestParam Map<String, Object> mapId){
+    	return dhProcessDefinitionService.copySimilarProcess(mapId);
     }
 }
