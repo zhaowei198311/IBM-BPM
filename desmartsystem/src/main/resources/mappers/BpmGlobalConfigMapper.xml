@@ -7,7 +7,8 @@
 		BPMFORMS_HOST,
 		BPMFORMS_WEB_CONTEXT, CONFIG_NAME, CONFIG_STATUS, CREATE_TIME, GMT_TIME_ZONE,
 		HTTP_MAX_CONNECTION,
-		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME, BPM_API_HOST,SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP
+		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME, BPM_API_HOST,
+		SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT
 	</sql>
 
 	<select id="queryActiveConfig" resultType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
@@ -34,13 +35,13 @@
 		BPMFORMS_WEB_CONTEXT, CONFIG_NAME, CONFIG_STATUS,
 		CREATE_TIME, GMT_TIME_ZONE, HTTP_MAX_CONNECTION,
 		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME,
-		BPM_API_HOST,SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP)
+		BPM_API_HOST,SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT)
 		values (#{configId}, #{bpmAdminName}, #{bpmAdminPsw},
 		#{bpmClientTimeout}, #{bpmServerHost}, #{bpmformsHost},
 		#{bpmformsWebContext}, #{configName}, #{configStatus},
 		sysdate, #{gmtTimeZone}, #{httpMaxConnection},
 		#{preRouteMaxConnection}, #{schedulerHost}, #{updateTime},
-		#{bpmApiHost},#{sftpPath},#{sftpUserName},#{sftpPassword},#{sftpIp})
+		#{bpmApiHost},#{sftpPath},#{sftpUserName},#{sftpPassword},#{sftpIp},#{sftpPort})
 	</insert>
 	<insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
 		insert into BPM_GLOBAL_CONFIG
@@ -99,6 +100,9 @@
 			</if>
 			<if test="sftpIp != null">
 				SFTP_IP,
+			</if>
+			<if test="sftpPort != null">
+				SFTP_PORT,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -162,6 +166,9 @@
 			<if test="sftpIp != null">
 				#{sftpIp},
 			</if>
+			<if test="sftpPort != null">
+				#{sftpPort},
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
@@ -224,6 +231,9 @@
 			<if test="sftpIp != null">
 				SFTP_IP = #{sftpIp},
 			</if>
+			<if test="sftpPort != null">
+				SFTP_PORT = #{sftpPort},
+			</if>
 		</set>
 		where CONFIG_ID = #{configId}
 	</update>
@@ -248,6 +258,7 @@
 		SFTP_USERNAME = #{sftpUserName},
 		SFTP_PASSWORD = #{sftpPassword},
 		SFTP_IP = #{sftpIp}
+		SFTP_PORT = #{sftpPort}
 		where CONFIG_ID = #{configId}
 	</update>
 
