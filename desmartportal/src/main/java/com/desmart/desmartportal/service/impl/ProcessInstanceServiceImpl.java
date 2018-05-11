@@ -16,8 +16,8 @@ import com.desmart.desmartportal.service.ProcessInstanceService;
 /**  
 * <p>Title: ProcessInstanceServiceImpl</p>  
 * <p>Description: </p>  
-* @author zhaowei  
-* @date 2018年5月9日  
+* @author 张志颖  
+* @date 2018年5月11日  
 */
 @Service
 public class ProcessInstanceServiceImpl implements ProcessInstanceService {
@@ -32,13 +32,13 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 	 */
 	@Override
 	public List<ProcessInstance> selectAllProcess(ProcessInstance processInstance) {
-		log.info("");
+		log.info("查询所有process开始");
 		try {
-			
+			return processInstanceDao.selectAllProcess(processInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		log.info("查询所有process结束");
 		return null;
 	}
 	
