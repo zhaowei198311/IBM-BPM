@@ -93,7 +93,7 @@
 								<div class="menu_detail">
 									<ul>
 										<li><a
-											href="menus/startProcess?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
+											href="menus/processType?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
 											target="iframe0">${info.proName}</a></li>
 										<h1 style="clear: both;"></h1>
 									</ul>
