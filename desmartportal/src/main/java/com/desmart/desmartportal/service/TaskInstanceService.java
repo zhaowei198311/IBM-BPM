@@ -25,4 +25,6 @@ public interface TaskInstanceService {
 	int deleteByPrimaryKey(String taskUid);
 	
 	void insertTask(TaskInstance taskInstance);
+	
+	int selectByusrUid(String usrUid);
 }

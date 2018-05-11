@@ -47,7 +47,7 @@
 									class="system_title">BPM系统</span></li>
 								<li class="layui-nav-item layui-this"><a
 									href="menus/backlog" target="iframe0"><i class="layui-icon">&#xe60e;</i><span>
-											待办任务</span> </a></li>
+											待办任务<span class="layui-badge" id="daiban_icon"></span></span> </a></li>
 								<li class="layui-nav-item"><a href="not_read.html"
 									target="iframe0"><i class="layui-icon">&#xe645;</i><span>
 											未阅通知</span></a></li>
@@ -82,6 +82,7 @@
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
 						<c:forEach items="${listmap}" var="info">
+							<input id="userId" value="${info.userId}" style="display: none;">
 							<div class="menu_container">
 								<div class="menu_title">
 									${info.categoryName}<i class="layui-icon"
@@ -110,7 +111,12 @@
 	<script type="text/javascript" src="resources/js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	<script>
-		$(function() {
+		$(document).ready(function(){
+			getUserTask();
+		})
+	
+		$(function() {	
+			
 			$(".layui-nav-item a").mouseover(
 					function() {
 						$(".layui-nav-item a").not(".detail_menu1").not(
@@ -191,19 +197,19 @@
 			}
 		});
 
-		function getProcessMenuInfo() {
+		// 获取用户有多少代办
+		function getUserTask(){
+			var uId = document.getElementById('userId').value;
 			$.ajax({
-				url : '',
+				url : 'user/todoTask',
 				type : 'POST',
-				dataType : 'json',
-				data : '',
-				success : function(result) {
-					// 接受数据 
-					alert(result)
-
-					jQuery.each(result.resultList, function(i, item) {
-						alert(item);
-					});
+				dataType : 'text',
+				data : {
+					userId : uId
+				},
+				success : function(result){
+					// 渲染到待办
+					$("#daiban_icon").text(result);
 				}
 			})
 		}

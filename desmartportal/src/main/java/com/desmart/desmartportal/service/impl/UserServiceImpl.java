@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
 				map2.put("proName", dhProcessMeta2.getProName());
 				map2.put("categoryUid", dhProcessCategory2.getCategoryUid());
 				map2.put("categoryName", dhProcessCategory2.getCategoryName());
+				map2.put("userId", user);
 				infoList.add(map2);
 			}
 			

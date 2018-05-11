@@ -102,4 +102,12 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 		log.info("");
 	}
 
+	/* 
+	 * 根据用户id 查询 有多少代办任务
+	 */
+	@Override
+	public int selectByusrUid(String usrUid) {
+		return	taskInstanceDao.selectByusrUid(usrUid);
+	}
+
 }

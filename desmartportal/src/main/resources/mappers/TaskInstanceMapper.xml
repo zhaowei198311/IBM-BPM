@@ -104,6 +104,15 @@
 		</where>
 	</select>
 	
+	<select id="selectByusrUid" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) 
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			USR_UID = #{usrUid}
+		</where> 
+	</select>
+	
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
 		UPDATE 
 		DH_TASK_INSTANCE
