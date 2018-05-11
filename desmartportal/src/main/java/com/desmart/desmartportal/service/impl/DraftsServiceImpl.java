@@ -96,8 +96,6 @@ public class DraftsServiceImpl implements DraftsService {
 	@Override
 	public int saveDrafts(Drafts drafts) {
 		drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
-		String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		drafts.setDfsCreator(user);
 		return draftsDao.save(drafts);
 	}
 	

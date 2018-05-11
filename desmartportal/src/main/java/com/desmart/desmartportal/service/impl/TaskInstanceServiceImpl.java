@@ -95,7 +95,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	public void insertTask(TaskInstance taskInstance) {
 		log.info("");
 		try {
-			
+			taskInstanceDao.insertTask(taskInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

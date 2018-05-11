@@ -12,14 +12,14 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.common.ResponseCode;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.dao.ProcessInstanceDao;
 import com.desmart.desmartportal.entity.ProcessInstance;
+import com.desmart.desmartportal.entity.TaskInstance;
 import com.desmart.desmartportal.service.ProcessInstanceService;
 import com.desmart.desmartportal.service.ProcessService;
 import com.desmart.desmartportal.service.TaskInstanceService;
@@ -69,20 +69,38 @@ public class ProcessServiceImpl implements ProcessService {
 			log.info("掉用API返回过来的数据信息:"+result.getMsg());
 			
 			JSONObject jsonBody = JSONObject.parseObject(result.getMsg());
-			JSONObject jsonBody2 = JSONObject.parseObject(jsonBody.get("data").toString());
+			JSONObject jsonBody2 = JSONObject.parseObject(String.valueOf(jsonBody.get("data")));
+			JSONArray jsonBody3 = JSONArray.parseArray(String.valueOf(jsonBody2.get("tasks")));
+			// 将流程数据 保存到 当前流程实例数据库中
+			String InsUid = EntityIdPrefix.DH_PROCESS_INSTANCE + String.valueOf(UUID.randomUUID());
 	      	ProcessInstance processInstance = new ProcessInstance();
-	      	processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-	      	processInstance.setInsTitle(jsonBody2.get("processAppName").toString());
-	      	processInstance.setInsId(Integer.parseInt(jsonBody2.get("piid").toString()));
+	      	processInstance.setInsUid(InsUid);
+	      	processInstance.setInsTitle(String.valueOf(jsonBody2.get("processAppName")));
+	      	processInstance.setInsId(Integer.parseInt(String.valueOf(jsonBody2.get("piid"))));
 	      	processInstance.setInsParent("");
-	      	processInstance.setInsStatus(jsonBody2.get("state").toString());
+	      	processInstance.setInsStatus(String.valueOf(jsonBody2.get("state")));
 	      	processInstance.setInsStatusId(0);
-	      	processInstance.setProAppId(jsonBody2.get("processAppID").toString());
-	      	processInstance.setProUid(jsonBody2.get("processTemplateID").toString());
-	      	processInstance.setProVerUid(jsonBody2.get("snapshotID").toString());
+	      	processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
+	      	processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
+	      	processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
 	      	processInstance.setInsInitUser(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 	      	processInstance.setInsData(result.getMsg());
 	      	processInstanceService.insertProcess(processInstance);
+	      	// 将任务数据 保存到 当前任务实例数据库中
+	      	TaskInstance taskInstance = new TaskInstance();
+	      	taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + String.valueOf(UUID.randomUUID()));
+	      	taskInstance.setInsUid(InsUid);
+			for (int i = 0; i < jsonBody3.size(); i++) {
+				JSONObject jsonObject=jsonBody3.getJSONObject(i);
+		      	taskInstance.setTaskId(Integer.parseInt(String.valueOf(jsonObject.get("tkiid"))));
+		      	taskInstance.setUsrUid(String.valueOf(jsonObject.get("assignedToDisplayName")));
+		      	taskInstance.setActivityBpdId(String.valueOf(jsonObject.get("flowObjectID")));
+		      	taskInstance.setTaskType(String.valueOf(jsonObject.get("clientTypes")));
+		      	taskInstance.setTaskStatus(String.valueOf(jsonObject.get("status")));
+		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
+		      	taskInstance.setTaskData(String.valueOf(jsonObject.get("data")));
+		      	taskInstanceService.insertTask(taskInstance);
+			}
 			return ServerResponse.createBySuccess();
 		}else {
 			return ServerResponse.createByError();

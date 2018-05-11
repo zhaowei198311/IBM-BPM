@@ -50,8 +50,6 @@
 					<tr>
 						<th>序号</th>
 						<th>草稿名称</th>
-						<th>草稿状态</th>
-						<th>草稿数据</th>
 						<th>创建人</th>
 						<th>创建日期</th>
 						<th>操作</th>
@@ -120,13 +118,14 @@
 		if (pageInfo.total == 0) {
 			return;
 		}
-
 		var list = pageInfo.list;
 		var startSort = pageInfo.startRow;//开始序号
 		var trs = "";
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			var sortNum = startSort + i;
+			var agentOdate = new Date(meta.dfsCreatedate);
+			var showDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
 			trs += '<tr><td>'
 					+ sortNum
 					+ '</td>'
@@ -134,16 +133,10 @@
 					+ meta.dfsTitle
 					+ '</td>'
 					+ '<td>'
-					+ meta.dfsStatus
-					+ '</td>'
-					+ '<td>'
-					+ meta.dfsData
-					+ '</td>'
-					+ '<td>'
-					+ meta.dfsCreatedate
-					+ '</td>'
-					+ '<td>'
 					+ meta.dfsCreator
+					+ '</td>'
+					+ '<td>'
+					+ showDate
 					+ '</td>'
 					+ '<td>'
 					+ '<i class="layui-icon"  title="查看详情"  onclick=info("'

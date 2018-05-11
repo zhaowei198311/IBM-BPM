@@ -17,15 +17,17 @@ public class Drafts {
 	
 	private String dfsTitle; // 草稿标题
 	
-	private String insUid; // 流程实例id
-	
-	private String dfsStatus; // 草稿状态
-	
 	private String dfsData; // 草稿数据
 	
 	private Date dfsCreatedate; // 草稿创建时间
 	
 	private String dfsCreator; // 草稿创建人
+	
+	private String proUid; // 流程id
+	
+	private String proVerUid; // 流程版本id
+	
+	private String proAppId; // 流程应用库id
 
 	/**
 	 * @return the dfsId
@@ -53,34 +55,6 @@ public class Drafts {
 	 */
 	public void setDfsTitle(String dfsTitle) {
 		this.dfsTitle = dfsTitle;
-	}
-
-	/**
-	 * @return the insUid
-	 */
-	public String getInsUid() {
-		return insUid;
-	}
-
-	/**
-	 * @param insUid the insUid to set
-	 */
-	public void setInsUid(String insUid) {
-		this.insUid = insUid;
-	}
-
-	/**
-	 * @return the dfsStatus
-	 */
-	public String getDfsStatus() {
-		return dfsStatus;
-	}
-
-	/**
-	 * @param dfsStatus the dfsStatus to set
-	 */
-	public void setDfsStatus(String dfsStatus) {
-		this.dfsStatus = dfsStatus;
 	}
 
 	/**
@@ -124,29 +98,75 @@ public class Drafts {
 	public void setDfsCreator(String dfsCreator) {
 		this.dfsCreator = dfsCreator;
 	}
-	
-	public Drafts(){
-		
+
+	/**
+	 * @return the proUid
+	 */
+	public String getProUid() {
+		return proUid;
+	}
+
+	/**
+	 * @param proUid the proUid to set
+	 */
+	public void setProUid(String proUid) {
+		this.proUid = proUid;
+	}
+
+	/**
+	 * @return the proVerUid
+	 */
+	public String getProVerUid() {
+		return proVerUid;
+	}
+
+	/**
+	 * @param proVerUid the proVerUid to set
+	 */
+	public void setProVerUid(String proVerUid) {
+		this.proVerUid = proVerUid;
+	}
+
+	/**
+	 * @return the proAppId
+	 */
+	public String getProAppId() {
+		return proAppId;
+	}
+
+	/**
+	 * @param proAppId the proAppId to set
+	 */
+	public void setProAppId(String proAppId) {
+		this.proAppId = proAppId;
 	}
 	
+	public Drafts() {
+		
+	}
+
 	/**
-	 * @param dfsId 
+	 * @param dfsId
 	 * @param dfsTitle
-	 * @param insUid
-	 * @param dfsStatus
 	 * @param dfsData
 	 * @param dfsCreatedate
 	 * @param dfsCreator
+	 * @param proUid
+	 * @param proVerUid
+	 * @param proAppId
 	 */
-	public Drafts(String dfsId, String dfsTitle, String insUid, String dfsStatus, String dfsData, Date dfsCreatedate,
-			String dfsCreator) {
+	public Drafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator, String proUid,
+			String proVerUid, String proAppId) {
 		super();
 		this.dfsId = dfsId;
 		this.dfsTitle = dfsTitle;
-		this.insUid = insUid;
-		this.dfsStatus = dfsStatus;
 		this.dfsData = dfsData;
 		this.dfsCreatedate = dfsCreatedate;
 		this.dfsCreator = dfsCreator;
+		this.proUid = proUid;
+		this.proVerUid = proVerUid;
+		this.proAppId = proAppId;
 	}
+
+	
 }
