@@ -43,18 +43,18 @@ public class MenusController {
 
 	@RequestMapping("/index")
 	public String index() {
-		return "index";
+		return "desmartportal/index";
 	}
 
 	@RequestMapping("/backlog")
 	public ModelAndView backlog() {
-		ModelAndView mv = new ModelAndView("backlog");
+		ModelAndView mv = new ModelAndView("desmartportal/backlog");
 		return mv;
 	}
 
 	@RequestMapping("/backlogDetail")
 	public ModelAndView backlogDetail() {
-		ModelAndView mv = new ModelAndView("backlog_detail");
+		ModelAndView mv = new ModelAndView("desmartportal/backlog_detail");
 		return mv;
 	}
 	
@@ -72,7 +72,7 @@ public class MenusController {
 			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
 			@RequestParam(value = "proName",required = false) String proName,
 			@RequestParam(value = "categoryName",required = false) String categoryName) {
-		ModelAndView mv = new ModelAndView("process");
+		ModelAndView mv = new ModelAndView("desmartportal/process");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("verUid", verUid);
@@ -96,7 +96,7 @@ public class MenusController {
 			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
 			@RequestParam(value = "proName",required = false) String proName,
 			@RequestParam(value = "categoryName",required = false) String categoryName) {
-		ModelAndView mv = new ModelAndView("processType");
+		ModelAndView mv = new ModelAndView("desmartportal/processType");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("verUid", verUid);
@@ -111,19 +111,19 @@ public class MenusController {
 	
 	@RequestMapping("queryProcess")
 	public ModelAndView queryProcess() {
-		ModelAndView mv = new ModelAndView("query_process");
+		ModelAndView mv = new ModelAndView("desmartportal/query_process");
 		return mv;
 	}
 	
 	@RequestMapping("finishProcess")
 	public ModelAndView finishProcess() {
-		ModelAndView mv = new ModelAndView("finished");
+		ModelAndView mv = new ModelAndView("desmartportal/finished");
 		return mv;
 	}
 	
 	@RequestMapping("notRedProcess")
 	public ModelAndView notRedProcess() {
-		ModelAndView mv = new ModelAndView("not_read");
+		ModelAndView mv = new ModelAndView("desmartportal/not_read");
 		return mv;
 	}
 }

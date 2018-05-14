@@ -63,7 +63,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/menus")
 	public ModelAndView menus() {
-		ModelAndView mv = new ModelAndView("index");
+		ModelAndView mv = new ModelAndView("desmartportal/index");
 		// 判断用户可以发起那些流程的 权限 菜单等
 		List<Map<String, Object>> resultList = userService.selectByMenusProcess();
 		mv.addObject("listmap",resultList);
