@@ -23,6 +23,13 @@
 	rel="stylesheet">
 <link rel="stylesheet" href="resources/css/layui.css" media="all">
 <link rel="stylesheet" href="resources/css/my.css" />
+<style type="text/css">
+	.container-fluid {
+	    padding-right: 0px; 
+	    padding-left: 0px;
+	    zoom: 1;
+	}
+</style>
 </head>
 <body>
 	<div class="search_area top_btn">
@@ -40,9 +47,9 @@
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
 	</div>
-	<div class="container">
-		<div class="content" style="width: 1080px">
-		<table class="layui-table" style="width: 1080px">
+	<div class="container" style="margin-left:0px;">
+		<div class="content" style="width: 1100px">
+		<table class="layui-table" style="width: 1100px">
 					<colgroup>
 					    <col width="150">
 					    <col>
