@@ -39,9 +39,14 @@
 							</div>
 							<div class="btn-group">
 								<button type="button" class="btn btn-primary"
+									data-target="#addJSModal"
+									role="button" data-toggle="modal">
+									<i class="glyphicon glyphicon-pencil"></i>脚本
+								</button>
+								<button type="button" class="btn btn-primary"
 									data-target="#downloadModal" rel="/build/downloadModal"
 									role="button" data-toggle="modal">
-									<i class="icon-chevron-down icon-white"></i>下载
+									<i class="icon-chevron-down icon-white"></i>保存
 								</button>
 								<button class="btn btn-primary" href="#clear" id="clear">
 									<i class="icon-trash icon-white"></i>清空
@@ -423,18 +428,24 @@
 										<i class="icon-move"></i>拖动
 									</span> 
 									<span class="configuration">
-										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#editorModal"
+										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showDataTableModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
 									</span>
 									<div class="preview">数据表格</div>
 									<div class="view">
-										<table>
-											<thead>
-												<th></th>
-											</thead>
-											<tr></tr>
-										</table>
+										<div class="subDiv">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th col-type="text">1</th>
+														<th col-type="text">2</th>
+														<th col-type="text">3</th>
+														<th col-type="text">4</th>
+													</tr>
+												</thead>
+											</table>
+										</div>
 									</div>
 								</div>
 								<!-- 审批意见 -->
@@ -808,14 +819,6 @@
 						<div class="col-xs-7">
 							<input type="text" class="form-control col" id="date-width"
 								placeholder="请输入组件占列宽">
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-xs-2 col-sm-offset-2 control-label">默认值</label>
-						<div class="col-xs-7 input-append date form-control">
-							<input type="text" id="date-default-value"
-								placeholder="请输入组件默认值" readonly>
-							<span class="add-on"><i class="icon-calendar"></i></span>
 						</div>
 					</div>
 					<div class="form-group">
@@ -1469,6 +1472,72 @@
 				<a class="btn btn-primary" data-dismiss="modal">取消</a>
 			</div>
 		</div>
+		<!-- 设置数据表格的属性 -->
+		<div class="modal hide fade" role="dialog" id="dataTableModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>设置数据表格的属性</h3>
+			</div>
+			<div class="modal-body">
+				<div id="data-table-warn" class="hide alert alert-warning">
+    				<strong>警告！</strong>必须填写标<span style="color:red;">*</span>的属性。
+				</div>
+
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							ID<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="data-table-id"
+								placeholder="请输入组件ID" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							name<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="data-table-name"
+								placeholder="请输入组件name">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							表格列数<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control col" id="data-table-number"
+								placeholder="请输入表格列数">
+						</div>
+					</div>
+					<div class="form-group col-xs-12 data-table-set">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							表格列头<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-1">
+							<input type="text" class="col-xs-12 col data-table-head"
+								placeholder="列头" style="width:70px;">
+						</div>
+						<label class="col-xs-1 col-sm-offset-1 control-label">
+							列组件类型
+						</label>
+						<div class="col-xs-4">
+							<select class="data-table-type col-xs-6">
+								<option value="text" selected>文本框</option>
+								<option value="number">数字框</option>
+								<option value="date">日期文本框</option>
+								<option value="select">下拉列表</option>
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a id="save-dataTable-content" class="btn btn-primary">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#data-table-warn").modal("hide");'>取消</a>
+			</div>
+		</div>
 		
 		<!-- 文件上传模态框 -->
 		<div class="modal fade" id="myModal" style="display:none;" role="dialog"
@@ -1488,11 +1557,26 @@
 				</div>
 			</div>
 		</div>
-
+		<!-- 添加js脚本 -->
+		<div class="modal hide fade" role="dialog" id="addJSModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>添加js脚本</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					<textarea></textarea>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" data-dismiss="modal" onclick="saveJS();">确认保存</a>
+			</div>
+		</div>
+		<!-- 保存html -->
 		<div class="modal hide fade" role="dialog" id="downloadModal">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">×</a>
-				<h3>下载</h3>
+				<h3>保存</h3>
 			</div>
 			<div class="modal-body">
 				<p>
@@ -1506,7 +1590,7 @@
 				<input type="hidden" id="formName" value="${formName}"/>
 				<input type="hidden" id="formDescription" value="${formDescription}"/>
 				<input type="hidden" id="nameArr" value="">
-				<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">确认保存</a>
 			</div>
 		</div>
 	</div>
