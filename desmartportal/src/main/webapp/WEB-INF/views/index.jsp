@@ -60,7 +60,7 @@
 								<li class="layui-nav-item"><a href="agent/index"
 									target="iframe0"><i class="layui-icon">&#xe6b2;</i><span>
 											代理设置</span></a></li>
-								<li class="layui-nav-item"><a href="javascript:void(0)"
+								<li class="layui-nav-i`tem"><a href="javascript:void(0)"
 									target="iframe0" class="detail_menu1"><i class="layui-icon">&#xe68e;</i><span>
 											门店生命周期</span></a></li>
 								<li class="layui-nav-item"><a href="drafts/index"

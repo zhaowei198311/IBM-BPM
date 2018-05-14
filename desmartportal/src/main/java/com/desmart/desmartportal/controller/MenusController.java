@@ -62,16 +62,17 @@ public class MenusController {
 	 * @return
 	 */
 	@RequestMapping("/startProcess")
-	public ModelAndView startProcess(@RequestParam(value = "proUid") String proUid,
-			@RequestParam(value = "proAppId") String proAppId, @RequestParam(value = "verUid") String verUid,
-			@RequestParam(value = "proName") String proName,
-			@RequestParam(value = "categoryName") String categoryName) {
+	public ModelAndView startProcess(@RequestParam(value = "proUid",required = false) String proUid,
+			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
+			@RequestParam(value = "proName",required = false) String proName,
+			@RequestParam(value = "categoryName",required = false) String categoryName) {
 		ModelAndView mv = new ModelAndView("process");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("verUid", verUid);
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
+		System.err.println(proAppId);
 		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		// 表单详细信息设置
 		Map<String,Object> resultMap = processFormService.queryProcessForm(proAppId, proUid, verUid);
@@ -82,10 +83,13 @@ public class MenusController {
 		return mv;
 	}
 	
+	
+	
 	@RequestMapping("/processType")
-	public ModelAndView processType(@RequestParam Map<String, String> processMap) {
+	public ModelAndView processType(@RequestParam Map<String, Object> processMap) {
 		ModelAndView mv = new ModelAndView("processType");
-		mv.addObject("processMap", JSONObject.toJSONString(processMap));
+		//JSONObject.toJSONString(processMap)
+		mv.addObject("processMap", processMap);
 		return mv;
 	}
 	
@@ -95,5 +99,10 @@ public class MenusController {
 		return mv;
 	}
 	
-	
+	@RequestMapping("sa")
+	public ModelAndView sa(@RequestParam(value = "proUid",required = false) String proUid) {
+		System.err.println(proUid);
+		ModelAndView mv = new ModelAndView("redict:menus/process");
+		return mv;
+	}
 }

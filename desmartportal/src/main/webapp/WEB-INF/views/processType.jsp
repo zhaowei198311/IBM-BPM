@@ -43,7 +43,7 @@
 					</div>
 					<div class="layui-col-xs2" style="text-align: right; width: 200px">
 					        <button class="layui-btn" >查询</button>
-					        <button class="layui-btn" onclick="menus/startProcess?proAppId=${processMap.proAppId}&proUid=${processMap.proUid}&verUid=${processMap.verUid}&proName=${processMap.proName}&categoryName=${processMap.categoryName}">发起新流程</button>
+					        <button class="layui-btn" onclick="menus/startProcess?proUid=${processMap.proUid}&proAppId=${processMap.proAppId}&verUid=${processMap.verUid}&proName=${processMap.proName}&categoryName=${processMap.categoryName}">发起新流程</button>
 					</div>
 				</div>
 			</div>
@@ -90,13 +90,12 @@
 				</table>
 			</div>
 		</div>
-		<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
-		<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	</body>
 	
 </html>
-	
-	<script>
+<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
+<script type="text/javascript" src="resources/js/layui.all.js"></script>
+<script>
 		layui.use('laydate', function(){
 			var laydate = layui.laydate;
 			  	laydate.render({
@@ -110,4 +109,4 @@
 			});
 		});
 
-	</script>
+</script>
