@@ -48,10 +48,10 @@
 								<li class="layui-nav-item layui-this"><a
 									href="menus/backlog" target="iframe0"><i class="layui-icon">&#xe60e;</i><span>
 											待办任务<span class="layui-badge" id="daiban_icon"></span></span> </a></li>
-								<li class="layui-nav-item"><a href="not_read.html"
+								<li class="layui-nav-item"><a href="menus/notRedProcess"
 									target="iframe0"><i class="layui-icon">&#xe645;</i><span>
 											未阅通知</span></a></li>
-								<li class="layui-nav-item"><a href="finished.html"
+								<li class="layui-nav-item"><a href="menus/finishProcess"
 									target="iframe0"><i class="layui-icon">&#x1005;</i><span>
 											已办任务</span></a></li>
 								<!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>

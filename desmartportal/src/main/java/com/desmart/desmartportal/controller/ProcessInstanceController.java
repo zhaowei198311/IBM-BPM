@@ -51,8 +51,7 @@ public class ProcessInstanceController {
 		//userId = "00011178";
 		TaskInstance taskInstance = new TaskInstance();
 		taskInstance.setUsrUid(userId);
-		List <ProcessInstance> resultList = taskInstanceService.selectAllTask(taskInstance);//根据userId查询taskList
-		
+		List <ProcessInstance> resultList = taskInstanceService.selectTaskByUser(taskInstance);//根据userId查询taskList		
 		return ServerResponse.createBySuccess(resultList);
 	}
 }

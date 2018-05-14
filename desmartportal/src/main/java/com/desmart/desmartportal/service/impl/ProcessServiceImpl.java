@@ -78,7 +78,7 @@ public class ProcessServiceImpl implements ProcessService {
 	      	processInstance.setInsTitle(String.valueOf(jsonBody2.get("processAppName")));
 	      	processInstance.setInsId(Integer.parseInt(String.valueOf(jsonBody2.get("piid"))));
 	      	processInstance.setInsParent("");
-	      	processInstance.setInsStatus(String.valueOf(jsonBody2.get("state")));
+	      	processInstance.setInsStatus(String.valueOf(jsonBody2.get("executionState")));
 	      	processInstance.setInsStatusId(0);
 	      	processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
 	      	processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));

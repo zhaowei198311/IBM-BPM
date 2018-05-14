@@ -15,7 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartportal.entity.TaskInstance;
 import com.desmart.desmartportal.service.ProcessFormService;
+import com.desmart.desmartportal.service.ProcessInstanceService;
+import com.desmart.desmartportal.service.TaskInstanceService;
 
 /**
  * <p>
@@ -34,6 +37,9 @@ public class MenusController {
 	
 	@Autowired
 	private ProcessFormService processFormService;
+	
+	@Autowired
+	private TaskInstanceService taskInstanceService;
 
 	@RequestMapping("/index")
 	public String index() {
@@ -96,6 +102,10 @@ public class MenusController {
 		mv.addObject("verUid", verUid);
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
+		// 根据当前用户查询 他有哪些流程
+		TaskInstance taskInstance = new TaskInstance();
+		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		mv.addObject("processList", taskInstanceService.selectTaskByUser(taskInstance));
 		return mv;
 	}
 	
@@ -105,10 +115,15 @@ public class MenusController {
 		return mv;
 	}
 	
-	@RequestMapping("sa")
-	public ModelAndView sa(@RequestParam(value = "proUid",required = false) String proUid) {
-		System.err.println(proUid);
-		ModelAndView mv = new ModelAndView("redict:menus/process");
+	@RequestMapping("finishProcess")
+	public ModelAndView finishProcess() {
+		ModelAndView mv = new ModelAndView("finished");
+		return mv;
+	}
+	
+	@RequestMapping("notRedProcess")
+	public ModelAndView notRedProcess() {
+		ModelAndView mv = new ModelAndView("not_read");
 		return mv;
 	}
 }

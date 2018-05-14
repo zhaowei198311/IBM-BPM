@@ -79,53 +79,25 @@
 				<thead>
 					<tr>
 						<th>序号</th>
-						<th>申请人</th>
-						<th>上一环节提交人</th>
-						<th>当前环节名称</th>
+						<th>流程名称</th>
+						<th>流程状态</th>
+						<th>流程实例编号</th>
 						<th>标题</th>
 						<th>剩余审批时长</th>
-						<th>类型</th>
-						<th>接收时间</th>
-						<th>期限</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td class="backlog_td">1</td>
-						<td class="backlog_td">张三</td>
-						<td class="backlog_td">赵权</td>
-						<td class="backlog_td">经理审批</td>
-						<td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i>
-							江西南昌店</td>
-						<td class="backlog_td">6小时</td>
-						<td class="backlog_td">门店生命周期流程</td>
-						<td class="backlog_td">2018-03-12</td>
-						<td class="backlog_td">2018-03-13</td>
-					</tr>
-					<tr>
-						<td class="backlog_td">2</td>
-						<td class="backlog_td">李四</td>
-						<td class="backlog_td">周一围</td>
-						<td class="backlog_td">经理审批</td>
-						<td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i>
-							江西南昌店</td>
-						<td class="backlog_td">6小时</td>
-						<td class="backlog_td">门店生命周期流程</td>
-						<td class="backlog_td">2018-03-12</td>
-						<td class="backlog_td">2018-03-13</td>
-					</tr>
-					<tr>
-						<td class="backlog_td">3</td>
-						<td class="backlog_td">王五</td>
-						<td class="backlog_td">周五</td>
-						<td class="backlog_td">经理审批</td>
-						<td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i>
-							江西南昌店</td>
-						<td class="backlog_td">6小时</td>
-						<td class="backlog_td">门店生命周期流程</td>
-						<td class="backlog_td">2018-03-12</td>
-						<td class="backlog_td">2018-03-13</td>
-					</tr>
+					<c:forEach items="${processList}" var="process">
+						<tr>
+							<td class="">1</td>
+							<td class="">${process.insTitle}</td>
+							<td class="">${process.insStatus}</td>
+							<td class="">${process.insId}</td>
+							<td class=""><i id="backlog_td" class="layui-icon backlog_img">&#xe63c;</i>
+								江西南昌店</td>
+							<td class="">6小时</td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
 		</div>
@@ -146,4 +118,11 @@
 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
 				+ proName + '&categoryName=' + categoryName;
 	}
+	
+	$(function(){
+		$("#backlog_td").click(function(){
+			window.location.href="menus/backlogDetail";
+		})
+		
+	})
 </script>

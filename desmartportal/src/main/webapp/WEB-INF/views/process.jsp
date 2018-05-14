@@ -22,7 +22,6 @@
 <link href="resources/css/modules/laydate/default/laydate.css"
 	rel="stylesheet">
 <link rel="stylesheet" href="resources/css/layui.css" media="all">
-<link rel="stylesheet" href="resources/css/admin.css" media="all">
 <link rel="stylesheet" href="resources/css/my.css" />
 </head>
 <body>
@@ -36,18 +35,48 @@
 			id="dataInfo" style="display: none;"> <span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
-			<button class="layui-btn  layui-btn-sm" onclick="viewProcess()">流程图</button>
 			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存</button>
 			<button class="layui-btn layui-btn-sm" onclick="startProcess()">提交</button>
-			<button class="layui-btn layui-btn-sm">转办</button>
-			<button class="layui-btn layui-btn-sm">会签</button>
-			<button class="layui-btn layui-btn-sm">驳回</button> <a
-			href="backlog.html" style="margin-left: 10px;"><button
-					class="layui-btn layui-btn-sm back_btn">退出</button></a>
+			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
 	</div>
-	<div class="container"style="width: 900px;height: 250px">
-		<div class="content">
+	<div class="container">
+		<div class="content" style="width: 1080px">
+		<table class="layui-table" style="width: 1080px">
+					<colgroup>
+					    <col width="150">
+					    <col>
+					    <col width="150">
+					    <col> 
+					</colgroup>
+					<tbody>
+						<tr>
+							<th colspan="4" class="list_title">目标店调查表
+							<span style="float: right;font-size:14px;font-weight:normal;">流程编号：1000-10185-BG-60</span>
+							</th>
+						</tr>
+						<tr>
+							<th colspan="4" >
+								<div class="layui-progress layui-progress-big" lay-showPercent="yes" style="position:relative;">
+								  <div class="layui-progress-bar" lay-percent="50%"></div><span class="progress_time" >审批剩余时间6小时</span>
+								</div>
+							</th>
+						</tr>
+					    <tr>
+					      <td class="td_title">工号</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">姓名</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
+					    </tr>
+					    <tr>
+					      <td class="td_title">创建日期</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="2018-03-12" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">金额</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="11453" autocomplete="off" class="layui-input"></td>
+					    </tr>
+					</tbody>
+				</table>
+		
 			<div id="formSet"></div>
 		</div>
 	</div>
@@ -241,6 +270,15 @@
 								}
 							});
 						}); //end
+	}
+	
+	// 回退到上一页面
+	function back(){
+		var proUid = $("#proUid").val();
+		var proAppId = $("#proAppId").val();
+		var verUid = $("#verUid").val();
+		window.location.href = 'menus/processType?proUid=' + proUid
+		+ '&proAppId=' + proAppId + '&verUid=' + verUid ;
 	}
 	
 	// 查看流程图

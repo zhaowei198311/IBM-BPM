@@ -38,27 +38,13 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	 */
 	@Override
 	public List<ProcessInstance> selectAllTask(TaskInstance taskInstance) {
-		log.info("查询taskInstance开始==============");
+		log.info("查询taskInstance开始......");
 		try {
-			List <TaskInstance> taskInstanceList = taskInstanceDao.selectAllTask(taskInstance);//根据userId查询taskList
-			List <ProcessInstance> resultList = new ArrayList<ProcessInstance>();
-			if(taskInstanceList.size() > 0) {
-				for(TaskInstance taskInstance1 : taskInstanceList) {
-					ProcessInstance processInstance = new ProcessInstance();
-					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
-					List <ProcessInstance> processInstanceList= processInstanceDao.selectAllProcess(processInstance);//根据instUid查询processList
-					for(ProcessInstance p : processInstanceList) {
-						resultList.add(p);
-						System.err.println(p.getInsTitle());
-					}
-				}
-			}
 			
-			return resultList;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("查询taskInstance结束==============");
+		log.info("查询taskInstance结束......");
 		return null;
 	}
 	
@@ -127,6 +113,34 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	@Override
 	public int selectByusrUid(String usrUid) {
 		return	taskInstanceDao.selectByusrUid(usrUid);
+	}
+
+	/* 
+	 * 根据用户id  查询 他有哪些流程
+	 */
+	@Override
+	public List<ProcessInstance> selectTaskByUser(TaskInstance taskInstance) {
+		log.info("根据用户id查询有哪些流程开始......");
+		List <ProcessInstance> resultList = new ArrayList<ProcessInstance>();
+		try {
+			List <TaskInstance> taskInstanceList = taskInstanceDao.selectAllTask(taskInstance);//根据userId查询taskList
+			if(taskInstanceList.size() > 0) {
+				for(TaskInstance taskInstance1 : taskInstanceList) {
+					ProcessInstance processInstance = new ProcessInstance();
+					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
+					List <ProcessInstance> processInstanceList= processInstanceDao.selectAllProcess(processInstance);//根据instUid查询processList
+					for(ProcessInstance p : processInstanceList) {
+						resultList.add(p);
+						System.err.println(p.getInsTitle());
+					}
+				}
+			}
+			return resultList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("根据用户id查询有哪些流程结束......");
+		return resultList;
 	}
 
 }

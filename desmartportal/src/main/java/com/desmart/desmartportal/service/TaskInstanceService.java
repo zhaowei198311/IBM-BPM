@@ -27,4 +27,6 @@ public interface TaskInstanceService {
 	void insertTask(TaskInstance taskInstance);
 	
 	int selectByusrUid(String usrUid);
+	
+	List <ProcessInstance> selectTaskByUser(TaskInstance taskInstance);
 }
