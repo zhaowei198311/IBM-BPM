@@ -60,6 +60,22 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
+	<div class="display_container">
+		<div class="display_content" style="width: 350px;height: 500px;">
+			<div class="top">
+				草稿详情
+			</div>
+			<div class="middle" style="height:400px;">
+				<form class="layui-form form-horizontal" method="post" action="agent/saveAgent" style="margin-top:30px;" id="draftForm">
+				 
+				</form>
+			</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn sure_btn" type="button" onclick="formSubmit();" >确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancel()">取消</button>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 <script type="text/javascript" src="resources/js/jquery-3.3.1.js" charset="utf-8"></script>
@@ -208,6 +224,63 @@
 			})
 			layer.close(index);
 		});
+	}
+	
+	function info(id){
+		$("#draftForm").html('');
+		$.ajax({
+			url : 'drafts/selectBydfsId',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				dfsId : id
+			},
+			success : function(result) {
+				$(".display_container").css("display", "block");
+				$("#dfsData").val('');
+				var reg=new RegExp("-","g"); //创建正则RegExp对象
+				var list = result.data.list;
+				var jsondata = eval('(' + list[0].dfsData + ')'); 
+				var jsonArray = Object.keys(jsondata).toString().split(",");
+
+				for(var i=0;i < jsonArray.length;i++){
+					var key = jsonArray[i];
+					var str =  '<div class="layui-form-item">'
+						+'<div class="layui-inline">'
+						+'<label class="layui-form-label">'+key+':</label>'
+						+'<div class="layui-input-inline">'
+						+'<input type="text" id="'+key+'" name="'+key+'"'
+						+'lay-verify="'+key+'" autocomplete="off"'
+						+'class="layui-input">'
+						+'</div>'
+						+'</div>'
+						+'</div>';	
+					$("#draftForm").append(str);
+					if(key == 'date'){
+						$( "#" + key  + "").val(eval('jsondata.'+key).value.replace(reg,"/"));
+					}else{
+						$( "#" + key  + "").val(eval('jsondata.'+key).value);
+					}
+				}
+				
+				layui.use([ 'laydate'], function(){  
+			        var $ = layui.$;  
+			        var laydate = layui.laydate;   
+			        var max = null;  
+			        var start = laydate.render({  
+			            elem: '#date',  
+			            type: 'datetime',  
+			            format:'yyyy/MM/dd',   
+			            btns: ['clear', 'confirm']
+			        });  
+			     }) 
+				
+			}
+		})
+	}
+	
+	function cancel(){
+		$(".display_container").css("display", "none");	
 	}
 </script>
 
