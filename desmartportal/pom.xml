@@ -7,7 +7,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>desmartportal Maven Webapp</name>
   <url>http://maven.apache.org</url>
- <!-- 加载的是 第三方项目使用的jar包 -->
+ <!-- 加载的是 第三方项目 使用的jar包 -->
 	<repositories>
 		<repository>
 			<snapshots>
