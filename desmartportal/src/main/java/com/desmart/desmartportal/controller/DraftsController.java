@@ -60,4 +60,10 @@ public class DraftsController {
 	public int saveDrafts(Drafts drafts) {
 		return draftsService.saveDrafts(drafts);
 	}
+	
+	@RequestMapping(value = "/selectBydfsId")
+	@ResponseBody
+	public ServerResponse selectBydfsId(@RequestParam(value="dfsId")String dfsId) {
+		return draftsService.selectBydfsId(dfsId);
+	}
 }
