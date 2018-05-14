@@ -5,8 +5,10 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
+import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.ProcessInstance;
 import com.desmart.desmartportal.entity.TaskInstance;
+import com.github.pagehelper.PageInfo;
 
 /**  
 * <p>Title: 任务实例Service</p>  
@@ -16,9 +18,9 @@ import com.desmart.desmartportal.entity.TaskInstance;
 */
 public interface TaskInstanceService {
 	
-	List <ProcessInstance> selectAllTask(TaskInstance taskInstance);
+	ServerResponse<PageInfo<List<TaskInstance>>> selectAllTask(TaskInstance taskInstance,Integer pageNum, Integer pageSize);
 	
-	List <TaskInstance> selectByPrimaryKey(String taskUid);
+	ServerResponse<PageInfo<List<TaskInstance>>> selectByPrimaryKey(String taskUid,Integer pageNum, Integer pageSize);
 	
 	int updateByPrimaryKey(String taskUid);
 	

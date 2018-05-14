@@ -74,56 +74,21 @@
 					<thead>
 					    <tr>
 					      <th>序号</th>
-					      <th>申请人</th>
+					      <th>任务实例序号</th>
+					      <th>任务标题</th>
+					      <th>处理人</th>
+					      <th>任务状态</th>
 					      <th>上一环节提交人</th>
-					      <th>当前环节名称</th>
-					      <th>标题</th>
-					      <th>剩余审批时长</th>
-					      <th>类型</th>
+					      <th>任务类型</th>
 					      <th>接收时间</th>
-					      <th>期限</th>
+					      <th>任务期限</th>
 					    </tr> 
 					</thead>
-					<tbody>
-					    <tr>
-					      <td class="backlog_td">1</td>
-					      <td class="backlog_td">张三</td>
-					      <td class="backlog_td">赵权</td>
-					      <td class="backlog_td">经理审批</td>
-					      <td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i> 江西南昌店</td>
-					      <td class="backlog_td">6小时</td>
-					      <td class="backlog_td">门店生命周期流程</td>
-					      <td class="backlog_td">2018-03-12</td>
-					      <td class="backlog_td">2018-03-13</td>
-					    </tr>
-					    <tr>
-					      <td class="backlog_td">2</td>
-					      <td class="backlog_td">李四</td>
-					      <td class="backlog_td">周一围</td>
-					      <td class="backlog_td">经理审批</td>
-					      <td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i> 江西南昌店</td>
-					      <td class="backlog_td">6小时</td>
-					      <td class="backlog_td">门店生命周期流程</td>
-					      <td class="backlog_td">2018-03-12</td>
-					      <td class="backlog_td">2018-03-13</td>
-					    </tr>
-					    <tr>
-					      <td class="backlog_td">3</td>
-					      <td class="backlog_td">王五</td>
-					      <td class="backlog_td">周五</td>
-					      <td class="backlog_td">经理审批</td>
-					      <td class="backlog_td"><i class="layui-icon backlog_img">&#xe63c;</i> 江西南昌店</td>
-					      <td class="backlog_td">6小时</td>
-					      <td class="backlog_td">门店生命周期流程</td>
-					      <td class="backlog_td">2018-03-12</td>
-					      <td class="backlog_td">2018-03-13</td>
-					    </tr>
-					</tbody>
+					<tbody id = "proMet_table_tbody"/>
 				</table>
 			</div>
+			<div id="lay_page"></div>
 		</div>
-		<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
-		<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	    <!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
@@ -136,8 +101,16 @@
 	</body>
 	
 </html>
-	
+	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="resources/js/layui.all.js"></script>
 	<script>
+	// 为翻页提供支持
+	var pageConfig = {
+		pageNum : 1,
+		pageSize : 10,
+		total : 0
+	}
+	
 		layui.use('laydate', function(){
 			var laydate = layui.laydate;
 			  	laydate.render({
@@ -156,5 +129,90 @@
 			})
 			
 		})
+		
+		$(document).ready(function() {
+			// 加载数据
+			getTaskInstanceInfo();
+		})
+		
+		function getTaskInstanceInfo(){
+			$.ajax({
+				url : 'taskInstance/queryTask',
+				type : 'post',
+				dataType : 'json',
+				data : {
+					pageNum : pageConfig.pageNum,
+					pageSize : pageConfig.pageSize					
+				},
+				success : function(result){
+					if (result.status == 0) {
+						drawTable(result.data);
+					}
+				}
+			})
+		}
+		
+		function drawTable(pageInfo, data) {
+			pageConfig.pageNum = pageInfo.pageNum;
+			pageConfig.pageSize = pageInfo.pageSize;
+			pageConfig.total = pageInfo.total;
+			doPage();
+			// 渲染数据
+			$("#proMet_table_tbody").html('');
+			if (pageInfo.total == 0) {
+				return;
+			}
 
+			var list = pageInfo.list;
+			var startSort = pageInfo.startRow;//开始序号
+			var trs = "";
+			for (var i = 0; i < list.length; i++) {
+				var meta = list[i];
+				var sortNum = startSort + i;
+				var meta = list[i];
+				var agentOdate = new Date(meta.taskInitDate);
+				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
+				var agentOdate2 = new Date(meta.taskDueDate);
+				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
+				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
+						+ '</td>' + '<td>' + meta.taskTitle + '</td>' + '<td>'
+						+ meta.usrUid + '</td>'
+						+ '<td>' + meta.taskStatus + '</td>' + '<td>'
+						+ meta.taskPreviousUsrUsername + '</td>' + '<td>' + meta.taskType
+						+ '</td>' 
+						+ '<td>'
+						+ InitDate
+						+'</td>' 
+						+ '<td>'
+						+ taskDueDate
+						+'</td>' 
+						+ '</tr>'
+			}
+			$("#proMet_table_tbody").append(trs);
+
+		}
+		
+		// 分页
+		function doPage() {
+			layui.use([ 'laypage', 'layer' ], function() {
+				var laypage = layui.laypage, layer = layui.layer;
+				//完整功能
+				laypage.render({
+					elem : 'lay_page',
+					curr : pageConfig.pageNum,
+					count : pageConfig.total,
+					limit : pageConfig.pageSize,
+					layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+					jump : function(obj, first) {
+						// obj包含了当前分页的所有参数  
+						pageConfig.pageNum = obj.curr;
+						pageConfig.pageSize = obj.limit;
+						if (!first) {
+							getInterfaceInfo();
+						}
+					}
+				});
+			});
+		}
+		
 	</script>
