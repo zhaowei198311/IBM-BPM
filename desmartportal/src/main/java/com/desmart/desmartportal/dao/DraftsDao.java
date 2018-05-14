@@ -24,4 +24,6 @@ public interface DraftsDao {
 	List <Drafts> selectBydfsTitle(String dfsTitle);
 	
 	int save(Drafts drafts);
+	
+	List <Drafts> selectBydfsId(String dfsId);
 }
