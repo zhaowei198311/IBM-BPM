@@ -24,4 +24,6 @@ public interface DraftsService {
 	ServerResponse<PageInfo<List<Drafts>>> selectDraftsBydfsTitle(String title, Integer pageNum, Integer pageSize);
 	
 	int saveDrafts(Drafts drafts);
+	
+	ServerResponse<PageInfo<List<Drafts>>> selectBydfsId(String dfsId);
 }
