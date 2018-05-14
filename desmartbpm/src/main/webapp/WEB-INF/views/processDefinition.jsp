@@ -185,6 +185,12 @@
         	 dataType: "json",
         	 success: function(result) {
         		 $.fn.zTree.init($("#treeDemo"), setting, result);
+        		 if (getCookie("processDefinition_selectedMetaUid")) {
+        			 var treeObject = $.fn.zTree.getZTreeObj("treeDemo");
+        			 var node = treeObject.getNodeByParam("id", getCookie("processDefinition_selectedMetaUid"));
+        			 treeObject.selectNode(node, true);
+        		 }
+        		 
         	 }
          });
          
@@ -205,6 +211,8 @@
          })
          $(".display_container8").css("display","none");
      });
+     
+
 </script>
 </html>
     

@@ -1,5 +1,11 @@
 $(function() {
-	doPage();
+	if (getCookie("processDefinition_selectedMetaUid")) {
+		pageConfig.metaUid = getCookie("processDefinition_selectedMetaUid");
+		getInfo();
+	} else {
+		doPage();
+	}
+	
 });
 
 function zTreeOnClick(event, treeId, treeNode) {
@@ -28,6 +34,7 @@ function getInfo() {
 		type : "post",
 		success : function(result) {
 			if (result.status == 0) {
+				setCookie("processDefinition_selectedMetaUid", pageConfig.metaUid, 7200);
 				drawTable(result.data);
 			}
 		}
@@ -142,8 +149,32 @@ $(function() {
 			},
 			success : function(result) {
 				if (result.status == 0) {
-					getInfo();
 					layer.alert("同步成功");
+					// 更新这条记录的信息
+					$.ajax({
+						url: common.getPath() + "/processDefinition/getSynchronizedDefinition",
+					    type: "post",
+					    dataType: "json",
+					    data: {
+							"proUid" : proUid,
+							"proVerUid" : proVerUid,
+							"proAppId" : proAppId
+						},
+					    success:function(result) {
+					    	if (result.status == 0) {
+					    		var vo = result.data;
+					    		var ck = $("#definitionList_tbody :checkbox:checked");
+					    		if (ck.data('proveruid') == vo.proVerUid) {
+					    			var $tr = ck.parent().parent();
+					    			$tr.find("td").eq(6).html(vo.proStatus); // 状态
+					    			$tr.find("td").eq(7).html(vo.updator); // 修改人
+					    			$tr.find("td").eq(8).html(vo.updateTime); // 修改时间
+					    		}
+					    	} else {
+					    		layer.alert(result.msg);
+					    	}
+					    }
+					});
 				} else {
 					layer.alert(result.msg);
 				}

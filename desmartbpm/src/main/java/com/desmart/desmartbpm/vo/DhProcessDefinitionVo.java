@@ -12,9 +12,9 @@ public class DhProcessDefinitionVo {
     private String isActive;  // 是否激活
 
     private String verCreateTime; // 快照创建时间
-    private String proStatus; // 流程定义状态
-    private String updator;   // 流程定义更新人
-    private String updateTime; // 流程定义更新时间
+    private String proStatus; // 流程定义状态  如： 配置中
+    private String updator;   // 流程定义更新人  如：张三
+    private String updateTime; // 流程定义更新时间  如：2018-05-11 00:00:00
 
     public String getProName() {
         return proName;

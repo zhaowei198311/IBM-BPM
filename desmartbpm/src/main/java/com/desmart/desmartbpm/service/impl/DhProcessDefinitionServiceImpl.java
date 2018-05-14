@@ -12,32 +12,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -181,7 +156,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
-
+        // 同步环节
         bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
         
         DhProcessDefinition definitionSelective = new DhProcessDefinition();
@@ -189,14 +164,14 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         definitionSelective.setProAppId(proAppId);
         definitionSelective.setProUid(proUid);
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
-        if (list.size() == 0) { // 如果有环节信息，不再重复生成
+        String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        if (list.size() == 0) { 
             // 插入新流程定义记录
             DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
             dhProcessDefinition.setProUid(proUid);
             dhProcessDefinition.setProAppId(proAppId);
             dhProcessDefinition.setProVerUid(proVerUid);
-            String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-            dhProcessDefinition.setCreateUser(creator);
+            dhProcessDefinition.setCreateUser(currentUser);
             dhProcessDefinition.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
             int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
             if (countRow > 0) {
@@ -205,6 +180,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
                 return ServerResponse.createByErrorMessage("同步失败");
             }
         } else {
+            // 更新流程定义状态
+            DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
+            selective.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
+            selective.setLastModifiedUser(currentUser);
+            dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(selective);
             return ServerResponse.createBySuccess();
         }
         
@@ -433,5 +413,47 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
+
+    @Override
+    public ServerResponse<DhProcessDefinitionVo> getSynchronizedDhProcessDefinitionWithSnapshotInfo(
+            String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        DhProcessDefinition dhProcessDefinition = getDhProcessDefinition(proAppId, proUid, proVerUid);
+        if (dhProcessDefinition == null) {
+            return ServerResponse.createByErrorMessage("找不到指定的流程定义");
+        } 
+        LswSnapshot lswSnapshot = getLswSnapshotBySnapshotId(dhProcessDefinition.getProVerUid());
+        if (lswSnapshot == null) {
+            return ServerResponse.createByErrorMessage("快照信息错误");
+        }
+        DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
+        vo.setProName(dhProcessDefinition.getProName());
+        vo.setProVerUid(dhProcessDefinition.getProVerUid());
+        vo.setProUid(dhProcessDefinition.getProUid());
+        vo.setProAppId(dhProcessDefinition.getProAppId());
+        vo.setVerName(lswSnapshot.getName());
+        vo.setVerCreateTime(DateFmtUtils.formatDate(lswSnapshot.getCreatedOn(), "yyyy-MM-dd HH:mm:ss"));
+        vo.setIsActive("T".equals(lswSnapshot.getIsActive()) ? "激活" : "未激活");
+        vo.setProStatus(DhProcessDefinitionStatus.codeOf(dhProcessDefinition.getProStatus()).getValue());
+        vo.setUpdator(dhProcessDefinition.getUpdatorFullName());
+        vo.setUpdateTime(DateFmtUtils.formatDate(dhProcessDefinition.getLastModifiedDate(), "yyyy-MM-dd HH:mm:ss"));
+        return ServerResponse.createBySuccess(vo);
+    }
+    
+    @Override
+    public DhProcessDefinition getDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return null;
+        }
+        DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
    
 }

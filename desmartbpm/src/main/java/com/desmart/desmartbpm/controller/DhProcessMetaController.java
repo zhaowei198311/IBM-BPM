@@ -53,8 +53,6 @@ public class DhProcessMetaController {
         return dhProcessMetaService.listDhProcessMetaByCategoryList(serverResponse.getData(), proName, pageNum, pageSize);
     }
     
-    
-    
     /**
      * 获得公开的流程元数据（没有绑定过的）
      * @param pageNum 

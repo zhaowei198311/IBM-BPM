@@ -262,10 +262,15 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     if ("activity".equals(activityType) && "CalledProcess".equals(bpmTaskType) && "activity".equals(type)) {
                         // 外链流程
                         String externalId = activityMeta.getExternalId(); // 外链的流程的bpdId(流程图id)
-                        // todo
-                        
-                        
-                        
+                        // 跳过这个节点获得它下个节点的信息, 同Service节点
+                        tos = activityMeta.getActivityTo().split(",");
+                        for (int i=0; i<tos.length; i++) {
+                            gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
+                            subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
+                            gateAndData.addAll((List)subGateData.get("normal"));
+                            gateAndData.addAll((List)subGateData.get("gateAnd"));
+                            end.addAll((List)subGateData.get("end"));
+                        }
                     } else {
                         if ("activity".equals(activityType) && "SubProcess".equals(bpmTaskType) && "activity".equals(type)) {
                             // 内链子流程

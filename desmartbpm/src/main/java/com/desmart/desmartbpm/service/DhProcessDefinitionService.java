@@ -4,6 +4,7 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
+import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 
 import java.util.Map;
 
@@ -18,6 +19,16 @@ public interface DhProcessDefinitionService {
      */
     ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize);
 
+    /**
+     * 获得指定的流程定义
+     */
+    DhProcessDefinition getDhProcessDefinition(String proAppId, String proUid, String proVerUid);
+    
+    /**
+     * 获得已经同步的指定的流程定义信息包含快照信息
+     */
+    ServerResponse<DhProcessDefinitionVo> getSynchronizedDhProcessDefinitionWithSnapshotInfo(String proAppId, String proUid, String proVerUid);
+    
     /**
      * 创建流程定义
      * @param proAppId 流程应用库id

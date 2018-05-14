@@ -16,6 +16,7 @@ import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.HttpClientUtils;
+import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 
 import java.util.List;
 import java.util.Map;
@@ -74,11 +75,23 @@ public class DhProcessDefinitionController {
         try {
             return dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
         } catch (Exception e) {
-            LOG.error("创建流程定义失败", e);
-            return ServerResponse.createByErrorMessage("创建流程定义失败");
+            LOG.error("同步环节失败", e);
+            return ServerResponse.createByErrorMessage("同步环节失败");
         }
     }
 
+    
+    @RequestMapping(value = "/getSynchronizedDefinition")
+    @ResponseBody
+    public ServerResponse<DhProcessDefinitionVo> getSynchronizedDhProcessDefinitionWithSnapshotInfo(String proAppId, String proUid, String proVerUid) {
+        try {
+            return dhProcessDefinitionService.getSynchronizedDhProcessDefinitionWithSnapshotInfo(proAppId, proUid, proVerUid);
+        } catch (Exception e) {
+            LOG.error("获取流程定义信息失败", e);
+            return ServerResponse.createByErrorMessage("获取流程定义信息失败");
+        }
+    }
+    
     /**
      * 查看指定的流程定义是否存在
      * @return
