@@ -60,4 +60,16 @@ public interface DhProcessDefinitionMapper {
      * @throws
      */
     int saveDhObjectPermissionById(DhObjectPermission dhObjectPermission);
+    /**
+     * 
+     * @Title: deleteDhObjectPermissionById  
+     * @Description: 删除对象权限表根据proUid，proVerUid，proAppId  
+     * @param @param proUid
+     * @param @param proVeruid
+     * @param @param proAppId
+     * @param @return  
+     * @return int
+     * @throws
+     */
+    int deleteDhObjectPermissionById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
 }

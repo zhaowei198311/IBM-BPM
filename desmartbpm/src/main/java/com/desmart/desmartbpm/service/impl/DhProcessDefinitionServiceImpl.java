@@ -70,9 +70,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
-    @Autowired
-    private DhProcessDefinitionService dhProcessDefinitionService;
-
+    
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
@@ -403,15 +401,21 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
 
 			List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
-			for (DhObjectPermission dop : dhObjectPermissionList) {
-				dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
-				dop.setProUid(proUidNew);
-				dop.setProVerUid(proVerUidNew);
-				dop.setProAppId(proAppIdNew);
-				// 新增 DH_OBJECT_PERMISSION表
-				dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
-			}	
-			return ServerResponse.createBySuccess();
+			if (dhObjectPermissionList.size() > 0) {
+				// 删除新流程旧的权限信息，重新添加
+				dhProcessDefinitionMapper.deleteDhObjectPermissionById(proUidNew, proVerUidNew, proAppIdNew);
+				
+				for (DhObjectPermission dop : dhObjectPermissionList) {
+					dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
+					dop.setProUid(proUidNew);
+					dop.setProVerUid(proVerUidNew);
+					dop.setProAppId(proAppIdNew);
+					// 新增 DH_OBJECT_PERMISSION表
+					dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
+				}
+				return ServerResponse.createBySuccess();
+			}
+			return ServerResponse.createByErrorMessage("该对象无权限信息！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ServerResponse.createByErrorMessage(e.getMessage());
