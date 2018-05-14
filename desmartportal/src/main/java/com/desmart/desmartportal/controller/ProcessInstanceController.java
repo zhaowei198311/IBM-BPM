@@ -51,19 +51,8 @@ public class ProcessInstanceController {
 		//userId = "00011178";
 		TaskInstance taskInstance = new TaskInstance();
 		taskInstance.setUsrUid(userId);
-		List <TaskInstance> taskInstanceList = taskInstanceService.selectAllTask(taskInstance);//根据userId查询taskList
-		List <ProcessInstance> resultList = new ArrayList<ProcessInstance>();
-		if(taskInstanceList.size() > 0) {
-			for(TaskInstance taskInstance1 : taskInstanceList) {
-				ProcessInstance processInstance = new ProcessInstance();
-				processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
-				List <ProcessInstance> processInstanceList= processInstanceService.selectAllProcess(processInstance);//根据instUid查询processList
-				for(ProcessInstance p : processInstanceList) {
-					resultList.add(p);
-					System.err.println(p.getInsTitle());
-				}
-			}
-		}
+		List <ProcessInstance> resultList = taskInstanceService.selectAllTask(taskInstance);//根据userId查询taskList
+		
 		return ServerResponse.createBySuccess(resultList);
 	}
 }
