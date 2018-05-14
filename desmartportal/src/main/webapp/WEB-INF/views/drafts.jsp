@@ -63,7 +63,7 @@
 	<div class="display_container">
 		<div class="display_content" style="width: 350px;height: 500px;">
 			<div class="top">
-				草稿详情
+				草稿数据
 			</div>
 			<div class="middle" style="height:400px;">
 				<form class="layui-form form-horizontal" method="post" action="agent/saveAgent" style="margin-top:30px;" id="draftForm">
