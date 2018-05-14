@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.AgentMapper">
+	
+	<resultMap id="AgentMap" type="java.util.Map">
+		<result column="AGENT_ID" 				property="agentId"/>
+		<result column="AGENT_ODATE" 				property="agentOdate"/>
+		<result column="AGENT_OPERATOR" 				property="agentOperator"/>
+		<result column="AGENT_CLIENTELE" 			property="agentClientele"/>
+		<result column="AGENT_SDATE" 				property="agentSdate"/>
+		<result column="AGENT_EDATE"			property="agentEdate"/>
+		<result column="AGENT_STATUS" 			property="agentStatus"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		AGENT_ID, AGENT_ODATE, AGENT_OPERATOR,
+		AGENT_CLIENTELE, AGENT_SDATE, AGENT_EDATE,AGENT_STATUS
+	</sql>
+	
+	<select id="select" resultType="com.desmart.desmartportal.entity.Agent">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_AGENT_AGENTINFO
+	</select>
+	
+	<delete id="deleteByAgentId" parameterType="java.lang.String">
+		DELETE
+		FROM DH_AGENT_AGENTINFO
+		<where>
+			AGENT_ID = #{agentId}
+		</where>
+	</delete>
+	
+	<select id="selectByAgentPerson" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Agent">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_AGENT_AGENTINFO
+		<where>
+			AGENT_OPERATOR like '%' || #{person} || '%' or AGENT_CLIENTELE like '%' || #{person} || '%'
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.desmart.desmartportal.entity.Agent">
+		INSERT INTO
+		DH_AGENT_AGENTINFO
+		(<include refid="Base_Column_List"/>) 
+		VALUES
+		(
+			#{agentId},
+			#{agentOdate},
+			#{agentOperator},
+			#{agentClientele},
+			#{agentSdate},
+			#{agentEdate},
+			#{agentStatus}
+		)
+	</insert>
+	
+</mapper>
