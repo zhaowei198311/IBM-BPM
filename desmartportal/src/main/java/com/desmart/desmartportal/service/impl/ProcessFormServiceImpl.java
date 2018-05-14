@@ -36,13 +36,13 @@ public class ProcessFormServiceImpl implements ProcessFormService{
 	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	@Autowired
-	private DhActivityConfMapper dhActivityConfDao;
+	private DhActivityConfMapper dhActivityConfMapper;
 	
 	@Autowired
-	private DhStepMapper dhStepDao;
+	private DhStepMapper dhStepMapper;
 	
 	@Autowired
-	private DhObjectPermissionMapper dhObjectPermissionDao;
+	private DhObjectPermissionMapper dhObjectPermissionMapper;
 	
 	private Logger log = Logger.getLogger(ProcessFormServiceImpl.class);
 	
@@ -71,12 +71,12 @@ public class ProcessFormServiceImpl implements ProcessFormService{
 			log.info("流程元素id:"+activityBpdId);
 			log.info("Bpm主键id:"+activityId);
 			// 通过主键id  获取 配置信息
-			DhActivityConf  dhActivityConf = dhActivityConfDao.getByActivityId(activityId);
+			DhActivityConf  dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
 			log.info("流程配置主键id:"+dhActivityConf.getActcUid());
 			// 通过activityBpdId 找到步骤
 			DhStep dhStep = new DhStep();
 			dhStep.setActivityBpdId(activityBpdId);
-			List<DhStep> dhStepList = dhStepDao.listBySelective(dhStep);
+			List<DhStep> dhStepList = dhStepMapper.listBySelective(dhStep);
 			for (DhStep dhStep2 : dhStepList) {
 				log.info("表单id:"+dhStep2.getStepObjectUid());
 				StepMap.put("activityBpdId", activityBpdId);

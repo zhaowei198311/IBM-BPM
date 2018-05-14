@@ -55,10 +55,10 @@ public class UserServiceImpl implements UserService {
 	private SysTeamMemberService sysTeamMemberService;
 
 	@Autowired
-	private DhProcessMetaMapper dhProcessMetaDao;
+	private DhProcessMetaMapper dhProcessMetaMapper;
 	
 	@Autowired
-	private DhProcessCategoryMapper dhProcessCategoryDao;
+	private DhProcessCategoryMapper dhProcessCategoryMapper;
 	
 	@Autowired
 	private ProcessFormService processFormService;
@@ -85,10 +85,10 @@ public class UserServiceImpl implements UserService {
 			for (DhObjectPermission dhObjectPermission3 : result3) {
 				String proAppId = dhObjectPermission3.getProAppId();
 				String proUid = dhObjectPermission3.getProUid();
-				DhProcessMeta dhProcessMeta2 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
+				DhProcessMeta dhProcessMeta2 = dhProcessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
 				log.info("该用户获取的流程:" + dhProcessMeta2.getProName());
 				// 通过分类id查询流程分类
-				DhProcessCategory dhProcessCategory2 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta2.getCategoryUid());
+				DhProcessCategory dhProcessCategory2 = dhProcessCategoryMapper.queryByCategoryUid(dhProcessMeta2.getCategoryUid());
 				log.info("该流程分类:" + dhProcessCategory2.getCategoryName());
 				Map<String, Object> map2 = new HashMap<>();
 				map2.put("proAppId", dhProcessMeta2.getProAppId());
@@ -126,10 +126,10 @@ public class UserServiceImpl implements UserService {
 					String proAppId = dhObjectPermission1.getProAppId();
 					String proUid = dhObjectPermission1.getProUid();
 					// 通过id  去 查询流程元数据表里的 数据信息
-					DhProcessMeta dhProcessMeta = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
+					DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("角色获取的流程:" + dhProcessMeta.getProName());
 					// 通过 查询元数据 获得的getCategoryUid 流程分类id  去查询流程分类
-					DhProcessCategory dhProcessCategory = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta.getCategoryUid());
+					DhProcessCategory dhProcessCategory = dhProcessCategoryMapper.queryByCategoryUid(dhProcessMeta.getCategoryUid());
 					log.info("该流程分类:" + dhProcessCategory.getCategoryName());
 					// 把所有信息 归纳到 一个map里进行保存
 					Map<String, Object> map1 = new HashMap<>();
@@ -150,10 +150,10 @@ public class UserServiceImpl implements UserService {
 				for (DhObjectPermission dhObjectPermission4 : result4) {
 					String proAppId = dhObjectPermission4.getProAppId();
 					String proUid = dhObjectPermission4.getProUid();
-					DhProcessMeta dhProcessMeta3 = dhProcessMetaDao.queryByProAppIdAndProUid(proAppId, proUid);
+					DhProcessMeta dhProcessMeta3 = dhProcessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
 					log.info("用户所在的角色组获取的流程:" + dhProcessMeta3.getProName());
 					// 通过分类id查询流程分类
-					DhProcessCategory dhProcessCategory3 = dhProcessCategoryDao.queryByCategoryUid(dhProcessMeta3.getCategoryUid());
+					DhProcessCategory dhProcessCategory3 = dhProcessCategoryMapper.queryByCategoryUid(dhProcessMeta3.getCategoryUid());
 					log.info("该流程分类:" + dhProcessCategory3.getCategoryName());
 					Map<String, Object> map3 = new HashMap<>();
 					map3.put("proAppId", dhProcessMeta3.getProAppId());

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.dao.AgentDao;
+import com.desmart.desmartportal.dao.AgentMapper;
 import com.desmart.desmartportal.entity.Agent;
 import com.desmart.desmartportal.entity.Drafts;
 import com.desmart.desmartportal.service.AgentService;
@@ -31,7 +31,7 @@ import com.github.pagehelper.PageInfo;
 public class AgentServiceImpl implements AgentService {
 	
 	@Autowired
-	private AgentDao agentDao;
+	private AgentMapper agentMapper;
 	
 	private Logger log = Logger.getLogger(AgentServiceImpl.class);
 	
@@ -43,7 +43,7 @@ public class AgentServiceImpl implements AgentService {
 		log.info("删除代理数据开始...");
 		int result = 0;
 		try {
-			result = agentDao.deleteByAgentId(agentId);
+			result = agentMapper.deleteByAgentId(agentId);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +60,7 @@ public class AgentServiceImpl implements AgentService {
 		log.info("查询所有代理数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<Agent> resultList = agentDao.select();
+			List<Agent> resultList = agentMapper.select();
 			PageInfo<List<Agent>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -75,7 +75,7 @@ public class AgentServiceImpl implements AgentService {
 		agent.setAgentId(EntityIdPrefix.DH_AGENT_META+ UUID.randomUUID().toString());
 		//String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		//agent.setAgentOperator(user);
-		return agentDao.save(agent);
+		return agentMapper.save(agent);
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class AgentServiceImpl implements AgentService {
 		log.info("根据代理设置人或代理委托人查询 开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<Agent> resultList = agentDao.selectByAgentPerson(person);
+			List<Agent> resultList = agentMapper.selectByAgentPerson(person);
 			PageInfo<List<Agent>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {

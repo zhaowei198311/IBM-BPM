@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartportal.dao.ProcessInstanceDao;
+import com.desmart.desmartportal.dao.ProcessInstanceMapper;
 import com.desmart.desmartportal.entity.ProcessInstance;
 import com.desmart.desmartportal.service.ProcessInstanceService;
 
@@ -25,7 +25,7 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 	private Logger log = Logger.getLogger(ProcessInstanceServiceImpl.class);
 	
 	@Autowired
-	private ProcessInstanceDao processInstanceDao;
+	private ProcessInstanceMapper processInstanceMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -34,7 +34,7 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 	public List<ProcessInstance> selectAllProcess(ProcessInstance processInstance) {
 		log.info("查询所有process开始");
 		try {
-			return processInstanceDao.selectAllProcess(processInstance);
+			return processInstanceMapper.selectAllProcess(processInstance);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,7 +96,7 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 		log.info("添加新的流程实例 Start...");
 		try {
 			if(processInstance != null) {
-				processInstanceDao.insertProcess(processInstance);	
+				processInstanceMapper.insertProcess(processInstance);	
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

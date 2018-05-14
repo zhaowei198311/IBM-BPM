@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.dao.ProcessInstanceDao;
-import com.desmart.desmartportal.dao.TaskInstanceDao;
+import com.desmart.desmartportal.dao.ProcessInstanceMapper;
+import com.desmart.desmartportal.dao.TaskInstanceMapper;
 import com.desmart.desmartportal.entity.Drafts;
 import com.desmart.desmartportal.entity.ProcessInstance;
 import com.desmart.desmartportal.entity.TaskInstance;
@@ -32,10 +32,10 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	private Logger log = Logger.getLogger(TaskInstanceServiceImpl.class);
 	
 	@Autowired
-	private TaskInstanceDao taskInstanceDao;
+	private TaskInstanceMapper taskInstanceMapper;
 	
 	@Autowired
-	private ProcessInstanceDao processInstanceDao;
+	private ProcessInstanceMapper processInstanceMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -45,7 +45,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 		log.info("查询taskInstance开始......");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<TaskInstance> resultList = taskInstanceDao.selectAllTask(taskInstance);
+			List<TaskInstance> resultList = taskInstanceMapper.selectAllTask(taskInstance);
 			PageInfo<List<TaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	public void insertTask(TaskInstance taskInstance) {
 		log.info("");
 		try {
-			taskInstanceDao.insertTask(taskInstance);
+			taskInstanceMapper.insertTask(taskInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -119,7 +119,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	 */
 	@Override
 	public int selectByusrUid(String usrUid) {
-		return	taskInstanceDao.selectByusrUid(usrUid);
+		return	taskInstanceMapper.selectByusrUid(usrUid);
 	}
 
 	/* 
@@ -130,12 +130,12 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 		log.info("根据用户id查询有哪些流程开始......");
 		List <ProcessInstance> resultList = new ArrayList<ProcessInstance>();
 		try {
-			List <TaskInstance> taskInstanceList = taskInstanceDao.selectAllTask(taskInstance);//根据userId查询taskList
+			List <TaskInstance> taskInstanceList = taskInstanceMapper.selectAllTask(taskInstance);//根据userId查询taskList
 			if(taskInstanceList.size() > 0) {
 				for(TaskInstance taskInstance1 : taskInstanceList) {
 					ProcessInstance processInstance = new ProcessInstance();
 					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
-					List <ProcessInstance> processInstanceList= processInstanceDao.selectAllProcess(processInstance);//根据instUid查询processList
+					List <ProcessInstance> processInstanceList= processInstanceMapper.selectAllProcess(processInstance);//根据instUid查询processList
 					for(ProcessInstance p : processInstanceList) {
 						resultList.add(p);
 						System.err.println(p.getInsTitle());

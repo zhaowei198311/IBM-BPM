@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.dao.DraftsDao;
+import com.desmart.desmartportal.dao.DraftsMapper;
 import com.desmart.desmartportal.entity.Drafts;
 import com.desmart.desmartportal.service.DraftsService;
 import com.github.pagehelper.PageHelper;
@@ -30,7 +30,7 @@ import com.github.pagehelper.PageInfo;
 public class DraftsServiceImpl implements DraftsService {
 	
 	@Autowired
-	private DraftsDao draftsDao;
+	private DraftsMapper draftsMapper;
 	
 	private Logger log = Logger.getLogger(DraftsServiceImpl.class);
 	
@@ -42,7 +42,7 @@ public class DraftsServiceImpl implements DraftsService {
 		log.info("删除草稿箱数据开始...");
 		int result = 0;
 		try {
-			result = draftsDao.deleteBydfsId(dfsId);
+			result = draftsMapper.deleteBydfsId(dfsId);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,7 +59,7 @@ public class DraftsServiceImpl implements DraftsService {
 		log.info("查询所有草稿数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<Drafts> resultList = draftsDao.select();
+			List<Drafts> resultList = draftsMapper.select();
 			if(null == resultList || resultList.size() == 0) {
 				log.info("查询所有草稿数据出错,出错类为{}"+DraftsServiceImpl.class);
 			}
@@ -80,7 +80,7 @@ public class DraftsServiceImpl implements DraftsService {
 		log.info("根据草稿名称查询草稿数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<Drafts> resultList = draftsDao.selectBydfsTitle(title);
+			List<Drafts> resultList = draftsMapper.selectBydfsTitle(title);
 			PageInfo<List<Drafts>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -96,7 +96,7 @@ public class DraftsServiceImpl implements DraftsService {
 	@Override
 	public int saveDrafts(Drafts drafts) {
 		drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
-		return draftsDao.save(drafts);
+		return draftsMapper.save(drafts);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class DraftsServiceImpl implements DraftsService {
 		log.info("根据草稿dfsid查询草稿数据开始...");
 		try {
 			PageHelper.startPage(1, 10);
-			List<Drafts> resultList = draftsDao.selectBydfsId(dfsId);
+			List<Drafts> resultList = draftsMapper.selectBydfsId(dfsId);
 			PageInfo<List<Drafts>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
