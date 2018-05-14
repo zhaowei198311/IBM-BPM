@@ -13,8 +13,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
-  		<link href="css/layui.css" rel="stylesheet"/>
-  		<link href="css/my.css" rel="stylesheet" />
+  		<link href="resources/desmartportal/css/layui.css" rel="stylesheet"/>
+  		<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
   		
 	</head>
 	<body>
@@ -297,8 +297,8 @@
 	</body>
 	
 </html>
-	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="js/layui.all.js"></script>	
+	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
 	<script>
 		$(function(){
 			$(".add_row").click(function(){

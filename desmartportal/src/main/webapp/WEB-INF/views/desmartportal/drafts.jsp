@@ -13,13 +13,13 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="resources/css/layui.css" rel="stylesheet" media="all" />
-<link href="resources/css/my.css" rel="stylesheet" media="all" />
-<link href="resources/css/modules/laydate/default/laydate.css"
+<link href="resources/desmartportal/css/layui.css" rel="stylesheet" media="all" />
+<link href="resources/desmartportal/css/my.css" rel="stylesheet" media="all" />
+<link href="resources/desmartportal/css/modules/laydate/default/laydate.css"
 	rel="stylesheet" media="all"/>
-<link href="resources/css/modules/layer/default/layer.css"
+<link href="resources/desmartportal/css/modules/layer/default/layer.css"
 	rel="stylesheet" media="all"/>
-<link href="resources/css/modules/code.css"
+<link href="resources/desmartportal/css/modules/code.css"
 	rel="stylesheet" media="all"/>
 <title>回收站页面</title>
 </head>
@@ -78,8 +78,8 @@
 	</div>
 </body>
 </html>
-<script type="text/javascript" src="resources/js/jquery-3.3.1.js" charset="utf-8"></script>
-<script type="text/javascript" src="resources/js/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script>
 	
 	// 为翻页提供支持

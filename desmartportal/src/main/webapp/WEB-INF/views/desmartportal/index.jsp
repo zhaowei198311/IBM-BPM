@@ -16,9 +16,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="stylesheet" href="resources/css/layui.css" media="all">
-<link rel="stylesheet" href="resources/css/admin.css" media="all">
-<link rel="stylesheet" href="resources/css/my.css" />
+<link rel="stylesheet" href="resources/desmartportal/css/layui.css" media="all">
+<link rel="stylesheet" href="resources/desmartportal/css/admin.css" media="all">
+<link rel="stylesheet" href="resources/desmartportal/css/my.css" />
 
 </head>
 <body class="layui-layout-body">
@@ -108,8 +108,8 @@
 			<div class="layadmin-body-shade" layadmin-event="shade"></div>
 		</div>
 	</div>
-	<script type="text/javascript" src="resources/js/jquery-3.3.1.js"></script>
-	<script type="text/javascript" src="resources/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script>
 		$(document).ready(function(){
 			getUserTask();

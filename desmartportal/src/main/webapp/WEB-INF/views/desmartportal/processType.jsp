@@ -14,10 +14,10 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>待办任务</title>
-<link href="resources/css/layui.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
 <link rel="stylesheet"
-	href="resources/css/modules/laydate/default/laydate.css" />
-<link href="resources/css/my.css" rel="stylesheet" />
+	href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
+<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
 
 </head>
 <body>
@@ -105,8 +105,8 @@
 </body>
 </html>
 
-<script type="text/javascript" src="resources/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="resources/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script>
 	function startProcess() {
 		var proUid = $('#proUid').val();

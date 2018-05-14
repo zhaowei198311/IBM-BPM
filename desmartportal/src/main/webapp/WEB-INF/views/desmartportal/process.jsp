@@ -16,13 +16,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link href="resources/formDesign/css/bootstrap-combined.min.css"
+<link href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css"
 	rel="stylesheet">
-<link href="resources/formDesign/css/layoutit.css" rel="stylesheet">
-<link href="resources/css/modules/laydate/default/laydate.css"
+<link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
+<link href="resources/desmartportal/css/modules/laydate/default/laydate.css"
 	rel="stylesheet">
-<link rel="stylesheet" href="resources/css/layui.css" media="all">
-<link rel="stylesheet" href="resources/css/my.css" />
+<link rel="stylesheet" href="resources/desmartportal/css/layui.css" media="all">
+<link rel="stylesheet" href="resources/desmartportal/css/my.css" />
 <style type="text/css">
 	.container-fluid {
 	    padding-right: 0px; 
@@ -90,9 +90,9 @@
 </body>
 
 </html>
-<script type="text/javascript" src="resources/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="resources/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script>
 	function startProcess() {
 		var proUids = $("#proUid").val();
@@ -293,4 +293,4 @@
 		
 	}
 </script>
-<script type="text/javascript" src="resources/formDesign/js/my.js"></script>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>

@@ -13,9 +13,9 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
-  		<link href="css/layui.css" rel="stylesheet"/>
-  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
-  		<link href="css/my.css" rel="stylesheet" />
+  		<link href="resources/desmartportal/css/layui.css" rel="stylesheet"/>
+  		<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
+  		<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
   		
 	</head>
 	<body>
@@ -106,8 +106,8 @@
 				</table>
 			</div>
 		</div>
-		<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
-		<script type="text/javascript" src="js/layui.all.js"></script>	
+		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
+		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
 		<!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>

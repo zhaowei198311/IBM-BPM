@@ -14,10 +14,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
   		<link href="css/layui.css" rel="stylesheet"/>
-  		<link rel="stylesheet" href="css/modules/laydate/default/laydate.css" />
-  		<link rel="stylesheet" href="tree/css/demo.css" type="text/css">
-		<link rel="stylesheet" href="tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
-  		<link rel="stylesheet" href="css/my.css" />
+  		<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
+  		<link rel="stylesheet" href="resources/desmartportal/tree/css/demo.css" type="text/css">
+		<link rel="stylesheet" href="resources/desmartportal/tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+  		<link rel="stylesheet" href="resources/desmartportal/css/my.css" />
   		<style>
   			.ztree li span.button.add {
 			    margin-right: 2px;
@@ -138,11 +138,11 @@
 	</body>
 	
 </html>
-	<script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="js/layui.all.js"></script>
-	<script type="text/javascript" src="tree/js/jquery.ztree.core.js"></script>
-	<script type="text/javascript" src="tree/js/jquery.ztree.excheck.js"></script>
-	<script type="text/javascript" src="tree/js/jquery.ztree.exedit.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.exedit.js"></script>
 	<script>
 		layui.use(['laypage', 'layer'], function(){
 			var laypage = layui.laypage,layer = layui.layer;  

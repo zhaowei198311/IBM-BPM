@@ -13,8 +13,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
-  		<link href="resources/css/layui.css" rel="stylesheet"/>
-  		<link href="resources/css/my.css" rel="stylesheet" />
+  		<link href="resources/desmartportal/css/layui.css" rel="stylesheet"/>
+  		<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
   		<style>
   			.layui-form-label{text-align:left;padding:6px 0;width:60px;}
   			.layui-input-block{margin-left:70px;}
@@ -362,8 +362,8 @@
 		</div>
 	</body>	
 </html>
-	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="resources/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script>
 	
 		var url='http://localhost:8080/desmartsystem/sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
