@@ -70,6 +70,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhProcessDefinitionService dhProcessDefinitionService;
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -366,7 +368,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
 	@Override
 	public ServerResponse listProcessDefinitionById(DhProcessDefinition dhProcessDefinition) {
-		return ServerResponse.createBySuccess(dhProcessDefinitionMapper.listById(dhProcessDefinition));
+//		LswSnapshot lswSnapshot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(dhProcessDefinition.getProVerUid());
+		List<DhProcessDefinition> dpd = dhProcessDefinitionMapper.listById(dhProcessDefinition);
+		return ServerResponse.createBySuccess(dpd);
 	}
 
 	@Override
