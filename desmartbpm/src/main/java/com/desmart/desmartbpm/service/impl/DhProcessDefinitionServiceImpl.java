@@ -401,6 +401,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			synchronizationConfig(similarBpmActivityMetaList);
 			
 			return ServerResponse.createBySuccess();
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ServerResponse.createByErrorMessage(e.getMessage());
