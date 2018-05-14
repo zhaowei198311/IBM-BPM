@@ -86,10 +86,16 @@ public class MenusController {
 	
 	
 	@RequestMapping("/processType")
-	public ModelAndView processType(@RequestParam Map<String, Object> processMap) {
+	public ModelAndView processType(@RequestParam(value = "proUid",required = false) String proUid,
+			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
+			@RequestParam(value = "proName",required = false) String proName,
+			@RequestParam(value = "categoryName",required = false) String categoryName) {
 		ModelAndView mv = new ModelAndView("processType");
-		//JSONObject.toJSONString(processMap)
-		mv.addObject("processMap", processMap);
+		mv.addObject("proUid", proUid);
+		mv.addObject("proAppId", proAppId);
+		mv.addObject("verUid", verUid);
+		mv.addObject("proName", proName);
+		mv.addObject("categoryName", categoryName);
 		return mv;
 	}
 	

@@ -35,6 +35,7 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 		log.info("查询所有process开始");
 		try {
 			return processInstanceDao.selectAllProcess(processInstance);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
