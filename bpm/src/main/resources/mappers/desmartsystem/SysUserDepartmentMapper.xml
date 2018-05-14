@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.dao.SysUserDepartmentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysUserDepartment" >
+    <result column="UDUID" property="uduid" jdbcType="VARCHAR" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="DEPART_NAME" property="departName" jdbcType="VARCHAR" />
+    
+    
+    <result column="IS_MANAGER" property="isManager" jdbcType="VARCHAR" />
+    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+	  <select id="selectUserDepartmentView" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap">
+	  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d) user_department LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID where 1=1
+			<if test="userUid!=null">
+	 			and user_Uid = #{userUid}
+	 		</if>
+	  </select>
+  
+  	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
+	 		SELECT	ud.UDUID,ud.USER_UID,d.DEPART_NAME,u.USER_NAME,ud.IS_MANAGER  FROM	 SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID  where 1=1
+	 		<if test="userUid!=null and userUid!='' ">
+	 			and ud.user_Uid = #{userUid}
+	 		</if>
+	 		<if test="departUid!=null and departUid!='' ">
+	 			and ud.depart_Uid = #{departUid} 
+	 			<!-- and UD.IS_MANAGER='true' -->
+	 		</if>
+	 		<if test="isManager!=null and isManager!='' ">
+	 			and UD.IS_MANAGER =#{isManager}
+	 		</if>
+	 </select>
+	  
+	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
+	  		select * from SYS_USER_DEPARTMENT d where d.UDUID=#{uduid}
+	  </select>
+		
+	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
+	 		insert into SYS_USER_DEPARTMENT (UDUID, USER_UID, IS_MANAGER,DEPART_UID)
+		    values (#{uduid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{isManager,jdbcType=VARCHAR},#{departUid,jdbcType=VARCHAR})
+	 </insert>
+	  
+	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap" >
+	  		select * from SYS_USER_DEPARTMENT u where u.UDUID=#{uduid}
+	  </select>
+	  
+	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment">
+	  		DELETE FROM SYS_USER_DEPARTMENT where 1=1
+	  		<if test="uduid!=null and uduid!='' ">
+	  			and UDUID=#{uduid}
+	  		</if>
+	  		<if test="departUid!=null and departUid!='' ">
+	  			and DEPART_UID = #{departUid}
+	  		</if>
+	  		<if test="userUid!=null and userUid!='' ">
+	  			and USER_UID = #{userUid}
+	  		</if>
+	  </delete>
+	  
+	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
+	  		update SYS_USER_DEPARTMENT set  USER_UID=#{userUid,jdbcType=VARCHAR},IS_MANAGER=#{isManager,jdbcType=VARCHAR},DEPART_UID=#{departUid,jdbcType=VARCHAR} where UDUID=#{uduid}
+	  </update>
+	  
+	  <update id="updateUserDepartment" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
+	  		update SYS_USER_DEPARTMENT set DEPART_UID=#{departUid}   where DEPART_UID=#{departUid} and USER_UID = #{userUid}
+	  </update>
+
+</mapper>
