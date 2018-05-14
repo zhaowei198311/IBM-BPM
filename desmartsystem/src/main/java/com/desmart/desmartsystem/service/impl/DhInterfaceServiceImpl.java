@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.common.ServerResponse;
-import com.desmart.desmartsystem.dao.DhInterfaceDao;
+import com.desmart.desmartsystem.dao.DhInterfaceMapper;
 import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import com.github.pagehelper.PageHelper;
@@ -37,7 +37,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	private static final Logger LOG = LoggerFactory.getLogger(DhInterfaceServiceImpl.class);
 
 	@Autowired
-	private DhInterfaceDao dhInterfaceDao;
+	private DhInterfaceMapper dhInterfaceMapper;
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterface(Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhInterface> interfacelist = dhInterfaceDao.listAll();
+		List<DhInterface> interfacelist = dhInterfaceMapper.listAll();
 		if (null == interfacelist || interfacelist.size() == 0) {
 			LOG.info("查询接口出错,出错类为{}", DhInterfaceServiceImpl.class);
 		}
@@ -63,7 +63,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	@Override
 	public int saveDhInterface(DhInterface dhInterface) {
 		dhInterface.setIntUid(EntityIdPrefix.DH_INTERFACE_META + UUID.randomUUID().toString());
-		int resultCount = dhInterfaceDao.save(dhInterface);
+		int resultCount = dhInterfaceMapper.save(dhInterface);
 		return resultCount;
 	}
 
@@ -75,7 +75,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	@Override
 	public void delDhInterface(String Interfaceid) {
 		if (Interfaceid != null) {
-			dhInterfaceDao.delete(Interfaceid);
+			dhInterfaceMapper.delete(Interfaceid);
 		}else {
 			LOG.info("删除接口模块出错，出错类为"+DhInterfaceServiceImpl.class);
 		}
@@ -89,7 +89,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByTitle(Map<String, Object> params, Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhInterface> DhInterfaceList = dhInterfaceDao.selectByCondition(params);
+		List<DhInterface> DhInterfaceList = dhInterfaceMapper.selectByCondition(params);
 		PageInfo<List<DhInterface>> pageInfo = new PageInfo(DhInterfaceList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
@@ -99,7 +99,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 */
 	@Override
 	public int updateDhInterface(DhInterface dhInterface) {
-		int result = dhInterfaceDao.update(dhInterface);
+		int result = dhInterfaceMapper.update(dhInterface);
 		return result;
 	}
 
@@ -108,6 +108,6 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 */
 	@Override
 	public DhInterface selectDhInterfaceByid(String intUid) {
-		return dhInterfaceDao.selectByintUid(intUid);
+		return dhInterfaceMapper.selectByintUid(intUid);
 	}
 }

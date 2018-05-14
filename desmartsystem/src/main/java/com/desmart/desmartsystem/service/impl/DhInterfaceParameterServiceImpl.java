@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.common.ServerResponse;
-import com.desmart.desmartsystem.dao.DhInterfaceParameterDao;
+import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.github.pagehelper.PageHelper;
@@ -31,7 +31,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	private static final Logger LOG = LoggerFactory.getLogger(DhInterfaceParameterServiceImpl.class);
 	
 	@Autowired
-	private DhInterfaceParameterDao dhInterfaceParameterDao;
+	private DhInterfaceParameterMapper dhInterfaceParameterMapper;
 	
 	/* (non-Javadoc)
 	 * @see com.desmart.desmartbpm.service.DhInterfaceParameterService#listDhInterfaceParameter(java.lang.String, java.lang.Integer, java.lang.Integer)
@@ -40,7 +40,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	public ServerResponse<PageInfo<List<DhInterfaceParameter>>> listDhInterfaceParameter(String intUid, Integer pageNum,
 			Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhInterfaceParameter> interfaceParameterlist = dhInterfaceParameterDao.listAll(intUid);
+		List<DhInterfaceParameter> interfaceParameterlist = dhInterfaceParameterMapper.listAll(intUid);
 		PageInfo<List<DhInterfaceParameter>> pageInfo = new PageInfo(interfaceParameterlist);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
@@ -51,7 +51,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	public void delDhInterfaceParameter(String paraUid) {
 		if(paraUid!=null) {
-			dhInterfaceParameterDao.delete(paraUid);
+			dhInterfaceParameterMapper.delete(paraUid);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	public ServerResponse saveDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter) {
 		dhInterfaceParameter.setParaUid(EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString());
-		return ServerResponse.createBySuccess(dhInterfaceParameterDao.save(dhInterfaceParameter));
+		return ServerResponse.createBySuccess(dhInterfaceParameterMapper.save(dhInterfaceParameter));
 	}
 
 	/* (non-Javadoc)
@@ -69,7 +69,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	 */
 	@Override
 	public ServerResponse updateDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter) {
-		return ServerResponse.createBySuccess(dhInterfaceParameterDao.update(dhInterfaceParameter));
+		return ServerResponse.createBySuccess(dhInterfaceParameterMapper.update(dhInterfaceParameter));
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +77,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	 */
 	@Override
 	public DhInterfaceParameter selectByparaUid(String paraUid) {
-		return dhInterfaceParameterDao.selectByparaUid(paraUid);
+		return dhInterfaceParameterMapper.selectByparaUid(paraUid);
 	}
 	
 }
