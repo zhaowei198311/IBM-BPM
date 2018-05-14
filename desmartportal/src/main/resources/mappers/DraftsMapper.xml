@@ -25,6 +25,15 @@
 		DH_DRAFTS
 	</select>
 	
+	<select id="selectBydfsId" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Drafts">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_DRAFTS
+		<where>
+				DFS_ID = #{dfsId}	
+		</where>
+	</select>
 	<delete id="deleteBydfsId" parameterType="java.lang.String">
 		DELETE
 		FROM DH_DRAFTS
