@@ -37,7 +37,7 @@ public class AgentController {
 	
 	@RequestMapping(value = "/index")
 	public String index() {
-		return "agent";
+		return "desmartportal/agent";
 	}
 	
 	@RequestMapping(value = "/queryAgentByList")

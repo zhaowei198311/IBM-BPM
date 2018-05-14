@@ -32,7 +32,7 @@ public class DraftsController {
 	
 	@RequestMapping(value = "/index")
 	public String index() {
-		return "drafts";
+		return "desmartportal/drafts";
 	}
 	
 	@RequestMapping(value = "/queryDraftsByList")
