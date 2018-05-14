@@ -10,11 +10,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.ProcessInstanceDao;
 import com.desmart.desmartportal.dao.TaskInstanceDao;
+import com.desmart.desmartportal.entity.Drafts;
 import com.desmart.desmartportal.entity.ProcessInstance;
 import com.desmart.desmartportal.entity.TaskInstance;
 import com.desmart.desmartportal.service.TaskInstanceService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**  
 * <p>Title: TaskInstanceServiceImpl</p>  
@@ -37,10 +41,13 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	 * 查询所有流程实例
 	 */
 	@Override
-	public List<ProcessInstance> selectAllTask(TaskInstance taskInstance) {
+	public ServerResponse<PageInfo<List<TaskInstance>>> selectAllTask(TaskInstance taskInstance, Integer pageNum, Integer pageSize) {
 		log.info("查询taskInstance开始......");
 		try {
-			
+			PageHelper.startPage(pageNum, pageSize);
+			List<TaskInstance> resultList = taskInstanceDao.selectAllTask(taskInstance);
+			PageInfo<List<TaskInstance>> pageInfo = new PageInfo(resultList);
+			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,7 +59,7 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	 * 根据实例任务id 查询任务
 	 */
 	@Override
-	public List<TaskInstance> selectByPrimaryKey(String taskUid) {
+	public ServerResponse<PageInfo<List<TaskInstance>>> selectByPrimaryKey(String taskUid, Integer pageNum, Integer pageSize) {
 		log.info("");
 		try {
 			
