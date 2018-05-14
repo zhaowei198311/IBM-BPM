@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartportal.dao.TaskInstanceDao">
+<mapper namespace="com.desmart.desmartportal.dao.TaskInstanceMapper">
 	<resultMap id="TaskInstanceMap" type="java.util.Map">
 		<result column="TASK_UID" 							property="taskUid"/>
 		<result column="INS_UID" 							property="insUid"/>
