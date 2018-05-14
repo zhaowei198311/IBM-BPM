@@ -421,37 +421,6 @@
 	         	$("#tabletrDetail").append(str);
 	         });
 		}
-		//添加和修改
-		function validateCallback_1(form, callback) {
-			var $form = $(form);
-			if (!$form.valid()) {
-				return false;
-			}
-			var reg = /[^\d]/g;
-			var _submitFn = function(){
-				$form.find(':focus').blur();
-				$.ajax({
-					type: form.method || 'POST',
-					url:$form.attr("action"),
-					data:$form.serializeArray(),
-					dataType:"json",
-					cache: false,
-					beforeSend: function () {
-					   $('.layui-btn',$form).attr({disabled: "disabled"});
-				    },
-					success: callback,
-					complete: function () {//完成响应
-					   $('.layui-btn',$form).removeAttr("disabled");
-				    },
-					error: function(e){
-			 	       //alert("添加或修改失败");
-						layer.alert("失败");
-				    }
-				});
-			}
-			_submitFn();
-			return false;
-		}
 		// 检索
 		function search_1(){
 			var dicName = $("#dicName").val();
