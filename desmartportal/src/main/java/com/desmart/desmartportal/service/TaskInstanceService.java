@@ -16,7 +16,7 @@ import com.desmart.desmartportal.entity.TaskInstance;
 */
 public interface TaskInstanceService {
 	
-	List <TaskInstance> selectAllTask(TaskInstance taskInstance);
+	List <ProcessInstance> selectAllTask(TaskInstance taskInstance);
 	
 	List <TaskInstance> selectByPrimaryKey(String taskUid);
 	
