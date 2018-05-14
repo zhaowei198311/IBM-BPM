@@ -182,11 +182,12 @@
     
     <select id="listById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
     	select 
-    	<include refid="base_column" />
-    	from DH_PROCESS_DEFINITION
-    	where PRO_UID = #{proUid}
-    	and PRO_APP_ID = #{proAppId}
-    	and PRO_VER_UID != #{proVerUid}
+    	<include refid="relation_column" />,pm.pro_name proName
+    	from DH_PROCESS_DEFINITION pd
+    	left join dh_process_meta pm on pd.pro_uid = pm.pro_uid and pd.pro_app_id = pm.pro_app_id
+    	where pd.PRO_UID = #{proUid}
+    	and pd.PRO_APP_ID = #{proAppId}
+    	and pd.PRO_VER_UID != #{proVerUid}
     </select>
     
     <select id="getProcessById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
