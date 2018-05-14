@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartsystem.dao.SysDictionaryMapper">
+	<sql id="Base_Column_List">
+		DIC_UID,DIC_CODE,DIC_NAME,DIC_DESCRIPTION,DIC_STATUS
+	</sql>
+	
+	<sql id="Base_Column_List1">
+		DIC_DATA_UID,DIC_DATA_CODE,DIC_DATA_NAME,DIC_UID,DIC_DATA_DESCRIPTION,DIC_DATA_SORT,DIC_DATA_STATUS
+	</sql>
+
+	<select id="selectSysDictionaryByName" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+		select 
+		<include refid="Base_Column_List" />
+		from SYS_DICTIONARY
+		where 1=1
+		<if test="dicName != null">
+			and DIC_NAME like '%'||#{dicName}||'%'
+		</if>	
+	</select>
+	
+	<select id="selectSysDictionaryById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+		select 
+		<include refid="Base_Column_List" />
+		from SYS_DICTIONARY
+		<if test="dicUid != null">
+		where DIC_UID = #{dicUid}
+		</if>
+	</select>
+	
+	<select id="selectSysDictionaryByCode" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+		select 
+		<include refid="Base_Column_List" />
+		from SYS_DICTIONARY
+		where DIC_CODE = #{dicCode}
+	</select>
+	
+	<insert id="save" parameterType="com.desmart.desmartsystem.entity.SysDictionary">
+		insert into SYS_DICTIONARY (
+			DIC_UID,
+			DIC_CODE,
+			DIC_NAME,
+			DIC_DESCRIPTION,
+			DIC_STATUS,
+			CREATE_DATE,
+			CREATE_BY
+		)values (
+			#{dicUid},
+			#{dicCode},
+			#{dicName},
+			#{dicDescription},
+			#{dicStatus},
+			sysdate,
+			#{createBy}
+		)
+	</insert>
+	
+	<delete id="delete">
+		delete from  SYS_DICTIONARY	
+		where DIC_UID = #{dicUid}
+	</delete>	
+	
+	<update id="update" parameterType="com.desmart.desmartsystem.entity.SysDictionary">
+		update SYS_DICTIONARY
+		<set>
+			<if test="dicCode != null">
+				DIC_CODE = #{dicCode},
+			</if>
+			<if test="dicName != null">
+				DIC_NAME = #{dicName},
+			</if>
+			<if test="dicDescription != null">
+				DIC_DESCRIPTION = #{dicDescription},
+			</if>
+			<if test="dicStatus != null">
+				DIC_STATUS = #{dicStatus},
+			</if>
+			<if test="updateBy != null">
+				UPDATE_BY = #{updateBy},
+			</if>			
+				UPDATE_DATE = sysdate			
+		</set>
+		where DIC_UID = #{dicUid}
+	</update>
+	
+	<select id="selectSysDictionaryDataListById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		select 
+		<include refid="Base_Column_List1" />
+		from SYS_DICTIONARY_DATA
+		where 1=1
+		<if test="dicUid != null">
+			and DIC_UID = #{dicUid}
+		</if>	
+		<if test="dicDataName != null">
+			and DIC_DATA_NAME like '%'||#{dicDataName}||'%'
+		</if>
+	</select>
+	
+	<select id="selectSysDictionaryDataById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		select  
+		<include refid="Base_Column_List1" />
+		from SYS_DICTIONARY_DATA
+		where DIC_DATA_UID = #{dicDataUid}
+	</select>
+	
+	<select id="selectSysDictionaryDataByCode" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		select  
+		<include refid="Base_Column_List1" />
+		from SYS_DICTIONARY_DATA
+		where DIC_DATA_CODE = #{dicDataCode}
+	</select>
+	
+	<insert id="saveSysDictionaryData" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		insert into SYS_DICTIONARY_DATA(
+			DIC_DATA_UID,
+			DIC_DATA_CODE,
+			DIC_DATA_NAME,
+			DIC_UID,
+			DIC_DATA_DESCRIPTION,
+			DIC_DATA_SORT,
+			DIC_DATA_STATUS,
+			CREATE_DATE,
+			CREATE_BY
+		)values (
+			#{dicDataUid},
+			#{dicDataCode},
+			#{dicDataName},
+			#{dicUid},
+			#{dicDataDescription},
+			#{dicDataSort},	
+			#{dicDataStatus},
+			sysdate,
+			#{createBy}
+		)
+	</insert>
+	
+	<delete id="deleteSysDictionaryData" parameterType="java.lang.String">
+		delete from SYS_DICTIONARY_DATA
+		where DIC_DATA_UID = #{dicDataUid}
+	</delete>
+	
+	<update id="updateSysDictionaryData" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		update SYS_DICTIONARY_DATA
+		<set>
+			<if test="dicDataCode != null">
+				DIC_DATA_CODE = #{dicDataCode},			
+			</if>
+			<if test="dicDataName != null">
+				DIC_DATA_NAME = #{dicDataName},
+			</if>
+			<if test="dicDataDescription != null">
+				DIC_DATA_DESCRIPTION = #{dicDataDescription},
+			</if>
+			<if test="dicDataSort != null">
+				DIC_DATA_SORT = #{dicDataSort},
+			</if>
+			<if test="dicDataStatus != null">
+				DIC_DATA_STATUS = #{dicDataStatus},
+			</if>
+			<if test="updateBy != null">
+				UPDATE_BY = #{updateBy},
+			</if>	
+				UPDATE_DATE = sysdate			
+			where DIC_DATA_UID = #{dicDataUid}
+		</set>
+	</update>
+</mapper>

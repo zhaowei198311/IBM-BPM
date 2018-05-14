@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.dao.SysDepartmentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysDepartment">
+		<result column="DEPART_UID" property="departUid" />
+		<result column="DEPART_PARENT" property="departParent" />
+		<result column="DEPART_NAME" property="departName" />
+		<result column="ORDER_INDEX" property="orderIndex" />
+		<result column="DEPART_DESC" property="departDesc" />
+		<result column="DEPART_NO" property="departNo" />
+		<result column="DEPART_LAYER" property="departLayer" />
+		<result column="DEPART_ADMINS" property="departAdmins" />
+		<result column="DEPART_ZONE" property="departZone" />
+		<result column="COMPANY_UID" property="companyUid" />
+		<result column="EXT1" property="ext1" />
+		<result column="EXT2" property="ext2" />
+		<result column="WORK_CALENDAR" property="workCalendar" />
+		<result column="EXT3" property="ext3" />
+		<result column="EXT4" property="ext4" />
+		<result column="EXT5" property="ext5" />
+		<result column="DEPART_TYPE" property="departType" />
+		<result column="IS_CLOSED" property="isClosed" />
+		<result column="CLOSE_DATE" property="closeDate" />
+		<result column="BEGIN_DATE" property="beginDate" />
+		<result column="END_DATE" property="endDate" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	
+	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
+			select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE,
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    from Sys_Department d where 1=1 
+	 		<if test="departName!= null and departName!='' ">
+	 			and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%') 
+	 		</if>
+	 		
+	 		<if test="departParent!= null and departParent!='' ">
+	 			and d.DEPART_PARENT=#{departParent}
+	 		</if>
+	 		<!-- 过滤掉指定人下的部门 -->
+	 		<if test="ext1!= null and ext1!=''" > 
+	 			and d.DEPART_UID not in (SELECT	 ud.DEPART_UID FROM SYS_USER_DEPARTMENT ud where ud.USER_UID=#{ext1})
+	 		</if>
+	  </select>
+	  
+	  
+	  <!-- 查询所有部门信息 -->
+	  <select id="selectDesmarts" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
+			select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE
+		    from Sys_Department d where 1=1 
+	  </select>
+	  
+	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
+	  		select * from Sys_Department
+	  </select>
+		
+	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
+	 		insert into SYS_DEPARTMENT (DEPART_UID, DEPART_PARENT, DISPLAY_NAME, 
+		      DEPART_NAME, ORDER_INDEX, DEPART_DESC, 
+		      DEPART_NO, DEPART_LAYER, DEPART_ADMINS, 
+		      DEPART_ZONE, COMPANY_UID, EXT1, 
+		      EXT2, WORK_CALENDAR, EXT3, 
+		      EXT4, EXT5, DEPART_TYPE, 
+		      IS_CLOSED, CLOSE_DATE, BEGIN_DATE, 
+		      END_DATE, CREATE_DATE, UPDATE_DATE
+		      )
+		    values (#{departUid,jdbcType=VARCHAR}, #{departParent,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+		      #{departName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, #{departDesc,jdbcType=VARCHAR}, 
+		      #{departNo,jdbcType=VARCHAR}, #{departLayer,jdbcType=DECIMAL}, #{departAdmins,jdbcType=VARCHAR}, 
+		      #{departZone,jdbcType=VARCHAR}, #{companyUid,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, 
+		      #{ext2,jdbcType=VARCHAR}, #{workCalendar,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, 
+		      #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{departType,jdbcType=VARCHAR}, 
+		      #{isClosed,jdbcType=DECIMAL}, #{closeDate,jdbcType=TIMESTAMP}, #{beginDate,jdbcType=TIMESTAMP}, 
+		      #{endDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+		      )
+	 </insert>
+	 
+	 <insert id="inserBatch" parameterType="java.util.List" >  
+	  		INSERT
+			INTO SYS_DEPARTMENT
+			  (
+			    DEPART_UID,
+			    DEPART_PARENT,
+			    DISPLAY_NAME,
+			    DEPART_NAME,
+			    DEPART_NO,
+			    DEPART_ADMINS,
+			    CREATE_DATE,
+			    UPDATE_DATE
+			  )
+	        <foreach collection="list" index="index" item="item" separator=" union all ">  
+	            SELECT
+				   #{item.departUid,jdbcType=VARCHAR},
+				   #{item.departParent,jdbcType=VARCHAR},
+				   #{item.displayName,jdbcType=VARCHAR},
+				   #{item.departName,jdbcType=VARCHAR},
+				   #{item.departNo,jdbcType=VARCHAR},
+				   #{item.departAdmins,jdbcType=VARCHAR},
+				   #{item.createDate,jdbcType=TIMESTAMP},
+				   #{item.updateDate,jdbcType=TIMESTAMP}
+				  FROM DUAL
+	        </foreach>  
+      </insert>
+	  
+	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysDepartment" resultMap="BaseResultMap" >
+	  		select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE,
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    from  Sys_Department d where d.DEPART_UID=#{departUid}
+	  </select>
+	  
+	  <select id="selectTree" parameterType="com.desmart.desmartsystem.entity.TreeNode" resultType="com.desmart.desmartsystem.entity.TreeNode">
+	  		select depart_uid as code,depart_name as name,depart_no id,depart_parent pId,lvl,isParent from(
+			select  d.depart_uid,d.depart_name,d.depart_no,d.depart_parent,1 lvl,case when (select count(*) from Sys_Department cd where d.depart_no=cd.depart_parent)>0 then 'true' else 'false' end  isParent from Sys_Department  d  
+			) where
+			<choose>
+				<when test="id!=null and id!='' ">
+					 depart_parent=#{id}
+				</when>  
+             	<otherwise>
+             		depart_no='10000000'
+             	</otherwise>
+			</choose>
+	  </select>
+	  
+	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysDepartment">
+	  		DELETE FROM SYS_RESOURCE where RESOUCE_UID=#{resouceUid}
+	  </delete>
+	  
+	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
+	  		 update SYS_DEPARTMENT set DEPART_PARENT=#{departParent,jdbcType=VARCHAR}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR}, 
+		     DEPART_NAME=#{departName,jdbcType=VARCHAR}, ORDER_INDEX=#{orderIndex,jdbcType=DECIMAL}, DEPART_DESC=#{departDesc,jdbcType=VARCHAR}, 
+		     DEPART_NO=#{departNo,jdbcType=VARCHAR}, DEPART_LAYER=#{departLayer,jdbcType=DECIMAL}, DEPART_ADMINS=#{departAdmins,jdbcType=VARCHAR}, 
+		     DEPART_ZONE=#{departZone,jdbcType=VARCHAR}, COMPANY_UID=#{companyUid,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
+		     where DEPART_UID = #{departUid,jdbcType=VARCHAR}
+	  </update>
+</mapper>
