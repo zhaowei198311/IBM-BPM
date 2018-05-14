@@ -1,6 +1,7 @@
 var webpage = "";
 var view = null;
 var dynContent = "";
+var formatJs = "<script type='text/javascript'>\n\n</script>";
 function supportstorage() {
 	if (typeof window.localStorage=='object') 
 		return true;
@@ -301,14 +302,18 @@ function downloadLayoutSrc() {
 			["data-slide-to"],
 			["data-slide"],
 			["col"],
+			["col-type"],
 			["regx"]
 		]
 	});
-	var formatJs = "<script type='text/javascript'></script>";
 	$("#download-layout").html(formatSrc);
 	$("#downloadModal textarea").empty();
 	$("#downloadModal textarea").val(formatSrc+formatJs);
 	webpage = formatSrc+formatJs;
+}
+
+function saveJS(){
+	formatJs = $("#addJSModal textarea").val();
 }
 
 var currentDocument = null;
@@ -399,7 +404,10 @@ $(document).ready(function() {
 				if(result.status==0){
 					$("#proUid").val(result.data.proUid);
 					$("#proVersion").val(result.data.proVersion);
-					$(".demo").html(result.data.dynContent);
+					var jsIndex = result.data.dynContent.indexOf("<script type='text/javascript'>"); 
+					formatJs = result.data.dynContent.substr(jsIndex);
+					var demoHtml = result.data.dynContent.substring(0,jsIndex);
+					$(".demo").html(demoHtml);
 					var nameVal = "";
 					$(".demo .subDiv").each(function(){
 						var name = $($(this).children()[0]).attr("name");
@@ -501,16 +509,9 @@ $(document).ready(function() {
 			
 			if($("#"+temp).parent().parent().find(".subDiv").find("input[type='radio']").length>0 ||
 					$("#"+temp).parent().parent().find(".subDiv").find("input[type='checkbox']").length>0){
-				$("#"+temp).parent().parent().find(".subDiv").find("input").attr("class",inputId);
+				$("#"+temp).parent().parent().find(".subDiv").find("input").attr("class",inputId).attr("name",inputId);
 			}else{
-				$($("#"+temp).parent().parent().find(".subDiv").children()[0]).attr("id",inputId);
-				/*if($("#"+inputId).attr("class")=="editor_textarea"){
-					CKEDITOR.replace(inputId ,{
-						language: 'en',
-						contentsCss: ['../resources/formDesign/css/bootstrap-combined.min.css'],
-						allowedContent: true
-					});
-				}*/
+				$($("#"+temp).parent().parent().find(".subDiv").children()[0]).attr("id",inputId).attr("name",inputId);
 			}
 			$("#"+temp).trigger("click");
 		}
@@ -529,6 +530,11 @@ $(document).ready(function() {
 	$("[data-target=#downloadModal]").click(function(e) {
 		e.preventDefault();
 		downloadLayoutSrc();
+	});
+	$("[data-target=#addJSModal]").click(function(e) {
+		e.preventDefault();
+		$("#addJSModal textarea").empty();
+		$("#addJSModal textarea").val(formatJs);
 	});
 	$("[data-target=#shareModal]").click(function(e) {
 		e.preventDefault();
@@ -617,6 +623,8 @@ $(document).ready(function() {
 function saveHtml() {
 	var filename = $("#formName").val()+".html";
 	webpage = $("#downloadModal textarea").val();
+	console.log(webpage);
+	dynContent += formatJs;
 	var subDivArr = $("#download-layout").find(".subDiv");
 	var jsonArr = new Array();
 	//修改表单

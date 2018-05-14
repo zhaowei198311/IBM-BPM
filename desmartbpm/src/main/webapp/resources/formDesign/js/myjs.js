@@ -389,6 +389,105 @@ function showEditorModal(obj){
 	$("#editor-label-width").val(textLabelCol);
 }
 
+function showDataTableModal(obj){
+	$("#dataTableModal").modal("show");
+	
+	view = $(obj).parent().next().next();
+	var tableObj = view.find(".subDiv table");
+	var id = tableObj.attr("id");
+	var name = tableObj.attr("name");
+	var thObjArr = tableObj.find("thead th");
+	var thNum = thObjArr.length;
+	
+	$("#dataTableModal .data-table-set").remove();
+	for(var i=0;i<thObjArr.length;i++){
+		var thObj = $(thObjArr[i]);
+		var thText = thObj.text();
+		var thSetHtml = '<div class="form-group col-xs-12 data-table-set">'+
+						'<label class="col-xs-2 col-sm-offset-2 control-label">'+
+							'表格列头<span style="color:red;float:left;">*</span>'+
+						'</label>'+
+						'<div class="col-xs-1">'+
+							'<input type="text" class="col-xs-12 col data-table-head"'+
+								'placeholder="列头" style="width:70px;" value="'+thText+'">'+
+						'</div>'+
+						'<label class="col-xs-1 col-sm-offset-1 control-label">'+
+							'列组件类型'+
+						'</label>'+
+						'<div class="col-xs-2">'+
+							'<select class="data-table-type col-xs-12">';
+		var thType = thObj.attr("col-type");
+		switch(thType){
+			case "text":{
+				thSetHtml += '<option value="text" selected>文本框</option>'+
+							'<option value="number">数字框</option>'+
+							'<option value="date">日期文本框</option>'+
+							'<option value="select">下拉列表</option>';
+				break;
+			}
+			case "number":{
+				thSetHtml += '<option value="text">文本框</option>'+
+							'<option value="number" selected>数字框</option>'+
+							'<option value="date">日期文本框</option>'+
+							'<option value="select">下拉列表</option>';
+				break;
+			}
+			case "date":{
+				thSetHtml += '<option value="text">文本框</option>'+
+							'<option value="number">数字框</option>'+
+							'<option value="date" selected>日期文本框</option>'+
+							'<option value="select">下拉列表</option>';
+				break;
+			}
+			case "select":{
+				thSetHtml += '<option value="text">文本框</option>'+
+							'<option value="number">数字框</option>'+
+							'<option value="date">日期文本框</option>'+
+							'<option value="select" selected>下拉列表</option>';
+				break;
+			}
+		}
+		thSetHtml += '</select></div></div>';
+		$("#dataTableModal form").append(thSetHtml);
+	}
+	
+	$("#data-table-number").blur(function(){
+		var forNum = $("#data-table-number").val();
+		$("#dataTableModal .data-table-set").remove();
+		for(var i=0;i<forNum;i++){
+			var thSetHtml = '<div class="form-group col-xs-12 data-table-set">'+
+				'<label class="col-xs-2 col-sm-offset-2 control-label">'+
+					'表格列头<span style="color:red;float:left;">*</span>'+
+				'</label>'+
+				'<div class="col-xs-1">'+
+					'<input type="text" class="col-xs-12 col data-table-head"'+
+						'placeholder="列头" style="width:70px;">'+
+				'</div>'+
+				'<label class="col-xs-1 col-sm-offset-1 control-label">'+
+					'列组件类型'+
+				'</label>'+
+				'<div class="col-xs-2">'+
+					'<select class="data-table-type col-xs-12">'+
+						'<option value="text">文本框</option>'+
+						'<option value="number">数字框</option>'+
+						'<option value="date">日期文本框</option>'+
+						'<option value="select">下拉列表</option>'+
+					'</select></div></div>';
+			$("#dataTableModal form").append(thSetHtml);
+		}//end for
+		
+		for(var i=0;i<thObjArr.length;i++){
+			var thObj = $(thObjArr[i]);
+			$($(".data-table-head")[i]).val(thObj.text());
+			$($(".data-table-type")[i]).val(thObj.attr("col-type"));
+		}
+	});//end blur
+	
+	$("#data-table-id").val(id);
+	$("#data-table-name").val(name);
+	$("#data-table-number").val(thNum);
+}
+
 var nameArr = new Array();
 
 //新建、修改表单组件时判断该组件的name是否重复
@@ -926,6 +1025,39 @@ $(function(){
 			
 			$("#editor-warn").modal('hide');
 			$("#editorAreaModal").modal("hide");
+		}
+	});
+	//保存数据表格的属性编辑
+	$("#save-dataTable-content").click(function(e){
+		e.preventDefault();
+		var id = $("#data-table-id").val().trim();
+		var name = $("#data-table-name").val();
+		oldName = name;
+		var thContentFlag = false;
+		$(".data-table-head").each(function(){
+			if($(this).val()=="" || $(this).val()==null){
+				thContentFlag = true;
+			}
+		});
+		if(id=="" || id==null || name==null || name=="" || thContentFlag){
+			$("#data-table-warn").modal('show');
+		}else if(nameIsRepeat(name)){//判断组件name是否重复
+			$("#data-table-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+			$("#data-table-warn").modal('show');
+		}else{
+			var tableObj = view.find("table");
+			tableObj.attr({"id":id,"name":name});
+			var tableThArr = $(".data-table-head");
+			tableObj.find("th").remove();
+			for(var i=0;i<tableThArr.length;i++){
+				var tableThObj = $(tableThArr[i]);
+				var tableThType = $($(".data-table-type")[i]);
+				var thHtml = "<th col-type='"+tableThType.val()+"'>"+tableThObj.val()+"</th>";
+				tableObj.find("thead tr").append(thHtml);
+			}
+			
+			$("#data-table-warn").modal('hide');
+			$("#dataTableModal").modal("hide");
 		}
 	});
 	
