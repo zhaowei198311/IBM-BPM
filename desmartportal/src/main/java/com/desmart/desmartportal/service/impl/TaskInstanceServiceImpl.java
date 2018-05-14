@@ -3,15 +3,17 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartportal.dao.ProcessInstanceDao;
 import com.desmart.desmartportal.dao.TaskInstanceDao;
+import com.desmart.desmartportal.entity.ProcessInstance;
 import com.desmart.desmartportal.entity.TaskInstance;
-import com.desmart.desmartportal.service.ProcessInstanceService;
 import com.desmart.desmartportal.service.TaskInstanceService;
 
 /**  
@@ -28,14 +30,31 @@ public class TaskInstanceServiceImpl implements TaskInstanceService {
 	@Autowired
 	private TaskInstanceDao taskInstanceDao;
 	
+	@Autowired
+	private ProcessInstanceDao processInstanceDao;
+	
 	/**
-	 * 查询所有任务实例
+	 * 查询所有流程实例
 	 */
 	@Override
-	public List<TaskInstance> selectAllTask(TaskInstance taskInstance) {
+	public List<ProcessInstance> selectAllTask(TaskInstance taskInstance) {
 		log.info("查询taskInstance开始==============");
 		try {
-			return taskInstanceDao.selectAllTask(taskInstance);
+			List <TaskInstance> taskInstanceList = taskInstanceDao.selectAllTask(taskInstance);//根据userId查询taskList
+			List <ProcessInstance> resultList = new ArrayList<ProcessInstance>();
+			if(taskInstanceList.size() > 0) {
+				for(TaskInstance taskInstance1 : taskInstanceList) {
+					ProcessInstance processInstance = new ProcessInstance();
+					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
+					List <ProcessInstance> processInstanceList= processInstanceDao.selectAllProcess(processInstance);//根据instUid查询processList
+					for(ProcessInstance p : processInstanceList) {
+						resultList.add(p);
+						System.err.println(p.getInsTitle());
+					}
+				}
+			}
+			
+			return resultList;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
