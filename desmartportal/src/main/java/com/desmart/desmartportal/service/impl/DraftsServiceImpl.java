@@ -98,5 +98,23 @@ public class DraftsServiceImpl implements DraftsService {
 		drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
 		return draftsDao.save(drafts);
 	}
+
+	/**
+	 * 根据dfsId查询draft信息
+	 */
+	@Override
+	public ServerResponse<PageInfo<List<Drafts>>> selectBydfsId(String dfsId) {
+		log.info("根据草稿dfsid查询草稿数据开始...");
+		try {
+			PageHelper.startPage(1, 10);
+			List<Drafts> resultList = draftsDao.selectBydfsId(dfsId);
+			PageInfo<List<Drafts>> pageInfo = new PageInfo(resultList);
+			return ServerResponse.createBySuccess(pageInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("根据草稿dfsid查询草稿数据结束...");
+		return null;
+	}
 	
 }
