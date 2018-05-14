@@ -299,4 +299,28 @@
 		</set>
 		where ACTIVITY_ID = #{activityId}
 	</update>
+	
+	<select id="listSimilarActivityMetaById" parameterType="java.util.HashMap" resultType="java.util.Map">
+    	select * from bpm_activity_meta a1
+		left join bpm_activity_meta a2 on a1.activity_bpd_id = a2.activity_bpd_id and a1.activity_name = a2.activity_name
+		where a1.bpd_id = #{proUid}
+		and a1.snapshot_id = #{proVerUid}
+		and a1.pro_app_id = #{proAppId}
+		and a2.bpd_id = #{proUidNew}
+		and a2.snapshot_id = #{proVerUidNew}
+		and a2.pro_app_id = #{proAppIdNew}
+    </select>
+    
+    <select id="listCopyActivityMetaById" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 	BPM_ACTIVITY_META
+    	where ACTIVITY_BPD_ID not in
+    	<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+    		#{item}
+    	</foreach>
+    	and BPD_ID = #{proUid}
+    	and SNAPSHOT_ID = #{proVerUid}
+    	and PRO_APP_ID = #{proAppId}
+    </select>
 </mapper>

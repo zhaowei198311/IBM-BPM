@@ -26,6 +26,7 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
@@ -70,6 +71,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhActivityAssignMapper dhActivityAssignMapper;
     
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -366,7 +369,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
 	@Override
 	public ServerResponse listProcessDefinitionById(DhProcessDefinition dhProcessDefinition) {
-//		LswSnapshot lswSnapshot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(dhProcessDefinition.getProVerUid());
 		List<DhProcessDefinition> dpd = dhProcessDefinitionMapper.listById(dhProcessDefinition);
 		return ServerResponse.createBySuccess(dpd);
 	}
@@ -383,39 +385,22 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			String proUidNew = mapId.get("proUidNew").toString();
 			String proVerUidNew = mapId.get("proVerUidNew").toString();
 			String proAppIdNew = mapId.get("proAppIdNew").toString();
-			// 同类流程信息
-			DhProcessDefinition similarProcess = new DhProcessDefinition();
-			similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
-			// 新流程
-			DhProcessDefinition processNew = new DhProcessDefinition();
-			processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
-			similarProcess.setProUid(processNew.getProUid());
-			similarProcess.setProVerUid(processNew.getProVerUid());
-			similarProcess.setProAppId(processNew.getProAppId());
-			similarProcess.setProStatus(processNew.getProStatus());
-//			similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
-			similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
-			similarProcess.setCreateDate(processNew.getCreateDate());
-			similarProcess.setCreateUser(processNew.getCreateUser());
-			// 更新DH_PROCESS_DEFINITION表
-			dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
-
-			List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
-			if (dhObjectPermissionList.size() > 0) {
-				// 删除新流程旧的权限信息，重新添加
-				dhProcessDefinitionMapper.deleteDhObjectPermissionById(proUidNew, proVerUidNew, proAppIdNew);
-				
-				for (DhObjectPermission dop : dhObjectPermissionList) {
-					dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
-					dop.setProUid(proUidNew);
-					dop.setProVerUid(proVerUidNew);
-					dop.setProAppId(proAppIdNew);
-					// 新增 DH_OBJECT_PERMISSION表
-					dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
-				}
-				return ServerResponse.createBySuccess();
-			}
-			return ServerResponse.createByErrorMessage("该对象无权限信息！");
+			// 同步流程
+			synchronizationProcess(proUid, proVerUid, proAppId, proUidNew, proVerUidNew, proAppIdNew);
+			
+			Map<String, Object> idS = new HashMap<>();
+			idS.put("proUid", proUid);
+			idS.put("proVerUid", proVerUid);
+			idS.put("proAppId", proAppId);
+			idS.put("proUidNew", proUidNew);
+			idS.put("proVerUidNew", proVerUidNew);
+			idS.put("proAppIdNew", proAppIdNew);
+			// 新旧流程相同的环节元素
+			List<BpmActivityMeta> similarBpmActivityMetaList = bpmActivityMetaMapper.listSimilarActivityMetaById(idS);
+			// 同步config
+			synchronizationConfig(similarBpmActivityMetaList);
+			
+			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ServerResponse.createByErrorMessage(e.getMessage());
@@ -463,5 +448,51 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return list.get(0);
         }
     }
-   
+    
+    // 同步流程
+    public void synchronizationProcess(String proUid, String proVerUid, String proAppId, 
+    								String proUidNew, String proVerUidNew, String proAppIdNew){
+    	// 同类流程信息
+		DhProcessDefinition similarProcess = new DhProcessDefinition();
+		similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
+		// 新流程
+		DhProcessDefinition processNew = new DhProcessDefinition();
+		processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
+		similarProcess.setProUid(processNew.getProUid());
+		similarProcess.setProVerUid(processNew.getProVerUid());
+		similarProcess.setProAppId(processNew.getProAppId());
+		similarProcess.setProStatus(processNew.getProStatus());
+//    				similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
+		similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
+		similarProcess.setCreateDate(processNew.getCreateDate());
+		similarProcess.setCreateUser(processNew.getCreateUser());
+		// 更新DH_PROCESS_DEFINITION表
+		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
+
+		List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
+		if (dhObjectPermissionList.size() > 0) {
+			// 删除新流程旧的权限信息，重新添加
+			dhProcessDefinitionMapper.deleteDhObjectPermissionById(proUidNew, proVerUidNew, proAppIdNew);
+			
+			for (DhObjectPermission dop : dhObjectPermissionList) {
+				dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
+				dop.setProUid(proUidNew);
+				dop.setProVerUid(proVerUidNew);
+				dop.setProAppId(proAppIdNew);
+				// 新增 DH_OBJECT_PERMISSION表
+				dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
+			}
+		}
+    }
+    
+    // 同步config
+    public void synchronizationConfig(List<BpmActivityMeta> similarBpmActivityMetaList){
+    	
+    }
+    
+    public void synchronizationStep(List<BpmActivityMeta> similarBpmActivityMetaList){
+    	for (BpmActivityMeta bpmActivityMeta : similarBpmActivityMetaList) {
+			dhActivityAssignMapper.listByActivityId(bpmActivityMeta.getActivityId());
+		}
+    }
 }

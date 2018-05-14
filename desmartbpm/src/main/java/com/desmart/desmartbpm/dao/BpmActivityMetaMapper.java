@@ -1,12 +1,12 @@
 package com.desmart.desmartbpm.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhProcessCategory;
 
 @Repository
 public interface BpmActivityMetaMapper {
@@ -43,4 +43,24 @@ public interface BpmActivityMetaMapper {
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
     
     BpmActivityMeta queryByPrimaryKey(String activityId);
+    
+    /**
+     * 
+     * @Title: listSimilarActivityMetaById  
+     * @Description: 查询新旧流程相同的环节元素  
+     * @param @return  
+     * @return List<BpmActivityMeta>
+     * @throws
+     */
+    List<BpmActivityMeta> listSimilarActivityMetaById(Map<String, Object> idS);
+    
+    /**
+     * 
+     * @Title: listCopyActivityMetaById  
+     * @Description: 查询新流程没有的环节元素  
+     * @param @return  
+     * @return List<BpmActivityMeta>
+     * @throws
+     */
+//    List<BpmActivityMeta> listCopyActivityMetaById(Map<String, Object> param);
 }
