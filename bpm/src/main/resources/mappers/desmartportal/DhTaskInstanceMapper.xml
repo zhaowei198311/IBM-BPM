@@ -104,12 +104,13 @@
 		</where>
 	</select>
 	
+	<!-- 用户查询代办 -->
 	<select id="selectByusrUid" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(*) 
 		FROM
 		DH_TASK_INSTANCE
 		<where>
-			USR_UID = #{usrUid}
+			USR_UID = #{usrUid} AND TASK_STATUS = 12
 		</where> 
 	</select>
 	
