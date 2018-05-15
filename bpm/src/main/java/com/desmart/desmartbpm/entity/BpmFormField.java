@@ -7,7 +7,7 @@ package com.desmart.desmartbpm.entity;
  */
 public class BpmFormField {
 	private String fldUid;
-	private String fldCodeId;//字段在html文件中的Id
+	private String fldCodeName;//字段在html文件中的name
 	private Integer fldIndex;
 	private String fldName;
 	private String fldDescription;
@@ -29,11 +29,11 @@ public class BpmFormField {
 	public void setFldUid(String fldUid) {
 		this.fldUid = fldUid;
 	}
-	public String getFldCodeId() {
-		return fldCodeId;
+	public String getFldCodeName() {
+		return fldCodeName;
 	}
-	public void setFldCodeId(String fldCodeId) {
-		this.fldCodeId = fldCodeId;
+	public void setFldCodeName(String fldCodeName) {
+		this.fldCodeName = fldCodeName;
 	}
 	public Integer getFldIndex() {
 		return fldIndex;
@@ -118,12 +118,12 @@ public class BpmFormField {
 		}
 	}
 	public BpmFormField() {}
-	public BpmFormField(String fldUid, String fldCodeId, Integer fldIndex, String fldName, String fldDescription,
+	public BpmFormField(String fldUid, String fldCodeName, Integer fldIndex, String fldName, String fldDescription,
 			String fldType, Integer fldSize, String multiSeparator, String multiValue, String fldForeignKeyTable,
 			String fldDynName, String fldDybUid, String fldFilter, String formUid, String opAction) {
 		super();
 		this.fldUid = fldUid;
-		this.fldCodeId = fldCodeId;
+		this.fldCodeName = fldCodeName;
 		this.fldIndex = fldIndex;
 		this.fldName = fldName;
 		this.fldDescription = fldDescription;
@@ -140,10 +140,10 @@ public class BpmFormField {
 	}
 	@Override
 	public String toString() {
-		return "BpmFormField [fldUid=" + fldUid + ", fldCodeId=" + fldCodeId + ", fldIndex=" + fldIndex + ", fldName="
-				+ fldName + ", fldDescription=" + fldDescription + ", fldType=" + fldType + ", fldSize=" + fldSize
-				+ ", multiSeparator=" + multiSeparator + ", multiValue=" + multiValue + ", fldForeignKeyTable="
-				+ fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDybUid=" + fldDybUid + ", fldFilter="
-				+ fldFilter + ", formUid=" + formUid + ", opAction=" + opAction + "]";
+		return "BpmFormField [fldUid=" + fldUid + ", fldCodeName=" + fldCodeName + ", fldIndex=" + fldIndex
+				+ ", fldName=" + fldName + ", fldDescription=" + fldDescription + ", fldType=" + fldType + ", fldSize="
+				+ fldSize + ", multiSeparator=" + multiSeparator + ", multiValue=" + multiValue
+				+ ", fldForeignKeyTable=" + fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDybUid="
+				+ fldDybUid + ", fldFilter=" + fldFilter + ", formUid=" + formUid + ", opAction=" + opAction + "]";
 	}
 }

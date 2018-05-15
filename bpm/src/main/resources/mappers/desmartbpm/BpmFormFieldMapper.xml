@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.BpmFormFieldMapper" >
     <sql id="base_column">
-    	fld_uid,fld_code_id,fld_index,fld_name,fld_description,
+    	fld_uid,fld_code_name,fld_index,fld_name,fld_description,
     	fld_type,fld_size,multi_separator,multi_value,form_uid
     </sql>
     
     <sql id="step_column">
-    	bfd.fld_uid,bfd.fld_code_id,bfd.fld_index,bfd.fld_name,bfd.fld_description,
+    	bfd.fld_uid,bfd.fld_code_name,bfd.fld_index,bfd.fld_name,bfd.fld_description,
     	bfd.fld_type,bfd.fld_size,bfd.multi_separator,bfd.multi_value,bfd.form_uid
     </sql>
     
@@ -19,7 +19,7 @@
 		<foreach collection="fields" item="item" index="index" close=")" open="(" separator="union">
 			select
 			#{item.fldUid},
-			#{item.fldCodeId},
+			#{item.fldCodeName},
 			#{item.fldIndex},
 			#{item.fldName},
 			#{item.fldDescription},
