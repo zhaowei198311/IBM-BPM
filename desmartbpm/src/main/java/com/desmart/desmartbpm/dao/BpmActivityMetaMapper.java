@@ -52,7 +52,7 @@ public interface BpmActivityMetaMapper {
      * @return List<BpmActivityMeta>
      * @throws
      */
-    List<BpmActivityMeta> listSimilarActivityMetaById(Map<String, Object> idS);
+    List<Map<String, Object>> listSimilarActivityMetaById(Map<String, Object> idS);
     
     /**
      * 
@@ -62,5 +62,5 @@ public interface BpmActivityMetaMapper {
      * @return List<BpmActivityMeta>
      * @throws
      */
-//    List<BpmActivityMeta> listCopyActivityMetaById(Map<String, Object> param);
+    BpmActivityMeta getActivityIdByIdAndName(Map<String, Object> param);
 }

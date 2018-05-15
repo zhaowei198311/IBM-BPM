@@ -27,10 +27,15 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhActivityAssign;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhActivityReject;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -73,6 +78,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private BpmActivityMetaMapper bpmActivityMetaMapper;
     @Autowired
     private DhActivityAssignMapper dhActivityAssignMapper;
+    @Autowired
+    private DhActivityConfMapper dhActivityConfMapper;
+    @Autowired
+    private DhActivityRejectMapper dhActivityRejectMapper;
     
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -396,9 +405,13 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			idS.put("proVerUidNew", proVerUidNew);
 			idS.put("proAppIdNew", proAppIdNew);
 			// 新旧流程相同的环节元素
-			List<BpmActivityMeta> similarBpmActivityMetaList = bpmActivityMetaMapper.listSimilarActivityMetaById(idS);
+			List<Map<String, Object>> similarBpmActivityMetaList = bpmActivityMetaMapper.listSimilarActivityMetaById(idS);
 			// 同步config
 			synchronizationConfig(similarBpmActivityMetaList);
+			// 同步step
+			synchronizationStep(similarBpmActivityMetaList);
+			// 同步驳回环节
+			synchronizationRule(similarBpmActivityMetaList, proUidNew, proVerUidNew, proAppIdNew);
 			
 			return ServerResponse.createBySuccess();
 			
@@ -489,13 +502,61 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
     
     // 同步config
-    public void synchronizationConfig(List<BpmActivityMeta> similarBpmActivityMetaList){
-    	
+    public void synchronizationConfig(List<Map<String, Object>> similarBpmActivityMetaList){
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			// 老流程配置
+    		DhActivityConf OldDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID").toString());
+			// 新流程配置
+			DhActivityConf NewDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID_1").toString());
+			if (NewDhActivityConf != null) {
+				// 拷贝老流程配置信息（DH_ACTIVITY_CONF）
+				OldDhActivityConf.setActcUid(NewDhActivityConf.getActcUid());
+				OldDhActivityConf.setActivityId(NewDhActivityConf.getActivityId());
+				dhActivityConfMapper.updateByPrimaryKey(OldDhActivityConf);
+			}			
+		}
     }
-    
-    public void synchronizationStep(List<BpmActivityMeta> similarBpmActivityMetaList){
-    	for (BpmActivityMeta bpmActivityMeta : similarBpmActivityMetaList) {
-			dhActivityAssignMapper.listByActivityId(bpmActivityMeta.getActivityId());
+    // 默认处理人，可选处理人，超时通知环节
+    public void synchronizationStep(List<Map<String, Object>> similarBpmActivityMetaList){
+    	// 根据ACTIVITY_ID,清除新流程DH_ACTIVITY_ASSIGN表中信息
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			dhActivityAssignMapper.deleteByActivityId(map.get("ACTIVITY_ID_1").toString());
+		}
+    	// 拷贝旧流程DH_ACTIVITY_ASSIGN表中信息
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+    		List<DhActivityAssign> oldDhActivityAssignList = dhActivityAssignMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
+    		for (DhActivityAssign dhActivityAssign : oldDhActivityAssignList) {
+				dhActivityAssign.setActaUid("acta:"+UUID.randomUUID().toString());
+    			dhActivityAssign.setActivityId(map.get("ACTIVITY_ID_1").toString());
+				dhActivityAssignMapper.insert(dhActivityAssign);
+			}
+		}
+    }
+    // 同步驳回环节
+    public void synchronizationRule(List<Map<String, Object>> similarBpmActivityMetaList, String proUidNew, String proVerUidNew, String proAppIdNew){
+    	// 根据ACTIVITY_ID,清除新流程 DH_ACTIVITY_REJECT表中信息
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			dhActivityRejectMapper.deleteByActivityId(map.get("ACTIVITY_ID_1").toString());
+		}
+    	// 拷贝可驳回环节信息
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			List<DhActivityReject> OldDhActivityReject = dhActivityRejectMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
+			for (DhActivityReject dhActivityReject : OldDhActivityReject) {
+				// 老流程 当前环节可驳回的流程名
+				String activityName = dhActivityReject.getActivityName();
+				Map<String, Object> idS = new HashMap<>();
+				idS.put("proUid", proUidNew);
+				idS.put("proVerUid", proVerUidNew);
+				idS.put("proAppId", proAppIdNew);
+				idS.put("activityName", activityName);
+				// 新流程环节
+				BpmActivityMeta newBpmActivityMeta = bpmActivityMetaMapper.getActivityIdByIdAndName(idS);
+				DhActivityReject dar = new DhActivityReject();
+				dar.setActrUid("act_rej:"+UUID.randomUUID());
+				dar.setActivityId(map.get("ACTIVITY_ID_1").toString());
+				dar.setActrRejectActivity(newBpmActivityMeta.getActivityId());
+				dhActivityRejectMapper.insert(dar);
+			}
 		}
     }
 }
