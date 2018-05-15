@@ -171,8 +171,8 @@
 				<div class="option_container">
 					<p class="title_p" style="margin-top:10px;">本环节审批要求</p>
 					<div class="layui-form">
-						<p style="margin-bottom:10px;"><img src="resources/images/top_star.png" class="star_img"/>单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。</p>
-						<p><img src="resources/images/top_star.png" class="star_img"/>审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。</p>
+						<p style="margin-bottom:10px;"><img src="resources/desmartportal/images/top_star.png" class="star_img"/>单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。</p>
+						<p><img src="resources/desmartportal/images/top_star.png" class="star_img"/>审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。</p>
 					</div>
 					<p class="title_p">审批意见</p>				
 					<div class="layui-form">
