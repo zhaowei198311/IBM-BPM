@@ -25,7 +25,7 @@ var common = {
     },
     // 选人弹框的路径
     chooseUserPath : function(id, isSingle) {
-    	return common.getSystemPath() + "/sysUser/select_personnel?id=" + id +"&isSingle=" + isSingle; 
+    	return common.getPath() + "/sysUser/select_personnel?id=" + id +"&isSingle=" + isSingle; 
     },
     // 选角色弹框的路径
     chooseRolePath : function(id, isSingle) {

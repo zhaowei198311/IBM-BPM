@@ -69,7 +69,7 @@ var elementId = '${id}';
 var isSingle = '${isSingle}';
 $(function () {
     $.ajax({
-        url: common.getSystemPath() + "/sysRole/roleList",
+        url: common.getPath() + "/sysRole/roleList",
         dataType: "json",
         type: "post",
         data: {},
