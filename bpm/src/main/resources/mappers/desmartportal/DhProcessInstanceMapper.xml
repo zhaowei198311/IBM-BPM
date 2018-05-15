@@ -216,7 +216,7 @@
 		)
 	</insert>
 	
-    <select id="queryByInsId" parameterType="int" resultType="com.desmart.desmartportal.entity.ProcessInstance">
+    <select id="queryByInsId" parameterType="int" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
        SELECT <include refid="Base_Column_List"/>
        FROM dh_process_instance
        where ins_id = #{insId}
