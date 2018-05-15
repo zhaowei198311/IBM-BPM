@@ -21,7 +21,7 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
-import com.desmart.desmartportal.controller.UserController1;
+import com.desmart.desmartportal.controller.UsersController;
 import com.desmart.desmartportal.service.ProcessFormService;
 import com.desmart.desmartportal.service.UserService;
 import com.desmart.desmartsystem.entity.SysRoleUser;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private ProcessFormService processFormService;
 
-	private Logger log = Logger.getLogger(UserController1.class);
+	private Logger log = Logger.getLogger(UsersController.class);
 
 	@Override
 	public List<Map<String, Object>> selectByMenusProcess() {
