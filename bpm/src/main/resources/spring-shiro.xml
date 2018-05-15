@@ -54,6 +54,7 @@
         <property name="filterChainDefinitions">
             <value>
                 /user/login.do=anon
+                /user/logins.do=anon
                 /url1.do=anon
                 /url2.do=authc
                 /document/open.do=authc,documentAuthorizationFileter
