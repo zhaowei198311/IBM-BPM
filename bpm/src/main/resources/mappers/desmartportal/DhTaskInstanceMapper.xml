@@ -31,7 +31,7 @@
 	</sql>
 	
 	
-	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.TaskInstance" resultType="com.desmart.desmartportal.entity.TaskInstance">
+	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -183,7 +183,7 @@
 		</where>
 	</delete>
 	
-	<insert id="insertTask" parameterType="com.desmart.desmartportal.entity.TaskInstance">
+	<insert id="insertTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
 		INSERT INTO
 		DH_TASK_INSTANCE
 		(<include refid="Base_Column_List"/>)

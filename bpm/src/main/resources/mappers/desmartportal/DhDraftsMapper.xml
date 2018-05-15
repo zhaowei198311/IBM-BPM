@@ -18,14 +18,14 @@
 		DFS_CREATOR,PRO_UID,PRO_VER_UID,PRO_APP_ID
 	</sql>
 	
-	<select id="select" resultType="com.desmart.desmartportal.entity.Drafts">
+	<select id="select" resultType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
 		DH_DRAFTS
 	</select>
 	
-	<select id="selectBydfsId" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Drafts">
+	<select id="selectBydfsId" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -42,7 +42,7 @@
 		</where>
 	</delete>
 	
-	<select id="selectBydfsTitle" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Drafts">
+	<select id="selectBydfsTitle" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -52,7 +52,7 @@
 		</where>
 	</select>
 	
-	<insert id="save" parameterType="com.desmart.desmartportal.entity.Drafts">
+	<insert id="save" parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		INSERT INTO
 		DH_DRAFTS
 		(<include refid="Base_Column_List"/>) 

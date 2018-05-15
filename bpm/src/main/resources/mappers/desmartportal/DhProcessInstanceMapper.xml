@@ -33,7 +33,7 @@
 		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA
 	</sql>
 	
-	<select id="selectAllProcess" parameterType="com.desmart.desmartportal.entity.ProcessInstance" resultType="com.desmart.desmartportal.entity.ProcessInstance">
+	<select id="selectAllProcess" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -102,7 +102,7 @@
 		</where>
 	</select>
 	
-	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.ProcessInstance">
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
 		SELECT
 		<include refid="Base_Column_List"/>
 		FROM
@@ -187,7 +187,7 @@
 		</where>
 	</delete>
 	
-	<insert id="insertProcess" parameterType="com.desmart.desmartportal.entity.ProcessInstance">
+	<insert id="insertProcess" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
 		INSERT INTO
 		DH_PROCESS_INSTANCE
 		(<include refid="Base_Column_List"/>)

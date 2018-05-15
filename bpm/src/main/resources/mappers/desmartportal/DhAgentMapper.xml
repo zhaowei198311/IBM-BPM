@@ -17,7 +17,7 @@
 		AGENT_CLIENTELE, AGENT_SDATE, AGENT_EDATE,AGENT_STATUS
 	</sql>
 	
-	<select id="select" resultType="com.desmart.desmartportal.entity.Agent">
+	<select id="select" resultType="com.desmart.desmartportal.entity.DhAgent">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -32,7 +32,7 @@
 		</where>
 	</delete>
 	
-	<select id="selectByAgentPerson" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Agent">
+	<select id="selectByAgentPerson" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhAgent">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
@@ -42,7 +42,7 @@
 		</where>
 	</select>
 	
-	<insert id="save" parameterType="com.desmart.desmartportal.entity.Agent">
+	<insert id="save" parameterType="com.desmart.desmartportal.entity.DhAgent">
 		INSERT INTO
 		DH_AGENT_AGENTINFO
 		(<include refid="Base_Column_List"/>) 
