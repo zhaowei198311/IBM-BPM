@@ -44,8 +44,6 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/test")
     @ResponseBody
     public String test3(HttpServletRequest request, Integer page, Integer rows) {
-        
-        
         return "OK";
     }
     
