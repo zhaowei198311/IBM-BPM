@@ -66,11 +66,8 @@
 			</p>
 			<table class="layui-table">
 				<colgroup>
-					<col width="60">
-					<col width="100">
-					<col width="130">
-					<col width="120">
-					<col>
+					<col width="150">
+					<col width="150">
 					<col width="150">
 					<col width="150">
 					<col width="150">
@@ -93,8 +90,7 @@
 							<td class="">${process.insTitle}</td>
 							<td class="">${process.insStatus}</td>
 							<td class="">${process.insId}</td>
-							<td class=""><i id="backlog_td" class="layui-icon backlog_img">&#xe63c;</i>
-								江西南昌店</td>
+							<td class=""><i id="backlog_td" class="layui-icon backlog_img" onclick="shoplifeCycle('');">&#xe63c;</i>江西南昌店</td>
 							<td class="">6小时</td>
 						</tr>
 					</c:forEach>
@@ -108,6 +104,12 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script>
+
+	
+	function shoplifeCycle(){
+		
+	}
+	
 	function startProcess() {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
