@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.DhDraftsMapper">
+	
+	<resultMap id="DraftsMap" type="java.util.Map">
+		<result column="DFS_ID" 				property="dfsId"/>
+		<result column="DFS_TITLE" 				property="dfsTitle"/>
+		<result column="DFS_DATA" 				property="dfsData"/>
+		<result column="DFS_CREATEDATE"			property="dfsCreatedate"/>
+		<result column="DFS_CREATOR" 			property="dfsCreator"/>
+		<result column="PRO_UID" 			property="proUid"/>
+		<result column="PRO_VER_UID" 			property="proVerUid"/>
+		<result column="PRO_APP_ID" 			property="proAppId"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		DFS_ID, DFS_TITLE,DFS_DATA, DFS_CREATEDATE,
+		DFS_CREATOR,PRO_UID,PRO_VER_UID,PRO_APP_ID
+	</sql>
+	
+	<select id="select" resultType="com.desmart.desmartportal.entity.Drafts">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_DRAFTS
+	</select>
+	
+	<select id="selectBydfsId" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Drafts">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_DRAFTS
+		<where>
+				DFS_ID = #{dfsId}	
+		</where>
+	</select>
+	<delete id="deleteBydfsId" parameterType="java.lang.String">
+		DELETE
+		FROM DH_DRAFTS
+		<where>
+			DFS_ID = #{dfsId}
+		</where>
+	</delete>
+	
+	<select id="selectBydfsTitle" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.Drafts">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_DRAFTS
+		<where>
+			DFS_TITLE like '%' || #{dfsTitle} || '%'
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.desmart.desmartportal.entity.Drafts">
+		INSERT INTO
+		DH_DRAFTS
+		(<include refid="Base_Column_List"/>) 
+		VALUES
+		(
+			#{dfsId},
+			#{dfsTitle},
+			#{dfsData},
+			sysdate,
+			#{dfsCreator},
+			#{proUid},
+			#{proVerUid},
+			#{proAppId}
+		)
+	</insert>
+	
+</mapper>
