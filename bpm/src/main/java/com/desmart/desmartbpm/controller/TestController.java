@@ -49,10 +49,6 @@ public class TestController extends BaseWebController {
         return "OK";
     }
     
-    @RequestMapping
-    public ModelAndView toIndex() {
-        return new ModelAndView("desmartbpm/index");
-    }
     
     @RequestMapping(value = "/error.do")
     @ResponseBody
