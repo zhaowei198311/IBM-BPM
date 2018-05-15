@@ -210,4 +210,8 @@
 			#{taskData}
 		)
 	</insert>
+	
+	<select id="getMaxTaskId" resultType="int">
+       select nvl(max(task_id), 0) from dh_task_instance
+    </select>
 </mapper>

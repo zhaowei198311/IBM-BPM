@@ -27,4 +27,6 @@ public interface DhProcessInstanceMapper {
 	int deleteByPrimaryKey(String insUid);
 	
 	void insertProcess(DhProcessInstance processInstance);
+	
+	DhProcessInstance queryByInsId(int insId);
 }

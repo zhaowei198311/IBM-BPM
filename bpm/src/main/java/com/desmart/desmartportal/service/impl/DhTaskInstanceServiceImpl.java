@@ -150,4 +150,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return resultList;
 	}
 
+    @Override
+    public int getMaxTaskIdInDb() {
+        return dhTaskInstanceMapper.getMaxTaskId();
+    }
 }

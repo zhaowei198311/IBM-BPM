@@ -31,4 +31,6 @@ public interface DhTaskInstanceService {
 	int selectByusrUid(String usrUid);
 	
 	List <DhProcessInstance> selectTaskByUser(DhTaskInstance taskInstance);
+	
+	int getMaxTaskIdInDb();
 }

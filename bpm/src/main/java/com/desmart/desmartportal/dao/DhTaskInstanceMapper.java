@@ -29,4 +29,6 @@ public interface DhTaskInstanceMapper {
 	void insertTask(DhTaskInstance taskInstance);
 	
 	int selectByusrUid(String usrUid);
+	
+	int getMaxTaskId();
 }

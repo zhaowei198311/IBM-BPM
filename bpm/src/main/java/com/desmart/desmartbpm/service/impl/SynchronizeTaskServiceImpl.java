@@ -16,10 +16,10 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
-import com.desmart.desmartportal.dao.ProcessInstanceMapper;
-import com.desmart.desmartportal.entity.ProcessInstance;
-import com.desmart.desmartportal.entity.TaskInstance;
-import com.desmart.desmartportal.service.TaskInstanceService;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -30,9 +30,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Autowired
     private LswTaskMapper lswTaskMapper;
     @Autowired
-    private TaskInstanceService taskInstanceService;
+    private DhTaskInstanceService dhTaskInstanceService;
     @Autowired
-    private ProcessInstanceMapper processInstanceMapper;
+    private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
     
@@ -50,7 +50,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Transactional
     private void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         for (LswTask lswTask : newLswTaskList) {
-            List<TaskInstance> taskList = generateUserTask(lswTask, groupInfo);
+            List<DhTaskInstance> taskList = generateUserTask(lswTask, groupInfo);
         }
         
     }
@@ -61,11 +61,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @param groupInfo
      * @return
      */
-    private List<TaskInstance> generateUserTask(LswTask lswTask, Map<Integer, String> groupInfo) {
-        List<TaskInstance> taskList = Lists.newArrayList();
+    private List<DhTaskInstance> generateUserTask(LswTask lswTask, Map<Integer, String> groupInfo) {
+        List<DhTaskInstance> taskList = Lists.newArrayList();
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
         Long insId = lswTask.getBpdInstanceId(); // 实例id
-        ProcessInstance proInstance = processInstanceMapper.queryByInsId(insId.intValue());
+        DhProcessInstance proInstance = dhProcessInstanceMapper.queryByInsId(insId.intValue());
         // 查看环节的任务类型
         if (proInstance == null) {
             return taskList;
@@ -99,7 +99,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     }
 
     private List<LswTask> getNewTasks() {
-        int maxTaskId = taskInstanceService.getMaxTaskIdInDb();
+        int maxTaskId = dhTaskInstanceService.getMaxTaskIdInDb();
         return lswTaskMapper.listNewTasks(maxTaskId);
     }
     
