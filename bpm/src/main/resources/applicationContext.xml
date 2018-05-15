@@ -36,5 +36,5 @@
 
     <import resource="spring-datasource.xml"/>
     <import resource="spring-enginedatasource.xml"/>
-
+	<import resource="spring-shiro.xml"/>
 </beans>
