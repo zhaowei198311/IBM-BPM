@@ -31,7 +31,7 @@ import com.desmart.desmartsystem.util.UUIDTool;
 public class DhAgentController {
 	
 	@Autowired
-	private DhAgentService agentService;
+	private DhAgentService dhAgentService;
 	
 	private Logger Log = Logger.getLogger(DhAgentController.class);
 	
@@ -43,13 +43,13 @@ public class DhAgentController {
 	@RequestMapping(value = "/queryAgentByList")
 	@ResponseBody
 	public ServerResponse queryAgentByList(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
-		return agentService.selectAgentList(pageNum, pageSize);
+		return dhAgentService.selectAgentList(pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/deleteAgentById")
 	@ResponseBody
 	public void deleteAgentById(@RequestParam(value="agentId")String agentId) {
-		agentService.deleteAgentByAgentId(agentId);
+		dhAgentService.deleteAgentByAgentId(agentId);
 	}
 	
 	@RequestMapping(value = "/queryAgentByPerson")
@@ -57,7 +57,7 @@ public class DhAgentController {
 	public ServerResponse queryAgentByPerson(@RequestParam(value="person")String person,
 			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		return agentService.selectByAgentPerson(person, pageNum, pageSize);
+		return dhAgentService.selectByAgentPerson(person, pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/saveAgent")
@@ -73,7 +73,7 @@ public class DhAgentController {
 			agent.setAgentSdate(new Date());
 			agent.setAgentStatus(agentStatus);
 			System.out.println("==========================="+agent);
-			agentService.saveAgent(agent);
+			dhAgentService.saveAgent(agent);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();
