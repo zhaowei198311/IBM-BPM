@@ -40,8 +40,8 @@
 						<div class="layui-side-scroll">
 							<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 							<ul class="layui-nav layui-nav-tree" lay-filter="test">
-								<li class="logo"><img src="resources/images/logo.png"
-									class="big_logo" /><img src="resources/images/logo.png"
+								<li class="logo"><img src="resources/desmartportal/images/logo.png"
+									class="big_logo" /><img src="resources/desmartportal/images/logo.png"
 									class="mini_logo" /></li>
 								<li style="text-align: center; margin-bottom: 20px;"><span
 									class="system_title">BPM系统</span></li>

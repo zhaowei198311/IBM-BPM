@@ -39,7 +39,7 @@ import com.desmart.desmartportal.service.UserService;
  * @date 2018年5月3日
  */
 @Controller
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/user")
 public class UserController1 {
 	
 	@Autowired
@@ -59,7 +59,7 @@ public class UserController1 {
 		Session session = SecurityUtils.getSubject().getSession();
 		session.setAttribute(Const.CURRENT_USER, "00011178");
 		session.setTimeout(17200000L);
-		return "redirect:/users/menus";
+		return "redirect:/user/menus";
 	}
 	
 	@RequestMapping(value = "/menus")
