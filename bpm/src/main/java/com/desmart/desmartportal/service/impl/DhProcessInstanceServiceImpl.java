@@ -25,7 +25,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private Logger log = Logger.getLogger(DhProcessInstanceServiceImpl.class);
 	
 	@Autowired
-	private DhProcessInstanceMapper processInstanceMapper;
+	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -34,7 +34,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	public List<DhProcessInstance> selectAllProcess(DhProcessInstance processInstance) {
 		log.info("查询所有process开始");
 		try {
-			return processInstanceMapper.selectAllProcess(processInstance);
+			return dhProcessInstanceMapper.selectAllProcess(processInstance);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,7 +96,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		log.info("添加新的流程实例 Start...");
 		try {
 			if(processInstance != null) {
-				processInstanceMapper.insertProcess(processInstance);	
+				dhProcessInstanceMapper.insertProcess(processInstance);	
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
