@@ -26,14 +26,14 @@ public class DhProcessController {
 	private Logger log = Logger.getLogger(DhProcessController.class);
 	
 	@Autowired
-	private DhProcessService processService;
+	private DhProcessService dhProcessService;
 	
 	@RequestMapping(value = "/startProcess")
 	@ResponseBody
 	public ServerResponse startProcess(@RequestParam(value="proUid")String proUid, @RequestParam(value="proAppId")String proAppId, 
 							@RequestParam(value="verUid")String verUid) {
 		// 发起流程		
-		return processService.startProcess(proUid, proAppId, verUid);
+		return dhProcessService.startProcess(proUid, proAppId, verUid);
 	}
 	
 	@RequestMapping(value = "/queryProcessByUser")

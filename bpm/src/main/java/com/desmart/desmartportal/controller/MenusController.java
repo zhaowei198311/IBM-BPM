@@ -15,10 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
 import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartportal.entity.TaskInstance;
-import com.desmart.desmartportal.service.ProcessFormService;
-import com.desmart.desmartportal.service.ProcessInstanceService;
-import com.desmart.desmartportal.service.TaskInstanceService;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhProcessFormService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
 
 /**
  * <p>
@@ -36,10 +36,10 @@ import com.desmart.desmartportal.service.TaskInstanceService;
 public class MenusController {
 	
 	@Autowired
-	private ProcessFormService processFormService;
+	private DhProcessFormService dhProcessFormService;
 	
 	@Autowired
-	private TaskInstanceService taskInstanceService;
+	private DhTaskInstanceService dhTaskInstanceService;
 
 	@RequestMapping("/index")
 	public String index() {
@@ -81,7 +81,7 @@ public class MenusController {
 		System.err.println(proAppId);
 		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		// 表单详细信息设置
-		Map<String,Object> resultMap = processFormService.queryProcessForm(proAppId, proUid, verUid);
+		Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
 		mv.addObject("formId", resultMap.get("formId"));
 		mv.addObject("actcUid", resultMap.get("actcUid"));
 		mv.addObject("activityId", resultMap.get("activityId"));
@@ -103,9 +103,9 @@ public class MenusController {
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
 		// 根据当前用户查询 他有哪些流程
-		TaskInstance taskInstance = new TaskInstance();
+		DhTaskInstance taskInstance = new DhTaskInstance();
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		mv.addObject("processList", taskInstanceService.selectTaskByUser(taskInstance));
+		mv.addObject("processList", dhTaskInstanceService.selectTaskByUser(taskInstance));
 		return mv;
 	}
 	

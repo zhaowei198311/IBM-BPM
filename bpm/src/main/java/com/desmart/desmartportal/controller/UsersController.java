@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartportal.entity.TaskInstance;
-import com.desmart.desmartportal.service.ProcessFormService;
-import com.desmart.desmartportal.service.TaskInstanceService;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhProcessFormService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.UserService;
 
 
@@ -46,7 +46,7 @@ public class UsersController {
 	private UserService userService;
 	
 	@Autowired
-	private TaskInstanceService taskInstanceService;
+	private DhTaskInstanceService dhTaskInstanceService;
 	
 	private Logger log = Logger.getLogger(UsersController.class);
 	
@@ -55,7 +55,6 @@ public class UsersController {
 		Subject user = SecurityUtils.getSubject();
 		UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
 		user.login(token);
-		System.err.println("asdadasdasd111");
 		Session session = SecurityUtils.getSubject().getSession();
 		session.setAttribute(Const.CURRENT_USER, "00011178");
 		session.setTimeout(17200000L);
@@ -83,6 +82,6 @@ public class UsersController {
 	@RequestMapping(value = "/todoTask")
 	@ResponseBody
 	public int todoTask(String userId) {
-		return taskInstanceService.selectByusrUid(userId);
+		return dhTaskInstanceService.selectByusrUid(userId);
 	}
 }

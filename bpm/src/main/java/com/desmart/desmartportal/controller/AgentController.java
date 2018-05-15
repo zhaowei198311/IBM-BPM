@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.entity.Agent;
-import com.desmart.desmartportal.service.AgentService;
+import com.desmart.desmartportal.entity.DhAgent;
+import com.desmart.desmartportal.service.DhAgentService;
 import com.desmart.desmartsystem.util.UUIDTool;
 
 
@@ -31,7 +31,7 @@ import com.desmart.desmartsystem.util.UUIDTool;
 public class AgentController {
 	
 	@Autowired
-	private AgentService agentService;
+	private DhAgentService agentService;
 	
 	private Logger Log = Logger.getLogger(AgentController.class);
 	
@@ -65,7 +65,7 @@ public class AgentController {
 	public String saveAgent(@RequestParam(value="agentOdate") Date agentOdate,@RequestParam(value="agentOperator")String agentOperator,
 			@RequestParam(value="agentClientele")String agentClientele,@RequestParam(value="agentStatus")String agentStatus) {
 		try {	
-			Agent agent = new Agent();
+			DhAgent agent = new DhAgent();
 			agent.setAgentOdate(agentOdate);
 			agent.setAgentOperator(agentOperator);
 			agent.setAgentClientele(agentClientele);

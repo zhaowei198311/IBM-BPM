@@ -26,7 +26,7 @@ import com.desmart.desmartportal.service.DhDraftsService;
 public class DhDraftsController {
 	
 	@Autowired
-	private DhDraftsService draftsService;
+	private DhDraftsService dhDraftsService;
 	
 	private Logger Log = Logger.getLogger(DhDraftsController.class);
 	
@@ -38,13 +38,13 @@ public class DhDraftsController {
 	@RequestMapping(value = "/queryDraftsByList")
 	@ResponseBody
 	public ServerResponse queryDraftsByList(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
-		return draftsService.selectDraftsList(pageNum, pageSize);
+		return dhDraftsService.selectDraftsList(pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/deleteDraftsById")
 	@ResponseBody
 	public void deleteDraftsById(@RequestParam(value="dfsId")String dfsId) {
-		draftsService.deleteDraftsBydfsId(dfsId);
+		dhDraftsService.deleteDraftsBydfsId(dfsId);
 	}
 	
 	@RequestMapping(value = "/queryDraftsByTitle")
@@ -52,18 +52,18 @@ public class DhDraftsController {
 	public ServerResponse queryDraftsByTitle(@RequestParam(value="dfsTitle")String dfsTitle,
 			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		return draftsService.selectDraftsBydfsTitle(dfsTitle, pageNum, pageSize);
+		return dhDraftsService.selectDraftsBydfsTitle(dfsTitle, pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/saveDrafts")
 	@ResponseBody
 	public int saveDrafts(DhDrafts drafts) {
-		return draftsService.saveDrafts(drafts);
+		return dhDraftsService.saveDrafts(drafts);
 	}
 	
 	@RequestMapping(value = "/selectBydfsId")
 	@ResponseBody
 	public ServerResponse selectBydfsId(@RequestParam(value="dfsId")String dfsId) {
-		return draftsService.selectBydfsId(dfsId);
+		return dhDraftsService.selectBydfsId(dfsId);
 	}
 }

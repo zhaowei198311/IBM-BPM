@@ -31,7 +31,7 @@ public class DhTaskInstanceController {
 	private Logger log = Logger.getLogger(DhTaskInstanceController.class);
 	
 	@Autowired
-	private DhTaskInstanceService taskInstanceService;
+	private DhTaskInstanceService dhTaskInstanceService;
 	
 	/**
 	 * 查询代办(任务状态接受)
@@ -45,7 +45,7 @@ public class DhTaskInstanceController {
 	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskStatus(BpmStatus.TASK_STATUS_RECEIVED);
-		return taskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
+		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 	
 	/**
@@ -60,6 +60,6 @@ public class DhTaskInstanceController {
 	private ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskStatus(BpmStatus.TASK_STATUS_CLOSED);
-		return taskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
+		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 }

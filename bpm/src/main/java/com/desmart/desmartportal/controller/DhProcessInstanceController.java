@@ -30,10 +30,10 @@ import com.desmart.desmartportal.service.DhTaskInstanceService;
 public class DhProcessInstanceController {
 	
 	@Autowired
-	private DhProcessInstanceService processInstanceService;
+	private DhProcessInstanceService dhProcessInstanceService;
 	
 	@Autowired
-	private DhTaskInstanceService taskInstanceService;
+	private DhTaskInstanceService dhTaskInstanceService;
 
 	
 	/**
@@ -51,7 +51,7 @@ public class DhProcessInstanceController {
 		//userId = "00011178";
 		DhTaskInstance taskInstance = new DhTaskInstance();
 		taskInstance.setUsrUid(userId);
-		List <DhProcessInstance> resultList = taskInstanceService.selectTaskByUser(taskInstance);//根据userId查询taskList		
+		List <DhProcessInstance> resultList = dhTaskInstanceService.selectTaskByUser(taskInstance);//根据userId查询taskList		
 		return ServerResponse.createBySuccess(resultList);
 	}
 }
