@@ -30,7 +30,7 @@ import com.github.pagehelper.PageInfo;
 public class DhDraftsServiceImpl implements DhDraftsService {
 	
 	@Autowired
-	private DhDraftsMapper draftsMapper;
+	private DhDraftsMapper dhDraftsMapper;
 	
 	private Logger log = Logger.getLogger(DhDraftsServiceImpl.class);
 	
@@ -42,7 +42,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("删除草稿箱数据开始...");
 		int result = 0;
 		try {
-			result = draftsMapper.deleteBydfsId(dfsId);
+			result = dhDraftsMapper.deleteBydfsId(dfsId);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,7 +59,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("查询所有草稿数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<DhDrafts> resultList = draftsMapper.select();
+			List<DhDrafts> resultList = dhDraftsMapper.select();
 			if(null == resultList || resultList.size() == 0) {
 				log.info("查询所有草稿数据出错,出错类为{}"+DhDraftsServiceImpl.class);
 			}
@@ -80,7 +80,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("根据草稿名称查询草稿数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<DhDrafts> resultList = draftsMapper.selectBydfsTitle(title);
+			List<DhDrafts> resultList = dhDraftsMapper.selectBydfsTitle(title);
 			PageInfo<List<DhDrafts>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -96,7 +96,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	@Override
 	public int saveDrafts(DhDrafts drafts) {
 		drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
-		return draftsMapper.save(drafts);
+		return dhDraftsMapper.save(drafts);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("根据草稿dfsid查询草稿数据开始...");
 		try {
 			PageHelper.startPage(1, 10);
-			List<DhDrafts> resultList = draftsMapper.selectBydfsId(dfsId);
+			List<DhDrafts> resultList = dhDraftsMapper.selectBydfsId(dfsId);
 			PageInfo<List<DhDrafts>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {

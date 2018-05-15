@@ -37,10 +37,10 @@ public class DhProcessServiceImpl implements DhProcessService {
 	private Logger log = Logger.getLogger(DhProcessServiceImpl.class);
 	
 	@Autowired
-	private DhProcessInstanceService processInstanceService;
+	private DhProcessInstanceService dhProcessInstanceService;
 	
 	@Autowired
-	private DhTaskInstanceService taskInstanceService;
+	private DhTaskInstanceService dhTaskInstanceService;
 	
 	/**
 	 * 发起流程
@@ -85,7 +85,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 	      	processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
 	      	processInstance.setInsInitUser(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 	      	processInstance.setInsData(result.getMsg());
-	      	processInstanceService.insertProcess(processInstance);
+	      	dhProcessInstanceService.insertProcess(processInstance);
 	      	// 将任务数据 保存到 当前任务实例数据库中
 	      	DhTaskInstance taskInstance = new DhTaskInstance();
 	      	taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + String.valueOf(UUID.randomUUID()));
@@ -99,7 +99,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 		      	taskInstance.setTaskStatus(String.valueOf(jsonObject.get("status")));
 		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 		      	taskInstance.setTaskData(String.valueOf(jsonObject.get("data")));
-		      	taskInstanceService.insertTask(taskInstance);
+		      	dhTaskInstanceService.insertTask(taskInstance);
 			}
 			return ServerResponse.createBySuccess();
 		}else {

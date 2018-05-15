@@ -32,10 +32,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private Logger log = Logger.getLogger(DhTaskInstanceServiceImpl.class);
 	
 	@Autowired
-	private DhTaskInstanceMapper taskInstanceMapper;
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	
 	@Autowired
-	private DhProcessInstanceMapper processInstanceMapper;
+	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -45,7 +45,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("查询taskInstance开始......");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<DhTaskInstance> resultList = taskInstanceMapper.selectAllTask(taskInstance);
+			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectAllTask(taskInstance);
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public void insertTask(DhTaskInstance taskInstance) {
 		log.info("");
 		try {
-			taskInstanceMapper.insertTask(taskInstance);
+			dhTaskInstanceMapper.insertTask(taskInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -119,7 +119,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public int selectByusrUid(String usrUid) {
-		return	taskInstanceMapper.selectByusrUid(usrUid);
+		return	dhTaskInstanceMapper.selectByusrUid(usrUid);
 	}
 
 	/* 
@@ -130,12 +130,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("根据用户id查询有哪些流程开始......");
 		List <DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
 		try {
-			List <DhTaskInstance> taskInstanceList = taskInstanceMapper.selectAllTask(taskInstance);//根据userId查询taskList
+			List <DhTaskInstance> taskInstanceList = dhTaskInstanceMapper.selectAllTask(taskInstance);//根据userId查询taskList
 			if(taskInstanceList.size() > 0) {
 				for(DhTaskInstance taskInstance1 : taskInstanceList) {
 					DhProcessInstance processInstance = new DhProcessInstance();
 					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
-					List <DhProcessInstance> processInstanceList= processInstanceMapper.selectAllProcess(processInstance);//根据instUid查询processList
+					List <DhProcessInstance> processInstanceList= dhProcessInstanceMapper.selectAllProcess(processInstance);//根据instUid查询processList
 					for(DhProcessInstance p : processInstanceList) {
 						resultList.add(p);
 						System.err.println(p.getInsTitle());

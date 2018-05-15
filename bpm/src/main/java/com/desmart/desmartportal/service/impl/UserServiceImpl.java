@@ -22,7 +22,7 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartportal.controller.UsersController;
-import com.desmart.desmartportal.service.ProcessFormService;
+import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.UserService;
 import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysTeamMember;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 	private DhProcessCategoryMapper dhProcessCategoryMapper;
 	
 	@Autowired
-	private ProcessFormService processFormService;
+	private DhProcessFormService processFormService;
 
 	private Logger log = Logger.getLogger(UsersController.class);
 

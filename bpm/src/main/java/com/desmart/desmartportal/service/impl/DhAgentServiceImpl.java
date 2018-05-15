@@ -31,7 +31,7 @@ import com.github.pagehelper.PageInfo;
 public class DhAgentServiceImpl implements DhAgentService {
 	
 	@Autowired
-	private DhAgentMapper agentMapper;
+	private DhAgentMapper dhAgentMapper;
 	
 	private Logger log = Logger.getLogger(DhAgentServiceImpl.class);
 	
@@ -43,7 +43,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		log.info("删除代理数据开始...");
 		int result = 0;
 		try {
-			result = agentMapper.deleteByAgentId(agentId);
+			result = dhAgentMapper.deleteByAgentId(agentId);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,7 +60,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		log.info("查询所有代理数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<DhAgent> resultList = agentMapper.select();
+			List<DhAgent> resultList = dhAgentMapper.select();
 			PageInfo<List<DhAgent>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -75,7 +75,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		agent.setAgentId(EntityIdPrefix.DH_AGENT_META+ UUID.randomUUID().toString());
 		//String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		//agent.setAgentOperator(user);
-		return agentMapper.save(agent);
+		return dhAgentMapper.save(agent);
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		log.info("根据代理设置人或代理委托人查询 开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
-			List<DhAgent> resultList = agentMapper.selectByAgentPerson(person);
+			List<DhAgent> resultList = dhAgentMapper.selectByAgentPerson(person);
 			PageInfo<List<DhAgent>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
