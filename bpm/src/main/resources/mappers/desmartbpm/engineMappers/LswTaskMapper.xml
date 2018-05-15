@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.enginedao.LswTaskMapper">
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.engine.LswTask">
+    <id column="TASK_ID" jdbcType="INTEGER" property="taskId" />
+    <result column="TIP" jdbcType="VARCHAR" property="tip" />
+    <result column="SNAPSHOT_ID" jdbcType="CHAR" property="snapshotId" />
+    <result column="USER_ID" jdbcType="DECIMAL" property="userId" />
+    <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId" />
+    <result column="PARTICIPANT_ID" jdbcType="CHAR" property="participantId" />
+    <result column="MANAGERS_GROUP_ID" jdbcType="DECIMAL" property="managersGroupId" />
+    <result column="EXPERT_PARTICIPANT_REF" jdbcType="DECIMAL" property="expertParticipantRef" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="PRIORITY_ID" jdbcType="DECIMAL" property="priorityId" />
+    <result column="DUE_DATE" jdbcType="TIMESTAMP" property="dueDate" />
+    <result column="DUE_TIME" jdbcType="TIMESTAMP" property="dueTime" />
+    <result column="AT_RISK_DATE" jdbcType="TIMESTAMP" property="atRiskDate" />
+    <result column="SUBJECT" jdbcType="VARCHAR" property="subject" />
+    <result column="RCVD_DATETIME" jdbcType="TIMESTAMP" property="rcvdDatetime" />
+    <result column="RCVD_FROM" jdbcType="DECIMAL" property="rcvdFrom" />
+    <result column="RCVD_TASK_ID" jdbcType="DECIMAL" property="rcvdTaskId" />
+    <result column="COLLABORATION" jdbcType="VARCHAR" property="collaboration" />
+    <result column="SENT_DATETIME" jdbcType="TIMESTAMP" property="sentDatetime" />
+    <result column="READ_DATETIME" jdbcType="TIMESTAMP" property="readDatetime" />
+    <result column="CLOSE_DATETIME" jdbcType="TIMESTAMP" property="closeDatetime" />
+    <result column="CLOSE_BY" jdbcType="DECIMAL" property="closeBy" />
+    <result column="ORIG_TASK_ID" jdbcType="DECIMAL" property="origTaskId" />
+    <result column="START_PROCESS_REF" jdbcType="DECIMAL" property="startProcessRef" />
+    <result column="CACHED_PROCESS_VERSION_ID" jdbcType="CHAR" property="cachedProcessVersionId" />
+    <result column="GROUP_ID_TYPE" jdbcType="DECIMAL" property="groupIdType" />
+    <result column="EXECUTION_STATUS" jdbcType="DECIMAL" property="executionStatus" />
+    <result column="BPD_INSTANCE_ID" jdbcType="DECIMAL" property="bpdInstanceId" />
+    <result column="CREATED_BY_BPD_REF" jdbcType="DECIMAL" property="createdByBpdRef" />
+    <result column="CACHED_CBB_VERSION_ID" jdbcType="CHAR" property="cachedCbbVersionId" />
+    <result column="CREATED_BY_BPD_FLOW_OBJECT_ID" jdbcType="VARCHAR" property="createdByBpdFlowObjectId" />
+    <result column="ASSUMER_ID" jdbcType="DECIMAL" property="assumerId" />
+    <result column="ATTACHED_FORM_REF" jdbcType="DECIMAL" property="attachedFormRef" />
+    <result column="CACHED_FORM_VERSION_ID" jdbcType="CHAR" property="cachedFormVersionId" />
+    <result column="ATTACHED_EXT_ACTIVITY_REF" jdbcType="DECIMAL" property="attachedExtActivityRef" />
+    <result column="CACHED_EXTACT_VERSION_ID" jdbcType="CHAR" property="cachedExtactVersionId" />
+    <result column="SHAREPOINT_DISCUSSION_URL" jdbcType="OTHER" property="sharepointDiscussionUrl" />
+    <result column="ACTIVITY_NAME" jdbcType="OTHER" property="activityName" />
+    <result column="ACTIVITY_TASK_TYPE" jdbcType="DECIMAL" property="activityTaskType" />
+  </resultMap>
+    <resultMap id="relationMap" type="com.desmart.desmartbpm.entity.engine.LswTask">
+    <id column="TASK_ID" jdbcType="INTEGER" property="taskId" />
+    <result column="TIP" jdbcType="VARCHAR" property="tip" />
+    <result column="SNAPSHOT_ID" jdbcType="CHAR" property="snapshotId" />
+    <result column="USER_ID" jdbcType="DECIMAL" property="userId" />
+    <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId" />
+    <result column="PARTICIPANT_ID" jdbcType="CHAR" property="participantId" />
+    <result column="MANAGERS_GROUP_ID" jdbcType="DECIMAL" property="managersGroupId" />
+    <result column="EXPERT_PARTICIPANT_REF" jdbcType="DECIMAL" property="expertParticipantRef" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="PRIORITY_ID" jdbcType="DECIMAL" property="priorityId" />
+    <result column="DUE_DATE" jdbcType="TIMESTAMP" property="dueDate" />
+    <result column="DUE_TIME" jdbcType="TIMESTAMP" property="dueTime" />
+    <result column="AT_RISK_DATE" jdbcType="TIMESTAMP" property="atRiskDate" />
+    <result column="SUBJECT" jdbcType="VARCHAR" property="subject" />
+    <result column="RCVD_DATETIME" jdbcType="TIMESTAMP" property="rcvdDatetime" />
+    <result column="RCVD_FROM" jdbcType="DECIMAL" property="rcvdFrom" />
+    <result column="RCVD_TASK_ID" jdbcType="DECIMAL" property="rcvdTaskId" />
+    <result column="COLLABORATION" jdbcType="VARCHAR" property="collaboration" />
+    <result column="SENT_DATETIME" jdbcType="TIMESTAMP" property="sentDatetime" />
+    <result column="READ_DATETIME" jdbcType="TIMESTAMP" property="readDatetime" />
+    <result column="CLOSE_DATETIME" jdbcType="TIMESTAMP" property="closeDatetime" />
+    <result column="CLOSE_BY" jdbcType="DECIMAL" property="closeBy" />
+    <result column="ORIG_TASK_ID" jdbcType="DECIMAL" property="origTaskId" />
+    <result column="START_PROCESS_REF" jdbcType="DECIMAL" property="startProcessRef" />
+    <result column="CACHED_PROCESS_VERSION_ID" jdbcType="CHAR" property="cachedProcessVersionId" />
+    <result column="GROUP_ID_TYPE" jdbcType="DECIMAL" property="groupIdType" />
+    <result column="EXECUTION_STATUS" jdbcType="DECIMAL" property="executionStatus" />
+    <result column="BPD_INSTANCE_ID" jdbcType="DECIMAL" property="bpdInstanceId" />
+    <result column="CREATED_BY_BPD_REF" jdbcType="DECIMAL" property="createdByBpdRef" />
+    <result column="CACHED_CBB_VERSION_ID" jdbcType="CHAR" property="cachedCbbVersionId" />
+    <result column="CREATED_BY_BPD_FLOW_OBJECT_ID" jdbcType="VARCHAR" property="createdByBpdFlowObjectId" />
+    <result column="ASSUMER_ID" jdbcType="DECIMAL" property="assumerId" />
+    <result column="ATTACHED_FORM_REF" jdbcType="DECIMAL" property="attachedFormRef" />
+    <result column="CACHED_FORM_VERSION_ID" jdbcType="CHAR" property="cachedFormVersionId" />
+    <result column="ATTACHED_EXT_ACTIVITY_REF" jdbcType="DECIMAL" property="attachedExtActivityRef" />
+    <result column="CACHED_EXTACT_VERSION_ID" jdbcType="CHAR" property="cachedExtactVersionId" />
+    <result column="SHAREPOINT_DISCUSSION_URL" jdbcType="OTHER" property="sharepointDiscussionUrl" />
+    <result column="ACTIVITY_NAME" jdbcType="OTHER" property="activityName" />
+    <result column="ACTIVITY_TASK_TYPE" jdbcType="DECIMAL" property="activityTaskType" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    TASK_ID, TIP, SNAPSHOT_ID, USER_ID, GROUP_ID, PARTICIPANT_ID, MANAGERS_GROUP_ID, 
+    EXPERT_PARTICIPANT_REF, STATUS, PRIORITY_ID, DUE_DATE, DUE_TIME, AT_RISK_DATE, SUBJECT, 
+    RCVD_DATETIME, RCVD_FROM, RCVD_TASK_ID, COLLABORATION, SENT_DATETIME, READ_DATETIME, 
+    CLOSE_DATETIME, CLOSE_BY, ORIG_TASK_ID, START_PROCESS_REF, CACHED_PROCESS_VERSION_ID, 
+    GROUP_ID_TYPE, EXECUTION_STATUS, BPD_INSTANCE_ID, CREATED_BY_BPD_REF, CACHED_CBB_VERSION_ID, 
+    CREATED_BY_BPD_FLOW_OBJECT_ID, ASSUMER_ID, ATTACHED_FORM_REF, CACHED_FORM_VERSION_ID, 
+    ATTACHED_EXT_ACTIVITY_REF, CACHED_EXTACT_VERSION_ID, SHAREPOINT_DISCUSSION_URL, ACTIVITY_NAME, 
+    ACTIVITY_TASK_TYPE
+  </sql>
+  <sql id="relationColumnList">
+    t.TASK_ID, t.TIP, t.SNAPSHOT_ID, t.USER_ID, t.GROUP_ID, t.PARTICIPANT_ID, t.MANAGERS_GROUP_ID,
+    t.EXPERT_PARTICIPANT_REF, t.STATUS, t.PRIORITY_ID, t.DUE_DATE, t.DUE_TIME, t.AT_RISK_DATE, t.SUBJECT,
+    t.RCVD_DATETIME, t.RCVD_FROM, t.RCVD_TASK_ID, t.COLLABORATION, t.SENT_DATETIME, t.READ_DATETIME,
+    t.CLOSE_DATETIME, t.CLOSE_BY, t.ORIG_TASK_ID, t.START_PROCESS_REF, t.CACHED_PROCESS_VERSION_ID,
+    t.GROUP_ID_TYPE, t.EXECUTION_STATUS, t.BPD_INSTANCE_ID, t.CREATED_BY_BPD_REF, t.CACHED_CBB_VERSION_ID,
+    t.CREATED_BY_BPD_FLOW_OBJECT_ID, t.ASSUMER_ID, t.ATTACHED_FORM_REF, t.CACHED_FORM_VERSION_ID,
+    t.ATTACHED_EXT_ACTIVITY_REF, t.CACHED_EXTACT_VERSION_ID, t.SHAREPOINT_DISCUSSION_URL, t.ACTIVITY_NAME,
+    t.ACTIVITY_TASK_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from LSW_TASK
+    where TASK_ID = #{taskId,jdbcType=INTEGER}
+  </select>
+  
+  
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.engine.LswTask">
+    update LSW_TASK
+    <set>
+      <if test="tip != null">
+        TIP = #{tip,jdbcType=VARCHAR},
+      </if>
+      <if test="snapshotId != null">
+        SNAPSHOT_ID = #{snapshotId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        USER_ID = #{userId,jdbcType=DECIMAL},
+      </if>
+      <if test="groupId != null">
+        GROUP_ID = #{groupId,jdbcType=DECIMAL},
+      </if>
+      <if test="participantId != null">
+        PARTICIPANT_ID = #{participantId,jdbcType=CHAR},
+      </if>
+      <if test="managersGroupId != null">
+        MANAGERS_GROUP_ID = #{managersGroupId,jdbcType=DECIMAL},
+      </if>
+      <if test="expertParticipantRef != null">
+        EXPERT_PARTICIPANT_REF = #{expertParticipantRef,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="priorityId != null">
+        PRIORITY_ID = #{priorityId,jdbcType=DECIMAL},
+      </if>
+      <if test="dueDate != null">
+        DUE_DATE = #{dueDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dueTime != null">
+        DUE_TIME = #{dueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="atRiskDate != null">
+        AT_RISK_DATE = #{atRiskDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="subject != null">
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="rcvdDatetime != null">
+        RCVD_DATETIME = #{rcvdDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rcvdFrom != null">
+        RCVD_FROM = #{rcvdFrom,jdbcType=DECIMAL},
+      </if>
+      <if test="rcvdTaskId != null">
+        RCVD_TASK_ID = #{rcvdTaskId,jdbcType=DECIMAL},
+      </if>
+      <if test="collaboration != null">
+        COLLABORATION = #{collaboration,jdbcType=VARCHAR},
+      </if>
+      <if test="sentDatetime != null">
+        SENT_DATETIME = #{sentDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readDatetime != null">
+        READ_DATETIME = #{readDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closeDatetime != null">
+        CLOSE_DATETIME = #{closeDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closeBy != null">
+        CLOSE_BY = #{closeBy,jdbcType=DECIMAL},
+      </if>
+      <if test="origTaskId != null">
+        ORIG_TASK_ID = #{origTaskId,jdbcType=DECIMAL},
+      </if>
+      <if test="startProcessRef != null">
+        START_PROCESS_REF = #{startProcessRef,jdbcType=DECIMAL},
+      </if>
+      <if test="cachedProcessVersionId != null">
+        CACHED_PROCESS_VERSION_ID = #{cachedProcessVersionId,jdbcType=CHAR},
+      </if>
+      <if test="groupIdType != null">
+        GROUP_ID_TYPE = #{groupIdType,jdbcType=DECIMAL},
+      </if>
+      <if test="executionStatus != null">
+        EXECUTION_STATUS = #{executionStatus,jdbcType=DECIMAL},
+      </if>
+      <if test="bpdInstanceId != null">
+        BPD_INSTANCE_ID = #{bpdInstanceId,jdbcType=DECIMAL},
+      </if>
+      <if test="createdByBpdRef != null">
+        CREATED_BY_BPD_REF = #{createdByBpdRef,jdbcType=DECIMAL},
+      </if>
+      <if test="cachedCbbVersionId != null">
+        CACHED_CBB_VERSION_ID = #{cachedCbbVersionId,jdbcType=CHAR},
+      </if>
+      <if test="createdByBpdFlowObjectId != null">
+        CREATED_BY_BPD_FLOW_OBJECT_ID = #{createdByBpdFlowObjectId,jdbcType=VARCHAR},
+      </if>
+      <if test="assumerId != null">
+        ASSUMER_ID = #{assumerId,jdbcType=DECIMAL},
+      </if>
+      <if test="attachedFormRef != null">
+        ATTACHED_FORM_REF = #{attachedFormRef,jdbcType=DECIMAL},
+      </if>
+      <if test="cachedFormVersionId != null">
+        CACHED_FORM_VERSION_ID = #{cachedFormVersionId,jdbcType=CHAR},
+      </if>
+      <if test="attachedExtActivityRef != null">
+        ATTACHED_EXT_ACTIVITY_REF = #{attachedExtActivityRef,jdbcType=DECIMAL},
+      </if>
+      <if test="cachedExtactVersionId != null">
+        CACHED_EXTACT_VERSION_ID = #{cachedExtactVersionId,jdbcType=CHAR},
+      </if>
+      <if test="sharepointDiscussionUrl != null">
+        SHAREPOINT_DISCUSSION_URL = #{sharepointDiscussionUrl,jdbcType=OTHER},
+      </if>
+      <if test="activityName != null">
+        ACTIVITY_NAME = #{activityName,jdbcType=OTHER},
+      </if>
+      <if test="activityTaskType != null">
+        ACTIVITY_TASK_TYPE = #{activityTaskType,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where TASK_ID = #{taskId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.engine.LswTask">
+    update LSW_TASK
+    set TIP = #{tip,jdbcType=VARCHAR},
+      SNAPSHOT_ID = #{snapshotId,jdbcType=CHAR},
+      USER_ID = #{userId,jdbcType=DECIMAL},
+      GROUP_ID = #{groupId,jdbcType=DECIMAL},
+      PARTICIPANT_ID = #{participantId,jdbcType=CHAR},
+      MANAGERS_GROUP_ID = #{managersGroupId,jdbcType=DECIMAL},
+      EXPERT_PARTICIPANT_REF = #{expertParticipantRef,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PRIORITY_ID = #{priorityId,jdbcType=DECIMAL},
+      DUE_DATE = #{dueDate,jdbcType=TIMESTAMP},
+      DUE_TIME = #{dueTime,jdbcType=TIMESTAMP},
+      AT_RISK_DATE = #{atRiskDate,jdbcType=TIMESTAMP},
+      SUBJECT = #{subject,jdbcType=VARCHAR},
+      RCVD_DATETIME = #{rcvdDatetime,jdbcType=TIMESTAMP},
+      RCVD_FROM = #{rcvdFrom,jdbcType=DECIMAL},
+      RCVD_TASK_ID = #{rcvdTaskId,jdbcType=DECIMAL},
+      COLLABORATION = #{collaboration,jdbcType=VARCHAR},
+      SENT_DATETIME = #{sentDatetime,jdbcType=TIMESTAMP},
+      READ_DATETIME = #{readDatetime,jdbcType=TIMESTAMP},
+      CLOSE_DATETIME = #{closeDatetime,jdbcType=TIMESTAMP},
+      CLOSE_BY = #{closeBy,jdbcType=DECIMAL},
+      ORIG_TASK_ID = #{origTaskId,jdbcType=DECIMAL},
+      START_PROCESS_REF = #{startProcessRef,jdbcType=DECIMAL},
+      CACHED_PROCESS_VERSION_ID = #{cachedProcessVersionId,jdbcType=CHAR},
+      GROUP_ID_TYPE = #{groupIdType,jdbcType=DECIMAL},
+      EXECUTION_STATUS = #{executionStatus,jdbcType=DECIMAL},
+      BPD_INSTANCE_ID = #{bpdInstanceId,jdbcType=DECIMAL},
+      CREATED_BY_BPD_REF = #{createdByBpdRef,jdbcType=DECIMAL},
+      CACHED_CBB_VERSION_ID = #{cachedCbbVersionId,jdbcType=CHAR},
+      CREATED_BY_BPD_FLOW_OBJECT_ID = #{createdByBpdFlowObjectId,jdbcType=VARCHAR},
+      ASSUMER_ID = #{assumerId,jdbcType=DECIMAL},
+      ATTACHED_FORM_REF = #{attachedFormRef,jdbcType=DECIMAL},
+      CACHED_FORM_VERSION_ID = #{cachedFormVersionId,jdbcType=CHAR},
+      ATTACHED_EXT_ACTIVITY_REF = #{attachedExtActivityRef,jdbcType=DECIMAL},
+      CACHED_EXTACT_VERSION_ID = #{cachedExtactVersionId,jdbcType=CHAR},
+      SHAREPOINT_DISCUSSION_URL = #{sharepointDiscussionUrl,jdbcType=OTHER},
+      ACTIVITY_NAME = #{activityName,jdbcType=OTHER},
+      ACTIVITY_TASK_TYPE = #{activityTaskType,jdbcType=DECIMAL}
+    where TASK_ID = #{taskId,jdbcType=INTEGER}
+  </update>
+
+    <select id="listNewTasks" parameterType="int" resultMap="relationMap">
+        select <include refid="relationColumnList"/>, lux.user_name
+        from lsw_task t 
+        left join LSW_USR_XREF lux on t.user_id = lux.user_id
+        where task_id > #{taskId}
+        and status = 12
+    </select>
+    
+    <select id="getGroupInfo" resultType="com.desmart.desmartbpm.entity.engine.GroupAndMember"> 
+        select group_id groupId, listagg(user_name, ',')  within group(order by group_id) members
+		from (select lugm.group_id, lux.user_name
+		        from LSW_USR_GRP_MEM_XREF lugm
+		        left join LSW_USR_XREF lux on lugm.user_id = lux.user_id) 
+		group by group_id
+    </select>
+
+</mapper>

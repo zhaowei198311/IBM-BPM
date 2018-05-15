@@ -8,8 +8,6 @@
     HAS_SUSPENDED_ALL_INSTANCES,STATUS,CAPABILITY,IS_ARCHIVED,ARCHIVED_ON,LAST_MODIFIED,LAST_MODIFIED_BY_USER_ID 
    </sql>
 
-
-
     <select id="listAll" resultType="com.desmart.desmartbpm.entity.engine.LswSnapshot">
         select <include refid="base_cloumn"/>  from LSW_SNAPSHOT
     </select>
