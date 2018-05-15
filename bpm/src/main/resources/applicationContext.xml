@@ -35,5 +35,6 @@
     </bean>
 
     <import resource="spring-datasource.xml"/>
+    <import resource="spring-enginedatasource.xml"/>
 
 </beans>

@@ -9,6 +9,11 @@
 		<session-timeout>300</session-timeout>
 	</session-config>
 	
+  <servlet-mapping>    
+    <servlet-name>default</servlet-name>    
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
+	
 	
 	<!-- <filter>
 		<filter-name>sessionFilter</filter-name>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhProcessDefinitionMapper" >
+    <sql id="base_column">
+        PRO_UID, PRO_VER_UID, PRO_PARENT, PRO_TIME, PRO_TIME_UNIT, PRO_STATUS, PRO_TYPE_DAY, PRO_TYPE ,
+        PRO_ASSIGNMENT, PRO_SHOW_MAP, PRO_SHOW_MESSAGE, PRO_SUBPROCESS, PRO_TRI_START, PRO_TRI_DELETED,
+        PRO_TRI_CANCELED, PRO_TRI_PAUSED, PRO_TRI_UNPAUSED, PRO_TRI_REASSIGNED, PRO_TYPE_PROCESS ,
+        PRO_SHOW_DELEGATE, PRO_SHOW_DYNAFORM,  LAST_MODIFIED_DATE, LAST_MODIFIED_USER,
+        CREATE_DATE, CREATE_USER, PRO_HEIGHT, PRO_WIDTH, PRO_TITLE_X, PRO_TITLE_Y, PRO_DEBUG, PRO_DYNAFORMS,
+        PRO_DERIVATION_SCREEN_TPL, PRO_APP_ID
+    </sql>
+
+    <sql id="relation_column">
+        pd.PRO_UID, pd.PRO_VER_UID, pd.PRO_PARENT, pd.PRO_TIME, pd.PRO_TIME_UNIT, pd.PRO_STATUS, pd.PRO_TYPE_DAY, pd.PRO_TYPE ,
+        pd.PRO_ASSIGNMENT, pd.PRO_SHOW_MAP, pd.PRO_SHOW_MESSAGE, pd.PRO_SUBPROCESS, pd.PRO_TRI_START, pd.PRO_TRI_DELETED,
+        pd.PRO_TRI_CANCELED, pd.PRO_TRI_PAUSED, pd.PRO_TRI_UNPAUSED, pd.PRO_TRI_REASSIGNED, pd.PRO_TYPE_PROCESS ,
+        pd.PRO_SHOW_DELEGATE, pd.PRO_SHOW_DYNAFORM,  pd.LAST_MODIFIED_DATE, pd.LAST_MODIFIED_USER,
+        pd.CREATE_DATE, pd.CREATE_USER, pd.PRO_HEIGHT, pd.PRO_WIDTH, pd.PRO_TITLE_X, pd.PRO_TITLE_Y, pd.PRO_DEBUG, pd.PRO_DYNAFORMS,
+        pd.PRO_DERIVATION_SCREEN_TPL, pd.PRO_APP_ID
+    </sql>
+
+    <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+        insert into DH_PROCESS_DEFINITION (PRO_UID, PRO_VER_UID, PRO_PARENT,
+        PRO_TIME, PRO_TIME_UNIT, PRO_STATUS,
+        PRO_TYPE_DAY, PRO_TYPE, PRO_ASSIGNMENT,
+        PRO_SHOW_MAP, PRO_SHOW_MESSAGE, PRO_SUBPROCESS,
+        PRO_TRI_START, PRO_TRI_DELETED, PRO_TRI_CANCELED,
+        PRO_TRI_PAUSED, PRO_TRI_UNPAUSED, PRO_TRI_REASSIGNED,
+        PRO_TYPE_PROCESS, PRO_SHOW_DELEGATE, PRO_SHOW_DYNAFORM,
+        LAST_MODIFIED_DATE, LAST_MODIFIED_USER,
+        CREATE_DATE, CREATE_USER, PRO_HEIGHT,
+        PRO_WIDTH, PRO_TITLE_X, PRO_TITLE_Y,
+        PRO_DEBUG, PRO_DYNAFORMS, PRO_DERIVATION_SCREEN_TPL,
+        PRO_APP_ID)
+        values (#{proUid}, #{proVerUid}, #{proParent},
+        #{proTime}, #{proTimeUnit}, #{proStatus},
+        #{proTypeDay}, #{proType}, #{proAssignment},
+        #{proShowMap}, #{proShowMessage}, #{proSubprocess},
+        #{proTriStart}, #{proTriDeleted}, #{proTriCanceled},
+        #{proTriPaused}, #{proTriUnpaused}, #{proTriReassigned},
+        #{proTypeProcess}, #{proShowDelegate}, #{proShowDynaform},
+        #{lastModifiedDate}, #{lastModifiedUser},
+        sysdate, #{createUser}, #{proHeight},
+        #{proWidth}, #{proTitleX}, #{proTitleY},
+        #{proDebug}, #{proDynaforms}, #{proDerivationScreenTpl},
+        #{proAppId})
+    </insert>
+
+
+
+
+    <select id="listBySelective" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+        select <include refid="relation_column"/>, u1.user_name creatorFullName, u2.user_name updatorFullName,
+        tri1.tri_title proTriStartTitle, tri2.tri_title proTriDeletedTitle, tri3.tri_title proTriCanceledTitle, tri4.tri_title proTriPausedTitle,
+        tri5.tri_title proTriUnpausedTitle, tri6.tri_title proTriReassignedTitle, pm.pro_name proName, pm.category_uid categoryUid
+        from dh_process_definition pd
+        left join sys_user u1 on pd.CREATE_USER = u1.user_uid
+        left join sys_user u2 on pd.LAST_MODIFIED_USER = u2.user_uid
+        left join dh_trigger tri1 on pd.pro_tri_start = tri1.tri_uid
+        left join dh_trigger tri2 on pd.pro_tri_deleted = tri2.tri_uid
+        left join dh_trigger tri3 on pd.pro_tri_canceled = tri3.tri_uid
+        left join dh_trigger tri4 on pd.pro_tri_paused = tri4.tri_uid
+        left join dh_trigger tri5 on pd.pro_tri_unpaused = tri5.tri_uid
+        left join dh_trigger tri6 on pd.pro_tri_reassigned = tri6.tri_uid
+        left join dh_process_meta pm on pd.pro_uid = pm.pro_uid and pd.pro_app_id = pm.pro_app_id
+        <where>
+            <if test="proUid != null">
+                pd.pro_uid = #{proUid}
+            </if>
+            <if test="proVerUid != null">
+                and pd.PRO_VER_UID = #{proVerUid}
+            </if>
+            <if test="proAppId != null">
+                and pd.PRO_APP_ID = #{proAppId}
+            </if>
+
+        </where>
+        order by pd.create_date desc
+    </select>
+
+    <update id="updateByProAppIdAndProUidAndProVerUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+        update DH_PROCESS_DEFINITION
+        <set>
+            LAST_MODIFIED_USER = #{lastModifiedUser},
+            LAST_MODIFIED_DATE = sysdate,
+            <if test="proParent != null">
+                PRO_PARENT = #{proParent},
+            </if>
+            <if test="proTime != null">
+                PRO_TIME = #{proTime},
+            </if>
+            <if test="proTimeUnit != null">
+                PRO_TIME_UNIT = #{proTimeUnit},
+            </if>
+            <if test="proStatus != null">
+                PRO_STATUS = #{proStatus},
+            </if>
+            <if test="proTypeDay != null">
+                PRO_TYPE_DAY = #{proTypeDay},
+            </if>
+            <if test="proType != null">
+                PRO_TYPE = #{proType},
+            </if>
+            <if test="proAssignment != null">
+                PRO_ASSIGNMENT = #{proAssignment},
+            </if>
+            <if test="proShowMap != null">
+                PRO_SHOW_MAP = #{proShowMap},
+            </if>
+            <if test="proShowMessage != null">
+                PRO_SHOW_MESSAGE = #{proShowMessage},
+            </if>
+            <if test="proSubprocess != null">
+                PRO_SUBPROCESS = #{proSubprocess},
+            </if>
+            <if test="proTriStart != null">
+                PRO_TRI_START = #{proTriStart},
+            </if>
+            <if test="proTriDeleted != null">
+                PRO_TRI_DELETED = #{proTriDeleted},
+            </if>
+            <if test="proTriCanceled != null">
+                PRO_TRI_CANCELED = #{proTriCanceled},
+            </if>
+            <if test="proTriPaused != null">
+                PRO_TRI_PAUSED = #{proTriPaused},
+            </if>
+            <if test="proTriUnpaused != null">
+                PRO_TRI_UNPAUSED = #{proTriUnpaused},
+            </if>
+            <if test="proTriReassigned != null">
+                PRO_TRI_REASSIGNED = #{proTriReassigned},
+            </if>
+            <if test="proTypeProcess != null">
+                PRO_TYPE_PROCESS = #{proTypeProcess},
+            </if>
+            <if test="proShowDelegate != null">
+                PRO_SHOW_DELEGATE = #{proShowDelegate},
+            </if>
+            <if test="proShowDynaform != null">
+                PRO_SHOW_DYNAFORM = #{proShowDynaform},
+            </if>
+            <if test="proHeight != null">
+                PRO_HEIGHT = #{proHeight},
+            </if>
+            <if test="proWidth != null">
+                PRO_WIDTH = #{proWidth},
+            </if>
+            <if test="proTitleX != null">
+                PRO_TITLE_X = #{proTitleX},
+            </if>
+            <if test="proTitleY != null">
+                PRO_TITLE_Y = #{proTitleY},
+            </if>
+            <if test="proDebug != null">
+                PRO_DEBUG = #{proDebug},
+            </if>
+            <if test="proDynaforms != null">
+                PRO_DYNAFORMS = #{proDynaforms},
+            </if>
+            <if test="proDerivationScreenTpl != null">
+                PRO_DERIVATION_SCREEN_TPL = #{proDerivationScreenTpl},
+            </if>
+        </set>
+        where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid} and PRO_VER_UID = #{proVerUid}
+    </update>
+
+    <select id="listAll" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition" >
+        select <include refid="relation_column"/>, u1.user_name creatorFullName, u2.user_name updatorFullName,
+        tri1.tri_title proTriStartTitle, tri2.tri_title proTriDeletedTitle, tri3.tri_title proTriCanceledTitle, tri4.tri_title proTriPausedTitle,
+        tri5.tri_title proTriUnpausedTitle, tri6.tri_title proTriReassignedTitle
+        from dh_process_definition pd
+        left join sys_user u1 on pd.CREATE_USER = u1.user_uid
+        left join sys_user u2 on pd.LAST_MODIFIED_USER = u2.user_uid
+        left join dh_trigger tri1 on pd.pro_tri_start = tri1.tri_uid
+        left join dh_trigger tri2 on pd.pro_tri_deleted = tri2.tri_uid
+        left join dh_trigger tri3 on pd.pro_tri_canceled = tri3.tri_uid
+        left join dh_trigger tri4 on pd.pro_tri_paused = tri4.tri_uid
+        left join dh_trigger tri5 on pd.pro_tri_unpaused = tri5.tri_uid
+        left join dh_trigger tri6 on pd.pro_tri_reassigned = tri6.tri_uid
+    </select>
+    
+    <select id="listById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+    	select 
+    	<include refid="relation_column" />,pm.pro_name proName
+    	from DH_PROCESS_DEFINITION pd
+    	left join dh_process_meta pm on pd.pro_uid = pm.pro_uid and pd.pro_app_id = pm.pro_app_id
+    	where pd.PRO_UID = #{proUid}
+    	and pd.PRO_APP_ID = #{proAppId}
+    	and pd.PRO_VER_UID != #{proVerUid}
+    </select>
+    
+    <select id="getProcessById" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+    	select 
+    	<include refid="base_column" />
+    	from DH_PROCESS_DEFINITION
+    	where PRO_UID = #{proUid}
+    	and PRO_VER_UID = #{proVerUid}
+    	and PRO_APP_ID = #{proAppId}
+    </select>
+    
+    <select id="listDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    	select * from DH_OBJECT_PERMISSION
+    	where PRO_UID = #{proUid}   	
+    	and PRO_VER_UID = #{proVerUid} 
+    	and PRO_APP_ID = #{proAppId}
+    </select>
+    
+    <insert id="saveDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    	insert into DH_OBJECT_PERMISSION (
+    		OP_UID,
+    		PRO_APP_ID,
+    		PRO_UID,
+    		PRO_VER_UID,
+    		STEP_UID,
+    		OP_PARTICIPATE_TYPE,
+    		OP_PARTICIPATE_UID,
+    		OP_OBJ_TYPE,
+    		OP_OBJ_UID,
+    		OP_ACTION
+    	)values (
+    		#{opUid},
+    		#{proAppId},
+    		#{proUid},
+    		#{proVerUid},
+    		#{stepUid},
+    		#{opParticipateType},
+    		#{opParticipateUid},
+    		#{opObjType},
+    		#{opObjUid},
+    		#{opAction}   		
+    	)  	
+    </insert>
+    
+    <delete id="deleteDhObjectPermissionById" parameterType="java.lang.String">
+    	delete from DH_OBJECT_PERMISSION
+    	where PRO_UID = #{proUid}   	
+    	and PRO_VER_UID = #{proVerUid} 
+    	and PRO_APP_ID = #{proAppId} 
+    </delete>
+</mapper>
