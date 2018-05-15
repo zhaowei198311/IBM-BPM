@@ -308,8 +308,8 @@ function downloadLayoutSrc() {
 	});
 	$("#download-layout").html(formatSrc);
 	$("#downloadModal textarea").empty();
-	$("#downloadModal textarea").val(formatSrc+formatJs);
-	webpage = formatSrc+formatJs;
+	$("#downloadModal textarea").val(formatSrc+"\n"+formatJs);
+	webpage = formatSrc+"\n"+formatJs;
 }
 
 function saveJS(){
@@ -405,8 +405,13 @@ $(document).ready(function() {
 					$("#proUid").val(result.data.proUid);
 					$("#proVersion").val(result.data.proVersion);
 					var jsIndex = result.data.dynContent.indexOf("<script type='text/javascript'>"); 
-					formatJs = result.data.dynContent.substr(jsIndex);
-					var demoHtml = result.data.dynContent.substring(0,jsIndex);
+					var demoHtml = "";
+					if(jsIndex!=-1){
+						formatJs = result.data.dynContent.substr(jsIndex);
+						demoHtml = result.data.dynContent.substring(0,jsIndex);
+					}else{
+						demoHtml = result.data.dynContent;
+					}
 					$(".demo").html(demoHtml);
 					var nameVal = "";
 					$(".demo .subDiv").each(function(){
@@ -623,7 +628,6 @@ $(document).ready(function() {
 function saveHtml() {
 	var filename = $("#formName").val()+".html";
 	webpage = $("#downloadModal textarea").val();
-	console.log(webpage);
 	dynContent += formatJs;
 	var subDivArr = $("#download-layout").find(".subDiv");
 	var jsonArr = new Array();
@@ -658,7 +662,7 @@ function saveHtml() {
 								var filedAttr = {
 									fldIndex:i,//索引
 									formUid:formUid,//表单Id
-									fldCodeId:"",//字段编码Id
+									fldCodeName:"",//字段编码Id
 									fldName:"",//字段名
 									fldDescription:"",//字段描述
 									fldType:"",//字段类型
@@ -668,7 +672,7 @@ function saveHtml() {
 								};
 								switch(subObj.prop("tagName")){
 									case "INPUT":{
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "false";
 										switch(subObj.attr("type")){
@@ -692,22 +696,21 @@ function saveHtml() {
 										break;
 									};
 									case "TEXTAREA":{//文本域，富文本编辑器
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "false";
 										filedAttr.fldType = "string";
 										break;
 									};
 									case "SELECT":{
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
-										filedAttr.multiValue = "true";
-										filedAttr.multiSepar = ",";
+										filedAttr.multiValue = "false";
 										filedAttr.fldType = "string";
 										break;
 									};
 									case "LABEL":{//多选框、单选框
-										filedAttr.fldCodeId = subObj.find("input").attr("class");
+										filedAttr.fldCodeName = subObj.find("input").attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "true";
 										filedAttr.multiSeparator = ",";
@@ -773,7 +776,7 @@ function saveHtml() {
 								var filedAttr = {
 									fldIndex:i,//索引
 									formUid:result2.data,//表单Id
-									fldCodeId:"",//字段编码Id
+									fldCodeName:"",//字段编码Id
 									fldName:"",//字段名
 									fldDescription:"",//字段描述
 									fldType:"",//字段类型
@@ -783,7 +786,7 @@ function saveHtml() {
 								};
 								switch(subObj.prop("tagName")){
 									case "INPUT":{
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "false";
 										switch(subObj.attr("type")){
@@ -807,22 +810,21 @@ function saveHtml() {
 										break;
 									};
 									case "TEXTAREA":{//文本域，富文本编辑器
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "false";
 										filedAttr.fldType = "string";
 										break;
 									};
 									case "SELECT":{
-										filedAttr.fldCodeId = subObj.attr("id");
+										filedAttr.fldCodeName = subObj.attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
-										filedAttr.multiValue = "true";
-										filedAttr.multiSepar = ",";
+										filedAttr.multiValue = "false";
 										filedAttr.fldType = "string";
 										break;
 									};
 									case "LABEL":{//多选框、单选框
-										filedAttr.fldCodeId = subObj.find("input").attr("class");
+										filedAttr.fldCodeName = subObj.find("input").attr("name");
 										filedAttr.fldName = subDivObj.prev().find("label").text();
 										filedAttr.multiValue = "true";
 										filedAttr.multiSeparator = ",";

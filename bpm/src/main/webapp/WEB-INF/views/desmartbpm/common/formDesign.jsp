@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 	<%@include file="formDesHead.jsp" %>
 </head>
-<body style="min-height: 660px; cursor: auto; background: url(../resources/formDesign/img/builderBg.png) repeat" class="edit">
+<body style="min-height: 660px; cursor: auto; background: url(../resources/desmartbpm/formDesign/img/builderBg.png) repeat" class="edit">
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container-fluid">
