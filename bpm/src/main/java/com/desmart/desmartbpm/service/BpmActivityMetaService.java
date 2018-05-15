@@ -59,7 +59,8 @@ public interface BpmActivityMetaService {
      * 查找指定节点的下个节点
      * @param sourceActivityMeta
      * @param insUid
-     * @return
+     * @return  Map的key： 
+     * normal  gateAnd  end
      */
     Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
     

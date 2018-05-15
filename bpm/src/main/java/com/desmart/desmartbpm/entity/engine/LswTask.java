@@ -64,7 +64,7 @@ public class LswTask {
 
     private String cachedCbbVersionId;
 
-    private Object createdByBpdFlowObjectId;
+    private String createdByBpdFlowObjectId;
 
     private Long assumerId;
 
@@ -81,6 +81,9 @@ public class LswTask {
     private Object activityName;
 
     private Long activityTaskType;
+    
+    // 表外字段 
+    private String userName;  // 任务处理人工号
 
     public Integer getTaskId() {
         return taskId;
@@ -322,11 +325,11 @@ public class LswTask {
         this.cachedCbbVersionId = cachedCbbVersionId == null ? null : cachedCbbVersionId.trim();
     }
 
-    public Object getCreatedByBpdFlowObjectId() {
+    public String getCreatedByBpdFlowObjectId() {
         return createdByBpdFlowObjectId;
     }
 
-    public void setCreatedByBpdFlowObjectId(Object createdByBpdFlowObjectId) {
+    public void setCreatedByBpdFlowObjectId(String createdByBpdFlowObjectId) {
         this.createdByBpdFlowObjectId = createdByBpdFlowObjectId;
     }
 
@@ -393,4 +396,45 @@ public class LswTask {
     public void setActivityTaskType(Long activityTaskType) {
         this.activityTaskType = activityTaskType;
     }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Override
+    public String toString() {
+        return "LswTask [taskId=" + taskId + ", tip=" + tip + ", snapshotId="
+                + snapshotId + ", userId=" + userId + ", groupId=" + groupId
+                + ", participantId=" + participantId + ", managersGroupId="
+                + managersGroupId + ", expertParticipantRef="
+                + expertParticipantRef + ", status=" + status + ", priorityId="
+                + priorityId + ", dueDate=" + dueDate + ", dueTime=" + dueTime
+                + ", atRiskDate=" + atRiskDate + ", subject=" + subject
+                + ", rcvdDatetime=" + rcvdDatetime + ", rcvdFrom=" + rcvdFrom
+                + ", rcvdTaskId=" + rcvdTaskId + ", collaboration="
+                + collaboration + ", sentDatetime=" + sentDatetime
+                + ", readDatetime=" + readDatetime + ", closeDatetime="
+                + closeDatetime + ", closeBy=" + closeBy + ", origTaskId="
+                + origTaskId + ", startProcessRef=" + startProcessRef
+                + ", cachedProcessVersionId=" + cachedProcessVersionId
+                + ", groupIdType=" + groupIdType + ", executionStatus="
+                + executionStatus + ", bpdInstanceId=" + bpdInstanceId
+                + ", createdByBpdRef=" + createdByBpdRef
+                + ", cachedCbbVersionId=" + cachedCbbVersionId
+                + ", createdByBpdFlowObjectId=" + createdByBpdFlowObjectId
+                + ", assumerId=" + assumerId + ", attachedFormRef="
+                + attachedFormRef + ", cachedFormVersionId="
+                + cachedFormVersionId + ", attachedExtActivityRef="
+                + attachedExtActivityRef + ", cachedExtactVersionId="
+                + cachedExtactVersionId + ", sharepointDiscussionUrl="
+                + sharepointDiscussionUrl + ", activityName=" + activityName
+                + ", activityTaskType=" + activityTaskType + ", userName="
+                + userName + "]";
+    }
+    
+    
 }
