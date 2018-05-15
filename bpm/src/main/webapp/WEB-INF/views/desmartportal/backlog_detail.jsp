@@ -192,33 +192,29 @@
 		      			</div>
 					</div>
 					
+					
 					<!-- 开始 -->
-					<p class="title_p">步骤</p>
-				<table class="layui-table">
-					<colgroup>
-					    <col width="150">
-					    <col>
-					    <col width="150">
-					    <col> 
-					    <col width="150">
-					    <col> 
-					</colgroup>
-					<tbody>
-					    <tr>
-					      <td class="td_title">下一步骤:<span class="tip_span"></span>
-					      	<input type="hidden" name="title" value="" id="" >
-					      	<input type="hidden" name="title" value="" id="" >
-					      </td>
-					      <td colspan="3"><input type="text" name="title" required  lay-verify="required" readonly="readonly" value="" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">下一步骤处理人:<span class="tip_span"></span></td>
-					      <td><input type="text" name="title" required  lay-verify="required" value=""  readonly="readonly" autocomplete="off" class="layui-input">
-					      </td>
-					      <td colspan="3">
-					      <i class="layui-icon"  onclick="getConductor();" >&#xe612;</i>
-					      </td>
-					    </tr>
-					</tbody>
-				</table>
+					<p class="title_p">处理人</p>
+					<table class="layui-table">
+						<colgroup>
+						    <col width="150">
+						    <col>
+						    <col width="150">
+						    <col> 
+						    <col width="150">
+						    <col> 
+						</colgroup>
+						<tbody>
+						    <tr>
+						      <td class="td_title">处理人:<span class="tip_span"></span></td>
+						      <td><input type="text" name="title" required  lay-verify="required" value=""  readonly="readonly" autocomplete="off" class="layui-input">
+						      </td>
+						      <td colspan="3">
+						      	<i class="layui-icon"  onclick="getConductor();" >&#xe612;</i>
+						      </td>
+						    </tr>
+						</tbody>
+					</table>
 					<!-- 结束 -->
 					
 					<div class="layui-tab">
@@ -366,7 +362,7 @@
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script>
 	
-		var url='http://localhost:8080/desmartsystem/sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
+		var url='sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
 		function getConductor(){
 			layer.open({
 			     type: 2,
