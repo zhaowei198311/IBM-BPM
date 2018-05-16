@@ -65,11 +65,8 @@
 			</p>
 			<table class="layui-table">
 				<colgroup>
-					<col width="60">
-					<col width="100">
-					<col width="130">
-					<col width="120">
-					<col>
+					<col width="150">
+					<col width="150">
 					<col width="150">
 					<col width="150">
 					<col width="150">
