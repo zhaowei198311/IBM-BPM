@@ -74,7 +74,7 @@ public class MenusController {
 	}
 	
 	/**
-	 * 发起流程
+	 * 新建一个流程页面
 	 * @param proUid 流程id
 	 * @param proAppId 流程应用库id
 	 * @param verUid 流程版本id
