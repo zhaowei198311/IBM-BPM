@@ -3,7 +3,11 @@
  */
 package com.desmart.desmartportal.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
+
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 
 /**  
 * <p>Title: 代理设置实体类</p>  
@@ -26,9 +30,20 @@ public class DhAgent {
 	private Date agentEdate; // 结束时间
 	
 	private String agentStatus; // 代理状态：ENABLED；DISABLED
+	
+	private String agentIsAll;//是否代理了所有流程
+
+	private List<DhProcessMeta> dhProcessMetaList;//代理的流程名集合 用于显示
+	
+	private String agentClienteleName;//代理委托人姓名 前台显示用
+	
+	public DhAgent() {
+		super();
+	}
 
 	public DhAgent(String agentId, Date agentOdate, String agentOperator, String agentClientele, Date agentSdate,
-			Date agentEdate, String agentStatus) {
+			Date agentEdate, String agentStatus, String agentIsAll, List<DhProcessMeta> dhProcessMetaList,
+			String agentClienteleName) {
 		super();
 		this.agentId = agentId;
 		this.agentOdate = agentOdate;
@@ -37,11 +52,9 @@ public class DhAgent {
 		this.agentSdate = agentSdate;
 		this.agentEdate = agentEdate;
 		this.agentStatus = agentStatus;
-	}
-
-	public DhAgent() {
-		super();
-		// TODO Auto-generated constructor stub
+		this.agentIsAll = agentIsAll;
+		this.dhProcessMetaList = dhProcessMetaList;
+		this.agentClienteleName = agentClienteleName;
 	}
 
 	public String getAgentId() {
@@ -56,7 +69,7 @@ public class DhAgent {
 		return agentOdate;
 	}
 
-	public void setAgentOdate(Date agentOdate) {
+	public void setAgentOdate(Timestamp agentOdate) {
 		this.agentOdate = agentOdate;
 	}
 
@@ -80,7 +93,7 @@ public class DhAgent {
 		return agentSdate;
 	}
 
-	public void setAgentSdate(Date agentSdate) {
+	public void setAgentSdate(Timestamp agentSdate) {
 		this.agentSdate = agentSdate;
 	}
 
@@ -88,7 +101,7 @@ public class DhAgent {
 		return agentEdate;
 	}
 
-	public void setAgentEdate(Date agentEdate) {
+	public void setAgentEdate(Timestamp agentEdate) {
 		this.agentEdate = agentEdate;
 	}
 
@@ -100,4 +113,27 @@ public class DhAgent {
 		this.agentStatus = agentStatus;
 	}
 
+	public String getAgentIsAll() {
+		return agentIsAll;
+	}
+
+	public void setAgentIsAll(String agentIsAll) {
+		this.agentIsAll = agentIsAll;
+	}
+
+	public List<DhProcessMeta> getDhProcessMetaList() {
+		return dhProcessMetaList;
+	}
+
+	public void setDhProcessMetaList(List<DhProcessMeta> dhProcessMetaList) {
+		this.dhProcessMetaList = dhProcessMetaList;
+	}
+
+	public String getAgentClienteleName() {
+		return agentClienteleName;
+	}
+
+	public void setAgentClienteleName(String agentClienteleName) {
+		this.agentClienteleName = agentClienteleName;
+	}
 }
