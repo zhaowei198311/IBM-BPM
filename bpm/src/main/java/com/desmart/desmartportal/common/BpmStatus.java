@@ -88,4 +88,9 @@ public class BpmStatus {
 	
 	// 
 	public static final String 	TASK_STATUS_COLLABORATION = "72";
+	
+	/**
+	 * 环节
+	 */
+	public static final String 	ACTIVITY_TYPE_START = "start";
 }
