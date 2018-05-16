@@ -127,23 +127,7 @@
 
 	$(function() {
 		clientSideInclude(document.getElementById('formId').value);	
-		alert($("#dfsData").attr("value"));
-		getdata($("#dfsData").attr("value"));
 	})
-		
-		function getdata(jsonStr){
-			var json = JSON.parse(jsonStr);
-			for(var name in json){
-				var paramObj = json[name];
-				//给各个组件赋值
-				setValue(paramObj,name);
-				//判断组件是否可见
-				isDisplay(paramObj,name);
-				//判断组件对象是否可编辑
-				isEdit(paramObj,name);
-			}
-		}
-	
 	/**
 	 * 表单数据
 	 */
@@ -158,7 +142,6 @@
 				},
 				success : function(result) {
 					if (result.status == 0) {
-						console.log(result.data);
 						$("#formSet").html(result.data);
 					}
 				}
@@ -175,9 +158,32 @@
 		+ '&proAppId=' + proAppId + '&verUid=' + verUid ;
 	}
 	
+</script>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+<script>
 	//数据信息
 	var view = $(".container-fluid");
+	var form = null;
+	$(function(){
+		layui.use(['form'], function () {
+	        form = layui.form;
+		});
+		getdata($("#dfsData").attr("value"));
+	});
 	
+	function getdata(jsonStr){
+		var json = JSON.parse(jsonStr);
+		for(var name in json){
+			var paramObj = json[name];
+			//给各个组件赋值
+			setValue(paramObj,name);
+			//判断组件是否可见
+			isDisplay(paramObj,name);
+			//判断组件对象是否可编辑
+			isEdit(paramObj,name);
+		}
+	}
+
 	/**
 	 * 根据组件对象的类型给各个组件赋值
 	 * @param paramObj 组件对象
@@ -193,12 +199,12 @@
 					case "tel":;
 					case "date":{
 						$("[name='"+name+"']").val(paramObj["value"]);
-						//form.render();
+						form.render();
 						break;
 					};
 					case "radio":{
 						$("[name='"+name+"'][id='"+paramObj["value"]+"']").prop("checked","true");
-						//form.render();
+						form.render();
 						break;
 					}
 					case "checkbox":{
@@ -206,7 +212,7 @@
 						for(var value in valueArr){
 							$("[name='"+name+"'][id='"+valueArr[value]+"']").prop("checked","true");
 						}
-						//form.render();
+						form.render();
 						break;
 					}
 				}
@@ -263,6 +269,4 @@
 			}
 		}
 	}
-	
 </script>
-<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>

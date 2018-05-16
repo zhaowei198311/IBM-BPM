@@ -8,7 +8,7 @@ $(function(){
 
 //渲染页面的方法
 function drawPage() {
-    var tableHead = '<table class="layui-table">' +
+    var tableHead = '<table class="layui-table form-sub">' +
         '<colgroup>' +
         '<col>' +
         '<col>' +
@@ -48,6 +48,47 @@ function drawPage() {
                     } else {
                         continue;
                     }
+                } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0) {
+                	flag = false;
+                	formHtml = formHtml.substring(0, formHtml.length - 4);
+                    formHtml += "</tbody></table>";
+                	var subDivObj = column.find(".subDiv");
+                	var tableObj = subDivObj.find("table");
+                	tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
+                	var thObjArr = tableObj.find("thead th");
+                	var trHtml ='<tr>';
+                	for(var i=0;i<thObjArr.length;i++){
+                		var thObj = $(thObjArr[i]);
+                		trHtml += '<td data-label="'+thObj.text().trim()+'">';
+                		switch(thObj.attr("col-type")){
+	                		case "text":{
+	                			trHtml += '<input type="text" class="layui-input"/>';
+	                			break;
+	                		}
+	                		case "number":{
+	                			trHtml += '<input type="tel" class="layui-input"/>';
+	                			break;
+	                		}
+	                		case "date":{
+	                			trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+	                			break;
+	                		}
+	                		case "select":{
+	                			trHtml += '<select></select>';
+	                			break;
+	                		}
+	                		case "tool":{
+	                			trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>'+
+	                					'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'	
+	                			break;
+	                		};
+                		}
+                		trHtml +='</td>';
+                	}
+                	trHtml += '</tr>';
+                	tableObj.append("<tbody>"+trHtml+"</tbody>");
+                	formHtml += "<table class='layui-table data-table'>"+tableObj.html()+"</table>";
+                    formHtml += tableHead;
                 } else {
                     flag = true;
                     var labelDivObj = column.find(".labelDiv");
@@ -115,6 +156,47 @@ function drawPage() {
                     } else {
                         continue;
                     }
+                } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0) {
+                	flag = false;
+                	formHtml = formHtml.substring(0, formHtml.length - 4);
+                    formHtml += "</tbody></table>";
+                	var subDivObj = column.find(".subDiv");
+                	var tableObj = subDivObj.find("table");
+                	tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
+                	var thObjArr = tableObj.find("thead th");
+                	var trHtml ='<tr>';
+                	for(var i=0;i<thObjArr.length;i++){
+                		var thObj = $(thObjArr[i]);
+                		trHtml += '<td data-label="'+thObj.text().trim()+'">';
+                		switch(thObj.attr("col-type")){
+	                		case "text":{
+	                			trHtml += '<input type="text" class="layui-input"/>';
+	                			break;
+	                		}
+	                		case "number":{
+	                			trHtml += '<input type="tel" class="layui-input"/>';
+	                			break;
+	                		}
+	                		case "date":{
+	                			trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+	                			break;
+	                		}
+	                		case "select":{
+	                			trHtml += '<select></select>';
+	                			break;
+	                		}
+	                		case "tool":{
+	                			trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>'+
+	                					'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'	
+	                			break;
+	                		};
+                		}
+                		trHtml +='</td>';
+                	}
+                	trHtml += '</tr>';
+                	tableObj.append("<tbody>"+trHtml+"</tbody>");
+                	formHtml += "<table class='layui-table data-table'>"+tableObj.html()+"</table>";
+                    formHtml += tableHead;
                 } else {
                     flag = true;
                     var labelDivObj = column.find(".labelDiv");
@@ -180,7 +262,6 @@ function drawPage() {
             $("colgroup").remove();
         }
     }
-    view.css("display", "block");
     view.find("input[type='tel']").desNumber();
 
     layui.use(['form', 'layedit', 'laydate'], function () {
@@ -367,11 +448,37 @@ function drawPage() {
             }, false);
         });
     });
+}
 
-    //getData("PI00-0000-0000-0000-0000-0000-02", "3");
+function addDataRow(obj){
+	var trHtml = $(obj).parent().parent().html();
+	var trNum = $(obj).parent().parent().parent().find("tr").length+1; 
+	var layKey = parseInt($(obj).parent().parent().find(".date").attr("lay-key"))+1;
+	$(obj).parent().parent().parent().append("<tr>"+trHtml+"</tr>");
+	$(obj).parent().parent().parent().find("tr:last").find(".layui-input").val("");
+	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id","date_"+trNum).attr("lay-key",layKey);
+	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
+	
+	var dateInput = $(obj).parent().parent().parent().find(".date");
+	if ($(window).width() < 568) {
+        dateInput.attr("type", "text");
+    }
+    dateInput.each(function () {
+        var dateInputId = $(this).prop("id");
+        layui.use(['laydate'], function () {
+        	laydate = layui.laydate;
+        	laydate.render({
+        		elem: '#' + dateInputId,
+        		trigger: 'click'
+        	}); 
+        });
+    });
+}
 
-    //保存表单数据
-    //saveData();
+function removeDataRow(obj){
+	if($(obj).parent().parent().parent().find("tr").length>1){
+		$(obj).parent().parent().remove();
+	}
 }
 
 //隐藏上传文件的模态框
@@ -408,120 +515,6 @@ jQuery.fn.desNumber = function() {
 	});
 }; 
 
-/**
- * 根据组件对象的类型给各个组件赋值
- * @param paramObj 组件对象
- * @param id 各个组件的id(单选框为class)
- */
-/*var setValue = function(paramObj,name){
-	var tagName = $("[name='"+name+"']").prop("tagName");
-	switch(tagName){
-		case "INPUT":{
-			var tagType = $("[name='"+name+"']").attr("type");
-			switch(tagType){
-				case "text":;
-				case "tel":;
-				case "date":{
-					$("[name='"+name+"']").val(paramObj["value"]);
-					form.render();
-					break;
-				};
-				case "radio":{
-					$("[name='"+name+"'][id='"+paramObj["value"]+"']").prop("checked","true");
-					form.render();
-					break;
-				}
-				case "checkbox":{
-					var valueArr = paramObj["value"];
-					for(var value in valueArr){
-						$("[name='"+name+"'][id='"+valueArr[value]+"']").prop("checked","true");
-					}
-					form.render();
-					break;
-				}
-			}
-			break;
-		};
-		case "SELECT":;
-		case "TEXTAREA":{
-			$("[name='"+name+"']").val(paramObj["value"]);
-			form.render();
-			break;
-		}
-	}
-}
-
-*//**
- * 判读组件对象是否可见
- * @param paramObj 组件对象
- * @param id 各个组件的id(单选框为class)
- *//*
-var isDisplay = function(paramObj,name){
-	var display = paramObj["display"];
-	if(display=="none"){
-		var tagType = $("[name='"+name+"']").attr("type");
-		$("[name='"+name+"']").parent().css("display","none");
-		$("[name='"+name+"']").parent().prev().css("display","none");
-		if(tagType=="radio" || tagType=="checkbox"){
-			$("[name='"+name+"']").parent().css("display","none");
-			$("[name='"+name+"']").parent().prev().css("display","none");
-		}
-	}
-}*/
-
-/**
- * 判读组件对象是否可编辑
- * @param paramObj 组件对象
- * @param id 各个组件的id(单选框为class)
- */
-/*var isEdit = function(paramObj,name){
-	var edit = paramObj["edit"];
-	if(edit=="no"){
-		$("[name='"+name+"']").attr("readonly","true");
-		var tagName = $("[name='"+name+"']").prop("tagName");
-		var tagType = $("[name='"+name+"']").attr("type");
-		var className = $("[name='"+name+"']").attr("class");
-		if(tagType=="radio" || tagType=="checkbox"){
-			$("[name='"+name+"']").attr("disabled","true");
-		}
-		if(tagName=="SELECT"){
-			$("[name='"+name+"']").attr("disabled","true");
-		}
-		if(className=="date"){
-			$("[name='"+name+"']").attr("disabled","true");
-		}
-	}
-}*/
-
-/**
- * 根据流程实例Id和环节配置Id获得某环节下的表单数据及配置数据
- * @param processId 流程实例Id
- * @param tacheCofigureId 环节配置Id
- */
-/*var getData = function(processId,tacheConfigureId){
-	if(processId!=null && processId!="" 
-		&& tacheConfigureId!=null && tacheConfigureId!=""){
-		$.ajax({
-			url:"form.json",
-			method:"post",
-			success:function(jsonStr){
-				//var json = JSON.parse(jsonStr);
-				for(var name in jsonStr){
-					var paramObj = jsonStr[name];
-					//给各个组件赋值
-					setValue(paramObj,name);
-					//判断组件是否可见
-					isDisplay(paramObj,name);
-					//判断组件对象是否可编辑
-					isEdit(paramObj,name);
-					$("body").css("display","block");
-				}
-			}
-		});
-	}else{
-		$("body").css("display","block");
-	}
-} */
 
 jQuery.fn.number = function() {
 	this.bind("keypress", function(e) {
@@ -536,8 +529,3 @@ jQuery.fn.number = function() {
 		return false;
 	});
 }; 
-
-$(window).resize(function(){
-	view.html(viewHtml);
-	drawPage();
-});
