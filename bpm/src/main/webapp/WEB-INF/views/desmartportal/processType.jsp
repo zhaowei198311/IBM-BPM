@@ -31,12 +31,10 @@
 							<div class="layui-input-block">
 								<select class="layui-input-block group_select" name="group"
 									lay-verify="required">
-									<option value="">分组</option>
-									<option value="01">不分组</option>
-									<option value="02">按类型分组</option>
-									<option value="03">按任务创建分组</option>
-									<option value="04">按任务创建人所在部门分组</option>
-									<option value="05">按优先级分组</option>
+									<option value="">请选择流程类型</option>
+									<option value="01">所有</option>
+									<option value="02">运行中</option>
+									<option value="03">已结束</option>
 								</select>
 							</div>
 						</div>
@@ -51,7 +49,7 @@
 						style="display: none;">
 				</div>
 				<div class="layui-col-xs2">
-					<input type="text" placeholder="标题" class="layui-input">
+					<input type="text" placeholder="流程名称" class="layui-input">
 				</div>
 				<div class="layui-col-xs2" style="text-align: right;">
 					<button class="layui-btn">查询</button>
