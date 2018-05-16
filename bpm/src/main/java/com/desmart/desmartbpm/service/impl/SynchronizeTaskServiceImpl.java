@@ -1,21 +1,26 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.desmart.common.constant.BpmActivityType;
+import com.desmart.common.constant.bpm.BpmActivityType;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
+import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -79,23 +84,83 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         BpmActivityMeta bpmActivityMeta = list.get(0);
         
-        //List<String> userUidList = getHandlerList(lswTask);
+        // 引擎分配任务的人，再考虑代理情况
+        List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
-        String loopType = bpmActivityMeta.getLoopType();
-        if (BpmActivityType.NONE_LOOP.equalsIgnoreCase(loopType)) {
-            // 普通任务
-            
-            
-        } else if (BpmActivityType.SIMPLE_LOOP.equalsIgnoreCase(loopType)) {
-            // 简单循环任务
-            
-        } else if (BpmActivityType.MULTI_INSTANCE_LOOP.equalsIgnoreCase(loopType)) {
-            // 多实例任务
+        
+        
+        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta);
+        
+        
+        // 查看是否允许代理
+        if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
+            // todo
+            // 查看这个流程有没有代理人
             
         }
         
         
+        
+        
         return null;
+    }
+
+    /**
+     * 根据条件生成引擎中的任务
+     * @param lswTask
+     * @param orgionUserUidList
+     * @param loopType
+     * @return
+     */
+    private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
+            List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {
+        List<DhTaskInstance> taskList = Lists.newArrayList();
+        for (String orgionUserUid : orgionUserUidList) {
+            DhTaskInstance dhTask = new DhTaskInstance();
+            dhTask.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
+            dhTask.setInsUid(dhProcessInstance.getInsUid());
+            dhTask.setTaskId(lswTask.getTaskId());
+            dhTask.setUsrUid(orgionUserUid);
+            dhTask.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+            String loopType = bpmActivityMeta.getLoopType();
+            if (BpmActivityMeta.LOOP_TYPE_NONE.equals(loopType)) {
+                
+            } else if (BpmActivityMeta.LOOP_TYPE_MULTI_SIMPLE_LOOP.equals(loopType)) {
+                
+            } else if (BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
+                
+            }
+            
+            //dhTask.setTaskType()
+            dhTask.setTaskStatus(lswTask.getStatus());
+            dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
+            dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
+            dhTask.setTaskInitDate(new Date());
+            // 设置
+            
+            //dhTask.setTaskDueDate()
+            //dhTask.setTaskRiskDate()
+            // todo
+            //dhTask.setTaskPriority()
+        }
+        
+        
+        return null;
+    }
+
+    private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, String> groupInfo) {
+        List<String> uidList = Lists.newArrayList();
+        if (lswTask.getUserId() != -1) {
+            uidList.add(lswTask.getUserName());
+        } else {
+            Long groupId = lswTask.getGroupId();
+            String uidStr = groupInfo.get(groupId.intValue());
+            if (StringUtils.isNotBlank(uidStr)) {
+                uidList.addAll(Arrays.asList(uidStr.split(",")));
+            }
+            
+        }
+        return uidList;
     }
 
     private List<LswTask> getNewTasks() {
@@ -110,5 +175,13 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             map.put(groupAndMember.getGroupId(), groupAndMember.getMembers());
         }
         return map;
+    }
+    public static void main(String[] args) {
+        String str = "00011";
+        List<String> list = Arrays.asList(str.split(","));
+        for (String s:list) {
+            System.out.println(s);
+        }
+        System.out.println("END");
     }
 }

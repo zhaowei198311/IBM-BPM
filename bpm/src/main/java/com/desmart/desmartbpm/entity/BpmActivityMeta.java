@@ -6,8 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BpmActivityMeta implements Serializable {
-	
-	/**
+    /** 循环类型：无 */
+    public static final String LOOP_TYPE_NONE = "none";
+    /** 循环类型：简单循环 */
+    public static final String LOOP_TYPE_MULTI_SIMPLE_LOOP = "simpleLoop";
+    /** 循环类型：多实例循环 */
+    public static final String LOOP_TYPE_MULTI_INSTANCE_LOOP = "MultiInstanceLoop";
+    /**
 	 * 环节类型 启动
 	 */
 	public static final String 	ACTIVITY_TYPE_START = "start";

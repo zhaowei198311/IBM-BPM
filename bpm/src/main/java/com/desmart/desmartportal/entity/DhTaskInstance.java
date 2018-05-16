@@ -135,6 +135,9 @@ public class DhTaskInstance {
 	private String taskPriority; // 优先级
 
 	private String taskData; // 任务提交的数据
+	
+	private String taskDelegateUser; // 任务代理人
+	
 
 	/**
 	 * @return the taskUid
@@ -392,7 +395,15 @@ public class DhTaskInstance {
 		
 	}
 	
-	/**
+	public String getTaskDelegateUser() {
+        return taskDelegateUser;
+    }
+
+    public void setTaskDelegateUser(String taskDelegateUser) {
+        this.taskDelegateUser = taskDelegateUser;
+    }
+
+    /**
 	 * @param taskUid
 	 * @param insUid
 	 * @param taskId
@@ -436,4 +447,20 @@ public class DhTaskInstance {
 		this.taskPriority = taskPriority;
 		this.taskData = taskData;
 	}
+
+    @Override
+    public String toString() {
+        return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid
+                + ", taskId=" + taskId + ", usrUid=" + usrUid
+                + ", activityBpdId=" + activityBpdId + ", taskType=" + taskType
+                + ", taskStatus=" + taskStatus + ", taskTitle=" + taskTitle
+                + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
+                + taskPreviousUsrUid + ", taskPreviousUsrUsername="
+                + taskPreviousUsrUsername + ", taskDelegateDate="
+                + taskDelegateDate + ", taskInitDate=" + taskInitDate
+                + ", taskFinishDate=" + taskFinishDate + ", taskDueDate="
+                + taskDueDate + ", taskRiskDate=" + taskRiskDate
+                + ", taskPriority=" + taskPriority + ", taskData=" + taskData
+                + ", taskDelegateUser=" + taskDelegateUser + "]";
+    }
 }

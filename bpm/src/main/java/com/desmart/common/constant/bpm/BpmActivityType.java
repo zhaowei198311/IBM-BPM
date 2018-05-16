@@ -1,4 +1,4 @@
-package com.desmart.common.constant;
+package com.desmart.common.constant.bpm;
 
 /**
  * 流程环节的常量值
@@ -24,6 +24,5 @@ public class BpmActivityType {
     public static final String MI_ORDER_PARALLEL = "parallel";
     public static final String MI_ORDER_SEQUEL = "sequential";
 
-    public BpmActivityType() {
-    }
+    
 }

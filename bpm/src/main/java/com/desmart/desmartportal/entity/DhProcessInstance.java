@@ -84,6 +84,9 @@ public class DhProcessInstance {
 
 	private String insRoutingData; // 流程实例路由数据
 
+	// 非流程表数据
+	private String proName; // 流程名
+	
 	/**
 	 * @return the insUid
 	 */
@@ -368,7 +371,15 @@ public class DhProcessInstance {
 		
 	}
 
-	/**
+	public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
+    }
+
+    /**
 	 * @param insUid
 	 * @param insTitle
 	 * @param insDescription
@@ -416,4 +427,21 @@ public class DhProcessInstance {
 		this.insDriveFolderUid = insDriveFolderUid;
 		this.insRoutingData = insRoutingData;
 	}
+
+    @Override
+    public String toString() {
+        return "DhProcessInstance [insUid=" + insUid + ", insTitle=" + insTitle
+                + ", insDescription=" + insDescription + ", insId=" + insId
+                + ", insParent=" + insParent + ", insStatus=" + insStatus
+                + ", insStatusId=" + insStatusId + ", proAppId=" + proAppId
+                + ", proUid=" + proUid + ", proVerUid=" + proVerUid
+                + ", insInitUser=" + insInitUser + ", insCreateDate="
+                + insCreateDate + ", insInitDate=" + insInitDate
+                + ", insFinishDate=" + insFinishDate + ", insUpdateDate="
+                + insUpdateDate + ", insData=" + insData + ", insDuration="
+                + insDuration + ", insDelayDuration=" + insDelayDuration
+                + ", insDriveFolderUid=" + insDriveFolderUid
+                + ", insRoutingData=" + insRoutingData + ", proName=" + proName
+                + "]";
+    }
 }
