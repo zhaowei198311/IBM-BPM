@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.AccessoryFileUploadMapper" >
+   <insert id="insertDhInstanceDocuments" parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   	INSERT INTO DH_INSTANCE_DOCUMENT 
+   	(APP_DOC_UID,APP_DOC_FILENAME,APP_DOC_TITLE,APP_DOC_COMMENT
+   	,DOC_VERSION,APP_UID,TASK_ID,USER_UID,APP_DOC_TYPE,APP_DOC_CREATE_DATE
+   	,APP_DOC_INDEX,APP_D0C_TAGS,APP_DOC_STATUS,APP_DOC_FILEURL) 
+	SELECT A.*
+    FROM (
+	<foreach collection="dhInstanceDocuments" item="emp" separator="UNION ALL">  
+	SELECT 
+	 #{emp.appDocUid} appDocUid, #{emp.appDocFileName} appDocFileName, #{emp.appDocTitle} appDocTitle
+	 , #{emp.appDocComment} appDocComment, #{emp.docVersion} docVersion, #{emp.appUid} appUid
+	 , #{emp.taskId} taskId, #{emp.userUid} userUid, #{emp.appDocType} appDocType  
+	 , #{emp.appDocCreateDate} appDocCreateDate, #{emp.appDocIndex} appDocIndex
+	 , #{emp.appDocTags} appDocTags, #{emp.appDocStatus} appDocStatus,#{emp.appDocFileUrl} appDocFileUrl
+	FROM dual
+	</foreach>
+	)A
+   </insert>
+   <select id="checkFileActivityIdByName" parameterType="map"
+    resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   select * from dh_instance_document 
+   where APP_UID = #{appUid} and App_Doc_FileName = #{myFileName}
+   and APP_DOC_STATUS = 0
+   </select>
+</mapper>

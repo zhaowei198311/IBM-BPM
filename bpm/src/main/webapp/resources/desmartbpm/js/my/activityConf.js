@@ -170,22 +170,42 @@ $(function(){
             },
             chooseableHandleUser: {
                 required: function(element) {
-                    return $('select[name="actcChooseableHandlerType"]').val() == 'users';
+                	var flag = $('input[name="actcCanChooseUser"]:checked').val();
+                	if(flag=="FALSE"){
+                		return false
+                	}else{
+                		return $('select[name="actcChooseableHandlerType"]').val() == 'users';
+                	}
                 }
             },
             chooseableHandleRole: {
                 required: function(element) {
-                    return $('select[name="actcChooseableHandlerType"]').val().startsWith('role');
+                	var flag = $('input[name="actcCanChooseUser"]:checked').val();
+                	if(flag=="FALSE"){
+                		return false
+                	}else{
+                		return $('select[name="actcChooseableHandlerType"]').val().startsWith('role');
+                	}
                 }
             },
             chooseableHandleTeam: {
                 required: function(element) {
-                    return $('select[name="actcChooseableHandlerType"]').val().startsWith('team');
+                	var flag = $('input[name="actcCanChooseUser"]:checked').val();
+                	if(flag=="FALSE"){
+                		return false
+                	}else{
+                		return $('select[name="actcChooseableHandlerType"]').val().startsWith('team');
+                	}
                 }
             },
             chooseableHandleField: {
                 required: function(element) {
-                    return $('select[name="actcChooseableHandlerType"]').val() == 'byField';
+                	var flag = $('input[name="actcCanChooseUser"]:checked').val();
+                	if(flag=="FALSE"){
+                		return false
+                	}else{
+                		return $('select[name="actcChooseableHandlerType"]').val() == 'byField';
+                	}
                 }
             },
             actcCanChooseUser: {

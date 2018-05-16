@@ -190,16 +190,17 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         
         // 判断可选处理人类型并记录
         if("TRUE".equals(dhActivityConf.getActcCanChooseUser())) {//判断是可选处理人
-        serverResponse = updateChooseAbleHandleOfActivity(dhActivityConf);
-        if (!serverResponse.isSuccess()) {
-            throw new PlatformException(serverResponse.getMsg());
-        }
+        	serverResponse = updateChooseAbleHandleOfActivity(dhActivityConf);
+        	if (!serverResponse.isSuccess()) {
+        		throw new PlatformException(serverResponse.getMsg());
+        	}
         }else {
         	DhActivityAssign selective = new DhActivityAssign();
         	String activityId = dhActivityConf.getActivityId();
             selective.setActivityId(activityId);
             selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
             dhActivityAssignMapper.deleteBySelective(selective);
+            
         }
         // 判断回退环节并记录
         serverResponse = updateRejectActivities(dhActivityConf);
@@ -271,7 +272,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         case TEAM_AND_DEPARTMENT:
         case TEAM_AND_COMPANY:
             activityAssignType = DhActivityAssignAssignType.TEAM.getCode();
-            String handleTeam2 = dhActivityConf.getHandleTeam();
+            String handleTeam2 = dhActivityConf.getChooseableHandleTeam();
             if (StringUtils.isBlank(handleTeam2)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
             }
