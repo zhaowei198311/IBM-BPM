@@ -342,20 +342,20 @@ $(function() {
 				var list = data.data;
 				if (list.length > 0) {
 					$(".display_container8").css("display","block");
-					$.ajax({
-						async: false,
-						url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
-						type: "post",
-						dataType: "json",
-						data: {
-							"proUid" : proUid,
-							"proVerUid" : proVerUid,
-							"proAppId" : proAppId
-						},
-						success: function(data) {
-							similarList(data.data);
-						}
-					})
+//					$.ajax({
+//						async: false,
+//						url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
+//						type: "post",
+//						dataType: "json",
+//						data: {
+//							"proUid" : proUid,
+//							"proVerUid" : proVerUid,
+//							"proAppId" : proAppId
+//						},
+//						success: function(data) {
+							similarList(list);
+//						}
+//					})
 				}else {
 					layer.alert("请先进行环节同步！");
 					return;
@@ -376,7 +376,7 @@ function similarList(data){
 			+ '" data-proveruid="' + this.proVerUid + '" >' + sortNum + '</td>'
 			+ '<td>'+ this.proName + '</td>'
 			+ '<td>'+ this.proVerUid + '</td>'
-//			+ '<td>'+ this.verName + '</td>'
+			+ '<td>'+ this.verName + '</td>'
 //			+ '<td>'+ this.isActive + '</td>'
 //			+ '<td>'+ this.verCreateTime + '</td>'
 			+ '<td>'+ this.proStatus + '</td>'

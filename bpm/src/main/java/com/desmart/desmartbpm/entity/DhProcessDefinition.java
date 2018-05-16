@@ -85,6 +85,7 @@ public class DhProcessDefinition {
     private String proTriReassignedTitle;
     private String proName; // 流程名
     private String categoryUid; // 分类id
+    private String verName;
     
     private String permissionStartUser; // 人员发起权限
     private String permissionStartRole; // 角色发起权限
@@ -468,8 +469,16 @@ public class DhProcessDefinition {
     public void setCategoryUid(String categoryUid) {
         this.categoryUid = categoryUid;
     }
+    
+    public String getVerName() {
+		return verName;
+	}
 
-    @Override
+	public void setVerName(String verName) {
+		this.verName = verName;
+	}
+
+	@Override
     public String toString() {
         return "DhProcessDefinition [proUid=" + proUid + ", proAppId=" + proAppId + ", proVerUid=" + proVerUid
                 + ", proParent=" + proParent + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit + ", proStatus="

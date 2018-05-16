@@ -379,6 +379,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 	@Override
 	public ServerResponse listProcessDefinitionById(DhProcessDefinition dhProcessDefinition) {
 		List<DhProcessDefinition> dpd = dhProcessDefinitionMapper.listById(dhProcessDefinition);
+		for (DhProcessDefinition similarDhProcessDefinition : dpd) {
+			LswSnapshot lswSnapshot = getLswSnapshotBySnapshotId(similarDhProcessDefinition.getProVerUid());
+			similarDhProcessDefinition.setVerName(lswSnapshot.getName());
+		}
 		return ServerResponse.createBySuccess(dpd);
 	}
 

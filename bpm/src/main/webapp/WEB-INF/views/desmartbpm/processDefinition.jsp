@@ -114,7 +114,7 @@
                 <div class="top">
                     同类流程
                 </div>
-                <div class="middle1" style="height: 300px;">
+                <div class="middle1" style="height: 300px;width: 97%">
                     <table class="layui-table backlog_table" lay-even lay-skin="nob">
                         <colgroup>
                             <col>
@@ -127,9 +127,9 @@
                               <th><input type="checkbox" name="" lay-skin="primary"> 序号</th>
                               <th>流程名称</th>
                               <th>快照号</th>
-<!--                               <th>快照名称</th> -->
-<!--                               <th>激活状态</th> -->
-<!--                               <th>快照创建时间</th> -->
+                              <th>快照名称</th>
+<!--                               <TH>激活状态</TH> -->
+<!--                               <TH>快照创建时间</TH> -->
                               <th>流程定义状态</th>
                             </tr> 
                         </thead>
