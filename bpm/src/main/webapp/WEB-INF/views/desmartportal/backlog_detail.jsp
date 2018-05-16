@@ -18,7 +18,40 @@
   		<style>
   			.layui-form-label{text-align:left;padding:6px 0;width:60px;}
   			.layui-input-block{margin-left:70px;}
-  		</style>  		
+  			
+  			#upload_file_modal {
+				display: none;
+			}
+
+			.display_content_accessory_file {
+    			color: #717171;
+   				padding: 20px;
+    			width: 1200px;
+    			height: 500px;
+    			background: #fff;
+    			position: fixed;;
+    			margin: 100px 0 0 -300px;
+    			left: 25%;
+    			top: 3%;
+    			box-shadow: 0 0 10px #ccc;
+			}
+
+			.foot_accessory_file {
+   				 text-align: right;
+    			 height: 50px;
+    			 line-height: 50px;
+    			 padding-right: 25px;
+			}
+			
+			.upload_overflow_middle {
+   				 height: 400px;
+   				 width: 96%;
+    			 border: 1px solid #ccc;
+                 position: relative;
+   				 padding: 0 10px;
+    			 overflow: scroll;
+}
+</style>  		
 	</head>
 	<body>
 		<div class="search_area top_btn">				
@@ -286,8 +319,14 @@
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>
-									      	<button class="layui-btn layui-btn-primary layui-btn-sm upload" style="margin-left:20px;">上传附件</button>
-									      	<input type="file" class="upload_file"/>
+									      	<button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left:20px;">上传附件</button>
+									      	<div class="hidden-value">
+												<input class="maxFileSize" value="20" type="hidden" />
+												<input class="maxFileCount" value="10" type="hidden" />
+												<input class="fileFormat" value="jpg,png,xls,xlsx,exe" type="hidden" />
+											</div>
+									      	<!-- <input type="file" class="upload_file"/> -->
+									      	<!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
 									      </th>
 									    </tr> 
 									</thead>
@@ -356,10 +395,45 @@
 				</div>
 			</div>
 		</div>
+		
+			<div class="display_content_accessory_file" id="upload_file_modal" >
+				<div class="top">文件上传</div>
+				<div class="upload_overflow_middle">
+					<div class="layui-upload-drag" style="width: 94.5%;">
+						<i class="layui-icon"></i>
+						<p>点击上传，或将文件拖拽到此处</p>
+					</div>
+					<div class="layui-upload">
+						<div class="layui-upload-list">
+							<table class="layui-table">
+								<thead>
+									<tr>
+										<th>文件名</th>
+										<th>大小</th>
+										<th>文件标题</th>
+										<th>文件标签</th>
+										<th>文件说明</th>
+										<th>状态</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody class="fileList"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="foot_accessory_file">
+					<button type="button" class="layui-btn listAction">开始上传</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">取消</button>
+				</div>
+			</div>
+		
 	</body>	
 </html>
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<!-- 附件上传js -->
+	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	<script>
 	
 		var url='sysUser/assign_personnel?id=test&isSingle=true&actcCanChooseUser=hide&actcAssignType=allUsers&userIds=00025559;00025614;00025620;';
