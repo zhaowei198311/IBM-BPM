@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.DhAgentRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartportal.entity.DhAgentRecord" >
+    <id column="AGENT_RECORD_ID" property="agentRecordId" jdbcType="VARCHAR" />
+    <result column="AGENT_ID" property="agentId" jdbcType="VARCHAR" />
+    <result column="PRO_NAME" property="proName" jdbcType="VARCHAR" />
+    <result column="TASK_UID" property="taskUid" jdbcType="VARCHAR" />
+    <result column="TASK_TITLE" property="taskTitle" jdbcType="VARCHAR" />
+    <result column="AGENT_USER" property="agentUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    AGENT_RECORD_ID, AGENT_ID, PRO_NAME, TASK_UID, TASK_TITLE, AGENT_USER
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_AGENT_REOCRD
+    where AGENT_RECORD_ID = #{agentRecordId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_AGENT_REOCRD
+    where AGENT_RECORD_ID = #{agentRecordId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartportal.entity.DhAgentRecord" >
+    insert into DH_AGENT_REOCRD (AGENT_RECORD_ID, AGENT_ID, PRO_NAME, 
+      TASK_UID, TASK_TITLE, AGENT_USER
+      )
+    values (#{agentRecordId,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{proName,jdbcType=VARCHAR}, 
+      #{taskUid,jdbcType=VARCHAR}, #{taskTitle,jdbcType=VARCHAR}, #{agentUser,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartportal.entity.DhAgentRecord" >
+    insert into DH_AGENT_REOCRD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="agentRecordId != null" >
+        AGENT_RECORD_ID,
+      </if>
+      <if test="agentId != null" >
+        AGENT_ID,
+      </if>
+      <if test="proName != null" >
+        PRO_NAME,
+      </if>
+      <if test="taskUid != null" >
+        TASK_UID,
+      </if>
+      <if test="taskTitle != null" >
+        TASK_TITLE,
+      </if>
+      <if test="agentUser != null" >
+        AGENT_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="agentRecordId != null" >
+        #{agentRecordId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentId != null" >
+        #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="proName != null" >
+        #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskUid != null" >
+        #{taskUid,jdbcType=VARCHAR},
+      </if>
+      <if test="taskTitle != null" >
+        #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="agentUser != null" >
+        #{agentUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhAgentRecord" >
+    update DH_AGENT_REOCRD
+    <set >
+      <if test="agentId != null" >
+        AGENT_ID = #{agentId,jdbcType=VARCHAR},
+      </if>
+      <if test="proName != null" >
+        PRO_NAME = #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskUid != null" >
+        TASK_UID = #{taskUid,jdbcType=VARCHAR},
+      </if>
+      <if test="taskTitle != null" >
+        TASK_TITLE = #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="agentUser != null" >
+        AGENT_USER = #{agentUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AGENT_RECORD_ID = #{agentRecordId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartportal.entity.DhAgentRecord" >
+    update DH_AGENT_REOCRD
+    set AGENT_ID = #{agentId,jdbcType=VARCHAR},
+      PRO_NAME = #{proName,jdbcType=VARCHAR},
+      TASK_UID = #{taskUid,jdbcType=VARCHAR},
+      TASK_TITLE = #{taskTitle,jdbcType=VARCHAR},
+      AGENT_USER = #{agentUser,jdbcType=VARCHAR}
+    where AGENT_RECORD_ID = #{agentRecordId,jdbcType=VARCHAR}
+  </update>
+  
+    <insert id="insertBatch"  parameterType="list">
+        insert into DH_AGENT_REOCRD (<include refid="Base_Column_List"/>)
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.agentRecordId,jdbcType=VARCHAR}, 
+            #{item.agentId,jdbcType=VARCHAR}, 
+            #{item.proName,jdbcType=VARCHAR}, 
+		    #{item.taskUid,jdbcType=VARCHAR}, 
+		    #{item.taskTitle,jdbcType=VARCHAR}, 
+		    #{item.agentUser,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+    </insert> 
+</mapper>

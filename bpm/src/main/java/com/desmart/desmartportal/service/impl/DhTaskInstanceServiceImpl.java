@@ -154,4 +154,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     public int getMaxTaskIdInDb() {
         return dhTaskInstanceMapper.getMaxTaskId();
     }
+    
+    public int insertBatch(List<DhTaskInstance> list) {
+        return dhTaskInstanceMapper.insertBatch(list);
+    }
 }

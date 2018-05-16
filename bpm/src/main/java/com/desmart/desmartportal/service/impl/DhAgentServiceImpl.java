@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -95,5 +96,11 @@ public class DhAgentServiceImpl implements DhAgentService {
 		log.info("根据代理设置人或代理委托人查询 结束...");
 		return null;
 	}
+
+    @Override
+    public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

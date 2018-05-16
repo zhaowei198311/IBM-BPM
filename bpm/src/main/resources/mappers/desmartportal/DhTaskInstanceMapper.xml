@@ -222,4 +222,32 @@
 	<select id="getMaxTaskId" resultType="int">
        select nvl(max(task_id), 0) from dh_task_instance
     </select>
+    
+    <insert id="insertBatch"  parameterType="list">
+        insert into dh_task_instance (<include refid="Base_Column_List"/>)
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.taskUid},
+            #{item.insUid},
+            #{item.taskId},
+            #{item.usrUid},
+            #{item.activityBpdId},
+            #{item.taskType},
+            #{item.taskStatus},
+            #{item.taskTitle},
+            #{item.insUpdateDate},
+            #{item.taskPreviousUsrUid},
+            #{item.taskPreviousUsrUsername},
+            #{item.taskDelegateDate},
+            sysdate,
+            #{item.taskFinishDate},
+            #{item.taskDueDate},
+            #{item.taskRiskDate},
+            #{item.taskPriority},
+            #{item.taskData},
+            #{item.taskDelegateUser}
+            from dual
+        </foreach>
+    </insert>
+    
 </mapper>

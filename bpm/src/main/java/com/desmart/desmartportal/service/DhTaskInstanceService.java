@@ -33,4 +33,11 @@ public interface DhTaskInstanceService {
 	List <DhProcessInstance> selectTaskByUser(DhTaskInstance taskInstance);
 	
 	int getMaxTaskIdInDb();
+	
+	/**
+	 * 批量插入任务
+	 * @param list
+	 * @return
+	 */
+	int insertBatch(List<DhTaskInstance> list);
 }

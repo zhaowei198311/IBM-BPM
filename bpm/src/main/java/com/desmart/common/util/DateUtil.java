@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.util;
+package com.desmart.common.util;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;

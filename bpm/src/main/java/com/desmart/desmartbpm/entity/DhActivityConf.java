@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class DhActivityConf {
+    public static final String TIME_UNIT_HOUR = "hour";
+    public static final String TIME_UNIT_DAY = "day";
+    public static final String TIME_UNIT_MONTH = "month";
+    
     private String actcUid;
 
     private String activityId;

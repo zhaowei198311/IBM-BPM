@@ -12,7 +12,13 @@ import java.util.Date;
 * @date 2018年5月9日  
 */
 public class DhTaskInstance {
-	
+    /** 普通任务 */
+	public static final String TYPE_NORMAL = "normal";
+	/** 简单循环任务 */
+    public static final String TYPE_SIMPLE_LOOP = "simpleLoop";
+    /** 多实例循环任务 */
+    public static final String TYPE_MULT_IINSTANCE_LOOP = "multiInstanceLoop";
+    
 	/**
 	 *  新任务
 	 */
