@@ -13,14 +13,17 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="resources/desmartportal/css/layui.css" rel="stylesheet" media="all" />
-<link href="resources/desmartportal/css/my.css" rel="stylesheet" media="all" />
-<link href="resources/desmartportal/css/modules/laydate/default/laydate.css"
-	rel="stylesheet" media="all"/>
+<link href="resources/desmartportal/css/layui.css" rel="stylesheet"
+	media="all" />
+<link href="resources/desmartportal/css/my.css" rel="stylesheet"
+	media="all" />
+<link
+	href="resources/desmartportal/css/modules/laydate/default/laydate.css"
+	rel="stylesheet" media="all" />
 <link href="resources/desmartportal/css/modules/layer/default/layer.css"
-	rel="stylesheet" media="all"/>
+	rel="stylesheet" media="all" />
 <link href="resources/desmartportal/css/modules/code.css"
-	rel="stylesheet" media="all"/>
+	rel="stylesheet" media="all" />
 <title>回收站页面</title>
 </head>
 <body>
@@ -28,7 +31,8 @@
 		<div class="search_area">
 			<div class="layui-row layui-form">
 				<div class="layui-col-md2">
-					<input id="dfsTitle" type="text" placeholder="草稿名称" class="layui-input">
+					<input id="dfsTitle" type="text" placeholder="草稿名称"
+						class="layui-input">
 				</div>
 				<div class="layui-col-md2" style="text-align: right; width: 80px">
 					<button class="layui-btn select_btn" onclick="search()">查询</button>
@@ -60,7 +64,7 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
-	<div class="display_container">
+	<!-- 	<div class="display_container">
 		<div class="display_content" style="width: 350px;height: 500px;">
 			<div class="top">
 				草稿数据
@@ -75,13 +79,14 @@
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancel()">取消</button>
 			</div>
 		</div>
-	</div>
+	</div> -->
 </body>
 </html>
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
-<script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript"
+	src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
+<script type="text/javascript"
+	src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script>
-	
 	// 为翻页提供支持
 	var pageConfig = {
 		pageNum : 1,
@@ -102,14 +107,13 @@
 			}
 		});
 	});
-	
-	
+
 	$(document).ready(function() {
 		// 加载数据
-		  getDraftsInfo();
+		getDraftsInfo();
 	});
 
-	 function getDraftsInfo() {
+	function getDraftsInfo() {
 		$.ajax({
 			url : 'drafts/queryDraftsByList',
 			type : 'POST',
@@ -123,8 +127,8 @@
 			}
 		})
 	}
-	
-	function drawTable(pageInfo, data){
+
+	function drawTable(pageInfo, data) {
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
 		pageConfig.total = pageInfo.total;
@@ -141,8 +145,9 @@
 			var meta = list[i];
 			var sortNum = startSort + i;
 			var agentOdate = new Date(meta.dfsCreatedate);
-			var showDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
-			trs += '<tr><td>'
+			var showDate = agentOdate.getFullYear() + "-"
+					+ (agentOdate.getMonth() + 1) + "-" + agentOdate.getDate();
+			trs += '<tr><td id="aa">'
 					+ sortNum
 					+ '</td>'
 					+ '<td>'
@@ -155,16 +160,15 @@
 					+ showDate
 					+ '</td>'
 					+ '<td>'
-					+ '<i class="layui-icon"  title="查看详情"  onclick=info("'
-					+ meta.dfsId + '")>&#xe60a;</i>'
+					+ "<i class='layui-icon'  title='查看详情'  onclick=\"showinfo('"
+					+ meta.dfsId + "','" + meta.proUid + "','" + meta.proVerUid
+					+ "','" + meta.proAppId + "')\">&#xe60a;</i>"
 					+ '<i class="layui-icon"  title="删除草稿"  onclick=del("'
-					+ meta.dfsId + '") >&#xe640;</i>'
-					+ '</td>'
-					+ '</tr>';
+					+ meta.dfsId + '") >&#xe640;</i>' + '</td>' + '</tr>';
 		}
 		$("#drafts_table_tbody").append(trs);
 	}
-	
+
 	// 分页
 	function doPage() {
 		layui.use([ 'laypage', 'layer' ], function() {
@@ -187,8 +191,8 @@
 			});
 		});
 	}
-	
-	function search(){
+
+	function search() {
 		var title = $("#dfsTitle").val();
 		$.ajax({
 			url : 'drafts/queryDraftsByTitle',
@@ -197,13 +201,13 @@
 			data : {
 				dfsTitle : title
 			},
-			success : function(result){
+			success : function(result) {
 				drawTable(result.data)
 			}
 		})
 	}
-	
-	function del(id){
+
+	function del(id) {
 		layer.confirm('是否删除该草稿？', {
 			btn : [ '确定', '取消' ], //按钮
 			shade : false
@@ -225,62 +229,14 @@
 			layer.close(index);
 		});
 	}
-	
-	function info(id){
-		$("#draftForm").html('');
-		$.ajax({
-			url : 'drafts/selectBydfsId',
-			type : 'POST',
-			dataType : 'json',
-			data : {
-				dfsId : id
-			},
-			success : function(result) {
-				$(".display_container").css("display", "block");
-				$("#dfsData").val('');
-				var reg=new RegExp("-","g"); //创建正则RegExp对象
-				var list = result.data.list;
-				var jsondata = eval('(' + list[0].dfsData + ')'); 
-				var jsonArray = Object.keys(jsondata).toString().split(",");
 
-				for(var i=0;i < jsonArray.length;i++){
-					var key = jsonArray[i];
-					var str =  '<div class="layui-form-item">'
-						+'<div class="layui-inline">'
-						+'<label class="layui-form-label">'+key+':</label>'
-						+'<div class="layui-input-inline">'
-						+'<input type="text" id="'+key+'" name="'+key+'"'
-						+'lay-verify="'+key+'" autocomplete="off"'
-						+'class="layui-input">'
-						+'</div>'
-						+'</div>'
-						+'</div>';	
-					$("#draftForm").append(str);
-					if(key == 'date'){
-						$( "#" + key  + "").val(eval('jsondata.'+key).value.replace(reg,"/"));
-					}else{
-						$( "#" + key  + "").val(eval('jsondata.'+key).value);
-					}
-				}
-				
-				layui.use([ 'laydate'], function(){  
-			        var $ = layui.$;  
-			        var laydate = layui.laydate;   
-			        var max = null;  
-			        var start = laydate.render({  
-			            elem: '#date',  
-			            type: 'datetime',  
-			            format:'yyyy/MM/dd',   
-			            btns: ['clear', 'confirm']
-			        });  
-			     }) 
-				
-			}
-		})
+	function showinfo(dfsId, proUid,proVerUid,proAppId) {
+		window.location.href = 'menus/draftsInfo?proUid=' + proUid
+		+ '&proAppId=' + proAppId + '&verUid=' + proVerUid + '&dfsId=' + dfsId
 	}
-	
-	function cancel(){
-		$(".display_container").css("display", "none");	
+
+	function cancel() {
+		$(".display_container").css("display", "none");
 	}
 </script>
 

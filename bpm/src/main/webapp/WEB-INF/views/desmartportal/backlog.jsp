@@ -137,7 +137,7 @@
 		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'taskInstance/queryTask',
+				url : 'taskInstance/queryTaskByReceived',
 				type : 'post',
 				dataType : 'json',
 				data : {
@@ -175,8 +175,13 @@
 				var agentOdate2 = new Date(meta.taskDueDate);
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
 				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
-						+ '</td>' + '<td>' + meta.taskTitle + '</td>' + '<td>'
-						+ meta.usrUid + '</td>'
+						+ '</td>' 
+						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
+						+ meta.taskTitle 
+						+ '</td>' 
+						+ '<td>'
+						+ meta.usrUid 
+						+ '</td>'
 						+ '<td>' + meta.taskStatus + '</td>' + '<td>'
 						+ meta.taskPreviousUsrUsername + '</td>' + '<td>' + meta.taskType
 						+ '</td>' 

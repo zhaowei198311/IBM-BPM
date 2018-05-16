@@ -25,5 +25,5 @@ public interface DhDraftsMapper {
 	
 	int save(DhDrafts drafts);
 	
-	List <DhDrafts> selectBydfsId(String dfsId);
+	DhDrafts selectBydfsId(String dfsId);
 }

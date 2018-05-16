@@ -25,5 +25,5 @@ public interface DhDraftsService {
 	
 	int saveDrafts(DhDrafts drafts);
 	
-	ServerResponse<PageInfo<List<DhDrafts>>> selectBydfsId(String dfsId);
+	DhDrafts selectBydfsId(String dfsId);
 }

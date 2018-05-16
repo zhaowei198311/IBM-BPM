@@ -368,7 +368,7 @@ function drawPage() {
         });
     });
 
-    getData("PI00-0000-0000-0000-0000-0000-02", "3");
+    //getData("PI00-0000-0000-0000-0000-0000-02", "3");
 
     //保存表单数据
     //saveData();
@@ -413,7 +413,7 @@ jQuery.fn.desNumber = function() {
  * @param paramObj 组件对象
  * @param id 各个组件的id(单选框为class)
  */
-var setValue = function(paramObj,name){
+/*var setValue = function(paramObj,name){
 	var tagName = $("[name='"+name+"']").prop("tagName");
 	switch(tagName){
 		case "INPUT":{
@@ -451,11 +451,11 @@ var setValue = function(paramObj,name){
 	}
 }
 
-/**
+*//**
  * 判读组件对象是否可见
  * @param paramObj 组件对象
  * @param id 各个组件的id(单选框为class)
- */
+ *//*
 var isDisplay = function(paramObj,name){
 	var display = paramObj["display"];
 	if(display=="none"){
@@ -467,14 +467,14 @@ var isDisplay = function(paramObj,name){
 			$("[name='"+name+"']").parent().prev().css("display","none");
 		}
 	}
-}
+}*/
 
 /**
  * 判读组件对象是否可编辑
  * @param paramObj 组件对象
  * @param id 各个组件的id(单选框为class)
  */
-var isEdit = function(paramObj,name){
+/*var isEdit = function(paramObj,name){
 	var edit = paramObj["edit"];
 	if(edit=="no"){
 		$("[name='"+name+"']").attr("readonly","true");
@@ -491,14 +491,14 @@ var isEdit = function(paramObj,name){
 			$("[name='"+name+"']").attr("disabled","true");
 		}
 	}
-}
+}*/
 
 /**
  * 根据流程实例Id和环节配置Id获得某环节下的表单数据及配置数据
  * @param processId 流程实例Id
  * @param tacheCofigureId 环节配置Id
  */
-var getData = function(processId,tacheConfigureId){
+/*var getData = function(processId,tacheConfigureId){
 	if(processId!=null && processId!="" 
 		&& tacheConfigureId!=null && tacheConfigureId!=""){
 		$.ajax({
@@ -521,7 +521,7 @@ var getData = function(processId,tacheConfigureId){
 	}else{
 		$("body").css("display","block");
 	}
-} 
+} */
 
 jQuery.fn.number = function() {
 	this.bind("keypress", function(e) {

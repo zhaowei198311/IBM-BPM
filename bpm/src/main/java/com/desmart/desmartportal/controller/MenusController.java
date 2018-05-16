@@ -15,10 +15,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhDraftsService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
@@ -40,6 +45,9 @@ public class MenusController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	
+	@Autowired
+	private DhDraftsService dhDraftsService;
 
 	@RequestMapping("/index")
 	public String index() {
@@ -124,6 +132,27 @@ public class MenusController {
 	@RequestMapping("notRedProcess")
 	public ModelAndView notRedProcess() {
 		ModelAndView mv = new ModelAndView("desmartportal/not_read");
+		return mv;
+	}
+	
+	
+	@RequestMapping("draftsInfo")
+	public ModelAndView draftsInfo(@RequestParam(value = "proUid",required = false) String proUid,
+			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
+			@RequestParam(value = "dfsId",required = false) String dfsId) {
+		ModelAndView mv = new ModelAndView("desmartportal/drafts_info");
+		mv.addObject("proUid",proUid);
+		mv.addObject("proAppId",proAppId);
+		mv.addObject("verUid",verUid);
+		mv.addObject("dfsId",dfsId);
+		// 查询草稿数据
+		DhDrafts drafts = dhDraftsService.selectBydfsId(dfsId);
+		String dfsdata = drafts.getDfsData();
+		mv.addObject("dfsData", dfsdata);
+		System.err.println(dfsdata);
+		// 表单详细信息设置
+		Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
+		mv.addObject("formId", resultMap.get("formId"));
 		return mv;
 	}
 }

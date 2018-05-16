@@ -63,7 +63,7 @@ public class DhDraftsController {
 	
 	@RequestMapping(value = "/selectBydfsId")
 	@ResponseBody
-	public ServerResponse selectBydfsId(@RequestParam(value="dfsId")String dfsId) {
+	public DhDrafts selectBydfsId(@RequestParam(value="dfsId")String dfsId) {
 		return dhDraftsService.selectBydfsId(dfsId);
 	}
 }

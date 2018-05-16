@@ -103,13 +103,10 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	 * 根据dfsId查询draft信息
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhDrafts>>> selectBydfsId(String dfsId) {
+	public DhDrafts selectBydfsId(String dfsId) {
 		log.info("根据草稿dfsid查询草稿数据开始...");
 		try {
-			PageHelper.startPage(1, 10);
-			List<DhDrafts> resultList = dhDraftsMapper.selectBydfsId(dfsId);
-			PageInfo<List<DhDrafts>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
+			return dhDraftsMapper.selectBydfsId(dfsId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
