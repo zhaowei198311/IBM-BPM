@@ -114,7 +114,7 @@
 		FROM
 		DH_TASK_INSTANCE
 		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS = 12
+			USR_UID = #{usrUid} AND TASK_STATUS = '12'
 		</where> 
 	</select>
 	
