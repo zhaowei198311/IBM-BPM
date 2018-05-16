@@ -13,6 +13,37 @@ import java.util.Date;
 */
 public class DhProcessInstance {
 	
+	/** 
+	 * 流程运转中
+	 */
+	public static final String STATUS_ACTIVE = "1";
+	
+	/** 
+	 * 流程完成
+	 */
+	public static final String STATUS_COMPLETED = "2";
+	
+	/**
+	 * 流程失败
+	 */
+	public static final String STATUS_FAILED = "3";
+	
+	/**
+	 * 流程终止
+	 */
+	public static final String STATUS_TERMINATED = "4";
+	
+	/**
+	 * 流程未启动
+	 */
+	public static final String STATUS_DID_NOT_START = "5";
+	
+	/**
+	 * 流程暂停
+	 */
+	public static final String STATUS_SUSPENDED = "6";
+	
+	
 	private String insUid; // 流程实例ID
 	
 	private String insTitle; // 流程实例标题

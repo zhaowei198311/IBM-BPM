@@ -13,6 +13,93 @@ import java.util.Date;
 */
 public class DhTaskInstance {
 	
+	/**
+	 *  新任务
+	 */
+	public static final String 	STATUS_NEW = "11";
+	
+	/**
+	 *  接收到任务
+	 */
+	public static final String 	STATUS_RECEIVED = "12";
+	
+	/**
+	 *  回复任务
+	 */
+	public static final String 	STATUS_REPLIED = "13";
+	
+	/**
+	 *  转发任务
+	 */
+	public static final String 	STATUS_FORWARDED = "14";
+	
+	/**
+	 *  传送任务
+	 */
+	public static final String 	STATUS_SENT = "21";
+	
+	/**
+	 *  
+	 */
+	public static final String 	STATUS_ACTIONED = "31";
+	
+	/**
+	 *  任务关闭
+	 */
+	public static final String 	STATUS_CLOSED = "32";
+	
+	/**
+	 * 
+	 */
+	public static final String 	STATUS_SPECIAL = "41";
+	
+	/**
+	 *  删除任务
+	 */
+	public static final String 	STATUS_DELETED = "91";
+	
+	/**
+	 *  警报任务
+	 */
+	public static final String 	STATUS_ALERT = "61";
+	
+	/**
+	 *  帮助请求任务
+	 */
+	public static final String 	STATUS_HELP_REQUEST = "62";
+	
+	/**
+	 *  说明任务
+	 */
+	public static final String 	STATUS_COMMENT = "63";
+	
+	/**
+	 *  已应答帮助请求任务
+	 */
+	public static final String 	STATUS_ANSWERED_HELP_REQUEST = "65";
+	
+	/**
+	 *  忽略帮助请求任务
+	 */
+	public static final String 	STATUS_IGNORED_HELP_REQUEST = "66";
+	
+	/**
+	 *  继承任务
+	 */
+	public static final String 	STATUS_FOLLOWED = "70";
+	
+	/**
+	 *  标记任务
+	 */
+	public static final String 	STATUS_TAGGED = "71";
+	
+	/**
+	 *  
+	 */
+	public static final String 	STATUS_COLLABORATION = "72";
+	
+	
+	
 	private String taskUid; // 任务id(主键)
 
 	private String insUid; // 流程实例主键

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.desmartbpm.entity.DhTask;
 import com.desmart.desmartportal.common.BpmStatus;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
@@ -44,7 +45,7 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		taskInstance.setTaskStatus(BpmStatus.TASK_STATUS_RECEIVED);
+		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 	
@@ -59,7 +60,7 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	private ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		taskInstance.setTaskStatus(BpmStatus.TASK_STATUS_CLOSED);
+		taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 }

@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BpmActivityMeta implements Serializable {
+	
+	/**
+	 * 环节类型 启动
+	 */
+	public static final String 	ACTIVITY_TYPE_START = "start";
+	
     private String activityId;  // 主键
     private String noteType;
     private Date createTime;

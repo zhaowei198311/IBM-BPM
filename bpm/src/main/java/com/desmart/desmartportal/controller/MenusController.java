@@ -100,10 +100,10 @@ public class MenusController {
 		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		// 找到当前环节
 		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-		bpmActivityMeta.setBpdId(proUid);
+		bpmActivityMeta.setBpdId(proUid); 
 		bpmActivityMeta.setProAppId(proAppId);
 		bpmActivityMeta.setSnapshotId(verUid);
-		bpmActivityMeta.setActivityType(BpmStatus.ACTIVITY_TYPE_START);
+		bpmActivityMeta.setActivityType(BpmActivityMeta.ACTIVITY_TYPE_START);
 		List<BpmActivityMeta> resultList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
 		for (BpmActivityMeta bpmActivityMeta2 : resultList) {
 			mv.addObject("bpmActivity",bpmActivityMeta2);
