@@ -25,4 +25,8 @@ public class EntityIdPrefix {
 	
 	/** 任务实例参数前缀 */
 	public static final String DH_TASK_INSTANCE = "task_instance:";
+	/**
+	 * 流程附件前缀
+	 */
+	public static final String DH_INSTANCE_DOCUMENT = "docid:";
 }
