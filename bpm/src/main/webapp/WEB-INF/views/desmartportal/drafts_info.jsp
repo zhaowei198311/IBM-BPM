@@ -96,6 +96,7 @@
 		var proUids = $("#proUid").val();
 		var proAppIds = $("#proAppId").val();
 		var verUids = $("#verUid").val();
+		var dfsIds = $("#dfsId").val();
 		$.ajax({
 			url : 'process/startProcess',
 			type : 'POST',
@@ -107,9 +108,8 @@
 			},
 			success : function(result) {
 				if (result.status == 0) {
-					layer.alert('提交成功', {
-						icon : 1
-					});
+					// 提交成功之后 删除该草稿数据
+					deleteDraftsInfo(dfsIds);
 				}
 				if (result.status == 1) {
 					layer.alert('提交失败', {
@@ -123,6 +123,21 @@
 				});
 			}
 		});
+	}
+	
+	function deleteDraftsInfo(id){
+		$.ajax({
+			url : 'drafts/deleteDraftsById',
+			type : 'POST',
+			dataType : 'text',
+			data : {
+				dfsId : id
+			},
+			success : function(result) {
+				// 删除成功后 ajxa跳转 查询controller
+				window.location.href = "drafts/index";
+			}
+		})
 	}
 
 	$(function() {
@@ -151,11 +166,7 @@
 	
 	// 回退到上一页面
 	function back(){
-		var proUid = $("#proUid").val();
-		var proAppId = $("#proAppId").val();
-		var verUid = $("#verUid").val();
-		window.location.href = 'menus/processType?proUid=' + proUid
-		+ '&proAppId=' + proAppId + '&verUid=' + verUid ;
+		window.location.href = 'drafts/index';
 	}
 	
 </script>

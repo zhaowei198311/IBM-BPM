@@ -42,7 +42,7 @@
 			id="dataInfo" style="display: none;"> <span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
-			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存</button>
+			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
 			<button class="layui-btn layui-btn-sm" onclick="startProcess()">提交</button>
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
