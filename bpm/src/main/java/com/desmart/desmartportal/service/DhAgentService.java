@@ -6,7 +6,7 @@ package com.desmart.desmartportal.service;
 import java.util.List;
 import java.util.Map;
 
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhAgent;
 import com.github.pagehelper.PageInfo;
 
@@ -17,12 +17,12 @@ import com.github.pagehelper.PageInfo;
 * @date 2018年5月8日  
 */
 public interface DhAgentService {
-	
 	int deleteAgentByAgentId(String agentId);
 	
-	ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize);
-	
-	ServerResponse<PageInfo<List<DhAgent>>> selectByAgentPerson(String person, Integer pageNum, Integer pageSize);
+	/**
+	 * 根据参数组合查询某个用户的代理设置信息
+	 */
+	ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize, String person);
 	
 	int saveAgent(DhAgent agent);
 	
