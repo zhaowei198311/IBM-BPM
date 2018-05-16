@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,12 +13,14 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartportal.common.EntityIdPrefix;
-import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhAgentMapper;
 import com.desmart.desmartportal.entity.DhAgent;
-import com.desmart.desmartportal.entity.DhDrafts;
+import com.desmart.desmartportal.entity.DhAgentProInfo;
 import com.desmart.desmartportal.service.DhAgentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -30,9 +33,11 @@ import com.github.pagehelper.PageInfo;
 */
 @Service
 public class DhAgentServiceImpl implements DhAgentService {
-	
 	@Autowired
 	private DhAgentMapper dhAgentMapper;
+	
+	@Autowired
+	private DhProcessMetaMapper dhProcessMetaMapper;
 	
 	private Logger log = Logger.getLogger(DhAgentServiceImpl.class);
 	
@@ -57,18 +62,37 @@ public class DhAgentServiceImpl implements DhAgentService {
 	 * 查询所有代理数据
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize) {
-		log.info("查询所有代理数据开始...");
-		try {
-			PageHelper.startPage(pageNum, pageSize);
-			List<DhAgent> resultList = dhAgentMapper.select();
-			PageInfo<List<DhAgent>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
-		} catch (Exception e) {
-			e.printStackTrace();
+	public ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize, String person) {
+		String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		log.info(currUser);
+		PageHelper.startPage(pageNum, pageSize);
+		List<DhAgent> resultList = dhAgentMapper.selectAgentList(currUser,person);
+		for(DhAgent dhAgent:resultList) {
+			if("TRUE".equals(dhAgent.getAgentIsAll())) {
+				DhProcessMeta dhProcessMeta = new DhProcessMeta();
+				dhProcessMeta.setProName("所有流程");
+				List<DhProcessMeta> dhProcessMetaList = new ArrayList<>();
+				dhProcessMetaList.add(dhProcessMeta);
+				dhAgent.setDhProcessMetaList(dhProcessMetaList);
+			} else {
+				dhAgent.setDhProcessMetaList(queryDhProcessMetaByAgentId(dhAgent.getAgentId()));
+			}
 		}
-		log.info("查询所有代理数据结束...");
-		return null;
+		PageInfo<List<DhAgent>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+	
+	/**
+	 * 通过代理信息Id获得代理流程信息
+	 */
+	private List<DhProcessMeta> queryDhProcessMetaByAgentId(String agentId){
+		List<DhProcessMeta> dhProcessMetaList = new ArrayList<>();
+		for(DhAgentProInfo dhAgentProInfo:dhAgentMapper.queryDhAgentProInfoByAgentId(agentId)) {
+			DhProcessMeta dhProcessMeta = dhProcessMetaMapper
+					.queryByProAppIdAndProUid(dhAgentProInfo.getProAppId(), dhAgentProInfo.getProUid());
+			dhProcessMetaList.add(dhProcessMeta);
+		}
+		return dhProcessMetaList;
 	}
 
 	@Override
@@ -79,28 +103,8 @@ public class DhAgentServiceImpl implements DhAgentService {
 		return dhAgentMapper.save(agent);
 	}
 	
-	/**
-	 * 根据代理设置人或代理委托人查询 代理数据
-	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhAgent>>> selectByAgentPerson(String person, Integer pageNum, Integer pageSize) {
-		log.info("根据代理设置人或代理委托人查询 开始...");
-		try {
-			PageHelper.startPage(pageNum, pageSize);
-			List<DhAgent> resultList = dhAgentMapper.selectByAgentPerson(person);
-			PageInfo<List<DhAgent>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.info("根据代理设置人或代理委托人查询 结束...");
+	public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
 		return null;
 	}
-
-    @Override
-    public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
