@@ -22,9 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;

@@ -3,7 +3,7 @@ package com.desmart.desmartbpm.service;
 import java.util.List;
 import java.util.Map;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 
 public interface BpmActivityMetaService {

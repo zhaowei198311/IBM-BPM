@@ -1,19 +1,19 @@
 package com.desmart.desmartbpm.controller;
 
-import com.desmart.desmartbpm.entity.ZTreeNode;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
+import com.desmart.desmartbpm.entity.ZTreeNode;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.util.JsonUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/processCategory")

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.ZTreeNode;

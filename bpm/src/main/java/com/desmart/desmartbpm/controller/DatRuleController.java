@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;

@@ -1,6 +1,6 @@
 package com.desmart.desmartbpm.service;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 
 /**
  * 为引擎的团队过滤提供支持

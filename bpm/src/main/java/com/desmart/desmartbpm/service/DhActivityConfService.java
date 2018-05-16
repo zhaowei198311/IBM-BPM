@@ -1,7 +1,6 @@
 package com.desmart.desmartbpm.service;
 
-import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 
 public interface DhActivityConfService {

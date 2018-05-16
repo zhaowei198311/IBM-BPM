@@ -2,9 +2,7 @@ package com.desmart.desmartbpm.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.github.pagehelper.PageInfo;

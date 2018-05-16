@@ -7,11 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
@@ -19,7 +18,6 @@ import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhActivityConfService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
-import com.desmart.desmartbpm.service.impl.DhActivityConfServiceImpl;
 
 @Controller
 @RequestMapping(value = "/activityConf")

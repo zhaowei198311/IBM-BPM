@@ -2,8 +2,7 @@ package com.desmart.desmartbpm.service;
 
 import org.springframework.web.context.WebApplicationContext;
 
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartbpm.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhTrigger;
 
 public interface DhTriggerService {

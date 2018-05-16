@@ -1,14 +1,14 @@
 package com.desmart.desmartbpm.service;
 
-import com.desmart.desmartbpm.common.ServerResponse;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
-
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 public interface DhProcessDefinitionService {
 

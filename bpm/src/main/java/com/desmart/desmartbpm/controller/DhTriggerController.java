@@ -1,19 +1,14 @@
 package com.desmart.desmartbpm.controller;
 
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.entity.DhTrigger;
-import com.desmart.desmartbpm.service.DhTriggerService;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhTrigger;
+import com.desmart.desmartbpm.service.DhTriggerService;
 
 @Controller
 @RequestMapping(value = "/trigger")
