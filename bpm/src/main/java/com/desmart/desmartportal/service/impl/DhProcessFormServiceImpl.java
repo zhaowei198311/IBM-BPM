@@ -11,15 +11,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartbpm.common.ServerResponse;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 
