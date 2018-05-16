@@ -3,9 +3,10 @@ package com.desmart.desmartportal.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartportal.entity.DhInstanceDocument;
-
+@Repository
 public interface AccessoryFileUploadMapper {
 	/**
 	 * 循环新增附件数据
