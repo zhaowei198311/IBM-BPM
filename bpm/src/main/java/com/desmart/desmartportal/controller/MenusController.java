@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartportal.common.BpmStatus;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -27,7 +31,7 @@ import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
- * Title: 跳转WEB-INFO下jsp页面的 控制层
+ * Title: 跳转WEB-INFO下jsp页面的 控制层 带参
  * </p>
  * <p>
  * Description:
@@ -45,6 +49,9 @@ public class MenusController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
 	
 	@Autowired
 	private DhDraftsService dhDraftsService;
@@ -80,6 +87,9 @@ public class MenusController {
 			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
 			@RequestParam(value = "proName",required = false) String proName,
 			@RequestParam(value = "categoryName",required = false) String categoryName) {
+		
+		
+		
 		ModelAndView mv = new ModelAndView("desmartportal/process");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
@@ -88,6 +98,18 @@ public class MenusController {
 		mv.addObject("categoryName", categoryName);
 		System.err.println(proAppId);
 		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		// 找到当前环节
+		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+		bpmActivityMeta.setBpdId(proUid);
+		bpmActivityMeta.setProAppId(proAppId);
+		bpmActivityMeta.setSnapshotId(verUid);
+		bpmActivityMeta.setActivityType(BpmStatus.ACTIVITY_TYPE_START);
+		List<BpmActivityMeta> resultList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+		for (BpmActivityMeta bpmActivityMeta2 : resultList) {
+			mv.addObject("bpmActivity",bpmActivityMeta2);
+		}
+		// 
+		
 		// 表单详细信息设置
 		Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
 		mv.addObject("formId", resultMap.get("formId"));
