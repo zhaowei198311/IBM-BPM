@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.DhAgentMapper">
-	
-	<resultMap id="AgentMap" type="java.util.Map">
-		<result column="AGENT_ID" 				property="agentId"/>
-		<result column="AGENT_ODATE" 				property="agentOdate"/>
-		<result column="AGENT_OPERATOR" 				property="agentOperator"/>
-		<result column="AGENT_CLIENTELE" 			property="agentClientele"/>
-		<result column="AGENT_SDATE" 				property="agentSdate"/>
-		<result column="AGENT_EDATE"			property="agentEdate"/>
-		<result column="AGENT_STATUS" 			property="agentStatus"/>
-	</resultMap>
-	
-	<sql id="Base_Column_List">
-		AGENT_ID, AGENT_ODATE, AGENT_OPERATOR,
-		AGENT_CLIENTELE, AGENT_SDATE, AGENT_EDATE,AGENT_STATUS
+	<sql id="base_agent_column_List">
+		a.AGENT_ID, a.AGENT_ODATE, a.AGENT_OPERATOR,
+		a.AGENT_CLIENTELE, a.AGENT_SDATE, a.AGENT_EDATE,a.AGENT_STATUS,a.AGENT_IS_ALL
 	</sql>
 	
-	<select id="select" resultType="com.desmart.desmartportal.entity.DhAgent">
-		SELECT 
-		<include refid="Base_Column_List"/>
-		FROM
-		DH_AGENT_AGENTINFO
+	<sql id="base_agent_proinfo_column_List">
+		agent_proinfo_id,agent_id,pro_app_id,pro_uid
+	</sql>
+	
+	<sql id="insert_column_List">
+		AGENT_ID, AGENT_ODATE, AGENT_OPERATOR,
+		AGENT_CLIENTELE, AGENT_SDATE, AGENT_EDATE,AGENT_STATUS,AGENT_IS_ALL
+	</sql>
+	
+	<select id="selectAgentList" resultType="com.desmart.desmartportal.entity.DhAgent" parameterType="map">
+		select <include refid="base_agent_column_List"/>,u.user_name agentClienteleName
+		from dh_agent_agentinfo a left join sys_user u
+		on a.agent_clientele = u.user_uid
+		where a.agent_operator = #{currUser}
+	    <if test="person != null and !person.trim().isEmpty()">
+	    	and u.user_name like '%' || #{person} || '%' 
+	   	</if>
+	</select>
+	
+	<select id="queryDhAgentProInfoByAgentId" parameterType="String" resultType="com.desmart.desmartportal.entity.DhAgentProInfo">
+		select <include refid="base_agent_proinfo_column_List"/>
+		from dh_agent_proinfo
+		where agent_id = #{agentId}
 	</select>
 	
 	<delete id="deleteByAgentId" parameterType="java.lang.String">
@@ -32,22 +39,9 @@
 		</where>
 	</delete>
 	
-	<select id="selectByAgentPerson" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhAgent">
-		SELECT 
-		<include refid="Base_Column_List"/>
-		FROM
-		DH_AGENT_AGENTINFO
-		<where>
-			AGENT_OPERATOR like '%' || #{person} || '%' or AGENT_CLIENTELE like '%' || #{person} || '%'
-		</where>
-	</select>
-	
 	<insert id="save" parameterType="com.desmart.desmartportal.entity.DhAgent">
-		INSERT INTO
-		DH_AGENT_AGENTINFO
-		(<include refid="Base_Column_List"/>) 
-		VALUES
-		(
+		INSERT INTO DH_AGENT_AGENTINFO (<include refid="insert_column_List"/>) 
+		VALUES (
 			#{agentId},
 			#{agentOdate},
 			#{agentOperator},
@@ -57,7 +51,5 @@
 			#{agentStatus}
 		)
 	</insert>
-	
- 
 	
 </mapper>
