@@ -12,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartportal.util.SFTPUtil;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
@@ -66,7 +68,8 @@ public class AccessoryFileUploadController {
 			//String js=JSONObject.toJSONString(jsarr, SerializerFeature.WriteClassName);//将array数组转换成字符串  
 			//获取所有的文本框输入的值
 			/*List<DhInstanceDocument> dhInstanceDocuments = JSONObject.parseArray(js,DhInstanceDocument.class);*/
-			String currUserUid = "sa";
+			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			
 			//System.out.println(dhInstanceDocuments.size());
 			for (int i = 0; i < multipartFiles.length; i++) {
 			
@@ -120,7 +123,7 @@ public class AccessoryFileUploadController {
 				        	dhInstanceDocument.setDocVersion(0);//文件版本
 				        	dhInstanceDocument.setAppUid(appUid);
 				        	dhInstanceDocument.setTaskId(taskId);
-				        	dhInstanceDocument.setUserUid(currUserUid);
+				        	dhInstanceDocument.setUserUid(creator);
 				        	dhInstanceDocument.setAppDocType(file.getContentType());
 				        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 							dhInstanceDocument.setAppDocIndex(i+1);
