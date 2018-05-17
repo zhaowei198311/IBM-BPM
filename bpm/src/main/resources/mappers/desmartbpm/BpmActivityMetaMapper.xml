@@ -313,7 +313,7 @@
 		and a2.pro_app_id = #{proAppIdNew}
     </select>
     
-    <select id="getActivityIdByIdAndName" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    <select id="getActivityIdByIdAndName" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta" parameterType="java.util.Map">
     	select 
     	<include refid="Base_Column_List" />
     	from 	BPM_ACTIVITY_META
@@ -323,7 +323,7 @@
     	and PRO_APP_ID = #{proAppId}
     </select>
     
-    <select id="getActivityIdByIds" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    <select id="getActivityIdByIds" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta" parameterType="java.util.Map">
     	select 
     	<include refid="Base_Column_List" />
     	from 	BPM_ACTIVITY_META
