@@ -33,7 +33,14 @@ import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
+import com.desmart.desmartsystem.dao.SysTeamMapper;
+import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysRoleUser;
+import com.desmart.desmartsystem.entity.SysTeamMember;
+import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.service.SysTeamMemberService;
+import com.desmart.desmartsystem.service.SysUserService;
 import com.desmart.desmartsystem.util.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.github.pagehelper.PageInfo;
@@ -74,6 +81,11 @@ public class MenusController {
 	 @Autowired
      SysRoleUserMapper sysRoleUserMapper;
 	 
+	 @Autowired
+	 SysUserMapper sysUserMapper;
+	 
+	 @Autowired
+	 SysTeamMemberMapper sysTeamMemberMapper;
 	 
 
 	@RequestMapping("/index")
@@ -167,7 +179,8 @@ public class MenusController {
 	          
 	          switch (assignTypeEnum) {
 	          case ROLE:
-	        	  //获取角色下的用户;号分割
+	          case ROLE_AND_DEPARTMENT:
+	          case ROLE_AND_COMPANY:
 	        	  SysRoleUser roleUser= new SysRoleUser();
 	        	  roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
 	        	  List<SysRoleUser> roleUsers=sysRoleUserMapper.selectByRoleUser(roleUser);
@@ -175,31 +188,28 @@ public class MenusController {
 	        		  userUid+=sysRoleUser.getUserUid()+";";
 	        		  userName+=sysRoleUser.getUserName()+";";
 	        	  }
-	        	  break; 
-	          case ROLE_AND_DEPARTMENT:
-	        	  //获取角色下的部门
-	        	  
-	        	  
-	        	  
-	        	  break;
-	          case ROLE_AND_COMPANY:
-	        	  for (String string : idList) {
-	        		  System.out.println(string);
-	        	  }
 	              break;
 	          case TEAM:
 	          case TEAM_AND_DEPARTMENT:
 	          case TEAM_AND_COMPANY:
-	        	  for (String string : idList) {
-	        		  System.out.println(string);
-	        	  }
+	        	  SysTeamMember sysTeamMember=new SysTeamMember();
+	        	  sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
+	        	  
+	        	  List<SysTeamMember>  sysTeamMembers=sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+	        	  for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
+	        		  userUid+=sysTeamMember2.getUserUid()+";";
+	        		  userName+=sysTeamMember2.getUserName()+";";
+				  }
+	        	  
 	              break;
 	          case LEADER_OF_PRE_ACTIVITY_USER:
 	              
 	              break;
 	          case USERS:
-	        	  for (String string : idList) {
-	        		  System.out.println(string);
+	        	  List<SysUser> users=sysUserMapper.listByPrimaryKeyList(idList);
+	        	  for (SysUser sysUser : users) {
+	        		  userUid+=sysUser.getUserUid()+";";
+	        		  userName+=sysUser.getUserName()+";";
 	        	  }
 	              break;
 	          case PROCESS_CREATOR:
