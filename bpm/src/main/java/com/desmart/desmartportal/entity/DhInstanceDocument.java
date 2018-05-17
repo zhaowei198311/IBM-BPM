@@ -1,5 +1,6 @@
 package com.desmart.desmartportal.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class DhInstanceDocument {
@@ -82,7 +83,7 @@ public class DhInstanceDocument {
 	public Date getAppDocCreateDate() {
 		return appDocCreateDate;
 	}
-	public void setAppDocCreateDate(Date appDocCreateDate) {
+	public void setAppDocCreateDate(Timestamp appDocCreateDate) {
 		this.appDocCreateDate = appDocCreateDate;
 	}
 	public Integer getAppDocIndex() {

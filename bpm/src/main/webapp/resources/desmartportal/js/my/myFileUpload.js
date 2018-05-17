@@ -273,8 +273,8 @@ function deleteAccessoryFile(a){
 			appDocUid:appDocUid
 			},
 		success : function(data) {
-			layer.alert(data.msg);
 			loadFileList();
+			layer.alert(data.msg);
 		  },
 		error : function(data) {
 			layer.alert(data.msg);
