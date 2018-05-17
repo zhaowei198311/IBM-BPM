@@ -233,6 +233,12 @@
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	<script>
 	function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
+		console.log(actcCanChooseUser);
+		if(actcCanChooseUser=='FALSE'){
+			layer.alert('没有配置可选处理人!');
+			return false;
+		}
+		
 		var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
 		layer.open({
 		     type: 2,
