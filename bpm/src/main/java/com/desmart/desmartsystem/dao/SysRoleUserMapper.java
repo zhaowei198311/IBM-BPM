@@ -24,4 +24,8 @@ public interface SysRoleUserMapper {
     
     
     List<SysRoleUser> selectAll(SysRoleUser entity);
+    
+    
+    //查询角色下的用户用;号分割
+    List<SysRoleUser> selectByRoleUser(SysRoleUser entity);
 }
