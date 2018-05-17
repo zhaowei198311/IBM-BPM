@@ -6,7 +6,9 @@ package com.desmart.desmartportal.service;
 import java.util.List;
 import java.util.Map;
 
+import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.github.pagehelper.PageInfo;
 
 /**  
 * <p>Title: 流程实例Service</p>  
@@ -16,9 +18,9 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 */
 public interface DhProcessInstanceService {
 	
-	List <DhProcessInstance> selectAllProcess(DhProcessInstance processInstance);
+	ServerResponse<PageInfo<List<DhProcessInstance>>> selectAllProcess(DhProcessInstance processInstance,Integer pageNum, Integer pageSize);
 	
-	List <DhProcessInstance> selectByPrimaryKey(String insUid);
+	ServerResponse<PageInfo<List<DhProcessInstance>>> selectByPrimaryKey(String insUid,Integer pageNum, Integer pageSize);
 	
 	int updateByPrimaryKey(String insUid);
 	
@@ -26,7 +28,7 @@ public interface DhProcessInstanceService {
 	
 	void insertProcess(DhProcessInstance processInstance);
 	
-	List <DhProcessInstance> selectProcessByUserAndType(DhProcessInstance processInstance);
+	ServerResponse<PageInfo<List<DhProcessInstance>>> selectProcessByUserAndType(DhProcessInstance processInstance,Integer pageNum, Integer pageSize);
 	
-	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
+	ServerResponse<PageInfo<List<DhProcessInstance>>> queryByStausOrTitle(Map<String, Object> paramMap,Integer pageNum, Integer pageSize);
 }

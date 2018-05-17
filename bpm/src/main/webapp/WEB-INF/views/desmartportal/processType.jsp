@@ -121,14 +121,32 @@
 	
 	function getProcessInfo() {
 		$.ajax({
-			url : 'process/queryProcessByActive',
+			url : 'processInstance/queryProcessByActive',
 			type : 'POST',
 			dataType : 'json',
 			data : {
 				pageNum : pageConfig.pageNum,
-				pageSize : pageConfig.pageSize,
+				pageSize : pageConfig.pageSize
 			},
 			success : function(result) {
+				drawTable(result.data)
+			}
+		})
+	}
+	
+	function queryProcess(){
+		var processName = $('#processName').val();
+		var processType = $('#processType').val();
+		// 按条件查询 流程
+		$.ajax({
+			url : 'processInstance/queryProcessByUserAndType',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				insTitle : processName,
+				insStatusId : processType
+			},
+			success : function(result){
 				drawTable(result.data)
 			}
 		})
@@ -141,6 +159,7 @@
 		doPage();
 		// 渲染数据
 		$("#processType_table_tbody").html('');
+		alert(pageInfo.total)
 		if (pageInfo.total == 0) {
 			return;
 		}
@@ -196,23 +215,6 @@
 		});
 	}
 	
-	function queryProcess(){
-		var processName = $('#processName').val();
-		var processType = $('#processType').val();
-		// 按条件查询 流程
-		$.ajax({
-			url : 'process/queryProcessByUserAndType',
-			type : 'post',
-			dataType : 'json',
-			data : {
-				insTitle : processName,
-				insStatusId : processType
-			},
-			success : function(result){
-				drawTable(result.data)
-			}
-		})
-	}
 	
 	function startProcess() {
 		var proUid = $('#proUid').val();
