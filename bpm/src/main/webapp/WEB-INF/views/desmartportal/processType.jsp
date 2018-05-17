@@ -158,7 +158,7 @@
 		doPage();
 		// 渲染数据
 		$("#processType_table_tbody").html('');
-		alert('伟哥无敌！！！！！')
+		alert('伟哥无敌！！！！！');
 		if (pageInfo.total == 0) {
 			return;
 		}
