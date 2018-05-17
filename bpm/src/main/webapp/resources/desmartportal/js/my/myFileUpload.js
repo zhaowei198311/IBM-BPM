@@ -1,177 +1,10 @@
 var form = null;
 /* 动态表单渲染js */
 $(function(){
-	console.log($("[name='test_name']").prop("id"));
-	var tableHead = '<table class="layui-table">'
-				+'<colgroup>'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'<col width="">'
-				+'</colgroup>'
-				+'<tbody>';
-	var formHtml = tableHead;
-	var view = $(".container-fluid");
-	view.addClass("layui-form");
-	var rowObj = view.find(".row-fluid");
-	rowObj.each(function(){
-		var colObj = $(this).find(".column");
-		formHtml += '<tr>';
-		for(var i=0;i<colObj.length;i++){
-			var column = $(colObj[i]);
-			if(column.find(".subDiv").length==0 && column.find(".labelDiv").length==0){
-				column.find("p").addClass("title_p");
-				pHtml = column.html();
-				if(column.find("p").length!=0){
-					formHtml = formHtml.substring(0,formHtml.length-4);
-					formHtml += "</tbody></table>";
-					formHtml += pHtml;
-					formHtml += tableHead;
-				}else{
-					continue;
-				}
-			}else{
-				var labelDivObj = column.find(".labelDiv");
-				var labelDivCol = $(labelDivObj).attr("col");
-				var subDivObj = column.find(".subDiv");
-				var subDivCol = $(subDivObj).attr("col");
-				
-				labelDivObj.find("span").addClass("tip_span");
-				
-				var labelHtml = "";
-				var subHtml = "";
-				if($(labelDivObj).next().find(".editor_textarea").length==1){
-					formHtml = formHtml.substring(0,formHtml.length-4);
-					formHtml += "</tbody></table>";
-					labelHtml = "<p class='title_p'>"+$(labelDivObj).text()+"</p>";
-					subHtml = "<div class='layui-form'>"+$(subDivObj).html()+"</div>";
-					formHtml += labelHtml;
-					formHtml += subHtml;
-					continue;
-				}else{
-					labelHtml = $(labelDivObj).html();
-					var labelText = $(labelDivObj).text();
-					if(subDivObj.find("label").length==0){
-						if($(subDivObj).next().prop("class")=="hidden-value"){
-							subHtml = $(subDivObj).html()+$(subDivObj).next().html();
-						}else{
-							subHtml = $(subDivObj).html();
-						}
-					}else if(subDivObj.find("label").length==1){
-						subHtml = $(subDivObj).find("label").html();
-					}else{
-						subDivObj.find("label").each(function(){
-							var title = $(this).text();
-							$(this).find("input").prop("title",title);
-							$(this).html($(this).find("input"));
-							subHtml += $(this).html();
-						});
-					}
-					
-					if(!isNaN(labelDivCol)){
-						formHtml += '<td class="td_title" colspan='+labelDivCol+'>'+labelHtml+'</td>';
-					}
-					
-					if(!isNaN(subDivCol)){
-						formHtml += '<td colspan='+subDivCol+' data-label="'+labelText+'">'+subHtml+'</td>';
-					}
-				}// end if editor
-			}// end if column
-		}// end for
-		formHtml += "</tr>";
-	});
-	formHtml += "</tbody></table>";
-	view.html(formHtml);
-	if(view.find(".layui-table").width()>568){
-		var colWidth = view.find(".layui-table").width()/12;
-		view.find("col").css("width",colWidth);
-	}
-	view.css("display","block");
-
-	view.find("input[type='tel']").desNumber();
-	
-	layui.use(['form', 'layedit', 'laydate'], function(){
-		  form = layui.form
-		  ,layer = layui.layer
-		  ,layedit = layui.layedit
-		  ,laydate = layui.laydate;
-		  
-		  form.render();
-		  
-		  view.find("input[type='text']").each(function(){
-			  $(this).blur(function(){
-				  if($(this).attr("regx")!=null && $(this).attr("regx")!=""
-					&& $(this).val()!=null && $(this).val()!=""){
-					  reg = new RegExp($(this).attr("regx"),"g");
-					  if(!reg.test($(this).val())){
-						  var regxCue = $(this).attr("regxCue");
-						  if(regxCue!=null && regxCue!=""){
-							  layer.msg(regxCue,{icon:2});
-						  }else{
-							  layer.msg("输入框的值与正则表达式不匹配",{icon:2});
-						  }
-					  }
-				  }// end if
-			  });
-		  });
-		  
-		  view.find(".editor_textarea").each(function(){
-			  var editorId = $(this).prop("id");
-			  var editor = layedit.build(editorId, {
-					  tool: [
-						  'strong' // 加粗
-						  ,'italic' // 斜体
-						  ,'underline' // 下划线
-						  ,'del' // 删除线
-						  
-						  ,'|' // 分割线
-						  
-						  ,'left' // 左对齐
-						  ,'center' // 居中对齐
-						  ,'right' // 右对齐
-						],
-						height: 100
-			  });
-		  });
-		  
-		  var dateInput = view.find(".date");
-		  dateInput.each(function(){
-			  dateInput.prop("readonly",true);
-			  var dateInputId = $(this).prop("id");
-			  // 日期
-			  laydate.render({
-			    elem: '#'+dateInputId
-			    ,trigger: 'click'
-			  });
-		  });
-	});
-	
-	/*var loadBtn = view.find(".file");
-	loadBtn.each(function(){
-		var modelHtml = $("#file_load_hide").html();
-		view.append(modelHtml);
-		view.find(".model").prop("id",$(this).prop("id")+"Model").removeClass("model");
-		$("#"+$(this).prop("id")+"Model").find(".layui-upload-drag").prop("id",$(this).prop("id")+"Drag");
-		$("#"+$(this).prop("id")+"Model").find(".listAction").prop("id",$(this).prop("id")+"Btn");
-		
-		$(this).click(function(){
-			$("#"+$(this).prop("id")+"Model").css("display","block");
-		});
-	});*/
-	
 	$("#upload-file").click(function(){
 		$("#upload_file_modal").css("display","block");
 	});
 	
-	//var uploadModels = new Array();
 	layui.use('upload', function(){
 		  var $ = layui.jquery
 		  ,upload = layui.upload;
@@ -259,7 +92,7 @@ $(function(){
 			            layer.closeAll('loading');
 			          });
 			        }
-			  		,before: function(obj){ //上传之前的回调函数
+			  		,before: function(obj){ // 上传之前的回调函数
 			  			var uploadModels = new Array();
 			  			var trs = demoListView.children();
 			  			trs.each(function(i){
@@ -272,17 +105,13 @@ $(function(){
 						    		+'","appDocTags":"'+appDocTags+'"}';
 						    uploadModels.push(uploadModel);   
 			        	});
-		    		/*,data:{
-				    	appDocTitle:"测试"
-				    	,appDocComment:"测试"
-				    	,appUid:"测试"
-				    	,taskId:"1"
-						,userUid:"测试"
-						,appDocTags:appDocTags
-				    }*/
+		    		/*
+					 * ,data:{ appDocTitle:"测试" ,appDocComment:"测试" ,appUid:"测试"
+					 * ,taskId:"1" ,userUid:"测试" ,appDocTags:appDocTags }
+					 */
 	        	      this.data = {appUid:"测试"
 					    	,taskId:"1",uploadModels:'{"uploadModels":['+uploadModels+']}'};
-		    		//this.data = {uploadModels:uploadModels.toString()};
+		    		// this.data = {uploadModels:uploadModels.toString()};
 			  		}
 
 			        ,done: function(res, index, upload){
@@ -319,61 +148,66 @@ $(function(){
 			        }
 			  });
 			  
-			/*  document.getElementById(dragId).addEventListener("dragenter", function(e){ 
+			  dragDiv.get(0).addEventListener("dragenter", function(e){ 
 				    e.stopPropagation(); 
 				    e.preventDefault(); 
 				}, false);  
-			  document.getElementById(dragId).addEventListener("dragover", function(e){ 
+			  /* document.getElementById(dragId) */
+			  dragDiv.get(0).addEventListener("dragover", function(e){ 
 				    e.stopPropagation(); 
 				    e.preventDefault(); 
 				}, false); 
-			  document.getElementById(dragId).addEventListener("drop", function(e){ 
+			  dragDiv.get(0).addEventListener("drop", function(e){ 
 				    e.stopPropagation(); 
 				    e.preventDefault(); 
 				}, false);
-*/
+
 	});
 	
 	loadFileList();
-	//全选
-	/*$("#all-file-check").click(function(){
-		var checkeNodes= $(".layui-table.upload-file-table").find(".file-check");
-		checkeNodes.prop("checked",$(this).prop("checked"));
-	});
-	*/
+	// 全选
+	/*
+	 * $("#all-file-check").click(function(){ var checkeNodes=
+	 * $(".layui-table.upload-file-table").find(".file-check");
+	 * checkeNodes.prop("checked",$(this).prop("checked")); });
+	 */
 });
-//反选
-/*function invertSelection(a){
-	var checkeNodes= $(".layui-table.upload-file-table").find(".file-check");
-	var checkedNodes= $(".layui-table.upload-file-table").find(".file-check:checked");
-	if(checkedNodes.length==checkeNodes.length){
-		$("#all-file-check").prop("checked",$(a).prop("checked"));
-	}else if(checkedNodes.length==0){
-		$("#all-file-check").prop("checked",false);
-	}
-};*/
-//加载已上传的文件列表
+// 反选
+/*
+ * function invertSelection(a){ var checkeNodes=
+ * $(".layui-table.upload-file-table").find(".file-check"); var checkedNodes=
+ * $(".layui-table.upload-file-table").find(".file-check:checked");
+ * if(checkedNodes.length==checkeNodes.length){
+ * $("#all-file-check").prop("checked",$(a).prop("checked")); }else
+ * if(checkedNodes.length==0){ $("#all-file-check").prop("checked",false); } };
+ */
+// 加载已上传的文件列表
 function loadFileList(){
 	$.post('accessoryFileUpload/loadFileList.do'
 		,{"appUid":"测试"}
 		,function(result){
 		var tagTbody = $(".layui-table.upload-file-table").find("tbody");
 		tagTbody.empty();
-		/*<input onclick='invertSelection(this)' class='file-check' type='checkbox'>*/
+		/*
+		 * <input onclick='invertSelection(this)' class='file-check'
+		 * type='checkbox'>
+		 */
 		for (var i = 0; i < result.data.length; i++) {
 			var info = "<tr>"
 		      +"<td>"
 		      +"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
 		      +(i+1)+"</td>"
 		      +"<td>"+result.data[i].appDocFileName+"</td>"		
-		      +"<td>"+result.data[i].appDocTags+"</td>"	
-		      +"<td>"+result.data[i].appDocTitle+"</td>"	
+		     /*
+				 * +"<td>"+result.data[i].appDocTags+"</td>" +"<td>"+result.data[i].appDocTitle+"</td>"
+				 */
 		      +"<td>"+result.data[i].appDocComment+"</td>"	
 		      +"<td>"+result.data[i].appDocType+"</td>"			      
 		      +"<td>"+result.data[i].appUserName+"</td>"	
-		      +"<td>"+result.data[i].appDocCreateDate+"</td>"	
+		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
-		      +"<button class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
+		      +"<button onclick='deleteAccessoryFile(this)'" +
+		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
 		      +"</td></tr>"; 
 			tagTbody.append(info);
@@ -386,20 +220,19 @@ function cancelClick(obj){
 	$("#upload_file_modal").css("display","none");
 }
 
-//批量下载触发事件
-/*function batchDown(){
-  var url = "accessoryFileUpload/batchFileDown.do";
-  var checkedNodes= $(".layui-table.upload-file-table").find(".file-check:checked");
-  checkedNodes.each(function (){
-	  var appDocFileName = $(this).parent().parent().find("td").eq(1).text();
-	  var appDocFileUrl = $(this).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
-	  var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl};
-  });
- // post(url,);
-};
-*/
+// 批量下载触发事件
+/*
+ * function batchDown(){ var url = "accessoryFileUpload/batchFileDown.do"; var
+ * checkedNodes=
+ * $(".layui-table.upload-file-table").find(".file-check:checked");
+ * checkedNodes.each(function (){ var appDocFileName =
+ * $(this).parent().parent().find("td").eq(1).text(); var appDocFileUrl =
+ * $(this).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
+ * var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl}; }); //
+ * post(url,); };
+ */
 
-//单个下载触发事件
+// 单个下载触发事件
 function singleDown(a){
   var url = "accessoryFileUpload/singleFileDown.do";
   var appDocFileName = $(a).parent().parent().find("td").eq(1).text();
@@ -407,11 +240,11 @@ function singleDown(a){
   post(url,{appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl});
 };
 
-//文件下载
+// 文件下载
 function post(URL, PARAMS) { 
 	var temp_form = document.createElement("form");      
 	temp_form .action = URL;      
-	//temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+	// temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
 	temp_form .method = "post";      
 	temp_form .style.display = "none"; 
 	for (var x in PARAMS) { 
@@ -424,45 +257,87 @@ function post(URL, PARAMS) {
 	temp_form .submit();     
 } 
 
-// 只能输入数字
-jQuery.fn.desNumber = function() {
-	this.bind("keypress", function(e) {
-		var code = (e.keyCode ? e.keyCode : e.which); // 兼容火狐 IE
-		// 火狐下不能使用退格键
-		if (e.keyCode == 0x8) {
-			return;
-		}
-		if (this.value.indexOf(".") == -1) {
-			return (code >= 48 && code <= 57) || (code == 46);
-		} else {
-			return code >= 48 && code <= 57
-		}
-	});
-	this.bind("paste", function() {
-		return false;
-	});
-	this.bind("keyup", function() {
-		if (this.value.slice(0, 1) == ".") {
-			this.value = "";
-		}
-	});
-	this.bind("blur", function() {
-		if (this.value.slice(-1) == ".") {
-			this.value = this.value.slice(0, this.value.length - 1);
-		}
-	});
-}; 
-
-jQuery.fn.number = function() {
-	this.bind("keypress", function(e) {
-		var code = (e.keyCode ? e.keyCode : e.which); // 兼容火狐 IE
-		// 火狐下不能使用退格键
-		if (e.keyCode == 0x8) {
-			return;
-		}
-		return code >= 48 && code <= 57
-	});
-	this.bind("paste", function() {
-		return false;
-	});
-}; 
+// 删除附件触发事件
+function deleteAccessoryFile(a){
+	layer.confirm('确认删除？', {
+		  btn: ['确定', '取消'] 
+		}, function(index, layero){
+	var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
+    var appDocUid = $(a).val();
+    	$.ajax({
+    		url : "accessoryFileUpload/deleteAccessoryFile.do",
+    		type : 'POST',
+    		dataType : 'json',
+    		data : {
+			appDocFileUrl:appDocFileUrl,
+			appDocUid:appDocUid
+			},
+		success : function(data) {
+			layer.alert(data.msg);
+			loadFileList();
+		  },
+		error : function(data) {
+			layer.alert(data.msg);
+		  }
+     });
+		}, function(index){
+			 layer.close(index)
+		});
+}
+function datetimeFormat_1(longTypeDate){  
+    var datetimeType = "";  
+    var date = new Date();  
+    date.setTime(longTypeDate);  
+    datetimeType+= date.getFullYear();   //年  
+    datetimeType+= "-" + getMonth(date); //月   
+    datetimeType += "-" + getDay(date);   //日  
+    datetimeType+= "&nbsp;&nbsp;" + getHours(date);   //时  
+    datetimeType+= ":" + getMinutes(date);      //分
+    datetimeType+= ":" + getSeconds(date);      //分
+    return datetimeType;
+} 
+//返回 01-12 的月份值   
+function getMonth(date){  
+    var month = "";  
+    month = date.getMonth() + 1; //getMonth()得到的月份是0-11  
+    if(month<10){  
+        month = "0" + month;  
+    }  
+    return month;  
+}  
+//返回01-30的日期  
+function getDay(date){  
+    var day = "";  
+    day = date.getDate();  
+    if(day<10){  
+        day = "0" + day;  
+    }  
+    return day;  
+}
+//返回小时
+function getHours(date){
+    var hours = "";
+    hours = date.getHours();
+    if(hours<10){  
+        hours = "0" + hours;  
+    }  
+    return hours;  
+}
+//返回分
+function getMinutes(date){
+    var minute = "";
+    minute = date.getMinutes();
+    if(minute<10){  
+        minute = "0" + minute;  
+    }  
+    return minute;  
+}
+//返回秒
+function getSeconds(date){
+    var second = "";
+    second = date.getSeconds();
+    if(second<10){  
+        second = "0" + second;  
+    }  
+    return second;  
+}

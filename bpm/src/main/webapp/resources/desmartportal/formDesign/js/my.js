@@ -325,7 +325,7 @@ function drawPage() {
         });
     });
 
-    var loadBtn = view.find(".file");
+    /*var loadBtn = view.find(".file");
     loadBtn.each(function () {
         var modelHtml = $("#file_load_hide").html();
         view.append(modelHtml);
@@ -447,7 +447,7 @@ function drawPage() {
                 e.preventDefault();
             }, false);
         });
-    });
+    });*/
 }
 
 function addDataRow(obj){
@@ -479,11 +479,6 @@ function removeDataRow(obj){
 	if($(obj).parent().parent().parent().find("tr").length>1){
 		$(obj).parent().parent().remove();
 	}
-}
-
-//隐藏上传文件的模态框
-function cancelClick(obj){
-	$(obj).parent().parent().parent().css("display","none");
 }
 
 // 只能输入数字

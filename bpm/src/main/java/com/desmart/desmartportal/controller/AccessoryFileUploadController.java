@@ -194,6 +194,23 @@ public class AccessoryFileUploadController {
 			}
 		}
 	}
+	
+	@RequestMapping("deleteAccessoryFile.do")
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
+		String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
+	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
+	    		,  dhInstanceDocument.getAppDocFileUrl().length());
+	    SFTPUtil sftp = new SFTPUtil();
+	    
+	    if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
+	    {
+	    	int count = accessoryFileUploadServiceImpl.deleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
+	    	
+	    	return ServerResponse.createBySuccessMessage("删除成功！");
+	    }else {
+	    	return ServerResponse.createByErrorMessage("删除失败！");
+	    }
+	}
 	/*
 	@RequestMapping("bachFileDown.do")
 	public void batchFileDown(List<DhInstanceDocument> dhInstanceDocuments) {

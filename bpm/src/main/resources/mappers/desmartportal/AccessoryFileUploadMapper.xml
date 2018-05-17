@@ -30,7 +30,10 @@
    <select id="loadFileListByCondition" 
    parameterType="com.desmart.desmartportal.entity.DhInstanceDocument"
    resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
-   select did.*,su.user_name as appUserName from dh_instance_document did left join sys_user su 
+   select did.app_Doc_Uid,did.app_Doc_FileName,did.app_Doc_FileUrl,did.app_Doc_Title,
+   did.app_Doc_Comment,did.doc_Version,did.app_Uid,did.task_id,did.user_uid,did.app_doc_Type
+   ,did.app_doc_Create_Date,did.app_doc_index,did.app_doc_tags,did.app_doc_status
+   ,su.user_name as appUserName from dh_instance_document did left join sys_user su 
    on did.APP_UID = su.USER_UID 
    where 1 = 1
    <if test="appUid != null and appUid != '' ">

@@ -308,8 +308,6 @@
 									    <col width="75">
 									    <col>
 									    <col>
-									    <col>
-									    <col>
 									    <col> 
 									    <col>
 									    <col>
@@ -319,8 +317,6 @@
 									    <tr>
 									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
 									      <th>附件名称</th>
-									      <th>附件标签</th>
-									      <th>附件标题</th>
 									      <th>附件说明</th>
 									      <th>附件类型</th>
 									      <th>上传人</th>
