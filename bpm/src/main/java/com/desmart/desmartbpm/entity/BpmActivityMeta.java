@@ -49,6 +49,9 @@ public class BpmActivityMeta implements Serializable {
     // 不在表中
     private DhActivityConf dhActivityConf;
     
+    private String userUid;//环节下的用户id
+    private String userName;//环节下的用户名
+    
     public BpmActivityMeta(){
         
     }
@@ -301,9 +304,30 @@ public class BpmActivityMeta implements Serializable {
     public void setSortNum(Integer sortNum) {
         this.sortNum = sortNum;
     }
+    
 
 
-    @Override
+    public String getUserUid() {
+		return userUid;
+	}
+
+
+	public void setUserUid(String userUid) {
+		this.userUid = userUid;
+	}
+
+
+	public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+
+	@Override
     public String toString() {
         return "BpmActivityMeta [activityId=" + activityId + ", noteType="
                 + noteType + ", createTime=" + createTime + ", creator="
