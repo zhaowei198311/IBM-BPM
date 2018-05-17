@@ -96,10 +96,12 @@
 		var actcCanChooseUser=assignPersonnel.actcCanChooseUser;
 		var actcAssignType=assignPersonnel.actcAssignType;
 		$(function(){
-			if(actcCanChooseUser=='show'){
+			if(actcAssignType=='allUsers'){
 				$('#treeDemo').show();
-			}else if(actcCanChooseUser=='hide'){
+				$('.query_user').show();
+			}else{
 				$('#treeDemo').hide();
+				$('.query_user').hide();
 			}
 			var url='sysDepartment/treeDisplay';
 			//tree展示
@@ -139,26 +141,31 @@
 				}
 			}
 			
-			if(actcAssignType=='users'||actcAssignType=='leaderOfPreActivityUser'||actcAssignType=='processCreator'){//直接传递用户
+			if(actcAssignType!='allUsers'){
 				$.ajax({
 					type:'post',
-					url:'sysUser/userByIds',
-					data:{userIds:assignPersonnel.userIds},
+					url:'menus/choosableHandler',
+					data:{activityUid:elementId},
 					dataType:'json',
 					success: function (data){
 						var $ul=$("#usersul");
 						user_add_li(data,$ul);
 					}
 				});	
-			}else if(actcAssignType=='allUsers'){//全部用户
-				$('#treeDemo').show();
 			}
 			
 		})
 	
 		
 		function delete_user(){
-			$("#user_add .colorli").remove();
+			$("#user_add .colorli").each(function(){
+				//console.log(this);
+				var actccanchooseuser=$(this).attr('actccanchooseuser');
+				if(actccanchooseuser==''){
+					$(this).remove();
+				}
+			});
+			//$("#user_add .colorli").remove();
 		}
 	
 	
@@ -199,7 +206,7 @@
 			$("#usersul").empty();
 			$(data).each(function(index){
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'"  onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				str+='<li type="hidden" value="'+this.userUid+'" actcCanChooseUser="true"  onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
 				$ul.append(str);
 			});
 		};
@@ -220,7 +227,7 @@
 					var name=$userLi.text();
 					if($.inArray(userUid, userids)==-1){
 						var str='';
-						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
+						str+="<li value='"+userUid+"' actcCanChooseUser='"+actcCanChooseUser+"' onclick='selectClick(this);'>"+name;
 						str+="</li>";
 						$("#user_add").append(str);
 					}
