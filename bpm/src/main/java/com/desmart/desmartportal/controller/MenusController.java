@@ -294,4 +294,10 @@ public class MenusController {
 		mv.addObject("formId", resultMap.get("formId"));
 		return mv;
 	}
+	
+	@RequestMapping("approval")
+	public ModelAndView approval() {
+		ModelAndView mv = new ModelAndView("desmartportal/approval");
+		return mv;
+	}
 }
