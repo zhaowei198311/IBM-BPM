@@ -63,4 +63,7 @@ public interface BpmActivityMetaMapper {
      * @throws
      */
     BpmActivityMeta getActivityIdByIdAndName(Map<String, Object> param);
+    
+    
+    BpmActivityMeta getActivityIdByIds(Map<String, Object> param);
 }

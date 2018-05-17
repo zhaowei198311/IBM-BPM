@@ -40,4 +40,14 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	int insertBatch(List<DhTaskInstance> list);
+	
+	/**
+	 * 给任务设置变量
+	 */
+	public void queryTaskSetVariable(String activityId,String tkkid);
+	
+	/**
+	 * 完成任务
+	 */
+	public void perform(String tkkid);
 }
