@@ -36,7 +36,7 @@
 			.display_content_accessory_file {
     			color: #717171;
    				padding: 20px;
-    			width: 94.5%;
+				width: 85%;
     			height: 500px;
     			background: #fff;
     			position: fixed;;
