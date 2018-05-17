@@ -46,6 +46,12 @@
       </if>
   </select>
   
+  <select id="selectByRoleUser" resultType="com.desmart.desmartsystem.entity.SysRoleUser" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
+  		SELECT  r.ROLE_UID as roleUid,listagg(u.USER_NAME,';') within group(order by u.USER_NAME) as userName,listagg(u.USER_UID,',') within group(order by u.USER_UID) as userUid from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID
+  		where role_uid in (${roleUid})
+  		 GROUP BY r.ROLE_UID
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_ROLE_USER
     where USER_UID = #{userUid,jdbcType=VARCHAR}
