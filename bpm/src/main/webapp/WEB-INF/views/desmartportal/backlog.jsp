@@ -111,6 +111,43 @@
 		total : 0
 	}
 	
+	layui.use([ 'laypage', 'layer' ], function() {
+		var laypage = layui.laypage, layer = layui.layer;
+		//完整功能
+		laypage.render({
+			elem : 'lay_page',
+			count : 50,
+			limit : 10,
+			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+			jump : function(obj) {
+				console.log(obj)
+			}
+		});
+	});
+	
+	// 分页
+	function doPage() {
+		layui.use([ 'laypage', 'layer' ], function() {
+			var laypage = layui.laypage, layer = layui.layer;
+			//完整功能
+			laypage.render({
+				elem : 'lay_page',
+				curr : pageConfig.pageNum,
+				count : pageConfig.total,
+				limit : pageConfig.pageSize,
+				layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+				jump : function(obj, first) {
+					// obj包含了当前分页的所有参数  
+					pageConfig.pageNum = obj.curr;
+					pageConfig.pageSize = obj.limit;
+					if (!first) {
+						getTaskInstanceInfo();
+					}
+				}
+			});
+		});
+	}
+	
 		layui.use('laydate', function(){
 			var laydate = layui.laydate;
 			  	laydate.render({
@@ -197,27 +234,5 @@
 
 		}
 		
-		// 分页
-		function doPage() {
-			layui.use([ 'laypage', 'layer' ], function() {
-				var laypage = layui.laypage, layer = layui.layer;
-				//完整功能
-				laypage.render({
-					elem : 'lay_page',
-					curr : pageConfig.pageNum,
-					count : pageConfig.total,
-					limit : pageConfig.pageSize,
-					layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
-					jump : function(obj, first) {
-						// obj包含了当前分页的所有参数  
-						pageConfig.pageNum = obj.curr;
-						pageConfig.pageSize = obj.limit;
-						if (!first) {
-							getInterfaceInfo();
-						}
-					}
-				});
-			});
-		}
 		
 	</script>

@@ -189,7 +189,7 @@
 					pageConfig.pageNum = obj.curr;
 					pageConfig.pageSize = obj.limit;
 					if (!first) {
-						getDraftsInfo();
+						getProcessInfo();
 					}
 				}
 			});
