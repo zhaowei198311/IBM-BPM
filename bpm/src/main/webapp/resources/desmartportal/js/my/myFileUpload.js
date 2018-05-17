@@ -60,10 +60,10 @@ $(function(){
 			            var tr = $(['<tr id="upload-'+ index +'">'
 			              ,'<td>'+ file.name +'</td>'
 			              ,'<td>'+ (file.size/1024/1024).toFixed(2) +'Mb</td>'
-			              ,'<td><input type="text" style="width:70px;" /></td>'
+			              ,/*'<td><input type="text" style="width:70px;" /></td>'
 			              ,'<td><input type="text" style="width:70px;" /></td>'
 			              ,'<td><input type="text" /></td>'
-			              ,'<td>等待上传</td>'
+			              ,*/'<td>等待上传</td>'
 			              ,'<td>'
 			              	,'<button class="layui-btn layui-btn-mini demo-upload ">上传</button>'
 			                ,'<button class="layui-btn layui-btn-mini demo-reload layui-hide">重传</button>'
@@ -118,8 +118,8 @@ $(function(){
 			        	var tr = demoListView.find('tr#upload-'+ index)
 			            ,tds = tr.children();
 			        	if(res.data==1){ // 上传成功
-			        		tds.eq(5).html('<span style="color: #5FB878;">上传成功</span>');
-			        		tds.eq(6).html(''); // 清空操作
+			        		tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+			        		tds.eq(3).html(''); // 清空操作
 			        		return delete this.files[index]; // 删除文件队列已经上传成功的文件
 			        	}else{
 			        		this.error(index, upload);
@@ -142,9 +142,9 @@ $(function(){
 			        ,error: function(index, upload){
 			          var tr = demoListView.find('tr#upload-'+ index)
 			          ,tds = tr.children();
-			          tds.eq(5).html('<span style="color: #FF5722;">上传失败</span>');
-			          tds.eq(6).find('.demo-upload').addClass('layui-hide');// 隐藏上传
-			          tds.eq(6).find('.demo-reload').removeClass('layui-hide'); // 显示重传
+			          tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+			          tds.eq(3).find('.demo-upload').addClass('layui-hide');// 隐藏上传
+			          tds.eq(3).find('.demo-reload').removeClass('layui-hide'); // 显示重传
 			        }
 			  });
 			  
@@ -200,9 +200,9 @@ function loadFileList(){
 		      +"<td>"+result.data[i].appDocFileName+"</td>"		
 		     /*
 				 * +"<td>"+result.data[i].appDocTags+"</td>" +"<td>"+result.data[i].appDocTitle+"</td>"
-				 */
+				 *//*
 		      +"<td>"+result.data[i].appDocComment+"</td>"	
-		      +"<td>"+result.data[i].appDocType+"</td>"			      
+		      +"<td>"+result.data[i].appDocType+"</td>"	*/		      
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
