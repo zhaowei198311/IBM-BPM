@@ -158,14 +158,7 @@
 	
 		
 		function delete_user(){
-			$("#user_add .colorli").each(function(){
-				//console.log(this);
-				var actccanchooseuser=$(this).attr('actccanchooseuser');
-				if(actccanchooseuser==''){
-					$(this).remove();
-				}
-			});
-			//$("#user_add .colorli").remove();
+			$("#user_add .colorli").remove();
 		}
 	
 	
