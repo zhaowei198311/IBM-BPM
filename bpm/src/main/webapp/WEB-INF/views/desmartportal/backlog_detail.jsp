@@ -48,7 +48,7 @@
     			 border: 1px solid #ccc;
                  position: relative;
    				 padding: 0 10px;
-    			 overflow: scroll;
+   				 overflow: scroll;
 			}
 </style>  		
 	</head>
@@ -301,14 +301,14 @@
 									</tbody>								
 								</table>
 						    </div>
-						    <div class="layui-tab-item" style="height: 280px;overflow: scroll;">
+						    <div class="layui-tab-item" style="height: auto;">
 						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
 									    <col width="5%">
-									    <col width ="20%">
+									    <col width ="20%"><%-- 
 									    <col width="15%">
 									    <col width="20%"> 
-									    <col width="10%">
+									    <col width="10%"> --%>
 									    <col width="10%">
 									    <col width="20%">
 									</colgroup>
@@ -405,10 +405,10 @@
 							<table class="layui-table">
 									<colgroup>
 									    <col width="5%">
-									    <col width ="20%">
+									    <col width ="20%"><%-- 
 									    <col width="15%">
 									    <col width="20%"> 
-									    <col width="10%">
+									    <col width="10%"> --%>
 									    <col width="10%">
 									    <col width="20%">
 									</colgroup>
@@ -416,9 +416,9 @@
 									<tr>
 										<th>文件名</th>
 										<th>大小</th>
-										<th>文件标题</th>
+										<!-- <th>文件标题</th>
 										<th>文件标签</th>
-										<th>文件说明</th>
+										<th>文件说明</th> -->
 										<th>状态</th>
 										<th>操作</th>
 									</tr>

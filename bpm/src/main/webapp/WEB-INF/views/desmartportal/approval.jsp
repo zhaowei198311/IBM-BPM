@@ -18,6 +18,37 @@
   		<style>
   			.layui-form-label{text-align:left;padding:6px 0;width:60px;}
   			.layui-input-block{margin-left:70px;}
+  			
+  			#upload_file_modal {
+				display: none;
+			}
+
+			.display_content_accessory_file {
+    			color: #717171;
+				padding: 20px;
+				width: 70%;
+				height: 60%;
+				background: #fff;
+				position: fixed;
+				left: 12.5%;
+				top: 16%;
+				box-shadow: 0 0 10px #ccc;
+			}
+
+			.foot_accessory_file {
+   				 text-align: right;
+    			 height: 50px;
+    			 line-height: 50px;
+    			 padding-right: 25px;
+			}
+			
+			.upload_overflow_middle {
+   				 height: 80%;
+   				 width: 96%;
+    			 border: 1px solid #ccc;
+                 position: relative;
+   				 padding: 0 10px;
+    			 overflow: scroll;
   		</style>  		
 	</head>
 	<body>
@@ -332,6 +363,8 @@
 		</div>
 		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	   <!-- 附件上传js -->
+	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	    <!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>

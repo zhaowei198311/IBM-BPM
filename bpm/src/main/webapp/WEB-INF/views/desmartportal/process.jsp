@@ -59,7 +59,7 @@
     			 border: 1px solid #ccc;
                  position: relative;
    				 padding: 0 10px;
-    			 overflow: scroll;
+   				 overflow: scroll;
 			}
 </style>
 </head>
@@ -122,13 +122,13 @@
 					  		<li class="layui-this">附件</li>
 					  	</ul>
 			<div class="layui-tab-content" style="padding:0;">	
-				<div class="layui-tab-item layui-show" style="height: 280px;overflow: scroll;">
+				<div class="layui-tab-item layui-show" style="height: auto;">
 						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
 									    <col width="5%">
-									    <col width ="20%">
+									    <col width ="20%"><%-- 
 									    <col width="15%">
-									    <col width="20%"> 
+									    <col width="20%">  --%>
 									    <col width="10%">
 									    <col width="10%">
 									    <col width="20%">
@@ -136,9 +136,9 @@
 									<thead>
 									    <tr>
 									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
-									      <th>附件名称</th>
+									      <th>附件名称</th><!-- 
 									      <th>附件说明</th>
-									      <th>附件类型</th>
+									      <th>附件类型</th> -->
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>
@@ -205,9 +205,9 @@
 									<tr>
 										<th>文件名</th>
 										<th>大小</th>
-										<th>文件标题</th>
+										<!-- <th>文件标题</th>
 										<th>文件标签</th>
-										<th>文件说明</th>
+										<th>文件说明</th> -->
 										<th>状态</th>
 										<th>操作</th>
 									</tr>
