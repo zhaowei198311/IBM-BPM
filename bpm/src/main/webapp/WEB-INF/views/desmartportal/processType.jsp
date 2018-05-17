@@ -29,12 +29,13 @@
 						<div class="layui-form-item">
 							<label class="layui-form-label" style="cursor: pointer;">刷新</label>
 							<div class="layui-input-block">
-								<select class="layui-input-block group_select" name="group"
+								<select id="processType" class="layui-input-block group_select" name="group"
 									lay-verify="required">
 									<option value="">请选择流程类型</option>
-									<option value="01">所有</option>
-									<option value="02">运行中</option>
-									<option value="03">已结束</option>
+									<option value="">所有</option>
+									<option value="1">运行中</option>
+									<option value="2">已结束</option>
+									<option value="6">暂停中</option>
 								</select>
 							</div>
 						</div>
@@ -49,10 +50,10 @@
 						style="display: none;">
 				</div>
 				<div class="layui-col-xs2">
-					<input type="text" placeholder="流程名称" class="layui-input">
+					<input id="processName" type="text" placeholder="流程名称" class="layui-input">
 				</div>
 				<div class="layui-col-xs2" style="text-align: right;">
-					<button class="layui-btn">查询</button>
+					<button class="layui-btn" onclick="queryProcess()">查询</button>
 					<button class="layui-btn" onclick="startProcess()">发起新流程</button>
 				</div>
 			</div>
@@ -80,21 +81,10 @@
 						<th>剩余审批时长</th>
 					</tr>
 				</thead>
-				<tbody>
-					<c:forEach items="${processList}" var="process">
-						<tr>
-							<td class="">1</td>
-							<td class="">${process.insTitle}</td>
-							<td class="">${process.insStatus}</td>
-							<td class="">${process.insId}</td>
-							<td class=""><i id="backlog_td" class="layui-icon backlog_img">&#xe63c;</i>
-								江西南昌店</td>
-							<td class="">6小时</td>
-						</tr>
-					</c:forEach>
-				</tbody>
+				<tbody id="processType_table_tbody"/>
 			</table>
 		</div>
+		<div id="lay_page"></div>
 	</div>
 </body>
 </html>
@@ -102,6 +92,128 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script>
+
+		// 为翻页提供支持
+		var pageConfig = {
+			pageNum : 1,
+			pageSize : 10,
+			total : 0
+		}
+
+		layui.use([ 'laypage', 'layer' ], function() {
+			var laypage = layui.laypage, layer = layui.layer;
+			//完整功能
+			laypage.render({
+				elem : 'lay_page',
+				count : 50,
+				limit : 10,
+				layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+				jump : function(obj) {
+					console.log(obj)
+				}
+			});
+		});
+	
+	$(document).ready(function() {
+		// 加载数据
+		getProcessInfo();
+	});
+	
+	function getProcessInfo() {
+		$.ajax({
+			url : 'process/queryProcessByActive',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				pageNum : pageConfig.pageNum,
+				pageSize : pageConfig.pageSize,
+			},
+			success : function(result) {
+				drawTable(result.data)
+			}
+		})
+	}
+
+	function drawTable(pageInfo, data) {
+		pageConfig.pageNum = pageInfo.pageNum;
+		pageConfig.pageSize = pageInfo.pageSize;
+		pageConfig.total = pageInfo.total;
+		doPage();
+		// 渲染数据
+		$("#processType_table_tbody").html('');
+		if (pageInfo.total == 0) {
+			return;
+		}
+		var list = pageInfo.list;
+		var startSort = pageInfo.startRow;//开始序号
+		var trs = "";
+		for (var i = 0; i < list.length; i++) {
+			var meta = list[i];
+			var sortNum = startSort+1 + i;
+			trs += '<tr><td id="aa">'
+					+ sortNum
+					+ '</td>'
+					+ '<td>'
+					+ meta.insTitle
+					+ '</td>'
+					+ '<td>'
+					+ meta.insStatus
+					+ '</td>'
+					+ '<td>'
+					+ meta.insId
+					+ '</td>'
+					+ '<td class=""><i id="backlog_td" class="layui-icon backlog_img">&#xe63c;</i>'
+					+ meta.insId
+					+ '</td>'
+					+ '<td>'
+					+ meta.insId
+					+ '</td>'
+					+ '</tr>';
+		}
+		$("#processType_table_tbody").append(trs);
+	}
+
+	// 分页
+	function doPage() {
+		layui.use([ 'laypage', 'layer' ], function() {
+			var laypage = layui.laypage, layer = layui.layer;
+			//完整功能
+			laypage.render({
+				elem : 'lay_page',
+				curr : pageConfig.pageNum,
+				count : pageConfig.total,
+				limit : pageConfig.pageSize,
+				layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+				jump : function(obj, first) {
+					// obj包含了当前分页的所有参数  
+					pageConfig.pageNum = obj.curr;
+					pageConfig.pageSize = obj.limit;
+					if (!first) {
+						getDraftsInfo();
+					}
+				}
+			});
+		});
+	}
+	
+	function queryProcess(){
+		var processName = $('#processName').val();
+		var processType = $('#processType').val();
+		// 按条件查询 流程
+		$.ajax({
+			url : 'process/queryProcessByUserAndType',
+			type : 'post',
+			dataType : 'json',
+			data : {
+				insTitle : processName,
+				insStatusId : processType
+			},
+			success : function(result){
+				drawTable(result.data)
+			}
+		})
+	}
+	
 	function startProcess() {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
@@ -112,11 +224,4 @@
 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
 				+ proName + '&categoryName=' + categoryName;
 	}
-	
-	$(function(){
-		$("#backlog_td").click(function(){
-			window.location.href="menus/backlogDetail";
-		})
-		
-	})
 </script>

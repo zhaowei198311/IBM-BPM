@@ -63,16 +63,16 @@
 				AND INS_PARENT = #{insParent}
 			</if>
 			<if test="insStatus != null and insStatus != ''">
-				AND INS_STATUS = #{insTitle}
+				AND INS_STATUS = #{insStatus}
 			</if>
 			<if test="insStatusId != null and insStatusId != ''">
-				AND INS_STATUS_ID = #{insTitle}
+				AND INS_STATUS_ID = #{insStatusId}
+			</if>
+			<if test="proAppId != null and proAppId != ''">
+				AND PRO_APP_ID = #{proAppId}
 			</if>
 			<if test="proUid != null and proUid != ''">
-				AND PRO_APP_ID = #{proUid}
-			</if>
-			<if test="insTitle != null and insTitle != ''">
-				AND PRO_UID = #{insTitle}
+				AND PRO_UID = #{proUid}
 			</if>
 			<if test="proVerUid != null and proVerUid != ''">
 				AND PRO_VER_UID = #{proVerUid}
@@ -90,7 +90,7 @@
 				AND INS_FINISH_DATE = #{insFinishDate}
 			</if>
 			<if test="insUpdateDate != null and insUpdateDate != ''">
-				AND INS_UPDATE_DATE = #{insTitle}
+				AND INS_UPDATE_DATE = #{insUpdateDate}
 			</if>
 			<if test="insData != null and insData != ''">
 				AND INS_DATA = #{insData}
@@ -123,6 +123,9 @@
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
 		UPDATE DH_PROCESS_INSTANCE
 		<set>
+			<if test="insUid != null and insUid != ''">
+				INS_UID = #{insUid},
+			</if>
 			<if test="insTitle != null and insTitle != ''">
 				INS_TITLE = #{insTitle},
 			</if>
@@ -136,16 +139,16 @@
 				INS_PARENT = #{insParent},
 			</if>
 			<if test="insStatus != null and insStatus != ''">
-				INS_STATUS = #{insTitle},
+				INS_STATUS = #{insStatus},
 			</if>
 			<if test="insStatusId != null and insStatusId != ''">
-				INS_STATUS_ID = #{insTitle},
+				INS_STATUS_ID = #{insStatusId},
+			</if>
+			<if test="proAppId != null and proAppId != ''">
+				PRO_APP_ID = #{proAppId},
 			</if>
 			<if test="proUid != null and proUid != ''">
-				PRO_APP_ID = #{proUid},
-			</if>
-			<if test="insTitle != null and insTitle != ''">
-				PRO_UID = #{insTitle},
+				PRO_UID = #{proUid},
 			</if>
 			<if test="proVerUid != null and proVerUid != ''">
 				PRO_VER_UID = #{proVerUid},
@@ -163,7 +166,7 @@
 				INS_FINISH_DATE = #{insFinishDate},
 			</if>
 			<if test="insUpdateDate != null and insUpdateDate != ''">
-				INS_UPDATE_DATE = #{insTitle},
+				INS_UPDATE_DATE = #{insUpdateDate},
 			</if>
 			<if test="insData != null and insData != ''">
 				INS_DATA = #{insData},
@@ -230,6 +233,21 @@
        left join dh_process_meta meta
          on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
        where ins.ins_id = #{insId}
+    </select>
+    
+    <select id="queryByStausOrTitle" parameterType="java.util.Map" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+    	SELECT
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_PROCESS_INSTANCE
+		<where>
+			<if test="insTitle != null and insTitle != ''">
+				INS_TITLE like '%' || #{insTitle} || '%'
+			</if>
+			<if test="insStatusId != null and insStatusId != ''">
+				OR INS_STATUS_ID = #{insStatusId}
+			</if>
+		</where> 
     </select>
 	
 </mapper>

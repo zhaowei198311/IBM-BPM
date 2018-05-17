@@ -30,7 +30,7 @@ public interface DhTaskInstanceService {
 	
 	int selectByusrUid(String usrUid);
 	
-	List <DhProcessInstance> selectTaskByUser(DhTaskInstance taskInstance);
+	ServerResponse<PageInfo<List<DhProcessInstance>>> selectTaskByUser(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize);
 	
 	int getMaxTaskIdInDb();
 	

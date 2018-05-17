@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
@@ -126,28 +125,31 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * 根据用户id  查询 他有哪些流程
 	 */
 	@Override
-	public List<DhProcessInstance> selectTaskByUser(DhTaskInstance taskInstance) {
-		log.info("根据用户id查询有哪些流程开始......");
+	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectTaskByUser(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize) {
+		log.info("根据用户id查询有哪些流程.开始......");
 		List <DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
 		try {
+			PageHelper.startPage(pageNum, pageSize);
 			List <DhTaskInstance> taskInstanceList = dhTaskInstanceMapper.selectAllTask(taskInstance);//根据userId查询taskList
 			if(taskInstanceList.size() > 0) {
 				for(DhTaskInstance taskInstance1 : taskInstanceList) {
 					DhProcessInstance processInstance = new DhProcessInstance();
+					int id = Integer.parseInt(DhProcessInstance.STATUS_ACTIVE);
 					processInstance.setInsUid(taskInstance1.getInsUid());//获取taskList里的insUid
+					processInstance.setInsStatusId(id);
 					List <DhProcessInstance> processInstanceList= dhProcessInstanceMapper.selectAllProcess(processInstance);//根据instUid查询processList
 					for(DhProcessInstance p : processInstanceList) {
 						resultList.add(p);
-						System.err.println(p.getInsTitle());
 					}
 				}
 			}
-			return resultList;
+			PageInfo<List<DhProcessInstance>> pageInfo = new PageInfo(resultList);
+			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		log.info("根据用户id查询有哪些流程结束......");
-		return resultList;
+		
 	}
 
     @Override

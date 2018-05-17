@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -29,4 +30,6 @@ public interface DhProcessInstanceMapper {
 	void insertProcess(DhProcessInstance processInstance);
 	
 	DhProcessInstance queryByInsId(int insId);
+	
+	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
 }

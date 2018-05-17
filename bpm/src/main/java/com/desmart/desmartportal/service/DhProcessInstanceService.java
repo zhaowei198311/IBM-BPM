@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.desmart.desmartportal.entity.DhProcessInstance;
 
@@ -24,4 +25,8 @@ public interface DhProcessInstanceService {
 	int deleteByPrimaryKey(String insUid);
 	
 	void insertProcess(DhProcessInstance processInstance);
+	
+	List <DhProcessInstance> selectProcessByUserAndType(DhProcessInstance processInstance);
+	
+	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
 }

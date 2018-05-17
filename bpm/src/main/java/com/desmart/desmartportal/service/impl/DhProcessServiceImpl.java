@@ -78,8 +78,10 @@ public class DhProcessServiceImpl implements DhProcessService {
 	      	processInstance.setInsTitle(String.valueOf(jsonBody2.get("processAppName")));
 	      	processInstance.setInsId(Integer.parseInt(String.valueOf(jsonBody2.get("piid"))));
 	      	processInstance.setInsParent("");
-	      	processInstance.setInsStatus(String.valueOf(jsonBody2.get("executionState")));
-	      	processInstance.setInsStatusId(0);
+	      	if(String.valueOf(jsonBody2.get("executionState")).equals("Active")) {
+	      		processInstance.setInsStatus(String.valueOf(jsonBody2.get("executionState")));
+	      		processInstance.setInsStatusId(Integer.parseInt(DhProcessInstance.STATUS_ACTIVE));
+	      	}
 	      	processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
 	      	processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
 	      	processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));

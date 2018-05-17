@@ -132,10 +132,6 @@ public class MenusController {
 		mv.addObject("verUid", verUid);
 		mv.addObject("proName", proName);
 		mv.addObject("categoryName", categoryName);
-		// 根据当前用户查询 他有哪些流程
-		DhTaskInstance taskInstance = new DhTaskInstance();
-		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		mv.addObject("processList", dhTaskInstanceService.selectTaskByUser(taskInstance));
 		return mv;
 	}
 	
