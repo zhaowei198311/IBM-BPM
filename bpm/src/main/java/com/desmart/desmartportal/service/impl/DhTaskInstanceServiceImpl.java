@@ -4,13 +4,22 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -18,6 +27,7 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.github.pagehelper.PageHelper;
@@ -39,6 +49,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
+	
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	
+	@Autowired
+	private DhActivityConfMapper dhActivityConfMapper;
 	
 	@Autowired
 	private SysUserMapper sysUserMapper;
@@ -173,4 +189,61 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     public int insertBatch(List<DhTaskInstance> list) {
         return dhTaskInstanceMapper.insertBatch(list);
     }
+
+	/**
+	 * 寻找 并 设置流程变量 更具activityid 去 找 meta下的 LoopType 知道是简单循环还是多循环 (3种方式)要判断
+	 * if loopType 为 none 单 实例 情况下 就不需要 activityCofg 表下的 会签变量数据(sign_Count_varname)
+	 * else 就需要  会签变量数据 
+	 * activityCofg  下的 分派变量名称 是 必须要的
+	 * 
+	 * @param activityId 环节关联id
+	 * @param tkkid 任务实例id (引擎)
+	 */
+	@Override
+	public void queryTaskSetVariable(String activityId, String tkkid) {
+		
+		log.info("寻找流程变量开始......");
+		try {
+			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+			String LoopType = bpmActivityMeta.getLoopType();
+			log.info("循环类型:"+LoopType);
+			HttpReturnStatus result = new HttpReturnStatus();
+			HttpClientUtils httpClientUtils = new HttpClientUtils();
+			Map<String,Object> params = new HashMap<>();
+			params.put("action", "setData");
+			if("none".equals(LoopType)) {
+				// 单实例循环
+				DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(bpmActivityMeta.getActivityId());
+				// 获取变量并赋值   {"pubBo":{"nextOwners_0":["XXXXXXXXX"]}}
+				String variable = dhActivityConf.getActcAssignVariable();
+				String jsonstr = "{\"pubBo\":{\""+variable+"\":[\"00011178\"]}}";
+				JSONObject jsonObj = JSONObject.parseObject(jsonstr);
+				params.put("params", jsonObj);
+				result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK+tkkid, params);
+				log.info("掉用API状态码:"+result.getCode());		
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("寻找流程变量结束......");
+	}
+
+	/* 
+	 *
+	 */
+	@Override
+	public void perform(String tkkid) {
+		log.info("完成任务开始......");
+		try {
+			HttpReturnStatus result = new HttpReturnStatus();
+			HttpClientUtils httpClientUtils = new HttpClientUtils();
+			Map<String,Object> params = new HashMap<>();
+			params.put("action", "finish");
+			params.put("parts", "all");
+			result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK+tkkid, params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("完成任务结束......");
+	}
 }
