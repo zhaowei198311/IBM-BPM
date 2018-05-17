@@ -73,7 +73,9 @@
             <if test="proAppId != null">
                 and pd.PRO_APP_ID = #{proAppId}
             </if>
-
+            <if test="proStatus != null">
+                an pd.PRO_STAUTS = #{proStatus}
+            </if>
         </where>
         order by pd.create_date desc
     </select>

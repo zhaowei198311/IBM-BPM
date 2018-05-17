@@ -26,13 +26,13 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.BpmCommonBusObject;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartportal.entity.BpmCommonBusObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 

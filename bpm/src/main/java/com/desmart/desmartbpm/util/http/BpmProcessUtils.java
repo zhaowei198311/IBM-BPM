@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmCommonBusObject;
-import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
+import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.BpmRouteConditionResult;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmProcessUtils extends BpmRestApiUtils {

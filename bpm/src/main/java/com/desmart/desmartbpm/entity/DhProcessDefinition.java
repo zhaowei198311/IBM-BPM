@@ -8,6 +8,9 @@ import java.util.Date;
  *
  */
 public class DhProcessDefinition {
+    public static final String STATUS_SYNCHRONIZED = "synchronized";
+    public static final String STATUS_ENABLED = "enabled";
+    
     private String proUid;// 流程id(引擎中流程图id)
     
     private String proAppId; // 流程应用库id

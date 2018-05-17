@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.entity;
+package com.desmart.desmartportal.entity;
 
 import java.io.Serializable;
 import org.slf4j.Logger;

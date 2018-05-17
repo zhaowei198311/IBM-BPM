@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.entity.BpmCommonBusObject;
-import com.desmart.desmartbpm.entity.BpmRouteConditionResult;
 import com.desmart.desmartbpm.util.JSONUtils;
+import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.BpmRouteConditionResult;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 public class BpmTaskUtils extends BpmRestApiUtils {

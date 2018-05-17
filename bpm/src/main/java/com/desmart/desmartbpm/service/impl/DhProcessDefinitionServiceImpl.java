@@ -42,7 +42,6 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
-import com.desmart.desmartbpm.enums.DhProcessDefinitionStatus;
 import com.desmart.desmartbpm.exception.PermissionException;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
@@ -132,7 +131,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             vo.setProUid(dhProcessMeta.getProUid());
             vo.setProVerUid(definition.getProVerUid());
             // 流程定义状态
-            vo.setProStatus(DhProcessDefinitionStatus.codeOf(definition.getProStatus()).getValue());
+            if (DhProcessDefinition.STATUS_SYNCHRONIZED.equals(definition.getProStatus())) {
+                vo.setProStatus("已同步");
+            } else if (DhProcessDefinition.STATUS_ENABLED.equals(definition.getProStatus())) {
+                vo.setProStatus("已启用");
+            }
             vo.setUpdator(definition.getUpdatorFullName());
             vo.setUpdateTime(DateFmtUtils.formatDate(definition.getLastModifiedDate(), "yyyy-MM-dd HH:mm:ss"));
             voList.add(vo);
@@ -184,7 +187,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             dhProcessDefinition.setProAppId(proAppId);
             dhProcessDefinition.setProVerUid(proVerUid);
             dhProcessDefinition.setCreateUser(currentUser);
-            dhProcessDefinition.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
+            dhProcessDefinition.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
             int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
             if (countRow > 0) {
                 return ServerResponse.createBySuccess();
@@ -194,7 +197,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         } else {
             // 更新流程定义状态
             DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
-            selective.setProStatus(DhProcessDefinitionStatus.SETTING.getCode());
+            selective.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
             selective.setLastModifiedUser(currentUser);
             dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(selective);
             return ServerResponse.createBySuccess();
@@ -446,7 +449,12 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         vo.setVerName(lswSnapshot.getName());
         vo.setVerCreateTime(DateFmtUtils.formatDate(lswSnapshot.getCreatedOn(), "yyyy-MM-dd HH:mm:ss"));
         vo.setIsActive("T".equals(lswSnapshot.getIsActive()) ? "激活" : "未激活");
-        vo.setProStatus(DhProcessDefinitionStatus.codeOf(dhProcessDefinition.getProStatus()).getValue());
+        if (DhProcessDefinition.STATUS_SYNCHRONIZED.equals(dhProcessDefinition.getProStatus())) {
+            vo.setProStatus("已同步");
+        } else if (DhProcessDefinition.STATUS_ENABLED.equals(dhProcessDefinition.getProStatus())) {
+            vo.setProStatus("已启用");
+        }
+        
         vo.setUpdator(dhProcessDefinition.getUpdatorFullName());
         vo.setUpdateTime(DateFmtUtils.formatDate(dhProcessDefinition.getLastModifiedDate(), "yyyy-MM-dd HH:mm:ss"));
         return ServerResponse.createBySuccess(vo);
@@ -561,4 +569,25 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 		}
     }
 
+    
+    public DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid) {
+        if(StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid)) {
+            return null;
+        }
+        DhProcessDefinition selective = new DhProcessDefinition();
+        selective.setProAppId(proAppId);
+        selective.setProUid(proUid);
+        selective.setProStatus(DhProcessDefinition.STATUS_ENABLED);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(selective);
+        if (list.size() != 1) {
+            return null;
+        }
+        DhProcessDefinition dhProcessDefinition = list.get(0);
+        
+        LswSnapshot lswSnapshot = getLswSnapshotBySnapshotId(dhProcessDefinition.getProVerUid());
+        if (lswSnapshot != null && "T".equals(lswSnapshot.getIsActive())) {
+            return dhProcessDefinition;
+        }
+        return null;
+    }
 }

@@ -37,4 +37,5 @@
     <import resource="spring-datasource.xml"/>
     <import resource="spring-enginedatasource.xml"/>
 	<import resource="spring-shiro.xml"/>
+	<import resource="spring-timer.xml"/>
 </beans>

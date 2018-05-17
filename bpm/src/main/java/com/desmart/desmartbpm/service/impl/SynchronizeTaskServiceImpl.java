@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,17 +53,34 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     /**
      * 从引擎同步任务
      */
+    @Scheduled(cron = "0 * * * * ?")
     public void synchronizeTaskFromEngine() {
+        LOG.info("==================  开始拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasks();
         Map<Integer, String> groupInfo = getGroupInfo();
         generateDhTaskInstance(newLswTaskList, groupInfo);
-        
+        LOG.info("==================  拉取任务结束  ===============");
     }
     
     @Transactional
     private void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+        List<DhTaskInstance> dhTaskList = Lists.newArrayList();
+        List<DhAgentRecord> agentRecordList = Lists.newArrayList();
+        
         for (LswTask lswTask : newLswTaskList) {
-            handleLswTask(lswTask, groupInfo);
+            Map<String, Object> data = handleLswTask(lswTask, groupInfo);
+            if (data != null) {
+                dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
+                agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
+            }
+        }
+        LOG.info("同步新任务：" + dhTaskList.size() + "个");
+        LOG.info("产生代理记录：" + agentRecordList.size() + "个");
+        if (dhTaskList.size() > 0) {
+            dhTaskInstanceService.insertBatch(dhTaskList);
+        }
+        if (agentRecordList.size() > 0) {
+            dhAgentRecordMapper.insertBatch(agentRecordList);
         }
         
     }
@@ -72,13 +91,16 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @param groupInfo
      * @return
      */
-    private void handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo) {
+    private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo) {
+        Map<String, Object> result = Maps.newHashMap();
+        
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
         Long insId = lswTask.getBpdInstanceId(); // 实例id
         DhProcessInstance proInstance = dhProcessInstanceMapper.queryByInsId(insId.intValue());
         // 查看环节的任务类型
         if (proInstance == null) {
             LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+            return null;
         }
         String proAppId = proInstance.getProAppId();
         String proUid = proInstance.getProUid();
@@ -114,12 +136,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 }
             }
         }
-        if (dhTaskList.size() > 0) {
-            dhTaskInstanceService.insertBatch(dhTaskList);
-        }
-        if (agentRecordList.size() > 0) {
-            dhAgentRecordMapper.insertBatch(agentRecordList);
-        }
+        
+        result.put("dhTaskList", dhTaskList);
+        result.put("agentRecordList", agentRecordList);
+        return result;
     }
 
     /**
@@ -147,11 +167,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
             dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
             dhTask.setTaskInitDate(new Date());
-            dhTask.setTaskData("??");
+            
             // 设置
             DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
             if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {
-                dhTask.setTaskDueDate(calculateDueDate(new Date(0), conf.getActcTime(), conf.getActcTimeunit()));
+                dhTask.setTaskDueDate(calculateDueDate(new Date(), conf.getActcTime(), conf.getActcTimeunit()));
             }
             taskList.add(dhTask);
         }
@@ -163,8 +183,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         if (lswTask.getUserId() != -1) {
             uidList.add(lswTask.getUserName());
         } else {
-//            Long groupId = lswTask.getGroupId();
-            Long groupId = 1238l;
+            Long groupId = lswTask.getGroupId();
             String uidStr = groupInfo.get(groupId.intValue());
             if (StringUtils.isNotBlank(uidStr)) {
                 uidList.addAll(Arrays.asList(uidStr.split(",")));

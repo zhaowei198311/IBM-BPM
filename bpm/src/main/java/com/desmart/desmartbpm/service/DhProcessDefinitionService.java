@@ -92,5 +92,13 @@ public interface DhProcessDefinitionService {
      * @throws
      */
     ServerResponse copySimilarProcess(Map<String, Object> mapId);
+    
+    /**
+     * 找到指定元数据下可发起的流程定义
+     * @param proAppId
+     * @param proUid
+     * @return
+     */
+    DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid);
 
 }
