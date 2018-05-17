@@ -18,6 +18,8 @@ import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysUser;
 
 /**  
 * <p>Title: TaskInstanceController</p>  
@@ -45,7 +47,7 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);		
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 	

@@ -241,11 +241,14 @@
 		FROM
 		DH_PROCESS_INSTANCE
 		<where>
+			<if test="insUid != null and insUid != ''">
+				INS_UID = #{insUid}
+			</if>
 			<if test="insTitle != null and insTitle != ''">
-				INS_TITLE like '%' || #{insTitle} || '%'
+				AND INS_TITLE like '%' || #{insTitle} || '%'
 			</if>
 			<if test="insStatusId != null and insStatusId != ''">
-				OR INS_STATUS_ID = #{insStatusId}
+				AND INS_STATUS_ID = #{insStatusId}
 			</if>
 		</where> 
     </select>

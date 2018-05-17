@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
@@ -42,8 +46,14 @@ public class DhProcessServiceImpl implements DhProcessService {
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
 	
+	@Autowired
+	private DhActivityConfMapper dhActivityConfMapper;
+	
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	
 	/**
-	 * 发起流程
+	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息 
 	 */
 	@Override
 	public ServerResponse startProcess(String proUid, String proAppId, String verUid) {
@@ -63,7 +73,6 @@ public class DhProcessServiceImpl implements DhProcessService {
 		result = httpClientUtils.checkApiLogin("post", "http://10.0.4.201:9080/rest/bpm/wle/v1/process", params);
 		log.info("掉用API状态码:"+result.getCode());		
 		// 如果获取API成功  将返回过来的流程数据 保存到 平台
-		log.info("发起流程结束......");
 		if(result.getCode()==200) {
 			// 保存数据信息
 			log.info("掉用API返回过来的数据信息:"+result.getMsg());
@@ -95,18 +104,62 @@ public class DhProcessServiceImpl implements DhProcessService {
 			for (int i = 0; i < jsonBody3.size(); i++) {
 				JSONObject jsonObject=jsonBody3.getJSONObject(i);
 		      	taskInstance.setTaskId(Integer.parseInt(String.valueOf(jsonObject.get("tkiid"))));
-		      	taskInstance.setUsrUid(String.valueOf(jsonObject.get("assignedToDisplayName")));
+		      	taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		      	taskInstance.setActivityBpdId(String.valueOf(jsonObject.get("flowObjectID")));
 		      	taskInstance.setTaskType(String.valueOf(jsonObject.get("clientTypes")));
-		      	taskInstance.setTaskStatus(String.valueOf(jsonObject.get("status")));
+		      	taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 		      	taskInstance.setTaskData(String.valueOf(jsonObject.get("data")));
 		      	dhTaskInstanceService.insertTask(taskInstance);
 			}
+			log.info("发起流程结束......");
 			return ServerResponse.createBySuccess();
 		}else {
 			return ServerResponse.createByError();
 		}
+	}
+
+	/**
+	 * 寻找流程变量 更具activityid 去 找 meta下的 LoopType 知道是简单循环还是多循环 (3种方式)要判断
+	 * if loopType 为 none 单 实例 情况下 就不需要 activityCofg 表下的 会签变量数据(sign_Count_varname)
+	 * else 就需要  会签变量数据 
+	 * activityCofg  下的 分派变量名称 是 必须要的
+	 * 
+	 * @param activityId 环节关联id
+	 * @param tkkid 任务实例id (引擎)
+	 */
+	@Override
+	public void queryProcessVariable(String activityId,String tkkid) {
+		log.info("寻找流程变量开始......");
+		try {
+			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+			String LoopType = bpmActivityMeta.getLoopType();
+			DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
+			log.info("循环类型:"+LoopType);
+			HttpReturnStatus result = new HttpReturnStatus();
+			HttpClientUtils httpClientUtils = new HttpClientUtils();
+			Map<String,Object> params = new HashMap<>();
+			params.put("action", "finish");
+			params.put("parts", "all");
+			if("none".equals(LoopType)) {
+				// 单实例循环
+				params.put("params", "all");
+				result = httpClientUtils.checkApiLogin("put", "http://10.0.4.201:9080/rest/bpm/wle/v1/task/"+tkkid, params);
+				log.info("掉用API状态码:"+result.getCode());		
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("寻找流程变量结束......");
+	}
+
+	/* 
+	 * 
+	 */
+	@Override
+	public void setApprover() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -7,15 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -36,6 +40,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
+	@Autowired
+	private SysUserMapper sysUserMapper;
+	
 	/**
 	 * 查询所有流程实例
 	 */
@@ -43,6 +50,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectAllTask(DhTaskInstance taskInstance, Integer pageNum, Integer pageSize) {
 		log.info("查询taskInstance开始......");
 		try {
+			// 查询用户
+/*			// 根据用户id 查询用户信息
+			SysUser sysUser = new SysUser();
+			sysUser.setUserId(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+			SysUser sysUser2 = sysUserMapper.findById(sysUser);
+			sysUser2.getUserName();*/
 			PageHelper.startPage(pageNum, pageSize);
 			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectAllTask(taskInstance);
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
