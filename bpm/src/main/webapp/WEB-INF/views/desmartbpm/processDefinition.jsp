@@ -114,7 +114,7 @@
                 <div class="top">
                     同类流程
                 </div>
-                <div class="middle1" style="height: 300px;width: 97%">
+                <div class="middle1" style="height: 75%;width: 98%">
                     <table class="layui-table backlog_table" lay-even lay-skin="nob">
                         <colgroup>
                             <col>
