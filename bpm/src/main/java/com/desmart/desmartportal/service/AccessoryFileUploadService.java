@@ -20,7 +20,7 @@ public interface AccessoryFileUploadService {
 	 */
 	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName);
 	/**
-	 * 根据条件查询已上传附件列表
+	 * 根据条件查询附件列表
 	 * @param dhInstanceDocument
 	 * @return
 	 */

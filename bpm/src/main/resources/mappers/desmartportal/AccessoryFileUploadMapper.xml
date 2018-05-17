@@ -35,9 +35,15 @@
    ,did.app_doc_Create_Date,did.app_doc_index,did.app_doc_tags,did.app_doc_status
    ,su.user_name as appUserName from dh_instance_document did left join sys_user su 
    on did.APP_UID = su.USER_UID 
-   where 1 = 1
+   where 1 = 1 
    <if test="appUid != null and appUid != '' ">
     and APP_UID = #{appUid}
+   </if>
+   <if test="appDocFileName != null and appDocFileName != '' ">
+    and app_doc_fileName = #{appDocFileName}
+   </if>
+   <if test="appDocStatus!=null and appDocStatus != '' ">
+    and app_doc_status = #{appDocStatus}
    </if>
    </select>
    
@@ -47,18 +53,50 @@
         <foreach collection="dhInstanceDocuments" item="item" index="index" separator=";" > 
             update dh_instance_document 
             <set>
-            <if test="item.appUid!=null and item.appUid!=''">
-                APP_UID = #{item.appUid},
+            <if test="item.appDocFileName != null and item.appDocFileName != '' ">
+                app_doc_filename = #{item.appDocFileName},
             </if>
-
-            <if test="item.appDocUid!=null and item.appDocUid!=''">
-                APP_DOC_UID = #{item.appDocUid},
+            <if test="item.appDocFileUrl != null and item.appDocFileUrl != '' ">
+                app_doc_fileUrl = #{item.appDocFileUrl},
             </if>
-
+            <if test="item.appDocTitle != null and item.appDocTitle != '' ">
+                app_doc_title = #{item.appDocTitle},
+            </if>
+            <if test="item.appDocComment != null and item.appDocComment != '' ">
+                app_doc_comment = #{item.appDocComment},
+            </if>
+            <if test="item.docVersion != null ">
+                doc_version = #{item.docVersion},
+            </if>
+            <if test="item.appUid != null and item.appUid != '' ">
+                app_uid = #{item.appUid},
+            </if>
+            <if test="item.taskId != null ">
+                task_id = #{item.taskId},
+            </if>
+            <if test="item.userUid !=null and item.userUid !=''">
+                user_uid = #{item.userUid},
+            </if>
+            <if test="item.appDocType !=null and item.appDocType !=''">
+                app_doc_type = #{item.appDocType},
+            </if>
+            <if test="item.appDocCreateDate !=null ">
+                app_doc_create_date = #{item.appDocCreateDate},
+            </if>
+            <if test="item.appDocIndex !=null ">
+                app_doc_index = #{item.appDocIndex},
+            </if>
+            <if test="item.appDocTags !=null and item.appDocTags !=''">
+                app_doc_tags = #{item.appDocTags},
+            </if>
+            <if test="item.appDocStatus !=null and item.appDocStatus !=''">
+                app_doc_status = #{item.appDocStatus},
+            </if>
+            
             </set>
-            where id = #{item.id}
+            where APP_DOC_UID = #{item.appDocUid}
             </foreach>
-        ;end;
+          ;end;
    </update>
    
    <delete id="deleteFileByAppDocUid" 

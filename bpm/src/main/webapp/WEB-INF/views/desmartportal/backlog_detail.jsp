@@ -26,7 +26,7 @@
 			.display_content_accessory_file {
     			color: #717171;
    				padding: 20px;
-    			width: 1200px;
+    			width: 94.5%;
     			height: 500px;
     			background: #fff;
     			position: fixed;;
@@ -404,6 +404,15 @@
 					<div class="layui-upload">
 						<div class="layui-upload-list">
 							<table class="layui-table">
+									<colgroup>
+									    <col width="5%">
+									    <col width ="20%">
+									    <col width="15%">
+									    <col width="20%"> 
+									    <col width="10%">
+									    <col width="10%">
+									    <col width="20%">
+									</colgroup>
 								<thead>
 									<tr>
 										<th>文件名</th>

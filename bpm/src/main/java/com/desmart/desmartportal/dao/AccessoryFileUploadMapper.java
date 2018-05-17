@@ -22,7 +22,7 @@ public interface AccessoryFileUploadMapper {
 	 */
 	public List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName);
 	/**
-	 * 根据条件查询已上传附件列表
+	 * 根据条件查询附件列表
 	 * @param dhInstanceDocument
 	 * @return
 	 */
@@ -32,7 +32,7 @@ public interface AccessoryFileUploadMapper {
 	 * @param dhInstanceDocuments
 	 * @return
 	 */
-	public Integer updateFileByKeys(List<DhInstanceDocument> dhInstanceDocuments);
+	public Integer updateFileByKeys(@Param("dhInstanceDocuments")List<DhInstanceDocument> dhInstanceDocuments);
 	/**
 	 * 删除
 	 * @param appDocUid

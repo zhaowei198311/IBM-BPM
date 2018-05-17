@@ -36,7 +36,7 @@
 			.display_content_accessory_file {
     			color: #717171;
    				padding: 20px;
-    			width: 1200px;
+    			width: 94.5%;
     			height: 500px;
     			background: #fff;
     			position: fixed;;
@@ -125,13 +125,13 @@
 				<div class="layui-tab-item layui-show" style="height: 280px;overflow: scroll;">
 						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
-									    <col width="75">
-									    <col>
-									    <col>
-									    <col> 
-									    <col>
-									    <col>
-									    <col width="228">
+									    <col width="5%">
+									    <col width ="20%">
+									    <col width="15%">
+									    <col width="20%"> 
+									    <col width="10%">
+									    <col width="10%">
+									    <col width="20%">
 									</colgroup>
 									<thead>
 									    <tr>

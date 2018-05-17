@@ -63,6 +63,7 @@ public class AccessoryFileUploadController {
 			,@RequestParam("uploadModels") String uploadModels,
 			@RequestParam("appUid")String appUid,@RequestParam("taskId")Integer taskId) {
 			List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
+			List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
 			JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
 			JSONArray jsarr=jso.getJSONArray("uploadModels");//jsonobject对象取得uploadModels对应的jsonarray数组
 			//String js=JSONObject.toJSONString(jsarr, SerializerFeature.WriteClassName);//将array数组转换成字符串  
@@ -91,7 +92,7 @@ public class AccessoryFileUploadController {
 							jObject = jsarrSon;
                     		break;
                     	}
-                    	System.out.println(checkFileName);
+                    	//System.out.println(checkFileName);
 					}
                     //}
                     if(jObject==null) {
@@ -114,9 +115,15 @@ public class AccessoryFileUploadController {
 							try {
 								InputStream inputStream = file.getInputStream();
 							DhInstanceDocument dhInstanceDocument = new DhInstanceDocument();
-				        	String uuId = UUIDTool.getUUID();
-				        	dhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
-				        	dhInstanceDocument.setAppDocFileName(myFileName);
+							dhInstanceDocument.setAppDocFileName(myFileName);
+							dhInstanceDocument.setAppDocStatus("1");//查询是否已有逻辑删除记录--唯一
+							List<DhInstanceDocument> exitsList = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
+				            if(exitsList!=null&&exitsList.size()>0) {
+				            	dhInstanceDocument = exitsList.get(0);
+				            }else {
+				            	String uuId = UUIDTool.getUUID();
+				            	dhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
+				            }
 				        	dhInstanceDocument.setAppDocFileUrl(directory+newFileName);//文件ftp存储路径
 				        	dhInstanceDocument.setAppDocTitle(jObject.get("appDocTitle").toString());
 				        	dhInstanceDocument.setAppDocComment(jObject.get("appDocComment").toString());
@@ -128,9 +135,12 @@ public class AccessoryFileUploadController {
 				        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 							dhInstanceDocument.setAppDocIndex(i+1);
 							dhInstanceDocument.setAppDocTags(jObject.get("appDocTags").toString());
-							dhInstanceDocument.setAppDocStatus("0");//是否被删除
-							fileUploadList.add(dhInstanceDocument);
-							
+							dhInstanceDocument.setAppDocStatus("0");//是否被删除 0否，1是
+							if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
+								fileUpdateList.add(dhInstanceDocument);
+							}else {
+								fileUploadList.add(dhInstanceDocument);
+							}
 							try {
 								SFTPUtil sftp = new SFTPUtil();
 					        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
@@ -149,18 +159,25 @@ public class AccessoryFileUploadController {
                 }
                 
         }
-        int count = accessoryFileUploadServiceImpl.insertDhInstanceDocuments(fileUploadList);
-        if(count<=0) {
-        	return ServerResponse.createBySuccess(0);
-        }else {
-		 return ServerResponse.createBySuccess(1);
-        } 	
+			int count = 0;
+			if(fileUploadList.size()>0) {
+				count = accessoryFileUploadServiceImpl.insertDhInstanceDocuments(fileUploadList);//新增
+			}
+			if(fileUpdateList.size()>0) {
+				count += accessoryFileUploadServiceImpl.updateFileByKeys(fileUpdateList);//修改
+			}
+			if(count<=0) {
+				return ServerResponse.createBySuccess(0);
+			}else {
+				return ServerResponse.createBySuccess(1);
+			} 	
 	}
 	
 	@RequestMapping(value="loadFileList.do")
 	@ResponseBody
 	public ServerResponse<List<DhInstanceDocument>> loadFileList(
 			DhInstanceDocument dhInstanceDocument) {//加载已上传附件列表
+		dhInstanceDocument.setAppDocStatus("0");//0表示没有被删除
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
 	}
@@ -210,8 +227,13 @@ public class AccessoryFileUploadController {
 	    
 	    if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
 	    {
-	    	int count = accessoryFileUploadServiceImpl.deleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
-	    	
+	    	//int count = accessoryFileUploadServiceImpl.deleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
+	    	//逻辑删除--批量修改方法
+	    	List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
+	    	dhInstanceDocument.setAppDocFileUrl("null");
+	    	dhInstanceDocument.setAppDocStatus("1");//1表示删除
+	    	list.add(dhInstanceDocument);
+	    	int count = accessoryFileUploadServiceImpl.updateFileByKeys(list);
 	    	return ServerResponse.createBySuccessMessage("删除成功！");
 	    }else {
 	    	return ServerResponse.createByErrorMessage("删除失败！");
