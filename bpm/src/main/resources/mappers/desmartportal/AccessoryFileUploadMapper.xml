@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.AccessoryFileUploadMapper" >
-   <insert id="insertDhInstanceDocuments" parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   <insert id="insertDhInstanceDocuments" parameterType="java.util.List">
    	INSERT INTO DH_INSTANCE_DOCUMENT 
    	(APP_DOC_UID,APP_DOC_FILENAME,APP_DOC_TITLE,APP_DOC_COMMENT
    	,DOC_VERSION,APP_UID,TASK_ID,USER_UID,APP_DOC_TYPE,APP_DOC_CREATE_DATE
@@ -19,10 +19,47 @@
 	</foreach>
 	)A
    </insert>
+   
    <select id="checkFileActivityIdByName" parameterType="map"
     resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
    select * from dh_instance_document 
    where APP_UID = #{appUid} and App_Doc_FileName = #{myFileName}
    and APP_DOC_STATUS = 0
    </select>
+   
+   <select id="loadFileListByCondition" 
+   parameterType="com.desmart.desmartportal.entity.DhInstanceDocument"
+   resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   select did.*,su.user_name as appUserName from dh_instance_document did left join sys_user su 
+   on did.APP_UID = su.USER_UID 
+   where 1 = 1
+   <if test="appUid != null and appUid != '' ">
+    and APP_UID = #{appUid}
+   </if>
+   </select>
+   
+   <update id="updateFileByKeys" 
+   parameterType="java.util.List">
+    begin  
+        <foreach collection="dhInstanceDocuments" item="item" index="index" separator=";" > 
+            update dh_instance_document 
+            <set>
+            <if test="item.appUid!=null and item.appUid!=''">
+                APP_UID = #{item.appUid},
+            </if>
+
+            <if test="item.appDocUid!=null and item.appDocUid!=''">
+                APP_DOC_UID = #{item.appDocUid},
+            </if>
+
+            </set>
+            where id = #{item.id}
+            </foreach>
+        ;end;
+   </update>
+   
+   <delete id="deleteFileByAppDocUid" 
+   parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
+     DELETE dh_instance_document WHERE APP_DOC_UID = #{appDocUid}
+   </delete>
 </mapper>

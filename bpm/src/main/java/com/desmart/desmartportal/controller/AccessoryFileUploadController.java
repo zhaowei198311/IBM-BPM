@@ -2,11 +2,15 @@ package com.desmart.desmartportal.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartbpm.util.SFTPUtil;
+import com.desmart.desmartportal.util.SFTPUtil;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
@@ -124,7 +128,7 @@ public class AccessoryFileUploadController {
 							
 							try {
 								SFTPUtil sftp = new SFTPUtil();
-					        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, myFileName, inputStream);
+					        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
 							} catch (SftpException e) {
 								// TODO Auto-generated catch block
 								LOG.error("保存附件失败", e);
@@ -148,4 +152,51 @@ public class AccessoryFileUploadController {
         } 	
 	}
 	
+	@RequestMapping(value="loadFileList.do")
+	@ResponseBody
+	public ServerResponse<List<DhInstanceDocument>> loadFileList(
+			DhInstanceDocument dhInstanceDocument) {//加载已上传附件列表
+		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
+		return ServerResponse.createBySuccess(list);
+	}
+	
+	@RequestMapping("singleFileDown.do")
+	public void singleFileDown(DhInstanceDocument dhInstanceDocument,HttpServletResponse response){
+		//System.out.println(dhInstanceDocument.getAppDocFileName());
+		response.setContentType("text/html; charset=UTF-8"); //设置编码字符  
+		response.setContentType("application/x-msdownload"); //设置内容类型为下载类型  
+		OutputStream out = null;
+		try {
+		
+		response.setHeader("Content-disposition", "attachment;filename="
+		+new String(dhInstanceDocument.getAppDocFileName().getBytes(), "ISO-8859-1"));//设置下载的文件名称  
+	    out = response.getOutputStream();   //创建页面返回方式为输出流，会自动弹出下载框
+
+	    String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
+	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
+	    		,  dhInstanceDocument.getAppDocFileUrl().length());
+	    SFTPUtil sftp = new SFTPUtil();
+	    
+	    sftp.getOututStream(bpmGlobalConfigService.getFirstActConfig(), directory, filename,out);	    
+	    
+	    out.flush();
+		} catch (IOException e) {
+			// TODO: handle exception
+			LOG.error(e.getMessage());
+		}finally {
+			if(out!=null) {
+				try {
+					out.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					LOG.error(e.getMessage());
+				}  
+			}
+		}
+	}
+	/*
+	@RequestMapping("bachFileDown.do")
+	public void batchFileDown(List<DhInstanceDocument> dhInstanceDocuments) {
+		System.out.println(dhInstanceDocuments.size());
+	}*/
 }

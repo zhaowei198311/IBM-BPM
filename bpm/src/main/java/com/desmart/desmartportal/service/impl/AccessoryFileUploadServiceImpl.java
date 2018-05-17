@@ -27,4 +27,22 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		return accessoryFileuploadMapper.checkFileActivityIdByName(appUid, myFileName);
 	}
 
+	@Override
+	public List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument) {
+		// TODO Auto-generated method stub
+		return accessoryFileuploadMapper.loadFileListByCondition(dhInstanceDocument);
+	}
+
+	@Override
+	public Integer updateFileByKeys(List<DhInstanceDocument> dhInstanceDocuments) {
+		// TODO Auto-generated method stub
+		return accessoryFileuploadMapper.updateFileByKeys(dhInstanceDocuments);
+	}
+
+	@Override
+	public Integer deleteFileByAppDocUid(String appDocUid) {
+		// TODO Auto-generated method stub
+		return accessoryFileuploadMapper.deleteFileByAppDocUid(appDocUid);
+	}
+
 }

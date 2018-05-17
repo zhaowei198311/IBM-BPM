@@ -3,9 +3,10 @@ package com.desmart.desmartportal.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
-import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -166,6 +167,7 @@ public class SFTPUtil {
     	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	String result = null;
     	try {
+    		
 			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(filename);
 			result = readInputStream(input);
@@ -192,4 +194,76 @@ public class SFTPUtil {
         bos.close();  
         return new String(bos.toByteArray(),"utf-8");
     }  
+	
+	 /**
+     * 获得服务器文件输入流
+     * @param gcfg 全局变量
+     * @param directory 上传到该目录 
+     * @param filename 文件名
+     */
+    public InputStream getInputStream(BpmGlobalConfig gcfg,String directory,String filename) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
+    	try {
+			sftp.cd(gcfg.getSftpPath()+directory);
+			InputStream input = sftp.get(filename);
+			/**
+			 * 退出连接，流关闭。。。
+			 */
+			logout();
+	    	return input;
+		} catch (Exception e) {
+			logout();
+			e.printStackTrace();
+	    	return null;
+		}
+    }
+    
+    /**
+     * 将文件下载到outputstream
+     * @param gcfg
+     * @param directory
+     * @param filename
+     * @param outputStream
+     * @return
+     */
+    public void getOututStream(BpmGlobalConfig gcfg,String directory,String filename
+    		,OutputStream outputStream) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
+    	try {
+			sftp.cd(gcfg.getSftpPath()+directory);
+			sftp.get(filename, outputStream);
+			logout();
+		} catch (Exception e) {
+			logout();
+			e.printStackTrace();
+		}
+    }
+    /**
+     * @param gcfg
+     * @param directory
+     * @param filename
+     * @param outputStream
+     */
+    public void writeToOutput(BpmGlobalConfig gcfg,String directory,String filename
+    	    ,OutputStream outputStream) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
+    	
+    	try {
+    		sftp.cd(gcfg.getSftpPath()+directory);
+			InputStream input = sftp.get(filename);	
+			 byte[] b=new byte[2048];  //设置每次读取大小  
+			    int i = 0;
+			    do {
+		            i = input.read(b, 0, b.length);
+		            if (i > 0) {
+		            	outputStream.write(b, 0, i);
+		            }
+		        } while (i >= 0);
+			    input.close();
+			    logout();
+		} catch (Exception e) {
+			logout();
+			e.printStackTrace();
+		}
+    }
 }

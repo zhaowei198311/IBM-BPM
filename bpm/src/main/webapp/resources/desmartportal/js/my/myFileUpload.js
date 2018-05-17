@@ -333,12 +333,96 @@ $(function(){
 				}, false);
 */
 	});
+	
+	loadFileList();
+	//全选
+	/*$("#all-file-check").click(function(){
+		var checkeNodes= $(".layui-table.upload-file-table").find(".file-check");
+		checkeNodes.prop("checked",$(this).prop("checked"));
+	});
+	*/
 });
-
+//反选
+/*function invertSelection(a){
+	var checkeNodes= $(".layui-table.upload-file-table").find(".file-check");
+	var checkedNodes= $(".layui-table.upload-file-table").find(".file-check:checked");
+	if(checkedNodes.length==checkeNodes.length){
+		$("#all-file-check").prop("checked",$(a).prop("checked"));
+	}else if(checkedNodes.length==0){
+		$("#all-file-check").prop("checked",false);
+	}
+};*/
+//加载已上传的文件列表
+function loadFileList(){
+	$.post('accessoryFileUpload/loadFileList.do'
+		,{"appUid":"测试"}
+		,function(result){
+		var tagTbody = $(".layui-table.upload-file-table").find("tbody");
+		tagTbody.empty();
+		/*<input onclick='invertSelection(this)' class='file-check' type='checkbox'>*/
+		for (var i = 0; i < result.data.length; i++) {
+			var info = "<tr>"
+		      +"<td>"
+		      +"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
+		      +(i+1)+"</td>"
+		      +"<td>"+result.data[i].appDocFileName+"</td>"		
+		      +"<td>"+result.data[i].appDocTags+"</td>"	
+		      +"<td>"+result.data[i].appDocTitle+"</td>"	
+		      +"<td>"+result.data[i].appDocComment+"</td>"	
+		      +"<td>"+result.data[i].appDocType+"</td>"			      
+		      +"<td>"+result.data[i].appUserName+"</td>"	
+		      +"<td>"+result.data[i].appDocCreateDate+"</td>"	
+		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
+		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
+		      +"</td></tr>"; 
+			tagTbody.append(info);
+		}
+		},'json');
+}
 // 隐藏上传文件的模态框
 function cancelClick(obj){
+	loadFileList();
 	$("#upload_file_modal").css("display","none");
 }
+
+//批量下载触发事件
+/*function batchDown(){
+  var url = "accessoryFileUpload/batchFileDown.do";
+  var checkedNodes= $(".layui-table.upload-file-table").find(".file-check:checked");
+  checkedNodes.each(function (){
+	  var appDocFileName = $(this).parent().parent().find("td").eq(1).text();
+	  var appDocFileUrl = $(this).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
+	  var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl};
+  });
+ // post(url,);
+};
+*/
+
+//单个下载触发事件
+function singleDown(a){
+  var url = "accessoryFileUpload/singleFileDown.do";
+  var appDocFileName = $(a).parent().parent().find("td").eq(1).text();
+  var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
+  post(url,{appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl});
+};
+
+//文件下载
+function post(URL, PARAMS) { 
+	var temp_form = document.createElement("form");      
+	temp_form .action = URL;      
+	//temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+	temp_form .method = "post";      
+	temp_form .style.display = "none"; 
+	for (var x in PARAMS) { 
+	var opt = document.createElement("textarea");      
+    opt.name = x;      
+    opt.value = PARAMS[x];      
+    temp_form .appendChild(opt);      
+	}      
+	document.body.appendChild(temp_form);      
+	temp_form .submit();     
+} 
 
 // 只能输入数字
 jQuery.fn.desNumber = function() {

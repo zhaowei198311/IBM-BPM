@@ -19,4 +19,22 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName);
+	/**
+	 * 根据条件查询已上传附件列表
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument);
+	/**
+	 * 批量修改
+	 * @param dhInstanceDocuments
+	 * @return
+	 */
+	public Integer updateFileByKeys(List<DhInstanceDocument> dhInstanceDocuments);
+	/**
+	 * 删除
+	 * @param appDocUid
+	 * @return
+	 */
+	public Integer deleteFileByAppDocUid(String appDocUid);
 }

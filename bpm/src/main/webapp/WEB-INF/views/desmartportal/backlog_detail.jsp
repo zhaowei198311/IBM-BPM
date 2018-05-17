@@ -50,7 +50,7 @@
                  position: relative;
    				 padding: 0 10px;
     			 overflow: scroll;
-}
+			}
 </style>  		
 	</head>
 	<body>
@@ -302,24 +302,32 @@
 									</tbody>								
 								</table>
 						    </div>
-						    <div class="layui-tab-item">
-						    	<table class="layui-table" style="margin:0;">
+						    <div class="layui-tab-item" style="height: 280px;overflow: scroll;">
+						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
-									    <col width="60">
+									    <col width="75">
 									    <col>
 									    <col>
 									    <col>
-									    <col width="200"> 
 									    <col>
+									    <col> 
+									    <col>
+									    <col>
+									    <col width="228">
 									</colgroup>
 									<thead>
 									    <tr>
-									      <th>序号</th>
+									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
 									      <th>附件名称</th>
+									      <th>附件标签</th>
+									      <th>附件标题</th>
+									      <th>附件说明</th>
+									      <th>附件类型</th>
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>
 									      	<button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left:20px;">上传附件</button>
+									      	<!-- <button class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button> -->
 									      	<div class="hidden-value">
 												<input class="maxFileSize" value="20" type="hidden" />
 												<input class="maxFileCount" value="10" type="hidden" />
@@ -331,13 +339,7 @@
 									    </tr> 
 									</thead>
 									<tbody>
-									    <tr>
-									      <td>1</td>
-									      <td>附件1</td>					      
-									      <td>张三</td>
-									      <td>2018-04-13</td>
-									      <td><button class="layui-btn layui-btn-primary layui-btn-sm">删除</button></td>
-									    </tr>
+								
 									</tbody>
 								</table>
 						    </div>

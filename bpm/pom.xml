@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.desmart</groupId>
-  <artifactId>bpm</artifactId>
-  <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>bpm Maven Webapp</name>
-  <url>http://maven.apache.org</url>
- <!-- 加载的是 第三方项目使用的jar包 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.desmart</groupId>
+	<artifactId>bpm</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>bpm Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<!-- 加载的是 第三方项目使用的jar包 -->
 	<repositories>
 		<repository>
 			<snapshots>
@@ -119,12 +120,12 @@
 			<artifactId>spring-core</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
@@ -316,9 +317,9 @@
 		</dependency>
 		<!-- sftp文件上传下载 -->
 		<dependency>
-		    <groupId>com.jcraft</groupId>
-		    <artifactId>jsch</artifactId>
-		    <version>0.1.51</version>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.51</version>
 		</dependency>
 
 		<!-- 用于xlsx -->
@@ -370,16 +371,18 @@
 			<artifactId>kie-ci</artifactId>
 			<version>6.3.0.Final</version>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0.4.0</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
+			<version>11.2.0.4.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.12</version>
+		</dependency>
+		<!-- 打包下载jar -->
+		<dependency>
+			<groupId>ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.6.5</version>
 		</dependency>
 	</dependencies>
 
