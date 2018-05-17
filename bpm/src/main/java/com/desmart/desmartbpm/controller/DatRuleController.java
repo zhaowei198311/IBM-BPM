@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
@@ -68,7 +69,7 @@ public class DatRuleController {
 			String dateTime = simpleDateFormat.format(new Date());
 				datRule = new DatRule();
 				datRule.setRuleName(ruleName);
-				datRule.setRuleId("datrule:" + UUIDTool.getUUID());
+				datRule.setRuleId(EntityIdPrefix.DAT_RULE + UUIDTool.getUUID());
 				datRule.setBizType("wfCondCtrl");
 				datRule.setEditMode("STD");// 不明确
 				datRule.setIsActivate("on");
