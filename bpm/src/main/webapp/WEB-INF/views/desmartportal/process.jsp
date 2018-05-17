@@ -160,6 +160,33 @@
 			</div>
 		</div>
 	</div>
+	<table class="layui-table">
+		<colgroup>
+		    <col width="150">
+		    <col>
+		    <col width="150">
+		    <col> 
+		</colgroup>
+		<tbody>
+			<c:forEach items="${activityMetaList}" var="activityMeta">
+			    <tr>
+			      <td>下一环节:<span class="tip_span"></span></td>
+			      <td>
+			      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
+			      </td>
+			      <td class="td_title">处理人:<span class="tip_span"></span></td>
+			      <td>
+			      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
+			      </td>
+			      <td colspan="3">
+			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
+			      </td>
+			    </tr>
+		    </c:forEach>
+		</tbody>
+	</table>
+		
 	<!-- 附件上传模态框 -->
 	<div class="display_content_accessory_file" id="upload_file_modal" >
 				<div class="top">文件上传</div>
@@ -202,6 +229,27 @@
 <!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	<script>
+	function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
+		var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
+		layer.open({
+		     type: 2,
+		     title: '选择人员',
+		     shadeClose: true,
+		     shade: 0.8,
+		     area: ['680px', '520px'],
+		     content : [ url, 'yes'],
+		     success : function(layero, lockIndex) {
+			      var body = layer.getChildFrame('body', lockIndex);
+			      //绑定解锁按钮的点击事件
+			      body.find('button#close').on('click', function() {
+			       	layer.close(lockIndex);
+			        //location.reload();//刷新
+			      });
+		     }
+		 });
+	}
+	
+
 	function startProcess() {
 		var proUids = $("#proUid").val();
 		var proAppIds = $("#proAppId").val();

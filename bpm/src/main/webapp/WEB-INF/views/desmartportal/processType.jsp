@@ -92,7 +92,6 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script>
-
 		// 为翻页提供支持
 		var pageConfig = {
 			pageNum : 1,
