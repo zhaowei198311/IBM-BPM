@@ -58,7 +58,7 @@ $(function() {
             layer.alert(dataToSend.msg);
             return;
         }
-        dataToSend.proStatus = "SETTING";
+        
         $.ajax({
             url: common.getPath() + "/processDefinition/update",
             type: "post",
@@ -87,7 +87,7 @@ $(function() {
              layer.alert(dataToSend.msg);
              return;
          }
-         dataToSend.proStatus = "SETTED";
+         
          $.ajax({
              url: common.getPath() + "/processDefinition/update",
              type: "post",

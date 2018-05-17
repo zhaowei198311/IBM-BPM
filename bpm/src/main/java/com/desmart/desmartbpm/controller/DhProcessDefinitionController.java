@@ -168,4 +168,22 @@ public class DhProcessDefinitionController {
     public ServerResponse copySimilarProcess(@RequestParam Map<String, Object> mapId){
     	return dhProcessDefinitionService.copySimilarProcess(mapId);
     }
+    
+    /**
+     * 启用一个版本
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    @RequestMapping(value = "/enableDefinition")
+    @ResponseBody
+    public ServerResponse enableDefinition(String proAppId, String proUid, String proVerUid) {
+        try {
+            return dhProcessDefinitionService.enableProcessDefinition(proAppId, proUid, proVerUid);
+        } catch(Exception e) {
+            LOG.error("启用流程失败", e);
+            return ServerResponse.createByErrorMessage("启用流程失败");
+        }
+    }
 }

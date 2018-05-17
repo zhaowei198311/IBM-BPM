@@ -38,7 +38,7 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
-                                    <a href="draft.html"><button class="layui-btn layui-btn-primary layui-btn-sm">起草权限配置</button></a>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="enable_btn">启用</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess"">拷贝</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导入</button>

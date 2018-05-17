@@ -35,7 +35,7 @@
             <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
             <span style="float:right;">
 						<button class="layui-btn layui-btn-primary layui-btn-sm" id="save_btn">保存</button>
-						<button class="layui-btn layui-btn-primary layui-btn-sm" id="finish_btn">配置完成</button>
+						<!--  <button class="layui-btn layui-btn-primary layui-btn-sm" id="finish_btn">配置完成</button>-->
 					</span>
         </div>
     </div>

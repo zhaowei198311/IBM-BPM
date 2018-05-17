@@ -67,7 +67,7 @@ function drawTable(pageInfo) {
 				+ vo.proAppId
 				+ '" data-proveruid="'
 				+ vo.proVerUid
-				+ '" >'
+				+ '" data-isactive="'+ vo.isActive +'">'
 				+ sortNum
 				+ '</td>'
 				+ '<td>'
@@ -121,7 +121,7 @@ function doPage() {
 }
 
 $(function() {
-	// 同步
+	// “环节同步”
 	$("#synchr_btn").click(function() {
 		var cks = $("[name='definition_ck']:checked");
 		if (!cks.length) {
@@ -185,6 +185,54 @@ $(function() {
 		});
 	});
 
+	// 启用版本
+	$("#enable_btn").click(function(){
+		var cks = $("[name='definition_ck']:checked");
+		if (!cks.length) {
+			layer.alert("请选择一个流程定义");
+			return;
+		}
+		if (cks.length > 1) {
+			layer.alert("请选择一个流程定义，不能选择多个");
+			return;
+		}
+		var ck = cks.eq(0);
+		var proUid = ck.data('prouid');
+		var proVerUid = ck.data('proveruid');
+		var proAppId = ck.data('proappid');
+		// 查看版本是否激活
+		if (ck.data('isactive') != '激活') {
+			layer.alert("选择的版本未激活，不能设为启用");
+			return;
+		}
+		layer.confirm("是否确认启用此版本？", function(){
+			$.ajax({
+				url : common.getPath()
+						+ "/processDefinition/enableDefinition",
+				dataType : "json",
+				data : {
+					"proAppId": proAppId,
+					"proUid": proUid,
+					"proVerUid": proVerUid
+				},
+				type : "post",
+				success : function(result) {
+					if (result.status == 0) {
+						$("#definitionList_tbody tr").each(function() {
+							var status = $(this).find("td").eq(6).html();
+							if (status == '已启用') {
+								$(this).find("td").eq(6).html('已同步');
+							}
+						});
+						ck.parent().parent().find("td").eq(6).html("已启用");
+						layer.alert("启用成功");
+					}
+				}
+			});
+		});
+		
+	});
+	
 	// “流程配置”按钮
 	$("#toEditDefinition_btn")
 			.click(

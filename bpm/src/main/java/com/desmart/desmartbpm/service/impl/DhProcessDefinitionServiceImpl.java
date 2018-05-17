@@ -590,4 +590,37 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         return null;
     }
+    
+    @Transactional
+    public ServerResponse enableProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if(StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return ServerResponse.createByErrorMessage("找不到此流程定义");
+        }
+        DhProcessDefinition currDefinition = list.get(0);
+        if (StringUtils.equals(DhProcessDefinition.STATUS_ENABLED, currDefinition.getProStatus())) {
+            return ServerResponse.createByErrorMessage("当前版本已经启用");
+        } 
+        
+        // 找到此流程当前启用的版本
+        selective = new DhProcessDefinition();
+        selective.setProAppId(proAppId);
+        selective.setProUid(proUid);
+        selective.setProStatus(DhProcessDefinition.STATUS_ENABLED);
+        list = dhProcessDefinitionMapper.listBySelective(selective);
+        if (!CollectionUtils.isEmpty(list)) {
+            // 将以前的版本状态设为“已同步”
+            DhProcessDefinition otherDefinition = list.get(0);
+            otherDefinition.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
+            dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(otherDefinition);
+        }
+        
+        currDefinition.setProStatus(DhProcessDefinition.STATUS_ENABLED);
+        dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(currDefinition);
+        return ServerResponse.createBySuccess();
+    }
 }

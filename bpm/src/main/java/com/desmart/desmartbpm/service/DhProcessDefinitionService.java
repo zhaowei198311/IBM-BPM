@@ -100,5 +100,13 @@ public interface DhProcessDefinitionService {
      * @return
      */
     DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid);
-
+    
+    /**
+     * 启用一个版本的流程定义
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse enableProcessDefinition(String proAppId, String proUid, String proVerUid);
 }
