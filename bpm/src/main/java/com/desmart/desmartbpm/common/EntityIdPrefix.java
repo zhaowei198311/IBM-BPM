@@ -46,4 +46,6 @@ public class EntityIdPrefix {
     /** 步骤前缀 */
     public static final String DH_STEP = "step:";
 
+    /** 网关规则前缀 */
+    public static final String DAT_RULE = "datrule:";
 }
