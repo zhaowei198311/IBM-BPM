@@ -171,6 +171,11 @@
 			<if test="proAppId != null">
 			    am.pro_app_id = #{proAppId}
 			</if>
+			
+			<if test="activityId!=null and activityId!='' ">
+				and am.ACTIVITY_ID = #{activityId} 
+			</if>
+			
 			<if test="bpdId != null">
 				and am.bpd_id = #{bpdId}
 			</if>
