@@ -322,4 +322,14 @@
     	and SNAPSHOT_ID = #{proVerUid}
     	and PRO_APP_ID = #{proAppId}
     </select>
+    
+    <select id="getActivityIdByIds" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    	select 
+    	<include refid="Base_Column_List" />
+    	from 	BPM_ACTIVITY_META
+    	where 
+		BPD_ID = #{proUid}
+    	and SNAPSHOT_ID = #{proVerUid}
+    	and PRO_APP_ID = #{proAppId}
+    </select>
 </mapper>
