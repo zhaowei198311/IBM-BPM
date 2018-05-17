@@ -178,6 +178,9 @@
 			      <td>
 			      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
 			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
+			      	
+			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+			      	
 			      </td>
 			      <td colspan="3">
 			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
