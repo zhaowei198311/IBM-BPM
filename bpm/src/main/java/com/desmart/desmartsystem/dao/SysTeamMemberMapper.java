@@ -23,4 +23,6 @@ public interface SysTeamMemberMapper {
     public List<SysTeamMember> selectAll(SysTeamMember entity);
     
     int delete(SysTeamMember entity);
+    
+    List<SysTeamMember> selectTeamUser(SysTeamMember entity);
 }
