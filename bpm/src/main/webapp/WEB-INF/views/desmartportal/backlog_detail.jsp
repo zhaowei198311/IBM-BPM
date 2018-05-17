@@ -25,15 +25,14 @@
 
 			.display_content_accessory_file {
     			color: #717171;
-   				padding: 20px;
-				width: 85%;
-    			height: 500px;
-    			background: #fff;
-    			position: fixed;;
-    			margin: 100px 0 0 -300px;
-    			left: 25%;
-    			top: 3%;
-    			box-shadow: 0 0 10px #ccc;
+				padding: 20px;
+				width: 70%;
+				height: 60%;
+				background: #fff;
+				position: fixed;
+				left: 12.5%;
+				top: 16%;
+				box-shadow: 0 0 10px #ccc;
 			}
 
 			.foot_accessory_file {
@@ -44,7 +43,7 @@
 			}
 			
 			.upload_overflow_middle {
-   				 height: 400px;
+   				 height: 80%;
    				 width: 96%;
     			 border: 1px solid #ccc;
                  position: relative;
