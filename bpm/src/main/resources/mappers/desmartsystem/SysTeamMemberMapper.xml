@@ -31,6 +31,14 @@
 		</if>
   </select>
   
+  <select id="selectTeamUser" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultType="com.desmart.desmartsystem.entity.SysTeamMember" >
+		SELECT TEAM_UID teamUid,listagg(USER_UID,';') within group(order by USER_UID) userUid,listagg(USER_NAME,';') within group(order by USER_NAME) userName FROM(
+		SELECT  tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='role') tm LEFT JOIN SYS_ROLE_USER ru on tm.USER_UID =ru.ROLE_UID LEFT JOIN SYS_USER u on ru.USER_UID=u.USER_UID 
+		union all
+		SELECT tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='user') tm LEFT JOIN SYS_USER u  on tm.USER_UID=u.USER_UID
+		) team WHERE team.TEAM_UID in (${teamUid}) group by team.team_uid;
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_TEAM_MEMBER
     where TEAM_UID = #{teamUid,jdbcType=VARCHAR}
