@@ -113,6 +113,8 @@
 	<script>
 		$(document).ready(function(){
 			getUserTask();
+			// 定时 去查询我的 代办任务
+			window.setInterval(getUserTask, 60000);   
 		})
 	
 		$(function() {	
@@ -196,7 +198,7 @@
 				isShow = true;
 			}
 		});
-
+		
 		// 获取用户有多少代办
 		function getUserTask(){
 			var uId = document.getElementById('userId').value;
