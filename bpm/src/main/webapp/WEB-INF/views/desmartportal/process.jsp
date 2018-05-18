@@ -76,9 +76,9 @@
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
 	</div>
-	<div class="container" >
-		<div class="content" >
-		<table class="layui-table" >
+	<div class="container" style="width:96%">
+		<div class="content">
+		<table class="layui-table">
 					<colgroup>
 					    <col width="150">
 					    <col>
