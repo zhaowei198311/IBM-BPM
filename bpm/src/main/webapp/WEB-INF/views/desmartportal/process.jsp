@@ -75,7 +75,7 @@
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
 			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
-			<button class="layui-btn layui-btn-sm" onclick="startProcess()">提交</button>
+			<button id="startProcess" class="layui-btn layui-btn-sm" >提交</button>
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
 	</div>
@@ -257,40 +257,6 @@
 		     }
 		 });
 	}
-	
-
-	function startProcess() {
-		var proUids = $("#proUid").val();
-		var proAppIds = $("#proAppId").val();
-		var verUids = $("#verUid").val();
-		$.ajax({
-			url : 'process/startProcess',
-			type : 'POST',
-			dataType : 'json',
-			data : {
-				proUid : proUids,
-				proAppId : proAppIds,
-				verUid : verUids
-			},
-			success : function(result) {
-				if (result.status == 0) {
-					layer.alert('提交成功', {
-						icon : 1
-					});
-				}
-				if (result.status == 1) {
-					layer.alert('提交失败', {
-						icon : 2
-					});
-				}
-			},
-			error : function(result) {
-				layer.alert('提交失败', {
-					icon : 2
-				});
-			}
-		});
-	}
 
 	function clientSideInclude(dynUid) {
 		$.ajax({
@@ -312,6 +278,7 @@
 	$(function() {
 		clientSideInclude(document.getElementById('formId').value);
 		saveData();
+		startProcess();
 	})
 
 	/**
@@ -425,7 +392,7 @@
 							var proName = $("#proName").val();
 							var userId = $("#userId").val();
 							var dataInfo = $("#dataInfo").val();
-							$.ajax({
+ 							$.ajax({
 								url : "drafts/saveDrafts",
 								method : "post",
 								async : false,
@@ -441,7 +408,148 @@
 									layer.alert('保存成功')
 								}
 							});
-						}); //end
+						}); 
+		//end
+	}	
+	
+	/**
+	 * 发起流程
+	 */
+	var saveData = function() {
+		$("#startProcess")
+				.click(
+						function(e) {
+							e.preventDefault();
+							var inputArr = $("table input");
+							var selectArr = $("table select");
+							var control = true; //用于控制复选框出现重复值
+							var checkName = ""; //用于获得复选框的class值，分辨多个复选框
+							var json = "{";
+							for (var i = 0; i < inputArr.length; i++) {
+								var type = $(inputArr[i]).attr("type");
+								var textJson = "";
+
+								var checkJson = "";
+								switch (type) {
+								case "text": {
+									if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
+										var name = $(inputArr[i]).parent()
+												.parent().prev().prop("name");
+										var value = $("[name='" + name + "']")
+												.val();
+										textJson = "\"" + name
+												+ "\":{\"value\":\"" + value
+												+ "\"}";
+										break;
+									}
+								}
+									;
+								case "tel":
+									;
+								case "date":
+									;
+								case "textarae": {
+									var name = $(inputArr[i]).attr("name");
+									var value = $("[name='" + name + "']")
+											.val();
+									textJson = "\"" + name + "\":{\"value\":\""
+											+ value + "\"}";
+									break;
+								}
+								case "radio": {
+									var name = $(inputArr[i]).attr("name");
+									var radio = $("[name='" + name + "']")
+											.parent().parent().find(
+													"input:radio:checked");
+									textJson = "\"" + name + "\":{\"value\":\""
+											+ radio.attr("id") + "\"}";
+									break;
+								}
+								case "checkbox": {
+									var name = $(inputArr[i]).attr("name");
+									var checkbox = $("[name='" + name + "']")
+											.parent().parent().find(
+													"input:checkbox:checked");
+									//判断每次的复选框是否为同一个class
+									if (control) {
+										checkName = checkbox.attr("name");
+									} else {
+										if (checkName != checkbox.attr("name")) {
+											checkName = checkbox.attr("name");
+											control = true;
+										}
+									}
+
+									if (control) {
+										control = false;
+										checkJson += "\"" + checkName
+												+ "\":{\"value\":[";
+										for (var j = 0; j < checkbox.length; j++) {
+											if (j == checkbox.length - 1) {
+												checkJson += "\""
+														+ $(checkbox[j]).attr(
+																"id") + "\"";
+											} else {
+												checkJson += "\""
+														+ $(checkbox[j]).attr(
+																"id") + "\",";
+											}
+										}
+										checkJson += "]},";
+									}
+
+									json += checkJson;
+									break;
+								}
+								}//end switch
+								textJson += ",";
+								if (json.indexOf(textJson) == -1) {
+									json += textJson;
+								}
+							}
+							//获得最后一位字符是否为","
+							var charStr = json.substring(json.length - 1,
+									json.length);
+
+							if (charStr == ",") {
+								json = json.substring(0, json.length - 1);
+							}
+							json += "}";
+							// 发起流程				
+							var dataInfo = json
+							var proUids = $("#proUid").val();
+							var proAppIds = $("#proAppId").val();
+							var verUids = $("#verUid").val();
+							$.ajax({
+								url : 'process/startProcess',
+								type : 'POST',
+								dataType : 'json',
+								data : {
+									proUid : proUids,
+									proAppId : proAppIds,
+									verUid : verUids,
+									dataInfo : dataInfo
+								},
+								success : function(result) {
+									if (result.status == 0) {
+										layer.alert('提交成功', {
+											icon : 1
+										});
+									}
+									if (result.status == 1) {
+										layer.alert('提交失败', {
+											icon : 2
+										});
+									}
+								},
+								error : function(result) {
+									layer.alert('提交失败', {
+										icon : 2
+									});
+								}
+							});
+						}); 
+		//end
 	}
 	
 	// 回退到上一页面

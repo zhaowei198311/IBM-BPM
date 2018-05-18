@@ -53,7 +53,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息 
 	 */
 	@Override
-	public ServerResponse startProcess(String proUid, String proAppId, String verUid) {
+	public ServerResponse startProcess(String proUid, String proAppId, String verUid,String dataInfo) {
 		log.info("发起流程开始......");
 		HttpReturnStatus result = new HttpReturnStatus();
 		// 判断
@@ -94,7 +94,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 	      	processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
 	      	processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
 	      	processInstance.setInsInitUser(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-	      	processInstance.setInsData(result.getMsg());
+	      	// 流程数据
+	      	processInstance.setInsData(dataInfo);
 	      	dhProcessInstanceService.insertProcess(processInstance);
 	      	// 将任务数据 保存到 当前任务实例数据库中
 	      	DhTaskInstance taskInstance = new DhTaskInstance();
@@ -108,7 +109,10 @@ public class DhProcessServiceImpl implements DhProcessService {
 		      	taskInstance.setTaskType(String.valueOf(jsonObject.get("clientTypes")));
 		      	taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
-		      	taskInstance.setTaskData(String.valueOf(jsonObject.get("data")));
+		      	// 发起流程上一环节默认 是自己
+		      	taskInstance.setTaskPreviousUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		      	// 任务数据 
+		      	taskInstance.setTaskData(dataInfo);
 		      	dhTaskInstanceService.insertTask(taskInstance);
 				// 流程发起结束后设置变量
 				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();

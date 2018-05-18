@@ -31,9 +31,9 @@ public class DhProcessController {
 	@RequestMapping(value = "/startProcess")
 	@ResponseBody
 	public ServerResponse startProcess(@RequestParam(value="proUid")String proUid, @RequestParam(value="proAppId")String proAppId, 
-							@RequestParam(value="verUid")String verUid) {
+							@RequestParam(value="verUid")String verUid, @RequestParam(value="dataInfo")String dataInfo) {
 		// 发起流程		
-		return dhProcessService.startProcess(proUid, proAppId, verUid);
+		return dhProcessService.startProcess(proUid, proAppId, verUid, dataInfo);
 	}
 	
 	@RequestMapping(value = "/queryProcessByUser")

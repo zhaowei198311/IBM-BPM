@@ -125,6 +125,11 @@
 		});
 	});
 	
+	$(document).ready(function() {
+		// 加载数据
+		getTaskInstanceInfo();
+	})
+	
 	// 分页
 	function doPage() {
 		layui.use([ 'laypage', 'layer' ], function() {
@@ -165,11 +170,6 @@
 				window.location.href="menus/backlogDetail";
 			})
 			
-		})
-		
-		$(document).ready(function() {
-			// 加载数据
-			getTaskInstanceInfo();
 		})
 		
 		function getTaskInstanceInfo(){
@@ -219,8 +219,14 @@
 						+ '<td>'
 						+ meta.usrUid 
 						+ '</td>'
-						+ '<td>' + meta.taskStatus + '</td>' + '<td>'
-						+ meta.taskPreviousUsrUsername + '</td>' + '<td>' + meta.taskType
+						+ '<td>' 
+						+ meta.taskStatus
+						+ '</td>' 
+						+ '<td>'
+						+ meta.taskPreviousUsrUsername 
+						+ '</td>' 
+						+ '<td>' 
+						+ meta.taskType
 						+ '</td>' 
 						+ '<td>'
 						+ InitDate
