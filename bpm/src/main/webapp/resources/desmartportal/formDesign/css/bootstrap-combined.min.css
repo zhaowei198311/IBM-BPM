@@ -6191,7 +6191,7 @@ button.close {
     clear: both;
 }
  .container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
-    width: 1170px;
+    width: 96%;
 }
  .span12 {
     width: 1170px;
@@ -6673,7 +6673,7 @@ button.close {
 /* Customize container */
 @media (min-width: 768px) {
   .container {
-    max-width: 730px;
+    max-width: 100%;
   }
 }
 .container-narrow > hr {
