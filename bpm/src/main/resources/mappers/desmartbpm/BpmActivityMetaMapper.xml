@@ -307,7 +307,7 @@
 	
 	<select id="listSimilarActivityMetaById" parameterType="java.util.HashMap" resultType="java.util.Map">
     	select  
-    	a1.ACTIVITY_ID,a2.ACTIVITY_ID ACTIVITY_ID_1
+    	a1.ACTIVITY_ID,a1.ACTIVITY_BPD_ID,a2.ACTIVITY_ID ACTIVITY_ID_1,a2.ACTIVITY_BPD_ID ACTIVITY_BPD_ID_1
     	from bpm_activity_meta a1
 		left join bpm_activity_meta a2 on a1.activity_bpd_id = a2.activity_bpd_id and a1.activity_name = a2.activity_name
 		where a1.bpd_id = #{proUid}

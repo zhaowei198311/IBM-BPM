@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
@@ -26,23 +27,30 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
+import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
 import com.desmart.desmartbpm.exception.PermissionException;
+import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -81,6 +89,16 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhActivityConfMapper dhActivityConfMapper;
     @Autowired
     private DhActivityRejectMapper dhActivityRejectMapper;
+    @Autowired
+    private DhStepMapper dhStepMapper;
+    @Autowired
+    private BpmFormManageMapper bpmFormManageMapper;
+    @Autowired
+    private BpmFormManageService bpmFormManageService;
+    @Autowired
+    private BpmFormFieldMapper bpmFormFieldMapper;
+    @Autowired
+    private DhObjectPermissionMapper dhObjectPermissionMapper;
     
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -416,7 +434,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			// 同步config
 			synchronizationConfig(similarBpmActivityMetaList);
 			// 同步step
-			synchronizationStep(similarBpmActivityMetaList);
+			synchronizationStep(similarBpmActivityMetaList, proUid, proVerUid, proAppId, proUidNew, proVerUidNew, proAppIdNew);;
 			// 同步驳回环节
 			synchronizationRule(similarBpmActivityMetaList, proUidNew, proVerUidNew, proAppIdNew);
 			
@@ -474,8 +492,20 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
     }
     
-    // 同步流程
-    public void synchronizationProcess(String proUid, String proVerUid, String proAppId, 
+    /**
+     * 
+     * @Title: synchronizationProcess  
+     * @Description: 同步流程  
+     * @param @param proUid
+     * @param @param proVerUid
+     * @param @param proAppId
+     * @param @param proUidNew
+     * @param @param proVerUidNew
+     * @param @param proAppIdNew  
+     * @return void
+     * @throws
+     */
+    public void synchronizationProcess(String proUid, String proVerUid, String proAppId,
     								String proUidNew, String proVerUidNew, String proAppIdNew){
     	// 同类流程信息
 		DhProcessDefinition similarProcess = new DhProcessDefinition();
@@ -510,7 +540,14 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 		}
     }
     
-    // 同步config
+    /**
+     * 
+     * @Title: synchronizationConfig  
+     * @Description: 同步config  
+     * @param @param similarBpmActivityMetaList  
+     * @return void
+     * @throws
+     */
     public void synchronizationConfig(List<Map<String, Object>> similarBpmActivityMetaList){
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			// 老流程配置
@@ -523,10 +560,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 				OldDhActivityConf.setActivityId(NewDhActivityConf.getActivityId());
 				dhActivityConfMapper.updateByPrimaryKey(OldDhActivityConf);
 			}			
-		}
-    }
-    // 默认处理人，可选处理人，超时通知环节
-    public void synchronizationStep(List<Map<String, Object>> similarBpmActivityMetaList){
+		}   	
     	// 根据ACTIVITY_ID,清除新流程DH_ACTIVITY_ASSIGN表中信息
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			dhActivityAssignMapper.deleteByActivityId(map.get("ACTIVITY_ID_1").toString());
@@ -541,8 +575,19 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			}
 		}
     }
-    // 同步驳回环节
-    public void synchronizationRule(List<Map<String, Object>> similarBpmActivityMetaList, String proUidNew, String proVerUidNew, String proAppIdNew){
+    /**
+     * 
+     * @Title: synchronizationRule  
+     * @Description: 同步驳回环节  
+     * @param @param similarBpmActivityMetaList
+     * @param @param proUidNew
+     * @param @param proVerUidNew
+     * @param @param proAppIdNew  
+     * @return void
+     * @throws
+     */
+    public void synchronizationRule(List<Map<String, Object>> similarBpmActivityMetaList,
+    		String proUidNew, String proVerUidNew, String proAppIdNew){
     	// 根据ACTIVITY_ID,清除新流程 DH_ACTIVITY_REJECT表中信息
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			dhActivityRejectMapper.deleteByActivityId(map.get("ACTIVITY_ID_1").toString());
@@ -572,7 +617,87 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			}
 		}
     }
+    
+    /**
+     * 
+     * @Title: synchronizationStep  
+     * @Description: 同步DH_STEP  
+     * @param @param similarBpmActivityMetaList  
+     * @return void
+     * @throws
+     */
+    public void synchronizationStep(List<Map<String, Object>> similarBpmActivityMetaList,
+    		String proUid, String proVerUid, String proAppId, String proUidNew, String proVerUidNew, String proAppIdNew){
+    	// 新旧流程相同元素节点的activityBpdId集合
+    	List<String> activityBpdIdList = new ArrayList<>();
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+    		activityBpdIdList.add(map.get("ACTIVITY_BPD_ID").toString());
+		}
+    	// 老流程步骤查询参数
+    	Map<String, Object> ids = new HashMap<>();
+    	ids.put("proUid", proUid);
+    	ids.put("proVerUid", proVerUid);
+    	ids.put("proAppId", proAppId);
+    	ids.put("list", activityBpdIdList);
+    	// 先删除新旧流程相同节点中 新流程的节点元素(DH_STEP)
+    	Map<String, Object> deleteIds = new HashMap<>();
+    	deleteIds.put("proUid", proUidNew);
+    	deleteIds.put("proVerUid", proVerUidNew);
+    	deleteIds.put("proAppId", proAppIdNew);
+    	deleteIds.put("list", activityBpdIdList);
+    	dhStepMapper.deleteByIds(deleteIds);
+    	// 老流程步骤节点
+    	List<DhStep> oldDhStepList = dhStepMapper.listByIds(ids);
+    	for (DhStep dhStep : oldDhStepList) {
+			if ("trigger".equals(dhStep.getStepType())) {
+				dhStep.setStepUid("step:"+UUID.randomUUID());
+				dhStep.setProUid(proUidNew);
+				dhStep.setProVerUid(proVerUidNew);
+				dhStep.setProAppId(proAppIdNew);
+				dhStepMapper.insert(dhStep);
+			}else if ("form".equals(dhStep.getStepType())) {
+				// 随机生成俩个字母
+				char a=(char)(int)(Math.random()*26+97);
+				char b=(char)(int)(Math.random()*26+97);
+				// 老流程formUid
+				String stepObjectUid = dhStep.getStepObjectUid();
+				// 拷贝表单所需参数 bpmForm
+				BpmForm OldBpmForm = bpmFormManageMapper.queryFormByFormUid(stepObjectUid);
+				BpmForm bpmForm = new BpmForm();
+				bpmForm.setDynUid(OldBpmForm.getDynUid());
+				bpmForm.setDynTitle(OldBpmForm.getDynTitle()+"_copy"+a+b);
+				bpmForm.setDynFilename(OldBpmForm.getDynTitle()+"_copy"+a+b+".html");
+				bpmForm.setProUid(proUidNew);
+				bpmForm.setProVersion(proVerUidNew);
+				// 拷贝老流程表单
+				ServerResponse<?> sr = bpmFormManageService.copyForm(bpmForm);
+				if (sr.getStatus() == 0) {					
+					dhStep.setStepUid("step:"+UUID.randomUUID());
+					dhStep.setProUid(proUidNew);
+					dhStep.setProVerUid(proVerUidNew);
+					dhStep.setProAppId(proAppIdNew);
+					// 新流程表单formUid
+					dhStep.setStepObjectUid(sr.getData().toString());
+					dhStepMapper.insert(dhStep);
+				}
+				// 新老流程相同表单字段
+				List<Map<String, Object>> fldUidList = bpmFormFieldMapper.listFldUidByFormUid(stepObjectUid, sr.getData().toString());
 
+				// 拷贝表单字典权限
+				for (Map<String, Object> map : fldUidList) {
+					DhObjectPermission oldDhObjectPermission = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
+					if (oldDhObjectPermission != null) {
+						oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
+						oldDhObjectPermission.setProUid(proUidNew);
+						oldDhObjectPermission.setProVerUid(proVerUidNew);
+						oldDhObjectPermission.setProAppId(proAppIdNew);
+						oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
+						dhObjectPermissionMapper.save(oldDhObjectPermission);
+					}
+				}
+			}
+		}
+    }
     
     public DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid) {
         if(StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid)) {

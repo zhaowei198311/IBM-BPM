@@ -25,4 +25,15 @@ public interface DhObjectPermissionMapper {
      * @return
      */
     List<DhObjectPermission> listByDhObjectPermissionSelective(DhObjectPermission selective);
+    
+    /**
+     * 
+     * @Title: getDhObjectPermissionByFldUid  
+     * @Description: 根据fldUid查找单个DhObjectPermission对象  
+     * @param: @param fldUid
+     * @param: @return  
+     * @return: DhObjectPermission
+     * @throws
+     */
+    DhObjectPermission getDhObjectPermissionByFldUid(String fldUid);
 }

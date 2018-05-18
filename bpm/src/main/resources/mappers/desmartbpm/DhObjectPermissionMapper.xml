@@ -98,5 +98,12 @@
                 and op_action = #{opAction}
             </if>
         </where>
-    </select>     
+    </select>   
+    
+    <select id="getDhObjectPermissionByFldUid" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    	select 
+    	<include refid="base_column" />
+    	from DH_OBJECT_PERMISSION
+    	where OP_OBJ_UID = #{fldUid}
+    </select> 
 </mapper>

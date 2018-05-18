@@ -57,4 +57,12 @@
 		delete from dh_object_permission 
 		where op_obj_uid=#{opObjUid} and step_uid=#{stepUid}
 	</delete>
+	
+	<select id="listFldUidByFormUid" parameterType="java.util.HashMap" resultType="java.util.Map">
+		select f1.FLD_UID,f2.FLD_UID FLD_UID_1
+		from BPM_FORM_FIELD f1
+		left join BPM_FORM_FIELD f2 on f1.FLD_CODE_NAME = f2.FLD_CODE_NAME
+		where f1.FORM_UID = #{oldFormUid}
+		and f2.FORM_UID = #{newFormUid}
+	</select>
 </mapper>

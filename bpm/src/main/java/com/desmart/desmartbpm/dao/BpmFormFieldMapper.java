@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -40,4 +41,15 @@ public interface BpmFormFieldMapper {
 	 * 根据环节ID和表单字段ID删除字段权限信息
 	 */
 	int deleteFormFieldPermission(DhObjectPermission dhObjectPermission);
+	/**
+	 * 
+	 * @Title: listFldUidByFormUid  
+	 * @Description: 根据新老formUid查询相同FLD_CODE_NAME的FLD_UID  
+	 * @param: @param oldFormUid
+	 * @param: @param newFormUid
+	 * @param: @return  
+	 * @return: List<Map<String,Object>>
+	 * @throws
+	 */
+	List<Map<String, Object>> listFldUidByFormUid(@Param("oldFormUid")String oldFormUid, @Param("newFormUid")String newFormUid);
 }

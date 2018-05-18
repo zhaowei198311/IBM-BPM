@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -24,4 +25,24 @@ public interface DhStepMapper {
     int updateByPrimaryKey(DhStep record);
     
     List<DhStep> listBySelective(DhStep selective);
+    /**
+     * 
+     * @Title: listByIds  
+     * @Description: 通过proUId,proVerUid,proAppId,activityBpdIds查找  
+     * @param: @param ids
+     * @param: @return  
+     * @return: List<DhStep>
+     * @throws
+     */
+    List<DhStep> listByIds(Map<String, Object> ids);
+    /**
+     * 
+     * @Title: deleteByIds  
+     * @Description: 拷贝前先删除新旧流程相同节点中新流程节点元素  
+     * @param: @param ids
+     * @param: @return  
+     * @return: int
+     * @throws
+     */
+    int deleteByIds(Map<String, Object> deleteIds);
 }
