@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,9 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
-import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
@@ -48,9 +47,6 @@ public class DhProcessServiceImpl implements DhProcessService {
 	private DhTaskInstanceService dhTaskInstanceService;
 	
 	@Autowired
-	private DhActivityConfMapper dhActivityConfMapper;
-	
-	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
 	
 	/**
@@ -69,6 +65,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 		params.put("processAppId", proAppId);
 		params.put("action", "start");
 		params.put("bpdId", proUid);
+		String str = "{\"pubBo\":{\"creatorId\":\"00011178\"}}";
+		params.put("params", str);
 		// 掉用API 发起一个流程
 		HttpClientUtils httpClientUtils = new HttpClientUtils();
 		result = httpClientUtils.checkApiLogin("post", IBMApiUrl.IBM_API_PROCESS, params);
@@ -113,13 +111,19 @@ public class DhProcessServiceImpl implements DhProcessService {
 		      	taskInstance.setTaskData(String.valueOf(jsonObject.get("data")));
 		      	dhTaskInstanceService.insertTask(taskInstance);
 				// 流程发起结束后设置变量
-		      	Map<String,Object> activityMap = new HashMap<>();
-				params.put("proVerUid", verUid);
-				params.put("proAppId", proAppId);
-				params.put("proUid", proUid);
-		      	BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.getActivityIdByIds(activityMap);
-				dhTaskInstanceService.queryTaskSetVariable(bpmActivityMeta.getActivityId(), String.valueOf(jsonObject.get("tkiid")));
-				// 默认发起 提交完成第一个环节
+				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+				bpmActivityMeta.setProAppId(proAppId);
+				bpmActivityMeta.setPoId(proUid);
+				bpmActivityMeta.setSnapshotId(verUid);
+		      	List<BpmActivityMeta> bpmActivityMeta2 = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+		      	for (BpmActivityMeta bpmActivityMeta3 : bpmActivityMeta2) {
+		      		// 找到一个环节顺序号
+		      		if(bpmActivityMeta3.getSortNum() == 1) {
+		      			System.err.println(bpmActivityMeta3.getActivityId());
+		      			dhTaskInstanceService.queryTaskSetVariable(bpmActivityMeta3.getActivityId(), String.valueOf(jsonObject.get("tkiid")));	
+		      		}
+				}
+				// 默认发起 提交第一个环节
 				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")));
 			}
 			log.info("发起流程结束......");

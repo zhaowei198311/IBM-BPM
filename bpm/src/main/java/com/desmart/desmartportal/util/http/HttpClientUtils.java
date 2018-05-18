@@ -13,12 +13,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartportal.util.rest.RestUtil;
+import com.desmart.common.util.RestUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;

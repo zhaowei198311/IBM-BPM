@@ -9,18 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -28,8 +25,6 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
-import com.desmart.desmartsystem.dao.SysUserMapper;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -55,9 +50,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
-	
-	@Autowired
-	private SysUserMapper sysUserMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -216,9 +208,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(bpmActivityMeta.getActivityId());
 				// 获取变量并赋值   {"pubBo":{"nextOwners_0":["XXXXXXXXX"]}}
 				String variable = dhActivityConf.getActcAssignVariable();
-				String jsonstr = "{\"pubBo\":{\""+variable+"\":[\"00011178\"]}}";
-				JSONObject jsonObj = JSONObject.parseObject(jsonstr);
-				params.put("params", jsonObj);
+				String jsonstr = "{\"pubBo\":{\""+variable+"\":[\"00011178\"],\"creatorId\":\"00011178\"}}";
+			//	JSONObject jsonObj = JSONObject.   .parseObject(jsonstr);
+				params.put("params", jsonstr);
 				result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK+tkkid, params);
 				log.info("掉用API状态码:"+result.getCode());		
 			}
