@@ -553,18 +553,22 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			for (DhActivityReject dhActivityReject : OldDhActivityReject) {
 				// 老流程 当前环节可驳回的流程名
 				String activityName = dhActivityReject.getActivityName();
+				String activityBpdId = dhActivityReject.getActivityBpmId();
 				Map<String, Object> idS = new HashMap<>();
 				idS.put("proUid", proUidNew);
 				idS.put("proVerUid", proVerUidNew);
 				idS.put("proAppId", proAppIdNew);
 				idS.put("activityName", activityName);
+				idS.put("activityBpdId", activityBpdId);
 				// 新流程环节
 				BpmActivityMeta newBpmActivityMeta = bpmActivityMetaMapper.getActivityIdByIdAndName(idS);
-				DhActivityReject dar = new DhActivityReject();
-				dar.setActrUid("act_rej:"+UUID.randomUUID());
-				dar.setActivityId(map.get("ACTIVITY_ID_1").toString());
-				dar.setActrRejectActivity(newBpmActivityMeta.getActivityId());
-				dhActivityRejectMapper.insert(dar);
+				if (newBpmActivityMeta != null) {
+					DhActivityReject dar = new DhActivityReject();
+					dar.setActrUid("act_rej:"+UUID.randomUUID());
+					dar.setActivityId(map.get("ACTIVITY_ID_1").toString());
+					dar.setActrRejectActivity(newBpmActivityMeta.getActivityId());
+					dhActivityRejectMapper.insert(dar);
+				}				
 			}
 		}
     }

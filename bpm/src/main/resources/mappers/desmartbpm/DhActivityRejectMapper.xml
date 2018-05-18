@@ -54,7 +54,7 @@
   </update>
   
   <select id="listByActivityId" parameterType="string" resultMap="BaseResultMap">
-    select  <include refid="relationColumn"/>, am.activity_name
+    select  <include refid="relationColumn"/>, am.activity_name,am.activity_bpd_id
     from DH_ACTIVITY_REJECT ar
     left join bpm_activity_meta am on ar.actr_reject_activity = am.activity_id
     where ar.activity_id = #{activityId,jdbcType=VARCHAR}

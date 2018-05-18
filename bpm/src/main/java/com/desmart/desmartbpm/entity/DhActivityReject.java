@@ -12,6 +12,7 @@ public class DhActivityReject {
     
     // 非此表字段
     private String activityName;
+    private String activityBpdId;
     
     public DhActivityReject() {
         
@@ -54,8 +55,16 @@ public class DhActivityReject {
     public void setActivityName(String activityName) {
         this.activityName = activityName;
     }
+    
+    public String getActivityBpmId() {
+		return activityBpdId;
+	}
 
-    @Override
+	public void setActivityBpmId(String activityBpdId) {
+		this.activityBpdId = activityBpdId;
+	}
+
+	@Override
     public String toString() {
         return "DhActivityReject [actrUid=" + actrUid + ", activityId="
                 + activityId + ", actrRejectActivity=" + actrRejectActivity

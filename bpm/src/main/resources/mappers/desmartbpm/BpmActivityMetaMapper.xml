@@ -323,6 +323,7 @@
     	<include refid="Base_Column_List" />
     	from 	BPM_ACTIVITY_META
     	where ACTIVITY_NAME = #{activityName}
+    	and ACTIVITY_BPD_ID = #{activityBpdId}
     	and BPD_ID = #{proUid}
     	and SNAPSHOT_ID = #{proVerUid}
     	and PRO_APP_ID = #{proAppId}
