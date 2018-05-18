@@ -316,8 +316,8 @@
 									    <tr>
 									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
 									      <th>附件名称</th>
-									      <th>附件说明</th>
-									      <th>附件类型</th>
+									     <!--  <th>附件说明</th>
+									      <th>附件类型</th> -->
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>

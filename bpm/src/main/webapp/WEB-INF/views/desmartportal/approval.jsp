@@ -48,8 +48,9 @@
     			 border: 1px solid #ccc;
                  position: relative;
    				 padding: 0 10px;
-    			 overflow: scroll;
-  		</style>  		
+   				 overflow: scroll;
+			}
+		</style>  		
 	</head>
 	<body>
 		<div class="search_area top_btn">				
@@ -274,36 +275,40 @@
 									</tbody>								
 								</table>
 						    </div>
-						    <div class="layui-tab-item">
-						    	<table class="layui-table" style="margin:0;">
+						    <div class="layui-tab-item" style="height: auto;">
+						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
-									    <col width="60">
-									    <col>
-									    <col>
-									    <col>
-									    <col width="200"> 
-									    <col>
+									    <col width="5%">
+									    <col width ="20%"><%-- 
+									    <col width="15%">
+									    <col width="20%"> 
+									    <col width="10%"> --%>
+									    <col width="10%">
+									    <col width="20%">
 									</colgroup>
 									<thead>
 									    <tr>
-									      <th>序号</th>
-									      <th>附件名称</th>
+									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
+									      <th>附件名称</th><!-- 
+									      <th>附件说明</th>
+									      <th>附件类型</th> -->
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>
-									      	<button class="layui-btn layui-btn-primary layui-btn-sm upload" style="margin-left:20px;">上传附件</button>
-									      	<input type="file" class="upload_file"/>
+									      	<button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left:20px;">上传附件</button>
+									      	<!-- <button class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button> -->
+									      	<div class="hidden-value">
+												<input class="maxFileSize" value="20" type="hidden" />
+												<input class="maxFileCount" value="10" type="hidden" />
+												<input class="fileFormat" value="jpg,png,xls,xlsx,exe" type="hidden" />
+											</div>
+									      	<!-- <input type="file" class="upload_file"/> -->
+									      	<!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
 									      </th>
 									    </tr> 
 									</thead>
 									<tbody>
-									    <tr>
-									      <td>1</td>
-									      <td>附件1</td>					      
-									      <td>张三</td>
-									      <td>2018-04-13</td>
-									      <td><button class="layui-btn layui-btn-primary layui-btn-sm">删除</button></td>
-									    </tr>
+								
 									</tbody>
 								</table>
 						    </div>
@@ -374,6 +379,46 @@
 		  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
 		  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
+		<div class="display_content_accessory_file" id="upload_file_modal" >
+				<div class="top">文件上传</div>
+				<div class="upload_overflow_middle">
+					<div class="layui-upload-drag" style="width: 94.5%;">
+						<i class="layui-icon"></i>
+						<p>点击上传，或将文件拖拽到此处</p>
+					</div>
+					<div class="layui-upload">
+						<div class="layui-upload-list">
+							<table class="layui-table">
+									<colgroup>
+									    <col width="5%">
+									    <col width ="20%"><%-- 
+									    <col width="15%">
+									    <col width="20%"> 
+									    <col width="10%"> --%>
+									    <col width="10%">
+									    <col width="20%">
+									</colgroup>
+								<thead>
+									<tr>
+										<th>文件名</th>
+										<th>大小</th>
+										<!-- <th>文件标题</th>
+										<th>文件标签</th>
+										<th>文件说明</th> -->
+										<th>状态</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody class="fileList"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="foot_accessory_file">
+					<button type="button" class="layui-btn listAction">开始上传</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">取消</button>
+				</div>
+			</div>
 	</body>	
 </html>
 	<script>
