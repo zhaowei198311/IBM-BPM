@@ -14,13 +14,10 @@
 <title>发起流程</title>
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css"
-	rel="stylesheet">
+<meta name="viewport"	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css"	rel="stylesheet"> 
 <link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
-<link href="resources/desmartportal/css/modules/laydate/default/laydate.css"
-	rel="stylesheet">
+<link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
 <link rel="stylesheet" href="resources/desmartportal/css/layui.css" media="all">
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
 <style type="text/css">
@@ -79,9 +76,9 @@
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
 	</div>
-	<div class="container" style="margin-left:0px; width: 100%">
-		<div class="content" style="width: 1100px">
-		<table class="layui-table" style="width: 1100px">
+	<div class="container" >
+		<div class="content" >
+		<table class="layui-table" >
 					<colgroup>
 					    <col width="150">
 					    <col>
@@ -117,10 +114,7 @@
 				</table>
 		
 			<div id="formSet"></div>
-			
-		</div>
-	</div>
-	<table class="layui-table">
+			<table class="layui-table">
 		<colgroup>
 		    <col width="150">
 		    <col>
@@ -191,6 +185,10 @@
 				</div>
 			</div>
 		
+			
+		</div>
+	</div>
+	
 	<!-- 附件上传模态框 -->
 	<div class="display_content_accessory_file" id="upload_file_modal" >
 				<div class="top">文件上传</div>
