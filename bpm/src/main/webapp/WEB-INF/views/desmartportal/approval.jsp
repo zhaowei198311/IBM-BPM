@@ -56,7 +56,7 @@
 		<div class="search_area top_btn">				
 			<span style="padding-left:10px;color:#777;font-size:18px;">门店生命周期流程</span>
 			<span style="float:right;padding-right:20px;">
-				<button class="layui-btn  layui-btn-sm">流程图</button><button class="layui-btn  layui-btn-sm">保存</button><button class="layui-btn layui-btn-sm">提交</button><button class="layui-btn layui-btn-sm">转办</button><button class="layui-btn layui-btn-sm">会签</button><button class="layui-btn layui-btn-sm">驳回</button>
+				<button class="layui-btn  layui-btn-sm">流程图</button><button class="layui-btn  layui-btn-sm" onclick="save()">保存</button><button class="layui-btn layui-btn-sm">提交</button><button class="layui-btn layui-btn-sm">转办</button><button class="layui-btn layui-btn-sm">会签</button><button class="layui-btn layui-btn-sm">驳回</button>
 				<a href="backlog.html" style="margin-left:10px;"><button class="layui-btn layui-btn-sm back_btn">退出</button></a>
 			</span>
 		</div>
@@ -215,10 +215,10 @@
 		      			<div style="margin-top:10px;">
 					      	<label class="layui-form-label">常用语</label>
 					      	<div class="layui-input-block">
-					        	<select>
-									<option>--请选择--</option>
-									<option>通过</option>
-									<option>驳回</option>
+					        	<select class="layui-form" lay-filter="useselfChange">
+									<option value="-1">--请选择--</option>
+									<option value="通过">通过</option>
+									<option value="驳回">驳回</option>
 								</select>
 			      			</div>
 		      			</div>
@@ -243,7 +243,7 @@
 									    <col width="10%">
 									    <col width="22%">
 									</colgroup>
-									<tbody>
+									<tbody id="approval_tbody">
 									    <tr>
 									      <th class="approval_th">环节名称</th>
 									      <td>人工任务1</td>
@@ -258,20 +258,7 @@
 									    	<th class="approval_th">审批意见</th>
 									    	<td colspan="7">审批意见</td>
 									    </tr>
-									    <tr>
-									      <th class="approval_th">环节名称</th>
-									      <td>人工任务1</td>
-									      <th class="approval_th">审批人</th>
-									      <td>张三</td>
-									      <th class="approval_th">岗位名称</th>
-									      <td>网点开发员</td>
-									      <th class="approval_th">审批时间</th>
-									      <td>2018-03-12 10:00:00</td>								     
-									    </tr> 
-									    <tr>
-									    	<th class="approval_th">审批意见</th>
-									    	<td colspan="7">审批意见</td>
-									    </tr>
+									   
 									</tbody>								
 								</table>
 						    </div>
@@ -370,6 +357,8 @@
 		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	   <!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
+	<!-- 审批信息js -->
+	<script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
 	    <!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
@@ -424,7 +413,7 @@
 	<script>
 		layui.use('layedit', function(){
 		  var layedit = layui.layedit;
-		  layedit.build('demo',{
+		  editIndex=layedit.build('demo',{
 		  	height: 100 ,
 		    tool: [
 		      'strong' //加粗
@@ -439,6 +428,7 @@
 		      ,'right' //右对齐
 		    ]
 		  }); //建立编辑器
+		  
 		});	
 		$(function(){
 			$(".add_row").click(function(){

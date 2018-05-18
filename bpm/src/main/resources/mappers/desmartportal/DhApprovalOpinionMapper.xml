@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.desmart.desmartportal.dao.DhApprovalOpinionMapper">
+	<select id="loadDhApprovalOpinionListByCondition"
+		parameterType="com.desmart.desmartportal.entity.DhApprovalOpinion"
+		resultType="com.desmart.desmartportal.entity.DhApprovalOpinion">
+		select dao.*,su.user_name as aprUserName,su.station as aprStation
+		,bam.activity_name as activityName from DH_Approval_Opinion dao
+		left join Sys_User su on dao.apr_user_id = su.user_uid
+		left join bpm_activity_meta bam on dao.task_uid = bam.activity_id
+		where 1 = 1
+		<if test="aprUid != null and aprUid != '' ">
+			and dao.apr_uid = #{aprUid}
+		</if>
+		<if test="taskUid != null and taskUid != ''">
+			and dao.task_uid = #{taskUid}
+		</if>
+		order by dao.apr_opi_index asc
+	</select>
+
+	<insert id="insert"
+		parameterType="com.desmart.desmartportal.entity.DhApprovalOpinion">
+		INSERT
+		INTO
+		DH_APPROVAL_OPINION
+		(
+		APR_OPI_ID,
+		APR_UID,
+		TASK_UID,
+		APR_OPI_INDEX,
+		APR_USER_ID,
+		APR_TIME_NUMBER,
+		APR_OPI_COMMENT,
+		APR_STATUS,
+		APR_DATE
+		)
+		VALUES
+		(
+		#{aprOpiId},
+		#{aprUid},
+		#{taskUid},
+		#{aprOpiIndex},
+		#{aprUserId},
+		#{aprTimeNumber},
+		#{aprOpiComment},
+		#{aprStatus},
+		#{aprDate}
+		)
+	</insert>
+
+	<select id="getDhApprovalObinionList"
+		parameterType="com.desmart.desmartportal.entity.DhApprovalOpinion"
+		resultType="com.desmart.desmartportal.entity.DhApprovalOpinion">
+		select * from DH_Approval_Opinion
+		where 1 = 1
+		<if test="aprUid != null and aprUid != '' ">
+			and apr_uid = #{aprUid}
+		</if>
+		<if test="taskUid != null and taskUid != ''">
+			and task_uid = #{taskUid}
+		</if>
+		order by apr_opi_index asc
+	</select>
+
+</mapper>

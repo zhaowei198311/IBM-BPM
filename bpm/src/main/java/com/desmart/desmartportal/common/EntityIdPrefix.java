@@ -29,4 +29,8 @@ public class EntityIdPrefix {
 	 * 流程附件前缀
 	 */
 	public static final String DH_INSTANCE_DOCUMENT = "docid:";
+	/**
+	 * 审批意见前缀
+	 */
+	public static final String DH_APPROVAL_OPINION = "apr_idea:";
 }
