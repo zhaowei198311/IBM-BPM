@@ -653,10 +653,17 @@ function step_table(data){
 		   }
 		   var value=encodeURI(JSON.stringify(val));
 		   if(this.stepType=='trigger'){
-			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
+			   trs+= '<td>'
+				   + '<i class="layui-icon" title="上移" onclick="resortStep(\'' + val.stepUid + '\', \'reduce\');">&#xe619;</i>'
+				   + '<i class="layui-icon" title="下移" onclick="resortStep(\'' + val.stepUid + '\', \'increase\');">&#xe61a;</i>'
+				   +'<i class="layui-icon delete_btn" title="编辑" onclick=stepEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
 		   }else{
-			   trs+='<td><i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
-			   trs+='<i class="layui-icon" onclick=formFieldEdit("'+value+'"); >&#xe654;</i>';
+			   trs+= '<td>'
+				   + '<i class="layui-icon" title="上移" onclick="resortStep(\'' + val.stepUid + '\', \'reduce\');">&#xe619;</i>'
+				   + '<i class="layui-icon" title="下移" onclick="resortStep(\'' + val.stepUid + '\', \'increase\');">&#xe61a;</i>'
+				   + '<i class="layui-icon delete_btn" title="编辑" onclick=stepFormEdit("'+value+'") >&#xe642;</i><i class="layui-icon delete_btn" title="删除" onclick="deleteStep(\''+ this.stepUid +'\');">&#xe640;</i>'
+			       + '<i class="layui-icon" onclick=formFieldEdit("'+value+'"); >&#xe654;</i>'
+			   
 		   }
 		   trs+='</td>';
 		   trs+='</tr>';
@@ -752,7 +759,7 @@ function updateFormTable(formUid){
 	    proUid:proUid,
 	    proVersion:proVerUid,
 	    dynTitle:$('#updateDynTitle').val(),
-	    dynDescription:$('#updateDynTitle').val()
+	    dynDescription:$('#updateDynDescription').val()
 	   },
 	   dataType: "json",
 	   success: function(result) {
@@ -1200,13 +1207,8 @@ function getFormData() {
 function addStep() {
 	var stepObjectUid;
 	var $activeLi = $("#my_collapse li.link_active");
-	var actcUid = $activeLi.data('uid');
+	var actcUid = getCurrentActcUid();
 	var activityBpdId = $activeLi.data('activitybpdid');
-	var stepSort = $("#stepSort").val();
-	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
-		layer.alert('步骤序号不正确，请填写正整数');
-		return;
-	}
 	var stepBusinessKey;
 	//console.log($('input[name="stepType"]:checked').val());
 	console.log($('input:radio[name=stepType]:checked').val());
@@ -1244,7 +1246,6 @@ function addStep() {
 				"proUid" : proUid,
 				"proVerUid": proVerUid,
 				"activityBpdId": activityBpdId,
-				"stepSort": stepSort,
 			    "stepBusinessKey": stepBusinessKey,
 			    "stepType":stepType,
 			    "stepObjectUid": stepObjectUid
@@ -1278,7 +1279,6 @@ function addStep() {
 				"proUid" : proUid,
 				"proVerUid": proVerUid,
 				"activityBpdId": activityBpdId,
-				"stepSort": stepSort,
 			    "stepBusinessKey": stepBusinessKey,
 			    "stepType": stepType,
 			    "stepObjectUid": stepObjectUid
@@ -1303,88 +1303,46 @@ function addStep() {
 //更新步骤关联表单信息
 function updateStep(){
 	var stepObjectUid;
-	var $activeLi = $("#my_collapse li.link_active");
-	var actcUid = $activeLi.data('uid');
-	var activityBpdId = $activeLi.data('activitybpdid');
-	var stepSort = $("#updateStepSort").val();
-	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
-		layer.alert('步骤序号不正确，请填写正整数');
+	var actcUid = getCurrentActcUid();
+	var  formCheck = $('#update_step_form_tbody input[name="dynUid_check"]:checked');
+	stepObjectUid =formCheck.val();
+	
+	if (!stepObjectUid) {
+		layer.alert('请选择表单');
 		return;
 	}
-	var stepBusinessKey;
-	var stepBusinessKeyType = $('input[name="edtiStepBusinessKeyType"]:checked').val();
-	if (stepBusinessKeyType != 'default') {
-		stepBusinessKey = $('input[name="edtistepBusinessKey"]').val();
-		if (!stepBusinessKey || stepBusinessKey.length > 100 || stepBusinessKey.trim().length == 0) {
-			layer.alert('步骤关键字验证失败，过长或未填写');
-			return;
-		} 
-	} else {
-		stepBusinessKey = 'default';
+	
+	if(formCheck.length>1){
+		layer.alert('请选择一个表单，不能选择多个');
+		return false;
 	}
-		var  formCheck=$('#update_step_form_tbody input[name="dynUid_check"]:checked');
-		stepObjectUid =formCheck.val();
-		
-		if (!stepObjectUid) {
-			layer.alert('请选择表单');
-			return;
-		}
-		
-		if(formCheck.length>1){
-			layer.alert('请选择一个表单，不能选择多个');
-			return false;
-		}
-		
-		$.ajax({
-			url : common.getPath() + "/step/updateStep",
-			type : "post",
-			dataType : "json",
-			data : {
-				"proAppId": proAppId,
-				"proUid" : proUid,
-				"proVerUid": proVerUid,
-				"activityBpdId": activityBpdId,
-				"stepSort": stepSort,
-			    "stepBusinessKey": stepBusinessKey,
-			    "stepType":'form',
-			    "stepObjectUid": stepObjectUid,
-			     stepUid:$('#eidtstepUid').val()
-			},
-			success : function(result){
-				if(result.status == 0){
-					$('#update_step_form_container').hide();
-					loadActivityConf(actcUid);
-				}else{
-					layer.alert(result.msg);
-				}
-			},
-			error : function(){
-				layer.alert('操作失败');
+	
+	$.ajax({
+		url : common.getPath() + "/step/updateStep",
+		type : "post",
+		dataType : "json",
+		data : {
+			"stepUid": $('#eidtstepUid').val(),
+		    "stepObjectUid": stepObjectUid
+		},
+		success : function(result){
+			if(result.status == 0){
+				$('#update_step_form_container').hide();
+				loadActivityConf(actcUid);
+			}else{
+				layer.alert(result.msg);
 			}
-		});
+		},
+		error : function(){
+			layer.alert('操作失败');
+		}
+	});
 }
 
 // 更新触发器类型的步骤
 function updateTriggerStep() {
 	var stepUid = stepUidToEdit;
-	var $activeLi = $("#my_collapse li.link_active");
-	var actcUid = $activeLi.data('uid');
-	var stepSort = $("#ETS_stepSort").val();
-	if (!stepSort || !/^\d{0,3}$/.test(stepSort) || stepSort == 0) {
-		layer.alert('步骤序号不正确，请填写正整数');
-		return;
-	}
-	var stepBusinessKey;
-	var stepBusinessKeyType = $('input[name="ETS_BusinessKeyType"]:checked').val();
-	if (stepBusinessKeyType != 'default') {
-		stepBusinessKey = $('#ETS_stepBusinessKey').val();
-		if (!stepBusinessKey || stepBusinessKey.length > 100 || stepBusinessKey.trim().length == 0) {
-			layer.alert('步骤关键字验证失败，过长或未填写');
-			return;
-		} 
-	} else {
-		stepBusinessKey = 'default';
-	}
+	var actcUid = getCurrentActcUid();
 	var stepObjectUid = $("#ETS_trigger_of_step").val();
 	if (!stepObjectUid) {
 		layer.alert('请选择触发器');
@@ -1396,9 +1354,6 @@ function updateTriggerStep() {
 		dataType : "json",
 		data : {
 			"stepUid": stepUid,
-			"stepSort" : stepSort,
-			"stepType": "trigger",
-			"stepBusinessKey": stepBusinessKey,
 			"stepObjectUid": stepObjectUid
 		},
 		success : function(result){
@@ -1428,10 +1383,8 @@ function deleteStep(stepUid) {
 		},
 		success : function(result){
 			if(result.status == 0){
-				var $activeLi = $("#my_collapse li.link_active");
-				var actcUid = $activeLi.data('uid');
 				layer.alert("删除成功");
-				loadActivityConf(actcUid);
+				loadActivityConf(getCurrentActcUid());
 			}else{
 				layer.alert(result.msg);
 			}
@@ -1443,3 +1396,32 @@ function deleteStep(stepUid) {
 }
 
 function submitAddDatRule(){}
+
+function resortStep(stepUid, resortType) {
+	$.ajax({
+		url : common.getPath() + "/step/resortStep",
+		type : "post",
+		dataType : "json",
+		data : {
+			"stepUid": stepUid,
+			"resortType": resortType
+		},
+		success : function(result){
+			if(result.status == 0){
+				loadActivityConf(getCurrentActcUid());
+			}else{
+				layer.alert(result.msg);
+			}
+		},
+		error : function(){
+			layer.alert('操作失败');
+		}
+	});
+}
+
+// 获得当前正在配置的环节配置主键
+function getCurrentActcUid() {
+	var $activeLi = $("#my_collapse li.link_active");
+	var actcUid = $activeLi.data('uid');
+	return actcUid;
+}

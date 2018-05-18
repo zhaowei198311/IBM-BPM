@@ -59,5 +59,21 @@ public class DhStepController {
         }
     }
     
+    /**
+     *  重新排序步骤
+     * @param stepUid 步骤主键
+     * @param resortType 重排类型：减少步骤，增加步骤   increase/reduce
+     * @return
+     */
+    @RequestMapping(value = "/resortStep")
+    @ResponseBody
+    public ServerResponse resortStep(String stepUid, String resortType) {
+        try {
+            return dhStepService.resortStep(stepUid, resortType);
+        } catch (Exception e) {
+            LOG.error("排序步骤失败", e);
+            return ServerResponse.createByErrorMessage("排序步骤失败");
+        }
+    }
     
 }

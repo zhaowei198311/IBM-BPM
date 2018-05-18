@@ -25,6 +25,22 @@ public interface DhStepMapper {
     int updateByPrimaryKey(DhStep record);
     
     List<DhStep> listBySelective(DhStep selective);
+
+    
+    /**
+     * 获得最大的步骤序号
+     * @param dhStep
+     * @return
+     */
+    int getMaxStepSort(DhStep dhStep);
+    
+    /**
+     * 更新后续环节的序号-1
+     * @param dhStep
+     * @return
+     */
+    int updateStepSortOfRelationStep(DhStep dhStep);
+
     /**
      * 
      * @Title: listByIds  
@@ -45,4 +61,5 @@ public interface DhStepMapper {
      * @throws
      */
     int deleteByIds(Map<String, Object> deleteIds);
+
 }

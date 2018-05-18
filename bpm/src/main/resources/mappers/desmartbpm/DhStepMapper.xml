@@ -212,6 +212,32 @@
       STEP_BUSINESS_KEY = #{stepBusinessKey,jdbcType=VARCHAR}
     where STEP_UID = #{stepUid,jdbcType=VARCHAR}
   </update>
+
+  
+  <select id="getMaxStepSort" parameterType="com.desmart.desmartbpm.entity.DhStep" resultType="int">
+    select nvl(max(step_sort), 0) 
+    from dh_step
+    where 
+        PRO_APP_ID = #{proAppId} 
+	    and PRO_UID = #{proUid} 
+	    and PRO_VER_UID = #{proVerUid}
+	    and ACTIVITY_BPD_ID = #{activityBpdId}
+	    and Step_business_key = #{stepBusinessKey}
+  </select>
+  
+  <update id="updateStepSortOfRelationStep" parameterType="com.desmart.desmartbpm.entity.DhStep" >
+    update 
+        dh_step
+	set 
+	   step_sort = step_sort-1
+	where  
+	    pro_app_id = #{proAppId}
+	    and pro_uid = #{proUid}
+		and pro_ver_uid = #{proVerUid}
+		and ACTIVITY_BPD_ID = #{activityBpdId}
+		and step_business_key = #{stepBusinessKey}
+		and step_sort > #{stepSort}
+  </update> 
   
   <select id="listByIds" parameterType="java.util.HashMap" resultType="com.desmart.desmartbpm.entity.DhStep">
   	select 
@@ -236,4 +262,5 @@
   		#{item}
   	</foreach>
   </delete>
+
 </mapper>

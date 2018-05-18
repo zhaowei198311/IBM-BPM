@@ -5,6 +5,9 @@ package com.desmart.desmartbpm.entity;
  *
  */
 public class DhStep {
+    public static final String TYPE_TRIGGER = "trigger";
+    public static final String TYPE_FORM = "form";
+    
     private String stepUid;
     private String proAppId;
     private String proUid;

@@ -16,6 +16,9 @@
 	            background-color: #9DA5EC;
 	            color: white;
 	        }
+	        #step_table i {
+	           margin-right: 2px;
+	        }
         </style>
     </head>
     <body>
@@ -39,12 +42,14 @@
                                     <input type="text" name="title" required  value="${processDefinition.proName}" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
                             </div>
+                            <!--  
                             <div class="layui-form-item">
                                 <label class="layui-form-label">快照号</label>
                                 <div class="layui-input-block">
                                     <input type="text" name="title" required  value="${processDefinition.proVerUid}" autocomplete="off" class="layui-input" disabled="disabled">
                                 </div>
-                            </div>                          
+                            </div>
+                            -->                          
                         </div>
                         <div class="layui-col-md6">
                             <div class="layui-form-item">
@@ -638,14 +643,11 @@
                                 <input type="radio" name="stepType" value="form" title="表单"  lay-filter="stepTypeFilter" style="margin-left:10px;"> 
                                 <input type="radio" name="stepType" value="trigger" title="触发器" lay-filter="stepTypeFilter"> 
                             </div>
-                            <div class="layui-col-md2">
-	                           <input id="stepSort" name="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
-                            </div>
                             <div class="layui-col-md4" style="padding-left:5px;">
                                 <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="default" title="默认关键字"  checked > 
                                 <input type="radio" name="stepBusinessKeyType" lay-filter="stepBusinessKey" value="custom" title="自定义关键字" >    
                             </div>
-                            <div class="layui-col-md3">
+                            <div class="layui-col-md5">
                                 <input id="stepBusinessKey_input" name="stepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
                             </div>
                         </div>
@@ -774,31 +776,19 @@
                 	<input type="hidden" id="eidtstepUid"/>
                     <div class="search_area" style="height:38px;">
                         <div class="layui-row layui-form" style="margin-top:10px">
-                            <div class="layui-col-md2">
-	                           <input id="updateStepSort" name="stepSort" type="text" placeholder="步骤序号"  class="layui-input">
-                            </div>
-                            <div class="layui-col-md4" style="padding-left:5px;">
-                                <input type="radio" name="edtiStepBusinessKeyType" lay-filter="StepBusinessKey" value="default" title="默认关键字"  checked > 
-                                <input type="radio" name="edtiStepBusinessKeyType" lay-filter="edtiStepBusinessKey" value="custom" title="自定义关键字" >    
-                            </div>
-                            <div class="layui-col-md3">
-                                <input id="update_stepBusinessKey_input" name="edtistepBusinessKey" type="text" placeholder="输入步骤关键字"  class="layui-input" >
-                            </div>
-                        </div>
-                    </div>
-                    <div id="form_innerArea" style="height:362px;">
-                        <div style="height:38px;" class="layui-row layui-form">
                             <div class="layui-col-md2" style="margin-right: 5px;">
                                <input id="updateDynTitle" type="text" placeholder="标题"  class="layui-input">
                             </div>
                             
                             <div class="layui-col-md2" style="margin-right: 5px;">
-                               <input id="updateDynTitle" type="text" placeholder="描述"  class="layui-input">
+                               <input id="updateDynDescription" type="text" placeholder="描述"  class="layui-input">
                             </div>
                             <div class="layui-col-md2">
                                <button class="layui-btn" id="update_search_form_btn" type="button">查询</button>
                             </div>
                         </div>
+                    </div>
+                    <div id="form_innerArea" style="height:362px;">
                         <div style="height:334px;overflow-y: auto;">
                             <table class="layui-table backlog_table form_table" lay-even lay-skin="nob">
                                 <colgroup>
@@ -950,20 +940,6 @@
             <div class="display_content3" style="height:500px;width:900px;">
                 <div class="top">编辑触发器步骤</div>
                 <div class="middle1" style="height:420px;">
-                    <div class="search_area" style="height:38px;">
-                        <div class="layui-row layui-form" style="margin-top:10px">
-                            <div class="layui-col-md3">
-                                <input id="ETS_stepSort" name="ETS_stepSort" type="text" placeholder="步骤序号"  class="layui-input">
-                            </div>
-                            <div class="layui-col-md4" style="padding-left:5px;">
-                                <input type="radio" id="ETS_radio_default" name="ETS_BusinessKeyType" lay-filter="ETS_stepBusinessKey" value="default" title="默认关键字"  checked > 
-                                <input type="radio" id="ETS_radio_custom" name="ETS_BusinessKeyType" lay-filter="ETS_stepBusinessKey" value="custom" title="自定义关键字" >    
-                            </div>
-                            <div class="layui-col-md5">
-                                <input id="ETS_stepBusinessKey"  type="text" placeholder="输入步骤关键字"  class="layui-input" >
-                            </div>
-                        </div>
-                    </div>
                     <div id="trigger_innerArea" style="padding-top: 30px;padding-right:50px;">
                           <div class="layui-form-item ">
                               <label class="layui-form-label">请选择触发器</label>

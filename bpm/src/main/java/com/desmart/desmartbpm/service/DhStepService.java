@@ -36,4 +36,26 @@ public interface DhStepService {
      * @return
      */
     ServerResponse deleteDhStep(String stepUid);
+    
+    /**
+     * 排序步骤
+     * @param stepUid
+     * @param resortType  increase, reduce
+     * @return
+     */
+    ServerResponse resortStep(String stepUid, String resortType);
+    
+    /**
+     * 找到指定步骤的上一个步骤
+     * @param dhStep
+     * @return
+     */
+    DhStep getPreStepOfCurrStep(DhStep dhStep); 
+    
+    /**
+     * 找到指定步骤的下一个步骤
+     * @param dhStep
+     * @return
+     */
+    DhStep getNextStepOfCurrStep(DhStep dhStep); 
 }

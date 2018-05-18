@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +18,11 @@ import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
@@ -45,7 +48,6 @@ public class DhStepServiceImpl implements DhStepService {
     public ServerResponse create(DhStep dhStep) {
         if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
-                || dhStep.getStepSort() == null || dhStep.getStepSort().intValue() < 0
                 || StringUtils.isBlank(dhStep.getStepObjectUid())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         } 
@@ -54,11 +56,6 @@ public class DhStepServiceImpl implements DhStepService {
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
         if (list.size() == 0) {
             return ServerResponse.createByErrorMessage("此环节不存在");
-        }
-        
-        // 查看这个step是否已经存在
-        if (isStepExists(dhStep)) {
-            return ServerResponse.createByErrorMessage("步骤序号：" +dhStep.getStepSort() +"，步骤关键字："+dhStep.getStepBusinessKey()+"已经存在，不能重复配置");
         }
         
         String stepType = dhStep.getStepType();
@@ -78,8 +75,8 @@ public class DhStepServiceImpl implements DhStepService {
             }
         }
         dhStep.setStepUid(EntityIdPrefix.DH_STEP + UUID.randomUUID().toString());
+        dhStep.setStepSort(generateStepSort(dhStep));
         dhStepMapper.insert(dhStep);
-        
         return ServerResponse.createBySuccess();
     }
     
@@ -92,7 +89,7 @@ public class DhStepServiceImpl implements DhStepService {
         if (bpmActivityMeta == null) {
             return ServerResponse.createByErrorMessage("找不到环节");
         }
-        PageHelper.orderBy("STEP_SORT");
+        PageHelper.orderBy("STEP_BUSINESS_KEY, STEP_SORT");
         DhStep selective = new DhStep(bpmActivityMeta.getProAppId(), bpmActivityMeta.getBpdId(), bpmActivityMeta.getSnapshotId());
         selective.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
         List<DhStep> stepList = dhStepMapper.listBySelective(selective);
@@ -102,51 +99,35 @@ public class DhStepServiceImpl implements DhStepService {
     
     @Transactional
     public ServerResponse updateStep(DhStep dhStep) {
-        if (StringUtils.isBlank(dhStep.getStepUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey()) || StringUtils.isBlank(dhStep.getStepType())
-                || dhStep.getStepSort() == null || dhStep.getStepSort().intValue() < 0 || StringUtils.isBlank(dhStep.getStepObjectUid())) {
+        if (StringUtils.isBlank(dhStep.getStepUid()) || StringUtils.isBlank(dhStep.getStepObjectUid())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         } 
         DhStep currentStep = dhStepMapper.selectByPrimaryKey(dhStep.getStepUid());
         if (currentStep == null) {
             return ServerResponse.createByErrorMessage("找不到此步骤");
         }
-        dhStep.setProAppId(currentStep.getProAppId());
-        dhStep.setProUid(currentStep.getProUid());
-        dhStep.setProVerUid(currentStep.getProVerUid());
-        dhStep.setActivityBpdId(currentStep.getActivityBpdId());
-        // 步骤序号变更的话看是否已经有这个序号同关键字的步骤
-        if (!currentStep.getStepSort().equals(dhStep.getStepSort()) && isStepExists(dhStep)) {
-            return ServerResponse.createByErrorMessage("修改失败，这个步骤序号已存在相同步骤关键字的步骤");
-        }
         
-        if (DhStepType.TRIGGER.getCode().equals(currentStep.getStepType()) && DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
-            if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
+        if (DhStep.TYPE_TRIGGER.equals(currentStep.getStepType())) {
+            DhTrigger trigger = dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid());
+            if (trigger == null) {
                 return ServerResponse.createByErrorMessage("触发器不存在");
             }
-        } else if (DhStepType.TRIGGER.getCode().equals(currentStep.getStepType()) && DhStepType.FORM.getCode().equals(dhStep.getStepType())) {
-            if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
+            
+        } else if (DhStep.TYPE_FORM.equals(currentStep.getStepType())) {
+            BpmForm form = bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid());
+            if (form == null) {
                 return ServerResponse.createByErrorMessage("表单不存在");
             }
-        } else if (DhStepType.FORM.getCode().equals(currentStep.getStepType()) && DhStepType.TRIGGER.getCode().equals(dhStep.getStepType())) {
-            if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
-                return ServerResponse.createByErrorMessage("触发器不存在");
-            }
-            removeFieldPermissionOfStep(dhStep.getStepUid());
-        } else if (DhStepType.FORM.getCode().equals(currentStep.getStepType()) && DhStepType.FORM.getCode().equals(dhStep.getStepType())) {
-            if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
-                return ServerResponse.createByErrorMessage("表单不存在");
-            }
-            removeFieldPermissionOfStep(dhStep.getStepUid());
+            // 移除当前绑定表单的字段权限
+            removeFieldPermissionOfStep(currentStep.getStepUid());
         } else {
             return ServerResponse.createByErrorMessage("修改失败, 步骤类型异常");
         }
+        
         // 执行更新
         DhStep updateSelective = new DhStep();
         updateSelective.setStepUid(currentStep.getStepUid());
-        updateSelective.setStepSort(dhStep.getStepSort());
         updateSelective.setStepObjectUid(dhStep.getStepObjectUid());
-        updateSelective.setStepType(dhStep.getStepType());
-        updateSelective.setStepBusinessKey(dhStep.getStepBusinessKey());
         dhStepMapper.updateByPrimaryKeySelective(updateSelective);
         return ServerResponse.createBySuccess();
     }
@@ -164,6 +145,7 @@ public class DhStepServiceImpl implements DhStepService {
             // 如果是表单类型，清除权限
             removeFieldPermissionOfStep(stepUid);
         }
+        dhStepMapper.updateStepSortOfRelationStep(currentStep);
         dhStepMapper.deleteByPrimaryKey(stepUid);
         return ServerResponse.createBySuccess();
     }
@@ -191,6 +173,87 @@ public class DhStepServiceImpl implements DhStepService {
             return true;
         } 
         return false;
+    }
+    
+    @Override
+    @Transactional
+    public ServerResponse resortStep(String stepUid, String resortType) {
+        if (StringUtils.isBlank(stepUid) || (!StringUtils.equals("increase", resortType) && !StringUtils.equals("reduce", resortType))) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        DhStep currStep = dhStepMapper.selectByPrimaryKey(stepUid);
+        if (currStep == null) {
+            return ServerResponse.createByErrorMessage("此步骤不存在");
+        }
+        DhStep anotherStep = null;
+        if (StringUtils.equals("reduce", resortType)) {
+            anotherStep = getPreStepOfCurrStep(currStep);
+            if (anotherStep == null) {
+                return ServerResponse.createByErrorMessage("此环节已经是第一个环节");
+            }
+        } else {
+            anotherStep = getNextStepOfCurrStep(currStep);
+            if (anotherStep == null) {
+                return ServerResponse.createByErrorMessage("此环节已经是最后一个环节");
+            }
+        }
+        Integer tempStep = currStep.getStepSort();
+        currStep.setStepSort(anotherStep.getStepSort());
+        anotherStep.setStepSort(tempStep);
+        dhStepMapper.updateByPrimaryKeySelective(currStep);
+        dhStepMapper.updateByPrimaryKeySelective(anotherStep);
+        return ServerResponse.createBySuccess();
+    }
+    
+    
+    public DhStep getPreStepOfCurrStep(DhStep dhStep) {
+        DhStep selective = new DhStep();
+        selective.setProAppId(dhStep.getProAppId());
+        selective.setProUid(dhStep.getProUid());
+        selective.setProVerUid(dhStep.getProVerUid());
+        selective.setActivityBpdId(dhStep.getActivityBpdId());
+        selective.setStepBusinessKey(dhStep.getStepBusinessKey());
+        Integer stepSort = dhStep.getStepSort();
+        if (stepSort == null || stepSort.intValue() == 1) {
+            return null;
+        }
+        stepSort = stepSort.intValue() - 1;
+        selective.setStepSort(stepSort);
+        List<DhStep> list = dhStepMapper.listBySelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+    
+    public DhStep getNextStepOfCurrStep(DhStep dhStep) {
+        DhStep selective = new DhStep();
+        selective.setProAppId(dhStep.getProAppId());
+        selective.setProUid(dhStep.getProUid());
+        selective.setProVerUid(dhStep.getProVerUid());
+        selective.setActivityBpdId(dhStep.getActivityBpdId());
+        selective.setStepBusinessKey(dhStep.getStepBusinessKey());
+        Integer stepSort = dhStep.getStepSort();
+        if (stepSort == null) {
+            return null;
+        }
+        stepSort = stepSort.intValue() + 1;
+        selective.setStepSort(stepSort);
+        List<DhStep> list = dhStepMapper.listBySelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+    
+    /**
+     * 生成一个StepSort
+     * @return
+     */
+    private int generateStepSort(DhStep dhStep) {
+        return dhStepMapper.getMaxStepSort(dhStep) + 1;
     }
     
 }
