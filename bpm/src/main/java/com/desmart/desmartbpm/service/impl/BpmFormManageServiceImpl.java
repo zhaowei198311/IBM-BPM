@@ -170,21 +170,21 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		//复制表单信息
 		String newFormUid = copyFormInfo(bpmForm,oldBpmForm,newFilename);
 		//复制表单字段信息
-		copyFormFieldInfo(newFormUid);
+		copyFormFieldInfo(newFormUid,oldBpmForm.getDynUid());
 		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
 		//复制表单文件
 		boolean flag = sftp.copyFile(gcfg,"/form",oldFilename,newFilename);
 		if(!flag) {
 			throw new PlatformException("表单文件复制异常");
 		}
-		return ServerResponse.createBySuccess();
+		return ServerResponse.createBySuccess(newFormUid);
 	}
 
 	/**
 	 * 复制表单字段信息
 	 */
-	private void copyFormFieldInfo(String newFormUid) {
-		List<BpmFormField> oldFields = bpmFormFieldMapper.queryFormFieldByFormUid(newFormUid);
+	private void copyFormFieldInfo(String newFormUid,String oldFormUid) {
+		List<BpmFormField> oldFields = bpmFormFieldMapper.queryFormFieldByFormUid(oldFormUid);
 		int fieldSize = oldFields.size();
 		if(fieldSize!=0) {
 			List<BpmFormField> newFields = new ArrayList<>();
@@ -202,7 +202,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 
 	/**
 	 * 复制表单信息
-	 * @return 
 	 */
 	private String copyFormInfo(BpmForm bpmForm,BpmForm oldBpmForm,String newFilename) {
 		String newFormUid = EntityIdPrefix.BPM_FORM + UUID.randomUUID().toString();
