@@ -28,6 +28,8 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhProcessService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysUser;
 
 /**  
 * <p>Title: ProcessServiceImpl</p>  
@@ -48,6 +50,9 @@ public class DhProcessServiceImpl implements DhProcessService {
 	
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	
+	@Autowired
+	private SysUserMapper sysUserMapper;
 	
 	/**
 	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息 
@@ -106,11 +111,16 @@ public class DhProcessServiceImpl implements DhProcessService {
 		      	taskInstance.setTaskId(Integer.parseInt(String.valueOf(jsonObject.get("tkiid"))));
 		      	taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		      	taskInstance.setActivityBpdId(String.valueOf(jsonObject.get("flowObjectID")));
-		      	taskInstance.setTaskType(String.valueOf(jsonObject.get("clientTypes")));
+		      	// 任务类型 
+		      	taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
 		      	taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 		      	// 发起流程上一环节默认 是自己
 		      	taskInstance.setTaskPreviousUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		      	SysUser sysUser = new SysUser();
+		      	sysUser.setUserId(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		      	SysUser sysUserName = sysUserMapper.findById(sysUser);
+		      	taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
 		      	// 任务数据 
 		      	taskInstance.setTaskData(dataInfo);
 		      	dhTaskInstanceService.insertTask(taskInstance);

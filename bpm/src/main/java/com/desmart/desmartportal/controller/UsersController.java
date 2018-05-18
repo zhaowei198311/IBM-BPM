@@ -82,6 +82,9 @@ public class UsersController {
 	@RequestMapping(value = "/todoTask")
 	@ResponseBody
 	public int todoTask(String userId) {
+		if(userId==null) {
+			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		}
 		return dhTaskInstanceService.selectByusrUid(userId);
 	}
 }

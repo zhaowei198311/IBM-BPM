@@ -44,13 +44,10 @@
 				    	<input type="text" placeholder="来自"  class="layui-input">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text" placeholder="标题"  class="layui-input">
+						<input type="text" placeholder="任务标题"  class="layui-input">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="test1">
-					</div>
-					<div class="layui-col-xs2">
-					    <input type="text"  placeholder="结束时间"  class="layui-input" id="test2">				    
+						<input type="text"  placeholder="接受时间"  class="layui-input" id="test1">
 					</div>
 					<div class="layui-col-xs1" style="text-align:right;">
 					        <button class="layui-btn" >查询</button>
@@ -58,7 +55,7 @@
 				</div>
 			</div>
 			<div>
-				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共3条任务</p>
+				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
 				<table class="layui-table">
 					<colgroup>
 					    <col width="60">
@@ -128,6 +125,9 @@
 	$(document).ready(function() {
 		// 加载数据
 		getTaskInstanceInfo();
+		// 定时 去查询我的 代办任务
+		getUserTask();
+		window.setInterval(getUserTask, 60000); 
 	})
 	
 	// 分页
@@ -213,7 +213,7 @@
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
 				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
 						+ '</td>' 
-						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
+						+ '<td><i class="layui-icon backlog_img" onclick="openApproval()">&#xe63c;</i>'
 						+ meta.taskTitle 
 						+ '</td>' 
 						+ '<td>'
@@ -240,5 +240,23 @@
 
 		}
 		
+		// 获取用户有多少代办
+		function getUserTask(){
+			$.ajax({
+				url : 'user/todoTask',
+				type : 'POST',
+				dataType : 'text',
+				data : {},
+				success : function(result){
+					// 渲染到待办
+					$("#daiban_icon").text(result);
+				}
+			})
+		}
+		
+		// 打开 代办的 详细页面
+		function openApproval(){
+			window.location.href = 'menus/approval';
+		}
 		
 	</script>

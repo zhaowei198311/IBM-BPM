@@ -136,9 +136,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	/* 
 	 * 根据用户id 查询 有多少代办任务
+	 * js前台定时 任务 每隔一分钟 去 查询一次用户待办
 	 */
 	@Override
 	public int selectByusrUid(String usrUid) {
+		log.info("======定时查询用户有多少代办=======");
 		return	dhTaskInstanceMapper.selectByusrUid(usrUid);
 	}
 
