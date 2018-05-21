@@ -56,20 +56,20 @@
 		<div class="search_area top_btn">				
 			<span style="padding-left:10px;color:#777;font-size:18px;">门店生命周期流程</span>
 			<span style="float:right;padding-right:20px;">
-				<button class="layui-btn  layui-btn-sm">流程图</button><button class="layui-btn  layui-btn-sm" onclick="save()">保存</button><button class="layui-btn layui-btn-sm">提交</button><button class="layui-btn layui-btn-sm">转办</button><button class="layui-btn layui-btn-sm">会签</button><button class="layui-btn layui-btn-sm">驳回</button>
+				<button class="layui-btn  layui-btn-sm">流程图</button><button class="layui-btn layui-btn-sm">通过</button><button class="layui-btn layui-btn-sm">驳回</button><button class="layui-btn layui-btn-sm">转办</button><button class="layui-btn layui-btn-sm">会签</button>
 				<a href="backlog.html" style="margin-left:10px;"><button class="layui-btn layui-btn-sm back_btn">退出</button></a>
 			</span>
 		</div>
 		<div class="container">			
 			<div class="content">
 				<table class="layui-table">
-					<colgroup>
-					    <col width="150">
-					    <col>
-					    <col width="150">
-					    <col> 
-					</colgroup>
-					<tbody>
+				<colgroup>
+					<col width="150">
+					<col>
+					<col width="150">
+					<col>
+				</colgroup>
+				<tbody>
 						<tr>
 							<th colspan="4" class="list_title">目标店调查表
 							<span style="float: right;font-size:14px;font-weight:normal;">流程编号：1000-10185-BG-60</span>
