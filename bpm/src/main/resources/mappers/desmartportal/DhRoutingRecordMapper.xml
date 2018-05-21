@@ -15,6 +15,7 @@
   <if test="insUid != null and insUid != '' ">
   and drr.ins_uid = #{insUid}
   </if>
+  order by drr.create_time asc
   </select>
   
   <insert id="insert" parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
