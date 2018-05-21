@@ -542,9 +542,13 @@
                 }
         		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
         					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
-        		            + '<td>'+formInfo.dynTitle+'</td>'
-        		            + '<td>'+formInfo.dynDescription+'</td>'
-        		            + '<td>'+createTime+'</td>'
+        		            + '<td>'+formInfo.dynTitle+'</td>';
+        		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
+        		   trs += '<td>'+formInfo.dynDescription+'</td>'
+        		}else{
+        		   trs += '<td></td>'
+        		}
+        		trs += '<td>'+createTime+'</td>'
         		            + '<td>'+formInfo.creatorFullName+'</td>'
         		            + '<td><i class="layui-icon" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'+
         		            ' <i class="layui-icon" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
