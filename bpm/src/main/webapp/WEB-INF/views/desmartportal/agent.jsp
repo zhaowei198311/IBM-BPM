@@ -587,14 +587,15 @@
 					$("input[name='updateAllProSel']").prop("checked",false);
 					$("input[name='updateProNameCheck']").prop("checked",false);
 					var proArr = $("input[name='updateProNameCheck']");
-					console.log(updateProMetaUidArr);
 					for(var i=0;i<proArr.length;i++){
 						var updateProMetaUid = $(proArr[i]).val();
-						if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1){
+						if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1
+								|| updateProMetaUidArr[0]=="allProMeta"){
 							$(proArr[i]).prop("checked",true);
 							updateOnClickProSel(proArr[i]);
 						}
 					} 
+					updateProMetaUidArr.splice($.inArray("allProMeta",updateProMetaUidArr),1);
 				}
 			}//end success
 		});
@@ -603,7 +604,11 @@
 	//选择要添加代理的流程信息
 	function addProMeta(){
 		var addProMetaStr = proMetaNameArr.join(";");
-		$("#addAgentProcess").val(addProMetaStr);
+		if(allProMetaNum!=proMetaUidArr.length){
+			$("#addAgentProcess").val(addProMetaStr);
+		}else{
+			$("#addAgentProcess").val("所有流程");
+		}
 	} 
 	
 	//添加代理信息
@@ -619,7 +624,7 @@
 			var end = new Date(agentEdate.replace("-", "/").replace("-", "/"));  
 			if(start<end){
 				var agentIsAll = "TRUE";
-				if(allProMetaNum!=proMetaUidArr){
+				if(allProMetaNum!=proMetaUidArr.length){
 					agentIsAll = "FALSE";
 				}
 				layer.load();
@@ -657,8 +662,11 @@
 	//修改代理流程元数据的方法
 	function updateProMeta(){
 		var updateProMetaStr = updateProMetaNameArr.join(";");
-		$("#updateAgentProcess").val(updateProMetaStr);
-		console.log(updateProMetaNameArr);
+		if(updateAllProMetaNum != updateProMetaUidArr.length){
+			$("#updateAgentProcess").val(updateProMetaStr);
+		}else{
+			$("#updateAgentProcess").val("所有流程");
+		}
 	}
 	
 	//修改代理信息的方法
@@ -675,7 +683,7 @@
 			var end = new Date(updateAgentEdate.replace("-", "/").replace("-", "/"));  
 			if(start<end){
 				var updateAgentIsAll = "TRUE";
-				if(updateAllProMetaNum != updateProMetaUidArr){
+				if(updateAllProMetaNum != updateProMetaUidArr.length){
 					updateAgentIsAll = "FALSE";
 				}
 				//修改代理信息
@@ -963,7 +971,7 @@
 						if(result.status != 0){
 							layer.alert(result.msg);	
 						}else{
-							if(this.checked){
+							if(agentStatus=="ENABLED"){
 								layer.alert("代理启用成功");
 							}else{
 								layer.alert("代理停用成功");
