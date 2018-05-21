@@ -95,7 +95,8 @@
 		update dh_agent_agentinfo 
 		set agent_sdate = #{agentSdate},
 			agent_edate = #{agentEdate},
-			agent_clientele = #{agentClientele}
+			agent_clientele = #{agentClientele},
+			agent_is_all = #{agentIsAll}
 		where agent_id = #{agentId}
 	</update>
 	
@@ -126,6 +127,16 @@
 		  and p.pro_uid = #{proUid}
 		  and a.agent_operator = #{userUid}
 		  and a.agent_sdate &lt;= sysdate
-		  and a.agent_edate >= sysdate;
+		  and a.agent_edate >= sysdate
+		  and a.agent_status = 'ENABLED'
+	</select>
+	
+	<select id="getDelegateByUserId" parameterType="string" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select <include refid="insert_column_List"/>
+		from dh_agent_agentinfo
+		where agent_operator = #{userUid}
+		  and agent_sdate &lt;= sysdate
+		  and agent_edate >= sysdate
+		  and agent_status = 'ENABLED'
 	</select>
 </mapper>
