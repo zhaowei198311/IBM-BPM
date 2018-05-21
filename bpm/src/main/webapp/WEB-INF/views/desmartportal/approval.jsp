@@ -244,21 +244,7 @@
 									    <col width="22%">
 									</colgroup>
 									<tbody id="approval_tbody">
-									    <tr>
-									      <th class="approval_th">环节名称</th>
-									      <td>人工任务1</td>
-									      <th class="approval_th">审批人</th>
-									      <td>张三</td>
-									      <th class="approval_th">岗位名称</th>
-									      <td>网点开发员</td>
-									      <th class="approval_th">审批时间</th>
-									      <td>2018-03-12 10:00:00</td>								     
-									    </tr> 
-									    <tr>
-									    	<th class="approval_th">审批意见</th>
-									    	<td colspan="7">审批意见</td>
-									    </tr>
-									   
+									    
 									</tbody>								
 								</table>
 						    </div>
@@ -301,17 +287,17 @@
 						    </div>
 						    <div class="layui-tab-item">
 						    	<div class="p">
-				    			  	<p><font>是否催办：</font>是</p>
-				    			  	<p><font>现在的环节号：</font>9999</p>
+				    			  	<p><font>现在的环节名：</font>9999</p>
 				    			  	<p><font>当前处理人：</font>张三，李四，王五，赵权，李彦龙，李耀光，陈洁敏，方敏</p>
-				    			  	<p><font>需要处理此文件的人：</font>赵权，李彦龙，李耀光，陈洁敏，方敏</p>
 				    			  	<p><font>当前处理状态：</font>流程结束</p>
+				    			  	<p><font>当前处理到达时间：</font>2017-10-10 10:10:59</p>
 				    			  	<p><font>流转过程：</font></p>				    			  	
 					    		</div>
-					    		<ul class="tab_ul">
+					    		<ul id="transferProcess" class="tab_ul">
 					    			<li>
 					    				<div>(1)</div>
 					    				<div>张三</div>
+					    				<div>岗位：起草</div>
 					    				<div>起草</div>
 					    				<div>2018-04-17 10:00:00</div>
 					    			</li>

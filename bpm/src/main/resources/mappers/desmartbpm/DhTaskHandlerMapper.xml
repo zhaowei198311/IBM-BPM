@@ -109,4 +109,9 @@
         </foreach>
     </insert>
 
+	<select id="getListByInsIdAndActivityBpdId" resultType="com.desmart.desmartbpm.entity.DhTaskHandler">
+	    select dth.*,su.user_name as userName from dh_task_handler dth
+	    left join sys_user su on dth.user_uid = su.user_uid
+	    where dth.ins_id = #{insId} and dth.activity_bpd_id = #{activityBpdId} and dth.status = 'on'
+    </select>
 </mapper>

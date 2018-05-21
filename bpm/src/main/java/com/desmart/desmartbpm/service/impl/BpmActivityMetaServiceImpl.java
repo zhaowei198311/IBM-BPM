@@ -483,6 +483,13 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         }
         
     }
+
+
+	@Override
+	public BpmActivityMeta queryByPrimaryKey(String activityId) {
+		// TODO Auto-generated method stub
+		return bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+	}
     
     
 

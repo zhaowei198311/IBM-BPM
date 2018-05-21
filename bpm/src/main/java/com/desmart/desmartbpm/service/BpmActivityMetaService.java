@@ -64,4 +64,10 @@ public interface BpmActivityMetaService {
      */
     Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
     
+    /**
+     * 根据主键查询
+     * @param activityId
+     * @return
+     */
+    BpmActivityMeta queryByPrimaryKey(String activityId);
 }

@@ -80,6 +80,10 @@ function save(){
 	    	 layer.alert(data.msg);
 	     }
 	});
-
+	
+	/**
+	 * 流转信息js开始
+	 */
+	
 }
 

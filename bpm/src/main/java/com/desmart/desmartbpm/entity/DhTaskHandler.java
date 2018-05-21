@@ -14,6 +14,8 @@ public class DhTaskHandler {
     private String userUid;
 
     private String status;
+    
+    private String userName;//不在表内，处理人用户姓名
 
     public String getHandleUid() {
         return handleUid;
@@ -55,12 +57,19 @@ public class DhTaskHandler {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "DhTaskHandler [handleUid=" + handleUid + ", insId=" + insId
-                + ", activityBpdId=" + activityBpdId + ", userUid=" + userUid
-                + ", status=" + status + "]";
-    }
+    public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	@Override
+	public String toString() {
+		return "DhTaskHandler [handleUid=" + handleUid + ", insId=" + insId + ", activityBpdId=" + activityBpdId
+				+ ", userUid=" + userUid + ", status=" + status + ", userName=" + userName + "]";
+	}
 
     
 }

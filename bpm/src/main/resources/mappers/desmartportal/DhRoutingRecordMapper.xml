@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.DhRoutingRecordMapper" >
+ <select id="getDhRoutingRecordListByCondition" resultType="com.desmart.desmartportal.entity.DhRoutingRecord"
+  parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
+  SELECT drr.*,su.user_name as userName,su.station as station 
+  FROM DH_ROUTING_RECORD drr left join sys_user su on drr.user_uid = su.user_uid
+  where 1 = 1 
+  <if test="insUid != null and insUid != '' ">
+  drr.ins_uid = #{insUid}
+  </if>
+  </select>
+ 
+</mapper>
