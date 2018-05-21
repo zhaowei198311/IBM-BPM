@@ -692,6 +692,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 						oldDhObjectPermission.setProVerUid(proVerUidNew);
 						oldDhObjectPermission.setProAppId(proAppIdNew);
 						oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
+						oldDhObjectPermission.setStepUid(dhStep.getStepUid());
 						dhObjectPermissionMapper.save(oldDhObjectPermission);
 					}
 				}
