@@ -2,8 +2,10 @@ package com.desmart.desmartportal.dao;
 
 import java.util.List;
 
-import com.desmart.desmartportal.entity.DhRoutingRecord;
+import org.springframework.stereotype.Repository;
 
+import com.desmart.desmartportal.entity.DhRoutingRecord;
+@Repository
 public interface DhRoutingRecordMapper {
 	
 	/**
