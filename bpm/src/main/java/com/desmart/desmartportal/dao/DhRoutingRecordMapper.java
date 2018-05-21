@@ -14,4 +14,10 @@ public interface DhRoutingRecordMapper {
 	 * @return
 	 */
 	List<DhRoutingRecord> getDhRoutingRecordListByCondition(DhRoutingRecord dhRoutingRecord);
+	
+	/**
+	 * 添加流转信息
+	 * @param dhRoutingRecord
+	 */
+	void insert(DhRoutingRecord dhRoutingRecord);
 }

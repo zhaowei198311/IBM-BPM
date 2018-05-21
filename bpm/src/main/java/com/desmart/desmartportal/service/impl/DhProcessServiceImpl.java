@@ -15,14 +15,17 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.common.constant.RouteStatus;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.common.Const;
-import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhProcessService;
@@ -53,6 +56,9 @@ public class DhProcessServiceImpl implements DhProcessService {
 	
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	
+	@Autowired
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
 	
 	/**
 	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息 
@@ -129,17 +135,29 @@ public class DhProcessServiceImpl implements DhProcessService {
 				bpmActivityMeta.setPoId(proUid);
 				bpmActivityMeta.setSnapshotId(verUid);
 		      	List<BpmActivityMeta> bpmActivityMeta2 = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+		      	// 环节名称 用于保存流转信息
+		      	String activityName = "";
 		      	for (BpmActivityMeta bpmActivityMeta3 : bpmActivityMeta2) {
 		      		// 找到一个环节顺序号
 		      		if(bpmActivityMeta3.getSortNum() == 1) {
-		      			System.err.println(bpmActivityMeta3.getActivityId());
+		      			log.info("第一个环节ID:"+bpmActivityMeta3.getActivityId());
 		      			dhTaskInstanceService.queryTaskSetVariable(bpmActivityMeta3.getActivityId(), String.valueOf(jsonObject.get("tkiid")));	
+		      			BpmActivityMeta bpmActivityMeta4 = bpmActivityMetaMapper.queryByPrimaryKey(bpmActivityMeta3.getActivityId());
+		      			log.info("第一个环节ID:"+bpmActivityMeta4.getActivityName());
+		      			activityName = bpmActivityMeta4.getActivityName();
 		      		}
 				}
 				// 默认发起 提交第一个环节
 				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")));
 				// 任务完成后 保存到流转信息表里面
-				
+				DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+				dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+				dhRoutingRecord.setInsUid(InsUid);
+				dhRoutingRecord.setActivityName(activityName);
+				dhRoutingRecord.setRouteType(RouteStatus.ROUTE_STARTPROCESS);
+				// 发起流程 第一个流转环节信息 的 用户id  是 自己
+				dhRoutingRecord.setUserUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+				dhRoutingRecordMapper.insert(dhRoutingRecord);
 			}
 			log.info("发起流程结束......");
 			return ServerResponse.createBySuccess();

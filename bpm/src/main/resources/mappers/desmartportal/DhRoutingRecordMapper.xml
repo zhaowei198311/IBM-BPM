@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.DhRoutingRecordMapper" >
+ 
+ <sql id="Base_Column_List">
+ 	ROUTE_UID,INS_UID,ACTIVITY_NAME,
+ 	ROUTE_TYPE,USER_UID,CREATE_TIME
+ </sql>
+ 
  <select id="getDhRoutingRecordListByCondition" resultType="com.desmart.desmartportal.entity.DhRoutingRecord"
   parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
   SELECT drr.*,su.user_name as userName,su.station as station 
@@ -10,5 +16,20 @@
   and drr.ins_uid = #{insUid}
   </if>
   </select>
+  
+  <insert id="insert" parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
+  	INSERT INTO
+  	DH_ROUTING_RECORD
+  	(<include refid="Base_Column_List"/>)
+  	VALUES
+  	(
+  		#{routeUid},
+  		#{insUid},
+  		#{activityName},
+  		#{routeType},
+  		#{userUid},
+  		sysdate
+  	)
+  </insert>
  
 </mapper>
