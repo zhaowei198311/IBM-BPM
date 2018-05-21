@@ -286,12 +286,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				resultMap.put("insId", dhprocessInstance.getInsId());
 				resultMap.put("insData", dhprocessInstance.getInsData());
 				// 查询流程图元素信息
-				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(
-						dhTaskInstance.getActivityBpdId(), dhprocessInstance.getProVerUid());
-				for (BpmActivityMeta bpmActivityMeta : bpmActivityList) {
-					resultMap.put("activityId", bpmActivityMeta.getActivityId());
-					resultMap.put("activityName", bpmActivityMeta.getActivityName());
-				}
+				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+				bpmActivityMeta.setBpdId(dhprocessInstance.getProUid());
+				bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
+				bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
+				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+				resultMap.put("bpmActivityList", bpmActivityList);
 				// 查找表单id
 				Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
 						dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
