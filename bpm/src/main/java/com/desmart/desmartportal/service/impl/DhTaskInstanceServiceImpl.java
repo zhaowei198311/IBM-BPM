@@ -240,4 +240,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		log.info("完成任务结束......");
 	}
+	
+	public boolean isTaskExists(int taskId) {
+	    if (taskId == 0) {
+	        return false;
+	    }
+	    return dhTaskInstanceMapper.countByTaskId(taskId) > 0;
+	}
 }

@@ -69,7 +69,7 @@ public class DhActivityConfController {
     }
     
     /**
-     * 更新环节配置信息（不包括步骤）
+     * 更新环节配置信息（不包括步骤和网关）
      * @param dhActivityConf
      * @return
      */

@@ -33,4 +33,6 @@ public interface DhTaskInstanceMapper {
 	int getMaxTaskId();
 	
 	int insertBatch(List <DhTaskInstance> list);
+	
+	int countByTaskId(int taskId);
 }

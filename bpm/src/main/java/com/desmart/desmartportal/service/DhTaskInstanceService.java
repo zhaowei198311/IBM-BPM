@@ -50,4 +50,11 @@ public interface DhTaskInstanceService {
 	 * 完成任务
 	 */
 	public void perform(String tkkid);
+	
+	/**
+	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录
+	 * @param taskId
+	 * @return
+	 */
+	boolean isTaskExists(int taskId);
 }

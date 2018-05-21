@@ -16,12 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
 import com.desmart.desmartportal.dao.DhAgentRecordMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -49,6 +51,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private DhAgentService dhAgentService;
     @Autowired
     private DhAgentRecordMapper dhAgentRecordMapper;
+    @Autowired
+    private DhProcessDefinitionService dhProcessDefinitionService;
     
     /**
      * 从引擎同步任务
@@ -94,8 +98,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo) {
         Map<String, Object> result = Maps.newHashMap();
         
+        // 流程图上的元素id
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
-        Long insId = lswTask.getBpdInstanceId(); // 实例id
+        Long insId = lswTask.getBpdInstanceId(); // 流程实例id
         DhProcessInstance proInstance = dhProcessInstanceMapper.queryByInsId(insId.intValue());
         // 查看环节的任务类型
         if (proInstance == null) {
@@ -105,6 +110,13 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         String proAppId = proInstance.getProAppId();
         String proUid = proInstance.getProUid();
         String proVerUid = proInstance.getProVerUid();
+        
+        // 查看任务表中是否已经有这个任务id的任务， 避免发起流程环节的任务被同步过来 
+        boolean taskExists = dhTaskInstanceService.isTaskExists(lswTask.getTaskId());
+        if (taskExists) {
+            LOG.error("任务id：" + lswTask.getTaskId() + "的任务发现已经存在，放弃拉取此任务");
+            return null;
+        }
         
         BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         metaSelective.setActivityBpdId(activityBpdId);
@@ -207,7 +219,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return map;
     }
     
-    public static Date calculateDueDate(Date date, Double timeAmount, String timeUnit) {
+    public Date calculateDueDate(Date date, Double timeAmount, String timeUnit) {
         long addAmount = 0;
         if (DhActivityConf.TIME_UNIT_HOUR.equals(timeUnit)) {
             addAmount = (long)(1000L*60*60*timeAmount);
