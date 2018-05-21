@@ -32,12 +32,12 @@ public class DhRoutingRecordController {
 	@ResponseBody
 	public ServerResponse loadDhRoutingRecords(String insUid
 			,Integer insId,String proAppId,String proUid
-			,String proVerUid,String bpdId,String activityBpdId) {
+			,String activityId) {
 		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 		dhRoutingRecord.setInsUid(insUid);
 		List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordServiceImpl.getDhRoutingRecordListByCondition(dhRoutingRecord);
 		
-		BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.getBpmActivityMeta(proAppId, activityBpdId, proVerUid, bpdId);
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(activityId);
 		List<DhTaskHandler> dhTaskHandlers = null;
 		if(bpmActivityMeta!=null) {
 			dhTaskHandlers = dhRoutingRecordServiceImpl.getListByInsIdAndActivityBpdId(insId, bpmActivityMeta.getActivityBpdId());

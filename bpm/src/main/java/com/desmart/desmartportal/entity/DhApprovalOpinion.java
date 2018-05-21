@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class DhApprovalOpinion {
 	private String aprOpiId;//审批id
-	private String aprUid;//流程实例id--
+	private String aprUid;//流程实例id--ins_Uid
 	private String taskUid;//任务id--activityId
 	private Integer aprOpiIndex;//审批序号
 	private String aprUserId;//审批用户id

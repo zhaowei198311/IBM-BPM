@@ -23,8 +23,8 @@ $(function(){
 });
 
 function loadDhApprovalOpinionList(){
-	var aprUid = "sa";//流程实例id--
-	var taskUid = "sa";//环节id，activity_id
+	var aprUid = $("#insUid").val();//流程实例id--ins_uid
+	var taskUid = $("#activityId").val();//环节id，activity_id
 	$.ajax({
 	     url:"dhApprovalOpinion/loadDhApprovalOpinion.do",
 	     type : 'POST',
@@ -62,8 +62,8 @@ function save(){
 	var aprOpiComment = layui.layedit.getContent(editIndex);
 	alert(aprOpiComment);
 	var aprStatus = "ok";
-	var aprUid = "sa";
-	var taskUid = "sa";
+	var aprUid = $("#insUid").val();//流程实例id--ins_uid
+	var taskUid = $("#activityId").val();//环节id，activity_id
 	$.ajax({
 	     url:"dhApprovalOpinion/insertDhApprovalOpinion.do",
 	     type : 'POST',
@@ -89,13 +89,14 @@ function save(){
  */
 
 function loadDhroutingRecords(){
-	var insUid = "process_instance:ca393c05-183c-4893-826c-55ae3a9f2a44";
-	var insId = "739";
-	var proAppId="2066.033d0e8d-f0a5-4d4d-a694-2501d9e82d21";
-	var proUid="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
-	var proVerUid="2064.0d365b48-35f4-45cd-9b85-d4557d56d9a2";
-	var activityBpdId="bpdid:5c5863a60b29558f:5a01b566:16010c92375:-7ff6";
-	var bpdId="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
+	var insUid = $("#insUid").val();
+	var insId = $("#insId").val();
+	var proAppId=$("#proAppId").val();
+	var proUid=$("#proUid").val();
+	//var proVerUid=$("#proVerUid").val();
+	//var activityBpdId="bpdid:5c5863a60b29558f:5a01b566:16010c92375:-7ff6";
+	//var bpdId="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
+	var activityId = $("#activityId").val();
 	$.ajax({
 	     url:"dhRoutingRecord/loadDhRoutingRecords.do",
 	     type : 'POST',
@@ -105,9 +106,7 @@ function loadDhroutingRecords(){
 			 insId:insId,
 			 proAppId:proAppId,
 			 proUid:proUid,
-			 proVerUid:proVerUid,
-			 activityBpdId:activityBpdId,
-			 bpdId:bpdId
+			 activityId:activityId
 			},
 	     success : function(result){
 	    	 $(".p").find("p").find("span").empty();
@@ -135,6 +134,7 @@ function loadDhroutingRecords(){
 				+"</li>";
 	    		$("#transferProcess").append(info);
 			}
+	    	 $("#transferProcess").append("<h1 style='clear: both;'></h1>");
 	     },error : function (){
 	    	 layer.alert("网络繁忙！");
 	     }
