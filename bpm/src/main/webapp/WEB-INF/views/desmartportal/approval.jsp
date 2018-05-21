@@ -75,9 +75,7 @@
 			id="insUid" value="${insUid}" style="display: none;"><input
 			id="insId" value="${insId}" style="display: none;"> <span
 			id="insData" value='${insData}'></span> <input
-			id="activityId" value="${activityId}" style="display: none;">
-		<input id="activityName" value="${activityName}"
-			style="display: none;"> <span
+			id="bpmActivityList" value="${bpmActivityList}" style="display: none;"><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
 			<button class="layui-btn  layui-btn-sm" onclick="processView()">流程图</button>
