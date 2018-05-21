@@ -15,8 +15,8 @@ import com.desmart.desmartportal.entity.DhAgentProInfo;
 /**  
 * <p>Title: 代理设置接口</p>  
 * <p>Description: </p>  
-* @author 张志颖 
-* @date 2018年5月8日  
+* @author loser
+* @date 2018年5月18日  
 */
 @Repository
 public interface DhAgentMapper {
@@ -91,5 +91,11 @@ public interface DhAgentMapper {
 	 * @param userUid 用户id
 	 * @return 代理信息
 	 */
-	DhAgent getDelegateResult(String proAppid, String proUid, String userUid);
+	DhAgent getDelegateResult(@Param("proAppId")String proAppId, 
+			@Param("proUid")String proUid, @Param("userUid")String userUid);
+
+	/**
+	 * 通过用户Id查询用户当前代理信息
+	 */
+	List<DhAgent> getDelegateByUserId(String userUid);
 }

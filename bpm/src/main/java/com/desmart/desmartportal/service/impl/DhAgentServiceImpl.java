@@ -33,8 +33,8 @@ import com.github.pagehelper.PageInfo;
 /**  
 * <p>Title: 代理设置实现类</p>  
 * <p>Description: </p>  
-* @author 张志颖  
-* @date 2018年5月8日  
+* @author loser_wu
+* @date 2018年5月18日  
 */
 @Service
 public class DhAgentServiceImpl implements DhAgentService {
@@ -72,6 +72,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		for(DhAgent dhAgent:resultList) {
 			if("TRUE".equals(dhAgent.getAgentIsAll())) {
 				DhProcessMeta dhProcessMeta = new DhProcessMeta();
+				dhProcessMeta.setProMetaUid("allProMeta");
 				dhProcessMeta.setProName("所有流程");
 				List<DhProcessMeta> dhProcessMetaList = new ArrayList<>();
 				dhProcessMetaList.add(dhProcessMeta);
@@ -100,12 +101,22 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Override
 	public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
 		Map<String,String> agentInfoMap = new HashMap<String, String>();
-		DhAgent dhAgent = dhAgentMapper.getDelegateResult(proAppid,proUid,userUid);
-		if(null == dhAgent) {
+		List<DhAgent> dhAgentList = dhAgentMapper.getDelegateByUserId(userUid);
+		if(dhAgentList.size()>=1) {
+			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
+				agentInfoMap.put(dhAgentList.get(0).getAgentClientele(), dhAgentList.get(0).getAgentId());
+				return agentInfoMap;
+			}else {
+				DhAgent dhAgent = dhAgentMapper.getDelegateResult(proAppid,proUid,userUid);
+				if(null == dhAgent) {
+					return null;
+				}else {
+					agentInfoMap.put(dhAgent.getAgentClientele(), dhAgent.getAgentId());
+					return agentInfoMap;
+				}
+			}
+		}else{
 			return null;
-		}else {
-			agentInfoMap.put(dhAgent.getAgentClientele(), dhAgent.getAgentId());
-			return agentInfoMap;
 		}
 	}
 
@@ -135,17 +146,17 @@ public class DhAgentServiceImpl implements DhAgentService {
 		if(1!=dhAgentMapper.addAgentInfo(dhAgent)) {
 			throw new PlatformException("添加代理信息失败");
 		}else {
-			int result = 0;
 			if(agentIsAll.equals("FALSE")) {
+				int result = 0;
 				for(DhProcessMeta meta:metaList) {
 					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
 					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId,
 								agentId,meta.getProAppId(),meta.getProUid());
 					result += dhAgentMapper.addAgentProInfo(agentProInfo);
 				}
-			}
-			if(result!=metaList.size()) {
-				throw new PlatformException("添加代理流程信息失败");
+				if(result!=metaList.size()) {
+					throw new PlatformException("添加代理流程信息失败");
+				}
 			}
 		}
 		return ServerResponse.createBySuccess();
@@ -200,21 +211,23 @@ public class DhAgentServiceImpl implements DhAgentService {
 
 	@Override
 	public ServerResponse updateAgentInfo(DhAgent dhAgent, List<DhProcessMeta> metaList) {
-		//修改代理设置 isall == true
+		//修改代理设置
 		int updateRow = dhAgentMapper.updateAgentById(dhAgent);
 		if(1!=updateRow) {
 			throw new PlatformException("修改代理设置信息失败");
 		}else {
 			dhAgentMapper.deleteAgentProById(dhAgent.getAgentId());
-			int addRow = 0;
-			for(DhProcessMeta meta:metaList) {
-				String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
-				DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId, 
-						dhAgent.getAgentId(), meta.getProAppId(), meta.getProUid());
-				addRow += dhAgentMapper.addAgentProInfo(agentProInfo);
-			}
-			if(addRow != metaList.size()) {
-				throw new PlatformException("修改代理流程失败");
+			if(dhAgent.getAgentIsAll().equals("FALSE")) {
+				int addRow = 0;
+				for(DhProcessMeta meta:metaList) {
+					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
+					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId, 
+							dhAgent.getAgentId(), meta.getProAppId(), meta.getProUid());
+					addRow += dhAgentMapper.addAgentProInfo(agentProInfo);
+				}
+				if(addRow != metaList.size()) {
+					throw new PlatformException("修改代理流程失败");
+				}
 			}
 		}
 		return ServerResponse.createBySuccess();

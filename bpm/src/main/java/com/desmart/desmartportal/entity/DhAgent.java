@@ -12,8 +12,8 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 /**  
 * <p>Title: 代理设置实体类</p>  
 * <p>Description: </p>  
-* @author 张志颖  
-* @date 2018年5月8日  
+* @author loser_wu  
+* @date 2018年5月18日  
 */
 public class DhAgent {
 

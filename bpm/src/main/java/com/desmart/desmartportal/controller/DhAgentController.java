@@ -30,8 +30,8 @@ import com.desmart.desmartsystem.util.UUIDTool;
 /**  
 * <p>Title: 代理设置控制层</p>  
 * <p>Description: </p>  
-* @author 张志颖 
-* @date 2018年5月88日  
+* @author loser_wu 
+* @date 2018年5月18日  
 * 
 */
 @Controller

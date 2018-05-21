@@ -32,7 +32,7 @@ public interface DhAgentService {
 	 * @param userUid
 	 * @return  Map中的键：  delegateUser  代理人    agentId 代理主键
 	 */
-	Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid);
+	Map<String, String> getDelegateResult(String proAppId, String proUid, String userUid);
 
 	/**
 	 * 根据分类集合查询分类下所有的流程元数据
