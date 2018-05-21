@@ -7,7 +7,7 @@
   FROM DH_ROUTING_RECORD drr left join sys_user su on drr.user_uid = su.user_uid
   where 1 = 1 
   <if test="insUid != null and insUid != '' ">
-  drr.ins_uid = #{insUid}
+  and drr.ins_uid = #{insUid}
   </if>
   </select>
  
