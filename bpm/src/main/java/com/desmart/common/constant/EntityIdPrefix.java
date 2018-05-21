@@ -58,4 +58,7 @@ public class EntityIdPrefix {
     
     /** 步骤前缀 */
     public static final String DH_STEP = "step:";
+    
+    /** 流转信息前缀 */
+    public static final String DH_ROUTING_RECORD = "routing_record:";
 }
