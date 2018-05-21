@@ -23,6 +23,7 @@
 	    <if test="person != null and !person.trim().isEmpty()">
 	    	and u.user_name like '%' || #{person} || '%' 
 	   	</if>
+	   	order by a.agent_odate desc
 	</select>
 	
 	<select id="queryDhAgentProInfoByAgentId" parameterType="String" resultType="com.desmart.desmartportal.entity.DhAgentProInfo">
@@ -30,6 +31,84 @@
 		from dh_agent_proinfo
 		where agent_id = #{agentId}
 	</select>
+	
+	<select id="queryAgentProInfoBySelective" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgentProInfo">
+		select <include refid="base_agent_proinfo_column_List"/>
+		from dh_agent_proinfo
+		where agent_id in (select agent_id 
+	        from dh_agent_agentinfo 
+	        where agent_operator = #{agentOperator} and agent_status = 'ENABLED'
+	          and(#{agentSdate} >= agent_sdate
+		          and #{agentSdate} &lt;= agent_edate
+		          or #{agentEdate} >= agent_sdate
+		          and #{agentEdate} &lt;= agent_edate)
+	    )and pro_app_id = #{meta.proAppId} and pro_uid = #{meta.proUid}
+	</select>
+	
+	<select id="queryAgentInfoByUserAndDate" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select <include refid="insert_column_List"/>
+		from dh_agent_agentinfo  
+		where agent_operator = #{agentOperator} and agent_status = 'ENABLED'
+	    	and(#{agentSdate} >= agent_sdate
+				and #{agentSdate} &lt;= agent_edate
+				or #{agentEdate} >= agent_sdate
+				and #{agentEdate} &lt;= agent_edate)
+	</select>
+	
+	<select id="queryAgentProInfoBySelectiveNotSelf" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgentProInfo">
+		select <include refid="base_agent_proinfo_column_List"/>
+		from dh_agent_proinfo
+		where agent_id in (select agent_id 
+	        from dh_agent_agentinfo 
+	        where agent_operator = #{agentOperator} and agent_status = 'ENABLED'
+	          and(#{agentSdate} >= agent_sdate
+		          and #{agentSdate} &lt;= agent_edate
+		          or #{agentEdate} >= agent_sdate
+		          and #{agentEdate} &lt;= agent_edate)
+		      and agent_id != #{agentId}
+	    )and pro_app_id = #{meta.proAppId} and pro_uid = #{meta.proUid}
+	</select>
+	
+	<select id="queryAgentInfoByUserAndDateNotSelf" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select <include refid="insert_column_List"/>
+		from dh_agent_agentinfo  
+		where agent_operator = #{agentOperator} and agent_status = 'ENABLED'
+	    	and(#{agentSdate} >= agent_sdate
+				and #{agentSdate} &lt;= agent_edate
+				or #{agentEdate} >= agent_sdate
+				and #{agentEdate} &lt;= agent_edate)
+			and agent_id != #{agentId}
+	</select>
+	
+	<insert id="addAgentInfo" parameterType="com.desmart.desmartportal.entity.DhAgent">
+		insert into dh_agent_agentinfo(<include refid="insert_column_List"/>) 
+		values(#{agentId},sysdate,#{agentOperator},#{agentClientele},
+			#{agentSdate},#{agentEdate},#{agentStatus},#{agentIsAll})
+	</insert>
+	
+	<insert id="addAgentProInfo" parameterType="com.desmart.desmartportal.entity.DhAgentProInfo">
+		insert into dh_agent_proinfo(<include refid="base_agent_proinfo_column_List"/>)
+		values(#{agentProInfoId},#{agentId},#{proAppId},#{proUid})
+	</insert>
+	
+	<update id="updateAgentById" parameterType="com.desmart.desmartportal.entity.DhAgent">
+		update dh_agent_agentinfo 
+		set agent_sdate = #{agentSdate},
+			agent_edate = #{agentEdate},
+			agent_clientele = #{agentClientele}
+		where agent_id = #{agentId}
+	</update>
+	
+	<update id="updateAgentStatus" parameterType="com.desmart.desmartportal.entity.DhAgent">
+		update dh_agent_agentinfo
+		set agent_status = #{agentStatus}
+		where agent_id = #{agentId}
+	</update>
+	
+	<delete id="deleteAgentProById" parameterType="String">
+		delete from dh_agent_proinfo 
+		where agent_id = #{agentId}
+	</delete>
 	
 	<delete id="deleteByAgentId" parameterType="java.lang.String">
 		DELETE
@@ -39,17 +118,14 @@
 		</where>
 	</delete>
 	
-	<insert id="save" parameterType="com.desmart.desmartportal.entity.DhAgent">
-		INSERT INTO DH_AGENT_AGENTINFO (<include refid="insert_column_List"/>) 
-		VALUES (
-			#{agentId},
-			#{agentOdate},
-			#{agentOperator},
-			#{agentClientele},
-			#{agentSdate},
-			#{agentEdate},
-			#{agentStatus}
-		)
-	</insert>
-	
+	<select id="getDelegateResult" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select a.agent_id,a.agent_clientele
+		from dh_agent_agentinfo a left join dh_agent_proinfo p
+		on a.agent_id = p.agent_id
+		where p.pro_app_id = #{proAppId}
+		  and p.pro_uid = #{proUid}
+		  and a.agent_operator = #{userUid}
+		  and a.agent_sdate &lt;= sysdate
+		  and a.agent_edate >= sysdate;
+	</select>
 </mapper>
