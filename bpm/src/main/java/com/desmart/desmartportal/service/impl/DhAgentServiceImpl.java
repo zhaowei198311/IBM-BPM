@@ -196,6 +196,12 @@ public class DhAgentServiceImpl implements DhAgentService {
 			}
 		}
 		
+		if("allProMeta".equals(agentProMetaUidArr[0])) {
+			if(dhAgentList.size()>=1) {
+				throw new PlatformException("在该时间段内有目标流程已被代理");
+			}
+		}
+		
 		List<DhProcessMeta> metaList = new ArrayList<>();
 		for(String agentProMetaUid:agentProMetaUidArr) {
 			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
