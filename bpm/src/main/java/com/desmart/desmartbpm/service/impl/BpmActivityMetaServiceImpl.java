@@ -490,6 +490,22 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 		// TODO Auto-generated method stub
 		return bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 	}
+
+
+	@Override
+	public BpmActivityMeta getBpmActivityMeta(String proAppId, String activityBpdId, String snapshotId, String bpdId) {
+		// TODO Auto-generated method stub
+		BpmActivityMeta metaSelective = new BpmActivityMeta();
+		metaSelective.setProAppId(proAppId);
+        metaSelective.setActivityBpdId(activityBpdId);
+        metaSelective.setSnapshotId(snapshotId);
+        metaSelective.setBpdId(bpdId);
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        if(list!=null && list.size()>0) {
+        	return list.get(0);
+        }
+        return null;
+	}
     
     
 

@@ -70,4 +70,13 @@ public interface BpmActivityMetaService {
      * @return
      */
     BpmActivityMeta queryByPrimaryKey(String activityId);
+    /**
+     * 根据流程应用库id，元素id，流程图id和版本id获得BpmActivityMeta 只有一个
+     * @param proAppId
+     * @param bpmActivityId
+     * @param snapshotId
+     * @param bpdId
+     * @return
+     */
+    BpmActivityMeta getBpmActivityMeta(String proAppId,String activityBpdId, String snapshotId, String bpdId);
 }

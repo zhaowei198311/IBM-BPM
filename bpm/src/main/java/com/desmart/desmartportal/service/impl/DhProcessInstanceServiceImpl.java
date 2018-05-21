@@ -61,10 +61,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 * 根据流程实例主键 查询流程
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectByPrimaryKey(String insUid,Integer pageNum, Integer pageSize) {
+	public DhProcessInstance selectByPrimaryKey(String insUid) {
 		log.info("");
 		try {
-			
+			return dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

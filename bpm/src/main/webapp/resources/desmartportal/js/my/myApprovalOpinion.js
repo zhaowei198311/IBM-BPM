@@ -18,7 +18,8 @@ layui.use('form', function(){
 });
 $(function(){
 
-    loadDhApprovalOpinionList();
+    loadDhApprovalOpinionList();//加载审批记录
+    loadDhroutingRecords();//加载流转信息
 });
 
 function loadDhApprovalOpinionList(){
@@ -80,10 +81,63 @@ function save(){
 	    	 layer.alert(data.msg);
 	     }
 	});
-	
-	/**
-	 * 流转信息js开始
-	 */
-	
+}
+
+
+/**
+ * 流转信息js开始
+ */
+
+function loadDhroutingRecords(){
+	var insUid = "process_instance:ca393c05-183c-4893-826c-55ae3a9f2a44";
+	var insId = "739";
+	var proAppId="2066.033d0e8d-f0a5-4d4d-a694-2501d9e82d21";
+	var proUid="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
+	var proVerUid="2064.0d365b48-35f4-45cd-9b85-d4557d56d9a2";
+	var activityBpdId="bpdid:5c5863a60b29558f:5a01b566:16010c92375:-7ff6";
+	var bpdId="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
+	$.ajax({
+	     url:"dhRoutingRecord/loadDhRoutingRecords.do",
+	     type : 'POST',
+		 dataType : 'json',
+		 data : {
+			 insUid:insUid,
+			 insId:insId,
+			 proAppId:proAppId,
+			 proUid:proUid,
+			 proVerUid:proVerUid,
+			 activityBpdId:activityBpdId,
+			 bpdId:bpdId
+			},
+	     success : function(result){
+	    	 $(".p").find("p").find("span").empty();
+	    	 $(".p").find("p").eq(0).find("span").html(result.data.bpmActivityMeta.sortNum);
+	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
+	    		 $(".p").find("p").eq(1).find("span").html( result.data.dhTaskHandlers[i].userName);
+	    	 }
+	    	 $(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
+	    	 if(result.data.dhRoutingRecords!=null){
+	    	 var index = result.data.dhRoutingRecords.length-1;
+	    	 	if(index>=0){
+	    	 		var date = new Date(result.data.dhRoutingRecords[index].createTime);
+	    	 		$(".p").find("p").eq(3).find("span").html(datetimeFormat_1(date));
+	    	 	}
+	    	 }
+	    	 $("#transferProcess").find("li").remove();
+	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
+	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
+	    		var info = "<li>"
+				+"<div>("+(i+1)+")</div>"
+				+"<div>"+result.data.dhRoutingRecords[i].userName+"</div>"
+				+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
+				+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>"
+				+"<div>"+datetimeFormat_1(date)+"</div>"
+				+"</li>";
+	    		$("#transferProcess").append(info);
+			}
+	     },error : function (){
+	    	 layer.alert("网络繁忙！");
+	     }
+	});
 }
 

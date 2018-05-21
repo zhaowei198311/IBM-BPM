@@ -21,7 +21,7 @@ public interface DhProcessInstanceMapper {
 	
 	List <DhProcessInstance> selectAllProcess(DhProcessInstance processInstance);
 	
-	List <DhProcessInstance> selectByPrimaryKey(String insUid);
+	DhProcessInstance selectByPrimaryKey(String insUid);
 	
 	int updateByPrimaryKey(String insUid);
 	

@@ -66,6 +66,10 @@
 	padding: 0 10px;
 	overflow: scroll;
 }
+
+.approval_th{
+ 	background-color: #A9B1B3;
+}
 </style>
 </head>
 <body>
@@ -395,59 +399,23 @@
 						<div class="layui-tab-item">
 							<div class="p">
 								<p>
-									<font>现在的环节名：</font>9999
+									<font>现在的环节号：</font><span></span>
 								</p>
 								<p>
-									<font>当前处理人：</font>张三，李四，王五，赵权，李彦龙，李耀光，陈洁敏，方敏
+									<font>当前处理人：</font><span></span>
 								</p>
 								<p>
-									<font>当前处理状态：</font>流程结束
+									<font>当前处理状态：</font><span></span>
 								</p>
 								<p>
-									<font>当前处理到达时间：</font>2017-10-10 10:10:59
+									<font>当前处理到达时间：</font><span></span>
 								</p>
 								<p>
 									<font>流转过程：</font>
 								</p>
 							</div>
 							<ul id="transferProcess" class="tab_ul">
-								<li>
-									<div>(1)</div>
-									<div>张三</div>
-									<div>岗位：起草</div>
-									<div>起草</div>
-									<div>2018-04-16 10:00:00</div>
-								</li>
-								<li>
-									<div>(2)</div>
-									<div>李四</div>
-									<div>数据维护主管</div>
-									<div>2018-04-17 10:20:00</div>
-								</li>
-								<li>
-									<div>(3)</div>
-									<div>王五</div>
-									<div>驳回</div>
-									<div>2018-04-17 10:30:00</div>
-								</li>
-								<li>
-									<div>(4)</div>
-									<div>赵权</div>
-									<div>数据维护主管</div>
-									<div>2018-04-17 11:00:00</div>
-								</li>
-								<li>
-									<div>(5)</div>
-									<div>陈敏洁</div>
-									<div>数据维护员</div>
-									<div>2018-04-17 12:00:00</div>
-								</li>
-								<li>
-									<div>(6)</div>
-									<div>方敏</div>
-									<div>数据检核员</div>
-									<div>2018-04-17 13:00:00</div>
-								</li>
+								
 								<h1 style="clear: both;"></h1>
 							</ul>
 						</div>

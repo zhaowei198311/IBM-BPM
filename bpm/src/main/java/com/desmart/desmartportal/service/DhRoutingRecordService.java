@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 
 public interface DhRoutingRecordService {
 
@@ -24,5 +25,8 @@ public interface DhRoutingRecordService {
      * @return
      */
     List<DhTaskHandler> getListByInsIdAndActivityBpdId(@Param("insId")Integer insId, @Param("activityBpdId")String activityBpdId);
-
+    /**
+	 * 根据实例任务id 查询任务
+	 */
+    List<DhTaskInstance> selectByPrimaryKey(String taskUid);
 }

@@ -20,7 +20,7 @@ public interface DhProcessInstanceService {
 	
 	ServerResponse<PageInfo<List<DhProcessInstance>>> selectAllProcess(DhProcessInstance processInstance,Integer pageNum, Integer pageSize);
 	
-	ServerResponse<PageInfo<List<DhProcessInstance>>> selectByPrimaryKey(String insUid,Integer pageNum, Integer pageSize);
+	DhProcessInstance selectByPrimaryKey(String insUid);
 	
 	int updateByPrimaryKey(String insUid);
 	
