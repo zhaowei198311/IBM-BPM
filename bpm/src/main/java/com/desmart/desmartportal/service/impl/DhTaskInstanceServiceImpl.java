@@ -282,7 +282,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				resultMap.put("proAppId", dhprocessInstance.getProAppId());
 				resultMap.put("proUid", dhprocessInstance.getProUid());
 				resultMap.put("proVerUid", dhprocessInstance.getProVerUid());
-				resultMap.put("insUid", dhprocessInstance.getInsId());
+				resultMap.put("insUid", dhprocessInstance.getInsUid());
+				resultMap.put("insId", dhprocessInstance.getInsId());
 				resultMap.put("insData", dhprocessInstance.getInsData());
 				// 查询流程图元素信息
 				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(
