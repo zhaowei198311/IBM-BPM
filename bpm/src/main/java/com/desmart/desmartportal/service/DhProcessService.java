@@ -14,5 +14,5 @@ import com.desmart.desmartportal.common.ServerResponse;
 public interface DhProcessService {
 	
 	// 发起流程
-	ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo);	
+	ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo, String approval);	
 }

@@ -317,4 +317,8 @@
 	  		DELETE FROM SYS_USER WHERE USER_UID = #{userUid}
 	  </delete>
 	  
+	  <select id="queryByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysUser">
+		   	SELECT * FROM SYS_USER WHERE USER_UID = #{userUid}
+	  </select>
+	  
 </mapper>

@@ -58,7 +58,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息 
 	 */
 	@Override
-	public ServerResponse startProcess(String proUid, String proAppId, String verUid,String dataInfo) {
+	public ServerResponse startProcess(String proUid, String proAppId, String verUid,String dataInfo,String approval) {
 		log.info("发起流程开始......");
 		HttpReturnStatus result = new HttpReturnStatus();
 		// 判断
@@ -109,7 +109,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 			for (int i = 0; i < jsonBody3.size(); i++) {
 				JSONObject jsonObject=jsonBody3.getJSONObject(i);
 		      	taskInstance.setTaskId(Integer.parseInt(String.valueOf(jsonObject.get("tkiid"))));
-		      	taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		      	// 处理人
+		      	taskInstance.setUsrUid(approval);
 		      	taskInstance.setActivityBpdId(String.valueOf(jsonObject.get("flowObjectID")));
 		      	// 任务类型 
 		      	taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
@@ -117,10 +118,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 		      	taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 		      	// 发起流程上一环节默认 是自己
 		      	taskInstance.setTaskPreviousUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		      	SysUser sysUser = new SysUser();
-		      	sysUser.setUserId(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-		      	SysUser sysUserName = sysUserMapper.findById(sysUser);
-		      	taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
+		      	SysUser sysUserName = sysUserMapper.queryByPrimaryKey(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		     	taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
 		      	// 任务数据 
 		      	taskInstance.setTaskData(dataInfo);
 		      	dhTaskInstanceService.insertTask(taskInstance);
@@ -139,6 +138,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 				}
 				// 默认发起 提交第一个环节
 				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")));
+				// 任务完成后 保存到流转信息表里面
+				
 			}
 			log.info("发起流程结束......");
 			return ServerResponse.createBySuccess();

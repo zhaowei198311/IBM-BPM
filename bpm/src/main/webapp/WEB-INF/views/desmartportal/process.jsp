@@ -130,7 +130,7 @@
 			      </td>
 			      <td class="td_title">处理人:<span class="tip_span"></span></td>
 			      <td>
-			      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+			      	<input type="hidden" class="getUser" id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
 			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
 			      	
 			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
@@ -278,6 +278,7 @@
 		clientSideInclude(document.getElementById('formId').value);
 		saveData();
 		startProcess();
+		
 	})
 
 	/**
@@ -514,6 +515,8 @@
 								json = json.substring(0, json.length - 1);
 							}
 							json += "}";
+							//获取审批人
+							var user = $(".getUser").val().substring(0,8);
 							// 发起流程				
 							var dataInfo = json
 							var proUids = $("#proUid").val();
@@ -527,7 +530,8 @@
 									proUid : proUids,
 									proAppId : proAppIds,
 									verUid : verUids,
-									dataInfo : dataInfo
+									dataInfo : dataInfo,
+									approval : user
 								},
 								success : function(result) {
 									if (result.status == 0) {
