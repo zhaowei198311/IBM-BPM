@@ -670,26 +670,39 @@
 				});
 				
 				layer.confirm("确认删除表单数据？", function () {
+					//先判断表单数据是否可删除
 					$.ajax({
-						url:common.getPath()+"/formManage/deleteForm",
+						url:common.getPath()+"/formManage/isBindStep",
 						method:"post",
 						data:{"formUids":checkedFormUid},
 						traditional: true,//传递数组给后台
 						success:function(result){
-							if(result.status==0){
-								getFormInfoByProDefinition();
-								//如果有checkbox没有被选中
-								if($("input[name='formInfo_check']:checked").length==0 ||
-										$("input[name='formInfo_check']:checked").length==$("input[name='formInfo_check']").length){
-									$("input[name='allSel']").prop("checked",false);
-								}
-								layer.alert('删除表单数据成功');
+							if(result.status==0){//未绑定
+								$.ajax({
+									url:common.getPath()+"/formManage/deleteForm",
+									method:"post",
+									data:{"formUids":checkedFormUid},
+									traditional: true,//传递数组给后台
+									success:function(result){
+										if(result.status==0){
+											getFormInfoByProDefinition();
+											//如果有checkbox没有被选中
+											if($("input[name='formInfo_check']:checked").length==0 ||
+													$("input[name='formInfo_check']:checked").length==$("input[name='formInfo_check']").length){
+												$("input[name='allSel']").prop("checked",false);
+											}
+											layer.alert('删除表单数据成功');
+										}else{
+											layer.alert("删除表单数据失败");
+										}
+									}
+								});// end delete
 							}else{
-								layer.alert("删除表单数据失败");
+								layer.alert("该表单已被步骤绑定");
 							}
 						}
-					});
-				});
+					});//end ajax
+				});//end layer.confirm
 			}
 		}
 		
@@ -739,13 +752,30 @@
 		function updateFormModal(obj){
 			var trObj = $(obj).parent().parent();
 			updateFormId = trObj.data("formuid");
-			var dynTitle = $(trObj.find("td")[1]).text().trim();
-			var dynDescription = $(trObj.find("td")[2]).text().trim();
-			oldFormDescription = dynDescription;
-			oldFormName = dynTitle;
-			$("#update-form-name").val(dynTitle);
-			$("#update-form-description").val(dynDescription);
-			$(".display_container2").css("display", "block");
+			var formUidArr = new Array();
+			formUidArr.push(updateFormId);
+			//先判断该表单是否可修改
+			$.ajax({
+				url:common.getPath()+"/formManage/isBindStep",
+				method:"post",
+				data:{
+					"formUids":formUidArr
+				},
+				traditional: true,
+				success:function(result){
+					if(result.status==0){//未绑定
+						var dynTitle = $(trObj.find("td")[1]).text().trim();
+						var dynDescription = $(trObj.find("td")[2]).text().trim();
+						oldFormDescription = dynDescription;
+						oldFormName = dynTitle;
+						$("#update-form-name").val(dynTitle);
+						$("#update-form-description").val(dynDescription);
+						$(".display_container2").css("display", "block");
+					}else{
+						layer.alert("该表单已被步骤绑定");
+					}
+				}
+			});//end ajax
 		}
 		
 		//复选框全选，取消全选
