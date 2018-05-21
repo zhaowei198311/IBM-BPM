@@ -18,7 +18,10 @@ public class EntityIdPrefix {
 	public static final String DH_DRAFTS_META = "draft_meta:";
 	
 	/** 代理参数前缀 */
-	public static final String DH_AGENT_META = "agent_meta:";
+	public static final String DH_AGENT_INFO = "agent_info:";
+	
+	/** 代理流程参数前缀 */
+	public static final String DH_AGENT_PRO_INFO = "agent_pro_info:";
 	
 	/** 流程实例参数前缀 */
 	public static final String DH_PROCESS_INSTANCE = "process_instance:";

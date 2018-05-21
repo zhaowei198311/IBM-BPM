@@ -4,10 +4,12 @@
 package com.desmart.desmartportal.controller;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartportal.common.EntityIdPrefix;
@@ -75,32 +79,76 @@ public class DhAgentController {
         if (!serverResponse.isSuccess()) {
             return serverResponse;
         }
-        return dhProcessMetaService.listDhProcessMetaByCategoryList(serverResponse.getData(), proName, null, null);
+        return dhAgentService.listDhProcessMetaByCategoryList(serverResponse.getData(), proName);
     }
 	
+    /**
+     * 添加代理信息(添加之前做排他验证)
+     */
+    @RequestMapping(value = "/addAgentInfo")
+    @ResponseBody
+    public ServerResponse addAgentInfo(@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date agentSdate,
+    		@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date agentEdate,
+    		String[] agentProMetaUidArr,String agentPerson,String agentIsAll) {
+    	try {
+    		//先判断某个时间段，要分配的流程是否处于已启用的分配代理
+    		ServerResponse<List<DhProcessMeta>> serverResponse = dhAgentService.queryConformProMeta(agentSdate,agentEdate,agentProMetaUidArr);
+    		return dhAgentService.addAgentInfo(agentSdate,agentEdate,serverResponse.getData(),agentPerson,agentIsAll);
+    	} catch(PlatformException e) {
+    		return ServerResponse.createByErrorMessage(e.getMessage());
+    	} catch(Exception e) {
+    		return ServerResponse.createByErrorMessage("添加代理失败");
+    	}
+    }
+    
+    /**
+     * 修改代理信息
+     */
+    @RequestMapping(value = "/updateAgentInfo")
+    @ResponseBody
+    public ServerResponse updateAgentInfo(DhAgent dhAgent,String[] agentProMetaUidArr) {
+    	try {
+    		ServerResponse<List<DhProcessMeta>> serverResponse;
+    		//判断代理是否启用
+    		if("ENABLED".equals(dhAgent.getAgentStatus())) {
+    			//先判断除目标代理以外的代理中是否有目标代理流程
+    	    	serverResponse = dhAgentService.queryConformProMetaNotSelf(dhAgent,agentProMetaUidArr);
+    		}else {
+    			serverResponse = dhAgentService.listProMeta(agentProMetaUidArr);
+    		}
+	    	return dhAgentService.updateAgentInfo(dhAgent,serverResponse.getData());
+    	} catch(PlatformException e) {
+    		return ServerResponse.createByErrorMessage(e.getMessage());
+    	} catch(Exception e) {
+    		return ServerResponse.createByErrorMessage("修改代理失败");
+    	}
+    }
+    
+    /**
+     * 修改代理设置的状态
+     */
+    @RequestMapping(value = "/updateAgentStatus")
+    @ResponseBody
+    public ServerResponse updateAgentStatus(DhAgent dhAgent,String[] agentProMetaUidArr) {
+    	try {
+    		if("ENABLED".equals(dhAgent.getAgentStatus())) {
+    			dhAgentService.queryConformProMetaNotSelf(dhAgent,agentProMetaUidArr);
+        	}
+	    	return dhAgentService.updateAgentStatus(dhAgent);
+    	} catch(PlatformException e) {
+    		return ServerResponse.createByErrorMessage(e.getMessage());
+    	} catch(Exception e) {
+    		return ServerResponse.createByErrorMessage("修改代理状态失败");
+    	}
+    }
+    
 	@RequestMapping(value = "/deleteAgentById")
 	@ResponseBody
-	public void deleteAgentById(@RequestParam(value="agentId")String agentId) {
-		dhAgentService.deleteAgentByAgentId(agentId);
-	}
-	
-	@RequestMapping(value = "/saveAgent")
-	@ResponseBody
-	public String saveAgent(@RequestParam(value="agentOdate") Timestamp agentOdate,@RequestParam(value="agentOperator")String agentOperator,
-			@RequestParam(value="agentClientele")String agentClientele,@RequestParam(value="agentStatus")String agentStatus) {
-		try {	
-			DhAgent agent = new DhAgent();
-			agent.setAgentOdate(agentOdate);
-			agent.setAgentOperator(agentOperator);
-			agent.setAgentClientele(agentClientele);
-			agent.setAgentId(EntityIdPrefix.DH_AGENT_META+UUIDTool.getUUID());
-			agent.setAgentStatus(agentStatus);
-			System.out.println("==========================="+agent);
-			dhAgentService.saveAgent(agent);
-			return "{\"msg\":\"success\"}";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "{\"msg\":\"error\"}";
+	public ServerResponse deleteAgentById(@RequestParam(value="agentId")String agentId) {
+		try {
+			return dhAgentService.deleteAgentByAgentId(agentId);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
 		}
 	}
 }

@@ -21,9 +21,9 @@ public class DhAgent {
 	
 	private Date agentOdate; // 代理设置时间
 	
-	private String agentOperator; // 代理设置人
+	private String agentOperator; // 委托人
 	
-	private String agentClientele; // 代理委托人
+	private String agentClientele; // 代理人
 	
 	private Date agentSdate; // 开始时间
 	
@@ -35,7 +35,7 @@ public class DhAgent {
 
 	private List<DhProcessMeta> dhProcessMetaList;//代理的流程名集合 用于显示
 	
-	private String agentClienteleName;//代理委托人姓名 前台显示用
+	private String agentClienteleName;//代理人姓名 前台显示用
 	
 	public DhAgent() {
 		super();

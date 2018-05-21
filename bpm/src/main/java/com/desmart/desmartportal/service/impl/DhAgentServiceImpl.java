@@ -3,7 +3,10 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,7 +19,9 @@ import org.springframework.stereotype.Service;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhAgentMapper;
 import com.desmart.desmartportal.entity.DhAgent;
@@ -39,23 +44,21 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Autowired
 	private DhProcessMetaMapper dhProcessMetaMapper;
 	
-	private Logger log = Logger.getLogger(DhAgentServiceImpl.class);
-	
 	/**
-	 * 根据草稿id 删除代理数据
+	 * 根据代理Id删除代理数据
 	 */
 	@Override
-	public int deleteAgentByAgentId(String agentId) {
-		log.info("删除代理数据开始...");
-		int result = 0;
-		try {
-			result = dhAgentMapper.deleteByAgentId(agentId);
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
+	public ServerResponse deleteAgentByAgentId(String agentId) {
+		int delAgent = dhAgentMapper.deleteByAgentId(agentId);
+		if(delAgent!=1) {
+			throw new PlatformException("删除代理信息失败");
 		}
-		log.info("删除代理数据结束...");
-		return result;
+		int agentProSize = dhAgentMapper.queryDhAgentProInfoByAgentId(agentId).size();
+		int delAgentPro = dhAgentMapper.deleteAgentProById(agentId);
+		if(delAgentPro!=agentProSize) {
+			throw new PlatformException("删除代理流程信息失败");
+		}
+		return ServerResponse.createBySuccess();
 	}
 
 	/**
@@ -64,7 +67,6 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Override
 	public ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize, String person) {
 		String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		log.info(currUser);
 		PageHelper.startPage(pageNum, pageSize);
 		List<DhAgent> resultList = dhAgentMapper.selectAgentList(currUser,person);
 		for(DhAgent dhAgent:resultList) {
@@ -96,15 +98,144 @@ public class DhAgentServiceImpl implements DhAgentService {
 	}
 
 	@Override
-	public int saveAgent(DhAgent agent) {
-		agent.setAgentId(EntityIdPrefix.DH_AGENT_META+ UUID.randomUUID().toString());
-		//String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		//agent.setAgentOperator(user);
-		return dhAgentMapper.save(agent);
-	}
-	
-	@Override
 	public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
-		return null;
+		Map<String,String> agentInfoMap = new HashMap<String, String>();
+		DhAgent dhAgent = dhAgentMapper.getDelegateResult(proAppid,proUid,userUid);
+		if(null == dhAgent) {
+			return null;
+		}else {
+			agentInfoMap.put(dhAgent.getAgentClientele(), dhAgent.getAgentId());
+			return agentInfoMap;
+		}
+	}
+
+	@Override
+	public ServerResponse<List<DhProcessMeta>> listDhProcessMetaByCategoryList(List<DhProcessCategory> categoryList, String proName) {
+		if (categoryList == null || categoryList.isEmpty()) {
+            return ServerResponse.createByErrorMessage("列表参数错误");
+        }
+        // 获取所有子分类的元数据
+		List<DhProcessMeta> metalist = dhProcessMetaMapper.listByCategoryListAndProName(categoryList, proName);
+        return ServerResponse.createBySuccess(metalist);
+	}
+
+	@Override
+	public ServerResponse addAgentInfo(Date agentSdate, Date agentEdate, 
+			List<DhProcessMeta> metaList, String agentPerson,String agentIsAll) {
+		String agentId = EntityIdPrefix.DH_AGENT_INFO + UUID.randomUUID().toString();
+		String agentOperator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		DhAgent dhAgent = new DhAgent();
+		dhAgent.setAgentId(agentId);
+		dhAgent.setAgentOperator(agentOperator);
+		dhAgent.setAgentClientele(agentPerson);
+		dhAgent.setAgentStatus("ENABLED");
+		dhAgent.setAgentSdate(new Timestamp(agentSdate.getTime()));
+		dhAgent.setAgentEdate(new Timestamp(agentEdate.getTime()));
+		dhAgent.setAgentIsAll(agentIsAll);
+		if(1!=dhAgentMapper.addAgentInfo(dhAgent)) {
+			throw new PlatformException("添加代理信息失败");
+		}else {
+			int result = 0;
+			if(agentIsAll.equals("FALSE")) {
+				for(DhProcessMeta meta:metaList) {
+					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
+					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId,
+								agentId,meta.getProAppId(),meta.getProUid());
+					result += dhAgentMapper.addAgentProInfo(agentProInfo);
+				}
+			}
+			if(result!=metaList.size()) {
+				throw new PlatformException("添加代理流程信息失败");
+			}
+		}
+		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse<List<DhProcessMeta>> queryConformProMeta(Date agentSdate, Date agentEdate,
+			String[] agentProMetaUidArr) {
+		String agentOperator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		List<DhAgent> dhAgentList = dhAgentMapper.queryAgentInfoByUserAndDate(agentOperator,agentSdate,agentEdate);
+		if(dhAgentList.size()==1) {
+			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
+				throw new PlatformException("在该时间段内有目标流程已被代理");
+			}
+		}
+		
+		List<DhProcessMeta> metaList = new ArrayList<>();
+		for(String agentProMetaUid:agentProMetaUidArr) {
+			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
+			if(dhAgentMapper.queryAgentProInfoBySelective(agentSdate,agentEdate,meta,agentOperator).isEmpty()) {
+				metaList.add(meta);
+			}else {
+				throw new PlatformException("在该时间段内有目标流程已被代理");
+			}
+		}
+		return ServerResponse.createBySuccess(metaList);
+	}
+
+	@Override
+	public ServerResponse<List<DhProcessMeta>> queryConformProMetaNotSelf(DhAgent dhAgent, String[] agentProMetaUidArr) {
+		String agentOperator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		List<DhAgent> dhAgentList = dhAgentMapper.queryAgentInfoByUserAndDateNotSelf(
+				dhAgent.getAgentId(),agentOperator,dhAgent.getAgentSdate(),dhAgent.getAgentEdate());
+		if(dhAgentList.size()==1) {
+			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
+				throw new PlatformException("在该时间段内有目标流程已被代理");
+			}
+		}
+		
+		List<DhProcessMeta> metaList = new ArrayList<>();
+		for(String agentProMetaUid:agentProMetaUidArr) {
+			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
+			if(dhAgentMapper.queryAgentProInfoBySelectiveNotSelf(dhAgent.getAgentId(),
+					dhAgent.getAgentSdate(),dhAgent.getAgentEdate(),meta,agentOperator).isEmpty()) {
+				metaList.add(meta);
+			}else {
+				throw new PlatformException("在该时间段内有目标流程已被代理");
+			}
+		}
+		return ServerResponse.createBySuccess(metaList);
+	}
+
+	@Override
+	public ServerResponse updateAgentInfo(DhAgent dhAgent, List<DhProcessMeta> metaList) {
+		//修改代理设置 isall == true
+		int updateRow = dhAgentMapper.updateAgentById(dhAgent);
+		if(1!=updateRow) {
+			throw new PlatformException("修改代理设置信息失败");
+		}else {
+			dhAgentMapper.deleteAgentProById(dhAgent.getAgentId());
+			int addRow = 0;
+			for(DhProcessMeta meta:metaList) {
+				String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
+				DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId, 
+						dhAgent.getAgentId(), meta.getProAppId(), meta.getProUid());
+				addRow += dhAgentMapper.addAgentProInfo(agentProInfo);
+			}
+			if(addRow != metaList.size()) {
+				throw new PlatformException("修改代理流程失败");
+			}
+		}
+		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse<List<DhProcessMeta>> listProMeta(String[] agentProMetaUidArr) {
+		List<DhProcessMeta> metaList = new ArrayList<>();
+		for(String agentProMetaUid:agentProMetaUidArr) {
+			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
+			metaList.add(meta);
+		}
+		return ServerResponse.createBySuccess(metaList);
+	}
+
+	@Override
+	public ServerResponse updateAgentStatus(DhAgent dhAgent) {
+		int updateRow = dhAgentMapper.updateAgentStatus(dhAgent);
+		if(1!=updateRow) {
+			throw new PlatformException("修改代理信息失败");
+		}
+		return ServerResponse.createBySuccess();
 	}
 }
