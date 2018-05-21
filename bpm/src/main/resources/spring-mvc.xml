@@ -34,12 +34,7 @@
 	    </mvc:message-converters>
 	</mvc:annotation-driven>
 	
-	<mvc:resources mapping="/resources/**/" location="/resources/"/>  
-	<mvc:resources location="/images/" mapping="/images/**"/>  
-    <mvc:resources location="/scripts/" mapping="/scripts/**"/>  
-    <mvc:resources location="/styles/" mapping="/styles/**"/>  
-    <mvc:resources location="/views/" mapping="/views/**"/>
-    <mvc:resources location="/tree/" mapping="/tree/**"/>
+	<mvc:resources mapping="/resources/**" location="/resources/"/>  
     
 	
     <!-- 配置视图解析器 -->
@@ -63,6 +58,6 @@
 		<property name="defaultEncoding" value="UTF-8"></property>
 	</bean>
 	
-    <mvc:default-servlet-handler/>
+    
 </beans>
 
