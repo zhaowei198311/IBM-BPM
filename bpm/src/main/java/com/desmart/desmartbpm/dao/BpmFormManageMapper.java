@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.entity.DhStep;
 
 @Repository
 public interface BpmFormManageMapper {
@@ -61,4 +62,9 @@ public interface BpmFormManageMapper {
 	 * 修改表单内容
 	 */
 	int updateFormContent(BpmForm bpmForm);
+
+	/**
+	 * 根据表单Id查询绑定的步骤集合
+	 */
+	List<DhStep> isBindStep(String formUid);
 }

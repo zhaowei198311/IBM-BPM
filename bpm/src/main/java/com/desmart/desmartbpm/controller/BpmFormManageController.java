@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,6 +263,19 @@ public class BpmFormManageController {
 			return bpmFormManageService.getFormFileByFormUid(dynUid);
 		}catch (Exception e) {
 			return ServerResponse.createByErrorMessage("获取表单文件失败");
+		}
+	}
+	
+	/**
+	 * 根据表单判断表单是否被步骤绑定
+	 */
+	@RequestMapping(value = "/isBindStep")
+	@ResponseBody
+	public ServerResponse isBindStep(@RequestParam("formUids")String[] formUids){
+		try {
+			return bpmFormManageService.isBindStep(formUids);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
 		}
 	}
 }

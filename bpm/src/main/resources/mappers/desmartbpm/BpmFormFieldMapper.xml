@@ -65,4 +65,8 @@
 		where f1.FORM_UID = #{oldFormUid}
 		and f2.FORM_UID = #{newFormUid}
 	</select>
+	
+	<delete id="deleteFieldPermissById" parameterType="string">
+		delete from dh_object_permission where op_obj_uid=#{fldUid}
+	</delete>
 </mapper>

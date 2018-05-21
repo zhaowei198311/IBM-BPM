@@ -22,6 +22,7 @@ import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.util.SFTPUtil;
@@ -142,14 +143,20 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 
 	@Override
 	public ServerResponse deleteForm(String[] formUids) {
-		//to do 这里需要判断表单是否可删除--判断条件：所属的流程定义是否已经发布
 		for(String formUid:formUids) {
 			BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(formUid);
 			if(null==bpmForm) {
 				throw new PlatformException("找不到指定的表单数据");
 			}
 			int countRow = bpmFormManageMapper.deleteForm(formUid);
+			if(1!=countRow) {
+				throw new PlatformException("删除表单信息失败");
+			}
+			List<BpmFormField> fiedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
+			if(fieldCountRow!=fiedList.size()) {
+				throw new PlatformException("删除表单字段失败");
+			}
 			BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
 			boolean flag = sftp.removeFile(gcfg,"/form", bpmForm.getDynFilename());
 			if(!flag) {
@@ -159,6 +166,12 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return ServerResponse.createBySuccess();
 	}
 
+	private void deleteFieldPermiss(List<BpmFormField> fieldList) {
+		for(BpmFormField field:fieldList) {
+			bpmFormFieldMapper.deleteFieldPermissById(field.getFldUid());
+		}
+	}
+	
 	@Override
 	public ServerResponse copyForm(BpmForm bpmForm) {
 		String newFilename = bpmForm.getDynTitle()+".html";
@@ -238,5 +251,16 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(dynUid);
 		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
 		return sftp.getFileStream(gcfg,"/form", bpmForm.getDynFilename());
+	}
+
+	@Override
+	public ServerResponse isBindStep(String[] formUids) {
+		for(String formUid:formUids) {
+			List<DhStep> stepList = bpmFormManageMapper.isBindStep(formUid);
+			if(!stepList.isEmpty()) {
+				throw new PlatformException("表单已经被步骤绑定");
+			}
+		}
+		return ServerResponse.createBySuccess();
 	}
 }

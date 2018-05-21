@@ -94,4 +94,9 @@
 	    	and dyn_title like '%${dynDescription}%' 
 	    </if>
     </select>
+    
+    <select id="isBindStep" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhStep">
+    	select * from dh_step
+    	where step_object_uid = #{formUid} 
+    </select>
 </mapper>

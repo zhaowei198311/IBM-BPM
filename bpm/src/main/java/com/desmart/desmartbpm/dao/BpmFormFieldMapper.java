@@ -52,4 +52,9 @@ public interface BpmFormFieldMapper {
 	 * @throws
 	 */
 	List<Map<String, Object>> listFldUidByFormUid(@Param("oldFormUid")String oldFormUid, @Param("newFormUid")String newFormUid);
+
+	/**
+	 * 根据表单字段Id删除该字段权限
+	 */
+	int deleteFieldPermissById(String fldUid);
 }

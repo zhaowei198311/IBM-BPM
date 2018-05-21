@@ -62,4 +62,9 @@ public interface BpmFormManageService {
 	 * 根据表单Id获得表单文件
 	 */
 	ServerResponse getFormFileByFormUid(String dynUid);
+
+	/**
+	 * 根据表单判断表单是否被步骤绑定
+	 */
+	ServerResponse isBindStep(String[] formUids);
 }
