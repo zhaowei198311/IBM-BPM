@@ -98,7 +98,7 @@
 		</where>
 	</select>
 	
-	<select id="selectByPrimaryKey" parameterType="java.lang.String">
+	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM

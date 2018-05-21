@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -57,4 +58,9 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	boolean isTaskExists(int taskId);
+	
+	/**
+	 * 代办任务详细信息
+	 */
+	public Map<String, Object> taskInfo(String taskUid);
 }

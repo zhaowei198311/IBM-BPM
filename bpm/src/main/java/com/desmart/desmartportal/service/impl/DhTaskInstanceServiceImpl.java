@@ -23,6 +23,7 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.github.pagehelper.PageHelper;
@@ -50,6 +51,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
+	
+	@Autowired
+	private DhProcessFormService dhProcessFormService;
 	
 	/**
 	 * 查询所有流程实例
@@ -246,5 +250,48 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	        return false;
 	    }
 	    return dhTaskInstanceMapper.countByTaskId(taskId) > 0;
+	}
+
+	/**
+	 * 任务代办 详细信息
+	 */
+	@Override
+	public Map<String, Object> taskInfo(String taskUid) {
+		log.info("代办任务详细信息查询 开始......");
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			/**
+			 * 首先要通过任务实例数据信息里的 流程实例id 去查询流程，流程图元素id(activityBpdId) form表单id
+			 * 然后把这些数据存放map 返回给 前台 代办页面
+			 */
+			List<DhTaskInstance> taskList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			for (DhTaskInstance dhTaskInstance : taskList) {
+				// 查询流程  
+				List<DhProcessInstance> processList = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+				for (DhProcessInstance dhProcessInstance : processList) {
+					resultMap.put("proAppId", dhProcessInstance.getProAppId());
+					resultMap.put("proUid", dhProcessInstance.getProUid());
+					resultMap.put("proVerUid", dhProcessInstance.getProVerUid());
+					resultMap.put("insUid", dhProcessInstance.getInsId());
+					resultMap.put("insData", dhProcessInstance.getInsData());
+					// 查询流程图元素信息
+					List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(dhTaskInstance.getActivityBpdId(), dhProcessInstance.getProVerUid());	
+					for (BpmActivityMeta bpmActivityMeta : bpmActivityList) {
+						resultMap.put("activityId", bpmActivityMeta.getActivityId());
+						resultMap.put("activityName", bpmActivityMeta.getActivityName());
+					}
+					// 查找表单id
+					Map<String,Object> formMap = dhProcessFormService.queryProcessForm(dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
+					resultMap.put("formId", formMap.get("formId"));
+					return resultMap;
+				}
+			}
+		} catch (Exception e) {
+			log.info("查询代办任务详细信息失败");
+			e.printStackTrace();
+			return null;
+		}
+		log.info("代办任务详细信息查询 结束......");
+		return resultMap;
 	}
 }

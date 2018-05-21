@@ -213,7 +213,7 @@
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
 				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
 						+ '</td>' 
-						+ '<td><i class="layui-icon backlog_img" onclick="openApproval()">&#xe63c;</i>'
+						+ '<td><i class="layui-icon backlog_img" onclick=openApproval("'+meta.taskUid+'")>&#xe63c;</i>'
 						+ meta.taskTitle 
 						+ '</td>' 
 						+ '<td>'
@@ -255,8 +255,8 @@
 		}
 		
 		// 打开 代办的 详细页面
-		function openApproval(){
-			window.location.href = 'menus/approval';
+		function openApproval(taskUid){
+			window.location.href = 'menus/approval?taskUid='+taskUid;
 		}
 		
 	</script>
