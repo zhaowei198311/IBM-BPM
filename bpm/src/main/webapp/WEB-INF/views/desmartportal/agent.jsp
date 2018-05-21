@@ -52,6 +52,29 @@
 	box-shadow: 0 0 10px #ccc;
 }
 
+.display_container1 {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
+
+.display_content1 {
+	color: #717171;
+	padding: 20px;
+	width: 36%;
+	height: 350px;
+	background: #fff;
+	position: absolute;
+	margin: 100px 0 0 -300px;
+	left: 55%;
+	box-shadow: 0 0 10px #ccc;
+}
+
 .middle .layui-input{
 	width:80%;
 }
@@ -104,6 +127,31 @@
 	background-color:#f2f2f2;
 }
 
+#update_middle_left_tree{
+	float: left;
+	width:48%;
+	border: 1px solid #ccc;
+	height:100%;
+}
+
+#update_middle_right_list .layui-table{
+	text-align:center;
+	margin-top:0px;
+}
+
+#update_middle_right_list th,#update_middle_right_list td{
+	text-align:center;
+	padding:0px;
+}
+
+#update_middle_right_list{
+	float: right;
+	width:48%;
+	border: 1px solid #ccc;
+	height:100%;
+	background-color:#f2f2f2;
+}
+
 .agent_pro_foot{
 	text-align: right;
 	height: 50px;
@@ -119,7 +167,7 @@
 		<div class="search_area">
 			<div class="layui-row layui-form">
 				<div class="layui-col-md3">
-					<input id="agentPerson" type="text" placeholder="代理委托人" class="layui-input" style="width:250px;">
+					<input id="agentPerson" type="text" placeholder="代理人" class="layui-input" style="width:250px;">
 				</div>
 				<div class="layui-col-md3" style="text-align: left; width: 200px">
 					<button class="layui-btn select_btn" onclick="search()">查询</button>
@@ -128,7 +176,7 @@
 			</div>
 		</div>
 		<div>
-			<table class="layui-table backlog_table" lay-even lay-skin="nob"
+			<table class="layui-table backlog_table layui-form" lay-even lay-skin="nob"
 				lay-filter="demo" style="table-layout: fixed;">
 				<colgroup>
 					<col width="9%">
@@ -141,11 +189,11 @@
 				</colgroup>
 				<thead>
 					<tr>
-						<th><input type="checkbox"> 序号</th>
+						<th><input type="checkbox" name="allSel" onclick="onClickHander(this);" lay-ignore> 序号</th>
 						<th class="process_name_td">代理的流程名称</th>
 						<th>代理开始时间</th>
 						<th>代理结束时间</th>
-						<th>代理委托人</th>
+						<th>代理人</th>
 						<th>代理状态</th>
 						<th>操作</th>
 					</tr>
@@ -156,13 +204,14 @@
 		<div id="lay_page"></div>
 	</div>
 	
+	<!-- 新增代理信息 -->
 	<div class="display_container">
 		<div class="display_content">
 			<div class="top">
 				新增代理
 			</div>
 			<div class="middle" id="addMiddle">
-				<form class="layui-form form-horizontal" method="post" action="agent/saveAgent" style="margin-top:30px;">
+				<form class="layui-form form-horizontal" style="margin-top:30px;">
 				    <div class="layui-form-item">
 					    <label class="layui-form-label">开始时间</label>
 						<div class="layui-input-block">
@@ -178,12 +227,12 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">代理的流程</label>
 						<div class="layui-input-block">
-							<input type="text" id="addAgentProcess" name="addAgentProcess" value="" autocomplete="off" class="layui-input" style="float:left"> 
+							<input type="text" id="addAgentProcess" name="addAgentProcess" class="layui-input" style="float:left" readonly> 
 							<i class="layui-icon" id="choose_agent_process" style="position:relative;left:2%;font-size:30px;">&#xe672;</i>
 						</div>
 					</div>
 					<div class="layui-form-item">
-						<label class="layui-form-label">代理委托人</label>
+						<label class="layui-form-label">代理人</label>
 						<div class="layui-input-block">
 							<input type="text" id="addAgentPerson_view" name="addAgentPerson" class="layui-input" style="float:left" readonly>
 							<i class="layui-icon" id="choose_agent_user" style="position:relative;left:2%;font-size:30px;">&#xe612;</i>
@@ -193,7 +242,7 @@
 				</form>
 			</div>
 			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="button" onclick="formSubmit();" >确定</button>
+				<button class="layui-btn layui-btn sure_btn" type="button" onclick="addAgentInfo();" >确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancel()">取消</button>
 			</div>
 		</div>
@@ -204,7 +253,7 @@
 			<div class="layui-col-md5">
 				<input id="search_processName" type="text" placeholder="流程名称" class="layui-input"/>
 			</div>
-			<button class="layui-btn select_btn layui-col-md2 layui-col-md-offset1" id="search_pro_btn">查询</button>
+			<button class="layui-btn select_btn layui-col-md2 layui-col-md-offset1" id="search_pro_btn" onclick="searchProBtn();">查询</button>
 		</div>
 		<div class="agent_pro_middle">
 			<div id="middle_left_tree">
@@ -218,7 +267,7 @@
 					</colgroup>
 					<thead>
 						<tr>
-							<th><input type="checkbox"/></th>
+							<th><input type="checkbox" name="allProSel" onclick="onClickProAll(this);"/></th>
 							<th>流程名称</th>
 						</tr>
 					</thead>
@@ -228,7 +277,85 @@
 			</div>
 		</div>
 		<div class="agent_pro_foot">
-			<button class="layui-btn layui-btn sure_btn" type="button">确定</button>
+			<button class="layui-btn layui-btn sure_btn" type="button" onclick="addProMeta();">确定</button>
+			<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
+		</div>
+	</div>
+	
+	<!-- 修改代理信息 -->
+	<div class="display_container1">
+		<div class="display_content1">
+			<div class="top">
+				修改代理
+			</div>
+			<div class="middle" id="upateMiddle">
+				<form class="layui-form form-horizontal" style="margin-top:30px;">
+				    <div class="layui-form-item">
+					    <label class="layui-form-label">开始时间</label>
+						<div class="layui-input-block">
+							<input type="text" id="updateAgentSdate" name="updateAgentSdate" value="" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">结束时间</label>
+						<div class="layui-input-block">
+							<input type="text" id="updateAgentEdate" name="updateAgentEdate" value="" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">代理的流程</label>
+						<div class="layui-input-block">
+							<input type="text" id="updateAgentProcess" name="updateAgentProcess" class="layui-input" style="float:left" readonly> 
+							<i class="layui-icon" id="update_choose_agent_process" style="position:relative;left:2%;font-size:30px;">&#xe672;</i>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">代理人</label>
+						<div class="layui-input-block">
+							<input type="text" id="updateAgentPerson_view" name="updateAgentPerson" class="layui-input" style="float:left" readonly>
+							<i class="layui-icon" id="update_choose_agent_user" style="position:relative;left:2%;font-size:30px;">&#xe612;</i>
+							<input type="hidden" id="updateAgentPerson"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn sure_btn" type="button" onclick="updateAgentInfo();" >确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancel()">取消</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="update_choose_agent_process_box" style="display:none;">
+		<div class="agent_pro_top layui-row">
+			<div class="layui-col-md5">
+				<input id="update_search_processName" type="text" placeholder="流程名称" class="layui-input"/>
+			</div>
+			<button class="layui-btn select_btn layui-col-md2 layui-col-md-offset1" id="update_search_pro_btn" onclick="updateSearchProBtn();">查询</button>
+		</div>
+		<div class="agent_pro_middle">
+			<div id="update_middle_left_tree">
+				<ul id="update_category_tree" class="ztree" style="width:auto;height:100%;"></ul>
+			</div>
+			<div id="update_middle_right_list">
+				<table class="layui-table">
+					<colgroup>
+						<col width="10%">
+						<col width="90%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="updateAllProSel" onclick="updateOnClickProAll(this);"/></th>
+							<th>流程名称</th>
+						</tr>
+					</thead>
+					<tbody id="update_agent_pro_list">
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="agent_pro_foot">
+			<button class="layui-btn layui-btn sure_btn" type="button" onclick="updateProMeta();">确定</button>
 			<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
 		</div>
 	</div>
@@ -249,7 +376,18 @@
 		person : "",
 		total : 0
 	}
-
+	
+	var categoryUid = "rootCategory";//新增代理时点击流程树获得流程分类Id
+	var updateCategoryUid = "rootCategory";//修改代理时点击流程树获得流程分类Id
+	var proMetaUidArr = new Array();//新增代理时选择代理流程的ID数组
+	var proMetaNameArr = new Array();//新增代理时选择代理流程的name数组
+	var updateProMetaUidArr = new Array();//修改代理时选择代理流程的ID数组
+	var updateProMetaNameArr = new Array();//修改代理时选择代理流程的name数组
+	var allProMetaNum = 0;//新增代理时选择流程的数量
+	var updateAllProMetaNum = 0;//修改代理时选择流程的数量
+	var updateAgentId = "";//修改代理信息的代理Id
+	var updateIsUse = "ENABLED";//修改代理信息时是否启用
+	
 	layui.use([ 'laypage', 'layer' ], function() {
 		var laypage = layui.laypage, layer = layui.layer;
 		//完整功能
@@ -259,7 +397,7 @@
 			limit : 10,
 			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
 			jump : function(obj) {
-				console.log(obj)
+				
 			}
 		});
 	});
@@ -282,12 +420,36 @@
 	    }
 	};
 	
+	var setting1 = {
+		data: {
+			key: {
+		    	name: "name",
+		    	icon: "menuIcon"
+		    },
+			simpleData: {
+				enable: true,
+				idKey: "id",
+				pIdKey: "pid",
+				rootPId: "rootCategory"
+			}
+		},
+		callback: {
+			onClick: zTreeUpdateOnClick
+		}
+	};
+	
 	$(document).ready(function() {
 		// 加载数据
 		getAgentInfo();
 		
+		getMetaInfo("rootCategory");
+		
 		$("#choose_agent_user").click(function() {
 	        common.chooseUser('addAgentPerson', 'true');
+	    });
+		
+		$("#update_choose_agent_user").click(function() {
+	        common.chooseUser('updateAgentPerson', 'true');
 	    });
 		
 		// 加载树
@@ -297,9 +459,11 @@
             dataType: "json",
             success: function(result) {
                 $.fn.zTree.init($("#category_tree"), setting, result);
+                $.fn.zTree.init($("#update_category_tree"), setting1, result);
             }
         });
 		
+		//弹出选择流程信息的弹层
 		$("#choose_agent_process").click(function(){
 			layer.open({
 				type: 1,
@@ -308,24 +472,245 @@
 	    	    shade: 0.8,
 	    	    area: ['600px', '540px'],
 	    	    content: $("#choose_agent_process_box"),
+	    	    cancel: function(index, layero){ 
+	    	    	$("#choose_agent_process_box").css("display","none");
+	    	   		layer.close(index);
+	    	    	return true; 
+	    	    },
 	    	    success: function (layero, lockIndex) {
-	    	        var body = layer.getChildFrame('body', lockIndex);
-	    	        body.find('button#close').on('click', function () {
-	    	            layer.close(lockIndex);
+	    	    	$("#choose_agent_process_box").find('.cancel_btn').on('click', function () {
+	    	    		$("#choose_agent_process_box").css("display","none");
+	    	    		layer.close(lockIndex);
+	    	        });
+	    	    	$("#choose_agent_process_box").find('.sure_btn').on('click', function () {
+	    	    		$("#choose_agent_process_box").css("display","none");
+	    	    		layer.close(lockIndex);
 	    	        });
 	    	    }
 			});
-		});
+		});//end click
+		
+		//弹出选择流程信息的弹层
+		$("#update_choose_agent_process").click(function(){
+			layer.open({
+				type: 1,
+	    	    title: '选择流程',
+	    	    shadeClose: true,
+	    	    shade: 0.8,
+	    	    area: ['600px', '540px'],
+	    	    content: $("#update_choose_agent_process_box"),
+	    	    cancel: function(index, layero){ 
+	    	    	$("#update_choose_agent_process_box").css("display","none");
+	    	   		layer.close(index);
+	    	    	return true; 
+	    	    },
+	    	    success: function (layero, lockIndex) {
+	    	    	$("#update_choose_agent_process_box").find('.cancel_btn').on('click', function () {
+	    	    		$("#update_choose_agent_process_box").css("display","none");
+	    	    		layer.close(lockIndex);
+	    	        });
+	    	    	$("#update_choose_agent_process_box").find('.sure_btn').on('click', function () {
+	    	    		$("#update_choose_agent_process_box").css("display","none");
+	    	    		layer.close(lockIndex);
+	    	        });
+	    	    }
+			});
+		});//end click
 	});
 	
+	//流程分类树节点的双击事件
 	function zTreeOnClick(event, treeId, treeNode) {
-    	var categoryUid = treeNode.id;
-    	var categoryName = treeNode.name;
-    	var categoryUid = treeNode.id;
-    	//$("#proName_input").val('');
-    	//getMetaInfo();
+    	categoryUid = treeNode.id;
+    	getMetaInfo(categoryUid);
     }
 	
+	function zTreeUpdateOnClick(event, treeId, treeNode){
+		updateCategoryUid = treeNode.id;
+    	getUpdateMetaInfo(updateCategoryUid);
+	}
+	
+	//模糊查询流程元集合数据
+	function searchProBtn(){
+		getMetaInfo(categoryUid);
+	}
+	
+	//模糊查询修改流程元集合数据
+	function updateSearchProBtn(){
+		getUpdateMetaInfo(updateCategoryUid);
+	}
+	
+	//add根据分类Id获得流程元集合数据
+	function getMetaInfo(categoryUid){
+		$.ajax({
+			url:"agent/listByCategoryUid",
+			method:"post",
+			data:{
+				categoryUid:categoryUid,
+				proName:$("#search_processName").val()
+			},
+			success:function(result){
+				if(result.status==0){
+					if(categoryUid == "rootCategory"){
+						allProMetaNum = result.data.length;
+					}
+					drawProTable(result.data);
+					$("input[name='allProSel']").prop("checked",false);
+					$("input[name='proNameCheck']").prop("checked",false);
+					var proArr = $("input[name='proNameCheck']");
+					for(var i=0;i<proArr.length;i++){
+						var proMetaUid = $(proArr[i]).val();
+						if($.inArray(proMetaUid,proMetaUidArr)!=-1){
+							$(proArr[i]).prop("checked",true);
+							onClickProSel(proArr[i]);
+						}
+					}
+				}
+			}//end success
+		});
+	}
+	
+	//update根据分类Id获得流程元集合数据
+	function getUpdateMetaInfo(categoryUid){
+		$.ajax({
+			url:"agent/listByCategoryUid",
+			method:"post",
+			data:{
+				categoryUid:categoryUid,
+				proName:$("#update_search_processName").val()
+			},
+			success:function(result){
+				if(result.status==0){
+					if(categoryUid == "rootCategory"){
+						updateAllProMetaNum = result.data.length;
+					}
+					drawUpdateProTable(result.data);
+					$("input[name='updateAllProSel']").prop("checked",false);
+					$("input[name='updateProNameCheck']").prop("checked",false);
+					var proArr = $("input[name='updateProNameCheck']");
+					console.log(updateProMetaUidArr);
+					for(var i=0;i<proArr.length;i++){
+						var updateProMetaUid = $(proArr[i]).val();
+						if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1){
+							$(proArr[i]).prop("checked",true);
+							updateOnClickProSel(proArr[i]);
+						}
+					} 
+				}
+			}//end success
+		});
+	}
+	
+	//选择要添加代理的流程信息
+	function addProMeta(){
+		var addProMetaStr = proMetaNameArr.join(";");
+		$("#addAgentProcess").val(addProMetaStr);
+	} 
+	
+	//添加代理信息
+	function addAgentInfo(){
+		var agentSdate = $("#addAgentSdate").val();
+		var agentEdate = $("#addAgentEdate").val();
+		var agentPerson = $("#addAgentPerson").val().replace(";","");
+		//判断值不为空
+		if(agentSdate!=null && agentSdate!="" && agentEdate!=null && agentEdate!=""
+			&& agentPerson!=null && agentPerson!="" && proMetaUidArr.length!=0){
+			//判断结束时间 晚于 开始时间
+			var start = new Date(agentSdate.replace("-", "/").replace("-", "/"));  
+			var end = new Date(agentEdate.replace("-", "/").replace("-", "/"));  
+			if(start<end){
+				var agentIsAll = "TRUE";
+				if(allProMetaNum!=proMetaUidArr){
+					agentIsAll = "FALSE";
+				}
+				layer.load();
+				//添加代理信息
+				$.ajax({
+					url:"agent/addAgentInfo",
+					method:"post",
+					traditional: true,//传递数组给后台
+					data:{
+						agentProMetaUidArr:proMetaUidArr,
+						agentSdate:agentSdate,
+						agentEdate:agentEdate,
+						agentPerson:agentPerson,
+						agentIsAll:agentIsAll
+					},
+					success:function(result){
+						layer.closeAll('loading');
+						if(result.status==0){
+							getAgentInfo();
+							$(".display_container").css("display", "none");
+							layer.alert("添加代理设置成功");
+						}else{
+							layer.alert(result.msg);
+						}
+					}
+				});
+			}else{
+				layer.alert("结束时间不能早于开始时间");
+			}//end 判断时间
+		}else{
+			layer.alert("请填写所有参数");
+		}//end if
+	}
+	
+	//修改代理流程元数据的方法
+	function updateProMeta(){
+		var updateProMetaStr = updateProMetaNameArr.join(";");
+		$("#updateAgentProcess").val(updateProMetaStr);
+		console.log(updateProMetaNameArr);
+	}
+	
+	//修改代理信息的方法
+	function updateAgentInfo(){
+		var updateAgentSdate = $("#updateAgentSdate").val();
+		var updateAgentEdate = $("#updateAgentEdate").val();
+		var updateAgentPerson = $("#updateAgentPerson").val().replace(";","");
+
+		//判断值不为空
+		if(updateAgentSdate!=null && updateAgentSdate!="" && updateAgentEdate!=null && updateAgentEdate!=""
+			&& updateAgentPerson!=null && updateAgentPerson!="" && updateProMetaUidArr.length!=0){
+			//判断结束时间 晚于 开始时间
+			var start = new Date(updateAgentSdate.replace("-", "/").replace("-", "/"));  
+			var end = new Date(updateAgentEdate.replace("-", "/").replace("-", "/"));  
+			if(start<end){
+				var updateAgentIsAll = "TRUE";
+				if(updateAllProMetaNum != updateProMetaUidArr){
+					updateAgentIsAll = "FALSE";
+				}
+				//修改代理信息
+				$.ajax({
+					url:"agent/updateAgentInfo",
+					method:"post",
+					traditional: true,//传递数组给后台
+					data:{
+						agentId:updateAgentId,
+						agentProMetaUidArr:updateProMetaUidArr,
+						agentSdate:updateAgentSdate,
+						agentEdate:updateAgentEdate,
+						agentClientele:updateAgentPerson,
+						agentStatus:updateIsUse,
+						agentIsAll:updateAgentIsAll
+					},
+					success:function(result){
+						if(result.status==0){
+							getAgentInfo();
+							$(".display_container1").css("display", "none");
+							layer.alert("修改代理设置成功");
+						}else{
+							layer.alert(result.msg);
+						}
+					}
+				});
+			}else{
+				layer.alert("结束时间不能早于开始时间");
+			}//end 判断时间
+		}else{
+			layer.alert("请填写所有参数");
+		}//end if
+	}
+	
+	//查询代理信息
 	 function getAgentInfo() {
 		$.ajax({
 			url : 'agent/queryAgentByList',
@@ -342,6 +727,157 @@
 		})
 	}
 	
+	//渲染代理流程信息表格
+	function drawProTable(data){
+		$("#agent_pro_list").html("");
+		var trs = "";
+		for(var i=0;i<data.length;i++){
+			var meta = data[i];
+			trs += '<tr>'+
+					'<td><input type="checkbox" value="'+meta.proMetaUid+'" name="proNameCheck" onclick="onClickProSel(this);"/></td>'+
+					'<td>'+meta.proName+'</td>'+
+					'</tr>';
+		}
+		$("#agent_pro_list").append(trs);
+	}
+	
+	//渲染修改代理流程信息表格
+	function drawUpdateProTable(data){
+		$("#update_agent_pro_list").html("");
+		var trs = "";
+		for(var i=0;i<data.length;i++){
+			var meta = data[i];
+			trs += '<tr>'+
+					'<td><input type="checkbox" value="'+meta.proMetaUid+'" name="updateProNameCheck" onclick="updateOnClickProSel(this);"/></td>'+
+					'<td>'+meta.proName+'</td>'+
+					'</tr>';
+		}
+		$("#update_agent_pro_list").append(trs);
+	}
+	
+	//选择代理流程的复选框全选，取消全选
+	function onClickProAll(obj){
+		if(obj.checked){
+			$("input[name='proNameCheck']").prop("checked",true);
+			$("input[name='proNameCheck']").each(function(){
+				if($.inArray($(this).val(),proMetaUidArr)==-1){
+					proMetaUidArr.push($(this).val());
+					proMetaNameArr.push($(this).parent().next().text());
+				}
+			});
+		}else{
+			$("input[name='proNameCheck']").prop("checked",false);
+			$("input[name='proNameCheck']").each(function(){
+				proMetaUidArr.splice($.inArray($(this).val(),proMetaUidArr),1);
+				proMetaNameArr.splice($.inArray($(this).parent().next().text(),proMetaNameArr),1);
+			});
+		}
+	}
+	
+	//选择代理流程的复选框分选
+	function onClickProSel(obj){
+		if(obj.checked){
+			if($.inArray($(obj).val(),proMetaUidArr)==-1){
+				proMetaUidArr.push($(obj).val());
+				proMetaNameArr.push($(obj).parent().next().text());
+			}
+			var allSel = false;
+			$("input[name='proNameCheck']").each(function(){
+				if(!$(this).is(":checked")){
+					allSel = true;
+				}
+			});
+			
+			//如果有checkbox没有被选中
+			if(allSel){
+				$("input[name='allProSel']").prop("checked",false);
+			}else{
+				$("input[name='allProSel']").prop("checked",true);
+			}
+		}else{
+			proMetaUidArr.splice($.inArray($(obj).val(),proMetaUidArr),1);
+			proMetaNameArr.splice($.inArray($(obj).parent().next().text(),proMetaNameArr),1);
+			$("input[name='allProSel']").prop("checked",false);
+		}
+	}
+	
+	//选择修改代理流程的复选框全选，取消全选
+	function updateOnClickProAll(obj){
+		if(obj.checked){
+			$("input[name='updateProNameCheck']").prop("checked",true);
+			$("input[name='updateProNameCheck']").each(function(){
+				if($.inArray($(this).val(),updateProMetaUidArr)==-1){
+					updateProMetaUidArr.push($(this).val());
+					updateProMetaNameArr.push($(this).parent().next().text());
+				}
+			});
+		}else{
+			$("input[name='updateProNameCheck']").prop("checked",false);
+			$("input[name='updateProNameCheck']").each(function(){
+				updateProMetaUidArr.splice($.inArray($(this).val(),updateProMetaUidArr),1);
+				updateProMetaNameArr.splice($.inArray($(this).parent().next().text(),updateProMetaNameArr),1);
+			});
+		}
+	}
+	
+	//选择代理流程的复选框分选
+	function updateOnClickProSel(obj){
+		if(obj.checked){
+			if($.inArray($(obj).val(),updateProMetaUidArr)==-1){
+				updateProMetaUidArr.push($(obj).val());
+				updateProMetaNameArr.push($(obj).parent().next().text());
+			}
+			var allSel = false;
+			$("input[name='updateProNameCheck']").each(function(){
+				if(!$(this).is(":checked")){
+					allSel = true;
+				}
+			});
+			
+			//如果有checkbox没有被选中
+			if(allSel){
+				$("input[name='updateAllProSel']").prop("checked",false);
+			}else{
+				$("input[name='updateAllProSel']").prop("checked",true);
+			}
+		}else{
+			updateProMetaUidArr.splice($.inArray($(obj).val(),updateProMetaUidArr),1);
+			updateProMetaNameArr.splice($.inArray($(obj).parent().next().text(),updateProMetaNameArr),1);
+			$("input[name='updateAllProSel']").prop("checked",false);
+		}
+	}
+	
+	//代理信息复选框全选，取消全选
+	function onClickHander(obj){
+		if(obj.checked){
+			$("input[name='agent_check']").prop("checked",true);
+		}else{
+			$("input[name='agent_check']").prop("checked",false);
+		}
+	}
+	
+	//代理信息复选框分选
+	function onClickSel(obj){
+		if(obj.checked){
+			var allSel = false;
+			$("input[name='agent_check']").each(function(){
+				if(!$(this).is(":checked")){
+					allSel = true;
+				}
+			});
+			
+			//如果有checkbox没有被选中
+			if(allSel){
+				$("input[name='allSel']").prop("checked",false);
+			}else{
+				$("input[name='allSel']").prop("checked",true);
+			}
+		}else{
+			$("input[name='allSel']").prop("checked",false);
+		}
+	}
+	
+	//渲染代理信息表格
 	function drawTable(pageInfo, data){
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
@@ -362,29 +898,82 @@
 			var agentEdate = common.dateToString(new Date(meta.agentEdate));
 			var sortNum = startSort + i;
 			var tdTitle = "";
+			var updateAgentProcessIds = "";
 			for(var j=0;j<meta.dhProcessMetaList.length;j++){
 				var processMetaName = (meta.dhProcessMetaList)[j].proName;
+				var processMetaUid = (meta.dhProcessMetaList)[j].proMetaUid;
 				tdTitle += processMetaName;
+				updateAgentProcessIds += processMetaUid;
 				if(j!=meta.dhProcessMetaList.length-1){
-					tdTitle += ",";
+					tdTitle += ";";
+					updateAgentProcessIds += ";";
 				}
 			}
 			
-			var agentStatus = "启用";
+			var agentStatus = true;
 			if(meta.agentStatus == "DISABLED"){
-				agentStatus = "停用";
+				agentStatus = false;
 			}
-			trs += '<tr>'
-				+ '<td><input type="checkbox" value="'+meta.agentId+'"/> ' + sortNum + '</td>'
+			trs += '<tr data-agentid="'+meta.agentId+'">'
+				+ '<td><input type="checkbox" value="'+meta.agentId+'" name="agent_check" onclick="onClickSel(this);" lay-ignore/> ' + sortNum + '</td>'
 				+ '<td class="process_name_td" title="'+tdTitle+'">' + tdTitle + '</td>'
 				+ '<td>' + agentSdate + '</td>'
 				+ '<td>' + agentEdate + '</td>'
-				+ '<td>' + meta.agentClienteleName +'</td>'
-				+ '<td>' + agentStatus +'</td>'
-				+ '<td><i class="layui-icon" title="修改代理设置" onclick=del("'+ meta.agentId + '") >&#xe640;</i></td>'
+				+ '<td id="'+meta.agentClientele+'">' + meta.agentClienteleName +'</td>';
+			if(agentStatus){
+				trs += 	'<td><input name="agentStatus" checked type="checkbox" lay-skin="switch" lay-text="启用|停用" lay-filter="isUse"></td>';
+			}else{
+				trs += 	'<td><input name="agentStatus" type="checkbox" lay-skin="switch" lay-text="启用|停用" lay-filter="isUse"></td>';
+			}
+			trs	+= '<td><i class="layui-icon" title="修改代理设置" onclick=update(this)>&#xe642;</i>'
+				+ '<i class="layui-icon" title="删除代理设置" onclick=del("'+ meta.agentId + '")>&#xe640;</i>'
+				+ '<input type="hidden" id="updateAgentProcessIds" value="'+updateAgentProcessIds+'"/></td>'
 				+ '</tr>';
 		}
 		$("#agent_table_tbody").append(trs);
+		layui.use('form', function(){
+			var form = layui.form; 
+			form.render('checkbox');
+			$("input[name='agentStatus']").click(function(){
+				
+			});
+			form.on('switch(isUse)', function(data){
+				var agentId = $(this).parent().parent().data("agentid");
+				var agentProArr = $(this).parent().parent().find("#updateAgentProcessIds").val().split(";");
+				var agentStratDate = $(this).parent().parent().find("td:eq(2)").text();
+				var agentEndDate = $(this).parent().parent().find("td:eq(3)").text();
+				var agentStatus = "";
+				if(this.checked){
+					agentStatus = "ENABLED";
+			    }else{
+			    	agentStatus = "DISABLED";
+			    }
+				$.ajax({
+					url:"agent/updateAgentStatus",
+					method:"post",
+					traditional: true,
+					data:{
+						agentId:agentId,
+						agentProMetaUidArr:agentProArr,
+						agentSdate:agentStratDate,
+						agentEdate:agentEndDate,
+						agentStatus:agentStatus
+					},
+					success:function(result){
+						if(result.status != 0){
+							layer.alert(result.msg);	
+						}else{
+							if(this.checked){
+								layer.alert("代理启用成功");
+							}else{
+								layer.alert("代理停用成功");
+							}
+						}
+						getAgentInfo();
+					}
+				});
+			});//end function
+		});
 	}
 	
 	// 分页
@@ -410,17 +999,58 @@
 		});
 	}
 	
+	//模糊查询代理信息
 	function search(){
 		pageConfig.person = $("#agentPerson").val();
 		getAgentInfo();
 	}
+	
+	//显示新增代理模态框
 	function add(){
 		$(".display_container .layui-input").val("");
+		proMetaUidArr = new Array();
+		proMetaNameArr = new Array();
+		$("input[name='allProSel']").prop("checked",false);
+		$("input[name='proNameCheck']").prop("checked",false);
 		$(".display_container").css("display", "block");	
 	}
+	
+	//显示修改代理模态框
+	function update(obj){
+		$(".display_container1 .layui-input").val("");
+		$("input[name='updateAllProSel']").prop("checked",false);
+		$("input[name='updateProNameCheck']").prop("checked",false);
+		
+		var updateAgentSdate = $(obj).parent().parent().find("td:eq(2)").text();
+		var updateAgentEdate = $(obj).parent().parent().find("td:eq(3)").text();
+		var updateAgentPersonName = $(obj).parent().parent().find("td:eq(4)").text();
+		var updateAgentPersonId = $(obj).parent().parent().find("td:eq(4)").prop("id");
+		var updateAgentProcess = $(obj).parent().parent().find("td:eq(1)").text();
+		updateProMetaUidArr = $(obj).parent().find("#updateAgentProcessIds").val().split(";");
+		updateProMetaNameArr = updateAgentProcess.split(";");
+		getUpdateMetaInfo("rootCategory");
+		updateAgentId = $(obj).parent().parent().data("agentid");
+		var isUse = $(obj).parent().parent().find("input[name='agentStatus']").prop("checked");
+		if(isUse){
+			updateIsUse = "ENABLED";
+		}else{
+			updateIsUse = "DISABLED";
+		}
+		
+		$("#updateAgentSdate").val(updateAgentSdate);
+		$("#updateAgentEdate").val(updateAgentEdate);
+		$("#updateAgentPerson_view").val(updateAgentPersonName);
+		$("#updateAgentPerson").val(updateAgentPersonId);
+		$("#updateAgentProcess").val(updateAgentProcess);
+		$(".display_container1").css("display", "block");	
+	}
+	
+	//隐藏新增代理模态框
 	function cancel(){
 		$(".display_container").css("display", "none");	
+		$(".display_container1").css("display", "none");
 	}
+	
 	function del(id){
 		layer.confirm('是否删除该代理？', {
 			btn : [ '确定', '取消' ], //按钮
@@ -431,19 +1061,25 @@
 			$.ajax({
 				url : 'agent/deleteAgentById',
 				type : 'POST',
-				dataType : 'text',
 				data : {
 					agentId : id
 				},
 				success : function(result) {
-					// 删除成功后 ajxa跳转 查询controller
-					window.location.href = "agent/index";
+					console.log(result.status);
+					console.log(result.status==0);
+					if(result.status == 0){
+						layer.alert("删除成功");
+						getAgentInfo();
+					}else{
+						layer.alert("删除失败");
+					}
 				}
 			})
 			layer.close(index);
 		});
 	}
 	
+	//日期控件渲染
 	layui.use([ 'laydate'], function(){  
         var $ = layui.$;  
         var laydate = layui.laydate;   
@@ -453,51 +1089,26 @@
         var start = laydate.render({
             elem: '#addAgentSdate',
             type: 'datetime',
-            min: nowTime,
-            done: function(value, date){
-                endMax = end.config.max;
-                end.config.min = date;
-                end.config.min.month = date.month -1;
-            }
+            min: nowTime
         });
         
         var end = laydate.render({
             elem: '#addAgentEdate',
             type: 'datetime',
-            min: nowTime,
-            btns: ['clear', 'confirm'],
-            done: function(value, date){
-                if($.trim(value) == ''){
-                    var curDate = new Date();
-                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
-                }
-                start.config.max = date;
-                start.config.max.month = date.month -1;
-            }
+            min: nowTime
+     	});
+        
+        var updateStart = laydate.render({
+            elem: '#updateAgentSdate',
+            type: 'datetime',
+            min: nowTime
+        });
+        
+        var updateEnd = laydate.render({
+            elem: '#updateAgentEdate',
+            type: 'datetime',
+            min: nowTime
      	});
 	 });
-	
-     function formSubmit(){
-		var agentOdate = new Date($('#agentOdate').val());
-		var agentOperator = $('#agentOperator').val();
-		var agentClientele = $('#agentClientele').val();
-		var agentStatus = $('#agentStatus').val();
-		$.ajax({
-			url : 'agent/saveAgent',
-			type : 'POST',
-			dataType : 'text',
-			data : {
-				agentOdate : agentOdate,
-				agentOperator : agentOperator,
-				agentClientele : agentClientele,
-				agentStatus : agentStatus
-			},
-			success : function(result) {
-				// 删除成功后 ajxa跳转 查询controller
-				window.location.href = "agent/index";
-			}
-		})
-		
-	}
 </script>
 
