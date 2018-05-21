@@ -1,6 +1,5 @@
 package com.desmart.desmartportal.entity;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class DhRoutingRecord {
@@ -46,7 +45,7 @@ public class DhRoutingRecord {
 	public Date getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 	public String getUserName() {
