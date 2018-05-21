@@ -160,6 +160,37 @@
 			</div>
 		</div>
 	</div>
+	
+	<table class="layui-table">
+		<colgroup>
+		    <col width="150">
+		    <col>
+		    <col width="150">
+		    <col> 
+		</colgroup>
+		<tbody>
+			<c:forEach items="${activityMetaList}" var="activityMeta">
+			    <tr>
+			      <td>下一环节:<span class="tip_span"></span></td>
+			      <td>
+			      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
+			      </td>
+			      <td class="td_title">处理人:<span class="tip_span"></span></td>
+			      <td>
+			      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
+			      	
+			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+			      	
+			      </td>
+			      <td colspan="3">
+			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
+			      </td>
+			    </tr>
+		    </c:forEach>
+		</tbody>
+	</table>
+	
 	<div class="display_content_accessory_file" id="upload_file_modal" >
 				<div class="top">文件上传</div>
 				<div class="upload_overflow_middle">
