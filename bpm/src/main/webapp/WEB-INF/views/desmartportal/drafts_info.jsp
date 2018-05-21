@@ -60,7 +60,7 @@
     			 border: 1px solid #ccc;
                  position: relative;
    				 padding: 0 10px;
-   				 overflow: scroll;
+    			 overflow: scroll;
 			}
 	
 </style>
@@ -117,28 +117,57 @@
 				</table>
 		
 			<div id="formSet"></div>
+			<table class="layui-table">
+				<colgroup>
+				    <col width="150">
+				    <col>
+				    <col width="150">
+				    <col> 
+				</colgroup>
+				<tbody>
+					<c:forEach items="${activityMetaList}" var="activityMeta">
+					    <tr>
+					      <td>下一环节:<span class="tip_span"></span></td>
+					      <td>
+					      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
+					      </td>
+					      <td class="td_title">处理人:<span class="tip_span"></span></td>
+					      <td>
+					      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+					      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
+					      	
+					      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
+					      	
+					      </td>
+					      <td colspan="3">
+					      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
+					      </td>
+					    </tr>
+				    </c:forEach>
+				</tbody>
+			</table>
 			<div class="layui-tab">
 					  	<ul class="layui-tab-title">
 					  		<li class="layui-this">附件</li>
 					  	</ul>
 			<div class="layui-tab-content" style="padding:0;">	
-				<div class="layui-tab-item layui-show" style="height: auto;">
+				<div class="layui-tab-item layui-show" style="height: 280px;overflow: scroll;">
 						    	<table class="layui-table upload-file-table" style="margin:0;">
 									<colgroup>
 									    <col width="5%">
-									    <col width ="20%"><%-- 
+									    <col width ="20%">
 									    <col width="15%">
 									    <col width="20%"> 
-									    <col width="10%"> --%>
+									    <col width="10%">
 									    <col width="10%">
 									    <col width="20%">
 									</colgroup>
 									<thead>
 									    <tr>
 									      <th><!-- <input id="all-file-check" type="checkbox"> -->序号</th>
-									      <th>附件名称</th><!-- 
+									      <th>附件名称</th>
 									      <th>附件说明</th>
-									      <th>附件类型</th> -->
+									      <th>附件类型</th>
 									      <th>上传人</th>
 									      <th>上传时间</th>
 									      <th>
@@ -160,37 +189,6 @@
 			</div>
 		</div>
 	</div>
-	
-	<table class="layui-table">
-		<colgroup>
-		    <col width="150">
-		    <col>
-		    <col width="150">
-		    <col> 
-		</colgroup>
-		<tbody>
-			<c:forEach items="${activityMetaList}" var="activityMeta">
-			    <tr>
-			      <td>下一环节:<span class="tip_span"></span></td>
-			      <td>
-			      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
-			      </td>
-			      <td class="td_title">处理人:<span class="tip_span"></span></td>
-			      <td>
-			      	<input type="hidden"  id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
-			      	
-			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-			      	
-			      </td>
-			      <td colspan="3">
-			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
-			      </td>
-			    </tr>
-		    </c:forEach>
-		</tbody>
-	</table>
-	
 	<div class="display_content_accessory_file" id="upload_file_modal" >
 				<div class="top">文件上传</div>
 				<div class="upload_overflow_middle">
@@ -214,9 +212,9 @@
 									<tr>
 										<th>文件名</th>
 										<th>大小</th>
-										<!-- <th>文件标题</th>
+										<th>文件标题</th>
 										<th>文件标签</th>
-										<th>文件说明</th> -->
+										<th>文件说明</th>
 										<th>状态</th>
 										<th>操作</th>
 									</tr>
@@ -241,6 +239,33 @@
 <!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 <script>
+	
+	function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
+		console.log(actcCanChooseUser);
+		if(actcCanChooseUser=='FALSE'){
+			layer.alert('没有配置可选处理人!');
+			return false;
+		}
+		
+		var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
+		layer.open({
+		     type: 2,
+		     title: '选择人员',
+		     shadeClose: true,
+		     shade: 0.8,
+		     area: ['680px', '520px'],
+		     content : [ url, 'yes'],
+		     success : function(layero, lockIndex) {
+			      var body = layer.getChildFrame('body', lockIndex);
+			      //绑定解锁按钮的点击事件
+			      body.find('button#close').on('click', function() {
+			       	layer.close(lockIndex);
+			        //location.reload();//刷新
+			      });
+		     }
+		 });
+	}
+
 	function startProcess() {
 		var proUids = $("#proUid").val();
 		var proAppIds = $("#proAppId").val();
