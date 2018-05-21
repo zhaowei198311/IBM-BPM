@@ -38,10 +38,11 @@
                             <div class="layui-col-md2">
                                 <input id="proName_input" type="text" placeholder="流程名称"  class="layui-input">
                             </div>
-                            <div class="layui-col-md3" style="text-align:right;">
+                            <div class="layui-col-md3" style="text-align:right;width: 35%">
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
                                     <button class="layui-btn delete_btn" id="meta_del_btn">删除</button>
+                                    <button class="layui-btn move_btn" id="move_btn">移动</button>
                             </div>
                         </div>
                     </div>
@@ -172,6 +173,20 @@
                  </div>
               </div>
          </div>
+         <div class="display_container8">
+         	<div class="display_content8">
+         		<div class="top">
+	         		流程分类
+	         	</div>
+         		<div class="middle1" style="height: 75%">
+                    <ul id="category_tree1" class="ztree" style="width:auto;height:75%;"></ul>
+                </div>
+                <div class="foot">
+                     <button class="layui-btn layui-btn sure_btn" id="moveSure_btn">确定</button>
+                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="moveCancel_btn">取消</button>
+                 </div>
+         	</div>       	
+         </div>
     </body>
     
 <script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
@@ -249,7 +264,20 @@
                 onRename: onRename
             }
         };
-
+		
+        var setting_1 = {
+    		data: {
+            	key: {
+            		name: "name",
+            	},
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "pid",
+                    rootPId: "rootCategory"
+                }
+            }	
+        };
 
         function zTreeOnClick(event, treeId, treeNode) {
         	newMeta.categoryUid = treeNode.id;
@@ -620,6 +648,65 @@
             	pageConfig.total = 0;
             	getMetaInfo();
             });
+            // 移动
+            $("#move_btn").click(function(){
+            	var cks = $("[name='proMeta_check']:checked");
+            	if (cks.length != 1) {
+					layer.alert("请只选择一条流程定义");
+					return;
+				}
+            	$(".display_container8").css("display","block");
+            	// 加载树
+                $.ajax({
+                    url: common.getPath() + "/processCategory/getTreeData",
+                    type: "post",
+                    data: {},
+                    dataType: "json",
+                    success: function(result) {
+                        $.fn.zTree.init($("#category_tree1"), setting_1, result);
+                    }
+                });
+            });
+            // 取消移动
+            $("#moveCancel_btn").click(function(){
+            	$(".display_container8").css("display","none");
+            })
+            // 移动确定
+            $("#moveSure_btn").click(function(){
+            	var treeObj = $.fn.zTree.getZTreeObj("category_tree1"),
+                nodes = treeObj.getSelectedNodes();
+                if (nodes.length != 1) {
+					layer.alert("请只选择一条节点");
+					return;
+				}
+                var cks = $("input[name='proMeta_check']:checked");
+                var metaUid = "";
+                cks.each(function(){
+                	var $tr=$(this).parents('tr');
+                	metaUid = $tr.attr('data-metauid');
+                });
+                $.ajax({
+                	async: false,
+                	url: common.getPath() + "/processCategory/changeThePosition",
+                	type: "post",
+                	dataType: "json",
+                	data:{
+                		metaUid: metaUid,
+                		categoryUid: nodes[0].id
+                	},
+                	success: function(data){
+                		if (data.status == 0) {
+							layer.alert("移动成功！");
+							$(".display_container8").css("display","none");
+							cks.each(function(){
+								$(this).parents('tr').remove();
+							})
+						}else {
+							layer.alert("移动失败！");
+						}
+                	}
+                })
+            })
             
         });
         

@@ -140,5 +140,18 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
             return ServerResponse.createByErrorMessage("删除失败");
         }
     }
+
+	@Override
+	public ServerResponse<?> changeThePosition(String meteUid, String categoryUid) {
+		DhProcessMeta dhProcessMeta = new DhProcessMeta();
+		dhProcessMeta.setProMetaUid(meteUid);
+		dhProcessMeta.setCategoryUid(categoryUid);
+		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
+		if (count > 0) {
+			return ServerResponse.createBySuccess();
+		}else {
+			return ServerResponse.createByError();
+		}
+	}
     
 }

@@ -78,4 +78,9 @@ public class DhProcessCategoryController {
         return JsonUtil.obj2String(nodesToShow);
     }
     
+    @RequestMapping(value = "/changeThePosition")
+    @ResponseBody
+    public ServerResponse<?> changeThePosition(String metaUid, String categoryUid){
+    	return dhProcessCategoryService.changeThePosition(metaUid, categoryUid);
+    }
 }

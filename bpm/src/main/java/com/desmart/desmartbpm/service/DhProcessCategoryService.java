@@ -31,4 +31,15 @@ public interface DhProcessCategoryService {
     
     /** 重命名分类*/
     ServerResponse renameDhProcessCategory(String categoryUid, String newName);
+    
+    /**
+     * 
+     * @Title: changeThePosition  
+     * @Description: 改变源数据所在分类的位置  
+     * @param: @param id
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
+    ServerResponse<?> changeThePosition(String metaUid, String categoryUid);
 }
