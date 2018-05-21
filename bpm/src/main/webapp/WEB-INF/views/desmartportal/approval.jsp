@@ -68,7 +68,7 @@
 }
 
 .approval_th{
- 	background-color: #A9B1B3;
+ 	background-color: #F2F2F2;
 }
 </style>
 </head>
