@@ -268,6 +268,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         dhProcessMeta.setProMetaUid(EntityIdPrefix.DH_PROCESS_META + UUID.randomUUID().toString());
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessMeta.setCreator(currUser);
+        dhProcessMeta.setProMetaStatus(DhProcessMeta.STATUS_ON);
         countRow = dhProcessMetaMapper.save(dhProcessMeta);
         if (countRow > 0) {
             return ServerResponse.createBySuccess();

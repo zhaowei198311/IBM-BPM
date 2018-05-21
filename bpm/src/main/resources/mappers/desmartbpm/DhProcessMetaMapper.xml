@@ -2,18 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhProcessMetaMapper" >
     <sql id="base_column">
-        PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, LAST_UPDATE_TIME, CATEGORY_UID, PRO_DISPLAY  
+        PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, 
+        LAST_UPDATE_TIME, CATEGORY_UID, PRO_DISPLAY, PRO_META_STATUS 
     </sql>
     
     <sql id="relation_column">
-        pm.PRO_META_UID, pm.PRO_APP_ID, pm.PRO_UID, pm.PRO_NAME, pm.CREATOR, pm.CREATE_TIME, pm.UPDATE_USER, pm.LAST_UPDATE_TIME, pm.CATEGORY_UID, pm.PRO_DISPLAY  
+        pm.PRO_META_UID, pm.PRO_APP_ID, pm.PRO_UID, pm.PRO_NAME, pm.CREATOR, pm.CREATE_TIME, 
+        pm.UPDATE_USER, pm.LAST_UPDATE_TIME, pm.CATEGORY_UID, pm.PRO_DISPLAY, pm.PRO_META_STATUS
     </sql>
     
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta">
         insert into dh_process_meta (<include refid="base_column"/>)
         values(
             #{proMetaUid}, #{proAppId}, #{proUid}, #{proName}, #{creator}, sysdate, 
-            #{updateUser}, #{lastUpdateTime}, #{categoryUid}, #{proDisplay}
+            #{updateUser}, #{lastUpdateTime}, #{categoryUid}, #{proDisplay}, #{proMetaStatus}
         )
     </insert>
     
@@ -85,6 +87,9 @@
             <if test="categoryUid != null">
                 and pm.CATEGORY_UID = #{categoryUid}
             </if>
+            <if test="proMetaStatus != null">
+                and pm.PRO_META_STATUS = #{proMetaStatus}
+            </if>
         </where>
     </select>
     
@@ -102,7 +107,10 @@
                 PRO_NAME = #{proName},
             </if>
             <if test="categoryUid != null">
-                CATEGORY_UID = #{categoryUid}
+                CATEGORY_UID = #{categoryUid},
+            </if>
+            <if test="proMetaStatus != null">
+                PRO_META_STATUS = #{proMetaStatus}
             </if>
         </set>
         where PRO_META_UID = #{proMetaUid}

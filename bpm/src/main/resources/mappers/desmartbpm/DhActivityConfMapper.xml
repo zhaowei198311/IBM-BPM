@@ -89,21 +89,7 @@
   </delete>
   
   <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
-    insert into DH_ACTIVITY_CONF (ACTC_UID, ACTIVITY_ID, ACTC_SORT, 
-      ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, 
-      ACTC_ASSIGN_VARIABLE, SIGN_COUNT_VARNAME, ACTC_CAN_EDIT_ATTACH, 
-      ACTC_CAN_UPLOAD_ATTACH, ACTC_CAN_DELEGATE, ACTC_CAN_DELETE_ATTACH, 
-      ACTC_CAN_MESSAGE_NOTIFY, ACTC_CAN_MAIL_NOTIFY, 
-      ACTC_MAIL_NOTIFY_TEMPLATE, ACTC_CAN_REJECT, 
-      ACTC_REJECT_TYPE, ACTC_CAN_REVOKE, ACTC_CAN_AUTOCOMMIT, 
-      ACTC_CAN_ADD, ACTC_CAN_USER_TO_FIELD, ACTC_CAN_AUDIT_TO_FIELD, 
-      ACTC_CAN_APPROVE, ACTC_USER_TO_FIELD, ACTC_AUDIT_TO_FIELD, 
-      ACTC_OUTTIME_TRIGGER, ACTC_OUTTIME_TEMPLATE, 
-      ACTC_DESCRIPTION, ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, 
-      ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, ACTC_ALERT, 
-      ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, 
-      ACTC_CAN_SKIP, UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY
-      )
+    insert into DH_ACTIVITY_CONF (<include refid="Base_Column_List"/>)
     values (#{actcUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{actcSort,jdbcType=INTEGER}, 
       #{actcTime,jdbcType=FLOAT}, #{actcTimeunit,jdbcType=VARCHAR}, #{actcAssignType,jdbcType=VARCHAR}, 
       #{actcAssignVariable,jdbcType=VARCHAR}, #{signCountVarname,jdbcType=VARCHAR}, #{actcCanEditAttach,jdbcType=VARCHAR}, 
@@ -118,7 +104,7 @@
       #{actcDefMessage,jdbcType=VARCHAR}, #{actcDefDescription,jdbcType=VARCHAR}, #{actcAlert,jdbcType=VARCHAR}, 
       #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR}, 
       #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{actcCanChooseUser},
-      #{actcCanTransfer}, #{actcResponsibility}
+      #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType}
       )
   </insert>
   
@@ -232,16 +218,19 @@
         ACTC_CAN_PAUSE = #{actcCanPause,jdbcType=VARCHAR},
       </if>
       <if test="actcCanSkip != null" >
-        ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR}
+        ACTC_CAN_SKIP = #{actcCanSkip,jdbcType=VARCHAR},
       </if>
       <if test="actcCanChooseUser != null" >
-        ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser,jdbcType=VARCHAR}
+        ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser,jdbcType=VARCHAR},
       </if>
       <if test="actcCanTransfer != null" >
-        actc_Can_Transfer = #{actcCanTransfer,jdbcType=VARCHAR}
+        actc_Can_Transfer = #{actcCanTransfer,jdbcType=VARCHAR},
       </if>
       <if test="actcResponsibility != null" >
-        actc_Responsibility = #{actcResponsibility,jdbcType=VARCHAR}
+        actc_Responsibility = #{actcResponsibility,jdbcType=VARCHAR},
+      </if>
+      <if test="actcChooseableHandlerType != null" >
+        ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType,jdbcType=VARCHAR}
       </if>
     </set>
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}

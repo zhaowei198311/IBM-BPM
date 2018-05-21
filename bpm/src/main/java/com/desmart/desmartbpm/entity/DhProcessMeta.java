@@ -7,6 +7,13 @@ import java.util.Date;
  *
  */
 public class DhProcessMeta {
+    /** 正常状态 */
+    public static final String STATUS_ON = "on";
+    /** 隐藏状态，菜单界面不提供发起 */
+    public static final String STATUS_HIDE = "hide";
+    /** 关闭状态，切换为关闭菜单时，删除所有的流程实例，任务， 已办等信息  */
+    public static final String STATUS_CLOSED = "closed";
+    
     private String proMetaUid;  // 主键
     private String proAppId;  // 应用库id
     private String proUid; // 流程图id
@@ -17,6 +24,7 @@ public class DhProcessMeta {
     private Date lastUpdateTime;
     private String categoryUid;  // 流程分类
     private String proDisplay; // 流程引擎中流程名
+    private String proMetaStatus; // 元数据状态 
     
     // 不再此表中
     private String creatorFullName;
@@ -91,6 +99,12 @@ public class DhProcessMeta {
     }
     
     
+    public String getProMetaStatus() {
+        return proMetaStatus;
+    }
+    public void setProMetaStatus(String proMetaStatus) {
+        this.proMetaStatus = proMetaStatus;
+    }
     public String getProDisplay() {
         return proDisplay;
     }
@@ -104,8 +118,9 @@ public class DhProcessMeta {
                 + ", creator=" + creator + ", createTime=" + createTime
                 + ", updateUser=" + updateUser + ", lastUpdateTime="
                 + lastUpdateTime + ", categoryUid=" + categoryUid
-                + ", creatorFullName=" + creatorFullName + ", updatorFullName="
-                + updatorFullName + "]";
+                + ", proDisplay=" + proDisplay + ", proMetaStatus="
+                + proMetaStatus + ", creatorFullName=" + creatorFullName
+                + ", updatorFullName=" + updatorFullName + "]";
     }
 
     
