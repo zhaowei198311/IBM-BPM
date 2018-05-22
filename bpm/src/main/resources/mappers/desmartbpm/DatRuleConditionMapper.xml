@@ -22,6 +22,7 @@
    <select id="getDatruleConditionByRuleId"
     resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
     SELECT * FROM DAT_RULE_CONDITION where rule_id = #{ruleId}
+    order by CONDITION_GROUP_NAME
    </select>
    
    <select id="getDatruleConditionInRuleId" parameterType="map"

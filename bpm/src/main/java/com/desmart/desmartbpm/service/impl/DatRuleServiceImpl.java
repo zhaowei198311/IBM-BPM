@@ -347,24 +347,27 @@ public class DatRuleServiceImpl implements DatRuleService {
 					if(bpmActivityMeta.getActivityType()!=null&&!"".equals(bpmActivityMeta.getActivityType())) {//判断是否已经添加规则数据
 						
 						//根据ruleId查询predictRules展示
-						//DatRule datRule = 
-						//根据当前activityId查询当前环节和当前type所有predictRules展示,需要按时间排序
-						List<DatRule> predictRules = getPreRulesLikeRuleName(bpmActivityMeta.getActivityId());
+						DatRule datRule = getDatRuleByKey(dhGatewayLine2.getRuleId());
 						
+						//根据当前activityId查询当前环节和当前type所有predictRules展示,需要按时间排序
+						/*List<DatRule> predictRules = getPreRulesLikeRuleName(bpmActivityMeta.getActivityId());
+						*/
 						//根据当前ruleId查询所有dat_rule_condition展示,需要按照分组名排序
+						List<DatRuleCondition> datRuleConditions = datRuleConditionServiceImpl.getDatruleConditionByRuleId(dhGatewayLine2.getRuleId());
 						
 						//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
-						List<DatRuleCondition> datRuleConditionList
+						/*List<DatRuleCondition> datRuleConditionList
 						=datRuleConditionServiceImpl.loadDatruleConditionInRuleId(bpmActivityMeta.getActivityId());
+						*/
 						
-						
-						son.put("DataList", datRuleConditionList);
-						son.put("PredictRule", predictRules);
-						map.put("gatewayKey", son);
+						son.put("DataList", datRuleConditions);
+						son.put("PredictRule", datRule);
+						map.put(datRule.getRuleName(), son);
 					}
 				}
 			}
-			return ServerResponse.createBySuccess(list);
+			map.put("leftMenus", list);
+			return ServerResponse.createBySuccess(map);
 		}else {
 			return ServerResponse.createByErrorMessage("拉取环节列表失败！");
 		}
