@@ -59,7 +59,7 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse saveFile(@RequestParam("files")MultipartFile[] multipartFiles
 			,@RequestParam("uploadModels") String uploadModels,
-			@RequestParam("appUid")String appUid,@RequestParam("taskId")Integer taskId) {
+			@RequestParam("appUid")String appUid,@RequestParam("taskId")String taskId) {
 			List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
 			List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
 			JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
