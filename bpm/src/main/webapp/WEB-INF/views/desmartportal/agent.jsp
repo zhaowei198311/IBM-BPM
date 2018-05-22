@@ -627,7 +627,7 @@
 				if(allProMetaNum!=proMetaUidArr.length){
 					agentIsAll = "FALSE";
 				}
-				layer.load();
+				layer.load(1);
 				//添加代理信息
 				$.ajax({
 					url:"agent/addAgentInfo",
