@@ -215,7 +215,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 *            任务实例id (引擎)
 	 */
 	@Override
-	public void queryTaskSetVariable(String activityId, String tkkid) {
+	public ServerResponse queryTaskSetVariable(String activityId, String tkkid) {
 
 		log.info("寻找流程变量开始......");
 		try {
@@ -241,13 +241,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			e.printStackTrace();
 		}
 		log.info("寻找流程变量结束......");
+		return null;
 	}
 
 	/* 
 	 *
 	 */
 	@Override
-	public void perform(String tkkid) {
+	public ServerResponse perform(String tkkid) {
 		log.info("完成任务开始......");
 		try {
 			HttpReturnStatus result = new HttpReturnStatus();
@@ -256,10 +257,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			params.put("action", "finish");
 			params.put("parts", "all");
 			result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK + tkkid, params);
+			if(result.getCode()==200) {
+				return ServerResponse.createBySuccess(result.getCode());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		log.info("完成任务结束......");
+		return null;
 	}
 
 	public boolean isTaskExists(int taskId) {

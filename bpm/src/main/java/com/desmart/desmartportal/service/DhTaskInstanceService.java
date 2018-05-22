@@ -45,12 +45,12 @@ public interface DhTaskInstanceService {
 	/**
 	 * 给任务设置变量
 	 */
-	public void queryTaskSetVariable(String activityId,String tkkid);
+	public ServerResponse queryTaskSetVariable(String activityId,String tkkid);
 	
 	/**
 	 * 完成任务
 	 */
-	public void perform(String tkkid);
+	public ServerResponse perform(String tkkid);
 	
 	/**
 	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录

@@ -51,6 +51,7 @@ public class UsersController {
 	private Logger log = Logger.getLogger(UsersController.class);
 	
 	@RequestMapping(value = "/logins")
+	@ResponseBody
 	public String login(String username, String password, HttpServletRequest request) {
 		Subject user = SecurityUtils.getSubject();
 		UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
@@ -58,7 +59,7 @@ public class UsersController {
 		Session session = SecurityUtils.getSubject().getSession();
 		session.setAttribute(Const.CURRENT_USER, "00011178");
 		session.setTimeout(17200000L);
-		return "redirect:/user/menus";
+		return "1";
 	}
 	
 	@RequestMapping(value = "/menus")
