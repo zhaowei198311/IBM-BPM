@@ -48,7 +48,10 @@ public class DhRoutingRecordController {
 		dhRoutingRecord.setInsUid(insUid);
 		List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordServiceImpl.getDhRoutingRecordListByCondition(dhRoutingRecord);
 		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByInsUidAndTaskTypeCondition(insUid);
-		List<BpmActivityMeta> bpmActivityMetas = JsonUtil.string2Obj(bpmActivityList, ArrayList.class, BpmActivityMeta.class);
+		List<BpmActivityMeta> bpmActivityMetas = new ArrayList<BpmActivityMeta>();
+		if(bpmActivityList!=null&&!"".equals(bpmActivityList)) {
+			bpmActivityMetas = JsonUtil.string2Obj(bpmActivityList, ArrayList.class, BpmActivityMeta.class);
+		}
 		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();
 		for (DhTaskInstance record : dhTaskInstances) {
 			if(DhTaskInstance.STATUS_RECEIVED.equals(record.getTaskStatus()))//循环确定该流程实例任务中，有哪些是环节处于接收到任务
