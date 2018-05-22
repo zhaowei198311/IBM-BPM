@@ -96,7 +96,8 @@
     <update id="updateByProMetaUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta">
         update dh_process_meta 
         <set>
-            LAST_UPDATE_TIME = sysdate, UPDATE_USER = #{updateUser},
+            LAST_UPDATE_TIME = sysdate, 
+            UPDATE_USER = #{updateUser},
             <if test="proAppId != null">
                 PRO_APP_ID = #{proAppId},
             </if>
@@ -105,9 +106,6 @@
             </if>
             <if test="proName != null">
                 PRO_NAME = #{proName},
-            </if>
-            <if test="proMetaStatus">
-            	PRO_META_STATUS = #{proMetaStatus}
             </if>
             <if test="categoryUid != null">
                 CATEGORY_UID = #{categoryUid},
