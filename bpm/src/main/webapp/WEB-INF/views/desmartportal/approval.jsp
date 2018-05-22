@@ -82,9 +82,8 @@
 			<button class="layui-btn layui-btn-sm">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
 			<button class="layui-btn layui-btn-sm">转办</button>
-			<button class="layui-btn layui-btn-sm">会签</button> <a
-			href="backlog.html" style="margin-left: 10px;"><button
-					class="layui-btn layui-btn-sm back_btn">退出</button></a>
+			<button class="layui-btn layui-btn-sm">会签</button>
+			<button	class="layui-btn layui-btn-sm" onclick="back()">退出</button>
 			</span>
 	</div>
 	<div class="container" style="width: 96%">
@@ -401,9 +400,6 @@
 		$(".upload").click(function() {
 			$(".upload_file").click();
 		});
-		$(".back_btn").click(function() {
-			window.location.href = "backlog.html";
-		});
 	})
 	
 	
@@ -433,6 +429,10 @@
 			area : [ '790px', '580px' ],
 			content : 'http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId='+insId
 			});
+	}
+	
+	function back(){
+		window.location.href = 'menus/backlog';
 	}
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
