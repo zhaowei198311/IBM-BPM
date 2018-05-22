@@ -79,4 +79,12 @@ public interface BpmActivityMetaService {
      * @return
      */
     BpmActivityMeta getBpmActivityMeta(String proAppId,String activityBpdId, String snapshotId, String bpdId);
+    /**
+     * 根据元素id，流程图id和版本id以及activityType获得BpmActivityMeta
+     * @param bpmActivityId
+     * @param snapshotId
+     * @param bpdId
+     * @return
+     */
+    List<BpmActivityMeta> getBpmActivityMetaByActivityType(String activityBpdId, String snapshotId, String bpdId,String activityType);
 }

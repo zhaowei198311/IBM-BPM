@@ -25,4 +25,10 @@ public interface DhGatewayLineMapper {
      * @return
      */
     int countByActivityId(String activityId);
+    /**
+     * 根据条件查询网关连接线集合
+     * @param dhGatewayLine
+     * @return
+     */
+    List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine);
 }

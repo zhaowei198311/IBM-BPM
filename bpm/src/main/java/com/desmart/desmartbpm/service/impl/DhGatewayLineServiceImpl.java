@@ -279,4 +279,10 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
         
         System.out.println(condition.matches("*+\\s==\\s\"*+\""));
     }
+
+	@Override
+	public List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine) {
+		// TODO Auto-generated method stub
+		return dhGatewayLineMapper.getGateWayLinesByCondition(dhGatewayLine);
+	}
 }

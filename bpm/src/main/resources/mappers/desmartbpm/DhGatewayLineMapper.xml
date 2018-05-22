@@ -122,4 +122,17 @@
     select count(1) from DH_GATEWAY_LINE
     where activity_id = #{activityId}
   </select>
+  <select id="getGateWayLinesByCondition" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine"
+   resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
+   select 
+    <include refid="Base_Column_List" />
+    from DH_GATEWAY_LINE
+    where 1 = 1
+   	<if test="gatewayLineUid != null and gatewayLineUid != '' ">
+   	and GATEWAY_LINE_UID = #{gatewayLineUid}
+   	</if>
+   	<if test="activityId != null and activityId != '' ">
+   	and ACTIVITY_ID = #{activityId}
+   	</if>
+   </select>
 </mapper>

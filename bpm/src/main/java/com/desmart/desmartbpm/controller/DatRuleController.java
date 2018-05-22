@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DatRuleService;
 import com.desmart.desmartbpm.util.DateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
@@ -38,10 +40,15 @@ public class DatRuleController {
 
 	@Resource
 	private DatRuleService datRuleServiceImpl;
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaServiceImpl;
 
 	@RequestMapping("/loadGatewaySet")
-	public String loadGatewaySet() {
-		return "desmartbpm/gatewaySet";
+	@ResponseBody
+	public ServerResponse loadGatewaySet(String activityBpdId,String snapshotId,String bpdId,String activityType) {
+		List<BpmActivityMeta> list = 
+				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(activityBpdId, snapshotId, bpdId, activityType);		
+		return ServerResponse.createBySuccess(list);
 	}
 
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })

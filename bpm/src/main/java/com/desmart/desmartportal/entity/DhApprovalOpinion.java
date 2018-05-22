@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class DhApprovalOpinion {
 	private String aprOpiId;//审批id
-	private String aprUid;//流程实例id--ins_Uid
+	private String insUid;//流程实例id--ins_Uid
 	private String taskUid;//任务id--activityId
 	private Integer aprOpiIndex;//审批序号
 	private String aprUserId;//审批用户id
@@ -24,11 +24,11 @@ public class DhApprovalOpinion {
 	public void setAprOpiId(String aprOpiId) {
 		this.aprOpiId = aprOpiId;
 	}
-	public String getAprUid() {
-		return aprUid;
+	public String getInsUid() {
+		return insUid;
 	}
-	public void setAprUid(String aprUid) {
-		this.aprUid = aprUid;
+	public void setInsUid(String insUid) {
+		this.insUid = insUid;
 	}
 	public String getTaskUid() {
 		return taskUid;
@@ -92,11 +92,12 @@ public class DhApprovalOpinion {
 	}
 	@Override
 	public String toString() {
-		return "DhApprovalOpinion [aprOpiId=" + aprOpiId + ", aprUid=" + aprUid + ", taskUid=" + taskUid
+		return "DhApprovalOpinion [aprOpiId=" + aprOpiId + ", insUid=" + insUid + ", taskUid=" + taskUid
 				+ ", aprOpiIndex=" + aprOpiIndex + ", aprUserId=" + aprUserId + ", aprTimeNumber=" + aprTimeNumber
 				+ ", aprOpiComment=" + aprOpiComment + ", aprStatus=" + aprStatus + ", aprDate=" + aprDate
 				+ ", activityName=" + activityName + ", aprUserName=" + aprUserName + ", aprStation=" + aprStation
 				+ "]";
 	}
+	
 	
 }

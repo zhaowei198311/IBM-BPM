@@ -506,6 +506,19 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         }
         return null;
 	}
+
+
+	@Override
+	public List<BpmActivityMeta> getBpmActivityMetaByActivityType(String activityBpdId, String snapshotId, String bpdId,
+			String activityType) {
+		// TODO Auto-generated method stub
+		BpmActivityMeta metaSelective = new BpmActivityMeta();
+        metaSelective.setActivityBpdId(activityBpdId);
+        metaSelective.setSnapshotId(snapshotId);
+        metaSelective.setBpdId(bpdId);
+        metaSelective.setActivityType(activityType);
+        return bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+	}
     
     
 

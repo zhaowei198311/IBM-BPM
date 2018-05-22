@@ -1,6 +1,9 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhGatewayLine;
 
 public interface DhGatewayLineService {
     
@@ -21,4 +24,11 @@ public interface DhGatewayLineService {
      * @return
      */
     boolean needGenerateGatewayLine(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 根据条件查询网关连接线集合
+     * @param dhGatewayLine
+     * @return
+     */
+    List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine);
 }

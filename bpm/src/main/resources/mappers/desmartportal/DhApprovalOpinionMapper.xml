@@ -10,8 +10,8 @@
 		left join Sys_User su on dao.apr_user_id = su.user_uid
 		left join bpm_activity_meta bam on dao.task_uid = bam.activity_id
 		where 1 = 1
-		<if test="aprUid != null and aprUid != '' ">
-			and dao.apr_uid = #{aprUid}
+		<if test="insUid != null and insUid != '' ">
+			and dao.ins_uid = #{insUid}
 		</if>
 		<if test="taskUid != null and taskUid != ''">
 			and dao.task_uid = #{taskUid}
@@ -26,7 +26,7 @@
 		DH_APPROVAL_OPINION
 		(
 		APR_OPI_ID,
-		APR_UID,
+		ins_uid,
 		TASK_UID,
 		APR_OPI_INDEX,
 		APR_USER_ID,
@@ -38,7 +38,7 @@
 		VALUES
 		(
 		#{aprOpiId},
-		#{aprUid},
+		#{insUid},
 		#{taskUid},
 		#{aprOpiIndex},
 		#{aprUserId},
@@ -54,8 +54,8 @@
 		resultType="com.desmart.desmartportal.entity.DhApprovalOpinion">
 		select * from DH_Approval_Opinion
 		where 1 = 1
-		<if test="aprUid != null and aprUid != '' ">
-			and apr_uid = #{aprUid}
+		<if test="insUid != null and insUid != '' ">
+			and ins_uid = #{insUid}
 		</if>
 		<if test="taskUid != null and taskUid != ''">
 			and task_uid = #{taskUid}
