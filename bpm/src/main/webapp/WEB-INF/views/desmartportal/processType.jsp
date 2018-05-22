@@ -62,7 +62,7 @@
 			<p class="table_list">
 				<i class="layui-icon">&#xe61d;</i>共3条任务
 			</p>
-			<table class="layui-table">
+			<table class="layui-table" lay-even lay-skin="nob">
 				<colgroup>
 					<col width="150">
 					<col width="150">

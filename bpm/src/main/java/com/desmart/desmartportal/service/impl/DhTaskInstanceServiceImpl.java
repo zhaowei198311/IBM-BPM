@@ -288,6 +288,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			
 			for (DhTaskInstance dhTaskInstance : taskList) {
 				// 查询流程
+				resultMap.put("taskId", dhTaskInstance.getTaskId());
 				DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
 						.selectByPrimaryKey(dhTaskInstance.getInsUid());
 				resultMap.put("proAppId", dhprocessInstance.getProAppId());

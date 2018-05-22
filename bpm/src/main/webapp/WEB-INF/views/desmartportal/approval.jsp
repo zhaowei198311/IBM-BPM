@@ -73,13 +73,14 @@
 			id="proAppId" value="${proAppId}" style="display: none;"> <input
 			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
 			id="insUid" value="${insUid}" style="display: none;"><input
-			id="insId" value="${insId}" style="display: none;"> <span
+			id="insId" value="${insId}" style="display: none;"> <input
+			id="taskId" value="${taskId}" style="display: none;"><span
 			id="insData" value='${insData}' ></span> <span
 			id="listStr" value='${listStr}'></span><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 			<span id="test" style="float: right; padding-right: 20px;">
 			<button class="layui-btn  layui-btn-sm" onclick="processView(${insId})">流程图</button>
-			<button class="layui-btn layui-btn-sm">通过</button>
+			<button class="layui-btn layui-btn-sm" onclick="agree(${taskId})">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
 			<button class="layui-btn layui-btn-sm">转办</button>
 			<button class="layui-btn layui-btn-sm">会签</button>
@@ -454,6 +455,10 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			area : [ '790px', '580px' ],
 			content : 'http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId='+insId
 			});
+	}
+	
+	function agree(taskId){
+		
 	}
 	
 	function back(){
