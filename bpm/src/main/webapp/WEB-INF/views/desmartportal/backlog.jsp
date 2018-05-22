@@ -64,7 +64,7 @@
 					    <tr>
 					      <th>序号</th>
 					      <th>任务标题</th>
-					      <th>上一环节提交人</th>
+					      <th>流程名称</th>
 					      <th>任务类型</th>
 					      <th>创建时间</th>
 					      <th>操作</th>
@@ -204,10 +204,14 @@
 			var list = pageInfo.list;
 			var startSort = pageInfo.startRow;//开始序号
 			var trs = "";
+			var type = "";
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
 				var meta = list[i];
+				if(meta.taskType=='normal'){
+					type = "一般流程";
+				}
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
 				var agentOdate2 = new Date(meta.taskDueDate);
@@ -217,10 +221,10 @@
 						+ meta.taskTitle 
 						+ '</td>' 
 						+ '<td>'
-						+ meta.taskPreviousUsrUsername 
+						+ 一般合同用印
 						+ '</td>' 
 						+ '<td>' 
-						+ meta.taskType
+						+ type
 						+ '</td>' 
 						+ '<td>'
 						+ InitDate
