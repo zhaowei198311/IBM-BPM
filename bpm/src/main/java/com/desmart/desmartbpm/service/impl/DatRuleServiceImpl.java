@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,11 @@ import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
+import com.desmart.desmartbpm.entity.DhGatewayLine;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DatRuleService;
+import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartbpm.util.DateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
 @Service
@@ -33,6 +38,12 @@ public class DatRuleServiceImpl implements DatRuleService {
 
 	@Resource
 	private DatRuleMapper datRuleMapper;
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaServiceImpl;
+	@Autowired
+	private DhGatewayLineService dhGatewayLineServiceImpl;
+	@Autowired
+	private DatRuleConditionService datRuleConditionServiceImpl;
 	
 	@Override
 	public DatRule getDatRuleByCondition(DatRule datRule) {
@@ -45,19 +56,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 		// TODO Auto-generated method stub
 		return datRuleMapper.insertToDatRule(datRule);
 	}
-
-	@Override
-	public int inserToDatRuleCondition(List<DatRuleCondition> datRuleCondition) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.inserToDatRuleCondition(datRuleCondition);
-	}
-
-	@Override
-	public LinkedList<DatRuleCondition> getDatruleConditionByRuleId(String ruleId) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.getDatruleConditionByRuleId(ruleId);
-	}
-
+	
 	@Override
 	public Integer updateDatRule(DatRule datRule) {
 		// TODO Auto-generated method stub
@@ -65,46 +64,17 @@ public class DatRuleServiceImpl implements DatRuleService {
 	}
 
 	@Override
-	public List<DatRuleCondition> getDatruleConditionInRuleId(String activityId) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.getDatruleConditionInRuleId(activityId);
-	}
-
-	@Override
 	public List<DatRule> getPreRulesLikeRuleName(String activityId) {
 		// TODO Auto-generated method stub
 		return datRuleMapper.getPreRulesLikeRuleName(activityId);
 	}
-
-	@Override
-	public int deleteDatRuleCondition(DatRule datRule) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.deleteDatRuleCondition(datRule);
-	}
-
-	@Override
-	public List<DatRuleCondition> loadDatruleConditionInRuleId(String activityId) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.loadDatruleConditionInRuleId(activityId);
-	}
-
+	
 	@Override
 	public int deleteDatRule(DatRule datRule) {
 		// TODO Auto-generated method stub
 		return datRuleMapper.deleteDatRule(datRule);
 	}
 
-	@Override
-	public int updateActivityMeta(BpmActivityMeta bpmActivityMeta) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.updateActivityMeta(bpmActivityMeta);
-	}
-
-	@Override
-	public BpmActivityMeta loadActivityMetaByCondition(BpmActivityMeta activity) {
-		// TODO Auto-generated method stub
-		return datRuleMapper.loadActivityMetaByCondition(activity);
-	}
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse addDatRule(List<DatRuleCondition> itemList1, String activityId, String type,
@@ -192,12 +162,12 @@ public class DatRuleServiceImpl implements DatRuleService {
 				sb.append(")");
 				datRule.setRuleProcess(sb.toString());
 				num +=  insertToDatRule(datRule);
-				count +=  inserToDatRuleCondition(itemList);
+				count +=  datRuleConditionServiceImpl.inserToDatRuleCondition(itemList);
 		}
 		if (num > 0) {
 			if (count > 0) {
 				// 根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
-				List<DatRuleCondition> datRuleConditionList = loadDatruleConditionInRuleId(activityId);
+				List<DatRuleCondition> datRuleConditionList = datRuleConditionServiceImpl.loadDatruleConditionInRuleId(activityId);
 				// 根据当前activityId查询当前流程和当前type所有predictRules展示,需要按时间排序
 				List<DatRule> predictRules =  getPreRulesLikeRuleName(activityId);
 				Map<String, Object> data = new HashMap<String, Object>();
@@ -217,14 +187,14 @@ public class DatRuleServiceImpl implements DatRuleService {
 		for (DatRule datRule2 : datRules) {
 			datRule = datRule2;
 			num +=  deleteDatRule(datRule);
-			 deleteDatRuleCondition(datRule);
+			datRuleConditionServiceImpl.deleteDatRuleCondition(datRule);
 		}
 		
 		if(datRule!=null) {
 		if(num>0) {
 			//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
     		List<DatRuleCondition> datRuleConditionList
-    		= loadDatruleConditionInRuleId(activityId);
+    		= datRuleConditionServiceImpl.loadDatruleConditionInRuleId(activityId);
     		//根据当前activityId查询当前流程和当前type所有predictRules展示,需要按时间排序
     		List<DatRule> predictRules =  getPreRulesLikeRuleName(activityId);
     		Map<String, Object> data = new HashMap<String, Object>();
@@ -347,13 +317,57 @@ public class DatRuleServiceImpl implements DatRuleService {
 		//if(count>0) {
 		List<DatRule> datRules = getPreRulesLikeRuleName(activityId);
 		for (DatRule datRule : datRules) {
-			int num = deleteDatRuleCondition(datRule); 
+			int num = datRuleConditionServiceImpl.deleteDatRuleCondition(datRule); 
 			if(num>0) {
 			     deleteDatRule(datRule);
 			}
 		}
 		//}
 		//return 1;
+	}
+
+	@Override
+	public ServerResponse loadGatewaySet(String activityBpdId, String snapshotId, String bpdId,
+			String activityType) {
+		// TODO Auto-generated method stub
+		List<BpmActivityMeta> list = 
+				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(activityBpdId, snapshotId, bpdId, activityType);
+		if(list!=null&&list.size()>0) {
+			BpmActivityMeta bpmActivityMeta = list.get(0);
+			DhGatewayLine dhGatewayLine = new DhGatewayLine();
+			dhGatewayLine.setActivityId(bpmActivityMeta.getActivityId());
+			List<DhGatewayLine> dhGatewayLines = dhGatewayLineServiceImpl.getGateWayLinesByCondition(dhGatewayLine);
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			
+			for (DhGatewayLine dhGatewayLine2 : dhGatewayLines) {//循环网关连接线集合
+				if("FALSE".equals(dhGatewayLine2.getIsDefault())) {//不是默认连接线
+					
+					Map<String, Object> son = new HashMap<String, Object>();
+					if(bpmActivityMeta.getActivityType()!=null&&!"".equals(bpmActivityMeta.getActivityType())) {//判断是否已经添加规则数据
+						
+						//根据ruleId查询predictRules展示
+						
+						//根据当前activityId查询当前环节和当前type所有predictRules展示,需要按时间排序
+						List<DatRule> predictRules = getPreRulesLikeRuleName(bpmActivityMeta.getActivityId());
+						
+						//根据当前ruleId查询所有dat_rule_condition展示,需要按照分组名排序
+						
+						//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
+						List<DatRuleCondition> datRuleConditionList
+						=datRuleConditionServiceImpl.loadDatruleConditionInRuleId(bpmActivityMeta.getActivityId());
+						
+						
+						son.put("DataList", datRuleConditionList);
+						son.put("PredictRule", predictRules);
+						map.put("gatewayKey", son);
+					}
+				}
+			}
+			return ServerResponse.createBySuccess(list);
+		}else {
+			return ServerResponse.createByErrorMessage("拉取环节列表失败！");
+		}
 	}
 
 

@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
@@ -18,24 +16,26 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
 import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.util.FreeMarkUtil;
 @Service
 public class DroolsEngineService {
-	   	@Resource
-	    private DatRuleMapper datRuleMapper;
+	   	@Autowired
+	    private DatRuleConditionMapper datRuleConditionMapper;
 	
 	    public DroolsEngineService() {
 	    }
 	    
 	    public Map<String, Object> jsonObjToExecuteData(JSONObject jsonObject, DatRule datRule){
-	    	List<DatRuleCondition> list = datRuleMapper.getDatruleConditionByRuleId(datRule.getRuleId());
+	    	List<DatRuleCondition> list = datRuleConditionMapper.getDatruleConditionByRuleId(datRule.getRuleId());
 	    	Map<String, Object> data = new HashMap<String,Object>();
 	        for (DatRuleCondition datRuleCondition : list) {data.put(datRuleCondition.getLeftValue(), 
 			    		  		jsonObject.get(datRuleCondition.getLeftValue()));
@@ -106,7 +106,7 @@ public class DroolsEngineService {
 	     * @return
 	     */
 	    public Map<String, Object> jsonObjToExecuteDataTest(DatRuleMapper datRuleMapper,JSONObject jsonObject, DatRule datRule){
-	    	List<DatRuleCondition> list = datRuleMapper.getDatruleConditionByRuleId(datRule.getRuleId());
+	    	List<DatRuleCondition> list = datRuleConditionMapper.getDatruleConditionByRuleId(datRule.getRuleId());
 	    	Map<String, Object> data = new HashMap<String,Object>();
 	        for (DatRuleCondition datRuleCondition : list) {
 	        	System.out.println("key===="+datRuleCondition.getLeftValue());

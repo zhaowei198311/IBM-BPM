@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +19,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DatRuleService;
 
 @Controller
@@ -30,13 +30,13 @@ public class DatRuleController {
 	private DatRuleService datRuleServiceImpl;
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaServiceImpl;
+	@Autowired
+	private DatRuleConditionService datRuleConditionServiceImpl;
 
 	@RequestMapping("/loadGatewaySet")
 	@ResponseBody
-	public ServerResponse<List> loadGatewaySet(String activityBpdId,String snapshotId,String bpdId,String activityType) {
-		List<BpmActivityMeta> list = 
-				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(activityBpdId, snapshotId, bpdId, activityType);
-		return ServerResponse.createBySuccess(list);
+	public ServerResponse loadGatewaySet(String activityBpdId,String snapshotId,String bpdId,String activityType) {
+		return datRuleServiceImpl.loadGatewaySet(activityBpdId, snapshotId, bpdId, activityType);
 	}
 
 	@RequestMapping("/addDatRule")
@@ -52,12 +52,12 @@ public class DatRuleController {
 	public ServerResponse loadConditionArr(@RequestBody List<BpmActivityMeta> activitys) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		for (BpmActivityMeta activity : activitys) {
-			activity = datRuleServiceImpl.loadActivityMetaByCondition(activity);
+			activity = bpmActivityMetaServiceImpl.queryByPrimaryKey(activity.getActivityId());
 			Map<String, Object> son = new HashMap<String, Object>();
 			if(activity.getActivityType()!=null&&!"".equals(activity.getActivityType())) {//判断是否已经添加规则数据
 				//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
 				List<DatRuleCondition> datRuleConditionList
-				=datRuleServiceImpl.loadDatruleConditionInRuleId(activity.getActivityId());
+				=datRuleConditionServiceImpl.loadDatruleConditionInRuleId(activity.getActivityId());
 				//根据当前activityId查询当前流程和当前type所有predictRules展示,需要按时间排序
 				List<DatRule> predictRules = datRuleServiceImpl.getPreRulesLikeRuleName(activity.getActivityId());
 				son.put("DataList", datRuleConditionList);

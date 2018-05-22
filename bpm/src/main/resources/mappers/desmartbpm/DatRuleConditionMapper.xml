@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DatRuleConditionMapper" >
+   
+   <insert id="inserToDatRuleCondition" parameterType="com.desmart.desmartbpm.entity.DatRuleCondition">
+   	INSERT INTO DAT_RULE_CONDITION (CONDITION_ID, CONDITION_GROUP_NAME, CONDITION_OPERATOR
+	, CONDITION_OPERATOR_NAME, CONDITION_TYPE, CREATE_TIME, CREATOR, LEFT_NAME, LEFT_VALUE, LEFT_VALUE_TYPE
+	, RETURN_TYPE, RIGHT_VALUE, RIGHT_VALUE_TYPE, RULE_ID, RULE_STATUS, RULE_VERSION, SORT_NUM, VALUE_OPERATOR) 
+	SELECT A.*
+    FROM (
+	<foreach collection="datRuleCondition" item="emp" separator="UNION ALL">  
+	SELECT 
+	 #{emp.conditionId} conditionId, #{emp.conditionGroupName} conditionGroupName, #{emp.conditionOperator} conditionOperator, #{emp.conditionOperatorName} conditionOperatorName
+	, #{emp.conditionType} conditionType, #{emp.createTime} createTime, #{emp.creator} creator, #{emp.leftName} leftName, #{emp.leftValue} leftValue
+	, #{emp.leftValueType}, #{emp.returnType}, #{emp.rightValue}, #{emp.rightValueType}
+	, #{emp.ruleId} ruleId, #{emp.ruleStatus} ruleStatus, #{emp.ruleVersion} ruleVersion, #{emp.sortNum} sortNum, #{emp.valueOperator} valueOperator
+	FROM dual
+	</foreach>
+	)A
+   </insert>
+   
+   <select id="getDatruleConditionByRuleId"
+    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
+    SELECT * FROM DAT_RULE_CONDITION where rule_id = #{ruleId}
+   </select>
+   
+   <select id="getDatruleConditionInRuleId" parameterType="map"
+    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
+    select drc.* from dat_rule_condition drc left join dat_rule dr
+    on drc.rule_id = dr.rule_id where dr.rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
+    </select>
+    
+    <delete id="deleteDatRuleCondition" parameterType="com.desmart.desmartbpm.entity.DatRule">
+    DELETE FROM DAT_RULE_CONDITION WHERE rule_id = #{ruleId}
+    </delete>
+    
+    <select id="loadDatruleConditionInRuleId" parameterType="map"
+    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
+    select drc.CONDITION_ID, drc.CONDITION_GROUP_NAME
+    ,case when 1=1 then  CONCAT(CONCAT(CONDITION_OPERATOR,':'),CONDITION_OPERATOR_NAME) end as CONDITION_OPERATOR
+    , drc.CONDITION_TYPE, drc.CREATE_TIME, drc.CREATOR, drc.LEFT_NAME, drc.LEFT_VALUE, drc.LEFT_VALUE_TYPE, drc.RETURN_TYPE, drc.RIGHT_VALUE
+    , drc.RIGHT_VALUE_TYPE, drc.RULE_ID, drc.RULE_STATUS, drc.RULE_VERSION, drc.SORT_NUM, drc.VALUE_OPERATOR
+    ,dr.rule_name as result from dat_rule_condition drc
+    left join dat_rule dr on drc.rule_id =dr.rule_id
+    where dr.rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
+    </select>
+
+</mapper>
