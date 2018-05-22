@@ -153,7 +153,7 @@ function loadDhroutingRecords(){
 			}
 	    	 $("#transferProcess").append("<h1 style='clear: both;'></h1>");
 	     },error : function (){
-	    	 layer.alert("网络繁忙！");
+	    	 layer.alert("审批意见出现异常！");
 	     }
 	});
 }
