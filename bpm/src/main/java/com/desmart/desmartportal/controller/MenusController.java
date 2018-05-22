@@ -392,4 +392,11 @@ public class MenusController {
 		mv.addAllObjects(resultMap);
 		return mv;
 	}
+	
+	@RequestMapping("viewProcessImage")
+	public ModelAndView viewProcessImage(@RequestParam(value="insId") String insId) {
+		ModelAndView mv = new ModelAndView("desmartportal/viewProcessImage");
+		mv.addObject("insId",insId);
+		return mv;
+	}
 }

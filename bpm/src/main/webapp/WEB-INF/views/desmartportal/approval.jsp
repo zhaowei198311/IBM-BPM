@@ -78,7 +78,7 @@
 			id="bpmActivityList" value="${bpmActivityList}" style="display: none;"><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
-			<button class="layui-btn  layui-btn-sm" onclick="processView()">流程图</button>
+			<button class="layui-btn  layui-btn-sm" onclick="processView(${insId})">流程图</button>
 			<button class="layui-btn layui-btn-sm">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
 			<button class="layui-btn layui-btn-sm">转办</button>
@@ -394,8 +394,8 @@
 			});
 		}
 	
-	function processView(){
-		
+	function processView(insId){
+		window.location.href = 'menus/viewProcessImage?insId='+insId;
 	}
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
