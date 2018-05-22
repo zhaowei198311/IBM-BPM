@@ -239,28 +239,39 @@
 		and step_sort > #{stepSort}
   </update> 
   
-  <select id="listByIds" parameterType="java.util.HashMap" resultType="com.desmart.desmartbpm.entity.DhStep">
-  	select 
-  	<include refid="Base_Column_List" />	
-  	from DH_STEP
-  	where PRO_UID = #{proUid}
-  	and PRO_VER_UID = #{proVerUid}
-  	and PRO_APP_ID = #{proAppId}
-  	and ACTIVITY_BPD_ID in
-  	<foreach collection="list" item="item" open="(" separator="," close=")">
-  		#{item}
-  	</foreach>
-  </select>
+	<select id="listByIds" parameterType="java.util.HashMap" resultType="com.desmart.desmartbpm.entity.DhStep">
+		select 
+		<include refid="Base_Column_List" />	
+		from DH_STEP
+		where PRO_UID = #{proUid}
+		and PRO_VER_UID = #{proVerUid}
+		and PRO_APP_ID = #{proAppId}
+		and ACTIVITY_BPD_ID in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
   
-  <delete id="deleteByIds" parameterType="java.util.HashMap">
-  	delete from DH_STEP
-  	where PRO_UID = #{proUid}
-  	and PRO_VER_UID = #{proVerUid}
-  	and PRO_APP_ID = #{proAppId}
-  	and ACTIVITY_BPD_ID in
-  	<foreach collection="list" item="item" open="(" separator="," close=")">
-  		#{item}
-  	</foreach>
-  </delete>
-
+	<delete id="deleteByIds" parameterType="java.util.HashMap">
+		delete from DH_STEP
+		where PRO_UID = #{proUid}
+		and PRO_VER_UID = #{proVerUid}
+		and PRO_APP_ID = #{proAppId}
+		and ACTIVITY_BPD_ID in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+		
+	<delete id="deleteBySelective" parameterType="com.desmart.desmartbpm.entity.DhStep">
+		delete from DH_STEP
+		<where>
+			<if test="proUid != null">
+				PRO_UID = #{proUid}
+			</if>
+			<if test="proAppId != null">
+				and PRO_APP_ID = #{proAppId}
+			</if>
+		</where>
+	</delete>			
 </mapper>

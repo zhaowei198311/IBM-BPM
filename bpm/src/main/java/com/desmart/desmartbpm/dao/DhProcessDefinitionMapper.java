@@ -20,6 +20,16 @@ public interface DhProcessDefinitionMapper {
     List<DhProcessDefinition> listAll();
     /**
      * 
+     * @Title: deleteBySelective  
+     * @Description: 根据PRO_UID,PRO_APP_ID删除  
+     * @param @param dhProcessDefinition
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteBySelective(DhProcessDefinition dhProcessDefinition);
+    /**
+     * 
      * @Title: listById  
      * @Description: 通过proUid,proAppId查找拷贝所需的同类流程信息  
      * @param @param dhProcessDefinition

@@ -157,7 +157,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 	public ServerResponse<?> changeStatus(String metaUid) {
 		DhProcessMeta dhProcessMeta = new DhProcessMeta();
 		dhProcessMeta.setProMetaUid(metaUid);
-		dhProcessMeta.setProMetaStatus("hide");
+		dhProcessMeta.setProMetaStatus(DhProcessMeta.STATUS_HIDE);
 		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
 		if (count > 0) {
 			return ServerResponse.createBySuccess();
@@ -169,7 +169,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 	public ServerResponse<?> closeCategory(String metaUid) {
 		DhProcessMeta dhProcessMeta = new DhProcessMeta();
 		dhProcessMeta.setProMetaUid(metaUid);
-		dhProcessMeta.setProMetaStatus("closed");
+		dhProcessMeta.setProMetaStatus(DhProcessMeta.STATUS_CLOSED);
 		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
 		if (count > 0) {
 			return ServerResponse.createBySuccess();

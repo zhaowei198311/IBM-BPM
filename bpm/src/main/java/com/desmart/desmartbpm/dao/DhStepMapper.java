@@ -61,5 +61,15 @@ public interface DhStepMapper {
      * @throws
      */
     int deleteByIds(Map<String, Object> deleteIds);
+    /**
+     * 
+     * @Title: deleteBySelective  
+     * @Description: 根据对象DH_STEP条件进行删除  
+     * @param @param dhStep
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteBySelective(DhStep dhStep);
 
 }

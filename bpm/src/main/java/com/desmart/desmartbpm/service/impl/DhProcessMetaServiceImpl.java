@@ -23,11 +23,24 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.BpmFormManageMapper;
+import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
+import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.dao.DhStepMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
@@ -46,7 +59,22 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     private DhProcessMetaMapper dhProcessMetaMapper;
     @Autowired
     private DhProcessCategoryMapper dhProcessCategoryMapper;
-    
+    @Autowired
+    private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhActivityAssignMapper dhActivityAssignMapper;
+    @Autowired
+    private DhActivityConfMapper dhActivityConfMapper;
+    @Autowired
+    private DhActivityRejectMapper dhActivityRejectMapper;
+    @Autowired
+    private DhObjectPermissionMapper dhObjectPermissionMapper; 
+    @Autowired
+    private DhProcessDefinitionMapper dhProcessDefinitionMapper;
+    @Autowired
+    private DhStepMapper dhStepMapper;
+    @Autowired
+    private BpmFormManageService bpmFormManageService;
     
     public ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize) {
         pageNum = pageNum == null ? 0 : (pageNum < 0 ? 0 : pageNum - 1);
@@ -320,7 +348,53 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         }
         String proUid = dhProcessMeta.getProUid();
         String proAppId = dhProcessMeta.getProAppId();
-        String proName = dhProcessMeta.getProName();
+//        String proName = dhProcessMeta.getProName();
+        
+        // BPM_ACTIVITY_META
+        BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+        bpmActivityMeta.setBpdId(proUid);
+        bpmActivityMeta.setProAppId(proAppId);
+        List<BpmActivityMeta> bpmActivityMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+        // ACTIVITY_ID集合
+        List<String> activityIds = new ArrayList<>();
+        for (BpmActivityMeta bam : bpmActivityMetaList) {
+			activityIds.add(bam.getActivityId());
+		} 
+        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_ASSIGN表
+        dhActivityAssignMapper.deleteByActivityIds(activityIds);
+        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_CONF表
+        dhActivityConfMapper.deleteByActivityIds(activityIds);
+        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_REJECT表
+        dhActivityRejectMapper.deleteByActivityIds(activityIds);
+        // 根据PRO_UID,PRO_APP_ID删除DH_OBJECT_PERMISSION
+        DhObjectPermission dhObjectPermission = new DhObjectPermission();
+        dhObjectPermission.setProUid(proUid);
+        dhObjectPermission.setProAppId(proAppId);
+        dhObjectPermissionMapper.delectByDhObjectPermissionSelective(dhObjectPermission);
+        // 根据PRO_UID,PRO_APP_ID删除DH_PROCESS_DEFINITION
+        DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
+        dhProcessDefinition.setProUid(proUid);
+        dhProcessDefinition.setProAppId(proAppId);
+        dhProcessDefinitionMapper.deleteBySelective(dhProcessDefinition);
+        // 
+        DhStep dhStep = new DhStep();
+        dhStep.setProUid(proUid);
+        dhStep.setProAppId(proAppId);
+        List<DhStep> dhStepList = dhStepMapper.listBySelective(dhStep);
+        // formId集合
+        String[] forms = new String[dhStepList.size()];
+        for (int j = 0; j < forms.length; j++) {
+        	if ("form".equals(dhStepList.get(j).getStepType())) {
+        		forms[j] = dhStepList.get(j).getStepObjectUid();
+			}	
+		}
+        // 批量删除表单
+        bpmFormManageService.deleteForm(forms);
+        // 根据PRO_UID,PRO_APP_ID删除DH_STEP
+        dhStepMapper.deleteBySelective(dhStep);
+        // 根据PRO_UID,PRO_APP_ID删除BPM_ACTIVITY_META
+        bpmActivityMetaMapper.deleteByIds(bpmActivityMeta);
+
         // DH_PROCESS_META
         int count = dhProcessMetaMapper.removeByProMetaUid(uid);
         if (count > 0) {
