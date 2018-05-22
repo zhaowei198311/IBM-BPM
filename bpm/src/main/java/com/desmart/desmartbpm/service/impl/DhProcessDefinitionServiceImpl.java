@@ -127,12 +127,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             Map<String, String> item = iterator.next();
             if (versionInDb.contains(item.get("snapshotId"))) {
                 iterator.remove();
-            }
-            if (matchedSnapshots.contains(item.get("snapshotId"))) {
+            } else if (matchedSnapshots.contains(item.get("snapshotId"))) {
                 iterator.remove();
-            } else {
-                matchedSnapshots.add(item.get("snapshotId"));
-            }
+            } 
+            matchedSnapshots.add(item.get("snapshotId"));
         }
 
         List<DhProcessDefinitionVo> voList = new ArrayList<>();

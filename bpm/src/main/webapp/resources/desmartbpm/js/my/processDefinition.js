@@ -26,6 +26,9 @@ function getInfo() {
 		url : common.getPath()
 				+ "/processDefinition/listDefinitionByProcessMeta",
 		dataType : "json",
+		beforeSend : function(){
+			layer.load(1);
+		},
 		data : {
 			"metaUid" : pageConfig.metaUid,
 			"pageNum" : pageConfig.pageNum,
@@ -33,10 +36,14 @@ function getInfo() {
 		},
 		type : "post",
 		success : function(result) {
+			layer.closeAll('loading');
 			if (result.status == 0) {
 				setCookie("processDefinition_selectedMetaUid", pageConfig.metaUid, 7200);
 				drawTable(result.data);
 			}
+		}, 
+		error: function(){
+			layer.closeAll('loading');
 		}
 	});
 }
