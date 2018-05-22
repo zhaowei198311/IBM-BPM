@@ -12,12 +12,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -291,7 +294,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
 				bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
 				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
-				resultMap.put("bpmActivityList", bpmActivityList);
+				// 转json
+				String listStr = JsonUtil.obj2String(bpmActivityList);
+				resultMap.put("listStr", listStr);
 				// 查找表单id
 				Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
 						dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
