@@ -53,7 +53,7 @@
 				PRO_UID = #{proUid}
 			</if>
 			<if test="proAppId != null">
-				PRO_APP_ID = #{proAppId}
+				and PRO_APP_ID = #{proAppId}
 			</if>
 		</where>
 	</delete>

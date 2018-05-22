@@ -381,8 +381,14 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         dhStep.setProUid(proUid);
         dhStep.setProAppId(proAppId);
         List<DhStep> dhStepList = dhStepMapper.listBySelective(dhStep);
+        int num = 0;
+        for (DhStep ds : dhStepList) {
+			if ("form".equals(ds.getStepType())) {
+				num++;
+			}
+		}
         // formId集合
-        String[] forms = new String[dhStepList.size()];
+        String[] forms = new String[num];
         for (int j = 0; j < forms.length; j++) {
         	if ("form".equals(dhStepList.get(j).getStepType())) {
         		forms[j] = dhStepList.get(j).getStepObjectUid();
