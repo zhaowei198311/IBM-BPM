@@ -20,4 +20,9 @@ public class IBMApiUrl {
 	 * 流程公共api
 	 */
 	public static final String IBM_API_PROCESS = "http://10.0.4.201:9080/rest/bpm/wle/v1/process";
+	
+	/**
+	 * 检索模型api
+	 */
+	public static final String IBM_API_PROCESSMODEL = "http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/instances";
 }
