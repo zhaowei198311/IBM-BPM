@@ -353,6 +353,33 @@
 <script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
 
 <script>
+
+function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
+	console.log(actcCanChooseUser);
+	if(actcCanChooseUser=='FALSE'){
+		layer.alert('没有配置可选处理人!');
+		return false;
+	}
+	
+	var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
+	layer.open({
+	     type: 2,
+	     title: '选择人员',
+	     shadeClose: true,
+	     shade: 0.8,
+	     area: ['680px', '520px'],
+	     content : [ url, 'yes'],
+	     success : function(layero, lockIndex) {
+		      var body = layer.getChildFrame('body', lockIndex);
+		      //绑定解锁按钮的点击事件
+		      body.find('button#close').on('click', function() {
+		       	layer.close(lockIndex);
+		        //location.reload();//刷新
+		      });
+	     }
+	 });
+}
+
 	layui.use('layedit', function() {
 		var layedit = layui.layedit;
 		editIndex = layedit.build('demo', {
