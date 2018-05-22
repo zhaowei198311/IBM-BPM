@@ -267,4 +267,17 @@
 			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
 		</where>
 	</select>
+	
+	<update id="updateByInsUids" parameterType="list">
+		update DH_TASK_INSTANCE
+		<set>
+			TASK_STATUS = '-1'
+		</set>
+		<where>
+			INS_UID in
+			<foreach collection="list" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</update>
 </mapper>

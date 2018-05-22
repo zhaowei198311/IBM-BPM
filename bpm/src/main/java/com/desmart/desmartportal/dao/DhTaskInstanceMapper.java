@@ -22,7 +22,7 @@ public interface DhTaskInstanceMapper {
 	
 	List <DhTaskInstance> selectByPrimaryKey(String taskUid);
 	
-	int updateByPrimaryKey(String taskUid);
+	int updateByPrimaryKey(DhTaskInstance taskInstance);
 	
 	int deleteByPrimaryKey(String taskUid);
 	
@@ -42,4 +42,14 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
+	/**
+	 * 
+	 * @Title: updateByInsUids  
+	 * @Description: 根据INS_UID集合更改DH_TASK_INSTANCE  
+	 * @param @param insUids
+	 * @param @return  
+	 * @return int  
+	 * @throws
+	 */
+	int updateByInsUids(List<String> insUids);
 }

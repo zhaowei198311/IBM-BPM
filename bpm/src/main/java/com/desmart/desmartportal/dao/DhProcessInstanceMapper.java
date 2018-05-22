@@ -32,4 +32,14 @@ public interface DhProcessInstanceMapper {
 	DhProcessInstance queryByInsId(int insId);
 	
 	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
+	/**
+	 * 
+	 * @Title: updateBySelective  
+	 * @Description: 根据DhProcessInstance变量条件更新DhProcessInstance  
+	 * @param @param dhProcessInstance
+	 * @param @return  
+	 * @return int  
+	 * @throws
+	 */
+	int updateBySelective(DhProcessInstance dhProcessInstance);
 }

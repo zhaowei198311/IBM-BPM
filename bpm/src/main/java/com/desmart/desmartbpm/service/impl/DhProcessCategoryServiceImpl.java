@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
@@ -18,6 +19,10 @@ import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 
 @Service
 public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
@@ -27,7 +32,10 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     private DhProcessCategoryMapper dhProcessCategoryMapper;
     @Autowired
     private DhProcessMetaMapper dhProcessMetaMapper;
-    
+    @Autowired
+    private DhProcessInstanceMapper dhProcessInstanceMapper;
+    @Autowired
+    private DhTaskInstanceMapper dhTaskInstanceMapper;   
     
     public ServerResponse save(DhProcessCategory dhProcessCategory) {
         if (StringUtils.isBlank(dhProcessCategory.getCategoryName()) || StringUtils.isBlank(dhProcessCategory.getCategoryParent())) {
@@ -164,13 +172,35 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 		}
 		return ServerResponse.createByError();
 	}
-
+	
+	@Transactional
 	@Override
 	public ServerResponse<?> closeCategory(String metaUid) {
+		// 根据metaUid更改表DH_PROCESS_META
 		DhProcessMeta dhProcessMeta = new DhProcessMeta();
 		dhProcessMeta.setProMetaUid(metaUid);
 		dhProcessMeta.setProMetaStatus(DhProcessMeta.STATUS_CLOSED);
 		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
+		
+		DhProcessMeta dpm = dhProcessMetaMapper.queryByProMetaUid(metaUid);
+		String proUid = dpm.getProUid();
+		String proAppId = dpm.getProAppId();
+		// DhProcessInstance
+		DhProcessInstance dhProcessInstance = new DhProcessInstance();
+		dhProcessInstance.setProUid(proUid);
+		dhProcessInstance.setProAppId(proAppId);
+		List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.selectAllProcess(dhProcessInstance);
+		List<String> insUids = new ArrayList<>();
+		for (DhProcessInstance dpi : dhProcessInstanceList) {
+			insUids.add(dpi.getInsUid());
+		}
+		if (!insUids.isEmpty()) {
+			// 根据INS_UID批量更改DH_TASK_INSTANCE
+			dhTaskInstanceMapper.updateByInsUids(insUids);
+		}		
+		// 根据proUid,proAppId更改DH_PROCESS_INSTANCE
+		dhProcessInstanceMapper.updateBySelective(dhProcessInstance);
+
 		if (count > 0) {
 			return ServerResponse.createBySuccess();
 		}

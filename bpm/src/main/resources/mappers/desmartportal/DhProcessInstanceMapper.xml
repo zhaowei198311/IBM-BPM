@@ -253,4 +253,14 @@
 		</where> 
     </select>
 	
+	<update id="updateBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
+		update DH_PROCESS_INSTANCE
+		<set>
+			INS_STATUS = '-1'
+		</set>
+		<where>
+			PRO_UID = #{proUid}
+			and PRO_APP_ID = #{proAppId}
+		</where>
+	</update>
 </mapper>
