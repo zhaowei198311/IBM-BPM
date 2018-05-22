@@ -71,7 +71,7 @@
 			id="dataInfo" style="display: none;"> <span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
-			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
+			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm" >保存草稿</button>
 			<button id="startProcess" class="layui-btn layui-btn-sm" >提交</button>
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
 		</span>
@@ -276,15 +276,15 @@
 	}
 	$(function() {
 		clientSideInclude(document.getElementById('formId').value);
+		saveDraftsData();
 		saveData();
-		startProcess();
-		
 	})
 
 	/**
 	 * 保存表单数据的方法
 	 */
-	var saveData = function() {
+	var index2 = null;
+	var saveDraftsData = function() {
 		$("#saveInfoBtn")
 				.click(
 						function(e) {
@@ -404,7 +404,11 @@
 									proVerUid : verUids,
 									proAppId : proAppIds
 								},
+								beforeSend : function(){
+									index2 = layer.load(1);
+								},
 								success : function(result) {
+									layer.close(index2);
 									layer.alert('保存成功')
 								}
 							});
