@@ -512,7 +512,7 @@ public class HttpClientUtils {
 			credsProvider.setCredentials(AuthScope.ANY, credentials);
 			context.setCredentialsProvider(credsProvider);
 			HttpGet httpget = new HttpGet(url);
-			CloseableHttpResponse httpResponse = httpClient.execute(null, context);
+			CloseableHttpResponse httpResponse = httpClient.execute(httpget, context);
 		//	msg = org.apache.http.util.EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			return msg;
 		} catch (Exception e) {

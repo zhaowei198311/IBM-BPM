@@ -15,4 +15,7 @@ public interface DhProcessService {
 	
 	// 发起流程
 	ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo, String approval);	
+	
+	// 流程图查看
+	String viewProcessImage(String insId);
 }

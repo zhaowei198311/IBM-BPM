@@ -415,6 +415,7 @@
 	/**
 	 * 发起流程
 	 */
+	var index = null; // 加载
 	var saveData = function() {
 		$("#startProcess")
 				.click(
@@ -533,7 +534,11 @@
 									dataInfo : dataInfo,
 									approval : user
 								},
+								beforeSend : function(){
+									index = layer.load(1);
+								},
 								success : function(result) {
+									layer.close(index);
 									if (result.status == 0) {
 										layer.alert('提交成功', {
 											icon : 1
@@ -546,6 +551,7 @@
 									}
 								},
 								error : function(result) {
+									layer.close(index);
 									layer.alert('提交失败', {
 										icon : 2
 									});

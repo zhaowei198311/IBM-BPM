@@ -68,17 +68,14 @@
 </head>
 <body>
 	<div class="search_area top_btn">
-		
-		 <input id="activityId"  value="${activityId}" type="hidden">
-			
 		<input id="formId" value="${formId}" style="display: none;"> <input
 			id="proUid" value="${proUid}" style="display: none;"> <input
 			id="proAppId" value="${proAppId}" style="display: none;"> <input
 			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
 			id="insUid" value="${insUid}" style="display: none;"><input
-			id="insId" value="${insId}" style="display: none;"> <span style="display: none;"
-			id="insData" value='${insData}' ></span> <span style="display: none;"
-			id="listStr">${listStr}</span><span
+			id="insId" value="${insId}" style="display: none;"> <span
+			id="insData" value='${insData}' ></span> <span
+			id="listStr" value='${listStr}'></span><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 			<span id="test" style="float: right; padding-right: 20px;">
 			<button class="layui-btn  layui-btn-sm" onclick="processView(${insId})">流程图</button>
@@ -168,40 +165,7 @@
 								</select>
 							</div>
 						</div>
-						<table class="layui-table">
-						<colgroup>
-						    <col width="150">
-						    <col>
-						    <col width="150">
-						    <col> 
-						</colgroup>
-						<tbody>
-							<c:forEach items="${activityMetaList}" var="activityMeta">
-							    <tr>
-							      <td>下一环节:<span class="tip_span"></span></td>
-							      <td>
-							      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
-							      </td>
-							      <td class="td_title">处理人:<span class="tip_span"></span></td>
-							      <td>
-							      	<input type="hidden" class="getUser" id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-							      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
-							      	
-							      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-							      	
-							      </td>
-							      <td colspan="3">
-							      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
-							      </td>
-							    </tr>
-						    </c:forEach>
-						</tbody>
-					</table>
-						
 					</div>
-					
-					
-					
 					<div class="layui-tab">
 						<ul class="layui-tab-title">
 							<li class="layui-this">审批记录</li>
@@ -431,38 +395,18 @@
 		}
 	
 	function processView(insId){
-		window.location.href = 'menus/viewProcessImage?insId='+insId;
+		layer.open({
+			type : 2,
+			title : '流程图',
+			shadeClose : true,
+			shade : 0.8,
+			area : [ '790px', '580px' ],
+			content : 'http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId='+insId
+			});
 	}
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script>
-
-function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
-	console.log(actcCanChooseUser);
-	if(actcCanChooseUser=='FALSE'){
-		layer.alert('没有配置可选处理人!');
-		return false;
-	}
-	
-	var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
-	layer.open({
-	     type: 2,
-	     title: '选择人员',
-	     shadeClose: true,
-	     shade: 0.8,
-	     area: ['680px', '520px'],
-	     content : [ url, 'yes'],
-	     success : function(layero, lockIndex) {
-		      var body = layer.getChildFrame('body', lockIndex);
-		      //绑定解锁按钮的点击事件
-		      body.find('button#close').on('click', function() {
-		       	layer.close(lockIndex);
-		        //location.reload();//刷新
-		      });
-	     }
-	 });
-}
-
 //数据信息
 var view = $(".container-fluid");
 var form = null;
