@@ -73,8 +73,8 @@
 			id="proAppId" value="${proAppId}" style="display: none;"> <input
 			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
 			id="insUid" value="${insUid}" style="display: none;"><input
-			id="insId" value="${insId}" style="display: none;"> <span
-			id="insData" value='${insData}' ></span> <span
+			id="insId" value="${insId}" style="display: none;"> <span style="display: none;"
+			id="insData" value='${insData}' ></span> <span style="display: none;"
 			id="listStr">${listStr}</span><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 			<span id="test" style="float: right; padding-right: 20px;">
@@ -433,6 +433,33 @@
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script>
+
+function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
+	console.log(actcCanChooseUser);
+	if(actcCanChooseUser=='FALSE'){
+		layer.alert('没有配置可选处理人!');
+		return false;
+	}
+	
+	var url='sysUser/assign_personnel?id='+id+'&isSingle='+isSingle+'&actcCanChooseUser='+actcCanChooseUser+'&actcAssignType='+actcAssignType;
+	layer.open({
+	     type: 2,
+	     title: '选择人员',
+	     shadeClose: true,
+	     shade: 0.8,
+	     area: ['680px', '520px'],
+	     content : [ url, 'yes'],
+	     success : function(layero, lockIndex) {
+		      var body = layer.getChildFrame('body', lockIndex);
+		      //绑定解锁按钮的点击事件
+		      body.find('button#close').on('click', function() {
+		       	layer.close(lockIndex);
+		        //location.reload();//刷新
+		      });
+	     }
+	 });
+}
+
 //数据信息
 var view = $(".container-fluid");
 var form = null;
