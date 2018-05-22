@@ -254,4 +254,15 @@
         select count(1) from dh_task_instance
         where task_id = #{taskId}
     </select>
+    
+    <select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			INS_UID = #{insUid}
+			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
+		</where>
+	</select>
 </mapper>

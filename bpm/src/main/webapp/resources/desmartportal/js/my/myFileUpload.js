@@ -10,7 +10,8 @@ $(function(){
 		  ,upload = layui.upload;
 		  
 		  var fileCount = 0;
-		  
+		  var appUid = $("#insUid").val();
+		  var taskId = $("#activityId").val();
 			  var btnButtom = $(".foot_accessory_file").find(".listAction");
 			  var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
 			  var maxFileCount = $(".hidden-value").find(".maxFileCount").val();
@@ -109,8 +110,9 @@ $(function(){
 					 * ,data:{ appDocTitle:"测试" ,appDocComment:"测试" ,appUid:"测试"
 					 * ,taskId:"1" ,userUid:"测试" ,appDocTags:appDocTags }
 					 */
-	        	      this.data = {appUid:"测试"
-					    	,taskId:"1",uploadModels:'{"uploadModels":['+uploadModels+']}'};
+			  			
+	        	      this.data = {appUid:appUid
+					    	,taskId:taskId,uploadModels:'{"uploadModels":['+uploadModels+']}'};
 		    		// this.data = {uploadModels:uploadModels.toString()};
 			  		}
 
@@ -183,8 +185,9 @@ $(function(){
  */
 // 加载已上传的文件列表
 function loadFileList(){
+	var appUid = $("#insUid").val();
 	$.post('accessoryFileUpload/loadFileList.do'
-		,{"appUid":"测试"}
+		,{"appUid":appUid}
 		,function(result){
 		var tagTbody = $(".layui-table.upload-file-table").find("tbody");
 		tagTbody.empty();

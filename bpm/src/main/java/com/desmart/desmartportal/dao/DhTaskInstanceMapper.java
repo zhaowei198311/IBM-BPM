@@ -35,4 +35,11 @@ public interface DhTaskInstanceMapper {
 	int insertBatch(List <DhTaskInstance> list);
 	
 	int countByTaskId(int taskId);
+	
+	/**
+	 * 根据insUid查询任务，任务实例类型为：SIGN或NORMAL或TRANSFER；
+	 * @param insUid
+	 * @return
+	 */
+	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
 }

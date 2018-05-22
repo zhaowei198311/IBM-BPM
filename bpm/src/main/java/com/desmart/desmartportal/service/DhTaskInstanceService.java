@@ -63,4 +63,11 @@ public interface DhTaskInstanceService {
 	 * 代办任务详细信息
 	 */
 	public Map<String, Object> taskInfo(String taskUid);
+	/**
+	 * 根据insUid查询任务，任务实例类型为：SIGN或NORMAL或TRANSFER；
+	 * @param insUid
+	 * @return
+	 */
+	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
+
 }

@@ -93,28 +93,45 @@ function loadDhroutingRecords(){
 	var insId = $("#insId").val();
 	var proAppId=$("#proAppId").val();
 	var proUid=$("#proUid").val();
-	//var proVerUid=$("#proVerUid").val();
+	var proVerUid=$("#proVerUid").val();
 	//var activityBpdId="bpdid:5c5863a60b29558f:5a01b566:16010c92375:-7ff6";
 	//var bpdId="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
-	var activityId = $("#activityId").val();
+	//var activityId = $("#activityId").val();
+	var bpmActivityList = $("#listStr").html();
+	
 	$.ajax({
 	     url:"dhRoutingRecord/loadDhRoutingRecords.do",
 	     type : 'POST',
-		 dataType : 'json',
-		 data : {
-			 insUid:insUid,
-			 insId:insId,
-			 proAppId:proAppId,
-			 proUid:proUid,
-			 activityId:activityId
-			},
+	     data : {
+	    	 insUid:insUid,
+	    	 insId:insId,
+	    	 proVerUid:proVerUid,
+	    	 proAppId:proAppId,
+	    	 proUid:proUid,
+	    	 bpmActivityList:bpmActivityList
+	     },
+	     dataType:'json',
+	     async: false, 
 	     success : function(result){
 	    	 $(".p").find("p").find("span").empty();
-	    	 $(".p").find("p").eq(0).find("span").html(result.data.bpmActivityMeta.sortNum);
+	    	 //$(".p").find("p").eq(0).find("span").html(result.data.bpmActivityMeta.sortNum);环节序号
+	    	 var h="";
+	    	 var activityNameHtml = "";
+	    	 for (var i = 0; i < result.data.bpmActivityMetaList.length; i++) {
+				 if(i==(result.data.bpmActivityMetaList.length-1)){
+					 h += result.data.bpmActivityMetaList[i].sortNum;
+					 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName;
+				 }else{
+					 h += result.data.bpmActivityMetaList[i].sortNum+"、";
+					 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName+"、";
+				 }
+			 }
+	    	 $(".p").find("p").eq(0).find("span").html(h);
 	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
 	    		 $(".p").find("p").eq(1).find("span").html( result.data.dhTaskHandlers[i].userName);
 	    	 }
-	    	 $(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
+	    	 //$(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
+	    	 $(".p").find("p").eq(2).find("span").html(activityNameHtml);
 	    	 if(result.data.dhRoutingRecords!=null){
 	    	 var index = result.data.dhRoutingRecords.length-1;
 	    	 	if(index>=0){

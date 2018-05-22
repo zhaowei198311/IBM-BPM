@@ -330,4 +330,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("代办任务详细信息查询 结束......");
 		return resultMap;
 	}
+
+	@Override
+	public List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid) {
+		// TODO Auto-generated method stub
+		return dhTaskInstanceMapper.selectByInsUidAndTaskTypeCondition(insUid);
+	}
 }
