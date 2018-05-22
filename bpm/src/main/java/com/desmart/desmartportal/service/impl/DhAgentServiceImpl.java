@@ -104,14 +104,16 @@ public class DhAgentServiceImpl implements DhAgentService {
 		List<DhAgent> dhAgentList = dhAgentMapper.getDelegateByUserId(userUid);
 		if(dhAgentList.size()>=1) {
 			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
-				agentInfoMap.put(dhAgentList.get(0).getAgentClientele(), dhAgentList.get(0).getAgentId());
+				agentInfoMap.put("delegateUser",dhAgentList.get(0).getAgentClientele());
+				agentInfoMap.put("agentId", dhAgentList.get(0).getAgentId());
 				return agentInfoMap;
 			}else {
 				DhAgent dhAgent = dhAgentMapper.getDelegateResult(proAppid,proUid,userUid);
 				if(null == dhAgent) {
 					return null;
 				}else {
-					agentInfoMap.put(dhAgent.getAgentClientele(), dhAgent.getAgentId());
+					agentInfoMap.put("delegateUser",dhAgent.getAgentClientele());
+					agentInfoMap.put("agentId", dhAgent.getAgentId());
 					return agentInfoMap;
 				}
 			}
