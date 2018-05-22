@@ -34,7 +34,6 @@
                             <dl class="layui-nav-child">
                               <dd><a href="<%=basePath%>/processCategory/index" target="iframe0">流程分类</a></dd>
                               <dd><a href="<%=basePath%>/processDefinition/index" target="iframe0">流程定义</a></dd>
-                              <dd><a href="<%=basePath%>/dfkd"  target="iframe0">流程配置</a></dd>
                             </dl>
                         </li>
                         <li class="layui-nav-item">

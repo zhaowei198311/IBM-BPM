@@ -121,11 +121,17 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         // 所有公开的流程中获得这个流程的公开版本
         List<Map<String, String>> exposedItemList = getAllExposedProcess();
         List<Map<String, String>> matchedItemList = getMatchedItem(exposedItemList, dhProcessMeta.getProUid(), dhProcessMeta.getProAppId());
+        Set<String> matchedSnapshots = new HashSet<>();
         Iterator<Map<String, String>> iterator = matchedItemList.iterator();
         while (iterator.hasNext()) {
             Map<String, String> item = iterator.next();
             if (versionInDb.contains(item.get("snapshotId"))) {
                 iterator.remove();
+            }
+            if (matchedSnapshots.contains(item.get("snapshotId"))) {
+                iterator.remove();
+            } else {
+                matchedSnapshots.add(item.get("snapshotId"));
             }
         }
 
