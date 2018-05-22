@@ -7,6 +7,9 @@
    	SELECT RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE, END_TIME, IS_ACTIVATE
    	, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS, RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME FROM DAT_RULE
    	where 1=1 
+   	<if test="ruleId != null and ruleId != '' ">
+   	and rule_Id = #{ruleId}
+   	</if>
    	<if test="ruleName!=null and ruleName !=''">
    	and rule_name = #{ruleName}
    	</if>
@@ -21,76 +24,22 @@
 	, #{ruleProcess}, #{ruleStatus}, #{ruleType}, #{ruleVersion}, #{startTime})
    </insert>
    
-   <insert id="inserToDatRuleCondition" parameterType="com.desmart.desmartbpm.entity.DatRuleCondition">
-   	INSERT INTO DAT_RULE_CONDITION (CONDITION_ID, CONDITION_GROUP_NAME, CONDITION_OPERATOR
-	, CONDITION_OPERATOR_NAME, CONDITION_TYPE, CREATE_TIME, CREATOR, LEFT_NAME, LEFT_VALUE, LEFT_VALUE_TYPE
-	, RETURN_TYPE, RIGHT_VALUE, RIGHT_VALUE_TYPE, RULE_ID, RULE_STATUS, RULE_VERSION, SORT_NUM, VALUE_OPERATOR) 
-	SELECT A.*
-    FROM (
-	<foreach collection="datRuleCondition" item="emp" separator="UNION ALL">  
-	SELECT 
-	 #{emp.conditionId} conditionId, #{emp.conditionGroupName} conditionGroupName, #{emp.conditionOperator} conditionOperator, #{emp.conditionOperatorName} conditionOperatorName
-	, #{emp.conditionType} conditionType, #{emp.createTime} createTime, #{emp.creator} creator, #{emp.leftName} leftName, #{emp.leftValue} leftValue
-	, #{emp.leftValueType}, #{emp.returnType}, #{emp.rightValue}, #{emp.rightValueType}
-	, #{emp.ruleId} ruleId, #{emp.ruleStatus} ruleStatus, #{emp.ruleVersion} ruleVersion, #{emp.sortNum} sortNum, #{emp.valueOperator} valueOperator
-	FROM dual
-	</foreach>
-	)A
-   </insert>
-   
-   <select id="getDatruleConditionByRuleId"
-    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
-    SELECT * FROM DAT_RULE_CONDITION where rule_id = #{ruleId}
-   </select>
-   
    <update id="updateDatRule" parameterType="com.desmart.desmartbpm.entity.DatRule">
     UPDATE DAT_RULE SET RULE_VERSION = #{ruleVersion},
     RULE_PROCESS = #{ruleProcess} where rule_id = #{ruleId}
    </update>
-   
-   <select id="getDatruleConditionInRuleId" parameterType="map"
-    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
-    select drc.* from dat_rule_condition drc left join dat_rule dr
-    on drc.rule_id = dr.rule_id where dr.rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
-    </select>
     
     <select id="getPreRulesLikeRuleName" parameterType="map"
     resultType="com.desmart.desmartbpm.entity.DatRule">
     select * from dat_rule where rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
     order by create_time 
     </select>
-    
-    <delete id="deleteDatRuleCondition" parameterType="com.desmart.desmartbpm.entity.DatRule">
-    DELETE FROM DAT_RULE_CONDITION WHERE rule_id = #{ruleId}
-    </delete>
-    
-    <select id="loadDatruleConditionInRuleId" parameterType="map"
-    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
-    select drc.CONDITION_ID, drc.CONDITION_GROUP_NAME
-    ,case when 1=1 then  CONCAT(CONCAT(CONDITION_OPERATOR,':'),CONDITION_OPERATOR_NAME) end as CONDITION_OPERATOR
-    , drc.CONDITION_TYPE, drc.CREATE_TIME, drc.CREATOR, drc.LEFT_NAME, drc.LEFT_VALUE, drc.LEFT_VALUE_TYPE, drc.RETURN_TYPE, drc.RIGHT_VALUE
-    , drc.RIGHT_VALUE_TYPE, drc.RULE_ID, drc.RULE_STATUS, drc.RULE_VERSION, drc.SORT_NUM, drc.VALUE_OPERATOR
-    ,dr.rule_name as result from dat_rule_condition drc
-    left join dat_rule dr on drc.rule_id =dr.rule_id
-    where dr.rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
-    </select>
-    
+
     <delete id="deleteDatRule" parameterType="com.desmart.desmartbpm.entity.DatRule">
     DELETE FROM DAT_RULE WHERE rule_id = #{ruleId}
     </delete>
     
-    <update id="updateActivityMeta" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-    update bpm_activity_meta set type = #{type},activity_type = #{activityType}
-    where activity_id = #{activityId}
-    </update>
-    
-    <select id="loadActivityMetaByCondition" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta"
-    resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-    select * from bpm_activity_meta
-    where activity_id = #{activityId}
-    </select>
-
-	<insert id="batchInsertDatRule"  parameterType="list">
+    <insert id="batchInsertDatRule"  parameterType="list">
 	        insert into DAT_RULE (RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE,
 	            END_TIME, IS_ACTIVATE, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS,
 	            RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME)
@@ -102,4 +51,5 @@
 	        from dual
 	    </foreach>
 	</insert> 
+
 </mapper>
