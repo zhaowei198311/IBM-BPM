@@ -26,7 +26,7 @@
 					<div class="layui-col-xs3">
 					    <div class="layui-form-pane">
 					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;">刷新</label>
+					          	<label class="layui-form-label" style="cursor:pointer;" onclick="reload()">刷新</label>
 						        <div class="layui-input-block">
 						            <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
 									  	<option value="">任务类型</option>
@@ -265,11 +265,15 @@
 		function openApproval(taskUid){
 			window.location.href = 'menus/approval?taskUid='+taskUid;
 		}
-		
+		//模糊查询
 		function search(){
 			pageConfig.taskType = $("#task-type-search").val();
 			pageConfig.taskTitle = $("#task-title-search").val();
 			pageConfig.taskInitDate = $("#init-date-search").val()==""?null:$("#init-date-search").val();
 			getTaskInstanceInfo();
+		}
+		//刷新按钮
+		function reload(){
+			window.location.reload();	
 		}
 	</script>
