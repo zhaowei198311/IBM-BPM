@@ -123,4 +123,10 @@ public class DhProcessCategoryController {
     public ServerResponse<?> closeCategory(String metaUid){
     	return dhProcessCategoryService.closeCategory(metaUid);
     }
+    
+    @RequestMapping(value = "/enableCategory")
+    @ResponseBody
+    public ServerResponse<?> enableCategory(String metaUid){
+    	return dhProcessCategoryService.enableCategory(metaUid);
+    }
 }

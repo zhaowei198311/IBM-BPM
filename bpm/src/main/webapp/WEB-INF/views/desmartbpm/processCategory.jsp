@@ -38,13 +38,14 @@
                             <div class="layui-col-md2">
                                 <input id="proName_input" type="text" placeholder="流程名称"  class="layui-input">
                             </div>
-                            <div class="layui-col-md3" style="text-align:right;width: 55%">
+                            <div class="layui-col-md3" style="text-align:right;width: 65%">
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
                                     <button class="layui-btn delete_btn" id="meta_del_btn" style="background: #FF5151">删除</button>
                                     <button class="layui-btn move_btn" id="move_btn">移动</button>
                                     <button class="layui-btn hide_btn" id="hide_btn">隐藏</button>
                                     <button class="layui-btn close_btn" id="close_btn">关闭</button>
+                                    <button class="layui-btn enable_btn" id="enable_btn">启用</button>
                             </div>
                         </div>
                     </div>
@@ -721,13 +722,27 @@
             	var url = "/processCategory/closeCategory";
             	commonMethod(url);
             })
+            
+            //启用
+            $("#enable_btn").click(function(){
+            	var url = "/processCategory/enableCategory";
+            	commonMethod(url);
+            })
         });
         
-        // 隐藏，关闭功能公共方法
+        // 隐藏,关闭,启用功能公共方法
         function commonMethod(url){
         	var cks = $("input[name='proMeta_check']:checked");
         	if (cks.length != 1) {
         		layer.alert("请只选择一条流程定义");
+				return;
+			}
+        	var status = "";
+        	cks.each(function(){
+        		status = $(this).parents('tr').children().eq(5).text();
+        	});
+        	if (status == 'on') {
+				layer.alert("该流程已经是启用状态!");
 				return;
 			}
         	var metaUid = "";

@@ -206,5 +206,17 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 		}
 		return ServerResponse.createByError();
 	}
+
+	@Override
+	public ServerResponse<?> enableCategory(String metaUid) {
+		DhProcessMeta dhProcessMeta = new DhProcessMeta();
+		dhProcessMeta.setProMetaUid(metaUid);
+		dhProcessMeta.setProMetaStatus(DhProcessMeta.STATUS_ON);
+		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
+		if (count > 0) {
+			return ServerResponse.createBySuccess();
+		}
+		return ServerResponse.createByError();
+	}
     
 }

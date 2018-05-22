@@ -64,4 +64,15 @@ public interface DhProcessCategoryService {
      * @throws
      */
     ServerResponse<?> closeCategory(String metaUid);
+    
+    /**
+     * 
+     * @Title: enableCategory  
+     * @Description: 启用流程  
+     * @param @param metaUid
+     * @param @return  
+     * @return ServerResponse<?>  
+     * @throws
+     */
+    ServerResponse<?> enableCategory(String metaUid);
 }
