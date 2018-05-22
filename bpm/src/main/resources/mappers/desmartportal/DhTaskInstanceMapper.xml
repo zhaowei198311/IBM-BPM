@@ -60,9 +60,9 @@
 				AND TASK_STATUS = #{taskStatus}
 			</if>
 			<if test="taskTitle != null and taskTitle != ''">
-				AND TASK_TITLE = #{taskTitle}
+				AND TASK_TITLE like '%' || #{taskTitle} || '%' 
 			</if>
-			<if test="insUpdateDate != null and insUpdateDate != ''">
+			<if test="insUpdateDate != null ">
 				AND INS_UPDATE_DATE = #{insUpdateDate}
 			</if>
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
@@ -71,19 +71,20 @@
 			<if test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
 				AND TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername}
 			</if>
-			<if test="taskDelegateDate != null and taskDelegateDate != ''">
+			<if test="taskDelegateDate != null ">
 				AND TASK_DELEGATE_DATE = #{taskDelegateDate}
 			</if>
-			<if test="taskInitDate != null and taskInitDate != ''">
-				AND TASK_INIT_DATE = #{taskInitDate}
+			<if test="taskInitDate != null ">
+				AND TASK_INIT_DATE  &gt;= to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_INIT_DATE  &lt;= to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
-			<if test="taskFinishDate != null and taskFinishDate != ''">
+			<if test="taskFinishDate != null ">
 				AND TASK_FINISH_DATE = #{taskFinishDate}
 			</if>
-			<if test="taskDueDate != null and taskDueDate != ''">
+			<if test="taskDueDate != null ">
 				AND TASK_DUE_DATE = #{taskDueDate}
 			</if>
-			<if test="taskRiskDate != null and taskRiskDate != ''">
+			<if test="taskRiskDate != null ">
 				AND TASK_RISK_DATE = #{taskRiskDate}
 			</if>
 			<if test="taskPriority != null and taskPriority != ''">
