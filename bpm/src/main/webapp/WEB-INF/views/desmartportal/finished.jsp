@@ -56,7 +56,6 @@
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 					    <col width="60">
-					    <col width="100">
 					    <col width="130">
 					    <col width="140">
 					    <col>
@@ -70,7 +69,6 @@
 					<thead>
 					    <tr>
 					      <th>序号</th>
-					      <th>任务实例序号</th>
 					      <th>任务标题</th>
 					      <th>处理人</th>
 					      <th>任务状态</th>
@@ -205,8 +203,7 @@
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
 				var agentOdate2 = new Date(meta.taskDueDate);
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
-				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
-						+ '</td>' 
+				trs += '<tr>' + '<td>' + sortNum + '</td>' 
 						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
 						+ meta.taskTitle 
 						+ '</td>' 
