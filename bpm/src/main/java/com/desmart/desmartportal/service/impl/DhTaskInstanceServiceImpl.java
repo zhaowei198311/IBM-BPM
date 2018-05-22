@@ -28,6 +28,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -62,6 +63,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Autowired
 	private DhProcessFormService dhProcessFormService;
+	
+	@Autowired
+	private MenusService menusService;
 
 	/**
 	 * 查询所有流程实例
@@ -278,6 +282,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			 * 前台 代办页面
 			 */
 			List<DhTaskInstance> taskList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			
+			BpmActivityMeta activityMeta=new BpmActivityMeta();
+			
 			for (DhTaskInstance dhTaskInstance : taskList) {
 				// 查询流程
 				DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
@@ -294,6 +301,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
 				bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
 				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+				
+				
+				
+				//获取当前环节  找到下一环节
+				bpmActivityMeta.setActivityBpdId(dhTaskInstance.getActivityBpdId());
+				List<BpmActivityMeta> activityMetas=bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+				if(activityMetas!=null&&activityMetas.size()>0) {
+					activityMeta=activityMetas.get(0);
+				}
+				resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
+				
+				
 				// 转json
 				String listStr = JsonUtil.obj2String(bpmActivityList);
 				resultMap.put("listStr", listStr);
