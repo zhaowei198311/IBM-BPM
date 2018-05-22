@@ -63,9 +63,12 @@ public class DhTaskInstanceController {
 	 */
 	@RequestMapping(value = "/queryTaskByClosed")
 	@ResponseBody
-	private ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+	private ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@DateTimeFormat(pattern ="yyyy-MM-dd")Date initTime,@DateTimeFormat(pattern ="yyyy-MM-dd")Date dueTime) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+		taskInstance.setTaskInitDate(initTime);
+		taskInstance.setTaskDueDate(dueTime);
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
 }
