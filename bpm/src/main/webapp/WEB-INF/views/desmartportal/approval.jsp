@@ -74,10 +74,10 @@
 			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
 			id="insUid" value="${insUid}" style="display: none;"><input
 			id="insId" value="${insId}" style="display: none;"> <span
-			id="insData" value='${insData}'></span> <input
-			id="listStr" value="${listStr}" style="display: none;"><span
+			id="insData" value='${insData}' ></span> <span
+			id="listStr" value='${listStr}'></span><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
-		<span style="float: right; padding-right: 20px;">
+			<span id="test" style="float: right; padding-right: 20px;">
 			<button class="layui-btn  layui-btn-sm" onclick="processView(${insId})">流程图</button>
 			<button class="layui-btn layui-btn-sm">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
@@ -85,7 +85,7 @@
 			<button class="layui-btn layui-btn-sm">会签</button> <a
 			href="backlog.html" style="margin-left: 10px;"><button
 					class="layui-btn layui-btn-sm back_btn">退出</button></a>
-		</span>
+			</span>
 	</div>
 	<div class="container" style="width: 96%">
 		<div class="content">
