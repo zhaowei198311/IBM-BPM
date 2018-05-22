@@ -28,7 +28,7 @@
 					    	<div class="layui-form-item">
 					          	<label class="layui-form-label" style="cursor:pointer;">刷新</label>
 						        <div class="layui-input-block">
-						            <select class="layui-input-block group_select" name="group" lay-verify="required">
+						            <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
 									  	<option value="">任务类型</option>
 									  	<option value="sign">sign</option>
 									  	<option value="normal">normal</option>
@@ -39,13 +39,13 @@
 					    </div>
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text" placeholder="任务标题"  class="layui-input">
+						<input type="text" placeholder="任务标题"  class="layui-input" id="task-title-search">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text"  placeholder="接受时间"  class="layui-input" id="test1">
+						<input type="text"  placeholder="接受时间"  class="layui-input" id="init-date-search">
 					</div>
 					<div class="layui-col-xs1" style="text-align:right;">
-					        <button class="layui-btn" >查询</button>
+					        <button class="layui-btn" onclick="search()">查询</button>
 					</div>
 				</div>
 			</div>
@@ -100,6 +100,9 @@
 	var pageConfig = {
 		pageNum : 1,
 		pageSize : 10,
+		taskType : "",
+		taskTitle : "",
+		taskInitDate : null,
 		total : 0
 	}
 	
@@ -160,6 +163,12 @@
 			    elem: '#test2'
 			});
 		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#init-date-search'
+			});
+		});
 		$(function(){
 			$(".backlog_td").click(function(){
 				window.location.href="menus/backlogDetail";
@@ -174,7 +183,10 @@
 				dataType : 'json',
 				data : {
 					pageNum : pageConfig.pageNum,
-					pageSize : pageConfig.pageSize					
+					pageSize : pageConfig.pageSize,
+					taskType : pageConfig.taskType,
+					taskTitle : pageConfig.taskTitle,
+					initTime : pageConfig.taskInitDate
 				},
 				success : function(result){
 					if (result.status == 0) {
@@ -254,4 +266,10 @@
 			window.location.href = 'menus/approval?taskUid='+taskUid;
 		}
 		
+		function search(){
+			pageConfig.taskType = $("#task-type-search").val();
+			pageConfig.taskTitle = $("#task-title-search").val();
+			pageConfig.taskInitDate = $("#init-date-search").val()==""?null:$("#init-date-search").val();
+			getTaskInstanceInfo();
+		}
 	</script>
