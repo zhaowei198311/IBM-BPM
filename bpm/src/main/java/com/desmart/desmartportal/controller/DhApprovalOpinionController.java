@@ -33,29 +33,11 @@ public class DhApprovalOpinionController {
 		
 		return ServerResponse.createBySuccess(list);
 	}
-	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
+	
 	@RequestMapping("insertDhApprovalOpinion.do")
 	@ResponseBody
 	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion) {
-		List<DhApprovalOpinion> list = dhApprovalOpinionServiceImpl.getDhApprovalObinionList(dhApprovalOpinion);
-		if(list!=null&&list.size()>0) {
-			DhApprovalOpinion dhApprovalOpinion2 = list.get(list.size()-1);
-			dhApprovalOpinion.setAprOpiIndex(dhApprovalOpinion2.getAprOpiIndex()+1);
-			dhApprovalOpinion.setAprTimeNumber(dhApprovalOpinion2.getAprTimeNumber()+1);
-		}else {
-			dhApprovalOpinion.setAprOpiIndex(0);
-			dhApprovalOpinion.setAprTimeNumber(0);
-		}
-		dhApprovalOpinion.setAprDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
-		dhApprovalOpinion.setAprOpiId(EntityIdPrefix.DH_APPROVAL_OPINION+UUIDTool.getUUID());
-		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		dhApprovalOpinion.setAprUserId(creator);
-		Integer count = dhApprovalOpinionServiceImpl.insert(dhApprovalOpinion);
-		if(count>0) {
-			return ServerResponse.createBySuccessMessage("添加成功！");
-		}else {
-			return ServerResponse.createByErrorMessage("添加失败！");
-		}
+		return dhApprovalOpinionServiceImpl.insertDhApprovalOpinion(dhApprovalOpinion);
 	}
 	
 }

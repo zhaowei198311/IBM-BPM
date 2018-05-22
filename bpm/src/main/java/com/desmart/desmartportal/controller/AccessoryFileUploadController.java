@@ -54,121 +54,12 @@ public class AccessoryFileUploadController {
 		return new ModelAndView("desmartportal/fileUploadLay");
 	}
 	
-	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	@RequestMapping(value="saveFile.do")
 	@ResponseBody
 	public ServerResponse saveFile(@RequestParam("files")MultipartFile[] multipartFiles
 			,@RequestParam("uploadModels") String uploadModels,
 			@RequestParam("appUid")String appUid,@RequestParam("taskId")String taskId) {
-			List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
-			List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
-			JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
-			JSONArray jsarr=jso.getJSONArray("uploadModels");//jsonobject对象取得uploadModels对应的jsonarray数组
-			//String js=JSONObject.toJSONString(jsarr, SerializerFeature.WriteClassName);//将array数组转换成字符串  
-			//获取所有的文本框输入的值
-			/*List<DhInstanceDocument> dhInstanceDocuments = JSONObject.parseArray(js,DhInstanceDocument.class);*/
-			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-			
-			//System.out.println(dhInstanceDocuments.size());
-			for (int i = 0; i < multipartFiles.length; i++) {
-			
-			//取得上传文件  
-                MultipartFile file = multipartFiles[i];
-                if(file != null){
-                	//取得当前上传文件的文件名称  
-                    String myFileName = file.getOriginalFilename();  
-                    //DhInstanceDocument dhInstanceDocumentSource = null;
-                    //for (DhInstanceDocument dhInstanceDocument : dhInstanceDocuments) {
-                    JSONObject jObject = null;
-                    for (int j = 0; j < jsarr.size(); j++) {
-                    	JSONObject jsarrSon = (JSONObject)jsarr.get(j);
-                    	String checkFileName = (String)jsarrSon.get("appDocFileName");
-                    	/*DhInstanceDocument dhInstanceDocument = 
-                    			(DhInstanceDocument)JSONObject.parseObject(str, DhInstanceDocument.class);*/
-						if(myFileName.equals(checkFileName)) {//获取当前要上传文件的文本框输入的值
-                    		//dhInstanceDocumentSource = dhInstanceDocument;
-							jObject = jsarrSon;
-                    		break;
-                    	}
-                    	//System.out.println(checkFileName);
-					}
-                    //}
-                    if(jObject==null) {
-                    	return ServerResponse.createBySuccess("上传失败，网络繁忙！", 0);
-                    }
-                    //如果名称不为“”,说明该文件存在，否则说明该文件不存在  
-                    if(myFileName.trim() !=""){  
-                        String directory ="/AccessoryFile/";
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String[] dateStrings = simpleDateFormat.format(new Date()).split("-");
-                        directory+=dateStrings[0]+"/"+dateStrings[1]+"/"+dateStrings[2]+"/";//获取文件上传目录
-                        // 年/月/日/当前时间戳+文件名
-                        String newFileName = DateUtil.datetoString(new Date())+myFileName;
-                        //判断文件在当前流程是否已经上传
-                        List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.checkFileActivityIdByName(
-                        		appUid,myFileName);
-                        if(list!=null&&list.size()>0) {
-                        	return ServerResponse.createBySuccess("上传失败，文件已存在！", 0);
-                        } 
-							try {
-								InputStream inputStream = file.getInputStream();
-							DhInstanceDocument dhInstanceDocument = new DhInstanceDocument();
-							dhInstanceDocument.setAppDocFileName(myFileName);
-							dhInstanceDocument.setAppDocStatus("1");//查询是否已有逻辑删除记录--唯一
-							List<DhInstanceDocument> exitsList = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
-				            if(exitsList!=null&&exitsList.size()>0) {
-				            	dhInstanceDocument = exitsList.get(0);
-				            }else {
-				            	String uuId = UUIDTool.getUUID();
-				            	dhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
-				            }
-				        	dhInstanceDocument.setAppDocFileUrl(directory+newFileName);//文件ftp存储路径
-				        	dhInstanceDocument.setAppDocTitle(jObject.get("appDocTitle").toString());
-				        	dhInstanceDocument.setAppDocComment(jObject.get("appDocComment").toString());
-				        	dhInstanceDocument.setDocVersion(0);//文件版本
-				        	dhInstanceDocument.setAppUid(appUid);
-				        	dhInstanceDocument.setTaskId(taskId);
-				        	dhInstanceDocument.setUserUid(creator);
-				        	dhInstanceDocument.setAppDocType(file.getContentType());
-				        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
-							dhInstanceDocument.setAppDocIndex(i+1);
-							dhInstanceDocument.setAppDocTags(jObject.get("appDocTags").toString());
-							dhInstanceDocument.setAppDocStatus("0");//是否被删除 0否，1是
-							if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
-								fileUpdateList.add(dhInstanceDocument);
-							}else {
-								fileUploadList.add(dhInstanceDocument);
-							}
-							try {
-								SFTPUtil sftp = new SFTPUtil();
-					        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
-							} catch (SftpException e) {
-								// TODO Auto-generated catch block
-								LOG.error("保存附件失败", e);
-								return ServerResponse.createBySuccess(0);
-							}
-							
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								LOG.error("保存附件失败", e);
-								return ServerResponse.createBySuccess(0);
-							}
-                    }
-                }
-                
-        }
-			int count = 0;
-			if(fileUploadList.size()>0) {
-				count = accessoryFileUploadServiceImpl.insertDhInstanceDocuments(fileUploadList);//新增
-			}
-			if(fileUpdateList.size()>0) {
-				count += accessoryFileUploadServiceImpl.updateFileByKeys(fileUpdateList);//修改
-			}
-			if(count<=0) {
-				return ServerResponse.createBySuccess(0);
-			}else {
-				return ServerResponse.createBySuccess(1);
-			} 	
+			return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId);
 	}
 	
 	@RequestMapping(value="loadFileList.do")

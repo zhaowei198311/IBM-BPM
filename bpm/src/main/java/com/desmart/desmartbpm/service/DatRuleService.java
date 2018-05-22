@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.service;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
@@ -94,4 +95,14 @@ public interface DatRuleService {
 	 */
 	BpmActivityMeta loadActivityMetaByCondition(BpmActivityMeta activity);
 
+	/**
+	 * 
+	 * @param itemList1
+	 * @param activityId
+	 * @param type
+	 * @param activityType
+	 * @return
+	 */
+	public ServerResponse addDatRule(List<DatRuleCondition> itemList1,String activityId,
+			 String type,String activityType);
 }

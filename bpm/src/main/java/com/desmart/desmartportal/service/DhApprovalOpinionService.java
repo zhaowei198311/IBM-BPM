@@ -2,6 +2,7 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
+import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
 
 public interface DhApprovalOpinionService {
@@ -24,5 +25,10 @@ public interface DhApprovalOpinionService {
 	 * @return
 	 */
 	public List<DhApprovalOpinion> getDhApprovalObinionList(DhApprovalOpinion dhApprovalOpinion);
-	
+	/**
+	 * 新增审批意见
+	 * @param dhApprovalOpinion
+	 * @return
+	 */
+	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion);
 }
