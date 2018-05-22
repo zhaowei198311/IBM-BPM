@@ -27,23 +27,18 @@
 					    	<div class="layui-form-item">
 					          	<label class="layui-form-label" style="cursor:pointer;">刷新</label>
 						        <div class="layui-input-block">
-						            <select class="layui-input-block group_select" name="group" lay-verify="required">
-									  	<option value="">分组</option>
-									  	<option value="01">不分组</option>
-									  	<option value="02">按类型分组</option>
-									  	<option value="03">按任务创建分组</option>
-									  	<option value="04">按任务创建人所在部门分组</option>
-									  	<option value="05">按优先级分组</option>
+						             <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
+									  	<option value="">任务类型</option>
+									  	<option value="sign">sign</option>
+									  	<option value="normal">normal</option>
+									  	<option value="transfer">transfer</option>
 									</select>
 						        </div>
 					       </div>					    	     
 					    </div>
 					</div>
 					<div class="layui-col-xs2">
-				    	<input type="text" placeholder="来自"  class="layui-input">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="标题"  class="layui-input">
+						<input type="text" placeholder="任务标题"  class="layui-input" id="task-title-search">
 					</div>
 					<div class="layui-col-xs2">
 						<input type="text"  placeholder="开始时间"  class="layui-input" id="test1">
@@ -52,7 +47,7 @@
 					    <input type="text"  placeholder="结束时间"  class="layui-input" id="test2">				    
 					</div>
 					<div class="layui-col-xs1" style="text-align:right;">
-					        <button class="layui-btn" >查询</button>
+					        <button class="layui-btn" onclick="search()">查询</button>
 					</div>
 				</div>
 			</div>
@@ -88,6 +83,7 @@
 					<tbody id="proMet_table_tbody" />
 				</table>
 			</div>
+			<div id="lay_page"></div>
 		</div>
 		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
@@ -109,6 +105,10 @@
 	var pageConfig = {
 			pageNum : 1,
 			pageSize : 10,
+			taskType : "",
+			taskTitle : "",
+			taskInitDate : null,
+			taskDueDate : null,
 			total : 0
 		}
 	
@@ -151,7 +151,11 @@
 				dataType : 'json',
 				data : {
 					pageNum : pageConfig.pageNum,
-					pageSize : pageConfig.pageSize
+					pageSize : pageConfig.pageSize,
+					taskType : pageConfig.taskType,
+					taskTitle : pageConfig.taskTitle,
+					initTime : pageConfig.taskInitDate,
+					dueTime : pageConfig.taskDueDate,
 				},
 				success : function(result){
 					if(result.status == 0){
@@ -227,5 +231,18 @@
 					}
 				});
 			});
+		}
+		
+		//模糊查询
+		function search(){
+			pageConfig.taskType = $("#task-type-search").val();
+			pageConfig.taskTitle = $("#task-title-search").val();
+			pageConfig.taskInitDate = $("#test1").val()==""?null:$("#test1").val();
+			pageConfig.taskDueDate = $("#test2").val()==""?null:$("#test2").val();
+			getTaskInstanceInfo();
+		}
+		//刷新按钮
+		function reload(){
+			window.location.reload();	
 		}
 	</script>
