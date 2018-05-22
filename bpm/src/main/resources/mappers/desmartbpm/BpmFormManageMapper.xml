@@ -99,4 +99,10 @@
     	select * from dh_step
     	where step_object_uid = #{formUid} 
     </select>
+    
+    <select id="queryMetaNameByProUid" parameterType="String" resultType="String">
+    	select pro_name
+        from dh_process_meta 
+        where pro_uid = #{proUid}
+    </select>
 </mapper>
