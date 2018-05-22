@@ -54,7 +54,7 @@
 						        <button class="layui-btn" id="searchForm_btn">查询</button>
 						        <button class="layui-btn create_btn">新增</button>
 						        <button class="layui-btn delete_btn" onclick="deleteForm();">删除</button>
-						        <button class="layui-btn copy_btn">复制快照</button>
+						        <button class="layui-btn copy_btn">复制表单到当前指定流程版本</button>
 							</div>
 						</div>
 					</div>
@@ -651,32 +651,15 @@
 		function updateFormContent(obj){
 			var trObj = $(obj).parent().parent();
 			var formId = trObj.data("formuid");
-			var formUidArr = new Array();
-			formUidArr.push(formId);
-			//先判断该表单是否可修改
-			$.ajax({
-				url:common.getPath()+"/formManage/isBindStep",
-				method:"post",
-				data:{
-					"formUids":formUidArr
-				},
-				traditional: true,
-				success:function(result){
-					if(result.status==0){//未绑定
-						var dynTitle = $(trObj.find("td")[1]).text().trim();
-						var dynDescription = $(trObj.find("td")[2]).text().trim();
-						var href = "/formManage/designForm?formUid="+formId
-							+"&formName="+dynTitle
-							+"&formDescription="+dynDescription
-							+"&proUid="+pageConfig.proUid	//当用户未点击流程定义时，表单内容中包含了流程定义Id及版本Id
-							+"&proVersion="+pageConfig.proVerUid;
-						window.location.href = common.getPath()+href;
-						$(".display_container2").css("display", "none");
-					}else{
-						layer.alert("该表单已被步骤绑定");
-					}
-				}
-			});
+			var dynTitle = $(trObj.find("td")[1]).text().trim();
+			var dynDescription = $(trObj.find("td")[2]).text().trim();
+			var href = "/formManage/designForm?formUid="+formId
+					+"&formName="+dynTitle
+					+"&formDescription="+dynDescription
+					+"&proUid="+pageConfig.proUid	//当用户未点击流程定义时，表单内容中包含了流程定义Id及版本Id
+					+"&proVersion="+pageConfig.proVerUid;
+			window.location.href = common.getPath()+href;
+			$(".display_container2").css("display", "none");
 		}
 		
 		//删除表单

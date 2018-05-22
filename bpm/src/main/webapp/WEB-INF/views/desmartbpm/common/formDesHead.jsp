@@ -12,7 +12,10 @@
 	href="<%=basePath%>/resources/desmartbpm/formDesign/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>/resources/desmartbpm/formDesign/fileinput/css/fileinput.min.css">
-
+	
+<link rel="stylesheet"
+	href="<%=basePath%>/resources/desmartbpm/css/modules/layer/default/layer.css">
+	
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/formDesign/js/jquery-2.0.0.min.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/formDesign/js/common.js"></script>
@@ -31,6 +34,9 @@
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/formDesign/ckeditor/config.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
+
+<script src="<%=basePath%>/resources/desmartbpm/lay/modules/layer.js"></script>
+
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/formDesign/js/scripts.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/formDesign/js/FileSaver.js"></script>

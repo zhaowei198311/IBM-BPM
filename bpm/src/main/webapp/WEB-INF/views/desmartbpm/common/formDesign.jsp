@@ -36,13 +36,13 @@
 								<button type="button" class="btn btn-primary" id="sourcepreview">
 									<i class="icon-eye-open icon-white"></i>预览
 								</button>
-							</div>
-							<div class="btn-group">
 								<button type="button" class="btn btn-primary"
 									data-target="#addJSModal"
 									role="button" data-toggle="modal">
 									<i class="glyphicon glyphicon-pencil"></i>脚本
 								</button>
+							</div>
+							<div class="btn-group">
 								<button type="button" class="btn btn-primary"
 									data-target="#downloadModal" rel="/build/downloadModal"
 									role="button" data-toggle="modal">
@@ -50,6 +50,9 @@
 								</button>
 								<button class="btn btn-primary" href="#clear" id="clear">
 									<i class="icon-trash icon-white"></i>清空
+								</button>
+								<button type="button" class="btn btn-primary" onclick="returnFormManage()">
+									<i class="icon-chevron-down icon-white"></i>返回
 								</button>
 							</div>
 						</li>
