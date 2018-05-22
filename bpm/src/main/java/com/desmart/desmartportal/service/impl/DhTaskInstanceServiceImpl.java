@@ -284,6 +284,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			List<DhTaskInstance> taskList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 			
 			BpmActivityMeta activityMeta=new BpmActivityMeta();
+			String activityId="";
 			
 			for (DhTaskInstance dhTaskInstance : taskList) {
 				// 查询流程
@@ -309,8 +310,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				List<BpmActivityMeta> activityMetas=bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
 				if(activityMetas!=null&&activityMetas.size()>0) {
 					activityMeta=activityMetas.get(0);
+					activityId=activityMeta.getActivityId();
 				}
 				resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
+				resultMap.put("activityId", activityId);
 				
 				
 				// 转json
