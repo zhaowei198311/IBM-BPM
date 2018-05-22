@@ -42,7 +42,7 @@
 						<input type="text" placeholder="任务标题"  class="layui-input" id="task-title-search">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text"  placeholder="接受时间"  class="layui-input" id="init-date-search">
+						<input type="text"  placeholder="接收时间"  class="layui-input" id="init-date-search">
 					</div>
 					<div class="layui-col-xs1" style="text-align:right;">
 					        <button class="layui-btn" onclick="search()">查询</button>
