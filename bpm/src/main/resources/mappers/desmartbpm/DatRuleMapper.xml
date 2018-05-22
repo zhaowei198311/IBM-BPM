@@ -90,4 +90,16 @@
     where activity_id = #{activityId}
     </select>
 
+	<insert id="batchInsertDatRule"  parameterType="list">
+	        insert into DAT_RULE (RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE,
+	            END_TIME, IS_ACTIVATE, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS,
+	            RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME)
+	    <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+	        select
+	            #{item.ruleId}, #{item.bizType}, #{item.createTime}, #{item.creator}, #{item.editMode},
+	            #{item.endTime}, #{item.isActivate}, #{item.parentRuleId}, #{item.returnType}, #{item.ruleName},
+	            #{item.ruleProcess}, #{item.ruleStatus}, #{item.ruleType}, #{item.ruleVersion}, #{item.startTime}
+	        from dual
+	    </foreach>
+	</insert> 
 </mapper>

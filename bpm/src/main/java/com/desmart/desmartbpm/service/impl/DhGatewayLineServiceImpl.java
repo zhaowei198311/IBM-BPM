@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.service.impl;
 import java.io.ByteArrayInputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -27,17 +29,22 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.dao.DhGatewayLineMapper;
 import com.desmart.desmartbpm.enginedao.LswBpdMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswBpd;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+import com.desmart.desmartbpm.util.DateUtil;
+import com.desmart.desmartbpm.util.UUIDTool;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -57,6 +64,8 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     private BpmActivityMetaMapper bpmActivityMetaMapper;
     @Autowired
     private DhGatewayLineMapper dhGatewayLineMapper;
+    @Autowired
+    private DatRuleMapper datRuleMapper;
     
     
     public ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid) {
@@ -188,6 +197,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                         }
                     }
                     
+                    List<DatRule> ruleList = new ArrayList<>();
                     for (DhGatewayLine gatewayLine : gatewayLineList) {
                        if (StringUtils.equals("FALSE", gatewayLine.getIsDefault())) {
                            String condition = idConditionMap.get(gatewayLine.getActivityBpdId());
@@ -197,12 +207,18 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                                if (firstIndex < lastIndex) {
                                    condition = condition.substring(firstIndex+1, lastIndex);
                                    gatewayLine.setRouteResult(condition);
+                                   DatRule datRule = generateTemplateRule();
+                                   gatewayLine.setRuleId(datRule.getRuleId());
+                                   ruleList.add(datRule);
                                }
                            }
                        } 
                     }
                     if (gatewayLineList.size() > 0) {
                         dhGatewayLineMapper.insertBatch(gatewayLineList);
+                    }
+                    if (ruleList.size() > 0) {
+                        datRuleMapper.batchInsertDatRule(ruleList);
                     }
                 } catch (DocumentException e) {
                     LOG.error("解析网关XML错误", e);
@@ -272,12 +288,26 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
 
         return results;
     }
-    public static void main(String[] args) {
-        String condition = "decition.routeResult == \"3\"";
-        System.out.println(condition);
-        
-        
-        System.out.println(condition.matches("*+\\s==\\s\"*+\""));
+    
+    /**
+     * 创建默认的规则，不包含具体条件
+     * @return
+     */
+    private DatRule generateTemplateRule() {
+        DatRule datRule = new DatRule();
+        datRule.setRuleId(EntityIdPrefix.DAT_RULE + UUID.randomUUID().toString());
+        datRule.setBizType("wfCondCtrl");
+        datRule.setEditMode("STD");// 不明确
+        datRule.setIsActivate("on");
+        datRule.setReturnType("text");
+        datRule.setRuleStatus("on");
+        datRule.setCreateTime(DateUtil.datetoString(new Date()));
+        datRule.setStartTime(DateUtil.datetoString(new Date()));
+        datRule.setEndTime(null);
+        datRule.setCreator((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        datRule.setRuleType("PARAMS");
+        datRule.setRuleVersion(1);// 规则版本
+        return datRule;
     }
 
 	@Override

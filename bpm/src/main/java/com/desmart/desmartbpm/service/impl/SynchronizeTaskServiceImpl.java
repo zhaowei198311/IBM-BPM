@@ -155,7 +155,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     }
 
     /**
-     * 根据条件生成平台中的任务（未对代理做处理）
+     * 根据条件生成平台中的任务
      */
     private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
             List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {

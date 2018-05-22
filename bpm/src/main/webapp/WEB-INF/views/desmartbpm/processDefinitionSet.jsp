@@ -166,8 +166,8 @@
                 </div>
             </div>
         </form>
-        <p class="title_p">流程图配置</p>
-        <form class="layui-form" action="" id="form4">
+        <p class="title_p" style="display:none">流程图配置</p>
+        <form class="layui-form" action="" id="form4" style="display:none">
             <div class="layui-row">
                 <div class="layui-col-md6">
                     <div class="layui-form-item">

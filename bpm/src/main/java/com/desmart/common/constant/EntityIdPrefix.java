@@ -65,4 +65,6 @@ public class EntityIdPrefix {
     /** 流转信息前缀 */
     public static final String DH_ROUTING_RECORD = "routing_record:";
 
+    /** 网关规则前缀 */
+    public static final String DAT_RULE = "datrule:";
 }

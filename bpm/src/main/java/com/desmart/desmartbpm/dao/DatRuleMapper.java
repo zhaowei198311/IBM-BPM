@@ -90,5 +90,7 @@ public interface DatRuleMapper {
 	 * @return
 	 */
 	BpmActivityMeta loadActivityMetaByCondition(BpmActivityMeta activity);
+	
+	int batchInsertDatRule(List<DatRule> datRule);
 
 }

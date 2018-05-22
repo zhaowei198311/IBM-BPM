@@ -137,9 +137,11 @@ $(function() {
 		var proUid = ck.data('prouid');
 		var proVerUid = ck.data('proveruid');
 		var proAppId = ck.data('proappid');
-
 		$.ajax({
 			url : common.getPath() + "/processDefinition/create",
+			beforeSend : function(){
+				layer.load(1);
+			},
 			type : "post",
 			dataType : "json",
 			data : {
@@ -148,6 +150,7 @@ $(function() {
 				"proAppId" : proAppId
 			},
 			success : function(result) {
+				layer.closeAll('loading');
 				if (result.status == 0) {
 					layer.alert("同步成功");
 					// 更新这条记录的信息
@@ -180,6 +183,7 @@ $(function() {
 				}
 			},
 			error : function() {
+				layer.closeAll('loading');
 				layer.alert("同步失败，请稍后再试");
 			}
 		});
