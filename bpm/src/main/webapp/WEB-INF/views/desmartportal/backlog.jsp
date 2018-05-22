@@ -51,29 +51,23 @@
 			</div>
 			<div>
 				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
-				<table class="layui-table">
+				<table class="layui-table" lay-even lay-skin="nob">
 					<colgroup>
 					    <col width="60">
 					    <col width="100">
-					    <col width="130">
-					    <col width="120">
-					    <col>
 					    <col width="150">
 					    <col width="150">
-					    <col width="150"> 
+					    <col width="150">
 					    <col width="150">
 					</colgroup>
 					<thead>
 					    <tr>
 					      <th>序号</th>
-					      <th>任务实例序号</th>
 					      <th>任务标题</th>
-					      <th>处理人</th>
-					      <th>任务状态</th>
 					      <th>上一环节提交人</th>
 					      <th>任务类型</th>
-					      <th>接收时间</th>
-					      <th>任务期限</th>
+					      <th>创建时间</th>
+					      <th>操作</th>
 					    </tr> 
 					</thead>
 					<tbody id = "proMet_table_tbody"/>
@@ -218,16 +212,9 @@
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
 				var agentOdate2 = new Date(meta.taskDueDate);
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
-				trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.taskId
-						+ '</td>' 
-						+ '<td><i class="layui-icon backlog_img" onclick=openApproval("'+meta.taskUid+'")>&#xe63c;</i>'
+				trs += '<tr>' + '<td>' + sortNum + '</td>' 
+						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
 						+ meta.taskTitle 
-						+ '</td>' 
-						+ '<td>'
-						+ meta.usrUid 
-						+ '</td>'
-						+ '<td>' 
-						+ meta.taskStatus
 						+ '</td>' 
 						+ '<td>'
 						+ meta.taskPreviousUsrUsername 
@@ -239,7 +226,7 @@
 						+ InitDate
 						+'</td>' 
 						+ '<td>'
-						+ taskDueDate
+						+ '<i class="layui-icon" title="查看详情" onclick=openApproval("'+meta.taskUid+'")>&#xe60a;</i>'
 						+'</td>' 
 						+ '</tr>'
 			}
