@@ -66,4 +66,6 @@ public interface BpmActivityMetaMapper {
     
     
     BpmActivityMeta getActivityIdByIds(Map<String, Object> param);
+    
+    
 }

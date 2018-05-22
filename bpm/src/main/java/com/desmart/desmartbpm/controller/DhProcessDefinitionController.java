@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
@@ -35,6 +36,9 @@ public class DhProcessDefinitionController {
     private DhProcessMetaService dhProcessMetaService;
     @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
+    @Autowired
+    private DhGatewayLineService dhGatewayLineService;
+    
     
     
     @RequestMapping(value = "/index")
@@ -71,7 +75,18 @@ public class DhProcessDefinitionController {
     public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
 
         try {
-            return dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
+            ServerResponse serverResponse = dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
+            if (serverResponse.isSuccess()) {
+                // 判断是否需要同步网关路线
+                boolean needGenerateGatewayLine = dhGatewayLineService.needGenerateGatewayLine(proAppId, proUid, proVerUid);
+                if (needGenerateGatewayLine) {
+                    return dhGatewayLineService.generateGatewayLine(proAppId, proUid, proVerUid);
+                } else {
+                    return serverResponse;
+                }
+            } else {
+                return serverResponse;
+            }
         } catch (Exception e) {
             LOG.error("同步环节失败", e);
             return ServerResponse.createByErrorMessage("同步环节失败");

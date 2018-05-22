@@ -189,8 +189,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
-        // 同步环节
-        bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
         
         DhProcessDefinition definitionSelective = new DhProcessDefinition();
         definitionSelective.setProVerUid(proVerUid);
@@ -199,6 +197,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
         String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         if (list.size() == 0) { 
+            // 同步环节
+            bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
             // 插入新流程定义记录
             DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
             dhProcessDefinition.setProUid(proUid);

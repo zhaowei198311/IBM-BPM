@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhGatewayLineMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhGatewayLine" >
+    <id column="GATEWAY_LINE_UID" property="gatewayLineUid" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ID" property="activityId" jdbcType="VARCHAR" />
+    <result column="TO_ACTIVITY_ID" property="toActivityId" jdbcType="VARCHAR" />
+    <result column="ROUTE_RESULT" property="routeResult" jdbcType="VARCHAR" />
+    <result column="IS_DEFAULT" property="isDefault" jdbcType="VARCHAR" />
+    <result column="RULE_ID" property="ruleId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    GATEWAY_LINE_UID, ACTIVITY_ID, TO_ACTIVITY_ID, ROUTE_RESULT, IS_DEFAULT, RULE_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_GATEWAY_LINE
+    where GATEWAY_LINE_UID = #{gatewayLineUid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from DH_GATEWAY_LINE
+    where GATEWAY_LINE_UID = #{gatewayLineUid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine" >
+    insert into DH_GATEWAY_LINE (GATEWAY_LINE_UID, ACTIVITY_ID, TO_ACTIVITY_ID, 
+      ROUTE_RESULT, IS_DEFAULT, RULE_ID
+      )
+    values (#{gatewayLineUid,jdbcType=VARCHAR}, #{activityId,jdbcType=VARCHAR}, #{toActivityId,jdbcType=VARCHAR}, 
+      #{routeResult,jdbcType=VARCHAR}, #{isDefault,jdbcType=VARCHAR}, #{ruleId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine" >
+    insert into DH_GATEWAY_LINE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gatewayLineUid != null" >
+        GATEWAY_LINE_UID,
+      </if>
+      <if test="activityId != null" >
+        ACTIVITY_ID,
+      </if>
+      <if test="toActivityId != null" >
+        TO_ACTIVITY_ID,
+      </if>
+      <if test="routeResult != null" >
+        ROUTE_RESULT,
+      </if>
+      <if test="isDefault != null" >
+        IS_DEFAULT,
+      </if>
+      <if test="ruleId != null" >
+        RULE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gatewayLineUid != null" >
+        #{gatewayLineUid,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="toActivityId != null" >
+        #{toActivityId,jdbcType=VARCHAR},
+      </if>
+      <if test="routeResult != null" >
+        #{routeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null" >
+        #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleId != null" >
+        #{ruleId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine" >
+    update DH_GATEWAY_LINE
+    <set >
+      <if test="activityId != null" >
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="toActivityId != null" >
+        TO_ACTIVITY_ID = #{toActivityId,jdbcType=VARCHAR},
+      </if>
+      <if test="routeResult != null" >
+        ROUTE_RESULT = #{routeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null" >
+        IS_DEFAULT = #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleId != null" >
+        RULE_ID = #{ruleId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GATEWAY_LINE_UID = #{gatewayLineUid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine" >
+    update DH_GATEWAY_LINE
+    set ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      TO_ACTIVITY_ID = #{toActivityId,jdbcType=VARCHAR},
+      ROUTE_RESULT = #{routeResult,jdbcType=VARCHAR},
+      IS_DEFAULT = #{isDefault,jdbcType=VARCHAR},
+      RULE_ID = #{ruleId,jdbcType=VARCHAR}
+    where GATEWAY_LINE_UID = #{gatewayLineUid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertBatch"  parameterType="list">
+    insert into DH_GATEWAY_LINE (<include refid="Base_Column_List" />) 
+    <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+        select
+        #{item.gatewayLineUid},
+        #{item.activityId},
+        #{item.toActivityId},
+        #{item.routeResult},
+        #{item.isDefault},
+        #{item.ruleId}
+        from dual
+    </foreach>
+  </insert> 
+  
+  <select id="countByActivityId" parameterType="string" resultType="int">
+    select count(1) from DH_GATEWAY_LINE
+    where activity_id = #{activityId}
+  </select>
+</mapper>

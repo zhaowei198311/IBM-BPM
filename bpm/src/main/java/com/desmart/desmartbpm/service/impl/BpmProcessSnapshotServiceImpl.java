@@ -82,6 +82,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 }
             }
         }
+        
+        
     }
 
 
@@ -212,7 +214,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     }
 
     /**
-     * 将流程图(Diagram)中一个step解析为BpmActivityMeta，可能是一个或多个
+     * 将流程图(Diagram)中一个step解析为BpmActivityMeta，可能是一个或多个(子流程)
      * @param request
      * @param stepElement
      * @param snapshotId

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.enginedao.LswBpdMapper">
+    <sql id="baseColumnList">
+        BPD_ID, VERSION_ID, NAME, DATA
+    </sql>  
+    
+    <select id="queryByBpdIdAndVersionId" parameterType="map" resultType="com.desmart.desmartbpm.entity.engine.LswBpd">
+        select <include refid="baseColumnList"/>
+        from LSW_BPD
+        where BPD_ID = #{bpdId} and VERSION_ID = #{versionId}
+    </select>
+    
+</mapper>

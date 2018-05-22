@@ -59,6 +59,10 @@ public class EntityIdPrefix {
     /** 步骤前缀 */
     public static final String DH_STEP = "step:";
     
+    /** 排他网关输出连线前缀 */
+    public static final String DH_GATEWAY_LINE = "gateway_line:";
+    
     /** 流转信息前缀 */
     public static final String DH_ROUTING_RECORD = "routing_record:";
+
 }
