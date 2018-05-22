@@ -52,7 +52,7 @@
 				</div>
 			</div>
 			<div>
-				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共3条任务</p>
+				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="yiban_icon"></span>条任务</p>
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 					    <col width="60">
@@ -177,7 +177,7 @@
 				data : {},
 				success : function(result){
 					// 渲染到已办
-					$("#daiban_icon").text(result);
+					$("#yiban_icon").text(result);
 				}
 			})
 		}
