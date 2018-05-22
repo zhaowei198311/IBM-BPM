@@ -39,10 +39,10 @@ public interface DhProcessMetaService {
     
     /**
      * 删除指定的流程元数据
-     * @param uids 要删除的一条或多条流程元数据
+     * @param uid
      * @return
      */
-    ServerResponse removeProcessMeta(String uids);
+    ServerResponse removeProcessMeta(String uid);
     
     List<DhProcessMeta> listAll();
     

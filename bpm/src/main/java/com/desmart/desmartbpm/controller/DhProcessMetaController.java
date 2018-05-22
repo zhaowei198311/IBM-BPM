@@ -97,17 +97,15 @@ public class DhProcessMetaController {
     }
     
     /**
-     * 批量删除流程元数据
+     * 删除流程元数据
      * @param data
      * @return
      */
     @RequestMapping(value = "/remove")
     @ResponseBody
-    public ServerResponse removeProcessMeta(String uids) {
-        // todo
+    public ServerResponse removeProcessMeta(String metaUid) {
         try {
-            return dhProcessMetaService.removeProcessMeta(uids);
-            
+            return dhProcessMetaService.removeProcessMeta(metaUid);
         } catch (Exception e) {
             LOG.error("删除元数据失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());

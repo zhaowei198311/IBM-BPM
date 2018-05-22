@@ -42,4 +42,26 @@ public interface DhProcessCategoryService {
      * @throws
      */
     ServerResponse<?> changeThePosition(String metaUid, String categoryUid);
+    
+    /**
+     * 
+     * @Title: changeStatus  
+     * @Description: 更改流程状态  
+     * @param: @param metaUid
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
+    ServerResponse<?> changeStatus(String metaUid);
+    
+    /**
+     * 
+     * @Title: closeCategory  
+     * @Description: 关闭流程  
+     * @param: @param metaUid
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
+    ServerResponse<?> closeCategory(String metaUid);
 }

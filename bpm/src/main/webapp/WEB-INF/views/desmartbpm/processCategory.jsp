@@ -38,17 +38,20 @@
                             <div class="layui-col-md2">
                                 <input id="proName_input" type="text" placeholder="流程名称"  class="layui-input">
                             </div>
-                            <div class="layui-col-md3" style="text-align:right;width: 35%">
+                            <div class="layui-col-md3" style="text-align:right;width: 55%">
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
-                                    <button class="layui-btn delete_btn" id="meta_del_btn">删除</button>
+                                    <button class="layui-btn delete_btn" id="meta_del_btn" style="background: #FF5151">删除</button>
                                     <button class="layui-btn move_btn" id="move_btn">移动</button>
+                                    <button class="layui-btn hide_btn" id="hide_btn">隐藏</button>
+                                    <button class="layui-btn close_btn" id="close_btn">关闭</button>
                             </div>
                         </div>
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
                         <table id="proMet_table" class="layui-table backlog_table link_table" lay-even lay-skin="nob" style="width:2000px;">
                             <colgroup>
+                                <col>
                                 <col>
                                 <col>
                                 <col>
@@ -66,6 +69,7 @@
                                   <th>流程应用库id</th>
                                   <th>流程图id</th>
                                   <th>源流程名</th>
+                                  <th>流程状态</th>
                                   <th>创建者</th>
                                   <th>创建时间</th>
                                   <th>更新者</th>
@@ -448,8 +452,7 @@
             });
 
             doPage();
-
-            
+     
             // “添加”按钮
             $("#show_expose_btn").click(function(){
                 getExposedInfo();
@@ -489,22 +492,21 @@
             
             $('#meta_del_btn').click(function() {
             	var cks = $("[name='proMeta_check']:checked");
-            	if (!cks.length) {
-            		layer.alert("请选择要删除的流程元数据");
+            	if (cks.length != 1) {
+            		layer.alert("请只选择一个流程元数据进行删除!");
             		return;
             	}
-            	var uids = "";
+            	var metaUid = "";
             	cks.each(function(index, element){
-            		uids += $(element).parent().parent().data('metauid') + ";";
+            		metaUid = $(element).parent().parent().data('metauid');
             	});
-            	uids = uids.substring(0, uids.length -1);
             	layer.confirm("确认删除元数据？", function () {
                     $.ajax({
                         url: common.getPath() + "/processMeta/remove",
                         type: "post",
                         dataType: "json",
                         data: {
-                            "uids": uids
+                        	metaUid: metaUid
                         },
                         success: function(result) {
                             if (result.status == 0) {
@@ -567,8 +569,7 @@
             		}
             		
             	});
-            });
-            
+            });          
             
             // 命名后再次确认添加元数据
             $('#addMetaSure_btn').click(function(){
@@ -648,6 +649,7 @@
             	pageConfig.total = 0;
             	getMetaInfo();
             });
+            
             // 移动
             $("#move_btn").click(function(){
             	var cks = $("[name='proMeta_check']:checked");
@@ -708,8 +710,47 @@
                 })
             })
             
+            // 隐藏
+            $("#hide_btn").click(function(){
+            	var url = "/processCategory/changeStatus";
+            	commonMethod(url);
+            })
+            
+            // 关闭流程
+            $("#close_btn").click(function(){
+            	var url = "/processCategory/closeCategory";
+            	commonMethod(url);
+            })
         });
         
+        // 隐藏，关闭功能公共方法
+        function commonMethod(url){
+        	var cks = $("input[name='proMeta_check']:checked");
+        	if (cks.length != 1) {
+        		layer.alert("请只选择一条流程定义");
+				return;
+			}
+        	var metaUid = "";
+        	cks.each(function(){
+        		metaUid = $(this).parents('tr').attr('data-metauid');
+        	});
+        	$.ajax({
+        		async: false,
+        		url: common.getPath() + url,
+        		type: 'post',
+        		dataType: 'json',
+        		data: {
+        			metaUid: metaUid
+        		},
+        		success: function(data){
+        			if (data.status == 0) {
+						layer.alert("操作成功!");
+					}else {
+						layer.alert("操作失败!");
+					}
+        		}
+        	})
+        }
         
         /* 向服务器请求流程元数据   */
         function getMetaInfo() {
@@ -763,6 +804,7 @@
         		            + '<td>'+meta.proAppId+'</td>'
         		            + '<td>'+meta.proUid+'</td>'
         		            + '<td>'+meta.proDisplay+'</td>'
+        		            + '<td>'+meta.proMetaStatus+'</td>'
         		            + '<td>'+meta.creatorFullName+'</td>'
         		            + '<td>'+createTime+'</td>'
         		            + '<td>'+meta.updatorFullName+'</td>'

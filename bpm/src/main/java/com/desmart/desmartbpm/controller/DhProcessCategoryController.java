@@ -78,9 +78,49 @@ public class DhProcessCategoryController {
         return JsonUtil.obj2String(nodesToShow);
     }
     
+    /**
+     * 
+     * @Title: changeThePosition  
+     * @Description: 改变源数据在分类树的位置  
+     * @param: @param metaUid
+     * @param: @param categoryUid
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
     @RequestMapping(value = "/changeThePosition")
     @ResponseBody
     public ServerResponse<?> changeThePosition(String metaUid, String categoryUid){
     	return dhProcessCategoryService.changeThePosition(metaUid, categoryUid);
+    }
+    
+    /**
+     * 
+     * @Title: changeStatus  
+     * @Description: 更改流程状态为隐藏（DH_PROCESS_META）  
+     * @param: @param metaUid
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
+    @RequestMapping(value = "/changeStatus")
+    @ResponseBody
+    public ServerResponse<?> changeStatus(String metaUid){
+    	return dhProcessCategoryService.changeStatus(metaUid);
+    }
+    
+    /**
+     * 
+     * @Title: closeCategory  
+     * @Description: 关闭流程  
+     * @param: @param metaUid
+     * @param: @return  
+     * @return: ServerResponse<?>
+     * @throws
+     */
+    @RequestMapping(value = "/closeCategory")
+    @ResponseBody
+    public ServerResponse<?> closeCategory(String metaUid){
+    	return dhProcessCategoryService.closeCategory(metaUid);
     }
 }

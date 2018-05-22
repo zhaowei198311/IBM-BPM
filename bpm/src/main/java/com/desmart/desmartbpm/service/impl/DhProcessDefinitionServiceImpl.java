@@ -406,7 +406,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 		}
 		return ServerResponse.createBySuccess(dpd);
 	}
-
+	
+	@Transactional
 	@Override
 	public ServerResponse copySimilarProcess(Map<String, Object> mapId) {
 		try {

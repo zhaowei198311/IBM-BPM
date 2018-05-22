@@ -313,17 +313,20 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     }
     
     @Transactional
-    public ServerResponse removeProcessMeta(String uids) {
-        String[] uidArr = uids.split(";");
-        // todo 判断能否删除元数据
-        for (String uid : uidArr) {
-            DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(uid);
-            if (dhProcessMeta == null) {
-                throw new PlatformException("找不到指定的元数据");
-            }
-            int countRow = dhProcessMetaMapper.removeByProMetaUid(uid);
+    public ServerResponse removeProcessMeta(String uid) {
+        DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(uid);
+        if (dhProcessMeta == null) {
+            throw new PlatformException("找不到指定的元数据");
         }
-        return ServerResponse.createBySuccess();
+        String proUid = dhProcessMeta.getProUid();
+        String proAppId = dhProcessMeta.getProAppId();
+        String proName = dhProcessMeta.getProName();
+        // DH_PROCESS_META
+        int count = dhProcessMetaMapper.removeByProMetaUid(uid);
+        if (count > 0) {
+        	return ServerResponse.createBySuccess();
+		}
+        return ServerResponse.createByError();
     }
 
 
