@@ -16,7 +16,7 @@ public class DhInstanceDocument {
 	private String appDocTitle;//文件标题---
 	private String appDocComment; //文件说明-----
 	private Integer docVersion; //文件版本
-	private String appUid; // 流程实例UID ===== 发起流程时，存储草稿UID  
+	private String appUid; // 流程实例insUID ===== 发起流程时，存储草稿UID  
 	private String taskId; //环节id -----activity_id 
 	private String userUid; // 用户UID
 	private String appDocType; //文档类型
