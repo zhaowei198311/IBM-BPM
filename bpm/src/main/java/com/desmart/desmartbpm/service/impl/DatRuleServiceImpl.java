@@ -46,9 +46,9 @@ public class DatRuleServiceImpl implements DatRuleService {
 	private DatRuleConditionService datRuleConditionServiceImpl;
 	
 	@Override
-	public DatRule getDatRuleByCondition(DatRule datRule) {
+	public DatRule getDatRuleByKey(String ruleId) {
 		// TODO Auto-generated method stub
-		return datRuleMapper.getDatRuleByCondition(datRule);
+		return datRuleMapper.getDatRuleByKey(ruleId);
 	}
 
 	@Override
@@ -333,7 +333,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 		List<BpmActivityMeta> list = 
 				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(activityBpdId, snapshotId, bpdId, activityType);
 		if(list!=null&&list.size()>0) {
-			BpmActivityMeta bpmActivityMeta = list.get(0);
+			BpmActivityMeta bpmActivityMeta = list.get(0);//默认展示第一个
 			DhGatewayLine dhGatewayLine = new DhGatewayLine();
 			dhGatewayLine.setActivityId(bpmActivityMeta.getActivityId());
 			List<DhGatewayLine> dhGatewayLines = dhGatewayLineServiceImpl.getGateWayLinesByCondition(dhGatewayLine);
@@ -347,7 +347,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 					if(bpmActivityMeta.getActivityType()!=null&&!"".equals(bpmActivityMeta.getActivityType())) {//判断是否已经添加规则数据
 						
 						//根据ruleId查询predictRules展示
-						
+						//DatRule datRule = 
 						//根据当前activityId查询当前环节和当前type所有predictRules展示,需要按时间排序
 						List<DatRule> predictRules = getPreRulesLikeRuleName(bpmActivityMeta.getActivityId());
 						

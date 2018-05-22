@@ -11,11 +11,11 @@ import com.desmart.desmartbpm.entity.DatRuleCondition;
 public interface DatRuleService {
 
 	/**
-	 * 根据条件查询DatRule数据
+	 * 根据主键查询DatRule数据
 	 * @param datRule
 	 * @return
 	 */
-	DatRule getDatRuleByCondition(DatRule datRule);
+	DatRule getDatRuleByKey(String ruleId);
 
 	/**
 	 * 新增datrule

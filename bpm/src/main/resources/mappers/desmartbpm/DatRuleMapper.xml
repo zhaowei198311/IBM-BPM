@@ -2,16 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DatRuleMapper" >
   
-   <select id="getDatRuleByCondition" parameterType="com.desmart.desmartbpm.entity.DatRule"
+   <select id="getDatRuleByKey" parameterType="com.desmart.desmartbpm.entity.DatRule"
    resultType="com.desmart.desmartbpm.entity.DatRule">
    	SELECT RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE, END_TIME, IS_ACTIVATE
    	, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS, RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME FROM DAT_RULE
    	where 1=1 
    	<if test="ruleId != null and ruleId != '' ">
    	and rule_Id = #{ruleId}
-   	</if>
-   	<if test="ruleName!=null and ruleName !=''">
-   	and rule_name = #{ruleName}
    	</if>
    </select>
    

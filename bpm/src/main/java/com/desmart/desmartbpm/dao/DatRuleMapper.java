@@ -10,11 +10,11 @@ import com.desmart.desmartbpm.entity.DatRule;
 @Repository
 public interface DatRuleMapper {
 	/**
-	 * 根据条件查询DatRule数据
-	 * @param datRule
+	 * 根据主键查询DatRule数据
+	 * @param ruleId
 	 * @return
 	 */
-	DatRule getDatRuleByCondition(DatRule datRule);
+	DatRule getDatRuleByKey(String ruleId);
 
 	/**
 	 * 新增datrule
