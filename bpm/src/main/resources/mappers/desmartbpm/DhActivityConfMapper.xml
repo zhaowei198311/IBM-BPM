@@ -281,4 +281,12 @@
       ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType}
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
+  
+  <delete id="deleteByActivityIds" parameterType="list">
+  	delete from DH_ACTIVITY_CONF
+  	where ACTIVITY_ID in
+  	<foreach collection="list" item="item" open="(" separator="," close=")">
+  		#{item}
+  	</foreach>	
+  </delete>
 </mapper>

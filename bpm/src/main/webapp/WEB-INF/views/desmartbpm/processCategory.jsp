@@ -745,6 +745,7 @@
         		success: function(data){
         			if (data.status == 0) {
 						layer.alert("操作成功!");
+						getMetaInfo();
 					}else {
 						layer.alert("操作失败!");
 					}

@@ -19,8 +19,16 @@ public interface DhActivityAssignMapper {
     int updateByPrimaryKey(DhActivityAssign record);
     
     List<DhActivityAssign> listByDhActivityAssignSelective(DhActivityAssign selective);
-    
-    int deleteByActivityId(String activityId);
+    /**
+     * 
+     * @Title: deleteByActivityIds  
+     * @Description: 根据activityIds批量删除  
+     * @param @param activityId
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteByActivityIds(List<String> activityIds);
     
     int deleteBySelective(DhActivityAssign dhActivityAssign);
     

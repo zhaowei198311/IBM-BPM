@@ -75,4 +75,13 @@
         delete from DH_ACTIVITY_REJECT 
         where activity_id = #{activityId}
     </delete>
+    
+    <delete id="deleteByActivityIds" parameterType="list">
+        delete from DH_ACTIVITY_REJECT 
+        where activity_id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+        	#{item}
+        </foreach>
+    </delete>
+    
 </mapper>

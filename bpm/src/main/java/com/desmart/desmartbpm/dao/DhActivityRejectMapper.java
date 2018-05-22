@@ -28,5 +28,14 @@ public interface DhActivityRejectMapper {
     int insertBatch(List<DhActivityReject> list);
     
     int deleteByActivityId(String activityId);
-    
+    /**
+     * 
+     * @Title: deleteByActivityIds  
+     * @Description: 根据activityIds批量删除  
+     * @param @param activityIds
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteByActivityIds(List<String> activityIds);
 }

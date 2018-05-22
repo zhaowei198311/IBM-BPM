@@ -338,4 +338,10 @@
     	and SNAPSHOT_ID = #{proVerUid}
     	and PRO_APP_ID = #{proAppId}
     </select>
+    
+    <delete id="deleteByIds" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+    	delete from BPM_ACTIVITY_META
+    	where BPD_ID = #{bpdId}
+    	and PRO_APP_ID = #{proAppId}
+    </delete>
 </mapper>

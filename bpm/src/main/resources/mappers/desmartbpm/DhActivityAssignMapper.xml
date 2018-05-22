@@ -114,9 +114,12 @@
     where activity_id = #{activityId}
   </select>
   
-  <delete id="deleteByActivityId" parameterType="string">
+  <delete id="deleteByActivityIds" parameterType="list">
       delete from DH_ACTIVITY_ASSIGN 
-      where activity_id = #{activityId}
+      where activity_id in
+      <foreach collection="list" item="item" open="(" separator="," close=")"> 
+      	#{item}
+      </foreach>
   </delete>
   
   <insert id="insertBatch"  parameterType="list">

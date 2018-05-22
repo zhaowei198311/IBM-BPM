@@ -41,7 +41,15 @@ public interface BpmActivityMetaMapper {
      * @return
      */
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
-    
+    /**
+     * 
+     * @Title: queryByPrimaryKey  
+     * @Description: 根据ACTIVITY_ID查找  
+     * @param @param activityId
+     * @param @return  
+     * @return BpmActivityMeta  
+     * @throws
+     */
     BpmActivityMeta queryByPrimaryKey(String activityId);
     
     /**
@@ -64,8 +72,24 @@ public interface BpmActivityMetaMapper {
      */
     BpmActivityMeta getActivityIdByIdAndName(Map<String, Object> param);
     
-    
+    /**
+     * 
+     * @Title: getActivityIdByIds  
+     * @Description: 根据ids查找ACTIVITY_ID  
+     * @param @param param
+     * @param @return  
+     * @return BpmActivityMeta  
+     * @throws
+     */
     BpmActivityMeta getActivityIdByIds(Map<String, Object> param);
-    
-    
+    /**
+     * 
+     * @Title: 根据BPD_ID,PRO_APP_ID删除流程节点元素  
+     * @Description: TODO  
+     * @param @param bpmActivityMeta
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteByIds(BpmActivityMeta bpmActivityMeta);
 }
