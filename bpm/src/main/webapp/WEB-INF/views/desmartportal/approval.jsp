@@ -133,8 +133,6 @@
 				</tbody>
 			</table>
 			<div id="formSet"></div>
-			<table class="layui-table">
-				</colgroup>
 				<div class="option_container">
 					<p class="title_p" style="margin-top: 10px;">本环节审批要求</p>
 					<div class="layui-form">
