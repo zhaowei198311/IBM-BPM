@@ -65,7 +65,7 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                  <th><input type="checkbox" id="select_all_check" name="" title='全选' lay-skin="primary"> 序号</th>
+                                  <th>序号</th>
                                   <th>流程元数据名称</th>
                                   <th>流程应用库id</th>
                                   <th>流程图id</th>
@@ -460,14 +460,13 @@
             	$("#exposed_table_container").css("display","block");
             })
             
-            // 全选当页元数据 
-            $('#select_all_check').click(function() {
-            	if ($(this).prop('checked') == true) {
-            		$("[name='proMeta_check']").prop('checked', true);
-            	} else {
-            		$("[name='proMeta_check']").prop('checked', false);
-            	}
-            });
+            
+            $("#proMet_table").on("click", ":checkbox", function(){
+		        if ($(this).prop("checked")) {
+		            $("#proMet_table :checkbox").prop("checked", false);
+		            $(this).prop("checked", true);
+		        }
+		    });
             
             // 确认添加
             $('#bind_meta_btn').click(function() {
