@@ -30,9 +30,9 @@
 						        <div class="layui-input-block">
 						            <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
 									  	<option value="">任务类型</option>
-									  	<option value="sign">sign</option>
-									  	<option value="normal">normal</option>
-									  	<option value="transfer">transfer</option>
+									  	<option value="normal">一般任务</option>
+									  	<option value="sign">会签任务</option>
+									  	<option value="transfer">加签任务</option>
 									</select>
 						        </div>
 					       </div>					    	     
