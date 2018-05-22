@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
@@ -37,6 +38,7 @@ import com.github.pagehelper.PageInfo;
 * @date 2018年5月18日  
 */
 @Service
+@Transactional
 public class DhAgentServiceImpl implements DhAgentService {
 	@Autowired
 	private DhAgentMapper dhAgentMapper;
