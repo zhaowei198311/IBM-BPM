@@ -207,14 +207,6 @@ public class MenusController {
 	public ModelAndView approval(@RequestParam(value="taskUid") String taskUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		Map<String,Object> resultMap = dhTaskInstanceService.taskInfo(taskUid);
-		
-		//环节选人
-		String proUid=String.valueOf(resultMap.get("proUid"));
-		String proAppId=String.valueOf(resultMap.get("proAppId"));
-		String proVerUid=String.valueOf(resultMap.get("proVerUid"));
-		mv.addObject("activityMetaList", menusService.activityHandler(proUid, proAppId, proVerUid));
-		
-		
 		mv.addAllObjects(resultMap);
 		return mv;
 	}
