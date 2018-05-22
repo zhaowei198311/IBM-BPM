@@ -68,6 +68,9 @@
 </head>
 <body>
 	<div class="search_area top_btn">
+		
+		 <input id="activityId"  value="${activityId}" type="hidden">
+			
 		<input id="formId" value="${formId}" style="display: none;"> <input
 			id="proUid" value="${proUid}" style="display: none;"> <input
 			id="proAppId" value="${proAppId}" style="display: none;"> <input
