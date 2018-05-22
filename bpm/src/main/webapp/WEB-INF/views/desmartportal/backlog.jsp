@@ -29,19 +29,14 @@
 					          	<label class="layui-form-label" style="cursor:pointer;">刷新</label>
 						        <div class="layui-input-block">
 						            <select class="layui-input-block group_select" name="group" lay-verify="required">
-									  	<option value="">分组</option>
-									  	<option value="01">不分组</option>
-									  	<option value="02">按类型分组</option>
-									  	<option value="03">按任务创建分组</option>
-									  	<option value="04">按任务创建人所在部门分组</option>
-									  	<option value="05">按优先级分组</option>
+									  	<option value="">任务类型</option>
+									  	<option value="sign">sign</option>
+									  	<option value="normal">normal</option>
+									  	<option value="transfer">transfer</option>
 									</select>
 						        </div>
 					       </div>					    	     
 					    </div>
-					</div>
-					<div class="layui-col-xs2">
-				    	<input type="text" placeholder="来自"  class="layui-input">
 					</div>
 					<div class="layui-col-xs2">
 						<input type="text" placeholder="任务标题"  class="layui-input">
