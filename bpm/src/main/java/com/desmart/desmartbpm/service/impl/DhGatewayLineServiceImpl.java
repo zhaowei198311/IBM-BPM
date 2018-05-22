@@ -70,7 +70,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
         
         List<Map<String, Object>> prepareData = prepareData(proAppId, proUid, proVerUid);
         analysisData(prepareData, dhProcessDefinition);
-        return null;
+        return ServerResponse.createBySuccess();
     }
     
     public boolean needGenerateGatewayLine(String proAppId, String proUid, String proVerUid) {
@@ -191,11 +191,13 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                     for (DhGatewayLine gatewayLine : gatewayLineList) {
                        if (StringUtils.equals("FALSE", gatewayLine.getIsDefault())) {
                            String condition = idConditionMap.get(gatewayLine.getActivityBpdId());
-                           int firstIndex = condition.indexOf("\"");
-                           int lastIndex = condition.lastIndexOf("\"");
-                           if (firstIndex < lastIndex) {
-                               condition = condition.substring(firstIndex+1, lastIndex);
-                               gatewayLine.setRouteResult(condition);
+                           if (condition != null) {
+                               int firstIndex = condition.indexOf("\"");
+                               int lastIndex = condition.lastIndexOf("\"");
+                               if (firstIndex < lastIndex) {
+                                   condition = condition.substring(firstIndex+1, lastIndex);
+                                   gatewayLine.setRouteResult(condition);
+                               }
                            }
                        } 
                     }
