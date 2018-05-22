@@ -52,7 +52,7 @@
 									<i class="icon-trash icon-white"></i>清空
 								</button>
 								<button type="button" class="btn btn-primary" onclick="returnFormManage()">
-									<i class="icon-chevron-down icon-white"></i>返回
+									<i class="glyphicon glyphicon-share-alt"></i>返回
 								</button>
 							</div>
 						</li>
