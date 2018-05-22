@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
@@ -16,6 +17,7 @@ import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 
 @Service
+@Transactional
 public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Autowired
 	private BpmFormFieldMapper bpmFormFieldMapper;
