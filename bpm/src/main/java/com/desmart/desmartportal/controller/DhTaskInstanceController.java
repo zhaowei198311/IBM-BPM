@@ -3,10 +3,13 @@
  */
 package com.desmart.desmartportal.controller;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,8 +47,9 @@ public class DhTaskInstanceController {
 	 */
 	@RequestMapping(value = "/queryTaskByReceived")
 	@ResponseBody
-	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,@DateTimeFormat(pattern ="yyyy-MM-dd")Date initTime) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+		taskInstance.setTaskInitDate(initTime);
 		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);		
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
