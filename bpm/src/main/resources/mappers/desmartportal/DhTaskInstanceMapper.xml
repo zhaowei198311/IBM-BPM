@@ -82,7 +82,8 @@
 				AND TASK_FINISH_DATE = #{taskFinishDate}
 			</if>
 			<if test="taskDueDate != null ">
-				AND TASK_DUE_DATE = #{taskDueDate}
+				AND TASK_DUE_DATE  &gt;= to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_DUE_DATE  &lt;= to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
 			<if test="taskRiskDate != null ">
 				AND TASK_RISK_DATE = #{taskRiskDate}
