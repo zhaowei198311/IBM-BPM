@@ -65,7 +65,7 @@
 				  	<div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
 					    	<p class="table_list"><i class="layui-icon">&#xe61d;</i>共3条任务</p>
-							<table class="layui-table backlog_table">
+							<table class="layui-table backlog_table" lay-even lay-skin="nob">
 								<colgroup>
 								    <col width="60">
 								    <col width="100">
