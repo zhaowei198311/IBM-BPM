@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.service.DhProcessService;
+import com.desmart.desmartportal.util.http.HttpClientUtils;
 
 /**  
 * <p>Title: 流程controller</p>  
@@ -46,11 +47,13 @@ public class DhProcessController {
 	
 	@RequestMapping(value = "/viewProcess")
 	@ResponseBody
-	public void viewProcess() {
-		// 查看流程图 需要流程实例
-		
+	public String viewProcess(String insId) {
+		// 查看流程图 需要流程实例  这一步目的是 去 掉用IBM 做一次 登陆验证
+		HttpClientUtils httpUtils = new HttpClientUtils();
+		String url = "http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId="+insId;
+		httpUtils.checkApiLogin("get", url, null);
+		return url;
 	}
-	
 	
 	///
 }

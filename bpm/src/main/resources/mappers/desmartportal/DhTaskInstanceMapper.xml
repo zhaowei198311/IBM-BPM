@@ -120,6 +120,16 @@
 		</where> 
 	</select>
 	
+	<!-- 用户查询代办 -->
+	<select id="selectByusrUidFinsh" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) 
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			USR_UID = #{usrUid} AND TASK_STATUS = '32'
+		</where> 
+	</select>
+	
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
 		UPDATE 
 		DH_TASK_INSTANCE

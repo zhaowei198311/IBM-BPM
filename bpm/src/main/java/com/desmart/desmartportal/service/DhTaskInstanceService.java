@@ -31,6 +31,8 @@ public interface DhTaskInstanceService {
 	
 	int selectByusrUid(String usrUid);
 	
+	int selectByusrUidFinsh(String usrUid);
+	
 	ServerResponse<PageInfo<List<DhProcessInstance>>> selectTaskByUser(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize);
 	
 	int getMaxTaskIdInDb();
@@ -50,7 +52,7 @@ public interface DhTaskInstanceService {
 	/**
 	 * 完成任务
 	 */
-	public ServerResponse perform(String tkkid);
+	public ServerResponse perform(String tkkid,String user);
 	
 	/**
 	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录

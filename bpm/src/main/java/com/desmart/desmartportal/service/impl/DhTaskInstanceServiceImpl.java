@@ -248,7 +248,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 *
 	 */
 	@Override
-	public ServerResponse perform(String tkkid) {
+	public ServerResponse perform(String tkkid,String user) {
 		log.info("完成任务开始......");
 		try {
 			HttpReturnStatus result = new HttpReturnStatus();
@@ -344,5 +344,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid) {
 		// TODO Auto-generated method stub
 		return dhTaskInstanceMapper.selectByInsUidAndTaskTypeCondition(insUid);
+	}
+
+	/** 
+	 * 已办任务
+	 */
+	@Override
+	public int selectByusrUidFinsh(String usrUid) {
+		log.info("已办任务总数查询开始......");
+		try {
+			return dhTaskInstanceMapper.selectByusrUidFinsh(usrUid); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("已办任务总数查询结束......");
+		return 0;
 	}
 }

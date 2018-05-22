@@ -88,4 +88,17 @@ public class UsersController {
 		}
 		return dhTaskInstanceService.selectByusrUid(userId);
 	}
+	
+	/**
+	 * 已办任务
+	 * @return 
+	 */
+	@RequestMapping(value = "/todoFinshTask")
+	@ResponseBody
+	public int todoFinshTask(String userId) {
+		if(userId==null) {
+			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		}
+		return dhTaskInstanceService.selectByusrUidFinsh(userId);
+	}
 }

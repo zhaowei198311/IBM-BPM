@@ -102,13 +102,13 @@
 					      <td class="td_title">工号</td>
 					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">姓名</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="测试用户" autocomplete="off" class="layui-input"></td>
 					    </tr>
 					    <tr>
 					      <td class="td_title">创建日期</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="2018-03-12" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">金额</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="11453" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">所属部门</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="信息部" autocomplete="off" class="layui-input"></td>
 					    </tr>
 					</tbody>
 				</table>

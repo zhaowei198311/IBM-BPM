@@ -71,4 +71,10 @@ public class DhTaskInstanceController {
 		taskInstance.setTaskDueDate(dueTime);
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
+	
+	@RequestMapping(value = "/finshedTask")
+	@ResponseBody
+	private ServerResponse finshedTask(@RequestParam(value="taskId") String tkkid,@RequestParam(value="user") String user) {
+		return dhTaskInstanceService.perform(tkkid,user);
+	}
 }

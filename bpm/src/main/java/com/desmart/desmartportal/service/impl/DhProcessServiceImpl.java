@@ -165,7 +165,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 					}
 				}
 				// 默认发起 提交第一个环节
-				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")));
+				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")),String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 				// 任务完成后 保存到流转信息表里面
 				DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 				dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));

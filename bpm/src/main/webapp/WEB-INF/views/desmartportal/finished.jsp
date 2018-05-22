@@ -142,6 +142,9 @@
 		$(document).ready(function (){
 			// 加载数据
 			getTaskInstanceInfo();
+			// 定数刷新
+			getUserTask();
+			window.setInterval(getUserTask, 60000);
 		})
 		
 		function getTaskInstanceInfo(){
@@ -161,6 +164,20 @@
 					if(result.status == 0){
 						drawTable(result.data);
 					}
+				}
+			})
+		}
+		
+		// 获取用户有多少已办
+		function getUserTask(){
+			$.ajax({
+				url : 'user/todoFinshTask',
+				type : 'POST',
+				dataType : 'text',
+				data : {},
+				success : function(result){
+					// 渲染到已办
+					$("#daiban_icon").text(result);
 				}
 			})
 		}

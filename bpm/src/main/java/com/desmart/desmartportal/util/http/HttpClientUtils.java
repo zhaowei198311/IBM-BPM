@@ -513,7 +513,7 @@ public class HttpClientUtils {
 			context.setCredentialsProvider(credsProvider);
 			HttpGet httpget = new HttpGet(url);
 			CloseableHttpResponse httpResponse = httpClient.execute(httpget, context);
-		//	msg = org.apache.http.util.EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+			msg = org.apache.http.util.EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 			return msg;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -111,25 +111,17 @@
 						</th>
 					</tr>
 					<tr>
-						<td class="td_title">工号</td>
-						<td><input type="text" name="title" required
-							lay-verify="required" value="00003" autocomplete="off"
-							class="layui-input"></td>
-						<td class="td_title">姓名</td>
-						<td><input type="text" name="title" required
-							lay-verify="required" value="00003" autocomplete="off"
-							class="layui-input"></td>
-					</tr>
-					<tr>
-						<td class="td_title">创建日期</td>
-						<td><input type="text" name="title" required
-							lay-verify="required" value="2018-03-12" autocomplete="off"
-							class="layui-input"></td>
-						<td class="td_title">金额</td>
-						<td><input type="text" name="title" required
-							lay-verify="required" value="11453" autocomplete="off"
-							class="layui-input"></td>
-					</tr>
+					      <td class="td_title">工号</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">姓名</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="测试用户" autocomplete="off" class="layui-input"></td>
+					    </tr>
+					    <tr>
+					      <td class="td_title">创建日期</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
+					      <td class="td_title">所属部门</td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="信息部" autocomplete="off" class="layui-input"></td>
+					    </tr>
 				</tbody>
 			</table>
 			<div id="formSet"></div>
@@ -450,25 +442,35 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 		}
 	
 	function processView(insId){
-		layer.open({
-			type : 2,
-			title : '流程图',
-			shadeClose : true,
-			shade : 0.8,
-			area : [ '790px', '580px' ],
-			content : 'http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId='+insId
-			});
+		$.ajax({
+			url : 'process/viewProcess',
+			type : 'post',
+			dataType : 'text',
+			data : {
+				insId : insId
+			},
+			success : function(result){
+				layer.open({
+					type : 2,
+					title : '流程图',
+					shadeClose : true,
+					shade : 0.8,
+					area : [ '790px', '580px' ],
+					content : result
+					});
+			}
+		})
 	}
 	
 	function agree(taskId){
 		var user = $(".getUser").val().substring(0,8);
 		$.ajax({
-			url : '',
+			url : 'taskInstance/finshedTask',
 			type : 'POST',
-			dataType : 'json',
+			dataType : 'text',
 			data : {
 				taskId : taskId,
-				proAppId : user
+				user : user
 			},
 			beforeSend : function(){
 				index = layer.load(1);
