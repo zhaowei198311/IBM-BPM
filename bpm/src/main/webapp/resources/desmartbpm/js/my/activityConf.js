@@ -138,7 +138,21 @@ layui.use('form', function(){
 $(function(){
     initCollapse();
     loadActivityConf(firstHumanMeteConf);
-
+    
+    $("#chooseTrigger_container").on("click", ":checkbox", function(){
+        if ($(this).prop("checked")) {
+            $("#chooseTrigger_container :checkbox").prop("checked", false);
+            $(this).prop("checked", true);
+        }
+    });
+    
+    $("#form_tbody").on("click", ":checkbox", function(){
+    	if ($(this).prop("checked")) {
+    		$("#form_tbody :checkbox").prop("checked", false);
+    		$(this).prop("checked", true);
+    	}
+    });
+    
     // 校验规则
     $('#config_form').validate({
         rules : {

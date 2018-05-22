@@ -45,6 +45,13 @@ $(function() {
         window.history.back();
     });
 
+    $("#chooseTrigger_container").on("click", ":checkbox", function(){
+        if ($(this).prop("checked")) {
+            $("#chooseTrigger_container :checkbox").prop("checked", false);
+            $(this).prop("checked", true);
+        }
+    });
+    
     // “保存”按钮
     $("#save_btn").click(function () {
         if (!$("#form1").valid() || !$("#form4").valid()) {

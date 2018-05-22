@@ -415,6 +415,14 @@ $(function() {
 			}
 		})		
 	});
+	
+	// checkbox排他选择
+	$("#definitionList_tbody").on("click", ":checkbox", function(){
+		if ($(this).prop("checked")) {
+			$("#definitionList_tbody :checkbox").prop("checked", false);
+			$(this).prop("checked", true);
+		}
+	});
 });
 
 function similarList(data){

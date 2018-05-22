@@ -59,7 +59,7 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                  <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
+                                  <th>序号</th>
                                   <th>流程名称</th>
                                   <th>快照号</th>
                                   <th>快照名称</th>
