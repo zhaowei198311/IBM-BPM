@@ -23,7 +23,9 @@
 				width: 100%;
 				height: 100%;
 			}
-			
+			.display_content3{
+				width:800px;
+			}
 			.display_content_copy {
 				overflow-y: auto;
 				color: #717171;
@@ -54,7 +56,7 @@
 						        <button class="layui-btn" id="searchForm_btn">查询</button>
 						        <button class="layui-btn create_btn">新增</button>
 						        <button class="layui-btn delete_btn" onclick="deleteForm();">删除</button>
-						        <button class="layui-btn copy_btn">复制表单到当前指定流程版本</button>
+						        <button class="layui-btn copy_btn">从其它流程复制</button>
 							</div>
 						</div>
 					</div>
@@ -72,8 +74,8 @@
 							      <th><input type="checkbox" name="allSel" onclick="onClickHander(this);" title='全选' lay-skin="primary"> 序号</th>
 							      <th>表单名称</th>
 							      <th>表单描述</th>
-							      <th>操作时间</th>
-							      <th>操作人</th>
+							      <th>所属流程名</th>
+							      <th>所属快照名</th>
 							      <th>操作</th>
 							    </tr> 
 							</thead>
@@ -171,8 +173,8 @@
 						      <th>序号</th>
 						      <th>表单名称</th>
 						      <th>表单描述</th>
-						      <th>操作时间</th>
-							  <th>操作人</th>
+						      <th>所属流程名</th>
+						      <th>所属快照名</th>
 						    </tr> 
 						</thead>
 						<tbody id="copy_formInfo">
@@ -219,11 +221,11 @@
 		</div>
 	</body>
 </html>
-	<script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
-	<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.excheck.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.exedit.js"></script>
-	<script>
+<script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.exedit.js"></script>
+<script>
 		// 为翻页提供支持
 	    var pageConfig = {
 	    	pageNum: 1,
@@ -479,17 +481,17 @@
         	for(var i=0; i<list.length; i++) {
         		var formInfo = list[i];
         		var sortNum = startSort + i;
-        		var createTime = "";
                 var updateTime = "";
-                if (formInfo.createTime) {
-                	createTime = common.dateToString(new Date(formInfo.createTime));
-                }
         		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
         					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
-        		            + '<td>'+formInfo.dynDescription+'</td>'
-        		            + '<td>'+createTime+'</td>'
-        		            + '<td>'+formInfo.creatorFullName+'</td>'
+        		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
+        			trs += '<td>'+formInfo.dynDescription+'</td>';
+        		}else{
+        			trs += '<td></td>';
+        		}
+        		trs += '<td>'+formInfo.proMetaName+'</td>'
+        		            + '<td>'+formInfo.proVerName+'</td>'
         		            + '</tr>';
         	}
         	$("#copy_formInfo").append(trs);
@@ -537,19 +539,16 @@
         		var sortNum = startSort + i;
         		var createTime = "";
                 var updateTime = "";
-                if (formInfo.createTime) {
-                	createTime = common.dateToString(new Date(formInfo.createTime));
-                }
         		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
         					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>';
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
-        		   trs += '<td>'+formInfo.dynDescription+'</td>'
+        		   trs += '<td>'+formInfo.dynDescription+'</td>';
         		}else{
-        		   trs += '<td></td>'
+        		   trs += '<td></td>';
         		}
-        		trs += '<td>'+createTime+'</td>'
-        		            + '<td>'+formInfo.creatorFullName+'</td>'
+        		trs += '<td>'+formInfo.proMetaName+'</td>'
+	            			+'<td>'+formInfo.proVerName+'</td>'
         		            + '<td><i class="layui-icon" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'+
         		            ' <i class="layui-icon" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
         		            + '</tr>';
@@ -811,4 +810,4 @@
 		    }  
 		    return pwd;  
 		} 
-	</script>
+</script>
