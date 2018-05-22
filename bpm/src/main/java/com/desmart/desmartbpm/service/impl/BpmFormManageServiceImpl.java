@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
@@ -32,6 +33,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 @Service
+@Transactional
 public class BpmFormManageServiceImpl implements BpmFormManageService{
 	@Autowired
 	private BpmFormManageMapper bpmFormManageMapper;
