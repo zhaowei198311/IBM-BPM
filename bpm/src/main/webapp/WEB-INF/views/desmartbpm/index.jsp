@@ -39,9 +39,24 @@
                         </li>
                         <li class="layui-nav-item">
                         	<a href="<%=basePath%>/formManage/index" target="iframe0"><i class="layui-icon">&#xe62d;</i> 表单管理</a>
+                        	<li class="layui-nav-item"><a href="interfaces/index" target="iframe0"><i class="layui-icon">&#xe614;</i> 接口管理</a></li>
                         </li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe629;</i> 流程实例管理</a></li>
+                        <li class="layui-nav-item">
+						     <a href="javascript:;"><i class="layui-icon">&#xe614;</i> 系统管理</a>
+						    <dl class="layui-nav-child">
+						      <dd><a href="sysUser/organization" target="iframe0">组织管理</a></dd>
+						      <dd><a href="sysUser/user"  target="iframe0">用户管理</a></dd>
+						      <dd><a href="sysRole/role" target="iframe0">业务角色管理</a></dd>
+						      <dd><a href="sysResource/resource_list" target="iframe0">模块资源管理</a></dd>
+						      <dd><a href="sysRole/system_role" target="iframe0">系统角色管理</a></dd>
+						      <dd><a href="sysTeam/group" target="iframe0">角色组管理</a></dd>
+						      <dd><a href="sysDictionary/dictionary" target="iframe0">数据字典</a></dd>
+						      <dd><a href="http://localhost:8080/ssmquartztest/Quarz/QuarzList.jsp" target="iframe0">定时任务管理</a></dd>
+						      <dd><a href="sysUser/globalConfig" target="iframe0">全局配置管理</a></dd>
+						    </dl>
+						</li>
                     </ul>
                 </div>
             </div>
