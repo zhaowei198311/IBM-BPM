@@ -23,14 +23,14 @@ $(function(){
 });
 
 function loadDhApprovalOpinionList(){
-	var aprUid = $("#insUid").val();//流程实例id--ins_uid
+	var insUid = $("#insUid").val();//流程实例id--ins_uid
 	var taskUid = $("#activityId").val();//环节id，activity_id
 	$.ajax({
 	     url:"dhApprovalOpinion/loadDhApprovalOpinion.do",
 	     type : 'POST',
  		 dataType : 'json',
  		 data : {
- 			aprUid:aprUid,
+ 			insUid:insUid,
  			taskUid:taskUid
 			},
 	     success : function(result){
@@ -61,15 +61,15 @@ function loadDhApprovalOpinionList(){
 function save(){
 	var aprOpiComment = layui.layedit.getContent(editIndex);
 	alert(aprOpiComment);
-	var aprStatus = "ok";
-	var aprUid = $("#insUid").val();//流程实例id--ins_uid
+	var aprStatus = "";
+	var insUid = $("#insUid").val();//流程实例id--ins_uid
 	var taskUid = $("#activityId").val();//环节id，activity_id
 	$.ajax({
 	     url:"dhApprovalOpinion/insertDhApprovalOpinion.do",
 	     type : 'POST',
 		 dataType : 'json',
 		 data : {
-			aprUid:aprUid,
+			insUid:insUid,
 			taskUid:taskUid,
 			aprOpiComment:aprOpiComment,
 			aprStatus:aprStatus
