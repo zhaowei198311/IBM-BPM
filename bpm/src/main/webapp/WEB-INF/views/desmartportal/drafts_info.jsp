@@ -79,9 +79,9 @@
 			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">返回草稿箱列表</button>
 		</span>
 	</div>
-	<div class="container" style="margin-left:0px; width: 100%">
-		<div class="content" style="width: 1100px">
-		<table class="layui-table" style="width: 1100px">
+	<div class="container" style="width: 96%">
+		<div class="content">
+		<table class="layui-table">
 					<colgroup>
 					    <col width="150">
 					    <col>
