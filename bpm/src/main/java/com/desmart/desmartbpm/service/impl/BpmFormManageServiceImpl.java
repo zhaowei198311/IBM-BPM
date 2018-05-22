@@ -24,8 +24,10 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.util.SFTPUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -52,6 +54,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalCofigService;
+	
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	private SFTPUtil sftp = new SFTPUtil();
 	
@@ -82,6 +87,15 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			PageHelper.startPage(pageNum, pageSize);
 			//获得的数据
 			List<BpmForm> formList = bpmFormManageMapper.listFormByProDefinition(formTitle,proUid,proVerUid);
+			for(BpmForm bpmForm:formList) {
+				if(null!=dhProcessDefinitionService.getLswSnapshotBySnapshotId(bpmForm.getProVersion())) {
+					String proVerName = dhProcessDefinitionService
+	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
+					bpmForm.setProVerName(proVerName);
+				}
+				String proMetaName = bpmFormManageMapper.queryMetaNameByProUid(bpmForm.getProUid());
+				bpmForm.setProMetaName(proMetaName);
+			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
 			return ServerResponse.createBySuccess(pageInfo);
 		}else{
@@ -94,6 +108,15 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			PageHelper.startPage(pageNum, pageSize);
 			//获得的数据
 			List<BpmForm> formList = bpmFormManageMapper.listFormByProUidList(metaList,formTitle);
+			for(BpmForm bpmForm:formList) {
+				if(null!=dhProcessDefinitionService.getLswSnapshotBySnapshotId(bpmForm.getProVersion())) {
+					String proVerName = dhProcessDefinitionService
+	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
+					bpmForm.setProVerName(proVerName);
+				}
+				String proMetaName = bpmFormManageMapper.queryMetaNameByProUid(bpmForm.getProUid());
+				bpmForm.setProMetaName(proMetaName);
+			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
 			return ServerResponse.createBySuccess(pageInfo);
 		}

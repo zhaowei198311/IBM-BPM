@@ -21,11 +21,14 @@ public class BpmForm {
 	private String creatorFullName;//不是本表，连接查询得到
 	private Date createTime;
 	
+	private String proMetaName;//流程元名，前台显示
+	private String proVerName;//流程快照名
+	
 	public BpmForm() {}
 
 	public BpmForm(String dynUid, String dynTitle, String dynDescription, String dynType, String dynFilename,
 			String dynContent, String proUid, String proVersion, String creator, String creatorFullName,
-			Date createTime) {
+			Date createTime, String proMetaName, String proVerName) {
 		super();
 		this.dynUid = dynUid;
 		this.dynTitle = dynTitle;
@@ -38,6 +41,8 @@ public class BpmForm {
 		this.creator = creator;
 		this.creatorFullName = creatorFullName;
 		this.createTime = createTime;
+		this.proMetaName = proMetaName;
+		this.proVerName = proVerName;
 	}
 
 	public String getDynUid() {
@@ -106,12 +111,25 @@ public class BpmForm {
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
+	public String getProMetaName() {
+		return proMetaName;
+	}
+	public void setProMetaName(String proMetaName) {
+		this.proMetaName = proMetaName;
+	}
+	public String getProVerName() {
+		return proVerName;
+	}
+	public void setProVerName(String proVerName) {
+		this.proVerName = proVerName;
+	}
 
 	@Override
 	public String toString() {
 		return "BpmForm [dynUid=" + dynUid + ", dynTitle=" + dynTitle + ", dynDescription=" + dynDescription
 				+ ", dynType=" + dynType + ", dynFilename=" + dynFilename + ", dynContent=" + dynContent + ", proUid="
 				+ proUid + ", proVersion=" + proVersion + ", creator=" + creator + ", creatorFullName="
-				+ creatorFullName + ", createTime=" + createTime + "]";
+				+ creatorFullName + ", createTime=" + createTime + ", proMetaName=" + proMetaName + ", proVerName="
+				+ proVerName + "]";
 	}
 }

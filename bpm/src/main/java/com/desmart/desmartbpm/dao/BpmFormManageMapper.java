@@ -67,4 +67,9 @@ public interface BpmFormManageMapper {
 	 * 根据表单Id查询绑定的步骤集合
 	 */
 	List<DhStep> isBindStep(String formUid);
+
+	/**
+	 * 根据快照id获得流程元名称
+	 */
+	String queryMetaNameByProUid(String proUid);
 }
