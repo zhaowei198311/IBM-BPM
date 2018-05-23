@@ -32,7 +32,6 @@
 		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
 	</sql>
 	
-	
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
@@ -236,7 +235,7 @@
 			#{taskPriority},
 			#{taskData},
 			#{taskDelegateUser},
-			#{syn_num}
+			#{synNumber}
 		)
 	</insert>
 	

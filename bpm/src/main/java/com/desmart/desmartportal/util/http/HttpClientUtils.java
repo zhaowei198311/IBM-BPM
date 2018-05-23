@@ -44,8 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
     private BpmGlobalConfig bpmGlobalConfig;
-	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
 
 	private static final String USERNAME = "deadmin";
 

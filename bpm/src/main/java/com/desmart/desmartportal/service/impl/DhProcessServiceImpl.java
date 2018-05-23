@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.common.constant.RouteStatus;
+import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -31,6 +33,7 @@ import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -86,23 +89,22 @@ public class DhProcessServiceImpl implements DhProcessService {
 	@Transactional
 	public ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo,
 			String approval) {
-		log.info("发起流程开始......");
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(verUid)) {
+            return ServerResponse.createByError();
+        }
+	    log.info("发起流程开始......");
+		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		HttpReturnStatus result = new HttpReturnStatus();
-		// 判断
-		if ("".equals(proUid) && "".equals(proAppId) && "".equals(verUid)) {
-			return ServerResponse.createByError();
-		}
-		Map<String, Object> params = new HashMap<>();
-		params.put("snapshotId", verUid);
-		params.put("processAppId", proAppId);
-		params.put("action", "start");
-		params.put("bpdId", proUid);
-		String str = "{\"pubBo\":{\"creatorId\":\"00011178\"}}";
-		params.put("params", str);
+		
 		// 掉用API 发起一个流程
-		HttpClientUtils httpClientUtils = new HttpClientUtils();
-		result = httpClientUtils.checkApiLogin("post", IBMApiUrl.IBM_API_PROCESS, params);
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		CommonBusinessObject pubBo = new CommonBusinessObject();
+		pubBo.setCreatorId(currentUserUid);
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		result = bpmProcessUtil.startProcess(proAppId, proUid, verUid, pubBo);
 		log.info("掉用API状态码:" + result.getCode());
+		
+		
 		// 如果获取API成功 将返回过来的流程数据 保存到 平台
 		if (result.getCode() == 200) {
 			// 保存数据信息
@@ -124,8 +126,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 			processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
 			processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
 			processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
-			processInstance.setInsInitUser(
-					String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+			processInstance.setInsInitUser(currentUserUid);
 			// 流程数据
 			processInstance.setInsData(dataInfo);
 			dhProcessInstanceService.insertProcess(processInstance);
@@ -144,10 +145,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 				taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 				taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 				// 发起流程上一环节默认 是自己
-				taskInstance.setTaskPreviousUsrUid(
-						String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-				SysUser sysUserName = sysUserMapper.queryByPrimaryKey(
-						String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+				taskInstance.setTaskPreviousUsrUid(currentUserUid);
+				SysUser sysUserName = sysUserMapper.queryByPrimaryKey(currentUserUid);
 				taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
 				// 任务数据
 				taskInstance.setTaskData(dataInfo);
