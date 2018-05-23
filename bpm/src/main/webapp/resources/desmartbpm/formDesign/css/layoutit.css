@@ -345,7 +345,8 @@ body.devpreview {
 	display: none
 }
 
-#editorModal textarea, #downloadModal textarea, #addJSModal textarea {
+#editorModal textarea, #downloadModal textarea, 
+#addJSModal textarea, #editEventModal textarea{
 	width: 100%;
 	height: 280px;
 	resize: none;
