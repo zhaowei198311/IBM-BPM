@@ -32,7 +32,7 @@ import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.util.rest.RestUtil;
-import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
@@ -439,8 +439,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcTime(1.0); // 处理时间 1天
         conf.setActcTimeunit(Const.TimeUnit.DAY);  
         conf.setActcAssignType(DhActivityConfAssignType.NONE.getCode());  // 默认没有处理人
-        conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);  
-        conf.setSignCountVarname(BpmCommonBusObject.OWNER_SIGN_COUNT[0]);
+        conf.setActcAssignVariable(CommonBusinessObject.NEXT_OWNER_VARNAME[0]);  
+        conf.setSignCountVarname(CommonBusinessObject.OWNER_SIGN_COUNT[0]);
         conf.setActcCanEditAttach(Const.Boolean.TRUE); // 是否可以编辑附件
         conf.setActcCanUploadAttach(Const.Boolean.TRUE); // 是否可以上传附件
         conf.setActcCanDelegate(Const.Boolean.TRUE); // 是否允许代理

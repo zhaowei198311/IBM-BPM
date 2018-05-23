@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.BpmRouteConditionResult;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -43,15 +43,15 @@ public class BpmProcessUtils extends BpmRestApiUtils {
         return result;
     }
 
-    public Map<String, HttpReturnStatus> startProcess(HttpServletRequest request, String procAppId, String bpdId, String snapShotId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> startProcess(HttpServletRequest request, String procAppId, String bpdId, String snapShotId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._startProcess(request, procAppId, bpdId, snapShotId, pubBo, routeBo);
     }
 
-    public Map<String, HttpReturnStatus> startProcess(Cookie cookie, String procAppId, String bpdId, String snapShotId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> startProcess(Cookie cookie, String procAppId, String bpdId, String snapShotId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._startProcess(cookie, procAppId, bpdId, snapShotId, pubBo, routeBo);
     }
 
-    private Map<String, HttpReturnStatus> _startProcess(Object webobj, String procAppId, String bpdId, String snapshotId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    private Map<String, HttpReturnStatus> _startProcess(Object webobj, String procAppId, String bpdId, String snapshotId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         HashMap resultMap = new HashMap();
 
         try {

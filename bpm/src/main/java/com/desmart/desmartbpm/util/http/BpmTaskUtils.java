@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.util.JSONUtils;
-import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.BpmRouteConditionResult;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -135,15 +135,15 @@ public class BpmTaskUtils extends BpmRestApiUtils {
         return result;
     }
 
-    public Map<String, HttpReturnStatus> commitTask(HttpServletRequest request, String taskId, String commitNote, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> commitTask(HttpServletRequest request, String taskId, String commitNote, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._commitTask(request, taskId, commitNote, pubBo, routeBo);
     }
 
-    public Map<String, HttpReturnStatus> commitTask(Cookie cookie, String taskId, String commitNote, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> commitTask(Cookie cookie, String taskId, String commitNote, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._commitTask(cookie, taskId, commitNote, pubBo, routeBo);
     }
 
-    private Map<String, HttpReturnStatus> _commitTask(Object webobj, String taskId, String commitNote, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    private Map<String, HttpReturnStatus> _commitTask(Object webobj, String taskId, String commitNote, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         HashMap resultMap = new HashMap();
 
         try {
@@ -301,15 +301,15 @@ public class BpmTaskUtils extends BpmRestApiUtils {
      * @param routeBo  当routeBo的used属性为true时才会进行覆盖
      * @return
      */
-    public Map<String, HttpReturnStatus> setTaskData(HttpServletRequest request, String taskId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> setTaskData(HttpServletRequest request, String taskId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._setTaskData(request, taskId, pubBo, routeBo);
     }
 
-    public Map<String, HttpReturnStatus> setTaskData(Cookie cookie, String taskId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    public Map<String, HttpReturnStatus> setTaskData(Cookie cookie, String taskId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         return this._setTaskData(cookie, taskId, pubBo, routeBo);
     }
 
-    private Map<String, HttpReturnStatus> _setTaskData(Object webobj, String taskId, BpmCommonBusObject pubBo, BpmRouteConditionResult routeBo) {
+    private Map<String, HttpReturnStatus> _setTaskData(Object webobj, String taskId, CommonBusinessObject pubBo, BpmRouteConditionResult routeBo) {
         HashMap resultMap = new HashMap();
 
         try {
@@ -353,7 +353,7 @@ public class BpmTaskUtils extends BpmRestApiUtils {
                             do {
                                 do {
                                     if (!var17.hasNext()) {
-                                        pubBo = (BpmCommonBusObject)JSON.parseObject(newPubBo.toString(), BpmCommonBusObject.class);
+                                        pubBo = (CommonBusinessObject)JSON.parseObject(newPubBo.toString(), CommonBusinessObject.class);
                                         key = "";
                                         if (pubBo != null) {
                                             JSONObject jsoBO = new JSONObject();

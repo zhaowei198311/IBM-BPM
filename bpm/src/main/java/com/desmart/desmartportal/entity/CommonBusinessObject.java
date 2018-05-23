@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BpmCommonBusObject implements Cloneable, Serializable {
-    private static final Logger LOG = LoggerFactory.getLogger(BpmCommonBusObject.class);
+public class CommonBusinessObject implements Cloneable, Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(CommonBusinessObject.class);
     public static final String CREATOR_VARNAME = "creatorId";
     public static final String[] NEXT_OWNER_VARNAME = new String[]{"nextOwners_0", "nextOwners_1", "nextOwners_2", "nextOwners_3", "nextOwners_4", "nextOwners_5", "nextOwners_6", "nextOwners_7", "nextOwners_8", "nextOwners_9", "nextOwners_10", "nextOwners_11", "nextOwners_12", "nextOwners_13", "nextOwners_14", "nextOwners_15", "nextOwners_16", "nextOwners_17", "nextOwners_18", "nextOwners_19", "nextOwners_20"};
     public static final String[] OWNER_SIGN_COUNT = new String[]{"signCount_0", "signCount_1", "signCount_2", "signCount_3", "signCount_4", "signCount_5", "signCount_6", "signCount_7", "signCount_8", "signCount_9", "signCount_10", "signCount_11", "signCount_12", "signCount_13", "signCount_14", "signCount_15", "signCount_16", "signCount_17", "signCount_18", "signCount_19", "signCount_20"};
@@ -79,14 +79,14 @@ public class BpmCommonBusObject implements Cloneable, Serializable {
     private String tag2;
     private String tag3;
 
-    public BpmCommonBusObject() {
+    public CommonBusinessObject() {
     }
 
-    public BpmCommonBusObject clone() {
-        BpmCommonBusObject bo = null;
+    public CommonBusinessObject clone() {
+        CommonBusinessObject bo = null;
 
         try {
-            bo = (BpmCommonBusObject)super.clone();
+            bo = (CommonBusinessObject)super.clone();
         } catch (CloneNotSupportedException var3) {
             bo = null;
             LOG.error("克隆BO对象失败！", var3);

@@ -22,7 +22,7 @@ import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.service.TestService;
 import com.desmart.desmartbpm.util.http.BpmTaskUtils;
-import com.desmart.desmartportal.entity.BpmCommonBusObject;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.BpmRouteConditionResult;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -168,7 +168,7 @@ public class TestController extends BaseWebController {
     	BpmGlobalConfig config = bpmGlobalConfigService.getFirstActConfig();
     	BpmTaskUtils taskUtils = new BpmTaskUtils(config, request.getServletContext());
     	
-    	BpmCommonBusObject pubBo = new BpmCommonBusObject();
+    	CommonBusinessObject pubBo = new CommonBusinessObject();
 		pubBo.setCreatorId("changeMessage");
     	BpmRouteConditionResult routeBo = new BpmRouteConditionResult();
 		routeBo.setResult_0("true");
