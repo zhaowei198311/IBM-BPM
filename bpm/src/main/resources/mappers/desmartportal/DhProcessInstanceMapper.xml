@@ -23,6 +23,7 @@
 		<result column="INS_DELAY_DURATION" 			property="insDelayDuration"/>
 		<result column="INS_DRIVE_FOLDER_UID" 			property="insDriveFolderUid"/>
 		<result column="INS_ROUTING_DATA" 				property="insRoutingData"/>
+		<result column="COMPANY_NUMBER" 				property="companyNumber"/>
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -30,7 +31,7 @@
 		INS_PARENT,INS_STATUS,INS_STATUS_ID,PRO_APP_ID,
 		PRO_UID,PRO_VER_UID,INS_INIT_USER,INS_CREATE_DATE,
 		INS_INIT_DATE,INS_FINISH_DATE,INS_UPDATE_DATE,INS_DATA,
-		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA
+		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA, COMPANY_NUMBER
 	</sql>
 	
     <sql id="realationColumnList">
@@ -38,7 +39,7 @@
         ins.INS_PARENT,ins.INS_STATUS,ins.INS_STATUS_ID,ins.PRO_APP_ID,
         ins.PRO_UID,ins.PRO_VER_UID,ins.INS_INIT_USER,ins.INS_CREATE_DATE,
         ins.INS_INIT_DATE,ins.INS_FINISH_DATE,ins.INS_UPDATE_DATE,ins.INS_DATA,
-        ins.INS_DURATION,ins.INS_DELAY_DURATION,ins.INS_DRIVE_FOLDER_UID,ins.INS_ROUTING_DATA
+        ins.INS_DURATION,ins.INS_DELAY_DURATION,ins.INS_DRIVE_FOLDER_UID,ins.INS_ROUTING_DATA, ins.COMPANY_NUMBER
     </sql>
 	
 	<select id="selectAllProcess" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
@@ -106,6 +107,9 @@
 			</if>
 			<if test="insRoutingData != null and insRoutingData != ''">
 				AND INS_ROUTING_DATA = #{insRoutingData}
+			</if>
+			<if test="companyNumber != null and companyNumber != ''">
+				AND COMPANY_NUMBER = #{companyNumber}
 			</if>
 		</where>
 	</select>
@@ -181,7 +185,10 @@
 				INS_DRIVE_FOLDER_UID = #{insDriveFolderUid},
 			</if>
 			<if test="insRoutingData != null and insRoutingData != ''">
-				INS_ROUTING_DATA = #{insRoutingData}
+				INS_ROUTING_DATA = #{insRoutingData},
+			</if>
+			<if test="companyNumber != null and companyNumber != ''">
+				COMPANY_NUMBER = #{companyNumber}
 			</if>
 			<where>
 				INS_UID = #{insUid}
@@ -223,7 +230,8 @@
 			#{insDuration},
 			#{insDelayDuration},
 			#{insDriveFolderUid},
-			#{insRoutingData}
+			#{insRoutingData},
+			#{companyNumber}
 		)
 	</insert>
 	

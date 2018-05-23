@@ -204,7 +204,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         return uidList;
     }
-
+    
+    /**
+     * 从引擎中获得新的任务列表
+     * @return
+     */
     private List<LswTask> getNewTasks() {
         int maxTaskId = dhTaskInstanceService.getMaxTaskIdInDb();
         return lswTaskMapper.listNewTasks(maxTaskId);

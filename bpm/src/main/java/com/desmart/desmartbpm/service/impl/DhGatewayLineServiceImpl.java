@@ -199,6 +199,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                     
                     List<DatRule> ruleList = new ArrayList<>();
                     for (DhGatewayLine gatewayLine : gatewayLineList) {
+                       // 如果不是默认的线路
                        if (StringUtils.equals("FALSE", gatewayLine.getIsDefault())) {
                            String condition = idConditionMap.get(gatewayLine.getActivityBpdId());
                            if (condition != null) {

@@ -87,6 +87,8 @@ public class DhProcessInstance {
 	// 非流程表数据
 	private String proName; // 流程名
 	
+	private String companyNumber; // 公司编码
+	
 	/**
 	 * @return the insUid
 	 */
@@ -379,6 +381,14 @@ public class DhProcessInstance {
         this.proName = proName;
     }
 
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
     /**
 	 * @param insUid
 	 * @param insTitle
@@ -442,6 +452,6 @@ public class DhProcessInstance {
                 + insDuration + ", insDelayDuration=" + insDelayDuration
                 + ", insDriveFolderUid=" + insDriveFolderUid
                 + ", insRoutingData=" + insRoutingData + ", proName=" + proName
-                + "]";
+                + ", companyNumber=" + companyNumber + "]";
     }
 }
