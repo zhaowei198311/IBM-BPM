@@ -185,6 +185,9 @@
 										<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showTextModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
+										<button type="button" class="btn btn-mini" onclick="textAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button>
 									</span>
 									<div class="preview">单行文本框</div>
 									<div class="view">
@@ -210,6 +213,9 @@
 										<button type="button" class="btn btn-mini edit-attr" title="edit-number" onclick="showNumberModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
+										<button type="button" class="btn btn-mini" onclick="textAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button>
 									</span>
 									<div class="preview">数字文本框</div>
 									<div class="view">
@@ -234,7 +240,10 @@
 									<span class="configuration">
 										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showDateModal(this);"
 												role="button" data-toggle="modal">编辑
-										</button>  
+										</button> 
+										<button type="button" class="btn btn-mini" onclick="textAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button> 
 									</span>
 									<div class="preview">日期文本框</div>
 									<div class="view">
@@ -261,6 +270,9 @@
 										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showTextareaModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
+										<button type="button" class="btn btn-mini" onclick="textAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button>
 									</span>
 									<div class="preview">多行文本框</div>
 									<div class="view">
@@ -285,6 +297,9 @@
 									<span class="configuration">
 										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showSelectModal(this);"
 												role="button" data-toggle="modal">编辑
+										</button>
+										<button type="button" class="btn btn-mini" onclick="selectAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
 										</button>  
 									</span>
 									<div class="preview">下拉列表框</div>
@@ -313,6 +328,9 @@
 										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showRadioModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
+										<button type="button" class="btn btn-mini" onclick="clickAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button> 
 									</span>
 									<div class="preview">单选框</div>
 									<div class="view">
@@ -340,6 +358,9 @@
 										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showCheckboxModal(this);"
 												role="button" data-toggle="modal">编辑
 										</button>  
+										<button type="button" class="btn btn-mini" onclick="clickAddEventModal(this);"
+												role="button" data-toggle="modal">添加事件
+										</button> 
 									</span>
 									<div class="preview">多选框</div>
 									<div class="view">
@@ -1539,6 +1560,159 @@
 			<div class="modal-footer">
 				<a id="save-dataTable-content" class="btn btn-primary">保存</a>
 				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#data-table-warn").modal("hide");'>取消</a>
+			</div>
+		</div>
+		
+		<!-- 添加组件事件的方法 -->
+		<div class="modal hide fade" role="dialog" id="textAddEventModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>给组件添加事件</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-1 control-label">
+							onchange
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										组件的值改变事件</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<textarea rows="1" class="layui-textarea" title="onchange" onclick="showEventModal(this)"
+								 style="resize:none;width:100%"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-1 control-label">
+							onfocus
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										组件的获得焦点事件</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<textarea rows="1" class="layui-textarea" title="onfocus" onclick="showEventModal(this)"
+								style="resize:none;width:100%"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-1 control-label">
+							onkeypress
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										组件的键盘点击事件</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<textarea rows="1" class="layui-textarea" title="onkeypress" onclick="showEventModal(this)"
+								style="resize:none;width:100%"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" data-dismiss="modal" onclick="saveEvent();">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+			</div>
+		</div>
+		
+		<div class="modal hide fade" role="dialog" id="selectAddEventModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>给组件添加事件</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-1 control-label">
+							onchange
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										组件的值改变事件</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<textarea rows="1" class="layui-textarea" title="onchange" onclick="showEventModal(this)"
+								 style="resize:none;width:100%"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" data-dismiss="modal" onclick="saveSelectEvent();">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+			</div>
+		</div>
+		
+		<div class="modal hide fade" role="dialog" id="clickAddEventModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>给组件添加事件</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-1 control-label">
+							onclick
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										组件的点击事件</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<textarea rows="1" class="layui-textarea" title="onclick" onclick="showEventModal(this)"
+								 style="resize:none;width:100%"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" data-dismiss="modal" onclick="saveClickEvent();">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal">取消</a>
+			</div>
+		</div>
+		
+		<!-- 修改组件事件脚本 -->
+		<div class="modal hide fade" role="dialog" id="editEventModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3></h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					<textarea></textarea>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" data-dismiss="modal" onclick="saveEditEvent();">确认</a>
+				<a class="btn btn-primary" data-dismiss="modal" id="cancelEditEvent">取消</a>
 			</div>
 		</div>
 		

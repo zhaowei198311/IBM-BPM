@@ -1,5 +1,81 @@
 var view = null;
 var oldName = "";
+var title = "";
+//显示填写事件脚本的js
+function showEventModal(obj){
+	$("#editEventModal").modal("show");
+	title = $(obj).attr("title");
+	$("#editEventModal textarea").val($(obj).val());
+	$("#editEventModal .modal-header h3").text("给组件添加"+title+"事件");
+}
+
+function saveEditEvent(){
+	var eventStr = $("#editEventModal textarea").val();
+	$("textarea[title='"+title+"']").val(eventStr);
+}
+
+function saveEvent(){
+	var inputObj = view.find("input");
+	if(view.find("input").length==0){
+		inputObj = view.find("textarea");
+	}
+	var onchangeStr = $("#textAddEventModal textarea[title='onchange']").val().replace(/\"/g,"\"");
+	var onfocusStr = $("#textAddEventModal textarea[title='onfocus']").val().replace(/\"/g,"\"");
+	var onkeypreStr = $("#textAddEventModal textarea[title='onkeypress']").val().replace(/\"/g,"\"");
+	inputObj.attr({"onchange":onchangeStr,"onfocus":onfocusStr,"onkeypress":onkeypreStr});
+}
+
+//显示给文本框添加事件的模态框
+function textAddEventModal(obj){
+	view = $(obj).parent().next().next();
+	var inputObj = view.find("input");
+	if(view.find("input").length==0){
+		inputObj = view.find("textarea");
+	}
+	var onchangeStr = inputObj.attr("onchange");
+	var onfocusStr = inputObj.attr("onfocus");
+	var onkeypreStr = inputObj.attr("onkeypress");
+	$("#textAddEventModal textarea[title='onchange']").val(onchangeStr);
+	$("#textAddEventModal textarea[title='onfocus']").val(onfocusStr);
+	$("#textAddEventModal textarea[title='onkeypress']").val(onkeypreStr);
+	$("#textAddEventModal").modal("show");
+}
+
+//显示填写select组件事件脚本的js
+function saveSelectEvent(){
+	var inputObj = view.find("select");
+	var onchangeStr = $("#selectAddEventModal textarea[title='onchange']").val().replace(/\"/g,"\"");
+	inputObj.attr({"onchange":onchangeStr});
+}
+
+function selectAddEventModal(obj){
+	view = $(obj).parent().next().next();
+	var onchangeStr = view.find("select").attr("onchange");
+	$("#selectAddEventModal textarea[title='onchange']").val(onchangeStr);
+	$("#selectAddEventModal").modal("show");
+}
+
+//给单选框、复选框加点击事件
+function saveClickEvent(){
+	var subObj = view.find("input[type='radio']");
+	if(subObj.length==0){
+		subObj = view.find("input[type='checkbox']");
+	}
+	var onclickStr = $("#clickAddEventModal textarea[title='onclick']").val().replace(/\"/g,"\"");
+	subObj.attr({"onclick":onclickStr});
+}
+
+function clickAddEventModal(obj){
+	view = $(obj).parent().next().next();
+	var subObj = view.find("input[type='radio']");
+	if(subObj.length==0){
+		subObj = view.find("input[type='checkbox']");
+	}
+	var onclickStr = subObj.attr("onclick");
+	$("#clickAddEventModal textarea[title='onclick']").val(onclickStr);
+	$("#clickAddEventModal").modal("show");
+}
+
 //显示设置文本属性的模态框
 function showTextModal(obj){
 	$("#textModal").modal("show");

@@ -303,7 +303,11 @@ function downloadLayoutSrc() {
 			["data-slide"],
 			["col"],
 			["col-type"],
-			["regx"]
+			["regx"],
+			["onclick"],
+			["onchange"],
+			["onfocus"],
+			["onkeypress"]
 		]
 	});
 	$("#download-layout").html(formatSrc);
