@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhTask;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
@@ -76,5 +77,20 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	private ServerResponse finshedTask(@RequestParam(value="taskId") String tkkid,@RequestParam(value="user") String user) {
 		return dhTaskInstanceService.perform(tkkid,user);
+	}
+	
+	/**
+	 * |
+	 * @Title: queryProgressBar  
+	 * @Description: 查询审批进度  
+	 * @param @param bpmActivityMeta
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	@RequestMapping(value = "/queryProgressBar")
+	@ResponseBody
+	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid){
+		return dhTaskInstanceService.queryProgressBar(proUid, proVerUid, proAppId, taskUid);
 	}
 }

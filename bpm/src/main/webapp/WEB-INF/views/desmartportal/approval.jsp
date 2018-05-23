@@ -66,16 +66,17 @@
 </head>
 <body>
 	<div class="search_area top_btn">
-		<input id="formId" value="${formId}" style="display: none;"> <input
-			id="proUid" value="${proUid}" style="display: none;"> <input
-			id="proAppId" value="${proAppId}" style="display: none;"> <input
-			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
-			id="insUid" value="${insUid}" style="display: none;"><input
-			id="insId" value="${insId}" style="display: none;"> <input
-			id="taskId" value="${taskId}" style="display: none;"><span
-			id="insData" value='${insData}'></span> <span id="listStr"
-			value='${listStr}'></span><span
-			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
+		<input id="formId" value="${formId}" style="display: none;">
+		<input id="proUid" value="${proUid}" style="display: none;">
+		<input id="proAppId" value="${proAppId}" style="display: none;">
+		<input id="proVerUid" value="${proVerUid}" style="display: none;"> 
+		<input id="insUid" value="${insUid}" style="display: none;">
+		<input id="insId" value="${insId}" style="display: none;">
+		<input id="taskId" value="${taskId}" style="display: none;">
+		<input id="taskUid" value="${taskUid}" style="display: none;">
+		<span id="insData" >${insData}</span>
+		<span id="listStr" >${listStr}</span>
+		<span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span id="test" style="float: right; padding-right: 20px;">
 			<button class="layui-btn  layui-btn-sm"
 				onclick="processView(${insId})">流程图</button>
@@ -103,9 +104,8 @@
 					</tr>
 					<tr>
 						<th colspan="4">
-							<div class="layui-progress layui-progress-big"
-								lay-showPercent="yes" style="position: relative;">
-								<div class="layui-progress-bar" lay-percent="50%"></div>
+							<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showpercent="true" style="position: relative;">
+								<div class="layui-progress-bar" lay-percent="0%"></div>
 								<span class="progress_time">审批剩余时间6小时</span>
 							</div>
 						</th>
@@ -394,7 +394,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	});
 	$(function() {
 		clientSideInclude(document.getElementById('formId').value);
-		
+		element.progress('demo', "50%");
 		$(".add_row")
 				.click(
 						function() {
@@ -421,6 +421,30 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 		$(".upload").click(function() {
 			$(".upload_file").click();
 		});
+		
+		// 审批进度条
+		var proUid = $("#proUid").val();
+		var proVerUid = $("#proVerUid").val();
+		var proAppId = $("#proAppId").val();
+		var taskUid = $("#taskUid").val();
+		$.ajax({
+			async: false,
+			url: "/taskInstance/queryProgressBar",
+			type: "post",
+			dataType: "json",
+			data: {
+				proUid: proUid,
+				proVerUid: proVerUid,
+				proAppId: proAppId,
+				taskUid: taskUid
+			},
+			success: function(data){
+				if (data.status == 0) {
+					var percent = data.msg;
+					
+				}
+			}
+		})
 	})
 	
 	

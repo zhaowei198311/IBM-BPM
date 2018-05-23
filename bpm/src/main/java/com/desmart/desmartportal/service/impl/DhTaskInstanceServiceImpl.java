@@ -3,7 +3,9 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -361,5 +361,51 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		log.info("已办任务总数查询结束......");
 		return 0;
+	}
+
+	@Override
+	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid) {
+//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+		// 创建时间
+		Date createDate = new Date();
+		// 当前时间
+		Date now = new Date();
+		// 时间个数
+		Double time = null;
+		// 时间单位
+		String timeType = "";
+		// 根据taskUid查询单个DH_TASK_INSTANCE对象
+		List<DhTaskInstance> dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		for (DhTaskInstance dti : dhTaskInstance) {	
+			createDate = dti.getTaskInitDate();
+			// 根据proUid，proVerUid，proAppId，activityBpdId查询单个BPM_ACTIVITY_META对象
+			String activityBpdId = dti.getActivityBpdId();
+			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+			bpmActivityMeta.setBpdId(proUid);
+			bpmActivityMeta.setSnapshotId(proVerUid);
+			bpmActivityMeta.setProAppId(proAppId);
+			bpmActivityMeta.setActivityBpdId(activityBpdId);
+			List<BpmActivityMeta> bpmActivityMeta_1 = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+			for (BpmActivityMeta bam : bpmActivityMeta_1) {
+				// DH_ACTIVITY_CONF对象
+				DhActivityConf dhActivityConf = bam.getDhActivityConf();
+				time = dhActivityConf.getActcTime();
+				timeType = dhActivityConf.getActcTimeunit();
+			}
+			
+		}
+		if ("day".equals(timeType)) {
+			time = time * 24;
+		}
+		if ("month".equals(timeType)) {
+			time = time * 30 * 24;
+		}
+		// 当前时间 - 创建时间的差值转换成小时
+		long diff = now.getTime() - createDate.getTime();
+		long hours = diff / (1000 * 60 * 60);
+		// 差值 /运行时长
+		Double percent = hours / time;
+		int index = percent.toString().indexOf("."); 
+		return ServerResponse.createBySuccessMessage(percent.toString().substring(0, index));
 	}
 }

@@ -183,6 +183,7 @@ public class MenusController {
 	public ModelAndView approval(@RequestParam(value="taskUid") String taskUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		Map<String,Object> resultMap = dhTaskInstanceService.taskInfo(taskUid);
+		resultMap.put("taskUid", taskUid);
 		mv.addAllObjects(resultMap);
 		return mv;
 	}
