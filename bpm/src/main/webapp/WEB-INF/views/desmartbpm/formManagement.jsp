@@ -38,6 +38,60 @@
 				left: 50%;
 				box-shadow: 0 0 10px #ccc;
 			}
+			
+			.display_container_sel_copy{
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 10;
+				background: rgba(255, 255, 255, 0.8);
+				width: 100%;
+				height: 100%;
+			}
+			.display_content_sel_copy{
+				overflow-y: auto;
+				color: #717171;
+				padding: 20px;
+				width: 400px;
+				height: 300px;
+				background: #fff;
+				position: absolute;
+				margin: 100px 0 0 -200px;
+				left: 50%;
+				box-shadow: 0 0 10px #ccc;
+			}
+			.display_sel_copy{
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 10;
+				background: rgba(255, 255, 255, 0.8);
+				width: 100%;
+				height: 100%;
+			}
+			
+			.display_sel_content_copy {
+				overflow-y: auto;
+				color: #717171;
+				padding: 20px;
+				width: 280px;
+				height: 400px;
+				background: #fff;
+				position: absolute;
+				margin: 100px 0 0 -200px;
+				left: 50%;
+				box-shadow: 0 0 10px #ccc;
+			}
+			
+			.middle_copy{
+				height: 300px;
+				width: 96%;
+				border: 1px solid #ccc;
+				position: relative;
+				padding: 0 10px;
+			}
 		</style>
 	</head>
 	<body>
@@ -56,6 +110,7 @@
 						        <button class="layui-btn" id="searchForm_btn">查询</button>
 						        <button class="layui-btn create_btn">新增</button>
 						        <button class="layui-btn delete_btn" onclick="deleteForm();">删除</button>
+						        <button class="layui-btn copy_sel_btn">复制到其它流程</button>
 						        <button class="layui-btn copy_btn">从其它流程复制</button>
 							</div>
 						</div>
@@ -219,9 +274,55 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- 复制表单到指定位置的模态框 -->
+		<div class="display_sel_copy">
+			<div class="display_sel_content_copy">
+				<div class="top">
+					请选择一个流程快照
+				</div>
+				<div class="middle_copy">
+					<ul id="category_copy_tree" class="ztree" style="width:auto;height:93%;"></ul>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" onclick="sureCopyPro()">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_sel_copy').css('display','none');">取消</button>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 复制表单到指定位置的填写信息模态框 -->
+		<div class="display_container_sel_copy">
+			<div class="display_content_sel_copy">
+				<div class="top">
+					请填写复制之后表单信息
+				</div>
+				<div class="middle">
+					<form class="layui-form" action="" style="margin-top:30px;">
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-sel-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单描述</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-sel-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					    </div>
+					  </div>				  
+					</form>
+				</div>
+				<div class="foot">
+					<button class="layui-btn layui-btn sure_btn" onclick="copySelForm();">确定</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+						onclick="$('.display_container_sel_copy').css('display','none');">取消</button>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
-<script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.excheck.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.exedit.js"></script>
@@ -243,10 +344,15 @@
 	    }
 	
 	    var createFromFlag = false;//是否可以创建表单的控制变量
+	    var copyFromFlag = false;//是否可以复制表单的控制变量
 	    var oldFormName = "";//修改表单信息时表单的旧名称
 	    var oldFormDescription = "";//修改表单信息时的旧描述
 	    var updateFormId = "";//修改表单时表单的Id
 	    var copyFormId = "";//复制表单时表单的Id
+	    var copyFormSelId = "";//复制表单到其他快照时表单的Id
+	    var copyFormSelProId = "";//复制表单到其他快照时流程的Id
+	    var copyFormSelVerId = "";//复制表单到其他快照时快照的Id
+	    
 		//tree
 		var setting = {
             view: {
@@ -264,6 +370,23 @@
                 onClick: zTreeOnClick// 点击回调 ，自己定义
             }
     	};
+	    
+		var setting1 = {
+	            view: {
+	                selectedMulti: false
+	            },
+	            data: {
+	                simpleData: {
+	                    enable: true,
+	                    idKey: "id",
+	                    pIdKey: "pid",
+	                    rootPId: "rootCategory"
+	                }
+	            },
+	            callback: {
+	                onClick: zTreeCopyOnClick// 点击回调 ，自己定义
+	            }
+	    	};
 
 	    function zTreeOnClick(event, treeId, treeNode) {
 	    	switch(treeNode.itemType){
@@ -299,6 +422,25 @@
 	    			pageConfig.proUid = treeNode.pid;
 	    			pageConfig.proVerUid = treeNode.id;
 	    			getFormInfoByProDefinition();
+	    			break;
+	    		}
+	    	}
+	    };
+	    
+	    function zTreeCopyOnClick(event, treeId, treeNode) {
+	    	switch(treeNode.itemType){
+	    		case "category":{
+	    			copyFromFlag = false;
+	    			break;
+	    		}
+	    		case "processMeta":{
+	    			copyFromFlag = false;
+	    			break;
+	    		}
+	    		case "processDefinition":{
+	    			copyFromFlag = true;
+	    			copyFormSelProId = treeNode.pid;
+	    			copyFormSelVerId = treeNode.id;
 	    			break;
 	    		}
 	    	}
@@ -377,6 +519,7 @@
 					 dataType: "json",
 					 success: function(result) {
 						 $.fn.zTree.init($("#category_tree"), setting, result);
+						 $.fn.zTree.init($("#category_copy_tree"), setting1, result);
 					 }
 				 });
 				var treeObj = $.fn.zTree.getZTreeObj("category_tree");
@@ -397,6 +540,7 @@
 					 dataType: "json",
 					 success: function(result) {
 						 $.fn.zTree.init($("#category_tree"), setting, result);
+						 $.fn.zTree.init($("#category_copy_tree"), setting1, result);
 					 }
 				 });
 				pageConfig.proCategoryUid = "";
@@ -431,10 +575,32 @@
 					copyFormId = checkSel.val();
 					var copyFormName = checkSel.parent().next().text().trim()+"_copy"+_getRandomString(2);
 					$("#copy-form-name").val(copyFormName);
-					$("#copy-form-description").val(checkSel.parent().next().next().text().trim()+"_copy");
+					var oldFormDes = checkSel.parent().next().next().text().trim();
+					if(oldFormDes!=null && oldFormDes!=""){
+						$("#copy-form-description").val(oldFormDes+"_copy");
+					}
 					$(".display_container_copy").css("display", "block");
 				}else{
 					layer.alert("请选择一个要复制的表单");
+				}
+			});
+			
+			$(".copy_sel_btn").click(function() {
+				var checkInput = $("input[name='formInfo_check']:checked");
+				if(checkInput.length<1){
+					layer.alert("请选择一个要复制的表单");
+				}else if(checkInput.length==1){
+					copyFromFlag = false;
+					copyFormSelId = checkInput.val();
+					var copyFormName = checkInput.parent().next().text().trim()+"_copy"+_getRandomString(2);
+					$("#copy-sel-form-name").val(copyFormName);
+					var oldFormDes = checkInput.parent().next().next().text().trim();
+					if(oldFormDes!=null && oldFormDes!=""){
+						$("#copy-sel-form-description").val(oldFormDes+"_copy");
+					}
+					$(".display_sel_copy").css("display","block");
+				}else{
+					layer.alert("一次只能复制一个表单");
 				}
 			});
 			
@@ -443,6 +609,56 @@
 				$(".display_container2").css("display", "none");
 			})
 		});
+		
+		function sureCopyPro(){
+			if(copyFromFlag){
+				$(".display_sel_copy").css("display","none");
+				$(".display_container_sel_copy").css("display","block");
+			}else{
+				layer.alert("请选择一个流程快照");
+			}
+		}
+		
+		function copySelForm(){
+			var proUid = copyFormSelProId;
+			var proVersion = copyFormSelVerId;
+			var formName = $("#copy-sel-form-name").val().trim();
+			var formDescription = $("#copy-sel-form-description").val().trim();
+			
+			$.ajax({
+				url:common.getPath()+"/formManage/queryFormByName",
+				method:"post",
+				data:{
+					dynTitle:formName
+				},
+				success:function(result){
+					if(result.status==0){
+						$.ajax({
+							url:common.getPath()+"/formManage/copyForm",
+							method:"post",
+							data:{
+								dynUid:copyFormSelId,
+								dynTitle:formName,
+								dynDescription:formDescription,
+								proUid:proUid,
+								proVersion:proVersion
+							},
+							success:function(result2){
+								if(result2.status==0){
+									getFormInfoByProDefinition();
+									$(".display_container_sel_copy").css("display", "none");
+									layer.alert("复制成功");
+								}else{
+									layer.alert("复制失败");
+								}
+							}
+						});
+					}else{
+						layer.alert("表单名已存在，不能重复");
+					}
+				}
+			});			
+		}
 		
 		//复制快照--根据流程定义(proUid,proVerUid)
 		function getFormInfoByProDefinitionCopy(){

@@ -12,9 +12,10 @@
     </sql>
     
     <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
-    	select <include refid="select_column"/>,u.user_name creatorFullName
-    	from bpm_form bmf
-    		left join sys_user u on bmf.creator = u.user_uid
+    	select <include refid="select_column"/>,pm.pro_name proMetaName
+    	from bpm_form bmf 
+    		left join dh_process_meta pm
+    		on bmf.pro_uid = pm.pro_uid
     	<where>
 	    	<if test="proUid != null and !proUid.trim().isEmpty()">
 	    		bmf.pro_uid = #{proUid} 
@@ -23,23 +24,28 @@
 	    		and bmf.pro_version = #{proVerUid}
 	    	</if>
 	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
-	        	and dyn_title like '%${formTitle}%' 
+	        	and bmf.dyn_title like '%${formTitle}%' 
+	        	or bmf.dyn_description like '%${formTitle}%'
+	        	or pm.pro_name like '%${formTitle}%'
 	        </if>
         </where>
         order by create_time desc
     </select>
     
     <select id="listFormByProUidList" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
-    	select <include refid="select_column"/>,u.user_name creatorFullName
+    	select <include refid="select_column"/>,pm.pro_name proMetaName
     	from bpm_form bmf
-    		left join sys_user u on bmf.creator = u.user_uid
+    		left join dh_process_meta pm
+    		on bmf.pro_uid = pm.pro_uid
     	<where>
-    		pro_uid in
+    		bmf.pro_uid in
     		<foreach collection="metaList" item="item" index="index" open="(" separator="," close=")">
 	            #{item.proUid}
 	        </foreach>
 	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
-	        	and dyn_title like '%${formTitle}%' 
+	        	and bmf.dyn_title like '%${formTitle}%' 
+	        	or bmf.dyn_description like '%${formTitle}%'
+	        	or pm.pro_name like '%${formTitle}%'
 	        </if>
         </where>
         order by create_time desc
@@ -91,7 +97,7 @@
 	    	and dyn_title like '%${dynTitle}%' 
 	    </if>
 	    <if test="dynDescription != null and !dynDescription.trim().isEmpty()">
-	    	and dyn_title like '%${dynDescription}%' 
+	    	and dyn_description like '%${dynDescription}%' 
 	    </if>
     </select>
     
