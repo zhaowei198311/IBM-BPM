@@ -712,38 +712,59 @@
             
             // 隐藏
             $("#hide_btn").click(function(){
-            	var url = "/processCategory/changeStatus";
-            	commonMethod(url);
+            	var sign = "hide";
+            	if (commonCheck(sign)) {
+            		var url = "/processCategory/changeStatus";
+                	commonMethod(url);
+            	}
             })
             
             // 关闭流程
             $("#close_btn").click(function(){
-            	var url = "/processCategory/closeCategory";
-            	commonMethod(url);
+            	var sign = "close";
+            	if (commonCheck(sign)) {
+            		var url = "/processCategory/closeCategory";
+                	commonMethod(url);
+            	}
             })
             
             //启用
             $("#enable_btn").click(function(){
-            	var url = "/processCategory/enableCategory";
-            	commonMethod(url);
+            	var sign = "enable";
+            	if (commonCheck(sign)) {
+            		var url = "/processCategory/enableCategory";
+                	commonMethod(url);
+            	}     	
             })
         });
-        
-        // 隐藏,关闭,启用功能公共方法
-        function commonMethod(url){
+        // 隐藏,关闭,启用功能公共验证方法
+        function commonCheck(sign){
         	var cks = $("input[name='proMeta_check']:checked");
         	if (cks.length != 1) {
         		layer.alert("请只选择一条流程定义");
-				return;
+				return false;
 			}
         	var status = "";
         	cks.each(function(){
         		status = $(this).parents('tr').children().eq(5).text();
         	});
-        	if (status == 'on') {
-				layer.alert("该流程已经是启用状态!");
-				return;
+        	if (sign == "close" && status == 'closed') {
+				layer.alert("该流程已经是关闭状态!");
+				return false;
 			}
+        	if (sign == "enable" && status == 'on') {
+				layer.alert("该流程已经是启用状态!");
+				return false;
+			}
+        	if (sign == "hide" && status == 'hide') {
+				layer.alert("该流程已经是隐藏状态!");
+				return false;
+			}
+        	return true;
+        }
+        // 隐藏,关闭,启用功能公共方法
+        function commonMethod(url){
+        	var cks = $("input[name='proMeta_check']:checked");
         	var metaUid = "";
         	cks.each(function(){
         		metaUid = $(this).parents('tr').attr('data-metauid');
@@ -785,8 +806,7 @@
         			}
         		}
         	});
-        }
-        
+        }   
         
         // 请求数据成功
         function drawTable(pageInfo) {
