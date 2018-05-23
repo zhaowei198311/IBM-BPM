@@ -30,7 +30,7 @@
 						<label class="layui-form-label">管理员用户名:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="bpmAdminName" name="bpmAdminName"
-								lay-verify="bpmAdminName" autocomplete="off" class="layui-input">
+								lay-verify="bpmAdminName" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 					<div class="layui-inline"  style="width:500px;">
@@ -38,7 +38,7 @@
 						<div class="layui-input-inline">
 							<input type="text" id="bpmAdminPsw" name="bpmAdminPsw"
 								lay-verify="bpmAdminPsw" autocomplete="off"
-								class="layui-input">
+								class="layui-input"/>
 						</div>
 					</div>
 				</div>
@@ -48,14 +48,14 @@
 						<div class="layui-input-inline">
 							<input type="text" id="bpmClientTimeout" name="bpmClientTimeout"
 								lay-verify="bpmClientTimeout" autocomplete="off"
-								class="layui-input">
+								class="layui-input"/>
 						</div>
 					</div>
 					<div class="layui-inline"  style="width:500px;">
 						<label class="layui-form-label">流程引擎ip端口:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="bpmServerHost" name="bpmServerHost" lay-verify="bpmServerHost"
-								autocomplete="off" class="layui-input">
+								autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 				</div>
@@ -65,14 +65,14 @@
 						<div class="layui-input-inline">
 							<input type="text" id="bpmformsHost" name="bpmformsHost"
 								lay-verify="bpmformsHost" autocomplete="off"
-								class="layui-input">
+								class="layui-input"/>
 						</div>
 					</div>
 					<div class="layui-inline"  style="width:500px;">
 						<label class="layui-form-label">平台上下文:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="bpmformsWebContext" name="bpmformsWebContext"
-								lay-verify="bpmformsWebContext" autocomplete="off" class="layui-input">
+								lay-verify="bpmformsWebContext" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 				</div>
@@ -81,14 +81,14 @@
 						<label class="layui-form-label">配置名:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="configName" name="configName"
-								lay-verify="configName" autocomplete="off" class="layui-input">
+								lay-verify="configName" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 					<div class="layui-inline"  style="width:500px;">
 						<label class="layui-form-label">附件上传根目录:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="sftpPath" name="sftpPath"
-								lay-verify="sftpPath" autocomplete="off" class="layui-input">
+								lay-verify="sftpPath" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 				</div>
@@ -97,23 +97,55 @@
 						<label class="layui-form-label">附件上传用户名:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="sftpUserName" name="sftpUserName"
-								lay-verify="sftpUserName" autocomplete="off" class="layui-input">
+								lay-verify="sftpUserName" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 					<div class="layui-inline" style="width:500px;">
 						<label class="layui-form-label">附件上传根密码:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="sftpPassword" name="sftpPassword"
-								lay-verify="sftpPassword" autocomplete="off" class="layui-input">
+								lay-verify="sftpPassword" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-inline">
+					<div class="layui-inline" style="width:500px;">
 						<label class="layui-form-label">附件上传ip地址:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="sftpIp" name="sftpIp"
-								lay-verify="sftpIp" autocomplete="off" class="layui-input">
+								lay-verify="sftpIp" autocomplete="off" class="layui-input"/>
+						</div>
+					</div>
+					<div class="layui-inline" style="width:500px;">
+						<label class="layui-form-label">附件上传端口号:</label>
+						<div class="layui-input-inline">
+							<input type="text" id="sftpPort" name="sftpPort"
+								lay-verify="sftpPort" autocomplete="off" class="layui-input"/>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline" style="width:500px;">
+						<label class="layui-form-label">附件上传最大大小:</label>
+						<div class="layui-input-inline">
+							<input type="tel" id="maxFileSize" name="maxFileSize"
+								lay-verify="maxFileSize" autocomplete="off" class="layui-input"/>
+						</div>
+					</div>
+					<div class="layui-inline" style="width:500px;">
+						<label class="layui-form-label">附件上传最大数量:</label>
+						<div class="layui-input-inline">
+							<input type="tel" id="maxFileCount" name="maxFileCount"
+								lay-verify="maxFileCount" autocomplete="off" class="layui-input"/>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+				<div class="layui-inline" style="width:500px;">
+						<label class="layui-form-label">附件上传文件后缀:</label>
+						<div class="layui-input-inline" style="width:350px;">
+							<input type="text" id="fileFormat" name="fileFormat"
+								lay-verify="fileFormat" autocomplete="off" class="layui-input"/>
 						</div>
 					</div>
 				</div>
@@ -156,6 +188,8 @@
 	$(document).ready(function() {
 		// 加载数据
 		  getGlobalConfigInfo();
+		
+		$("input[type='tel']").number();
 	});
 	
 	function getGlobalConfigInfo() {
@@ -195,6 +229,10 @@
 		var sftpUserName = meta.sftpUserName;   // 骞冲彴api鍦板潃
 		var sftpPassword = meta.sftpPassword;   // 骞冲彴api鍦板潃
 		var sftpIp = meta.sftpIp;   // 骞冲彴api鍦板潃
+		var sftpPort = meta.sftpPort;
+		var maxFileSize = meta.maxFileSize;
+		var maxFileCount = meta.maxFileCount;
+		var fileFormat = meta.fileFormat;
 		$('#configId').val(configId);
 		$('#bpmAdminName').val(bpmAdminName);
 		$('#bpmAdminPsw').val(bpmAdminPsw);
@@ -207,6 +245,10 @@
 		$('#sftpUserName').val(sftpUserName);
 		$('#sftpPassword').val(sftpPassword);
 		$('#sftpIp').val(sftpIp);
+		$('#sftpPort').val(sftpPort);
+		$('#maxFileSize').val(maxFileSize);
+		$('#maxFileCount').val(maxFileCount);
+		$('#fileFormat').val(fileFormat);
 	}
 	
 	function formSubmit(){
@@ -221,6 +263,10 @@
 		var sftpUserName = $('#sftpUserName').val();
 		var sftpPassword = $('#sftpPassword').val();
 		var sftpIp = $('#sftpIp').val();
+		var sftpPort = $('#sftpPort').val();
+		var maxFileSize = $('#maxFileSize').val();
+		var maxFileCount = $('#maxFileCount').val();
+		var fileFormat = $('#fileFormat').val();
 		var configId = $('#configId').val();
 		$.ajax({
 			url : 'globalConfig/saveGlobalConfig',
@@ -239,7 +285,10 @@
 				sftpUserName : sftpUserName,
 				sftpPassword : sftpPassword,
 				sftpIp : sftpIp,
-				
+				sftpPort:sftpPort,
+				maxFileSize:maxFileSize,
+				maxFileCount:maxFileCount,
+				fileFormat:fileFormat
 			},
 			success : function(result) {
 				layer.open({
@@ -251,6 +300,19 @@
 				}); 
 			}
 		})
-		
 	}
+	
+	jQuery.fn.number = function() {
+		this.bind("keypress", function(e) {
+			var code = (e.keyCode ? e.keyCode : e.which); // 兼容火狐 IE
+			// 火狐下不能使用退格键
+			if (e.keyCode == 0x8) {
+				return;
+			}
+			return code >= 48 && code <= 57
+		});
+		this.bind("paste", function() {
+			return false;
+		});
+	}; 
 	</script>	
