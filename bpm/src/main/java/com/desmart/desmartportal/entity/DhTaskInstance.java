@@ -144,7 +144,7 @@ public class DhTaskInstance {
 	
 	private String taskDelegateUser; // 任务代理人
 	
-	private String synNumber; // 同步编号，记录任务同步
+	private Integer synNumber; // 同步编号，记录任务同步
 	
 
 	/**
@@ -411,11 +411,11 @@ public class DhTaskInstance {
         this.taskDelegateUser = taskDelegateUser;
     }
 
-    public String getSynNumber() {
+    public Integer getSynNumber() {
         return synNumber;
     }
 
-    public void setSynNumber(String synNumber) {
+    public void setSynNumber(Integer synNumber) {
         this.synNumber = synNumber;
     }
 
