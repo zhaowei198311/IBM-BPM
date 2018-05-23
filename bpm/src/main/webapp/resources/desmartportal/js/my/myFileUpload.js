@@ -66,7 +66,7 @@ $(function(){
 			              ,'<td><input type="text" /></td>'
 			              ,*/'<td>等待上传</td>'
 			              ,'<td>'
-			              	,'<button class="layui-btn layui-btn-mini demo-upload ">上传</button>'
+			              	/*,'<button class="layui-btn layui-btn-mini demo-upload ">上传</button>'*/
 			                ,'<button class="layui-btn layui-btn-mini demo-reload layui-hide">重传</button>'
 			                ,'<button class="layui-btn layui-btn-mini layui-btn-danger demo-delete">删除</button>'
 			              ,'</td>'
@@ -77,9 +77,9 @@ $(function(){
 			              obj.upload(index, file);
 			            });
 			            // 单个上传
-			            tr.find('.demo-upload').on('click', function(){
+			            /*tr.find('.demo-upload').on('click', function(){
 			              obj.upload(index, file);
-			            });
+			            });*/
 			            
 			            // 删除
 			            tr.find('.demo-delete').on('click', function(){
@@ -145,7 +145,7 @@ $(function(){
 			          var tr = demoListView.find('tr#upload-'+ index)
 			          ,tds = tr.children();
 			          tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
-			          tds.eq(3).find('.demo-upload').addClass('layui-hide');// 隐藏上传
+			          //tds.eq(3).find('.demo-upload').addClass('layui-hide');// 隐藏上传
 			          tds.eq(3).find('.demo-reload').removeClass('layui-hide'); // 显示重传
 			        }
 			  });
