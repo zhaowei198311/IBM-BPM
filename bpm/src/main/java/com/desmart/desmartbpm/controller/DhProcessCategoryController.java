@@ -124,6 +124,15 @@ public class DhProcessCategoryController {
     	return dhProcessCategoryService.closeCategory(metaUid);
     }
     
+    /**
+     * 
+     * @Title: enableCategory  
+     * @Description: 启用流程  
+     * @param @param metaUid
+     * @param @return  
+     * @return ServerResponse<?>  
+     * @throws
+     */
     @RequestMapping(value = "/enableCategory")
     @ResponseBody
     public ServerResponse<?> enableCategory(String metaUid){
