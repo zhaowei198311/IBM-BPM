@@ -93,8 +93,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
 					bpmForm.setProVerName(proVerName);
 				}
-				String proMetaName = bpmFormManageMapper.queryMetaNameByProUid(bpmForm.getProUid());
-				bpmForm.setProMetaName(proMetaName);
 			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
 			return ServerResponse.createBySuccess(pageInfo);
@@ -114,8 +112,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
 					bpmForm.setProVerName(proVerName);
 				}
-				String proMetaName = bpmFormManageMapper.queryMetaNameByProUid(bpmForm.getProUid());
-				bpmForm.setProMetaName(proMetaName);
 			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
 			return ServerResponse.createBySuccess(pageInfo);
