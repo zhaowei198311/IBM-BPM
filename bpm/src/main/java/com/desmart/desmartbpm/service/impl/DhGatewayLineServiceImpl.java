@@ -208,6 +208,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                                    condition = condition.substring(firstIndex+1, lastIndex);
                                    gatewayLine.setRouteResult(condition);
                                    DatRule datRule = generateTemplateRule();
+                                   datRule.setRuleName("result==\"" + condition + "\"");
                                    gatewayLine.setRuleId(datRule.getRuleId());
                                    ruleList.add(datRule);
                                }
