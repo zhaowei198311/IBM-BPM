@@ -5,6 +5,7 @@ package com.desmart.desmartportal.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -32,7 +33,7 @@ public interface DhTaskInstanceMapper {
 	
 	int selectByusrUidFinsh(String usrUid);
 	
-	int getMaxTaskId();
+	int getMaxSynNumber();
 	
 	int insertBatch(List <DhTaskInstance> list);
 	
@@ -45,7 +46,7 @@ public interface DhTaskInstanceMapper {
 	 */
 	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
 	/**
-	 * 
+	 * 根据流程实例id作废任务（状态改为-1）
 	 * @Title: updateByInsUids  
 	 * @Description: 根据INS_UID集合更改DH_TASK_INSTANCE  
 	 * @param @param insUids
@@ -53,5 +54,21 @@ public interface DhTaskInstanceMapper {
 	 * @return int  
 	 * @throws
 	 */
-	int updateByInsUids(List<String> insUids);
+	int abandonTaskByInsUidList(List<String> insUids);
+	
+	/**
+	 * 更改指定任务编号的任务的同步号
+	 * @param taskId
+	 * @param synNumber
+	 * @return
+	 */
+	int updateSynNumberByTaskId(@Param("taskId")Integer taskId, @Param("synNumber")Integer synNumber);
+	
+	/**
+	 * 更改指定任务编号的任务的状态
+	 * @param taskId
+	 * @param taskStatus
+	 * @return
+	 */
+	int updateTaskStatusByTaskId(@Param("taskId")Integer taskId, @Param("taskStatus")String taskStatus);
 }

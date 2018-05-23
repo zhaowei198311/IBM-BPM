@@ -197,7 +197,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public int getMaxTaskIdInDb() {
-		return dhTaskInstanceMapper.getMaxTaskId();
+		return dhTaskInstanceMapper.getMaxSynNumber();
 	}
 
 	public int insertBatch(List<DhTaskInstance> list) {
@@ -258,13 +258,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			params.put("parts", "all");
 			result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK + tkkid, params);
 			if(result.getCode()==200) {
+			    log.info("完成任务结束......");
 				return ServerResponse.createBySuccess(result.getCode());
+			} else {
+			    return ServerResponse.createByErrorMessage("完成第一个任务失败");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("完成第一个任务失败", e);
+			return ServerResponse.createByErrorMessage("完成第一个任务失败");
 		}
-		log.info("完成任务结束......");
-		return null;
 	}
 
 	public boolean isTaskExists(int taskId) {

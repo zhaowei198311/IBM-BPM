@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -25,9 +26,11 @@ import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -38,6 +41,7 @@ import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**
  * <p>
@@ -57,7 +61,8 @@ public class DhProcessServiceImpl implements DhProcessService {
 
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
-
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
 
@@ -69,11 +74,16 @@ public class DhProcessServiceImpl implements DhProcessService {
 
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
+	
+	
 
 	/**
 	 * 发起流程 掉用API 发起一个流程 然后 根据所选的 流程 去找下一环节审批人 以及 变量信息
 	 */
 	@Override
+	@Transactional
 	public ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo,
 			String approval) {
 		log.info("发起流程开始......");
@@ -97,7 +107,6 @@ public class DhProcessServiceImpl implements DhProcessService {
 		if (result.getCode() == 200) {
 			// 保存数据信息
 			log.info("掉用API返回过来的数据信息:" + result.getMsg());
-
 			JSONObject jsonBody = JSONObject.parseObject(result.getMsg());
 			JSONObject jsonBody2 = JSONObject.parseObject(String.valueOf(jsonBody.get("data")));
 			JSONArray jsonBody3 = JSONArray.parseArray(String.valueOf(jsonBody2.get("tasks")));
@@ -142,7 +151,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 				taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
 				// 任务数据
 				taskInstance.setTaskData(dataInfo);
-				dhTaskInstanceService.insertTask(taskInstance);
+				
 				// 流程发起结束后设置变量
 				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
 				bpmActivityMeta.setProAppId(proAppId);
@@ -165,7 +174,16 @@ public class DhProcessServiceImpl implements DhProcessService {
 					}
 				}
 				// 默认发起 提交第一个环节
-				dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")),String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+				ServerResponse serverResponse = dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")),String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+				if (!serverResponse.isSuccess()) {
+				    throw new PlatformException("提交第一个任务失败");
+				}
+				if (dhTaskInstanceService.isTaskExists(taskInstance.getTaskId())) {
+                    // 更新任务状态为完成
+                    dhTaskInstanceMapper.updateTaskStatusByTaskId(taskInstance.getTaskId(), DhTaskInstance.STATUS_CLOSED);
+                } else {
+                    dhTaskInstanceService.insertTask(taskInstance);
+                }
 				// 任务完成后 保存到流转信息表里面
 				DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 				dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
@@ -191,9 +209,7 @@ public class DhProcessServiceImpl implements DhProcessService {
 	public String viewProcessImage(String insId) {
 		try {
 			log.info("流程图查看......");
-			BpmGlobalConfig bpmGlobalConfig = new BpmGlobalConfig();
-			bpmGlobalConfig.setBpmAdminName("deadmin");
-			bpmGlobalConfig.setBpmAdminPsw("passw0rd");
+			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 			RestUtil restUtil = new RestUtil(bpmGlobalConfig);
 			HttpClientUtils httpClientUtils = new HttpClientUtils();
 			String result = httpClientUtils.checkLoginIbm("http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/instances?instanceIds=["+insId+"]&showCurrentActivites=true&showExecutionPath=true&showNote=true&showColor=true&image=true");

@@ -196,7 +196,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 		}
 		if (!insUids.isEmpty()) {
 			// 根据INS_UID批量更改DH_TASK_INSTANCE
-			dhTaskInstanceMapper.updateByInsUids(insUids);
+			dhTaskInstanceMapper.abandonTaskByInsUidList(insUids);
 		}		
 		// 根据proUid,proAppId更改DH_PROCESS_INSTANCE
 		dhProcessInstanceMapper.updateBySelective(dhProcessInstance);

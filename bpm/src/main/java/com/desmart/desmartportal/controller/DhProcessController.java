@@ -35,7 +35,12 @@ public class DhProcessController {
 							@RequestParam(value="verUid")String verUid, @RequestParam(value="dataInfo")String dataInfo,
 							@RequestParam(value="approval")String approval) {
 		// 发起流程		
-		return dhProcessService.startProcess(proUid, proAppId, verUid, dataInfo, approval);
+		try {
+            return dhProcessService.startProcess(proUid, proAppId, verUid, dataInfo, approval);
+        } catch (Exception e) {
+            log.error("发起流程失败", e);
+            return ServerResponse.createByErrorMessage("发起流程失败");
+        }
 	}
 	
 	@RequestMapping(value = "/queryProcessByUser")

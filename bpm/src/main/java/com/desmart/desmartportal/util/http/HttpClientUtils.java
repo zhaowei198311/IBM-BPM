@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientUtils {
-
+    private BpmGlobalConfig bpmGlobalConfig;
 	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtils.class);
 
 	private static final String USERNAME = "deadmin";
@@ -57,6 +57,9 @@ public class HttpClientUtils {
 	private int tkiid = 0;
 	
 	public HttpClientUtils() {
+	}
+	public HttpClientUtils(BpmGlobalConfig bpmGlobalConfig) {
+	    this.bpmGlobalConfig = bpmGlobalConfig;
 	}
 
 	public static RequestConfig getRequestConfig(Integer timeout) {

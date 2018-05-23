@@ -240,8 +240,8 @@
 		)
 	</insert>
 	
-	<select id="getMaxTaskId" resultType="int">
-       select nvl(max(task_id), 0) from dh_task_instance
+	<select id="getMaxSynNumber" resultType="int">
+       select nvl(max(SYN_NUMBER), 0) from dh_task_instance
     </select>
     
     <insert id="insertBatch"  parameterType="list">
@@ -288,7 +288,7 @@
 		</where>
 	</select>
 	
-	<update id="updateByInsUids" parameterType="list">
+	<update id="abandonTaskByInsUidList" parameterType="list">
 		update DH_TASK_INSTANCE
 		<set>
 			TASK_STATUS = '-1'
@@ -300,4 +300,17 @@
 			</foreach>
 		</where>
 	</update>
+	
+	<update id="updateSynNumberByTaskId" parameterType="map">
+	   update dh_task_instance 
+	   set syn_number = #{synNumber}
+	   where task_id = #{taskId}
+	</update>
+	
+	<update id="updateTaskStatusByTaskId" parameterType="map">
+	   update dh_task_instance 
+	   set task_status = #{taskStatus}
+	   where task_id = #{taskId}
+	</update>
+	
 </mapper>

@@ -27,6 +27,7 @@ import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
 import com.desmart.desmartportal.dao.DhAgentRecordMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -41,6 +42,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     
     @Autowired
     private LswTaskMapper lswTaskMapper;
+    @Autowired
+    private DhTaskInstanceMapper dhTaskInstanceMapper;
     @Autowired
     private DhTaskInstanceService dhTaskInstanceService;
     @Autowired
@@ -72,7 +75,12 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<DhAgentRecord> agentRecordList = Lists.newArrayList();
         
         for (LswTask lswTask : newLswTaskList) {
-            Map<String, Object> data = handleLswTask(lswTask, groupInfo);
+            Map<String, Object> data = null;
+            try {
+                data =  handleLswTask(lswTask, groupInfo);
+            } catch (Exception e) {
+               LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
+            }
             if (data != null) {
                 dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
                 agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
@@ -111,10 +119,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         String proUid = proInstance.getProUid();
         String proVerUid = proInstance.getProVerUid();
         
-        // 查看任务表中是否已经有这个任务id的任务， 避免发起流程环节的任务被同步过来 
+        // 查看任务表中是否已经有这个任务id的任务
         boolean taskExists = dhTaskInstanceService.isTaskExists(lswTask.getTaskId());
         if (taskExists) {
-            LOG.error("任务id：" + lswTask.getTaskId() + "的任务发现已经存在，放弃拉取此任务");
+            dhTaskInstanceMapper.updateSynNumberByTaskId(lswTask.getTaskId(), lswTask.getTaskId());
             return null;
         }
         
@@ -122,7 +130,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         metaSelective.setActivityBpdId(activityBpdId);
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         BpmActivityMeta bpmActivityMeta = list.get(0);
-        
+        // 创建出 DhTaskInstance
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
@@ -179,7 +187,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
             dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
             dhTask.setTaskInitDate(new Date());
-            
+            dhTask.setSynNumber(lswTask.getTaskId());
             // 设置
             DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
             if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {
