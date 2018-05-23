@@ -436,31 +436,31 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcUid(EntityIdPrefix.DH_ACTIVITY_CONF + UUID.randomUUID().toString());
         conf.setActivityId(activityId);
         conf.setActcSort(1);
-        conf.setActcTime(null);
-        conf.setActcTimeunit(Const.TimeUnit.DAY);
-        conf.setActcAssignType(DhActivityConfAssignType.NONE.getCode());
-        conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);
+        conf.setActcTime(1.0); // 处理时间 1天
+        conf.setActcTimeunit(Const.TimeUnit.DAY);  
+        conf.setActcAssignType(DhActivityConfAssignType.NONE.getCode());  // 默认没有处理人
+        conf.setActcAssignVariable(BpmCommonBusObject.NEXT_OWNER_VARNAME[0]);  
         conf.setSignCountVarname(BpmCommonBusObject.OWNER_SIGN_COUNT[0]);
-        conf.setActcCanEditAttach(Const.Boolean.TRUE);
-        conf.setActcCanUploadAttach(Const.Boolean.TRUE);
-        conf.setActcCanDelegate(Const.Boolean.TRUE);
-        conf.setActcCanDeleteAttach(Const.Boolean.TRUE);
-        conf.setActcCanMessageNotify(Const.Boolean.TRUE);
-        conf.setActcCanMailNotify(Const.Boolean.TRUE);
-        conf.setActcMailNotifyTemplate(null);
-        conf.setActcCanReject(Const.Boolean.FALSE);
-        conf.setActcRejectType(DhActivityConfRejectType.TO_PRE_ACTIVITY.getCode());
-        conf.setActcCanRevoke(Const.Boolean.TRUE);
-        conf.setActcCanAutocommit(Const.Boolean.FALSE);
-        conf.setActcCanAdd(Const.Boolean.TRUE);
-        conf.setActcCanUserToField(Const.Boolean.FALSE);
+        conf.setActcCanEditAttach(Const.Boolean.TRUE); // 是否可以编辑附件
+        conf.setActcCanUploadAttach(Const.Boolean.TRUE); // 是否可以上传附件
+        conf.setActcCanDelegate(Const.Boolean.TRUE); // 是否允许代理
+        conf.setActcCanDeleteAttach(Const.Boolean.TRUE); // 是否可以删除附件
+        conf.setActcCanMessageNotify(Const.Boolean.TRUE); // 是否短信通知
+        conf.setActcCanMailNotify(Const.Boolean.TRUE); // 是否邮件通知
+        conf.setActcMailNotifyTemplate(null); // 邮件通知模版
+        conf.setActcCanReject(Const.Boolean.FALSE); // 是否允许驳回
+        conf.setActcRejectType(DhActivityConfRejectType.TO_PRE_ACTIVITY.getCode()); // 驳回类型
+        conf.setActcCanRevoke(Const.Boolean.TRUE); // 是否可以取回
+        conf.setActcCanAutocommit(Const.Boolean.FALSE); // 是否允许自动提交
+        conf.setActcCanAdd(Const.Boolean.TRUE); // 是否允许加签
+        conf.setActcCanUserToField(Const.Boolean.FALSE); // 略
         conf.setActcUserToField(null);
         conf.setActcCanAuditToField(Const.Boolean.FALSE);
         conf.setActcAuditToField(null);
-        conf.setActcCanApprove(Const.Boolean.TRUE);
-        conf.setActcOuttimeTrigger(null);
-        conf.setActcOuttimeTemplate(null);
-        conf.setActcDescription(null);
+        conf.setActcCanApprove(Const.Boolean.TRUE);  // 是否允许审批
+        conf.setActcOuttimeTrigger(null); // 超时触发器
+        conf.setActcOuttimeTemplate(null); // 超时通知模版
+        conf.setActcDescription(null); 
         conf.setActcDefTitle(null);
         conf.setActcDefSubjectMessage(null);
         conf.setActcDefMessage(null);
@@ -472,8 +472,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanSkip(null);
         conf.setActcCanChooseUser(Const.Boolean.FALSE);
         conf.setActcChooseableHandlerType(DhActivityConfAssignType.ALL_USER.getCode());
-        conf.setActcCanTransfer(Const.Boolean.FALSE);
-        conf.setActcResponsibility(null);
+        conf.setActcCanTransfer(Const.Boolean.FALSE); // 是否允许
+        conf.setActcResponsibility(null); // 职责描述
         return conf;
     }
     

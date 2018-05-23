@@ -144,6 +144,8 @@ public class DhTaskInstance {
 	
 	private String taskDelegateUser; // 任务代理人
 	
+	private String synNumber; // 同步编号，记录任务同步
+	
 
 	/**
 	 * @return the taskUid
@@ -407,6 +409,14 @@ public class DhTaskInstance {
 
     public void setTaskDelegateUser(String taskDelegateUser) {
         this.taskDelegateUser = taskDelegateUser;
+    }
+
+    public String getSynNumber() {
+        return synNumber;
+    }
+
+    public void setSynNumber(String synNumber) {
+        this.synNumber = synNumber;
     }
 
     /**
