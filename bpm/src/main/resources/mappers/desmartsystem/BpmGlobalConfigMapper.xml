@@ -8,7 +8,8 @@
 		BPMFORMS_WEB_CONTEXT, CONFIG_NAME, CONFIG_STATUS, CREATE_TIME, GMT_TIME_ZONE,
 		HTTP_MAX_CONNECTION,
 		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME, BPM_API_HOST,
-		SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT
+		SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT,
+		MAX_FILE_SIZE,MAX_FILE_COUNT,FILE_FORMAT
 	</sql>
 
 	<select id="queryActiveConfig" resultType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
@@ -35,13 +36,15 @@
 		BPMFORMS_WEB_CONTEXT, CONFIG_NAME, CONFIG_STATUS,
 		CREATE_TIME, GMT_TIME_ZONE, HTTP_MAX_CONNECTION,
 		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME,
-		BPM_API_HOST,SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT)
+		BPM_API_HOST,SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,
+		SFTP_PORT,MAX_FILE_SIZE,MAX_FILE_COUNT,FILE_FORMAT)
 		values (#{configId}, #{bpmAdminName}, #{bpmAdminPsw},
 		#{bpmClientTimeout}, #{bpmServerHost}, #{bpmformsHost},
 		#{bpmformsWebContext}, #{configName}, #{configStatus},
 		sysdate, #{gmtTimeZone}, #{httpMaxConnection},
 		#{preRouteMaxConnection}, #{schedulerHost}, #{updateTime},
-		#{bpmApiHost},#{sftpPath},#{sftpUserName},#{sftpPassword},#{sftpIp},#{sftpPort})
+		#{bpmApiHost},#{sftpPath},#{sftpUserName},#{sftpPassword},
+		#{sftpIp},#{sftpPort},#{maxFileSize},#{maxFileCount},#{fileFormat})
 	</insert>
 	<insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
 		insert into BPM_GLOBAL_CONFIG
@@ -103,6 +106,15 @@
 			</if>
 			<if test="sftpPort != null">
 				SFTP_PORT,
+			</if>
+			<if test="maxFileSize != null">
+				MAX_FILE_SIZE,
+			</if>
+			<if test="maxFileCount != null">
+				MAX_FILE_COUNT,
+			</if>
+			<if test="fileFormat != null">
+				FILE_FORMAT,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -169,6 +181,15 @@
 			<if test="sftpPort != null">
 				#{sftpPort},
 			</if>
+			<if test="maxFileSize != null">
+				#{maxFileSize},
+			</if>
+			<if test="maxFileCount != null">
+				#{maxFileCount},
+			</if>
+			<if test="fileFormat != null">
+				#{fileFormat},
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
@@ -234,6 +255,15 @@
 			<if test="sftpPort != null">
 				SFTP_PORT = #{sftpPort},
 			</if>
+			<if test="maxFileSize != null">
+				MAX_FILE_SIZE = #{maxFileSize},
+			</if>
+			<if test="maxFileCount != null">
+				MAX_FILE_COUNT = #{maxFileCount},
+			</if>
+			<if test="fileFormat != null">
+				FILE_FORMAT = #{fileFormat},
+			</if>
 		</set>
 		where CONFIG_ID = #{configId}
 	</update>
@@ -257,8 +287,11 @@
 		SFTP_PATH = #{sftpPath},
 		SFTP_USERNAME = #{sftpUserName},
 		SFTP_PASSWORD = #{sftpPassword},
-		SFTP_IP = #{sftpIp}
-		SFTP_PORT = #{sftpPort}
+		SFTP_IP = #{sftpIp},
+		SFTP_PORT = #{sftpPort},
+		MAX_FILE_SIZE = #{maxFileSize},
+		MAX_FILE_COUNT = #{maxFileCount},
+		FILE_FORMAT = #{fileFormat}
 		where CONFIG_ID = #{configId}
 	</update>
 

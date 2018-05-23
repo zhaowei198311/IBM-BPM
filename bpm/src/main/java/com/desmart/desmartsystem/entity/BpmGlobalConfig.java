@@ -31,11 +31,15 @@ public class BpmGlobalConfig implements Serializable {
     private String sftpPassword;  //附件上传根密码
     private String sftpIp;       //附件上传IP地址ַ
     private Integer sftpPort;	//附件上传端口号
+    private String fileFormat; //附件上传文件后缀
+    private Integer maxFileSize;//附件上次文件最大大小
+    private Integer maxFileCount;//附件上次文件最大数量
 	public BpmGlobalConfig(String configId, String configName, String bpmServerHost, String bpmAdminName,
 			String bpmAdminPsw, String configStatus, Date createTime, Date updateTime, String gmtTimeZone,
 			String bpmformsHost, Integer bpmClientTimeout, String bpmformsWebContext, Integer httpMaxConnection,
 			Integer preRouteMaxConnection, String schedulerHost, String bpmAdminEmail, String bpmApiHost,
-			String sftpPath, String sftpUserName, String sftpPassword, String sftpIp, Integer sftpPort) {
+			String sftpPath, String sftpUserName, String sftpPassword, String sftpIp, Integer sftpPort,
+			String fileFormat, Integer maxFileSize, Integer maxFileCount) {
 		super();
 		this.configId = configId;
 		this.configName = configName;
@@ -59,6 +63,9 @@ public class BpmGlobalConfig implements Serializable {
 		this.sftpPassword = sftpPassword;
 		this.sftpIp = sftpIp;
 		this.sftpPort = sftpPort;
+		this.fileFormat = fileFormat;
+		this.maxFileSize = maxFileSize;
+		this.maxFileCount = maxFileCount;
 	}
 
 	public String getSftpPath() {
@@ -241,6 +248,30 @@ public class BpmGlobalConfig implements Serializable {
 		this.sftpPort = sftpPort;
 	}
 
+	public String getFileFormat() {
+		return fileFormat;
+	}
+
+	public void setFileFormat(String fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+
+	public Integer getMaxFileSize() {
+		return maxFileSize;
+	}
+
+	public void setMaxFileSize(Integer maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	public Integer getMaxFileCount() {
+		return maxFileCount;
+	}
+
+	public void setMaxFileCount(Integer maxFileCount) {
+		this.maxFileCount = maxFileCount;
+	}
+
 	@Override
     public String toString() {
         return "BpmGlobalConfig{" +
@@ -262,6 +293,9 @@ public class BpmGlobalConfig implements Serializable {
                 ", bpmAdminEmail='" + bpmAdminEmail + '\'' +
                 ", bpmApiHost='" + bpmApiHost + '\'' +
                 ", sftpPort='" + sftpPort + '\'' +
+                ", maxFileSize='" + maxFileSize + '\'' +
+                ", maxFileCount='" + maxFileCount + '\'' +
+                ", fileFormat='" + fileFormat + '\'' +
                 '}';
     }
 }
