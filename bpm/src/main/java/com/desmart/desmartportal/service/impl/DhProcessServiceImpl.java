@@ -114,6 +114,10 @@ public class DhProcessServiceImpl implements DhProcessService {
 			JSONArray jsonBody3 = JSONArray.parseArray(String.valueOf(jsonBody2.get("tasks")));
 			// 将流程数据 保存到 当前流程实例数据库中
 			String InsUid = EntityIdPrefix.DH_PROCESS_INSTANCE + String.valueOf(UUID.randomUUID());
+			// 查询用户信息
+			SysUser sysUser = sysUserMapper.queryByPrimaryKey(
+					String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+			//
 			DhProcessInstance processInstance = new DhProcessInstance();
 			processInstance.setInsUid(InsUid);
 			processInstance.setInsTitle(String.valueOf(jsonBody2.get("processAppName")));
@@ -126,6 +130,11 @@ public class DhProcessServiceImpl implements DhProcessService {
 			processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
 			processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
 			processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
+
+			processInstance.setCompanyNumber(sysUser.getCompanynumber());
+			processInstance.setInsInitUser(
+					String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+
 			processInstance.setInsInitUser(currentUserUid);
 			// 流程数据
 			processInstance.setInsData(dataInfo);
@@ -145,6 +154,9 @@ public class DhProcessServiceImpl implements DhProcessService {
 				taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 				taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
 				// 发起流程上一环节默认 是自己
+				taskInstance.setTaskPreviousUsrUid(
+						String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+				taskInstance.setTaskPreviousUsrUsername(sysUser.getUserName());
 				taskInstance.setTaskPreviousUsrUid(currentUserUid);
 				SysUser sysUserName = sysUserMapper.queryByPrimaryKey(currentUserUid);
 				taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
