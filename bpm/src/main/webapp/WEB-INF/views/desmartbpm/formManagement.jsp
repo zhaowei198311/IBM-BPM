@@ -2,7 +2,7 @@
 <%@ page language="java"  pageEncoding="UTF-8"%>
 <html>
 	<head>
-  		<title>表单管理</title>
+  		<title>流程表单管理</title>
   		<%@include file="common/head.jsp" %>
         <%@include file="common/tag.jsp" %>
         <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/my.css" media="all">
@@ -109,7 +109,7 @@
 							<div class="layui-col-md9 layui-col-md-offset1" style="text-align:left;">
 						        <button class="layui-btn" id="searchForm_btn">查询</button>
 						        <button class="layui-btn create_btn">新增</button>
-						        <button class="layui-btn delete_btn" onclick="deleteForm();">删除</button>
+						        <button class="layui-btn delete_btn" style="background: #FF5151" onclick="deleteForm();">删除</button>
 						        <button class="layui-btn copy_sel_btn">复制到其它流程</button>
 						        <button class="layui-btn copy_btn">从其它流程复制</button>
 							</div>
@@ -874,7 +874,6 @@
 					+"&proUid="+pageConfig.proUid	//当用户未点击流程定义时，表单内容中包含了流程定义Id及版本Id
 					+"&proVersion="+pageConfig.proVerUid;
 			window.location.href = common.getPath()+href;
-			$(".display_container2").css("display", "none");
 		}
 		
 		//删除表单
