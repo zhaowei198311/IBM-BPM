@@ -121,13 +121,13 @@
 		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
 	</sql>
 	
-<<<<<<< .mine
 	<sql id="TaskAndProcess_Column_List">
-		TASK_UID,INS_UID,TASK_ID,USR_UID,
-		ACTIVITY_BPD_ID,TASK_TYPE,TASK_STATUS,TASK_TITLE,
-		INS_UPDATE_DATE,TASK_PREVIOUS_USR_UID,TASK_PREVIOUS_USR_USERNAME,TASK_DELEGATE_DATE,
-		TASK_INIT_DATE,TASK_FINISH_DATE,TASK_DUE_DATE,TASK_RISK_DATE,
-		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
+		T.TASK_UID,T.INS_UID,T.TASK_ID,T.USR_UID,
+		T.ACTIVITY_BPD_ID,T.TASK_TYPE,T.TASK_STATUS,T.TASK_TITLE,
+		T.INS_UPDATE_DATE,T.TASK_PREVIOUS_USR_UID,T.TASK_PREVIOUS_USR_USERNAME,T.TASK_DELEGATE_DATE,
+		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
+		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,P.INS_TITLE,
+		P.INS_CREATE_DATE,S.USER_NAME,S.USER_ID
 	</sql>
 
 
@@ -135,6 +135,7 @@
 		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT
 		<include refid="Base_Column_List" />
+	</select>
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
@@ -418,13 +419,16 @@
 		where task_id = #{taskId}
 	</select>
 
-	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String"
-		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
-		SELECT
-		<include refid="Base_Column_List" />
-	<select id="getMaxSynNumber" resultType="int">
-       select nvl(max(SYN_NUMBER), 0) from dh_task_instance
-    </select>
+	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			INS_UID = #{insUid}
+			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
+		</where>
+	</select>
     
     <insert id="insertBatch"  parameterType="list">
         insert into dh_task_instance (<include refid="Base_Column_List"/>)
@@ -487,17 +491,15 @@
 
 	<select id="selectTaskAndProcessInfo" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
 		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid=""/>
+		SELECT <include refid="TaskAndProcess_Column_List"/>
 		FROM
-		DH_TASK_INSTANCE T
-		LEFT
-		JOIN DH_PROCESS_INSTANCE P
-		LEFT 
-		JOIN SYS_USER S
-		ON T.INS_UID = P.INS_UID
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
 		<where>
+			T.INS_UID = P.INS_UID 
+			AND
+			P.INS_INIT_USER = S.USER_ID
 			<if test="taskUid != null and taskUid != ''">
-				T.TASK_UID = #{taskUid}
+				AND T.TASK_UID = #{taskUid}
 			</if>
 			<if test="insUid != null and insUid != ''">
 				AND T.INS_UID = #{insUid}
