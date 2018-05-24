@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.util.JSONUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -93,7 +92,7 @@ public class BpmTaskUtil {
     }
     
     /**
-     * 使某人申领任务
+     * 将任务分配给某人
      * @return
      */
     public HttpReturnStatus applyTask(Integer taskId, String userUid) {
@@ -125,6 +124,11 @@ public class BpmTaskUtil {
         return result;
     }
     
+    /**
+     * 获得task中的变量pubBo
+     * @param taskId
+     * @return
+     */
     public HttpReturnStatus getTaskData(Integer taskId) {
         HttpReturnStatus result = null;
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
@@ -148,9 +152,14 @@ public class BpmTaskUtil {
         return result;
     }
     
+    /**
+     * 将引擎中pubBo的数据更新
+     * @param taskId
+     * @param pubBo
+     * @return
+     */
     public Map<String, HttpReturnStatus> setTaskData(Integer taskId, CommonBusinessObject pubBo) {
         Map<String, HttpReturnStatus> resultMap = new HashMap<>();
-        
         
         try {
             HttpReturnStatus getTaskResult = this.getTaskData(taskId);
@@ -220,6 +229,8 @@ public class BpmTaskUtil {
         }
         return resultMap;
     }
+    
+    
     
 }
 

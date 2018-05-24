@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.util;
+package com.desmart.common.util;
 import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
