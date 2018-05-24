@@ -387,7 +387,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return null;
 	}
 
-	/*@Override
+	@Override
 	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid) {
 //		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		// 创建时间
@@ -431,5 +431,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		Double percent = hours / time;
 		int index = percent.toString().indexOf("."); 
 		return ServerResponse.createBySuccessMessage(percent.toString().substring(0, index));
-	}*/
+	}
+
 }
