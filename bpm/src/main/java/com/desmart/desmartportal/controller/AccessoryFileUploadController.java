@@ -109,24 +109,7 @@ public class AccessoryFileUploadController {
 	@RequestMapping("deleteAccessoryFile.do")
 	@ResponseBody
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
-		String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
-	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
-	    		,  dhInstanceDocument.getAppDocFileUrl().length());
-	    SFTPUtil sftp = new SFTPUtil();
-	    
-	    if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
-	    {
-	    	//int count = accessoryFileUploadServiceImpl.deleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
-	    	//逻辑删除--批量修改方法
-	    	List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
-	    	dhInstanceDocument.setAppDocFileUrl("null");
-	    	dhInstanceDocument.setAppDocStatus("1");//1表示删除
-	    	list.add(dhInstanceDocument);
-	    	int count = accessoryFileUploadServiceImpl.updateFileByKeys(list);
-	    	return ServerResponse.createBySuccessMessage("删除成功！");
-	    }else {
-	    	return ServerResponse.createByErrorMessage("删除失败！");
-	    }
+		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument);
 	}
 	/*
 	@RequestMapping("bachFileDown.do")

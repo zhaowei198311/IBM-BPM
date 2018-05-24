@@ -509,11 +509,11 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 
 
 	@Override
-	public List<BpmActivityMeta> getBpmActivityMetaByActivityType(String activityBpdId, String snapshotId, String bpdId,
+	public List<BpmActivityMeta> getBpmActivityMetaByActivityType(String proAppId, String snapshotId, String bpdId,
 			String activityType) {
 		// TODO Auto-generated method stub
 		BpmActivityMeta metaSelective = new BpmActivityMeta();
-        metaSelective.setActivityBpdId(activityBpdId);
+        metaSelective.setProAppId(proAppId);
         metaSelective.setSnapshotId(snapshotId);
         metaSelective.setBpdId(bpdId);
         metaSelective.setActivityType(activityType);

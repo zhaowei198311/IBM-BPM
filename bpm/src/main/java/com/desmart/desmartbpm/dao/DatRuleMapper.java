@@ -14,7 +14,7 @@ public interface DatRuleMapper {
 	 * @param ruleId
 	 * @return
 	 */
-	DatRule getDatRuleByKey(String ruleId);
+	DatRule getDatRuleByKey(@Param("ruleId")String ruleId);
 
 	/**
 	 * 新增datrule

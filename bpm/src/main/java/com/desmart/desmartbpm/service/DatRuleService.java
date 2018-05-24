@@ -58,5 +58,12 @@ public interface DatRuleService {
 	/**
 	 * 初始化加载网关配置界面
 	 */
-	public ServerResponse loadGatewaySet(String activityBpdId,String snapshotId,String bpdId,String activityType);
+	public ServerResponse loadGatewaySet(String proAppId,String snapshotId,String bpdId,String activityType);
+	/**
+	 * 修改网关规则，新增网关规则条件
+	 * @param datRuleCondition
+	 * @param activityId
+	 * @return
+	 */
+	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId);
 }

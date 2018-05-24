@@ -10,7 +10,7 @@ import com.desmart.desmartbpm.entity.DatRuleCondition;
 
 public interface DatRuleConditionService {
 	/**
-	 * 新增datrulecondition
+	 * 新增datrulecondition,批量新增
 	 * @param datRuleCondition
 	 * @return
 	 */
@@ -43,4 +43,17 @@ public interface DatRuleConditionService {
 	 * @return
 	 */
 	List<DatRuleCondition> loadDatruleConditionInRuleId(String activityId);
+	/**
+	 * 新增
+	 * @param datRuleCondition
+	 * @return
+	 */
+	Integer insert(DatRuleCondition datRuleCondition);
+
+	/**
+	 * 根据activityId查询datrulecondition集合
+	 * @param activityId
+	 * @return
+	 */
+	List<DatRuleCondition> getDatruleConditionByActivityId(String activityId);
 }

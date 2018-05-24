@@ -11,7 +11,7 @@ import com.desmart.desmartbpm.entity.DatRuleCondition;
 
 public interface DatRuleConditionMapper {
 	/**
-	 * 新增datrulecondition
+	 * 新增datrulecondition,批量新增
 	 * @param datRuleCondition
 	 * @return
 	 */
@@ -22,7 +22,7 @@ public interface DatRuleConditionMapper {
 	 * @param ruleId
 	 * @return
 	 */
-	LinkedList<DatRuleCondition> getDatruleConditionByRuleId(String ruleId);
+	LinkedList<DatRuleCondition> getDatruleConditionByRuleId(@Param("ruleId")String ruleId);
 
 	/**
 	 * 根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
@@ -44,5 +44,17 @@ public interface DatRuleConditionMapper {
 	 * @return
 	 */
 	List<DatRuleCondition> loadDatruleConditionInRuleId(String activityId);
+	/**
+	 * 新增
+	 * @param datRuleCondition
+	 * @return
+	 */
+	Integer insert(DatRuleCondition datRuleCondition);
 
+	/**
+	 * 根据activityId查询datrulecondition集合
+	 * @param activityId
+	 * @return
+	 */
+	List<DatRuleCondition> getDatruleConditionByActivityId(@Param("activityId")String activityId);
 }

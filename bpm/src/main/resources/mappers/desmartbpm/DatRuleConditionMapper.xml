@@ -18,8 +18,8 @@
 	</foreach>
 	)A
    </insert>
-   
-   <select id="getDatruleConditionByRuleId"
+  
+   <select id="getDatruleConditionByRuleId" parameterType="map"
     resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
     SELECT * FROM DAT_RULE_CONDITION where rule_id = #{ruleId}
     order by CONDITION_GROUP_NAME
@@ -45,5 +45,28 @@
     left join dat_rule dr on drc.rule_id =dr.rule_id
     where dr.rule_name like CONCAT(CONCAT('%',#{activityId}),'%')
     </select>
-
+    
+    <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DatRuleCondition">
+    INSERT INTO DAT_RULE_CONDITION (CONDITION_ID, CONDITION_GROUP_NAME, CONDITION_OPERATOR
+	, CONDITION_OPERATOR_NAME, CONDITION_TYPE, CREATE_TIME, CREATOR, LEFT_NAME, LEFT_VALUE, LEFT_VALUE_TYPE
+	, RETURN_TYPE, RIGHT_VALUE, RIGHT_VALUE_TYPE, RULE_ID, RULE_STATUS, RULE_VERSION, SORT_NUM, VALUE_OPERATOR)
+	values(
+	 #{conditionId}, #{conditionGroupName}
+	 , #{conditionOperator},#{conditionOperatorName}
+	 , #{conditionType}, #{createTime}, #{creator}
+	 , #{leftName}, #{leftValue}
+	 , #{leftValueType}, #{returnType}
+	 , #{rightValue}, #{rightValueType}
+	 , #{ruleId}, #{ruleStatus}, #{ruleVersion}
+	 , #{sortNum}, #{valueOperator}
+	)
+    </insert>
+	
+	<select id="getDatruleConditionByActivityId" parameterType="map"
+    resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
+    SELECT drc.*,dr.rule_name FROM DAT_RULE_CONDITION drc left join dat_rule dr on drc.rule_id = dr.rule_id
+	left join dh_gateway_line dgl on dr.rule_id = dgl.rule_id
+	where dgl.activity_id = #{activityId}
+	order by drc.CONDITION_GROUP_NAME
+    </select>
 </mapper>

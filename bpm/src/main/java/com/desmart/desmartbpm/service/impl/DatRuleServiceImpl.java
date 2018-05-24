@@ -127,11 +127,10 @@ public class DatRuleServiceImpl implements DatRuleService {
 					datRuleCondition.setConditionOperatorName(arr[1]);
 					datRuleCondition.setCreateTime(dateTime);
 					datRuleCondition.setCreator(creator);
-					;
 					datRuleCondition.setRuleId(ruleId);
 					datRuleCondition.setRuleStatus("on");
 					datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
-					if (datRuleCondition.getRuleVersion() == null || "".equals(datRuleCondition.getRuleVersion())) {
+					if (datRuleCondition.getRuleVersion() == null) {
 						datRuleCondition.setRuleVersion(0);// 设置优先级默认为0
 					}
 					linkedList.addFirst(datRuleCondition);
@@ -240,7 +239,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	}
 
 	/**
-	 * 循环分组，降序map
+	 * 循环分组(按照groupName)，降序map
 	 * 
 	 * @param list
 	 * @return
@@ -327,11 +326,12 @@ public class DatRuleServiceImpl implements DatRuleService {
 	}
 
 	@Override
-	public ServerResponse loadGatewaySet(String activityBpdId, String snapshotId, String bpdId,
+	public ServerResponse loadGatewaySet(String proAppId, String snapshotId, String bpdId,
 			String activityType) {
 		// TODO Auto-generated method stub
 		List<BpmActivityMeta> list = 
-				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(activityBpdId, snapshotId, bpdId, activityType);
+				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(proAppId, snapshotId, bpdId, activityType);
+		List<Map<String, Object>> rightDetailsList = new ArrayList<Map<String, Object>>();
 		if(list!=null&&list.size()>0) {
 			BpmActivityMeta bpmActivityMeta = list.get(0);//默认展示第一个
 			DhGatewayLine dhGatewayLine = new DhGatewayLine();
@@ -348,30 +348,77 @@ public class DatRuleServiceImpl implements DatRuleService {
 						
 						//根据ruleId查询predictRules展示
 						DatRule datRule = getDatRuleByKey(dhGatewayLine2.getRuleId());
-						
-						//根据当前activityId查询当前环节和当前type所有predictRules展示,需要按时间排序
-						/*List<DatRule> predictRules = getPreRulesLikeRuleName(bpmActivityMeta.getActivityId());
-						*/
 						//根据当前ruleId查询所有dat_rule_condition展示,需要按照分组名排序
 						List<DatRuleCondition> datRuleConditions = datRuleConditionServiceImpl.getDatruleConditionByRuleId(dhGatewayLine2.getRuleId());
 						
-						//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
-						/*List<DatRuleCondition> datRuleConditionList
-						=datRuleConditionServiceImpl.loadDatruleConditionInRuleId(bpmActivityMeta.getActivityId());
-						*/
-						
-						son.put("DataList", datRuleConditions);
+						son.put("DatConditionList", datRuleConditions);
 						son.put("PredictRule", datRule);
-						map.put(datRule.getRuleName(), son);
+						Map<String,Object> sonMap = new HashMap<String,Object>();
+						String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+						sonMap.put(target, son);
+						rightDetailsList.add(sonMap);
 					}
+				}else {
+					Map<String,Object> sonMap = new HashMap<String,Object>();
+					String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+					sonMap.put(target, "default");
+					rightDetailsList.add(sonMap);
 				}
 			}
 			map.put("leftMenus", list);
+			map.put("rightDetailsList", rightDetailsList);
 			return ServerResponse.createBySuccess(map);
 		}else {
-			return ServerResponse.createByErrorMessage("拉取环节列表失败！");
+			return ServerResponse.createByErrorMessage("拉取网关环节列表失败！");
 		}
 	}
 
-
+	@Override
+	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
+		// TODO Auto-generated method stub
+		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
+		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(datRuleCondition.getRuleId());
+		linkedList.addFirst(datRuleCondition);
+		List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
+		StringBuffer sb = new StringBuffer("Map(");
+		for (int j = 0; j < list2.size(); j++) {
+			Entry<String, List<DatRuleCondition>> entry = list2.get(j);
+			StringBuffer sonSb = new StringBuffer("(");
+			for (int b = 0; b < entry.getValue().size(); b++) {
+				DatRuleCondition datRuleCondition2 = entry.getValue().get(b);
+				sonSb.append("this['");
+				sonSb.append(datRuleCondition2.getLeftValue());
+				sonSb.append("']");
+				sonSb.append(datRuleCondition2.getValueOperator());
+				sonSb.append(datRuleCondition2.getRightValue());
+				if ((b + 1) < entry.getValue().size()) {
+					sonSb.append(datRuleCondition2.getConditionOperator());
+				}
+			}
+			if ((j + 1) == list2.size()) {
+				sonSb.append(")");
+			} else if ((j + 1) < list2.size()) {
+				sonSb.append(")" + entry.getValue().get(entry.getValue().size() - 1).getConditionOperator());
+			}
+			sb.append(sonSb.toString());
+		}
+		sb.append(")");
+		DatRule datRule = new DatRule();
+		datRule.setRuleId(datRuleCondition.getRuleId());
+		datRule.setRuleProcess(sb.toString());
+		Integer count = datRuleMapper.updateDatRule(datRule);//修改
+		if(count>0) {
+			if(datRuleConditionServiceImpl.insert(datRuleCondition)>0) {
+				List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
+				Map<String, Object> data = new HashMap<String,Object>();
+				data.put("DatConditionList", list);
+				data.put("PredictRule", datRule);
+				return ServerResponse.createBySuccess("新增网关规则成功！", data);
+			}else {
+				return ServerResponse.createByErrorMessage("添加网关规则异常！");
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("添加网关规则异常！");
+		}
+	}
 }

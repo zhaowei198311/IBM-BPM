@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DatRuleMapper" >
   
-   <select id="getDatRuleByKey" parameterType="com.desmart.desmartbpm.entity.DatRule"
+   <select id="getDatRuleByKey" parameterType="map"
    resultType="com.desmart.desmartbpm.entity.DatRule">
    	SELECT RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE, END_TIME, IS_ACTIVATE
    	, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS, RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME FROM DAT_RULE
@@ -22,7 +22,7 @@
    </insert>
    
    <update id="updateDatRule" parameterType="com.desmart.desmartbpm.entity.DatRule">
-    UPDATE DAT_RULE SET RULE_VERSION = #{ruleVersion},
+    UPDATE DAT_RULE SET RULE_VERSION = RULE_VERSION+1,
     RULE_PROCESS = #{ruleProcess} where rule_id = #{ruleId}
    </update>
     

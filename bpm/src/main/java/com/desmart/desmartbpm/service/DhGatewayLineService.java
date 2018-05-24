@@ -26,7 +26,7 @@ public interface DhGatewayLineService {
     boolean needGenerateGatewayLine(String proAppId, String proUid, String proVerUid);
 
     /**
-     * 根据条件查询网关连接线集合
+     * 根据条件查询网关连接线集合,按照is_delfault排序，默认线路放在最后
      * @param dhGatewayLine
      * @return
      */

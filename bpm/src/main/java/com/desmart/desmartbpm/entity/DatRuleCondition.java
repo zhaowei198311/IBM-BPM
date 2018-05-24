@@ -23,6 +23,8 @@ public class DatRuleCondition {
 	private Integer ruleVersion;//规则优先级   RULE_VERSION
 	private Integer sortNum;//SORT_NUM 网关序号
 	private String valueOperator;//值运算操作符   VALUE_OPERATOR
+	//不在表内
+	private String ruleName;//规则名称
 	public String getConditionId() {
 		return conditionId;
 	}
@@ -138,6 +140,12 @@ public class DatRuleCondition {
 	public void setResult(String result) {
 		this.result = result;
 	}
+	public String getRuleName() {
+		return ruleName;
+	}
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
 	@Override
 	public String toString() {
 		return "DatRuleCondition [result=" + result + ", conditionId=" + conditionId + ", conditionGroupName="
@@ -146,18 +154,7 @@ public class DatRuleCondition {
 				+ ", creator=" + creator + ", leftName=" + leftName + ", leftValue=" + leftValue + ", leftValueType="
 				+ leftValueType + ", returnType=" + returnType + ", rightValue=" + rightValue + ", rightValueType="
 				+ rightValueType + ", ruleId=" + ruleId + ", ruleStatus=" + ruleStatus + ", ruleVersion=" + ruleVersion
-				+ ", sortNum=" + sortNum + ", valueOperator=" + valueOperator + ", getConditionId()=" + getConditionId()
-				+ ", getConditionGroupName()=" + getConditionGroupName() + ", getConditionOperator()="
-				+ getConditionOperator() + ", getConditionOperatorName()=" + getConditionOperatorName()
-				+ ", getConditionType()=" + getConditionType() + ", getCreateTime()=" + getCreateTime()
-				+ ", getCreator()=" + getCreator() + ", getLeftName()=" + getLeftName() + ", getLeftValue()="
-				+ getLeftValue() + ", getLeftValueType()=" + getLeftValueType() + ", getReturnType()=" + getReturnType()
-				+ ", getRightValue()=" + getRightValue() + ", getRightValueType()=" + getRightValueType()
-				+ ", getRuleId()=" + getRuleId() + ", getRuleStatus()=" + getRuleStatus() + ", getRuleVersion()="
-				+ getRuleVersion() + ", getSortNum()=" + getSortNum() + ", getValueOperator()=" + getValueOperator()
-				+ ", getResult()=" + getResult() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+				+ ", sortNum=" + sortNum + ", valueOperator=" + valueOperator + ", ruleName=" + ruleName + "]";
 	}
-	
 	
 }

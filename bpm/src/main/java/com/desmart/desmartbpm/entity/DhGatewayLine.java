@@ -19,7 +19,10 @@ public class DhGatewayLine {
     
     private String activityBpdId;  // 此线在流程图上的元素id
     
-
+    //不在表上
+    private String activityName;// 连接线起始点的排他网关的activity_name
+    private String toActivityName;// 连接线结束点相连的节点activity_name
+    
     public String getGatewayLineUid() {
         return gatewayLineUid;
     }
@@ -75,6 +78,30 @@ public class DhGatewayLine {
     public void setActivityBpdId(String activityBpdId) {
         this.activityBpdId = activityBpdId;
     }
+
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
+	public String getToActivityName() {
+		return toActivityName;
+	}
+
+	public void setToActivityName(String toActivityName) {
+		this.toActivityName = toActivityName;
+	}
+
+	@Override
+	public String toString() {
+		return "DhGatewayLine [gatewayLineUid=" + gatewayLineUid + ", activityId=" + activityId + ", toActivityId="
+				+ toActivityId + ", routeResult=" + routeResult + ", isDefault=" + isDefault + ", ruleId=" + ruleId
+				+ ", activityBpdId=" + activityBpdId + ", activityName=" + activityName + ", toActivityName="
+				+ toActivityName + "]";
+	}
     
     
     

@@ -51,4 +51,10 @@ public interface AccessoryFileUploadService {
 	 */
 	public ServerResponse saveFile(MultipartFile[] multipartFiles,String uploadModels,
 			String appUid,String taskId);
+	/**
+	 * 文件删除
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument);
 }

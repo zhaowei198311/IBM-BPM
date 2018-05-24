@@ -48,6 +48,18 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 		return datRuleConditionMapper.loadDatruleConditionInRuleId(activityId);
 	}
 
+	@Override
+	public Integer insert(DatRuleCondition datRuleCondition) {
+		// TODO Auto-generated method stub
+		return datRuleConditionMapper.insert(datRuleCondition);
+	}
+
+	@Override
+	public List<DatRuleCondition> getDatruleConditionByActivityId(String activityId) {
+		// TODO Auto-generated method stub
+		return datRuleConditionMapper.getDatruleConditionByActivityId(activityId);
+	}
+
 	
 
 }
