@@ -527,17 +527,27 @@
 							console.log(JSON.stringify(finalData));
 							var proUids = $("#proUid").val();
 							var proAppIds = $("#proAppId").val();
-							var verUids = $("#verUid").val();
-							$.ajax({
+							var proVerIds = $("#verUid").val();
+							var activityId = ""
+								var userUid = ""
+								var insData = $("#insData").text();
+								$('.getUser').each(function(){
+						    		activityId=$(this).attr('id');
+						    		userUid=$(this).val();
+						    	});
+								var startjson = "{";
+								var formData = "formData"; // 表单数据外层
+								var routeData = "routeData"; // 选人数据外层
+								var approvaData = "approvaData"; // 审批数据外层
+								var processData = "processIdData"; // 任务数据外层
+								var endjson = "}";	
+								var jsonStr = ""+startjson+"\""+formData+"\":"+json+",\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+processData+"\":{\"proUids\":\""+proUids+"\",\"proAppIds\":\""+proAppIds+"\",\"proVerIds\":\""+proVerIds+"\"}"+endjson+"";		
+							 	$.ajax({
 								url : 'processInstance/startProcess',
 								type : 'POST',
 								dataType : 'json',
 								data : {
-									proUid : proUids,
-									proAppId : proAppIds,
-									verUid : verUids,
-									dataInfo : JSON.stringify(finalData),
-									approval : user
+									data : jsonStr
 								},
 								beforeSend : function(){
 									index = layer.load(1);
@@ -561,7 +571,7 @@
 										icon : 2
 									});
 								}
-							});
+							}); */
 						}); 
 		//end
 	}
