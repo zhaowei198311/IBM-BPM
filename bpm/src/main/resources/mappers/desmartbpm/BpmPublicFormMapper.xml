@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.BpmPublicFormMapper" >
+	<sql id="base_column">
+		public_form_uid,public_form_name,public_form_description,
+		public_form_content,public_form_filename,creator,create_time
+	</sql>
+	
+	<sql id="select_column">
+		pf.public_form_uid,pf.public_form_name,pf.public_form_description,
+		pf.public_form_content,pf.public_form_filename,pf.creator,pf.create_time
+	</sql>
+	
+	<select id="listFormByFormName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		select <include refid="select_column"/>,u.user_name creatorName
+		from bpm_public_form pf left join sys_user u
+		on pf.creator = u.user_uid
+		<where>
+			<if test="formName != null and !formName.trim().isEmpty()">
+				pf.public_form_name like '%' || #{formName} || '%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryFormByFormName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		select <include refid="base_column"/>
+		from bpm_public_form
+		where public_form_name = #{formName}
+	</select>
+	
+	<select id="isBindMainForm" parameterType="String" resultType="String">
+		select form_uid 
+		from bpm_form_rele_public_form
+		where public_form_uid = #{formUid}
+	</select>
+	
+	<insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		insert into bpm_public_form(<include refid="base_column"/>)
+		values(#{publicFormUid},#{publicFormName},#{publicFormDescription},#{publicFormContent},
+			#{publicFormFilename},'00035438',sysdate)
+	</insert>
+	
+	<update id="updateFormContent" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		update bpm_public_form
+		set public_form_content = #{publicFormContent}
+		where public_form_uid = #{publicFormUid}
+	</update>
+	
+	<select id="queryFormByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		select <include refid="base_column"/>
+		from bpm_public_form
+		where public_form_uid = #{formUid}
+	</select>
+	
+	<update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		update bpm_public_form
+		set public_form_name = #{publicFormName},
+			public_form_description = #{publicFormDescription}
+		where public_form_uid = #{publicFormUid}
+	</update>
+	
+	<update id="updateFormFilenameByFormUid" parameterType="map">
+		update bpm_public_form
+		set public_form_filename = #{formFilename}
+		where public_form_uid = #{publicFormUid}
+	</update>
+</mapper>
