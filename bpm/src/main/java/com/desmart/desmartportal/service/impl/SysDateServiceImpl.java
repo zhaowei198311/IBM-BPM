@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,22 +48,30 @@ public class SysDateServiceImpl implements SysDateService{
 				timeAmount = timeAmount * 30 * 24;
 			}
 		}
-		// 当前时间 - 创建时间的差值转换成小时
+		// 创建时间  + 配置时间
 		long lastTime = date.getTime() + (long)(timeAmount * 60 * 60 * 1000L);
-		// 查询最后日期是否为节假日或者休息日 true为是
-		Boolean condition = queryHolidayOrRestDay(new Date(lastTime));
-		if (condition) {
-			// 如果最后日期为节假日或者休息日则往后延一天，直到最后日期不为节假日或者休息日为止
-			while (true) {
-				lastTime += 24 * 60 * 60 * 1000L;	
-				Boolean sign = queryHolidayOrRestDay(new Date(lastTime));
-				if (!sign) {
-					break;
-				}
+		// 如果最后日期为节假日或者休息日则往后延一天，直到最后日期不为节假日或者休息日为止
+		while (true) {
+			
+			// 查询最后日期是否为节假日 true为是
+			Boolean sign = queryHolidayOrRestDay(new Date(lastTime));
+			if (sign || isWeekend(new Date(lastTime))) {
+				lastTime += 24 * 60 * 60 * 1000L;
+			}else {
+				break;
 			}
-			return new Date(lastTime);
-		}
+		}		
 		return new Date(lastTime);
 	}
-
+	
+	// 判断日期是否为休息日，true为是
+	public static boolean isWeekend(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int result = cal.get(Calendar.WEEK_OF_MONTH);
+        if (result == Calendar.SATURDAY || result == Calendar.SUNDAY) {
+            return true;
+        }
+        return false;
+    }
 }

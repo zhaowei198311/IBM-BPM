@@ -443,7 +443,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			procent = (int) (((double)new Date().getTime() / lastDate.getTime()) * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
-		map.put("precent", 100 - procent);
+		map.put("procent", 100 - procent);
 		map.put("hour", hour);
 		return ServerResponse.createBySuccess(map);
 	}
