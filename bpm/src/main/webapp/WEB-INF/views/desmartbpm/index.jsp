@@ -36,9 +36,14 @@
                               <dd><a href="<%=basePath%>/processDefinition/index" target="iframe0">流程定义</a></dd>
                             </dl>
                         </li>
-                        <li class="layui-nav-item"><a href="<%=basePath%>/formManage/index" target="iframe0"><i class="layui-icon">&#xe62d;</i> 表单管理</a></li>
+                        <li class="layui-nav-item">
+                        	<a href="javascript:;"><i class="layui-icon">&#xe62d;</i> 表单管理</a>
+                            <dl class="layui-nav-child">
+                              <dd><a href="<%=basePath%>/formManage/index" target="iframe0">流程表单管理</a></dd>
+                              <dd><a href="<%=basePath%>/publicForm/index" target="iframe0">公共表单管理</a></dd>
+                            </dl>
+                        </li>
                         <li class="layui-nav-item"><a href="interfaces/index" target="iframe0"><i class="layui-icon">&#xe614;</i> 接口管理</a></li>
-                        
                         <li class="layui-nav-item"><a href="<%=basePath%>/trigger/index" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/" target="iframe0"><i class="layui-icon">&#xe629;</i> 流程实例管理</a></li>
                         <li class="layui-nav-item">
