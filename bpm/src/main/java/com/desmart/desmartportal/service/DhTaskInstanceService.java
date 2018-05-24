@@ -79,6 +79,15 @@ public interface DhTaskInstanceService {
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> selectTaskAndProcessInfo(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize);
 	
-	
+	/**
+	 * 
+	 * @Title: queryProgressBar  
+	 * @Description: 查询审批进度  
+	 * @param @param bpmActivityMeta
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid);
 
 }
