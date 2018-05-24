@@ -47,7 +47,6 @@ public class BpmTaskUtil {
         HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
         HttpReturnStatus result = new HttpReturnStatus();
-        
         String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         
         try {
@@ -75,7 +74,6 @@ public class BpmTaskUtil {
                         resultMap.put("errorResult", result);
                     }
                 }
-                
             } else {
                 resultMap.put("errorResult", result);
             }
