@@ -571,7 +571,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			activityIds.add(map.get("ACTIVITY_ID_1").toString());
 		}
-    	dhActivityAssignMapper.deleteByActivityIds(activityIds);
+    	if (!activityIds.isEmpty()) {
+    		dhActivityAssignMapper.deleteByActivityIds(activityIds);
+		}	
     	// 拷贝旧流程DH_ACTIVITY_ASSIGN表中信息
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
     		List<DhActivityAssign> oldDhActivityAssignList = dhActivityAssignMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
@@ -600,7 +602,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			activityIds.add(map.get("ACTIVITY_ID_1").toString());
 		}
-    	dhActivityRejectMapper.deleteByActivityIds(activityIds);
+    	if (!activityIds.isEmpty()) {
+    		dhActivityRejectMapper.deleteByActivityIds(activityIds);
+		}
     	// 拷贝可驳回环节信息
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			List<DhActivityReject> OldDhActivityReject = dhActivityRejectMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
