@@ -60,7 +60,8 @@
 	border: 1px solid #ccc;
 	position: relative;
 	padding: 0 10px;
-	overflow: scroll;
+	overflow-y:auto;
+	overflow-x:hidden;
 }
 </style>
 </head>

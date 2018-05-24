@@ -63,7 +63,8 @@
 	border: 1px solid #ccc;
 	position: relative;
 	padding: 0 10px;
-	overflow: scroll;
+	overflow-y:auto;
+	overflow-x:hidden;
 }
 </style>
 </head>
@@ -201,6 +202,7 @@
 			</div>
 		</div>
 	</div>
+	<!-- 附件上传模态框 -->
 	<div class="display_content_accessory_file" id="upload_file_modal">
 		<div class="top">文件上传</div>
 		<div class="upload_overflow_middle">

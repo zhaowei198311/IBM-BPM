@@ -51,12 +51,13 @@
 			}
 			
 			.upload_overflow_middle {
-   				 height: 80%;
-   				 width: 96%;
-    			 border: 1px solid #ccc;
-                 position: relative;
-   				 padding: 0 10px;
-   				 overflow: scroll;
+				height: 80%;
+				width: 96%;
+				border: 1px solid #ccc;
+				position: relative;
+				padding: 0 10px;
+				overflow-y:auto;
+				overflow-x:hidden;
 			}
 </style>
 </head>
