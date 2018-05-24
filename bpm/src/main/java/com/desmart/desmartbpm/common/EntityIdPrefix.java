@@ -43,6 +43,9 @@ public class EntityIdPrefix {
     /** 表单字段前缀 */
     public static final String BPM_FORM_FIELD = "form_field:";
     
+    /** 公共表单前缀 */
+    public static final String BPM_PUBLIC_FORM = "public_form:";
+    
     /** 步骤前缀 */
     public static final String DH_STEP = "step:";
 

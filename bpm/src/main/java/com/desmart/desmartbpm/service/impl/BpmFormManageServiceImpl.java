@@ -24,7 +24,6 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -137,7 +136,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	}
 	
 	@Override
-	public ServerResponse updateFormInfo(BpmForm bpmForm) throws IOException {
+	public ServerResponse updateFormInfo(BpmForm bpmForm) throws Exception {
 		//修改表单文件名
 		if(!updateFormFilename(bpmForm)) {
 			throw new PlatformException("表单名修改异常");
@@ -158,7 +157,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		String updateFilename = bpmForm.getDynTitle()+".html";
 		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
 		boolean flag = sftp.renameFile(gcfg,"/form",filename, updateFilename);
-		bpmFormManageMapper.updateFormFilenameByFormUid(bpmForm.getDynUid(),updateFilename);
+		int updateRow = bpmFormManageMapper.updateFormFilenameByFormUid(bpmForm.getDynUid(),updateFilename);
+		if(1!=updateRow) {
+			throw new PlatformException("表单文件名修改失败");
+		}
 		return flag;
 	}
 
@@ -173,9 +175,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			if(1!=countRow) {
 				throw new PlatformException("删除表单信息失败");
 			}
-			List<BpmFormField> fiedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+			List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+			deleteFieldPermiss(filedList);
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
-			if(fieldCountRow!=fiedList.size()) {
+			if(fieldCountRow!=filedList.size()) {
 				throw new PlatformException("删除表单字段失败");
 			}
 			BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();

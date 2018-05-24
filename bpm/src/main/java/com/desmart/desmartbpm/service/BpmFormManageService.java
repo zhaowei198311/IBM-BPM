@@ -46,7 +46,7 @@ public interface BpmFormManageService {
 	/**
 	 * 修改表单基本信息
 	 */
-	ServerResponse updateFormInfo(BpmForm bpmForm) throws IOException;
+	ServerResponse updateFormInfo(BpmForm bpmForm) throws Exception;
 	
 	/**
 	 * 根据传入的组合条件查询表单集合
