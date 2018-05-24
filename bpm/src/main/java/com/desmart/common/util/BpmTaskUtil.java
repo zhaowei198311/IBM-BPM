@@ -234,6 +234,16 @@ public class BpmTaskUtil {
         return this.doTaskAction(taskId, "start", "");
     }
     
+    /**
+     * 完成任务
+     * @param taskId
+     * @return
+     */
+    public HttpReturnStatus completeTask(Integer taskId) {
+        return this.doTaskAction(taskId, "finish", "");
+    }
+    
+    
 }
 
 
