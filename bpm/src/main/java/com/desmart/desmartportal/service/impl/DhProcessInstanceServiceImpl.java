@@ -4,6 +4,8 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,11 +22,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -75,6 +80,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
+	
 	
 	/**
 	 * 查询所有流程实例
@@ -213,131 +221,111 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return null;
 	}
 	
-	@Override
-	@Transactional
-	public ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo,
-			String approval) {
+    @Override
+    @Transactional
+    public ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo,
+            String approval) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(verUid)) {
             return ServerResponse.createByError();
         }
-	    log.info("发起流程开始......");
-		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		HttpReturnStatus result = new HttpReturnStatus();
-		
-		// 掉用API 发起一个流程
-		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-		CommonBusinessObject pubBo = new CommonBusinessObject();
-		pubBo.setCreatorId(currentUserUid);
-		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-		result = bpmProcessUtil.startProcess(proAppId, proUid, verUid, pubBo);
-		log.info("掉用API状态码:" + result.getCode());
-		
-		
-		// 如果获取API成功 将返回过来的流程数据 保存到 平台
-		if (result.getCode() == 200) {
-			// 保存数据信息
-			log.info("掉用API返回过来的数据信息:" + result.getMsg());
-			JSONObject jsonBody = JSONObject.parseObject(result.getMsg());
-			JSONObject jsonBody2 = JSONObject.parseObject(String.valueOf(jsonBody.get("data")));
-			JSONArray jsonBody3 = JSONArray.parseArray(String.valueOf(jsonBody2.get("tasks")));
-			// 将流程数据 保存到 当前流程实例数据库中
-			String InsUid = EntityIdPrefix.DH_PROCESS_INSTANCE + String.valueOf(UUID.randomUUID());
-			// 查询用户信息
-			SysUser sysUser = sysUserMapper.queryByPrimaryKey(String.valueOf(currentUserUid));
-			// 
-			DhProcessInstance processInstance = new DhProcessInstance();
-			processInstance.setInsUid(InsUid);
-			processInstance.setInsTitle(String.valueOf(jsonBody2.get("processAppName")));
-			processInstance.setInsId(Integer.parseInt(String.valueOf(jsonBody2.get("piid"))));
-			processInstance.setInsParent("");
-			if (String.valueOf(jsonBody2.get("executionState")).equals("Active")) {
-				processInstance.setInsStatus(String.valueOf(jsonBody2.get("executionState")));
-				processInstance.setInsStatusId(Integer.parseInt(DhProcessInstance.STATUS_ACTIVE));
-			}
-			processInstance.setProAppId(String.valueOf(jsonBody2.get("processAppID")));
-			processInstance.setProUid(String.valueOf(jsonBody2.get("processTemplateID")));
-			processInstance.setProVerUid(String.valueOf(jsonBody2.get("snapshotID")));
+        log.info("发起流程开始......");
+        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
+        BpmActivityMeta firstHumanActivity = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, verUid).getData();
+        
+        JSONObject taskData = JSONObject.parseObject(dataInfo);
+        JSONObject formDataFromTask = (JSONObject)taskData.get("formData");
+        // formdata
+        // New CO
+        
+        HttpReturnStatus result = new HttpReturnStatus();
+        
+        // 掉用API 发起一个流程
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        CommonBusinessObject pubBo = new CommonBusinessObject();
+        pubBo.setCreatorId(currentUserUid);
+        pubBo.setNextOwners_0(Arrays.asList(new String[] {"00011178"}));
+        
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        result = bpmProcessUtil.startProcess(proAppId, proUid, verUid, pubBo);
+        
+        // 如果获取API成功 将返回过来的流程数据 保存到 平台
+        if (!BpmClientUtils.isErrorResult(result)) {
+            // 获得流流程编号,和第一个任务的编号
+            int insId = getProcessId(result);
+            int taskId = getFirstTaskId(result);
+            
+            BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+            HttpReturnStatus startTaskResult = bpmTaskUtil.startTask(taskId);
+            // 如果完成任务成功
+            if (200 == startTaskResult.getCode()) {
+                // 数据库中插入流程， 数据库中插入任务
+                DhProcessInstance processInstance = new DhProcessInstance();
+                processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
+                processInstance.setInsTitle("DEMO_TITLE");
+                processInstance.setInsId(insId);
+                processInstance.setInsStatusId(12);
+                processInstance.setProAppId(proAppId);
+                processInstance.setProUid(proUid);
+                processInstance.setProVerUid(verUid);
+                processInstance.setInsInitDate(new Date());
+                processInstance.setInsInitUser(currentUserUid);
+                processInstance.setCompanyNumber(currentUser.getCompanynumber());
+                JSONObject insData = new JSONObject();
+                insData.put("formData", formDataFromTask);
+                processInstance.setInsData(insData.toJSONString());
+                processInstance.setInsStatus("run");
+                dhProcessInstanceMapper.insertProcess(processInstance);
+                
+                DhTaskInstance taskInstance = new DhTaskInstance();
+                taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
+                taskInstance.setUsrUid(currentUserUid);
+                taskInstance.setActivityBpdId(firstHumanActivity.getActivityBpdId());
+                taskInstance.setTaskData(dataInfo);
+                taskInstance.setTaskId(taskId);
+                taskInstance.setInsUid(processInstance.getInsUid());
+                taskInstance.setTaskData(dataInfo);
+                taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
+                taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+                taskInstance.setTaskInitDate(new Date());
+                taskInstance.setTaskFinishDate(new Date());
+                dhTaskInstanceMapper.insertTask(taskInstance);
+                
+                // 任务完成后 保存到流转信息表里面
+                DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+                dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+                dhRoutingRecord.setInsUid(processInstance.getInsUid());
+                dhRoutingRecord.setActivityName(firstHumanActivity.getActivityName());
+                dhRoutingRecord.setRouteType(RouteStatus.ROUTE_STARTPROCESS);
+                // 发起流程 第一个流转环节信息 的 用户id 是 自己
+                dhRoutingRecord.setUserUid(currentUserUid);
+                dhRoutingRecordMapper.insert(dhRoutingRecord);
+            } else {
+                return ServerResponse.createByErrorMessage("发起流程失败");
+            }
+            return ServerResponse.createBySuccess();
+        } else {
+            return ServerResponse.createByErrorMessage("发起流程失败");
+        }
+    }
 
-			processInstance.setCompanyNumber(sysUser.getCompanynumber());
-			processInstance.setInsInitUser(String.valueOf(currentUserUid));
-			processInstance.setInsInitUser(currentUserUid);
-			// 流程数据
-			processInstance.setInsData(dataInfo);
-			dhProcessInstanceMapper.insertProcess(processInstance);
-			// 将任务数据 保存到 当前任务实例数据库中
-			DhTaskInstance taskInstance = new DhTaskInstance();
-			taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + String.valueOf(UUID.randomUUID()));
-			taskInstance.setInsUid(InsUid);
-			for (int i = 0; i < jsonBody3.size(); i++) {
-				JSONObject jsonObject = jsonBody3.getJSONObject(i);
-				taskInstance.setTaskId(Integer.parseInt(String.valueOf(jsonObject.get("tkiid"))));
-				// 处理人
-				taskInstance.setUsrUid(approval);
-				taskInstance.setActivityBpdId(String.valueOf(jsonObject.get("flowObjectID")));
-				// 任务类型
-				taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
-				taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-				taskInstance.setTaskTitle(String.valueOf(jsonObject.get("name")));
-				// 发起流程上一环节默认 是自己
-				taskInstance.setTaskPreviousUsrUid(
-						String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-				taskInstance.setTaskPreviousUsrUsername(sysUser.getUserName());
-				taskInstance.setTaskPreviousUsrUid(currentUserUid);
-				SysUser sysUserName = sysUserMapper.queryByPrimaryKey(currentUserUid);
-				taskInstance.setTaskPreviousUsrUsername(sysUserName.getUserName());
-				// 任务数据
-				taskInstance.setTaskData(dataInfo);
-				
-				// 流程发起结束后设置变量
-				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-				bpmActivityMeta.setProAppId(proAppId);
-				bpmActivityMeta.setPoId(proUid);
-				bpmActivityMeta.setSnapshotId(verUid);
-				List<BpmActivityMeta> bpmActivityMeta2 = bpmActivityMetaMapper
-						.queryByBpmActivityMetaSelective(bpmActivityMeta);
-				// 环节名称 用于保存流转信息
-				String activityName = "";
-				for (BpmActivityMeta bpmActivityMeta3 : bpmActivityMeta2) {
-					// 找到一个环节顺序号
-					if (bpmActivityMeta3.getSortNum() == 1) {
-						log.info("第一个环节ID:" + bpmActivityMeta3.getActivityId());
-						dhTaskInstanceService.queryTaskSetVariable(bpmActivityMeta3.getActivityId(),
-								String.valueOf(jsonObject.get("tkiid")));
-						BpmActivityMeta bpmActivityMeta4 = bpmActivityMetaMapper
-								.queryByPrimaryKey(bpmActivityMeta3.getActivityId());
-						log.info("第一个环节ID:" + bpmActivityMeta4.getActivityName());
-						activityName = bpmActivityMeta4.getActivityName();
-					}
-				}
-				// 默认发起 提交第一个环节
-				ServerResponse serverResponse = dhTaskInstanceService.perform(String.valueOf(jsonObject.get("tkiid")),String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-				if (!serverResponse.isSuccess()) {
-				    throw new PlatformException("提交第一个任务失败");
-				}
-				if (dhTaskInstanceService.isTaskExists(taskInstance.getTaskId())) {
-                    // 更新任务状态为完成
-                    dhTaskInstanceMapper.updateTaskStatusByTaskId(taskInstance.getTaskId(), DhTaskInstance.STATUS_CLOSED);
-                } else {
-                    dhTaskInstanceService.insertTask(taskInstance);
-                }
-				// 任务完成后 保存到流转信息表里面
-				DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-				dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-				dhRoutingRecord.setInsUid(InsUid);
-				dhRoutingRecord.setActivityName(activityName);
-				dhRoutingRecord.setRouteType(RouteStatus.ROUTE_STARTPROCESS);
-				// 发起流程 第一个流转环节信息 的 用户id 是 自己
-				dhRoutingRecord.setUserUid(
-						String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-				dhRoutingRecordMapper.insert(dhRoutingRecord);
-			}
-			log.info("发起流程结束......");
-			return ServerResponse.createBySuccess();
-		} else {
-			return ServerResponse.createByError();
-		}
+	/**
+	 * 根据RESTfual调用返回值获得流程实例id
+	 * @param httpReturnStatus
+	 */
+	private int getProcessId(HttpReturnStatus httpReturnStatus) {
+	    JSONObject jsonBody = JSONObject.parseObject(httpReturnStatus.getMsg());
+        JSONObject jsonBody2 = JSONObject.parseObject(String.valueOf(jsonBody.get("data")));
+        return new Integer(jsonBody2.getString("piid"));
 	}
-
+	
+	
+	private int getFirstTaskId(HttpReturnStatus httpReturnStatus) {
+	    JSONObject jsoResult = JSONObject.parseObject(httpReturnStatus.getMsg());
+	    String taskId = jsoResult.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid");
+	    return new Integer(taskId);
+	}
+	
 	/**
 	 * 查看流程图
 	 */

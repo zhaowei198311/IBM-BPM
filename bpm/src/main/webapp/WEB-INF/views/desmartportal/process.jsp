@@ -133,9 +133,7 @@
 			      <td>
 			      	<input type="hidden" class="getUser" id="${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
 			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
-			      	
 			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-			      	
 			      </td>
 			      <td colspan="3">
 			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
@@ -229,6 +227,7 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	<script>
@@ -523,8 +522,11 @@
 							json += "}";
 							//获取审批人
 							var user = $(".getUser").val().substring(0,8);
+							
 							// 发起流程				
-							var dataInfo = json
+							var finalData = {};
+							finalData.formData = JSON.parse(json);
+							console.log(JSON.stringify(finalData));
 							var proUids = $("#proUid").val();
 							var proAppIds = $("#proAppId").val();
 							var verUids = $("#verUid").val();
@@ -536,7 +538,7 @@
 									proUid : proUids,
 									proAppId : proAppIds,
 									verUid : verUids,
-									dataInfo : dataInfo,
+									dataInfo : JSON.stringify(finalData),
 									approval : user
 								},
 								beforeSend : function(){

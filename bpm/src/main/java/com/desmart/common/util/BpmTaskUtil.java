@@ -230,7 +230,9 @@ public class BpmTaskUtil {
         return resultMap;
     }
     
-    
+    public HttpReturnStatus startTask(Integer taskId) {
+        return this.doTaskAction(taskId, "start", "");
+    }
     
 }
 
