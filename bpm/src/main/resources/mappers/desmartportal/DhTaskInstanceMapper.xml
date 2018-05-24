@@ -348,27 +348,7 @@
 		#{taskPriority},
 		#{taskData},
 		#{taskDelegateUser},
-		#{syn_num}
-			#{taskUid},
-			#{insUid},
-			#{taskId},
-			#{usrUid},
-			#{activityBpdId},
-			#{taskType},
-			#{taskStatus},
-			#{taskTitle},
-			#{insUpdateDate},
-			#{taskPreviousUsrUid},
-			#{taskPreviousUsrUsername},
-			#{taskDelegateDate},
-			sysdate,
-			#{taskFinishDate},
-			#{taskDueDate},
-			#{taskRiskDate},
-			#{taskPriority},
-			#{taskData},
-			#{taskDelegateUser},
-			#{synNumber}
+		#{synNumber}
 		)
 	</insert>
 
