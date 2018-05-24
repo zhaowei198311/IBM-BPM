@@ -91,6 +91,7 @@ public class DhTaskInstanceController {
 	@RequestMapping(value = "/queryProgressBar")
 	@ResponseBody
 	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid){
-		return dhTaskInstanceService.queryProgressBar(proUid, proVerUid, proAppId, taskUid);
+		//return dhTaskInstanceService.queryProgressBar(proUid, proVerUid, proAppId, taskUid);
+	    return null;
 	}
 }

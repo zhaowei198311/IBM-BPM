@@ -368,6 +368,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return 0;
 	}
 
+
 	/**
 	 * 根据任务实例查询任务数据和流程数据
 	 */
