@@ -47,7 +47,7 @@ import com.github.pagehelper.PageInfo;
  * Description:
  * </p>
  * 
- * @author 张志颖
+ * @author zhaowei
  * @date 2018年5月11日
  */
 @Service
@@ -260,10 +260,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 *
 	 */
 	@Override
-	public String perform(String data) {
+	public ServerResponse perform(String data) {
 		log.info("完成任务开始......");
-		
-		return "";
+		try {
+			
+			log.info("完成任务结束......");
+			return ServerResponse.createBySuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByError();
+		}
 	}
 
 	public boolean isTaskExists(int taskId) {

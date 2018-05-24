@@ -3,7 +3,9 @@
  */
 package com.desmart.desmartportal.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
@@ -87,9 +89,14 @@ public class DhTaskInstanceController {
 		//解析data
 		JSONObject jsonBody = JSONObject.parseObject(data);
 		JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
-		Integer taskId = (Integer) taskData.get("taskId");
+		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
+		JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
+		String userId = routeData.getString("userUid");
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		CommonBusinessObject pubBo = new CommonBusinessObject();
+		List<String> userList = new ArrayList<>();
+		userList.add(userId);
+		pubBo.setNextOwners_0(userList);
 		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
 		bpmTaskUtil.commitTask(taskId, pubBo);
 		return ServerResponse.createBySuccess();
