@@ -30,6 +30,8 @@ import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -66,6 +68,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private MenusService menusService;
+	
+	@Autowired
+	private SysUserMapper sysUserMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -363,7 +368,26 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return 0;
 	}
 
+	/**
+	 * 根据任务实例查询任务数据和流程数据
+	 */
 	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectTaskAndProcessInfo(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize) {
+		log.info("根据任务实例查询任务数据和流程数据 Start......");
+		try {
+			PageHelper.startPage(pageNum, pageSize);
+			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectTaskAndProcessInfo(taskInstance);
+			// 返回流程创建者 名称 而不是id 这里做处理 好直接返给前台
+			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+			return ServerResponse.createBySuccess(pageInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.info("根据任务实例查询任务数据和流程数据 END......");
+		return null;
+	}
+
+	/*@Override
 	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid) {
 //		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		// 创建时间
@@ -407,5 +431,5 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		Double percent = hours / time;
 		int index = percent.toString().indexOf("."); 
 		return ServerResponse.createBySuccessMessage(percent.toString().substring(0, index));
-	}
+	}*/
 }
