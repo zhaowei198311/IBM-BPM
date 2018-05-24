@@ -72,6 +72,13 @@ public interface DhTaskInstanceService {
 	 */
 	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
 	
+	/**
+	 * 根据任务实例查询任务数据和流程数据
+	 * @param taskInstance
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> selectTaskAndProcessInfo(DhTaskInstance taskInstance,Integer pageNum, Integer pageSize);
+	
 	
 
 }
