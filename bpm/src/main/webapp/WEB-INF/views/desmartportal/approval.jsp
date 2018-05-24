@@ -74,11 +74,11 @@
 		<input id="insId" value="${insId}" style="display: none;">
 		<input id="taskId" value="${taskId}" style="display: none;">
 		<input id="taskUid" value="${taskUid}" style="display: none;">
-		<span id="insData" >${insData}</span>
-		<span id="listStr" >${listStr}</span>
+		<span id="insData" style="display: none;">${insData}</span>
+		<span id="listStr" style="display: none;">${listStr}</span>
 		<span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span id="test" style="float: right; padding-right: 20px;">
-			<button class="layui-btn  layui-btn-sm"
+			<button class="layui-btn layui-btn-sm"
 				onclick="processView(${insId})">流程图</button>
 			<button class="layui-btn layui-btn-sm" onclick="agree(${taskId})">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
@@ -535,7 +535,8 @@ $(function(){
 	layui.use(['form'], function () {
         form = layui.form;
 	});
-	getdata($("#insData").attr("value"));
+	console.log($("#insData").text());
+	getdata($("#insData").text());
 });
 
 function getdata(jsonStr){
