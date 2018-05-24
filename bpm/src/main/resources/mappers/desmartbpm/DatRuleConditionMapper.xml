@@ -21,7 +21,9 @@
   
    <select id="getDatruleConditionByRuleId" parameterType="map"
     resultType="com.desmart.desmartbpm.entity.DatRuleCondition">
-    SELECT * FROM DAT_RULE_CONDITION where rule_id = #{ruleId}
+    SELECT drc.*,dr.rule_Name as ruleName FROM 
+    DAT_RULE_CONDITION drc left join DAT_RULE dr
+    on drc.rule_id = dr.rule_id where drc.rule_id = #{ruleId}
     order by CONDITION_GROUP_NAME
    </select>
    
@@ -67,6 +69,15 @@
     SELECT drc.*,dr.rule_name FROM DAT_RULE_CONDITION drc left join dat_rule dr on drc.rule_id = dr.rule_id
 	left join dh_gateway_line dgl on dr.rule_id = dgl.rule_id
 	where dgl.activity_id = #{activityId}
-	order by drc.CONDITION_GROUP_NAME
+	order by drc.rule_id,drc.CONDITION_GROUP_NAME
     </select>
+    
+    <delete id="batchDelete" parameterType="java.util.List">
+  		delete from dat_rule_condition
+ 		 <where>
+  		<foreach collection="list" index="index" item="item" open="(" separator="or" close=")">     
+  			condition_id=#{item.conditionId}
+   	 	</foreach>
+ 	 </where>
+ 	 </delete>
 </mapper>

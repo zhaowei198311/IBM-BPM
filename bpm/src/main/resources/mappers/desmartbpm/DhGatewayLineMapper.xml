@@ -128,7 +128,7 @@
     to_bam.activity_name as toActivityName
     from DH_GATEWAY_LINE dgl left join 
     BPM_ACTIVITY_META bam on dgl.activity_id = bam.activity_id
-    left join BPM_ACTIVITY_META to_bam on dgl.activity_id = to_bam.activity_id
+    left join BPM_ACTIVITY_META to_bam on dgl.to_activity_id = to_bam.activity_id
     where 1 = 1
    	<if test="gatewayLineUid != null and gatewayLineUid != '' ">
    	and dgl.GATEWAY_LINE_UID = #{gatewayLineUid}
@@ -136,6 +136,6 @@
    	<if test="activityId != null and activityId != '' ">
    	and dgl.ACTIVITY_ID = #{activityId}
    	</if>
-   	order by dgl.is_default
+   	order by dgl.is_default,dgl.rule_id
    </select>
 </mapper>

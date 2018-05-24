@@ -333,38 +333,9 @@ public class DatRuleServiceImpl implements DatRuleService {
 				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(proAppId, snapshotId, bpdId, activityType);
 		List<Map<String, Object>> rightDetailsList = new ArrayList<Map<String, Object>>();
 		if(list!=null&&list.size()>0) {
-			BpmActivityMeta bpmActivityMeta = list.get(0);//默认展示第一个
-			DhGatewayLine dhGatewayLine = new DhGatewayLine();
-			dhGatewayLine.setActivityId(bpmActivityMeta.getActivityId());
-			List<DhGatewayLine> dhGatewayLines = dhGatewayLineServiceImpl.getGateWayLinesByCondition(dhGatewayLine);
-			
 			Map<String, Object> map = new HashMap<String, Object>();
-			
-			for (DhGatewayLine dhGatewayLine2 : dhGatewayLines) {//循环网关连接线集合
-				if("FALSE".equals(dhGatewayLine2.getIsDefault())) {//不是默认连接线
-					
-					Map<String, Object> son = new HashMap<String, Object>();
-					if(bpmActivityMeta.getActivityType()!=null&&!"".equals(bpmActivityMeta.getActivityType())) {//判断是否已经添加规则数据
-						
-						//根据ruleId查询predictRules展示
-						DatRule datRule = getDatRuleByKey(dhGatewayLine2.getRuleId());
-						//根据当前ruleId查询所有dat_rule_condition展示,需要按照分组名排序
-						List<DatRuleCondition> datRuleConditions = datRuleConditionServiceImpl.getDatruleConditionByRuleId(dhGatewayLine2.getRuleId());
-						
-						son.put("DatConditionList", datRuleConditions);
-						son.put("PredictRule", datRule);
-						Map<String,Object> sonMap = new HashMap<String,Object>();
-						String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
-						sonMap.put(target, son);
-						rightDetailsList.add(sonMap);
-					}
-				}else {
-					Map<String,Object> sonMap = new HashMap<String,Object>();
-					String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
-					sonMap.put(target, "default");
-					rightDetailsList.add(sonMap);
-				}
-			}
+			BpmActivityMeta bpmActivityMeta = list.get(0);//默认展示第一个
+			rightDetailsList = loadRightDetailsList(bpmActivityMeta.getActivityId());
 			map.put("leftMenus", list);
 			map.put("rightDetailsList", rightDetailsList);
 			return ServerResponse.createBySuccess(map);
@@ -372,8 +343,41 @@ public class DatRuleServiceImpl implements DatRuleService {
 			return ServerResponse.createByErrorMessage("拉取网关环节列表失败！");
 		}
 	}
+	@Override
+	public List<Map<String,Object>> loadRightDetailsList(String activityId){
+		List<Map<String,Object>> rightDetailsList = new ArrayList<Map<String,Object>>();
+		DhGatewayLine dhGatewayLine = new DhGatewayLine();
+		dhGatewayLine.setActivityId(activityId);
+		List<DhGatewayLine> dhGatewayLines = dhGatewayLineServiceImpl.getGateWayLinesByCondition(dhGatewayLine);
+		
+		
+		for (DhGatewayLine dhGatewayLine2 : dhGatewayLines) {//循环网关连接线集合
+			if("FALSE".equals(dhGatewayLine2.getIsDefault())) {//不是默认连接线
+				
+				Map<String, Object> son = new HashMap<String, Object>();
+					//根据ruleId查询predictRules展示
+					DatRule datRule = getDatRuleByKey(dhGatewayLine2.getRuleId());
+					//根据当前ruleId查询所有dat_rule_condition展示,需要按照分组名排序
+					List<DatRuleCondition> datRuleConditions = datRuleConditionServiceImpl.getDatruleConditionByRuleId(dhGatewayLine2.getRuleId());
+					
+					son.put("DatConditionList", datRuleConditions);
+					son.put("PredictRule", datRule);
+					Map<String,Object> sonMap = new HashMap<String,Object>();
+					String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+					sonMap.put(target, son);
+					rightDetailsList.add(sonMap);
+			}else {
+				Map<String,Object> sonMap = new HashMap<String,Object>();
+				String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+				sonMap.put(target, "default");
+				rightDetailsList.add(sonMap);
+			}
+		}
+		return rightDetailsList;
+	}
 
 	@Override
+	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
 		// TODO Auto-generated method stub
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
@@ -420,5 +424,93 @@ public class DatRuleServiceImpl implements DatRuleService {
 		}else {
 			return ServerResponse.createByErrorMessage("添加网关规则异常！");
 		}
+	}
+
+	@Override
+	@Transactional(rollbackFor= {RuntimeException.class,Exception.class})
+	public ServerResponse deleteDatRule(List<DatRuleCondition> datRuleConditions,String activityId) {
+		// TODO Auto-generated method stub
+		Map<String, List<DatRuleCondition>> datRuleMap = groupListToMapByRuleId(datRuleConditions);
+		Integer count = 0;
+		for (String key : datRuleMap.keySet()) {
+			datRuleConditionServiceImpl.batchDelete(datRuleConditions);
+			count += updateDatruleByDelete(key);
+		}
+		if(count>0) {
+			List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId( activityId);
+			List<DatRule> datRules = datRuleMapper.batchSelectDatRule(datRuleMap.keySet());
+			Map<String, Object> data = new HashMap<String,Object>();
+			data.put("DatConditionList", list);
+			data.put("PredictRules", datRules);
+			return ServerResponse.createBySuccess("删除成功", data);
+		}else {
+			return ServerResponse.createByErrorMessage("删除异常！");
+		}
+	}
+	
+	private Integer updateDatruleByDelete(String ruleId) {
+		// TODO Auto-generated method stub
+		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
+		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(ruleId);
+		DatRule datRule = new DatRule();
+		if(linkedList.size()>0) {
+		List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
+		StringBuffer sb = new StringBuffer("Map(");
+		for (int j = 0; j < list2.size(); j++) {
+			Entry<String, List<DatRuleCondition>> entry = list2.get(j);
+			StringBuffer sonSb = new StringBuffer("(");
+			for (int b = 0; b < entry.getValue().size(); b++) {
+				DatRuleCondition datRuleCondition2 = entry.getValue().get(b);
+				sonSb.append("this['");
+				sonSb.append(datRuleCondition2.getLeftValue());
+				sonSb.append("']");
+				sonSb.append(datRuleCondition2.getValueOperator());
+				sonSb.append(datRuleCondition2.getRightValue());
+				if ((b + 1) < entry.getValue().size()) {
+					sonSb.append(datRuleCondition2.getConditionOperator());
+				}
+			}
+			if ((j + 1) == list2.size()) {
+				sonSb.append(")");
+			} else if ((j + 1) < list2.size()) {
+				sonSb.append(")" + entry.getValue().get(entry.getValue().size() - 1).getConditionOperator());
+			}
+			sb.append(sonSb.toString());
+		}
+		sb.append(")");
+		datRule.setRuleProcess(sb.toString());
+		}else {
+			datRule.setRuleProcess(null);
+		}
+		datRule.setRuleId(ruleId);
+		return datRuleMapper.updateDatRule(datRule);//修改
+	}
+
+	/**
+	 * 根据ruleId分组
+	 * 
+	 * @param list
+	 * @return
+	 */
+	private Map<String, List<DatRuleCondition>> groupListToMapByRuleId(List<DatRuleCondition> list) {
+		// TODO Auto-generated method stub
+		Map<String, List<DatRuleCondition>> map = new HashMap<>();
+		for (DatRuleCondition datRuleCondition : list) {
+			if(datRuleCondition!=null) {
+			String key = datRuleCondition.getRuleId();
+			List<DatRuleCondition> sonList = new ArrayList<>();
+			for (DatRuleCondition son : list) {
+				if(son!=null) {
+				if (key != null) {
+					if (key.equals(son.getRuleId())) {
+						sonList.add(son);
+					}
+				}
+				}
+			}
+			map.put(key, sonList);
+		  }
+		}
+		return map;
 	}
 }

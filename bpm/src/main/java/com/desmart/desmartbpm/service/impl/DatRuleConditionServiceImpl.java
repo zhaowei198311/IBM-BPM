@@ -60,6 +60,12 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 		return datRuleConditionMapper.getDatruleConditionByActivityId(activityId);
 	}
 
+	@Override
+	public Integer batchDelete(List<DatRuleCondition> datRuleConditions) {
+		// TODO Auto-generated method stub
+		return datRuleConditionMapper.batchDelete(datRuleConditions);
+	}
+
 	
 
 }

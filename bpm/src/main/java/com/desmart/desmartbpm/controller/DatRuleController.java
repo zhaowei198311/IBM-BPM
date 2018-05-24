@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -92,4 +93,19 @@ public class DatRuleController {
 		}
 	    	return datRuleServiceImpl.saveDatRule(datRuleCondition,activityId);
 	   }
+	
+	@RequestMapping("/deleteDatRule")
+	@ResponseBody
+	public ServerResponse deleteDatRule(@RequestBody List<DatRuleCondition> datRuleConditions
+			,@RequestParam("activityId")String activityId) {
+		return datRuleServiceImpl.deleteDatRule(datRuleConditions,activityId);
+	}
+	@RequestMapping("/loadRightDetailsList")
+	@ResponseBody
+	public ServerResponse loadRightDetailsList(String activityId) {
+		List<Map<String, Object>> rightDetailsList = datRuleServiceImpl.loadRightDetailsList(activityId);
+		return ServerResponse.createBySuccess(rightDetailsList);
+	}
+	
+	
 }

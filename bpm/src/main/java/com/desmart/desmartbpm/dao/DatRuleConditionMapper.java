@@ -52,9 +52,15 @@ public interface DatRuleConditionMapper {
 	Integer insert(DatRuleCondition datRuleCondition);
 
 	/**
-	 * 根据activityId查询datrulecondition集合
+	 * 根据activityId查询datrulecondition集合,按照rule_id、group_name排序
 	 * @param activityId
 	 * @return
 	 */
 	List<DatRuleCondition> getDatruleConditionByActivityId(@Param("activityId")String activityId);
+	/**
+	 * 批量删除
+	 * @param datRuleConditions
+	 * @return
+	 */
+	Integer batchDelete(@Param("list")List<DatRuleCondition> datRuleConditions);
 }

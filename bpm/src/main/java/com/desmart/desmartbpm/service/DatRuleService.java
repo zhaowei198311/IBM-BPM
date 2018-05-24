@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -66,4 +67,17 @@ public interface DatRuleService {
 	 * @return
 	 */
 	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId);
+	/**
+	 * 修改网关规则，删除网关规则条件
+	 * @param datRuleConditions
+	 * @param activityId
+	 * @return
+	 */
+	public ServerResponse deleteDatRule(List<DatRuleCondition> datRuleConditions,String activityId);
+	/**
+	 * 加载右侧网关详细
+	 * @param activityId
+	 * @return
+	 */
+	public List<Map<String,Object>> loadRightDetailsList(String activityId);
 }

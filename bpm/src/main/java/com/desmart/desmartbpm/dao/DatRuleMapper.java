@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -46,5 +47,5 @@ public interface DatRuleMapper {
 
 	int batchInsertDatRule(List<DatRule> datRule);
 	
-
+	List<DatRule> batchSelectDatRule(@Param("keySet")Set<String> ruleIds);
 }

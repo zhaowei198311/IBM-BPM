@@ -36,7 +36,7 @@
     DELETE FROM DAT_RULE WHERE rule_id = #{ruleId}
     </delete>
     
-    <insert id="batchInsertDatRule"  parameterType="list">
+    <insert id="batchInsertDatRule"  parameterType="java.util.List">
 	        insert into DAT_RULE (RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE,
 	            END_TIME, IS_ACTIVATE, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS,
 	            RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME)
@@ -48,5 +48,16 @@
 	        from dual
 	    </foreach>
 	</insert> 
+	
+	<select id="batchSelectDatRule" parameterType="java.util.Set" 
+		resultType="com.desmart.desmartbpm.entity.DatRule">
+		SELECT RULE_ID, BIZ_TYPE, CREATE_TIME, CREATOR, EDIT_MODE, END_TIME, IS_ACTIVATE
+   		, PARENT_RULE_ID, RETURN_TYPE, RULE_NAME, RULE_PROCESS, RULE_STATUS, RULE_TYPE, RULE_VERSION, START_TIME FROM DAT_RULE
+   		<where>
+  			<foreach collection="keySet" index="index" item="item" open="(" separator="or" close=")">     
+  				rule_id = #{item}
+    		</foreach>
+  		</where>
+	</select>
 
 </mapper>

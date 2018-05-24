@@ -485,12 +485,19 @@
                             </div>
                         </div>
                         <div class="layui-tab-item">
-						<div class="layui-row">
-							<div class="layui-col-md12">
+                        	<div class="layui-row">
+							<!-- <div class="layui-col-md12">
+								<div class="layui-tab"> -->
+                         <div class="layui-col-md2">
+                                    <!-- 折叠层 -->
+                                    <div class="layui-collapse" lay-accordion id="my_fold_hurdle" lay-filter="demo">
+                                    </div>                                  
+                         </div>
+					<!-- 	<div class="layui-row"> -->
+							<div class="layui-col-md10 ">
 								<div class="layui-tab">
-									<ul id="gatewaySet_tab_title" class="layui-tab-title">
-										
-									</ul>
+									<!-- <ul id="gatewaySet_tab_title" class="layui-tab-title">
+									</ul> -->
 									<div class="layui-tab-content">
 									<form class="layui-form" action="">
 										<div id="gatewaySet_tab_row" class="layui-tab-item layui-show">
@@ -498,10 +505,10 @@
 												<div class="layui-row">
 													<div class="layui-col-md6">
 														<div class="layui-form-item">
-															<label class="layui-form-label">网关类型</label>
+															<label class="layui-form-label">网关名称</label>
 															<div class="layui-input-block">
-																<input type="text" name="title" required
-																	lay-verify="required" value="并行网关" autocomplete="off"
+																<input id="gatewayActivityName" type="text" name="title" required
+																	lay-verify="required" value="" autocomplete="off"
 																	class="layui-input" disabled="disabled">
 															</div>
 														</div>
@@ -509,76 +516,11 @@
 												</div>
 										</div>
 										<div class="layui-col-md12">
+											<div id="rightGatewayDetails">
+														
+											</div>				
 														<div class="layui-form-item">
-															<label class="layui-form-label">路由变量名称</label>
-															<div class="layui-input-block">
-																<table class="layui-table" lay-even lay-skin="nob">
-																	<colgroup>
-																		<col>
-																		<col>
-																		<col>
-																		<col>
-																		<col>
-																	</colgroup>
-																	<tbody class="gatewayTbody">
-																		<tr>
-																			<td><input type="checkbox" id="0" /><label
-																				for="0">result_0</label></td>
-																			<td><input type="checkbox" id="1" /><label
-																				for="1">result_1</label></td>
-																			<td><input type="checkbox" id="2" /><label
-																				for="2">result_2</label></td>
-																			<td><input type="checkbox" id="3" /><label
-																				for="3">result_3</label></td>
-																			<td><input type="checkbox" id="4" /><label
-																				for="4">result_4</label></td>
-																		</tr>
-																		<tr>
-																			<td><input type="checkbox" id="5" /><label
-																				for="5">result_5</label></td>
-																			<td><input type="checkbox" id="6" /><label
-																				for="6">result_6</label></td>
-																			<td><input type="checkbox" id="7" /><label
-																				for="7">result_7</label></td>
-																			<td><input type="checkbox" id="8" /><label
-																				for="8">result_8</label></td>
-																			<td><input type="checkbox" id="9" /><label
-																				for="9">result_9</label></td>
-																		</tr>
-																		<tr>
-																			<td><input type="checkbox" id="10" /><label
-																				for="10">result_10</label></td>
-																			<td><input type="checkbox" id="11" /><label
-																				for="11">result_11</label></td>
-																			<td><input type="checkbox" id="12" /><label
-																				for="12">result_12</label></td>
-																			<td><input type="checkbox" id="13" /><label
-																				for="13">result_13</label></td>
-																			<td><input type="checkbox" id="14" /><label
-																				for="14">result_14</label></td>
-																		</tr>
-																		<tr>
-																			<td><input type="checkbox" id="15" /><label
-																				for="15">result_15</label></td>
-																			<td><input type="checkbox" id="16" /><label
-																				for="16">result_16</label></td>
-																			<td><input type="checkbox" id="17" /><label
-																				for="17">result_17</label></td>
-																			<td><input type="checkbox" id="18" /><label
-																				for="18">result_18</label></td>
-																			<td><input type="checkbox" id="19" /><label
-																				for="19">result_19</label></td>
-																		</tr>
-																		<tr>
-																			<td><input type="checkbox" id="20" /><label
-																				for="20">result_20</label></td>
-																		</tr>
-																	</tbody>
-																</table>
-															</div>
-														</div>
-														<div class="layui-form-item">
-															<label class="layui-form-label">路由变量名称</label>
+															<label class="layui-form-label">规则条件</label>
 															<div class="layui-input-block">
 																<button type="button" value=""
 																	class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
@@ -598,7 +540,7 @@
 																	<thead>
 																		<tr>
 																			<th><input type="checkbox" name="allChecked" title='全选'
-																			lay-filter="allChoose"	lay-skin="primary"> 序号</th>
+																			lay-filter="allChoose"	lay-skin="primary"></th>
 																			<th>路由变量</th>
 																			<th>字段名称</th>
 																			<th>比较运算符</th>
@@ -614,10 +556,6 @@
 																	</tbody>
 																</table>
 															</div>
-														</div>
-														<div class="layui-form-item">
-															<label class="layui-form-label">条件组合预览</label>
-															<div id="gatewayPredictRule" class="layui-input-block"></div>
 														</div>
 													</div>
 													</form>
@@ -837,6 +775,7 @@
 						<label class="layui-form-label">路由器变量</label>
 						<div class="layui-input-block">
 							<select id="gateway_result" name="result" lay-verify="required">
+								
 							</select>
 						</div>
 					</div>
@@ -904,7 +843,7 @@
 				</form>
 			</div>
 			<div class="foot">
-				<button id="addToArr" type="button" class="layui-btn layui-btn sure_btn" onclick="addToArr()">确定</button>
+				<button id="addToArr" type="button" class="layui-btn layui-btn sure_btn" onclick="saveDatRule()">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
 			</div>
 		</div>
