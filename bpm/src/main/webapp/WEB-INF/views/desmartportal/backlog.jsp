@@ -215,7 +215,6 @@
 				if(meta.taskType=='normal'){
 					type = "一般任务";
 				}
-				queryUserName();
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
 				var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
@@ -237,9 +236,9 @@
 						+ meta.taskPreviousUsrUsername
 						+ '</td>' 
 						+ '<td>' 
-						+ '1111'
-						+ '</td>' 
-						+ '<td>'
+						+ meta.sysUser.userName 
+						+ '</td>'
+						+ '<td>' 
 						+ taskDueDate
 						+'</td>' 
 						+ '<td>'
