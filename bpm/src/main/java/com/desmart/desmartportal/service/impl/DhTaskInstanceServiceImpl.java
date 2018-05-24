@@ -437,6 +437,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 如果最大剩余时间大于配置时间，则百分比为0，剩余时间为配置时间
 		if (hour > timeAmount) {
 			hour = timeAmount.intValue();
+			procent = 100;
 		}else {
 			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
 			// 百分比

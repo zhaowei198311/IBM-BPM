@@ -106,7 +106,7 @@
 					<tr>
 						<th colspan="4">
 							<div class="layui-progress layui-progress-big" lay-filter="demo"
-								lay-showpercent="true" style="position: relative;">
+								lay-showPercent="yes" style="position: relative;">
 								<div class="layui-progress-bar" lay-percent="0%"></div>
 <!-- 								<span class="progress_time">审批剩余时间6小时</span> -->
 							</div>
@@ -451,19 +451,20 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			success: function(data){
 				var result = data.data;
 				if (data.status == 0) {
-					progressBar(result.procent);					
+					progressBar(result.procent,result.hour);					
 				}
 			}
 		})
 	})
 	// 加载进度条
-	function progressBar(procent){
+	function progressBar(procent,hour){
 		layui.use('element', function(){
-			var $ = layui.jquery
-			  ,element = layui.element;
-			element.progress('progressBar', procent+'%');
+			var element = layui.element;
+			element.init();
+			element.progress('demo', procent+'%');	
+			$(".layui-progress-text").text(procent+"%");
 		});
-		
+		$(".layui-progress").append('<span class="progress_time">审批剩余时间'+hour+'小时</span>');
 	}
 	
 	function getAllDataInfo(){
