@@ -541,7 +541,7 @@
 								var approvaData = "approvaData"; // 审批数据外层
 								var processData = "processIdData"; // 任务数据外层
 								var endjson = "}";	
-								var jsonStr = ""+startjson+"\""+formData+"\":"+json+",\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+processData+"\":{\"proUids\":\""+proUids+"\",\"proAppIds\":\""+proAppIds+"\",\"proVerIds\":\""+proVerIds+"\"}"+endjson+"";		
+								var jsonStr = ""+startjson+"\""+formData+"\":"+json+",\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+processData+"\":{\"proUid\":\""+proUids+"\",\"proAppId\":\""+proAppIds+"\",\"proVerId\":\""+proVerIds+"\"}"+endjson+"";		
 							 	$.ajax({
 								url : 'processInstance/startProcess',
 								type : 'POST',
