@@ -52,7 +52,7 @@ public class DhTaskInstanceController {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskInitDate(initTime);
 		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);		
-		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
+		return dhTaskInstanceService.selectTaskAndProcessInfo(taskInstance, pageNum, pageSize);
 	}
 	
 	/**
@@ -88,9 +88,9 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
-	@RequestMapping(value = "/queryProgressBar")
+	/*@RequestMapping(value = "/queryProgressBar")
 	@ResponseBody
 	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid){
 		return dhTaskInstanceService.queryProgressBar(proUid, proVerUid, proAppId, taskUid);
-	}
+	}*/
 }

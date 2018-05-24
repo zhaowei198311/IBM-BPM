@@ -53,8 +53,10 @@
 				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
 				<table class="layui-table" lay-even lay-skin="nob">
 					<colgroup>
-					    <col width="60">
-					    <col width="100">
+					    <col width="70">
+					    <col width="120">
+					    <col width="120">
+					    <col width="150">
 					    <col width="150">
 					    <col width="150">
 					    <col width="150">
@@ -63,10 +65,12 @@
 					<thead>
 					    <tr>
 					      <th>序号</th>
-					      <th>任务标题</th>
-					      <th>流程名称</th>
+					      <th>流程标题</th>
+					      <th>环节名称</th>
 					      <th>任务类型</th>
-					      <th>创建时间</th>
+					      <th>上一环节处理人</th>
+					      <th>流程创建人</th>
+					      <th>流程创建时间</th>
 					      <th>操作</th>
 					    </tr> 
 					</thead>
@@ -208,26 +212,35 @@
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
-				var meta = list[i];
 				if(meta.taskType=='normal'){
-					type = "一般流程";
+					type = "一般任务";
 				}
+				queryUserName();
 				var agentOdate = new Date(meta.taskInitDate);
-				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
-				var agentOdate2 = new Date(meta.taskDueDate);
-				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
-				trs += '<tr>' + '<td>' + sortNum + '</td>' 
-						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
-						+ meta.taskTitle 
+				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
+				var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
+				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();;
+				trs += '<tr>'
+						+'<td>' 
+						+ sortNum 
 						+ '</td>' 
 						+ '<td>'
-						+ '一般合同用印'
+						+ meta.dhProcessInstance.insTitle
 						+ '</td>' 
-						+ '<td>' 
+						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
+						+ meta.taskTitle
+						+ '</td>'
+						+ '<td>'
 						+ type
 						+ '</td>' 
+						+ '<td>' 
+						+ meta.taskPreviousUsrUsername
+						+ '</td>' 
+						+ '<td>' 
+						+ '1111'
+						+ '</td>' 
 						+ '<td>'
-						+ InitDate
+						+ taskDueDate
 						+'</td>' 
 						+ '<td>'
 						+ '<i class="layui-icon" title="查看详情" onclick=openApproval("'+meta.taskUid+'")>&#xe60a;</i>'

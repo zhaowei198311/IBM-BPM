@@ -5,6 +5,8 @@ package com.desmart.desmartportal.entity;
 
 import java.util.Date;
 
+import com.desmart.desmartsystem.entity.SysUser;
+
 /**  
 * <p>Title: 任务实例实体类</p>  
 * <p>Description: </p>  
@@ -105,7 +107,6 @@ public class DhTaskInstance {
 	public static final String 	STATUS_COLLABORATION = "72";
 	
 	
-	
 	private String taskUid; // 任务id(主键)
 
 	private String insUid; // 流程实例主键
@@ -146,6 +147,9 @@ public class DhTaskInstance {
 	
 	private Integer synNumber; // 同步编号，记录任务同步
 	
+	private DhProcessInstance dhProcessInstance; // 流程实例
+	
+	private SysUser sysUser; // 用户实例
 
 	/**
 	 * @return the taskUid
@@ -419,7 +423,39 @@ public class DhTaskInstance {
         this.synNumber = synNumber;
     }
 
-    /**
+	public SysUser getSysUser() {
+		return sysUser;
+	}
+
+	public void setSysUser(SysUser sysUser) {
+		this.sysUser = sysUser;
+	}
+
+    @Override
+    public String toString() {
+        return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid
+                + ", taskId=" + taskId + ", usrUid=" + usrUid
+                + ", activityBpdId=" + activityBpdId + ", taskType=" + taskType
+                + ", taskStatus=" + taskStatus + ", taskTitle=" + taskTitle
+                + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
+                + taskPreviousUsrUid + ", taskPreviousUsrUsername="
+                + taskPreviousUsrUsername + ", taskDelegateDate="
+                + taskDelegateDate + ", taskInitDate=" + taskInitDate
+                + ", taskFinishDate=" + taskFinishDate + ", taskDueDate="
+                + taskDueDate + ", taskRiskDate=" + taskRiskDate
+                + ", taskPriority=" + taskPriority + ", taskData=" + taskData
+                + ", taskDelegateUser=" + taskDelegateUser + "]";
+    }
+
+	public DhProcessInstance getDhProcessInstance() {
+		return dhProcessInstance;
+	}
+
+	public void setDhProcessInstance(DhProcessInstance dhProcessInstance) {
+		this.dhProcessInstance = dhProcessInstance;
+	}
+
+	/**
 	 * @param taskUid
 	 * @param insUid
 	 * @param taskId
@@ -438,11 +474,16 @@ public class DhTaskInstance {
 	 * @param taskRiskDate
 	 * @param taskPriority
 	 * @param taskData
+	 * @param taskDelegateUser
+	 * @param synNumber
+	 * @param dhProcessInstance
+	 * @param sysUser
 	 */
-	public DhTaskInstance(String taskUid, String insUid, int taskId, String usrUid, String activityBpdId, String taskType,
-			String taskStatus, String taskTitle, Date insUpdateDate, String taskPreviousUsrUid,
+	public DhTaskInstance(String taskUid, String insUid, int taskId, String usrUid, String activityBpdId,
+			String taskType, String taskStatus, String taskTitle, Date insUpdateDate, String taskPreviousUsrUid,
 			String taskPreviousUsrUsername, Date taskDelegateDate, Date taskInitDate, Date taskFinishDate,
-			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData) {
+			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData, String taskDelegateUser,
+			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser) {
 		super();
 		this.taskUid = taskUid;
 		this.insUid = insUid;
@@ -462,21 +503,10 @@ public class DhTaskInstance {
 		this.taskRiskDate = taskRiskDate;
 		this.taskPriority = taskPriority;
 		this.taskData = taskData;
+		this.taskDelegateUser = taskDelegateUser;
+		this.synNumber = synNumber;
+		this.dhProcessInstance = dhProcessInstance;
+		this.sysUser = sysUser;
 	}
 
-    @Override
-    public String toString() {
-        return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid
-                + ", taskId=" + taskId + ", usrUid=" + usrUid
-                + ", activityBpdId=" + activityBpdId + ", taskType=" + taskType
-                + ", taskStatus=" + taskStatus + ", taskTitle=" + taskTitle
-                + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
-                + taskPreviousUsrUid + ", taskPreviousUsrUsername="
-                + taskPreviousUsrUsername + ", taskDelegateDate="
-                + taskDelegateDate + ", taskInitDate=" + taskInitDate
-                + ", taskFinishDate=" + taskFinishDate + ", taskDueDate="
-                + taskDueDate + ", taskRiskDate=" + taskRiskDate
-                + ", taskPriority=" + taskPriority + ", taskData=" + taskData
-                + ", taskDelegateUser=" + taskDelegateUser + "]";
-    }
 }

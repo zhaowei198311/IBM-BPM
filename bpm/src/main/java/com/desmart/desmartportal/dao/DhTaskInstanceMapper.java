@@ -71,4 +71,11 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	int updateTaskStatusByTaskId(@Param("taskId")Integer taskId, @Param("taskStatus")String taskStatus);
+	
+	/**
+	 * 根据任务实例查询任务数据和流程
+	 * @param taskInstance
+	 * @return
+	 */
+	List <DhTaskInstance> selectTaskAndProcessInfo(DhTaskInstance taskInstance);
 }
