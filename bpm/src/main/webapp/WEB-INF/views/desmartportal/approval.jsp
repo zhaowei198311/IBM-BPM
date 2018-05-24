@@ -108,7 +108,7 @@
 							<div class="layui-progress layui-progress-big" lay-filter="demo"
 								lay-showpercent="true" style="position: relative;">
 								<div class="layui-progress-bar" lay-percent="0%"></div>
-								<span class="progress_time">审批剩余时间6小时</span>
+<!-- 								<span class="progress_time">审批剩余时间6小时</span> -->
 							</div>
 						</th>
 					</tr>
@@ -405,7 +405,6 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	$(function() {
 		getAllDataInfo();
 		clientSideInclude(document.getElementById('formId').value);
-		element.progress('demo', "50%");
 		$(".add_row")
 				.click(
 						function() {
@@ -433,14 +432,14 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			$(".upload_file").click();
 		});
 		
-		// 审批进度条
+		// 查询审批进度剩余进度百分比
 		var proUid = $("#proUid").val();
 		var proVerUid = $("#proVerUid").val();
 		var proAppId = $("#proAppId").val();
 		var taskUid = $("#taskUid").val();
 		$.ajax({
 			async: false,
-			url: "/taskInstance/queryProgressBar",
+			url: common.getPath() + "/taskInstance/queryProgressBar",
 			type: "post",
 			dataType: "json",
 			data: {
@@ -450,13 +449,22 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 				taskUid: taskUid
 			},
 			success: function(data){
+				var result = data.data;
 				if (data.status == 0) {
-					var percent = data.msg;
-					
+					progressBar(result.procent);					
 				}
 			}
 		})
 	})
+	// 加载进度条
+	function progressBar(procent){
+		layui.use('element', function(){
+			var $ = layui.jquery
+			  ,element = layui.element;
+			element.progress('progressBar', procent+'%');
+		});
+		
+	}
 	
 	function getAllDataInfo(){
 		// 拼装数据
