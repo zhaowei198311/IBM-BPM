@@ -129,13 +129,7 @@
 		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,P.INS_TITLE,
 		P.INS_CREATE_DATE,S.USER_NAME,S.USER_ID
 	</sql>
-
-
-	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
-		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
-		SELECT
-		<include refid="Base_Column_List" />
-	</select>
+	
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
@@ -427,51 +421,6 @@
 		<where>
 			INS_UID = #{insUid}
 			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
-		</where>
-	</select>
-    
-    <insert id="insertBatch"  parameterType="list">
-        insert into dh_task_instance (<include refid="Base_Column_List"/>)
-        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
-            select
-            #{item.taskUid},
-            #{item.insUid},
-            #{item.taskId},
-            #{item.usrUid},
-            #{item.activityBpdId},
-            #{item.taskType},
-            #{item.taskStatus},
-            #{item.taskTitle},
-            #{item.insUpdateDate},
-            #{item.taskPreviousUsrUid},
-            #{item.taskPreviousUsrUsername},
-            #{item.taskDelegateDate},
-            sysdate,
-            #{item.taskFinishDate},
-            #{item.taskDueDate},
-            #{item.taskRiskDate},
-            #{item.taskPriority},
-            #{item.taskData},
-            #{item.taskDelegateUser},
-            #{item.synNumber}
-            from dual
-        </foreach>
-    </insert>
-    
-    <select id="countByTaskId" parameterType="int" resultType="int">
-        select count(1) from dh_task_instance
-        where task_id = #{taskId}
-    </select>
-    
-    <select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
-		SELECT 
-		<include refid="Base_Column_List"/>
-		FROM
-		DH_TASK_INSTANCE
-		<where>
-			INS_UID = #{insUid}
-			and ( TASK_TYPE='sign' or TASK_TYPE='normal'
-			or TASK_TYPE='transfer')
 		</where>
 	</select>
 
