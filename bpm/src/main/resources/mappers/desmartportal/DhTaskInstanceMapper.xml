@@ -1,29 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.DhTaskInstanceMapper">
-	<resultMap id="TaskInstanceMap" type="java.util.Map">
-		<result column="TASK_UID" 							property="taskUid"/>
-		<result column="INS_UID" 							property="insUid"/>
-		<result column="TASK_ID" 							property="taskId"/>
-		<result column="USR_UID" 							property="usrUid"/>
-		<result column="ACTIVITY_BPD_ID" 					property="activityBpdId"/>
-		<result column="TASK_TYPE" 							property="taskType"/>
-		<result column="TASK_STATUS" 						property="taskStatus"/>
-		<result column="TASK_TITLE" 						property="taskTitle"/>
-		<result column="INS_UPDATE_DATE"					property="insUpdateDate"/>
-		<result column="TASK_PREVIOUS_USR_UID" 				property="taskPreviousUsrUid"/>
-		<result column="TASK_PREVIOUS_USR_USERNAME" 		property="taskPreviousUsrUsername"/>
-		<result column="TASK_DELEGATE_DATE" 				property="taskDelegateDate"/>
-		<result column="TASK_INIT_DATE" 					property="taskInitDate"/>
-		<result column="TASK_FINISH_DATE" 					property="taskFinishDate"/>
-		<result column="TASK_DUE_DATE" 						property="taskDueDate"/>
-		<result column="TASK_RISK_DATE" 					property="taskRiskDate"/>
-		<result column="TASK_PRIORITY" 						property="taskPriority"/>
-		<result column="TASK_DATA" 							property="taskData"/>
-		<result column="TASK_DELEGATE_USER" 				property="taskDelegateUser"/>
-		<result column="SYN_NUMBER"                         property="synNumber"/>
+
+	<resultMap id="TaskInstanceMap"
+		type="com.desmart.desmartportal.entity.DhTaskInstance">
+		<result column="TASK_UID" property="taskUid" />
+		<result column="INS_UID" property="insUid" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="USR_UID" property="usrUid" />
+		<result column="ACTIVITY_BPD_ID" property="activityBpdId" />
+		<result column="TASK_TYPE" property="taskType" />
+		<result column="TASK_STATUS" property="taskStatus" />
+		<result column="TASK_TITLE" property="taskTitle" />
+		<result column="INS_UPDATE_DATE" property="insUpdateDate" />
+		<result column="TASK_PREVIOUS_USR_UID" property="taskPreviousUsrUid" />
+		<result column="TASK_PREVIOUS_USR_USERNAME" property="taskPreviousUsrUsername" />
+		<result column="TASK_DELEGATE_DATE" property="taskDelegateDate" />
+		<result column="TASK_INIT_DATE" property="taskInitDate" />
+		<result column="TASK_FINISH_DATE" property="taskFinishDate" />
+		<result column="TASK_DUE_DATE" property="taskDueDate" />
+		<result column="TASK_RISK_DATE" property="taskRiskDate" />
+		<result column="TASK_PRIORITY" property="taskPriority" />
+		<result column="TASK_DATA" property="taskData" />
+		<result column="TASK_DELEGATE_USER" property="taskDelegateUser" />
+		<result column="SYN_NUMBER" property="synNumber" />
 	</resultMap>
-	
+
+	<resultMap id="TaskInstanceByProcessAndUserMap"
+		type="com.desmart.desmartportal.entity.DhTaskInstance">
+		<result column="TASK_UID" property="taskUid" />
+		<result column="INS_UID" property="insUid" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="USR_UID" property="usrUid" />
+		<result column="ACTIVITY_BPD_ID" property="activityBpdId" />
+		<result column="TASK_TYPE" property="taskType" />
+		<result column="TASK_STATUS" property="taskStatus" />
+		<result column="TASK_TITLE" property="taskTitle" />
+		<result column="INS_UPDATE_DATE" property="insUpdateDate" />
+		<result column="TASK_PREVIOUS_USR_UID" property="taskPreviousUsrUid" />
+		<result column="TASK_PREVIOUS_USR_USERNAME" property="taskPreviousUsrUsername" />
+		<result column="TASK_DELEGATE_DATE" property="taskDelegateDate" />
+		<result column="TASK_INIT_DATE" property="taskInitDate" />
+		<result column="TASK_FINISH_DATE" property="taskFinishDate" />
+		<result column="TASK_DUE_DATE" property="taskDueDate" />
+		<result column="TASK_RISK_DATE" property="taskRiskDate" />
+		<result column="TASK_PRIORITY" property="taskPriority" />
+		<result column="TASK_DATA" property="taskData" />
+		<result column="TASK_DELEGATE_USER" property="taskDelegateUser" />
+		<result column="SYN_NUMBER" property="synNumber" />
+		<association property="dhProcessInstance"
+			javaType="com.desmart.desmartportal.entity.DhProcessInstance">
+			<result column="INS_UID" property="insUid" />
+			<result column="INS_TITLE" property="insTitle" />
+			<result column="INS_DESCRIPTION" property="insDescription" />
+			<result column="INS_ID" property="insId" />
+			<result column="INS_PARENT" property="insParent" />
+			<result column="INS_STATUS" property="insStatus" />
+			<result column="INS_STATUS_ID" property="insStatusId" />
+			<result column="PRO_APP_ID" property="proAppId" />
+			<result column="PRO_UID" property="proUid" />
+			<result column="PRO_VER_UID" property="proVerUid" />
+			<result column="INS_INIT_USER" property="insInitUser" />
+			<result column="INS_CREATE_DATE" property="insCreateDate" />
+			<result column="INS_INIT_DATE" property="insInitDate" />
+			<result column="INS_FINISH_DATE" property="insFinishDate" />
+			<result column="INS_UPDATE_DATE" property="insUpdateDate" />
+			<result column="INS_DATA" property="insData" />
+			<result column="INS_DURATION" property="insDuration" />
+			<result column="INS_DELAY_DURATION" property="insDelayDuration" />
+			<result column="INS_DRIVE_FOLDER_UID" property="insDriveFolderUid" />
+			<result column="INS_ROUTING_DATA" property="insRoutingData" />
+			<result column="COMPANY_NUMBER" property="companyNumber" />
+		</association>
+		<association property="sysUser" javaType="com.desmart.desmartsystem.entity.SysUser">
+			<result column="USER_UID" property="userUid" />
+			<result column="USER_NO" property="userNo" />
+			<result column="USER_ID" property="userId" />
+			<result column="USER_NAME" property="userName" />
+			<result column="ORDER_INDEX" property="orderIndex" />
+			<result column="PASSWORD" property="password" />
+			<result column="DEPART_UID" property="departUid" />
+			<result column="IS_MANAGER" property="isManager" />
+			<result column="WORK_CALENDAR" property="workCalendar" />
+			<result column="OFFICE_TEL" property="officeTel" />
+			<result column="OFFICE_FAX" property="officeFax" />
+			<result column="MOBILE" property="mobile" />
+			<result column="EMAIL" property="email" />
+			<result column="USER_IP" property="userIp" />
+			<result column="IS_SINGLE_LOGIN" property="isSingleLogin" />
+			<result column="WORK_STATUS" property="workStatus" />
+			<result column="SESSION_TIME" property="sessionTime" />
+			<result column="WECHAT" property="wechat" />
+			<result column="EXT1" property="ext1" />
+			<result column="EXT2" property="ext2" />
+			<result column="EXT3" property="ext3" />
+			<result column="EXT4" property="ext4" />
+			<result column="EXT5" property="ext5" />
+			<result column="REPORT_TO" property="reportTo" />
+			<result column="IS_CLOSED" property="isClosed" />
+			<result column="CLOSE_DATE" property="closeDate" />
+			<result column="BEGIN_DATE" property="beginDate" />
+			<result column="END_DATE" property="endDate" />
+			<result column="CREATE_DATE" property="createDate" />
+			<result column="UPDATE_DATE" property="updateDate" />
+			<result column="SESSION_TIME" property="sessionTime" />
+			<result column="COSTCENTER" property="costCenter" />
+			<result column="COMPANYNUMBER" property="companynumber" />
+			<result column="DEPARTMENTNUMBER" property="departmetNumber" />
+			<result column="EMPLOYEETYPE" property="employeeType" />
+			<result column="DEPART_NAME" property="departName" />
+			<result column="ACCOUNT_TYPE" property="accountType" />
+		</association>
+	</resultMap>
+
 	<sql id="Base_Column_List">
 		TASK_UID,INS_UID,TASK_ID,USR_UID,
 		ACTIVITY_BPD_ID,TASK_TYPE,TASK_STATUS,TASK_TITLE,
@@ -32,6 +121,20 @@
 		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
 	</sql>
 	
+<<<<<<< .mine
+	<sql id="TaskAndProcess_Column_List">
+		TASK_UID,INS_UID,TASK_ID,USR_UID,
+		ACTIVITY_BPD_ID,TASK_TYPE,TASK_STATUS,TASK_TITLE,
+		INS_UPDATE_DATE,TASK_PREVIOUS_USR_UID,TASK_PREVIOUS_USR_USERNAME,TASK_DELEGATE_DATE,
+		TASK_INIT_DATE,TASK_FINISH_DATE,TASK_DUE_DATE,TASK_RISK_DATE,
+		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
+	</sql>
+
+
+	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
+		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT
+		<include refid="Base_Column_List" />
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
@@ -60,7 +163,7 @@
 				AND TASK_STATUS = #{taskStatus}
 			</if>
 			<if test="taskTitle != null and taskTitle != ''">
-				AND TASK_TITLE like '%' || #{taskTitle} || '%' 
+				AND TASK_TITLE like '%' || #{taskTitle} || '%'
 			</if>
 			<if test="insUpdateDate != null ">
 				AND INS_UPDATE_DATE = #{insUpdateDate}
@@ -68,22 +171,31 @@
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
 				AND TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid}
 			</if>
-			<if test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
+			<if
+				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
 				AND TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername}
 			</if>
 			<if test="taskDelegateDate != null ">
 				AND TASK_DELEGATE_DATE = #{taskDelegateDate}
 			</if>
 			<if test="taskInitDate != null ">
-				AND TASK_INIT_DATE  &gt;= to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
-				AND TASK_INIT_DATE  &lt;= to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_INIT_DATE &gt;=
+				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_INIT_DATE &lt;=
+				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
 			<if test="taskFinishDate != null ">
 				AND TASK_FINISH_DATE = #{taskFinishDate}
 			</if>
 			<if test="taskDueDate != null ">
-				AND TASK_DUE_DATE  &gt;= to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
-				AND TASK_DUE_DATE  &lt;= to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_DUE_DATE &gt;=
+				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_DUE_DATE &lt;=
+				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
 			<if test="taskRiskDate != null ">
 				AND TASK_RISK_DATE = #{taskRiskDate}
@@ -100,44 +212,47 @@
 			<if test="synNumber != null and synNumber != ''">
 				AND SYN_NUMBER = #{synNumber}
 			</if>
-			
+
 		</where>
 	</select>
-	
-	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
-		SELECT 
-		<include refid="Base_Column_List"/>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT
+		<include refid="Base_Column_List" />
 		FROM
 		DH_TASK_INSTANCE
 		<where>
 			TASK_UID = #{taskUid}
 		</where>
 	</select>
-	
+
 	<!-- 用户查询代办 -->
-	<select id="selectByusrUid" parameterType="java.lang.String" resultType="java.lang.Integer">
-		SELECT COUNT(*) 
+	<select id="selectByusrUid" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
 		FROM
 		DH_TASK_INSTANCE
 		<where>
 			USR_UID = #{usrUid} AND TASK_STATUS = '12'
-		</where> 
+		</where>
 	</select>
-	
+
 	<!-- 用户查询代办 -->
-	<select id="selectByusrUidFinsh" parameterType="java.lang.String" resultType="java.lang.Integer">
-		SELECT COUNT(*) 
+	<select id="selectByusrUidFinsh" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
 		FROM
 		DH_TASK_INSTANCE
 		<where>
 			USR_UID = #{usrUid} AND TASK_STATUS = '32'
-		</where> 
+		</where>
 	</select>
-	
+
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
-		UPDATE 
+		UPDATE
 		DH_TASK_INSTANCE
-		<set>	
+		<set>
 			<if test="insUid != null and insUid != ''">
 				INS_UID = #{insUid},
 			</if>
@@ -165,7 +280,8 @@
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
 				TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid},
 			</if>
-			<if test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
+			<if
+				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
 				TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername},
 			</if>
 			<if test="taskDelegateDate != null and taskDelegateDate != ''">
@@ -188,34 +304,56 @@
 			</if>
 			<if test="taskData != null and taskData != ''">
 				TASK_DATA = #{taskData},
-			</if>	
+			</if>
 			<if test="taskDelegateUser != null and taskDelegateUser != ''">
 				TASK_DELEGATE_USER = #{taskDelegateUser},
-			</if>	
+			</if>
 			<if test="synNumber != null and synNumber != ''">
 				SYN_NUMBER = #{synNumber}
-			</if>	
+			</if>
 			<where>
 				TASK_UID = #{taskUid}
 			</where>
 		</set>
 	</update>
-	
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-		DELETE 
+		DELETE
 		FROM
 		DH_TASK_INSTANCE
 		<where>
 			TASK_UID = #{taskUid}
 		</where>
 	</delete>
-	
+
 	<insert id="insertTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
 		INSERT INTO
 		DH_TASK_INSTANCE
-		(<include refid="Base_Column_List"/>)
+		(
+		<include refid="Base_Column_List" />
+		)
 		VALUES
 		(
+		#{taskUid},
+		#{insUid},
+		#{taskId},
+		#{usrUid},
+		#{activityBpdId},
+		#{taskType},
+		#{taskStatus},
+		#{taskTitle},
+		#{insUpdateDate},
+		#{taskPreviousUsrUid},
+		#{taskPreviousUsrUsername},
+		#{taskDelegateDate},
+		sysdate,
+		#{taskFinishDate},
+		#{taskDueDate},
+		#{taskRiskDate},
+		#{taskPriority},
+		#{taskData},
+		#{taskDelegateUser},
+		#{syn_num}
 			#{taskUid},
 			#{insUid},
 			#{taskId},
@@ -238,7 +376,52 @@
 			#{synNumber}
 		)
 	</insert>
-	
+
+	<select id="getMaxTaskId" resultType="int">
+		select nvl(max(task_id), 0)
+		from dh_task_instance
+	</select>
+
+	<insert id="insertBatch" parameterType="list">
+		insert into dh_task_instance (
+		<include refid="Base_Column_List" />
+		)
+		<foreach collection="list" item="item" index="index" close=")"
+			open="(" separator="union">
+			select
+			#{item.taskUid},
+			#{item.insUid},
+			#{item.taskId},
+			#{item.usrUid},
+			#{item.activityBpdId},
+			#{item.taskType},
+			#{item.taskStatus},
+			#{item.taskTitle},
+			#{item.insUpdateDate},
+			#{item.taskPreviousUsrUid},
+			#{item.taskPreviousUsrUsername},
+			#{item.taskDelegateDate},
+			sysdate,
+			#{item.taskFinishDate},
+			#{item.taskDueDate},
+			#{item.taskRiskDate},
+			#{item.taskPriority},
+			#{item.taskData},
+			#{item.taskDelegateUser},
+			#{item.synNumber}
+			from dual
+		</foreach>
+	</insert>
+
+	<select id="countByTaskId" parameterType="int" resultType="int">
+		select count(1) from dh_task_instance
+		where task_id = #{taskId}
+	</select>
+
+	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String"
+		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT
+		<include refid="Base_Column_List" />
 	<select id="getMaxSynNumber" resultType="int">
        select nvl(max(SYN_NUMBER), 0) from dh_task_instance
     </select>
@@ -283,10 +466,11 @@
 		DH_TASK_INSTANCE
 		<where>
 			INS_UID = #{insUid}
-			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
+			and ( TASK_TYPE='sign' or TASK_TYPE='normal'
+			or TASK_TYPE='transfer')
 		</where>
 	</select>
-	
+
 	<update id="abandonTaskByInsUidList" parameterType="list">
 		update DH_TASK_INSTANCE
 		<set>
@@ -294,11 +478,97 @@
 		</set>
 		<where>
 			INS_UID in
-			<foreach collection="list" item="item" open="(" separator="," close=")">
+			<foreach collection="list" item="item" open="(" separator=","
+				close=")">
 				#{item}
 			</foreach>
 		</where>
 	</update>
+
+	<select id="selectTaskAndProcessInfo" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid=""/>
+		FROM
+		DH_TASK_INSTANCE T
+		LEFT
+		JOIN DH_PROCESS_INSTANCE P
+		LEFT 
+		JOIN SYS_USER S
+		ON T.INS_UID = P.INS_UID
+		<where>
+			<if test="taskUid != null and taskUid != ''">
+				T.TASK_UID = #{taskUid}
+			</if>
+			<if test="insUid != null and insUid != ''">
+				AND T.INS_UID = #{insUid}
+			</if>
+			<if test="taskId != null and taskId != ''">
+				AND T.TASK_ID = #{taskId}
+			</if>
+			<if test="usrUid != null and usrUid != ''">
+				AND T.USR_UID = #{usrUid}
+			</if>
+			<if test="activityBpdId != null and activityBpdId != ''">
+				AND T.ACTIVITY_BPD_ID = #{activityBpdId}
+			</if>
+			<if test="taskType != null and taskType != ''">
+				AND T.TASK_TYPE = #{taskType}
+			</if>
+			<if test="taskStatus != null and taskStatus != ''">
+				AND T.TASK_STATUS = #{taskStatus}
+			</if>
+			<if test="taskTitle != null and taskTitle != ''">
+				AND T.TASK_TITLE like '%' || #{taskTitle} || '%'
+			</if>
+			<if test="insUpdateDate != null ">
+				AND T.INS_UPDATE_DATE = #{insUpdateDate}
+			</if>
+			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
+				AND T.TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid}
+			</if>
+			<if
+				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
+				AND T.TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername}
+			</if>
+			<if test="taskDelegateDate != null ">
+				AND T.TASK_DELEGATE_DATE = #{taskDelegateDate}
+			</if>
+			<if test="taskInitDate != null ">
+				AND TASK_INIT_DATE &gt;=
+				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_INIT_DATE &lt;=
+				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="taskFinishDate != null ">
+				AND TASK_FINISH_DATE = #{taskFinishDate}
+			</if>
+			<if test="taskDueDate != null ">
+				AND TASK_DUE_DATE &gt;=
+				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND TASK_DUE_DATE &lt;=
+				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="taskRiskDate != null ">
+				AND TASK_RISK_DATE = #{taskRiskDate}
+			</if>
+			<if test="taskPriority != null and taskPriority != ''">
+				AND TASK_PRIORITY = #{taskPriority}
+			</if>
+			<if test="taskData != null and taskData != ''">
+				AND TASK_DATA = #{taskData}
+			</if>
+			<if test="taskDelegateUser != null and taskDelegateUser != ''">
+				AND TASK_DELEGATE_USER = #{taskDelegateUser}
+			</if>
+			<if test="synNumber != null and synNumber != ''">
+				AND SYN_NUMBER = #{synNumber}
+			</if>
+		</where>
+	</select>
 	
 	<update id="updateSynNumberByTaskId" parameterType="map">
 	   update dh_task_instance 
