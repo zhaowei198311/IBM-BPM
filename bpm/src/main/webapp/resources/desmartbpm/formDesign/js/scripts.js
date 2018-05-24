@@ -490,19 +490,19 @@ $(document).ready(function() {
 			if($("#"+temp).parent().parent().find(".subDiv").find("input").length>0){
 				switch($("#"+temp).parent().parent().find(".subDiv").find("input").attr("type")){
 					case "text":{
-						inputId = "text-"+inputId;
+						inputId = "text_"+inputId;
 						break;
 					};
 					case "tel":{
-						inputId = "number-"+inputId;
+						inputId = "number_"+inputId;
 						break;
 					};
 					case "date":{
-						inputId = "date-"+inputId;
+						inputId = "date_"+inputId;
 						break;
 					};
 					case "button":{
-						inputId = "button-"+inputId;
+						inputId = "button_"+inputId;
 						break;
 					};
 				}
@@ -510,9 +510,9 @@ $(document).ready(function() {
 				inputId = "select-"+inputId;
 			}else if($("#"+temp).parent().parent().find(".subDiv").find("textarea").length>0){
 				if($("#"+inputId).attr("class")=="editor_textarea"){
-					inputId = "editor-"+inputId;
+					inputId = "editor_"+inputId;
 				}else{
-					inputId = "textarea-"+inputId;
+					inputId = "textarea_"+inputId;
 				}
 			}
 			
