@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.util.http.HttpClientUtils;
 
 /**
  * <p>
@@ -31,18 +33,51 @@ import com.desmart.desmartportal.service.DhTaskInstanceService;
  * Description:
  * </p>
  * 
- * @author 张志颖
+ * @author zhaowei
  * @date 2018年5月9日
  */
 @Controller
 @RequestMapping(value = "/processInstance")
 public class DhProcessInstanceController {
+	
+	private Logger log = Logger.getLogger(DhProcessInstanceController.class);
 
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
 
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	
+	@RequestMapping(value = "/startProcess")
+	@ResponseBody
+	public ServerResponse startProcess(@RequestParam(value="proUid")String proUid, @RequestParam(value="proAppId")String proAppId, 
+							@RequestParam(value="verUid")String verUid, @RequestParam(value="dataInfo")String dataInfo,
+							@RequestParam(value="approval")String approval) {
+		// 发起流程		
+		try {
+			return dhProcessInstanceService.startProcess(proUid, proAppId, verUid, dataInfo, approval);
+        } catch (Exception e) {
+            log.error("发起流程失败", e);
+            return ServerResponse.createByErrorMessage("发起流程失败");
+        }
+	}
+	
+	@RequestMapping(value = "/queryProcessByUser")
+	@ResponseBody
+	public ServerResponse queryProcessByUser() {
+		
+		return null;	
+	}
+	
+	@RequestMapping(value = "/viewProcess")
+	@ResponseBody
+	public String viewProcess(String insId) {
+		// 查看流程图 需要流程实例  这一步目的是 去 掉用IBM 做一次 登陆验证
+		HttpClientUtils httpUtils = new HttpClientUtils();
+		String url = "http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId="+insId;
+		httpUtils.checkApiLogin("get", url, null);
+		return url;
+	}
 
 	/**
 	 * 根据userId查询instuid,再根据instuid查processInstanceList
@@ -57,7 +92,7 @@ public class DhProcessInstanceController {
 	 *            流程版本id
 	 * @return
 	 */
-	@RequestMapping("/getInfo")
+	@RequestMapping(value = "/getInfo")
 	@ResponseBody
 	public ServerResponse getInfo(@RequestParam(value = "userId") String userId,
 			@RequestParam(value = "proAppId") String proAppId, @RequestParam(value = "proUid") String proUid,
@@ -70,7 +105,7 @@ public class DhProcessInstanceController {
 		return dhTaskInstanceService.selectTaskByUser(taskInstance, pageNum, pageSize);// 根据userId查询taskList
 	}
 
-	@RequestMapping("/queryProcessByUserAndType")
+	@RequestMapping(value = "/queryProcessByUserAndType")
 	@ResponseBody
 	public ServerResponse queryProcessByUserAndType(@RequestParam(value = "insTitle", required = false) String insTitle,
 			@RequestParam(value = "insStatusId", required = false) String insStatusId,
@@ -82,7 +117,7 @@ public class DhProcessInstanceController {
 		return dhProcessInstanceService.queryByStausOrTitle(paramsMap, pageNum, pageSize);
 	}
 
-	@RequestMapping("/queryProcessByActive")
+	@RequestMapping(value = "/queryProcessByActive")
 	@ResponseBody
 	public ServerResponse queryProcessByActive(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {

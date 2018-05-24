@@ -467,7 +467,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	
 	function processView(insId){
 		$.ajax({
-			url : 'process/viewProcess',
+			url : 'processInstance/viewProcess',
 			type : 'post',
 			dataType : 'text',
 			data : {

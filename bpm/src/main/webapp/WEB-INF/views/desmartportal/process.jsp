@@ -528,7 +528,7 @@
 							var proAppIds = $("#proAppId").val();
 							var verUids = $("#verUid").val();
 							$.ajax({
-								url : 'process/startProcess',
+								url : 'processInstance/startProcess',
 								type : 'POST',
 								dataType : 'json',
 								data : {
