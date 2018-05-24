@@ -14,7 +14,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -253,25 +256,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 *
 	 */
 	@Override
-	public ServerResponse perform(String tkkid,String user) {
+	public String perform(String data) {
 		log.info("完成任务开始......");
-		try {
-			HttpReturnStatus result = new HttpReturnStatus();
-			HttpClientUtils httpClientUtils = new HttpClientUtils();
-			Map<String, Object> params = new HashMap<>();
-			params.put("action", "finish");
-			params.put("parts", "all");
-			result = httpClientUtils.checkApiLogin("put", IBMApiUrl.IBM_API_TASK + tkkid, params);
-			if(result.getCode()==200) {
-			    log.info("完成任务结束......");
-				return ServerResponse.createBySuccess(result.getCode());
-			} else {
-			    return ServerResponse.createByErrorMessage("完成第一个任务失败");
-			}
-		} catch (Exception e) {
-			log.error("完成第一个任务失败", e);
-			return ServerResponse.createByErrorMessage("完成第一个任务失败");
-		}
+		
+		return "";
 	}
 
 	public boolean isTaskExists(int taskId) {

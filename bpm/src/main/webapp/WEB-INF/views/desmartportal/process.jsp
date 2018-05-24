@@ -297,7 +297,6 @@
 							for (var i = 0; i < inputArr.length; i++) {
 								var type = $(inputArr[i]).attr("type");
 								var textJson = "";
-
 								var checkJson = "";
 								switch (type) {
 								case "text": {
@@ -348,7 +347,6 @@
 											control = true;
 										}
 									}
-
 									if (control) {
 										control = false;
 										checkJson += "\"" + checkName

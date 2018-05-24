@@ -15,14 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhTask;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**  
 * <p>Title: TaskInstanceController</p>  
@@ -38,6 +43,9 @@ public class DhTaskInstanceController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	
 	/**
 	 * 查询代办(任务状态接受)
@@ -75,8 +83,16 @@ public class DhTaskInstanceController {
 	
 	@RequestMapping(value = "/finshedTask")
 	@ResponseBody
-	private ServerResponse finshedTask(@RequestParam(value="taskId") String tkkid,@RequestParam(value="user") String user) {
-		return dhTaskInstanceService.perform(tkkid,user);
+	private ServerResponse finshedTask(@RequestParam(value="data") String data) {		
+		//解析data
+		JSONObject jsonBody = JSONObject.parseObject(data);
+		JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
+		Integer taskId = (Integer) taskData.get("taskId");
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		CommonBusinessObject pubBo = new CommonBusinessObject();
+		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+		bpmTaskUtil.commitTask(taskId, pubBo);
+		return ServerResponse.createBySuccess();
 	}
 	
 	/**

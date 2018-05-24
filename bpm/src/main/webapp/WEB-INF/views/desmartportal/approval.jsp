@@ -67,21 +67,21 @@
 </head>
 <body>
 	<div class="search_area top_btn">
-		<input id="formId" value="${formId}" style="display: none;">
-		<input id="proUid" value="${proUid}" style="display: none;">
-		<input id="proAppId" value="${proAppId}" style="display: none;">
-		<input id="proVerUid" value="${proVerUid}" style="display: none;"> 
-		<input id="insUid" value="${insUid}" style="display: none;">
-		<input id="insId" value="${insId}" style="display: none;">
-		<input id="taskId" value="${taskId}" style="display: none;">
-		<input id="taskUid" value="${taskUid}" style="display: none;">
-		<span id="insData" style="display: none;">${insData}</span>
-		<span id="listStr" style="display: none;">${listStr}</span>
-		<span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
+		<input id="formId" value="${formId}" style="display: none;"> <input
+			id="proUid" value="${proUid}" style="display: none;"> <input
+			id="proAppId" value="${proAppId}" style="display: none;"> <input
+			id="proVerUid" value="${proVerUid}" style="display: none;"> <input
+			id="insUid" value="${insUid}" style="display: none;"> <input
+			id="insId" value="${insId}" style="display: none;"> <input
+			id="taskId" value="${taskId}" style="display: none;"> <input
+			id="taskUid" value="${taskUid}" style="display: none;"> <span
+			id="insData" style="display: none;">${insData}</span> <span
+			id="listStr" style="display: none;">${listStr}</span> <span
+			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span id="test" style="float: right; padding-right: 20px;">
 			<button class="layui-btn layui-btn-sm"
 				onclick="processView(${insId})">流程图</button>
-			<button class="layui-btn layui-btn-sm" onclick="agree(${taskId})">通过</button>
+			<button class="layui-btn layui-btn-sm" onclick="agree()">通过</button>
 			<button class="layui-btn layui-btn-sm">驳回</button>
 			<button class="layui-btn layui-btn-sm">转办</button>
 			<button class="layui-btn layui-btn-sm">会签</button>
@@ -105,24 +105,33 @@
 					</tr>
 					<tr>
 						<th colspan="4">
-							<div class="layui-progress layui-progress-big" lay-filter="demo" lay-showpercent="true" style="position: relative;">
+							<div class="layui-progress layui-progress-big" lay-filter="demo"
+								lay-showpercent="true" style="position: relative;">
 								<div class="layui-progress-bar" lay-percent="0%"></div>
 								<span class="progress_time">审批剩余时间6小时</span>
 							</div>
 						</th>
 					</tr>
 					<tr>
-					      <td class="td_title">工号</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">姓名</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="测试用户" autocomplete="off" class="layui-input"></td>
-					    </tr>
-					    <tr>
-					      <td class="td_title">创建日期</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">所属部门</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="信息部" autocomplete="off" class="layui-input"></td>
-					    </tr>
+						<td class="td_title">工号</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="00003" autocomplete="off"
+							class="layui-input"></td>
+						<td class="td_title">姓名</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="测试用户" autocomplete="off"
+							class="layui-input"></td>
+					</tr>
+					<tr>
+						<td class="td_title">创建日期</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="2018-05-23" autocomplete="off"
+							class="layui-input"></td>
+						<td class="td_title">所属部门</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="信息部" autocomplete="off"
+							class="layui-input"></td>
+					</tr>
 				</tbody>
 			</table>
 			<div id="formSet"></div>
@@ -394,6 +403,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 
 	});
 	$(function() {
+		getAllDataInfo();
 		clientSideInclude(document.getElementById('formId').value);
 		element.progress('demo', "50%");
 		$(".add_row")
@@ -448,6 +458,23 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 		})
 	})
 	
+	function getAllDataInfo(){
+		// 拼装数据
+		var activityId = ""
+		var userUid = ""
+		var insData = $("#insData").text();
+		$('.getUser').each(function(){
+    		activityId=$(this).attr('id');
+    		userUid=$(this).val();
+    	});
+		var json = "{";
+		var formData = "formData"; // 表单数据外层
+		var routeData = "routeData"; // 选人数据外层
+		var approvaData = "approvaData"; // 审批数据外层
+		var endjson = "}";
+		// 
+		var jsonStr = ""+json+"\""+formData+"\":"+insData+",\""+approvaData+"\":{\"a\":{\"A\":\"C\"}},\""+routeData+"\":{\"activityId\":\""+activityId+"\"}"+endjson+"";	
+	}
 	
 	function clientSideInclude(dynUid) {
 			$.ajax({
@@ -487,40 +514,54 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 		})
 	}
 	
-	function agree(taskId){
-		var user = $(".getUser").val().substring(0,8);
-		$.ajax({
-			url : 'taskInstance/finshedTask',
-			type : 'POST',
-			dataType : 'text',
-			data : {
-				taskId : taskId,
-				user : user
-			},
-			beforeSend : function(){
-				index = layer.load(1);
-			},
-			success : function(result) {
-				layer.close(index);
-				if (result.status == 0) {
-					layer.alert('提交成功', {
-						icon : 1
-					});
-				}
-				if (result.status == 1) {
+	function agree(){
+			var taskId = $("#taskId").val();
+			var activityId = ""
+			var userUid = ""
+			var insData = $("#insData").text();
+			$('.getUser').each(function(){
+	    		activityId=$(this).attr('id');
+	    		userUid=$(this).val();
+	    	});
+			var json = "{";
+			var formData = "formData"; // 表单数据外层
+			var routeData = "routeData"; // 选人数据外层
+			var approvaData = "approvaData"; // 审批数据外层
+			var taskData = "taskData"; // 任务数据外层
+			var endjson = "}";
+			// 数据信息
+			var jsonStr = ""+json+"\""+formData+"\":"+insData+",\""+approvaData+"\":{\"a\":{\"A\":\"C\"}},\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+taskData+"\":{\"taskId\":\""+taskId+"\"}"+endjson+"";	
+			 $.ajax({
+				url : 'taskInstance/finshedTask',
+				type : 'POST',
+				dataType : 'text',
+				data : {
+					data : jsonStr
+				},
+				beforeSend : function(){
+					index = layer.load(1);
+				},
+				success : function(result) {
+					layer.close(index);
+						if (result.status == 0) {
+							layer.alert('提交成功', {
+							icon : 1
+						});
+					}
+						if (result.status == 1) {
+							layer.alert('提交失败', {
+							icon : 2
+						});
+					}
+				},
+				error : function(result) {
+					layer.close(index);
 					layer.alert('提交失败', {
 						icon : 2
 					});
 				}
-			},
-			error : function(result) {
-				layer.close(index);
-				layer.alert('提交失败', {
-					icon : 2
-				});
-			}
-		}); 
-	}
+			});  
+		}
 	
 	function back(){
 		window.location.href = 'menus/backlog';
