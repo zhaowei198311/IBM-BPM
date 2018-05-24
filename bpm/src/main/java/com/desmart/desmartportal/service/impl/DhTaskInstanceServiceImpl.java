@@ -32,6 +32,7 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
+import com.desmart.desmartportal.service.SysDateService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
@@ -74,6 +75,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	
+	@Autowired
+	private SysDateService sysDateService;
 
 	/**
 	 * 查询所有流程实例
@@ -381,12 +385,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 //		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		// 创建时间
 		Date createDate = new Date();
-		// 当前时间
-		Date now = new Date();
 		// 时间个数
-		Double time = null;
+		Double timeAmount = null;
 		// 时间单位
 		String timeType = "";
+		// 审批剩余时间
+		int hour = 0;
+		// 百分比
+		int procent = 0;
 		// 根据taskUid查询单个DH_TASK_INSTANCE对象
 		List<DhTaskInstance> dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		for (DhTaskInstance dti : dhTaskInstance) {	
@@ -402,24 +408,38 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			for (BpmActivityMeta bam : bpmActivityMeta_1) {
 				// DH_ACTIVITY_CONF对象
 				DhActivityConf dhActivityConf = bam.getDhActivityConf();
-				time = dhActivityConf.getActcTime();
+				timeAmount = dhActivityConf.getActcTime();
 				timeType = dhActivityConf.getActcTimeunit();
 			}
 			
 		}
-		if ("day".equals(timeType)) {
-			time = time * 24;
+		// 审批最后日期
+		Date lastDate = sysDateService.lastTime(createDate, timeAmount, timeType);
+		if (timeAmount == null) {
+			timeAmount = 24.0;
+		}else {
+			if (DhActivityConf.TIME_UNIT_DAY.equals(timeType)) {
+				timeAmount = timeAmount * 24;
+			}
+			if (DhActivityConf.TIME_UNIT_MONTH.equals(timeType)) {
+				timeAmount = timeAmount * 30 * 24;
+			}
 		}
-		if ("month".equals(timeType)) {
-			time = time * 30 * 24;
+		// 最大剩余时间
+		long remainingTime = lastDate.getTime() - createDate.getTime();
+		hour = (int) (remainingTime / (1000 * 60 * 60));
+		// 如果最大剩余时间大于配置时间，则百分比为0，剩余时间为配置时间
+		if (hour > timeAmount) {
+			hour = timeAmount.intValue();
+		}else {
+			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
+			// 百分比
+			procent = (int) (((double)new Date().getTime() / lastDate.getTime()) * 100);
 		}
-		// 当前时间 - 创建时间的差值转换成小时
-		long diff = now.getTime() - createDate.getTime();
-		long hours = diff / (1000 * 60 * 60);
-		// 差值 /运行时长
-		Double percent = hours / time;
-		int index = percent.toString().indexOf("."); 
-		return ServerResponse.createBySuccessMessage(percent.toString().substring(0, index));
+		Map<String, Object> map = new HashMap<>();
+		map.put("precent", 100 - procent);
+		map.put("hour", hour);
+		return ServerResponse.createBySuccess(map);
 	}
 
 }
