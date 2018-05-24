@@ -64,7 +64,7 @@ public class BpmTaskUtil {
                     resultMap.putAll((Map)setDataResult);
                     Map<String, HttpReturnStatus> errorMap = BpmClientUtils.findErrorResult(setDataResult);
                     if (errorMap.isEmpty() && !BpmClientUtils.isErrorResult(result)) {
-                        result = doTaskAction(taskId, "start", "");
+                        result = this.completeTask(taskId);
                         resultMap.put("commitTaskResult", result);
                         if (BpmClientUtils.isErrorResult(result)) {
                             resultMap.put("errorResult", result);
