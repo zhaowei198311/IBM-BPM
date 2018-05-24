@@ -107,11 +107,16 @@
 	width:48%;
 	border: 1px solid #ccc;
 	height:100%;
+	overflow-y: auto;
 }
 
 #middle_right_list .layui-table{
 	text-align:center;
 	margin-top:0px;
+}
+
+#middle_right_list{
+	overflow-y: auto;
 }
 
 #middle_right_list th,#middle_right_list td{
@@ -132,6 +137,7 @@
 	width:48%;
 	border: 1px solid #ccc;
 	height:100%;
+	overflow-y: auto;
 }
 
 #update_middle_right_list .layui-table{
@@ -150,6 +156,7 @@
 	border: 1px solid #ccc;
 	height:100%;
 	background-color:#f2f2f2;
+	overflow-y: auto;
 }
 
 .agent_pro_foot{
@@ -257,7 +264,7 @@
 		</div>
 		<div class="agent_pro_middle">
 			<div id="middle_left_tree">
-				<ul id="category_tree" class="ztree" style="width:auto;height:100%;"></ul>
+				<ul id="category_tree" class="ztree" style="width:auto;height:97%;"></ul>
 			</div>
 			<div id="middle_right_list">
 				<table class="layui-table">
@@ -335,7 +342,7 @@
 		</div>
 		<div class="agent_pro_middle">
 			<div id="update_middle_left_tree">
-				<ul id="update_category_tree" class="ztree" style="width:auto;height:100%;"></ul>
+				<ul id="update_category_tree" class="ztree" style="width:auto;height:97%;"></ul>
 			</div>
 			<div id="update_middle_right_list">
 				<table class="layui-table">
@@ -589,13 +596,18 @@
 					var proArr = $("input[name='updateProNameCheck']");
 					for(var i=0;i<proArr.length;i++){
 						var updateProMetaUid = $(proArr[i]).val();
-						if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1
-								|| updateProMetaUidArr[0]=="allProMeta"){
+						console.log(updateProMetaUidArr.length);
+						if(updateProMetaUidArr[0]=="allProMeta"){
+							$(proArr[i]).prop("checked",true);
+							updateOnClickProSel(proArr[i]);
+							if(i==proArr.length-1){
+								updateProMetaUidArr.splice($.inArray("allProMeta",updateProMetaUidArr),1);
+							}
+						}else if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1){
 							$(proArr[i]).prop("checked",true);
 							updateOnClickProSel(proArr[i]);
 						}
 					} 
-					updateProMetaUidArr.splice($.inArray("allProMeta",updateProMetaUidArr),1);
 				}
 			}//end success
 		});
@@ -1073,8 +1085,6 @@
 					agentId : id
 				},
 				success : function(result) {
-					console.log(result.status);
-					console.log(result.status==0);
 					if(result.status == 0){
 						layer.alert("删除成功");
 						getAgentInfo();
