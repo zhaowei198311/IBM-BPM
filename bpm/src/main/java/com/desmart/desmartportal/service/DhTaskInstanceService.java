@@ -52,7 +52,7 @@ public interface DhTaskInstanceService {
 	/**
 	 * 完成任务
 	 */
-	public String perform(String data);
+	public ServerResponse perform(String data);
 	
 	/**
 	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录
