@@ -519,6 +519,7 @@
 				AND SYN_NUMBER = #{synNumber}
 			</if>
 		</where>
+		ORDER BY P.INS_CREATE_DATE DESC
 	</select>
 	
 	<update id="updateSynNumberByTaskId" parameterType="map">
