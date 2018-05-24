@@ -431,7 +431,6 @@
 							for (var i = 0; i < inputArr.length; i++) {
 								var type = $(inputArr[i]).attr("type");
 								var textJson = "";
-
 								var checkJson = "";
 								switch (type) {
 								case "text": {
@@ -525,9 +524,9 @@
 							var finalData = {};
 							finalData.formData = JSON.parse(json);
 							console.log(JSON.stringify(finalData));
-							var proUids = $("#proUid").val();
-							var proAppIds = $("#proAppId").val();
-							var proVerIds = $("#verUid").val();
+							var proUid = $("#proUid").val();
+							var proAppId = $("#proAppId").val();
+							var proVerUid = $("#verUid").val();
 							var activityId = ""
 								var userUid = ""
 								var insData = $("#insData").text();
@@ -539,9 +538,9 @@
 								var formData = "formData"; // 表单数据外层
 								var routeData = "routeData"; // 选人数据外层
 								var approvaData = "approvaData"; // 审批数据外层
-								var processData = "processIdData"; // 任务数据外层
+								var processData = "processData"; // 任务数据外层
 								var endjson = "}";	
-								var jsonStr = ""+startjson+"\""+formData+"\":"+json+",\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+processData+"\":{\"proUid\":\""+proUids+"\",\"proAppId\":\""+proAppIds+"\",\"proVerId\":\""+proVerIds+"\"}"+endjson+"";		
+								var jsonStr = ""+startjson+"\""+formData+"\":"+json+",\""+routeData+"\":{\"activityId\":\""+activityId+"\",\"userUid\":\""+userUid+"\"},\""+processData+"\":{\"proUid\":\""+proUid+"\",\"proAppId\":\""+proAppId+"\",\"proVerUid\":\""+proVerUid+"\"}"+endjson+"";		
 							 	$.ajax({
 								url : 'processInstance/startProcess',
 								type : 'POST',

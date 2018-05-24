@@ -50,12 +50,10 @@ public class DhProcessInstanceController {
 	
 	@RequestMapping(value = "/startProcess")
 	@ResponseBody
-	public ServerResponse startProcess(@RequestParam(value="proUid")String proUid, @RequestParam(value="proAppId")String proAppId, 
-							@RequestParam(value="verUid")String verUid, @RequestParam(value="dataInfo")String dataInfo,
-							@RequestParam(value="approval")String approval) {
+	public ServerResponse startProcess(String data) {
 		// 发起流程		
 		try {
-			return dhProcessInstanceService.startProcess(proUid, proAppId, verUid, dataInfo, approval);
+			return dhProcessInstanceService.startProcess(data);
         } catch (Exception e) {
             log.error("发起流程失败", e);
             return ServerResponse.createByErrorMessage("发起流程失败");

@@ -74,7 +74,7 @@ public interface DhProcessInstanceService {
 	 * @param approval 审批意见
 	 * @return
 	 */
-	ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo, String approval);	
+	ServerResponse startProcess(String data);	
 	
 	/**
 	 * 根据流程实例id  查看流程图

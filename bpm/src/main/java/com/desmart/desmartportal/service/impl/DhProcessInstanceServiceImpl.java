@@ -223,20 +223,33 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	
     @Override
     @Transactional
-    public ServerResponse startProcess(String proUid, String proAppId, String verUid, String dataInfo,
-            String approval) {
-        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(verUid)) {
-            return ServerResponse.createByError();
+    public ServerResponse startProcess(String data) {
+        if (StringUtils.isBlank(data)) {
+            return ServerResponse.createByErrorMessage("缺少必要参数");
         }
+        JSONObject dataJson = JSONObject.parseObject(data);
+        JSONObject formDataFromTask = (JSONObject)dataJson.get("formData");
+        JSONObject routeData = (JSONObject)dataJson.get("routeData");
+        JSONObject processData = (JSONObject)dataJson.get("processData");
+        
+        String proAppId = processData.getString("proAppId");
+        String proUid = processData.getString("proUid");
+        String proVerUid = processData.getString("proVerUid");
+        
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("缺少必要参数");
+        }
+        
+        
+        
+        
         log.info("发起流程开始......");
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
-        BpmActivityMeta firstHumanActivity = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, verUid).getData();
+        BpmActivityMeta firstHumanActivity = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid).getData();
         
-        JSONObject taskData = JSONObject.parseObject(dataInfo);
-        JSONObject formDataFromTask = (JSONObject)taskData.get("formData");
-        // formdata
-        // New CO
+        
+        
         
         HttpReturnStatus result = new HttpReturnStatus();
         
@@ -247,7 +260,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         pubBo.setNextOwners_0(Arrays.asList(new String[] {"00011178"}));
         
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-        result = bpmProcessUtil.startProcess(proAppId, proUid, verUid, pubBo);
+        result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
         
         // 如果获取API成功 将返回过来的流程数据 保存到 平台
         if (!BpmClientUtils.isErrorResult(result)) {
@@ -267,7 +280,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 processInstance.setInsStatusId(12);
                 processInstance.setProAppId(proAppId);
                 processInstance.setProUid(proUid);
-                processInstance.setProVerUid(verUid);
+                processInstance.setProVerUid(proVerUid);
                 processInstance.setInsInitDate(new Date());
                 processInstance.setInsInitUser(currentUserUid);
                 processInstance.setCompanyNumber(currentUser.getCompanynumber());
@@ -281,10 +294,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
                 taskInstance.setUsrUid(currentUserUid);
                 taskInstance.setActivityBpdId(firstHumanActivity.getActivityBpdId());
-                taskInstance.setTaskData(dataInfo);
+                taskInstance.setTaskData(data);
                 taskInstance.setTaskId(taskId);
                 taskInstance.setInsUid(processInstance.getInsUid());
-                taskInstance.setTaskData(dataInfo);
                 taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
                 taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
                 taskInstance.setTaskInitDate(new Date());
