@@ -66,19 +66,20 @@ public class BpmTaskUtil {
                     Map<String, HttpReturnStatus> errorMap = BpmClientUtils.findErrorResult(setDataResult);
                     if (errorMap.isEmpty() && !BpmClientUtils.isErrorResult(result)) {
                         result = doTaskAction(taskId, "start", "");
-                        
-                        resultMap.put("commitTaskMsg", result);
+                        resultMap.put("commitTaskResult", result);
+                        if (BpmClientUtils.isErrorResult(result)) {
+                            resultMap.put("errorResult", result);
+                        }
                     } else if (!errorMap.isEmpty()) {
                         resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
                     } else {
                         resultMap.put("errorResult", result);
                     }
-                    
                 }
                 
-                
+            } else {
+                resultMap.put("errorResult", result);
             }
-            
         } catch (Exception e) {
             log.error("发起流程失败", e);
             HttpReturnStatus errorStatus = new HttpReturnStatus();

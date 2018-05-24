@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.mq.MqSendUtil;
@@ -44,7 +47,15 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/test")
     @ResponseBody
     public String test3(HttpServletRequest request, Integer page, Integer rows) {
-        return "OK";
+        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfigService.getFirstActConfig());
+        CommonBusinessObject pubBo = new CommonBusinessObject();
+        List<String> list1 = new ArrayList<>();
+        list1.add("deadmin");
+        list1.add("2222222");
+        pubBo.setNextOwners_1(list1);
+        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(1407, pubBo);
+        System.out.println(resultMap.get("commitTaskResult").getMsg());
+        return "done";
     }
     
     
