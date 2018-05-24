@@ -61,7 +61,18 @@ public class BpmTaskUtil {
                 JSONObject jsoResult = new JSONObject(result.getMsg());
                 String status = jsoResult.optString("status", "");
                 if (StringUtils.isNotBlank(status) && !"error".equals(status)) {
-                    setTaskData(taskId, pubBo);
+                    Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
+                    resultMap.putAll((Map)setDataResult);
+                    Map<String, HttpReturnStatus> errorMap = BpmClientUtils.findErrorResult(setDataResult);
+                    if (errorMap.isEmpty() && !BpmClientUtils.isErrorResult(result)) {
+                        result = doTaskAction(taskId, "start", "");
+                        
+                        resultMap.put("commitTaskMsg", result);
+                    } else if (!errorMap.isEmpty()) {
+                        resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
+                    } else {
+                        resultMap.put("errorResult", result);
+                    }
                     
                 }
                 
