@@ -106,7 +106,7 @@
 					</tr>
 					<tr>
 						<th colspan="4">
-							<div class="layui-progress layui-progress-big" lay-filter="demo"
+							<div class="layui-progress layui-progress-big" lay-filter="progressBar"
 								lay-showPercent="yes" style="position: relative;">
 								<div class="layui-progress-bar" lay-percent="0%"></div>
 <!-- 								<span class="progress_time">审批剩余时间6小时</span> -->
@@ -404,6 +404,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 		}); //建立编辑器
 
 	});
+	
 	$(function() {
 		getAllDataInfo();
 		clientSideInclude(document.getElementById('formId').value);
@@ -453,21 +454,20 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			success: function(data){
 				var result = data.data;
 				if (data.status == 0) {
-					progressBar(result.procent,result.hour);					
+					$(".layui-progress").append('<span class="progress_time">审批剩余时间'+result.hour+'小时</span>');
+					// 加载进度条
+					layui.use('element', function(){
+						  var $ = layui.jquery
+						  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+						// 延迟加载
+						setTimeout(function(){
+							element.progress('progressBar',result.procent+'%');
+						}, 500);
+					});
 				}
 			}
-		})
-	})
-	// 加载进度条
-	function progressBar(procent,hour){
-		layui.use('element', function(){
-			var element = layui.element;
-			element.init();
-			element.progress('demo', procent+'%');	
-			$(".layui-progress-text").text(procent+"%");
 		});
-		$(".layui-progress").append('<span class="progress_time">审批剩余时间'+hour+'小时</span>');
-	}
+	});	
 	
 	function getAllDataInfo(){
 		// 拼装数据
