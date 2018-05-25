@@ -548,6 +548,7 @@
 	
 	//add根据分类Id获得流程元集合数据
 	function getMetaInfo(categoryUid){
+		layer.load(1);
 		$.ajax({
 			url:"agent/listByCategoryUid",
 			method:"post",
@@ -572,12 +573,14 @@
 						}
 					}
 				}
+				layer.closeAll('loading');
 			}//end success
 		});
 	}
 	
 	//update根据分类Id获得流程元集合数据
 	function getUpdateMetaInfo(categoryUid){
+		layer.load(1);
 		$.ajax({
 			url:"agent/listByCategoryUid",
 			method:"post",
@@ -596,12 +599,12 @@
 					var proArr = $("input[name='updateProNameCheck']");
 					for(var i=0;i<proArr.length;i++){
 						var updateProMetaUid = $(proArr[i]).val();
-						console.log(updateProMetaUidArr.length);
 						if(updateProMetaUidArr[0]=="allProMeta"){
 							$(proArr[i]).prop("checked",true);
 							updateOnClickProSel(proArr[i]);
 							if(i==proArr.length-1){
 								updateProMetaUidArr.splice($.inArray("allProMeta",updateProMetaUidArr),1);
+								updateProMetaNameArr.splice($.inArray("所有流程",updateProMetaNameArr),1);
 							}
 						}else if($.inArray(updateProMetaUid,updateProMetaUidArr)!=-1){
 							$(proArr[i]).prop("checked",true);
@@ -609,6 +612,7 @@
 						}
 					} 
 				}
+				layer.closeAll('loading');
 			}//end success
 		});
 	}
@@ -628,6 +632,7 @@
 		var agentSdate = $("#addAgentSdate").val();
 		var agentEdate = $("#addAgentEdate").val();
 		var agentPerson = $("#addAgentPerson").val().replace(";","");
+		layer.load(1);
 		//判断值不为空
 		if(agentSdate!=null && agentSdate!="" && agentEdate!=null && agentEdate!=""
 			&& agentPerson!=null && agentPerson!="" && proMetaUidArr.length!=0){
@@ -639,7 +644,6 @@
 				if(allProMetaNum!=proMetaUidArr.length){
 					agentIsAll = "FALSE";
 				}
-				layer.load(1);
 				//添加代理信息
 				$.ajax({
 					url:"agent/addAgentInfo",
@@ -653,7 +657,6 @@
 						agentIsAll:agentIsAll
 					},
 					success:function(result){
-						layer.closeAll('loading');
 						if(result.status==0){
 							getAgentInfo();
 							$(".display_container").css("display", "none");
@@ -661,6 +664,7 @@
 						}else{
 							layer.alert(result.msg);
 						}
+						layer.closeAll('loading');
 					}
 				});
 			}else{
@@ -686,7 +690,7 @@
 		var updateAgentSdate = $("#updateAgentSdate").val();
 		var updateAgentEdate = $("#updateAgentEdate").val();
 		var updateAgentPerson = $("#updateAgentPerson").val().replace(";","");
-
+		layer.load(1);
 		//判断值不为空
 		if(updateAgentSdate!=null && updateAgentSdate!="" && updateAgentEdate!=null && updateAgentEdate!=""
 			&& updateAgentPerson!=null && updateAgentPerson!="" && updateProMetaUidArr.length!=0){
@@ -720,6 +724,7 @@
 						}else{
 							layer.alert(result.msg);
 						}
+						layer.closeAll('loading');
 					}
 				});
 			}else{
