@@ -23,5 +23,5 @@ public interface UserProcessService {
 	/**
 	 * 发起流程用户信息
 	 */
-	Map<String, Object> startProcessByUserInfo();
+	Map<String, Object> startProcessByUserInfo(String proUid,String proAppId,String verUid,String proName,String categoryName);
 }

@@ -26,10 +26,13 @@ import com.desmart.desmartportal.service.DhDraftsService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
+import com.desmart.desmartportal.service.UserProcessService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
+import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.entity.SysUserDepartment;
 
 /**
  * <p>
@@ -55,13 +58,15 @@ public class MenusController {
 	@Autowired
 	private MenusService menusService;
 	
-	
+	@Autowired
+	private SysUserMapper sysUserMapper;
 	
 	@Autowired
 	private DhDraftsService dhDraftsService;
-	
-	 
 
+	@Autowired
+	private UserProcessService userProcessService;
+	
 	@RequestMapping("/index")
 	public String index() {
 		return "desmartportal/index";
@@ -93,28 +98,8 @@ public class MenusController {
 			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
 			@RequestParam(value = "proName",required = false) String proName,
 			@RequestParam(value = "categoryName",required = false) String categoryName) {
-		
-		
-		
 		ModelAndView mv = new ModelAndView("desmartportal/process");
-		mv.addObject("proUid", proUid);
-		mv.addObject("proAppId", proAppId);
-		mv.addObject("verUid", verUid);
-		mv.addObject("proName", proName);
-		mv.addObject("categoryName", categoryName);
-		System.err.println(proAppId);
-		mv.addObject("userId", SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		
-		//环节选人
-		mv.addObject("activityMetaList", menusService.activityHandler(proUid, proAppId, verUid));
-		
-		
-		// 表单详细信息设置
-		Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
-		mv.addObject("formId", resultMap.get("formId"));
-		mv.addObject("actcUid", resultMap.get("actcUid"));
-		mv.addObject("activityId", resultMap.get("activityId"));
-		mv.addObject("activityBpdId", resultMap.get("activityBpdId"));
+		mv.addAllObjects(userProcessService.startProcessByUserInfo(proUid, proAppId, verUid, proName, categoryName));
 		return mv;
 	}
 	

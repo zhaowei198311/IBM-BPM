@@ -69,7 +69,8 @@
 			id="verUid" value="${verUid}" style="display: none;"> <input
 			id="userId" value="${userId}" style="display: none;"> <input
 			id="proName" value="${proName}" style="display: none;"> <input
-			id="dataInfo" style="display: none;"> <span
+			id="userId" value="${userId}" style="display: none;"> <input
+			id="dataInfo" style="display: none;"><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">
 			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm" >保存草稿</button>
@@ -79,6 +80,7 @@
 	</div>
 	<div class="container" style="width:96%">
 		<div class="content">
+		<form action="" class="layui-form">
 		<table class="layui-table">
 					<colgroup>
 					    <col width="150">
@@ -101,18 +103,26 @@
 						</tr>
 					    <tr>
 					      <td class="td_title">工号</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="${userId}" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">姓名</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="测试用户" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="${userName}" autocomplete="off" class="layui-input"></td>
 					    </tr>
 					    <tr>
 					      <td class="td_title">创建日期</td>
 					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">所属部门</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="信息部" autocomplete="off" class="layui-input"></td>
+					      <td>
+							<select id="processType" lay-verify="required" >
+								<option value="">请选择所属部</option>
+								<c:forEach items="${userDepartmentList}" var="department">
+									<option value="${department.companyCode}">${department.departName}</option>
+								</c:forEach>
+							</select>
+					      </td>
 					    </tr>
 					</tbody>
 				</table>
+				</form>
 		
 			<div id="formSet"></div>
 			<table class="layui-table">

@@ -52,7 +52,7 @@
 				<div class="layui-col-xs2">
 					<input id="processName" type="text" placeholder="流程名称" class="layui-input">
 				</div>
-				<div class="layui-col-xs2" style="text-align: right;">
+				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
 					<button class="layui-btn" onclick="startProcess()">发起新流程</button>
 				</div>

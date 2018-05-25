@@ -24,7 +24,7 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.UserService;
+import com.desmart.desmartportal.service.UserProcessService;
 
 
 /**
@@ -43,7 +43,7 @@ import com.desmart.desmartportal.service.UserService;
 public class UsersController {
 	
 	@Autowired
-	private UserService userService;
+	private UserProcessService userProcessService;
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
@@ -66,7 +66,7 @@ public class UsersController {
 	public ModelAndView menus() {
 		ModelAndView mv = new ModelAndView("desmartportal/index");
 		// 判断用户可以发起那些流程的 权限 菜单等
-		List<Map<String, Object>> resultList = userService.selectByMenusProcess();
+		List<Map<String, Object>> resultList = userProcessService.selectByMenusProcess();
 		mv.addObject("listmap",resultList);
 		return mv;
 	}
