@@ -66,7 +66,7 @@ public class SysDictCdController {
 	@ResponseBody
 	public String addSysDictCd(SysDictCd sysDictCd) {
 		try {	
-			sysDictCd.setDcUid(UUIDTool.getUUID());
+			sysDictCd.setDcUid("sysDcUid"+UUIDTool.getUUID());
 			sysDictCdService.insert(sysDictCd);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
