@@ -413,7 +413,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 审批剩余时间
 		int hour = 0;
 		// 百分比
-		int procent = 0;
+		int percent = 0;
 		// 根据taskUid查询单个DH_TASK_INSTANCE对象
 		List<DhTaskInstance> dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		for (DhTaskInstance dti : dhTaskInstance) {	
@@ -456,14 +456,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
 			// 剩余时间百分比
 			long reTime = new Date().getTime() - createDate.getTime();
-			procent = (int) ((reTime / (1000 * 60 * 60)) / timeAmount * 100);
+			percent = (int) ((reTime / (1000 * 60 * 60)) / timeAmount * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
 		if (hour < 0) {
 			hour = -1;
-			procent = 100;
+			percent = 100;
 		}
-		map.put("procent", procent);
+		map.put("percent", percent);
 		map.put("hour", hour);
 		return ServerResponse.createBySuccess(map);
 	}
