@@ -113,7 +113,7 @@
 					      <td class="td_title">所属部门</td>
 					      <td>
 							<select id="processType" lay-verify="required" >
-								<option value="">请选择所属部</option>
+								<option value="">请选择部门</option>
 								<c:forEach items="${userDepartmentList}" var="department">
 									<option value="${department.companyCode}">${department.departName}</option>
 								</c:forEach>
