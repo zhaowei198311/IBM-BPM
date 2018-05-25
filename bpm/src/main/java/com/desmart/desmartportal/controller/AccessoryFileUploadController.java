@@ -34,6 +34,7 @@ import com.desmart.desmartportal.entity.DhInstanceDocument;
 import com.desmart.desmartportal.service.AccessoryFileUploadService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.UUIDTool;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.jcraft.jsch.SftpException;
 
@@ -66,7 +67,7 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse<List<DhInstanceDocument>> loadFileList(
 			DhInstanceDocument dhInstanceDocument) {//加载已上传附件列表
-		dhInstanceDocument.setAppDocStatus("0");//0表示没有被删除
+		dhInstanceDocument.setAppDocStatus("normal");//normal表示没有被删除
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
 	}
@@ -116,4 +117,10 @@ public class AccessoryFileUploadController {
 	public void batchFileDown(List<DhInstanceDocument> dhInstanceDocuments) {
 		System.out.println(dhInstanceDocuments.size());
 	}*/
+	@RequestMapping("loadGlobalConfig.do")
+	@ResponseBody
+	public ServerResponse loadGlobalConfig() {
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		return ServerResponse.createBySuccess(bpmGlobalConfig);
+	}
 }

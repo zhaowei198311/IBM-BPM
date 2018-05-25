@@ -23,7 +23,11 @@ public class DhInstanceDocument {
 	private Date appDocCreateDate;//文档创建日期
 	private Integer appDocIndex;//文档排序
 	private String appDocTags;//文档标签----
-	private String appDocStatus;//文档状态
+	private String appDocStatus;//文档状态 是否被删除 normal/del
+	private String appDocIsHistory;//是否为历史文件
+	private Date appDocUpdateDate;//文档修改时间
+	private String updateUserUid;//修改用户id
+	
 	private String appUserName;//不在表内
 	public String getAppDocUid() {
 		return appDocUid;
@@ -117,14 +121,33 @@ public class DhInstanceDocument {
 	public void setAppUserName(String appUserName) {
 		this.appUserName = appUserName;
 	}
+	public String getAppDocIsHistory() {
+		return appDocIsHistory;
+	}
+	public void setAppDocIsHistory(String appDocIsHistory) {
+		this.appDocIsHistory = appDocIsHistory;
+	}
+	public Date getAppDocUpdateDate() {
+		return appDocUpdateDate;
+	}
+	public void setAppDocUpdateDate(Date appDocUpdateDate) {
+		this.appDocUpdateDate = appDocUpdateDate;
+	}
+	public String getUpdateUserUid() {
+		return updateUserUid;
+	}
+	public void setUpdateUserUid(String updateUserUid) {
+		this.updateUserUid = updateUserUid;
+	}
 	@Override
 	public String toString() {
 		return "DhInstanceDocument [appDocUid=" + appDocUid + ", appDocFileName=" + appDocFileName + ", appDocFileUrl="
 				+ appDocFileUrl + ", appDocTitle=" + appDocTitle + ", appDocComment=" + appDocComment + ", docVersion="
 				+ docVersion + ", appUid=" + appUid + ", taskId=" + taskId + ", userUid=" + userUid + ", appDocType="
 				+ appDocType + ", appDocCreateDate=" + appDocCreateDate + ", appDocIndex=" + appDocIndex
-				+ ", appDocTags=" + appDocTags + ", appDocStatus=" + appDocStatus + ", appUserName=" + appUserName
-				+ "]";
+				+ ", appDocTags=" + appDocTags + ", appDocStatus=" + appDocStatus + ", appDocIsHistory="
+				+ appDocIsHistory + ", appDocUpdateDate=" + appDocUpdateDate + ", updateUserUid=" + updateUserUid
+				+ ", appUserName=" + appUserName + "]";
 	}
 	
 	

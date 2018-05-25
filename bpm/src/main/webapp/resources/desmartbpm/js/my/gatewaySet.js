@@ -14,6 +14,7 @@ layui.use('form', function() {
  * @returns
  */
 $(function() {
+	
 	$(".create_net").click(function() {
 		/*if (checkAndLoadFrom($(this)) == false) {
 			return;

@@ -24,7 +24,7 @@
     resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
    select * from dh_instance_document 
    where APP_UID = #{appUid} and App_Doc_FileName = #{myFileName}
-   and APP_DOC_STATUS = 0
+   and APP_DOC_STATUS = 'normal'
    </select>
    
    <select id="loadFileListByCondition" 

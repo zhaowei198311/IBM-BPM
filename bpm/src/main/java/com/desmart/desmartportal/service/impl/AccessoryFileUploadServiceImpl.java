@@ -128,7 +128,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 							InputStream inputStream = file.getInputStream();
 						DhInstanceDocument dhInstanceDocument = new DhInstanceDocument();
 						dhInstanceDocument.setAppDocFileName(myFileName);
-						dhInstanceDocument.setAppDocStatus("1");//查询是否已有逻辑删除记录--唯一
+						dhInstanceDocument.setAppDocStatus("del");//查询是否已有逻辑删除记录--唯一
 						List<DhInstanceDocument> exitsList = loadFileListByCondition(dhInstanceDocument);
 			            if(exitsList!=null&&exitsList.size()>0) {
 			            	dhInstanceDocument = exitsList.get(0);
@@ -147,7 +147,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 						dhInstanceDocument.setAppDocIndex(i+1);
 						dhInstanceDocument.setAppDocTags(jObject.get("appDocTags").toString());
-						dhInstanceDocument.setAppDocStatus("0");//是否被删除 0否，1是
+						dhInstanceDocument.setAppDocStatus("normal");//是否被删除
 						if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
 							dhInstanceDocument.setDocVersion(exitsList.get(exitsList.size()-1).getDocVersion()+1);
 							fileUpdateList.add(dhInstanceDocument);
@@ -201,7 +201,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    	//逻辑删除--批量修改方法
 	    	List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
 	    	dhInstanceDocument.setAppDocFileUrl("null");
-	    	dhInstanceDocument.setAppDocStatus("1");//1表示删除
+	    	dhInstanceDocument.setAppDocStatus("del");//del表示删除
 	    	list.add(dhInstanceDocument);
 	    	int count = updateFileByKeys(list);
 	    	return ServerResponse.createBySuccessMessage("删除成功！");

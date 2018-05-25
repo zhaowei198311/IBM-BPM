@@ -1,6 +1,10 @@
 var form = null;
 /* 动态表单渲染js */
 $(function(){
+	
+	//拉取全局配置
+	loadGlobalConfig();
+	
 	$("#upload-file").click(function(){
 		$("#upload_file_modal").css("display","block");
 	});
@@ -13,9 +17,9 @@ $(function(){
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
 			  var btnButtom = $(".foot_accessory_file").find(".listAction");
-			  var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
+			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
 			  var maxFileCount = $(".hidden-value").find(".maxFileCount").val();
-			  var fileFormat = $(".hidden-value").find(".fileFormat").val();
+			  var fileFormat = $(".hidden-value").find(".fileFormat").val();*/
 			  re = new RegExp(",","g");
 			  var formatStr = fileFormat.replace(re,"|");
 			  var dragDiv = $("#upload_file_modal").find(".layui-upload-drag");
@@ -168,21 +172,41 @@ $(function(){
 	
 	loadFileList();
 	// 全选
-	/*
-	 * $("#all-file-check").click(function(){ var checkeNodes=
-	 * $(".layui-table.upload-file-table").find(".file-check");
-	 * checkeNodes.prop("checked",$(this).prop("checked")); });
-	 */
+	
+	  $("#all-file-check").click(function(){ var checkeNodes=
+	  $(".layui-table.upload-file-table").find(".file-check");
+	  checkeNodes.prop("checked",$(this).prop("checked")); });
+	 
 });
+var maxFileSize = "";
+var maxFileCount = "";
+var fileFormat = "";
+function loadGlobalConfig(){
+	$.ajax({
+		url:common.getPath()+"/accessoryFileUpload/loadGlobalConfig.do",
+		type:'post',
+        async: false,  
+		dataType:'json',
+		success: function(result){
+			maxFileSize= result.data.maxFileSize;
+			maxFileCount = result.data.maxFileCount;
+			fileFormat = result.data.fileFormat;
+		},
+		error: function(){
+			layer.alert("全局配置拉取异常！");
+		}
+	});
+	
+}
 // 反选
-/*
- * function invertSelection(a){ var checkeNodes=
- * $(".layui-table.upload-file-table").find(".file-check"); var checkedNodes=
- * $(".layui-table.upload-file-table").find(".file-check:checked");
- * if(checkedNodes.length==checkeNodes.length){
- * $("#all-file-check").prop("checked",$(a).prop("checked")); }else
- * if(checkedNodes.length==0){ $("#all-file-check").prop("checked",false); } };
- */
+  function invertSelection(a){ var checkeNodes=
+	  $(".layui-table.upload-file-table").find(".file-check"); var checkedNodes=
+	  $(".layui-table.upload-file-table").find(".file-check:checked");
+	  if(checkedNodes.length==checkeNodes.length){
+	  $("#all-file-check").prop("checked",$(a).prop("checked")); }else
+	  if(checkedNodes.length==0){ $("#all-file-check").prop("checked",false); } 
+	  };
+
 // 加载已上传的文件列表
 function loadFileList(){
 	var appUid = $("#insUid").val();
@@ -209,6 +233,8 @@ function loadFileList(){
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>更新附件</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>查看历史版本</button>"
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
