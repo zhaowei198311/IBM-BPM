@@ -45,4 +45,14 @@ public interface BpmPublicFormService {
 	 * 修改公共的表单属性
 	 */
 	ServerResponse updateFormInfo(BpmPublicForm bpmPublicForm) throws Exception;
+
+	/**
+	 * 删除公共表单
+	 */
+	ServerResponse deleteForm(String[] formUids);
+
+	/**
+	 * 复制表单
+	 */
+	ServerResponse copyForm(BpmPublicForm bpmPubilcForm);
 }

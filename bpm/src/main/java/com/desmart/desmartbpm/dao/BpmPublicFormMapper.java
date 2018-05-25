@@ -54,4 +54,9 @@ public interface BpmPublicFormMapper {
 	 */
 	int updateFormFilenameByFormUid(@Param("publicFormUid")String publicFormUid, 
 			@Param("formFilename")String updateFilename);
+
+	/**
+	 * 根据表单Id删除表单
+	 */
+	int deleteForm(String formUid);
 }

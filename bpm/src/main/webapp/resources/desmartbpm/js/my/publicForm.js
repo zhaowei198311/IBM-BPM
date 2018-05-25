@@ -1,6 +1,7 @@
 var oldFormName = "";//修改表单信息时表单的旧名称
 var oldFormDescription = "";//修改表单信息时的旧描述
 var updateFormId = "";//修改表单时表单的Id
+var copuFormId = "";//复制表单时表单的Id
 
 //分页控件的参数
 var pageConfig = {
@@ -16,6 +17,7 @@ $(function() {
 	$(".cancel_btn").click(function(){
 		$(".display_container").css("display","none");
 		$(".display_container1").css("display","none");
+		$(".display_container2").css("display","none");
 	});
 });
 
@@ -64,7 +66,7 @@ function drawTable(pageInfo) {
 				+ formInfo.publicFormUid
 				+ '">'
 				+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="'
-				+ formInfo.dynUid + '" lay-skin="primary"> ' + sortNum
+				+ formInfo.publicFormUid + '" lay-skin="primary"> ' + sortNum
 				+ '</td>' + '<td>' + formInfo.publicFormName + '</td>';
 		if (formInfo.publicFormDescription != null
 				&& formInfo.publicFormDescription != "") {
@@ -141,7 +143,7 @@ function doPage() {
 
 function showCreateFormModal() {
 	$("#add_form_name").val("");
-	$("#add_form_name").val("");
+	$("#add_form_description").val("");
 	$(".display_container").css("display", "block");
 }
 
@@ -149,6 +151,7 @@ function saveForm(){
 	var addFormName = $("#add_form_name").val().trim();
 	var	addFormDescription = $("#add_form_description").val().trim();
 	if(addFormName!=null && addFormName!=""){
+		layer.load(1);
 		$.ajax({
 			url:common.getPath()+"/publicForm/queryFormByFormName",
 			method:"post",
@@ -164,6 +167,7 @@ function saveForm(){
 				}else{
 					layer.alert(result.msg);
 				}
+				layer.closeAll("loading");
 			}
 		});
 	}else{
@@ -257,3 +261,123 @@ function updateForm(){
 		});
 	}
 }
+
+//删除表单
+function deleteForm(){
+	var checkedFormArr = $("input[name='formInfo_check']:checked");
+	var checkedFormUids = new Array();
+	if(checkedFormArr.length>0){
+		for(var i=0;i<checkedFormArr.length;i++){
+			var checkedForm = checkedFormArr[i];
+			checkedFormUids.push($(checkedForm).val());
+		}
+		$.ajax({
+			url:common.getPath()+"/publicForm/isBindMainForm",
+			method:"post",
+			data:{
+				"formUids":checkedFormUids
+			},
+			traditional: true,
+			success:function(result){
+				if(result.status==0){//未绑定
+					layer.load(1);
+					$.ajax({
+						url:common.getPath()+"/publicForm/deleteForm",
+						method:"post",
+						traditional:true,
+						data:{
+							"formUids":checkedFormUids
+						},
+						success:function(result){
+							if(result.status==0){
+								queryFormByName();
+								layer.alert("删除成功");
+							}else{
+								layer.alert("删除失败");
+							}
+							layer.closeAll("loading");
+						}
+					});
+				}else{
+					layer.alert("该子表单已被主表单绑定");
+				}
+			}
+		});
+	}else{
+		layer.alert("请选中要删除的表单");
+	}
+}
+
+//显示复制表单的模态框
+function showCopyFormModal(){
+	var checkedForm = $("input[name='formInfo_check']:checked");
+	if(checkedForm.length==1){
+		copyFormId = checkedForm.val();
+		var formName = checkedForm.parent().parent().find("td:eq(1)").text()+"_copy"+_getRandomString(2);
+		var formDescription = checkedForm.parent().parent().find("td:eq(2)").text();
+		$("#copy_form_name").val(formName);
+		if(formDescription!=null && formDescription!=""){
+			$("#copy_form_description").val(formDescription+"_copy");
+		}else{
+			$("#copy_form_description").val("");
+		}
+		$(".display_container2").css("display","block");
+	}else if(checkedForm.length<1){
+		layer.alert("请选择一个要复制的表单");
+	}else{
+		layer.alert("一次只能复制一个表单");
+	}
+}
+
+//复制表单
+function copyForm(){
+	var copyFormName = $("#copy_form_name").val().trim();
+	var copyFormDescription = $("#copy_form_description").val().trim();
+	if(copyFormName==null || copyFormName==""){
+		layer.alert("表单名不能为空");
+	}else{
+		$.ajax({
+			url:common.getPath()+"/publicForm/queryFormByFormName",
+			method:"post",
+			data:{
+				publicFormName:copyFormName
+			},
+			success:function(result){
+				if(result.status==0){
+					$.ajax({
+						url:common.getPath()+"/publicForm/copyForm",
+						method:"post",
+						data:{
+							publicFormUid:copyFormId,
+							publicFormName:copyFormName,
+							publicFormDescription:copyFormDescription
+						},
+						success:function(result){
+							if(result.status==0){
+								queryFormByName();
+								layer.alert("复制成功");
+							}else{
+								layer.alert("复制失败");
+							}
+							$(".display_container2").css("display","none");
+						}
+					});
+				}else{
+					layer.alert("表单名不能重复");
+				}
+			}
+		});//end ajax
+	}
+}
+
+//生成随机码的方法
+function _getRandomString(len) {  
+    len = len || 32;  
+    var $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+    var maxPos = $chars.length;  
+    var pwd = '';  
+    for (i = 0; i < len; i++) {  
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));  
+    }  
+    return pwd;  
+} 

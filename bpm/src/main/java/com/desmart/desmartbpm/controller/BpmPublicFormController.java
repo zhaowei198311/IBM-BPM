@@ -153,4 +153,30 @@ public class BpmPublicFormController {
 			return ServerResponse.createByErrorMessage("表单属性修改失败");
 		}
 	}
+	
+	/**
+	 * 删除公共表单
+	 */
+	@RequestMapping(value = "/deleteForm")
+	@ResponseBody
+	public ServerResponse deleteForm(@Param("formUids") String[] formUids) {
+		try {
+			return bpmPublicFormService.deleteForm(formUids);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
+	/**
+	 * 复制表单
+	 */
+	@RequestMapping(value = "/copyForm")
+	@ResponseBody
+	public ServerResponse copyForm(BpmPublicForm bpmPubilcForm) {
+		try {
+			return bpmPublicFormService.copyForm(bpmPubilcForm);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 }
