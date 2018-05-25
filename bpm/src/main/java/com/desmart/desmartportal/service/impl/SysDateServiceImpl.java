@@ -68,7 +68,7 @@ public class SysDateServiceImpl implements SysDateService{
 	public static boolean isWeekend(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        int result = cal.get(Calendar.WEEK_OF_MONTH);
+        int result = cal.get(Calendar.DAY_OF_WEEK);
         if (result == Calendar.SATURDAY || result == Calendar.SUNDAY) {
             return true;
         }

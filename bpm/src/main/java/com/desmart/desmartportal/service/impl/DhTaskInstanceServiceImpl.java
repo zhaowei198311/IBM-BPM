@@ -433,7 +433,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			
 		}
 		// 审批最后日期
-		Date lastDate = sysDateService.lastTime(createDate, timeAmount, timeType);
+		Date lastDate = sysDateService.lastTime(new Date(), timeAmount, timeType);
 		if (timeAmount == null) {
 			timeAmount = 24.0;
 		}else {
@@ -453,11 +453,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			procent = 100;
 		}else {
 			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
-			// 百分比
-			procent = (int) (((double)new Date().getTime() / lastDate.getTime()) * 100);
+			// 剩余时间
+			long reTime = new Date().getTime() - createDate.getTime();
+			procent = (int) ((reTime / (1000 * 60 * 60)) / timeAmount * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
-		map.put("procent", 100 - procent);
+		map.put("procent", procent);
 		map.put("hour", hour);
 		return ServerResponse.createBySuccess(map);
 	}
