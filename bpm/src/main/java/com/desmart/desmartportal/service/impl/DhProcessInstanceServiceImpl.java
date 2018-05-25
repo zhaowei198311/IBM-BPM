@@ -229,7 +229,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
         JSONObject dataJson = JSONObject.parseObject(data);
         JSONObject formDataFromTask = (JSONObject)dataJson.get("formData");
-        JSONObject routeData = (JSONObject)dataJson.get("routeData");
+        JSONArray routeData = dataJson.getJSONArray("routeData");
         JSONObject processData = (JSONObject)dataJson.get("processData");
         
         

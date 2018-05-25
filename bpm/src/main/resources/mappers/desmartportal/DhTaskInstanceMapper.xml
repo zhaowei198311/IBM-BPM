@@ -357,6 +357,10 @@
 		from dh_task_instance
 	</select>
 
+    <select id="getMaxSynNumber" resultType="int">
+       select nvl(max(SYN_NUMBER), 0) from dh_task_instance
+    </select>
+
 	<insert id="insertBatch" parameterType="list">
 		insert into dh_task_instance (
 		<include refid="Base_Column_List" />
