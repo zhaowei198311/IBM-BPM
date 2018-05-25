@@ -30,8 +30,11 @@
 							<div class="layui-col-md2">
 						    	<input type="text" placeholder="组织名称"  name="departName" class="layui-input">
 							</div>
+							<div class="layui-col-md2">
+						    	<input type="text" placeholder="组织代码"  name="departNo" class="layui-input">
+							</div>
 							<div class="layui-col-md1" style="text-align:right;">
-							        <button class="layui-btn" >查询</button>
+							    <button class="layui-btn" >查询</button>
 							</div>
 						</div>
 						<input type="hidden" name="departParent" id="departParent" >
@@ -130,13 +133,11 @@
 				})
 				
 				function onClick(e, treeId, treeNode) {
-					console.log(e);
 					var departUid='';
 					var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 					var sNodes = treeObj.getSelectedNodes();
 					if (sNodes.length > 0) {
 						var node = sNodes[0].getPath();
-						//console.log(node);
 						for (var i = 0; i < node.length; i++) {
 							departUid=node[i].id;
 						}
@@ -155,7 +156,8 @@
 			         	str+='<td>' + this.departNo + '</td>';
 			         	str+='<td>' + this.ext1 + '</td>';
 			         	str+='<td>' + this.departParent + '</td>';
-			         	str+='<td>' + userName(this.sysUserDepartmentList,this.departAdmins) + '</td>';
+			         	str+='<td>' + this.departAdmins + '</td>';
+			         	/* str+='<td>' + userName(this.sysUserDepartmentList,this.departAdmins) + '</td>'; */
 				        str+='<td><i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","edit")>&#xe60a;</i></tr>';
 			         	$("#tabletr").append(str);
 			         });

@@ -46,19 +46,12 @@
 					    <tr>
 					      <th>序号</th>
 					      <th>角色名称</th>
+					      <th>描述</th>
 					      <th>状态</th>
-<!-- 					      <th>菜单权限</th> -->
 					      <th>操作</th>
 					    </tr> 
 					</thead>
 					<tbody id="tabletr">
-					   <!--  <tr>
-					      <td>1</td>
-					      <td>普通用户</td>
-					      <td>显示</td>
-					      <td>待办任务，未读通知...</td>
-					      <td><i class="layui-icon edit_user">&#xe642;</i> <i class="layui-icon add_user">&#xe654;</i>  <i class="layui-icon jurisdiction_btn">&#xe6b2;</i> <i class="layui-icon delete_btn">&#xe640;</i></td>
-					    </tr> -->
 					</tbody>
 				</table>
 			</div>
@@ -66,16 +59,22 @@
 		</div>
 	</body>
 	<div class="display_container">
-		<div class="display_content">
+		<div class="display_content" style="height:auto;">
 			<div class="top">
 				新建角色
 			</div>
-			<div class="middle">
-				<form class="layui-form form-horizontal" method="post"  action="sysRole/addSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
+			<div class="middle" style="height:auto;">
+				<form class="layui-form form-horizontal" method="post"  action="sysRole/addSysRole" style="margin-top:20px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="roleName" required  lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input"/>
+				    </div>
+				  </div>
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="descrribe" value="" placeholder="请输入描述" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -98,16 +97,22 @@
 		</div>
 	</div>
 	<div class="display_container1">
-		<div class="display_content6">
+		<div class="display_content6" style="height:auto;">
 			<div class="top">
 				编辑角色
 			</div>
-			<div class="middle">
-				<form class="layui-form form-horizontal"  method="post"  action="sysRole/updateSysRole" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
+			<div class="middle" style="height:auto;">
+				<form class="layui-form form-horizontal"  method="post"  action="sysRole/updateSysRole" style="margin-top:20px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" value="普通用户" autocomplete="off" class="layui-input" />
+				      <input type="text" name="roleName" required  lay-verify="required"  value="" placeholder="请输入角色名称" autocomplete="off" class="layui-input" />
+				    </div>
+				  </div>
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="descrribe"  value="" placeholder="请输入描述"  autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -133,13 +138,13 @@
 	
 	
 	<div class="display_container6">
-		<div class="display_content6">
+		<div class="display_content6" style="height:auto;">
 			<div class="top">
 				授权菜单
 			</div>
 			<form method="post"  action="sysRoleResource/adSysRoleResource"   onsubmit="return validateCallback(this,closeResourceDialog);">
-				<div class="middle" style="padding: 0px;">
-					<ul id="resourceTree" class="ztree" style="width:auto;height:189px;"></ul>
+				<div class="middle" style="height: auto;">
+					<ul id="resourceTree" class="ztree" style="width:auto;height:240px;"></ul>
 				</div>
 				<div class="foot">
 					<button class="layui-btn layui-btn sure_btn" type="button" id="addresource">确定</button>
@@ -338,6 +343,7 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.roleName + '</td>';
+	         	str+='<td>' + isEmpty(this.describe) + '</td>';
 				if(this.isClosed==1){
 	         		str+='<td>显示</td>';
 	         	}else{

@@ -3,29 +3,97 @@ function addSysUserDepartmentsuccess(data){
 	serachDeparmet($("#bdbm_userUid").val());
 }
 
+
+
+//同步指定用户  syn--synchronization
+function synchronizationAppointUser(){
+	opendialog('display_container_synAppointUser');
+}
+
+function addUserDepartment(data){
+	returnSuccess(data,'display_container_company_department');
+	if(data.msg='sucess'){
+		serachDeparmet(data.obj.userUid);
+	}
+}
+
+//提交用户和部门
+function submitUserDeaprtment(ts){
+	var companyCode=$('#companyCode').val();
+	if(companyCode==''){
+		layer.alert('请选择公司');
+		return false;
+	}
+	
+	var userUid=$('#bdbm_userUid').val();
+	
+	
+	var departUid=$('#departUid_b').val();
+	if(departUid==''){
+		layer.alert('请选择部门');
+		return false;
+	}
+	
+	$.ajax({
+		url:'sysUserDepartment/userDepartmentExists',
+		type:'post',
+		dataType:'json',
+		data:{userUid:userUid,departUid:departUid},
+		success:function(data){
+			if(data){
+				$(ts).submit();
+			}else{
+				layer.alert('当前部门已配置请选择其他部门');
+			}
+		}
+	});
+	
+};
+
+//删除部门
 function dels(data){
 	serachDeparmet($("#bdbm_userUid").val());
 }
 
 
 $(function(){
-	$("#bdbm").click(function(){
-		var isManagerStr='';
-		$('#sysUserDepartmentForm input[name="departUid"]:checked').each(function(){
-			isManagerStr+=$(this).parent().siblings().last().children("select").val()+",";
-		});
-		$('#bdbm_isManager').val(isManagerStr);
-		$('#sysUserDepartmentForm').submit();
+	$('#add_department_company_btn').click(function(){
+		opendialog('display_container_company_department');
+		companySelect('sysCompany/allCompany','.companyCode');
 	});
-	 
-	
-	$("#copy_searchForm_btn").click(function(){
-		var pageNo=$('#pageNoDepartmet').val();
-		pageBreakDepartmet(pageNo);
-	});
-	
 });
 
+
+function companySelect(url,select){
+	$(select).empty();
+	$.ajax({  
+        url: url,    //后台webservice里的方法名称  
+        type: "post",  
+        dataType: "json",  
+        success: function (data) {
+        	var optionstring="";
+        	optionstring+="<option value='' ></option>";
+        	$(data).each(function(){
+        		optionstring+="<option value=\"" + this.companyCode + "\" >" + this.companyName + "</option>";
+        	});
+        	$(select).prepend(optionstring);
+        	if(select!='.companyCode'){
+        		$(select).first().prepend("<option value='' selected='selected'>"+language.please_select+"</option>");
+        	}
+        	
+        	layui.use('form', function(){
+    	        var form = layui.form;
+    	        form.render();
+    	    });
+        }
+    });
+}
+
+
+//关闭弹框
+function closeDialog(cls){
+	$("."+cls).css("display","none");
+}
 
 function departmentOfBinding(userUid){
 	$("#bdbm_departName").val('');
@@ -35,9 +103,9 @@ function departmentOfBinding(userUid){
 	serachDeparmet(userUid)
 }
 
-//pageBreakDepartmet(){
-//	var pageNo=$('#pageNoDepartmet').val();
-//}
+function pageBreakDepartmet(){
+	var pageNo=$('#pageNoDepartmet').val();
+}
 
 function pageBreakDepartmet(curr){
 	
@@ -68,6 +136,8 @@ function pageBreakDepartmet(curr){
 		    	$(dataList).each(function(i){//重新生成
 					var str='<tr>';
 					str+='<td><input type="checkbox" name="departUid"  value="' + this.departUid + '"/>' + (data.beginNum+i) + '</td>';
+					str+='<td>' + isEmpty(this.companyCode) + '</td>';
+					str+='<td>' + isEmpty(this.companyName) + '</td>';
 		         	str+='<td>' + this.departName + '</td>';
 		         	str+='<td>' + this.departNo + '</td>';
 		         	/* str+='<td>' + this.departAdmins + '</td>'; */
@@ -85,7 +155,7 @@ function pageBreakDepartmet(curr){
 };
 
 function serachDeparmet(userUid){
-	pageBreakDepartmet('');
+	//pageBreakDepartmet('');
 	$.ajax({
 		type:'POST',
 		url:"sysUserDepartment/selectAll?userUid="+userUid,
@@ -98,14 +168,24 @@ function serachDeparmet(userUid){
 		    	$(dataList).each(function(i){//重新生成
 					var str='<tr>';
 					str+='<td>' + (i+1) + '</td>';
+					
+					var companyName='';
+					if(this.sysCompany!=null){
+						companyName=isEmpty(this.sysCompany.companyName);
+					}
+					str+='<td>' + companyName + '</td>';
+					str+='<td>' + isEmpty(this.companyCode) + '</td>';
 		         	str+='<td>' + this.departName + '</td>';
-		         	str+='<td>' + this.userName + '</td>';
+		         	str+='<td>' + this.departNo + '</td>';
 		         	if(this.isManager=='false'){
-			         	str+='<td><select ><option value="false">否</option><option value="true">是</option></select></td>'; 
+			         	str+='<td>否</td>'; 
 		         	}else{
-		         		str+='<td><select ><option value="true">是</option><option value="false">否</option></select></td>'; 
+		         		str+='<td>是</td>'; 
 		         	}
-		         	str+='<td><i class="layui-icon delete_btn" onclick=ajaxTodo("sysUserDepartment/deleteSysUserDepartment?uduid='+this.uduid+'","dels") >&#xe640;</i></td>';
+		         	str+='<td><i class="layui-icon delete_btn" onclick=delUserDepartment("'+this.uduid+'","'+this.userUid+'"); >&#xe640;</i></td>';
+		         	
+		         	
+		         	
 		         	str+='</tr>';
 		         	$("#tabletr2").append(str);
 		         });
@@ -116,3 +196,26 @@ function serachDeparmet(userUid){
 		}
 	});
 }
+
+function delUserDepartment(uduid,userUid){
+	layer.confirm(language.determine_to_perform,function(index){
+		layer.close(index);
+		$.ajax({
+			url:'sysUserDepartment/selectAll',
+			type:'post',
+			data:{userUid:userUid},
+			dataType:'json',
+			success:function(data){
+				console.log(data.length);
+				if(data.length==1){
+					layer.alert('部门信息不能全部删除');
+					return false;
+				}else{
+					ajaxTodo("sysUserDepartment/deleteSysUserDepartment?uduid="+uduid,"dels");
+				}
+			}
+		});
+	});
+	
+}
+

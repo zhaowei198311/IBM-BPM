@@ -15,11 +15,17 @@ public class SysUserDepartment implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	private String uduid;
-	private String userUid;
+	private String userUid; 
 	private String isManager;
 	private String departUid;
 	private String userName;
 	private String departName;
+	private String departNo;
+	private String isDelete;
+	private String companyCode;
+	private String companyName;
+	
+	private SysCompany sysCompany;
 	
 	public String getUduid() {
 		return uduid;
@@ -79,4 +85,54 @@ public class SysUserDepartment implements Serializable {
 			", departUid=" + departUid +
 			"}";
 	}
+	
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+//
+//	public String getCompanyName() {
+//		return companyName;
+//	}
+//
+//	public void setCompanyName(String companyName) {
+//		this.companyName = companyName;
+//	}
+
+	public String getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(String isDelete) {
+		this.isDelete = isDelete;
+	}
+
+	public SysCompany getSysCompany() {
+		return sysCompany;
+	}
+
+	public void setSysCompany(SysCompany sysCompany) {
+		this.sysCompany = sysCompany;
+	}
+
+	public String getDepartNo() {
+		return departNo;
+	}
+
+	public void setDepartNo(String departNo) {
+		this.departNo = departNo;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	
 }

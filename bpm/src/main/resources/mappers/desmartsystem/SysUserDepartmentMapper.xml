@@ -4,25 +4,48 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysUserDepartment" >
-    <result column="UDUID" property="uduid" jdbcType="VARCHAR" />
-    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
-    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
-    <result column="DEPART_NAME" property="departName" jdbcType="VARCHAR" />
-    
-    
-    <result column="IS_MANAGER" property="isManager" jdbcType="VARCHAR" />
-    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+	    <result column="UDUID" property="uduid" jdbcType="VARCHAR" />
+	    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+	    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+	    <result column="DEPART_NAME" property="departName" jdbcType="VARCHAR" />
+	    <result column="DEPART_NO" property="departNo" jdbcType="VARCHAR" />
+	    <result column="IS_MANAGER" property="isManager" jdbcType="VARCHAR" />
+	    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+	    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
+	    
+	    
+	    	
+	    <association property="sysCompany"  javaType="com.desmart.desmartsystem.entity.SysCompany"  >
+			<result column="COMPANY_CODE" property="companyCode" />
+			<result column="COMPANY_NAME" property="companyName" />
+			<result column="COMPANY_LOGO" property="companyLogo" />
+			<result column="COMPANY_TYPE" property="companyType" />
+			<result column="COMPANY_DESC" property="companyDesc" />
+			<result column="EXT1" property="ext1" />
+			<result column="EXT2" property="ext2" />
+			<result column="EXT3" property="ext3" />
+			<result column="EXT4" property="ext4" />
+			<result column="EXT5" property="ext5" />
+			<result column="IS_CLOSED" property="isClosed" />
+			<result column="CLOSE_DATE" property="closeDate" />
+			<result column="BEGIN_DATE" property="beginDate" />
+			<result column="END_DATE" property="endDate" />
+			<result column="CREATE_DATE" property="createDate" />
+			<result column="UPDATE_DATE" property="updateDate" />
+	    </association>
   </resultMap>
   
 	  <select id="selectUserDepartmentView" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap">
-	  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d) user_department LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID where 1=1
+	  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d) user_department   LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID
+	  		 where 1=1
 			<if test="userUid!=null">
 	 			and user_Uid = #{userUid}
 	 		</if>
 	  </select>
   
   	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
-	 		SELECT	ud.UDUID,ud.USER_UID,d.DEPART_NAME,u.USER_NAME,ud.IS_MANAGER  FROM	 SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID  where 1=1
+	 		SELECT	ud.UDUID,ud.USER_UID,d.DEPART_NAME,d.DEPART_NO,u.USER_NAME,ud.IS_MANAGER,c.COMPANY_CODE,c.COMPANY_NAME  FROM	 SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID left JOIN SYS_COMPANY c on ud.COMPANY_CODE=c.COMPANY_CODE	 		
+	 		where 1=1
 	 		<if test="userUid!=null and userUid!='' ">
 	 			and ud.user_Uid = #{userUid}
 	 		</if>
@@ -36,12 +59,21 @@
 	 </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
-	  		select * from SYS_USER_DEPARTMENT d where d.UDUID=#{uduid}
+	  		select * from SYS_USER_DEPARTMENT d where 1=1
+	  		<if test="uduid!=null">
+				and d.UDUID=#{uduid} 
+	  		</if>
+	  		<if test="userUid!=null">
+	  			and d.user_uid =#{userUid}
+	  		</if>
+	  		<if test="departUid!=null">
+	  			and d.depart_uid=#{departUid}
+	  		</if>
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
-	 		insert into SYS_USER_DEPARTMENT (UDUID, USER_UID, IS_MANAGER,DEPART_UID)
-		    values (#{uduid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{isManager,jdbcType=VARCHAR},#{departUid,jdbcType=VARCHAR})
+	 		insert into SYS_USER_DEPARTMENT (UDUID, USER_UID, IS_MANAGER,DEPART_UID,COMPANY_CODE,IS_DELETE)
+		    values (#{uduid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{isManager,jdbcType=VARCHAR},#{departUid,jdbcType=VARCHAR},#{companyCode,jdbcType=VARCHAR},#{isDelete,jdbcType=VARCHAR})
 	 </insert>
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap" >
@@ -62,7 +94,9 @@
 	  </delete>
 	  
 	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
-	  		update SYS_USER_DEPARTMENT set  USER_UID=#{userUid,jdbcType=VARCHAR},IS_MANAGER=#{isManager,jdbcType=VARCHAR},DEPART_UID=#{departUid,jdbcType=VARCHAR} where UDUID=#{uduid}
+	  		update SYS_USER_DEPARTMENT set  USER_UID=#{userUid,jdbcType=VARCHAR},IS_MANAGER=#{isManager,jdbcType=VARCHAR},DEPART_UID=#{departUid,jdbcType=VARCHAR} 
+	  		,COMPANY_CODE=#{companyCode,jdbcType=VARCHAR},IS_DELETE=#{isDelete,jdbcType=VARCHAR}
+	  		where UDUID=#{uduid}
 	  </update>
 	  
 	  <update id="updateUserDepartment" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >

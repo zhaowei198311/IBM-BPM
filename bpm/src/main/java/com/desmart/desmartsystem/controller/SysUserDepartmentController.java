@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
+import com.desmart.desmartsystem.util.Json;
 import com.desmart.desmartsystem.util.UUIDTool;
 
 /**
@@ -35,6 +36,24 @@ public class SysUserDepartmentController {
 	}
 	 
 	
+	//添加用户对应的部门
+	@RequestMapping("/addUserDepartment") 
+	@ResponseBody
+	public Json addUserDepartment(SysUserDepartment sysUserDepartment) {
+		Json j= new Json();
+		try {
+			sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
+			sysUserDepartmentService.insert(sysUserDepartment);
+			j.setMsg("success");
+			j.setObj(sysUserDepartment);
+			return j;
+		} catch (Exception e) {
+			e.printStackTrace();
+			j.setMsg("error");
+			return j;
+		}
+	}
+	
 	@RequestMapping("/addSysUserDepartments")
 	@ResponseBody
 	public String addSysUserDepartments(SysUserDepartment sysUserDepartment) {
@@ -49,7 +68,7 @@ public class SysUserDepartmentController {
 					sysUserDepartment.setDepartUid(departuids[i]);
 					sysUserDepartment.setIsManager(isManagers[i]);
 					sysUserDepartmentService.insert(sysUserDepartment);
-				}
+				} 
 			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
@@ -57,6 +76,18 @@ public class SysUserDepartmentController {
 			return "{\"msg\":\"error\"}";
 		}
 	}
+	
+	
+	
+	@ResponseBody  
+	@RequestMapping(value="userDepartmentExists") 
+	public boolean userDepartmentExists(SysUserDepartment sysUserDepartment) {
+		if(sysUserDepartmentService.select(sysUserDepartment)!=null){
+			return false;  
+		}
+		return true;  
+	}
+	
 	
 	@RequestMapping("/deleteSysUserDepartment")
 	@ResponseBody

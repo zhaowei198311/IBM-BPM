@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.dao.SysDictCdMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysDictCd">
+		<result column="DC_UID" property="dcUid" />
+		<result column="DICT_CD" property="dictCd" />
+		<result column="DICT_NM" property="dictNm" />
+		<result column="DICT_TYPE_CD" property="dictTypeCd" />
+	</resultMap>
+
+	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysDictCd"  resultMap="BaseResultMap">
+	 		  		SELECT DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD FROM SYS_DICT_CD
+	  </select>
+	
+	  <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysDictCd" >
+	  		INSERT INTO SYS_DICT_CD (DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD) VALUES (#{dcUid}, #{dictCd}, #{dictTypeCd}, #{dictNm})
+	  		
+	  </insert>
+	  
+	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysDictCd" resultMap="BaseResultMap" >
+	  		SELECT DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD FROM SYS_DICT_CD  WHERE DC_UID=#{dcUid}
+	  		
+	  </select>
+	  
+	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysDictCd">
+	  		DELETE FROM SYS_DICT_CD WHERE DC_UID=#{dcUid}
+	  </delete>
+	  
+	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysDictCd" >
+	  		UPDATE SYS_DICT_CD SET DICT_CD = #{dcUid}, DICT_NM = #{dictCd}, DICT_TYPE_CD = #{dictTypeCd} WHERE DC_UID=#{dcUid}
+	  </update>
+	  
+</mapper>

@@ -169,7 +169,7 @@ public class SysUserController {
 			return "{\"msg\":\"error\"}";
 		}
 	}
-	
+	 
 	@ResponseBody  
 	@RequestMapping(value="userexists")
 	public boolean userexists(SysUser cpUser) {

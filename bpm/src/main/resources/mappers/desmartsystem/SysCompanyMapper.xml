@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.dao.SysCompanyMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysCompany">
+		<id column="COMPANY_UID" property="companyUid" />
+		<result column="COMPANY_CODE" property="companyCode" />
+		<result column="COMPANY_NAME" property="companyName" />
+		<result column="COMPANY_LOGO" property="companyLogo" />
+		<result column="COMPANY_TYPE" property="companyType" />
+		<result column="COMPANY_DESC" property="companyDesc" />
+		<result column="EXT1" property="ext1" />
+		<result column="EXT2" property="ext2" />
+		<result column="EXT3" property="ext3" />
+		<result column="EXT4" property="ext4" />
+		<result column="EXT5" property="ext5" />
+		<result column="IS_CLOSED" property="isClosed" />
+		<result column="CLOSE_DATE" property="closeDate" />
+		<result column="BEGIN_DATE" property="beginDate" />
+		<result column="END_DATE" property="endDate" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT
+		INTO SYS_COMPANY
+		(COMPANY_UID,COMPANY_CODE,COMPANY_NAME,CREATE_DATE,UPDATE_DATE)
+		<foreach collection="lists" index="index" item="item"
+			separator=" union all ">
+			SELECT  #{item.companyUid},#{item.companyCode},#{item.companyCode},#{item.createDate},#{item.updateDate} FROM DUAL
+		</foreach>
+	</insert>
+	
+	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysCompany" resultMap="BaseResultMap" >
+		 select * from SYS_COMPANY
+	</select>
+</mapper>

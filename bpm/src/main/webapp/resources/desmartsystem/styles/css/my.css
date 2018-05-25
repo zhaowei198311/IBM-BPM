@@ -194,10 +194,29 @@
 	height: 100%;
 }
 
+.display_container6 {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
 
-.display_container6{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
-.display_content6{overflow-y:auto;color:#717171;padding:20px;width:400px;height:300px;background:#fff;position:absolute;margin:100px 0 0 -200px;left:50%;box-shadow:0 0 10px #ccc;}
-
+.display_content6 {
+	overflow-y: auto;
+	color: #717171;
+	padding: 20px;
+	width: 400px;
+	height: 300px;
+	background: #fff;
+	position: absolute;
+	margin: 100px 0 0 -300px;
+	left: 50%;
+	box-shadow: 0 0 10px #ccc;
+}
 
 .display_content, .display_content1 {
 	color: #717171;
@@ -210,8 +229,6 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
-
-
 
 .display_container2 {
 	display: none;
@@ -285,6 +302,53 @@
 	box-shadow: 0 0 10px #ccc;
 }
 
+.display_container_company_department {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
+
+.display_content_company_department {
+	overflow-y: auto;
+	color: #717171;
+	padding: 20px;
+	min-width: 400px;
+	min-height: 480px;
+	background: #fff;
+	position: absolute;
+	margin: 20px 0 0 -270px;
+	left: 50%;
+	box-shadow: 0 0 10px #ccc;
+}
+
+.display_container_synAppointUser {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
+
+.display_content_synAppointUser {
+	color: #717171;
+	padding: 20px;
+	width: 400px;
+	height:auto;
+	background: #fff;
+	position: absolute;
+	margin: 100px 0 0 -300px;
+	left: 50%;
+	box-shadow: 0 0 10px #ccc;
+}
+
 
 .display_container10 {
 	display: none;
@@ -301,83 +365,83 @@
 	overflow-y: auto;
 	color: #717171;
 	padding: 20px;
-	min-width: 900px;
-	min-height: 520px;
+	min-width: 700px;
+	min-height: 450px;
 	background: #fff;
 	position: absolute;
-	margin: 20px 0 0 -450px;
+	margin: 20px 0 0 -370px;
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
 
-.query_user{
-	font-size:15px;
-	margin-top:5px;
+.query_user {
+	font-size: 15px;
+	margin-top: 5px;
 }
 
-.middle_temp{
+.middle_temp {
 	height: 280px;
 	width: 100%;
 	position: relative;
-	top:50px;
+	/* top: 50px; */
 }
 
-#temp_left{
-	float:left;
+#temp_left {
+	float: left;
 	border: 1px solid #ccc;
-	background:#C0C0C0;
-	width:40%;
-	height:100%;
+	/* background: #C0C0C0; */
+	width: 40%;
+	height: 100%;
 }
 
-#temp_middle{
-	overflow-y:auto;
-	float:left;
+#temp_middle {
+	overflow-y: auto;
+	float: left;
 	border: 1px solid #ccc;
-	background:#C0C0C0;
-	margin-left:20px;
-	width:20%;
-	height:100%;
+	/* background: #C0C0C0; */
+	margin-left: 20px;
+	width: 20%;
+	height: 100%;
 }
 
-#temp_button{
-	float:left;
-	width:10%;
-	height:100%;
-	margin-left:10px;
+#temp_button {
+	float: left;
+	width: 10%;
+	height: 100%;
+	margin-left: 10px;
 }
 
-#temp_right{
-	overflow-y:auto;
+#temp_right {
+	overflow-y: auto;
 	border: 1px solid #ccc;
-	background:#C0C0C0;
-	float:right;
-	width:20%;
-	height:100%;
+	/* background: #C0C0C0; */
+	float: right;
+	width: 20%;
+	height: 100%;
 }
 
-.foot_temp{
+.foot_temp {
 	text-align: right;
 	height: 50px;
 	line-height: 50px;
-	float:right;
+	float: right;
 	position: relative;
 	top: 80px;
 }
 
-.query_user input[type="text"]{
-	height:28px;
-	width:80%;
+.query_user input[type="text"] {
+	height: 28px;
+	width: 80%;
 }
 
-.query_user input[type="button"]{
-	height:28px;
+.query_user input[type="button"] {
+	height: 28px;
 	text-align: center;
-	padding-right:10px;
+	padding-right: 10px;
 }
 
-.query_user table{
-	width:100%;
+.query_user table {
+	width: 100%;
 }
 
 .top {
@@ -507,7 +571,6 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 } */
-
 .middle1 {
 	height: 250px;
 	width: 96%;
@@ -526,7 +589,7 @@
 	overflow-y: auto;
 }
 
-./* display_container4 {
+. /* display_container4 {
 	display: none;
 	position: absolute;
 	top: 0;
@@ -658,6 +721,7 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
-.error{
-	color:red;
+
+.error {
+	color: red;
 }

@@ -20,11 +20,12 @@
     <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP" />
     <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
     <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="DESCRIBE" property="describe" />
   </resultMap>
   <sql id="Base_Column_List" >
     ROLE_UID, ROLE_NAME, ORDER_INDEX, CATEGORY_NAME, ROLE_NO, ROLE_DESC, ROLE_TYPE, EXT1, 
     EXT2, EXT3, EXT4, EXT5, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
-    UPDATE_DATE
+    UPDATE_DATE,DESCRIBE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -61,13 +62,13 @@
       ROLE_TYPE, EXT1, EXT2, 
       EXT3, EXT4, EXT5, IS_CLOSED, 
       CLOSE_DATE, BEGIN_DATE, END_DATE, 
-      CREATE_DATE, UPDATE_DATE)
+      CREATE_DATE, UPDATE_DATE,DESCRIBE)
     values (#{roleUid,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, 
       #{categoryName,jdbcType=VARCHAR}, #{roleNo,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, 
       #{roleType,jdbcType=DECIMAL}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
       #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{isClosed,jdbcType=DECIMAL}, 
       #{closeDate,jdbcType=TIMESTAMP}, #{beginDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP},#{describe})
   </insert>
   <insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.SysRole" >
     insert into SYS_ROLE
@@ -259,7 +260,8 @@
       BEGIN_DATE = #{beginDate,jdbcType=TIMESTAMP},
       END_DATE = #{endDate,jdbcType=TIMESTAMP},
       CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
-      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP}
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      DESCRIBE = #{describe,jdbcType=VARCHAR}
     where ROLE_UID = #{roleUid,jdbcType=VARCHAR}
   </update>
 </mapper>

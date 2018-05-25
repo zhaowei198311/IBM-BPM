@@ -46,6 +46,7 @@
 					    <tr>
 					      <th>序号</th>
 					      <th>角色名称</th>
+					      <th>描述</th>
 					      <th>状态</th>
 					      <th>操作</th>
 					    </tr> 
@@ -76,6 +77,14 @@
 				      <input type="text" name="roleName" required  lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="describe"  value="" autocomplete="off" placeholder="请输入描述" class="layui-input">
+				    </div>
+				  </div>
+				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
@@ -109,6 +118,14 @@
 				      <input type="text" name="roleName" required  lay-verify="required" value="普通用户" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="describe"  value=""  maxlength="200" autocomplete="off" placeholder="请输入描述" class="layui-input">
+				    </div>
+				  </div>
+				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">状态</label>
 				    <div class="layui-input-block">
@@ -186,6 +203,7 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 				str+='<td>' + this.roleName + '</td>';
+				str+='<td>' + isEmpty(this.describe) + '</td>';
 				if(this.isClosed==1){
 	         		str+='<td>显示</td>';
 	         	}else{
@@ -194,7 +212,7 @@
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
 		        str+='<i class="layui-icon add_user" onclick=openRoleUsers("'+this.roleUid+'")  >&#xe654;</i>';
-		        str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>';
+		        /* str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>'; */
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);

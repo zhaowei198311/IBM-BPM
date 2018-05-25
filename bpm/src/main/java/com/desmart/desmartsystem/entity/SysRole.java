@@ -39,6 +39,8 @@ public class SysRole {
     private Date createDate;
 
     private Date updateDate;
+    
+    private String describe;
 
     public String getRoleUid() {
         return roleUid;
@@ -183,4 +185,13 @@ public class SysRole {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+	public String getDescribe() {
+		return describe;
+	}
+
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
+    
 }

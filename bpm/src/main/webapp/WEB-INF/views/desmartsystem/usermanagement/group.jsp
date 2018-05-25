@@ -56,11 +56,11 @@
 		</div>
 	</body>
 	<div class="display_container">
-		<div class="display_content">
+		<div class="display_content" style="height:auto;">
 			<div class="top">
 				新建角色组
 			</div>
-			<div class="middle">
+			<div class="middle" style="height:auto;">
 				<form class="layui-form form-horizontal" method="post" action="sysTeam/addSysTeam" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色组名称</label>
@@ -94,11 +94,11 @@
 		</div>
 	</div>
 	<div class="display_container1">
-		<div class="display_content1">
+		<div class="display_content1" style="height:auto;">
 			<div class="top">
 				编辑角色组
 			</div>
-			<div class="middle">
+			<div class="middle" style="height:auto;">
 				<form class="layui-form form-horizontal" method="post" action="sysTeam/updateSysTeam" style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色组名称</label>
@@ -192,37 +192,37 @@
 			</div>
 	</div>
 	
-		<div class="display_container4">
-			<div class="display_content4">
-				<div class="top">
-					绑定业务角色
-				</div>
-				<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-				<div class="middle" style="height: 420px;">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob">
-						<colgroup>
-							<col>
-						    <col>
-						</colgroup>
-						<thead>
-						    <tr>
-						      <th><input type="checkbox" name=""  id="checkAll_a"  title='全选' lay-skin="primary"> 序号</th>
-						      <th>角色名称</th>
-						    </tr> 
-						</thead>
-						<tbody id="businessRoleTable"></tbody>
-					</table>		
-				</div>
-				<input  type="hidden" name="memberType" value="role"/>
-				<input type="hidden" name="teamUid" class="teamUid" />
-				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
-				</div>
-				
-				</form>
+	<div class="display_container4" >
+		<div class="display_content4">
+			<div class="top">
+				绑定业务角色
 			</div>
+			<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
+			<div class="middle" style="height: 420px;">
+				<table class="layui-table backlog_table" lay-even lay-skin="nob">
+					<colgroup>
+						<col>
+					    <col>
+					</colgroup>
+					<thead>
+					    <tr>
+					      <th><input type="checkbox" name=""  id="checkAll_a"  title='全选' lay-skin="primary"> 序号</th>
+					      <th>角色名称</th>
+					    </tr> 
+					</thead>
+					<tbody id="businessRoleTable"></tbody>
+				</table>		
+			</div>
+			<input  type="hidden" name="memberType" value="role"/>
+			<input type="hidden" name="teamUid" class="teamUid" />
+			<div class="foot">
+				<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+			</div>
+			
+			</form>
 		</div>
+	</div>
 	
 	
 </html>

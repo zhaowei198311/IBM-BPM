@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.dao.SysDictTpMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.desmart.desmartsystem.entity.SysDictTp">
+		<result column="DICT_TYPE_CD" property="dictTypeCd" />
+		<result column="DICT_TYPE_NM" property="dictTypeNm" />
+	</resultMap>
+	<select id="selectAll"
+		parameterType="com.desmart.desmartsystem.entity.SysDictCd"
+		resultMap="BaseResultMap">
+		SELECT DICT_TYPE_CD, DICT_TYPE_NM FROM SYS_DICT_TP
+	</select>
+
+</mapper>

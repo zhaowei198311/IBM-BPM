@@ -34,18 +34,21 @@
 									<input type="text" placeholder="用户名"  name="userNo"  class="layui-input">
 								</div>
 								<div class="layui-col-md2">
+								<input type="hidden" name="departUid" id="departParent" >
 									<input type="text"  placeholder="部门"  name="departName" class="layui-input" />
 								</div>
-								<div class="layui-col-md2">
+								<!-- <div class="layui-col-md2">
 								    <input type="text"  placeholder="类型"  name="employeeType" class="layui-input">				    
-								</div>
+								</div> -->
 								<div class="layui-col-md1" style="text-align:right;">
 								        <button class="layui-btn" >查询</button>
 								</div>
 								<div class="layui-col-md1" style="text-align:right;">
-								        <button class="layui-btn create_btn" >新建</button>
+								    <button class="layui-btn create_btn" >新建</button>
 								</div>
-							<input type="hidden" name="departUid" id="departParent" >
+								<div class="layui-col-md1" style="text-align:right;margin-left: 20px;">
+								   <button class="layui-btn" type="button" onclick="synchronizationAppointUser();" >同步指定用户</button>
+								</div>
 					</form>
 					</div>
 					<div>				
@@ -65,7 +68,7 @@
 							      <th>姓名</th>
 							      <th>用户名</th>
 							      <th>部门</th>
-							      <th>类型</th>
+							      <!-- <th>类型</th> -->
 							      <th>联系电话</th>
 							      <th>操作</th>
 							    </tr>  
@@ -79,13 +82,13 @@
 		
 	
 	<div class="display_container3">
-		<div class="display_content3">
+		<div class="display_content3" style="min-height: auto;padding-bottom:10px;">
 			<div class="top">
 				新建用户
 			</div>
 				<form  action="sysUser/addSysUser" method="post"   onsubmit="return validateCallback(this,addsuccess3);">
-			<div class="middle" style="height: 460px;">
-				   <div class="layui-form-item" style="margin-top:30px;">
+			<div class="middle" style="height: auto;">
+				   <div class="layui-form-item" style="padding-top:20px;">
 				    <label class="layui-form-label">工号</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="userUid" required  lay-verify="required" remote="sysUser/userexists" placeholder="请输入工号" data-msg-remote="工号已存在请重新输入!" autocomplete="off" class="layui-input number" minlength="8" />
@@ -119,10 +122,8 @@
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
 				    	<div class="tree" id="demo"  >
-				    		<input type="hidden"  name="companyNumber" id="companyNumber_A"/>
-				    		<input type="hidden"  name="departUid" id="departUid_A"/>
 				    		<input type="hidden"  name="departmetNumber" id="departmetNumber"/>
-							<ul id="treeDemo"  class="ztree" depart="departUid_A" company="companyNumber_A" departmetNumber="departmetNumber" style="width:auto;height:130px;"></ul>
+							<ul id="treeDemo"  class="ztree" departmetNumber="departmetNumber" style="width:auto;height:130px;"></ul>
 						</div>
 				    </div>
 				  </div>
@@ -138,16 +139,16 @@
 	
 	
 	<div class="display_container4">
-		<div class="display_content4">
+		<div class="display_content4" style="min-height: auto;">
 			<div class="top">
 				修改用户
 			</div>
 				<form  action="sysUser/updateSysUser" method="post"   onsubmit="return validateCallback(this,updatesuccess1);">
-			<div class="middle" style="height: 500px;">
+			<div class="middle" style="height: auto;">
 				   <div class="layui-form-item" style="margin-top:20px;">
 				    <label class="layui-form-label">工号</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="userNo" required  readonly="readonly" lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input" />
+				      <input type="text" name="userUid" required  readonly="readonly" lay-verify="required" placeholder="请输入工号" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -249,136 +250,144 @@
 		</div>
 	
 	
-	<div class="display_container">
-			<div class="display_content">
-				<div class="top">
-					绑定业务角色
+		<div class="display_container">
+				<div class="display_content">
+					<div class="top">
+						角色绑定
+					</div>
+					<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
+						<div class="middle">
+							<table class="layui-table backlog_table" lay-even lay-skin="nob">
+								<colgroup>
+									<col>
+								    <col>
+								</colgroup>
+								<thead>
+								    <tr>
+								      <th><input type="checkbox" name=""  id="checkAll_a"  title='全选' lay-skin="primary"> 序号</th>
+								      <th>角色名称</th>
+								    </tr> 
+								</thead>
+								<tbody id="businessRoleTable"></tbody>
+							</table>		
+						</div>
+						<input  type="hidden" name="userUid" class="userUid"/>
+						<input  type="hidden" name="departUid" class="departUid"/>
+						<input  type="hidden" name="mapType" value="1"/>
+						
+						<div class="foot">
+							<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+							<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+						</div>
+					</form>
 				</div>
-				<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-				<div class="middle">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob">
-						<colgroup>
-							<col>
-						    <col>
-						</colgroup>
-						<thead>
-						    <tr>
-						      <th><input type="checkbox" name=""  id="checkAll_a"  title='全选' lay-skin="primary"> 序号</th>
-						      <th>角色名称</th>
-						    </tr> 
-						</thead>
-						<tbody id="businessRoleTable">
-						   <!--  <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 2</td>
-						      <td>经理</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 3</td>
-						      <td>区域经理</td>
-						    </tr>
-						    <tr>
-						      <td><input type="checkbox" name="" title='全选' lay-skin="primary"> 4</td>
-						      <td>总监</td>
-						    </tr> -->
-						</tbody>
-					</table>		
-				</div>
-				<input  type="hidden" name="userUid" class="userUid"/>
-				<input  type="hidden" name="departUid" class="departUid"/>
-				<input  type="hidden" name="mapType" value="1"/>
-				
-				<div class="foot">
-					<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
-				</div>
-				</form>
-			</div>
 		</div>
 		
 		
 		
+		<!-- 绑定部门对应的公司 -->
 		<div class="display_container10">
-			<div class="display_content10" style="width: 800px;">
+			<div class="display_content10">
 				<div class="top">
-					<div class="layui-col-md12">绑定部门</div>
-					<div class="">
-						<div class="layui-col-md3" style="margin:5px 0 ;">
-							<input id="bdbm_departName" type="text" class="layui-input" placeholder="部门名称" style="font-size:15px;">
-						</div>
-						<input type="hidden" name="pageNoDepartmet" id="pageNoDepartmet" value="1" >
-						<div class="layui-col-md2 layui-col-md-offset1" style="text-align:center;margin:5px 0;">
-							<button class="layui-btn layui-btn-sm" id="copy_searchForm_btn">查询</button>
-						</div>
-					</div>
+					<div class="layui-col-md12">绑定公司和部门</div>
 				</div>
-				<br/>
-				<div style="width:50%;float: left;">
-					<div class="middle1" style="height: 400px;width: 100%;">
-							<form class="form-horizontal" id="sysUserDepartmentForm" action="sysUserDepartment/addSysUserDepartments" method="post"   onsubmit="return validateCallback(this,addSysUserDepartmentsuccess);">
-						<table class="layui-table backlog_table" lay-even lay-skin="nob">
-							<colgroup>
-							    <col>
-							    <col>
-							    <col>
-							    <col>
-							    <col> 
-							    <col>
-							    <col>
-							</colgroup>
-							<thead>
-							     <tr>
-							      <th>序号</th>
-							      <th>部门名称</th>
-							      <th>部门代码</th>
-							      <th>部门负责人</th>
-							    </tr>  
-							</thead>
-							<tbody id="tabletr1"></tbody>
-							
-						</table>	
-							<input type="hidden" name="userUid" id="bdbm_userUid"/>
-							<input type="hidden" name="isManager" id="bdbm_isManager"/>
-							</form>
-						<div id="pagination1"></div>
-					</div>
+				<button class="layui-btn layui-btn-sm" id="add_department_company_btn" style="float: right;margin: 0 15px 15px 0;">添加</button>
+				<div class="middle1" style="height:350px;">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+						     <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						</colgroup>
+						<thead>
+						     <tr>
+						      <th>序号</th>
+						      <th>公司名称</th>
+						      <th>公司代码</th>
+						      <th>部门名称</th>
+						      <th>部门代码</th>
+						      <th>部门负责人</th>
+						      <th>操作</th>
+						    </tr>  
+						</thead>
+						<tbody id="tabletr2"></tbody>
+					</table>	
 				</div>
-				<div style="width:5%;float: left;margin: 0 20px 0 10px;">
-				<div class="middle1" style="height: 400px;width: 100%;">
-					<div style="margin-top:80px;"></div>
-					<button class="layui-btn layui-btn-sm" id="bdbm">绑定</button>
-				</div>
-				</div>
-				<div style="width:40%;float: left;">
-					<div class="middle1" style="height: 400px;width: 100%;">
-						<table class="layui-table backlog_table" lay-even lay-skin="nob">
-							<colgroup>
-							    <col>
-							    <col>
-							    <col>
-							    <col>
-							    <col> 
-							    <col>
-							    <col>
-							</colgroup>
-							<thead>
-							     <tr>
-							      <th>序号</th>
-							      <th>部门名称</th>
-							      <th>客户</th>
-							      <th>部门负责人</th>
-							      <th>操作</th>
-							    </tr>  
-							</thead>
-							<tbody id="tabletr2"></tbody>
-						</table>	
-					</div>
-				</div>
-				<div class="foot">
+				<div class="foot" style="margin: 15px 10px 0;">
 					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container3').css('display','none');">取消</button>
 				</div>
 				</div>
 			</div>
+			
+			
+			
+			<div class="display_container_company_department">
+				<div class="display_content_company_department">
+					<div class="top">
+						添加公司和部门
+					</div>
+					<form class="layui-form" action="sysUserDepartment/addUserDepartment" method="post"    onsubmit="return validateCallback(this,addUserDepartment);">
+					<div class="middle1" style="height: auto;">
+					   <div class="layui-form-item" style="margin-top:30px;">
+						    <label class="layui-form-label">公司</label>
+						    <div class="layui-input-block">
+						    	<select  name="companyCode" class="companyCode" id="companyCode"  style="width: 230px;"  lay-search="" ></select>
+						    </div>
+						  </div>
+						  
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">部门</label>
+						    <div class="layui-input-block">
+						    	<input type="hidden" name="departUid"  id="departUid_b" >
+						    	<input type="text" name="departName" id="departName_b"  readonly="readonly"  required  lay-verify="required" autocomplete="off" class="layui-input">
+						    	<ul id="departmentTree"  class="ztree"  depart="departName_b"  departmetNumber="departUid_b"  style="height: 200px;width: 96%;"></ul>
+						    </div>
+						  </div>
+						   <div class="layui-form-item">
+						    <label class="layui-form-label">是否是部门负责人</label>
+						    <div class="layui-input-block">
+						      <input type="radio" name="isManager" value="true" title="是">
+						      <input type="radio" name="isManager" value="false" title="否" checked>
+						    </div>
+						  </div>
+					</div>
+					<div class="foot">
+						<input  type="hidden" name="userUid" id="bdbm_userUid" />
+						<button class="layui-btn layui-btn sure_btn" type="button"   onclick="submitUserDeaprtment(this);" >确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary" type="button" onclick="closeDialog('display_container_company_department');">取消</button>
+					</div>
+					</form>
+			</div>
+		</div>
+	
 		
+		
+		<!-- 同步指定用户  -->
+		<div class="display_container_synAppointUser">
+			<div class="display_content_synAppointUser">
+				<div class="top">
+					同步指定用户
+				</div>
+				<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
+					<div class="middle" style="height: auto;">
+					   <div class="layui-form-item" style="margin-top:20px;">
+					    <label class="layui-form-label">工号</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="costCenter" required  lay-verify="required" data-msg-required="请输入工号" placeholder="请输入工号" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+					</div>
+					<div class="foot">
+						<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_synAppointUser" onclick="closeDialog('display_container_synAppointUser');" type="button">取消</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	
 		<script>
 		$(function(){
@@ -418,7 +427,7 @@
 			var url='sysDepartment/treeDisplay';
 			settings.callback={onClick: onClick}
 			/* treeDisplays(url,['treeDemo','treeDemo1']); */
-			treeDisplays(url,['treeDemo']);
+			treeDisplays(url,['treeDemo','departmentTree']);
 			
 			$(".cancelUserDepartmentBtn").click(function(){
 				$(".display_container1").css("display","none");
@@ -495,35 +504,16 @@
 		}
 		
 		
+		//修改时属性菜单
 		function onClick(e, treeId, treeNode) {
 			var  depart=$("#"+treeId).attr("depart");
-			var  company=$("#"+treeId).attr("company");
 			var  departmentNo=$("#"+treeId).attr("departmetNumber");
-			var  departName='';
-			
-			var departId='';
-			var companyId='';
-			var departmetNumber='';
 			var treeObj = $.fn.zTree.getZTreeObj(treeId);
 			var sNodes = treeObj.getSelectedNodes();
 			if (sNodes.length > 0) {
-				var node = sNodes[0].getPath();
-				for (var i = 0; i < node.length; i++) {
-					if(node[i].pId=='10000000'){
-						companyId=node[i].id;
-					}
-					departId=node[i].code;
-					departmetNumber=node[i].id;
-					departName=node[i].name;
-				}
+				$("#"+depart).val(sNodes[0].name.replace(/\s/g, ""));
+				$("#"+departmentNo).val(sNodes[0].code.replace(/\s/g, ""));
 			}
-			$("#"+depart).val(departId.replace(/\s/g, ""));
-			$("#"+company).val(companyId.replace(/\s/g, ""));
-			$("#"+departmentNo).val(departmetNumber.replace(/\s/g, ""));
-			
-			$("#departName").val(departName);
-			
-			//pageBreak(1);
 		}
 		
 		
@@ -535,17 +525,13 @@
 	         	str+='<td>' + this.userName + '</td>';
 	         	str+='<td>' + this.userUid + '</td>';
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
-	         	
-	         	/* str+='<td></td>'; */
-	         	str+='<td>' + isEmpty(this.employeeType) + '</td>';
+	         	/* str+='<td>' + isEmpty(this.employeeType) + '</td>'; */
 	         	str+='<td>' + this.mobile + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定系统角色"  onclick=openSystemRoleBinding("'+this.userUid+'","'+this.departUid+'"); >&#xe614;</i>';
-	         	
 	         	str+='<i class="layui-icon link_system" title="绑定部门"  onclick=departmentOfBinding("'+this.userUid+'"); >&#xe631;</i>';
-	         	
 	         	str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>';
 	         	if(this.accountType=='1'){
 	         		str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysUser/deleteSysUser?userUid='+this.userUid+'","del") >&#xe640;</i>';
@@ -581,8 +567,6 @@
 			$('.departUid').val(departUid);
 			$(".display_container").css("display","block");
 			$("#businessRoleTable").empty();
-			/*opendialog('display_container');
-			$("#systemRoleTable").empty();*/
 			$.ajax({
 				type:'POST',
 				url:'sysRoleUser/allSysRoleUser?mapType=1&userUid='+userUid,

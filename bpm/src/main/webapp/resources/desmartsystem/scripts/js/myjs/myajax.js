@@ -393,35 +393,39 @@ function searchReturn(form,methods){
 //生成表格
 function table(data) {
 	var dataList = data.dataList;
-//	layui.use('laypage', function(){
-//	  var laypage = layui.laypage;
-//	  //执行一个laypage实例
-//	  laypage.render({
-//		    elem: 'pagination',
-//		    count: data.total, //总条数
-//		    pages: Math.ceil(data.total / data.pageSize),
-//		    limit:data.pageSize, //每页条数
-//		    theme: '#FFB800', //自定义颜色
-//		    jump: function(obj, first){
-//		        if(!first){ //首次则不进入
-//		        	pageBreak(obj.curr);
-//		        }
-//		    }
-//	   });
-//	});
+	layui.use('laypage', function(){
+	  var laypage = layui.laypage;
+	  //执行一个laypage实例
+	  laypage.render({
+          elem: 'pagination',
+          curr: data.pageNo,
+          count: data.total,
+          limit: data.pageSize,
+          groups:3,
+          layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+          jump: function(obj, first){
+              //obj包含了当前分页的所有参数  
+        	  data.pageNo = obj.curr;
+        	  data.pageSize = obj.limit;
+              if (!first) {
+              	pageBreak(obj.curr);
+              }
+          }
+      });
+	});
 	
-	laypage({
-        cont: 'pagination',
-        pages: Math.ceil(data.total / data.pageSize),
-        curr: data.pageNo || 1,
-        group: 3,
-        skip: true,
-        jump: function (obj, first) {
-            if (!first) {
-            	pageBreak(obj.curr);
-            }
-        }
-    });
+//	laypage({
+//        cont: 'pagination',
+//        pages: Math.ceil(data.total / data.pageSize),
+//        curr: data.pageNo || 1,
+//        group: 3,
+//        skip: true,
+//        jump: function (obj, first) {
+//            if (!first) {
+//            	pageBreak(obj.curr);
+//            }
+//        }
+//    });
 	
  	
  	$("#tabletr").empty();//清空表格内容

@@ -5,7 +5,7 @@
 		<div class="display_content2">
 			<div class="top">
 				群组人员分配
-				<div class="query_user">
+				<div class="query_user" style="height: 40px;">
 					<div>
 						<form class="form-inline" method="post" action="sysUser/userList"  onsubmit="return searchReturn(this,setUserList);">
 						<table>
@@ -18,7 +18,12 @@
 								<tr>
 									<td><input type="text" id="user_code" name="userNo" autocomplete="off" class="layui-input" /></td>
 									<td><input type="text" id="user_name" name="userName" autocomplete="off" class="layui-input" /></td>
-									<td><input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
+									<td>
+										<button class="layui-btn layui-btn" id="query_btn" style="margin-bottom: 22px;">查询</button>
+										
+										<!-- <input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/> -->
+										
+									</td>
 								</tr>
 							</tbody>
 						</table>
