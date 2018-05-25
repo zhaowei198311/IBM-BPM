@@ -459,6 +459,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			procent = (int) ((reTime / (1000 * 60 * 60)) / timeAmount * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
+		if (hour < 0) {
+			hour = -1;
+		}
 		map.put("procent", procent);
 		map.put("hour", hour);
 		return ServerResponse.createBySuccess(map);

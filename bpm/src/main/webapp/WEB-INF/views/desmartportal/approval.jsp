@@ -454,7 +454,11 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			success: function(data){
 				var result = data.data;
 				if (data.status == 0) {
-					$(".layui-progress").append('<span class="progress_time">审批剩余时间'+result.hour+'小时</span>');
+					if (result.hour == -1) {
+						$(".layui-progress").append('<span class="progress_time">审批已超时</span>');
+					} else {
+						$(".layui-progress").append('<span class="progress_time">审批剩余时间'+result.hour+'小时</span>');
+					}
 					// 加载进度条
 					layui.use('element', function(){
 						  var $ = layui.jquery
