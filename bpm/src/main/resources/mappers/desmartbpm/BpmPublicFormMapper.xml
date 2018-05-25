@@ -64,4 +64,8 @@
 		set public_form_filename = #{formFilename}
 		where public_form_uid = #{publicFormUid}
 	</update>
+	
+	<delete id="deleteForm" parameterType="String">
+		delete from bpm_public_form where public_form_uid = #{formUid}
+	</delete>
 </mapper>
