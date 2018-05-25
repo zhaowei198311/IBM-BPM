@@ -32,6 +32,7 @@ import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhGatewayLineMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
@@ -42,6 +43,7 @@ import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
+import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -99,6 +101,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private BpmFormFieldMapper bpmFormFieldMapper;
     @Autowired
     private DhObjectPermissionMapper dhObjectPermissionMapper;
+    @Autowired
+    private DhGatewayLineMapper dhGatewayLineMapper;
     
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -711,6 +715,41 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 				}
 			}
 		}
+    }
+    
+    /**
+     * 
+     * @Title: synchronizationGateway  
+     * @Description: 同步网关  
+     * @param @param similarBpmActivityMetaList  
+     * @return void  
+     * @throws
+     */
+    public void synchronizationGateway(List<Map<String, Object>> similarBpmActivityMetaList){
+    	// 新流程ACTIVITY_ID集合
+    	List<String> newActivityIdList = new ArrayList<>();
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			newActivityIdList.add(map.get("ACTIVITY_ID_1").toString());
+		}
+    	// 拷贝前，先根据新流程ACTIVITY_ID集合删除DH_GATEWAY_LINE表中信息
+    	if (!newActivityIdList.isEmpty()) {
+			dhGatewayLineMapper.deleteByActivityIds(newActivityIdList);
+		}
+    	// 拷贝DH_GATEWAY_LINE表
+    	for (Map<String, Object> map : similarBpmActivityMetaList) {
+			// 老流程节点网关
+    		List<DhGatewayLine> oldDhGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
+			// 新流程节点网关
+    		List<DhGatewayLine> newGatewayLineList = new ArrayList<>();
+			for (DhGatewayLine dhGatewayLine : oldDhGatewayLineList) {
+				dhGatewayLine.setGatewayLineUid("gateway_line:"+UUID.randomUUID());
+				dhGatewayLine.setActivityId(map.get("ACTIVITY_ID_1").toString());
+				newGatewayLineList.add(dhGatewayLine);
+			}
+			dhGatewayLineMapper.insertBatch(newGatewayLineList);
+		}
+    	
+    	// 删除新流程DAT_RULE表中信息
     }
     
     public DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid) {

@@ -457,11 +457,21 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 			},
 			success: function(data){
 				var result = data.data;
+				// 剩余时间
+				var hour = result.hour;
+				// 剩余时间百分比
+				var percent = result.percent;
 				if (data.status == 0) {
 					if (result.hour == -1) {
 						$(".layui-progress").append('<span class="progress_time">审批已超时</span>');
+						$(".progress_time").css('right','4%');
 					} else {
-						$(".layui-progress").append('<span class="progress_time">审批剩余时间'+result.hour+'小时</span>');
+						$(".layui-progress").append('<span class="progress_time">审批剩余时间'+hour+'小时</span>');
+						if (percent == 0) {
+							$(".progress_time").css('right','87%');
+						}else {
+							$(".progress_time").css('right',90-percent+'%');
+						}			
 					}
 					// 加载进度条
 					layui.use('element', function(){
@@ -469,9 +479,17 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 						  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
 						// 延迟加载
 						setTimeout(function(){
-							element.progress('progressBar',result.procent+'%');
+							if (percent > 50) {
+								$('.layui-progress-bar').css('background-color','yellow');
+							}
+							if (percent > 80) {
+								$('.layui-progress-bar').css('background-color','red');
+							}
+							element.progress('progressBar',percent+'%');
 						}, 500);
 					});
+				}else {
+					$(".layui-progress").append('<span class="progress_time">加载失败!</span>');
 				}
 			}
 		});

@@ -31,4 +31,26 @@ public interface DhGatewayLineMapper {
      * @return
      */
     List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine);
+    
+    /**
+     * 
+     * @Title: deleteByActivityIds  
+     * @Description: 根据activityIds删除  
+     * @param @param activityIds
+     * @param @return  
+     * @return int  
+     * @throws
+     */
+    int deleteByActivityIds(List<String> activityIds);
+    
+    /**
+     * 
+     * @Title: listByActivityId  
+     * @Description: 根据activityId查询  
+     * @param @param activityId
+     * @param @return  
+     * @return List<DhGatewayLine>  
+     * @throws
+     */
+    List<DhGatewayLine> listByActivityId(String activityId);
 }

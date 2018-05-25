@@ -138,4 +138,26 @@
    	</if>
    	order by dgl.is_default,dgl.rule_id
    </select>
+   
+   <delete id="deleteByActivityIds" parameterType="list">
+   	delete from DH_GATEWAY_LINE
+   	<where>
+   		ACTIVITY_ID in
+   		<foreach collection="list" item="item" open="(" separator="," close=")">
+   			#{item}
+   		</foreach>
+   	</where>	
+   </delete>
+   
+   <select id="listByActivityId" parameterType="string" 
+   			resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
+   	SELECT * FROM DH_GATEWAY_LINE
+   	WHERE ACTIVITY_ID = #{activityId}
+   </select>
+   
+   <select id="listByIds">
+   	SELECT dgl.*, dr.* FROM DH_GATEWAY_LINE
+   	LEFT JOIN DAT_RULE dr ON dgl.RULE_ID = dr.RULE_ID
+   	WHERE dgl.ACTIVITY_ID = #{activityId} 
+   </select>
 </mapper>
