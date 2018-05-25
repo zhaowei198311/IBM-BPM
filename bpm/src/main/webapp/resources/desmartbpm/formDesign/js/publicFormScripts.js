@@ -609,7 +609,7 @@ function saveHtml() {
 	var formUidArr = new Array();
 	var formId = $("#downloadModal #formUid").val();
 	formUidArr.push(formId);
-	console.log(formUidArr);
+	layer.load(1);
 	//先判断该表单是否可修改
 	$.ajax({
 		url:common.getPath()+"/publicForm/isBindMainForm",
@@ -854,6 +854,7 @@ function saveHtml() {
 			}else{
 				layer.alert("该表单已被步骤绑定");
 			}
+			layer.closeAll("loading");
 		}
 	});
 }
