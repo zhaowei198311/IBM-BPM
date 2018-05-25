@@ -454,13 +454,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			hour = timeAmount.intValue();
 		}else {
 			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
-			// 剩余时间
+			// 剩余时间百分比
 			long reTime = new Date().getTime() - createDate.getTime();
 			procent = (int) ((reTime / (1000 * 60 * 60)) / timeAmount * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
 		if (hour < 0) {
 			hour = -1;
+			procent = 100;
 		}
 		map.put("procent", procent);
 		map.put("hour", hour);
