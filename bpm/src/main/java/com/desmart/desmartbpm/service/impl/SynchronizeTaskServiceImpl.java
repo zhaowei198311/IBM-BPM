@@ -88,8 +88,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         LOG.info("同步新任务：" + dhTaskList.size() + "个");
         LOG.info("产生代理记录：" + agentRecordList.size() + "个");
-        if (dhTaskList.size() > 0) {
-            dhTaskInstanceService.insertBatch(dhTaskList);
+//        if (dhTaskList.size() > 0) {
+//            dhTaskInstanceService.insertBatch(dhTaskList);
+//        }
+        for(DhTaskInstance task : dhTaskList) {
+            dhTaskInstanceMapper.insertTask(task);
         }
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
