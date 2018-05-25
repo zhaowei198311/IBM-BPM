@@ -16,12 +16,10 @@ $(function(){
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
-			  var btnButtom = $(".foot_accessory_file").find(".listAction");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
 			  var maxFileCount = $(".hidden-value").find(".maxFileCount").val();
 			  var fileFormat = $(".hidden-value").find(".fileFormat").val();*/
-			  re = new RegExp(",","g");
-			  var formatStr = fileFormat.replace(re,"|");
+		  var btnButtom = $(".foot_accessory_file").find(".listAction");
 			  var dragDiv = $("#upload_file_modal").find(".layui-upload-drag");
 			  // 拖拽上传
 			  var demoListView = $(".layui-upload-list").find('.fileList')
@@ -154,6 +152,9 @@ $(function(){
 			        }
 			  });
 			  
+			  
+			  
+			  
 			  dragDiv.get(0).addEventListener("dragenter", function(e){ 
 				    e.stopPropagation(); 
 				    e.preventDefault(); 
@@ -181,6 +182,8 @@ $(function(){
 var maxFileSize = "";
 var maxFileCount = "";
 var fileFormat = "";
+var re = new RegExp(",","g");
+var formatStr = fileFormat.replace(re,"|");
 function loadGlobalConfig(){
 	$.ajax({
 		url:common.getPath()+"/accessoryFileUpload/loadGlobalConfig.do",
@@ -198,6 +201,53 @@ function loadGlobalConfig(){
 	});
 	
 }
+
+//附件更新
+function updateAccessoryFile(a){
+	//文件更新，单文件
+	  //执行实例
+	  var updateElem = $(a);
+	  var appUid = $("#insUid").val();
+	  var taskId = $("#activityId").val();
+	  // 拖拽上传
+	  var updateAccessoryFile = layui.upload.render({
+		  elem: updateElem
+		    ,url: 'accessoryFileUpload/updateAccessoryFile.do'
+		    ,data:{
+		    	"appUid":appUid
+		    	,"taskId":taskId}
+		    ,exts: formatStr
+		    ,field: "file"
+	    ,before: function(obj){
+	    	var files = this.files = obj.pushFile(); // 将每次选择的文件追加到文件队列
+	          layer.load();
+	          // 读取本地文件
+	          obj.preview(function(index, file, result){
+	        	var size = file.size;
+	          	if(size > maxFileSize*1024*1024){
+	          		layer.msg('文件大小不得超过'+maxFileSize+'M',{icon:2});
+	          		layer.closeAll('loading');
+	          		delete files[index];
+	          		return;
+	          	}
+	          	if(size == 0){
+	          		layer.msg('文件大小不能为空',{icon:2});
+	          		layer.closeAll('loading');
+	          		delete files[index];
+	          		return;
+	          	}
+	          })
+	    }
+	    ,done: function(res){
+	      //上传完毕回调
+	    }
+	    ,error: function(){
+	      //请求异常回调
+	    }
+	  });
+	  
+}
+
 // 反选
   function invertSelection(a){ var checkeNodes=
 	  $(".layui-table.upload-file-table").find(".file-check"); var checkedNodes=
@@ -233,8 +283,8 @@ function loadFileList(){
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
-		      +"<button class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>更新附件</button>"
-		      +"<button class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>查看历史版本</button>"
+		      +"<button onclick='updateAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;'>更新附件</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'>查看历史版本</button>"
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"

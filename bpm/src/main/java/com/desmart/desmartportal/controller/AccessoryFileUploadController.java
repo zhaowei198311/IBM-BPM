@@ -123,4 +123,11 @@ public class AccessoryFileUploadController {
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		return ServerResponse.createBySuccess(bpmGlobalConfig);
 	}
+	
+	@RequestMapping(value="updateAccessoryFile.do")
+	@ResponseBody
+	public ServerResponse updateAccessoryFile(@RequestParam("file")MultipartFile multipartFile
+			,@RequestParam("appUid")String appUid,@RequestParam("taskId")String taskId) {
+			return null;
+	}
 }

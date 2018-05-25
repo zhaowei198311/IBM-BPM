@@ -67,6 +67,7 @@
 </head>
 <body>
 	<div class="search_area top_btn">
+		<input id="activityId" value="${activityId}" style="display: none;">
 		<input id="formId" value="${formId}" style="display: none;"> <input
 			id="proUid" value="${proUid}" style="display: none;"> <input
 			id="proAppId" value="${proAppId}" style="display: none;"> <input
@@ -553,10 +554,8 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 				},
 				success : function(result) {
 					layer.close(index);
-						alert(result)
-						alert(result.status)
 						if (result.status == 0) {
-							layer.alert('任务完成', {
+							layer.alert('提交成功', {
 							icon : 1
 						});
 					}
