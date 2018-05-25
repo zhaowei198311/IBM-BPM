@@ -270,12 +270,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 			JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
-			String userId = routeData.getString("userUid");
+			String userId = routeData.getString("userUid").substring(0, 8);
+			
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+			
 			CommonBusinessObject pubBo = new CommonBusinessObject();
 			List<String> userList = new ArrayList<>();
 			userList.add(userId);
 			pubBo.setNextOwners_0(userList);
+			
+			
 			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
 			bpmTaskUtil.commitTask(taskId, pubBo);
 			log.info("完成任务结束......");

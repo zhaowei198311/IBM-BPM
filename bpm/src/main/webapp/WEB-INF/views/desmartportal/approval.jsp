@@ -83,7 +83,7 @@
 			<button class="layui-btn layui-btn-sm"
 				onclick="processView(${insId})">流程图</button>
 			<button class="layui-btn layui-btn-sm" onclick="agree()">通过</button>
-			<button class="layui-btn layui-btn-sm">驳回</button>
+			<button class="layui-btn layui-btn-sm" onclick="reject()">驳回</button>
 			<button class="layui-btn layui-btn-sm">转办</button>
 			<button class="layui-btn layui-btn-sm">会签</button>
 			<button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
@@ -573,6 +573,11 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 				}
 			});  
 		}
+	
+	function reject(){
+		layer.alert('1231313')
+		var taskId = $("#taskId").val();
+	}
 	
 	function back(){
 		window.location.href = 'menus/backlog';
