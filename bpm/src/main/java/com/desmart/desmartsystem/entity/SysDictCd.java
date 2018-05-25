@@ -18,6 +18,7 @@ public class SysDictCd implements Serializable {
 	private String dictCd;
 	private String dictNm;
 	private String dictTypeCd;
+	private SysDictTp sysDictTp;
 
 
 	public String getDcUid() {
@@ -52,5 +53,12 @@ public class SysDictCd implements Serializable {
 		this.dictTypeCd = dictTypeCd;
 	}
 
+	public SysDictTp getSysDictTp() {
+		return sysDictTp;
+	}
+
+	public void setSysDictTp(SysDictTp sysDictTp) {
+		this.sysDictTp = sysDictTp;
+	}
 
 }
