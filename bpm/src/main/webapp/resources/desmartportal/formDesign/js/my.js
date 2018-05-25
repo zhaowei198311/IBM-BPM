@@ -236,7 +236,7 @@ function drawPage() {
                         }
 
                         if (!isNaN(labelDivCol)) {
-                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width: 144px">' + labelHtml + '</td>';
+                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width: 70px">' + labelHtml + '</td>';
                         }
 
                         if (!isNaN(subDivCol)) {
