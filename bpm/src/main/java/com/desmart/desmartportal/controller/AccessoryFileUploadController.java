@@ -1,42 +1,27 @@
 package com.desmart.desmartportal.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartportal.util.SFTPUtil;
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartportal.common.EntityIdPrefix;
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 import com.desmart.desmartportal.service.AccessoryFileUploadService;
-import com.desmart.desmartportal.util.DateUtil;
-import com.desmart.desmartportal.util.UUIDTool;
+import com.desmart.desmartportal.util.SFTPUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import com.jcraft.jsch.SftpException;
 
 @Controller
 @RequestMapping("/accessoryFileUpload")

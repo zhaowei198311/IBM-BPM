@@ -2,7 +2,7 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
 
 public interface DhApprovalOpinionService {

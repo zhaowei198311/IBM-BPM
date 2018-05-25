@@ -3,7 +3,6 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,9 +13,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -24,7 +23,6 @@ import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.util.JsonUtil;
-import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
@@ -35,9 +33,7 @@ import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.SysDateService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
-import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;

@@ -5,7 +5,7 @@ package com.desmart.desmartsystem.service;
 
 import java.util.List;
 
-import com.desmart.desmartsystem.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.github.pagehelper.PageInfo;
 

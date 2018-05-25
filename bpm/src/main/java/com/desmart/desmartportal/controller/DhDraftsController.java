@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.service.DhDraftsService;
 

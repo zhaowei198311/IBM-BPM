@@ -178,7 +178,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             String loopType = bpmActivityMeta.getLoopType();
             if (BpmActivityMeta.LOOP_TYPE_NONE.equals(loopType)) {
                 dhTask.setTaskType(DhTaskInstance.TYPE_NORMAL);
-            } else if (BpmActivityMeta.LOOP_TYPE_MULTI_SIMPLE_LOOP.equals(loopType)) {
+            } else if (BpmActivityMeta.LOOP_TYPE_SIMPLE_LOOP.equals(loopType)) {
                 dhTask.setTaskType(DhTaskInstance.TYPE_SIMPLE_LOOP);
             } else if (BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
                 dhTask.setTaskType(DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP);

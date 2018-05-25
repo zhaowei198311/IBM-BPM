@@ -3,11 +3,8 @@
  */
 package com.desmart.desmartportal.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.util.BpmTaskUtil;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhTask;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.common.Const;
-import com.desmart.desmartportal.common.ServerResponse;
-import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartsystem.dao.SysUserMapper;
-import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**  

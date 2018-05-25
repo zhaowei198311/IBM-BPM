@@ -2,10 +2,9 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 
 public interface AccessoryFileUploadService {

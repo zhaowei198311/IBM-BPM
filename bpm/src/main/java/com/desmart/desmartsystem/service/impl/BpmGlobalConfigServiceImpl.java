@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.desmart.desmartsystem.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.dao.BpmGlobalConfigMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;

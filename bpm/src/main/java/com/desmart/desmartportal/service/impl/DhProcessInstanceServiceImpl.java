@@ -21,17 +21,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.RouteStatus;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.BpmTaskUtil;
+import com.desmart.common.util.CommonBusinessObjectUtils;
 import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
-import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -231,18 +231,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         JSONObject formDataFromTask = (JSONObject)dataJson.get("formData");
         JSONArray routeData = dataJson.getJSONArray("routeData");
         JSONObject processData = (JSONObject)dataJson.get("processData");
-        
-        
-        
         String proAppId = processData.getString("proAppId");
         String proUid = processData.getString("proUid");
         String proVerUid = processData.getString("proVerUid");
-        
-        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
-            return ServerResponse.createByErrorMessage("缺少必要参数");
-        }
-        
-        
         
         
         log.info("发起流程开始......");
@@ -250,16 +241,21 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
         BpmActivityMeta firstHumanActivity = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid).getData();
         
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("缺少必要参数");
+        }
         
-        
-        
-        HttpReturnStatus result = new HttpReturnStatus();
-        
-        // 掉用API 发起一个流程
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         CommonBusinessObject pubBo = new CommonBusinessObject();
         pubBo.setCreatorId(currentUserUid);
-        pubBo.setNextOwners_0(Arrays.asList(new String[] {"00011178"}));
+        // 封装下一环节的处理人
+        ServerResponse<CommonBusinessObject> assembleResponse = assembleCommonBusinessObject(pubBo, routeData);
+        if (!assembleResponse.isSuccess()) {
+            return assembleResponse;
+        }
+        
+        HttpReturnStatus result = new HttpReturnStatus();
+        // 掉用API 发起一个流程
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
         result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
@@ -357,4 +353,43 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		return null;
 	}
+
+
+    /**
+     * 装配处理人的信息
+     */
+    public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData) {
+        if (pubBo == null) {
+            pubBo = new CommonBusinessObject();
+        }
+        
+        for (int i=0; i<routeData.size(); i++) {
+            JSONObject item = (JSONObject)routeData.get(i);
+            String activityId = item.getString("activityId");
+            String userUids = item.getString("userUid");
+            String assignVarName = item.getString("assignVarName");
+            String signCountVarName = item.getString("signCountVarName");
+            String loopType = item.getString("loopType");
+            
+            if (StringUtils.isBlank(activityId) || StringUtils.isBlank(userUids) || StringUtils.isBlank(assignVarName) || StringUtils.isBlank(signCountVarName)
+                    || StringUtils.isBlank(loopType)) {
+                return ServerResponse.createByErrorMessage("处理人信息错误");
+            }
+            
+            List<String> userIdList = Arrays.asList(userUids.split(";"));
+            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList); 
+            if (userIdList.size() != userList.size()) {
+                return ServerResponse.createByErrorMessage("处理人信息错误");
+            }
+            // 设置处理人
+            CommonBusinessObjectUtils.setNextOwners(assignVarName, pubBo, userIdList);
+            // 如果是多实例会签或者简单循环会签就设置signCount值
+            if (BpmActivityMeta.LOOP_TYPE_SIMPLE_LOOP.equals(loopType) || BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
+                CommonBusinessObjectUtils.setOwnerSignCount(signCountVarName, pubBo, userIdList.size());
+            }
+            
+        }
+        
+        return ServerResponse.createBySuccess(pubBo);
+    }
 }

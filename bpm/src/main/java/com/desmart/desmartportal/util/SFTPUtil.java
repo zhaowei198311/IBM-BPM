@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import com.desmart.desmartportal.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;

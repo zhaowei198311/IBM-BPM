@@ -59,7 +59,6 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
     @Autowired
     private DhStepService dhStepService;
     
-    
     public ServerResponse getActivityConfData(String actcUid) {
         if(StringUtils.isBlank(actcUid)) {
             return ServerResponse.createByErrorMessage("参数错误");

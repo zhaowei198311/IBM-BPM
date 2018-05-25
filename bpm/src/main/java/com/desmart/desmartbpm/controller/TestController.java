@@ -52,8 +52,8 @@ public class TestController extends BaseWebController {
         List<String> list1 = new ArrayList<>();
         list1.add("deadmin");
         list1.add("2222222");
-        pubBo.setNextOwners_1(list1);
-        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(1407, pubBo);
+        pubBo.setNextOwners_0(list1);
+        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(1517, pubBo);
         System.out.println(resultMap.get("commitTaskResult").getMsg());
         return "done";
     }

@@ -1,6 +1,7 @@
 package com.desmart.desmartsystem.controller;
 
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.sql.Timestamp;
-import com.desmart.desmartsystem.common.ServerResponse;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.util.UUIDTool;
 import com.github.pagehelper.PageInfo;
