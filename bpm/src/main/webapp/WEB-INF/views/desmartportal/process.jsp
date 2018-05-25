@@ -124,7 +124,7 @@
 				</table>
 				</form>
 		
-			<div id="formSet"></div>
+			<div id="formSet">${formHtml }</div>
 			<table class="layui-table">
 		<colgroup>
 		    <col width="150">

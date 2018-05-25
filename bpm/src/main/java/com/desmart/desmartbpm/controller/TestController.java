@@ -72,12 +72,12 @@ public class TestController extends BaseWebController {
 
     @RequestMapping(value = "/user/login.do")
     @ResponseBody
-    public String login(String username, String password, HttpServletRequest request) {
+    public String login(String username) {
         Subject user = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
         user.login(token);
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute(Const.CURRENT_USER, "00011178");
+        session.setAttribute(Const.CURRENT_USER, username);
         session.setTimeout(17200000L);
 
         return "hello " + username;

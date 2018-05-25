@@ -13,12 +13,14 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartportal.controller.UsersController;
@@ -76,6 +78,9 @@ public class UserProcessServiceImpl implements UserProcessService {
 	
 	@Autowired
 	private MenusService menusService;
+	
+	@Autowired
+	private BpmFormManageService bpmFormManageService;
 
 	private Logger log = Logger.getLogger(UsersController.class);
 
@@ -235,6 +240,8 @@ public class UserProcessServiceImpl implements UserProcessService {
 			paramMap.put("actcUid", resultMap.get("actcUid"));
 			paramMap.put("activityId", resultMap.get("activityId"));
 			paramMap.put("activityBpdId", resultMap.get("activityBpdId"));
+			ServerResponse response = bpmFormManageService.getFormFileByFormUid((String)resultMap.get("formId"));
+			paramMap.put("formHtml", response.getData());
 			return paramMap;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -24,23 +24,6 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
     });
 }
 
-function clientSideInclude(dynUid) {
-    $.ajax({
-        url: "formSet/getFormFileByFormUid",
-        method: "post",
-        async: false,
-        data: {
-            dynUid: dynUid
-            //表单Id，唯一主键
-        },
-        success: function (result) {
-            if (result.status == 0) {
-                console.log(result.data);
-                $("#formSet").html(result.data);
-            }
-        }
-    });
-}
 $(function () {
     clientSideInclude(document.getElementById('formId').value);
     saveDraftsData();
