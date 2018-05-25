@@ -328,8 +328,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
 				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
 				
-				
-				
 				//获取当前环节  找到下一环节
 				bpmActivityMeta.setActivityBpdId(dhTaskInstance.getActivityBpdId());
 				List<BpmActivityMeta> activityMetas=bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);

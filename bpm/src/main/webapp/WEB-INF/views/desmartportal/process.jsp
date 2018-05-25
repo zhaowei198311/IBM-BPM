@@ -536,13 +536,12 @@
 	                var userUid = ""
 	                var insData = $("#insData").text();
 	                // 路由数据
-	                var routeData = {};
-	                var routeArr = [];
+	                var routeData = [];
 	                $('.getUser').each(function () {
 	                    var item = {};
 	                    item.activityId = $(this).attr('id');
 	                    item.userUid = $(this).val();
-	                    routeArr.push(item);
+	                    routeData.push(item);
 	                });
 	                finalData.routeData = routeData;
 	                console.log(finalData);
