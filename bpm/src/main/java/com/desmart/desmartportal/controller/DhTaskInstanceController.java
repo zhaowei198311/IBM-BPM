@@ -87,19 +87,7 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	private ServerResponse finshedTask(@RequestParam(value="data") String data) {		
 		//解析data
-		JSONObject jsonBody = JSONObject.parseObject(data);
-		JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
-		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
-		JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
-		String userId = routeData.getString("userUid");
-		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-		CommonBusinessObject pubBo = new CommonBusinessObject();
-		List<String> userList = new ArrayList<>();
-		userList.add(userId);
-		pubBo.setNextOwners_0(userList);
-		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-		bpmTaskUtil.commitTask(taskId, pubBo);
-		return ServerResponse.createBySuccess();
+		return dhTaskInstanceService.perform(data);
 	}
 	
 	/**

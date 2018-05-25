@@ -27,6 +27,7 @@ import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.common.ServerResponse;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
@@ -35,7 +36,9 @@ import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.SysDateService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -74,7 +77,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private MenusService menusService;
 	
 	@Autowired
-	private SysUserMapper sysUserMapper;
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	
 	@Autowired
 	private SysDateService sysDateService;
@@ -263,7 +266,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse perform(String data) {
 		log.info("完成任务开始......");
 		try {
-			
+			JSONObject jsonBody = JSONObject.parseObject(data);
+			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
+			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
+			JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
+			String userId = routeData.getString("userUid");
+			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+			CommonBusinessObject pubBo = new CommonBusinessObject();
+			List<String> userList = new ArrayList<>();
+			userList.add(userId);
+			pubBo.setNextOwners_0(userList);
+			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+			bpmTaskUtil.commitTask(taskId, pubBo);
 			log.info("完成任务结束......");
 			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
@@ -347,7 +361,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid) {
-		// TODO Auto-generated method stub
 		return dhTaskInstanceMapper.selectByInsUidAndTaskTypeCondition(insUid);
 	}
 

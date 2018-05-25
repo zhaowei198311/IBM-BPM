@@ -553,8 +553,10 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 				},
 				success : function(result) {
 					layer.close(index);
+						alert(result)
+						alert(result.status)
 						if (result.status == 0) {
-							layer.alert('提交成功', {
+							layer.alert('任务完成', {
 							icon : 1
 						});
 					}
