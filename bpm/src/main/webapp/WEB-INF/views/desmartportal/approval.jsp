@@ -63,6 +63,10 @@
 	overflow-y:auto;
 	overflow-x:hidden;
 }
+
+#formSet{
+	display:none;
+}
 </style>
 </head>
 <body>
@@ -135,7 +139,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<div id="formSet"></div>
+			<div id="formSet">${formHtml }</div>
 			<div class="option_container">
 				<p class="title_p" style="margin-top: 10px;">本环节审批要求</p>
 				<div class="layui-form">
@@ -492,7 +496,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	}
 	
 	function clientSideInclude(dynUid) {
-			$.ajax({
+			/* $.ajax({
 				url : "formSet/getFormFileByFormUid",
 				method : "post",
 				async : false,
@@ -505,7 +509,7 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 						$("#formSet").html(result.data);
 					}
 				}
-			});
+			}); */
 		}
 	
 	function processView(insId){

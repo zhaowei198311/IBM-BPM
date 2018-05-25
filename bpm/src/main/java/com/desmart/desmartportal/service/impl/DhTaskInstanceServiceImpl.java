@@ -22,6 +22,7 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -77,6 +78,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private SysDateService sysDateService;
+	
+	@Autowired
+	private BpmFormManageService bpmFormManageService;
 
 	/**
 	 * 查询所有流程实例
@@ -346,6 +350,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
 						dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
 				resultMap.put("formId", formMap.get("formId"));
+				String formUid = (String) formMap.get("formId");
+				resultMap.put("formHtml", bpmFormManageService.getFormFileByFormUid(formUid).getData());
 				return resultMap;
 			}
 		} catch (Exception e) {

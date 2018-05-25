@@ -24,7 +24,7 @@
 	media="all">
 <style>
 body {
-	color: #fff;
+	/* color: #fff; */
 }
 
 h4 {
@@ -69,6 +69,7 @@ h4 {
 .layadmin-user-login-body .layui-form-item .layui-input {
 	padding-left: 10px;
 }
+.list{color:#fff;}
 </style>
 </head>
 <body
@@ -81,7 +82,7 @@ h4 {
 				<div>
 					<img src="resources/desmartportal/images/logo.png" class="logo" />
 				</div>
-				<h4 style="margin: 10px 0 20px;">
+				<h4 style="margin: 10px 0 20px;color:#fff;">
 					欢迎使用 <strong>来伊份BPM后台管理系统</strong>
 				</h4>
 				<ul class="list">
@@ -121,7 +122,7 @@ h4 {
 
 		</div>
 		<div class="layui-trans layadmin-user-login-footer"
-			style="width: 750px; margin: 0 auto; margin-top: 20px;">
+			style="width: 750px; margin: 0 auto; margin-top: 20px;color:#fff;">
 			<p>Copyright © 来伊份 2018</p>
 		</div>
 	</div>

@@ -4,6 +4,7 @@ var view = null;
 /*动态表单渲染js*/
 $(function(){
 	drawPage();
+	$("#formSet").css("display","block");
 });
 
 //渲染页面的方法

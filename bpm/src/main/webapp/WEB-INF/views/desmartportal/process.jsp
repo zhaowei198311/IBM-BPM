@@ -91,7 +91,7 @@
 					<tbody>
 						<tr>
 							<th colspan="4" class="list_title">目标店调查表
-							<span style="float: right;font-size:14px;font-weight:normal;">流程编号：1000-10185-BG-60</span>
+							<span style="float: right;font-size:14px;font-weight:normal;">表单编号：${formId}</span>
 							</th>
 						</tr>
 						<tr>
