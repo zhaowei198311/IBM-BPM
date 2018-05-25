@@ -47,9 +47,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	}
 
 	@Override
-	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName) {
+	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName,String appDocUid) {
 		// TODO Auto-generated method stub
-		return accessoryFileuploadMapper.checkFileActivityIdByName(appUid, myFileName);
+		return accessoryFileuploadMapper.checkFileActivityIdByName(appUid, myFileName,	appDocUid);
 	}
 
 	@Override
@@ -120,22 +120,24 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
                     String newFileName = DateUtil.datetoString(new Date())+myFileName;
                     //判断文件在当前流程是否已经上传
                     List<DhInstanceDocument> list = checkFileActivityIdByName(
-                    		appUid,myFileName);
+                    		appUid,myFileName,null);
                     if(list!=null&&list.size()>0) {
-                    	return ServerResponse.createBySuccess("上传失败，文件已存在！", 0);
+                    	return ServerResponse.createBySuccess("上传失败，文件名已存在！请选择对应文件进行更新", 0);
                     } 
 						try {
 							InputStream inputStream = file.getInputStream();
 						DhInstanceDocument dhInstanceDocument = new DhInstanceDocument();
 						dhInstanceDocument.setAppDocFileName(myFileName);
-						dhInstanceDocument.setAppDocStatus("del");//查询是否已有逻辑删除记录--唯一
+						/*dhInstanceDocument.setAppDocStatus("del");//查询是否已有逻辑删除记录--唯一
 						List<DhInstanceDocument> exitsList = loadFileListByCondition(dhInstanceDocument);
 			            if(exitsList!=null&&exitsList.size()>0) {
 			            	dhInstanceDocument = exitsList.get(0);
 			            }else {
 			            	String uuId = UUIDTool.getUUID();
 			            	dhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
-			            }
+			            }*/
+						String uuId = UUIDTool.getUUID();
+		            	dhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
 			        	dhInstanceDocument.setAppDocFileUrl(directory+newFileName);//文件ftp存储路径
 			        	dhInstanceDocument.setAppDocTitle(jObject.get("appDocTitle").toString());
 			        	dhInstanceDocument.setAppDocComment(jObject.get("appDocComment").toString());
@@ -147,13 +149,14 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 						dhInstanceDocument.setAppDocIndex(i+1);
 						dhInstanceDocument.setAppDocTags(jObject.get("appDocTags").toString());
-						dhInstanceDocument.setAppDocStatus("normal");//是否被删除
-						if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
+						dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
+						dhInstanceDocument.setAppDocIdCard(EntityIdPrefix.DH_INSTANCE_FILE_CARD+uuId);//不同版本中的文件唯一标识
+						/*if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
 							dhInstanceDocument.setDocVersion(exitsList.get(exitsList.size()-1).getDocVersion()+1);
 							fileUpdateList.add(dhInstanceDocument);
-						}else {
+						}else {*/
 							fileUploadList.add(dhInstanceDocument);
-						}
+						/*}*/
 						try {
 							SFTPUtil sftp = new SFTPUtil();
 				        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
@@ -195,19 +198,94 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    		,  dhInstanceDocument.getAppDocFileUrl().length());
 	    SFTPUtil sftp = new SFTPUtil();
 	    
-	    if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
-	    {
-	    	//int count = eleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
-	    	//逻辑删除--批量修改方法
-	    	List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
-	    	dhInstanceDocument.setAppDocFileUrl("null");
-	    	dhInstanceDocument.setAppDocStatus("del");//del表示删除
-	    	list.add(dhInstanceDocument);
-	    	int count = updateFileByKeys(list);
+	    //int count = eleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
+	    //逻辑删除--批量修改方法
+	    List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
+	    //dhInstanceDocument.setAppDocFileUrl("null");
+	    dhInstanceDocument.setAppDocStatus(Const.FileStatus.DEL);//del表示删除
+	    dhInstanceDocument.setAppDocUpdateDate(DateUtil.format(new Date()));
+	    String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+	    dhInstanceDocument.setUpdateUserUid(creator);
+	    list.add(dhInstanceDocument);
+	    int count = updateFileByKeys(list);
+	    /*if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
+	    {*/
 	    	return ServerResponse.createBySuccessMessage("删除成功！");
-	    }else {
+	    /*}else {
 	    	return ServerResponse.createByErrorMessage("删除失败！");
-	    }
+	    }*/
+	}
+
+	@Override
+	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
+	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument) {
+		// TODO Auto-generated method stub
+		//取得当前上传文件的文件名称  
+        String myFileName = multipartFile.getOriginalFilename();
+        /** 检查更新文件在最新版本是否重名 **/
+        List<DhInstanceDocument> checkList = accessoryFileuploadMapper
+        		.checkFileActivityIdByName(dhInstanceDocument.getAppUid(), myFileName, dhInstanceDocument.getAppDocUid());
+		if(checkList!=null && checkList.size()>0) {
+			return ServerResponse.createByErrorMessage("文件名与其它文件名冲突，请选择相应的文件更新或重命名后上传！");
+		}else {
+			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String currTime = simpleDateFormat.format(new Date());
+			Date currentDate = DateUtil.format(new Date());
+			
+			dhInstanceDocument.setUpdateUserUid(creator);
+			dhInstanceDocument.setAppDocUpdateDate(currentDate);
+		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
+		Integer count = accessoryFileuploadMapper.updateFileByPrimaryKey(dhInstanceDocument);//对当前文件修改-修改人-修改时间-历史
+		DhInstanceDocument oldDhInstanceDocument = accessoryFileuploadMapper.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
+		if(count > 0 ) {
+			//当前新增文件
+			InputStream inputStream;
+			try {
+				inputStream = multipartFile.getInputStream();
+			
+			DhInstanceDocument newDhInstanceDocument = new DhInstanceDocument();
+			String directory ="/AccessoryFile/";
+            String[] dateStrings = currTime.split("-");
+            directory+=dateStrings[0]+"/"+dateStrings[1]+"/"+dateStrings[2]+"/";//获取文件上传目录
+            // 年/月/日/当前时间戳+文件名
+            String newFileName = DateUtil.datetoString(currentDate)+myFileName;
+            
+            newDhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);
+            newDhInstanceDocument.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
+            newDhInstanceDocument.setDocVersion(oldDhInstanceDocument.getDocVersion()+1);
+            newDhInstanceDocument.setAppUid(dhInstanceDocument.getAppUid());
+            newDhInstanceDocument.setTaskId(dhInstanceDocument.getTaskId());
+            newDhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(currentDate)));
+            newDhInstanceDocument.setUserUid(creator);
+            
+			String uuId = UUIDTool.getUUID();
+			newDhInstanceDocument.setAppDocFileName(myFileName);
+			newDhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
+			newDhInstanceDocument.setAppDocFileUrl(directory+newFileName);//文件ftp存储路径
+			newDhInstanceDocument.setAppDocType(multipartFile.getContentType());newDhInstanceDocument.setAppDocIndex(1);
+			newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
+			List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
+			insert.add(newDhInstanceDocument);
+			accessoryFileuploadMapper.insertDhInstanceDocuments(insert);
+			try {
+				SFTPUtil sftp = new SFTPUtil();
+	        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
+			} catch (SftpException e) {
+				// TODO Auto-generated catch block
+				LOG.error("保存附件失败", e);
+				return ServerResponse.createByErrorMessage("更新文件失败！");
+			}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				LOG.error("保存附件失败", e1);
+				return ServerResponse.createByErrorMessage("更新文件失败！");
+			}
+			return ServerResponse.createBySuccessMessage("更新文件成功！");
+		}else {
+			return ServerResponse.createByErrorMessage("更新文件失败！");
+		}
+		}
 	}
 
 }

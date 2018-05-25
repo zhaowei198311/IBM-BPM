@@ -17,5 +17,9 @@ public class Const {
         public static final String TRUE = "TRUE";
         public static final String FALSE = "FALSE";
     }
+    public interface FileStatus{
+    	public static final String NORMAL = "normal";
+    	public static final String DEL = "del";
+    }
     
 }

@@ -18,9 +18,11 @@ public interface AccessoryFileUploadMapper {
 	 * 判断文件在当前流程是否已经上传
 	 * @param appUid
 	 * @param myFileName
+	 * @param appDocUid
 	 * @return
 	 */
-	public List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName);
+	public List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName
+			,@Param("appDocUid")String appDocUid);
 	/**
 	 * 根据条件查询附件列表
 	 * @param dhInstanceDocument
@@ -39,4 +41,22 @@ public interface AccessoryFileUploadMapper {
 	 * @return
 	 */
 	public Integer deleteFileByAppDocUid(String appDocUid);
+	/**
+	 * 根据文件标识修改文件
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public Integer updateFileByFileCard(DhInstanceDocument dhInstanceDocument);
+	/**
+	 * 根据主键查询
+	 * @param appDocUid
+	 * @return
+	 */
+	public DhInstanceDocument selectByPrimaryKey(String appDocUid);
+	/**
+	 * 更新文件时根据主键修改
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public Integer updateFileByPrimaryKey(DhInstanceDocument dhInstanceDocument);
 }

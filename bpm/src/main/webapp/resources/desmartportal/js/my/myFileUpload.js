@@ -288,8 +288,10 @@ function loadFileList(){
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
-		      +"<button onclick='updateAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;'>更新附件</button>"
-		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'>查看历史版本</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;'" +
+		      		"value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>更新附件</button>"
+		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
+		      		"value = '"+result.data[i].appDocUid+"'>查看历史版本</button>"
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
@@ -298,12 +300,19 @@ function loadFileList(){
 		}
 		$(".layui-update-file").each(function(){
 			var updateElem = $(this);
+			var fileCount = 0;
+			var appUid = $("#insUid").val();
+		    var taskId = $("#activityId").val();
+		    var appDocIdCard = updateElem.val();
+		    var appDocUid = updateElem.data("appdocuid");
 			layui.use('upload', function(){
 				  var $ = layui.jquery
 				  ,upload = layui.upload;
 			  var updateAccessoryFile = upload.render({
 				  elem: updateElem
-				    ,url: 'accessoryFileUpload/updateAccessoryFile.do'
+				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
+				    ,data: {"appUid":appUid,"taskId":taskId
+				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid}
 				    ,exts: formatStr
 				    ,field: "file"
 			    ,before: function(obj){
@@ -311,6 +320,13 @@ function loadFileList(){
 			          layer.load();
 			          // 读取本地文件
 			          obj.preview(function(index, file, result){
+			        	if(fileCount>1){
+				        	    fileCount = maxFileCount;
+				          	    layer.msg('文件数量不得超过1个',{icon:2});
+				          	    layer.closeAll('loading');
+				          	    delete files[index];
+				          		return;
+				        }
 			        	var size = file.size;
 			          	if(size > maxFileSize*1024*1024){
 			          		layer.msg('文件大小不得超过'+maxFileSize+'M',{icon:2});
@@ -327,12 +343,15 @@ function loadFileList(){
 			          })
 			    }
 			    ,done: function(res){
-			    	alert("上传成功");
+			    	layer.alert(res.msg);
+			    	loadFileList();
+			    	layer.closeAll('loading');
 			      //上传完毕回调
 			    }
-			    ,error: function(){
-			    	alert("上传失败");
+			    ,error: function(res){
 			      //请求异常回调
+			    	layer.alert(res.msg);
+			    	layer.closeAll('loading');
 			    }
 			  });
 		});

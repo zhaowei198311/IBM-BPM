@@ -19,9 +19,10 @@ public interface AccessoryFileUploadService {
 	 * 判断文件在当前流程是否已经上传
 	 * @param appUid
 	 * @param myFileName
+	 * @param appDocUid
 	 * @return
 	 */
-	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName);
+	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName,String appDocUid);
 	/**
 	 * 根据条件查询附件列表
 	 * @param dhInstanceDocument
@@ -56,4 +57,12 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument);
+	/**
+	 * 更新附件
+	 * @param multipartFile
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public ServerResponse updateAccessoryFile(MultipartFile multipartFile
+			,DhInstanceDocument dhInstanceDocument);
 }

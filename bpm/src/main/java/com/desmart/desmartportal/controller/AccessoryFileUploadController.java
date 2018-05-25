@@ -2,7 +2,9 @@ package com.desmart.desmartportal.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 import com.desmart.desmartportal.service.AccessoryFileUploadService;
 import com.desmart.desmartportal.util.SFTPUtil;
@@ -53,6 +56,7 @@ public class AccessoryFileUploadController {
 	public ServerResponse<List<DhInstanceDocument>> loadFileList(
 			DhInstanceDocument dhInstanceDocument) {//加载已上传附件列表
 		dhInstanceDocument.setAppDocStatus("normal");//normal表示没有被删除
+		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);//表示不是历史文件
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
 	}
@@ -106,13 +110,22 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse loadGlobalConfig() {
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		Map<String, Object> data = new HashMap<String,Object>();
+		data.put("maxFileSize", bpmGlobalConfig.getMaxFileSize());
+		data.put("maxFileCount", bpmGlobalConfig.getMaxFileCount());
+		data.put("fileFormat", bpmGlobalConfig.getFileFormat());
 		return ServerResponse.createBySuccess(bpmGlobalConfig);
 	}
 	
 	@RequestMapping(value="updateAccessoryFile.do")
 	@ResponseBody
 	public ServerResponse updateAccessoryFile(@RequestParam("file")MultipartFile multipartFile
-			,@RequestParam("appUid")String appUid,@RequestParam("taskId")String taskId) {
-			return null;
+			,DhInstanceDocument dhInstanceDocument) {
+			if(dhInstanceDocument.getAppDocIdCard()==null||
+					"".equals(dhInstanceDocument.getAppDocIdCard())) {
+				return ServerResponse.createByErrorMessage("更新文件异常！");
+			}else {
+				return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument);
+			}
 	}
 }

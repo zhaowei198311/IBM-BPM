@@ -5,7 +5,8 @@
    	INSERT INTO DH_INSTANCE_DOCUMENT 
    	(APP_DOC_UID,APP_DOC_FILENAME,APP_DOC_TITLE,APP_DOC_COMMENT
    	,DOC_VERSION,APP_UID,TASK_ID,USER_UID,APP_DOC_TYPE,APP_DOC_CREATE_DATE
-   	,APP_DOC_INDEX,APP_DOC_TAGS,APP_DOC_STATUS,APP_DOC_FILEURL) 
+   	,APP_DOC_INDEX,APP_DOC_TAGS,APP_DOC_STATUS,APP_DOC_FILEURL
+   	,APP_DOC_IS_HISTORY,APP_DOC_UPDATE_DATE,UPDATE_USER_UID,APP_DOC_ID_CARD) 
 	SELECT A.*
     FROM (
 	<foreach collection="dhInstanceDocuments" item="emp" separator="UNION ALL">  
@@ -15,6 +16,8 @@
 	 , #{emp.taskId} taskId, #{emp.userUid} userUid, #{emp.appDocType} appDocType  
 	 , #{emp.appDocCreateDate} appDocCreateDate, #{emp.appDocIndex} appDocIndex
 	 , #{emp.appDocTags} appDocTags, #{emp.appDocStatus} appDocStatus,#{emp.appDocFileUrl} appDocFileUrl
+	 , #{emp.appDocIsHistory} appDocIsHistory, #{emp.appDocUpdateDate} appDocUpdateDate
+	 , #{emp.updateUserUid} updateUserUid, #{emp.appDocIdCard} appDocIdCard
 	FROM dual
 	</foreach>
 	)A
@@ -24,7 +27,10 @@
     resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
    select * from dh_instance_document 
    where APP_UID = #{appUid} and App_Doc_FileName = #{myFileName}
-   and APP_DOC_STATUS = 'normal'
+   and APP_DOC_STATUS = 'normal' and APP_DOC_IS_HISTORY = 'FALSE'
+   <if test="appDocUid != null and appDocUid != '' ">
+   and app_doc_uid != #{appDocUid}
+   </if>
    </select>
    
    <select id="loadFileListByCondition" 
@@ -33,6 +39,7 @@
    select did.app_Doc_Uid,did.app_Doc_FileName,did.app_Doc_FileUrl,did.app_Doc_Title,
    did.app_Doc_Comment,did.doc_Version,did.app_Uid,did.task_id,did.user_uid,did.app_doc_Type
    ,did.app_doc_Create_Date,did.app_doc_index,did.app_doc_tags,did.app_doc_status
+   ,did.app_Doc_Is_History,did.app_Doc_Update_Date,did.update_User_Uid,did.app_Doc_Id_Card
    ,su.user_name as appUserName from dh_instance_document did left join sys_user su 
    on did.USER_UID = su.USER_UID 
    where 1 = 1 
@@ -44,6 +51,9 @@
    </if>
    <if test="appDocStatus!=null and appDocStatus != '' ">
     and app_doc_status = #{appDocStatus}
+   </if>
+   <if test="appDocIsHistory !=null and appDocIsHistory != '' ">
+    and app_Doc_Is_History = #{appDocIsHistory}
    </if>
    </select>
    
@@ -92,6 +102,15 @@
             <if test="item.appDocStatus !=null and item.appDocStatus !=''">
                 app_doc_status = #{item.appDocStatus},
             </if>
+            <if test="item.appDocUpdateDate != null ">
+                app_doc_update_date = #{item.appDocUpdateDate},
+            </if>
+            <if test="item.updateUserUid != null and item.updateUserUid != '' ">
+             	update_user_uid = #{item.updateUserUid},
+            </if>
+            <if test="item.appDocIsHistory != null and item.appDocIsHistory != '' ">
+            	app_doc_is_history = #{item.appDocIsHistory},
+            </if>
             
             </set>
             where APP_DOC_UID = #{item.appDocUid}
@@ -103,4 +122,81 @@
    parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
      DELETE dh_instance_document WHERE APP_DOC_UID = #{appDocUid}
    </delete>
+   
+   <update id="updateFileByFileCard" parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   	update dh_instance_document 
+            <set>
+            <if test="appDocFileName != null and appDocFileName != '' ">
+                app_doc_filename = #{appDocFileName},
+            </if>
+            <if test="appDocFileUrl != null and appDocFileUrl != '' ">
+                app_doc_fileUrl = #{appDocFileUrl},
+            </if>
+            <if test="appDocTitle != null and appDocTitle != '' ">
+                app_doc_title = #{appDocTitle},
+            </if>
+            <if test="appDocComment != null and appDocComment != '' ">
+                app_doc_comment = #{appDocComment},
+            </if>
+            <if test="docVersion != null ">
+                doc_version = #{docVersion},
+            </if>
+            <if test="appUid != null and appUid != '' ">
+                app_uid = #{appUid},
+            </if>
+            <if test="taskId != null ">
+                task_id = #{taskId},
+            </if>
+            <if test="userUid !=null and userUid !=''">
+                user_uid = #{userUid},
+            </if>
+            <if test="appDocType !=null and appDocType !=''">
+                app_doc_type = #{appDocType},
+            </if>
+            <if test="appDocCreateDate !=null ">
+                app_doc_create_date = #{appDocCreateDate},
+            </if>
+            <if test="appDocIndex !=null ">
+                app_doc_index = #{appDocIndex},
+            </if>
+            <if test="appDocTags !=null and appDocTags !=''">
+                app_doc_tags = #{appDocTags},
+            </if>
+            <if test="appDocStatus !=null and appDocStatus !=''">
+                app_doc_status = #{appDocStatus},
+            </if>
+            <if test="appDocUpdateDate != null ">
+                app_doc_update_date = #{appDocUpdateDate},
+            </if>
+            <if test="updateUserUid != null and updateUserUid != '' ">
+             	update_user_uid = #{updateUserUid},
+            </if>
+            <if test="appDocIsHistory != null and appDocIsHistory != '' ">
+            	app_doc_is_history = #{appDocIsHistory},
+            </if>
+            
+            </set>
+            where APP_DOC_ID_CARD = #{appDocIdCard}
+   </update>
+   <select id="selectByPrimaryKey" parameterType="java.lang.String"
+    resultType="com.desmart.desmartportal.entity.DhInstanceDocument">
+         select * from dh_instance_document 
+         where app_doc_uid = #{appDocUid}
+   </select>
+   <update id="updateFileByPrimaryKey" parameterType="com.desmart.desmartportal.entity.DhInstanceDocument">
+   	update dh_instance_document 
+            <set>
+            <if test="appDocUpdateDate != null ">
+                app_doc_update_date = #{appDocUpdateDate},
+            </if>
+            <if test="updateUserUid != null and updateUserUid != '' ">
+             	update_user_uid = #{updateUserUid},
+            </if>
+            <if test="appDocIsHistory != null and appDocIsHistory != '' ">
+            	app_doc_is_history = #{appDocIsHistory},
+            </if>
+            
+            </set>
+            where APP_DOC_UID = #{appDocUid}
+   </update>
 </mapper>
