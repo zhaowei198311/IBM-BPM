@@ -24,6 +24,7 @@
 		<result column="INS_DRIVE_FOLDER_UID" 			property="insDriveFolderUid"/>
 		<result column="INS_ROUTING_DATA" 				property="insRoutingData"/>
 		<result column="COMPANY_NUMBER" 				property="companyNumber"/>
+		<result column="DEPART_NO" 				        property="departNo"/>
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -31,7 +32,7 @@
 		INS_PARENT,INS_STATUS,INS_STATUS_ID,PRO_APP_ID,
 		PRO_UID,PRO_VER_UID,INS_INIT_USER,INS_CREATE_DATE,
 		INS_INIT_DATE,INS_FINISH_DATE,INS_UPDATE_DATE,INS_DATA,
-		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA, COMPANY_NUMBER
+		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA, COMPANY_NUMBER, DEPART_NO
 	</sql>
 	
     <sql id="realationColumnList">
@@ -39,7 +40,8 @@
         ins.INS_PARENT,ins.INS_STATUS,ins.INS_STATUS_ID,ins.PRO_APP_ID,
         ins.PRO_UID,ins.PRO_VER_UID,ins.INS_INIT_USER,ins.INS_CREATE_DATE,
         ins.INS_INIT_DATE,ins.INS_FINISH_DATE,ins.INS_UPDATE_DATE,ins.INS_DATA,
-        ins.INS_DURATION,ins.INS_DELAY_DURATION,ins.INS_DRIVE_FOLDER_UID,ins.INS_ROUTING_DATA, ins.COMPANY_NUMBER
+        ins.INS_DURATION,ins.INS_DELAY_DURATION,ins.INS_DRIVE_FOLDER_UID,ins.INS_ROUTING_DATA, ins.COMPANY_NUMBER,
+        ins.DEPART_NO
     </sql>
 	
 	<select id="selectAllProcess" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
@@ -81,16 +83,16 @@
 			<if test="insInitUser != null and insInitUser != ''">
 				AND INS_INIT_USER = #{insInitUser}
 			</if>
-			<if test="insCreateDate != null and insCreateDate != ''">
+			<if test="insCreateDate != null ">
 				AND INS_CREATE_DATE = #{insCreateDate}
 			</if>
-			<if test="insInitDate != null and insInitDate != ''">
+			<if test="insInitDate != null ">
 				AND INS_INIT_DATE = #{insInitDate}
 			</if>
-			<if test="insFinishDate != null and insFinishDate != ''">
+			<if test="insFinishDate != null">
 				AND INS_FINISH_DATE = #{insFinishDate}
 			</if>
-			<if test="insUpdateDate != null and insUpdateDate != ''">
+			<if test="insUpdateDate != null">
 				AND INS_UPDATE_DATE = #{insUpdateDate}
 			</if>
 			<if test="insData != null and insData != ''">
@@ -111,6 +113,9 @@
 			<if test="companyNumber != null and companyNumber != ''">
 				AND COMPANY_NUMBER = #{companyNumber}
 			</if>
+			<if test="departNo != null and departNo != ''">
+				AND DEPART_NO = #{departNo}
+			</if>
 		</where>
 	</select>
 	
@@ -124,12 +129,9 @@
 		</where>
 	</select>
 	
-	<update id="updateByPrimaryKey" parameterType="java.lang.String">
+	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
 		UPDATE DH_PROCESS_INSTANCE
 		<set>
-			<if test="insUid != null and insUid != ''">
-				INS_UID = #{insUid},
-			</if>
 			<if test="insTitle != null and insTitle != ''">
 				INS_TITLE = #{insTitle},
 			</if>
@@ -160,16 +162,16 @@
 			<if test="insInitUser != null and insInitUser != ''">
 				INS_INIT_USER = #{insInitUser},
 			</if>
-			<if test="insCreateDate != null and insCreateDate != ''">
+			<if test="insCreateDate != null">
 				INS_CREATE_DATE = #{insCreateDate},
 			</if>
-			<if test="insInitDate != null and insInitDate != ''">
+			<if test="insInitDate != null">
 				INS_INIT_DATE = #{insInitDate},
 			</if>
-			<if test="insFinishDate != null and insFinishDate != ''">
+			<if test="insFinishDate != null">
 				INS_FINISH_DATE = #{insFinishDate},
 			</if>
-			<if test="insUpdateDate != null and insUpdateDate != ''">
+			<if test="insUpdateDate != null">
 				INS_UPDATE_DATE = #{insUpdateDate},
 			</if>
 			<if test="insData != null and insData != ''">
@@ -188,7 +190,10 @@
 				INS_ROUTING_DATA = #{insRoutingData},
 			</if>
 			<if test="companyNumber != null and companyNumber != ''">
-				COMPANY_NUMBER = #{companyNumber}
+				COMPANY_NUMBER = #{companyNumber},
+			</if>
+			<if test="departNo != null and departNo != ''">
+				DEPART_NO = #{departNo}
 			</if>
 			<where>
 				INS_UID = #{insUid}
@@ -231,7 +236,8 @@
 			#{insDelayDuration},
 			#{insDriveFolderUid},
 			#{insRoutingData},
-			#{companyNumber}
+			#{companyNumber},
+			#{departNo}
 		)
 	</insert>
 	

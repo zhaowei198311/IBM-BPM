@@ -23,7 +23,7 @@ public interface DhProcessInstanceMapper {
 	
 	DhProcessInstance selectByPrimaryKey(String insUid);
 	
-	int updateByPrimaryKey(String insUid);
+	int updateByPrimaryKeySelective(DhProcessInstance processInstance);
 	
 	int deleteByPrimaryKey(String insUid);
 	

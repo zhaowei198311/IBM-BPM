@@ -12,36 +12,27 @@ import java.util.Date;
 * @date 2018年5月9日  
 */
 public class DhProcessInstance {
-	
-	/** 
-	 * 流程运转中
-	 */
-	public static final String STATUS_ACTIVE = "1";
-	
-	/** 
-	 * 流程完成
-	 */
-	public static final String STATUS_COMPLETED = "2";
-	
-	/**
-	 * 流程失败
-	 */
-	public static final String STATUS_FAILED = "3";
-	
-	/**
-	 * 流程终止
-	 */
-	public static final String STATUS_TERMINATED = "4";
-	
-	/**
-	 * 流程未启动
-	 */
-	public static final String STATUS_DID_NOT_START = "5";
-	
-	/**
-	 * 流程暂停
-	 */
-	public static final String STATUS_SUSPENDED = "6";
+	/** 未发起的草稿 */
+    public static final String STATUS_DRAFT = "draft";
+    public static final int STATUS_ID_DRAFT = -2; 
+    /** 流程运转中 */
+    public static final String STATUS_ACTIVE = "1";
+    public static final int STATUS_ID_ACTIVE = 1;
+     /** 流程完成 */
+    public static final String STATUS_COMPLETED = "2";
+    public static final int STATUS_ID_COMPLETED = 2;
+     /** 流程失败 */
+    public static final String STATUS_FAILED = "3";
+    public static final int STATUS_ID_FAILED = 3;
+     /** 流程终止 */
+    public static final String STATUS_TERMINATED = "4";
+    public static final int STATUS_ID_TERMINATED = 4;
+     /** 流程未启动 */
+    public static final String STATUS_DID_NOT_START = "5";
+    public static final int STATUS_ID_DID_NOT_START = 5;
+     /** 流程暂停 */
+    public static final String STATUS_SUSPENDED = "6";
+    public static final int STATUS_ID_SUSPENDED = 6;
 	
 	
 	private String insUid; // 流程实例ID
@@ -83,11 +74,13 @@ public class DhProcessInstance {
 	private String insDriveFolderUid; // 流程实例文件目录ID
 
 	private String insRoutingData; // 流程实例路由数据
-
+	private String companyNumber; // 公司编码
+	private String departNo;      // 发起人部门编号
+	
 	// 非流程表数据
 	private String proName; // 流程名
 	
-	private String companyNumber; // 公司编码
+	
 	
 	/**
 	 * @return the insUid
@@ -389,6 +382,14 @@ public class DhProcessInstance {
         this.companyNumber = companyNumber;
     }
 
+    public String getDepartNo() {
+        return departNo;
+    }
+
+    public void setDepartNo(String departNo) {
+        this.departNo = departNo;
+    }
+
     /**
 	 * @param insUid
 	 * @param insTitle
@@ -451,7 +452,8 @@ public class DhProcessInstance {
                 + insUpdateDate + ", insData=" + insData + ", insDuration="
                 + insDuration + ", insDelayDuration=" + insDelayDuration
                 + ", insDriveFolderUid=" + insDriveFolderUid
-                + ", insRoutingData=" + insRoutingData + ", proName=" + proName
-                + ", companyNumber=" + companyNumber + "]";
+                + ", insRoutingData=" + insRoutingData + ", companyNumber="
+                + companyNumber + ", departNo=" + departNo + ", proName="
+                + proName + "]";
     }
 }

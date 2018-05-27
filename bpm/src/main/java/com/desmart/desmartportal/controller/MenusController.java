@@ -4,8 +4,10 @@
 package com.desmart.desmartportal.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -29,6 +33,7 @@ import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartportal.entity.DhDrafts;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
@@ -120,52 +125,16 @@ public class MenusController {
 	 */
 	@RequestMapping("/startProcess")
 	public ModelAndView startProcess(@RequestParam(value = "proUid",required = false) String proUid,
-			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
-			@RequestParam(value = "proName",required = false) String proName,
-			@RequestParam(value = "categoryName",required = false) String categoryName) {
+			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "insUid",required = false) String insUid) {
 	    ModelAndView mv = new ModelAndView("desmartportal/process");
 	    
-	    String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
-		mv.addObject("currentUser", currentUser);
-		
-		// 获得发起人部门信息和公司编码信息
-        SysUserDepartment sysUserDepartment = new SysUserDepartment();
-        sysUserDepartment.setUserUid(currentUserUid);
-        List<SysUserDepartment> userDepartmentList = sysUserDepartmentService.selectAll(sysUserDepartment);
-		mv.addObject("userDepartmentList", userDepartmentList);
-		
-		DhProcessDefinition processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
-		if (processDefintion == null) {
-		    mv.setViewName("/desmartbpm/error");
-		    mv.addObject("errorMessage", "找不到可供发起的流程");
-		}
-		mv.addObject("processDefinition", processDefintion);
-		
-		ServerResponse<BpmActivityMeta> metaResponse = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, processDefintion.getProVerUid());
-		if (!metaResponse.isSuccess()) {
-		    mv.setViewName("/desmartbpm/error");
-            mv.addObject("errorMessage", "找不到第一个人工环节");
-		}
-		BpmActivityMeta firstHumanMeta = metaResponse.getData();
-		mv.addObject("bpmActivityMeta", firstHumanMeta);
-		mv.addObject("dhActivityConf", firstHumanMeta.getDhActivityConf());
-		// 获得默认步骤的列表
-		List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, "default");
-		
-		DhStep formStep = getFirstFormStepOfStepList(steps);
-		mv.addObject("dhStep", formStep);
-		
-		// 获得表单文件内容
-		ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
-		if (!formResponse.isSuccess()) {
-		    mv.setViewName("/desmartbpm/error");
-            mv.addObject("errorMessage", "获得表单数据失败");
-		}
-		mv.addObject("formHtml", formResponse.getData());
-		
-		// 获得下个环节处理人信息
-		mv.addObject("activityMetaList", menusService.activityHandler(proUid, proAppId, verUid));
+	    ServerResponse<Map<String, Object>> startResponse = dhProcessInstanceService.toStartProcess(proAppId, proUid, insUid);
+	    if (startResponse.isSuccess()) {
+	        mv.addAllObjects(startResponse.getData());
+	    } else {
+	        mv.setViewName("/desmartbpm/error");
+	        mv.addObject("errorMessage", startResponse.getMsg());
+	    }
 		
 		return mv;
 	}
@@ -247,12 +216,5 @@ public class MenusController {
 		return mv;
 	}
 	
-	private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
-	    for (DhStep dhStep : stepList) {
-	        if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
-	            return dhStep;
-	        }
-	    }
-	    return null;
-	}
+
 }

@@ -29,6 +29,7 @@ $(function () {
     saveDraftsData();
     saveData();
 })
+function clientSideInclude(){}
 
 /**
  * 保存表单数据的方法
@@ -175,6 +176,13 @@ var saveData = function () {
                 e.preventDefault();
                 var inputArr = $("table input");
                 var selectArr = $("table select");
+                var creatorInfo = $("#creatorInfo").val()
+                if (!creatorInfo) {
+                	layer.alert("缺少发起人信息");
+                	return;
+                }
+                var departNo = creatorInfo.split(",")[0];
+                var companyNumber = creatorInfo.split(",")[1];
                 var control = true; //用于控制复选框出现重复值
                 var checkName = ""; //用于获得复选框的class值，分辨多个复选框
                 var json = "{";
@@ -277,9 +285,12 @@ var saveData = function () {
                 finalData.formData = formData;
                 // 流程数据
                 var processData = {};
-                processData.proAppId = $("#proAppId").val();
-                processData.proUid = $("#proUid").val(); 
-                processData.proVerUid = $("#verUid").val();
+                //processData.proAppId = $("#proAppId").val();
+                //processData.proUid = $("#proUid").val(); 
+                //processData.proVerUid = $("#verUid").val();
+                processData.insUid = $("#insUid").val();
+                processData.departNo = departNo,
+                processData.companyNumber = companyNumber,
                 finalData.processData = processData;
 
                 var activityId = ""

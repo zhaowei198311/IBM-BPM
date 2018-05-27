@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.github.pagehelper.PageInfo;
 
@@ -67,14 +68,14 @@ public interface DhProcessInstanceService {
 	
 	/**
 	 * 发起流程
-	 * @param proUid 流程id
-	 * @param proAppId 流程应用库id
-	 * @param verUid 流程版本id
-	 * @param dataInfo 流程数据
-	 * @param approval 审批意见
-	 * @return
 	 */
 	ServerResponse startProcess(String data);	
+	
+	/**
+	 * 准备流程第一个环节的数据
+	 * @return
+	 */
+	ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid);
 	
 	/**
 	 * 根据流程实例id  查看流程图
@@ -82,4 +83,18 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	String viewProcessImage(String insId);
+	
+	/**
+	 * 根据流程定义创建草稿的流程实例
+	 * @param dhProcessDefinition
+	 * @return
+	 */
+	DhProcessInstance generateDraftDefinition(DhProcessDefinition dhProcessDefinition);
+	
+	/**
+	 * 根据流程实例唯一主键获得流程实例
+	 * @param insUid
+	 * @return
+	 */
+	DhProcessInstance getByInsUid(String insUid);
 }

@@ -63,7 +63,8 @@
 </head>
 <body>
 	<div class="search_area top_btn">
-	    <input id="formId" value="${formId}" style="display: none;">
+	    <input type="hidden" id="insUid" value="${processInstance.insUid}"/>
+	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
 	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
 	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
 	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
@@ -111,10 +112,10 @@
 					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">所属部门</td>
 					      <td>
-							<select id="processType" lay-verify="required" >
+							<select id="creatorInfo" lay-verify="required" >
 								<option value="">请选择部门</option>
-								<c:forEach items="${userDepartmentList}" var="department">
-									<option value="${department.companyCode}">${department.departName}</option>
+								<c:forEach items="${userDepartmentList}" var="item">
+									<option value="${item.departNo},${item.companyCode}">${item.departName}</option>
 								</c:forEach>
 							</select>
 					      </td>
@@ -240,8 +241,8 @@
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <!-- 附件上传js -->
-	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
-	<script>
+<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
+<script>
 
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
