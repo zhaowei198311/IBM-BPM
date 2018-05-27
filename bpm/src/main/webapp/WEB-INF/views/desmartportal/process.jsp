@@ -63,20 +63,19 @@
 </head>
 <body>
 	<div class="search_area top_btn">
-		<input id="formId" value="${formId}" style="display: none;"> <input
-			id="proUid" value="${proUid}" style="display: none;"> <input
-			id="proAppId" value="${proAppId}" style="display: none;"> <input
-			id="verUid" value="${verUid}" style="display: none;"> <input
-			id="userId" value="${userId}" style="display: none;"> <input
-			id="proName" value="${proName}" style="display: none;"> <input
-			id="userId" value="${userId}" style="display: none;"> <input
-			id="dataInfo" style="display: none;"><span
-			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
-		<span style="float: right; padding-right: 20px;">
-			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm" >保存草稿</button>
-			<button id="startProcess" class="layui-btn layui-btn-sm" >提交</button>
-			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
-		</span>
+	    <input id="formId" value="${formId}" style="display: none;">
+	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
+	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
+	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
+	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
+	    <input id="userId" value="${currentUser.userId}" style="display: none;">
+	    <input id="dataInfo" style="display: none;">
+	    <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
+	    <span style="float: right; padding-right: 20px;">
+	        <button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
+	        <button id="startProcess" class="layui-btn layui-btn-sm">提交</button>
+	        <button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
+	    </span>
 	</div>
 	<div class="container" style="width:96%">
 		<div class="content">
@@ -103,9 +102,9 @@
 						</tr>
 					    <tr>
 					      <td class="td_title">工号</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="${userId}" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="${currentUser.userId}" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">姓名</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="${userName}" autocomplete="off" class="layui-input"></td>
+					      <td><input type="text" name="title" required  lay-verify="required" value="${currentUser.userName}" autocomplete="off" class="layui-input"></td>
 					    </tr>
 					    <tr>
 					      <td class="td_title">创建日期</td>

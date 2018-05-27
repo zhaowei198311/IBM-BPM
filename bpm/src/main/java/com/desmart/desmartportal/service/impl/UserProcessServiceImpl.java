@@ -224,9 +224,9 @@ public class UserProcessServiceImpl implements UserProcessService {
 			paramMap.put("categoryName", categoryName);
 			
 			String userId = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-			paramMap.put("userId", userId);
+			paramMap.put("userId", userId); // 创建人id
 			SysUser sysUser = sysUserMapper.queryByPrimaryKey(userId);
-			paramMap.put("userName", sysUser.getUserName());
+			paramMap.put("userName", sysUser.getUserName()); // 创建人全名
 			SysUserDepartment sysUserDepartment = new SysUserDepartment();
 			sysUserDepartment.setUserUid(userId);
 			List<SysUserDepartment> department = sysUserDepartmentMapper.selectAll(sysUserDepartment);

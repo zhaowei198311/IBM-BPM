@@ -3,7 +3,9 @@ package com.desmart.desmartbpm.service;
 import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 
 public interface DhStepService {
@@ -57,5 +59,13 @@ public interface DhStepService {
      * @param dhStep
      * @return
      */
-    DhStep getNextStepOfCurrStep(DhStep dhStep); 
-}
+    DhStep getNextStepOfCurrStep(DhStep dhStep);
+    
+    /**
+     * 根据step关键字，获得指定环节的步骤，按步骤序号正序排序
+     * @param bpmActivityMeta
+     * @param stepBusinessKey
+     * @return
+     */
+    List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey);
+}    

@@ -21,6 +21,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
@@ -255,5 +256,16 @@ public class DhStepServiceImpl implements DhStepService {
     private int generateStepSort(DhStep dhStep) {
         return dhStepMapper.getMaxStepSort(dhStep) + 1;
     }
+
+    @Override
+    public List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
+        DhStep stepSelective = new DhStep(bpmActivityMeta.getProAppId(), bpmActivityMeta.getBpdId(), bpmActivityMeta.getSnapshotId());
+        stepSelective.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+        stepSelective.setStepBusinessKey(stepBusinessKey);
+        PageHelper.orderBy("STEP_SORT");
+        return dhStepMapper.listBySelective(stepSelective);
+    }
+   
+    
     
 }

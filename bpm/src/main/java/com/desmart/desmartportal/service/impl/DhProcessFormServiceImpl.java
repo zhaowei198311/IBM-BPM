@@ -59,7 +59,7 @@ public class DhProcessFormServiceImpl implements DhProcessFormService{
 	@Override
 	public Map<String,Object> queryProcessForm(String proAppId, String proUid, String verUid) {
 		log.info("获取表单 Start...");
-		Map<String,Object> StepMap = new HashMap<>();
+		Map<String,Object> stepMap = new HashMap<>();
 		try {
 			// 找到第一个环节的 流程bpdId 和 主键id
 			ServerResponse<BpmActivityMeta> bpmActivityMeta = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, verUid);
@@ -72,23 +72,26 @@ public class DhProcessFormServiceImpl implements DhProcessFormService{
 			DhActivityConf  dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
 			log.info("流程配置主键id:"+dhActivityConf.getActcUid());
 			// 通过activityBpdId 找到步骤
-			DhStep dhStep = new DhStep();
-			dhStep.setActivityBpdId(activityBpdId);
-			List<DhStep> dhStepList = dhStepMapper.listBySelective(dhStep);
-			for (DhStep dhStep2 : dhStepList) {
-				log.info("表单id:"+dhStep2.getStepObjectUid());
-				StepMap.put("activityBpdId", activityBpdId);
-				StepMap.put("activityId", activityId);
-				StepMap.put("actcUid", dhActivityConf.getActcUid());
-				StepMap.put("formId", dhStep2.getStepObjectUid());
-				return StepMap;
+			DhStep stepSelective = new DhStep();
+			stepSelective.setActivityBpdId(activityBpdId);
+			stepSelective.setStepType(DhStep.TYPE_FORM);
+			List<DhStep> dhStepList = dhStepMapper.listBySelective(stepSelective);
+			if (dhStepList.size() == 0) {
+			    
 			}
+			DhStep currentStep = dhStepList.get(0);
+			log.info("表单id:"+currentStep.getStepObjectUid());
+			stepMap.put("activityBpdId", activityBpdId);
+			stepMap.put("activityId", activityId);
+			stepMap.put("actcUid", dhActivityConf.getActcUid());
+			stepMap.put("formId", currentStep.getStepObjectUid());
+			stepMap.put("stepId", currentStep.getStepUid());
+			return stepMap;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		log.info("获取表单 End...");
-		return StepMap;
 	}
 
 }
