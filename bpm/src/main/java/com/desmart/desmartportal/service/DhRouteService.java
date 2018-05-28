@@ -10,10 +10,12 @@ public interface DhRouteService {
 	
 	/**
 	 * 查询获取环节处理人
-	 * @param processInstance 流程实例对象
-	 * @param pageNum 
-	 * @param pageSize
-	 * @return List<DhProcessInstance> 集合
+	 * @param insUid 流程实例id
+	 * @param  activityId 当前环节id
+	 * @param  departNo 部门
+	 * @param formData 表单数据
+	 * @param 	companyNum 公司id
+	 * @return  ServerResponse<List<BpmActivityMeta>>
 	 */
 	ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo, String companyNum, String formData);
 	
