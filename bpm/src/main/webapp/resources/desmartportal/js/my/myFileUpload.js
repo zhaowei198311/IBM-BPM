@@ -16,6 +16,8 @@ $(function(){
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
+		  var re = new RegExp(",","g");
+		  var formatStr = fileFormat.replace(re,"|");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
 			  var maxFileCount = $(".hidden-value").find(".maxFileCount").val();
 			  var fileFormat = $(".hidden-value").find(".fileFormat").val();*/
@@ -183,8 +185,6 @@ $(function(){
 var maxFileSize = "";
 var maxFileCount = "";
 var fileFormat = "";
-var re = new RegExp(",","g");
-var formatStr = fileFormat.replace(re,"|");
 function loadGlobalConfig(){
 	$.ajax({
 		url:common.getPath()+"/accessoryFileUpload/loadGlobalConfig.do",
@@ -306,6 +306,8 @@ function loadFileList(){
 		    var taskId = $("#activityId").val();
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
+		    var re = new RegExp(",","g");
+		    var formatStr = fileFormat.replace(re,"|");
 			layui.use('upload', function(){
 				  var $ = layui.jquery
 				  ,upload = layui.upload;
