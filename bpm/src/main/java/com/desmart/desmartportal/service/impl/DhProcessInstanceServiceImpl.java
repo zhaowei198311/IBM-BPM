@@ -463,27 +463,35 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         List<SysUserDepartment> userDepartmentList = sysUserDepartmentService.selectAll(sysUserDepartment);
         resultMap.put("userDepartmentList", userDepartmentList);
         
-        DhProcessDefinition processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
-        if (processDefintion == null) {
-            return ServerResponse.createByErrorMessage("找不到可供发起的流程");
-        }
-        resultMap.put("processDefinition", processDefintion);
         
+        DhProcessDefinition processDefintion = null;
         DhProcessInstance processInstance = null;
-        // 是否是草稿箱转来的
+        
         if (StringUtils.isBlank(insUid)) {
+            // 不是草稿箱来的
+            processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
+            if (processDefintion == null) {
+                return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
+            }
         	resultMap.put("formData", "");
             processInstance = this.generateDraftDefinition(processDefintion);
         } else {
+            // 是草稿箱来的
             processInstance = this.getByInsUid(insUid);
+            if (processInstance == null) {
+                return ServerResponse.createByErrorMessage("草稿中的流程实例不存在");
+            }
+            processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(processInstance.getProAppId(), processInstance.getProUid());
+            if (processDefintion == null || processDefintion.getProVerUid().equals(processInstance.getProVerUid())) {
+                return ServerResponse.createByErrorMessage("不能用此草稿版本发起流程");
+            }
             DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
             JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
             String formData = jsonObj.getString("formData");
             resultMap.put("formData", formData);
-            if (processInstance == null) {
-                return ServerResponse.createByErrorMessage("草稿中的流程实例不存在");
-            }
         }
+        
+        resultMap.put("processDefinition", processDefintion);
         
         ServerResponse<BpmActivityMeta> metaResponse = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, processDefintion.getProVerUid());
         if (!metaResponse.isSuccess()) {
@@ -497,6 +505,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 获得默认步骤的列表
         List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, "default");
         DhStep formStep = getFirstFormStepOfStepList(steps);
+        if (formStep == null) {
+            return ServerResponse.createByErrorMessage("找不到表单步骤");
+        }
         resultMap.put("dhStep", formStep);
         
         // 获得表单文件内容
