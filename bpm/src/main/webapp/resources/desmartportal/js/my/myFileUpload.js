@@ -295,7 +295,7 @@ function loadFileList(){
 		      		"value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
-		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
+		      		" value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
 		      +"</td></tr>"; 
 			tagTbody.append(info);
 		}
@@ -471,14 +471,16 @@ function deleteAccessoryFile(a){
 		  btn: ['确定', '取消'] 
 		}, function(index, layero){
 	var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
-    var appDocUid = $(a).val();
+    var appDocIdCard = $(a).val();
+    var appDocUid = $(a).data("appdocuid");
     	$.ajax({
     		url : "accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
     		dataType : 'json',
     		data : {
-			appDocFileUrl:appDocFileUrl,
-			appDocUid:appDocUid
+			"appDocFileUrl":appDocFileUrl,
+			"appDocUid":appDocUid,
+			"appDocIdCard":appDocIdCard
 			},
 		success : function(data) {
 			loadFileList();

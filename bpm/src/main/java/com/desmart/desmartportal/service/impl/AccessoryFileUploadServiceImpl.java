@@ -187,20 +187,26 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
-		String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
+		/*String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
 	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
 	    		,  dhInstanceDocument.getAppDocFileUrl().length());
-	    SFTPUtil sftp = new SFTPUtil();
+	    SFTPUtil sftp = new SFTPUtil();*/
 	    
 	    //int count = eleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
 	    //逻辑删除--批量修改方法
 	    List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
+	    DhInstanceDocument selectCondition = new DhInstanceDocument();
+	    selectCondition.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
+	    selectCondition.setAppDocIsHistory(Const.Boolean.TRUE);
+	    list = accessoryFileuploadMapper.loadFileListByCondition(selectCondition);//得到当前标识的历史版本文件，将其也一并修改
 	    //dhInstanceDocument.setAppDocFileUrl("null");
-	    dhInstanceDocument.setAppDocStatus(Const.FileStatus.DEL);//del表示删除
-	    dhInstanceDocument.setAppDocUpdateDate(DateUtil.format(new Date()));
-	    String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-	    dhInstanceDocument.setUpdateUserUid(creator);
 	    list.add(dhInstanceDocument);
+	    String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+	    for (DhInstanceDocument dhInstanceDocument2 : list) {
+	    	dhInstanceDocument2.setAppDocStatus(Const.FileStatus.DEL);//del表示删除
+	    	dhInstanceDocument2.setAppDocUpdateDate(DateUtil.format(new Date()));
+	    	dhInstanceDocument2.setUpdateUserUid(creator);
+		}
 	    int count = updateFileByKeys(list);
 	    /*if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
 	    {*/
