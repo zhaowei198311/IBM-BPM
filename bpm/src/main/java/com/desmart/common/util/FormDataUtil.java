@@ -32,8 +32,9 @@ public class FormDataUtil {
 	        Object combinedObjVal; // 接受新的json对象
 	        for(Iterator var3 = oldObj.keySet().iterator(); var3.hasNext(); newObj.put(key.toString(), combinedObjVal)) {
 	            key = var3.next();
-	            JSONObject newObjVal = oldObj.getJSONObject(key.toString());
-	            JSONObject oldObjVal = newObj.getJSONObject(key.toString());
+	            //optJSONObject(key.toString());
+	            JSONObject newObjVal = oldObj.getJSONObject("");
+	            JSONObject oldObjVal = newObj.getJSONObject("");
 	            combinedObjVal = null;
 	            if (newObjVal != null && oldObjVal != null) {
 	                combinedObjVal = formDataCombine(oldObj, newObj);
@@ -41,6 +42,7 @@ public class FormDataUtil {
 	                combinedObjVal = oldObj.get(key.toString());
 	            }
 	        }
+	        System.err.println(newObj);
 	        return newObj;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -58,6 +60,7 @@ public class FormDataUtil {
     	json1.put("sex", "asdasdas");
     	json1.put("hobby", array1);
     	json1.put("1", "a");
+    	json1.put("2", "b");
     	
     	JSONArray array2 = new JSONArray();
     	array2.add("啊啊啊");
