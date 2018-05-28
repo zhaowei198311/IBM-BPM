@@ -332,16 +332,14 @@ public class DatRuleServiceImpl implements DatRuleService {
 		List<BpmActivityMeta> list = 
 				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(proAppId, snapshotId, bpdId, activityType);
 		List<Map<String, Object>> rightDetailsList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		if(list!=null&&list.size()>0) {
-			Map<String, Object> map = new HashMap<String, Object>();
 			BpmActivityMeta bpmActivityMeta = list.get(0);//默认展示第一个
 			rightDetailsList = loadRightDetailsList(bpmActivityMeta.getActivityId());
 			map.put("leftMenus", list);
 			map.put("rightDetailsList", rightDetailsList);
-			return ServerResponse.createBySuccess(map);
-		}else {
-			return ServerResponse.createByErrorMessage("拉取网关环节列表失败！");
 		}
+		return ServerResponse.createBySuccess(map);
 	}
 	@Override
 	public List<Map<String,Object>> loadRightDetailsList(String activityId){
