@@ -370,25 +370,28 @@ function cancelClick(obj){
 // 批量下载触发事件
 
 function batchDown(){ 
-		var url = "accessoryFileUpload/batchFileDown.do"; 
+		var url = common.getPath()+"/accessoryFileUpload/bachFileDown.do"; 
 		var trNodes= $(".layui-table.upload-file-table").find("tbody").find("tr");
-		trNodes.each(function (){ 
-		var appDocFileName = tdNodes.find("td").eq(1).text(); 
-		var appDocFileUrl =tdNodes.find("td").eq(0).find("input[name='appDocFileUrl']").val();
-		var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl}; 
-		});
+		var params = new Array();
+		for (var i = 0; i < trNodes.length; i++) {
+			var appDocFileName = $(trNodes[i]).find("td").eq(1).text(); 
+			var appDocFileUrl =$(trNodes[i]).find("td").eq(0).find("input[name='appDocFileUrl']").val();
+			var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl};
+			params.push(info);
+		}
+		batchPost(url,params);
  };
 
 
 // 单个下载触发事件
 function singleDown(a){
-  var url = "accessoryFileUpload/singleFileDown.do";
+  var url = common.getPath()+"/accessoryFileUpload/singleFileDown.do";
   var appDocFileName = $(a).parent().parent().find("td").eq(1).text();
   var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
   post(url,{appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl});
 };
 
-// 文件下载
+// 文件下载(单个下载)
 function post(URL, PARAMS) { 
 	var temp_form = document.createElement("form");      
 	temp_form .action = URL;      
@@ -402,11 +405,59 @@ function post(URL, PARAMS) {
     temp_form .appendChild(opt);      
 	}      
 	document.body.appendChild(temp_form);      
-	temp_form .submit();     
+	temp_form .submit();   
+	temp_form.remove();
+} 
+function batchPost(URL, PARAMS) { 
+	var temp_form = document.createElement("form");      
+	temp_form .action = URL;      
+	// temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+	temp_form .method = "post";      
+	temp_form .style.display = "none";
+	for (var i = 0; i < PARAMS.length; i++) {
+	for (var x in PARAMS[i]) { 
+	var opt = document.createElement("textarea");      
+    opt.name = x;      
+    opt.value = PARAMS[i][x];      
+    temp_form .appendChild(opt);      
+	}   
+	}
+	document.body.appendChild(temp_form);      
+	temp_form .submit();
+	temp_form.remove();
 } 
 
 //显示历史版本附件
 function showHistoryFile(a){
+	var appDocIdCard = $(a).val();
+	$.ajax({
+		url : "accessoryFileUpload/loadHistoryFile.do",
+		type : 'POST',
+		dataType : 'json',
+		data : {
+			"appDocIdCard":appDocIdCard
+		},
+		success : function(result) {
+			var tbody = $("#showHistoryModal").find(".showHistoryList");
+			tbody.empty();
+			for (var i = 0; i < result.data.length; i++) {
+				var info = "<tr><td>"
+					+"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
+					+result.data[i].docVersion+"</td>"
+					+"<td>"+result.data[i].appDocFileName+"</td>"
+					+"<td>"+result.data[i].appUserName+"</td>"
+					+"<td>"+result.data[i].updateUserName+"</td>"
+					+"<td>"+datetimeFormat_1(result.data[i].appDocUpdateDate)+"</td>"
+					+"<td><button onclick='singleDown(this)'" 
+					+" class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+					+"</td></tr>";
+					tbody.append(info);
+			}
+		},
+		error : function(data) {
+			layer.alert(data.msg);
+		}
+	});
 	$("#showHistoryModal").css("display","block");
 }
 //隐藏历史版本附件模态框
