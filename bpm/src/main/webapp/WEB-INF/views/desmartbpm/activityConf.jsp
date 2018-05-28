@@ -167,7 +167,7 @@
                                                             <div class="layui-form-item " id="chooseableHandleUser_div" style="display:none;">
                                                                 <label class="layui-form-label">人员</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
+		                                                           <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
                                                                     <input type="text" name="chooseableHandleUser_view"  id="chooseableHandleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i class="layui-icon choose_user" id="choose_able_handle_user" title="选择人员">&#xe612;</i>  
                                                                 </div>
