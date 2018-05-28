@@ -10,20 +10,6 @@ $(function(){
 //渲染页面的方法
 function drawPage() {
     var tableHead = '<table class="layui-table form-sub">' +
-        '<colgroup>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '<col>' +
-        '</colgroup>' +
         '<tbody>';
     var formHtml = tableHead;
     view = $(".container-fluid");
@@ -129,7 +115,7 @@ function drawPage() {
                         }
 
                         if (!isNaN(labelDivCol)) {
-                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width: 144px">' + labelHtml + '</td>';
+                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
                         }
 
                         if (!isNaN(subDivCol)) {
