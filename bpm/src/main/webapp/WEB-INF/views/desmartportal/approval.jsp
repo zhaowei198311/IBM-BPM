@@ -646,11 +646,17 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 var view = $(".container-fluid");
 var form = null;
 $(function(){
+	var insData = $("#insData").text();
 	layui.use(['form'], function () {
         form = layui.form;
 	});
-	console.log($("#insData").text());
-	getdata($("#insData").text());
+	console.log(insData);
+	alert(insData)
+	var insDataFromDb = JSON.parse(insData);
+	var formData = insDataFromDb.formData;
+	var str = JSON.stringify(formData);
+	alert(str)
+	getdata(str);
 });
 
 function getdata(jsonStr){
