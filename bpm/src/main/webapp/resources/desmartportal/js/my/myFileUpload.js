@@ -290,8 +290,9 @@ function loadFileList(){
 		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
 		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;'" +
 		      		"value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>更新附件</button>"
-		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
-		      		"value = '"+result.data[i].appDocUid+"'>查看历史版本</button>"
+		      +"<button onclick = 'showHistoryFile(this)'" +
+		      		" class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
+		      		"value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocUid+"'>删除</button>"
@@ -365,16 +366,17 @@ function cancelClick(obj){
 }
 
 // 批量下载触发事件
-/*
- * function batchDown(){ var url = "accessoryFileUpload/batchFileDown.do"; var
- * checkedNodes=
- * $(".layui-table.upload-file-table").find(".file-check:checked");
- * checkedNodes.each(function (){ var appDocFileName =
- * $(this).parent().parent().find("td").eq(1).text(); var appDocFileUrl =
- * $(this).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
- * var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl}; }); //
- * post(url,); };
- */
+
+function batchDown(){ 
+		var url = "accessoryFileUpload/batchFileDown.do"; 
+		var trNodes= $(".layui-table.upload-file-table").find("tbody").find("tr");
+		trNodes.each(function (){ 
+		var appDocFileName = tdNodes.find("td").eq(1).text(); 
+		var appDocFileUrl =tdNodes.find("td").eq(0).find("input[name='appDocFileUrl']").val();
+		var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl}; 
+		});
+ };
+
 
 // 单个下载触发事件
 function singleDown(a){
@@ -400,6 +402,15 @@ function post(URL, PARAMS) {
 	document.body.appendChild(temp_form);      
 	temp_form .submit();     
 } 
+
+//显示历史版本附件
+function showHistoryFile(a){
+	$("#showHistoryModal").css("display","block");
+}
+//隐藏历史版本附件模态框
+function hideHistoryFile(){
+	$("#showHistoryModal").css("display","none");
+}
 
 // 删除附件触发事件
 function deleteAccessoryFile(a){

@@ -349,6 +349,36 @@
 				onclick="cancelClick(this)">取消</button>
 		</div>
 	</div>
+	<div id="showHistoryModal" class="display_content_accessory_file">
+	<div class="top">历史版本</div>
+		<div class="upload_overflow_middle">
+			<div class="layui-upload">
+				<div class="layui-upload-list">
+					<table class="layui-table">
+						<colgroup>
+							<col width="5%">
+							<col width="20%">
+							<col width="10%">
+							<col width="10%">
+							<col width="20%">
+							<col width="10%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>文件版本</th>
+								<th>文件名</th>
+								<th>上传人</th>
+								<th>修改人</th>
+								<th>修改时间</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="showHistoryList"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 <script type="text/javascript"
