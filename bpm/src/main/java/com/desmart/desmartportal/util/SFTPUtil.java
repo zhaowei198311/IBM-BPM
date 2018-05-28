@@ -1,5 +1,6 @@
 package com.desmart.desmartportal.util;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -201,14 +202,19 @@ public class SFTPUtil {
      * @param directory 上传到该目录 
      * @param filename 文件名
      */
-    public InputStream getInputStream(BpmGlobalConfig gcfg,String directory,String filename) {
+    public InputStream getBatchDown(BpmGlobalConfig gcfg,String directory,String filename,OutputStream outputStream) {
     	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	try {
 			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(filename);
-			/**
-			 * 退出连接，流关闭。。。
-			 */
+			BufferedInputStream bis = new BufferedInputStream(input);  
+			 byte[] buffer = new byte[1024];  
+		        int len = 0;  
+		        while((len = bis.read(buffer)) != -1) {  
+		        	outputStream.write(buffer, 0, len);  
+		        }
+		    bis.close();
+		    input.close();
 			logout();
 	    	return input;
 		} catch (Exception e) {
@@ -261,6 +267,30 @@ public class SFTPUtil {
 		        } while (i >= 0);
 			    input.close();
 			    logout();
+		} catch (Exception e) {
+			logout();
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * 将文件批量下载到outputstream
+     * @param gcfg
+     * @param directory
+     * @param filename
+     * @param outputStream
+     * @param flag 标识是否保持连接   false表示退出连接
+     * @return
+     */
+    public void getBatchOututStream(BpmGlobalConfig gcfg,String directory,String filename
+    		,OutputStream outputStream,boolean flag) {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
+    	try {
+			sftp.cd(gcfg.getSftpPath()+directory);
+			sftp.get(filename, outputStream);
+			if(flag==false) {
+			logout();
+			}
 		} catch (Exception e) {
 			logout();
 			e.printStackTrace();
