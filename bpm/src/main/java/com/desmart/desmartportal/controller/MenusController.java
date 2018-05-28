@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
@@ -44,8 +45,10 @@ import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
 
 /**
@@ -64,38 +67,19 @@ import com.desmart.desmartsystem.service.SysUserDepartmentService;
 public class MenusController {
 	
 	@Autowired
-	private DhProcessFormService dhProcessFormService;
-	
-	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
 	
 	@Autowired
 	private MenusService menusService;
 	
 	@Autowired
-	private SysUserMapper sysUserMapper;
-	
-	@Autowired
 	private DhDraftsService dhDraftsService;
-
-	@Autowired
-	private UserProcessService userProcessService;
 	
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
 	
 	@Autowired
-	private DhProcessDefinitionService dhProcessDefinitionService;
-	
-	@Autowired
-	private DhStepService dhStepService;
-	
-	@Autowired
-	private BpmFormManageService bpmFormManageService;
-	
-	@Autowired
-	private SysUserDepartmentService sysUserDepartmentService;
-	
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -181,22 +165,10 @@ public class MenusController {
 	
 	
 	@RequestMapping("draftsInfo")
-	public ModelAndView draftsInfo(@RequestParam(value = "proUid",required = false) String proUid,
-			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
+	public ModelAndView draftsInfo(@RequestParam(value = "insUid",required = false) String insUid,
 			@RequestParam(value = "dfsId",required = false) String dfsId) {
 		ModelAndView mv = new ModelAndView("desmartportal/drafts_info");
-		mv.addObject("proUid",proUid);
-		mv.addObject("proAppId",proAppId);
-		mv.addObject("verUid",verUid);
-		mv.addObject("dfsId",dfsId);
-		// 查询草稿数据
-		DhDrafts drafts = dhDraftsService.selectBydfsId(dfsId);
-		String dfsdata = drafts.getDfsData();
-		mv.addObject("dfsData", dfsdata);
-		System.err.println(dfsdata);
-		// 表单详细信息设置
-		Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
-		mv.addObject("formId", resultMap.get("formId"));
+		mv.addAllObjects(dhDraftsService.selectDraftsAndFromInfo(dfsId, insUid));
 		return mv;
 	}
 	
@@ -216,5 +188,11 @@ public class MenusController {
 		return mv;
 	}
 	
+	@RequestMapping("test")
+	public void test() {
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        bpmProcessUtil.rejectProcess("661", "bpdid:9ba2e5f1271c68f2:-1a57422b:163382b7a4a:-7ff3", "00011178");
+	}
 
 }

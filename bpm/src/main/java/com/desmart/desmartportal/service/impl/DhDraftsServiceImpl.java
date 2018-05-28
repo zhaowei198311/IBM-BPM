@@ -3,7 +3,9 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -14,7 +16,10 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.entity.DhDrafts;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
+import com.desmart.desmartportal.service.DhProcessFormService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -29,6 +34,12 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
+	
+	@Autowired
+	private DhProcessFormService dhProcessFormService;
+	
+	@Autowired
+	private DhProcessInstanceService dhProcessInstanceService;
 	
 	private Logger log = Logger.getLogger(DhDraftsServiceImpl.class);
 	
@@ -110,6 +121,27 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		}
 		log.info("根据草稿dfsid查询草稿数据结束...");
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> selectDraftsAndFromInfo(String dfsId, String insUid) {
+		log.info("根据草稿id和流程id查询数据开始...");
+		Map<String, Object> resultMap = new HashMap<>();
+		try {
+			// 查询草稿数据
+			DhDrafts drafts = dhDraftsMapper.selectBydfsId(dfsId);
+			resultMap.put("drafts", drafts);
+			// 表单详细信息设置
+			DhProcessInstance dhProcessInstance = dhProcessInstanceService.selectByPrimaryKey(insUid);
+			Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
+			resultMap.put("formMap", formMap);
+			log.info("根据草稿id和流程id查询数据结束...");	
+			return resultMap;
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("查询异常");
+			return null;
+		}
 	}
 	
 }

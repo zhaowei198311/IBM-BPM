@@ -77,12 +77,10 @@
 </style>
 </head>
 <body>
-	<div class="search_area top_btn">
-		<input id="proUid" value="${proUid}" style="display: none;"> <input
-			id="proAppId" value="${proAppId}" style="display: none;"> <input
-			id="verUid" value="${verUid}" style="display: none;"> <input
-			id="dfsId" value="${dfsId}" style="display: none;"> <span
-			id="dfsData" value='${dfsData}'></span> <input id="formId"
+	<div class="search_area top_btn"> <input
+			id="insUid" value="${drafts.insUid}" style="display: none;"> <input
+			id="dfsId" value="${drafts.dfsId}" style="display: none;"> <span
+			id="dfsData" value='${drafts.dfsData}'></span> <input id="formId"
 			value="${formId}" style="display: none;"><span
 			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 		<span style="float: right; padding-right: 20px;">

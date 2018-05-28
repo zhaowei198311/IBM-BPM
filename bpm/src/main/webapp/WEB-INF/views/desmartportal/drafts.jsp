@@ -160,9 +160,7 @@
 					+ showDate
 					+ '</td>'
 					+ '<td>'
-					+ "<i class='layui-icon'  title='查看详情'  onclick=\"showinfo('"
-					+ meta.dfsId + "','" + meta.proUid + "','" + meta.proVerUid
-					+ "','" + meta.proAppId + "')\">&#xe60a;</i>"
+					+ "<i class='layui-icon'  title='查看详情'  onclick=\"showinfo('" + meta.proUid + "','" + meta.proAppId + "','" + meta.insUid + "')\">&#xe60a;</i>"
 					+ '<i class="layui-icon"  title="删除草稿"  onclick=del("'
 					+ meta.dfsId + '") >&#xe640;</i>' + '</td>' + '</tr>';
 		}
@@ -230,9 +228,10 @@
 		});
 	}
 
-	function showinfo(dfsId, proUid,proVerUid,proAppId) {
-		window.location.href = 'menus/draftsInfo?proUid=' + proUid
-		+ '&proAppId=' + proAppId + '&verUid=' + proVerUid + '&dfsId=' + dfsId
+	function showinfo(proUid,proAppId,insUid) {
+		alert(proUid+"~~"+proAppId+"~~"+insUid)
+		window.location.href = 'menus/startProcess?proUid=' + ""
+		+ '&proAppId=' + "" + '&insUid=' + insUid
 	}
 
 	function cancel() {
