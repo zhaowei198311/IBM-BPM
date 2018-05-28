@@ -307,7 +307,8 @@ function downloadLayoutSrc() {
 			["onclick"],
 			["onchange"],
 			["onfocus"],
-			["onkeypress"]
+			["onkeypress"],
+			["value"]
 		]
 	});
 	$("#download-layout").html(formatSrc);
