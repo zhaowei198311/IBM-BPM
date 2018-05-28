@@ -314,7 +314,6 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
 
 	@Override
 	public List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine) {
-		// TODO Auto-generated method stub
 		return dhGatewayLineMapper.getGateWayLinesByCondition(dhGatewayLine);
 	}
 }

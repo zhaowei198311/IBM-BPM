@@ -167,7 +167,9 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return ServerResponse.createBySuccess(getwayMetaList);
     }
     
-    public List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta) {
+    /*
+     public List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta) {
+     
         String activityTo = bpmActivityMeta.getActivityTo();
         List<BpmActivityMeta> normal = new ArrayList<>();
         
@@ -202,7 +204,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
 
         return DataListUtils.cloneList(normal, BpmActivityMeta.class);
        
-    }
+    }*/
     
     public List<BpmActivityMeta> getBpmActivityMeta(String activityBpdId, String snapshotId, String bpdId){
         BpmActivityMeta metaSelective = new BpmActivityMeta();
