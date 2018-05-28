@@ -147,7 +147,8 @@ h4 {
 				type : 'post',
 				dataType : 'text',
 				data : {
-					
+					username : $("#LAY-user-login-username").val(),
+					password : $("#LAY-user-login-password").val()
 				},
 				success : function(data) {
 					if (data == 1) {
