@@ -482,9 +482,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 return ServerResponse.createByErrorMessage("草稿中的流程实例不存在");
             }
             processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(processInstance.getProAppId(), processInstance.getProUid());
-            if (processDefintion == null || processDefintion.getProVerUid().equals(processInstance.getProVerUid())) {
+            if (processDefintion == null || !processDefintion.getProVerUid().equals(processInstance.getProVerUid())) {
                 return ServerResponse.createByErrorMessage("不能用此草稿版本发起流程");
             }
+            proAppId = processInstance.getProAppId();
+            proUid = processInstance.getProUid();
             DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
             JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
             String formData = jsonObj.getString("formData");
