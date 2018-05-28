@@ -1,8 +1,11 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +17,14 @@ import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -58,6 +63,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	
 	@Autowired
 	private DhGatewayLineService dhGatewayLineService;
+	@Autowired
+	private DatRuleConditionService datRuleConditionService;
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo,
@@ -183,6 +190,21 @@ public class DhRouteServiceImpl implements DhRouteService {
             DhGatewayLine lineSelective = new DhGatewayLine();
             lineSelective.setActivityId(gatewayMeta.getActivityId());
             List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
+            // 获得相关的条件
+            List<DatRuleCondition> conditions = datRuleConditionService.getDatruleConditionByActivityId(gatewayMeta.getActivityId());
+            // 获得条件需要的表单中的变量
+            Set<String> needVarNameList = new HashSet<>();
+            Map<String, String> varTypeMap = new HashMap<>();
+            for (DatRuleCondition condition : conditions) {
+                String varname = condition.getLeftValue();
+                if (!needVarNameList.contains(varname)) {
+                    needVarNameList.add(varname);
+                    varTypeMap.put(varname, condition.getRightValueType());
+                }
+            }
+            // 从表单中取出需要的参数
+            
+            
             // 找出这个规则需要的所有表单字段
             // List<String> variableNeeded
             // formData.getString(var)
