@@ -305,26 +305,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("代办任务详细信息查询 开始......");
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
-			/**
+			/*
 			 * 首先要通过任务实例数据信息里的 流程实例id 去查询流程，流程图元素id(activityBpdId) form表单id 然后把这些数据存放map 返回给
 			 * 前台 代办页面
 			 */
 			List<DhTaskInstance> taskList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 			
 			BpmActivityMeta activityMeta=new BpmActivityMeta();
-			String activityId="";
 			
 			for (DhTaskInstance dhTaskInstance : taskList) {
 				// 查询流程
-				resultMap.put("taskId", dhTaskInstance.getTaskId());
+				resultMap.put("taskInstance", dhTaskInstance);
 				DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
 						.selectByPrimaryKey(dhTaskInstance.getInsUid());
-				resultMap.put("proAppId", dhprocessInstance.getProAppId());
-				resultMap.put("proUid", dhprocessInstance.getProUid());
-				resultMap.put("proVerUid", dhprocessInstance.getProVerUid());
-				resultMap.put("insUid", dhprocessInstance.getInsUid());
-				resultMap.put("insId", dhprocessInstance.getInsId());
-				resultMap.put("insData", dhprocessInstance.getInsData());
+				resultMap.put("processInstance", dhprocessInstance);
 				// 查询流程图元素信息
 				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
 				bpmActivityMeta.setBpdId(dhprocessInstance.getProUid());
@@ -337,11 +331,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				List<BpmActivityMeta> activityMetas=bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
 				if(activityMetas!=null&&activityMetas.size()>0) {
 					activityMeta=activityMetas.get(0);
-					activityId=activityMeta.getActivityId();
+					resultMap.put("activityMeta", activityMeta);
 				}
 				resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
-				resultMap.put("activityId", activityId);
-				
 				
 				// 转json
 				String listStr = JsonUtil.obj2String(bpmActivityList);
