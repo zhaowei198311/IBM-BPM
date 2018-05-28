@@ -155,7 +155,7 @@
       BEGIN_DATE, END_DATE, CREATE_DATE, 
       UPDATE_DATE, COMPANYNUMBER, DEPARTMENTNUMBER, 
       ACCOUNT_TYPE,COSTCENTER)
-    values (#{userUid,jdbcType=VARCHAR}, #{userNo,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+    values (#{userUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
       #{userName,jdbcType=VARCHAR}, #{userNameUs,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, 
       #{givenname,jdbcType=VARCHAR}, #{sex,jdbcType=DECIMAL}, #{homeplace,jdbcType=VARCHAR}, 
       #{passport,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, 
@@ -255,8 +255,8 @@
       <if test="managernumber != null" >
         MANAGERNUMBER = #{managernumber,jdbcType=VARCHAR},
       </if>
-      <if test="userLevel != null" >
-        USER_LEVEL = #{userLevel,jdbcType=DECIMAL},
+      <if test="levels != null" >
+        LEVELS = #{levels,jdbcType=DECIMAL},
       </if>
       <if test="ext1 != null" >
         EXT1 = #{ext1,jdbcType=VARCHAR},

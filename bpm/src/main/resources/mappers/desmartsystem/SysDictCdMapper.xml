@@ -8,14 +8,24 @@
 		<result column="DICT_CD" property="dictCd" />
 		<result column="DICT_NM" property="dictNm" />
 		<result column="DICT_TYPE_CD" property="dictTypeCd" />
+		
+		<association property="sysDictTp" javaType="com.desmart.desmartsystem.entity.SysDictTp">
+			<result column="DICT_TYPE_CD"  property="dictTypeCd" />
+			<result column="DICT_TYPE_NM"  property="dictTypeNm" />
+		</association>
+		
 	</resultMap>
-
+	
+	<sql id="Base_Column_List">
+		dc.DC_UID, dc.DICT_CD, dc.DICT_NM, dc.DICT_TYPE_CD,dt.dict_type_nm
+	</sql>
+	
 	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysDictCd"  resultMap="BaseResultMap">
-	 		  		SELECT DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD FROM SYS_DICT_CD
+			SELECT <include refid="Base_Column_List"></include> from sys_dict_cd dc left join sys_dict_tp dt on dc.dict_type_cd = dt.dict_type_cd
 	  </select>
 	
 	  <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysDictCd" >
-	  		INSERT INTO SYS_DICT_CD (DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD) VALUES (#{dcUid}, #{dictCd}, #{dictTypeCd}, #{dictNm})
+	  		INSERT INTO SYS_DICT_CD (DC_UID, DICT_CD, DICT_NM, DICT_TYPE_CD) VALUES (#{dcUid}, #{dictCd}, #{dictNm}, #{dictTypeCd})
 	  		
 	  </insert>
 	  

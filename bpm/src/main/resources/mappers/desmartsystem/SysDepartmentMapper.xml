@@ -56,6 +56,11 @@
 		    UPDATE_DATE,
 		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
 		    from Sys_Department d where 1=1 
+		    
+		    <if test="departNo!=null and departNo!='' ">
+		    	and d.depart_no LIKE CONCAT(CONCAT('%',#{departNo},'%')) 
+		    </if>
+		    
 	 		<if test="departName!= null and departName!='' ">
 	 			and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%') 
 	 		</if>
@@ -63,10 +68,12 @@
 	 		<if test="departParent!= null and departParent!='' ">
 	 			and d.DEPART_PARENT=#{departParent}
 	 		</if>
+	 		
 	 		<!-- 过滤掉指定人下的部门 -->
 	 		<if test="ext1!= null and ext1!=''" > 
 	 			and d.DEPART_UID not in (SELECT	 ud.DEPART_UID FROM SYS_USER_DEPARTMENT ud where ud.USER_UID=#{ext1})
 	 		</if>
+	 		
 	  </select>
 	  
 	  

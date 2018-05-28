@@ -44,6 +44,7 @@
 					    <tr>
 					      <th>序号</th>
 					      <th>角色组名称</th>
+					      <th>描述</th>
 					      <th>状态</th>
 					      <th>操作</th>
 					    </tr> 
@@ -66,6 +67,13 @@
 				    <label class="layui-form-label">角色组名称</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="teamName" required  lay-verify="required" placeholder="请输入角色组名称" autocomplete="off" class="layui-input">
+				    </div>
+				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="teamDesc"  lay-verify="required" placeholder="描述" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
 				  
@@ -103,7 +111,14 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色组名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="teamName" required  lay-verify="required" value="组1" autocomplete="off" class="layui-input">
+				      <input type="text" name="teamName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+				    </div>
+				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">描述</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="teamDesc"  lay-verify="required" placeholder="描述" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
 				  
@@ -331,6 +346,7 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 				str+='<td>' + this.teamName + '</td>';
+				str+='<td>' +isEmpty(this.teamDesc)+ '</td>';
 				if(this.isClosed==1){
 	         		str+='<td>显示</td>';
 	         	}else{

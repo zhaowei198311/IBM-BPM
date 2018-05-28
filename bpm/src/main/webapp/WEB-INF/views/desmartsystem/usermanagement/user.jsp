@@ -118,7 +118,7 @@
 				      <input type="text" name="costCenter" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
-				   <div class="layui-form-item">
+				   <!-- <div class="layui-form-item">
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
 				    	<div class="tree" id="demo"  >
@@ -126,7 +126,7 @@
 							<ul id="treeDemo"  class="ztree" departmetNumber="departmetNumber" style="width:auto;height:130px;"></ul>
 						</div>
 				    </div>
-				  </div>
+				  </div> -->
 			</div>
 			<div class="foot">
 				<input  type="hidden" name="accountType" value="1"/>
@@ -175,12 +175,12 @@
 				      <input type="text" name="costCenter" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
-				  <div class="layui-form-item">
+				  <!-- <div class="layui-form-item">
 				    <label class="layui-form-label">部门名称</label>
 				    <div class="layui-input-block">
 				      <input type="text" name="departName"  id="departName"  required  lay-verify="required" placeholder="请输入部门" autocomplete="off" class="layui-input" />
 				    </div>
-				  </div>
+				  </div> -->
 				  
 				   <!-- <div class="layui-form-item">
 				    <label class="layui-form-label">部门</label>
@@ -195,8 +195,7 @@
 				  </div> -->
 			</div>
 			<div class="foot">
-				<input  type="hidden" name="accountType" value="1"/>
-				<input  type="hidden" name="userUid" />
+				<!-- <input  type="hidden" name="userUid" /> -->
 				<button class="layui-btn layui-btn sure_btn" type="submit"  >确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 			</div>
@@ -251,9 +250,21 @@
 	
 	
 		<div class="display_container">
-				<div class="display_content">
+				<div class="display_content" style="height: auto;">
 					<div class="top">
 						角色绑定
+					</div>
+					
+					<div style="height:50px;">
+						<div class="layui-inline">
+				      <label class="layui-form-label" style="width: auto;">角色名称：</label>
+				      <div class="layui-input-inline">
+				        <input name="roleName" id="jsbd_roleName"  autocomplete="off"  style="display:inline;" class="layui-input" type="tel" />
+				      </div>
+				      <div class="layui-input-inline" style="margin-left: 20px;">
+				        	<button class="layui-btn" onclick="selectByNameRole();">查询</button>
+				      </div>
+				    </div>
 					</div>
 					<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
 						<div class="middle">
@@ -426,8 +437,8 @@
 			
 			var url='sysDepartment/treeDisplay';
 			settings.callback={onClick: onClick}
-			/* treeDisplays(url,['treeDemo','treeDemo1']); */
-			treeDisplays(url,['treeDemo','departmentTree']);
+			/* treeDisplays(url,['treeDemo','departmentTree']); */
+			treeDisplays(url,['treeDemo1']);
 			
 			$(".cancelUserDepartmentBtn").click(function(){
 				$(".display_container1").css("display","none");
@@ -495,11 +506,11 @@
 		}
 		function updatesuccess1(data){
 			if(data.msg=='success'){
-				alert(language.modify_successfully);
+				layer.alert(language.modify_successfully);
 				dgclose(dialogs.userEditDialog);
 				pageBreak();
 			}else{
-				alert(language.modify_failed);
+				layer.alert(language.modify_failed);
 			}
 		}
 		
@@ -559,8 +570,17 @@
 		}
 		
 		
+		function selectByNameRole(){
+			var userUid=$('.userUid').val();
+			var deparUid=$('.departUid').val();
+			
+			var roleName=$('#jsbd_roleName').val();
+			
+			openBusinessRoleBindings(userUid,departUid,roleName);
+		};
+		
 		//打开业务角色绑定
-		function openBusinessRoleBindings(userUid,departUid){
+		function openBusinessRoleBindings(userUid,departUid,roleName){
 			var xz = document.getElementById('checkAll_a');
 			 xz.checked=false;
 			$('.userUid').val(userUid);
@@ -578,6 +598,7 @@
 						type:'POST',
 						url:'sysRole/roleList?roleType=1',
 						dataType:"json",
+						data:{roleName:roleName},
 						cache: false,
 						success: function(data){
 							$(data).each(function(i){

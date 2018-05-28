@@ -52,73 +52,72 @@
 			</div>
 		</div>
 	<div class="display_container">
-		<div class="display_content" style="width:auto;">
+		<div class="display_content" style="height:auto;">
 			<div class="top">
 				新增字典
 			</div>
-			<div class="middle" style="width:auto;" >
-				<form class="layui-form form-horizontal"  method="post"  action="sysDictCd/addSysDictCd" style="margin-top:30px;"  onsubmit="return validateCallback(this,addsuccess);">
-				  <div class="layui-form-item">
+			<form class="layui-form"  method="post"  action="sysDictCd/addSysDictCd"  onsubmit="return validateCallback(this,addsuccess);">
+			<div class="middle" style="height:auto;" >
+				  <div class="layui-form-item" style="margin-top:20px;" >
 				    <label class="layui-form-label">字典代码</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="dictCd" required  lay-verify="required" autocomplete="off" class="layui-input">
+				      <input type="text" name="dictCd" required  lay-verify="required"  autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">字典名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input">
+				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">字典类型</label>
 				    <div class="layui-input-block">
-				    	<select  name="companyCode" class="dictTypeCd"  style="width: 230px;"  lay-search="" ></select>
+				    	<select  name="dictTypeCd" class="dictTypeCd" required  style="width: 230px;" lay-verify="required"   ></select>
 				    </div>
 				  </div>
-				  <input type="hidden" id="submit_add" />
-				</form>
 			</div>
 			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="button" onclick="$('#submit_add').submit();" >确定</button>
+				<button class="layui-btn layui-btn sure_btn" type="submit"  >确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 			</div>
+			</form>
 		</div>
 	</div>	
 	
 	
-	<div class="display_container">
-		<div class="display_content" style="width:auto;">
+	<div class="display_container1">
+		<div class="display_content1" style="height:auto;">
 			<div class="top">
 				编辑字典
 			</div>
-			<div class="middle" style="width:auto;" >
-				<form class="layui-form form-horizontal" action="sysDictCd/updateSysDictCd" method="post"  style="margin-top:30px;"  onsubmit="return validateCallback(this,updatesuccess);">
-				  <div class="layui-form-item">
+			<form class="layui-form" action="sysDictCd/updateSysDictCd" method="post"  onsubmit="return validateCallback(this,updatesuccess);">
+			<div class="middle" style="height:auto;" >
+				  <div class="layui-form-item" style="margin-top:20px;">
 				    <label class="layui-form-label">字典代码</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="dictCd" required  lay-verify="required" autocomplete="off" class="layui-input">
+				      <input type="text" name="dictCd" required  lay-verify="required" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">字典名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input">
+				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">字典类型</label>
 				    <div class="layui-input-block">
-				    	<select  name="companyCode" class="dictTypeCd"  style="width: 230px;"  lay-search="" ></select>
+				    	<select  name="dictTypeCd" class="dictTypeCd"  style="width: 230px;"  lay-search="" ></select>
 				    </div>
 				  </div>
 				  <input type="hidden" name="dcUid"  />
-				</form>
 			</div>
 			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="button" >确定</button>
+				<button class="layui-btn layui-btn sure_btn" type="submit" >确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
 			</div>
+			</form>
 		</div>
 	</div>	
 	
@@ -132,16 +131,17 @@
 			});
 			
 			dictTypeSelect('sysDictTp/allSysDictTp','.dictTypeCd');
+			
 		})
 		//table数据显示
 		function tabledata(dataList,data){
 			 $(dataList).each(function(i){//重新生成
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
-	         	str+='<td>' + this.dcUid + '</td>';
 	         	str+='<td>' + this.dictCd + '</td>';
 	         	str+='<td>' + this.dictNm + '</td>';
-	         	str+='<td>' + this.dictTypeCd + '</td>';
+	         	str+='<td>' + this.sysDictTp.dictTypeCd + '</td>';
+	         	str+='<td>' + this.sysDictTp.dictTypeNm + '</td>';
 		        str+='<td>';       
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysDictCd/getSysDictCd?dcUid='+this.dcUid+'","edit") >&#xe642;</i>';
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysDictCd/deleteSysDictCd?dcUid='+this.dcUid+'","del") >&#xe640;</i>';
@@ -161,10 +161,10 @@
 		        success: function (data) {
 		        	var optionstring="";
 		        	optionstring+="<option value='' ></option>";
-		        	$(data).each(function(){
-		        		optionstring+="<option value=\"" + this.dictTypeCd + "\" >" + this.dictTypeName + "</option>";
-			        	$(select).append(optionstring);
+		        	$(data.dataList).each(function(){
+		        		optionstring+="<option value=\"" + this.dictTypeCd + "\" >" + this.dictTypeNm + "</option>";
 		        	}); 
+		        	$(select).prepend(optionstring);
 		        	/* layui.use('form', function(){
 		    	        var form = layui.form;
 		    	        form.render();

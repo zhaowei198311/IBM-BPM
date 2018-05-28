@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.entity.SysUserDepartment;
+import com.desmart.desmartsystem.service.SysUserDepartmentService;
 import com.desmart.desmartsystem.service.SysUserService;
 import com.desmart.desmartsystem.util.BeanUtil;
 import com.desmart.desmartsystem.util.PagedResult;
@@ -26,6 +28,9 @@ public class SysUserServiceImpl implements SysUserService {
 	@Autowired
 	SysUserMapper sysUserDao;
 	
+	@Autowired
+	SysUserDepartmentService sysUserDepartmentService;
+	
 	@Override
 	public int insert(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
@@ -35,12 +40,16 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
 	public int update(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
-		return sysUserDao.update(entity);
+		return sysUserDao.update(entity); 
 	} 
 
 	@Override
 	public int delete(SysUser entity) throws Exception {
 		// TODO Auto-generated method stub
+		SysUserDepartment userDepartment=new SysUserDepartment();
+		userDepartment.setUserUid(entity.getUserUid());
+		sysUserDepartmentService.delete(userDepartment);
+		
 		return sysUserDao.delete(entity);
 	}
 
