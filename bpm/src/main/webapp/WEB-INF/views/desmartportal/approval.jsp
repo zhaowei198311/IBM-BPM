@@ -349,7 +349,7 @@
 				onclick="cancelClick(this)">取消</button>
 		</div>
 	</div>
-	<div id="showHistoryModal" class="display_content_accessory_file">
+	<div id="showHistoryModal" style="display: none;" class="display_content_accessory_file">
 	<div class="top">历史版本</div>
 		<div class="upload_overflow_middle">
 			<div class="layui-upload">
