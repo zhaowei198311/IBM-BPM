@@ -6,12 +6,10 @@ package com.desmart.common.util;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 import com.alibaba.fastjson.JSONArray;
-import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
-import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.alibaba.fastjson.JSONObject;
 
 /**  
 * <p>Title: 表单数据工具类</p>  
@@ -28,17 +26,17 @@ public class FormDataUtil {
 	 * @param oldObj 旧的json对象
 	 * @param newObj 新的json对象
 	 */
-	public static JSONObject FormDataCombine(JSONObject newObj, JSONObject oldObj) {
+	public static JSONObject formDataCombine(JSONObject newObj, JSONObject oldObj) {
 		try {
 	        Object key;
 	        Object combinedObjVal; // 接受新的json对象
 	        for(Iterator var3 = oldObj.keySet().iterator(); var3.hasNext(); newObj.put(key.toString(), combinedObjVal)) {
 	            key = var3.next();
-	            JSONObject newObjVal = oldObj.optJSONObject(key.toString());
-	            JSONObject oldObjVal = newObj.optJSONObject(key.toString());
+	            JSONObject newObjVal = oldObj.getJSONObject(key.toString());
+	            JSONObject oldObjVal = newObj.getJSONObject(key.toString());
 	            combinedObjVal = null;
 	            if (newObjVal != null && oldObjVal != null) {
-	                combinedObjVal = FormDataCombine(oldObj, newObj);
+	                combinedObjVal = formDataCombine(oldObj, newObj);
 	            } else {
 	                combinedObjVal = oldObj.get(key.toString());
 	            }
@@ -70,6 +68,6 @@ public class FormDataUtil {
     	json2.put("sex", "男的");
     	json2.put("seccccx", "a");
     	json2.put("hobby", array2);
-    	a.FormDataCombine(json1, json2);
+    	a.formDataCombine(json1, json2);
 	}
 }
