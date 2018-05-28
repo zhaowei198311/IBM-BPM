@@ -47,10 +47,10 @@
             line-height: 50px;
             padding-right: 25px;
         }
-        
-        .foot_history_file{
-        	padding-top:5px;
-         	text-align: right;
+
+        .foot_history_file {
+            padding-top: 5px;
+            text-align: right;
             height: 50px;
             line-height: 50px;
             padding-right: 25px;
@@ -74,16 +74,16 @@
 
 <body>
     <div class="search_area top_btn">
-        <input id="activityId" value="${activityId}" style="display: none;">
+        <input id="activityId" value="${activityMeta.activityId}" style="display: none;">
         <input id="formId" value="${formId}" style="display: none;">
-        <input id="proUid" value="${proUid}" style="display: none;">
-        <input id="proAppId" value="${proAppId}" style="display: none;">
-        <input id="proVerUid" value="${proVerUid}" style="display: none;">
-        <input id="insUid" value="${insUid}" style="display: none;">
-        <input id="insId" value="${insId}" style="display: none;">
-        <input id="taskId" value="${taskId}" style="display: none;">
-        <input id="taskUid" value="${taskUid}" style="display: none;">
-        <span id="insData" style="display: none;">${insData}</span>
+        <input id="proUid" value="${dhprocessInstance.proUid}" style="display: none;">
+        <input id="proAppId" value="${dhprocessInstance.proAppId}" style="display: none;">
+        <input id="proVerUid" value="${dhprocessInstance.proVerUid}" style="display: none;">
+        <input id="insUid" value="${dhprocessInstance.insUid}" style="display: none;">
+        <input id="insId" value="${dhprocessInstance.insId}" style="display: none;">
+        <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
+        <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
+        <span id="insData" style="display: none;">${dhprocessInstance.insData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
@@ -366,7 +366,7 @@
                 </div>
             </div>
         </div>
-         <div class="foot_history_file">
+        <div class="foot_history_file">
             <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="hideHistoryFile()">关闭</button>
         </div>
     </div>
