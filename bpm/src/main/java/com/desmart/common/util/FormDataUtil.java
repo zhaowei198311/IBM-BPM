@@ -42,7 +42,7 @@ public class FormDataUtil {
 	                combinedObjVal = oldObj.get(key.toString());
 	            }
 	        }
-	        System.err.println(newObj);
+	        String obj = newObj.toJSONString();
 	        return newObj;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -52,25 +52,28 @@ public class FormDataUtil {
 	
 	public static void main(String[] args) {
 		FormDataUtil a = new FormDataUtil();
-    	JSONObject json1 = new JSONObject();
-    	JSONArray array1 = new JSONArray();
-    	array1.add("asdasd");
-    	array1.add("222");
-    	json1.put("name", "asdasdas");
-    	json1.put("sex", "asdasdas");
-    	json1.put("hobby", array1);
-    	json1.put("1", "a");
-    	json1.put("2", "b");
-    	
-    	JSONArray array2 = new JSONArray();
-    	array2.add("啊啊啊");
-    	array2.add("1111");
-    	
-    	JSONObject json2 = new JSONObject();
-    	json2.put("name", "新的");
-    	json2.put("sex", "男的");
-    	json2.put("seccccx", "a");
-    	json2.put("hobby", array2);
-    	a.formDataCombine(json1, json2);
+		
+		JSONObject formData = new JSONObject();
+        JSONObject oo = new JSONObject();
+        oo.put("value", "cool");
+        formData.put("name", oo);
+        JSONObject oo1 = new JSONObject();
+        oo1.put("value", "220.22");
+        formData.put("salary", oo1);
+        JSONObject oo5 = new JSONObject();
+        oo5.put("value", "220.22");
+        formData.put("zhaowei", oo5);
+        System.out.println("1"+formData.toJSONString());
+        
+		JSONObject formData2 = new JSONObject();
+        JSONObject oo2 = new JSONObject();
+        oo2.put("value", "sadsad");
+        formData2.put("name", oo2);
+        JSONObject oo3 = new JSONObject();
+        oo3.put("value", "cccc");
+        formData2.put("salary", oo3);
+        System.out.println("2"+formData2.toJSONString());
+        
+        a.formDataCombine(formData, formData2);
 	}
 }
