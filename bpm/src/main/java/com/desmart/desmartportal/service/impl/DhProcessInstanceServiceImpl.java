@@ -37,10 +37,12 @@ import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
+import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -98,6 +100,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private BpmFormManageService bpmFormManageService;
 	@Autowired
 	private MenusService menusService;
+	@Autowired
+	private DhDraftsMapper dhDraftsMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -468,9 +472,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         DhProcessInstance processInstance = null;
         // 是否是草稿箱转来的
         if (StringUtils.isBlank(insUid)) {
+        	resultMap.put("formData", "");
             processInstance = this.generateDraftDefinition(processDefintion);
         } else {
             processInstance = this.getByInsUid(insUid);
+            DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
+            JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
+            String formData = jsonObj.getString("formData");
+            resultMap.put("formData", formData);
             if (processInstance == null) {
                 return ServerResponse.createByErrorMessage("草稿中的流程实例不存在");
             }
