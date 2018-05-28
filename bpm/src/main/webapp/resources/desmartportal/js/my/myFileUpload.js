@@ -379,7 +379,11 @@ function batchDown(){
 			var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl};
 			params.push(info);
 		}
+		if(trNodes != undefined && trNodes.length>0){
 		batchPost(url,params);
+		}else{
+			return;
+		}
  };
 
 

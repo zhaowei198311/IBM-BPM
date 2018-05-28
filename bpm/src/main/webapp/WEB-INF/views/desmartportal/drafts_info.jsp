@@ -57,14 +57,22 @@
 	padding-right: 25px;
 }
 
+.foot_history_file {
+	padding-top: 5px;
+	text-align: right;
+	height: 50px;
+	line-height: 50px;
+	padding-right: 25px;
+}
+
 .upload_overflow_middle {
 	height: 80%;
 	width: 96%;
 	border: 1px solid #ccc;
 	position: relative;
 	padding: 0 10px;
-	overflow-y:auto;
-	overflow-x:hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 </style>
 </head>
@@ -107,17 +115,25 @@
 						</th>
 					</tr>
 					<tr>
-					      <td class="td_title">工号</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="00003" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">姓名</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="测试用户" autocomplete="off" class="layui-input"></td>
-					    </tr>
-					    <tr>
-					      <td class="td_title">创建日期</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
-					      <td class="td_title">所属部门</td>
-					      <td><input type="text" name="title" required  lay-verify="required" value="信息部" autocomplete="off" class="layui-input"></td>
-					 </tr>
+						<td class="td_title">工号</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="00003" autocomplete="off"
+							class="layui-input"></td>
+						<td class="td_title">姓名</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="测试用户" autocomplete="off"
+							class="layui-input"></td>
+					</tr>
+					<tr>
+						<td class="td_title">创建日期</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="2018-05-23" autocomplete="off"
+							class="layui-input"></td>
+						<td class="td_title">所属部门</td>
+						<td><input type="text" name="title" required
+							lay-verify="required" value="信息部" autocomplete="off"
+							class="layui-input"></td>
+					</tr>
 				</tbody>
 			</table>
 
@@ -184,6 +200,8 @@
 										<button
 											class="layui-btn layui-btn-primary layui-btn-sm upload"
 											id="upload-file" style="margin-left: 20px;">上传附件</button>
+											<button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " 
+											id="batch-down-file" style="margin-left:20px;">下载全部</button>
 										<div class="hidden-value">
 											<input class="maxFileSize" value="20" type="hidden" /> <input
 												class="maxFileCount" value="10" type="hidden" /> <input
@@ -245,6 +263,41 @@
 		</div>
 	</div>
 
+	<div id="showHistoryModal" style="display: none;"
+		class="display_content_accessory_file">
+		<div class="top">历史版本</div>
+		<div class="upload_overflow_middle">
+			<div class="layui-upload">
+				<div class="layui-upload-list">
+					<table class="layui-table">
+						<colgroup>
+							<col width="10%">
+							<col width="20%">
+							<col width="10%">
+							<col width="10%">
+							<col width="20%">
+							<col width="10%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>文件版本</th>
+								<th>文件名</th>
+								<th>上传人</th>
+								<th>修改人</th>
+								<th>修改时间</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="showHistoryList"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="foot_history_file">
+			<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+				onclick="hideHistoryFile()">关闭</button>
+		</div>
+	</div>
 </body>
 
 </html>
