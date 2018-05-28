@@ -50,8 +50,26 @@ public class FormDataUtil {
 		return null;
 	}
 	
+	/**
+	 * 从formData中取得指定key的值，没有值则返回null
+	 * @param key
+	 * @param formData
+	 * @return
+	 */
+	public static String getStringValue(String key, JSONObject formData) {
+	    JSONObject obj = (JSONObject)formData.get(key);
+	    if (obj != null) {
+	        return obj.getString("value");
+	    } else {
+	        return null;
+	    }
+	    
+	}
+	
 	public static void main(String[] args) {
 		FormDataUtil a = new FormDataUtil();
+
+
 		
 		JSONObject formData = new JSONObject();
         JSONObject oo = new JSONObject();
@@ -75,5 +93,6 @@ public class FormDataUtil {
         System.out.println("2"+formData2.toJSONString());
         
         a.formDataCombine(formData, formData2);
+
 	}
 }
