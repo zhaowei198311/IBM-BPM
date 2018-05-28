@@ -25,12 +25,10 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
 }
 
 $(function () {
-    clientSideInclude(document.getElementById('formId').value);
     selectDepart();
     saveDraftsData();
     saveData();
 })
-function clientSideInclude(){}
 
 /**
  * 选择部门触发的事件
