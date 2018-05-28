@@ -252,11 +252,9 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	        form = layui.form;
 		});
 		console.log(insData);
-		alert(insData)
 		var insDataFromDb = JSON.parse(insData);
 		var formData = insDataFromDb.formData;
 		var str = JSON.stringify(formData);
-		alert(str)
 		getdata(str);
 	});
 
