@@ -21,6 +21,7 @@ import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.util.FreeMarkUtil;
+import com.desmart.desmartportal.util.DateUtil;
 
 @Service
 public class DroolsEngineService {
@@ -59,7 +60,8 @@ public class DroolsEngineService {
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("ruleProcess", datRule.getRuleProcess());
 				param.put("effective", datRule.getStartTime());
-				param.put("expires", datRule.getEndTime());
+				/*param.put("expires", datRule.getEndTime());*/
+				param.put("expires", DateUtil.getDateAddDay(datRule.getStartTime(), 20));
 				param.put("ruleName", "ruleName");
 				String ruleContent = (new FreeMarkUtil()).getHtml("DroolsTemplate.ftl", param);
 				System.out.println("执行的规则:" + ruleContent);
