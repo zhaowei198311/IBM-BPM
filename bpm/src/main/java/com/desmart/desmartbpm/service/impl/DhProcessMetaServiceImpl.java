@@ -25,15 +25,19 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
+import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
+import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhGatewayLineMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
@@ -75,6 +79,12 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     private DhStepMapper dhStepMapper;
     @Autowired
     private BpmFormManageService bpmFormManageService;
+    @Autowired
+    private DhGatewayLineMapper dhGatewayLineMapper;
+    @Autowired
+    private DatRuleMapper datRuleMapper;
+    @Autowired
+    private DatRuleConditionMapper datRuleConditionMapper;
     
     public ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize) {
         pageNum = pageNum == null ? 0 : (pageNum < 0 ? 0 : pageNum - 1);
@@ -360,12 +370,15 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         for (BpmActivityMeta bam : bpmActivityMetaList) {
 			activityIds.add(bam.getActivityId());
 		} 
-        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_ASSIGN表
-        dhActivityAssignMapper.deleteByActivityIds(activityIds);
-        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_CONF表
-        dhActivityConfMapper.deleteByActivityIds(activityIds);
-        // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_REJECT表
-        dhActivityRejectMapper.deleteByActivityIds(activityIds);
+        if (!activityIds.isEmpty()) {
+        	// 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_ASSIGN表
+            dhActivityAssignMapper.deleteByActivityIds(activityIds);
+            // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_CONF表
+            dhActivityConfMapper.deleteByActivityIds(activityIds);
+            // 根据ACTIVITY_ID集合批量删除DH_ACTIVITY_REJECT表
+            dhActivityRejectMapper.deleteByActivityIds(activityIds);
+		}
+        
         // 根据PRO_UID,PRO_APP_ID删除DH_OBJECT_PERMISSION
         DhObjectPermission dhObjectPermission = new DhObjectPermission();
         dhObjectPermission.setProUid(proUid);
@@ -400,13 +413,28 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         dhStepMapper.deleteBySelective(dhStep);
         // 根据PRO_UID,PRO_APP_ID删除BPM_ACTIVITY_META
         bpmActivityMetaMapper.deleteByIds(bpmActivityMeta);
-
-        // DH_PROCESS_META
-        int count = dhProcessMetaMapper.removeByProMetaUid(uid);
-        if (count > 0) {
-        	return ServerResponse.createBySuccess();
+        
+        // 删除流程网关信息
+        List<DhGatewayLine> dhGatewayLineList = dhGatewayLineMapper.listByActivityIds(activityIds);
+        List<String> ruleIds = new ArrayList<>();
+        for (DhGatewayLine dhGatewayLine : dhGatewayLineList) {
+        	if (dhGatewayLine.getRuleId() != null) {
+        		ruleIds.add(dhGatewayLine.getRuleId());
+			}
 		}
-        return ServerResponse.createByError();
+        if (!ruleIds.isEmpty()) {
+        	datRuleMapper.deleteByRuleIds(ruleIds);
+        	datRuleConditionMapper.deleteByRuleIds(ruleIds);
+		}       
+        if (!activityIds.isEmpty()) {
+			dhGatewayLineMapper.deleteByActivityIds(activityIds);
+		}
+        
+        // DH_PROCESS_META
+        dhProcessMetaMapper.removeByProMetaUid(uid);
+
+        return ServerResponse.createBySuccess();
+
     }
 
 

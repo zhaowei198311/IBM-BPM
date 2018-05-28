@@ -59,5 +59,24 @@
     		</foreach>
   		</where>
 	</select>
-
+	
+	<delete id="deleteByRuleIds" parameterType="list">
+		DELETE FROM DAT_RULE
+		<where>
+			RULE_ID IN
+			<foreach collection="list" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</delete>
+	
+	<select id="listByRuleIds" parameterType="list" resultType="com.desmart.desmartbpm.entity.DatRule">
+		SELECT * FROM DAT_RULE
+		<where>
+			RULE_ID IN
+			<foreach collection="list" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</select>
 </mapper>

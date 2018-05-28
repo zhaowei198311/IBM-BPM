@@ -53,4 +53,14 @@ public interface DhGatewayLineMapper {
      * @throws
      */
     List<DhGatewayLine> listByActivityId(String activityId);
+    /**
+     * 
+     * @Title: listByActivityIds  
+     * @Description: 根据activityIds批量查询  
+     * @param @param activityIds
+     * @param @return  
+     * @return List<DhGatewayLine>  
+     * @throws
+     */
+    List<DhGatewayLine> listByActivityIds(List<String> activityIds);
 }

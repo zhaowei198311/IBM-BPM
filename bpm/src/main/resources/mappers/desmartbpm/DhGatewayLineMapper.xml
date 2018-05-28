@@ -155,9 +155,14 @@
    	WHERE ACTIVITY_ID = #{activityId}
    </select>
    
-   <select id="listByIds">
-   	SELECT dgl.*, dr.* FROM DH_GATEWAY_LINE
-   	LEFT JOIN DAT_RULE dr ON dgl.RULE_ID = dr.RULE_ID
-   	WHERE dgl.ACTIVITY_ID = #{activityId} 
+   <select id="listByActivityIds" parameterType="list" 
+   			resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
+   	SELECT * FROM DH_GATEWAY_LINE
+   	<where>
+   		ACTIVITY_ID IN
+	   	<foreach collection="list" item="item" open="(" separator="," close=")">
+	   		#{item}
+	   	</foreach>
+   	</where> 
    </select>
 </mapper>
