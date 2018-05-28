@@ -23,11 +23,7 @@ public class DhDrafts {
 	
 	private String dfsCreator; // 草稿创建人
 	
-	private String proUid; // 流程id
-	
-	private String proVerUid; // 流程版本id
-	
-	private String proAppId; // 流程应用库id
+	private String insUid; // 流程实例id
 
 	/**
 	 * @return the dfsId
@@ -100,49 +96,17 @@ public class DhDrafts {
 	}
 
 	/**
-	 * @return the proUid
+	 * @return the insUid
 	 */
-	public String getProUid() {
-		return proUid;
+	public String getInsUid() {
+		return insUid;
 	}
 
 	/**
-	 * @param proUid the proUid to set
+	 * @param insUid the insUid to set
 	 */
-	public void setProUid(String proUid) {
-		this.proUid = proUid;
-	}
-
-	/**
-	 * @return the proVerUid
-	 */
-	public String getProVerUid() {
-		return proVerUid;
-	}
-
-	/**
-	 * @param proVerUid the proVerUid to set
-	 */
-	public void setProVerUid(String proVerUid) {
-		this.proVerUid = proVerUid;
-	}
-
-	/**
-	 * @return the proAppId
-	 */
-	public String getProAppId() {
-		return proAppId;
-	}
-
-	/**
-	 * @param proAppId the proAppId to set
-	 */
-	public void setProAppId(String proAppId) {
-		this.proAppId = proAppId;
-	}
-	
-	public DhDrafts() {
-		
+	public void setInsUid(String insUid) {
+		this.insUid = insUid;
 	}
 
 	/**
@@ -151,22 +115,17 @@ public class DhDrafts {
 	 * @param dfsData
 	 * @param dfsCreatedate
 	 * @param dfsCreator
-	 * @param proUid
-	 * @param proVerUid
-	 * @param proAppId
+	 * @param insUid
 	 */
-	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator, String proUid,
-			String proVerUid, String proAppId) {
+	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator,
+			String insUid) {
 		super();
 		this.dfsId = dfsId;
 		this.dfsTitle = dfsTitle;
 		this.dfsData = dfsData;
 		this.dfsCreatedate = dfsCreatedate;
 		this.dfsCreator = dfsCreator;
-		this.proUid = proUid;
-		this.proVerUid = proVerUid;
-		this.proAppId = proAppId;
+		this.insUid = insUid;
 	}
-
 	
 }

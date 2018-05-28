@@ -8,14 +8,12 @@
 		<result column="DFS_DATA" 				property="dfsData"/>
 		<result column="DFS_CREATEDATE"			property="dfsCreatedate"/>
 		<result column="DFS_CREATOR" 			property="dfsCreator"/>
-		<result column="PRO_UID" 			property="proUid"/>
-		<result column="PRO_VER_UID" 			property="proVerUid"/>
-		<result column="PRO_APP_ID" 			property="proAppId"/>
+		<result column="INS_UID" 			property="insUid"/>
 	</resultMap>
 	
 	<sql id="Base_Column_List">
 		DFS_ID, DFS_TITLE,DFS_DATA, DFS_CREATEDATE,
-		DFS_CREATOR,PRO_UID,PRO_VER_UID,PRO_APP_ID
+		DFS_CREATOR,INS_UID
 	</sql>
 	
 	<select id="select" resultType="com.desmart.desmartportal.entity.DhDrafts">
@@ -63,9 +61,7 @@
 			#{dfsData},
 			sysdate,
 			#{dfsCreator},
-			#{proUid},
-			#{proVerUid},
-			#{proAppId}
+			#{insUid}
 		)
 	</insert>
 	
