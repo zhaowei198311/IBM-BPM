@@ -44,6 +44,21 @@ function getConductor(id,isSingle,actcCanChooseUser,actcAssignType){
 	});
 	
 	$(function() {
+//		// 驳回
+//		var actcCanReject = $("#actcCanReject").val();
+//		// 传阅
+//		var actcCanTransfer = $("#actcCanTransfer").val();
+//		// 加签
+//		var actcCanAdd = $("#actcCanAdd").val();
+//		if (actcCanReject == false) {
+//			$("#actcCanReject").css("display","none");
+//		}
+//		if (actcCanTransfer == false) {
+//			$("#actcCanTransfer").css("display","none");
+//		}
+//		if (actcCanAdd == false) {
+//			$("#actcCanAdd").css("display","none");
+//		}
 		getAllDataInfo();
 		clientSideInclude(document.getElementById('formId').value);
 		$(".add_row")
