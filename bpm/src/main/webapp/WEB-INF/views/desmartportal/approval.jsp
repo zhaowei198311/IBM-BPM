@@ -344,7 +344,7 @@
                 <div class="layui-upload-list">
                     <table class="layui-table">
                         <colgroup>
-                            <col width="5%">
+                            <col width="10%">
                             <col width="20%">
                             <col width="10%">
                             <col width="10%">
