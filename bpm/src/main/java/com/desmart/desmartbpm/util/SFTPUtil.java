@@ -157,7 +157,7 @@ public class SFTPUtil {
     }
     
     /**
-     * 获得文件的输入流
+     * 获得文件的输入流中的内容
      * @param gcfg 全局变量
      * @param directory 上传到该目录 
      * @param filename 文件名
@@ -190,6 +190,6 @@ public class SFTPUtil {
             bos.write(buffer, 0, len);  
         }  
         bos.close();  
-        return new String(bos.toByteArray(),"utf-8");
+        return new String(bos.toByteArray(),"GBK");
     }  
 }
