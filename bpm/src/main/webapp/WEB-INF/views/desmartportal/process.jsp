@@ -156,7 +156,7 @@
                             </td>
                             <td class="td_title" style="width:120px" colspan="1">所属部门</td>
                             <td class="sub_title" colspan="5">
-                                <select id="creatorInfo" style="border-width:1px;">
+                                <select id="creatorInfo" lay-filter="creatorInfo">
                                     <option value="">请选择部门</option>
                                     <c:forEach items="${userDepartmentList}" var="item">
                                         <option value="${item.departNo},${item.companyCode}">${item.departName}</option>
