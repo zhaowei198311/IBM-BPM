@@ -3,6 +3,9 @@ package com.desmart.desmartbpm.entity;
 import java.util.Date;
 
 public class DatRuleCondition {
+    public static final String RIGHT_VALUE_TYPE_STRING = "String";
+    public static final String RIGHT_VALUE_TYPE_NUMBER = "Number";
+    
 	private String result;//不在表内
 	
 	private String conditionId;//条件id
