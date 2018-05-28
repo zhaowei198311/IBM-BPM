@@ -214,5 +214,11 @@ public class TestController extends BaseWebController {
         return mv;
     }
     
+    @RequestMapping(value = "/testError")
+    public ModelAndView toError() {
+        ModelAndView mv = new ModelAndView("desmartbpm/error");
+        mv.addObject("errorMessage", "流程实例不存在");
+        return mv;
+    }
     
 }

@@ -214,11 +214,12 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         
     
     public Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid) {
-        Map<String, Object> results = new HashMap();
+        Map<String, Object> results = new HashMap<>();
         String activityTo = sourceActivityMeta.getActivityTo();
-        List<BpmActivityMeta> end = new ArrayList();
-        List<BpmActivityMeta> normal = new ArrayList();
-        List<BpmActivityMeta> gateAndData = new ArrayList();
+        List<BpmActivityMeta> end = new ArrayList<>();
+        List<BpmActivityMeta> normal = new ArrayList<>();
+        List<BpmActivityMeta> gateAndData = new ArrayList<>();
+        List<BpmActivityMeta> gateway = new ArrayList<>();
         if (StringUtils.isNotBlank(activityTo)) {
             String[] toActivityBpdIds = activityTo.split(",");
             List<BpmActivityMeta> bpmActivityMetas = new ArrayList<>(); 
@@ -313,6 +314,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                                     
                                 } else if ("gateway".equals(activityType)) {
                                     // 排他网关
+                                    gateway.add(activityMeta);
                                     tos = activityMeta.getActivityTo().split(",");
                                     for (int i=0; i<tos.length; i++) {
                                         gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
@@ -359,6 +361,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         results.put("normal", normal);
         results.put("gateAnd", gateAndData);
         results.put("end", end);
+        results.put("gateway", gateway);
         return results;
     }
 

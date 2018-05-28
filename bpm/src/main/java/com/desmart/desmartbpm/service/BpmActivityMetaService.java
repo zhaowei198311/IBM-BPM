@@ -60,7 +60,7 @@ public interface BpmActivityMetaService {
      * @param sourceActivityMeta
      * @param insUid
      * @return  Map的key： 
-     * normal  gateAnd  end
+     * normal  gateAnd  end 
      */
     Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
     
