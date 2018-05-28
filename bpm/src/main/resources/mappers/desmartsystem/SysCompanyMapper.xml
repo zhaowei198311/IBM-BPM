@@ -29,7 +29,7 @@
 		(COMPANY_UID,COMPANY_CODE,COMPANY_NAME,CREATE_DATE,UPDATE_DATE)
 		<foreach collection="lists" index="index" item="item"
 			separator=" union all ">
-			SELECT  #{item.companyUid},#{item.companyCode},#{item.companyCode},#{item.createDate},#{item.updateDate} FROM DUAL
+			SELECT  #{item.companyUid},#{item.companyCode},#{item.companyName},#{item.createDate},#{item.updateDate} FROM DUAL
 		</foreach>
 	</insert>
 	
