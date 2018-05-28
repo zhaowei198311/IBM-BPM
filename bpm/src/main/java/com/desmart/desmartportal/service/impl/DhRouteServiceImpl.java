@@ -1,9 +1,11 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -20,7 +22,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
-	
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaService;
 	
 
 	@Override
@@ -37,4 +40,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return null;
 	}
 
+	@Override
+	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
+	    Map<String, Object> nextToResultMap = bpmActivityMetaService.getNextToActivity(sourceActivityMeta, "");
+	    
+	    
+	    
+	    return null;
+	}
+	
 }
