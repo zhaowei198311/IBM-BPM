@@ -59,10 +59,48 @@
 				overflow-y:auto;
 				overflow-x:hidden;
 			}
+			
+			#formSet{
+				display: none;
+			}
+			
+			.choose_middle{
+				min-height:100px;
+				width: 96%;
+				border: 1px solid #ccc;
+				position: relative;
+				padding: 0 10px;
+			}
+			
+			.choose_middle .layui-input {
+			    width: 80%;
+			}
+			
+			.choose_display_content{
+				color: #717171;
+				padding: 20px;
+				width: 600px;
+				min-height:200px;
+				background: #fff;
+				position: absolute;
+				margin: 100px 0 0 -300px;
+				left: 50%;
+				box-shadow: 0 0 10px #ccc;
+			}
+			.choose_user_div .form_label{
+				float: left;
+				display: block;
+				padding: 9px 15px;
+				font-weight: 400;
+				line-height: 20px;
+				text-align: right;
+			}
 </style>
 </head>
 <body>
 	<div class="search_area top_btn">
+		<input type="hidden" id="departNo"/>
+		<input type="hidden" id="companyNum"/>
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}"/>
 	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
 	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
@@ -70,7 +108,8 @@
 	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
 	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
 	    <input id="userId" value="${currentUser.userId}" style="display: none;">
-	    <input id="dataInfo" style="display: none;">
+	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;"/>
+	    <span id="formData" style="display: none;">${ formData }</span>
 	    <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
 	    <span style="float: right; padding-right: 20px;">
 	        <button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
@@ -112,7 +151,7 @@
 					      <td><input type="text" name="title" required  lay-verify="required" value="2018-05-23" autocomplete="off" class="layui-input"></td>
 					      <td class="td_title">所属部门</td>
 					      <td>
-							<select id="creatorInfo" lay-verify="required" >
+							<select id="creatorInfo" lay-verify="required" lay-filter="creatorInfo">
 								<option value="">请选择部门</option>
 								<c:forEach items="${userDepartmentList}" var="item">
 									<option value="${item.departNo},${item.companyCode}">${item.departName}</option>
@@ -125,35 +164,22 @@
 				</form>
 		
 			<div id="formSet">${formHtml }</div>
-			<table class="layui-table">
-		<colgroup>
-		    <col width="150">
-		    <col>
-		    <col width="150">
-		    <col> 
-		</colgroup>
-		<tbody>
-			<c:forEach items="${activityMetaList}" var="activityMeta">
-			    <tr>
-			      <td>下一环节:<span class="tip_span"></span></td>
-			      <td>
-			      	<input type="text" name="title" required  lay-verify="required" value="${activityMeta.activityName}"  readonly="readonly" autocomplete="off" class="layui-input">
-			      </td>
-			      <td class="td_title">处理人:<span class="tip_span"></span></td>
-			      <td>
-			      	<input type="hidden" class="getUser" id="${activityMeta.activityId}"  value="${activityMeta.userUid}" 
-			      	  data-assignvarname="${activityMeta.dhActivityConf.actcAssignVariable }"  data-signcountvarname="${activityMeta.dhActivityConf.signCountVarname }"
-			      	  data-looptype="${activityMeta.loopType }" />
-			      	<input type="text"    id="${activityMeta.activityId}_view"  required  lay-verify="required" value="${activityMeta.userName}"  readonly="readonly" autocomplete="off" class="layui-input">
-			      	<input type="hidden"  id="choosable_${activityMeta.activityId}"  value="${activityMeta.userUid}"  />
-			      </td>
-			      <td colspan="3">
-			      	<i class="layui-icon"  onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');" >&#xe612;</i>
-			      </td>
-			    </tr>
-		    </c:forEach>
-		</tbody>
-	</table>
+			<div class="display_container">
+				<div class="choose_display_content">
+	                <div class="top">
+	                   	选择下个环节处理人
+	                </div>
+	                <div class="choose_middle">
+	                    <form class="layui-form" action="" style="margin-top:30px;">
+	                        
+	                    </form>
+	                </div>
+	                <div class="foot">
+	                    <button class="layui-btn layui-btn sure_btn" onclick="submitProcess()">确定</button>
+	                    <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container').css('display','none')">取消</button>
+	                </div>
+	            </div>
+			</div>
 	<div class="layui-tab">
 					  	<ul class="layui-tab-title">
 					  		<li class="layui-this">附件</li>
@@ -246,3 +272,116 @@
 
 </script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript">
+//数据信息
+var view = $(".container-fluid");
+var form = null;
+$(function(){
+	layui.use(['form'], function () {
+        form = layui.form;
+	});
+	var formData = $("#formData").text();
+	if(formData!=null && formData!=""){
+		getdata(formData);
+	}
+});
+
+function getdata(jsonStr){
+	var json = JSON.parse(jsonStr);
+	for(var name in json){
+		var paramObj = json[name];
+		//给各个组件赋值
+		setValue(paramObj,name);
+		//判断组件是否可见
+		isDisplay(paramObj,name);
+		//判断组件对象是否可编辑
+		isEdit(paramObj,name);
+	}
+}
+
+/**
+ * 根据组件对象的类型给各个组件赋值
+ * @param paramObj 组件对象
+ * @param id 各个组件的id(单选框为class)
+ */
+var setValue = function(paramObj,name){
+	var tagName = $("[name='"+name+"']").prop("tagName");
+	switch(tagName){
+		case "INPUT":{
+			var tagType = $("[name='"+name+"']").attr("type");
+			switch(tagType){
+				case "text":;
+				case "tel":;
+				case "date":{
+					$("[name='"+name+"']").val(paramObj["value"]);
+					form.render();
+					break;
+				};
+				case "radio":{
+					$("[name='"+name+"'][id='"+paramObj["value"]+"']").prop("checked","true");
+					form.render();
+					break;
+				}
+				case "checkbox":{
+					var valueArr = paramObj["value"];
+					for(var value in valueArr){
+						$("[name='"+name+"'][id='"+valueArr[value]+"']").prop("checked","true");
+					}
+					form.render();
+					break;
+				}
+			}
+			break;
+		};
+		case "SELECT":;
+		case "TEXTAREA":{
+			$("[name='"+name+"']").val(paramObj["value"]);
+			form.render();
+			break;
+		}
+	}
+}
+
+
+/**
+ * 判读组件对象是否可见
+ * @param paramObj 组件对象
+ * @param id 各个组件的id(单选框为class)
+ */
+var isDisplay = function(paramObj,name){
+	var display = paramObj["display"];
+	if(display=="none"){
+		var tagType = $("[name='"+name+"']").attr("type");
+		$("[name='"+name+"']").parent().css("display","none");
+		$("[name='"+name+"']").parent().prev().css("display","none");
+		if(tagType=="radio" || tagType=="checkbox"){
+			$("[name='"+name+"']").parent().css("display","none");
+			$("[name='"+name+"']").parent().prev().css("display","none");
+		}
+	}
+}
+
+/**
+ * 判读组件对象是否可编辑
+ * @param paramObj 组件对象
+ * @param id 各个组件的id(单选框为class)
+ */
+var isEdit = function(paramObj,name){
+	var edit = paramObj["edit"];
+	if(edit=="no"){
+		$("[name='"+name+"']").attr("readonly","true");
+		var tagName = $("[name='"+name+"']").prop("tagName");
+		var tagType = $("[name='"+name+"']").attr("type");
+		var className = $("[name='"+name+"']").attr("class");
+		if(tagType=="radio" || tagType=="checkbox"){
+			$("[name='"+name+"']").attr("disabled","true");
+		}
+		if(tagName=="SELECT"){
+			$("[name='"+name+"']").attr("disabled","true");
+		}
+		if(className=="date"){
+			$("[name='"+name+"']").attr("disabled","true");
+		}
+	}
+}
+</script>
