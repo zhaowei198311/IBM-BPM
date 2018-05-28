@@ -42,38 +42,32 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	private AccessoryFileUploadMapper accessoryFileuploadMapper;
 	@Override
 	public Integer insertDhInstanceDocuments(List<DhInstanceDocument> dhInstanceDocuments) {
-		// TODO Auto-generated method stub
 		return accessoryFileuploadMapper.insertDhInstanceDocuments(dhInstanceDocuments);
 	}
 
 	@Override
 	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName,String appDocUid) {
-		// TODO Auto-generated method stub
 		return accessoryFileuploadMapper.checkFileActivityIdByName(appUid, myFileName,	appDocUid);
 	}
 
 	@Override
 	public List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument) {
-		// TODO Auto-generated method stub
 		return accessoryFileuploadMapper.loadFileListByCondition(dhInstanceDocument);
 	}
 
 	@Override
 	public Integer updateFileByKeys(List<DhInstanceDocument> dhInstanceDocuments) {
-		// TODO Auto-generated method stub
 		return accessoryFileuploadMapper.updateFileByKeys(dhInstanceDocuments);
 	}
 
 	@Override
 	public Integer deleteFileByAppDocUid(String appDocUid) {
-		// TODO Auto-generated method stub
 		return accessoryFileuploadMapper.deleteFileByAppDocUid(appDocUid);
 	}
 
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid, String taskId) {
-		// TODO Auto-generated method stub
 		List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
 		List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
 		JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
@@ -193,7 +187,6 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
-		// TODO Auto-generated method stub
 		String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
 	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
 	    		,  dhInstanceDocument.getAppDocFileUrl().length());
@@ -220,7 +213,6 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument) {
-		// TODO Auto-generated method stub
 		//取得当前上传文件的文件名称  
         String myFileName = multipartFile.getOriginalFilename();
         /** 检查更新文件在最新版本是否重名 **/
