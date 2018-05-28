@@ -60,7 +60,7 @@ public class DroolsEngineService {
 				param.put("ruleProcess", datRule.getRuleProcess());
 				param.put("effective", datRule.getStartTime());
 				param.put("expires", datRule.getEndTime());
-				param.put("ruleName", datRule.getRuleName());
+				param.put("ruleName", "ruleName");
 				String ruleContent = (new FreeMarkUtil()).getHtml("DroolsTemplate.ftl", param);
 				System.out.println("执行的规则:" + ruleContent);
 				KnowledgeBuilder kb = KnowledgeBuilderFactory.newKnowledgeBuilder();
