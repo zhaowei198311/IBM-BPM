@@ -62,13 +62,12 @@ var saveDraftsData = function () {
                 e.preventDefault();
                 var inputArr = $("table input");
                 var selectArr = $("table select");
-                var creatorInfo = $("#creatorInfo").val()
-                if (!creatorInfo) {
+                var departNo = $("#departNo").val();
+                var companyNumber = $("#companyNum").val();
+                if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
                 	layer.alert("缺少发起人信息");
                 	return;
                 }
-                var departNo = creatorInfo.split(",")[0];
-                var companyNumber = creatorInfo.split(",")[1];
                 var control = true; //用于控制复选框出现重复值
                 var checkName = ""; //用于获得复选框的class值，分辨多个复选框
                 var json = "{";
@@ -253,7 +252,10 @@ var saveData = function () {
 						+'<label class="form_label layui-col-md2">处理人</label>'
 						+'<div class="layui-col-md4">'
 							+'<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="float:left;border-width:1px;" readonly>'
-							+'<i class="layui-icon" id="choose_agent_user" style="position:relative;left:2%;font-size:30px;">&#xe612;</i>'
+							+'<i class="layui-icon" onclick="getConductor('+activityMeta.activityId
+								+',false,'+activityMeta.dhActivityConf.actcCanChooseUser+','
+								+activityMeta.dhActivityConf.actcAssignType+');" '
+								+'style="position:relative;left:2%;font-size:30px;">&#xe612;</i>'
 							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
 								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
 								+'data-looptype="'+activityMeta.loopType+'" />'
