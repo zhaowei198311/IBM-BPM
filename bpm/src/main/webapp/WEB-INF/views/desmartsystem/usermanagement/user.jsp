@@ -581,6 +581,11 @@
 		
 		//打开业务角色绑定
 		function openBusinessRoleBindings(userUid,departUid,roleName){
+			
+			if (roleName === undefined){
+				$('#jsbd_roleName').val('');
+			}
+			
 			var xz = document.getElementById('checkAll_a');
 			 xz.checked=false;
 			$('.userUid').val(userUid);

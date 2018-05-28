@@ -22,6 +22,8 @@ public class SysRoleUser {
     
     private String userName;
     
+    private String companyCode;
+    
     
 
     public List<SysUser> getUsers() {
@@ -94,6 +96,14 @@ public class SysRoleUser {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
 	}
     
     

@@ -69,8 +69,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 		String insInitUser=dhProcessInstance.getInsInitUser(); //流程发起人
 		String insDate=dhProcessInstance.getInsData();//实例表单
-		JSONObject formJson=FormDataUtil.formDataCombine(JSONObject.parseObject(formData), JSONObject.parseObject(insDate));
-		List<BpmActivityMeta>	activityMetaList=getNextActivities(bpmActivityMeta,formJson); 
+		
+		JSONObject formJson=new JSONObject();
+		if(StringUtils.isNotBlank(formData)) {
+			formJson=FormDataUtil.formDataCombine(JSONObject.parseObject(formData), JSONObject.parseObject(insDate));
+		}
+		List<BpmActivityMeta> activityMetaList=getNextActivities(bpmActivityMeta,formJson); 
 		// 环节配置获取
 		for (BpmActivityMeta activityMeta : activityMetaList) {
 			DhActivityConf dhActivityConf = activityMeta.getDhActivityConf();
