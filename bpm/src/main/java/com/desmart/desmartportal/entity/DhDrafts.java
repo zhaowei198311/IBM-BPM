@@ -108,8 +108,12 @@ public class DhDrafts {
 	public void setInsUid(String insUid) {
 		this.insUid = insUid;
 	}
-
-	/**
+	
+	public DhDrafts() {
+		
+	}
+	
+	/**	
 	 * @param dfsId
 	 * @param dfsTitle
 	 * @param dfsData
