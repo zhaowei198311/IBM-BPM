@@ -94,9 +94,6 @@ function loadDhroutingRecords(){
 	var proAppId=$("#proAppId").val();
 	var proUid=$("#proUid").val();
 	var proVerUid=$("#proVerUid").val();
-	//var activityBpdId="bpdid:5c5863a60b29558f:5a01b566:16010c92375:-7ff6";
-	//var bpdId="25.09b075e8-8cd4-45ae-bd36-50a67ad54cac";
-	//var activityId = $("#activityId").val();
 	var bpmActivityList = $("#listStr").html();
 	
 	$.ajax({
