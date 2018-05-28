@@ -237,7 +237,7 @@
                                         <th>上传时间</th>
                                         <th>
                                             <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
-                                            <button class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
+                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
                                                 <input class="maxFileCount" value="10" type="hidden" />
