@@ -4,9 +4,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 public class DhInstanceDocument {
-	/** 
-     * 默认的构造方法必须不能省，不然不能解析 
-     */  
     public DhInstanceDocument() {  
           
     }  
@@ -30,6 +27,7 @@ public class DhInstanceDocument {
 	private String appDocIdCard;//不同版本中的文件唯一标识
 	
 	private String appUserName;//不在表内
+	private String updateUserName;
 	public String getAppDocUid() {
 		return appDocUid;
 	}
@@ -146,6 +144,12 @@ public class DhInstanceDocument {
 	public void setAppDocIdCard(String appDocIdCard) {
 		this.appDocIdCard = appDocIdCard;
 	}
+	public String getUpdateUserName() {
+		return updateUserName;
+	}
+	public void setUpdateUserName(String updateUserName) {
+		this.updateUserName = updateUserName;
+	}
 	@Override
 	public String toString() {
 		return "DhInstanceDocument [appDocUid=" + appDocUid + ", appDocFileName=" + appDocFileName + ", appDocFileUrl="
@@ -154,7 +158,8 @@ public class DhInstanceDocument {
 				+ appDocType + ", appDocCreateDate=" + appDocCreateDate + ", appDocIndex=" + appDocIndex
 				+ ", appDocTags=" + appDocTags + ", appDocStatus=" + appDocStatus + ", appDocIsHistory="
 				+ appDocIsHistory + ", appDocUpdateDate=" + appDocUpdateDate + ", updateUserUid=" + updateUserUid
-				+ ", appDocIdCard=" + appDocIdCard + ", appUserName=" + appUserName + "]";
+				+ ", appDocIdCard=" + appDocIdCard + ", appUserName=" + appUserName + ", updateUserName="
+				+ updateUserName + "]";
 	}
 	
 }

@@ -40,8 +40,10 @@
    did.app_Doc_Comment,did.doc_Version,did.app_Uid,did.task_id,did.user_uid,did.app_doc_Type
    ,did.app_doc_Create_Date,did.app_doc_index,did.app_doc_tags,did.app_doc_status
    ,did.app_Doc_Is_History,did.app_Doc_Update_Date,did.update_User_Uid,did.app_Doc_Id_Card
+   ,update_su.user_name updateUserName
    ,su.user_name as appUserName from dh_instance_document did left join sys_user su 
-   on did.USER_UID = su.USER_UID 
+   on did.USER_UID = su.USER_UID left join sys_user update_su 
+   on did.UPDATE_USER_UID = update_su.USER_UID
    where 1 = 1 
    <if test="appUid != null and appUid != '' ">
     and APP_UID = #{appUid}
@@ -54,6 +56,9 @@
    </if>
    <if test="appDocIsHistory !=null and appDocIsHistory != '' ">
     and app_Doc_Is_History = #{appDocIsHistory}
+   </if>
+   <if test="appDocIdCard != null and appDocIdCard != '' ">
+    and APP_DOC_ID_CARD = #{appDocIdCard}
    </if>
    </select>
    

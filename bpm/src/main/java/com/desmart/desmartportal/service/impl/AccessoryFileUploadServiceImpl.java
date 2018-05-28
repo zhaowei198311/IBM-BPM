@@ -150,6 +150,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 						dhInstanceDocument.setAppDocIndex(i+1);
 						dhInstanceDocument.setAppDocTags(jObject.get("appDocTags").toString());
 						dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
+						dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);
 						dhInstanceDocument.setAppDocIdCard(EntityIdPrefix.DH_INSTANCE_FILE_CARD+uuId);//不同版本中的文件唯一标识
 						/*if(exitsList!=null&&exitsList.size()>0) {//有已存在删除记录的，则加入到修改中准备修改
 							dhInstanceDocument.setDocVersion(exitsList.get(exitsList.size()-1).getDocVersion()+1);
