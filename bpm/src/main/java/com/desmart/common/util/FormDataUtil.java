@@ -28,8 +28,7 @@ public class FormDataUtil {
 	 * @param oldObj 旧的json对象
 	 * @param newObj 新的json对象
 	 */
-	public JSONObject FormDataCombine(JSONObject newObj, JSONObject oldObj) {
-		log.info("覆盖替换json数据 Start......");
+	public static JSONObject FormDataCombine(JSONObject newObj, JSONObject oldObj) {
 		try {
 	        Object key;
 	        Object combinedObjVal; // 接受新的json对象
@@ -44,12 +43,9 @@ public class FormDataUtil {
 	                combinedObjVal = oldObj.get(key.toString());
 	            }
 	        }
-	        log.info("替换后的json数据为"+newObj);
-	        log.info("覆盖替换json数据 End......");
 	        return newObj;
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.info("覆盖替换json数据 异常......");
 		}
 		return null;
 	}
