@@ -47,6 +47,14 @@
             line-height: 50px;
             padding-right: 25px;
         }
+        
+        .foot_history_file{
+        	padding-top:5px;
+         	text-align: right;
+            height: 50px;
+            line-height: 50px;
+            padding-right: 25px;
+        }
 
         .upload_overflow_middle {
             height: 80%;
@@ -324,7 +332,7 @@
                 </div>
             </div>
         </div>
-        <div class="foot_accessory_file">
+        <div class="foot_history_file">
             <button type="button" class="layui-btn listAction">开始上传</button>
             <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">取消</button>
         </div>
@@ -357,6 +365,9 @@
                     </table>
                 </div>
             </div>
+        </div>
+         <div class="foot_history_file">
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="hideHistoryFile()">关闭</button>
         </div>
     </div>
 </body>
