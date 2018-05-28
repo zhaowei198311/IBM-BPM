@@ -65,4 +65,9 @@
 		)
 	</insert>
 	
+	<select id="queryDraftsByInsUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhDrafts">
+		select <include refid="Base_Column_List"/>
+		from dh_drafts
+		where ins_uid = #{insUid}
+	</select>
 </mapper>
