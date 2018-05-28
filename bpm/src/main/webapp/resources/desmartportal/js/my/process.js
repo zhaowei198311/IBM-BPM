@@ -52,7 +52,7 @@ function selectDepart(){
 }
 
 /**
- * 保存表单数据的方法
+ * 保存草稿表单数据的方法
  */
 var index2 = null;
 var saveDraftsData = function () {
@@ -62,6 +62,13 @@ var saveDraftsData = function () {
                 e.preventDefault();
                 var inputArr = $("table input");
                 var selectArr = $("table select");
+                var creatorInfo = $("#creatorInfo").val()
+                if (!creatorInfo) {
+                	layer.alert("缺少发起人信息");
+                	return;
+                }
+                var departNo = creatorInfo.split(",")[0];
+                var companyNumber = creatorInfo.split(",")[1];
                 var control = true; //用于控制复选框出现重复值
                 var checkName = ""; //用于获得复选框的class值，分辨多个复选框
                 var json = "{";
@@ -153,25 +160,49 @@ var saveDraftsData = function () {
                     json = json.substring(0, json.length - 1);
                 }
                 json += "}";
-                document.getElementById('dataInfo').value = json;
+                // 发起流程             
+                var finalData = {};
+                // 表单数据
+                var formData = JSON.parse(json);
+                finalData.formData = formData;
+                // 流程数据
+                var processData = {};
+                //processData.proAppId = $("#proAppId").val();
+                //processData.proUid = $("#proUid").val(); 
+                //processData.proVerUid = $("#verUid").val();
+                processData.insUid = $("#insUid").val();
+                processData.departNo = departNo,
+                processData.companyNumber = companyNumber,
+                finalData.processData = processData;
+
+                var activityId = ""
+                var userUid = ""
+                var insData = $("#insData").text();
+                // 路由数据
+                var routeData = [];
+                $('.getUser').each(function () {
+                    var item = {};
+                    item.activityId = $(this).attr('id');
+                    item.userUid = $(this).val();
+                    item.assignVarName = $(this).data("assignvarname");
+                    item.signCountVarName =  $(this).data("signcountvarname");
+                    item.loopType = $(this).data("looptype");
+                    routeData.push(item);
+                });
+                finalData.routeData = routeData;
                 // 保存草稿数据                   
-                var proUids = $("#proUid").val();
-                var proAppIds = $("#proAppId").val();
-                var verUids = $("#verUid").val();
-                var proName = $("#proName").val();
+                var insUid = $("#insUid").val();
                 var userId = $("#userId").val();
-                var dataInfo = $("#dataInfo").val();
+                var insTitle = $("#insTitle").val();
                 $.ajax({
                     url: "drafts/saveDrafts",
                     method: "post",
                     async: false,
                     data: {
-                        dfsTitle: proName,
-                        dfsData: dataInfo,
+                    	dfsTitle: insTitle,
+                        dfsData: JSON.stringify(finalData),
                         dfsCreator: userId,
-                        proUid: proUids,
-                        proVerUid: verUids,
-                        proAppId: proAppIds
+                        insUid: insUid
                     },
                     beforeSend: function () {
                         index2 = layer.load(1);
