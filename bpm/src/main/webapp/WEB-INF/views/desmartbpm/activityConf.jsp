@@ -813,7 +813,7 @@
 						<div class="layui-input-block">
 							<select id="rightValueType" name="rightValueType" lay-verify="required">
 								<option value="String">字符串</option>
-								<option value="Integer">整数</option>
+								<option value="Number">数值</option>
 							</select>
 						</div>
 					</div>
