@@ -102,6 +102,7 @@
 		<input type="hidden" id="departNo"/>
 		<input type="hidden" id="companyNum"/>
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}"/>
+	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
 	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
 	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
 	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
