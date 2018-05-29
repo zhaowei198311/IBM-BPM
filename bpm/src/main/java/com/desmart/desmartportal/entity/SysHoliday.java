@@ -15,11 +15,11 @@ public class SysHoliday {
 	private String dateId;	
 	private String holiday;
 	
-	public SysDate() {
+	public SysHoliday() {
 		super();
 	}
 	
-	public SysDate(String holiday){
+	public SysHoliday(String holiday){
 		super();
 		this.holiday = holiday;
 	}
@@ -31,16 +31,18 @@ public class SysHoliday {
 		this.dateId = dateId;
 	}
 
-	public String getDate() {
+	public String getHoliday() {
 		return holiday;
 	}
-	public void setDate(String holiday) {
+	public void setHoliday(String holiday) {
 		this.holiday = holiday;
 	}
 
 	@Override
 	public String toString() {
-		return "SysDate [dateId=" + dateId + ", holiday=" + holiday + "]";
+		return "SysHoliday [dateId=" + dateId + ", holiday=" + holiday + "]";
 	}
+
+	
 	
 }
