@@ -169,6 +169,7 @@ function addSure(){
 
 function getAllDataInfo() {
     // 拼装数据
+	var inputArr = $("table input");
     var activityId = ""
     var userUid = ""
     var insData = $("#insData").text();
@@ -276,8 +277,8 @@ function getAllDataInfo() {
     //processData.proUid = $("#proUid").val(); 
     //processData.proVerUid = $("#verUid").val();
     processData.insUid = $("#insUid").val();
-    processData.departNo = departNo,
-    processData.companyNumber = companyNumber,
+    // processData.departNo = departNo,
+    // processData.companyNumber = companyNumber,
     finalData.processData = processData;
 
     var activityId = ""
@@ -319,6 +320,7 @@ function processView(insId) {
 }
 
 function agree() {
+	var inputArr = $("table input");
     var taskId = $("#taskId").val();
     var taskUid = $("#taskUid").val();
     var activityId = ""
@@ -447,8 +449,8 @@ function agree() {
     //processData.proUid = $("#proUid").val(); 
     //processData.proVerUid = $("#verUid").val();
     processData.insUid = $("#insUid").val();
-    processData.departNo = departNo,
-    processData.companyNumber = companyNumber,
+    // processData.departNo = departNo,
+    // processData.companyNumber = companyNumber,
     finalData.processData = processData;
 
     var activityId = ""
