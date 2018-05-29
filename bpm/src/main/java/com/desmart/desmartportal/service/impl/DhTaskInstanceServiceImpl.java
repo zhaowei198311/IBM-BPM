@@ -292,15 +292,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
 			Map<String,HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
 			if(resultMap.get("commitTaskResult").getCode()==200) {
-				// 插入流转数据
-				  // 任务完成后 保存到流转信息表里面
-                DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-                dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-                dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-                dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-                dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
-                dhRoutingRecord.setUserUid(userId);
-                dhRoutingRecordMapper.insert(dhRoutingRecord);
+				 // 任务完成后 保存到流转信息表里面
+				DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+				dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+				dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+				dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
+				dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
+				dhRoutingRecord.setUserUid(userId);
 				dhRoutingRecordMapper.insert(dhRoutingRecord);
 			}
 			log.info("完成任务结束......");
