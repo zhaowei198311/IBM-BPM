@@ -613,11 +613,34 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance) {
+<<<<<<< .mine
+		// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
+		
+		dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+		dhTaskInstance.setTaskType("normal");
+		dhTaskInstance.setTaskStatus("12");
+		dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
+		dhTaskInstance.setTaskInitDate(new Date());
+		String usrUids = dhTaskInstance.getUsrUid();
+		if (usrUids.contains(";")) {
+			String[] usrUid = usrUids.split(";");
+			for (String string : usrUid) {
+				dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
+				dhTaskInstance.setUsrUid(string);
+				dhTaskInstanceMapper.insertTask(dhTaskInstance);
+			}
+		}else {
+			dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
+			dhTaskInstance.setUsrUid(usrUids);
+			dhTaskInstanceMapper.insertTask(dhTaskInstance);
+=======
 		String usrUid = dhTaskInstance.getUsrUid();
 		if (usrUid.contains(";")) {
 
+>>>>>>> .r1007
 		}
-		return null;
+		return ServerResponse.createBySuccess();
 	}
 
 }
