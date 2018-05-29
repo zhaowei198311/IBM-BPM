@@ -156,7 +156,7 @@
                 <div class="layui-form">
                     <!--<label class="layui-form-label">审批意见</label>
 				      	<div class="layui-input-block">-->
-                    <textarea placeholder="意见留言" class="layui-textarea" id="demo" style="display: none; margin-bottom: 10px;"></textarea>
+                    <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"></textarea>
                     <!--</div>-->
                     <div style="margin-top: 10px;">
                         <label class="layui-form-label">常用语</label>

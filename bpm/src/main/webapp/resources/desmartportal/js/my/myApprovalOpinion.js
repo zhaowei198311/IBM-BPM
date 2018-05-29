@@ -2,14 +2,16 @@ var editIndex;
 layui.use('form', function(){
     var form = layui.form;
     form.on('select(useselfChange)', function(data){
-    		$("#demo").val("");
+    		//$("#demo").val("");
+    		$("#myApprovalOpinion").text("");
     	    if(data.value!='-1'){
-    	    	$("#demo").val(data.value);
+    	    	//$("#demo").val(data.value);
     	    	//alert($("#demo").val());
+    	    	$("#myApprovalOpinion").text(data.value);
     	    }
-    	    layui.use('layedit', function(){
+    	    /*layui.use('layedit', function(){
     	    	editIndex = layui.layedit.build("demo");
-    	    });
+    	    });*/
     	    /*layui.use('layedit', function(){
     	    layui.layedit.sync(editIndex);
     	    });*/
@@ -59,8 +61,9 @@ function loadDhApprovalOpinionList(){
 }
 
 function save(){
-	var aprOpiComment = layui.layedit.getContent(editIndex);
-	alert(aprOpiComment);
+	//var aprOpiComment = layui.layedit.getContent(editIndex);
+	var aprOpiComment = $("#myApprovalOpinion").text();
+	//alert(aprOpiComment);
 	var aprStatus = "";
 	var insUid = $("#insUid").val();//流程实例id--ins_uid
 	var taskUid = $("#activityId").val();//环节id，activity_id

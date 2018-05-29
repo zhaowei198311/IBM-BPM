@@ -387,6 +387,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     /**
      * 装配处理人的信息
      */
+	@Override
     public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData) {
         if (pubBo == null) {
             pubBo = new CommonBusinessObject();

@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.common.constant.ResponseCode;
 import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -33,10 +36,12 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhApprovalOpinion;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
@@ -90,6 +95,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private BpmFormManageService bpmFormManageService;
+	
+	@Autowired
+	private DhProcessInstanceService dhProcessInstanceService;
 	
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
@@ -279,19 +287,51 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse perform(String data) {
 		log.info("完成任务开始......");
 		try {
+
 	        if (StringUtils.isBlank(data)) {
 	            return ServerResponse.createByErrorMessage("缺少必要参数");
 	        }
+
 			JSONObject jsonBody = JSONObject.parseObject(data);
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
+			String taskUid =taskData.getString("taskUid");
+			List<DhTaskInstance> checkList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			if(checkList!=null && checkList.size()>0) {
+				DhTaskInstance currDhTaskInstance = checkList.get(0);
+			if("12".equals(currDhTaskInstance.getTaskStatus())) {//检查任务是否重复提交
+			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			if(checkTaskUser(currDhTaskInstance,creator)) {
+				
 			JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
 			String userId = routeData.getString("userUid").substring(0, 8);
+
+			JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("")));//获取审批信息
+			String insUid = approvalData.getString("insUid");
+			String apr_taskUid = approvalData.getString("taskUid");//存储的是环节id->activity_id
+			String aprOpiComment = approvalData.getString("aprOpiComment");
+			String aprStatus = approvalData.getString("aprStatus");
+			
+
 			// 根据任务标识和用户  去查询流程 实例
 			DhTaskInstance taskInstance = new DhTaskInstance();
 			taskInstance.setTaskId(taskId);
 			taskInstance.setUsrUid(userId);
 			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(taskInstance);
+
+			//装配处理人信息
+			CommonBusinessObject puBo = new CommonBusinessObject();
+			ServerResponse<CommonBusinessObject> serverResponse = 
+				dhProcessInstanceService.assembleCommonBusinessObject(puBo,JSONObject.parseArray(routeData.toJSONString()));
+			if(serverResponse.getStatus()==ResponseCode.ERROR.getCode()) {
+				return serverResponse;
+			}
+			
+			
+			DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();//审批信息
+			dhApprovalOpinion.setInsUid(insUid);dhApprovalOpinion.setTaskUid(apr_taskUid);
+			dhApprovalOpinion.setAprOpiComment(aprOpiComment);dhApprovalOpinion.setAprStatus(aprStatus);
+			
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 			CommonBusinessObject pubBo = new CommonBusinessObject();
 			List<String> userList = new ArrayList<>();
@@ -311,10 +351,42 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			}
 			log.info("完成任务结束......");
 			return ServerResponse.createBySuccess();
+			}else {
+				return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败!");
+			}
+			}else{
+				return ServerResponse.createByErrorMessage("请不要重复提交!");
+			}
+			}else {
+				return ServerResponse.createByErrorMessage("当前任务不存在!");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("完成任务出现异常......");
 			return ServerResponse.createByError();
+		}
+	}
+
+	/**
+	 * 判断用户是否有权限提交审批
+	 * @param currDhTaskInstance
+	 * @param creator
+	 * @return
+	 */
+	private boolean checkTaskUser(DhTaskInstance currDhTaskInstance, String creator) {
+		// TODO Auto-generated method stub
+		if(currDhTaskInstance.getTaskDelegateUser()!=null&&!"".equals(currDhTaskInstance.getTaskDelegateUser())) {
+			if(currDhTaskInstance.getTaskDelegateUser().equals(creator)) {
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			if(currDhTaskInstance.getUsrUid().equals(creator)) {
+				return true;
+			}else {
+				return false;
+			}
 		}
 	}
 

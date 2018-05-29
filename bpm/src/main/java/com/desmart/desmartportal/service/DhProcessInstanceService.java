@@ -6,8 +6,10 @@ package com.desmart.desmartportal.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.github.pagehelper.PageInfo;
 
@@ -97,9 +99,19 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	DhProcessInstance getByInsUid(String insUid);
+
+	/**
+	 * 装配处理人信息
+	 * @param pubBo
+	 * @param routeData
+	 * @return
+	 */
+	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
+
 	
 	/**
 	 * 驳回流程
 	 */
 	ServerResponse rejectProcess(int insId,String activityId, String user);
+
 }

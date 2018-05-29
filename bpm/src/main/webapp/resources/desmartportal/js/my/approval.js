@@ -320,6 +320,7 @@ function processView(insId) {
 
 function agree() {
     var taskId = $("#taskId").val();
+    var taskUid = $("#taskUid").val();
     var activityId = ""
     var userUid = ""
     var insData = $("#insData").text();
@@ -327,8 +328,28 @@ function agree() {
         activityId = $(this).attr('id');
         userUid = $(this).val();
     });
-    
+
+    var insUid = $("#insUid").val();//流程实例id--ins_uid
+    var apr_taskUid = $("#activityId").val();//环节id，activity_id
+    var aprOpiComment = $("#myApprovalOpinion").text();//审批意见
+	var aprStatus = "ok";
+	var approvaInfo ={
+			"insUid":insUid,
+			"taskUid":apr_taskUid,
+			"aprOpiComment":aprOpiComment,
+			"aprStatus":aprStatus
+			} 
+
     var json = "{";
+
+    var formData = "formData"; // 表单数据外层
+    var routeData = "routeData"; // 选人数据外层
+    var approvaData = "approvaData"; // 审批数据外层
+    var taskData = "taskData"; // 任务数据外层
+    var endjson = "}";
+    // 数据信息
+    var jsonStr = "" + json + "\"" + formData + "\":" + insData + ",\"" + approvaData + "\":"+JSON.stringify(approvaInfo)+",\"" + routeData + "\":{\"activityId\":\"" + activityId + "\",\"userUid\":\"" + userUid + "\"},\""
+    + taskData + "\":{\"taskId\":\"" + taskId + "\",\"taskUid\":"+taskUid+"\"}" + endjson + "";
     for (var i = 0; i < inputArr.length; i++) {
         var type = $(inputArr[i]).attr("type");
         var textJson = "";
@@ -447,7 +468,6 @@ function agree() {
         routeData.push(item);
     });
     finalData.routeData = routeData;
-    
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
