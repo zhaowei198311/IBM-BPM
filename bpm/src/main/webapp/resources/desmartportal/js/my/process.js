@@ -253,14 +253,14 @@ var saveData = function () {
                 	chooseUserDiv += '<div class="choose_user_div">'
 						+'<label class="form_label layui-col-md2">下一环节</label>'
 						+'<div class="layui-col-md4">'
-							+'<input type="text" name="title" readonly class="layui-input" style="border-width:1px;"/>'
+							+'<input type="text" name="title" readonly  value="'+activityMeta.activityName+'" class="layui-input" style="border-width:1px;"/>'
 						+'</div>'
 						+'<label class="form_label layui-col-md2">处理人</label>'
 						+'<div class="layui-col-md4">'
 							+'<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="float:left;border-width:1px;" readonly>'
-							+'<i class="layui-icon" onclick="getConductor('+activityMeta.activityId
-								+',false,'+activityMeta.dhActivityConf.actcCanChooseUser+','
-								+activityMeta.dhActivityConf.actcAssignType+');" '
+							+'<i class="layui-icon" onclick=getConductor("'+activityMeta.activityId
+								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+								+activityMeta.dhActivityConf.actcAssignType+'"); '
 								+'style="position:relative;left:2%;font-size:30px;">&#xe612;</i>'
 							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
 								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
@@ -448,8 +448,11 @@ function submitProcess(){
 
 // 回退到上一页面
 function back() {
-	var insUid = $("#insUid").val();
-	window.location.href = 'javascript:history.go(-1)';
+    var proUid = $("#proUid").val();
+    var proAppId = $("#proAppId").val();
+    var verUid = $("#verUid").val();
+    window.location.href = 'menus/processType?proUid=' + proUid
+        + '&proAppId=' + proAppId + '&verUid=' + verUid;
 }
 
 // 查看流程图
