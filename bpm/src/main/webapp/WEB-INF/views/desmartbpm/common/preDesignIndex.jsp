@@ -94,6 +94,7 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	function returnEdit(){
+		layer.load(1);
 		var dynHtml = $("#dynHtml").text();
 		var dynContent = dynHtml.replace(/</g,"&lt;").replace(/>/g,"&gt;")
 				.replace(/\(/g,"&lc;").replace(/\)/g,"&gc;");

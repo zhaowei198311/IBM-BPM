@@ -437,7 +437,7 @@
 										<i class="icon-move"></i>拖动
 									</span> 
 									<span class="configuration">
-										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#textBlockModal"
+										<button type="button" class="btn btn-mini edit-attr" title="edit-date" onclick="showTextBlockModal(this)"
 												role="button" data-toggle="modal">编辑
 										</button>  
 										<button type="button" class="btn btn-mini" title="edit-date" data-target="#editorModal"
@@ -1288,24 +1288,6 @@
     				<strong>警告！</strong>必须填写标<span style="color:red;">*</span>的属性。
 				</div>
 				<form>
-					<div class="form-group">
-						<label class="col-xs-2 col-sm-offset-2 control-label">
-							文本占列宽
-							<div class="pull-right popover-info">
-								<i class="icon-question-sign "></i>
-								<div class="popover fade right">
-									<div class="arrow"></div>
-									<h3 class="popover-title">帮助</h3>
-									<div class="popover-content">
-										请填写文本块占列宽(1~12的整数)</div>
-								</div>
-							</div>
-						</label>
-						<div class="col-xs-7">
-							<input type="text" class="form-control col" id="text-block-col"
-								placeholder="请输入文本块占列宽">
-						</div>
-					</div>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
 							文本占行数
