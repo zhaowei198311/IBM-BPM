@@ -94,7 +94,9 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	function returnEdit(){
-		var dynHtml = $("#dynHtml").html().replace(/\"/g,"\"");
+		var dynHtml = $("#dynHtml").text();
+		var dynContent = dynHtml.replace(/</g,"&lt;").replace(/>/g,"&gt;")
+				.replace(/\(/g,"&lc;").replace(/\)/g,"&gc;");
 		var url = common.getPath()+"/formManage/designForm";
 		var preParam = {
 			proUid:$("#proUid").val(),
@@ -102,8 +104,9 @@
 			forName:$("#formName").val(),
 			formDescription:$("#formDescription").val(),
 			formUid:$("#formUid").val(),
-			dynHtml:dynHtml
+			dynHtml:dynContent 
 		};
+		console.log(dynContent);
 		post(url,preParam);
 	}
 	

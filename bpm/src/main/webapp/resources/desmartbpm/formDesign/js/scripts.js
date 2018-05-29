@@ -305,6 +305,7 @@ function downloadLayoutSrc() {
 			["col"],
 			["col-type"],
 			["regx"],
+			["regx_cue"],
 			["onclick"],
 			["onchange"],
 			["onfocus"],
@@ -401,6 +402,8 @@ $(document).ready(function() {
 	var dynHtml = $("#dynHtml").html();
 	$("#dynHtml").html("");
 	if(dynHtml!=null && dynHtml!=""){
+		dynHtml = dynHtml.replace(/&lt;/g,"<").replace(/&gt;/g,">")
+				.replace(/&lc;/g,"(").replace(/&gc;/g,")");
 		var jsIndex = dynHtml.indexOf("<script type='text/javascript'>"); 
 		var jsIndex2 = dynHtml.indexOf("<script type=\"text/javascript\">"); 
 		var demoHtml = "";
@@ -614,7 +617,7 @@ $(document).ready(function() {
 	$("#sourcepreview").click(function() {
 		downloadLayoutSrc();
 		dynContent += formatJs;
-		var dynHtml = dynContent.replace(/\"/g,"\"");
+		var dynHtml = dynContent.replace(/\"/g,"\"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 		var preHtml = webpage.replace(/\"/g,"\"");
 		var url = common.getPath()+"/formManage/preIndex";
 		var preParam = {
@@ -674,18 +677,6 @@ function returnFormManage(){
 	});
 }
 
-/*var filedAttr = {
-	filedCodeId : "",// 字段Id
-	filedIndex : "",// 字段索引
-	filedName : "",// 字段名称
-	filedDes : "",// 字段描述
-	filedLength : "",// 字段长度
-	filedType : "",// 字段类型
-	multiSepar : "",// 多值分割符
-	multiValue : "",// 是否多值
-	formUid : "" //表单id
-}
-*/
 function post(URL, PARAMS) { 
 	var temp_form = document.createElement("form");      
 	temp_form .action = URL;      

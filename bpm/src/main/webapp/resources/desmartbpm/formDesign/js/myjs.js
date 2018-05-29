@@ -90,7 +90,7 @@ function showTextModal(obj){
 	var textWidth = inputObj.width();
 	var textLabelWidth = view.find(".labelDiv").width();
 	var regx = inputObj.attr("regx");
-	var regxCue = inputObj.attr("regxCue");
+	var regxCue = inputObj.attr("regx_cue");
 	oldName = name;
 	var rowWidth = $(".demo").width()-5;
 	var colWidth = rowWidth/12;
@@ -105,7 +105,7 @@ function showTextModal(obj){
 	$("#text-default-value").val(defaultVal);
 	$("#text-place").val(place);
 	$("#text-regx").val(regx);
-	$("#text-regxCue").val(regxCue);
+	$("#text-regx-cue").val(regxCue);
 	$("#text-width").val(textCol);
 	$("#text-label-width").val(textLabelCol);
 	
@@ -465,6 +465,25 @@ function showEditorModal(obj){
 	$("#editor-label-width").val(textLabelCol);
 }
 
+//设置富文本框属性的模态框
+function showEditorModal(obj){
+	$("#editorAreaModal").modal("show");
+	
+	view = $(obj).parent().next().next();
+	var textareaObj = view.find("textarea");
+	var id = textareaObj.attr("id");
+	
+	var rowWidth = $(".demo").width()-5;
+	var colWidth = rowWidth/12;
+	
+	var textCol = textareaObj.attr("col");
+	var textLabelCol = view.find(".labelDiv").attr("col");
+	
+	$("#editor-id").val(id);
+	$("#editor-width").val(textCol);
+	$("#editor-label-width").val(textLabelCol);
+}
+
 function showDataTableModal(obj){
 	$("#dataTableModal").modal("show");
 	
@@ -669,6 +688,7 @@ $(function(){
 			var regx = $("#text-regx").val();
 			if(regx!=null && regx!=""){
 				try{  
+					isRegx = true;
 					new RegExp(regx);
 				}catch(e){  
 					isRegx = false;
@@ -695,11 +715,11 @@ $(function(){
 						view.find("label").text(label);
 						var inputObj = view.find("input");
 						inputObj.attr("value",defaultVal);
-						inputObj.attr({"id":id,"placeholder":place,"name":name,"regxCue":regxCue});
+						inputObj.attr({"id":id,"placeholder":place,"name":name});
 						
 						view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
 						inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
-						inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+						inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr({"regx":regx,"regx_cue":regxCue});
 						
 						if(isMust){
 							var num = view.find(".labelDiv").find("span").length;
@@ -729,7 +749,7 @@ $(function(){
 					
 					view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
 					inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
-					inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+					inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr({"regx":regx,"regx_cue":regxCue});
 					
 					if(isMust){
 						var num = view.find(".labelDiv").find("span").length;
@@ -761,7 +781,7 @@ $(function(){
 				
 				view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
 				inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
-				inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+				inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr({"regx_cue":regxCue});
 				
 				if(isMust){
 					var num = view.find(".labelDiv").find("span").length;

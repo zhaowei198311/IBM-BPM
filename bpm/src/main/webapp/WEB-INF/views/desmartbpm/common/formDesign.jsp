@@ -437,13 +437,18 @@
 										<i class="icon-move"></i>拖动
 									</span> 
 									<span class="configuration">
-										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#editorModal"
+										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#textBlockModal"
 												role="button" data-toggle="modal">编辑
+										</button>  
+										<button type="button" class="btn btn-mini" title="edit-date" data-target="#editorModal"
+												role="button" data-toggle="modal">编辑文本
 										</button>  
 									</span>
 									<div class="preview">文本块</div>
 									<div class="view">
-										<p contenteditable="true">文本块，可以输入一些提示性话语</p>
+										<div class="subDiv">
+											<p contenteditable="true">文本块，可以输入一些提示性话语</p>
+										</div>
 									</div>
 								</div>
 								<!-- 数据表格 -->
@@ -1271,6 +1276,62 @@
 				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#checkbox-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
+		
+		<!-- 设置文本块的属性 -->
+		<div class="modal hide fade" role="dialog" id="textBlockModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>文本块属性</h3>
+			</div>
+			<div class="modal-body">
+				<div id="text-block-warn" class="hide alert alert-warning">
+    				<strong>警告！</strong>必须填写标<span style="color:red;">*</span>的属性。
+				</div>
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							文本占列宽
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										请填写文本块占列宽(1~12的整数)</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control col" id="text-block-col"
+								placeholder="请输入文本块占列宽">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							文本占行数
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										请填写文本块占行数</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control col" id="text-block-row"
+								placeholder="请输入文本块占行数">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a id="save-text-block-content" class="btn btn-primary">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#text-block-warn").modal("hide");'>取消</a>
+			</div>
+		</div>
+		
 		<!-- 设置文件上传按钮的属性 -->
 		<div class="modal hide fade" role="dialog" id="loadFileModal">
 			<div class="modal-header">
