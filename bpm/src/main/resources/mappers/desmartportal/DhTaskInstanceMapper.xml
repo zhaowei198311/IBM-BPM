@@ -524,10 +524,15 @@
 	   where task_id = #{taskId}
 	</update>
 	
-	<update id="updateTaskStatusByTaskId" parameterType="map">
+	<update id="updateOtherTaskStatusByTaskId" parameterType="map">
 	   update dh_task_instance 
 	   set task_status = #{taskStatus}
-	   where task_id = #{taskId}
+	   where task_id = #{taskId} AND TASK_UID != #{taskUid}
 	</update>
 	
+	<update id="updateTaskStatusByTaskUid" parameterType="map">
+	   update dh_task_instance 
+	   set task_status = #{taskStatus}
+	   where TASK_UID = #{taskUid}
+	</update>
 </mapper>

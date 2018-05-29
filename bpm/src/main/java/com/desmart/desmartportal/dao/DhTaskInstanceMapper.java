@@ -65,12 +65,13 @@ public interface DhTaskInstanceMapper {
 	int updateSynNumberByTaskId(@Param("taskId")Integer taskId, @Param("synNumber")Integer synNumber);
 	
 	/**
-	 * 更改指定任务编号的任务的状态
+	 * 更改除指定任务之外的其它任务编号的任务的状态
 	 * @param taskId
 	 * @param taskStatus
 	 * @return
 	 */
-	int updateTaskStatusByTaskId(@Param("taskId")Integer taskId, @Param("taskStatus")String taskStatus);
+	int updateOtherTaskStatusByTaskId(@Param("taskUid")String taskUid,
+			@Param("taskId")Integer taskId, @Param("taskStatus")String taskStatus);
 	
 	/**
 	 * 根据任务实例查询任务数据和流程
@@ -80,4 +81,10 @@ public interface DhTaskInstanceMapper {
 	List <DhTaskInstance> selectTaskAndProcessInfo(DhTaskInstance taskInstance);
 	
 	DhTaskInstance selectByTaskIdAndUser(DhTaskInstance taskInstance);
+	/**
+	 * 根据taskUid修改任务状态
+	 * @param taskUid
+	 * @return
+	 */
+	Integer updateTaskStatusByTaskUid(@Param("taskUid")String taskUid);
 }

@@ -62,6 +62,11 @@ public class DhTaskInstance {
 	public static final String 	STATUS_CLOSED = "32";
 	
 	/**
+	 *  任务废弃
+	 */
+	public static final String 	STATUS_DISCARD = "-1";
+	
+	/**
 	 * 
 	 */
 	public static final String 	STATUS_SPECIAL = "41";

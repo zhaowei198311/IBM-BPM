@@ -352,9 +352,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						}
 						currDhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
 						currDhProcessInstance.setInsData(formJson.toJSONString());
-						// 修改任务实例状态
-						dhTaskInstanceMapper.updateTaskStatusByTaskId(taskId, DhTaskInstance.STATUS_CLOSED);
-
+						//修改任务实例表单信息
+						dhProcessInstanceMapper.updateByPrimaryKeySelective(currDhProcessInstance);
+						
 						// 审批信息
 						DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 						dhApprovalOpinion.setInsUid(insUid);
@@ -376,6 +376,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
 						dhRoutingRecord.setUserUid(userId);
 						dhRoutingRecordMapper.insert(dhRoutingRecord);
+						// 修改当前任务实例状态为已完成
+						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid)>0) {
+						//如果任务为类型为normal，则将其它相同任务id的任务废弃
+							if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
+								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
+							}
+						}
 					}
 					log.info("完成任务结束......");
 					return ServerResponse.createBySuccess();
