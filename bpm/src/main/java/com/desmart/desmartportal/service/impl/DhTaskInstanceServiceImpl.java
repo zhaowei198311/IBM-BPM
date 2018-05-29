@@ -314,7 +314,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			DhTaskInstance taskInstance = new DhTaskInstance();
 			taskInstance.setTaskId(taskId);
 			taskInstance.setUsrUid(userId);
-			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(taskInstance);
+			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 			if (dhTaskInstance==null) {
 				return ServerResponse.createByErrorMessage("当前任务不存在!");
 			}
@@ -394,7 +394,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhProcessInstance.setInsData(formJson.toJSONString());
 						//判断流程是否结束
 						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
-						if(nextBpmActivityMetas==null) {
+
+						if(nextBpmActivityMetas==null || nextBpmActivityMetas.size()==0) {
 							dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
 							dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
 						}
