@@ -31,6 +31,7 @@ function drawPage() {
     rowObj.each(function () {
         var colObj = $(this).find(".column");
         var flag = true;
+        var isContinue = false;
         if ($(window).width() > 568) {
             formHtml += '<tr>';
             for (var i = 0; i < colObj.length; i++) {
@@ -51,13 +52,13 @@ function drawPage() {
                     }
                 } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0) {
                 	//表单中的填写说明与数据表格
-                	flag = false;
-                	formHtml = formHtml.substring(0, formHtml.length - 4);
-                    formHtml += "</tbody></table>";
                 	var subDivObj = column.find(".subDiv");
                 	var tableObj = subDivObj.find("table");
                 	var pObj = subDivObj.find("p");
                 	if(tableObj.length!=0){
+                		flag = false;
+                    	formHtml = formHtml.substring(0, formHtml.length - 4);
+                        formHtml += "</tbody></table>";
                 		tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
                     	var thObjArr = tableObj.find("thead th");
                     	var trHtml ='<tr>';
@@ -94,55 +95,112 @@ function drawPage() {
                     	formHtml += "<table class='layui-table data-table'>"+tableObj.html()+"</table>";
                         formHtml += tableHead;
                 	}else if(pObj.length!=0){
-                		
+                		var subDivCol = subDivObj.attr("col");
+                		var subDivRow = subDivObj.attr("row");
+                		if(subDivRow==1){//说明
+                			var subHtml = subDivObj.html();
+                			if (!isNaN(subDivCol)) {
+                                formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
+                            }
+                		}else{//表格行的头部
+                			var subHtml = subDivObj.html();
+                			if (!isNaN(subDivCol)) {
+                                formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
+                            }
+                			isContinue = true;
+                		}
                 	}
                 } else {
                 	//普通组件
                     flag = true;
-                    var labelDivObj = column.find(".labelDiv");
-                    var labelDivCol = $(labelDivObj).attr("col");
-                    var subDivObj = column.find(".subDiv");
-                    var subDivCol = $(subDivObj).attr("col");
-
-                    labelDivObj.find("span").addClass("tip_span");
-
-                    var labelHtml = "";
-                    var subHtml = "";
-                    if ($(labelDivObj).next().find(".editor_textarea").length == 1) {
-                        formHtml = formHtml.substring(0, formHtml.length - 4);
-                        formHtml += "</tbody></table>";
-                        labelHtml = "<p class='title_p'>" + $(labelDivObj).text() + "</p>";
-                        subHtml = "<div class='layui-form'>" + $(subDivObj).html() + "</div>";
-                        formHtml += labelHtml;
-                        formHtml += subHtml;
-                        continue;
-                    } else {
-                        labelHtml = $(labelDivObj).html();
-                        if (subDivObj.find("label").length == 0) {
-                            if ($(subDivObj).next().prop("class") == "hidden-value") {
-                                subHtml = $(subDivObj).html() + $(subDivObj).next().html();
-                            } else {
-                                subHtml = $(subDivObj).html();
-                            }
-                        } else if (subDivObj.find("label").length == 1) {
-                            subHtml = $(subDivObj).find("label").html();
-                        } else {
-                            subDivObj.find("label").each(function () {
-                                var title = $(this).text();
-                                $(this).find("input").prop("title", title);
-                                $(this).html($(this).find("input"));
-                                subHtml += $(this).html();
-                            });
-                        }
-
-                        if (!isNaN(labelDivCol)) {
-                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
-                        }
-
-                        if (!isNaN(subDivCol)) {
-                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
-                        }
-                    } //end if editor
+                    if(isContinue){
+                		column.find(".subDiv").each(function(index){
+                			if(index!=0){
+	                        	formHtml += '<tr>';
+                			}
+                			var labelDivObj = $(column.find(".labelDiv")[index]);
+    	                    var labelDivCol = labelDivObj.attr("col");
+    	                    var subDivObj = $(column.find(".subDiv")[index]);
+    	                    var subDivCol = subDivObj.attr("col");
+    	
+    	                    labelDivObj.find("span").addClass("tip_span");
+                			var labelHtml = $(labelDivObj).html();
+                			var subHtml = "";
+	                        if (subDivObj.find("label").length == 0) {
+	                            if ($(subDivObj).next().prop("class") == "hidden-value") {
+	                                subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+	                            } else {
+	                                subHtml = $(subDivObj).html();
+	                            }
+	                        } else if (subDivObj.find("label").length == 1) {
+	                            subHtml = $(subDivObj).find("label").html();
+	                        } else {
+	                            subDivObj.find("label").each(function () {
+	                                var title = $(this).text();
+	                                $(this).find("input").prop("title", title);
+	                                $(this).html($(this).find("input"));
+	                                subHtml += $(this).html();
+	                            });
+	                        }
+	
+	                        if (!isNaN(labelDivCol)) {
+	                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:240px">' + labelHtml + '</td>';
+	                        }
+	
+	                        if (!isNaN(subDivCol)) {
+	                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+	                        }
+	                        if(index!=column.find(".subDiv").length-1){
+	                        	formHtml += '</tr>';
+                			}
+                        });
+                		isContinue = false;
+                	}else{
+	                    var labelDivObj = column.find(".labelDiv");
+	                    var labelDivCol = labelDivObj.attr("col");
+	                    var subDivObj = column.find(".subDiv");
+	                    var subDivCol = subDivObj.attr("col");
+	
+	                    labelDivObj.find("span").addClass("tip_span");
+	
+	                    var labelHtml = "";
+	                    var subHtml = "";
+	                    if ($(labelDivObj).next().find(".editor_textarea").length == 1) {
+	                        formHtml = formHtml.substring(0, formHtml.length - 4);
+	                        formHtml += "</tbody></table>";
+	                        labelHtml = "<p class='title_p'>" + $(labelDivObj).text() + "</p>";
+	                        subHtml = "<div class='layui-form'>" + $(subDivObj).html() + "</div>";
+	                        formHtml += labelHtml;
+	                        formHtml += subHtml;
+	                        continue;
+	                    } else {
+	                        labelHtml = $(labelDivObj).html();
+	                        if (subDivObj.find("label").length == 0) {
+	                            if ($(subDivObj).next().prop("class") == "hidden-value") {
+	                                subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+	                            } else {
+	                                subHtml = $(subDivObj).html();
+	                            }
+	                        } else if (subDivObj.find("label").length == 1) {
+	                            subHtml = $(subDivObj).find("label").html();
+	                        } else {
+	                            subDivObj.find("label").each(function () {
+	                                var title = $(this).text();
+	                                $(this).find("input").prop("title", title);
+	                                $(this).html($(this).find("input"));
+	                                subHtml += $(this).html();
+	                            });
+	                        }
+	
+	                        if (!isNaN(labelDivCol)) {
+	                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
+	                        }
+	
+	                        if (!isNaN(subDivCol)) {
+	                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+	                        }
+	                    } //end if editor
+                	}//
                 } //end if column
             } //end for
             if (flag) {
@@ -270,6 +328,12 @@ function drawPage() {
             $("colgroup").remove();
         }
     }
+    
+    var explainArr = $(".td_sub_explain");
+    explainArr.each(function(){
+    	$(this).find("p").prepend('<img src="../resources/desmartportal/images/top_star.png" class="star_img">');
+    });
+    
     view.find("input[type='tel']").desNumber();
 
     layui.use(['form', 'layedit', 'laydate'], function () {
