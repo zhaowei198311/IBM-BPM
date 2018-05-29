@@ -212,7 +212,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	 * 复制表单信息
 	 */
 	private String copyFormInfo(BpmPublicForm bpmPublicForm,BpmPublicForm oldBpmPublicForm,String newFilename) {
-		String newFormUid = EntityIdPrefix.BPM_FORM + UUID.randomUUID().toString();
+		String newFormUid = EntityIdPrefix.BPM_PUBLIC_FORM + UUID.randomUUID().toString();
 		bpmPublicForm.setPublicFormUid(newFormUid);//重新生成唯一主键
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         bpmPublicForm.setCreator(currUser);
