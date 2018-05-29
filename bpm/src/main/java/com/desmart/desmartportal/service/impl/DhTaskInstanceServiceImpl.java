@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.StringUtil;
 
 /**
  * <p>
@@ -277,6 +279,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse perform(String data) {
 		log.info("完成任务开始......");
 		try {
+	        if (StringUtils.isBlank(data)) {
+	            return ServerResponse.createByErrorMessage("缺少必要参数");
+	        }
 			JSONObject jsonBody = JSONObject.parseObject(data);
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
@@ -305,6 +310,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.info("完成任务出现异常......");
 			return ServerResponse.createByError();
 		}
 	}
