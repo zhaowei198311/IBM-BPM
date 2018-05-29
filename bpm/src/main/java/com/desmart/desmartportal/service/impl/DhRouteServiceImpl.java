@@ -49,7 +49,7 @@ import com.desmart.desmartsystem.util.ArrayUtil;
 
 @Service
 public class DhRouteServiceImpl implements DhRouteService {
-    private Logger log = Logger.getLogger(DhRouteServiceImpl.class);
+	private Logger log = Logger.getLogger(DhRouteServiceImpl.class);
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	@Autowired
@@ -69,7 +69,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Autowired
 	private SysTeamMemberMapper sysTeamMemberMapper;
-	
+
 	@Autowired
 	private DhGatewayLineService dhGatewayLineService;
 	@Autowired
@@ -78,8 +78,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DroolsEngineService droolsEngineService;
 	@Autowired
 	private DatRuleService datRuleService;
-	
-	
+
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo,
 			String companyNum, String formData) {
@@ -92,9 +91,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 		String insDate = dhProcessInstance.getInsData();// 实例表单
 
 		JSONObject formJson = new JSONObject();
+		
+		
+		JSONObject newObj = new JSONObject();
 		if (StringUtils.isNotBlank(formData)) {
-			formJson = FormDataUtil.formDataCombine(JSONObject.parseObject(formData), JSONObject.parseObject(insDate));
+			newObj=JSONObject.parseObject(insDate);
 		}
+		formJson = FormDataUtil.formDataCombine(newObj,JSONObject.parseObject(insDate).getJSONObject("formData"));
 		List<BpmActivityMeta> activityMetaList = getNextActivities(bpmActivityMeta, formJson);
 		// 环节配置获取
 		for (BpmActivityMeta activityMeta : activityMetaList) {
@@ -115,7 +118,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 			if (assignList.size() == 0) {
 				return ServerResponse.createByErrorMessage("缺少处理人信息");
 			}
-			List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList); // 角色或部门
+			List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
 
 			String userUid = "";
 			String userName = "";
@@ -126,19 +129,18 @@ public class DhRouteServiceImpl implements DhRouteService {
 			case ROLE_AND_COMPANY:
 				SysRoleUser roleUser = new SysRoleUser();
 				roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
-				
-				
-				if(assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
+
+				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
 					if (StringUtils.isNotBlank(departNo)) {
 						roleUser.setCompanyCode(companyNum);
 					}
 				}
-				if(assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
+				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
 					if (StringUtils.isNotBlank(companyNum)) {
 						roleUser.setDepartUid(departNo);
 					}
 				}
-				
+
 				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
 				for (SysRoleUser sysRoleUser : roleUsers) {
 					userUid += sysRoleUser.getUserUid() + ";";
@@ -146,24 +148,23 @@ public class DhRouteServiceImpl implements DhRouteService {
 				}
 				break;
 			case TEAM:
-				
+
 			case TEAM_AND_DEPARTMENT:
-				
-				
+
 			case TEAM_AND_COMPANY:
 				SysTeamMember sysTeamMember = new SysTeamMember();
-				
-				if(assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
+
+				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
 					if (StringUtils.isNotBlank(departNo)) {
 						sysTeamMember.setCompanyCode(companyNum);
 					}
 				}
-				if(assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
+				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
 					if (StringUtils.isNotBlank(companyNum)) {
 						sysTeamMember.setDepartUid(departNo);
 					}
 				}
-				
+
 				sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
 				List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
 				for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
@@ -173,7 +174,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 				break;
 			case LEADER_OF_PRE_ACTIVITY_USER:
 				
-				
 			case USERS:
 				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
 				for (SysUser sysUser : userItem) {
@@ -181,9 +181,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 					userName += sysUser.getUserName() + ";";
 				}
 				break;
-			case PROCESS_CREATOR:	//流程发起人
-				
-				idList=new ArrayList<String>();
+			case PROCESS_CREATOR: // 流程发起人
+				idList = new ArrayList<String>();
 				idList.add(insInitUser);
 				List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList);
 				for (SysUser sysUser : userList) {
@@ -191,10 +190,23 @@ public class DhRouteServiceImpl implements DhRouteService {
 					userName += sysUser.getUserName() + ";";
 				}
 				break;
-			case BY_FIELD:
+			case BY_FIELD://根据表单字段选
 				if (assignList.size() > 0) {
 					String field = assignList.get(0).getActaAssignId();
 					dhActivityConf.setHandleField(field);
+					JSONObject jsonObject=formJson.getJSONObject(field);
+					idList=new ArrayList<String>(); 
+					if (jsonObject!=null) {
+						String value=jsonObject.getString("value");
+						idList.add(value);
+					}
+					if(idList.size()>0) {
+						List<SysUser> users = sysUserMapper.listByPrimaryKeyList(idList);
+						for (SysUser sysUser : users) {
+							userUid += sysUser.getUserUid() + ";";
+							userName += sysUser.getUserName() + ";";
+						}
+					}
 				}
 				break;
 			default:
@@ -343,7 +355,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	    } 
 	    return param;
 	}
-	
+
 	private List<DhGatewayLine> getUnDefaultLines(List<DhGatewayLine> lineList) {
 	    List<DhGatewayLine> unDefaultLines = new ArrayList<>();
 	    Iterator<DhGatewayLine> iterator = lineList.iterator();
@@ -355,7 +367,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	    }
 	    return unDefaultLines;
 	}
-	
+
 	private DhGatewayLine getDefaultLine(List<DhGatewayLine> lineList) {
         Iterator<DhGatewayLine> iterator = lineList.iterator();
         while (iterator.hasNext()) {
