@@ -1,8 +1,10 @@
 package com.desmart.desmartbpm.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import com.desmart.common.constant.ServerResponse;
@@ -13,6 +15,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.opensymphony.xwork2.Result;
 
 public class SFTPUtil {
 	private ChannelSftp sftp;
@@ -146,8 +149,20 @@ public class SFTPUtil {
     	try {
 			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(oldFilename);
+			//拷贝读取到的文件流  
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+            byte[] buffer = new byte[1024];  
+            int len;  
+            while ((len = input.read(buffer)) > -1 ) {  
+                baos.write(buffer, 0, len);  
+            }  
+            baos.flush();  
+            InputStream newInput = new ByteArrayInputStream(baos.toByteArray());  
+            newInput = new ByteArrayInputStream(baos.toByteArray());
+			sftp.put(newInput,newFilename);
+			newInput.close();
+			baos.close();
 			input.close();
-			sftp.put(input, newFilename);
 		} catch (Exception e) {
 			flag = false;
 			e.printStackTrace();
@@ -168,7 +183,19 @@ public class SFTPUtil {
     	try {
 			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(filename);
-			result = readInputStream(input);
+			//拷贝读取到的文件流  
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+            byte[] buffer = new byte[1024];  
+            int len;  
+            while ((len = input.read(buffer)) > -1 ) {  
+                baos.write(buffer, 0, len);  
+            }  
+            baos.flush();  
+            InputStream newInput = new ByteArrayInputStream(baos.toByteArray());  
+            newInput = new ByteArrayInputStream(baos.toByteArray());
+			result = readInputStream(newInput);
+			newInput.close();
+			baos.close();
 			input.close();
 			logout();
 	    	return ServerResponse.createBySuccess(result);
@@ -190,6 +217,6 @@ public class SFTPUtil {
             bos.write(buffer, 0, len);  
         }  
         bos.close();  
-        return new String(bos.toByteArray(),"GBK");
+        return new String(bos.toByteArray());
     }  
 }
