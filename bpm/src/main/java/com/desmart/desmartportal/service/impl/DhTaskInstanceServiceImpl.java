@@ -24,6 +24,7 @@ import com.desmart.common.constant.ResponseCode;
 import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
+import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -40,8 +41,10 @@ import com.desmart.desmartportal.entity.DhApprovalOpinion;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
@@ -97,10 +100,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private BpmFormManageService bpmFormManageService;
 	
 	@Autowired
-	private DhProcessInstanceService dhProcessInstanceService;
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
 	
 	@Autowired
-	private DhRoutingRecordMapper dhRoutingRecordMapper;
+	private DhApprovalOpinionService dhapprovalOpinionServiceImpl;
+	
+	@Autowired
+	private DhRouteService dhRouteServiceImpl;
 
 	/**
 	 * 查询所有流程实例
@@ -294,6 +300,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 			JSONObject jsonBody = JSONObject.parseObject(data);
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
+			JSONObject formData = JSONObject.parseObject(String.valueOf(jsonBody.get("formData")));
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 			String taskUid =taskData.getString("taskUid");
 			List<DhTaskInstance> checkList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
@@ -311,7 +318,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			String apr_taskUid = approvalData.getString("taskUid");//存储的是环节id->activity_id
 			String aprOpiComment = approvalData.getString("aprOpiComment");
 			String aprStatus = approvalData.getString("aprStatus");
-			
+			DhProcessInstance currDhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 
 			// 根据任务标识和用户  去查询流程 实例
 			DhTaskInstance taskInstance = new DhTaskInstance();
@@ -322,15 +329,26 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			//装配处理人信息
 			CommonBusinessObject puBo = new CommonBusinessObject();
 			ServerResponse<CommonBusinessObject> serverResponse = 
-				dhProcessInstanceService.assembleCommonBusinessObject(puBo,JSONObject.parseArray(routeData.toJSONString()));
+					dhRouteServiceImpl.assembleCommonBusinessObject(puBo,JSONObject.parseArray(routeData.toJSONString()));
 			if(serverResponse.getStatus()==ResponseCode.ERROR.getCode()) {
 				return serverResponse;
 			}
 			
+			//整合formdata
+			JSONObject formJson = new JSONObject();
+			if (StringUtils.isNotBlank(formData.toJSONString())) {
+				formJson = FormDataUtil.formDataCombine(formData
+						,JSONObject.parseObject(currDhProcessInstance.getInsData()));
+			}
 			
-			DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();//审批信息
+			//审批信息
+			DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 			dhApprovalOpinion.setInsUid(insUid);dhApprovalOpinion.setTaskUid(apr_taskUid);
 			dhApprovalOpinion.setAprOpiComment(aprOpiComment);dhApprovalOpinion.setAprStatus(aprStatus);
+			ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl.insertDhApprovalOpinion(dhApprovalOpinion);
+			if(!serverResponse2.isSuccess()) {
+				return serverResponse2;
+			}
 			
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 			CommonBusinessObject pubBo = new CommonBusinessObject();
