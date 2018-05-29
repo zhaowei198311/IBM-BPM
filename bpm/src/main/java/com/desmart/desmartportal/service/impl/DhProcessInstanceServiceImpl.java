@@ -300,7 +300,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             int taskId = getFirstTaskId(result);
             
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            HttpReturnStatus startTaskResult = bpmTaskUtil.startTask(taskId);
+            HttpReturnStatus startTaskResult = bpmTaskUtil.completeTask(taskId);
             // 如果完成任务成功
             if (200 == startTaskResult.getCode()) {
                 // 更新草稿流程实例的状态
