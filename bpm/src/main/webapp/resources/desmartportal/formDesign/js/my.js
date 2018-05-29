@@ -4,13 +4,22 @@ var view = null;
 /*动态表单渲染js*/
 $(function(){
 	drawPage();
+	showTableP();
 	$("#formSet").css("display","block");
 });
+/*
+function showTableP(){
+	var tableArr = view.find(".layui-table");
+	tableArr.each(function(){
+		if($(this).find("tbody").html()==null || $(this).find("tbody").html()==""){
+			view.find();
+		}
+	});
+}*/
 
 //渲染页面的方法
 function drawPage() {
-    var tableHead = '<table class="layui-table form-sub">' +
-        '<tbody>';
+    var tableHead = '<table class="layui-table form-sub">' + '<tbody>';
     var formHtml = tableHead;
     view = $(".container-fluid");
     viewHtml = view.html();
@@ -27,11 +36,11 @@ function drawPage() {
                     column.find("p").addClass("title_p");
                     pHtml = column.html();
                     flag = false;
-                    if (column.find("p").length != 0) {
+                    if (column.find(".title_p").length != 0) {
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;
-                        formHtml += tableHead;
+                        formHtml += '<table class="layui-table form-sub" title='+pHtml+'>' + '<tbody>';
                     } else {
                         continue;
                     }
@@ -139,7 +148,7 @@ function drawPage() {
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;
-                        formHtml += tableHead;
+                        formHtml += '<table class="layui-table form-sub" title='+pHtml+'>' + '<tbody>';
                     } else {
                         continue;
                     }
