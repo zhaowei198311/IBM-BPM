@@ -134,7 +134,32 @@ h4 {
 	src="resources/desmartportal/js/layui.all.js"></script>
 
 <script type="text/javascript">
-	layui.use(['form'],function() {
+
+	function login(){
+		$.ajax({
+			url : 'user/logins',
+			type : 'post',
+			dataType : 'text',
+			data : {
+				username : $("#LAY-user-login-username").val(),
+				password : $("#LAY-user-login-password").val()
+			},
+	        beforeSend: function () {
+	            index = layer.load(1);
+	        },
+			success : function(data) {
+				layer.close(index);
+				if (data == 1) {
+					layer.msg('登陆成功');
+					location.href = "user/menus";
+				} else {
+					layer.msg('登陆失败');
+				}
+			}
+		})
+	}
+
+	layui.use(['form'],function cc() {
 		var $ = layui.jquery;
 		var form   = layui.form;
 		var layer  = layui.layer;
@@ -142,25 +167,21 @@ h4 {
 		form.render();
 		//提交
 		form.on('submit(LAY-user-login-submit)', function(obj) {
-			$.ajax({
-				url : 'user/logins',
-				type : 'post',
-				dataType : 'text',
-				data : {
-					username : $("#LAY-user-login-username").val(),
-					password : $("#LAY-user-login-password").val()
-				},
-				success : function(data) {
-					if (data == 1) {
-						layer.msg('登陆成功');
-						location.href = "user/menus";
-					} else {
-						layer.msg('登陆失败');
-					}
-				}
-			})
+			login();
 			return false;
 		});
 
 	});
+	
+	$(document).keydown(function(e) {
+		var username = $("#LAY-user-login-username").val();
+		var password = $("#LAY-user-login-password").val();
+		   if (e.keyCode == 13) {
+				if(username.trim().length!=0 && password.trim().length!=0){
+					login();
+				}else{
+					layer.msg('必填项不能为空',{icon: 5});
+				}
+		   }
+		})
 </script>
