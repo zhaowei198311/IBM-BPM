@@ -100,14 +100,6 @@ public interface DhProcessInstanceService {
 	 */
 	DhProcessInstance getByInsUid(String insUid);
 
-	/**
-	 * 装配处理人信息
-	 * @param pubBo
-	 * @param routeData
-	 * @return
-	 */
-	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
-
 	
 	/**
 	 * 驳回流程

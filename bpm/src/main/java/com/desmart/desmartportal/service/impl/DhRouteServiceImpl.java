@@ -8,14 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.CommonBusinessObjectUtils;
 import com.desmart.common.util.FormDataUtil;
@@ -35,8 +35,10 @@ import com.desmart.desmartbpm.service.DatRuleService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DroolsEngineService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
+import com.desmart.desmartportal.dao.DhGatewayRouteResultMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhGatewayRouteResult;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
@@ -78,6 +80,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DroolsEngineService droolsEngineService;
 	@Autowired
 	private DatRuleService datRuleService;
+	@Autowired
+	private DhGatewayRouteResultMapper dhGatewayRouteResultMapper;
+
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo,
@@ -426,5 +431,69 @@ public class DhRouteServiceImpl implements DhRouteService {
         
         return ServerResponse.createBySuccess(pubBo);
     }
+	
+	public ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData) {
+	    Map<String, Object> resultMap = bpmActivityMetaService.getNextToActivity(currActivityMeta, "");
+	    List<BpmActivityMeta> gatewayList = (List<BpmActivityMeta>)resultMap.get("gateway");
+	    
+	    for (BpmActivityMeta gatewayMeta : gatewayList) {
+	        DhGatewayLine lineSelective = new DhGatewayLine();
+            lineSelective.setActivityId(gatewayMeta.getActivityId());
+            List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
+            // 获得相关的条件
+            List<DatRuleCondition> conditions = datRuleConditionService.getDatruleConditionByActivityId(gatewayMeta.getActivityId());
+            // 获得条件需要的表单中的变量
+            Set<String> needVarnameSet = new HashSet<>();
+            Map<String, String> varTypeMap = new HashMap<>();
+            for (DatRuleCondition condition : conditions) {
+                String varname = condition.getLeftValue();
+                if (!needVarnameSet.contains(varname)) {
+                    needVarnameSet.add(varname);
+                    varTypeMap.put(varname, condition.getRightValueType());
+                }
+            }
+            // 从表单中取出需要的参数
+            org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
+            if (param == null) {
+                // 从表单中获取变量发生错误, 不保存/更新值
+                log.error("从表单中获取变量发生错误，网关id: " + gatewayMeta.getActivityId());
+                continue;
+            }
+            // 计算每种规则的结果
+            List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
+            String fittedLineId = null; // 满足规则的连接线id
+            for (DhGatewayLine line : unDefaultLines) {
+                String ruleId = line.getRuleId();
+                DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
+                Map<String, Object> ruleResult = null;
+                try {
+                    ruleResult = droolsEngineService.execute(param, datRule);
+                    if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
+                        // 规则运算成功，更新或新增结果
+                        fittedLineId = line.getGatewayLineUid();
+                        String outputValue = line.getRouteResult();
+                        DhGatewayRouteResult routeResult = new DhGatewayRouteResult();
+                        routeResult.setInsId(insId);
+                        routeResult.setActivityBpdId(gatewayMeta.getActivityBpdId());
+                        routeResult.setRouteResult(outputValue);
+                        int updateCount = dhGatewayRouteResultMapper.updateRouteResultByInsIdAndActivityBpdId(routeResult);
+                        if (updateCount == 0) {
+                            routeResult.setRouteResultUid(EntityIdPrefix.DH_GATEWAY_ROUTE_RESULT + UUID.randomUUID().toString());
+                            routeResult.setStatus("on");
+                            dhGatewayRouteResultMapper.save(routeResult);
+                        }
+                        break;
+                    }
+                } catch (Exception e) {
+                   log.error("规则运算异常,规则编号：" + ruleId, e); 
+                }
+            }
+            if (fittedLineId == null) {
+                // 删除表中相应的记录
+                dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayMeta.getActivityBpdId());
+            }
+	    } // 遍历网关结束
+	    return ServerResponse.createBySuccess();
+	}
 	
 }

@@ -67,4 +67,7 @@ public class EntityIdPrefix {
 
     /** 网关规则前缀 */
     public static final String DAT_RULE = "datrule:";
+    
+    /** 网关决策服务结果前缀 */
+    public static final String DH_GATEWAY_ROUTE_RESULT = "route_result:";
 }

@@ -49,6 +49,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
@@ -107,6 +108,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
+	@Autowired
+	private DhRouteService dhRouteService;
 	
 	/**
 	 * 查询所有流程实例
@@ -278,7 +281,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         CommonBusinessObject pubBo = new CommonBusinessObject();
         pubBo.setCreatorId(currentUserUid);
         // 封装下一环节的处理人
-        ServerResponse<CommonBusinessObject> assembleResponse = assembleCommonBusinessObject(pubBo, routeData);
+        ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo, routeData);
         if (!assembleResponse.isSuccess()) {
             return assembleResponse;
         }
@@ -384,45 +387,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
 
 
-    /**
-     * 装配处理人的信息
-     */
-	@Override
-    public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData) {
-        if (pubBo == null) {
-            pubBo = new CommonBusinessObject();
-        }
-        
-        for (int i=0; i<routeData.size(); i++) {
-            JSONObject item = (JSONObject)routeData.get(i);
-            String activityId = item.getString("activityId");
-            String userUids = item.getString("userUid");
-            String assignVarName = item.getString("assignVarName");
-            String signCountVarName = item.getString("signCountVarName");
-            String loopType = item.getString("loopType");
-            
-            if (StringUtils.isBlank(activityId) || StringUtils.isBlank(userUids) || StringUtils.isBlank(assignVarName) || StringUtils.isBlank(signCountVarName)
-                    || StringUtils.isBlank(loopType)) {
-                return ServerResponse.createByErrorMessage("处理人信息错误");
-            }
-            
-            List<String> userIdList = Arrays.asList(userUids.split(";"));
-            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList); 
-            if (userIdList.size() != userList.size()) {
-                return ServerResponse.createByErrorMessage("处理人信息错误");
-            }
-            // 设置处理人
-            CommonBusinessObjectUtils.setNextOwners(assignVarName, pubBo, userIdList);
-            // 如果是多实例会签或者简单循环会签就设置signCount值
-            if (BpmActivityMeta.LOOP_TYPE_SIMPLE_LOOP.equals(loopType) || BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
-                CommonBusinessObjectUtils.setOwnerSignCount(signCountVarName, pubBo, userIdList.size());
-            }
-            
-        }
-        
-        return ServerResponse.createBySuccess(pubBo);
-    }
-    
     public DhProcessInstance generateDraftDefinition(DhProcessDefinition dhProcessDefinition) {
         DhProcessInstance processInstance = new DhProcessInstance();
         processInstance = new DhProcessInstance();

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.DhGatewayRouteResultMapper" >
+ 
+ <sql id="Base_Column_List">
+    ROUTE_RESULT_UID, INS_ID, ACTIVITY_BPD_ID, ROUTE_RESULT, STATUS, create_time, update_time 	
+ </sql>
+ 
+ <insert id="save" parameterType="com.desmart.desmartportal.entity.DhGatewayRouteResult">
+    insert into DH_GATEWAY_ROUTE_RESULT (<include refid="Base_Column_List"/>) 
+    values (
+        #{routeResultUid},
+	    #{insId},
+	    #{activityBpdId},
+	    #{routeResult},
+	    #{status},
+	    sysdate,
+	    sysdate
+    )
+ </insert>
+ 
+ <update id="updateRouteResultByInsIdAndActivityBpdId" parameterType="com.desmart.desmartportal.entity.DhGatewayRouteResult">
+    update DH_GATEWAY_ROUTE_RESULT 
+    set route_result = #{routeResult}, update_time = sysdate
+    where ins_id = #{insId} and activity_bpd_id = #{activityBpdId}
+ </update>
+ 
+ <select id="queryByInsIdAndActivityBpdId" parameterType="map" resultType="com.desmart.desmartportal.entity.DhGatewayRouteResult">
+    select <include refid="Base_Column_List"/>
+    from DH_GATEWAY_ROUTE_RESULT
+    where ins_id = #{insId} and activity_bpd_id = #{activityBpdId}
+ </select>
+ 
+ <delete id="deleteByInsIdAndActivityBpdId" parameterType="map">
+    delete from DH_GATEWAY_ROUTE_RESULT
+    where ins_id = #{insId} and activity_bpd_id = #{activityBpdId}
+ </delete>
+ 
+</mapper>
