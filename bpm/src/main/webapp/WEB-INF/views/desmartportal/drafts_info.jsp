@@ -203,8 +203,7 @@
 										<div class="hidden-value">
 											<input class="maxFileSize" value="20" type="hidden" /> <input
 												class="maxFileCount" value="10" type="hidden" /> <input
-												class="fileFormat" value="jpg,png,xls,xlsx,exe"
-												type="hidden" />
+												class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
 										</div>
 									</th>
 								</tr>

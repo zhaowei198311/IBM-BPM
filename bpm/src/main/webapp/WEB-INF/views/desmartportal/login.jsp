@@ -83,15 +83,15 @@ h4 {
 					<img src="resources/desmartportal/images/logo.png" class="logo" />
 				</div>
 				<h4 style="margin: 10px 0 20px;color:#fff;">
-					欢迎使用 <strong>来伊份BPM后台管理系统</strong>
+					欢迎使用 <strong>来伊份BPM系统</strong>
 				</h4>
-				<ul class="list">
+				<!-- <ul class="list">
 					<li><i class="layui-icon">&#xe702;</i> 平台简介一</li>
 					<li><i class="layui-icon">&#xe702;</i> 平台简介二</li>
 					<li><i class="layui-icon">&#xe702;</i> 平台简介三</li>
 					<li><i class="layui-icon">&#xe702;</i> 平台简介四</li>
 					<li><i class="layui-icon">&#xe702;</i> 平台简介五</li>
-				</ul>
+				</ul> -->
 			</div>
 			<div class="layui-col-md5">
 				<div class="layadmin-user-login-main">
