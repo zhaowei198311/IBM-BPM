@@ -229,7 +229,6 @@
 	}
 
 	function showinfo(proUid,proAppId,insUid) {
-		alert(proUid+"~~"+proAppId+"~~"+insUid)
 		window.location.href = 'menus/startProcess?proUid=' + ""
 		+ '&proAppId=' + "" + '&insUid=' + insUid
 	}

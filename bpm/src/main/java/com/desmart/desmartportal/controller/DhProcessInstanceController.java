@@ -121,4 +121,11 @@ public class DhProcessInstanceController {
 				.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		return dhTaskInstanceService.selectTaskByUser(taskInstance, pageNum, pageSize);
 	}
+	
+	@RequestMapping(value = "/rejectProcess")
+	@ResponseBody
+	public ServerResponse rejectProcess() {
+		
+		return null;
+	}
 }

@@ -97,4 +97,9 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	DhProcessInstance getByInsUid(String insUid);
+	
+	/**
+	 * 驳回流程
+	 */
+	ServerResponse rejectProcess(int insId,String activityId, String user);
 }

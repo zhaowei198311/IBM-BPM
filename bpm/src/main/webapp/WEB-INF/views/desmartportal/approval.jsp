@@ -89,7 +89,7 @@
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${insId})">流程图</button>
             <button class="layui-btn layui-btn-sm" onclick="agree()">通过</button>
-            <button class="layui-btn layui-btn-sm" onclick="reject()" id="actcCanReject">驳回</button>
+            <button class="layui-btn layui-btn-sm" onclick="reject()">驳回</button>
             <button class="layui-btn layui-btn-sm" id="actcCanTransfer">传阅</button>
             <button class="layui-btn layui-btn-sm" id="actcCanAdd">加签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>

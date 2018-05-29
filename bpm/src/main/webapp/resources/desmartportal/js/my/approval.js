@@ -217,8 +217,9 @@ function agree() {
 }
 
 function reject() {
-    layer.alert('1231313')
-    var taskId = $("#taskId").val();
+    var activityId = $("#activityId").val();
+    var insId = $("#insId").val();
+    alert(activityId+"~~~~"+insId)
 }
 
 function back() {

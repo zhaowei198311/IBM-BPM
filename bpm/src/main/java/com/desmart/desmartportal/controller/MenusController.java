@@ -192,7 +192,7 @@ public class MenusController {
 	public void test() {
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-        bpmProcessUtil.rejectProcess("661", "bpdid:9ba2e5f1271c68f2:-1a57422b:163382b7a4a:-7ff3", "00011178");
+        bpmProcessUtil.rejectProcess(661, "bpdid:9ba2e5f1271c68f2:-1a57422b:163382b7a4a:-7ff3", "00011178");
 	}
 
 }
