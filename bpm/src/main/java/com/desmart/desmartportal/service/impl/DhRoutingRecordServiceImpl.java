@@ -33,10 +33,5 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		return dhTaskHandlerMapper.getListByInsIdAndActivityBpdId(insId, activityBpdId);
 	}
 
-	@Override
-	public List<DhTaskInstance> selectByPrimaryKey(String taskUid) {
-		// TODO Auto-generated method stub
-		return dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-	}
 
 }

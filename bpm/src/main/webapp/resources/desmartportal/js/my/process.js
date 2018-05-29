@@ -35,6 +35,9 @@ $(function () {
     selectDepart();
     saveDraftsData();
     saveData();
+    
+    var dateStr = common.dateToSimpleString(new Date());
+    $("#createDate").val(dateStr);
 })
 
 /**

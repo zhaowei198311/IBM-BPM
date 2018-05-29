@@ -159,22 +159,21 @@
 						</tr>
 						<tr>
 							<td class="td_title" colspan="1" style="width: 120px">工号</td>
-							<td class="sub_title" colspan="5"><input type="text"
-								name="userId" value="${currentUser.userId}" class="layui-input">
+							<td class="sub_title" colspan="5">
+							 <input type="text" name="userId" value="${currentUser.userId}" class="layui-input" readonly>
 							</td>
 							<td class="td_title" colspan="1" style="width: 120px">姓名</td>
-							<td class="sub_title" colspan="5"><input type="text"
-								name="userName" value="${currentUser.userName}"
-								class="layui-input"></td>
+							<td class="sub_title" colspan="5">
+							 <input type="text" name="userName" value="${currentUser.userName}" class="layui-input" readonly></td>
 						</tr>
 						<tr>
 							<td class="td_title" style="width: 120px" colspan="1">创建日期</td>
-							<td class="sub_title" colspan="5"><input type="text"
-								name="createDate" value="2018-05-23" class="layui-input">
+							<td class="sub_title" colspan="5">
+							<input type="text" name="createDate" id="createDate" value="" class="layui-input" readonly>
 							</td>
 							<td class="td_title" style="width: 120px" colspan="1">所属部门</td>
-							<td class="sub_title" colspan="5"><select id="creatorInfo"
-								lay-filter="creatorInfo">
+							<td class="sub_title" colspan="5">
+							<select id="creatorInfo" lay-filter="creatorInfo">
 									<option value="">请选择部门</option>
 									<c:forEach items="${userDepartmentList}" var="item">
 										<option value="${item.departNo},${item.companyCode}">${item.departName}</option>

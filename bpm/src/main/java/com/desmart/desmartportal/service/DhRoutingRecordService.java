@@ -25,8 +25,5 @@ public interface DhRoutingRecordService {
      * @return
      */
     List<DhTaskHandler> getListByInsIdAndActivityBpdId(@Param("insId")Integer insId, @Param("activityBpdId")String activityBpdId);
-    /**
-	 * 根据实例任务id 查询任务
-	 */
-    List<DhTaskInstance> selectByPrimaryKey(String taskUid);
+
 }

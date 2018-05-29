@@ -97,6 +97,15 @@ var common = {
 		var seconds = date.getSeconds();
 		return year + "-" + common.getzf(month) + "-" + common.getzf(day) + " " + common.getzf(hours) + ":" + common.getzf(minutes) + ":" + common.getzf(seconds);
 	},
+	dateToSimpleString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var seconds = date.getSeconds();
+		return year + "-" + common.getzf(month) + "-" + common.getzf(day);
+	},
 	getzf : function (num){  
 		if(parseInt(num) < 10){  
 			num = '0'+num;  

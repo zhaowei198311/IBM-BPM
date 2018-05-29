@@ -458,52 +458,51 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			 * 首先要通过任务实例数据信息里的 流程实例id 去查询流程，流程图元素id(activityBpdId) form表单id 然后把这些数据存放map 返回给
 			 * 前台 代办页面
 			 */
-			List<DhTaskInstance> taskList = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 
 			BpmActivityMeta activityMeta = new BpmActivityMeta();
+			
+			// 查询流程
+			resultMap.put("taskInstance", dhTaskInstance);
+			DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
+					.selectByPrimaryKey(dhTaskInstance.getInsUid());
+			resultMap.put("processInstance", dhprocessInstance);
+			// 查询流程图元素信息
+			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+			bpmActivityMeta.setBpdId(dhprocessInstance.getProUid());
+			bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
+			bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
+			List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper
+					.queryByBpmActivityMetaSelective(bpmActivityMeta);
 
-			for (DhTaskInstance dhTaskInstance : taskList) {
-				// 查询流程
-				resultMap.put("taskInstance", dhTaskInstance);
-				DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
-						.selectByPrimaryKey(dhTaskInstance.getInsUid());
-				resultMap.put("processInstance", dhprocessInstance);
-				// 查询流程图元素信息
-				BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-				bpmActivityMeta.setBpdId(dhprocessInstance.getProUid());
-				bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
-				bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
-				List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper
-						.queryByBpmActivityMetaSelective(bpmActivityMeta);
-
-				// 获取当前环节 找到下一环节
-				bpmActivityMeta.setActivityBpdId(dhTaskInstance.getActivityBpdId());
-				List<BpmActivityMeta> activityMetas = bpmActivityMetaMapper
-						.queryByBpmActivityMetaSelective(bpmActivityMeta);
-				if (activityMetas != null && activityMetas.size() > 0) {
-					activityMeta = activityMetas.get(0);
-					resultMap.put("activityMeta", activityMeta);
-				}
-				resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
-
-				// 转json
-				String listStr = JsonUtil.obj2String(bpmActivityList);
-				resultMap.put("listStr", listStr);
-				// 查找表单id
-				Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
-						dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
-				resultMap.put("formId", formMap.get("formId"));
-				String formUid = (String) formMap.get("formId");
-				resultMap.put("formHtml", bpmFormManageService.getFormFileByFormUid(formUid).getData());
-				return resultMap;
+			// 获取当前环节 找到下一环节
+			bpmActivityMeta.setActivityBpdId(dhTaskInstance.getActivityBpdId());
+			List<BpmActivityMeta> activityMetas = bpmActivityMetaMapper
+					.queryByBpmActivityMetaSelective(bpmActivityMeta);
+			if (activityMetas != null && activityMetas.size() > 0) {
+				activityMeta = activityMetas.get(0);
+				resultMap.put("activityMeta", activityMeta);
 			}
+			resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
+
+			// 转json
+			String listStr = JsonUtil.obj2String(bpmActivityList);
+			resultMap.put("listStr", listStr);
+			// 查找表单id
+			Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
+					dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
+			resultMap.put("formId", formMap.get("formId"));
+			String formUid = (String) formMap.get("formId");
+			resultMap.put("formHtml", bpmFormManageService.getFormFileByFormUid(formUid).getData());
+			return resultMap;
+			
 		} catch (Exception e) {
 			log.info("查询代办任务详细信息失败");
 			e.printStackTrace();
 			return null;
 		}
-		log.info("代办任务详细信息查询 结束......");
-		return resultMap;
+		
+		
 	}
 
 	@Override
@@ -559,26 +558,24 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 百分比
 		int percent = 0;
 		// 根据taskUid查询单个DH_TASK_INSTANCE对象
-		List<DhTaskInstance> dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		for (DhTaskInstance dti : dhTaskInstance) {
-			createDate = dti.getTaskInitDate();
-			// 根据proUid，proVerUid，proAppId，activityBpdId查询单个BPM_ACTIVITY_META对象
-			String activityBpdId = dti.getActivityBpdId();
-			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-			bpmActivityMeta.setBpdId(proUid);
-			bpmActivityMeta.setSnapshotId(proVerUid);
-			bpmActivityMeta.setProAppId(proAppId);
-			bpmActivityMeta.setActivityBpdId(activityBpdId);
-			List<BpmActivityMeta> bpmActivityMeta_1 = bpmActivityMetaMapper
-					.queryByBpmActivityMetaSelective(bpmActivityMeta);
-			for (BpmActivityMeta bam : bpmActivityMeta_1) {
-				// DH_ACTIVITY_CONF对象
-				DhActivityConf dhActivityConf = bam.getDhActivityConf();
-				timeAmount = dhActivityConf.getActcTime();
-				timeType = dhActivityConf.getActcTimeunit();
-			}
-
+		DhTaskInstance dti = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		createDate = dti.getTaskInitDate();
+		// 根据proUid，proVerUid，proAppId，activityBpdId查询单个BPM_ACTIVITY_META对象
+		String activityBpdId = dti.getActivityBpdId();
+		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+		bpmActivityMeta.setBpdId(proUid);
+		bpmActivityMeta.setSnapshotId(proVerUid);
+		bpmActivityMeta.setProAppId(proAppId);
+		bpmActivityMeta.setActivityBpdId(activityBpdId);
+		List<BpmActivityMeta> bpmActivityMeta_1 = bpmActivityMetaMapper
+				.queryByBpmActivityMetaSelective(bpmActivityMeta);
+		for (BpmActivityMeta bam : bpmActivityMeta_1) {
+			// DH_ACTIVITY_CONF对象
+			DhActivityConf dhActivityConf = bam.getDhActivityConf();
+			timeAmount = dhActivityConf.getActcTime();
+			timeType = dhActivityConf.getActcTimeunit();
 		}
+		
 		// 审批最后日期
 		Date lastDate = sysDateService.lastTime(createDate, timeAmount, timeType);
 		if (timeAmount == null) {

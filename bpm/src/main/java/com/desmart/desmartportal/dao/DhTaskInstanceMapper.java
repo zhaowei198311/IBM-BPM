@@ -21,7 +21,7 @@ public interface DhTaskInstanceMapper {
 	
 	List <DhTaskInstance> selectAllTask(DhTaskInstance taskInstance);
 	
-	List <DhTaskInstance> selectByPrimaryKey(String taskUid);
+	DhTaskInstance selectByPrimaryKey(String taskUid);
 	
 	int updateByPrimaryKey(DhTaskInstance taskInstance);
 	
