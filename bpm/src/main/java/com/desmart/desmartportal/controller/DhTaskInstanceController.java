@@ -93,4 +93,19 @@ public class DhTaskInstanceController {
 	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid){
 		return dhTaskInstanceService.queryProgressBar(proUid, proVerUid, proAppId, taskUid);
 	}
+	
+	/**
+	 * 
+	 * @Title: addSure  
+	 * @Description: 加签确定  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	@RequestMapping(value = "/addSure")
+	@ResponseBody
+	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance){
+		return dhTaskInstanceService.addSure(dhTaskInstance);
+	}
 }

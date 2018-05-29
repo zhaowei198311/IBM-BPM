@@ -89,5 +89,15 @@ public interface DhTaskInstanceService {
 	 * @throws
 	 */
 	ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid);
-
+	
+	/**
+	 * 
+	 * @Title: addSure  
+	 * @Description: 加签确定  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance);
 }

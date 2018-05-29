@@ -71,6 +71,17 @@ $(function () {
     $(".upload").click(function () {
         $(".upload_file").click();
     });
+    // 加签
+    $("#actcCanAdd").click(function() {
+    	$(".display_container7").css("display","block");
+    })
+    // 选择处理人（人员）
+    $("#choose_handle_user").click(function() {
+    	common.chooseUser('handleUser', 'false');
+    });
+    $(".cancel_btn").click(function() {
+    	$(".display_container7").css("display","none");
+    })
 
     // 查询审批进度剩余进度百分比
     var proUid = $("#proUid").val();
@@ -127,6 +138,34 @@ $(function () {
         }
     });
 });
+
+// 加签确定
+function addSure(){
+	var taskId = $("#taskId").val();
+	var insUid = $("#insUid").val();
+	var usrUid = $("#handleUser_view").val();
+	var activityBpdId = $("#activityId").val();
+	$.ajax({
+		async: false,
+		url: common.getPath() + "/taskInstance/addSure",
+		type: 'post',
+		dataType: 'json',
+		data: {
+			insUid: insUid,
+			taskId: taskId,
+			activityBpdId: activityBpdId,
+			usrUid: usrUid
+		},
+		success: function(data){
+			if (data.status == 0) {
+				layer.alert("操作成功!");
+				$(".display_container7").css("display","none");
+			}else {
+				layer.alert("操作失败!")
+			}
+		}
+	})
+}
 
 function getAllDataInfo() {
     // 拼装数据

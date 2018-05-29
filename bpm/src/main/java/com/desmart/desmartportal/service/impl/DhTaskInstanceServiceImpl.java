@@ -489,4 +489,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return ServerResponse.createBySuccess(map);
 	}
 
+	@Override
+	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance) {
+		String usrUid = dhTaskInstance.getUsrUid();
+		if (usrUid.contains(";")) {
+			
+		}
+		return null;
+	}
+
 }
