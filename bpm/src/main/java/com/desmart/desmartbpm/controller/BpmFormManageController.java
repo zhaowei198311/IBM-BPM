@@ -65,17 +65,35 @@ public class BpmFormManageController {
 	}
 	
 	/**
+	 * 表单预览
+	 */
+	@RequestMapping(value = "/preIndex")
+	public ModelAndView preIndex(String proUid,String proVersion,String formUid,
+			String formName,String formDescription,String dynHtml,String webpage) {
+		ModelAndView mv = new ModelAndView("desmartbpm/common/preDesignIndex");
+		mv.addObject("formName", formName);
+		mv.addObject("formDescription", formDescription);
+		mv.addObject("proUid", proUid);
+		mv.addObject("formUid", formUid);
+		mv.addObject("proVersion", proVersion);
+		mv.addObject("webpage", webpage);
+		mv.addObject("dynHtml", dynHtml);
+        return mv;
+	}
+	
+	/**
 	 * 跳转到表单设计器
 	 */
 	@RequestMapping(value = "/designForm")
 	public ModelAndView designForm(String formName,String formDescription,String formUid,
-			String proUid,String proVersion) {
+			String proUid,String proVersion,String dynHtml) {
 		ModelAndView mv = new ModelAndView("desmartbpm/common/formDesign");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
 		mv.addObject("proUid", proUid);
 		mv.addObject("formUid", formUid);
 		mv.addObject("proVersion", proVersion);
+		mv.addObject("dynHtml", dynHtml);
 		return mv;
 	}
 	
