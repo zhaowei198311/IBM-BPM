@@ -73,7 +73,7 @@ public class BpmProcessUtil {
 	 * @param flowobjectId 需要驳回到哪一个节点的标识id
 	 * @param user 将任务分配给某个用户标识id
 	 */
-	public void rejectProcess(String insId,String flowobjectId, String user) {
+	public void rejectProcess(int insId,String flowobjectId, String user) {
 		log.info("驳回服务  开始...");
 		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
 		String msg = ""; // 全局消息
