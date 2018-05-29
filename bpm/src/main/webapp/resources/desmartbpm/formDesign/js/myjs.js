@@ -465,23 +465,16 @@ function showEditorModal(obj){
 	$("#editor-label-width").val(textLabelCol);
 }
 
-//设置富文本框属性的模态框
-function showEditorModal(obj){
-	$("#editorAreaModal").modal("show");
+//设置文本块属性的模态框
+function showTextBlockModal(obj){
+	$("#textBlockModal").modal("show");
 	
 	view = $(obj).parent().next().next();
-	var textareaObj = view.find("textarea");
-	var id = textareaObj.attr("id");
+	var pObj = view.find("p");
 	
-	var rowWidth = $(".demo").width()-5;
-	var colWidth = rowWidth/12;
+	var textRow = pObj.parent().attr("row");
 	
-	var textCol = textareaObj.attr("col");
-	var textLabelCol = view.find(".labelDiv").attr("col");
-	
-	$("#editor-id").val(id);
-	$("#editor-width").val(textCol);
-	$("#editor-label-width").val(textLabelCol);
+	$("#text-block-row").val(textRow);
 }
 
 function showDataTableModal(obj){
@@ -1156,6 +1149,20 @@ $(function(){
 			$("#editorAreaModal").modal("hide");
 		}
 	});
+	//保存文本块的属性编辑
+	$("#save-text-block-content").click(function(e){
+		e.preventDefault();
+		var textRow = $("#text-block-row").val();
+		var textWidth = textCol*colWidth;
+		
+		var pObj = view.find("p");
+		pObj.attr({"id":id});
+		
+		pObj.attr({"row":textRow});
+		
+		$("#text-block-warn").modal('hide');
+		$("#textBlockModal").modal("hide");
+	});	
 	//保存数据表格的属性编辑
 	$("#save-dataTable-content").click(function(e){
 		e.preventDefault();

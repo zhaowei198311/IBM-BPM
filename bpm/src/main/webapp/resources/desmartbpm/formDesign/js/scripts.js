@@ -303,6 +303,8 @@ function downloadLayoutSrc() {
 			["data-slide-to"],
 			["data-slide"],
 			["col"],
+			["row"],
+			["rows"],
 			["col-type"],
 			["regx"],
 			["regx_cue"],
@@ -615,6 +617,7 @@ $(document).ready(function() {
 		return false
 	});
 	$("#sourcepreview").click(function() {
+		layer.load(1);
 		downloadLayoutSrc();
 		dynContent += formatJs;
 		var dynHtml = dynContent.replace(/\"/g,"\"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -775,6 +778,7 @@ function saveHtml() {
 															break;
 														};
 													}
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "TEXTAREA":{//文本域，富文本编辑器
@@ -782,6 +786,7 @@ function saveHtml() {
 													filedAttr.fldName = subDivObj.prev().find("label").text();
 													filedAttr.multiValue = "false";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "SELECT":{
@@ -789,6 +794,7 @@ function saveHtml() {
 													filedAttr.fldName = subDivObj.prev().find("label").text();
 													filedAttr.multiValue = "false";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "LABEL":{//多选框、单选框
@@ -797,10 +803,10 @@ function saveHtml() {
 													filedAttr.multiValue = "true";
 													filedAttr.multiSeparator = ",";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 											}
-											jsonArr.push(filedAttr);
 										}
 										if(jsonArr!=null && jsonArr!=""){
 											$.ajax({//添加表单字段数据
@@ -889,6 +895,7 @@ function saveHtml() {
 															break;
 														};
 													}
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "TEXTAREA":{//文本域，富文本编辑器
@@ -896,6 +903,7 @@ function saveHtml() {
 													filedAttr.fldName = subDivObj.prev().find("label").text();
 													filedAttr.multiValue = "false";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "SELECT":{
@@ -903,6 +911,7 @@ function saveHtml() {
 													filedAttr.fldName = subDivObj.prev().find("label").text();
 													filedAttr.multiValue = "false";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 												case "LABEL":{//多选框、单选框
@@ -911,10 +920,10 @@ function saveHtml() {
 													filedAttr.multiValue = "true";
 													filedAttr.multiSeparator = ",";
 													filedAttr.fldType = "string";
+													jsonArr.push(filedAttr);
 													break;
 												};
 											}
-											jsonArr.push(filedAttr);
 										}
 										if(jsonArr!=null && jsonArr!=""){
 											$.ajax({//添加表单字段数据
