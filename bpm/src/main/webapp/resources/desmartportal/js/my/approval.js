@@ -73,6 +73,7 @@ $(function () {
     });
     // 加签
     $("#actcCanAdd").click(function() {
+    	$("#handleUser_view").val("");
     	$(".display_container7").css("display","block");
     })
     // 选择处理人（人员）
