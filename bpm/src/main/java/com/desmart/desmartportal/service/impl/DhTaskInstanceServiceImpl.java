@@ -366,6 +366,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
 				dhRoutingRecord.setUserUid(userId);
 				dhRoutingRecordMapper.insert(dhRoutingRecord);
+				// 修改任务实例状态
+				dhTaskInstanceMapper.updateTaskStatusByTaskId(taskId, DhTaskInstance.STATUS_CLOSED);
 			}
 			log.info("完成任务结束......");
 			return ServerResponse.createBySuccess();
