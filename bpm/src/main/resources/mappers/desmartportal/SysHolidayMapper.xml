@@ -4,7 +4,7 @@
 
 	<select id="queryHoliday" parameterType="com.desmart.desmartportal.entity.SysDate"
 			resultType="com.desmart.desmartportal.entity.SysDate">
-	SELECT * FROM SYS_DATE		
+	SELECT * FROM SYS_HOLIDAY		
 	<where>
 		<if test="holiday != null">
 			HOLIDAY = #{holiday}
