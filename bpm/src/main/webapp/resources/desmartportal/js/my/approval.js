@@ -334,8 +334,6 @@ function agree() {
     var aprOpiComment = $("#myApprovalOpinion").text();//审批意见
 	var aprStatus = "ok";
 	var approvaInfo ={
-			"insUid":insUid,
-			"taskUid":apr_taskUid,
 			"aprOpiComment":aprOpiComment,
 			"aprStatus":aprStatus
 			} 

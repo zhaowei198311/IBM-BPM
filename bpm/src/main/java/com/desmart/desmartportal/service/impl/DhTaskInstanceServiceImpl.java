@@ -31,6 +31,7 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -108,6 +109,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Autowired
 	private DhRouteService dhRouteServiceImpl;
+	
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaServiceImpl;
 
 	/**
 	 * 查询所有流程实例
@@ -337,28 +341,24 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					if (resultMap.get("commitTaskResult").getCode() == 200) {// 任务完成，修改数据信息
 
 						JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("")));// 获取审批信息
-						String insUid = approvalData.getString("insUid");
-						String apr_taskUid = approvalData.getString("taskUid");// 存储的是环节id->activity_id
+						/*String insUid = approvalData.getString("insUid");
+						String apr_taskUid = approvalData.getString("taskUid");// 存储的是环节id->activity_id*/
 						String aprOpiComment = approvalData.getString("aprOpiComment");
 						String aprStatus = approvalData.getString("aprStatus");
-						DhProcessInstance currDhProcessInstance = dhProcessInstanceMapper
+						String insUid = dhTaskInstance.getInsUid();
+						DhProcessInstance dhProcessInstance = dhProcessInstanceMapper
 								.selectByPrimaryKey(insUid);
-
-						// 整合formdata
-						JSONObject formJson = new JSONObject();
-						if (StringUtils.isNotBlank(formData.toJSONString())) {
-							formJson = FormDataUtil.formDataCombine(formData,
-									JSONObject.parseObject(currDhProcessInstance.getInsData()));
-						}
-						currDhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-						currDhProcessInstance.setInsData(formJson.toJSONString());
-						//修改任务实例表单信息
-						dhProcessInstanceMapper.updateByPrimaryKeySelective(currDhProcessInstance);
+						String proAppId = dhProcessInstance.getProAppId();
+						String activityBpdId = dhTaskInstance.getActivityBpdId();
+						String snapshotId = dhProcessInstance.getProVerUid();
+						String bpdId = dhProcessInstance.getProUid();
+						BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
+						
 						
 						// 审批信息
 						DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 						dhApprovalOpinion.setInsUid(insUid);
-						dhApprovalOpinion.setTaskUid(apr_taskUid);
+						dhApprovalOpinion.setTaskUid(bpmActivityMeta.getActivityId());
 						dhApprovalOpinion.setAprOpiComment(aprOpiComment);
 						dhApprovalOpinion.setAprStatus(aprStatus);
 						ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl
@@ -383,6 +383,23 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
 							}
 						}
+						
+						// 整合formdata
+						JSONObject formJson = new JSONObject();
+						if (StringUtils.isNotBlank(formData.toJSONString())) {
+							formJson = FormDataUtil.formDataCombine(formData,
+									JSONObject.parseObject(dhProcessInstance.getInsData()));
+						}
+						dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
+						dhProcessInstance.setInsData(formJson.toJSONString());
+						//判断流程是否结束
+						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
+						if(nextBpmActivityMetas==null) {
+							dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
+							dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
+						}
+						//修改流程实例信息
+						dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 					}
 					log.info("完成任务结束......");
 					return ServerResponse.createBySuccess();
