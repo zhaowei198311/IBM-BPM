@@ -50,13 +50,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	@Autowired
 	private DhActivityAssignMapper dhActivityAssignMapper;
-	
+
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaService;
-	
+
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
-	
+
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
 
@@ -80,18 +80,18 @@ public class DhRouteServiceImpl implements DhRouteService {
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo,
 			String companyNum, String formData) {
 		// TODO Auto-generated method stub
-		
-		BpmActivityMeta bpmActivityMeta=bpmActivityMetaMapper.queryByPrimaryKey(activityId);
-		//根据表单字段查
+
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		// 根据表单字段查
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-		String insInitUser=dhProcessInstance.getInsInitUser(); //流程发起人
-		String insDate=dhProcessInstance.getInsData();//实例表单
-		
-		JSONObject formJson=new JSONObject();
-		if(StringUtils.isNotBlank(formData)) {
-			formJson=FormDataUtil.formDataCombine(JSONObject.parseObject(formData), JSONObject.parseObject(insDate));
+		String insInitUser = dhProcessInstance.getInsInitUser(); // 流程发起人
+		String insDate = dhProcessInstance.getInsData();// 实例表单
+
+		JSONObject formJson = new JSONObject();
+		if (StringUtils.isNotBlank(formData)) {
+			formJson = FormDataUtil.formDataCombine(JSONObject.parseObject(formData), JSONObject.parseObject(insDate));
 		}
-		List<BpmActivityMeta> activityMetaList=getNextActivities(bpmActivityMeta,formJson); 
+		List<BpmActivityMeta> activityMetaList = getNextActivities(bpmActivityMeta, formJson);
 		// 环节配置获取
 		for (BpmActivityMeta activityMeta : activityMetaList) {
 			DhActivityConf dhActivityConf = activityMeta.getDhActivityConf();
@@ -122,12 +122,19 @@ public class DhRouteServiceImpl implements DhRouteService {
 			case ROLE_AND_COMPANY:
 				SysRoleUser roleUser = new SysRoleUser();
 				roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
-				if(StringUtils.isNotBlank(departNo)) {
-					roleUser.setDepartUid(departNo);
+				
+				
+				if(assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
+					if (StringUtils.isNotBlank(departNo)) {
+						roleUser.setCompanyCode(companyNum);
+					}
 				}
-				if(StringUtils.isNotBlank(companyNum)) {
-					roleUser.setCompanyCode(companyNum);
+				if(assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
+					if (StringUtils.isNotBlank(companyNum)) {
+						roleUser.setDepartUid(departNo);
+					}
 				}
+				
 				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
 				for (SysRoleUser sysRoleUser : roleUsers) {
 					userUid += sysRoleUser.getUserUid() + ";";
@@ -138,29 +145,47 @@ public class DhRouteServiceImpl implements DhRouteService {
 				
 			case TEAM_AND_DEPARTMENT:
 				
+				
 			case TEAM_AND_COMPANY:
 				SysTeamMember sysTeamMember = new SysTeamMember();
+				
+				if(assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
+					if (StringUtils.isNotBlank(departNo)) {
+						sysTeamMember.setCompanyCode(companyNum);
+					}
+				}
+				if(assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
+					if (StringUtils.isNotBlank(companyNum)) {
+						sysTeamMember.setDepartUid(departNo);
+					}
+				}
+				
 				sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
-
 				List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
 				for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
 					userUid += sysTeamMember2.getUserUid() + ";";
 					userName += sysTeamMember2.getUserName() + ";";
 				}
-
 				break;
 			case LEADER_OF_PRE_ACTIVITY_USER:
-
-				break;
+				
+				
 			case USERS:
-				List<SysUser> users = sysUserMapper.listByPrimaryKeyList(idList);
-				for (SysUser sysUser : users) {
+				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
+				for (SysUser sysUser : userItem) {
 					userUid += sysUser.getUserUid() + ";";
 					userName += sysUser.getUserName() + ";";
 				}
 				break;
-			case PROCESS_CREATOR:
+			case PROCESS_CREATOR:	//流程发起人
 				
+				idList=new ArrayList<String>();
+				idList.add(insInitUser);
+				List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList);
+				for (SysUser sysUser : userList) {
+					userUid += sysUser.getUserUid() + ";";
+					userName += sysUser.getUserName() + ";";
+				}
 				break;
 			case BY_FIELD:
 				if (assignList.size() > 0) {

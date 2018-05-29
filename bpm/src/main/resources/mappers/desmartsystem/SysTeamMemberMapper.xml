@@ -32,11 +32,20 @@
   </select>
   
   <select id="selectTeamUser" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultType="com.desmart.desmartsystem.entity.SysTeamMember" >
-		SELECT TEAM_UID teamUid,listagg(USER_UID,';') within group(order by USER_UID) userUid,listagg(USER_NAME,';') within group(order by USER_NAME) userName FROM(
+		SELECT TEAM_UID teamUid,listagg(USER_UID,';') within group(order by USER_UID) userUid,listagg(USER_NAME,';') within group(order by USER_UID) userName FROM(
+		SELECT teamuser.TEAM_UID,teamuser.USER_UID,teamuser.USER_NAME FROM (
 		SELECT  tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='role') tm LEFT JOIN SYS_ROLE_USER ru on tm.USER_UID =ru.ROLE_UID LEFT JOIN SYS_USER u on ru.USER_UID=u.USER_UID 
 		union all
 		SELECT tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='user') tm LEFT JOIN SYS_USER u  on tm.USER_UID=u.USER_UID
-		) team WHERE team.TEAM_UID in (${teamUid}) group by team.team_uid
+		) teamuser LEFT JOIN SYS_USER_DEPARTMENT ud on teamuser.USER_UID=ud.USER_UID  where 1=1 
+		<if test="departUid!=null">
+			and depart_uid = #{departUid} 
+		</if>
+		<if test="companyCode!=null">
+			and company_code = #{companyCode}
+		</if>
+		) team  WHERE team.TEAM_UID in (${teamUid}) group by team.team_uid
+		
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >

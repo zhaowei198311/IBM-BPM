@@ -35,7 +35,7 @@
                         </li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
                         <li class="layui-nav-item">
-                        	<a href="http://localhost:8080/ssmquartztest/Quarz/QuarzList.jsp" target="iframe0"><i class="layui-icon">&#xe857;</i>定时任务管理</a>
+                        	<a href="quarz/quarzList" target="iframe0"><i class="layui-icon">&#xe857;</i>定时任务管理</a>
                         </li>
                         <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe629;</i> 流程实例管理</a></li>
                         <li class="layui-nav-item">

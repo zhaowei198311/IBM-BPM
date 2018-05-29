@@ -13,6 +13,9 @@ public class SysTeamMember {
     private String memberType;
 
     private Integer orderIndex;
+    
+    private String companyCode;
+    private String departUid;
 
     
     public String getUserName() {
@@ -62,4 +65,21 @@ public class SysTeamMember {
     public void setOrderIndex(Integer orderIndex) {
         this.orderIndex = orderIndex;
     }
+
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+
+	public String getDepartUid() {
+		return departUid;
+	}
+
+	public void setDepartUid(String departUid) {
+		this.departUid = departUid;
+	}
+    
 }
