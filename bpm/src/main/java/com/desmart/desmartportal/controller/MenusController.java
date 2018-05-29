@@ -178,7 +178,7 @@ public class MenusController {
 	 * @return
 	 */
 	@RequestMapping("approval")
-	public ModelAndView approval(@RequestParam(value="taskUid") String taskUid) {
+	public ModelAndView toDealTask(@RequestParam(value="taskUid") String taskUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {
