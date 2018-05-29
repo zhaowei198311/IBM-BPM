@@ -138,12 +138,124 @@ function getAllDataInfo() {
         userUid = $(this).val();
     });
     var json = "{";
-    var formData = "formData"; // 表单数据外层
-    var routeData = "routeData"; // 选人数据外层
-    var approvaData = "approvaData"; // 审批数据外层
-    var endjson = "}";
-    // 
-    var jsonStr = "" + json + "\"" + formData + "\":" + insData + ",\"" + approvaData + "\":{\"a\":{\"A\":\"C\"}},\"" + routeData + "\":{\"activityId\":\"" + activityId + "\"}" + endjson + "";
+    for (var i = 0; i < inputArr.length; i++) {
+        var type = $(inputArr[i]).attr("type");
+        var textJson = "";
+        var checkJson = "";
+        switch (type) {
+            case "text": {
+                if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
+                    var name = $(inputArr[i]).parent()
+                        .parent().prev().prop("name");
+                    var value = $("[name='" + name + "']")
+                        .val();
+                    textJson = "\"" + name
+                        + "\":{\"value\":\"" + value
+                        + "\"}";
+                    break;
+                }
+            }
+                ;
+            case "tel":
+                ;
+            case "date":
+                ;
+            case "textarae": {
+                var name = $(inputArr[i]).attr("name");
+                var value = $("[name='" + name + "']")
+                    .val();
+                textJson = "\"" + name + "\":{\"value\":\""
+                    + value + "\"}";
+                break;
+            }
+            case "radio": {
+                var name = $(inputArr[i]).attr("name");
+                var radio = $("[name='" + name + "']")
+                    .parent().parent().find(
+                        "input:radio:checked");
+                textJson = "\"" + name + "\":{\"value\":\""
+                    + radio.attr("id") + "\"}";
+                break;
+            }
+            case "checkbox": {
+                var name = $(inputArr[i]).attr("name");
+                var checkbox = $("[name='" + name + "']")
+                    .parent().parent().find(
+                        "input:checkbox:checked");
+                //判断每次的复选框是否为同一个class
+                if (control) {
+                    checkName = checkbox.attr("name");
+                } else {
+                    if (checkName != checkbox.attr("name")) {
+                        checkName = checkbox.attr("name");
+                        control = true;
+                    }
+                }
+                if (control) {
+                    control = false;
+                    checkJson += "\"" + checkName
+                        + "\":{\"value\":[";
+                    for (var j = 0; j < checkbox.length; j++) {
+                        if (j == checkbox.length - 1) {
+                            checkJson += "\""
+                                + $(checkbox[j]).attr(
+                                    "id") + "\"";
+                        } else {
+                            checkJson += "\""
+                                + $(checkbox[j]).attr(
+                                    "id") + "\",";
+                        }
+                    }
+                    checkJson += "]},";
+                }
+
+                json += checkJson;
+                break;
+            }
+        }//end switch
+        textJson += ",";
+        if (json.indexOf(textJson) == -1) {
+            json += textJson;
+        }
+    }
+    //获得最后一位字符是否为","
+    var charStr = json.substring(json.length - 1,
+        json.length);
+
+    if (charStr == ",") {
+        json = json.substring(0, json.length - 1);
+    }
+    json += "}";
+    // 发起流程             
+    var finalData = {};
+    // 表单数据
+    var formData = JSON.parse(json);
+    finalData.formData = formData;
+    // 流程数据
+    var processData = {};
+    //processData.proAppId = $("#proAppId").val();
+    //processData.proUid = $("#proUid").val(); 
+    //processData.proVerUid = $("#verUid").val();
+    processData.insUid = $("#insUid").val();
+    processData.departNo = departNo,
+    processData.companyNumber = companyNumber,
+    finalData.processData = processData;
+
+    var activityId = ""
+    var userUid = ""
+    var insData = $("#insData").text();
+    // 路由数据
+    var routeData = [];
+    $('.getUser').each(function () {
+        var item = {};
+        item.activityId = $(this).attr('id');
+        item.userUid = $(this).val();
+        item.assignVarName = $(this).data("assignvarname");
+        item.signCountVarName =  $(this).data("signcountvarname");
+        item.loopType = $(this).data("looptype");
+        routeData.push(item);
+    });
+    finalData.routeData = routeData;
 }
 
 function processView(insId) {
@@ -176,20 +288,133 @@ function agree() {
         activityId = $(this).attr('id');
         userUid = $(this).val();
     });
+    
     var json = "{";
-    var formData = "formData"; // 表单数据外层
-    var routeData = "routeData"; // 选人数据外层
-    var approvaData = "approvaData"; // 审批数据外层
-    var taskData = "taskData"; // 任务数据外层
-    var endjson = "}";
-    // 数据信息
-    var jsonStr = "" + json + "\"" + formData + "\":" + insData + ",\"" + approvaData + "\":{\"a\":{\"A\":\"C\"}},\"" + routeData + "\":{\"activityId\":\"" + activityId + "\",\"userUid\":\"" + userUid + "\"},\"" + taskData + "\":{\"taskId\":\"" + taskId + "\"}" + endjson + "";
+    for (var i = 0; i < inputArr.length; i++) {
+        var type = $(inputArr[i]).attr("type");
+        var textJson = "";
+        var checkJson = "";
+        switch (type) {
+            case "text": {
+                if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
+                    var name = $(inputArr[i]).parent()
+                        .parent().prev().prop("name");
+                    var value = $("[name='" + name + "']")
+                        .val();
+                    textJson = "\"" + name
+                        + "\":{\"value\":\"" + value
+                        + "\"}";
+                    break;
+                }
+            }
+                ;
+            case "tel":
+                ;
+            case "date":
+                ;
+            case "textarae": {
+                var name = $(inputArr[i]).attr("name");
+                var value = $("[name='" + name + "']")
+                    .val();
+                textJson = "\"" + name + "\":{\"value\":\""
+                    + value + "\"}";
+                break;
+            }
+            case "radio": {
+                var name = $(inputArr[i]).attr("name");
+                var radio = $("[name='" + name + "']")
+                    .parent().parent().find(
+                        "input:radio:checked");
+                textJson = "\"" + name + "\":{\"value\":\""
+                    + radio.attr("id") + "\"}";
+                break;
+            }
+            case "checkbox": {
+                var name = $(inputArr[i]).attr("name");
+                var checkbox = $("[name='" + name + "']")
+                    .parent().parent().find(
+                        "input:checkbox:checked");
+                //判断每次的复选框是否为同一个class
+                if (control) {
+                    checkName = checkbox.attr("name");
+                } else {
+                    if (checkName != checkbox.attr("name")) {
+                        checkName = checkbox.attr("name");
+                        control = true;
+                    }
+                }
+                if (control) {
+                    control = false;
+                    checkJson += "\"" + checkName
+                        + "\":{\"value\":[";
+                    for (var j = 0; j < checkbox.length; j++) {
+                        if (j == checkbox.length - 1) {
+                            checkJson += "\""
+                                + $(checkbox[j]).attr(
+                                    "id") + "\"";
+                        } else {
+                            checkJson += "\""
+                                + $(checkbox[j]).attr(
+                                    "id") + "\",";
+                        }
+                    }
+                    checkJson += "]},";
+                }
+
+                json += checkJson;
+                break;
+            }
+        }//end switch
+        textJson += ",";
+        if (json.indexOf(textJson) == -1) {
+            json += textJson;
+        }
+    }
+    //获得最后一位字符是否为","
+    var charStr = json.substring(json.length - 1,
+        json.length);
+
+    if (charStr == ",") {
+        json = json.substring(0, json.length - 1);
+    }
+    json += "}";
+    // 发起流程             
+    var finalData = {};
+    // 表单数据
+    var formData = JSON.parse(json);
+    finalData.formData = formData;
+    // 流程数据
+    var processData = {};
+    //processData.proAppId = $("#proAppId").val();
+    //processData.proUid = $("#proUid").val(); 
+    //processData.proVerUid = $("#verUid").val();
+    processData.insUid = $("#insUid").val();
+    processData.departNo = departNo,
+    processData.companyNumber = companyNumber,
+    finalData.processData = processData;
+
+    var activityId = ""
+    var userUid = ""
+    var insData = $("#insData").text();
+    // 路由数据
+    var routeData = [];
+    $('.getUser').each(function () {
+        var item = {};
+        item.activityId = $(this).attr('id');
+        item.userUid = $(this).val();
+        item.assignVarName = $(this).data("assignvarname");
+        item.signCountVarName =  $(this).data("signcountvarname");
+        item.loopType = $(this).data("looptype");
+        routeData.push(item);
+    });
+    finalData.routeData = routeData;
+    
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
         dataType: 'text',
         data: {
-            data: jsonStr
+            data: JSON.stringify(finalData)
         },
         beforeSend: function () {
             index = layer.load(1);
