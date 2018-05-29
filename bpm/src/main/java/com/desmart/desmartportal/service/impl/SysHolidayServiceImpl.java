@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartportal.dao.SysDateMapper;
-import com.desmart.desmartportal.entity.SysDate;
-import com.desmart.desmartportal.service.SysDateService;
+import com.desmart.desmartportal.dao.SysHolidayMapper;
+import com.desmart.desmartportal.entity.SysHoliday;
+import com.desmart.desmartportal.service.SysHolidayService;
 
 /**
  * 
@@ -21,15 +21,15 @@ import com.desmart.desmartportal.service.SysDateService;
  *
  */
 @Service
-public class SysDateServiceImpl implements SysDateService{
+public class SysHolidayServiceImpl implements SysHolidayService{
 	
 	@Autowired
-	private SysDateMapper sysDateMapper;
+	private SysHolidayMapper sysDateMapper;
 	
 	@Override
 	public boolean queryHolidayOrRestDay(Date date) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		SysDate sysDate = sysDateMapper.queryHoliday(new SysDate(df.format(date)));
+		SysHoliday sysDate = sysDateMapper.queryHoliday(new SysHoliday(df.format(date)));
 		if (sysDate == null) {
 			return false;
 		}

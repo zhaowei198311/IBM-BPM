@@ -46,7 +46,7 @@ import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
-import com.desmart.desmartportal.service.SysDateService;
+import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -94,7 +94,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private BpmGlobalConfigService bpmGlobalConfigService;
 
 	@Autowired
-	private SysDateService sysDateService;
+	private SysHolidayService sysDateService;
 
 	@Autowired
 	private BpmFormManageService bpmFormManageService;

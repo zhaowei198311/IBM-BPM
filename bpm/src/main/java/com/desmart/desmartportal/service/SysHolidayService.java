@@ -10,7 +10,7 @@ import java.util.Date;
  * @date: 2018年5月24日  
  *
  */
-public interface SysDateService {
+public interface SysHolidayService {
 	/**
 	 * 
 	 * @Title: queryHolidayOrRestDay  
