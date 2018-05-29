@@ -408,13 +408,15 @@
 		</where>
 	</select>
 	
-	<select id="selectByTaskId" parameterType="java.lang.Integer" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+	<select id="selectByTaskIdAndUser" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
 		<include refid="Base_Column_List"/>
 		FROM
 		DH_TASK_INSTANCE
 		<where>
 			TASK_ID = #{taskId}
+			and
+			USR_UID = #{usrUid}
 		</where>
 	</select>
 
