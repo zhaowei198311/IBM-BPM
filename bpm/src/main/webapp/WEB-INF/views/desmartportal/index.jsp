@@ -66,9 +66,6 @@
 								<li class="layui-nav-item"><a href="drafts/index"
 									target="iframe0"><i class="layui-icon">&#xe640;</i> <span>
 											草稿箱</span></a></li>
-								<li class="layui-nav-item"><a href="javascript:void(0)"
-									target="iframe0"><i class="layui-icon">&#xe629;</i> <span>
-											报表</span></a></li>
 								<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
 							</ul>
 						</div>
