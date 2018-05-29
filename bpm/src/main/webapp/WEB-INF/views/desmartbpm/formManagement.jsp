@@ -715,6 +715,7 @@
 		
 		//根据流程定义(proUid,proVerUid)
 		function getFormInfoByProDefinition(){
+			layer.load(1);
 			$.ajax({
 				url:common.getPath() + "/formManage/listFormByProDefinition",
 				type:"post",
@@ -730,6 +731,7 @@
 				success:function(result){
 					if(result.status==0){
 						drawTable(result.data);
+						layer.closeAll("loading");
 					}
 				}
 			});
