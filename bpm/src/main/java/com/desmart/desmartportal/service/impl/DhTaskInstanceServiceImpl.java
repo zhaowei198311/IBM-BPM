@@ -613,7 +613,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance) {
-<<<<<<< .mine
 		// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
 		
@@ -634,11 +633,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
 			dhTaskInstance.setUsrUid(usrUids);
 			dhTaskInstanceMapper.insertTask(dhTaskInstance);
-=======
-		String usrUid = dhTaskInstance.getUsrUid();
-		if (usrUid.contains(";")) {
-
->>>>>>> .r1007
 		}
 		return ServerResponse.createBySuccess();
 	}
