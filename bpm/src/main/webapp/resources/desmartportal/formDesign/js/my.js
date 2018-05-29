@@ -4,7 +4,7 @@ var view = null;
 /*动态表单渲染js*/
 $(function(){
 	drawPage();
-	showTableP();
+	//showTableP();
 	$("#formSet").css("display","block");
 });
 /*
@@ -35,12 +35,13 @@ function drawPage() {
                 if (column.find(".subDiv").length == 0 && column.find(".labelDiv").length == 0) {
                     column.find("p").addClass("title_p");
                     pHtml = column.html();
+                    var pText = column.find("p").text();
                     flag = false;
                     if (column.find(".title_p").length != 0) {
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;
-                        formHtml += '<table class="layui-table form-sub" title='+pHtml+'>' + '<tbody>';
+                        formHtml += '<table class="layui-table form-sub" title='+pText+'>' + '<tbody>';
                     } else {
                         continue;
                     }
