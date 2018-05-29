@@ -36,4 +36,12 @@ public interface DhRouteService {
 	 */
 	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
 
+	/**
+	 * 更新网关决策的中间表
+	 * @param currActivityMeta
+	 * @param insId
+	 * @param formData
+	 * @return
+	 */
+	ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData);
 }
