@@ -113,6 +113,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaServiceImpl;
 
+	
 	/**
 	 * 查询所有流程实例
 	 */
@@ -311,36 +312,27 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 			String taskUid = taskData.getString("taskUid");
 			// 根据任务标识和用户 去查询流程 实例
-			DhTaskInstance taskInstance = new DhTaskInstance();
-			taskInstance.setTaskId(taskId);
-			taskInstance.setUsrUid(userId);
 			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 			if (dhTaskInstance==null) {
 				return ServerResponse.createByErrorMessage("当前任务不存在!");
 			}
-			if ("12".equals(taskInstance.getTaskStatus())) {// 检查任务是否重复提交
-				String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-				if (checkTaskUser(taskInstance, creator)) {// 检查任务是否有权限提交
+			if ("12".equals(dhTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
+				String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+				if (checkTaskUser(dhTaskInstance, currentUserUid)) {// 检查任务是否有权限提交
 
 					// 装配处理人信息
 					CommonBusinessObject pubBo = new CommonBusinessObject();
 					ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
 							.assembleCommonBusinessObject(pubBo, JSONObject.parseArray(routeData.toJSONString()));
-					if (serverResponse.getStatus() == ResponseCode.ERROR.getCode()) {
+					if (!serverResponse.isSuccess()) {
 						return serverResponse;
 					}
 					/*
 					 * List<String> userList = new ArrayList<>(); userList.add(userId);
 					 * pubBo.setNextOwners_0(userList);
 					 */
-					BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-					BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-					// 调用方法完成任务
-					Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
 
-					if (resultMap.get("commitTaskResult").getCode() == 200) {// 任务完成，修改数据信息
-
-						JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("")));// 获取审批信息
+						JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
 						/*String insUid = approvalData.getString("insUid");
 						String apr_taskUid = approvalData.getString("taskUid");// 存储的是环节id->activity_id*/
 						String aprOpiComment = approvalData.getString("aprOpiComment");
@@ -366,6 +358,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						if (!serverResponse2.isSuccess()) {
 							return serverResponse2;
 						}
+						
+						// 整合formdata
+						JSONObject formJson = new JSONObject();
+						if (StringUtils.isNotBlank(formData.toJSONString())) {
+							formJson = FormDataUtil.formDataCombine(formData,
+									JSONObject.parseObject(dhProcessInstance.getInsData()));
+						}
+						dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
+						dhProcessInstance.setInsData(formJson.toJSONString());
+						//判断流程是否结束
+						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
+						dhRouteServiceImpl.updateGatewayRouteResult(bpmActivityMeta, dhProcessInstance.getInsId(), formData);
+						
+						if(nextBpmActivityMetas==null || nextBpmActivityMetas.size()==0) {
+							dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
+							dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
+						}
+						//修改流程实例信息
+						dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
 						// 任务完成后 保存到流转信息表里面
 						DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
@@ -383,27 +394,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
 							}
 						}
+						BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+						BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+						// 调用方法完成任务
+						Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
 						
-						// 整合formdata
-						JSONObject formJson = new JSONObject();
-						if (StringUtils.isNotBlank(formData.toJSONString())) {
-							formJson = FormDataUtil.formDataCombine(formData,
-									JSONObject.parseObject(dhProcessInstance.getInsData()));
+						if (resultMap.get("commitTaskResult").getCode() == 200) {// 任务完成，修改数据信息
+							log.info("完成任务结束......");
+							return ServerResponse.createBySuccess();
+						}else {
+							log.info("任务完成失败！");
+							throw new RuntimeException("任务完成失败！");
 						}
-						dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-						dhProcessInstance.setInsData(formJson.toJSONString());
-						//判断流程是否结束
-						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
-
-						if(nextBpmActivityMetas==null || nextBpmActivityMetas.size()==0) {
-							dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
-							dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
-						}
-						//修改流程实例信息
-						dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
-					}
-					log.info("完成任务结束......");
-					return ServerResponse.createBySuccess();
 				} else {
 					return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败!");
 				}
@@ -421,18 +423,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * 判断用户是否有权限提交审批
 	 * 
 	 * @param currDhTaskInstance
-	 * @param creator
+	 * @param currentUser
 	 * @return
 	 */
-	private boolean checkTaskUser(DhTaskInstance currDhTaskInstance, String creator) {
+	private boolean checkTaskUser(DhTaskInstance currDhTaskInstance, String currentUser) {
 		if (currDhTaskInstance.getTaskDelegateUser() != null && !"".equals(currDhTaskInstance.getTaskDelegateUser())) {
-			if (currDhTaskInstance.getTaskDelegateUser().equals(creator)) {
+			if (currDhTaskInstance.getTaskDelegateUser().equals(currentUser)) {
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			if (currDhTaskInstance.getUsrUid().equals(creator)) {
+			if (currDhTaskInstance.getUsrUid().equals(currentUser)) {
 				return true;
 			} else {
 				return false;
