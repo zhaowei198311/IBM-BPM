@@ -222,7 +222,7 @@ public class DhRouteServiceImpl implements DhRouteService {
                 // 走默认路径，需要排除非默认路径
                 for (DhGatewayLine line : lines) {
                     if ("FALSE".equals(line.getIsDefault())){
-                        activityIdsToRemove.add(line.getToActivityId());
+                        addHumanActivityToRemoveList(activityIdsToRemove, line);
                     }
                 }
                 continue;
@@ -230,29 +230,66 @@ public class DhRouteServiceImpl implements DhRouteService {
             
             // 计算每种规则的结果
             List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
-            boolean isRuleFit = false; // 规则是否满足
+            String fittedLineId = null; // 满足规则的连接线id
             for (DhGatewayLine line : unDefaultLines) {
                 String ruleId = line.getRuleId();
                 DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
                 Map<String, Object> ruleResult = null;
                 try {
                     ruleResult = droolsEngineService.execute(param, datRule);
+                    if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
+                        // 规则运算成功
+                        fittedLineId = line.getGatewayLineUid();
+                        break;
+                    }
                 } catch (Exception e) {
-                    
+                   log.error("规则运算异常,规则编号：" + ruleId, e); 
+                }
+            }
+            if (fittedLineId == null) {
+                // 如果没有满足规则的连线，从人工环节列表中去除所有不是默认路线的节点
+                for (DhGatewayLine line : unDefaultLines) {
+                    addHumanActivityToRemoveList(activityIdsToRemove, line);
+                }
+            } else {
+                // 如果有连线满足规则， 从人工环节列表中除去不是这个线相连的节点
+                for (DhGatewayLine line : lines) {
+                    if (!fittedLineId.equals(line.getGatewayLineUid())) {
+                        addHumanActivityToRemoveList(activityIdsToRemove, line);
+                    }
                 }
             }
             
-            
-            
-            // 找出这个规则需要的所有表单字段
-            // List<String> variableNeeded
-            // formData.getString(var)
-            // 
-            
+        } // 遍历处理网关结束
+	    // 移除多余的节点
+        Iterator<BpmActivityMeta> iterator = result.iterator();
+        while (iterator.hasNext()) {
+            BpmActivityMeta meta = iterator.next();
+            if (activityIdsToRemove.contains(meta.getActivityId())) {
+                iterator.remove();
+            }
         }
-	    
 	    return result;
 	}
+
+	/**
+	 * 将连线连接的人工环节加入移除列表，如果连线连接的不是人工环节，连接点后续的人工环节加入移除列表
+	 * @param activityIdsToRemove
+	 * @param line
+	 */
+    private void addHumanActivityToRemoveList(List<String> activityIdsToRemove, DhGatewayLine line) {
+        BpmActivityMeta activityMeta = bpmActivityMetaMapper.queryByPrimaryKey(line.getToActivityId());
+        if (isHumanActivity(activityMeta)) {
+            activityIdsToRemove.add(line.getToActivityId());
+        } else {
+            List<BpmActivityMeta> nextToMetaList = bpmActivityMetaService.getNextToActivity(activityMeta);
+            if (nextToMetaList.size() > 0) {
+                for (BpmActivityMeta item : nextToMetaList) {
+                    activityIdsToRemove.add(item.getActivityId());
+                }
+            }
+        }
+    }
 	
 	private org.json.JSONObject assembleJsonParam(Set<String> needvarNameList, Map<String, String> varTypeMap, JSONObject formData) {
 	    org.json.JSONObject param = new org.json.JSONObject();
@@ -279,14 +316,39 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 	
 	private List<DhGatewayLine> getUnDefaultLines(List<DhGatewayLine> lineList) {
+	    List<DhGatewayLine> unDefaultLines = new ArrayList<>();
 	    Iterator<DhGatewayLine> iterator = lineList.iterator();
 	    while (iterator.hasNext()) {
 	        DhGatewayLine line = iterator.next();
-	        if ("TRUE".equals(line.getIsDefault())) {
-	            iterator.remove();
+	        if ("FALSE".equals(line.getIsDefault())) {
+	            unDefaultLines.add(line);
 	        }
 	    }
-	    return lineList;
+	    return unDefaultLines;
+	}
+	
+	private DhGatewayLine getDefaultLine(List<DhGatewayLine> lineList) {
+        Iterator<DhGatewayLine> iterator = lineList.iterator();
+        while (iterator.hasNext()) {
+            DhGatewayLine line = iterator.next();
+            if ("TRUE".equals(line.getIsDefault())) {
+                return line;
+            }
+        }
+        return null;
+    }
+	
+	/**
+	 * 判断节点是否人工服务节点
+	 * @param meta
+	 * @return
+	 */
+	private boolean isHumanActivity(BpmActivityMeta meta) {
+	    if ("activity".equals(meta.getActivityType()) && "UserTask".equals(meta.getBpmTaskType()) && "activity".equals(meta.getType())) {
+	        return true;
+	    } else {
+	        return false;
+	    }
 	}
 	
 }

@@ -39,12 +39,12 @@ public interface BpmActivityMetaService {
      */
     ServerResponse<List<BpmActivityMeta>> getGatewaysOfDhProcessDefinition(String proAppId, String proUid, String proVerUid);
     
-    /*
-     * 获得指定人工环节的后续人工环节
+    /**
+     * 获得指定环节的后续人工环节, 有局限性！！不能进入子流程，只能在同层
      * @param bpmActivityMeta
      * @return
-     
-    List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta);*/
+     */
+    List<BpmActivityMeta> getNextToActivity(BpmActivityMeta bpmActivityMeta);
     
     /**
      * 根据元素id，流程图id和版本id获得BpmActivityMeta，应该是只有一个

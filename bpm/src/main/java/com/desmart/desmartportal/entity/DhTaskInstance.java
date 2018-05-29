@@ -20,7 +20,12 @@ public class DhTaskInstance {
     public static final String TYPE_SIMPLE_LOOP = "simpleLoop";
     /** 多实例循环任务 */
     public static final String TYPE_MULT_IINSTANCE_LOOP = "multiInstanceLoop";
-    
+    /** 传阅任务 */
+    public static final String TYPE_TRANSFER = "transfer";
+    /** 加签任务 */
+    public static final String TYPE_ADD = "add";
+    /** 等待加签结束  */
+    public static final String STATUS_WAIT_ADD = "-2";
 	/**
 	 *  新任务
 	 */
