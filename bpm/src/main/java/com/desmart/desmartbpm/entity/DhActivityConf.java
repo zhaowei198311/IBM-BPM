@@ -90,7 +90,7 @@ public class DhActivityConf {
     
     private String actcCanChooseUser;
     
-    private String actcCanTransfer;
+    private String actcCanTransfer;  // 传阅
     
     private String actcResponsibility;
     
