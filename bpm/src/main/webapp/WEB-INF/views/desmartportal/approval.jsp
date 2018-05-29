@@ -249,7 +249,7 @@
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
                                                 <input class="maxFileCount" value="10" type="hidden" />
-                                                <input class="fileFormat" value="jpg,png,xls,xlsx,exe" type="hidden" />
+                                                <input class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
                                             </div>
                                             <!-- <input type="file" class="upload_file"/> -->
                                             <!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
