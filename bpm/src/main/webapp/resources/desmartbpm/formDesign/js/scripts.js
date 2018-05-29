@@ -282,6 +282,7 @@ function downloadLayoutSrc() {
 		cleanHtml(this)
 	});
 	t.find(".removeClean").remove();
+	t.find(".add-on").remove();
 	$("#download-layout .column").removeClass("ui-sortable");
 	$("#download-layout .column").removeClass("clearfix").children().removeClass("column");
 	if ($("#download-layout .container").length > 0) {
@@ -397,44 +398,78 @@ $(document).ready(function() {
 	$(".demo").css("min-height", $(window).height() - 130);
 	
 	var formUid = $("#formUid").val();
-	if(formUid!=null && formUid!=""){
-		$.ajax({
-			url:common.getPath()+"/formManage/queryFormByFormUid",
-			method:"post",
-			async:false,
-			data:{
-				formUid:formUid
-			},
-			success:function(result){
-				if(result.status==0){
-					$("#proUid").val(result.data.proUid);
-					$("#proVersion").val(result.data.proVersion);
-					var jsIndex = result.data.dynContent.indexOf("<script type='text/javascript'>"); 
-					var demoHtml = "";
-					if(jsIndex!=-1){
-						formatJs = result.data.dynContent.substr(jsIndex);
-						demoHtml = result.data.dynContent.substring(0,jsIndex);
-					}else{
-						demoHtml = result.data.dynContent;
-					}
-					$(".demo").html(demoHtml);
-					var nameVal = "";
-					$(".demo .subDiv").each(function(){
-						var name = $($(this).children()[0]).attr("name");
-						if(name!=undefined){
-							nameVal += name+",";
-						}
-					});
-					var charStr = nameVal.substring(nameVal.length-1,nameVal.length);
-					if(charStr == ","){
-						nameVal = nameVal.substring(0,nameVal.length-1);
-					}
-					$("#nameArr").val(nameVal);
-				}
+	var dynHtml = $("#dynHtml").html();
+	$("#dynHtml").html("");
+	if(dynHtml!=null && dynHtml!=""){
+		var jsIndex = dynHtml.indexOf("<script type='text/javascript'>"); 
+		var jsIndex2 = dynHtml.indexOf("<script type=\"text/javascript\">"); 
+		var demoHtml = "";
+		if(jsIndex!=-1){
+			formatJs = dynHtml.substr(jsIndex);
+			demoHtml = dynHtml.substring(0,jsIndex);
+		}else if(jsIndex2!=-1){
+			formatJs = dynHtml.substr(jsIndex2);
+			demoHtml = dynHtml.substring(0,jsIndex2);
+		}else{
+			demoHtml = dynHtml;
+		}
+		$(".demo").html(demoHtml);
+		var nameVal = "";
+		$(".demo .subDiv").each(function(){
+			var name = $($(this).children()[0]).attr("name");
+			if(name!=undefined){
+				nameVal += name+",";
 			}
 		});
+		var charStr = nameVal.substring(nameVal.length-1,nameVal.length);
+		if(charStr == ","){
+			nameVal = nameVal.substring(0,nameVal.length-1);
+		}
+		$("#nameArr").val(nameVal);
 	}else{
-		clearDemo();
+		if(formUid!=null && formUid!=""){
+			$.ajax({
+				url:common.getPath()+"/formManage/queryFormByFormUid",
+				method:"post",
+				async:false,
+				data:{
+					formUid:formUid
+				},
+				success:function(result){
+					if(result.status==0){
+						$("#proUid").val(result.data.proUid);
+						$("#proVersion").val(result.data.proVersion);
+						var jsIndex = result.data.dynContent.indexOf("<script type='text/javascript'>"); 
+						var jsIndex2 = result.data.dynContent.indexOf("<script type=\"text/javascript\">"); 
+						var demoHtml = "";
+						if(jsIndex!=-1){
+							formatJs = result.data.dynContent.substr(jsIndex);
+							demoHtml = result.data.dynContent.substring(0,jsIndex);
+						}else if(jsIndex2!=-1){
+							formatJs = result.data.dynContent.substr(jsIndex2);
+							demoHtml = result.data.dynContent.substring(0,jsIndex2);
+						}else{
+							demoHtml = result.data.dynContent;
+						}
+						$(".demo").html(demoHtml);
+						var nameVal = "";
+						$(".demo .subDiv").each(function(){
+							var name = $($(this).children()[0]).attr("name");
+							if(name!=undefined){
+								nameVal += name+",";
+							}
+						});
+						var charStr = nameVal.substring(nameVal.length-1,nameVal.length);
+						if(charStr == ","){
+							nameVal = nameVal.substring(0,nameVal.length-1);
+						}
+						$("#nameArr").val(nameVal);
+					}
+				}
+			});
+		}else{
+			clearDemo();
+		}
 	}
 	
 	$(".sidebar-nav .lyrow").draggable({
@@ -577,10 +612,21 @@ $(document).ready(function() {
 		return false
 	});
 	$("#sourcepreview").click(function() {
-		$("body").removeClass("edit");
-		$("body").addClass("devpreview sourcepreview");
-		removeMenuClasses();
-		$(this).addClass("active");
+		downloadLayoutSrc();
+		dynContent += formatJs;
+		var dynHtml = dynContent.replace(/\"/g,"\"");
+		var preHtml = webpage.replace(/\"/g,"\"");
+		var url = common.getPath()+"/formManage/preIndex";
+		var preParam = {
+			proUid:$("#proUid").val(),
+			proVersion:$("#proVersion").val(),
+			forName:$("#formName").val(),
+			formDescription:$("#formDescription").val(),
+			formUid:$("#formUid").val(),
+			webpage:preHtml,
+			dynHtml:dynHtml
+		};
+		post(url,preParam);
 		return false
 	});
 	$("#fluidPage").click(function(e) {
@@ -619,9 +665,13 @@ $(document).ready(function() {
 });
 
 function returnFormManage(){
-	window.location.href = common.getPath()
+	layer.confirm('你编辑的内容可能还未保存，是否确定返回？', {
+		  btn: ['确定','取消'] //按钮
+	},function(){
+		window.location.href = common.getPath()
 		+"/formManage/index?proUid="+$("#proUid").val()
 		+"&proVersion="+$("#proVersion").val();
+	});
 }
 
 /*var filedAttr = {
@@ -636,11 +686,27 @@ function returnFormManage(){
 	formUid : "" //表单id
 }
 */
+function post(URL, PARAMS) { 
+	var temp_form = document.createElement("form");      
+	temp_form .action = URL;      
+	// temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+	temp_form .method = "post";      
+	temp_form .style.display = "none"; 
+	for (var x in PARAMS) { 
+	var opt = document.createElement("textarea");      
+    opt.name = x;      
+    opt.value = PARAMS[x];      
+    temp_form .appendChild(opt);      
+	}      
+	document.body.appendChild(temp_form);      
+	temp_form .submit();   
+	temp_form.remove();
+} 
+
 function saveHtml() {
 	var formUidArr = new Array();
 	var formId = $("#downloadModal #formUid").val();
 	formUidArr.push(formId);
-	console.log(formUidArr);
 	//先判断该表单是否可修改
 	$.ajax({
 		url:common.getPath()+"/formManage/isBindStep",

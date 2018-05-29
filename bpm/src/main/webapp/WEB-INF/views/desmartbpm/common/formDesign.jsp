@@ -15,20 +15,6 @@
 					<ul class="nav" id="menu-layoutit">
 						<!-- <li class="divider-vertical"></li> -->
 						<li>
-							<div class="btn-group">
-								<button onclick="resizeCanvas('lg')" class="btn btn-primary">
-									<i class="fa fa-desktop"></i>
-								</button>
-								<button onclick="resizeCanvas('md')" class="btn btn-primary">
-									<i class="fa fa-laptop"></i>
-								</button>
-								<button onclick="resizeCanvas('sm')" class="btn btn-primary">
-									<i class="fa fa-tablet"></i>
-								</button>
-								<button onclick="resizeCanvas('xs')" class="btn btn-primary">
-									<i class="fa fa-mobile-phone"></i>
-								</button>
-							</div>
 							<div class="btn-group" data-toggle="buttons-radio">
 								<button type="button" id="edit" class="btn btn-primary active">
 									<i class="icon-edit icon-white"></i>编辑
@@ -424,6 +410,24 @@
 								</div>
 							</li>
 							<li style="display: none;" class="boxes" id="elmBase">
+								<!-- 标题 -->
+								<div class="box box-element ui-draggable">
+									<a href="#close" class="remove label label-important">
+										<i class="icon-remove icon-white"></i>删除
+									</a> 
+									<span class="drag label">
+										<i class="icon-move"></i>拖动
+									</span> 
+									<span class="configuration">
+										<button type="button" class="btn btn-mini edit-attr" title="edit-date" data-target="#editorModal"
+												role="button" data-toggle="modal">编辑
+										</button>  
+									</span>
+									<div class="preview">标题</div>
+									<div class="view">
+										<p contenteditable="true">标题</p>
+									</div>
+								</div>
 								<!-- 文本块 -->
 								<div class="box box-element ui-draggable">
 									<a href="#close" class="remove label label-important">
@@ -439,8 +443,7 @@
 									</span>
 									<div class="preview">文本块</div>
 									<div class="view">
-										<h5 contenteditable="true">标题</h5>
-										<p contenteditable="true">这里是一个段落，可以通过点击编辑按钮去富文本编辑器编辑文本</p>
+										<p contenteditable="true">文本块，可以输入一些提示性话语</p>
 									</div>
 								</div>
 								<!-- 数据表格 -->
@@ -1767,6 +1770,7 @@
 				<input type="hidden" id="formName" value="${formName}"/>
 				<input type="hidden" id="formDescription" value="${formDescription}"/>
 				<input type="hidden" id="nameArr" value="">
+				<span style="display:none;" id="dynHtml">${ dynHtml }</span>
 				<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">确认保存</a>
 			</div>
 		</div>

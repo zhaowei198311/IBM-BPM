@@ -665,15 +665,17 @@ $(function(){
 			$("#text-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
 			$("#text-warn").modal('show');
 		}else{
-			var isRegx = true;
+			var isRegx = false;
 			var regx = $("#text-regx").val();
-			try{  
-			  	new RegExp(regx);
-			}catch(e){  
-				isRegx = false;
-			 	$("#text-warn").html("<strong>警告！</strong>请输入有效正则表达式");
-				$("#text-warn").modal('show');
-			}  
+			if(regx!=null && regx!=""){
+				try{  
+					new RegExp(regx);
+				}catch(e){  
+					isRegx = false;
+					$("#text-warn").html("<strong>警告！</strong>请输入有效正则表达式");
+					$("#text-warn").modal('show');
+				} 
+			}
 			if(isRegx){
 				rowWidth = $(".demo").width()-5;
 				colWidth = rowWidth/12;
@@ -692,7 +694,7 @@ $(function(){
 						
 						view.find("label").text(label);
 						var inputObj = view.find("input");
-						inputObj.val(defaultVal);
+						inputObj.attr("value",defaultVal);
 						inputObj.attr({"id":id,"placeholder":place,"name":name,"regxCue":regxCue});
 						
 						view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
@@ -722,7 +724,7 @@ $(function(){
 					
 					view.find("label").text(label);
 					var inputObj = view.find("input");
-					inputObj.val(defaultVal);
+					inputObj.attr("value",defaultVal);
 					inputObj.attr({"id":id,"placeholder":place,"name":name});
 					
 					view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
@@ -740,6 +742,37 @@ $(function(){
 					$("#text-warn").modal('hide');
 					$("#textModal").modal("hide");
 				}
+			}else{//else 正则为空
+				rowWidth = $(".demo").width()-5;
+				colWidth = rowWidth/12;
+				var label = $("#text-label").val();
+				
+				var defaultVal = $("#text-default-value").val().trim();
+				var place = $("#text-place").val();
+				var isMust = $("#text-must").is(':checked');
+				
+				var textWidth = $("#text-width").val()*colWidth;
+				var textLabelWidth = $("#text-label-width").val()*colWidth;
+				
+				view.find("label").text(label);
+				var inputObj = view.find("input");
+				inputObj.attr("value",defaultVal);
+				inputObj.attr({"id":id,"placeholder":place,"name":name});
+				
+				view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#text-label-width").val());
+				inputObj.parent().css("width",textWidth-18).attr("col",$("#text-width").val());
+				inputObj.css("width",textWidth-18).attr("col",$("#text-width").val()).attr("regx",regx);
+				
+				if(isMust){
+					var num = view.find(".labelDiv").find("span").length;
+					if(num==0){
+						view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+					}
+				}else{
+					view.find(".labelDiv").find("span").remove();
+				}
+				$("#text-warn").modal('hide');
+				$("#textModal").modal("hide");
 			}
 		}
 	});
@@ -765,7 +798,7 @@ $(function(){
 			
 			view.find("label").text(label);
 			var inputObj = view.find("input");
-			inputObj.val(defaultVal);
+			inputObj.attr("value",defaultVal);
 			inputObj.attr({"id":id,"placeholder":place,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#number-label-width").val());
@@ -807,7 +840,7 @@ $(function(){
 			view.find("label").text(label);
 			var inputObj = view.find("input");
 			
-			inputObj.val(defaultVal);
+			inputObj.attr("value",defaultVal);
 			inputObj.attr({"id":id,"placeholder":place,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#date-label-width").val());
@@ -848,7 +881,7 @@ $(function(){
 			
 			view.find("label").text(label);
 			var textareaObj = view.find("textarea");
-			textareaObj.val(defaultVal);
+			textareaObj.attr("value",defaultVal);
 			textareaObj.attr({"id":id,"rows":rows,"name":name});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#textarea-label-width").val());
@@ -1064,7 +1097,7 @@ $(function(){
 			view.find(".fileFormat").val(formatStr);
 			view.find("label").text(label);
 			var inputObj = view.find(".subDiv input");
-			inputObj.val(defaultVal);
+			inputObj.attr("value",defaultVal);
 			inputObj.attr({"id":id});
 			
 			view.find(".labelDiv").css("width",textLabelWidth).attr("col",$("#loadFile-label-width").val());

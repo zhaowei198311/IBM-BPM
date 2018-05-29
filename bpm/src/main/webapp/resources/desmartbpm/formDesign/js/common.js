@@ -48,7 +48,9 @@ $.fn.onlyNumAlpha = function () {
 	});
 	$(this).keyup(function (event) {
 		if(!/^[A-Za-z0-9_-]+$/.test(this.value)) {
-			this.value=oldValue;
+			if($(this).val().trim()!="" && $(this).val().trim()!=null){
+				this.value=oldValue;
+			}
 		}
 	});
 };
