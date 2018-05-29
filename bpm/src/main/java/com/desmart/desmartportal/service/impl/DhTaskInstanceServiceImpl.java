@@ -424,7 +424,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * @return
 	 */
 	private boolean checkTaskUser(DhTaskInstance currDhTaskInstance, String creator) {
-		// TODO Auto-generated method stub
 		if (currDhTaskInstance.getTaskDelegateUser() != null && !"".equals(currDhTaskInstance.getTaskDelegateUser())) {
 			if (currDhTaskInstance.getTaskDelegateUser().equals(creator)) {
 				return true;
