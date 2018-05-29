@@ -10,6 +10,8 @@ public class DhRoutingRecord {
 	private String routeType;//操作类型
 	private String userUid;//操作人uid 
 	private Date createTime;//操作时间
+	private String activityId;//环节id
+	private String activityTo;//流转到的节点activityId  逗号分隔
 	//不在表内，关联查询
 	private String userName;//操作人姓名
 	private String station;//操作人岗位身份
@@ -61,11 +63,23 @@ public class DhRoutingRecord {
 	public void setStation(String station) {
 		this.station = station;
 	}
+	public String getActivityId() {
+		return activityId;
+	}
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+	public String getActivityTo() {
+		return activityTo;
+	}
+	public void setActivityTo(String activityTo) {
+		this.activityTo = activityTo;
+	}
 	@Override
 	public String toString() {
 		return "DhRoutingRecord [routeUid=" + routeUid + ", insUid=" + insUid + ", activityName=" + activityName
-				+ ", routeType=" + routeType + ", userUid=" + userUid + ", createTime=" + createTime + ", userName="
-				+ userName + ", station=" + station + "]";
+				+ ", routeType=" + routeType + ", userUid=" + userUid + ", createTime=" + createTime + ", activityId="
+				+ activityId + ", activityTo=" + activityTo + ", userName=" + userName + ", station=" + station + "]";
 	}
 	
 	

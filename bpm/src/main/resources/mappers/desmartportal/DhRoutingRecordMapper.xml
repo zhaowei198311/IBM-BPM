@@ -4,7 +4,8 @@
  
  <sql id="Base_Column_List">
  	ROUTE_UID,INS_UID,ACTIVITY_NAME,
- 	ROUTE_TYPE,USER_UID,CREATE_TIME
+ 	ROUTE_TYPE,USER_UID,CREATE_TIME,
+ 	ACTIVITY_ID,ACTIVITY_TO
  </sql>
  
  <select id="getDhRoutingRecordListByCondition" resultType="com.desmart.desmartportal.entity.DhRoutingRecord"
@@ -29,7 +30,9 @@
   		#{activityName},
   		#{routeType},
   		#{userUid},
-  		sysdate
+  		sysdate,
+  		#{activityId},
+  		#{activityTo}
   	)
   </insert>
  

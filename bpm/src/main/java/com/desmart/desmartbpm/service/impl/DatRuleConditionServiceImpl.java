@@ -20,49 +20,49 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 
 	@Override
 	public int inserToDatRuleCondition(List<DatRuleCondition> datRuleCondition) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.inserToDatRuleCondition(datRuleCondition);
 	}
 
 	@Override
 	public LinkedList<DatRuleCondition> getDatruleConditionByRuleId(String ruleId) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.getDatruleConditionByRuleId(ruleId);
 	}
 
 	@Override
 	public List<DatRuleCondition> getDatruleConditionInRuleId(String activityId) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.getDatruleConditionInRuleId(activityId);
 	}
 
 	@Override
 	public int deleteDatRuleCondition(DatRule datRule) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.deleteDatRuleCondition(datRule);
 	}
 
 	@Override
 	public List<DatRuleCondition> loadDatruleConditionInRuleId(String activityId) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.loadDatruleConditionInRuleId(activityId);
 	}
 
 	@Override
 	public Integer insert(DatRuleCondition datRuleCondition) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.insert(datRuleCondition);
 	}
 
 	@Override
 	public List<DatRuleCondition> getDatruleConditionByActivityId(String activityId) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.getDatruleConditionByActivityId(activityId);
 	}
 
 	@Override
 	public Integer batchDelete(List<DatRuleCondition> datRuleConditions) {
-		// TODO Auto-generated method stub
+
 		return datRuleConditionMapper.batchDelete(datRuleConditions);
 	}
 

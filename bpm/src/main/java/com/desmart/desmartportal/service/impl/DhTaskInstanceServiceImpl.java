@@ -386,6 +386,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
 						dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
 						dhRoutingRecord.setUserUid(userId);
+						dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
+						if(nextBpmActivityMetas!=null&&nextBpmActivityMetas.size()>0) {
+							setActivityToValues(nextBpmActivityMetas,dhRoutingRecord);
+						}
 						dhRoutingRecordMapper.insert(dhRoutingRecord);
 						// 修改当前任务实例状态为已完成
 						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid)>0) {
@@ -396,6 +400,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						}
 						BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 						BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+						
 						// 调用方法完成任务
 						Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
 						
@@ -416,6 +421,22 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			e.printStackTrace();
 			log.info("完成任务出现异常......");
 			return ServerResponse.createByError();
+		}
+	}
+
+	/**
+	 *	设置流转到的节点activityId  逗号分隔
+	 * @param nextBpmActivityMetas
+	 * @param dhRoutingRecord
+	 */
+	private void setActivityToValues(List<BpmActivityMeta> nextBpmActivityMetas, DhRoutingRecord dhRoutingRecord) {
+		StringBuffer stringBuffer = new StringBuffer();
+		for (int i = 0; i < nextBpmActivityMetas.size(); i++) {
+			if(i==nextBpmActivityMetas.size()-1) {
+				stringBuffer.append(nextBpmActivityMetas.get(i));
+			}else {
+				stringBuffer.append(nextBpmActivityMetas.get(i)+",");
+			}
 		}
 	}
 

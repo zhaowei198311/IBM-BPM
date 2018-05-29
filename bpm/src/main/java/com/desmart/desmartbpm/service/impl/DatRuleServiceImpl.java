@@ -47,31 +47,31 @@ public class DatRuleServiceImpl implements DatRuleService {
 	
 	@Override
 	public DatRule getDatRuleByKey(String ruleId) {
-		// TODO Auto-generated method stub
+
 		return datRuleMapper.getDatRuleByKey(ruleId);
 	}
 
 	@Override
 	public Integer insertToDatRule(DatRule datRule) {
-		// TODO Auto-generated method stub
+
 		return datRuleMapper.insertToDatRule(datRule);
 	}
 	
 	@Override
 	public Integer updateDatRule(DatRule datRule) {
-		// TODO Auto-generated method stub
+
 		return datRuleMapper.updateDatRule(datRule);
 	}
 
 	@Override
 	public List<DatRule> getPreRulesLikeRuleName(String activityId) {
-		// TODO Auto-generated method stub
+
 		return datRuleMapper.getPreRulesLikeRuleName(activityId);
 	}
 	
 	@Override
 	public int deleteDatRule(DatRule datRule) {
-		// TODO Auto-generated method stub
+
 		return datRuleMapper.deleteDatRule(datRule);
 	}
 
@@ -79,7 +79,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse addDatRule(List<DatRuleCondition> itemList1, String activityId, String type,
 			String activityType) {
-		// TODO Auto-generated method stub
+
 		//activityId = "sa";
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		//String routeVarname="result_0,result_5";
@@ -215,7 +215,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	 * @return
 	 */
 	private Map<String, List<DatRuleCondition>> groupListToMapByResult(List<DatRuleCondition> list) {
-		// TODO Auto-generated method stub
+
 		Map<String, List<DatRuleCondition>> map = new HashMap<>();
 		for (DatRuleCondition datRuleCondition : list) {
 			if(datRuleCondition!=null) {
@@ -245,7 +245,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	 * @return
 	 */
 	private List<Map.Entry<String, List<DatRuleCondition>>> groupListToMap(List<DatRuleCondition> list) {
-		// TODO Auto-generated method stub
+
 		Map<String, List<DatRuleCondition>> map = new HashMap<>();
 		for (DatRuleCondition datRuleCondition : list) {
 			String key = datRuleCondition.getConditionGroupName();
@@ -269,7 +269,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 
 				@Override
 				public int compare(DatRuleCondition o1, DatRuleCondition o2) {
-					// TODO Auto-generated method stub
+			
 					if (o1.getRuleVersion() > o2.getRuleVersion()) {
 						return -1;
 					}
@@ -306,7 +306,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 
 	private void check_Update_MetaAndRule(Map<String, List<DatRuleCondition>> map, String ruleName
 			, String activityType, String activityId,String type) {
-		// TODO Auto-generated method stub
+
 		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
 		bpmActivityMeta.setActivityId(activityId);
 		bpmActivityMeta.setActivityType(activityType);
@@ -328,7 +328,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	@Override
 	public ServerResponse loadGatewaySet(String proAppId, String snapshotId, String bpdId,
 			String activityType) {
-		// TODO Auto-generated method stub
+
 		List<BpmActivityMeta> list = 
 				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(proAppId, snapshotId, bpdId, activityType);
 		List<Map<String, Object>> rightDetailsList = new ArrayList<Map<String, Object>>();
@@ -377,7 +377,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
-		// TODO Auto-generated method stub
+
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
 		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(datRuleCondition.getRuleId());
 		linkedList.addFirst(datRuleCondition);
@@ -427,7 +427,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	@Override
 	@Transactional(rollbackFor= {RuntimeException.class,Exception.class})
 	public ServerResponse deleteDatRule(List<DatRuleCondition> datRuleConditions,String activityId) {
-		// TODO Auto-generated method stub
+
 		Map<String, List<DatRuleCondition>> datRuleMap = groupListToMapByRuleId(datRuleConditions);
 		Integer count = 0;
 		for (String key : datRuleMap.keySet()) {
@@ -447,7 +447,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	}
 	
 	private Integer updateDatruleByDelete(String ruleId) {
-		// TODO Auto-generated method stub
+
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
 		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(ruleId);
 		DatRule datRule = new DatRule();
@@ -491,7 +491,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 	 * @return
 	 */
 	private Map<String, List<DatRuleCondition>> groupListToMapByRuleId(List<DatRuleCondition> list) {
-		// TODO Auto-generated method stub
+
 		Map<String, List<DatRuleCondition>> map = new HashMap<>();
 		for (DatRuleCondition datRuleCondition : list) {
 			if(datRuleCondition!=null) {
