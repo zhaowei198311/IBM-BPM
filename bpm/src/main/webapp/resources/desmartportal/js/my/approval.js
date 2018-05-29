@@ -507,7 +507,7 @@ function reject() {
 }
 
 function back() {
-    window.location.href = 'menus/backlog';
+	window.location.href = 'javascript:history.go(-1)';
 }
 
 //数据信息
