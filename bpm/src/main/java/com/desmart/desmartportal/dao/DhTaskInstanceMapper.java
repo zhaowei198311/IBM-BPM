@@ -78,4 +78,6 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	List <DhTaskInstance> selectTaskAndProcessInfo(DhTaskInstance taskInstance);
+	
+	DhTaskInstance selectByTaskId(Integer taskId);
 }

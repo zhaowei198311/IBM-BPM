@@ -407,6 +407,16 @@
 			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
 		</where>
 	</select>
+	
+	<select id="selectByTaskId" parameterType="java.lang.Integer" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			TASK_ID = #{taskId}
+		</where>
+	</select>
 
 	<update id="abandonTaskByInsUidList" parameterType="list">
 		update DH_TASK_INSTANCE

@@ -8,13 +8,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
+import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -25,11 +29,14 @@ import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
+import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.SysDateService;
@@ -81,6 +88,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private BpmFormManageService bpmFormManageService;
+	
+	@Autowired
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -263,6 +273,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 *
 	 */
 	@Override
+	@Transactional
 	public ServerResponse perform(String data) {
 		log.info("完成任务开始......");
 		try {
@@ -271,17 +282,27 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 			JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
 			String userId = routeData.getString("userUid").substring(0, 8);
-			
+			// 根据任务标识 去查询流程 实例
+			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByTaskId(taskId);
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-			
 			CommonBusinessObject pubBo = new CommonBusinessObject();
 			List<String> userList = new ArrayList<>();
 			userList.add(userId);
-			pubBo.setNextOwners_0(userList);
-			
-			
+			pubBo.setNextOwners_0(userList);			
 			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-			bpmTaskUtil.commitTask(taskId, pubBo);
+			Map<String,HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+			if(resultMap.get("commitTaskResult").getCode()==200) {
+				// 插入流转数据
+				  // 任务完成后 保存到流转信息表里面
+                DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+                dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+                dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+                dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
+                dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
+                dhRoutingRecord.setUserUid(userId);
+                dhRoutingRecordMapper.insert(dhRoutingRecord);
+				dhRoutingRecordMapper.insert(dhRoutingRecord);
+			}
 			log.info("完成任务结束......");
 			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
