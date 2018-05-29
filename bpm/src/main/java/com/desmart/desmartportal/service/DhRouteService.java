@@ -2,9 +2,11 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 
 public interface DhRouteService {
 	
@@ -26,4 +28,12 @@ public interface DhRouteService {
 	 * @return
 	 */
 	List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
+	/**
+	 * 装配处理人信息
+	 * @param pubBo
+	 * @param routeData
+	 * @return
+	 */
+	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
+
 }
