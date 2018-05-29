@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartsystem.entity.SysUser;
 
 public interface DhRouteService {
 	
@@ -36,6 +37,15 @@ public interface DhRouteService {
 	 */
 	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
 
+
+	
+	 /**
+     * 获取环节可选处理人
+     * @param activityUid
+     * @return
+     */
+	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData);
+
 	/**
 	 * 更新网关决策的中间表
 	 * @param currActivityMeta
@@ -44,4 +54,5 @@ public interface DhRouteService {
 	 * @return
 	 */
 	ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData);
+
 }
