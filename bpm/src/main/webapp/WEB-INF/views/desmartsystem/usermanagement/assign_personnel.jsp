@@ -142,14 +142,20 @@
 			}
 			
 			if(actcAssignType!='allUsers'){
+				
+				var insUid=$("#insUid",parent.document).val();
+				var formData=$("#formData",parent.document).text();
+				var companyNum=$("#companyNum",parent.document).val();
+				var departNo=$("#departNo",parent.document).val();
+				
 				$.ajax({
 					type:'post',
-					url:'menus/choosableHandler',
-					data:{activityUid:elementId},
+					url:'dhRoute/choosableHandler',
+					data:{insUid:insUid,companyNum:companyNum,departNo:departNo,activityId:elementId,formData:formData},
 					dataType:'json',
-					success: function (data){
+					success: function (result){
 						var $ul=$("#usersul");
-						user_add_li(data,$ul);
+						user_add_li(result.data,$ul);
 					}
 				});	
 			}

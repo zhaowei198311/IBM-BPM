@@ -157,8 +157,7 @@ public class MenusServiceImpl implements MenusService {
 		if(bpmActivityMetas!=null){
 			dhActivityConf=bpmActivityMetas.get(0).getDhActivityConf();
 		}
-		
-		  String actcAssignType = dhActivityConf.getActcAssignType();
+		  String actcAssignType = dhActivityConf.getActcChooseableHandlerType();
           DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
           String activityId = dhActivityConf.getActivityId();
           if (assignTypeEnum == null) {
@@ -171,7 +170,6 @@ public class MenusServiceImpl implements MenusService {
           }
           DhActivityAssign selective = new DhActivityAssign();
           selective.setActivityId(activityId);
-          System.err.println(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
           selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode()); 
           List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
           if (assignList.size() == 0) {
