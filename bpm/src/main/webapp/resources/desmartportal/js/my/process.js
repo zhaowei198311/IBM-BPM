@@ -1,9 +1,16 @@
 function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
-    console.log(actcCanChooseUser);
     if (actcCanChooseUser == 'FALSE') {
         layer.alert('没有配置可选处理人!');
         return false;
     }
+    
+    var area=[];
+    if(actcAssignType=='allUsers'){
+    	area=['680px', '520px'];
+    }else{
+    	area=['594px', '460px'];
+    }
+    
 
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType;
     layer.open({
@@ -11,7 +18,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
         title: '选择人员',
         shadeClose: true,
         shade: 0.8,
-        area: ['680px', '520px'],
+        area: area,
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
@@ -238,6 +245,7 @@ var saveData = function () {
     	},
         success:function(result){
         	if(result.status==0){
+        		$(".choose_middle .layui-form").empty();
             	var activityMetaList = result.data;
             	var chooseUserDiv = "";
             	for(var i=0;i<activityMetaList.length;i++){
