@@ -145,6 +145,10 @@ function addSure(){
 	var insUid = $("#insUid").val();
 	var usrUid = $("#handleUser_view").val();
 	var activityBpdId = $("#activityId").val();
+	if (usrUid == null || usrUid == "") {
+		layer.alert("请选择人员!");
+		return;
+	}
 	$.ajax({
 		async: false,
 		url: common.getPath() + "/taskInstance/addSure",

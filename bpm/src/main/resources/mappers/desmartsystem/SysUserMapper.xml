@@ -101,7 +101,7 @@
 	
 	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
 	 		select * from sys_user u  where 1=1
-	 		<if test="userName!=null and userName!='' ">
+	 		<if test="userName !=null and userName !='' ">
 	 			and u.USER_NAME LIKE CONCAT(CONCAT('%',#{userName}),'%') 
 	 		</if>
 	 		<if test="userNo!=null and userNo!='' ">

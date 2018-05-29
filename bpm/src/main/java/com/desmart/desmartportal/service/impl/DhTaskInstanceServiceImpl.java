@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
-import com.desmart.common.constant.ResponseCode;
 import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
@@ -44,19 +43,18 @@ import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessFormService;
-import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.SysDateService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.StringUtil;
 
 /**
  * <p>
@@ -112,7 +110,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaServiceImpl;
-
+	
+	@Autowired
+	private SysUserMapper sysUserMapper;
 	
 	/**
 	 * 查询所有流程实例
@@ -617,23 +617,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance) {
 		// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
-		
 		dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
 		dhTaskInstance.setTaskType("normal");
 		dhTaskInstance.setTaskStatus("12");
 		dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
 		dhTaskInstance.setTaskInitDate(new Date());
-		String usrUids = dhTaskInstance.getUsrUid();
-		if (usrUids.contains(";")) {
-			String[] usrUid = usrUids.split(";");
-			for (String string : usrUid) {
-				dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-				dhTaskInstance.setUsrUid(string);
-				dhTaskInstanceMapper.insertTask(dhTaskInstance);
-			}
-		}else {
+		String[] usrUid = dhTaskInstance.getUsrUid().split(";");
+		SysUser sysUser = new SysUser();
+		for (String string : usrUid) {
+			sysUser.setUserName(string);
+			List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
 			dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-			dhTaskInstance.setUsrUid(usrUids);
+			dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
 			dhTaskInstanceMapper.insertTask(dhTaskInstance);
 		}
 		return ServerResponse.createBySuccess();
