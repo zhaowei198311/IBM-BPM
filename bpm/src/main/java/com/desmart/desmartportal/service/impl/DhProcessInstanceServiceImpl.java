@@ -490,7 +490,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         resultMap.put("formHtml", formResponse.getData());
         
         // 获得下个环节处理人信息
-        resultMap.put("activityMetaList", menusService.activityHandler(proUid, proAppId, processDefintion.getProVerUid()));
+        //resultMap.put("activityMetaList", menusService.activityHandler(proUid, proAppId, processDefintion.getProVerUid()));
         
         if (StringUtils.isBlank(insUid)) {
             dhProcessInstanceMapper.insertProcess(processInstance);

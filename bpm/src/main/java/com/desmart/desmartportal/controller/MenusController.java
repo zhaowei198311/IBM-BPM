@@ -172,12 +172,21 @@ public class MenusController {
 		return mv;
 	}
 	
+	/**
+	 * 去待办明细页面
+	 * @param taskUid
+	 * @return
+	 */
 	@RequestMapping("approval")
 	public ModelAndView approval(@RequestParam(value="taskUid") String taskUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
-		Map<String,Object> resultMap = dhTaskInstanceService.taskInfo(taskUid);
-		resultMap.put("taskUid", taskUid);
-		mv.addAllObjects(resultMap);
+		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
+		if (serverResponse.isSuccess()) {
+            mv.addAllObjects(serverResponse.getData());
+        } else {
+            mv.setViewName("/desmartbpm/error");
+            mv.addObject("errorMessage", serverResponse.getMsg());
+        }
 		return mv;
 	}
 	

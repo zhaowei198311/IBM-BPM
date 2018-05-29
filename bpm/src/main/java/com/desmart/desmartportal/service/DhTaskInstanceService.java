@@ -62,9 +62,12 @@ public interface DhTaskInstanceService {
 	boolean isTaskExists(int taskId);
 	
 	/**
-	 * 代办任务详细信息
+	 * 获得待办任务信息, 跳转到处理待办页面的数据
+	 * @param taskUid
+	 * @return
 	 */
-	public Map<String, Object> taskInfo(String taskUid);
+	ServerResponse<Map<String, Object>> toDealTask(String taskUid);
+	
 	/**
 	 * 根据insUid查询任务，任务实例类型为：SIGN或NORMAL或TRANSFER；
 	 * @param insUid

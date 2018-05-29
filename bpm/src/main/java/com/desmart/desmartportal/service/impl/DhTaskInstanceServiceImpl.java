@@ -30,8 +30,10 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
@@ -113,6 +115,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	
+	@Autowired
+	private DhStepService dhStepService;
+	
 	
 	/**
 	 * 查询所有流程实例
@@ -469,65 +475,45 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		return dhTaskInstanceMapper.countByTaskId(taskId) > 0;
 	}
-
-	/**
-	 * 任务代办 详细信息
-	 */
-	@Override
-	public Map<String, Object> taskInfo(String taskUid) {
-		log.info("代办任务详细信息查询 开始......");
-		Map<String, Object> resultMap = new HashMap<>();
-		try {
-			/*
-			 * 首先要通过任务实例数据信息里的 流程实例id 去查询流程，流程图元素id(activityBpdId) form表单id 然后把这些数据存放map 返回给
-			 * 前台 代办页面
-			 */
-			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-
-			BpmActivityMeta activityMeta = new BpmActivityMeta();
-			
-			// 查询流程
-			resultMap.put("taskInstance", dhTaskInstance);
-			DhProcessInstance dhprocessInstance = dhProcessInstanceMapper
-					.selectByPrimaryKey(dhTaskInstance.getInsUid());
-			resultMap.put("processInstance", dhprocessInstance);
-			// 查询流程图元素信息
-			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-			bpmActivityMeta.setBpdId(dhprocessInstance.getProUid());
-			bpmActivityMeta.setProAppId(dhprocessInstance.getProAppId());
-			bpmActivityMeta.setSnapshotId(dhprocessInstance.getProVerUid());
-			List<BpmActivityMeta> bpmActivityList = bpmActivityMetaMapper
-					.queryByBpmActivityMetaSelective(bpmActivityMeta);
-
-			// 获取当前环节 找到下一环节
-			bpmActivityMeta.setActivityBpdId(dhTaskInstance.getActivityBpdId());
-			List<BpmActivityMeta> activityMetas = bpmActivityMetaMapper
-					.queryByBpmActivityMetaSelective(bpmActivityMeta);
-			if (activityMetas != null && activityMetas.size() > 0) {
-				activityMeta = activityMetas.get(0);
-				resultMap.put("activityMeta", activityMeta);
-			}
-			resultMap.put("activityMetaList", menusService.backlogActivityHandler(activityMeta));
-
-			// 转json
-			String listStr = JsonUtil.obj2String(bpmActivityList);
-			resultMap.put("listStr", listStr);
-			// 查找表单id
-			Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhprocessInstance.getProAppId(),
-					dhprocessInstance.getProUid(), dhprocessInstance.getProVerUid());
-			resultMap.put("formId", formMap.get("formId"));
-			String formUid = (String) formMap.get("formId");
-			resultMap.put("formHtml", bpmFormManageService.getFormFileByFormUid(formUid).getData());
-			return resultMap;
-			
-		} catch (Exception e) {
-			log.info("查询代办任务详细信息失败");
-			e.printStackTrace();
-			return null;
-		}
-		
-		
+	
+	public ServerResponse<Map<String, Object>> toDealTask(String taskUid) {
+	    Map<String, Object> resultMap = new HashMap<>();
+	    
+	    if (StringUtils.isBlank(taskUid)) {
+	        return ServerResponse.createByErrorMessage("缺少必要的参数");
+	    }
+	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance.getTaskStatus())) {
+	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
+	    }
+	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+	    if (dhprocessInstance == null) {
+            return ServerResponse.createByErrorMessage("流程实例不存在");
+        }
+	    resultMap.put("processInstance", dhprocessInstance);
+	    
+	    // 获得当前环节
+	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
+	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
+	    
+	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
+	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    if (formStep == null) {
+            return ServerResponse.createByErrorMessage("找不到表单步骤");
+        }
+        resultMap.put("dhStep", formStep);
+        // 获得表单文件内容
+        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
+        if (!formResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("获得表单数据失败");
+        }
+        resultMap.put("formHtml", formResponse.getData());
+	    resultMap.put("taskInstance", dhTaskInstance);
+	    return ServerResponse.createBySuccess(resultMap);
+	    
+	    
 	}
+	
 
 	@Override
 	public List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid) {
@@ -654,5 +640,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		return ServerResponse.createBySuccess();
 	}
-
+    private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
+        for (DhStep dhStep : stepList) {
+            if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
+                return dhStep;
+            }
+        }
+        return null;
+    }
 }

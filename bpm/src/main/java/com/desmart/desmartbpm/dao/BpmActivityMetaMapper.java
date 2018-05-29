@@ -92,4 +92,15 @@ public interface BpmActivityMetaMapper {
      * @throws
      */
     int deleteByIds(BpmActivityMeta bpmActivityMeta);
+    
+    /**
+     * 根据流程应用库id， 流程图id，版本id， 元素节点id查出唯一的一个节点
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @param activityBpdId
+     * @return
+     */
+    BpmActivityMeta queryByFourElement(@Param("proAppId")String proAppId, @Param("proUid")String proUid,
+            @Param("proVerUid")String proVerUid, @Param("activityBpdId")String activityBpdId);
 }
