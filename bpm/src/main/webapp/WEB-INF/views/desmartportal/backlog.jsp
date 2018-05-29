@@ -60,6 +60,7 @@
 					    <col width="150">
 					    <col width="150">
 					    <col width="150">
+					    <col width="200">
 					    <col width="150">
 					</colgroup>
 					<thead>
@@ -68,6 +69,7 @@
 					      <th>流程标题</th>
 					      <th>环节名称</th>
 					      <th>任务类型</th>
+					      <th>任务状态</th>
 					      <th>上一环节处理人</th>
 					      <th>流程创建人</th>
 					      <th>流程创建时间</th>
@@ -209,11 +211,15 @@
 			var startSort = pageInfo.startRow;//开始序号
 			var trs = "";
 			var type = "";
+			var status = "";
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
 				if(meta.taskType=='normal'){
 					type = "一般任务";
+				}
+				if(meta.taskStatus==12){
+					status = "待处理";
 				}
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
@@ -232,6 +238,9 @@
 						+ '<td>'
 						+ type
 						+ '</td>' 
+						+ '<td>'
+						+ status
+						+ '</td>'					
 						+ '<td>' 
 						+ meta.taskPreviousUsrUsername
 						+ '</td>' 
