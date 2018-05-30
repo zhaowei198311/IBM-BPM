@@ -185,7 +185,7 @@
 						</table>
 					</div>
 					<div class="foot">
-						<button class="layui-btn sure_btn">确定</button>
+						<button class="layui-btn sure_btn" onclick="agree();">确定</button>
 						<button class="layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container2').css('display','none')">取消</button>
 					</div>				
 				</div>
