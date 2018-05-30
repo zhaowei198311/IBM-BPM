@@ -6,10 +6,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<!-- layUI -->
-<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/jquery-3.3.1.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/layui.css" media="all" />
-<script type="text/javascript"src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/layui.js"></script>
+
+<link href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/layui.css" rel="stylesheet"/>
+<link href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/my.css" rel="stylesheet" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/tree/css/demo.css" type="text/css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/tree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<link type="text/css" href="<%=request.getContextPath()%>/resources/desmartsystem/scripts/laypage/1.2/skin/laypage.css">
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/laypage/1.2/laypage.js"></script>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/jquery-3.3.1.js"/></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/layui.all.js"></script>	
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/myjs/public.js"></script>
 <!-- 公共组件 -->
 <jsp:include page="pbPlugins.jsp"></jsp:include>
