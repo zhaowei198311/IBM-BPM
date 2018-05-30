@@ -149,15 +149,6 @@
 							</th>
 						</tr>
 						<tr>
-							<th colspan="12">
-								<div class="layui-progress layui-progress-big"
-									lay-showPercent="yes" style="position: relative;">
-									<div class="layui-progress-bar" lay-percent="50%"></div>
-									<span class="progress_time">审批剩余时间6小时</span>
-								</div>
-							</th>
-						</tr>
-						<tr>
 							<td class="td_title" colspan="1" style="width: 120px">工号</td>
 							<td class="sub_title" colspan="5">
 							 <input type="text" name="userId" value="${currentUser.userId}" class="layui-input" readonly>
