@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
 import com.desmart.desmartsystem.service.SysDictionaryService;
@@ -249,5 +250,23 @@ public class SysDictionaryController {
 			e.printStackTrace();
 			return "{\"msg\":\"error\"}";
 		}
+	}
+	
+	/**
+	 * 查询所有启用的数据字典分类(不分页)
+	 */
+	@RequestMapping(value = "/listAllOnSysDictionary")
+	@ResponseBody
+	public ServerResponse listAllOnSysDictionary() {
+		return sysDictionaryService.listAllOnSysDictitonary();
+	}
+	
+	/**
+	 * 根据数据字典id获得启用的数据字典内容(不分页)
+	 */
+	@RequestMapping(value = "/listOnDicDataBydicUid")
+	@ResponseBody
+	public ServerResponse listOnDicDataBydicUid(String dicUid) {
+		return sysDictionaryService.listOnDicDataBydicUid(dicUid);
 	}
 }

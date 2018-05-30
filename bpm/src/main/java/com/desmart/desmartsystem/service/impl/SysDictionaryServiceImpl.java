@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.dao.SysDictionaryMapper;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
@@ -125,6 +126,18 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 				return sysDictionaryMapper.updateSysDictionaryData(sysDictionaryData);
 			}
 		}	
+	}
+
+	@Override
+	public ServerResponse listAllOnSysDictitonary() {
+		List<SysDictionary> dicList = sysDictionaryMapper.listAllOnSysDictitonary();
+		return ServerResponse.createBySuccess(dicList);
+	}
+
+	@Override
+	public ServerResponse listOnDicDataBydicUid(String dicUid) {
+		List<SysDictionaryData> dicDataList = sysDictionaryMapper.listOnDicDataBydicUid(dicUid);
+		return ServerResponse.createBySuccess(dicDataList);
 	}
 	
 }

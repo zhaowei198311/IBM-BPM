@@ -3,7 +3,7 @@ package com.desmart.desmartsystem.service;
 import org.springframework.stereotype.Service;
 
 import com.desmart.desmartsystem.util.PagedResult;
-
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
 /**
@@ -116,4 +116,14 @@ public interface SysDictionaryService {
 	 * @throws
 	 */
 	int updateSysDictionaryData(SysDictionaryData sysDictionaryData);
+	
+	/**
+	 * 查询所有启用的数据字典分类(不分页)
+	 */
+	ServerResponse listAllOnSysDictitonary();
+	
+	/**
+	 * 根据数据字典id获得启用的数据字典内容(不分页)
+	 */
+	ServerResponse listOnDicDataBydicUid(String dicUid);
 }

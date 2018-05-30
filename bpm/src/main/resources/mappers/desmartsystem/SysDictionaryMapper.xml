@@ -164,4 +164,18 @@
 			where DIC_DATA_UID = #{dicDataUid}
 		</set>
 	</update>
+	
+	<select id="listAllOnSysDictitonary" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+		select 
+		<include refid="Base_Column_List" />
+		from SYS_DICTIONARY
+		where dic_status='on'
+	</select>
+	
+	<select id="listOnDicDataBydicUid" parameterType="String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		select 
+		<include refid="Base_Column_List1" />
+		from SYS_DICTIONARY_DATA
+		where dic_uid=#{dicUid} and dic_data_status='on'
+	</select>
 </mapper>
