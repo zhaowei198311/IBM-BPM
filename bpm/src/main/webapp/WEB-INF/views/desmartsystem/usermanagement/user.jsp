@@ -298,7 +298,7 @@
 		
 		<!-- 绑定部门对应的公司 -->
 		<div class="display_container10">
-			<div class="display_content10">
+			<div class="display_content10" style="min-height: auto;">
 				<div class="top">
 					<div class="layui-col-md12">绑定公司和部门</div>
 				</div>
@@ -543,7 +543,7 @@
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定系统角色"  onclick=openSystemRoleBinding("'+this.userUid+'","'+this.departUid+'"); >&#xe614;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定部门"  onclick=departmentOfBinding("'+this.userUid+'"); >&#xe631;</i>';
-	         	str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>';
+	         	/* str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>'; */
 	         	if(this.accountType=='1'){
 	         		str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysUser/deleteSysUser?userUid='+this.userUid+'","del") >&#xe640;</i>';
 	         	}
