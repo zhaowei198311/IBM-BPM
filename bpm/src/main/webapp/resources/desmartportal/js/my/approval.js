@@ -413,7 +413,7 @@ function agree() {
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
-        dataType: 'text',
+        dataType: 'json',
         data: {
             data: JSON.stringify(finalData)
         },

@@ -419,18 +419,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 							return ServerResponse.createBySuccess();
 						}else {
 							log.info("任务完成失败！");
-							throw new RuntimeException("任务完成失败！");
+							throw new RuntimeException("任务完成失败");
 						}
 				} else {
-					return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败!");
+					return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败");
 				}
 			} else {
-				return ServerResponse.createByErrorMessage("请不要重复提交!");
+				return ServerResponse.createByErrorMessage("请不要重复提交");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("完成任务出现异常......");
-			return ServerResponse.createByError();
+			return ServerResponse.createByErrorMessage("完成任务出现异常");
 		}
 	}
 
