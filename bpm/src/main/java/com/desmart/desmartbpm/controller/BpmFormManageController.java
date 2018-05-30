@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
@@ -28,7 +28,6 @@ import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartbpm.util.SFTPUtil;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
@@ -147,7 +146,7 @@ public class BpmFormManageController {
                 nodesToShow.add(node);
         	}
         }
-        return JsonUtil.obj2String(nodesToShow);
+        return JSON.toJSONString(nodesToShow);
 	}
 	
 	/**

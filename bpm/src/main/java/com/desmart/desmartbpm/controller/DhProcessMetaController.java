@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.ZTreeNode;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.util.JsonUtil;
 
 @Controller
 @RequestMapping(value = "/processMeta")
@@ -146,7 +146,7 @@ public class DhProcessMetaController {
             nodesToShow.add(node);
         }
         
-        return JsonUtil.obj2String(nodesToShow);
+        return JSON.toJSONString(nodesToShow);
     }
     
 

@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.ZTreeNode;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
-import com.desmart.desmartbpm.util.JsonUtil;
 
 @Controller
 @RequestMapping(value = "/processCategory")
@@ -24,7 +24,7 @@ public class DhProcessCategoryController {
     
     @RequestMapping(value = "/index")
     public ModelAndView toIndex() {
-        String zNodes = JsonUtil.obj2String(dhProcessCategoryService.listAll());
+        String zNodes = JSON.toJSONString(dhProcessCategoryService.listAll());
         ModelAndView mv =  new ModelAndView("desmartbpm/processCategory");
         mv.addObject("zNodes", zNodes);
         return mv;
@@ -75,7 +75,7 @@ public class DhProcessCategoryController {
             node.setIcon("../resources/desmartbpm/images/1.png");
             nodesToShow.add(node);
         }
-        return JsonUtil.obj2String(nodesToShow);
+        return JSON.toJSONString(nodesToShow);
     }
     
     /**
