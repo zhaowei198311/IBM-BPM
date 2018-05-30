@@ -64,12 +64,11 @@
 				</div>
 			</div>
 			<div class="middle_temp">	
-				<div style="float:left;width:220px;height: 240px;margin:0 0 10px 10px;">
-					<!-- <ul id="treeDemo" class="ztree" style="height: 100%;width: 96%;" ></ul> -->
+				<div style="float:left;width:220px;height: 240px;margin-left: 3px;">
 					<ul id="treeDemo" class="ztree" style="width: 220px; height: 250px; -moz-user-select: none;"></ul>
 				</div>
 				
-				<div id="temp_middle" style="float:left;width:120px;height:230px;margin:10px 0 0 30px;padding:0;overflow-y:scroll;" class="show_user_div">
+				<div id="temp_middle" style="float:left;width:134px;height:260px;" >
 					<ul id="usersul" style="width:240px;display:inline;" >
 					</ul>
 				</div>
@@ -80,11 +79,11 @@
 					<br></br>
 					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
 				</div>
-					<div id="temp_right" style="float:left;width:120px;height:230px;margin-top:10px;padding:0;overflow-y:scroll;">
+					<div id="temp_right" style="float:left;width:134px;height:260px;">
 						<ul id="user_add" style="width:240px;display:inline;"></ul>
 					</div>
 			</div>
-			<div class="foot_temp" style="margin:0px 40px 0 0;">
+			<div class="foot_temp" style="margin:40px 20px 0 0;">
 				<button class="layui-btn layui-btn sure_btn" style="float:left;" type="button" id="addpersonnel">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="close" style="float:left;">取消</button>
 			</div>

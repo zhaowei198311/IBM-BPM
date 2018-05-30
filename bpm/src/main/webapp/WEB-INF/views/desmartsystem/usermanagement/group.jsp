@@ -150,7 +150,7 @@
 	
 	
 		<div class="display_container2">
-			<div class="display_content2">
+			<div class="display_content2" style="min-height: auto;">
 				<div class="top">
 					群组人员分配
 					<div class="query_user">
@@ -166,7 +166,7 @@
 									<tr>
 										<td><input type="text" id="user_code" name="userNo" autocomplete="off" class="layui-input" /></td>
 										<td><input type="text" id="user_name" name="userName" autocomplete="off" class="layui-input" /></td>
-										<td><input type="submit" id="query_btn" autocomplete="off" class="layui-input" value="查询"/></td>
+										<td><button class="layui-btn layui-btn" id="query_btn" style="margin-bottom: 22px;">查询</button></td>
 									</tr>
 								</tbody>
 							</table>
@@ -174,13 +174,13 @@
 						</div>
 					</div>
 				</div>
-				<div class="middle_temp">	
-					<div style="float:left;width:220px;height: 240px;margin:10px 0 10px 10px;">
+				<div class="middle_temp" >	
+					<div style="float:left;width:220px;height: 240px;">
 						<!-- <ul id="treeDemo" class="ztree" style="height: 100%;width: 96%;" ></ul> -->
 						<ul id="treeDemo" class="ztree" style="width: 220px; height: 250px; -moz-user-select: none;"></ul>
 					</div>
 					
-					<div id="temp_middle" style="float:left;width:120px;height:230px;margin:10px 0 0 30px;padding:0;overflow-y:scroll;" class="show_user_div">
+					<div id="temp_middle" style="float:left;width:134px;height:260px;" >
 						<ul id="usersul" style="width:240px;display:inline;" >
 						</ul>
 					</div>
@@ -192,7 +192,7 @@
 						<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
 					</div>
 					<form class="layui-form form-horizontal" id="addRoleUserForm" action="sysTeamMember/addSysTeamMember" style="margin-top:30px;"  onsubmit="return validateCallback(this,addUserRoleSuccess);">
-						<div id="temp_right" style="float:left;width:120px;height:230px;margin-top:10px;padding:0;overflow-y:scroll;">
+						<div id="temp_right" style="float:left;width:134px;height:260px;">
 							<ul id="user_add" style="width:240px;display:inline;"></ul>
 						</div>
 						<input type="hidden" name="teamUid" id="teamUid"  />
@@ -208,12 +208,23 @@
 	</div>
 	
 	<div class="display_container4" >
-		<div class="display_content4">
+		<div class="display_content4" style="height: auto;padding-bottom: 0px;">
 			<div class="top">
 				绑定业务角色
 			</div>
+			<div style="height:50px;">
+				<div class="layui-inline">
+		      <label class="layui-form-label" style="width: auto;">角色名称：</label>
+		      <div class="layui-input-inline">
+		        <input name="roleName" id="jsbd_roleName"  autocomplete="off"  style="display:inline;" class="layui-input" type="tel" />
+		      </div>
+		      <div class="layui-input-inline" style="margin-left: 20px;">
+		        	<button class="layui-btn" onclick="selectByNameRole();">查询</button>
+		      </div>
+		    </div>
+			</div>
 			<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-			<div class="middle" style="height: 420px;">
+			<div class="middle" style="height: 350px;">
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 						<col>

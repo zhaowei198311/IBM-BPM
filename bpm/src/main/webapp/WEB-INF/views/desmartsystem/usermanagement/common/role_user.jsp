@@ -37,7 +37,7 @@
 					<ul id="treeDemo" class="ztree" style="width: 220px; height: 250px;"></ul>
 				</div>
 				
-				<div id="temp_middle" style="float:left;width:134px;height:260px;overflow-y:scroll;" >
+				<div id="temp_middle" style="float:left;width:134px;height:260px;" >
 					<ul id="usersul" style="width:240px;display:inline;" >
 					</ul>
 				</div>
