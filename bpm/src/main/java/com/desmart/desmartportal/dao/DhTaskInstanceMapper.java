@@ -88,4 +88,13 @@ public interface DhTaskInstanceMapper {
 	 */
 	Integer updateTaskStatusByTaskUid(@Param("taskUid")String taskUid,
 			@Param("taskStatus")String taskStatus);
+	
+	/**
+	 * 查找任务处理人或任务代理人是指定人员，流程实例是指定实例，任务节点是指定节点, 并且是属于计划内(流程图上)的任务
+	 * @param insUid
+	 * @param activityBpdId
+	 * @param userUid
+	 * @return
+	 */
+	List<DhTaskInstance> listTaskByCondition(@Param("insUid")String insUid, @Param("activityBpdId")String activityBpdId, @Param("userUid")String userUid);
 }

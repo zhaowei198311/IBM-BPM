@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
@@ -26,6 +27,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.CommonBusinessObjectUtils;
+import com.desmart.common.util.FormDataUtil;
 import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -268,6 +270,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         String proAppId = dhProcessInstance.getProAppId();
         String proUid = dhProcessInstance.getProUid();
         String proVerUid = dhProcessInstance.getProVerUid();
+        String insDataStr = dhProcessInstance.getInsData();
+        // 混合提交的表单内容和流程实例中的表单内容
+        JSONObject insData = JSON.parseObject(insDataStr);
+        JSONObject formDataFromIns = insData.getJSONObject("formData");
+        JSONObject mergedFromData = FormDataUtil.formDataCombine(formDataFromTask, formDataFromIns);
+        
         DhProcessDefinition startableDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
         
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
@@ -278,13 +286,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return ServerResponse.createByErrorMessage("缺少必要参数");
         }
         
+        // 传递第一个环节处理人信息
         CommonBusinessObject pubBo = new CommonBusinessObject();
-        pubBo.setCreatorId(currentUserUid);
-        // 封装下一环节的处理人
-        ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo, routeData);
-        if (!assembleResponse.isSuccess()) {
-            return assembleResponse;
-        }
+        String firstUserVarname = firstHumanActivity.getDhActivityConf().getActcAssignVariable();
+        List<String> tmpList = new ArrayList<>();
+        tmpList.add(currentUserUid);
+        CommonBusinessObjectUtils.setNextOwners(firstUserVarname, pubBo, tmpList);
+        
         
         HttpReturnStatus result = new HttpReturnStatus();
         // 掉用API 发起一个流程
@@ -298,11 +306,22 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             // 获得流流程编号,和第一个任务的编号
             int insId = getProcessId(result);
             int taskId = getFirstTaskId(result);
+            pubBo.setInstanceId(String.valueOf(insId));
             
+            List<BpmActivityMeta> nextActivities = dhRouteService.getNextActivities(firstHumanActivity, mergedFromData);
+            dhRouteService.updateGatewayRouteResult(firstHumanActivity, insId, mergedFromData);
+            
+            // 封装下一环节的处理人
+            ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo, routeData);
+            if (!assembleResponse.isSuccess()) {
+                return assembleResponse;
+            }
+            
+            // 完成第一个任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            HttpReturnStatus startTaskResult = bpmTaskUtil.completeTask(taskId);
+            Map<String, HttpReturnStatus> commitTaskMap = bpmTaskUtil.commitTask(taskId, pubBo);
             // 如果完成任务成功
-            if (200 == startTaskResult.getCode()) {
+            if (!commitTaskMap.containsKey("errorMap") && commitTaskMap.get("commitTaskResult") != null && commitTaskMap.get("commitTaskResult").getCode() == 200) {
                 // 更新草稿流程实例的状态
                 DhProcessInstance instanceSelective = new DhProcessInstance();
                 instanceSelective.setInsUid(dhProcessInstance.getInsUid());
@@ -313,8 +332,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 instanceSelective.setCompanyNumber(companyNumber);
                 instanceSelective.setDepartNo(departNo);
                 // 装配insData
-                JSONObject insData = new JSONObject();
-                insData.put("formData", formDataFromTask);
+                insData.put("formData", mergedFromData);
                 processData.put("insInitUser", currentUserUid);
                 insData.put("processData", processData);
                 instanceSelective.setInsData(insData.toJSONString());
@@ -339,8 +357,16 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 dhRoutingRecord.setInsUid(dhProcessInstance.getInsUid());
                 dhRoutingRecord.setActivityName(firstHumanActivity.getActivityName());
                 dhRoutingRecord.setRouteType(RouteStatus.ROUTE_STARTPROCESS);
-                // 发起流程 第一个流转环节信息 的 用户id 是 自己
                 dhRoutingRecord.setUserUid(currentUserUid);
+                dhRoutingRecord.setActivityId(firstHumanActivity.getActivityId());
+                if (nextActivities.size() > 0) {
+                    String activityTo = "";
+                    for (BpmActivityMeta nextMeta : nextActivities) {
+                        activityTo += nextMeta.getActivityId() + ",";
+                    }
+                    dhRoutingRecord.setActivityTo(activityTo.substring(0, activityTo.length() - 1));
+                }
+                // 发起流程 第一个流转环节信息 的 用户id 是 自己
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
             } else {
                 return ServerResponse.createByErrorMessage("发起流程失败");

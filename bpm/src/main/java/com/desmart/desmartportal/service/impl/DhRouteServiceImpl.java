@@ -38,9 +38,13 @@ import com.desmart.desmartbpm.service.DroolsEngineService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartportal.dao.DhGatewayRouteResultMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhGatewayRouteResult;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
@@ -69,7 +73,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
-
+	
 	@Autowired
 	private SysUserMapper sysUserMapper;
 
@@ -86,6 +90,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DatRuleService datRuleService;
 	@Autowired
 	private DhGatewayRouteResultMapper dhGatewayRouteResultMapper;
+	@Autowired
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
 
 
 	@Override
@@ -680,5 +688,24 @@ public class DhRouteServiceImpl implements DhRouteService {
 	    } // 遍历网关结束
 	    return ServerResponse.createBySuccess();
 	}
+
+    @Override
+    public ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {
+        // 查找流转到这个环节的流转记录
+        List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper.listPreRoutingRecord(dhProcessInstance.getInsUid(), bpmActivityMeta.getActivityId());
+        if (preRoutingRecordList.size() == 0) {
+            return ServerResponse.createByErrorMessage("获取上个环节失败");
+        }
+        DhRoutingRecord preRoutingRecord = preRoutingRecordList.get(0);
+        BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(preRoutingRecord.getActivityId());
+        // 从任务列表中找，这个流程实例的 这个节点的任务，并且任务处理人是路由记录中的人
+        List<DhTaskInstance> taskList = dhTaskInstanceMapper.listTaskByCondition(dhProcessInstance.getInsUid(), preMeta.getActivityBpdId(), preRoutingRecord.getUserUid());
+        if (taskList.size() == 0) {
+            return ServerResponse.createByErrorMessage("获取上个环节失败");
+        }
+        preMeta.setUserUid(preRoutingRecord.getUserUid());
+        
+        return ServerResponse.createBySuccess(preMeta);
+    }
 	
 }

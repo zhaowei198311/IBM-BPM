@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartsystem.entity.SysUser;
 
 public interface DhRouteService {
@@ -54,5 +55,13 @@ public interface DhRouteService {
 	 * @return
 	 */
 	ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData);
-
+	
+    /**
+     * 找到流程中指定环节的上一环节
+     * @param dhProcessInstance
+     * @param bpmActivityMeta
+     * @return
+     */
+	ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta);
+	
 }

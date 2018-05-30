@@ -2,6 +2,7 @@ package com.desmart.desmartportal.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartportal.entity.DhRoutingRecord;
@@ -20,4 +21,12 @@ public interface DhRoutingRecordMapper {
 	 * @param dhRoutingRecord
 	 */
 	void insert(DhRoutingRecord dhRoutingRecord);
+	
+	/**
+	 * 根据流程实例主键，传入的环节id，查找传入环节的上一个环节，根据create_time倒序排列
+	 * @param insUid
+	 * @param currActivityId
+	 * @return
+	 */
+	List<DhRoutingRecord> listPreRoutingRecord(@Param("insUid")String insUid, @Param("currActivityId")String currActivityId);
 }

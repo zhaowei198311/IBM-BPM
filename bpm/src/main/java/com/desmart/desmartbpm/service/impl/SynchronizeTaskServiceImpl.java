@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -29,6 +31,7 @@ import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhAgentService;
+import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.SysHolidayService;
 import com.google.common.collect.Lists;
@@ -56,6 +59,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
     private SysHolidayService sysHolidayService;
+    @Autowired
+    private DhRouteService dhRouteService;
     
     /**
      * 从引擎同步任务
@@ -137,8 +142,19 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
-        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta);
-        List<DhAgentRecord> agentRecordList = Lists.newArrayList();
+        //  查找上个环节处理人信息
+        ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(proInstance, bpmActivityMeta);
+        BpmActivityMeta preMeta = null;
+        if (preActivityResponse.isSuccess()) {
+            preMeta = preActivityResponse.getData();
+        } else {
+            LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
+        }
+        
+        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta, preMeta);
+        List<DhAgentRecord> agentRecordList = new ArrayList<>();
+        
+        
         
         // 查看是否允许代理
         if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
@@ -169,7 +185,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * 根据条件生成平台中的任务
      */
     private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
-            List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {
+            List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta, BpmActivityMeta preMeta) {
         List<DhTaskInstance> taskList = Lists.newArrayList();
         for (String orgionUserUid : orgionUserUidList) {
             DhTaskInstance dhTask = new DhTaskInstance();
@@ -191,6 +207,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
             dhTask.setTaskInitDate(new Date());
             dhTask.setSynNumber(lswTask.getTaskId());
+            dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
             // 设置
             DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
             if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {

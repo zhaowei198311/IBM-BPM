@@ -545,4 +545,14 @@
 	   set task_status = #{taskStatus}
 	   where TASK_UID = #{taskUid}
 	</update>
+	
+	<select id="listTaskByCondition" parameterType="map" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+	   select <include refid="Base_Column_List"/>
+	   from dh_task_instance
+	   where 
+	       ACTIVITY_BPD_ID = #{activityBpdId} 
+	       and (USR_UID = #{userUid} or TASK_DELEGATE_USER = #{userUid})
+	       and (TASK_TYPE = 'normal' or TASK_TYPE = 'simpleLoop' or TASK_TYPE = 'multiInstanceLoop')
+	       and ins_uid = #{insUid} 
+	</select>
 </mapper>

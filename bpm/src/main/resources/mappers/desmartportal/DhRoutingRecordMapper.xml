@@ -7,6 +7,12 @@
  	ROUTE_TYPE,USER_UID,CREATE_TIME,
  	ACTIVITY_ID,ACTIVITY_TO
  </sql>
+ <sql id="relationColumnList">
+    rr.ROUTE_UID, rr.INS_UID, rr.ACTIVITY_NAME,
+    rr.ROUTE_TYPE, rr.USER_UID, rr.CREATE_TIME,
+    rr.ACTIVITY_ID, rr.ACTIVITY_TO
+ </sql>
+ 
  
  <select id="getDhRoutingRecordListByCondition" resultType="com.desmart.desmartportal.entity.DhRoutingRecord"
   parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
@@ -35,5 +41,16 @@
   		#{activityTo}
   	)
   </insert>
+ 
+ 
+ <select id="listPreRoutingRecord" parameterType="map" resultType="com.desmart.desmartportal.entity.DhRoutingRecord">
+    select <include refid="relationColumnList"/> 
+    from DH_ROUTING_RECORD rr
+    where 
+        rr.activity_to like '%${currActivityId}%'
+        and rr.route_type != 'addTask'
+        and rr.ins_uid = #{insUid}
+    order by rr.create_time desc
+ </select>
  
 </mapper>
