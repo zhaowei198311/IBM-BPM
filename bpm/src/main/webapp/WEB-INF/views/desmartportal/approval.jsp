@@ -83,6 +83,7 @@
         <input id="insId" value="${processInstance.insId}" style="display: none;">
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
+        
         <span id="insData" style="display: none;">${processInstance.insData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>

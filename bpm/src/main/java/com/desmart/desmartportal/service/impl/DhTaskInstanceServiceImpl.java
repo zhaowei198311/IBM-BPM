@@ -494,7 +494,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (dhprocessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
-	    resultMap.put("processInstance", dhprocessInstance);
 	    
 	    // 获得当前环节
 	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
@@ -502,19 +501,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (currMeta == null) {
 	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
 	    }
-	    resultMap.put("activityMeta", currMeta);
+	    
 	    
 	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
 	    DhStep formStep = getFirstFormStepOfStepList(steps);
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
-        resultMap.put("dhStep", formStep);
+        
         // 获得表单文件内容
         ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
         if (!formResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("获得表单数据失败");
         }
+        
+        
+        resultMap.put("activityMeta", currMeta);
+        resultMap.put("activityConf", currMeta.getDhActivityConf());
+        resultMap.put("dhStep", formStep);
+        resultMap.put("processInstance", dhprocessInstance);
         resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    return ServerResponse.createBySuccess(resultMap);
