@@ -48,6 +48,20 @@ public class JobController {
 		return "desmartsystem/usermanagement/Quarz/QuarzList";
 	}
 
+	@RequestMapping(value="/quarzAdd")
+	public String quarzAdd(){
+		return "desmartsystem/usermanagement/Quarz/QuarzAdd";
+	}
+	@RequestMapping(value="/quarzDetail")
+	public String quarzDetail(){
+		return "desmartsystem/usermanagement/Quarz/QuarzDetail";
+	}
+	
+	@RequestMapping(value="/quarzEdit")
+	public String quarzEdit(){
+		return "desmartsystem/usermanagement/Quarz/QuarzEdit";
+	}
+	
 	
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	@ResponseBody
