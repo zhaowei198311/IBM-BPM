@@ -83,7 +83,9 @@
         <input id="insId" value="${processInstance.insId}" style="display: none;">
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
-        
+        <input id="actcCanReject" value="${activityConf}" style="display: none;">
+        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
+        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <span id="insData" style="display: none;">${processInstance.insData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
@@ -91,7 +93,7 @@
             <button class="layui-btn layui-btn-sm" onclick="processView(${insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
             <button class="layui-btn layui-btn-sm" onclick="agree()">提交</button>
-            <button class="layui-btn layui-btn-sm" onclick="reject()">驳回</button>
+            <button class="layui-btn layui-btn-sm" id="actcCanReject" onclick="reject()">驳回</button>
             <button class="layui-btn layui-btn-sm" id="actcCanTransfer">传阅</button>
             <button class="layui-btn layui-btn-sm" id="actcCanAdd">加签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
