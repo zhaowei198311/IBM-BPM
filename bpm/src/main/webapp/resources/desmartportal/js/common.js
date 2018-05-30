@@ -239,5 +239,78 @@ var common = {
 		json += "}";
 		return json;
 	},
+	//传入表单json数据给表单组件赋值
+	giveFormSetValue:function(jsonStr){
+		for(var name in jsonStr){
+			var paramObj = jsonStr[name];
+			var tagName = $("[name='"+name+"']").prop("tagName");
+			switch(tagName){
+				case "INPUT":{
+					var tagType = $("[name='"+name+"']").attr("type");
+					switch(tagType){
+						case "text":;
+						case "tel":;
+						case "date":{
+							$("[name='"+name+"']").val(paramObj["value"]);
+							form.render();
+							break;
+						};
+						case "radio":{
+							$("[name='"+name+"'][id='"+paramObj["value"]+"']").prop("checked","true");
+							form.render();
+							break;
+						}
+						case "checkbox":{
+							var valueArr = paramObj["value"];
+							for(var value in valueArr){
+								$("[name='"+name+"'][id='"+valueArr[value]+"']").prop("checked","true");
+							}
+							form.render();
+							break;
+						}
+					}
+					break;
+				};
+				case "SELECT":;
+				case "TEXTAREA":{
+					$("[name='"+name+"']").val(paramObj["value"]);
+					form.render();
+					break;
+				}
+			}
+		}//end for
+	},
+	//根据字段权限json给动态表单组件设置权限
+	giveFormFieldPermission:function(jsonStr){
+		for(var name in jsonStr){
+			var paramObj = jsonStr[name];
+			var display = paramObj["display"];
+			if(display=="none"){
+				var tagType = $("[name='"+name+"']").attr("type");
+				$("[name='"+name+"']").parent().css("display","none");
+				$("[name='"+name+"']").parent().prev().css("display","none");
+				if(tagType=="radio" || tagType=="checkbox"){
+					$("[name='"+name+"']").parent().css("display","none");
+					$("[name='"+name+"']").parent().prev().css("display","none");
+				}
+			}
+			var edit = paramObj["edit"];
+			if(edit=="no"){
+				$("[name='"+name+"']").attr("disabled","true");
+				var tagName = $("[name='"+name+"']").prop("tagName");
+				var tagType = $("[name='"+name+"']").attr("type");
+				var className = $("[name='"+name+"']").attr("class");
+				if(tagType=="radio" || tagType=="checkbox"){
+					$("[name='"+name+"']").attr("disabled","true");
+				}
+				if(tagName=="SELECT"){
+					$("[name='"+name+"']").attr("disabled","true");
+				}
+				if(className=="date"){
+					$("[name='"+name+"']").attr("disabled","true");
+				}
+			}
+		}
+	},
 };
 
