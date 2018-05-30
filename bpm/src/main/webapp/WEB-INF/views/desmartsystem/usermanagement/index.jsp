@@ -47,7 +47,8 @@
 						      <dd><a href="sysResource/resource_list" target="iframe0">模块资源管理</a></dd>
 						      <dd><a href="sysRole/system_role" target="iframe0">系统角色管理</a></dd>
 						      <dd><a href="sysTeam/group" target="iframe0">角色组管理</a></dd>
-						      <dd><a href="sysDictCd/dictCdList" target="iframe0">数据字典</a></dd>
+						      <dd><a href="sysDictionary/dictionary" target="iframe0">数据字典</a></dd>
+						      <!-- <dd><a href="sysDictCd/dictCdList" target="iframe0">数据字典</a></dd> -->
 						      <dd><a href="sysUser/globalConfig" target="iframe0">全局配置管理</a></dd>
 						    </dl>
 						</li>

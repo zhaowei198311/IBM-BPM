@@ -329,7 +329,14 @@
 		    });
 		}
 		
-		
+		function selectByNameRole(){
+			var userUid=$('.userUid').val();
+			var deparUid=$('.departUid').val();
+			
+			var roleName=$('#jsbd_roleName').val();
+			
+			openBusinessRoleBindings(userUid,departUid,roleName);
+		};
 		
 		function delete_user(){
 			$("#user_add .colorli").remove();
@@ -377,7 +384,7 @@
 		//打开业务角色绑定
 		function openBusinessRoleBindings(teamUid){
 			var xz = document.getElementById('checkAll_a');
-			 xz.checked=false;
+			xz.checked=false;
 			$('.teamUid').val(teamUid);
 			$(".display_container4").css("display","block");
 			$("#businessRoleTable").empty();
