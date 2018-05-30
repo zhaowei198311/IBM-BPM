@@ -57,4 +57,9 @@ public interface BpmFormFieldMapper {
 	 * 根据表单字段Id删除该字段权限
 	 */
 	int deleteFieldPermissById(String fldUid);
+
+	/**
+	 * 根据字段id查询字段对象
+	 */
+	BpmFormField queryFieldByFldUid(String fldUid);
 }

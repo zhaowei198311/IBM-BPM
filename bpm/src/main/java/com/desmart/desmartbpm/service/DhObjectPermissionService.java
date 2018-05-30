@@ -41,4 +41,9 @@ public interface DhObjectPermissionService {
      * @return
      */
     List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission);
+
+    /**
+     * 根据步骤ID查表单字段权限信息
+     */
+    List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid);
 }

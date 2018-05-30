@@ -43,6 +43,7 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
     private SysTeamMapper sysTeamMapper;
     
     @Transactional
+	@Override
     public ServerResponse updatePermissionOfProcess(DhProcessDefinition definition, String ids, String participateType, String action) {
         if (StringUtils.isBlank(action) || definition == null || DhObjectPermissionParticipateType.codeOf(participateType) == null
                 || DhObjectPermissionAction.codeOf(action) == null || StringUtils.isBlank(definition.getProAppId())
@@ -107,8 +108,8 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
             return ServerResponse.createByErrorMessage("编辑权限失败");
         }
     }
-    
 
+	@Override
     public ServerResponse getPermissionStartOfProcess(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
@@ -180,9 +181,13 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         return idList;
     }
 
-
 	@Override
 	public List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission) {
 		return dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjectPermission);
+	}
+
+	@Override
+	public List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid) {
+		return dhObjectPermissionMapper.getFieldPermissionByStepUid(stepUid);
 	}
 }
