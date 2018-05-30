@@ -44,6 +44,22 @@ layui.use('layedit', function () {
 });
 
 $(function () {
+	// 驳回
+	var actcCanReject = $("#actcCanReject").val();
+	// 传阅
+	var actcCanTransfer = $("#actcCanTransfer").val();
+	// 加签
+	var actcCanAdd = $("#actcCanAdd").val();
+	if (actcCanReject == false) {
+		$("#actcCanReject").css("display","none");
+	}
+	if (actcCanTransfer == false) {
+		$("#actcCanTransfer").css("display","none");
+	}
+	if (actcCanAdd == false) {
+		$("#actcCanAdd").css("display","none");
+	}
+	console.log(actcCanReject+" a "+actcCanTransfer+" a "+actcCanAdd);
     getAllDataInfo();
     $(".add_row")
         .click(
