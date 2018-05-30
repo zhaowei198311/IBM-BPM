@@ -144,7 +144,7 @@
 				<table class="layui-table">
 					<tbody>
 						<tr>
-							<th colspan="12" class="list_title">目标店调查表 <span
+							<th colspan="12" class="list_title">${bpmForm.dynTitle} <span
 								style="float: right; font-size: 14px; font-weight: normal;">表单编号：${formId}</span>
 							</th>
 						</tr>

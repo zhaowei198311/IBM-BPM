@@ -145,7 +145,6 @@ public class DhProcessMetaController {
             node.setIcon("../resources/desmartbpm/images/2.png");
             nodesToShow.add(node);
         }
-        
         return JSON.toJSONString(nodesToShow);
     }
     

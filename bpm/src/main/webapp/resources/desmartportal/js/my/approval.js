@@ -580,7 +580,7 @@ function checkUserData() {
     	},
         success:function(result){
         	if(result.status==0){
-        		$(".choose_middle .layui-form").empty();
+        		$("#choose_user_tbody").empty();
             	var activityMetaList = result.data;
             	var chooseUserDiv = "";
             	for(var i=0;i<activityMetaList.length;i++){
