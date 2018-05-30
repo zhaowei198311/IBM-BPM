@@ -649,8 +649,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
 			// usrUid集合
 			String[] usrUids = dhTaskInstance.getUsrUid().split(";");
-			// 需要保存任务集合
-			List<DhTaskInstance> saveDhTaskInstanceList = new ArrayList<>();
+//			// 需要保存任务集合
+//			List<DhTaskInstance> saveDhTaskInstanceList = new ArrayList<>();
 			// 已经加签人员姓名
 			String completedSigning = "";
 			SysUser sysUser = new SysUser();
@@ -662,16 +662,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
 					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-					saveDhTaskInstanceList.add(dhTaskInstance);
+					dhTaskInstanceMapper.insertTask(dhTaskInstance);
 				}else {
 					completedSigning += string+",";
 				}
-				
-//				dhTaskInstanceMapper.insertTask(dhTaskInstance);
 			}
-			if (!saveDhTaskInstanceList.isEmpty()) {
-				dhTaskInstanceMapper.insertBatch(saveDhTaskInstanceList);
-			}
+//			if (!saveDhTaskInstanceList.isEmpty()) {
+//				dhTaskInstanceMapper.insertBatch(saveDhTaskInstanceList);
+//			}
 			// 路由表记录
 			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());

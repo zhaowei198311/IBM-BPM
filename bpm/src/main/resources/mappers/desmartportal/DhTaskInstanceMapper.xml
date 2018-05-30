@@ -372,7 +372,7 @@
 		<include refid="Base_Column_List" />
 		)
 		<foreach collection="list" item="item" index="index" close=")"
-			open="(" separator="union">
+			open="(" separator="union all">
 			select
 			#{item.taskUid},
 			#{item.insUid},
@@ -394,7 +394,7 @@
 			#{item.taskData},
 			#{item.taskDelegateUser},
 			#{item.synNumber},
-			#{item.fromTo}
+			#{item.fromTaskUid}
 			from dual
 		</foreach>
 	</insert>
