@@ -720,7 +720,8 @@ public class DhRouteServiceImpl implements DhRouteService {
             return ServerResponse.createByErrorMessage("获取上个环节失败");
         }
         preMeta.setUserUid(preRoutingRecord.getUserUid());
-        
+        SysUser preUser = sysUserMapper.queryByPrimaryKey(preRoutingRecord.getUserUid());
+        preMeta.setUserName(preUser.getUserName());
         return ServerResponse.createBySuccess(preMeta);
     }
 	
