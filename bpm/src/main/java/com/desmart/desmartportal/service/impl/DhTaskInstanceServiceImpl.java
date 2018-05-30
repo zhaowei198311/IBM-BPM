@@ -642,6 +642,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
 			// 加新任务
 			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
+			String activityId = dhTaskInstance.getActivityBpdId();
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
 			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
 			dhTaskInstance.setTaskType(DhTaskInstance.TYPE_ADD);
@@ -678,8 +679,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhRoutingRecord.setActivityName(bpmActivityMeta.getActivityName());
 			dhRoutingRecord.setRouteType("addTask");
 			dhRoutingRecord.setUserUid("00011178");
-			dhRoutingRecord.setActivityId(dhTaskInstance.getActivityBpdId());
-			dhRoutingRecord.setActivityTo(dhTaskInstance.getActivityBpdId());
+			dhRoutingRecord.setActivityId(activityId);
+			dhRoutingRecord.setActivityTo(activityId);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
 			
 			if (!completedSigning.isEmpty()) {
