@@ -98,7 +98,14 @@
 		var dynHtml = $("#dynHtml").text();
 		var dynContent = dynHtml.replace(/</g,"&lt;").replace(/>/g,"&gt;")
 				.replace(/\(/g,"&lc;").replace(/\)/g,"&gc;");
-		var url = common.getPath()+"/formManage/designForm";
+		var proUid = $("#proUid").val().trim();
+		var url = "";
+		if(proUid!="" && proUid!=null){
+			url = common.getPath()+"/formManage/designForm";
+		}else{
+			url = common.getPath()+"/publicForm/designForm";
+		}
+		
 		var preParam = {
 			proUid:$("#proUid").val(),
 			proVersion:$("#proVersion").val(),

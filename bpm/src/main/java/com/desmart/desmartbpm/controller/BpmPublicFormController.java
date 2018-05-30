@@ -42,11 +42,12 @@ public class BpmPublicFormController {
 	}
 	
 	@RequestMapping(value = "/designForm")
-	public ModelAndView designForm(String formUid,String formName,String formDescription) {
+	public ModelAndView designForm(String formUid,String formName,String formDescription,String dynHtml) {
 		ModelAndView modelAndView = new ModelAndView("desmartbpm/common/publicFormDesign");
 		modelAndView.addObject("formUid", formUid);
 		modelAndView.addObject("formName", formName);
 		modelAndView.addObject("formDescription", formDescription);
+		modelAndView.addObject("dynHtml",dynHtml);
 		return modelAndView;
 	}
 	
