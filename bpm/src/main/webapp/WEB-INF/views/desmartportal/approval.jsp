@@ -82,7 +82,9 @@
 
 <body>
     <div class="search_area top_btn">
-        <input id="activityId" value="${activityMeta.activityId}" style="display: none;">
+    	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
+    	<input type="hidden" id="companyNum" value="${processInstance.companyNumber}"/> 
+       	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
         <input id="formId" value="${formId}" style="display: none;">
         <input id="proUid" value="${processInstance.proUid}" style="display: none;">
         <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
@@ -148,7 +150,7 @@
                         <td class="td_title">所属部门</td>
                         <td>
                             <input type="text"  required lay-verify="required" value="${processInstance.departName}" autocomplete="off" class="layui-input" readonly/>
-                        </td>
+                       	</td>
                     </tr>
                 </tbody>
             </table>

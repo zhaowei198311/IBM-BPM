@@ -345,7 +345,7 @@ function agree() {
     var taskUid = $("#taskUid").val();
     var activityId = ""
     var userUid = ""
-    var insData = $("#insData").text();
+    //var insData = $("#insData").text();
     $('.getUser').each(function () {
         activityId = $(this).attr('id');
         userUid = $(this).val();
@@ -368,100 +368,14 @@ function agree() {
     var taskData = "taskData"; // 任务数据外层
     var endjson = "}";
     // 数据信息
-    var jsonStr = "" + json + "\"" + formData + "\":" + insData + ",\"" + approvaData + "\":"+JSON.stringify(approvaInfo)+",\"" + routeData + "\":{\"activityId\":\"" + activityId + "\",\"userUid\":\"" + userUid + "\"},\""
-    + taskData + "\":{\"taskId\":\"" + taskId + "\",\"taskUid\":"+taskUid+"\"}" + endjson + "";
-    for (var i = 0; i < inputArr.length; i++) {
-        var type = $(inputArr[i]).attr("type");
-        var textJson = "";
-        var checkJson = "";
-        switch (type) {
-            case "text": {
-                if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
-                    var name = $(inputArr[i]).parent()
-                        .parent().prev().prop("name");
-                    var value = $("[name='" + name + "']")
-                        .val();
-                    textJson = "\"" + name
-                        + "\":{\"value\":\"" + value
-                        + "\"}";
-                    break;
-                }
-            }
-                ;
-            case "tel":
-                ;
-            case "date":
-                ;
-            case "textarae": {
-                var name = $(inputArr[i]).attr("name");
-                var value = $("[name='" + name + "']")
-                    .val();
-                textJson = "\"" + name + "\":{\"value\":\""
-                    + value + "\"}";
-                break;
-            }
-            case "radio": {
-                var name = $(inputArr[i]).attr("name");
-                var radio = $("[name='" + name + "']")
-                    .parent().parent().find(
-                        "input:radio:checked");
-                textJson = "\"" + name + "\":{\"value\":\""
-                    + radio.attr("id") + "\"}";
-                break;
-            }
-            case "checkbox": {
-                var name = $(inputArr[i]).attr("name");
-                var checkbox = $("[name='" + name + "']")
-                    .parent().parent().find(
-                        "input:checkbox:checked");
-                //判断每次的复选框是否为同一个class
-                if (control) {
-                    checkName = checkbox.attr("name");
-                } else {
-                    if (checkName != checkbox.attr("name")) {
-                        checkName = checkbox.attr("name");
-                        control = true;
-                    }
-                }
-                if (control) {
-                    control = false;
-                    checkJson += "\"" + checkName
-                        + "\":{\"value\":[";
-                    for (var j = 0; j < checkbox.length; j++) {
-                        if (j == checkbox.length - 1) {
-                            checkJson += "\""
-                                + $(checkbox[j]).attr(
-                                    "id") + "\"";
-                        } else {
-                            checkJson += "\""
-                                + $(checkbox[j]).attr(
-                                    "id") + "\",";
-                        }
-                    }
-                    checkJson += "]},";
-                }
-
-                json += checkJson;
-                break;
-            }
-        }//end switch
-        textJson += ",";
-        if (json.indexOf(textJson) == -1) {
-            json += textJson;
-        }
-    }
-    //获得最后一位字符是否为","
-    var charStr = json.substring(json.length - 1,
-        json.length);
-
-    if (charStr == ",") {
-        json = json.substring(0, json.length - 1);
-    }
-    json += "}";
+   
     // 发起流程             
     var finalData = {};
     // 表单数据
-    var formData = JSON.parse(json);
+    formData = JSON.stringify({formData:common.getDesignFormData()});
+    
+    approvalData(formData);//选人
+    
     finalData.formData = formData;
     // 流程数据
     var processData = {};
@@ -651,4 +565,54 @@ var isEdit = function (paramObj, name) {
             $("[name='" + name + "']").attr("disabled", "true");
         }
     }
+}
+//提交流程-->选人
+function approvalData(formData) {
+    var departNo = $("#departNo").val();
+    var companyNumber = $("#companyNum").val();
+    if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
+    	layer.alert("缺少提交人信息");
+    	return;
+    }
+    $.ajax({
+    	url:"dhRoute/showRouteBar",
+    	method:"post",
+    	data:{
+        	"insUid":$("#insUid").val(),
+            "activityId":$("#activityId").val(),
+        	"departNo":departNo,
+        	"companyNum":companyNumber,
+        	"formData":formData
+    	},
+        success:function(result){
+        	if(result.status==0){
+        		$(".choose_middle .layui-form").empty();
+            	var activityMetaList = result.data;
+            	var chooseUserDiv = "";
+            	for(var i=0;i<activityMetaList.length;i++){
+                	var activityMeta = activityMetaList[i];
+                	chooseUserDiv += '<div class="choose_user_div">'
+						+'<label class="form_label layui-col-md2">下一环节</label>'
+						+'<div class="layui-col-md4">'
+							+'<input type="text" name="title" readonly  value="'+activityMeta.activityName+'" class="layui-input" style="border-width:1px;"/>'
+						+'</div>'
+						+'<label class="form_label layui-col-md2">处理人</label>'
+						+'<div class="layui-col-md4">'
+							+'<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="float:left;border-width:1px;" readonly>'
+							+'<i class="layui-icon" onclick=getConductor("'+activityMeta.activityId
+								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+								+activityMeta.dhActivityConf.actcAssignType+'"); '
+								+'style="position:relative;left:2%;font-size:30px;">&#xe612;</i>'
+							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
+								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+								+'data-looptype="'+activityMeta.loopType+'" />'
+							+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
+						+'</div>'
+						+'</div>';
+                		$(".choose_middle .layui-form").append(chooseUserDiv);
+                	}//end for
+                }
+        	}//end ajax
+		});
+		$(".display_container").css("display","block"); //end
 }
