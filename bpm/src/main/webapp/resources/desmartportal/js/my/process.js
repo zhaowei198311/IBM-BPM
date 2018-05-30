@@ -1,6 +1,5 @@
 function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
     if (actcCanChooseUser == 'FALSE') {
-        layer.alert('没有配置可选处理人!');
         return false;
     }
     
