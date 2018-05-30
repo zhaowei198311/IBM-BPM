@@ -393,8 +393,8 @@ function agree() {
         routeData.push(item);
     });
     finalData.routeData = routeData;
-    finalData.taskData = {"taskId":taskId,"activityId":apr_activityId};
-    finalData.approvalData = {"aprOpiComment":aprOpiComment,"aprStatus":aprStatus};
+    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+    finalData.approvalData = {"aprOpiComment":aprOpiComment,"aprStatus":aprStatus,"activityId":apr_activityId};
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
