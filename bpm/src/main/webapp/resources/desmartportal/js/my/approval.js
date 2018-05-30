@@ -372,9 +372,13 @@ function agree() {
     // 发起流程             
     var finalData = {};
     // 表单数据
-    formData = JSON.stringify({formData:common.getDesignFormData()});
+    var jsonStr = common.getDesignFormData();
+    formData = JSON.parse(jsonStr);
+    finalData.formData = formData;
     
-    approvalData(formData);//选人
+    console.log(common.getDesignFormData());
+    
+    approvalData(common.getDesignFormData());//选人
     
     finalData.formData = formData;
     // 流程数据

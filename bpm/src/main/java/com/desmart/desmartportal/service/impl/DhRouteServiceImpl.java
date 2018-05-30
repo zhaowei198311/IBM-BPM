@@ -104,7 +104,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 		if (StringUtils.isNotBlank(formData)) {
 			newObj = JSONObject.parseObject(formData);
 		}
-		formJson = FormDataUtil.formDataCombine(newObj, JSONObject.parseObject(insDate).getJSONObject("formData"));
+		JSONObject oldObj = JSONObject.parseObject(insDate).getJSONObject("formData");
+		formJson = FormDataUtil.formDataCombine(newObj, oldObj);
 		List<BpmActivityMeta> activityMetaList = getNextActivities(bpmActivityMeta, formJson);
 		// 环节配置获取
 		for (BpmActivityMeta activityMeta : activityMetaList) {
