@@ -441,11 +441,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		StringBuffer stringBuffer = new StringBuffer();
 		for (int i = 0; i < nextBpmActivityMetas.size(); i++) {
 			if(i==nextBpmActivityMetas.size()-1) {
-				stringBuffer.append(nextBpmActivityMetas.get(i));
+				stringBuffer.append(nextBpmActivityMetas.get(i).getActivityId());
 			}else {
-				stringBuffer.append(nextBpmActivityMetas.get(i)+",");
+				stringBuffer.append(nextBpmActivityMetas.get(i).getActivityId()+",");
 			}
 		}
+		dhRoutingRecord.setActivityTo(stringBuffer.toString());
 	}
 
 	/**
