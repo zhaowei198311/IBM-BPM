@@ -189,6 +189,15 @@ public class DhRouteServiceImpl implements DhRouteService {
 				}
 				break;
 			case LEADER_OF_PRE_ACTIVITY_USER:
+				
+				ServerResponse<BpmActivityMeta> serverResponse=getPreActivity(dhProcessInstance,bpmActivityMeta);
+				BpmActivityMeta activityMetaNew=serverResponse.getData();
+				String activityMetaUserUid=activityMetaNew.getUserUid(); 
+				SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
+				SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
+				userUid += leader.getManagernumber()+";";
+				userName += leader.getUserName() + ";";
+				
 				break;
 			case USERS:
 				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
@@ -477,7 +486,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 			String companyNum, String formData) {
 		List<SysUser> userListToBeReturned = new ArrayList<SysUser>();
 		
-		//BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		
 		DhActivityConf dhActivityConf=dhActivityConfMapper.getByActivityId(activityId);
 		// 根据表单字段查
@@ -563,6 +572,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 			break;
 		case LEADER_OF_PRE_ACTIVITY_USER:
+			ServerResponse<BpmActivityMeta> serverResponse=getPreActivity(dhProcessInstance,bpmActivityMeta);
+			BpmActivityMeta activityMeta=serverResponse.getData();
+			String activityMetaUserUid=activityMeta.getUserUid(); 
+			SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
+			SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
+			userUid += leader.getManagernumber()+";";
+			userName += leader.getUserName() + ";";
 			break;
 		case USERS:
 			List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
