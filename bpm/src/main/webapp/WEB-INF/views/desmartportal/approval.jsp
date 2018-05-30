@@ -167,20 +167,27 @@
                 </tbody>
             </table>
             <div id="formSet">${formHtml }</div>
-            <div class="display_container">
-				<div class="choose_display_content">
-					<div class="top">选择下个环节处理人</div>
-					<div class="choose_middle">
-						<form class="layui-form" action="" style="margin-top: 30px;">
-
-						</form>
+            <div class="display_container2">
+				<div class="display_content2">
+					<div class="top">
+						选择下一环节
+					</div>
+					<div class="middle2">
+						<table class="layui-table">
+							<col width="19%">
+						    <col>
+						    <col width="15%">
+						    <col>
+						    <col width="10%">
+						    <tbody id="choose_user_tbody">
+							    
+							</tbody>	
+						</table>
 					</div>
 					<div class="foot">
-						<button class="layui-btn layui-btn sure_btn"
-							onclick="agree()">确定</button>
-						<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
-							onclick="$('.display_container').css('display','none')">取消</button>
-					</div>
+						<button class="layui-btn sure_btn">确定</button>
+						<button class="layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container2').css('display','none')">取消</button>
+					</div>				
 				</div>
 			</div>
             <div class="option_container">
@@ -209,39 +216,6 @@
                             </select>
                         </div>
                     </div>
-                    <table class="layui-table">
-                        <colgroup>
-                            <col width="150">
-                            <col>
-                            <col width="150">
-                            <col>
-                        </colgroup>
-                        <tbody>
-                            <c:forEach items="${activityMetaList}" var="activityMeta">
-                                <tr>
-                                    <td>下一环节:
-                                        <span class="tip_span"></span>
-                                    </td>
-                                    <td>
-                                        <input type="text" name="title" required lay-verify="required" value="${activityMeta.activityName}" readonly="readonly" autocomplete="off"
-                                            class="layui-input">
-                                    </td>
-                                    <td class="td_title">处理人:
-                                        <span class="tip_span"></span>
-                                    </td>
-                                    <td>
-                                        <input type="hidden" class="getUser" id="${activityMeta.activityId}" value="${activityMeta.userUid}" />
-                                        <input type="text" id="${activityMeta.activityId}_view" required lay-verify="required" value="${activityMeta.userName}" readonly="readonly"
-                                            autocomplete="off" class="layui-input">
-                                        <input type="hidden" id="choosable_${activityMeta.activityId}" value="${activityMeta.userUid}" />
-                                    </td>
-                                    <td colspan="3">
-                                        <i class="layui-icon" onclick="getConductor('${activityMeta.activityId}','false','${activityMeta.dhActivityConf.actcCanChooseUser}','${activityMeta.dhActivityConf.actcAssignType}');">&#xe612;</i>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
                 </div>
                 <div class="layui-tab">
                     <ul class="layui-tab-title">
