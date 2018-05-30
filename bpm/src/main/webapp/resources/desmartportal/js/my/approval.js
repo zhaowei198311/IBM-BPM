@@ -50,16 +50,15 @@ $(function () {
 	var actcCanTransfer = $("#actcCanTransfer").val();
 	// 加签
 	var actcCanAdd = $("#actcCanAdd").val();
-	if (actcCanReject == false) {
-		$("#actcCanReject").css("display","none");
+	if (actcCanReject == "FALSE") {
+		$("#reject").css("display","none");
 	}
-	if (actcCanTransfer == false) {
-		$("#actcCanTransfer").css("display","none");
+	if (actcCanTransfer == "FALSE") {
+		$("#transfer").css("display","none");
 	}
-	if (actcCanAdd == false) {
-		$("#actcCanAdd").css("display","none");
+	if (actcCanAdd == "FALSE") {
+		$("#add").css("display","none");
 	}
-	console.log(actcCanReject+" a "+actcCanTransfer+" a "+actcCanAdd);
     getAllDataInfo();
     $(".add_row")
         .click(
