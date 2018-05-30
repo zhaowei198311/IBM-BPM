@@ -376,14 +376,14 @@
 
 .query_user {
 	font-size: 15px;
-	margin-top: 5px;
+	margin-top: 15px;
 }
 
 .middle_temp {
 	height: 280px;
 	width: 100%;
 	position: relative;
-	/* top: 50px; */
+	top: 30px;
 }
 
 #temp_left {
@@ -426,7 +426,7 @@
 	line-height: 50px;
 	float: right;
 	position: relative;
-	top: 80px;
+	margin: 30px 20px 0;
 }
 
 .query_user input[type="text"] {
@@ -721,6 +721,20 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
+
+/* 用户选人css */
+
+
+.show_user_div{
+	float:left;
+	width:120px;
+	height:230px;
+	margin:10px 0 0 30px;
+	padding:0;
+	overflow-y:scroll;
+}
+
+
 
 .error {
 	color: red;
