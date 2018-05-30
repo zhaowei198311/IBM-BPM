@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	String path = request.getContextPath();
@@ -67,6 +66,9 @@
 								<li class="layui-nav-item"><a href="drafts/index"
 									target="iframe0"><i class="layui-icon">&#xe640;</i> <span>
 											草稿箱</span></a></li>
+								<li class="layui-nav-item"><a href="javascript:void(0)"
+									target="iframe0"><i class="layui-icon">&#xe629;</i> <span>
+											报表</span></a></li>
 								<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
 							</ul>
 						</div>
@@ -79,25 +81,23 @@
 					<iframe src="menus/backlog" name="iframe0" frameborder="0"
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
-						<%-- 	<input id="userId" value="${info.userId}" style="display: none;"> --%>
+						<c:forEach items="${listmap}" var="info">
+							<input id="userId" value="${info.userId}" style="display: none;">
 							<div class="menu_container">
-							<c:forEach items="${listmap}" var="info">
 								<div class="menu_title">
-									${fn:substringAfter(info.key, ",")}     <i class="layui-icon"
+									${info.categoryName}<i class="layui-icon"
 										style="font-size: 14px; cursor: default;">&#xe602;</i>
 								</div>
 								<div class="menu_detail">
-								<c:forEach items="${info.value}" var="process">
-									<ul style="list-style-type: none;">
-										<li style="display: inline;"><a
-											href="menus/processType"
-											target="iframe0"></a>${process.proName}</li>
-										<h1 style="clear: both;"></h1>	
+									<ul>
+										<li><a
+											href="menus/processType?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
+											target="iframe0">${info.proName}</a></li>
+										<h1 style="clear: both;"></h1>
 									</ul>
-								</c:forEach>
 								</div>
-							</c:forEach>
-							</div>		
+							</div>
+						</c:forEach>
 					</div>
 				</div>
 			</div>
@@ -113,8 +113,6 @@
 	<script>
 		$(document).ready(function(){
 			getUserTask();
-			// 定时 去查询我的 代办任务
-			window.setInterval(getUserTask, 60000);   
 		})
 	
 		$(function() {	
@@ -198,7 +196,7 @@
 				isShow = true;
 			}
 		});
-		
+
 		// 获取用户有多少代办
 		function getUserTask(){
 			var uId = document.getElementById('userId').value;

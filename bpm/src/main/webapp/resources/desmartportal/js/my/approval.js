@@ -98,6 +98,11 @@ $(function () {
     $(".cancel_btn").click(function() {
     	$(".display_container7").css("display","none");
     })
+    
+    // 驳回
+    $(".cancel5_btn").click(function() {
+    	$(".display_container8").css("display","none");
+    })
 
     // 查询审批进度剩余进度百分比
     var proUid = $("#proUid").val();
@@ -438,7 +443,7 @@ function agree() {
 function reject() {
     var activityId = $("#activityId").val();
     var insId = $("#insId").val();
-    alert(activityId+"~~~~"+insId)
+	$(".display_container8").css("display","block");
 }
 
 function back() {
