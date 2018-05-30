@@ -41,7 +41,7 @@ a{text-decoration:none;}
 .table_list .layui-icon{margin-right:5px;}
 .tail,.back{color:#007DDB;}
 .red{color:#ff0000;font-size:16px;vertical-align:-3px;padding-left:5px;}
-.layui-table .approval_th{color:#000;text-align:right;}
+.layui-table .approval_th{color:#000;text-align:center;}
 .choice_tr{display:none;}
 .create_type{list-style:none;display:none;width:120px;border:1px solid #ddd;box-shadow:0 0 10px #ccc;border-radius:3px;position:absolute;z-index:10;top:35px}
 .create_type li{list-style:none;text-decoration:none;height:30px;padding-left:10px;line-height:30px;color:#4183C4;cursor:pointer;background:#fff;}
