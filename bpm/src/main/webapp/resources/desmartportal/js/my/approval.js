@@ -43,21 +43,7 @@ layui.use('layedit', function () {
 });
 
 $(function () {
-	// 驳回
-	var actcCanReject = $("#actcCanReject").val();
-	// 传阅
-	var actcCanTransfer = $("#actcCanTransfer").val();
-	// 加签
-	var actcCanAdd = $("#actcCanAdd").val();
-	if (actcCanReject == "FALSE") {
-		$("#reject").css("display","none");
-	}
-	if (actcCanTransfer == "FALSE") {
-		$("#transfer").css("display","none");
-	}
-	if (actcCanAdd == "FALSE") {
-		$("#add").css("display","none");
-	}
+
     getAllDataInfo();
     $(".add_row")
         .click(
@@ -624,3 +610,4 @@ function checkUserData() {
 		});
 		$(".display_container").css("display","block"); //end
 }
+

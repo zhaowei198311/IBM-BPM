@@ -115,9 +115,9 @@
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
-            <button class="layui-btn layui-btn-sm" id="reject" onclick="reject()">驳回</button>
-            <button class="layui-btn layui-btn-sm" id="transfer">传阅</button>
-            <button class="layui-btn layui-btn-sm" id="add">加签</button>
+            <button class="layui-btn layui-btn-sm" id="reject" onclick="reject()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
+            <button class="layui-btn layui-btn-sm" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
+            <button class="layui-btn layui-btn-sm" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>加签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
         </span>
     </div>
@@ -132,7 +132,7 @@
                 </colgroup>
                 <tbody>
                     <tr>
-                        <th colspan="4" class="list_title">目标店调查表
+                        <th colspan="4" class="list_title">${bpmForm.dynTitle}
                             <span style="float: right; font-size: 14px; font-weight: normal;">流程编号：1000-10185-BG-60</span>
                         </th>
                     </tr>

@@ -116,27 +116,24 @@
 
 <body>
 	<div class="search_area top_btn">
-		<input type="hidden" id="departNo" /> <input type="hidden"
-			id="companyNum" /> <input type="hidden" id="insUid"
-			value="${processInstance.insUid}" /> <input id="insTitle"
-			value="${processInstance.insTitle}" style="display: none;"> <input
-			id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
-		<input id="proUid" value="${processDefinition.proUid}"
-			style="display: none;"> <input id="proAppId"
-			value="${processDefinition.proAppId}" style="display: none;">
-		<input id="verUid" value="${processDefinition.proVerUid}"
-			style="display: none;"> <input id="proName"
-			value="${processDefinition.proName}" style="display: none;">
-		<input id="userId" value="${currentUser.userId}"
-			style="display: none;"> <input id="activityId"
-			value="${bpmActivityMeta.activityId}" style="display: none;" /> <span
-			id="formData" style="display: none;">${ formData }</span> <span
-			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
-		<span style="float: right; padding-right: 20px;">
-			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
-			<button id="startProcess" class="layui-btn layui-btn-sm">提交</button>
-			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
-		</span>
+	    <input type="hidden" id="departNo" />
+	    <input type="hidden" id="companyNum" />
+	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
+	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
+	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
+	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
+	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
+	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
+	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
+	    <input id="userId" value="${currentUser.userId}" style="display: none;">
+	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;" />
+	    <span id="formData" style="display: none;">${ formData }</span>
+	    <span style="padding-left: 10px; color: #777; font-size: 18px;">${processDefinition.proName}</span>
+	    <span style="float: right; padding-right: 20px;">
+	        <button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
+	        <button id="startProcess" class="layui-btn layui-btn-sm">提交</button>
+	        <button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
+	    </span>
 	</div>
 	<div class="container" style="width: 96%">
 		<div class="content">
@@ -144,8 +141,8 @@
 				<table class="layui-table">
 					<tbody>
 						<tr>
-							<th colspan="12" class="list_title">目标店调查表 <span
-								style="float: right; font-size: 14px; font-weight: normal;">表单编号：${formId}</span>
+							<th colspan="12" class="list_title">${bpmForm.dynTitle}<span
+								style="float: right; font-size: 14px; font-weight: normal;">表单编号：1000-10185-BG-60</span>
 							</th>
 						</tr>
 						<tr>

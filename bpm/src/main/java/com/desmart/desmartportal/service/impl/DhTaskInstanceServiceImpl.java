@@ -29,6 +29,7 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -507,6 +508,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
+        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
+        if (!getFormResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单");
+        }
+        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
         
         // 获得表单文件内容
         ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
@@ -514,6 +520,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("获得表单数据失败");
         }
         
+        resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currMeta);
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);
@@ -521,8 +528,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    return ServerResponse.createBySuccess(resultMap);
-	    
-	    
 	}
 	
 

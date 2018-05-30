@@ -31,6 +31,7 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
@@ -497,6 +498,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
         
         
+        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
+        if (!getFormResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单");
+        }
+        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
         
         // 获得表单文件内容
         ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
@@ -508,7 +514,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.insertProcess(processInstance);
         }
         
+        
         resultMap.put("currentUser", currentUser);
+        resultMap.put("bpmForm", bpmForm);
         resultMap.put("processDefinition", processDefintion);
         resultMap.put("formData", formData);
         resultMap.put("bpmActivityMeta", firstHumanMeta);
