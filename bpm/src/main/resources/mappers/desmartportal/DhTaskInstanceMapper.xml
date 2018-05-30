@@ -397,14 +397,17 @@
 		where task_id = #{taskId}
 	</select>
 
-	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
-		SELECT 
-		<include refid="Base_Column_List"/>
+	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" 
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid="TaskAndProcess_Column_List"/>
 		FROM
-		DH_TASK_INSTANCE
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
 		<where>
-			INS_UID = #{insUid}
-			and ( TASK_TYPE='sign' or TASK_TYPE='normal' or TASK_TYPE='transfer')
+			T.INS_UID = P.INS_UID 
+			AND
+			P.INS_INIT_USER = S.USER_ID
+			AND
+			T.INS_UID = #{insUid}
 		</where>
 	</select>
 	

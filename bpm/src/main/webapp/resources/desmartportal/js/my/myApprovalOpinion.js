@@ -94,21 +94,13 @@ function save(){
 function loadDhroutingRecords(){
 	var insUid = $("#insUid").val();
 	var insId = $("#insId").val();
-	var proAppId=$("#proAppId").val();
-	var proUid=$("#proUid").val();
-	var proVerUid=$("#proVerUid").val();
-	var bpmActivityList = $("#listStr").html();
 	
 	$.ajax({
 	     url:"dhRoutingRecord/loadDhRoutingRecords.do",
 	     type : 'POST',
 	     data : {
 	    	 insUid:insUid,
-	    	 insId:insId,
-	    	 proVerUid:proVerUid,
-	    	 proAppId:proAppId,
-	    	 proUid:proUid,
-	    	 bpmActivityList:bpmActivityList
+	    	 insId:insId
 	     },
 	     dataType:'json',
 	     async: false, 
@@ -127,11 +119,17 @@ function loadDhroutingRecords(){
 				 }
 			 }
 	    	 $(".p").find("p").eq(0).find("span").html(h);
-	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
-	    		 $(".p").find("p").eq(1).find("span").html( result.data.dhTaskHandlers[i].userName);
-	    	 }
-	    	 //$(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
 	    	 $(".p").find("p").eq(2).find("span").html(activityNameHtml);
+	    	 var dhTaskHandlerHtml = "";
+	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
+	    		 if(i==(result.data.dhTaskHandlers.length-1)){
+					 dhTaskHandlerHtml +=result.datadhTaskHandlers[i].userName;
+				 }else{
+					 dhTaskHandlerHtml +=result.datadhTaskHandlers[i].userName+"、";
+				 }
+	    	 }
+	    	 $(".p").find("p").eq(1).find("span").html(dhTaskHandlerHtml);
+	    	 //$(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
 	    	 if(result.data.dhRoutingRecords!=null){
 	    	 var index = result.data.dhRoutingRecords.length-1;
 	    	 	if(index>=0){

@@ -13,12 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 
@@ -31,48 +28,36 @@ public class DhRoutingRecordController {
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaServiceImpl;
 	@Autowired
-	private DhProcessInstanceService dhProcessInstanceServiceImpl;
-	@Autowired
 	private DhTaskInstanceService dhTaskInstanceServiceImpl;
 	
 	@RequestMapping("/loadDhRoutingRecords.do")
 	@ResponseBody
 	public ServerResponse loadDhRoutingRecords(@RequestParam String insUid
-			,@RequestParam Integer insId
-			,@RequestParam String proVerUid
-			,@RequestParam String proAppId
-			,@RequestParam String proUid
-			,@RequestParam(value="bpmActivityList",required=false) String bpmActivityList) {
+			,@RequestParam Integer insId) {
 		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 		dhRoutingRecord.setInsUid(insUid);
 		List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordServiceImpl.getDhRoutingRecordListByCondition(dhRoutingRecord);
+		
 		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByInsUidAndTaskTypeCondition(insUid);
-		List<BpmActivityMeta> bpmActivityMetas = new ArrayList<BpmActivityMeta>();
-		if(bpmActivityList!=null&&!"".equals(bpmActivityList)) {
-			bpmActivityMetas = JsonUtil.string2Obj(bpmActivityList, ArrayList.class, BpmActivityMeta.class);
-		}
-		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();
-		for (DhTaskInstance record : dhTaskInstances) {
-			if(DhTaskInstance.STATUS_RECEIVED.equals(record.getTaskStatus()))//循环确定该流程实例任务中，有哪些是环节处于接收到任务
-			{				
-				String activity_bpd_id = record.getActivityBpdId();
-				for (BpmActivityMeta bpmActivityMeta : bpmActivityMetas) {
-					if(activity_bpd_id.equals(bpmActivityMeta.getActivityBpdId())//锁定到一个环节
-							&&proUid.equals(bpmActivityMeta.getBpdId())
-							&&proVerUid.equals(bpmActivityMeta.getSnapshotId())&&proAppId.equals(bpmActivityMeta.getProAppId())) {
+		
+		DhRoutingRecord lastDhRoutingRecord = dhRoutingRecords.get(dhRoutingRecords.size()-1);//根据流程uid取得最后一个流转记录
+		
+		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();//获取当前流转到的所有环节
+		if(lastDhRoutingRecord.getActivityTo()!=null&&!"".equals(lastDhRoutingRecord.getActivityTo())) {
+				String[] activityTo = lastDhRoutingRecord.getActivityTo().split(",");
+				for (int i = 0; i < activityTo.length; i++) {
+					String activityId = activityTo[i];
+					BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(activityId);
 					bpmActivityMetaList.add(bpmActivityMeta);
 				}
-			}
-			}
 		}
-		//BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(activityId);
-	    
-		List<DhTaskHandler> dhTaskHandlers = new ArrayList<DhTaskHandler>();
-		for (BpmActivityMeta bpmActivityMeta2 : bpmActivityMetaList) {
-			List<DhTaskHandler> dhTaskHandlers1 = dhRoutingRecordServiceImpl.getListByInsIdAndActivityBpdId(insId, bpmActivityMeta2.getActivityBpdId());
-			if(dhTaskHandlers1!=null) {
-				for (DhTaskHandler dhTaskHandler : dhTaskHandlers1) {
-					dhTaskHandlers.add(dhTaskHandler);
+		
+		List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
+		for (DhTaskInstance dhTaskInstance : dhTaskInstances) {
+			String activity_bpd_id = dhTaskInstance.getActivityBpdId();
+			for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {
+				if(bpmActivityMeta.getActivityBpdId().equals(activity_bpd_id)) {
+					dhTaskHandlers.add(dhTaskInstance);
 				}
 			}
 		}
