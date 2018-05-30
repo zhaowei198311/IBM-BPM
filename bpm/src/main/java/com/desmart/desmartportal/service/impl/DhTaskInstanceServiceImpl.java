@@ -339,8 +339,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					 */
 
 						JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
-						/*String insUid = approvalData.getString("insUid");
-						String apr_taskUid = approvalData.getString("taskUid");// 存储的是环节id->activity_id*/
+						 
+						
 						String aprOpiComment = approvalData.getString("aprOpiComment");
 						String aprStatus = approvalData.getString("aprStatus");
 						String insUid = dhTaskInstance.getInsUid();
@@ -356,7 +356,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						// 审批信息
 						DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 						dhApprovalOpinion.setInsUid(insUid);
-						dhApprovalOpinion.setTaskUid(bpmActivityMeta.getActivityId());
+						dhApprovalOpinion.setTaskUid(taskUid);
+						dhApprovalOpinion.setActivityId(bpmActivityMeta.getActivityId());
 						dhApprovalOpinion.setAprOpiComment(aprOpiComment);
 						dhApprovalOpinion.setAprStatus(aprStatus);
 						ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl

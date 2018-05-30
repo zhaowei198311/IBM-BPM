@@ -344,7 +344,7 @@ function agree() {
     });
 
     var insUid = $("#insUid").val();//流程实例id--ins_uid
-    var apr_taskUid = $("#activityId").val();//环节id，activity_id
+    var apr_activityId = $("#activityId").val();//环节id，activity_id
     var aprOpiComment = $("#myApprovalOpinion").text();//审批意见
 	var aprStatus = "ok";
 	/*var approvaInfo ={
@@ -393,7 +393,7 @@ function agree() {
         routeData.push(item);
     });
     finalData.routeData = routeData;
-    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+    finalData.taskData = {"taskId":taskId,"activityId":apr_activityId};
     finalData.approvalData = {"aprOpiComment":aprOpiComment,"aprStatus":aprStatus};
     $.ajax({
         url: 'taskInstance/finshedTask',

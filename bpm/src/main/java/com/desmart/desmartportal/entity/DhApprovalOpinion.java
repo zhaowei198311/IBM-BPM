@@ -14,6 +14,7 @@ public class DhApprovalOpinion {
 	private String aprOpiComment;//审批意见
 	private String aprStatus;//审批状态--
 	private Date aprDate;//审批时间
+	private String activityId;//环节id
 	//不在表内
 	private String activityName;//环节名称
 	private String aprUserName;//审批用户名称
@@ -90,14 +91,21 @@ public class DhApprovalOpinion {
 	public void setAprStation(String aprStation) {
 		this.aprStation = aprStation;
 	}
+	public String getActivityId() {
+		return activityId;
+	}
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
 	@Override
 	public String toString() {
 		return "DhApprovalOpinion [aprOpiId=" + aprOpiId + ", insUid=" + insUid + ", taskUid=" + taskUid
 				+ ", aprOpiIndex=" + aprOpiIndex + ", aprUserId=" + aprUserId + ", aprTimeNumber=" + aprTimeNumber
 				+ ", aprOpiComment=" + aprOpiComment + ", aprStatus=" + aprStatus + ", aprDate=" + aprDate
-				+ ", activityName=" + activityName + ", aprUserName=" + aprUserName + ", aprStation=" + aprStation
-				+ "]";
+				+ ", activityId=" + activityId + ", activityName=" + activityName + ", aprUserName=" + aprUserName
+				+ ", aprStation=" + aprStation + "]";
 	}
+	
 	
 	
 }

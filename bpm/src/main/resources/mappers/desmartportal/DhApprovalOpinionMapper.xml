@@ -8,13 +8,13 @@
 		select dao.*,su.user_name as aprUserName,su.station as aprStation
 		,bam.activity_name as activityName from DH_Approval_Opinion dao
 		left join Sys_User su on dao.apr_user_id = su.user_uid
-		left join bpm_activity_meta bam on dao.task_uid = bam.activity_id
+		left join bpm_activity_meta bam on dao.activity_id = bam.activity_id
 		where 1 = 1
 		<if test="insUid != null and insUid != '' ">
 			and dao.ins_uid = #{insUid}
 		</if>
-		<if test="taskUid != null and taskUid != ''">
-			and dao.task_uid = #{taskUid}
+		<if test="activityId != null and activityId != ''">
+			and dao.activity_id = #{activityId}
 		</if>
 		order by dao.apr_opi_index asc
 	</select>
@@ -33,7 +33,8 @@
 		APR_TIME_NUMBER,
 		APR_OPI_COMMENT,
 		APR_STATUS,
-		APR_DATE
+		APR_DATE,
+		ACTIVITY_ID
 		)
 		VALUES
 		(
@@ -45,7 +46,8 @@
 		#{aprTimeNumber},
 		#{aprOpiComment},
 		#{aprStatus},
-		#{aprDate}
+		#{aprDate},
+		#{activityId}
 		)
 	</insert>
 
@@ -57,8 +59,8 @@
 		<if test="insUid != null and insUid != '' ">
 			and ins_uid = #{insUid}
 		</if>
-		<if test="taskUid != null and taskUid != ''">
-			and task_uid = #{taskUid}
+		<if test="activityId != null and activityId != ''">
+			and activity_id = #{activityId}
 		</if>
 		order by apr_opi_index asc
 	</select>
