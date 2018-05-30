@@ -473,6 +473,7 @@ function agree() {
         routeData.push(item);
     });
     finalData.routeData = routeData;
+    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',

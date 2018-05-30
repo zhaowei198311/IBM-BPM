@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
@@ -313,8 +314,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			JSONObject jsonBody = JSONObject.parseObject(data);
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
 			JSONObject formData = JSONObject.parseObject(String.valueOf(jsonBody.get("formData")));
-			JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
-			String userId = routeData.getString("userUid").substring(0, 8);
+			JSONArray routeData = JSONObject.parseArray(String.valueOf(jsonBody.get("routeData")));
+			
 			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 			String taskUid = taskData.getString("taskUid");
 			// 根据任务标识和用户 去查询流程 实例
@@ -329,7 +330,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					// 装配处理人信息
 					CommonBusinessObject pubBo = new CommonBusinessObject();
 					ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
-							.assembleCommonBusinessObject(pubBo, JSONObject.parseArray(routeData.toJSONString()));
+							.assembleCommonBusinessObject(pubBo, routeData);
 					if (!serverResponse.isSuccess()) {
 						return serverResponse;
 					}
@@ -384,6 +385,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						//修改流程实例信息
 						dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
+						for (int i = 0; i < routeData.size(); i++) {
+						String userId = routeData.getJSONObject(i).getString("userUid").substring(0, 8);
 						// 任务完成后 保存到流转信息表里面
 						DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 						dhRoutingRecord
@@ -397,6 +400,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 							setActivityToValues(nextBpmActivityMetas,dhRoutingRecord);
 						}
 						dhRoutingRecordMapper.insert(dhRoutingRecord);
+						}
 						// 修改当前任务实例状态为已完成
 						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid)>0) {
 						//如果任务为类型为normal，则将其它相同任务id的任务废弃
