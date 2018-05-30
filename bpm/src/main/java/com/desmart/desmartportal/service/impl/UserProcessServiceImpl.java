@@ -152,8 +152,8 @@ public class UserProcessServiceImpl implements UserProcessService {
 		return null;
 	}
 	
-	
-	public void test() {
+	@Override
+	public List<Map<String, Object>> selectByMenusProcess2() {
 		log.info("判断---当前用户权限菜单 开始。。。");
 		// 集合创建
 		List<Map<String, Object>> infoList = new ArrayList<Map<String, Object>>();
@@ -274,6 +274,7 @@ public class UserProcessServiceImpl implements UserProcessService {
 		} finally {
 			log.info("判断---当前用户权限菜单 结束。。。");
 		}
+		return infoList;
 	}
 
 }
