@@ -66,7 +66,14 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
-
+		
+		.choose_user{
+			position: absolute;
+		    right: 10px;
+		    top: 8px;
+		    z-index: 1;
+		}
+		
         #formSet {
             display: none;
         }
@@ -376,17 +383,17 @@
         </div>
     </div>
 	<div class="display_container7" style="display: none;">
-		<div class="display_content7" style="height: 150px">
-		    <label class="layui-form-label">人员</label>
-		    <div class="layui-input-block" style="position:relative;">
-		        <input type="hidden" id="handleUser" name="handleUser" />
-		        <input type="text" name="handleUser_view"  id="handleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
-		        <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
-		    </div>
-		    <div class="foot">
-	            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>
-	            <button class="layui-btn layui-btn cancel_btn">取消</button>
-	        </div>
+		<div class="display_content7" style="height: 125px">
+			    <label class="layui-form-label" style="width: 30px;">人员</label>
+			    <div class="layui-input-block" style="position:relative;margin-left: 60px;">
+                     <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
+                     <input type="text" name="chooseableHandleUser_view"  id="chooseableHandleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
+                     <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
+                 </div>
+			    <div class="foot" style="margin-top: 20px;">
+		            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>
+		            <button class="layui-btn layui-btn cancel_btn">取消</button>
+		        </div>
 	    </div>
 	</div>
 </body>

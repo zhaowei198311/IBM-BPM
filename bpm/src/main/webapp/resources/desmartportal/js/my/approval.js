@@ -87,7 +87,7 @@ $(function () {
         $(".upload_file").click();
     });
     // 加签
-    $("#actcCanAdd").click(function() {
+    $("#add").click(function() {
     	$("#handleUser_view").val("");
     	$(".display_container7").css("display","block");
     })
