@@ -4,7 +4,6 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +21,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.BpmTaskUtil;
@@ -356,7 +354,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
                 dhRoutingRecord.setInsUid(dhProcessInstance.getInsUid());
                 dhRoutingRecord.setActivityName(firstHumanActivity.getActivityName());
-                dhRoutingRecord.setRouteType(RouteStatus.ROUTE_STARTPROCESS);
+                dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_START_PROCESS);
                 dhRoutingRecord.setUserUid(currentUserUid);
                 dhRoutingRecord.setActivityId(firstHumanActivity.getActivityId());
                 if (nextActivities.size() > 0) {

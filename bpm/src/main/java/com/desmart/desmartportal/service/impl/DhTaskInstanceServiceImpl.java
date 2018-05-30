@@ -21,7 +21,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
-import com.desmart.common.constant.RouteStatus;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.FormDataUtil;
@@ -35,7 +34,6 @@ import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
-import com.desmart.desmartbpm.util.JsonUtil;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -393,7 +391,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 								.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
 						dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
 						dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-						dhRoutingRecord.setRouteType(RouteStatus.ROUTE_SUBMITTASK);
+						dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
 						dhRoutingRecord.setUserUid(userId);
 						dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
 						if(nextBpmActivityMetas!=null&&nextBpmActivityMetas.size()>0) {
