@@ -99,14 +99,10 @@ function drawPage() {
                 		var subDivRow = subDivObj.attr("row");
                 		if(subDivRow==1){//说明
                 			var subHtml = subDivObj.html();
-                			if (!isNaN(subDivCol)) {
-                                formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
-                            }
+                            formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
                 		}else{//表格行的头部
                 			var subHtml = subDivObj.html();
-                			if (!isNaN(subDivCol)) {
-                                formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
-                            }
+                            formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
                 			isContinue = true;
                 		}
                 	}
@@ -265,50 +261,93 @@ function drawPage() {
                     formHtml += tableHead;
                 } else {
                     flag = true;
-                    var labelDivObj = column.find(".labelDiv");
-                    var labelDivCol = $(labelDivObj).attr("col");
-                    var subDivObj = column.find(".subDiv");
-                    var subDivCol = $(subDivObj).attr("col");
-
-                    labelDivObj.find("span").addClass("tip_span");
-
-                    var labelHtml = "";
-                    var subHtml = "";
-                    if ($(labelDivObj).next().find(".editor_textarea").length == 1) {
-                        formHtml = formHtml.substring(0, formHtml.length - 4);
-                        formHtml += "</tbody></table>";
-                        labelHtml = "<p class='title_p'>" + $(labelDivObj).text() + "</p>";
-                        subHtml = "<div class='layui-form'>" + $(subDivObj).html() + "</div>";
-                        formHtml += labelHtml;
-                        formHtml += subHtml;
-                        continue;
-                    } else {
-                        labelHtml = $(labelDivObj).html();
-                        if (subDivObj.find("label").length == 0) {
-                            if ($(subDivObj).next().prop("class") == "hidden-value") {
-                                subHtml = $(subDivObj).html() + $(subDivObj).next().html();
-                            } else {
-                                subHtml = $(subDivObj).html();
+                    if(column.find(".subDiv").length>1){
+                        column.find(".subDiv").each(function(index){
+                            if(index!=0){
+                                formHtml += '<tr>';
                             }
-                        } else if (subDivObj.find("label").length == 1) {
-                            subHtml = $(subDivObj).find("label").html();
+                            var labelDivObj = $(column.find(".labelDiv")[index]);
+                            var labelDivCol = labelDivObj.attr("col");
+                            var subDivObj = $(column.find(".subDiv")[index]);
+                            var subDivCol = subDivObj.attr("col");
+        
+                            labelDivObj.find("span").addClass("tip_span");
+                            var labelHtml = $(labelDivObj).html();
+                            var subHtml = "";
+                            if (subDivObj.find("label").length == 0) {
+                                if ($(subDivObj).next().prop("class") == "hidden-value") {
+                                    subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+                                } else {
+                                    subHtml = $(subDivObj).html();
+                                }
+                            } else if (subDivObj.find("label").length == 1) {
+                                subHtml = $(subDivObj).find("label").html();
+                            } else {
+                                subDivObj.find("label").each(function () {
+                                    var title = $(this).text();
+                                    $(this).find("input").prop("title", title);
+                                    $(this).html($(this).find("input"));
+                                    subHtml += $(this).html();
+                                });
+                            }
+    
+                            if (!isNaN(labelDivCol)) {
+                                formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:240px">' + labelHtml + '</td>';
+                            }
+    
+                            if (!isNaN(subDivCol)) {
+                                formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+                            }
+                            if(index!=column.find(".subDiv").length-1){
+                                formHtml += '</tr>';
+                            }
+                        });
+                    }else{
+                        var labelDivObj = column.find(".labelDiv");
+                        var labelDivCol = $(labelDivObj).attr("col");
+                        var subDivObj = column.find(".subDiv");
+                        var subDivCol = $(subDivObj).attr("col");
+
+                        labelDivObj.find("span").addClass("tip_span");
+
+                        var labelHtml = "";
+                        var subHtml = "";
+                        if ($(labelDivObj).next().find(".editor_textarea").length == 1) {
+                            formHtml = formHtml.substring(0, formHtml.length - 4);
+                            formHtml += "</tbody></table>";
+                            labelHtml = "<p class='title_p'>" + $(labelDivObj).text() + "</p>";
+                            subHtml = "<div class='layui-form'>" + $(subDivObj).html() + "</div>";
+                            formHtml += labelHtml;
+                            formHtml += subHtml;
+                            continue;
                         } else {
-                            subDivObj.find("label").each(function () {
-                                var title = $(this).text();
-                                $(this).find("input").prop("title", title);
-                                $(this).html($(this).find("input"));
-                                subHtml += $(this).html();
-                            });
-                        }
+                            labelHtml = $(labelDivObj).html();
+                            if (subDivObj.find("label").length == 0) {
+                                if ($(subDivObj).next().prop("class") == "hidden-value") {
+                                    subHtml = $(subDivObj).html() + $(subDivObj).next().html();
+                                } else {
+                                    subHtml = $(subDivObj).html();
+                                }
+                            } else if (subDivObj.find("label").length == 1) {
+                                subHtml = $(subDivObj).find("label").html();
+                            } else {
+                                subDivObj.find("label").each(function () {
+                                    var title = $(this).text();
+                                    $(this).find("input").prop("title", title);
+                                    $(this).html($(this).find("input"));
+                                    subHtml += $(this).html();
+                                });
+                            }
 
-                        if (!isNaN(labelDivCol)) {
-                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width: 70px">' + labelHtml + '</td>';
-                        }
+                            if (!isNaN(labelDivCol)) {
+                                formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width: 70px">' + labelHtml + '</td>';
+                            }
 
-                        if (!isNaN(subDivCol)) {
-                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
-                        }
-                    } //end if editor
+                            if (!isNaN(subDivCol)) {
+                                formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+                            }
+                        } //end if editor
+                    }
                 } //end if column
                 if (flag) {
                     formHtml += "</tr>";
@@ -331,7 +370,13 @@ function drawPage() {
     
     var explainArr = $(".td_sub_explain");
     explainArr.each(function(){
-    	$(this).find("p").prepend('<img src="../resources/desmartportal/images/top_star.png" class="star_img">');
+    	$(this).find("p").prepend('<img src="'+common.getPath()+'/resources/desmartportal/images/top_star.png" class="star_img">');
+    });
+
+    //给动态表单中的下拉列表赋值
+    var selectArr = $("select[data_source='数据字典拉取']");
+    selectArr.each(function(){
+        getDataToSelect(this,$(this).attr("database_type"));
     });
     
     view.find("input[type='tel']").desNumber();
@@ -396,130 +441,30 @@ function drawPage() {
             });
         });
     });
-
-    /*var loadBtn = view.find(".file");
-    loadBtn.each(function () {
-        var modelHtml = $("#file_load_hide").html();
-        view.append(modelHtml);
-        view.find(".model").prop("id", $(this).prop("id") + "Model").removeClass("model");
-        $("#" + $(this).prop("id") + "Model").find(".layui-upload-drag").prop("id", $(this).prop("id") + "Drag");
-        $("#" + $(this).prop("id") + "Model").find(".listAction").prop("id", $(this).prop("id") + "Btn");
-
-        $(this).click(function () {
-            $("#" + $(this).prop("id") + "Model").css("display", "block");
-        });
+}
+/**
+ * 根据下拉列表的组件对象，和数据字典的id，动态生成下拉组件
+ */
+function getDataToSelect(obj,dicUid){
+    $(obj).children().remove();
+    $.ajax({
+        url:common.getPath()+"/sysDictionary/listOnDicDataBydicUid",
+        method:"post",
+        data:{
+            dicUid:dicUid
+        },
+        success:function(result){
+            if(result.status==0){
+                var dicDataList = result.data;
+                for(var i=0;i<dicDataList.length;i++){
+                    var dicDataObj = dicDataList[i];
+                    var optionObj = '<option value="'+dicDataObj.dicDataName+'">'+dicDataObj.dicDataName+'</option>';
+                    $(obj).append(optionObj);
+                }
+                form.render();
+            }
+        }
     });
-
-    layui.use('upload', function () {
-        var $ = layui.jquery,
-            upload = layui.upload;
-
-        var fileCount = 0;
-        var fileModels = view.find(".display_container");
-        fileModels.each(function () {
-            var model = $(this);
-            var btnId = model.prop("id").replace("Model", "");
-            var maxFileSize = $("#" + btnId).parent().find(".maxFileSize").val();
-            var maxFileCount = $("#" + btnId).parent().find(".maxFileCount").val();
-            var fileFormat = $("#" + btnId).parent().find(".fileFormat").val();
-
-            re = new RegExp(",", "g");
-            var formatStr = fileFormat.replace(re, "|");
-            var dragId = model.find(".layui-upload-drag").prop("id");
-            // 拖拽上传
-            var demoListView = model.find('.fileList'),
-                uploadListIns = upload.render({
-                    elem: '#' + dragId
-                    , url: 'saveFile.do' //'dhInstanceDoc/loadFile.do'
-                    , auto: false // 不自动上传
-                    , exts: formatStr
-                    , multiple: true
-                    , bindAction: '#' + btnId + "Btn"
-                    , choose: function (obj) {
-                        var files = this.files = obj.pushFile(); // 将每次选择的文件追加到文件队列
-                        layer.load();
-                        // 读取本地文件
-                        obj.preview(function (index, file, result) {
-                            fileCount++;
-                            if (fileCount > maxFileCount) {
-                                fileCount = maxFileCount;
-                                layer.msg('文件数量不得超过' + maxFileCount + '个', {
-                                    icon: 2
-                                });
-                                layer.closeAll('loading');
-                                delete files[index];
-                                return;
-                            }
-                            var size = file.size;
-                            if (size > maxFileSize * 1024 * 1024) {
-                                layer.msg('文件大小不得超过' + maxFileSize + 'M', {
-                                    icon: 2
-                                });
-                                layer.closeAll('loading');
-                                delete files[index];
-                                return;
-                            }
-                            if (size == 0) {
-                                layer.msg('文件大小不能为空', {
-                                    icon: 2
-                                });
-                                layer.closeAll('loading');
-                                delete files[index];
-                                return;
-                            }
-
-                            var tr = $(['<tr id="upload-' + index + '">', '<td>' + file.name + '</td>', '<td>' + (file.size / 1024 / 1024).toFixed(2) + 'Mb</td>', '<td>等待上传</td>', '<td>', '<button class="layui-btn layui-btn-mini demo-reload layui-hide">重传</button>', '<button class="layui-btn layui-btn-mini layui-btn-danger demo-delete">删除</button>', '</td>', '</tr>'].join(''));
-
-                            // 单个重传
-                            tr.find('.demo-reload').on('click', function () {
-                                obj.upload(index, file);
-                            });
-
-                            // 删除
-                            tr.find('.demo-delete').on('click', function () {
-                                delete files[index]; // 删除对应的文件
-                                tr.remove();
-                                fileCount--;
-                                uploadListIns.config.elem.next()[0].value = '';
-                            });
-
-                            demoListView.append(tr);
-                            layer.closeAll('loading');
-                        });
-                    }
-                    , done: function (res, index, upload) {
-                        var tr = demoListView.find('tr#upload-' + index),
-                            tds = tr.children();
-                        if (res.filename == tds.eq(0).text().trim()) { // 上传成功
-                            tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
-                            tds.eq(3).html(''); // 清空操作
-                            return delete this.files[index]; // 删除文件队列已经上传成功的文件
-                        }
-                        this.error(index, upload);
-                        model.css("display", "none");
-                    }
-                    , error: function (index, upload) {
-                        var tr = demoListView.find('tr#upload-' + index),
-                            tds = tr.children();
-                        tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
-                        tds.eq(3).find('.demo-reload').removeClass('layui-hide'); // 显示重传
-                    }
-                });
-
-            document.getElementById(dragId).addEventListener("dragenter", function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-            document.getElementById(dragId).addEventListener("dragover", function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-            document.getElementById(dragId).addEventListener("drop", function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-        });
-    });*/
 }
 
 function addDataRow(obj){

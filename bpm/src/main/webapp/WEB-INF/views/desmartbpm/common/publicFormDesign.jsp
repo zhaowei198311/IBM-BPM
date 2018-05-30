@@ -435,7 +435,7 @@
 									</span>
 									<div class="preview">文本块</div>
 									<div class="view">
-										<div class="subDiv">
+										<div class="subDiv" row="1" col="12">
 											<p contenteditable="true">文本块，可以输入一些提示性话语</p>
 										</div>
 									</div>
@@ -1027,12 +1027,33 @@
 					</div>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
+								数据来源
+							</label>
+							<div class="col-xs-7" style="margin-bottom:10px;">
+								<label class="col-xs-4">
+									<input type="radio" name="data_source" value="手动填写" onclick="dataSourceClick(this)" checked/> 手动填写
+								</label>
+								<label class="col-xs-4">
+									<input type="radio" name="data_source" value="数据字典拉取" onclick="dataSourceClick(this)" /> 数据字典拉取
+								</label>
+							</div>
+						</div>
+						<div class="form-group hand_act">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
 							添加选项值
 						</label>
 						<div class="col-xs-7">
 							<input type="text" class="form-control option-value" placeholder="请输入列表选项值" />
 							<span class="glyphicon glyphicon-minus" onclick="removeOptionInput(this)" style="font-size:20px;color:#888;cursor:pointer;"></span>
 							<span class="glyphicon glyphicon-plus" onclick="addOptionInput(this)" style="font-size:20px;color:#888;cursor:pointer;"></span>
+						</div>
+					</div>
+					<div class="form-group database" style="display: none;">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							选择字段
+						</label>
+						<div class="col-xs-7">
+							<select></select>
 						</div>
 					</div>
 				</form>
@@ -1254,6 +1275,23 @@
 				<form>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
+								文本占列数
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											请填写文本块占列数</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control col" id="text-block-col" placeholder="请输入文本块占列数">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
 							文本占行数
 							<div class="pull-right popover-info">
 								<i class="icon-question-sign "></i>

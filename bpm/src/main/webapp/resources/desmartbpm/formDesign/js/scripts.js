@@ -380,6 +380,8 @@ function downloadLayoutSrc() {
             ["col-type"],
             ["regx"],
             ["regx_cue"],
+            ["data_source"],
+            ["database_type"],
             ["onclick"],
             ["onchange"],
             ["onfocus"],
@@ -477,7 +479,7 @@ $(document).ready(function () {
     $("#dynHtml").html("");
     if (dynHtml != null && dynHtml != "") {
         dynHtml = dynHtml.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-            .replace(/&lc;/g, "(").replace(/&gc;/g, ")");
+            .replace(/&amp;lc;/g, "(").replace(/&amp;gc;/g, ")");
         var jsIndex = dynHtml.indexOf("<script type='text/javascript'>");
         var jsIndex2 = dynHtml.indexOf("<script type=\"text/javascript\">");
         var demoHtml = "";

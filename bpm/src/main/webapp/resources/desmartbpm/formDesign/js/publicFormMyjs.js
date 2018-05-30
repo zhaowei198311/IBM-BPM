@@ -245,6 +245,9 @@ function showSelectModal(obj) {
     var selectObj = view.find("select");
     var id = selectObj.attr("id");
     var name = selectObj.attr("name");
+    var dataSource = selectObj.attr("data_source");
+    var databaseType = selectObj.attr("database_type");
+
     var textWidth = selectObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -261,21 +264,32 @@ function showSelectModal(obj) {
     $("#select-width").val(textCol);
     $("#select-label-width").val(textLabelCol);
 
-    $("#selectModal .add-form-obj").remove();
-    var optionValueArr = selectObj.children();
-    $(".option-value").val($(optionValueArr[0]).val());
-    for (var i = 1; i < optionValueArr.length; i++) {
-        var html = "<div class='form-group add-form-obj'>" +
-            "<div class='col-xs-7 col-sm-offset-4'>";
-        html += "<input type='text' " + "class='form-control option-value' " +
-            "value='" + $(optionValueArr[i]).val() + "'" +
-            "placeholder='请输入列表选项值'/>";
-        html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'" +
-            "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
-            " <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'" +
-            "style='font-size:20px;color:#888;cursor:pointer;'></span>";
-        html += "</div></div>";;
-        $("#selectModal form").append(html);
+    if (dataSource == "数据字典拉取") {
+        $(".hand_act").css("display", "none");
+        $(".database").css("display", "block");
+        $("input[value='数据字典拉取']").prop("checked", true);
+        $(".database select").val(databaseType);
+    } else {
+        $(".hand_act").css("display", "block");
+        $(".database").css("display", "none");
+        $("input[value='手动填写']").prop("checked", true);
+
+        $("#selectModal .add-form-obj").remove();
+        var optionValueArr = selectObj.children();
+        $(".option-value").val($(optionValueArr[0]).val());
+        for (var i = 1; i < optionValueArr.length; i++) {
+            var html = "<div class='form-group add-form-obj'>" +
+                "<div class='col-xs-7 col-sm-offset-4'>";
+            html += "<input type='text' " + "class='form-control option-value' " +
+                "value='" + $(optionValueArr[i]).val() + "'" +
+                "placeholder='请输入列表选项值'/>";
+            html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'" +
+                "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
+                " <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'" +
+                "style='font-size:20px;color:#888;cursor:pointer;'></span>";
+            html += "</div></div>";;
+            $("#selectModal form").append(html);
+        }
     }
 
     var num = view.find(".labelDiv").find("span").length;
@@ -480,8 +494,10 @@ function showTextBlockModal(obj) {
     var pObj = view.find("p");
 
     var textRow = pObj.parent().attr("row");
+    var textCol = pObj.parent().attr("col");
 
     $("#text-block-row").val(textRow);
+    $("#text-block-col").val(textCol);
 }
 
 function showDataTableModal(obj) {
@@ -600,6 +616,39 @@ function nameIsRepeat(name) {
     } else {
         return true;
     }
+}
+
+//下拉列表的数据源选择
+function dataSourceClick(obj) {
+    var dataSource = $(obj).val();
+    console.log(dataSource);
+    if (dataSource == "数据字典拉取") {
+        $(".database").css("display", "block");
+        $(".hand_act").css("display", "none");
+    } else {
+        $(".database").css("display", "none");
+        $(".hand_act").css("display", "block");
+    }
+}
+
+//下拉列表的数据类型选择
+function selectData() {
+    var selectObj = $(".database").find("select");
+    selectObj.children().remove();
+    $.ajax({
+        url: common.getPath() + "/sysDictionary/listAllOnSysDictionary",
+        method: "post",
+        success: function (result) {
+            if (result.status == 0) {
+                var dicList = result.data;
+                for (var i = 0; i < dicList.length; i++) {
+                    var dicObj = dicList[i];
+                    var optionObj = '<option value="' + dicObj.dicUid + '">' + dicObj.dicName + '</option>';
+                    selectObj.append(optionObj);
+                }
+            }
+        }
+    });
 }
 
 //日期控件图标的宽度
@@ -724,6 +773,9 @@ $(function () {
         }
         nameArr.splice($.inArray(removeName, nameArr), 1);
     })
+
+    //给下拉框数据来源赋值
+    selectData();
 
     //保存单行文本框的属性编辑
     $("#save-text-content").click(function (e) {
@@ -1021,6 +1073,8 @@ $(function () {
             var isMust = $("#select-must").is(':checked');
             var optionObjArr = $(".option-value"); //下拉列表添加选项的输入框对象
 
+            var dataSource = $("input[name='data_source']:checked").val();
+
             var textWidth = $("#select-width").val() * colWidth;
             var textLabelWidth = $("#select-label-width").val() * colWidth;
 
@@ -1028,8 +1082,14 @@ $(function () {
             var selectObj = view.find("select");
             selectObj.attr({
                 "id": id,
-                "name": name
+                "name": name,
+                "data_source": dataSource
             });
+
+            if (dataSource == "数据字典拉取") {
+                var databaseType = $(".database select").val();
+                selectObj.attr("database_type", databaseType);
+            }
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#select-label-width").val());
             selectObj.parent().css("width", textWidth - 18).attr("col", $("#select-width").val());
@@ -1251,7 +1311,7 @@ $(function () {
     $("#save-text-block-content").click(function (e) {
         e.preventDefault();
         var textRow = $("#text-block-row").val();
-        var textWidth = textCol * colWidth;
+        var textCol = $("#text-block-col").val();
 
         var pObj = view.find("p");
         pObj.attr({
@@ -1259,7 +1319,12 @@ $(function () {
         });
 
         pObj.attr({
-            "row": textRow
+            "row": textRow,
+            "col": textCol
+        });
+        pObj.parent().attr({
+            "row": textRow,
+            "col": textCol
         });
 
         $("#text-block-warn").modal('hide');
