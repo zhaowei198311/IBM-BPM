@@ -1633,7 +1633,6 @@ input, button, select, textarea {
 }
 
 label {
-    display: block;
     margin-bottom: 5px;
 }
 
