@@ -499,6 +499,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    // 获得当前环节
 	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
 	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
+	    if (currMeta == null) {
+	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
+	    }
+	    resultMap.put("activityMeta", currMeta);
 	    
 	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
 	    DhStep formStep = getFirstFormStepOfStepList(steps);

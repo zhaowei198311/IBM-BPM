@@ -120,13 +120,11 @@
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT
-		<include refid="Base_Column_List"/>
-		FROM
-		DH_PROCESS_INSTANCE
-		<where>
-			INS_UID = #{insUid}
-		</where>
+       SELECT <include refid="realationColumnList"/>, meta.pro_Name
+       FROM dh_process_instance ins
+       left join dh_process_meta meta
+         on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+       where ins.ins_uid = #{insUid}
 	</select>
 	
 	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
