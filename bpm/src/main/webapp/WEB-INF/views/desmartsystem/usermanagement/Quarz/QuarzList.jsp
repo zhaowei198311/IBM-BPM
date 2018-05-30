@@ -67,9 +67,9 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					/* noAuthTip(res);//无权限提示 */
 				},
 				cols : [ [ //标题栏
-				{
+				/* {
 					checkbox: true
-				},
+				}, */
 				{
 					field : 'jobName',
 					title : '任务名称',
@@ -130,14 +130,11 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 						title : '新增',
 						shift:'0',
 						shadeClose : false,//点击遮罩关闭
-						anim : public_anim,
+						shade: public_shade,
 						btnAlign : 'c',
-						shade : public_shade,//是否有遮罩，可以设置成false
-						maxmin : true, //开启最大化最小化按钮
 						area: ['700px', '440px'],
-						//area : [ '100%', '100%' ],
-						//boolean : true,
-						content : [ 'QuarzAdd.jsp', 'yes'], //iframe的url，no代表不显示滚动条
+						closeBtn: 0,
+						content : [ 'quarz/quarzAdd', 'yes'],
 						success : function(layero, lockIndex) {
 							var body = layer.getChildFrame('body', lockIndex);
 							//绑定解锁按钮的点击事件
@@ -155,21 +152,17 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					type : 2,
 					title : '查看',
 					shadeClose : false,//点击遮罩关闭
+					shade: public_shade,
 					shift:'0',
-					anim : public_anim,
 					btnAlign : 'c',
-					shade : public_shade,//是否有遮罩，可以设置成false
-					maxmin : true, //开启最大化最小化按钮
 					area: ['650px', '300px'],
-					//area : [ '100%', '100%' ],
-					//boolean : true,
-					content : [ 'QuarzDetail.jsp?obj='+encodeURIComponent(JSON.stringify(data)), 'no'], //iframe的url，no代表不显示滚动条
+					closeBtn: 0,
+					content : [ 'quarz/quarzDetail?obj='+encodeURIComponent(JSON.stringify(data)), 'no'],
 					success : function(layero, lockIndex) {
 						var body = layer.getChildFrame('body', lockIndex);
 						//绑定解锁按钮的点击事件
 						body.find('button#close').on('click', function() {
 							layer.close(lockIndex);
-							//location.reload();//刷新
 						});
 						pubUtil.load(body, data);//填充表单
 						body.find("input").attr("readonly", "readonly");  
@@ -186,13 +179,11 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				      shadeClose: false,//点击遮罩关闭
 				      anim: public_anim,
 				      btnAlign: 'c',
-				      shade: public_shade,//是否有遮罩，可以设置成false
-				      maxmin: true, //开启最大化最小化按钮
+				      shade: public_shade,
 				      area: ['700px', '440px'],
-				      //area: ['100%', '100%'],
-					  content: ['QuarzEdit.jsp?obj='+encodeURIComponent(JSON.stringify(data)), 'yes'], //iframe的url，no代表不显示滚动条
+				      closeBtn: 0,
+					  content: ['quarz/quarzEdit?obj='+encodeURIComponent(JSON.stringify(data)), 'yes'],
 					  success: function(layero, lockIndex) {
-						//alert(JSON.stringify(data));
 						var body = layer.getChildFrame('body', lockIndex);
 						//绑定解锁按钮的点击事件
 						body.find('button#close').on('click', function() {
@@ -388,6 +379,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 		});
 	</script>
 <script type="text/html" id="toobar">
+<i class="layui-icon" title="修改接口" onclick="updatate(&quot;int_meta:cc02fbff-8553-4bfc-b5d9-9b07c1c855b8&quot;)"></i>
 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
 <a class="layui-btn layui-btn-xs"  lay-event="update" >修改</a>
 <a class="layui-btn layui-btn-xs"  {{ d.jobStatus == 'NORMAL' ? 'lay-event="pauseJob"' : 'lay-event="resumeJob"' }}  >{{d.jobStatus == 'PAUSED' ? '启动' : '暂停'}}</a>

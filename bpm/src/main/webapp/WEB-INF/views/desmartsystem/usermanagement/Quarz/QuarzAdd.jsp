@@ -4,17 +4,17 @@
 <head>
 <meta charset="utf-8">
 <title>新增</title>
-<link href="resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.css" rel="stylesheet">
-<link href="resources/desmartsystem/cron-generator/cron-generator/font/font-awesome.min.css" rel="stylesheet">
-<link href="resources/desmartsystem/cron-generator/cron-generator/cronGen.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/font/font-awesome.min.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.css" rel="stylesheet">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/layui.css" media="all" />
-<script src="resources/desmartsystem/cron-generator/cron-generator/jquery-2.1.4.min.js"></script>
-<script type="text/javascript"src="<%=request.getContextPath()%>/plugins/layui-v2/layui.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/public.js"></script>
+<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/jquery-2.1.4.min.js"></script>
+<script type="text/javascript"src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/layui.all.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/myjs/public.js"></script>	
 <!-- 公共组件 -->
 <jsp:include page="../common/pbPlugins.jsp"></jsp:include>
-<script src="resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script>
-<script src="resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script>
+<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script>
 </head>
 <body>
 	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="" id="quartzAddForm" >
