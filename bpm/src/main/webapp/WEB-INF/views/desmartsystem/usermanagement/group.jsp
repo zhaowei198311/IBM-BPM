@@ -208,11 +208,11 @@
 	</div>
 	
 	<div class="display_container4" >
-		<div class="display_content4" style="height: auto;padding-bottom: 0px;">
+		<div class="display_content4" style="min-height: auto;">
 			<div class="top">
 				绑定业务角色
 			</div>
-			<div style="height:50px;">
+			<!-- <div style="height:50px;">
 				<div class="layui-inline">
 		      <label class="layui-form-label" style="width: auto;">角色名称：</label>
 		      <div class="layui-input-inline">
@@ -222,7 +222,7 @@
 		        	<button class="layui-btn" onclick="selectByNameRole();">查询</button>
 		      </div>
 		    </div>
-			</div>
+			</div> -->
 			<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
 			<div class="middle" style="height: 350px;">
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
