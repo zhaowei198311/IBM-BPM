@@ -106,6 +106,7 @@ public class DhTaskInstanceController {
 	@RequestMapping(value = "/addSure")
 	@ResponseBody
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance){
-		return dhTaskInstanceService.addSure(dhTaskInstance);
+		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		return dhTaskInstanceService.addSure(dhTaskInstance, creator);
 	}
 }

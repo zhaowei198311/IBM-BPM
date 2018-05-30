@@ -160,6 +160,8 @@ public class DhTaskInstance {
 	private DhProcessInstance dhProcessInstance; // 流程实例
 	
 	private SysUser sysUser; // 用户实例
+	
+	private String fromTaskUid; // 从属哪个任务id
 
 	/**
 	 * @return the taskUid
@@ -440,22 +442,26 @@ public class DhTaskInstance {
 	public void setSysUser(SysUser sysUser) {
 		this.sysUser = sysUser;
 	}
+	
+	public String getFromTaskUid() {
+		return fromTaskUid;
+	}
 
-    @Override
-    public String toString() {
-        return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid
-                + ", taskId=" + taskId + ", usrUid=" + usrUid
-                + ", activityBpdId=" + activityBpdId + ", taskType=" + taskType
-                + ", taskStatus=" + taskStatus + ", taskTitle=" + taskTitle
-                + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
-                + taskPreviousUsrUid + ", taskPreviousUsrUsername="
-                + taskPreviousUsrUsername + ", taskDelegateDate="
-                + taskDelegateDate + ", taskInitDate=" + taskInitDate
-                + ", taskFinishDate=" + taskFinishDate + ", taskDueDate="
-                + taskDueDate + ", taskRiskDate=" + taskRiskDate
-                + ", taskPriority=" + taskPriority + ", taskData=" + taskData
-                + ", taskDelegateUser=" + taskDelegateUser + "]";
-    }
+	public void setFromTaskUid(String fromTaskUid) {
+		this.fromTaskUid = fromTaskUid;
+	}
+
+	@Override
+	public String toString() {
+		return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid + ", taskId=" + taskId + ", usrUid=" + usrUid
+				+ ", activityBpdId=" + activityBpdId + ", taskType=" + taskType + ", taskStatus=" + taskStatus
+				+ ", taskTitle=" + taskTitle + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
+				+ taskPreviousUsrUid + ", taskPreviousUsrUsername=" + taskPreviousUsrUsername + ", taskDelegateDate="
+				+ taskDelegateDate + ", taskInitDate=" + taskInitDate + ", taskFinishDate=" + taskFinishDate
+				+ ", taskDueDate=" + taskDueDate + ", taskRiskDate=" + taskRiskDate + ", taskPriority=" + taskPriority
+				+ ", taskData=" + taskData + ", taskDelegateUser=" + taskDelegateUser + ", synNumber=" + synNumber
+				+ ", fromTaskUid=" + fromTaskUid + "]";
+	}
 
 	public DhProcessInstance getDhProcessInstance() {
 		return dhProcessInstance;
@@ -493,7 +499,7 @@ public class DhTaskInstance {
 			String taskType, String taskStatus, String taskTitle, Date insUpdateDate, String taskPreviousUsrUid,
 			String taskPreviousUsrUsername, Date taskDelegateDate, Date taskInitDate, Date taskFinishDate,
 			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData, String taskDelegateUser,
-			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser) {
+			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser, String fromTaskUid) {
 		super();
 		this.taskUid = taskUid;
 		this.insUid = insUid;
@@ -517,6 +523,7 @@ public class DhTaskInstance {
 		this.synNumber = synNumber;
 		this.dhProcessInstance = dhProcessInstance;
 		this.sysUser = sysUser;
+		this.fromTaskUid = fromTaskUid;
 	}
 
 }

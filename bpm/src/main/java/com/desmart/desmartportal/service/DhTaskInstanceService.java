@@ -102,5 +102,5 @@ public interface DhTaskInstanceService {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
-	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance);
+	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator);
 }

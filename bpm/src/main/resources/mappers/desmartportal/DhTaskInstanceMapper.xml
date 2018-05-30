@@ -24,6 +24,7 @@
 		<result column="TASK_DATA" property="taskData" />
 		<result column="TASK_DELEGATE_USER" property="taskDelegateUser" />
 		<result column="SYN_NUMBER" property="synNumber" />
+		<result column="FROM_TASK_UID" property="fromTaskUid" />
 	</resultMap>
 
 	<resultMap id="TaskInstanceByProcessAndUserMap"
@@ -48,6 +49,7 @@
 		<result column="TASK_DATA" property="taskData" />
 		<result column="TASK_DELEGATE_USER" property="taskDelegateUser" />
 		<result column="SYN_NUMBER" property="synNumber" />
+		<result column="FROM_TASK_UID" property="fromTaskUid" />
 		<association property="dhProcessInstance"
 			javaType="com.desmart.desmartportal.entity.DhProcessInstance">
 			<result column="INS_UID" property="insUid" />
@@ -118,7 +120,7 @@
 		ACTIVITY_BPD_ID,TASK_TYPE,TASK_STATUS,TASK_TITLE,
 		INS_UPDATE_DATE,TASK_PREVIOUS_USR_UID,TASK_PREVIOUS_USR_USERNAME,TASK_DELEGATE_DATE,
 		TASK_INIT_DATE,TASK_FINISH_DATE,TASK_DUE_DATE,TASK_RISK_DATE,
-		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER
+		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER,FROM_TASK_UID
 	</sql>
 	
 	<sql id="TaskAndProcess_Column_List">
@@ -126,7 +128,7 @@
 		T.ACTIVITY_BPD_ID,T.TASK_TYPE,T.TASK_STATUS,T.TASK_TITLE,
 		T.INS_UPDATE_DATE,T.TASK_PREVIOUS_USR_UID,T.TASK_PREVIOUS_USR_USERNAME,T.TASK_DELEGATE_DATE,
 		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
-		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,P.INS_TITLE,
+		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,P.INS_TITLE,
 		P.INS_CREATE_DATE,S.USER_NAME,S.USER_ID
 	</sql>
 	
@@ -244,7 +246,7 @@
 		</where>
 	</select>
 
-	<update id="updateByPrimaryKey" parameterType="java.lang.String">
+	<update id="updateByPrimaryKey" parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
 		UPDATE
 		DH_TASK_INSTANCE
 		<set>
@@ -306,10 +308,13 @@
 			<if test="synNumber != null and synNumber != ''">
 				SYN_NUMBER = #{synNumber}
 			</if>
-			<where>
-				TASK_UID = #{taskUid}
-			</where>
+			<if test="fromTaskUid != null and fromTaskUid != ''">
+				FROM_TASK_UID = #{fromTaskUid}
+			</if>
 		</set>
+		<where>
+			TASK_UID = #{taskUid}
+		</where>
 	</update>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -348,7 +353,8 @@
 		#{taskPriority},
 		#{taskData},
 		#{taskDelegateUser},
-		#{synNumber}
+		#{synNumber},
+		#{fromTaskUid}
 		)
 	</insert>
 
@@ -387,7 +393,8 @@
 			#{item.taskPriority},
 			#{item.taskData},
 			#{item.taskDelegateUser},
-			#{item.synNumber}
+			#{item.synNumber},
+			#{item.fromTo}
 			from dual
 		</foreach>
 	</insert>

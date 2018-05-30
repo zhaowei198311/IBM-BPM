@@ -633,25 +633,68 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	@Override
-	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance) {
-		// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
-		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
-		dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
-		dhTaskInstance.setTaskType("normal");
-		dhTaskInstance.setTaskStatus("12");
-		dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
-		dhTaskInstance.setTaskInitDate(new Date());
-		String[] usrUid = dhTaskInstance.getUsrUid().split(";");
-		SysUser sysUser = new SysUser();
-		for (String string : usrUid) {
-			sysUser.setUserName(string);
-			List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
-			dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-			dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
-			dhTaskInstanceMapper.insertTask(dhTaskInstance);
-		}
-		return ServerResponse.createBySuccess();
+	@Transactional
+	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator) {
+		try {
+			// 将当前任务暂挂
+			DhTaskInstance currentDhTaskInstance = new DhTaskInstance();
+			currentDhTaskInstance.setTaskUid(dhTaskInstance.getTaskUid());
+			currentDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
+			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
+			// 加新任务
+			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
+			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
+			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+			dhTaskInstance.setTaskType(DhTaskInstance.TYPE_ADD);
+			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+			dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
+			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
+			// usrUid集合
+			String[] usrUids = dhTaskInstance.getUsrUid().split(";");
+			// 需要保存任务集合
+			List<DhTaskInstance> saveDhTaskInstanceList = new ArrayList<>();
+			// 已经加签人员姓名
+			String completedSigning = "";
+			SysUser sysUser = new SysUser();
+			for (String string : usrUids) {
+				sysUser.setUserName(string);
+				List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
+				dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
+				// 验证当前人员是否已经加签
+				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(dhTaskInstance);
+				if (checkDhTaskInstance == null) {
+					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
+					saveDhTaskInstanceList.add(dhTaskInstance);
+				}else {
+					completedSigning += string+",";
+				}
+				
+//				dhTaskInstanceMapper.insertTask(dhTaskInstance);
+			}
+			if (!saveDhTaskInstanceList.isEmpty()) {
+				dhTaskInstanceMapper.insertBatch(saveDhTaskInstanceList);
+			}
+			// 路由表记录
+			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
+			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+			dhRoutingRecord.setActivityName(bpmActivityMeta.getActivityName());
+			dhRoutingRecord.setRouteType("addTask");
+			dhRoutingRecord.setUserUid("00011178");
+			dhRoutingRecord.setActivityId(dhTaskInstance.getActivityBpdId());
+			dhRoutingRecord.setActivityTo(dhTaskInstance.getActivityBpdId());
+			dhRoutingRecordMapper.insert(dhRoutingRecord);
+			
+			if (!completedSigning.isEmpty()) {
+				return ServerResponse.createByErrorMessage(completedSigning+"已经加签，其他人员操作成功！");
+			}
+			return ServerResponse.createBySuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage(e.getMessage());
+		}	
 	}
+	
     private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
         for (DhStep dhStep : stepList) {
             if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {

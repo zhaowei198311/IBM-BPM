@@ -162,6 +162,7 @@ $(function () {
 
 // 加签确定
 function addSure(){
+	var taskUid = $("#taskUid").val();
 	var taskId = $("#taskId").val();
 	var insUid = $("#insUid").val();
 	var usrUid = $("#handleUser_view").val();
@@ -176,6 +177,7 @@ function addSure(){
 		type: 'post',
 		dataType: 'json',
 		data: {
+			taskUid: taskUid,
 			insUid: insUid,
 			taskId: taskId,
 			activityBpdId: activityBpdId,
@@ -186,7 +188,7 @@ function addSure(){
 				layer.alert("操作成功!");
 				$(".display_container7").css("display","none");
 			}else {
-				layer.alert("操作失败!")
+				layer.alert(data.msg)
 			}
 		}
 	})
