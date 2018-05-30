@@ -479,7 +479,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		JSONObject formJson = new JSONObject();
 		JSONObject newObj = new JSONObject();
 		if (StringUtils.isNotBlank(formData)) {
-			newObj = JSONObject.parseObject(insDate);
+			newObj = JSONObject.parseObject(formData);
 		}
 		formJson = FormDataUtil.formDataCombine(newObj, JSONObject.parseObject(insDate).getJSONObject("formData"));
 
