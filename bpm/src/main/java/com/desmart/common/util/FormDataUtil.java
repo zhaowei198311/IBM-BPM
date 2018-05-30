@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -37,7 +37,7 @@ public class FormDataUtil {
 	            JSONObject oldObjVal = newObj.getJSONObject("");
 	            combinedObjVal = null;
 	            if (newObjVal != null && oldObjVal != null) {
-	                combinedObjVal = formDataCombine(oldObj, newObj);
+	                combinedObjVal = formDataCombine(newObjVal, oldObjVal);
 	            } else {
 	                combinedObjVal = oldObj.get(key.toString());
 	            }
@@ -69,28 +69,12 @@ public class FormDataUtil {
 	public static void main(String[] args) {
 		FormDataUtil a = new FormDataUtil();
 
-
+		String oldData = "{\"vendorType\":{\"value\":\"\"},\"fileName\":{\"value\":\"fdsffds\"},\"cooperationMode\":{\"value\":\"\"},\"financialCoding\":{\"value\":\"\"},\"landlord\":{\"value\":\"\"},\"useForPrint\":{\"value\":\"fddfdfdf\"},\"companyName\":{\"value\":\"\"},\"processNumber\":{\"value\":\"\"},\"contractLease\":{\"value\":\"\"},\"rent\":{\"value\":\"\"},\"bankOfDeposit\":{\"value\":\"\"},\"collaborator\":{\"value\":\"dffddf\"},\"ownershipCompany\":{\"value\":\"\"},\"reconciliationAccount\":{\"value\":\"\"},\"companyNumber\":{\"value\":\"\"},\"rentDate\":{\"value\":\"\"},\"price\":{\"value\":\"fdfddf\"},\"contact\":{\"value\":\"\"},\"contactNumber\":{\"value\":\"\"},\"paymentCycle\":{\"value\":\"\"},\"scopeOperation\":{\"value\":\"\"},\"rentFreeDate\":{\"value\":\"\"},\"email\":{\"value\":\"\"},\"termOfPayment\":{\"value\":\"\"},\"nameOfBank\":{\"value\":\"\"},\"orderCurrency\":{\"value\":\"\"},\"dateOfDelivery\":{\"value\":\"\"},\"dissolution\":{\"value\":\"undefined\"},\"contractCoding\":{\"value\":\"\"},\"vendorName\":{\"value\":\"\"},\"bankAddress\":{\"value\":\"\"},\"printNumber\":{\"value\":\"dfdf\"},\"sealName\":{\"value\":\"\"},\"landlordCode\":{\"value\":\"\"},\"builtUpArea\":{\"value\":\"\"},\"bankCountryCode\":{\"value\":\"\"},\"storeAddress\":{\"value\":\"\"},\"accountOpeningAccount\":{\"value\":\"\"},\"leaseDate\":{\"value\":\"\"},\"companyAddress\":{\"value\":\"\"},\"paymentMethod\":{\"value\":\"\"},\"postCode\":{\"value\":\"\"},\"standardContract\":{\"value\":\"4XX20\"},\"agencyFee\":{\"value\":\"\"},\"printTime\":{\"value\":\"\"}}";
+		String newData = "{\"\":{\"value\":\"undefined\"},\"fileName\":{\"value\":\"fdsffds\"},\"financialCoding\":{\"value\":\"\"},\"useForPrint\":{\"value\":\"fddfdfdf\"},\"companyName\":{\"value\":\"\"},\"contractLease\":{\"value\":\"\"},\"rent\":{\"value\":\"\"},\"collaborator\":{\"value\":\"dffddf\"},\"reconciliationAccount\":{\"value\":\"\"},\"price\":{\"value\":\"fdfddf\"},\"contact\":{\"value\":\"\"},\"scopeOperation\":{\"value\":\"\"},\"rentFreeDate\":{\"value\":\"\"},\"termOfPayment\":{\"value\":\"\"},\"nameOfBank\":{\"value\":\"\"},\"orderCurrency\":{\"value\":\"\"},\"dissolution\":{\"value\":\"undefined\"},\"contractCoding\":{\"value\":\"\"},\"vendorName\":{\"value\":\"\"},\"bankAddress\":{\"value\":\"\"},\"sealName\":{\"value\":\"\"},\"landlordCode\":{\"value\":\"\"},\"builtUpArea\":{\"value\":\"\"},\"bankCountryCode\":{\"value\":\"\"},\"storeAddress\":{\"value\":\"\"},\"paymentMethod\":{\"value\":\"\"},\"postCode\":{\"value\":\"\"},\"standardContract\":{\"value\":\"4XX20\"},\"vendorType\":{\"value\":\"\"},\"cooperationMode\":{\"value\":\"\"},\"landlord\":{\"value\":\"\"},\"processNumber\":{\"value\":\"\"},\"bankOfDeposit\":{\"value\":\"\"},\"ownershipCompany\":{\"value\":\"\"},\"companyNumber\":{\"value\":\"\"},\"rentDate\":{\"value\":\"\"},\"contactNumber\":{\"value\":\"\"},\"paymentCycle\":{\"value\":\"\"},\"email\":{\"value\":\"\"},\"createDate\":{\"value\":\"2018-05-30\"},\"dateOfDelivery\":{\"value\":\"\"},\"userName\":{\"value\":\"马亚伟\"},\"userId\":{\"value\":\"00011178\"},\"printNumber\":{\"value\":\"dfdf\"},\"accountOpeningAccount\":{\"value\":\"\"},\"leaseDate\":{\"value\":\"\"},\"companyAddress\":{\"value\":\"\"},\"agencyFee\":{\"value\":\"\"},\"printTime\":{\"value\":\"\"}}";
 		
-		JSONObject formData = new JSONObject();
-        JSONObject oo = new JSONObject();
-        oo.put("value", "cool");
-        formData.put("name", oo);
-        JSONObject oo1 = new JSONObject();
-        oo1.put("value", "220.22");
-        formData.put("salary", oo1);
-        JSONObject oo5 = new JSONObject();
-        oo5.put("value", "220.22");
-        formData.put("zhaowei", oo5);
-        System.out.println("1"+formData.toJSONString());
-        
-		JSONObject formData2 = new JSONObject();
-        JSONObject oo2 = new JSONObject();
-        oo2.put("value", "sadsad");
-        formData2.put("name", oo2);
-        JSONObject oo3 = new JSONObject();
-        oo3.put("value", "cccc");
-        formData2.put("salary", oo3);
-        System.out.println("2"+formData2.toJSONString());
+		JSONObject formData = JSON.parseObject(newData);
+		
+		JSONObject formData2 = JSON.parseObject(oldData);
         
         a.formDataCombine(formData, formData2);
 
