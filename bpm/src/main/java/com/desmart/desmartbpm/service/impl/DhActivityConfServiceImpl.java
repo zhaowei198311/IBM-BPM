@@ -271,11 +271,11 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         case TEAM_AND_DEPARTMENT:
         case TEAM_AND_COMPANY:
             activityAssignType = DhActivityAssignAssignType.TEAM.getCode();
-            String handleTeam2 = dhActivityConf.getChooseableHandleTeam();
-            if (StringUtils.isBlank(handleTeam2)) {
+            String chooseableHandleTeam2 = dhActivityConf.getChooseableHandleTeam();
+            if (StringUtils.isBlank(chooseableHandleTeam2)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
             }
-            List<String> teamIdList2 = Arrays.asList(handleTeam2.split(";"));
+            List<String> teamIdList2 = Arrays.asList(chooseableHandleTeam2.split(";"));
             List<SysTeam> teamList2 = sysTeamMapper.listByPrimaryKeyList(teamIdList2);
             if (teamIdList2.size() != teamList2.size()) {
                 return ServerResponse.createByErrorMessage("处理人信息错误");
@@ -294,11 +294,11 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             
             break;
         case USERS:
-            String handleUser = dhActivityConf.getHandleUser();
-            if (StringUtils.isBlank(handleUser)) {
+            String chooseableHandleUser = dhActivityConf.getChooseableHandleUser();
+            if (StringUtils.isBlank(chooseableHandleUser)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
             }
-            List<String> idList = Arrays.asList(handleUser.split(";"));
+            List<String> idList = Arrays.asList(chooseableHandleUser.split(";"));
             List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList); 
             if (idList.size() != userList.size()) {
                 return ServerResponse.createByErrorMessage("处理人信息错误");
@@ -316,11 +316,11 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         case PROCESS_CREATOR:
             break;
         case BY_FIELD:
-            String handleField = dhActivityConf.getHandleField();
-            if (StringUtils.isBlank(handleField)) {
+            String chosseableHandleField = dhActivityConf.getChooseableHandleField();
+            if (StringUtils.isBlank(chosseableHandleField)) {
                 return ServerResponse.createByErrorMessage("缺少处理人信息");
             }
-            if (handleField.length() > 60) {
+            if (chosseableHandleField.length() > 60) {
                 return ServerResponse.createByErrorMessage("处理人字段过长");
             }
             DhActivityAssign assign = new DhActivityAssign();
@@ -328,7 +328,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             assign.setActivityId(activityId);
             assign.setActaAssignType(DhActivityAssignAssignType.FIELD.getCode());
             assign.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
-            assign.setActaAssignId(handleField.trim());
+            assign.setActaAssignId(chosseableHandleField.trim());
             assignList.add(assign);
             break;
         default:
