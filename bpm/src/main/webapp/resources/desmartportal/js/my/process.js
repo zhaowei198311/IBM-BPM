@@ -285,96 +285,7 @@ function submitProcess(){
     var selectArr = $("table select");
     var control = true; //用于控制复选框出现重复值
     var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-    var json = "{";
-    for (var i = 0; i < inputArr.length; i++) {
-        var type = $(inputArr[i]).attr("type");
-        var textJson = "";
-        var checkJson = "";
-        switch (type) {
-            case "text": {
-                if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
-                    var name = $(inputArr[i]).parent()
-                        .parent().prev().prop("name");
-                    var value = $("[name='" + name + "']")
-                        .val();
-                    textJson = "\"" + name
-                        + "\":{\"value\":\"" + value
-                        + "\"}";
-                    break;
-                }
-            }
-                ;
-            case "tel":
-                ;
-            case "date":
-                ;
-            case "textarae": {
-                var name = $(inputArr[i]).attr("name");
-                var value = $("[name='" + name + "']")
-                    .val();
-                textJson = "\"" + name + "\":{\"value\":\""
-                    + value + "\"}";
-                break;
-            }
-            case "radio": {
-                var name = $(inputArr[i]).attr("name");
-                var radio = $("[name='" + name + "']")
-                    .parent().parent().find(
-                        "input:radio:checked");
-                textJson = "\"" + name + "\":{\"value\":\""
-                    + radio.attr("id") + "\"}";
-                break;
-            }
-            case "checkbox": {
-                var name = $(inputArr[i]).attr("name");
-                var checkbox = $("[name='" + name + "']")
-                    .parent().parent().find(
-                        "input:checkbox:checked");
-                //判断每次的复选框是否为同一个class
-                if (control) {
-                    checkName = checkbox.attr("name");
-                } else {
-                    if (checkName != checkbox.attr("name")) {
-                        checkName = checkbox.attr("name");
-                        control = true;
-                    }
-                }
-
-                if (control) {
-                    control = false;
-                    checkJson += "\"" + checkName
-                        + "\":{\"value\":[";
-                    for (var j = 0; j < checkbox.length; j++) {
-                        if (j == checkbox.length - 1) {
-                            checkJson += "\""
-                                + $(checkbox[j]).attr(
-                                    "id") + "\"";
-                        } else {
-                            checkJson += "\""
-                                + $(checkbox[j]).attr(
-                                    "id") + "\",";
-                        }
-                    }
-                    checkJson += "]},";
-                }
-
-                json += checkJson;
-                break;
-            }
-        }//end switch
-        textJson += ",";
-        if (json.indexOf(textJson) == -1) {
-            json += textJson;
-        }
-    }
-    //获得最后一位字符是否为","
-    var charStr = json.substring(json.length - 1,
-        json.length);
-
-    if (charStr == ",") {
-        json = json.substring(0, json.length - 1);
-    }
-    json += "}";
+    var json = common.getDesignFormData();
     //获取审批人
     var user = $(".getUser").val().substring(0, 8);
 
@@ -385,9 +296,6 @@ function submitProcess(){
     finalData.formData = formData;
     // 流程数据
     var processData = {};
-    //processData.proAppId = $("#proAppId").val();
-    //processData.proUid = $("#proUid").val(); 
-    //processData.proVerUid = $("#verUid").val();
     processData.insUid = $("#insUid").val();
     processData.departNo = $("#departNo").val();
     processData.companyNumber = $("#companyNum").val();
@@ -409,12 +317,6 @@ function submitProcess(){
     });
     finalData.routeData = routeData;
     console.log(finalData);
-    var startjson = "{";
-    var formData = "formData"; // 表单数据外层
-    var routeData = "routeData"; // 选人数据外层
-    var approvaData = "approvaData"; // 审批数据外层
-    var processData = "processData"; // 任务数据外层
-    var endjson = "}";
     
     $.ajax({
         url: 'processInstance/startProcess',

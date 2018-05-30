@@ -112,7 +112,7 @@
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
-            <button class="layui-btn layui-btn-sm" onclick="processView(${insId})">流程图</button>
+            <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
             <button class="layui-btn layui-btn-sm" id="reject" onclick="reject()">驳回</button>
