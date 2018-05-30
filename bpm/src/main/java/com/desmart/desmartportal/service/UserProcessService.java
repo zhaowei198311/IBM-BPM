@@ -6,6 +6,8 @@ package com.desmart.desmartportal.service;
 import java.util.List;
 import java.util.Map;
 
+import com.desmart.desmartbpm.entity.DhProcessMeta;
+
 /**  
 * <p>Title: 用户接口</p>  
 * <p>Description: </p>  
@@ -18,7 +20,7 @@ public interface UserProcessService {
 	 * 查询用户流程权限
 	 * @return
 	 */
-	List<Map<String, Object>> selectByMenusProcess();
+	Map<String, List<DhProcessMeta>> selectByMenusProcess();
 	
 	/**
 	 * 发起流程用户信息

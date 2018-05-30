@@ -67,8 +67,7 @@ public class UsersController {
 	public ModelAndView menus() {
 		ModelAndView mv = new ModelAndView("desmartportal/index");
 		// 判断用户可以发起那些流程的 权限 菜单等
-		List<Map<String, Object>> resultList = userProcessService.selectByMenusProcess();
-		mv.addObject("listmap",resultList);
+		mv.addObject("listmap",userProcessService.selectByMenusProcess());
 		return mv;
 	}
 	
@@ -76,30 +75,5 @@ public class UsersController {
 	public String index(){
 		return "desmartportal/login";
 	}
-	
-	/**
-	 * 代办任务
-	 * @return 
-	 */
-	@RequestMapping(value = "/todoTask")
-	@ResponseBody
-	public int todoTask(String userId) {
-		if(userId==null) {
-			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		}
-		return dhTaskInstanceService.selectByusrUid(userId);
-	}
-	
-	/**
-	 * 已办任务
-	 * @return 
-	 */
-	@RequestMapping(value = "/todoFinshTask")
-	@ResponseBody
-	public int todoFinshTask(String userId) {
-		if(userId==null) {
-			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		}
-		return dhTaskInstanceService.selectByusrUidFinsh(userId);
-	}
+			
 }

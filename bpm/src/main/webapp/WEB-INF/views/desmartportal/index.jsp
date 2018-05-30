@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	String path = request.getContextPath();
@@ -78,23 +79,25 @@
 					<iframe src="menus/backlog" name="iframe0" frameborder="0"
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
-						<c:forEach items="${listmap}" var="info">
-							<input id="userId" value="${info.userId}" style="display: none;">
+						<%-- 	<input id="userId" value="${info.userId}" style="display: none;"> --%>
 							<div class="menu_container">
+							<c:forEach items="${listmap}" var="info">
 								<div class="menu_title">
-									${info.categoryName}<i class="layui-icon"
+									${fn:substringAfter(info.key, ",")}     <i class="layui-icon"
 										style="font-size: 14px; cursor: default;">&#xe602;</i>
 								</div>
 								<div class="menu_detail">
-									<ul>
-										<li><a
-											href="menus/processType?proUid=${info.proUid}&proAppId=${info.proAppId}&verUid=${info.verUid}&proName=${info.proName}&categoryName=${info.categoryName}"
-											target="iframe0">${info.proName}</a></li>
-										<h1 style="clear: both;"></h1>
+								<c:forEach items="${info.value}" var="process">
+									<ul style="list-style-type: none;">
+										<li style="display: inline;"><a
+											href="menus/processType"
+											target="iframe0"></a>${process.proName}</li>
+										<h1 style="clear: both;"></h1>	
 									</ul>
+								</c:forEach>
 								</div>
-							</div>
-						</c:forEach>
+							</c:forEach>
+							</div>		
 					</div>
 				</div>
 			</div>
