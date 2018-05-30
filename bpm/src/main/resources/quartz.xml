@@ -31,6 +31,7 @@
         <!--方式三 : quartz.properties配置文件写入到配置XML中-->  
         <property name="quartzProperties">  
             <props>  
+            	<prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
                 <prop key="org.quartz.scheduler.instanceName">CRMscheduler</prop>  
                 <prop key="org.quartz.scheduler.instanceId">AUTO</prop>  
                 <!-- 线程池配置 -->  
