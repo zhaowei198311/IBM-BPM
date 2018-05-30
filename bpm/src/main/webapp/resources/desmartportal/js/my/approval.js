@@ -585,29 +585,26 @@ function checkUserData() {
             	var chooseUserDiv = "";
             	for(var i=0;i<activityMetaList.length;i++){
                 	var activityMeta = activityMetaList[i];
-                	chooseUserDiv += '<div class="choose_user_div">'
-						+'<label class="form_label layui-col-md2">下一环节</label>'
-						+'<div class="layui-col-md4">'
-							+'<input type="text" name="title" readonly  value="'+activityMeta.activityName+'" class="layui-input" style="border-width:1px;"/>'
-						+'</div>'
-						+'<label class="form_label layui-col-md2">处理人</label>'
-						+'<div class="layui-col-md4">'
-							+'<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="float:left;border-width:1px;" readonly>'
-							+'<i class="layui-icon" onclick=getConductor("'+activityMeta.activityId
+                	chooseUserDiv += '<tr>'
+                		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
+						+'<td>'+activityMeta.activityName+'</td>'
+						+'<th class="approval_th">处理人</th>'
+						+'<td><input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly></td>'
+						+'<th style="text-align:center;">'
+							+'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
 								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-								+activityMeta.dhActivityConf.actcAssignType+'"); '
-								+'style="position:relative;left:2%;font-size:30px;">&#xe612;</i>'
+								+activityMeta.dhActivityConf.actcAssignType+'"); >&#xe612;</i> '
 							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
 								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
 								+'data-looptype="'+activityMeta.loopType+'" />'
 							+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
-						+'</div>'
-						+'</div>';
-                		$(".choose_middle .layui-form").append(chooseUserDiv);
-                	}//end for
-                }
-        	}//end ajax
-		});
-		$(".display_container").css("display","block"); //end
+						+'</th>'							     
+					+'</tr>';
+            		$("#choose_user_tbody").append(chooseUserDiv);
+            	}//end for
+            }
+    	}//end ajax
+	});
+	$(".display_container2").css("display","block"); //end
 }
 
