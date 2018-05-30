@@ -120,10 +120,16 @@
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-       SELECT <include refid="realationColumnList"/>, meta.pro_Name
+       SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name, su.user_name initUserFullname
        FROM dh_process_instance ins
        left join dh_process_meta meta
          on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+       left join sys_department sd 
+         on ins.depart_no   = sd.depart_uid
+       left join sys_company sc 
+         on ins.company_number = sc.company_code
+       left join sys_user su 
+         on ins.ins_Init_User = su.user_uid
        where ins.ins_uid = #{insUid}
 	</select>
 	
@@ -240,10 +246,14 @@
 	</insert>
 	
     <select id="queryByInsId" parameterType="int" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-       SELECT <include refid="realationColumnList"/>, meta.pro_Name
+       SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
        FROM dh_process_instance ins
        left join dh_process_meta meta
          on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+       left join sys_department sd 
+         on ins.depart_no   = sd.depart_uid
+       left join sys_company sc 
+         on ins.company_number = sc.company_code
        where ins.ins_id = #{insId}
     </select>
     

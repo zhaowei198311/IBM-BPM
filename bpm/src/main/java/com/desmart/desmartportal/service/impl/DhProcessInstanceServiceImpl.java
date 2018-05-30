@@ -425,25 +425,22 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
-        resultMap.put("currentUser", currentUser);
         
         // 获得发起人部门信息和公司编码信息
         SysUserDepartment sysUserDepartment = new SysUserDepartment();
         sysUserDepartment.setUserUid(currentUserUid);
         List<SysUserDepartment> userDepartmentList = sysUserDepartmentService.selectAll(sysUserDepartment);
-        resultMap.put("userDepartmentList", userDepartmentList);
-        
         
         DhProcessDefinition processDefintion = null;
         DhProcessInstance processInstance = null;
         
+        String formData = "";
         if (StringUtils.isBlank(insUid)) {
             // 不是草稿箱来的
             processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
             if (processDefintion == null) {
                 return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
             }
-        	resultMap.put("formData", "");
             processInstance = this.generateDraftDefinition(processDefintion);
         } else {
             // 是草稿箱来的
@@ -459,20 +456,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             proUid = processInstance.getProUid();
             DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
             JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
-            String formData = jsonObj.getString("formData");
-            resultMap.put("formData", formData);
+            formData = jsonObj.getString("formData");
         }
-        
-        resultMap.put("processDefinition", processDefintion);
         
         ServerResponse<BpmActivityMeta> metaResponse = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, processDefintion.getProVerUid());
         if (!metaResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("找不到第一个人工环节");
         }
-        
         BpmActivityMeta firstHumanMeta = metaResponse.getData();
-        resultMap.put("bpmActivityMeta", firstHumanMeta);
-        resultMap.put("dhActivityConf", firstHumanMeta.getDhActivityConf());
         
         // 获得默认步骤的列表
         List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, "default");
@@ -480,21 +471,25 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
-        resultMap.put("dhStep", formStep);
         
         // 获得表单文件内容
         ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
         if (!formResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("获得表单数据失败");
         }
-        resultMap.put("formHtml", formResponse.getData());
-        
-        // 获得下个环节处理人信息
-        //resultMap.put("activityMetaList", menusService.activityHandler(proUid, proAppId, processDefintion.getProVerUid()));
         
         if (StringUtils.isBlank(insUid)) {
             dhProcessInstanceMapper.insertProcess(processInstance);
         }
+        
+        resultMap.put("currentUser", currentUser);
+        resultMap.put("processDefinition", processDefintion);
+        resultMap.put("formData", formData);
+        resultMap.put("bpmActivityMeta", firstHumanMeta);
+        resultMap.put("dhActivityConf", firstHumanMeta.getDhActivityConf());
+        resultMap.put("userDepartmentList", userDepartmentList);
+        resultMap.put("dhStep", formStep);
+        resultMap.put("formHtml", formResponse.getData());
         resultMap.put("processInstance", processInstance);
         return ServerResponse.createBySuccess(resultMap);
     }

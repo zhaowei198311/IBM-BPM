@@ -515,7 +515,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("获得表单数据失败");
         }
         
-        
         resultMap.put("activityMeta", currMeta);
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);

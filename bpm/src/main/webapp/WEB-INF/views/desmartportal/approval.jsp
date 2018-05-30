@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
@@ -125,21 +126,21 @@
                     <tr>
                         <td class="td_title">工号</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input">
+                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input" readonly/>
                         </td>
                         <td class="td_title">姓名</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser }" autocomplete="off" class="layui-input">
+                            <input type="text"  required lay-verify="required" value="${processInstance.initUserFullname}" autocomplete="off" class="layui-input" readonly/>
                         </td>
                     </tr>
                     <tr>
                         <td class="td_title">创建日期</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="" autocomplete="off" class="layui-input">
+                            <input type="text"  required lay-verify="required" value="<fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd"/>" autocomplete="off" class="layui-input" readonly/>
                         </td>
                         <td class="td_title">所属部门</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="" autocomplete="off" class="layui-input">
+                            <input type="text"  required lay-verify="required" value="${processInstance.departName}" autocomplete="off" class="layui-input" readonly/>
                         </td>
                     </tr>
                 </tbody>

@@ -79,7 +79,9 @@ public class DhProcessInstance {
 	
 	// 非流程表数据
 	private String proName; // 流程名
-	
+	private String departName;
+	private String companyName;
+	private String initUserFullname;
 	
 	
 	/**
@@ -138,7 +140,31 @@ public class DhProcessInstance {
 		this.insId = insId;
 	}
 
-	/**
+	public String getDepartName() {
+        return departName;
+    }
+
+    public void setDepartName(String departName) {
+        this.departName = departName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getInitUserFullname() {
+        return initUserFullname;
+    }
+
+    public void setInitUserFullname(String initUserFullname) {
+        this.initUserFullname = initUserFullname;
+    }
+
+    /**
 	 * @return the insParent
 	 */
 	public String getInsParent() {
