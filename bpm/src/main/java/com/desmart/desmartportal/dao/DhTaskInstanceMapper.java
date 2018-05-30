@@ -86,5 +86,6 @@ public interface DhTaskInstanceMapper {
 	 * @param taskUid
 	 * @return
 	 */
-	Integer updateTaskStatusByTaskUid(@Param("taskUid")String taskUid);
+	Integer updateTaskStatusByTaskUid(@Param("taskUid")String taskUid,
+			@Param("taskStatus")String taskStatus);
 }

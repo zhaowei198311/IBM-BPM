@@ -123,9 +123,9 @@ function loadDhroutingRecords(){
 	    	 var dhTaskHandlerHtml = "";
 	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
 	    		 if(i==(result.data.dhTaskHandlers.length-1)){
-					 dhTaskHandlerHtml +=result.datadhTaskHandlers[i].userName;
+					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName;
 				 }else{
-					 dhTaskHandlerHtml +=result.datadhTaskHandlers[i].userName+"、";
+					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName+"、";
 				 }
 	    	 }
 	    	 $(".p").find("p").eq(1).find("span").html(dhTaskHandlerHtml);

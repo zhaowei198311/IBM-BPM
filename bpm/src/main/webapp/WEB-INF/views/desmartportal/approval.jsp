@@ -77,6 +77,18 @@
         #formSet {
             display: none;
         }
+        
+        .choose_display_content {
+			color: #717171;
+			padding: 20px;
+			width: 600px;
+			min-height: 200px;
+			background: #fff;
+			position: absolute;
+			margin: 100px 0 0 -300px;
+			left: 50%;
+			box-shadow: 0 0 10px #ccc;
+		}
     </style>
 </head>
 
@@ -102,7 +114,7 @@
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
-            <button class="layui-btn layui-btn-sm" onclick="agree()">提交</button>
+            <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
             <button class="layui-btn layui-btn-sm" id="reject" onclick="reject()">驳回</button>
             <button class="layui-btn layui-btn-sm" id="transfer">传阅</button>
             <button class="layui-btn layui-btn-sm" id="add">加签</button>
@@ -155,6 +167,22 @@
                 </tbody>
             </table>
             <div id="formSet">${formHtml }</div>
+            <div class="display_container">
+				<div class="choose_display_content">
+					<div class="top">选择下个环节处理人</div>
+					<div class="choose_middle">
+						<form class="layui-form" action="" style="margin-top: 30px;">
+
+						</form>
+					</div>
+					<div class="foot">
+						<button class="layui-btn layui-btn sure_btn"
+							onclick="agree()">确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+							onclick="$('.display_container').css('display','none')">取消</button>
+					</div>
+				</div>
+			</div>
             <div class="option_container">
                 <p class="title_p" style="margin-top: 10px;">本环节审批要求</p>
                 <div class="layui-form">

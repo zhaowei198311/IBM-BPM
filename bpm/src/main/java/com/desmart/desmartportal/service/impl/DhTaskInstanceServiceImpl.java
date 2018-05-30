@@ -402,7 +402,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhRoutingRecordMapper.insert(dhRoutingRecord);
 						}
 						// 修改当前任务实例状态为已完成
-						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid)>0) {
+						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid,DhTaskInstance.STATUS_CLOSED)>0) {
 						//如果任务为类型为normal，则将其它相同任务id的任务废弃
 							if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);

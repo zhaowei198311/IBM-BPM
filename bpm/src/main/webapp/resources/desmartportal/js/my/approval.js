@@ -355,30 +355,25 @@ function agree() {
     var apr_taskUid = $("#activityId").val();//环节id，activity_id
     var aprOpiComment = $("#myApprovalOpinion").text();//审批意见
 	var aprStatus = "ok";
-	var approvaInfo ={
+	/*var approvaInfo ={
 			"aprOpiComment":aprOpiComment,
 			"aprStatus":aprStatus
-			} 
+			} */
 
-    var json = "{";
+    /*var json = "{";
 
     var formData = "formData"; // 表单数据外层
     var routeData = "routeData"; // 选人数据外层
-    var approvaData = "approvaData"; // 审批数据外层
+    var approvalData = "approvalData"; // 审批数据外层
     var taskData = "taskData"; // 任务数据外层
-    var endjson = "}";
+    var endjson = "}";*/
     // 数据信息
    
     // 发起流程             
     var finalData = {};
     // 表单数据
     var jsonStr = common.getDesignFormData();
-    formData = JSON.parse(jsonStr);
-    finalData.formData = formData;
-    
-    console.log(common.getDesignFormData());
-    
-    approvalData(common.getDesignFormData());//选人
+    var formData = JSON.parse(jsonStr);
     
     finalData.formData = formData;
     // 流程数据
@@ -407,6 +402,7 @@ function agree() {
     });
     finalData.routeData = routeData;
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+    finalData.approvalData = {"aprOpiComment":aprOpiComment,"aprStatus":aprStatus};
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
@@ -429,6 +425,7 @@ function agree() {
                     icon: 2
                 });
             }
+            $(".display_container").css("display","none"); 
         },
         error: function (result) {
             layer.close(index);
@@ -571,9 +568,11 @@ var isEdit = function (paramObj, name) {
     }
 }
 //提交流程-->选人
-function approvalData(formData) {
+function checkUserData() {
     var departNo = $("#departNo").val();
     var companyNumber = $("#companyNum").val();
+    var formData =common.getDesignFormData();
+        
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
     	layer.alert("缺少提交人信息");
     	return;
