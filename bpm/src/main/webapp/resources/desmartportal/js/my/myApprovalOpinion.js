@@ -26,14 +26,13 @@ $(function(){
 
 function loadDhApprovalOpinionList(){
 	var insUid = $("#insUid").val();//流程实例id--ins_uid
-	var taskUid = $("#activityId").val();//环节id，activity_id
+	//var taskUid = $("#activityId").val();//环节id，activity_id
 	$.ajax({
 	     url:"dhApprovalOpinion/loadDhApprovalOpinion.do",
 	     type : 'POST',
  		 dataType : 'json',
  		 data : {
- 			insUid:insUid,
- 			taskUid:taskUid
+ 			insUid:insUid
 			},
 	     success : function(result){
 	    	 $("#approval_tbody").empty();
