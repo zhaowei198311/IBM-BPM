@@ -419,9 +419,8 @@ function agree() {
                 layer.alert('提交成功', {
                     icon: 1
                 });
-            }
-            if (result.status == 1) {
-                layer.alert('提交失败', {
+            }else{
+                layer.alert(result.msg, {
                     icon: 2
                 });
             }
