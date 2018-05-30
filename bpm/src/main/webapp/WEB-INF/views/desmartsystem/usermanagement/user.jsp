@@ -46,9 +46,9 @@
 								<div class="layui-col-md1" style="text-align:right;">
 								    <button class="layui-btn create_btn" >新建</button>
 								</div>
-								<div class="layui-col-md1" style="text-align:right;margin-left: 20px;">
+								<!-- <div class="layui-col-md1" style="text-align:right;margin-left: 20px;">
 								   <button class="layui-btn" type="button" onclick="synchronizationAppointUser();" >同步指定用户</button>
-								</div>
+								</div> -->
 					</form>
 					</div>
 					<div>				

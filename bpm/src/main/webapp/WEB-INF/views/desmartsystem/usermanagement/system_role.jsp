@@ -144,7 +144,7 @@
 			</div>
 			<form method="post"  action="sysRoleResource/adSysRoleResource"   onsubmit="return validateCallback(this,closeResourceDialog);">
 				<div class="middle" style="height: auto;">
-					<ul id="resourceTree" class="ztree" style="width:auto;height:240px;"></ul>
+					<ul id="resourceTree" class="ztree" style="width:100%;height:240px;border:0px;"></ul>
 				</div>
 				<div class="foot">
 					<button class="layui-btn layui-btn sure_btn" type="button" id="addresource">确定</button>
