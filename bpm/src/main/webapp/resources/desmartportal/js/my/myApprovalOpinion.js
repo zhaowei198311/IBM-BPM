@@ -38,16 +38,16 @@ function loadDhApprovalOpinionList(){
 	    	 $("#approval_tbody").empty();
 	    	 for (var i = 0; i < result.data.length; i++) {
 	    	 var info = "<tr>"
-			      +"<th class='approval_th'>环节名称</th>"
+			      +"<th style='background-color: #FBFBFB;' class='approval_th'>环节名称</th>"
 			      +"<td>"+result.data[i].activityName+"</td>"
-			      +"<th class='approval_th'>审批人</th>"
+			      +"<th style='background-color: #FBFBFB;' class='approval_th'>审批人</th>"
 			      +"<td>"+result.data[i].aprUserName+"</td>"
-			      +"<th class='approval_th'>岗位名称</th>"
+			      +"<th style='background-color: #FBFBFB;' class='approval_th'>岗位名称</th>"
 			      +"<td>"+result.data[i].aprStation+"</td>"
-			      +"<th class='approval_th'>审批时间</th>"
+			      +"<th style='background-color: #FBFBFB;' class='approval_th'>审批时间</th>"
 			      +"<td>"+datetimeFormat_1(result.data[i].aprDate)+"</td>"								     
 			      +"</tr> <tr>"
-			      +"<th class='approval_th'>审批意见</th>"
+			      +"<th style='background-color: #FBFBFB;'class='approval_th'>审批意见</th>"
 			      +"<td colspan='7'>"+result.data[i].aprOpiComment+"</td>"
 			      +"</tr>";
 	    	 $("#approval_tbody").append(info);
