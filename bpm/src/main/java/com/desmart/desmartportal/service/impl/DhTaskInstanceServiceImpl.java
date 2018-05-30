@@ -587,7 +587,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		
 		// 审批最后日期
-		Date lastDate = sysDateService.lastTime(createDate, timeAmount, timeType);
+		Date lastDate = sysDateService.calculateDueDate(createDate, timeAmount, timeType);
 		if (timeAmount == null) {
 			timeAmount = 24.0;
 		} else {

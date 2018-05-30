@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.SysDateMapper" >
 
-	<select id="queryHoliday" parameterType="com.desmart.desmartportal.entity.SysDate"
-			resultType="com.desmart.desmartportal.entity.SysDate">
+	<select id="queryHoliday" parameterType="com.desmart.desmartportal.entity.SysHoliday"
+			resultType="com.desmart.desmartportal.entity.SysHoliday">
 	SELECT * FROM SYS_HOLIDAY		
 	<where>
 		<if test="holiday != null">

@@ -4,7 +4,7 @@ import java.lang.String;
 
 /**
  * 
- * @ClassName: SysDate  
+ * @ClassName: SysHoliday  
  * @Description: SYS_DATE  
  * @author: WUZHUANG  
  * @holiday: 2018年5月24日  

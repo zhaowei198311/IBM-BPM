@@ -1,7 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -33,6 +30,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhAgentService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.service.SysHolidayService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -56,6 +54,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private DhAgentRecordMapper dhAgentRecordMapper;
     @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
+    @Autowired
+    private SysHolidayService sysHolidayService;
     
     /**
      * 从引擎同步任务
@@ -194,7 +194,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             // 设置
             DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
             if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {
-                dhTask.setTaskDueDate(calculateDueDate(new Date(), conf.getActcTime(), conf.getActcTimeunit()));
+                dhTask.setTaskDueDate(sysHolidayService.calculateDueDate(new Date(), conf.getActcTime(), conf.getActcTimeunit()));
             }
             taskList.add(dhTask);
         }
@@ -234,17 +234,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return map;
     }
     
-    public Date calculateDueDate(Date date, Double timeAmount, String timeUnit) {
-        long addAmount = 0;
-        if (DhActivityConf.TIME_UNIT_HOUR.equals(timeUnit)) {
-            addAmount = (long)(1000L*60*60*timeAmount);
-        } else if (DhActivityConf.TIME_UNIT_DAY.equals(timeUnit)) {
-            addAmount = (long)(1000L*60*60*24*timeAmount);
-        } else if (DhActivityConf.TIME_UNIT_MONTH.equals(timeUnit)) {
-            addAmount = (long)(1000L*60*60*24*30*timeAmount);
-        }
-        return new Date(date.getTime() + addAmount);
-    }
     
    
 }

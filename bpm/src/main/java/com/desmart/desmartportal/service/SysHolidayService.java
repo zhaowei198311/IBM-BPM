@@ -33,5 +33,5 @@ public interface SysHolidayService {
 	 * @return Date  
 	 * @throws
 	 */
-	Date lastTime(Date date, Double timeAmount, String timeUnit);
+	Date calculateDueDate(Date date, Double timeAmount, String timeUnit);
 }

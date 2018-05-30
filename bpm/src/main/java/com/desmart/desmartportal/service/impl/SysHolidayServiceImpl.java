@@ -24,20 +24,20 @@ import com.desmart.desmartportal.service.SysHolidayService;
 public class SysHolidayServiceImpl implements SysHolidayService{
 	
 	@Autowired
-	private SysHolidayMapper sysDateMapper;
+	private SysHolidayMapper sysHolidayMapper;
 	
 	@Override
 	public boolean queryHolidayOrRestDay(Date date) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		SysHoliday sysDate = sysDateMapper.queryHoliday(new SysHoliday(df.format(date)));
-		if (sysDate == null) {
+		SysHoliday sysHoliday = sysHolidayMapper.queryHoliday(new SysHoliday(df.format(date)));
+		if (sysHoliday == null) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public Date lastTime(Date date, Double timeAmount, String timeUnit) {
+	public Date calculateDueDate(Date date, Double timeAmount, String timeUnit) {
 		if (timeAmount == null) {
 			timeAmount = 24.0;
 		}else {

@@ -16,5 +16,5 @@ public interface SysHolidayMapper {
 	 * @return SysDate  
 	 * @throws
 	 */
-	SysHoliday queryHoliday(SysHoliday sysDate);
+	SysHoliday queryHoliday(SysHoliday sysHoliday);
 }
