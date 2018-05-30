@@ -200,8 +200,8 @@
                         <img src="resources/desmartportal/images/top_star.png" class="star_img" />审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。
                     </p>
                 </div>
-                <p class="title_p" <c:if test="#{activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
-                <div class="layui-form" <c:if test="#{activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
+                <p class="title_p" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
+                <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
                     <!--<label class="layui-form-label">审批意见</label>
 				      	<div class="layui-input-block">-->
                     <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"></textarea>
