@@ -265,15 +265,22 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     if ("activity".equals(activityType) && "CalledProcess".equals(bpmTaskType) && "activity".equals(type)) {
                         // 外链流程
                         String externalId = activityMeta.getExternalId(); // 外链的流程的bpdId(流程图id)
-                        // 跳过这个节点获得它下个节点的信息, 同Service节点
-                        tos = activityMeta.getActivityTo().split(",");
-                        for (int i=0; i<tos.length; i++) {
-                            gateActivityMetas = getBpmActivityMeta(tos[i], sourceActivityMeta.getSnapshotId(), sourceActivityMeta.getBpdId());
-                            subGateData = this.getNowActivity((BpmActivityMeta)gateActivityMetas.get(0), insUid);
-                            gateAndData.addAll((List)subGateData.get("normal"));
-                            gateAndData.addAll((List)subGateData.get("gateAnd"));
-                            end.addAll((List)subGateData.get("end"));
+                        // 获得外链子流程的第一个节点
+                        BpmActivityMeta metaSelective = new BpmActivityMeta(activityMeta.getProAppId(), externalId, activityMeta.getSnapshotId());
+                        metaSelective.setActivityType("start");
+                        metaSelective.setDeepLevel(0);
+                        List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+                        BpmActivityMeta startMeta = metaList.get(0);
+                        String[] toArr = startMeta.getActivityTo().split(",");
+                        for (int i=0; i<toArr.length; i++) {
+                            String activityBpdId = toArr[i];
+                            subGateAnd = getBpmActivityMeta(activityBpdId, startMeta.getSnapshotId(), startMeta.getBpdId());
+                            Map<String, Object> subData = getNowActivity((BpmActivityMeta)subGateAnd.get(0), insUid);
+                            normal.addAll((List)subData.get("normal"));
+                            gateAndData.addAll((List)subData.get("gateAnd"));
+                            end.addAll((List)subData.get("end"));
                         }
+                        
                     } else {
                         if ("activity".equals(activityType) && "SubProcess".equals(bpmTaskType) && "activity".equals(type)) {
                             // 内链子流程

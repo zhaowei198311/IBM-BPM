@@ -116,30 +116,28 @@
 
 <body>
 	<div class="search_area top_btn">
-		  <input id="actcCanEditAttach" value="${dhActivityConf.actcCanEditAttach}" style="display: none;">
+	    <input type="hidden" id="departNo" />
+	    <input type="hidden" id="companyNum" />
+	    <input id="actcCanEditAttach" value="${dhActivityConf.actcCanEditAttach}" style="display: none;">
         <input id="actcCanUploadAttach" value="${dhActivityConf.actcCanUploadAttach}" style="display: none;">
         <input id="actcCanDeleteAttach" value="${dhActivityConf.actcCanDeleteAttach}" style="display: none;">
-		<input type="hidden" id="departNo" /> <input type="hidden"
-			id="companyNum" /> <input type="hidden" id="insUid"
-			value="${processInstance.insUid}" /> <input id="insTitle"
-			value="${processInstance.insTitle}" style="display: none;"> <input
-			id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
-		<input id="proUid" value="${processDefinition.proUid}"
-			style="display: none;"> <input id="proAppId"
-			value="${processDefinition.proAppId}" style="display: none;">
-		<input id="verUid" value="${processDefinition.proVerUid}"
-			style="display: none;"> <input id="proName"
-			value="${processDefinition.proName}" style="display: none;">
-		<input id="userId" value="${currentUser.userId}"
-			style="display: none;"> <input id="activityId"
-			value="${bpmActivityMeta.activityId}" style="display: none;" /> <span
-			id="formData" style="display: none;">${ formData }</span> <span
-			style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
-		<span style="float: right; padding-right: 20px;">
-			<button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
-			<button id="startProcess_btn" class="layui-btn layui-btn-sm">提交</button>
-			<button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
-		</span>
+	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
+	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
+	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
+	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
+	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
+	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
+	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
+	    <input id="userId" value="${currentUser.userId}" style="display: none;">
+	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;" />
+	    <span id="formData" style="display: none;">${ formData }</span>
+	    <span id="fieldPermissionInfo" style="display: none;">${ fieldPermissionInfo }</span>
+	    <span style="padding-left: 10px; color: #777; font-size: 18px;">${processDefinition.proName}</span>
+	    <span style="float: right; padding-right: 20px;">
+	        <button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
+	        <button id="startProcess_btn" class="layui-btn layui-btn-sm">提交</button>
+	        <button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
+	    </span>
 	</div>
 	<div class="container" style="width: 96%">
 		<div class="content">
@@ -353,113 +351,11 @@
 		});
 		var formData = $("#formData").text();
 		if (formData != null && formData != "") {
-			getdata(formData);
+			//getdata(formData);
+			common.giveFormSetValue(formData);
 		}
+		
+		common.giveFormFieldPermission($("#fieldPermissionInfo").text());
 	});
 
-	function getdata(jsonStr) {
-		var json = JSON.parse(jsonStr);
-		for ( var name in json) {
-			var paramObj = json[name];
-			//给各个组件赋值
-			setValue(paramObj, name);
-			//判断组件是否可见
-			isDisplay(paramObj, name);
-			//判断组件对象是否可编辑
-			isEdit(paramObj, name);
-		}
-	}
-
-	/**
-	 * 根据组件对象的类型给各个组件赋值
-	 * @param paramObj 组件对象
-	 * @param id 各个组件的id(单选框为class)
-	 */
-	var setValue = function(paramObj, name) {
-		var tagName = $("[name='" + name + "']").prop("tagName");
-		switch (tagName) {
-		case "INPUT": {
-			var tagType = $("[name='" + name + "']").attr("type");
-			switch (tagType) {
-			case "text":
-				;
-			case "tel":
-				;
-			case "date": {
-				$("[name='" + name + "']").val(paramObj["value"]);
-				form.render();
-				break;
-			}
-				;
-			case "radio": {
-				$("[name='" + name + "'][id='" + paramObj["value"] + "']")
-						.prop("checked", "true");
-				form.render();
-				break;
-			}
-			case "checkbox": {
-				var valueArr = paramObj["value"];
-				for ( var value in valueArr) {
-					$("[name='" + name + "'][id='" + valueArr[value] + "']")
-							.prop("checked", "true");
-				}
-				form.render();
-				break;
-			}
-			}
-			break;
-		}
-			;
-		case "SELECT":
-			;
-		case "TEXTAREA": {
-			$("[name='" + name + "']").val(paramObj["value"]);
-			form.render();
-			break;
-		}
-		}
-	}
-
-	/**
-	 * 判读组件对象是否可见
-	 * @param paramObj 组件对象
-	 * @param id 各个组件的id(单选框为class)
-	 */
-	var isDisplay = function(paramObj, name) {
-		var display = paramObj["display"];
-		if (display == "none") {
-			var tagType = $("[name='" + name + "']").attr("type");
-			$("[name='" + name + "']").parent().css("display", "none");
-			$("[name='" + name + "']").parent().prev().css("display", "none");
-			if (tagType == "radio" || tagType == "checkbox") {
-				$("[name='" + name + "']").parent().css("display", "none");
-				$("[name='" + name + "']").parent().prev().css("display",
-						"none");
-			}
-		}
-	}
-
-	/**
-	 * 判读组件对象是否可编辑
-	 * @param paramObj 组件对象
-	 * @param id 各个组件的id(单选框为class)
-	 */
-	var isEdit = function(paramObj, name) {
-		var edit = paramObj["edit"];
-		if (edit == "no") {
-			$("[name='" + name + "']").attr("readonly", "true");
-			var tagName = $("[name='" + name + "']").prop("tagName");
-			var tagType = $("[name='" + name + "']").attr("type");
-			var className = $("[name='" + name + "']").attr("class");
-			if (tagType == "radio" || tagType == "checkbox") {
-				$("[name='" + name + "']").attr("disabled", "true");
-			}
-			if (tagName == "SELECT") {
-				$("[name='" + name + "']").attr("disabled", "true");
-			}
-			if (className == "date") {
-				$("[name='" + name + "']").attr("disabled", "true");
-			}
-		}
-	}
 </script>

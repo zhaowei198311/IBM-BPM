@@ -35,6 +35,7 @@ import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhStepService;
@@ -111,6 +112,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private DhActivityConfMapper dhActivityConfMapper;
 	@Autowired
 	private DhRouteService dhRouteService;
+	@Autowired
+	private BpmFormFieldService bpmFormFieldService;
 	
 	/**
 	 * 查询所有流程实例
@@ -496,13 +499,18 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
-        
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep.getStepUid());
+        if (!fieldPermissionResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单权限信息");
+        }
+        String fieldPermissionInfo = fieldPermissionResponse.getData();
         
         ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
         if (!getFormResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单");
         }
         BpmForm bpmForm = (BpmForm)getFormResponse.getData();
+        
         
         // 获得表单文件内容
         ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
@@ -517,6 +525,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         
         resultMap.put("currentUser", currentUser);
         resultMap.put("bpmForm", bpmForm);
+        resultMap.put("fieldPermissionInfo", fieldPermissionInfo);
         resultMap.put("processDefinition", processDefintion);
         resultMap.put("formData", formData);
         resultMap.put("bpmActivityMeta", firstHumanMeta);

@@ -73,7 +73,7 @@ var saveDraftsData = function () {
                 // 发起流程             
                 var finalData = {};
                 // 表单数据
-                var formData = JSON.parse(json);
+                var formData = common.getDesignFormData();
                 finalData.formData = formData;
                 // 流程数据
                 var processData = {};
@@ -81,8 +81,8 @@ var saveDraftsData = function () {
                 //processData.proUid = $("#proUid").val(); 
                 //processData.proVerUid = $("#verUid").val();
                 processData.insUid = $("#insUid").val();
-                processData.departNo = departNo,
-                processData.companyNumber = companyNumber,
+                processData.departNo = $("#departNo").val();
+                processData.companyNumber = $("#companyNum").val();
                 finalData.processData = processData;
 
                 var activityId = ""

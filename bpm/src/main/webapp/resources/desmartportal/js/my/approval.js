@@ -411,6 +411,7 @@ function agree() {
                 layer.alert('提交成功', {
                     icon: 1
                 });
+                window.history.back();
             }else{
                 layer.alert(result.msg, {
                     icon: 2
