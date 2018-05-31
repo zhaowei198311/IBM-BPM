@@ -95,9 +95,13 @@
 		var isSingle=assignPersonnel.isSingle;
 		var actcCanChooseUser=assignPersonnel.actcCanChooseUser;
 		var actcAssignType=assignPersonnel.actcAssignType;
-		var oganizationIdOfcreator=assignPersonnel.oganizationIdOfcreator;
+		var actcChooseableHandlerType=assignPersonnel.actcChooseableHandlerType;
+		
 		$(function(){
-			if(actcAssignType=='allUsers'||oganizationIdOfcreator=='allUsers'){
+			console.log(actcChooseableHandlerType);
+			console.log(actcChooseableHandlerType=='allUsers');
+			if(actcAssignType=='allUser'||actcChooseableHandlerType=='allUser'){
+				console.log(actcChooseableHandlerType);
 				$('#treeDemo').show();
 				$('.query_user').show();
 			}else{
@@ -142,8 +146,7 @@
 				}
 			}
 			
-			if(oganizationIdOfcreator=='allUsers'){
-				
+			if(actcChooseableHandlerType!='allUser'){
 				var insUid=$("#insUid",parent.document).val();
 				var formData=$("#formData",parent.document).text();
 				var companyNum=$("#companyNum",parent.document).val();

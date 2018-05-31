@@ -30,7 +30,7 @@ import com.desmart.desmartsystem.service.DhInterfaceService;
  */
 @Controller
 @RequestMapping(value = "/interfaces")
-public class DhInterfaceController {
+public class DhInterfaceController { 
 
 	@Autowired
 	private DhInterfaceService dhInterfaceService;

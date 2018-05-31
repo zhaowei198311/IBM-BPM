@@ -35,7 +35,7 @@
     </div>
   </div>
 </div>
-<table class="layui-hide" id="table" lay-filter="table"></table>
+<table class="layui-hide layui-table" id="table" lay-filter="table" style="border: 0px;"></table>
 <script>
 	
 	
@@ -47,7 +47,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 	  var carousel = layui.carousel; //轮播
 	  var upload = layui.upload; //上传
 	  var element = layui.element; //元素操作
-	  var index = layer.load(1);//开启进度条
+	  //var index = layer.load(1);//开启进度条
 	  
 	  
 	  //绑定table
@@ -59,7 +59,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				//limits : [ 10, 20, 30, 60, 90, 100 ],
 				//limit : 20, //默认采用20
 				//cellMinWidth: 120,
-				even : true, //开启隔行背景
+				//even : true, //开启隔行背景
 				id : 'searchID',
 				done: function(res, curr, count){
 					//加载后回调
@@ -379,10 +379,12 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 		});
 	</script>
 <script type="text/html" id="toobar">
-<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-<a class="layui-btn layui-btn-xs"  lay-event="update" >修改</a>
+
+
+<i class="layui-icon" layui-btn-primary layui-btn-xs" lay-event="detail" >&#xe60a;</i>
+<i class="layui-icon" layui-btn-primary layui-btn-xs" lay-event="update" >&#xe642;</i>
 <a class="layui-btn layui-btn-xs"  {{ d.jobStatus == 'NORMAL' ? 'lay-event="pauseJob"' : 'lay-event="resumeJob"' }}  >{{d.jobStatus == 'PAUSED' ? '启动' : '暂停'}}</a>
-<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+<i class="layui-icon" layui-btn-primary layui-btn-xs" lay-event="del" >&#xe640;</i>
 </script>
 <script type="text/html" id="operStTpl">
 	<span class="layui-badge  {{ d.jobStatus == 'NORMAL' ? 'layui-bg-green' : '' }} ">{{d.jobStatus == 'NORMAL' ? '正常运行'  :'暂停状态'}}</span>

@@ -13,20 +13,29 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>数据字典</title>
   		<%@ include file="common/common.jsp" %>
-  		
 	</head>
 	<body>
-		<form class="form-inline" method="post" action="sysDictCd/allSysDictCd"  onsubmit="return search(this);">
-			<input type="hidden" name="pageNo" id="pageNo" value="1" >
-			<input type="hidden" name="parentId" value="0" >
-		</form>
+		
 		<div class="container">
 			<div class="search_area">
-				<div class="layui-row layui-form">					
-					<div class="layui-col-md1" style="text-align:right;">
-					    <button class="layui-btn create_btn" onclick="adddialog();" >新建</button>
-					</div>
-				</div>
+				<div class="layui-row">
+					<form class="form-inline layui-form" method="post" action="sysDictCd/allSysDictCd"  onsubmit="return search(this);">
+						<input type="hidden" name="pageNo" id="pageNo" value="1" />
+						<input type="hidden" name="roleType" value="1" />
+						<div class="layui-col-md2">
+							<input type="text" name="dictNm" placeholder="请输入字典名称" class="layui-input"/>
+						</div>
+						<div class="layui-col-md2">
+							<select  name="dictTypeCd" class="dictTypeCd"   lay-verify="required"   ></select>
+						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button class="layui-btn create_btn" type="submit">检索</button>
+						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button class="layui-btn create_btn" type="button"  onclick="adddialog()">新建</button>
+						</div>
+					</form>
+				</div>						
 			</div>
 			<div>				
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
@@ -160,15 +169,15 @@
 		        dataType: "json",  
 		        success: function (data) {
 		        	var optionstring="";
-		        	optionstring+="<option value='' ></option>";
+		        	optionstring+="<option value='' >请选择字典类型</option>";
 		        	$(data.dataList).each(function(){
 		        		optionstring+="<option value=\"" + this.dictTypeCd + "\" >" + this.dictTypeNm + "</option>";
 		        	}); 
 		        	$(select).prepend(optionstring);
-		        	/* layui.use('form', function(){
+		        	layui.use('form', function(){
 		    	        var form = layui.form;
 		    	        form.render();
-		    	    }); */
+		    	    });
 		        }
 		    });
 		}

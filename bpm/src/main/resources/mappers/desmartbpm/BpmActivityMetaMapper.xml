@@ -91,6 +91,8 @@
 			    <result column="ACTC_CAN_SKIP" jdbcType="VARCHAR" property="actcCanSkip" />
 			    <result column="ACTC_CAN_CHOOSE_USER" jdbcType="VARCHAR" property="actcCanChooseUser" />
 			    <result column="ACTC_CAN_TRANSFER" jdbcType="VARCHAR" property="actcCanTransfer" />
+			    
+			    <result column="ACTC_CHOOSEABLE_HANDLER_TYPE" jdbcType="VARCHAR" property="actcChooseableHandlerType" />
 	    </association>
     </resultMap>
 	  
