@@ -75,6 +75,7 @@ $(function () {
 		        		layer.alert('驳回完成', {
 				                icon: 1
 				         });
+		        		 window.history.back();
 		        	}else{
 		        		layer.alert('驳回失败', {
 			                icon: 2
