@@ -379,7 +379,6 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 		});
 	</script>
 <script type="text/html" id="toobar">
-<i class="layui-icon" title="修改接口" onclick="updatate(&quot;int_meta:cc02fbff-8553-4bfc-b5d9-9b07c1c855b8&quot;)"></i>
 <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
 <a class="layui-btn layui-btn-xs"  lay-event="update" >修改</a>
 <a class="layui-btn layui-btn-xs"  {{ d.jobStatus == 'NORMAL' ? 'lay-event="pauseJob"' : 'lay-event="resumeJob"' }}  >{{d.jobStatus == 'PAUSED' ? '启动' : '暂停'}}</a>
