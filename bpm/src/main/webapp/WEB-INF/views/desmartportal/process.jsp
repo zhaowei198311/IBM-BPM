@@ -290,7 +290,7 @@
 			</div>
 		</div>
 		<div class="foot_accessory_file">
-			<button type="button" class="layui-btn listAction" <c:if test="${dhActivityConf.actcCanUploadAttach =='FALSE'}" >style="display:none;"</c:if>>${dhActivityConf.actcUid}开始上传</button>
+			<button type="button" class="layui-btn listAction" <c:if test="${dhActivityConf.actcCanUploadAttach =='FALSE'}" >style="display:none;"</c:if>>开始上传</button>
 			<button class="layui-btn layui-btn-primary "
 				onclick="cancelClick(this)">取消</button>
 		</div>
