@@ -95,8 +95,9 @@
 		var isSingle=assignPersonnel.isSingle;
 		var actcCanChooseUser=assignPersonnel.actcCanChooseUser;
 		var actcAssignType=assignPersonnel.actcAssignType;
+		var oganizationIdOfcreator=assignPersonnel.oganizationIdOfcreator;
 		$(function(){
-			if(actcAssignType=='allUsers'){
+			if(actcAssignType=='allUsers'||oganizationIdOfcreator=='allUsers'){
 				$('#treeDemo').show();
 				$('.query_user').show();
 			}else{
@@ -141,7 +142,7 @@
 				}
 			}
 			
-			if(actcAssignType!='allUsers'){
+			if(oganizationIdOfcreator=='allUsers'){
 				
 				var insUid=$("#insUid",parent.document).val();
 				var formData=$("#formData",parent.document).text();
