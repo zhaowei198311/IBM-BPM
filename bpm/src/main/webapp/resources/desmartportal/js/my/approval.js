@@ -72,10 +72,12 @@ $(function () {
 		        success: function (result) {
 		            layer.close(index);
 		        	if(result.status == 0){
-		        		layer.alert('驳回完成', {
-				                icon: 1
-				         });
-		        		 window.history.back();
+		        		layer.msg('驳回成功', {
+		        			  icon: 1,
+		        			  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+		        			}, function(){
+		        				window.history.back();
+		        			});   
 		        	}else{
 		        		layer.alert('驳回失败', {
 			                icon: 2
