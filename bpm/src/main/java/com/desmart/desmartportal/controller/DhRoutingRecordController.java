@@ -53,11 +53,12 @@ public class DhRoutingRecordController {
 		}
 		
 		List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
+		for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {
+			String activity_bpd_id = bpmActivityMeta.getActivityBpdId();
 		for (DhTaskInstance dhTaskInstance : dhTaskInstances) {
-			String activity_bpd_id = dhTaskInstance.getActivityBpdId();
-			for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {
 				if(bpmActivityMeta.getActivityBpdId().equals(activity_bpd_id)) {
 					dhTaskHandlers.add(dhTaskInstance);
+					break;
 				}
 			}
 		}
