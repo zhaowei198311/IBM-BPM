@@ -50,13 +50,14 @@ public class AccessoryFileUploadController {
 		System.out.println("INNNNNNN");
 		return new ModelAndView("desmartportal/fileUploadLay");
 	}
-
+	
 	@RequestMapping(value = "saveFile.do")
 	@ResponseBody
 	public ServerResponse saveFile(@RequestParam("files") MultipartFile[] multipartFiles,
 			@RequestParam("uploadModels") String uploadModels, @RequestParam("appUid") String appUid,
-			@RequestParam("taskId") String taskId) {
-		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId);
+			@RequestParam("taskId") String taskId,
+			@RequestParam("actcCanUploadAttach")String actcCanUploadAttach) {
+		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId,actcCanUploadAttach);
 	}
 
 	@RequestMapping(value = "loadFileList.do")
@@ -107,8 +108,9 @@ public class AccessoryFileUploadController {
 
 	@RequestMapping("deleteAccessoryFile.do")
 	@ResponseBody
-	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
-		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument);
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,
+			@RequestParam("actcCanDeleteAttach")String actcCanDeleteAttach) {
+		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,actcCanDeleteAttach);
 	}
 
 	@RequestMapping("bachFileDown.do")
@@ -213,11 +215,12 @@ public class AccessoryFileUploadController {
 	@RequestMapping(value = "updateAccessoryFile.do")
 	@ResponseBody
 	public ServerResponse updateAccessoryFile(@RequestParam("file") MultipartFile multipartFile,
-			DhInstanceDocument dhInstanceDocument) {
+			DhInstanceDocument dhInstanceDocument,
+			@RequestParam("actcCanUploadAttach")String actcCanUploadAttach) {
 		if (dhInstanceDocument.getAppDocIdCard() == null || "".equals(dhInstanceDocument.getAppDocIdCard())) {
 			return ServerResponse.createByErrorMessage("更新文件异常！");
 		} else {
-			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument);
+			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument,actcCanUploadAttach);
 		}
 	}
 	@RequestMapping("loadHistoryFile.do")

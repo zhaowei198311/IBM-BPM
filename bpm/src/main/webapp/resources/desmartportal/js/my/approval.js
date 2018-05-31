@@ -450,6 +450,8 @@ $(function () {
     var formData = insDataFromDb.formData;
     var str = JSON.stringify(formData);
     getdata(str);
+    var fieldPermissionInfo = $("#fieldPermissionInfo").text();
+    common.giveFormFieldPermission(fieldPermissionInfo);
 });
 
 function getdata(jsonStr) {

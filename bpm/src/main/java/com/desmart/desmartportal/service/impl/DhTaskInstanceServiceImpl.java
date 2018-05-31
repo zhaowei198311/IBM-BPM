@@ -33,6 +33,7 @@ import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -118,6 +119,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private DhStepService dhStepService;
+	
+	@Autowired
+	private BpmFormFieldService bpmFormFieldService;
 	
 	
 	/**
@@ -520,6 +524,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if (!formResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("获得表单数据失败");
         }
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep.getStepUid());
+        if (!fieldPermissionResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单权限信息");
+        }
+        String fieldPermissionInfo = fieldPermissionResponse.getData();
         
         resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currMeta);
@@ -528,6 +537,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("processInstance", dhprocessInstance);
         resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
+	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 	

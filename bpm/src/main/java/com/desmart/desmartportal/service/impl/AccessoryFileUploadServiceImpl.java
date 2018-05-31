@@ -67,7 +67,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
-	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid, String taskId) {
+	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid
+			, String taskId,String actcCanUploadAttach) {
+		if(Const.Boolean.TRUE.equals(actcCanUploadAttach)) {
 		List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
 		List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
 		JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
@@ -116,7 +118,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
                     List<DhInstanceDocument> list = checkFileActivityIdByName(
                     		appUid,myFileName,null);
                     if(list!=null&&list.size()>0) {
-                    	return ServerResponse.createBySuccess("上传失败，文件名已存在！请选择对应文件进行更新", 0);
+                    	return ServerResponse.createByErrorMessage("上传失败，文件名已存在！请选择对应文件进行更新");
                     } 
 						try {
 							InputStream inputStream = file.getInputStream();
@@ -158,13 +160,13 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 						} catch (SftpException e) {
 							// TODO Auto-generated catch block
 							LOG.error("保存附件失败", e);
-							return ServerResponse.createBySuccess(0);
+							return ServerResponse.createByErrorMessage("保存附件失败");
 						}
 						
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							LOG.error("保存附件失败", e);
-							return ServerResponse.createBySuccess(0);
+							return ServerResponse.createByErrorMessage("保存附件失败");
 						}
                 }
             }
@@ -178,15 +180,20 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			count += updateFileByKeys(fileUpdateList);//修改
 		}
 		if(count<=0) {
-			return ServerResponse.createBySuccess(0);
+			return ServerResponse.createByErrorMessage("上传文件出现异常");
 		}else {
-			return ServerResponse.createBySuccess(1);
-		} 	
+			return ServerResponse.createBySuccess();
+		} 
+		}else {
+			return ServerResponse.createByErrorMessage("上传权限验证失败！");
+		}
 	}
 
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
-	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument) {
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument
+			,String actcCanDeleteAttach) {
+		if(Const.Boolean.TRUE.equals(actcCanDeleteAttach)) {
 		/*String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
 	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
 	    		,  dhInstanceDocument.getAppDocFileUrl().length());
@@ -214,11 +221,16 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    /*}else {
 	    	return ServerResponse.createByErrorMessage("删除失败！");
 	    }*/
+		}else {
+			return ServerResponse.createByErrorMessage("删除权限验证失败！");
+		}
 	}
 
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
-	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument) {
+	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
+			,String actcCanUploadAttach) {
+		if(Const.Boolean.TRUE.equals(actcCanUploadAttach)) {
 		//取得当前上传文件的文件名称  
         String myFileName = multipartFile.getOriginalFilename();
         /** 检查更新文件在最新版本是否重名 **/
@@ -285,6 +297,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			return ServerResponse.createByErrorMessage("更新文件失败！");
 		}
 		}
+		}else {
+			return ServerResponse.createByErrorMessage("更新文件权限验证失败！");
+		}
 	}
-
+		
 }

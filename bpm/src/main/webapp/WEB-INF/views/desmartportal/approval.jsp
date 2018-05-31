@@ -94,6 +94,7 @@
 
 <body>
     <div class="search_area top_btn">
+    	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
     	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
     	<input type="hidden" id="companyNum" value="${processInstance.companyNumber}"/> 
        	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
@@ -108,6 +109,9 @@
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
+        <input id="actcCanEditAttach" value="${activityConf.actcCanEditAttach}" style="display: none;">
+        <input id="actcCanUploadAttach" value="${activityConf.actcCanUploadAttach}" style="display: none;">
+        <input id="actcCanDeleteAttach" value="${activityConf.actcCanDeleteAttach}" style="display: none;">
         <span id="insData" style="display: none;">${processInstance.insData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>

@@ -16,6 +16,9 @@ $(function(){
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
+		  //var actcCanEditAttach = $("#actcCanEditAttach").val();
+		  var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
+		  //var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
 		  var re = new RegExp(",","g");
 		  var formatStr = fileFormat.replace(re,"|");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
@@ -114,16 +117,18 @@ $(function(){
 					 * ,data:{ appDocTitle:"测试" ,appDocComment:"测试" ,appUid:"测试"
 					 * ,taskId:"1" ,userUid:"测试" ,appDocTags:appDocTags }
 					 */
-			  			
-	        	      this.data = {appUid:appUid
-					    	,taskId:taskId,uploadModels:'{"uploadModels":['+uploadModels+']}'};
+			  			 
+	        	      this.data = {"appUid":appUid
+					    	,"taskId":taskId
+					    	,"actcCanUploadAttach":actcCanUploadAttach
+					    	,uploadModels:'{"uploadModels":['+uploadModels+']}'};
 		    		// this.data = {uploadModels:uploadModels.toString()};
 			  		}
 
 			        ,done: function(res, index, upload){
 			        	var tr = demoListView.find('tr#upload-'+ index)
 			            ,tds = tr.children();
-			        	if(res.data==1){ // 上传成功
+			        	if(res.status==0){ // 上传成功
 			        		tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
 			        		tds.eq(3).html(''); // 清空操作
 			        		return delete this.files[index]; // 删除文件队列已经上传成功的文件
@@ -306,6 +311,9 @@ function loadFileList(){
 		    var taskId = $("#activityId").val();
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
+		    //var actcCanEditAttach = $("#actcCanEditAttach").val();
+			var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
+			//var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
 		    var re = new RegExp(",","g");
 		    var formatStr = fileFormat.replace(re,"|");
 			layui.use('upload', function(){
@@ -315,7 +323,8 @@ function loadFileList(){
 				  elem: updateElem
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
 				    ,data: {"appUid":appUid,"taskId":taskId
-				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid}
+				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
+				    	,"actcCanUploadAttach":actcCanUploadAttach}
 				    ,exts: formatStr
 				    ,field: "file"
 			    ,before: function(obj){
@@ -477,6 +486,9 @@ function deleteAccessoryFile(a){
 	var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
     var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");
+    //var actcCanEditAttach = $("#actcCanEditAttach").val();
+	//var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
+	var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
     	$.ajax({
     		url : "accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
@@ -484,7 +496,8 @@ function deleteAccessoryFile(a){
     		data : {
 			"appDocFileUrl":appDocFileUrl,
 			"appDocUid":appDocUid,
-			"appDocIdCard":appDocIdCard
+			"appDocIdCard":appDocIdCard,
+			"actcCanDeleteAttach":actcCanDeleteAttach
 			},
 		success : function(data) {
 			loadFileList();
