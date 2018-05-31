@@ -714,7 +714,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhRoutingRecord.setRouteType("addTask");
 			dhRoutingRecord.setUserUid("00011178");
 			dhRoutingRecord.setActivityId(activityId);
-			dhRoutingRecord.setActivityTo(activityId);
+//			dhRoutingRecord.setActivityTo(activityId);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
 			
 			if (!completedSigning.isEmpty()) {
