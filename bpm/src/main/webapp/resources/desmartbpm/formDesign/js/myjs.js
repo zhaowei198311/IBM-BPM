@@ -275,19 +275,28 @@ function showSelectModal(obj) {
         $("input[value='手动填写']").prop("checked", true);
 
         $("#selectModal .add-form-obj").remove();
-        var optionValueArr = selectObj.children();
-        $(".option-value").val($(optionValueArr[0]).val());
-        for (var i = 1; i < optionValueArr.length; i++) {
-            var html = "<div class='form-group add-form-obj'>" +
-                "<div class='col-xs-7 col-sm-offset-4'>";
-            html += "<input type='text' " + "class='form-control option-value' " +
-                "value='" + $(optionValueArr[i]).val() + "'" +
-                "placeholder='请输入列表选项值'/>";
-            html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'" +
-                "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
-                " <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'" +
-                "style='font-size:20px;color:#888;cursor:pointer;'></span>";
-            html += "</div></div>";;
+        var optionObjArr = selectObj.children();
+        $(".option-text").val($(optionObjArr[0]).text());
+        $(".option-value").val($(optionObjArr[0]).val());
+        for (var i = 1; i < optionObjArr.length; i++) {
+        	var html = '<div class="form-group hand_act add-form-obj">'
+    			+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+    				+'显示的文本'
+    			+'</label>'
+    			+'<div class="col-xs-7">'
+    				+'<input type="text" class="form-control option-text col-xs-3"'
+    				+'value="'+$(optionObjArr[i]).text()+'"'
+    				+'placeholder="显示的文本"/>'
+    				+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+    				+'<input type="text" class="form-control option-value col-xs-3"'
+    				+'value="'+$(optionObjArr[i]).val()+'"'
+    				+'placeholder="存储的value"/>'
+    				+'<span class="glyphicon glyphicon-minus" onclick="removeOptionInput(this)" '
+    				+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+    				+'<span class="glyphicon glyphicon-plus" onclick="addOptionInput(this)" '
+    				+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+    			+'</div>'
+    		+'</div>';
             $("#selectModal form").append(html);
         }
     }
@@ -319,22 +328,32 @@ function showRadioModal(obj) {
     $("#radio-label-width").val(textLabelCol);
     $("#radio-width").val(textCol);
 
-    $(".radio-value").val($(view.find(".subDiv label")[0]).text().trim());
+    $(".radio-text").val($(view.find(".subDiv label")[0]).text().trim());
+    $(".radio-value").val($(view.find(".subDiv input[type='radio']")[0]).val().trim());
     $("#radioModal .add-form-obj").remove();
     for (var i = 1; i < view.find(".subDiv label").length; i++) {
         var radioLabelObj = $(view.find(".subDiv label")[i]);
-        var radioAddVal = radioLabelObj.text().trim();
-        var html = "<div class='form-group add-form-obj'>" +
-            "<div class='col-xs-7 col-sm-offset-4'>";
-        html += "<input type='text' " +
-            "class='form-control radio-value' " +
-            "value='" + radioAddVal + "' " +
-            "placeholder='请输入单选框选项值'/>";
-        html += " <span class='glyphicon glyphicon-minus' onclick='removeRadioInput(this)'" +
-            "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
-            " <span class='glyphicon glyphicon-plus' onclick='addRadioInput(this)'" +
-            "style='font-size:20px;color:#888;cursor:pointer;'></span>";
-        html += "</div></div>";
+        var radioAddVal = $(view.find(".subDiv input[type='radio']")[i]).val();
+        var radioAddText = radioLabelObj.text().trim();
+        
+        var html = '<div class="form-group add-form-obj">'
+	    		+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+					+'显示的文本'
+				+'</label>'
+				+'<div class="col-xs-7">'
+					+'<input type="text" class="form-control radio-text col-xs-3" '
+					+'value="'+radioAddText+'"'
+					+'placeholder="显示的文本"/>'
+					+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+					+'<input type="text" class="form-control radio-value col-xs-3"'
+					+'value="'+radioAddVal+'"'
+					+'placeholder="存储的value"/>'
+					+'<span class="glyphicon glyphicon-minus" onclick="removeRadioInput(this)" '
+					+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+					+'<span class="glyphicon glyphicon-plus" onclick="addRadioInput(this)" '
+					+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+				+'</div>'
+			+'</div>';
         $("#radioModal form").append(html);
     }
 
@@ -366,39 +385,33 @@ function showCheckboxModal(obj) {
     $("#checkbox-width").val(textCol);
 
     var checkboxLabelArr = view.find(".subDiv label");
-    $(".checkbox-value").val($(checkboxLabelArr[0]).text().trim());
-
-    if ($(checkboxLabelArr[0]).find("input").is(":checked")) {
-        $(".checkbox-value").next().find("input").attr("checked", "checked");
-    } else {
-        $(".checkbox-value").next().find("input").removeAttr("checked");
-    }
+    var checkboxObjArr = view.find("input[type='checkbox']");
+    $(".checkbox-text").val($(checkboxLabelArr[0]).text().trim());
+    $(".checkbox-value").val($(checkboxObjArr[0]).val().trim());
 
     $("#checkboxModal .add-form-obj").remove();
     for (var i = 1; i < checkboxLabelArr.length; i++) {
-        var checkboxLabelObj = $(view.find(".subDiv label")[i]);
-        var checkboxAddVal = checkboxLabelObj.text().trim();
-
-        var html = "<div class='form-group add-form-obj'>" +
-            "<div class='col-xs-7 col-sm-offset-4'>";
-
-        html += "<input type='text' " +
-            "class='col-xs-4 checkbox-value' " +
-            "placeholder='请输入复选框选项值' value='" + checkboxAddVal + "'/> " +
-            "<div class='col-sm-offset-1 col-xs-1' style='margin-top:4px;'>"
-
-        if (checkboxLabelObj.find("input").is(":checked")) {
-            html += "<input type='checkbox' title='勾选让该选项选中' checked/> ";
-        } else {
-            html += "<input type='checkbox' title='勾选让该选项选中'/> ";
-        }
-
-        html += "</div>";
-        html += " <span class='glyphicon glyphicon-minus' onclick='removeCheckboxInput(this)'" +
-            "style='font-size:20px;color:#888;margin:4px 0 0 7px;cursor:pointer;'></span>" +
-            " <span class='glyphicon glyphicon-plus' onclick='addCheckboxInput(this)'" +
-            "style='font-size:20px;color:#888;margin:4px 0 0 5px;cursor:pointer;'></span>";
-        html += "</div></div>";
+        var checkboxLabelObj = $(checkboxLabelArr[i]);
+        var checkboxAddText = checkboxLabelObj.text().trim();
+        var checkboxAddValue = $(checkboxObjArr[i]).val();
+        var html = '<div class="form-group add-form-obj">'
+				+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+					+'显示的文本'
+				+'</label>'
+				+'<div class="col-xs-7">'
+					+'<input type="text" class="form-control checkbox-text col-xs-3"'
+					+'value="'+checkboxAddText+'"'
+					+'placeholder="显示的文本"/>'
+					+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+					+'<input type="text" class="form-control checkbox-value col-xs-3"'
+					+'value="'+checkboxAddValue+'"'
+					+'placeholder="存储的value"/>'
+					+'<span class="glyphicon glyphicon-minus" onclick="removeCheckboxInput(this)" '
+					+'style="font-size:20px;color:#888;margin:4px 0 0 7px;cursor:pointer;"></span>'
+					+'<span class="glyphicon glyphicon-plus" onclick="addCheckboxInput(this)" '
+					+'style="font-size:20px;color:#888;margin:4px 0 0 5px;cursor:pointer;"></span>'
+				+'</div>'
+			+'</div>';
         $("#checkboxModal form").append(html);
     }
 
@@ -1071,8 +1084,9 @@ $(function () {
             var label = $("#select-label").val();
             var name = $("#select-name").val();
             var isMust = $("#select-must").is(':checked');
-            var optionObjArr = $(".option-value"); //下拉列表添加选项的输入框对象
-
+            var optionTextArr = $(".option-text"); //下拉列表添加选项的输入框对象
+            var optionValueArr = $(".option-value");
+            
             var dataSource = $("input[name='data_source']:checked").val();
 
             var textWidth = $("#select-width").val() * colWidth;
@@ -1095,11 +1109,11 @@ $(function () {
             selectObj.parent().css("width", textWidth - 18).attr("col", $("#select-width").val());
             selectObj.css("width", textWidth - 3.5).attr("col", $("#select-width").val());
             selectObj.children().remove();
-            for (var i = 0; i < optionObjArr.length; i++) {
-                var optionObj = $(optionObjArr[i]);
-                var optionVal = optionObj.val();
-                if (optionVal.trim() != null && optionVal.trim() != "") {
-                    selectObj.append("<option value=" + optionVal + ">" + optionVal + "</option>");
+            for (var i = 0; i < optionTextArr.length; i++) {
+                var optionText = $(optionTextArr[i]).val().trim();
+                var optionValue = $(optionValueArr[i]).val().trim();
+                if (optionText != null && optionText != "" && optionValue != null && optionValue != "") {
+                    selectObj.append("<option value=" + optionValue + ">" + optionText + "</option>");
                 }
             }
             if (isMust) {
@@ -1128,8 +1142,8 @@ $(function () {
         } else {
             var label = $("#radio-label").val();
             var isMust = $("#radio-must").is(':checked');
-            var radioObjArr = $(".radio-value"); //单选框添加选项的输入框对象
-
+            var radioTextArr = $(".radio-text"); //单选框添加选项的显示文本的输入框对象
+            var radioValueArr = $(".radio-value");//单选框添加选项的vlaue的输入框对象
             var textWidth = $("#radio-width").val() * colWidth;
             var textLabelWidth = $("#radio-label-width").val() * colWidth;
 
@@ -1137,14 +1151,24 @@ $(function () {
 
             var parentDivObj = view.find(".subDiv");
             view.find(".radio").remove();
-            for (var i = 0; i < radioObjArr.length; i++) {
-                if ($(radioObjArr[i]).val() != "" && $(radioObjArr[i]).val() != null) {
-                    var radioObj = $(radioObjArr[i]);
+            for (var i = 0; i < radioTextArr.length; i++) {
+            	var radioText = $(radioTextArr[i]).val();
+            	var radioValue = $(radioValueArr[i]).val();
+                if(radioText != "" && radioText != null && radioValue!=null && radioValue!="") {
                     var html = "<label class='radio'>" +
-                        "<input type='radio' class='" + id + "' id='" + id + i + "' name='" + name + "'/>" +
-                        radioObj.val() +
+                        "<input type='radio' class='" + id + "' id='" + id + i 
+                        + "' name='" + name + "' value='"+radioValue+"'/>" +
+                        radioText +
                         "</label>";
                     parentDivObj.append(html);
+                }else{
+                	var html = "<label class='radio'>" +
+                    "<input type='radio' class='" + id + "' id='" + id + i 
+                    + "' name='" + name + "' value='radioValue'/>radioValue</label>";
+                	parentDivObj.append(html);
+                }
+                if(i==0){
+                	parentDivObj.find("input[type='radio']:eq(0)").prop("checked",true);
                 }
             }
 
@@ -1177,7 +1201,8 @@ $(function () {
         } else {
             var label = $("#checkbox-label").val();
             var isMust = $("#checkbox-must").is(':checked');
-            var checkboxObjArr = $(".checkbox-value"); //单选框添加选项的输入框对象
+            var checkboxTextArr = $(".checkbox-text"); //单选框添加选项的输入框对象
+            var checkboxValueArr = $(".checkbox-value");
             var id = $("#checkbox-id").val();
 
             var textWidth = $("#checkbox-width").val() * colWidth;
@@ -1186,33 +1211,20 @@ $(function () {
             view.find(".labelDiv label").text(label);
             var parentDivObj = view.find(".subDiv");
             view.find(".checkbox").remove();
-            for (var i = 0; i < checkboxObjArr.length; i++) {
-                var checkboxObj = $(checkboxObjArr[i])
+            for (var i = 0; i < checkboxTextArr.length; i++) {
+                var checkboxText = $(checkboxTextArr[i]).val();
+                var checkboxValue = $(checkboxValueArr[i]).val();
                 var html = "";
-                if (checkboxObj.val() == "" || checkboxObj.val() == null) {
-                    if (i == 0) {
-                        if (checkboxObj.next().find("input").is(":checked")) {
-                            html += "<label class='checkbox'>" +
-                                "<input type='checkbox' class='" + id + "' id='" + id + i + "' name='" + name + "' checked/>checkboxValue" +
-                                "</label>";
-                        } else {
-                            html += "<label class='checkbox'>" +
-                                "<input type='checkbox' class='" + id + "' id='" + id + i + "' name='" + name + "'/>checkboxValue" +
-                                "</label>";
-                        }
-                    }
-                } else {
-                    if (checkboxObj.next().find("input").is(":checked")) {
-                        html += "<label class='checkbox'>" +
-                            "<input type='checkbox' class='" + id + "' id='" + id + i + "' name='" + name + "' checked/>" +
-                            checkboxObj.val() +
-                            "</label>";
-                    } else {
-                        html += "<label class='checkbox'>" +
-                            "<input type='checkbox' class='" + id + "' id='" + id + i + "' name='" + name + "'/>" +
-                            checkboxObj.val() +
-                            "</label>";
-                    }
+                if(checkboxText!=null && checkboxText!="" && checkboxValue!=null && checkboxValue!=""){
+                	html += "<label class='checkbox'>" +
+	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
+	                    + "' name='" + name + "' value='"+checkboxValue+"'/>"+checkboxText+
+	                    "</label>";
+                }else{
+                	html += "<label class='checkbox'>" +
+	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
+	                    + "' name='" + name + "' value='checkboxValue'/>checkboxText" +
+	                    "</label>";
                 }
                 parentDivObj.append(html);
             }
@@ -1466,23 +1478,29 @@ $(function () {
 //动态添加下拉框的选项添加框
 function addOptionInput(obj) {
     var addFormObj = $(obj).parent().parent();
-    var html = "<div class='form-group add-form-obj'>" +
-        "<div class='col-xs-7 col-sm-offset-4'>";
-    html += "<input type='text' " +
-        "class='form-control option-value' " +
-        "placeholder='请输入列表选项值'/>";
-    html += " <span class='glyphicon glyphicon-minus' onclick='removeOptionInput(this)'" +
-        "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
-        " <span class='glyphicon glyphicon-plus' onclick='addOptionInput(this)'" +
-        "style='font-size:20px;color:#888;cursor:pointer;'></span>";
-    html += "</div></div>";
+    var html = '<div class="form-group hand_act add-form-obj">'
+			+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+				+'显示的文本'
+			+'</label>'
+			+'<div class="col-xs-7">'
+				+'<input type="text" class="form-control option-text col-xs-3"'
+				+'placeholder="显示的文本"/>'
+				+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+				+'<input type="text" class="form-control option-value col-xs-3"'
+				+'placeholder="存储的value"/>'
+				+'<span class="glyphicon glyphicon-minus" onclick="removeOptionInput(this)" '
+				+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+				+'<span class="glyphicon glyphicon-plus" onclick="addOptionInput(this)" '
+				+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+			+'</div>'
+		+'</div>';
     addFormObj.after(html);
 }
 
 //动态删除下拉框的选项添加框
 function removeOptionInput(obj) {
     var removeFormObj = $(obj).parent().parent();
-    if (removeFormObj.find("label").length == 1) {
+    if (removeFormObj.parent().find(".option-text").length == 1) {
         $(obj).parent().find("input").val("");
     } else {
         removeFormObj.remove();
@@ -1492,23 +1510,29 @@ function removeOptionInput(obj) {
 //动态添加单选框的选项添加框
 function addRadioInput(obj) {
     var addFormObj = $(obj).parent().parent();
-    var html = "<div class='form-group add-form-obj'>" +
-        "<div class='col-xs-7 col-sm-offset-4'>";
-    html += "<input type='text' " +
-        "class='form-control radio-value' " +
-        "placeholder='请输入单选框选项值'/>";
-    html += " <span class='glyphicon glyphicon-minus' onclick='removeRadioInput(this)'" +
-        "style='font-size:20px;color:#888;cursor:pointer;'></span>" +
-        " <span class='glyphicon glyphicon-plus' onclick='addRadioInput(this)'" +
-        "style='font-size:20px;color:#888;cursor:pointer;'></span>";
-    html += "</div></div>";
+    var html = '<div class="form-group add-form-obj">'
+	    		+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+					+'显示的文本'
+				+'</label>'
+				+'<div class="col-xs-7">'
+					+'<input type="text" class="form-control radio-text col-xs-3"'
+					+'placeholder="显示的文本"/>'
+					+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+					+'<input type="text" class="form-control radio-value col-xs-3"'
+					+'placeholder="存储的value"/>'
+					+'<span class="glyphicon glyphicon-minus" onclick="removeRadioInput(this)" '
+					+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+					+'<span class="glyphicon glyphicon-plus" onclick="addRadioInput(this)" '
+					+'style="font-size:20px;color:#888;cursor:pointer;"></span>'
+				+'</div>'
+			+'</div>';
     addFormObj.after(html);
 }
 
 //动态删除单选框的选项添加框
 function removeRadioInput(obj) {
     var removeFormObj = $(obj).parent().parent();
-    if (removeFormObj.find("label").length != 1) {
+    if (removeFormObj.parent().find(".radio-text").length != 1) {
         removeFormObj.remove();
     }
 }
@@ -1516,26 +1540,29 @@ function removeRadioInput(obj) {
 //动态添加复选框的选项添加框
 function addCheckboxInput(obj) {
     var addFormObj = $(obj).parent().parent();
-    var html = "<div class='form-group add-form-obj'>" +
-        "<div class='col-xs-7 col-sm-offset-4'>";
-    html += "<input type='text' " +
-        "class='col-xs-4 checkbox-value' " +
-        "placeholder='请输入复选框选项值'/> " +
-        "<div class='col-sm-offset-1 col-xs-1' style='margin-top:4px;'>" +
-        "<input type='checkbox' title='勾选让该选项选中'/> " +
-        "</div>";
-    html += " <span class='glyphicon glyphicon-minus' onclick='removeCheckboxInput(this)'" +
-        "style='font-size:20px;color:#888;margin:4px 0 0 7px;cursor:pointer;'></span>" +
-        " <span class='glyphicon glyphicon-plus' onclick='addCheckboxInput(this)'" +
-        "style='font-size:20px;color:#888;margin:4px 0 0 5px;cursor:pointer;'></span>";
-    html += "</div></div>";
+    var html = '<div class="form-group add-form-obj">'
+			+'<label class="col-xs-2 col-sm-offset-2 control-label">'
+				+'显示的文本'
+			+'</label>'
+			+'<div class="col-xs-7">'
+				+'<input type="text" class="form-control checkbox-text col-xs-3"'
+				+'placeholder="显示的文本"/>'
+				+'<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>'
+				+'<input type="text" class="form-control checkbox-value col-xs-3"'
+				+'placeholder="存储的value"/>'
+				+'<span class="glyphicon glyphicon-minus" onclick="removeCheckboxInput(this)" '
+				+'style="font-size:20px;color:#888;margin:4px 0 0 7px;cursor:pointer;"></span>'
+				+'<span class="glyphicon glyphicon-plus" onclick="addCheckboxInput(this)" '
+				+'style="font-size:20px;color:#888;margin:4px 0 0 5px;cursor:pointer;"></span>'
+			+'</div>'
+		+'</div>';
     addFormObj.after(html);
 }
 
 //动态删除复选框的选项添加框
 function removeCheckboxInput(obj) {
     var removeFormObj = $(obj).parent().parent();
-    if (removeFormObj.find("label").length != 1) {
+    if (removeFormObj.parent().find(".checkbox-text").length != 1) {
         removeFormObj.remove();
     }
 }

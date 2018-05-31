@@ -173,7 +173,7 @@ var common = {
 						.parent().parent().find(
 							"input:radio:checked");
 					textJson = "\"" + name + "\":{\"value\":\""
-						+ radio.attr("id") + "\"}";
+						+ radio.val() + "\"}";
 					break;
 				}
 				case "checkbox": {
@@ -198,12 +198,10 @@ var common = {
 						for (var j = 0; j < checkbox.length; j++) {
 							if (j == checkbox.length - 1) {
 								checkJson += "\""
-									+ $(checkbox[j]).attr(
-										"id") + "\"";
+									+ $(checkbox[j]).val() + "\"";
 							} else {
 								checkJson += "\""
-									+ $(checkbox[j]).attr(
-										"id") + "\",";
+									+ $(checkbox[j]).val() + "\",";
 							}
 						}
 						checkJson += "]},";
@@ -257,14 +255,14 @@ var common = {
 							break;
 						};
 						case "radio":{
-							$("[name='"+name+"'][id='"+paramObj["value"]+"']").prop("checked","true");
+							$("[name='"+name+"'][value='"+paramObj["value"]+"']").prop("checked","true");
 							form.render();
 							break;
 						}
 						case "checkbox":{
 							var valueArr = paramObj["value"];
 							for(var value in valueArr){
-								$("[name='"+name+"'][id='"+valueArr[value]+"']").prop("checked","true");
+								$("[name='"+name+"'][value='"+valueArr[value]+"']").prop("checked","true");
 							}
 							form.render();
 							break;

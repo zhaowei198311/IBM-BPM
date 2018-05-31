@@ -458,7 +458,7 @@ function getDataToSelect(obj,dicUid){
                 var dicDataList = result.data;
                 for(var i=0;i<dicDataList.length;i++){
                     var dicDataObj = dicDataList[i];
-                    var optionObj = '<option value="'+dicDataObj.dicDataName+'">'+dicDataObj.dicDataName+'</option>';
+                    var optionObj = '<option value="'+dicDataObj.dicDataCode+'">'+dicDataObj.dicDataName+'</option>';
                     $(obj).append(optionObj);
                 }
                 form.render();

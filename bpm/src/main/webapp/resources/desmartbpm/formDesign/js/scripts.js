@@ -385,6 +385,7 @@ function downloadLayoutSrc() {
             ["onclick"],
             ["onchange"],
             ["onfocus"],
+            ["checked"],
             ["onkeypress"],
             ["value"]
         ]

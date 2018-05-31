@@ -296,7 +296,7 @@
 											</div>
 											<div class="subDiv">
 												<select col="1">
-													<option value="---请选择---">---请选择---</option>
+													<option value="selectOption">---请选择---</option>
 												</select>
 											</div>
 										</div>
@@ -326,7 +326,7 @@
 											</div>
 											<div class="subDiv" col="1">
 												<label class="radio">
-													<input type="radio" name="optionsRadios" checked/>radioValue
+													<input type="radio" name="optionsRadios" value="radioValue" checked/>radioText
 												</label>
 											</div>
 										</div>
@@ -356,7 +356,7 @@
 											</div>
 											<div class="subDiv" col="1">
 												<label class="checkbox">
-													<input type="checkbox" checked/>checkboxValue
+													<input type="checkbox" value="checkboxValue"/>checkboxText
 												</label>
 											</div>
 										</div>
@@ -1066,11 +1066,14 @@
 					</div>
 					<div class="form-group hand_act">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
-							添加选项值
+							显示的文本
 						</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control option-value"
-								placeholder="请输入列表选项值"/>
+							<input type="text" class="form-control option-text col-xs-3"
+								placeholder="显示的文本"/>
+							<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>
+							<input type="text" class="form-control option-value col-xs-3"
+								placeholder="存储的value"/>
 							<span class="glyphicon glyphicon-minus" onclick="removeOptionInput(this)" 
 								style="font-size:20px;color:#888;cursor:pointer;"></span>
 							<span class="glyphicon glyphicon-plus" onclick="addOptionInput(this)" 
@@ -1175,11 +1178,14 @@
 					</div>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
-							添加选项值
+							显示的文本
 						</label>
 						<div class="col-xs-7">
-							<input type="text" class="form-control radio-value"
-								placeholder="请输入单选框选项值"/>
+							<input type="text" class="form-control radio-text col-xs-3"
+								placeholder="显示的文本"/>
+							<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>
+							<input type="text" class="form-control radio-value col-xs-3"
+								placeholder="存储的value"/>
 							<span class="glyphicon glyphicon-minus" onclick="removeRadioInput(this)" 
 								style="font-size:20px;color:#888;cursor:pointer;"></span>
 							<span class="glyphicon glyphicon-plus" onclick="addRadioInput(this)" 
@@ -1276,14 +1282,14 @@
 					</div>
 					<div class="form-group">
 						<label class="col-xs-2 col-sm-offset-2 control-label">
-							添加选项值
+							显示的文本
 						</label>
 						<div class="col-xs-7">
-							<input type="text" class="col-xs-4 checkbox-value"
-								placeholder="请输入复选框选项值"/>
-							<div class="col-sm-offset-1 col-xs-1" style="margin-top:4px;">
-								<input type="checkbox" title="勾选让该选项选中"/>
-							</div>
+							<input type="text" class="form-control checkbox-text col-xs-3"
+								placeholder="显示的文本"/>
+							<label class="col-xs-1" style="padding:0 10px 0 2px;">value</label>
+							<input type="text" class="form-control checkbox-value col-xs-3"
+								placeholder="存储的value"/>
 							<span class="glyphicon glyphicon-minus" onclick="removeCheckboxInput(this)" 
 								style="font-size:20px;color:#888;margin:4px 0 0 7px;cursor:pointer;"></span>
 							<span class="glyphicon glyphicon-plus" onclick="addCheckboxInput(this)" 
