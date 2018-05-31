@@ -55,27 +55,23 @@
 				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="yiban_icon"></span>条任务</p>
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
-					    <col width="60">
-					    <col width="130">
-					    <col width="140">
 					    <col>
-					    <col width="150">
-					    <col width="150">
-					    <col width="100">
-					    <col width="100"> 
-					    <col width="100"> 
-					    <col width="100">
+					    <col>
+					    <col>
+					    <col>
+					    <col> 
+					    <col> 
+					    <col>
 					</colgroup>
 					<thead>
 					    <tr>
 					      <th>序号</th>
 					      <th>任务标题</th>
-					      <th>处理人</th>
-					      <th>任务状态</th>
-					      <th>上一环节提交人</th>
+					      <!-- <th>上一环节提交人</th> -->
 					      <th>任务类型</th>
 					      <th>接收时间</th>
-					      <th>任务期限</th>
+					      <!-- <th>处理时间</th> -->
+					      <th>跟踪</th>
 					    </tr> 
 					</thead>
 					<tbody id="proMet_table_tbody" />
@@ -97,8 +93,6 @@
 	</body>
 	
 </html>
-	<script type="text/javascript" src="resources/js/jquery-3.3.1.js" ></script>
-	<script type="text/javascript" src="resources/js/layui.all.js"></script>	
 	<script>
 	var pageConfig = {
 			pageNum : 1,
@@ -200,26 +194,24 @@
 				var sortNum = startSort + i;
 				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
-				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate();
-				var agentOdate2 = new Date(meta.taskDueDate);
-				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate();
+				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
 				trs += '<tr>' + '<td>' + sortNum + '</td>' 
-						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
+						+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
 						+ meta.taskTitle 
 						+ '</td>' 
-						+ '<td>'
-						+ meta.usrUid 
-						+ '</td>'
-						+ '<td>' + meta.taskStatus + '</td>' + '<td>'
-						+ meta.taskPreviousUsrUsername + '</td>' + '<td>' + meta.taskType
+						+ '<td>';
+					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+						trs += meta.taskPreviousUsrUsername 
+					}
+					trs += '</td>' + '<td>' + meta.taskType
 						+ '</td>' 
 						+ '<td>'
 						+ InitDate
 						+'</td>' 
 						+ '<td>'
-						+ taskDueDate
-						+'</td>' 
-						+ '</tr>'
+						+ "<i class='layui-icon tail' onclick='processView(\""+ meta.insUid +"\")'>&#xe641;</i>"
+						+ '</td>'
+						+ '</tr>';
 			}
 			$("#proMet_table_tbody").append(trs);
 		}
@@ -258,5 +250,31 @@
 		//刷新按钮
 		function reload(){
 			window.location.reload();	
+		}
+		//进入已办详情页面
+		function openFinishedDetail(taskUid){
+			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+		}
+		
+		//跟踪流程图
+		function processView(insId) {
+			$.ajax({
+		        url: 'processInstance/viewProcess',
+		        type: 'post',
+		        dataType: 'text',
+		        data: {
+		            insId: insId
+		        },
+		        success: function (result) {
+		            layer.open({
+		                type: 2,
+		                title: '流程图',
+		                shadeClose: true,
+		                shade: 0.8,
+		                area: ['790px', '580px'],
+		                content: result
+		            });
+		        }
+		    });
 		}
 	</script>
