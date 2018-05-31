@@ -40,7 +40,7 @@ var common = {
     	    title: '选择人员',
     	    shadeClose: true,
     	    shade: 0.8,
-    	    area: ['48%', '78%'],
+    	    area: ['600px', '540px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);
@@ -147,7 +147,7 @@ var common = {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");
 						var value = $("[name='" + name + "']")
-							.val();
+							.val().trim();
 						textJson = "\"" + name
 							+ "\":{\"value\":\"" + value
 							+ "\"}";
@@ -157,23 +157,21 @@ var common = {
 					;
 				case "tel":
 					;
-				case "date":
-					;
-				case "textarea": {
+				case "date":{
 					var name = $(inputArr[i]).attr("name");
 					var value = $("[name='" + name + "']")
-						.val();
+						.val().trim();
 					textJson = "\"" + name + "\":{\"value\":\""
 						+ value + "\"}";
 					break;
-				}
+				};
 				case "radio": {
 					var name = $(inputArr[i]).attr("name");
 					var radio = $("[name='" + name + "']")
 						.parent().parent().find(
 							"input:radio:checked");
 					textJson = "\"" + name + "\":{\"value\":\""
-						+ radio.val() + "\"}";
+						+ radio.val().trim() + "\"}";
 					break;
 				}
 				case "checkbox": {
@@ -198,10 +196,10 @@ var common = {
 						for (var j = 0; j < checkbox.length; j++) {
 							if (j == checkbox.length - 1) {
 								checkJson += "\""
-									+ $(checkbox[j]).val() + "\"";
+									+ $(checkbox[j]).val().trim() + "\"";
 							} else {
 								checkJson += "\""
-									+ $(checkbox[j]).val() + "\",";
+									+ $(checkbox[j]).val().trim() + "\",";
 							}
 						}
 						checkJson += "]},";
@@ -220,7 +218,7 @@ var common = {
 		for(var i=0;i<textareaArr.length;i++){
 			var name = $(textareaArr[i]).attr("name");
 			var value = $("[name='" + name + "']")
-				.val();
+				.val().trim();
 			var textJson = "\"" + name + "\":{\"value\":\""
 				+ value + "\"},";
 			if (json.indexOf(textJson) == -1) {
@@ -235,6 +233,7 @@ var common = {
 			json = json.substring(0, json.length - 1);
 		}
 		json += "}";
+		json = json.replace(/\t/g,"");
 		return json;
 	},
 	//传入表单json数据给表单组件赋值
