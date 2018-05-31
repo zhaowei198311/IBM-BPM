@@ -2,16 +2,15 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     if (actcCanChooseUser == 'FALSE') {
         return false;
     }
-    
     var area=[];
-    if(actcAssignType=='allUsers'){
+    if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
     	area=['680px', '520px'];
     }else{
     	area=['594px', '460px'];
     }
     
 
-    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType+'&actcChooseableHandlerType='+actcChooseableHandlerType;
+    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType;
     layer.open({
         type: 2,
         title: '选择人员',
