@@ -27,6 +27,7 @@
                 <div class="search_area top_btn">
                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
                     <span style="float:right;">
+                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>
                         <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="saveFrom='saveBtn';save('');">保存</button>
 
                     </span>

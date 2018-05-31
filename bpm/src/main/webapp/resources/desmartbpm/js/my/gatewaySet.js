@@ -359,6 +359,43 @@ var activityType = "gateway";
 //页面加载完成
 $(function(){
 	initFoldHurdle();
+	
+	$("#snapshotFlowChart_btn").click(function() {
+		/*var cks = $("[name='definition_ck']:checked")
+		if (!cks.length) {
+			layer.alert("请选择一个流程定义");
+			return;
+		}
+		if (cks.length > 1) {
+			layer.alert("请选择一个流程定义，不能选择多个");
+			return;
+		}*/
+		/*var ck = cks.eq(0);
+		var proUid = ck.data('prouid');
+		var proVerUid = ck.data('proveruid');
+		var proAppId = ck.data('proappid');
+*/
+		$.ajax({
+			url : common.getPath() + "/processDefinition/snapshotFlowChart",
+			dataType : "text",
+			type : "POST",
+			data : {
+				"proUid" : proUid,
+				"proVerUid" : proVerUid,
+				"proAppId" : proAppId
+			},
+			success : function(result) {
+				layer.open({
+					type : 2,
+					title : '流程快照',
+					shadeClose : true,
+					shade : 0.8,
+					area : [ '790px', '580px' ],
+					content : result
+				});
+			}
+		})
+	})
 })
 
 //初始化网关左侧折叠菜单
