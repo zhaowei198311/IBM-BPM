@@ -76,7 +76,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
 		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUid(stepUid);
 		if(objPermissList.size()==0) {
-			return ServerResponse.createByErrorMessage("没有权限信息");
+			return ServerResponse.createBySuccess("");
 		}else {
 			String jsonStr = "{";
 			for(int i=0;i<objPermissList.size();i++) {
