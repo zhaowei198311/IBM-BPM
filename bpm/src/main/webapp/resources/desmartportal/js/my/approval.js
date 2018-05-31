@@ -348,15 +348,14 @@ function back() {
 var view = $(".container-fluid");
 var form = null;
 $(function () {
-    var insData = $("#insData").text();
+   
     layui.use(['form'], function () {
         form = layui.form;
     });
-    console.log(insData);
-    var insDataFromDb = JSON.parse(insData);
-    var formData = insDataFromDb.formData;
-    var str = JSON.stringify(formData);
-    common.giveFormSetValue(str);
+    console.log($("#formData").text());
+    
+    common.giveFormSetValue($("#formData").text());
+    form.render();
     var fieldPermissionInfo = $("#fieldPermissionInfo").text();
     common.giveFormFieldPermission(fieldPermissionInfo);
     form.render();

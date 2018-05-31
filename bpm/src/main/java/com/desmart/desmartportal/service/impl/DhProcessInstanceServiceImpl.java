@@ -347,6 +347,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 taskInstance.setActivityBpdId(firstHumanActivity.getActivityBpdId());
                 taskInstance.setTaskData(data);
                 taskInstance.setTaskId(taskId);
+                taskInstance.setTaskTitle(firstHumanActivity.getActivityName());
                 taskInstance.setInsUid(dhProcessInstance.getInsUid());
                 taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
                 taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);

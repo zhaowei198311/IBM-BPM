@@ -128,7 +128,7 @@
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
-        <span id="insData" style="display: none;">${processInstance.insData}</span>
+        <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">

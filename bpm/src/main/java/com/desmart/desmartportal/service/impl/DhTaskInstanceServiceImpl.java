@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
@@ -530,7 +531,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         String fieldPermissionInfo = fieldPermissionResponse.getData();
         
+        String insDataStr = dhprocessInstance.getInsData();
+        JSONObject insData = JSON.parseObject(insDataStr);
+        JSONObject formData = insData.getJSONObject("formData");
+        
         resultMap.put("bpmForm", bpmForm);
+        resultMap.put("formData", formData.toJSONString());
         resultMap.put("activityMeta", currMeta);
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);
