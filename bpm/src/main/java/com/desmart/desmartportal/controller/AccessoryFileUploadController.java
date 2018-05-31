@@ -133,7 +133,6 @@ public class AccessoryFileUploadController {
 	            request.getSession().removeAttribute("totalCount");
 	            request.getSession().removeAttribute("curCount");
 	            request.getSession().removeAttribute("percent");
-	            request.getSession().removeAttribute("percentText");
 				/*
 				 * response.setContentType("text/html; charset=UTF-8"); //设置编码字符
 				 * response.setContentType("application/zip"); //设置内容类型为zip
@@ -188,14 +187,13 @@ public class AccessoryFileUploadController {
 						curCount+=size;
 						out.write(buff, 0, size);
 					}
-					fis.close();
 					
 					 double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
 			            int percent=(int)(dPercent*100);               //再乘上100取整
 			            request.getSession().setAttribute("totalCount",totalCount);
 			            request.getSession().setAttribute("curCount", curCount);
 			            request.getSession().setAttribute("percent", percent);    //比如这里是50
-			            request.getSession().setAttribute("percentText",percent+"%");//这里是50%
+					fis.close();
 				} catch (IOException e) {
 					// TODO: handle exception
 					LOG.error(e.getMessage());
@@ -249,10 +247,22 @@ public class AccessoryFileUploadController {
 		  HashMap<String,Object> map=null;
 		  HttpSession session = request.getSession();
           map=new HashMap<String, Object>();
-          map.put("totalCount", session.getAttribute("totalCount"));  //总条数
-          map.put("curCount", session.getAttribute("curCount"));      //已导条数
-          map.put("percent", session.getAttribute("percent"));          //百分比数字
-          map.put("percentText", session.getAttribute("percentText"));  //百分比文本
+          Integer totalCount = 0;
+          if(session.getAttribute("totalCount")!=null) {
+        	  totalCount = Integer.valueOf((String) session.getAttribute("totalCount"));
+          }
+          Integer curCount = 0;
+          if(session.getAttribute("curCount")!=null) {
+        	  curCount = Integer.valueOf(session.getAttribute("curCount").toString());
+          }
+          Integer percent = 0;
+          if(session.getAttribute("percent")!=null) {
+        	  percent = Integer.valueOf(session.getAttribute("percent").toString());
+          }
+          map.put("totalCount", totalCount);  //总条数
+          map.put("curCount", curCount);      //已导条数
+          map.put("percent", percent);          //百分比数字
+          map.put("percentText", percent+"%");  //百分比文本
 		return ServerResponse.createBySuccess(map);
 	}
 }
