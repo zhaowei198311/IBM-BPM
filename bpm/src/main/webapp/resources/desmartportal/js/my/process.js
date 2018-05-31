@@ -1,4 +1,4 @@
-function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
+function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
     if (actcCanChooseUser == 'FALSE') {
         return false;
     }
@@ -11,7 +11,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
     }
     
 
-    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType;
+    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType+'&actcChooseableHandlerType='+actcChooseableHandlerType;
     layer.open({
         type: 2,
         title: '选择人员',
@@ -163,7 +163,7 @@ function toShowRouteBar () {
 					      +'<th style="text-align:center;">'
 						      +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
 								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-								+activityMeta.dhActivityConf.actcAssignType+'"); >&#xe612;</i> '
+								+activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
 							  +'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
 								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
 								+'data-looptype="'+activityMeta.loopType+'" />'
