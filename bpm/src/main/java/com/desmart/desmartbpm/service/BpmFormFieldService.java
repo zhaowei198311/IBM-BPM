@@ -24,5 +24,5 @@ public interface BpmFormFieldService {
 	/**
 	 * 获得某步骤上表单字段的权限信息(返回的是封装了字段权限的json数据)
 	 */
-	ServerResponse queryFieldPermissionByStepUid(String stepUid);
+	ServerResponse<String> queryFieldPermissionByStepUid(String stepUid);
 }

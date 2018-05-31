@@ -72,7 +72,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	}
 
 	@Override
-	public ServerResponse queryFieldPermissionByStepUid(String stepUid) {
+	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
 		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUid(stepUid);
 		String jsonStr = "{";
