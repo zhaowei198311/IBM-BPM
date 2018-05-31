@@ -22,7 +22,12 @@ public interface BpmFormFieldService {
 	ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions);
 	
 	/**
-	 * 获得某步骤上表单字段的权限信息(返回的是封装了字段权限的json数据)
+	 * 获得某步骤上代办的表单字段的权限信息(返回的是封装了字段权限的json数据)
 	 */
 	ServerResponse<String> queryFieldPermissionByStepUid(String stepUid);
+	
+	/**
+	 * 获得某步骤上已办的表单字段权限信息(返回的是封装了字段权限的json数据)
+	 */
+	ServerResponse<String> queryFinshedFieldPerMissionByStepUid(String stepUid);
 }

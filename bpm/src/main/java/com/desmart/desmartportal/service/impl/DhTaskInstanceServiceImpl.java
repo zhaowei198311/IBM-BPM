@@ -140,7 +140,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			 * getAttribute(Const.CURRENT_USER))); SysUser sysUser2 =
 			 * sysUserMapper.findById(sysUser); sysUser2.getUserName();
 			 */
-			PageHelper.startPage(pageNum, pageSize);
+			PageHelper.startPage(pageNum, pageSize,"task_init_date desc");
 			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectAllTask(taskInstance);
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
@@ -538,12 +538,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         String fieldPermissionInfo = fieldPermissionResponse.getData();
         
-        String insDataStr = dhprocessInstance.getInsData();
-        JSONObject insData = JSON.parseObject(insDataStr);
-        JSONObject formData = insData.getJSONObject("formData");
-        
         resultMap.put("bpmForm", bpmForm);
-        resultMap.put("formData", formData.toJSONString());
         resultMap.put("activityMeta", currMeta);
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);
@@ -585,7 +580,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		try {
 			PageHelper.startPage(pageNum, pageSize);
 			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectTaskAndProcessInfo(taskInstance);
-			// 返回流程创建者 名称 而不是id 这里做处理 好直接返给前台
+			
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
@@ -735,4 +730,61 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         return null;
     }
+
+	@Override
+	public ServerResponse<Map<String, Object>> toFinshedTaskDetail(String taskUid) {
+Map<String, Object> resultMap = new HashMap<>();
+	    
+	    if (StringUtils.isBlank(taskUid)) {
+	        return ServerResponse.createByErrorMessage("缺少必要的参数");
+	    }
+	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance.getTaskStatus())) {
+	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
+	    }
+	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+	    if (dhprocessInstance == null) {
+            return ServerResponse.createByErrorMessage("流程实例不存在");
+        }
+	    
+	    // 获得当前环节
+	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
+	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
+	    if (currMeta == null) {
+	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
+	    }
+	    
+	    
+	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
+	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    if (formStep == null) {
+            return ServerResponse.createByErrorMessage("找不到表单步骤");
+        }
+        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
+        if (!getFormResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单");
+        }
+        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
+        
+        // 获得表单文件内容
+        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
+        if (!formResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("获得表单数据失败");
+        }
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
+        if (!fieldPermissionResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单权限信息");
+        }
+        String fieldPermissionInfo = fieldPermissionResponse.getData();
+        
+        resultMap.put("bpmForm", bpmForm);
+        resultMap.put("activityMeta", currMeta);
+        resultMap.put("activityConf", currMeta.getDhActivityConf());
+        resultMap.put("dhStep", formStep);
+        resultMap.put("processInstance", dhprocessInstance);
+        resultMap.put("formHtml", formResponse.getData());
+	    resultMap.put("taskInstance", dhTaskInstance);
+	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
+	    return ServerResponse.createBySuccess(resultMap);
+	}
 }

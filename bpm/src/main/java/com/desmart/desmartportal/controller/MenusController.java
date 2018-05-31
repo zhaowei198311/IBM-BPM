@@ -203,4 +203,20 @@ public class MenusController {
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
         bpmProcessUtil.rejectProcess(661, "bpdid:9ba2e5f1271c68f2:-1a57422b:163382b7a4a:-7ff3", "00011178");
 	}
+	
+	/**
+	 * 已办明细页面
+	 */
+	@RequestMapping("/finshed_detail")
+	public ModelAndView toFinshedDetail(@RequestParam(value="taskUid") String taskUid) {
+		ModelAndView mv = new ModelAndView("desmartportal/finished_detail");
+		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
+		if (serverResponse.isSuccess()) {
+            mv.addAllObjects(serverResponse.getData());
+        } else {
+            mv.setViewName("/desmartbpm/error");
+            mv.addObject("errorMessage", serverResponse.getMsg());
+        }
+		return mv;
+	}
 }

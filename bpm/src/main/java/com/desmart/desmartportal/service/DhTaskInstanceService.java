@@ -103,4 +103,10 @@ public interface DhTaskInstanceService {
 	 * @throws
 	 */
 	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator);
+
+	/**
+	 * 根据已办任务id查询已办的任务明细
+	 * @param taskUid
+	 */
+	ServerResponse<Map<String, Object>> toFinshedTaskDetail(String taskUid);
 }

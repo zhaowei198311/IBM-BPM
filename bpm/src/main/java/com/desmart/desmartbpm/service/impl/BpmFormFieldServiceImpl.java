@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
+import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhStep;
@@ -27,6 +27,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	
 	@Autowired
 	private DhObjectPermissionService dhObjectPermissionService;
+	
+	@Autowired
+	private DhStepMapper dhStepMapper;
 	
 	@Override
 	public ServerResponse saveFormField(BpmFormField[] fields) {
@@ -97,5 +100,40 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			jsonStr += "}";
 			return ServerResponse.createBySuccess(jsonStr);
 		}
+	}
+
+	@Override
+	public ServerResponse<String> queryFinshedFieldPerMissionByStepUid(String stepUid) {
+		//根据stepUid找到步骤绑定的表单id
+		DhStep dhStep = dhStepMapper.selectByPrimaryKey(stepUid);
+		if(null==dhStep) {
+			return ServerResponse.createBySuccess("{}");
+		}
+		String formUid = dhStep.getStepObjectUid();
+		//再根据表单id找到所有的表单字段对象
+		List<BpmFormField> formFieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		String jsonStr = "{";
+		for(int i=0;i<formFieldList.size();i++) {
+			BpmFormField formField = formFieldList.get(i);
+			//根据表单字段id和步骤id去对象权限表中找字段权限信息
+			DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
+			if(null==objPer) {
+				jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"}";
+			}else {
+				String opAction = objPer.getOpAction();
+				if(opAction.equals("VIEW")) {
+					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"}";
+				}else if(opAction.equals("HIDDEN")){
+					jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"}";
+				}else {
+					continue;
+				}
+			}
+			if(i!=formFieldList.size()-1) {
+				jsonStr += ",";
+			}
+		}
+		jsonStr += "}";
+		return ServerResponse.createBySuccess(jsonStr);
 	}
 }

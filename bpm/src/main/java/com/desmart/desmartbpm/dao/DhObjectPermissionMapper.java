@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.DhObjectPermission;
@@ -41,4 +42,9 @@ public interface DhObjectPermissionMapper {
      * 根据步骤ID查表单字段权限信息
      */
 	List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid);
+
+	/**
+	 * 根据步骤id和字段id找到字段权限信息
+	 */
+	DhObjectPermission getFieldPermissionByStepUidAndFldUid(@Param("stepUid")String stepUid, @Param("fldUid")String fldUid);
 }

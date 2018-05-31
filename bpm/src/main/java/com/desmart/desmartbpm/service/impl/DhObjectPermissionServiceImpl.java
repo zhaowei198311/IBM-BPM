@@ -190,4 +190,9 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
 	public List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid) {
 		return dhObjectPermissionMapper.getFieldPermissionByStepUid(stepUid);
 	}
+
+	@Override
+	public DhObjectPermission getFieldPermissionByStepUidAndFldUid(String stepUid, String fldUid) {
+		return dhObjectPermissionMapper.getFieldPermissionByStepUidAndFldUid(stepUid,fldUid);
+	}
 }
