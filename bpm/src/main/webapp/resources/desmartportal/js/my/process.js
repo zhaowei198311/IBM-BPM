@@ -197,6 +197,7 @@ function toShowRouteBar () {
 function submitProcess(){
 	var finalData = {};
     var json = common.getDesignFormData();
+    console.log(json);
     // 表单数据
     var formData = JSON.parse(json);
     finalData.formData = formData;
