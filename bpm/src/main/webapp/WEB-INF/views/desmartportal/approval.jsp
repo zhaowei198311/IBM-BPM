@@ -167,6 +167,19 @@
                     </tr>
                 </tbody>
             </table>
+            
+            <p class="title_p">流程标题</p>
+            <table class="layui-table">
+                <tbody>
+                    <tr>
+                        <td class="td_title" colspan="1" style="width: 120px">流程标题</td>
+                        <td class="sub_title" colspan="5">
+                             <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" readonly>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
             <div id="formSet">${formHtml }</div>
             <div class="display_container2">
 				<div class="display_content2">

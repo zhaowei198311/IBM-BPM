@@ -262,7 +262,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         JSONObject formDataFromTask = (JSONObject)dataJson.get("formData");
         JSONArray routeData = dataJson.getJSONArray("routeData");
         JSONObject processData = (JSONObject)dataJson.get("processData");
-        String companyNumber = processData.getString("companyNumber");;
+        String insTitle = processData.getString("insTitle");
+        String companyNumber = processData.getString("companyNumber");
         String departNo = processData.getString("departNo");;
         String insUid = processData.getString("insUid");
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
@@ -327,7 +328,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 // 更新草稿流程实例的状态
                 DhProcessInstance instanceSelective = new DhProcessInstance();
                 instanceSelective.setInsUid(dhProcessInstance.getInsUid());
-                instanceSelective.setInsTitle("DEMO_TITLE");
+                instanceSelective.setInsTitle(insTitle);
                 instanceSelective.setInsId(insId);
                 instanceSelective.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
                 instanceSelective.setInsInitDate(new Date());

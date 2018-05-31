@@ -138,6 +138,15 @@ function toShowRouteBar () {
     	layer.alert("缺少发起人信息");
     	return;
     }
+    var insTitle = $("#insTitle_input").val();
+    if (!insTitle || insTitle.trim() == '') {
+    	layer.alert("缺少流程标题");
+    	return;
+    }
+    if (!insTitle.length > 60) {
+    	layer.alert("流程标题过长，请重新填写");
+    	return;
+    }
     $.ajax({
     	url:"dhRoute/showRouteBar",
     	method:"post",
@@ -179,9 +188,8 @@ function toShowRouteBar () {
 	}); //end
 }
 
-//提交流程环节数据
+//发起流程     
 function submitProcess(){
-	// 发起流程             
 	var finalData = {};
     var json = common.getDesignFormData();
     // 表单数据
@@ -192,6 +200,7 @@ function submitProcess(){
     processData.insUid = $("#insUid").val();
     processData.departNo = $("#departNo").val();
     processData.companyNumber = $("#companyNum").val();
+    processData.insTitle = $("#insTitle_input").val();
     finalData.processData = processData;
     // 路由数据
     var routeData = [];
