@@ -53,15 +53,15 @@
 				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
 				<table class="layui-table" lay-even lay-skin="nob">
 					<colgroup>
-					    <col width="70">
-					    <col width="120">
-					    <col width="120">
-					    <col width="150">
-					    <col width="150">
-					    <col width="150">
-					    <col width="150">
-					    <col width="200">
-					    <col width="150">
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
+					    <col>
 					</colgroup>
 					<thead>
 					    <tr>
@@ -241,9 +241,11 @@
 						+ '<td>'
 						+ status
 						+ '</td>'					
-						+ '<td>' 
-						+ meta.taskPreviousUsrUsername
-						+ '</td>' 
+						+ '<td>' ;
+					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+						trs += meta.taskPreviousUsrUsername;
+					}
+					trs += '</td>' 
 						+ '<td>' 
 						+ meta.sysUser.userName 
 						+ '</td>'
@@ -253,7 +255,7 @@
 						+ '<td>'
 						+ '<i class="layui-icon" title="查看详情" onclick=openApproval("'+meta.taskUid+'")>&#xe60a;</i>'
 						+'</td>' 
-						+ '</tr>'
+						+ '</tr>';
 			}
 			$("#proMet_table_tbody").append(trs);
 
