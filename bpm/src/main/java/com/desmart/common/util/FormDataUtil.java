@@ -6,6 +6,7 @@ package com.desmart.common.util;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -29,26 +30,19 @@ public class FormDataUtil {
 	public static JSONObject formDataCombine(JSONObject newObj, JSONObject oldObj) {
 		try {
 	        Object key;
-	        Object combinedObjVal; // 接受新的json对象
-	        for(Iterator var3 = oldObj.keySet().iterator(); var3.hasNext(); newObj.put(key.toString(), combinedObjVal)) {
+	        for(Iterator var3 = newObj.keySet().iterator(); var3.hasNext();) {
 	            key = var3.next();
-	            //optJSONObject(key.toString());
-	            JSONObject newObjVal = oldObj.getJSONObject("");
-	            JSONObject oldObjVal = newObj.getJSONObject("");
-	            combinedObjVal = null;
-	            if (newObjVal != null && oldObjVal != null) {
-	                combinedObjVal = formDataCombine(newObjVal, oldObjVal);
-	            } else {
-	                combinedObjVal = oldObj.get(key.toString());
+	            if(newObj.get(key) != null) {    //新的值为空的时候，不替换new的值到old中去
+	            	oldObj.put((String) key, newObj.get(key));
 	            }
 	        }
-	        String obj = newObj.toJSONString();
-	        return newObj;
+	        return oldObj;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
 	
 	/**
 	 * 从formData中取得指定key的值，没有值则返回null
@@ -79,4 +73,6 @@ public class FormDataUtil {
         a.formDataCombine(formData, formData2);
 
 	}
+	
+	
 }
