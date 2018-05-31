@@ -824,4 +824,13 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(currDefinition);
         return ServerResponse.createBySuccess();
     }
+
+	@Override
+	public ServerResponse checkWhetherLinkSynchronization(BpmActivityMeta bpmActivityMeta) {
+		List<BpmActivityMeta> checkList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(bpmActivityMeta);
+		if (checkList.isEmpty()) {
+			return ServerResponse.createByError();
+		}
+		return ServerResponse.createBySuccess();
+	}
 }

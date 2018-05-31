@@ -389,32 +389,31 @@ $(function() {
 		// 判断是否进行环节同步操作
 		$.ajax({
 			async: false,
-			url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
+			url: common.getPath() + "/processDefinition/whetherLinkSynchronization",
 			type: "post",
 			dataType: "json",
 			data: {
-				"proUid" : proUid,
-				"proVerUid" : proVerUid,
+				"bpdId" : proUid,
+				"snapshotId" : proVerUid,
 				"proAppId" : proAppId
 			},
 			success: function(data) {
-				var list = data.data;
-				if (list.length > 0) {
+				if (data.status == 0) {
 					$(".display_container8").css("display","block");
-//					$.ajax({
-//						async: false,
-//						url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
-//						type: "post",
-//						dataType: "json",
-//						data: {
-//							"proUid" : proUid,
-//							"proVerUid" : proVerUid,
-//							"proAppId" : proAppId
-//						},
-//						success: function(data) {
-							similarList(list);
-//						}
-//					})
+					$.ajax({
+						async: false,
+						url: common.getPath() + "/processDefinition/selectSimilarProcessForCopy",
+						type: "post",
+						dataType: "json",
+						data: {
+							"proUid" : proUid,
+							"proVerUid" : proVerUid,
+							"proAppId" : proAppId
+						},
+						success: function(data) {
+							similarList(data.data);
+						}
+					})
 				}else {
 					layer.alert("请先进行环节同步！");
 					return;
@@ -450,8 +449,8 @@ function similarList(data){
 //			+ '<td>'+ this.updator + '</td>'
 //			+ '<td>'+ this.updateTime + '</td>'
 			+ '</tr>';
-		$("#similar_process").append(trs);
 	})
+	$("#similar_process").append(trs);
 }
 // 拷贝同类流程
 function copyProcess(){

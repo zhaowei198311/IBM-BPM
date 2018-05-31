@@ -128,15 +128,12 @@
                               <th>流程名称</th>
                               <th>快照号</th>
                               <th>快照名称</th>
-<!--                               <TH>激活状态</TH> -->
-<!--                               <TH>快照创建时间</TH> -->
                               <th>流程定义状态</th>
                             </tr> 
                         </thead>
                         <tbody id="similar_process"></tbody>
                     </table>
                 </div>
-<!--                 <div id="demo9"></div> -->
                 <div class="foot">
                     <button class="layui-btn layui-btn sure_btn" onclick="copyProcess()">拷贝</button>
                     <button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
@@ -38,8 +39,6 @@ public class DhProcessDefinitionController {
     private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
     private DhGatewayLineService dhGatewayLineService;
-    
-    
     
     @RequestMapping(value = "/index")
     @ResponseBody
@@ -155,6 +154,20 @@ public class DhProcessDefinitionController {
     	return url;
     }
     
+    /**
+     * 
+     * @Title: whetherLinkSynchronization  
+     * @Description: 拷贝前验证是否进行环节同步  
+     * @param @param bpmActivityMeta
+     * @param @return  
+     * @return ServerResponse  
+     * @throws
+     */
+    @RequestMapping(value = "/whetherLinkSynchronization")
+    @ResponseBody
+    public ServerResponse whetherLinkSynchronization(BpmActivityMeta bpmActivityMeta){
+    	return dhProcessDefinitionService.checkWhetherLinkSynchronization(bpmActivityMeta);
+    }
     /**
      * 
      * @Title: selectSimilarProcessForCopy  

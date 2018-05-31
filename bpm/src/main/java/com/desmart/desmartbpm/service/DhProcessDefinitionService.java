@@ -109,4 +109,15 @@ public interface DhProcessDefinitionService {
      * @return
      */
     ServerResponse enableProcessDefinition(String proAppId, String proUid, String proVerUid);
+    
+    /**
+     * 
+     * @Title: checkWhetherLinkSynchronization  
+     * @Description: 拷贝前验证是否进行环节同步  
+     * @param @param bpmActivityMeta
+     * @param @return  
+     * @return ServerResponse  
+     * @throws
+     */
+    ServerResponse checkWhetherLinkSynchronization(BpmActivityMeta bpmActivityMeta);
 }
