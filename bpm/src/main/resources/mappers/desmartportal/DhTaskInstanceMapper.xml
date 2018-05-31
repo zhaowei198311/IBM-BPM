@@ -547,24 +547,6 @@
 	   where task_id = #{taskId} AND TASK_UID != #{taskUid}
 	</update>
 	
-	<update id="updateTaskStatusByTaskUid" parameterType="map">
-	   update dh_task_instance 
-	   <set>
-	   <trim suffixOverrides=",">
-	   <if test="taskStatus != null and taskStatus != '' ">
-	    task_Status = #{taskStatus}
-	   </if>
-	   <if test="taskFinishDate != null ">
-	    task_Finish_Date = #{taskFinishDate}
-	   </if>
-	   <if test="taskData != null and taskData != '' ">
-	    task_Data = #{taskData}
-	   </if>
-	   </trim>
-	   </set>
-	   where TASK_UID = #{taskUid}
-	</update>
-	
 	<select id="listTaskByCondition" parameterType="map" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 	   select <include refid="Base_Column_List"/>
 	   from dh_task_instance

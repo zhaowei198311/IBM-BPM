@@ -81,12 +81,6 @@ public interface DhTaskInstanceMapper {
 	List <DhTaskInstance> selectTaskAndProcessInfo(DhTaskInstance taskInstance);
 	
 	DhTaskInstance selectByTaskIdAndUser(DhTaskInstance taskInstance);
-	/**
-	 * 根据taskUid修改任务状态
-	 * @param taskUid
-	 * @return
-	 */
-	Integer updateTaskStatusByTaskUid(DhTaskInstance dhTaskInstance);
 	
 	/**
 	 * 查找任务处理人或任务代理人是指定人员，流程实例是指定实例，任务节点是指定节点, 并且是属于计划内(流程图上)的任务

@@ -414,7 +414,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhTaskInstance2.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 						dhTaskInstance2.setTaskFinishDate(DateUtil.format(new Date()));
 						dhTaskInstance2.setTaskData(taskData.toJSONString());
-						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(dhTaskInstance2)>0) {
+						if(dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance2)>0) {
 						//如果任务为类型为normal，则将其它相同任务id的任务废弃
 							if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
