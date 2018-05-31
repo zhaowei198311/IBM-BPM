@@ -531,7 +531,7 @@ function saveDatRule(){
 			  layer.alert("请输入正确的数字格式!");
 			  return false;
 		  }
-		  rightValue=parseInt(rightValue);
+		  //rightValue=parseInt(rightValue);
 	  }
 	  var conditionOperator = $("#conditionOperator").val();
 	  var ruleVersion = $("#addDatRule input[name='ruleVersion']").val();
