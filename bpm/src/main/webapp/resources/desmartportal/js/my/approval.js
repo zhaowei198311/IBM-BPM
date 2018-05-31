@@ -453,7 +453,8 @@ $(function () {
 });
 
 function getdata(jsonStr) {
-    var json = JSON.parse(jsonStr);
+	common.giveFormSetValue(jsonStr);
+    /*var json = JSON.parse(jsonStr);
     for (var name in json) {
         var paramObj = json[name];
         //给各个组件赋值
@@ -462,7 +463,7 @@ function getdata(jsonStr) {
         isDisplay(paramObj, name);
         //判断组件对象是否可编辑
         isEdit(paramObj, name);
-    }
+    }*/
 }
 
 /**

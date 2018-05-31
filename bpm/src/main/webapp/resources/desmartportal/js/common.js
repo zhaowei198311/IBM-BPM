@@ -241,8 +241,9 @@ var common = {
 	},
 	//传入表单json数据给表单组件赋值
 	giveFormSetValue:function(jsonStr){
-		for(var name in jsonStr){
-			var paramObj = jsonStr[name];
+		var json = JSON.parse(jsonStr)
+		for(var name in json){
+			var paramObj = json[name];
 			var tagName = $("[name='"+name+"']").prop("tagName");
 			switch(tagName){
 				case "INPUT":{
@@ -282,8 +283,9 @@ var common = {
 	},
 	//根据字段权限json给动态表单组件设置权限
 	giveFormFieldPermission:function(jsonStr){
-		for(var name in jsonStr){
-			var paramObj = jsonStr[name];
+		var json = JSON.parse(jsonStr)
+		for(var name in json){
+			var paramObj = json[name];
 			var display = paramObj["display"];
 			if(display=="none"){
 				var tagType = $("[name='"+name+"']").attr("type");
