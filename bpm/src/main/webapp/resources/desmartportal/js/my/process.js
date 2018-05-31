@@ -33,9 +33,9 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
 $(function () {
     selectDepart();
     saveDraftsData();
-    saveData();
-    
+    toShowRouteBar(); 
     var dateStr = common.dateToSimpleString(new Date());
+    // 为流程创建日期赋值
     $("#createDate").val(dateStr);
 })
 
@@ -67,105 +67,9 @@ var saveDraftsData = function () {
         .click(
             function (e) {
                 e.preventDefault();
-                var inputArr = $("table input");
-                var selectArr = $("table select");
-                var departNo = $("#departNo").val();
-                var companyNumber = $("#companyNum").val();
-                if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
-                	layer.alert("缺少发起人信息");
-                	return;
-                }
                 var control = true; //用于控制复选框出现重复值
                 var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-                var json = "{";
-                for (var i = 0; i < inputArr.length; i++) {
-                    var type = $(inputArr[i]).attr("type");
-                    var textJson = "";
-                    var checkJson = "";
-                    switch (type) {
-                        case "text": {
-                            if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
-                                var name = $(inputArr[i]).parent()
-                                    .parent().prev().prop("name");
-                                var value = $("[name='" + name + "']")
-                                    .val();
-                                textJson = "\"" + name
-                                    + "\":{\"value\":\"" + value
-                                    + "\"}";
-                                break;
-                            }
-                        }
-                            ;
-                        case "tel":
-                            ;
-                        case "date":
-                            ;
-                        case "textarae": {
-                            var name = $(inputArr[i]).attr("name");
-                            var value = $("[name='" + name + "']")
-                                .val();
-                            textJson = "\"" + name + "\":{\"value\":\""
-                                + value + "\"}";
-                            break;
-                        }
-                        case "radio": {
-                            var name = $(inputArr[i]).attr("name");
-                            var radio = $("[name='" + name + "']")
-                                .parent().parent().find(
-                                    "input:radio:checked");
-                            textJson = "\"" + name + "\":{\"value\":\""
-                                + radio.attr("id") + "\"}";
-                            break;
-                        }
-                        case "checkbox": {
-                            var name = $(inputArr[i]).attr("name");
-                            var checkbox = $("[name='" + name + "']")
-                                .parent().parent().find(
-                                    "input:checkbox:checked");
-                            //判断每次的复选框是否为同一个class
-                            if (control) {
-                                checkName = checkbox.attr("name");
-                            } else {
-                                if (checkName != checkbox.attr("name")) {
-                                    checkName = checkbox.attr("name");
-                                    control = true;
-                                }
-                            }
-                            if (control) {
-                                control = false;
-                                checkJson += "\"" + checkName
-                                    + "\":{\"value\":[";
-                                for (var j = 0; j < checkbox.length; j++) {
-                                    if (j == checkbox.length - 1) {
-                                        checkJson += "\""
-                                            + $(checkbox[j]).attr(
-                                                "id") + "\"";
-                                    } else {
-                                        checkJson += "\""
-                                            + $(checkbox[j]).attr(
-                                                "id") + "\",";
-                                    }
-                                }
-                                checkJson += "]},";
-                            }
-
-                            json += checkJson;
-                            break;
-                        }
-                    }//end switch
-                    textJson += ",";
-                    if (json.indexOf(textJson) == -1) {
-                        json += textJson;
-                    }
-                }
-                //获得最后一位字符是否为","
-                var charStr = json.substring(json.length - 1,
-                    json.length);
-
-                if (charStr == ",") {
-                    json = json.substring(0, json.length - 1);
-                }
-                json += "}";
+                
                 // 发起流程             
                 var finalData = {};
                 // 表单数据
@@ -222,12 +126,11 @@ var saveDraftsData = function () {
     //end
 }
 
-/**
- * 发起流程
- */
+
 var index = null; // 加载
-var saveData = function () {
-    $("#startProcess").click(function (e) {
+function toShowRouteBar () {
+	// 点击"提交"按钮弹出选人框
+    $("#startProcess_btn").click(function (e) {
     e.preventDefault();
     var departNo = $("#departNo").val();
     var companyNumber = $("#companyNum").val();
@@ -243,7 +146,7 @@ var saveData = function () {
             activityId:$("#activityId").val(),
         	departNo:departNo,
         	companyNum:companyNumber,
-        	formData:$("#formData").text()
+        	formData:common.getDesignFormData()
     	},
         success:function(result){
         	if(result.status==0){
@@ -278,16 +181,9 @@ var saveData = function () {
 
 //提交流程环节数据
 function submitProcess(){
-	var inputArr = $("table input");
-    var selectArr = $("table select");
-    var control = true; //用于控制复选框出现重复值
-    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
+	// 发起流程             
+	var finalData = {};
     var json = common.getDesignFormData();
-    //获取审批人
-    var user = $(".getUser").val().substring(0, 8);
-
-    // 发起流程             
-    var finalData = {};
     // 表单数据
     var formData = JSON.parse(json);
     finalData.formData = formData;
@@ -297,10 +193,6 @@ function submitProcess(){
     processData.departNo = $("#departNo").val();
     processData.companyNumber = $("#companyNum").val();
     finalData.processData = processData;
-
-    var activityId = ""
-    var userUid = ""
-    var insData = $("#insData").text();
     // 路由数据
     var routeData = [];
     $('.getUser').each(function () {
@@ -314,9 +206,8 @@ function submitProcess(){
     });
     finalData.routeData = routeData;
     console.log(finalData);
-    
     $.ajax({
-        url: 'processInstance/startProcess',
+        url: common.getPath() + '/processInstance/startProcess',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -356,7 +247,3 @@ function back() {
         + '&proAppId=' + proAppId + '&verUid=' + verUid;
 }
 
-// 查看流程图
-function viewProcess() {
-
-}
