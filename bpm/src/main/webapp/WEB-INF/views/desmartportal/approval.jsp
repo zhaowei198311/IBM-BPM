@@ -404,23 +404,21 @@
 		        </div>
 	    </div>
 	</div>
-	<div class="display_container8" style="display: none;">
-		<div class="display_content7" style="height: 125px;width: 400px">
-			<div class="layui-form-item">
-			<label class="layui-form-label" style="width: 80px;">驳回的环节:</label>
-				<div class="layui-input-inline">
-					<form action="" class="layui-form">
-					<select name="quiz1">
-						<option value="">请选择驳回环节</option>
-					</select>
-					</form>
+	<div class="display_container8">
+		<div class="display_content10">
+				<div class="top">
+					驳回至：
 				</div>
+				<div class="middle10">
+					<ul id="reject_items">
+						
+					</ul>
+				</div>
+				<div class="foot">
+					<button class="layui-btn sure_btn">确定</button>
+					<button class="layui-btn layui-btn-primary cancel_btn">取消</button>
+				</div>				
 			</div>
-			    <div class="foot" style="margin-top: 20px;">
-		            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>
-		            <button class="layui-btn layui-btn cancel5_btn">取消</button>
-		        </div>
-		</div>
 	</div>
 </body>
 
