@@ -38,7 +38,6 @@ public class DhRoutingRecordController {
 		dhRoutingRecord.setInsUid(insUid);
 		List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordServiceImpl.getDhRoutingRecordListByCondition(dhRoutingRecord);
 		
-		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByInsUidAndTaskTypeCondition(insUid);
 		
 		DhRoutingRecord lastDhRoutingRecord = dhRoutingRecords.get(dhRoutingRecords.size()-1);//根据流程uid取得最后一个流转记录
 		
@@ -51,6 +50,9 @@ public class DhRoutingRecordController {
 					bpmActivityMetaList.add(bpmActivityMeta);
 				}
 		}
+		DhTaskInstance dhTaskInstanceSelect = new DhTaskInstance();
+		dhTaskInstanceSelect.setInsUid(insUid);
+		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByCondition(dhTaskInstanceSelect);
 		
 		List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
 		for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {

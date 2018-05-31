@@ -69,11 +69,11 @@ public interface DhTaskInstanceService {
 	ServerResponse<Map<String, Object>> toDealTask(String taskUid);
 	
 	/**
-	 * 根据insUid查询任务，任务实例类型为：SIGN或NORMAL或TRANSFER；
-	 * @param insUid
+	 * 根据条件查询任务
+	 * @param dhTaskInstance
 	 * @return
 	 */
-	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
+	List<DhTaskInstance> selectByCondition(DhTaskInstance dhTaskInstance);
 	
 	/**
 	 * 根据任务实例查询任务数据和流程数据

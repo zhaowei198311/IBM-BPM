@@ -411,7 +411,8 @@
 		where task_id = #{taskId}
 	</select>
 
-	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" 
+	<select id="selectByCondition" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
+	 resultType="com.desmart.desmartportal.entity.DhTaskInstance" 
 		resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT <include refid="TaskAndProcess_Column_List"/>
 		FROM
@@ -420,8 +421,13 @@
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
+			<if test="insUid != null and insUid != '' ">
 			AND
 			T.INS_UID = #{insUid}
+			</if>
+			<if test="activityBpdId != null and activityBpdId != ''">
+			T.ACTIVITY_BPD_ID = #{activityBpdId}
+			</if>
 		</where>
 	</select>
 	

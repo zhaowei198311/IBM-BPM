@@ -40,11 +40,11 @@ public interface DhTaskInstanceMapper {
 	int countByTaskId(int taskId);
 	
 	/**
-	 * 根据insUid查询任务，任务实例类型为：SIGN或NORMAL或TRANSFER；
-	 * @param insUid
+	 * 根据条件查询任务
+	 * @param dhTaskInstance
 	 * @return
 	 */
-	List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid);
+	List<DhTaskInstance> selectByCondition(DhTaskInstance dhTaskInstance);
 	/**
 	 * 根据流程实例id作废任务（状态改为-1）
 	 * @Title: updateByInsUids  

@@ -551,8 +551,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 
 	@Override
-	public List<DhTaskInstance> selectByInsUidAndTaskTypeCondition(String insUid) {
-		return dhTaskInstanceMapper.selectByInsUidAndTaskTypeCondition(insUid);
+	public List<DhTaskInstance> selectByCondition(DhTaskInstance dhTaskInstance) {
+		return dhTaskInstanceMapper.selectByCondition(dhTaskInstance);
 	}
 
 	/**
