@@ -10,6 +10,7 @@ public class AssignPersonnel {
 	private String departIdOfcreator;
 	private String oganizationIdOfcreator;
 	private String actcCanChooseUser;
+	private String actcChooseableHandlerType;
 	
 	public String getId() {
 		return id;
@@ -65,6 +66,12 @@ public class AssignPersonnel {
 	}
 	public void setActcCanChooseUser(String actcCanChooseUser) {
 		this.actcCanChooseUser = actcCanChooseUser;
+	}
+	public String getActcChooseableHandlerType() {
+		return actcChooseableHandlerType;
+	}
+	public void setActcChooseableHandlerType(String actcChooseableHandlerType) {
+		this.actcChooseableHandlerType = actcChooseableHandlerType;
 	}
 	
 }
