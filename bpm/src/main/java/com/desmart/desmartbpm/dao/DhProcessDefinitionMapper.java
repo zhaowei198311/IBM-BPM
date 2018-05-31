@@ -62,7 +62,7 @@ public interface DhProcessDefinitionMapper {
     List<DhObjectPermission> listDhObjectPermissionById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
     /**
      * 
-     * @Title: updateDhObjectPermissionById  
+     * @Title: saveDhObjectPermissionById  
      * @Description: TODO  
      * @param @param dhObjectPermission
      * @param @return  
