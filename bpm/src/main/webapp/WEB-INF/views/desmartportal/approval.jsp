@@ -118,7 +118,7 @@
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
             <button class="layui-btn layui-btn-sm" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
             <button class="layui-btn layui-btn-sm" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
-            <button class="layui-btn layui-btn-sm" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>加签</button>
+            <button class="layui-btn layui-btn-sm" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
         </span>
     </div>
@@ -388,12 +388,22 @@
         </div>
     </div>
 	<div class="display_container7" style="display: none;">
-		<div class="display_content7" style="height: 125px">
+		<div class="display_content7" style="height: 160px">
 			    <label class="layui-form-label" style="width: 30px;">人员</label>
-                <div class="layui-input-block" style="position:relative;">
+                <div class="layui-input-block" style="position:relative;margin-left: 60px;">
                     <input type="hidden" id="handleUser" name="handleUser" />
                     <input type="text" name="handleUser_view"  id="handleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
                     <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="layui-form-label" style="width: 60px;">会签方式</label>
+                    <div class="layui-input-block" style="margin-left: 80px;">
+                        <select class="layui-form_1" lay-filter="useselfChange" style="width: 20%;height: 30px">
+                            <option value="normalAdd">随机会签</option>
+                            <option value="simpleLoopAdd">顺序会签</option>
+                            <option value="multiInstanceLoopAdd">并行会签</option>
+                        </select>
+                    </div>
                 </div>
 			    <div class="foot" style="margin-top: 20px;">
 		            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>

@@ -656,21 +656,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			currentDhTaskInstance.setTaskUid(dhTaskInstance.getTaskUid());
 			currentDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
 			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
-			// 加新任务
 			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
 			String activityId = dhTaskInstance.getActivityBpdId();
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
+			// 加新任务			
 			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
-			dhTaskInstance.setTaskType(DhTaskInstance.TYPE_ADD);
-			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 			dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
 			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
+			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 			// usrUid集合
 			String[] usrUids = dhTaskInstance.getUsrUid().split(";");
-//			// 需要保存任务集合
-//			List<DhTaskInstance> saveDhTaskInstanceList = new ArrayList<>();
 			// 已经加签人员姓名
 			String completedSigning = "";
+			// 会签人审批顺序，说明：如果会签方式是顺序会签，则第一人taskType为12，其他人员taskType为暂停状态
+			int num = 1;
 			SysUser sysUser = new SysUser();
 			for (String string : usrUids) {
 				sysUser.setUserName(string);
@@ -679,15 +678,21 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
+					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
+					if ("simpleLoopAdd".equals(dhTaskInstance.getTaskType())) {
+						dhTaskInstance.setToTaskUid(num);
+						if (num > 1) {
+							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
+						}
+					}
 					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
 					dhTaskInstanceMapper.insertTask(dhTaskInstance);
 				}else {
 					completedSigning += string+",";
 				}
+				num++;
 			}
-//			if (!saveDhTaskInstanceList.isEmpty()) {
-//				dhTaskInstanceMapper.insertBatch(saveDhTaskInstanceList);
-//			}
+
 			// 路由表记录
 			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
