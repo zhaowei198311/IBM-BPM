@@ -75,23 +75,27 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
 		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUid(stepUid);
-		String jsonStr = "{";
-		for(int i=0;i<objPermissList.size();i++) {
-			DhObjectPermission objPer = objPermissList.get(i);
-			String fieldCodeName = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid()).getFldCodeName();
-			String opAction = objPer.getOpAction();
-			if(opAction.equals("VIEW")) {
-				jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"}";
-			}else if(opAction.equals("HIDDEN")){
-				jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"}";
-			}else {
-				continue;
+		if(objPermissList.size()==0) {
+			return ServerResponse.createByErrorMessage("没有权限信息");
+		}else {
+			String jsonStr = "{";
+			for(int i=0;i<objPermissList.size();i++) {
+				DhObjectPermission objPer = objPermissList.get(i);
+				String fieldCodeName = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid()).getFldCodeName();
+				String opAction = objPer.getOpAction();
+				if(opAction.equals("VIEW")) {
+					jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"}";
+				}else if(opAction.equals("HIDDEN")){
+					jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"}";
+				}else {
+					continue;
+				}
+				if(i!=objPermissList.size()-1) {
+					jsonStr += ",";
+				}
 			}
-			if(i!=objPermissList.size()-1) {
-				jsonStr += ",";
-			}
+			jsonStr += "}";
+			return ServerResponse.createBySuccess(jsonStr);
 		}
-		jsonStr += "}";
-		return ServerResponse.createBySuccess(jsonStr);
 	}
 }
