@@ -192,12 +192,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 				
 				ServerResponse<BpmActivityMeta> serverResponse=getPreActivity(dhProcessInstance,bpmActivityMeta);
 				BpmActivityMeta activityMetaNew=serverResponse.getData();
-				String activityMetaUserUid=activityMetaNew.getUserUid(); 
-				SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
-				SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
-				userUid += leader.getManagernumber()+";";
-				userName += leader.getUserName() + ";";
-				
+				if(activityMetaNew!=null) {
+					String activityMetaUserUid=activityMetaNew.getUserUid(); 
+					SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
+					SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
+					userUid += leader.getManagernumber()+";";
+					userName += leader.getUserName() + ";";
+				}
 				break;
 			case USERS:
 				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
