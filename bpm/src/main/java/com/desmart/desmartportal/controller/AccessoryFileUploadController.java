@@ -249,15 +249,15 @@ public class AccessoryFileUploadController {
           map=new HashMap<String, Object>();
           Integer totalCount = 0;
           if(session.getAttribute("totalCount")!=null) {
-        	  totalCount = Integer.valueOf((String) session.getAttribute("totalCount"));
+        	  totalCount = Integer.valueOf(String.valueOf(session.getAttribute("totalCount")));
           }
           Integer curCount = 0;
           if(session.getAttribute("curCount")!=null) {
-        	  curCount = Integer.valueOf(session.getAttribute("curCount").toString());
+        	  curCount = Integer.valueOf(String.valueOf(session.getAttribute("curCount")));
           }
           Integer percent = 0;
           if(session.getAttribute("percent")!=null) {
-        	  percent = Integer.valueOf(session.getAttribute("percent").toString());
+        	  percent = Integer.valueOf(String.valueOf(session.getAttribute("percent")));
           }
           map.put("totalCount", totalCount);  //总条数
           map.put("curCount", curCount);      //已导条数
