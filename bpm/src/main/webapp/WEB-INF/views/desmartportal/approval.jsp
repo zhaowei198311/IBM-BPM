@@ -454,7 +454,7 @@
 					</ul>
 				</div>
 				<div class="foot">
-					<button class="layui-btn sure_btn">确定</button>
+					<button id="reject_btn" class="layui-btn reject_btn">确定</button>
 					<button class="layui-btn layui-btn-primary cancel5_btn">取消</button>
 				</div>				
 			</div>

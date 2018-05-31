@@ -50,6 +50,46 @@ $(function () {
             $(this).prop("checked", true);
          }
 	});
+	
+	$("#reject_btn").click(function (){
+		$('input[name="check"]:checked').each(function(){ 
+			var str = $(this).val();
+		    var insId = str.substring(0,str.indexOf("+"));
+		    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
+		    var userId = str.substring(str.lastIndexOf("+") + 1);
+		    $.ajax({
+		        url: 'processInstance/rejectProcess',
+		        type: 'POST',
+		        dataType: 'json',
+		        data: {
+		        	insId : insId,
+		        	activityBpdId : activityBpdId,
+		        	userId : userId
+		        },
+		        beforeSend: function () {
+		            index = layer.load(1);
+		        },
+		        success: function (result) {
+		            layer.close(index);
+		        	if(result.status == 0){
+		        		layer.alert('驳回完成', {
+				                icon: 1
+				         });
+		        	}else{
+		        		layer.alert('驳回失败', {
+			                icon: 2
+			            });
+		        	}
+		        },
+		        error: function (result) {
+		            layer.close(index);
+		            layer.alert('驳回失败', {
+		                icon: 2
+		            });
+		        }
+		    });
+		 }) 
+	})
 
     $(".add_row")
         .click(
@@ -326,7 +366,7 @@ function queryRejectByActivitiy() {
             	var rejectMapList = result.data;
             	var rejectDiv = "";
             	for(var i=0;i<rejectMapList.length;i++){
-                	rejectDiv += "<li><input type='checkbox' /><label>"+rejectMapList[i].activityName+"————审批人:"+rejectMapList[i].userName+"</label></li>";    
+                	rejectDiv += "<li><input type='checkbox' name='check' value='"+rejectMapList[i].insId+"+"+rejectMapList[i].activityBpdId+"+"+rejectMapList[i].userId+"'/><label>"+rejectMapList[i].activityName+"————审批人:"+rejectMapList[i].userName+"</label></li>";    
                 	}//end for
             	$("#middle10").append(rejectDiv);
         },
@@ -409,6 +449,6 @@ function checkUserData() {
     	}//end ajax
 	});
 	$(".display_container2").css("display","block"); //end
-
+	
 }
 

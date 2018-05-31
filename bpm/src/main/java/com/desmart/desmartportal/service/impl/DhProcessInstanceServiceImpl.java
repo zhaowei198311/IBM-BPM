@@ -631,37 +631,15 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
     
     @Override
-    @Transactional
 	public ServerResponse rejectProcess(int insId,String activityId, String user) {
-		if(insId!=0 || StringUtils.isBlank(activityId) || StringUtils.isBlank(user)) {
+    	log.info("驳回流程开始......");
+    	log.info("流程标识为:"+insId);
+		if(insId==0 || StringUtils.isBlank(activityId) || StringUtils.isBlank(user)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.queryByInsId(insId);
-		String startProcessHuman = dhProcessInstance.getInsInitUser(); // 流程发起人
-		
-		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
-		// 当前环节是否允许驳回 （TRUE,FALSE）
-		String rejectboolean = dhActivityConf.getActcCanReject();
-		// 当前环节驳回方式 (toProcessStart发起人,toPreActivity上个环节,toActivities选择环节)
-		String rejectType =  dhActivityConf.getActcRejectType();
-		// 可以驳回
-		if(Const.Boolean.TRUE.equals(rejectboolean)) {
-			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-			switch (rejectType) {
-				case "toProcessStart":
-					// 发起人
-					bpmProcessUtil.rejectProcess(insId, activityId, startProcessHuman);
-					break;
-				case "toPreActivity":
-					// 上个环节
-					break;
-				case "toActivities":
-					// 选择环节
-					bpmProcessUtil.rejectProcess(insId, activityId, user);
-					break;
-			}	
-		}
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		bpmProcessUtil.rejectProcess(insId, activityId, user);
 		return ServerResponse.createBySuccess();
 	}
 }
