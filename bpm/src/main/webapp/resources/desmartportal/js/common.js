@@ -251,12 +251,10 @@ var common = {
 						case "tel":;
 						case "date":{
 							$("[name='"+name+"']").val(paramObj["value"]);
-							form.render();
 							break;
 						};
 						case "radio":{
 							$("[name='"+name+"'][value='"+paramObj["value"]+"']").prop("checked","true");
-							form.render();
 							break;
 						}
 						case "checkbox":{
@@ -264,7 +262,6 @@ var common = {
 							for(var value in valueArr){
 								$("[name='"+name+"'][value='"+valueArr[value]+"']").prop("checked","true");
 							}
-							form.render();
 							break;
 						}
 					}
@@ -273,7 +270,6 @@ var common = {
 				case "SELECT":;
 				case "TEXTAREA":{
 					$("[name='"+name+"']").val(paramObj["value"]);
-					form.render();
 					break;
 				}
 			}
