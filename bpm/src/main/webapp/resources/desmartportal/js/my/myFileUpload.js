@@ -16,9 +16,7 @@ $(function(){
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
-		  //var actcCanEditAttach = $("#actcCanEditAttach").val();
-		  var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
-		  //var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
+		  var activityId = $("#activityId").val();		  
 		  var re = new RegExp(",","g");
 		  var formatStr = fileFormat.replace(re,"|");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
@@ -120,7 +118,7 @@ $(function(){
 			  			 
 	        	      this.data = {"appUid":appUid
 					    	,"taskId":taskId
-					    	,"actcCanUploadAttach":actcCanUploadAttach
+					    	,"activityId":activityId
 					    	,uploadModels:'{"uploadModels":['+uploadModels+']}'};
 		    		// this.data = {uploadModels:uploadModels.toString()};
 			  		}
@@ -311,9 +309,7 @@ function loadFileList(){
 		    var taskId = $("#activityId").val();
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
-		    //var actcCanEditAttach = $("#actcCanEditAttach").val();
-			var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
-			//var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
+			var activityId = $("#activityId").val();		  
 		    var re = new RegExp(",","g");
 		    var formatStr = fileFormat.replace(re,"|");
 			layui.use('upload', function(){
@@ -324,7 +320,7 @@ function loadFileList(){
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
 				    ,data: {"appUid":appUid,"taskId":taskId
 				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
-				    	,"actcCanUploadAttach":actcCanUploadAttach}
+				    	,"activityId":activityId}
 				    ,exts: formatStr
 				    ,field: "file"
 			    ,before: function(obj){
@@ -485,10 +481,8 @@ function deleteAccessoryFile(a){
 		}, function(index, layero){
 	var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
     var appDocIdCard = $(a).val();
-    var appDocUid = $(a).data("appdocuid");
-    //var actcCanEditAttach = $("#actcCanEditAttach").val();
-	//var actcCanUploadAttach = $("#actcCanUploadAttach").val();		  
-	var actcCanDeleteAttach = $("#actcCanDeleteAttach").val();
+    var appDocUid = $(a).data("appdocuid");		  
+	var activityId = $("#activityId").val();
     	$.ajax({
     		url : "accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
@@ -497,7 +491,7 @@ function deleteAccessoryFile(a){
 			"appDocFileUrl":appDocFileUrl,
 			"appDocUid":appDocUid,
 			"appDocIdCard":appDocIdCard,
-			"actcCanDeleteAttach":actcCanDeleteAttach
+			"activityId":activityId
 			},
 		success : function(data) {
 			loadFileList();

@@ -23,6 +23,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.AccessoryFileUploadMapper;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
@@ -40,6 +42,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Resource
 	private AccessoryFileUploadMapper accessoryFileuploadMapper;
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	
 	@Override
 	public Integer insertDhInstanceDocuments(List<DhInstanceDocument> dhInstanceDocuments) {
 		return accessoryFileuploadMapper.insertDhInstanceDocuments(dhInstanceDocuments);
@@ -68,8 +73,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid
-			, String taskId,String actcCanUploadAttach) {
-		if(Const.Boolean.TRUE.equals(actcCanUploadAttach)) {
+			, String taskId,String activityId) {
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
 		List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
 		List<DhInstanceDocument> fileUpdateList = new ArrayList<DhInstanceDocument>();
 		JSONObject jso=JSON.parseObject(uploadModels);//json字符串转换成jsonobject对象
@@ -192,14 +198,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument
-			,String actcCanDeleteAttach) {
-		if(Const.Boolean.TRUE.equals(actcCanDeleteAttach)) {
-		/*String directory = dhInstanceDocument.getAppDocFileUrl().substring(0, dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1);
-	    String filename = dhInstanceDocument.getAppDocFileUrl().substring(dhInstanceDocument.getAppDocFileUrl().lastIndexOf("/")+1
-	    		,  dhInstanceDocument.getAppDocFileUrl().length());
-	    SFTPUtil sftp = new SFTPUtil();*/
-	    
-	    //int count = eleteFileByAppDocUid(dhInstanceDocument.getAppDocUid());
+			,String activityId) {
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanDeleteAttach())) {
 	    //逻辑删除--批量修改方法
 	    List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
 	    DhInstanceDocument selectCondition = new DhInstanceDocument();
@@ -215,12 +216,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    	dhInstanceDocument2.setUpdateUserUid(creator);
 		}
 	    int count = updateFileByKeys(list);
-	    /*if(sftp.removeFile(bpmGlobalConfigService.getFirstActConfig(), directory, filename))
-	    {*/
 	    	return ServerResponse.createBySuccessMessage("删除成功！");
-	    /*}else {
-	    	return ServerResponse.createByErrorMessage("删除失败！");
-	    }*/
 		}else {
 			return ServerResponse.createByErrorMessage("删除权限验证失败！");
 		}
@@ -229,8 +225,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
-			,String actcCanUploadAttach) {
-		if(Const.Boolean.TRUE.equals(actcCanUploadAttach)) {
+			,String activityId) {
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
 		//取得当前上传文件的文件名称  
         String myFileName = multipartFile.getOriginalFilename();
         /** 检查更新文件在最新版本是否重名 **/

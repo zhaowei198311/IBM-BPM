@@ -51,14 +51,14 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse saveFile(MultipartFile[] multipartFiles,String uploadModels,
-			String appUid,String taskId,String actcCanUploadAttach);
+			String appUid,String taskId,String activityId);
 	/**
 	 * 文件删除
 	 * @param dhInstanceDocument
 	 * @param actcCanDeleteAttach
 	 * @return
 	 */
-	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,String actcCanDeleteAttach);
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,String activityId);
 	/**
 	 * 更新附件
 	 * @param multipartFile
@@ -67,5 +67,5 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile
-			,DhInstanceDocument dhInstanceDocument,String actcCanUploadAttach);
+			,DhInstanceDocument dhInstanceDocument,String activityId);
 }

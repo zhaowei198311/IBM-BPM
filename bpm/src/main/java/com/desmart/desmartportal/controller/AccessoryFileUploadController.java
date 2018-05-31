@@ -56,8 +56,8 @@ public class AccessoryFileUploadController {
 	public ServerResponse saveFile(@RequestParam("files") MultipartFile[] multipartFiles,
 			@RequestParam("uploadModels") String uploadModels, @RequestParam("appUid") String appUid,
 			@RequestParam("taskId") String taskId,
-			@RequestParam("actcCanUploadAttach")String actcCanUploadAttach) {
-		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId,actcCanUploadAttach);
+			@RequestParam("activityId")String activityId) {
+		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId,activityId);
 	}
 
 	@RequestMapping(value = "loadFileList.do")
@@ -109,8 +109,8 @@ public class AccessoryFileUploadController {
 	@RequestMapping("deleteAccessoryFile.do")
 	@ResponseBody
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,
-			@RequestParam("actcCanDeleteAttach")String actcCanDeleteAttach) {
-		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,actcCanDeleteAttach);
+			@RequestParam("activityId")String activityId) {
+		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,activityId);
 	}
 
 	@RequestMapping("bachFileDown.do")
@@ -216,11 +216,11 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse updateAccessoryFile(@RequestParam("file") MultipartFile multipartFile,
 			DhInstanceDocument dhInstanceDocument,
-			@RequestParam("actcCanUploadAttach")String actcCanUploadAttach) {
+			@RequestParam("activityId")String activityId) {
 		if (dhInstanceDocument.getAppDocIdCard() == null || "".equals(dhInstanceDocument.getAppDocIdCard())) {
 			return ServerResponse.createByErrorMessage("更新文件异常！");
 		} else {
-			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument,actcCanUploadAttach);
+			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument,activityId);
 		}
 	}
 	@RequestMapping("loadHistoryFile.do")

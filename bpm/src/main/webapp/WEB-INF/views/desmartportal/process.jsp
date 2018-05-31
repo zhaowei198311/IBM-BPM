@@ -118,9 +118,6 @@
 	<div class="search_area top_btn">
 	    <input type="hidden" id="departNo" />
 	    <input type="hidden" id="companyNum" />
-	    <input id="actcCanEditAttach" value="${dhActivityConf.actcCanEditAttach}" style="display: none;">
-        <input id="actcCanUploadAttach" value="${dhActivityConf.actcCanUploadAttach}" style="display: none;">
-        <input id="actcCanDeleteAttach" value="${dhActivityConf.actcCanDeleteAttach}" style="display: none;">
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
 	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
 	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
