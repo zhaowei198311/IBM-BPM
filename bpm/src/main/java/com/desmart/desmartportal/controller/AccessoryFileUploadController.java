@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
@@ -88,8 +89,9 @@ public class AccessoryFileUploadController {
 					dhInstanceDocument.getAppDocFileUrl().length());
 			SFTPUtil sftp = new SFTPUtil();
 
-			sftp.getOututStream(bpmGlobalConfigService.getFirstActConfig(), directory, filename, out);
-
+			Long fileLength = sftp.getOututStream(bpmGlobalConfigService.getFirstActConfig()
+					, directory, filename, out);
+			response.setHeader("Content-Length", String.valueOf(fileLength));
 			out.flush();
 		} catch (IOException e) {
 			// TODO: handle exception
@@ -126,6 +128,12 @@ public class AccessoryFileUploadController {
 					dhInstanceDocuments.add(dhInstanceDocument);
 				}
 				// 打包下载开始
+				//首先需要移除掉session当中的数据，因为如果是第二次下载数据的话，这些数据已经存在
+	            //会导致进度条先是100%的状态，然后才从0%开始
+	            request.getSession().removeAttribute("totalCount");
+	            request.getSession().removeAttribute("curCount");
+	            request.getSession().removeAttribute("percent");
+	            request.getSession().removeAttribute("percentText");
 				/*
 				 * response.setContentType("text/html; charset=UTF-8"); //设置编码字符
 				 * response.setContentType("application/zip"); //设置内容类型为zip
@@ -163,12 +171,6 @@ public class AccessoryFileUploadController {
 						ZipEntry ze = new ZipEntry(dhInstanceDocument.getAppDocFileName()); // 获取文件名
 						zipOut.putNextEntry(ze);
 						sftp.getBatchDown(gcfg, directory, filename, zipOut);
-						/*
-						 * if(i==dhInstanceDocuments.size()-1) {//最后一个文件退出连接
-						 * sftp.getBatchOututStream(gcfg, directory, filename,zipOut,false); }else {
-						 * sftp.getBatchOututStream(gcfg, directory, filename,zipOut,true); }
-						 */
-						// sftp.getOututStream(gcfg, directory, filename, out);
 
 					}
 					fos.flush();  
@@ -177,12 +179,23 @@ public class AccessoryFileUploadController {
 					fos.close();
 					// 将打包后的文件写到客户端，使用缓冲流输出
 					InputStream fis = new BufferedInputStream(new FileInputStream(zipFilePath));
+					//计算百分比
+					Integer totalCount = fis.available();//获得文件总大小
+					Integer curCount = 0;
 					byte[] buff = new byte[4096];
 					int size = 0;
 					while ((size = fis.read(buff)) != -1) {
+						curCount+=size;
 						out.write(buff, 0, size);
 					}
 					fis.close();
+					
+					 double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
+			            int percent=(int)(dPercent*100);               //再乘上100取整
+			            request.getSession().setAttribute("totalCount",totalCount);
+			            request.getSession().setAttribute("curCount", curCount);
+			            request.getSession().setAttribute("percent", percent);    //比如这里是50
+			            request.getSession().setAttribute("percentText",percent+"%");//这里是50%
 				} catch (IOException e) {
 					// TODO: handle exception
 					LOG.error(e.getMessage());
@@ -229,5 +242,17 @@ public class AccessoryFileUploadController {
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
+	}
+	@RequestMapping("flushProgress.do")
+	@ResponseBody
+	public ServerResponse flushProgress(HttpServletRequest request) {
+		  HashMap<String,Object> map=null;
+		  HttpSession session = request.getSession();
+          map=new HashMap<String, Object>();
+          map.put("totalCount", session.getAttribute("totalCount"));  //总条数
+          map.put("curCount", session.getAttribute("curCount"));      //已导条数
+          map.put("percent", session.getAttribute("percent"));          //百分比数字
+          map.put("percentText", session.getAttribute("percentText"));  //百分比文本
+		return ServerResponse.createBySuccess(map);
 	}
 }

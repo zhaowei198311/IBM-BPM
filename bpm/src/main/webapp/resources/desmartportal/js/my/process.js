@@ -134,6 +134,11 @@ function toShowRouteBar () {
     e.preventDefault();
     var departNo = $("#departNo").val();
     var companyNumber = $("#companyNum").val();
+    var insTitle = $("#insTitle").val();
+    if(insTitle == null || insTitle== "" ){
+    	layer.alert("请填写流程实例标题");
+    	return;
+    }
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
     	layer.alert("缺少发起人信息");
     	return;

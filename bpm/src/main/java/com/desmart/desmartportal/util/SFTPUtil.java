@@ -14,6 +14,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
 public class SFTPUtil {
@@ -232,16 +233,18 @@ public class SFTPUtil {
      * @param outputStream
      * @return
      */
-    public void getOututStream(BpmGlobalConfig gcfg,String directory,String filename
+    public Long getOututStream(BpmGlobalConfig gcfg,String directory,String filename
     		,OutputStream outputStream) {
     	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	try {
 			sftp.cd(gcfg.getSftpPath()+directory);
+			SftpATTRS sftpAttrs = sftp.stat(gcfg.getSftpPath()+directory);
 			sftp.get(filename, outputStream);
 			logout();
+			return sftpAttrs.getSize();
 		} catch (Exception e) {
 			logout();
-			e.printStackTrace();
+			return null;
 		}
     }
     /**

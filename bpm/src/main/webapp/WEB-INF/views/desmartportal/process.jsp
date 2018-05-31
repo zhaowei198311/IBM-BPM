@@ -169,6 +169,14 @@
 									</c:forEach>
 							</select></td>
 						</tr>
+						<tr>
+							<td class="td_title" style="width: 120px" colspan="1">流程标题
+							<span class="tip_span">*</span>
+							</td>
+							<td class="sub_title" colspan="10">
+							<input type="text" name="insTitle"  id="insTitle" value="" class="layui-input" >
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</form>

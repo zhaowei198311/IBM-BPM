@@ -19,8 +19,9 @@
     <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
+    <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
     <style type="text/css">
-        .container-fluid {
+       .container-fluid {
             padding-right: 0px;
             padding-left: 0px;
             zoom: 1;
@@ -89,10 +90,28 @@
 			left: 50%;
 			box-shadow: 0 0 10px #ccc;
 		}
+		
+		#Mask {
+   		  	 position: absolute; top: 0px; filter: alpha(opacity=60); background-color: #333;
+    		 z-index: 1002; left: 0px;
+    		 opacity:0.5; -moz-opacity:0.5;
+		}
+		#Progress{
+    		position: absolute; top: 35%;left:35%;z-index: 2000;
+		}
+		#Progress .circle-info{
+   			 color:black;
+		}
     </style>
 </head>
 
 <body>
+
+	<!---Mask是遮罩，Progress是进度条-->
+	<div>
+      <div id="Mask"></div>
+      <div id="Progress" data-dimension="250" data-text="0%" data-info="导出进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+ 	</div>
     <div class="search_area top_btn">
     	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
     	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
