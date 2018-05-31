@@ -26,7 +26,7 @@
 					<div class="layui-col-xs3">
 					    <div class="layui-form-pane">
 					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;" onclick="reload()">刷新</label>
+					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>
 						        <div class="layui-input-block">
 						            <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
 									  	<option value="">任务类型</option>
@@ -127,6 +127,12 @@
 		getUserTask();
 		window.setInterval(getUserTask, 60000); 
 	})
+	
+	// 刷新
+	function refresh(){
+		getUserTask();
+		getTaskInstanceInfo();
+	}
 	
 	// 分页
 	function doPage() {
