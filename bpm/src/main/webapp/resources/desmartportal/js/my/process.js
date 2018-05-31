@@ -254,10 +254,6 @@ function submitProcess(){
 
 // 回退到上一页面
 function back() {
-    var proUid = $("#proUid").val();
-    var proAppId = $("#proAppId").val();
-    var verUid = $("#verUid").val();
-    window.location.href = 'menus/processType?proUid=' + proUid
-        + '&proAppId=' + proAppId + '&verUid=' + verUid;
+	window.history.back();
 }
 
