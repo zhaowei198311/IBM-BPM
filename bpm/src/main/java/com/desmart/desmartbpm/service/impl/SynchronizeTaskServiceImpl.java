@@ -143,15 +143,15 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
         //  查找上个环节处理人信息
-        ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(proInstance, bpmActivityMeta);
-        BpmActivityMeta preMeta = null;
-        if (preActivityResponse.isSuccess()) {
-            preMeta = preActivityResponse.getData();
-        } else {
-            LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
-        }
+//        ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(proInstance, bpmActivityMeta);
+//        BpmActivityMeta preMeta = null;
+//        if (preActivityResponse.isSuccess()) {
+//            preMeta = preActivityResponse.getData();
+//        } else {
+//            LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
+//        }
         
-        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta, preMeta);
+        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta, new BpmActivityMeta());
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
         
         
