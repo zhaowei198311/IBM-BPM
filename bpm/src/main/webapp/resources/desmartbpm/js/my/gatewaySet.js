@@ -1,76 +1,10 @@
-layui.use('form', function() {
-	var form = layui.form;
-	//全选  
-    form.on('checkbox(allChoose)', function(data){  
-        var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');  
-        child.each(function(index, item){  
-          item.checked = data.elem.checked;  
-        });  
-        form.render('checkbox');  
-    });  
-});
-/**
- * 绑定create_net,delete_net事件
- * @returns
- */
-$(function() {
-	
-	$(".create_net").click(function() {
-		/*if (checkAndLoadFrom($(this)) == false) {
-			return;
-		} else {*/
-			$(".display_container5").css("display", "block");
-		/*}*/
-	})
-	$(".delete_net").click(function(){
-		/*var checkA = $(this).parent().find("input[name='allChecked']");
-		if($(checkA[0]).prop("checked")==true){
-			if(flag=="gateway"||flag==="gateway"){
-				  gatewayArr=[];
-			  }if(flag=="gatewayAnd"||flag==="gatewayAnd"){
-				  gatewayAndArr=[];
-			  }
-			  if(flag=="gatewayOr"||flag==="gatewayOr"){
-				  gatewayOrArr=[];
-			  }
-			$(this).parent().find("tbody").empty();
-		}else{*/
-			var checkB = $(this).parent().find("input[name!='allChecked']:checked");
-			var dataArr = new Array();
-			var activityId =  $("#gatewayActivityName").data("activityId");
-			$(checkB).each(function(){
-					var ruleId = $(this).data('ruleid');
-					var conditionId = $(this).data('conditionid');
-					var info = {"ruleId":ruleId,"conditionId":conditionId};
-					dataArr.push(info);
-			})
-			$.ajax({
-				url:common.getPath()+"/datRule/deleteDatRule?activityId="+activityId,
-				type:"post",
-				data: JSON.stringify(dataArr),
-				contentType: "application/json",
-		        dataType:'json',
-		        async: false,  
-				success: function(result){
-					layer.alert(result.msg);
-					$("#gatewayTab").find("tbody").empty();
-		  			printDatRuleCondition(result.data.DatConditionList);
-		  			//画出做过更改的规则
-		  			printUpdateDatRuleList(result.data.PredictRules);
-	            	layui.form.render();
-				},error: function(result){
-					layer.alert(result.msg);
-				}
-			});
-			checkB.parent().parent().remove();
-		/*}*/
-	})
-	
+/*$(function(){
+
 	//loadActivity_Meta();
 	//appendGateWaySetList(activityMetas);
 	
-});
-
+});*/
+/*
     var type;
 	var gatewayArr = [];
 	var gatewayAndArr = [];
@@ -83,10 +17,10 @@ type = currActivityMeta.type;
 $(a).parent().attr("id",type);
 flag=currActivityMeta.activityType;
 //var gatewayIndex = $("#gatewayIndex").val(); sortNum暂时隐藏
-/*if( gatewayIndex ==''|| gatewayIndex == undefined){
+if( gatewayIndex ==''|| gatewayIndex == undefined){
 	return false;
-}else{*/
-		/*$("#sortNum").val(gatewayIndex);*/
+}else{
+		$("#sortNum").val(gatewayIndex);
 		$("#gateway_result").empty();
 	  $(".gatewayTbody input[type='checkbox']").each(function(){
 		if($(this).prop("checked")==true){
@@ -97,7 +31,7 @@ flag=currActivityMeta.activityType;
 	});
 		layui.form.render('select');
 	
-/*}*/
+}
 } 
 //提交保存已新建规则
 function submitAddDatRule(){
@@ -149,7 +83,7 @@ function submitAddDatRule(){
 //添加规则到数组
 function addToArr(){
   
-  /*var sortNum = $("#addDatRule input[name='sortNum']").val();*/
+  var sortNum = $("#addDatRule input[name='sortNum']").val();
   var result = $("#gateway_result").val();
   if(result==null||result==undefined||result==''){
 	  layer.alert("请选择路由变量名称！");
@@ -288,35 +222,9 @@ function loadEachArr(s,itemList){
 			s.find("tbody").append(tr);
     	})
   }
-}
-//分组名称事件
-function dothis(v){
-    if(v.value == ''){
-        return false;
-    }
-    //小写转大写
-    v.value = v.value.toUpperCase();
-    //判断是否为英文
-    if(!/^([A-Za-z]+\s?)*[A-Za-z]$/.test(v.value)){
-        return v.value = v.value.substr(0, v.value.length - 1);
-    }
-    //判断是否超过长度
-    if(v.value.length > 10){
-        return v.value = v.value.substr(0, 9);
-    }
-}
-//优先级序号事件
-function doVersion(v){
-	if(!/^[1-9]\d*$/.test(v.value)){
-        return v.value = v.value.substr(0, v.value.length - 1);
-    }
-	//判断是否超过长度
-    if(v.value.length > 10){
-        return v.value = v.value.substr(0, 9);
-    }
-}
+}*/
 //加载activity_meta及确定网关环节列表
-function loadActivity_Meta(){
+/*function loadActivity_Meta(){
 	 $.ajax({  
         type: "POST",    
         url:" ../activityMeta/getGatewaysOfDhProcessDefinition", 
@@ -349,8 +257,103 @@ function appendGateWaySetList(itemList){
 		 }
 	}
 	 
+}*/
+//分组名称事件
+function dothis(v){
+    if(v.value == ''){
+        return false;
+    }
+    //小写转大写
+    v.value = v.value.toUpperCase();
+    //判断是否为英文
+    if(!/^([A-Za-z]+\s?)*[A-Za-z]$/.test(v.value)){
+        return v.value = v.value.substr(0, v.value.length - 1);
+    }
+    //判断是否超过长度
+    if(v.value.length > 10){
+        return v.value = v.value.substr(0, 9);
+    }
+}
+//优先级序号事件
+function doVersion(v){
+	if(!/^[1-9]\d*$/.test(v.value)){
+        return v.value = v.value.substr(0, v.value.length - 1);
+    }
+	//判断是否超过长度
+    if(v.value.length > 10){
+        return v.value = v.value.substr(0, 9);
+    }
 }
 
+layui.use('form', function() {
+	var form = layui.form;
+	//全选  
+	form.on('checkbox(allChoose)', function(data){  
+		var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');  
+		child.each(function(index, item){  
+			item.checked = data.elem.checked;  
+		});  
+		form.render('checkbox');  
+	});  
+});
+/**
+ * 绑定create_net,delete_net事件
+ * @returns
+ */
+$(function() {
+	
+	$(".create_net").click(function() {
+		/*if (checkAndLoadFrom($(this)) == false) {
+			return;
+		} else {*/
+		$(".display_container5").css("display", "block");
+		/*}*/
+	})
+	$(".delete_net").click(function(){
+		/*var checkA = $(this).parent().find("input[name='allChecked']");
+		if($(checkA[0]).prop("checked")==true){
+			if(flag=="gateway"||flag==="gateway"){
+				  gatewayArr=[];
+			  }if(flag=="gatewayAnd"||flag==="gatewayAnd"){
+				  gatewayAndArr=[];
+			  }
+			  if(flag=="gatewayOr"||flag==="gatewayOr"){
+				  gatewayOrArr=[];
+			  }
+			$(this).parent().find("tbody").empty();
+		}else{*/
+		var checkB = $(this).parent().find("input[name!='allChecked']:checked");
+		var dataArr = new Array();
+		var activityId =  $("#gatewayActivityName").data("activityId");
+		$(checkB).each(function(){
+			var ruleId = $(this).data('ruleid');
+			var conditionId = $(this).data('conditionid');
+			var info = {"ruleId":ruleId,"conditionId":conditionId};
+			dataArr.push(info);
+		})
+		$.ajax({
+			url:common.getPath()+"/datRule/deleteDatRule?activityId="+activityId,
+			type:"post",
+			data: JSON.stringify(dataArr),
+			contentType: "application/json",
+			dataType:'json',
+			async: false,  
+			success: function(result){
+				layer.alert(result.msg);
+				$("#gatewayTab").find("tbody").empty();
+				printDatRuleCondition(result.data.DatConditionList);
+				//画出做过更改的规则
+				printUpdateDatRuleList(result.data.PredictRules);
+				layui.form.render();
+			},error: function(result){
+				layer.alert(result.msg);
+			}
+		});
+		checkB.parent().parent().remove();
+		/*}*/
+	})
+
+});
 /** 改动网关配置开始 **/
 var activityType = "gateway";
 //页面加载完成
@@ -454,6 +457,8 @@ function printRightGatewayDetails(list){
 }
 //循环画出规则条件
 function printDatRuleCondition(itemList){
+	$("#gateway_result").find("option").eq(0).prop("selected",true);//操作后将路由变量默认置为请选择
+	
 	var tbody = $("#gatewayTab").find("tbody");
 	//tbody.empty();
 	for (var i = 0; i < itemList.length; i++) {
@@ -553,12 +558,12 @@ function saveDatRule(){
 	  		//画出当前环节的所有的规则条件
 	  			$("#gatewayTab").find("tbody").empty();
 	  			printDatRuleCondition(result.data.DatConditionList);
+	  			
             	layui.form.render();
 	  		},error: function(result){
 	  			layer.alert(result.msg);
 	  		}
 	  	});
-	  
 	   $(".display_container5").css("display","none");
 		layui.form.render(); 
 	}
