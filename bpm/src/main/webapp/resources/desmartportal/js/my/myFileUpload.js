@@ -464,7 +464,7 @@ function batchPost(URL, PARAMS) {
              error:function(result){}
           });
        },2000);
-    },200);
+    },2000);
     isFirstExport=false;
 } 
 
