@@ -166,11 +166,12 @@ $(function () {
                     $(".progress_time").css('right', '4%');
                 } else {
                     $(".layui-progress").append('<span class="progress_time">审批剩余时间' + hour + '小时</span>');
-                    if (percent == 0) {
-                        $(".progress_time").css('right', '87%');
-                    } else {
-                        $(".progress_time").css('right', 90 - percent + '%');
-                    }
+                    var num = 89 - percent;
+                    if (num > 0) {
+                    	$(".progress_time").css('right', num + '%');
+					} else {
+						$(".progress_time").css('right', '15%');
+					}                
                 }
                 // 加载进度条
                 layui.use('element', function () {
@@ -178,12 +179,6 @@ $(function () {
                         element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
                     // 延迟加载
                     setTimeout(function () {
-                        if (percent > 50) {
-                            $('.layui-progress-bar').css('background-color', 'yellow');
-                        }
-                        if (percent > 80) {
-                            $('.layui-progress-bar').css('background-color', 'red');
-                        }
                         element.progress('progressBar', percent + '%');
                     }, 500);
                 });
