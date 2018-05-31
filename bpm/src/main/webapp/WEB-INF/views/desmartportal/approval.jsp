@@ -119,7 +119,7 @@
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
-            <button class="layui-btn layui-btn-sm" id="reject" onclick="reject()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
+            <button class="layui-btn layui-btn-sm" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
             <button class="layui-btn layui-btn-sm" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
             <button class="layui-btn layui-btn-sm" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>加签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
