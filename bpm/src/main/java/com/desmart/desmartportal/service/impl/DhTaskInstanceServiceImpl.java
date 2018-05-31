@@ -373,12 +373,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						
 						// 整合formdata
 						JSONObject formJson = new JSONObject();
+						JSONObject insJson = JSONObject.parseObject(dhProcessInstance.getInsData());
 						if (StringUtils.isNotBlank(formData.toJSONString())) {
 							formJson = FormDataUtil.formDataCombine(formData,
-									JSONObject.parseObject(dhProcessInstance.getInsData()));
+									insJson.getJSONObject("formData"));
 						}
+						insJson.put("formData", formJson);
 						dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-						dhProcessInstance.setInsData(formJson.toJSONString());
+						dhProcessInstance.setInsData(insJson.toJSONString());
 						//判断流程是否结束
 						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
 						dhRouteServiceImpl.updateGatewayRouteResult(bpmActivityMeta, dhProcessInstance.getInsId(), formData);
@@ -407,7 +409,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhRoutingRecordMapper.insert(dhRoutingRecord);
 						}
 						// 修改当前任务实例状态为已完成
-						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(taskUid,DhTaskInstance.STATUS_CLOSED)>0) {
+						DhTaskInstance dhTaskInstance2 = new DhTaskInstance();
+						dhTaskInstance2.setTaskUid(taskUid);
+						dhTaskInstance2.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+						dhTaskInstance2.setTaskFinishDate(DateUtil.format(new Date()));
+						dhTaskInstance2.setTaskData(taskData.toJSONString());
+						if(dhTaskInstanceMapper.updateTaskStatusByTaskUid(dhTaskInstance2)>0) {
 						//如果任务为类型为normal，则将其它相同任务id的任务废弃
 							if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);

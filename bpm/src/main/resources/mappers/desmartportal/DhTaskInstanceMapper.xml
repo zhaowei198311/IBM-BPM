@@ -549,7 +549,19 @@
 	
 	<update id="updateTaskStatusByTaskUid" parameterType="map">
 	   update dh_task_instance 
-	   set task_status = #{taskStatus}
+	   <set>
+	   <trim suffixOverrides=",">
+	   <if test="taskStatus != null and taskStatus != '' ">
+	    task_Status = #{taskStatus}
+	   </if>
+	   <if test="taskFinishDate != null ">
+	    task_Finish_Date = #{taskFinishDate}
+	   </if>
+	   <if test="taskData != null and taskData != '' ">
+	    task_Data = #{taskData}
+	   </if>
+	   </trim>
+	   </set>
 	   where TASK_UID = #{taskUid}
 	</update>
 	
