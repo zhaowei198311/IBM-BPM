@@ -546,6 +546,88 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         return null;
     }
     
+
+	@Override
+	public ServerResponse<List<Map<String,Object>>> queryRejectByActivity(String activityId, String insUid) {
+		List<Map<String,Object>> activitiMapList = new ArrayList<>();
+		if(StringUtils.isBlank(activityId) || StringUtils.isBlank(insUid)) {
+			return ServerResponse.createByErrorMessage("缺少必要参数");
+		}		
+		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
+		// 查询当前环节是否允许驳回 （TRUE,FALSE）
+		String rejectboolean = dhActivityConf.getActcCanReject();
+		// 查询当前环节驳回方式 (toProcessStart发起人,toPreActivity上个环节,toActivities选择环节)
+		String rejectType =  dhActivityConf.getActcRejectType();
+		// 可以驳回
+		
+		if(Const.Boolean.TRUE.equals(rejectboolean)) {
+			DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+			// 获得流程实例引擎id
+			int insId = dhProcessInstance.getInsId();
+			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+			dhRoutingRecord.setInsUid(insUid);
+			switch (rejectType) {
+			case "toProcessStart":
+				log.info("驳回到发起人");
+				// 发起人
+				// 获得流程发起人
+				String insInitUser =  dhProcessInstance.getInsInitUser(); 
+				SysUser sysUser = new SysUser();
+				sysUser.setUserUid(insInitUser);
+				SysUser sysUser2 = sysUserMapper.findById(sysUser);
+				String UserName = sysUser2.getUserName();
+				// 获得流转数据中的发起流程的环节id
+				Map<String,Object> toProcessStartMap = new HashMap<>();
+				List<DhRoutingRecord> dhRoutingRecordList = dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
+				for (DhRoutingRecord dhRoutingRecord2 : dhRoutingRecordList) {
+					// 过滤掉其他的数据信息  只需要 类型为 发起流程的环节信息
+					BpmActivityMeta bpmActivityMeta3 = bpmActivityMetaMapper.queryByPrimaryKey(dhRoutingRecord2.getActivityId());
+					if (DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {
+						toProcessStartMap.put("insId", insId);
+						toProcessStartMap.put("activityBpdId", bpmActivityMeta3.getActivityBpdId());
+						toProcessStartMap.put("activityName", bpmActivityMeta3.getActivityName());
+						toProcessStartMap.put("userId", dhRoutingRecord2.getUserUid());
+						toProcessStartMap.put("userName", dhRoutingRecord2.getUserName());
+						activitiMapList.add(toProcessStartMap);
+					}
+				}
+				return ServerResponse.createBySuccess(activitiMapList);
+			case "toPreActivity":
+				log.info("驳回到上个环节");
+				// 上个环节	
+				Map<String,Object> toPreActivityMap = new HashMap<>();
+				ServerResponse<BpmActivityMeta> bpmActivityMeta2 = dhRouteService.getPreActivity(dhProcessInstance, bpmActivityMeta);
+				toPreActivityMap.put("insInitUser", bpmActivityMeta2.getData().getUserUid());
+				toPreActivityMap.put("insInitUserName", bpmActivityMeta2.getData().getUserName());
+				toPreActivityMap.put("insId", insId);
+				toPreActivityMap.put("activityBpdId", bpmActivityMeta2.getData().getActivityBpdId());
+				toPreActivityMap.put("activityName", bpmActivityMeta2.getData().getActivityName());
+				activitiMapList.add(toPreActivityMap);
+				return ServerResponse.createBySuccess(activitiMapList);
+			case "toActivities":
+				log.info("驳回到指定环节");
+				// 选择环节
+				List<DhRoutingRecord> dhRoutingRecordList2 = dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
+				for (DhRoutingRecord dhRoutingRecord3 : dhRoutingRecordList2) {
+					// 过滤信息
+					BpmActivityMeta bpmActivityMeta4 = bpmActivityMetaMapper.queryByPrimaryKey(dhRoutingRecord3.getActivityId());
+					if (DhRoutingRecord.ROUTE_Type_SUBMIT_TASK.equals(dhRoutingRecord3.getRouteType())||DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord3.getRouteType())) {
+						Map<String,Object> toActivitiesMap = new HashMap<>();
+						toActivitiesMap.put("insId", insId);
+						toActivitiesMap.put("activityBpdId", bpmActivityMeta4.getActivityBpdId());
+						toActivitiesMap.put("activityName", bpmActivityMeta4.getActivityName());
+						toActivitiesMap.put("userId", dhRoutingRecord3.getUserUid());
+						toActivitiesMap.put("userName", dhRoutingRecord3.getUserName());
+						activitiMapList.add(toActivitiesMap);
+					}
+				}
+				return ServerResponse.createBySuccess(activitiMapList);
+		}	
+		}
+		return null;
+	}
+    
     @Override
     @Transactional
 	public ServerResponse rejectProcess(int insId,String activityId, String user) {

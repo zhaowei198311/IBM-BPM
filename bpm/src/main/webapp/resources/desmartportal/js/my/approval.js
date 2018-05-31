@@ -43,6 +43,13 @@ layui.use('layedit', function () {
 });
 
 $(function () {
+	
+	$("#middle10").on("click", ":checkbox", function(){
+		if($(this).prop("checked")){
+			$("#middle10 :checkbox").prop("checked", false);
+            $(this).prop("checked", true);
+         }
+	});
 
     $(".add_row")
         .click(
@@ -298,10 +305,39 @@ function agree() {
     });
 }
 
-function reject() {
+function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
-    var insId = $("#insId").val();
-	$(".display_container8").css("display","block");
+    var insUid = $("#insUid").val();
+    
+    $.ajax({
+        url: 'processInstance/queryRejectByActivity',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+        	activityId : activityId,
+        	insUid : insUid
+        },
+        beforeSend: function () {
+            index = layer.load(1);
+        },
+        success: function (result) {
+            layer.close(index);
+        		$("#middle10").empty();
+            	var rejectMapList = result.data;
+            	var rejectDiv = "";
+            	for(var i=0;i<rejectMapList.length;i++){
+                	rejectDiv += "<li><input type='checkbox' /><label>"+rejectMapList[i].activityName+"————审批人:"+rejectMapList[i].userName+"</label></li>";    
+                	}//end for
+            	$("#middle10").append(rejectDiv);
+        },
+        error: function (result) {
+            layer.close(index);
+            layer.alert('查询驳回环节失败', {
+                icon: 2
+            });
+        }
+    });
+    $(".display_container8").css("display","block");
 }
 
 function back() {
@@ -374,5 +410,6 @@ function checkUserData() {
     	}//end ajax
 	});
 	$(".display_container2").css("display","block"); //end
+
 }
 

@@ -122,10 +122,10 @@ public class DhProcessInstanceController {
 		return dhTaskInstanceService.selectTaskByUser(taskInstance, pageNum, pageSize);
 	}
 	
-	@RequestMapping(value = "/rejectProcess")
+	@RequestMapping(value = "/queryRejectByActivity")
 	@ResponseBody
-	public ServerResponse rejectProcess() {
-		
-		return null;
+	public ServerResponse queryRejectByActivity(@RequestParam(value = "activityId", required = false) String activityId,
+			@RequestParam(value = "insUid", required = false) String insUid) {
+		return dhProcessInstanceService.queryRejectByActivity(activityId,insUid);
 	}
 }

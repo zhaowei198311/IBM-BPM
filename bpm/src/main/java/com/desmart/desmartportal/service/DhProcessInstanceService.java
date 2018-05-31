@@ -99,10 +99,19 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	DhProcessInstance getByInsUid(String insUid);
+	
+	/**
+	 * 查询可供驳回的环节
+	 */
+	ServerResponse<List<Map<String,Object>>> queryRejectByActivity(String activityId,String insUid);
 
 	
 	/**
 	 * 驳回流程
+	 * @param insId 引擎实例id
+	 * @param activityId 环节id
+	 * @param user 用户id
+	 * @return
 	 */
 	ServerResponse rejectProcess(int insId,String activityId, String user);
 
