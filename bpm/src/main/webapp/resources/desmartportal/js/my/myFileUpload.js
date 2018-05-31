@@ -60,12 +60,16 @@ $(function(){
 			          		delete files[index];
 			          		return;
 			          	}
-			          	
-			          	
+			          	var fileSize = "";
+			          	 if((file.size/1024/1024)<1){
+			          		fileSize = (file.size/1024).toFixed(2) +'Kb'
+			              }else{
+			            	fileSize = (file.size/1024/1024).toFixed(2) +'Mb'
+			              }
 			          	
 			            var tr = $(['<tr id="upload-'+ index +'">'
 			              ,'<td>'+ file.name +'</td>'
-			              ,'<td>'+ (file.size/1024/1024).toFixed(2) +'Mb</td>'
+			              ,'<td>'+ fileSize +'</td>'
 			              ,/*'<td><input type="text" style="width:70px;" /></td>'
 			              ,'<td><input type="text" style="width:70px;" /></td>'
 			              ,'<td><input type="text" /></td>'
@@ -416,7 +420,7 @@ function post(URL, PARAMS) {
     temp_form .appendChild(opt);      
 	}      
 	document.body.appendChild(temp_form);      
-	temp_form .submit();   
+	temp_form.submit();   
 	temp_form.remove();
 } 
 function batchPost(URL, PARAMS) { 
@@ -434,7 +438,7 @@ function batchPost(URL, PARAMS) {
 	}   
 	}
 	document.body.appendChild(temp_form);      
-	temp_form .submit();
+	temp_form.submit();
 	temp_form.remove();
 	//Ajax刷新进度条
     showProgress();
