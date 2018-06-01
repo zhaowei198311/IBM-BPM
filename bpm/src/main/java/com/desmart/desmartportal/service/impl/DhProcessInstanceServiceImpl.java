@@ -655,11 +655,16 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		dhTaskInstance.setInsUid(insUid);
 		List<DhTaskInstance> DhTaskInstanceList = dhTaskInstanceMapper.selectAllTask(dhTaskInstance);
 		for (DhTaskInstance dhTaskInstance2 : DhTaskInstanceList) {
-			if(user.equals(dhTaskInstance2.getUsrUid()) && DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance2.getTaskStatus())) {
-				String insUid2 = dhTaskInstance2.getInsUid();
-				List<String> insUids = new ArrayList<>();
-				insUids.add(insUid2);
-				dhTaskInstanceMapper.abandonTaskByInsUidList(insUids);
+			/**
+			 *  这里的用户判断 应该是获取当前登陆的用户 因为是我驳回的 ， 相反user是驳回给谁 哪一个人， 跟当前用户无关 ，
+			 *  这里只是修改我本人的状态 ----完成任务(注：如果是并行任务需要修改其他人的任务状态为-1废弃)
+			 */
+			String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER); 
+			if(currentUser.equals(dhTaskInstance2.getUsrUid()) && DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance2.getTaskStatus())) {
+				dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(dhTaskInstance2.getUsrUid(), dhTaskInstance2.getTaskId(), DhTaskInstance.STATUS_CLOSED);
+		/*		List<String> insUids = new ArrayList<>();
+				insUids.add();
+				dhTaskInstanceMapper.abandonTaskByInsUidList(insUids);*/
 			}
 		}
 		return ServerResponse.createBySuccess();
