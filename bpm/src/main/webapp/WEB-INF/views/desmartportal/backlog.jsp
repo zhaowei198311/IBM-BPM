@@ -235,7 +235,7 @@
 						+'<td>' 
 						+ sortNum 
 						+ '</td>' 
-						+ '<td>'
+						+ '<td onclick="openApproval(\'' + meta.taskUid + '\');">'
 						+ meta.dhProcessInstance.insTitle
 						+ '</td>' 
 						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
