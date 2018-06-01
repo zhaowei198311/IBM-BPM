@@ -59,6 +59,13 @@ public class SysUserController {
 		return "desmartsystem/usermanagement/globalConfig";
 	}
 	
+	@RequestMapping(value="/userChooseRole")
+	public ModelAndView userChooseRole(String userUid){
+		ModelAndView mode=new ModelAndView("desmartsystem/usermanagement/common/userChooseRole");
+		mode.addObject("userUid", userUid);
+		return mode;
+	}
+	
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){
 		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/assign_personnel");
