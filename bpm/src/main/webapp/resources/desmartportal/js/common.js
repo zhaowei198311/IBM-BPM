@@ -302,11 +302,17 @@ var common = {
 				var tagName = $("[name='"+name+"']").prop("tagName");
 				var tagType = $("[name='"+name+"']").attr("type");
 				var className = $("[name='"+name+"']").attr("class");
-				if(tagType=="radio" || tagType=="checkbox"){
+				if(tagType=="checkbox"){
 					$("[name='"+name+"']").attr("disabled","true");
+				}
+				if(tagType=="radio"){
+					$("[name='"+name+"']").attr("disabled","true");
+					var title = $("[name='"+name+"']:checked").attr("title");
+					$("[name='"+name+"']:checked").parent().text(title);
 				}
 				if(tagName=="SELECT"){
 					$("[name='"+name+"']").attr("disabled","true");
+					$("[name='"+name+"']").next().find("input");
 				}
 				if(className=="date"){
 					$("[name='"+name+"']").attr("disabled","true");

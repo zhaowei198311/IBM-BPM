@@ -8014,3 +8014,7 @@ button.close {
 .form-group .subDiv{
 	float:left;
 }
+
+input[disabled],.layui-select-disabled .layui-disabled{
+	border-width:0px;
+}

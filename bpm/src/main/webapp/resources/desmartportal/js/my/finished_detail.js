@@ -12,7 +12,7 @@ function processView(insId) {
 				type : 2,
 				title : '流程图',
 				shadeClose : true,
-				shade : 0.8,
+				shade : 0,
 				area : [ '790px', '580px' ],
 				content : result
 			});
