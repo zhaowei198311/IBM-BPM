@@ -106,6 +106,7 @@
         <input id="insId" value="${processInstance.insId}" style="display: none;">
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
+        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
@@ -211,7 +212,9 @@
                                         <th>上传人</th>
                                         <th>上传时间</th>
                                         <th>
+                                        <c:if test="${taskInstance.taskStatus!=32 }">
                                             <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
+                                            </c:if>
                                             <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />

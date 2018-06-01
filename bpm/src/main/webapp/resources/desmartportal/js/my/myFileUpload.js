@@ -272,6 +272,7 @@ function updateAccessoryFile(a){
 // 加载已上传的文件列表
 function loadFileList(){
 	var appUid = $("#insUid").val();
+	var taskStatus = $("taskStatus").val();
 	$.post('accessoryFileUpload/loadFileList.do'
 		,{"appUid":appUid}
 		,function(result){
@@ -300,10 +301,12 @@ function loadFileList(){
 		      +"<button onclick = 'showHistoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
 		      		"value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
+		      		if(taskStatus!=32){
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
-		      +"</td></tr>"; 
+		      		}
+		      		+"</td></tr>"; 
 			tagTbody.append(info);
 		}
 		$(".layui-update-file").each(function(){
