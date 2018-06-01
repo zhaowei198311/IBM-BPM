@@ -2,6 +2,7 @@ package com.desmart.desmartsystem.service.impl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +79,12 @@ public class SysUserServiceImpl implements SysUserService {
 	public List<SysUser> selectAll(SysUser entity) {
 		// TODO Auto-generated method stub
 		return sysUserDao.selectAll(entity);
+	}
+
+	@Override
+	public List<SysUser> login(String username, String password) {
+		List<SysUser> userList = sysUserDao.login(username, password);
+		return userList;
 	}
 	
 }
