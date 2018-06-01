@@ -2,7 +2,7 @@
     isErrorPage="true"
     pageEncoding="UTF-8"%>
 <div class="display_container2">
-		<div class="display_content2" style="min-height: auto;">
+		<div class="display_content2" style="min-height: auto;padding: 20px 0 10px 20px;">
 			<div class="top">
 				群组人员分配
 				<div class="query_user" style="height: 40px;">
