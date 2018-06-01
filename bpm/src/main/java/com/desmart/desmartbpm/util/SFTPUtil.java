@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
 
 import com.desmart.common.constant.ServerResponse;
@@ -15,7 +14,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import com.opensymphony.xwork2.Result;
 
 public class SFTPUtil {
 	private ChannelSftp sftp;
@@ -217,6 +215,6 @@ public class SFTPUtil {
             bos.write(buffer, 0, len);  
         }  
         bos.close();  
-        return new String(bos.toByteArray());
+        return new String(bos.toByteArray(),"UTF-8");
     }  
 }
