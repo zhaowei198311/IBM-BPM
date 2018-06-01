@@ -660,7 +660,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			percent = (int) (((double) reTime / (1000 * 60 * 60)) / timeAmount * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
-		if (hour < 0) {
+		if (hour < 0 || percent >= 100) {
 			hour = -1;
 			percent = 100;
 		}
@@ -680,7 +680,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
 			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
 			String activityId = dhTaskInstance.getActivityBpdId();
-			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getActivityBpdId());
+			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 			// 加新任务			
 			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
 			dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
@@ -692,6 +692,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			String completedSigning = "";
 			// 会签人审批顺序，说明：如果会签方式是顺序会签，则第一人taskType为12，其他人员taskType为暂停状态
 			int num = 1;
+			// 上一个加签任务taskUid
+			String taskUid = "";
 			SysUser sysUser = new SysUser();
 			for (String string : usrUids) {
 				sysUser.setUserName(string);
@@ -702,12 +704,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				if (checkDhTaskInstance == null) {
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
 					if ("simpleLoopAdd".equals(dhTaskInstance.getTaskType())) {
-						//dhTaskInstance.setToTaskUid(num);
 						if (num > 1) {
 							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
+							dhTaskInstance.setToTaskUid(taskUid);
+						}else {
+							dhTaskInstance.setToTaskUid(dhTaskInstance.getTaskUid());
 						}
 					}
 					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
+					taskUid = dhTaskInstance.getTaskUid();
 					dhTaskInstanceMapper.insertTask(dhTaskInstance);
 				}else {
 					completedSigning += string+",";
