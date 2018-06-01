@@ -209,6 +209,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskInitDate(new Date());
             dhTask.setSynNumber(lswTask.getTaskId());
             dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
+            dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
             // 设置
             DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
             if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {

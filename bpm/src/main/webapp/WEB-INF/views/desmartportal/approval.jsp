@@ -142,7 +142,6 @@
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <span id="formData" style="display: none;">${formData}</span>
-        <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
@@ -485,3 +484,11 @@
 
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
+<script>
+    $(function(){
+    	console.log("formData: ===============");
+        console.log($("#formData").text());
+        console.log("fieldPermissionInfo: ===============");
+        console.log($("#fieldPermissionInfo").text());
+    });
+</script>
