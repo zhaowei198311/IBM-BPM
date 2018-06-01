@@ -135,4 +135,14 @@ public class DhProcessInstanceController {
 			@RequestParam(value = "activityBpdId", required = false) String activityBpdId,@RequestParam(value = "userId", required = false) String userId) {
 		return dhProcessInstanceService.rejectProcess(insId, activityBpdId, userId);
 	}
+	
+	@RequestMapping(value = "/queryProInstanceByInsUid")
+	@ResponseBody
+	public ServerResponse queryProInstanceByInsUid(@RequestParam(value = "insUid")String insUid) {
+		try {
+			return dhProcessInstanceService.selectByPrimaryKey(insUid);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 }

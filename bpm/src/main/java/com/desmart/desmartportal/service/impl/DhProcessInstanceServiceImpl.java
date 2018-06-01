@@ -35,6 +35,7 @@ import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -137,15 +138,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 * 根据流程实例主键 查询流程
 	 */
 	@Override
-	public DhProcessInstance selectByPrimaryKey(String insUid) {
+	public ServerResponse selectByPrimaryKey(String insUid) {
 		log.info("");
-		try {
-			return dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-		} catch (Exception e) {
-			e.printStackTrace();
+		DhProcessInstance proInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+		if(null==proInstance) {
+			throw new PlatformException("找不到目标流程实例");
 		}
 		log.info("");
-		return null;
+		return ServerResponse.createBySuccess(proInstance);
 	}
 	
 	/**

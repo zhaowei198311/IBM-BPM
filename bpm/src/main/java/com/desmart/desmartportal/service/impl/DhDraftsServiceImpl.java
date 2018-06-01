@@ -132,7 +132,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 			DhDrafts drafts = dhDraftsMapper.selectBydfsId(dfsId);
 			resultMap.put("drafts", drafts);
 			// 表单详细信息设置
-			DhProcessInstance dhProcessInstance = dhProcessInstanceService.selectByPrimaryKey(insUid);
+			DhProcessInstance dhProcessInstance = (DhProcessInstance) dhProcessInstanceService.selectByPrimaryKey(insUid).getData();
 			Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
 			resultMap.put("formMap", formMap);
 			log.info("根据草稿id和流程id查询数据结束...");	

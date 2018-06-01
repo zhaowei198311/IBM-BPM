@@ -35,7 +35,7 @@ public interface DhProcessInstanceService {
 	 * @param insUid
 	 * @return DhProcessInstance 流程实例对象
 	 */
-	DhProcessInstance selectByPrimaryKey(String insUid);
+	ServerResponse selectByPrimaryKey(String insUid);
 	
 	/**
 	 * 根据流程实例主键 修改流程实例

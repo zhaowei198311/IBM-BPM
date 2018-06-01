@@ -66,6 +66,7 @@
 					<thead>
 					    <tr>
 					      <th>序号</th>
+					      <th>流程标题</th>
 					      <th>任务标题</th>
 					      <!-- <th>上一环节提交人</th> -->
 					      <th>任务类型</th>
@@ -195,24 +196,42 @@
 				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
-				trs += '<tr>' + '<td>' + sortNum + '</td>' 
-						+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
-						+ meta.taskTitle 
-						+ '</td>' 
-					/* 	+ '<td>';
-					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
-						trs += meta.taskPreviousUsrUsername 
+				var insTitle = "";
+				var insId = "";
+				$.ajax({
+					url:"processInstance/queryProInstanceByInsUid",
+					method:"post",
+					async:false,
+					data:{
+						insUid:meta.insUid
+					},
+					success:function(result){
+						if(result.status==0){
+							insTitle = result.data.insTitle;
+							insId = result.data.insId;
+						}
 					}
-					trs += '</td>'  */
-						+ '<td>' + meta.taskType
-						+ '</td>' 
-						+ '<td>'
-						+ InitDate
-						+'</td>' 
-						+ '<td>'
-						+ "<i class='layui-icon tail' onclick='processView(\""+ meta.insUid +"\")'>&#xe641;</i>"
-						+ '</td>'
-						+ '</tr>';
+				});
+				trs += '<tr>' 
+					+ '<td>' + sortNum + '</td>'
+					+'<td>'+insTitle+'</td>'
+					+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
+					+ meta.taskTitle 
+					+ '</td>' 
+				/* 	+ '<td>';
+				if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+					trs += meta.taskPreviousUsrUsername 
+				}
+				trs += '</td>'  */
+					+ '<td>' + meta.taskType
+					+ '</td>' 
+					+ '<td>'
+					+ InitDate
+					+'</td>' 
+					+ '<td>'
+					+ "<i class='layui-icon tail' onclick='processView(\""+ insId +"\")'>&#xe641;</i>"
+					+ '</td>'
+					+ '</tr>';
 			}
 			$("#proMet_table_tbody").append(trs);
 		}
