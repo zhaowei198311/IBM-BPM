@@ -702,7 +702,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				if (checkDhTaskInstance == null) {
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
 					if ("simpleLoopAdd".equals(dhTaskInstance.getTaskType())) {
-						dhTaskInstance.setToTaskUid(num);
+						//dhTaskInstance.setToTaskUid(num);
 						if (num > 1) {
 							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
 						}

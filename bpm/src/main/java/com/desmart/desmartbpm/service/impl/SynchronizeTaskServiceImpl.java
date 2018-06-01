@@ -188,6 +188,19 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
             List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta, BpmActivityMeta preMeta) {
         List<DhTaskInstance> taskList = Lists.newArrayList();
+        
+        // 计算到期时间
+        DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
+        Double timeAmount = 1.0;
+        String timeUnit = "day";
+        if (conf.getActcTime() != null && conf.getActcTime().doubleValue() != 1.0) {
+            timeAmount = conf.getActcTime();
+        }
+        if (StringUtils.isNotBlank(conf.getActcTimeunit())) {
+            timeUnit = conf.getActcTimeunit();
+        }
+        Date dueDate = sysHolidayService.calculateDueDate(lswTask.getRcvdDatetime(), timeAmount, timeUnit);
+        
         for (String orgionUserUid : orgionUserUidList) {
             DhTaskInstance dhTask = new DhTaskInstance();
             dhTask.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
@@ -206,15 +219,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskStatus(lswTask.getStatus());
             dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
             dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
-            dhTask.setTaskInitDate(new Date());
+            dhTask.setTaskInitDate(lswTask.getRcvdDatetime());
             dhTask.setSynNumber(lswTask.getTaskId());
             dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
             dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
-            // 设置
-            DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
-            if (conf.getActcTime() != null && conf.getActcTimeunit() != null) {
-                dhTask.setTaskDueDate(sysHolidayService.calculateDueDate(new Date(), conf.getActcTime(), conf.getActcTimeunit()));
-            }
+            dhTask.setTaskDueDate(dueDate);
             taskList.add(dhTask);
         }
         return taskList;

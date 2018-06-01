@@ -351,7 +351,7 @@
 		#{taskPreviousUsrUid},
 		#{taskPreviousUsrUsername},
 		#{taskDelegateDate},
-		sysdate,
+		#{taskInitDate},
 		#{taskFinishDate},
 		#{taskDueDate},
 		#{taskRiskDate},
