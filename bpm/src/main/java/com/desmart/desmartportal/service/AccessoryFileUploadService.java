@@ -48,24 +48,27 @@ public interface AccessoryFileUploadService {
 	 * @param appUid
 	 * @param taskId
 	 * @param actcCanUploadAttach
+	 * @param taskUid
 	 * @return
 	 */
 	public ServerResponse saveFile(MultipartFile[] multipartFiles,String uploadModels,
-			String appUid,String taskId,String activityId);
+			String appUid,String taskId,String activityId,String taskUid);
 	/**
 	 * 文件删除
 	 * @param dhInstanceDocument
 	 * @param actcCanDeleteAttach
+	 * @param taskUid
 	 * @return
 	 */
-	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,String activityId);
+	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,String activityId,String taskUid);
 	/**
 	 * 更新附件
 	 * @param multipartFile
 	 * @param dhInstanceDocument
 	 * @param actcCanUploadAttach
+	 * @param taskUid
 	 * @return
 	 */
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile
-			,DhInstanceDocument dhInstanceDocument,String activityId);
+			,DhInstanceDocument dhInstanceDocument,String activityId,String taskUid);
 }

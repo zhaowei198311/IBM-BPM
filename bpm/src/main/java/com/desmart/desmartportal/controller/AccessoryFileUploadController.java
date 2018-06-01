@@ -57,8 +57,10 @@ public class AccessoryFileUploadController {
 	public ServerResponse saveFile(@RequestParam("files") MultipartFile[] multipartFiles,
 			@RequestParam("uploadModels") String uploadModels, @RequestParam("appUid") String appUid,
 			@RequestParam("taskId") String taskId,
-			@RequestParam("activityId")String activityId) {
-		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels, appUid, taskId,activityId);
+			@RequestParam("activityId")String activityId
+			,@RequestParam("taskUid")String taskUid) {
+		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels
+				, appUid, taskId,activityId,taskUid);
 	}
 
 	@RequestMapping(value = "loadFileList.do")
@@ -111,8 +113,10 @@ public class AccessoryFileUploadController {
 	@RequestMapping("deleteAccessoryFile.do")
 	@ResponseBody
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,
-			@RequestParam("activityId")String activityId) {
-		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,activityId);
+			@RequestParam("activityId")String activityId
+			,@RequestParam("taskUid")String taskUid) {
+		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,activityId
+				,taskUid);
 	}
 
 	@RequestMapping("bachFileDown.do")
@@ -227,11 +231,13 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse updateAccessoryFile(@RequestParam("file") MultipartFile multipartFile,
 			DhInstanceDocument dhInstanceDocument,
-			@RequestParam("activityId")String activityId) {
+			@RequestParam("activityId")String activityId
+			,@RequestParam("taskUid")String taskUid) {
 		if (dhInstanceDocument.getAppDocIdCard() == null || "".equals(dhInstanceDocument.getAppDocIdCard())) {
 			return ServerResponse.createByErrorMessage("更新文件异常！");
 		} else {
-			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile, dhInstanceDocument,activityId);
+			return accessoryFileUploadServiceImpl.updateAccessoryFile(multipartFile
+					, dhInstanceDocument,activityId,taskUid);
 		}
 	}
 	@RequestMapping("loadHistoryFile.do")

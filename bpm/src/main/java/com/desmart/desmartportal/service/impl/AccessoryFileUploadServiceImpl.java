@@ -27,7 +27,9 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.AccessoryFileUploadMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.AccessoryFileUploadService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.SFTPUtil;
@@ -44,6 +46,8 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	private AccessoryFileUploadMapper accessoryFileuploadMapper;
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	
 	@Override
 	public Integer insertDhInstanceDocuments(List<DhInstanceDocument> dhInstanceDocuments) {
@@ -73,7 +77,10 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid
-			, String taskId,String activityId) {
+			, String taskId,String activityId,String taskUid) {
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
 		List<DhInstanceDocument> fileUploadList = new ArrayList<DhInstanceDocument>();
@@ -191,14 +198,21 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			return ServerResponse.createBySuccess();
 		} 
 		}else {
-			return ServerResponse.createByErrorMessage("上传权限验证失败！");
+			return ServerResponse.createByErrorMessage("上传权限验证失败 ");
+		}	
+		}else {
+			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
 		}
+		
 	}
 
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument
-			,String activityId) {
+			,String activityId,String taskUid) {
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanDeleteAttach())) {
 	    //逻辑删除--批量修改方法
@@ -220,12 +234,18 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		}else {
 			return ServerResponse.createByErrorMessage("删除权限验证失败！");
 		}
+		}else {
+			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
+		}
 	}
 
 	@Override
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
-			,String activityId) {
+			,String activityId,String taskUid) {
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
 		//取得当前上传文件的文件名称  
@@ -296,6 +316,9 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		}
 		}else {
 			return ServerResponse.createByErrorMessage("更新文件权限验证失败！");
+		}
+		}else {
+			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
 		}
 	}
 		

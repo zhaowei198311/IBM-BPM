@@ -7,8 +7,15 @@ layui.use('form', function(){
     	    if(data.value!='-1'){
     	    	//$("#demo").val(data.value);
     	    	//alert($("#demo").val());
-    	    	$("#myApprovalOpinion").text(data.value);
+    	    	if($("#myApprovalOpinion").text()!=null&&
+    	    			$("#myApprovalOpinion").text()!=''){
+    	    		var info = $("#myApprovalOpinion").text()+data.value;
+    	    		$("#myApprovalOpinion").text(info);
+    	    	}else{
+    	    		$("#myApprovalOpinion").text(data.value);
+    	    	}
     	    }
+    	    form.render();
     	    /*layui.use('layedit', function(){
     	    	editIndex = layui.layedit.build("demo");
     	    });*/
