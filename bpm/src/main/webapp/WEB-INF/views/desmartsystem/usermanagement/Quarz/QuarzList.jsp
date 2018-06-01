@@ -14,7 +14,9 @@
 <title>任务调度</title>
  
 <jsp:include page="../common/inc.jsp"></jsp:include>
-
+<style type="text/css">
+	.layui-icon{cursor: pointer;}
+</style>
 </head>
 <body>
   <div class="layui-tab">
@@ -24,8 +26,8 @@
   </ul> -->
   <div class="layui-tab-content">
     <div class="layui-tab-item layui-show">
-	  <div class="layui-btn-group">
-			    <button class="layui-btn" data-type="btnAdd">新增</button>
+	  <div class="layui-btn-group" style="margin-left: 10px;">
+			    <button class="layui-btn" data-type="btnAdd" >新增</button>
 			    <!-- <button class="layui-btn layui-btn-danger" data-type="btnDelAll">批量删除</button> -->
 		    </div>
     </div>
@@ -35,7 +37,7 @@
     </div>
   </div>
 </div>
-<table class="layui-hide layui-table" id="table" lay-filter="table" style="border: 0px;"></table>
+<table class="layui-hide layui-table" id="table" lay-filter="table" ></table>
 <script>
 	
 	
@@ -63,7 +65,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				id : 'searchID',
 				done: function(res, curr, count){
 					//加载后回调
-					layer.close(index);//关闭   
+					//layer.close(index);//关闭   
 					/* noAuthTip(res);//无权限提示 */
 				},
 				cols : [ [ //标题栏
