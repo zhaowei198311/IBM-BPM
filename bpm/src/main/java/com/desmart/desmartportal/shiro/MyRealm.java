@@ -19,6 +19,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.desmart.common.util.DataTool;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.service.UserProcessService;
 import com.desmart.desmartsystem.entity.SysUser;
@@ -52,7 +53,7 @@ public class MyRealm extends AuthorizingRealm {
 
         System.out.println("username: " + username + ", password: " + password);
         //login
-        List<SysUser> userList = sysUserService.login(username, password);
+        List<SysUser> userList = sysUserService.login(username, DataTool.encodeMD5(password));
         if (userList.size() == 0) { 
         	 throw new UnknownAccountException();//没找到帐号  
         }  
