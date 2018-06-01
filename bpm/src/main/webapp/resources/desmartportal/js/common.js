@@ -170,8 +170,12 @@ var common = {
 					var radio = $("[name='" + name + "']")
 						.parent().parent().find(
 							"input:radio:checked");
-					textJson = "\"" + name + "\":{\"value\":\""
+					if(radio.length!=0){
+						textJson = "\"" + name + "\":{\"value\":\""
 						+ radio.val().trim() + "\"}";
+					}else{
+						textJson = "\"" + name + "\":{\"value\":\"\"}";
+					}
 					break;
 				}
 				case "checkbox": {
@@ -179,32 +183,35 @@ var common = {
 					var checkbox = $("[name='" + name + "']")
 						.parent().parent().find(
 							"input:checkbox:checked");
-					//判断每次的复选框是否为同一个class
-					if (control) {
-						checkName = checkbox.attr("name");
-					} else {
-						if (checkName != checkbox.attr("name")) {
+					if(checkbox.length!=0){
+						//判断每次的复选框是否为同一个class
+						if (control) {
 							checkName = checkbox.attr("name");
-							control = true;
-						}
-					}
-
-					if (control) {
-						control = false;
-						checkJson += "\"" + checkName
-							+ "\":{\"value\":[";
-						for (var j = 0; j < checkbox.length; j++) {
-							if (j == checkbox.length - 1) {
-								checkJson += "\""
-									+ $(checkbox[j]).val().trim() + "\"";
-							} else {
-								checkJson += "\""
-									+ $(checkbox[j]).val().trim() + "\",";
+						} else {
+							if (checkName != checkbox.attr("name")) {
+								checkName = checkbox.attr("name");
+								control = true;
 							}
 						}
-						checkJson += "]},";
-					}
 
+						if (control) {
+							control = false;
+							checkJson += "\"" + checkName
+								+ "\":{\"value\":[";
+							for (var j = 0; j < checkbox.length; j++) {
+								if (j == checkbox.length - 1) {
+									checkJson += "\""
+										+ $(checkbox[j]).val().trim() + "\"";
+								} else {
+									checkJson += "\""
+										+ $(checkbox[j]).val().trim() + "\",";
+								}
+							}
+							checkJson += "]},";
+						}
+					}else{
+						checkJson += "\"" + checkName + "\":{\"value\":[]}";
+					}
 					json += checkJson;
 					break;
 				}

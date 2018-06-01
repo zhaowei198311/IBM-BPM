@@ -753,7 +753,7 @@ Map<String, Object> resultMap = new HashMap<>();
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
 	    }
 	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance.getTaskStatus())) {
+	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
 	    }
 	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());

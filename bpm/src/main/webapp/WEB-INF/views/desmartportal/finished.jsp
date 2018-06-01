@@ -199,11 +199,12 @@
 						+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
 						+ meta.taskTitle 
 						+ '</td>' 
-						+ '<td>';
+					/* 	+ '<td>';
 					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
 						trs += meta.taskPreviousUsrUsername 
 					}
-					trs += '</td>' + '<td>' + meta.taskType
+					trs += '</td>'  */
+						+ '<td>' + meta.taskType
 						+ '</td>' 
 						+ '<td>'
 						+ InitDate
