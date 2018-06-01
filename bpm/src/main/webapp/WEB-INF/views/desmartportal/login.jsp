@@ -139,7 +139,7 @@ h4 {
 		$.ajax({
 			url : 'user/logins',
 			type : 'post',
-			dataType : 'text',
+			dataType : 'json',
 			data : {
 				username : $("#LAY-user-login-username").val(),
 				password : $("#LAY-user-login-password").val()
@@ -148,12 +148,15 @@ h4 {
 	            index = layer.load(1);
 	        },
 			success : function(data) {
+				console.log(data);
 				layer.close(index);
-				if (data == 1) {
+				console.log(data.status);
+				//console.log(data.success);
+				if(data.status == 0){
 					layer.msg('登陆成功');
 					location.href = "user/menus";
-				} else {
-					layer.msg('登陆失败');
+				}else{
+					layer.msg('用户名/密码错误');
 				}
 			}
 		})
