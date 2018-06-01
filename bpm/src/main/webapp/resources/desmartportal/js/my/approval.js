@@ -407,25 +407,36 @@ function checkUserData() {
         		$("#choose_user_tbody").empty();
             	var activityMetaList = result.data;
             	var chooseUserDiv = "";
-            	for(var i=0;i<activityMetaList.length;i++){
-                	var activityMeta = activityMetaList[i];
-                	chooseUserDiv += '<tr>'
+            	layer.load(1);
+            	if(activityMetaList.length==0){
+            		chooseUserDiv += '<tr>'
                 		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
-						+'<td>'+activityMeta.activityName+'</td>'
+						+'<td>流程结束</td>'
 						+'<th class="approval_th">处理人</th>'
-						+'<td><input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly></td>'
-						+'<th style="text-align:center;">'
-						 +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
-							+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-							+activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
-							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
-								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
-								+'data-looptype="'+activityMeta.loopType+'" />'
-							+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
-						+'</th>'							     
+						+'<td></td>'
 					+'</tr>';
-            		$("#choose_user_tbody").append(chooseUserDiv);
-            	}//end for
+            	}else{
+            		for(var i=0;i<activityMetaList.length;i++){
+                    	var activityMeta = activityMetaList[i];
+                    	chooseUserDiv += '<tr>'
+                    		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
+    						+'<td>'+activityMeta.activityName+'</td>'
+    						+'<th class="approval_th">处理人</th>'
+    						+'<td><input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly></td>'
+    						+'<th style="text-align:center;">'
+    						 +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
+    							+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+    							+activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
+    							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
+    								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+    								+'data-looptype="'+activityMeta.loopType+'" />'
+    							+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
+    						+'</th>'							     
+    					+'</tr>';
+                	}//end for
+            	}
+            	$("#choose_user_tbody").append(chooseUserDiv);
+            	layer.closeAll("loading");
             }
     	}//end ajax
 	});
