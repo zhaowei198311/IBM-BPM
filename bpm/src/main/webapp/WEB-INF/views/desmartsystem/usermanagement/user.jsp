@@ -298,7 +298,7 @@
 		
 		<!-- 绑定部门对应的公司 -->
 		<div class="display_container10">
-			<div class="display_content10" style="min-height: auto;">
+			<div class="display_content10" style="min-height: auto;padding: 20px 20px 10px; 20px;">
 				<div class="top">
 					<div class="layui-col-md12">绑定公司和部门</div>
 				</div>
@@ -438,7 +438,7 @@
 			var url='sysDepartment/treeDisplay';
 			settings.callback={onClick: onClick}
 			/* treeDisplays(url,['treeDemo','departmentTree']); */
-			treeDisplays(url,['treeDemo1']);
+			treeDisplays(url,['departmentTree']);
 			
 			$(".cancelUserDepartmentBtn").click(function(){
 				$(".display_container1").css("display","none");
