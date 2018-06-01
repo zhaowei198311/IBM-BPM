@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
@@ -52,15 +55,18 @@ public class UsersController {
 	
 	@RequestMapping(value = "/logins")
 	@ResponseBody
-	public String login(String username, String password, HttpServletRequest request) {
+	public ServerResponse login(String username, String password, HttpServletRequest request) throws Exception {
+		
 		Subject user = SecurityUtils.getSubject();
-		UsernamePasswordToken token = new UsernamePasswordToken("caocao", "caocao");
-		user.login(token);
-		Session session = SecurityUtils.getSubject().getSession();
-		session.setAttribute(Const.CURRENT_USER, username);
-		session.setTimeout(17200000L);
-		System.err.println(username);
-		return "1";
+		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+		try {
+			user.login(token);
+		} catch (UnknownAccountException uae) {  
+			return ServerResponse.createByErrorMessage("用户名/密码错误"); 
+        } catch (IncorrectCredentialsException ice) { 
+        	return ServerResponse.createByErrorMessage("用户名/密码错误"); 
+        }  
+        return ServerResponse.createBySuccess("成功登陆");
 	}
 	
 	@RequestMapping(value = "/menus")
