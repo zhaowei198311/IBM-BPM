@@ -210,7 +210,7 @@
 	<div class="display_container4" >
 		<div class="display_content4" style="min-height: auto;">
 			<div class="top">
-				绑定业务角色
+				绑定角色
 			</div>
 			<!-- <div style="height:50px;">
 				<div class="layui-inline">
@@ -224,7 +224,7 @@
 		    </div>
 			</div> -->
 			<form class="form-horizontal" action="sysTeamMember/addSysTeamMember" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-			<div class="middle" style="height: 350px;">
+			<div class="middle1" style="height: 350px;">
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 						<col>
