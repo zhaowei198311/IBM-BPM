@@ -476,7 +476,12 @@ function batchPost(URL, PARAMS) {
                  if(result.data.percent=="100"){
                      window.clearInterval(timer);
                      hideProgress();
-                 }
+                 }/*else{
+                	 //$.data($.fn.circliful,"percent",result.data.percent)
+                	 //settings.precent=result.data.percent;
+                	 $("#Progress.circliful").data("percent",result.data.percent);
+                	 animate(result.data.percent);
+                 }*/
              },
              error:function(result){}
           });
@@ -649,7 +654,7 @@ function hideProgress(){
         //$("#test").animate({ left: $(window).width() - 40 + "px" }, { duration: 600, queue: false });    
     });    
 	
-
+    
     $.fn.circliful = function(options) {
 
         var settings = $.extend({
@@ -695,7 +700,6 @@ function hideProgress(){
                 } else {
                     size = settings.size;
                 }
-
                 if($(this).data('percent') != undefined) {
                     percent = $(this).data('percent') / 100;
                     endPercent = $(this).data('percent');
