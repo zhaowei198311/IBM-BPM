@@ -276,7 +276,11 @@
 				data : {},
 				success : function(result){
 					// 渲染到待办
-					$("#daiban_icon").text(result);
+					if(result==0){
+						$("#daiban_icon").css("display", "none");
+					}else{
+						$("#daiban_icon").text(result);
+					}
 				}
 			})
 		}
