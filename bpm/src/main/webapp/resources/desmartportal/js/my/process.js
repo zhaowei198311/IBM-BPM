@@ -4,11 +4,10 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     var area=[];
     if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
-    	area=['680px', '520px'];
+    	area=['615px', '492px'];
     }else{
-    	area=['594px', '460px'];
+    	area=['615px', '492px'];
     }
-    
 
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType;
     layer.open({
