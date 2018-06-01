@@ -420,7 +420,7 @@
 		<where>
 			T.INS_UID = P.INS_UID 
 			AND
-			P.INS_INIT_USER = S.USER_ID
+			T.USR_UID = S.USER_ID
 			<if test="insUid != null and insUid != '' ">
 			AND
 			T.INS_UID = #{insUid}
