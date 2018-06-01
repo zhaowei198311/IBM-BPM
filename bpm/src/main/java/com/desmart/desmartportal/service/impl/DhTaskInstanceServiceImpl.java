@@ -393,7 +393,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
 						for (int i = 0; i < routeData.size(); i++) {
-						String userId = routeData.getJSONObject(i).getString("userUid").substring(0, 8);
+						//String userId = routeData.getJSONObject(i).getString("userUid").substring(0, 8);
+						String userId = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 						// 任务完成后 保存到流转信息表里面
 						DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 						dhRoutingRecord
