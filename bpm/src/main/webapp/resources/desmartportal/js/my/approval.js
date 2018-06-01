@@ -265,7 +265,7 @@ function agree() {
     	layer.alert("请填写审批意见");
     	return;
     }
-	var aprStatus = "ok";
+	//var aprStatus = "通过";
 	/*var approvaInfo ={
 			"aprOpiComment":aprOpiComment,
 			"aprStatus":aprStatus
@@ -313,7 +313,7 @@ function agree() {
     });
     finalData.routeData = routeData;
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
-    finalData.approvalData = {"aprOpiComment":aprOpiComment,"aprStatus":aprStatus};
+    finalData.approvalData = {"aprOpiComment":aprOpiComment};
     $.ajax({
         url: 'taskInstance/finshedTask',
         type: 'POST',
