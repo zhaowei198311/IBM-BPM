@@ -1,23 +1,20 @@
-function getConductor(id, isSingle, actcCanChooseUser, actcAssignType) {
-    console.log(actcCanChooseUser);
+function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
     if (actcCanChooseUser == 'FALSE') {
         return false;
     }
-
-    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType;
+    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType;
     layer.open({
         type: 2,
         title: '选择人员',
         shadeClose: true,
         shade: 0.8,
-        area: ['680px', '520px'],
+        area: ['615px', '492px'],
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
             //绑定解锁按钮的点击事件
             body.find('button#close').on('click', function () {
                 layer.close(lockIndex);
-                //location.reload();//刷新
             });
         }
     });
@@ -442,9 +439,9 @@ function checkUserData() {
 						+'<th class="approval_th">处理人</th>'
 						+'<td><input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly></td>'
 						+'<th style="text-align:center;">'
-							+'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
-								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-								+activityMeta.dhActivityConf.actcAssignType+'"); >&#xe612;</i> '
+						 +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
+							+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+							+activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
 							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
 								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
 								+'data-looptype="'+activityMeta.loopType+'" />'
