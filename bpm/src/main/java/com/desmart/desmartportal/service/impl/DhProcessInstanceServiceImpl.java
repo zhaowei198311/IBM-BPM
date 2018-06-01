@@ -464,7 +464,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         DhProcessDefinition processDefintion = null;
         DhProcessInstance processInstance = null;
         
-        String formData = "";
+        String formData = "{}";
         if (StringUtils.isBlank(insUid)) {
             // 不是草稿箱来的
             processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
@@ -495,6 +495,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
         BpmActivityMeta firstHumanMeta = metaResponse.getData();
         
+        DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(firstHumanMeta.getDhActivityConf().getActcUid());
+        
         // 获得默认步骤的列表
         List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, "default");
         DhStep formStep = getFirstFormStepOfStepList(steps);
@@ -524,6 +526,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.insertProcess(processInstance);
         }
         
+        // 是否显示环节权责控制
+        if (StringUtils.isBlank(dhActivityConf.getActcResponsibility()) || "<br>".equals(dhActivityConf.getActcResponsibility())) {
+            resultMap.put("showResponsibility", "FALSE");
+        } else {
+            resultMap.put("showResponsibility", "TRUE");
+        }
         
         resultMap.put("currentUser", currentUser);
         resultMap.put("bpmForm", bpmForm);
@@ -531,7 +539,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         resultMap.put("processDefinition", processDefintion);
         resultMap.put("formData", formData);
         resultMap.put("bpmActivityMeta", firstHumanMeta);
-        resultMap.put("dhActivityConf", firstHumanMeta.getDhActivityConf());
+        resultMap.put("dhActivityConf", dhActivityConf);
         resultMap.put("userDepartmentList", userDepartmentList);
         resultMap.put("dhStep", formStep);
         resultMap.put("formHtml", formResponse.getData());

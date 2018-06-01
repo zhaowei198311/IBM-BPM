@@ -183,7 +183,7 @@
                     </tr>
                 </tbody>
             </table>
-            
+            <!-- 动态表单区域 -->
 			<div id="formSet">${formHtml }</div>
 			<div class="display_container2">
 				<div class="display_content2">
@@ -208,11 +208,17 @@
 					</div>				
 				</div>
 			</div>
+			<!-- 环节权责区域 -->
+			<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
+            <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
+                ${dhActivityConf.actcResponsibility }
+            </div>
 			<div class="layui-tab">
 				<ul class="layui-tab-title">
 					<li class="layui-this">附件</li>
 				</ul>
 				<div class="layui-tab-content" style="padding: 0;">
+				    <!-- 附件区域 -->
 					<div class="layui-tab-item layui-show" style="height: auto;">
 						<table class="layui-table upload-file-table" style="margin: 0;">
 							<colgroup>
@@ -239,7 +245,7 @@
 									<th>
 										<button
 											class="layui-btn layui-btn-primary layui-btn-sm upload"
-											id="upload-file" style="margin-left: 20px;">上传附件</button>
+											id="upload-file" style="margin-left: 20px;<c:if test="${dhActivityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>" >上传附件</button>
 											<button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm "
 											 id="batch-down-file" style="margin-left:20px;">下载全部</button>
 										<div class="hidden-value">
@@ -334,35 +340,30 @@
 </body>
 
 </html>
-<script type="text/javascript"
-	src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-<script type="text/javascript"
-	src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript"
-	src="resources/desmartportal/js/common.js"></script>
-<script type="text/javascript"
-	src="resources/desmartportal/js/my/process.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
-<script>
-	
-</script>
-<script type="text/javascript"
-	src="resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	//数据信息
 	var view = $(".container-fluid");
 	var form = null;
 	$(function() {
+		console.log("formData: ===============");
+		console.log($("#formData").text());
+		console.log("fieldPermissionInfo: ===============");
+        console.log($("#fieldPermissionInfo").text());
+		
 		layui.use([ 'form' ], function() {
 			form = layui.form;
 		});
 		var formData = $("#formData").text();
 		if (formData != null && formData != "") {
-			//getdata(formData);
 			common.giveFormSetValue(formData);
 		}
-		
 		common.giveFormFieldPermission($("#fieldPermissionInfo").text());
 	});
 

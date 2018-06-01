@@ -514,6 +514,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (currMeta == null) {
 	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
 	    }
+	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currMeta.getDhActivityConf().getActcUid());
 	    
 	    
 	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
@@ -538,9 +539,22 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         String fieldPermissionInfo = fieldPermissionResponse.getData();
         
+        // 是否显示环节权责控制
+        if (StringUtils.isBlank(dhActivityConf.getActcResponsibility()) || "<br>".equals(dhActivityConf.getActcResponsibility())) {
+            resultMap.put("showResponsibility", "FALSE");
+        } else {
+            resultMap.put("showResponsibility", "TRUE");
+        }
+        
+        
+        String insDataStr = dhprocessInstance.getInsData();
+        JSONObject insData = JSON.parseObject(insDataStr);
+        JSONObject formData = insData.getJSONObject("formData");
+
+        resultMap.put("formData", formData.toJSONString());
         resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currMeta);
-        resultMap.put("activityConf", currMeta.getDhActivityConf());
+        resultMap.put("activityConf", dhActivityConf);
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
         resultMap.put("formHtml", formResponse.getData());

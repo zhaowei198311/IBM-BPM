@@ -20,7 +20,7 @@
 	    ac.ACTC_AUDIT_TO_FIELD, ac.ACTC_OUTTIME_TRIGGER, ac.ACTC_OUTTIME_TEMPLATE, ac.ACTC_DESCRIPTION,
 	    ac.ACTC_DEF_TITLE, ac.ACTC_DEF_SUBJECT_MESSAGE, ac.ACTC_DEF_MESSAGE, ac.ACTC_DEF_DESCRIPTION,
 	    ac.ACTC_ALERT, ac.ACTC_PRIORITY_VARIABLE, ac.ACTC_CAN_CANCEL, ac.ACTC_CAN_PAUSE, ac.ACTC_CAN_SKIP,
-	    ac.UPDATOR, ac.UPDATE_TIME, ac.actc_can_choose_user, ac.actc_can_transfer,ac.ACTC_CHOOSEABLE_HANDLER_TYPE
+	    ac.UPDATOR, ac.UPDATE_TIME, ac.actc_can_choose_user, ac.actc_can_transfer,ac.ACTC_RESPONSIBILITY,ac.ACTC_CHOOSEABLE_HANDLER_TYPE
 	</sql>
 	
 	<resultMap id="mapWithConf" type="com.desmart.desmartbpm.entity.BpmActivityMeta" >
@@ -91,7 +91,7 @@
 			    <result column="ACTC_CAN_SKIP" jdbcType="VARCHAR" property="actcCanSkip" />
 			    <result column="ACTC_CAN_CHOOSE_USER" jdbcType="VARCHAR" property="actcCanChooseUser" />
 			    <result column="ACTC_CAN_TRANSFER" jdbcType="VARCHAR" property="actcCanTransfer" />
-			    
+			    <result column="ACTC_RESPONSIBILITY" jdbcType="VARCHAR" property="actcResponsibility" />
 			    <result column="ACTC_CHOOSEABLE_HANDLER_TYPE" jdbcType="VARCHAR" property="actcChooseableHandlerType" />
 	    </association>
     </resultMap>

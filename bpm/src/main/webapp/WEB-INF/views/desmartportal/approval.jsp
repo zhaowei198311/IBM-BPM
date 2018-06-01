@@ -237,15 +237,12 @@
 				</div>
 			</div>
             <div class="option_container">
-                <p class="title_p" style="margin-top: 10px;">本环节审批要求</p>
-                <div class="layui-form">
-                    <p style="margin-bottom: 10px;">
-                        <img src="resources/desmartportal/images/top_star.png" class="star_img" />单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。
-                    </p>
-                    <p>
-                        <img src="resources/desmartportal/images/top_star.png" class="star_img" />审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。
-                    </p>
+                <!-- 环节职责区块  -->
+                <p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
+                <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
+                    ${activityConf.actcResponsibility }
                 </div>
+                <!-- 审批意见区块  -->
                 <p class="title_p" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
                 <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
                     <!--<label class="layui-form-label">审批意见</label>
@@ -270,6 +267,7 @@
                         <li>流转信息</li>
                     </ul>
                     <div class="layui-tab-content" style="padding: 0;">
+                        <!-- 审批记录区域 -->
                         <div class="layui-tab-item layui-show">
                             <table class="layui-table" style="margin: 0;">
                                 <colgroup>
@@ -286,6 +284,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- 附件区域 -->
                         <div class="layui-tab-item" style="height: auto;">
                             <table class="layui-table upload-file-table" style="margin: 0;">
                                 <colgroup>
@@ -306,7 +305,7 @@
                                         <th>上传人</th>
                                         <th>上传时间</th>
                                         <th>
-                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
+                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
                                             <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
@@ -322,6 +321,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- 流转记录区域 -->
                         <div class="layui-tab-item">
                             <div class="p">
                                 <p>
