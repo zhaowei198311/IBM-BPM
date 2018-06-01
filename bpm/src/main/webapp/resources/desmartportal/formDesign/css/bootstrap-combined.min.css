@@ -1827,6 +1827,10 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
     border-width:1px;
 }
 
+input[type="date"][readonly]{
+	cursor: pointer;
+}
+
 input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"][readonly], input[type="checkbox"][readonly] {
     background-color: transparent;
 }
