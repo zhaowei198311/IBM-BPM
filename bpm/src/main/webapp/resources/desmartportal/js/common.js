@@ -40,7 +40,7 @@ var common = {
     	    title: '选择人员',
     	    shadeClose: true,
     	    shade: 0.8,
-    	    area: ['600px', '540px'],
+    	    area: ['615px', '492px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);

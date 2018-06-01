@@ -70,4 +70,8 @@
 		from dh_drafts
 		where ins_uid = #{insUid}
 	</select>
+	
+	<delete id="deleteByInsUid" parameterType="string">
+	   delete from dh_drafts where ins_uid = #{insUid}
+	</delete>
 </mapper>

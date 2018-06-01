@@ -28,4 +28,6 @@ public interface DhDraftsMapper {
 	DhDrafts selectBydfsId(String dfsId);
 	
 	DhDrafts queryDraftsByInsUid(String insUid);
+	
+	int deleteByInsUid(String insUid);
 }

@@ -280,6 +280,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         JSONObject mergedFromData = FormDataUtil.formDataCombine(formDataFromTask, formDataFromIns);
         
         DhProcessDefinition startableDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
+        if (!dhProcessInstance.getProVerUid().equals(startableDefinition.getProVerUid())) {
+            ServerResponse.createByErrorMessage("草稿版本不符合当前可发起版本，请重新起草");
+        }
         
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
@@ -372,6 +375,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 }
                 // 发起流程 第一个流转环节信息 的 用户id 是 自己
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
+                
+                // 从草稿箱删除这个流程的草稿
+                dhDraftsMapper.deleteByInsUid(insUid);
             } else {
                 return ServerResponse.createByErrorMessage("发起流程失败");
             }
@@ -391,7 +397,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         return new Integer(jsonBody2.getString("piid"));
 	}
 	
-	
+	/**
+	 * 从发起流程RESTful调用的结果中得到第一个人工任务
+	 * @param httpReturnStatus
+	 * @return
+	 */
 	private int getFirstTaskId(HttpReturnStatus httpReturnStatus) {
 	    JSONObject jsoResult = JSONObject.parseObject(httpReturnStatus.getMsg());
 	    String taskId = jsoResult.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid");
@@ -421,7 +431,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         DhProcessInstance processInstance = new DhProcessInstance();
         processInstance = new DhProcessInstance();
         processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        processInstance.setInsTitle("DEMO_TITLE");
+        processInstance.setInsTitle("未命名");
         processInstance.setInsId(-1);
         processInstance.setInsStatusId(DhProcessInstance.STATUS_ID_DRAFT);
         processInstance.setInsStatus(DhProcessInstance.STATUS_DRAFT);
