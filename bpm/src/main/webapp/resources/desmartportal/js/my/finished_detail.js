@@ -37,3 +37,7 @@ $(function () {
     common.giveFormFieldPermission(fieldPermissionInfo);
     form.render();
 });
+
+function back() {
+	window.location.href = 'javascript:history.go(-1)';
+}

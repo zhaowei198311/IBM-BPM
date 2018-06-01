@@ -212,9 +212,9 @@
 						}
 					}
 				});
-				trs += '<tr>' 
+				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ '<td>' + sortNum + '</td>'
-					+'<td>'+insTitle+'</td>'
+					+'<td><span onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
 					+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
 					+ meta.taskTitle 
 					+ '</td>' 
