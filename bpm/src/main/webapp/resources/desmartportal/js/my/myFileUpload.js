@@ -359,7 +359,7 @@ function batchDown(){
 			params.push(info);
 			}
 		}
-		if(trNodes != undefined && trNodes.length>0){
+		if(params != undefined && params.length>0){
 			//layer.load(1);
 		batchPost(url,params);
 		}else{
