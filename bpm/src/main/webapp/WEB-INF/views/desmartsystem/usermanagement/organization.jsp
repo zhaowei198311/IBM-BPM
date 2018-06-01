@@ -72,7 +72,7 @@
 		  	</div>
 		  	
 		  	<div class="display_container1">
-				<div class="display_content1" style="height: 450px;">
+				<div class="display_content1" style="height: 450px;margin: 5px 0 0 -290px;">
 					<div class="top">
 						查看部门
 					</div>
