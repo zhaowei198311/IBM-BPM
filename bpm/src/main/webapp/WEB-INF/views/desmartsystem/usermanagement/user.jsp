@@ -204,12 +204,12 @@
 	</div>
 	
 	<div class="display_container1">
-			<div class="display_content1">
+			<div class="display_content1" style="height: auto;">
 				<div class="top">
 					绑定系统角色
 				</div>
 				<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess1);">
-				<div class="middle">
+				<div class="middle1">
 					<table class="layui-table backlog_table" lay-even  lay-skin="nob">
 						<colgroup>
 							<col>
@@ -252,7 +252,7 @@
 		<div class="display_container">
 				<div class="display_content" style="height: auto;">
 					<div class="top">
-						角色绑定
+						业务角色绑定
 					</div>
 					
 					<div style="height:50px;">
@@ -267,7 +267,7 @@
 				    </div>
 					</div>
 					<form class="form-horizontal" action="sysRoleUser/addRoleUser" method="post"   onsubmit="return validateCallback(this,addsuccess2);">
-						<div class="middle">
+						<div class="middle1">
 							<table class="layui-table backlog_table" lay-even lay-skin="nob">
 								<colgroup>
 									<col>
