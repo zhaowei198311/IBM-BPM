@@ -75,13 +75,16 @@ public class AccessoryFileUploadController {
 	@RequestMapping("singleFileDown.do")
 	public void singleFileDown(DhInstanceDocument dhInstanceDocument, HttpServletResponse response) {
 		// System.out.println(dhInstanceDocument.getAppDocFileName());
-		response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
-		response.setContentType("application/x-msdownload"); // 设置内容类型为下载类型
 		OutputStream out = null;
 		try {
-
-			response.setHeader("Content-disposition", "attachment;filename="
-					+ new String(dhInstanceDocument.getAppDocFileName().getBytes(), "ISO-8859-1"));// 设置下载的文件名称
+			String fileName = dhInstanceDocument.getAppDocFileName();
+			response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+			fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1"); 
+			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));  
+			response.setCharacterEncoding("UTF-8"); 
+			response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
+			response.setContentType("application/x-msdownload"); // 设置内容类型为下载类型
+			
 			out = response.getOutputStream(); // 创建页面返回方式为输出流，会自动弹出下载框
 
 			String directory = dhInstanceDocument.getAppDocFileUrl().substring(0,
@@ -141,20 +144,27 @@ public class AccessoryFileUploadController {
 				 * response.setContentType("text/html; charset=UTF-8"); //设置编码字符
 				 * response.setContentType("application/zip"); //设置内容类型为zip
 				 */
-				response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
-				response.setContentType("application/x-msdownload"); // 设置内容类型为下载类型
 				OutputStream out = null;
 				try {
-					response.setHeader("Content-disposition",
-							"attachment;filename=" + new String("流程附件".getBytes(), "ISO-8859-1")+".zip");// 设置下载的文件名称
+					String fileName = "流程附件.zip";
+					response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+					fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1"); 
+					response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));  
+					response.setCharacterEncoding("UTF-8"); 
+					//response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
+					//response.setContentType("application/x-msdownload"); // 设置内容类型为下载类型
 					out = response.getOutputStream(); // 创建页面返回方式为输出流，会自动弹出下载框
 
 					// 创建压缩文件需要的空的zip包
 					String zipBasePath = request.getSession().getServletContext()
 							.getRealPath("/resources/desmartportal/upload/zip/");
 					String zipFilePath = zipBasePath + "temp.zip";
+					File zip = new File(zipBasePath);
+					if(!zip.exists()) { 
+						zip.mkdirs();
+					}
 					// 根据临时的zip压缩包路径，创建zip文件
-					File zip = new File(zipFilePath);
+					 zip = new File(zipFilePath);
 					if (!zip.exists()) {
 						zip.createNewFile();
 					}
@@ -195,7 +205,7 @@ public class AccessoryFileUploadController {
 						request.getSession().setAttribute("percent", percent);    //比如这里是50
 						out.write(buff, 0, size);
 					}
-					
+					response.setHeader("Content-Length", String.valueOf(totalCount));
 			            request.getSession().setAttribute("totalCount",totalCount);
 					fis.close();
 				} catch (IOException e) {
