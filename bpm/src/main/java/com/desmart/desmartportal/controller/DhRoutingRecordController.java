@@ -74,8 +74,9 @@ public class DhRoutingRecordController {
 			String activity_bpd_id = bpmActivityMeta.getActivityBpdId();
 		for (DhTaskInstance dhTaskInstance : dhTaskInstances) {
 				if(bpmActivityMeta.getActivityBpdId().equals(activity_bpd_id)) {
+					if(DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance.getTaskStatus())){
 					dhTaskHandlers.add(dhTaskInstance);
-					break;
+					}
 				}
 			}
 		}
