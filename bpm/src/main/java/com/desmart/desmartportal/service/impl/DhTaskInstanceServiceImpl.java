@@ -747,7 +747,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public ServerResponse<Map<String, Object>> toFinshedTaskDetail(String taskUid) {
-Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 	    
 	    if (StringUtils.isBlank(taskUid)) {
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
