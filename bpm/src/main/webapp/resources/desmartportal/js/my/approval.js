@@ -161,7 +161,7 @@ $(function () {
             // 剩余时间百分比
             var percent = result.percent;
             if (data.status == 0) {
-                if (result.hour == -1) {
+                if (hour == -1) {
                     $(".layui-progress").append('<span class="progress_time">审批已超时</span>');
                     $(".progress_time").css('right', '4%');
                 } else {
