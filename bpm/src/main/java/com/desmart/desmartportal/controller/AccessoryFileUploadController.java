@@ -185,14 +185,14 @@ public class AccessoryFileUploadController {
 					int size = 0;
 					while ((size = fis.read(buff)) != -1) {
 						curCount+=size;
+						double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
+						int percent=(int)(dPercent*100);               //再乘上100取整
+						request.getSession().setAttribute("curCount", curCount);
+						request.getSession().setAttribute("percent", percent);    //比如这里是50
 						out.write(buff, 0, size);
 					}
 					
-					 double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
-			            int percent=(int)(dPercent*100);               //再乘上100取整
 			            request.getSession().setAttribute("totalCount",totalCount);
-			            request.getSession().setAttribute("curCount", curCount);
-			            request.getSession().setAttribute("percent", percent);    //比如这里是50
 					fis.close();
 				} catch (IOException e) {
 					// TODO: handle exception

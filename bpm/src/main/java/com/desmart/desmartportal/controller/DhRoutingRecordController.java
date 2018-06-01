@@ -50,6 +50,21 @@ public class DhRoutingRecordController {
 					bpmActivityMetaList.add(bpmActivityMeta);
 				}
 		}
+		
+		/*List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
+		for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {
+			String activity_bpd_id = bpmActivityMeta.getActivityBpdId();
+			if(activity_bpd_id!=null&&!"".equals(activity_bpd_id)) {
+			DhTaskInstance dhTaskInstanceSelect = new DhTaskInstance();
+			dhTaskInstanceSelect.setInsUid(insUid);
+			dhTaskInstanceSelect.setActivityBpdId(activity_bpd_id);
+			List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByCondition(dhTaskInstanceSelect);
+			if(dhRoutingRecords!=null&&dhRoutingRecords.size()>0) {
+				dhTaskHandlers.add(dhTaskInstances.get(0));
+			}
+			}
+		}*/
+		
 		DhTaskInstance dhTaskInstanceSelect = new DhTaskInstance();
 		dhTaskInstanceSelect.setInsUid(insUid);
 		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceServiceImpl.selectByCondition(dhTaskInstanceSelect);
