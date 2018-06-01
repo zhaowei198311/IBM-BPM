@@ -90,4 +90,26 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	List<DhTaskInstance> listTaskByCondition(@Param("insUid")String insUid, @Param("activityBpdId")String activityBpdId, @Param("userUid")String userUid);
+	
+	/**
+	 * 
+	 * @Title: getByFromTaskUid  
+	 * @Description: 根据fromTaskUid查询任务集合  
+	 * @param @param fromTaskUid
+	 * @param @return  
+	 * @return List<DhTaskInstance>  
+	 * @throws
+	 */
+	List<DhTaskInstance> getByFromTaskUid(@Param("fromTaskUid")String fromTaskUid);
+	
+	/**
+	 * 
+	 * @Title: getByToTaskUid  
+	 * @Description: 根据toTaskUid查询下一个加签任务  
+	 * @param @param toTaskUid
+	 * @param @return  
+	 * @return DhTaskInstance  
+	 * @throws
+	 */
+	DhTaskInstance getByToTaskUid(@Param("toTaskUid")String toTaskUid);
 }

@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
+import com.desmart.desmartportal.dao.DhApprovalOpinionMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -807,4 +809,110 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    return ServerResponse.createBySuccess(resultMap);
 	}
+
+	@Override
+	public ServerResponse<Map<String, Object>> toAddSign(String taskUid) {
+		Map<String, Object> resultMap = new HashMap<>();
+	    
+	    if (StringUtils.isBlank(taskUid)) {
+	        return ServerResponse.createByErrorMessage("缺少必要的参数");
+	    }
+	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance.getTaskStatus())) {
+	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
+	    }
+	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+	    if (dhprocessInstance == null) {
+            return ServerResponse.createByErrorMessage("流程实例不存在");
+        }
+	    
+	    // 获得当前环节
+	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
+	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
+	    if (currMeta == null) {
+	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
+	    }
+	    
+	    
+	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
+	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    if (formStep == null) {
+            return ServerResponse.createByErrorMessage("找不到表单步骤");
+        }
+        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
+        if (!getFormResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单");
+        }
+        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
+        
+        // 获得表单文件内容
+        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
+        if (!formResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("获得表单数据失败");
+        }
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
+        if (!fieldPermissionResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("缺少表单权限信息");
+        }
+        String fieldPermissionInfo = fieldPermissionResponse.getData();
+        
+        resultMap.put("bpmForm", bpmForm);
+        resultMap.put("activityMeta", currMeta);
+        resultMap.put("activityConf", currMeta.getDhActivityConf());
+        resultMap.put("dhStep", formStep);
+        resultMap.put("processInstance", dhprocessInstance);
+        resultMap.put("formHtml", formResponse.getData());
+	    resultMap.put("taskInstance", dhTaskInstance);
+	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
+	    return ServerResponse.createBySuccess(resultMap);
+	}
+	
+	@Transactional
+	@Override
+	public ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent) {
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		// 判断taskType类型
+		String type = dhTaskInstance.getTaskType();
+		// 插入审批意见
+		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+		dhApprovalOpinion.setAprOpiId("apr_idea:"+UUID.randomUUID());
+		dhApprovalOpinion.setInsUid(dhTaskInstance.getInsUid());
+		dhApprovalOpinion.setTaskUid(taskUid);
+		dhApprovalOpinion.setAprUserId(dhTaskInstance.getUsrUid());
+		dhApprovalOpinion.setAprOpiComment(approvalContent);
+		dhApprovalOpinion.setAprStatus("ok");
+		dhApprovalOpinion.setAprDate((Timestamp) new Date());
+		dhApprovalOpinion.setActivityId(activityId);
+		dhapprovalOpinionServiceImpl.insert(dhApprovalOpinion);
+		// 说明：如果taskType为 normalAdd，则一人完成加签即可
+		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
+			// 将主任务状态回归到正常状态
+			DhTaskInstance task = new DhTaskInstance();
+			task.setTaskUid(dhTaskInstance.getFromTaskUid());
+			task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+			dhTaskInstanceMapper.updateByPrimaryKey(task);
+			// 将其他会签人任务删除
+			List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
+			for (DhTaskInstance dti : dhTaskInstanceList) {
+				dhTaskInstanceMapper.deleteByPrimaryKey(dti.getTaskUid());
+			}
+		}
+		// 说明： 如果taskType为simpleLoopAdd，则按照加签人审批顺序进行
+		if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
+			// 将下一个会签审批任务回归到正常状态
+			DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.getByToTaskUid(taskUid);
+			if (nextDhTaskInstance != null) {
+				nextDhTaskInstance.setTaskType(DhTaskInstance.STATUS_RECEIVED);
+				dhTaskInstanceMapper.updateByPrimaryKey(nextDhTaskInstance);
+			}else {
+				// 将主任务状态回归到正常状态
+				DhTaskInstance task = new DhTaskInstance();
+				task.setTaskUid(dhTaskInstance.getFromTaskUid());
+				task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+				dhTaskInstanceMapper.updateByPrimaryKey(task);
+			}
+		}
+		return null;
+	}
+
 }

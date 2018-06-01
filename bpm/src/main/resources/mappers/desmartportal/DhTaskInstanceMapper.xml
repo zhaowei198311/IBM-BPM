@@ -562,4 +562,20 @@
 	       and (TASK_TYPE = 'normal' or TASK_TYPE = 'simpleLoop' or TASK_TYPE = 'multiInstanceLoop')
 	       and ins_uid = #{insUid} 
 	</select>
+	
+	<select id="getByFromTaskUid" parameterType="string" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+			FROM_TASK_UID = #{fromTaskUid}
+		</where>
+	</select>
+	
+	<select id="getByToTaskUid" parameterType="string" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+			TO_TASK_UID = #{toTaskUid}
+		</where>
+	</select>
 </mapper>

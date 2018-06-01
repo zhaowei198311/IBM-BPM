@@ -3,15 +3,9 @@
  */
 package com.desmart.desmartportal.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,37 +13,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
-import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.service.BpmFormManageService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
-import com.desmart.desmartbpm.service.DhStepService;
-import com.desmart.desmartportal.entity.DhDrafts;
-import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
-import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
-import com.desmart.desmartportal.service.UserProcessService;
-import com.desmart.desmartsystem.dao.SysRoleUserMapper;
-import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
-import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
-import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
-import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import com.desmart.desmartsystem.service.SysUserDepartmentService;
 
 /**
  * <p>
@@ -80,6 +54,9 @@ public class MenusController {
 	
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
+	
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -179,6 +156,19 @@ public class MenusController {
 	 */
 	@RequestMapping("approval")
 	public ModelAndView toDealTask(@RequestParam(value="taskUid") String taskUid) {
+		// 判断该任务是否为加签任务
+		DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (checkDhTaskInstance.getFromTaskUid() != null) {
+			ModelAndView mv = new ModelAndView("desmartportal/addSign");
+			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toAddSign(taskUid);
+			if (serverResponse.isSuccess()) {
+	            mv.addAllObjects(serverResponse.getData());
+	        } else {
+	            mv.setViewName("/desmartbpm/error");
+	            mv.addObject("errorMessage", serverResponse.getMsg());
+	        }
+			return mv;
+		}
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {

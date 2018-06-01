@@ -109,4 +109,27 @@ public interface DhTaskInstanceService {
 	 * @param taskUid
 	 */
 	ServerResponse<Map<String, Object>> toFinshedTaskDetail(String taskUid);
+	
+	/**
+	 * 
+	 * @Title: toAddSign  
+	 * @Description: 根据taskUid查询加签代办任务
+	 * @param @param taskUid
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<Map<String, Object>> toAddSign(String taskUid);
+	
+	/**
+	 * 
+	 * @Title: finishAdd  
+	 * @Description: 会签人审批完成  
+	 * @param @param taskUid
+	 * @param @param approvalContent
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent);
 }

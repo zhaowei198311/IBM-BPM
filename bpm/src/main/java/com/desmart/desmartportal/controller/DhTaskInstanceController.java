@@ -109,4 +109,17 @@ public class DhTaskInstanceController {
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		return dhTaskInstanceService.addSure(dhTaskInstance, creator);
 	}
+	
+	/**
+	 * 
+	 * @Title: finishAdd  
+	 * @Description: 加签审批完成  
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	@RequestMapping(value = "/finishAdd")
+	public ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent){
+		return dhTaskInstanceService.finishAdd(taskUid, activityId, approvalContent);
+	}
 }
