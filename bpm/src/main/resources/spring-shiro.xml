@@ -20,7 +20,7 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 
-    <bean id="myRealm" class="com.desmart.desmartbpm.shiro.MyRealm"/>
+    <bean id="myRealm" class="com.desmart.desmartportal.shiro.MyRealm"/>
 
     <bean id="documentAuthorizationFileter" class="com.desmart.desmartbpm.shiro.DocumentAclFilter"/>
 
@@ -33,9 +33,9 @@
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
         <!-- 登录url -->
-        <property name="loginUrl" value="/toLogin.do" />
+        <property name="loginUrl" value="/user/logins.do" />
         <!-- 登录成功的url -->
-        <property name="successUrl" value="/url1.do" />
+       <!--  <property name="successUrl" value="/url1.do" /> -->
         <!-- 请求的而资源超过权限时，跳转的url -->
         <property name="unauthorizedUrl" value="/unauthorizedUrl.do" />
         <!-- 自定义过滤器 -->
