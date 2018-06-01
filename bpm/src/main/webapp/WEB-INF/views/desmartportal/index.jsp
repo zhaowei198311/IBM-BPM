@@ -211,8 +211,9 @@
 					// 渲染到待办
 					if(result==0){
 						$("#daiban_icon").css("display", "none");
+					}else{
+						$("#daiban_icon").text(result);
 					}
-					$("#daiban_icon").text(result);
 				}
 			})
 		}
