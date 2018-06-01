@@ -171,7 +171,7 @@ public class DhTaskInstance {
 	
 	private String fromTaskUid; // 从属哪个任务id
 	
-	private int toTaskUid; // 加签人审批顺序
+	private String toTaskUid; // 加签人审批顺序
 
 	/**
 	 * @return the taskUid
@@ -461,11 +461,11 @@ public class DhTaskInstance {
 		this.fromTaskUid = fromTaskUid;
 	}
 	
-	public int getToTaskUid() {
+	public String getToTaskUid() {
 		return toTaskUid;
 	}
 
-	public void setToTaskUid(int toTaskUid) {
+	public void setToTaskUid(String toTaskUid) {
 		this.toTaskUid = toTaskUid;
 	}
 
@@ -519,7 +519,7 @@ public class DhTaskInstance {
 			String taskPreviousUsrUsername, Date taskDelegateDate, Date taskInitDate, Date taskFinishDate,
 			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData, String taskDelegateUser,
 			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser, String fromTaskUid,
-			int toTaskUid) {
+			String toTaskUid) {
 		super();
 		this.taskUid = taskUid;
 		this.insUid = insUid;
