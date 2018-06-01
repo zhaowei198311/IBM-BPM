@@ -321,4 +321,8 @@
 		   	SELECT * FROM SYS_USER WHERE USER_UID = #{userUid}
 	  </select>
 	  
+	  <select id="login" resultType="com.desmart.desmartsystem.entity.SysUser">
+	        SELECT USER_ID,PASSWORD from SYS_USER WHERE USER_UID = #{username} and PASSWORD = #{password}
+	  </select>
+	  
 </mapper>
