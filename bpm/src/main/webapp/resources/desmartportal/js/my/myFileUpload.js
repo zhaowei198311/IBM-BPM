@@ -104,6 +104,7 @@ $(function(){
 			          });
 			        }
 			  		,before: function(obj){ // 上传之前的回调函数
+			  			layer.load(1);
 			  			var uploadModels = new Array();
 			  			var trs = demoListView.children();
 			  			trs.each(function(i){
@@ -143,6 +144,7 @@ $(function(){
 			          // model.css("display","none");
 			        	}
 			         },allDone: function(obj){ // 当文件全部被提交后，才触发
+			        	 layer.closeAll('loading');
 			            console.log(obj.total); // 得到总文件数
 			            console.log(obj.successful); // 请求成功的文件数
 			            console.log(obj.aborted); // 请求失败的文件数
