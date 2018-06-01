@@ -476,12 +476,12 @@ function batchPost(URL, PARAMS) {
                  if(result.data.percent=="100"){
                      window.clearInterval(timer);
                      hideProgress();
-                 }/*else{
+                 }else{
                 	 //$.data($.fn.circliful,"percent",result.data.percent)
                 	 //settings.precent=result.data.percent;
-                	 $("#Progress.circliful").data("percent",result.data.percent);
-                	 animate(result.data.percent);
-                 }*/
+                	 $("#Progress").data("percent",result.data.percent);
+                	 
+                 }
              },
              error:function(result){}
           });
