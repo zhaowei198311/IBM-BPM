@@ -260,7 +260,7 @@ function agree() {
 
     var insUid = $("#insUid").val();//流程实例id--ins_uid
     //var apr_activityId = $("#activityId").val();//环节id，activity_id
-    var aprOpiComment = $("#myApprovalOpinion").text();//审批意见
+    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment==null || aprOpiComment == ""){
     	layer.alert("请填写审批意见");
     	return;
