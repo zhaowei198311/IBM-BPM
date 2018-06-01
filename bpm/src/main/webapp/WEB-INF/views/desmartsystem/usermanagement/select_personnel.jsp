@@ -79,9 +79,9 @@
 					<br></br>
 					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
 				</div>
-					<div id="temp_right" style="float:left;width:134px;height:260px;">
-						<ul id="user_add" style="width:240px;display:inline;"></ul>
-					</div>
+				<div id="temp_right" style="float:left;width:134px;height:260px;">
+					<ul id="user_add" style="width:240px;display:inline;"></ul>
+				</div>
 			</div>
 			<div class="foot_temp" style="margin:40px 20px 0 0;">
 				<button class="layui-btn layui-btn sure_btn" style="float:left;" type="button" id="addpersonnel">确定</button>
