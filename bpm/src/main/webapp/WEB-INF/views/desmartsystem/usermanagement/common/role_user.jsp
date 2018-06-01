@@ -49,7 +49,8 @@
 					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
 				</div>
 				<form class="layui-form form-horizontal" id="addRoleUserForm" action="sysRoleUser/insertRoleUser" style="margin-top:30px;"  onsubmit="return validateCallback(this,addUserRoleSuccess);">
-					<div id="temp_right" style="float:left;width:134px;height:260px;overflow-y:scroll;">
+					<!-- <div id="temp_right" style="float:left;width:134px;height:260px;overflow-y:scroll;"> -->
+					<div id="temp_right" style="float:left;width:134px;height:260px;">
 						<ul id="user_add" style="width:240px;display:inline;"></ul>
 					</div>
 					<input type="hidden" name="roleUid" id="roleUid"  />
