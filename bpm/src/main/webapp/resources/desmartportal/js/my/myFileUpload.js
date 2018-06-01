@@ -629,6 +629,19 @@ function hideProgress(){
 }
 
 (function( $ ) {
+	
+	 //滚动条事件    
+    $(window).scroll(function() {    
+        //获取窗口一半的高度+滚动条高度    
+        var offsetTop = $(window).scrollTop() + $(window).height() / 2;    
+        //改变样式 显示     
+        //$("#test").show();    
+        //改变样式 top 高度    
+        $("#Progress").animate({ top: offsetTop + "px" }, { duration: 600, queue: false });    
+        //改变left 位置    
+        //$("#test").animate({ left: $(window).width() - 40 + "px" }, { duration: 600, queue: false });    
+    });    
+	
 
     $.fn.circliful = function(options) {
 

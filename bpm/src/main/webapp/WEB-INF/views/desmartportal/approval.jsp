@@ -102,19 +102,19 @@
 		#Progress .circle-info{
    			 color:black;
 		}
- 		/*.layui-progress-bar {
+ 		.layui-progress-bar {
  		  display: block;
  		  min-width: 8px;
  		  height: 12px;
  		  background: #2067c5;
- 		  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(left, #009933, #FF0000);
- 		  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -moz-linear-gradient(left, #009933, #FF0000);
- 		  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -o-linear-gradient(left, #009933, #FF0000);
- 		  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), linear-gradient(to right, #009933, #FF0000);
+ 		  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -moz-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -o-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), linear-gradient(to right, #2067c5, #24c1fc);
  		  border-radius: 4px;
  		  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
  		  box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
- 		}*/
+ 		}
     </style>
 </head>
 
@@ -142,6 +142,7 @@
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <span id="formData" style="display: none;">${formData}</span>
+        <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
@@ -236,12 +237,15 @@
 				</div>
 			</div>
             <div class="option_container">
-                <!-- 环节职责区块  -->
-                <p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-                <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
-                    ${activityConf.actcResponsibility }
+                <p class="title_p" style="margin-top: 10px;">本环节审批要求</p>
+                <div class="layui-form">
+                    <p style="margin-bottom: 10px;">
+                        <img src="resources/desmartportal/images/top_star.png" class="star_img" />单店单月租金≤1.5万元，华东区租金占比≤12%，其他地区≤15%。
+                    </p>
+                    <p>
+                        <img src="resources/desmartportal/images/top_star.png" class="star_img" />审核门店地理位置，评估门店未来盈利趋势，对门店信息合理性负责。
+                    </p>
                 </div>
-                <!-- 审批意见区块  -->
                 <p class="title_p" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
                 <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
                     <!--<label class="layui-form-label">审批意见</label>
@@ -266,7 +270,6 @@
                         <li>流转信息</li>
                     </ul>
                     <div class="layui-tab-content" style="padding: 0;">
-                        <!-- 审批记录区域 -->
                         <div class="layui-tab-item layui-show">
                             <table class="layui-table" style="margin: 0;">
                                 <colgroup>
@@ -283,7 +286,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- 附件区域 -->
                         <div class="layui-tab-item" style="height: auto;">
                             <table class="layui-table upload-file-table" style="margin: 0;">
                                 <colgroup>
@@ -304,7 +306,7 @@
                                         <th>上传人</th>
                                         <th>上传时间</th>
                                         <th>
-                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
+                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
                                             <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
@@ -320,7 +322,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- 流转记录区域 -->
                         <div class="layui-tab-item">
                             <div class="p">
                                 <p>
@@ -484,11 +485,3 @@
 
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
-<script>
-    $(function(){
-    	console.log("formData: ===============");
-        console.log($("#formData").text());
-        console.log("fieldPermissionInfo: ===============");
-        console.log($("#fieldPermissionInfo").text());
-    });
-</script>
