@@ -3,20 +3,19 @@ layui.use('form', function(){
     var form = layui.form;
     form.on('select(useselfChange)', function(data){
     		//$("#demo").val("");
-    		$("#myApprovalOpinion").text("");
     	    if(data.value!='-1'){
     	    	//$("#demo").val(data.value);
     	    	//alert($("#demo").val());
-    	    	if($("#myApprovalOpinion").html()==null||
-    	    			$("#myApprovalOpinion").html()==''){
-    	    		$("#myApprovalOpinion").html(data.value);
+    	    	if($("#myApprovalOpinion").val()==null||
+    	    			$("#myApprovalOpinion").val()==''){
+    	    		$("#myApprovalOpinion").val(data.value);
     	    	}else{
-    	    		var info = $("#myApprovalOpinion").html()+data.value;
-    	    		$("#myApprovalOpinion").html(info);
+    	    		var info = $("#myApprovalOpinion").val()+data.value;
+    	    		$("#myApprovalOpinion").val(info);
     	    	}
     	    }
-    	    form.render();
-    	    /*layui.use('layedit', function(){
+    	    //form.render();
+    	    /*layu8i.use('layedit', function(){
     	    	editIndex = layui.layedit.build("demo");
     	    });*/
     	    /*layui.use('layedit', function(){
