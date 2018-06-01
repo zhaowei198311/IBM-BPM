@@ -79,7 +79,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid
 			, String taskId,String activityId,String taskUid) {
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
@@ -211,7 +211,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument
 			,String activityId,String taskUid) {
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanDeleteAttach())) {
@@ -244,7 +244,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
 			,String activityId,String taskUid) {
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if(!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
+		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanUploadAttach())) {
