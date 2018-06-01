@@ -81,8 +81,8 @@
 					<iframe src="menus/backlog" name="iframe0" frameborder="0"
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
+					<input id="userId" value="${userId}" style="display: none;">
 						<c:forEach items="${listmap}" var="info">
-							<input id="userId" value="${info.userId}" style="display: none;">
 							<div class="menu_container">
 								<div class="menu_title">
 									${info.categoryName}<i class="layui-icon"
@@ -111,11 +111,11 @@
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script>
-		$(document).ready(function(){
-			getUserTask();
-		})
-	
 		$(function() {	
+			
+			getUserTask();
+			// 定时 去查询我的 代办任务
+			window.setInterval(getUserTask, 30000);
 			
 			$(".layui-nav-item a").mouseover(
 					function() {
@@ -209,6 +209,9 @@
 				},
 				success : function(result){
 					// 渲染到待办
+					if(result==0){
+						$("#daiban_icon").css("display", "none");
+					}
 					$("#daiban_icon").text(result);
 				}
 			})
