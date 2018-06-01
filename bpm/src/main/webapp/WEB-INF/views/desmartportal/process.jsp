@@ -165,7 +165,7 @@
 							<select id="creatorInfo" lay-filter="creatorInfo">
 									<option value="">请选择部门</option>
 									<c:forEach items="${userDepartmentList}" var="item">
-										<option value="${item.departNo},${item.companyCode}">${item.departName}</option>
+										<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
 									</c:forEach>
 							</select></td>
 						</tr>

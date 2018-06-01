@@ -264,7 +264,7 @@ function agree() {
     var insUid = $("#insUid").val();//流程实例id--ins_uid
     //var apr_activityId = $("#activityId").val();//环节id，activity_id
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if(aprOpiComment==null || aprOpiComment == ""){
+    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
     	layer.alert("请填写审批意见");
     	return;
     }
@@ -387,9 +387,13 @@ function checkUserData() {
     var departNo = $("#departNo").val();
     var companyNumber = $("#companyNum").val();
     var formData =common.getDesignFormData();
-        
+    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+    	layer.alert("请填写审批意见");
+    	return;
+    }   
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
-    	layer.alert("缺少提交人信息");
+    	layer.alert("缺少流程发起人信息");
     	return;
     }
     $.ajax({

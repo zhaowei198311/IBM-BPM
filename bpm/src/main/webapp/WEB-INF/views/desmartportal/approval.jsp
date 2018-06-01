@@ -194,7 +194,7 @@
                         </td>
                         <td class="td_title">所属部门</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.departName}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.departName} - ${processInstance.companyName}" autocomplete="off" class="layui-input" readonly/>
                        	</td>
                     </tr>
                 </tbody>
