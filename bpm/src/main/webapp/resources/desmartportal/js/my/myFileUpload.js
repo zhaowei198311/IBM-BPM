@@ -16,7 +16,8 @@ $(function(){
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var taskId = $("#activityId").val();
-		  var activityId = $("#activityId").val();		  
+		  var activityId = $("#activityId").val();	
+  		  var taskUid = $("#taskUid").val();
 		  var re = new RegExp(",","g");
 		  var formatStr = fileFormat.replace(re,"|");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
@@ -119,10 +120,10 @@ $(function(){
 					 * ,data:{ appDocTitle:"测试" ,appDocComment:"测试" ,appUid:"测试"
 					 * ,taskId:"1" ,userUid:"测试" ,appDocTags:appDocTags }
 					 */
-			  			 
+
 	        	      this.data = {"appUid":appUid
 					    	,"taskId":taskId
-					    	,"activityId":activityId
+					    	,"activityId":activityId,"taskUid":taskUid
 					    	,uploadModels:'{"uploadModels":['+uploadModels+']}'};
 		    		// this.data = {uploadModels:uploadModels.toString()};
 			  		}
@@ -213,10 +214,11 @@ function loadGlobalConfig(){
 //附件更新
 function updateAccessoryFile(a){
 	//文件更新，单文件
-	  //执行实例
+	  /*//执行实例
 	  var updateElem = $(a);
 	  var appUid = $("#insUid").val();
 	  var taskId = $("#activityId").val();
+	  var taskUid = $("#taskUid").val();*/
 	  // 拖拽上传
 	  /*layui.use('upload', function(){
 		  var $ = layui.jquery
@@ -272,7 +274,7 @@ function updateAccessoryFile(a){
 // 加载已上传的文件列表
 function loadFileList(){
 	var appUid = $("#insUid").val();
-	var taskStatus = $("taskStatus").val();
+	var taskStatus = $("#taskStatus").val();
 	$.post('accessoryFileUpload/loadFileList.do'
 		,{"appUid":appUid}
 		,function(result){
@@ -295,17 +297,21 @@ function loadFileList(){
 		      +"<td>"+result.data[i].appDocType+"</td>"	*/		      
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
-		      +"<td><button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+		      +"<td>"
+				+"<button onclick = 'showHistoryFile(this)'" +
+				" class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
+				"value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
+		      +"<button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+		      if(taskStatus!="32"){
 		      +"<button class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;'" +
 		      		"value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>更新附件</button>"
-		      +"<button onclick = 'showHistoryFile(this)'" +
-		      		" class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;'" +
-		      		"value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
-		      		if(taskStatus!=32){
+		      }
+			
+		      if(taskStatus!="32"){
 		      +"<button onclick='deleteAccessoryFile(this)'" +
 		      		" class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;'" +
 		      		" value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
-		      		}
+		      }
 		      		+"</td></tr>"; 
 			tagTbody.append(info);
 		}
@@ -316,7 +322,8 @@ function loadFileList(){
 		    var taskId = $("#activityId").val();
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
-			var activityId = $("#activityId").val();		  
+			var activityId = $("#activityId").val();	
+	  		  var taskUid = $("#taskUid").val();	  
 		    var re = new RegExp(",","g");
 		    var formatStr = fileFormat.replace(re,"|");
 			layui.use('upload', function(){
@@ -327,7 +334,7 @@ function loadFileList(){
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
 				    ,data: {"appUid":appUid,"taskId":taskId
 				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
-				    	,"activityId":activityId}
+				    	,"activityId":activityId,"taskUid":taskUid}
 				    ,exts: formatStr
 				    ,field: "file"
 			    ,before: function(obj){
@@ -518,6 +525,7 @@ function deleteAccessoryFile(a){
     var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");		  
 	var activityId = $("#activityId").val();
+	  var taskUid = $("#taskUid").val();	
     	$.ajax({
     		url : "accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
@@ -526,7 +534,8 @@ function deleteAccessoryFile(a){
 			"appDocFileUrl":appDocFileUrl,
 			"appDocUid":appDocUid,
 			"appDocIdCard":appDocIdCard,
-			"activityId":activityId
+			"activityId":activityId,
+			"taskUid":taskUid
 			},
 		success : function(data) {
 			loadFileList();

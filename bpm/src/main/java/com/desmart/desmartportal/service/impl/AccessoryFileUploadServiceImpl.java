@@ -201,7 +201,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			return ServerResponse.createByErrorMessage("上传权限验证失败 ");
 		}	
 		}else {
-			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
+			return ServerResponse.createByErrorMessage("任务已完成，无法操作附件");
 		}
 		
 	}
@@ -235,7 +235,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			return ServerResponse.createByErrorMessage("删除权限验证失败！");
 		}
 		}else {
-			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
+			return ServerResponse.createByErrorMessage("任务已完成，无法操作附件");
 		}
 	}
 
@@ -318,7 +318,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			return ServerResponse.createByErrorMessage("更新文件权限验证失败！");
 		}
 		}else {
-			return ServerResponse.createByErrorMessage("任务已完成，无法上传附件");
+			return ServerResponse.createByErrorMessage("任务已完成，无法操作附件");
 		}
 	}
 		

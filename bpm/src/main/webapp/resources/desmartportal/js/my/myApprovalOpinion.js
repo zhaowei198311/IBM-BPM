@@ -7,12 +7,12 @@ layui.use('form', function(){
     	    if(data.value!='-1'){
     	    	//$("#demo").val(data.value);
     	    	//alert($("#demo").val());
-    	    	if($("#myApprovalOpinion").text()!=null&&
-    	    			$("#myApprovalOpinion").text()!=''){
-    	    		var info = $("#myApprovalOpinion").text()+data.value;
-    	    		$("#myApprovalOpinion").text(info);
+    	    	if($("#myApprovalOpinion").html()==null||
+    	    			$("#myApprovalOpinion").html()==''){
+    	    		$("#myApprovalOpinion").html(data.value);
     	    	}else{
-    	    		$("#myApprovalOpinion").text(data.value);
+    	    		var info = $("#myApprovalOpinion").html()+data.value;
+    	    		$("#myApprovalOpinion").html(info);
     	    	}
     	    }
     	    form.render();
