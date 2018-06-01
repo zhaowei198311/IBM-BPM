@@ -138,6 +138,7 @@
         <input id="insId" value="${processInstance.insId}" style="display: none;">
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
+        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
