@@ -49,7 +49,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 	  var carousel = layui.carousel; //轮播
 	  var upload = layui.upload; //上传
 	  var element = layui.element; //元素操作
-	  //var index = layer.load(1);//开启进度条
+	  var index = layer.load(1);//开启进度条
 	  
 	  
 	  //绑定table
@@ -65,7 +65,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				id : 'searchID',
 				done: function(res, curr, count){
 					//加载后回调
-					//layer.close(index);//关闭   
+					layer.close(index);//关闭   
 					/* noAuthTip(res);//无权限提示 */
 				},
 				cols : [ [ //标题栏
