@@ -206,7 +206,7 @@ public class AccessoryFileUploadController {
 						out.write(buff, 0, size);
 					}
 					response.setHeader("Content-Length", String.valueOf(totalCount));
-			            request.getSession().setAttribute("totalCount",totalCount);
+			        request.getSession().setAttribute("totalCount",totalCount);
 					fis.close();
 				} catch (IOException e) {
 					// TODO: handle exception

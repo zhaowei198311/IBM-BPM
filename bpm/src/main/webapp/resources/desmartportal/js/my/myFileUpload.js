@@ -473,8 +473,8 @@ function batchPost(URL, PARAMS) {
              },
              error:function(result){}
           });
-       },2000);
-    },2000);
+       },1000);
+    },1000);
     isFirstExport=false;
 } 
 
