@@ -8,12 +8,50 @@
 	<sql id="Base_Column_List1">
 		DIC_DATA_UID,DIC_DATA_CODE,DIC_DATA_NAME,DIC_UID,DIC_DATA_DESCRIPTION,DIC_DATA_SORT,DIC_DATA_STATUS
 	</sql>
+	
+	<sql id="DictionaryData_Dictionary_Column">
+		dd.DIC_DATA_UID,dd.DIC_DATA_CODE,dd.DIC_DATA_NAME,dd.DIC_UID,dd.DIC_DATA_DESCRIPTION,dd.DIC_DATA_SORT,dd.DIC_DATA_STATUS,d.DIC_CODE,d.DIC_NAME,d.DIC_DESCRIPTION,d.DIC_STATUS
+	</sql>
+	
+	
+	
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysDictionaryData">
+		<id column="DIC_DATA_UID" property="dicDataUid" />
+		<result column="DIC_DATA_CODE" property="dicDataCode" />
+		<result column="DIC_DATA_NAME" property="dicDataName" />
+		<result column="DIC_UID" property="dicUid" />
+		<result column="DIC_DATA_DESCRIPTION" property="dicDataDescription" />
+		<result column="DIC_DATA_SORT" property="dicDataSort" />
+		<result column="DIC_DATA_STATUS" property="dicDataStatus" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="CREATE_BY" property="createBy" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="UPDATE_BY" property="updateBy" />
+		
+		<association property="sysDictionary"  column="dicUid" javaType="com.desmart.desmartsystem.entity.SysDictionary">
+			<id column="DIC_UID" property="dicUid" />
+			<result column="DIC_CODE" property="dicCode" />
+			<result column="DIC_NAME" property="dicName" />
+			<result column="DIC_DESCRIPTION" property="dicDescription" />
+			<result column="DIC_STATUS" property="dicStatus" />
+			<result column="CREATE_DATE" property="createDate" />
+			<result column="CREATE_BY" property="createBy" />
+			<result column="UPDATE_DATE" property="updateDate" />
+			<result column="UPDATE_BY" property="updateBy" />
+		</association>
+		
+	</resultMap>
 
 	<select id="selectSysDictionaryByName" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
 		select 
 		<include refid="Base_Column_List" />
 		from SYS_DICTIONARY
 		where 1=1
+		
+		<if test="dicCode != null">
+			and DIC_CODE like '%'||#{dicCode}||'%'
+		</if>	
+		
 		<if test="dicName != null">
 			and DIC_NAME like '%'||#{dicName}||'%'
 		</if>	
@@ -83,15 +121,15 @@
 		where DIC_UID = #{dicUid}
 	</update>
 	
-	<select id="selectSysDictionaryDataListById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+	<select id="selectSysDictionaryDataListById" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData" resultMap="BaseResultMap">
 		select 
-		<include refid="Base_Column_List1" />
-		from SYS_DICTIONARY_DATA
+		<include refid="DictionaryData_Dictionary_Column" />
+		from SYS_DICTIONARY_DATA  dd left join SYS_DICTIONARY d on dd.DIC_UID=d.DIC_UID
 		where 1=1
-		<if test="dicUid != null">
+		<if test="dicUid != null and dicUid != '' ">
 			and DIC_UID = #{dicUid}
 		</if>	
-		<if test="dicDataName != null">
+		<if test="dicDataName != null and dicDataName != '' ">
 			and DIC_DATA_NAME like '%'||#{dicDataName}||'%'
 		</if>
 	</select>

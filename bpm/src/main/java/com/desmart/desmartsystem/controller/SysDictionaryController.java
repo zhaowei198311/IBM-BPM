@@ -28,7 +28,18 @@ public class SysDictionaryController {
 	
 	@RequestMapping(value = "/dictionary")
 	public String dictionary(){		
+		return "desmartsystem/usermanagement/dictTpList";
+	}
+	
+	@RequestMapping(value = "/dictionary1")
+	public String dictionary1(){		
 		return "desmartsystem/usermanagement/sys_dictionary";
+	}
+	
+	
+	@RequestMapping(value = "/dictCdList")
+	public String dictCdList(){		
+		return "desmartsystem/usermanagement/dictCdList";
 	}
 	
 	/**

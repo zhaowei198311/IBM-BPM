@@ -30,15 +30,10 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 
 	@Override
 	public PagedResult<SysDictionary> listSysDictionary(SysDictionary sysDictionary, Integer pageNo, Integer pageSize) {
-		try {
-			pageNo = pageNo == null?1:pageNo;
-			pageSize = pageSize == null?10:pageSize;
-			PageHelper.startPage(pageNo,pageSize);
-			return BeanUtil.toPagedResult(sysDictionaryMapper.selectSysDictionaryByName(sysDictionary));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		pageNo = pageNo == null?1:pageNo;
+		pageSize = pageSize == null?10:pageSize;
+		PageHelper.startPage(pageNo,pageSize);
+		return BeanUtil.toPagedResult(sysDictionaryMapper.selectSysDictionaryByName(sysDictionary));
 	}
 
 	@Override

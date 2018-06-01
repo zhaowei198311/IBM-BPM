@@ -19,14 +19,13 @@
 		<div class="container">
 			<div class="search_area">
 				<div class="layui-row">
-					<form class="form-inline layui-form" method="post" action="sysDictCd/allSysDictCd"  onsubmit="return search(this);">
+					<form class="form-inline layui-form" method="post" action="sysDictionary/getSysDictionaryDataList"  onsubmit="return search(this);">
 						<input type="hidden" name="pageNo" id="pageNo" value="1" />
-						<input type="hidden" name="roleType" value="1" />
 						<div class="layui-col-md2">
-							<input type="text" name="dictNm" placeholder="请输入字典名称" class="layui-input"/>
+							<input type="text" name="dicDataName" placeholder="请输入字典名称" class="layui-input"/>
 						</div>
 						<div class="layui-col-md2">
-							<select  name="dictTypeCd" class="dictTypeCd"   lay-verify="required"   ></select>
+							<select  name="dicUid" class="dictTypeCd"   lay-verify="required"  lay-search="" ></select>
 						</div>
 						<div class="layui-col-md1" style="text-align:right;">
 							<button class="layui-btn create_btn" type="submit">检索</button>
@@ -49,8 +48,11 @@
 					      <th>序号</th>
 					      <th>字典代码</th>
 					      <th>字典名称</th>
-					      <th>字典类型</th>
+					      <th>字典类型代码</th>
 					      <th>字典类型名称</th>
+					      <th>字典说明</th>
+					      <th>排序号</th>
+					      <th>状态</th>
 					      <th>操作</th>
 					    </tr> 
 					</thead>
@@ -65,32 +67,51 @@
 			<div class="top">
 				新增字典
 			</div>
-			<form class="layui-form"  method="post"  action="sysDictCd/addSysDictCd"  onsubmit="return validateCallback(this,addsuccess);">
-			<div class="middle" style="height:auto;" >
-				  <div class="layui-form-item" style="margin-top:20px;" >
-				    <label class="layui-form-label">字典代码</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="dictCd" required  lay-verify="required"  autocomplete="off" class="layui-input" />
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">字典名称</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input" />
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">字典类型</label>
-				    <div class="layui-input-block">
-				    	<select  name="dictTypeCd" class="dictTypeCd" required  style="width: 230px;" lay-verify="required"   ></select>
-				    </div>
-				  </div>
-			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="submit"  >确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
-			</div>
-			</form>
+			<form class="layui-form form-horizontal" action="sysDictionary/saveSysDictionaryData" method="post"  onsubmit="return validateCallback(this,updatesuccess);">
+				<div class="middle" style="height:auto;" >
+					  <div class="layui-form-item"  style="margin-top:20px;">
+					    <label class="layui-form-label">字典代码</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+				  	  <div class="layui-form-item">
+					    <label class="layui-form-label">字典名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">字典类型</label>
+					    <div class="layui-input-block">
+					    	<select  name="dicUid" class="dictTypeCd" required   lay-search="" style="width: 230px;" lay-verify="required"   ></select>
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">字典说明</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataDescription" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">排序号</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input" onkeyup="value=value.replace(/[^\d]/g,'') "/>
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">状态</label>
+					    <div class="layui-input-block">
+					      <input type="radio" name="dicDataStatus" value="on" title="启用" checked />
+					      <input type="radio" name="dicDataStatus" value="off" title="禁用"  />
+					    </div>
+					  </div>
+					  </div>
+					  <div class="foot">
+						<button class="layui-btn layui-btn sure_btn" type="submit"  >确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+					</div>
+				</form>
 		</div>
 	</div>	
 	
@@ -100,33 +121,52 @@
 			<div class="top">
 				编辑字典
 			</div>
-			<form class="layui-form" action="sysDictCd/updateSysDictCd" method="post"  onsubmit="return validateCallback(this,updatesuccess);">
-			<div class="middle" style="height:auto;" >
-				  <div class="layui-form-item" style="margin-top:20px;">
-				    <label class="layui-form-label">字典代码</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="dictCd" required  lay-verify="required" autocomplete="off" class="layui-input" />
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">字典名称</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="dictNm" required  lay-verify="required" autocomplete="off" class="layui-input" />
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">字典类型</label>
-				    <div class="layui-input-block">
-				    	<select  name="dictTypeCd" class="dictTypeCd"  style="width: 230px;"  lay-search="" ></select>
-				    </div>
-				  </div>
-				  <input type="hidden" name="dcUid"  />
-			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="submit" >确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
-			</div>
-			</form>
+				<form class="layui-form" action="sysDictionary/updateSysDictionaryData" method="post"  onsubmit="return validateCallback(this,updatesuccess);">
+				<div class="middle" style="height:auto;" >
+					  <div class="layui-form-item"  style="margin-top:20px;">
+					    <label class="layui-form-label">字典代码</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+				  	  <div class="layui-form-item">
+					    <label class="layui-form-label">字典名称</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">字典类型</label>
+					    <div class="layui-input-block">
+					    	<select  name="dicUid" class="dictTypeCd" required  lay-search="" style="width: 230px;" lay-verify="required"   ></select>
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">字典说明</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataDescription" autocomplete="off" class="layui-input" />
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">排序号</label>
+					    <div class="layui-input-block">
+					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input" onkeyup="value=value.replace(/[^\d]/g,'') "/>
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">状态</label>
+					    <div class="layui-input-block">
+					      <input type="radio" name="dicDataStatus" value="on" title="启用" checked />
+					      <input type="radio" name="dicDataStatus" value="off" title="禁用"  />
+					    </div>
+					  </div>
+					  </div>
+					  <div class="foot">
+					  	<input type="hidden" name="dicDataUid"/>
+						<button class="layui-btn layui-btn sure_btn" type="submit"  >确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_btn" type="button">取消</button>
+					</div>
+				</form>
 		</div>
 	</div>	
 	
@@ -139,39 +179,41 @@
 				$(".display_container1").css("display","none");
 			});
 			
-			dictTypeSelect('sysDictTp/allSysDictTp','.dictTypeCd');
+			dictTypeSelect('sysDictionary/listAllOnSysDictionary','.dictTypeCd');
 			
 		})
 		//table数据显示
 		function tabledata(dataList,data){
-			 $(dataList).each(function(i){//重新生成
+			var dataList = data.dataList;
+			$(dataList).each(function(i){//重新生成
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
-	         	str+='<td>' + this.dictCd + '</td>';
-	         	str+='<td>' + this.dictNm + '</td>';
-	         	str+='<td>' + this.sysDictTp.dictTypeCd + '</td>';
-	         	str+='<td>' + this.sysDictTp.dictTypeNm + '</td>';
-		        str+='<td>';       
-		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysDictCd/getSysDictCd?dcUid='+this.dcUid+'","edit") >&#xe642;</i>';
-		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysDictCd/deleteSysDictCd?dcUid='+this.dcUid+'","del") >&#xe640;</i>';
+				str+='<td>' + this.dicDataCode + '</td>';
+				str+='<td>' + this.dicDataName + '</td>';
+				str+='<td>' + this.sysDictionary.dicCode + '</td>';
+				str+='<td>' + this.sysDictionary.dicName + '</td>';
+				str+='<td>' + isEmpty(this.dicDataDescription) + '</td>';
+				str+='<td>' + this.dicDataSort + '</td>';
+				if(this.dicDataStatus == 'on'){str+='<td>启用</td>';}else{str+='<td>禁用</td>';}
+		        str+='<td>';
+		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysDictionary/getSysDictionaryDataById?dicDataUid='+this.dicDataUid+'","edit") >&#xe642;</i>';
+		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysDictionary/deleteSysDictionaryData?dicDataUid='+this.dicDataUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);
 	         });
 		}
 		
-		
-		
 		function dictTypeSelect(url,select){
 			$(select).empty();
-			$.ajax({  
+			$.ajax({ 
 		        url: url,    //后台webservice里的方法名称  
 		        type: "post",  
 		        dataType: "json",  
 		        success: function (data) {
 		        	var optionstring="";
 		        	optionstring+="<option value='' >请选择字典类型</option>";
-		        	$(data.dataList).each(function(){
-		        		optionstring+="<option value=\"" + this.dictTypeCd + "\" >" + this.dictTypeNm + "</option>";
+		        	$(data.data).each(function(){
+		        		optionstring+="<option value=\"" + this.dicUid + "\" >" + this.dicName + "</option>";
 		        	}); 
 		        	$(select).prepend(optionstring);
 		        	layui.use('form', function(){

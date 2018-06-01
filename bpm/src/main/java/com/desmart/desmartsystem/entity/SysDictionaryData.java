@@ -55,6 +55,8 @@ public class SysDictionaryData {
 	 * 更新人
 	 */
 	private String updateBy;
+	
+	private SysDictionary sysDictionary;
 
 	public String getDicDataUid() {
 		return dicDataUid;
@@ -142,6 +144,16 @@ public class SysDictionaryData {
 
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
+	}
+	
+	
+
+	public SysDictionary getSysDictionary() {
+		return sysDictionary;
+	}
+
+	public void setSysDictionary(SysDictionary sysDictionary) {
+		this.sysDictionary = sysDictionary;
 	}
 
 	@Override
