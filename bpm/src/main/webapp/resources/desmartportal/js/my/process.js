@@ -8,7 +8,6 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }else{
     	area=['615px', '492px'];
     }
-
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType;
     layer.open({
         type: 2,
