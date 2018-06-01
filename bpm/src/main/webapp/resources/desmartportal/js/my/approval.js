@@ -268,21 +268,6 @@ function agree() {
     	layer.alert("请填写审批意见");
     	return;
     }
-	//var aprStatus = "通过";
-	/*var approvaInfo ={
-			"aprOpiComment":aprOpiComment,
-			"aprStatus":aprStatus
-			} */
-
-    /*var json = "{";
-
-    var formData = "formData"; // 表单数据外层
-    var routeData = "routeData"; // 选人数据外层
-    var approvalData = "approvalData"; // 审批数据外层
-    var taskData = "taskData"; // 任务数据外层
-    var endjson = "}";*/
-    // 数据信息
-   
     // 发起流程             
     var finalData = {};
     // 表单数据
@@ -292,12 +277,7 @@ function agree() {
     finalData.formData = formData;
     // 流程数据
     var processData = {};
-    //processData.proAppId = $("#proAppId").val();
-    //processData.proUid = $("#proUid").val(); 
-    //processData.proVerUid = $("#verUid").val();
     processData.insUid = $("#insUid").val();
-    // processData.departNo = departNo,
-    // processData.companyNumber = companyNumber,
     finalData.processData = processData;
 
     var activityId = ""
@@ -325,27 +305,23 @@ function agree() {
             data: JSON.stringify(finalData)
         },
         beforeSend: function () {
-            index = layer.load(1);
+            layer.load(1);
         },
         success: function (result) {
-            layer.close(index);
+        	layer.closeAll('loading'); 
             if (result.status == 0) {
-                layer.alert('提交成功', {
-                    icon: 1
+                layer.alert('提交成功', function(){
+                	window.history.back();
                 });
-                window.history.back();
+                
             }else{
-                layer.alert(result.msg, {
-                    icon: 2
-                });
+                layer.alert(result.msg);
             }
             $(".display_container").css("display","none"); 
         },
         error: function (result) {
-            layer.close(index);
-            layer.alert('提交失败', {
-                icon: 2
-            });
+        	layer.closeAll('loading'); 
+            layer.alert('提交失败');
         }
     });
 }

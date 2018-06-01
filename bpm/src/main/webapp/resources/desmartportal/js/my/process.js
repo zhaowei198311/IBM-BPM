@@ -231,21 +231,17 @@ function submitProcess(){
         success: function (result) {
             layer.close(index);
             if (result.status == 0) {
-                layer.alert('提交成功', {
-                    icon: 1
+                layer.alert('提交成功', function(){
+                	window.history.back();
                 });
-                window.history.back();
+                
             }else {
-                layer.alert(result.msg, {
-                    icon: 2
-                });
+                layer.alert(result.msg);
             }
         },
         error: function (result) {
             layer.close(index);
-            layer.alert('提交失败', {
-                icon: 2
-            });
+            layer.alert('提交失败');
         }
     });
 }
