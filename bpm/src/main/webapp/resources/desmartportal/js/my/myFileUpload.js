@@ -219,57 +219,7 @@ function loadGlobalConfig(){
 	});
 	
 }
-
-//附件更新
-function updateAccessoryFile(a){
-	//文件更新，单文件
-	  /*//执行实例
-	  var updateElem = $(a);
-	  var appUid = $("#insUid").val();
-	  var taskId = $("#activityId").val();
-	  var taskUid = $("#taskUid").val();*/
-	  // 拖拽上传
-	  /*layui.use('upload', function(){
-		  var $ = layui.jquery
-		  ,upload = layui.upload;
-	  var updateAccessoryFile = upload.render({
-		  elem: updateElem
-		    ,url: 'accessoryFileUpload/updateAccessoryFile.do'
-		    ,data:{
-		    	"appUid":appUid
-		    	,"taskId":taskId}
-		    ,exts: formatStr
-		    ,field: "file"
-	    ,before: function(obj){
-	    	var files = this.files = obj.pushFile(); // 将每次选择的文件追加到文件队列
-	          layer.load();
-	          // 读取本地文件
-	          obj.preview(function(index, file, result){
-	        	var size = file.size;
-	          	if(size > maxFileSize*1024*1024){
-	          		layer.msg('文件大小不得超过'+maxFileSize+'M',{icon:2});
-	          		layer.closeAll('loading');
-	          		delete files[index];
-	          		return;
-	          	}
-	          	if(size == 0){
-	          		layer.msg('文件大小不能为空',{icon:2});
-	          		layer.closeAll('loading');
-	          		delete files[index];
-	          		return;
-	          	}
-	          })
-	    }
-	    ,done: function(res){
-	    	alert("上传成功");
-	      //上传完毕回调
-	    }
-	    ,error: function(){
-	      //请求异常回调
-	    }
-	  });
-   });*/
-}
+ 
 
 // 反选
   function invertSelection(a){ var checkeNodes=
@@ -296,6 +246,7 @@ function loadFileList(){
 		for (var i = 0; i < result.data.length; i++) {
 			var info = "<tr>"
 		      +"<td>"
+		      +"<input onclick='invertSelection(this)' class='file-check' type='checkbox'>"
 		      +"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
 		      +(i+1)+"</td>"
 		      +"<td>"+result.data[i].appDocFileName+"</td>"		
@@ -400,10 +351,13 @@ function batchDown(){
 		var trNodes= $(".layui-table.upload-file-table").find("tbody").find("tr");
 		var params = new Array();
 		for (var i = 0; i < trNodes.length; i++) {
+			var flag = $(trNodes[i]).find("td").eq(0).find("input[type='checkbox']").prop("checked");
+			if(flag==true){
 			var appDocFileName = $(trNodes[i]).find("td").eq(1).text(); 
 			var appDocFileUrl =$(trNodes[i]).find("td").eq(0).find("input[name='appDocFileUrl']").val();
 			var info = {appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl};
 			params.push(info);
+			}
 		}
 		if(trNodes != undefined && trNodes.length>0){
 			//layer.load(1);

@@ -219,7 +219,7 @@
                                         <c:if test="${taskInstance.taskStatus!=32 }">
                                             <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
                                             </c:if>
-                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
+                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
                                                 <input class="maxFileCount" value="10" type="hidden" />

@@ -293,7 +293,7 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            <!-- <input id="all-file-check" type="checkbox"> -->序号
+                                            <input id="all-file-check" type="checkbox"> <!-- 序号 -->
                                         </th>
                                         <th>附件名称</th>
                                         <!-- 
@@ -303,7 +303,7 @@
                                         <th>上传时间</th>
                                         <th>
                                             <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
-                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
+                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
                                                 <input class="maxFileCount" value="10" type="hidden" />
