@@ -347,7 +347,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						 
 						
 						String aprOpiComment = approvalData.getString("aprOpiComment");
-						String aprStatus = approvalData.getString("aprStatus");
+						String aprStatus = "通过";
 						String insUid = dhTaskInstance.getInsUid();
 						DhProcessInstance dhProcessInstance = dhProcessInstanceMapper
 								.selectByPrimaryKey(insUid);
