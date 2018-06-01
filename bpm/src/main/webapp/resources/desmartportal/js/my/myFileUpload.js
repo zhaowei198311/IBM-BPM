@@ -104,23 +104,27 @@ $(function(){
 			          });
 			        }
 			  		,before: function(obj){ // 上传之前的回调函数
-			  			layer.load(1);
 			  			var uploadModels = new Array();
 			  			var trs = demoListView.children();
 			  			trs.each(function(i){
 			        		var tr = $(this),tds = tr.children();
+			        		var operatorFlag = tds.eq(3).html();
 			        		var appDocFileName = tds.eq(0).text();
-			        		var appDocTitle = tds.eq(2).find("input").val();
-						    var appDocComment = tds.eq(3).find("input").val();
-						    var appDocTags = tds.eq(4).find("input").val();
+			        		var appDocTitle = "";
+						    var appDocComment = "";
+						    var appDocTags = "";
+						    var appDocComment = "";
 						    var uploadModel = '{"appDocFileName":"'+appDocFileName+'","appDocTitle":"'+appDocTitle+'","appDocComment":"'+appDocComment
 						    		+'","appDocTags":"'+appDocTags+'"}';
-						    uploadModels.push(uploadModel);   
+						    if(operatorFlag!=""&&operatorFlag!=null){
+						    uploadModels.push(uploadModel); 
+						    }
 			        	});
-		    		/*
-					 * ,data:{ appDocTitle:"测试" ,appDocComment:"测试" ,appUid:"测试"
-					 * ,taskId:"1" ,userUid:"测试" ,appDocTags:appDocTags }
-					 */
+			  			if(uploadModels.length==0){
+			  				layer.closeAll('loading');
+			  			}else if(uploadModels.length>0){
+			  				layer.load(1);
+			  			}
 
 	        	      this.data = {"appUid":appUid
 					    	,"taskId":taskId
@@ -135,12 +139,14 @@ $(function(){
 			        	if(res.status==0){ // 上传成功
 			        		tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
 			        		tds.eq(3).html(''); // 清空操作
+			        		layer.closeAll('loading');
 			        		return delete this.files[index]; // 删除文件队列已经上传成功的文件
 			        	}else{
 			        		this.error(index, upload);
 			        		if(res.msg!=null && res.msg.length>0){
 			        			layer.alert(res.msg);
 			        		}
+			        		layer.closeAll('loading');
 			          // model.css("display","none");
 			        	}
 			         },allDone: function(obj){ // 当文件全部被提交后，才触发
@@ -161,6 +167,7 @@ $(function(){
 			          tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
 			          //tds.eq(3).find('.demo-upload').addClass('layui-hide');// 隐藏上传
 			          tds.eq(3).find('.demo-reload').removeClass('layui-hide'); // 显示重传
+			          layer.closeAll('loading');
 			        }
 			  });
 			  
