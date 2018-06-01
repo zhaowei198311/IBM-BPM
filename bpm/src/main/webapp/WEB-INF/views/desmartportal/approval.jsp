@@ -102,7 +102,7 @@
 		#Progress .circle-info{
    			 color:black;
 		}
- 		.layui-progress-bar {
+ 		/*.layui-progress-bar {
  		  display: block;
  		  min-width: 8px;
  		  height: 12px;
@@ -114,7 +114,7 @@
  		  border-radius: 4px;
  		  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
  		  box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
- 		}
+ 		}*/
     </style>
 </head>
 
