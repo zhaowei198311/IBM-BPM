@@ -648,6 +648,20 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
 		bpmProcessUtil.rejectProcess(insId, activityId, user);
+		// 驳回成功修改当前用户任务状态为 驳回
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.queryByInsId(insId);
+		String insUid = dhProcessInstance.getInsUid();
+		DhTaskInstance dhTaskInstance = new DhTaskInstance();
+		dhTaskInstance.setInsUid(insUid);
+		List<DhTaskInstance> DhTaskInstanceList = dhTaskInstanceMapper.selectAllTask(dhTaskInstance);
+		for (DhTaskInstance dhTaskInstance2 : DhTaskInstanceList) {
+			if(user.equals(dhTaskInstance2.getUsrUid()) && DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance2.getTaskStatus())) {
+				String insUid2 = dhTaskInstance2.getInsUid();
+				List<String> insUids = new ArrayList<>();
+				insUids.add(insUid2);
+				dhTaskInstanceMapper.abandonTaskByInsUidList(insUids);
+			}
+		}
 		return ServerResponse.createBySuccess();
 	}
 }

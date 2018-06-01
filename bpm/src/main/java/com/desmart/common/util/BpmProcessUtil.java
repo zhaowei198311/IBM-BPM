@@ -119,7 +119,7 @@ public class BpmProcessUtil {
 				postMap.put("tokenId", tokenId);
 				HttpReturnStatus result2 = restUtil.sendPost(processUrl, postMap);
 				// 将当前用户分配给user 
-				int taskid = tkiid+1;
+				int taskid = tkiid;
 				Map<String, Object> putMap = new HashMap<>();
 				putMap.put("action", "assign");
 				putMap.put("toUser", user);
