@@ -203,7 +203,7 @@ public class SFTPUtil {
      * @param directory 上传到该目录 
      * @param filename 文件名
      */
-    public InputStream getBatchDown(BpmGlobalConfig gcfg,String directory,String filename,OutputStream outputStream) {
+    public Integer getBatchDown(BpmGlobalConfig gcfg,String directory,String filename,OutputStream outputStream) {
     	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	try {
 			sftp.cd(gcfg.getSftpPath()+directory);
@@ -217,11 +217,11 @@ public class SFTPUtil {
 		    bis.close();
 		    input.close();
 			logout();
-	    	return input;
+	    	return 1;
 		} catch (Exception e) {
 			logout();
 			e.printStackTrace();
-	    	return null;
+	    	return 0;
 		}
     }
     

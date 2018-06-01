@@ -308,7 +308,7 @@
         </div>
         <div class="foot_accessory_file">
             <button type="button" class="layui-btn listAction">开始上传</button>
-            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">取消</button>
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">关闭</button>
         </div>
     </div>
     <div id="showHistoryModal" style="display: none;" class="display_content_accessory_file">

@@ -171,6 +171,11 @@ public class AccessoryFileUploadController {
 					// 创建zip文件输出流
 					FileOutputStream fos = new FileOutputStream(zip);
 					ZipOutputStream zipOut = new ZipOutputStream(fos);
+					
+					Integer totalCount = dhInstanceDocuments.size();//获得文件总数
+			        request.getSession().setAttribute("totalCount",totalCount);
+			        Integer curCount = 0;
+			        
 					for (int i = 0; i < dhInstanceDocuments.size(); i++) {
 						DhInstanceDocument dhInstanceDocument = dhInstanceDocuments.get(i);
 						String directory = dhInstanceDocument.getAppDocFileUrl().substring(0,
@@ -183,8 +188,12 @@ public class AccessoryFileUploadController {
 						// 将文件写入zip内，即将文件进行打包
 						ZipEntry ze = new ZipEntry(dhInstanceDocument.getAppDocFileName()); // 获取文件名
 						zipOut.putNextEntry(ze);
-						sftp.getBatchDown(gcfg, directory, filename, zipOut);
-
+						//计算百分比
+						curCount += sftp.getBatchDown(gcfg, directory, filename, zipOut);
+						double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
+						int percent=(int)(dPercent*100);               //再乘上100取整
+						request.getSession().setAttribute("curCount", curCount);
+						request.getSession().setAttribute("percent", percent);    //比如这里是50
 					}
 					fos.flush();  
 					zipOut.flush();  
@@ -192,21 +201,12 @@ public class AccessoryFileUploadController {
 					fos.close();
 					// 将打包后的文件写到客户端，使用缓冲流输出
 					InputStream fis = new BufferedInputStream(new FileInputStream(zipFilePath));
-					//计算百分比
-					Integer totalCount = fis.available();//获得文件总大小
-					Integer curCount = 0;
 					byte[] buff = new byte[4096];
 					int size = 0;
 					while ((size = fis.read(buff)) != -1) {
-						curCount+=size;
-						double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
-						int percent=(int)(dPercent*100);               //再乘上100取整
-						request.getSession().setAttribute("curCount", curCount);
-						request.getSession().setAttribute("percent", percent);    //比如这里是50
 						out.write(buff, 0, size);
 					}
-					response.setHeader("Content-Length", String.valueOf(totalCount));
-			        request.getSession().setAttribute("totalCount",totalCount);
+					response.setHeader("Content-Length", String.valueOf(fis.available()));
 					fis.close();
 				} catch (IOException e) {
 					// TODO: handle exception

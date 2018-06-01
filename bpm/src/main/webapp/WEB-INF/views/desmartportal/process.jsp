@@ -298,7 +298,7 @@
 		<div class="foot_accessory_file">
 			<button type="button" class="layui-btn listAction" >开始上传</button>
 			<button class="layui-btn layui-btn-primary "
-				onclick="cancelClick(this)">取消</button>
+				onclick="cancelClick(this)">关闭</button>
 		</div>
 	</div>
 
