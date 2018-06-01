@@ -190,6 +190,7 @@
 			var list = pageInfo.list;
 			var startSort = pageInfo.startRow;//开始序号
 			var trs = "";
+			var type = "";
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
@@ -212,6 +213,12 @@
 						}
 					}
 				});
+				if(meta.taskType=='normal'){
+					type = "一般任务";
+				}
+				if(meta.taskStatus==12){
+					status = "待处理";
+				}
 				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ '<td>' + sortNum + '</td>'
 					+'<td><span onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
@@ -223,7 +230,7 @@
 					trs += meta.taskPreviousUsrUsername 
 				}
 				trs += '</td>'  */
-					+ '<td>' + meta.taskType
+					+ '<td>' + type
 					+ '</td>' 
 					+ '<td>'
 					+ InitDate
