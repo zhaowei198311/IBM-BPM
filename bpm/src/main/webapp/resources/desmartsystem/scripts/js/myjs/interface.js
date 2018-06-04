@@ -547,6 +547,18 @@
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			var sortNum = startSort + i;
+			var multiValue = "";
+			var isMust = "";
+			if(meta.multiValue == "true"){
+				multiValue = "是"
+			}else{
+				multiValue = "否"
+			}
+			if(meta.isMust == "true"){
+				isMust = "是"
+			}else{
+				isMust = "否"
+			}
 			trs += '<tr><td><input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">'
 					+ sortNum
 					+ '</td>'
@@ -566,10 +578,10 @@
 					+ meta.multiSeparator
 					+ '</td>'
 					+ '<td>'
-					+ meta.multiValue
+					+ multiValue
 					+ '</td>'
 					+ '<td>'
-					+ meta.isMust
+					+ isMust
 					+ '</td>' + '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
