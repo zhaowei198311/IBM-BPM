@@ -50,6 +50,7 @@ $(function () {
 	
 	$("#reject_btn").click(function (){
 		$('input[name="check"]:checked').each(function(){ 
+			var aprOpiComment = $("#myApprovalOpinion").val();
 		    var taskId = $("#taskId").val();
 		    var taskUid = $("#taskUid").val();
 		    var finalData = {};
@@ -339,7 +340,6 @@ function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
     var insUid = $("#insUid").val();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    alert(aprOpiComment)
     if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
    	$("#myApprovalOpinion").focus();
    	layer.alert("请填写审批意见");
