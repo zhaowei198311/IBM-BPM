@@ -53,8 +53,10 @@ function loadDhApprovalOpinionList(){
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批时间</th>"
 			      +"<td>"+datetimeFormat_1(result.data[i].aprDate)+"</td>"								     
 			      +"</tr> <tr>"
+			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批状态</th>"
+			      +"<td>"+result.data[i].aprStatus+"</td>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批意见</th>"
-			      +"<td colspan='7'>"+result.data[i].aprOpiComment+"</td>"
+			      +"<td colspan='5'>"+result.data[i].aprOpiComment+"</td>"
 			      +"</tr>";
 	    	 $("#approval_tbody").append(info);
 	    	 }
