@@ -53,13 +53,12 @@
 			<table class="layui-table backlog_table" lay-even lay-skin="nob"
 				lay-filter="demo">
 				<colgroup>
-					<col width="12%">
-					<col width="12%">
-					<col width="12%">
-					<col width="25%">
-					<col width="10%">
-					<col width="12%">
-					<col width="10%">
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
+					<col>
 				</colgroup>
 				<thead>
 					<tr>
@@ -69,7 +68,7 @@
 						<th>接口类型</th>
 						<th>接口访问地址</th>
 						<th>接口访问方法名</th>
-						<th>状态</th>
+						<th>接口状态</th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -81,15 +80,18 @@
 	<div class="display_container3" id="exposed_table_container">
 		<div class="display_content2">
 			<div class="top">接口参数配置</div>
-			<div class="middle1"
-				style="width: 700px; height: 225px; overflow: scroll">
-				<table style="width: 1500px" class="layui-table backlog_table"
+			<div class="middle1">
+				<table class="layui-table backlog_table"
 					lay-even lay-skin="nob">
 					<colgroup>
-						<col>
-						<col>
-						<col>
-						<col>
+						<col width="4%">
+						<col width="8%">
+						<col width="8%">
+						<col width="10%">
+						<col width="10%">
+						<col width="10%">
+						<col width="4%">
+						<col width="4%">
 					</colgroup>
 					<thead>
 						<tr>
@@ -345,7 +347,7 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口状态:</label>
 						<div class="layui-input-inline">
-							<input id="intStatus2" type="checkbox" name="intStatus2"
+							<input id="intStatus2" type="checkbox"  name="intStatus2"
 								lay-skin="switch" lay-filter="switch2" lay-text="启用|停用" value="">
 						</div>
 					</div>

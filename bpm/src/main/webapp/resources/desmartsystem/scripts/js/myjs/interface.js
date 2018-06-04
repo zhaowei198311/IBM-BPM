@@ -125,7 +125,6 @@
 					isMust : $("#isMust3").val()
 				},
 				success : function(result){
-					layer.alert('修改参数成功')
 					window.location.href = "interfaces/index";
 				}
 			})
@@ -572,4 +571,9 @@
 					+ '</td>' + '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
+	}
+	
+	// 退出
+	function back(){
+		window.location.href = 'javascript:history.go(-1)';
 	}
