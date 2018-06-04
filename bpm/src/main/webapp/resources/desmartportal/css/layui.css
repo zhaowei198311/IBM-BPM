@@ -159,7 +159,7 @@ a cite {
 
 .layui-disabled, .layui-disabled:hover {
 	color: #666 !important;
-	cursor: not-allowed !important
+	cursor: text !important
 }
 
 .layui-circle {

@@ -484,7 +484,7 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
 }
 
 label, select, button, input[type="button"], input[type="reset"], input[type="submit"], input[type="radio"], input[type="checkbox"] {
-    cursor: pointer;
+    cursor: text;
 }
 
 input[type="search"] {
@@ -1823,12 +1823,16 @@ input.span1, textarea.span1, .uneditable-input.span1 {
 }
 
 input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
-    cursor: not-allowed;
+    cursor: text;
     border-width:1px;
 }
 
 input[type="date"][readonly]{
 	cursor: pointer;
+}
+
+input[type="date"][disabled]{
+	cursor: text;
 }
 
 input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"][readonly], input[type="checkbox"][readonly] {
