@@ -132,8 +132,8 @@ var common = {
 	 },
 	//抽取页面中动态表单的数据
 	getDesignFormData:function(){
-		var inputArr = $("#formSet table input");
-		var textareaArr = $("#formSet table textarea");
+		var inputArr = $("#formSet .form-sub input");
+		var textareaArr = $("#formSet .form-sub textarea");
 		var control = true; //用于控制复选框出现重复值
 		var checkName = ""; //用于获得复选框的class值，分辨多个复选框
 		var json = "{";
