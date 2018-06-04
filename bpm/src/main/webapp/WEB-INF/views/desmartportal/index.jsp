@@ -50,7 +50,7 @@
 											待办任务<span class="layui-badge" id="daiban_icon"></span></span> </a></li>
 								<li class="layui-nav-item"><a href="menus/notRedProcess"
 									target="iframe0"><i class="layui-icon">&#xe645;</i><span>
-											未阅通知</span></a></li>
+											抄送</span></a></li>
 								<li class="layui-nav-item"><a href="menus/finishProcess"
 									target="iframe0"><i class="layui-icon">&#x1005;</i><span>
 											已办任务</span></a></li>
