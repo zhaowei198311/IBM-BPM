@@ -188,6 +188,7 @@ public class AccessoryFileUploadController {
 						// 将文件写入zip内，即将文件进行打包
 						ZipEntry ze = new ZipEntry(dhInstanceDocument.getAppDocFileName()); // 获取文件名
 						zipOut.putNextEntry(ze);
+						zipOut.setEncoding("GBK");
 						//计算百分比
 						curCount += sftp.getBatchDown(gcfg, directory, filename, zipOut);
 						double dPercent=(double)curCount/totalCount;   //将计算出来的数转换成double
