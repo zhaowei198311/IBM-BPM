@@ -39,9 +39,9 @@
 .create_type{display:none;width:120px;border:1px solid #ddd;box-shadow:0 0 10px #ccc;border-radius:3px;position:absolute;z-index:10;top:35px}
 .create_type li{height:30px;padding-left:10px;line-height:30px;color:#4183C4;cursor:pointer;background:#fff;}
 .create_type li:hover{color:#235;}
-.display_container,.display_container1{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_container,.display_container1{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(0,0,0,0.3);width:100%;height:100%;}
 .display_content,.display_content1{color:#717171;padding:20px;width:400px;height:300px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
-.display_container2{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_container2{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(0,0,0,0.3);width:100%;height:100%;}
 .display_content2{overflow-y:auto;color:#717171;padding:20px;width:400px;height:300px;background:#fff;position:absolute;margin:100px 0 0 -200px;left:50%;box-shadow:0 0 10px #ccc;}
 .top{height:50px;width:100%;font-size:20px;}
 .middle{height:200px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;}
@@ -61,10 +61,10 @@
 .user_list{border:1px solid #ccc;border-radius:5px;padding:10px;margin-top:20px;}
 .role_list{padding:10px;}
 .layui-anim.layui-icon{vertical-align: -8px;}
-.display_container3{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_container3{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(0,0,0,0.3);width:100%;height:100%;}
 .display_content3{overflow-y:auto;color:#717171;padding:20px;width:750px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -375px;left:50%;box-shadow:0 0 10px #ccc;}
 .middle1{height:250px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;}
 .middle2{height:300px;width:96%;border:1px solid #ccc;position:relative;padding:0 10px;}
-.display_container4{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(255,255,255,0.8);width:100%;height:100%;}
+.display_container4{display:none;position:absolute;top:0;left:0;z-index:10;background:rgba(0,0,0,0.3);width:100%;height:100%;}
 .display_content4{overflow-y:auto;color:#717171;padding:20px;width:600px;height:400px;background:#fff;position:absolute;margin:100px 0 0 -300px;left:50%;box-shadow:0 0 10px #ccc;}
 .layui-colla-content{padding:0;}
