@@ -23,38 +23,46 @@
 		<div class="container">
 			<div class="search_area">
 				<div class="layui-row layui-form">
-					<div class="layui-col-xs3">
+					<div class="layui-col-xs1">
 					    <div class="layui-form-pane">
 					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>
-						        <div class="layui-input-block">
-						            <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
-									  	<option value="">任务类型</option>
-									  	<option value="normal">一般任务</option>
-									  	<option value="sign">会签任务</option>
-									  	<option value="transfer">加签任务</option>
-									</select>
-						        </div>
+					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>    
 					       </div>					    	     
 					    </div>
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text" placeholder="任务标题"  class="layui-input" id="task-title-search">
+						<input type="text" placeholder="流程创建人姓名"  class="layui-input" id="task-createProcessUserName-search">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text"  placeholder="接收时间"  class="layui-input" id="init-date-search">
+						<input type="text" placeholder="上一环节处理人姓名"  class="layui-input" id="task-taskPreviousUsrUsername-search">
 					</div>
-					<div class="layui-col-xs1" style="text-align:right;">
-					        <button class="layui-btn" onclick="search()">查询</button>
+					<div class="layui-col-xs2">
+						<input type="text" placeholder="流程实例标题"  class="layui-input" id="task-insTitle-search">
 					</div>
 				</div>
+				<div class="layui-row layui-form">
+				<div class="layui-col-xs1">
+					    <div class="layui-form-pane">
+					    	<div class="layui-form-item">
+					    	<div class="layui-col-xs1" >
+					        <button class="layui-btn" onclick="search()">查询</button>
+							</div>
+					        </div>					    	     
+					    </div>
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
+					</div>
+					
+				</div>
 			</div>
-			<div>
+			<div style="margin-top: 5px;">
 				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
 				<table class="layui-table" lay-even lay-skin="nob">
 					<colgroup>
-					    <col>
-					    <col>
 					    <col>
 					    <col>
 					    <col>
@@ -68,12 +76,10 @@
 					      <th>序号</th>
 					      <th>流程标题</th>
 					      <th>环节名称</th>
-					      <th>任务类型</th>
 					      <th>任务状态</th>
 					      <th>上一环节处理人</th>
 					      <th>流程创建人</th>
-					      <th>流程创建时间</th>
-					      <th>操作</th>
+					      <th>任务接收时间</th>
 					    </tr> 
 					</thead>
 					<tbody id = "proMet_table_tbody"/>
@@ -100,9 +106,11 @@
 	var pageConfig = {
 		pageNum : 1,
 		pageSize : 10,
-		taskType : "",
-		taskTitle : "",
-		taskInitDate : null,
+		createProcessUserName : "",
+		taskPreviousUsrUsername: "",
+		insTitle : "",
+		startTime : null,
+		endTime: null,
 		total : 0
 	}
 	
@@ -172,7 +180,13 @@
 		layui.use('laydate', function(){
 			var laydate = layui.laydate;
 			  	laydate.render({
-			    elem: '#init-date-search'
+			    elem: '#init-startTime-search'
+			});
+		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#init-endTime-search'
 			});
 		});
 		$(function(){
@@ -184,15 +198,17 @@
 		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'taskInstance/queryTaskByReceived',
+				url : 'backLog/loadBackLog',
 				type : 'post',
 				dataType : 'json',
 				data : {
 					pageNum : pageConfig.pageNum,
 					pageSize : pageConfig.pageSize,
-					taskType : pageConfig.taskType,
-					taskTitle : pageConfig.taskTitle,
-					initTime : pageConfig.taskInitDate
+					createProcessUserName : pageConfig.createProcessUserName,
+					taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
+					insTitle : pageConfig.insTitle,
+					startTime : pageConfig.startTime,
+					endTime: pageConfig.endTime
 				},
 				success : function(result){
 					if (result.status == 0) {
@@ -221,45 +237,41 @@
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
-				if(meta.taskType=='normal'){
-					type = "一般任务";
-				}
 				if(meta.taskStatus==12){
 					status = "待处理";
 				}
+				if(meta.taskStatus==-2){
+					status = "等待加签结束";
+				}
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
-				var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
-				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();;
+				/* var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
+				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds(); */
 				trs += '<tr ondblclick=openApproval("'+meta.taskUid+'")>'
 						+'<td>' 
 						+ sortNum 
 						+ '</td>' 
-						+ '<td onclick="openApproval(\'' + meta.taskUid + '\');">'
+						+ '<td style= "cursor:pointer;" onclick="openApproval(\'' + meta.taskUid + '\');">'
 						+ meta.dhProcessInstance.insTitle
 						+ '</td>' 
-						+ '<td><i class="layui-icon backlog_img">&#xe63c;</i>'
+						+ '<td>'
 						+ meta.taskTitle
 						+ '</td>'
 						+ '<td>'
-						+ type
-						+ '</td>' 
-						+ '<td>'
 						+ status
-						+ '</td>'					
-						+ '<td>' ;
-					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
-						trs += meta.taskPreviousUsrUsername;
-					}
-					trs += '</td>' 
+						+ '</td>' 
+						+ '<td>';
+						if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+							trs += meta.taskPreviousUsrUsername;
+						}
+						trs += '</td>'					
+						+ '<td>';
+						if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
+							trs += meta.sysUser.userName;
+						}
+						trs += '</td>'
 						+ '<td>' 
-						+ meta.sysUser.userName 
-						+ '</td>'
-						+ '<td>' 
-						+ taskDueDate
-						+'</td>' 
-						+ '<td>'
-						+ '<i class="layui-icon" title="查看详情" onclick=openApproval("'+meta.taskUid+'")>&#xe60a;</i>'
+						+ InitDate
 						+'</td>' 
 						+ '</tr>';
 			}
@@ -291,9 +303,12 @@
 		}
 		//模糊查询
 		function search(){
-			pageConfig.taskType = $("#task-type-search").val();
-			pageConfig.taskTitle = $("#task-title-search").val();
-			pageConfig.taskInitDate = $("#init-date-search").val()==""?null:$("#init-date-search").val();
+			pageConfig.createProcessUserName = $("#task-createProcessUserName-search").val();
+			pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
+			pageConfig.insTitle = $("#task-insTitle-search").val();
+			pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
+			pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
+			
 			getTaskInstanceInfo();
 		}
 		//刷新按钮
