@@ -322,5 +322,65 @@ var common = {
 			}
 		}
 	},
+	//验证动态表单必填项
+	validateFormMust:function(id){
+		var mustObjArr = $("#formSet table .tip_span");
+		var value = "";
+		var name = "";
+		var flag = true;
+		for(var i=0;i<mustObjArr.length;i++){
+			var mustObj = $(mustObjArr[i]);
+			var inputObj = $(mustObj.parent().next().find("input")[0]);
+			var selectObj = $(mustObj.parent().next().find("select")[0]);
+			var textareaObj = $(mustObj.parent().next().find("textarea")[0]);
+			var text = mustObj.parent().find("label").text();
+			if(inputObj.length == 1){
+				var type = inputObj.attr("type");
+				switch(type){
+					case "text":
+					case "date":
+					case "tel":{
+						value = inputObj.val();
+						name = inputObj.attr("name");
+						break;
+					}
+					case "radio":
+					case "checkbox":{
+						name = inputObj.attr("name");
+						if($("[name='"+name+"']:checked").length<1){
+							value = "";
+						}
+						break;
+					}
+				}
+			}else if(textareaObj.length == 1){
+				value = textareaObj.val();
+				name = textareaObj.attr("name");
+			}else if(selectObj.length == 1){
+				value = selectObj.val();
+				name = selectObj.attr("name");
+			}
+			$("[name='"+name+"']").attr({"required":"required","lay-verify":"required"});
+			layui.use('form', function(){
+				var form = layui.form;
+				//监听提交
+				form.on('submit('+id+')', function(data){
+				    layer.msg(JSON.stringify(data.field));
+				    return false;
+				});
+			});
+			
+			if(value=="" || value==null){
+				var eleId = $("[name='"+name+"']").prop("id");
+				var Y = $('#'+eleId).offset().top-100;
+				console.log(Y);
+				$("body,html").animate({scrollTop: Y}, 500);
+				layer.msg("请填写必填项 "+text, {icon: 2});
+				$("[name='"+name+"']").focus();
+				flag = false; 
+				break;
+			}
+		}
+		return flag;
+	},
 };
-
