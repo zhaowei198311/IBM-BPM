@@ -113,6 +113,6 @@ public interface DhProcessInstanceService {
 	 * @param user 用户id
 	 * @return
 	 */
-	ServerResponse rejectProcess(int insId,String activityId, String user);
+	ServerResponse rejectProcess(String data);
 
 }

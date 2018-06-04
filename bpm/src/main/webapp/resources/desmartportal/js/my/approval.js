@@ -50,18 +50,31 @@ $(function () {
 	
 	$("#reject_btn").click(function (){
 		$('input[name="check"]:checked').each(function(){ 
-			var str = $(this).val();
+		    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+		    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+		    	layer.alert("请填写审批意见");
+		    	return;
+		    }
+		    var taskId = $("#taskId").val();
+		    var taskUid = $("#taskUid").val();
+		    var finalData = {};
+		    // 路由数据
+		    var routeData = {};
+		    var item = {};
+		    var str = $(this).val();
 		    var insId = str.substring(0,str.indexOf("+"));
+		    var userUid = str.substring(str.lastIndexOf("+") + 1);
 		    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
-		    var userId = str.substring(str.lastIndexOf("+") + 1);
+		    finalData.routeData = {"insId":insId,"userUid":userUid,"activityBpdId":activityBpdId};
+		    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+		    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
+		    
 		    $.ajax({
 		        url: 'processInstance/rejectProcess',
 		        type: 'POST',
 		        dataType: 'json',
 		        data: {
-		        	insId : insId,
-		        	activityBpdId : activityBpdId,
-		        	userId : userId
+		        	data : JSON.stringify(finalData)
 		        },
 		        beforeSend: function () {
 		            index = layer.load(1);

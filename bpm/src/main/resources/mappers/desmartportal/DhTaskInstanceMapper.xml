@@ -273,7 +273,7 @@
 			<if test="taskTitle != null and taskTitle != ''">
 				TASK_TITLE = #{taskTitle},
 			</if>
-			<if test="insUpdateDate != null ">
+			<if test="insUpdateDate != null and insUpdateDate != ''">
 				INS_UPDATE_DATE = #{insUpdateDate},
 			</if>
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
@@ -283,19 +283,19 @@
 				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
 				TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername},
 			</if>
-			<if test="taskDelegateDate != null ">
+			<if test="taskDelegateDate != null and taskDelegateDate != ''">
 				TASK_DELEGATE_DATE = #{taskDelegateDate},
 			</if>
-			<if test="taskInitDate != null ">
+			<if test="taskInitDate != null and taskInitDate != ''">
 				TASK_INIT_DATE = #{taskInitDate},
 			</if>
-			<if test="taskFinishDate != null ">
+			<if test="taskFinishDate != null and taskFinishDate != ''">
 				TASK_FINISH_DATE = #{taskFinishDate},
 			</if>
-			<if test="taskDueDate != null ">
+			<if test="taskDueDate != null and taskDueDate != ''">
 				TASK_DUE_DATE = #{taskDueDate},
 			</if>
-			<if test="taskRiskDate != null ">
+			<if test="taskRiskDate != null and taskRiskDate != ''">
 				TASK_RISK_DATE = #{taskRiskDate},
 			</if>
 			<if test="taskPriority != null and taskPriority != ''">
@@ -351,7 +351,7 @@
 		#{taskPreviousUsrUid},
 		#{taskPreviousUsrUsername},
 		#{taskDelegateDate},
-		#{taskInitDate},
+		sysdate,
 		#{taskFinishDate},
 		#{taskDueDate},
 		#{taskRiskDate},
@@ -411,8 +411,7 @@
 		where task_id = #{taskId}
 	</select>
 
-	<select id="selectByCondition" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
-	 resultType="com.desmart.desmartportal.entity.DhTaskInstance" 
+	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" 
 		resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT <include refid="TaskAndProcess_Column_List"/>
 		FROM
@@ -421,13 +420,8 @@
 			T.INS_UID = P.INS_UID 
 			AND
 			T.USR_UID = S.USER_ID
-			<if test="insUid != null and insUid != '' ">
 			AND
 			T.INS_UID = #{insUid}
-			</if>
-			<if test="activityBpdId != null and activityBpdId != ''">
-			T.ACTIVITY_BPD_ID = #{activityBpdId}
-			</if>
 		</where>
 	</select>
 	
@@ -551,6 +545,24 @@
 	   update dh_task_instance 
 	   set task_status = #{taskStatus}
 	   where task_id = #{taskId} AND TASK_UID != #{taskUid}
+	</update>
+	
+	<update id="updateTaskStatusByTaskUid" parameterType="map">
+	   update dh_task_instance 
+	   <set>
+	   <trim suffixOverrides=",">
+	   <if test="taskStatus != null and taskStatus != '' ">
+	    task_Status = #{taskStatus}
+	   </if>
+	   <if test="taskFinishDate != null ">
+	    task_Finish_Date = #{taskFinishDate}
+	   </if>
+	   <if test="taskData != null and taskData != '' ">
+	    task_Data = #{taskData}
+	   </if>
+	   </trim>
+	   </set>
+	   where TASK_UID = #{taskUid}
 	</update>
 	
 	<select id="listTaskByCondition" parameterType="map" resultType="com.desmart.desmartportal.entity.DhTaskInstance">

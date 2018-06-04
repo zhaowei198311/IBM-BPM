@@ -215,7 +215,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	/*
-	 * 根据用户id 查询 有多少代办任务 js前台定时 任务 每隔一分钟 去 查询一次用户待办
+	 * 根据用户id 查询 有多少代办任务 js前台定时 任务 每隔多少秒 去 查询一次用户待办
 	 */
 	@Override
 	public int selectByusrUid(String usrUid) {
@@ -590,7 +590,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	/**
-	 * 根据任务实例查询任务数据和流程数据
+	 * 根据任务实例查询待办 任务数据和流程数据
 	 */
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectTaskAndProcessInfo(DhTaskInstance taskInstance,
@@ -598,8 +598,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("根据任务实例查询任务数据和流程数据 Start......");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
+			// 这里查询的是待办
+			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			taskInstance.setUsrUid(creator);
+			taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 			List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectTaskAndProcessInfo(taskInstance);
-			
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {

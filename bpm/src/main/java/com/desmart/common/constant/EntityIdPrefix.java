@@ -70,4 +70,11 @@ public class EntityIdPrefix {
     
     /** 网关决策服务结果前缀 */
     public static final String DH_GATEWAY_ROUTE_RESULT = "route_result:";
+    
+	/**
+	 * 审批意见前缀
+	 */
+	public static final String DH_APPROVAL_OPINION = "apr_idea:";
+	/** 文件标识前缀*/
+	public static final String DH_INSTANCE_FILE_CARD = "file_card:";
 }

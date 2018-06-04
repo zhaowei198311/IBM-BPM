@@ -82,6 +82,7 @@
     from DH_ACTIVITY_CONF
     where activity_id = #{activityId,jdbcType=VARCHAR}
   </select>
+
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from DH_ACTIVITY_CONF
