@@ -29,8 +29,8 @@
 						        <div class="layui-input-block">
 						             <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
 									  	<option value="">任务类型</option>
-									  	<option value="sign">sign</option>
-									  	<option value="normal">normal</option>
+									  	<option value="sign">会签任务</option>
+									  	<option value="normal">一般任务</option>
 									  	<option value="transfer">transfer</option>
 									</select>
 						        </div>
@@ -68,7 +68,8 @@
 					      <th>序号</th>
 					      <th>流程标题</th>
 					      <th>任务标题</th>
-					      <!-- <th>上一环节提交人</th> -->
+					      <th>上一环节提交人</th>
+					      <th>流程发起人</th>
 					      <th>任务类型</th>
 					      <th>接收时间</th>
 					      <!-- <th>处理时间</th> -->
@@ -161,20 +162,6 @@
 			})
 		}
 		
-		// 获取用户有多少已办
-		function getUserTask(){
-			$.ajax({
-				url : 'user/todoFinshTask',
-				type : 'POST',
-				dataType : 'text',
-				data : {},
-				success : function(result){
-					// 渲染到已办
-					$("#yiban_icon").text(result);
-				}
-			})
-		}
-		
 		function drawTable(pageInfo,data){
 			pageConfig.pageNum = pageInfo.pageNum;
 			pageConfig.pageSize = pageInfo.pageSize;
@@ -197,22 +184,8 @@
 				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
-				var insTitle = "";
-				var insId = "";
-				$.ajax({
-					url:"processInstance/queryProInstanceByInsUid",
-					method:"post",
-					async:false,
-					data:{
-						insUid:meta.insUid
-					},
-					success:function(result){
-						if(result.status==0){
-							insTitle = result.data.insTitle;
-							insId = result.data.insId;
-						}
-					}
-				});
+				var insTitle = meta.dhProcessInstance.insTitle;
+				var insId = meta.dhProcessInstance.insId;
 				if(meta.taskType=='normal'){
 					type = "一般任务";
 				}
@@ -225,12 +198,15 @@
 					+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
 					+ meta.taskTitle 
 					+ '</td>' 
-				/* 	+ '<td>';
+					+ '<td>';
 				if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
-					trs += meta.taskPreviousUsrUsername 
+					trs += meta.taskPreviousUsrUsername;
 				}
-				trs += '</td>'  */
-					+ '<td>' + type
+				trs += '</td><td>';
+				if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
+					trs += meta.sysUser.userName;
+				}
+				trs += '</td><td>' + type
 					+ '</td>' 
 					+ '<td>'
 					+ InitDate

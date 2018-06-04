@@ -141,31 +141,23 @@
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="4">
-                            <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;">
-                                <div class="layui-progress-bar" lay-percent="0%"></div>
-                                <!--<span class="progress_time">审批剩余时间6小时</span> -->
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
                         <td class="td_title">工号</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input" disabled/>
                         </td>
                         <td class="td_title">姓名</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.initUserFullname}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.initUserFullname}" autocomplete="off" class="layui-input" disabled/>
                         </td>
                     </tr>
                     <tr>
                         <td class="td_title">创建日期</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="<fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd"/>" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="<fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd"/>" autocomplete="off" class="layui-input" disabled/>
                         </td>
                         <td class="td_title">所属部门</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.departName}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.departName}" autocomplete="off" class="layui-input" disabled/>
                        	</td>
                     </tr>
                 </tbody>
