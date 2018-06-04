@@ -50,11 +50,6 @@ $(function () {
 	
 	$("#reject_btn").click(function (){
 		$('input[name="check"]:checked').each(function(){ 
-		    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-		    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-		    	layer.alert("请填写审批意见");
-		    	return;
-		    }
 		    var taskId = $("#taskId").val();
 		    var taskUid = $("#taskUid").val();
 		    var finalData = {};
@@ -278,7 +273,7 @@ function agree() {
     //var apr_activityId = $("#activityId").val();//环节id，activity_id
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-    	$("#myApprovalOpinion").foucs();
+    	$("#myApprovalOpinion").focus();
     	layer.alert("请填写审批意见");
     	return;
     }
@@ -343,7 +338,13 @@ function agree() {
 function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
     var insUid = $("#insUid").val();
-    
+    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+    alert(aprOpiComment)
+    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+   	$("#myApprovalOpinion").focus();
+   	layer.alert("请填写审批意见");
+    	return;
+    }
     $.ajax({
         url: 'processInstance/queryRejectByActivity',
         type: 'POST',
