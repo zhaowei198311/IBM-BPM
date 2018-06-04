@@ -685,6 +685,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		try {
 			// 当前任务的taskUid
 			String currentTaskUid = dhTaskInstance.getTaskUid();
+			DhTaskInstance dti = dhTaskInstanceMapper.selectByPrimaryKey(currentTaskUid);
 			// 查询该任务是否还有会签任务未审批完成
 			List<DhTaskInstance> checkList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getTaskUid());
 			if (!checkList.isEmpty()) {
@@ -695,7 +696,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 			// 加新任务			
 			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
-			dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
+			dhTaskInstance.setTaskTitle(dti.getTaskTitle());
 			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
 			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 			dhTaskInstance.setTaskInitDate(new Date());
@@ -732,23 +733,23 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					completedSigning += string+",";
 				}	
 			}
-
-			// 路由表记录
-			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
-			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-			dhRoutingRecord.setActivityName(bpmActivityMeta.getActivityName());
-			dhRoutingRecord.setRouteType("addTask");
-			dhRoutingRecord.setUserUid("00011178");
-			dhRoutingRecord.setActivityId(activityId);
-//			dhRoutingRecord.setActivityTo(activityId);
-			dhRoutingRecordMapper.insert(dhRoutingRecord);
-			
 			// 如果会签人全部都已经会签过，则直接返回
 			String[] check = completedSigning.split(",");
 			if (Arrays.equals(usrUids, check)) {
 				return ServerResponse.createByErrorMessage(completedSigning.substring(0, completedSigning.length()-1)+"已经会签过!");
 			}
+
+			// 路由表记录
+			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
+			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+			dhRoutingRecord.setActivityName(dti.getTaskTitle());
+			dhRoutingRecord.setRouteType("addTask");
+			dhRoutingRecord.setUserUid(dti.getUsrUid());
+			dhRoutingRecord.setActivityId(activityId);
+//			dhRoutingRecord.setActivityTo(activityId);
+			dhRoutingRecordMapper.insert(dhRoutingRecord);
+			
 			// 将当前任务暂挂
 			DhTaskInstance currentDhTaskInstance = new DhTaskInstance();
 			currentDhTaskInstance.setTaskUid(currentTaskUid);
@@ -908,6 +909,17 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhApprovalOpinion.setAprDate(new Timestamp(System.currentTimeMillis()));
 			dhApprovalOpinion.setActivityId(activityId);
 			dhapprovalOpinionServiceImpl.insert(dhApprovalOpinion);
+			
+			// 路由表记录
+			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
+			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+			dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
+			dhRoutingRecord.setRouteType("finishAddTask");
+			dhRoutingRecord.setUserUid(dhTaskInstance.getUsrUid());
+			dhRoutingRecord.setActivityId(activityId);
+//			dhRoutingRecord.setActivityTo(activityId);
+			dhRoutingRecordMapper.insert(dhRoutingRecord);
 			// 说明：如果taskType为 normalAdd，则一人完成加签即可
 			if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
 				// 将主任务状态回归到正常状态

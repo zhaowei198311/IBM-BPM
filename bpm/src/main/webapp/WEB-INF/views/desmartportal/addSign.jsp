@@ -254,17 +254,15 @@
                                         <th>上传人</th>
                                         <th>上传时间</th>
                                         <th>
-                                        <c:if test="${taskInstance.taskStatus!=32 }">
-                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button>
-                                            </c:if>
+<%--                                         <c:if test="${taskInstance.taskStatus!=32 }"> --%>
+<!--                                             <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;">上传附件</button> -->
+<%--                                             </c:if> --%>
                                             <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">下载全部</button>
                                             <div class="hidden-value">
                                                 <input class="maxFileSize" value="20" type="hidden" />
                                                 <input class="maxFileCount" value="10" type="hidden" />
                                                 <input class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
                                             </div>
-                                            <!-- <input type="file" class="upload_file"/> -->
-                                            <!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
                                         </th>
                                     </tr>
                                 </thead>
@@ -383,24 +381,6 @@
             <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="hideHistoryFile()">关闭</button>
         </div>
     </div>
-	<div class="display_container8" style="display: none;">
-		<div class="display_content7" style="height: 125px;width: 400px">
-			<div class="layui-form-item">
-			<label class="layui-form-label" style="width: 80px;">驳回的环节:</label>
-				<div class="layui-input-inline">
-					<form action="" class="layui-form">
-					<select name="quiz1">
-						<option value="">请选择驳回环节</option>
-					</select>
-					</form>
-				</div>
-			</div>
-			    <div class="foot" style="margin-top: 20px;">
-		            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>
-		            <button class="layui-btn layui-btn cancel5_btn">取消</button>
-		        </div>
-		</div>
-	</div>
 </body>
 
 </html>

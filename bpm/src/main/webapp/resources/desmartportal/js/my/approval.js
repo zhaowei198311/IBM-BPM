@@ -228,8 +228,9 @@ function addSure(){
 		},
 		success: function(data){
 			if (data.status == 0) {
-				layer.alert("操作成功!");
-				$(".display_container7").css("display","none");
+				layer.alert("操作成功!", function(){
+                	window.history.back();
+                });
 			}else {
 				layer.alert(data.msg)
 			}

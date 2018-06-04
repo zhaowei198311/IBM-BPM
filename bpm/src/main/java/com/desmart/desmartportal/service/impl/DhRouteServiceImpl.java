@@ -103,10 +103,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 			String departNo, String companyNum, String formData) {
 		// 如果当前任务已添加会签任务，则不能执行提交操作
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if (DhTaskInstance.STATUS_WAIT_ADD.equals(dhTaskInstance.getTaskStatus())) {
-			return ServerResponse.createByErrorMessage("当前任务已经暂挂，请等会签人审批结束!");
+		if (dhTaskInstance != null) {
+			if (DhTaskInstance.STATUS_WAIT_ADD.equals(dhTaskInstance.getTaskStatus())) {
+				return ServerResponse.createByErrorMessage("当前任务已经暂挂，请等会签人审批结束!");
+			}
 		}
-		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		// 根据表单字段查
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
