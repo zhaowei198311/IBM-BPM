@@ -181,21 +181,21 @@
                     <tr>
                         <td class="td_title">工号</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.insInitUser}" autocomplete="off" class="layui-input" disabled/>
                         </td>
                         <td class="td_title">姓名</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.initUserFullname}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.initUserFullname}" autocomplete="off" class="layui-input" disabled/>
                         </td>
                     </tr>
                     <tr>
                         <td class="td_title">创建日期</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="<fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd"/>" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="<fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd"/>" autocomplete="off" class="layui-input" disabled/>
                         </td>
                         <td class="td_title">所属部门</td>
                         <td>
-                            <input type="text"  required lay-verify="required" value="${processInstance.departName} - ${processInstance.companyName}" autocomplete="off" class="layui-input" readonly/>
+                            <input type="text"  required lay-verify="required" value="${processInstance.departName} - ${processInstance.companyName}" autocomplete="off" class="layui-input" disabled/>
                        	</td>
                     </tr>
                 </tbody>
@@ -207,7 +207,7 @@
                     <tr>
                         <td class="td_title" colspan="1" style="width: 120px">流程标题</td>
                         <td class="sub_title" colspan="5">
-                             <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" readonly>
+                             <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled>
                         </td>
                     </tr>
                 </tbody>
