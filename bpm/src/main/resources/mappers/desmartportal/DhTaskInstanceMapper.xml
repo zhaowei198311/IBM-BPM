@@ -273,7 +273,7 @@
 			<if test="taskTitle != null and taskTitle != ''">
 				TASK_TITLE = #{taskTitle},
 			</if>
-			<if test="insUpdateDate != null and insUpdateDate != ''">
+			<if test="insUpdateDate != null">
 				INS_UPDATE_DATE = #{insUpdateDate},
 			</if>
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
@@ -283,19 +283,19 @@
 				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
 				TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername},
 			</if>
-			<if test="taskDelegateDate != null and taskDelegateDate != ''">
+			<if test="taskDelegateDate != null">
 				TASK_DELEGATE_DATE = #{taskDelegateDate},
 			</if>
-			<if test="taskInitDate != null and taskInitDate != ''">
+			<if test="taskInitDate != null">
 				TASK_INIT_DATE = #{taskInitDate},
 			</if>
-			<if test="taskFinishDate != null and taskFinishDate != ''">
+			<if test="taskFinishDate != null">
 				TASK_FINISH_DATE = #{taskFinishDate},
 			</if>
-			<if test="taskDueDate != null and taskDueDate != ''">
+			<if test="taskDueDate != null">
 				TASK_DUE_DATE = #{taskDueDate},
 			</if>
-			<if test="taskRiskDate != null and taskRiskDate != ''">
+			<if test="taskRiskDate != null">
 				TASK_RISK_DATE = #{taskRiskDate},
 			</if>
 			<if test="taskPriority != null and taskPriority != ''">
