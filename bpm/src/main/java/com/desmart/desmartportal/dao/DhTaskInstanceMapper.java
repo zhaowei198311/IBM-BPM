@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -123,4 +124,22 @@ public interface DhTaskInstanceMapper {
 	 * @throws
 	 */
 	DhTaskInstance getByUserAndFromTaskUid(DhTaskInstance dhTaskInstance);
+	/**
+	 * 根据条件查询待办
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @return
+	 */
+	List<DhTaskInstance> selectBackLogTaskInfoByCondition(
+			@Param("startTime")Date startTime,
+			@Param("endTime")Date endTime,
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+	
+	/**
+	 * 根据用户查询待办
+	 * @param usrUid
+	 * @return
+	 */
+	Integer selectBackLogByusrUid(String usrUid);
 }

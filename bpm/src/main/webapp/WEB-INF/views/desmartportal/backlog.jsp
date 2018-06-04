@@ -199,7 +199,7 @@
 		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'backLog/loadBackLog',
+				url : 'taskInstance/loadBackLog',
 				type : 'post',
 				dataType : 'json',
 				data : {
@@ -292,7 +292,7 @@
 		// 获取用户有多少代办
 		function getUserTask(){
 			$.ajax({
-				url : 'backLog/todoTask',
+				url : 'taskInstance/todoTask',
 				type : 'POST',
 				dataType : 'text',
 				data : {},

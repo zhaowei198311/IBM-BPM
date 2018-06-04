@@ -40,7 +40,6 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
-import com.desmart.desmartportal.dao.DhApprovalOpinionMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -127,8 +126,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private BpmFormFieldService bpmFormFieldService;
-	
-	
+
 	/**
 	 * 查询所有流程实例
 	 */
@@ -971,4 +969,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		return ServerResponse.createBySuccess();
 	}
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(Date startTime, Date endTime,
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		PageHelper.startPage(pageNum, pageSize);
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public Integer selectBackLogByusrUid(String usrUid) {
+		// TODO Auto-generated method stub
+		return dhTaskInstanceMapper.selectBackLogByusrUid(usrUid);
+	}
+
 }

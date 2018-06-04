@@ -22,32 +22,38 @@
 		<div class="container">
 			<div class="search_area">
 				<div class="layui-row layui-form">
-					<div class="layui-col-xs3">
+					<div class="layui-col-xs1">
 					    <div class="layui-form-pane">
 					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;">刷新</label>
-						        <div class="layui-input-block">
-						             <select class="layui-input-block group_select" name="group" lay-verify="required" id="task-type-search">
-									  	<option value="">任务类型</option>
-									  	<option value="sign">会签任务</option>
-									  	<option value="normal">一般任务</option>
-									  	<option value="transfer">transfer</option>
-									</select>
-						        </div>
+					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>    
 					       </div>					    	     
 					    </div>
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text" placeholder="任务标题"  class="layui-input" id="task-title-search">
+						<input type="text" placeholder="流程创建人姓名"  class="layui-input" id="task-createProcessUserName-search">
 					</div>
 					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="test1">
+						<input type="text" placeholder="上一环节处理人姓名"  class="layui-input" id="task-taskPreviousUsrUsername-search">
 					</div>
 					<div class="layui-col-xs2">
-					    <input type="text"  placeholder="结束时间"  class="layui-input" id="test2">				    
+						<input type="text" placeholder="流程实例标题"  class="layui-input" id="task-insTitle-search">
 					</div>
-					<div class="layui-col-xs1" style="text-align:right;">
+				<!-- </div>
+				<div class="layui-row layui-form"> -->
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
+					</div>
+					<div class="layui-col-xs1">
+					    <div class="layui-form-pane"  style="float: right;">
+					    	<div class="layui-form-item">
+					    	<div class="layui-col-xs1" >
 					        <button class="layui-btn" onclick="search()">查询</button>
+							</div>
+					        </div>					    	     
+					    </div>
 					</div>
 				</div>
 			</div>
@@ -99,10 +105,11 @@
 	var pageConfig = {
 			pageNum : 1,
 			pageSize : 10,
-			taskType : "",
-			taskTitle : "",
-			taskInitDate : null,
-			taskDueDate : null,
+			createProcessUserName : "",
+			taskPreviousUsrUsername: "",
+			insTitle : "",
+			startTime : null,
+			endTime: null,
 			total : 0
 		}
 	
@@ -132,6 +139,18 @@
 			    elem: '#test2'
 			});
 		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#init-startTime-search'
+			});
+		});
+		layui.use('laydate', function(){
+			var laydate = layui.laydate;
+			  	laydate.render({
+			    elem: '#init-endTime-search'
+			});
+		});
 		
 		$(document).ready(function (){
 			// 加载数据
@@ -143,16 +162,17 @@
 		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'taskInstance/queryTaskByClosed',
+				url : 'backlog/queryTaskByClosed',
 				type : 'post',
 				dataType : 'json',
 				data : {
 					pageNum : pageConfig.pageNum,
 					pageSize : pageConfig.pageSize,
-					taskType : pageConfig.taskType,
-					taskTitle : pageConfig.taskTitle,
-					initTime : pageConfig.taskInitDate,
-					dueTime : pageConfig.taskDueDate,
+					createProcessUserName : pageConfig.createProcessUserName,
+					taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
+					insTitle : pageConfig.insTitle,
+					startTime : pageConfig.startTime,
+					endTime: pageConfig.endTime
 				},
 				success : function(result){
 					if(result.status == 0){
@@ -195,7 +215,7 @@
 				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ '<td>' + sortNum + '</td>'
 					+'<td><span onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
-					+ '<td><i class="layui-icon backlog_img" title="查看详情" onclick=openFinishedDetail("'+meta.taskUid+'")>&#xe63c;</i>'
+					+ '<td onclick=openFinishedDetail("'+meta.taskUid+'")>'
 					+ meta.taskTitle 
 					+ '</td>' 
 					+ '<td>';
