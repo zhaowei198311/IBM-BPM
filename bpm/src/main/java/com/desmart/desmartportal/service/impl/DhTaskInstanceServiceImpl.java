@@ -26,6 +26,7 @@ import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.FormDataUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -428,8 +429,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						
 						// 调用方法完成任务
 						Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+						Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
 						
-						if (resultMap.get("commitTaskResult").getCode() == 200) {// 任务完成，修改数据信息
+						if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
 							log.info("完成任务结束......");
 							return ServerResponse.createBySuccess();
 						}else {

@@ -26,6 +26,7 @@ import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.CommonBusinessObjectUtils;
 import com.desmart.common.util.FormDataUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -326,8 +327,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             // 完成第一个任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
             Map<String, HttpReturnStatus> commitTaskMap = bpmTaskUtil.commitTask(taskId, pubBo);
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskMap);
+            
             // 如果完成任务成功
-            if (!commitTaskMap.containsKey("errorMap") && commitTaskMap.get("commitTaskResult") != null && commitTaskMap.get("commitTaskResult").getCode() == 200) {
+            if (errorMap.get("errorResult") == null) {
                 // 更新草稿流程实例的状态
                 DhProcessInstance instanceSelective = new DhProcessInstance();
                 instanceSelective.setInsUid(dhProcessInstance.getInsUid());

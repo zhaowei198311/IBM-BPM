@@ -15,10 +15,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.util.http.BpmClientUtils;
+
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -52,7 +51,7 @@ public class BpmTaskUtil {
         try {
             // 将任务分配给当前用户
             result = this.applyTask(taskId, currentUserUid);
-            if (!BpmClientUtils.isErrorResult(result)) {
+            if (!HttpReturnStatusUtil.isErrorResult(result)) {
                 // 将分配任务返回的信息放入返回值
                 resultMap.put("assignTaskResult", result);
                 // 查看是否分配任务成功
@@ -61,11 +60,11 @@ public class BpmTaskUtil {
                 if (StringUtils.isNotBlank(status) && !"error".equals(status)) {
                     Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
                     resultMap.putAll((Map)setDataResult);
-                    Map<String, HttpReturnStatus> errorMap = BpmClientUtils.findErrorResult(setDataResult);
-                    if (errorMap.isEmpty() && !BpmClientUtils.isErrorResult(result)) {
+                    Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
+                    if (errorMap.isEmpty() && !HttpReturnStatusUtil.isErrorResult(result)) {
                         result = this.completeTask(taskId);
                         resultMap.put("commitTaskResult", result);
-                        if (BpmClientUtils.isErrorResult(result)) {
+                        if (HttpReturnStatusUtil.isErrorResult(result)) {
                             resultMap.put("errorResult", result);
                         }
                     } else if (!errorMap.isEmpty()) {
@@ -161,7 +160,7 @@ public class BpmTaskUtil {
         
         try {
             HttpReturnStatus getTaskResult = this.getTaskData(taskId);
-            if (!BpmClientUtils.isErrorResult(getTaskResult)) {
+            if (!HttpReturnStatusUtil.isErrorResult(getTaskResult)) {
                 resultMap.put("getTaskResult", getTaskResult);
                 JSONObject jsoResult = new JSONObject(getTaskResult.getMsg());
                 String status = jsoResult.optString("status");
@@ -175,19 +174,24 @@ public class BpmTaskUtil {
                             oldPubBo.remove("@metadata");
                         }
                         JSONObject newPubBo = new JSONObject(pubBo);
+                        // 重新拼装JSON对象
                         newPubBo = JSONUtils.combine(newPubBo, oldPubBo);
                         
                         String key;
                         JSONObject jsoNextOwners;
                         Set<String> keyset = newPubBo.keySet();
                         Iterator<String> iterator = keyset.iterator();
-                        while(iterator.hasNext()) {
+                        while (iterator.hasNext()) {
                             key = iterator.next();
                             if (key.startsWith("nextOwners_")) {
                                 jsoNextOwners = newPubBo.optJSONObject(key);
+                                /* 
+                                 * 如果是oldPubBo中带过来的， 取JSONObject可以取到，
+                                 * 如果是newPubBo中设置的，是一个JSONArray数组，无法用取JSONObject方法获得
+                                 */
                                 if (jsoNextOwners != null) {
                                     JSONArray jayOwnerItems = jsoNextOwners.optJSONArray("items");
-                                    List<String> tmpOwners = new ArrayList();
+                                    List<String> tmpOwners = new ArrayList<>();
                                     if (jayOwnerItems != null) {
                                         for(int i = 0; i < jayOwnerItems.length(); ++i) {
                                             tmpOwners.add(jayOwnerItems.optString(i, ""));
@@ -206,7 +210,7 @@ public class BpmTaskUtil {
                             params = "&params=" + params;
                         }
                         HttpReturnStatus setTaskResult = this.doTaskAction(taskId, "setData", params);
-                        if (!BpmClientUtils.isErrorResult(setTaskResult)) {
+                        if (!HttpReturnStatusUtil.isErrorResult(setTaskResult)) {
                             resultMap.put("setTaskResult", setTaskResult);
                         } else {
                             resultMap.put("errorResult", setTaskResult);
