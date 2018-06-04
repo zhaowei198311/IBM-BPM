@@ -592,7 +592,6 @@
 	</select>
 	
 	<select id="selectByCondition" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
-	 resultType="com.desmart.desmartportal.entity.DhTaskInstance" 
 		resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT <include refid="TaskAndProcess_Column_List"/>
 		FROM
