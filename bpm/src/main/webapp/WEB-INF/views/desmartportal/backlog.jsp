@@ -69,12 +69,14 @@
 					    <col>
 					    <col>
 					    <col>
+					    <col>
 					</colgroup>
 					<thead>
 					    <tr>
 					      <th>序号</th>
 					      <th>流程标题</th>
 					      <th>环节名称</th>
+					      <th>是否代理</th>
 					      <th>任务状态</th>
 					      <th>上一环节处理人</th>
 					      <th>流程创建人</th>
@@ -233,6 +235,7 @@
 			var trs = "";
 			var type = "";
 			var status = "";
+			var delegateFlag= "";
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
@@ -241,6 +244,11 @@
 				}
 				if(meta.taskStatus==-2){
 					status = "等待加签结束";
+				}
+				if(meta.taskDelegateUser != null && meta.taskDelegateUser !=""){
+					delegateFlag = "是";
+				}else{
+					delegateFlag = "否";
 				}
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
@@ -256,6 +264,9 @@
 						+ '<td>'
 						+ meta.taskTitle
 						+ '</td>'
+						+ '<td>'
+						+ delegateFlag
+						+ '</td>' 
 						+ '<td>'
 						+ status
 						+ '</td>' 

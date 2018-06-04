@@ -172,7 +172,8 @@
 				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
 				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
-			AND T.USR_UID = #{dhTaskInstance.usrUid}
+			AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+			or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
 		</where>
 		ORDER BY P.INS_CREATE_DATE DESC
 	</select>
