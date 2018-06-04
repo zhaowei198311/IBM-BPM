@@ -5,6 +5,7 @@ package com.desmart.desmartportal.service.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -642,7 +643,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			timeAmount = dhActivityConf.getActcTime();
 			timeType = dhActivityConf.getActcTimeunit();
 		}
-		
+		// 会签页面默认时间为24小时
+		if (bpmActivityMeta_1.isEmpty()) {
+			timeAmount = null;
+		}
 		// 审批最后日期
 		Date lastDate = sysDateService.calculateDueDate(createDate, timeAmount, timeType);
 		if (timeAmount == null) {
@@ -673,7 +677,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			percent = 100;
 		}
 		map.put("percent", percent);
-		map.put("hour", hour);
+		map.put("hour", hour);	
 		return ServerResponse.createBySuccess(map);
 	}
 
@@ -681,11 +685,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Transactional
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator) {
 		try {
-			// 将当前任务暂挂
-			DhTaskInstance currentDhTaskInstance = new DhTaskInstance();
-			currentDhTaskInstance.setTaskUid(dhTaskInstance.getTaskUid());
-			currentDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
-			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
+			// 当前任务的taskUid
+			String currentTaskUid = dhTaskInstance.getTaskUid();
+			// 查询该任务是否还有会签任务未审批完成
+			List<DhTaskInstance> checkList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getTaskUid());
+			if (!checkList.isEmpty()) {
+				return ServerResponse.createByErrorMessage("当前任务已添加会签人，请等会签人审批结束!");
+			}
 			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
 			String activityId = dhTaskInstance.getActivityBpdId();
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
@@ -694,6 +700,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhTaskInstance.setTaskTitle(bpmActivityMeta.getActivityName());
 			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
 			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+			dhTaskInstance.setTaskInitDate(new Date());
 			// usrUid集合
 			String[] usrUids = dhTaskInstance.getUsrUid().split(";");
 			// 已经加签人员姓名
@@ -708,10 +715,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
 				dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
 				// 验证当前人员是否已经加签
-				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByTaskIdAndUser(dhTaskInstance);
+				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
-					if ("simpleLoopAdd".equals(dhTaskInstance.getTaskType())) {
+					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
 						if (num > 1) {
 							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
 							dhTaskInstance.setToTaskUid(taskUid);
@@ -722,10 +729,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
 					taskUid = dhTaskInstance.getTaskUid();
 					dhTaskInstanceMapper.insertTask(dhTaskInstance);
+					num++;
 				}else {
 					completedSigning += string+",";
-				}
-				num++;
+				}	
 			}
 
 			// 路由表记录
@@ -739,8 +746,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 //			dhRoutingRecord.setActivityTo(activityId);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
 			
+			// 如果会签人全部都已经会签过，则直接返回
+			String[] check = completedSigning.split(",");
+			if (Arrays.equals(usrUids, check)) {
+				return ServerResponse.createByErrorMessage(completedSigning.substring(0, completedSigning.length()-1)+"已经会签过!");
+			}
+			// 将当前任务暂挂
+			DhTaskInstance currentDhTaskInstance = new DhTaskInstance();
+			currentDhTaskInstance.setTaskUid(currentTaskUid);
+			currentDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
+			dhTaskInstanceMapper.updateByPrimaryKey(currentDhTaskInstance);
 			if (!completedSigning.isEmpty()) {
-				return ServerResponse.createByErrorMessage(completedSigning+"已经加签，其他人员操作成功！");
+				return ServerResponse.createByErrorMessage(completedSigning.substring(0, completedSigning.length()-1)+"已经会签过,其他人员操作成功!");
 			}
 			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
@@ -875,49 +892,83 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Transactional
 	@Override
 	public ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent) {
-		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		// 判断taskType类型
-		String type = dhTaskInstance.getTaskType();
-		// 插入审批意见
-		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
-		dhApprovalOpinion.setAprOpiId("apr_idea:"+UUID.randomUUID());
-		dhApprovalOpinion.setInsUid(dhTaskInstance.getInsUid());
-		dhApprovalOpinion.setTaskUid(taskUid);
-		dhApprovalOpinion.setAprUserId(dhTaskInstance.getUsrUid());
-		dhApprovalOpinion.setAprOpiComment(approvalContent);
-		dhApprovalOpinion.setAprStatus("ok");
-		dhApprovalOpinion.setAprDate((Timestamp) new Date());
-		dhApprovalOpinion.setActivityId(activityId);
-		dhapprovalOpinionServiceImpl.insert(dhApprovalOpinion);
-		// 说明：如果taskType为 normalAdd，则一人完成加签即可
-		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
-			// 将主任务状态回归到正常状态
-			DhTaskInstance task = new DhTaskInstance();
-			task.setTaskUid(dhTaskInstance.getFromTaskUid());
-			task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
-			dhTaskInstanceMapper.updateByPrimaryKey(task);
-			// 将其他会签人任务删除
-			List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
-			for (DhTaskInstance dti : dhTaskInstanceList) {
-				dhTaskInstanceMapper.deleteByPrimaryKey(dti.getTaskUid());
-			}
-		}
-		// 说明： 如果taskType为simpleLoopAdd，则按照加签人审批顺序进行
-		if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
-			// 将下一个会签审批任务回归到正常状态
-			DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.getByToTaskUid(taskUid);
-			if (nextDhTaskInstance != null) {
-				nextDhTaskInstance.setTaskType(DhTaskInstance.STATUS_RECEIVED);
-				dhTaskInstanceMapper.updateByPrimaryKey(nextDhTaskInstance);
-			}else {
+		try {
+			// 当前任务
+			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			// 判断taskType类型
+			String type = dhTaskInstance.getTaskType();
+			// 插入审批意见
+			DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+			dhApprovalOpinion.setAprOpiId("apr_idea:"+UUID.randomUUID());
+			dhApprovalOpinion.setInsUid(dhTaskInstance.getInsUid());
+			dhApprovalOpinion.setTaskUid(taskUid);
+			dhApprovalOpinion.setAprOpiIndex(0);
+			dhApprovalOpinion.setAprUserId(dhTaskInstance.getUsrUid());
+			dhApprovalOpinion.setAprTimeNumber(0);
+			dhApprovalOpinion.setAprOpiComment(approvalContent);
+			dhApprovalOpinion.setAprStatus("ok");
+			dhApprovalOpinion.setAprDate(new Timestamp(System.currentTimeMillis()));
+			dhApprovalOpinion.setActivityId(activityId);
+			dhapprovalOpinionServiceImpl.insert(dhApprovalOpinion);
+			// 说明：如果taskType为 normalAdd，则一人完成加签即可
+			if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
 				// 将主任务状态回归到正常状态
 				DhTaskInstance task = new DhTaskInstance();
 				task.setTaskUid(dhTaskInstance.getFromTaskUid());
 				task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 				dhTaskInstanceMapper.updateByPrimaryKey(task);
+				// 将当前任务关闭，其他会签人任务作废
+				List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
+				for (DhTaskInstance dti : dhTaskInstanceList) {
+					if (dhTaskInstance.getTaskUid().equals(dti.getTaskUid())) {
+						dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+						dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+					}else {
+						dti.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
+						dhTaskInstanceMapper.updateByPrimaryKey(dti);
+					}
+				}
 			}
+			// 说明： 如果taskType为simpleLoopAdd，则按照加签人审批顺序进行
+			if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(type)) {
+				// 将下一个会签审批任务回归到正常状态
+				DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.getByToTaskUid(taskUid);
+				if (nextDhTaskInstance != null) {
+					nextDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+					dhTaskInstanceMapper.updateByPrimaryKey(nextDhTaskInstance);
+					// 将当前任务关闭
+					dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+					dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+				}else {
+					// 将主任务状态回归到正常状态
+					DhTaskInstance task = new DhTaskInstance();
+					task.setTaskUid(dhTaskInstance.getFromTaskUid());
+					task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+					dhTaskInstanceMapper.updateByPrimaryKey(task);
+					// 将当前任务关闭
+					dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+					dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+				}
+			}
+			// 说明：如果taskType为multiInstanceLoopAdd,则需要主任务所有会签任务都审批完，主任务方可回归正常状态
+			if (DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(type)) {
+				// 将当前任务关闭
+				dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+				dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+				// 查询主任务的所有会签任务是否都已审批完成
+				List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
+				if (dhTaskInstanceList.isEmpty()) {
+					// 将主任务状态回归到正常状态
+					DhTaskInstance task = new DhTaskInstance();
+					task.setTaskUid(dhTaskInstance.getFromTaskUid());
+					task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+					dhTaskInstanceMapper.updateByPrimaryKey(task);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
-		return null;
+		return ServerResponse.createBySuccess();
 	}
-
 }

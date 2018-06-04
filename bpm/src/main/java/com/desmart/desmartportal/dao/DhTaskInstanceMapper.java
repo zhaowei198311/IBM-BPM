@@ -112,4 +112,15 @@ public interface DhTaskInstanceMapper {
 	 * @throws
 	 */
 	DhTaskInstance getByToTaskUid(@Param("toTaskUid")String toTaskUid);
+	
+	/**
+	 * 
+	 * @Title: getByUserAndFromTaskUid  
+	 * @Description: 根据usrUid和fromTaskUid查询单个任务  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return DhTaskInstance  
+	 * @throws
+	 */
+	DhTaskInstance getByUserAndFromTaskUid(DhTaskInstance dhTaskInstance);
 }

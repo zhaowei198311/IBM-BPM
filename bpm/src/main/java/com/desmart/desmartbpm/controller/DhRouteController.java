@@ -23,7 +23,8 @@ public class DhRouteController {
 	@RequestMapping(value = "/showRouteBar")
 	@ResponseBody
 	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter) {
-		ServerResponse response=dhRouteService.showRouteBar(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
+		ServerResponse response=dhRouteService.showRouteBar(parameter.get("taskUid"), parameter.get("insUid"), parameter.get("activityId"), 
+												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
         return response;
     }
 	

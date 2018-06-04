@@ -119,6 +119,7 @@ public class DhTaskInstanceController {
 	 * @throws
 	 */
 	@RequestMapping(value = "/finishAdd")
+	@ResponseBody
 	public ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent){
 		return dhTaskInstanceService.finishAdd(taskUid, activityId, approvalContent);
 	}

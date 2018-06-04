@@ -262,7 +262,7 @@
 				TASK_ID = #{taskId},
 			</if>
 			<if test="usrUid != null and usrUid != ''">
-				USR_UID = #{taskId},
+				USR_UID = #{usrUid},
 			</if>
 			<if test="activityBpdId != null and activityBpdId != ''">
 				ACTIVITY_BPD_ID = #{activityBpdId},
@@ -583,6 +583,7 @@
 		FROM DH_TASK_INSTANCE
 		<where>
 			FROM_TASK_UID = #{fromTaskUid}
+			AND TASK_STATUS NOT IN ('32','-1')
 		</where>
 	</select>
 	
@@ -591,6 +592,18 @@
 		FROM DH_TASK_INSTANCE
 		<where>
 			TO_TASK_UID = #{toTaskUid}
+			AND TASK_STATUS NOT IN ('32','-1')
+		</where>
+	</select>
+	
+	<select id="getByUserAndFromTaskUid" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" 
+			resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+			USR_UID = #{usrUid}
+			AND FROM_TASK_UID = #{fromTaskUid}
+			AND TASK_STATUS = '32'
 		</where>
 	</select>
 	

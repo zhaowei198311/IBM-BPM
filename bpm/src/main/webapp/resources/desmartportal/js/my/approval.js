@@ -416,6 +416,7 @@ function checkUserData() {
     	url:"dhRoute/showRouteBar",
     	method:"post",
     	data:{
+    		"taskUid": $("#taskUid").val(),
         	"insUid":$("#insUid").val(),
             "activityId":$("#activityId").val(),
         	"departNo":departNo,
@@ -457,10 +458,11 @@ function checkUserData() {
             	}
             	$("#choose_user_tbody").append(chooseUserDiv);
             	layer.closeAll("loading");
-            }
-    	}//end ajax
-	});
-	$(".display_container2").css("display","block"); //end
-	
+            	$(".display_container2").css("display","block"); //end
+            }else {
+        		layer.alert(result.msg);
+        	}
+    	}
+	});	
 }
 

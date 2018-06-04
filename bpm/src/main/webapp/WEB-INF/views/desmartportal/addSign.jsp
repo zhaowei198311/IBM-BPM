@@ -415,16 +415,70 @@
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/finished_detail.js"></script>
 <script type="text/javascript">
-	var taskUid = $('#taskUid').val();
-	var activityId = $('#activityId').val();
-	// 审批意见
-	var approvalContent = $('.layui-textarea')val();
-    if(approvalContent == null || approvalContent == "" || approvalContent == undefined){
-    	layer.alert("请填写审批意见！");
-    	return;
-    }
+	// 初始化加载进度条
+	$(function(){
+		var taskUid = $('#taskUid').val();
+		$.ajax({
+			async: false,
+			url: common.getPath() + '/taskInstance/queryProgressBar',
+			type: 'post',
+			dataType: 'json',
+			data: {
+				proUid: 'a',
+	            proVerUid: 'b',
+	            proAppId: 'c',
+				taskUid: taskUid
+			},
+			success: function(data){
+	            var result = data.data;
+	            // 剩余时间
+	            var hour = result.hour;
+	            // 剩余时间百分比
+	            var percent = result.percent;
+	            if (data.status == 0) {
+	                if (hour == -1) {
+	                    $(".layui-progress").append('<span class="progress_time">审批已超时</span>');
+	                    $(".progress_time").css('right', '4%');
+	                } else {
+	                    $(".layui-progress").append('<span class="progress_time">审批剩余时间' + hour + '小时</span>');
+	                    var num = 89 - percent;
+	                    if (num > 0) {
+	                    	$(".progress_time").css('right', num + '%');
+						} else {
+							$(".progress_time").css('right', '15%');
+						}                
+	                }
+	                // 加载进度条
+	                layui.use('element', function () {
+	                    var $ = layui.jquery,
+	                        element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+	                    // 延迟加载
+	                    setTimeout(function () {
+	                    	if (percent > 50) {
+	                            $('.layui-progress-bar').css('background-color', '#FFFF33');
+	                        }
+	                        if (percent > 80) {
+	                            $('.layui-progress-bar').css('background-color', 'red');
+	                        }
+	                        element.progress('progressBar', percent + '%');
+	                    }, 500);
+	                });
+	            } else {
+	                $(".layui-progress").append('<span class="progress_time">加载失败!</span>');
+	            }
+			}
+		})
+	});
 	// 提交
 	function approvalCompletion(){
+		var taskUid = $('#taskUid').val();
+		var activityId = $('#activityId').val();
+		// 审批意见
+		var approvalContent = $("#myApprovalOpinion").val();//审批意见
+	    if(approvalContent == null || approvalContent == "" || approvalContent == undefined){
+	    	layer.alert("请填写审批意见！");
+	    	return;
+	    }
 		$.ajax({
 			async: false,
 			url: common.getPath() + '/taskInstance/finishAdd',
@@ -436,10 +490,14 @@
 				approvalContent: approvalContent
 			},
 			success: function(data){
+				console.log("data: "+data);
+				layer.closeAll('loading');
 				if (data.status == 0) {
-					layer.alert("提交成功！");
+					layer.alert("提交成功！", function(){
+	                	window.history.back();
+	                });
 				}else {
-					layer.alert("提交失败！");
+					layer.alert(data.msg);
 				}
 			}
 		})

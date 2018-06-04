@@ -21,7 +21,8 @@ public interface DhRouteService {
 	 * @param 	companyNum 公司id
 	 * @return  ServerResponse<List<BpmActivityMeta>>
 	 */
-	ServerResponse<List<BpmActivityMeta>> showRouteBar(String insUid, String activityId, String departNo, String companyNum, String formData);
+	ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId, 
+												String departNo, String companyNum, String formData);
 	
 	/**
 	 * 根据表单数据和环节找到接下来会流转到的环节
