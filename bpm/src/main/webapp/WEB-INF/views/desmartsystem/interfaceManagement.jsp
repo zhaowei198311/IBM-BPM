@@ -53,12 +53,14 @@
 			<table class="layui-table backlog_table" lay-even lay-skin="nob"
 				lay-filter="demo">
 				<colgroup>
-					<col>
-					<col>
-					<col>
-					<col>
-					<col>
-					<col>
+					<col width="8%">
+					<col width="10%">
+					<col width="10%">
+					<col width="9%">
+					<col width="15%">
+					<col width="10%">
+					<col width="10%">
+					<col width="3%">
 				</colgroup>
 				<thead>
 					<tr>
