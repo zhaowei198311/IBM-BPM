@@ -39,10 +39,16 @@
 					<div class="layui-col-xs2">
 						<input type="text" placeholder="流程实例标题"  class="layui-input" id="task-insTitle-search">
 					</div>
-				</div>
-				<div class="layui-row layui-form">
-				<div class="layui-col-xs1">
-					    <div class="layui-form-pane">
+				<!-- </div>
+				<div class="layui-row layui-form"> -->
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
+					</div>
+					<div class="layui-col-xs1">
+					    <div class="layui-form-pane"  style="float: right;">
 					    	<div class="layui-form-item">
 					    	<div class="layui-col-xs1" >
 					        <button class="layui-btn" onclick="search()">查询</button>
@@ -50,13 +56,6 @@
 					        </div>					    	     
 					    </div>
 					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
-					</div>
-					
 				</div>
 			</div>
 			<div style="margin-top: 5px;">
