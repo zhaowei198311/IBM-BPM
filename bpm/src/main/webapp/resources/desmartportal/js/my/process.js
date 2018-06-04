@@ -13,7 +13,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
         type: 2,
         title: '选择人员',
         shadeClose: true,
-        shade: 0.8,
+        shade: 0.3,
         area: area,
         content: [url, 'yes'],
         success: function (layero, lockIndex) {

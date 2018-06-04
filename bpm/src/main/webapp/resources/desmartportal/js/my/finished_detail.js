@@ -1,5 +1,6 @@
 //跟踪流程图
 function processView(insId) {
+	console.log(common.getDesignFormData());
 	$.ajax({
 		url : 'processInstance/viewProcess',
 		type : 'post',
@@ -12,7 +13,7 @@ function processView(insId) {
 				type : 2,
 				title : '流程图',
 				shadeClose : true,
-				shade : 0,
+				shade : 0.3,
 				area : [ '790px', '580px' ],
 				content : result
 			});

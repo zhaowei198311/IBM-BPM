@@ -7,7 +7,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
         type: 2,
         title: '选择人员',
         shadeClose: true,
-        shade: 0.8,
+        shade: 0.3,
         area: ['615px', '492px'],
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
@@ -241,7 +241,7 @@ function processView(insId) {
                 type: 2,
                 title: '流程图',
                 shadeClose: true,
-                shade: 0.8,
+                shade: 0.3,
                 area: ['790px', '580px'],
                 content: result
             });

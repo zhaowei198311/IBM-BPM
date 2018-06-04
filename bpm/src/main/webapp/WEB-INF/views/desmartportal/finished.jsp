@@ -236,7 +236,7 @@
 					+ InitDate
 					+'</td>' 
 					+ '<td>'
-					+ "<i class='layui-icon tail' onclick='processView(\""+ insId +"\")'>&#xe641;</i>"
+					+ "<i class='layui-icon tail' onclick='processView(\""+ insId +"\")'>&#xe715;</i>"
 					+ '</td>'
 					+ '</tr>';
 			}
@@ -297,7 +297,7 @@
 		                type: 2,
 		                title: '流程图',
 		                shadeClose: true,
-		                shade: 0.8,
+		                shade: 0.3,
 		                area: ['790px', '580px'],
 		                content: result
 		            });

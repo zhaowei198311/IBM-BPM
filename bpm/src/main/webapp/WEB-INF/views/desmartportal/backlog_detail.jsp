@@ -497,7 +497,7 @@
 			     type: 2,
 			     title: '选择人员',
 			     shadeClose: true,
-			     shade: 0.8,
+			     shade: 0.3,
 			     area: ['680px', '520px'],
 			     content : [ url, 'yes'],
 			     success : function(layero, lockIndex) {

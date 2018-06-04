@@ -476,7 +476,7 @@
 				type: 1,
 	    	    title: '选择流程',
 	    	    shadeClose: true,
-	    	    shade: 0.8,
+	    	    shade: 0.3,
 	    	    area: ['600px', '540px'],
 	    	    content: $("#choose_agent_process_box"),
 	    	    cancel: function(index, layero){ 
@@ -503,7 +503,7 @@
 				type: 1,
 	    	    title: '选择流程',
 	    	    shadeClose: true,
-	    	    shade: 0.8,
+	    	    shade: 0.3,
 	    	    area: ['600px', '540px'],
 	    	    content: $("#update_choose_agent_process_box"),
 	    	    cancel: function(index, layero){ 

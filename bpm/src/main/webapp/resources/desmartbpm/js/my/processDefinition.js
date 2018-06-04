@@ -324,7 +324,7 @@ $(function() {
 					type : 2,
 					title : '流程快照',
 					shadeClose : true,
-					shade : 0.8,
+					shade : 0.3,
 					area : [ '790px', '580px' ],
 					content : result
 				});

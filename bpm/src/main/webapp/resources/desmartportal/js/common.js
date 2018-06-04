@@ -143,7 +143,8 @@ var common = {
 			var checkJson = "";
 			switch (type) {
 				case "text": {
-					if ($(inputArr[i]).prop("class") == "layui-input layui-unselect") {
+					if ($(inputArr[i]).prop("class") == "layui-input layui-unselect" 
+						|| $(inputArr[i]).prop("class") == "layui-input layui-unselect layui-disabled") {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");
 						var value = $("[name='" + name + "']")
@@ -161,6 +162,7 @@ var common = {
 					var name = $(inputArr[i]).attr("name");
 					var value = $("[name='" + name + "']")
 						.val().trim();
+					console.log(name+","+value);
 					textJson = "\"" + name + "\":{\"value\":\""
 						+ value + "\"}";
 					break;
@@ -308,7 +310,7 @@ var common = {
 				if(tagType=="radio"){
 					$("[name='"+name+"']").attr("disabled","true");
 					var title = $("[name='"+name+"']:checked").attr("title");
-					$("[name='"+name+"']:checked").parent().text(title);
+					$("[name='"+name+"']:checked").parent().html("<span style='margin-left:10px;'>"+title+"</span>");
 				}
 				if(tagName=="SELECT"){
 					$("[name='"+name+"']").attr("disabled","true");

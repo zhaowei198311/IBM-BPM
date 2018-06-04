@@ -105,7 +105,7 @@ $('button#treeSelect').on('click', function() {
 	      shadeClose: false,//点击遮罩关闭
 	      anim: public_anim,
 	      btnAlign: 'c',
-	      shade: public_shade,//是否有遮罩，可以设置成false
+	      shade : 0.3,//是否有遮罩，可以设置成false
 	      maxmin: true, //开启最大化最小化按钮
 	      area: ['600px', '300px'],
 	      /* boolean:true, */

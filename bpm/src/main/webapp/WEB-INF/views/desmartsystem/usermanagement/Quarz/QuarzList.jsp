@@ -132,7 +132,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 						title : '新增',
 						shift:'0',
 						shadeClose : false,//点击遮罩关闭
-						shade: public_shade,
+						shade : 0.3,
 						btnAlign : 'c',
 						area: ['700px', '440px'],
 						closeBtn: 0,
@@ -154,7 +154,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					type : 2,
 					title : '查看',
 					shadeClose : false,//点击遮罩关闭
-					shade: public_shade,
+					shade : 0.3,
 					shift:'0',
 					btnAlign : 'c',
 					area: ['650px', '300px'],
@@ -181,7 +181,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				      shadeClose: false,//点击遮罩关闭
 				      anim: public_anim,
 				      btnAlign: 'c',
-				      shade: public_shade,
+				      shade : 0.3,
 				      area: ['700px', '440px'],
 				      closeBtn: 0,
 					  content: ['quarz/quarzEdit?obj='+encodeURIComponent(JSON.stringify(data)), 'yes'],
@@ -211,7 +211,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 			        title: '提示' //显示标题栏
 			        ,closeBtn: false
 			        ,area: '300px;'
-			        ,shade: 0.5
+			        ,shade: 0.3
 			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
 			        ,btn: ['确定', '关闭']
 			        ,content: '确定要暂停?'
@@ -252,7 +252,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 			        title: '提示' //显示标题栏
 			        ,closeBtn: false
 			        ,area: '300px;'
-			        ,shade: 0.5
+			        ,shade: 0.3
 			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
 			        ,btn: ['确定', '关闭']
 			        ,content: '确定启动?'
@@ -293,7 +293,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 			        title: '确认删除' //显示标题栏
 			        ,closeBtn: false
 			        ,area: '300px;'
-			        ,shade: 0.5
+			        ,shade: 0.3
 			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
 			        ,btn: ['删除', '关闭']
 			        ,content: '您是否要删除当前选中的记录？'
