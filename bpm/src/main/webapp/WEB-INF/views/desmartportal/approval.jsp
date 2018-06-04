@@ -269,14 +269,16 @@
                         <div class="layui-tab-item layui-show">
                             <table class="layui-table" style="margin: 0;">
                                 <colgroup>
-                                    <col width="10%">
-                                    <col width="10%">
                                     <col width="8%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="22%">
+                                    <col width="18%">
+                                    <col width="8%">
+                                    <col width="6%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="12%">
+                                    <col width="8%">
+                                    <col width="20%">
                                 </colgroup>
                                 <tbody id="approval_tbody">
                                 </tbody>
