@@ -282,7 +282,7 @@
 		// 获取用户有多少代办
 		function getUserTask(){
 			$.ajax({
-				url : 'user/todoTask',
+				url : 'backLog/todoTask',
 				type : 'POST',
 				dataType : 'text',
 				data : {},

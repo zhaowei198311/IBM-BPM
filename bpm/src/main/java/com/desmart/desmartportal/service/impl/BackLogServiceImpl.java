@@ -28,4 +28,10 @@ public class BackLogServiceImpl implements BackLogService {
 		return ServerResponse.createBySuccess(pageInfo);
 	}
 
+	@Override
+	public Integer selectBackLogByusrUid(String usrUid) {
+		// TODO Auto-generated method stub
+		return backLogMapper.selectBackLogByusrUid(usrUid);
+	}
+
 }

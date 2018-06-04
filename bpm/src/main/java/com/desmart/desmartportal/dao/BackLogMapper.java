@@ -30,4 +30,11 @@ public interface BackLogMapper {
 			@Param("startTime")Date startTime,
 			@Param("endTime")Date endTime,
 			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+	
+	/**
+	 * 根据用户查询待办
+	 * @param usrUid
+	 * @return
+	 */
+	Integer selectBackLogByusrUid(String usrUid);
 }

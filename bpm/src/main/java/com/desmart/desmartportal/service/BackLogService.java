@@ -19,4 +19,10 @@ public interface BackLogService {
 			Date startTime,
 			Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize);
+	/**
+	 * 根据用户查询待办
+	 * @param usrUid
+	 * @return
+	 */
+	Integer selectBackLogByusrUid(String usrUid);
 }

@@ -45,4 +45,13 @@ public class BackLogController {
 		return backLogService.selectBackLogTaskInfoByCondition(startTime
 				, endTime, dhTaskInstance, pageNum, pageSize);
 	}
+	
+	@RequestMapping("/todoTask")
+	@ResponseBody
+	public Integer todoTask(String userId) {
+		if(userId==null) {
+			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		}
+		return backLogService.selectBackLogByusrUid(userId);
+	}
 }
