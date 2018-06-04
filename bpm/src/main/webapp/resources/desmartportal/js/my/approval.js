@@ -265,6 +265,7 @@ function agree() {
     //var apr_activityId = $("#activityId").val();//环节id，activity_id
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+    	$("#myApprovalOpinion").foucs();
     	layer.alert("请填写审批意见");
     	return;
     }
@@ -389,6 +390,7 @@ function checkUserData() {
     var formData =common.getDesignFormData();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+    	$("#myApprovalOpinion").focus();
     	layer.alert("请填写审批意见");
     	return;
     }   
