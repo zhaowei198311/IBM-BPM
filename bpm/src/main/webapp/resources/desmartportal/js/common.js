@@ -375,7 +375,11 @@ var common = {
 				var Y = $('#'+eleId).offset().top-100;
 				console.log(Y);
 				$("body,html").animate({scrollTop: Y}, 500);
-				layer.msg("请填写必填项 "+text, {icon: 2});
+				if(text!=null && text!=""){
+					layer.msg("请填写必填项 "+text, {icon: 2});
+				}else{
+					layer.msg("请填写必填项", {icon: 2});
+				}
 				$("[name='"+name+"']").focus();
 				flag = false; 
 				break;
