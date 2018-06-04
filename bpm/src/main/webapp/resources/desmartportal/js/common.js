@@ -316,8 +316,11 @@ var common = {
 					$("[name='"+name+"']").attr("disabled","true");
 					$("[name='"+name+"']").next().find("input");
 				}
-				if(className=="date"){
+				if(className=="layui-input date"){
 					$("[name='"+name+"']").attr("disabled","true");
+					if($("[name='"+name+"']").val()=="" || $("[name='"+name+"']").val()==null){
+						$("[name='"+name+"']").prop("type","text");
+					}
 				}
 			}
 		}
