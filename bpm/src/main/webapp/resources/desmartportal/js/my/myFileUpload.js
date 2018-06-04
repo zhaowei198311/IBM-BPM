@@ -412,7 +412,8 @@ function batchPost(URL, PARAMS) {
 	temp_form.submit();
 	temp_form.remove();
 	//Ajax刷新进度条
-    showProgress();
+	 /*$("#Progress").empty();
+	 showProgress();*/
     window.setTimeout(function(){
        var timer=window.setInterval(function(){
          $.ajax({
@@ -420,13 +421,7 @@ function batchPost(URL, PARAMS) {
              dataType:'json', 
              url: common.getPath()+"/accessoryFileUpload/flushProgress.do",
              success: function(result) {
-                 $("#Progress .circle-text").text(result.data.percentText);
-                 if(result.data.curCount===undefined||result.data.totalCount===undefined){
-                     $("#Progress .circle-info").text("导出进度");
-                 }
-                 else{
-                      $("#Progress .circle-info").text("导出进度:"+result.data.curCount+"/"+result.data.totalCount);
-                 }
+                
                  if(result.data.percent=="100"){
                      window.clearInterval(timer);
                      hideProgress();
@@ -434,13 +429,21 @@ function batchPost(URL, PARAMS) {
                 	 //$.data($.fn.circliful,"percent",result.data.percent)
                 	 //settings.precent=result.data.percent;
                 	 $("#Progress").data("percent",result.data.percent);
-                	 
+                	 $("#Progress").empty();
+                	 showProgress();
+                	 $("#Progress .circle-text").text(result.data.percentText);
+                     if(result.data.curCount===undefined||result.data.totalCount===undefined){
+                         $("#Progress .circle-info").text("导出进度");
+                     }
+                     else{
+                          $("#Progress .circle-info").text("导出进度:"+result.data.curCount+"/"+result.data.totalCount);
+                     }
                  }
              },
              error:function(result){}
           });
        },1000);
-    },1000);
+    },100);
     isFirstExport=false;
 } 
 
@@ -580,17 +583,18 @@ function showProgress(){
     $("#Mask").css("height",$(document).height());
     $("#Mask").css("width",$(document).width());
     $("#Mask").show();
-    if(isFirstExport){
+    //if(isFirstExport){
         $("#Progress").circliful();
-    }else{
-        $("#Progress .circle-text").text("0%");
-        $("#Progress .circle-info").text("导出进度");
+    //}else{
+        //$("#Progress .circle-text").text("0%");
+        //$("#Progress .circle-info").text("导出进度");
         $("#Progress").show();
-    }
+    //}
 }  
 //隐藏进度条
 function hideProgress(){
     $("#Mask").hide();
+    $("#Progress").empty();
     $("#Progress").hide();
 }
 
@@ -614,7 +618,7 @@ function hideProgress(){
         var settings = $.extend({
             // These are the defaults.
             foregroundColor: "#556b2f",
-            backgroundColor: "#eee",
+            backgroundColor: "#86DB49",
             fillColor: false,
             width: 15,
             dimension: 200,
@@ -783,9 +787,9 @@ function hideProgress(){
 
                 if (curPerc < endPercent) {
                      curPerc += curStep;
-                     requestAnimationFrame(function () {
+                     //requestAnimationFrame(function () {
                          animate(Math.min(curPerc, endPercent) / 100);
-                     });
+                     //});
                 }
 
              }
