@@ -60,6 +60,7 @@
 
 		$(".cancel_btn").click(function() {
 			$(".display_container").css("display", "none");
+			$("#form1").validate().resetForm();
 		})
 		$(".cancel2_btn").click(function() {
 			$(".display_container3").css("display", "none");
@@ -70,6 +71,7 @@
 		})
 		$(".cancel3_btn").click(function() {
 			$(".display_container4").css("display", "none");
+			$("#form2").validate().resetForm();
 		})
 		$(".sure3_btn").click(function() {
 			// 确定给 当前接口 添加新的参数
