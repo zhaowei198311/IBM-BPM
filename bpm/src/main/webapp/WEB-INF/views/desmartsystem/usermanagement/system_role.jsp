@@ -74,7 +74,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="descrribe" value="" placeholder="请输入描述" autocomplete="off" class="layui-input" />
+				      <input type="text" name="describe" value="" placeholder="请输入描述" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -112,7 +112,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="descrribe"  value="" placeholder="请输入描述"  autocomplete="off" class="layui-input" />
+				      <input type="text" name="describe"  value="" placeholder="请输入描述"  autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
