@@ -590,4 +590,25 @@
 			TO_TASK_UID = #{toTaskUid}
 		</where>
 	</select>
+	
+	<select id="selectByCondition" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
+	 resultType="com.desmart.desmartportal.entity.DhTaskInstance" 
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid="TaskAndProcess_Column_List"/>
+		FROM
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		<where>
+			T.INS_UID = P.INS_UID 
+			AND
+			T.USR_UID = S.USER_ID
+			<if test="insUid != null and insUid != '' ">
+			AND
+			T.INS_UID = #{insUid}
+			</if>
+			<if test="activityBpdId != null and activityBpdId != ''">
+			T.ACTIVITY_BPD_ID = #{activityBpdId}
+			</if>
+		</where>
+	</select>
+	
 </mapper>
