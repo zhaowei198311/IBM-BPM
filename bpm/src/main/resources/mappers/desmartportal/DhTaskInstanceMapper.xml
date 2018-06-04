@@ -131,85 +131,88 @@
 		T.INS_UPDATE_DATE,T.TASK_PREVIOUS_USR_UID,T.TASK_PREVIOUS_USR_USERNAME,T.TASK_DELEGATE_DATE,
 		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
 		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,T.TO_TASK_UID,P.INS_TITLE,
-		P.INS_CREATE_DATE,S.USER_NAME,S.USER_ID
+		P.INS_CREATE_DATE,P.INS_ID,S.USER_NAME,S.USER_ID
 	</sql>
 	
-	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT 
-		<include refid="Base_Column_List"/>
+		<include refid="TaskAndProcess_Column_List"/>
 		FROM
-		DH_TASK_INSTANCE
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
 		<where>
+			T.INS_UID = P.INS_UID 
+			AND
+			P.INS_INIT_USER = S.USER_ID
 			<if test="taskUid != null and taskUid != ''">
-				TASK_UID = #{taskUid}
+				AND T.TASK_UID = #{taskUid}
 			</if>
 			<if test="insUid != null and insUid != ''">
-				AND INS_UID = #{insUid}
+				AND T.INS_UID = #{insUid}
 			</if>
 			<if test="taskId != null and taskId != ''">
-				AND TASK_ID = #{taskId}
+				AND T.TASK_ID = #{taskId}
 			</if>
 			<if test="usrUid != null and usrUid != ''">
-				AND USR_UID = #{usrUid}
+				AND T.USR_UID = #{usrUid}
 			</if>
 			<if test="activityBpdId != null and activityBpdId != ''">
-				AND ACTIVITY_BPD_ID = #{activityBpdId}
+				AND T.ACTIVITY_BPD_ID = #{activityBpdId}
 			</if>
 			<if test="taskType != null and taskType != ''">
-				AND TASK_TYPE = #{taskType}
+				AND T.TASK_TYPE = #{taskType}
 			</if>
 			<if test="taskStatus != null and taskStatus != ''">
-				AND TASK_STATUS = #{taskStatus}
+				AND T.TASK_STATUS = #{taskStatus}
 			</if>
 			<if test="taskTitle != null and taskTitle != ''">
-				AND TASK_TITLE like '%' || #{taskTitle} || '%'
+				AND T.TASK_TITLE like '%' || #{taskTitle} || '%'
 			</if>
 			<if test="insUpdateDate != null ">
-				AND INS_UPDATE_DATE = #{insUpdateDate}
+				AND T.INS_UPDATE_DATE = #{insUpdateDate}
 			</if>
 			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
-				AND TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid}
+				AND T.TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid}
 			</if>
 			<if
 				test="taskPreviousUsrUsername != null and taskPreviousUsrUsername != ''">
-				AND TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername}
+				AND T.TASK_PREVIOUS_USR_USERNAME = #{taskPreviousUsrUsername}
 			</if>
 			<if test="taskDelegateDate != null ">
-				AND TASK_DELEGATE_DATE = #{taskDelegateDate}
+				AND T.TASK_DELEGATE_DATE = #{taskDelegateDate}
 			</if>
 			<if test="taskInitDate != null ">
-				AND TASK_INIT_DATE &gt;=
+				AND T.TASK_INIT_DATE &gt;=
 				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
 				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
-				AND TASK_INIT_DATE &lt;=
+				AND T.TASK_INIT_DATE &lt;=
 				to_date(concat(to_char(#{taskInitDate},'yyyy-mm-dd'),'
 				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
 			<if test="taskFinishDate != null ">
-				AND TASK_FINISH_DATE = #{taskFinishDate}
+				AND T.TASK_FINISH_DATE = #{taskFinishDate}
 			</if>
 			<if test="taskDueDate != null ">
-				AND TASK_DUE_DATE &gt;=
+				AND T.TASK_DUE_DATE &gt;=
 				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
 				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
-				AND TASK_DUE_DATE &lt;=
+				AND T.TASK_DUE_DATE &lt;=
 				to_date(concat(to_char(#{taskDueDate},'yyyy-mm-dd'),'
 				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
 			<if test="taskRiskDate != null ">
-				AND TASK_RISK_DATE = #{taskRiskDate}
+				AND T.TASK_RISK_DATE = #{taskRiskDate}
 			</if>
 			<if test="taskPriority != null and taskPriority != ''">
-				AND TASK_PRIORITY = #{taskPriority}
+				AND T.TASK_PRIORITY = #{taskPriority}
 			</if>
 			<if test="taskData != null and taskData != ''">
-				AND TASK_DATA = #{taskData}
+				AND T.TASK_DATA = #{taskData}
 			</if>
 			<if test="taskDelegateUser != null and taskDelegateUser != ''">
-				AND TASK_DELEGATE_USER = #{taskDelegateUser}
+				AND T.TASK_DELEGATE_USER = #{taskDelegateUser}
 			</if>
 			<if test="synNumber != null and synNumber != ''">
-				AND SYN_NUMBER = #{synNumber}
+				AND T.SYN_NUMBER = #{synNumber}
 			</if>
 
 		</where>
