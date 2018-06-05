@@ -670,16 +670,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			}
 		}
 		// 最大剩余时间
-		long remainingTime = lastDate.getTime() - createDate.getTime();
+		long remainingTime = lastDate.getTime() - new Date().getTime();
 		hour = (int) (remainingTime / (1000 * 60 * 60));
 		// 如果最大剩余时间大于配置时间，则百分比为0，剩余时间为配置时间
 		if (hour > timeAmount) {
 			hour = timeAmount.intValue();
 		} else {
-			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
+//			hour = (int) (lastDate.getTime() - new Date().getTime()) / (1000 * 60 * 60);
 			// 剩余时间百分比
-			long reTime = new Date().getTime() - createDate.getTime();
-			percent = (int) (((double) reTime / (1000 * 60 * 60)) / timeAmount * 100);
+//			long reTime = new Date().getTime() - createDate.getTime();
+			percent = (int) ((1 - hour / timeAmount) * 100);
 		}
 		Map<String, Object> map = new HashMap<>();
 		if (hour < 0 || percent >= 100) {
