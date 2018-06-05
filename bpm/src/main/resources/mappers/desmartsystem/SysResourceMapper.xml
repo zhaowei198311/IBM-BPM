@@ -22,13 +22,14 @@
 		<result column="END_DATE" property="endDate" />
 		<result column="CREATE_DATE" property="createDate" />
 		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="RESOURCE_CODE" property="resourceCode" />
 	</resultMap>
 	
 	<sql id="Base_Column_List" >
-    RESOUCE_UID, RESOUCE_NAME, ORDER_INDEX, PARENT_ID, RESOUCE_NO, RESOUCE_DESC, RESOUCE_TYPE, 
-    EXT1, EXT2, EXT3, EXT4, EXT5, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
-    UPDATE_DATE
-  </sql>
+	    RESOUCE_UID, RESOUCE_NAME, ORDER_INDEX, PARENT_ID, RESOUCE_NO, RESOUCE_DESC, RESOUCE_TYPE, 
+	    EXT1, EXT2, EXT3, EXT4, EXT5, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
+	    UPDATE_DATE,RESOURCE_CODE
+	</sql>
   
 	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysResource"  resultMap="BaseResultMap">
 	 		select <include refid="Base_Column_List" />  from SYS_RESOURCE where 1=1
@@ -62,12 +63,12 @@
       RESOUCE_TYPE, EXT1, EXT2, 
       EXT3, EXT4, EXT5, IS_CLOSED, 
       CLOSE_DATE, BEGIN_DATE, END_DATE, 
-      CREATE_DATE, UPDATE_DATE)
+      CREATE_DATE, UPDATE_DATE, RESOURCE_CODE)
     values (#{resouceUid,jdbcType=VARCHAR}, #{resouceName,jdbcType=VARCHAR}, #{orderIndex}, 
       #{parentId,jdbcType=VARCHAR}, #{resouceNo,jdbcType=VARCHAR}, #{resouceDesc,jdbcType=VARCHAR}, 
       #{resouceType}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
       #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{isClosed}, 
-      #{closeDate,jdbcType=DATE}, #{beginDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},sysdate,sysdate)
+      #{closeDate,jdbcType=DATE}, #{beginDate,jdbcType=DATE}, #{endDate,jdbcType=DATE},sysdate,sysdate,#{resourceCode})
 	 </insert>
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysResource" resultMap="BaseResultMap" >
@@ -99,7 +100,18 @@
       CLOSE_DATE = #{closeDate,jdbcType=DATE},
       BEGIN_DATE = #{beginDate,jdbcType=DATE},
       END_DATE = #{endDate,jdbcType=DATE},
-      UPDATE_DATE =sysdate
+      UPDATE_DATE =sysdate,
+      RESOURCE_CODE = #{resourceCode,jdbcType=VARCHAR}
     where RESOUCE_UID = #{resouceUid,jdbcType=VARCHAR}
 	  </update>
+	  
+	  <select id="selectResourceByUserId" resultType="com.desmart.desmartsystem.entity.SysResource">
+        select <include refid="Base_Column_List" /> from SYS_RESOURCE 
+	      where RESOUCE_TYPE = 1 
+	        and
+		      RESOUCE_UID in (select RESOURCE_UID from SYS_ROLE_RESOURCE 
+		        where 
+		          ROLE_UID in (select ROLE_UID from SYS_ROLE_USER where USER_UID=#{userId}))
+	  </select>
+	  
 </mapper>
