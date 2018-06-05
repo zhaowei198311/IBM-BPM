@@ -69,6 +69,15 @@ public class SysResourceController {
 	@ResponseBody
 	public String updateSysResource(SysResource sysResource) {
 		try {	
+			//此处设置权限码为  user:update 格式
+			String resourceCode = sysResource.getResouceNo();
+			if(null != resourceCode && "" != resourceCode) {
+				if(resourceCode.startsWith("/")) {
+					resourceCode = resourceCode.substring(1, resourceCode.length());
+				}
+				resourceCode = resourceCode.replaceAll("/", ":");
+				sysResource.setResourceCode(resourceCode);
+			}
 			sysResourceService.update(sysResource);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
@@ -90,7 +99,15 @@ public class SysResourceController {
 			}else{
 				sysResource.setResouceType(1);
 			}
-			
+			//此处设置权限码为  user:update 格式
+			String resourceCode = sysResource.getResouceNo();
+			if(null != resourceCode && "" != resourceCode) {
+				if(resourceCode.startsWith("/")) {
+					resourceCode = resourceCode.substring(1, resourceCode.length());
+				}
+				resourceCode = resourceCode.replaceAll("/", ":");
+				sysResource.setResourceCode(resourceCode);
+			}
 			sysResourceService.insert(sysResource);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
