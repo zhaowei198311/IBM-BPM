@@ -3,8 +3,8 @@ package com.desmart.common.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 public class TaskIdUtil {
 	
@@ -18,7 +18,7 @@ public class TaskIdUtil {
     	JSONObject root = executionTree.getJSONObject("root");
     	// 父children
     	JSONArray children = root.getJSONArray("children");
-    	for (int i = 0; i < children.length(); i++) {
+    	for (int i = 0; i < children.size(); i++) {
 			JSONObject childrenData= (JSONObject) children.get(i);
 			// 
 			String checkData = childrenData.toString().trim();
