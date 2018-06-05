@@ -21,6 +21,7 @@ public class SysResource implements Serializable {
 	private Integer orderIndex;
 	private String parentId;
 	private String resouceNo;
+	private String resourceCode;  //资源权限码 （shiro用）
 	private String resouceDesc;
 	private Integer resouceType;
 	private String ext1;
@@ -74,6 +75,14 @@ public class SysResource implements Serializable {
 
 	public void setResouceNo(String resouceNo) {
 		this.resouceNo = resouceNo;
+	}
+	
+	public String getResourceCode() {
+		return resourceCode;
+	}
+
+	public void setResourceCode(String resourceCode) {
+		this.resourceCode = resourceCode;
 	}
 
 	public String getResouceDesc() {
