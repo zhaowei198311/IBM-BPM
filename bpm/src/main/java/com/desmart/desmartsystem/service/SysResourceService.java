@@ -17,4 +17,5 @@ import com.desmart.desmartsystem.util.PagedResult;
 public interface SysResourceService extends BaseService<SysResource> {
 	PagedResult<SysResource> queryByPage(SysResource entity,Integer pageNo,Integer pageSize);
 	List<TreeNode>	resourceTree();
+	List<SysResource> selectResourceByUserId(String userId);
 }
