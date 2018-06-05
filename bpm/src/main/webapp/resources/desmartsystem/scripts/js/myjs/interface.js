@@ -14,7 +14,7 @@
 			limit : 10,
 			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
 			jump : function(obj) {
-				console.log(obj)
+				//console.log(obj)
 			}
 		});
 	});
@@ -71,7 +71,7 @@
 		})
 		$(".cancel3_btn").click(function() {
 			$(".display_container4").css("display", "none");
-			$("#form2").validate().resetForm();
+			//$("#form2").validate().resetForm();
 		})
 		$(".sure3_btn").click(function() {
 			// 确定给 当前接口 添加新的参数
@@ -410,11 +410,11 @@
 					+ meta.intCallMethod + '</td>' + '<td>'+status+'</td>' + '<td>'
 					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'
 					+ meta.intUid + '") >&#xe642;</i>'
-					+ '<i class="layui-icon"  title="查看详情"  onclick=info("'
-					+ meta.intUid + '")>&#xe60a;</i>'
+//					+ '<i class="layui-icon"  title="新增参数"  onclick=add("'
+//					+ meta.intUid + '")>&#xe60a;</i>'
 					+ '<i class="layui-icon"  title="删除接口"  onclick=del("'
 					+ meta.intUid + '") >&#xe640;</i>'
-					+ '<i class="layui-icon"  title="绑定参数"  onclick=add("'
+					+ '<i class="layui-icon"  title="绑定参数"  onclick=info("'
 					+ meta.intUid + '")>&#xe614;</i>' + '</td>' + '</tr>'
 		}
 		$("#proMet_table_tbody").append(trs);
@@ -430,10 +430,21 @@
 	function info(intUid) {
 		// “接口参数详情”按钮
 		$("#exposed_table_container").css("display", "block");
+		
+		//给新增参数页面赋接口uid
+		$("#intUid").val(intUid);
+		
 		getParamersInfo(intUid);
 	}
+	
+	
 
-	function add(intUid) {
+	function add() {
+		
+		var  fomr2=$("#form2");
+		fomr2.validate().resetForm();
+		fomr2[0].reset();
+		
 		// 绑定参数页面
 		layui.use([ 'layer', 'form' ], function() {
 			var form = layui.form, layer = layui.layer, $ = layui.jquery;
@@ -446,7 +457,6 @@
 				document.getElementById("isMust").value = ckd2;
 			})
 			$("#exposed_table2_container").css("display", "block");
-			$("#intUid").val(intUid);
 		})
 	}
 
@@ -547,13 +557,13 @@
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			var sortNum = startSort + i;
-			var multiValue = "";
+//			var multiValue = "";
 			var isMust = "";
-			if(meta.multiValue == "true"){
-				multiValue = "是"
-			}else{
-				multiValue = "否"
-			}
+//			if(meta.multiValue == "true"){
+//				multiValue = "是"
+//			}else{
+//				multiValue = "否"
+//			}
 			if(meta.isMust == "true"){
 				isMust = "是"
 			}else{
@@ -574,12 +584,12 @@
 					+ '<td>'
 					+ meta.paraSize
 					+ '</td>'
-					+ '<td>'
+					/*+ '<td>'
 					+ meta.multiSeparator
 					+ '</td>'
 					+ '<td>'
 					+ multiValue
-					+ '</td>'
+					+ '</td>'*/
 					+ '<td>'
 					+ isMust
 					+ '</td>' + '</tr>';
@@ -591,3 +601,4 @@
 	function back(){
 		window.location.href = 'javascript:history.go(-1)';
 	}
+	
