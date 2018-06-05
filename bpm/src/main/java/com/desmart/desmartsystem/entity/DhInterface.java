@@ -8,7 +8,7 @@ package com.desmart.desmartsystem.entity;
 * @date 2018年4月12日
  */
 public class DhInterface {
-	
+
 	private String intUid; // 接口id
 	
 	private String intTitle; // 接口名
@@ -28,6 +28,8 @@ public class DhInterface {
 	private String intStatus; // 接口状态
 	
 	private String updateDate;//修改时间
+	
+	private String createDate; // 创建时间
 
 	/**
 	 * @return the intUid
@@ -154,20 +156,36 @@ public class DhInterface {
 	public void setIntStatus(String intStatus) {
 		this.intStatus = intStatus;
 	}
-	
-	public DhInterface(){
-		
-	}
-	
 
+	/**
+	 * @return the updateDate
+	 */
 	public String getUpdateDate() {
 		return updateDate;
 	}
 
+	/**
+	 * @param updateDate the updateDate to set
+	 */
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
 
+	/**
+	 * @return the createDate
+	 */
+	public String getCreateDate() {
+		return createDate;
+	}
+
+	/**
+	 * @param createDate the createDate to set
+	 */
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
+	
+	
 	/**
 	 * @param intUid
 	 * @param intTitle
@@ -178,9 +196,12 @@ public class DhInterface {
 	 * @param intLoginUser
 	 * @param intLoginPwd
 	 * @param intStatus
+	 * @param updateDate
+	 * @param createDate
 	 */
 	public DhInterface(String intUid, String intTitle, String intDescription, String intType, String intUrl,
-			String intCallMethod, String intLoginUser, String intLoginPwd, String intStatus) {
+			String intCallMethod, String intLoginUser, String intLoginPwd, String intStatus, String updateDate,
+			String createDate) {
 		super();
 		this.intUid = intUid;
 		this.intTitle = intTitle;
@@ -191,6 +212,8 @@ public class DhInterface {
 		this.intLoginUser = intLoginUser;
 		this.intLoginPwd = intLoginPwd;
 		this.intStatus = intStatus;
+		this.updateDate = updateDate;
+		this.createDate = createDate;
 	}
 
 }
