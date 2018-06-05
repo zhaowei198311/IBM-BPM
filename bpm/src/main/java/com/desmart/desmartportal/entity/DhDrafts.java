@@ -24,6 +24,8 @@ public class DhDrafts {
 	private String dfsCreator; // 草稿创建人
 	
 	private String insUid; // 流程实例id
+	
+	private String taskUid; // 任务实例Uid
 
 	/**
 	 * @return the dfsId
@@ -107,22 +109,23 @@ public class DhDrafts {
 	 */
 	public void setInsUid(String insUid) {
 		this.insUid = insUid;
-	}
+	} 
 	
+	
+	public String getTaskUid() {
+		return taskUid;
+	}
+
+	public void setTaskUid(String taskUid) {
+		this.taskUid = taskUid;
+	}
+
 	public DhDrafts() {
 		
 	}
 	
-	/**	
-	 * @param dfsId
-	 * @param dfsTitle
-	 * @param dfsData
-	 * @param dfsCreatedate
-	 * @param dfsCreator
-	 * @param insUid
-	 */
-	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator,
-			String insUid) {
+	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator, String insUid,
+			String taskUid) {
 		super();
 		this.dfsId = dfsId;
 		this.dfsTitle = dfsTitle;
@@ -130,6 +133,7 @@ public class DhDrafts {
 		this.dfsCreatedate = dfsCreatedate;
 		this.dfsCreator = dfsCreator;
 		this.insUid = insUid;
+		this.taskUid = taskUid;
 	}
 	
 }

@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.entity.DhDrafts;
@@ -104,8 +106,18 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	 */
 	@Override
 	public int saveDrafts(DhDrafts drafts) {
-		drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
-		return dhDraftsMapper.save(drafts);
+		if(dhDraftsMapper.queryDraftsByInsUid(drafts.getInsUid())!=null) {
+			return dhDraftsMapper.updateByInsUid(drafts);
+		}else {
+			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			if(creator==null) {
+			drafts.setDfsCreator(creator);
+			drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
+			return dhDraftsMapper.save(drafts);
+			}else {
+				return 0;
+			}
+		}
 	}
 
 	/**

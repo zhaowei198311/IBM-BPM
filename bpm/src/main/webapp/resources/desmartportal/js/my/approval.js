@@ -289,7 +289,7 @@ function agree() {
 
     var activityId = ""
     var userUid = ""
-    var insData = $("#insData").text();
+    //var insData = $("#insData").text();
     // 路由数据
     var routeData = [];
     $('.getUser').each(function () {
@@ -462,4 +462,57 @@ function checkUserData() {
     	}
 	});	
 }
-
+/**
+ * 保存草稿表单数据的方法
+ */
+var index2 = null;
+function saveDraftsInfo() {
+                var control = true; //用于控制复选框出现重复值
+                var checkName = ""; //用于获得复选框的class值，分辨多个复选框
+                
+             // 发起流程             
+                var finalData = {};
+                // 表单数据
+                var jsonStr = common.getDesignFormData();
+                var formData = JSON.parse(jsonStr);
+                
+                finalData.formData = formData;
+                
+                var aprOpiComment = $("#myApprovalOpinion").val();
+    		    var taskUid = $("#taskUid").val();
+    		    var taskId = $("#taskId").val();
+                finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+                finalData.approvalData = {"aprOpiComment":aprOpiComment};
+                // 保存草稿数据                   
+                var insUid = $("#insUid").val();
+               
+                var insTitle = $("#insTitle_input").val();
+                $.ajax({
+                    url: common.getPath()+"/drafts/saveDrafts",
+                    method: "post",
+                    async: false,
+                    data: {
+                    	dfsTitle: insTitle,
+                        dfsData: JSON.stringify(finalData),
+                        insUid: insUid,
+                        taskUid: taskUid
+                    },
+                    beforeSend: function () {
+                        index2 = layer.load(1);
+                    },
+                    success: function (result) {
+                    	if(result>0){
+                        layer.close(index2);
+                        layer.alert('保存成功')
+                    	}else{
+                    		layer.close(index2);
+                            layer.alert('保存失败')
+                    	}
+                    },
+                    error: function (){
+                    	layer.close(index2);
+                        layer.alert('保存异常')
+                    }
+                });
+    //end
+}

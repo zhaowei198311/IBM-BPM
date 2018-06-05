@@ -9,11 +9,12 @@
 		<result column="DFS_CREATEDATE"			property="dfsCreatedate"/>
 		<result column="DFS_CREATOR" 			property="dfsCreator"/>
 		<result column="INS_UID" 			property="insUid"/>
+		<result column="TASK_UID" 			property="taskUid"/>
 	</resultMap>
 	
 	<sql id="Base_Column_List">
 		DFS_ID, DFS_TITLE,DFS_DATA, DFS_CREATEDATE,
-		DFS_CREATOR,INS_UID
+		DFS_CREATOR,INS_UID,TASK_UID
 	</sql>
 	
 	<select id="select" resultType="com.desmart.desmartportal.entity.DhDrafts">
@@ -61,7 +62,8 @@
 			#{dfsData},
 			sysdate,
 			#{dfsCreator},
-			#{insUid}
+			#{insUid},
+			#{taskUid}
 		)
 	</insert>
 	
@@ -74,4 +76,28 @@
 	<delete id="deleteByInsUid" parameterType="string">
 	   delete from dh_drafts where ins_uid = #{insUid}
 	</delete>
+	
+	<update id="updateByInsUid" parameterType="com.desmart.desmartportal.entity.DhDrafts">
+		update dh_drafts 
+		<set>
+		<trim suffixOverrides=",">
+			<if test="taskUid != null and taskUid != '' ">
+			TASK_UID = #{taskUid},
+			</if>
+			<if test="dfsTitle != null and dfsTitle != '' ">
+			DFS_TITLE = #{dfsTitle},
+			</if>
+			<if test="dfsData != null and dfsData != '' ">
+			DFS_DATA = #{dfsData},
+			</if>
+			</trim>
+		</set>
+		where INS_UID = #{insUid}
+	</update>
+	
+	<select id="queryDraftsByTaskUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhDrafts">
+		select <include refid="Base_Column_List"/>
+		from dh_drafts
+		where task_uid = #{taskUid}
+	</select>
 </mapper>

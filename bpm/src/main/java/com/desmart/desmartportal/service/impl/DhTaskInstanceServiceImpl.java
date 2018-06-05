@@ -40,11 +40,13 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
+import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
+import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -126,6 +128,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private BpmFormFieldService bpmFormFieldService;
+	
+	@Autowired
+	private DhDraftsMapper dhDraftsMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -418,6 +423,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhTaskInstance2.setTaskFinishDate(DateUtil.format(new Date()));
 						dhTaskInstance2.setTaskData(taskData.toJSONString());
 						if(dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance2)>0) {
+							//完成任务 删除草稿数据
+							dhDraftsMapper.deleteByInsUid(insUid);
+							
 						//如果任务为类型为normal，则将其它相同任务id的任务废弃
 							if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
 								dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
@@ -554,8 +562,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         String insDataStr = dhprocessInstance.getInsData();
         JSONObject insData = JSON.parseObject(insDataStr);
         JSONObject formData = insData.getJSONObject("formData");
-
-        resultMap.put("formData", formData.toJSONString());
+        //获取草稿数据
+        DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
+        JSONObject approvalData = null;
+        if(dhDrafts!=null) {
+        	if(dhDrafts.getDfsData()!=null) {
+        		JSONObject dfsData = JSON.parseObject(dhDrafts.getDfsData());
+        		JSONObject dfsFormData = dfsData.getJSONObject("formData");
+        		formData = FormDataUtil.formDataCombine(dfsFormData,
+        				formData);
+        		approvalData = dfsData.getJSONObject("approvalData");
+        	}
+        }
+        resultMap.put("approvalData", approvalData);
+        resultMap.put("formData", formData);
         resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currMeta);
         resultMap.put("activityConf", dhActivityConf);

@@ -29,5 +29,14 @@ public interface DhDraftsMapper {
 	
 	DhDrafts queryDraftsByInsUid(String insUid);
 	
+	DhDrafts queryDraftsByTaskUid(String taskUid);
+	
 	int deleteByInsUid(String insUid);
+	
+	/**
+	 * 根据insUid修改草稿数据
+	 * @param dhDrafts
+	 * @return
+	 */
+	Integer updateByInsUid(DhDrafts dhDrafts);
 }

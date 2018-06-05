@@ -148,6 +148,7 @@
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
+            <button class="layui-btn layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
             <button class="layui-btn layui-btn-sm" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
             <button class="layui-btn layui-btn-sm" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>抄送</button>
@@ -246,7 +247,7 @@
                 <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
                     <!--<label class="layui-form-label">审批意见</label>
 				      	<div class="layui-input-block">-->
-                    <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"></textarea>
+                    <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"><c:if test="${not empty approvalData.aprOpiComment }">${approvalData.aprOpiComment }</c:if></textarea>
                     <!--</div>-->
                     <div style="margin-top: 10px;">
                         <label class="layui-form-label">常用语</label>
