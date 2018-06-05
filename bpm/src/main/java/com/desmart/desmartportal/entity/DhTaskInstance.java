@@ -172,6 +172,8 @@ public class DhTaskInstance {
 	private String fromTaskUid; // 从属哪个任务id
 	
 	private String toTaskUid; // 加签人审批顺序
+	
+	private Double remainHours; // 会签出去时，任务剩余时间
 
 	/**
 	 * @return the taskUid
@@ -468,6 +470,14 @@ public class DhTaskInstance {
 	public void setToTaskUid(String toTaskUid) {
 		this.toTaskUid = toTaskUid;
 	}
+	
+	public Double getRemainHours() {
+		return remainHours;
+	}
+
+	public void setRemainHours(Double remainHours) {
+		this.remainHours = remainHours;
+	}
 
 	@Override
 	public String toString() {
@@ -479,7 +489,7 @@ public class DhTaskInstance {
 				+ ", taskDueDate=" + taskDueDate + ", taskRiskDate=" + taskRiskDate + ", taskPriority=" + taskPriority
 				+ ", taskData=" + taskData + ", taskDelegateUser=" + taskDelegateUser + ", synNumber=" + synNumber
 				+ ", dhProcessInstance=" + dhProcessInstance + ", sysUser=" + sysUser + ", fromTaskUid=" + fromTaskUid
-				+ ", toTaskUid=" + toTaskUid + "]";
+				+ ", toTaskUid=" + toTaskUid + ", remainHours=" + remainHours + "]";
 	}
 
 	public DhProcessInstance getDhProcessInstance() {
@@ -519,7 +529,7 @@ public class DhTaskInstance {
 			String taskPreviousUsrUsername, Date taskDelegateDate, Date taskInitDate, Date taskFinishDate,
 			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData, String taskDelegateUser,
 			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser, String fromTaskUid,
-			String toTaskUid) {
+			String toTaskUid, Double remainHours) {
 		super();
 		this.taskUid = taskUid;
 		this.insUid = insUid;
@@ -545,6 +555,7 @@ public class DhTaskInstance {
 		this.sysUser = sysUser;
 		this.fromTaskUid = fromTaskUid;
 		this.toTaskUid = toTaskUid;
+		this.remainHours = remainHours;
 	}
 	
 }

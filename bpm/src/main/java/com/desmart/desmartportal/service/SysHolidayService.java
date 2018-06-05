@@ -34,4 +34,14 @@ public interface SysHolidayService {
 	 * @throws
 	 */
 	Date calculateDueDate(Date date, Double timeAmount, String timeUnit);
+	
+	/**
+	 * 
+	 * @Title: remainHour  
+	 * @Description: 计算任务会签出去时 ，任务剩余时间并保存 
+	 * @param @param createDate  
+	 * @return void  
+	 * @throws
+	 */
+	void remainHour(String taskUid, String activityId);
 }

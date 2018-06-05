@@ -101,7 +101,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private BpmGlobalConfigService bpmGlobalConfigService;
 
 	@Autowired
-	private SysHolidayService sysDateService;
+	private SysHolidayService sysHolidayService;
 
 	@Autowired
 	private BpmFormManageService bpmFormManageService;
@@ -612,7 +612,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	@Override
-	public ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid) {
+	public ServerResponse<?> queryProgressBar(String activityId, String taskUid) {
 		// 创建时间
 		Date createDate = new Date();
 		// 时间个数
@@ -626,27 +626,19 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 根据taskUid查询单个DH_TASK_INSTANCE对象
 		DhTaskInstance dti = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		createDate = dti.getTaskInitDate();
-		// 根据proUid，proVerUid，proAppId，activityBpdId查询单个BPM_ACTIVITY_META对象
-		String activityBpdId = dti.getActivityBpdId();
-		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-		bpmActivityMeta.setBpdId(proUid);
-		bpmActivityMeta.setSnapshotId(proVerUid);
-		bpmActivityMeta.setProAppId(proAppId);
-		bpmActivityMeta.setActivityBpdId(activityBpdId);
-		List<BpmActivityMeta> bpmActivityMeta_1 = bpmActivityMetaMapper
-				.queryByBpmActivityMetaSelective(bpmActivityMeta);
-		for (BpmActivityMeta bam : bpmActivityMeta_1) {
-			// DH_ACTIVITY_CONF对象
-			DhActivityConf dhActivityConf = bam.getDhActivityConf();
+
+		// DH_ACTIVITY_CONF对象
+		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
+		// 审批最后日期
+		Date lastDate = null;
+		if (dhActivityConf != null) {
 			timeAmount = dhActivityConf.getActcTime();
 			timeType = dhActivityConf.getActcTimeunit();
+			lastDate = dti.getTaskDueDate();
+		}else {
+			lastDate =  sysHolidayService.calculateDueDate(createDate, timeAmount, timeType);
 		}
-		// 会签页面默认时间为24小时
-		if (bpmActivityMeta_1.isEmpty()) {
-			timeAmount = null;
-		}
-		// 审批最后日期
-		Date lastDate = sysDateService.calculateDueDate(createDate, timeAmount, timeType);
+		
 		if (timeAmount == null) {
 			timeAmount = 24.0;
 		} else {
@@ -749,6 +741,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhRoutingRecord.setActivityId(activityId);
 //			dhRoutingRecord.setActivityTo(activityId);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
+			// 会签开始时，保存主任务的审批剩余时间
+			sysHolidayService.remainHour(currentTaskUid, activityId);
 			
 			// 将当前任务暂挂
 			DhTaskInstance currentDhTaskInstance = new DhTaskInstance();
@@ -923,8 +917,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			// 说明：如果taskType为 normalAdd，则一人完成加签即可
 			if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
 				// 将主任务状态回归到正常状态
-				DhTaskInstance task = new DhTaskInstance();
-				task.setTaskUid(dhTaskInstance.getFromTaskUid());
+				DhTaskInstance task = dhTaskInstanceMapper.selectByPrimaryKey(dhTaskInstance.getFromTaskUid());
+				// 重新计算剩余时间
+				long dueDate = task.getTaskDueDate().getTime() + (long) (task.getRemainHours() * 60 * 60 * 1000);
+				task.setTaskDueDate(new Date(dueDate));
 				task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 				dhTaskInstanceMapper.updateByPrimaryKey(task);
 				// 将当前任务关闭，其他会签人任务作废
@@ -951,8 +947,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
 				}else {
 					// 将主任务状态回归到正常状态
-					DhTaskInstance task = new DhTaskInstance();
-					task.setTaskUid(dhTaskInstance.getFromTaskUid());
+					DhTaskInstance task = dhTaskInstanceMapper.selectByPrimaryKey(dhTaskInstance.getFromTaskUid());
+					// 重新计算剩余时间
+					long dueDate = task.getTaskDueDate().getTime() + (long) (task.getRemainHours() * 60 * 60 * 1000);
+					task.setTaskDueDate(new Date(dueDate));
 					task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 					dhTaskInstanceMapper.updateByPrimaryKey(task);
 					// 将当前任务关闭
@@ -969,12 +967,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
 				if (dhTaskInstanceList.isEmpty()) {
 					// 将主任务状态回归到正常状态
-					DhTaskInstance task = new DhTaskInstance();
-					task.setTaskUid(dhTaskInstance.getFromTaskUid());
+					DhTaskInstance task = dhTaskInstanceMapper.selectByPrimaryKey(dhTaskInstance.getFromTaskUid());
+					// 重新计算剩余时间
+					long dueDate = task.getTaskDueDate().getTime() + (long) (task.getRemainHours() * 60 * 60 * 1000);
+					task.setTaskDueDate(new Date(dueDate));
 					task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 					dhTaskInstanceMapper.updateByPrimaryKey(task);
 				}
 			}
+			// 会签结束时，查询主任务剩余时间，重新计算剩余时间
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ServerResponse.createByErrorMessage(e.getMessage());

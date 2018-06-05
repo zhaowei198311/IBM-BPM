@@ -7,8 +7,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.service.impl.DhActivityConfServiceImpl;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.dao.SysHolidayMapper;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.entity.SysHoliday;
 import com.desmart.desmartportal.service.SysHolidayService;
 
@@ -25,6 +29,10 @@ public class SysHolidayServiceImpl implements SysHolidayService{
 	
 	@Autowired
 	private SysHolidayMapper sysHolidayMapper;
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
+	@Autowired
+	private DhActivityConfMapper dhActivityConfMapper;
 	
 	@Override
 	public boolean queryHolidayOrRestDay(Date date) {
@@ -74,4 +82,37 @@ public class SysHolidayServiceImpl implements SysHolidayService{
         }
         return false;
     }
+
+	@Override
+	public void remainHour(String taskUid, String activityId) {
+		Double timeAmount = null;
+		String timeType = "";
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		// 主任务会签出去时，主任务花费的时间
+		Double spendHours = (double)(new Date().getTime() - dhTaskInstance.getTaskInitDate().getTime())/(60 * 60 *1000);
+		// 获取配置时间
+		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
+		if (dhActivityConf != null) {
+			timeAmount = dhActivityConf.getActcTime();
+			timeType = dhActivityConf.getActcTimeunit();
+		}
+		if (timeAmount == null) {
+			timeAmount = 24.0;
+		} else {
+			if (DhActivityConf.TIME_UNIT_DAY.equals(timeType)) {
+				timeAmount = timeAmount * 24;
+			}
+			if (DhActivityConf.TIME_UNIT_MONTH.equals(timeType)) {
+				timeAmount = timeAmount * 30 * 24;
+			}
+		}
+		while (true) {
+			if (spendHours < timeAmount) {
+				dhTaskInstance.setRemainHours(timeAmount - spendHours);
+				dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+				break;
+			}
+			spendHours -= 24;
+		}
+	}
 }

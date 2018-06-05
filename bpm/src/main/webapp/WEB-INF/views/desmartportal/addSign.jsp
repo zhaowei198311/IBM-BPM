@@ -404,9 +404,7 @@
 			type: 'post',
 			dataType: 'json',
 			data: {
-				proUid: 'a',
-	            proVerUid: 'b',
-	            proAppId: 'c',
+				activityId: '',
 				taskUid: taskUid
 			},
 			success: function(data){

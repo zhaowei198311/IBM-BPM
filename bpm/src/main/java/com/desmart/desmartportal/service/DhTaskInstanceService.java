@@ -92,7 +92,7 @@ public interface DhTaskInstanceService {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
-	ServerResponse<?> queryProgressBar(String proUid, String proVerUid, String proAppId, String taskUid);
+	ServerResponse<?> queryProgressBar(String activityId, String taskUid);
 	
 	/**
 	 * 

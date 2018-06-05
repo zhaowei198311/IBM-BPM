@@ -145,9 +145,7 @@ $(function () {
     })
 
     // 查询审批进度剩余进度百分比
-    var proUid = $("#proUid").val();
-    var proVerUid = $("#proVerUid").val();
-    var proAppId = $("#proAppId").val();
+    var activityId = $("#activityId").val();
     var taskUid = $("#taskUid").val();
     $.ajax({
         async: false,
@@ -155,9 +153,7 @@ $(function () {
         type: "post",
         dataType: "json",
         data: {
-            proUid: proUid,
-            proVerUid: proVerUid,
-            proAppId: proAppId,
+        	activityId: activityId,
             taskUid: taskUid
         },
         success: function (data) {
