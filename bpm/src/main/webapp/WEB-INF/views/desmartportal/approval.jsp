@@ -112,7 +112,7 @@
 	<!---Mask是遮罩，Progress是进度条-->
 	<div>
       <div id="Mask"></div>
-      <div id="Progress" data-dimension="200" data-text="0%" data-info="导出进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+      <div id="Progress" data-dimension="200" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
  	</div>
     <div class="search_area top_btn">
     	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>

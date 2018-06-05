@@ -433,10 +433,10 @@ function batchPost(URL, PARAMS) {
                 	 showProgress();
                 	 $("#Progress .circle-text").text(result.data.percentText);
                      if(result.data.curCount===undefined||result.data.totalCount===undefined){
-                         $("#Progress .circle-info").text("导出进度");
+                         $("#Progress .circle-info").text("下载进度");
                      }
                      else{
-                          $("#Progress .circle-info").text("导出进度:"+result.data.curCount+"/"+result.data.totalCount);
+                          $("#Progress .circle-info").text("下载进度:"+result.data.curCount+"/"+result.data.totalCount);
                      }
                  }
              },
