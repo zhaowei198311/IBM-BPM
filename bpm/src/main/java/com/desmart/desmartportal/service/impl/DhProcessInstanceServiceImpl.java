@@ -29,6 +29,7 @@ import com.desmart.common.util.CommonBusinessObjectUtils;
 import com.desmart.common.util.FormDataUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.RestUtil;
+import com.desmart.common.util.TaskIdUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -692,6 +693,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String activityBpdId = routeData.getString("activityBpdId");
 		String userUid = routeData.getString("userUid");
 		String taskUid = taskData.getString("taskUid");
+		int taskId = taskData.getIntValue("taskId");
 		log.info("驳回流程开始......");
 		log.info("流程标识为:" + routeData.getString("insId"));
 		if (insId == 0 || StringUtils.isBlank(activityBpdId) || StringUtils.isBlank(userUid)) {
@@ -700,11 +702,23 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		// 获取树流程信息
+		HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
+		if(returnStatus.getCode()!=200) {
+			return ServerResponse.createByErrorMessage("查询树流程信息出错");
+		}
+		// 查询token
+		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
+		TaskIdUtil taskIdUtil = new TaskIdUtil();
+		Map<String, Object> resultMap = taskIdUtil.queryTokenId(taskId, jsonObject);
+		String tokenId = String.valueOf(resultMap.get("tokenId"));
+		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
+		// 数据信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
 		List<String> dataList = new ArrayList<>();
 		dataList.add(userUid);
 		pubBo.setNextOwners_0(dataList);
-		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,"");
+		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,tokenId);
 		if (httpMap.get("moveTokenResult").getCode() == 200) {
 
 			// 驳回成功修改当前用户任务状态为 完成
