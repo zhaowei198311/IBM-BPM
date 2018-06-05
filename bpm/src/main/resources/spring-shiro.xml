@@ -33,11 +33,10 @@
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
         <!-- 登录url -->
-        <property name="loginUrl" value="/user/logins.do" />
-        <!-- 登录成功的url -->
-       <!--  <property name="successUrl" value="/url1.do" /> -->
+        <!-- <property name="loginUrl" value="/user/logins.do" /> -->
+        <property name="loginUrl" value="/login.jsp" />
         <!-- 请求的而资源超过权限时，跳转的url -->
-        <property name="unauthorizedUrl" value="/unauthorizedUrl.do" />
+        <property name="unauthorizedUrl" value="/refuse.jsp" />
         <!-- 自定义过滤器 -->
         <property name="filters">
             <util:map>
@@ -53,11 +52,53 @@
         <!-- anon表示不需要权限， authc表示需要登录 -->
         <property name="filterChainDefinitions">
             <value>
-                /user/login.do=anon
-                /user/logins.do=anon
-                /url1.do=anon
-                /url2.do=authc
-                /document/open.do=authc,documentAuthorizationFileter
+                <!-- 对静态资源设置匿名访问 -->
+			    /resources/desmartbpm/** = anon
+			    /resources/desmartportal/** = anon
+			    /resources/desmartsystem/** = anon
+               <!--  /user/login.do=anon -->
+                /user/logins=anon
+                /user/index=anon
+                /unauthorizedUrl.do=anon
+                /bpmindex=authc
+                <!-- /document/open.do=authc,documentAuthorizationFileter -->
+                <!-- /user/menus=perms[sysUser:user]   -->
+                <!-- portal模块不拦截,默认数据库中所有用户都可以进入此模块 -->
+                /user/**=authc
+                /menus/**=authc
+                /formSet/**=authc
+                /taskInstance/**=authc
+                /dhRoutingRecord/**=authc
+                /processInstance/**=authc
+                /drafts/**=authc
+                /dhApprovalOpinion/**=authc
+                /agent/**=authc
+                /accessoryFileUpload/**=authc
+                <!-- 表单管理 -->
+                /formManage/index=perms[formManage:index]
+                /publicForm/index=perms[publicForm:index]
+                <!-- 流程管理控制 -->
+                /processCategory/index=perms[processCategory:index]
+                /processDefinition/index=perms[processDefinition:index]
+                <!-- 接口管理 -->
+                /interfaces/index=perms[interfaces:index]
+                <!-- 触发器管理 -->
+                /trigger/index=perms[trigger:index]
+                <!-- 定时任务管理 -->
+                /quarz/quarzList=perms[quar:quarzList]
+                <!-- 流程实例管理 -->
+                
+                <!-- 系统管理 -->
+                /sysDictionary/dictionary=perms[sysDictionary:dictionary]
+                /sysUser/organization=perms[sysUser:organization]
+                /sysUser/user=perms[sysUser:user]
+                /sysRole/role=perms[sysRole:role]
+                /sysResource/resource_list=perms[sysResource:resource_list]
+                /sysRole/system_role=perms[sysRole:system_role]
+                /sysTeam/group=perms[sysTeam:group]
+                /sysDictionary/dictCdList=perms[sysDictionary:dictCdList]
+                /sysUser/globalConfig=perms[sysUser:globalConfig]
+                <!-- /menus/**=perms[menus:*]  --> 
             </value>
         </property>
     </bean>
