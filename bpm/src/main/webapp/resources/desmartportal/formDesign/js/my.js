@@ -20,6 +20,7 @@ function showTableP(){
 	});
 }
 
+var chooseInputWidth = new Array();
 //渲染页面的方法
 function drawPage() {
     var tableHead = '<table class="layui-table form-sub">' + '<tbody>';
@@ -50,11 +51,13 @@ function drawPage() {
                     } else {
                         continue;
                     }
-                } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0) {
+                } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0 
+                		|| column.find(".subDiv").find("div[title='choose_user']").length !=0) {
                 	//表单中的填写说明与数据表格
                 	var subDivObj = column.find(".subDiv");
                 	var tableObj = subDivObj.find("table");
                 	var pObj = subDivObj.find("p");
+                	var chooseUserDivObj = column.find(".subDiv").find("div[title='choose_user']");
                 	if(tableObj.length!=0){
                 		flag = false;
                     	formHtml = formHtml.substring(0, formHtml.length - 4);
@@ -105,6 +108,28 @@ function drawPage() {
                             formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
                 			isContinue = true;
                 		}
+                	}else{
+                		var labelDivObj = column.find(".labelDiv");
+	                    var labelDivCol = labelDivObj.attr("col");
+	                    var subDivObj = column.find(".subDiv div[title='choose_user']");
+	                    var subDivCol = subDivObj.attr("col");
+	                    var labelHtml = $(labelDivObj).html();
+	                    var subDivId = $(subDivObj).attr("id");
+	                    $(subDivObj).find("span").remove();
+	                    if(subDivCol<4){
+	                    	chooseInputWidth.push("90%");
+	                    }else{
+	                    	chooseInputWidth.push("93%");
+	                    }
+	                    $(subDivObj).append('<i class="layui-icon" title="choose_user" id="'+subDivId+'" onclick="desChooseUser(this);">&#xe612;</i>');
+	                    var subHtml = $(subDivObj).html();
+                        if (!isNaN(labelDivCol)) {
+                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
+                        }
+
+                        if (!isNaN(subDivCol)) {
+                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+                        }
                 	}
                 } else {
                 	//普通组件
@@ -380,7 +405,13 @@ function drawPage() {
     });
     
     view.find("input[type='tel']").desNumber();
-
+    
+    //给选人组件调整样式
+    var chooseUserInputArr = view.find("i[title='choose_user']").parent().find("input[type='text']");
+    chooseUserInputArr.each(function(index){
+    	$(this).css({"display":"inline","width":chooseInputWidth[index]});
+    });
+    
     layui.use(['form', 'layedit', 'laydate'], function () {
         form = layui.form, layer = layui.layer, layedit = layui.layedit, laydate = layui.laydate;
 
@@ -465,6 +496,13 @@ function getDataToSelect(obj,dicUid){
             }
         }
     });
+}
+
+//动态选人的方法
+function desChooseUser(obj){
+	var hideId = $(obj).parent().find("input[type='hidden']").prop("id");
+	console.log(hideId);
+	common.chooseUser(hideId, 'false');
 }
 
 function addDataRow(obj){

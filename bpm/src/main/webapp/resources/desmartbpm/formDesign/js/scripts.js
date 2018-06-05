@@ -388,7 +388,8 @@ function downloadLayoutSrc() {
             ["checked"],
             ["onkeypress"],
             ["value"],
-            ["name"]
+            ["name"],
+            ["title"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -608,8 +609,13 @@ $(document).ready(function () {
                 switch ($("#" + temp).parent().parent().find(".subDiv").find("input").attr("type")) {
                     case "text":
                         {
-                            inputId = "text_" + inputId;
-                            break;
+                    		console.log($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0);
+	                    	if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0){
+	                        	inputId = "choose_user_" + inputId;
+	                        }else{
+	                            inputId = "text_" + inputId;
+	                        }
+	                    	break;
                         };
                     case "tel":
                         {
@@ -635,6 +641,8 @@ $(document).ready(function () {
                 } else {
                     inputId = "textarea_" + inputId;
                 }
+            } else if($("#" + temp).parent().parent().find(".subDiv").find("table").length > 0){
+            	inputId = "table_" + inputId;
             }
 
             if ($("#" + temp).parent().parent().find(".subDiv").find("input[type='radio']").length > 0 ||
@@ -898,6 +906,26 @@ function saveHtml() {
                                                         jsonArr.push(filedAttr);
                                                         break;
                                                     };
+                                                case "TABLE":
+	                                                { //表格
+	                                                    filedAttr.fldCodeName = subObj.attr("name");
+	                                                    filedAttr.fldName = "数据表格";
+	                                                    filedAttr.multiValue = "false";
+	                                                    filedAttr.fldType = "object";
+	                                                    jsonArr.push(filedAttr);
+	                                                    break;
+	                                                };
+                                                case "DIV":
+	                                                { //选人组件
+	                                                	if(subObj.attr("title")=="choose_user"){
+	                                                		filedAttr.fldCodeName = subObj.attr("name");
+		                                                    filedAttr.fldName =  subDivObj.prev().find("label").text();;
+		                                                    filedAttr.multiValue = "false";
+		                                                    filedAttr.fldType = "string";
+		                                                    jsonArr.push(filedAttr);
+	                                                	}
+	                                                	break;
+	                                                };
                                             }
                                         }
                                         if (jsonArr != null && jsonArr != "") {

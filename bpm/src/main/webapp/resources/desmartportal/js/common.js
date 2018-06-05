@@ -153,6 +153,22 @@ var common = {
 							+ "\":{\"value\":\"" + value
 							+ "\"}";
 						break;
+					}else if($(inputArr[i]).attr("title")=="choose_user"){
+						var name = $(inputArr[i]).attr("name");
+						var userNameArr = $(inputArr[i]).val().trim().split(";");
+						var userIdArr = $(inputArr[i]).parent().find("input[type='hidden']")
+									.val().trim().split(";");
+						var value = "";
+						for(var j=0;j<userNameArr.length;j++){
+							var userName = userNameArr[j];
+							var userId = userIdArr[j];
+							if(userName!="" && userName!=null && userId!="" && userId!=null){
+								value += userName+"_"+userId+";";
+							}
+						}
+						textJson = "\"" + name + "\":{\"value\":\""
+							+ value + "\"}";
+						break;
 					}
 				}
 					;
@@ -162,7 +178,6 @@ var common = {
 					var name = $(inputArr[i]).attr("name");
 					var value = $("[name='" + name + "']")
 						.val().trim();
-					console.log(name+","+value);
 					textJson = "\"" + name + "\":{\"value\":\""
 						+ value + "\"}";
 					break;
@@ -255,7 +270,24 @@ var common = {
 				case "INPUT":{
 					var tagType = $("[name='"+name+"']").attr("type");
 					switch(tagType){
-						case "text":;
+						case "text":{
+							if($("[name='"+name+"']").attr("title")=="choose_user"){
+								var value = paramObj["value"];
+								var userArr = value.split(";");
+								var userNameStr = "";
+								var userIdStr = "";
+								for(var j=0;j<userArr.length;j++){
+									var user = userArr[j];
+									if(user!=null && user!=""){
+										userNameStr += user.split("_")[0]+";";
+										userIdStr += user.split("_")[1]+";";
+									}
+								}
+								$("[name='"+name+"']").val(userNameStr);
+								$("[name='"+name+"']").parent().find("input[type='hidden']").val(userIdStr);
+								break;
+							}
+						};
 						case "tel":;
 						case "date":{
 							$("[name='"+name+"']").val(paramObj["value"]);
@@ -315,6 +347,10 @@ var common = {
 				if(tagName=="SELECT"){
 					$("[name='"+name+"']").attr("disabled","true");
 					$("[name='"+name+"']").next().find("input");
+				}
+				if($("[name='"+name+"']").attr("title")=="choose_user"){
+					$("[name='"+name+"']").parent().find("i").css("display","none");
+					$("[name='"+name+"']").css("width","100%");
 				}
 				if(className=="layui-input date"){
 					$("[name='"+name+"']").attr("disabled","true");
@@ -376,7 +412,6 @@ var common = {
 			if(value=="" || value==null){
 				var eleId = $("[name='"+name+"']").prop("id");
 				var Y = $('#'+eleId).offset().top-100;
-				console.log(Y);
 				$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请填写必填项 "+text, {icon: 2});

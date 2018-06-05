@@ -616,6 +616,31 @@ function showDataTableModal(obj) {
     $("#data-table-number").val(thNum);
 }
 
+//选人组件
+function showChooseUserModal(obj){
+	$("#chooesUserModal").modal("show");
+	
+    view = $(obj).parent().next().next();
+    var label = view.find("label").text();
+    var subObj = view.find("div[title='choose_user']");
+    var id = subObj.attr("id");
+    var name = subObj.attr("name");
+    var textWidth = subObj.width();
+    var textLabelWidth = view.find(".labelDiv").width();
+    oldName = name;
+    var rowWidth = $(".demo").width() - 5;
+    var colWidth = rowWidth / 12;
+
+    var textCol = subObj.attr("col");
+    var textLabelCol = view.find(".labelDiv").attr("col");
+    $("#choose-user-label").val(label);
+    $("#choose-user-name").val(name);
+    $("#choose-user-name").onlyNumAlpha(); //只能输入英文
+    $("#choose-user-id").val(id);
+    $("#choose-user-width").val(textCol);
+    $("#choose-user-label-width").val(textLabelCol);
+}
+
 var nameArr = new Array();
 
 //新建、修改表单组件时判断该组件的name是否重复
@@ -1376,6 +1401,41 @@ $(function () {
 
             $("#data-table-warn").modal('hide');
             $("#dataTableModal").modal("hide");
+        }
+    });
+    
+    //保存选人组件的属性编辑
+    $("#save-choose-user-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#choose-user-id").val();
+        var name = $("#choose-user-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#choose-user-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#choose-user-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#choose-user-warn").modal('show');
+        } else {
+            var label = $("#choose-user-label").val();
+
+            var textWidth = $("#choose-user-width").val() * colWidth;
+            var textLabelWidth = $("#choose-user-label-width").val() * colWidth;
+
+            view.find("label").text(label);
+            var subObj = view.find("div[title='choose_user']");
+            subObj.attr({
+                "id": id,
+                "name": name
+            });
+            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":name});
+            subObj.find("input[type='hidden']").attr("id",id+"_hide");
+
+            view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#choose-user-label-width").val());
+            subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-user-width").val());
+            subObj.css("width", textWidth - 18).attr("col", $("#choose-user-width").val());
+            subObj.find("input[type='text']").css("width", textWidth - 60);
+            
+            $("#choose-user-warn").modal('hide');
+            $("#chooesUserModal").modal("hide");
         }
     });
 

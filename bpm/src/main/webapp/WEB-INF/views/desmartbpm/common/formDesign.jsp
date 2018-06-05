@@ -480,6 +480,35 @@
 										</div>
 									</div>
 								</div>
+								<!-- 选人组件 -->
+								<div class="box box-element ui-draggable">
+									<a href="#close" class="remove label label-important">
+										<i class="icon-remove icon-white"></i>删除
+									</a> 
+									<span class="drag label">
+										<i class="icon-move"></i>拖动
+									</span> 
+									<span class="configuration">
+										<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showChooseUserModal(this);"
+												role="button" data-toggle="modal">编辑
+										</button>  
+									</span>
+									<div class="preview">选人组件</div>
+									<div class="view">
+										<div class="form-group">
+											<div class="labelDiv" col="1">
+												<label>选择人员</label>
+											</div>
+											<div class="subDiv">
+												<div title="choose_user" col="1">
+													<input type="text" id="person_hide_view" title="choose_user" class="layui-input" style="float:left" readonly>
+													<input type="hidden" id="person_hide"/>
+													<span class="glyphicon glyphicon-user" id="choose_user_btn" style="position:relative;left:2%;font-size:25px;"></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 								<!-- 审批意见 -->
 								<div class="box box-element ui-draggable">
 									<a href="#close" class="remove label label-important">
@@ -1642,7 +1671,7 @@
 								<option value="text" selected>文本框</option>
 								<option value="number">数字框</option>
 								<option value="date">日期文本框</option>
-								<option value="select">下拉列表</option>
+								<!-- <option value="select">下拉列表</option> -->
 							</select>
 						</div>
 					</div>
@@ -1651,6 +1680,86 @@
 			<div class="modal-footer">
 				<a id="save-dataTable-content" class="btn btn-primary">保存</a>
 				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#data-table-warn").modal("hide");'>取消</a>
+			</div>
+		</div>
+		<!-- 设置选人组件的属性 -->
+		<div class="modal hide fade" role="dialog" id="chooesUserModal">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>设置选人组件的属性</h3>
+			</div>
+			<div class="modal-body">
+				<div id="choose-user-warn" class="hide alert alert-warning">
+    				<strong>警告！</strong>必须填写标<span style="color:red;">*</span>的属性。
+				</div>
+
+				<form>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="choose-user-label"
+								value="text" placeholder="请输入组件标签">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							ID<span style="color:red;float:left;">*</span>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control" id="choose-user-id"
+								placeholder="请输入组件ID" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+			            <label class="col-xs-2 col-sm-offset-2 control-label">
+			                name<span style="color:red;float:left;">*</span>
+			            </label>
+			            <div class="col-xs-7">
+			                <input type="text" class="form-control" id="choose-user-name"
+			                    placeholder="请输入组件name">
+			            </div>
+			        </div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							标签占列宽
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										请填写标签占列宽(1~12的整数)</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control col" id="choose-user-label-width"
+								placeholder="请输入标签占列宽">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-xs-2 col-sm-offset-2 control-label">
+							组件占列宽
+							<div class="pull-right popover-info">
+								<i class="icon-question-sign "></i>
+								<div class="popover fade right">
+									<div class="arrow"></div>
+									<h3 class="popover-title">帮助</h3>
+									<div class="popover-content">
+										请填写组件占列宽(1~12的整数)</div>
+								</div>
+							</div>
+						</label>
+						<div class="col-xs-7">
+							<input type="text" class="form-control col" id="choose-user-width"
+								placeholder="请输入组件占列宽">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a id="save-choose-user-content" class="btn btn-primary">保存</a>
+				<a class="btn btn-primary" data-dismiss="modal" onclick='$("#choose-user-warn").modal("hide");'>取消</a>
 			</div>
 		</div>
 		

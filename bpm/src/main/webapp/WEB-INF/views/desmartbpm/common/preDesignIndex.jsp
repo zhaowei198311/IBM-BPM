@@ -12,6 +12,7 @@
 <link href="<%=basePath%>/resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css" rel="stylesheet">
+<script type="text/javascript" src="<%=basePath%>/resources/desmartportal/js/common.js"></script>
 <title>Insert title here</title>
 <style>
 	.layui-form-label {
@@ -86,6 +87,7 @@
 		<span id="dynHtml" style="display:none;">${dynHtml}</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="returnEdit()">返回编辑</button>
+        	<button class="layui-btn layui-btn-sm" onclick="testData()">测试表单数据</button>
         </span>
     </div>
 	<div id="formSet" style="margin-top:10px;">${ webpage }</div>
@@ -93,6 +95,18 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
+	$(function(){
+		var json = '{"choose_user_xD7n":{"value":"苏思佳_00055685;胡笛_00054290;王安永_00056430;"}}';
+		common.giveFormSetValue(json);
+		
+		var perJson = '{"choose_user_xD7n":{"edit":"no"}}';
+		common.giveFormFieldPermission(perJson);
+	});
+	
+	function testData(){
+		var json = common.getDesignFormData();
+		console.log(json);
+	}
 	function returnEdit(){
 		layer.load(1);
 		var dynHtml = $("#dynHtml").text();
@@ -114,7 +128,6 @@
 			formUid:$("#formUid").val(),
 			dynHtml:dynContent 
 		};
-		console.log(dynContent);
 		post(url,preParam);
 	}
 	
