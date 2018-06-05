@@ -79,5 +79,11 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	public DhInterfaceParameter selectByparaUid(String paraUid) {
 		return dhInterfaceParameterMapper.selectByparaUid(paraUid);
 	}
+
+	@Override
+	public List<DhInterfaceParameter> querybyintUid(String intUid) {
+		// TODO Auto-generated method stub
+		return dhInterfaceParameterMapper.listAll(intUid);
+	}
 	
 }

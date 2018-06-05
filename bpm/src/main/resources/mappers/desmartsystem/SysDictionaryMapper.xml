@@ -48,13 +48,15 @@
 		from SYS_DICTIONARY
 		where 1=1
 		
-		<if test="dicCode != null">
+		<if test="dicCode != null and dicCode!='' ">
 			and DIC_CODE like '%'||#{dicCode}||'%'
 		</if>	
 		
-		<if test="dicName != null">
+		<if test="dicName != null and dicCode!='' ">
 			and DIC_NAME like '%'||#{dicName}||'%'
 		</if>	
+		
+		order by CREATE_DATE DESC,UPDATE_DATE DESC
 	</select>
 	
 	<select id="selectSysDictionaryById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">

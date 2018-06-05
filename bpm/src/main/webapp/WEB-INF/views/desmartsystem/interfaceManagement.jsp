@@ -18,6 +18,9 @@
 <link href="resources/desmartsystem/styles/css/modules/laydate/default/laydate.css"
 	rel="stylesheet" media="all" />
 <title>接口管理</title>
+<style type="text/css">
+	.display_content2{min-height:auto;}
+</style>
 </head>
 
 <body>
@@ -32,7 +35,7 @@
 					<select id="interfaceType" name="interfaceType">
 						<option value="">请选择接口类型</option>
 						<option value="webservice">webservice</option>
-						<option value="restapi">restapi</option>
+						<option value="restapi">restapi</option><option value="RPC">RPC</option>
 					</select>
 				</div>
 				<div class="layui-col-md2">
@@ -117,7 +120,8 @@
 		</div>
 	</div>
 	<div class="display_container">
-		<div class="display_content2" style="height: 300px">
+		<div class="display_content2" >
+		
 			<div class="top" style="color: red;">新增接口</div>
 			<label class="layui-input-label" style="color: red;">带*为必填参数</label>
 			<form id="form1" class="layui-form" action=""
@@ -146,7 +150,7 @@
 							<select id="intType" name="intType">
 								<option value="">请选择</option>
 								<option value="webservice">webservice</option>
-								<option value="restapi">restapi</option>
+								<option value="restapi">restapi</option><option value="RPC">RPC</option>
 							</select>
 						</div>
 					</div>
@@ -200,7 +204,7 @@
 		</div>
 	</div>
 	<div class="display_container4" id="exposed_table2_container">
-		<div class="display_content2" style="height: 300px">
+		<div class="display_content2" >
 			<div class="top" style="color: red;">绑定接口参数</div>
 			<label style="color: red;">带*的参数为必填</label>
 			<form id="form2" class="layui-form" action=""
@@ -282,7 +286,7 @@
 		</div>
 	</div>
 	<div class="display_container5" id="exposed_table3_container">
-		<div class="display_content2" style="height: 300px">
+		<div class="display_content2" >
 			<div class="top" style="color: red;">修改接口</div>
 			<form class="layui-form" action="" style="margin-top: 30px;">
 				<input id="intUid2" style="display: none;" />
@@ -310,7 +314,7 @@
 						<div class="layui-input-inline">
 							<select id="intType2" name="intType2">
 								<option value="webservice">webservice</option>
-								<option value="restapi">restapi</option>
+								<option value="restapi">restapi</option><option value="RPC">RPC</option>
 							</select>
 						</div>
 					</div>
@@ -362,7 +366,7 @@
 		</div>
 	</div>
 	<div class="display_container6" id="exposed_table3_container">
-		<div class="display_content2" style="height: 300px">
+		<div class="display_content2" >
 			<div class="top" style="color: red;">修改接口参数</div>
 			<form class="layui-form" action="" style="margin-top: 30px;">
 				<input id="intUid3" style="display: none;" />

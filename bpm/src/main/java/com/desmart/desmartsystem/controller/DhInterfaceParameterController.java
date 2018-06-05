@@ -28,6 +28,16 @@ public class DhInterfaceParameterController {
 	@Autowired
 	private DhInterfaceParameterService dhInterfaceParameterService;
 	
+	
+	
+	//拼装参数配置页面设置的值	
+	@RequestMapping(value = "/interfaceParameter")
+	public ModelAndView interfaceParameter(String intUid){
+		ModelAndView model=new ModelAndView("desmartsystem/interfaceParameter");
+		model.addObject("interfaceParameterList",dhInterfaceParameterService.querybyintUid(intUid));
+		return model;
+	}
+	
 	@RequestMapping(value = "/index")
 	@ResponseBody
 	public ServerResponse listAll(@RequestParam(value="intUid") String intUid,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {

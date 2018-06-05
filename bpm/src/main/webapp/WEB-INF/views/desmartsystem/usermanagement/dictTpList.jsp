@@ -76,7 +76,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">类型编码</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="dicCode " required lay-verify="required" autocomplete="off" class="layui-input" />
+				      <input type="text" name="dicCode" required lay-verify="required" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 			  	  <div class="layui-form-item">

@@ -10,6 +10,7 @@ import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
 import com.desmart.desmartsystem.service.SysDictionaryService;
 import com.desmart.desmartsystem.util.PagedResult;
+import com.desmart.desmartsystem.util.UUIDTool;
 
 /**
  * 

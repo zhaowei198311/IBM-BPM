@@ -26,6 +26,8 @@ public class DhInterface {
 	private String intLoginPwd; // 登陆用户密码
 	
 	private String intStatus; // 接口状态
+	
+	private String updateDate;//修改时间
 
 	/**
 	 * @return the intUid
@@ -155,6 +157,15 @@ public class DhInterface {
 	
 	public DhInterface(){
 		
+	}
+	
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	/**
