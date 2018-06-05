@@ -704,7 +704,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		List<String> dataList = new ArrayList<>();
 		dataList.add(userUid);
 		pubBo.setNextOwners_0(dataList);
-		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo);
+		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,"");
 		if (httpMap.get("moveTokenResult").getCode() == 200) {
 
 			// 驳回成功修改当前用户任务状态为 完成
