@@ -387,7 +387,8 @@ function downloadLayoutSrc() {
             ["onfocus"],
             ["checked"],
             ["onkeypress"],
-            ["value"]
+            ["value"],
+            ["name"]
         ]
     });
     $("#download-layout").html(formatSrc);
