@@ -246,7 +246,7 @@ function loadFileList(){
 		for (var i = 0; i < result.data.length; i++) {
 			var info = "<tr>"
 		      +"<td>"
-		      +"<input onclick='invertSelection(this)' class='file-check' type='checkbox'>"
+		      +"<input style = 'cursor: default;' onclick='invertSelection(this)' class='file-check' type='checkbox'>"
 		      +"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
 		      +(i+1)+"</td>"
 		      +"<td>"+result.data[i].appDocFileName+"</td>"		

@@ -286,7 +286,7 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            <input id="all-file-check" type="checkbox"> <!-- 序号 -->
+                                            <input style = 'cursor: default;' id="all-file-check" type="checkbox"> <!-- 序号 -->
                                         </th>
                                         <th>附件名称</th>
                                         <!-- 
