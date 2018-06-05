@@ -162,6 +162,9 @@ function toShowRouteBar () {
         	companyNum:companyNumber,
         	formData:common.getDesignFormData()
     	},
+    	beforeSend: function () {
+            index = layer.load(1);
+        },
         success:function(result){
         	if(result.status==0){
         		$("#choose_user_tbody").empty();
@@ -189,6 +192,7 @@ function toShowRouteBar () {
                 }
         	}//end ajax
 		});
+    	layer.close(index);
 		$(".display_container2").css("display","block");
 	}); //end
 }
@@ -219,6 +223,11 @@ function submitProcess(){
         item.loopType = $(this).data("looptype");
         routeData.push(item);
     });
+    if(routeData.length==0){
+    	layer.alert('提交失败,未配置下一环节处理人');
+    	return;
+    }
+    
     finalData.routeData = routeData;
     console.log(finalData);
     $.ajax({

@@ -303,6 +303,10 @@ function agree() {
         item.loopType = $(this).data("looptype");
         routeData.push(item);
     });
+    if(routeData.length==0){
+    	layer.alert('提交失败,未配置下一环节处理人');
+    	return;
+    }
     finalData.routeData = routeData;
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
     finalData.approvalData = {"aprOpiComment":aprOpiComment};
@@ -422,12 +426,15 @@ function checkUserData() {
         	"companyNum":companyNumber,
         	"formData":formData
     	},
+    	beforeSend: function(){
+        	layer.load(1);
+    	}
+    	,
         success:function(result){
         	if(result.status==0){
         		$("#choose_user_tbody").empty();
             	var activityMetaList = result.data;
             	var chooseUserDiv = "";
-            	layer.load(1);
             	if(activityMetaList.length==0){
             		chooseUserDiv += '<tr>'
                 		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
@@ -459,6 +466,7 @@ function checkUserData() {
             	layer.closeAll("loading");
             	$(".display_container2").css("display","block"); //end
             }else {
+            	layer.closeAll("loading");
         		layer.alert(result.msg);
         	}
     	}
