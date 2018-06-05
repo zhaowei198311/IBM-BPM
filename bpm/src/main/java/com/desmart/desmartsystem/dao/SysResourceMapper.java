@@ -2,6 +2,7 @@ package com.desmart.desmartsystem.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysResource;
@@ -17,5 +18,7 @@ import com.desmart.desmartsystem.entity.TreeNode;
  */
 @Repository
 public interface SysResourceMapper extends BaseMapper<SysResource> {
-	List<TreeNode>	resourceTree();	
+	List<TreeNode>	resourceTree();
+
+	List<SysResource> selectResourceByUserId(@Param(value="userId")String userId);	
 }
