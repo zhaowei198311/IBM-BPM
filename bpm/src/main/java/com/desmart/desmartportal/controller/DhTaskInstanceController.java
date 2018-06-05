@@ -4,6 +4,7 @@
 package com.desmart.desmartportal.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -21,6 +22,7 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import com.github.pagehelper.PageInfo;
 
 /**  
 * <p>Title: TaskInstanceController</p>  
@@ -128,7 +130,7 @@ public class DhTaskInstanceController {
 	
 	@RequestMapping("/loadBackLog")
 	@ResponseBody
-	public ServerResponse loadBackLog(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadBackLog(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
 			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
 			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
@@ -156,5 +158,37 @@ public class DhTaskInstanceController {
 			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		}
 		return dhTaskInstanceService.selectBackLogByusrUid(userId);
+	}
+	
+	@RequestMapping("/loadPageTaskByClosed")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosed(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
+			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
+			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
+			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName) {
+		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhTaskInstance.setUsrUid(currentUserUid);
+        if(insTitle!=null && !"".equals(insTitle)) {
+        	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        		dhProcessInstance.setInsTitle(insTitle);
+        		dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        	}
+        	if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        		SysUser sysUser = new SysUser();
+        		sysUser.setUserName(createProcessUserName);
+        		dhTaskInstance.setSysUser(sysUser);
+        	}
+		return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
+				, endTime, dhTaskInstance, pageNum, pageSize);
+	}
+	
+	@RequestMapping("/alreadyClosedTask")
+	@ResponseBody
+	public Integer alreadyClosedTask(String userId) {
+		if(userId==null) {
+			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		}
+		return dhTaskInstanceService.alreadyClosedTaskByusrUid(userId);
 	}
 }

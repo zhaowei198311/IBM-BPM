@@ -997,4 +997,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return dhTaskInstanceMapper.selectBackLogByusrUid(usrUid);
 	}
 
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize) {
+		// TODO Auto-generated method stub
+		PageHelper.startPage(pageNum, pageSize);
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.loadPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public Integer alreadyClosedTaskByusrUid(String userId) {
+		// TODO Auto-generated method stub
+		return dhTaskInstanceMapper.alreadyClosedTaskByusrUid(userId);
+	}
+
 }

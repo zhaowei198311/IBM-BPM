@@ -145,9 +145,28 @@ public interface DhTaskInstanceService {
 			Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize);
 	/**
-	 * 根据用户查询待办
+	 * 根据用户查询待办数量
 	 * @param usrUid
 	 * @return
 	 */
 	Integer selectBackLogByusrUid(String usrUid);
+
+	/**
+	 * 根据条件查询已办
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize);
+
+	/**
+	 * 根据用户查询已办数量
+	 * @param userId
+	 * @return
+	 */
+	Integer alreadyClosedTaskByusrUid(String userId);
 }

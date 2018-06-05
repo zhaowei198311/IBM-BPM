@@ -9,7 +9,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.github.pagehelper.PageInfo;
 
 /**  
 * <p>Title: 任务实例dao</p>  
@@ -142,4 +144,24 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	Integer selectBackLogByusrUid(String usrUid);
+	/**
+	 * 根据条件查询已办
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	List<DhTaskInstance> loadPageTaskByClosedByCondition(
+			@Param("startTime")Date startTime,
+			@Param("endTime")Date endTime,
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+
+	/**
+	 * 根据用户查询已办数量
+	 * @param userId
+	 * @return
+	 */
+	Integer alreadyClosedTaskByusrUid(String usrId);
 }

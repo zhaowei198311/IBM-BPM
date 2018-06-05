@@ -19,6 +19,7 @@
     <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
+    <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
     <style type="text/css">
         .container-fluid {
             padding-right: 0px;
@@ -93,10 +94,40 @@
 		.layui-radio-disbaled{
 			display:none;
 		}
+		
+		#Mask {
+   		  	 position: absolute; top: 0px; filter: alpha(opacity=60); background-color: #333;
+    		 z-index: 1002; left: 0px;
+    		 opacity:0.5; -moz-opacity:0.5;
+		}
+		#Progress{
+    		position: absolute; top: 35%;left:35%;z-index: 2000;
+		}
+		#Progress .circle-info{
+   			 color:black;
+		}
+		.layui-progress-bar {
+ 		  display: block;
+ 		  min-width: 8px;
+ 		  height: 12px;
+ 		  background: #2067c5;
+ 		  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -moz-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -o-linear-gradient(left, #2067c5, #24c1fc);
+ 		  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), linear-gradient(to right, #2067c5, #24c1fc);
+ 		  border-radius: 4px;
+ 		  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+ 		  box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+ 		}
     </style>
 </head>
 
 <body>
+	<!---Mask是遮罩，Progress是进度条-->
+	<div>
+      <div id="Mask"></div>
+      <div id="Progress" data-dimension="200" data-text="0%" data-info="导出进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+ 	</div>
     <div class="search_area top_btn">
     	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
     	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
@@ -199,7 +230,7 @@
                                 <thead>
                                     <tr>
                                         <th>
-                                            <!-- <input id="all-file-check" type="checkbox"> -->序号
+                                            <input id="all-file-check" type="checkbox"> <!-- 序号 -->
                                         </th>
                                         <th>附件名称</th>
                                         <!-- 

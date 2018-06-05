@@ -76,9 +76,9 @@
 					      <th>任务标题</th>
 					      <th>上一环节提交人</th>
 					      <th>流程发起人</th>
-					      <th>任务类型</th>
+					      <!-- <th>任务类型</th> -->
 					      <th>接收时间</th>
-					      <!-- <th>处理时间</th> -->
+					      <th>处理时间</th>
 					      <th>跟踪</th>
 					    </tr> 
 					</thead>
@@ -160,9 +160,27 @@
 			window.setInterval(getUserTask, 60000);
 		})
 		
+		// 获取用户有多少已办
+		function getUserTask(){
+			$.ajax({
+				url : 'taskInstance/alreadyClosedTask',
+				type : 'POST',
+				dataType : 'text',
+				data : {},
+				success : function(result){
+					// 渲染到已办
+					if(result==0){
+						$("#yiban_icon").css("display", "none");
+					}else{
+						$("#yiban_icon").text(result);
+					}
+				}
+			})
+		}
+		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'backlog/queryTaskByClosed',
+				url : 'taskInstance/loadPageTaskByClosed',
 				type : 'post',
 				dataType : 'json',
 				data : {
@@ -204,11 +222,13 @@
 				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
+				var agentOdate1 = new Date(meta.taskFinishDate);
+				var finishDate =agentOdate1.getFullYear()+"-"+(agentOdate1.getMonth()+1)+"-"+agentOdate1.getDate()+"   "+agentOdate1.getHours()+":"+agentOdate1.getMinutes()+":"+agentOdate1.getSeconds();
 				var insTitle = meta.dhProcessInstance.insTitle;
 				var insId = meta.dhProcessInstance.insId;
-				if(meta.taskType=='normal'){
+				/* if(meta.taskType=='normal'){
 					type = "一般任务";
-				}
+				} */
 				if(meta.taskStatus==12){
 					status = "待处理";
 				}
@@ -226,11 +246,13 @@
 				if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
 					trs += meta.sysUser.userName;
 				}
-				trs += '</td><td>' + type
-					+ '</td>' 
+				trs += '</td>'
 					+ '<td>'
 					+ InitDate
 					+'</td>' 
+					+'<td>'
+					+finishDate
+					+'</td>'
 					+ '<td>'
 					+ "<i class='layui-icon tail' onclick='processView(\""+ insId +"\")'>&#xe715;</i>"
 					+ '</td>'
@@ -264,10 +286,11 @@
 		
 		//模糊查询
 		function search(){
-			pageConfig.taskType = $("#task-type-search").val();
-			pageConfig.taskTitle = $("#task-title-search").val();
-			pageConfig.taskInitDate = $("#test1").val()==""?null:$("#test1").val();
-			pageConfig.taskDueDate = $("#test2").val()==""?null:$("#test2").val();
+			pageConfig.createProcessUserName = $("#task-createProcessUserName-search").val();
+			pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
+			pageConfig.insTitle = $("#task-insTitle-search").val();
+			pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
+			pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 			getTaskInstanceInfo();
 		}
 		//刷新按钮

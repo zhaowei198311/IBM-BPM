@@ -682,4 +682,60 @@
 		</where>
 	</select>
 	
+	<select id="loadPageTaskByClosedByCondition" 
+	parameterType="map"
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid="TaskAndProcess_Column_List"/>
+		FROM
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		<where>
+			T.INS_UID = P.INS_UID 
+			AND
+			P.INS_INIT_USER = S.USER_ID
+			AND T.TASK_STATUS = 32
+			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			<if test="dhTaskInstance.dhProcessInstance != null ">
+			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
+				and dhTaskInstance.dhProcessInstance.insTitle!='' ">
+				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
+			</if>
+			</if>
+			<if test="dhTaskInstance.sysUser != null ">
+			<if test="dhTaskInstance.sysUser.userName != null 
+				and dhTaskInstance.sysUser.userName !='' ">
+				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
+			</if>
+			</if>
+			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
+				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
+			</if>
+			<if test="startTime != null ">
+				AND TASK_FINISH_DATE &gt;=
+				to_date(concat(to_char(#{startTime},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="endTime != null ">
+				AND TASK_FINISH_DATE &lt;=
+				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+			or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+		</where>
+		ORDER BY P.INS_CREATE_DATE DESC
+	</select>
+	<!-- 用户查询已办 -->
+	<select id="alreadyClosedTaskByusrUid" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM
+		DH_TASK_INSTANCE
+		<where>
+			USR_UID = #{usrUid} AND TASK_STATUS = 32
+			AND TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+		</where>
+	</select>
+	
 </mapper>
