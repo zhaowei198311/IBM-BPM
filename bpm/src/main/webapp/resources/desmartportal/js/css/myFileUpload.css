@@ -1,20 +1,42 @@
 .circliful {
-    position: relative; 
+	position: relative;
 }
 
 .circle-text, .circle-info, .circle-text-half, .circle-info-half {
-    width: 100%;
-    position: absolute;
-    text-align: center;
-    display: inline-block;
+	width: 100%;
+	position: absolute;
+	text-align: center;
+	display: inline-block;
 }
 
 .circle-info, .circle-info-half {
-    color: #999;
+	color: #999;
 }
 
 .circliful .fa {
-    margin: -10px 3px 0 3px;
-    position: relative;
-    bottom: 4px;
+	margin: -10px 3px 0 3px;
+	position: relative;
+	bottom: 4px;
+}
+
+#Mask {
+	position: absolute;
+	top: 0px;
+	filter: alpha(opacity = 60);
+	background-color: #333;
+	z-index: 1002;
+	left: 0px;
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+}
+
+#Progress {
+	position: absolute;
+	top: 35%;
+	left: 35%;
+	z-index: 2000;
+}
+
+#Progress .circle-info {
+	color: white;
 }

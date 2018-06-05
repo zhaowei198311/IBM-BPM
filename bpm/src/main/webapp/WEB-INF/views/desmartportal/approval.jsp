@@ -91,17 +91,6 @@
 			box-shadow: 0 0 10px #ccc;
 		}
 		
-		#Mask {
-   		  	 position: absolute; top: 0px; filter: alpha(opacity=60); background-color: #333;
-    		 z-index: 1002; left: 0px;
-    		 opacity:0.5; -moz-opacity:0.5;
-		}
-		#Progress{
-    		position: absolute; top: 35%;left:35%;z-index: 2000;
-		}
-		#Progress .circle-info{
-   			 color:black;
-		}
  		.layui-progress-bar {
  		  display: block;
  		  min-width: 8px;
@@ -144,6 +133,7 @@
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
+        <span id="approvalData" style="display: none;">${approvalData}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
@@ -247,7 +237,7 @@
                 <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
                     <!--<label class="layui-form-label">审批意见</label>
 				      	<div class="layui-input-block">-->
-                    <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"><c:if test="${not empty approvalData.aprOpiComment }">${approvalData.aprOpiComment }</c:if></textarea>
+                    <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"></textarea>
                     <!--</div>-->
                     <div style="margin-top: 10px;">
                         <label class="layui-form-label">常用语</label>

@@ -95,17 +95,7 @@
 			display:none;
 		}
 		
-		#Mask {
-   		  	 position: absolute; top: 0px; filter: alpha(opacity=60); background-color: #333;
-    		 z-index: 1002; left: 0px;
-    		 opacity:0.5; -moz-opacity:0.5;
-		}
-		#Progress{
-    		position: absolute; top: 35%;left:35%;z-index: 2000;
-		}
-		#Progress .circle-info{
-   			 color:black;
-		}
+		
 		.layui-progress-bar {
  		  display: block;
  		  min-width: 8px;
@@ -206,14 +196,16 @@
                         <div class="layui-tab-item layui-show">
                             <table class="layui-table" style="margin: 0;">
                                 <colgroup>
-                                    <col width="10%">
-                                    <col width="10%">
                                     <col width="8%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="10%">
-                                    <col width="22%">
+                                    <col width="18%">
+                                    <col width="8%">
+                                    <col width="6%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="8%">
+                                    <col width="12%">
+                                    <col width="8%">
+                                    <col width="20%">
                                 </colgroup>
                                 <tbody id="approval_tbody">
                                 </tbody>

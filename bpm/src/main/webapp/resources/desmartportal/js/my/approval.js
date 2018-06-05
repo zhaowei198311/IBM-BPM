@@ -274,6 +274,8 @@ function agree() {
     	$("#myApprovalOpinion").focus();
     	layer.alert("请填写审批意见");
     	return;
+    }else{
+    	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
     }
     // 发起流程             
     var finalData = {};
@@ -479,6 +481,7 @@ function saveDraftsInfo() {
                 finalData.formData = formData;
                 
                 var aprOpiComment = $("#myApprovalOpinion").val();
+                aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
     		    var taskUid = $("#taskUid").val();
     		    var taskId = $("#taskId").val();
                 finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
