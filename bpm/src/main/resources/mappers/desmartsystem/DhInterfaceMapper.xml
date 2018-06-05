@@ -17,7 +17,7 @@
 	<sql id="Base_Column_List">
 		INT_UID, INT_TITLE, INT_DESCRIPTION,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
-		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS
+		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
@@ -41,8 +41,8 @@
 			#{intLoginUser},
 			#{intLoginPwd},
 			#{intStatus},
-			#{sysdate},
-			#{sysdate}
+			sysdate,
+			sysdate
 		)
 	</insert>
 	
