@@ -822,7 +822,7 @@ function initConf(map) {
     $("#handleTeam_div").hide();
     $("#handleField_div").hide();
     $("#chooseableHandleUser_div").hide();
-    $("#chooseableHandleRole_div").show();
+    $("#chooseableHandleRole_div").hide();
     $("#chooseableHandleTeam_div").hide();
     $("#chooseableHandleField_div").hide();
     
@@ -1127,7 +1127,7 @@ function showChosseAbleHandleDiv(assignType){
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
-    }else if(assignType=="teamAndCompany" || assignType=="teamAndCompany" || assignType=="team"){
+    }else if(assignType=="teamAndDepartment" || assignType=="teamAndCompany" || assignType=="team"){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").show();
         $("#chooseableHandleUser_div").hide();
