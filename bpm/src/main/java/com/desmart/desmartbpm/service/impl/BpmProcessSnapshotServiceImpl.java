@@ -1,6 +1,5 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -32,7 +32,6 @@ import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -57,20 +56,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         // 获得所有活动节点（事件节点、网关、人工活动...）和泳道对象
         JSONArray visualModelData = processVisualModel(request, bpdId, snapshotId, processAppId);
         BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
-        String host = gcfg.getBpmServerHost();
-        host = host.endsWith("/") ? host : host + "/";
-        String url = host + "rest/bpm/wle/v1/processModel/{0}?{1}";
-        String params = "processAppId=" + processAppId;
-        if (StringUtils.isNotBlank(snapshotId)) {
-            params = params + "&snapshotId=" + snapshotId;
-        }
-        url = MessageFormat.format(url, bpdId, params);
-        Map<String, Object> pmap = new HashMap<>();
-        //BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
-        //HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
-        RestUtil restUtil = new RestUtil(gcfg);
-        HttpReturnStatus result = restUtil.doGet(url, pmap);
-        restUtil.close();
+        
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
+        HttpReturnStatus result = bpmProcessUtil.getProcessModel(processAppId, bpdId, snapshotId);
         
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
@@ -84,28 +72,15 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
             }
         }
         
-        
     }
 
 
     public JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId) {
         JSONArray results = new JSONArray();
         BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
-        String host = gcfg.getBpmServerHost();
-        host = host.endsWith("/") ? host : host + "/";
-        String url = host + "rest/bpm/wle/v1/visual/processModel/{0}?{1}";
-        String params = "projectId=" + processAppId;
-        if (StringUtils.isNotBlank(snapshotId)) {
-            params = params + "&snapshotId=" + snapshotId;
-        }
-        url = MessageFormat.format(url, bpdId, params);
-        Map<String, Object> pmap = new HashMap<>();
-        //BpmClientUtils bpmClientUtil = new BpmClientUtils(gcfg, true, request.getServletContext());
-        //HttpReturnStatus result = bpmClientUtil.doGet(request, url, pmap);
-        //bpmClientUtil.closeClient();
-        RestUtil restUtil = new RestUtil(gcfg);
-        HttpReturnStatus result = restUtil.doGet(url, pmap);
-        restUtil.close();
+        
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
+        HttpReturnStatus result = bpmProcessUtil.getVisualModel(processAppId, bpdId, snapshotId);
         
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
@@ -126,7 +101,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
 
     @Transactional
     /**
-     * 根据rest 返回的流程图信息解析为 环节表
+     * 根据RESTful API 返回的流程图信息解析为 环节表
      * @param request
      * @param diagram  图信息
      * @param snapshotId 快照版本

@@ -5,13 +5,13 @@
 		ACTIVITY_ID, ACTIVITY_BPD_ID, ACTIVITY_GROUP_NAME, ACTIVITY_NAME, ACTIVITY_TO, ACTIVITY_TYPE, BPD_ID,
 		BPM_TASK_TYPE, CREATE_TIME, CREATOR, DEEP_LEVEL, EXTERNAL_ID, HANDLE_SIGN_TYPE, LOOP_TYPE, MI_ORDER,
 		NOTE_TYPE, PARENT_ACTIVITY_BPD_ID, PO_ID, SNAPSHOT_ID, SNAPSHOT_UID, STEP_ID, TYPE, UPDATE_BY, UPDATE_TIME,
-		ACTIVITY_ALT_NAME, PRO_APP_ID, SORT_NUM
+		ACTIVITY_ALT_NAME, PRO_APP_ID, SORT_NUM, PARENT_ACTIVITY_ID, SOURCE_ACTIVITY_ID
 	</sql>
 	<sql id="relationColumn">
 	    am.ACTIVITY_ID, am.ACTIVITY_BPD_ID, am.ACTIVITY_GROUP_NAME, am.ACTIVITY_NAME, am.ACTIVITY_TO, am.ACTIVITY_TYPE, am.BPD_ID,
 	    am.BPM_TASK_TYPE, am.CREATE_TIME, am.CREATOR, am.DEEP_LEVEL, am.EXTERNAL_ID, am.HANDLE_SIGN_TYPE, am.LOOP_TYPE, am.MI_ORDER,
 	    am.NOTE_TYPE, am.PARENT_ACTIVITY_BPD_ID, am.PO_ID, am.SNAPSHOT_ID, am.SNAPSHOT_UID, am.STEP_ID, am.TYPE, am.UPDATE_BY, am.UPDATE_TIME,
-	    am.ACTIVITY_ALT_NAME, am.PRO_APP_ID, am.SORT_NUM,
+	    am.ACTIVITY_ALT_NAME, am.PRO_APP_ID, am.SORT_NUM, am.PARENT_ACTIVITY_ID, am.SOURCE_ACTIVITY_ID,
 	    ac.ACTC_UID, ac.ACTIVITY_ID, ac.ACTC_SORT, ac.ACTC_TIME, ac.ACTC_TIMEUNIT, ac.ACTC_ASSIGN_TYPE, ac.ACTC_ASSIGN_VARIABLE,
 	    ac.SIGN_COUNT_VARNAME, ac.ACTC_CAN_EDIT_ATTACH, ac.ACTC_CAN_UPLOAD_ATTACH, ac.ACTC_CAN_DELEGATE,
 	    ac.ACTC_CAN_DELETE_ATTACH, ac.ACTC_CAN_MESSAGE_NOTIFY, ac.ACTC_CAN_MAIL_NOTIFY, ac.ACTC_MAIL_NOTIFY_TEMPLATE,
@@ -51,6 +51,8 @@
 	    <result column="ACTIVITY_ALT_NAME" property="activityAltName" jdbcType="VARCHAR" />
 	    <result column="PRO_APP_ID" property="proAppId" jdbcType="VARCHAR" />
 	    <result column="SORT_NUM" property="sortNum"  />
+	    <result column="PARENT_ACTIVITY_ID" property="parentActivityId"  />
+	    <result column="SOURCE_ACTIVITY_ID" property="sourceActivityId"  />
 	    <association property="dhActivityConf" javaType="com.desmart.desmartbpm.entity.DhActivityConf">
 	        <id property="actcUid" column="actc_Uid"/>
 	            <result column="ACTIVITY_ID" jdbcType="VARCHAR" property="activityId" />
@@ -141,7 +143,9 @@
 			UPDATE_TIME,
 			ACTIVITY_ALT_NAME,
 			PRO_APP_ID,
-			SORT_NUM
+			SORT_NUM,
+			PARENT_ACTIVITY_ID,
+			SOURCE_ACTIVITY_ID
 		)
 		values (
 			#{activityId},
@@ -170,7 +174,9 @@
 			#{updateTime},
 			#{activityAltName},
 			#{proAppId},
-			#{sortNum}
+			#{sortNum},
+			#{parentActivityId},
+			#{sourceActivityId}
 		)
 	</insert>
 
@@ -213,6 +219,12 @@
 			<if test="parentActivityBpdId != null">
 			    and am.parent_activity_bpd_id = #{parentActivityBpdId}
 			</if>
+			<if test="parentActivityId != null">
+                and am.PARENT_ACTIVITY_ID = #{parentActivityId}
+            </if>
+            <if test="sourceActivityId != null">
+                and am.SOURCE_ACTIVITY_ID = #{sourceActivityId}
+            </if>
 		</where>
 	</select>
 
@@ -226,8 +238,7 @@
 	<delete id="batchRemoveByPrimaryKey" parameterType="list">
 		delete from BPM_ACTIVITY_META
 		where activity_id in
-		<foreach collection="list" item="item" index="index" open="("
-			separator="," close=")">
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
 			#{item.activityId}
 		</foreach>
 	</delete>
@@ -313,6 +324,12 @@
 			<if test="sortNum != null">
 			    SORT_NUM = #{sortNum},
 			</if>
+			<if test="parentActivityId != null">
+                PARENT_ACTIVITY_ID = #{parentActivityId},
+            </if>
+            <if test="sourceActivityId != null">
+                SOURCE_ACTIVITY_ID = #{sourceActivityId},
+            </if>
 			UPDATE_TIME = sysdate
 		</set>
 		where ACTIVITY_ID = #{activityId}

@@ -19,6 +19,12 @@
 	        #step_table i {
 	           margin-right: 2px;
 	        }
+	        #chooseableHandleUser_div .error {margin-left:170px;}
+			#chooseableHandleRole_div .error {margin-left:170px;}
+			#chooseableHandleTeam_div .error {margin-left:170px;}
+			#handleUser_div .error {margin-left:170px;}
+			#handleRole_div .error {margin-left:170px;}
+			#handleTeam_div .error {margin-left:170px;}
         </style>
     </head>
     <body>
@@ -111,26 +117,26 @@
                                                             <div class="layui-form-item " id="handleUser_div" style="display:none;">
                                                                 <label class="layui-form-label">人员</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="handleUser" name="handleUser" />
                                                                     <input type="text" name="handleUser_view"  id="handleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="handleUser" name="handleUser" />
                                                             </div>
                                                             <div class="layui-form-item" id="handleRole_div" style="display:none;">
                                                                 <label class="layui-form-label">角色</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="handleRole" name="handleRole"   autocomplete="off" class="layui-input">
                                                                     <input type="text" id="handleRole_view" name="handleRole_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_handle_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="handleRole" name="handleRole"/>
                                                             </div>
                                                             <div class="layui-form-item " id="handleTeam_div" style="display:none;">
                                                                 <label class="layui-form-label">角色组</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="handleTeam" name="handleTeam"  value="" autocomplete="off" class="layui-input">
                                                                     <input type="text" id="handleTeam_view" name="handleTeam_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_handle_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="handleTeam" name="handleTeam" />
                                                             </div>
                                                             <div class="layui-form-item " id="handleField_div" style="display:none;">
                                                                 <label class="layui-form-label">字段名称</label>
@@ -168,26 +174,26 @@
                                                             <div class="layui-form-item " id="chooseableHandleUser_div" style="display:none;">
                                                                 <label class="layui-form-label">人员</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-		                                                           <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
                                                                     <input type="text" name="chooseableHandleUser_view"  id="chooseableHandleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i class="layui-icon choose_user" id="choose_able_handle_user" title="选择人员">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="chooseableHandleUser" name="chooseableHandleUser" />
                                                             </div>
                                                             <div class="layui-form-item" id="chooseableHandleRole_div">
                                                                 <label class="layui-form-label">角色</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="chooseableHandleRole" name="chooseableHandleRole"   autocomplete="off" class="layui-input">
-                                                                    <input type="text" id="chooseableHandleRole_view" name="chooseableHandleRole_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <input type="text"  id="chooseableHandleRole_view" name="chooseableHandleRole_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_able_handle_role" class="layui-icon choose_role" title="选择角色">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="chooseableHandleRole" name="chooseableHandleRole"   autocomplete="off" class="layui-input">
                                                             </div>
                                                             <div class="layui-form-item " id="chooseableHandleTeam_div" style="display:none;">
                                                                 <label class="layui-form-label">角色组</label>
                                                                 <div class="layui-input-block" style="position:relative;">
-                                                                    <input type="hidden" id="chooseableHandleTeam" name="chooseableHandleTeam"  value="" autocomplete="off" class="layui-input">
                                                                     <input type="text" id="chooseableHandleTeam_view" name="chooseableHandleTeam_view"  value="" autocomplete="off" class="layui-input" disabled="disabled">
                                                                     <i id="choose_able_handle_team" class="layui-icon choose_role" title="选择角色组">&#xe612;</i>  
                                                                 </div>
+                                                                <input type="hidden" id="chooseableHandleTeam" name="chooseableHandleTeam" >
                                                             </div>
                                                             <div class="layui-form-item " id="chooseableHandleField_div" style="display:none;">
                                                                 <label class="layui-form-label">字段名称</label>

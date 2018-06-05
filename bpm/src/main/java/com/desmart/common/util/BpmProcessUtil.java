@@ -1,6 +1,7 @@
 package com.desmart.common.util;
 
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-
+import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -312,5 +314,55 @@ public class BpmProcessUtil {
         return resultMap;
 	}
 	
+	public HttpReturnStatus getProcessModel(String proAppId, String bpdId, String snapshotId) {
+	    RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+	    HttpReturnStatus result = null;
+	    try {
+	        String host = bpmGlobalConfig.getBpmServerHost();
+	        host = host.endsWith("/") ? host : host + "/";
+	        String url = host + "rest/bpm/wle/v1/processModel/{0}?{1}";
+	        String params = "processAppId=" + proAppId;
+	        if (StringUtils.isNotBlank(snapshotId)) {
+	            params = params + "&snapshotId=" + snapshotId;
+	        }
+	        url = MessageFormat.format(url, bpdId, params);
+	        Map<String, Object> pmap = new HashMap<>();
+	        result = restUtil.doGet(url, pmap);
+	    } catch (Exception e) {
+	        log.error("获得ProcessModel失败：proAppId: " + proAppId + ", bpdId: " + bpdId + ", snapshotId: " + snapshotId, e);
+	        result = new HttpReturnStatus();
+	        result.setCode(-1);
+	        result.setMsg(e.toString());
+	    } finally {
+	        restUtil.close();
+	    }	    
+	    return result; 
+	}
+	
+	
+	public HttpReturnStatus getVisualModel(String proAppId, String bpdId, String snapshotId) {
+	    RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+        HttpReturnStatus result = null;
+        try {
+            String host = bpmGlobalConfig.getBpmServerHost();
+            host = host.endsWith("/") ? host : host + "/";
+            String url = host + "rest/bpm/wle/v1/visual/processModel/{0}?{1}";
+            String params = "projectId=" + proAppId;
+            if (StringUtils.isNotBlank(snapshotId)) {
+                params = params + "&snapshotId=" + snapshotId;
+            }
+            url = MessageFormat.format(url, bpdId, params);
+            Map<String, Object> pmap = new HashMap<>();
+            result = restUtil.doGet(url, pmap);
+        } catch (Exception e) {
+            log.error("获得VisualModel失败：proAppId: " + proAppId + ", bpdId: " + bpdId + ", snapshotId: " + snapshotId, e);
+            result = new HttpReturnStatus();
+            result.setCode(-1);
+            result.setMsg(e.toString());
+        } finally {
+            restUtil.close();
+        }       
+        return result;
+	}
 	
 }
