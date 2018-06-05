@@ -257,6 +257,7 @@ public class BpmProcessUtil {
 	 * 设置流程实例中的pubBo并移动令牌
 	 * @param insId
 	 * @param pubBo
+	 * @param tokenId  token编号
 	 * @return
 	 * 返回值中包含的key
 	 * "getProcessResult"
@@ -264,7 +265,7 @@ public class BpmProcessUtil {
 	 * "moveTokenResult"
 	 * "errorResult" 当调用失败时有这个key
 	 */
-	public Map<String, HttpReturnStatus> setDataAndMoveToken(Integer insId, String flowObjectId, CommonBusinessObject pubBo) {
+	public Map<String, HttpReturnStatus> setDataAndMoveToken(Integer insId, String flowObjectId, CommonBusinessObject pubBo, String tokenId) {
 	    Map<String, HttpReturnStatus> resultMap = new HashMap<>();
 	    RestUtil restUtil = new RestUtil(bpmGlobalConfig);
 	    
@@ -274,16 +275,6 @@ public class BpmProcessUtil {
 	        HttpReturnStatus getProcessResult = this.getProcessData(insId);
 	        if (!HttpReturnStatusUtil.isErrorResult(getProcessResult)) {
 	            resultMap.put("getProcessResult", getProcessResult);
-	            JSONObject returnJson = new JSONObject(getProcessResult.getMsg());
-	            JSONObject dataJson = returnJson.getJSONObject("data");
-	            JSONObject executionTreeJson = dataJson.getJSONObject("executionTree");
-	            JSONObject rootJson = executionTreeJson.getJSONObject("root");
-	            // 执行树的children
-	            JSONArray childrenJsonArr = rootJson.getJSONArray("children");
-	            // 第一个child
-	            JSONObject firstChildJson = childrenJsonArr.getJSONObject(0);
-	            String tokenId = firstChildJson.getString("tokenId");
-	            
 	            // 先设置数据，再移动token
 	            resultMap = this.setProcessData(insId, pubBo, getProcessResult);
 	            if (HttpReturnStatusUtil.findErrorResult(resultMap).get("errorResult") == null) {
