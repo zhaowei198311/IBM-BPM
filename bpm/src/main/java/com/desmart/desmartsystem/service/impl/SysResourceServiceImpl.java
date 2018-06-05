@@ -72,5 +72,11 @@ public class SysResourceServiceImpl implements SysResourceService {
 		// TODO Auto-generated method stub
 		return sysResourceDao.resourceTree();
 	}
+
+	@Override
+	public List<SysResource> selectResourceByUserId(String userId) {
+		List<SysResource> list = sysResourceDao.selectResourceByUserId(userId);
+		return list;
+	}
 	
 }
