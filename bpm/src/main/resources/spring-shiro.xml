@@ -85,7 +85,7 @@
                 <!-- 触发器管理 -->
                 /trigger/index=perms[trigger:index]
                 <!-- 定时任务管理 -->
-                /quarz/quarzList=perms[quar:quarzList]
+                /quarz/quarzList=perms[quarz:quarzList]
                 <!-- 流程实例管理 -->
                 
                 <!-- 系统管理 -->
