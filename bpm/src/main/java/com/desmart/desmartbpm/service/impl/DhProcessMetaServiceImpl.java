@@ -415,18 +415,19 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         bpmActivityMetaMapper.deleteByIds(bpmActivityMeta);
         
         // 删除流程网关信息
-        List<DhGatewayLine> dhGatewayLineList = dhGatewayLineMapper.listByActivityIds(activityIds);
-        List<String> ruleIds = new ArrayList<>();
-        for (DhGatewayLine dhGatewayLine : dhGatewayLineList) {
-        	if (dhGatewayLine.getRuleId() != null) {
-        		ruleIds.add(dhGatewayLine.getRuleId());
-			}
-		}
-        if (!ruleIds.isEmpty()) {
-        	datRuleMapper.deleteByRuleIds(ruleIds);
-        	datRuleConditionMapper.deleteByRuleIds(ruleIds);
-		}       
         if (!activityIds.isEmpty()) {
+	        List<DhGatewayLine> dhGatewayLineList = dhGatewayLineMapper.listByActivityIds(activityIds);
+	        List<String> ruleIds = new ArrayList<>();
+	        for (DhGatewayLine dhGatewayLine : dhGatewayLineList) {
+	        	if (dhGatewayLine.getRuleId() != null) {
+	        		ruleIds.add(dhGatewayLine.getRuleId());
+				}
+			}
+	        if (!ruleIds.isEmpty()) {
+	        	datRuleMapper.deleteByRuleIds(ruleIds);
+	        	datRuleConditionMapper.deleteByRuleIds(ruleIds);
+			}       
+        
 			dhGatewayLineMapper.deleteByActivityIds(activityIds);
 		}
         
