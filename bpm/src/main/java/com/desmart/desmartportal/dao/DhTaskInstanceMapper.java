@@ -164,4 +164,15 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	Integer alreadyClosedTaskByusrUid(String usrId);
+	
+	/**
+	 * 
+	 * @Title: queryTransferByTypeAndStatus  
+	 * @Description: 查询传阅任务  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return List<DhTaskInstance>  
+	 * @throws
+	 */
+	List<DhTaskInstance> queryTransferByTypeAndStatus(DhTaskInstance dhTaskInstance);
 }

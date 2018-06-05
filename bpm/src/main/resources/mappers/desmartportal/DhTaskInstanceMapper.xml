@@ -744,5 +744,22 @@
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 		</where>
 	</select>
+	<!-- 查询传阅任务 -->
+	<select id="queryTransferByTypeAndStatus" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
+			resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" /> 
+		FROM DH_TASK_INSTANCE
+		<where>
+			TASK_TYPE = 'transfer'
+			<choose>
+				<when test="taskStatus != null and taskStatus != ''">
+					AND TASK_STATUS = '12'
+				</when>
+				<otherwise>
+					AND TASK_STATUS = '32'
+				</otherwise>
+			</choose>
+		</where>
+	</select>
 	
 </mapper>

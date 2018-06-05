@@ -59,8 +59,8 @@
 			<div>
 				<div class="layui-tab">
 				  	<ul class="layui-tab-title">
-					    <li class="layui-this">未读通知</li>
-					    <li>通知查询</li>
+					    <li class="unread">未读通知</li>
+					    <li class="read">通知查询</li>
 				  	</ul>
 				  	<div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
@@ -84,7 +84,7 @@
 								      <th>期限</th>
 								    </tr> 
 								</thead>
-								<tbody>
+								<tbody id="transferBody">
 								    <tr>
 								      <td>1</td>
 								      <td>管理员</td>
@@ -179,19 +179,21 @@
 		<![endif]-->
 	</body>
 	
-</html>
-	
-	<script>
-		layui.use('laydate', function(){
-			var laydate = layui.laydate;
-			  	laydate.render({
-			    elem: '#test1'
-			});
+</html>	
+<script>
+	layui.use('laydate', function(){
+		var laydate = layui.laydate;
+		  	laydate.render({
+		    elem: '#test1'
 		});
-		layui.use('laydate', function(){
-			var laydate = layui.laydate;
-			  	laydate.render({
-			    elem: '#test2'
-			});
+	});
+	layui.use('laydate', function(){
+		var laydate = layui.laydate;
+		  	laydate.render({
+		    elem: '#test2'
 		});
-	</script>
+	});
+	$(function(){
+		
+	});
+</script>
