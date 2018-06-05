@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.desmart.common.constant.ServerResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,5 +24,14 @@ public interface BpmProcessSnapshotService {
 
     /** 获得虚拟节点  */
     JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
+    
+    /**
+     * 将流程中外链的流程环节引入到表中
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse startIncludeCalledProcess(String proAppId, String proUid, String proVerUid);
 
 }

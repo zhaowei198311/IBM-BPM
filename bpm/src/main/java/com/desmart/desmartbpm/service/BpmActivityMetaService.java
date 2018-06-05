@@ -87,4 +87,7 @@ public interface BpmActivityMetaService {
      * @return
      */
     List<BpmActivityMeta> getBpmActivityMetaByActivityType(String activityBpdId, String snapshotId, String bpdId,String activityType);
+    
+    
+
 }

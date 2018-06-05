@@ -45,6 +45,8 @@ public class BpmActivityMeta implements Serializable {
     private String activityAltName;
     private String proAppId;
     private Integer sortNum;  // 记录环节生成的顺序
+    private String parentActivityId; // 父节点的唯一标识
+    private String sourceActivityId; // 源节点的主键
     
     // 不在表中
     private DhActivityConf dhActivityConf;
@@ -70,6 +72,16 @@ public class BpmActivityMeta implements Serializable {
         this.activityBpdId = activityBpdId;
     }
 
+    public String getParentActivityId() {
+        return parentActivityId;
+    }
+
+
+    public void setParentActivityId(String parentActivityId) {
+        this.parentActivityId = parentActivityId;
+    }
+
+
     public String getProAppId() {
         return proAppId;
     }
@@ -77,6 +89,16 @@ public class BpmActivityMeta implements Serializable {
     public void setProAppId(String proAppId) {
         this.proAppId = proAppId;
     }
+
+    public String getSourceActivityId() {
+        return sourceActivityId;
+    }
+
+
+    public void setSourceActivityId(String sourceActivityId) {
+        this.sourceActivityId = sourceActivityId;
+    }
+
 
     public String getActivityId() {
         return activityId;
@@ -344,6 +366,9 @@ public class BpmActivityMeta implements Serializable {
                 + ", activityGroupName=" + activityGroupName + ", poId=" + poId
                 + ", deepLevel=" + deepLevel + ", activityAltName="
                 + activityAltName + ", proAppId=" + proAppId + ", sortNum="
-                + sortNum + ", dhActivityConf=" + dhActivityConf + "]";
+                + sortNum + ", parentActivityId=" + parentActivityId
+                + ", sourceActivityId=" + sourceActivityId + ", dhActivityConf="
+                + dhActivityConf + ", userUid=" + userUid + ", userName="
+                + userName + "]";
     }
 }

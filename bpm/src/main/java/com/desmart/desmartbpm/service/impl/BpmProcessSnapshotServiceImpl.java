@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -146,6 +147,12 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
             }
         }// 至此newActivityMetas中已经是此流程全部的环节
         
+        // 根据原先的parentActivityBpdId 生成出 parentActivityId 
+        Map<String, String> actIdAndActBpdIdMap = new HashMap<>();
+        for (BpmActivityMeta tempItem : newActivityMetas) {
+            actIdAndActBpdIdMap.put("activityBpdId", tempItem.getActivityId());
+        }
+        
         
         // 查询出表中已存在的此版本信息
         BpmActivityMeta metaSelective = new BpmActivityMeta();
@@ -209,7 +216,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         if (delActivityMetas.size() > 0) {
         	bpmActivityMetaMapper.batchRemoveByPrimaryKey(delActivityMetas);
         }
-
+        
+         
+        
 
     }
 
@@ -476,5 +485,52 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcResponsibility(null); // 职责描述
         return conf;
     }
+    
+    public ServerResponse startIncludeCalledProcess(String proAppId, String proUid, String proVerUid) {
+        List<BpmActivityMeta> allExternalMetaList = new ArrayList<>(); // 所有需要被接入的环节
+        
+        BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+        metaSelective.setBpmTaskType("CalledProcess");
+        List<BpmActivityMeta> exteralMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        System.out.println("主流程中存在外接节点个数：" + exteralMetaList.size());
+        
+        for (BpmActivityMeta exteralMeta : exteralMetaList) {
+            Integer sourceDeepLevel = exteralMeta.getDeepLevel(); // 外接节点的层级
+            String sourceBpdId = exteralMeta.getBpdId();          // 最终图的图id
+            String sourceParentActvityBpdId = exteralMeta.getActivityBpdId(); // 父节点activityBpdId
+            String sourceParentActivityId = exteralMeta.getActivityId(); // 父节点activityId
+            allExternalMetaList.addAll(includeCalledProcess(exteralMeta.getBpdId(), exteralMeta, allExternalMetaList));
+        }
+        System.out.println("需要被纳入流程的总环节数：" + allExternalMetaList.size());
+        
+        return null;
+    }
+    
+    /**
+     * 
+     * @param sourceBpdId  最终汇入的流程
+     * @param externalNode  作为子流程标识的节点
+     */
+    private List<BpmActivityMeta> includeCalledProcess(String sourceBpdId, BpmActivityMeta externalNode, List<BpmActivityMeta> allMetaList) {
+        BpmActivityMeta metaSelective = new BpmActivityMeta(externalNode.getProAppId(), externalNode.getExternalId(), externalNode.getSnapshotId());
+        List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        for (BpmActivityMeta item : metaList) {
+            // 将所有的节点拷贝进来， 更新bpdId，更新层级，将原activityId复制到，sourceActivityBpdId， 设置新的主键
+            item.setBpdId(sourceBpdId);
+            item.setDeepLevel(item.getDeepLevel() + externalNode.getDeepLevel() + 1);
+            if (item.getSourceActivityId() == null) {
+                // 如果被纳入的节点的源节点不存在，说明被纳入的这个节点就是源节点，反之保留源节点信息不更新
+                item.setSourceActivityId(item.getActivityId());
+            }
+            // 设置新的主键
+            item.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
+            if ("CalledProcess".equals(item.getBpmTaskType())) {
+                allMetaList.addAll(includeCalledProcess(sourceBpdId, item, allMetaList));
+            }
+        }
+        allMetaList.addAll(metaList);
+        return allMetaList;
+    }
+    
     
 }
