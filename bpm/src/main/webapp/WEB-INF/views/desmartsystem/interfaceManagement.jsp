@@ -13,13 +13,19 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="resources/desmartsystem/styles/css/layui.css" rel="stylesheet" media="all" />
-<link href="resources/desmartsystem/styles/css/my.css" rel="stylesheet" media="all" />
-<link href="resources/desmartsystem/styles/css/modules/laydate/default/laydate.css"
+<link href="resources/desmartsystem/styles/css/layui.css"
+	rel="stylesheet" media="all" />
+<link href="resources/desmartsystem/styles/css/my.css" rel="stylesheet"
+	media="all" />
+<link
+	href="resources/desmartsystem/styles/css/modules/laydate/default/laydate.css"
 	rel="stylesheet" media="all" />
 <title>接口管理</title>
 <style type="text/css">
-	.display_content2{min-height:auto;margin-left: -430px;}
+.display_content2 {
+	min-height: auto;
+	margin-left: -430px;
+}
 </style>
 </head>
 
@@ -35,7 +41,8 @@
 					<select id="interfaceType" name="interfaceType">
 						<option value="">请选择接口类型</option>
 						<option value="webservice">webservice</option>
-						<option value="restapi">restapi</option><option value="rpc">rpc</option>
+						<option value="restapi">restapi</option>
+						<option value="rpc">rpc</option>
 					</select>
 				</div>
 				<div class="layui-col-md2">
@@ -46,7 +53,7 @@
 					</select>
 				</div>
 				<div class="layui-col-md2" style="text-align: right; width: 280px">
-					<button class="layui-btn layui-btn-sm" >查询接口</button>
+					<button class="layui-btn layui-btn-sm">查询接口</button>
 					<button id="addInterfaces"
 						class="layui-btn layui-btn-sm create_btn">新增接口</button>
 				</div>
@@ -85,10 +92,10 @@
 	<div class="display_container3" id="exposed_table_container">
 		<div class="display_content2">
 			<div class="top">接口参数配置</div>
-			<button class="layui-btn layui-btn-sm" style="float: right;margin: 0 15px 15px 0;" onclick="add();">添加</button>
+			<button class="layui-btn layui-btn-sm"
+				style="float: right; margin: 0 15px 15px 0;" onclick="add();">添加</button>
 			<div class="middle1">
-				<table class="layui-table backlog_table"
-					lay-even lay-skin="nob">
+				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 						<col>
 						<col>
@@ -119,79 +126,99 @@
 		</div>
 	</div>
 	<div class="display_container">
-		<div class="display_content2" >
-		
+		<div class="display_content2">
+
 			<div class="top" style="color: red;">新增接口</div>
 			<label class="layui-input-label" style="color: red;">带*为必填参数</label>
 			<form id="form1" class="layui-form" action=""
 				style="margin-top: 30px;">
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">接口名称*:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intTitle" name="intTitle"
-								lay-verify="intTitle" autocomplete="off" class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<div class="layui-inline">
+								<label class="layui-form-label">接口名称*:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="intTitle" name="intTitle"
+										lay-verify="intTitle" autocomplete="off" class="layui-input">
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">接口描述:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intDescription" name="intDescription"
-								lay-verify="intDescription" autocomplete="off"
-								class="layui-input">
-						</div>
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">接口类型*:</label>
-						<div class="layui-input-inline">
-							<select id="intType" name="intType">
-								<option value="">请选择</option>
-								<option value="webservice">webservice</option>
-								<option value="restapi">restapi</option><option value="rpc">rpc</option>
-							</select>
-						</div>
-					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">接口地址*:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intUrl" name="intUrl" lay-verify="intUrl"
-								autocomplete="off" class="layui-input">
+						<div class="layui-col-md6">
+							<div class="layui-inline">
+								<label class="layui-form-label">接口描述:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="intDescription" name="intDescription"
+										lay-verify="intDescription" autocomplete="off"
+										class="layui-input">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">接口方法名:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intCallMethod" name="intCallMethod"
-								lay-verify="intCallMethod" autocomplete="off"
-								class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<label class="layui-form-label">接口类型*:</label>
+							<div class="layui-input-inline">
+								<select id="intType" name="intType">
+									<option value="">请选择</option>
+									<option value="webservice">webservice</option>
+									<option value="restapi">restapi</option>
+									<option value="rpc">rpc</option>
+								</select>
+							</div>
 						</div>
-					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">登录用户名:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intLoginUser" name="intLoginUser"
-								lay-verify="intLoginUser" autocomplete="off" class="layui-input">
+						<div class="layui-col-md6">
+							<div class="layui-inline">
+								<label class="layui-form-label">接口地址*:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="intUrl" name="intUrl"
+										lay-verify="intUrl" autocomplete="off" class="layui-input">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">登陆密码:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="intLoginPwd" name="intLoginPwd"
-								lay-verify="intLoginPwd" autocomplete="off" class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<label class="layui-form-label">接口方法名:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="intCallMethod" name="intCallMethod"
+									lay-verify="intCallMethod" autocomplete="off"
+									class="layui-input">
+							</div>
+						</div>
+						<div class="layui-col-md6">
+							<div class="layui-inline">
+								<label class="layui-form-label">登录用户名:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="intLoginUser" name="intLoginUser"
+										lay-verify="intLoginUser" autocomplete="off"
+										class="layui-input">
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">接口状态*:</label>
-						<div class="layui-input-inline">
-							<input id="intStatus" type="checkbox" name="intStatus"
-								lay-skin="switch" lay-filter="intStatus" lay-text="启用|停用"
-								value="disabled">
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<label class="layui-form-label">登陆密码:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="intLoginPwd" name="intLoginPwd"
+									lay-verify="intLoginPwd" autocomplete="off" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-col-md6">
+							<div class="layui-inline">
+								<label class="layui-form-label">接口状态*:</label>
+								<div class="layui-input-inline">
+									<input id="intStatus" type="checkbox" name="intStatus"
+										lay-skin="switch" lay-filter="intStatus" lay-text="启用|停用"
+										value="disabled">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -202,13 +229,13 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- 新增接口参数表单 -->
 	<div class="display_container4" id="exposed_table2_container">
 		<div class="display_content2" style="overflow: visible;">
 			<div class="top" style="color: red;">绑定接口参数</div>
-			<label style="color: red;">带*的参数为必填</label>
-			<input id="intUid" type="hidden"  />
+			<label style="color: red;">带*的参数为必填</label> <input id="intUid"
+				type="hidden" />
 			<form id="form2" class="layui-form" action=""
 				style="margin-top: 30px;">
 				<div class="layui-form-item">
@@ -220,9 +247,9 @@
 						</div>
 					</div>
 					<div class="layui-inline">
-					<label class="layui-form-label">参数类型*:</label>
+						<label class="layui-form-label">参数类型*:</label>
 						<div class="layui-input-inline">
-							<select name="paraType" class="require" lay-filter="paraType" >
+							<select name="paraType" class="require" lay-filter="paraType">
 								<option value="String">String</option>
 								<option value="Integer">Integer</option>
 								<option value="Double">Double</option>
@@ -233,41 +260,44 @@
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="layui-form-item">
-				    <label class="layui-form-label">参数描述:</label>
-				    <div class="layui-input-block">
-				       <input type="text" id="paraDescription" name="paraDescription"
-								lay-verify="paraDescription"  autocomplete="off"
-								class="layui-input paraDescription" />
-				    </div>
-				  </div>
-				
+					<label class="layui-form-label">参数描述:</label>
+					<div class="layui-input-block">
+						<input type="text" id="paraDescription" name="paraDescription"
+							lay-verify="paraDescription" autocomplete="off"
+							class="layui-input paraDescription" />
+					</div>
+				</div>
+
 				<div class="layui-form-item">
 					<div class="layui-inline">
 						<label class="layui-form-label">参数长度:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraSize" name="paraSize"
-								lay-verify="paraSize"  autocomplete="off" class="layui-input">
+								lay-verify="paraSize" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label">是否必须*:</label>
 						<div class="layui-input-inline">
-							<input id="isMust" type="checkbox" name="isMust" lay-skin="switch" lay-filter="switch4" lay-text="true|false" value="false">
+							<input id="isMust" type="checkbox" name="isMust"
+								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
+								value="false">
 						</div>
 					</div>
 				</div>
-				
+
 				<div class="layui-form-item">
-				  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter();" style="float: right;margin: 0 15px 0;" >
-				    <i class="layui-icon">&#xe654;</i>
-				  </button>
+					<button class="layui-btn layui-btn-sm" type="button"
+						onclick="addArrayParameter();"
+						style="float: right; margin: 0 15px 0;">
+						<i class="layui-icon">&#xe654;</i>
+					</button>
 				</div>
-				
+
 				<div class="middle1">
-					<table class="layui-table backlog_table"
-						lay-even lay-skin="nob">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
 						<colgroup>
 							<col>
 							<col>
@@ -284,11 +314,11 @@
 								<th>是否必须</th>
 							</tr>
 						</thead>
-						<tbody id="childNodeParameterTbody" ></tbody>
+						<tbody id="childNodeParameterTbody"></tbody>
 					</table>
 				</div>
-				
-				
+
+
 			</form>
 			<div class="foot">
 				<button id="sure3_btn" class="layui-btn layui-btn sure3_btn">确定</button>
@@ -325,7 +355,8 @@
 						<div class="layui-input-inline">
 							<select id="intType2" name="intType2">
 								<option value="webservice">webservice</option>
-								<option value="restapi">restapi</option><option value="rpc">rpc</option>
+								<option value="restapi">restapi</option>
+								<option value="rpc">rpc</option>
 							</select>
 						</div>
 					</div>
@@ -364,7 +395,7 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口状态:</label>
 						<div class="layui-input-inline">
-							<input id="intStatus2" type="checkbox"  name="intStatus2"
+							<input id="intStatus2" type="checkbox" name="intStatus2"
 								lay-skin="switch" lay-filter="switch2" lay-text="启用|停用" value="">
 						</div>
 					</div>
@@ -377,11 +408,11 @@
 		</div>
 	</div>
 	<div class="display_container6" id="exposed_table3_container">
-		<div class="display_content2" >
+		<div class="display_content2">
 			<div class="top" style="color: red;">修改接口参数</div>
 			<form class="layui-form" action="" style="margin-top: 30px;">
-				<input id="intUid3" style="display: none;" />
-				<input id="paraUid3" style="display: none;" />
+				<input id="intUid3" style="display: none;" /> <input id="paraUid3"
+					style="display: none;" />
 				<div class="layui-form-item">
 					<!-- <div class="layui-inline">
 						<label class="layui-form-label">参数索引:</label>
@@ -439,7 +470,7 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					
+
 					<div class="layui-inline">
 						<label class="layui-form-label">多值分隔符:</label>
 						<div class="layui-input-inline">
@@ -450,7 +481,7 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					
+
 					<div class="layui-inline">
 						<label class="layui-form-label">是否必须:</label>
 						<div class="layui-input-inline">
@@ -476,22 +507,25 @@
 
 
 <!-- 新增array接口参数表单 -->
-<div class="display_container4" id="chilNodeParameterContainer" >
-	<div class="display_content2"  style="overflow: visible;" >
+<div class="display_container4" id="chilNodeParameterContainer">
+	<div class="display_content2" style="overflow: visible;">
 		<div class="top" style="color: red;">绑定接口参数</div>
 		<label style="color: red;">带*的参数为必填</label>
-		<form  class="layui-form" id="chilNodeParameterForm" action="javascript:void(0);" style="margin-top: 30px;">
+		<form class="layui-form" id="chilNodeParameterForm"
+			action="javascript:void(0);" style="margin-top: 30px;">
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">参数名称*:</label>
 					<div class="layui-input-inline">
-						<input type="text" name="paraName" lay-verify="paraName" autocomplete="off" class="layui-input">
+						<input type="text" name="paraName" lay-verify="paraName"
+							autocomplete="off" class="layui-input">
 					</div>
 				</div>
 				<div class="layui-inline">
-				<label class="layui-form-label">参数类型*:</label>
+					<label class="layui-form-label">参数类型*:</label>
 					<div class="layui-input-inline">
-						<select name="paraType" class="require" lay-filter="childNodeParaType" >
+						<select name="paraType" class="require"
+							lay-filter="childNodeParaType">
 							<option value="String">String</option>
 							<option value="Integer">Integer</option>
 							<option value="Double">Double</option>
@@ -501,34 +535,37 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="layui-form-item">
-			    <label class="layui-form-label">参数描述:</label>
-			    <div class="layui-input-block">
-			       <input type="text"  name="paraDescription"
-							lay-verify="paraDescription"  autocomplete="off"
-							class="layui-input paraDescription" />
-			    </div>
-			  </div>
+				<label class="layui-form-label">参数描述:</label>
+				<div class="layui-input-block">
+					<input type="text" name="paraDescription"
+						lay-verify="paraDescription" autocomplete="off"
+						class="layui-input paraDescription" />
+				</div>
+			</div>
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
-						<input type="text" name="paraSize" lay-verify="paraSize"  autocomplete="off" class="layui-input">
+						<input type="text" name="paraSize" lay-verify="paraSize"
+							autocomplete="off" class="layui-input">
 					</div>
 				</div>
 				<div class="layui-inline">
 					<label class="layui-form-label">是否必须*:</label>
 					<div class="layui-input-inline">
-						<input  type="checkbox" name="isMust"
-							lay-skin="switch" lay-filter="isMustCheck" lay-text="true|false" >
+						<input type="checkbox" name="isMust" lay-skin="switch"
+							lay-filter="isMustCheck" lay-text="true|false">
 					</div>
 				</div>
 			</div>
-		<div class="foot">
-			<button  class="layui-btn layui-btn" lay-submit="" lay-filter="confimAddChildNodeParameter" >确定</button>
-			<button  class="layui-btn layui-btn"  onclick="closePopup('chilNodeParameterContainer','id');" >取消</button>
-		</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn" lay-submit=""
+					lay-filter="confimAddChildNodeParameter">确定</button>
+				<button class="layui-btn layui-btn"
+					onclick="closePopup('chilNodeParameterContainer','id');">取消</button>
+			</div>
 		</form>
 	</div>
 </div>
@@ -541,15 +578,20 @@
 
 
 
-</html> 
-<script type="text/javascript" src="resources/desmartsystem/scripts/js/jquery-3.3.1.js"
-	charset="utf-8"></script>
-<script type="text/javascript" src="resources/desmartsystem/scripts/js/layui.all.js"
+</html>
+<script type="text/javascript"
+	src="resources/desmartsystem/scripts/js/jquery-3.3.1.js"
 	charset="utf-8"></script>
 <script type="text/javascript"
-	src="resources/desmartsystem/scripts/js/validate_util/jquery.validate.min.js" charset="utf-8"></script>
+	src="resources/desmartsystem/scripts/js/layui.all.js" charset="utf-8"></script>
 <script type="text/javascript"
-	src="resources/desmartsystem/scripts/js/validate_util/dwz.regional.zh_CN.js" charset="utf-8"></script>
-<script type="text/javascript" src="resources/desmartsystem/scripts/js/myjs/interface.js"></script>	
+	src="resources/desmartsystem/scripts/js/validate_util/jquery.validate.min.js"
+	charset="utf-8"></script>
+<script type="text/javascript"
+	src="resources/desmartsystem/scripts/js/validate_util/dwz.regional.zh_CN.js"
+	charset="utf-8"></script>
+<script type="text/javascript"
+	src="resources/desmartsystem/scripts/js/myjs/interface.js"></script>
 
-<script type="text/javascript" src="resources/desmartsystem/scripts/js/myjs/interfaceParameter.js"></script>
+<script type="text/javascript"
+	src="resources/desmartsystem/scripts/js/myjs/interfaceParameter.js"></script>

@@ -12,12 +12,15 @@
 		<result column="INT_LOGIN_USER"  			property="intLoginUser"/>
 		<result column="INT_LOGIN_PWD"  			property="intLoginPwd"/>
 		<result column="INT_STATUS"  			property="intStatus"/>
+		<result column="CREATE_DATE"  			property="createDate"/>
+		<result column="UPDATE_DATE"  			property="updateDate"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		INT_UID, INT_TITLE, INT_DESCRIPTION,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
+		CREATE_DATE, UPDATE_DATE
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
@@ -29,7 +32,7 @@
 	<insert id="save" parameterType="com.desmart.desmartsystem.entity.DhInterface">
 		INSERT INTO
 		DH_INTERFACE
-		(<include refid="Base_Column_List"/>,CREATE_DATE,UPDATE_DATE) 
+		(<include refid="Base_Column_List"/>) 
 		VALUES
 		(
 			#{intUid},
@@ -100,7 +103,7 @@
 			</if>
 			
 			<if test="updateDate != null and updateDate!='' ">
-				UPDATE_DATE = #{sysdate}
+				UPDATE_DATE = #{updateDate}
 			</if>
 			
 			<where>

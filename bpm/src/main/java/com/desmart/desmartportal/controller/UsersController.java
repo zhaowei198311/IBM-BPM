@@ -23,11 +23,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.UserProcessService;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 
 /**
@@ -50,6 +53,9 @@ public class UsersController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
 	
 	private Logger log = Logger.getLogger(UsersController.class);
 	
@@ -110,5 +116,12 @@ public class UsersController {
 		}
 		return dhTaskInstanceService.selectByusrUidFinsh(userId);
 	}
-			
+	
+	@RequestMapping(value = "/test")
+	@ResponseBody
+	public void rejectTest() {
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		bpmProcessUtil.rejectProcess(1276, "bpdid:0907274553f39261:351615d5:163cd8dfd67:-7ff1", "deadmin");
+	}		
 }

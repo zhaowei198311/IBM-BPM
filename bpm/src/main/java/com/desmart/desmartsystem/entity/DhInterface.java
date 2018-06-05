@@ -1,5 +1,7 @@
 package com.desmart.desmartsystem.entity;
 
+import java.util.Date;
+
 /**
  * 
 * <p>Title: DhInterface</p>  
@@ -27,9 +29,9 @@ public class DhInterface {
 	
 	private String intStatus; // 接口状态
 	
-	private String updateDate;//修改时间
+	private Date updateDate;//修改时间
 	
-	private String createDate; // 创建时间
+	private Date createDate; // 创建时间
 
 	/**
 	 * @return the intUid
@@ -160,29 +162,33 @@ public class DhInterface {
 	/**
 	 * @return the updateDate
 	 */
-	public String getUpdateDate() {
+	public Date getUpdateDate() {
 		return updateDate;
 	}
 
 	/**
 	 * @param updateDate the updateDate to set
 	 */
-	public void setUpdateDate(String updateDate) {
+	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
 
 	/**
 	 * @return the createDate
 	 */
-	public String getCreateDate() {
+	public Date getCreateDate() {
 		return createDate;
 	}
 
 	/**
 	 * @param createDate the createDate to set
 	 */
-	public void setCreateDate(String createDate) {
+	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+	
+	public DhInterface() {
+		
 	}
 	
 	
@@ -200,8 +206,8 @@ public class DhInterface {
 	 * @param createDate
 	 */
 	public DhInterface(String intUid, String intTitle, String intDescription, String intType, String intUrl,
-			String intCallMethod, String intLoginUser, String intLoginPwd, String intStatus, String updateDate,
-			String createDate) {
+			String intCallMethod, String intLoginUser, String intLoginPwd, String intStatus, Date updateDate,
+			Date createDate) {
 		super();
 		this.intUid = intUid;
 		this.intTitle = intTitle;
