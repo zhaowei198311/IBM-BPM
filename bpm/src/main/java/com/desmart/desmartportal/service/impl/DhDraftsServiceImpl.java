@@ -110,7 +110,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 			return dhDraftsMapper.updateByInsUid(drafts);
 		}else {
 			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-			if(creator==null) {
+			if(creator!=null) {
 			drafts.setDfsCreator(creator);
 			drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
 			return dhDraftsMapper.save(drafts);
