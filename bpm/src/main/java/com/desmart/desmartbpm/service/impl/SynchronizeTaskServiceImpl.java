@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ import com.desmart.desmartportal.service.DhAgentService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.SysHolidayService;
-import com.desmart.desmartsystem.service.SendingEmailService;
+import com.desmart.desmartsystem.service.SendEmailService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -66,7 +65,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Autowired
     private DhRouteService dhRouteService;
     @Autowired
-    private SendingEmailService sendingEmailService;
+    private SendEmailService sendEmailService;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     
@@ -133,7 +132,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 			for (String to : toList) {
 				String subject = "邮件通知";
 				String body = "邮件通知";
-				sendingEmailService.sendingEmail(to, subject, body);
+				sendEmailService.sendingEmail(to, subject, body);
 			}
 		}
 	}
