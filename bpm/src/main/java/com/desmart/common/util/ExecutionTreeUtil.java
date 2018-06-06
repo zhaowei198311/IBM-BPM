@@ -1,6 +1,8 @@
 package com.desmart.common.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
@@ -12,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class ExecutionTreeUtil {
 	
+	static ArrayList<Object> preTokenIdList = new ArrayList<>();
     /**
      * 从流程详细信息中获得指定任务的tokenId和父tokenId
      * @param taskId 任务ID
@@ -19,40 +22,51 @@ public class ExecutionTreeUtil {
      * @return
      */
 	public static final Map<String, Object> queryTokenId(int taskId, JSONObject jsonObject){
-    	Map<String, Object> map = new HashMap<>();
-    	String datas = "";
-    	String [] dataList = null;
     	// 解析jsonObject
-    	JSONObject data = jsonObject.getJSONObject("data");
-    	JSONObject executionTree = data.getJSONObject("executionTree");
-    	JSONObject root = executionTree.getJSONObject("root");
-    	// 父children
-    	JSONArray children = root.getJSONArray("children");
-    	for (int i = 0; i < children.size(); i++) {
-			JSONObject childrenData= (JSONObject) children.get(i);
-			// 
-			String checkData = childrenData.toString().trim();
-			if (checkData.contains("\"" + taskId + "\"")) {
-				// taskId的标记位
-				int taskIdSign = checkData.indexOf("\"" + taskId + "\"");
-				// 以taskId的下标为末尾截取checkData
-				String fristSubstring = checkData.substring(0, taskIdSign);
-				// 找到tokenId最后一次出现的位置
-				int childTokenkId = fristSubstring.lastIndexOf("\"tokenId\"");
-				datas = fristSubstring.substring(childTokenkId, fristSubstring.length());
-				dataList = datas.split("\"");
-				// tokenId
-				map.put("tokenId", dataList[3]);
-				// parentTokenId
-				String secondSubstring = fristSubstring.substring(0, childTokenkId);
-				// 找到tokenId最后一次出现的位置
-				int parentTokenkId = secondSubstring.lastIndexOf("\"tokenId\"");
-				datas = secondSubstring.substring(parentTokenkId, secondSubstring.length());
-				dataList = datas.split("\"");
-				map.put("parentTokenId", dataList[3]);
-				break;
-			}
-		}
+    	JSONObject data = jsonObject.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
+    	JSONArray childrenList = data.getJSONArray("children");
+    	HashMap<String, Object> map = util(childrenList, taskId);
+    	System.out.println("map:" + map);
     	return map;
     }
+	
+	public static HashMap util(JSONArray jsonArray, int taskId) {
+		
+		HashMap<Object, Object> hashMap = new HashMap<>();
+		JSONObject result;
+		for (int i = 0; i < jsonArray.size(); i++) {
+		//for (Iterator var = jsonArray.iterator(); var.hasNext();) {
+			result = (JSONObject) jsonArray.get(i);
+			preTokenIdList.add(result.get("tokenId"));
+			if(null != result.get("createdTaskIDs")) {
+				JSONArray jsonArray2 = result.getJSONArray("createdTaskIDs");
+				for (Iterator iterator = jsonArray2.iterator(); iterator.hasNext();) {
+					String object = (String) iterator.next();
+					if((taskId+"").equals(object)) {
+						hashMap.put("tokenId", result.get("tokenId"));
+						hashMap.put("parentTokenId", null);
+						if(preTokenIdList.size() > 0) {
+							//Collections.reverse(preTokenIdList);
+							for (int j = 0; j < preTokenIdList.size(); j++) {
+								if(preTokenIdList.get(j) != null) {
+									hashMap.put("parentTokenId", preTokenIdList.get(j));
+									break;
+								}
+							}
+						}
+						return hashMap;
+					}
+				}
+			}
+			JSONArray jsonArray2 = result.getJSONArray("children");
+			if(null != jsonArray2) {
+				hashMap = util(jsonArray2, taskId);
+			}
+			if(hashMap != null ) {
+				return hashMap;
+			}
+		}
+		return null;
+	}
+	
 }
