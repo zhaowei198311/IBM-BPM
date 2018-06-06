@@ -261,13 +261,13 @@ function loadFileList(){
 		      
 			  info += "<button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
 		     
-		      if(taskStatus!="32"){
+		      if(taskStatus!="32"&&taskStatus!="-2"){
 		    	  info += "<button class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>更新附件</button>"
 		      }
 			
 		      info +="<button onclick = 'showHistoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm layui-history-file' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"'>查看历史版本</button>"
 			
-		      if(taskStatus!="32"){
+		      if(taskStatus!="32"&&taskStatus!="-2"){
 		    	  info += "<button onclick='deleteAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
 		      }
 		      info += "</td></tr>"; 
