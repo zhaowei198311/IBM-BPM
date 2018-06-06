@@ -169,6 +169,18 @@ public class MenusController {
 	        }
 			return mv;
 		}
+		// 等待加签 跳转 已办详情页面
+		if(DhTaskInstance.STATUS_WAIT_ADD.equals(checkDhTaskInstance.getTaskStatus())) {
+			ModelAndView mv = new ModelAndView("desmartportal/finished_detail");
+			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
+			if (serverResponse.isSuccess()) {
+	            mv.addAllObjects(serverResponse.getData());
+	        } else {
+	            mv.setViewName("/desmartbpm/error");
+	            mv.addObject("errorMessage", serverResponse.getMsg());
+	        }
+			return mv;
+		}
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {
