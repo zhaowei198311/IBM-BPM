@@ -96,7 +96,7 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	$(function(){
-		var json = '{"choose_user_xD7n":{"value":"苏思佳-00055685;胡笛-00054290;王安永-00056430;"}}';
+		var json = '{"choose_user_xD7n":{"value":"00055685;00054290;00056430;","description":"苏思佳;胡笛;王安永;"}}';
 		common.giveFormSetValue(json);
 		
 		var perJson = '{"choose_user_xD7n":{"edit":"no"}}';
