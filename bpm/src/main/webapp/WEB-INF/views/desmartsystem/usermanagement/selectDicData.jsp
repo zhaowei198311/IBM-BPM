@@ -14,7 +14,10 @@
   		<title>选择数据字典</title>
   		<%@ include file="common/common.jsp" %>
   		<style>
-			
+			#dicData{
+				height: 300px;
+				overflow-y: auto; 
+			}
 		</style>
 	</head>
 	<body>
@@ -32,7 +35,7 @@
 					</div>
 				</div>						
 			</div>
-			<div>				
+			<div id="dicData">				
 				<table class="layui-table" lay-even lay-skin="nob">
 					<colgroup>
 					    <col/>

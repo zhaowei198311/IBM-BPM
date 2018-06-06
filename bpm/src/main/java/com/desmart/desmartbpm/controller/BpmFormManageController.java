@@ -196,7 +196,6 @@ public class BpmFormManageController {
 	public String saveFormFile(String webpage,String filename) {
         InputStream input = new ByteArrayInputStream(webpage.getBytes());
         try {
-        	input.close();
         	SFTPUtil sftp = new SFTPUtil();
         	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), "/form", filename, input);
 		} catch (Exception e) {
