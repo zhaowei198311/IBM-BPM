@@ -797,7 +797,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    }
 	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
-	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
+	      if(!DhTaskInstance.STATUS_WAIT_ADD.equals(dhTaskInstance.getTaskStatus())) {
+	    	  return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");  
+	      }
 	    }
 	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
 	    if (dhprocessInstance == null) {
