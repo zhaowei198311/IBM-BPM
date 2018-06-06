@@ -163,7 +163,7 @@ var common = {
 							var userName = userNameArr[j];
 							var userId = userIdArr[j];
 							if(userName!="" && userName!=null && userId!="" && userId!=null){
-								value += userName+"_"+userId+";";
+								value += userName+"-"+userId+";";
 							}
 						}
 						textJson = "\"" + name + "\":{\"value\":\""
@@ -279,8 +279,8 @@ var common = {
 								for(var j=0;j<userArr.length;j++){
 									var user = userArr[j];
 									if(user!=null && user!=""){
-										userNameStr += user.split("_")[0]+";";
-										userIdStr += user.split("_")[1]+";";
+										userNameStr += user.split("-")[0]+";";
+										userIdStr += user.split("-")[1]+";";
 									}
 								}
 								$("[name='"+name+"']").val(userNameStr);
