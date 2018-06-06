@@ -612,6 +612,8 @@ $(document).ready(function () {
                     		console.log($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0);
 	                    	if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0){
 	                        	inputId = "choose_user_" + inputId;
+	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_value']").length > 0){
+	                        	inputId = "choose_value_" + inputId;
 	                        }else{
 	                            inputId = "text_" + inputId;
 	                        }

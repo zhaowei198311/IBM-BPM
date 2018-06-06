@@ -268,7 +268,9 @@ function showSelectModal(obj) {
         $(".hand_act").css("display", "none");
         $(".database").css("display", "block");
         $("input[value='数据字典拉取']").prop("checked", true);
-        $(".database select").val(databaseType);
+        $(".database input[type='hidden']").val(databaseType);
+        var dictionaryName = getDictionaryByDicUid(databaseType);
+        $(".database input[type='text']").val(dictionaryName);
     } else {
         $(".hand_act").css("display", "block");
         $(".database").css("display", "none");
@@ -616,6 +618,23 @@ function showDataTableModal(obj) {
     $("#data-table-number").val(thNum);
 }
 
+//根据数据字典id获得数据字典名称
+function getDictionaryByDicUid(dicUid){
+	var dicName = "";
+	$.ajax({
+		url:common.getPath()+"/sysDictionary/getSysDictionaryById",
+		method:"post",
+		async:false,
+		data:{
+			dicUid:dicUid
+		},
+		success:function(result){
+			dicName = result.dicName;
+		}
+	});
+	return dicName;
+}
+
 //选人组件
 function showChooseUserModal(obj){
 	$("#chooesUserModal").modal("show");
@@ -639,6 +658,35 @@ function showChooseUserModal(obj){
     $("#choose-user-id").val(id);
     $("#choose-user-width").val(textCol);
     $("#choose-user-label-width").val(textLabelCol);
+}
+
+//弹框选值
+function showChooseValueModal(obj){
+	$("#chooesValueModal").modal("show");
+	
+    view = $(obj).parent().next().next();
+    var label = view.find("label").text();
+    var subObj = view.find("div[title='choose_value']");
+    var id = subObj.attr("id");
+    var name = subObj.attr("name");
+    var databaseType = subObj.attr("database_type");
+    var databaseName = getDictionaryByDicUid(databaseType);
+    var textWidth = subObj.width();
+    var textLabelWidth = view.find(".labelDiv").width();
+    oldName = name;
+    var rowWidth = $(".demo").width() - 5;
+    var colWidth = rowWidth / 12;
+
+    var textCol = subObj.attr("col");
+    var textLabelCol = view.find(".labelDiv").attr("col");
+    $("#choose-value-label").val(label);
+    $("#choose-value-name").val(name);
+    $("#choose-value-name").onlyNumAlpha(); //只能输入英文
+    $("#choose-value-id").val(id);
+    $("#choose-value-width").val(textCol);
+    $("#data_type_view").val(databaseName);
+    $("#data_type").val(databaseType);
+    $("#choose-value-label-width").val(textLabelCol);
 }
 
 var nameArr = new Array();
@@ -670,23 +718,9 @@ function dataSourceClick(obj) {
 }
 
 //下拉列表的数据类型选择
-function selectData() {
-    var selectObj = $(".database").find("select");
-    selectObj.children().remove();
-    $.ajax({
-        url: common.getPath() + "/sysDictionary/listAllOnSysDictionary",
-        method: "post",
-        success: function (result) {
-            if (result.status == 0) {
-                var dicList = result.data;
-                for (var i = 0; i < dicList.length; i++) {
-                    var dicObj = dicList[i];
-                    var optionObj = '<option value="' + dicObj.dicUid + '">' + dicObj.dicName + '</option>';
-                    selectObj.append(optionObj);
-                }
-            }
-        }
-    });
+function selectData(obj) {
+	var elementId = $(obj).prev().prop("id");
+	common.chooseDictionary(elementId);
 }
 
 //日期控件图标的宽度
@@ -789,9 +823,13 @@ $(function () {
         } else {
             if ($(inputDiv.children()[0]).prop("tagName") == "SELECT") {
                 $(inputDiv.children()[0]).css("width", colNum * colWidth - 3);
-            } else if ($(inputDiv.children()[0]).prop("type") == "button") {
+            }else if($(inputDiv.children()[0]).prop("type") == "button") {
                 continue;
-            } else {
+            }else if($(inputDiv.children()[0]).attr("title") == "choose_user"){
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            }else if($(inputDiv.children()[0]).attr("title") == "choose_value"){
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            }else {
                 $(inputDiv.children()[0]).css("width", colNum * colWidth - 18);
             }
         }
@@ -811,9 +849,6 @@ $(function () {
         }
         nameArr.splice($.inArray(removeName, nameArr), 1);
     })
-
-    //给下拉框数据来源赋值
-    selectData();
 
     //保存单行文本框的属性编辑
     $("#save-text-content").click(function (e) {
@@ -1126,7 +1161,7 @@ $(function () {
             });
 
             if (dataSource == "数据字典拉取") {
-                var databaseType = $(".database select").val();
+                var databaseType = $(".database input[type='hidden']").val();
                 selectObj.attr("database_type", databaseType);
             }
 
@@ -1436,6 +1471,45 @@ $(function () {
             
             $("#choose-user-warn").modal('hide');
             $("#chooesUserModal").modal("hide");
+        }
+    });
+    
+    //保存弹框选值的属性编辑
+    $("#save-choose-value-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#choose-value-id").val();
+        var name = $("#choose-value-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#choose-value-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#choose-value-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#choose-value-warn").modal('show');
+        } else {
+            var label = $("#choose-value-label").val();
+
+            var textWidth = $("#choose-value-width").val() * colWidth;
+            var textLabelWidth = $("#choose-value-label-width").val() * colWidth;
+            var dataType = $("#data_type").val();
+            
+            view.find("label").text(label);
+            var subObj = view.find("div[title='choose_value']");
+            subObj.attr({
+                "id": id,
+                "name": name,
+                "database_type":dataType
+            });
+            
+            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":name,"database_type":dataType});
+            subObj.find("input[class='value_id']").attr("id",id+"_hide");
+            subObj.find("input[class='value_code']").attr("id",id+"_hide_code");
+
+            view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#choose-value-label-width").val());
+            subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-value-width").val());
+            subObj.css("width", textWidth - 18).attr("col", $("#choose-value-width").val());
+            subObj.find("input[type='text']").css("width", textWidth - 60);
+            
+            $("#choose-value-warn").modal('hide');
+            $("#chooesValueModal").modal("hide");
         }
     });
 
