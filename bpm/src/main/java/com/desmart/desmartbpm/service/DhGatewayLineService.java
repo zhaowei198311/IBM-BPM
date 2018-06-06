@@ -17,7 +17,7 @@ public interface DhGatewayLineService {
     ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid);
     
     /**
-     * 判断流程定义是否需要生成网关连接线
+     * 判断是否需要为流程定义生成网关连接线记录
      * @param proAppId
      * @param proUid
      * @param proVerUid

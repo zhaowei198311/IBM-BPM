@@ -86,28 +86,45 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
         BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         metaSelective.setActivityType("gateway");
         List<BpmActivityMeta> gatewayList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
-        if (gatewayList.size() > 0) {
-            BpmActivityMeta firstGateway = gatewayList.get(0);
-            int count = dhGatewayLineMapper.countByActivityId(firstGateway.getActivityId());
-            return count == 0;
-        } else {
+        if (gatewayList.size() == 0) {
+            // 如果图中没有网关，返回不需要生成网关
             return false;
         }
+        
+        BpmActivityMeta firstGatewayMeta = null;
+        for (BpmActivityMeta gatewayMeta : gatewayList) {
+            if (gatewayMeta.getActivityId().equals(gatewayMeta.getSourceActivityId())) {
+                firstGatewayMeta = gatewayMeta;
+                break;
+            }
+        }
+        if (firstGatewayMeta == null) {
+            return false;
+        }
+        // 查看这个环节有没有配置
+        int count = dhGatewayLineMapper.countByActivityId(firstGatewayMeta.getActivityId());
+        // 如果没配置就返回true
+        return count == 0;
     }
     
     
     /**
-     * 收集生成网关连接线需要的数据，Map中的值： visualModel（JSONObject）   byteData（字节数组）
+     * 收集生成网关连接线需要的数据，Map中的值： 
      * @param proAppId
      * @param proUid
      * @param proVerUid
-     * @return
+     * @return 
+     *  一个map集合，其中的key  
+     *  1）visualModel（JSONObject）   
+     *  2）byteData（字节数组）
      */
     private List<Map<String, Object>> prepareData(String proAppId, String proUid, String proVerUid) {
+        List<Map<String, Object>> dataList = new ArrayList<>();  // 用来返回的数据
+        
         List<JSONObject> visualModelList = new ArrayList<JSONObject>();
         getVisualModel(visualModelList, proAppId, proUid, proVerUid);
+        // 调用结束，visualModelLsit中是主流程和其内所有内连子流程的VisualModel
         System.out.println(visualModelList.size());
-        List<Map<String, Object>> dataList = new ArrayList<>();
         for (JSONObject visualModel : visualModelList) {
             String poId = visualModel.getString("poId");
             String versionId = visualModel.getString("poVersionId");
@@ -237,6 +254,8 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     
     
     /**
+     * 从主流程出发，得到主流程和它包含的所有子流程的VisualModel
+     * 
      * 获得visualModel "data" 节点下的对象
      * @param visualModelList
      * @param proAppId

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -331,6 +332,16 @@ public class DatRuleServiceImpl implements DatRuleService {
 
 		List<BpmActivityMeta> list = 
 				bpmActivityMetaServiceImpl.getBpmActivityMetaByActivityType(proAppId, snapshotId, bpdId, activityType);
+		
+		// 过滤掉外链流程的网关节点
+		Iterator<BpmActivityMeta> iterator = list.iterator();
+		while(iterator.hasNext()) {
+		    BpmActivityMeta meta = iterator.next();
+		    if (!meta.getActivityId().equals(meta.getSourceActivityId())) {
+		        iterator.remove();
+		    }
+		}
+		
 		List<Map<String, Object>> rightDetailsList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(list!=null&&list.size()>0) {
