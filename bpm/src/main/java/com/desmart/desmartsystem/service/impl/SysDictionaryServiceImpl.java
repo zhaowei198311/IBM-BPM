@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartsystem.dao.SysDictionaryMapper;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
@@ -14,6 +15,7 @@ import com.desmart.desmartsystem.service.SysDictionaryService;
 import com.desmart.desmartsystem.util.BeanUtil;
 import com.desmart.desmartsystem.util.PagedResult;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 /**
  * 
  * @ClassName: SysDictionaryServiceImpl  
@@ -82,8 +84,8 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 			return BeanUtil.toPagedResult(sysDictionaryMapper.selectSysDictionaryDataListById(sysDictionaryData));
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -124,15 +126,30 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 	}
 
 	@Override
-	public ServerResponse listAllOnSysDictitonary() {
-		List<SysDictionary> dicList = sysDictionaryMapper.listAllOnSysDictitonary();
+	public ServerResponse listAllOnSysDictitonary(String dicName) {
+		List<SysDictionary> dicList = sysDictionaryMapper.listAllOnSysDictitonary(dicName);
 		return ServerResponse.createBySuccess(dicList);
 	}
 
 	@Override
-	public ServerResponse listOnDicDataBydicUid(String dicUid) {
-		List<SysDictionaryData> dicDataList = sysDictionaryMapper.listOnDicDataBydicUid(dicUid);
+	public ServerResponse listOnDicDataBydicUid(String dicUid,String dicDataName) {
+		List<SysDictionaryData> dicDataList = sysDictionaryMapper.listOnDicDataBydicUid(dicUid,dicDataName);
 		return ServerResponse.createBySuccess(dicDataList);
 	}
-	
+
+	@Override
+	public ServerResponse getOnSysDictionaryList(Integer pageNum,Integer pageSize,String dicName) {
+		PageHelper.startPage(pageNum,pageSize);
+		List<SysDictionary> dicList = sysDictionaryMapper.listAllOnSysDictitonary(dicName);
+		PageInfo<List<SysDictionary>> pageInfo = new PageInfo(dicList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public ServerResponse getOnSysDictionaryDataList(Integer pageNum,Integer pageSize,String dicUid) {
+		PageHelper.startPage(pageNum,pageSize);
+		List<SysDictionaryData> dicList = sysDictionaryMapper.listOnDicDataBydicUid(dicUid,null);
+		PageInfo<List<SysDictionaryData>> pageInfo = new PageInfo(dicList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
 }

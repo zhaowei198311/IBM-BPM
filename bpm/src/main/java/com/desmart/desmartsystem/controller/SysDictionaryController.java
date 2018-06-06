@@ -3,7 +3,9 @@ package com.desmart.desmartsystem.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDictionary;
@@ -41,6 +43,21 @@ public class SysDictionaryController {
 	@RequestMapping(value = "/dictCdList")
 	public String dictCdList(){		
 		return "desmartsystem/usermanagement/dictCdList";
+	}
+	
+	@RequestMapping(value = "/selectDictionary")
+	public ModelAndView toSelectDictionary(String elementId) {
+		ModelAndView mv = new ModelAndView("desmartsystem/usermanagement/selectDictionary");
+		mv.addObject("elementId",elementId);
+		return mv;
+	}
+	
+	@RequestMapping(value = "/selectDicData")
+	public ModelAndView toSelectDicData(String elementId,String dicUid) {
+		ModelAndView mv = new ModelAndView("desmartsystem/usermanagement/selectDicData");
+		mv.addObject("elementId",elementId);
+		mv.addObject("dicUid",dicUid);
+		return mv;
 	}
 	
 	/**
@@ -269,8 +286,18 @@ public class SysDictionaryController {
 	 */
 	@RequestMapping(value = "/listAllOnSysDictionary")
 	@ResponseBody
-	public ServerResponse listAllOnSysDictionary() {
-		return sysDictionaryService.listAllOnSysDictitonary();
+	public ServerResponse listAllOnSysDictionary(String dicName) {
+		return sysDictionaryService.listAllOnSysDictitonary(dicName);
+	}
+	
+	/**
+	 * 根据分类名模糊查询所有启用的数据字典分类(分页)
+	 */
+	@RequestMapping(value = "/getOnSysDictionaryList")
+	@ResponseBody
+	public ServerResponse getOnSysDictionaryList(@RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
+			@RequestParam(value="pageSize",defaultValue="10") Integer pageSize,String dicName) {
+		return sysDictionaryService.getOnSysDictionaryList(pageNum,pageSize,dicName);
 	}
 	
 	/**
@@ -278,7 +305,17 @@ public class SysDictionaryController {
 	 */
 	@RequestMapping(value = "/listOnDicDataBydicUid")
 	@ResponseBody
-	public ServerResponse listOnDicDataBydicUid(String dicUid) {
-		return sysDictionaryService.listOnDicDataBydicUid(dicUid);
+	public ServerResponse listOnDicDataBydicUid(String dicUid,String dicDataName) {
+		return sysDictionaryService.listOnDicDataBydicUid(dicUid,dicDataName);
+	}
+	
+	/**
+	 * 根据数据字典id获得启用的数据字典详细信息(分页)
+	 */
+	@RequestMapping(value = "/getOnSysDictionaryDataList")
+	@ResponseBody
+	public ServerResponse getOnSysDictionaryDataList(@RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
+			@RequestParam(value="pageSize",defaultValue="10") Integer pageSize,String dicUid) {
+		return sysDictionaryService.getOnSysDictionaryDataList(pageNum,pageSize,dicUid);
 	}
 }

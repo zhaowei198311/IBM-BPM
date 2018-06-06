@@ -126,14 +126,15 @@
 	<select id="selectSysDictionaryDataListById" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData" resultMap="BaseResultMap">
 		select 
 		<include refid="DictionaryData_Dictionary_Column" />
-		from SYS_DICTIONARY_DATA  dd left join SYS_DICTIONARY d on dd.DIC_UID=d.DIC_UID
-		where 1=1
-		<if test="dicUid != null and dicUid != '' ">
-			and DIC_UID = #{dicUid}
-		</if>	
-		<if test="dicDataName != null and dicDataName != '' ">
-			and DIC_DATA_NAME like '%'||#{dicDataName}||'%'
-		</if>
+		from SYS_DICTIONARY_DATA dd left join SYS_DICTIONARY d on dd.DIC_UID=d.DIC_UID
+		<where>
+			<if test="dicUid != null and dicUid != '' ">
+				and dd.DIC_UID = #{dicUid}
+			</if>	
+			<if test="dicDataName != null and dicDataName != '' ">
+				and dd.DIC_DATA_NAME like '%'||#{dicDataName}||'%'
+			</if>
+		</where>
 	</select>
 	
 	<select id="selectSysDictionaryDataById" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
@@ -205,11 +206,14 @@
 		</set>
 	</update>
 	
-	<select id="listAllOnSysDictitonary" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+	<select id="listAllOnSysDictitonary" parameterType="String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
 		select 
 		<include refid="Base_Column_List" />
 		from SYS_DICTIONARY
 		where dic_status='on'
+		<if test="dicName != null and !dicName.trim().isEmpty()">
+			and dic_name like '%'||#{dicName}||'%'
+		</if>
 	</select>
 	
 	<select id="listOnDicDataBydicUid" parameterType="String" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
@@ -217,5 +221,8 @@
 		<include refid="Base_Column_List1" />
 		from SYS_DICTIONARY_DATA
 		where dic_uid=#{dicUid} and dic_data_status='on'
+		<if test="dicDataName != null and !dicDataName.trim().isEmpty()">
+			and dic_data_name like '%'||#{dicDataName}||'%'
+		</if>
 	</select>
 </mapper>

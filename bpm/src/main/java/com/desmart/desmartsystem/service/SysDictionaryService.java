@@ -120,10 +120,20 @@ public interface SysDictionaryService {
 	/**
 	 * 查询所有启用的数据字典分类(不分页)
 	 */
-	ServerResponse listAllOnSysDictitonary();
+	ServerResponse listAllOnSysDictitonary(String dicName);
 	
 	/**
 	 * 根据数据字典id获得启用的数据字典内容(不分页)
 	 */
-	ServerResponse listOnDicDataBydicUid(String dicUid);
+	ServerResponse listOnDicDataBydicUid(String dicUid,String dicDataName);
+	
+	/**
+	 * 根据分类名模糊查询所有启用的数据字典分类(分页)
+	 */
+	ServerResponse getOnSysDictionaryList(Integer pageNum,Integer pageSize,String dicName);
+	
+	/**
+	 * 根据数据字典id获得启用的数据字典详细信息(分页)
+	 */
+	ServerResponse getOnSysDictionaryDataList(Integer pageNum,Integer pageSize,String dicUid);
 }

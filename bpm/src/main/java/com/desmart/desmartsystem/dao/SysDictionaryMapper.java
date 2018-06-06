@@ -139,12 +139,12 @@ public interface SysDictionaryMapper {
 	int updateSysDictionaryData(SysDictionaryData sysDictionaryData);
 	
 	/**
-	 * 查询所有启用的数据字典分类(不分页)
+	 * 根据数据字典名查询所有启用的数据字典分类
 	 */
-	List<SysDictionary> listAllOnSysDictitonary();
+	List<SysDictionary> listAllOnSysDictitonary(@Param("dicName")String dicName);
 	
 	/**
-	 * 根据数据字典id获得启用的数据字典内容(不分页)
+	 * 根据数据字典id以及数据字典内容获得启用的数据字典内容
 	 */
-	List<SysDictionaryData> listOnDicDataBydicUid(String dicUid);
+	List<SysDictionaryData> listOnDicDataBydicUid(@Param("dicUid")String dicUid, @Param("dicDataName")String dicDataName);
 }
