@@ -2,8 +2,9 @@ package com.desmart.desmartbpm.reflect;
 
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.alibaba.fastjson.JSONObject;
 
 public interface DhChooseUserTriggerTemplate {
     

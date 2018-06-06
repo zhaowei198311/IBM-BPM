@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
@@ -72,7 +72,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			try {
 				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
 				Object obj = clz.newInstance();
-				JSONObject jb = new JSONObject(dhTrigger.getTriParam());
+				JSONObject jb = JSONObject.parseObject(dhTrigger.getTriParam());
 				Method md = obj.getClass().getDeclaredMethod("execute", 
 						new Class []{WebApplicationContext.class, String.class,
 								org.json.JSONObject.class});
@@ -81,6 +81,36 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	@Override
+	public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid){
+		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+		if ("javaclass".equals(dhTrigger.getTriType())) {
+			try {
+				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
+				Object obj = clz.newInstance();
+				JSONObject jb = null;
+					try {
+						if (dhTrigger.getTriParam()!=null) {
+							jb = JSONObject.parseObject(dhTrigger.getTriParam());
+						}
+						Method md = obj.getClass().getDeclaredMethod("execute", 
+								new Class []{WebApplicationContext.class, String.class,
+										JSONObject.class});
+						return ServerResponse.createBySuccess((List<String>)md.invoke(obj, new Object[]{wac, insUid, jb}));
+					} catch (Exception e) {
+						// TODO: handle exception
+						return ServerResponse.createByErrorMessage("触发器执行异常，"+e.getMessage());
+					}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ServerResponse.createByErrorMessage("触发器调用异常，"+e.getMessage());
+			}
+		}
+		return ServerResponse.createByErrorMessage("触发器调用异常，该触发器目前只开放javaClass调用");
 	}
 	
 }

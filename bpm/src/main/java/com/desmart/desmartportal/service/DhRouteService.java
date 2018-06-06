@@ -25,8 +25,7 @@ public interface DhRouteService {
 	 * @return  ServerResponse<List<BpmActivityMeta>>
 	 */
 	ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId, 
-												String departNo, String companyNum, String formData
-												,HttpServletRequest request);
+												String departNo, String companyNum, String formData);
 	
 	/**
 	 * 根据表单数据和环节找到接下来会流转到的环节
@@ -50,7 +49,8 @@ public interface DhRouteService {
      * @param activityUid
      * @return
      */
-	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData);
+	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData
+			,HttpServletRequest request);
 
 	/**
 	 * 更新网关决策的中间表

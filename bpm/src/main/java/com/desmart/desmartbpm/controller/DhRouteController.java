@@ -24,10 +24,9 @@ public class DhRouteController {
 	
 	@RequestMapping(value = "/showRouteBar")
 	@ResponseBody
-	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter,HttpServletRequest request) {
+	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter) {
 		ServerResponse response=dhRouteService.showRouteBar(parameter.get("taskUid"), parameter.get("insUid"), parameter.get("activityId"), 
-												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
-												,request);
+												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
         return response;
     }
 	
@@ -37,7 +36,8 @@ public class DhRouteController {
 	//可选处理人获取
 	@RequestMapping("/choosableHandler")
 	@ResponseBody
-	public ServerResponse choosableHandler(@RequestParam Map<String, String> parameter){
-		return dhRouteService.choosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
+	public ServerResponse choosableHandler(@RequestParam Map<String, String> parameter,HttpServletRequest request){
+		return dhRouteService.choosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
+				,request);
 	}
 }

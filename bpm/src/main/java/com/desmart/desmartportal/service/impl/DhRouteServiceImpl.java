@@ -1,6 +1,5 @@
 package com.desmart.desmartportal.service.impl;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,20 +28,19 @@ import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
-import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
-import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DatRuleService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
+import com.desmart.desmartbpm.service.DhTriggerService;
 import com.desmart.desmartbpm.service.DroolsEngineService;
 import com.desmart.desmartportal.dao.DhGatewayRouteResultMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -103,13 +101,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
-	private DhTriggerMapper dhTriggerMapper;
+	private DhTriggerService dhTriggerService;
 
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
-			String departNo, String companyNum, String formData
-			,HttpServletRequest request) {
+			String departNo, String companyNum, String formData) {
 		// 如果当前任务已添加会签任务，则不能执行提交操作
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		if (dhTaskInstance != null) {
@@ -251,17 +248,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 					}
 				}
 				break;
-			case BY_TRIGGER:// 根据触发器选择
-				String triUid = idList.get(0);
-				WebApplicationContext webApplicationContext = 
-					WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
-				List<String> userIds = invokeTrigger(webApplicationContext, insUid, triUid);
-				List<SysUser> userList1 = sysUserMapper.listByPrimaryKeyList(userIds);
-				for (SysUser sysUser : userList1) {
-					userUid += sysUser.getUserUid() + ";";
-					userName += sysUser.getUserName() + ";";
-				}
-				break;
 			default:
 				break;
 			}
@@ -289,24 +275,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(activityMetaList);
 	}
 	
-	public List<String> invokeTrigger(WebApplicationContext wac, String insUid, String triUid){
-		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
-		if ("javaclass".equals(dhTrigger.getTriType())) {
-			try {
-				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
-				Object obj = clz.newInstance();
-				JSONObject jb = JSONObject.parseObject(dhTrigger.getTriParam());
-				Method md = obj.getClass().getDeclaredMethod("execute", 
-						new Class []{WebApplicationContext.class, String.class,
-								org.json.JSONObject.class});
-				return (List<String>)md.invoke(obj, new Object[]{wac, insUid, jb});
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-		return null;
-	}
 
 	// 获取指定分配类型的用户
 	// private List<BpmActivityMeta> assignTypeByUser(){}
@@ -530,7 +498,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Override
 	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo,
-			String companyNum, String formData) {
+			String companyNum, String formData,HttpServletRequest request) {
 		List<SysUser> userListToBeReturned = new ArrayList<SysUser>();
 		
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
@@ -660,6 +628,22 @@ public class DhRouteServiceImpl implements DhRouteService {
 						userName += sysUser.getUserName() + ";";
 					}
 				}
+			}
+			break;
+		case BY_TRIGGER:// 根据触发器选择
+			String triUid = idList.get(0);
+			WebApplicationContext webApplicationContext = 
+				WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
+			ServerResponse serverResponse2 = dhTriggerService.invokeChooseUserTrigger(webApplicationContext, insUid, triUid);
+			if(serverResponse2.isSuccess()) {
+			List<String> userIds = (List<String>)serverResponse2.getData();
+			List<SysUser> userList1 = sysUserMapper.listByPrimaryKeyList(userIds);
+			for (SysUser sysUser : userList1) {
+				userUid += sysUser.getUserUid() + ";";
+				userName += sysUser.getUserName() + ";";
+			}
+			}else {
+				return serverResponse2;
 			}
 			break;
 		default:

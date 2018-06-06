@@ -1079,7 +1079,7 @@ function drawTable(pageInfo) {
         } else {
             tempWebbot = trigger.triWebbot;
         }
-        if (trigger.triParam.length > 20) {
+        if (trigger.triParam!=null && trigger.triParam.length > 20) {
             tempParam = trigger.triParam.substring(0, 20) + "...";
         } else {
             tempParam = trigger.triParam;

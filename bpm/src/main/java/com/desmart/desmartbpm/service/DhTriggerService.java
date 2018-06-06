@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import org.springframework.web.context.WebApplicationContext;
 
 import com.desmart.common.constant.ServerResponse;
@@ -41,6 +43,13 @@ public interface DhTriggerService {
      */
     void invokeTrigger(WebApplicationContext wac, String insUid, String triUid);
     
-    
+    /**
+     * 反射调用选人触发器
+     * @param wac
+     * @param insUid
+     * @param triUid
+     * @return
+     */
+    public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid);
     
 }
