@@ -17,12 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
 import com.desmart.desmartportal.dao.DhAgentRecordMapper;
@@ -35,6 +37,7 @@ import com.desmart.desmartportal.service.DhAgentService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.SysHolidayService;
+import com.desmart.desmartsystem.service.SendingEmailService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -62,6 +65,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private SysHolidayService sysHolidayService;
     @Autowired
     private DhRouteService dhRouteService;
+    @Autowired
+    private SendingEmailService sendingEmailService;
+    @Autowired
+    private BpmActivityMetaService bpmActivityMetaService;
     
     /**
      * 从引擎同步任务
@@ -98,7 +105,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 //            dhTaskInstanceService.insertBatch(dhTaskList);
 //        }
         for(DhTaskInstance task : dhTaskList) {
-            dhTaskInstanceMapper.insertTask(task);
+        	dhTaskInstanceMapper.insertTask(task);
+        	//发送邮件通知
+        	//dhSendEmail(task);
         }
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
@@ -106,7 +115,30 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         
     }
     
-    /**
+    private void dhSendEmail(DhTaskInstance task) {
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(task.getInsUid());
+		String proAppId = dhProcessInstance.getProAppId();
+		String activityBpdId = task.getActivityBpdId();
+		String snapshotId = dhProcessInstance.getProVerUid();
+		String bpdId = dhProcessInstance.getProUid();
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaService.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
+		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
+			List<String> toList = new ArrayList<>();
+			if(task.getUsrUid()!=null&&!"".equals(task.getUsrUid())) {
+				toList.add(task.getUsrUid());
+			}
+			if(task.getTaskDelegateUser()!=null&&!"".equals(task.getTaskDelegateUser())) {
+				toList.add(task.getTaskDelegateUser());
+			}
+			for (String to : toList) {
+				String subject = "邮件通知";
+				String body = "邮件通知";
+				sendingEmailService.sendingEmail(to, subject, body);
+			}
+		}
+	}
+
+	/**
      * 处理一个引擎任务
      * @param lswTask
      * @param groupInfo
