@@ -3,6 +3,8 @@ package com.desmart.desmartbpm.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +24,10 @@ public class DhRouteController {
 	
 	@RequestMapping(value = "/showRouteBar")
 	@ResponseBody
-	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter) {
+	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter,HttpServletRequest request) {
 		ServerResponse response=dhRouteService.showRouteBar(parameter.get("taskUid"), parameter.get("insUid"), parameter.get("activityId"), 
-												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
+												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
+												,request);
         return response;
     }
 	

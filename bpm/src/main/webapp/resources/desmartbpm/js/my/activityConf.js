@@ -48,31 +48,43 @@ layui.use('form', function(){
             $("#chooseableHandleTeam_div").hide();
             $("#chooseableHandleUser_div").hide();
             $("#chooseableHandleField_div").hide();
+            $("#chooseableHandleTrigger_div").hide();
         }else  if(data.value=="team" || data.value=="teamAndDepartment" || data.value=="teamAndCompany"){
             $("#chooseableHandleUser_div").hide();
             $("#chooseableHandleTeam_div").show();
             $("#chooseableHandleRole_div").hide();
             $("#chooseableHandleField_div").hide();
+            $("#chooseableHandleTrigger_div").hide();
         }else if(data.value=="leaderOfPreActivityUser" || data.value=="processCreator" || data.value == "none"){
             $("#chooseableHandleRole_div").hide();
             $("#chooseableHandleTeam_div").hide();
             $("#chooseableHandleUser_div").hide();
             $("#chooseableHandleField_div").hide();
+            $("#chooseableHandleTrigger_div").hide();
         }else if(data.value=="users"){
             $("#chooseableHandleRole_div").hide();
             $("#chooseableHandleTeam_div").hide();
             $("#chooseableHandleUser_div").show();
             $("#chooseableHandleField_div").hide();
+            $("#chooseableHandleTrigger_div").hide();
         }else if(data.value=="byField"){
             $("#chooseableHandleRole_div").hide();
             $("#chooseableHandleTeam_div").hide();
             $("#chooseableHandleUser_div").hide();
             $("#chooseableHandleField_div").show();
+            $("#chooseableHandleTrigger_div").hide();
         }else if(data.value=="allUser"){
         	$("#chooseableHandleRole_div").hide();
             $("#chooseableHandleTeam_div").hide();
             $("#chooseableHandleUser_div").hide();
             $("#chooseableHandleField_div").hide();
+            $("#chooseableHandleTrigger_div").hide();
+        }else if(data.value='byTrigger'){
+        	$("#chooseableHandleRole_div").hide();
+            $("#chooseableHandleTeam_div").hide();
+            $("#chooseableHandleUser_div").hide();
+            $("#chooseableHandleField_div").hide();
+        	$("#chooseableHandleTrigger_div").show();
         }
     });
 
@@ -221,6 +233,16 @@ $(function(){
                 		return $('select[name="actcChooseableHandlerType"]').val() == 'byField';
                 	}
                 }
+            },
+            chooseableHandleTrigger: {
+            	required: function(element) {
+            		var flag = $('input[name="actcCanChooseUser"]:checked').val();
+            		if(flag=="FALSE"){
+            			return false
+            		}else{
+            			return $('select[name="actcChooseableHandlerType"]').val().startsWith('byTrigger');
+            		}
+            	}
             },
             actcCanChooseUser: {
                 required: true
@@ -384,6 +406,12 @@ $(function(){
     // 选择可选处理人（角色组）
     $("#choose_able_handle_team").click(function() {
         common.chooseTeam('chooseableHandleTeam', 'false');
+    });
+    //选择可选处理人（触发器）
+    $("#choose_HandleTri_btn").click(function() {
+        triggerToEdit = 'chooseableHandleTrigger';
+        getTriggerInfo();
+        $("#chooseTrigger_container").show();
     });
 
     // 选择超时通知人（人员）
@@ -825,6 +853,7 @@ function initConf(map) {
     $("#chooseableHandleRole_div").hide();
     $("#chooseableHandleTeam_div").hide();
     $("#chooseableHandleField_div").hide();
+    $("#chooseableHandleTrigger_div").hide();
     
     $('input[name="actcUid"]').val(conf.actcUid);
     $('input[name="actcSort"]').val(conf.actcSort);
@@ -969,6 +998,7 @@ function initConf(map) {
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
     }
     
     $('input[name="chooseableHandleUser"]').val(conf.chooseableHandleUser);
@@ -978,6 +1008,8 @@ function initConf(map) {
     $('input[name="chooseableHandleTeam"]').val(conf.chooseableHandleTeam);
     $('input[name="chooseableHandleTeam_view"]').val(conf.chooseableHandleTeamView);
     $('input[name="chooseableHandleField"]').val(conf.chooseableHandleField);
+    $('input[name="chooseableHandleTriggerTitle"]').val(conf.chooseableHandleTriggerTitle);
+    $('input[name="chooseableHandleTrigger"]').val(conf.chooseableHandleTrigger);
     
     $('input[name="outtimeUser"]').val(conf.outtimeUser);
     $('input[name="outtimeUser_view"]').val(conf.outtimeUserView);
@@ -1127,31 +1159,43 @@ function showChosseAbleHandleDiv(assignType){
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
     }else if(assignType=="teamAndDepartment" || assignType=="teamAndCompany" || assignType=="team"){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").show();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
     }else if(assignType=="leaderOfPreActivityUser" || assignType=="processCreator" || assignType == 'none'){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
     }else if(assignType=="users"){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").show();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
     }else if(assignType=="byField"){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").show();
+        $("#chooseableHandleTrigger_div").hide();
     }else if(assignType=="allUser"){
     	$("#chooseableHandleRole_div").hide();
         $("#chooseableHandleTeam_div").hide();
         $("#chooseableHandleUser_div").hide();
         $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").hide();
+    }else if(assignType=="byTrigger"){
+    	$("#chooseableHandleRole_div").hide();
+        $("#chooseableHandleTeam_div").hide();
+        $("#chooseableHandleUser_div").hide();
+        $("#chooseableHandleField_div").hide();
+        $("#chooseableHandleTrigger_div").show();
     }
 }
 function moveActivityToRight(){

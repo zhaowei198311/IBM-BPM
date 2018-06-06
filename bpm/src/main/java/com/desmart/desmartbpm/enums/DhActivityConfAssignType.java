@@ -15,7 +15,8 @@ public enum DhActivityConfAssignType {
     USERS("users", "指定人员"),
     PROCESS_CREATOR("processCreator", "流程发起人"),
     BY_FIELD("byField", "根据表单字段"),
-    ALL_USER("allUser", "全体人员");
+    ALL_USER("allUser", "全体人员"),
+	BY_TRIGGER("byTrigger","触发器选人");
 
     private final String code;
     private final String value;

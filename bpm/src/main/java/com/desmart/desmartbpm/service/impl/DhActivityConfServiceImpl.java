@@ -21,10 +21,12 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhActivityAssignAssignType;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
@@ -58,6 +60,8 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
     private SysUserMapper sysUserMapper;
     @Autowired
     private DhStepService dhStepService;
+    @Autowired
+    private DhTriggerMapper dhTriggerMapper;
     
     public ServerResponse getActivityConfData(String actcUid) {
         if(StringUtils.isBlank(actcUid)) {
@@ -160,6 +164,13 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
                 String field = assignList.get(0).getActaAssignId();
                 dhActivityConf.setChooseableHandleField(field);
             }
+            break;
+        case BY_TRIGGER:
+            DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(idList.get(0));
+            str+=dhTrigger.getTriUid();
+            strView+=dhTrigger.getTriTitle();
+            dhActivityConf.setChooseableHandleTrigger(str);
+            dhActivityConf.setChooseableHandleTriggerTitle(strView);
             break;
         default:
             break; 
@@ -331,6 +342,16 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             assign.setActaAssignId(chosseableHandleField.trim());
             assignList.add(assign);
             break;
+        case BY_TRIGGER:
+        	 String chosseableHandleTrigger = dhActivityConf.getChooseableHandleTrigger();
+        	 DhActivityAssign assign1 = new DhActivityAssign();
+             assign1.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+             assign1.setActivityId(activityId);
+             assign1.setActaAssignType(DhActivityAssignAssignType.TRIGGER.getCode());
+             assign1.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
+             assign1.setActaAssignId(chosseableHandleTrigger.trim());
+             assignList.add(assign1);
+        	break;
         default:
             break; 
         }

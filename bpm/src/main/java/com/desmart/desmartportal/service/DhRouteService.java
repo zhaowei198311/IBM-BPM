@@ -2,6 +2,8 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
@@ -19,10 +21,12 @@ public interface DhRouteService {
 	 * @param  departNo 部门
 	 * @param formData 表单数据
 	 * @param 	companyNum 公司id
+	 * @param request
 	 * @return  ServerResponse<List<BpmActivityMeta>>
 	 */
 	ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId, 
-												String departNo, String companyNum, String formData);
+												String departNo, String companyNum, String formData
+												,HttpServletRequest request);
 	
 	/**
 	 * 根据表单数据和环节找到接下来会流转到的环节

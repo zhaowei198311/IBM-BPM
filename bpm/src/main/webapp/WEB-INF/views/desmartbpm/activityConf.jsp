@@ -22,6 +22,7 @@
 	        #chooseableHandleUser_div .error {margin-left:170px;}
 			#chooseableHandleRole_div .error {margin-left:170px;}
 			#chooseableHandleTeam_div .error {margin-left:170px;}
+			#chooseableHandleTrigger_div .error {margin-left:170px;}
 			#handleUser_div .error {margin-left:170px;}
 			#handleRole_div .error {margin-left:170px;}
 			#handleTeam_div .error {margin-left:170px;}
@@ -168,6 +169,7 @@
                                                                         <option value="processCreator">流程发起人</option>
                                                                         <option value="byField">根据表字段选择</option>
                                                                         <option value="allUser">全体人员</option>
+                                                                        <option value="byTrigger">触发器选人</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -200,6 +202,14 @@
                                                                 <div class="layui-input-block" style="position:relative;">
                                                                     <input type="text" name="chooseableHandleField"  value="" autocomplete="off" class="layui-input">
                                                                 </div>
+                                                            </div>
+                                                            <div class="layui-form-item " id="chooseableHandleTrigger_div" style="display:none;">
+                                                                <label class="layui-form-label">触发器名</label>
+                                                                <div class="layui-input-block" style="position:relative;">
+                                                                    <input type="text" id="chooseableHandleTriggerTitle" name="chooseableHandleTriggerTitle"  value="" autocomplete="off" class="layui-input" disabled="disabled">
+                                                                    <i id="choose_HandleTri_btn" class="layui-icon choose_role" title="选择触发器">&#xe621;</i>  
+                                                                </div>
+                                                                <input type="hidden" id="chooseableHandleTrigger" name="chooseableHandleTrigger" >
                                                             </div>
                                                             </div>
                                                             <!-- 可选处理人 (结束)-->
