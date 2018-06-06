@@ -12,10 +12,26 @@ public class BpmActivityMeta implements Serializable {
     public static final String LOOP_TYPE_SIMPLE_LOOP = "simpleLoop";
     /** 循环类型：多实例循环 */
     public static final String LOOP_TYPE_MULTI_INSTANCE_LOOP = "MultiInstanceLoop";
-    /**
-	 * 环节类型 启动
-	 */
-	public static final String 	ACTIVITY_TYPE_START = "start";
+	/** 任务类型： 子流程  */
+	public static final String BPM_TASK_TYPE_SUB_PROCESS = "SubProcess";
+	/** 任务类型： 外链流程  */
+	public static final String BPM_TASK_TYPE_CALLED_PROCESS =  "CalledProcess";
+	/** 任务类型： 系统服务  */
+	public static final String BPM_TASK_TYPE_SERVICE_TASK = "ServiceTask";
+	/** 任务类型： 人员服务  */
+	public static final String BPM_TASK_TYPE_USER_TASK = "UserTask";
+	/** 活动类型：开始 */
+	public static final String ACTIVITY_TYPE_START = "start";
+	/** 活动类型：排他网关 */
+	public static final String ACTIVITY_TYPE_GATEWAY = "gateway";
+	/** 活动类型：活动 */
+	public static final String ACTIVITY_TYPE_ACTIVITY = "activity";
+	/** 活动类型：包容网关 */
+	public static final String ACTIVITY_TYPE_GATEWAYOR = "gatewayOr";
+	/** 活动类型：结束 */
+	public static final String ACTIVITY_TYPE_END = "end";
+	/** 活动类型：并行网关 */
+	public static final String ACTIVITY_TYPE_GATEWAYAND = "gatewayAnd";
 	
     private String activityId;  // 主键
     private String noteType;

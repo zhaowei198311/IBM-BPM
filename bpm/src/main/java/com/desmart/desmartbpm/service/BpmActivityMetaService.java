@@ -18,6 +18,18 @@ public interface BpmActivityMetaService {
      * @param proUid
      * @param proVerUid
      * @return
+     * Map{
+            "children": [
+                {
+                    "activityId": "act_meta:3064efa6-8094-4d0e-9e99-0f8ebf9aae17",
+                    "activityBpdId": "5e4610e4-584e-4b4c-82e8-a6a410c40257",
+                    "actcUid": "act_conf:1e9f581f-4445-4a39-b686-cfe2e7f8312c",
+                    "activityName": "合同用印(子公司财务备案)"
+                }
+            ],
+            "name": "主流程环节",
+            "id": "main"
+        }
      */
     ServerResponse<List<Map<String, Object>>> getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid);
     
@@ -88,6 +100,10 @@ public interface BpmActivityMetaService {
      */
     List<BpmActivityMeta> getBpmActivityMetaByActivityType(String activityBpdId, String snapshotId, String bpdId,String activityType);
     
-    
-
+    /**
+     * 从指定列表中过滤出activityId 与 sourceActivityId相同的集合
+     * @param bpmActivityMetaList
+     * @return 
+     */
+    List<BpmActivityMeta> filterBasicActivity(List<BpmActivityMeta> bpmActivityMetaList);
 }

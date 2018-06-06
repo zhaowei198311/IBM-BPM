@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -61,6 +63,7 @@ import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
+import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -108,6 +111,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DatRuleMapper datRuleMapper;
     @Autowired
     private DatRuleConditionMapper datRuleConditionMapper;
+    @Autowired
+    private DhRouteService dhRouteService;
+    
     
     public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -274,21 +280,21 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         restUtil.close();
         List<Map<String, String>> exposeItemList = new ArrayList<>();
         if (!BpmClientUtils.isErrorResult(procStatus)) {
-            JSONObject jsoMsg = new JSONObject(procStatus.getMsg());
+            JSONObject jsoMsg = JSON.parseObject(procStatus.getMsg());
             JSONObject jsoData = jsoMsg.getJSONObject("data");
-            JSONArray jayExpoItems = jsoData.optJSONArray("exposedItemsList");
+            JSONArray jayExpoItems = jsoData.getJSONArray("exposedItemsList");
             if (jayExpoItems != null) {
-                for(int i = 0; i < jayExpoItems.length(); ++i) {
+                for(int i = 0; i < jayExpoItems.size(); ++i) {
                     JSONObject jsoItem = jayExpoItems.getJSONObject(i);
                     Map<String, String> itemData = new HashMap<>();
-                    String procAppId = jsoItem.optString("processAppID", "");
-                    itemData.put("procAppName", jsoItem.optString("processAppName", ""));
+                    String procAppId = jsoItem.getString("processAppID");
+                    itemData.put("procAppName", jsoItem.getString("processAppName"));
                     itemData.put("procAppId", procAppId);
-                    itemData.put("bpdName", jsoItem.optString("display", ""));
-                    itemData.put("bpdId", jsoItem.optString("itemID", ""));
-                    itemData.put("snapshotId", jsoItem.optString("snapshotID", ""));
-                    itemData.put("snapshotCreated", jsoItem.optString("snapshotCreatedOn", ""));
-                    itemData.put("branchId", jsoItem.optString("branchID", ""));
+                    itemData.put("bpdName", jsoItem.getString("display"));
+                    itemData.put("bpdId", jsoItem.getString("itemID"));
+                    itemData.put("snapshotId", jsoItem.getString("snapshotID"));
+                    itemData.put("snapshotCreated", jsoItem.getString("snapshotCreatedOn"));
+                    itemData.put("branchId", jsoItem.getString("branchID"));
                     exposeItemList.add(itemData);
                 }
             }
@@ -393,13 +399,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("找不到开始环节(start event)");
         }
         BpmActivityMeta startMeta = list.get(0);
-        selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
-        selective.setActivityBpdId(startMeta.getActivityTo());
-        list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (list.size() != 1) {
-            return ServerResponse.createByErrorMessage("找不到开始环节后第一个人工环节");
+        List<BpmActivityMeta> nextActivities = dhRouteService.getNextActivities(startMeta, new JSONObject());
+        if (nextActivities.isEmpty()) {
+            return ServerResponse.createByErrorMessage("找不到第一个环节");
         }
-        return ServerResponse.createBySuccess(list.get(0));
+        return ServerResponse.createBySuccess(nextActivities.get(0));
     }
 
     @Override

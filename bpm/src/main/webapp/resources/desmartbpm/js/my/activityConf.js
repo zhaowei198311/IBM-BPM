@@ -587,6 +587,7 @@ function printCollapse(list) {
         str += '<div class="layui-colla-item">'
             +     '<h2 class="layui-colla-title">'+name+'</h2>';
         if (process.id == 'main') {
+        	// 如果是主流程的话，展开
             str += '<div class="layui-colla-content layui-show" id="content'+i+'">';
         } else {
             str += '<div class="layui-colla-content " id="content'+i+'">';
@@ -595,6 +596,7 @@ function printCollapse(list) {
         for (var j=0; j<children.length; j++) {
             var meta = children[j];
             if (meta.activityId == firstHumanMeta) {
+            	// 如果这个环节是此流程的第一个环节
                 str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
             } else {
                 str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" onclick="clickLi(this);">'+meta.activityName+'</li>';

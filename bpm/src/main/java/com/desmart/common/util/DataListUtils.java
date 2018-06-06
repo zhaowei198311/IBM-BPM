@@ -18,8 +18,8 @@ public class DataListUtils {
     
     /**
      * 克隆集合，集合内是实体对象
-     * @param srcList
-     * @param cls
+     * @param srcList 源集合
+     * @param cls 源集合内的对象Class
      * @return
      */
     public static <T> List<T> cloneList(List<T> srcList, Class<?> cls) {

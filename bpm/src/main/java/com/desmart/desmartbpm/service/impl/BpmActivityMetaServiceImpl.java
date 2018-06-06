@@ -85,50 +85,68 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         }
         BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         PageHelper.orderBy("SORT_NUM");
-        List<BpmActivityMeta> allMeta = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (allMeta.size() == 0) {
+        List<BpmActivityMeta> allMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        
+        List<BpmActivityMeta> basicMetaList = filterBasicActivity(allMetaList);
+        
+        if (basicMetaList.size() == 0) {
             return ServerResponse.createByErrorMessage("没有匹配的环节，请先同步环节");
         }
         List<Map<String, Object>> processList = new ArrayList<>();
         Map<String, Object> mainProcess = new HashMap<>();
         mainProcess.put("name", "主流程环节");
         mainProcess.put("id", "main");
+        mainProcess.put("type", "mainProcess");
         List<Map<String, Object>> children = new ArrayList<>();
         List<BpmActivityMeta> subProcessList = new ArrayList<>();
+        List<BpmActivityMeta> calledProcessList = new ArrayList<>();
         
-        Iterator<BpmActivityMeta> iterator = allMeta.iterator();
+        Iterator<BpmActivityMeta> iterator = basicMetaList.iterator();
         while (iterator.hasNext()) {
             BpmActivityMeta meta = iterator.next();
             if ("SubProcess".equalsIgnoreCase(meta.getBpmTaskType())) { // 如果类型是子流程，单独做折叠栏
                 subProcessList.add(meta);
                 iterator.remove();
                 continue;
-            }
-            if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) { // 如果是人工节点，并且是主流程下的人工节点，就加入主流程折叠栏
-                if (meta.getDeepLevel() == 0) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("activityName", meta.getActivityName());
-                    map.put("actcUid", meta.getDhActivityConf().getActcUid());
-                    map.put("activityId", meta.getActivityId());
-                    map.put("activityBpdId", meta.getActivityBpdId());
-                    children.add(map);
-                    iterator.remove();
-                }
+            } else if ("CalledProcess".equalsIgnoreCase(meta.getBpmTaskType())) {
+                calledProcessList.add(meta);
+                iterator.remove();
+                continue;
+            }else if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType()) && meta.getDeepLevel() == 0) { 
+                // 如果是人工节点，并且是主流程下的人工节点，就加入主流程折叠栏
+                Map<String, Object> map = new HashMap<>();
+                map.put("activityName", meta.getActivityName());
+                map.put("actcUid", meta.getDhActivityConf().getActcUid());
+                map.put("activityId", meta.getActivityId());
+                map.put("activityBpdId", meta.getActivityBpdId());
+                children.add(map);
+                iterator.remove();
             } else { // 去除非人工节点，非子流程环节的无关元素
                 iterator.remove();
             }
-        }
+        } // 至此集合中还剩余内连子流程下的内容
+        
         mainProcess.put("children", children);
         processList.add(mainProcess); // 主流程环节装配完毕
         
-        for (BpmActivityMeta meta : subProcessList) {
+        for (BpmActivityMeta calledProcessNode : calledProcessList) {
+            Map<String, Object> calledProcess = new HashMap<>();
+            calledProcess.put("name", calledProcessNode.getActivityName());
+            calledProcess.put("id", calledProcessNode.getActivityId());
+            calledProcess.put("type", "calledProcess");
+            calledProcess.put("children", new ArrayList());
+            processList.add(calledProcess);
+        }
+        
+        for (BpmActivityMeta subProcessNode : subProcessList) {
             Map<String, Object> subProcess = new HashMap<>();
             children = new ArrayList<>();
-            String activityBpdId = meta.getActivityBpdId();
-            String activityName = meta.getActivityName();
+            String activityBpdId = subProcessNode.getActivityBpdId();
+            String activityName = subProcessNode.getActivityName();
             subProcess.put("name", activityName);
-            subProcess.put("id", meta.getActivityId());
-            iterator = allMeta.iterator();
+            subProcess.put("id", subProcessNode.getActivityId());
+            subProcess.put("type", "subProcess");
+            iterator = basicMetaList.iterator();
             while (iterator.hasNext()) {
                 BpmActivityMeta item = iterator.next();
                 if (activityBpdId.equals(item.getParentActivityBpdId())) {
@@ -155,6 +173,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         selective.setBpmTaskType("UserTask");
         List<BpmActivityMeta> humanMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        humanMetaList = this.filterBasicActivity(humanMetaList);
         return ServerResponse.createBySuccess(humanMetaList);
     }
     
@@ -533,7 +552,20 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
 	}
     
-    
+	@Override
+    public List<BpmActivityMeta> filterBasicActivity(List<BpmActivityMeta> bpmActivityMetaList) {
+        if (bpmActivityMetaList == null || bpmActivityMetaList.size() == 0) {
+            return new ArrayList<BpmActivityMeta>();
+        }  
+        Iterator<BpmActivityMeta> it = bpmActivityMetaList.iterator();
+        while (it.hasNext()) {
+            BpmActivityMeta item = it.next();
+            if (!StringUtils.equals(item.getActivityId(), item.getSourceActivityId())) {
+                it.remove();
+            }
+        }
+        return bpmActivityMetaList;
+    }
 
     
 }

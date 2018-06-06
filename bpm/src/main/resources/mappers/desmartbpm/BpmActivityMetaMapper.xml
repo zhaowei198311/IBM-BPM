@@ -102,7 +102,7 @@
 	    select 
         <include refid="relationColumn" />
         from BPM_ACTIVITY_META am 
-        left join dh_activity_conf ac on am.activity_id = ac.activity_id
+        left join dh_activity_conf ac on am.source_activity_id = ac.activity_id
 	    where am.activity_id = #{activityId}
 	</select> 
 	
