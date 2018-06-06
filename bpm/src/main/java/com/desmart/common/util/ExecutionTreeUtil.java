@@ -30,9 +30,9 @@ public class ExecutionTreeUtil {
     	return map;
     }
 	
-	public static HashMap util(JSONArray jsonArray, int taskId) {
+	public static HashMap<String, Object> util(JSONArray jsonArray, int taskId) {
 		
-		HashMap<Object, Object> hashMap = new HashMap<>();
+		HashMap<String, Object> hashMap = new HashMap<>();
 		JSONObject result;
 		for (int i = 0; i < jsonArray.size(); i++) {
 		//for (Iterator var = jsonArray.iterator(); var.hasNext();) {
@@ -47,7 +47,7 @@ public class ExecutionTreeUtil {
 						hashMap.put("parentTokenId", null);
 						if(preTokenIdList.size() > 0) {
 							//Collections.reverse(preTokenIdList);
-							for (int j = 0; j < preTokenIdList.size(); j++) {
+							for (int j = preTokenIdList.size()-2; j >= 0; j--) {
 								if(preTokenIdList.get(j) != null) {
 									hashMap.put("parentTokenId", preTokenIdList.get(j));
 									break;
