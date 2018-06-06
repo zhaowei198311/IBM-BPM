@@ -52,7 +52,8 @@ function drawPage() {
                         continue;
                     }
                 } else if(column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0 
-                		|| column.find(".subDiv").find("div[title='choose_user']").length !=0) {
+                		|| column.find(".subDiv").find("div[title='choose_user']").length !=0
+                		|| column.find(".subDiv").find("div[title='choose_value']").length !=0) {
                 	//表单中的填写说明与数据表格
                 	var subDivObj = column.find(".subDiv");
                 	var tableObj = subDivObj.find("table");
@@ -108,7 +109,7 @@ function drawPage() {
                             formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
                 			isContinue = true;
                 		}
-                	}else{
+                	}else if(column.find(".subDiv").find("div[title='choose_user']").length !=0){
                 		var labelDivObj = column.find(".labelDiv");
 	                    var labelDivCol = labelDivObj.attr("col");
 	                    var subDivObj = column.find(".subDiv div[title='choose_user']");
@@ -122,6 +123,28 @@ function drawPage() {
 	                    	chooseInputWidth.push("93%");
 	                    }
 	                    $(subDivObj).append('<i class="layui-icon" title="choose_user" id="'+subDivId+'" onclick="desChooseUser(this);">&#xe612;</i>');
+	                    var subHtml = $(subDivObj).html();
+                        if (!isNaN(labelDivCol)) {
+                            formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
+                        }
+
+                        if (!isNaN(subDivCol)) {
+                            formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+                        }
+                	}else if(column.find(".subDiv").find("div[title='choose_value']").length !=0){
+                		var labelDivObj = column.find(".labelDiv");
+	                    var labelDivCol = labelDivObj.attr("col");
+	                    var subDivObj = column.find(".subDiv div[title='choose_value']");
+	                    var subDivCol = subDivObj.attr("col");
+	                    var labelHtml = $(labelDivObj).html();
+	                    var subDivId = $(subDivObj).attr("id");
+	                    $(subDivObj).find("span").remove();
+	                    if(subDivCol<4){
+	                    	chooseInputWidth.push("90%");
+	                    }else{
+	                    	chooseInputWidth.push("93%");
+	                    }
+	                    $(subDivObj).append('<i class="layui-icon" title="choose_value" id="'+subDivId+'" onclick="chooseDicData(this);">&#xe615;</i>');
 	                    var subHtml = $(subDivObj).html();
                         if (!isNaN(labelDivCol)) {
                             formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:120px">' + labelHtml + '</td>';
@@ -409,7 +432,13 @@ function drawPage() {
     //给选人组件调整样式
     var chooseUserInputArr = view.find("i[title='choose_user']").parent().find("input[type='text']");
     chooseUserInputArr.each(function(index){
-    	$(this).css({"display":"inline","width":chooseInputWidth[index]});
+    	$(this).css({"display":"inline","width":chooseInputWidth[index]}).attr("readonly",true);
+    });
+    
+    //给弹框选值调整样式
+    var chooseValueInputArr = view.find("i[title='choose_value']").parent().find("input[type='text']");
+    chooseValueInputArr.each(function(index){
+    	$(this).css({"display":"inline","width":chooseInputWidth[index]}).attr("readonly",true);
     });
     
     layui.use(['form', 'layedit', 'laydate'], function () {
@@ -503,6 +532,13 @@ function desChooseUser(obj){
 	var hideId = $(obj).parent().find("input[type='hidden']").prop("id");
 	console.log(hideId);
 	common.chooseUser(hideId, 'false');
+}
+
+//选择具体数据字典分类的数据内容
+function chooseDicData(obj){
+	var elementId = $(obj).parent().find("input[type='hidden']").prop("id");
+	var dicUid = $(obj).parent().find("input[type='text']").attr("database_type");
+	common.chooseDicData(elementId, dicUid);
 }
 
 function addDataRow(obj){

@@ -88,6 +88,52 @@ var common = {
             }
         }); 
     },
+    //选择数据字典分类的路径
+    chooseDictionaryPath:function(id) {
+    	return common.getPath() + "/sysDictionary/selectDictionary?elementId=" + id; 
+    },
+    chooseDictionary:function(elementId){
+    	layer.open({
+            type: 2,
+            title: '数据字典分类选择',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['790px', '500px'],
+            content: common.chooseDictionaryPath(elementId),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
+    //选择数据字典内容的路径
+    chooseDicDataPath:function(id,dicUid) {
+    	return common.getPath() + "/sysDictionary/selectDicData?elementId=" + id +"&dicUid="+dicUid; 
+    },
+    chooseDicData:function(elementId,dicUid){
+    	layer.open({
+            type: 2,
+            title: '数据字典详细数据选择',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['400px', '500px'],
+            content: common.chooseDicDataPath(elementId,dicUid),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
@@ -155,19 +201,21 @@ var common = {
 						break;
 					}else if($(inputArr[i]).attr("title")=="choose_user"){
 						var name = $(inputArr[i]).attr("name");
-						var userNameArr = $(inputArr[i]).val().trim().split(";");
+						var userNameArr = $(inputArr[i]).val().trim();
 						var userIdArr = $(inputArr[i]).parent().find("input[type='hidden']")
-									.val().trim().split(";");
-						var value = "";
-						for(var j=0;j<userNameArr.length;j++){
-							var userName = userNameArr[j];
-							var userId = userIdArr[j];
-							if(userName!="" && userName!=null && userId!="" && userId!=null){
-								value += userName+"-"+userId+";";
-							}
-						}
+									.val().trim();
 						textJson = "\"" + name + "\":{\"value\":\""
-							+ value + "\"}";
+							+ userIdArr + "\",\"description\":\"" + userNameArr + "\"}";
+						break;
+					}else if($(inputArr[i]).attr("title")=="choose_value"){
+						var name = $(inputArr[i]).attr("name");
+						var dicDataName = $(inputArr[i]).val().trim();
+						var dicDataCode = $(inputArr[i]).parent().find("input[class='value_code']")
+									.val().trim();
+						var dicDataUid = $(inputArr[i]).parent().find("input[class='value_id']")
+									.val().trim();
+						textJson = "\"" + name + "\":{\"value\":\""
+							+ dicDataCode + "\",\"description\":\"" + dicDataName + "\",\"dicDataUid\":\""+dicDataUid+"\"}";
 						break;
 					}
 				}
@@ -272,19 +320,18 @@ var common = {
 					switch(tagType){
 						case "text":{
 							if($("[name='"+name+"']").attr("title")=="choose_user"){
+								var valueStr = paramObj["value"];
+								var descriptionStr = paramObj["description"];
+								$("[name='"+name+"']").val(descriptionStr);
+								$("[name='"+name+"']").parent().find("input[type='hidden']").val(valueStr);
+								break;
+							}else if($("[name='"+name+"']").attr("title")=="choose_value"){
 								var value = paramObj["value"];
-								var userArr = value.split(";");
-								var userNameStr = "";
-								var userIdStr = "";
-								for(var j=0;j<userArr.length;j++){
-									var user = userArr[j];
-									if(user!=null && user!=""){
-										userNameStr += user.split("-")[0]+";";
-										userIdStr += user.split("-")[1]+";";
-									}
-								}
-								$("[name='"+name+"']").val(userNameStr);
-								$("[name='"+name+"']").parent().find("input[type='hidden']").val(userIdStr);
+								var description = paramObj["description"];
+								var id = paramObj["id"];
+								$("[name='"+name+"']").val(description);
+								$("[name='"+name+"']").parent().find("input[type='value_id']").val(value);
+								$("[name='"+name+"']").parent().find("input[type='value_code']").val(id);
 								break;
 							}
 						};

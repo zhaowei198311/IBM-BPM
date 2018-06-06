@@ -88,6 +88,52 @@ var common = {
             }
         }); 
     },
+    //选择数据字典分类的路径
+    chooseDictionaryPath:function(id) {
+    	return common.getPath() + "/sysDictionary/selectDictionary?elementId=" + id; 
+    },
+    chooseDictionary:function(elementId){
+    	layer.open({
+            type: 2,
+            title: '数据字典分类选择',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['790px', '500px'],
+            content: common.chooseDictionaryPath(elementId),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
+    //选择数据字典内容的路径
+    chooseDicDataPath:function(id,dicUid) {
+    	return common.getPath() + "/sysDictionary/selectDicData?elementId=" + id +"&dicUid="+dicUid; 
+    },
+    chooseDicData:function(elementId,dicUid){
+    	layer.open({
+            type: 2,
+            title: '数据字典详细数据选择',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['400px', '500px'],
+            content: common.chooseDicDataPath(elementId,dicUid),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
