@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
@@ -80,7 +81,7 @@ public class UsersController {
 		ModelAndView mv = new ModelAndView("desmartportal/index");
 		// 判断用户可以发起那些流程的 权限 菜单等
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		List<Map<String, Object>> resultList = userProcessService.selectByMenusProcess2();
+		Map<String, List<DhProcessMeta>> resultList = userProcessService.selectByMenusProcess();
 		mv.addObject("listmap",resultList);
 		mv.addObject("userId",creator);
 		return mv;

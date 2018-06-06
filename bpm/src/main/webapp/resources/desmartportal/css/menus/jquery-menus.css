@@ -1,0 +1,103 @@
+*{
+			margin: 0;
+			padding: 0;
+			font-family: "微软雅黑";
+		}
+
+		ul{
+			list-style: none;
+			background: #fff;
+		}
+
+		.nav2{
+			padding: 0;
+		}
+
+		.nav3{
+			padding: 0;
+		}
+		
+		
+		.nav1{
+			margin: 100px 0 0 100px; 
+			padding: 0;
+		}
+
+/*设置a标签的属性  区块，宽高，下划线删除，改变默认颜色*/
+		.nav1 a{
+			display: block;
+			width: 100px;
+			height: 36px;
+			line-height: 36px;
+			text-decoration: none;
+			color: #000000;
+			text-align: center;
+		}
+
+		.nav1 a:hover{
+			background: #069683;
+			color: #000000;
+			transition: all 1s;
+		}
+
+
+		.nav1 li{
+			position: relative;
+		}
+
+		li{
+			text-align: center;
+		}
+
+		.nav1{
+			width: 110px;
+			margin: 0;
+		}
+
+		.nav1 a{
+			width: 110px;
+		}
+/*悬浮不同的nav中的li 设置不同颜色*/
+		.li1:hover{
+			background: #fff;
+		}
+
+		.li2:hover{
+			background: #fff;
+		}
+
+		.li3:hover{
+			background: #fff;
+		}
+/*	设置绝对定位 从nav1的ul开始，相对定位是nav中的li，也就是ul的父级元素
+	因为nav1的宽度是110px;所以想让nav1下的ul紧贴nav1，设置left110-px,最好是 110px;
+	并且设置子元素隐藏
+*/
+
+		.nav1 ul{
+			position: absolute;
+			left: 109px;
+			top:0;
+			display: none;
+		}
+
+/*就是当鼠标悬浮在li1 上面的时候，让他子元素中的 nav2 显示可见  当鼠标悬浮在nv2中的li2 上面的时候，则让他子元素中的 nav3 显示可见*/
+		.li1:hover .nav2{
+			background: #fff;
+			display: block;
+		}
+
+		.li2:hover .nav3{
+			background: #fff;
+			display: block;
+		}
+
+/*单独设置每个nav 下的a 的宽度，以及nav 的绝对定位，*/
+		.haizei .li2>a{
+			width:200px;
+		}
+
+		.haizei .li3>a{
+			width:120px;
+		}
+
