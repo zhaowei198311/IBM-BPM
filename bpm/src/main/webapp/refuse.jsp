@@ -11,9 +11,9 @@
 </head>
 <body>
    <div class="container" style="text-align:center;">
-            <h1 style="font-size:100px;margin-top:80px;">无权访问</h1>
-            <br><br>
-            <h2 style="font-weight:600;margin:10px 0 10px">此角色没有该权限功能</h2>
-        </div>
+        <h1 style="font-size:100px;margin-top:80px;">无权访问</h1>
+        <br><br>
+        <h2 style="font-weight:600;margin:10px 0 10px">此角色没有该权限功能</h2>
+   </div>
 </body>
 </html>
