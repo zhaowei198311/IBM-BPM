@@ -29,7 +29,7 @@ import com.desmart.common.util.CommonBusinessObjectUtils;
 import com.desmart.common.util.FormDataUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.RestUtil;
-import com.desmart.common.util.TaskIdUtil;
+import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -709,7 +709,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		// 查询token
 		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
-		TaskIdUtil taskIdUtil = new TaskIdUtil();
+		ExecutionTreeUtil taskIdUtil = new ExecutionTreeUtil();
 		Map<String, Object> resultMap = taskIdUtil.queryTokenId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));

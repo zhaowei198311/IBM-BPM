@@ -6,8 +6,18 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-public class TaskIdUtil {
+/**
+ * 用来分析执行树的工具类
+ *
+ */
+public class ExecutionTreeUtil {
 	
+    /**
+     * 从流程详细信息中获得指定任务的tokenId和父tokenId
+     * @param taskId 任务ID
+     * @param jsonObject 由流程详细信息转化来的JSONObject
+     * @return
+     */
 	public static final Map<String, Object> queryTokenId(int taskId, JSONObject jsonObject){
     	Map<String, Object> map = new HashMap<>();
     	String datas = "";
