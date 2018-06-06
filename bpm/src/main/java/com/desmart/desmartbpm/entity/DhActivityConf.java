@@ -39,6 +39,8 @@ public class DhActivityConf {
     private String actcCanMailNotify;
 
     private String actcMailNotifyTemplate;
+    
+    private String actcSmsNotifyTemplate;
 
     private String actcCanReject;  // 是否可以驳回
 
@@ -690,6 +692,16 @@ public class DhActivityConf {
 	}
 
 
+	public String getActcSmsNotifyTemplate() {
+		return actcSmsNotifyTemplate;
+	}
+
+
+	public void setActcSmsNotifyTemplate(String actcSmsNotifyTemplate) {
+		this.actcSmsNotifyTemplate = actcSmsNotifyTemplate;
+	}
+
+
 	@Override
 	public String toString() {
 		return "DhActivityConf [actcUid=" + actcUid + ", activityId=" + activityId + ", actcSort=" + actcSort
@@ -699,30 +711,31 @@ public class DhActivityConf {
 				+ actcCanEditAttach + ", actcCanUploadAttach=" + actcCanUploadAttach + ", actcCanDelegate="
 				+ actcCanDelegate + ", actcCanDeleteAttach=" + actcCanDeleteAttach + ", actcCanMessageNotify="
 				+ actcCanMessageNotify + ", actcCanMailNotify=" + actcCanMailNotify + ", actcMailNotifyTemplate="
-				+ actcMailNotifyTemplate + ", actcCanReject=" + actcCanReject + ", actcRejectType=" + actcRejectType
-				+ ", actcCanRevoke=" + actcCanRevoke + ", actcCanAutocommit=" + actcCanAutocommit + ", actcCanAdd="
-				+ actcCanAdd + ", actcCanUserToField=" + actcCanUserToField + ", actcCanAuditToField="
-				+ actcCanAuditToField + ", actcCanApprove=" + actcCanApprove + ", actcUserToField=" + actcUserToField
-				+ ", actcAuditToField=" + actcAuditToField + ", actcOuttimeTrigger=" + actcOuttimeTrigger
-				+ ", actcOuttimeTemplate=" + actcOuttimeTemplate + ", actcDescription=" + actcDescription
-				+ ", actcDefTitle=" + actcDefTitle + ", actcDefSubjectMessage=" + actcDefSubjectMessage
-				+ ", actcDefMessage=" + actcDefMessage + ", actcDefDescription=" + actcDefDescription + ", actcAlert="
-				+ actcAlert + ", actcPriorityVariable=" + actcPriorityVariable + ", actcCanCancel=" + actcCanCancel
-				+ ", actcCanPause=" + actcCanPause + ", actcCanSkip=" + actcCanSkip + ", updator=" + updator
-				+ ", updateTime=" + updateTime + ", actcCanChooseUser=" + actcCanChooseUser + ", actcCanTransfer="
-				+ actcCanTransfer + ", actcResponsibility=" + actcResponsibility + ", actcOuttimeTriggerTitle="
-				+ actcOuttimeTriggerTitle + ", handleUser=" + handleUser + ", handleUserView=" + handleUserView
-				+ ", handleRole=" + handleRole + ", handleRoleView=" + handleRoleView + ", handleTeam=" + handleTeam
-				+ ", handleTeamView=" + handleTeamView + ", handleField=" + handleField + ", chooseableHandleUser="
-				+ chooseableHandleUser + ", chooseableHandleUserView=" + chooseableHandleUserView
-				+ ", chooseableHandleRole=" + chooseableHandleRole + ", chooseableHandleRoleView="
-				+ chooseableHandleRoleView + ", chooseableHandleTeam=" + chooseableHandleTeam
-				+ ", chooseableHandleTeamView=" + chooseableHandleTeamView + ", chooseableHandleField="
-				+ chooseableHandleField + ", chooseableHandleTriggerTitle=" + chooseableHandleTriggerTitle
-				+ ", chooseableHandleTrigger=" + chooseableHandleTrigger + ", outtimeUser=" + outtimeUser
-				+ ", outtimeUserView=" + outtimeUserView + ", outtimeRole=" + outtimeRole + ", outtimeRoleView="
-				+ outtimeRoleView + ", outtimeTeam=" + outtimeTeam + ", outtimeTeamView=" + outtimeTeamView
-				+ ", rejectActivities=" + rejectActivities + ", rejectActivitiesView=" + rejectActivitiesView + "]";
+				+ actcMailNotifyTemplate + ", actcSmsNotifyTemplate=" + actcSmsNotifyTemplate + ", actcCanReject="
+				+ actcCanReject + ", actcRejectType=" + actcRejectType + ", actcCanRevoke=" + actcCanRevoke
+				+ ", actcCanAutocommit=" + actcCanAutocommit + ", actcCanAdd=" + actcCanAdd + ", actcCanUserToField="
+				+ actcCanUserToField + ", actcCanAuditToField=" + actcCanAuditToField + ", actcCanApprove="
+				+ actcCanApprove + ", actcUserToField=" + actcUserToField + ", actcAuditToField=" + actcAuditToField
+				+ ", actcOuttimeTrigger=" + actcOuttimeTrigger + ", actcOuttimeTemplate=" + actcOuttimeTemplate
+				+ ", actcDescription=" + actcDescription + ", actcDefTitle=" + actcDefTitle + ", actcDefSubjectMessage="
+				+ actcDefSubjectMessage + ", actcDefMessage=" + actcDefMessage + ", actcDefDescription="
+				+ actcDefDescription + ", actcAlert=" + actcAlert + ", actcPriorityVariable=" + actcPriorityVariable
+				+ ", actcCanCancel=" + actcCanCancel + ", actcCanPause=" + actcCanPause + ", actcCanSkip=" + actcCanSkip
+				+ ", updator=" + updator + ", updateTime=" + updateTime + ", actcCanChooseUser=" + actcCanChooseUser
+				+ ", actcCanTransfer=" + actcCanTransfer + ", actcResponsibility=" + actcResponsibility
+				+ ", actcOuttimeTriggerTitle=" + actcOuttimeTriggerTitle + ", handleUser=" + handleUser
+				+ ", handleUserView=" + handleUserView + ", handleRole=" + handleRole + ", handleRoleView="
+				+ handleRoleView + ", handleTeam=" + handleTeam + ", handleTeamView=" + handleTeamView
+				+ ", handleField=" + handleField + ", chooseableHandleUser=" + chooseableHandleUser
+				+ ", chooseableHandleUserView=" + chooseableHandleUserView + ", chooseableHandleRole="
+				+ chooseableHandleRole + ", chooseableHandleRoleView=" + chooseableHandleRoleView
+				+ ", chooseableHandleTeam=" + chooseableHandleTeam + ", chooseableHandleTeamView="
+				+ chooseableHandleTeamView + ", chooseableHandleField=" + chooseableHandleField
+				+ ", chooseableHandleTriggerTitle=" + chooseableHandleTriggerTitle + ", chooseableHandleTrigger="
+				+ chooseableHandleTrigger + ", outtimeUser=" + outtimeUser + ", outtimeUserView=" + outtimeUserView
+				+ ", outtimeRole=" + outtimeRole + ", outtimeRoleView=" + outtimeRoleView + ", outtimeTeam="
+				+ outtimeTeam + ", outtimeTeamView=" + outtimeTeamView + ", rejectActivities=" + rejectActivities
+				+ ", rejectActivitiesView=" + rejectActivitiesView + "]";
 	}
 
     

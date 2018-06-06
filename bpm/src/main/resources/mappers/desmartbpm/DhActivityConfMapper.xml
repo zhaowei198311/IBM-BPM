@@ -44,6 +44,7 @@
     <result column="ACTC_CAN_CHOOSE_USER" property="actcCanChooseUser" jdbcType="VARCHAR" />
     <result column="ACTC_CAN_TRANSFER" property="actcCanTransfer" jdbcType="VARCHAR" />
     <result column="ACTC_RESPONSIBILITY" property="actcResponsibility" jdbcType="VARCHAR" />
+  	<result column="ACTC_SMS_NOTIFY_TEMPLATE" property="actcSmsNotifyTemplate" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     ACTC_UID, ACTIVITY_ID, ACTC_SORT, ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, ACTC_ASSIGN_VARIABLE, 
@@ -55,6 +56,7 @@
     ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION, 
     ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP, 
     UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY,ACTC_CHOOSEABLE_HANDLER_TYPE
+    ,ACTC_SMS_NOTIFY_TEMPLATE
   </sql>
   <sql id="relationColumn" >
     atc.ACTC_UID, atc.ACTIVITY_ID, atc.ACTC_SORT, atc.ACTC_TIME, atc.ACTC_TIMEUNIT, atc.ACTC_ASSIGN_TYPE, atc.ACTC_ASSIGN_VARIABLE,
@@ -66,7 +68,7 @@
     atc.ACTC_DEF_TITLE, atc.ACTC_DEF_SUBJECT_MESSAGE, atc.ACTC_DEF_MESSAGE, atc.ACTC_DEF_DESCRIPTION,
     atc.ACTC_ALERT, atc.ACTC_PRIORITY_VARIABLE, atc.ACTC_CAN_CANCEL, atc.ACTC_CAN_PAUSE, atc.ACTC_CAN_SKIP,
     atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY,
-    atc.ACTC_CHOOSEABLE_HANDLER_TYPE
+    atc.ACTC_CHOOSEABLE_HANDLER_TYPE,atc.ACTC_SMS_NOTIFY_TEMPLATE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -105,7 +107,7 @@
       #{actcDefMessage,jdbcType=VARCHAR}, #{actcDefDescription,jdbcType=VARCHAR}, #{actcAlert,jdbcType=VARCHAR}, 
       #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR}, 
       #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{actcCanChooseUser},
-      #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType}
+      #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType},#{actcSmsNotifyTemplate}
       )
   </insert>
   
@@ -231,7 +233,10 @@
         actc_Responsibility = #{actcResponsibility,jdbcType=VARCHAR},
       </if>
       <if test="actcChooseableHandlerType != null" >
-        ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType,jdbcType=VARCHAR}
+        ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType,jdbcType=VARCHAR},
+      </if>
+      <if test="actcSmsNotifyTemplate != null" >
+        ACTC_SMS_NOTIFY_TEMPLATE = #{actcSmsNotifyTemplate}
       </if>
     </set>
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
@@ -279,7 +284,8 @@
       ACTC_CAN_CHOOSE_USER = #{actcCanChooseUser},
       ACTC_CAN_TRANSFER = #{actcCanTransfer},
       ACTC_RESPONSIBILITY = #{actcResponsibility},
-      ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType}
+      ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType},
+      ACTC_SMS_NOTIFY_TEMPLATE = #{actcSmsNotifyTemplate}
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
   
