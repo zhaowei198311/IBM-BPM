@@ -4,9 +4,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="resources/desmartportal/css/layui.css" rel="stylesheet"/>
+<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
+<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
 <title>越权页面</title>
 </head>
 <body>
-   <h1>无权访问</h1>
+   <div class="container" style="text-align:center;">
+            <h1 style="font-size:100px;margin-top:80px;">无权访问</h1>
+            <br><br>
+            <h2 style="font-weight:600;margin:10px 0 10px">此角色没有该权限功能</h2>
+        </div>
 </body>
 </html>
