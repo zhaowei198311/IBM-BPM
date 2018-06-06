@@ -9,7 +9,7 @@ import org.springframework.web.context.WebApplicationContext;
  * Java类型的Trigger必须实现此方法
  *
  */
-public interface JavaClassTrigger {
+public interface DhJavaClassTriggerTemplate {
 
     void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject);
     

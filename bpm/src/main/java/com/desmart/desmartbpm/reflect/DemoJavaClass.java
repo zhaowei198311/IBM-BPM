@@ -5,7 +5,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 
 
-public class DemoJavaClass implements JavaClassTrigger {
+public class DemoJavaClass implements DhJavaClassTriggerTemplate {
 
 	@Override
 	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject) {

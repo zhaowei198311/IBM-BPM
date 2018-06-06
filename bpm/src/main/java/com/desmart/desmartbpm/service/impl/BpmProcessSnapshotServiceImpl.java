@@ -74,7 +74,6 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         
     }
 
-
     public JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId) {
         JSONArray results = new JSONArray();
         BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
@@ -153,16 +152,14 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }
         
         System.out.println("主流程中存在外接节点个数：" + externalNodeList.size());
-        List<BpmActivityMeta> allExternalMetaList = new ArrayList<>();
+        List<BpmActivityMeta> allNodeToInclude = new ArrayList<>();
+        // 记录刚拉进来的时候
         
-        for (BpmActivityMeta exteralMeta : externalNodeList) {
-            Integer sourceDeepLevel = exteralMeta.getDeepLevel(); // 外接节点的层级
-            String sourceBpdId = exteralMeta.getBpdId();          // 最终图的图id
-            String sourceParentActvityBpdId = exteralMeta.getActivityBpdId(); // 父节点activityBpdId
-            String sourceParentActivityId = exteralMeta.getActivityId(); // 父节点activityId
-            includeCalledProcess(exteralMeta.getBpdId(), exteralMeta, allExternalMetaList);
+        
+        for (BpmActivityMeta exteralNode : externalNodeList) {
+            includeCalledProcess(bpdId, exteralNode, allNodeToInclude);
         }
-        System.out.println("需要被纳入流程的总环节数：" + allExternalMetaList.size());
+        System.out.println("需要被纳入流程的总环节数：" + allNodeToInclude.size());
         
     }
 
@@ -456,6 +453,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
      * @param externalNode  作为子流程标识的节点
      */
     private List<BpmActivityMeta> includeCalledProcess(String sourceBpdId, BpmActivityMeta externalNode, List<BpmActivityMeta> allMetaList) {
+        // 找到外链流程的所有节点
         BpmActivityMeta metaSelective = new BpmActivityMeta(externalNode.getProAppId(), externalNode.getExternalId(), externalNode.getSnapshotId());
         List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         
