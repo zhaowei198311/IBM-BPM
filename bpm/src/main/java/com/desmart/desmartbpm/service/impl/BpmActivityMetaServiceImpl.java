@@ -71,6 +71,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         bpmActivityMeta.setCreator(employeeNum);
         bpmActivityMeta.setUpdateBy(employeeNum);
         bpmActivityMeta.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
+        bpmActivityMeta.setSourceActivityId(bpmActivityMeta.getActivityId()); // 将源环节主键设置为自己的主键
         bpmActivityMeta.setMiOrder(miOrder);
         bpmActivityMeta.setDeepLevel(deepLevel);
         bpmActivityMeta.setProAppId(proAppId);

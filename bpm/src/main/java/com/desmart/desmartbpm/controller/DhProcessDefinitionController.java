@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
@@ -86,6 +87,9 @@ public class DhProcessDefinitionController {
             } else {
                 return serverResponse;
             }
+        } catch (PlatformException pe) {
+            LOG.error("同步环节失败", pe);
+            return ServerResponse.createByErrorMessage(pe.getMessage());
         } catch (Exception e) {
             LOG.error("同步环节失败", e);
             return ServerResponse.createByErrorMessage("同步环节失败");

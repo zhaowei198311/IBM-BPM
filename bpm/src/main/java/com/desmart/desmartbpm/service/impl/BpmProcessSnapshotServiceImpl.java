@@ -20,7 +20,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.DataListUtils;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
@@ -122,9 +124,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         }// 至此newActivityMetas中已经是此流程全部的环节
         
         // 根据原先的parentActivityBpdId 生成出 parentActivityId 
-        Map<String, String> actIdAndActBpdIdMap = new HashMap<>();
+        Map<String, String> actBpdIdAndActIdMap = new HashMap<>();
         for (BpmActivityMeta tempItem : basicActivityMetaList) {
-            actIdAndActBpdIdMap.put(tempItem.getActivityBpdId(), tempItem.getActivityId());
+            actBpdIdAndActIdMap.put(tempItem.getActivityBpdId(), tempItem.getActivityId());
         }
         
         List<BpmActivityMeta> externalNodeList = new ArrayList<>(); // bascicNode中的外链节点
@@ -133,7 +135,13 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         for (BpmActivityMeta basticActivityMeta : basicActivityMetaList) {
             LOG.error(basticActivityMeta.getActivityName());
         	String activityBpdId = basticActivityMeta.getActivityBpdId();
-        	basticActivityMeta.setParentActivityId(actIdAndActBpdIdMap.get(basticActivityMeta.getParentActivityBpdId()));
+        	// 设置父activityId 没有则为"0"
+        	if ("0".equals(basticActivityMeta.getParentActivityBpdId())) {
+        	    basticActivityMeta.setParentActivityId("0");
+        	} else {
+        	    basticActivityMeta.setParentActivityId(actBpdIdAndActIdMap.get(basticActivityMeta.getParentActivityBpdId()));
+        	}
+        	
         	basticActivityMeta.setSortNum(sortNum);
             bpmActivityMetaMapper.save(basticActivityMeta);
             if (isHumanActivity(basticActivityMeta)) {
@@ -144,7 +152,16 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
                 externalNodeList.add(basticActivityMeta);
             }
             sortNum++;
+            //System.out.println(basticActivityMeta.toString());
         }
+        
+        // 测试输出basic节点开始
+//        for (BpmActivityMeta basticActivityMeta : basicActivityMetaList) {
+//            System.out.println("主键： " +  basticActivityMeta.getActivityId());
+//            System.out.println("名称： " +  basticActivityMeta.getActivityName());
+//        }
+        // 测试输出basic节点结束
+        
         
         // 引入外链流程的节点，找出所有外链节点
         if (externalNodeList.size() == 0) {
@@ -155,12 +172,77 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> allNodeToInclude = new ArrayList<>();
         // 记录刚拉进来的时候
         
-        
-        for (BpmActivityMeta exteralNode : externalNodeList) {
-            includeCalledProcess(bpdId, exteralNode, allNodeToInclude);
+        List<BpmActivityMeta> newList = null;
+        for (int i=0; i<externalNodeList.size(); i++) {
+            allNodeToInclude.addAll(includeCalledProcess(externalNodeList.get(i)));
         }
         System.out.println("需要被纳入流程的总环节数：" + allNodeToInclude.size());
         
+
+        
+        
+        for (BpmActivityMeta item : allNodeToInclude) {
+            System.out.println(item.toString());
+            bpmActivityMetaMapper.save(item);
+        }
+        
+        
+    }
+    
+    
+    /**
+     * 
+     * @param sourceBpdId  最终汇入的流程
+     * @param externalNode  作为子流程标识的节点
+     */
+    private List<BpmActivityMeta> includeCalledProcess(BpmActivityMeta externalNode) {
+        // 找到外链流程的所有节点
+        BpmActivityMeta metaSelective = new BpmActivityMeta(externalNode.getProAppId(), externalNode.getExternalId(), externalNode.getSnapshotId());
+        List<BpmActivityMeta> nodesSelected = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        
+        List<BpmActivityMeta> nodeToIncludeList = DataListUtils.cloneList(nodesSelected, BpmActivityMeta.class);
+        
+      for (BpmActivityMeta basticActivityMeta : nodeToIncludeList) {
+          System.out.println("主键： " +  basticActivityMeta.getActivityId());
+          System.out.println("名称： " +  basticActivityMeta.getActivityName());
+      }
+        
+        
+        
+        
+        
+        if (nodeToIncludeList.size() == 0) {
+            throw new PlatformException("外链的流程不存在，或未被同步, 外链流程bpd_id: " + externalNode.getExternalId() + ", snapshot_id: " + externalNode.getSnapshotId());
+        }
+        
+        // 为同步的节点设置新的主键并记录老的主键
+        String temp = null;
+        Map<String, String> oldActIdAndNewActIdMap = new HashMap<>(); // 记录新老主键对应关系
+        for (BpmActivityMeta nodeToInclude : nodeToIncludeList) {
+            temp = nodeToInclude.getActivityId();
+            nodeToInclude.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
+            oldActIdAndNewActIdMap.put(temp, nodeToInclude.getActivityId());
+        }
+        
+        for (BpmActivityMeta nodeToInclude : nodeToIncludeList) {
+            // 将所有的节点拷贝进来， 更新bpdId，更新层级,更新父节点
+            nodeToInclude.setBpdId(externalNode.getBpdId());
+            nodeToInclude.setDeepLevel(nodeToInclude.getDeepLevel() + externalNode.getDeepLevel() + 1);
+            // 设置新的父节点
+            if ("0".equals(nodeToInclude.getParentActivityId())) {
+                nodeToInclude.setParentActivityId(externalNode.getActivityId());
+            } else {
+                nodeToInclude.setParentActivityId(oldActIdAndNewActIdMap.get(nodeToInclude.getParentActivityId()));
+            }
+            
+        }
+        
+        for (BpmActivityMeta basticActivityMeta : nodeToIncludeList) {
+            System.out.println("主键： " +  basticActivityMeta.getActivityId());
+            System.out.println("名称： " +  basticActivityMeta.getActivityName());
+        }
+        
+        return nodeToIncludeList;
     }
 
     /**
@@ -427,56 +509,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         return conf;
     }
     
-    public ServerResponse startIncludeCalledProcess(String proAppId, String proUid, String proVerUid) {
-        List<BpmActivityMeta> allExternalMetaList = new ArrayList<>(); // 所有需要被接入的环节
-        
-        BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
-        metaSelective.setBpmTaskType("CalledProcess");
-        List<BpmActivityMeta> exteralMetaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
-        System.out.println("主流程中存在外接节点个数：" + exteralMetaList.size());
-        
-        for (BpmActivityMeta exteralMeta : exteralMetaList) {
-            Integer sourceDeepLevel = exteralMeta.getDeepLevel(); // 外接节点的层级
-            String sourceBpdId = exteralMeta.getBpdId();          // 最终图的图id
-            String sourceParentActvityBpdId = exteralMeta.getActivityBpdId(); // 父节点activityBpdId
-            String sourceParentActivityId = exteralMeta.getActivityId(); // 父节点activityId
-            includeCalledProcess(exteralMeta.getBpdId(), exteralMeta, allExternalMetaList);
-        }
-        System.out.println("需要被纳入流程的总环节数：" + allExternalMetaList.size());
-        
-        return null;
-    }
+
     
-    /**
-     * 
-     * @param sourceBpdId  最终汇入的流程
-     * @param externalNode  作为子流程标识的节点
-     */
-    private List<BpmActivityMeta> includeCalledProcess(String sourceBpdId, BpmActivityMeta externalNode, List<BpmActivityMeta> allMetaList) {
-        // 找到外链流程的所有节点
-        BpmActivityMeta metaSelective = new BpmActivityMeta(externalNode.getProAppId(), externalNode.getExternalId(), externalNode.getSnapshotId());
-        List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
-        
-        
-        
-        
-        for (BpmActivityMeta item : metaList) {
-            // 将所有的节点拷贝进来， 更新bpdId，更新层级，将原activityId复制到，sourceActivityBpdId， 设置新的主键
-            item.setBpdId(sourceBpdId);
-            item.setDeepLevel(item.getDeepLevel() + externalNode.getDeepLevel() + 1);
-            if (item.getSourceActivityId() == null) {
-                // 如果被纳入的节点的源节点不存在，说明被纳入的这个节点就是源节点，反之保留源节点信息不更新
-                item.setSourceActivityId(item.getActivityId());
-            }
-            // 设置新的主键
-            item.setActivityId(EntityIdPrefix.BPM_ACTIVITY_META + UUID.randomUUID().toString());
-            if ("CalledProcess".equals(item.getBpmTaskType())) {
-                allMetaList.addAll(includeCalledProcess(sourceBpdId, item, allMetaList));
-            }
-        }
-        allMetaList.addAll(metaList);
-        return allMetaList;
-    }
+
     
     
 }
