@@ -920,6 +920,14 @@ function initConf(map) {
             $(this).prop("checked", false);
         }
     });
+    $('input[name="actcCanMessageNotify"]').each(function(){
+        if ($(this).val() == conf.actcCanMessageNotify) {
+            $(this).prop("checked", true);
+            $('input[name = "actcMessageNotifyTemplate"]').val(conf.actcMessageNotifyTemplate);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
     $('input[name="actcCanReject"]').each(function(){
         if ($(this).val() == conf.actcCanReject) {
             $(this).prop("checked", true);

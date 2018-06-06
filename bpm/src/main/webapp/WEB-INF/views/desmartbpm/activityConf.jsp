@@ -387,6 +387,12 @@
                                                                     <input type="radio" name="actcCanMessageNotify" value="FALSE" title="否">
                                                                 </div>
                                                             </div>
+                                                            <div class="layui-form-item">
+                                                                <label class="layui-form-label">短信通知模板</label>
+                                                                <div class="layui-input-block">
+                                                                    <input type="text" name="actcMessageNotifyTemplate"  value="" autocomplete="off" class="layui-input" >
+                                                                </div>
+                                                            </div>
                                                         </div>                                                      
                                                     </div>
                                                 </form>
