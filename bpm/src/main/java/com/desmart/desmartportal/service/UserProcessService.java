@@ -21,13 +21,7 @@ public interface UserProcessService {
 	 * @return
 	 */
 	Map<String, List<DhProcessMeta>> selectByMenusProcess();
-	
-	/**
-	 * 发起流程用户信息
-	 */
-	Map<String, Object> startProcessByUserInfo(String proUid,String proAppId,String verUid,String proName,String categoryName);
-	
-	
+
 	List<Map<String, Object>> selectByMenusProcess2();
 
 }

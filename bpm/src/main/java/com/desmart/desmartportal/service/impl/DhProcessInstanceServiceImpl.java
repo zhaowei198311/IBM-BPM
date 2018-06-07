@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
@@ -53,17 +54,10 @@ import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.CommonBusinessObject;
-import com.desmart.desmartportal.entity.DhApprovalOpinion;
-import com.desmart.desmartportal.entity.DhDrafts;
-import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhRoutingRecord;
-import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
@@ -122,8 +116,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private DhStepService dhStepService;
 	@Autowired
 	private BpmFormManageService bpmFormManageService;
-	@Autowired
-	private MenusService menusService;
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
 
@@ -350,9 +342,16 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			pubBo.setInstanceId(String.valueOf(insId));
 
 			List<BpmActivityMeta> nextActivities = dhRouteService.getNextActivities(firstHumanActivity, mergedFromData);
-			dhRouteService.updateGatewayRouteResult(firstHumanActivity, insId, mergedFromData);
+			//dhRouteService.updateGatewayRouteResult(firstHumanActivity, insId, mergedFromData);
 
-			// 封装下一环节的处理人
+			// 获得路由信息
+            BpmRoutingData routingData = dhRouteService.getNextActivityTo(firstHumanActivity, mergedFromData);
+            if (routingData.getGatewayNodes().size() > 0) {
+
+            }
+
+
+            // 封装下一环节的处理人
 			ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo,
 					routeData);
 			if (!assembleResponse.isSuccess()) {

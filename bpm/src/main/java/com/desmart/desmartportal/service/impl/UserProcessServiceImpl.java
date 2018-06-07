@@ -26,7 +26,6 @@ import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartportal.controller.UsersController;
 import com.desmart.desmartportal.service.DhProcessFormService;
-import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.UserProcessService;
 import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -78,9 +77,6 @@ public class UserProcessServiceImpl implements UserProcessService {
 	private SysUserDepartmentMapper sysUserDepartmentMapper;
 	
 	@Autowired
-	private MenusService menusService;
-	
-	@Autowired
 	private BpmFormManageService bpmFormManageService;
 
 	private Logger log = Logger.getLogger(UsersController.class);
@@ -111,46 +107,7 @@ public class UserProcessServiceImpl implements UserProcessService {
 		return resultMap;
 	}
 
-	/** 
-	 * 发起流程用户信息
-	 */
-	@Override
-	public Map<String, Object> startProcessByUserInfo(String proUid,String proAppId,String verUid,String proName,String categoryName) {
-		log.info("发起流程用户信息 Start.....");
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		try {
-			paramMap.put("proUid", proUid);
-			paramMap.put("proAppId", proAppId);
-			paramMap.put("verUid", verUid);
-			paramMap.put("proName", proName);
-			paramMap.put("categoryName", categoryName);
-			
-			String userId = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-			paramMap.put("userId", userId); // 创建人id
-			SysUser sysUser = sysUserMapper.queryByPrimaryKey(userId);
-			paramMap.put("userName", sysUser.getUserName()); // 创建人全名
-			SysUserDepartment sysUserDepartment = new SysUserDepartment();
-			sysUserDepartment.setUserUid(userId);
-			List<SysUserDepartment> department = sysUserDepartmentMapper.selectAll(sysUserDepartment);
-			paramMap.put("userDepartmentList", department);
-			//环节选人
-			paramMap.put("activityMetaList", menusService.activityHandler(proUid, proAppId, verUid));
-		
-			// 表单详细信息设置
-			Map<String,Object> resultMap = dhProcessFormService.queryProcessForm(proAppId, proUid, verUid);
-			paramMap.put("formId", resultMap.get("formId"));
-			paramMap.put("actcUid", resultMap.get("actcUid"));
-			paramMap.put("activityId", resultMap.get("activityId"));
-			paramMap.put("activityBpdId", resultMap.get("activityBpdId"));
-			ServerResponse response = bpmFormManageService.getFormFileByFormUid((String)resultMap.get("formId"));
-			paramMap.put("formHtml", response.getData());
-			return paramMap;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.info("发起流程用户信息 END.....");
-		return null;
-	}
+
 	
 	@Override
 	public List<Map<String, Object>> selectByMenusProcess2() {

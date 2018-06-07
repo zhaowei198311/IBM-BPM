@@ -20,7 +20,6 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -42,9 +41,7 @@ public class MenusController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
-	
-	@Autowired
-	private MenusService menusService;
+
 	
 	@Autowired
 	private DhDraftsService dhDraftsService;
@@ -79,9 +76,6 @@ public class MenusController {
 	 * 新建一个流程页面，进入发起流程的页面
 	 * @param proUid 流程id
 	 * @param proAppId 流程应用库id
-	 * @param verUid 流程版本id
-	 * @param proName 流程名称
-	 * @param categoryName 流程分类名称
 	 * @return
 	 */
 	@RequestMapping("/startProcess")
@@ -99,14 +93,7 @@ public class MenusController {
 		
 		return mv;
 	}
-	
-	
-	//可选处理人获取
-	@RequestMapping("/choosableHandler")
-	@ResponseBody
-	public List<SysUser> choosableHandler(String activityUid){
-		return menusService.choosableHandler(activityUid);
-	}
+
 	
 	@RequestMapping("/processType")
 	public ModelAndView processType(@RequestParam(value = "proUid",required = false) String proUid,

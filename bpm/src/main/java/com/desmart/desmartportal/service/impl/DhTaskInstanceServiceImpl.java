@@ -55,7 +55,6 @@ import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
@@ -96,9 +95,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Autowired
 	private DhProcessFormService dhProcessFormService;
-
-	@Autowired
-	private MenusService menusService;
 
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
@@ -391,7 +387,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 						dhProcessInstance.setInsData(insJson.toJSONString());
 						//判断流程是否结束
 						List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
-						dhRouteServiceImpl.updateGatewayRouteResult(bpmActivityMeta, dhProcessInstance.getInsId(), formData);
+						//dhRouteServiceImpl.updateGatewayRouteResult(bpmActivityMeta, dhProcessInstance.getInsId(), formData);
 						
 						if(nextBpmActivityMetas==null || nextBpmActivityMetas.size()==0) {
 							dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);

@@ -61,7 +61,7 @@ public interface DhRouteService {
 	 * @param formData
 	 * @return
 	 */
-	ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData);
+	ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData);
 	
     /**
      * 找到流程中指定环节的上一环节
@@ -86,4 +86,12 @@ public interface DhRouteService {
 	 * @return
 	 */
 	DhGatewayLine getUniqueOutLineByGatewayNodeAndFormData(BpmActivityMeta gatewayNode, JSONObject formData);
+
+	/**
+	 * 查询网关路由的结果
+	 * @param insId
+	 * @param activityBpdId
+	 * @return
+	 */
+	ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId);
 }

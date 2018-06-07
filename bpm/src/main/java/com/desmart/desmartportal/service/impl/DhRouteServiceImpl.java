@@ -264,108 +264,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 		return ServerResponse.createBySuccess(activityMetaList);
 	}
-	
 
-	// 获取指定分配类型的用户
-	// private List<BpmActivityMeta> assignTypeByUser(){}
 
 	@Override
 	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
-		List<BpmActivityMeta> result = new ArrayList<>();
-		Map<String, List<BpmActivityMeta>> resultMap = new HashMap<>();
-		List<BpmActivityMeta> normalList = resultMap.get("normal");
-		List<BpmActivityMeta> gateAndlList = resultMap.get("gateAnd");
-		List<BpmActivityMeta> endList = resultMap.get("end");
-		List<BpmActivityMeta> gatewayList = resultMap.get("gateway");
-
         BpmRoutingData bpmRoutingData = getNextActivityTo(sourceActivityMeta, formData);
-
-
-        result.addAll(bpmRoutingData.getNormalNodes());
-
-		// 查看是否需要校验排他网关
-		if ("1".equals("1")) {
-			return result;
-		}
-
-		// 被排他网关排除的节点
-		List<String> activityIdsToRemove = new ArrayList<>();
-
-		// 遍历处理每个网关
-		for (BpmActivityMeta gatewayMeta : gatewayList) {
-			DhGatewayLine lineSelective = new DhGatewayLine();
-			lineSelective.setActivityId(gatewayMeta.getActivityId());
-			List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
-			// 获得相关的条件
-			List<DatRuleCondition> conditions = datRuleConditionService
-					.getDatruleConditionByActivityId(gatewayMeta.getActivityId());
-			// 获得条件需要的表单中的变量
-			Set<String> needVarnameSet = new HashSet<>();
-			Map<String, String> varTypeMap = new HashMap<>();
-			for (DatRuleCondition condition : conditions) {
-				String varname = condition.getLeftValue();
-				if (!needVarnameSet.contains(varname)) {
-					needVarnameSet.add(varname);
-					varTypeMap.put(varname, condition.getRightValueType());
-				}
-			}
-			// 从表单中取出需要的参数
-			org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
-
-			if (param == null) {
-				// 从表单中获取变量发生错误
-				log.error("从表单中获取变量发生错误，网关id: " + gatewayMeta.getActivityId());
-				// 走默认路径，需要排除非默认路径
-				for (DhGatewayLine line : lines) {
-					if ("FALSE".equals(line.getIsDefault())) {
-						addHumanActivityToRemoveList(activityIdsToRemove, line);
-					}
-				}
-				continue;
-			}
-
-			// 计算每种规则的结果
-			List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
-			String fittedLineId = null; // 满足规则的连接线id
-			for (DhGatewayLine line : unDefaultLines) {
-				String ruleId = line.getRuleId();
-				DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
-				Map<String, Object> ruleResult = null;
-				try {
-					ruleResult = droolsEngineService.execute(param, datRule);
-					if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
-						// 规则运算成功
-						fittedLineId = line.getGatewayLineUid();
-						break;
-					}
-				} catch (Exception e) {
-					log.error("规则运算异常,规则编号：" + ruleId, e);
-				}
-			}
-			if (fittedLineId == null) {
-				// 如果没有满足规则的连线，从人工环节列表中去除所有不是默认路线的节点
-				for (DhGatewayLine line : unDefaultLines) {
-					addHumanActivityToRemoveList(activityIdsToRemove, line);
-				}
-			} else {
-				// 如果有连线满足规则， 从人工环节列表中除去不是这个线相连的节点
-				for (DhGatewayLine line : lines) {
-					if (!fittedLineId.equals(line.getGatewayLineUid())) {
-						addHumanActivityToRemoveList(activityIdsToRemove, line);
-					}
-				}
-			}
-
-		} // 遍历处理网关结束
-			// 移除多余的节点
-		Iterator<BpmActivityMeta> iterator = result.iterator();
-		while (iterator.hasNext()) {
-			BpmActivityMeta meta = iterator.next();
-			if (activityIdsToRemove.contains(meta.getActivityId())) {
-				iterator.remove();
-			}
-		}
-		return result;
+        return new ArrayList<>(bpmRoutingData.getNormalNodes());
 	}
 
 	/**
@@ -677,68 +581,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-	public ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData) {
-	    Map<String, List<BpmActivityMeta>> resultMap = bpmActivityMetaService.getNextToActivity(currActivityMeta, "");
-	    List<BpmActivityMeta> gatewayList = (List<BpmActivityMeta>)resultMap.get("gateway");
-	    
-	    for (BpmActivityMeta gatewayMeta : gatewayList) {
-	        DhGatewayLine lineSelective = new DhGatewayLine();
-            lineSelective.setActivityId(gatewayMeta.getActivityId());
-            List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
-            // 获得相关的条件
-            List<DatRuleCondition> conditions = datRuleConditionService.getDatruleConditionByActivityId(gatewayMeta.getActivityId());
-            // 获得条件需要的表单中的变量
-            Set<String> needVarnameSet = new HashSet<>();
-            Map<String, String> varTypeMap = new HashMap<>();
-            for (DatRuleCondition condition : conditions) {
-                String varname = condition.getLeftValue();
-                if (!needVarnameSet.contains(varname)) {
-                    needVarnameSet.add(varname);
-                    varTypeMap.put(varname, condition.getRightValueType());
-                }
-            }
-            // 从表单中取出需要的参数
-            org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
-            if (param == null) {
-                // 从表单中获取变量发生错误, 不保存/更新值
-                log.error("从表单中获取变量发生错误，网关id: " + gatewayMeta.getActivityId());
-                continue;
-            }
-            // 计算每种规则的结果
-            List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
-            String fittedLineId = null; // 满足规则的连接线id
-            for (DhGatewayLine line : unDefaultLines) {
-                String ruleId = line.getRuleId();
-                DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
-                Map<String, Object> ruleResult = null;
-                try {
-                    ruleResult = droolsEngineService.execute(param, datRule);
-                    if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
-                        // 规则运算成功，更新或新增结果
-                        fittedLineId = line.getGatewayLineUid();
-                        String outputValue = line.getRouteResult();
-                        DhGatewayRouteResult routeResult = new DhGatewayRouteResult();
-                        routeResult.setInsId(insId);
-                        routeResult.setActivityBpdId(gatewayMeta.getActivityBpdId());
-                        routeResult.setRouteResult(outputValue);
-                        int updateCount = dhGatewayRouteResultMapper.updateRouteResultByInsIdAndActivityBpdId(routeResult);
-                        if (updateCount == 0) {
-                            routeResult.setRouteResultUid(EntityIdPrefix.DH_GATEWAY_ROUTE_RESULT + UUID.randomUUID().toString());
-                            routeResult.setStatus("on");
-                            dhGatewayRouteResultMapper.save(routeResult);
-                        }
-                        break;
-                    }
-                } catch (Exception e) {
-                   log.error("规则运算异常,规则编号：" + ruleId, e); 
-                }
-            }
-            if (fittedLineId == null) {
-                // 删除表中相应的记录
-                dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayMeta.getActivityBpdId());
-            }
-	    } // 遍历网关结束
-	    return ServerResponse.createBySuccess();
+	public ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData) {
+        Set<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
+        // 删除这些网关对应的路由结果
+        for (BpmActivityMeta gatewayNode : gatewayNodes) {
+            dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayNode.getActivityBpdId());
+        }
+
+        return ServerResponse.createBySuccess();
 	}
 
     @Override
@@ -1004,6 +854,19 @@ public class DhRouteServiceImpl implements DhRouteService {
         routeResult.setCreateTime(new Date());
         routeResult.setUpdateTime(new Date());
         return routeResult;
+    }
+
+    @Override
+    public ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId) {
+        if (insId == null || StringUtils.isBlank(activityBpdId)) {
+            return ServerResponse.createBySuccess(UUID.randomUUID().toString());
+        }
+        DhGatewayRouteResult routeResult = dhGatewayRouteResultMapper.queryByInsIdAndActivityBpdId(insId, activityBpdId);
+        if (routeResult == null) {
+            return ServerResponse.createBySuccess(UUID.randomUUID().toString());
+        }
+        return ServerResponse.createBySuccess(routeResult.getRouteResult());
+
     }
 
 }
