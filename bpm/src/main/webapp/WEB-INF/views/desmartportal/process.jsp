@@ -364,7 +364,8 @@
 		if (formData != null && formData != "") {
 			common.giveFormSetValue(formData);
 		}
-		common.giveFormFieldPermission($("#fieldPermissionInfo").text());
+		var formFieldPer = $("#fieldPermissionInfo").text().trim();
+		common.giveFormFieldPermission(formFieldPer);
 	});
 
 </script>

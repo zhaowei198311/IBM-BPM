@@ -1,7 +1,9 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,28 +84,50 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Override
 	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
-		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUid(stepUid);
+		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUidNotPrint(stepUid);
+		Map<String,String> map = new HashMap<>();
 		if(objPermissList.size()==0) {
 			return ServerResponse.createBySuccess("{}");
 		}else {
 			String jsonStr = "{";
+			String titleJsonStr = "{";
 			for(int i=0;i<objPermissList.size();i++) {
 				DhObjectPermission objPer = objPermissList.get(i);
-				String fieldCodeName = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid()).getFldCodeName();
+				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid());
+				String fieldCodeName = formField.getFldCodeName();
+				String fieldType = formField.getFldType();
 				String opAction = objPer.getOpAction();
-				if(opAction.equals("VIEW")) {
-					jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"}";
-				}else if(opAction.equals("HIDDEN")){
-					jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"}";
+				//判断该字段是否为标题
+				if("title".equals(fieldType)){
+					if(opAction.equals("VIEW")) {
+						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+					}else if(opAction.equals("HIDDEN")){
+						titleJsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
+					}else {
+						continue;
+					}
 				}else {
-					continue;
-				}
-				if(i!=objPermissList.size()-1) {
-					jsonStr += ",";
+					if(opAction.equals("VIEW")) {
+						jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+					}else if(opAction.equals("HIDDEN")){
+						jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
+					}else {
+						continue;
+					}
 				}
 			}
+			if(jsonStr.endsWith(",")) {
+				jsonStr = jsonStr.substring(0, jsonStr.length()-1);
+			}
 			jsonStr += "}";
-			return ServerResponse.createBySuccess(jsonStr);
+			if(titleJsonStr.endsWith(",")) {
+				titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
+			}
+			titleJsonStr += "}";
+			String json = "{\"fieldJsonStr\":"+jsonStr
+					+",\"titleJsonStr\":"+titleJsonStr
+					+"}";
+			return ServerResponse.createBySuccess(json);
 		}
 	}
 
@@ -118,27 +142,76 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		//再根据表单id找到所有的表单字段对象
 		List<BpmFormField> formFieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
 		String jsonStr = "{";
+		String titleJsonStr = "{";
+		String printJsonStr = "{";
+		String titlePrintJsonStr = "{";
 		for(int i=0;i<formFieldList.size();i++) {
 			BpmFormField formField = formFieldList.get(i);
-			//根据表单字段id和步骤id去对象权限表中找字段权限信息
-			DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
-			if(null==objPer) {
-				jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"}";
-			}else {
-				String opAction = objPer.getOpAction();
-				if(opAction.equals("VIEW")) {
-					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"}";
-				}else if(opAction.equals("HIDDEN")){
-					jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"}";
+			String fieldType = formField.getFldType();
+			//判断该字段是否为标题
+			if("title".equals(fieldType)){
+				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
+				DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,formField.getFldUid());
+				if(null==objPer) {
+					titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 				}else {
-					continue;
+					String opAction = objPer.getOpAction();
+					if(opAction.equals("VIEW")) {
+						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
+					}else if(opAction.equals("HIDDEN")){
+						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
+					}else {
+						continue;
+					}
+				}
+				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)
+				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
+				if(null!=printObjPer) {
+					titlePrintJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
+				}
+			}else {
+				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
+				DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,formField.getFldUid());
+				if(null==objPer) {
+					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
+				}else {
+					String opAction = objPer.getOpAction();
+					if(opAction.equals("VIEW")) {
+						jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
+					}else if(opAction.equals("HIDDEN")){
+						jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
+					}else {
+						continue;
+					}
+				}
+				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)
+				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
+				if(null!=printObjPer) {
+					printJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
 				}
 			}
-			if(i!=formFieldList.size()-1) {
-				jsonStr += ",";
-			}
+		}
+		if(jsonStr.endsWith(",")) {
+			jsonStr = jsonStr.substring(0, jsonStr.length()-1);
 		}
 		jsonStr += "}";
-		return ServerResponse.createBySuccess(jsonStr);
+		if(titleJsonStr.endsWith(",")) {
+			titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
+		}
+		titleJsonStr += "}";
+		if(printJsonStr.endsWith(",")) {
+			printJsonStr = printJsonStr.substring(0, printJsonStr.length()-1);
+		}
+		printJsonStr += "}";
+		if(titlePrintJsonStr.endsWith(",")) {
+			titlePrintJsonStr = titlePrintJsonStr.substring(0, titlePrintJsonStr.length()-1);
+		}
+		titlePrintJsonStr += "}";
+		String json = "{\"fieldJsonStr\":"+jsonStr
+					+",\"titleJsonStr\":"+titleJsonStr
+					+",\"fieldPrintJsonStr\":"+printJsonStr
+					+",\"titlePrintJsonStr\":"+titlePrintJsonStr
+					+"}";
+		return ServerResponse.createBySuccess(json);
 	}
 }

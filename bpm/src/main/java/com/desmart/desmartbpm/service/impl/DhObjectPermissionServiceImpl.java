@@ -187,12 +187,17 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
 	}
 
 	@Override
-	public List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid) {
-		return dhObjectPermissionMapper.getFieldPermissionByStepUid(stepUid);
+	public List<DhObjectPermission> getFieldPermissionByStepUidNotPrint(String stepUid) {
+		return dhObjectPermissionMapper.getFieldPermissionByStepUidNotPrint(stepUid);
 	}
 
 	@Override
-	public DhObjectPermission getFieldPermissionByStepUidAndFldUid(String stepUid, String fldUid) {
-		return dhObjectPermissionMapper.getFieldPermissionByStepUidAndFldUid(stepUid,fldUid);
+	public DhObjectPermission getFieldPermissionByStepUidAndFldUidNotPrint(String stepUid, String fldUid) {
+		return dhObjectPermissionMapper.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,fldUid);
+	}
+
+	@Override
+	public DhObjectPermission getFieldPrintPermissionByStepUidAndFldUid(String stepUid, String fldUid) {
+		return dhObjectPermissionMapper.getFieldPrintPermissionByStepUidAndFldUid(stepUid,fldUid);
 	}
 }

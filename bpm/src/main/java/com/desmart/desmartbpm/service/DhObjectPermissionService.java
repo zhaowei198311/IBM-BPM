@@ -43,12 +43,17 @@ public interface DhObjectPermissionService {
     List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission);
 
     /**
-     * 根据步骤ID查表单字段权限信息
+     * 根据步骤ID查表单字段权限信息(不包括打印)
      */
-    List<DhObjectPermission> getFieldPermissionByStepUid(String stepUid);
+    List<DhObjectPermission> getFieldPermissionByStepUidNotPrint(String stepUid);
 
     /**
-     * 根据步骤id和表单字段id查询字段权限信息
+     * 根据步骤id和表单字段id查询字段权限信息(不包括打印)
      */
-	DhObjectPermission getFieldPermissionByStepUidAndFldUid(String stepUid, String fldUid);
+	DhObjectPermission getFieldPermissionByStepUidAndFldUidNotPrint(String stepUid, String fldUid);
+
+	/**
+	 * 根据步骤id和表单字段id查询字段打印权限信息
+	 */
+	DhObjectPermission getFieldPrintPermissionByStepUidAndFldUid(String stepUid, String fldUid);
 }

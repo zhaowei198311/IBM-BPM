@@ -384,7 +384,32 @@ var common = {
 	},
 	//根据字段权限json给动态表单组件设置权限
 	giveFormFieldPermission:function(jsonStr){
-		var json = JSON.parse(jsonStr)
+		console.log(jsonStr);
+		var json = JSON.parse(jsonStr);
+		for(var name in json){
+			var perJsonStr = json[name];
+			switch(name){
+				case "fieldJsonStr":{
+					common.fieldPermissionNoPrint(perJsonStr);
+					break;
+				}
+				case "titleJsonStr":{
+					common.titlePermissionNoPrint(perJsonStr);
+					break;
+				}
+				case "fieldPrintJsonStr":{
+					common.fieldPrintPermission(perJsonStr);
+					break;
+				}
+				case "titlePrintJsonStr":{
+					common.titlePrintPermission(perJsonStr);
+					break;
+				}
+			}
+		}
+	},
+	//普通字段的可见性、可编辑行控制
+	fieldPermissionNoPrint:function(json){
 		for(var name in json){
 			var paramObj = json[name];
 			var display = paramObj["display"];
@@ -399,36 +424,106 @@ var common = {
 			}
 			var edit = paramObj["edit"];
 			if(edit=="no"){
-				$("[name='"+name+"']").attr("disabled","true");
-				var tagName = $("[name='"+name+"']").prop("tagName");
-				var tagType = $("[name='"+name+"']").attr("type");
-				var className = $("[name='"+name+"']").attr("class");
-				if(tagType=="checkbox"){
-					$("[name='"+name+"']").attr("disabled","true");
-				}
-				if(tagType=="radio"){
-					$("[name='"+name+"']").attr("disabled","true");
-					var title = $("[name='"+name+"']:checked").attr("title");
-					$("[name='"+name+"']:checked").parent().html("<span style='margin-left:10px;'>"+title+"</span>");
-				}
-				if(tagName=="SELECT"){
-					$("[name='"+name+"']").attr("disabled","true");
-					$("[name='"+name+"']").next().find("input");
-				}
-				if($("[name='"+name+"']").attr("title")=="choose_user"){
-					$("[name='"+name+"']").parent().find("i").css("display","none");
-					$("[name='"+name+"']").css("width","100%");
-				}
-				if(className=="layui-input date"){
-					$("[name='"+name+"']").attr("disabled","true");
-					if($("[name='"+name+"']").val()=="" || $("[name='"+name+"']").val()==null){
-						$("[name='"+name+"']").prop("type","text");
-					}
-				}
+				common.fieldNoEditPermission(name);
 			}
 		}
 		//是否显示标题
 		common.showTableP();
+	},
+	//普通字段不可编辑
+	fieldNoEditPermission:function(name){
+		$("[name='"+name+"']").attr("disabled","true");
+		var tagName = $("[name='"+name+"']").prop("tagName");
+		var tagType = $("[name='"+name+"']").attr("type");
+		var className = $("[name='"+name+"']").attr("class");
+		if(tagType=="checkbox"){
+			$("[name='"+name+"']").attr("disabled","true");
+		}
+		if(tagType=="radio"){
+			$("[name='"+name+"']").attr("disabled","true");
+			var title = $("[name='"+name+"']:checked").attr("title");
+			$("[name='"+name+"']:checked").parent().html("<span style='margin-left:10px;'>"+title+"</span>");
+		}
+		if(tagName=="SELECT"){
+			$("[name='"+name+"']").attr("disabled","true");
+			$("[name='"+name+"']").next().find("input");
+		}
+		if($("[name='"+name+"']").attr("title")=="choose_user" 
+			|| $("[name='"+name+"']").attr("title")=="choose_value"){
+			$("[name='"+name+"']").parent().find("i").css("display","none");
+			$("[name='"+name+"']").css("width","100%");
+		}
+		if(className=="layui-input date"){
+			$("[name='"+name+"']").attr("disabled","true");
+			if($("[name='"+name+"']").val()=="" || $("[name='"+name+"']").val()==null){
+				$("[name='"+name+"']").prop("type","text");
+			}
+		}
+	},
+	//标题字段的可见性、可编辑性控制
+	titlePermissionNoPrint:function(json){
+		for(var name in json){
+			var paramObj = json[name];
+			var display = paramObj["display"];
+			var edit = paramObj["edit"];
+			if(display=="none"){
+				$("[name='"+name+"']").parent().css("display","none");
+				var pTitle = $("[name='"+name+"']").text().trim();
+				var tableArr = $("#formSet").find(".layui-table");
+				for(var i=0;i<tableArr.length;i++){
+					var talbeTitle = $(tableArr[i]).attr("title");
+					if(talbeTitle==pTitle){
+						$(tableArr[i]).css("display","none");
+						break;
+					}
+				}
+			}
+			if(edit=="no"){
+				var pTitle = $("[name='"+name+"']").text().trim();
+				var tableArr = $("#formSet").find(".layui-table");
+				for(var i=0;i<tableArr.length;i++){
+					var talbeTitle = $(tableArr[i]).attr("title");
+					if(talbeTitle==pTitle){
+						var tdArr = $(tableArr[i]).find("td");
+						tdArr.each(function(){
+							var tdObj = $(this);
+							var fieldCodeName = "";
+							if(tdObj.find("input[type='text']").length!=0){
+								fieldCodeName = tdObj.find("input[type='text']").attr("name");
+							}
+							if(tdObj.find("input[type='tel']").length!=0){
+								fieldCodeName = tdObj.find("input[type='tel']").attr("name");
+							} 
+							if(tdObj.find("input[type='date']").length!=0){
+								fieldCodeName = tdObj.find("input[type='date']").attr("name");
+							}
+							if(tdObj.find("input[type='radio']").length!=0){
+								fieldCodeName = tdObj.find("input[type='radio']").attr("name");
+							}
+							if(tdObj.find("input[type='checkbox']").length!=0){
+								fieldCodeName = tdObj.find("input[type='checkbox']").attr("name");
+							}
+							if(tdObj.find("select").length!=0){
+								fieldCodeName = tdObj.find("select").attr("name");
+							}
+							if(tdObj.find("textarea").length!=0){
+								fieldCodeName = tdObj.find("textarea").attr("name");
+							}
+							common.fieldNoEditPermission(fieldCodeName);
+						});
+						break;
+					}
+				}
+			}
+		}
+	},
+	//普通字段的打印权限控制
+	fieldPrintPermission:function(json){
+		
+	},
+	//标题字段的打印权限控制
+	titlePrintPermission:function(json){
+		
 	},
 	//验证动态表单必填项
 	validateFormMust:function(id){
