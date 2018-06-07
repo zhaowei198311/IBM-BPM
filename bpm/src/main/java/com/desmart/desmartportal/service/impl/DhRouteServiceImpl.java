@@ -1,17 +1,10 @@
 package com.desmart.desmartportal.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -395,6 +388,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 	}
 
+    /**
+     * 从表单中取出网关判断需要的参数
+     * @param needvarNameList
+     * @param varTypeMap
+     * @param formData
+     * @return
+     */
 	private org.json.JSONObject assembleJsonParam(Set<String> needvarNameList, Map<String, String> varTypeMap,
 			JSONObject formData) {
 		org.json.JSONObject param = new org.json.JSONObject();
@@ -432,6 +432,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return unDefaultLines;
 	}
 
+    /**
+     * 从所有连线中过的默认连线
+     * @param lineList
+     * @return
+     */
 	private DhGatewayLine getDefaultLine(List<DhGatewayLine> lineList) {
 		Iterator<DhGatewayLine> iterator = lineList.iterator();
 		while (iterator.hasNext()) {
@@ -782,7 +787,17 @@ public class DhRouteServiceImpl implements DhRouteService {
             } else if ("gateway".equals(type)) {
                 if ("gateway".equals(activityType)) {
                     // 排他网关
-                    // todo
+                    result.addGatewayNode(directNextNode);
+                    // 根据规则判断网关走向
+                    DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(directNextNode, formData);
+                    // 根据输出线，封装DhGatewayRouteResult
+                    DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
+                    if (routeResult != null) {
+                        result.addRouteResult(routeResult);
+                    }
+                    // 获得连接点对应的节点
+                    BpmActivityMeta node = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(outLine.getToActivityBpdId(), directNextNode.getParentActivityId());
+                    result.includeAll(getNowActivity(node, formData));
                 } else if ("gatewayAnd".equals(activityType)) {
                     // 并行网关
                     List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
@@ -847,14 +862,16 @@ public class DhRouteServiceImpl implements DhRouteService {
 				// 排他网关
                 result.addGatewayNode(nowActivity);
                 // 根据规则判断网关走向
-                DhGatewayLine lineSelective = new DhGatewayLine();
-                // 获得源网关的id
-                lineSelective.setActivityId(nowActivity.getSourceActivityId());
-                List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
-
-
-
-			} else if ("gatewayAnd".equals(activityType)) {
+                DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(nowActivity, formData);
+                // 根据输出线，封装DhGatewayRouteResult
+                DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
+                if (routeResult != null) {
+                    result.addRouteResult(routeResult);
+                }
+                // 获得连接点对应的节点
+                BpmActivityMeta node = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(outLine.getToActivityBpdId(), nowActivity.getParentActivityId());
+                result.includeAll(getNowActivity(node, formData));
+            } else if ("gatewayAnd".equals(activityType)) {
 				// 并行网关
                 List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
                 for (BpmActivityMeta node : directNextNodes) {
@@ -917,6 +934,76 @@ public class DhRouteServiceImpl implements DhRouteService {
             directNextNodeList.add(meta);
         }
         return directNextNodeList;
+    }
+
+    /**
+     * 根据网关环节和表单内容给出唯一的输出连接线
+     * @param gatewayNode
+     * @param formData
+     * @return
+     */
+    public DhGatewayLine getUniqueOutLineByGatewayNodeAndFormData(BpmActivityMeta gatewayNode, JSONObject formData) {
+        DhGatewayLine lineSelective = new DhGatewayLine();
+        // 获得源网关的id
+        lineSelective.setActivityId(gatewayNode.getSourceActivityId());
+        List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
+        // 获得相关的条件
+        List<DatRuleCondition> conditions = datRuleConditionService.getDatruleConditionByActivityId(gatewayNode.getSourceActivityId());
+        // 获得条件需要的表单中的变量
+        Set<String> needVarnameSet = new HashSet<>();
+        Map<String, String> varTypeMap = new HashMap<>();
+        for (DatRuleCondition condition : conditions) {
+            String varname = condition.getLeftValue();
+            if (!needVarnameSet.contains(varname)) {
+                needVarnameSet.add(varname);
+                varTypeMap.put(varname, condition.getRightValueType());
+            }
+        }
+        // 从表单中取出需要的参数
+        org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
+
+        if (param == null) {
+            // 从表单中获取变量发生错误
+            log.error("从表单中获取变量发生错误，网关id: " + gatewayNode.getActivityId());
+            // 返回默认连线
+            return getDefaultLine(lines);
+        }
+
+        // 计算每种规则的结果
+        List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
+
+        for (DhGatewayLine line : unDefaultLines) {
+            String ruleId = line.getRuleId();
+            DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
+            Map<String, Object> ruleResult = null;
+            try {
+                ruleResult = droolsEngineService.execute(param, datRule);
+                if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
+                    // 规则运算成功, 返回满足规则的连线
+                    return line;
+                }
+            } catch (Exception e) {
+                log.error("规则运算异常,规则编号：" + ruleId, e);
+            }
+        }
+
+        // 如果没有满足规则的连线，返回默认连线
+        return getDefaultLine(lines);
+    }
+
+
+    private DhGatewayRouteResult assembleDhGatewayRouteResultWithOutInsId(DhGatewayLine line) {
+        if (line == null || "TRUE".equals(line.getIsDefault())){
+            return null;
+        }
+        DhGatewayRouteResult routeResult = new DhGatewayRouteResult();
+        routeResult.setRouteResultUid(EntityIdPrefix.DH_GATEWAY_ROUTE_RESULT + UUID.randomUUID().toString());
+        routeResult.setStatus("on");
+        routeResult.setActivityBpdId(line.getGatewayActivityBpdId()); // 网关的activityBpdId
+        routeResult.setRouteResult(line.getRouteResult());
+        routeResult.setCreateTime(new Date());
+        routeResult.setUpdateTime(new Date());
+        return routeResult;
     }
 
 }

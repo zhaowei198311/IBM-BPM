@@ -125,7 +125,7 @@
   <select id="getGateWayLinesByCondition" parameterType="com.desmart.desmartbpm.entity.DhGatewayLine"
    resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
    select dgl.*,bam.activity_name as activityName,
-    to_bam.activity_name as toActivityName
+    to_bam.activity_name as toActivityName, to_bam.activity_bpd_id toActivityBpdId, bam.activity_bpd_id gatewayActivityBpdId
     from DH_GATEWAY_LINE dgl left join 
     BPM_ACTIVITY_META bam on dgl.activity_id = bam.activity_id
     left join BPM_ACTIVITY_META to_bam on dgl.to_activity_id = to_bam.activity_id

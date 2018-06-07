@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -78,5 +79,11 @@ public interface DhRouteService {
 	 */
 	BpmRoutingData getNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData);
 
-
+	/**
+	 * 根据网关环节和表单内容给出唯一的输出连接线
+	 * @param gatewayNode
+	 * @param formData
+	 * @return
+	 */
+	DhGatewayLine getUniqueOutLineByGatewayNodeAndFormData(BpmActivityMeta gatewayNode, JSONObject formData);
 }
