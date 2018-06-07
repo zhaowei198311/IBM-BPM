@@ -17,9 +17,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="stylesheet" href="resources/desmartportal/css/layui.css" media="all">
-<link rel="stylesheet" href="resources/desmartportal/css/admin.css" media="all">
-<link rel="stylesheet" href="resources/desmartportal/css/menus/jquery-menus.css" />
+<link rel="stylesheet" href="resources/desmartportal/css/layui.css"
+	media="all">
+<link rel="stylesheet" href="resources/desmartportal/css/admin.css"
+	media="all">
+<link rel="stylesheet"
+	href="resources/desmartportal/css/menus/jquery-menus.css" />
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
 
 </head>
@@ -42,14 +45,15 @@
 						<div class="layui-side-scroll">
 							<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 							<ul class="layui-nav layui-nav-tree" lay-filter="test">
-								<li class="logo"><img src="resources/desmartportal/images/logo.png"
-									class="big_logo" /><img src="resources/desmartportal/images/logo.png"
-									class="mini_logo" /></li>
+								<li class="logo"><img
+									src="resources/desmartportal/images/logo.png" class="big_logo" /><img
+									src="resources/desmartportal/images/logo.png" class="mini_logo" /></li>
 								<li style="text-align: center; margin-bottom: 20px;"><span
 									class="system_title">BPM系统</span></li>
 								<li class="layui-nav-item layui-this"><a
-									href="menus/backlog" target="iframe0"><i class="layui-icon" style="left: 40px">&#xe60e;</i><span>
-											待办任务<span class="layui-badge" id="daiban_icon"></span></span> </a></li>
+									href="menus/backlog" target="iframe0"><i class="layui-icon"
+										style="left: 40px">&#xe60e;</i><span> 待办任务<span
+											class="layui-badge" id="daiban_icon"></span></span> </a></li>
 								<li class="layui-nav-item"><a href="menus/notRedProcess"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe645;</i><span>
 											抄送</span></a></li>
@@ -63,14 +67,14 @@
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe6b2;</i><span>
 											代理设置</span></a></li>
 								<li class="layui-nav-item"><a href="javascript:void(0)"
-									target="iframe0" class="detail_menu1"><i class="layui-icon" style="left: 40px">&#xe68e;</i><span>
-											门店生命周期</span></a></li>
+									target="iframe0" class="detail_menu1"><i class="layui-icon"
+										style="left: 40px">&#xe68e;</i><span> 门店生命周期</span></a></li>
 								<li class="layui-nav-item"><a href="drafts/index"
-									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe640;</i> <span>
-											草稿箱</span></a></li>
+									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe640;</i>
+										<span> 草稿箱</span></a></li>
 								<li class="layui-nav-item"><a href="javascript:void(0)"
-									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe629;</i> <span>
-											报表</span></a></li>
+									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe629;</i>
+										<span> 报表</span></a></li>
 								<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
 							</ul>
 						</div>
@@ -83,45 +87,23 @@
 					<iframe src="menus/backlog" name="iframe0" frameborder="0"
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
-	 				<input id="userId" value="${info.userId}" style="display: none;">
-							
-<%-- 							<c:forEach items="${listmap}" var="info">
-								<div class="menu_title">
-									${fn:substringAfter(info.key, ",")}     <i class="layui-icon"
-										style="font-size: 14px; cursor: default;">&#xe602;</i>
-								</div>
-								<div class="menu_detail">
-								<c:forEach items="${info.value}" var="process">
-									<ul style="list-style-type: none;">
-										<li style="display: inline;"><a
-											href="menus/processType"
-											target="iframe0"></a>${process.proName}</li>
-										<h1 style="clear: both;"></h1>	
-									</ul>
+						<input id="userId" value="${info.userId}" style="display: none;">
+						<div class="nav" style="margin-top: 50%">
+							<ul class="nav1">
+								<c:forEach items="${listmap}" var="info">
+									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
+											></a>
+										<ul class="nav2">
+											<c:forEach items="${info.value}" var="process">
+												<li class="li2"><a
+													href="menus/processType?proUid=${process.proUid}&proAppId=${process.proAppId}"
+													target="iframe0">${process.proName}</a></li>
+												<h1 style="clear: both;"></h1>
+											</c:forEach>
+										</ul></li>
 								</c:forEach>
-								</div>
-							</c:forEach>  --%>
-							
-							
-							<div class="nav" style="margin-top: 50%">
-		<ul class="nav1">
-		<c:forEach items="${listmap}" var="info">
-			<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")} ></a>
-				<ul class="nav2">
-				<c:forEach items="${info.value}" var="process">
-					<li class="li2"><a href="menus/processType?proUid=${process.proUid}&proAppId=${process.proAppId}" target="iframe0">${process.proName}</a></li>
-					<h1 style="clear: both;"></h1>
-					</c:forEach>	
-				</ul>			
-			</li>
-		</c:forEach>
-		</ul>
-		</div>
-							
-							
-							
-							
-						
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -132,15 +114,17 @@
 			<div class="layadmin-body-shade" layadmin-event="shade"></div>
 		</div>
 	</div>
-	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript"
+		src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript"
+		src="resources/desmartportal/js/layui.all.js"></script>
 	<script>
-		$(function() {	
-			
+		$(function() {
+
 			getUserTask();
 			// 定时 去查询我的 代办任务
 			window.setInterval(getUserTask, 30000);
-			
+
 			$(".layui-nav-item a").mouseover(
 					function() {
 						$(".layui-nav-item a").not(".detail_menu1").not(
@@ -222,7 +206,7 @@
 		});
 
 		// 获取用户有多少代办
-		function getUserTask(){
+		function getUserTask() {
 			var uId = document.getElementById('userId').value;
 			$.ajax({
 				url : 'user/todoTask',
@@ -231,11 +215,11 @@
 				data : {
 					userId : uId
 				},
-				success : function(result){
+				success : function(result) {
 					// 渲染到待办
-					if(result==0){
+					if (result == 0) {
 						$("#daiban_icon").css("display", "none");
-					}else{
+					} else {
 						$("#daiban_icon").text(result);
 					}
 				}
