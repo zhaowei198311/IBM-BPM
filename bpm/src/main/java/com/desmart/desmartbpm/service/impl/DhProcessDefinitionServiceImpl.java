@@ -225,6 +225,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             dhProcessDefinition.setProVerUid(proVerUid);
             dhProcessDefinition.setCreateUser(currentUser);
             dhProcessDefinition.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
+            dhProcessDefinition.setIsAllUserStart("FALSE");
             int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
             if (countRow > 0) {
                 return ServerResponse.createBySuccess();

@@ -11,16 +11,16 @@ import java.util.Set;
 public class BpmRoutingData {
     Set<BpmActivityMeta> normalNodes = new HashSet<>();  // 记录人工任务节点的集合
     Set<BpmActivityMeta> gatewayNodes = new HashSet<>(); // 记录遇到的排他网关
-    Set<BpmActivityMeta> subProcessNodes = new HashSet<>(); // 代表子流程的节点
-    Set<BpmActivityMeta> subEndNodes = new HashSet<>(); // 记录结束节点的集合
+    Set<BpmActivityMeta> startProcessNodes = new HashSet<>(); // 代表需要创建的子流程的节点
+    Set<BpmActivityMeta> endProcessNodes = new HashSet<>(); // 代表需要结束的子流程的节点
     Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
     Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
 
     public void includeAll(BpmRoutingData bpmRouteingData) {
         this.normalNodes.addAll(bpmRouteingData.getNormalNodes());
         this.gatewayNodes.addAll(bpmRouteingData.getGatewayNodes());
-        this.subProcessNodes.addAll(bpmRouteingData.getSubEndNodes());
-        this.subEndNodes.addAll(bpmRouteingData.getSubEndNodes());
+        this.startProcessNodes.addAll(bpmRouteingData.getStartProcessNodes());
+        this.endProcessNodes.addAll(bpmRouteingData.getEndProcessNodes());
         this.mainEndNodes.addAll(bpmRouteingData.getMainEndNodes());
         this.routeResults.addAll(bpmRouteingData.getRouteResults());
     }
@@ -28,14 +28,14 @@ public class BpmRoutingData {
     public void addNormalNode(BpmActivityMeta normlNode) {
         this.normalNodes.add(normlNode);
     }
-    public void addGateway(BpmActivityMeta gatewayNode) {
+    public void addGatewayNode(BpmActivityMeta gatewayNode) {
         this.gatewayNodes.add(gatewayNode);
     }
-    public void addSubProcessNode(BpmActivityMeta subProcessNode) {
-        this.subProcessNodes.add(subProcessNode);
+    public void addStartProcessNode(BpmActivityMeta endProcessNode) {
+        this.startProcessNodes.add(endProcessNode);
     }
-    public void addSubEndNode(BpmActivityMeta subEndNode) {
-        this.subEndNodes.add(subEndNode);
+    public void addEndProcessNode(BpmActivityMeta subEndNode) {
+        this.endProcessNodes.add(subEndNode);
     }
     public void addMainEndNode(BpmActivityMeta mainEndNode) {
         this.mainEndNodes.add(mainEndNode);
@@ -43,8 +43,6 @@ public class BpmRoutingData {
     public void addRouteResult(DhGatewayRouteResult routeResult) {
         this.routeResults.add(routeResult);
     }
-
-
 
 
     public Set<BpmActivityMeta> getNormalNodes() {
@@ -63,20 +61,20 @@ public class BpmRoutingData {
         this.gatewayNodes = gatewayNodes;
     }
 
-    public Set<BpmActivityMeta> getSubProcessNodes() {
-        return subProcessNodes;
+    public Set<BpmActivityMeta> getStartProcessNodes() {
+        return startProcessNodes;
     }
 
-    public void setSubProcessNodes(Set<BpmActivityMeta> subProcessNodes) {
-        this.subProcessNodes = subProcessNodes;
+    public void setStartProcessNodes(Set<BpmActivityMeta> startProcessNodes) {
+        this.startProcessNodes = startProcessNodes;
     }
 
-    public Set<BpmActivityMeta> getSubEndNodes() {
-        return subEndNodes;
+    public Set<BpmActivityMeta> getEndProcessNodes() {
+        return endProcessNodes;
     }
 
-    public void setSubEndNodes(Set<BpmActivityMeta> subEndNodes) {
-        this.subEndNodes = subEndNodes;
+    public void setEndProcessNodes(Set<BpmActivityMeta> endProcessNodes) {
+        this.endProcessNodes = endProcessNodes;
     }
 
     public Set<BpmActivityMeta> getMainEndNodes() {

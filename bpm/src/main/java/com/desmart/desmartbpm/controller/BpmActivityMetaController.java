@@ -29,6 +29,7 @@ public class BpmActivityMetaController {
     public ServerResponse getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid) {
         return bpmActivityMetaService.getActivitiyMetasForConfig(proAppId, proUid, proVerUid);
     }
+
     
     /**
      * 获得流程定义中所有排他网关

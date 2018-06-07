@@ -279,14 +279,17 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Override
 	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
 		List<BpmActivityMeta> result = new ArrayList<>();
-		Map<String, List<BpmActivityMeta>> resultMap = bpmActivityMetaService.getNextToActivity(sourceActivityMeta, "");
+		Map<String, List<BpmActivityMeta>> resultMap = new HashMap<>();
 		List<BpmActivityMeta> normalList = resultMap.get("normal");
 		List<BpmActivityMeta> gateAndlList = resultMap.get("gateAnd");
 		List<BpmActivityMeta> endList = resultMap.get("end");
 		List<BpmActivityMeta> gatewayList = resultMap.get("gateway");
 
-		result.addAll(normalList);
-		result.addAll(gateAndlList);
+        BpmRoutingData bpmRoutingData = getNextActivityTo(sourceActivityMeta, formData);
+
+
+        result.addAll(bpmRoutingData.getNormalNodes());
+
 		// 查看是否需要校验排他网关
 		if (gatewayList.isEmpty()) {
 			return result;
@@ -767,27 +770,45 @@ public class DhRouteServiceImpl implements DhRouteService {
 
             if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType) && "activity".equals(type)) {
                 // 人员服务
-
+                result.addNormalNode(directNextNode);
             } else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
                     && "activity".equals(type)) {
                 // 子流程
-                List<BpmActivityMeta> nodes = findDirectNextNodesOfStartNodeBySubProcessNode(directNextNode);
-                for (BpmActivityMeta node : nodes) {
-                    result.includeAll(getNowActivity(node, formData));
+                result.addStartProcessNode(directNextNode);
+                List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(directNextNode);
+                for (BpmActivityMeta sonNode : sonNodes) {
+                    result.includeAll(getNowActivity(sonNode, formData));
                 }
-            } else if ("event".equals(type)) {
+            } else if ("gateway".equals(type)) {
                 if ("gateway".equals(activityType)) {
                     // 排他网关
+                    // todo
                 } else if ("gatewayAnd".equals(activityType)) {
                     // 并行网关
+                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
+                    for (BpmActivityMeta node : directNextNodes) {
+                        result.includeAll(getNowActivity(node, formData));
+                    }
                 } else if ("gatewayOr".equals(activityType)) {
                     // 包容网关
+                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
+                    for (BpmActivityMeta node : directNextNodes) {
+                        result.includeAll(getNowActivity(node, formData));
+                    }
                 } else {
                     throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
                 }
             }else if ("end".equals(activityType)) {
                 if (!"0".equals(sourceNode.getParentActivityId())) {
                     // 子流程结束
+                    // 获得父节点，找到父节点，遍历父节点的下个节点
+                    BpmActivityMeta endProcessNode = bpmActivityMetaService.queryByPrimaryKey(directNextNode.getParentActivityId());
+                    result.addEndProcessNode(endProcessNode);
+                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
+                    for (BpmActivityMeta node : directNextNodes) {
+                        result.includeAll(getNowActivity(node, formData));
+                    }
+
                 } else {
                     // 主流程结束
                     result.addMainEndNode(sourceNode);
@@ -797,9 +818,6 @@ public class DhRouteServiceImpl implements DhRouteService {
             }
 
         }
-
-
-
 		return result;
 	}
 
@@ -817,29 +835,47 @@ public class DhRouteServiceImpl implements DhRouteService {
             result.addNormalNode(nowActivity);
 		} else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
 				&& "activity".equals(type)) {
-			// 子流程
-            result.addSubProcessNode(nowActivity);
+			// 子流程, 在需要创建的子流程中加入节点
+            result.addStartProcessNode(nowActivity);
+            List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(nowActivity);
+            for (BpmActivityMeta sonNode : sonNodes) {
+                result.includeAll(getNowActivity(sonNode, formData));
+            }
 
-
-
-		} else if ("event".equals(type)) {
+		} else if ("gateway".equals(type)) {
 			if ("gateway".equals(activityType)) {
 				// 排他网关
+                // todo
+
 			} else if ("gatewayAnd".equals(activityType)) {
 				// 并行网关
-			} else if ("gatewayOr".equals(activityType)) {
+                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
+                for (BpmActivityMeta node : directNextNodes) {
+                    result.includeAll(getNowActivity(node, formData));
+                }
+            } else if ("gatewayOr".equals(activityType)) {
 				// 包容网关
+                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
+                for (BpmActivityMeta node : directNextNodes) {
+                    result.includeAll(getNowActivity(node, formData));
+                }
 			} else {
 				throw new BpmFindNextNodeException("环节类型异常，环节主键：" + nowActivity.getActivityId());
 			}
 		}else if ("end".equals(activityType)) {
 			if (!"0".equals(nowActivity.getParentActivityId())) {
 				// 子流程结束
-			} else {
+                // 获得父节点，找到父节点，遍历父节点的下个节点
+                BpmActivityMeta endProcessNode = bpmActivityMetaService.queryByPrimaryKey(nowActivity.getParentActivityId());
+                result.addEndProcessNode(endProcessNode);
+                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
+                for (BpmActivityMeta sonNode : directNextNodes) {
+                    result.includeAll(getNowActivity(sonNode, formData));
+                }
+            } else {
 				// 主流程结束
 				result.addMainEndNode(nowActivity);
 			}
-
 
 		} else {
 			throw new BpmFindNextNodeException("环节类型异常，环节主键：" + nowActivity.getActivityId());

@@ -43,7 +43,7 @@
         sysdate, #{createUser}, #{proHeight},
         #{proWidth}, #{proTitleX}, #{proTitleY},
         #{proDebug}, #{proDynaforms}, #{proDerivationScreenTpl},
-        #{proAppId}),#{isAllUserStart}
+        #{proAppId}, #{isAllUserStart})
     </insert>
 
 	<delete id="deleteBySelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
