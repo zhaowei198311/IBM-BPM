@@ -100,7 +100,7 @@ public class ExecutionTreeUtil {
 	 * @param childFlowObjectId  子节点tokenId
 	 * @return preFlowObjectId节点下的tokenId
 	 */
-	public static String queryCurrentTokenId(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
+	public static String queryCurrentNodeTokenId(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
 		
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
