@@ -282,11 +282,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Override
 	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
 		List<BpmActivityMeta> result = new ArrayList<>();
-		Map<String, Object> resultMap = bpmActivityMetaService.getNextToActivity(sourceActivityMeta, "");
-		List<BpmActivityMeta> normalList = (List<BpmActivityMeta>) resultMap.get("normal");
-		List<BpmActivityMeta> gateAndlList = (List<BpmActivityMeta>) resultMap.get("gateAnd");
-		List<BpmActivityMeta> endList = (List<BpmActivityMeta>) resultMap.get("end");
-		List<BpmActivityMeta> gatewayList = (List<BpmActivityMeta>) resultMap.get("gateway");
+		Map<String, List<BpmActivityMeta>> resultMap = bpmActivityMetaService.getNextToActivity(sourceActivityMeta, "");
+		List<BpmActivityMeta> normalList = resultMap.get("normal");
+		List<BpmActivityMeta> gateAndlList = resultMap.get("gateAnd");
+		List<BpmActivityMeta> endList = resultMap.get("end");
+		List<BpmActivityMeta> gatewayList = resultMap.get("gateway");
 
 		result.addAll(normalList);
 		result.addAll(gateAndlList);
@@ -673,7 +673,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Override
 	public ServerResponse updateGatewayRouteResult(BpmActivityMeta currActivityMeta, Integer insId, JSONObject formData) {
-	    Map<String, Object> resultMap = bpmActivityMetaService.getNextToActivity(currActivityMeta, "");
+	    Map<String, List<BpmActivityMeta>> resultMap = bpmActivityMetaService.getNextToActivity(currActivityMeta, "");
 	    List<BpmActivityMeta> gatewayList = (List<BpmActivityMeta>)resultMap.get("gateway");
 	    
 	    for (BpmActivityMeta gatewayMeta : gatewayList) {

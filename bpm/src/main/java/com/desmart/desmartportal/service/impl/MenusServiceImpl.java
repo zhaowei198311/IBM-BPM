@@ -60,10 +60,10 @@ public class MenusServiceImpl implements MenusService {
 		ServerResponse<BpmActivityMeta> bpmActivityMeta=dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, verUid);
 		
 		//获取下一个环节
-		Map<String, Object> activtyMap = bpmActivityMetaService.getNextToActivity(bpmActivityMeta.getData(), "");
+		Map<String, List<BpmActivityMeta>> activtyMap = bpmActivityMetaService.getNextToActivity(bpmActivityMeta.getData(), "");
 		List<BpmActivityMeta> activityMetaList = new ArrayList<BpmActivityMeta>();
-		List<BpmActivityMeta> normal = (List<BpmActivityMeta>) activtyMap.get("normal");
-		List<BpmActivityMeta> gateAnd = (List<BpmActivityMeta>) activtyMap.get("gateAnd");
+		List<BpmActivityMeta> normal = activtyMap.get("normal");
+		List<BpmActivityMeta> gateAnd = activtyMap.get("gateAnd");
 		activityMetaList.addAll(gateAnd);
 		activityMetaList.addAll(normal);
 		// 环节配置获取
@@ -246,10 +246,10 @@ public class MenusServiceImpl implements MenusService {
 	@Override
 	public List<BpmActivityMeta> backlogActivityHandler(BpmActivityMeta bpmActivityMeta) {
 		//获取下一个环节
-		Map<String, Object> activtyMap = bpmActivityMetaService.getNextToActivity(bpmActivityMeta, "");
+		Map<String, List<BpmActivityMeta>> activtyMap = bpmActivityMetaService.getNextToActivity(bpmActivityMeta, "");
 		List<BpmActivityMeta> activityMetaList = new ArrayList<BpmActivityMeta>();
-		List<BpmActivityMeta> normal = (List<BpmActivityMeta>) activtyMap.get("normal");
-		List<BpmActivityMeta> gateAnd = (List<BpmActivityMeta>) activtyMap.get("gateAnd");
+		List<BpmActivityMeta> normal = activtyMap.get("normal");
+		List<BpmActivityMeta> gateAnd = activtyMap.get("gateAnd");
 		activityMetaList.addAll(gateAnd);
 		activityMetaList.addAll(normal);
 		// 环节配置获取

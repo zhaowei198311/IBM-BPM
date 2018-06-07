@@ -74,7 +74,7 @@ public interface BpmActivityMetaService {
      * @return  Map的key： 
      * normal  gateAnd  end 
      */
-    Map<String, Object> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
+    Map<String, List<BpmActivityMeta>> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
     
     /**
      * 根据主键查询
@@ -106,4 +106,12 @@ public interface BpmActivityMetaService {
      * @return 
      */
     List<BpmActivityMeta> filterBasicActivity(List<BpmActivityMeta> bpmActivityMetaList);
+
+    /**
+     * 根据环节的 元素id和父元素的主键来查找唯一的一个环节
+     * @param parentActivityId
+     * @param activityBpdId
+     * @return
+     */
+    BpmActivityMeta queryMetaByActivityBpdIdAndParentActivityId(String activityBpdId, String parentActivityId);
 }
