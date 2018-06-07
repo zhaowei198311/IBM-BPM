@@ -34,10 +34,12 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.exception.PlatformException;
@@ -63,8 +65,12 @@ import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.MenusService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
+import com.desmart.desmartsystem.dao.SysRoleUserMapper;
+import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysRoleUser;
+import com.desmart.desmartsystem.entity.SysTeamMember;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -131,6 +137,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private DhApprovalOpinionService dhApprovalOpinionService;
 	@Autowired
 	private DhActivityRejectMapper dhActivityRejectMapper;
+	@Autowired
+	private DhObjectPermissionMapper dhObjectPermissionMapper;
+	@Autowired
+	private SysRoleUserMapper sysRoleUserMapper;
+	@Autowired
+	private SysTeamMemberMapper sysTeamMemberMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -511,7 +523,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if (processDefintion == null) {
 				return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
 			}
-			processInstance = this.generateDraftDefinition(processDefintion);
+			if(checkPermissionStart(processDefintion)) {
+				processInstance = this.generateDraftDefinition(processDefintion);
+			}else {
+				return ServerResponse.createByErrorMessage("无权限发起当前流程");
+			}
 		} else {
 			// 是草稿箱来的
 			processInstance = this.getByInsUid(insUid);
@@ -589,6 +605,67 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		resultMap.put("formHtml", formResponse.getData());
 		resultMap.put("processInstance", processInstance);
 		return ServerResponse.createBySuccess(resultMap);
+	}
+
+	private boolean checkPermissionStart(DhProcessDefinition processDefintion) {
+		boolean flag = false;
+		log.info("判断---当前用户权限 开始。。。");
+		String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		log.info("当前用户为" + user);
+		if(Const.Boolean.TRUE.equals(processDefintion.getIsAllUserStart())) {
+			flag = true;
+		}else {
+			DhObjectPermission dhObjectPermission = new DhObjectPermission();
+			dhObjectPermission.setProAppId(processDefintion.getProAppId());
+			dhObjectPermission.setProUid(processDefintion.getProUid());
+			dhObjectPermission.setProVerUid(processDefintion.getProVerUid());
+			List<DhObjectPermission> list = dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjectPermission);
+			// 根据用户id 去 查询 角色id
+			SysRoleUser sysRoleUser = new SysRoleUser();
+			sysRoleUser.setUserUid(user);
+			List<SysRoleUser> result = sysRoleUserMapper.selectAll(sysRoleUser);
+			
+			for (DhObjectPermission dhObjectPermission2 : list) {
+				switch (dhObjectPermission2.getOpParticipateType()) {
+				case "USER":
+					if(user.equals(dhObjectPermission2.getOpParticipateUid())) {
+						flag = true;
+					}
+					break;
+				case "ROLE":
+					for (SysRoleUser sysRoleUser2 : result) {
+						if(sysRoleUser2.getRoleUid().equals(dhObjectPermission2.getOpParticipateUid())) {
+							flag = true;
+							break;
+						}
+					}
+					break;
+				case "TEAM":
+					for (SysRoleUser sysRoleUser2 : result) {
+						// 根据用户id 去找到 用户所在的角色组织
+						SysTeamMember sysTeamMember = new SysTeamMember();
+						sysTeamMember.setUserUid(sysRoleUser2.getUserUid());
+						List<SysTeamMember> sysTeamList = sysTeamMemberMapper.selectAll(sysTeamMember);
+						for (SysTeamMember sysTeamMember2 : sysTeamList) {
+							//根据team
+							if(sysTeamMember2.getTeamUid().equals(dhObjectPermission2.getOpParticipateUid())) {
+								flag = true;
+								break;
+							}
+						}
+					}
+					break;
+				default:
+					break;
+				}
+				
+				if(flag==true) {
+					break;
+				}
+			}
+			
+		}
+		return flag;
 	}
 
 	private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
