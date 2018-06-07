@@ -42,6 +42,20 @@
 		order by fld_index
 	</select>
 	
+	<select id="queryFormFieldByFormUidAndType" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		select <include refid="base_column"/> from bpm_form_field
+		where form_uid = #{formUid} 
+		<choose>
+			<when test="fieldType!=null and !fieldType.trim().isEmpty()">
+				and fld_type = #{fieldType}
+			</when>
+			<otherwise>
+				and fld_type != 'title'
+			</otherwise>
+		</choose>
+		order by fld_index
+	</select>
+	
 	<select id="queryFieldByFieldIdAndStepId" parameterType="map" resultType="String">
 		select op_action
 		from dh_object_permission

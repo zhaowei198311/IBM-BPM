@@ -47,11 +47,14 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	}
 
 	@Override
-	public ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid) {
-		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+	public ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid, String fieldType) {
+		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUidAndType(formUid,fieldType);
 		for(BpmFormField field:fieldList) {
-			String opAction = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
-			field.setOpAction(opAction);
+			List<String> opActionList = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
+			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
+				opActionList.add("EDIT");
+			}
+			field.setOpActionList(opActionList);
 		}
 		return ServerResponse.createBySuccess(fieldList);
 	}
@@ -61,6 +64,8 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		int countRow = 0;
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
 			bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
+		}
+		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
 			if("EDIT".equals(dhObjectPermission.getOpAction())) {
 				countRow++;
 			}else{

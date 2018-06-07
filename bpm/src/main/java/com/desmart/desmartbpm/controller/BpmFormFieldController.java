@@ -27,12 +27,12 @@ public class BpmFormFieldController {
 	}
 	
 	/**
-	 * 通过表单ID获得所属字段信息及权限信息
+	 * 通过表单ID,步骤ID以及字段类型获得所属字段信息及权限信息
 	 */
 	@RequestMapping(value = "/queryFieldByFormUidAndStepId")
 	@ResponseBody
-	public ServerResponse queryFieldByFormUidAndStepId(String stepUid,String formUid) {
-		return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid);
+	public ServerResponse queryFieldByFormUidAndStepId(String stepUid,String formUid,String fieldType) {
+		return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid,fieldType);
 	}
 	
 	/**

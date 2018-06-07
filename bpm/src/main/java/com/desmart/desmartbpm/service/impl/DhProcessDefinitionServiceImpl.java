@@ -713,15 +713,17 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
 				// 拷贝表单字典权限
 				for (Map<String, Object> map : fldUidList) {
-					DhObjectPermission oldDhObjectPermission = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
-					if (oldDhObjectPermission != null) {
-						oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
-						oldDhObjectPermission.setProUid(proUidNew);
-						oldDhObjectPermission.setProVerUid(proVerUidNew);
-						oldDhObjectPermission.setProAppId(proAppIdNew);
-						oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
-						oldDhObjectPermission.setStepUid(dhStep.getStepUid());
-						dhObjectPermissionMapper.save(oldDhObjectPermission);
+					List<DhObjectPermission> oldDhObjectPermissionlist = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
+					for(DhObjectPermission oldDhObjectPermission:oldDhObjectPermissionlist) {
+						if (oldDhObjectPermission != null) {
+							oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
+							oldDhObjectPermission.setProUid(proUidNew);
+							oldDhObjectPermission.setProVerUid(proVerUidNew);
+							oldDhObjectPermission.setProAppId(proAppIdNew);
+							oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
+							oldDhObjectPermission.setStepUid(dhStep.getStepUid());
+							dhObjectPermissionMapper.save(oldDhObjectPermission);
+						}
 					}
 				}
 			}

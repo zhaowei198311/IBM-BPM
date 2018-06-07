@@ -3,6 +3,8 @@ var preFormData;
 var stepUidToEdit;
 var editIndex;
 var saveFrom; // 触发保存的元素  saveBtn   activityLi  gatewayLi  stepLi   
+
+var dates = "";//查询权限信息时，存储当前步骤和表单id
 var pageConfig = {
     pageNum: 1,
     pageSize: 5,
@@ -118,6 +120,16 @@ layui.use('form', function(){
     	} else {
     		$("#form_innerArea").hide();
     		$("#trigger_innerArea").show();
+    	}
+    });
+    // 切换授权类型
+    form.on('radio(perType)', function(data){
+    	if (data.value == "titleField") {
+    		$("#field_permissions_table").css("display","none");
+    		$("#title_permissions_table").css("display","block");
+    	}else{
+    		$("#title_permissions_table").css("display","none");
+    		$("#field_permissions_table").css("display","block");
     	}
     });
     // 切换是否显示自定义业务字段
@@ -737,51 +749,180 @@ function step_table(data){
 function formFieldEdit(data){
 	$(".display_container4").css("display","block");
 	//查找该步骤绑定表单的所有字段及权限信息
-	var dates=jQuery.parseJSON(decodeURI(data));
+	dates=jQuery.parseJSON(decodeURI(data));
 	$.ajax({
-	     url: common.getPath() + "/formField/queryFieldByFormUidAndStepId",
+	     url: common.getPath()+"/formField/queryFieldByFormUidAndStepId",
 	     type: "post",
 	     dataType: "json",
 	     data:{
 	    	 stepUid:dates.stepUid,
-	    	 formUid:dates.stepObjectUid
+	    	 formUid:dates.stepObjectUid,
+	    	 fieldType:""
 	     },
 	     success: function(result) {
-	    	 $("#field_permissions_table").empty();
-	    	 var trs='';
-		      $(result.data).each(function(index,val){
-				   trs+='<tr>';
-				  // trs+='<td> <input type="checkbox" name="fldUid_a" lay-skin="primary"> '+(index+1)+'</td>';
-				   trs+='<td>'+(index+1)+'</td>';
-				   trs+='<input type="hidden" name="fldUid" value="' + this.fldUid + '">';
-				   trs+='<input type="hidden" name="stepUid" value="' + dates.stepUid + '">';
-				   //trs+='<input type="hidden" name="opObjType" value="FIELD">';
-				   trs+='</td>';
-				   trs+='<td>'+this.fldName+'</td>';
-				   if(this.opAction=='EDIT'){
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
-				   }else if(this.opAction=='VIEW'){
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" value="HIDDEN"/></td>';
-				   }else if(this.opAction=='HIDDEN'){
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="EDIT"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'"  value="VIEW"/></td>';
-					   trs+='<td><input type="radio"  name="opAction_'+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
-				   }
-				   trs+='</tr>';
-			   });
-		      $("#field_permissions_table").append(trs);
-		      radiocheckAll(result.data.length);
-		      $("#field_permissions_table input[type='radio']").bind("click",function(){
-		    	  radiocheckAll(result.data.length);
-		      });
-
+	    	 drawPerTable(result,"field_permissions_table","");
+	     }
+	 });
+	$.ajax({
+	     url: common.getPath()+"/formField/queryFieldByFormUidAndStepId",
+	     type: "post",
+	     dataType: "json",
+	     data:{
+	    	 stepUid:dates.stepUid,
+	    	 formUid:dates.stepObjectUid,
+	    	 fieldType:"title"
+	     },
+	     success: function(result) {
+	    	 drawPerTable(result,"title_permissions_table","title");
 	     }
 	 });
 	//$(".form-horizontal").serialize();
+}
+//渲染权限信息表格
+function drawPerTable(result,perTableId,title){
+	$("#"+perTableId+" tbody").empty();
+	 var trs='';
+     $(result.data).each(function(index,val){
+		   trs+='<tr>';
+		   trs+='<td>'+(index+1);
+		   trs+='<input type="hidden" name="fldUid" value="' + this.fldUid + '">';
+		   trs+='<input type="hidden" name="stepUid" value="' + dates.stepUid + '">';
+		   trs+='</td>';
+		   trs+='<td>'+this.fldName+'</td>';
+		   if(this.opActionList.length==1){
+			   var opAction = (this.opActionList)[0];
+			   if(opAction=='EDIT'){
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="EDIT"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+			   }else if(opAction=='VIEW'){
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+			   }else if(opAction=='HIDDEN'){
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+				   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
+			   }
+			   trs+='<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'+title+'" value="PRINT" onclick="onClickSel'+title+'(this)"/></td>'
+		   }else if(this.opActionList.length==2){
+			   var opAction0 = (this.opActionList)[0];
+			   var opAction1 = (this.opActionList)[1];
+			   if(opAction0=="PRINT"){
+				   if(opAction1=='EDIT'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+				   }else if(opAction1=='VIEW'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+				   }else if(opAction1=='HIDDEN'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
+				   }
+				   trs+='<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'+title+'" value="PRINT" onclick="onClickSel'+title+'(this)" checked/></td>'
+			   }else if(opAction1=="PRINT"){
+				   if(opAction0=='EDIT'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+				   }else if(opAction0=='VIEW'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  checked="checked"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" value="HIDDEN"/></td>';
+				   }else if(opAction0=='HIDDEN'){
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="EDIT"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'"  value="VIEW"/></td>';
+					   trs+='<td><input type="radio"  name="opAction_'+title+this.fldUid+'" checked="checked" value="HIDDEN"/></td>';
+				   }
+				   trs+='<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'+title+'" value="PRINT" onclick="onClickSel'+title+'(this)" checked/></td>'
+			   }
+		   }
+		   trs+='</tr>';
+	   });
+     $("#"+perTableId+" tbody").append(trs);
+     if(title!=null && title!=""){
+		 radiocheckAlltitle(result.data.length);
+	 }else{
+		 radiocheckAll(result.data.length);
+	 }
+     $("#"+perTableId+" tbody input[type='radio']").bind("click",function(){
+    	 if(title!=null && title!=""){
+    		 radiocheckAlltitle(result.data.length);
+    	 }else{
+    		 radiocheckAll(result.data.length);
+    	 }
+     });
+     
+     $("#"+perTableId+" tbody input[type='checkbox']").each(function(){
+    	 if(title!=null && title!=""){
+    		 onClickSeltitle(this);
+    	 }else{
+    		 onClickSel(this);
+    	 }
+     });
+}
+
+//复选框全选，取消全选
+function onClickHander(obj){
+	if(obj.checked){
+		$("input[name='checkboxSel']").prop("checked",true);
+	}else{
+		$("input[name='checkboxSel']").prop("checked",false);
+	}
+}
+
+//复选框分选
+function onClickSel(obj){
+	if(obj.checked){
+		var allSel = false;
+		$("input[name='checkboxSel']").each(function(){
+			if(!$(this).is(":checked")){
+				allSel = true;
+			}
+		});
+		
+		//如果有checkbox没有被选中
+		if(allSel){
+			$("input[name='checkboxAll']").prop("checked",false);
+		}else{
+			$("input[name='checkboxAll']").prop("checked",true);
+		}
+	}else{
+		$("input[name='checkboxAll']").prop("checked",false);
+	}
+}
+
+//复选框全选，取消全选
+function onClickHandertitle(obj){
+	if(obj.checked){
+		$("input[name='checkboxSeltitle']").prop("checked",true);
+	}else{
+		$("input[name='checkboxSeltitle']").prop("checked",false);
+	}
+}
+
+//复选框分选
+function onClickSeltitle(obj){
+	if(obj.checked){
+		var allSel = false;
+		$("input[name='checkboxSeltitle']").each(function(){
+			if(!$(this).is(":checked")){
+				allSel = true;
+			}
+		});
+		
+		//如果有checkbox没有被选中
+		if(allSel){
+			$("input[name='checkboxAlltitle']").prop("checked",false);
+		}else{
+			$("input[name='checkboxAlltitle']").prop("checked",true);
+		}
+	}else{
+		$("input[name='checkboxAlltitle']").prop("checked",false);
+	}
 }
 
 function stepEdit(data){

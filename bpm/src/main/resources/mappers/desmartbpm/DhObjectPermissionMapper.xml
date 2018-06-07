@@ -111,11 +111,13 @@
     	select <include refid="base_column"/>
     	from dh_object_permission
     	where step_uid = #{stepUid} and op_obj_type = 'FIELD'
+    		and OP_ACTION !='PRINT'
     </select>
     
     <select id="getFieldPermissionByStepUidAndFldUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
     	select <include refid="base_column"/>
     	from dh_object_permission
     	where step_uid = #{stepUid} and op_obj_uid = #{fldUid}
+    		and OP_ACTION !='PRINT'
     </select>
 </mapper>

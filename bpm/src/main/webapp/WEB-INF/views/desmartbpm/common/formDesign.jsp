@@ -425,7 +425,9 @@
 									</span>
 									<div class="preview">标题</div>
 									<div class="view">
-										<p contenteditable="true">标题</p>
+										<div class="subDiv">
+											<p contenteditable="true" title="table_title">标题</p>
+										</div>
 									</div>
 								</div>
 								<!-- 文本块 -->

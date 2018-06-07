@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
+import java.util.List;
+
 /**
  * 表单字段
  * @author loser_wu
@@ -21,7 +23,7 @@ public class BpmFormField {
 	private String fldFilter;//是否为过滤字段--报表
 	private String formUid;
 	
-	private String opAction;//字段权限，不是本表字段
+	private List<String> opActionList;//字段权限，不是本表字段
 	
 	public String getFldUid() {
 		return fldUid;
@@ -107,20 +109,17 @@ public class BpmFormField {
 	public void setFormUid(String formUid) {
 		this.formUid = formUid;
 	}
-	public String getOpAction() {
-		return opAction;
+	public List<String> getOpActionList() {
+		return opActionList;
 	}
-	public void setOpAction(String opAction) {
-		if(opAction==null || "".equals(opAction)) {
-			this.opAction = "EDIT";
-		}else{
-			this.opAction = opAction;
-		}
+	public void setOpActionList(List<String> opActionList) {
+		this.opActionList = opActionList;
 	}
+	
 	public BpmFormField() {}
 	public BpmFormField(String fldUid, String fldCodeName, Integer fldIndex, String fldName, String fldDescription,
 			String fldType, Integer fldSize, String multiSeparator, String multiValue, String fldForeignKeyTable,
-			String fldDynName, String fldDybUid, String fldFilter, String formUid, String opAction) {
+			String fldDynName, String fldDybUid, String fldFilter, String formUid, List<String> opActionList) {
 		super();
 		this.fldUid = fldUid;
 		this.fldCodeName = fldCodeName;
@@ -136,7 +135,7 @@ public class BpmFormField {
 		this.fldDybUid = fldDybUid;
 		this.fldFilter = fldFilter;
 		this.formUid = formUid;
-		this.opAction = opAction;
+		this.opActionList = opActionList;
 	}
 	@Override
 	public String toString() {
@@ -144,6 +143,7 @@ public class BpmFormField {
 				+ ", fldName=" + fldName + ", fldDescription=" + fldDescription + ", fldType=" + fldType + ", fldSize="
 				+ fldSize + ", multiSeparator=" + multiSeparator + ", multiValue=" + multiValue
 				+ ", fldForeignKeyTable=" + fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDybUid="
-				+ fldDybUid + ", fldFilter=" + fldFilter + ", formUid=" + formUid + ", opAction=" + opAction + "]";
+				+ fldDybUid + ", fldFilter=" + fldFilter + ", formUid=" + formUid + ", opActionList=" + opActionList
+				+ "]";
 	}
 }

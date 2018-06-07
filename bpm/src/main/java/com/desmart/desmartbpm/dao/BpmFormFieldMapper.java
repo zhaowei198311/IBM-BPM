@@ -29,7 +29,7 @@ public interface BpmFormFieldMapper {
 	/**
 	 * 通过字段ID和活动ID获得所属权限信息
 	 */
-	String queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
+	List<String> queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
 			@Param("fieldUid")String fieldUid);
 
 	/**
@@ -62,4 +62,9 @@ public interface BpmFormFieldMapper {
 	 * 根据字段id查询字段对象
 	 */
 	BpmFormField queryFieldByFldUid(String fldUid);
+
+	/**
+	 * 根据表单查找某个类型的字段集合
+	 */
+	List<BpmFormField> queryFormFieldByFormUidAndType(@Param("formUid")String formUid, @Param("fieldType")String fieldType);
 }

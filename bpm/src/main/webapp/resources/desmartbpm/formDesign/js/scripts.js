@@ -883,7 +883,7 @@ function saveHtml() {
                                                 case "TEXTAREA":
                                                     { //文本域，富文本编辑器
                                                         filedAttr.fldCodeName = subObj.attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "false";
                                                         filedAttr.fldType = "string";
                                                         jsonArr.push(filedAttr);
@@ -892,7 +892,7 @@ function saveHtml() {
                                                 case "SELECT":
                                                     {
                                                         filedAttr.fldCodeName = subObj.attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "false";
                                                         filedAttr.fldType = "string";
                                                         jsonArr.push(filedAttr);
@@ -901,7 +901,7 @@ function saveHtml() {
                                                 case "LABEL":
                                                     { //多选框、单选框
                                                         filedAttr.fldCodeName = subObj.find("input").attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "true";
                                                         filedAttr.multiSeparator = ",";
                                                         filedAttr.fldType = "string";
@@ -918,16 +918,27 @@ function saveHtml() {
 	                                                    break;
 	                                                };
                                                 case "DIV":
-	                                                { //选人组件
-	                                                	if(subObj.attr("title")=="choose_user"){
+	                                                { //选人组件，弹框选值组件
+	                                                	if(subObj.attr("title")=="choose_user" || subObj.attr("title")=="choose_value"){
 	                                                		filedAttr.fldCodeName = subObj.attr("name");
-		                                                    filedAttr.fldName =  subDivObj.prev().find("label").text();;
+		                                                    filedAttr.fldName =  subDivObj.prev().find("label").text().trim();
 		                                                    filedAttr.multiValue = "false";
 		                                                    filedAttr.fldType = "string";
 		                                                    jsonArr.push(filedAttr);
 	                                                	}
 	                                                	break;
 	                                                };
+                                                case "P":
+                                                	{//标题
+	                                                	if(subObj.attr("title")=="table_title"){
+	                                                		filedAttr.fldCodeName = subObj.attr("name");
+		                                                    filedAttr.fldName =  subDivObj.find("p").text().trim();
+		                                                    filedAttr.multiValue = "false";
+		                                                    filedAttr.fldType = "title";
+		                                                    jsonArr.push(filedAttr);
+	                                                	}
+	                                                	break;
+                                                	}
                                             }
                                         }
                                         if (jsonArr != null && jsonArr != "") {
@@ -1031,7 +1042,7 @@ function saveHtml() {
                                                 case "TEXTAREA":
                                                     { //文本域，富文本编辑器
                                                         filedAttr.fldCodeName = subObj.attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "false";
                                                         filedAttr.fldType = "string";
                                                         jsonArr.push(filedAttr);
@@ -1040,7 +1051,7 @@ function saveHtml() {
                                                 case "SELECT":
                                                     {
                                                         filedAttr.fldCodeName = subObj.attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "false";
                                                         filedAttr.fldType = "string";
                                                         jsonArr.push(filedAttr);
@@ -1049,13 +1060,35 @@ function saveHtml() {
                                                 case "LABEL":
                                                     { //多选框、单选框
                                                         filedAttr.fldCodeName = subObj.find("input").attr("name");
-                                                        filedAttr.fldName = subDivObj.prev().find("label").text();
+                                                        filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                         filedAttr.multiValue = "true";
                                                         filedAttr.multiSeparator = ",";
                                                         filedAttr.fldType = "string";
                                                         jsonArr.push(filedAttr);
                                                         break;
                                                     };
+                                                case "DIV":
+	                                                { //选人组件，弹框选值组件
+	                                                	if(subObj.attr("title")=="choose_user" || subObj.attr("title")=="choose_value"){
+	                                                		filedAttr.fldCodeName = subObj.attr("name");
+		                                                    filedAttr.fldName =  subDivObj.prev().find("label").text().trim();
+		                                                    filedAttr.multiValue = "false";
+		                                                    filedAttr.fldType = "string";
+		                                                    jsonArr.push(filedAttr);
+	                                                	}
+	                                                	break;
+	                                                };
+	                                            case "P":
+	                                            	{//标题
+	                                                	if(subObj.attr("title")=="table_title"){
+	                                                		filedAttr.fldCodeName = subObj.attr("name");
+		                                                    filedAttr.fldName =  subDivObj.find("p").text().trim();
+		                                                    filedAttr.multiValue = "false";
+		                                                    filedAttr.fldType = "title";
+		                                                    jsonArr.push(filedAttr);
+	                                                	}
+	                                                	break;
+	                                            	}
                                             }
                                         }
                                         if (jsonArr != null && jsonArr != "") {

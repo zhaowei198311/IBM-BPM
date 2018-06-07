@@ -14,7 +14,7 @@ public interface BpmFormFieldService {
 	/**
 	 * 通过表单ID获得所属字段信息及权限信息
 	 */
-	ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid);
+	ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid,String fieldType);
 
 	/**
 	 * 保存某步骤上表单字段的权限信息

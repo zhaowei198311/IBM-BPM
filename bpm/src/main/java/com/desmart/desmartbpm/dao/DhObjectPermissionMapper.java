@@ -36,7 +36,7 @@ public interface DhObjectPermissionMapper {
      * @return: DhObjectPermission
      * @throws
      */
-    DhObjectPermission getDhObjectPermissionByFldUid(String fldUid);
+    List<DhObjectPermission> getDhObjectPermissionByFldUid(String fldUid);
 
     /**
      * 根据步骤ID查表单字段权限信息

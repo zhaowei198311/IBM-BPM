@@ -99,15 +99,31 @@ function drawPage() {
                     	formHtml += "<table class='layui-table data-table'>"+tableObj.html()+"</table>";
                         formHtml += tableHead;
                 	}else if(pObj.length!=0){
-                		var subDivCol = subDivObj.attr("col");
-                		var subDivRow = subDivObj.attr("row");
-                		if(subDivRow==1){//说明
-                			var subHtml = subDivObj.html();
-                            formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
-                		}else{//表格行的头部
-                			var subHtml = subDivObj.html();
-                            formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
-                			isContinue = true;
+                		if(pObj.attr("title")=="table_title"){
+                			//表单块标题
+                        	column.find("p").addClass("title_p");
+                            pHtml = column.html();
+                            var pText = column.find("p").text();
+                            flag = false;
+                            if (column.find(".title_p").length != 0) {
+                                formHtml = formHtml.substring(0, formHtml.length - 4);
+                                formHtml += "</tbody></table>";
+                                formHtml += pHtml;
+                                formHtml += '<table class="layui-table form-sub" title='+pText+'>' + '<tbody>';
+                            } else {
+                                continue;
+                            }
+                		}else{
+	                		var subDivCol = subDivObj.attr("col");
+	                		var subDivRow = subDivObj.attr("row");
+	                		if(subDivRow==1){//说明
+	                			var subHtml = subDivObj.html();
+	                            formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
+	                		}else{//表格行的头部
+	                			var subHtml = subDivObj.html();
+	                            formHtml += '<td class="td_sub" rowspan='+subDivRow+'>' + subHtml + '</td>';
+	                			isContinue = true;
+	                		}
                 		}
                 	}else if(column.find(".subDiv").find("div[title='choose_user']").length !=0){
                 		var labelDivObj = column.find(".labelDiv");

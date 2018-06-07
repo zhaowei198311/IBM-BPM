@@ -362,6 +362,26 @@ var common = {
 			}
 		}//end for
 	},
+	//当表单中某块信息全都不可见时，title也要不可见
+	showTableP:function(){
+		var tableArr = $("#formSet").find(".layui-table");
+		tableArr.each(function(){
+			var tdArr = $(this).find("td");
+			var flag = true;
+			tdArr.each(function(){
+				if($(this).find("p").length==0 && $(this).css("display")!="none"){
+					flag = false;
+				}
+			});
+			if(flag){
+				$(this).css("display","none");
+				var pText = $(this).prev().text().trim();
+				if($(this).attr("title")==pText){
+					$(this).prev().css("display","none");
+				}
+			}
+		});
+	},
 	//根据字段权限json给动态表单组件设置权限
 	giveFormFieldPermission:function(jsonStr){
 		var json = JSON.parse(jsonStr)
@@ -407,6 +427,8 @@ var common = {
 				}
 			}
 		}
+		//是否显示标题
+		common.showTableP();
 	},
 	//验证动态表单必填项
 	validateFormMust:function(id){

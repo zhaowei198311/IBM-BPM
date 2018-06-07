@@ -665,60 +665,65 @@
         </form>
         </div>
         <div class="display_container4" id="editFieldPermissions">
-            <div class="display_content3" style="width: 950px;height: 500px;">
+            <div class="display_content3" style="width: 600px;height: 400px;">
                 <div class="top">
-                    编辑字段权限
+                  	编辑字段权限
                 </div>
-                <div class="middle1" style="height: 400px;">
+                <div class="middle1" style="height: 300px;" class="layui-row">
+                	<div class="layui-form">
+                		<input name="fieldType" value="formField" title="按字段授权" style="margin-left:10px;"  type="radio" lay-filter="perType" checked>
+                		<input name="fieldType" value="titleField" title="按标题块授权" style="margin-left:10px;"  type="radio" lay-filter="perType">
+                	</div>
                     <form class="form-horizontal"  >
-                    <table class="layui-table" lay-even lay-skin="nob" >
+                    <table class="layui-table layui-col-md12" lay-even lay-skin="nob" id="field_permissions_table">
                         <colgroup>
-                            <col width="100">
-                            <col>
-                            <col>
+                        	<col>
+                        	<col width=150>
+                        	<col width=80>
+                        	<col width=80>
+                        	<col width=80>
+                        	<col>
                         </colgroup>
                         <thead>
-                            <th><!-- <input type="checkbox"  name="fldUid"  id="field_check" lay-skin="primary"> -->序号</th>
-                            <th>字段名称</th>
-                            <th><input type="radio" name="radioAll"  id="radioedit" lay-skin="primary" onclick="editAllclick(this)">编辑</th>
-                            <th><input type="radio" name="radioAll"    lay-skin="primary" id="viewAllclick">只读</th>
-                            <th><input type="radio" name="radioAll"   lay-skin="primary" id="hiddenAllclick">隐藏</th>
+                        	<tr>
+                            <th>序号</th>
+                            <th>对象名称</th>
+                            <th><input type="radio" name="radioAll" lay-skin="primary" id="fieldradioedit" onclick="editAllclick(this)">编辑</th>
+                            <th><input type="radio" name="radioAll" lay-skin="primary" id="fieldviewAllclick">只读</th>
+                            <th><input type="radio" name="radioAll" lay-skin="primary" id="fieldhiddenAllclick">隐藏</th>
+                            <th style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxAll" id="printAllclick" onclick="onClickHander(this)">是否打印</th>
+                        	</tr>
                         </thead>
                         
-                        <tbody id="field_permissions_table" >
-                            <tr>
-                                <td><input type="checkbox" id="0"/><label for="0"> 1</label></td>
-                                <td>字段1</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="1"/><label for="1"> 2</label></td>
-                                <td>字段2</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="2"/><label for="2"> 3</label></td>
-                                <td>字段3</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="3"/><label for="3"> 4</label></td>
-                                <td>字段4</td>
-                                <td>只读</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="4"/><label for="4"> 5</label></td>
-                                <td>字段5</td>
-                                <td>隐藏</td>
-                            </tr>
-                            <tr>
-                                <td><input type="checkbox" id="5"/><label for="5"> 6</label></td>
-                                <td>字段6</td>
-                                <td>隐藏</td>
-                            </tr>
+                        <tbody>
+                            
+                        </tbody>
+            		</table>
+            		<table class="layui-table layui-col-md12" lay-even lay-skin="nob" id="title_permissions_table" style="display:none;">
+                        <colgroup>
+                        	<col>
+                        	<col width=150>
+                        	<col width=80>
+                        	<col width=80>
+                        	<col width=80>
+                        	<col>
+                        </colgroup>
+                        <thead>
+                        	<tr>
+                            <th>序号</th>
+                            <th>对象名称</th>
+                            <th><input type="radio" name="titleradioAll" lay-skin="primary" id="titleradioedit" onclick="titleeditAllclick(this)">编辑</th>
+                            <th><input type="radio" name="titleradioAll" lay-skin="primary" id="titleviewAllclick">只读</th>
+                            <th><input type="radio" name="titleradioAll" lay-skin="primary" id="titlehiddenAllclick">隐藏</th>
+                            <th style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxAlltitle" id="printAllclick" onclick="onClickHandertitle(this)">是否打印</th>
+                        	</tr>
+                        </thead>
+                        
+                        <tbody>
+                        
                         </tbody>
                     </table>                
-	                    </form>
+	               </form>
                 </div>
                 <div class="foot">
                     <button class="layui-btn layui-btn " id="filedSave">保存</button>
@@ -1011,10 +1016,6 @@
                 $(".display_container5").css("display","none");
             })
         	
-            /* $(".create_net").click(function(){
-                $(".display_container5").css("display","block");
-            }) */
-           
             $(".edit_role").click(function(){
                 $(".display_container4").css("display","block");
                 $.ajax({
@@ -1054,16 +1055,14 @@
                 $(".display_container10").css("display","none");
             })
             
-            
-            
              //表单字段权限  保存   只读 隐藏
              $("#filedSave").click(function(){
            		var $activeLi = $("#my_collapse li.link_active");
            		var actcUid = $activeLi.data('uid');
             	 
             	var jsonArr = new Array();
-            	 var radioSelArr = $("#field_permissions_table").find("input[type='radio']:checked");
-            	 //console.log(radioSelArr.length);
+            	//普通字段的权限信息
+            	 var radioSelArr = $("#field_permissions_table tbody").find("input[type='radio']:checked");
             	 radioSelArr.each(function(){
             		 var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
             		 var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
@@ -1077,7 +1076,54 @@
                     jsonParam.opAction = opAction;
                     jsonArr.push(jsonParam);
             	 });
-                 //给表单字段添加权限
+            	 
+            	 var fieldCheckArr = $("#field_permissions_table tbody").find("input[type='checkbox']:checked");
+            	 fieldCheckArr.each(function(){
+            		 var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
+            		 var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
+            		 var jsonParam = {
+                          stepUid:stepUid,//步骤ID
+                          opObjUid:opObjUid,//表单字段ID
+                          opObjType:"FIELD",
+                          opAction:""//EDIT，HIDDEN，VIEW
+                     };
+            		var opAction = $(this).val();
+                    jsonParam.opAction = opAction;
+                    jsonArr.push(jsonParam);
+            	 });
+            	 
+            	 //标题块的权限信息
+            	 var titleRadioSelArr = $("#title_permissions_table tbody").find("input[type='radio']:checked");
+            	 titleRadioSelArr.each(function(){
+            		var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
+            		var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
+            		var jsonParam = {
+                          stepUid:stepUid,//步骤ID
+                          opObjUid:opObjUid,//表单字段ID
+                          opObjType:"FIELD",
+                          opAction:""//EDIT，HIDDEN，VIEW
+                    };
+            		var opAction = $(this).val();
+                    jsonParam.opAction = opAction;
+                    jsonArr.push(jsonParam);
+            	 });
+            	 
+            	 var titleCheckArr = $("#title_permissions_table tbody").find("input[type='checkbox']:checked");
+            	 titleCheckArr.each(function(){
+            		 var opObjUid = $(this).parent().parent().find("input[name='fldUid']").val();
+            		 var stepUid = $(this).parent().parent().find("input[name='stepUid']").val();
+            		 var jsonParam = {
+                          stepUid:stepUid,//步骤ID
+                          opObjUid:opObjUid,//表单字段ID
+                          opObjType:"FIELD",
+                          opAction:""//EDIT，HIDDEN，VIEW
+                     };
+            		var opAction = $(this).val();
+                    jsonParam.opAction = opAction;
+                    jsonArr.push(jsonParam);
+            	 });
+            	 console.log(JSON.stringify(jsonArr));
+            	//给表单字段添加权限
                 $.ajax({
 		            url:common.getPath() +"/formField/saveFormFieldPermission",
 		            method:"post",
@@ -1087,6 +1133,7 @@
 		            success:function(result){
 		            	if(result.status == 0){
 							$('#editFieldPermissions').hide();
+							layer.alert("修改成功");
 							loadActivityConf(actcUid);
 						}else{
 							layer.alert(result.msg);
@@ -1095,54 +1142,78 @@
                  });
              })
              
-             //全选
-            /*  $("#field_check").click(function(){   
- 			    if(this.checked){   
- 			        $("#field_permissions_table :checkbox").prop("checked", true);  
- 			    }else{   
- 					$("#field_permissions_table :checkbox").prop("checked", false);
- 			    }   
- 			}); */
-        	
-        	
         	//只读
-            $("#viewAllclick").click(function(){   
+            $("#fieldviewAllclick").click(function(){   
             	if(this.checked){
             		$("#field_permissions_table").find("input[value='VIEW']").prop("checked",true);
             	}
 			});
         	
            //隐藏
-            $("#hiddenAllclick").click(function(){   
+            $("#fieldhiddenAllclick").click(function(){   
             	if(this.checked){
             		$("#field_permissions_table").find("input[value='HIDDEN']").prop("checked",true);
             	}
 			});
            
+          	//只读
+            $("#titleviewAllclick").click(function(){   
+            	if(this.checked){
+            		$("#title_permissions_table").find("input[value='VIEW']").prop("checked",true);
+            	}
+			});
+        	
+           //隐藏
+            $("#titlehiddenAllclick").click(function(){   
+            	if(this.checked){
+            		$("#title_permissions_table").find("input[value='HIDDEN']").prop("checked",true);
+            	}
+			});
         })
         
-        //编辑 只读  隐藏
+       	//编辑 只读  隐藏
         function radiocheckAll(dataLength){
         	var $table=$("#field_permissions_table");
         	var  HIDDEN=$table.find("input[value='HIDDEN']:checked").length;
         	var  VIEW=$table.find("input[value='VIEW']:checked").length;
         	var  EDIT=$table.find("input[value='EDIT']:checked").length;
         	if(HIDDEN==dataLength){
-        		$('#hiddenAllclick').click(); 
+        		$('#fieldhiddenAllclick').click(); 
         	}else if(VIEW==dataLength){
-        		$('#viewAllclick').click(); 
+        		$('#fieldviewAllclick').click(); 
         	}else if(EDIT==dataLength){
-        		$('#radioedit').click();
+        		$('#fieldradioedit').click();
         	}else{
         		$("#editFieldPermissions input[name=radioAll]").prop("checked",false);
         	}
-        }
-        
-        
+        } 
         
         function editAllclick(obj){
         	if(obj.checked){
         		$("#field_permissions_table").find("input[value='EDIT']").prop("checked",true);
+        	}
+        }
+        
+      	//编辑 只读  隐藏
+        function radiocheckAlltitle(dataLength){
+        	var $table=$("#title_permissions_table");
+        	var  HIDDEN=$table.find("input[value='HIDDEN']:checked").length;
+        	var  VIEW=$table.find("input[value='VIEW']:checked").length;
+        	var  EDIT=$table.find("input[value='EDIT']:checked").length;
+        	if(HIDDEN==dataLength){
+        		$('#titlehiddenAllclick').click(); 
+        	}else if(VIEW==dataLength){
+        		$('#titleviewAllclick').click(); 
+        	}else if(EDIT==dataLength){
+        		$('#titleradioedit').click();
+        	}else{
+        		$("#editFieldPermissions input[name=radioAll]").prop("checked",false);
+        	}
+        } 
+        
+        function titleeditAllclick(obj){
+        	if(obj.checked){
+        		$("#title_permissions_table").find("input[value='EDIT']").prop("checked",true);
         	}
         }
             
@@ -1154,7 +1225,5 @@
             $(".form_table").css("display","none");
             $(".trigger_table").css("display","inline-table");
         }
-        
-        
     </script>
 </html>
