@@ -291,7 +291,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         result.addAll(bpmRoutingData.getNormalNodes());
 
 		// 查看是否需要校验排他网关
-		if (gatewayList.isEmpty()) {
+		if ("1".equals("1")) {
 			return result;
 		}
 
@@ -845,7 +845,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 		} else if ("gateway".equals(type)) {
 			if ("gateway".equals(activityType)) {
 				// 排他网关
-                // todo
+                result.addGatewayNode(nowActivity);
+                // 根据规则判断网关走向
+                DhGatewayLine lineSelective = new DhGatewayLine();
+                // 获得源网关的id
+                lineSelective.setActivityId(nowActivity.getSourceActivityId());
+                List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
+
+
 
 			} else if ("gatewayAnd".equals(activityType)) {
 				// 并行网关
