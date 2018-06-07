@@ -3,8 +3,11 @@
  */
 package com.desmart.desmartsystem.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,14 +49,25 @@ public class DhInterfaceParameterController {
 	
 	@RequestMapping(value = "/add")
 	@ResponseBody
-	public ServerResponse saveInterfaceParamers(DhInterfaceParameter dhInterfaceParameter) {
-		return dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameter);
+	public ServerResponse saveInterfaceParamers(@RequestBody List<DhInterfaceParameter> dhInterfaceParameterList) {
+		return dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameterList);
 	}
 	
 	@RequestMapping(value = "/update")
 	@ResponseBody
 	public ServerResponse updateInterfaceParamers(DhInterfaceParameter dhInterfaceParameter) {
 		return dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
+	}
+	
+	@RequestMapping(value = "/delete")
+	@ResponseBody
+	public ServerResponse deleteInterfaceParamers(String paraUid) {
+		try {
+			dhInterfaceParameterService.delDhInterfaceParameter(paraUid);
+		} catch (Exception e) {
+			return ServerResponse.createByErrorMessage("删除失败");
+		}
+		return ServerResponse.createBySuccessMessage("删除成功");
 	}
 	
 	@RequestMapping(value = "/queryByparaId")

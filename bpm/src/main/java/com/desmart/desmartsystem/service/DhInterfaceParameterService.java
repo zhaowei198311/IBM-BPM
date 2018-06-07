@@ -42,7 +42,7 @@ public interface DhInterfaceParameterService {
 	 * @param
 	 * @return 
 	 */
-	ServerResponse saveDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter);
+	ServerResponse saveDhInterfaceParametere(List<DhInterfaceParameter> dhInterfaceParameterList);
 	
 	/**
 	 * 修改接口参数

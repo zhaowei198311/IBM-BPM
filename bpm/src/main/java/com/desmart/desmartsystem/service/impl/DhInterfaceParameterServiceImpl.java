@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
@@ -59,9 +60,30 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	 * @see com.desmart.desmartbpm.service.DhInterfaceParameterService#saveDhInterfaceParametere(com.desmart.desmartbpm.entity.DhInterfaceParameter)
 	 */
 	@Override
-	public ServerResponse saveDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter) {
-		dhInterfaceParameter.setParaUid(EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString());
-		return ServerResponse.createBySuccess(dhInterfaceParameterMapper.save(dhInterfaceParameter));
+	public ServerResponse saveDhInterfaceParametere(List<DhInterfaceParameter> dhInterfaceParameterList) {
+		
+		int size=dhInterfaceParameterList.size();
+		if(size>0) {//添加数组类型参数
+			
+			String paraParent="";
+			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+				String paraUid=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();
+				dhInterfaceParameter.setParaUid(paraUid);
+				String paraType=dhInterfaceParameter.getParaType();
+				if(paraType.equals(Const.PARAMETER_TYPE_ARRAY)) {
+					paraParent=paraUid;
+				}else{
+					dhInterfaceParameter.setParaParent(paraParent);
+				}
+				dhInterfaceParameter.setParaUid(paraUid);
+				dhInterfaceParameterMapper.save(dhInterfaceParameter);
+			}
+		}else {//添加非array类型参数
+			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+				dhInterfaceParameterMapper.save(dhInterfaceParameter);
+			}
+		}
+		return ServerResponse.createBySuccess();
 	}
 
 	/* (non-Javadoc)

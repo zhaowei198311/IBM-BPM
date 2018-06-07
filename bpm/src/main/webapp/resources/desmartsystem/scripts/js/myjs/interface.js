@@ -185,7 +185,7 @@
 							$("#intUid3").val(result.intUid);
 							form.render();
 						}
-					})
+					});
 				})
 			})
 		})
@@ -463,6 +463,7 @@
 		var  fomr2=$("#form2");
 		fomr2.validate().resetForm();
 		fomr2[0].reset();
+		byParameterTypeHideAndShowElement('String','');
 		
 		// 绑定参数页面
 		layui.use([ 'layer', 'form' ], function() {
@@ -561,6 +562,8 @@
 
 	// 请求数据成功
 	function drawTable2(pageInfo) {
+		
+		
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
 		pageConfig.total = pageInfo.total;
@@ -575,6 +578,8 @@
 		var trs = "";
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
+			
+			
 			var sortNum = startSort + i;
 //			var multiValue = "";
 			var isMust = "";
@@ -589,7 +594,8 @@
 			}else{
 				isMust = "否"
 			}
-			trs += '<tr><td><input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">'
+//			<input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">
+			trs += '<tr><td>'
 					+ sortNum
 					+ '</td>'
 					+ '<td>'
@@ -602,7 +608,7 @@
 					+ meta.paraType
 					+ '</td>'
 					+ '<td>'
-					+ meta.paraSize
+					+ isEmpty(meta.paraSize)
 					+ '</td>'
 					/*+ '<td>'
 					+ meta.multiSeparator
@@ -613,11 +619,15 @@
 					+ '<td>'
 					+ isMust
 					+ '</td>'
-					+'<td><i class="layui-icon" title="修改参数" onclick="deleteTr(this);" >&#xe642;</i><i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>'
+					+ '<td>'+ isEmpty(meta.dateFormat)+ '</td>'
+					+ '<td>'+ meta.paraParentName+ '</td>'
+					+ '<td>'+ isEmpty(meta.paraXml)+ '</td>'
+					+'<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'"); >&#xe642;</i><i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'"); >&#xe640;</i></td>'
 					+ '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
 	}
+	
 	
 	// 退出
 	function back(){

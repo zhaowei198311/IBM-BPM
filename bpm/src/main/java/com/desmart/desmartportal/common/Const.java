@@ -8,6 +8,10 @@ public class Const {
     
     public static final String CURRENT_USER = "currentUser";
     
+    
+    //绑定接口参数类型
+    public static final String PARAMETER_TYPE_ARRAY = "Array";
+    
     public interface TimeUnit {
         public static final String HOUR = "hour";
         public static final String DAY = "day";

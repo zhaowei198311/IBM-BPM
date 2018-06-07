@@ -30,7 +30,13 @@ public class DhInterfaceParameter {
 	private String isMust; // 是否必须
 	
 	private String intUid; // 接口定义id (对应接口表的主键id)
+	
+	private String  paraParent;//父参数
+	
+	private String paraXml;//xml请求参数
 
+	private String paraParentName; 
+	
 	/**
 	 * @return the paraUid
 	 */
@@ -173,6 +179,32 @@ public class DhInterfaceParameter {
 	
 	public DhInterfaceParameter() {
 		
+	}
+	
+	
+	public String getParaParent() {
+		return paraParent;
+	}
+
+	public void setParaParent(String paraParent) {
+		this.paraParent = paraParent;
+	}
+
+	public String getParaXml() {
+		return paraXml;
+	}
+
+	public void setParaXml(String paraXml) {
+		this.paraXml = paraXml;
+	}
+	
+
+	public String getParaParentName() {
+		return paraParentName;
+	}
+
+	public void setParaParentName(String paraParentName) {
+		this.paraParentName = paraParentName;
 	}
 
 	/**
