@@ -169,4 +169,37 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	Integer alreadyClosedTaskByusrUid(String userId);
+	
+	/**
+	 * 
+	 * @Title: queryTransfer  
+	 * @Description: 查询抄送已读/未读任务  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return ServerResponse<PageInfo<List<DhTaskInstance>>>  
+	 * @throws
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(Date startTime, Date endTime,
+																DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize);
+	/**
+	 * 
+	 * @Title: queryTransferNumber  
+	 * @Description: 查询抄送已读/未读任务数量  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return Integer  
+	 * @throws
+	 */
+	Integer queryTransferNumber(DhTaskInstance dhTaskInstance);
+	
+	/**
+	 * 
+	 * @Title: updateTaskStatusOfTransfer  
+	 * @Description: 点击抄送未读详情页面，更改任务状态  
+	 * @param @param taskUid
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<?> updateTaskStatusOfTransfer(String taskUid);
 }

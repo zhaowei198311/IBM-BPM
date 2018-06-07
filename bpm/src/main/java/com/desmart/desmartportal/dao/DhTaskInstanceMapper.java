@@ -168,11 +168,25 @@ public interface DhTaskInstanceMapper {
 	/**
 	 * 
 	 * @Title: queryTransferByTypeAndStatus  
-	 * @Description: 查询传阅任务  
+	 * @Description: 查询传阅任务（未读/已读）  
 	 * @param @param dhTaskInstance
 	 * @param @return  
 	 * @return List<DhTaskInstance>  
 	 * @throws
 	 */
-	List<DhTaskInstance> queryTransferByTypeAndStatus(DhTaskInstance dhTaskInstance);
+	List<DhTaskInstance> queryTransferByTypeAndStatus(
+						@Param("startTime")Date startTime,
+						@Param("endTime")Date endTime,
+						@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+	
+	/**
+	 * 
+	 * @Title: queryTransferNumberByusrUid  
+	 * @Description: 查询抄送任务数量 （未读/已读） 
+	 * @param @param usrUid
+	 * @param @return  
+	 * @return Integer  
+	 * @throws
+	 */
+	Integer queryTransferNumberByusrUid(DhTaskInstance dhTaskInstance);
 }

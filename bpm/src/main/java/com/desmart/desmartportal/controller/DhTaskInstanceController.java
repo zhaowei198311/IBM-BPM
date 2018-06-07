@@ -191,4 +191,71 @@ public class DhTaskInstanceController {
 		}
 		return dhTaskInstanceService.alreadyClosedTaskByusrUid(userId);
 	}
+	
+	/**
+	 * 
+	 * @Title: queryTransfer  
+	 * @Description: 查询抄送已读/未读任务  
+	 * @param @param dhTaskInstance
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @return  
+	 * @return ServerResponse<PageInfo<List<DhTaskInstance>>>  
+	 * @throws
+	 */
+	@RequestMapping(value = "/queryTransfer")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime,
+																		@DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
+																		@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
+																		@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,
+																		@RequestParam("insTitle")String insTitle,
+																		@RequestParam("createProcessUserName")String createProcessUserName,
+																		DhTaskInstance dhTaskInstance){
+		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		dhTaskInstance.setUsrUid(currentUserUid);
+        if(insTitle!=null && !"".equals(insTitle)) {
+    	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+    		dhProcessInstance.setInsTitle(insTitle);
+    		dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+    	}
+    	if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+    		SysUser sysUser = new SysUser();
+    		sysUser.setUserName(createProcessUserName);
+    		dhTaskInstance.setSysUser(sysUser);
+    	}
+		return dhTaskInstanceService.queryTransfer(startTime, endTime, dhTaskInstance, pageNum, pageSize);
+	}
+	
+	/**
+	 * 
+	 * @Title: queryTransferNumber  
+	 * @Description: 查询抄送已读/未读任务数量
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return Integer  
+	 * @throws
+	 */
+	@RequestMapping("/queryTransferNumber")
+	@ResponseBody
+	public Integer queryTransferNumber(DhTaskInstance dhTaskInstance) {
+		String usrUid = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		dhTaskInstance.setUsrUid(usrUid);
+		return dhTaskInstanceService.queryTransferNumber(dhTaskInstance);
+	}
+	
+	/**
+	 * 
+	 * @Title: updateTaskStatusOfTransfer  
+	 * @Description: 点击抄送未读详情页面，更改任务状态  
+	 * @param @param taskUid
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	@RequestMapping("/updateTaskStatusOfTransfer")
+	@ResponseBody
+	public ServerResponse<?> updateTaskStatusOfTransfer(String taskUid){
+		return dhTaskInstanceService.updateTaskStatusOfTransfer(taskUid);
+	}
 }

@@ -18,6 +18,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -1035,6 +1036,33 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public Integer alreadyClosedTaskByusrUid(String userId) {
 		// TODO Auto-generated method stub
 		return dhTaskInstanceMapper.alreadyClosedTaskByusrUid(userId);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(Date startTime, Date endTime,
+											DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.queryTransferByTypeAndStatus(startTime, endTime, dhTaskInstance);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(dhTaskInstanceList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public Integer queryTransferNumber(DhTaskInstance dhTaskInstance) {
+		return dhTaskInstanceMapper.queryTransferNumberByusrUid(dhTaskInstance);
+	}
+
+	@Override
+	public ServerResponse<?> updateTaskStatusOfTransfer(String taskUid) {
+		DhTaskInstance dhTaskInstance = new DhTaskInstance();
+		dhTaskInstance.setTaskUid(taskUid);
+		dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+		int count = dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+		if (count > 0) {
+			return ServerResponse.createBySuccess();
+		}
+		return ServerResponse.createByError();
 	}
 
 }
