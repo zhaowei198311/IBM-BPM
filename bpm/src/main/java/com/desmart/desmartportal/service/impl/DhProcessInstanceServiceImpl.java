@@ -33,9 +33,11 @@ import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhActivityReject;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.exception.PlatformException;
@@ -127,6 +129,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private BpmFormFieldService bpmFormFieldService;
 	@Autowired
 	private DhApprovalOpinionService dhApprovalOpinionService;
+	@Autowired
+	private DhActivityRejectMapper dhActivityRejectMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -659,6 +663,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toActivities":
 				log.info("驳回到指定环节");
+				//查询可选配置
+				List<DhActivityReject> dhActivityRejects = dhActivityRejectMapper.listByActivityId(activityId);
+				
 				// 选择环节
 				List<DhRoutingRecord> dhRoutingRecordList2 = dhRoutingRecordMapper
 						.getDhRoutingRecordListByCondition(dhRoutingRecord);
@@ -666,6 +673,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 					// 过滤信息
 					BpmActivityMeta bpmActivityMeta4 = bpmActivityMetaMapper
 							.queryByPrimaryKey(dhRoutingRecord3.getActivityId());
+					if(checkReject(bpmActivityMeta4,dhActivityRejects)) {
 					if (DhRoutingRecord.ROUTE_Type_SUBMIT_TASK.equals(dhRoutingRecord3.getRouteType())
 							|| DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord3.getRouteType())) {
 						Map<String, Object> toActivitiesMap = new HashMap<>();
@@ -676,11 +684,23 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 						toActivitiesMap.put("userName", dhRoutingRecord3.getUserName());
 						activitiMapList.add(toActivitiesMap);
 					}
+					}
 				}
 				return ServerResponse.createBySuccess(activitiMapList);
 			}
 		}
 		return null;
+	}
+
+	private boolean checkReject(BpmActivityMeta bpmActivityMeta4, List<DhActivityReject> dhActivityRejects) {
+		boolean flag = false;
+		for (DhActivityReject dhActivityReject : dhActivityRejects) {
+			if(bpmActivityMeta4.getActivityId().equals(dhActivityReject.getActivityId())) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
 	}
 
 	@Override

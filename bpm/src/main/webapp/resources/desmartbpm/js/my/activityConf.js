@@ -469,9 +469,9 @@ $(function(){
 
     // “选择环节”
     $("#chooseActivity_i").click(function(){
-        $("#left_activity_ul").empty();
+        //$("#left_activity_ul").empty();
         $("#right_activity_ul").empty();
-        $("#left_activity_ul").append(activityStr);
+        //$("#left_activity_ul").append(activityStr);
         var choosedValue = $("#rejectActivities").val();
         if (!choosedValue) {
             $("#choose_activity_container").show();
@@ -597,9 +597,18 @@ function printCollapse(list) {
             var meta = children[j];
             if (meta.activityId == firstHumanMeta) {
             	// 如果这个环节是此流程的第一个环节
-                str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
+                str += '<li data-parentActivityId="'+ meta.parentActivityId +'" data-uid="'+meta.actcUid+'" data-activitybpdid="'+meta.activityBpdId+'" class="link_active" onclick="clickLi(this);">'+meta.activityName+'</li>';
+                $("#left_activity_ul").empty();
+                $("#left_activity_ul").append(activityStr);
+                var leftLi = $("#left_activity_ul").find("li");
+                $(leftLi).each(function(){
+                	var checkParentId = $(this).data('parentactivityid');
+                	if(checkParentId != meta.parentActivityId){
+                		$(this).remove();
+                	}
+                });
             } else {
-                str += '<li data-uid="'+meta.actcUid+'" data-activitybpdid="'+ meta.activityBpdId +'" onclick="clickLi(this);">'+meta.activityName+'</li>';
+                str += '<li data-parentActivityId="'+ meta.parentActivityId +'" data-uid="'+meta.actcUid+'" data-activitybpdid="'+meta.activityBpdId+'" onclick="clickLi(this);">'+meta.activityName+'</li>';
             }
         }
         str +=   '</ul>'
@@ -619,7 +628,17 @@ function clickLi(li) {
     if ($li.hasClass('link_active')) {
         return;
     } else {
-        var actcUid = $li.data('uid');
+        var actcUid = $(li).data('uid');
+        var parentActivityId = $(li).data('parentactivityid');
+        $("#left_activity_ul").empty();
+        $("#left_activity_ul").append(activityStr);
+        var leftLi = $("#left_activity_ul").find("li");
+        $(leftLi).each(function(){
+        	var checkParentId = $(this).data('parentactivityid');
+        	if(checkParentId != parentActivityId){
+        		$(this).remove();
+        	}
+        });
         if (getFormData() != preFormData) {//配置变化了
             layer.confirm('是否先保存数据再切换环节？', {btn: ['确定','取消'] },
                 function(){

@@ -121,6 +121,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     map.put("actcUid", meta.getDhActivityConf().getActcUid());
                     map.put("activityId", meta.getActivityId());
                     map.put("activityBpdId", meta.getActivityBpdId());
+                    map.put("parentActivityId", meta.getParentActivityId());
                     children.add(map);
                     iterator.remove();
                 }
@@ -158,6 +159,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                     map.put("actcUid", item.getDhActivityConf().getActcUid());
                     map.put("activityId", item.getActivityId());
                     map.put("activityBpdId", item.getActivityBpdId());
+                    map.put("parentActivityId", item.getParentActivityId());
                     children.add(map);
                     iterator.remove();
                 }
