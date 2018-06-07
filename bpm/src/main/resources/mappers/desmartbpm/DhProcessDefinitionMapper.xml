@@ -7,7 +7,7 @@
         PRO_TRI_CANCELED, PRO_TRI_PAUSED, PRO_TRI_UNPAUSED, PRO_TRI_REASSIGNED, PRO_TYPE_PROCESS ,
         PRO_SHOW_DELEGATE, PRO_SHOW_DYNAFORM,  LAST_MODIFIED_DATE, LAST_MODIFIED_USER,
         CREATE_DATE, CREATE_USER, PRO_HEIGHT, PRO_WIDTH, PRO_TITLE_X, PRO_TITLE_Y, PRO_DEBUG, PRO_DYNAFORMS,
-        PRO_DERIVATION_SCREEN_TPL, PRO_APP_ID
+        PRO_DERIVATION_SCREEN_TPL, PRO_APP_ID , IS_ALL_USER_START
     </sql>
 
     <sql id="relation_column">
@@ -16,7 +16,7 @@
         pd.PRO_TRI_CANCELED, pd.PRO_TRI_PAUSED, pd.PRO_TRI_UNPAUSED, pd.PRO_TRI_REASSIGNED, pd.PRO_TYPE_PROCESS ,
         pd.PRO_SHOW_DELEGATE, pd.PRO_SHOW_DYNAFORM,  pd.LAST_MODIFIED_DATE, pd.LAST_MODIFIED_USER,
         pd.CREATE_DATE, pd.CREATE_USER, pd.PRO_HEIGHT, pd.PRO_WIDTH, pd.PRO_TITLE_X, pd.PRO_TITLE_Y, pd.PRO_DEBUG, pd.PRO_DYNAFORMS,
-        pd.PRO_DERIVATION_SCREEN_TPL, pd.PRO_APP_ID
+        pd.PRO_DERIVATION_SCREEN_TPL, pd.PRO_APP_ID ,pd.IS_ALL_USER_START
     </sql>
 
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
@@ -31,7 +31,7 @@
         CREATE_DATE, CREATE_USER, PRO_HEIGHT,
         PRO_WIDTH, PRO_TITLE_X, PRO_TITLE_Y,
         PRO_DEBUG, PRO_DYNAFORMS, PRO_DERIVATION_SCREEN_TPL,
-        PRO_APP_ID)
+        PRO_APP_ID, IS_ALL_USER_START)
         values (#{proUid}, #{proVerUid}, #{proParent},
         #{proTime}, #{proTimeUnit}, #{proStatus},
         #{proTypeDay}, #{proType}, #{proAssignment},
@@ -43,7 +43,7 @@
         sysdate, #{createUser}, #{proHeight},
         #{proWidth}, #{proTitleX}, #{proTitleY},
         #{proDebug}, #{proDynaforms}, #{proDerivationScreenTpl},
-        #{proAppId})
+        #{proAppId}),#{isAllUserStart}
     </insert>
 
 	<delete id="deleteBySelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
@@ -171,6 +171,9 @@
             </if>
             <if test="proDerivationScreenTpl != null">
                 PRO_DERIVATION_SCREEN_TPL = #{proDerivationScreenTpl},
+            </if>
+            <if test="isAllUserStart != null ">
+            	IS_ALL_USER_START = #{isAllUserStart},
             </if>
         </set>
         where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid} and PRO_VER_UID = #{proVerUid}

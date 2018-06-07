@@ -76,6 +76,8 @@ public class DhProcessDefinition {
     private String proDynaforms;// 最终信息汇总表单名
 
     private String proDerivationScreenTpl;// 发送邮件通知的模板
+    
+    private String isAllUserStart;//是否全体人员可发起
 
     // 以下不属于表字段
     private String creatorFullName;
@@ -481,29 +483,39 @@ public class DhProcessDefinition {
 		this.verName = verName;
 	}
 
-	@Override
-    public String toString() {
-        return "DhProcessDefinition [proUid=" + proUid + ", proAppId=" + proAppId + ", proVerUid=" + proVerUid
-                + ", proParent=" + proParent + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit + ", proStatus="
-                + proStatus + ", proTypeDay=" + proTypeDay + ", proType=" + proType + ", proAssignment=" + proAssignment
-                + ", proShowMap=" + proShowMap + ", proShowMessage=" + proShowMessage + ", proSubprocess="
-                + proSubprocess + ", proTriStart=" + proTriStart + ", proTriDeleted=" + proTriDeleted
-                + ", proTriCanceled=" + proTriCanceled + ", proTriPaused=" + proTriPaused + ", proTriUnpaused="
-                + proTriUnpaused + ", proTriReassigned=" + proTriReassigned + ", proTypeProcess=" + proTypeProcess
-                + ", proShowDelegate=" + proShowDelegate + ", proShowDynaform=" + proShowDynaform
-                + ", lastModifiedDate=" + lastModifiedDate + ", lastModifiedUser=" + lastModifiedUser + ", createDate="
-                + createDate + ", createUser=" + createUser + ", proHeight=" + proHeight + ", proWidth=" + proWidth
-                + ", proTitleX=" + proTitleX + ", proTitleY=" + proTitleY + ", proDebug=" + proDebug + ", proDynaforms="
-                + proDynaforms + ", proDerivationScreenTpl=" + proDerivationScreenTpl + ", creatorFullName="
-                + creatorFullName + ", updatorFullName=" + updatorFullName + ", proTriStartTitle=" + proTriStartTitle
-                + ", proTriDeletedTitle=" + proTriDeletedTitle + ", proTriCanceledTitle=" + proTriCanceledTitle
-                + ", proTriPausedTitle=" + proTriPausedTitle + ", proTriUnpausedTitle=" + proTriUnpausedTitle
-                + ", proTriReassignedTitle=" + proTriReassignedTitle + ", proName=" + proName + ", categoryUid="
-                + categoryUid + ", permissionStartUser=" + permissionStartUser + ", permissionStartRole="
-                + permissionStartRole + ", permissionStartTeam=" + permissionStartTeam + "]";
-    }
+	
+    public String getIsAllUserStart() {
+		return isAllUserStart;
+	}
 
-    @Override
+	public void setIsAllUserStart(String isAllUserStart) {
+		this.isAllUserStart = isAllUserStart;
+	}
+
+	@Override
+	public String toString() {
+		return "DhProcessDefinition [proUid=" + proUid + ", proAppId=" + proAppId + ", proVerUid=" + proVerUid
+				+ ", proParent=" + proParent + ", proTime=" + proTime + ", proTimeUnit=" + proTimeUnit + ", proStatus="
+				+ proStatus + ", proTypeDay=" + proTypeDay + ", proType=" + proType + ", proAssignment=" + proAssignment
+				+ ", proShowMap=" + proShowMap + ", proShowMessage=" + proShowMessage + ", proSubprocess="
+				+ proSubprocess + ", proTriStart=" + proTriStart + ", proTriDeleted=" + proTriDeleted
+				+ ", proTriCanceled=" + proTriCanceled + ", proTriPaused=" + proTriPaused + ", proTriUnpaused="
+				+ proTriUnpaused + ", proTriReassigned=" + proTriReassigned + ", proTypeProcess=" + proTypeProcess
+				+ ", proShowDelegate=" + proShowDelegate + ", proShowDynaform=" + proShowDynaform
+				+ ", lastModifiedDate=" + lastModifiedDate + ", lastModifiedUser=" + lastModifiedUser + ", createDate="
+				+ createDate + ", createUser=" + createUser + ", proHeight=" + proHeight + ", proWidth=" + proWidth
+				+ ", proTitleX=" + proTitleX + ", proTitleY=" + proTitleY + ", proDebug=" + proDebug + ", proDynaforms="
+				+ proDynaforms + ", proDerivationScreenTpl=" + proDerivationScreenTpl + ", isAllUserStart="
+				+ isAllUserStart + ", creatorFullName=" + creatorFullName + ", updatorFullName=" + updatorFullName
+				+ ", proTriStartTitle=" + proTriStartTitle + ", proTriDeletedTitle=" + proTriDeletedTitle
+				+ ", proTriCanceledTitle=" + proTriCanceledTitle + ", proTriPausedTitle=" + proTriPausedTitle
+				+ ", proTriUnpausedTitle=" + proTriUnpausedTitle + ", proTriReassignedTitle=" + proTriReassignedTitle
+				+ ", proName=" + proName + ", categoryUid=" + categoryUid + ", verName=" + verName
+				+ ", permissionStartUser=" + permissionStartUser + ", permissionStartRole=" + permissionStartRole
+				+ ", permissionStartTeam=" + permissionStartTeam + "]";
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

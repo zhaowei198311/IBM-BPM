@@ -9,6 +9,13 @@ var pageConfig = {
     triType: ""
 }
 $(function() {
+	var isAllUserStart = $("#isAllUserStart").val();
+	$("input[name='isAllUserStart']").each(function(){
+		if($(this).val()==isAllUserStart){
+			$(this).prop("checked",true);
+			layui.form.render();
+		}
+	})
 	getPermissionStart();
 	
     $('#form1').validate({
@@ -194,6 +201,7 @@ function getData() {
     data.permissionStartUser = $('[name="permissionStartUser"]').val();
     data.permissionStartRole = $('[name="permissionStartRole"]').val();
     data.permissionStartTeam = $('[name="permissionStartTeam"]').val();
+    data.isAllUserStart = $('[name="isAllUserStart"]:checked').val();
     // if(!/^[0-9]*[1-9][0-9]*$/.test(data.proHeight) || !/^[0-9]*[1-9][0-9]*$/.test(data.proWidth)
     //     || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleX) || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleY)){
     //     data.isOk = false;

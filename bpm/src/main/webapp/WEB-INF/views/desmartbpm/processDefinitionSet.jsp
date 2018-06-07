@@ -32,6 +32,7 @@
             <input type="hidden" name="proAppId" value="${definition.proAppId}"/>
             <input type="hidden" name="proUid" value="${definition.proUid}"/>
             <input type="hidden" name="proVerUid" value="${definition.proVerUid}"/>
+            <input type="hidden" id = "isAllUserStart" value="${definition.isAllUserStart}">
             <button class="layui-btn layui-btn-primary layui-btn-sm" id="back_btn">返回</button>
             <span style="float:right;">
 						<button class="layui-btn layui-btn-primary layui-btn-sm" id="save_btn">保存</button>
@@ -163,6 +164,12 @@
                         </div>
                         <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" style="margin-right:10px;" id="chooseTeam_btn">&#xe612;</i> </div>
                     </div>
+               	 	<div class="layui-form-item">
+                        <label class="layui-form-label">是否全员可发起</label>
+                        <div class="layui-input-inline">
+                            <input type="radio" name="isAllUserStart" value="TRUE" title="是" />
+                            <input type="radio" name="isAllUserStart" value="FALSE" title="否" checked />
+                        </div></div>
                 </div>
             </div>
         </form>
