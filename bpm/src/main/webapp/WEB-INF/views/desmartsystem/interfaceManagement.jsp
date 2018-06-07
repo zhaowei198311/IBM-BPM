@@ -26,6 +26,7 @@
 	min-height: auto;
 	margin-left: -430px;
 }
+.cancel2_btn{margin-top:15px}
 </style>
 </head>
 
@@ -113,6 +114,9 @@
 							<th>参数类型</th>
 							<th>参数长度</th>
 							<th>是否必须</th>
+							<th>日期格式</th>
+							<th>父参数</th>
+							<th>xml参数</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -120,7 +124,7 @@
 				</table>
 			</div>
 			<div class="foot">
-				<button class="layui-btn update2_btn"></button>
+				<!-- <button class="layui-btn update2_btn"></button> -->
 				<button class="layui-btn cancel2_btn">关闭</button>
 			</div>
 		</div>
@@ -236,8 +240,7 @@
 			<div class="top" style="color: red;">绑定接口参数</div>
 			<label style="color: red;">带*的参数为必填</label> <input id="intUid"
 				type="hidden" />
-			<form id="form2" class="layui-form" action=""
-				style="margin-top: 30px;">
+			<form id="form2" class="layui-form" action="javascript:void(0);" style="margin-top: 30px;">
 				<div class="layui-form-item">
 					<div class="layui-inline">
 						<label class="layui-form-label">参数名称*:</label>
@@ -269,16 +272,25 @@
 							class="layui-input paraDescription" />
 					</div>
 				</div>
-
 				<div class="layui-form-item">
-					<div class="layui-inline">
+					<div class="layui-inline paraSize">
 						<label class="layui-form-label">参数长度:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="paraSize" name="paraSize"
 								lay-verify="paraSize" autocomplete="off" class="layui-input">
 						</div>
 					</div>
-					<div class="layui-inline">
+					
+					
+					<div class="layui-inline dateFormat" style="display:none;">
+						<label class="layui-form-label">日期格式:</label>
+						<div class="layui-input-inline">
+							<input type="text"  name="dateFormat"  placeholder="例如:yyyy-MM-dd" lay-verify="paraSize"   autocomplete="off" class="layui-input">
+						</div>
+					</div>
+					
+					
+					<div class="layui-inline  isMust">
 						<label class="layui-form-label">是否必须*:</label>
 						<div class="layui-input-inline">
 							<input id="isMust" type="checkbox" name="isMust"
@@ -288,42 +300,44 @@
 					</div>
 				</div>
 
-				<div class="layui-form-item">
-					<button class="layui-btn layui-btn-sm" type="button"
-						onclick="addArrayParameter();"
-						style="float: right; margin: 0 15px 0;">
-						<i class="layui-icon">&#xe654;</i>
-					</button>
+				<div id="arryParameterDiv" >
+					<div class="layui-form-item">
+					  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter();" style="float: right;margin: 0 15px 0;" >
+					    <i class="layui-icon">&#xe654;</i>
+					  </button>
+					</div>
+					<div class="middle1">
+						<table class="layui-table backlog_table"
+							lay-even lay-skin="nob">
+							<colgroup>
+								<col>
+								<col>
+								<col>
+								<col>
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>参数名称</th>
+									<th>参数描述</th>
+									<th>参数类型</th>
+									<th>参数长度</th>
+									<th>是否必须</th>
+									<th>日期格式</th>
+									<th>xml参数</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="childNodeParameterTbody" ></tbody>
+						</table>
+					</div>
 				</div>
-
-				<div class="middle1">
-					<table class="layui-table backlog_table" lay-even lay-skin="nob">
-						<colgroup>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
-						</colgroup>
-						<thead>
-							<tr>
-								<th>参数名称</th>
-								<th>参数描述</th>
-								<th>参数类型</th>
-								<th>参数长度</th>
-								<th>是否必须</th>
-							</tr>
-						</thead>
-						<tbody id="childNodeParameterTbody"></tbody>
-					</table>
-				</div>
-
-
-			</form>
 			<div class="foot">
-				<button id="sure3_btn" class="layui-btn layui-btn sure3_btn">确定</button>
+				<!-- <button id="sure3_btn" class="layui-btn layui-btn sure3_btn" lay-submit="" lay-filter="addParameterFilter" >确定</button> -->
+				<button  class="layui-btn layui-btn" lay-submit="" lay-filter="addParameterFilter" >确定</button>
 				<button id="cancel3_btn" class="layui-btn layui-btn cancel3_btn">取消</button>
 			</div>
+			</form>
 		</div>
 	</div>
 	<div class="display_container5" id="exposed_table3_container">
@@ -433,7 +447,7 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">参数类型:</label>
 						<div class="layui-input-inline">
-							<select id="paraType3" name="paraType">
+							<select id="paraType3" name="paraType" lay-filter="paraType" >
 								<option value="String">String</option>
 								<option value="Integer">Integer</option>
 								<option value="Double">Double</option>
@@ -524,8 +538,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">参数类型*:</label>
 					<div class="layui-input-inline">
-						<select name="paraType" class="require"
-							lay-filter="childNodeParaType">
+						<select name="paraType" class="require" lay-filter="paraType1" >
 							<option value="String">String</option>
 							<option value="Integer">Integer</option>
 							<option value="Double">Double</option>
@@ -545,14 +558,22 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<div class="layui-inline">
+				<div class="layui-inline paraSize1">
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
 							autocomplete="off" class="layui-input">
 					</div>
 				</div>
-				<div class="layui-inline">
+				
+				<div class="layui-inline dateFormat1" style="display:none;">
+					<label class="layui-form-label">日期格式:</label>
+					<div class="layui-input-inline">
+						<input type="text"  name="dateFormat"  placeholder="例如:yyyy-MM-dd" lay-verify="paraSize"   autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				
+				<div class="layui-inline isMust1">
 					<label class="layui-form-label">是否必须*:</label>
 					<div class="layui-input-inline">
 						<input type="checkbox" name="isMust" lay-skin="switch"
