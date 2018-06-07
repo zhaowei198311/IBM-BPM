@@ -39,6 +39,7 @@ public class ExecutionTreeUtil {
 				for (int i = 0; i < taskIdsArray.size(); i++) {
 					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
 						hashMap.put("tokenId", object.get("tokenId"));
+						//第一次循环时，preTokenId为null
 				        hashMap.put("preTokenId", null);
 				        return hashMap;
 					}
@@ -49,8 +50,6 @@ public class ExecutionTreeUtil {
 				JSONArray jsonArray2 = object.getJSONArray("children");
 				HashMap utilMap = util(jsonArray2, taskId);
 				if (utilMap != null) {
-					/*System.out.println(utilMap.get("tokenId"));
-					System.out.println(utilMap.get("preTokenId"));*/
 					return utilMap;
 				} else {
 					System.out.println("未查到结果...");
@@ -70,9 +69,11 @@ public class ExecutionTreeUtil {
 				for (int i = 0; i < taskIdsArray.size(); i++) {
 					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
 						map.put("tokenId", object.get("tokenId"));
+						//此处赋值上级preTokenId
 						for (int j = flag; j >= 0; j--) {
 							if(preTokenIdList.get(j) != null) {
 								map.put("preTokenId", preTokenIdList.get(j));
+								return map;
 							}else {
 								map.put("preTokenId", null);
 							}
