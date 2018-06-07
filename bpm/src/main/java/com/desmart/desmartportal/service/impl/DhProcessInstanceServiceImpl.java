@@ -710,7 +710,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 查询token
 		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
 		ExecutionTreeUtil taskIdUtil = new ExecutionTreeUtil();
-		Map<String, Object> resultMap = taskIdUtil.queryTokenId(taskId, jsonObject);
+		Map<Object, Object> resultMap = taskIdUtil.queryTokenId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
 		// 数据信息
