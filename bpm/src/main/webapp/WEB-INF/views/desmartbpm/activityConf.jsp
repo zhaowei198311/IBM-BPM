@@ -984,7 +984,7 @@
         var proVerUid = '${processDefinition.proVerUid}';
         var firstHumanMeta = '${firstHumanMeta}';
         var firstHumanMeteConf = '${firstHumanMeteConf}';
-        var activityStr = '<c:forEach items="${humanActivities}" var="humanActivity" varStatus="varStatus"><li data-activityid="${humanActivity.activityId}">${humanActivity.activityName}</li></c:forEach>';
+        var activityStr = '<c:forEach items="${humanActivities}" var="humanActivity" varStatus="varStatus"><li data-activityBpdId="${humanActivity.activityBpdId}">${humanActivity.activityName}</li></c:forEach>';
         
         
         window.onload=function(){

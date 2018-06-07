@@ -479,8 +479,8 @@ $(function(){
         }
         var chooseIds = choosedValue.split(";");
         $("#left_activity_ul li").each(function(){
-            var activityId = $(this).data('activityid');
-            if ($.inArray(activityId, chooseIds) != -1) {
+            var activityBpdId = $(this).data('activitybpdid');
+            if ($.inArray(activityBpdId, chooseIds) != -1) {
                 $(this).appendTo($("#right_activity_ul"));
             }
         });
@@ -495,7 +495,7 @@ $(function(){
         var val = '';
         var val_view = '';
         $("#right_activity_ul li").each(function(){
-            val += $(this).data('activityid') + ";";
+            val += $(this).data('activitybpdid') + ";";
             val_view += $(this).html() + ";";
         });
         $("#rejectActivities").val(val);
