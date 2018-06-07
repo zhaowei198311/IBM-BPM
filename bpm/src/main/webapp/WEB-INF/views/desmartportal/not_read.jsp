@@ -246,15 +246,8 @@ function doPage() {
 		    elem: '#init-endTime-search'
 		});
 	});
-// 	$(function(){
-// 		$(".backlog_td").click(function(){
-// 			window.location.href="menus/backlogDetail";
-// 		})
-		
-// 	})
 	
 	function getTaskInstanceInfo(taskStatus){
-		console.log("aa: "+taskStatus)
 		$.ajax({
 			url : 'taskInstance/queryTransfer',
 			type : 'post',
@@ -353,20 +346,20 @@ function doPage() {
 				taskStatus: taskStatus
 			},
 			success : function(result){
-				// 渲染到待办
-				if(result==0){
+				// 渲染到抄送
+				if(result == 0){
 					$("#daiban_icon").css("display", "none");
 				}else{
-					$("#daiban_icon").text(result);
+					$("#daiban_icon").html(result);
 				}
 			}
 		})
 	}
 	
-	// 打开 代办的 详细页面
+	// 打开 抄送详情页面
 	function openApproval(taskUid){
 		updateTaskStatus(taskUid,taskStatus);
-		window.location.href = 'menus/finished_detail?taskUid='+taskUid;
+		window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
 	}
 	//模糊查询
 	function search(){
@@ -383,7 +376,7 @@ function doPage() {
 		if (taskStatus = 12) {
 			$.ajax({
 				async: false,
-				url: common.getPath() + 'taskInstance/updateTaskStatusOfTransfer',
+				url: 'taskInstance/updateTaskStatusOfTransfer',
 				type: 'post',
 				dataType: 'json',
 				data:{

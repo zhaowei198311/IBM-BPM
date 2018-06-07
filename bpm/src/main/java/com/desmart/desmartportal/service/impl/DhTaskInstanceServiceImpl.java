@@ -1058,11 +1058,59 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		DhTaskInstance dhTaskInstance = new DhTaskInstance();
 		dhTaskInstance.setTaskUid(taskUid);
 		dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+		dhTaskInstance.setTaskDueDate(new Date());
 		int count = dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
 		if (count > 0) {
 			return ServerResponse.createBySuccess();
 		}
 		return ServerResponse.createByError();
+	}
+
+	@Override
+	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId) {
+		// 当前任务实例
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		dhTaskInstance.setTaskType(DhTaskInstance.TYPE_TRANSFER);
+		dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+		dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
+		dhTaskInstance.setTaskInitDate(new Date());
+		dhTaskInstance.setTaskDueDate(null);
+		// 抄送人员
+		String[] usrUidArray = usrUid.split(";");
+		// 错误提示
+		String errorInformation = "";
+		SysUser sysUser = new SysUser();
+		for (String string : usrUidArray) {
+			sysUser.setUserName(string);
+			List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
+			dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
+			DhTaskInstance dti = dhTaskInstanceMapper.getBytaskTypeAndUsrUid(dhTaskInstance);
+			if (dti != null) {
+				errorInformation += string + ",";
+			}else {
+				dhTaskInstance.setTaskUid("task_instance:" + UUID.randomUUID());
+				dhTaskInstanceMapper.insertTask(dhTaskInstance);
+			}
+		}
+		// 如果会签人全部都已经会签过，则直接返回
+		String[] check = errorInformation.split(",");
+		if (Arrays.equals(usrUidArray, check)) {
+			return ServerResponse.createByErrorMessage(errorInformation.substring(0, errorInformation.length()-1)+"已经抄送过!");
+		}
+		// 路由表记录
+		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+		dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
+		dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+		dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
+		dhRoutingRecord.setRouteType("addTask");
+		dhRoutingRecord.setUserUid(dhTaskInstance.getUsrUid());
+		dhRoutingRecord.setActivityId(activityId);
+//		dhRoutingRecord.setActivityTo(activityId);
+		dhRoutingRecordMapper.insert(dhRoutingRecord);
+		if (!errorInformation.isEmpty()) {
+			return ServerResponse.createByErrorMessage(errorInformation.substring(0,errorInformation.length()-1) + "已经抄送过,其他人员操作成功!");
+		}
+		return ServerResponse.createBySuccess();
 	}
 
 }

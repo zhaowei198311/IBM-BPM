@@ -158,7 +158,9 @@ public class MenusController {
 	public ModelAndView toDealTask(@RequestParam(value="taskUid") String taskUid) {
 		// 判断该任务是否为加签任务
 		DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if (checkDhTaskInstance.getFromTaskUid() != null) {
+		String taskType = checkDhTaskInstance.getTaskType();
+		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(taskType) || DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(taskType)
+				|| DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(taskType)) {
 			ModelAndView mv = new ModelAndView("desmartportal/addSign");
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toAddSign(taskUid);
 			if (serverResponse.isSuccess()) {

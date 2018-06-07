@@ -458,7 +458,7 @@
 		    <label class="layui-form-label" style="width: 30px;">人员</label>
                <div class="layui-input-block" style="position:relative;margin-left: 60px;">
                    <input type="hidden" id="handleUser1" name="handleUser1" />
-                   <input type="text" name="handleUser1_view" id="handleUser1_view" autocomplete="off" class="layui-input" disabled="disabled">
+                   <input type="text" id="handleUser1_view" name="handleUser1_view" autocomplete="off" class="layui-input" disabled="disabled">
                    <i class="layui-icon choose_user" id="choose_handle_user1" title="选择人员">&#xe612;</i>  
                </div>
 		    <div class="foot" style="margin-top: 25px;">

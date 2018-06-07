@@ -590,6 +590,7 @@
 		FROM DH_TASK_INSTANCE
 		<where>
 			FROM_TASK_UID = #{fromTaskUid}
+			AND TASK_TYPE IN ('normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			AND TASK_STATUS NOT IN ('32','-1')
 		</where>
 	</select>
@@ -599,6 +600,7 @@
 		FROM DH_TASK_INSTANCE
 		<where>
 			TO_TASK_UID = #{toTaskUid}
+			AND TASK_TYPE IN ('normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			AND TASK_STATUS NOT IN ('32','-1')
 		</where>
 	</select>
@@ -609,6 +611,7 @@
 		FROM DH_TASK_INSTANCE
 		<where>
 			USR_UID = #{usrUid}
+			AND TASK_TYPE IN ('normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			AND FROM_TASK_UID = #{fromTaskUid}
 			AND TASK_STATUS = '32'
 		</where>
@@ -800,4 +803,14 @@
 		</where>
 	</select>
 	
+	<select id="getBytaskTypeAndUsrUid" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" 
+			resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+			USR_UID = #{usrUid}
+			AND TASK_TYPE = #{taskType}
+			AND FROM_TASK_UID = #{fromTaskUid}
+		</where>
+	</select>
 </mapper>

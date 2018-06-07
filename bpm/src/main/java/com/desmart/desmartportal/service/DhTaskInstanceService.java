@@ -202,4 +202,15 @@ public interface DhTaskInstanceService {
 	 * @throws
 	 */
 	ServerResponse<?> updateTaskStatusOfTransfer(String taskUid);
+	
+	/**
+	 * 
+	 * @Title: transferSure  
+	 * @Description: 抄送确认  
+	 * @param @param taskUid
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId);
 }

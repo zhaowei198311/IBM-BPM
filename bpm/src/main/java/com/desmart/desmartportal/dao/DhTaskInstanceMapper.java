@@ -189,4 +189,15 @@ public interface DhTaskInstanceMapper {
 	 * @throws
 	 */
 	Integer queryTransferNumberByusrUid(DhTaskInstance dhTaskInstance);
+	
+	/**
+	 * 
+	 * @Title: getBytaskTypeAndUsrUid  
+	 * @Description: 查询一人是否已经抄送  
+	 * @param @param dhTaskInstance
+	 * @param @return  
+	 * @return DhTaskInstance  
+	 * @throws
+	 */
+	DhTaskInstance getBytaskTypeAndUsrUid(DhTaskInstance dhTaskInstance);
 }

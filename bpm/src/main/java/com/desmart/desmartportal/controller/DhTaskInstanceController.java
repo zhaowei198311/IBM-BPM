@@ -236,7 +236,7 @@ public class DhTaskInstanceController {
 	 * @return Integer  
 	 * @throws
 	 */
-	@RequestMapping("/queryTransferNumber")
+	@RequestMapping(value = "/queryTransferNumber")
 	@ResponseBody
 	public Integer queryTransferNumber(DhTaskInstance dhTaskInstance) {
 		String usrUid = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
@@ -253,9 +253,24 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
-	@RequestMapping("/updateTaskStatusOfTransfer")
+	@RequestMapping(value = "/updateTaskStatusOfTransfer")
 	@ResponseBody
 	public ServerResponse<?> updateTaskStatusOfTransfer(String taskUid){
 		return dhTaskInstanceService.updateTaskStatusOfTransfer(taskUid);
+	}
+	
+	/**
+	 * 
+	 * @Title: transferSure  
+	 * @Description: 抄送确认  
+	 * @param @param taskUid
+	 * @param @return  
+	 * @return ServerResponse<?>  
+	 * @throws
+	 */
+	@RequestMapping(value = "/transferSure")
+	@ResponseBody
+	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId){
+		return dhTaskInstanceService.transferSure(taskUid, usrUid, activityId);
 	}
 }

@@ -131,7 +131,7 @@ $(function () {
     $("#add").click(function() {
     	$("#handleUser_view").val("");
     	$(".display_container7").css("display","block");
-    })
+    });
     // 会签选择处理人（人员）
     $("#choose_handle_user").click(function() {
     	common.chooseUser('handleUser', 'false');
@@ -141,7 +141,7 @@ $(function () {
     $("#transfer").click(function(){
     	$("#handleUser1_view").val("");
     	$(".display_container6").css("display","block");
-    })   
+    }); 
     // 抄送选择处理人（人员）
     $("#choose_handle_user1").click(function() {
     	common.chooseUser('handleUser1', 'false');
@@ -150,12 +150,12 @@ $(function () {
     $(".cancel_btn").click(function() {
     	$(".display_container7").css("display","none");
     	$(".display_container6").css("display","none");
-    })
+    });
     
     // 驳回
     $(".cancel5_btn").click(function() {
     	$(".display_container8").css("display","none");
-    })
+    });
 
     // 查询审批进度剩余进度百分比
     var activityId = $("#activityId").val();
@@ -241,7 +241,37 @@ function addSure(){
                 	window.history.back();
                 });
 			}else {
-				layer.alert(data.msg)
+				layer.alert(data.msg);
+			}
+		}
+	})
+}
+
+// 抄送确认
+function transferSure(){
+	var taskUid = $("#taskUid").val();
+	var usrUid = $("#handleUser1_view").val();
+	var activityId = $("#activityId").val();
+	if (usrUid == null || usrUid == "") {
+		layer.alert("请选择人员!");
+		return;
+	}
+	$.ajax({
+		async: false,
+		url: common.getPath() + '/taskInstance/transferSure',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			taskUid: taskUid,
+			usrUid: usrUid,
+			activityId: activityId
+		},
+		success: function(data){
+			if (data.status == 0) {
+				layer.alert("操作成功!");
+				$('.display_container6').css("display","none");
+			}else {
+				layer.alert(data.msg);
 			}
 		}
 	})
