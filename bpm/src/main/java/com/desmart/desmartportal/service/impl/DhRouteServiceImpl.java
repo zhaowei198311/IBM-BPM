@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.exception.BpmFindNextNodeException;
+import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +48,6 @@ import com.desmart.desmartportal.dao.DhGatewayRouteResultMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.CommonBusinessObject;
-import com.desmart.desmartportal.entity.DhGatewayRouteResult;
-import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhRoutingRecord;
-import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
@@ -755,5 +752,128 @@ public class DhRouteServiceImpl implements DhRouteService {
         preMeta.setUserName(preUser.getUserName());
         return ServerResponse.createBySuccess(preMeta);
     }
-	
+
+
+	public BpmRoutingData getNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
+		BpmRoutingData result = new BpmRoutingData();
+
+        List<BpmActivityMeta> directNextNodeList = findDirectNextNodes(sourceNode);
+
+        // 遍历处理与源节点直接关联的节点
+        for (BpmActivityMeta directNextNode : directNextNodeList) {
+            String type = directNextNode.getType();
+            String activityType = directNextNode.getActivityType();
+            String bpmTaskType = directNextNode.getBpmTaskType();
+
+            if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType) && "activity".equals(type)) {
+                // 人员服务
+
+            } else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
+                    && "activity".equals(type)) {
+                // 子流程
+                List<BpmActivityMeta> nodes = findDirectNextNodesOfStartNodeBySubProcessNode(directNextNode);
+                for (BpmActivityMeta node : nodes) {
+                    result.includeAll(getNowActivity(node, formData));
+                }
+            } else if ("event".equals(type)) {
+                if ("gateway".equals(activityType)) {
+                    // 排他网关
+                } else if ("gatewayAnd".equals(activityType)) {
+                    // 并行网关
+                } else if ("gatewayOr".equals(activityType)) {
+                    // 包容网关
+                } else {
+                    throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
+                }
+            }else if ("end".equals(activityType)) {
+                if (!"0".equals(sourceNode.getParentActivityId())) {
+                    // 子流程结束
+                } else {
+                    // 主流程结束
+                    result.addMainEndNode(sourceNode);
+                }
+            } else {
+                throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
+            }
+
+        }
+
+
+
+		return result;
+	}
+
+
+
+
+    public BpmRoutingData getNowActivity (BpmActivityMeta nowActivity, JSONObject formData) {
+		BpmRoutingData result = new BpmRoutingData();
+		String type = nowActivity.getType();
+		String activityType = nowActivity.getActivityType();
+		String bpmTaskType = nowActivity.getBpmTaskType();
+
+		if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType) && "activity".equals(type)) {
+			// 人员服务
+            result.addNormalNode(nowActivity);
+		} else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
+				&& "activity".equals(type)) {
+			// 子流程
+            result.addSubProcessNode(nowActivity);
+
+
+
+		} else if ("event".equals(type)) {
+			if ("gateway".equals(activityType)) {
+				// 排他网关
+			} else if ("gatewayAnd".equals(activityType)) {
+				// 并行网关
+			} else if ("gatewayOr".equals(activityType)) {
+				// 包容网关
+			} else {
+				throw new BpmFindNextNodeException("环节类型异常，环节主键：" + nowActivity.getActivityId());
+			}
+		}else if ("end".equals(activityType)) {
+			if (!"0".equals(nowActivity.getParentActivityId())) {
+				// 子流程结束
+			} else {
+				// 主流程结束
+				result.addMainEndNode(nowActivity);
+			}
+
+
+		} else {
+			throw new BpmFindNextNodeException("环节类型异常，环节主键：" + nowActivity.getActivityId());
+		}
+
+		return result;
+	}
+
+    /**
+     * 根据代表子流程的节点，获得它的start节点直接相连的节点
+     * @return
+     */
+	private List<BpmActivityMeta> findDirectNextNodesOfStartNodeBySubProcessNode(BpmActivityMeta subProcessNode) {
+        BpmActivityMeta startNode = bpmActivityMetaService.getStartMetaOfSubProcess(subProcessNode);
+        return findDirectNextNodes(startNode);
+    }
+
+    private List<BpmActivityMeta> findDirectNextNodes(BpmActivityMeta sourceNode) {
+        List<BpmActivityMeta> directNextNodeList = new ArrayList<>();
+        String activityToStr = sourceNode.getActivityTo();
+        if (StringUtils.isBlank(activityToStr)) {
+            throw new BpmFindNextNodeException("找到下个环节异常，节点id：" + sourceNode.getActivityId());
+        }
+
+        String[] toActivityBpdIds = activityToStr.split(",");
+        // 直接关联的节点集合
+        for (String activityBpdId : toActivityBpdIds) {
+            BpmActivityMeta meta = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(activityBpdId, sourceNode.getParentActivityId());
+            if (meta == null) {
+                throw new BpmFindNextNodeException("找不到指定环节, activityBpdId: " + activityBpdId + ", parentActivityId: " + sourceNode.getParentActivityId());
+            }
+            directNextNodeList.add(meta);
+        }
+        return directNextNodeList;
+    }
+
 }

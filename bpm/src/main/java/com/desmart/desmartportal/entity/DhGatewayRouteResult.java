@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 网关决策结果
@@ -56,7 +57,21 @@ public class DhGatewayRouteResult {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DhGatewayRouteResult that = (DhGatewayRouteResult) o;
+        return Objects.equals(routeResultUid, that.routeResultUid);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(routeResultUid);
+    }
+
     @Override
     public String toString() {
         return "DhGatewayRouteResult [routeResultUid=" + routeResultUid

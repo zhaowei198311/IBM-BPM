@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.common.exception.BpmFindNextNodeException;
+import com.desmart.desmartportal.entity.BpmRoutingData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -111,15 +113,17 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
                 calledProcessList.add(meta);
                 iterator.remove();
                 continue;
-            }else if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType()) && meta.getDeepLevel() == 0) { 
-                // 如果是人工节点，并且是主流程下的人工节点，就加入主流程折叠栏
-                Map<String, Object> map = new HashMap<>();
-                map.put("activityName", meta.getActivityName());
-                map.put("actcUid", meta.getDhActivityConf().getActcUid());
-                map.put("activityId", meta.getActivityId());
-                map.put("activityBpdId", meta.getActivityBpdId());
-                children.add(map);
-                iterator.remove();
+            }else if ("UserTask".equalsIgnoreCase(meta.getBpmTaskType())) {
+                if (meta.getDeepLevel() == 0) {
+                    // 如果是人工节点，并且是主流程下的人工节点，就加入主流程折叠栏
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("activityName", meta.getActivityName());
+                    map.put("actcUid", meta.getDhActivityConf().getActcUid());
+                    map.put("activityId", meta.getActivityId());
+                    map.put("activityBpdId", meta.getActivityBpdId());
+                    children.add(map);
+                    iterator.remove();
+                }
             } else { // 去除非人工节点，非子流程环节的无关元素
                 iterator.remove();
             }
@@ -148,7 +152,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             iterator = basicMetaList.iterator();
             while (iterator.hasNext()) {
                 BpmActivityMeta item = iterator.next();
-                if (activityBpdId.equals(item.getParentActivityBpdId())) {
+                if (subProcessNode.getActivityId().equals(item.getParentActivityId())) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("activityName", item.getActivityName());
                     map.put("actcUid", item.getDhActivityConf().getActcUid());
@@ -409,6 +413,11 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return results;
     }
 
+
+
+
+
+
     
     // 根据传入的节点去找下一个人工环节，如果这个环节本身就是人工环节，不用再向后去找
     private Map<String, List<BpmActivityMeta>> getNowActivity(BpmActivityMeta nowActivityMeta, String insUid) {
@@ -493,14 +502,20 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         results.put("gateAnd", gateAndData);
         return results;
     }
-    
+
+
+
+
+
+
     /**
      * 根据代表子流程的元素，获得这个子流程的启动事件元素
      * @return
      */
-    private BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta bpmActivityMeta) {
+    @Override
+    public BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta subProcessNode) {
         BpmActivityMeta selective = new BpmActivityMeta();
-        selective.setParentActivityId(bpmActivityMeta.getActivityId());
+        selective.setParentActivityId(subProcessNode.getActivityId());
         selective.setActivityType("start");
         selective.setType("event");
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class BpmActivityMeta implements Serializable {
     /** 循环类型：无 */
@@ -364,8 +365,21 @@ public class BpmActivityMeta implements Serializable {
 		this.userName = userName;
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BpmActivityMeta meta = (BpmActivityMeta) o;
+        return Objects.equals(activityId, meta.activityId);
+    }
 
-	@Override
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(activityId);
+    }
+
+    @Override
     public String toString() {
         return "BpmActivityMeta [activityId=" + activityId + ", noteType="
                 + noteType + ", createTime=" + createTime + ", creator="

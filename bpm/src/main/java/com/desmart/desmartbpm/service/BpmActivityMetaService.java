@@ -114,4 +114,11 @@ public interface BpmActivityMetaService {
      * @return
      */
     BpmActivityMeta queryMetaByActivityBpdIdAndParentActivityId(String activityBpdId, String parentActivityId);
+
+    /**
+     * 根据代表子流程的节点找到它代表的子流程的开始节点
+     * @param subProcessNode  代表子流程的节点
+     * @return
+     */
+    BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta subProcessNode);
 }
