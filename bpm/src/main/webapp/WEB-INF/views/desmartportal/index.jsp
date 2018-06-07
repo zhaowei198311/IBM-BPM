@@ -87,7 +87,7 @@
 					<iframe src="menus/backlog" name="iframe0" frameborder="0"
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
-						<input id="userId" value="${info.userId}" style="display: none;">
+						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
 							<ul class="nav1">
 								<c:forEach items="${listmap}" var="info">
