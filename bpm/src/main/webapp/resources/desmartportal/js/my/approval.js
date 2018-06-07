@@ -126,17 +126,30 @@ $(function () {
     $(".upload").click(function () {
         $(".upload_file").click();
     });
-    // 加签
+    
+    // 会签
     $("#add").click(function() {
     	$("#handleUser_view").val("");
     	$(".display_container7").css("display","block");
     })
-    // 选择处理人（人员）
+    // 会签选择处理人（人员）
     $("#choose_handle_user").click(function() {
     	common.chooseUser('handleUser', 'false');
     });
+    
+    // 抄送
+    $("#transfer").click(function(){
+    	$("#handleUser1_view").val("");
+    	$(".display_container6").css("display","block");
+    })   
+    // 抄送选择处理人（人员）
+    $("#choose_handle_user1").click(function() {
+    	common.chooseUser('handleUser1', 'false');
+    });
+    
     $(".cancel_btn").click(function() {
     	$(".display_container7").css("display","none");
+    	$(".display_container6").css("display","none");
     })
     
     // 驳回

@@ -104,6 +104,12 @@
  		  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
  		  box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
  		}
+ 		.display_content6 {
+ 			width: 40%;
+ 			height: 100px;
+ 			left: 70%;
+ 			margin-top: 10%;
+ 		}
     </style>
 </head>
 
@@ -141,7 +147,7 @@
             <button class="layui-btn layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
             <button class="layui-btn layui-btn-sm" onclick="checkUserData()">提交</button>
             <button class="layui-btn layui-btn-sm" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
-            <button class="layui-btn layui-btn-sm" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>抄送</button>
+            <button class="layui-btn layui-btn-sm" id="transfer" >抄送</button>
             <button class="layui-btn layui-btn-sm" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
         </span>
@@ -421,12 +427,13 @@
             <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="hideHistoryFile()">关闭</button>
         </div>
     </div>
+    <!-- 会签选择人员 -->
 	<div class="display_container7" style="display: none;">
 		<div class="display_content7" style="height: 160px">
 			    <label class="layui-form-label" style="width: 30px;">人员</label>
                 <div class="layui-input-block" style="position:relative;margin-left: 60px;">
                     <input type="hidden" id="handleUser" name="handleUser" />
-                    <input type="text" name="handleUser_view"  id="handleUser_view"  autocomplete="off" class="layui-input" disabled="disabled">
+                    <input type="text" name="handleUser_view" id="handleUser_view" autocomplete="off" class="layui-input" disabled="disabled">
                     <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>  
                 </div>
                 <div style="margin-top: 15px;">
@@ -443,6 +450,21 @@
 		            <button class="layui-btn layui-btn sure_btn" onclick="addSure()">确定</button>
 		            <button class="layui-btn layui-btn cancel_btn">取消</button>
 		        </div>
+	    </div>
+	</div>
+	<!-- 抄送选择人员 -->
+	<div class="display_container6" style="display: none;">
+		<div class="display_content6" >
+		    <label class="layui-form-label" style="width: 30px;">人员</label>
+               <div class="layui-input-block" style="position:relative;margin-left: 60px;">
+                   <input type="hidden" id="handleUser1" name="handleUser1" />
+                   <input type="text" name="handleUser1_view" id="handleUser1_view" autocomplete="off" class="layui-input" disabled="disabled">
+                   <i class="layui-icon choose_user" id="choose_handle_user1" title="选择人员">&#xe612;</i>  
+               </div>
+		    <div class="foot" style="margin-top: 25px;">
+	            <button class="layui-btn layui-btn sure_btn" onclick="transferSure()">确定</button>
+	            <button class="layui-btn layui-btn cancel_btn">取消</button>
+	        </div>
 	    </div>
 	</div>
 	<div class="display_container8">
