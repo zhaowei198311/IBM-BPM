@@ -127,8 +127,9 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 		}
 	});
 	
-	form.on('select(triType)', function(data) {
-		// 监听判断 触发器类型 渲染不同的 的 添加触发器页面
+	form.on('select(triType)', function(data){
+		var value=data.value;
+		byParameterTypeHideAndShowElement(value,"");
 		if(data.value == 'interface'){
 			// 请求ajax 获取接口数据
 			$.ajax({
@@ -138,8 +139,6 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 				data : {
 				},
 				success : function(result){
-					$("#div_triWebbot").css("display", "none");
-					$("#div_triWebbot2").css("display", "block");
 					var data = result.data.list;
 					 for(var i=0; i<data.length; i++){
 						 var trs = '<option>'
@@ -156,9 +155,51 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 					});
 				}
 			})
+			form.render();
 		}
-		});
-	form.render();
+	});
+	
+	function byParameterTypeHideAndShowElement(paraType,selector){
+		var triWebbot=$('.triWebbot'); // 触发器执行命令
+		var trijiekou=$('.triInterface'); // 选择接口
+		var triParam = $('.triParam'); // 参数
+		var triType = $('.triType');
+		switch (paraType) {
+		case 'sql':
+			triWebbot.show();
+			triParam.show();
+			trijiekou.hide();
+			clearTableData();
+			break;
+		case 'javaclass':
+			triWebbot.show();
+			triParam.show();
+			trijiekou.hide();
+			clearTableData();
+			break;
+		case 'interface':
+			trijiekou.css("display", "block");
+			triParam.show();
+			triWebbot.hide();
+			$("#triWebbotType").empty();
+			clearTableData();
+			break;	
+		case 'script':
+			triWebbot.show();
+			triParam.show();
+			trijiekou.hide();
+			clearTableData();
+			break;	
+		}
+		form.render();
+	}
+	
+	function clearTableData(){
+		 $("#triWebbot").val("");
+		 $("#triParam").val("");
+		 $("#triTitle").val("");
+		 $("#triDescription").val("");
+	}
 });
 }
 
