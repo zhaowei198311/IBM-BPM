@@ -317,7 +317,7 @@ function doPage() {
 				if(result == 0){
 					$("#daiban_icon").css("display", "none");
 				}else{
-					$("#daiban_icon").html(result);
+					$("#daiban_icon").text(result);
 				}
 			}
 		})
