@@ -39,15 +39,6 @@ function saveLayout() {
         localStorage.setItem("layoutdata", JSON.stringify(data));
     }
     layouthistory = data;
-    //console.log(data);
-    /*$.ajax({  
-    	type: "POST",  
-    	url: "/build/saveLayout",  
-    	data: { layout: $('.demo').html() },  
-    	success: function(data) {
-    		//updateButtonsVisibility();
-    	}
-    });*/
 }
 
 function downloadLayout() {
@@ -79,7 +70,6 @@ function downloadHtmlLayout() {
 
 function undoLayout() {
     var data = layouthistory;
-    //console.log(data);
     if (data) {
         if (data.count < 2) return false;
         window.demoHtml = data.list[data.count - 2];
@@ -91,14 +81,6 @@ function undoLayout() {
         return true;
     }
     return false;
-    /*$.ajax({  
-    	type: "POST",  
-    	url: "/build/getPreviousLayout",  
-    	data: { },  
-    	success: function(data) {
-    		undoOperation(data);
-    	}
-    });*/
 }
 
 function redoLayout() {
@@ -115,15 +97,6 @@ function redoLayout() {
         }
     }
     return false;
-    /*
-    $.ajax({  
-    	type: "POST",  
-    	url: "/build/getPreviousLayout",  
-    	data: { },  
-    	success: function(data) {
-    		redoOperation(data);
-    	}
-    });*/
 }
 
 function handleJsIds() {
@@ -609,7 +582,6 @@ $(document).ready(function () {
                 switch ($("#" + temp).parent().parent().find(".subDiv").find("input").attr("type")) {
                     case "text":
                         {
-                    		console.log($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0);
 	                    	if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0){
 	                        	inputId = "choose_user_" + inputId;
 	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_value']").length > 0){
@@ -801,7 +773,7 @@ function saveHtml() {
         },
         traditional: true,
         success: function (result) {
-            //if (result.status == 0) { //未绑定
+            if (result.status == 0) { //未绑定
                 var filename = $("#formName").val() + ".html";
                 webpage = $("#downloadModal textarea").val();
                 dynContent += formatJs;
@@ -1102,9 +1074,9 @@ function saveHtml() {
                         }
                     });
                 }
-            /*} else {
+            } else {
                 layer.alert("该表单已被步骤绑定");
-            }*/
+            }
             layer.closeAll("loading");
         }
     });

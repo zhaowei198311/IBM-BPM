@@ -3,12 +3,12 @@
 <mapper namespace="com.desmart.desmartbpm.dao.BpmPublicFormMapper" >
 	<sql id="base_column">
 		public_form_uid,public_form_name,public_form_description,
-		public_form_content,public_form_filename,creator,create_time
+		public_form_content,public_form_webpage,creator,create_time
 	</sql>
 	
 	<sql id="select_column">
 		pf.public_form_uid,pf.public_form_name,pf.public_form_description,
-		pf.public_form_content,pf.public_form_filename,pf.creator,pf.create_time
+		pf.public_form_content,pf.public_form_webpage,pf.creator,pf.create_time
 	</sql>
 	
 	<select id="listFormByFormName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
@@ -37,12 +37,13 @@
 	<insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		insert into bpm_public_form(<include refid="base_column"/>)
 		values(#{publicFormUid},#{publicFormName},#{publicFormDescription},#{publicFormContent},
-			#{publicFormFilename},'00035438',sysdate)
+			#{publicFormWebpage},'00035438',sysdate)
 	</insert>
 	
 	<update id="updateFormContent" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		update bpm_public_form
 		set public_form_content = #{publicFormContent}
+			,public_form_webpage = #{publicFormWebpage}
 		where public_form_uid = #{publicFormUid}
 	</update>
 	
@@ -56,12 +57,6 @@
 		update bpm_public_form
 		set public_form_name = #{publicFormName},
 			public_form_description = #{publicFormDescription}
-		where public_form_uid = #{publicFormUid}
-	</update>
-	
-	<update id="updateFormFilenameByFormUid" parameterType="map">
-		update bpm_public_form
-		set public_form_filename = #{formFilename}
 		where public_form_uid = #{publicFormUid}
 	</update>
 	

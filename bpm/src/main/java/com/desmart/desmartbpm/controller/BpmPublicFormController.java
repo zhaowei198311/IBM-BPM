@@ -98,23 +98,6 @@ public class BpmPublicFormController {
 	}
 	
 	/**
-	 * 保存表单文件
-	 */
-	@RequestMapping(value = "/saveFormFile")
-	@ResponseBody
-	public String saveFormFile(String webpage,String filename) {
-		InputStream input = new ByteArrayInputStream(webpage.getBytes());
-        try {
-        	input.close();
-        	SFTPUtil sftp = new SFTPUtil();
-        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), "/form/public", filename, input);
-		} catch (Exception e) {
-			LOG.error("保存表单文件失败", e);
-		} 
-        return filename;
-	}
-	
-	/**
 	 * 保存公共表单信息
 	 */
 	@RequestMapping(value = "/saveForm")

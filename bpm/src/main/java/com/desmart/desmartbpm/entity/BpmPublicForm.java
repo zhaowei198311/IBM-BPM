@@ -12,7 +12,7 @@ public class BpmPublicForm {
 	private String publicFormName;
 	private String publicFormDescription;
 	private String publicFormContent;
-	private String publicFormFilename;
+	private String publicFormWebpage;
 	private String creator;
 	private Date createTime;
 	
@@ -21,13 +21,13 @@ public class BpmPublicForm {
 	public BpmPublicForm() {}
 
 	public BpmPublicForm(String publicFormUid, String publicFormName, String publicFormDescription,
-			String publicFormContent, String publicFormFilename, String creator, Date createTime, String creatorName) {
+			String publicFormContent, String publicFormWebpage, String creator, Date createTime, String creatorName) {
 		super();
 		this.publicFormUid = publicFormUid;
 		this.publicFormName = publicFormName;
 		this.publicFormDescription = publicFormDescription;
 		this.publicFormContent = publicFormContent;
-		this.publicFormFilename = publicFormFilename;
+		this.publicFormWebpage = publicFormWebpage;
 		this.creator = creator;
 		this.createTime = createTime;
 		this.creatorName = creatorName;
@@ -65,12 +65,12 @@ public class BpmPublicForm {
 		this.publicFormContent = publicFormContent;
 	}
 
-	public String getPublicFormFilename() {
-		return publicFormFilename;
+	public String getPublicFormWebpage() {
+		return publicFormWebpage;
 	}
 
-	public void setPublicFormFilename(String publicFormFilename) {
-		this.publicFormFilename = publicFormFilename;
+	public void setPublicFormWebpage(String publicFormWebpage) {
+		this.publicFormWebpage = publicFormWebpage;
 	}
 
 	public String getCreator() {
@@ -101,7 +101,7 @@ public class BpmPublicForm {
 	public String toString() {
 		return "BpmPublicForm [publicFormUid=" + publicFormUid + ", publicFormName=" + publicFormName
 				+ ", publicFormDescription=" + publicFormDescription + ", publicFormContent=" + publicFormContent
-				+ ", publicFormFilename=" + publicFormFilename + ", creator=" + creator + ", createTime=" + createTime
+				+ ", publicFormWebpage=" + publicFormWebpage + ", creator=" + creator + ", createTime=" + createTime
 				+ ", creatorName=" + creatorName + "]";
 	}
 }
