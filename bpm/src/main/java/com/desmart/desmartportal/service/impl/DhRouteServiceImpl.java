@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -41,9 +42,11 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.service.DhRouteService;
+import com.desmart.desmartsystem.dao.SysDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysTeamMember;
 import com.desmart.desmartsystem.entity.SysUser;
@@ -62,13 +65,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
-	
+
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
 
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
-	
+
 	@Autowired
 	private SysUserMapper sysUserMapper;
 
@@ -91,7 +94,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
 	private DhTriggerService dhTriggerService;
-
+	@Autowired
+	private SysDepartmentMapper sysDepartmentMapper;
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
@@ -106,6 +110,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		// 根据表单字段查
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+		
 		String insInitUser = dhProcessInstance.getInsInitUser(); // 流程发起人
 		String insDate = dhProcessInstance.getInsData();// 实例表单
 
@@ -134,7 +139,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 			selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
 			List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
 			if (assignList.size() == 0) {
-				//return ServerResponse.createByErrorMessage("缺少处理人信息");
+				// return ServerResponse.createByErrorMessage("缺少处理人信息");
 			}
 			List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
 
@@ -155,14 +160,17 @@ public class DhRouteServiceImpl implements DhRouteService {
 				}
 				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
 					if (StringUtils.isNotBlank(companyNum)) {
-						roleUser.setDepartUid(departNo);
+						StringBuffer str = new StringBuffer(departNo);
+						str.append(recursionSelectDepartMent(departNo,str));
+						
+						roleUser.setDepartUid(str.toString());
 					}
-				}
-
-				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-				for (SysRoleUser sysRoleUser : roleUsers) {
-					userUid += sysRoleUser.getUserUid() + ";";
-					userName += sysRoleUser.getUserName() + ";";
+				} else {
+					List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+					for (SysRoleUser sysRoleUser : roleUsers) {
+						userUid += sysRoleUser.getUserUid() + ";";
+						userName += sysRoleUser.getUserName() + ";";
+					}
 				}
 				break;
 			case TEAM:
@@ -191,14 +199,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 				}
 				break;
 			case LEADER_OF_PRE_ACTIVITY_USER:
-				
-				ServerResponse<BpmActivityMeta> serverResponse=getPreActivity(dhProcessInstance,bpmActivityMeta);
-				BpmActivityMeta activityMetaNew=serverResponse.getData();
-				if(activityMetaNew!=null) {
-					String activityMetaUserUid=activityMetaNew.getUserUid(); 
-					SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
-					SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
-					userUid += leader.getManagernumber()+";";
+
+				ServerResponse<BpmActivityMeta> serverResponse = getPreActivity(dhProcessInstance, bpmActivityMeta);
+				BpmActivityMeta activityMetaNew = serverResponse.getData();
+				if (activityMetaNew != null) {
+					String activityMetaUserUid = activityMetaNew.getUserUid();
+					SysUser previousActivityUser = sysUserMapper.queryByPrimaryKey(activityMetaUserUid);// 上个环节处理人
+					SysUser leader = sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());// 上个环节处理人上级
+					userUid += leader.getManagernumber() + ";";
 					userName += leader.getUserName() + ";";
 				}
 				break;
@@ -264,11 +272,20 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(activityMetaList);
 	}
 
+	private String recursionSelectDepartMent(String departNo,StringBuffer str) {
+		SysDepartment departmentAdmins = sysDepartmentMapper.getSysDepartmentByDepartNo(departNo);
+		if(departmentAdmins==null||"".equals(departmentAdmins.getDepartAdmins())) {
+			return str.toString();
+		}else {
+			str.append(","+departmentAdmins.getDepartAdmins());
+			return recursionSelectDepartMent(departNo, str);
+		}
+	}
 
 	@Override
 	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
-        BpmRoutingData bpmRoutingData = getNextActivityTo(sourceActivityMeta, formData);
-        return new ArrayList<>(bpmRoutingData.getNormalNodes());
+		BpmRoutingData bpmRoutingData = getNextActivityTo(sourceActivityMeta, formData);
+		return new ArrayList<>(bpmRoutingData.getNormalNodes());
 	}
 
 	/**
@@ -291,13 +308,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 	}
 
-    /**
-     * 从表单中取出网关判断需要的参数
-     * @param needvarNameList
-     * @param varTypeMap
-     * @param formData
-     * @return
-     */
+	/**
+	 * 从表单中取出网关判断需要的参数
+	 * 
+	 * @param needvarNameList
+	 * @param varTypeMap
+	 * @param formData
+	 * @return
+	 */
 	private org.json.JSONObject assembleJsonParam(Set<String> needvarNameList, Map<String, String> varTypeMap,
 			JSONObject formData) {
 		org.json.JSONObject param = new org.json.JSONObject();
@@ -335,11 +353,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return unDefaultLines;
 	}
 
-    /**
-     * 从所有连线中过的默认连线
-     * @param lineList
-     * @return
-     */
+	/**
+	 * 从所有连线中过的默认连线
+	 * 
+	 * @param lineList
+	 * @return
+	 */
 	private DhGatewayLine getDefaultLine(List<DhGatewayLine> lineList) {
 		Iterator<DhGatewayLine> iterator = lineList.iterator();
 		while (iterator.hasNext()) {
@@ -406,12 +425,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Override
 	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo,
-			String companyNum, String formData,HttpServletRequest request) {
+			String companyNum, String formData, HttpServletRequest request) {
 		List<SysUser> userListToBeReturned = new ArrayList<SysUser>();
-		
+
 		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
-		
-		DhActivityConf dhActivityConf=dhActivityConfMapper.getByActivityId(activityId);
+
+		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
 		// 根据表单字段查
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 		String insInitUser = dhProcessInstance.getInsInitUser(); // 流程发起人
@@ -438,7 +457,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
 		List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
 		if (assignList.size() == 0) {
-			//return ServerResponse.createByErrorMessage("缺少处理人信息");
+			// return ServerResponse.createByErrorMessage("缺少处理人信息");
 		}
 
 		List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
@@ -459,7 +478,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 			if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
 				if (StringUtils.isNotBlank(companyNum)) {
-					roleUser.setDepartUid(departNo);
+					StringBuffer str = new StringBuffer(departNo);
+					str.append(recursionSelectDepartMent(departNo,str));
+					
+					roleUser.setDepartUid(str.toString());
 				}
 			}
 
@@ -495,12 +517,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 			break;
 		case LEADER_OF_PRE_ACTIVITY_USER:
-			ServerResponse<BpmActivityMeta> serverResponse=getPreActivity(dhProcessInstance,bpmActivityMeta);
-			BpmActivityMeta activityMeta=serverResponse.getData();
-			String activityMetaUserUid=activityMeta.getUserUid(); 
-			SysUser previousActivityUser=sysUserMapper.queryByPrimaryKey(activityMetaUserUid);//上个环节处理人
-			SysUser leader=sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());//上个环节处理人上级
-			userUid += leader.getManagernumber()+";";
+			ServerResponse<BpmActivityMeta> serverResponse = getPreActivity(dhProcessInstance, bpmActivityMeta);
+			BpmActivityMeta activityMeta = serverResponse.getData();
+			String activityMetaUserUid = activityMeta.getUserUid();
+			SysUser previousActivityUser = sysUserMapper.queryByPrimaryKey(activityMetaUserUid);// 上个环节处理人
+			SysUser leader = sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());// 上个环节处理人上级
+			userUid += leader.getManagernumber() + ";";
 			userName += leader.getUserName() + ";";
 			break;
 		case USERS:
@@ -540,17 +562,18 @@ public class DhRouteServiceImpl implements DhRouteService {
 			break;
 		case BY_TRIGGER:// 根据触发器选择
 			String triUid = idList.get(0);
-			WebApplicationContext webApplicationContext = 
-				WebApplicationContextUtils.getWebApplicationContext(request.getServletContext());
-			ServerResponse serverResponse2 = dhTriggerService.invokeChooseUserTrigger(webApplicationContext, insUid, triUid);
-			if(serverResponse2.isSuccess()) {
-			List<String> userIds = (List<String>)serverResponse2.getData();
-			List<SysUser> userList1 = sysUserMapper.listByPrimaryKeyList(userIds);
-			for (SysUser sysUser : userList1) {
-				userUid += sysUser.getUserUid() + ";";
-				userName += sysUser.getUserName() + ";";
-			}
-			}else {
+			WebApplicationContext webApplicationContext = WebApplicationContextUtils
+					.getWebApplicationContext(request.getServletContext());
+			ServerResponse serverResponse2 = dhTriggerService.invokeChooseUserTrigger(webApplicationContext, insUid,
+					triUid);
+			if (serverResponse2.isSuccess()) {
+				List<String> userIds = (List<String>) serverResponse2.getData();
+				List<SysUser> userList1 = sysUserMapper.listByPrimaryKeyList(userIds);
+				for (SysUser sysUser : userList1) {
+					userUid += sysUser.getUserUid() + ";";
+					userName += sysUser.getUserName() + ";";
+				}
+			} else {
 				return serverResponse2;
 			}
 			break;
@@ -569,10 +592,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 				String userUidNext = userUidArray[i];
 				String useNameNext = userNameArray[i];
 				if (set.add(userUidNext)) {
-					  SysUser sysUser=new SysUser();
-	        		  sysUser.setUserUid(userUidNext);
-	        		  sysUser.setUserName(useNameNext);
-	        		  userListToBeReturned.add(sysUser);
+					SysUser sysUser = new SysUser();
+					sysUser.setUserUid(userUidNext);
+					sysUser.setUserName(useNameNext);
+					userListToBeReturned.add(sysUser);
 				}
 			}
 		}
@@ -581,179 +604,180 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Override
 	public ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData) {
-        Set<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
-        // 删除这些网关对应的路由结果
-        for (BpmActivityMeta gatewayNode : gatewayNodes) {
-            dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayNode.getActivityBpdId());
-        }
-        // 将新的结果插入
-		if (routingData.getRouteResults().size() > 0) {
-        	for (DhGatewayRouteResult routeResult : routingData.getRouteResults()) {
-        		routeResult.setInsId(insId);
-        		dhGatewayRouteResultMapper.save(routeResult);
-			}
+		Set<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
+		// 删除这些网关对应的路由结果
+		for (BpmActivityMeta gatewayNode : gatewayNodes) {
+			dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayNode.getActivityBpdId());
 		}
-        return ServerResponse.createBySuccess();
+
+		return ServerResponse.createBySuccess();
 	}
 
-    @Override
-    public ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {
-        // 查找流转到这个环节的流转记录
-        List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper.listPreRoutingRecord(dhProcessInstance.getInsUid(), bpmActivityMeta.getActivityId());
-        if (preRoutingRecordList.size() == 0) {
-            return ServerResponse.createByErrorMessage("获取上个环节失败");
-        }
-        DhRoutingRecord preRoutingRecord = preRoutingRecordList.get(0);
-        BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(preRoutingRecord.getActivityId());
-        // 从任务列表中找，这个流程实例的 这个节点的任务，并且任务处理人是路由记录中的人
-        List<DhTaskInstance> taskList = dhTaskInstanceMapper.listTaskByCondition(dhProcessInstance.getInsUid(), preMeta.getActivityBpdId(), preRoutingRecord.getUserUid());
-        if (taskList.size() == 0) {
-            return ServerResponse.createByErrorMessage("获取上个环节失败");
-        }
-        preMeta.setUserUid(preRoutingRecord.getUserUid());
-        SysUser preUser = sysUserMapper.queryByPrimaryKey(preRoutingRecord.getUserUid());
-        preMeta.setUserName(preUser.getUserName());
-        return ServerResponse.createBySuccess(preMeta);
-    }
-
+	@Override
+	public ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance,
+			BpmActivityMeta bpmActivityMeta) {
+		// 查找流转到这个环节的流转记录
+		List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper
+				.listPreRoutingRecord(dhProcessInstance.getInsUid(), bpmActivityMeta.getActivityId());
+		if (preRoutingRecordList.size() == 0) {
+			return ServerResponse.createByErrorMessage("获取上个环节失败");
+		}
+		DhRoutingRecord preRoutingRecord = preRoutingRecordList.get(0);
+		BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(preRoutingRecord.getActivityId());
+		// 从任务列表中找，这个流程实例的 这个节点的任务，并且任务处理人是路由记录中的人
+		List<DhTaskInstance> taskList = dhTaskInstanceMapper.listTaskByCondition(dhProcessInstance.getInsUid(),
+				preMeta.getActivityBpdId(), preRoutingRecord.getUserUid());
+		if (taskList.size() == 0) {
+			return ServerResponse.createByErrorMessage("获取上个环节失败");
+		}
+		preMeta.setUserUid(preRoutingRecord.getUserUid());
+		SysUser preUser = sysUserMapper.queryByPrimaryKey(preRoutingRecord.getUserUid());
+		preMeta.setUserName(preUser.getUserName());
+		return ServerResponse.createBySuccess(preMeta);
+	}
 
 	public BpmRoutingData getNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
 		BpmRoutingData result = new BpmRoutingData();
 
-        List<BpmActivityMeta> directNextNodeList = findDirectNextNodes(sourceNode);
+		List<BpmActivityMeta> directNextNodeList = findDirectNextNodes(sourceNode);
 
-        // 遍历处理与源节点直接关联的节点
-        for (BpmActivityMeta directNextNode : directNextNodeList) {
-            String type = directNextNode.getType();
-            String activityType = directNextNode.getActivityType();
-            String bpmTaskType = directNextNode.getBpmTaskType();
+		// 遍历处理与源节点直接关联的节点
+		for (BpmActivityMeta directNextNode : directNextNodeList) {
+			String type = directNextNode.getType();
+			String activityType = directNextNode.getActivityType();
+			String bpmTaskType = directNextNode.getBpmTaskType();
 
-            if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType) && "activity".equals(type)) {
-                // 人员服务
-                result.addNormalNode(directNextNode);
-            } else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
-                    && "activity".equals(type)) {
-                // 子流程
-                result.addStartProcessNode(directNextNode);
-                List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(directNextNode);
-                for (BpmActivityMeta sonNode : sonNodes) {
-                    result.includeAll(getNowActivity(sonNode, formData));
-                }
-            } else if ("gateway".equals(type)) {
-                if ("gateway".equals(activityType)) {
-                    // 排他网关
-                    result.addGatewayNode(directNextNode);
-                    // 根据规则判断网关走向
-                    DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(directNextNode, formData);
-                    // 根据输出线，封装DhGatewayRouteResult
-                    DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
-                    if (routeResult != null) {
-                        result.addRouteResult(routeResult);
-                    }
-                    // 获得连接点对应的节点
-                    BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(outLine.getToActivityBpdId(),
-							directNextNode.getParentActivityId(), directNextNode.getSnapshotId());
-                    result.includeAll(getNowActivity(node, formData));
-                } else if ("gatewayAnd".equals(activityType)) {
-                    // 并行网关
-                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
-                    for (BpmActivityMeta node : directNextNodes) {
-                        result.includeAll(getNowActivity(node, formData));
-                    }
-                } else if ("gatewayOr".equals(activityType)) {
-                    // 包容网关
-                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
-                    for (BpmActivityMeta node : directNextNodes) {
-                        result.includeAll(getNowActivity(node, formData));
-                    }
-                } else {
-                    throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
-                }
-            }else if ("end".equals(activityType)) {
-                if (!"0".equals(sourceNode.getParentActivityId())) {
-                    // 子流程结束
-                    // 获得父节点，找到父节点，遍历父节点的下个节点
-                    BpmActivityMeta endProcessNode = bpmActivityMetaService.queryByPrimaryKey(directNextNode.getParentActivityId());
-                    result.addEndProcessNode(endProcessNode);
-                    List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
-                    for (BpmActivityMeta node : directNextNodes) {
-                        result.includeAll(getNowActivity(node, formData));
-                    }
+			if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType)
+					&& "activity".equals(type)) {
+				// 人员服务
+				result.addNormalNode(directNextNode);
+			} else if ("activity".equals(activityType)
+					&& (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType)
+							|| BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
+					&& "activity".equals(type)) {
+				// 子流程
+				result.addStartProcessNode(directNextNode);
+				List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(directNextNode);
+				for (BpmActivityMeta sonNode : sonNodes) {
+					result.includeAll(getNowActivity(sonNode, formData));
+				}
+			} else if ("gateway".equals(type)) {
+				if ("gateway".equals(activityType)) {
+					// 排他网关
+					result.addGatewayNode(directNextNode);
+					// 根据规则判断网关走向
+					DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(directNextNode, formData);
+					// 根据输出线，封装DhGatewayRouteResult
+					DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
+					if (routeResult != null) {
+						result.addRouteResult(routeResult);
+					}
+					// 获得连接点对应的节点
+					BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(
+							outLine.getToActivityBpdId(), directNextNode.getParentActivityId(),"");
+					result.includeAll(getNowActivity(node, formData));
+				} else if ("gatewayAnd".equals(activityType)) {
+					// 并行网关
+					List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
+					for (BpmActivityMeta node : directNextNodes) {
+						result.includeAll(getNowActivity(node, formData));
+					}
+				} else if ("gatewayOr".equals(activityType)) {
+					// 包容网关
+					List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
+					for (BpmActivityMeta node : directNextNodes) {
+						result.includeAll(getNowActivity(node, formData));
+					}
+				} else {
+					throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
+				}
+			} else if ("end".equals(activityType)) {
+				if (!"0".equals(sourceNode.getParentActivityId())) {
+					// 子流程结束
+					// 获得父节点，找到父节点，遍历父节点的下个节点
+					BpmActivityMeta endProcessNode = bpmActivityMetaService
+							.queryByPrimaryKey(directNextNode.getParentActivityId());
+					result.addEndProcessNode(endProcessNode);
+					List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
+					for (BpmActivityMeta node : directNextNodes) {
+						result.includeAll(getNowActivity(node, formData));
+					}
 
-                } else {
-                    // 主流程结束
-                    result.addMainEndNode(sourceNode);
-                }
-            } else {
-                throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
-            }
+				} else {
+					// 主流程结束
+					result.addMainEndNode(sourceNode);
+				}
+			} else {
+				throw new BpmFindNextNodeException("环节类型异常，环节主键：" + directNextNode.getActivityId());
+			}
 
-        }
+		}
 		return result;
 	}
 
-
-
-
-    public BpmRoutingData getNowActivity (BpmActivityMeta nowActivity, JSONObject formData) {
+	public BpmRoutingData getNowActivity(BpmActivityMeta nowActivity, JSONObject formData) {
 		BpmRoutingData result = new BpmRoutingData();
 		String type = nowActivity.getType();
 		String activityType = nowActivity.getActivityType();
 		String bpmTaskType = nowActivity.getBpmTaskType();
 
-		if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType) && "activity".equals(type)) {
+		if ("activity".equals(activityType) && BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(bpmTaskType)
+				&& "activity".equals(type)) {
 			// 人员服务
-            result.addNormalNode(nowActivity);
-		} else if ("activity".equals(activityType) && (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType) || BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
+			result.addNormalNode(nowActivity);
+		} else if ("activity".equals(activityType)
+				&& (BpmActivityMeta.BPM_TASK_TYPE_SUB_PROCESS.equals(bpmTaskType)
+						|| BpmActivityMeta.BPM_TASK_TYPE_CALLED_PROCESS.equals(bpmTaskType))
 				&& "activity".equals(type)) {
 			// 子流程, 在需要创建的子流程中加入节点
-            result.addStartProcessNode(nowActivity);
-            List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(nowActivity);
-            for (BpmActivityMeta sonNode : sonNodes) {
-                result.includeAll(getNowActivity(sonNode, formData));
-            }
+			result.addStartProcessNode(nowActivity);
+			List<BpmActivityMeta> sonNodes = findDirectNextNodesOfStartNodeBySubProcessNode(nowActivity);
+			for (BpmActivityMeta sonNode : sonNodes) {
+				result.includeAll(getNowActivity(sonNode, formData));
+			}
 
 		} else if ("gateway".equals(type)) {
 			if ("gateway".equals(activityType)) {
 				// 排他网关
-                result.addGatewayNode(nowActivity);
-                // 根据规则判断网关走向
-                DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(nowActivity, formData);
-                // 根据输出线，封装DhGatewayRouteResult
-                DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
-                if (routeResult != null) {
-                    result.addRouteResult(routeResult);
-                }
-                // 获得连接点对应的节点
-                BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(outLine.getToActivityBpdId(),
-						nowActivity.getParentActivityId(), nowActivity.getSnapshotId());
-                result.includeAll(getNowActivity(node, formData));
-            } else if ("gatewayAnd".equals(activityType)) {
+				result.addGatewayNode(nowActivity);
+				// 根据规则判断网关走向
+				DhGatewayLine outLine = getUniqueOutLineByGatewayNodeAndFormData(nowActivity, formData);
+				// 根据输出线，封装DhGatewayRouteResult
+				DhGatewayRouteResult routeResult = assembleDhGatewayRouteResultWithOutInsId(outLine);
+				if (routeResult != null) {
+					result.addRouteResult(routeResult);
+				}
+				// 获得连接点对应的节点
+				BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(
+						outLine.getToActivityBpdId(), nowActivity.getParentActivityId(),"");
+				result.includeAll(getNowActivity(node, formData));
+			} else if ("gatewayAnd".equals(activityType)) {
 				// 并行网关
-                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
-                for (BpmActivityMeta node : directNextNodes) {
-                    result.includeAll(getNowActivity(node, formData));
-                }
-            } else if ("gatewayOr".equals(activityType)) {
+				List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
+				for (BpmActivityMeta node : directNextNodes) {
+					result.includeAll(getNowActivity(node, formData));
+				}
+			} else if ("gatewayOr".equals(activityType)) {
 				// 包容网关
-                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
-                for (BpmActivityMeta node : directNextNodes) {
-                    result.includeAll(getNowActivity(node, formData));
-                }
+				List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
+				for (BpmActivityMeta node : directNextNodes) {
+					result.includeAll(getNowActivity(node, formData));
+				}
 			} else {
 				throw new BpmFindNextNodeException("环节类型异常，环节主键：" + nowActivity.getActivityId());
 			}
-		}else if ("end".equals(activityType)) {
+		} else if ("end".equals(activityType)) {
 			if (!"0".equals(nowActivity.getParentActivityId())) {
 				// 子流程结束
-                // 获得父节点，找到父节点，遍历父节点的下个节点
-                BpmActivityMeta endProcessNode = bpmActivityMetaService.queryByPrimaryKey(nowActivity.getParentActivityId());
-                result.addEndProcessNode(endProcessNode);
-                List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
-                for (BpmActivityMeta sonNode : directNextNodes) {
-                    result.includeAll(getNowActivity(sonNode, formData));
-                }
-            } else {
+				// 获得父节点，找到父节点，遍历父节点的下个节点
+				BpmActivityMeta endProcessNode = bpmActivityMetaService
+						.queryByPrimaryKey(nowActivity.getParentActivityId());
+				result.addEndProcessNode(endProcessNode);
+				List<BpmActivityMeta> directNextNodes = findDirectNextNodes(endProcessNode);
+				for (BpmActivityMeta sonNode : directNextNodes) {
+					result.includeAll(getNowActivity(sonNode, formData));
+				}
+			} else {
 				// 主流程结束
 				result.addMainEndNode(nowActivity);
 			}
@@ -765,115 +789,120 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return result;
 	}
 
-    /**
-     * 根据代表子流程的节点，获得它的start节点直接相连的节点
-     * @return
-     */
+	/**
+	 * 根据代表子流程的节点，获得它的start节点直接相连的节点
+	 * 
+	 * @return
+	 */
 	private List<BpmActivityMeta> findDirectNextNodesOfStartNodeBySubProcessNode(BpmActivityMeta subProcessNode) {
-        BpmActivityMeta startNode = bpmActivityMetaService.getStartMetaOfSubProcess(subProcessNode);
-        return findDirectNextNodes(startNode);
-    }
+		BpmActivityMeta startNode = bpmActivityMetaService.getStartMetaOfSubProcess(subProcessNode);
+		return findDirectNextNodes(startNode);
+	}
 
-    private List<BpmActivityMeta> findDirectNextNodes(BpmActivityMeta sourceNode) {
-        List<BpmActivityMeta> directNextNodeList = new ArrayList<>();
-        String activityToStr = sourceNode.getActivityTo();
-        if (StringUtils.isBlank(activityToStr)) {
-            throw new BpmFindNextNodeException("找到下个环节异常，节点id：" + sourceNode.getActivityId());
-        }
+	private List<BpmActivityMeta> findDirectNextNodes(BpmActivityMeta sourceNode) {
+		List<BpmActivityMeta> directNextNodeList = new ArrayList<>();
+		String activityToStr = sourceNode.getActivityTo();
+		if (StringUtils.isBlank(activityToStr)) {
+			throw new BpmFindNextNodeException("找到下个环节异常，节点id：" + sourceNode.getActivityId());
+		}
 
-        String[] toActivityBpdIds = activityToStr.split(",");
-        // 直接关联的节点集合
-        for (String activityBpdId : toActivityBpdIds) {
-            BpmActivityMeta meta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, sourceNode.getParentActivityId(), sourceNode.getSnapshotId());
-            if (meta == null) {
-                throw new BpmFindNextNodeException("找不到指定环节, activityBpdId: " + activityBpdId + ", parentActivityId: " + sourceNode.getParentActivityId());
-            }
-            directNextNodeList.add(meta);
-        }
-        return directNextNodeList;
-    }
+		String[] toActivityBpdIds = activityToStr.split(",");
+		// 直接关联的节点集合
+		for (String activityBpdId : toActivityBpdIds) {
+			BpmActivityMeta meta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId,
+					sourceNode.getParentActivityId(),"");
+			if (meta == null) {
+				throw new BpmFindNextNodeException("找不到指定环节, activityBpdId: " + activityBpdId + ", parentActivityId: "
+						+ sourceNode.getParentActivityId());
+			}
+			directNextNodeList.add(meta);
+		}
+		return directNextNodeList;
+	}
 
-    /**
-     * 根据网关环节和表单内容给出唯一的输出连接线
-     * @param gatewayNode
-     * @param formData
-     * @return
-     */
-    public DhGatewayLine getUniqueOutLineByGatewayNodeAndFormData(BpmActivityMeta gatewayNode, JSONObject formData) {
-        DhGatewayLine lineSelective = new DhGatewayLine();
-        // 获得源网关的id
-        lineSelective.setActivityId(gatewayNode.getSourceActivityId());
-        List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
-        // 获得相关的条件
-        List<DatRuleCondition> conditions = datRuleConditionService.getDatruleConditionByActivityId(gatewayNode.getSourceActivityId());
-        // 获得条件需要的表单中的变量
-        Set<String> needVarnameSet = new HashSet<>();
-        Map<String, String> varTypeMap = new HashMap<>();
-        for (DatRuleCondition condition : conditions) {
-            String varname = condition.getLeftValue();
-            if (!needVarnameSet.contains(varname)) {
-                needVarnameSet.add(varname);
-                varTypeMap.put(varname, condition.getRightValueType());
-            }
-        }
-        // 从表单中取出需要的参数
-        org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
+	/**
+	 * 根据网关环节和表单内容给出唯一的输出连接线
+	 * 
+	 * @param gatewayNode
+	 * @param formData
+	 * @return
+	 */
+	public DhGatewayLine getUniqueOutLineByGatewayNodeAndFormData(BpmActivityMeta gatewayNode, JSONObject formData) {
+		DhGatewayLine lineSelective = new DhGatewayLine();
+		// 获得源网关的id
+		lineSelective.setActivityId(gatewayNode.getSourceActivityId());
+		List<DhGatewayLine> lines = dhGatewayLineService.getGateWayLinesByCondition(lineSelective);
+		// 获得相关的条件
+		List<DatRuleCondition> conditions = datRuleConditionService
+				.getDatruleConditionByActivityId(gatewayNode.getSourceActivityId());
+		// 获得条件需要的表单中的变量
+		Set<String> needVarnameSet = new HashSet<>();
+		Map<String, String> varTypeMap = new HashMap<>();
+		for (DatRuleCondition condition : conditions) {
+			String varname = condition.getLeftValue();
+			if (!needVarnameSet.contains(varname)) {
+				needVarnameSet.add(varname);
+				varTypeMap.put(varname, condition.getRightValueType());
+			}
+		}
+		// 从表单中取出需要的参数
+		org.json.JSONObject param = assembleJsonParam(needVarnameSet, varTypeMap, formData);
 
-        if (param == null) {
-            // 从表单中获取变量发生错误
-            log.error("从表单中获取变量发生错误，网关id: " + gatewayNode.getActivityId());
-            // 返回默认连线
-            return getDefaultLine(lines);
-        }
+		if (param == null) {
+			// 从表单中获取变量发生错误
+			log.error("从表单中获取变量发生错误，网关id: " + gatewayNode.getActivityId());
+			// 返回默认连线
+			return getDefaultLine(lines);
+		}
 
-        // 计算每种规则的结果
-        List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
+		// 计算每种规则的结果
+		List<DhGatewayLine> unDefaultLines = getUnDefaultLines(lines);
 
-        for (DhGatewayLine line : unDefaultLines) {
-            String ruleId = line.getRuleId();
-            DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
-            Map<String, Object> ruleResult = null;
-            try {
-                ruleResult = droolsEngineService.execute(param, datRule);
-                if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
-                    // 规则运算成功, 返回满足规则的连线
-                    return line;
-                }
-            } catch (Exception e) {
-                log.error("规则运算异常,规则编号：" + ruleId, e);
-            }
-        }
+		for (DhGatewayLine line : unDefaultLines) {
+			String ruleId = line.getRuleId();
+			DatRule datRule = datRuleService.getDatRuleByKey(ruleId);
+			Map<String, Object> ruleResult = null;
+			try {
+				ruleResult = droolsEngineService.execute(param, datRule);
+				if (ruleResult.get("state") != null && ruleResult.get("state").equals(true)) {
+					// 规则运算成功, 返回满足规则的连线
+					return line;
+				}
+			} catch (Exception e) {
+				log.error("规则运算异常,规则编号：" + ruleId, e);
+			}
+		}
 
-        // 如果没有满足规则的连线，返回默认连线
-        return getDefaultLine(lines);
-    }
+		// 如果没有满足规则的连线，返回默认连线
+		return getDefaultLine(lines);
+	}
 
+	private DhGatewayRouteResult assembleDhGatewayRouteResultWithOutInsId(DhGatewayLine line) {
+		if (line == null || "TRUE".equals(line.getIsDefault())) {
+			return null;
+		}
+		DhGatewayRouteResult routeResult = new DhGatewayRouteResult();
+		routeResult.setRouteResultUid(EntityIdPrefix.DH_GATEWAY_ROUTE_RESULT + UUID.randomUUID().toString());
+		routeResult.setStatus("on");
+		routeResult.setActivityBpdId(line.getGatewayActivityBpdId()); // 网关的activityBpdId
+		routeResult.setRouteResult(line.getRouteResult());
+		routeResult.setCreateTime(new Date());
+		routeResult.setUpdateTime(new Date());
+		return routeResult;
+	}
 
-    private DhGatewayRouteResult assembleDhGatewayRouteResultWithOutInsId(DhGatewayLine line) {
-        if (line == null || "TRUE".equals(line.getIsDefault())){
-            return null;
-        }
-        DhGatewayRouteResult routeResult = new DhGatewayRouteResult();
-        routeResult.setRouteResultUid(EntityIdPrefix.DH_GATEWAY_ROUTE_RESULT + UUID.randomUUID().toString());
-        routeResult.setStatus("on");
-        routeResult.setActivityBpdId(line.getGatewayActivityBpdId()); // 网关的activityBpdId
-        routeResult.setRouteResult(line.getRouteResult());
-        routeResult.setCreateTime(new Date());
-        routeResult.setUpdateTime(new Date());
-        return routeResult;
-    }
+	@Override
+	public ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId) {
+		if (insId == null || StringUtils.isBlank(activityBpdId)) {
+			return ServerResponse.createBySuccess(UUID.randomUUID().toString());
+		}
+		DhGatewayRouteResult routeResult = dhGatewayRouteResultMapper.queryByInsIdAndActivityBpdId(insId,
+				activityBpdId);
+		if (routeResult == null) {
+			return ServerResponse.createBySuccess(UUID.randomUUID().toString());
+		}
+		return ServerResponse.createBySuccess(routeResult.getRouteResult());
 
-    @Override
-    public ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId) {
-        if (insId == null || StringUtils.isBlank(activityBpdId)) {
-            return ServerResponse.createBySuccess(UUID.randomUUID().toString());
-        }
-        DhGatewayRouteResult routeResult = dhGatewayRouteResultMapper.queryByInsIdAndActivityBpdId(insId, activityBpdId);
-        if (routeResult == null) {
-            return ServerResponse.createBySuccess(UUID.randomUUID().toString());
-        }
-        return ServerResponse.createBySuccess(routeResult.getRouteResult());
-
-    }
+	}
 
 }
