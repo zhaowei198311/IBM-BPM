@@ -185,7 +185,7 @@
 		select
 		<include refid="relationColumn" />
 		from BPM_ACTIVITY_META am 
-		left join dh_activity_conf ac on am.activity_id = ac.activity_id
+		left join dh_activity_conf ac on am.SOURCE_ACTIVITY_ID = ac.activity_id
 		<where>
 			<if test="proAppId != null">
 			    am.pro_app_id = #{proAppId}
