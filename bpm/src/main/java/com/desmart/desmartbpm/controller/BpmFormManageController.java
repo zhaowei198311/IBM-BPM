@@ -188,21 +188,6 @@ public class BpmFormManageController {
 		return bpmFormManageService.saveForm(bpmForm);
 	}
 	
-	/**
-	 * 保存表单html文件
-	 */
-	@RequestMapping(value = "/saveFormFile")
-	@ResponseBody
-	public String saveFormFile(String webpage,String filename) {
-        InputStream input = new ByteArrayInputStream(webpage.getBytes());
-        try {
-        	SFTPUtil sftp = new SFTPUtil();
-        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), "/form", filename, input);
-		} catch (Exception e) {
-			LOG.error("保存表单文件失败", e);
-		} 
-        return filename;
-	}
 	
 	/**
 	 * 修改表单基本信息
@@ -267,19 +252,6 @@ public class BpmFormManageController {
 	@ResponseBody
 	public ServerResponse queryFormListBySelective(BpmForm bpmForm) {
 		return bpmFormManageService.listBySelective(bpmForm);
-	}
-	
-	/**
-	 * 根据表单Id获得表单文件
-	 */
-	@RequestMapping(value = "/getFormFileByFormUid")
-	@ResponseBody
-	public ServerResponse getFormFileByFormUid(String dynUid) {
-		try {
-			return bpmFormManageService.getFormFileByFormUid(dynUid);
-		}catch (Exception e) {
-			return ServerResponse.createByErrorMessage("获取表单文件失败");
-		}
 	}
 	
 	/**

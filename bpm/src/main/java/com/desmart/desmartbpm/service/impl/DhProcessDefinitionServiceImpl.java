@@ -694,7 +694,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 				BpmForm bpmForm = new BpmForm();
 				bpmForm.setDynUid(OldBpmForm.getDynUid());
 				bpmForm.setDynTitle(OldBpmForm.getDynTitle()+"_copy"+a+b);
-				bpmForm.setDynFilename(OldBpmForm.getDynTitle()+"_copy"+a+b+".html");
+				bpmForm.setDynWebpage(OldBpmForm.getDynWebpage());
 				bpmForm.setProUid(proUidNew);
 				bpmForm.setProVersion(proVerUidNew);
 				// 拷贝老流程表单

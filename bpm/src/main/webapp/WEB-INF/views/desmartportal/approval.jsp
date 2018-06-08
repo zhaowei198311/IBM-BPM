@@ -210,7 +210,7 @@
                 </tbody>
             </table>
             
-            <div id="formSet">${formHtml }</div>
+            <div id="formSet">${bpmForm.dynWebpage }</div>
             <div class="display_container2">
 				<div class="display_content2">
 					<div class="top">

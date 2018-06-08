@@ -534,11 +534,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         BpmForm bpmForm = (BpmForm)getFormResponse.getData();
         
-        // 获得表单文件内容
-        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
-        if (!formResponse.isSuccess()) {
-            return ServerResponse.createByErrorMessage("获得表单数据失败");
-        }
         ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep.getStepUid());
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
@@ -575,7 +570,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("activityConf", dhActivityConf);
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
-        resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    return ServerResponse.createBySuccess(resultMap);
@@ -819,11 +813,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         BpmForm bpmForm = (BpmForm)getFormResponse.getData();
         
-        // 获得表单文件内容
-        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
-        if (!formResponse.isSuccess()) {
-            return ServerResponse.createByErrorMessage("获得表单数据失败");
-        }
         ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
@@ -835,7 +824,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
-        resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    return ServerResponse.createBySuccess(resultMap);
@@ -876,11 +864,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
         BpmForm bpmForm = (BpmForm)getFormResponse.getData();
         
-        // 获得表单文件内容
-        ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
-        if (!formResponse.isSuccess()) {
-            return ServerResponse.createByErrorMessage("获得表单数据失败");
-        }
         ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
@@ -892,7 +875,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("activityConf", currMeta.getDhActivityConf());
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
-        resultMap.put("formHtml", formResponse.getData());
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    return ServerResponse.createBySuccess(resultMap);

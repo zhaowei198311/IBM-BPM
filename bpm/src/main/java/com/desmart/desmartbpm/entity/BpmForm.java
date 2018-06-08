@@ -12,8 +12,6 @@ public class BpmForm {
 	private String dynUid;
 	private String dynTitle;
 	private String dynDescription;
-	private String dynType;
-	private String dynFilename;
 	private String dynContent;
 	private String proUid;
 	private String proVersion;
@@ -21,29 +19,32 @@ public class BpmForm {
 	private String creatorFullName;//不是本表，连接查询得到
 	private Date createTime;
 	
+	private String dynWebpage;
+	
 	private String proMetaName;//流程元名，前台显示
 	private String proVerName;//流程快照名
 	
 	public BpmForm() {}
 
-	public BpmForm(String dynUid, String dynTitle, String dynDescription, String dynType, String dynFilename,
-			String dynContent, String proUid, String proVersion, String creator, String creatorFullName,
-			Date createTime, String proMetaName, String proVerName) {
+	public BpmForm(String dynUid, String dynTitle, String dynDescription, String dynContent, String proUid,
+			String proVersion, String creator, String creatorFullName, Date createTime, String dynWebpage,
+			String proMetaName, String proVerName) {
 		super();
 		this.dynUid = dynUid;
 		this.dynTitle = dynTitle;
 		this.dynDescription = dynDescription;
-		this.dynType = dynType;
-		this.dynFilename = dynFilename;
 		this.dynContent = dynContent;
 		this.proUid = proUid;
 		this.proVersion = proVersion;
 		this.creator = creator;
 		this.creatorFullName = creatorFullName;
 		this.createTime = createTime;
+		this.dynWebpage = dynWebpage;
 		this.proMetaName = proMetaName;
 		this.proVerName = proVerName;
 	}
+
+
 
 	public String getDynUid() {
 		return dynUid;
@@ -62,18 +63,6 @@ public class BpmForm {
 	}
 	public void setDynDescription(String dynDescription) {
 		this.dynDescription = dynDescription;
-	}
-	public String getDynType() {
-		return dynType;
-	}
-	public void setDynType(String dynType) {
-		this.dynType = dynType;
-	}
-	public String getDynFilename() {
-		return dynFilename;
-	}
-	public void setDynFilename(String dynFilename) {
-		this.dynFilename = dynFilename;
 	}
 	public String getDynContent() {
 		return dynContent;
@@ -123,13 +112,18 @@ public class BpmForm {
 	public void setProVerName(String proVerName) {
 		this.proVerName = proVerName;
 	}
+	public String getDynWebpage() {
+		return dynWebpage;
+	}
+	public void setDynWebpage(String dynWebpage) {
+		this.dynWebpage = dynWebpage;
+	}
 
 	@Override
 	public String toString() {
 		return "BpmForm [dynUid=" + dynUid + ", dynTitle=" + dynTitle + ", dynDescription=" + dynDescription
-				+ ", dynType=" + dynType + ", dynFilename=" + dynFilename + ", dynContent=" + dynContent + ", proUid="
-				+ proUid + ", proVersion=" + proVersion + ", creator=" + creator + ", creatorFullName="
-				+ creatorFullName + ", createTime=" + createTime + ", proMetaName=" + proMetaName + ", proVerName="
-				+ proVerName + "]";
+				+ ", dynContent=" + dynContent + ", proUid=" + proUid + ", proVersion=" + proVersion + ", creator="
+				+ creator + ", creatorFullName=" + creatorFullName + ", createTime=" + createTime + ", dynWebpage="
+				+ dynWebpage + ", proMetaName=" + proMetaName + ", proVerName=" + proVerName + "]";
 	}
 }

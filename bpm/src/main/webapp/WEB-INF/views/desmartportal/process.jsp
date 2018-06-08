@@ -184,7 +184,7 @@
                 </tbody>
             </table>
             <!-- 动态表单区域 -->
-			<div id="formSet">${formHtml }</div>
+			<div id="formSet">${bpmForm.dynWebpage }</div>
 			<div class="display_container2">
 				<div class="display_content2">
 					<div class="top" style="line-height:50px;">

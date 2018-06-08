@@ -43,6 +43,7 @@ public interface BpmFormManageService {
 	 * 复制表单
 	 */
 	ServerResponse copyForm(BpmForm bpmForm);
+	
 	/**
 	 * 修改表单基本信息
 	 */
@@ -57,11 +58,6 @@ public interface BpmFormManageService {
 	 * 修改表单内容
 	 */
 	ServerResponse updateFormContent(BpmForm bpmForm);
-
-	/**
-	 * 根据表单Id获得表单文件
-	 */
-	ServerResponse getFormFileByFormUid(String dynUid);
 
 	/**
 	 * 根据表单判断表单是否被步骤绑定

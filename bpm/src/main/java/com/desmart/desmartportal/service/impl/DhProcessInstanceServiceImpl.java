@@ -568,12 +568,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		BpmForm bpmForm = (BpmForm) getFormResponse.getData();
 
-		// 获得表单文件内容
-		ServerResponse formResponse = bpmFormManageService.getFormFileByFormUid(formStep.getStepObjectUid());
-		if (!formResponse.isSuccess()) {
-			return ServerResponse.createByErrorMessage("获得表单数据失败");
-		}
-
 		if (StringUtils.isBlank(insUid)) {
 			dhProcessInstanceMapper.insertProcess(processInstance);
 		}
@@ -595,7 +589,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		resultMap.put("dhActivityConf", dhActivityConf);
 		resultMap.put("userDepartmentList", userDepartmentList);
 		resultMap.put("dhStep", formStep);
-		resultMap.put("formHtml", formResponse.getData());
 		resultMap.put("processInstance", processInstance);
 		return ServerResponse.createBySuccess(resultMap);
 	}

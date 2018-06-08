@@ -52,12 +52,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	private BpmFormFieldMapper bpmFormFieldMapper;
 	
 	@Autowired
-	private BpmGlobalConfigService bpmGlobalCofigService;
-	
-	@Autowired
 	private DhProcessDefinitionService dhProcessDefinitionService;
-	
-	private SFTPUtil sftp = new SFTPUtil();
 	
 	@Override
 	public ServerResponse queryFormByName(String dynTitle) {
@@ -137,10 +132,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	
 	@Override
 	public ServerResponse updateFormInfo(BpmForm bpmForm) throws Exception {
-		//修改表单文件名
-		if(!updateFormFilename(bpmForm)) {
-			throw new PlatformException("表单名修改异常");
-		}
 		//修改表单基本信息
 		int countRow = bpmFormManageMapper.updateFormInfo(bpmForm);
 		if(countRow!=1) {
@@ -149,21 +140,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return ServerResponse.createBySuccess();
 	}
 	
-	/**
-	 * 修改表单文件名
-	 */
-	private boolean updateFormFilename(BpmForm bpmForm) throws IOException {
-		String filename = bpmFormManageMapper.queryFormByFormUid(bpmForm.getDynUid()).getDynFilename();
-		String updateFilename = bpmForm.getDynTitle()+".html";
-		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
-		boolean flag = sftp.renameFile(gcfg,"/form",filename, updateFilename);
-		int updateRow = bpmFormManageMapper.updateFormFilenameByFormUid(bpmForm.getDynUid(),updateFilename);
-		if(1!=updateRow) {
-			throw new PlatformException("表单文件名修改失败");
-		}
-		return flag;
-	}
-
 	@Override
 	public ServerResponse deleteForm(String[] formUids) {
 		for(String formUid:formUids) {
@@ -181,11 +157,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			if(fieldCountRow!=filedList.size()) {
 				throw new PlatformException("删除表单字段失败");
 			}
-			BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
-			boolean flag = sftp.removeFile(gcfg,"/form", bpmForm.getDynFilename());
-			if(!flag) {
-				throw new PlatformException("删除表单文件失败");
-			}
 		}
 		return ServerResponse.createBySuccess();
 	}
@@ -198,22 +169,14 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	
 	@Override
 	public ServerResponse copyForm(BpmForm bpmForm) {
-		String newFilename = bpmForm.getDynTitle()+".html";
 		BpmForm oldBpmForm = bpmFormManageMapper.queryFormByFormUid(bpmForm.getDynUid());
 		if(null==oldBpmForm) {
 			throw new PlatformException("找不到指定的表单数据");
 		}
-		String oldFilename = oldBpmForm.getDynFilename();
 		//复制表单信息
-		String newFormUid = copyFormInfo(bpmForm,oldBpmForm,newFilename);
+		String newFormUid = copyFormInfo(bpmForm,oldBpmForm);
 		//复制表单字段信息
 		copyFormFieldInfo(newFormUid,oldBpmForm.getDynUid());
-		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
-		//复制表单文件
-		boolean flag = sftp.copyFile(gcfg,"/form",oldFilename,newFilename);
-		if(!flag) {
-			throw new PlatformException("表单文件复制异常");
-		}
 		return ServerResponse.createBySuccess(newFormUid);
 	}
 
@@ -240,13 +203,13 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	/**
 	 * 复制表单信息
 	 */
-	private String copyFormInfo(BpmForm bpmForm,BpmForm oldBpmForm,String newFilename) {
+	private String copyFormInfo(BpmForm bpmForm,BpmForm oldBpmForm) {
 		String newFormUid = EntityIdPrefix.BPM_FORM + UUID.randomUUID().toString();
 		bpmForm.setDynUid(newFormUid);//重新生成唯一主键
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         bpmForm.setCreator(currUser);
+        bpmForm.setDynWebpage(oldBpmForm.getDynWebpage());
         bpmForm.setDynContent(oldBpmForm.getDynContent());
-        bpmForm.setDynFilename(newFilename);//表单类型固定为html
         int countRow = bpmFormManageMapper.saveForm(bpmForm);
         if(countRow!=1) {
         	throw new PlatformException("表单数据复制异常");
@@ -266,15 +229,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		if(countRow!=1) {
 			throw new PlatformException("表单内容修改失败");
 		}
+		List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(bpmForm.getDynUid());
+		deleteFieldPermiss(filedList);
 		bpmFormFieldMapper.deleteFormField(bpmForm.getDynUid());
 		return ServerResponse.createBySuccess();
-	}
-
-	@Override
-	public ServerResponse getFormFileByFormUid(String dynUid) {
-		BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(dynUid);
-		BpmGlobalConfig gcfg = bpmGlobalCofigService.getFirstActConfig();
-		return sftp.getFileStream(gcfg,"/form", bpmForm.getDynFilename());
 	}
 
 	@Override
