@@ -479,6 +479,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		processInstance.setProUid(dhProcessDefinition.getProUid());
 		processInstance.setProVerUid(dhProcessDefinition.getProVerUid());
 		processInstance.setInsInitDate(new Date());
+		processInstance.setInsParent("0");
 		processInstance
 				.setInsInitUser((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		// processInstance.setCompanyNumber(currentUser.getCompanynumber());

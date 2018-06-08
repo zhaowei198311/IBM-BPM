@@ -814,7 +814,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		// 直接关联的节点集合
 		for (String activityBpdId : toActivityBpdIds) {
 			BpmActivityMeta meta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId,
-					sourceNode.getParentActivityId(),"");
+					sourceNode.getParentActivityId(), sourceNode.getSnapshotId());
 			if (meta == null) {
 				throw new BpmFindNextNodeException("找不到指定环节, activityBpdId: " + activityBpdId + ", parentActivityId: "
 						+ sourceNode.getParentActivityId());
