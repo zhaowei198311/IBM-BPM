@@ -221,10 +221,10 @@
 			<if test="tokenActivityId != null and tokenActivityId != ''">
 				TOKEN_ACTIVITY_ID = #{tokenActivityId}
 			</if>
+		</set>
 			<where>
 				INS_UID = #{insUid}
 			</where>
-		</set>
 	</update>
 	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
