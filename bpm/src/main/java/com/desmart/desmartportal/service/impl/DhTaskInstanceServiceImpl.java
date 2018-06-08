@@ -312,13 +312,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	@Transactional
 	public ServerResponse perform(String data) {
+		if (StringUtils.isBlank(data)) {
+			return ServerResponse.createByErrorMessage("缺少必要参数");
+		}
 		log.info("完成任务开始......");
 		try {
-
-			if (StringUtils.isBlank(data)) {
-				return ServerResponse.createByErrorMessage("缺少必要参数");
-			}
-
 			JSONObject jsonBody = JSONObject.parseObject(data);
 			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
 			JSONObject formData = JSONObject.parseObject(String.valueOf(jsonBody.get("formData")));
@@ -328,7 +326,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			String taskUid = taskData.getString("taskUid");
 			// 根据任务标识和用户 去查询流程 实例
 			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-			if (dhTaskInstance==null) {
+			if (dhTaskInstance == null) {
 				return ServerResponse.createByErrorMessage("当前任务不存在!");
 			}
 			if ("12".equals(dhTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
@@ -348,7 +346,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					 */
 
 						JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
-						 
 						
 						String aprOpiComment = approvalData.getString("aprOpiComment");
 						String aprStatus = "通过";
@@ -446,7 +443,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败");
 				}
 			} else {
-				return ServerResponse.createByErrorMessage("请不要重复提交");
+				return ServerResponse.createByErrorMessage("任务已经被提交或暂停");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

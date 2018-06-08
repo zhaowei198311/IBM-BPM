@@ -60,21 +60,14 @@ public interface BpmActivityMetaService {
     
     /**
      * 根据元素id，流程图id和版本id获得BpmActivityMeta，应该是只有一个
-     * @param bpmActivityId
+     * @param activityBpdId
      * @param snapshotId
      * @param bpdId
      * @return
      */
     List<BpmActivityMeta> getBpmActivityMeta(String activityBpdId, String snapshotId, String bpdId);
     
-    /**
-     * 查找指定节点的下个节点
-     * @param sourceActivityMeta
-     * @param insUid
-     * @return  Map的key： 
-     * normal  gateAnd  end 
-     */
-    Map<String, List<BpmActivityMeta>> getNextToActivity(BpmActivityMeta sourceActivityMeta, String insUid);
+
     
     /**
      * 根据主键查询
@@ -85,7 +78,6 @@ public interface BpmActivityMetaService {
     /**
      * 根据流程应用库id，元素id，流程图id和版本id获得BpmActivityMeta 只有一个
      * @param proAppId
-     * @param bpmActivityId
      * @param snapshotId
      * @param bpdId
      * @return
@@ -93,7 +85,7 @@ public interface BpmActivityMetaService {
     BpmActivityMeta getBpmActivityMeta(String proAppId,String activityBpdId, String snapshotId, String bpdId);
     /**
      * 根据元素id，流程图id和版本id以及activityType获得BpmActivityMeta
-     * @param bpmActivityId
+     * @param activityBpdId
      * @param snapshotId
      * @param bpdId
      * @return
@@ -109,11 +101,12 @@ public interface BpmActivityMetaService {
 
     /**
      * 根据环节的 元素id和父元素的主键来查找唯一的一个环节
-     * @param parentActivityId
      * @param activityBpdId
+     * @param parentActivityId
+     * @param proVerUid
      * @return
      */
-    BpmActivityMeta queryMetaByActivityBpdIdAndParentActivityId(String activityBpdId, String parentActivityId);
+    BpmActivityMeta getByActBpdIdAndParentActIdAndProVerUid(String activityBpdId, String parentActivityId, String proVerUid);
 
     /**
      * 根据代表子流程的节点找到它代表的子流程的开始节点

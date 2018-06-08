@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -587,7 +586,13 @@ public class DhRouteServiceImpl implements DhRouteService {
         for (BpmActivityMeta gatewayNode : gatewayNodes) {
             dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayNode.getActivityBpdId());
         }
-
+        // 将新的结果插入
+		if (routingData.getRouteResults().size() > 0) {
+        	for (DhGatewayRouteResult routeResult : routingData.getRouteResults()) {
+        		routeResult.setInsId(insId);
+        		dhGatewayRouteResultMapper.save(routeResult);
+			}
+		}
         return ServerResponse.createBySuccess();
 	}
 
@@ -646,7 +651,8 @@ public class DhRouteServiceImpl implements DhRouteService {
                         result.addRouteResult(routeResult);
                     }
                     // 获得连接点对应的节点
-                    BpmActivityMeta node = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(outLine.getToActivityBpdId(), directNextNode.getParentActivityId());
+                    BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(outLine.getToActivityBpdId(),
+							directNextNode.getParentActivityId(), directNextNode.getSnapshotId());
                     result.includeAll(getNowActivity(node, formData));
                 } else if ("gatewayAnd".equals(activityType)) {
                     // 并行网关
@@ -719,7 +725,8 @@ public class DhRouteServiceImpl implements DhRouteService {
                     result.addRouteResult(routeResult);
                 }
                 // 获得连接点对应的节点
-                BpmActivityMeta node = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(outLine.getToActivityBpdId(), nowActivity.getParentActivityId());
+                BpmActivityMeta node = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(outLine.getToActivityBpdId(),
+						nowActivity.getParentActivityId(), nowActivity.getSnapshotId());
                 result.includeAll(getNowActivity(node, formData));
             } else if ("gatewayAnd".equals(activityType)) {
 				// 并行网关
@@ -777,7 +784,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         String[] toActivityBpdIds = activityToStr.split(",");
         // 直接关联的节点集合
         for (String activityBpdId : toActivityBpdIds) {
-            BpmActivityMeta meta = bpmActivityMetaService.queryMetaByActivityBpdIdAndParentActivityId(activityBpdId, sourceNode.getParentActivityId());
+            BpmActivityMeta meta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, sourceNode.getParentActivityId(), sourceNode.getSnapshotId());
             if (meta == null) {
                 throw new BpmFindNextNodeException("找不到指定环节, activityBpdId: " + activityBpdId + ", parentActivityId: " + sourceNode.getParentActivityId());
             }

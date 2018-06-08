@@ -3,12 +3,7 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -341,13 +336,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			int taskId = getFirstTaskId(result);
 			pubBo.setInstanceId(String.valueOf(insId));
 
-			List<BpmActivityMeta> nextActivities = dhRouteService.getNextActivities(firstHumanActivity, mergedFromData);
-			//dhRouteService.updateGatewayRouteResult(firstHumanActivity, insId, mergedFromData);
-
 			// 获得路由信息
             BpmRoutingData routingData = dhRouteService.getNextActivityTo(firstHumanActivity, mergedFromData);
-            if (routingData.getGatewayNodes().size() > 0) {
 
+			Set<BpmActivityMeta> nextActivities = routingData.getNormalNodes();
+            if (routingData.getGatewayNodes().size() > 0) {
+				dhRouteService.updateGatewayRouteResult(insId, routingData);
             }
 
 
