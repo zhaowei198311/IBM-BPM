@@ -3,11 +3,14 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
-import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
-import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -23,10 +26,10 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.CommonBusinessObjectUtils;
+import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.common.util.FormDataUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.RestUtil;
-import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -39,7 +42,10 @@ import com.desmart.desmartbpm.entity.DhActivityReject;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
+import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -50,6 +56,13 @@ import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.BpmRoutingData;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhApprovalOpinion;
+import com.desmart.desmartportal.entity.DhDrafts;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
@@ -131,6 +144,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private SysRoleUserMapper sysRoleUserMapper;
 	@Autowired
 	private SysTeamMemberMapper sysTeamMemberMapper;
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaService;
 
 	/**
 	 * 查询所有流程实例
@@ -772,7 +787,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private boolean checkReject(BpmActivityMeta bpmActivityMeta4, List<DhActivityReject> dhActivityRejects) {
 		boolean flag = false;
 		for (DhActivityReject dhActivityReject : dhActivityRejects) {
-			if(bpmActivityMeta4.getActivityId().equals(dhActivityReject.getActivityId())) {
+			if(bpmActivityMeta4.getActivityBpdId().equals(dhActivityReject.getActrRejectActivity())) {
 				flag = true;
 				break;
 			}
@@ -808,7 +823,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (insId == 0 || StringUtils.isBlank(activityBpdId) || StringUtils.isBlank(userUid)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
+		
+		
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
 		// 获取树流程信息
@@ -821,12 +837,20 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		Map<Object, Object> resultMap = ExecutionTreeUtil.queryTokenId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
+		
+		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
+				String currActivityId = sourceTask.getTaskActivityId();
+				BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+				BpmActivityMeta targetActivityMeta = bpmActivityMetaService
+						.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, currActivityMeta.getParentActivityId()
+								, currActivityMeta.getSnapshotId());
+		String actcAssignVariable = targetActivityMeta.getDhActivityConf().getActcAssignVariable();
 		// 数据信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
 		List<String> dataList = new ArrayList<>();
 		dataList.add(userUid);
 		// todo  判断驳回到的这个环节，在配置中的处理人变量是哪个，pubBo设置对应的变量
-		pubBo.setNextOwners_0(dataList);
+		CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, dataList);
 		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,tokenId);
 		if (httpMap.get("moveTokenResult").getCode() == 200) {
 
