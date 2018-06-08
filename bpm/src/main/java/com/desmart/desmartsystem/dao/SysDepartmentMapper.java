@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysDepartment;
@@ -28,5 +29,7 @@ public interface SysDepartmentMapper extends BaseMapper<SysDepartment> {
 	//查询所有部门信息
 	public List<SysDepartment> selectDesmarts();
 	
+	//根据部门编码查询部门
+	SysDepartment getSysDepartmentByDepartNo(@Param("departNo")String departNo);
 	
 }

@@ -212,4 +212,32 @@
 		     DEPART_ZONE=#{departZone,jdbcType=VARCHAR}, COMPANY_UID=#{companyUid,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
 		     where DEPART_UID = #{departUid,jdbcType=VARCHAR}
 	  </update>
+	  
+	  <select id="getSysDepartmentByDepartNo" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
+			select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE FROM SYS_DEPARTMENT
+		    WHERE DEPART_NO = #{departNo}
+	  </select>
 </mapper>

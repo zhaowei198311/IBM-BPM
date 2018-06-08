@@ -165,13 +165,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 						
 						roleUser.setDepartUid(str.toString());
 					}
-				} else {
-					List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-					for (SysRoleUser sysRoleUser : roleUsers) {
-						userUid += sysRoleUser.getUserUid() + ";";
-						userName += sysRoleUser.getUserName() + ";";
-					}
+				} 
+				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+				for (SysRoleUser sysRoleUser : roleUsers) {
+					userUid += sysRoleUser.getUserUid() + ";";
+					userName += sysRoleUser.getUserName() + ";";
 				}
+				
 				break;
 			case TEAM:
 
@@ -273,12 +273,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	private String recursionSelectDepartMent(String departNo,StringBuffer str) {
-		SysDepartment departmentAdmins = sysDepartmentMapper.getSysDepartmentByDepartNo(departNo);
-		if(departmentAdmins==null||"".equals(departmentAdmins.getDepartAdmins())) {
+		SysDepartment department = sysDepartmentMapper.getSysDepartmentByDepartNo(departNo);
+		if(department==null||"".equals(department.getDepartParent())) {
 			return str.toString();
 		}else {
-			str.append(","+departmentAdmins.getDepartAdmins());
-			return recursionSelectDepartMent(departNo, str);
+			str.append(","+department.getDepartParent());
+			return recursionSelectDepartMent(department.getDepartParent(), str);
 		}
 	}
 

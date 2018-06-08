@@ -54,7 +54,7 @@
   			and u.user_Uid = #{userUid}
   		</if>
   		<if test="departUid!=null">
-			 and ud.depart_Uid = #{departUid}
+			 and ud.depart_Uid in (#{departUid})
   		</if>
   		
   		<if test="companyCode!=null">
