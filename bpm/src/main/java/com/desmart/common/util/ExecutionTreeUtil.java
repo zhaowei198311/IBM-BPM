@@ -20,8 +20,9 @@ public class ExecutionTreeUtil {
     /**
      * 从流程详细信息中获得指定任务的tokenId和父tokenId
      * @param taskId 任务ID
-     * @param jsonObject 由流程详细信息转化来的JSONObject
+     * @param json 由流程详细信息转化来的JSONObject
      * @return
+	 * Map中的key ： 1）tokenId 2) preTokenId
      */
 	public static final Map<Object, Object> queryTokenId(int taskId, JSONObject json){
     	// 解析jsonObject

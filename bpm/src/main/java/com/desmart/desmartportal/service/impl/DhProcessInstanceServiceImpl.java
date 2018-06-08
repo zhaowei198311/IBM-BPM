@@ -5,6 +5,8 @@ package com.desmart.desmartportal.service.impl;
 
 import java.util.*;
 
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
+import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -306,8 +308,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			ServerResponse.createByErrorMessage("草稿版本不符合当前可发起版本，请重新起草");
 		}
 
-		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
+        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
+		// 查看当前用户有没有发起流程的权限
+        if (!checkPermissionStart(startableDefinition)) {
+            return ServerResponse.createByErrorMessage("您没有发起该流程的权限");
+        }
+
 		BpmActivityMeta firstHumanActivity = dhProcessDefinitionService
 				.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid).getData();
 
@@ -593,6 +600,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return ServerResponse.createBySuccess(resultMap);
 	}
 
+    /**
+     * 查看当前用户有没有发起指定流程的权限
+     * @param processDefintion
+     * @return
+     */
 	private boolean checkPermissionStart(DhProcessDefinition processDefintion) {
 		boolean flag = false;
 		log.info("判断---当前用户权限 开始。。。");
@@ -605,6 +617,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhObjectPermission.setProAppId(processDefintion.getProAppId());
 			dhObjectPermission.setProUid(processDefintion.getProUid());
 			dhObjectPermission.setProVerUid(processDefintion.getProVerUid());
+			dhObjectPermission.setOpObjType(DhObjectPermissionObjType.PROCESS.getCode());
+			dhObjectPermission.setOpAction(DhObjectPermissionAction.START.getCode());
 			List<DhObjectPermission> list = dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjectPermission);
 			// 根据用户id 去 查询 角色id
 			SysRoleUser sysRoleUser = new SysRoleUser();
@@ -776,7 +790,19 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String activityBpdId = routeData.getString("activityBpdId");
 		String userUid = routeData.getString("userUid");
 		String taskUid = taskData.getString("taskUid");
-		int taskId = taskData.getIntValue("taskId");
+
+		// 判断驳回的任务是否存在
+		if (StringUtils.isBlank(taskUid)) {
+		    return ServerResponse.createByErrorMessage("缺少任务信息");
+        }
+        DhTaskInstance sourceTask = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+        if (sourceTask == null || !"12".equals(sourceTask.getTaskStatus())) {
+            return ServerResponse.createByErrorMessage("任务不存在，或状态异常");
+        }
+
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(sourceTask.getInsUid());
+
+        int taskId = taskData.getIntValue("taskId");
 		log.info("驳回流程开始......");
 		log.info("流程标识为:" + routeData.getString("insId"));
 		if (insId == 0 || StringUtils.isBlank(activityBpdId) || StringUtils.isBlank(userUid)) {
@@ -792,20 +818,20 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		// 查询token
 		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
-		ExecutionTreeUtil taskIdUtil = new ExecutionTreeUtil();
-		Map<Object, Object> resultMap = taskIdUtil.queryTokenId(taskId, jsonObject);
+		Map<Object, Object> resultMap = ExecutionTreeUtil.queryTokenId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
 		// 数据信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
 		List<String> dataList = new ArrayList<>();
 		dataList.add(userUid);
+		// todo  判断驳回到的这个环节，在配置中的处理人变量是哪个，pubBo设置对应的变量
 		pubBo.setNextOwners_0(dataList);
 		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,tokenId);
 		if (httpMap.get("moveTokenResult").getCode() == 200) {
 
 			// 驳回成功修改当前用户任务状态为 完成
-			DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.queryByInsId(insId);
+
 			String insUid = dhProcessInstance.getInsUid();
 			DhTaskInstance dhTaskInstance = new DhTaskInstance();
 			dhTaskInstance.setInsUid(insUid);

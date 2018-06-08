@@ -29,7 +29,7 @@ public interface DhProcessInstanceMapper {
 	
 	void insertProcess(DhProcessInstance processInstance);
 	
-	DhProcessInstance queryByInsId(int insId);
+	List<DhProcessInstance> queryByInsId(int insId);
 	
 	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
 	/**

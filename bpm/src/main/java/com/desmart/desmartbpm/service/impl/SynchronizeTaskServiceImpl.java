@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSON;
+import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.ExecutionTreeUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +75,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private SendEmailService sendEmailService;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
+    @Autowired
+    private BpmGlobalConfigService bpmGlobalConfigService;
+
     
     /**
      * 从引擎同步任务
@@ -82,14 +92,14 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     }
     
     @Transactional
-    private void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+    public void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         List<DhTaskInstance> dhTaskList = Lists.newArrayList();
         List<DhAgentRecord> agentRecordList = Lists.newArrayList();
-        
+        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             Map<String, Object> data = null;
             try {
-                data =  handleLswTask(lswTask, groupInfo);
+                data =  handleLswTask(lswTask, groupInfo, globalConfig);
             } catch (Exception e) {
                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
             }
@@ -100,9 +110,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         LOG.info("同步新任务：" + dhTaskList.size() + "个");
         LOG.info("产生代理记录：" + agentRecordList.size() + "个");
-//        if (dhTaskList.size() > 0) {
-//            dhTaskInstanceService.insertBatch(dhTaskList);
-//        }
+
         for(DhTaskInstance task : dhTaskList) {
         	dhTaskInstanceMapper.insertTask(task);
         	//发送邮件通知
@@ -143,13 +151,36 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @param groupInfo
      * @return
      */
-    private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo) {
+    private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
         Map<String, Object> result = Maps.newHashMap();
         
         // 流程图上的元素id
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
         Long insId = lswTask.getBpdInstanceId(); // 流程实例id
-        DhProcessInstance proInstance = dhProcessInstanceMapper.queryByInsId(insId.intValue());
+
+        // 获得任务所属的流程实例
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
+        HttpReturnStatus processDataResult = bpmProcessUtil.getProcessData(insId.intValue());
+        if (HttpReturnStatusUtil.isErrorResult(processDataResult)) {
+            LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
+            return null;
+        }
+        Map<Object, Object> tokenMap = ExecutionTreeUtil.queryTokenId(lswTask.getTaskId(),
+                JSON.parseObject(processDataResult.getMsg()));
+        if (tokenMap == null || tokenMap.get("tokenId") == null) {
+            LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
+            return null;
+        }
+
+        DhProcessInstance proInstance = null;
+        if (tokenMap.get("parentToken") == null) {
+            // 如果父token是null，说明当前任务属于主流程
+
+        } else {
+
+        }
+
+
         // 查看环节的任务类型
         if (proInstance == null) {
             LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
@@ -174,7 +205,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
-        //  查找上个环节处理人信息
+        // 查找上个环节处理人信息
         ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(proInstance, bpmActivityMeta);
         BpmActivityMeta preMeta = null;
         if (preActivityResponse.isSuccess()) {

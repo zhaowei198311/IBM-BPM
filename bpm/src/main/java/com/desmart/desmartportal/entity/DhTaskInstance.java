@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.desmart.desmartportal.entity;
 
 import java.util.Date;
@@ -175,6 +172,8 @@ public class DhTaskInstance {
 	
 	private Double remainHours; // 会签出去时，任务剩余时间
 
+	private String taskActivityId; // 任务停留的节点唯一标识
+
 	/**
 	 * @return the taskUid
 	 */
@@ -320,6 +319,14 @@ public class DhTaskInstance {
 	 */
 	public String getTaskPreviousUsrUsername() {
 		return taskPreviousUsrUsername;
+	}
+
+	public String getTaskActivityId() {
+		return taskActivityId;
+	}
+
+	public void setTaskActivityId(String taskActivityId) {
+		this.taskActivityId = taskActivityId;
 	}
 
 	/**
