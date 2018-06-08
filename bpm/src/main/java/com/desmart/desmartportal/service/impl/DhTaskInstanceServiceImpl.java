@@ -18,7 +18,6 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

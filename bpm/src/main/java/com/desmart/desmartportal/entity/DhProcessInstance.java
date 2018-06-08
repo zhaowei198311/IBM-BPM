@@ -41,13 +41,13 @@ public class DhProcessInstance {
 
 	private String insDescription; // 流程实例描述
 	
-	private int insId; // 流程实例编号(引擎)
+	private Integer insId; // 流程实例编号(引擎)
 
 	private String insParent; // 父流程实例ID
 
 	private String insStatus; // 流程实例状态
 
-	private int insStatusId; // 流程实例状态ID
+	private Integer insStatusId; // 流程实例状态ID
 
 	private String proAppId; // 流程应用库ID
 	
@@ -67,16 +67,20 @@ public class DhProcessInstance {
 	
 	private String insData; // 流程实例数据
 
-	private double insDuration; // 流程实例持续时间
+	private Double insDuration; // 流程实例持续时间
 
-	private double insDelayDuration; // 流程实例延迟持续时间
+	private Double insDelayDuration; // 流程实例延迟持续时间
 
 	private String insDriveFolderUid; // 流程实例文件目录ID
 
 	private String insRoutingData; // 流程实例路由数据
 	private String companyNumber; // 公司编码
 	private String departNo;      // 发起人部门编号
-	
+	private String tokenId;         // (当流程是一个子流程时)父级流程图上代表这个子流程的环节主键
+	private String tokenActivityId; // 当这个流程是子流程时，停留在它上的tokenId
+
+
+
 	// 非流程表数据
 	private String proName; // 流程名
 	private String departName;
@@ -119,6 +123,22 @@ public class DhProcessInstance {
 		return insDescription;
 	}
 
+	public String getTokenId() {
+		return tokenId;
+	}
+
+	public void setTokenId(String tokenId) {
+		this.tokenId = tokenId;
+	}
+
+	public String getTokenActivityId() {
+		return tokenActivityId;
+	}
+
+	public void setTokenActivityId(String tokenActivityId) {
+		this.tokenActivityId = tokenActivityId;
+	}
+
 	/**
 	 * @param insDescription the insDescription to set
 	 */
@@ -129,14 +149,14 @@ public class DhProcessInstance {
 	/**
 	 * @return the insId
 	 */
-	public int getInsId() {
+	public Integer getInsId() {
 		return insId;
 	}
 
 	/**
 	 * @param insId the insId to set
 	 */
-	public void setInsId(int insId) {
+	public void setInsId(Integer insId) {
 		this.insId = insId;
 	}
 
@@ -195,14 +215,14 @@ public class DhProcessInstance {
 	/**
 	 * @return the insStatusId
 	 */
-	public int getInsStatusId() {
+	public Integer getInsStatusId() {
 		return insStatusId;
 	}
 
 	/**
 	 * @param insStatusId the insStatusId to set
 	 */
-	public void setInsStatusId(int insStatusId) {
+	public void setInsStatusId(Integer insStatusId) {
 		this.insStatusId = insStatusId;
 	}
 
@@ -335,28 +355,28 @@ public class DhProcessInstance {
 	/**
 	 * @return the insDuration
 	 */
-	public double getInsDuration() {
+	public Double getInsDuration() {
 		return insDuration;
 	}
 
 	/**
 	 * @param insDuration the insDuration to set
 	 */
-	public void setInsDuration(double insDuration) {
+	public void setInsDuration(Double insDuration) {
 		this.insDuration = insDuration;
 	}
 
 	/**
 	 * @return the insDelayDuration
 	 */
-	public double getInsDelayDuration() {
+	public Double getInsDelayDuration() {
 		return insDelayDuration;
 	}
 
 	/**
 	 * @param insDelayDuration the insDelayDuration to set
 	 */
-	public void setInsDelayDuration(double insDelayDuration) {
+	public void setInsDelayDuration(Double insDelayDuration) {
 		this.insDelayDuration = insDelayDuration;
 	}
 
