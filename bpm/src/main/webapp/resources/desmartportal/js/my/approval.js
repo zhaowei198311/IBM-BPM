@@ -61,8 +61,9 @@ $(function () {
 		    var insId = str.substring(0,str.indexOf("+"));
 		    var userUid = str.substring(str.lastIndexOf("+") + 1);
 		    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
+		    var activityId = $("#activityId").val();
 		    finalData.routeData = {"insId":insId,"userUid":userUid,"activityBpdId":activityBpdId};
-		    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+		    finalData.taskData = {"taskId":taskId,"taskUid":taskUid,"activityId":activityId};
 		    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
 		    
 		    $.ajax({

@@ -805,6 +805,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String activityBpdId = routeData.getString("activityBpdId");
 		String userUid = routeData.getString("userUid");
 		String taskUid = taskData.getString("taskUid");
+		String currActivityId = taskData.getString("activityId");
 
 		// 判断驳回的任务是否存在
 		if (StringUtils.isBlank(taskUid)) {
@@ -839,7 +840,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
 		
 		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
-				String currActivityId = sourceTask.getTaskActivityId();
+				//String currActivityId = sourceTask.getTaskActivityId();//当前环节
+				
 				BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
 				BpmActivityMeta targetActivityMeta = bpmActivityMetaService
 						.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, currActivityMeta.getParentActivityId()
