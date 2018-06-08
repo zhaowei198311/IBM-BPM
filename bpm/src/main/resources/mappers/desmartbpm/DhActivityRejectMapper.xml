@@ -60,6 +60,7 @@
     left join bpm_activity_meta fm on ar.activity_id = fm.activity_id
     where ar.activity_id = #{activityId,jdbcType=VARCHAR}
     and fm.PARENT_ACTIVITY_ID = am.PARENT_ACTIVITY_ID
+    and fm.SNAPSHOT_ID = am.SNAPSHOT_ID
   </select>
   
     <insert id="insertBatch"  parameterType="list">
