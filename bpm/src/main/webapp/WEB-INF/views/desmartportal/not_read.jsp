@@ -62,7 +62,7 @@
 				<div class="layui-tab">
 				  	<ul class="layui-tab-title">
 					    <li class="unread">未读通知</li>
-					    <li class="read">通知查询</li>
+					    <li class="read">已读通知</li>
 				  	</ul>
 				  	<div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
@@ -87,45 +87,12 @@
 								      <th>任务状态</th>
 								      <th>上一环节处理人</th>
 								      <th>流程创建人</th>
-								      <th>任务接收时间</th>
+								      <th>抄送时间</th>
 								    </tr> 
 								</thead>
 								<tbody id="transferBody" />
 							</table>
 					    </div>
-<!-- 					    <div class="layui-tab-item"> -->
-<!-- 					    	<p class="table_list"><i class="layui-icon">&#xe61d;</i>共3条任务</p> -->
-<!-- 							<table class="layui-table backlog_table"> -->
-<%-- 								<colgroup> --%>
-<%-- 								    <col width="60"> --%>
-<%-- 								    <col width="100"> --%>
-<%-- 								    <col> --%>
-<%-- 								    <col width="150"> --%>
-<%-- 								    <col width="150">  --%>
-<%-- 								    <col width="150"> --%>
-<%-- 								</colgroup> --%>
-<!-- 								<thead> -->
-<!-- 								    <tr> -->
-<!-- 								      <th>序号</th> -->
-<!-- 								      <th>来自</th> -->
-<!-- 								      <th>标题</th> -->
-<!-- 								      <th>类型</th> -->
-<!-- 								      <th>接收时间</th> -->
-<!-- 								      <th>期限</th> -->
-<!-- 								    </tr>  -->
-<!-- 								</thead> -->
-<!-- 								<tbody id="transferedBody"> -->
-<!-- 								    <tr> -->
-<!-- 								      <td>1</td> -->
-<!-- 								      <td>管理员</td> -->
-<!-- 								      <td><i class="layui-icon backlog_img">&#xe63c;</i> 人生</td> -->
-<!-- 								      <td>日常报销</td> -->
-<!-- 								      <td>2018-03-12</td> -->
-<!-- 								      <td></td> -->
-<!-- 								    </tr> -->
-<!-- 								</tbody> -->
-<!-- 							</table> -->
-<!-- 					    </div> -->
 				  	</div>
 				</div>			
 			</div>
