@@ -39,7 +39,7 @@
 		SELECT tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='user') tm LEFT JOIN SYS_USER u  on tm.USER_UID=u.USER_UID
 		) teamuser LEFT JOIN SYS_USER_DEPARTMENT ud on teamuser.USER_UID=ud.USER_UID  where 1=1 
 		<if test="departUid!=null">
-			and depart_uid = #{departUid} 
+			and depart_uid in (${departUid}) 
 		</if>
 		<if test="companyCode!=null">
 			and company_code = #{companyCode}

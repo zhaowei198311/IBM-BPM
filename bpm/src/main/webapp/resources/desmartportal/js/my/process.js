@@ -188,12 +188,12 @@ function toShowRouteBar () {
 					      +'</th>'							     
 				      +'</tr>';
                 	$("#choose_user_tbody").append(chooseUserDiv);
+                	$(".display_container2").css("display","block");
+                	layer.close(index);
                 	}//end for
                 }
         	}//end ajax
 		});
-    	layer.close(index);
-		$(".display_container2").css("display","block");
 	}); //end
 }
 

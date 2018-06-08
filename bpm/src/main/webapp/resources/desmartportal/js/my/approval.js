@@ -506,8 +506,8 @@ function checkUserData() {
                 	}//end for
             	}
             	$("#choose_user_tbody").append(chooseUserDiv);
-            	layer.closeAll("loading");
             	$(".display_container2").css("display","block"); //end
+            	layer.closeAll("loading");
             }else {
             	layer.closeAll("loading");
         		layer.alert(result.msg);

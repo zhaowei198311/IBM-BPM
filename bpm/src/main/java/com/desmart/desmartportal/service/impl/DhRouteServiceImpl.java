@@ -161,9 +161,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
 					if (StringUtils.isNotBlank(companyNum)) {
 						StringBuffer str = new StringBuffer(departNo);
-						str.append(recursionSelectDepartMent(departNo,str));
+						String result = recursionSelectDepartMent(departNo,str);
 						
-						roleUser.setDepartUid(str.toString());
+						roleUser.setDepartUid(result);
 					}
 				} 
 				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
@@ -187,7 +187,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 				}
 				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
 					if (StringUtils.isNotBlank(companyNum)) {
-						sysTeamMember.setDepartUid(departNo);
+						if (StringUtils.isNotBlank(companyNum)) {
+							StringBuffer str = new StringBuffer(departNo);
+							String result = recursionSelectDepartMent(departNo,str);
+							sysTeamMember.setDepartUid(result);
+						}
 					}
 				}
 
@@ -479,9 +483,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 			if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
 				if (StringUtils.isNotBlank(companyNum)) {
 					StringBuffer str = new StringBuffer(departNo);
-					str.append(recursionSelectDepartMent(departNo,str));
-					
-					roleUser.setDepartUid(str.toString());
+					String result = recursionSelectDepartMent(departNo,str);
+					roleUser.setDepartUid(result);
 				}
 			}
 
@@ -505,7 +508,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 			if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
 				if (StringUtils.isNotBlank(companyNum)) {
-					sysTeamMember.setDepartUid(departNo);
+					StringBuffer str = new StringBuffer(departNo);
+					String result = recursionSelectDepartMent(departNo,str);
+					sysTeamMember.setDepartUid(result);
 				}
 			}
 
