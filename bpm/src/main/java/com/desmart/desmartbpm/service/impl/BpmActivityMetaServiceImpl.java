@@ -243,6 +243,7 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         BpmActivityMeta metaSelective = new BpmActivityMeta();
         metaSelective.setActivityBpdId(activityBpdId);
         metaSelective.setParentActivityId(parentActivityId);
+        metaSelective.setSnapshotId(proVerUid);
         List<BpmActivityMeta> bpmActivityMetas = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         if (bpmActivityMetas.isEmpty()) {
             return null;
