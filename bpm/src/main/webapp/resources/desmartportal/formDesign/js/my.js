@@ -4,21 +4,8 @@ var view = null;
 /*动态表单渲染js*/
 $(function(){
 	drawPage();
-	showTableP();
 	$("#formSet").css("display","block");
 });
-
-function showTableP(){
-	var tableArr = view.find(".layui-table");
-	tableArr.each(function(){
-		if($(this).find("tbody").html()==null || $(this).find("tbody").html()==""){
-			var pText = $(this).prev().text().trim();
-			if($(this).attr("title")==pText){
-				$(this).prev().remove();
-			}
-		}
-	});
-}
 
 var chooseInputWidth = new Array();
 //渲染页面的方法
@@ -40,8 +27,9 @@ function drawPage() {
                 if (column.find(".subDiv").length == 0 && column.find(".labelDiv").length == 0) {
                     //表单块标题
                 	column.find("p").addClass("title_p");
+                	column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
                     pHtml = column.html();
-                    var pText = column.find("p").text();
+                    var pText = column.find("p")[0].firstChild.data.trim();
                     flag = false;
                     if (column.find(".title_p").length != 0) {
                         formHtml = formHtml.substring(0, formHtml.length - 4);
@@ -102,8 +90,9 @@ function drawPage() {
                 		if(pObj.attr("title")=="table_title"){
                 			//表单块标题
                         	column.find("p").addClass("title_p");
+                        	column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
                             pHtml = column.html();
-                            var pText = column.find("p").text();
+                            var pText = column.find("p")[0].firstChild.data.trim();
                             flag = false;
                             if (column.find(".title_p").length != 0) {
                                 formHtml = formHtml.substring(0, formHtml.length - 4);
@@ -272,6 +261,7 @@ function drawPage() {
                 var column = $(colObj[i]);
                 if (column.find(".subDiv").length == 0 && column.find(".labelDiv").length == 0) {
                     column.find("p").addClass("title_p");
+                    column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
                     pHtml = column.html();
                     flag = false;
                     if (column.find("p").length != 0) {
@@ -518,6 +508,13 @@ function drawPage() {
         });
     });
 }
+
+function showTable(obj){
+	var pText = $(obj).parent()[0].firstChild.data.trim();
+	console.log(pText);
+	$("table[title='"+pText+"']").slideToggle("slow");
+}
+
 /**
  * 根据下拉列表的组件对象，和数据字典的id，动态生成下拉组件
  */

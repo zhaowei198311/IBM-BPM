@@ -375,7 +375,7 @@ var common = {
 			});
 			if(flag){
 				$(this).css("display","none");
-				var pText = $(this).prev().text().trim();
+				var pText = $(this).prev()[0].firstChild.data.trim();
 				if($(this).attr("title")==pText){
 					$(this).prev().css("display","none");
 				}
@@ -468,7 +468,7 @@ var common = {
 			var edit = paramObj["edit"];
 			if(display=="none"){
 				$("[name='"+name+"']").parent().css("display","none");
-				var pTitle = $("[name='"+name+"']").text().trim();
+				var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
 				var tableArr = $("#formSet").find(".layui-table");
 				for(var i=0;i<tableArr.length;i++){
 					var talbeTitle = $(tableArr[i]).attr("title");
@@ -479,7 +479,7 @@ var common = {
 				}
 			}
 			if(edit=="no"){
-				var pTitle = $("[name='"+name+"']").text().trim();
+				var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
 				var tableArr = $("#formSet").find(".layui-table");
 				for(var i=0;i<tableArr.length;i++){
 					var talbeTitle = $(tableArr[i]).attr("title");

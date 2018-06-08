@@ -183,7 +183,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div id="formSet">${formHtml }</div>
+            <div id="formSet">${bpmForm.dynWebpage }</div>
             
             <div class="option_container">
                 <div class="layui-tab">

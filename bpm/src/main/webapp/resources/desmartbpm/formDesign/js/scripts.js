@@ -773,7 +773,7 @@ function saveHtml() {
         },
         traditional: true,
         success: function (result) {
-            if (result.status == 0) { //未绑定
+            //if (result.status == 0) { //未绑定
                 var filename = $("#formName").val() + ".html";
                 webpage = $("#downloadModal textarea").val();
                 dynContent += formatJs;
@@ -1074,9 +1074,9 @@ function saveHtml() {
                         }
                     });
                 }
-            } else {
+            /*} else {
                 layer.alert("该表单已被步骤绑定");
-            }
+            }*/
             layer.closeAll("loading");
         }
     });
