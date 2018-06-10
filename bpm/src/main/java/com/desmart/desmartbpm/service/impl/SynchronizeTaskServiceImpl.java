@@ -12,6 +12,7 @@ import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -39,10 +40,6 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.DhAgentService;
-import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartsystem.service.SendEmailService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -61,6 +58,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhProcessInstanceService dhProcessInstanceService;
     @Autowired
     private DhAgentService dhAgentService;
     @Autowired
@@ -156,11 +155,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         
         // 流程图上的元素id
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
-        Long insId = lswTask.getBpdInstanceId(); // 流程实例id
+        int insId = lswTask.getBpdInstanceId().intValue(); // 流程实例id
 
-        // 获得任务所属的流程实例
+        // 获得任务所属的流程实例, 并定位环节节点
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
-        HttpReturnStatus processDataResult = bpmProcessUtil.getProcessData(insId.intValue());
+        HttpReturnStatus processDataResult = bpmProcessUtil.getProcessData(insId);
         if (HttpReturnStatusUtil.isErrorResult(processDataResult)) {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
             return null;
@@ -172,23 +171,37 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             return null;
         }
 
-        DhProcessInstance proInstance = null;
+        DhProcessInstance dhProcessInstance = null; // 流程实例
+        BpmActivityMeta bpmActivityMeta = null; // 任务停留的环节
         if (tokenMap.get("parentToken") == null) {
             // 如果父token是null，说明当前任务属于主流程
-
+            dhProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
+            if (dhProcessInstance == null) {
+                LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+                return null;
+            }
+            bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, "0",
+                    dhProcessInstance.getProVerUid());
         } else {
-
+            // 如果父token是存在，说明当前任务属于子流程
+            dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, (String)tokenMap.get("parentToken"));
+            if (dhProcessInstance == null) {
+                LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+                return null;
+            }
+            bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, dhProcessInstance.getTokenActivityId(),
+                    dhProcessInstance.getProVerUid());
         }
 
 
         // 查看环节的任务类型
-        if (proInstance == null) {
-            LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+        if (bpmActivityMeta == null) {
+            LOG.error("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
             return null;
         }
-        String proAppId = proInstance.getProAppId();
-        String proUid = proInstance.getProUid();
-        String proVerUid = proInstance.getProVerUid();
+        String proAppId = dhProcessInstance.getProAppId();
+        String proUid = dhProcessInstance.getProUid();
+        String proVerUid = dhProcessInstance.getProVerUid();
         
         // 查看任务表中是否已经有这个任务id的任务
         boolean taskExists = dhTaskInstanceService.isTaskExists(lswTask.getTaskId());
@@ -196,17 +209,15 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTaskInstanceMapper.updateSynNumberByTaskId(lswTask.getTaskId(), lswTask.getTaskId());
             return null;
         }
-        
-        BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
-        metaSelective.setActivityBpdId(activityBpdId);
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
-        BpmActivityMeta bpmActivityMeta = list.get(0);
+
+
+
         // 创建出 DhTaskInstance
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
         // 查找上个环节处理人信息
-        ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(proInstance, bpmActivityMeta);
+        ServerResponse<BpmActivityMeta> preActivityResponse = dhRouteService.getPreActivity(dhProcessInstance, bpmActivityMeta);
         BpmActivityMeta preMeta = null;
         if (preActivityResponse.isSuccess()) {
             preMeta = preActivityResponse.getData();
@@ -215,7 +226,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
         }
         
-        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, proInstance, bpmActivityMeta, preMeta);
+        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance, bpmActivityMeta, preMeta);
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
         
         
@@ -232,7 +243,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     agentRecord.setAgentDetailId(EntityIdPrefix.DH_AGENT_RECORD + UUID.randomUUID().toString());
                     agentRecord.setAgentId(delegateResult.get("agentId"));
                     agentRecord.setAgentUser(delegateResult.get("delegateUser"));
-                    agentRecord.setProName(proInstance.getProName());
+                    agentRecord.setProName(dhProcessInstance.getProName());
                     agentRecord.setTaskTitle(bpmActivityMeta.getActivityName());
                     agentRecord.setTaskUid(task.getTaskUid());
                     agentRecordList.add(agentRecord);
@@ -287,6 +298,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
             dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
             dhTask.setTaskDueDate(dueDate);
+            dhTask.setTaskActivityId(bpmActivityMeta.getActivityId());
             taskList.add(dhTask);
         }
         return taskList;
@@ -302,7 +314,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             if (StringUtils.isNotBlank(uidStr)) {
                 uidList.addAll(Arrays.asList(uidStr.split(",")));
             }
-            
         }
         return uidList;
     }

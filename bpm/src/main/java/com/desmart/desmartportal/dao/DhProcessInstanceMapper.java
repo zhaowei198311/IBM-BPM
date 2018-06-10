@@ -19,8 +19,14 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 @Repository
 public interface DhProcessInstanceMapper {
 	
-	List <DhProcessInstance> selectAllProcess(DhProcessInstance processInstance);
+    /**
+     * 查询满足条件的流程实例
+     */
+	List <DhProcessInstance> queryBySelective(DhProcessInstance processInstance);
 	
+	/**
+	 * 根据主键查询流程实例
+	 */
 	DhProcessInstance selectByPrimaryKey(String insUid);
 	
 	int updateByPrimaryKeySelective(DhProcessInstance processInstance);
@@ -29,6 +35,9 @@ public interface DhProcessInstanceMapper {
 	
 	void insertProcess(DhProcessInstance processInstance);
 	
+	/**
+	 * 查找指定流程编号的所有实例
+	 */
 	List<DhProcessInstance> queryByInsId(int insId);
 	
 	List <DhProcessInstance> queryByStausOrTitle(Map<String, Object> paramMap);
@@ -42,4 +51,10 @@ public interface DhProcessInstanceMapper {
 	 * @throws
 	 */
 	int updateBySelective(DhProcessInstance dhProcessInstance);
+
+	/**
+	 * 查找指定流程编号的主流程
+	 */
+	DhProcessInstance getMainProcessByInsId(int insId);
+
 }

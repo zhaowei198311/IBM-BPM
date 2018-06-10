@@ -22,7 +22,6 @@ import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhTaskInstance;
 
 @Service
 public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
@@ -189,7 +188,7 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 		DhProcessInstance dhProcessInstance = new DhProcessInstance();
 		dhProcessInstance.setProUid(proUid);
 		dhProcessInstance.setProAppId(proAppId);
-		List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.selectAllProcess(dhProcessInstance);
+		List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryBySelective(dhProcessInstance);
 		List<String> insUids = new ArrayList<>();
 		for (DhProcessInstance dpi : dhProcessInstanceList) {
 			insUids.add(dpi.getInsUid());

@@ -4,14 +4,13 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import com.desmart.desmartportal.entity.*;
+import com.desmart.desmartportal.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -44,17 +43,6 @@ import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.CommonBusinessObject;
-import com.desmart.desmartportal.entity.DhApprovalOpinion;
-import com.desmart.desmartportal.entity.DhDrafts;
-import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhRoutingRecord;
-import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.DhApprovalOpinionService;
-import com.desmart.desmartportal.service.DhProcessFormService;
-import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -127,7 +115,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
-
+    @Autowired
+    private ThreadPoolProvideService threadPoolProvideService;
 	/**
 	 * 查询所有流程实例
 	 */
@@ -241,7 +230,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					processInstance.setInsUid(taskInstance1.getInsUid());// 获取taskList里的insUid
 					processInstance.setInsStatusId(id);
 					List<DhProcessInstance> processInstanceList = dhProcessInstanceMapper
-							.selectAllProcess(processInstance);// 根据instUid查询processList
+							.queryBySelective(processInstance);// 根据instUid查询processList
 					for (DhProcessInstance p : processInstanceList) {
 						resultList.add(p);
 					}
@@ -340,6 +329,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					String activityBpdId = dhTaskInstance.getActivityBpdId();
 					String snapshotId = dhProcessInstance.getProVerUid();
 					String bpdId = dhProcessInstance.getProUid();
+					Integer insId = dhProcessInstance.getInsId();
 					BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
 
  					// 整合formdata
@@ -361,9 +351,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					String aprStatus = "通过";
 					String insUid = dhTaskInstance.getInsUid();
 
-
-
-
 					// 审批信息记录
 					DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 					dhApprovalOpinion.setInsUid(insUid);
@@ -382,10 +369,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
 					dhProcessInstance.setInsData(insJson.toJSONString());
 					//判断流程是否结束
-					List<BpmActivityMeta> nextBpmActivityMetas = dhRouteServiceImpl.getNextActivities(bpmActivityMeta, formData);
-					//dhRouteServiceImpl.updateGatewayRouteResult(bpmActivityMeta, dhProcessInstance.getInsId(), formData);
+					BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(bpmActivityMeta, formData);
+                    Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
+                    // 更新网关环节的信息
+                    if (routingData.getGatewayNodes().size() > 0) {
+                        ExecutorService executorService = threadPoolProvideService.getThreadPoolToUpdateRouteResult();
+                        Future<Boolean> future = executorService.submit(new SaveRouteResultCallable(dhRouteServiceImpl, insId, routingData));
+                        Boolean updateSucess = true;
+                        try {
+                            updateSucess = future.get(2, TimeUnit.SECONDS); // 最多等待2秒
+                        } catch (Exception e) {
+                            updateSucess = false;
+                        }
+                        if (!updateSucess) {
+                            return ServerResponse.createByErrorMessage("更新路中间表失败");
+                        }
+                    }
 
-					if(nextBpmActivityMetas==null || nextBpmActivityMetas.size()==0) {
+
+                    if(nextBpmActivityMetas == null || nextBpmActivityMetas.size() == 0) {
 						dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
 						dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
 					}
@@ -404,8 +406,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
 					dhRoutingRecord.setUserUid(userId);
 					dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
-					if(nextBpmActivityMetas!=null&&nextBpmActivityMetas.size()>0) {
-						setActivityToValues(nextBpmActivityMetas,dhRoutingRecord);
+					if(nextBpmActivityMetas != null && nextBpmActivityMetas.size() > 0) {
+						setActivityToValues(nextBpmActivityMetas, dhRoutingRecord);
 					}
 					dhRoutingRecordMapper.insert(dhRoutingRecord);
 					}
@@ -456,16 +458,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * @param nextBpmActivityMetas
 	 * @param dhRoutingRecord
 	 */
-	private void setActivityToValues(List<BpmActivityMeta> nextBpmActivityMetas, DhRoutingRecord dhRoutingRecord) {
+	private void setActivityToValues(Set<BpmActivityMeta> nextBpmActivityMetas, DhRoutingRecord dhRoutingRecord) {
 		StringBuffer stringBuffer = new StringBuffer();
-		for (int i = 0; i < nextBpmActivityMetas.size(); i++) {
-			if(i==nextBpmActivityMetas.size()-1) {
-				stringBuffer.append(nextBpmActivityMetas.get(i).getActivityId());
-			}else {
-				stringBuffer.append(nextBpmActivityMetas.get(i).getActivityId()+",");
-			}
-		}
-		dhRoutingRecord.setActivityTo(stringBuffer.toString());
+        Iterator<BpmActivityMeta> it = nextBpmActivityMetas.iterator();
+        while (it.hasNext()) {
+            BpmActivityMeta meta = it.next();
+            stringBuffer.append(meta.getActivityId()).append(",");
+        }
+        String str = stringBuffer.toString();
+        str = str.substring(0, str.length() - 1);
+        dhRoutingRecord.setActivityTo(str);
 	}
 
 	/**

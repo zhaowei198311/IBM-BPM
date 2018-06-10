@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,12 +31,21 @@ public interface DhRouteService {
 												String departNo, String companyNum, String formData);
 	
 	/**
-	 * 根据表单数据和环节找到接下来会流转到的环节
+	 * 根据表单数据和环节找到接下来会流转到的环节，供路由工具栏展示使用
 	 * @param sourceActivityMeta
 	 * @param formData
 	 * @return
 	 */
-	List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
+	List<BpmActivityMeta> getNextActivitiesForRoutingBar(BpmActivityMeta sourceActivityMeta, JSONObject formData);
+
+	/**
+	 * 为创建路由记录，获得下个环节的信息
+	 * @param sourceActivityMeta
+	 * @param routingData
+	 * @return
+	 */
+	List<BpmActivityMeta> getNextActiviesForRoutingRecord(BpmActivityMeta sourceActivityMeta, BpmRoutingData routingData);
+
 	/**
 	 * 装配处理人信息
 	 * @param pubBo
@@ -44,7 +54,13 @@ public interface DhRouteService {
 	 */
 	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
 
-
+	/**
+	 * 根据表单数据和环节找到接下来会流转到的真实环节
+	 * @param sourceActivityMeta
+	 * @param formData
+	 * @return
+	 */
+	Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
 	
 	 /**
      * 获取环节可选处理人
@@ -77,7 +93,7 @@ public interface DhRouteService {
 	 * @param formData
 	 * @return
 	 */
-	BpmRoutingData getNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData);
+	BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData);
 
 	/**
 	 * 根据网关环节和表单内容给出唯一的输出连接线

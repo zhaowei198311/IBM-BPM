@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -121,7 +120,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 		JSONObject oldObj = JSONObject.parseObject(insDate).getJSONObject("formData");
 		formJson = FormDataUtil.formDataCombine(newObj, oldObj);
-		List<BpmActivityMeta> activityMetaList = getNextActivities(bpmActivityMeta, formJson);
+		List<BpmActivityMeta> activityMetaList = getNextActivitiesForRoutingBar(bpmActivityMeta, formJson);
 		// 环节配置获取
 		for (BpmActivityMeta activityMeta : activityMetaList) {
 			DhActivityConf dhActivityConf = activityMeta.getDhActivityConf();
@@ -287,10 +286,56 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-	public List<BpmActivityMeta> getNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
-		BpmRoutingData bpmRoutingData = getNextActivityTo(sourceActivityMeta, formData);
-		return new ArrayList<>(bpmRoutingData.getNormalNodes());
+	public List<BpmActivityMeta> getNextActivitiesForRoutingBar(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
+		List<BpmActivityMeta> result = new ArrayList<>();
+		BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
+        if (routingData.getMainEndNodes().size() > 0) {
+			// 如果主流程结束，返回空集合
+			return result;
+		}
+		// 如果source节点所属的流程结束了，不需要选后面的人，不然需要选择后面的人
+        if (routingData.getEndProcessNodes().size() == 0) {
+            result = new ArrayList<>(routingData.getNormalNodes());
+        } else if (!"0".equals(sourceActivityMeta.getParentActivityId())) {
+
+            BpmActivityMeta parentMeta = new BpmActivityMeta(sourceActivityMeta.getParentActivityId());
+            if (routingData.getEndProcessNodes().contains(parentMeta)) {
+                // 如果sourceMeta对应的流程已经结束，不需要选择下个环节的人
+
+            } else {
+                result = new ArrayList<>(routingData.getNormalNodes());
+            }
+        }
+		return result;
 	}
+
+	@Override
+	public List<BpmActivityMeta> getNextActiviesForRoutingRecord(BpmActivityMeta sourceActivityMeta, BpmRoutingData routingData) {
+        List<BpmActivityMeta> result = new ArrayList<>();
+        if (routingData.getMainEndNodes().size() > 0) {
+            // 如果主流程结束，返回空集合
+            return result;
+        }
+        // 如果source节点所属的流程结束了，不需要选后面的人，不然需要选择后面的人
+        if (routingData.getEndProcessNodes().size() == 0) {
+            result = new ArrayList<>(routingData.getNormalNodes());
+        } else if (!"0".equals(sourceActivityMeta.getParentActivityId())) {
+
+            BpmActivityMeta parentMeta = new BpmActivityMeta(sourceActivityMeta.getParentActivityId());
+            if (routingData.getEndProcessNodes().contains(parentMeta)) {
+                // 如果sourceMeta对应的流程已经结束，不需要选择下个环节的人
+
+            } else {
+                result = new ArrayList<>(routingData.getNormalNodes());
+            }
+        }
+        return result;
+    }
+
+	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
+        BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
+        return routingData.getNormalNodes();
+    }
 
 	/**
 	 * 将连线连接的人工环节加入移除列表，如果连线连接的不是人工环节，连接点后续的人工环节加入移除列表
@@ -648,7 +693,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-    public BpmRoutingData getNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
+    public BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
         BpmRoutingData result = new BpmRoutingData();
 
         List<BpmActivityMeta> directNextNodeList = findDirectNextNodes(sourceNode);

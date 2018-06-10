@@ -47,7 +47,7 @@
         ins.DEPART_NO, ins.TOKEN_ID, ins.TOKEN_ACTIVITY_ID
     </sql>
 	
-	<select id="selectAllProcess" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+	<select id="queryBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
 		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name, su.user_name initUserFullname
 		FROM dh_process_instance ins
 		left join dh_process_meta meta
@@ -298,8 +298,20 @@
 			</if>
 		</where> 
     </select>
-	
-	<update id="updateBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
+
+    <select id="getMainProcessByInsId" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
+		FROM dh_process_instance ins
+		left join dh_process_meta meta
+		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+		left join sys_department sd
+		on ins.depart_no   = sd.depart_uid
+		left join sys_company sc
+		on ins.company_number = sc.company_code
+		where ins.ins_id = #{insId} and ins.ins_Parent='0'
+	</select>
+
+    <update id="updateBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
 		update DH_PROCESS_INSTANCE
 		<set>
 			INS_STATUS = '-1'

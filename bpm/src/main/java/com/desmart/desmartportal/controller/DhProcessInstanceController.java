@@ -6,6 +6,11 @@ package com.desmart.desmartportal.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartportal.entity.BpmRoutingData;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +48,31 @@ public class DhProcessInstanceController {
 
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
-	
+
+    /**
+     * 发起流程的方法
+     * @param data
+     * @return
+     */
 	@RequestMapping(value = "/startProcess")
 	@ResponseBody
 	public ServerResponse startProcess(String data) {
-		// 发起流程		
+
 		try {
-			return dhProcessInstanceService.startProcess(data);
+            // 1. 发起流程
+            ServerResponse<Map<String, Object>> startProcessResponse = dhProcessInstanceService.startProcess(data);
+            if (!startProcessResponse.isSuccess()) {
+                return startProcessResponse;
+            }
+            // 2. 提交第一个任务
+            Map<String, Object> map = startProcessResponse.getData();
+            int taskId = (Integer)map.get("taskId");
+            BpmActivityMeta firstHumanActivity = (BpmActivityMeta)map.get("firstHumanActivity");
+            DhProcessInstance dhProcessInstance = (DhProcessInstance)map.get("dhProcessInstance");
+            BpmRoutingData routingData = (BpmRoutingData)map.get("routingData");
+            CommonBusinessObject pubBo = (CommonBusinessObject)map.get("pubBo");
+            JSONObject dataJson =(JSONObject)map.get("dataJson");
+            return dhProcessInstanceService.commitFirstTask(taskId, firstHumanActivity, dhProcessInstance, routingData, pubBo, dataJson);
         } catch (Exception e) {
             log.error("发起流程失败", e);
             return ServerResponse.createByErrorMessage("发起流程失败");

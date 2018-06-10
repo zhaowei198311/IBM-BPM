@@ -400,11 +400,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("找不到开始环节(start event)");
         }
         BpmActivityMeta startMeta = list.get(0);
-        List<BpmActivityMeta> nextActivities = dhRouteService.getNextActivities(startMeta, new JSONObject());
+        Set<BpmActivityMeta> nextActivities = dhRouteService.getActualNextActivities(startMeta, new JSONObject());
         if (nextActivities.isEmpty()) {
             return ServerResponse.createByErrorMessage("找不到第一个环节");
         }
-        return ServerResponse.createBySuccess(nextActivities.get(0));
+        return ServerResponse.createBySuccess(new ArrayList<>(nextActivities).get(0));
     }
 
     @Override

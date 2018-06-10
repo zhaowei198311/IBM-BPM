@@ -6,9 +6,11 @@ package com.desmart.desmartportal.service;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.github.pagehelper.PageInfo;
@@ -71,8 +73,22 @@ public interface DhProcessInstanceService {
 	/**
 	 * 发起流程
 	 */
-	ServerResponse startProcess(String data);	
-	
+	ServerResponse<Map<String, Object>> startProcess(String data);
+
+	/**
+	 * 发起流程成功后，提交第一个任务
+	 * @param taskId
+	 * @param firstHumanActivity
+	 * @param dhProcessInstance
+	 * @param routingData
+	 * @param pubBo
+	 * @param dataJson
+	 * @return
+	 */
+	ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance dhProcessInstance,
+								   BpmRoutingData routingData,
+								   CommonBusinessObject pubBo, JSONObject dataJson);
+
 	/**
 	 * 准备流程第一个环节的数据
 	 * @return
@@ -114,5 +130,13 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	ServerResponse rejectProcess(String data);
+
+	/**
+	 * 根据流程实例编号，和tokenId来确定一个子流程实例
+	 * @param insId
+	 * @param tokenId
+	 * @return
+	 */
+	DhProcessInstance queryByInsIdAndTokenId(int insId, String tokenId);
 
 }
