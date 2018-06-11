@@ -140,10 +140,17 @@
         <form class="layui-form" action="" id="form3">
             <div class="layui-row">
                 <div class="layui-col-md12">
+               	 	<div class="layui-form-item">
+                        <label class="layui-form-label">是否全员可发起</label>
+                        <div class="layui-input-inline">
+                            <input type="radio" lay-filter="isAllUserStart"  name="isAllUserStart" value="TRUE" title="是" />
+                            <input type="radio" lay-filter="isAllUserStart"  name="isAllUserStart" value="FALSE" title="否" checked />
+                        </div>
+                   	</div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">个人</label>
                         <div class="layui-input-inline">
-                            <input type="text"  name="permissionStartUser_view" id="permissionStartUser_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
+                            <input type="text" name="permissionStartUser_view" id="permissionStartUser_view"  lay-verify="required" value="" autocomplete="off" class="layui-input" disabled="disabled"/>
                             <input type="hidden" name="permissionStartUser" id="permissionStartUser"/>
                         </div>
                         <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user"  style="margin-right:10px;" id="chooseUser_btn">&#xe612;</i> </div>
@@ -164,12 +171,6 @@
                         </div>
                         <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user" style="margin-right:10px;" id="chooseTeam_btn">&#xe612;</i> </div>
                     </div>
-               	 	<div class="layui-form-item">
-                        <label class="layui-form-label">是否全员可发起</label>
-                        <div class="layui-input-inline">
-                            <input type="radio" name="isAllUserStart" value="TRUE" title="是" />
-                            <input type="radio" name="isAllUserStart" value="FALSE" title="否" checked />
-                        </div></div>
                 </div>
             </div>
         </form>

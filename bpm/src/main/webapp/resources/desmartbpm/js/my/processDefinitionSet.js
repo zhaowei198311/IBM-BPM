@@ -8,11 +8,35 @@ var pageConfig = {
     triTitle: "",
     triType: ""
 }
+layui.use('form', function(){
+    var form = layui.form;
+    //是否为可选处理人
+    form.on('radio(isAllUserStart)', function(data){
+   	 if (data.value == "TRUE") {
+   		 	$(data.elem).parent().parent().parent().find(".layui-form-item").hide();
+   		 	$(data.elem).parent().parent().show();
+   		 $(data.elem).parent().parent().parent()
+   		 	.find(".layui-form-item").find("input[type='text']").val("");
+   		 $(data.elem).parent().parent().parent()
+		 	.find(".layui-form-item").find("input[type='hidden']").val("");
+        } else {
+        	$(data.elem).parent().parent().parent().find(".layui-form-item").show();
+        }
+   });
+});
 $(function() {
 	var isAllUserStart = $("#isAllUserStart").val();
 	$("input[name='isAllUserStart']").each(function(){
 		if($(this).val()==isAllUserStart){
 			$(this).prop("checked",true);
+			if($(this).val()=="TRUE"){
+				$(this).parent().parent().parent().find(".layui-form-item").hide();
+				$(this).parent().parent().show();
+				 $(this).parent().parent().parent()
+		   		 	.find(".layui-form-item").find("input[type='text']").val("");
+		   		 $(this).parent().parent().parent()
+				 	.find(".layui-form-item").find("input[type='hidden']").val("");
+			}
 			layui.form.render();
 		}
 	})

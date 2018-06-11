@@ -474,8 +474,9 @@ function printRightGatewayDetails(list){
 					str += map[key].PredictRule.ruleName+'</label></td><td>线路：<label>'
 						+key+'</label></td></tr></tbody></table></div></div>';
 					str += '<div class="layui-form-item">'
-					+'<label class="layui-form-label">组合预览</label>'
-					+'<div class="layui-input-block"><span id = "predictRule_'+map[key].PredictRule.ruleId+'">'
+					+'<label style="position: relative;bottom: 11px;" class="layui-form-label">组合预览</label>'
+					+'<div class="layui-input-block">'
+					+'<span id = "predictRule_'+map[key].PredictRule.ruleId+'">'
 					+map[key].PredictRule.ruleProcess+'</span></div></div>';
 					//将规则名、规则id添加到新增模态框中
 					var info = '<option value="'+map[key].PredictRule.ruleId+'">'

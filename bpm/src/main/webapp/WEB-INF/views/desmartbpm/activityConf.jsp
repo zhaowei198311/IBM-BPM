@@ -544,14 +544,14 @@
 											</div>				
 														<div class="layui-form-item">
 															<label class="layui-form-label">规则条件</label>
-															<div class="layui-input-block">
+															<!-- <div class="layui-input-block"> -->
 																<button type="button" value=""
 																	class="layui-btn layui-btn-sm layui-btn-primary create_net">新建</button>
 																<button type="button"
 																	class="layui-btn layui-btn-sm layui-btn-primary delete_net">删除</button>
 																<table id="gatewayTab"  class="layui-table" lay-even lay-skin="nob">
 																	<colgroup>
-																		<col>
+																		<col width="5%">
 																		<col>
 																		<col>
 																		<col>
@@ -578,7 +578,7 @@
 																	
 																	</tbody>
 																</table>
-															</div>
+															<!-- </div> -->
 														</div>
 													</div>
 													</form>
