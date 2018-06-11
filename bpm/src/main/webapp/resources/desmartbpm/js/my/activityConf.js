@@ -384,7 +384,11 @@ $(function(){
         var ck = cks.eq(0);
         var triUid = ck.val();
         var triTitle = ck.parent().next().html();
-
+        var triType = ck.parent().next().next().html();
+        //打开接口参数和form表单映射表单
+        if(triType == "interface"){
+        	
+        }
         $("#" + triggerToEdit).val(triUid);
         $("#" + triggerToEdit + "Title").val(triTitle);
         $("#chooseTrigger_container").hide();

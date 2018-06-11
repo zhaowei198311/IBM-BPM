@@ -126,6 +126,7 @@ $(function() {
 
     // “确认”选择触发器
     $("#chooseTrigger_sureBtn").click(function () {
+    	alert('asdadsad')
         var cks = $("[name='tri_check']:checked");
         if (!cks.length) {
             $("#" + triggerToEdit).val('');

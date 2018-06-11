@@ -976,6 +976,19 @@
 		    </div>
 		</div>
 		<!-- 选择触发器弹框结束 -->
+		
+		<!-- 参数映射弹框开始 -->
+	<div class="display_container7" id="chooseTrigger_container">
+		<div class="display_content3" style="height: 450px;">
+			<div class="top">参数映射</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn sure_btn" id="paramMapping_sureBtn">保存</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="paramMapping_cancelBtn">取消</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 参数映射弹框结束 -->
 
     </body>
     

@@ -119,7 +119,7 @@
 					<div class="layui-form-item">
 						<div class="layui-form-item triWebbot">
 							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">触发器执行命令*:</label>
+								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
 								<div class="layui-input-inline" id="div_triWebbot">
 									<input id="triWebbot" name="triWebbot" type="text"
 										lay-verify="triWebbot" autocomplete="off"

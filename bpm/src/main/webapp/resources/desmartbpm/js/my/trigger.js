@@ -19,9 +19,6 @@ $('#form1').validate({
         triType: {
         	required: true
         },
-        triWebbot: {
-        	required: true
-        }
     }
 })
 })
@@ -141,7 +138,7 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 				success : function(result){
 					var data = result.data.list;
 					 for(var i=0; i<data.length; i++){
-						 var trs = '<option>'
+						 var trs = '<option value="'+data[i].intUid+'">'
 							 + data[i].intTitle
 							 + '</option>';
 						$("#triWebbotType").append(trs)
@@ -251,26 +248,40 @@ $("#form1").validate().resetForm();
 
 $(".sure_btn").click(function(){
 // 新增触发器
-if ($("#form1").valid()) {
-		$.ajax({
-		url : common.getPath()+'/trigger/save',
-		type : 'POST',
-		dataType : 'text',
-		data : {
-			triTitle : $("#triTitle").val(),
-			triDescription : $("#triDescription").val(),
-			triType : $("#triType").val(),
-			triWebbot : $("#triWebbot").val(),
-			triParam : $("#triParam").val()
-		},
-		success : function(result){
-			window.location.href = common.getPath()+'/trigger/index'
-				},
-				error : function(result) {
-					layer.msg('添加失败', {
-						icon : 5
-					});
-				}
-			})
+	var triTitle = $("#triTitle").val();
+	var triWebbot = $("#triWebbot").val();
+	var triType = $("#triType").val();
+	var triDescription = $("#triDescription").val();
+	var triParam = $("#triParam").val();
+	if(triTitle.replace(/(^s*)|(s*$)/g, "").length !=0 && triType !=null){
+		var webbot = "";
+		var options=$("#triWebbotType option:selected");
+		if($("#triType").val()=="interface"){
+			webbot = options.val();
+		}else{
+			webbot = $("#triWebbot").val();
 		}
-	})
+			$.ajax({
+			url : common.getPath()+'/trigger/save',
+			type : 'POST',
+			dataType : 'text',
+			data : {
+				triTitle : triTitle,
+				triDescription : triDescription,
+				triType : triType,
+				triWebbot : webbot,
+				triParam : triParam
+			},
+			success : function(result){
+				window.location.href = common.getPath()+'/trigger/index'
+					},
+					error : function(result) {
+						layer.msg('添加失败', {
+							icon : 5
+						});
+					}
+				})
+		}else{
+			layer.alert('参数不能为空')
+		}
+})
