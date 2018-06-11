@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,6 +44,8 @@ import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
+import com.desmart.desmartbpm.entity.DatRule;
+import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.entity.DhActivityAssign;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhActivityReject;
@@ -745,27 +748,54 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      * @throws
      */
     public void synchronizationGateway(List<Map<String, Object>> similarBpmActivityMetaList){
+    	String oldRuleId = "";
+    	String newRuleId = "";
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
     		// 老环节网关
     		List<DhGatewayLine> oldGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
     		// 新环节网关
     		List<DhGatewayLine> newGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID_1").toString());
-    		if (oldGatewayLineList.size() == newGatewayLineList.size()) {
+    		if (!oldGatewayLineList.isEmpty() && oldGatewayLineList.size() == newGatewayLineList.size()) {
     			int num = 0;
     			// 新老网关线的ACTIVITY_BPD_ID和ROUTE_RESULT都相同，则可以拷贝
-    			Map<String, Object> similarMap = new HashMap<>();
+    			Map<String, String> similarMap = new HashMap<>();
 				for (DhGatewayLine oldDhGatewayLine : oldGatewayLineList) {
 					for (DhGatewayLine newDhGatewayLine : newGatewayLineList) {
-						if (oldDhGatewayLine.getRouteResult().equals(newDhGatewayLine.getRouteResult())
-								&& oldDhGatewayLine.getActivityBpdId().equals(newDhGatewayLine.getActivityBpdId())) {
+						if ("TRUE".equals(oldDhGatewayLine.getIsDefault()) && "TRUE".equals(newDhGatewayLine.getIsDefault())) {
 							num++;
-							similarMap.put(oldDhGatewayLine.getRuleId(), newDhGatewayLine.getRuleId());
 							break;
+						}
+						if ("FALSE".equals(oldDhGatewayLine.getIsDefault()) && "FALSE".equals(newDhGatewayLine.getIsDefault())) {
+							if (oldDhGatewayLine.getRouteResult().equals(newDhGatewayLine.getRouteResult()) &&
+								oldDhGatewayLine.getActivityBpdId().equals(newDhGatewayLine.getActivityBpdId())) {
+								num++;
+								similarMap.put(oldDhGatewayLine.getRuleId(), newDhGatewayLine.getRuleId());
+								break;
+							}
 						}
 					}
 				}
 				if (oldGatewayLineList.size() == num) {
-					
+					Iterator<Entry<String, String>> iterator = similarMap.entrySet().iterator();
+					while (iterator.hasNext()) {
+						Map.Entry<String, String> entry = iterator.next();
+						oldRuleId = entry.getKey();
+						newRuleId = entry.getValue();
+						DatRule oldDatRule = datRuleMapper.getDatRuleByKey(oldRuleId);
+						DatRule newDatRule = datRuleMapper.getDatRuleByKey(newRuleId);
+						// DAT_RULE
+						newDatRule.setRuleProcess(oldDatRule.getRuleProcess());
+						datRuleMapper.updateDatRule(newDatRule);
+						// DAT_RULE_CONDITION
+						List<DatRuleCondition> oldDatRuleConditionList = datRuleConditionMapper.getDatruleConditionByRuleId(oldRuleId);
+						// 清除新流程DAT_RULE_CONDITION表
+						datRuleConditionMapper.deleteDatRuleCondition(newDatRule);
+						for (DatRuleCondition datRuleCondition : oldDatRuleConditionList) {
+							datRuleCondition.setConditionId("rulecond:" + UUID.randomUUID());
+							datRuleCondition.setRuleId(newRuleId);
+							datRuleConditionMapper.insert(datRuleCondition);
+						}
+					}
 				}
 			}
 		}

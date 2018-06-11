@@ -151,8 +151,9 @@
    
    <select id="listByActivityId" parameterType="string" 
    			resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
-   	SELECT * FROM DH_GATEWAY_LINE
-   	WHERE ACTIVITY_ID = #{activityId}
+   	SELECT dgl.*,bam.ACTIVITY_BPD_ID FROM DH_GATEWAY_LINE dgl
+   	LEFT JOIN BPM_ACTIVITY_META bam ON dgl.ACTIVITY_ID = bam.ACTIVITY_ID
+   	WHERE dgl.ACTIVITY_ID = #{activityId}
    </select>
    
    <select id="listByActivityIds" parameterType="list" 
