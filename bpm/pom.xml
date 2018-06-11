@@ -49,11 +49,19 @@
 			<artifactId>ojdbc6</artifactId>
 			<version>1.6</version>
 		</dependency>
+		
+		<!-- rabbit -->
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
 			<version>4.2.0</version>
 		</dependency>
+		<dependency>  
+            <groupId>org.springframework.amqp</groupId>  
+            <artifactId>spring-rabbit</artifactId>  
+            <version>1.6.8.RELEASE</version>  
+        </dependency>
+		
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
