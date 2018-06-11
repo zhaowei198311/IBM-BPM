@@ -794,9 +794,9 @@
         </form>
         </div>
         <div class="display_container5">
-		<div class="display_content5">
+		<div class="display_content5" style="height: 430px;">
 			<div class="top">新增网关</div>
-			<div class="middle1">
+			<div class="middle1" style="height: 320px;">
 				<form id="addDatRule" class="layui-form" action="">
 				<!-- <input id="sortNum" name="sortNum" style="display: none;" readonly="readonly"/> -->
 					<div class="layui-form-item">
