@@ -340,16 +340,18 @@ $(function() {
 			async: false,  
 			success: function(result){
 				layer.alert(result.msg);
-				$("#gatewayTab").find("tbody").empty();
-				printDatRuleCondition(result.data.DatConditionList);
-				//画出做过更改的规则
-				printUpdateDatRuleList(result.data.PredictRules);
+				if(result.success){
+					$("#gatewayTab").find("tbody").empty();
+					printDatRuleCondition(result.data.DatConditionList);
+					//画出做过更改的规则
+					printUpdateDatRuleList(result.data.PredictRules);
+				}
 				layui.form.render();
 			},error: function(result){
 				layer.alert(result.msg);
 			}
 		});
-		checkB.parent().parent().remove();
+		 	checkB.parent().parent().remove();
 		/*}*/
 	})
 
