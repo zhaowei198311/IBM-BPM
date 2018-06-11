@@ -387,7 +387,8 @@ $(function(){
         var triType = ck.parent().next().next().html();
         //打开接口参数和form表单映射表单
         if(triType == "interface"){
-        	
+        	// 判断有没有表单 
+        	$("#triggerInterface_container").show();
         }
         $("#" + triggerToEdit).val(triUid);
         $("#" + triggerToEdit + "Title").val(triTitle);
@@ -448,13 +449,15 @@ $(function(){
     	getTriggerInfo();
     	$("#chooseTrigger_container").show();
     });
-    
     $("#ETS_choose_stepTri_btn").click(function() {
     	triggerToEdit = 'ETS_trigger_of_step';
     	getTriggerInfo();
     	$("#chooseTrigger_container").show();
     });
-    
+    // 参数映射 按钮
+    $("#paramMapping_cancelBtn").click(function() {
+    	$("#triggerInterface_container").hide();
+    });
     // “新增步骤”按钮
     $("#add_step_btn").click(function(){
     	$('#addStep_form')[0].reset();
@@ -956,7 +959,7 @@ function stepEdit(data){
 //修改环节关联表单信息
 var updateFormUid = "";//要修改步骤的关联表单
 $("#update_search_form_btn").click(function(){
-	 updateFormTable(updateFormUid);
+	 (updateFormUid);
 });
 
 function updateFormTable(formUid){

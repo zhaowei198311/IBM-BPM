@@ -978,12 +978,25 @@
 		<!-- 选择触发器弹框结束 -->
 		
 		<!-- 参数映射弹框开始 -->
-	<div class="display_container7" id="chooseTrigger_container">
+	<div class="display_container3" id="triggerInterface_container" style="display:none;padding-top: 30px;padding-right:50px;">
 		<div class="display_content3" style="height: 450px;">
 			<div class="top">参数映射</div>
+				<div class="middle1" style="height:300px;">
+		            <div class="search_area">
+		                <div class="layui-row layui-form" style="margin-top:10px">            
+		                    <div class="layui-col-md5">
+		                        <select lay-verify="required" id="triType_sel">
+		                            <option value="">请选择表单</option>
+		                            <option value="">Table1</option>
+		                            <option value="">Table2</option>
+		                        </select>
+		                    </div>
+		                </div>
+		            </div>
+				</div>
 			<div class="foot">
 				<button class="layui-btn layui-btn sure_btn" id="paramMapping_sureBtn">保存</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="paramMapping_cancelBtn">取消</button>
+				<button class="layui-btn layui-btn layui-btn-primary " id="paramMapping_cancelBtn">取消</button>
 			</div>
 		</div>
 	</div>
@@ -1065,6 +1078,7 @@
                 $(".display_container4").css("display","none");
                 $(".display_container5").css("display","none");
                 $(".display_container6").css("display","none");
+                $(".display_container7").css("display","none");
                 $(".display_container10").css("display","none");
             })
             
