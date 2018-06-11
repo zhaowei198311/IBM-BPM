@@ -57,6 +57,7 @@ public interface DhProcessDefinitionService {
     
     /**
      * 获得流程定义的第一个人工活动环节
+     * 方法内调用了 主流程开始节点的 getActualNextActivities() 取第一个
      * @param proAppId
      * @param proUid
      * @param proVerUid

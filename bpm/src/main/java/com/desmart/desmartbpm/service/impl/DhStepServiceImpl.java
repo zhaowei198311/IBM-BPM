@@ -259,8 +259,15 @@ public class DhStepServiceImpl implements DhStepService {
 
     @Override
     public List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
-        DhStep stepSelective = new DhStep(bpmActivityMeta.getProAppId(), bpmActivityMeta.getBpdId(), bpmActivityMeta.getSnapshotId());
-        stepSelective.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+        // 需要查询源环节的步骤配置
+        BpmActivityMeta sourceMeta = null;
+        if (bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
+            sourceMeta = bpmActivityMeta;
+        } else {
+            sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(bpmActivityMeta.getSourceActivityId());
+        }
+        DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
+        stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
         stepSelective.setStepBusinessKey(stepBusinessKey);
         PageHelper.orderBy("STEP_SORT");
         return dhStepMapper.listBySelective(stepSelective);

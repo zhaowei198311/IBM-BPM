@@ -107,7 +107,7 @@ public interface DhProcessInstanceService {
 	 * @param dhProcessDefinition
 	 * @return
 	 */
-	DhProcessInstance generateDraftDefinition(DhProcessDefinition dhProcessDefinition);
+	DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition);
 	
 	/**
 	 * 根据流程实例唯一主键获得流程实例
@@ -139,4 +139,16 @@ public interface DhProcessInstanceService {
 	 */
 	DhProcessInstance queryByInsIdAndTokenId(int insId, String tokenId);
 
+	/**
+	 * 根据父流程实例来创建子流程
+	 * @param parentInstance 父流程实例
+	 * @param processNode  代表子流程的节点
+	 * @param tokenId  代表子流程的节点上停留的token
+	 * @param creatorId   子流程创建人
+	 * @param departNo    子流程创建人所属部门
+	 * @param companyNumber 子流程创建人所属组织编号
+	 * @return
+	 */
+	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, BpmActivityMeta processNode,
+																 String tokenId, String creatorId, String departNo, String companyNumber);
 }

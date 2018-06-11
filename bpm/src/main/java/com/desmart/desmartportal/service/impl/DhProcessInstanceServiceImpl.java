@@ -302,14 +302,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String departNo = processData.getString("departNo");
 		String insUid = processData.getString("insUid");
 
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-		if (dhProcessInstance == null || DhProcessInstance.STATUS_ID_DRAFT != dhProcessInstance.getInsStatusId().intValue()) {
+		DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+		if (mainProcessInstance == null || DhProcessInstance.STATUS_ID_DRAFT != mainProcessInstance.getInsStatusId().intValue()) {
 			return ServerResponse.createByErrorMessage("流程实例状态异常");
 		}
-		String proAppId = dhProcessInstance.getProAppId();
-		String proUid = dhProcessInstance.getProUid();
-		String proVerUid = dhProcessInstance.getProVerUid();
-		String insDataStr = dhProcessInstance.getInsData();
+		String proAppId = mainProcessInstance.getProAppId();
+		String proUid = mainProcessInstance.getProUid();
+		String proVerUid = mainProcessInstance.getProVerUid();
+		String insDataStr = mainProcessInstance.getInsData();
 
 		// 混合提交的表单内容和流程实例中的表单内容
 		JSONObject insData = JSON.parseObject(insDataStr);
@@ -318,7 +318,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 		// 查看可供发起的流程定义版本
 		DhProcessDefinition startableDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
-		if (!dhProcessInstance.getProVerUid().equals(startableDefinition.getProVerUid())) {
+		if (!mainProcessInstance.getProVerUid().equals(startableDefinition.getProVerUid())) {
 			ServerResponse.createByErrorMessage("草稿版本不符合当前可发起版本，请重新起草");
 		}
 
@@ -349,17 +349,19 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 		// 如果获取API成功 将返回过来的流程数据 保存到 平台
 		if (!BpmClientUtils.isErrorResult(result)) {
-            int insId = getProcessIdFromStartProcessReturnStatus(result);
-            int taskId = getFirstTaskIdFromStartProcessReturnStatus(result);
+			JSONObject startProcessDataJson = JSON.parseObject(result.getMsg());
+            int insId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getString("piid"));
+            int taskId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid"));
 			// 在pubBo中设置实例编号，供网关环节决策使用
 			pubBo.setInstanceId(String.valueOf(insId));
 
 			// 更新网关决策服务中间表数据
             dhRouteService.updateGatewayRouteResult(insId, routingData);
 
+
             // 更新草稿流程实例的状态
             DhProcessInstance instanceSelective = new DhProcessInstance();
-            instanceSelective.setInsUid(dhProcessInstance.getInsUid());
+            instanceSelective.setInsUid(mainProcessInstance.getInsUid());
             instanceSelective.setInsTitle(insTitle);
             instanceSelective.setInsId(insId);
             instanceSelective.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
@@ -372,6 +374,22 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             insData.put("processData", processData);
             instanceSelective.setInsData(insData.toJSONString());
             dhProcessInstanceMapper.updateByPrimaryKeySelective(instanceSelective);
+            mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(mainProcessInstance.getInsUid());
+
+
+            // 判断是否要生成子流程
+			DhProcessInstance subProcessInstance = null;
+			if (routingData.getStartProcessNodes().size() > 0){
+			    BpmActivityMeta subProcessNode = new ArrayList<>(routingData.getStartProcessNodes()).get(0);
+                Map<Object, Object> map = ExecutionTreeUtil.queryTokenId(taskId, startProcessDataJson);
+                if (map.get("parentTokenId") != null) {
+                    subProcessInstance = generateSubProcessInstanceByParentInstance(mainProcessInstance, subProcessNode, (String)map.get("parentTokenId"),
+                            currentUserUid, mainProcessInstance.getDepartNo(), mainProcessInstance.getCompanyNumber());
+                }
+            }
+            if (subProcessInstance != null) {
+			    dhProcessInstanceMapper.insertProcess(subProcessInstance);
+            }
 
             // 从草稿箱删除这个流程的草稿
             dhDraftsMapper.deleteByInsUid(insUid);
@@ -379,7 +397,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             Map<String, Object> map = new HashMap<>();
             map.put("taskId", taskId);
             map.put("firstHumanActivity", firstHumanActivity);
-            map.put("dhProcessInstance", dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid()));
+
+            if (subProcessInstance == null) {
+                map.put("dhProcessInstance", mainProcessInstance);
+            } else {
+                map.put("dhProcessInstance", subProcessInstance);
+            }
             map.put("routingData", routingData);
             map.put("pubBo", pubBo);
             map.put("dataJson", dataJson);
@@ -454,29 +477,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 
 	/**
-	 * 根据RESTfual调用返回值获得流程实例id
-	 * 
-	 * @param httpReturnStatus
-	 */
-	private int getProcessIdFromStartProcessReturnStatus(HttpReturnStatus httpReturnStatus) {
-		JSONObject jsonBody = JSONObject.parseObject(httpReturnStatus.getMsg());
-		JSONObject jsonBody2 = JSONObject.parseObject(String.valueOf(jsonBody.get("data")));
-		return new Integer(jsonBody2.getString("piid"));
-	}
-
-	/**
-	 * 从发起流程RESTful调用的结果中得到第一个人工任务
-	 * 
-	 * @param httpReturnStatus
-	 * @return
-	 */
-	private int getFirstTaskIdFromStartProcessReturnStatus(HttpReturnStatus httpReturnStatus) {
-		JSONObject jsoResult = JSONObject.parseObject(httpReturnStatus.getMsg());
-		String taskId = jsoResult.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid");
-		return new Integer(taskId);
-	}
-
-	/**
 	 * 查看流程图
 	 */
 	@Override
@@ -496,9 +496,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return null;
 	}
 
-	public DhProcessInstance generateDraftDefinition(DhProcessDefinition dhProcessDefinition) {
+	@Override
+	public DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition) {
 		DhProcessInstance processInstance = new DhProcessInstance();
-		processInstance = new DhProcessInstance();
 		processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
 		processInstance.setInsTitle("未命名");
 		processInstance.setInsId(-1);
@@ -553,7 +553,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
 			}
 			if(checkPermissionStart(processDefintion)) {
-				processInstance = this.generateDraftDefinition(processDefintion);
+				processInstance = this.generateDraftProcessInstance(processDefintion);
 			}else {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
@@ -941,4 +941,33 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return list.get(0);
         }
     }
+
+    @Override
+    public DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, BpmActivityMeta processNode,
+            String tokenId, String creatorId, String departNo, String companyNumber) {
+        DhProcessInstance subInstance = new DhProcessInstance();
+        subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
+        subInstance.setInsTitle("子流程");
+        subInstance.setInsId(parentInstance.getInsId());
+        subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
+        subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
+        subInstance.setProAppId(parentInstance.getProAppId());
+        subInstance.setProUid(parentInstance.getProUid());
+        subInstance.setProVerUid(parentInstance.getProVerUid());
+        subInstance.setInsInitDate(new Date());
+        subInstance.setInsParent(parentInstance.getInsUid());
+        subInstance.setInsInitUser(creatorId);
+        subInstance.setCompanyNumber(companyNumber);
+        subInstance.setDepartNo(departNo);
+        JSONObject insData = new JSONObject();
+        insData.put("formData", new JSONObject());
+        JSONObject processData = new JSONObject();
+        processData.put("insUid", subInstance.getInsUid());
+        insData.put("processData", processData);
+        subInstance.setInsData(insData.toJSONString());
+        subInstance.setTokenId(tokenId);
+        subInstance.setTokenActivityId(processNode.getActivityId());
+        return subInstance;
+    }
+
 }
