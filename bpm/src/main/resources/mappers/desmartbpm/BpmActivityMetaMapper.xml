@@ -346,6 +346,8 @@
 		and a2.bpd_id = #{proUidNew}
 		and a2.snapshot_id = #{proVerUidNew}
 		and a2.pro_app_id = #{proAppIdNew}
+		and a1.ACTIVITY_ID = a1.SOURCE_ACTIVITY_ID
+		and a2.ACTIVITY_ID = a2.SOURCE_ACTIVITY_ID
     </select>
     
     <select id="getActivityIdByIdAndName" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta" parameterType="java.util.Map">

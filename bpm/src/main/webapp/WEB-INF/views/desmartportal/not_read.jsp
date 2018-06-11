@@ -66,7 +66,7 @@
 				  	</ul>
 				  	<div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
-					    	<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon"></span>条任务</p>
+					    	<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="transfer_icon"></span>条任务</p>
 							<table class="layui-table backlog_table" lay-even lay-skin="nob">
 								<colgroup>
 								    <col>
@@ -315,9 +315,9 @@ function doPage() {
 			success : function(result){
 				// 渲染到抄送
 				if(result == 0){
-					$("#daiban_icon").css("display", "none");
+					$("#transfer_icon").css("display", "none");
 				}else{
-					$("#daiban_icon").text(result);
+					$("#transfer_icon").text(result);
 				}
 			}
 		})

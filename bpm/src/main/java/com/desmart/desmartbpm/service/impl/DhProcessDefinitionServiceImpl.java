@@ -429,7 +429,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 	@Override
 	public ServerResponse copySimilarProcess(Map<String, Object> mapId) {
 		try {
-			// 同类流程Id
+			// 老流程Id
 			String proUid = mapId.get("proUid").toString();
 			String proVerUid = mapId.get("proVerUid").toString();
 			String proAppId = mapId.get("proAppId").toString();
@@ -527,26 +527,26 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      */
     public void synchronizationProcess(String proUid, String proVerUid, String proAppId,
     								String proUidNew, String proVerUidNew, String proAppIdNew){
-    	// 同类流程信息
-		DhProcessDefinition similarProcess = new DhProcessDefinition();
-		similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
-		// 新流程
-		DhProcessDefinition processNew = new DhProcessDefinition();
-		processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
-		similarProcess.setProUid(processNew.getProUid());
-		similarProcess.setProVerUid(processNew.getProVerUid());
-		similarProcess.setProAppId(processNew.getProAppId());
-		similarProcess.setProStatus(processNew.getProStatus());
-//    				similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
-		similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
-		similarProcess.setCreateDate(processNew.getCreateDate());
-		similarProcess.setCreateUser(processNew.getCreateUser());
-		// 更新DH_PROCESS_DEFINITION表
-		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
-
+//    	// 老流程信息
+//		DhProcessDefinition similarProcess = new DhProcessDefinition();
+//		similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
+//		// 新流程
+//		DhProcessDefinition processNew = new DhProcessDefinition();
+//		processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
+//		similarProcess.setProUid(processNew.getProUid());
+//		similarProcess.setProVerUid(processNew.getProVerUid());
+//		similarProcess.setProAppId(processNew.getProAppId());
+//		similarProcess.setProStatus(processNew.getProStatus());
+////    	similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
+//		similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
+//		similarProcess.setCreateDate(processNew.getCreateDate());
+//		similarProcess.setCreateUser(processNew.getCreateUser());
+//		// 更新DH_PROCESS_DEFINITION表
+//		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
+    	// 老流程权限信息
 		List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
 		if (dhObjectPermissionList.size() > 0) {
-			// 删除新流程旧的权限信息，重新添加
+			// 删除新流程的权限信息，重新添加
 			dhProcessDefinitionMapper.deleteDhObjectPermissionById(proUidNew, proVerUidNew, proAppIdNew);
 			
 			for (DhObjectPermission dop : dhObjectPermissionList) {
@@ -571,14 +571,20 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     public void synchronizationConfig(List<Map<String, Object>> similarBpmActivityMetaList){
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
 			// 老流程配置
-    		DhActivityConf OldDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID").toString());
+    		DhActivityConf oldDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID").toString());
 			// 新流程配置
-			DhActivityConf NewDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID_1").toString());
-			if (NewDhActivityConf != null) {
-				// 拷贝老流程配置信息（DH_ACTIVITY_CONF）
-				OldDhActivityConf.setActcUid(NewDhActivityConf.getActcUid());
-				OldDhActivityConf.setActivityId(NewDhActivityConf.getActivityId());
-				dhActivityConfMapper.updateByPrimaryKey(OldDhActivityConf);
+			DhActivityConf newDhActivityConf = dhActivityConfMapper.getByActivityId(map.get("ACTIVITY_ID_1").toString());
+			if (oldDhActivityConf != null) {
+				if (newDhActivityConf != null) {
+					// 拷贝老流程配置信息（DH_ACTIVITY_CONF）
+					oldDhActivityConf.setActcUid(newDhActivityConf.getActcUid());
+					oldDhActivityConf.setActivityId(newDhActivityConf.getActivityId());
+					dhActivityConfMapper.updateByPrimaryKey(oldDhActivityConf);
+				}else {
+					oldDhActivityConf.setActcUid("act_conf:" + UUID.randomUUID());
+					oldDhActivityConf.setActivityId(map.get("ACTIVITY_ID_1").toString());
+					dhActivityConfMapper.insert(oldDhActivityConf);
+				}
 			}			
 		}   	
     	// 根据ACTIVITY_ID,清除新流程DH_ACTIVITY_ASSIGN表中信息
@@ -739,43 +745,31 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      * @throws
      */
     public void synchronizationGateway(List<Map<String, Object>> similarBpmActivityMetaList){
-    	// 新流程ACTIVITY_ID集合
-    	List<String> newActivityIdList = new ArrayList<>();
-    	// 新流程ruleId集合
-//    	List<String> newRuleIdList = new ArrayList<>();
     	for (Map<String, Object> map : similarBpmActivityMetaList) {
-			newActivityIdList.add(map.get("ACTIVITY_ID_1").toString());
-			// 新流程节点网关
-//    		List<DhGatewayLine> newDhGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID_1").toString());
-//    		for (DhGatewayLine dhGatewayLine : newDhGatewayLineList) {
-//				newRuleIdList.add(dhGatewayLine.getRuleId());
-//			}
-		}
-//    	if (!newRuleIdList.isEmpty()) {
-//    		// DAT_RULE
-//			datRuleMapper.deleteByRuleIds(newRuleIdList);
-//			// DAT_RULE_CONDITION
-//			datRuleConditionMapper.deleteByRuleIds(newRuleIdList);
-//		}
-    	// 拷贝前，先根据新流程ACTIVITY_ID集合删除DH_GATEWAY_LINE表中信息
-    	if (!newActivityIdList.isEmpty()) {
-			dhGatewayLineMapper.deleteByActivityIds(newActivityIdList);
-		}
-    	// 拷贝DH_GATEWAY_LINE表
-    	// 新流程节点网关
-		List<DhGatewayLine> newGatewayLineList = new ArrayList<>();
-    	for (Map<String, Object> map : similarBpmActivityMetaList) {
-			// 老流程节点网关
-    		List<DhGatewayLine> oldDhGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
-			for (DhGatewayLine dhGatewayLine : oldDhGatewayLineList) {
-				dhGatewayLine.setGatewayLineUid("gateway_line:"+UUID.randomUUID());
-				dhGatewayLine.setActivityId(map.get("ACTIVITY_ID_1").toString());
-				newGatewayLineList.add(dhGatewayLine);
+    		// 老环节网关
+    		List<DhGatewayLine> oldGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
+    		// 新环节网关
+    		List<DhGatewayLine> newGatewayLineList = dhGatewayLineMapper.listByActivityId(map.get("ACTIVITY_ID_1").toString());
+    		if (oldGatewayLineList.size() == newGatewayLineList.size()) {
+    			int num = 0;
+    			// 新老网关线的ACTIVITY_BPD_ID和ROUTE_RESULT都相同，则可以拷贝
+    			Map<String, Object> similarMap = new HashMap<>();
+				for (DhGatewayLine oldDhGatewayLine : oldGatewayLineList) {
+					for (DhGatewayLine newDhGatewayLine : newGatewayLineList) {
+						if (oldDhGatewayLine.getRouteResult().equals(newDhGatewayLine.getRouteResult())
+								&& oldDhGatewayLine.getActivityBpdId().equals(newDhGatewayLine.getActivityBpdId())) {
+							num++;
+							similarMap.put(oldDhGatewayLine.getRuleId(), newDhGatewayLine.getRuleId());
+							break;
+						}
+					}
+				}
+				if (oldGatewayLineList.size() == num) {
+					
+				}
 			}
 		}
-    	if (!newGatewayLineList.isEmpty()) {
-    		dhGatewayLineMapper.insertBatch(newGatewayLineList);
-		}
+    	
     }
     
     public DhProcessDefinition getStartAbleProcessDefinition(String proAppId, String proUid) {
