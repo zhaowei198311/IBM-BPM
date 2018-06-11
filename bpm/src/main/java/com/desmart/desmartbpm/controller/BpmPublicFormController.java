@@ -1,8 +1,5 @@
 package com.desmart.desmartbpm.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +15,6 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
-import com.desmart.desmartbpm.util.SFTPUtil;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**

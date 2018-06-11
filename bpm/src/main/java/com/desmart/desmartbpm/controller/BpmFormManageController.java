@@ -1,7 +1,5 @@
 package com.desmart.desmartbpm.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +26,6 @@ import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.util.SFTPUtil;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**
