@@ -988,10 +988,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 						return serverResponse;
 					}
 				}else {
-					return ServerResponse.createByErrorMessage("请先配置表单步骤");
+					return ServerResponse.createByErrorMessage("请先配置流程步骤");
 				}
 			}else {
-				return ServerResponse.createByErrorMessage("获取表单步骤配置异常");
+				return ServerResponse.createByErrorMessage("获取流程步骤配置异常");
 			}
 		} else {
 			return ServerResponse.createByErrorMessage("无权限发起当前流程");
