@@ -474,16 +474,24 @@ $(function() {
 				},
 				success : function (result){
 					for (var i = 0; i < result.data.length; i++) {
-						var trs = '<form class="layui-form">'
-								+ '<div class="layui-form-item">'
+						var trs = '<div class="layui-form-item">'
+								+ '<div class="layui-row">'
+								+ '<div class="layui-col-md6">'
 								+ '<div class="layui-inline">'
-								+ '<label class="layui-form-label">参数</label>'
-								+ '<div class="layui-input-block">'
+								+ '<label class="layui-form-label" style="width: 100px">接口参数</label>'
+								+ '<div class="layui-input-inline">'
 								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">'
 								+ '</div>'
 								+ '</div>'
 								+ '</div>'
-								+ '</form>';
+								+ '<div class="layui-col-md6">'
+								+ '<label class="layui-form-label" style="width: 100px">表单参数</label>'
+								+ '<div class="layui-input-inline">'
+								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">'
+								+ '</div>'
+								+ '</div>'
+								+ '</div>'
+								+ '</div>';
 						$("#col_md5").append(trs)
 					}
 					form.render();
