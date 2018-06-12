@@ -488,7 +488,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
 
 	@Override
-	public DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition) {
+	public DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition,String insBusinessKey) {
 		DhProcessInstance processInstance = new DhProcessInstance();
 		processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
 		processInstance.setInsTitle(dhProcessDefinition.getProName());
@@ -500,6 +500,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		processInstance.setProVerUid(dhProcessDefinition.getProVerUid());
 		processInstance.setInsInitDate(new Date());
 		processInstance.setInsParent("0");
+		processInstance.setInsBusinessKey(insBusinessKey);
 		processInstance
 				.setInsInitUser((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		// processInstance.setCompanyNumber(currentUser.getCompanynumber());
@@ -522,7 +523,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
 
 	@Transactional
-	public ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid) {
+	public ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid,String insBusinessKey) {
 		Map<String, Object> resultMap = new HashMap<>();
 
 		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
@@ -544,7 +545,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
 			}
 			if(checkPermissionStart(processDefintion)) {
-				processInstance = this.generateDraftProcessInstance(processDefintion);
+				processInstance = this.generateDraftProcessInstance(processDefintion,insBusinessKey);
 			}else {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
@@ -960,5 +961,38 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         subInstance.setTokenActivityId(processNode.getActivityId());
         return subInstance;
     }
+
+	@Override
+	public ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance) {
+
+		DhProcessDefinition processDefintion = dhProcessDefinitionService
+				.getStartAbleProcessDefinition(dhProcessInstance.getProAppId(),
+						dhProcessInstance.getProUid());
+		if (processDefintion == null) {
+			return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
+		}
+		if (checkPermissionStart(processDefintion)) {
+			DhStep selective = new DhStep(processDefintion.getProAppId()
+	        		, processDefintion.getProUid(), processDefintion.getProVerUid());
+			//selective.setStepType("form");
+			ServerResponse<List<DhStep>> serverResponse = dhStepService.getStepInfoByCondition(selective);
+			if(serverResponse.isSuccess()) {
+				List<DhStep> list = serverResponse.getData();
+				if(list.size()>0) {
+					if(list.size()==1) {
+						return ServerResponse.createBySuccess(1);
+					}else {
+						return serverResponse;
+					}
+				}else {
+					return ServerResponse.createByErrorMessage("请先配置表单步骤");
+				}
+			}else {
+				return ServerResponse.createByErrorMessage("获取表单步骤配置异常");
+			}
+		} else {
+			return ServerResponse.createByErrorMessage("无权限发起当前流程");
+		}
+	}
 
 }

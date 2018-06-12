@@ -80,10 +80,11 @@ public class MenusController {
 	 */
 	@RequestMapping("/startProcess")
 	public ModelAndView startProcess(@RequestParam(value = "proUid",required = false) String proUid,
-			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "insUid",required = false) String insUid) {
+			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "insUid",required = false) String insUid
+			,String insBusinessKey) {
 	    ModelAndView mv = new ModelAndView("desmartportal/process");
 	    
-	    ServerResponse<Map<String, Object>> startResponse = dhProcessInstanceService.toStartProcess(proAppId, proUid, insUid);
+	    ServerResponse<Map<String, Object>> startResponse = dhProcessInstanceService.toStartProcess(proAppId, proUid, insUid,insBusinessKey);
 	    if (startResponse.isSuccess()) {
 	        mv.addAllObjects(startResponse.getData());
 	    } else {

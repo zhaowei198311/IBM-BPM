@@ -18,7 +18,38 @@
 <link rel="stylesheet"
 	href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
 <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
+<style type="text/css">
 
+.display_content_ins_business_key{
+            color: #717171;
+            padding: 20px;
+            width: 50%;
+            height: 60%;
+            background: #fff;
+            position: fixed;
+            left: 18%;
+            top: 16%;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .foot_ins_business_key{
+            text-align: right;
+            height: 50px;
+            line-height: 50px;
+            padding-right: 15px;
+        }
+        
+        .upload_overflow_middle {
+            height: 80%;
+            width: 96%;
+            border: 1px solid #ccc;
+            position: relative;
+            padding: 0 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+		
+</style>
 </head>
 <body>
 	<div class="container">
@@ -54,7 +85,7 @@
 				</div>
 				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
-					<button class="layui-btn" onclick="startProcess()">发起新流程</button>
+					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
 				</div>
 			</div>
 		</div>
@@ -86,6 +117,35 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
+	<!-- 选择业务关键字 -->
+	 <div id="checkedBusinessKey" style="display: none;" class="display_content_ins_business_key">
+        <div class="top">选择业务关键字</div>
+        <div class="upload_overflow_middle">
+            <div class="layui-upload">
+                <div class="layui-upload-list">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="10%">
+                            <col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                            <th>序号</th>
+                            <th style="text-align: center;">业务关键字</th>
+                            </tr>
+                        </thead>
+                        <tbody class="showBusinessList">
+                        	
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="foot_ins_business_key">
+        	<button class="layui-btn layui-btn sure_btn" onclick="startProcess()">确定</button>
+            <button class="layui-btn layui-btn cancel_btn" onclick="$('#checkedBusinessKey').hide()">取消</button>
+        </div>
+    </div>
 </body>
 </html>
 
@@ -218,6 +278,11 @@
 	
 	
 	function startProcess() {
+		var insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
+		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
+			layer.alert("请选择业务关键字");
+			return;
+		}
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
 		var verUid = $('#verUid').val();
@@ -225,6 +290,49 @@
 		var categoryName = $('#categoryName').val();
 		window.location.href = 'menus/startProcess?proUid=' + proUid
 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
-				+ proName + '&categoryName=' + categoryName;
+				+ proName + '&categoryName=' + categoryName
+				+'&insBusinessKey='+insBusinessKey;
+	}
+	
+	function checkedBusinesskey(){
+		var proUid = $('#proUid').val();
+		var proAppId = $('#proAppId').val();
+		var verUid = $('#verUid').val();
+		$.ajax({
+			url:"processInstance/checkedBusinesskey",
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				proUid : proUid,
+				proAppId : proAppId,
+				proVerUid : verUid
+			},
+			success : function(result) {
+				if(result.status == 0){
+					if(result.data==1){
+						
+					}else{
+						$("#checkedBusinessKey").find(".showBusinessList").empty();
+						for (var i = 0; i < result.data.length; i++) {
+						var info = '<tr><td><input type="radio" name="insBusinessKey" '
+						+'value="'
+						+ result.data[i].stepBusinessKey
+						+'" >'+(i+1)+'</td>'
+	                    +'<td style="text-align: center;">'
+	                   	+ result.data[i].stepBusinessKey
+	                    +'</td></tr>';
+	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
+						}
+						$("#checkedBusinessKey").show();
+					}
+				}else{
+					layer.alert(result.msg);
+				}
+			},
+			error : function(){
+				layer.alert("发起流程异常");
+			}
+		})
+		
 	}
 </script>

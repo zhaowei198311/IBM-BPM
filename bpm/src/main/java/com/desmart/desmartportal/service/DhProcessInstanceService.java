@@ -93,7 +93,7 @@ public interface DhProcessInstanceService {
 	 * 准备流程第一个环节的数据
 	 * @return
 	 */
-	ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid);
+	ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid,String insBusinessKey);
 	
 	/**
 	 * 根据流程实例id  查看流程图
@@ -107,7 +107,8 @@ public interface DhProcessInstanceService {
 	 * @param dhProcessDefinition
 	 * @return
 	 */
-	DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition);
+	DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition
+			,String insBusinessKey);
 	
 	/**
 	 * 根据流程实例唯一主键获得流程实例
@@ -151,4 +152,5 @@ public interface DhProcessInstanceService {
 	 */
 	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, BpmActivityMeta processNode,
 																 String tokenId, String creatorId, String departNo, String companyNumber);
+	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
 }

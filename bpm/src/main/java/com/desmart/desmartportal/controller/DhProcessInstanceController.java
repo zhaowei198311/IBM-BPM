@@ -167,4 +167,14 @@ public class DhProcessInstanceController {
 			return ServerResponse.createByError();
 		}
 	}
+	
+	@RequestMapping(value = "/checkedBusinesskey")
+	@ResponseBody
+	public ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance) {
+		try {
+			return dhProcessInstanceService.checkedBusinesskey(dhProcessInstance);
+		}catch (Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 }
