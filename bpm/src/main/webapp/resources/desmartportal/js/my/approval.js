@@ -338,16 +338,20 @@ function agree() {
     //var insData = $("#insData").text();
     // 路由数据
     var routeData = [];
+    var lackNextOwner = false;
     $('.getUser').each(function () {
         var item = {};
         item.activityId = $(this).attr('id');
         item.userUid = $(this).val();
+        if (item.userUid == null || item.userUid == undefined || item.userUid.trim() == '') {
+            lackNextOwner = true;
+        }
         item.assignVarName = $(this).data("assignvarname");
         item.signCountVarName =  $(this).data("signcountvarname");
         item.loopType = $(this).data("looptype");
         routeData.push(item);
     });
-    if(routeData.length==0){
+    if(lackNextOwner){
     	layer.alert('提交失败,未配置下一环节处理人');
     	return;
     }

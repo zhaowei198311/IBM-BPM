@@ -6,8 +6,12 @@ package com.desmart.desmartportal.controller;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.desmart.desmartbpm.controller.DhProcessDefinitionController;
+
+import net.sf.jsqlparser.schema.Server;
 import org.apache.shiro.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -33,8 +37,7 @@ import com.github.pagehelper.PageInfo;
 @Controller
 @RequestMapping(value = "/taskInstance")
 public class DhTaskInstanceController {
-	
-	private Logger log = Logger.getLogger(DhTaskInstanceController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DhTaskInstanceController.class);
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
@@ -79,8 +82,13 @@ public class DhTaskInstanceController {
 	@RequestMapping(value = "/finshedTask")
 	@ResponseBody
 	private ServerResponse finshedTask(@RequestParam(value="data") String data) {		
-		//解析data
-		return dhTaskInstanceService.perform(data);
+		try {
+			return dhTaskInstanceService.perform(data);
+		} catch (Exception e) {
+			LOG.error("完成任务失败，提交数据：" + data);
+			return ServerResponse.createByErrorMessage("完成任务失败");
+		}
+
 	}
 	
 	/**

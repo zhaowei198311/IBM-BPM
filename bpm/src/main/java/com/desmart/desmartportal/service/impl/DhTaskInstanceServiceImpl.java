@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.*;
 import org.apache.commons.lang3.StringUtils;
@@ -303,155 +304,161 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (StringUtils.isBlank(data)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		log.info("完成任务开始......");
-		try {
-			JSONObject jsonBody = JSONObject.parseObject(data);
-			JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
-			JSONObject formData = JSONObject.parseObject(String.valueOf(jsonBody.get("formData")));
-			JSONArray routeData = JSONObject.parseArray(String.valueOf(jsonBody.get("routeData")));
-			
-			Integer taskId = Integer.parseInt(taskData.getString("taskId"));
-			String taskUid = taskData.getString("taskUid");
-			// 根据任务标识和用户 去查询流程 实例
-			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-			if (dhTaskInstance == null) {
-				return ServerResponse.createByErrorMessage("当前任务不存在!");
-			}
-			if ("12".equals(dhTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
-				String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-				if (checkTaskUser(dhTaskInstance, currentUserUid)) {// 检查任务是否有权限提交
-					DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
-					if (dhProcessInstance == null) {
-						return ServerResponse.createByErrorMessage("流程实例不存在");
-					}
+		JSONObject dataJson = JSONObject.parseObject(data);
+		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
+		JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
+		JSONArray routeData = JSONObject.parseArray(String.valueOf(dataJson.get("routeData")));
+        String currUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 
-					String proAppId = dhProcessInstance.getProAppId();
-					String activityBpdId = dhTaskInstance.getActivityBpdId();
-					String snapshotId = dhProcessInstance.getProVerUid();
-					String bpdId = dhProcessInstance.getProUid();
-					Integer insId = dhProcessInstance.getInsId();
-					BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
-
- 					// 整合formdata
-					JSONObject formJson = new JSONObject();
-					JSONObject insJson = JSONObject.parseObject(dhProcessInstance.getInsData());
-					if (StringUtils.isNotBlank(formData.toJSONString())) {
-						formJson = FormDataUtil.formDataCombine(formData,insJson.getJSONObject("formData"));
-					}
-
-					// 装配处理人信息
-					CommonBusinessObject pubBo = new CommonBusinessObject();
-					ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
-							.assembleCommonBusinessObject(pubBo, routeData);
-					if (!serverResponse.isSuccess()) {
-						return serverResponse;
-					}
-					JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
-					String aprOpiComment = approvalData.getString("aprOpiComment");
-					String aprStatus = "通过";
-					String insUid = dhTaskInstance.getInsUid();
-
-					// 审批信息记录
-					DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
-					dhApprovalOpinion.setInsUid(insUid);
-					dhApprovalOpinion.setTaskUid(taskUid);
-					dhApprovalOpinion.setActivityId(bpmActivityMeta.getActivityId());
-					dhApprovalOpinion.setAprOpiComment(aprOpiComment);
-					dhApprovalOpinion.setAprStatus(aprStatus);
-					ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl
-							.insertDhApprovalOpinion(dhApprovalOpinion);
-					if (!serverResponse2.isSuccess()) {
-						return serverResponse2;
-					}
-
-
-					insJson.put("formData", formJson);
-					dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-					dhProcessInstance.setInsData(insJson.toJSONString());
-					//判断流程是否结束
-					BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(bpmActivityMeta, formData);
-                    Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
-                    // 更新网关环节的信息
-                    if (routingData.getGatewayNodes().size() > 0) {
-                        ExecutorService executorService = threadPoolProvideService.getThreadPoolToUpdateRouteResult();
-                        Future<Boolean> future = executorService.submit(new SaveRouteResultCallable(dhRouteServiceImpl, insId, routingData));
-                        Boolean updateSucess = true;
-                        try {
-                            updateSucess = future.get(2, TimeUnit.SECONDS); // 最多等待2秒
-                        } catch (Exception e) {
-                            updateSucess = false;
-                        }
-                        if (!updateSucess) {
-                            return ServerResponse.createByErrorMessage("更新路中间表失败");
-                        }
-                    }
-
-
-                    if(nextBpmActivityMetas == null || nextBpmActivityMetas.size() == 0) {
-						dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
-						dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
-					}
-					//修改流程实例信息
-					dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
-
-					for (int i = 0; i < routeData.size(); i++) {
-					//String userId = routeData.getJSONObject(i).getString("userUid").substring(0, 8);
-					String userId = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-					// 任务完成后 保存到流转信息表里面
-					DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-					dhRoutingRecord
-							.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-					dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-					dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-					dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
-					dhRoutingRecord.setUserUid(userId);
-					dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
-					if(nextBpmActivityMetas != null && nextBpmActivityMetas.size() > 0) {
-						setActivityToValues(nextBpmActivityMetas, dhRoutingRecord);
-					}
-					dhRoutingRecordMapper.insert(dhRoutingRecord);
-					}
-					// 修改当前任务实例状态为已完成
-					DhTaskInstance dhTaskInstance2 = new DhTaskInstance();
-					dhTaskInstance2.setTaskUid(taskUid);
-					dhTaskInstance2.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-					dhTaskInstance2.setTaskFinishDate(DateUtil.format(new Date()));
-					dhTaskInstance2.setTaskData(taskData.toJSONString());
-					if(dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance2)>0) {
-						//完成任务 删除草稿数据
-						dhDraftsMapper.deleteByInsUid(insUid);
-
-					//如果任务为类型为normal，则将其它相同任务id的任务废弃
-						if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
-							dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
-						}
-					}
-					BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-					BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-
-					// 调用方法完成任务
-					Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
-					Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-
-					if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
-						log.info("完成任务结束......");
-						return ServerResponse.createBySuccess();
-					}else {
-						log.info("任务完成失败！");
-						throw new RuntimeException("任务完成失败");
-					}
-				} else {
-					return ServerResponse.createByErrorMessage("提交失败，用户权限验证失败");
-				}
-			} else {
-				return ServerResponse.createByErrorMessage("任务已经被提交或暂停");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("完成任务出现异常......");
-			return ServerResponse.createByErrorMessage("完成任务出现异常");
+		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
+		String taskUid = taskData.getString("taskUid");
+		// 根据任务标识和用户 去查询流程 实例
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (dhTaskInstance == null) {
+			return ServerResponse.createByErrorMessage("当前任务不存在!");
 		}
-	}
+		// 校验任务状态
+		if (!"12".equals(dhTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
+			return ServerResponse.createByErrorMessage("任务已经被提交或暂停");
+		}
+		// 校验任务类型
+        String taskType = dhTaskInstance.getTaskType();
+		if (!(DhTaskInstance.TYPE_SIMPLE_LOOP.equals(taskType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equals(taskType)
+                || DhTaskInstance.TYPE_NORMAL.equals(taskType))) {
+            return ServerResponse.createByErrorMessage("任务类型异常");
+        }
+        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        if (!checkTaskUser(dhTaskInstance, currentUserUid)) {// 检查任务是否有权限提交
+            return ServerResponse.createByErrorMessage("提交失败，您没有完成任务的权限");
+        }
+
+        // 获得流程实例
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+        if (dhProcessInstance == null) {
+            return ServerResponse.createByErrorMessage("流程实例不存在");
+        }
+
+        String insUid = dhProcessInstance.getInsUid();
+        Integer insId = dhProcessInstance.getInsId();
+        BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
+        DhActivityConf dhActivityConf = bpmActivityMeta.getDhActivityConf();
+
+        // 整合formdata
+        JSONObject mergedFormData = new JSONObject();
+        JSONObject insJson = JSONObject.parseObject(dhProcessInstance.getInsData());
+        if (StringUtils.isNotBlank(formData.toJSONString())) {
+            mergedFormData = FormDataUtil.formDataCombine(formData, insJson.getJSONObject("formData"));
+        }
+
+        // 装配处理人信息
+        CommonBusinessObject pubBo = new CommonBusinessObject();
+        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
+                .assembleCommonBusinessObject(pubBo, routeData);
+        if (!serverResponse.isSuccess()) {
+            return serverResponse;
+        }
+
+        // 查看是否需要审批记录
+        if ("TRUE".equals(dhActivityConf.getActcCanApprove())){
+            JSONObject approvalData = dataJson.getJSONObject("approvalData");// 获取审批信息
+            if (approvalData == null) {
+                return ServerResponse.createByErrorMessage("缺少审批意见");
+            }
+            String aprOpiComment = approvalData.getString("aprOpiComment");
+            if (StringUtils.isBlank(aprOpiComment)) {
+                return ServerResponse.createByErrorMessage("缺少审批意见");
+            }
+            String aprStatus = "通过";
+            DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+            dhApprovalOpinion.setInsUid(insUid);
+            dhApprovalOpinion.setTaskUid(taskUid);
+            dhApprovalOpinion.setActivityId(bpmActivityMeta.getActivityId());
+            dhApprovalOpinion.setAprOpiComment(aprOpiComment);
+            dhApprovalOpinion.setAprStatus(aprStatus);
+            ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl.insertDhApprovalOpinion(dhApprovalOpinion);
+            if (!serverResponse2.isSuccess()) {
+                return serverResponse2;
+            }
+        }
+
+        insJson.put("formData", mergedFormData);
+        dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
+        dhProcessInstance.setInsData(insJson.toJSONString());
+        //判断流程是否结束
+        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(bpmActivityMeta, formData);
+        Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
+
+        // 更新网关环节的信息
+        if (routingData.getGatewayNodes().size() > 0) {
+            ExecutorService executorService = threadPoolProvideService.getThreadPoolToUpdateRouteResult();
+            Future<Boolean> future = executorService.submit(new SaveRouteResultCallable(dhRouteServiceImpl, insId, routingData));
+            Boolean updateSucess = true;
+            try {
+                updateSucess = future.get(2, TimeUnit.SECONDS); // 最多等待2秒
+            } catch (Exception e) {
+                updateSucess = false;
+            }
+            if (!updateSucess) {
+                return ServerResponse.createByErrorMessage("更新路中间表失败");
+            }
+        }
+
+
+        if(nextBpmActivityMetas == null || nextBpmActivityMetas.size() == 0) {
+            dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
+            dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
+        }
+
+
+        //修改流程实例信息
+        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+
+        // 任务完成后 保存到流转信息表里面
+        for (int i = 0; i < routeData.size(); i++) {
+            DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+            dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+            dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
+            dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
+            dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
+            dhRoutingRecord.setUserUid(currUserUid);
+            dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
+            if(nextBpmActivityMetas != null && nextBpmActivityMetas.size() > 0) {
+                setActivityToValues(nextBpmActivityMetas, dhRoutingRecord);
+            }
+            dhRoutingRecordMapper.insert(dhRoutingRecord);
+        }
+
+        // 修改当前任务实例状态为已完成
+        DhTaskInstance taskInstanceSelective = new DhTaskInstance();
+        taskInstanceSelective.setTaskUid(taskUid);
+        taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+        taskInstanceSelective.setTaskFinishDate(DateUtil.format(new Date()));
+        taskInstanceSelective.setTaskData(taskData.toJSONString());
+        if(dhTaskInstanceMapper.updateByPrimaryKey(taskInstanceSelective) > 0) {
+            //完成任务 删除任务的草稿数据
+            dhDraftsMapper.deleteByInsUid(insUid);
+
+            //如果任务为类型为normal，则将其它相同任务id的任务废弃
+            if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
+                dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
+            }
+        }
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+
+        // 调用方法完成任务
+        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+        Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+
+        if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
+            log.info("完成任务结束......");
+            return ServerResponse.createBySuccess();
+        }else {
+            log.info("任务完成失败！");
+            throw new PlatformException("任务完成失败");
+        }
+
+    }
 
 	/**
 	 *	设置流转到的节点activityId  逗号分隔

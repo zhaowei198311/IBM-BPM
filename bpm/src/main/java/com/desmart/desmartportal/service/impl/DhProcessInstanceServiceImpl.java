@@ -333,7 +333,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 获得第一个人工节点
         BpmActivityMeta firstHumanActivity = routingDataOfMainStartNode.getNormalNodes().iterator().next();
 
-        // 获得路由信息
+        // 获得第一个人工环节后的路由信息
         BpmRoutingData routingData = dhRouteService.getRoutingDataOfNextActivityTo(firstHumanActivity, mergedFromData);
 
 		// 传递第一个环节处理人信息
@@ -376,11 +376,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.updateByPrimaryKeySelective(instanceSelective);
             mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(mainProcessInstance.getInsUid());
 
-
-
-            // 发起主流程不提交时，不会进入子流程
-
-
+            // 由于流程的第一个环节约定为起草，发起主流程不提交时，不会进入子流程
             // 从草稿箱删除这个流程的草稿
             dhDraftsMapper.deleteByInsUid(insUid);
 
@@ -568,7 +564,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
 		} else {
-			// 是草稿箱来的
+			// 是草稿箱转来的
 			processInstance = this.getByInsUid(insUid);
 			if (processInstance == null) {
 				return ServerResponse.createByErrorMessage("草稿中的流程实例不存在");
@@ -957,7 +953,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             String tokenId, String creatorId, String departNo, String companyNumber) {
         DhProcessInstance subInstance = new DhProcessInstance();
         subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        subInstance.setInsTitle(parentInstance.getInsTitle() + processNode.getActivityName());
+        subInstance.setInsTitle(processNode.getActivityName());
         subInstance.setInsId(parentInstance.getInsId());
         subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
         subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
