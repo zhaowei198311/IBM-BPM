@@ -66,7 +66,8 @@ public class DhStepServiceImpl implements DhStepService {
         selective1.setActivityBpdId(list.get(0).getActivityBpdId());
         selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
         selective1.setStepType(dhStep.getStepType());
-        if(dhStepMapper.listBySelective(selective1)!=null) {
+        List<DhStep> checkList = dhStepMapper.listBySelective(selective1);
+        if(checkList!=null&&checkList.size()>0) {
         	return ServerResponse.createByErrorMessage("关键字已存在，请重新自定义关键字");
         }
         
