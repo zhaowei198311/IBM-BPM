@@ -692,7 +692,6 @@
 														</div>
 													</div>
 												</div>
-<<<<<<< .mine
 											</div>
 											<div class="layui-col-md12">
 												<div id="rightGatewayDetails"></div>
@@ -733,7 +732,6 @@
 
 															</tbody>
 														</table>
-=======
 										</div>
 										<div class="layui-col-md12">
 											<div id="rightGatewayDetails">
@@ -777,7 +775,6 @@
 																</table>
 															<!-- </div> -->
 														</div>
->>>>>>> .r1432
 													</div>
 												</div>
 											</div>
@@ -787,7 +784,6 @@
 							</div>
 						</div>
 					</div>
-<<<<<<< .mine
 				</div>
 			</div>
 		</div>
@@ -1034,7 +1030,6 @@
 		</form>
 	</div>
 	<div class="display_container5">
-=======
                     </div>
                 </div>              
             </div>
@@ -1243,7 +1238,6 @@
         </form>
         </div>
         <div class="display_container5">
->>>>>>> .r1432
 		<div class="display_content5" style="height: 430px;">
 			<div class="top">新增网关</div>
 			<div class="middle1" style="height: 320px;">
