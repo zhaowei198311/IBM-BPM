@@ -41,7 +41,8 @@ public class DhRoutingRecordController {
 		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();//获取当前流转到的所有环节
 
 
-		if (bpmActivityMetaList.size() > 0) {
+		//if (bpmActivityMetaList.size() > 0) {
+			if(dhRoutingRecords.size()>0) {
 			DhRoutingRecord lastDhRoutingRecord = dhRoutingRecords.get(dhRoutingRecords.size()-1);//根据流程uid取得最后一个流转记录
 			if(lastDhRoutingRecord.getActivityTo()!=null&&!"".equals(lastDhRoutingRecord.getActivityTo())) {
 				String[] activityTo = lastDhRoutingRecord.getActivityTo().split(",");
@@ -51,7 +52,8 @@ public class DhRoutingRecordController {
 					bpmActivityMetaList.add(bpmActivityMeta);
 				}
 			}
-		}
+			}
+		//}
 		
 		/*List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
 		for (BpmActivityMeta bpmActivityMeta : bpmActivityMetaList) {
