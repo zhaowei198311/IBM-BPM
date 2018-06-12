@@ -74,4 +74,8 @@ public interface DhStepService {
      * @return
      */
 	ServerResponse createStepToAll(DhStep dhStep);
+	/**
+	 * 根据条件查询所有步骤
+	 */
+	ServerResponse<List<DhStep>> getStepInfoByCondition(DhStep dhStep);
 }    
