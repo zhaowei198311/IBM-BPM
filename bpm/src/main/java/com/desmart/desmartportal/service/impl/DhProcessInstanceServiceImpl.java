@@ -980,6 +980,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				List<DhStep> list = serverResponse.getData();
 				if(list.size()>0) {
 					if(list.size()==1) {
+						Map<String, Object> map = new HashMap<>();
+						map.put("flag", 1);
+						map.put("dataObj", list.get(0));
 						return ServerResponse.createBySuccess(1);
 					}else {
 						return serverResponse;

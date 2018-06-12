@@ -277,11 +277,13 @@
 	}
 	
 	
-	function startProcess() {
-		var insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
+	function startProcess(insBusinessKey) {
+		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
+		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
 			layer.alert("请选择业务关键字");
 			return;
+		}
 		}
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
@@ -309,8 +311,8 @@
 			},
 			success : function(result) {
 				if(result.status == 0){
-					if(result.data==1){
-						
+					if(result.data.flag==1){
+						startProcess(result.data.dataObj.insBusinessKey);
 					}else{
 						$("#checkedBusinessKey").find(".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {
