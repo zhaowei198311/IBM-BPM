@@ -982,13 +982,17 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if(serverResponse.isSuccess()) {
 				List<DhStep> list = serverResponse.getData();
 				if(list.size()>0) {
-					if(list.size()==1) {
+					Set<String> set = new HashSet<>();
+					for (DhStep dhStep : list) {
+						set.add(dhStep.getStepBusinessKey());
+					}
+					if(set.size()==1) {
 						Map<String, Object> map = new HashMap<>();
 						map.put("flag", 1);
-						map.put("dataObj", list.get(0));
+						map.put("stepBusinessKey", list.get(0).getStepBusinessKey());
 						return ServerResponse.createBySuccess(map);
 					}else {
-						return serverResponse;
+						return ServerResponse.createBySuccess(set);
 					}
 				}else {
 					return ServerResponse.createByErrorMessage("请先配置流程步骤");

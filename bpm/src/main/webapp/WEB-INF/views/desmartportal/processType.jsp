@@ -312,16 +312,16 @@
 			success : function(result) {
 				if(result.status == 0){
 					if(result.data.flag==1){
-						startProcess(result.data.dataObj.stepBusinessKey);
+						startProcess(result.data.stepBusinessKey);
 					}else{
 						$("#checkedBusinessKey").find(".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {
 						var info = '<tr><td><input type="radio" name="insBusinessKey" '
 						+'value="'
-						+ result.data[i].stepBusinessKey
+						+ result.data[i]
 						+'" >'+(i+1)+'</td>'
 	                    +'<td style="text-align: center;">'
-	                   	+ result.data[i].stepBusinessKey
+	                   	+ result.data[i]
 	                    +'</td></tr>';
 	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
 						}
