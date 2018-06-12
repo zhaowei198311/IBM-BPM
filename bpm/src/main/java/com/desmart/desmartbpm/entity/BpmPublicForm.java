@@ -13,6 +13,7 @@ public class BpmPublicForm {
 	private String publicFormDescription;
 	private String publicFormContent;
 	private String publicFormWebpage;
+	private String publicFormCode;
 	private String creator;
 	private Date createTime;
 	
@@ -21,13 +22,15 @@ public class BpmPublicForm {
 	public BpmPublicForm() {}
 
 	public BpmPublicForm(String publicFormUid, String publicFormName, String publicFormDescription,
-			String publicFormContent, String publicFormWebpage, String creator, Date createTime, String creatorName) {
+			String publicFormContent, String publicFormWebpage, String publicFormCode, String creator, Date createTime,
+			String creatorName) {
 		super();
 		this.publicFormUid = publicFormUid;
 		this.publicFormName = publicFormName;
 		this.publicFormDescription = publicFormDescription;
 		this.publicFormContent = publicFormContent;
 		this.publicFormWebpage = publicFormWebpage;
+		this.publicFormCode = publicFormCode;
 		this.creator = creator;
 		this.createTime = createTime;
 		this.creatorName = creatorName;
@@ -73,6 +76,14 @@ public class BpmPublicForm {
 		this.publicFormWebpage = publicFormWebpage;
 	}
 
+	public String getPublicFormCode() {
+		return publicFormCode;
+	}
+
+	public void setPublicFormCode(String publicFormCode) {
+		this.publicFormCode = publicFormCode;
+	}
+
 	public String getCreator() {
 		return creator;
 	}
@@ -101,7 +112,7 @@ public class BpmPublicForm {
 	public String toString() {
 		return "BpmPublicForm [publicFormUid=" + publicFormUid + ", publicFormName=" + publicFormName
 				+ ", publicFormDescription=" + publicFormDescription + ", publicFormContent=" + publicFormContent
-				+ ", publicFormWebpage=" + publicFormWebpage + ", creator=" + creator + ", createTime=" + createTime
-				+ ", creatorName=" + creatorName + "]";
+				+ ", publicFormWebpage=" + publicFormWebpage + ", publicFormCode=" + publicFormCode + ", creator="
+				+ creator + ", createTime=" + createTime + ", creatorName=" + creatorName + "]";
 	}
 }

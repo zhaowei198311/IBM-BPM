@@ -134,6 +134,26 @@ var common = {
             }
         }); 
     },
+    //选择公共的子表单关联
+    choosePublicFormPath:function(id,formUid) {
+    	return common.getPath() + "/publicForm/selectPublicForm?elementId=" + id +"&formUid="+formUid; 
+    },
+    choosePublicForm:function(elementId,formUid){
+    	layer.open({
+            type: 2,
+            title: '选择关联公共子表单',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['500px', '500px'],
+            content: common.choosePublicFormPath(elementId,formUid),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;

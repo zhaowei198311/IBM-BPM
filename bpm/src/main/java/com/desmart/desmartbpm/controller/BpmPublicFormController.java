@@ -38,12 +38,14 @@ public class BpmPublicFormController {
 	}
 	
 	@RequestMapping(value = "/designForm")
-	public ModelAndView designForm(String formUid,String formName,String formDescription,String dynHtml) {
+	public ModelAndView designForm(String formUid,String formName,String formDescription,
+			String dynHtml,String formCode) {
 		ModelAndView modelAndView = new ModelAndView("desmartbpm/common/publicFormDesign");
 		modelAndView.addObject("formUid", formUid);
 		modelAndView.addObject("formName", formName);
 		modelAndView.addObject("formDescription", formDescription);
 		modelAndView.addObject("dynHtml",dynHtml);
+		modelAndView.addObject("formCode",formCode);
 		return modelAndView;
 	}
 	
@@ -61,11 +63,11 @@ public class BpmPublicFormController {
 	/**
 	 * 根据表单名精确查询表单
 	 */
-	@RequestMapping(value = "/queryFormByFormName")
+	@RequestMapping(value = "/queryFormByFormNameAndCode")
 	@ResponseBody
-	public ServerResponse queryFormByFormName(String formName) {
+	public ServerResponse queryFormByFormNameAndCode(String formName,String formCode) {
 		try {
-			return bpmPublicFormService.queryFormByFormName(formName);
+			return bpmPublicFormService.queryFormByFormNameAndCode(formName,formCode);
 		}catch(Exception e) {
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
@@ -81,7 +83,7 @@ public class BpmPublicFormController {
 	}
 	
 	/**
-	 * 根据表单id查询表单是否已被主表单引用
+	 * 根据表单id查询表单是否已被关联了步骤的主表单引用
 	 */
 	@RequestMapping(value = "/isBindMainForm")
 	@ResponseBody
@@ -155,6 +157,45 @@ public class BpmPublicFormController {
 	public ServerResponse copyForm(BpmPublicForm bpmPubilcForm) {
 		try {
 			return bpmPublicFormService.copyForm(bpmPubilcForm);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
+	/**
+	 * 进入选择关联子表单的页面
+	 */
+	@RequestMapping(value = "/selectPublicForm")
+	@ResponseBody
+	public ModelAndView toChoosePublicForm(String elementId,String formUid) {
+		ModelAndView mv = new ModelAndView("desmartbpm/choosePublicForm");
+		mv.addObject("elementId",elementId);
+		mv.addObject("formUid",formUid);
+		return mv;
+	}
+	
+	/**
+	 * 添加主表单与公共表单之间的关联信息
+	 */
+	@RequestMapping(value = "/saveFormRelePublicForm")
+	@ResponseBody
+	public ServerResponse saveFormRelePublicForm(String formUid,String[] publicFormUidArr) {
+		try {
+			return bpmPublicFormService.saveFormRelePublicForm(formUid,publicFormUidArr);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByError();
+		}
+	}
+	
+	/**
+	 * 根据表单id和公共表单id查询是否有相同的关联信息
+	 */
+	@RequestMapping(value = "/queryReleByFormUidAndPublicFormUid")
+	@ResponseBody
+	public ServerResponse queryReleByFormUidAndPublicFormUid(String formUid,String publicFormUid) {
+		try {
+			return bpmPublicFormService.queryReleByFormUidAndPublicFormUid(formUid,publicFormUid);
 		}catch(Exception e) {
 			return ServerResponse.createByError();
 		}

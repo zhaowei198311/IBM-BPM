@@ -266,6 +266,7 @@
 		}
 		// 查询所有的数据字典分类
 		function getOnDictionaryList(){
+			layer.load(1);
 			$.ajax({
 				url: "sysDictionary/getOnSysDictionaryList",
 				method: "post",
@@ -277,6 +278,7 @@
 				success: function(result){
 					if(result.status==0){
 						drawTable(result.data);
+						layer.closeAll("loading");
 					}
 				}
 			})	

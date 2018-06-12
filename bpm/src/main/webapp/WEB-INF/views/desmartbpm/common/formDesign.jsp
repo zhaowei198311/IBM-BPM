@@ -357,7 +357,7 @@
 										</div>
 									</div>
 									<!-- 文件上传按钮 -->
-									<div class="box box-element ui-draggable">
+									<!-- <div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
 											<i class="icon-remove icon-white"></i>删除
 										</a>
@@ -385,7 +385,7 @@
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 								</li>
 							</ul>
 							<!-- 特殊组件 -->
@@ -532,8 +532,31 @@
 											</div>
 										</div>
 									</div>
-									<!-- 审批意见 -->
+									<!-- 子表单关联 -->
 									<div class="box box-element ui-draggable">
+										<a href="#close" class="remove label label-important">
+											<i class="icon-remove icon-white"></i>删除
+										</a>
+										<span class="drag label">
+											<i class="icon-move"></i>拖动
+										</span>
+										<span class="configuration">
+											<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="chooseFormModal(this);" role="button"
+											    data-toggle="modal">选择关联表单
+											</button>
+										</span>
+										<div class="preview">关联子表单</div>
+										<div class="view">
+											<div class="subDiv">
+												<div title="choose_form" style="width:auto;height:30px;border:1px dashed #ccc;border-radius:4px;">
+													<span id="form_hide_view" title="choose_form" class="layui-input">关联的子表单名</span>
+													<input type="hidden" id="form_hide" class="value_id" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- 审批意见 -->
+									<!-- <div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
 											<i class="icon-remove icon-white"></i>删除
 										</a>
@@ -555,7 +578,7 @@
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 								</li>
 							</ul>
 						</div>
@@ -2036,6 +2059,7 @@
 					<input type="hidden" id="formName" value="${formName}" />
 					<input type="hidden" id="formDescription" value="${formDescription}" />
 					<input type="hidden" id="nameArr" value="">
+					<input type="hidden" id="publicFormUidArr" value="">
 					<span style="display:none;" id="dynHtml">${ dynHtml }</span>
 					<a class="btn btn-primary" data-dismiss="modal" onclick="javascript:saveHtml();">确认保存</a>
 				</div>

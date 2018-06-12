@@ -1,6 +1,7 @@
 var view = null;
 var oldName = "";
 var title = "";
+var formCode = "";
 //显示填写事件脚本的js
 function showEventModal(obj) {
     $("#editEventModal").modal("show");
@@ -93,7 +94,7 @@ function showTextModal(obj) {
     var inputObj = view.find("input");
     var defaultVal = inputObj.val();
     var id = inputObj.attr("id");
-    var name = inputObj.prop("name");
+    var name = inputObj.prop("name").replace(formCode+"_","");
     var place = inputObj.attr("placeholder");
     var textWidth = inputObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
@@ -135,7 +136,7 @@ function showNumberModal(obj) {
     var defaultVal = inputObj.val();
     var id = inputObj.attr("id");
     var place = inputObj.attr("placeholder");
-    var name = inputObj.attr("name");
+    var name = inputObj.attr("name").replace(formCode+"_","");
     var textWidth = inputObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -173,7 +174,7 @@ function showDateModal(obj) {
 
     var id = inputObj.attr("id");
     var place = inputObj.attr("placeholder");
-    var name = inputObj.attr("name");
+    var name = inputObj.attr("name").replace(formCode+"_","");
     var textWidth = inputObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -207,7 +208,7 @@ function showTextareaModal(obj) {
     var textareaObj = view.find("textarea");
     var defaultVal = textareaObj.val();
     var id = textareaObj.attr("id");
-    var name = textareaObj.attr("name");
+    var name = textareaObj.attr("name").replace(formCode+"_","");
     var rows = textareaObj.attr("rows");
     var textWidth = textareaObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
@@ -244,7 +245,7 @@ function showSelectModal(obj) {
     var label = view.find("label").text();
     var selectObj = view.find("select");
     var id = selectObj.attr("id");
-    var name = selectObj.attr("name");
+    var name = selectObj.attr("name").replace(formCode+"_","");
     var dataSource = selectObj.attr("data_source");
     var databaseType = selectObj.attr("database_type");
 
@@ -319,7 +320,7 @@ function showRadioModal(obj) {
     var label = view.find(".labelDiv label").text();
     var inputRadioObj = view.find("input[type='radio']");
     var id = inputRadioObj.attr("class");
-    var name = inputRadioObj.attr("name");
+    var name = inputRadioObj.attr("name").replace(formCode+"_","");
     var textLabelCol = view.find(".labelDiv").attr("col");
     var textCol = view.find(".subDiv").attr("col");
     oldName = name;
@@ -375,7 +376,7 @@ function showCheckboxModal(obj) {
     var label = view.find(".labelDiv label").text();
     var inputCheckboxObj = view.find(".subDiv input[type='checkbox']");
     var id = inputCheckboxObj.attr("class");
-    var name = inputCheckboxObj.attr("name");
+    var name = inputCheckboxObj.attr("name").replace(formCode+"_","");
     var textLabelCol = view.find(".labelDiv").attr("col");
     var textCol = view.find(".subDiv").attr("col");
     oldName = name;
@@ -521,7 +522,7 @@ function showDataTableModal(obj) {
     view = $(obj).parent().next().next();
     var tableObj = view.find(".subDiv table");
     var id = tableObj.attr("id");
-    var name = tableObj.attr("name");
+    var name = tableObj.attr("name").replace(formCode+"_","");
     var thObjArr = tableObj.find("thead th");
     var thNum = thObjArr.length;
 
@@ -643,7 +644,7 @@ function showChooseUserModal(obj){
     var label = view.find("label").text();
     var subObj = view.find("div[title='choose_user']");
     var id = subObj.attr("id");
-    var name = subObj.attr("name");
+    var name = subObj.attr("name").replace(formCode+"_","");
     var textWidth = subObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -668,7 +669,7 @@ function showChooseValueModal(obj){
     var label = view.find("label").text();
     var subObj = view.find("div[title='choose_value']");
     var id = subObj.attr("id");
-    var name = subObj.attr("name");
+    var name = subObj.attr("name").replace(formCode+"_","");
     var databaseType = subObj.attr("database_type");
     var databaseName = getDictionaryByDicUid(databaseType);
     var textWidth = subObj.width();
@@ -727,6 +728,7 @@ function selectData(obj) {
 var dateIconWidth = 28;
 
 $(function () {
+	formCode = $("#formCode").val();
     $(".col").number();
     $(".col").bind('input propertychange', function () {
         var colVal = $(this).val();
@@ -895,7 +897,7 @@ $(function () {
                         inputObj.attr({
                             "id": id,
                             "placeholder": place,
-                            "name": name
+                            "name": formCode+"_"+name
                         });
 
                         view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#text-label-width").val());
@@ -932,7 +934,7 @@ $(function () {
                     inputObj.attr({
                         "id": id,
                         "placeholder": place,
-                        "name": name
+                        "name": formCode+"_"+name
                     });
 
                     view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#text-label-width").val());
@@ -971,7 +973,7 @@ $(function () {
                 inputObj.attr({
                     "id": id,
                     "placeholder": place,
-                    "name": name
+                    "name": formCode+"_"+name
                 });
 
                 view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#text-label-width").val());
@@ -1019,7 +1021,7 @@ $(function () {
             inputObj.attr({
                 "id": id,
                 "placeholder": place,
-                "name": name
+                "name": formCode+"_"+name
             });
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#number-label-width").val());
@@ -1065,7 +1067,7 @@ $(function () {
             inputObj.attr({
                 "id": id,
                 "placeholder": place,
-                "name": name
+                "name": formCode+"_"+name
             });
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#date-label-width").val());
@@ -1110,7 +1112,7 @@ $(function () {
             textareaObj.attr({
                 "id": id,
                 "rows": rows,
-                "name": name
+                "name": formCode+"_"+name
             });
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#textarea-label-width").val());
@@ -1156,7 +1158,7 @@ $(function () {
             var selectObj = view.find("select");
             selectObj.attr({
                 "id": id,
-                "name": name,
+                "name": formCode+"_"+name,
                 "data_source": dataSource
             });
 
@@ -1217,14 +1219,14 @@ $(function () {
                 if(radioText != "" && radioText != null && radioValue!=null && radioValue!="") {
                     var html = "<label class='radio'>" +
                         "<input type='radio' class='" + id + "' id='" + id + i 
-                        + "' name='" + name + "' value='"+radioValue+"'/>" +
+                        + "' name='" + formCode+"_"+name + "' value='"+radioValue+"'/>" +
                         radioText +
                         "</label>";
                     parentDivObj.append(html);
                 }else{
                 	var html = "<label class='radio'>" +
                     "<input type='radio' class='" + id + "' id='" + id + i 
-                    + "' name='" + name + "' value='radioValue'/>radioValue</label>";
+                    + "' name='" + formCode+"_"+name + "' value='radioValue'/>radioValue</label>";
                 	parentDivObj.append(html);
                 }
                 if(i==0){
@@ -1278,12 +1280,12 @@ $(function () {
                 if(checkboxText!=null && checkboxText!="" && checkboxValue!=null && checkboxValue!=""){
                 	html += "<label class='checkbox'>" +
 	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
-	                    + "' name='" + name + "' value='"+checkboxValue+"'/>"+checkboxText+
+	                    + "' name='" + formCode+"_"+name + "' value='"+checkboxValue+"'/>"+checkboxText+
 	                    "</label>";
                 }else{
                 	html += "<label class='checkbox'>" +
 	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
-	                    + "' name='" + name + "' value='checkboxValue'/>checkboxText" +
+	                    + "' name='" + formCode+"_"+name + "' value='checkboxValue'/>checkboxText" +
 	                    "</label>";
                 }
                 parentDivObj.append(html);
@@ -1423,7 +1425,7 @@ $(function () {
             var tableObj = view.find("table");
             tableObj.attr({
                 "id": id,
-                "name": name
+                "name": formCode+"_"+name
             });
             var tableThArr = $(".data-table-head");
             tableObj.find("th").remove();
@@ -1459,9 +1461,9 @@ $(function () {
             var subObj = view.find("div[title='choose_user']");
             subObj.attr({
                 "id": id,
-                "name": name
+                "name": formCode+"_"+name
             });
-            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":name});
+            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":formCode+"_"+name});
             subObj.find("input[type='hidden']").attr("id",id+"_hide");
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#choose-user-label-width").val());
@@ -1495,11 +1497,11 @@ $(function () {
             var subObj = view.find("div[title='choose_value']");
             subObj.attr({
                 "id": id,
-                "name": name,
+                "name": formCode+"_"+name,
                 "database_type":dataType
             });
             
-            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":name,"database_type":dataType});
+            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":formCode+"_"+name,"database_type":dataType});
             subObj.find("input[class='value_id']").attr("id",id+"_hide");
             subObj.find("input[class='value_code']").attr("id",id+"_hide_code");
 

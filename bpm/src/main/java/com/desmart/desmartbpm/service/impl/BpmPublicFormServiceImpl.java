@@ -14,10 +14,12 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
+import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.BpmPublicFormMapper;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
 import com.desmart.desmartbpm.util.SFTPUtil;
@@ -37,12 +39,10 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	@Autowired 
 	private BpmPublicFormMapper bpmPublicFormMapper;
 	@Autowired
-	private BpmFormFieldMapper bpmFormFieldMapper;
+	private BpmFormManageMapper bpmFormManageMapper;
 	@Autowired
-	private BpmGlobalConfigService bpmGlobalCofigService;
+	private BpmFormFieldMapper bpmFormFieldMapper;
 	
-	private SFTPUtil sftp = new SFTPUtil();
-
 	@Override
 	public ServerResponse listFormByFormName(String formName, Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize,"create_time desc");
@@ -52,10 +52,14 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	}
 
 	@Override
-	public ServerResponse queryFormByFormName(String formName) {
+	public ServerResponse queryFormByFormNameAndCode(String formName,String formCode) {
 		BpmPublicForm bpmPublicForm = bpmPublicFormMapper.queryFormByFormName(formName);
 		if(null!=bpmPublicForm) {
 			throw new PlatformException("已存在表单名为"+formName+"的表单");
+		}
+		BpmPublicForm publicForm = bpmPublicFormMapper.queryFormByFormCode(formCode);
+		if(null!=publicForm) {
+			throw new PlatformException("已存在表单编码为"+formCode+"的表单");
 		}
 		return ServerResponse.createBySuccess();
 	}
@@ -65,7 +69,12 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		for(String formUid:formUids) {
 			List<String> mainFormUidList = bpmPublicFormMapper.isBindMainForm(formUid);
 			if(!mainFormUidList.isEmpty()) {
-				throw new PlatformException("该子表单已被主表单绑定");
+				for(String mainFormUid:mainFormUidList) {
+					List<DhStep> stepList = bpmFormManageMapper.isBindStep(mainFormUid);
+					if(!stepList.isEmpty()) {
+						throw new PlatformException("该子表单已被主表单绑定");
+					}
+				}
 			}
 		}
 		return ServerResponse.createBySuccess();
@@ -192,5 +201,27 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
         	throw new PlatformException("表单数据复制异常");
         }
         return newFormUid;
+	}
+
+	@Override
+	public ServerResponse saveFormRelePublicForm(String formUid, String[] publicFormUidArr) {
+		for(String publicFormUid:publicFormUidArr) {
+			if(!"".equals(publicFormUid) && null!=publicFormUid) {
+				int countRow = bpmPublicFormMapper.saveFormRelePublicForm(formUid,publicFormUid);
+				if(1!=countRow) {
+					throw new PlatformException("添加子表单关联失败");
+				}
+			}
+		}
+		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse queryReleByFormUidAndPublicFormUid(String formUid, String publicFormUid) {
+		int countRow = bpmPublicFormMapper.queryReleByFormUidAndPublicFormUid(formUid,publicFormUid);
+		if(countRow>=1) {
+			throw new PlatformException("添加子表单关联失败");
+		}
+		return ServerResponse.createBySuccess();
 	}
 }

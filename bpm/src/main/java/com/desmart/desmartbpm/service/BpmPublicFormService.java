@@ -19,7 +19,7 @@ public interface BpmPublicFormService {
 	/**
 	 * 根据表单名精确查询表单
 	 */
-	ServerResponse queryFormByFormName(String formName);
+	ServerResponse queryFormByFormNameAndCode(String formName,String formCode);
 
 	/**
 	 * 根据表单id查询表单是否已被主表单引用
@@ -55,4 +55,14 @@ public interface BpmPublicFormService {
 	 * 复制表单
 	 */
 	ServerResponse copyForm(BpmPublicForm bpmPubilcForm);
+
+	/**
+	 * 添加主表单与子表单之间的关联信息
+	 */
+	ServerResponse saveFormRelePublicForm(String formUid, String[] publicFormUidArr);
+
+	/**
+	 * 根据表单id和公共表单id查询是否有相同的关联信息
+	 */
+	ServerResponse queryReleByFormUidAndPublicFormUid(String formUid, String publicFormUid);
 }

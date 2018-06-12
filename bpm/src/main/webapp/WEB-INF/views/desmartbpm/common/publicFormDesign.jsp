@@ -357,7 +357,7 @@
 										</div>
 									</div>
 									<!-- 文件上传按钮 -->
-									<div class="box box-element ui-draggable">
+									<!-- <div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
 											<i class="icon-remove icon-white"></i>删除
 										</a>
@@ -385,7 +385,7 @@
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 								</li>
 							</ul>
 							<!-- 特殊组件 -->
@@ -533,7 +533,7 @@
 										</div>
 									</div>
 									<!-- 审批意见 -->
-									<div class="box box-element ui-draggable">
+									<!-- <div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
 											<i class="icon-remove icon-white"></i>删除
 										</a>
@@ -555,7 +555,7 @@
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 								</li>
 							</ul>
 						</div>
@@ -2032,6 +2032,7 @@
 				<div class="modal-footer">
 					<input type="hidden" id="formUid" value="${formUid}" />
 					<input type="hidden" id="formName" value="${formName}" />
+					<input type="hidden" id="formCode" value="${formCode}" />
 					<input type="hidden" id="formDescription" value="${formDescription}" />
 					<input type="hidden" id="nameArr" value="">
 					<span style="display:none;" id="dynHtml">${ dynHtml }</span>

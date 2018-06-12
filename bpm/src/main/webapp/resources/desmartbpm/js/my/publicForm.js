@@ -1,5 +1,6 @@
 var oldFormName = "";//修改表单信息时表单的旧名称
 var oldFormDescription = "";//修改表单信息时的旧描述
+var oldFormCode = "";//修改表单信息时的旧表单编码
 var updateFormId = "";//修改表单时表单的Id
 var copuFormId = "";//复制表单时表单的Id
 
@@ -11,6 +12,10 @@ var pageConfig = {
 }
 
 $(function() {
+	$("add_form_code").onlyNumAlpha();
+	$("update_form_code").onlyNumAlpha();
+	$("copy_form_code").onlyNumAlpha();
+	
 	queryFormByName();
 	searchForm();
 	
@@ -67,7 +72,9 @@ function drawTable(pageInfo) {
 				+ '">'
 				+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="'
 				+ formInfo.publicFormUid + '" lay-skin="primary"> ' + sortNum
-				+ '</td>' + '<td>' + formInfo.publicFormName + '</td>';
+				+ '</td>' 
+				+ '<td>' + formInfo.publicFormName + '</td>'
+				+ '<td>' + formInfo.publicFormCode + '</td>';
 		if (formInfo.publicFormDescription != null
 				&& formInfo.publicFormDescription != "") {
 			trs += '<td>' + formInfo.publicFormDescription + '</td>';
@@ -143,6 +150,7 @@ function doPage() {
 
 function showCreateFormModal() {
 	$("#add_form_name").val("");
+	$("#add_form_code").val("");
 	$("#add_form_description").val("");
 	$(".display_container").css("display", "block");
 }
@@ -150,18 +158,21 @@ function showCreateFormModal() {
 function saveForm(){
 	var addFormName = $("#add_form_name").val().trim();
 	var	addFormDescription = $("#add_form_description").val().trim();
-	if(addFormName!=null && addFormName!=""){
+	var addFormCode = $("#add_form_code").val().trim();
+	if(addFormName!=null && addFormName!="" && addFormCode!="" && addFormCode!=null){
 		layer.load(1);
 		$.ajax({
-			url:common.getPath()+"/publicForm/queryFormByFormName",
+			url:common.getPath()+"/publicForm/queryFormByFormNameAndCode",
 			method:"post",
 			data:{
-				formName:addFormName
+				formName:addFormName,
+				formCode:addFormCode
 			},
 			success:function(result){
 				if(result.status==0){
 					var href = "/publicForm/designForm?formName="+addFormName
 							+"&formDescription="+addFormDescription
+							+"&formCode="+addFormCode;
 					window.location.href = common.getPath()+href;
 					$(".display_container").css("display", "none");
 				}else{
@@ -171,7 +182,7 @@ function saveForm(){
 			}
 		});
 	}else{
-		layer.alert("输入的表单名不能为空");
+		layer.alert("输入的表单名和表单编码不能为空");
 	}
 }
 
@@ -180,9 +191,11 @@ function updateFormContent(obj){
 	var trObj = $(obj).parent().parent();
 	var formId = trObj.data("formuid");
 	var formName = $(trObj.find("td")[1]).text().trim();
-	var formDescription = $(trObj.find("td")[2]).text().trim();
+	var formCode = $(trObj.find("td")[2]).text().trim();
+	var formDescription = $(trObj.find("td")[3]).text().trim();
 	var href = "/publicForm/designForm?formUid="+formId
 			+"&formName="+formName
+			+"&formCode="+formCode
 			+"&formDescription="+formDescription;
 	window.location.href = common.getPath()+href;
 }
@@ -192,10 +205,13 @@ function updateFormModal(obj){
 	var trObj = $(obj).parent().parent();
 	updateFormId = trObj.data("formuid");
 	var formName = $(trObj.find("td")[1]).text().trim();
-	var formDescription = $(trObj.find("td")[2]).text().trim();
+	var formCode = $(trObj.find("td")[2]).text().trim();
+	var formDescription = $(trObj.find("td")[3]).text().trim();
 	oldFormDescription = formDescription;
 	oldFormName = formName;
+	oldFormCode = formCode;
 	$("#update_form_name").val(oldFormName);
+	$("#update_form_code").val(oldFormCode);
 	$("#update_form_description").val(oldFormDescription);
 	$(".display_container1").css("display", "block");
 }
@@ -203,18 +219,20 @@ function updateFormModal(obj){
 //修改表单的属性
 function updateForm(){
 	var formName = $("#update_form_name").val().trim();
+	var formCode = $("#update_form_code").val().trim();
 	var formDescription = $("#update_form_description").val().trim();
-	if(formName==null || formName==""){
-		layer.alert("请填写表单名");
-	}else if(oldFormName==formName && oldFormDescription==formDescription){
+	if(formName==null || formName=="" || formCode=="" || formCode==null){
+		layer.alert("请填写表单名和表单编码");
+	}else if(oldFormName==formName && oldFormDescription==formDescription && oldFormCode==formCode){
 		$(".display_container1").css("display", "none");
-	}else if(oldFormName==formName && oldFormDescription!=formDescription){
+	}else if(oldFormName==formName && oldFormCode==formCode){
 		$.ajax({
 			url:common.getPath()+"/publicForm/updateFormInfo",
 			method:"post",
 			data:{
 				publicFormUid:updateFormId,
 				publicFormName:formName,
+				publicFormCode:formCode,
 				publicFormDescription:formDescription
 			},
 			success:function(result2){
@@ -227,12 +245,12 @@ function updateForm(){
 				}
 			}
 		});
-	}else{
+	}else if(oldFormName==formName){
 		$.ajax({
-			url:common.getPath()+"/publicForm/queryFormByFormName",
+			url:common.getPath()+"/publicForm/queryFormByFormNameAndCode",
 			method:"post",
 			data:{
-				publicFormName:formName
+				formCode:formCode
 			},
 			success:function(result){
 				if(result.status==0){
@@ -242,6 +260,7 @@ function updateForm(){
 						data:{
 							publicFormUid:updateFormId,
 							publicFormName:formName,
+							publicFormCode:formCode,
 							publicFormDescription:formDescription
 						},
 						success:function(result2){
@@ -255,7 +274,74 @@ function updateForm(){
 						}
 					});
 				}else{
-					layer.alert("表单名已存在，不能重复");
+					layer.alert(result.msg);
+				}
+			}
+		});
+	}else if(oldFormCode==formCode){
+		$.ajax({
+			url:common.getPath()+"/publicForm/queryFormByFormNameAndCode",
+			method:"post",
+			data:{
+				formName:formName
+			},
+			success:function(result){
+				if(result.status==0){
+					$.ajax({
+						url:common.getPath()+"/publicForm/updateFormInfo",
+						method:"post",
+						data:{
+							publicFormUid:updateFormId,
+							publicFormName:formName,
+							publicFormCode:formCode,
+							publicFormDescription:formDescription
+						},
+						success:function(result2){
+							if(result2.status==0){
+								layer.alert("表单属性修改成功");
+								queryFormByName();
+								$(".display_container1").css("display", "none");
+							}else{
+								layer.alert("表单属性修改失败");
+							}
+						}
+					});
+				}else{
+					layer.alert(result.msg);
+				}
+			}
+		});
+	}else{
+		$.ajax({
+			url:common.getPath()+"/publicForm/queryFormByFormNameAndCode",
+			method:"post",
+			data:{
+				formName:formName,
+				formCode:formCode
+			},
+			success:function(result){
+				if(result.status==0){
+					$.ajax({
+						url:common.getPath()+"/publicForm/updateFormInfo",
+						method:"post",
+						data:{
+							publicFormUid:updateFormId,
+							publicFormName:formName,
+							publicFormCode:formCode,
+							publicFormDescription:formDescription
+						},
+						success:function(result2){
+							if(result2.status==0){
+								layer.alert("表单属性修改成功");
+								queryFormByName();
+								$(".display_container1").css("display", "none");
+							}else{
+								layer.alert("表单属性修改失败");
+							}
+						}
+					});
+				}else{
+					layer.alert(result.msg);
 				}
 			}
 		});
@@ -314,8 +400,10 @@ function showCopyFormModal(){
 	if(checkedForm.length==1){
 		copyFormId = checkedForm.val();
 		var formName = checkedForm.parent().parent().find("td:eq(1)").text()+"_copy"+_getRandomString(2);
-		var formDescription = checkedForm.parent().parent().find("td:eq(2)").text();
+		var formCode = checkedForm.parent().parent().find("td:eq(2)").text()+"_copy"+_getRandomString(2);
+		var formDescription = checkedForm.parent().parent().find("td:eq(3)").text();
 		$("#copy_form_name").val(formName);
+		$("#copy_form_code").val(formCode);
 		if(formDescription!=null && formDescription!=""){
 			$("#copy_form_description").val(formDescription+"_copy");
 		}else{
@@ -331,16 +419,19 @@ function showCopyFormModal(){
 
 //复制表单
 function copyForm(){
+	layer.load(1);
 	var copyFormName = $("#copy_form_name").val().trim();
+	var copyFormCode = $("#copy_form_code").val().trim();
 	var copyFormDescription = $("#copy_form_description").val().trim();
-	if(copyFormName==null || copyFormName==""){
-		layer.alert("表单名不能为空");
+	if(copyFormName==null || copyFormName=="" || copyFormCode==null || copyFormCode==""){
+		layer.alert("请填写表单名和表单编码");
 	}else{
 		$.ajax({
-			url:common.getPath()+"/publicForm/queryFormByFormName",
+			url:common.getPath()+"/publicForm/queryFormByFormNameAndCode",
 			method:"post",
 			data:{
-				publicFormName:copyFormName
+				formName:copyFormName,
+				formCode:copyFormCode
 			},
 			success:function(result){
 				if(result.status==0){
@@ -350,6 +441,7 @@ function copyForm(){
 						data:{
 							publicFormUid:copyFormId,
 							publicFormName:copyFormName,
+							publicFormCode:copyFormCode,
 							publicFormDescription:copyFormDescription
 						},
 						success:function(result){
@@ -363,11 +455,12 @@ function copyForm(){
 						}
 					});
 				}else{
-					layer.alert("表单名不能重复");
+					layer.alert(result.msg);
 				}
 			}
 		});//end ajax
 	}
+	layer.closeAll("loading");
 }
 
 //生成随机码的方法
@@ -381,3 +474,18 @@ function _getRandomString(len) {
     }  
     return pwd;  
 } 
+
+//只能输入英文和数字
+$.fn.onlyNumAlpha = function () {
+	var oldValue = "";
+	$(this).keydown(function(event){
+		oldValue = this.value;
+	});
+	$(this).keyup(function (event) {
+		if(!/^[A-Za-z0-9_-]+$/.test(this.value)) {
+			if($(this).val().trim()!="" && $(this).val().trim()!=null){
+				this.value=oldValue;
+			}
+		}
+	});
+};

@@ -23,7 +23,11 @@ public class BpmFormFieldController {
 	@RequestMapping(value = "/saveFormField")
 	@ResponseBody
 	public ServerResponse saveFormField(@RequestBody BpmFormField[] fields) {
-		return bpmFormFieldService.saveFormField(fields);
+		try {
+			return bpmFormFieldService.saveFormField(fields);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
 	}
 	
 	/**
@@ -32,7 +36,11 @@ public class BpmFormFieldController {
 	@RequestMapping(value = "/queryFieldByFormUidAndStepId")
 	@ResponseBody
 	public ServerResponse queryFieldByFormUidAndStepId(String stepUid,String formUid,String fieldType) {
-		return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid,fieldType);
+		try {
+			return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid,fieldType);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
 	}
 	
 	/**
@@ -41,7 +49,11 @@ public class BpmFormFieldController {
 	@RequestMapping(value = "/saveFormFieldPermission")
 	@ResponseBody
 	public ServerResponse saveFormFieldPermission(@RequestBody DhObjectPermission[] dhObjectPermissions) {
-		return bpmFormFieldService.saveFormFieldPermission(dhObjectPermissions);
+		try {
+			return bpmFormFieldService.saveFormFieldPermission(dhObjectPermissions);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
 	}
 	
 	/**
@@ -50,6 +62,10 @@ public class BpmFormFieldController {
 	@RequestMapping(value = "/queryFieldByFromUid")
 	@ResponseBody
 	public ServerResponse queryFieldByFormUid(String formUid) {
-		return bpmFormFieldService.queryFieldByFormUid(formUid);
+		try {
+			return bpmFormFieldService.queryFieldByFormUid(formUid);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
 	}
 }

@@ -689,6 +689,14 @@ function showChooseValueModal(obj){
     $("#choose-value-label-width").val(textLabelCol);
 }
 
+//选择关联子表单
+function chooseFormModal(obj){
+	view = $(obj).parent().next().next();
+	var elementId = view.find("input[type='hidden']").prop("id");
+	var formUid = $("#downloadModal #formUid").val();
+	common.choosePublicForm(elementId,formUid);
+}
+
 var nameArr = new Array();
 
 //新建、修改表单组件时判断该组件的name是否重复
@@ -848,6 +856,15 @@ $(function () {
             removeName = $($(this).parent().find(".subDiv").children()[0]).attr("name");
         }
         nameArr.splice($.inArray(removeName, nameArr), 1);
+        
+        var removePublicFormUid = "";
+        var publicFormUidArr = $("#publicFormUidArr").val().split(";");
+        if($(this).parent().find(".subDiv").find("div[title='choose_form']").length == 1){
+        	removePublicFormUid = $(this).parent().find(".subDiv")
+        		.find("div[title='choose_form'] input[type='hidden']").val();
+        }
+        publicFormUidArr.splice($.inArray(removePublicFormUid, publicFormUidArr), 1);
+        $("#publicFormUidArr").val(publicFormUidArr.join(";"));
     })
 
     //保存单行文本框的属性编辑

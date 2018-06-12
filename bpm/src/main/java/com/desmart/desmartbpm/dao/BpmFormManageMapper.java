@@ -72,4 +72,9 @@ public interface BpmFormManageMapper {
 	 * 根据快照id获得流程元名称
 	 */
 	String queryMetaNameByProUid(String proUid);
+
+	/**
+	 * 根据表单id删除表单关联信息
+	 */
+	int deleteFormRelePublicForm(String dynUid);
 }

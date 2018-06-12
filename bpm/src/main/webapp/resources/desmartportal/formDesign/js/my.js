@@ -7,6 +7,35 @@ $(function(){
 	$("#formSet").css("display","block");
 });
 
+//添加关联子表单的内容
+function addPublicFormContent(view){
+	var divArr = view.find(".subDiv div[title='choose_form']");
+	divArr.each(function(){
+		var divObj = $(this);
+		var publicFormUid = divObj.find("input[type='hidden']").val();
+		$.ajax({
+			url:common.getPath()+"/publicForm/queryFormByFormUid",
+			method:"post",
+			async:false,
+			data:{
+				formUid:publicFormUid
+			},
+			success:function(result){
+				if(result.status==0){
+					divObj.parent().parent().parent().removeClass("row-fluid");
+					divObj.parent().parent().parent().html(result.data.publicFormWebpage);
+					var publicFormHtml = divObj.parent().parent().parent().find(".container-fluid").html();
+					divObj.parent().parent().parent().html(publicFormHtml);
+				}else{
+					layer.alert("子表单内容读取失败");
+					divObj.parent().parent().parent().html("");
+				}
+			}
+		});
+	});
+	console.log(view.html());
+}
+
 var chooseInputWidth = new Array();
 //渲染页面的方法
 function drawPage() {
@@ -14,6 +43,8 @@ function drawPage() {
     var formHtml = tableHead;
     view = $(".container-fluid");
     viewHtml = view.html();
+    //将关联子表单内容添加进来
+    addPublicFormContent(view);
     view.addClass("layui-form");
     var rowObj = view.find(".row-fluid");
     rowObj.each(function () {
@@ -24,14 +55,15 @@ function drawPage() {
             formHtml += '<tr>';
             for (var i = 0; i < colObj.length; i++) {
                 var column = $(colObj[i]);
-                if (column.find(".subDiv").length == 0 && column.find(".labelDiv").length == 0) {
-                    //表单块标题
-                	column.find("p").addClass("title_p");
-                	column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
-                    pHtml = column.html();
-                    var pText = column.find("p")[0].firstChild.data.trim();
+                if (column.find(".subDiv").length == 0 
+                		&& column.find(".labelDiv").length == 0) {
                     flag = false;
                     if (column.find(".title_p").length != 0) {
+                    	//表单块标题
+                    	column.find("p").addClass("title_p");
+                    	column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
+                        pHtml = column.html();
+                        var pText = column.find("p")[0].firstChild.data.trim();
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;
@@ -259,12 +291,13 @@ function drawPage() {
             for (var i = 0; i < colObj.length; i++) {
                 formHtml += '<tr>';
                 var column = $(colObj[i]);
-                if (column.find(".subDiv").length == 0 && column.find(".labelDiv").length == 0) {
-                    column.find("p").addClass("title_p");
-                    column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
-                    pHtml = column.html();
+                if (column.find(".subDiv").length == 0 
+                		&& column.find(".labelDiv").length == 0) {
                     flag = false;
                     if (column.find("p").length != 0) {
+                    	column.find("p").addClass("title_p");
+                        column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
+                        pHtml = column.html();
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;

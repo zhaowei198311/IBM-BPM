@@ -481,6 +481,12 @@ $(document).ready(function () {
             nameVal = nameVal.substring(0, nameVal.length - 1);
         }
         $("#nameArr").val(nameVal);
+        
+        var publicFormUidStr = "";
+        $(".demo .subDiv").find("div[title='choose_form']").each(function(){
+        	publicFormUidStr += $(this).find("input[type='hidden']").val()+";";
+        });
+        $("#publicFormUidArr").val(publicFormUidStr);
     } else {
         if (formUid != null && formUid != "") {
             $.ajax({
@@ -519,6 +525,12 @@ $(document).ready(function () {
                             nameVal = nameVal.substring(0, nameVal.length - 1);
                         }
                         $("#nameArr").val(nameVal);
+                        
+                        var publicFormUidStr = "";
+                        $(".demo .subDiv").find("div[title='choose_form']").each(function(){
+                        	publicFormUidStr += $(this).find("input[type='hidden']").val();
+                        });
+                        $("#publicFormUidArr").val(publicFormUidStr);
                     }
                 }
             });
@@ -586,6 +598,8 @@ $(document).ready(function () {
 	                        	inputId = "choose_user_" + inputId;
 	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_value']").length > 0){
 	                        	inputId = "choose_value_" + inputId;
+	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_form']").length > 0){
+	                        	inputId = "choose_form_" + inputId;
 	                        }else{
 	                            inputId = "text_" + inputId;
 	                        }
@@ -623,7 +637,12 @@ $(document).ready(function () {
                 $("#" + temp).parent().parent().find(".subDiv").find("input[type='checkbox']").length > 0) {
                 $("#" + temp).parent().parent().find(".subDiv").find("input").attr("class", inputId).attr("name", inputId);
             } else {
-                $($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
+            	if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_form']").length > 0){
+            		$("#" + temp).parent().parent().find(".subDiv").find("input[type='hidden']").attr("id",inputId);
+            		$("#" + temp).parent().parent().find(".subDiv").find("span[title='choose_form']").attr("id",inputId+"_view");
+            	}else{
+            		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
+            	}
             }
             $("#" + temp).trigger("click");
         }
@@ -688,7 +707,7 @@ $(document).ready(function () {
         var preParam = {
             proUid: $("#proUid").val(),
             proVersion: $("#proVersion").val(),
-            forName: $("#formName").val(),
+            formName: $("#formName").val(),
             formDescription: $("#formDescription").val(),
             formUid: $("#formUid").val(),
             webpage: preHtml,
@@ -773,7 +792,7 @@ function saveHtml() {
         },
         traditional: true,
         success: function (result) {
-            //if (result.status == 0) { //未绑定
+            if (result.status == 0) { //未绑定
                 var filename = $("#formName").val() + ".html";
                 webpage = $("#downloadModal textarea").val();
                 dynContent += formatJs;
@@ -799,6 +818,7 @@ function saveHtml() {
                         data: JSON.stringify(formParam),
                         success: function (result) {
                             if (result.status == 0) {
+                            	var addFieldFlag = true;
                                 for (var i = 0; i < subDivArr.length; i++) {
                                     var subDivObj = $(subDivArr[i]);
                                     var subObj = $($(subDivArr[i]).children()[0]);
@@ -883,7 +903,8 @@ function saveHtml() {
                                             };
                                         case "DIV":
                                             { //选人组件，弹框选值组件
-                                                if (subObj.attr("title") == "choose_user" || subObj.attr("title") == "choose_value") {
+                                                if (subObj.attr("title") == "choose_user" 
+                                                	|| subObj.attr("title") == "choose_value") {
                                                     filedAttr.fldCodeName = subObj.attr("name");
                                                     filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                     filedAttr.multiValue = "false";
@@ -905,28 +926,49 @@ function saveHtml() {
                                             }
                                     }
                                 }
-                                if (jsonArr != null && jsonArr != "") {
-                                    $.ajax({ //添加表单字段数据
-                                        url: common.getPath() + "/formField/saveFormField",
-                                        method: "post",
-                                        dataType: "json",
-                                        contentType: "application/json",
-                                        data: JSON.stringify(jsonArr),
-                                        success: function (result2) {
-                                            if (result2.status == 0) {
-                                                clearDemo();
-                                                window.location.href = common.getPath() +
-                                                    "/formManage/index?proUid=" + $("#proUid").val() +
-                                                    "&proVersion=" + $("#proVersion").val();
-                                            } else {
-                                                layer.alert("添加失败");
+                                var publicFormUidArr = $("#publicFormUidArr").val().split(";");
+                                $.ajax({
+                            		url:common.getPath()+"/publicForm/saveFormRelePublicForm",
+                            		method:"post",
+                            		async:false,
+                            		traditional: true,//传递数组给后台
+                            		data:{
+                            			formUid:$("#downloadModal #formUid").val(),
+                            			publicFormUidArr:publicFormUidArr
+                            		},
+                            		success:function(result){
+                            			if(result.status==0){
+                            				addFieldFlag = true;
+                            			}else{
+                            				addFieldFlag = false;
+                            				layer.alert("添加字段失败");
+                            			}
+                            		}
+                            	});
+                                if(addFieldFlag){
+                                	if (jsonArr != null && jsonArr != "") {
+                                        $.ajax({ //添加表单字段数据
+                                            url: common.getPath() + "/formField/saveFormField",
+                                            method: "post",
+                                            dataType: "json",
+                                            contentType: "application/json",
+                                            data: JSON.stringify(jsonArr),
+                                            success: function (result2) {
+                                                if (result2.status == 0) {
+                                                    clearDemo();
+                                                    window.location.href = common.getPath() +
+                                                        "/formManage/index?proUid=" + $("#proUid").val() +
+                                                        "&proVersion=" + $("#proVersion").val();
+                                                } else {
+                                                    layer.alert("添加失败");
+                                                }
                                             }
-                                        }
-                                    });
-                                } else {
-                                    window.location.href = common.getPath() +
-                                        "/formManage/index?proUid=" + $("#proUid").val() +
-                                        "&proVersion=" + $("#proVersion").val();
+                                        });
+                                    } else {
+                                        window.location.href = common.getPath() +
+                                            "/formManage/index?proUid=" + $("#proUid").val() +
+                                            "&proVersion=" + $("#proVersion").val();
+                                    }
                                 }
                             }
                         }
@@ -948,6 +990,7 @@ function saveHtml() {
                         data: JSON.stringify(formParam),
                         success: function (result2) {
                             if (result2.status == 0) {
+                            	var addFieldFlag = true;
                                 for (var i = 0; i < subDivArr.length; i++) {
                                     var subDivObj = $(subDivArr[i]);
                                     var subObj = $($(subDivArr[i]).children()[0]);
@@ -1045,28 +1088,49 @@ function saveHtml() {
                                             }
                                     }
                                 }
-                                if (jsonArr != null && jsonArr != "") {
-                                    $.ajax({ //添加表单字段数据
-                                        url: common.getPath() + "/formField/saveFormField",
-                                        method: "post",
-                                        dataType: "json",
-                                        contentType: "application/json",
-                                        data: JSON.stringify(jsonArr),
-                                        success: function (result) {
-                                            if (result2.status == 0) {
-                                                clearDemo();
-                                                window.location.href = common.getPath() +
-                                                    "/formManage/index?proUid=" + $("#proUid").val() +
-                                                    "&proVersion=" + $("#proVersion").val();
-                                            } else {
-                                                layer.alert("添加失败");
+                                var publicFormUidArr = $("#publicFormUidArr").val().split(";");
+                                $.ajax({
+                            		url:common.getPath()+"/publicForm/saveFormRelePublicForm",
+                            		method:"post",
+                            		async:false,
+                            		traditional: true,//传递数组给后台
+                            		data:{
+                            			formUid:$("#downloadModal #formUid").val(),
+                            			publicFormUidArr:publicFormUidArr
+                            		},
+                            		success:function(result){
+                            			if(result.status==0){
+                            				addFieldFlag = true;
+                            			}else{
+                            				addFieldFlag = false;
+                            				layer.alert("添加字段失败");
+                            			}
+                            		}
+                            	});
+                                if(addFieldFlag){
+                                	if (jsonArr != null && jsonArr != "") {
+                                        $.ajax({ //添加表单字段数据
+                                            url: common.getPath() + "/formField/saveFormField",
+                                            method: "post",
+                                            dataType: "json",
+                                            contentType: "application/json",
+                                            data: JSON.stringify(jsonArr),
+                                            success: function (result) {
+                                                if (result2.status == 0) {
+                                                    clearDemo();
+                                                    window.location.href = common.getPath() +
+                                                        "/formManage/index?proUid=" + $("#proUid").val() +
+                                                        "&proVersion=" + $("#proVersion").val();
+                                                } else {
+                                                    layer.alert("添加失败");
+                                                }
                                             }
-                                        }
-                                    });
-                                } else {
-                                    window.location.href = common.getPath() +
-                                        "/formManage/index?proUid=" + $("#proUid").val() +
-                                        "&proVersion=" + $("#proVersion").val();
+                                        });
+                                    } else {
+                                        window.location.href = common.getPath() +
+                                            "/formManage/index?proUid=" + $("#proUid").val() +
+                                            "&proVersion=" + $("#proVersion").val();
+                                    }
                                 }
                             } else {
                                 layer.alert("添加失败");
@@ -1074,9 +1138,9 @@ function saveHtml() {
                         }
                     });
                 }
-            /*} else {
+            } else {
                 layer.alert("该表单已被步骤绑定");
-            }*/
+            }
             layer.closeAll("loading");
         }
     });

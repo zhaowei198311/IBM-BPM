@@ -3,12 +3,13 @@
 <mapper namespace="com.desmart.desmartbpm.dao.BpmPublicFormMapper" >
 	<sql id="base_column">
 		public_form_uid,public_form_name,public_form_description,
-		public_form_content,public_form_webpage,creator,create_time
+		public_form_content,public_form_webpage,public_form_code,creator,create_time
 	</sql>
 	
 	<sql id="select_column">
 		pf.public_form_uid,pf.public_form_name,pf.public_form_description,
-		pf.public_form_content,pf.public_form_webpage,pf.creator,pf.create_time
+		pf.public_form_content,pf.public_form_webpage,pf.public_form_code,
+		pf.creator,pf.create_time
 	</sql>
 	
 	<select id="listFormByFormName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
@@ -37,7 +38,7 @@
 	<insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		insert into bpm_public_form(<include refid="base_column"/>)
 		values(#{publicFormUid},#{publicFormName},#{publicFormDescription},#{publicFormContent},
-			#{publicFormWebpage},'00035438',sysdate)
+			#{publicFormWebpage},#{publicFormCode},'00035438',sysdate)
 	</insert>
 	
 	<update id="updateFormContent" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
@@ -56,11 +57,31 @@
 	<update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		update bpm_public_form
 		set public_form_name = #{publicFormName},
-			public_form_description = #{publicFormDescription}
+			public_form_description = #{publicFormDescription},
+			public_form_code = #{publicFormCode}
 		where public_form_uid = #{publicFormUid}
 	</update>
 	
 	<delete id="deleteForm" parameterType="String">
 		delete from bpm_public_form where public_form_uid = #{formUid}
 	</delete>
+	
+	<insert id="saveFormRelePublicForm" parameterType="map">
+		insert into 
+		bpm_form_rele_public_form(form_uid,public_form_uid)
+		values(#{formUid},#{publicFormUid})
+	</insert>
+	
+	<select id="queryReleByFormUidAndPublicFormUid" parameterType="map" resultType="int">
+		select COUNT(*) 
+		from bpm_form_rele_public_form
+		where form_uid = #{formUid}
+			and public_form_uid = #{publicFormUid}
+	</select>
+	
+	<select id="queryFormByFormCode" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		select <include refid="base_column"/>
+		from bpm_public_form
+		where public_form_code = #{formCode}
+	</select>
 </mapper>

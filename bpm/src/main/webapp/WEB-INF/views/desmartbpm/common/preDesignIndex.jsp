@@ -90,7 +90,7 @@
         	<button class="layui-btn layui-btn-sm" onclick="testData()">测试表单数据</button>
         </span>
     </div>
-	<div id="formSet" style="margin-top:10px;">${ webpage }</div>
+	<div id="formSet" style="margin-top:10px;display:none;">${ webpage }</div>
 </body>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>

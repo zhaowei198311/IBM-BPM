@@ -112,4 +112,8 @@
         from dh_process_meta 
         where pro_uid = #{proUid}
     </select>
+    
+    <delete id="deleteFormRelePublicForm" parameterType="String">
+    	delete from bpm_form_rele_public_form where form_uid = #{formUid}
+    </delete>
 </mapper>

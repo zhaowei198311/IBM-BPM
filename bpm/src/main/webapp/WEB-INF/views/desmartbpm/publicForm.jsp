@@ -42,6 +42,7 @@
                                     <th>
                                         <input type="checkbox" name="allSel" title='全选' onclick="onClickHander(this)"> 序号</th>
                                     <th>表单名称</th>
+                                    <th>表单编码</th>
                                     <th>表单描述</th>
                                     <th>创建时间</th>
                                     <th>创建人</th>
@@ -67,6 +68,12 @@
                             <label class="layui-form-label">表单名称</label>
                             <div class="layui-input-block">
                                 <input type="text" id="add_form_name" name="add_form_name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">表单编码</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="add_form_code" name="add_form_code" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -97,6 +104,12 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">表单编码</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="update_form_code" name="update_form_code" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">表单描述</label>
                             <div class="layui-input-block">
                                 <input type="text" id="update_form_description" name="update_form_description" autocomplete="off" class="layui-input">
@@ -122,6 +135,12 @@
                             <label class="layui-form-label">表单名称</label>
                             <div class="layui-input-block">
                                 <input type="text" id="copy_form_name" name="copy_form_name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">表单名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="copy_form_code" name="copy_form_code" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">

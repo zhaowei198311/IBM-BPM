@@ -151,6 +151,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			if(1!=countRow) {
 				throw new PlatformException("删除表单信息失败");
 			}
+			bpmFormManageMapper.deleteFormRelePublicForm(bpmForm.getDynUid());
 			List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
 			deleteFieldPermiss(filedList);
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
@@ -232,6 +233,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(bpmForm.getDynUid());
 		deleteFieldPermiss(filedList);
 		bpmFormFieldMapper.deleteFormField(bpmForm.getDynUid());
+		bpmFormManageMapper.deleteFormRelePublicForm(bpmForm.getDynUid());
 		return ServerResponse.createBySuccess();
 	}
 
