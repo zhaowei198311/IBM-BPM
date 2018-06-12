@@ -285,6 +285,13 @@ public class DhStepServiceImpl implements DhStepService {
     }
 
 	@Override
+	public ServerResponse<List<DhStep>> getStepInfoByCondition(DhStep dhStep) {
+		List<DhStep> stepList = dhStepMapper.listBySelective(dhStep);
+        return ServerResponse.createBySuccess(stepList);
+	}
+ 
+
+	@Override
 	public ServerResponse createStepToAll(DhStep dhStep) {
 		if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
