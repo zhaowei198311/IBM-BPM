@@ -658,6 +658,7 @@
                 </div>
                 <div id="demo8"></div>
                 <div class="foot">
+                	<button id="addStepByAll" type="button" class="layui-btn layui-btn sure_btn" onclick="addStepToAll();">添加到所有环节</button>
                     <button type="button" class="layui-btn layui-btn sure_btn" onclick="addStep();">确定</button>
                     <button type="button" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#addStep_container').hide();">取消</button>
                 </div>

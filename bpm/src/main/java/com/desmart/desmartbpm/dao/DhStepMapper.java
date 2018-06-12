@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.DhStep;
@@ -72,4 +73,16 @@ public interface DhStepMapper {
      */
     int deleteBySelective(DhStep dhStep);
 
+    /**
+     * 批量新增
+     * @param insertList
+     * @return
+     */
+    Integer insertBatchDhStep(@Param("insertList")List<DhStep> insertList);
+    /**
+     * 批量修改
+     * @param updateList
+     * @return
+     */
+    Integer updateBatchDhStep(@Param("updateList")List<DhStep> updateList);
 }

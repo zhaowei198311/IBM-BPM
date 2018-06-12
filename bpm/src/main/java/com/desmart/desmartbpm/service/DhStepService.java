@@ -68,4 +68,10 @@ public interface DhStepService {
      * @return
      */
     List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey);
+    /**
+     * 为该流程所有环节新增表单步骤，同关键字将修改表单uid
+     * @param dhStep
+     * @return
+     */
+	ServerResponse createStepToAll(DhStep dhStep);
 }    

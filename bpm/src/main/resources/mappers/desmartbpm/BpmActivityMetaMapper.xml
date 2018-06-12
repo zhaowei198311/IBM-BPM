@@ -114,6 +114,16 @@
         where am.pro_app_id=#{proAppId} and am.bpd_id=#{proUid} and am.snapshot_id=#{proVerUid}
         and activity_bpd_id=#{activityBpdId}
 	</select>
+	
+	<select id="queryByConditionToSource" parameterType="map" resultMap="mapWithConf">
+	    select 
+        <include refid="relationColumn" />
+        from BPM_ACTIVITY_META am 
+        left join dh_activity_conf ac on am.activity_id = ac.activity_id
+        where am.pro_app_id=#{proAppId} and am.bpd_id=#{proUid}
+        and snapshot_id=#{proVerUid} and am.SOURCE_ACTIVITY_ID = am.ACTIVITY_ID 
+        and am.BPM_TASK_TYPE = 'UserTask'
+	</select>
 	  
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
 		insert into BPM_ACTIVITY_META (

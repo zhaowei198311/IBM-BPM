@@ -273,5 +273,31 @@
 				and PRO_APP_ID = #{proAppId}
 			</if>
 		</where>
-	</delete>			
+	</delete>
+	
+	<insert id="insertBatchDhStep" parameterType="list">
+	INSERT INTO DH_STEP (STEP_UID, PRO_UID, PRO_VER_UID, ACTIVITY_BPD_ID, STEP_TYPE, STEP_OBJECT_UID
+	, STEP_CONDITION, STEP_SORT, STEP_MODE, PRO_APP_ID, STEP_BUSINESS_KEY) 
+		<foreach collection="insertList" item="item" index="index"  close=")" open="(" separator="union">
+	        select
+	            #{item.stepUid}, #{item.proUid}, #{item.proVerUid}, #{item.activityBpdId}
+	            , #{item.stepType},#{item.stepObjectUid}, #{item.stepCondition}
+	            , #{item.stepSort}, #{item.stepMode}, #{item.proAppId},
+	            #{item.stepBusinessKey}
+	        from dual
+	    </foreach>
+	</insert>
+	<update id="updateBatchDhStep" parameterType="list">
+	 begin  
+        <foreach collection="updateList" item="item" index="index" separator=";" > 
+            UPDATE DH_STEP 
+            <set>
+            <if test="item.stepUid != null and item.stepUid != '' ">
+                STEP_OBJECT_UID = #{item.stepObjectUid},
+            </if>
+            </set>
+            where STEP_UID = #{item.stepUid}
+            </foreach>
+        ;end;
+	</update>
 </mapper>

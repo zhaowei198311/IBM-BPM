@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,6 +60,16 @@ public class DhStepServiceImpl implements DhStepService {
             return ServerResponse.createByErrorMessage("此环节不存在");
         }
         
+        //检查该环节配置中步骤关键字是否已经存在
+        DhStep selective1 = new DhStep(list.get(0).getProAppId()
+        		, list.get(0).getBpdId(), list.get(0).getSnapshotId());
+        selective1.setActivityBpdId(list.get(0).getActivityBpdId());
+        selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
+        selective1.setStepType(dhStep.getStepType());
+        if(dhStepMapper.listBySelective(selective1)!=null) {
+        	return ServerResponse.createByErrorMessage("关键字已存在，请重新自定义关键字");
+        }
+        
         String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
         if (stepTypeEnum == null) {
@@ -96,7 +107,7 @@ public class DhStepServiceImpl implements DhStepService {
         List<DhStep> stepList = dhStepMapper.listBySelective(selective);
         return ServerResponse.createBySuccess(stepList);
     }
-    
+//    
     
     @Transactional
     public ServerResponse updateStep(DhStep dhStep) {
@@ -272,7 +283,58 @@ public class DhStepServiceImpl implements DhStepService {
         PageHelper.orderBy("STEP_SORT");
         return dhStepMapper.listBySelective(stepSelective);
     }
-   
-    
+
+	@Override
+	public ServerResponse createStepToAll(DhStep dhStep) {
+		if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
+                || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
+                || StringUtils.isBlank(dhStep.getStepObjectUid())) {
+            return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+		String stepType = dhStep.getStepType();
+        DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
+        if (stepTypeEnum == null) {
+            return ServerResponse.createByErrorMessage("步骤类型不符合要求");
+        }
+        if (stepTypeEnum == DhStepType.FORM) {
+            // form类型
+            if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
+                return ServerResponse.createByErrorMessage("表单不存在");
+            }
+        }
+		List<BpmActivityMeta> sourceList = bpmActivityMetaMapper.queryByConditionToSource
+				(dhStep.getProAppId(), dhStep.getProUid(), dhStep.getProVerUid());
+		List<DhStep> insertList = new ArrayList<>();//用于新增步骤
+		List<DhStep> updateList = new ArrayList<>();//用于修改步骤
+		for (BpmActivityMeta bpmActivityMeta : sourceList) {
+			
+		//检查该环节配置中步骤关键字是否已经存在
+        DhStep selective1 = new DhStep(bpmActivityMeta.getProAppId()
+        		, bpmActivityMeta.getBpdId(), bpmActivityMeta.getSnapshotId());
+        selective1.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+        selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
+        selective1.setStepType(dhStep.getStepType());
+        List<DhStep> list = dhStepMapper.listBySelective(selective1);
+        if(list!=null&&list.size()>0) {
+        	selective1 = list.get(0);
+        	selective1.setStepObjectUid(dhStep.getStepObjectUid());
+        	updateList.add(selective1);
+		}else {
+			selective1.setStepUid(EntityIdPrefix.DH_STEP + UUID.randomUUID().toString());
+			selective1.setStepSort(generateStepSort(dhStep));
+			selective1.setStepObjectUid(dhStep.getStepObjectUid());
+			insertList.add(selective1);
+		}
+        
+		}
+		int count = 0;
+		if(updateList.size()>0) {
+			count += dhStepMapper.updateBatchDhStep(updateList);
+		}
+		if(insertList.size()>0) {
+			count += dhStepMapper.insertBatchDhStep(insertList);
+		}
+			return ServerResponse.createBySuccess();
+	}
     
 }

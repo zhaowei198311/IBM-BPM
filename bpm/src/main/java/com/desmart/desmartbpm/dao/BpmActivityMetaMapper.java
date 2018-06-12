@@ -103,4 +103,13 @@ public interface BpmActivityMetaMapper {
      */
     BpmActivityMeta queryByFourElement(@Param("proAppId")String proAppId, @Param("proUid")String proUid,
             @Param("proVerUid")String proVerUid, @Param("activityBpdId")String activityBpdId);
+    /**
+     * 根据流程应用库id， 流程图id ， 流程版本查询流程源节点中的人工节点
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    List<BpmActivityMeta> queryByConditionToSource(@Param("proAppId")String proAppId, @Param("proUid")String proUid
+    		, @Param("proVerUid")String proVerUid);
 }

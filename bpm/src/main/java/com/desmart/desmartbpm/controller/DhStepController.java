@@ -32,6 +32,17 @@ public class DhStepController {
         
     }
     
+    @RequestMapping(value = "/createStepToAll")
+    @ResponseBody
+    public ServerResponse createStepToAll(DhStep dhStep) {
+    	 try {
+             return dhStepService.createStepToAll(dhStep);
+         } catch (Exception e) {
+             LOG.error("创建步骤失败", e);
+             return ServerResponse.createByErrorMessage("创建步骤失败");
+         }
+    }
+    
     @RequestMapping(value = "/updateStep")
     @ResponseBody
     public ServerResponse updateTriggerStep(DhStep dhStep) {
