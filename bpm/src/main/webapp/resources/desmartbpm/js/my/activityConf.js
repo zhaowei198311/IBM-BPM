@@ -121,6 +121,18 @@ layui.use('form', function() {
 	form.on('radio(stepTypeFilter)', function(data) {
 		if (data.value == "form") {
 			$("#form_innerArea").show();
+			$("#addStepByAll").show();
+			$("#trigger_innerArea").hide();
+		} else {
+			$("#form_innerArea").hide();
+			$("#addStepByAll").hide();
+			$("#trigger_innerArea").show();
+		}
+	});
+	// 切换新增步骤类型
+	form.on('radio(stepTypeFilter)', function(data) {
+		if (data.value == "form") {
+			$("#form_innerArea").show();
 			$("#trigger_innerArea").hide();
 		} else {
 			$("#form_innerArea").hide();
@@ -427,6 +439,7 @@ $(function() {
 					var triUid = ck.val();
 					var triTitle = ck.parent().next().html();
 					var triType = ck.parent().next().next().html();
+					var triContent = ck.parent().next().next().next().attr("title");
 					// 打开接口参数和form表单映射表单
 					var stepType = "form";
 					if (triType == "interface") {
@@ -443,9 +456,13 @@ $(function() {
 								stepType : stepType
 							},
 							success : function(result) {
+								var chose = '<option>请选择表单</option>';
+								$("#table_sel").append(chose)
 								for (var i = 0; i < result.data.length; i++) {
 									var trs = '<option value="'
 											+ result.data[i].stepObjectUid
+											+ '|'
+											+ triContent
 											+ '">' + result.data[i].formName
 											+ '</option>';
 									$("#table_sel").append(trs)
@@ -464,7 +481,35 @@ $(function() {
 				});
 
 		form.on('select(table_sel)', function(data) {
-			var formId = data.value; // 表单id
+			var data = data.value; // 表单id
+			// 截取字符串
+			var formId = data.substring(0,data.indexOf('|')); // 表单ID
+			var intUid = data.substring(data.indexOf('i')); // 参数ID
+			var startNum = 0;
+			$("#col_md5").empty();
+			
+			$.ajax({
+				url : common.getPath() + '/interfaceParamers/index',
+				type : 'post',
+				dataType : 'json',
+				data : {
+					intUid : intUid
+				},
+				success : function (result2){
+					console.info(result2.data);
+					var list = result2.data.list;
+					console.info(list);
+					for (var i = 0; i < list.length; i++) {
+						var paraIndex = list[i].paraIndex; // 接口索引下标
+						var paraName = list[i].paraName; // 接口名
+						
+					}
+				},
+				error : function(result2){
+					layer.alert("查询接口参数出错")
+				}
+			})
+			
 			$.ajax({
 				url : common.getPath() + '/formField/queryFieldByFromUid',
 				type : 'post',
@@ -472,8 +517,10 @@ $(function() {
 				data : {
 					formUid : formId
 				},
-				success : function (result){
+				success : function (result){					
 					for (var i = 0; i < result.data.length; i++) {
+						var fldIndex = result.data[i].fldIndex; // 字段索引下标
+						var fldCodeName = result.data[i].fldCodeName; // 字段名
 						var trs = '<div class="layui-form-item">'
 								+ '<div class="layui-row">'
 								+ '<div class="layui-col-md6">'
@@ -487,7 +534,7 @@ $(function() {
 								+ '<div class="layui-col-md6">'
 								+ '<label class="layui-form-label" style="width: 100px">表单参数</label>'
 								+ '<div class="layui-input-inline">'
-								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">'
+								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" value="'+fldCodeName+'">'
 								+ '</div>'
 								+ '</div>'
 								+ '</div>'
@@ -1513,7 +1560,6 @@ function drawTable(pageInfo) {
 		} else {
 			tempParam = trigger.triParam;
 		}
-		console.log(tempWebbot)
 		trs += '<tr><td><input type="checkbox" name="tri_check" value="'
 				+ trigger.triUid + '" lay-skin="primary">' + sortNum + '</td>'
 				+ '<td>' + trigger.triTitle + '</td>' + '<td>'
