@@ -118,6 +118,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private DhDraftsMapper dhDraftsMapper;
     @Autowired
     private ThreadPoolProvideService threadPoolProvideService;
+    @Autowired
+    private DhRoutingRecordService dhRoutingRecordService;
+
 	/**
 	 * 查询所有流程实例
 	 */
@@ -340,8 +343,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         String insUid = dhProcessInstance.getInsUid();
         Integer insId = dhProcessInstance.getInsId();
-        BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
-        DhActivityConf dhActivityConf = bpmActivityMeta.getDhActivityConf();
+        BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
+        DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
 
         // 整合formdata
         JSONObject mergedFormData = new JSONObject();
@@ -372,7 +375,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
             dhApprovalOpinion.setInsUid(insUid);
             dhApprovalOpinion.setTaskUid(taskUid);
-            dhApprovalOpinion.setActivityId(bpmActivityMeta.getActivityId());
+            dhApprovalOpinion.setActivityId(currTaskNode.getActivityId());
             dhApprovalOpinion.setAprOpiComment(aprOpiComment);
             dhApprovalOpinion.setAprStatus(aprStatus);
             ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl.insertDhApprovalOpinion(dhApprovalOpinion);
@@ -384,8 +387,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         insJson.put("formData", mergedFormData);
         dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
         dhProcessInstance.setInsData(insJson.toJSONString());
+
         //判断流程是否结束
-        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(bpmActivityMeta, formData);
+        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
+
         Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
 
         // 更新网关环节的信息
@@ -414,19 +419,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
         // 任务完成后 保存到流转信息表里面
-        for (int i = 0; i < routeData.size(); i++) {
-            DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-            dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-            dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-            dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-            dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
-            dhRoutingRecord.setUserUid(currUserUid);
-            dhRoutingRecord.setActivityId(bpmActivityMeta.getActivityId());
-            if(nextBpmActivityMetas != null && nextBpmActivityMetas.size() > 0) {
-                setActivityToValues(nextBpmActivityMetas, dhRoutingRecord);
-            }
-            dhRoutingRecordMapper.insert(dhRoutingRecord);
-        }
+        dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(dhTaskInstance, routingData);
+
 
         // 修改当前任务实例状态为已完成
         DhTaskInstance taskInstanceSelective = new DhTaskInstance();
@@ -452,6 +446,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
             log.info("完成任务结束......");
+
+
+
+
+
+
+
+
             return ServerResponse.createBySuccess();
         }else {
             log.info("任务完成失败！");

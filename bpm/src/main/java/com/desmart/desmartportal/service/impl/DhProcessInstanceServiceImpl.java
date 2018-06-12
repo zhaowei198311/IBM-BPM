@@ -138,7 +138,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
-    private ThreadPoolProvideService threadPoolProvideService;
+	private DhRoutingRecordService dhRoutingRecordService;
 
 
 	/**
@@ -429,22 +429,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         dhTaskInstanceMapper.insertTask(taskInstance);
 
         // 任务完成后 保存到流转信息表里面
-        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-        dhRoutingRecord.setInsUid(mainProcessInstance.getInsUid());
-        dhRoutingRecord.setActivityName(firstHumanActivity.getActivityName());
-        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
-        dhRoutingRecord.setUserUid(currentUserUid);
-        dhRoutingRecord.setActivityId(firstHumanActivity.getActivityId());
-        List<BpmActivityMeta> nextActivitiesForRoutingRecord = dhRouteService.getNextActiviesForRoutingRecord(firstHumanActivity, routingData);
-        if (nextActivitiesForRoutingRecord.size() > 0) {
-            String activityTo = "";
-            for (BpmActivityMeta nextMeta : nextActivitiesForRoutingRecord) {
-                activityTo += nextMeta.getActivityId() + ",";
-            }
-            dhRoutingRecord.setActivityTo(activityTo.substring(0, activityTo.length() - 1));
-        }
-        dhRoutingRecordMapper.insert(dhRoutingRecord);
+		dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData);
 
 
         // 完成第一个任务

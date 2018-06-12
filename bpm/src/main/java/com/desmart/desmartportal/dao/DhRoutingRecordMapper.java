@@ -20,7 +20,7 @@ public interface DhRoutingRecordMapper {
 	 * 添加流转信息
 	 * @param dhRoutingRecord
 	 */
-	void insert(DhRoutingRecord dhRoutingRecord);
+	int insert(DhRoutingRecord dhRoutingRecord);
 	
 	/**
 	 * 根据流程实例主键，传入的环节id，查找传入环节的上一个环节，根据create_time倒序排列
