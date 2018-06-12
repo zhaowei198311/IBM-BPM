@@ -78,7 +78,7 @@ public class DhProcessInstance {
 	private String departNo;      // 发起人部门编号
 	private String tokenId;         // (当流程是一个子流程时)父级流程图上代表这个子流程的环节主键
 	private String tokenActivityId; // 当这个流程是子流程时，停留在它上的tokenId
-
+	private String insBusinessKey;//业务关键字
 
 
 	// 非流程表数据
@@ -436,7 +436,15 @@ public class DhProcessInstance {
         this.departNo = departNo;
     }
 
-    /**
+    public String getInsBusinessKey() {
+		return insBusinessKey;
+	}
+
+	public void setInsBusinessKey(String insBusinessKey) {
+		this.insBusinessKey = insBusinessKey;
+	}
+
+	/**
 	 * @param insUid
 	 * @param insTitle
 	 * @param insDescription
@@ -485,21 +493,19 @@ public class DhProcessInstance {
 		this.insRoutingData = insRoutingData;
 	}
 
-    @Override
-    public String toString() {
-        return "DhProcessInstance [insUid=" + insUid + ", insTitle=" + insTitle
-                + ", insDescription=" + insDescription + ", insId=" + insId
-                + ", insParent=" + insParent + ", insStatus=" + insStatus
-                + ", insStatusId=" + insStatusId + ", proAppId=" + proAppId
-                + ", proUid=" + proUid + ", proVerUid=" + proVerUid
-                + ", insInitUser=" + insInitUser + ", insCreateDate="
-                + insCreateDate + ", insInitDate=" + insInitDate
-                + ", insFinishDate=" + insFinishDate + ", insUpdateDate="
-                + insUpdateDate + ", insData=" + insData + ", insDuration="
-                + insDuration + ", insDelayDuration=" + insDelayDuration
-                + ", insDriveFolderUid=" + insDriveFolderUid
-                + ", insRoutingData=" + insRoutingData + ", companyNumber="
-                + companyNumber + ", departNo=" + departNo + ", proName="
-                + proName + "]";
-    }
+	@Override
+	public String toString() {
+		return "DhProcessInstance [insUid=" + insUid + ", insTitle=" + insTitle + ", insDescription=" + insDescription
+				+ ", insId=" + insId + ", insParent=" + insParent + ", insStatus=" + insStatus + ", insStatusId="
+				+ insStatusId + ", proAppId=" + proAppId + ", proUid=" + proUid + ", proVerUid=" + proVerUid
+				+ ", insInitUser=" + insInitUser + ", insCreateDate=" + insCreateDate + ", insInitDate=" + insInitDate
+				+ ", insFinishDate=" + insFinishDate + ", insUpdateDate=" + insUpdateDate + ", insData=" + insData
+				+ ", insDuration=" + insDuration + ", insDelayDuration=" + insDelayDuration + ", insDriveFolderUid="
+				+ insDriveFolderUid + ", insRoutingData=" + insRoutingData + ", companyNumber=" + companyNumber
+				+ ", departNo=" + departNo + ", tokenId=" + tokenId + ", tokenActivityId=" + tokenActivityId
+				+ ", insBusinessKey=" + insBusinessKey + ", proName=" + proName + ", departName=" + departName
+				+ ", companyName=" + companyName + ", initUserFullname=" + initUserFullname + "]";
+	}
+	
+	
 }

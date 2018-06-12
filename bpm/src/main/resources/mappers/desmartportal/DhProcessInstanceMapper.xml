@@ -27,6 +27,7 @@
 		<result column="DEPART_NO" 				        property="departNo"/>
 		<result column="TOKEN_ID" 				        property="tokenId"/>
 		<result column="TOKEN_ACTIVITY_ID" 				property="tokenActivityId"/>
+		<result column="INS_BUSINESS_KEY" 				property="insBusinessKey"/>
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -35,7 +36,7 @@
 		PRO_UID,PRO_VER_UID,INS_INIT_USER,INS_CREATE_DATE,
 		INS_INIT_DATE,INS_FINISH_DATE,INS_UPDATE_DATE,INS_DATA,
 		INS_DURATION,INS_DELAY_DURATION,INS_DRIVE_FOLDER_UID,INS_ROUTING_DATA, COMPANY_NUMBER, DEPART_NO,
-		TOKEN_ID, TOKEN_ACTIVITY_ID
+		TOKEN_ID, TOKEN_ACTIVITY_ID,INS_BUSINESS_KEY
 	</sql>
 	
     <sql id="realationColumnList">
@@ -44,7 +45,7 @@
         ins.PRO_UID,ins.PRO_VER_UID,ins.INS_INIT_USER,ins.INS_CREATE_DATE,
         ins.INS_INIT_DATE,ins.INS_FINISH_DATE,ins.INS_UPDATE_DATE,ins.INS_DATA,
         ins.INS_DURATION,ins.INS_DELAY_DURATION,ins.INS_DRIVE_FOLDER_UID,ins.INS_ROUTING_DATA, ins.COMPANY_NUMBER,
-        ins.DEPART_NO, ins.TOKEN_ID, ins.TOKEN_ACTIVITY_ID
+        ins.DEPART_NO, ins.TOKEN_ID, ins.TOKEN_ACTIVITY_ID,ins.INS_BUSINESS_KEY
     </sql>
 	
 	<select id="queryBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
@@ -219,7 +220,10 @@
 				TOKEN_ID = #{tokenId},
 			</if>
 			<if test="tokenActivityId != null and tokenActivityId != ''">
-				TOKEN_ACTIVITY_ID = #{tokenActivityId}
+				TOKEN_ACTIVITY_ID = #{tokenActivityId},
+			</if>
+			<if test="insBusinessKey != null and insBusinessKey != '' ">
+				INS_BUSINESS_KEY = #{insBusinessKey}
 			</if>
 		</set>
 			<where>
@@ -265,7 +269,8 @@
 			#{companyNumber},
 			#{departNo},
 			#{tokenId},
-			#{tokenActivityId}
+			#{tokenActivityId},
+			#{insBusinessKey}
 		)
 	</insert>
 	
