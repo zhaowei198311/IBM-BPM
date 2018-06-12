@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -151,5 +152,17 @@ public class MqSendUtil {
             }
         }
     }
+    
+    @Test
+   public void rabbitTest() {
+       init();
+	   sendMessage("Hello");
+	}
+    
+    public static void main(String[] args) {
+    	MqSendUtil mqSendUtil = new MqSendUtil();
+    	mqSendUtil.init();
+    	mqSendUtil.sendMessage("Hello");
+	}
 
 }
