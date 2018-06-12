@@ -954,4 +954,15 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	}
 
+
+	public boolean checkRouteData(BpmActivityMeta currTaskNode, JSONObject routeData, BpmRoutingData routingData) {
+		// 所有当前任务节点平级的普通任务节点都有处理人
+		routingData.getNormalNodes();
+
+
+		// 如果有新的子流程，当前任务节点平级的 开始子流程节点 其下的第一个普通任务有处理人
+
+
+		return true;
+	}
 }

@@ -110,4 +110,13 @@ public interface DhRouteService {
 	 * @return
 	 */
 	ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId);
+
+	/**
+	 *	查看提交上来的选人信息是否完整
+	 * @param currTaskNode  当前任务节点
+	 * @param routeData     提交的路由信息
+	 * @param routingData   下个环节路由结果
+	 * @return  true 信息完整   false 信息缺失
+	 */
+	boolean checkRouteData(BpmActivityMeta currTaskNode, JSONObject routeData, BpmRoutingData routingData);
 }
