@@ -217,7 +217,7 @@ function addSure(){
 	var taskId = $("#taskId").val();
 	var insUid = $("#insUid").val();
 	var usrUid = $("#handleUser_view").val();
-	var activityBpdId = $("#activityId").val();
+	var taskActivityId = $("#activityId").val();
 	var taskType = $(".layui-form_1 option:selected").val();
 	if (usrUid == null || usrUid == "") {
 		layer.alert("请选择人员!");
@@ -232,7 +232,7 @@ function addSure(){
 			taskUid: taskUid,
 			insUid: insUid,
 			taskId: taskId,
-			activityBpdId: activityBpdId,
+			taskActivityId: taskActivityId,
 			usrUid: usrUid,
 			taskType: taskType
 		},

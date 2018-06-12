@@ -707,7 +707,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				return ServerResponse.createByErrorMessage("当前任务已添加会签人，请等会签人审批结束!");
 			}
 			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
-			String activityId = dhTaskInstance.getActivityBpdId();
+			String activityId = dhTaskInstance.getTaskActivityId();
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 			// 加新任务			
 			dhTaskInstance.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
@@ -721,7 +721,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			String completedSigning = "";
 			// 会签人审批顺序，说明：如果会签方式是顺序会签，则第一人taskType为12，其他人员taskType为暂停状态
 			int num = 1;
-			// 上一个加签任务taskUid
+			// 下一个加签任务taskUid
 			String taskUid = "";
 			SysUser sysUser = new SysUser();
 			for (String string : usrUids) {
@@ -731,17 +731,19 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
-					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
-					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
-						if (num > 1) {
-							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
-							dhTaskInstance.setToTaskUid(taskUid);
-						}else {
-							dhTaskInstance.setToTaskUid(dhTaskInstance.getTaskUid());
-						}
-					}
 					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
 					taskUid = dhTaskInstance.getTaskUid();
+					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
+					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
+						if(num<usrUids.length) {
+							dhTaskInstance.setToTaskUid(taskUid);
+						}
+						if (num > 1) {
+							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
+						}/*else {
+							dhTaskInstance.setToTaskUid(taskUid);
+						}*/
+					}
 					dhTaskInstanceMapper.insertTask(dhTaskInstance);
 					num++;
 				}else {
