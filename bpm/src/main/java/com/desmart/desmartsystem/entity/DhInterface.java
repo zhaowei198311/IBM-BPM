@@ -32,7 +32,10 @@ public class DhInterface {
 	private Date updateDate;//修改时间
 	
 	private Date createDate; // 创建时间
-
+	
+	
+	private String intXml;//webservice参数
+	
 	/**
 	 * @return the intUid
 	 */
@@ -220,6 +223,14 @@ public class DhInterface {
 		this.intStatus = intStatus;
 		this.updateDate = updateDate;
 		this.createDate = createDate;
+	}
+
+	public String getIntXml() {
+		return intXml;
+	}
+
+	public void setIntXml(String intXml) {
+		this.intXml = intXml;
 	}
 
 }

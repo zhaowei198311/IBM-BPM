@@ -33,9 +33,10 @@ public class DhInterfaceParameter {
 	
 	private String  paraParent;//父参数
 	
-	private String paraXml;//xml请求参数
 
 	private String paraParentName; 
+	
+	private String dateFormat;//时间格式
 	
 	/**
 	 * @return the paraUid
@@ -190,14 +191,6 @@ public class DhInterfaceParameter {
 		this.paraParent = paraParent;
 	}
 
-	public String getParaXml() {
-		return paraXml;
-	}
-
-	public void setParaXml(String paraXml) {
-		this.paraXml = paraXml;
-	}
-	
 
 	public String getParaParentName() {
 		return paraParentName;
@@ -205,6 +198,15 @@ public class DhInterfaceParameter {
 
 	public void setParaParentName(String paraParentName) {
 		this.paraParentName = paraParentName;
+	}
+	
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
 	}
 
 	/**
