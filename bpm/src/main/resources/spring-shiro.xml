@@ -59,6 +59,7 @@
                <!--  /user/login.do=anon -->
                 /user/logins=anon
                 /user/index=anon
+                /test/mqtest=anon
                 /unauthorizedUrl.do=anon
                 /bpmindex=authc
                 <!-- /document/open.do=authc,documentAuthorizationFileter -->
