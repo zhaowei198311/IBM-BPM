@@ -391,6 +391,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         //判断流程是否结束
         BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
 
+        // 检查用户传递的选人信息是否全面
+        if (!dhRouteServiceImpl.checkRouteData(currTaskNode, routeData, routingData)) {
+            return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
+        }
+
         Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
 
         // 更新网关环节的信息

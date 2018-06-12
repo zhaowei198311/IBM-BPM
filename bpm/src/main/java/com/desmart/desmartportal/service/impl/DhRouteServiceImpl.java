@@ -956,10 +956,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 
 	public boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData) {
-        Map<String, String> activityAndUsersMap = new HashMap<>();
+        Map<String, String> assignMap = new HashMap<>();
 	    for (int i=0; i<routeData.size(); i++) {
             JSONObject item = routeData.getJSONObject(i);
-            activityAndUsersMap.put(item.getString(""), "");
+            assignMap.put(item.getString("activityId"), item.getString("userUid"));
         }
 
 
@@ -972,15 +972,40 @@ public class DhRouteServiceImpl implements DhRouteService {
         for (Iterator<BpmActivityMeta> it = normalNodes.iterator(); it.hasNext();) {
             BpmActivityMeta normalNode = it.next();
             if (normalNode.getParentActivityId().equals(currTaskNode.getParentActivityId())) {
-
+                // 指定节点的处理人是否是空
+                if (StringUtils.isBlank(assignMap.get(normalNode.getActivityId()))) {
+                    return false;
+                }
             }
-
         }
 
-
 		// 如果有新的子流程，当前任务节点平级的 开始子流程节点 其下的第一个普通任务有处理人
-
-		return true;
+        Set<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodes();
+		if (startProcessNodes.isEmpty()) {
+		    return true;
+        }
+        // 找出与当前任务节点平级的子流程节点
+        List<BpmActivityMeta> brotherSubProcessNodes = new ArrayList<>();
+        for (Iterator<BpmActivityMeta> it = startProcessNodes.iterator(); it.hasNext();) {
+            BpmActivityMeta startProcessNode = it.next();
+            if (startProcessNode.getParentActivityId().equals(currTaskNode.getParentActivityId())) {
+                brotherSubProcessNodes.add(startProcessNode);
+            }
+        }
+        List<BpmActivityMeta> normalNodesNeedCheck = new ArrayList<>(); // 需要分配人的子流程下的任务
+        for (BpmActivityMeta brotherSubProcessNode : brotherSubProcessNodes) {
+            for (BpmActivityMeta item : normalNodes) {
+                if (item.getParentActivityId().equals(brotherSubProcessNode.getActivityId())) {
+                    normalNodesNeedCheck.add(item);
+                }
+            }
+        }
+        for (BpmActivityMeta item : normalNodesNeedCheck) {
+            if (StringUtils.isBlank(assignMap.get(item.getActivityId()))) {
+                return false;
+            }
+        }
+        return true;
 	}
 
 

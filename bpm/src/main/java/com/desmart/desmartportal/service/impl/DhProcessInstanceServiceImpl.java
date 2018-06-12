@@ -336,6 +336,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 获得第一个人工环节后的路由信息
         BpmRoutingData routingData = dhRouteService.getRoutingDataOfNextActivityTo(firstHumanActivity, mergedFromData);
 
+        // 检查用户传递的选人信息是否全面
+        if (!dhRouteService.checkRouteData(firstHumanActivity, routeData, routingData)) {
+            return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
+        }
+
 		// 传递第一个环节处理人信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
 		String firstUserVarname = firstHumanActivity.getDhActivityConf().getActcAssignVariable();
