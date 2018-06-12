@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.desmart.common.constant.ServerResponse;
@@ -32,4 +33,9 @@ public interface BpmFormFieldService {
 	 * 获得某步骤上已办的表单字段权限信息(返回的是封装了字段权限的json数据)
 	 */
 	ServerResponse<String> queryFinshedFieldPerMissionByStepUid(String stepUid);
+	
+	/**
+	 * 通过表单ID获得所有字段
+	 */
+	ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid);
 }

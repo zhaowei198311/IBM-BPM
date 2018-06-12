@@ -121,6 +121,72 @@ layui.use('form', function() {
 	form.on('radio(stepTypeFilter)', function(data) {
 		if (data.value == "form") {
 			$("#form_innerArea").show();
+			$("#trigger_innerArea").hide();
+		} else {
+			$("#form_innerArea").hide();
+			$("#trigger_innerArea").show();
+		}
+	});
+	// 切换授权类型
+	form.on('radio(perType)', function(data) {
+		if (data.value == "titleField") {
+			$("#field_permissions_table").css("display", "none");
+			$("#title_permissions_table").css("display", "block");
+		} else {
+			$("#title_permissions_table").css("display", "none");
+			$("#field_permissions_table").css("display", "block");
+		}
+	});
+	// 切换是否显示自定义业务字段
+	form.on('radio(stepBusinessKey)', function(data) {
+		if (data.value == "default") {
+			$("#stepBusinessKey_input").hide();
+		} else {
+			$("#stepBusinessKey_input").show();
+		}
+	});
+
+	form.on('radio(ETS_stepBusinessKey)', function(data) {
+		if (data.value == "false") {
+			$("#ETS_stepBusinessKey").hide();
+		} else {
+			$("#ETS_stepBusinessKey").show();
+		}
+	});
+	// 是否为可选处理人
+	form.on('radio(actcCanChooseUser)', function(data) {
+		if (data.value == "TRUE") {
+			$('#actcChooseableHandler').show();
+		} else {
+			$('#actcChooseableHandler').hide();
+		}
+	});
+=======
+	form.on('select(rejectType)', function(data) {
+		if (data.value == "toActivities") {
+			$("#rejectActivities_div").show();
+		} else {
+			$("#rejectActivities_div").hide();
+		}
+	});
+
+	form.on('radio(canReject)', function(data) {
+		if (data.value == "TRUE") {
+			$("#rejectType_div").show();
+			if ($('select[name="actcRejectType"]').val() == 'toActivities') {
+				$("#rejectActivities_div").show();
+			} else {
+				$("#rejectActivities_div").hide();
+			}
+		} else {
+			$("#rejectType_div").hide();
+			$("#rejectActivities_div").hide();
+		}
+	});
+	// 切换新增步骤类型
+	form.on('radio(stepTypeFilter)', function(data) {
+		if (data.value == "form") {
+			$("#form_innerArea").show();
 			$("#addStepByAll").show();
 			$("#trigger_innerArea").hide();
 		} else {
@@ -407,6 +473,51 @@ $(function() {
 		$("#chooseTrigger_container").show();
 	});
 
+	layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
+		var laypage = layui.laypage, layer = layui.layer, form = layui.form;
+		var $ = layui.jquery;
+		// “确认”选择触发器
+		$("#chooseTrigger_sureBtn").click(
+				function() {
+					$("#table_sel").empty();
+					var cks = $("[name='tri_check']:checked");
+					if (!cks.length) {
+						$("#" + triggerToEdit).val('');
+						$("#" + triggerToEdit + "Title").val('');
+						$("#chooseTrigger_container").hide();
+						return;
+					}
+					if (cks.length > 1) {
+						layer.alert("请选择一个触发器，不能选择多个");
+						return;
+					}
+					var ck = cks.eq(0);
+					var triUid = ck.val();
+					var triTitle = ck.parent().next().html();
+					var triType = ck.parent().next().next().html();
+					// 打开接口参数和form表单映射表单
+					var stepType = "form";
+					if (triType == "interface") {
+						// 判断有没有表单
+						$("#triggerInterface_container").show();
+						$.ajax({
+							url : common.getPath() + '/step/selectByStep',
+							type : 'post',
+							dataType : 'json',
+							data : {
+								proAppId : proAppId,
+								proUid : proUid,
+								proVerUid : proVerUid,
+								stepType : stepType
+							},
+							success : function(result) {
+								for (var i = 0; i < result.data.length; i++) {
+									var trs = '<option value="'
+											+ result.data[i].stepObjectUid
+											+ '">' + result.data[i].formName
+											+ '</option>';
+									$("#table_sel").append(trs)
+								}
 	// “确认”选择触发器
 	$("#chooseTrigger_sureBtn").click(function() {
 		var cks = $("[name='tri_check']:checked");
@@ -437,7 +548,133 @@ $(function() {
 	$("#chooseTrigger_cancelBtn").click(function() {
 		$("#chooseTrigger_container").hide();
 	});
+								form.render();
+							},
+							error : function(result) {
+								layer.alert('查询环节出错')
+							}
+						});
+					}
+					$("#" + triggerToEdit).val(triUid);
+					$("#" + triggerToEdit + "Title").val(triTitle);
+					$("#chooseTrigger_container").hide();
+				});
+	// 选择处理人（人员）
+	$("#choose_handle_user").click(function() {
+		common.chooseUser('handleUser', 'false');
+	});
+	// 选择处理人（角色）
+	$("#choose_handle_role").click(function() {
+		common.chooseRole('handleRole', 'false');
+	});
+	// 选择处理人（角色组）
+	$("#choose_handle_team").click(function() {
+		common.chooseTeam('handleTeam', 'false');
+	});
 
+		form.on('select(table_sel)', function(data) {
+			var formId = data.value; // 表单id
+			$.ajax({
+				url : common.getPath() + '/formField/queryFieldByFromUid',
+				type : 'post',
+				dataType : 'json',
+				data : {
+					formUid : formId
+				},
+				success : function (result){
+					for (var i = 0; i < result.data.length; i++) {
+						var trs = '<form class="layui-form">'
+								+ '<div class="layui-form-item">'
+								+ '<div class="layui-inline">'
+								+ '<label class="layui-form-label">参数</label>'
+								+ '<div class="layui-input-block">'
+								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">'
+								+ '</div>'
+								+ '</div>'
+								+ '</div>'
+								+ '</form>';
+						$("#col_md5").append(trs)
+					}
+					form.render();
+				},
+				error : function (result){
+					layer.alert('查询表单字段出错')
+				}
+			})
+		})
+	});
+	// 选择可选处理人（人员）
+	$("#choose_able_handle_user").click(function() {
+		common.chooseUser('chooseableHandleUser', 'false');
+	});
+	// 选择可选处理人（角色）
+	$("#choose_able_handle_role").click(function() {
+		common.chooseRole('chooseableHandleRole', 'false');
+	});
+	// 选择可选处理人（角色组）
+	$("#choose_able_handle_team").click(function() {
+		common.chooseTeam('chooseableHandleTeam', 'false');
+	});
+	// 选择可选处理人（触发器）
+	$("#choose_HandleTri_btn").click(function() {
+		triggerToEdit = 'chooseableHandleTrigger';
+		getTriggerInfo();
+		$("#chooseTrigger_container").show();
+	});
+	// “取消”选择触发器
+	$("#chooseTrigger_cancelBtn").click(function() {
+		$("#chooseTrigger_container").hide();
+	});
+	// 选择超时通知人（人员）
+	$("#choose_outtime_user").click(function() {
+		common.chooseUser('outtimeUser', 'false');
+	});
+	// 选择超时通知人（角色）
+	$("#choose_outtime_role").click(function() {
+		common.chooseRole('outtimeRole', 'false');
+	});
+	// 选择超时通知人（角色组）
+	$("#choose_outtime_team").click(function() {
+		common.chooseTeam('outtimeTeam', 'false');
+	});
+	// 新增流程中点击选择触发器
+	$("#choose_stepTri_btn").click(function() {
+		triggerToEdit = 'trigger_of_step';
+		getTriggerInfo();
+		$("#chooseTrigger_container").show();
+	});
+	$("#ETS_choose_stepTri_btn").click(function() {
+		triggerToEdit = 'ETS_trigger_of_step';
+		getTriggerInfo();
+		$("#chooseTrigger_container").show();
+	});
+	// 参数映射 按钮
+	$("#paramMapping_cancelBtn").click(function() {
+		$("#triggerInterface_container").hide();
+	});
+	// “新增步骤”按钮
+	$("#add_step_btn").click(function() {
+		$('#addStep_form')[0].reset();
+		$('input[name="stepType"]').each(function() {
+			if ($(this).val() == 'form') {
+				$(this).prop("checked", true);
+			} else {
+				$(this).prop("checked", false);
+			}
+		});
+		$('input[name="stepSort"]').val("");
+		$('input[name="stepBusinessKeyType"]').each(function() {
+			if ($(this).val() == 'default') {
+				$(this).prop("checked", true);
+			} else {
+				$(this).prop("checked", false);
+			}
+		});
+		$("#stepBusinessKey_input").hide();
+		layui.form.render();
+		$("#form_innerArea").show();
+		$("#trigger_innerArea").hide();
+		$("#addStep_container").show();
 	// 选择处理人（人员）
 	$("#choose_handle_user").click(function() {
 		common.chooseUser('handleUser', 'false');
@@ -493,10 +730,7 @@ $(function() {
 		getTriggerInfo();
 		$("#chooseTrigger_container").show();
 	});
-	// 参数映射 按钮
-	$("#paramMapping_cancelBtn").click(function() {
-		$("#triggerInterface_container").hide();
-	});
+
 	// “新增步骤”按钮
 	$("#add_step_btn").click(function() {
 		$('#addStep_form')[0].reset();
@@ -520,6 +754,68 @@ $(function() {
 		$("#form_innerArea").show();
 		$("#trigger_innerArea").hide();
 		$("#addStep_container").show();
+
+		formTable();
+
+	})
+
+	// “选择环节”
+	$("#chooseActivity_i").click(function() {
+		// $("#left_activity_ul").empty();
+		$("#right_activity_ul").empty();
+		// $("#left_activity_ul").append(activityStr);
+		var choosedValue = $("#rejectActivities").val();
+		if (!choosedValue) {
+			$("#choose_activity_container").show();
+			return;
+		}
+		var chooseIds = choosedValue.split(";");
+		$("#left_activity_ul li").each(function() {
+			var activityBpdId = $(this).data('activitybpdid');
+			if ($.inArray(activityBpdId, chooseIds) != -1) {
+				$(this).appendTo($("#right_activity_ul"));
+			}
+		});
+		$("#choose_activity_container").show();
+	})
+	$("#search_form_btn").click(function() {
+		formTable();
+	});
+
+	$("#chooseActivities_sureBtn").click(function() {
+		var val = '';
+		var val_view = '';
+		$("#right_activity_ul li").each(function() {
+			val += $(this).data('activitybpdid') + ";";
+			val_view += $(this).html() + ";";
+		});
+		$("#rejectActivities").val(val);
+		$("#rejectActivities_view").val(val_view);
+		console.log(val);
+		console.log(val_view);
+		$("#choose_activity_container").hide();
+	});
+
+	$("#choose_activity_container").on('click', 'li', function() {
+		if ($(this).hasClass('colorli')) {
+			$(this).removeClass('colorli');
+		} else {
+			$(this).addClass('colorli');
+		}
+	});
+
+	// 点击配置步骤
+	$("#step_li").click(function() {
+		if (getFormData() != preFormData) { // 配置变化了
+			layer.confirm('环节配置有变动，是否保存？', {
+				btn : [ '保存', '不保存' ]
+			}, function() {
+				saveFrom = 'stepLi';
+				save('');
+			}, function() {
+			});
+		}
+	});
 
 		formTable();
 

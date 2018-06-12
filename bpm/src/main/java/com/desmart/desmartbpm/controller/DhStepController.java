@@ -87,4 +87,18 @@ public class DhStepController {
         }
     }
     
+    /**
+     * 根据id 查询所有步骤 
+     */
+    @RequestMapping(value = "/selectByStep")
+    @ResponseBody
+    public ServerResponse selectStepById(DhStep dhStep) {
+        try {
+            return dhStepService.getStepInfoByCondition(dhStep);
+        } catch (Exception e) {
+            LOG.error("查询步骤失败 ", e);
+            return ServerResponse.createByErrorMessage("查询步骤失败");
+        }
+    }
+    
 }

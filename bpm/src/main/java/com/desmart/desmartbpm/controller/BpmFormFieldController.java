@@ -43,4 +43,13 @@ public class BpmFormFieldController {
 	public ServerResponse saveFormFieldPermission(@RequestBody DhObjectPermission[] dhObjectPermissions) {
 		return bpmFormFieldService.saveFormFieldPermission(dhObjectPermissions);
 	}
+	
+	/**
+	 * 通过表单ID 查询所有表单字段
+	 */
+	@RequestMapping(value = "/queryFieldByFromUid")
+	@ResponseBody
+	public ServerResponse queryFieldByFormUid(String formUid) {
+		return bpmFormFieldService.queryFieldByFormUid(formUid);
+	}
 }

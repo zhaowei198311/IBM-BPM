@@ -214,4 +214,10 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					+"}";
 		return ServerResponse.createBySuccess(json);
 	}
+
+	@Override
+	public ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid) {
+		List<BpmFormField> resultList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		return ServerResponse.createBySuccess(resultList);
+	}
 }
