@@ -176,7 +176,11 @@ function toShowRouteBar () {
 					      +'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
 					      +'<td>'+activityMeta.activityName+'</td>'
 					      +'<th class="approval_th">处理人</th>'
-					      +'<td><input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly></td>'
+					      +'<td>';
+					if(activityMeta.userName!=null && activityMeta.userName!=""){
+	    				chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
+					}
+                	chooseUserDiv +='</td>'
 					      +'<th style="text-align:center;">'
 						      +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
 								+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
