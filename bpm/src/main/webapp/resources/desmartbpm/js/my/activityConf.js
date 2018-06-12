@@ -1742,6 +1742,87 @@ function save(actcUid) {
 function getFormData() {
 	return $('#config_form').serialize() + "&" + $('#sla_form').serialize();
 }
+
+//添加步骤到所有环节
+function addStepToAll() {
+	
+						var stepObjectUid;
+						//var $activeLi = $("#my_collapse li.link_active");
+						var actcUid = getCurrentActcUid();
+						//var activityBpdId = $activeLi.data('activitybpdid');
+						var stepBusinessKey;
+						console.log($('input:radio[name=stepType]:checked')
+								.val());
+						var stepBusinessKeyType = $(
+								'input[name="stepBusinessKeyType"]:checked')
+								.val();
+						if (stepBusinessKeyType != 'default') {
+							stepBusinessKey = $('input[name="stepBusinessKey"]')
+									.val();
+							if (!stepBusinessKey
+									|| stepBusinessKey.length > 100
+									|| stepBusinessKey.trim().length == 0) {
+								layer.alert('步骤关键字验证失败，过长或未填写');
+								return;
+							}
+						} else {
+							stepBusinessKey = 'default';
+						}
+						var stepType = $('input[name="stepType"]:checked')
+								.val();
+						if (stepType == 'form') {
+							var formCheck = $('#form_tbody input[name="dynUid_check"]:checked');
+							stepObjectUid = formCheck.val();
+
+							if (!stepObjectUid) {
+								layer.alert('请选择表单');
+								return;
+							}
+
+							if (formCheck.length > 1) {
+								layer.alert('请选择一个表单，不能选择多个');
+								return false;
+							}
+
+						}
+				layer.confirm(
+						'将会覆盖同关键字的表单步骤,是否继续？',
+					{
+						btn : [ '是', '否' ]
+					},
+					function() {
+						$.ajax({
+							url : common.getPath() + "/step/createStepToAll",
+							type : "post",
+							dataType : "json",
+							data : {
+								"proAppId" : proAppId,
+								"proUid" : proUid,
+								"proVerUid" : proVerUid,
+								"stepBusinessKey" : stepBusinessKey,
+								"stepType" : stepType,
+								"stepObjectUid" : stepObjectUid
+							},
+							success : function(result) {
+								if (result.status == 0) {
+									layer.alert("创建步骤成功");
+									$('#addStep_container').hide();
+									loadActivityConf(actcUid);
+								} else {
+									layer.alert(result.msg);
+								}
+							},
+							error : function() {
+								layer.alert('操作失败');
+							}
+						});
+						
+						layer.close(1);
+					}, function() {
+						layer.close(1);
+					});
+}
+
 // 添加步骤
 function addStep() {
 	var stepObjectUid;
