@@ -98,6 +98,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         for (LswTask lswTask : newLswTaskList) {
             Map<String, Object> data = null;
             try {
+                // 分析一个引擎任务
                 data =  handleLswTask(lswTask, groupInfo, globalConfig);
             } catch (Exception e) {
                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
@@ -151,6 +152,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @return
      */
     private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
+        System.out.println("开始分析任务编号：" + lswTask.getTaskId());
         Map<String, Object> result = Maps.newHashMap();
         
         // 流程图上的元素id
@@ -173,7 +175,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
         BpmActivityMeta bpmActivityMeta = null; // 任务停留的环节
-        if (tokenMap.get("parentToken") == null) {
+        if (tokenMap.get("preTokenId") == null) {
             // 如果父token是null，说明当前任务属于主流程
             dhProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             if (dhProcessInstance == null) {
@@ -184,7 +186,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     dhProcessInstance.getProVerUid());
         } else {
             // 如果父token是存在，说明当前任务属于子流程
-            dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, (String)tokenMap.get("parentToken"));
+            dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, (String)tokenMap.get("preTokenId"));
             if (dhProcessInstance == null) {
                 LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
                 return null;

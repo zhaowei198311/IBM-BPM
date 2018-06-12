@@ -3,12 +3,7 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.desmart.desmartportal.service.*;
 import org.apache.commons.lang3.StringUtils;
@@ -329,8 +324,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return ServerResponse.createByErrorMessage("您没有发起该流程的权限");
         }
 
-		BpmActivityMeta firstHumanActivity = dhProcessDefinitionService
-				.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid).getData();
+        // 获得主流程开始节点
+        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
+
+        // 获得开始节点往后的路由信息
+        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, mergedFromData);
+
+        // 获得第一个人工节点
+        BpmActivityMeta firstHumanActivity = routingDataOfMainStartNode.getNormalNodes().iterator().next();
 
         // 获得路由信息
         BpmRoutingData routingData = dhRouteService.getRoutingDataOfNextActivityTo(firstHumanActivity, mergedFromData);
@@ -347,7 +348,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
         HttpReturnStatus result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
 
-		// 如果获取API成功 将返回过来的流程数据 保存到 平台
+		// 如果获取API成功 将返回过来的流程数据
 		if (!BpmClientUtils.isErrorResult(result)) {
 			JSONObject startProcessDataJson = JSON.parseObject(result.getMsg());
             int insId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getString("piid"));
@@ -357,7 +358,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 			// 更新网关决策服务中间表数据
             dhRouteService.updateGatewayRouteResult(insId, routingData);
-
 
             // 更新草稿流程实例的状态
             DhProcessInstance instanceSelective = new DhProcessInstance();
@@ -377,19 +377,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(mainProcessInstance.getInsUid());
 
 
-            // 判断是否要生成子流程
-			DhProcessInstance subProcessInstance = null;
-			if (routingData.getStartProcessNodes().size() > 0){
-			    BpmActivityMeta subProcessNode = new ArrayList<>(routingData.getStartProcessNodes()).get(0);
-                Map<Object, Object> map = ExecutionTreeUtil.queryTokenId(taskId, startProcessDataJson);
-                if (map.get("parentTokenId") != null) {
-                    subProcessInstance = generateSubProcessInstanceByParentInstance(mainProcessInstance, subProcessNode, (String)map.get("parentTokenId"),
-                            currentUserUid, mainProcessInstance.getDepartNo(), mainProcessInstance.getCompanyNumber());
-                }
-            }
-            if (subProcessInstance != null) {
-			    dhProcessInstanceMapper.insertProcess(subProcessInstance);
-            }
+
+            // 发起主流程不提交时，不会进入子流程
+
 
             // 从草稿箱删除这个流程的草稿
             dhDraftsMapper.deleteByInsUid(insUid);
@@ -397,12 +387,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             Map<String, Object> map = new HashMap<>();
             map.put("taskId", taskId);
             map.put("firstHumanActivity", firstHumanActivity);
-
-            if (subProcessInstance == null) {
-                map.put("dhProcessInstance", mainProcessInstance);
-            } else {
-                map.put("dhProcessInstance", subProcessInstance);
-            }
+            map.put("dhProcessInstance", mainProcessInstance);
             map.put("routingData", routingData);
             map.put("pubBo", pubBo);
             map.put("dataJson", dataJson);
@@ -414,23 +399,24 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 	@Override
     @Transactional
-	public ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance dhProcessInstance,
+	public ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance mainProcessInstance,
                                           BpmRoutingData routingData,
                                           CommonBusinessObject pubBo, JSONObject dataJson) {
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         // 获得流流程编号,和第一个任务的编号
-        int insId = dhProcessInstance.getInsId();
+        int insId = mainProcessInstance.getInsId();
 
         pubBo.setInstanceId(String.valueOf(insId));
 
+        JSONArray routeDataArr = dataJson.getJSONArray("routeData");
         // 设置后续任务处理人
         ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo,
-                dataJson.getJSONArray("routeData"));
+                routeDataArr);
         if (!assembleResponse.isSuccess()) {
             return assembleResponse;
         }
 
-        // 创建第一个任务实例
+        // 创建第一个任务实例，第一个任务一定属于主流程
         DhTaskInstance taskInstance = new DhTaskInstance();
         taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
         taskInstance.setUsrUid(currentUserUid);
@@ -438,7 +424,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         taskInstance.setTaskData(dataJson.toJSONString());
         taskInstance.setTaskId(taskId);
         taskInstance.setTaskTitle(firstHumanActivity.getActivityName());
-        taskInstance.setInsUid(dhProcessInstance.getInsUid());
+        taskInstance.setInsUid(mainProcessInstance.getInsUid());
         taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
         taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
         taskInstance.setTaskInitDate(new Date());
@@ -449,7 +435,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 任务完成后 保存到流转信息表里面
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
         dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-        dhRoutingRecord.setInsUid(dhProcessInstance.getInsUid());
+        dhRoutingRecord.setInsUid(mainProcessInstance.getInsUid());
         dhRoutingRecord.setActivityName(firstHumanActivity.getActivityName());
         dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
         dhRoutingRecord.setUserUid(currentUserUid);
@@ -464,12 +450,36 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
         dhRoutingRecordMapper.insert(dhRoutingRecord);
 
+
         // 完成第一个任务
-        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfigService.getFirstActConfig());
+        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(globalConfig);
         Map<String, HttpReturnStatus> commitTaskMap = bpmTaskUtil.commitTask(taskId, pubBo);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskMap);
         if (errorMap.get("errorResult") != null) {
             throw new PlatformException("提交第一个任务失败");
+        }
+
+        // 判断提交第一个任务后是否会发起子流程
+        if (routingData.getStartProcessNodes().size() > 0){
+            BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
+            HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
+            JSONObject processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
+            Iterator<BpmActivityMeta> it = routingData.getStartProcessNodes().iterator();
+            while (it.hasNext()) {
+                // 创建对应的子流程
+                BpmActivityMeta startProcessNode = it.next();
+                BpmActivityMeta firstUserTaskNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(startProcessNode);
+                String tokenId = ExecutionTreeUtil.queryCurrentNodeTokenId(processDataJson, startProcessNode.getActivityBpdId(),
+                        firstUserTaskNode.getActivityBpdId());
+                // 获得流程发起人
+                String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
+                List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
+
+                DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(mainProcessInstance, startProcessNode, tokenId, owners.get(0),
+                        mainProcessInstance.getDepartNo(), mainProcessInstance.getCompanyNumber());
+                dhProcessInstanceMapper.insertProcess(subProcessInstacne);
+            }
         }
 
         return ServerResponse.createBySuccess();
@@ -500,7 +510,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	public DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition) {
 		DhProcessInstance processInstance = new DhProcessInstance();
 		processInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-		processInstance.setInsTitle("未命名");
+		processInstance.setInsTitle(dhProcessDefinition.getProName());
 		processInstance.setInsId(-1);
 		processInstance.setInsStatusId(DhProcessInstance.STATUS_ID_DRAFT);
 		processInstance.setInsStatus(DhProcessInstance.STATUS_DRAFT);
@@ -947,7 +957,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             String tokenId, String creatorId, String departNo, String companyNumber) {
         DhProcessInstance subInstance = new DhProcessInstance();
         subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        subInstance.setInsTitle("子流程");
+        subInstance.setInsTitle(parentInstance.getInsTitle() + processNode.getActivityName());
         subInstance.setInsId(parentInstance.getInsId());
         subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
         subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);

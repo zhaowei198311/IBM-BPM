@@ -37,18 +37,20 @@ public class DhRoutingRecordController {
 		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
 		dhRoutingRecord.setInsUid(insUid);
 		List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordServiceImpl.getDhRoutingRecordListByCondition(dhRoutingRecord);
-		
-		
-		DhRoutingRecord lastDhRoutingRecord = dhRoutingRecords.get(dhRoutingRecords.size()-1);//根据流程uid取得最后一个流转记录
-		
+
 		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();//获取当前流转到的所有环节
-		if(lastDhRoutingRecord.getActivityTo()!=null&&!"".equals(lastDhRoutingRecord.getActivityTo())) {
+
+
+		if (bpmActivityMetaList.size() > 0) {
+			DhRoutingRecord lastDhRoutingRecord = dhRoutingRecords.get(dhRoutingRecords.size()-1);//根据流程uid取得最后一个流转记录
+			if(lastDhRoutingRecord.getActivityTo()!=null&&!"".equals(lastDhRoutingRecord.getActivityTo())) {
 				String[] activityTo = lastDhRoutingRecord.getActivityTo().split(",");
 				for (int i = 0; i < activityTo.length; i++) {
 					String activityId = activityTo[i];
 					BpmActivityMeta bpmActivityMeta = bpmActivityMetaServiceImpl.queryByPrimaryKey(activityId);
 					bpmActivityMetaList.add(bpmActivityMeta);
 				}
+			}
 		}
 		
 		/*List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息

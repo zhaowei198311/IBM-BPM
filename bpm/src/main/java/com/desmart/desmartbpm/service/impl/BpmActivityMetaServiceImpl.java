@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.sun.prism.shader.Solid_TextureSecondPassLCD_AlphaTest_Loader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -261,6 +262,31 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         selective.setParentActivityId(subProcessNode.getActivityId());
         selective.setActivityType("start");
         selective.setType("event");
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+    @Override
+    public BpmActivityMeta getFirstUserTaskMetaOfSubProcess(BpmActivityMeta subProcessNode) {
+        BpmActivityMeta startNode = getStartMetaOfSubProcess(subProcessNode);
+        return this.getByActBpdIdAndParentActIdAndProVerUid(startNode.getActivityTo(), subProcessNode.getActivityId(),
+                startNode.getSnapshotId());
+    }
+
+
+    @Override
+    public BpmActivityMeta getStartMetaOfMainProcess(String proAppId, String proUid, String proVerUid) {
+        BpmActivityMeta selective = new BpmActivityMeta();
+        selective.setProAppId(proAppId);
+        selective.setBpdId(proUid);
+        selective.setSnapshotId(proVerUid);
+        selective.setActivityType("start");
+        selective.setType("event");
+        selective.setParentActivityId("0");
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
         if (CollectionUtils.isEmpty(list)) {
             return null;

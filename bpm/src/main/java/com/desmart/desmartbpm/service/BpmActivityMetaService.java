@@ -114,4 +114,20 @@ public interface BpmActivityMetaService {
      * @return
      */
     BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta subProcessNode);
+
+    /**
+     * 根据代表子流程的节点找到它代表的子流程的第一个人员节点
+     * @param subProcessNode
+     * @return
+     */
+    BpmActivityMeta getFirstUserTaskMetaOfSubProcess(BpmActivityMeta subProcessNode);
+
+    /**
+     * 找到主流程的开始节点
+     * @param proAppId 应用库id
+     * @param proUid 图id
+     * @param proVerUid 版本id
+     * @return
+     */
+    BpmActivityMeta getStartMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
 }
