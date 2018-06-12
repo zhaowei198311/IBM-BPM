@@ -375,9 +375,11 @@ var common = {
 			});
 			if(flag){
 				$(this).css("display","none");
-				var pText = $(this).prev()[0].firstChild.data.trim();
-				if($(this).attr("title")==pText){
-					$(this).prev().css("display","none");
+				if($(this).prev().prop("tagName")=="P"){
+					var pText = $(this).prev()[0].firstChild.data.trim();
+					if($(this).attr("title")==pText){
+						$(this).prev().css("display","none");
+					}
 				}
 			}
 		});
@@ -388,22 +390,24 @@ var common = {
 		var json = JSON.parse(jsonStr);
 		for(var name in json){
 			var perJsonStr = json[name];
-			switch(name){
-				case "fieldJsonStr":{
-					common.fieldPermissionNoPrint(perJsonStr);
-					break;
-				}
-				case "titleJsonStr":{
-					common.titlePermissionNoPrint(perJsonStr);
-					break;
-				}
-				case "fieldPrintJsonStr":{
-					common.fieldPrintPermission(perJsonStr);
-					break;
-				}
-				case "titlePrintJsonStr":{
-					common.titlePrintPermission(perJsonStr);
-					break;
+			if(perJsonStr!=null && perJsonStr!=""){
+				switch(name){
+					case "fieldJsonStr":{
+						common.fieldPermissionNoPrint(perJsonStr);
+						break;
+					}
+					case "titleJsonStr":{
+						common.titlePermissionNoPrint(perJsonStr);
+						break;
+					}
+					case "fieldPrintJsonStr":{
+						common.fieldPrintPermission(perJsonStr);
+						break;
+					}
+					case "titlePrintJsonStr":{
+						common.titlePrintPermission(perJsonStr);
+						break;
+					}
 				}
 			}
 		}

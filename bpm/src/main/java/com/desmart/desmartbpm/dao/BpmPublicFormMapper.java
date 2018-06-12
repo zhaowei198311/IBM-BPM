@@ -61,11 +61,6 @@ public interface BpmPublicFormMapper {
 	int deleteForm(String formUid);
 
 	/**
-	 * 添加主表单与子表单之间的关联信息
-	 */
-	int saveFormRelePublicForm(@Param("formUid")String formUid, @Param("publicFormUid")String publicFormUid);
-
-	/**
 	 * 根据表单id和公共表单id查询是否有相同的关联信息
 	 */
 	int queryReleByFormUidAndPublicFormUid(@Param("formUid")String formUid, @Param("publicFormUid")String publicFormUid);

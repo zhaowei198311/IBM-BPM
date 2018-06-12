@@ -77,4 +77,14 @@ public interface BpmFormManageMapper {
 	 * 根据表单id删除表单关联信息
 	 */
 	int deleteFormRelePublicForm(String dynUid);
+
+	/**
+	 * 根据表单id查询表单关联信息
+	 */
+	List<String> queryFormReleByFormUid(String dynUid);
+	
+	/**
+	 * 添加主表单与子表单之间的关联信息
+	 */
+	int saveFormRelePublicForm(@Param("formUid")String formUid, @Param("publicFormUid")String publicFormUid);
 }

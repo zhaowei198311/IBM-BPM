@@ -89,4 +89,23 @@
 		from bpm_form_field
 		where fld_uid = #{fldUid} 
 	</select>
+	
+	<select id="queryPublicFormFieldByFormUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		select <include refid="base_column"/>
+		from bpm_form_field 
+		where form_uid in (
+			select public_form_uid 
+			from bpm_form_rele_public_form 
+			where form_uid=#{formUid}
+		) 
+		<choose>
+			<when test="fieldType!=null and !fieldType.trim().isEmpty()">
+				and fld_type = #{fieldType}
+			</when>
+			<otherwise>
+				and fld_type != 'title'
+			</otherwise>
+		</choose>
+		order by fld_index
+	</select>
 </mapper>

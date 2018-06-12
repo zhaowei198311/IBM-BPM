@@ -66,12 +66,6 @@
 		delete from bpm_public_form where public_form_uid = #{formUid}
 	</delete>
 	
-	<insert id="saveFormRelePublicForm" parameterType="map">
-		insert into 
-		bpm_form_rele_public_form(form_uid,public_form_uid)
-		values(#{formUid},#{publicFormUid})
-	</insert>
-	
 	<select id="queryReleByFormUidAndPublicFormUid" parameterType="map" resultType="int">
 		select COUNT(*) 
 		from bpm_form_rele_public_form

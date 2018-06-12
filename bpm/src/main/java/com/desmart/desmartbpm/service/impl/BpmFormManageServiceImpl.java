@@ -178,7 +178,22 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		String newFormUid = copyFormInfo(bpmForm,oldBpmForm);
 		//复制表单字段信息
 		copyFormFieldInfo(newFormUid,oldBpmForm.getDynUid());
+		//复制子表单关联信息
+		copyPublicFormInfo(newFormUid,oldBpmForm.getDynUid());
 		return ServerResponse.createBySuccess(newFormUid);
+	}
+
+	/**
+	 * 复制子表单关联信息
+	 */
+	private void copyPublicFormInfo(String newFormUid, String dynUid) {
+		List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(dynUid);
+		for(String publicFormUid:publicFormUidList) {
+			int countRow = bpmFormManageMapper.saveFormRelePublicForm(newFormUid, publicFormUid);
+			if(1!=countRow) {
+				throw new PlatformException("复制子表单关联失败");
+			}
+		}
 	}
 
 	/**

@@ -116,4 +116,16 @@
     <delete id="deleteFormRelePublicForm" parameterType="String">
     	delete from bpm_form_rele_public_form where form_uid = #{formUid}
     </delete>
+    
+    <select id="queryFormReleByFormUid" parameterType="String" resultType="String">
+    	select public_form_uid
+    	from bpm_form_rele_public_form 
+    	where form_uid = #{formUid}
+    </select>
+    
+    <insert id="saveFormRelePublicForm" parameterType="map">
+		insert into 
+		bpm_form_rele_public_form(form_uid,public_form_uid)
+		values(#{formUid},#{publicFormUid})
+	</insert>
 </mapper>

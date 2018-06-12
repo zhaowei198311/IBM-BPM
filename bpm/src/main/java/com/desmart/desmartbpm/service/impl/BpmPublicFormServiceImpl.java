@@ -99,6 +99,8 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		if(countRow!=1) {
 			throw new PlatformException("表单内容修改失败");
 		}
+		List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(bpmPublicForm.getPublicFormUid());
+		deleteFieldPermiss(filedList);
 		bpmFormFieldMapper.deleteFormField(bpmPublicForm.getPublicFormUid());
 		return ServerResponse.createBySuccess();
 	}
@@ -207,7 +209,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	public ServerResponse saveFormRelePublicForm(String formUid, String[] publicFormUidArr) {
 		for(String publicFormUid:publicFormUidArr) {
 			if(!"".equals(publicFormUid) && null!=publicFormUid) {
-				int countRow = bpmPublicFormMapper.saveFormRelePublicForm(formUid,publicFormUid);
+				int countRow = bpmFormManageMapper.saveFormRelePublicForm(formUid,publicFormUid);
 				if(1!=countRow) {
 					throw new PlatformException("添加子表单关联失败");
 				}

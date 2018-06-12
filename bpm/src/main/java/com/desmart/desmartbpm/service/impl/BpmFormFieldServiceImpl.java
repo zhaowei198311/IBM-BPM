@@ -51,6 +51,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Override
 	public ServerResponse queryFieldByFormIdAndStepId(String stepUid, String formUid, String fieldType) {
 		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUidAndType(formUid,fieldType);
+		//根据表单id找到所关联的子表单中的所有字段
+		List<BpmFormField> publicFormFieldList = bpmFormFieldMapper.queryPublicFormFieldByFormUid(formUid,fieldType);
+		fieldList.addAll(publicFormFieldList);
 		for(BpmFormField field:fieldList) {
 			List<String> opActionList = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
 			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
@@ -85,7 +88,6 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
 		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUidNotPrint(stepUid);
-		Map<String,String> map = new HashMap<>();
 		if(objPermissList.size()==0) {
 			return ServerResponse.createBySuccess("{}");
 		}else {
@@ -94,6 +96,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			for(int i=0;i<objPermissList.size();i++) {
 				DhObjectPermission objPer = objPermissList.get(i);
 				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid());
+				if(null==formField) {
+					continue;
+				}
 				String fieldCodeName = formField.getFldCodeName();
 				String fieldType = formField.getFldType();
 				String opAction = objPer.getOpAction();
@@ -141,6 +146,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		String formUid = dhStep.getStepObjectUid();
 		//再根据表单id找到所有的表单字段对象
 		List<BpmFormField> formFieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		formFieldList.addAll(bpmFormFieldMapper.queryPublicFormFieldByFormUid(formUid, ""));
 		String jsonStr = "{";
 		String titleJsonStr = "{";
 		String printJsonStr = "{";
