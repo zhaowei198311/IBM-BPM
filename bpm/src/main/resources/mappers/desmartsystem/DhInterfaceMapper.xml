@@ -14,13 +14,16 @@
 		<result column="INT_STATUS"  			property="intStatus"/>
 		<result column="CREATE_DATE"  			property="createDate"/>
 		<result column="UPDATE_DATE"  			property="updateDate"/>
+		
+		<result column="INT_XML"  			property="intXml"/>
+		
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		INT_UID, INT_TITLE, INT_DESCRIPTION,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
-		CREATE_DATE, UPDATE_DATE
+		CREATE_DATE, UPDATE_DATE,INT_XML
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
@@ -45,6 +48,7 @@
 			#{intLoginPwd},
 			#{intStatus},
 			sysdate,
+			#{intXml},
 			sysdate
 		)
 	</insert>
@@ -99,13 +103,12 @@
 				INT_LOGIN_PWD = #{intLoginPwd},
 			</if>
 			<if test="intStatus != null and intStatus != ''">
-				INT_STATUS = #{intStatus}
+				INT_STATUS = #{intStatus},
 			</if>
-			
-			<if test="updateDate != null and updateDate!='' ">
-				UPDATE_DATE = #{updateDate}
+			<if test="intXml != null and intXml != ''">
+				INT_XML = #{intXml},
 			</if>
-			
+			  UPDATE_DATE = sysdate
 			<where>
 				INT_UID = #{intUid}
 			</where>

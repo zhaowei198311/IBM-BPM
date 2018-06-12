@@ -17,7 +17,7 @@
 		
 		<result column="PARA_PARENT_NAME"  			property="paraParentName"/>
 		<result column="PARA_PARENT"  			property="paraParent"/>
-		<result column="PARA_XML"  			property="paraXml"/>
+		<result column="DATE_FORMAT"  			property="dateFormat"/>
 		
 		
 	</resultMap>
@@ -25,13 +25,13 @@
 	<sql id="Base_Column_List">
 		PARA_UID, PARA_INDEX, PARA_NAME,
 		PARA_DESCRIPTION, PARA_TYPE, PARA_SIZE,
-		MULTI_SEPARATOR, MULTI_VALUE, IS_MUST, INT_UID,PARA_PARENT,PARA_XML
+		MULTI_SEPARATOR, MULTI_VALUE, IS_MUST, INT_UID,PARA_PARENT,DATE_FORMAT
 	</sql>
 	
 	<sql id="ListAll_Column">
 		ip.PARA_UID,ip.PARA_INDEX, ip.PARA_NAME,
 		ip.PARA_DESCRIPTION, ip.PARA_TYPE, ip.PARA_SIZE,
-		ip.MULTI_SEPARATOR, ip.MULTI_VALUE, ip.IS_MUST, ip.INT_UID,ip.PARA_PARENT,ip.PARA_XML,ip1.PARA_NAME as paraParentName
+		ip.MULTI_SEPARATOR, ip.MULTI_VALUE, ip.IS_MUST, ip.INT_UID,ip.PARA_PARENT,ip.DATE_FORMAT,ip1.PARA_NAME as paraParentName
 	</sql>
 	
 	<select id="listAll" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
@@ -58,7 +58,8 @@
 			#{isMust},
 			#{intUid},
 			#{paraParent},
-			#{paraXml,jdbcType=VARCHAR}
+			#{paraXml,jdbcType=VARCHAR},
+			#{dateFormat,jdbcType=VARCHAR}
 		)
 	</insert>
 	
@@ -94,15 +95,16 @@
 				MULTI_VALUE = #{multiValue},
 			</if>
 			<if test="isMust != null">
-				IS_MUST = #{isMust}
+				IS_MUST = #{isMust},
 			</if>
 			
 			<if test="paraParent != null">
-				PARA_PARENT = #{paraParent}
+				PARA_PARENT = #{paraParent},
 			</if>
 			
-			<if test="paraXml != null">
-				PARA_XML = #{paraXml}
+			
+			<if test="dateFormat != null">
+				DATE_FORMAT = #{dateFormat}
 			</if>
 		</set>
 		<where>
