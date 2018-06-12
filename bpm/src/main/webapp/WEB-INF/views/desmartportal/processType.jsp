@@ -312,7 +312,7 @@
 			success : function(result) {
 				if(result.status == 0){
 					if(result.data.flag==1){
-						startProcess(result.data.dataObj.insBusinessKey);
+						startProcess(result.data.dataObj.stepBusinessKey);
 					}else{
 						$("#checkedBusinessKey").find(".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {

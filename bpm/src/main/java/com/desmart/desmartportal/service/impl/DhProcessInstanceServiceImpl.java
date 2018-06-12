@@ -983,7 +983,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 						Map<String, Object> map = new HashMap<>();
 						map.put("flag", 1);
 						map.put("dataObj", list.get(0));
-						return ServerResponse.createBySuccess(1);
+						return ServerResponse.createBySuccess(map);
 					}else {
 						return serverResponse;
 					}
