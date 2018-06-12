@@ -955,14 +955,34 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 
-	public boolean checkRouteData(BpmActivityMeta currTaskNode, JSONObject routeData, BpmRoutingData routingData) {
+	public boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData) {
+        Map<String, String> activityAndUsersMap = new HashMap<>();
+	    for (int i=0; i<routeData.size(); i++) {
+            JSONObject item = routeData.getJSONObject(i);
+            activityAndUsersMap.put(item.getString(""), "");
+        }
+
+
 		// 所有当前任务节点平级的普通任务节点都有处理人
-		routingData.getNormalNodes();
+		Set<BpmActivityMeta> normalNodes = routingData.getNormalNodes();
+		if (normalNodes.isEmpty()) {
+			// 当后续没有人工环节，返回true
+			return true;
+		}
+        for (Iterator<BpmActivityMeta> it = normalNodes.iterator(); it.hasNext();) {
+            BpmActivityMeta normalNode = it.next();
+            if (normalNode.getParentActivityId().equals(currTaskNode.getParentActivityId())) {
+
+            }
+
+        }
 
 
 		// 如果有新的子流程，当前任务节点平级的 开始子流程节点 其下的第一个普通任务有处理人
 
-
 		return true;
 	}
+
+
+
 }

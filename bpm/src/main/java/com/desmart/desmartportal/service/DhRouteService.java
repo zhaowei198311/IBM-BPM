@@ -118,5 +118,5 @@ public interface DhRouteService {
 	 * @param routingData   下个环节路由结果
 	 * @return  true 信息完整   false 信息缺失
 	 */
-	boolean checkRouteData(BpmActivityMeta currTaskNode, JSONObject routeData, BpmRoutingData routingData);
+	boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData);
 }

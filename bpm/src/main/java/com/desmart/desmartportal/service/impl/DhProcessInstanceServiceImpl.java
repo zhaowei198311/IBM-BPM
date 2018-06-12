@@ -545,7 +545,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
 			}
 			if(checkPermissionStart(processDefintion)) {
-				processInstance = this.generateDraftProcessInstance(processDefintion,insBusinessKey);
+				processInstance = this.generateDraftProcessInstance(processDefintion, insBusinessKey);
 			}else {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
@@ -577,8 +577,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		DhActivityConf dhActivityConf = dhActivityConfMapper
 				.selectByPrimaryKey(firstHumanMeta.getDhActivityConf().getActcUid());
 
-		// 获得默认步骤的列表
-		List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, "default");
+		// 根据步骤关键字，得到所有这个环节的步骤
+		List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, processInstance.getInsBusinessKey());
+
+
+		// 获得表单步骤
 		DhStep formStep = getFirstFormStepOfStepList(steps);
 		if (formStep == null) {
 			return ServerResponse.createByErrorMessage("找不到表单步骤");
