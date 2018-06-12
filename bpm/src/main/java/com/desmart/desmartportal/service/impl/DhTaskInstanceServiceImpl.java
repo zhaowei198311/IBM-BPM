@@ -735,7 +735,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					taskUid = dhTaskInstance.getTaskUid();
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
 					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
-						if(num<usrUids.length) {
+						if(num==usrUids.length) {
+							dhTaskInstance.setToTaskUid("");
+						}else {
 							dhTaskInstance.setToTaskUid(taskUid);
 						}
 						if (num > 1) {
