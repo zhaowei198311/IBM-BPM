@@ -179,6 +179,8 @@ function toShowRouteBar () {
 					      +'<td>';
 					if(activityMeta.userName!=null && activityMeta.userName!=""){
 	    				chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
+					}else{
+						chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
 					}
                 	chooseUserDiv +='</td>'
 					      +'<th style="text-align:center;">'
