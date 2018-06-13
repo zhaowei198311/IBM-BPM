@@ -97,7 +97,9 @@
 					intLoginUser : $("#intLoginUser2").val(),
 					intLoginPwd : $("#intLoginPwd2").val(),
 					intStatus : $("#intStatus2").val(),
-					intUid : $("#intUid2").val()
+					intUid : $("#intUid2").val(),
+					intXml : $("#intXml1").val()
+					
 				},
 				success : function(result) {
 					window.location.href = "interfaces/index";
@@ -111,10 +113,11 @@
 
 		// 修改接口参数配置
 		$(".sure5_btn").click(function() {
+			var intUid=$('#intUid').val();
 			$.ajax({
 				url : 'interfaceParamers/update',
 				type : 'POST',
-				dataType : 'text',
+				dataType : 'json',
 				data : {
 					paraUid : $("#paraUid3").val(),
 					paraIndex : $("#paraIndex3").val(),
@@ -124,10 +127,17 @@
 					paraSize : $("#paraSize3").val(),
 					multiSeparator : $("#multiSeparator3").val(),
 					multiValue : $("#multiValue3").val(),
-					isMust : $("#isMust3").val()
+					isMust : $("#isMust3").val(),
+					dateFormat : $("#dateFormat3").val()
 				},
 				success : function(result){
-					window.location.href = "interfaces/index";
+					if (result.success==true){
+						layer.alert(result.msg);
+						closePopup('display_container6','class');
+						getParamersInfo(intUid);
+					}else{
+						layer.alert(result.msg);
+					}
 				}
 			})
 		})
@@ -261,6 +271,7 @@
 				multiSeparator : $("#multiSeparator").val(),
 				multiValue : $("#multiValue").val(),
 				isMust : $("#isMust").val(),
+				dateFormat : $("#dateFormat").val(),
 				intUid : $("#intUid").val()
 			});
 		array.push({
@@ -290,8 +301,9 @@
 	}
 
 	$("#addInterfaces").click(function() {
-		$(".display_container").css("display", "block")
-
+		//$(".display_container").css("display", "block");
+		interfaceInputShowAndHide("","");
+		popupDivAndReset('display_container','class');
 		layui.use('laydate', function() {
 			var laydate = layui.laydate
 			laydate.render({
@@ -320,7 +332,9 @@
 						intCallMethod : $("#intCallMethod").val(),
 						intLoginUser : $("#intLoginUser").val(),
 						intLoginPwd : $("#intLoginPwd").val(),
-						intStatus : $("#intStatus").val()
+						intStatus : $("#intStatus").val(),
+						intXml:$("#intXml").val()
+						
 					},
 					success : function(result) {
 						// 添加成功后 ajxa跳转 查询controller
@@ -351,27 +365,27 @@
 	})
 
 	// 查看
-	$(".select_btn").click(function() {
-		var interfaceName = $("#interfaceName").val();
-		var interfaceType = $("#interfaceType").val();
-		var interfaceState = $("#interfaceState").val();
-		$.ajax({
-			url : 'interfaces/queryDhInterfaceByTitle',
-			type : 'POST',
-			dataType : 'json',
-			data : {
-				intTitle : interfaceName,
-				intType : interfaceType,
-				intStatus : interfaceState
-			},
-			success : function(result) {
-				// 成功的时候返回json数据 然后 进行展示
-				if (result.status == 0) {
-					drawTable(result.data);
-				}
-			}
-		})
-	})
+//	$(".select_btn").click(function() {
+//		var interfaceName = $("#interfaceName").val();
+//		var interfaceType = $("#interfaceType").val();
+//		var interfaceState = $("#interfaceState").val();
+//		$.ajax({
+//			url : 'interfaces/queryDhInterfaceByTitle',
+//			type : 'POST',
+//			dataType : 'json',
+//			data : {
+//				intTitle : interfaceName,
+//				intType : interfaceType,
+//				intStatus : interfaceState
+//			},
+//			success : function(result) {
+//				// 成功的时候返回json数据 然后 进行展示
+//				if (result.status == 0) {
+//					drawTable(result.data);
+//				}
+//			}
+//		})
+//	})
 
 	function getInterfaceInfo() {
 		$.ajax({
@@ -422,11 +436,12 @@
 			trs += '<tr>' + '<td>' + sortNum + '</td>' + '<td>' + meta.intTitle
 					+ '</td>' + '<td>' + meta.intDescription + '</td>' + '<td>'
 					+ meta.intType + '</td>'
-					+ '<td id="requestUrl" style="color:blue" onclick=urls("'
+					+ '<td id="requestUrl" onclick=urls("'
 					+ meta.intUrl + '")>' + meta.intUrl + '</td>' + '<td>'
 					+ meta.intCallMethod + '</td>' + '<td>'+status+'</td>' + '<td>'
-					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'
-					+ meta.intUid + '") >&#xe642;</i>'
+					+ '<i class="layui-icon"  title="接口测试" onclick=textInterface("'+meta.intUid+'")  >&#xe64c;</i>'
+					
+					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
 //					+ '<i class="layui-icon"  title="新增参数"  onclick=add("'
 //					+ meta.intUid + '")>&#xe60a;</i>'
 					+ '<i class="layui-icon"  title="删除接口"  onclick=del("'
@@ -440,7 +455,6 @@
 
 	// url 监听事件
 	function urls(url) {
-		window.open(url);
 	}
 
 	// 按钮事件
@@ -477,7 +491,7 @@
 				document.getElementById("isMust").value = ckd2;
 			})
 			$("#exposed_table2_container").css("display", "block");
-		})
+		});
 	}
 
 	function del(intUid) {
@@ -533,6 +547,9 @@
 					$("#intCallMethod2").val(result.intCallMethod);
 					$("#intLoginUser2").val(result.intLoginUser);
 					$("#intLoginPwd2").val(result.intLoginPwd);
+					interfaceInputShowAndHide(result.intType,1);
+					
+					$("#intXml1").val(result.intXml);
 					form.render();
 				}
 			})
@@ -620,9 +637,9 @@
 					+ isMust
 					+ '</td>'
 					+ '<td>'+ isEmpty(meta.dateFormat)+ '</td>'
-					+ '<td>'+ meta.paraParentName+ '</td>'
-					+ '<td>'+ isEmpty(meta.paraXml)+ '</td>'
-					+'<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'"); >&#xe642;</i><i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'"); >&#xe640;</i></td>'
+					+ '<td>'+ isEmpty(meta.paraParentName)+ '</td>'
+//					+ '<td>'+ isEmpty(meta.intXml)+ '</td>'
+					+'<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'"); >&#xe642;</i><i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i></td>'
 					+ '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);
