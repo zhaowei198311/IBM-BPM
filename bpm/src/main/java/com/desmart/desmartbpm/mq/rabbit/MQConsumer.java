@@ -25,7 +25,6 @@ private static final Logger log = LoggerFactory.getLogger(MQConsumer.class);
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
 		
-		System.out.println("rabbitmq接受到消息：" + message);
 		String str = null;
 		try {
 			str = new String(message.getBody(), "UTF-8");
@@ -34,6 +33,7 @@ private static final Logger log = LoggerFactory.getLogger(MQConsumer.class);
 			log.info("获取message中body内容出错...");
 			e.printStackTrace();
 		}finally {
+			//手动确认消息的消费
 			channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 		}
 		/*JSONObject json = JSONObject.parseObject(message.toString());
