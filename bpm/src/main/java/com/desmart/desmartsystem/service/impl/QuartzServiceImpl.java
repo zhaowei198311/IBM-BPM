@@ -23,7 +23,7 @@ public class QuartzServiceImpl implements QuartzService{
 	private static Logger logger = LoggerFactory.getLogger(QuartzServiceImpl.class);
 
 
-	@Autowired
+//	@Autowired
 	private Scheduler scheduler;// 获取调度器
 	
 	public void addJob(JobEntity jobEntity, HttpServletResponse response,JobController jobController) {
