@@ -193,6 +193,9 @@ var common = {
 						|| $(inputArr[i]).prop("class") == "layui-input layui-unselect layui-disabled") {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");
+						if(name==null || name==""){
+							break;
+						}
 						var value = $("[name='" + name + "']")
 							.val().trim();
 						textJson = "\"" + name
@@ -201,6 +204,9 @@ var common = {
 						break;
 					}else if($(inputArr[i]).attr("title")=="choose_user"){
 						var name = $(inputArr[i]).attr("name");
+						if(name==null || name==""){
+							break;
+						}
 						var userNameArr = $(inputArr[i]).val().trim();
 						var userIdArr = $(inputArr[i]).parent().find("input[type='hidden']")
 									.val().trim();
@@ -209,6 +215,9 @@ var common = {
 						break;
 					}else if($(inputArr[i]).attr("title")=="choose_value"){
 						var name = $(inputArr[i]).attr("name");
+						if(name==null || name==""){
+							break;
+						}
 						var dicDataName = $(inputArr[i]).val().trim();
 						var dicDataCode = $(inputArr[i]).parent().find("input[class='value_code']")
 									.val().trim();
@@ -224,6 +233,9 @@ var common = {
 					;
 				case "date":{
 					var name = $(inputArr[i]).attr("name");
+					if(name==null || name==""){
+						break;
+					}
 					var value = $("[name='" + name + "']")
 						.val().trim();
 					textJson = "\"" + name + "\":{\"value\":\""
@@ -232,6 +244,9 @@ var common = {
 				};
 				case "radio": {
 					var name = $(inputArr[i]).attr("name");
+					if(name==null || name==""){
+						break;
+					}
 					var radio = $("[name='" + name + "']")
 						.parent().parent().find(
 							"input:radio:checked");
@@ -245,21 +260,25 @@ var common = {
 				}
 				case "checkbox": {
 					var name = $(inputArr[i]).attr("name");
+					if(name==null || name==""){
+						break;
+					}
 					var checkbox = $("[name='" + name + "']")
 						.parent().parent().find(
 							"input:checkbox:checked");
-					if(checkbox.length!=0){
-						//判断每次的复选框是否为同一个class
-						if (control) {
+					
+					//判断每次的复选框是否为同一个class
+					if (control) {
+						checkName = checkbox.attr("name");
+					} else {
+						if (checkName != checkbox.attr("name")) {
 							checkName = checkbox.attr("name");
-						} else {
-							if (checkName != checkbox.attr("name")) {
-								checkName = checkbox.attr("name");
-								control = true;
-							}
+							control = true;
 						}
-
-						if (control) {
+					}
+					
+					if (control) {
+						if(checkbox.length!=0){
 							control = false;
 							checkJson += "\"" + checkName
 								+ "\":{\"value\":[";
@@ -273,15 +292,18 @@ var common = {
 								}
 							}
 							checkJson += "]},";
+						}else{
+							control = false;
+							checkJson += "\"" + name + "\":{\"value\":[]},";
 						}
-					}else{
-						checkJson += "\"" + checkName + "\":{\"value\":[]}";
 					}
 					json += checkJson;
 					break;
 				}
 			}//end switch
-			textJson += ",";
+			if(textJson.substring(textJson.length-1) != "," && textJson!=null && textJson!=""){
+				textJson += ",";
+			}
 			if (json.indexOf(textJson) == -1) {
 				json += textJson;
 			}
@@ -306,6 +328,7 @@ var common = {
 		}
 		json += "}";
 		json = json.replace(/\t/g,"");
+		console.log(json);
 		return json;
 	},
 	//传入表单json数据给表单组件赋值
