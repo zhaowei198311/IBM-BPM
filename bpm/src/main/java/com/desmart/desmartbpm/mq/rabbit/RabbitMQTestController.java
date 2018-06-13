@@ -19,7 +19,16 @@ public class RabbitMQTestController {
 		
 		SysUser sysUser = new SysUser();
 		sysUser.setAccountType("test123");
-		mqProducerService.sendMessage("queueTestKey", sysUser);
+		for (int i = 0; i < 10; i++) {
+			mqProducerService.sendMessage("queueTestKey", i);
+			try {  
+                //暂停一下，好让消息消费者去取消息打印出来  
+                Thread.sleep(1000);  
+            } catch (InterruptedException e) {  
+                e.printStackTrace();  
+            } 
+		}
+		
 	}
 
 }
