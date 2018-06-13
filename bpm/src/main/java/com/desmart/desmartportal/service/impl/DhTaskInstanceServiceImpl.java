@@ -718,11 +718,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
-					toTaskUid = "task_instance:"+UUID.randomUUID();
 					if(num==1) {
+						toTaskUid = "task_instance:"+UUID.randomUUID();
 						dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
 					}else {
 						dhTaskInstance.setTaskUid(toTaskUid);
+						toTaskUid = "task_instance:"+UUID.randomUUID();
 					}
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
 					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
