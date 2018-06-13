@@ -77,4 +77,6 @@ public class EntityIdPrefix {
 	public static final String DH_APPROVAL_OPINION = "apr_idea:";
 	/** 文件标识前缀*/
 	public static final String DH_INSTANCE_FILE_CARD = "file_card:";
+    /** 简单循环任务的任务处理人 */
+	public static final String DH_TASK_HANDLER = "task_handler:";
 }
