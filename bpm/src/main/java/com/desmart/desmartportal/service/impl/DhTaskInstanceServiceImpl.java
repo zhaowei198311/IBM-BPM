@@ -718,9 +718,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
+					toTaskUid = "task_instance:"+UUID.randomUUID();
 					if(num==1) {
 						dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-						toTaskUid = "task_instance:"+UUID.randomUUID();
 					}else {
 						dhTaskInstance.setTaskUid(toTaskUid);
 					}
