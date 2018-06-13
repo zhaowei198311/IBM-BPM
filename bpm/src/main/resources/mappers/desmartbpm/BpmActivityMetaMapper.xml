@@ -105,15 +105,7 @@
         left join dh_activity_conf ac on am.source_activity_id = ac.activity_id
 	    where am.activity_id = #{activityId}
 	</select> 
-	
-	<select id="queryByFourElement" parameterType="map" resultMap="mapWithConf">
-	    select 
-        <include refid="relationColumn" />
-        from BPM_ACTIVITY_META am 
-        left join dh_activity_conf ac on am.activity_id = ac.activity_id
-        where am.pro_app_id=#{proAppId} and am.bpd_id=#{proUid} and am.snapshot_id=#{proVerUid}
-        and activity_bpd_id=#{activityBpdId}
-	</select>
+
 	
 	<select id="queryByConditionToSource" parameterType="map" resultMap="mapWithConf">
 	    select 

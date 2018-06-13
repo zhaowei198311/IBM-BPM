@@ -271,18 +271,35 @@ public class DhStepServiceImpl implements DhStepService {
 
     @Override
     public List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
-        // 需要查询源环节的步骤配置
-        BpmActivityMeta sourceMeta = null;
-        if (bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
-            sourceMeta = bpmActivityMeta;
-        } else {
+        // 查询到源节点
+        BpmActivityMeta sourceMeta = bpmActivityMeta;
+        if (!bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
             sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(bpmActivityMeta.getSourceActivityId());
         }
+
         DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
         stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
         stepSelective.setStepBusinessKey(stepBusinessKey);
         PageHelper.orderBy("STEP_SORT");
-        return dhStepMapper.listBySelective(stepSelective);
+        List<DhStep> dhSteps = dhStepMapper.listBySelective(stepSelective);
+        if (!dhSteps.isEmpty() && getFirstFormStepOfStepList(dhSteps) != null) {
+            // 如果根据步骤关键字找到的步骤中存在表单步骤，则返回找到的所有步骤
+            return dhSteps;
+        }
+
+        if ("default".equals(stepBusinessKey)) {
+            // 如果步骤关键字下没有表单步骤，且步骤关键字是默认关键字，返回空集合
+            return new ArrayList<>();
+        }
+
+        stepSelective.setStepBusinessKey("default");
+        PageHelper.orderBy("STEP_SORT");
+        dhSteps = dhStepMapper.listBySelective(stepSelective);
+
+        if (!dhSteps.isEmpty() && getFirstFormStepOfStepList(dhSteps) != null) {
+            return dhSteps;
+        }
+        return new ArrayList<>();
     }
 
 	@Override

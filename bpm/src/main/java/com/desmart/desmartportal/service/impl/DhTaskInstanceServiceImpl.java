@@ -52,6 +52,7 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.StopWatch;
 
 /**
  * <p>
@@ -544,19 +545,22 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 	    
 	    // 获得当前环节
-	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
-	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
-	    if (currMeta == null) {
+	    BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
+	    if (currTaskNode == null) {
 	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
 	    }
-	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currMeta.getDhActivityConf().getActcUid());
+	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currTaskNode.getDhActivityConf().getActcUid());
 	    
 	    
-	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, dhprocessInstance.getInsBusinessKey());
-	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
-	    if (formStep == null) {
+	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
+        if (steps.isEmpty()) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
+
+        // todo 调用表单前的触发器
+
+	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
+
         ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
         if (!getFormResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单");
@@ -595,7 +599,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("approvalData", approvalData);
         resultMap.put("formData", formData);
         resultMap.put("bpmForm", bpmForm);
-        resultMap.put("activityMeta", currMeta);
+        resultMap.put("activityMeta", currTaskNode);
         resultMap.put("activityConf", dhActivityConf);
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
@@ -826,18 +830,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 	    
 	    // 获得当前环节
-	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
-	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
-	    if (currMeta == null) {
+	    BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
+	    if (currTaskNode == null) {
 	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
 	    }
 	    
-	    
-	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
-	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
-	    if (formStep == null) {
-            return ServerResponse.createByErrorMessage("找不到表单步骤");
-        }
+	    DhStep formStep = dhStepService.getFormStepOfTaskNode(currTaskNode, dhprocessInstance.getInsBusinessKey());
+
         ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
         if (!getFormResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单");
@@ -851,8 +850,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         String fieldPermissionInfo = fieldPermissionResponse.getData();
         
         resultMap.put("bpmForm", bpmForm);
-        resultMap.put("activityMeta", currMeta);
-        resultMap.put("activityConf", currMeta.getDhActivityConf());
+        resultMap.put("activityMeta", currTaskNode);
+        resultMap.put("activityConf", currTaskNode.getDhActivityConf());
         resultMap.put("dhStep", formStep);
         resultMap.put("processInstance", dhprocessInstance);
 	    resultMap.put("taskInstance", dhTaskInstance);
@@ -877,15 +876,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 	    
 	    // 获得当前环节
-	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByFourElement(dhprocessInstance.getProAppId(), dhprocessInstance.getProUid(), 
-	            dhprocessInstance.getProVerUid(), dhTaskInstance.getActivityBpdId());
+	    BpmActivityMeta currMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
 	    if (currMeta == null) {
 	        return ServerResponse.createByErrorMessage("找不到任务相关环节");
 	    }
 	    
-	    
-	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
-	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
+	    DhStep formStep = dhStepService.getFormStepOfTaskNode(currMeta, dhprocessInstance.getInsBusinessKey());
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
