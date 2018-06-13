@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 
@@ -63,4 +64,10 @@ public interface DatRuleConditionService {
 	 * @return
 	 */
 	Integer batchDelete(List<DatRuleCondition> datRuleConditions);
+	/**
+	 * 修改规则条件
+	 * @param datRuleCondition
+	 * @return
+	 */
+	ServerResponse update(DatRuleCondition datRuleCondition);
 }

@@ -66,6 +66,17 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 		return datRuleConditionMapper.batchDelete(datRuleConditions);
 	}
 
+	@Override
+	public ServerResponse update(DatRuleCondition datRuleCondition) {
+		Integer count = 0;
+		count = datRuleConditionMapper.update(datRuleCondition);
+		if(count>0) {
+			return ServerResponse.createBySuccess();
+		}else {
+			return ServerResponse.createByError();
+		}
+	}
+
 	
 
 }

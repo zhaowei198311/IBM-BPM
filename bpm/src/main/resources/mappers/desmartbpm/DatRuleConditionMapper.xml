@@ -100,4 +100,62 @@
  			</foreach>
  		</where>
  	</select>
+ 	
+ 	<update id="update" parameterType="com.desmart.desmartbpm.entity.DatRuleCondition">
+ 	UPDATE DAT_RULE_CONDITION 
+	<set> 
+	<if test="conditionGroupName != null and conditionGroupName!='' ">
+		CONDITION_GROUP_NAME = #{conditionGroupName}, 
+	</if>
+	<if test="conditionOperator != null and conditionOperator !='' ">
+		CONDITION_OPERATOR = #{conditionOperator}, 
+	</if>
+	<if test="conditionOperatorName != null and conditionOperatorName !='' ">
+		CONDITION_OPERATOR_NAME = #{conditionOperatorName}, 
+	</if>
+	<if test="conditionType != null and conditionType !='' ">
+		CONDITION_TYPE = #{conditionType}, 
+	</if>
+	<if test="createTime != null and createTime !='' ">
+		CREATE_TIME = #{createTime}, 
+	</if>
+	<if test="creator != null and creator != '' ">
+		CREATOR = #{creator}, 
+	</if>
+	<if test="leftName != null and leftName != '' ">
+		LEFT_NAME = #{leftName}, 
+	</if>
+	<if test="leftValue != null and leftValue != '' ">
+		LEFT_VALUE = #{leftValue}, 
+	</if>
+	<if test="leftValueType != null and leftValueType != '' ">
+		LEFT_VALUE_TYPE = #{leftValueType}, 
+	</if>
+	<if test="returnType != null and returnType != '' ">
+		RETURN_TYPE = #{returnType}, 
+	</if>
+	<if test="rightValue != null and rightValue != '' ">
+		RIGHT_VALUE = #{rightValue}, 
+	</if>
+	<if test="rightValueType != null and rightValueType != '' ">
+		RIGHT_VALUE_TYPE = #{rightValueType}, 
+	</if>
+	<if test="ruleId != null and ruleId != '' ">
+		RULE_ID = #{ruleId}, 
+	</if>
+	<if test="ruleStatus != null and ruleStatus != '' ">
+		RULE_STATUS = #{ruleStatus}, 
+	</if>
+	<if test="ruleVersion != null ">
+		RULE_VERSION = #{ruleVersion},
+	</if>
+	<if test="sortNum != null"> 
+		SORT_NUM = #{sortNum}, 
+	</if>
+	<if test="valueOperator != null and valueOperator != '' ">
+		VALUE_OPERATOR = #{valueOperator}, 
+	</if>
+ 	</set>
+		WHERE CONDITION_ID = #{conditionId}
+ 	</update>
 </mapper>

@@ -87,7 +87,6 @@ public class DatRuleController {
 		datRuleCondition.setConditionOperator(arr[0]);
 		datRuleCondition.setConditionOperatorName(arr[1]);
 		datRuleCondition.setRuleStatus("on");
-		datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
 		if (datRuleCondition.getRuleVersion() == null) {
 			datRuleCondition.setRuleVersion(0);// 设置优先级默认为0
 		}

@@ -372,12 +372,12 @@ public class DatRuleServiceImpl implements DatRuleService {
 					son.put("DatConditionList", datRuleConditions);
 					son.put("PredictRule", datRule);
 					Map<String,Object> sonMap = new HashMap<String,Object>();
-					String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+					String target = dhGatewayLine2.getToActivityName();
 					sonMap.put(target, son);
 					rightDetailsList.add(sonMap);
 			}else {
 				Map<String,Object> sonMap = new HashMap<String,Object>();
-				String target = dhGatewayLine2.getActivityName()+"=>"+dhGatewayLine2.getToActivityName();
+				String target = dhGatewayLine2.getToActivityName();
 				sonMap.put(target, "default");
 				rightDetailsList.add(sonMap);
 			}
@@ -390,8 +390,16 @@ public class DatRuleServiceImpl implements DatRuleService {
 	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
 
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
+		if(datRuleCondition.getConditionId()!=null&&!"".equals(datRuleCondition.getConditionId())) {
+			ServerResponse updateReponse = datRuleConditionServiceImpl.update(datRuleCondition);
+			if(!updateReponse.isSuccess()) {
+				return ServerResponse.createByErrorMessage("修改网关规则异常！");
+			}
+		}
 		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(datRuleCondition.getRuleId());
-		linkedList.addFirst(datRuleCondition);
+		if(datRuleCondition.getConditionId()==null||"".equals(datRuleCondition.getConditionId())) {
+			linkedList.addFirst(datRuleCondition);
+		}
 		List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
 		StringBuffer sb = new StringBuffer("Map(");
 		for (int j = 0; j < list2.size(); j++) {
@@ -421,14 +429,24 @@ public class DatRuleServiceImpl implements DatRuleService {
 		datRule.setRuleProcess(sb.toString());
 		Integer count = datRuleMapper.updateDatRule(datRule);//修改
 		if(count>0) {
-			if(datRuleConditionServiceImpl.insert(datRuleCondition)>0) {
+			if(datRuleCondition.getConditionId()!=null&&!"".equals(datRuleCondition.getConditionId())) {
 				List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
 				Map<String, Object> data = new HashMap<String,Object>();
 				data.put("DatConditionList", list);
 				data.put("PredictRule", datRule);
-				return ServerResponse.createBySuccess("新增网关规则成功！", data);
+				return ServerResponse.createBySuccess("修改网关规则成功！", data);
 			}else {
-				return ServerResponse.createByErrorMessage("添加网关规则异常！");
+				datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
+				if(datRuleConditionServiceImpl.insert(datRuleCondition)>0) {
+					List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
+					Map<String, Object> data = new HashMap<String,Object>();
+					data.put("DatConditionList", list);
+					data.put("PredictRule", datRule);
+
+					return ServerResponse.createBySuccess("新增网关规则成功！", data);
+				}else {
+					return ServerResponse.createByErrorMessage("添加网关规则异常！");
+				}
 			}
 		}else {
 			return ServerResponse.createByErrorMessage("添加网关规则异常！");
@@ -456,7 +474,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 			return ServerResponse.createByErrorMessage("删除异常！");
 		}
 	}
-	
+	//删除调用的修改规则方法
 	private Integer updateDatruleByDelete(String ruleId) {
 
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();

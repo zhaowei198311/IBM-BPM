@@ -794,6 +794,7 @@
             </div>
         </form>
         </div>
+        <!-- 新增网关 -->
         <div class="display_container5">
 		<div class="display_content5" style="height: 430px;">
 			<div class="top">新增网关</div>
@@ -872,7 +873,7 @@
 				</form>
 			</div>
 			<div class="foot">
-				<button id="addToArr" type="button" class="layui-btn layui-btn sure_btn" onclick="saveDatRule()">确定</button>
+				<button id="addToArr" type="button" class="layui-btn layui-btn sure_btn" >确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
 			</div>
 		</div>

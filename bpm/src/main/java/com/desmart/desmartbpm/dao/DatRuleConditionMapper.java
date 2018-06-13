@@ -76,4 +76,11 @@ public interface DatRuleConditionMapper {
 	int deleteByRuleIds(List<String> ruleIds);
 	
 	List<DatRuleCondition> listByRuleIds(List<String> ruleIds);
+
+	/**
+	 * 修改规则条件
+	 * @param datRuleCondition
+	 * @return
+	 */
+	Integer update(DatRuleCondition datRuleCondition);
 }
