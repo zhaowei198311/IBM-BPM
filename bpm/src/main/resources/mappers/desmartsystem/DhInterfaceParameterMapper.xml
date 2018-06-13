@@ -20,6 +20,7 @@
 		<result column="DATE_FORMAT"  			property="dateFormat"/>
 		
 		
+		
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -58,7 +59,6 @@
 			#{isMust},
 			#{intUid},
 			#{paraParent},
-			#{paraXml,jdbcType=VARCHAR},
 			#{dateFormat,jdbcType=VARCHAR}
 		)
 	</insert>
