@@ -141,7 +141,7 @@ public interface DhProcessInstanceService {
 	DhProcessInstance queryByInsIdAndTokenId(int insId, String tokenId);
 
 	/**
-	 * 根据父流程实例来创建子流程
+	 * 创建一个子流程实例对象
 	 * @param parentInstance 父流程实例
 	 * @param processNode  代表子流程的节点
 	 * @param tokenId  代表子流程的节点上停留的token
@@ -150,7 +150,7 @@ public interface DhProcessInstanceService {
 	 * @param companyNumber 子流程创建人所属组织编号
 	 * @return
 	 */
-	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, BpmActivityMeta processNode,
+	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
 																 String tokenId, String creatorId, String departNo, String companyNumber);
 	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
 
@@ -163,11 +163,11 @@ public interface DhProcessInstanceService {
 	ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData);
 
 	/**
-	 * 根据下个环节的路由信息和pubBo来创建子流程，如果不需要创建返回sucess
-	 * @param insId 流程实例编号
+	 * 根据当前任务所在的流程实例、下个环节的路由信息、提交的pubBo来创建子流程，如果不需要创建返回sucess
+	 * @param currProcessInstance 流程实例编号
 	 * @param routingData 下个环节路由信息
 	 * @param pubBo  向引擎传值的对象
 	 * @return
 	 */
-	ServerResponse createSubProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, CommonBusinessObject pubBo);
+	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData, CommonBusinessObject pubBo);
 }

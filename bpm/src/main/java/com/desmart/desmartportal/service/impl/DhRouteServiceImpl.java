@@ -491,6 +491,7 @@ public class DhRouteServiceImpl implements DhRouteService {
                     dhTaskHandler.setUserUid(userUid);
                     dhTaskHandler.setInsId(Long.valueOf(insId));
                     dhTaskHandler.setTaskActivityId(activityId);
+                    dhTaskHandler.setStatus("on");
                     dhTaskHandlers.add(dhTaskHandler);
                 }
             }
@@ -1066,7 +1067,22 @@ public class DhRouteServiceImpl implements DhRouteService {
         } else if (taskType.equals(DhTaskInstance.TYPE_SIMPLE_LOOP)) {
             // 简单循环会签任务
             // 查询出简单循环任务
-
+            DhProcessInstance processInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
+            // 查询出这个简单循环会签有几个人
+            List<DhTaskHandler> list = dhTaskHandlerMapper.listByInsIdAndTaskActivityId(processInstance.getInsId(), currTask.getTaskActivityId());
+            int count = 0;
+            for (Iterator<DhTaskInstance> it = matchedTasks.iterator(); it.hasNext();) {
+                DhTaskInstance task = it.next();
+                if (DhTaskInstance.STATUS_CLOSED.equals(task.getTaskStatus())) {
+                    count++;
+                }
+            }
+            if (count >= list.size() - 1) {
+                // 如果其他人都完成了简单循环会签任务
+                return true;
+            } else {
+                return false;
+            }
         }
         return false;
 	}

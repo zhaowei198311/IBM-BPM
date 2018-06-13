@@ -338,19 +338,19 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 
         // 获得流程实例
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
-        if (dhProcessInstance == null) {
+        DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
+        if (currProcessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
 
-        String insUid = dhProcessInstance.getInsUid();
-        Integer insId = dhProcessInstance.getInsId();
+        String insUid = currProcessInstance.getInsUid();
+        Integer insId = currProcessInstance.getInsId();
         BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
 
         // 整合formdata
         JSONObject mergedFormData = new JSONObject();
-        JSONObject insJson = JSONObject.parseObject(dhProcessInstance.getInsData());
+        JSONObject insJson = JSONObject.parseObject(currProcessInstance.getInsData());
         if (StringUtils.isNotBlank(formData.toJSONString())) {
             mergedFormData = FormDataUtil.formDataCombine(formData, insJson.getJSONObject("formData"));
         }
@@ -396,9 +396,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 修改流程实例信息
         insJson.put("formData", mergedFormData);
-        dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-        dhProcessInstance.setInsData(insJson.toJSONString());
-        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+        currProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
+        currProcessInstance.setInsData(insJson.toJSONString());
+        dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 获得下个节点的路由信息
         BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
@@ -462,7 +462,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 判断后续有没有触发器需要调用
         // 获得当前步骤
-        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, dhProcessInstance.getInsBusinessKey());
+        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
         if (dhStepService.getNextStepOfCurrStep(formStepOfTaskNode) == null) {
             // 没有后续步骤
 
@@ -474,7 +474,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 // 关闭需要结束的流程
                 dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
                 // 创建需要创建的子流程
-                dhProcessInstanceService.createSubProcessInstanceByRoutingData(insId, routingData, pubBo);
+                dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo);
                 return ServerResponse.createBySuccess();
             } else {
                 throw new PlatformException("调用RESTful API完成任务失败");
