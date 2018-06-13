@@ -129,7 +129,7 @@ layui.use('form', function() {
 			$("#trigger_innerArea").show();
 		}
 	});
-	// 切换新增步骤类型
+	/*// 切换新增步骤类型
 	form.on('radio(stepTypeFilter)', function(data) {
 		if (data.value == "form") {
 			$("#form_innerArea").show();
@@ -138,7 +138,7 @@ layui.use('form', function() {
 			$("#form_innerArea").hide();
 			$("#trigger_innerArea").show();
 		}
-	});
+	});*/
 	// 切换授权类型
 	form.on('radio(perType)', function(data) {
 		if (data.value == "titleField") {

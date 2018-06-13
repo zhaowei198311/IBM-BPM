@@ -158,6 +158,7 @@ function initFoldHurdle() {
 }
 //画出折叠栏
 function printFoldHurdle(list) {
+	if(list!= undefined && list!=null &&list.length>0){
     var str = '';
     str += '<div class="layui-colla-item">'
     	+     '<h2 class="layui-colla-title">网关环节线路配置</h2>';
@@ -182,12 +183,13 @@ function printFoldHurdle(list) {
         var element = layui.element;
         element.init();
     });
+	}
 }
 
 /**/
 //画出右侧
 function printRightGatewayDetails(list){
-	
+	if(list!= undefined && list!=null &&list.length>0){
 	$("#gateway_result").append('<option value="">--请选择--</option>');
 	for (var i = 0; i < list.length; i++) {
 		var str = '<div class="layui-form-item">'
@@ -223,6 +225,7 @@ function printRightGatewayDetails(list){
 			var form = layui.form;
 			form.render('select');
 		});
+	}
 }
 //循环画出规则条件
 function printDatRuleCondition(itemList){
