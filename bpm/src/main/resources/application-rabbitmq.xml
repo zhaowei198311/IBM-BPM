@@ -18,7 +18,7 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 
 	<!--配置connection-factory，指定连接rabbit server参数 -->
     <rabbit:connection-factory id="connectionFactory" username="${rabbitmq.username}" password="${rabbitmq.password}" host="${rabbitmq.host}" port="${rabbitmq.port}" virtual-host="${rabbitmq.virtual.host}" />
-    <!-- <rabbit:connection-factory id="connectionFactory" username="guest" password="guest" host="localhost" port="5672" virtual-host="/" /> --><!-- virtual-host="/"  -->
+    <!-- <rabbit:connection-factory id="connectionFactory" username="guest" password="guest" host="10.0.4.87" port="5672" virtual-host="/" /> --><!-- virtual-host="/"  -->
 
 	<!--通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
 	<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
@@ -49,8 +49,16 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 	<bean id="mqConsumer" class="com.desmart.desmartbpm.mq.rabbit.MQConsumer"></bean>
 
 	<!-- queue litener 观察监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
-	<rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual"><!-- acknowledge="auto" -->
+	<rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="1"><!-- acknowledge="auto" concurrency= "4" prefetch="1"-->
 		<rabbit:listener queues="queueTest" ref="mqConsumer" />
 	</rabbit:listener-container>
-
+	
+	<!-- 同一个队列个多消费者 -->
+	<!--定义queue -->  
+    <!-- <bean id="mqConsumer2" class="com.desmart.desmartbpm.mq.rabbit.MQConsumer2"></bean> -->
+    <!-- queue litener 观察监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
+	<!-- <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="1">acknowledge="auto"
+		<rabbit:listener queues="queueTest" ref="mqConsumer2" />
+	</rabbit:listener-container> -->
+	
 </beans>
