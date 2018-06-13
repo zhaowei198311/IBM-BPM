@@ -26,13 +26,13 @@ public class MQProducer implements MqProducerService {
 	 */
 	@Override
 	public boolean sendMessage(String queueKey, Object message) {
-		//System.out.println("rabbitmq发送数据：" + message.toString());
+		
 		if(null == message) {
 			log.info("rabbitmq生产者发送消息内容为null...");
 			return false;
 		}
 		try {
-			amqpTemplate.convertAndSend("queueTestKey", "hello123");
+			amqpTemplate.convertAndSend("queueTestKey", message);
 			return true;
 		} catch (AmqpException e) {
 			log.info("rabbitmq生产者发送消息失败...");
