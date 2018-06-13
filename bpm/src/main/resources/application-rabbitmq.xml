@@ -45,10 +45,11 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 	</rabbit:direct-exchange>
 
 	<!-- 消息接收者 -->
-	<bean id="mqConsumer" class="com.desmart.desmartbpm.mq.rabbit.MQConsumer"></bean>
+	<!-- <bean id="mqConsumer" class="com.desmart.desmartbpm.mq.rabbit.MQConsumer"></bean> -->
+	<bean id="mqConsumer" class="com.desmart.desmartbpm.mq.rabbit.RabbitMQConsumer"></bean>
 
 	<!-- queue litener 观察监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
-	<rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
+	<rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual"><!-- acknowledge="auto" -->
 		<rabbit:listener queues="queueTest" ref="mqConsumer" />
 	</rabbit:listener-container>
 
