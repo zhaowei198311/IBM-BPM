@@ -709,7 +709,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			// 会签人审批顺序，说明：如果会签方式是顺序会签，则第一人taskType为12，其他人员taskType为暂停状态
 			int num = 1;
 			// 下一个加签任务taskUid
-			String taskUid = "";
+			String toTaskUid = "";
 			SysUser sysUser = new SysUser();
 			for (String string : usrUids) {
 				sysUser.setUserName(string);
@@ -718,14 +718,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
-					dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
-					taskUid = dhTaskInstance.getTaskUid();
+					if(num==1) {
+						dhTaskInstance.setTaskUid("task_instance:"+UUID.randomUUID());
+						toTaskUid = "task_instance:"+UUID.randomUUID();
+					}else {
+						dhTaskInstance.setTaskUid(toTaskUid);
+					}
 					// normalAdd:随机加签; simpleLoopAdd：顺序加签; multiInstanceLoopAdd:并行加签
 					if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(dhTaskInstance.getTaskType())) {
 						if(num==usrUids.length) {
 							dhTaskInstance.setToTaskUid("");
 						}else {
-							dhTaskInstance.setToTaskUid(taskUid);
+							dhTaskInstance.setToTaskUid(toTaskUid);
 						}
 						if (num > 1) {
 							dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_WAIT_ADD);
@@ -942,7 +946,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			// 说明： 如果taskType为simpleLoopAdd，则按照加签人审批顺序进行
 			if (DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(type)) {
 				// 将下一个会签审批任务回归到正常状态
-				DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.getByToTaskUid(taskUid);
+				//DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.getByToTaskUid(taskUid);
+				DhTaskInstance nextDhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(dhTaskInstance.getToTaskUid());
 				if (nextDhTaskInstance != null) {
 					nextDhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
 					dhTaskInstanceMapper.updateByPrimaryKey(nextDhTaskInstance);
