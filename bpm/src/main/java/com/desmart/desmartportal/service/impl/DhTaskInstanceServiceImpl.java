@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.*;
 import org.apache.commons.lang3.StringUtils;
@@ -120,7 +121,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     private DhRoutingRecordService dhRoutingRecordService;
     @Autowired
     private DhProcessInstanceService dhProcessInstanceService;
-
+    @Autowired
+    private MqProducerService mqProducerService;
 	/**
 	 * 查询所有流程实例
 	 */
@@ -481,7 +483,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             }
         } else {
             // 有后续步骤
-            // todo 向对列发出消息
+            // 向队列发出消息
+            Map<String, Object> map = new HashMap<>();
+            map.put("pubBo", pubBo);
+            map.put("currProcessInstance", currProcessInstance);
+            map.put("routingData", routingData);
+            map.put("currTaskInstance", currTask);
+            String paramStr = JSON.toJSONString(map);
+            boolean result = mqProducerService.sendMessage("triggerAfterForm", paramStr);
             return ServerResponse.createBySuccess();
         }
     }
