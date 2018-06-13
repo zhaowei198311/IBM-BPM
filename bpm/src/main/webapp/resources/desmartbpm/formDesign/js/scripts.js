@@ -701,8 +701,10 @@ $(document).ready(function () {
         layer.load(1);
         downloadLayoutSrc();
         dynContent += formatJs;
-        var dynHtml = dynContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var preHtml = webpage.replace(/\"/g, "\"");
+        var dynHtml = dynContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
+        var preHtml = webpage.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
         var url = common.getPath() + "/formManage/preIndex";
         var preParam = {
             proUid: $("#proUid").val(),
@@ -713,6 +715,7 @@ $(document).ready(function () {
             webpage: preHtml,
             dynHtml: dynHtml
         };
+        //console.log(preHtml);
         post(url, preParam);
         return false;
     });

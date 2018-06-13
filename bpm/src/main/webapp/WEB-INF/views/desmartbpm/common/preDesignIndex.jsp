@@ -93,6 +93,14 @@
 	<div id="formSet" style="margin-top:10px;display:none;">${ webpage }</div>
 </body>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var formHtml = $("#formSet").html();
+		formHtml = formHtml.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+				.replace(/&amp;lc;/g, "(").replace(/&amp;gc;/g, ")");
+		$("#formSet").html(formHtml);
+	});
+</script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	$(function(){
@@ -110,8 +118,7 @@
 	function returnEdit(){
 		layer.load(1);
 		var dynHtml = $("#dynHtml").text();
-		var dynContent = dynHtml.replace(/</g,"&lt;").replace(/>/g,"&gt;")
-				.replace(/\(/g,"&lc;").replace(/\)/g,"&gc;");
+		var dynContent = dynHtml.replace(/</g,"&lt;").replace(/>/g,"&gt;");
 		var proUid = $("#proUid").val().trim();
 		var url = "";
 		if(proUid!="" && proUid!=null){
