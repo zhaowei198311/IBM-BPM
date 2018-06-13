@@ -27,6 +27,11 @@
 <link rel="stylesheet" href="resources/desmartportal/css/layui.css"
 	media="all">
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <style type="text/css">
 .container-fluid {
 	padding-right: 0px;
@@ -340,13 +345,8 @@
 </body>
 
 </html>
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
-<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	//数据信息
 	var view = $(".container-fluid");
