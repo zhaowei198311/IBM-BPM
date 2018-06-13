@@ -60,24 +60,24 @@ public class DhStepServiceImpl implements DhStepService {
             return ServerResponse.createByErrorMessage("此环节不存在");
         }
         
-        //检查该环节配置中步骤关键字是否已经存在
-        DhStep selective1 = new DhStep(list.get(0).getProAppId()
-        		, list.get(0).getBpdId(), list.get(0).getSnapshotId());
-        selective1.setActivityBpdId(list.get(0).getActivityBpdId());
-        selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
-        //selective1.setStepType(dhStep.getStepType());
-        selective1.setStepType(DhStepType.FORM.getCode());
-        List<DhStep> checkList = dhStepMapper.listBySelective(selective1);
-        if(checkList!=null&&checkList.size()>0) {
-        	return ServerResponse.createByErrorMessage("关键字已存在，请重新自定义关键字");
-        }
-        
         String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
         if (stepTypeEnum == null) {
             return ServerResponse.createByErrorMessage("步骤类型不符合要求");
         }
         if (stepTypeEnum == DhStepType.FORM) {
+        	 //检查该环节配置中步骤关键字是否已经存在
+            DhStep selective1 = new DhStep(list.get(0).getProAppId()
+            		, list.get(0).getBpdId(), list.get(0).getSnapshotId());
+            selective1.setActivityBpdId(list.get(0).getActivityBpdId());
+            selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
+            //selective1.setStepType(dhStep.getStepType());
+            selective1.setStepType(DhStepType.FORM.getCode());
+            List<DhStep> checkList = dhStepMapper.listBySelective(selective1);
+            if(checkList!=null&&checkList.size()>0) {
+            	return ServerResponse.createByErrorMessage("关键字已存在，请重新自定义关键字");
+            }
+            
             // form类型
             if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
                 return ServerResponse.createByErrorMessage("表单不存在");
