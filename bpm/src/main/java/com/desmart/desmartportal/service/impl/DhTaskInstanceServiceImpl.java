@@ -308,43 +308,45 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (StringUtils.isBlank(data)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		JSONObject dataJson = JSONObject.parseObject(data);
-		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
-		JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
-		JSONArray routeData = JSONObject.parseArray(String.valueOf(dataJson.get("routeData")));
-        String currUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+
+        JSONObject dataJson = JSONObject.parseObject(data);
+        JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
+        JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
+        JSONArray routeData = JSONObject.parseArray(String.valueOf(dataJson.get("routeData")));
 
 		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
 		String taskUid = taskData.getString("taskUid");
 		// 根据任务标识和用户 去查询流程 实例
-		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-		if (dhTaskInstance == null) {
+		DhTaskInstance currTask = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (currTask == null) {
 			return ServerResponse.createByErrorMessage("当前任务不存在!");
 		}
 		// 校验任务状态
-		if (!"12".equals(dhTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
+		if (!"12".equals(currTask.getTaskStatus())) {// 检查任务是否重复提交
 			return ServerResponse.createByErrorMessage("任务已经被提交或暂停");
 		}
 		// 校验任务类型
-        String taskType = dhTaskInstance.getTaskType();
+        String taskType = currTask.getTaskType();
 		if (!(DhTaskInstance.TYPE_SIMPLE_LOOP.equals(taskType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equals(taskType)
                 || DhTaskInstance.TYPE_NORMAL.equals(taskType))) {
             return ServerResponse.createByErrorMessage("任务类型异常");
         }
-        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        if (!checkTaskUser(dhTaskInstance, currentUserUid)) {// 检查任务是否有权限提交
+
+
+        if (!checkTaskUser(currTask, currentUserUid)) {// 检查任务是否有权限提交
             return ServerResponse.createByErrorMessage("提交失败，您没有完成任务的权限");
         }
 
         // 获得流程实例
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
         if (dhProcessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
 
         String insUid = dhProcessInstance.getInsUid();
         Integer insId = dhProcessInstance.getInsId();
-        BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
+        BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
 
         // 整合formdata
@@ -352,14 +354,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         JSONObject insJson = JSONObject.parseObject(dhProcessInstance.getInsData());
         if (StringUtils.isNotBlank(formData.toJSONString())) {
             mergedFormData = FormDataUtil.formDataCombine(formData, insJson.getJSONObject("formData"));
-        }
-
-        // 装配处理人信息
-        CommonBusinessObject pubBo = new CommonBusinessObject();
-        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
-                .assembleCommonBusinessObject(pubBo, routeData);
-        if (!serverResponse.isSuccess()) {
-            return serverResponse;
         }
 
         // 查看是否需要审批记录
@@ -385,22 +379,68 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             }
         }
 
+        // 修改当前任务实例状态为已完成
+        DhTaskInstance taskInstanceSelective = new DhTaskInstance();
+        taskInstanceSelective.setTaskUid(taskUid);
+        taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+        taskInstanceSelective.setTaskFinishDate(DateUtil.format(new Date()));
+        taskInstanceSelective.setTaskData(taskData.toJSONString());
+        dhTaskInstanceMapper.updateByPrimaryKey(taskInstanceSelective);
+
+        //完成任务 删除任务的草稿数据
+        dhDraftsMapper.deleteByTaskUid(taskUid);
+
+        //如果任务为类型为normal，则将其它相同任务id的任务废弃
+        if(DhTaskInstance.TYPE_NORMAL.equals(currTask.getTaskType())) {
+            dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid, taskId, DhTaskInstance.STATUS_DISCARD);
+        }
+
+        // 修改流程实例信息
         insJson.put("formData", mergedFormData);
         dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
         dhProcessInstance.setInsData(insJson.toJSONString());
+        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
         // 获得下个节点的路由信息
         BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
+        // 判断提交任务是否会移动token
+        boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask);
+
+        // 任务完成后 保存到流转信息表里面
+        dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, routingData, willTokenMove);
+
+        // === 以上已经处理完 token不移动的数据库操作情况
+
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        if (!willTokenMove) {
+            // 如果token不移动，调用完成任务的RESTful API
+            BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, new CommonBusinessObject(insId));
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+            if (errorMap.get("errorResult") == null) {
+                return ServerResponse.createBySuccess();
+            } else {
+                throw new PlatformException("调用RESTful API完成任务失败");
+            }
+
+        }
 
         // 检查用户传递的选人信息是否全面
         if (!dhRouteServiceImpl.checkRouteData(currTaskNode, routeData, routingData)) {
-            return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
+            throw new PlatformException("缺少下个环节的用户信息");
         }
 
-        //修改流程实例信息
-        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+        // 装配处理人信息
+        CommonBusinessObject pubBo = new CommonBusinessObject();
+        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
+                .assembleCommonBusinessObject(pubBo, routeData);
+        if (!serverResponse.isSuccess()) {
+            throw new PlatformException("装配处理人信息失败");
+        }
 
-        // 更新网关环节的信息
+        // todo 装配无法选择处理人的子流程发起人信息
+
+        // 更新网关决策条件
         if (routingData.getGatewayNodes().size() > 0) {
             ExecutorService executorService = threadPoolProvideService.getThreadPoolToUpdateRouteResult();
             Future<Boolean> future = executorService.submit(new SaveRouteResultCallable(dhRouteServiceImpl, insId, routingData));
@@ -411,47 +451,34 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 updateSucess = false;
             }
             if (!updateSucess) {
-                return ServerResponse.createByErrorMessage("更新路中间表失败");
+                throw new PlatformException("更新路中间表失败");
             }
         }
 
-        // 关闭需要结束的流程
-        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
+        // 判断后续有没有触发器需要调用
+        // 获得当前步骤
+        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, dhProcessInstance.getInsBusinessKey());
+        if (dhStepService.getNextStepOfCurrStep(formStepOfTaskNode) == null) {
+            // 没有后续步骤
 
-        // 任务完成后 保存到流转信息表里面
-        dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(dhTaskInstance, routingData);
-
-        // 修改当前任务实例状态为已完成
-        DhTaskInstance taskInstanceSelective = new DhTaskInstance();
-        taskInstanceSelective.setTaskUid(taskUid);
-        taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-        taskInstanceSelective.setTaskFinishDate(DateUtil.format(new Date()));
-        taskInstanceSelective.setTaskData(taskData.toJSONString());
-
-        if(dhTaskInstanceMapper.updateByPrimaryKey(taskInstanceSelective) > 0) {
-            //完成任务 删除任务的草稿数据
-            dhDraftsMapper.deleteByTaskUid(taskUid);
-            //如果任务为类型为normal，则将其它相同任务id的任务废弃
-            if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
-                dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid, taskId, DhTaskInstance.STATUS_DISCARD);
+            //  调用api 完成任务
+            BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+            if (errorMap.get("errorResult") == null) {
+                // 关闭需要结束的流程
+                dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
+                // 创建需要创建的子流程
+                dhProcessInstanceService.createSubProcessInstanceByRoutingData(insId, routingData, pubBo);
+                return ServerResponse.createBySuccess();
+            } else {
+                throw new PlatformException("调用RESTful API完成任务失败");
             }
-        }
-
-        // 调用方法完成任务
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
-        Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-
-        if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
-            log.info("完成任务结束......");
-            dhProcessInstanceService.createSubProcessInstanceByRoutingData(insId, routingData, pubBo);
+        } else {
+            // 有后续步骤
+            // todo 向对列发出消息
             return ServerResponse.createBySuccess();
-        }else {
-            log.info("任务完成失败！");
-            throw new PlatformException("任务完成失败");
         }
-
     }
 
 	/**
@@ -525,8 +552,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currMeta.getDhActivityConf().getActcUid());
 	    
 	    
-	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
-	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, dhprocessInstance.getInsBusinessKey());
+	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
@@ -778,14 +805,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}	
 	}
 	
-    private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
-        for (DhStep dhStep : stepList) {
-            if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
-                return dhStep;
-            }
-        }
-        return null;
-    }
+
 
 	@Override
 	public ServerResponse<Map<String, Object>> toFinshedTaskDetail(String taskUid) {
@@ -814,7 +834,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    
 	    
 	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
-	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
@@ -865,7 +885,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    
 	    
 	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currMeta, "default");
-	    DhStep formStep = getFirstFormStepOfStepList(steps);
+	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }

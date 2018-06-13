@@ -19,8 +19,6 @@ public class DhTaskInstance {
     public static final String TYPE_MULT_IINSTANCE_LOOP = "multiInstanceLoop";
     /** 传阅任务 */
     public static final String TYPE_TRANSFER = "transfer";
-    /** 加签任务 */
-    public static final String TYPE_ADD = "add";
     /** 普通加签任务，一人完成即可 */
     public static final String TYPE_NORMAL_ADD = "normalAdd";
     /** 循环加签任务，顺序完成  */

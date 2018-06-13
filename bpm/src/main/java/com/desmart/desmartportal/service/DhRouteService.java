@@ -13,6 +13,7 @@ import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartsystem.entity.SysUser;
 
 public interface DhRouteService {
@@ -119,4 +120,13 @@ public interface DhRouteService {
 	 * @return  true 信息完整   false 信息缺失
 	 */
 	boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData);
+
+	/**
+	 * 判断提交任务动作会不会使token移动到下个环节
+	 * @param currTask
+	 * @return
+	 */
+	boolean willFinishTaskMoveToken(DhTaskInstance currTask);
+
+
 }

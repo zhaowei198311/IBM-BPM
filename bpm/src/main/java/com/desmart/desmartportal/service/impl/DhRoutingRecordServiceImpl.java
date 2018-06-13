@@ -46,7 +46,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 	}
 
 
-	public ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData) {
+	public ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData, boolean willTokenMove) {
         BpmActivityMeta taskNode = bpmActivityMetaService.queryByPrimaryKey(taskInstance.getTaskActivityId());
 
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
@@ -60,21 +60,23 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		String activityTo = null;
         StringBuilder activityToBuilder = new StringBuilder();
 
-        // 接下来的额人员环节
-        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
-        Iterator<BpmActivityMeta> it = normalNodes.iterator();
-        if (it.hasNext()) {
-            BpmActivityMeta nextNode = it.next();
-            if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
-                // 说明此环节和当前任务环节在同一个层级
-                activityToBuilder.append(nextNode.getActivityId()).append(",");
+        if (willTokenMove) {
+            // 如果token要移动的话，处理接下来的人员环节
+            Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+            Iterator<BpmActivityMeta> it = normalNodes.iterator();
+            if (it.hasNext()) {
+                BpmActivityMeta nextNode = it.next();
+                if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
+                    // 说明此环节和当前任务环节在同一个层级
+                    activityToBuilder.append(nextNode.getActivityId()).append(",");
+                }
             }
+            if (activityToBuilder.length() > 0) {
+                activityTo = activityToBuilder.toString();
+                activityTo = activityTo.substring(0, activityTo.length() - 1);
+            }
+            dhRoutingRecord.setActivityTo(activityTo);
         }
-        if (activityToBuilder.length() > 0) {
-            activityTo = activityToBuilder.toString();
-            activityTo = activityTo.substring(0, activityTo.length() - 1);
-        }
-        dhRoutingRecord.setActivityTo(activityTo);
 
         int insertCount = dhRoutingRecordMapper.insert(dhRoutingRecord);
         if (insertCount > 0) {

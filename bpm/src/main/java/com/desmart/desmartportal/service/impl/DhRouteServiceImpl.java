@@ -5,6 +5,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.exception.BpmFindNextNodeException;
+import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,12 +23,6 @@ import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DatRule;
-import com.desmart.desmartbpm.entity.DatRuleCondition;
-import com.desmart.desmartbpm.entity.DhActivityAssign;
-import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -1008,6 +1003,39 @@ public class DhRouteServiceImpl implements DhRouteService {
         return true;
 	}
 
+	public boolean willFinishTaskMoveToken(DhTaskInstance currTask) {
+        // DhTaskInstance.TYPE_NORMAL;
+        String taskType = currTask.getTaskType();
+        if (taskType.endsWith("Add") || taskType.equals(DhTaskInstance.TYPE_TRANSFER)) {
+            // 加签的会签任务, 传阅任务
+            return false;
+        } else if (taskType.equals(DhTaskInstance.TYPE_NORMAL)) {
+            // 普通任务
+            return true;
+        }
+
+        // 查找指定任务编号和任务类型的任务
+        int taskId = currTask.getTaskId(); // 任务编号
+        DhTaskInstance selective = new DhTaskInstance();
+        selective.setTaskId(taskId);
+        selective.setTaskType(taskType);
+        List<DhTaskInstance> matchedTasks = dhTaskInstanceMapper.selectAllTask(selective);
+        if (taskType.equals(DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP)) {
+            // 多实例会签任务
+            boolean allTaskFinished = true;
+            for (Iterator<DhTaskInstance> it = matchedTasks.iterator(); it.hasNext();) {
+                DhTaskInstance task = it.next();
+                if (!task.getTaskUid().equals(currTask.getTaskUid()) && !DhTaskInstance.STATUS_CLOSED.equals(task.getTaskStatus())) {
+                    // 如果有其他同编号的多实例会签任务没有完成，就返回false
+                    return false;
+                }
+            }
+        } else if (taskType.equals(DhTaskInstance.TYPE_SIMPLE_LOOP)) {
+            // 简单循环会签任务
+            // todo 判断
+        }
+        return false;
+	}
 
 
 }

@@ -82,6 +82,14 @@ public class CommonBusinessObject implements Cloneable, Serializable {
     public CommonBusinessObject() {
     }
 
+    /**
+     * 创建pubBo并设置流程实例编号
+     * @param insId
+     */
+    public CommonBusinessObject(int insId) {
+        this.instanceId = String.valueOf(insId);
+    }
+
     public CommonBusinessObject clone() {
         CommonBusinessObject bo = null;
 

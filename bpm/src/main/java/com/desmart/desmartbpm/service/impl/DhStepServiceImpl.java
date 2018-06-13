@@ -344,5 +344,47 @@ public class DhStepServiceImpl implements DhStepService {
 		}
 			return ServerResponse.createBySuccess();
 	}
+
+	@Override
+    public DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
+        for (DhStep dhStep : stepList) {
+            if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
+                return dhStep;
+            }
+        }
+        return null;
+    }
+
+
+    public DhStep getFormStepOfTaskNode(BpmActivityMeta currTaskNode, String stepBusinessKey) {
+        BpmActivityMeta sourceMeta = currTaskNode;
+        if (!currTaskNode.getActivityId().equals(currTaskNode.getSourceActivityId())) {
+            sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(currTaskNode.getSourceActivityId());
+        }
+
+        // 如果这个步骤关键字下有表单，则返回这个步骤
+        DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
+        stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
+        stepSelective.setStepBusinessKey(stepBusinessKey);
+        stepSelective.setStepType(DhStep.TYPE_FORM);
+        List<DhStep> dhSteps = dhStepMapper.listBySelective(stepSelective);
+        if (dhSteps.size() > 0) {
+            return dhSteps.get(0);
+        }
+
+        // 如果这个步骤关键字下没有表单，查询默认关键字有没有表单
+        if (stepBusinessKey.equals("default")) {
+            return null;
+        }
+
+        stepSelective.setStepBusinessKey("default");
+        dhSteps = dhStepMapper.listBySelective(stepSelective);
+        if (dhSteps.size() > 0) {
+            return dhSteps.get(0);
+        } else {
+            return null;
+        }
+    }
+
     
 }

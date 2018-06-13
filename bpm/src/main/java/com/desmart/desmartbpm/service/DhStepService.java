@@ -78,4 +78,21 @@ public interface DhStepService {
 	 * 根据条件查询所有步骤
 	 */
 	ServerResponse<List<DhStep>> getStepInfoByCondition(DhStep dhStep);
+
+    /**
+     * 从步骤列表中找出第一个表单步骤
+     * @param stepList
+     * @return
+     */
+    DhStep getFirstFormStepOfStepList(List<DhStep> stepList);
+
+    /**
+     * 找到指定环节对应的表单步骤，如果提供的关键字没有对应表单步骤，进一步查询默认关键字有没有表单步骤
+     * @param currTaskNode
+     * @param stepBusinessKey
+     * @return
+     */
+    DhStep getFormStepOfTaskNode(BpmActivityMeta currTaskNode, String stepBusinessKey);
+
+
 }    

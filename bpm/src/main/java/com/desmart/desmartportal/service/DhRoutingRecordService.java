@@ -34,5 +34,6 @@ public interface DhRoutingRecordService {
 	 * @param bpmRoutingData
 	 * @return
 	 */
-	ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData);
+	ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData,
+																   boolean willTokenMove);
 }

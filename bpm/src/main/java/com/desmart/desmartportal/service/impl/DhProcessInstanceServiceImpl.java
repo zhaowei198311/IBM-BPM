@@ -431,7 +431,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         dhTaskInstanceMapper.insertTask(taskInstance);
 
         // 任务完成后 保存到流转信息表里面
-		dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData);
+		dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
 
 
         // 完成第一个任务
