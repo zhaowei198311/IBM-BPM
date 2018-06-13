@@ -387,7 +387,8 @@ public class DatRuleServiceImpl implements DatRuleService {
 
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
-	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
+	public ServerResponse saveOrUpdateDatRule(DatRuleCondition datRuleCondition,String activityId
+			,String oldRuleId) {
 
 		LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
 		if(datRuleCondition.getConditionId()!=null&&!"".equals(datRuleCondition.getConditionId())) {
@@ -400,6 +401,41 @@ public class DatRuleServiceImpl implements DatRuleService {
 		if(datRuleCondition.getConditionId()==null||"".equals(datRuleCondition.getConditionId())) {
 			linkedList.addFirst(datRuleCondition);
 		}
+		String ruleProcess = createRuleProcess(linkedList);
+		DatRule datRule = new DatRule();
+		datRule.setRuleId(datRuleCondition.getRuleId());
+		datRule.setRuleProcess(ruleProcess);
+		Integer count = datRuleMapper.updateDatRule(datRule);//修改
+		if(count>0) {
+			if(datRuleCondition.getConditionId()!=null&&!"".equals(datRuleCondition.getConditionId())) {
+				if(!datRuleCondition.getRuleId().equals(oldRuleId)) {
+					this.updateDatruleByDelete(oldRuleId);
+				}
+				List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
+				Map<String, Object> data = new HashMap<String,Object>();
+				data.put("DatConditionList", list);
+				data.put("PredictRule", datRule);
+				data.put("oldRule", datRuleMapper.getDatRuleByKey(oldRuleId));
+				return ServerResponse.createBySuccess("修改网关规则成功！", data);
+			}else {
+				datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
+				if(datRuleConditionServiceImpl.insert(datRuleCondition)>0) {
+					List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
+					Map<String, Object> data = new HashMap<String,Object>();
+					data.put("DatConditionList", list);
+					data.put("PredictRule", datRule);
+
+					return ServerResponse.createBySuccess("新增网关规则成功！", data);
+				}else {
+					return ServerResponse.createByErrorMessage("添加网关规则异常！");
+				}
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("添加网关规则异常！");
+		}
+	}
+
+	private String createRuleProcess(LinkedList<DatRuleCondition> linkedList) {
 		List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
 		StringBuffer sb = new StringBuffer("Map(");
 		for (int j = 0; j < list2.size(); j++) {
@@ -424,33 +460,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 			sb.append(sonSb.toString());
 		}
 		sb.append(")");
-		DatRule datRule = new DatRule();
-		datRule.setRuleId(datRuleCondition.getRuleId());
-		datRule.setRuleProcess(sb.toString());
-		Integer count = datRuleMapper.updateDatRule(datRule);//修改
-		if(count>0) {
-			if(datRuleCondition.getConditionId()!=null&&!"".equals(datRuleCondition.getConditionId())) {
-				List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
-				Map<String, Object> data = new HashMap<String,Object>();
-				data.put("DatConditionList", list);
-				data.put("PredictRule", datRule);
-				return ServerResponse.createBySuccess("修改网关规则成功！", data);
-			}else {
-				datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
-				if(datRuleConditionServiceImpl.insert(datRuleCondition)>0) {
-					List<DatRuleCondition> list = datRuleConditionServiceImpl.getDatruleConditionByActivityId(activityId);
-					Map<String, Object> data = new HashMap<String,Object>();
-					data.put("DatConditionList", list);
-					data.put("PredictRule", datRule);
-
-					return ServerResponse.createBySuccess("新增网关规则成功！", data);
-				}else {
-					return ServerResponse.createByErrorMessage("添加网关规则异常！");
-				}
-			}
-		}else {
-			return ServerResponse.createByErrorMessage("添加网关规则异常！");
-		}
+		return sb.toString();
 	}
 
 	@Override
@@ -481,31 +491,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(ruleId);
 		DatRule datRule = new DatRule();
 		if(linkedList.size()>0) {
-		List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
-		StringBuffer sb = new StringBuffer("Map(");
-		for (int j = 0; j < list2.size(); j++) {
-			Entry<String, List<DatRuleCondition>> entry = list2.get(j);
-			StringBuffer sonSb = new StringBuffer("(");
-			for (int b = 0; b < entry.getValue().size(); b++) {
-				DatRuleCondition datRuleCondition2 = entry.getValue().get(b);
-				sonSb.append("this['");
-				sonSb.append(datRuleCondition2.getLeftValue());
-				sonSb.append("']");
-				sonSb.append(datRuleCondition2.getValueOperator());
-				sonSb.append(datRuleCondition2.getRightValue());
-				if ((b + 1) < entry.getValue().size()) {
-					sonSb.append(datRuleCondition2.getConditionOperator());
-				}
-			}
-			if ((j + 1) == list2.size()) {
-				sonSb.append(")");
-			} else if ((j + 1) < list2.size()) {
-				sonSb.append(")" + entry.getValue().get(entry.getValue().size() - 1).getConditionOperator());
-			}
-			sb.append(sonSb.toString());
-		}
-		sb.append(")");
-		datRule.setRuleProcess(sb.toString());
+			datRule.setRuleProcess(createRuleProcess(linkedList));
 		}else {
 			datRule.setRuleProcess(null);
 		}

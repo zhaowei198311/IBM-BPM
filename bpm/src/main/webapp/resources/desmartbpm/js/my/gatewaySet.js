@@ -316,7 +316,8 @@ function saveDatRule(conditionId){
 	  if(conditionId != null && conditionId !='' && conditionId != undefined){
 		  info = {"activityId":activityId,"ruleId":ruleId,"leftValue":leftValue,"valueOperator":valueOperator
 			  ,"rightValue":rightValue,"rightValueType":rightValueType,"conditionOperator":conditionOperator
-			  ,"ruleVersion":ruleVersion,"conditionGroupName":conditionGroupName,"conditionId":conditionId};
+			  ,"ruleVersion":ruleVersion,"conditionGroupName":conditionGroupName,"conditionId":conditionId
+			  ,"oldRuleId":oldRuleId};
 	  }else{
 		  info = {"activityId":activityId,"ruleId":ruleId,"leftValue":leftValue,"valueOperator":valueOperator
 				  ,"rightValue":rightValue,"rightValueType":rightValueType,"conditionOperator":conditionOperator
@@ -334,6 +335,11 @@ function saveDatRule(conditionId){
 	  			var doc = document.getElementById("predictRule_"+ruleId);
 	  			doc.innerHTML="";
 	  			doc.innerHTML=result.data.PredictRule.ruleProcess;
+	  			if(result.data.oldRule!=null){
+	  				var oldDoc = document.getElementById("predictRule_"+result.data.oldRule.ruleId);
+	  				oldDoc.innerHTML="";
+	  				oldDoc.innerHTML=result.data.oldRule.ruleProcess;
+	  			}
 	  		//画出当前环节的所有的规则条件
 	  			$("#gatewayTab").find("tbody").empty();
 	  			printDatRuleCondition(result.data.DatConditionList);
@@ -357,11 +363,11 @@ function printUpdateDatRuleList(list){
 	}
 	
 }
-
+var oldRuleId ="";//用于保存修改之前的ruleId,编辑规则的时候用到
 function editDateRuleCondition(a){
 	var conditionId = $(a).parent().find("th").find("input").data("conditionid");
-	var ruleId = $(a).parent().find("th").find("input").data("ruleid"); 
-	$("#gateway_result").find("option[value='"+ruleId+"']").prop("selected",true);
+	oldRuleId = $(a).parent().find("th").find("input").data("ruleid"); 
+	$("#gateway_result").find("option[value='"+oldRuleId+"']").prop("selected",true);
 	var valueOperator = $(a).parent().find("td").eq(2).text(); 
 	$("#valueOperator").find("option[value='"+valueOperator+"']").prop("selected",true);
 	var rightValueType = $(a).parent().find("td").eq(4).text(); 

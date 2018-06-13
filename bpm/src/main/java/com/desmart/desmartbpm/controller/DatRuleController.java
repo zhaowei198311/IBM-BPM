@@ -76,7 +76,8 @@ public class DatRuleController {
 	 
 	@RequestMapping("/saveDatRule")
 	@ResponseBody
-	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId) {
+	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId
+			,@RequestParam(value="oldRuleId",required=false)String oldRuleId) {
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateTime = simpleDateFormat.format(new Date());
@@ -90,7 +91,7 @@ public class DatRuleController {
 		if (datRuleCondition.getRuleVersion() == null) {
 			datRuleCondition.setRuleVersion(0);// 设置优先级默认为0
 		}
-	    	return datRuleServiceImpl.saveDatRule(datRuleCondition,activityId);
+	    	return datRuleServiceImpl.saveOrUpdateDatRule(datRuleCondition,activityId,oldRuleId);
 	   }
 	
 	@RequestMapping("/deleteDatRule")

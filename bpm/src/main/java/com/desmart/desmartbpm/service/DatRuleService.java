@@ -61,12 +61,13 @@ public interface DatRuleService {
 	 */
 	public ServerResponse loadGatewaySet(String proAppId,String snapshotId,String bpdId,String activityType);
 	/**
-	 * 修改网关规则，新增网关规则条件
+	 * 修改网关规则，新增网关规则条件或者修改网关规则
 	 * @param datRuleCondition
 	 * @param activityId
+	 * @param oldRuleId
 	 * @return
 	 */
-	public ServerResponse saveDatRule(DatRuleCondition datRuleCondition,String activityId);
+	public ServerResponse saveOrUpdateDatRule(DatRuleCondition datRuleCondition,String activityId,String oldRuleId);
 	/**
 	 * 修改网关规则，删除网关规则条件
 	 * @param datRuleConditions
