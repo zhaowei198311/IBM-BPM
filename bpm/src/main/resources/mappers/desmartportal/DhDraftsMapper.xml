@@ -76,8 +76,12 @@
 	<delete id="deleteByInsUid" parameterType="string">
 	   delete from dh_drafts where ins_uid = #{insUid}
 	</delete>
-	
-	<update id="updateByInsUid" parameterType="com.desmart.desmartportal.entity.DhDrafts">
+
+    <delete id="deleteByTaskUid" parameterType="string">
+		delete from dh_drafts where task_uid = #{taskUid}
+	</delete>
+
+    <update id="updateByInsUid" parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		update dh_drafts 
 		<set>
 		<trim suffixOverrides=",">

@@ -316,7 +316,19 @@
 		where ins.ins_id = #{insId} and ins.ins_Parent='0'
 	</select>
 
-    <update id="updateBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
+	<select id="getByInsIdAndTokenActivityId" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
+		FROM dh_process_instance ins
+		left join dh_process_meta meta
+		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+		left join sys_department sd
+		on ins.depart_no   = sd.depart_uid
+		left join sys_company sc
+		on ins.company_number = sc.company_code
+		where ins.ins_id = #{insId} and ins.token_activity_id = #{tokenActivityId}
+	</select>
+
+	<update id="updateBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
 		update DH_PROCESS_INSTANCE
 		<set>
 			INS_STATUS = '-1'

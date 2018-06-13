@@ -6,6 +6,7 @@ package com.desmart.desmartportal.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -56,5 +57,10 @@ public interface DhProcessInstanceMapper {
 	 * 查找指定流程编号的主流程
 	 */
 	DhProcessInstance getMainProcessByInsId(int insId);
+
+	/**
+     * 根据流程实例编号，和token停留的节点来查找指定流程
+	 */
+	DhProcessInstance getByInsIdAndTokenActivityId(@Param("insId") int insId, @Param("tokenActivityId")String tokenActivityId);
 
 }

@@ -39,4 +39,6 @@ public interface DhDraftsMapper {
 	 * @return
 	 */
 	Integer updateByInsUid(DhDrafts dhDrafts);
+
+	int deleteByTaskUid(String taskUid);
 }

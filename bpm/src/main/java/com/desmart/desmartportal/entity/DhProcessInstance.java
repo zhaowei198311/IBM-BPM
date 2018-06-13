@@ -86,8 +86,15 @@ public class DhProcessInstance {
 	private String departName;
 	private String companyName;
 	private String initUserFullname;
-	
-	
+
+	public DhProcessInstance() {
+
+	}
+
+	public DhProcessInstance(String insUid) {
+		this.insUid = insUid;
+	}
+
 	/**
 	 * @return the insUid
 	 */
@@ -408,9 +415,7 @@ public class DhProcessInstance {
 		this.insRoutingData = insRoutingData;
 	}
 	
-	public DhProcessInstance() {
-		
-	}
+
 
 	public String getProName() {
         return proName;

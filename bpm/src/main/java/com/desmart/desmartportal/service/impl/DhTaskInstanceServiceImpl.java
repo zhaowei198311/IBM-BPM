@@ -120,7 +120,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     private ThreadPoolProvideService threadPoolProvideService;
     @Autowired
     private DhRoutingRecordService dhRoutingRecordService;
-
+    @Autowired
+    private DhProcessInstanceService dhProcessInstanceService;
 	/**
 	 * 查询所有流程实例
 	 */
@@ -388,7 +389,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
         dhProcessInstance.setInsData(insJson.toJSONString());
 
-        //判断流程是否结束
+        // 获得下个节点的路由信息
         BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
 
         // 检查用户传递的选人信息是否全面
@@ -396,7 +397,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
         }
 
-        Set<BpmActivityMeta> nextBpmActivityMetas = routingData.getNormalNodes();
+        //修改流程实例信息
+        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 
         // 更新网关环节的信息
         if (routingData.getGatewayNodes().size() > 0) {
@@ -413,19 +415,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             }
         }
 
-
-        if(nextBpmActivityMetas == null || nextBpmActivityMetas.size() == 0) {
-            dhProcessInstance.setInsStatus(DhProcessInstance.STATUS_COMPLETED);
-            dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
-        }
-
-
-        //修改流程实例信息
-        dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+        // 关闭需要结束的流程
+        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
 
         // 任务完成后 保存到流转信息表里面
         dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(dhTaskInstance, routingData);
-
 
         // 修改当前任务实例状态为已完成
         DhTaskInstance taskInstanceSelective = new DhTaskInstance();
@@ -433,32 +427,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
         taskInstanceSelective.setTaskFinishDate(DateUtil.format(new Date()));
         taskInstanceSelective.setTaskData(taskData.toJSONString());
+
         if(dhTaskInstanceMapper.updateByPrimaryKey(taskInstanceSelective) > 0) {
             //完成任务 删除任务的草稿数据
-            dhDraftsMapper.deleteByInsUid(insUid);
-
+            dhDraftsMapper.deleteByTaskUid(taskUid);
             //如果任务为类型为normal，则将其它相同任务id的任务废弃
             if(DhTaskInstance.TYPE_NORMAL.equals(dhTaskInstance.getTaskType())) {
-                dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid,taskId, DhTaskInstance.STATUS_DISCARD);
+                dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(taskUid, taskId, DhTaskInstance.STATUS_DISCARD);
             }
         }
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
 
         // 调用方法完成任务
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
         Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
 
         if (errorMap.get("errorResult") == null) {// 任务完成，修改数据信息
             log.info("完成任务结束......");
-
-
-
-
-
-
-
-
+            dhProcessInstanceService.createSubProcessInstanceByRoutingData(insId, routingData, pubBo);
             return ServerResponse.createBySuccess();
         }else {
             log.info("任务完成失败！");

@@ -153,4 +153,21 @@ public interface DhProcessInstanceService {
 	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, BpmActivityMeta processNode,
 																 String tokenId, String creatorId, String departNo, String companyNumber);
 	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
+
+	/**
+	 * 根据下一个环节的路由信息，关闭流程（主流程，子流程）
+	 * @param insId  流程实例编号
+	 * @param routingData  下个环节的路由信息
+	 * @return
+	 */
+	ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData);
+
+	/**
+	 * 根据下个环节的路由信息和pubBo来创建子流程，如果不需要创建返回sucess
+	 * @param insId 流程实例编号
+	 * @param routingData 下个环节路由信息
+	 * @param pubBo  向引擎传值的对象
+	 * @return
+	 */
+	ServerResponse createSubProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, CommonBusinessObject pubBo);
 }
