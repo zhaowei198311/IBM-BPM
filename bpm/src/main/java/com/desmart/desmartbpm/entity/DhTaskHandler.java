@@ -9,7 +9,7 @@ public class DhTaskHandler {
 
     private Long insId;
 
-    private String activityBpdId;
+    private String taskActivityId;
 
     private String userUid;
 
@@ -33,12 +33,12 @@ public class DhTaskHandler {
         this.insId = insId;
     }
 
-    public String getActivityBpdId() {
-        return activityBpdId;
+    public String getTaskActivityId() {
+        return taskActivityId;
     }
 
-    public void setActivityBpdId(String activityBpdId) {
-        this.activityBpdId = activityBpdId;
+    public void setTaskActivityId(String taskActivityId) {
+        this.taskActivityId = taskActivityId;
     }
 
     public String getUserUid() {
@@ -67,7 +67,7 @@ public class DhTaskHandler {
 
 	@Override
 	public String toString() {
-		return "DhTaskHandler [handleUid=" + handleUid + ", insId=" + insId + ", activityBpdId=" + activityBpdId
+		return "DhTaskHandler [handleUid=" + handleUid + ", insId=" + insId + ", taskActivityId=" + taskActivityId
 				+ ", userUid=" + userUid + ", status=" + status + ", userName=" + userName + "]";
 	}
 

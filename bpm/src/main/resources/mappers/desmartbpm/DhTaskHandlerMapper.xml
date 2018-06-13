@@ -4,12 +4,12 @@
     <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhTaskHandler">
         <id column="HANDLE_UID" jdbcType="VARCHAR" property="handleUid" />
         <result column="INS_ID" jdbcType="INTEGER" property="insId" />
-        <result column="ACTIVITY_BPD_ID" jdbcType="VARCHAR" property="activityBpdId" />
+        <result column="TASK_ACTIVITY_ID" jdbcType="VARCHAR" property="taskActivityId" />
         <result column="USER_UID" jdbcType="VARCHAR" property="userUid" />
         <result column="STATUS" jdbcType="VARCHAR" property="status" />
     </resultMap>
     <sql id="Base_Column_List">
-        HANDLE_UID, INS_ID, ACTIVITY_BPD_ID, USER_UID, STATUS
+        HANDLE_UID, INS_ID, TASK_ACTIVITY_ID, USER_UID, STATUS
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -21,10 +21,18 @@
         delete from DH_TASK_HANDLER
         where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
     </delete>
+    <delete id="deleteByInsIdAndTaskActivityIdList" parameterType="map">
+        delete from dh_task_handler
+        where ins_id = #{insId}
+        and task_activity_id in
+        <foreach collection="taskActivityIdList" item="item" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+    </delete>
     <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
-        insert into DH_TASK_HANDLER (HANDLE_UID, INS_ID, ACTIVITY_BPD_ID,
+        insert into DH_TASK_HANDLER (HANDLE_UID, INS_ID, TASK_ACTIVITY_ID,
         USER_UID, STATUS)
-        values (#{handleUid,jdbcType=VARCHAR}, #{insId,jdbcType=INTEGER}, #{activityBpdId,jdbcType=VARCHAR},
+        values (#{handleUid,jdbcType=VARCHAR}, #{insId,jdbcType=INTEGER}, #{taskActivityId,jdbcType=VARCHAR},
         #{userUid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
@@ -36,8 +44,8 @@
             <if test="insId != null">
                 INS_ID,
             </if>
-            <if test="activityBpdId != null">
-                ACTIVITY_BPD_ID,
+            <if test="taskActivityId != null">
+                TASK_ACTIVITY_ID,
             </if>
             <if test="userUid != null">
                 USER_UID,
@@ -53,8 +61,8 @@
             <if test="insId != null">
                 #{insId,jdbcType=INTEGER},
             </if>
-            <if test="activityBpdId != null">
-                #{activityBpdId,jdbcType=VARCHAR},
+            <if test="taskActivityId != null">
+                #{taskActivityId,jdbcType=VARCHAR},
             </if>
             <if test="userUid != null">
                 #{userUid,jdbcType=VARCHAR},
@@ -70,8 +78,8 @@
             <if test="insId != null">
                 INS_ID = #{insId,jdbcType=INTEGER},
             </if>
-            <if test="activityBpdId != null">
-                ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+            <if test="taskActivityId != null">
+                TASK_ACTIVITY_ID = #{taskActivityId,jdbcType=VARCHAR},
             </if>
             <if test="userUid != null">
                 USER_UID = #{userUid,jdbcType=VARCHAR},
@@ -85,7 +93,7 @@
     <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
         update DH_TASK_HANDLER
         set INS_ID = #{insId,jdbcType=INTEGER},
-        ACTIVITY_BPD_ID = #{activityBpdId,jdbcType=VARCHAR},
+        TASK_ACTIVITY_ID = #{taskActivityId,jdbcType=VARCHAR},
         USER_UID = #{userUid,jdbcType=VARCHAR},
         STATUS = #{status,jdbcType=VARCHAR}
         where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
@@ -93,7 +101,7 @@
 
     <select id="listActiveRecordsByInsIdAndActivityBpdId" resultMap="BaseResultMap">
 	    select <include refid="Base_Column_List"/> from dh_task_handler
-	    where ins_id = #{insId} and activity_bpd_id = #{activityBpdId} and status = 'on'
+	    where ins_id = #{insId} and TASK_ACTIVITY_ID = #{taskActivityId} and status = 'on'
     </select>
     
     <insert id="insertBatch"  parameterType="list">
@@ -102,16 +110,16 @@
             select
             #{item.handleUid},
             #{item.insId},
-            #{item.activityBpdId},
+            #{item.taskActivityId},
             #{item.userUid},
             #{item.status}
             from dual
         </foreach>
     </insert>
 
-	<select id="getListByInsIdAndActivityBpdId" resultType="com.desmart.desmartbpm.entity.DhTaskHandler">
+	<select id="listByInsIdAndTaskActivityId" resultType="com.desmart.desmartbpm.entity.DhTaskHandler">
 	    select dth.*,su.user_name as userName from dh_task_handler dth
 	    left join sys_user su on dth.user_uid = su.user_uid
-	    where dth.ins_id = #{insId} and dth.activity_bpd_id = #{activityBpdId} and dth.status = 'on'
+	    where dth.ins_id = #{insId} and dth.TASK_ACTIVITY_ID = #{taskActivityId} and dth.status = 'on'
     </select>
 </mapper>

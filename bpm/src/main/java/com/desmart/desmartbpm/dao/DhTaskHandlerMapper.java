@@ -25,7 +25,7 @@ public interface DhTaskHandlerMapper {
      * @param activityBpdId  元素id
      * @return
      */
-    List<DhTaskHandler> listActiveRecordsByInsIdAndActivityBpdId(@Param("insId")Integer insId, @Param("activityBpdId")String activityBpdId);
+    List<DhTaskHandler> listActiveRecordsByInsIdAndActivityBpdId(@Param("insId")Integer insId, @Param("taskActivityId")String taskActivityId);
 
     int insertBatch(List<DhTaskHandler> list);
     
@@ -36,6 +36,8 @@ public interface DhTaskHandlerMapper {
      * @param activityBpdId  元素id
      * @return
      */
-    List<DhTaskHandler> getListByInsIdAndActivityBpdId(@Param("insId")Integer insId, @Param("activityBpdId")String activityBpdId);
+    List<DhTaskHandler> listByInsIdAndTaskActivityId(@Param("insId")Integer insId, @Param("taskActivityId")String taskActivityId);
+
+    int deleteByInsIdAndTaskActivityIdList(@Param("insId")int insId, @Param("taskActivityIdList")List<String> taskActivityIdList);
 
 }

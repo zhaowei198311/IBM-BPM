@@ -29,8 +29,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     private BpmActivityMetaService bpmActivityMetaService;
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
-	@Autowired
-	private DhTaskHandlerMapper dhTaskHandlerMapper;
+
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Override
@@ -39,11 +38,6 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		return dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
 	}
 
-	@Override
-	public List<DhTaskHandler> getListByInsIdAndActivityBpdId(Integer insId, String activityBpdId) {
-		// TODO Auto-generated method stub
-		return dhTaskHandlerMapper.getListByInsIdAndActivityBpdId(insId, activityBpdId);
-	}
 
 
 	public ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData, boolean willTokenMove) {

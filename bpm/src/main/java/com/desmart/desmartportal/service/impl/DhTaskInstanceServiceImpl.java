@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.*;
@@ -32,10 +33,6 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
@@ -123,6 +120,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     private DhRoutingRecordService dhRoutingRecordService;
     @Autowired
     private DhProcessInstanceService dhProcessInstanceService;
+
 	/**
 	 * 查询所有流程实例
 	 */
@@ -438,6 +436,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if (!serverResponse.isSuccess()) {
             throw new PlatformException("装配处理人信息失败");
         }
+        // 如果有简单循环任务记录处理人信息
+        List<DhTaskHandler> taskHandlerList = dhRouteServiceImpl.getTaskHandlerOfSimpleLoopTask(insId, routeData);
+        if (taskHandlerList.size() > 0) {
+            dhRouteServiceImpl.updateDhTaskHandlerOfSimpleLoopTask(taskHandlerList);
+        }
 
         // todo 装配无法选择处理人的子流程发起人信息
 
@@ -455,6 +458,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 throw new PlatformException("更新路中间表失败");
             }
         }
+
 
         // 判断后续有没有触发器需要调用
         // 获得当前步骤
@@ -724,7 +728,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			if (!checkList.isEmpty()) {
 				return ServerResponse.createByErrorMessage("当前任务已添加会签人，请等会签人审批结束!");
 			}
-			// 说明 dhTaskInstance.getActivityBpdId() 实际值为 activityId
+			// 说明 dhTaskInstance.getTaskActivityId() 实际值为 activityId
 			String activityId = dhTaskInstance.getTaskActivityId();
 			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 			// 加新任务			

@@ -5,6 +5,8 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.exception.BpmFindNextNodeException;
+import com.desmart.common.exception.PlatformException;
+import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +92,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DhTriggerService dhTriggerService;
 	@Autowired
 	private SysDepartmentMapper sysDepartmentMapper;
+	@Autowired
+    private DhTaskHandlerMapper dhTaskHandlerMapper;
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
@@ -463,9 +467,38 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 
 		}
-
 		return ServerResponse.createBySuccess(pubBo);
 	}
+
+	@Override
+	public List<DhTaskHandler> getTaskHandlerOfSimpleLoopTask (int insId, JSONArray routeData) {
+	    List<DhTaskHandler> dhTaskHandlers = new ArrayList<>();
+        for (int i = 0; i < routeData.size(); i++) {
+            JSONObject item = (JSONObject) routeData.get(i);
+            String activityId = item.getString("activityId");
+            String userUids = item.getString("userUid");
+            String loopType = item.getString("loopType");
+
+            if (DhTaskInstance.TYPE_SIMPLE_LOOP.equals(loopType)) {
+                List<String> userIdList = Arrays.asList(userUids.split(";"));
+                List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
+                if (userIdList.size() != userList.size()) {
+                    throw new PlatformException("处理人信息异常");
+                }
+                for (String userUid : userIdList) {
+                    DhTaskHandler dhTaskHandler = new DhTaskHandler();
+                    dhTaskHandler.setHandleUid(EntityIdPrefix.DH_TASK_HANDLER + UUID.randomUUID().toString());
+                    dhTaskHandler.setUserUid(userUid);
+                    dhTaskHandler.setInsId(Long.valueOf(insId));
+                    dhTaskHandler.setTaskActivityId(activityId);
+                    dhTaskHandlers.add(dhTaskHandler);
+                }
+            }
+        }
+        return dhTaskHandlers;
+    }
+
+
 
 	@Override
 	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo,
@@ -1032,10 +1065,23 @@ public class DhRouteServiceImpl implements DhRouteService {
             }
         } else if (taskType.equals(DhTaskInstance.TYPE_SIMPLE_LOOP)) {
             // 简单循环会签任务
-            // todo 判断
+            // 查询出简单循环任务
+
         }
         return false;
 	}
 
+    public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
+	    int insId = 0;
+	    List<String> taskActivityIds = new ArrayList<>();
+        for (DhTaskHandler item : list) {
+            if (!taskActivityIds.contains(item.getTaskActivityId())) {
+                insId = item.getInsId().intValue();
+                taskActivityIds.add(item.getTaskActivityId());
+            }
+        }
+        dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, taskActivityIds);
+        return dhTaskHandlerMapper.insertBatch(list);
+    }
 
 }

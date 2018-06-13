@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
+import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -128,5 +129,18 @@ public interface DhRouteService {
 	 */
 	boolean willFinishTaskMoveToken(DhTaskInstance currTask);
 
+	/**
+	 * 根据流程实例编号和下个环节路由信息得到简单循环任务的处理人列表
+	 * @param insId  流程实例编号
+	 * @param routeData  下个环节路由数据
+	 * @return
+	 */
+	List<DhTaskHandler> getTaskHandlerOfSimpleLoopTask (int insId, JSONArray routeData);
 
+	/**
+	 * 更新流程实例下，简单循环任务的处理人信息
+	 * @param list
+	 * @return
+	 */
+	int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list);
 }
