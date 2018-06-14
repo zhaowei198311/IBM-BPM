@@ -19,7 +19,6 @@ $(function(){
 		  var activityId = $("#activityId").val();	
   		  var taskUid = $("#taskUid").val();
   		  if(taskUid == undefined){
-  			  checkDraftsExtis();//调用process.js中的方法，检查是否已保存草稿，没有保存则保存草稿
   			  taskUid = null;
   			}
 		  var re = new RegExp(",","g");

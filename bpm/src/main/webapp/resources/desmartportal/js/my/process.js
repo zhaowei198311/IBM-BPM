@@ -271,7 +271,9 @@ function back() {
 
 //检查是否存在草稿数据，无草稿则保存一份草稿
 var checkDraftsIndex;
+var checkCount = 0;
 function checkDraftsExtis(){
+	if(checkCount==0){//第一次点击开始上传时检查
 	var control = true; //用于控制复选框出现重复值
     var checkName = ""; //用于获得复选框的class值，分辨多个复选框
     
@@ -320,6 +322,7 @@ function checkDraftsExtis(){
         	checkDraftsIndex = layer.load(1);
         },
         success:function(result){
+        	checkCount = result.data;
         	if(result.data<=0){
         		layer.alert("保存草稿出现异常");
         	}
@@ -330,5 +333,6 @@ function checkDraftsExtis(){
         }
 		
 	});
+	}
 }
 
