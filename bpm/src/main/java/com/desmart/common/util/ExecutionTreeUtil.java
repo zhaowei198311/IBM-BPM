@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class ExecutionTreeUtil {
    
-	static int flag = 0;
+	//static int flag = 0;
 
 	/**
 	 * 从流程详细信息中获得指定任务的tokenId和父tokenId
@@ -24,6 +24,8 @@ public class ExecutionTreeUtil {
 	 * @return Map中的key ： 1）tokenId 2) preTokenId
 	 */
 	public static final Map<Object, Object> queryTokenId(int taskId, JSONObject json) {
+		
+		int flag = 0;
 		// 解析jsonObject
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
@@ -50,7 +52,7 @@ public class ExecutionTreeUtil {
 				map.put("flowObjectId", object.get("flowObjectId"));
 				preTokenIdList.add(map);
 				JSONArray jsonArray2 = object.getJSONArray("children");
-				HashMap utilMap = util(jsonArray2, taskId, preTokenIdList);
+				HashMap utilMap = util(jsonArray2, taskId, preTokenIdList, flag);
 				if (utilMap != null) {
 					return utilMap;
 				} /*else {
@@ -62,7 +64,7 @@ public class ExecutionTreeUtil {
 	}
 
 	public static HashMap<Object, Object> util(JSONArray jsonArray, int taskId,
-			ArrayList<HashMap<String, Object>> preTokenIdList) {
+			ArrayList<HashMap<String, Object>> preTokenIdList, int flag) {
 
 		for (Iterator<?> iterator = jsonArray.iterator(); iterator.hasNext();) {
 			HashMap<Object, Object> map = new HashMap<>();
@@ -97,7 +99,7 @@ public class ExecutionTreeUtil {
 			//每深入一级，flag加1s
 			flag++;
 			if (null != jsonArray2) {
-				HashMap<Object, Object> util = util(jsonArray2, taskId, preTokenIdList);
+				HashMap<Object, Object> util = util(jsonArray2, taskId, preTokenIdList, flag);
 				if (util != null) {
 					return util;
 				}
