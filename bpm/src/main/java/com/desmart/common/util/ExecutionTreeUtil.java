@@ -53,9 +53,9 @@ public class ExecutionTreeUtil {
 				HashMap utilMap = util(jsonArray2, taskId, preTokenIdList);
 				if (utilMap != null) {
 					return utilMap;
-				} else {
+				} /*else {
 					System.out.println("未查到结果...");
-				}
+				}*/
 			}
 		}
 		return null;
