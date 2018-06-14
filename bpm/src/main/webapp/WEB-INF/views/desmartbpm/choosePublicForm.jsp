@@ -92,7 +92,7 @@
 						return false;
 					}
 				}
-				//$('#cancel_btn').click();
+				$('#cancel_btn').click();
 		});
 
 		$(".cancel_btn").click(function () {
