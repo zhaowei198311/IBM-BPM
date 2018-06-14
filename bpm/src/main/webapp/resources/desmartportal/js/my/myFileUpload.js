@@ -18,6 +18,10 @@ $(function(){
 		  var taskId = $("#activityId").val();
 		  var activityId = $("#activityId").val();	
   		  var taskUid = $("#taskUid").val();
+  		  if(taskUid == undefined){
+  			  checkDraftsExtis();//调用process.js中的方法，检查是否已保存草稿，没有保存则保存草稿
+  			  taskUid = null;
+  			}
 		  var re = new RegExp(",","g");
 		  var formatStr = fileFormat.replace(re,"|");
 			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
@@ -108,8 +112,8 @@ $(function(){
 			  			var trs = demoListView.children();
 			  			trs.each(function(i){
 			        		var tr = $(this),tds = tr.children();
-			        		var operatorFlag = tds.eq(3).html();
-			        		var appDocFileName = tds.eq(0).text();
+			        		var operatorFlag =tds.eq(3).html();
+			        		var appDocFileName =tds.eq(0).text();
 			        		var appDocTitle = "";
 						    var appDocComment = "";
 						    var appDocTags = "";
@@ -281,7 +285,10 @@ function loadFileList(){
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
 			var activityId = $("#activityId").val();	
-	  		  var taskUid = $("#taskUid").val();	  
+	  		  var taskUid = $("#taskUid").val();	
+	  		if(taskUid == undefined){
+	  		  taskUid = null;
+	  		}
 		    var re = new RegExp(",","g");
 		    var formatStr = fileFormat.replace(re,"|");
 			layui.use('upload', function(){
@@ -494,9 +501,12 @@ function deleteAccessoryFile(a){
     var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");		  
 	var activityId = $("#activityId").val();
-	  var taskUid = $("#taskUid").val();	
+	  var taskUid = $("#taskUid").val();
+	  if(taskUid == undefined){
+		  taskUid = null;
+	  }
     	$.ajax({
-    		url : "accessoryFileUpload/deleteAccessoryFile.do",
+    		url : common.getPath()+"accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
     		dataType : 'json',
     		data : {

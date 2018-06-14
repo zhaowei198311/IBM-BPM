@@ -269,3 +269,66 @@ function back() {
 	window.history.back();
 }
 
+//检查是否存在草稿数据，无草稿则保存一份草稿
+var checkDraftsIndex;
+function checkDraftsExtis(){
+	var control = true; //用于控制复选框出现重复值
+    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
+    
+    // 发起流程             
+    var finalData = {};
+    // 表单数据
+    var formData = common.getDesignFormData();
+    finalData.formData = formData;
+    // 流程数据
+    var processData = {};
+    processData.insUid = $("#insUid").val();
+    processData.departNo = $("#departNo").val();
+    processData.companyNumber = $("#companyNum").val();
+    finalData.processData = processData;
+
+    var activityId = ""
+    var userUid = ""
+    var insData = $("#insData").text();
+    // 路由数据
+    var routeData = [];
+    $('.getUser').each(function () {
+        var item = {};
+        item.activityId = $(this).attr('id');
+        item.userUid = $(this).val();
+        item.assignVarName = $(this).data("assignvarname");
+        item.signCountVarName =  $(this).data("signcountvarname");
+        item.loopType = $(this).data("looptype");
+        routeData.push(item);
+    });
+    finalData.routeData = routeData;
+    // 保存草稿数据                   
+    var insUid = $("#insUid").val();
+    var userId = $("#userId").val();
+    var insTitle = $("#insTitle").val();
+    $.ajax({
+        url: "drafts/checkDraftsExtis",
+        method: "post",
+        async: false,
+        data: {
+        	dfsTitle: insTitle,
+            dfsData: JSON.stringify(finalData),
+            dfsCreator: userId,
+            insUid: insUid
+        },
+        beforeSend: function () {
+        	checkDraftsIndex = layer.load(1);
+        },
+        success:function(result){
+        	if(result.data<=0){
+        		layer.alert("保存草稿出现异常");
+        	}
+        	layer.close(checkDraftsIndex);
+        },error:function(){
+        	layer.close(checkDraftsIndex);
+        	layer.alert("检查草稿出现异常");
+        }
+		
+	});
+}
+

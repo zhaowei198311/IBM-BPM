@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="resources/desmartportal/css/layui.css"
 	media="all">
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
+<link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
@@ -120,6 +121,11 @@
 </head>
 
 <body>
+<!---Mask是遮罩，Progress是进度条-->
+	<div>
+      <div id="Mask"></div>
+      <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
+ 	</div>
 	<div class="search_area top_btn">
 	    <input type="hidden" id="departNo" />
 	    <input type="hidden" id="companyNum" />
@@ -225,47 +231,41 @@
 				<div class="layui-tab-content" style="padding: 0;">
 				    <!-- 附件区域 -->
 					<div class="layui-tab-item layui-show" style="height: auto;">
-						<table class="layui-table upload-file-table" style="margin: 0;">
-							<colgroup>
-								<col width="5%">
-								<col width="20%">
-								<%-- 
-									    <col width="15%">
-									    <col width="20%">  --%>
-								<col width="10%">
-								<col width="10%">
-								<col width="20%">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>
-										<!-- <input id="all-file-check" type="checkbox"> -->序号
-									</th>
-									<th>附件名称</th>
-									<!-- 
+                            <table class="layui-table upload-file-table" style="margin: 0;">
+                                <colgroup>
+                                    <col width="5%">
+                                    <col width="20%">
+                                    <col width="10%">
+                                    <col width="20%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input style = 'cursor: default;' id="all-file-check" type="checkbox"> <!-- 序号 -->
+                                        </th>
+                                        <th>附件名称</th>
+                                        <!-- 
 									      <th>附件说明</th>
 									      <th>附件类型</th> -->
-									<th>上传人</th>
-									<th>上传时间</th>
-									<th>
-										<button
-											class="layui-btn layui-btn-primary layui-btn-sm upload"
-											id="upload-file" style="margin-left: 20px;<c:if test="${dhActivityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>" >上传附件</button>
-											<button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm "
-											 id="batch-down-file" style="margin-left:20px;">批量下载</button>
-										<div class="hidden-value">
-											<input class="maxFileSize" value="20" type="hidden" /> <input
-												class="maxFileCount" value="10" type="hidden" /> <input
-												class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
-										</div>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-
-							</tbody>
-						</table>
-					</div>
+                                        <th>上传人</th>
+                                        <th>上传时间</th>
+                                        <th>
+                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
+                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button>
+                                            <div class="hidden-value">
+                                                <input class="maxFileSize" value="20" type="hidden" />
+                                                <input class="maxFileCount" value="10" type="hidden" />
+                                                <input class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
+                                            </div>
+                                            <!-- <input type="file" class="upload_file"/> -->
+                                            <!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
 				</div>
 			</div>
 

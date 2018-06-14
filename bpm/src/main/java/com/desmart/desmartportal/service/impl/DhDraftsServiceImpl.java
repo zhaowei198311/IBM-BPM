@@ -155,5 +155,16 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 			return null;
 		}
 	}
+
+	@Override
+	public ServerResponse checkDraftsExtis(DhDrafts dhDrafts) {
+		// TODO Auto-generated method stub
+		DhDrafts dhDrafts2 = dhDraftsMapper.queryDraftsByInsUid(dhDrafts.getInsUid());
+		Integer count = 0;
+		if(dhDrafts2==null) {
+			count = this.saveDrafts(dhDrafts);
+		}
+		return ServerResponse.createBySuccess(count);
+	}
 	
 }

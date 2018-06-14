@@ -63,4 +63,11 @@ public interface DhDraftsService {
 	 * @return
 	 */
 	Map<String, Object> selectDraftsAndFromInfo(String dfsId,String insUid);
+
+	/**
+	 * 根据insUid检查是否存在草稿数据，无草稿则保存一份草稿
+	 * @param dhDrafts
+	 * @return
+	 */
+	ServerResponse checkDraftsExtis(DhDrafts dhDrafts);
 }

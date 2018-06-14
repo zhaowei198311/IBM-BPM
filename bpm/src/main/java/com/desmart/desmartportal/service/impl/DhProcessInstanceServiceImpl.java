@@ -366,6 +366,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             instanceSelective.setInsUid(mainProcessInstance.getInsUid());
             instanceSelective.setInsTitle(insTitle);
             instanceSelective.setInsId(insId);
+            instanceSelective.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
             instanceSelective.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
             instanceSelective.setInsInitDate(new Date());
             instanceSelective.setCompanyNumber(companyNumber);
@@ -1050,7 +1051,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				List<DhProcessInstance> list = dhProcessInstanceMapper.queryBySelective(insSelective);
 				parentProcessInstance = list.get(0);
 			}
-
+			
             // 获得流程发起人
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);

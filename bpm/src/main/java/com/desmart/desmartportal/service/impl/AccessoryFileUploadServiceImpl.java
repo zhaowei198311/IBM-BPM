@@ -210,6 +210,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Transactional(rollbackFor= {Exception.class,RuntimeException.class})
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument
 			,String activityId,String taskUid) {
+		
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		

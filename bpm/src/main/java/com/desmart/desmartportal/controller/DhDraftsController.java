@@ -66,4 +66,10 @@ public class DhDraftsController {
 	public DhDrafts selectBydfsId(@RequestParam(value="dfsId")String dfsId) {
 		return dhDraftsService.selectBydfsId(dfsId);
 	}
+	
+	@RequestMapping(value="checkDraftsExtis")
+	@ResponseBody
+	public ServerResponse checkDraftsExtis(DhDrafts dhDrafts) {
+		return dhDraftsService.checkDraftsExtis(dhDrafts);
+	}
 }

@@ -117,7 +117,7 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse deleteAccessoryFile(DhInstanceDocument dhInstanceDocument,
 			@RequestParam("activityId")String activityId
-			,@RequestParam("taskUid")String taskUid) {
+			,@RequestParam(value = "taskUid",required=false)String taskUid) {
 		return accessoryFileUploadServiceImpl.deleteAccessoryFile(dhInstanceDocument,activityId
 				,taskUid);
 	}
