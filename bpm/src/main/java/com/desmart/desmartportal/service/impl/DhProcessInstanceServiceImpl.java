@@ -693,7 +693,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (StringUtils.isBlank(activityId) || StringUtils.isBlank(insUid)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(activityId);
+		BpmActivityMeta currentbpmActivityMeta3 = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		DhActivityConf dhActivityConf = dhActivityConfMapper.getByActivityId(currentbpmActivityMeta3.getSourceActivityId());
 		// 查询当前环节是否允许驳回 （TRUE,FALSE）
 		String rejectboolean = dhActivityConf.getActcCanReject();
 		// 查询当前环节驳回方式 (toProcessStart发起人,toPreActivity上个环节,toActivities选择环节)
@@ -719,21 +720,42 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				String UserName = sysUser2.getUserName();
 				// 获得流转数据中的发起流程的环节id
 				Map<String, Object> toProcessStartMap = new HashMap<>();
-				List<DhRoutingRecord> dhRoutingRecordList = dhRoutingRecordMapper
-						.getDhRoutingRecordListByCondition(dhRoutingRecord);
-				for (DhRoutingRecord dhRoutingRecord2 : dhRoutingRecordList) {
-					// 过滤掉其他的数据信息 只需要 类型为 发起流程的环节信息
-					BpmActivityMeta bpmActivityMeta3 = bpmActivityMetaMapper
-							.queryByPrimaryKey(dhRoutingRecord2.getActivityId());
-					if (DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {
-						toProcessStartMap.put("insId", insId);
-						toProcessStartMap.put("activityBpdId", bpmActivityMeta3.getActivityBpdId());
-						toProcessStartMap.put("activityName", bpmActivityMeta3.getActivityName());
-						toProcessStartMap.put("userId", dhRoutingRecord2.getUserUid());
-						toProcessStartMap.put("userName", dhRoutingRecord2.getUserName());
-						activitiMapList.add(toProcessStartMap);
+				
+				//for (DhRoutingRecord dhRoutingRecord2 : dhRoutingRecordList) {
+					// 过滤掉其他的数据信息 只需要 类型为 发起流程的环节信息---此处如果进入到子流程驳回，那么应该只会驳回到子流程的发起节点才正确
+					//BpmActivityMeta bpmActivityMeta3 = bpmActivityMetaMapper
+							//.queryByPrimaryKey(dhRoutingRecord2.getActivityId());
+					//if (DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {//满足不了应该
+					BpmActivityMeta toBpmActivityMeta = new BpmActivityMeta();
+					if("0".equals(currentbpmActivityMeta3.getParentActivityId())) {//主流程
+						// 获得主流程开始节点
+				        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(
+				        		currentbpmActivityMeta3.getProAppId(), currentbpmActivityMeta3.getBpdId()
+				        		, currentbpmActivityMeta3.getSnapshotId());
+
+				        // 获得开始节点往后的路由信息
+				        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, null);
+
+				        // 获得第一个人工节点
+				        toBpmActivityMeta = routingDataOfMainStartNode.getNormalNodes().iterator().next();	
+					}else {//子流程
+						BpmActivityMeta parentBpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currentbpmActivityMeta3.getParentActivityId());
+						toBpmActivityMeta = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(parentBpmActivityMeta);	
 					}
-				}
+						toProcessStartMap.put("insId", insId);
+						toProcessStartMap.put("activityBpdId", toBpmActivityMeta.getActivityBpdId());
+						toProcessStartMap.put("activityName", toBpmActivityMeta.getActivityName());
+						
+						dhRoutingRecord.setActivityId(toBpmActivityMeta.getActivityId());
+						List<DhRoutingRecord> dhRoutingRecordList = dhRoutingRecordMapper
+								.getDhRoutingRecordListByCondition(dhRoutingRecord);//排序方式是create_time asc
+						String userId = dhRoutingRecordList.get(dhRoutingRecordList.size()-1).getUserUid();
+						String userName = dhRoutingRecordList.get(dhRoutingRecordList.size()-1).getUserName();
+						toProcessStartMap.put("userId", userId);
+						toProcessStartMap.put("userName", userName);
+						activitiMapList.add(toProcessStartMap);
+					//}
+				//}
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toPreActivity":
 				log.info("驳回到上个环节");
@@ -884,14 +906,17 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_REJECT_TASK);
 			dhRoutingRecord.setUserUid(currentUser);
 			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+			
 			bpmActivityMeta.setActivityBpdId(activityBpdId);
 			List<BpmActivityMeta> bpmActivityMetaList = bpmActivityMetaMapper
 					.queryByBpmActivityMetaSelective(bpmActivityMeta);
-			String activityId = "";
+			String activityTO = "";
 			for (BpmActivityMeta bpmActivityMeta2 : bpmActivityMetaList) {
-				activityId = bpmActivityMeta2.getActivityId();
+				activityTO = bpmActivityMeta2.getActivityId();
 			}
-			dhRoutingRecord.setActivityId(activityId);
+			dhRoutingRecord.setActivityTo(activityTO);
+			dhRoutingRecord.setActivityId(currActivityId);
+			
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
 			// 保存审批意见
 			String aprOpiComment = approvalData.getString("aprOpiComment");
@@ -903,7 +928,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhApprovalOpinion.setAprUserId(currentUser);
 			dhApprovalOpinion.setAprOpiComment(aprOpiComment);
 			dhApprovalOpinion.setAprStatus(aprStatus);
-			dhApprovalOpinion.setActivityId(activityId);
+			dhApprovalOpinion.setActivityId(currActivityId);
 			dhApprovalOpinionService.insertDhApprovalOpinion(dhApprovalOpinion);
 			return ServerResponse.createBySuccess();
 		}else {

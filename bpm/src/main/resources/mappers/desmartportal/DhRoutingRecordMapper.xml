@@ -22,6 +22,9 @@
   <if test="insUid != null and insUid != '' ">
   and drr.ins_uid = #{insUid}
   </if>
+  <if test="activityId != null and activityId !='' ">
+  and drr.activity_id = #{activityId}
+  </if>
   order by drr.create_time asc
   </select>
   
