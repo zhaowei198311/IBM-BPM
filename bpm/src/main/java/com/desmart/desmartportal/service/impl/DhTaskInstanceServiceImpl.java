@@ -444,7 +444,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             dhRouteServiceImpl.updateDhTaskHandlerOfSimpleLoopTask(taskHandlerList);
         }
 
-        // todo 装配无法选择处理人的子流程发起人信息
+        // 装配无法选择处理人的子流程发起人信息
+		dhRouteServiceImpl.assembleInitUserOfSubProcess(currProcessInstance, pubBo, routingData);
 
         // 更新网关决策条件
         if (routingData.getGatewayNodes().size() > 0) {
@@ -461,13 +462,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             }
         }
 
-
         // 判断后续有没有触发器需要调用
         // 获得当前步骤
         DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
-        if (dhStepService.getNextStepOfCurrStep(formStepOfTaskNode) == null) {
+        DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
+        if ( nextStep == null) {
             // 没有后续步骤
-
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
             Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
@@ -485,10 +485,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             // 有后续步骤
             // 向队列发出消息
             Map<String, Object> map = new HashMap<>();
-            map.put("pubBo", pubBo);
-            map.put("currProcessInstance", currProcessInstance);
-            map.put("routingData", routingData);
-            map.put("currTaskInstance", currTask);
+			map.put("currProcessInstance", currProcessInstance);
+			map.put("currTaskInstance", currTask);
+			map.put("dhStep", nextStep);
+			map.put("pubBo", pubBo);
+			map.put("routingData", routingData);
             String paramStr = JSON.toJSONString(map);
             boolean result = mqProducerService.sendMessage("triggerAfterForm", paramStr);
             return ServerResponse.createBySuccess();

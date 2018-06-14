@@ -282,6 +282,7 @@
         left join LSW_USR_XREF lux on t.user_id = lux.user_id
         where task_id > #{taskId}
         and status = 12
+        order by task_id
     </select>
     
     <select id="getGroupInfo" resultType="com.desmart.desmartbpm.entity.engine.GroupAndMember"> 

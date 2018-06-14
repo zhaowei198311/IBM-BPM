@@ -366,7 +366,6 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
      * @param dhActivityConf
      * @return
      */
-    @Transactional
     private ServerResponse updateHandleOfActivity(DhActivityConf dhActivityConf) {
         String actcAssignType = dhActivityConf.getActcAssignType();
         DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);

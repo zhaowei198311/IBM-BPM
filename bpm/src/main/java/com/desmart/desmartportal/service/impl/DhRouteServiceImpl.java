@@ -4,11 +4,13 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartportal.entity.*;
+import com.desmart.desmartsystem.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +44,6 @@ import com.desmart.desmartsystem.dao.SysDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
-import com.desmart.desmartsystem.entity.SysDepartment;
-import com.desmart.desmartsystem.entity.SysRoleUser;
-import com.desmart.desmartsystem.entity.SysTeamMember;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.util.ArrayUtil;
 
 @Service
@@ -724,6 +722,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Override
     public BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
         BpmRoutingData result = new BpmRoutingData();
+        result.setSourceNode(sourceNode);
 
         List<BpmActivityMeta> directNextNodeList = findDirectNextNodes(sourceNode);
 
@@ -1098,6 +1097,142 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
         dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, taskActivityIds);
         return dhTaskHandlerMapper.insertBatch(list);
+    }
+
+    @Override
+    public CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance currProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData) {
+		// 找到满足条件的所有子流程, 代表子流程的节点和作为出发点的节点不是平级的
+        List<BpmActivityMeta> processNodesToAssemble = findNodesIdentifySubProcessNeedToAssemble(routingData);
+        for (BpmActivityMeta nodeIdentifySubProcess : processNodesToAssemble) {
+            // 找到发起节点
+            BpmActivityMeta firstTaskNode = null;
+            Set<BpmActivityMeta> normalNodes = routingData.getNormalNodes();
+            for (Iterator<BpmActivityMeta> it = normalNodes.iterator(); it.hasNext();) {
+                BpmActivityMeta normalNode = it.next();
+                if (normalNode.getParentActivityId().equals(nodeIdentifySubProcess.getActivityId())) {
+                    firstTaskNode = normalNode;
+                    break;
+                }
+            }
+            BpmGlobalConfig bpmGlobalConfig = new BpmGlobalConfig();
+            List<String> adminUidList = new ArrayList<>();
+            adminUidList.add(bpmGlobalConfig.getBpmAdminName());
+            DhActivityConf activityConf = firstTaskNode.getDhActivityConf();
+            // 分配默认处理人
+            String actcAssignType = activityConf.getActcAssignType();
+            String actcAssignVariable = activityConf.getActcAssignVariable();
+            DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+            if (assignTypeEnum == null || assignTypeEnum == DhActivityConfAssignType.NONE) {
+                log.info("为子流程创建处理人异常");
+                // 找不到默认处理人，分配给管理员
+                CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
+                continue;
+            }
+            DhActivityAssign selective = new DhActivityAssign();
+            selective.setActivityId(activityConf.getActivityId());
+            selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
+            List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+            List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
+            String departNo = currProcessInstance.getDepartNo();
+            String companyNum = currProcessInstance.getCompanyNumber();
+            String userUidStr = "";
+            switch (assignTypeEnum) {
+                case ROLE:
+                case ROLE_AND_DEPARTMENT:
+                case ROLE_AND_COMPANY:
+                    SysRoleUser roleUser = new SysRoleUser();
+                    roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
+
+                    if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
+                        roleUser.setCompanyCode(companyNum);
+                    }
+                    if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
+                        StringBuffer str = new StringBuffer(departNo);
+                        String result = recursionSelectDepartMent(departNo,str);
+                        roleUser.setDepartUid(result);
+                    }
+                    List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+                    for (SysRoleUser sysRoleUser : roleUsers) {
+                        userUidStr += sysRoleUser.getUserUid() + ";";
+                    }
+                    break;
+                case TEAM:
+                case TEAM_AND_DEPARTMENT:
+                case TEAM_AND_COMPANY:
+                    SysTeamMember sysTeamMember = new SysTeamMember();
+                    if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
+                        sysTeamMember.setCompanyCode(companyNum);
+                    }
+                    if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
+                        StringBuffer str = new StringBuffer(departNo);
+                        String result = recursionSelectDepartMent(departNo, str);
+                        sysTeamMember.setDepartUid(result);
+                    }
+                    sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
+                    List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+                    for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
+                        userUidStr += sysTeamMember2.getUserUid() + ";";
+                    }
+                    break;
+                case LEADER_OF_PRE_ACTIVITY_USER:
+                    break;
+                case USERS:
+                    List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
+                    for (SysUser sysUser : userItem) {
+                        userUidStr += sysUser.getUserUid() + ";";
+                    }
+                    break;
+                case PROCESS_CREATOR:
+                    // 流程发起人, 则使用触发次流程的那个流程的流程发起人
+                    userUidStr += currProcessInstance.getInsInitUser() + ";";
+                    break;
+                case BY_FIELD:// 根据表单字段选
+                    if (assignList.size() > 0) {
+                        String field = assignList.get(0).getActaAssignId();
+                        JSONObject obj = JSON.parseObject(currProcessInstance.getInsData());
+                        JSONObject formData = obj.getJSONObject("formData");
+                        String value = FormDataUtil.getStringValue(field, formData);
+                        if (value != null) {
+                            userUidStr += value;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (userUidStr.length() == 0) {
+                // 分配给管理员
+                CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
+                continue;
+            }
+            // 分配给userUidStr对应的人
+            List<String> initUser = new ArrayList<>();
+            initUser.add(userUidStr.split(";")[0]);
+            CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, initUser);
+        }
+        return pubBo;
+    }
+
+    /**
+     * 根据routingData得到需要被分配发起人的子流程节点，代表子流程的节点和作为出发点的节点不是平级的
+     * @param routingData
+     * @return
+     */
+    private List<BpmActivityMeta> findNodesIdentifySubProcessNeedToAssemble(BpmRoutingData routingData) {
+        List<BpmActivityMeta> result = new ArrayList<>();
+        Set<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodes();
+        if (startProcessNodes.isEmpty()) {
+            return result;
+        }
+        BpmActivityMeta sourceNode = routingData.getSourceNode();
+
+        for (Iterator<BpmActivityMeta> it = startProcessNodes.iterator(); it.hasNext();) {
+            BpmActivityMeta startProcessNode = it.next();
+            if (!startProcessNode.getParentActivityId().equals(sourceNode.getParentActivityId())) {
+                result.add(startProcessNode);
+            }
+        }
+        return result;
     }
 
 }

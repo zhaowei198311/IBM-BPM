@@ -1043,13 +1043,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			DhProcessInstance parentProcessInstance = null;
 			if ("0".equals(startProcessNode.getParentActivityId())) {
 				parentProcessInstance = mainProcessInstance;
+			} else {
+				DhProcessInstance insSelective = new DhProcessInstance();
+				insSelective.setInsId(insId);
+				insSelective.setTokenActivityId(startProcessNode.getParentActivityId());
+				List<DhProcessInstance> list = dhProcessInstanceMapper.queryBySelective(insSelective);
+				parentProcessInstance = list.get(0);
 			}
-			//
-			DhProcessInstance insSelective = new DhProcessInstance();
-			insSelective.setInsId(insId);
-			insSelective.setTokenActivityId(startProcessNode.getParentActivityId());
-            List<DhProcessInstance> list = dhProcessInstanceMapper.queryBySelective(insSelective);
-            parentProcessInstance = list.get(0);
 
             // 获得流程发起人
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();

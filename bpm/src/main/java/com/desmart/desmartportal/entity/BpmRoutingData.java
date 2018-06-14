@@ -9,12 +9,13 @@ import java.util.Set;
  * 找寻下个环节信息时记录的信息
  */
 public class BpmRoutingData {
-    Set<BpmActivityMeta> normalNodes = new HashSet<>();  // 记录人工任务节点的集合
-    Set<BpmActivityMeta> gatewayNodes = new HashSet<>(); // 记录遇到的排他网关
-    Set<BpmActivityMeta> startProcessNodes = new HashSet<>(); // 代表需要创建的子流程的节点
-    Set<BpmActivityMeta> endProcessNodes = new HashSet<>(); // 代表需要结束的子流程的节点
-    Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
-    Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
+    private BpmActivityMeta sourceNode;   // 作为起点的节点
+    private Set<BpmActivityMeta> normalNodes = new HashSet<>();  // 记录人工任务节点的集合
+    private Set<BpmActivityMeta> gatewayNodes = new HashSet<>(); // 记录遇到的排他网关
+    private Set<BpmActivityMeta> startProcessNodes = new HashSet<>(); // 代表需要创建的子流程的节点
+    private Set<BpmActivityMeta> endProcessNodes = new HashSet<>(); // 代表需要结束的子流程的节点
+    private Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
+    private Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
 
     public void includeAll(BpmRoutingData bpmRouteingData) {
         this.normalNodes.addAll(bpmRouteingData.getNormalNodes());
@@ -44,6 +45,14 @@ public class BpmRoutingData {
         this.routeResults.add(routeResult);
     }
 
+
+    public BpmActivityMeta getSourceNode() {
+        return sourceNode;
+    }
+
+    public void setSourceNode(BpmActivityMeta sourceNode) {
+        this.sourceNode = sourceNode;
+    }
 
     public Set<BpmActivityMeta> getNormalNodes() {
         return normalNodes;

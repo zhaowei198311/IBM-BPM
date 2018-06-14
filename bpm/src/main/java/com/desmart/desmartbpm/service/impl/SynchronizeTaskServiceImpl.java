@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
@@ -93,8 +94,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     
     @Transactional
     public void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
-        List<DhTaskInstance> dhTaskList = Lists.newArrayList();
-        List<DhAgentRecord> agentRecordList = Lists.newArrayList();
+        List<DhTaskInstance> dhTaskList = new ArrayList<>();
+        List<DhAgentRecord> agentRecordList = new ArrayList<>();
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             Map<String, Object> data = null;
@@ -167,8 +168,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
             return null;
         }
-        Map<Object, Object> tokenMap = ExecutionTreeUtil.queryTokenId(lswTask.getTaskId(),
-                JSON.parseObject(processDataResult.getMsg()));
+        JSONObject processData = JSON.parseObject(processDataResult.getMsg());
+        int taskId = lswTask.getTaskId();
+        Map<Object, Object> tokenMap = ExecutionTreeUtil.queryTokenId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
             return null;

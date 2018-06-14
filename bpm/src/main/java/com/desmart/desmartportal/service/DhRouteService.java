@@ -143,4 +143,13 @@ public interface DhRouteService {
 	 * @return
 	 */
 	int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list);
+
+	/**
+	 * 为没有分配发起人的子流程装配处理人
+	 * @param currProcessInstance
+	 * @param pubBo
+	 * @param routingData
+	 * @return
+	 */
+	CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance currProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData);
 }
