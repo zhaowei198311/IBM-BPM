@@ -32,7 +32,7 @@ public class MQProducer implements MqProducerService {
 			return false;
 		}
 		try {
-			amqpTemplate.convertAndSend("queueTestKey", message);
+			amqpTemplate.convertAndSend(queueKey, message);
 			return true;
 		} catch (AmqpException e) {
 			log.info("rabbitmq生产者发送消息失败...");
