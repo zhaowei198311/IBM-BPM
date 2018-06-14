@@ -7,15 +7,15 @@
 		<result column="INT_UID" property="intUid" />
 		<result column="DYN_UID" property="dynUid" />
 		<result column="CREATOR" property="creator" />
-		<result column="CREATE_TIME" property="createTime" />
-		<result column="STEP_UID" property="stepUid" />
+		<result column="CREATE_TIME" property="createTime"/>
+		<result column="ACTC_UID" property="actcUid" />
 		<result column="PARA_NAME" property="paraName" />
 		<result column="FLD_CODE_NAME" property="fldCodeName" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		TIN_UID,TRI_UID,INT_UID,
-		DYN_UID,CREATOR,CREATE_TIME,STEP_UID,
+		DYN_UID,CREATOR,CREATE_TIME,ACTC_UID,
 		PARA_NAME,FLD_CODE_NAME
 	</sql>
 
@@ -38,11 +38,20 @@
 			<if test="dynUid != null and dynUid !=''">
 				AND DYN_UID = #{dynUid}
 			</if>
-			<if test="creator != null and creator!=''">
+			<if test="creator != null and creator !=''">
 				AND CREATOR = #{creator}
 			</if>
 			<if test="createTime != null">
 				AND CREATE_TIME = #{createTime}
+			</if>
+			<if test="actcUid != null and actcUid !=''">
+				AND ACTC_UID = #{actcUid}
+			</if>
+			<if test="paraName != null and paraName !=''">
+				AND PARA_NAME = #{paraName}
+			</if>
+			<if test="fldCodeName != null and fldCodeName !=''">
+				AND FLD_CODE_NAME = #{fldCodeName}
 			</if>
 		</where>
 	</select>
@@ -72,7 +81,7 @@
 		#{dynUid},
 		#{creator},
 		sysdate,
-		#{stepUid},
+		#{actcUid},
 		#{paraName},
 		#{fldCodeName}
 		)
@@ -91,7 +100,7 @@
 				#{item.dynUid},
 				#{item.creator},
 				sysdate,
-				#{item.stepUid},
+				#{item.actcUid},
 				#{item.paraName},
 				#{item.fldCodeName}
 			FROM DUAL
@@ -126,6 +135,15 @@
 				</if>
 				<if test="createTime != null">
 					CREATE_TIME = #{createTime}
+				</if>
+				<if test="actcUid != null and actcUid !=''">
+					ACTC_UID = #{actcUid}
+				</if>
+				<if test="paraName != null and paraName !=''">
+					PARA_NAME = #{paraName}
+				</if>
+				<if test="fldCodeName != null and fldCodeName !=''">
+					FLD_CODE_NAME = #{fldCodeName}
 				</if>
 			</trim>
 		</set>

@@ -27,7 +27,7 @@ public class DhTriggerInterface {
 	
 	private Date createTime; // 创建时间
 	
-	private String stepUid; // 步骤ID
+	private String actcUid; // 环节ID
 	
 	private String paraName; // 接口参数
 	
@@ -120,15 +120,15 @@ public class DhTriggerInterface {
 	/**
 	 * @return the stepUid
 	 */
-	public String getStepUid() {
-		return stepUid;
+	public String getActcUid() {
+		return actcUid;
 	}
 
 	/**
 	 * @param stepUid the stepUid to set
 	 */
-	public void setStepUid(String stepUid) {
-		this.stepUid = stepUid;
+	public void setActcUid(String actcUid) {
+		this.actcUid = actcUid;
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class DhTriggerInterface {
 	 * @param fldCodeName
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String stepUid, String paraName, String fldCodeName) {
+			Date createTime, String actcUid, String paraName, String fldCodeName) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -183,7 +183,7 @@ public class DhTriggerInterface {
 		this.dynUid = dynUid;
 		this.creator = creator;
 		this.createTime = createTime;
-		this.stepUid = stepUid;
+		this.actcUid = actcUid;
 		this.paraName = paraName;
 		this.fldCodeName = fldCodeName;
 	}
