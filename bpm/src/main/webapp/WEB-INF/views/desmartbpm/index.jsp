@@ -48,7 +48,7 @@
                               <dd><a href="<%=basePath%>/formManage/index" target="iframe0">流程表单管理</a></dd>
                             </shiro:hasPermission>
                             <shiro:hasPermission name="publicForm:index">
-                              <dd><a href="<%=basePath%>/publicForm/index" target="iframe0">公共表单管理</a></dd>
+                              <dd><a href="<%=basePath%>/publicForm/index" target="iframe0">子表单管理</a></dd>
                             </shiro:hasPermission> 
                             </dl>
                         </li>
