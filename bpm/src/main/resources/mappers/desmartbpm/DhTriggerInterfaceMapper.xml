@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper" >
-	<resultMap id="DhTriggerInterfaceMap" type="java.util.Map" >
-		<result column="TIN_UID"  			property="tinUid"/>
-		<result column="TRI_UID" 			property="triUid"/>
-		<result column="INT_UID"  			property="intUid"/>
-		<result column="DYN_UID"  			property="dynUid"/>
-		<result column="CREATOR"  			property="creator"/>
-		<result column="CREATE_TIME"  		property="createTime"/>
+<mapper namespace="com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper">
+	<resultMap id="DhTriggerInterfaceMap" type="java.util.Map">
+		<result column="TIN_UID" property="tinUid" />
+		<result column="TRI_UID" property="triUid" />
+		<result column="INT_UID" property="intUid" />
+		<result column="DYN_UID" property="dynUid" />
+		<result column="CREATOR" property="creator" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="STEP_UID" property="stepUid" />
+		<result column="PARA_NAME" property="paraName" />
+		<result column="FLD_CODE_NAME" property="fldCodeName" />
 	</resultMap>
-	
+
 	<sql id="Base_Column_List">
 		TIN_UID,TRI_UID,INT_UID,
-		DYN_UID,CREATOR,CREATE_TIME
+		DYN_UID,CREATOR,CREATE_TIME,STEP_UID,
+		PARA_NAME,FLD_CODE_NAME
 	</sql>
-	
-	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface" parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
-		SELECT 
-		<include refid="Base_Column_List"/>
+
+	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
+		parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		SELECT
+		<include refid="Base_Column_List" />
 		FORM
 		DH_TRIGGER_INTERFACE
 		<where>
@@ -41,22 +46,23 @@
 			</if>
 		</where>
 	</select>
-	
-	<select id="selectByPrimaryKey" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface" parameterType="java.lang.String">
-		SELECT 
-		<include refid="Base_Column_List"/>
+
+	<select id="selectByPrimaryKey" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
+		parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
 		FORM
 		DH_TRIGGER_INTERFACE
 		<where>
 			TIN_UID = #{tinUid}
 		</where>
 	</select>
-	
+
 	<insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		INSERT INTO
 		DH_TRIGGER_INTERFACE
 		(
-		<include refid="Base_Column_List"/>
+		<include refid="Base_Column_List" />
 		)
 		VALUES
 		(
@@ -65,46 +71,69 @@
 		#{intUid},
 		#{dynUid},
 		#{creator},
-		#{createTime}
+		sysdate,
+		#{stepUid},
+		#{paraName},
+		#{fldCodeName}
 		)
 	</insert>
-	
+
+	<insert id="insertBatch" parameterType="list">
+		INSERT INTO DH_TRIGGER_INTERFACE (
+		<include refid="Base_Column_List" />
+		)
+		<foreach collection="tinList" item="item" index="index" close=")"
+			open="(" separator="union all">
+			SELECT
+				#{item.tinUid},
+				#{item.triUid},
+				#{item.intUid},
+				#{item.dynUid},
+				#{item.creator},
+				sysdate,
+				#{item.stepUid},
+				#{item.paraName},
+				#{item.fldCodeName}
+			FROM DUAL
+		</foreach>
+	</insert>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-		DELETE 
+		DELETE
 		FORM
 		DH_TRIGGER_INTERFACE
 		<where>
 			TIN_UID = #{tinUid}
 		</where>
 	</delete>
-	
+
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
 		UPDATE
 		DH_TRIGGER_INTERFACE
 		<set>
 			<trim suffixOverrides=",">
-			<if test="triUid != null and triUid != ''">
-				TRI_UID = #{triUid}
-			</if>
-			<if test="intUid != null and intUid != ''">
-				INT_UID = #{intUid}
-			</if>
-			<if test="dynUid != null and dynUid !=''">
-				DYN_UID = #{dynUid}
-			</if>
-			<if test="creator != null and creator!=''">
-				CREATOR = #{creator}
-			</if>
-			<if test="createTime != null">
-				CREATE_TIME = #{createTime}
-			</if>
+				<if test="triUid != null and triUid != ''">
+					TRI_UID = #{triUid}
+				</if>
+				<if test="intUid != null and intUid != ''">
+					INT_UID = #{intUid}
+				</if>
+				<if test="dynUid != null and dynUid !=''">
+					DYN_UID = #{dynUid}
+				</if>
+				<if test="creator != null and creator!=''">
+					CREATOR = #{creator}
+				</if>
+				<if test="createTime != null">
+					CREATE_TIME = #{createTime}
+				</if>
 			</trim>
 		</set>
-			<where>
-				<trim prefix="WHERE">
-    				TIN_UID = #{tinUid}
-				</trim>
-			</where>
+		<where>
+			<trim prefix="WHERE">
+				TIN_UID = #{tinUid}
+			</trim>
+		</where>
 	</update>
-	
+
 </mapper>

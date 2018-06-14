@@ -996,6 +996,7 @@
 	 			 					<legend>参数对照</legend>
 								</fieldset>
 								<div id="col_md5"></div>
+								<div id="col_md6"></div>
 							</div>
 						</div>
 				<div class="foot">

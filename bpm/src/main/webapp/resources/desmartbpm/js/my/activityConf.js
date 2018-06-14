@@ -424,6 +424,7 @@ $(function() {
 		$("#chooseTrigger_sureBtn").click(
 				function() {
 					$("#table_sel").empty();
+					$("#col_md5").empty();
 					var cks = $("[name='tri_check']:checked");
 					if (!cks.length) {
 						$("#" + triggerToEdit).val('');
@@ -440,6 +441,7 @@ $(function() {
 					var triTitle = ck.parent().next().html();
 					var triType = ck.parent().next().next().html();
 					var triContent = ck.parent().next().next().next().attr("title");
+					var sortNum = 1;
 					// 打开接口参数和form表单映射表单
 					var stepType = "form";
 					if (triType == "interface") {
@@ -474,6 +476,47 @@ $(function() {
 								layer.alert('查询环节出错')
 							}
 						});
+						// 接口参数
+						$.ajax({
+							url : common.getPath() + '/interfaceParamers/index',
+							type : 'post',
+							dataType : 'json',
+							data : {
+								intUid : triContent
+							},
+							success : function (result2){
+								var list = result2.data.list;
+								for (var i = 0; i < list.length; i++) {
+									var paraIndex = list[i].paraIndex; // 接口索引下标
+									var paraName = list[i].paraName; // 接口名
+									var index = sortNum + i
+									var trs = '<div class="layui-form-item">'
+										+ '<div class="layui-row">'
+										+ '<div class="layui-col-md6">'
+										+ '<div class="layui-inline">'
+										+ '<label class="layui-form-label" style="width: 100px">接口参数'+index+'</label>'
+										+ '<div class="layui-input-inline">'
+										+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" value="'+paraName+'">'
+										+ '</div>'
+										+ '</div>'
+										+ '</div>'
+										+ '<div class="layui-col-md6">'
+										+ '<label class="layui-form-label" style="width: 100px">表单参数'+index+'</label>'
+										+ '<div class="layui-input-inline">'
+										+ '<select id="tableParam'+index+'">'
+										+ '</select>'
+										+ '</div>'
+										+ '</div>'
+										+ '</div>'
+										+ '</div>';
+								$("#col_md5").append(trs)
+								}
+								form.render();
+							},
+							error : function(result2){
+								layer.alert("查询接口参数出错")
+							}
+						})
 					}
 					$("#" + triggerToEdit).val(triUid);
 					$("#" + triggerToEdit + "Title").val(triTitle);
@@ -481,35 +524,12 @@ $(function() {
 				});
 
 		form.on('select(table_sel)', function(data) {
+			$("#col_md5").find(".layui-form-item").find(".layui-row").find("select").empty();
 			var data = data.value; // 表单id
 			// 截取字符串
 			var formId = data.substring(0,data.indexOf('|')); // 表单ID
 			var intUid = data.substring(data.indexOf('i')); // 参数ID
-			var startNum = 0;
-			$("#col_md5").empty();
-			
-			$.ajax({
-				url : common.getPath() + '/interfaceParamers/index',
-				type : 'post',
-				dataType : 'json',
-				data : {
-					intUid : intUid
-				},
-				success : function (result2){
-					console.info(result2.data);
-					var list = result2.data.list;
-					console.info(list);
-					for (var i = 0; i < list.length; i++) {
-						var paraIndex = list[i].paraIndex; // 接口索引下标
-						var paraName = list[i].paraName; // 接口名
-						
-					}
-				},
-				error : function(result2){
-					layer.alert("查询接口参数出错")
-				}
-			})
-			
+			var startNum = 1;			
 			$.ajax({
 				url : common.getPath() + '/formField/queryFieldByFromUid',
 				type : 'post',
@@ -517,29 +537,21 @@ $(function() {
 				data : {
 					formUid : formId
 				},
-				success : function (result){					
+				success : function (result){	
 					for (var i = 0; i < result.data.length; i++) {
 						var fldIndex = result.data[i].fldIndex; // 字段索引下标
 						var fldCodeName = result.data[i].fldCodeName; // 字段名
-						var trs = '<div class="layui-form-item">'
-								+ '<div class="layui-row">'
-								+ '<div class="layui-col-md6">'
-								+ '<div class="layui-inline">'
-								+ '<label class="layui-form-label" style="width: 100px">接口参数</label>'
-								+ '<div class="layui-input-inline">'
-								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input">'
-								+ '</div>'
-								+ '</div>'
-								+ '</div>'
-								+ '<div class="layui-col-md6">'
-								+ '<label class="layui-form-label" style="width: 100px">表单参数</label>'
-								+ '<div class="layui-input-inline">'
-								+ '<input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" value="'+fldCodeName+'">'
-								+ '</div>'
-								+ '</div>'
-								+ '</div>'
-								+ '</div>';
-						$("#col_md5").append(trs)
+						var indexs = startNum + i
+						// 获取 接口参数的数据
+						 var trs = '<option id="">'
+						 + result.data[i].fldCodeName
+						 + '</option>';		
+						var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+						for (var j = 0; j < dataTableList.length; j++) {
+							var inputArr = $(dataTableList[j]).find("select");
+							//$(inputArr).empty();
+							$(inputArr).append(trs);				
+						}
 					}
 					form.render();
 				},
@@ -548,6 +560,41 @@ $(function() {
 				}
 			})
 		})
+		
+		$("#paramMapping_sureBtn").click(function() {
+			var triUid ="";
+			$('input[name="tri_check"]:checked').each(function(){ 
+				triUid =$(this).val(); 
+			  }); 
+			var data = $("select[name=table_sel]").val();
+			var formId = data.substring(0,data.indexOf('|')); // 表单ID
+			var intUid = data.substring(data.indexOf('i')); // 参数ID
+			var arr = new Array();
+			var dataList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+			for (var i = 0; i < dataList.length; i++) {
+				var inputArr = $(dataList[i]).find("input");
+				var info = {triUid : triUid,
+						intUid : intUid,
+						dynUid : formId,
+						paraName : $(inputArr[0]).val(),
+						fldCodeName : $(dataList[i]).find("option:selected").val()};
+				arr.push(info);
+			}
+			$.ajax({
+				url : common.getPath() + '/dhTriggerInterface/insertBatch',
+				type : 'post',
+				dataType : 'json',
+				contentType: "application/json",
+				data :JSON.stringify(arr),
+				success : function (result){
+					layer.alert('添加成功')
+				},
+				error : function (result){
+					layer.alert('添加出错')
+				}
+			})
+		});
+		
 	});
 
 	// “取消”选择触发器

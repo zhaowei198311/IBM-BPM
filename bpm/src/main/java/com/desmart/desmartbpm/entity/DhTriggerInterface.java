@@ -13,6 +13,8 @@ import java.util.Date;
 */
 public class DhTriggerInterface {
 	
+	public static final String DH_TRIGGER_INTERFACE = "triggerInterface:";
+	
 	private String tinUid; // 主键
 	
 	private String triUid; // 触发器ID
@@ -24,6 +26,12 @@ public class DhTriggerInterface {
 	private String creator; // 创建人
 	
 	private Date createTime; // 创建时间
+	
+	private String stepUid; // 步骤ID
+	
+	private String paraName; // 接口参数
+	
+	private String fldCodeName; // 字段编码
 
 	/**
 	 * @return the tinUid
@@ -108,6 +116,48 @@ public class DhTriggerInterface {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+
+	/**
+	 * @return the stepUid
+	 */
+	public String getStepUid() {
+		return stepUid;
+	}
+
+	/**
+	 * @param stepUid the stepUid to set
+	 */
+	public void setStepUid(String stepUid) {
+		this.stepUid = stepUid;
+	}
+
+	/**
+	 * @return the paraName
+	 */
+	public String getParaName() {
+		return paraName;
+	}
+
+	/**
+	 * @param paraName the paraName to set
+	 */
+	public void setParaName(String paraName) {
+		this.paraName = paraName;
+	}
+
+	/**
+	 * @return the fldCodeName
+	 */
+	public String getFldCodeName() {
+		return fldCodeName;
+	}
+
+	/**
+	 * @param fldCodeName the fldCodeName to set
+	 */
+	public void setFldCodeName(String fldCodeName) {
+		this.fldCodeName = fldCodeName;
+	}
 	
 	public DhTriggerInterface() {
 		
@@ -120,9 +170,12 @@ public class DhTriggerInterface {
 	 * @param dynUid
 	 * @param creator
 	 * @param createTime
+	 * @param stepUid
+	 * @param paraName
+	 * @param fldCodeName
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime) {
+			Date createTime, String stepUid, String paraName, String fldCodeName) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -130,5 +183,9 @@ public class DhTriggerInterface {
 		this.dynUid = dynUid;
 		this.creator = creator;
 		this.createTime = createTime;
+		this.stepUid = stepUid;
+		this.paraName = paraName;
+		this.fldCodeName = fldCodeName;
 	}
-}
+	
+}	

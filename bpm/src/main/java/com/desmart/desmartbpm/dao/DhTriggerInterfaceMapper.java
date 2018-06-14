@@ -5,8 +5,10 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
 
 /**  
@@ -51,4 +53,9 @@ public interface DhTriggerInterfaceMapper {
 	 * @return
 	 */
 	int updateByPrimaryKey(String tinUid);
+	
+	/**
+	 * 批量插入
+	 */
+	int insertBatch(@Param("tinList")List<DhTriggerInterface> tinList);
 }
