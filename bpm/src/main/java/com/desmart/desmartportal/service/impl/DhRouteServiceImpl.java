@@ -1050,8 +1050,10 @@ public class DhRouteServiceImpl implements DhRouteService {
         // 查找指定任务编号和任务类型的任务
         int taskId = currTask.getTaskId(); // 任务编号
         DhTaskInstance selective = new DhTaskInstance();
-        selective.setTaskId(taskId);
+        selective.setInsUid(currTask.getInsUid());
         selective.setTaskType(taskType);
+        selective.setTaskActivityId(currTask.getTaskActivityId());
+        // 当前流程实例在这个环节的任务
         List<DhTaskInstance> matchedTasks = dhTaskInstanceMapper.selectAllTask(selective);
         if (taskType.equals(DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP)) {
             // 多实例会签任务
@@ -1076,8 +1078,8 @@ public class DhRouteServiceImpl implements DhRouteService {
                     count++;
                 }
             }
-            if (count >= list.size() - 1) {
-                // 如果其他人都完成了简单循环会签任务
+            if (count == list.size()) {
+                // 如果都完成了简单循环会签任务
                 return true;
             } else {
                 return false;

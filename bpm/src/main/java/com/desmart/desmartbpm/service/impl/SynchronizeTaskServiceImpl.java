@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +84,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     /**
      * 从引擎同步任务
      */
-    //@Scheduled(cron = "5/15 * * * * ?")
+    @Scheduled(cron = "5/15 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasks();

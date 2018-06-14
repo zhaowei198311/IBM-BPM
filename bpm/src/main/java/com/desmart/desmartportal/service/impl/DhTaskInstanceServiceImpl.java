@@ -301,7 +301,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	/* 
-	 *
+	 * 完成任务
 	 */
 	@Override
 	@Transactional
@@ -416,9 +416,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if (!willTokenMove) {
             // 如果token不移动，调用完成任务的RESTful API
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, new CommonBusinessObject(insId));
-            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-            if (errorMap.get("errorResult") == null) {
+            HttpReturnStatus completeTaskResult = bpmTaskUtil.completeTask(taskId);
+            if (!HttpReturnStatusUtil.isErrorResult(completeTaskResult)) {
                 return ServerResponse.createBySuccess();
             } else {
                 throw new PlatformException("调用RESTful API完成任务失败");
@@ -467,6 +466,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
         DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
         if ( nextStep == null) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("currProcessInstance", currProcessInstance);
+			map.put("currTaskInstance", currTask);
+			map.put("dhStep", formStepOfTaskNode);
+			map.put("pubBo", pubBo);
+			map.put("routingData", routingData);
+			String paramStr = JSON.toJSONString(map);
+
+
+
             // 没有后续步骤
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
@@ -491,7 +500,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("pubBo", pubBo);
 			map.put("routingData", routingData);
             String paramStr = JSON.toJSONString(map);
-            boolean result = mqProducerService.sendMessage("triggerAfterForm", paramStr);
+            boolean result = mqProducerService.sendMessage("stepQueue", paramStr);
             return ServerResponse.createBySuccess();
         }
     }
