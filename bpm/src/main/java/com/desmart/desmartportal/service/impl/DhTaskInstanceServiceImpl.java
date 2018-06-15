@@ -327,7 +327,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		// 校验任务类型
         String taskType = currTask.getTaskType();
-		if (!(DhTaskInstance.TYPE_SIMPLE_LOOP.equals(taskType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equals(taskType)
+		if (!(DhTaskInstance.TYPE_SIMPLE_LOOP.equals(taskType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equalsIgnoreCase(taskType)
                 || DhTaskInstance.TYPE_NORMAL.equals(taskType))) {
             return ServerResponse.createByErrorMessage("任务类型异常");
         }
@@ -409,7 +409,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // 任务完成后 保存到流转信息表里面
         dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, routingData, willTokenMove);
 
-        // === 以上已经处理完 token不移动的数据库操作情况
+        // ========================== 以上已经处理完 token不移动的数据库操作情况
 
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 

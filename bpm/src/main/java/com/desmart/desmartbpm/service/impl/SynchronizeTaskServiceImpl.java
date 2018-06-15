@@ -216,8 +216,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             return null;
         }
 
-
-
         // 创建出 DhTaskInstance
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
