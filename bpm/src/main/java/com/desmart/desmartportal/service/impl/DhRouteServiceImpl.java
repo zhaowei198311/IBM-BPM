@@ -119,7 +119,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 		formJson = FormDataUtil.formDataCombine(newObj, oldObj);
 		List<BpmActivityMeta> activityMetaList = getNextActivitiesForRoutingBar(bpmActivityMeta, formJson);
 		// 环节配置获取
+		int num = 0;//用于判断到最后一个环节
 		for (BpmActivityMeta activityMeta : activityMetaList) {
+			num++;
 			DhActivityConf dhActivityConf = activityMeta.getDhActivityConf();
 			String actcAssignType = dhActivityConf.getActcAssignType();
 			DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
@@ -128,7 +130,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 				return ServerResponse.createByErrorMessage("处理人类型不符合要求");
 			}
 			if (assignTypeEnum == DhActivityConfAssignType.NONE) {
+				if(num==activityMetaList.size()) {
 				return ServerResponse.createBySuccess(activityMetaList);
+				}else {
+					continue;
+				}
 			}
 			DhActivityAssign selective = new DhActivityAssign();
 			selective.setActivityId(activity_id);
