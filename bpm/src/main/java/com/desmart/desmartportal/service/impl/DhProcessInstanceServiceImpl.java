@@ -697,7 +697,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 		if (Const.Boolean.TRUE.equals(rejectboolean)) {
 			DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-			BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+			//BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 			// 获得流程实例引擎id
 			int insId = dhProcessInstance.getInsId();
 			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
@@ -756,9 +756,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				// 上个环节
 				Map<String, Object> toPreActivityMap = new HashMap<>();
 				ServerResponse<BpmActivityMeta> bpmActivityMeta2 = dhRouteService.getPreActivity(dhProcessInstance,
-						bpmActivityMeta);
-				toPreActivityMap.put("insInitUser", bpmActivityMeta2.getData().getUserUid());
-				toPreActivityMap.put("insInitUserName", bpmActivityMeta2.getData().getUserName());
+						currentbpmActivityMeta3);
+				toPreActivityMap.put("userId", bpmActivityMeta2.getData().getUserUid());
+				toPreActivityMap.put("userName", bpmActivityMeta2.getData().getUserName());
 				toPreActivityMap.put("insId", insId);
 				toPreActivityMap.put("activityBpdId", bpmActivityMeta2.getData().getActivityBpdId());
 				toPreActivityMap.put("activityName", bpmActivityMeta2.getData().getActivityName());
