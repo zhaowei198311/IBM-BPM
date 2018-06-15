@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.IBMApiUrl;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmTaskUtil;
@@ -50,7 +49,6 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.util.StopWatch;
 
 /**
  * <p>
@@ -404,7 +402,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 获得下个节点的路由信息
         BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
-        // 判断提交任务是否会移动token
+
+        // 判断Token是否移动
         boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask);
 
         // 任务完成后 保存到流转信息表里面
@@ -413,6 +412,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // === 以上已经处理完 token不移动的数据库操作情况
 
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+
         if (!willTokenMove) {
             // 如果token不移动，调用完成任务的RESTful API
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
@@ -437,11 +437,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if (!serverResponse.isSuccess()) {
             throw new PlatformException("装配处理人信息失败");
         }
-        // 如果有简单循环任务记录处理人信息
-        List<DhTaskHandler> taskHandlerList = dhRouteServiceImpl.getTaskHandlerOfSimpleLoopTask(insId, routeData);
-        if (taskHandlerList.size() > 0) {
-            dhRouteServiceImpl.updateDhTaskHandlerOfSimpleLoopTask(taskHandlerList);
-        }
+        // 如果有循环任务记录处理人信息
+        List<DhTaskHandler> taskHandlerList = dhRouteServiceImpl.saveTaskHandlerOfLoopTask(insId, routeData);
+
 
         // 装配无法选择处理人的子流程发起人信息
 		dhRouteServiceImpl.assembleInitUserOfSubProcess(currProcessInstance, pubBo, routingData);

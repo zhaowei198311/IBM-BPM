@@ -309,7 +309,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
+        // SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
 		// 查看当前用户有没有发起流程的权限
         if (!checkPermissionStart(startableDefinition)) {
             return ServerResponse.createByErrorMessage("您没有发起该流程的权限");
@@ -317,10 +317,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
         // 获得主流程开始节点
         BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
-
         // 获得开始节点往后的路由信息
         BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, mergedFromData);
-
         // 获得第一个人工节点
         BpmActivityMeta firstHumanActivity = routingDataOfMainStartNode.getNormalNodes().iterator().next();
 
@@ -355,11 +353,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			// 更新网关决策服务中间表数据
             dhRouteService.updateGatewayRouteResult(insId, routingData);
 
-			// 如果有简单循环任务记录处理人信息
-			List<DhTaskHandler> taskHandlerList = dhRouteService.getTaskHandlerOfSimpleLoopTask(insId, routeData);
-			if (taskHandlerList.size() > 0) {
-				dhRouteService.updateDhTaskHandlerOfSimpleLoopTask(taskHandlerList);
-			}
+			// 如果有循环任务记录处理人信息
+			List<DhTaskHandler> taskHandlerList = dhRouteService.saveTaskHandlerOfLoopTask(insId, routeData);
 
             // 更新草稿流程实例的状态
             DhProcessInstance instanceSelective = new DhProcessInstance();

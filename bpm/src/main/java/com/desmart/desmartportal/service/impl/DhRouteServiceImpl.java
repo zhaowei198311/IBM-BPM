@@ -475,15 +475,15 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-	public List<DhTaskHandler> getTaskHandlerOfSimpleLoopTask (int insId, JSONArray routeData) {
-	    List<DhTaskHandler> dhTaskHandlers = new ArrayList<>();
+	public List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData) {
+	    List<DhTaskHandler> taskHandlerList = new ArrayList<>();
         for (int i = 0; i < routeData.size(); i++) {
             JSONObject item = (JSONObject) routeData.get(i);
             String activityId = item.getString("activityId");
             String userUids = item.getString("userUid");
             String loopType = item.getString("loopType");
 
-            if (DhTaskInstance.TYPE_SIMPLE_LOOP.equals(loopType)) {
+            if (DhTaskInstance.TYPE_SIMPLE_LOOP.equals(loopType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equals(loopType)) {
                 List<String> userIdList = Arrays.asList(userUids.split(";"));
                 List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
                 if (userIdList.size() != userList.size()) {
@@ -496,11 +496,23 @@ public class DhRouteServiceImpl implements DhRouteService {
                     dhTaskHandler.setInsId(Long.valueOf(insId));
                     dhTaskHandler.setTaskActivityId(activityId);
                     dhTaskHandler.setStatus("on");
-                    dhTaskHandlers.add(dhTaskHandler);
+
+                    taskHandlerList.add(dhTaskHandler);
                 }
             }
         }
-        return dhTaskHandlers;
+		if (taskHandlerList.isEmpty()) {
+        	return taskHandlerList;
+		}
+		List<String> taskActivityIds = new ArrayList<>();
+		for (DhTaskHandler item : taskHandlerList) {
+			if (!taskActivityIds.contains(item.getTaskActivityId())) {
+				taskActivityIds.add(item.getTaskActivityId());
+			}
+		}
+		dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, taskActivityIds);
+		dhTaskHandlerMapper.insertBatch(taskHandlerList);
+        return taskHandlerList;
     }
 
 
@@ -1096,14 +1108,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 
     public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
 	    int insId = 0;
-	    List<String> taskActivityIds = new ArrayList<>();
+	    Set<String> taskActivityIds = new HashSet<>();
         for (DhTaskHandler item : list) {
             if (!taskActivityIds.contains(item.getTaskActivityId())) {
                 insId = item.getInsId().intValue();
                 taskActivityIds.add(item.getTaskActivityId());
             }
         }
-        dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, taskActivityIds);
+        dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, new ArrayList<>(taskActivityIds));
         return dhTaskHandlerMapper.insertBatch(list);
     }
 

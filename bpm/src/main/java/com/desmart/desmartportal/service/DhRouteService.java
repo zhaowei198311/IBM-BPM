@@ -135,7 +135,7 @@ public interface DhRouteService {
 	 * @param routeData  下个环节路由数据
 	 * @return
 	 */
-	List<DhTaskHandler> getTaskHandlerOfSimpleLoopTask (int insId, JSONArray routeData);
+	List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData);
 
 	/**
 	 * 更新流程实例下，简单循环任务的处理人信息
