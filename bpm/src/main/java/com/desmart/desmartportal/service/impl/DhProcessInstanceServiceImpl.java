@@ -429,7 +429,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 任务完成后 保存到流转信息表里面
 		dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
 
-
         // 完成第一个任务
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(globalConfig);

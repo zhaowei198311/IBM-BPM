@@ -7,9 +7,10 @@
         <result column="TASK_ACTIVITY_ID" jdbcType="VARCHAR" property="taskActivityId" />
         <result column="USER_UID" jdbcType="VARCHAR" property="userUid" />
         <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="create_time"  property="createTime" />
     </resultMap>
     <sql id="Base_Column_List">
-        HANDLE_UID, INS_ID, TASK_ACTIVITY_ID, USER_UID, STATUS
+        HANDLE_UID, INS_ID, TASK_ACTIVITY_ID, USER_UID, STATUS, create_time
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -31,9 +32,9 @@
     </delete>
     <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
         insert into DH_TASK_HANDLER (HANDLE_UID, INS_ID, TASK_ACTIVITY_ID,
-        USER_UID, STATUS)
+        USER_UID, STATUS, create_time)
         values (#{handleUid,jdbcType=VARCHAR}, #{insId,jdbcType=INTEGER}, #{taskActivityId,jdbcType=VARCHAR},
-        #{userUid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+        #{userUid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime})
     </insert>
     <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhTaskHandler">
         insert into DH_TASK_HANDLER
@@ -87,6 +88,9 @@
             <if test="status != null">
                 STATUS = #{status,jdbcType=VARCHAR},
             </if>
+            <if test="createTime != null">
+                create_time = #{createTime}
+            </if>
         </set>
         where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
     </update>
@@ -95,7 +99,8 @@
         set INS_ID = #{insId,jdbcType=INTEGER},
         TASK_ACTIVITY_ID = #{taskActivityId,jdbcType=VARCHAR},
         USER_UID = #{userUid,jdbcType=VARCHAR},
-        STATUS = #{status,jdbcType=VARCHAR}
+        STATUS = #{status,jdbcType=VARCHAR},
+        create_time = #{createTime}
         where HANDLE_UID = #{handleUid,jdbcType=VARCHAR}
     </update>
 
@@ -112,7 +117,8 @@
             #{item.insId},
             #{item.taskActivityId},
             #{item.userUid},
-            #{item.status}
+            #{item.status},
+            #{item.createTime}
             from dual
         </foreach>
     </insert>

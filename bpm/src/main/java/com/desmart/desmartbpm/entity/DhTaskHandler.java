@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
+import java.util.Date;
+
 /**
  * 为团队过滤服务提供依据
  *
@@ -14,6 +16,8 @@ public class DhTaskHandler {
     private String userUid;
 
     private String status;
+
+    private Date createTime;
     
     private String userName;//不在表内，处理人用户姓名
 
@@ -27,6 +31,14 @@ public class DhTaskHandler {
 
     public Long getInsId() {
         return insId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public void setInsId(Long insId) {

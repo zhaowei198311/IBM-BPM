@@ -15,8 +15,8 @@ public class DhTaskInstance {
 	public static final String TYPE_NORMAL = "normal";
 	/** 简单循环任务 */
     public static final String TYPE_SIMPLE_LOOP = "simpleLoop";
-    /** 多实例循环任务 */
-    public static final String TYPE_MULT_IINSTANCE_LOOP = "multiInstanceLoop";
+    /** 多实例循环任务 跟随引擎中的描述M大写*/
+    public static final String TYPE_MULT_IINSTANCE_LOOP = "MultiInstanceLoop";
     /** 传阅任务 */
     public static final String TYPE_TRANSFER = "transfer";
     /** 普通加签任务，一人完成即可 */

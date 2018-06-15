@@ -464,16 +464,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
         DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
         if ( nextStep == null) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("currProcessInstance", currProcessInstance);
-			map.put("currTaskInstance", currTask);
-			map.put("dhStep", formStepOfTaskNode);
-			map.put("pubBo", pubBo);
-			map.put("routingData", routingData);
-			String paramStr = JSON.toJSONString(map);
-
-
-
             // 没有后续步骤
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
@@ -489,7 +479,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 throw new PlatformException("调用RESTful API完成任务失败");
             }
         } else {
-            // 有后续步骤
+            // 有后续步骤, MQ交互
             // 向队列发出消息
             Map<String, Object> map = new HashMap<>();
 			map.put("currProcessInstance", currProcessInstance);

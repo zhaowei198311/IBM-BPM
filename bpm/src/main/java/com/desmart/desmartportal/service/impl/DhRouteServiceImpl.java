@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.DateUtil;
 import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartportal.entity.*;
@@ -477,13 +478,17 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Override
 	public List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData) {
 	    List<DhTaskHandler> taskHandlerList = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.SECOND, -2);
+		Date nowDate = calendar.getTime(); // 记录的时间减去两秒
         for (int i = 0; i < routeData.size(); i++) {
             JSONObject item = (JSONObject) routeData.get(i);
             String activityId = item.getString("activityId");
             String userUids = item.getString("userUid");
             String loopType = item.getString("loopType");
 
-            if (DhTaskInstance.TYPE_SIMPLE_LOOP.equals(loopType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equals(loopType)) {
+            if (DhTaskInstance.TYPE_SIMPLE_LOOP.equalsIgnoreCase(loopType)
+                    || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equalsIgnoreCase(loopType)) {
                 List<String> userIdList = Arrays.asList(userUids.split(";"));
                 List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
                 if (userIdList.size() != userList.size()) {
@@ -496,7 +501,7 @@ public class DhRouteServiceImpl implements DhRouteService {
                     dhTaskHandler.setInsId(Long.valueOf(insId));
                     dhTaskHandler.setTaskActivityId(activityId);
                     dhTaskHandler.setStatus("on");
-
+					dhTaskHandler.setCreateTime(nowDate);
                     taskHandlerList.add(dhTaskHandler);
                 }
             }
@@ -1055,7 +1060,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	public boolean willFinishTaskMoveToken(DhTaskInstance currTask) {
-        // DhTaskInstance.TYPE_NORMAL;
         String taskType = currTask.getTaskType();
         if (taskType.endsWith("Add") || taskType.equals(DhTaskInstance.TYPE_TRANSFER)) {
             // 加签的会签任务, 传阅任务
@@ -1072,38 +1076,32 @@ public class DhRouteServiceImpl implements DhRouteService {
         selective.setTaskType(taskType);
         selective.setTaskActivityId(currTask.getTaskActivityId());
         // 当前流程实例在这个环节的任务
+        DhProcessInstance processInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
         List<DhTaskInstance> matchedTasks = dhTaskInstanceMapper.selectAllTask(selective);
-        if (taskType.equals(DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP)) {
-            // 多实例会签任务
-            boolean allTaskFinished = true;
-            for (Iterator<DhTaskInstance> it = matchedTasks.iterator(); it.hasNext();) {
-                DhTaskInstance task = it.next();
-                if (!task.getTaskUid().equals(currTask.getTaskUid()) && !DhTaskInstance.STATUS_CLOSED.equals(task.getTaskStatus())) {
-                    // 如果有其他同编号的多实例会签任务没有完成，就返回false
-                    return false;
-                }
-            }
-        } else if (taskType.equals(DhTaskInstance.TYPE_SIMPLE_LOOP)) {
-            // 简单循环会签任务
-            // 查询出简单循环任务
-            DhProcessInstance processInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
-            // 查询出这个简单循环会签有几个人
-            List<DhTaskHandler> list = dhTaskHandlerMapper.listByInsIdAndTaskActivityId(processInstance.getInsId(), currTask.getTaskActivityId());
-            int count = 0;
-            for (Iterator<DhTaskInstance> it = matchedTasks.iterator(); it.hasNext();) {
-                DhTaskInstance task = it.next();
-                if (DhTaskInstance.STATUS_CLOSED.equals(task.getTaskStatus())) {
-                    count++;
-                }
-            }
-            if (count == list.size()) {
-                // 如果都完成了简单循环会签任务
-                return true;
-            } else {
-                return false;
+        List<DhTaskHandler> handlerList = dhTaskHandlerMapper.listByInsIdAndTaskActivityId(processInstance.getInsId(), currTask.getTaskActivityId());
+        Date handlerRecordCteateTime = handlerList.get(0).getCreateTime(); // DhTaskHandler表的数据保存时间
+        // 过滤掉在记录时间之前的任务
+        Iterator<DhTaskInstance> it = matchedTasks.iterator();
+        while (it.hasNext()) {
+            DhTaskInstance taskInstance = it.next();
+            if (taskInstance.getTaskInitDate().getTime() < handlerRecordCteateTime.getTime()) {
+                it.remove();
             }
         }
-        return false;
+
+        int count = 0;
+        for (DhTaskInstance task : matchedTasks) {
+            if (DhTaskInstance.STATUS_CLOSED.equals(task.getTaskStatus())) {
+                count++;
+            }
+        }
+        if (count == handlerList.size()) {
+            // 如果都完成了简单循环会签任务
+            return true;
+        } else {
+            return false;
+        }
+
 	}
 
     public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
