@@ -1,10 +1,13 @@
 package com.desmart.desmartsystem.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartsystem.dao.SysDepartmentMapper;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
@@ -71,5 +74,30 @@ public class SysDepartmentServiceImpl   implements SysDepartmentService {
 		// TODO Auto-generated method stub
 		return sysDepartmentDao.selectTree(entity);
 	}
+
+	@Override
+	public ServerResponse queryDepartByNoAndName(SysDepartment sysDepartment) {
+		SysDepartment depart = sysDepartmentDao.queryDepartByNoAndName(sysDepartment);
+		if(null == depart) {
+			throw new PlatformException("未找到指定的部门对象");
+		}
+		return ServerResponse.createBySuccess(depart);
+	}
+
+	@Override
+	public ServerResponse<List<SysDepartment>> queryDepartParentsByDepartId(String departUid) {
+		List<SysDepartment> parentDepartList = new ArrayList<>();
+		parentDepartList = recurrenceQueryParentDeparts(departUid,parentDepartList);
+		return ServerResponse.createBySuccess(parentDepartList);
+	}
 	
+	private List<SysDepartment> recurrenceQueryParentDeparts(String departUid,List<SysDepartment> parentDepartList){
+		SysDepartment parentDepart = sysDepartmentDao.queryParentDepartByDepartId(departUid);
+		if(null == parentDepart) {
+			return parentDepartList;
+		}else {
+			parentDepartList.add(parentDepart);
+			return recurrenceQueryParentDeparts(parentDepart.getDepartUid(),parentDepartList);
+		}
+	}
 }

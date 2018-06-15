@@ -460,7 +460,7 @@
 										<div class="preview">数据表格</div>
 										<div class="view">
 											<div class="subDiv">
-												<table class="table table-bordered">
+												<table class="table table-bordered" table-label="数据表格">
 													<thead>
 														<tr>
 															<th col-type="text">1</th>
@@ -497,6 +497,35 @@
 														<input type="text" id="person_hide_view" title="choose_user" class="layui-input" style="float:left" readonly>
 														<input type="hidden" id="person_hide" />
 														<span class="glyphicon glyphicon-user" id="choose_user_btn" style="position:relative;left:2%;font-size:25px;"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- 选择部门 -->
+									<div class="box box-element ui-draggable">
+										<a href="#close" class="remove label label-important">
+											<i class="icon-remove icon-white"></i>删除
+										</a>
+										<span class="drag label">
+											<i class="icon-move"></i>拖动
+										</span>
+										<span class="configuration">
+											<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showChooseDepartModal(this);" role="button"
+											    data-toggle="modal">编辑
+											</button>
+										</span>
+										<div class="preview">选择部门</div>
+										<div class="view">
+											<div class="form-group">
+												<div class="labelDiv" col="1">
+													<label>选择部门</label>
+												</div>
+												<div class="subDiv">
+													<div title="choose_depart" col="1">
+														<input type="text" id="depart_hide_view" title="choose_depart" class="layui-input" style="float:left" readonly>
+														<input type="hidden" id="depart_hide" />
+														<span class="glyphicon glyphicon-tree-conifer" id="choose_depart_btn" style="position:relative;left:2%;font-size:25px;"></span>
 													</div>
 												</div>
 											</div>
@@ -1643,6 +1672,15 @@
 					<form>
 						<div class="form-group">
 							<label class="col-xs-2 col-sm-offset-2 control-label">
+								标签
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="data-table-label" placeholder="请输入组件name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
 								ID
 								<span style="color:red;float:left;">*</span>
 							</label>
@@ -1670,21 +1708,26 @@
 						</div>
 						<div class="form-group col-xs-12 data-table-set">
 							<label class="col-xs-2 col-sm-offset-2 control-label">
-								表格列头
+								列头文本
 								<span style="color:red;float:left;">*</span>
 							</label>
 							<div class="col-xs-1">
 								<input type="text" class="col-xs-12 col data-table-head" placeholder="列头" style="width:70px;">
 							</div>
 							<label class="col-xs-1 col-sm-offset-1 control-label">
+								列头name
+							</label>
+							<div class="col-xs-1">
+								<input type="text" class="col-xs-12 col data-table-head-name" placeholder="列头" style="width:70px;">
+							</div>
+							<label class="col-xs-1 col-sm-offset-1 control-label">
 								列组件类型
 							</label>
-							<div class="col-xs-4">
-								<select class="data-table-type col-xs-6">
+							<div class="col-xs-2">
+								<select class="data-table-type col-xs-12">
 									<option value="text" selected>文本框</option>
 									<option value="number">数字框</option>
 									<option value="date">日期文本框</option>
-									<!-- <option value="select">下拉列表</option> -->
 								</select>
 							</div>
 						</div>
@@ -1862,6 +1905,85 @@
 				</div>
 			</div>
 
+			<!-- 设置选择部门组件的属性 -->
+			<div class="modal hide fade" role="dialog" id="chooesDepartModal">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>设置选择部门组件的属性</h3>
+				</div>
+				<div class="modal-body">
+					<div id="choose-depart-warn" class="hide alert alert-warning">
+						<strong>警告！</strong>必须填写标
+						<span style="color:red;">*</span>的属性。
+					</div>
+
+					<form>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="choose-depart-label" value="text" placeholder="请输入组件标签">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								ID
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="choose-depart-id" placeholder="请输入组件ID" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								name
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="choose-depart-name" placeholder="请输入组件name">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								标签占列宽
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											请填写标签占列宽(1~12的整数)</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control col" id="choose-depart-label-width" placeholder="请输入标签占列宽">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								组件占列宽
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											请填写组件占列宽(1~12的整数)</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control col" id="choose-depart-width" placeholder="请输入组件占列宽">
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<a id="save-choose-depart-content" class="btn btn-primary">保存</a>
+					<a class="btn btn-primary" data-dismiss="modal" onclick='$("#choose-depart-warn").modal("hide");'>取消</a>
+				</div>
+			</div>
+			
 			<!-- 添加组件事件的方法 -->
 			<div class="modal hide fade" role="dialog" id="textAddEventModal">
 				<div class="modal-header">

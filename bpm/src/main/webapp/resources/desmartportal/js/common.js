@@ -134,6 +134,26 @@ var common = {
             }
         }); 
     },
+    //选择部门的路径
+    chooseDepartPath:function(id) {
+    	return common.getPath() + "/sysDepartment/chooseDepartment?elementId=" + id ; 
+    },
+    chooseDepart:function(elementId){
+    	layer.open({
+            type: 2,
+            title: '选择部门',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['400px', '550px'],
+            content: common.chooseDepartPath(elementId),
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#close').on('click', function () {
+    	            layer.close(lockIndex);
+    	        });
+            }
+        }); 
+    },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
@@ -180,6 +200,7 @@ var common = {
 	getDesignFormData:function(){
 		var inputArr = $("#formSet .form-sub input");
 		var textareaArr = $("#formSet .form-sub textarea");
+		var tableArr = $("#formSet .data-table");
 		var control = true; //用于控制复选框出现重复值
 		var checkName = ""; //用于获得复选框的class值，分辨多个复选框
 		var json = "{";
@@ -194,6 +215,9 @@ var common = {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");
 						if(name==null || name==""){
+							break;
+						}
+						if($("[name='" + name + "']").val()==null || $("[name='" + name + "']").val()==""){
 							break;
 						}
 						var value = $("[name='" + name + "']")
@@ -225,6 +249,17 @@ var common = {
 									.val().trim();
 						textJson = "\"" + name + "\":{\"value\":\""
 							+ dicDataCode + "\",\"description\":\"" + dicDataName + "\",\"dicDataUid\":\""+dicDataUid+"\"}";
+						break;
+					}else if($(inputArr[i]).attr("title")=="choose_depart"){
+						var name = $(inputArr[i]).attr("name");
+						if(name==null || name==""){
+							break;
+						}
+						var departName = $(inputArr[i]).val().trim();
+						var departNo = $(inputArr[i]).parent().find("input[type='hidden']")
+									.val().trim();
+						textJson = "\"" + name + "\":{\"value\":\""
+							+ departNo + "\",\"description\":\"" + departName +"\"}";
 						break;
 					}
 				}
@@ -319,6 +354,37 @@ var common = {
 				json += textJson;
 			}
 		}
+		
+		for(var i=0;i<tableArr.length;i++){
+			var tableObj = $(tableArr[i]);
+			var tableName = tableObj.attr("name");
+			var trArr = tableObj.find("tbody tr");
+			var tableJson = "\""+tableName+"\":{\"value\":[";
+			trArr.each(function(trIndex){
+				var trObj = $(this);
+				var tdArr = trObj.find("td");
+				tableJson += "{";
+				tdArr.each(function(tdIndex){
+					if(tdIndex!=tdArr.length-1){
+						var tdName = $(this).data("label");
+						if(tdName!="" && tdName!=null){
+							var tdValue = $(this).find("input").val();
+							tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+							if(tdIndex!=tdArr.length-2){
+								tableJson += ","
+							}
+						}
+					}
+				});
+				tableJson += "}";
+				if(trIndex!=trArr.length-1){
+					tableJson += ",";
+				}
+			});
+			tableJson += "]}";
+			json += tableJson;
+		}
+		
 		//获得最后一位字符是否为","
 		var charStr = json.substring(json.length - 1,
 			json.length);
@@ -336,6 +402,24 @@ var common = {
 		var json = JSON.parse(jsonStr)
 		for(var name in json){
 			var paramObj = json[name];
+			/*var type = paramObj.type;
+			if(type=="table"){
+				var valueArr = paramObj.value;
+				var trObj = $("[name='"+name+"']").find("tbody tr").html();
+				$("[name='"+name+"']").find("tbody").html("");
+				for(var i=0;i<valueArr.length;i++){
+					console.log(name);
+					$("[name='"+name+"']").find("tbody").append("<tr>"+trObj+"</tr>");
+					var valueObj = valueArr[i];
+					var tdArr = $("[name='"+name+"']").find("tbody tr:eq("+i+")").find("td");
+					tdArr.each(function(index){
+						if(index!=tdArr.length-1){
+							var key = $(this).data("label");
+							$(this).find("input").val(valueObj[key]);
+						}
+					});
+				}
+			}*/
 			var tagName = $("[name='"+name+"']").prop("tagName");
 			switch(tagName){
 				case "INPUT":{
@@ -353,8 +437,14 @@ var common = {
 								var description = paramObj["description"];
 								var id = paramObj["id"];
 								$("[name='"+name+"']").val(description);
-								$("[name='"+name+"']").parent().find("input[type='value_id']").val(value);
-								$("[name='"+name+"']").parent().find("input[type='value_code']").val(id);
+								$("[name='"+name+"']").parent().find("input[class='value_id']").val(value);
+								$("[name='"+name+"']").parent().find("input[class='value_code']").val(id);
+								break;
+							}else if($("[name='"+name+"']").attr("title")=="choose_depart"){
+								var value = paramObj["value"];
+								var description = paramObj["description"];
+								$("[name='"+name+"']").val(description);
+								$("[name='"+name+"']").parent().find("input[type='hidden']").val(value);
 								break;
 							}
 						};
@@ -473,7 +563,9 @@ var common = {
 		}
 		if(tagName=="SELECT"){
 			$("[name='"+name+"']").attr("disabled","true");
-			$("[name='"+name+"']").next().find("input");
+			$("[name='"+name+"']").next().find("input").attr("disabled","true");
+			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");
+			$("[name='"+name+"']").next().find(".layui-edge").css("display","none");
 		}
 		if($("[name='"+name+"']").attr("title")=="choose_user" 
 			|| $("[name='"+name+"']").attr("title")=="choose_value"){

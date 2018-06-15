@@ -240,4 +240,72 @@
 		    UPDATE_DATE FROM SYS_DEPARTMENT
 		    WHERE DEPART_NO = #{departNo}
 	  </select>
+	  
+	  <select id="queryDepartByNoAndName" parameterType="com.desmart.desmartsystem.entity.SysDepartment"
+	  	 resultType="com.desmart.desmartsystem.entity.SysDepartment">
+	  		select 
+			DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE FROM SYS_DEPARTMENT
+		    where 1=1
+		    <if test="departNo!=null and !departNo.trim().isEmpty()">
+		    	and DEPART_NO = #{departNo}
+		    </if>
+		    <if test="departName!=null and !departName.trim().isEmpty()">
+		    	and DEPART_NAME = #{departName}
+		    </if>
+	  </select>
+	  
+	  <select id="queryParentDepartByDepartId" parameterType="String" resultType="com.desmart.desmartsystem.entity.SysDepartment">
+	  		select
+	  		DEPART_UID,
+		    DEPART_PARENT,
+		    DISPLAY_NAME,
+		    DEPART_NAME,
+		    ORDER_INDEX,
+		    DEPART_DESC,
+		    DEPART_NO,
+		    DEPART_LAYER,
+		    DEPART_ADMINS,
+		    DEPART_ZONE,
+		    COMPANY_UID,
+		    EXT2,
+		    WORK_CALENDAR,
+		    EXT3,
+		    EXT4,
+		    EXT5,
+		    DEPART_TYPE,
+		    IS_CLOSED,
+		    CLOSE_DATE,
+		    BEGIN_DATE,
+		    END_DATE,
+		    CREATE_DATE,
+		    UPDATE_DATE FROM SYS_DEPARTMENT
+		    where depart_uid = (
+		    	select 
+			    DEPART_PARENT
+			    FROM SYS_DEPARTMENT
+			   	where depart_uid = #{departUid}
+			)
+	  </select>
 </mapper>

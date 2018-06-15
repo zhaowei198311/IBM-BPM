@@ -523,7 +523,7 @@
 					 }
 				 });
 				var treeObj = $.fn.zTree.getZTreeObj("category_tree");
-				var parentNode = treeObj.getNodeByParam("id", proUid)
+				var parentNode = treeObj.getNodeByParam("id", proUid);
 				var node = treeObj.getNodeByParam("id", proVersion, parentNode);
 				treeObj.selectNode(node,true);
 				pageConfig.proCategoryUid = "";
@@ -897,7 +897,7 @@
 						data:{"formUids":checkedFormUid},
 						traditional: true,//传递数组给后台
 						success:function(result){
-							if(result.status==0){//未绑定
+							//if(result.status==0){//未绑定
 								$.ajax({
 									url:common.getPath()+"/formManage/deleteForm",
 									method:"post",
@@ -917,9 +917,9 @@
 										}
 									}
 								});// end delete
-							}else{
+							/* }else{
 								layer.alert("该表单已被步骤绑定");
-							}
+							} */
 						}
 					});//end ajax
 				});//end layer.confirm

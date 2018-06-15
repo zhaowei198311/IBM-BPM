@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
@@ -31,6 +33,33 @@ public class SysDepartmentController {
 	private SysDepartmentService sysDepartmentService;
 	@Autowired
 	private SysUserDepartmentService sysUserDepartmentService;
+	
+	@RequestMapping(value="/chooseDepartment")
+	public ModelAndView chooseDepartment(String elementId) {
+		ModelAndView mv = new ModelAndView("desmartsystem/usermanagement/chooseDepartment");
+		mv.addObject("elementId",elementId);
+		return mv;
+	}
+	
+	@RequestMapping(value = "/queryDepartByNoAndName")
+	@ResponseBody
+	public ServerResponse queryDepartByNoAndName(SysDepartment sysDepartment) {
+		try {
+			return sysDepartmentService.queryDepartByNoAndName(sysDepartment);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
+	@RequestMapping(value = "/queryDepartParentsByDepartId")
+	@ResponseBody
+	public ServerResponse queryDepartParentsByDepartId(String departUid) {
+		try {
+			return sysDepartmentService.queryDepartParentsByDepartId(departUid);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 	
 	@RequestMapping(value="/allSysDepartment")
 	@ResponseBody
@@ -55,6 +84,7 @@ public class SysDepartmentController {
 	@RequestMapping(value="/treeDisplay")
 	@ResponseBody
 	public List<TreeNode> treeDisplay(TreeNode treeNode){
+		System.out.println(treeNode);
 		return sysDepartmentService.selectTree(treeNode); 
 	}
 	

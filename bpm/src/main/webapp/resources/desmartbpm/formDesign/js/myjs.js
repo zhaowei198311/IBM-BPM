@@ -524,19 +524,27 @@ function showDataTableModal(obj) {
     var name = tableObj.attr("name");
     var thObjArr = tableObj.find("thead th");
     var thNum = thObjArr.length;
-
+    var tableLabel = tableObj.attr("table-label");
     $("#dataTableModal .data-table-set").remove();
     for (var i = 0; i < thObjArr.length; i++) {
         var thObj = $(thObjArr[i]);
         var thText = thObj.text();
+        var thName = thObj.attr("name");
         var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
-            '<label class="col-xs-2 col-sm-offset-2 control-label">' +
+            '<label class="col-xs-2 col-sm-offset-1 control-label">' +
             '表格列头<span style="color:red;float:left;">*</span>' +
             '</label>' +
             '<div class="col-xs-1">' +
             '<input type="text" class="col-xs-12 col data-table-head"' +
-            'placeholder="列头" style="width:70px;" value="' + thText + '">' +
+            ' style="width:70px;" value="' + thText + '">' +
             '</div>' +
+            '<label class="col-xs-1 col-sm-offset-1 control-label">' +
+			'列头name' +
+			'</label>' +
+			'<div class="col-xs-1">' +
+			'<input type="text" class="col-xs-12 col data-table-head-name"'+
+			' style="width:70px;" value="' + thName + '">' +
+			'</div>' +
             '<label class="col-xs-1 col-sm-offset-1 control-label">' +
             '列组件类型' +
             '</label>' +
@@ -548,32 +556,21 @@ function showDataTableModal(obj) {
                 {
                     thSetHtml += '<option value="text" selected>文本框</option>' +
                     '<option value="number">数字框</option>' +
-                    '<option value="date">日期文本框</option>' +
-                    '<option value="select">下拉列表</option>';
+                    '<option value="date">日期文本框</option>';
                     break;
                 }
             case "number":
                 {
                     thSetHtml += '<option value="text">文本框</option>' +
                     '<option value="number" selected>数字框</option>' +
-                    '<option value="date">日期文本框</option>' +
-                    '<option value="select">下拉列表</option>';
+                    '<option value="date">日期文本框</option>';
                     break;
                 }
             case "date":
                 {
                     thSetHtml += '<option value="text">文本框</option>' +
                     '<option value="number">数字框</option>' +
-                    '<option value="date" selected>日期文本框</option>' +
-                    '<option value="select">下拉列表</option>';
-                    break;
-                }
-            case "select":
-                {
-                    thSetHtml += '<option value="text">文本框</option>' +
-                    '<option value="number">数字框</option>' +
-                    '<option value="date">日期文本框</option>' +
-                    '<option value="select" selected>下拉列表</option>';
+                    '<option value="date" selected>日期文本框</option>' ;
                     break;
                 }
         }
@@ -591,8 +588,14 @@ function showDataTableModal(obj) {
                 '</label>' +
                 '<div class="col-xs-1">' +
                 '<input type="text" class="col-xs-12 col data-table-head"' +
-                'placeholder="列头" style="width:70px;">' +
+                ' style="width:70px;">' +
                 '</div>' +
+                '<label class="col-xs-1 col-sm-offset-1 control-label">' +
+    			'列头name' +
+    			'</label>' +
+    			'<div class="col-xs-1">' +
+    			'<input type="text" class="col-xs-12 col data-table-head-name" style="width:70px;">' +
+    			'</div>' +
                 '<label class="col-xs-1 col-sm-offset-1 control-label">' +
                 '列组件类型' +
                 '</label>' +
@@ -601,7 +604,6 @@ function showDataTableModal(obj) {
                 '<option value="text">文本框</option>' +
                 '<option value="number">数字框</option>' +
                 '<option value="date">日期文本框</option>' +
-                '<option value="select">下拉列表</option>' +
                 '</select></div></div>';
             $("#dataTableModal form").append(thSetHtml);
         } //end for
@@ -616,6 +618,7 @@ function showDataTableModal(obj) {
     $("#data-table-id").val(id);
     $("#data-table-name").val(name);
     $("#data-table-number").val(thNum);
+    $("#data-table-label").val(tableLabel);
 }
 
 //根据数据字典id获得数据字典名称
@@ -658,6 +661,31 @@ function showChooseUserModal(obj){
     $("#choose-user-id").val(id);
     $("#choose-user-width").val(textCol);
     $("#choose-user-label-width").val(textLabelCol);
+}
+
+//选部门组件
+function showChooseDepartModal(obj){
+	$("#chooesDepartModal").modal("show");
+	
+    view = $(obj).parent().next().next();
+    var label = view.find("label").text();
+    var subObj = view.find("div[title='choose_depart']");
+    var id = subObj.attr("id");
+    var name = subObj.attr("name");
+    var textWidth = subObj.width();
+    var textLabelWidth = view.find(".labelDiv").width();
+    oldName = name;
+    var rowWidth = $(".demo").width() - 5;
+    var colWidth = rowWidth / 12;
+
+    var textCol = subObj.attr("col");
+    var textLabelCol = view.find(".labelDiv").attr("col");
+    $("#choose-depart-label").val(label);
+    $("#choose-depart-name").val(name);
+    $("#choose-depart-name").onlyNumAlpha(); //只能输入英文
+    $("#choose-depart-id").val(id);
+    $("#choose-depart-width").val(textCol);
+    $("#choose-depart-label-width").val(textLabelCol);
 }
 
 //弹框选值
@@ -1438,21 +1466,36 @@ $(function () {
             $("#data-table-warn").modal('show');
         } else {
             var tableObj = view.find("table");
+            var tableLabel = $("#data-table-label").val().trim();
             tableObj.attr({
                 "id": id,
-                "name": name
+                "name": name,
+                "table-label":tableLabel
             });
             var tableThArr = $(".data-table-head");
-            tableObj.find("th").remove();
-            for (var i = 0; i < tableThArr.length; i++) {
-                var tableThObj = $(tableThArr[i]);
-                var tableThType = $($(".data-table-type")[i]);
-                var thHtml = "<th col-type='" + tableThType.val() + "'>" + tableThObj.val() + "</th>";
-                tableObj.find("thead tr").append(thHtml);
-            }
+            var tableThNameArr = $(".data-table-head-name");
+            var flag = true;
+            tableThNameArr.each(function(){
+            	if(nameIsRepeat($(this).val().trim())){
+                	flag = false;
+                }
+            });
+            if(flag){
+            	tableObj.find("th").remove();
+                for (var i = 0; i < tableThArr.length; i++) {
+                    var tableThObj = $(tableThArr[i]);
+                    var tableThName = $(tableThNameArr[i]);
+                    var tableThType = $($(".data-table-type")[i]);
+                    var thHtml = "<th col-type='" + tableThType.val() + "' name='"+tableThName.val().trim()+"'>" + tableThObj.val() + "</th>";
+                    tableObj.find("thead tr").append(thHtml);
+                }
 
-            $("#data-table-warn").modal('hide');
-            $("#dataTableModal").modal("hide");
+                $("#data-table-warn").modal('hide');
+                $("#dataTableModal").modal("hide");
+            }else{
+            	$("#data-table-warn").html("<strong>警告！</strong>您输入的列头name重复，请重新输入");
+                $("#data-table-warn").modal('show');
+            }
         }
     });
     
@@ -1488,6 +1531,41 @@ $(function () {
             
             $("#choose-user-warn").modal('hide');
             $("#chooesUserModal").modal("hide");
+        }
+    });
+    
+    //保存选部门组件的属性编辑
+    $("#save-choose-depart-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#choose-depart-id").val();
+        var name = $("#choose-depart-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#choose-depart-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#choose-depart-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#choose-depart-warn").modal('show');
+        } else {
+            var label = $("#choose-depart-label").val();
+
+            var textWidth = $("#choose-depart-width").val() * colWidth;
+            var textLabelWidth = $("#choose-depart-label-width").val() * colWidth;
+
+            view.find("label").text(label);
+            var subObj = view.find("div[title='choose_depart']");
+            subObj.attr({
+                "id": id,
+                "name": name
+            });
+            subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":name});
+            subObj.find("input[type='hidden']").attr("id",id+"_hide");
+
+            view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#choose-depart-label-width").val());
+            subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-depart-width").val());
+            subObj.css("width", textWidth - 18).attr("col", $("#choose-depart-width").val());
+            subObj.find("input[type='text']").css("width", textWidth - 60);
+            
+            $("#choose-depart-warn").modal('hide');
+            $("#chooesDepartModal").modal("hide");
         }
     });
     
