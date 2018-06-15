@@ -20,4 +20,14 @@ public interface DhTriggerInterfaceService {
 	 * 批量插入
 	 */
 	ServerResponse insertBatch(List<DhTriggerInterface> tinList);
+	
+	/**
+	 * 关联查询 表单数据 和 映射数据
+	 */
+	ServerResponse <List<DhTriggerInterface>> selectByTriggerActivity (DhTriggerInterface dhTriggerInterface);
+	
+	/**
+	 * 修改参数映射
+	 */
+	
 }

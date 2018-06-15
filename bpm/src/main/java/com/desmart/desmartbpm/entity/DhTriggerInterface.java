@@ -32,6 +32,8 @@ public class DhTriggerInterface {
 	private String paraName; // 接口参数
 	
 	private String fldCodeName; // 字段编码
+	
+	private BpmForm bpmForm; // 表单实体类
 
 	/**
 	 * @return the tinUid
@@ -118,14 +120,14 @@ public class DhTriggerInterface {
 	}
 
 	/**
-	 * @return the stepUid
+	 * @return the actcUid
 	 */
 	public String getActcUid() {
 		return actcUid;
 	}
 
 	/**
-	 * @param stepUid the stepUid to set
+	 * @param actcUid the actcUid to set
 	 */
 	public void setActcUid(String actcUid) {
 		this.actcUid = actcUid;
@@ -158,6 +160,27 @@ public class DhTriggerInterface {
 	public void setFldCodeName(String fldCodeName) {
 		this.fldCodeName = fldCodeName;
 	}
+
+	/**
+	 * @return the bpmForm
+	 */
+	public BpmForm getBpmForm() {
+		return bpmForm;
+	}
+
+	/**
+	 * @param bpmForm the bpmForm to set
+	 */
+	public void setBpmForm(BpmForm bpmForm) {
+		this.bpmForm = bpmForm;
+	}
+
+	/**
+	 * @return the dhTriggerInterface
+	 */
+	public static String getDhTriggerInterface() {
+		return DH_TRIGGER_INTERFACE;
+	}
 	
 	public DhTriggerInterface() {
 		
@@ -170,12 +193,13 @@ public class DhTriggerInterface {
 	 * @param dynUid
 	 * @param creator
 	 * @param createTime
-	 * @param stepUid
+	 * @param actcUid
 	 * @param paraName
 	 * @param fldCodeName
+	 * @param bpmForm
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String actcUid, String paraName, String fldCodeName) {
+			Date createTime, String actcUid, String paraName, String fldCodeName, BpmForm bpmForm) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -186,6 +210,17 @@ public class DhTriggerInterface {
 		this.actcUid = actcUid;
 		this.paraName = paraName;
 		this.fldCodeName = fldCodeName;
+		this.bpmForm = bpmForm;
 	}
-	
-}	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DhTriggerInterface [tinUid=" + tinUid + ", triUid=" + triUid + ", intUid=" + intUid + ", dynUid="
+				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", actcUid=" + actcUid
+				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", bpmForm=" + bpmForm + "]";
+	}
+
+}

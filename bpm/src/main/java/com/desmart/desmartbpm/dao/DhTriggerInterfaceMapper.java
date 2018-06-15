@@ -27,6 +27,11 @@ public interface DhTriggerInterfaceMapper {
 	List<DhTriggerInterface> selectByCondition(DhTriggerInterface dhTriggerInterface);
 	
 	/**
+	 * 根据条件 连表查询表单表数据和 映射表数据
+	 */
+	List<DhTriggerInterface> selectByTriggerActivity(DhTriggerInterface dhTriggerInterface);
+	
+	/**
 	 * 根据主键查询
 	 * @param tinUid
 	 * @return

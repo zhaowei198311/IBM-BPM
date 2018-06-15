@@ -32,7 +32,6 @@ public class DhTriggerInterfaceController {
 	@Autowired
 	private DhTriggerInterfaceService dhTriggerInterfaceService;
 	
-	
 	@RequestMapping(value = "/insertBatch")
 	@ResponseBody
 	private ServerResponse insertBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
@@ -44,5 +43,11 @@ public class DhTriggerInterfaceController {
 		tinList.add(dhTriggerInterface);
 		}
 		return dhTriggerInterfaceService.insertBatch(tinList);
+	}
+	
+	@RequestMapping(value = "/selectTriggerAndForm")
+	@ResponseBody
+	private ServerResponse selectByTriggerAndForm(DhTriggerInterface dhTriggerInterface) {
+		return dhTriggerInterfaceService.selectByTriggerActivity(dhTriggerInterface);
 	}
 }

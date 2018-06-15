@@ -35,4 +35,12 @@ public class DhTriggerInterfaceServiceImpl implements DhTriggerInterfaceService 
 		return ServerResponse.createByError();
 	}
 
+	@Override
+	public ServerResponse<List<DhTriggerInterface>> selectByTriggerActivity(DhTriggerInterface dhTriggerInterface) {
+		if(dhTriggerInterface == null) {
+			return ServerResponse.createByErrorMessage("查询对象不能为空");
+		}
+		List<DhTriggerInterface> resultList = dhTriggerInterfaceMapper.selectByTriggerActivity(dhTriggerInterface);
+		return ServerResponse.createBySuccess(resultList);
+	}
 }
