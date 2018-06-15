@@ -29,10 +29,11 @@ public class ExecutionTreeUtil {
 		// 解析jsonObject
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
-		ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
+		//ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
 		// 第一次遍历children数组对象
 		HashMap<Object, Object> hashMap = new HashMap<>();
 		for (Iterator iterator = jsonArray.iterator(); iterator.hasNext();) {
+			ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
 			JSONObject object = (JSONObject) iterator.next();
 			if (null != object.get("createdTaskIDs")) {
 				// 此处比较createdTaskIDs数组中是否包含taskId
@@ -52,7 +53,7 @@ public class ExecutionTreeUtil {
 				map.put("flowObjectId", object.get("flowObjectId"));
 				preTokenIdList.add(map);
 				JSONArray jsonArray2 = object.getJSONArray("children");
-				HashMap utilMap = util(jsonArray2, taskId, preTokenIdList, flag);
+				HashMap<Object, Object> utilMap = util(jsonArray2, taskId, preTokenIdList, flag);
 				if (utilMap != null) {
 					return utilMap;
 				} /*else {
@@ -96,7 +97,7 @@ public class ExecutionTreeUtil {
 			currentNodeMap.put("flowObjectId", object.get("flowObjectId"));
 			preTokenIdList.add(currentNodeMap);
 			JSONArray jsonArray2 = object.getJSONArray("children");
-			//每深入一级，flag加1s
+			//每深入一级，flag加1
 			flag++;
 			if (null != jsonArray2) {
 				HashMap<Object, Object> util = util(jsonArray2, taskId, preTokenIdList, flag);
