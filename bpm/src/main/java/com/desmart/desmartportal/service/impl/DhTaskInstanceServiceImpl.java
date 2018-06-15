@@ -500,7 +500,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("pubBo", pubBo);
 			map.put("routingData", routingData);
             String paramStr = JSON.toJSONString(map);
-            boolean result = mqProducerService.sendMessage("stepQueue", paramStr);
+            boolean result = mqProducerService.sendMessage("stepQueueKey", paramStr);
             return ServerResponse.createBySuccess();
         }
     }
