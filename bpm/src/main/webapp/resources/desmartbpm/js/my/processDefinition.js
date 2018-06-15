@@ -483,9 +483,6 @@ function copyProcess(){
 			proVerUidNew : proVerUidNew,
 			proAppIdNew : proAppIdNew
 		},
-		beforeSend : function(){
-			layer.load(1);
-		},
 		success: function(data) {
 			if (data.status == 0) {
 				layer.alert("拷贝成功！");
@@ -494,11 +491,9 @@ function copyProcess(){
 				layer.alert("拷贝失败！");
 				console.log(data.msg);
 			}
-			layer.closeAll("loading");
 		},
 		error : function() {
 			layer.alert('拷贝失败');
-			layer.closeAll('loading');
 		}
 	})
 }
