@@ -964,6 +964,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         subInstance.setInsInitUser(creatorId);
         subInstance.setCompanyNumber(parentInstance.getCompanyNumber());
         subInstance.setDepartNo(parentInstance.getDepartNo());
+        subInstance.setInsBusinessKey(parentInstance.getInsBusinessKey());
         JSONObject insData = new JSONObject();
         insData.put("formData", new JSONObject());
         JSONObject processData = new JSONObject();
@@ -1059,6 +1060,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             // 获得子流程的tokenId
             String tokenId = ExecutionTreeUtil.queryCurrentNodeTokenId(processDataJson, startProcessNode.getActivityBpdId(),
                     firstUserTaskNode.getActivityBpdId());
+            // todo 如果tokenId找不到，不创建流程
+
 			// 找到子流程的上级流程
 			DhProcessInstance parentProcessInstance = null;
 			if ("0".equals(startProcessNode.getParentActivityId())) {

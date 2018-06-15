@@ -570,7 +570,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // todo 调用表单前的触发器
 
-	    DhStep formStep = dhStepService.getFirstFormStepOfStepList(steps);
+	    DhStep formStep = dhStepService.getFormStepOfStepList(steps);
 
         ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
         if (!getFormResponse.isSuccess()) {

@@ -62,7 +62,7 @@ public interface DhStepService {
     DhStep getNextStepOfCurrStep(DhStep dhStep);
     
     /**
-     * 根据step关键字，获得指定环节的步骤，按步骤序号正序排序
+     * 根据step关键字，获得指定环节的可用步骤，如果指定关键字没有可用步骤，返回默认关键字的可用步骤，按步骤序号正序排序
      * @param bpmActivityMeta
      * @param stepBusinessKey
      * @return
@@ -80,11 +80,11 @@ public interface DhStepService {
 	ServerResponse<List<DhStep>> getStepInfoByCondition(DhStep dhStep);
 
     /**
-     * 从步骤列表中找出第一个表单步骤
+     * 从步骤列表中的表单步骤
      * @param stepList
      * @return
      */
-    DhStep getFirstFormStepOfStepList(List<DhStep> stepList);
+    DhStep getFormStepOfStepList(List<DhStep> stepList);
 
     /**
      * 找到指定环节对应的表单步骤，如果提供的关键字没有对应表单步骤，进一步查询默认关键字有没有表单步骤

@@ -22,7 +22,6 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
@@ -283,7 +282,7 @@ public class DhStepServiceImpl implements DhStepService {
         stepSelective.setStepBusinessKey(stepBusinessKey);
         PageHelper.orderBy("STEP_SORT");
         List<DhStep> dhSteps = dhStepMapper.listBySelective(stepSelective);
-        if (!dhSteps.isEmpty() && getFirstFormStepOfStepList(dhSteps) != null) {
+        if (!dhSteps.isEmpty() && getFormStepOfStepList(dhSteps) != null) {
             // 如果根据步骤关键字找到的步骤中存在表单步骤，则返回找到的所有步骤
             return dhSteps;
         }
@@ -297,7 +296,7 @@ public class DhStepServiceImpl implements DhStepService {
         PageHelper.orderBy("STEP_SORT");
         dhSteps = dhStepMapper.listBySelective(stepSelective);
 
-        if (!dhSteps.isEmpty() && getFirstFormStepOfStepList(dhSteps) != null) {
+        if (!dhSteps.isEmpty() && getFormStepOfStepList(dhSteps) != null) {
             return dhSteps;
         }
         return new ArrayList<>();
@@ -364,7 +363,7 @@ public class DhStepServiceImpl implements DhStepService {
 	}
 
 	@Override
-    public DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
+    public DhStep getFormStepOfStepList(List<DhStep> stepList) {
         for (DhStep dhStep : stepList) {
             if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
                 return dhStep;
@@ -380,7 +379,7 @@ public class DhStepServiceImpl implements DhStepService {
             sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(currTaskNode.getSourceActivityId());
         }
 
-        // 如果这个步骤关键字下有表单，则返回这个步骤
+        // 如果这个步骤关键字下有表单步骤，则返回这个步骤
         DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
         stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
         stepSelective.setStepBusinessKey(stepBusinessKey);
@@ -390,7 +389,7 @@ public class DhStepServiceImpl implements DhStepService {
             return dhSteps.get(0);
         }
 
-        // 如果这个步骤关键字下没有表单，查询默认关键字有没有表单
+        // 如果这个步骤关键字下没有表单步骤，查询默认关键字有没有表单
         if (stepBusinessKey.equals("default")) {
             return null;
         }
