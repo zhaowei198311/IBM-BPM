@@ -130,7 +130,7 @@
 		var preParam = {
 			proUid:$("#proUid").val(),
 			proVersion:$("#proVersion").val(),
-			forName:$("#formName").val(),
+			formName:$("#formName").val(),
 			formDescription:$("#formDescription").val(),
 			formUid:$("#formUid").val(),
 			dynHtml:dynContent 
