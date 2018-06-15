@@ -112,7 +112,7 @@
         <div class="display_container8">
             <div class="display_content8">
                 <div class="top">
-                    同类流程
+                    请选一个流程从中复制配置
                 </div>
                 <div class="middle1" style="height: 75%;width: 98%">
                     <table class="layui-table backlog_table" lay-even lay-skin="nob">
