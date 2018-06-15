@@ -2033,6 +2033,9 @@ function addStep() {
 				"stepType" : stepType,
 				"stepObjectUid" : stepObjectUid
 			},
+			beforeSend : function(){
+				layer.load(1);
+			},
 			success : function(result) {
 				if (result.status == 0) {
 					layer.alert("创建步骤成功");
@@ -2041,9 +2044,11 @@ function addStep() {
 				} else {
 					layer.alert(result.msg);
 				}
+				layer.closeAll('loading');
 			},
 			error : function() {
 				layer.alert('操作失败');
+				layer.closeAll('loading');
 			}
 		});
 
