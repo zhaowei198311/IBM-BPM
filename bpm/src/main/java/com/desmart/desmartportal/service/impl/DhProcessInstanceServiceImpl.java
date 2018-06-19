@@ -545,6 +545,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
 			JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
 			formData = jsonObj.getString("formData");
+			JSONObject processData = jsonObj.getJSONObject("processData");
+			resultMap.put("departNo", processData.getString("departNo"));
+			resultMap.put("companyNumber", processData.getString("companyNumber"));
+			resultMap.put("dhDrafts", dhDrafts);
 		}
 
 		ServerResponse<BpmActivityMeta> metaResponse = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId,

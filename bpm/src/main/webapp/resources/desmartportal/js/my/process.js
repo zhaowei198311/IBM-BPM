@@ -193,10 +193,10 @@ function toShowRouteBar () {
 							  +'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
 					      +'</th>'							     
 				      +'</tr>';
-                	$("#choose_user_tbody").append(chooseUserDiv);
-                	$(".display_container2").css("display","block");
-                	layer.close(index);
                 	}//end for
+            		$("#choose_user_tbody").append(chooseUserDiv);
+            		$(".display_container2").css("display","block");
+            		layer.close(index);
                 }
         	}//end ajax
 		});

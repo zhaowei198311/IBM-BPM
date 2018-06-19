@@ -26,6 +26,8 @@ public class DhDrafts {
 	private String insUid; // 流程实例id
 	
 	private String taskUid; // 任务实例Uid
+	
+	private String userName;//创建人姓名，不在表内
 
 	/**
 	 * @return the dfsId
@@ -120,10 +122,31 @@ public class DhDrafts {
 		this.taskUid = taskUid;
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	public DhDrafts() {
 		
 	}
 	
+	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator, String insUid,
+			String taskUid, String userName) {
+		super();
+		this.dfsId = dfsId;
+		this.dfsTitle = dfsTitle;
+		this.dfsData = dfsData;
+		this.dfsCreatedate = dfsCreatedate;
+		this.dfsCreator = dfsCreator;
+		this.insUid = insUid;
+		this.taskUid = taskUid;
+		this.userName = userName;
+	}
+
 	public DhDrafts(String dfsId, String dfsTitle, String dfsData, Date dfsCreatedate, String dfsCreator, String insUid,
 			String taskUid) {
 		super();

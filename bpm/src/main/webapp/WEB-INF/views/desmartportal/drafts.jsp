@@ -86,6 +86,7 @@
 	src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
 <script type="text/javascript"
 	src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script>
 	// 为翻页提供支持
 	var pageConfig = {
@@ -145,8 +146,9 @@
 			var meta = list[i];
 			var sortNum = startSort + i;
 			var agentOdate = new Date(meta.dfsCreatedate);
-			var showDate = agentOdate.getFullYear() + "-"
-					+ (agentOdate.getMonth() + 1) + "-" + agentOdate.getDate();
+			var showDate = datetimeFormat_1(agentOdate);
+				/* agentOdate.getFullYear() + "-"
+					+ (agentOdate.getMonth() + 1) + "-" + agentOdate.getDate(); */
 			trs += '<tr><td id="aa">'
 					+ sortNum
 					+ '</td>'
@@ -154,7 +156,7 @@
 					+ meta.dfsTitle
 					+ '</td>'
 					+ '<td>'
-					+ meta.dfsCreator
+					+ meta.userName
 					+ '</td>'
 					+ '<td>'
 					+ showDate

@@ -12,6 +12,11 @@
 		<result column="TASK_UID" 			property="taskUid"/>
 	</resultMap>
 	
+	<sql id="Relation_Column_List">
+		d.DFS_ID, d.DFS_TITLE,d.DFS_DATA, d.DFS_CREATEDATE,
+		d.DFS_CREATOR,d.INS_UID,d.TASK_UID,s.USER_NAME
+	</sql>
+	
 	<sql id="Base_Column_List">
 		DFS_ID, DFS_TITLE,DFS_DATA, DFS_CREATEDATE,
 		DFS_CREATOR,INS_UID,TASK_UID
@@ -19,9 +24,10 @@
 	
 	<select id="select" resultType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
-		<include refid="Base_Column_List"/>
+		<include refid="Relation_Column_List"/>
 		FROM
-		DH_DRAFTS
+		DH_DRAFTS d 
+		left join sys_user s on d.DFS_CREATOR = s.user_id
 	</select>
 	
 	<select id="selectBydfsId" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhDrafts">

@@ -127,8 +127,8 @@
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
 	<div class="search_area top_btn">
-	    <input type="hidden" id="departNo" />
-	    <input type="hidden" id="companyNum" />
+	    <input type="hidden" id="departNo" value="${departNo}" />
+	    <input type="hidden" id="companyNum" value="${companyNumber}" />
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
 	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
 	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
@@ -176,7 +176,9 @@
 							<select id="creatorInfo" lay-filter="creatorInfo">
 									<option value="">请选择部门</option>
 									<c:forEach items="${userDepartmentList}" var="item">
-										<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+									<c:if test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
+										<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+									</c:if>
 									</c:forEach>
 							</select></td>
 						</tr>
@@ -189,7 +191,8 @@
                     <tr>
                         <td class="td_title" colspan="1" style="width: 120px">流程标题</td>
                         <td class="sub_title" colspan="5">
-                             <input type="text" id="insTitle_input" class="layui-input" >
+                             <input type="text" id="insTitle_input" class="layui-input" 
+                             	value="${dhDrafts.dfsTitle }">
                         </td>
                     </tr>
                 </tbody>

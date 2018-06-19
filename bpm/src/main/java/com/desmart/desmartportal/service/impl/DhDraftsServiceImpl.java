@@ -70,6 +70,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("查询所有草稿数据开始...");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
+			PageHelper.orderBy("DFS_CREATEDATE desc");
 			List<DhDrafts> resultList = dhDraftsMapper.select();
 			if(null == resultList || resultList.size() == 0) {
 				log.info("查询所有草稿数据出错,出错类为{}"+DhDraftsServiceImpl.class);

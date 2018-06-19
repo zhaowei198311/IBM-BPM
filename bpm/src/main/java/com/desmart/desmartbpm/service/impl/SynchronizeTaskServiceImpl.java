@@ -86,9 +86,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Scheduled(cron = "5/15 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
-        List<LswTask> newLswTaskList = getNewTasks();
+        /*List<LswTask> newLswTaskList = getNewTasks();
         Map<Integer, String> groupInfo = getGroupInfo();
-        generateDhTaskInstance(newLswTaskList, groupInfo);
+        generateDhTaskInstance(newLswTaskList, groupInfo);*/
         LOG.info("==================  拉取任务结束  ===============");
     }
     
