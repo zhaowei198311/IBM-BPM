@@ -470,10 +470,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
-                // 关闭需要结束的流程
-                dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
-                // 创建需要创建的子流程
-                dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo);
+                ServerResponse<JSONObject> didMoveResponse = dhRouteServiceImpl.didTokenMove(insId, routingData);
+                if (didMoveResponse.isSuccess()) {
+                    JSONObject processData = didMoveResponse.getData();
+                    if (processData != null) {
+                        // 关闭需要结束的流程
+                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
+                        // 创建需要创建的子流程
+                        dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
+                    }
+                } else {
+                    log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+                }
                 return ServerResponse.createBySuccess();
             } else {
                 throw new PlatformException("调用RESTful API完成任务失败");

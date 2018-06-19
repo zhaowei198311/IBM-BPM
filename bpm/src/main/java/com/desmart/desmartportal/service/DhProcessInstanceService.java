@@ -169,5 +169,6 @@ public interface DhProcessInstanceService {
 	 * @param pubBo  向引擎传值的对象
 	 * @return
 	 */
-	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData, CommonBusinessObject pubBo);
+	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,
+														 CommonBusinessObject pubBo, JSONObject processDataJson);
 }

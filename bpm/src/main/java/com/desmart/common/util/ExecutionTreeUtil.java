@@ -18,12 +18,12 @@ public class ExecutionTreeUtil {
 	//static int flag = 0;
 
 	/**
-	 * 从流程详细信息中获得指定任务的tokenId和父tokenId
+	 * 从流程详细信息中获得指定任务的tokenId和父tokenId(代表子流程)
 	 * @param taskId ： 任务ID
 	 * @param json ：由流程详细信息转化来的JSONObject
 	 * @return Map中的key ： 1）tokenId 2) preTokenId
 	 */
-	public static final Map<Object, Object> queryTokenId(int taskId, JSONObject json) {
+	public static final Map<Object, Object> getTokenIdAndPreTokenIdByTaskId(int taskId, JSONObject json) {
 		
 		int flag = 0;
 		// 解析jsonObject
@@ -64,7 +64,7 @@ public class ExecutionTreeUtil {
 		return null;
 	}
 
-	public static HashMap<Object, Object> util(JSONArray jsonArray, int taskId,
+	private static HashMap<Object, Object> util(JSONArray jsonArray, int taskId,
 			ArrayList<HashMap<String, Object>> preTokenIdList, int flag) {
 
 		for (Iterator<?> iterator = jsonArray.iterator(); iterator.hasNext();) {
@@ -110,13 +110,13 @@ public class ExecutionTreeUtil {
 	}
 
 	/**
-	 * 获取preFlowObjectId同级下的tokenId
+	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId
 	 * @param json： JSONObject对象
-	 * @param preFlowObjectId：父节点tokenId
-	 * @param childFlowObjectId：子节点tokenId
-	 * @return preFlowObjectId节点下的tokenId
+	 * @param preFlowObjectId：代表子流程的节点的元素id
+	 * @param childFlowObjectId：代表子流程第一个任务节点的元素id
+	 * @return 代表子流程的节点上的tokenId
 	 */
-	public static String queryCurrentNodeTokenId(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
+	public static String getTokenIdIdentifySubProcess(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
 
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
@@ -146,7 +146,7 @@ public class ExecutionTreeUtil {
 	 * @param childFlowObjectId
 	 * @return
 	 */
-	public static boolean queryCurrentTokenIdUtil(JSONArray jsonArray, String preFlowObjectId,
+	private static boolean queryCurrentTokenIdUtil(JSONArray jsonArray, String preFlowObjectId,
 			String childFlowObjectId) {
 
 		for (int i = 0; i < jsonArray.size(); i++) {
@@ -170,4 +170,21 @@ public class ExecutionTreeUtil {
 		}
 		return false;
 	}
+
+	public static boolean isExecutionTreeContainsFlowObjectId(String flowObjectId, JSONObject processData) {
+        JSONObject data = processData.getJSONObject("data");
+        String executionTreeStr = data.getString("executionTree");
+        if (executionTreeStr == null) {
+            return false;
+        }
+        return executionTreeStr.contains(flowObjectId);
+    }
+
+    public static boolean isProcessFinished(JSONObject processData) {
+        JSONObject data = processData.getJSONObject("data");
+        return "STATE_FINISHED".equalsIgnoreCase(data.getString("state"));
+    }
+
+
+
 }

@@ -177,8 +177,8 @@ public class BpmProcessUtil {
 	 * 1） "getProcessResult"
 	 * 2) "setProcessResult"
 	 * 3) "errorResult"  当发生错误时
-	 * @param insUid
-	 * @param pubBo
+	 * @param insId 实例编号
+	 * @param pubBo 引擎中参数
 	 * @param getProcessResult  如果已经查询过流程实例信息，传入此参数，方法内不再去查询, 没有的话传入null
 	 * @return
 	 */

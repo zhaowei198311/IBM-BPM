@@ -26,7 +26,6 @@ public interface DhRouteService {
 	 * @param  departNo 部门
 	 * @param formData 表单数据
 	 * @param 	companyNum 公司id
-	 * @param request
 	 * @return  ServerResponse<List<BpmActivityMeta>>
 	 */
 	ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId, 
@@ -123,11 +122,20 @@ public interface DhRouteService {
 	boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData);
 
 	/**
-	 * 判断提交任务动作会不会使token移动到下个环节
+	 * 预判提交任务动作会不会使token移动到下个人员服务
 	 * @param currTask
 	 * @return
 	 */
 	boolean willFinishTaskMoveToken(DhTaskInstance currTask);
+
+	/**
+	 * 判断token是否真实移动——移动到下个人员任务节点，或者导致流程结束
+	 * @param insId  流程实例id
+	 * @param routingData  预测的执行情况
+	 * @return 当结果是会移动，返回success， data中存放 JSONObject processData
+	 *         当结果是没有移动，返回success， data中存放null
+	 */
+	ServerResponse<JSONObject> didTokenMove(int insId, BpmRoutingData routingData);
 
 	/**
 	 * 根据流程实例编号和下个环节路由信息得到简单循环任务的处理人列表

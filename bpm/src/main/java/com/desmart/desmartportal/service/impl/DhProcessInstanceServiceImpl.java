@@ -435,11 +435,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         Map<String, HttpReturnStatus> commitTaskMap = bpmTaskUtil.commitTask(taskId, pubBo);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskMap);
         if (errorMap.get("errorResult") != null) {
-            throw new PlatformException("提交第一个任务失败");
+            throw new PlatformException("提交第一个任务失败，流程实例id：" + insId);
         }
 
         // 如果需要创建子流程，就创建
-        createSubProcessInstanceByRoutingData(mainProcessInstance, routingData, pubBo);
+        createSubProcessInstanceByRoutingData(mainProcessInstance, routingData, pubBo, null);
 
         return ServerResponse.createBySuccess();
     }
@@ -846,7 +846,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		// 查询token
 		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
-		Map<Object, Object> resultMap = ExecutionTreeUtil.queryTokenId(taskId, jsonObject);
+		Map<Object, Object> resultMap = ExecutionTreeUtil.getTokenIdAndPreTokenIdByTaskId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
 		
@@ -1036,7 +1036,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         return ServerResponse.createBySuccess();
     }
 
-    public ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData, CommonBusinessObject pubBo) {
+    @Override
+    public ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,
+																CommonBusinessObject pubBo, JSONObject processDataJson) {
         Set<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodes();
         if (startProcessNodes.isEmpty()) {
 	        return ServerResponse.createBySuccess();
@@ -1044,13 +1046,15 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         int insId = currProcessInstance.getInsId();
         DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
 
-        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
-        HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
-        if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
-            return ServerResponse.createByErrorMessage("通过RESTful API获得流程实例信息失败");
+        if (processDataJson == null) { // 如果没有传入流程实例信息, 主动获取
+            BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+            BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
+            HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
+            if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
+                return ServerResponse.createByErrorMessage("通过RESTful API获得流程实例信息失败");
+            }
+            processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
         }
-        JSONObject processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
 
         for (Iterator<BpmActivityMeta> it = startProcessNodes.iterator(); it.hasNext();) {
             // 代表子流程的节点
@@ -1058,7 +1062,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             // 子流程的第一个人工环节
             BpmActivityMeta firstUserTaskNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(startProcessNode);
             // 获得子流程的tokenId
-            String tokenId = ExecutionTreeUtil.queryCurrentNodeTokenId(processDataJson, startProcessNode.getActivityBpdId(),
+            String tokenId = ExecutionTreeUtil.getTokenIdIdentifySubProcess(processDataJson, startProcessNode.getActivityBpdId(),
                     firstUserTaskNode.getActivityBpdId());
             // todo 如果tokenId找不到，不创建流程
 

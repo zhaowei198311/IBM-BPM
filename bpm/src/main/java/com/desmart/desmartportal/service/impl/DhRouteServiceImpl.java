@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSON;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.DateUtil;
+import com.desmart.common.util.*;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartsystem.entity.*;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.util.CommonBusinessObjectUtils;
-import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -93,6 +93,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private SysDepartmentMapper sysDepartmentMapper;
 	@Autowired
     private DhTaskHandlerMapper dhTaskHandlerMapper;
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
+
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
@@ -1103,6 +1106,32 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
 
 	}
+
+	@Override
+	public ServerResponse<JSONObject> didTokenMove(int insId, BpmRoutingData routingData) {
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfigService.getFirstActConfig());
+        HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
+        if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
+            return ServerResponse.createByErrorMessage("查看流程状态失败");
+        }
+        JSONObject processData = JSON.parseObject(processDataReturnStatus.getMsg());
+        boolean moved = false;
+        if (routingData.getNormalNodes().size() > 0) {
+            // 预测有后续节点，查看执行树上是否包含后续任务节点信息
+            moved = ExecutionTreeUtil.isExecutionTreeContainsFlowObjectId(routingData.getNormalNodes().iterator().next().getActivityBpdId(),
+                    processData);
+        } else {
+            // 预测没有后续节点，查看流程实例是否已经执行完毕
+            moved = ExecutionTreeUtil.isProcessFinished(processData);
+        }
+
+        if (moved) {
+            return ServerResponse.createBySuccess(processData);
+        } else {
+            return ServerResponse.createBySuccess();
+        }
+    }
+
 
     public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
 	    int insId = 0;

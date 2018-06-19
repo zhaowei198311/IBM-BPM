@@ -13,7 +13,6 @@ import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -171,7 +170,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
         int taskId = lswTask.getTaskId();
-        Map<Object, Object> tokenMap = ExecutionTreeUtil.queryTokenId(taskId, processData);
+        Map<Object, Object> tokenMap = ExecutionTreeUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
             return null;
