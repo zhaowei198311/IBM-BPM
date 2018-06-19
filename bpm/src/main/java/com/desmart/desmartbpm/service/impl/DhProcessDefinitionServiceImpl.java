@@ -648,7 +648,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 					DhActivityReject dar = new DhActivityReject();
 					dar.setActrUid("act_rej:"+UUID.randomUUID());
 					dar.setActivityId(map.get("ACTIVITY_ID_1").toString());
-					dar.setActrRejectActivity(newBpmActivityMeta.getActivityId());
+					dar.setActrRejectActivity(newBpmActivityMeta.getActivityBpdId());
 					dhActivityRejectMapper.insert(dar);
 				}				
 			}
