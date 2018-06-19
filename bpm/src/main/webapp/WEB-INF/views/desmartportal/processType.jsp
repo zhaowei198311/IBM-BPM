@@ -254,10 +254,12 @@
 			var InitDate = datetimeFormat_1(agentOdate);
 			var agentOdate1 = new Date(meta.taskFinishDate);
 			var finishDate = datetimeFormat_1(agentOdate1);
-			trs += '<tr><td id="aa">'
+			trs += '<tr ondblclick=dbGoToTask(this)'
+					+'><td id="'+meta.taskUid+'">'
 					+ sortNum
 					+ '</td>'
-					+ '<td>'
+					+ '<td style = "cursor:pointer;" '
+					+'data-taskstatus = "'+meta.taskStatus+'" onclick ="goToTask(this)" >'
 					+ meta.dhProcessInstance.insTitle
 					+ '</td>'
 					+ '<td>'
@@ -369,5 +371,27 @@
 			}
 		})
 		
+	}
+	function goToTask(a){
+		var taskUid = $(a).prev().attr("id");
+		var taskStatus = $(a).data("taskstatus");
+		if(taskStatus == 12 ){
+			window.location.href = 'menus/approval?taskUid='+taskUid;
+		}else if(taskStatus == -2 ){
+			window.location.href = 'menus/approval?taskUid='+taskUid;
+		}else if(taskStatus == 32){
+			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+		}
+	}
+	function dbGoToTask(a){
+		var taskUid = $(a).find("td").eq(0).attr("id");
+		var taskStatus = $(a).find("td").eq(1).data("taskstatus");
+		if(taskStatus == 12 ){
+			window.location.href = 'menus/approval?taskUid='+taskUid;
+		}else if(taskStatus == -2 ){
+			window.location.href = 'menus/approval?taskUid='+taskUid;
+		}else if(taskStatus == 32){
+			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+		}
 	}
 </script>
