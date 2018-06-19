@@ -101,6 +101,8 @@
 	</body>
 	
 </html>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+	
 	<script>
 	var pageConfig = {
 			pageNum : 1,
@@ -221,9 +223,11 @@
 				var sortNum = startSort + i;
 				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
-				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
+				var InitDate = datetimeFormat_1(agentOdate);
+					//agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
 				var agentOdate1 = new Date(meta.taskFinishDate);
-				var finishDate =agentOdate1.getFullYear()+"-"+(agentOdate1.getMonth()+1)+"-"+agentOdate1.getDate()+"   "+agentOdate1.getHours()+":"+agentOdate1.getMinutes()+":"+agentOdate1.getSeconds();
+				var finishDate = datetimeFormat_1(agentOdate1);
+					//agentOdate1.getFullYear()+"-"+(agentOdate1.getMonth()+1)+"-"+agentOdate1.getDate()+"   "+agentOdate1.getHours()+":"+agentOdate1.getMinutes()+":"+agentOdate1.getSeconds();
 				var insTitle = meta.dhProcessInstance.insTitle;
 				var insId = meta.dhProcessInstance.insId;
 				/* if(meta.taskType=='normal'){

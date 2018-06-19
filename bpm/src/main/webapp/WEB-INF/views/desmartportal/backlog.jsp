@@ -102,6 +102,8 @@
 </html>
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+	
 	<script>
 	// 为翻页提供支持
 	var pageConfig = {
@@ -251,7 +253,8 @@
 					delegateFlag = "否";
 				}
 				var agentOdate = new Date(meta.taskInitDate);
-				var InitDate = agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
+				var InitDate = datetimeFormat_1(agentOdate);
+					//agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
 				/* var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
 				var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds(); */
 				trs += '<tr ondblclick=openApproval("'+meta.taskUid+'")>'
