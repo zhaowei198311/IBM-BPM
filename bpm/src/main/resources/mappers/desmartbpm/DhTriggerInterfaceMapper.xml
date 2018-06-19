@@ -203,9 +203,8 @@
 	</update>
 
 	<update id="updateBatch" parameterType="list">
-		<trim suffixOverrides=";">
-		<foreach collection="tinList" item="item" index="index" open=""
-			close="" separator=";">
+		<foreach collection="tinList" item="item" index="index" open="begin"
+			close=";end;" separator=";">
 			UPDATE DH_TRIGGER_INTERFACE
 			<set>
 				FLD_CODE_NAME = #{item.fldCodeName}
@@ -218,7 +217,6 @@
 				PARA_NAME = #{item.paraName}
 			</where>
 		</foreach>
-		</trim>
 	</update>
 
 </mapper>

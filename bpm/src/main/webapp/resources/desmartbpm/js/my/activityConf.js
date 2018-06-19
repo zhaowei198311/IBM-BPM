@@ -1138,8 +1138,8 @@ function triggerEdit(triggerUid){
 				url : common.getPath() + '/dhTriggerInterface/updateBatch',
 				type : 'post',
 				dataType : 'json',
-				contentType: "application/json",
 				data : JSON.stringify(arr),
+				contentType: "application/json;charset=utf-8",
 				success : function(result){
 					layer.alert("修改成功")
 				},
