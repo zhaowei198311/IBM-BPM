@@ -41,4 +41,11 @@ public interface DhDraftsMapper {
 	Integer updateByInsUid(DhDrafts dhDrafts);
 
 	int deleteByTaskUid(String taskUid);
+	
+	/**
+	 * 根据条件查询草稿，包含关联映射
+	 * @param dhDrafts
+	 * @return
+	 */
+	List<DhDrafts> selectByCondition(DhDrafts dhDrafts);
 }

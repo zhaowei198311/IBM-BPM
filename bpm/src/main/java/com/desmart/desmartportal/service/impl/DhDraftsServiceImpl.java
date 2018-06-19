@@ -69,9 +69,12 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	public ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize) {
 		log.info("查询所有草稿数据开始...");
 		try {
+			DhDrafts dhDrafts = new DhDrafts();
+			String dfsCreator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			dhDrafts.setDfsCreator(dfsCreator);
 			PageHelper.startPage(pageNum, pageSize);
 			PageHelper.orderBy("DFS_CREATEDATE desc");
-			List<DhDrafts> resultList = dhDraftsMapper.select();
+			List<DhDrafts> resultList = dhDraftsMapper.selectByCondition(dhDrafts);
 			if(null == resultList || resultList.size() == 0) {
 				log.info("查询所有草稿数据出错,出错类为{}"+DhDraftsServiceImpl.class);
 			}

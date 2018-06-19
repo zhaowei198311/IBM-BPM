@@ -110,4 +110,17 @@
 		from dh_drafts
 		where task_uid = #{taskUid}
 	</select>
+	
+	<select id="selectByCondition" resultType="com.desmart.desmartportal.entity.DhDrafts"
+		parameterType="com.desmart.desmartportal.entity.DhDrafts">
+		SELECT 
+		<include refid="Relation_Column_List"/>
+		FROM
+		DH_DRAFTS d 
+		left join sys_user s on d.DFS_CREATOR = s.user_id
+		where 1 = 1
+		<if test="dfsCreator != null and dfsCreator != ''">
+			and d.DFS_CREATOR =	#{dfsCreator}
+		</if>
+	</select>
 </mapper>
