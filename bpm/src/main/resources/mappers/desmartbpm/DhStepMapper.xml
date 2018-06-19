@@ -250,6 +250,7 @@
 		<foreach collection="list" item="item" open="(" separator="," close=")">
 			#{item}
 		</foreach>
+		order by STEP_OBJECT_UID
 	</select>
   
 	<delete id="deleteByIds" parameterType="java.util.HashMap">

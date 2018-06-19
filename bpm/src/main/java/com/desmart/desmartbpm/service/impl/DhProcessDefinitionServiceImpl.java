@@ -671,20 +671,24 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     		activityBpdIdList.add(map.get("ACTIVITY_BPD_ID").toString());
 		}
     	// 老流程步骤查询参数
-    	Map<String, Object> ids = new HashMap<>();
-    	ids.put("proUid", proUid);
-    	ids.put("proVerUid", proVerUid);
-    	ids.put("proAppId", proAppId);
-    	ids.put("list", activityBpdIdList);
+    	Map<String, Object> oldIds = new HashMap<>();
+    	oldIds.put("proUid", proUid);
+    	oldIds.put("proVerUid", proVerUid);
+    	oldIds.put("proAppId", proAppId);
+    	oldIds.put("list", activityBpdIdList);
     	// 先删除新旧流程相同节点中 新流程的节点元素(DH_STEP)
-    	Map<String, Object> deleteIds = new HashMap<>();
-    	deleteIds.put("proUid", proUidNew);
-    	deleteIds.put("proVerUid", proVerUidNew);
-    	deleteIds.put("proAppId", proAppIdNew);
-    	deleteIds.put("list", activityBpdIdList);
-    	dhStepMapper.deleteByIds(deleteIds);
+    	Map<String, Object> newIds = new HashMap<>();
+    	newIds.put("proUid", proUidNew);
+    	newIds.put("proVerUid", proVerUidNew);
+    	newIds.put("proAppId", proAppIdNew);
+    	newIds.put("list", activityBpdIdList);
+    	dhStepMapper.deleteByIds(newIds);
     	// 老流程步骤节点
-    	List<DhStep> oldDhStepList = dhStepMapper.listByIds(ids);
+    	List<DhStep> oldDhStepList = dhStepMapper.listByIds(oldIds);
+    	// 老流程相同formUid
+    	String sameOldStepObjectUid = "";
+    	// 新流程相同formUid
+    	String sameNewStepObjectUid = "";
     	for (DhStep dhStep : oldDhStepList) {
 			if ("trigger".equals(dhStep.getStepType())) {
 				dhStep.setStepUid("step:"+UUID.randomUUID());
@@ -693,47 +697,60 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 				dhStep.setProAppId(proAppIdNew);
 				dhStepMapper.insert(dhStep);
 			}else if ("form".equals(dhStep.getStepType())) {
-				// 随机生成俩个字母
-				char a=(char)(int)(Math.random()*26+97);
-				char b=(char)(int)(Math.random()*26+97);
-				// 老流程formUid
-				String stepObjectUid = dhStep.getStepObjectUid();
-				// 拷贝表单所需参数 bpmForm
-				BpmForm OldBpmForm = bpmFormManageMapper.queryFormByFormUid(stepObjectUid);
-				BpmForm bpmForm = new BpmForm();
-				bpmForm.setDynUid(OldBpmForm.getDynUid());
-				bpmForm.setDynTitle(OldBpmForm.getDynTitle()+"_copy"+a+b);
-				bpmForm.setDynWebpage(OldBpmForm.getDynWebpage());
-				bpmForm.setProUid(proUidNew);
-				bpmForm.setProVersion(proVerUidNew);
-				// 拷贝老流程表单
-				ServerResponse<?> sr = bpmFormManageService.copyForm(bpmForm);
-				if (sr.getStatus() == 0) {					
+				if (sameOldStepObjectUid.equals(dhStep.getStepObjectUid())) {
 					dhStep.setStepUid("step:"+UUID.randomUUID());
 					dhStep.setProUid(proUidNew);
 					dhStep.setProVerUid(proVerUidNew);
 					dhStep.setProAppId(proAppIdNew);
 					// 新流程表单formUid
-					dhStep.setStepObjectUid(sr.getData().toString());
+					dhStep.setStepObjectUid(sameNewStepObjectUid);
 					dhStepMapper.insert(dhStep);
-				}
-				// 新老流程相同表单字段
-				List<Map<String, Object>> fldUidList = bpmFormFieldMapper.listFldUidByFormUid(stepObjectUid, sr.getData().toString());
+				}else {
+					// 随机生成俩个字母
+					char a=(char)(int)(Math.random()*26+97);
+					char b=(char)(int)(Math.random()*26+97);
+					// 老流程formUid
+					String stepObjectUid = dhStep.getStepObjectUid();
+					sameOldStepObjectUid = stepObjectUid;
+					// 拷贝表单所需参数 bpmForm
+					BpmForm OldBpmForm = bpmFormManageMapper.queryFormByFormUid(stepObjectUid);
+					BpmForm bpmForm = new BpmForm();
+					bpmForm.setDynUid(OldBpmForm.getDynUid());
+					bpmForm.setDynTitle(OldBpmForm.getDynTitle()+"_copy"+a+b);
+					bpmForm.setDynWebpage(OldBpmForm.getDynWebpage());
+					bpmForm.setProUid(proUidNew);
+					bpmForm.setProVersion(proVerUidNew);
+					// 拷贝老流程表单
+					ServerResponse<?> sr = bpmFormManageService.copyForm(bpmForm);
+					if (sr.getStatus() == 0) {					
+						dhStep.setStepUid("step:"+UUID.randomUUID());
+						dhStep.setProUid(proUidNew);
+						dhStep.setProVerUid(proVerUidNew);
+						dhStep.setProAppId(proAppIdNew);
+						// 新流程表单formUid
+						dhStep.setStepObjectUid(sr.getData().toString());
+						dhStepMapper.insert(dhStep);
+					}
+					// 新老流程相同表单字段
+					List<Map<String, Object>> fldUidList = bpmFormFieldMapper.listFldUidByFormUid(stepObjectUid, sr.getData().toString());
 
-				// 拷贝表单字典权限
-				for (Map<String, Object> map : fldUidList) {
-					List<DhObjectPermission> oldDhObjectPermissionlist = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
-					for(DhObjectPermission oldDhObjectPermission:oldDhObjectPermissionlist) {
-						if (oldDhObjectPermission != null) {
-							oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
-							oldDhObjectPermission.setProUid(proUidNew);
-							oldDhObjectPermission.setProVerUid(proVerUidNew);
-							oldDhObjectPermission.setProAppId(proAppIdNew);
-							oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
-							oldDhObjectPermission.setStepUid(dhStep.getStepUid());
-							dhObjectPermissionMapper.save(oldDhObjectPermission);
+					// 拷贝表单字典权限
+					for (Map<String, Object> map : fldUidList) {
+						List<DhObjectPermission> oldDhObjectPermissionlist = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
+						for(DhObjectPermission oldDhObjectPermission:oldDhObjectPermissionlist) {
+							if (oldDhObjectPermission != null) {
+								oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
+								oldDhObjectPermission.setProUid(proUidNew);
+								oldDhObjectPermission.setProVerUid(proVerUidNew);
+								oldDhObjectPermission.setProAppId(proAppIdNew);
+								oldDhObjectPermission.setOpObjUid(map.get("FLD_UID_1").toString());
+								oldDhObjectPermission.setStepUid(dhStep.getStepUid());
+								dhObjectPermissionMapper.save(oldDhObjectPermission);
+							}
 						}
 					}
+					
+					sameNewStepObjectUid = sr.getData().toString();
 				}
 			}
 		}
