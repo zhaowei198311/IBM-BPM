@@ -421,7 +421,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 
         // 装配处理人信息
-        CommonBusinessObject pubBo = new CommonBusinessObject();
+        CommonBusinessObject pubBo = new CommonBusinessObject(insId);
         ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl.assembleCommonBusinessObject(pubBo, routeData);
         if (!serverResponse.isSuccess()) {
             throw new PlatformException("装配处理人信息失败，缺少下个环节处理人信息");
