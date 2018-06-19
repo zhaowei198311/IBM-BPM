@@ -592,7 +592,10 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         if (rejectTypeEmun.equals(DhActivityConfRejectType.TO_ACTIVITIES)) {
             String rejectActivities = dhActivityConf.getRejectActivities();
             if (StringUtils.isBlank(rejectActivities)) {
+            	if (Const.Boolean.TRUE.equals(actcCanReject)){
                 return ServerResponse.createByErrorMessage("驳回设置失败,缺少驳回环节");
+            
+            	}
             }
             String[] actIdArr = rejectActivities.split(";");
             List<DhActivityReject> rejectList = new ArrayList<>();

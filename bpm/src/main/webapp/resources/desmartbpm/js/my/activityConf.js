@@ -313,7 +313,7 @@ $(function() {
 							},
 							rejectActivities : {
 								required : function(element) {
-									return ($('input[name="actcCanReject"]')
+									return ($('input[name="actcCanReject"]:checked')
 											.val() == "TRUE" && $(
 											'select[name="actcRejectType"]')
 											.val() == "toActivities");
@@ -1679,10 +1679,18 @@ function initConf(map) {
 	$('input[name="outtimeTeam"]').val(conf.outtimeTeam);
 	$('input[name="outtimeTeam_view"]').val(conf.outtimeTeamView);
 	$('input[name="rejectActivities"]').val(conf.rejectActivities);
-	if (conf.rejectActivities) {
-		$("#rejectActivities_div").show();
-	}
 	$('input[name="rejectActivities_view"]').val(conf.rejectActivitiesView);
+	if (conf.actcCanReject=='TRUE') {
+		$("#rejectType_div").show();
+		if(conf.actcRejectType=="toActivities"){
+			$("#rejectActivities_div").show();
+		}else{
+			$("#rejectActivities_div").hide();
+		}
+	}else{
+		$("#rejectType_div").hide();
+		$("#rejectActivities_div").hide();
+	}
 
 	layui.form.render();
 	layui.use('layedit', function() {
