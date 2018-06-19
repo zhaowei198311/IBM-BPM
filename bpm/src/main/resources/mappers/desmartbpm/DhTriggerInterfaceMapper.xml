@@ -2,49 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper">
 	<resultMap id="DhTriggerInterfaceMap" type="java.util.Map">
-		<result column="TIN_UID" 			property="tinUid" />
-		<result column="TRI_UID" 			property="triUid" />
-		<result column="INT_UID" 			property="intUid" />
-		<result column="DYN_UID" 			property="dynUid" />
-		<result column="CREATOR" 			property="creator" />
-		<result column="CREATE_TIME" 		property="createTime"/>
-		<result column="ACTC_UID" 			property="actcUid" />
-		<result column="PARA_NAME" 			property="paraName" />
-		<result column="FLD_CODE_NAME" 		property="fldCodeName" />
+		<result column="TIN_UID" property="tinUid" />
+		<result column="TRI_UID" property="triUid" />
+		<result column="INT_UID" property="intUid" />
+		<result column="DYN_UID" property="dynUid" />
+		<result column="CREATOR" property="creator" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="ACTIVITY_ID" property="activityId" />
+		<result column="PARA_NAME" property="paraName" />
+		<result column="FLD_CODE_NAME" property="fldCodeName" />
 	</resultMap>
-	
-	<resultMap id="DhTriggerInterfaceAndFormMap" type="com.desmart.desmartbpm.entity.DhTriggerInterface">
-		<result column="TIN_UID" 			property="tinUid" />
-		<result column="TRI_UID" 			property="triUid" />
-		<result column="INT_UID" 			property="intUid" />
-		<result column="DYN_UID" 			property="dynUid" />
-		<result column="CREATOR" 			property="creator" />
-		<result column="CREATE_TIME" 		property="createTime"/>
-		<result column="ACTC_UID" 			property="actcUid" />
-		<result column="PARA_NAME" 			property="paraName" />
-		<result column="FLD_CODE_NAME" 		property="fldCodeName" />
-		<association property="bpmForm" javaType="com.desmart.desmartbpm.entity.BpmForm">
-			<id column="DYN_UID" 					property="dynUid"/>
-			<result column="DYN_TITLE" 				property="dynTitle" />
-			<result column="DYN_DESCRIPTION" 		property="dynDescription" />
-			<result column="DYN_CONTENT" 			property="dynContent" />
-			<result column="PRO_UID" 				property="proUid" />
-			<result column="PRO_VERSION" 			property="proVersion" />
-			<result column="CREATOR" 				property="creator" />
-			<result column="CREATE_TIME" 			property="createTime" />
-			<result column="DYN_WEBPAGE" 			property="dynWebpage" />
+
+	<resultMap id="DhTriggerInterfaceAndFormMap"
+		type="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		<result column="TIN_UID" property="tinUid" />
+		<result column="TRI_UID" property="triUid" />
+		<result column="INT_UID" property="intUid" />
+		<result column="DYN_UID" property="dynUid" />
+		<result column="CREATOR" property="creator" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="ACTIVITY_ID" property="activityId" />
+		<result column="PARA_NAME" property="paraName" />
+		<result column="FLD_CODE_NAME" property="fldCodeName" />
+		<association property="bpmForm"
+			javaType="com.desmart.desmartbpm.entity.BpmForm">
+			<id column="DYN_UID" property="dynUid" />
+			<result column="DYN_TITLE" property="dynTitle" />
+			<result column="DYN_DESCRIPTION" property="dynDescription" />
+			<result column="DYN_CONTENT" property="dynContent" />
+			<result column="PRO_UID" property="proUid" />
+			<result column="PRO_VERSION" property="proVersion" />
+			<result column="CREATOR" property="creator" />
+			<result column="CREATE_TIME" property="createTime" />
+			<result column="DYN_WEBPAGE" property="dynWebpage" />
 		</association>
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		TIN_UID,TRI_UID,INT_UID,
-		DYN_UID,CREATOR,CREATE_TIME,ACTC_UID,
+		DYN_UID,CREATOR,CREATE_TIME,ACTIVITY_ID,
 		PARA_NAME,FLD_CODE_NAME
 	</sql>
-	
+
 	<sql id="Condition_Column_List">
 		T.TIN_UID,T.TRI_UID,T.INT_UID,
-		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTC_UID,
+		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTIVITY_ID,
 		T.PARA_NAME,T.FLD_CODE_NAME,M.DYN_TITLE
 	</sql>
 
@@ -74,7 +76,7 @@
 				AND CREATE_TIME = #{createTime}
 			</if>
 			<if test="actcUid != null and actcUid !=''">
-				AND ACTC_UID = #{actcUid}
+				AND ACTIVITY_ID = #{activityId}
 			</if>
 			<if test="paraName != null and paraName !=''">
 				AND PARA_NAME = #{paraName}
@@ -95,18 +97,18 @@
 			TIN_UID = #{tinUid}
 		</where>
 	</select>
-	
+
 	<select id="selectByTriggerActivity" resultMap="DhTriggerInterfaceAndFormMap"
 		parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
-		SELECT 
+		SELECT
 		<include refid="Condition_Column_List" />
-		FROM 
+		FROM
 		DH_TRIGGER_INTERFACE T LEFT JOIN BPM_FORM M
 		ON T.DYN_UID = M.DYN_UID
 		<where>
 			TRI_UID = #{triUid}
 			AND
-			ACTC_UID = #{actcUid}
+			ACTIVITY_ID = #{activityId}
 		</where>
 	</select>
 
@@ -124,7 +126,7 @@
 		#{dynUid},
 		#{creator},
 		sysdate,
-		#{actcUid},
+		#{activityId},
 		#{paraName},
 		#{fldCodeName}
 		)
@@ -137,15 +139,15 @@
 		<foreach collection="tinList" item="item" index="index" close=")"
 			open="(" separator="union all">
 			SELECT
-				#{item.tinUid},
-				#{item.triUid},
-				#{item.intUid},
-				#{item.dynUid},
-				#{item.creator},
-				sysdate,
-				#{item.actcUid},
-				#{item.paraName},
-				#{item.fldCodeName}
+			#{item.tinUid},
+			#{item.triUid},
+			#{item.intUid},
+			#{item.dynUid},
+			#{item.creator},
+			sysdate,
+			#{item.activityId},
+			#{item.paraName},
+			#{item.fldCodeName}
 			FROM DUAL
 		</foreach>
 	</insert>
@@ -164,6 +166,9 @@
 		DH_TRIGGER_INTERFACE
 		<set>
 			<trim suffixOverrides=",">
+				<if test="tinUid != null and tinUid != ''">
+					TIN_UID = #{tinUid}
+				</if>
 				<if test="triUid != null and triUid != ''">
 					TRI_UID = #{triUid}
 				</if>
@@ -180,7 +185,7 @@
 					CREATE_TIME = #{createTime}
 				</if>
 				<if test="actcUid != null and actcUid !=''">
-					ACTC_UID = #{actcUid}
+					ACTIVITY_ID = #{activityId}
 				</if>
 				<if test="paraName != null and paraName !=''">
 					PARA_NAME = #{paraName}
@@ -195,6 +200,25 @@
 				TIN_UID = #{tinUid}
 			</trim>
 		</where>
+	</update>
+
+	<update id="updateBatch" parameterType="list">
+		<trim suffixOverrides=";">
+		<foreach collection="tinList" item="item" index="index" open=""
+			close="" separator=";">
+			UPDATE DH_TRIGGER_INTERFACE
+			<set>
+				FLD_CODE_NAME = #{item.fldCodeName}
+			</set>
+			<where>
+				TRI_UID = #{item.triUid} 
+				AND 
+				ACTIVITY_ID = #{item.activityId}
+				AND
+				PARA_NAME = #{item.paraName}
+			</where>
+		</foreach>
+		</trim>
 	</update>
 
 </mapper>

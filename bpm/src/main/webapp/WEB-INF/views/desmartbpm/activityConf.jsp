@@ -140,6 +140,7 @@
 										<div class="layui-tab-item layui-show">
 											<form class="layui-form" action="" id="config_form">
 												<input type="hidden" name=actcUid value="" />
+												<input id="activityId" type="hidden" value="" />
 												<div class="layui-row">
 													<div class="layui-col-md6">
 														<div class="layui-form-item">

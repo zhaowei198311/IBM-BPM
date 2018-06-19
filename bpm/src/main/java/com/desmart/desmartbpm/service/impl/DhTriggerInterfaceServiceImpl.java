@@ -43,4 +43,13 @@ public class DhTriggerInterfaceServiceImpl implements DhTriggerInterfaceService 
 		List<DhTriggerInterface> resultList = dhTriggerInterfaceMapper.selectByTriggerActivity(dhTriggerInterface);
 		return ServerResponse.createBySuccess(resultList);
 	}
+
+	@Override
+	public ServerResponse updateBatch(List<DhTriggerInterface> tinList) {
+		if(tinList == null) {
+			return ServerResponse.createByErrorMessage("修改对象集合不能为空");
+		}
+		dhTriggerInterfaceMapper.updateBatch(tinList);
+		return ServerResponse.createBySuccess();
+	}
 }

@@ -63,4 +63,9 @@ public interface DhTriggerInterfaceMapper {
 	 * 批量插入
 	 */
 	int insertBatch(@Param("tinList")List<DhTriggerInterface> tinList);
+	
+	/**
+	 * 批量修改
+	 */
+	int updateBatch(@Param("tinList")List<DhTriggerInterface> tinList);
 }

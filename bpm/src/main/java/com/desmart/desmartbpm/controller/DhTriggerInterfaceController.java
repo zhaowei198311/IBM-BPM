@@ -50,4 +50,10 @@ public class DhTriggerInterfaceController {
 	private ServerResponse selectByTriggerAndForm(DhTriggerInterface dhTriggerInterface) {
 		return dhTriggerInterfaceService.selectByTriggerActivity(dhTriggerInterface);
 	}
+	
+	@RequestMapping(value = "/updateBatch")
+	@ResponseBody
+	private ServerResponse updateBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
+		return dhTriggerInterfaceService.updateBatch(dhTriggerInterfaceList);
+	}
 }

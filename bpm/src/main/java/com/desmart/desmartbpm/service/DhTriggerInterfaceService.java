@@ -27,7 +27,7 @@ public interface DhTriggerInterfaceService {
 	ServerResponse <List<DhTriggerInterface>> selectByTriggerActivity (DhTriggerInterface dhTriggerInterface);
 	
 	/**
-	 * 修改参数映射
+	 * 批量修改参数映射
 	 */
-	
+	ServerResponse updateBatch(List<DhTriggerInterface> tinList);
 }

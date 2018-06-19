@@ -27,7 +27,7 @@ public class DhTriggerInterface {
 	
 	private Date createTime; // 创建时间
 	
-	private String actcUid; // 环节ID
+	private String activityId; // 环节ID
 	
 	private String paraName; // 接口参数
 	
@@ -122,15 +122,15 @@ public class DhTriggerInterface {
 	/**
 	 * @return the actcUid
 	 */
-	public String getActcUid() {
-		return actcUid;
+	public String getActivityId() {
+		return activityId;
 	}
 
 	/**
 	 * @param actcUid the actcUid to set
 	 */
-	public void setActcUid(String actcUid) {
-		this.actcUid = actcUid;
+	public void setActivityId(String actcUid) {
+		this.activityId = actcUid;
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class DhTriggerInterface {
 	 * @param bpmForm
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String actcUid, String paraName, String fldCodeName, BpmForm bpmForm) {
+			Date createTime, String activityId, String paraName, String fldCodeName, BpmForm bpmForm) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -207,7 +207,7 @@ public class DhTriggerInterface {
 		this.dynUid = dynUid;
 		this.creator = creator;
 		this.createTime = createTime;
-		this.actcUid = actcUid;
+		this.activityId = activityId;
 		this.paraName = paraName;
 		this.fldCodeName = fldCodeName;
 		this.bpmForm = bpmForm;
@@ -219,7 +219,7 @@ public class DhTriggerInterface {
 	@Override
 	public String toString() {
 		return "DhTriggerInterface [tinUid=" + tinUid + ", triUid=" + triUid + ", intUid=" + intUid + ", dynUid="
-				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", actcUid=" + actcUid
+				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", activityId=" + activityId
 				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", bpmForm=" + bpmForm + "]";
 	}
 

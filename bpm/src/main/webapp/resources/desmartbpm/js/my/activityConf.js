@@ -578,7 +578,7 @@ $(function() {
 				var info = {triUid : triUid,
 						intUid : intUid,
 						dynUid : formId,
-						actcUid : actcUid,
+						activityId : $("#activityId").val(),
 						paraName : $(inputArr[0]).val(),
 						fldCodeName : $(dataList[i]).find("option:selected").val()};
 				arr.push(info);
@@ -915,7 +915,7 @@ function loadActivityConf(actcUid) {
 			if (result.status == 0) {
 				console.log(result.data);
 				initConf(result.data);
-
+				document.getElementById("activityId").value = result.data.conf.activityId
 				step_table(result.data.stepList);
 
 			} else {
@@ -1024,7 +1024,7 @@ function formFieldEdit(data) {
 	});
 	// $(".form-horizontal").serialize();
 }
-// 修改触发器
+// 修改之前 查询触发器数据信息
 function triggerEdit(triggerUid){
 	layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 		var laypage = layui.laypage, layer = layui.layer, form = layui.form;
@@ -1038,7 +1038,7 @@ function triggerEdit(triggerUid){
 		dataType : 'json',
 		data : {
 			triUid : triggerUid,
-			actcUid : actcUid
+			activityId : $("#activityId").val()
 		},
 		success : function(result){
 			console.info(result);
@@ -1119,16 +1119,38 @@ function triggerEdit(triggerUid){
 			}
 		},
 		error : function(result){
-			
+			layer.alert("查询映射数据失败")
 		}
+		})
+		
+		$("#triggerSave").click(function(){
+			var arr = new Array();
+			var dataList = $("#update_param").find(".layui-form-item").find(".layui-row");
+			for (var i = 0; i < dataList.length; i++) {
+				var inputArr = $(dataList[i]).find("input");
+				var info = {triUid : triggerUid,
+						activityId : $("#activityId").val(),
+						paraName : $(inputArr[0]).val(),
+						fldCodeName : $(dataList[i]).find("option:selected").val()};
+				arr.push(info);
+			}
+			$.ajax({
+				url : common.getPath() + '/dhTriggerInterface/updateBatch',
+				type : 'post',
+				dataType : 'json',
+				contentType: "application/json",
+				data : JSON.stringify(arr),
+				success : function(result){
+					layer.alert("修改成功")
+				},
+				error : function(result){
+					layer.alert("修改失败")
+				}			
+			})
 		})
 	})
 }
 
-// 保存修改
-function triggerSave(){
-	
-}
 
 // 渲染权限信息表格
 function drawPerTable(result, perTableId, title) {
