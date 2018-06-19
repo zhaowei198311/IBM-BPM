@@ -36,6 +36,7 @@ import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -121,6 +122,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     private DhProcessInstanceService dhProcessInstanceService;
     @Autowired
     private MqProducerService mqProducerService;
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
 	/**
 	 * 查询所有流程实例
 	 */
@@ -1027,6 +1030,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// TODO Auto-generated method stub
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
+		dhTaskInstance.setTaskStatus("32");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
@@ -1128,6 +1132,34 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			return ServerResponse.createByErrorMessage(errorInformation.substring(0,errorInformation.length()-1) + "已经抄送过,其他人员操作成功!");
 		}
 		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String insTitle,
+			Integer insStatusId,String proAppId,String proUid) {
+		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhTaskInstance.setUsrUid(currentUserUid);
+        DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        DhProcessDefinition processDefintion = dhProcessDefinitionService
+				.getStartAbleProcessDefinition(proAppId,
+						proUid);
+        if(processDefintion==null) {
+        	return ServerResponse.createByErrorMessage("该流程版本有异常");
+        			}
+        dhProcessInstance.setProAppId(proAppId);
+        dhProcessInstance.setProUid(proUid);
+        dhProcessInstance.setProVerUid(processDefintion.getProVerUid());
+        dhProcessInstance.setInsStatusId(insStatusId);
+        if(insTitle!=null && !"".equals(insTitle)) {
+        		dhProcessInstance.setInsTitle(insTitle);
+        	}
+        dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.loadPageTaskByClosedByCondition(null, null, dhTaskInstance);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
 	}
 
 }

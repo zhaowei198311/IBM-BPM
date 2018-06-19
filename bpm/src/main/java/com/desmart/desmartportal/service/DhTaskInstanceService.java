@@ -213,4 +213,18 @@ public interface DhTaskInstanceService {
 	 * @throws
 	 */
 	ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId);
+
+	/**
+	 * 发起流程界面的分页展示
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param insStatusId
+	 * @param proAppId
+	 * @param proUid
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize,String insTitle,Integer insStatusId,String proAppId, String proUid);
 }

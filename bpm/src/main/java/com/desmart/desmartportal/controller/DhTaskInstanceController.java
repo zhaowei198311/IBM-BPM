@@ -6,9 +6,6 @@ package com.desmart.desmartportal.controller;
 import java.util.Date;
 import java.util.List;
 
-import com.desmart.desmartbpm.controller.DhProcessDefinitionController;
-
-import net.sf.jsqlparser.schema.Server;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,5 +277,18 @@ public class DhTaskInstanceController {
 	@ResponseBody
 	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId){
 		return dhTaskInstanceService.transferSure(taskUid, usrUid, activityId);
+	}
+	@RequestMapping("/loadPageTaskByStartProcess")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByStartProcess(
+			DhTaskInstance dhTaskInstance
+			,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
+			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@RequestParam("insTitle")String insTitle,@RequestParam("insStatusId")Integer insStatusId
+			,@RequestParam("proUid")String proUid
+			,@RequestParam("proAppId")String proAppId) {
+		
+		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess( dhTaskInstance
+				, pageNum, pageSize,insTitle,insStatusId,proAppId,proUid);
 	}
 }

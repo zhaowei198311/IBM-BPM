@@ -62,11 +62,11 @@
 							<div class="layui-input-block">
 								<select id="processType" class="layui-input-block group_select" name="group"
 									lay-verify="required">
-									<option value="">请选择流程类型</option>
+									<option value="">请选择流程状态</option>
 									<option value="">所有</option>
-									<option value="1">运行中</option>
-									<option value="2">已结束</option>
-									<option value="6">暂停中</option>
+									<option value="1">待处理</option>
+									<option value="6">已结束</option>
+									<option value="4">暂停中</option>
 								</select>
 							</div>
 						</div>
@@ -81,7 +81,7 @@
 						style="display: none;">
 				</div>
 				<div class="layui-col-xs2">
-					<input id="processName" type="text" placeholder="流程名称" class="layui-input">
+					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
 				</div>
 				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
@@ -95,21 +95,25 @@
 			</p>
 			<table class="layui-table" lay-even lay-skin="nob">
 				<colgroup>
-					<col width="150">
-					<col width="150">
-					<col width="150">
-					<col width="150">
-					<col width="150">
-					<col width="150">
+					 	<col width="5%">
+					    <col>
+					    <col>
+					    <col>
+					    <col> 
+					    <col> 
+					    <col>
+					    <col>
 				</colgroup>
 				<thead>
 					<tr>
 						<th>序号</th>
-						<th>流程名称</th>
-						<th>流程状态</th>
-						<th>流程实例编号</th>
-						<th>标题</th>
-						<th>剩余审批时长</th>
+					    <th>流程标题</th>
+					    <th>流程实例状态</th>
+					    <th>任务标题</th>
+					    <th>上一环节提交人</th>
+					    <th>流程发起人</th>
+					    <th>接收时间</th>
+					    <th>处理时间</th>
 					</tr>
 				</thead>
 				<tbody id="processType_table_tbody"/>
@@ -151,6 +155,7 @@
 
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script>
 
 		// 为翻页提供支持
@@ -176,10 +181,11 @@
 	
 	$(document).ready(function() {
 		// 加载数据
-		getProcessInfo();
+		//getProcessInfo();
+		queryProcess();
 	});
 	
-	function getProcessInfo() {
+	/* function getProcessInfo() {
 		$.ajax({
 			url : 'processInstance/queryProcessByActive',
 			type : 'POST',
@@ -192,24 +198,38 @@
 				drawTable(result.data)
 			}
 		})
-	}
-	
+	} */
+	var index;
 	function queryProcess(){
 		var processName = $('#processName').val();
 		var processType = $('#processType').val();
+		var proUid = $('#proUid').val();
+		var proAppId = $('#proAppId').val();
 		// 按条件查询 流程
 		$.ajax({
-			url : 'processInstance/queryProcessByUserAndType',
+			url : 'taskInstance/loadPageTaskByStartProcess',
 			type : 'post',
 			dataType : 'json',
 			data : {
 				pageNum : pageConfig.pageNum,
 				pageSize : pageConfig.pageSize,
 				insTitle : processName,
-				insStatusId : processType
+				insStatusId : processType,
+				proUid : proUid,
+				proAppId : proAppId
 			},
+			beforeSend: function () {
+		        index = layer.load(1);
+		    },
 			success : function(result){
-				drawTable(result.data)
+				if(result.status==0){
+				drawTable(result.data);
+				}else{
+					layer.alert(result.msg);
+				}
+				layer.close(index);
+			},error : function(){
+				layer.close(index);
 			}
 		})
 	}
@@ -229,25 +249,37 @@
 		var trs = "";
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
-			var sortNum = startSort+1 + i;
+			var sortNum = startSort + i;
+			var agentOdate = new Date(meta.taskInitDate);
+			var InitDate = datetimeFormat_1(agentOdate);
+			var agentOdate1 = new Date(meta.taskFinishDate);
+			var finishDate = datetimeFormat_1(agentOdate1);
 			trs += '<tr><td id="aa">'
 					+ sortNum
 					+ '</td>'
 					+ '<td>'
-					+ meta.insTitle
+					+ meta.dhProcessInstance.insTitle
 					+ '</td>'
 					+ '<td>'
-					+ meta.insStatus
+					+ meta.dhProcessInstance.insStatus
 					+ '</td>'
 					+ '<td>'
-					+ meta.insId
-					+ '</td>'
-					+ '<td class=""><i id="backlog_td" class="layui-icon backlog_img">&#xe63c;</i>'
-					+ meta.insId
-					+ '</td>'
-					+ '<td>'
-					+ meta.insId
-					+ '</td>'
+					+ meta.taskTitle
+					+ '</td><td>';
+					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+						trs += meta.taskPreviousUsrUsername;
+					}
+					trs += '</td><td>';
+					if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
+						trs += meta.sysUser.userName;
+					}
+					trs += '</td>'
+						+ '<td>'
+						+ InitDate
+						+'</td>' 
+						+'<td>'
+						+finishDate
+						+'</td>'
 					+ '</tr>';
 		}
 		$("#processType_table_tbody").append(trs);
@@ -269,7 +301,8 @@
 					pageConfig.pageNum = obj.curr;
 					pageConfig.pageSize = obj.limit;
 					if (!first) {
-						getProcessInfo();
+						//getProcessInfo();
+						queryProcess();
 					}
 				}
 			});

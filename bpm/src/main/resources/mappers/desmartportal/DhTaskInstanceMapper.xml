@@ -137,7 +137,7 @@
 		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
 		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,T.TO_TASK_UID,T.REMAIN_HOURS,
 		T.TASK_ACTIVITY_ID,
-		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,S.USER_NAME,S.USER_ID
+		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,P.INS_STATUS,S.USER_NAME,S.USER_ID
 	</sql>
 	
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultMap="TaskInstanceByProcessAndUserMap">
@@ -242,9 +242,15 @@
 		resultType="java.lang.Integer">
 		SELECT COUNT(*)
 		FROM
-		DH_TASK_INSTANCE
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S 
 		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS = '12'
+		T.INS_UID = P.INS_UID 
+			AND P.INS_INIT_USER = S.USER_ID
+			AND T.TASK_STATUS IN (12,-2)
+			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			 	AND (T.USR_UID = #{usrUid}
+			or T.TASK_DELEGATE_USER = #{usrUid} )
 		</where>
 	</select>
 
@@ -713,13 +719,28 @@
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
-			AND T.TASK_STATUS = 32
+			AND T.TASK_STATUS IN (12,-2,32)
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.dhProcessInstance != null ">
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
-				and dhTaskInstance.dhProcessInstance.insTitle!='' ">
+				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
 				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proUid != null 
+				and dhTaskInstance.dhProcessInstance.proUid !=''">
+				AND p.pro_Uid = #{dhTaskInstance.dhProcessInstance.proUid}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proVerUid != null 
+				and dhTaskInstance.dhProcessInstance.proVerUid !=''">
+				AND p.pro_Ver_Uid = #{dhTaskInstance.dhProcessInstance.proVerUid}
+			</if>	
+			<if test="dhTaskInstance.dhProcessInstance.proAppId != null 
+				and dhTaskInstance.dhProcessInstance.proAppId !=''">
+				AND p.pro_App_Id = #{dhTaskInstance.dhProcessInstance.proAppId}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.insStatusId != null ">
+				AND p.ins_status_id = #{dhTaskInstance.dhProcessInstance.insStatusId}
 			</if>
 			</if>
 			<if test="dhTaskInstance.sysUser != null ">
