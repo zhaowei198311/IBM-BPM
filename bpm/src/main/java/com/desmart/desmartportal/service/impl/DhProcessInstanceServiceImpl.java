@@ -427,7 +427,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         dhTaskInstanceMapper.insertTask(taskInstance);
 
         // 任务完成后 保存到流转信息表里面
-		dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
+        ServerResponse<DhRoutingRecord> generateRountingRecordResponse =
+                dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
+        dhRoutingRecordMapper.insert(generateRountingRecordResponse.getData());
 
         // 完成第一个任务
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();

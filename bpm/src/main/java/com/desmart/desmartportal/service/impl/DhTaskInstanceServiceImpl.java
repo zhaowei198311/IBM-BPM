@@ -355,27 +355,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             mergedFormData = FormDataUtil.formDataCombine(formData, insJson.getJSONObject("formData"));
         }
 
-        // 查看是否需要审批记录
-        if ("TRUE".equals(dhActivityConf.getActcCanApprove())){
-            JSONObject approvalData = dataJson.getJSONObject("approvalData");// 获取审批信息
-            if (approvalData == null) {
-                return ServerResponse.createByErrorMessage("缺少审批意见");
-            }
-            String aprOpiComment = approvalData.getString("aprOpiComment");
-            if (StringUtils.isBlank(aprOpiComment)) {
-                return ServerResponse.createByErrorMessage("缺少审批意见");
-            }
-            String aprStatus = "通过";
-            DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
-            dhApprovalOpinion.setInsUid(insUid);
-            dhApprovalOpinion.setTaskUid(taskUid);
-            dhApprovalOpinion.setActivityId(currTaskNode.getActivityId());
-            dhApprovalOpinion.setAprOpiComment(aprOpiComment);
-            dhApprovalOpinion.setAprStatus(aprStatus);
-            ServerResponse serverResponse2 = dhapprovalOpinionServiceImpl.insertDhApprovalOpinion(dhApprovalOpinion);
-            if (!serverResponse2.isSuccess()) {
-                return serverResponse2;
-            }
+        // 根据配置保存审批意见
+        ServerResponse response = dhapprovalOpinionServiceImpl.saveDhApprovalOpiionWhenSubmitTask(currTask, dhActivityConf, dataJson);
+        if (!response.isSuccess()) {
+            throw new PlatformException(response.getMsg());
         }
 
         // 修改当前任务实例状态为已完成
@@ -407,13 +390,17 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask);
 
         // 任务完成后 保存到流转信息表里面
-        dhRoutingRecordService.saveSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, routingData, willTokenMove);
+        ServerResponse<DhRoutingRecord> generateRoutingRecordResponse =
+                dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, routingData, willTokenMove);
+        DhRoutingRecord routingRecord = generateRoutingRecordResponse.getData();
 
-        // ========================== 以上已经处理完 token不移动的数据库操作情况
+        // ========================== 根据预判token是否移动，区别处理
 
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 
         if (!willTokenMove) {
+            // 保存流转信息
+            dhRoutingRecordMapper.insert(routingRecord);
             // 如果token不移动，调用完成任务的RESTful API
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
             HttpReturnStatus completeTaskResult = bpmTaskUtil.completeTask(taskId);
@@ -432,14 +419,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 装配处理人信息
         CommonBusinessObject pubBo = new CommonBusinessObject();
-        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl
-                .assembleCommonBusinessObject(pubBo, routeData);
+        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl.assembleCommonBusinessObject(pubBo, routeData);
         if (!serverResponse.isSuccess()) {
-            throw new PlatformException("装配处理人信息失败");
+            throw new PlatformException("装配处理人信息失败，缺少下个环节处理人信息");
         }
-        // 如果有循环任务记录处理人信息
-        List<DhTaskHandler> taskHandlerList = dhRouteServiceImpl.saveTaskHandlerOfLoopTask(insId, routeData);
-
+        // 如果下个环节有循环任务（保存/更新）处理人信息
+        dhRouteServiceImpl.saveTaskHandlerOfLoopTask(insId, routeData);
 
         // 装配无法选择处理人的子流程发起人信息
 		dhRouteServiceImpl.assembleInitUserOfSubProcess(currProcessInstance, pubBo, routingData);
@@ -463,21 +448,28 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // 获得当前步骤
         DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
         DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
-        if ( nextStep == null) {
+        if (nextStep == null) {
             // 没有后续步骤
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
             Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
-                ServerResponse<JSONObject> didMoveResponse = dhRouteServiceImpl.didTokenMove(insId, routingData);
-                if (didMoveResponse.isSuccess()) {
-                    JSONObject processData = didMoveResponse.getData();
+                // 判断实际TOKEN是否移动了
+                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteServiceImpl.didTokenMove(insId, routingData);
+                if (didTokenMoveResponse.isSuccess()) {
+                    JSONObject processData = didTokenMoveResponse.getData();
                     if (processData != null) {
+                        // 实际Token移动了
                         // 关闭需要结束的流程
+                        dhRoutingRecordMapper.insert(routingRecord);
                         dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
                         // 创建需要创建的子流程
                         dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
+                    } else {
+                        // 实际Token没有移动, 更新流转信息
+                        routingRecord.setActivityTo(null);
+                        dhRoutingRecordMapper.insert(routingRecord);
                     }
                 } else {
                     log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
@@ -494,7 +486,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("currTaskInstance", currTask);
 			map.put("dhStep", nextStep);
 			map.put("pubBo", pubBo);
-			map.put("routingData", routingData);
+			map.put("routingData", routingData); // 预判的下个环节信息
+			map.put("routingRecord", routingRecord); // 流转记录
             String paramStr = JSON.toJSONString(map);
             boolean result = mqProducerService.sendMessage("stepQueueKey", paramStr);
             return ServerResponse.createBySuccess();

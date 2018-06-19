@@ -592,7 +592,7 @@
 	   where 
 	       ACTIVITY_BPD_ID = #{activityBpdId} 
 	       and (USR_UID = #{userUid} or TASK_DELEGATE_USER = #{userUid})
-	       and (TASK_TYPE = 'normal' or TASK_TYPE = 'simpleLoop' or TASK_TYPE = 'multiInstanceLoop')
+	       and (TASK_TYPE = 'normal' or TASK_TYPE = 'simpleLoop' or TASK_TYPE = 'MultiInstanceLoop')
 	       and ins_uid = #{insUid} 
 	</select>
 	
@@ -658,7 +658,7 @@
 			AND
 			P.INS_INIT_USER = S.USER_ID
 			AND T.TASK_STATUS IN (12,-2)
-			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.dhProcessInstance != null ">
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
@@ -698,7 +698,7 @@
 		DH_TASK_INSTANCE
 		<where>
 			USR_UID = #{usrUid} AND TASK_STATUS IN (12,-2)
-			AND TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 		</where>
 	</select>
@@ -714,7 +714,7 @@
 			AND
 			P.INS_INIT_USER = S.USER_ID
 			AND T.TASK_STATUS = 32
-			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.dhProcessInstance != null ">
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
@@ -754,7 +754,7 @@
 		DH_TASK_INSTANCE
 		<where>
 			USR_UID = #{usrUid} AND TASK_STATUS = 32
-			AND TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
+			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 		</where>
 	</select>

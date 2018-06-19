@@ -4,6 +4,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +68,28 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 		}else {
 			return ServerResponse.createByErrorMessage("添加失败！");
 		}
+	}
+
+	@Override
+	public ServerResponse saveDhApprovalOpiionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson) {
+		if (!"TRUE".equals(dhActivityConf.getActcCanApprove())) {
+			return ServerResponse.createBySuccess();
+		}
+		JSONObject approvalData = dataJson.getJSONObject("approvalData");// 获取审批信息
+		if (approvalData == null) {
+			return ServerResponse.createByErrorMessage("缺少审批意见");
+		}
+		String aprOpiComment = approvalData.getString("aprOpiComment");
+		if (StringUtils.isBlank(aprOpiComment)) {
+			return ServerResponse.createByErrorMessage("缺少审批意见");
+		}
+		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+		dhApprovalOpinion.setInsUid(currTask.getInsUid());
+		dhApprovalOpinion.setTaskUid(currTask.getTaskUid());
+		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
+		dhApprovalOpinion.setAprOpiComment(aprOpiComment);
+		dhApprovalOpinion.setAprStatus("通过");
+		return this.insertDhApprovalOpinion(dhApprovalOpinion);
 	}
 
 }

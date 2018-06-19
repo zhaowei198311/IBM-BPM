@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.BpmRoutingData;
-import org.apache.ibatis.annotations.Param;
 
-import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 
@@ -26,6 +24,13 @@ public interface DhRoutingRecordService {
 	 * @param bpmRoutingData
 	 * @return
 	 */
-	ServerResponse saveSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData,
-																   boolean willTokenMove);
+	ServerResponse<DhRoutingRecord> generateSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData,
+																						boolean willTokenMove);
+
+	/**
+	 * 根据流程实例主键加载流转记录
+	 * @param insUid
+	 * @return
+	 */
+	ServerResponse loadDhRoutingRecords(String insUid);
 }

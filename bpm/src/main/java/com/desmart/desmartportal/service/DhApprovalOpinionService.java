@@ -2,8 +2,11 @@ package com.desmart.desmartportal.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 
 public interface DhApprovalOpinionService {
 	/**
@@ -31,4 +34,13 @@ public interface DhApprovalOpinionService {
 	 * @return
 	 */
 	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion);
+
+	/**
+	 * 保存提交任务时的审批记录
+	 * @param currTask  当前任务
+	 * @param dhActivityConf  当前节点配置
+	 * @param dataJson  提交上来的data
+	 * @return
+	 */
+	ServerResponse saveDhApprovalOpiionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson);
 }
