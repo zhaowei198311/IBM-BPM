@@ -634,23 +634,23 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			List<DhActivityReject> OldDhActivityReject = dhActivityRejectMapper.listByActivityId(map.get("ACTIVITY_ID").toString());
 			for (DhActivityReject dhActivityReject : OldDhActivityReject) {
 				// 老流程 当前环节可驳回的流程名
-				String activityName = dhActivityReject.getActivityName();
+//				String activityName = dhActivityReject.getActivityName();
 				String activityBpdId = dhActivityReject.getActivityBpmId();
-				Map<String, Object> idS = new HashMap<>();
-				idS.put("proUid", proUidNew);
-				idS.put("proVerUid", proVerUidNew);
-				idS.put("proAppId", proAppIdNew);
-				idS.put("activityName", activityName);
-				idS.put("activityBpdId", activityBpdId);
-				// 新流程环节
-				BpmActivityMeta newBpmActivityMeta = bpmActivityMetaMapper.getActivityIdByIdAndName(idS);
-				if (newBpmActivityMeta != null) {
+//				Map<String, Object> idS = new HashMap<>();
+//				idS.put("proUid", proUidNew);
+//				idS.put("proVerUid", proVerUidNew);
+//				idS.put("proAppId", proAppIdNew);
+//				idS.put("activityName", activityName);
+//				idS.put("activityBpdId", activityBpdId);
+//				// 新流程环节
+//				BpmActivityMeta newBpmActivityMeta = bpmActivityMetaMapper.getActivityIdByIdAndName(idS);
+//				if (newBpmActivityMeta != null) {
 					DhActivityReject dar = new DhActivityReject();
 					dar.setActrUid("act_rej:"+UUID.randomUUID());
 					dar.setActivityId(map.get("ACTIVITY_ID_1").toString());
-					dar.setActrRejectActivity(newBpmActivityMeta.getActivityBpdId());
+					dar.setActrRejectActivity(activityBpdId);
 					dhActivityRejectMapper.insert(dar);
-				}				
+//				}				
 			}
 		}
     }
