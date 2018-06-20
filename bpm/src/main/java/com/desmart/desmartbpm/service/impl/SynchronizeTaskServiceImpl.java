@@ -86,9 +86,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     //@Scheduled(cron = "0/20 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
-        /*List<LswTask> newLswTaskList = getNewTasks();
+        List<LswTask> newLswTaskList = getNewTasks();
         Map<Integer, String> groupInfo = getGroupInfo();
-        generateDhTaskInstance(newLswTaskList, groupInfo);*/
+        generateDhTaskInstance(newLswTaskList, groupInfo);
         LOG.info("==================  拉取任务结束  ===============");
     }
     
@@ -327,7 +327,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      */
     private List<LswTask> getNewTasks() {
         int maxTaskId = dhTaskInstanceService.getMaxTaskIdInDb();
-        return lswTaskMapper.listNewTasks(3062);
+        return lswTaskMapper.listNewTasks(3151);
     }
     
     private Map<Integer, String> getGroupInfo() {

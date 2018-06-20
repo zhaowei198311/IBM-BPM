@@ -294,7 +294,26 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
             return list.get(0);
         }
     }
-    
+
+    @Override
+    public BpmActivityMeta getFirstUserTaskMetaOfMainProcess(String proAppId, String proUid, String proVerUid) {
+        BpmActivityMeta startNode = getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
+        if (startNode == null) return null;
+        String activityBpdId = startNode.getActivityTo();
+        BpmActivityMeta metaSelective = new BpmActivityMeta();
+        metaSelective.setParentActivityId("0");
+        metaSelective.setSnapshotId(proVerUid);
+        metaSelective.setBpdId(proUid);
+        metaSelective.setActivityBpdId(activityBpdId);
+        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+
     /**
      * 获得指定元素的父元素
      * @param bpmActivityMeta

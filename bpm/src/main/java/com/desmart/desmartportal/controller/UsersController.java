@@ -124,6 +124,6 @@ public class UsersController {
 	public void rejectTest() {
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-		bpmProcessUtil.rejectProcess(1276, "bpdid:0907274553f39261:351615d5:163cd8dfd67:-7ff1", "deadmin");
+		//bpmProcessUtil.rejectProcess(1276, "bpdid:0907274553f39261:351615d5:163cd8dfd67:-7ff1", "deadmin");
 	}		
 }

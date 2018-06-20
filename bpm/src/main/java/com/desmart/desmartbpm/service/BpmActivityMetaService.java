@@ -130,4 +130,13 @@ public interface BpmActivityMetaService {
      * @return
      */
     BpmActivityMeta getStartMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 找到主流程的第一个人工服务节点
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    BpmActivityMeta getFirstUserTaskMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
 }

@@ -1071,7 +1071,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				parentProcessInstance = list.get(0);
 			}
 			
-            // 获得流程发起人
+            // 从pubBo中获得流程发起人id
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
             DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, startProcessNode,
@@ -1088,7 +1088,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                                                                         String tokenId, String creatorId, String departNo, String companyNumber) {
         DhProcessInstance subInstance = new DhProcessInstance();
         subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        subInstance.setInsTitle(processNode.getActivityName());
+        subInstance.setInsTitle(parentInstance.getInsTitle() + "-" + processNode.getActivityName()); // 流程标题
         subInstance.setInsId(parentInstance.getInsId());
         subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
         subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);

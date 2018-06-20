@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.net.ProxySelector;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -312,9 +313,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
         String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 
-        JSONObject dataJson = JSONObject.parseObject(data);
-        JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
-        JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
+		JSONObject dataJson = JSONObject.parseObject(data);
+		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
+		JSONObject processDataIn = JSONObject.parseObject(String.valueOf(dataJson.get("processData")));
+		JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
         JSONArray routeData = JSONObject.parseArray(String.valueOf(dataJson.get("routeData")));
 
 		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
@@ -350,6 +352,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         Integer insId = currProcessInstance.getInsId();
         BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
+
+        // 检查是否需要更新insTitle
+		if (canEditInsTitle(currTask, currProcessInstance)) {
+            String insTitle = processDataIn.getString("insTitle");
+            if (StringUtils.isBlank(insTitle) || insTitle.trim().length()>30) {
+                return ServerResponse.createByErrorMessage("流程标题异常");
+            }
+            currProcessInstance.setInsTitle(insTitle);
+        }
 
         // 整合formdata
         JSONObject mergedFormData = new JSONObject();
@@ -566,8 +577,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    }
 	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currTaskNode.getDhActivityConf().getActcUid());
 	    
-	    
-	    List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
+	    // 查看能否编辑insTitle
+        boolean canEditInsTitle = canEditInsTitle(dhTaskInstance, dhprocessInstance);
+
+        List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
         if (steps.isEmpty()) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
@@ -620,6 +633,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("processInstance", dhprocessInstance);
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
+	    resultMap.put("canEditInsTitle", canEditInsTitle);
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 	
@@ -1166,5 +1180,32 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
+
+    @Override
+	public boolean canEditInsTitle(DhTaskInstance taskInstance, DhProcessInstance processInstance) {
+        // 如果任务处于子流程或主流程的第一个人工环节，并且不是被驳回的，可以修改流程标题
+        BpmActivityMeta taskNode = bpmActivityMetaMapper.queryByPrimaryKey(taskInstance.getTaskActivityId());
+        BpmActivityMeta startNode = null;
+        if (processInstance.getTokenActivityId() == null) {
+            // 流程是主流程
+            startNode = bpmActivityMetaServiceImpl.getStartMetaOfMainProcess(processInstance.getProAppId(),
+                    processInstance.getProUid(), processInstance.getProVerUid());
+        } else {
+            // 流程是子流程
+            BpmActivityMeta subProcessNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(processInstance.getTokenActivityId());
+            if (subProcessNode == null) return false;
+            startNode = bpmActivityMetaServiceImpl.getStartMetaOfSubProcess(subProcessNode);
+        }
+
+        String activityTo = startNode.getActivityTo();
+        if (StringUtils.isBlank(activityTo) || !activityTo.contains(taskNode.getActivityBpdId())) return false;
+        // 判断是否是初次提交，即这个节点的任务有没有被完成过
+        DhTaskInstance taskSelective = new DhTaskInstance();
+        taskSelective.setTaskActivityId(taskInstance.getTaskActivityId());
+        taskSelective.setInsUid(taskInstance.getInsUid());
+        taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+        int count = dhTaskInstanceMapper.selectAllTask(taskSelective).size();
+        return count == 0 ? true : false;
+    }
 
 }

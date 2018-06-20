@@ -349,6 +349,9 @@
 			url:"processInstance/checkedBusinesskey",
 			type : 'POST',
 			dataType : 'json',
+			beforeSend: function() {
+			    layer.load(1);
+			},
 			data : {
 				proUid : proUid,
 				proAppId : proAppId,
@@ -359,6 +362,7 @@
 					if(result.data.flag==1){
 						startProcess(result.data.stepBusinessKey);
 					}else{
+                        layer.closeAll('loading');
 						$("#checkedBusinessKey").find(".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {
 						var info = '<tr><td><input type="radio" name="insBusinessKey" '
@@ -373,10 +377,12 @@
 						$("#checkedBusinessKey").show();
 					}
 				}else{
+                    layer.closeAll('loading');
 					layer.alert(result.msg);
 				}
 			},
 			error : function(){
+                layer.closeAll('loading');
 				layer.alert("发起流程异常");
 			}
 		})

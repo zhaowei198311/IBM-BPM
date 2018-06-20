@@ -321,6 +321,11 @@ function agree() {
     }else{
     	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
     }
+    // 校验标题有没有填写
+    if (!checkInsTitle()) {
+        layer.alert("流程标题过长或未填写");
+        return
+    }
     // 发起流程             
     var finalData = {};
     // 表单数据
@@ -331,6 +336,7 @@ function agree() {
     // 流程数据
     var processData = {};
     processData.insUid = $("#insUid").val();
+    processData.insTitle = $("#insTitle_input").val().trim();
     finalData.processData = processData;
 
     var activityId = ""
@@ -458,10 +464,15 @@ function checkUserData() {
     	$("#myApprovalOpinion").focus();
     	layer.alert("请填写审批意见");
     	return;
-    }   
+    }
+
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
     	layer.alert("缺少流程发起人信息");
     	return;
+    }
+    if (!checkInsTitle()) {
+        layer.alert("流程标题过长或未填写");
+        return
     }
     $.ajax({
     	url:"dhRoute/showRouteBar",
@@ -580,4 +591,19 @@ function saveDraftsInfo() {
                     }
                 });
     //end
+}
+
+function checkInsTitle() {
+    if ($('#canEditInsTitle').val() == 'true') {
+        var insTitle = $("#insTitle_input").val();
+        if (!insTitle || insTitle.trim() == '') {
+            return false;
+        }
+        if (!insTitle.length > 60) {
+            return false;
+        }
+        return true;
+    } else {
+        return true;
+    }
 }

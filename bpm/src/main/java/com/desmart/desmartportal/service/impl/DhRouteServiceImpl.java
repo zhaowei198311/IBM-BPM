@@ -1147,7 +1147,7 @@ public class DhRouteServiceImpl implements DhRouteService {
     }
 
     @Override
-    public CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance currProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData) {
+    public CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance subProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData) {
 		// 找到满足条件的所有子流程, 代表子流程的节点和作为出发点的节点不是平级的
         List<BpmActivityMeta> processNodesToAssemble = findNodesIdentifySubProcessNeedToAssemble(routingData);
         for (BpmActivityMeta nodeIdentifySubProcess : processNodesToAssemble) {
@@ -1161,13 +1161,15 @@ public class DhRouteServiceImpl implements DhRouteService {
                     break;
                 }
             }
-            BpmGlobalConfig bpmGlobalConfig = new BpmGlobalConfig();
+            // 管理员作为没有发起人时的处理人
+            BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
             List<String> adminUidList = new ArrayList<>();
             adminUidList.add(bpmGlobalConfig.getBpmAdminName());
+
+            // 获得第一个节点的默认处理人
             DhActivityConf activityConf = firstTaskNode.getDhActivityConf();
-            // 分配默认处理人
             String actcAssignType = activityConf.getActcAssignType();
-            String actcAssignVariable = activityConf.getActcAssignVariable();
+            String actcAssignVariable = activityConf.getActcAssignVariable(); // 分配变量
             DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
             if (assignTypeEnum == null || assignTypeEnum == DhActivityConfAssignType.NONE) {
                 log.info("为子流程创建处理人异常");
@@ -1180,8 +1182,8 @@ public class DhRouteServiceImpl implements DhRouteService {
             selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
             List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
             List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-            String departNo = currProcessInstance.getDepartNo();
-            String companyNum = currProcessInstance.getCompanyNumber();
+            String departNo = subProcessInstance.getDepartNo();
+            String companyNum = subProcessInstance.getCompanyNumber();
             String userUidStr = "";
             switch (assignTypeEnum) {
                 case ROLE:
@@ -1231,12 +1233,12 @@ public class DhRouteServiceImpl implements DhRouteService {
                     break;
                 case PROCESS_CREATOR:
                     // 流程发起人, 则使用触发次流程的那个流程的流程发起人
-                    userUidStr += currProcessInstance.getInsInitUser() + ";";
+                    userUidStr += subProcessInstance.getInsInitUser() + ";";
                     break;
                 case BY_FIELD:// 根据表单字段选
                     if (assignList.size() > 0) {
                         String field = assignList.get(0).getActaAssignId();
-                        JSONObject obj = JSON.parseObject(currProcessInstance.getInsData());
+                        JSONObject obj = JSON.parseObject(subProcessInstance.getInsData());
                         JSONObject formData = obj.getJSONObject("formData");
                         String value = FormDataUtil.getStringValue(field, formData);
                         if (value != null) {

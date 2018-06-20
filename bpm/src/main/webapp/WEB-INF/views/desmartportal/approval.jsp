@@ -127,8 +127,8 @@
  	</div>
     <div class="search_area top_btn">
     	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
-    	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
-    	<input type="hidden" id="companyNum" value="${processInstance.companyNumber}"/> 
+    	<input id="departNo" type="hidden" value="${processInstance.departNo}"/>
+    	<input id="companyNum" type="hidden" value="${processInstance.companyNumber}"/>
        	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
         <input id="formId" value="${formId}" style="display: none;">
         <input id="proUid" value="${processInstance.proUid}" style="display: none;">
@@ -142,6 +142,7 @@
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
+        <input id="canEditInsTitle" value="${canEditInsTitle}" />
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span id="approvalData" style="display: none;">${approvalData}</span>
@@ -209,7 +210,16 @@
                     <tr>
                         <td class="td_title" colspan="1" style="width: 120px">流程标题</td>
                         <td class="sub_title" colspan="5">
-                             <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled>
+                            <c:choose>
+                                <%-- 可编辑标题 --%>
+                                <c:when test="${canEditInsTitle == true}">
+                                    <input type="text" id="insTitle_input" class="layui-input" />
+                                </c:when>
+                                <%-- 不可编辑标题 --%>
+                                <c:otherwise>
+                                    <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled/>
+                                </c:otherwise>
+                            </c:choose>
                         </td>
                     </tr>
                 </tbody>

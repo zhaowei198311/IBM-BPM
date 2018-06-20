@@ -154,10 +154,10 @@ public interface DhRouteService {
 
 	/**
 	 * 为没有分配发起人的子流程装配处理人
-	 * @param currProcessInstance
+	 * @param subProcessInstance
 	 * @param pubBo
 	 * @param routingData
 	 * @return
 	 */
-	CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance currProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData);
+	CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance subProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData);
 }
