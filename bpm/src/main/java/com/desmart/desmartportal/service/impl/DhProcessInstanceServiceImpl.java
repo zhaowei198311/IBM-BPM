@@ -3,10 +3,16 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import com.desmart.desmartbpm.entity.*;
-import com.desmart.desmartportal.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -31,6 +37,15 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
+import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhActivityReject;
+import com.desmart.desmartbpm.entity.DhObjectPermission;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.exception.PlatformException;
@@ -52,6 +67,10 @@ import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhApprovalOpinionService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
+import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
@@ -948,39 +967,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
     }
 
-    @Override
-    public DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance,  DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
-            String tokenId, String creatorId, String departNo, String companyNumber) {
-        DhProcessInstance subInstance = new DhProcessInstance();
-        subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        subInstance.setInsTitle(processNode.getActivityName());
-        subInstance.setInsId(parentInstance.getInsId());
-        subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
-        subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
-        subInstance.setProAppId(parentInstance.getProAppId());
-        if (StringUtils.isNotBlank(processNode.getExternalId())) {
-            // 子流程的proUid设为外链的流程的proUid
-            subInstance.setProUid(processNode.getExternalId());
-        } else {
-            subInstance.setProUid(parentInstance.getProUid());
-        }
-        subInstance.setProVerUid(parentInstance.getProVerUid());
-        subInstance.setInsInitDate(new Date());
-        subInstance.setInsParent(parentInstance.getInsUid());
-        subInstance.setInsInitUser(creatorId);
-        subInstance.setCompanyNumber(parentInstance.getCompanyNumber());
-        subInstance.setDepartNo(parentInstance.getDepartNo());
-        subInstance.setInsBusinessKey(parentInstance.getInsBusinessKey());
-        JSONObject insData = new JSONObject();
-        insData.put("formData", new JSONObject());
-        JSONObject processData = new JSONObject();
-        processData.put("insUid", subInstance.getInsUid());
-        insData.put("processData", processData);
-        subInstance.setInsData(insData.toJSONString());
-        subInstance.setTokenId(tokenId);
-        subInstance.setTokenActivityId(processNode.getActivityId());
-        return subInstance;
-    }
+
 
 	@Override
 	public ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance) {
@@ -1097,6 +1084,82 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
 
 	    return ServerResponse.createBySuccess();
+    }
+
+    @Override
+    public DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance,  DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
+                                                                        String tokenId, String creatorId, String departNo, String companyNumber) {
+        DhProcessInstance subInstance = new DhProcessInstance();
+        subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
+        subInstance.setInsTitle(processNode.getActivityName());
+        subInstance.setInsId(parentInstance.getInsId());
+        subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
+        subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
+        subInstance.setProAppId(parentInstance.getProAppId());
+        if (StringUtils.isNotBlank(processNode.getExternalId())) {
+            // 子流程的proUid设为外链的流程的proUid
+            subInstance.setProUid(processNode.getExternalId());
+        } else {
+            subInstance.setProUid(parentInstance.getProUid());
+        }
+        subInstance.setProVerUid(parentInstance.getProVerUid());
+        subInstance.setInsInitDate(new Date());
+        subInstance.setInsParent(parentInstance.getInsUid());
+        subInstance.setInsInitUser(creatorId);
+        subInstance.setCompanyNumber(parentInstance.getCompanyNumber());
+        subInstance.setDepartNo(parentInstance.getDepartNo());
+        subInstance.setInsBusinessKey(parentInstance.getInsBusinessKey());  // 流程关键字
+        subInstance.setTokenId(tokenId);
+        subInstance.setTokenActivityId(processNode.getActivityId());
+
+        // 从父流程实例中获取自己表单中name相同的值作为子流程的数据
+        JSONObject insData = assembleinsDataOfSubProcess(subInstance, parentInstance);
+        subInstance.setInsData(insData.toJSONString());
+        return subInstance;
+    }
+
+    /**
+     * 为子流程生成insData
+     * @param parentInstance
+     * @param subInstance
+     * @return
+     */
+    private JSONObject assembleinsDataOfSubProcess(DhProcessInstance subInstance, DhProcessInstance parentInstance) {
+        JSONObject insData = new JSONObject();
+        // processData部分
+        JSONObject processData = new JSONObject();
+        processData.put("insUid", subInstance.getInsUid());
+        processData.put("departNo", subInstance.getDepartNo());
+        processData.put("companyNumber", subInstance.getCompanyNumber());
+        processData.put("insTitle", subInstance.getInsTitle());
+        processData.put("insInitUser", subInstance.getInsInitUser());
+        insData.put("processData", processData);
+
+        // formData部分
+        JSONObject formData = new JSONObject();
+        BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(subInstance.getTokenActivityId());
+        BpmActivityMeta firstTaskNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
+        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstTaskNode, subInstance.getInsBusinessKey());
+        if (formStepOfTaskNode != null) {
+            // 根据表单字段获取值
+            String formUid = formStepOfTaskNode.getStepObjectUid(); // 获得表单主键
+            ServerResponse<List<BpmFormField>> response = bpmFormFieldService.queryFieldByFormUid(formUid);
+            List<BpmFormField> allFields = response.getData();
+            JSONObject parentInsData = JSON.parseObject(parentInstance.getInsData());
+            JSONObject parentFormData = parentInsData.getJSONObject("formData");
+            for (BpmFormField field : allFields) {
+                String fldCodeName = field.getFldCodeName(); // 字段name属性
+                if (StringUtils.isNotBlank(fldCodeName)) {
+                    JSONObject obj = parentFormData.getJSONObject(fldCodeName);
+                    if (obj != null) {
+                        formData.put(fldCodeName, obj);
+                    }
+                }
+            }
+
+        }
+        insData.put("formData", formData);
+        return insData;
     }
 
 }
