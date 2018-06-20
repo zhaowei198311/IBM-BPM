@@ -797,11 +797,18 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				// 选择环节
 				List<DhRoutingRecord> dhRoutingRecordList2 = dhRoutingRecordMapper
 						.getDhRoutingRecordListByCondition(dhRoutingRecord);
-				for (DhRoutingRecord dhRoutingRecord3 : dhRoutingRecordList2) {
+				for (DhActivityReject dhActivityReject : dhActivityRejects) {
 					// 过滤信息
-					BpmActivityMeta bpmActivityMeta4 = bpmActivityMetaMapper
-							.queryByPrimaryKey(dhRoutingRecord3.getActivityId());
-					if(checkReject(bpmActivityMeta4,dhActivityRejects)) {
+					BpmActivityMeta bpmActivityMeta4 = null;
+					DhRoutingRecord dhRoutingRecord3 = null;
+					for (DhRoutingRecord dhRoutingRecordCheck : dhRoutingRecordList2) {
+						BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhRoutingRecordCheck.getActivityId());
+						if(bpmActivityMeta.getActivityBpdId().equals(dhActivityReject.getActrRejectActivity())) {
+							bpmActivityMeta4 = bpmActivityMeta;
+							dhRoutingRecord3 = dhRoutingRecordCheck;
+						}
+					}
+					if(bpmActivityMeta4!=null) {
 					if (DhRoutingRecord.ROUTE_Type_SUBMIT_TASK.equals(dhRoutingRecord3.getRouteType())
 							|| DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord3.getRouteType())) {
 						Map<String, Object> toActivitiesMap = new HashMap<>();
@@ -818,17 +825,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			}
 		}
 		return null;
-	}
-
-	private boolean checkReject(BpmActivityMeta bpmActivityMeta4, List<DhActivityReject> dhActivityRejects) {
-		boolean flag = false;
-		for (DhActivityReject dhActivityReject : dhActivityRejects) {
-			if(bpmActivityMeta4.getActivityBpdId().equals(dhActivityReject.getActrRejectActivity())) {
-				flag = true;
-				break;
-			}
-		}
-		return flag;
 	}
 
 	@Override
@@ -878,8 +874,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
 				//String currActivityId = sourceTask.getTaskActivityId();//当前环节
 				
-				BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
-				BpmActivityMeta targetActivityMeta = bpmActivityMetaService
+		BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+		BpmActivityMeta targetActivityMeta = bpmActivityMetaService
 						.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, currActivityMeta.getParentActivityId()
 								, currActivityMeta.getSnapshotId());
 		String actcAssignVariable = targetActivityMeta.getDhActivityConf().getActcAssignVariable();
@@ -924,7 +920,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhRoutingRecord.setActivityName(taskTitle);
 			dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_REJECT_TASK);
 			dhRoutingRecord.setUserUid(currentUser);
-			BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
+			/*BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
 			
 			bpmActivityMeta.setActivityBpdId(activityBpdId);
 			List<BpmActivityMeta> bpmActivityMetaList = bpmActivityMetaMapper
@@ -932,8 +928,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			String activityTO = "";
 			for (BpmActivityMeta bpmActivityMeta2 : bpmActivityMetaList) {
 				activityTO = bpmActivityMeta2.getActivityId();
-			}
-			dhRoutingRecord.setActivityTo(activityTO);
+			}*/ 
+			String activityTo = targetActivityMeta.getActivityId();
+			dhRoutingRecord.setActivityTo(activityTo);
 			dhRoutingRecord.setActivityId(currActivityId);
 			
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
