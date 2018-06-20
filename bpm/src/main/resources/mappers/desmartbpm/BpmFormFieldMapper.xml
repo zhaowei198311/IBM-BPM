@@ -50,7 +50,7 @@
 				and fld_type = #{fieldType}
 			</when>
 			<otherwise>
-				and fld_type != 'title'
+				and fld_type != 'title' and fld_type not like '%object_%'
 			</otherwise>
 		</choose>
 		order by fld_index
@@ -103,7 +103,7 @@
 				and fld_type = #{fieldType}
 			</when>
 			<otherwise>
-				and fld_type != 'title'
+				and fld_type != 'title' and fld_type not like '%object_%'
 			</otherwise>
 		</choose>
 		order by fld_index
