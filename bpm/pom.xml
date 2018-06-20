@@ -50,6 +50,14 @@
 			<version>1.6</version>
 		</dependency>
 		
+		
+		<!-- sap joc -->
+		<dependency>
+			<groupId>com.sap</groupId>
+			<artifactId>sapjco3</artifactId>
+			<version>3.0</version>
+		</dependency>
+		
 		<!-- rabbit -->
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
