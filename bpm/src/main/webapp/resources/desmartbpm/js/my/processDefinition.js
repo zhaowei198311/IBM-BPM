@@ -471,10 +471,12 @@ function copyProcess(){
 	var proAppIdNew = ck_1.data('proappid');
 
 	$.ajax({
-		async: false,
 		url: common.getPath() + "/processDefinition/copySimilarProcess",
 		type: "post",
 		dataType: "json",
+		beforeSend:function(){
+			layer.load(1);
+		},
 		data: {
 			proUid : proUid,
 			proVerUid : proVerUid,
@@ -491,9 +493,11 @@ function copyProcess(){
 				layer.alert("拷贝失败！");
 				console.log(data.msg);
 			}
+			layer.closeAll("loading");
 		},
 		error : function() {
 			layer.alert('拷贝失败');
+			layer.closeAll("loading");
 		}
 	})
 }
