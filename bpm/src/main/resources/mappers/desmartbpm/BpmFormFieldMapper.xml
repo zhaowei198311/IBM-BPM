@@ -108,4 +108,17 @@
 		</choose>
 		order by fld_index
 	</select>
+	
+	<select id="queryFieldByFldUidAndCodeName" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		select <include refid="base_column"/>
+		from bpm_form_field 
+		where form_uid = #{formUid}
+		and fld_code_name = #{fieldCodeName}
+ 	</select>
+ 	
+ 	<select id="queryFieldByTableFldUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+ 		select <include refid="base_column"/>
+ 		from bpm_form_field
+ 		where fld_description = #{fldUid}
+ 	</select>
 </mapper>

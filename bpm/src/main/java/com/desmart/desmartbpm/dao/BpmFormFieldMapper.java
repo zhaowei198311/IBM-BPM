@@ -72,4 +72,14 @@ public interface BpmFormFieldMapper {
 	 * 根据表单id找到所有的关联子表单字段集合
 	 */
 	List<BpmFormField> queryPublicFormFieldByFormUid(@Param("formUid")String formUid,@Param("fieldType")String fieldType);
+
+	/**
+	 * 根据表单id和字段在表单中的name查询到唯一的字段
+	 */
+	BpmFormField queryFieldByFldUidAndCodeName(@Param("formUid")String dynUid, @Param("fieldCodeName")String fieldCodeName);
+
+	/**
+	 * 根据表单中表格的id查询表格中所有字段
+	 */
+	List<BpmFormField> queryFieldByTableFldUid(String fldUid);
 }

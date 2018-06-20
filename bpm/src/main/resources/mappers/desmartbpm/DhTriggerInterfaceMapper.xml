@@ -219,4 +219,11 @@
 		</foreach>
 	</update>
 
+	<select id="queryTriIntByTriUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		DH_TRIGGER_INTERFACE
+		where tri_uid = #{triUid}
+	</select>
 </mapper>

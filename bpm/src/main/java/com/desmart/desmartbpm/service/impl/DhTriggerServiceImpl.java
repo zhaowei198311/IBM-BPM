@@ -13,13 +13,27 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
+import com.desmart.desmartbpm.dao.BpmFormManageMapper;
+import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
+import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhTrigger;
+import com.desmart.desmartbpm.entity.DhTriggerInterface;
+import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.DhTriggerService;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.entity.DhInstanceDocument;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartsystem.service.DhInterfaceExecuteService;
+import com.desmart.desmartsystem.util.Json;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rabbitmq.tools.json.JSONUtil;
 
 /**
  * 触发器服务
@@ -30,7 +44,22 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
+    
+    @Autowired
+	private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
+    
+    @Autowired
+    private BpmFormManageMapper bpmFormManageMapper;
+    
+    @Autowired
+    private BpmFormFieldMapper bpmFormFieldMapper;
+    
+    @Autowired
+    private DhProcessInstanceMapper dhProcessInstanceMapper;
 
+    @Autowired
+    private DhInterfaceExecuteService dhInterfaceExecuteService;
+    
     @Override
     public ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
@@ -78,6 +107,52 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 								org.json.JSONObject.class});
 				md.invoke(obj, new Object[]{wac, insUid, jb});
 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else if("interface".equals(dhTrigger.getTriType())) {
+			try {
+				String insData = dhProcessInstanceMapper.selectByPrimaryKey(insUid).getInsData();
+				JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
+				List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUid(triUid);
+				String intUid = dhTrigger.getTriWebbot();
+				String inputParameter = "\"inputParameter\":{";
+				for(int i=0;i<dhTriggerInterfaceList.size();i++) {
+					DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
+					String fieldCodeName = triInt.getFldCodeName();
+					String paramName = triInt.getParaName();
+					BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),fieldCodeName);
+					if(null==formField) {
+						List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+						for(String publicFormUid:publicFormUidList) {
+							formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid,fieldCodeName);
+							if(null!=formField) {
+								break;
+							}
+						} 
+					}
+					if("object".equals(formField.getFldType())) {
+						/*List<BpmFormField> tableFieldList = bpmFormFieldMapper.queryFieldByTableFldUid(formField.getFldUid());
+						for(int j=0;j<tableFieldList.size();j++) {
+							BpmFormField tableField = tableFieldList.get(i);
+							
+						}*/
+					}else {
+						String fieldValue = FormDataUtil.getStringValue(fieldCodeName, formDataObj);
+						if(null == fieldValue) {
+							fieldValue = "";
+						}
+						inputParameter += "\""+paramName+"\":\""+fieldValue+"\"";
+						if(i!=dhTriggerInterfaceList.size()-1) {
+							inputParameter += ",";
+						}
+					}
+				}
+				inputParameter += "}";
+				String paramJson = "{\"intUid\":\""+intUid+"\","+inputParameter+"}";
+				JSONObject paramObj = JSONObject.parseObject(paramJson);
+				Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
+				System.out.println(JSONObject.toJSONString(json));
+			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}

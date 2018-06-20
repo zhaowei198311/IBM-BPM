@@ -67,7 +67,7 @@
 	</delete>
 	
 	<select id="queryReleByFormUidAndPublicFormUid" parameterType="map" resultType="int">
-		select COUNT(*) 
+		select COUNT(form_uid) 
 		from bpm_form_rele_public_form
 		where form_uid = #{formUid}
 			and public_form_uid = #{publicFormUid}

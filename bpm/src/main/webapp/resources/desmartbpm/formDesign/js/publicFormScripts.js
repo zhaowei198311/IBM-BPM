@@ -892,7 +892,7 @@ function saveHtml() {
                                                         formUid: formUid, //表单Id
                                                         fldCodeName: $(this).attr("name"), //字段编码Id
                                                         fldName: $(this).text().trim(), //字段名
-                                                        fldDescription: "", //字段描述
+                                                        fldDescription: filedAttr.fldCodeName, //字段描述
                                                         fldType: "object_"+$(this).attr("col-type"), //字段类型
                                                         fldSize: "", //字段长度
                                                         multiSeparator: "", //多值分隔符
@@ -1055,7 +1055,7 @@ function saveHtml() {
                                                         formUid: formUid, //表单Id
                                                         fldCodeName: $(this).attr("name"), //字段编码Id
                                                         fldName: $(this).text().trim(), //字段名
-                                                        fldDescription: "", //字段描述
+                                                        fldDescription: filedAttr.fldCodeName, //字段描述
                                                         fldType: "object_"+$(this).attr("col-type"), //字段类型
                                                         fldSize: "", //字段长度
                                                         multiSeparator: "", //多值分隔符

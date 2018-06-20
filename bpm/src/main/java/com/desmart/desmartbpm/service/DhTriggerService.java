@@ -51,5 +51,4 @@ public interface DhTriggerService {
      * @return
      */
     public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid);
-    
 }
