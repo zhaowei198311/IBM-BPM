@@ -439,7 +439,7 @@
 					+ '<td id="requestUrl" onclick=urls("'
 					+ meta.intUrl + '")>' + meta.intUrl + '</td>' + '<td>'
 					+ meta.intCallMethod + '</td>' + '<td>'+status+'</td>' + '<td>'
-					+ '<i class="layui-icon"  title="接口测试" onclick=textInterface("'+meta.intUid+'")  >&#xe64c;</i>'
+					+ '<i class="layui-icon"  title="接口测试" style="font-size:17px;" onclick=textInterface("'+meta.intUid+'","'+meta.intTitle+'")  >&#xe64c;</i>'
 					
 					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
 //					+ '<i class="layui-icon"  title="新增参数"  onclick=add("'
@@ -593,6 +593,11 @@
 		var list = pageInfo.list;
 		var startSort = pageInfo.startRow;//开始序号
 		var trs = "";
+		
+		
+		var sortNumTow=1;
+		var displaySrotNum="";
+		
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			
@@ -611,9 +616,16 @@
 			}else{
 				isMust = "否"
 			}
-//			<input id="paraUid" type="checkbox" name="eCheck" value="' + meta.paraUid + '" lay-skin="primary">
-			trs += '<tr><td>'
-					+ sortNum
+			
+			var paraParenName = meta.paraParentName;
+			if(meta.paraParentName==null){
+				displaySrotNum=sortNumTow++;
+			}else{
+				displaySrotNum="";
+			}
+			trs += '<tr>'
+					+'<td>'
+					+displaySrotNum
 					+ '</td>'
 					+ '<td>'
 					+ meta.paraName
@@ -639,7 +651,10 @@
 					+ '<td>'+ isEmpty(meta.dateFormat)+ '</td>'
 					+ '<td>'+ isEmpty(meta.paraParentName)+ '</td>'
 //					+ '<td>'+ isEmpty(meta.intXml)+ '</td>'
-					+'<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'"); >&#xe642;</i><i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i></td>'
+					+'<td>'
+					+'<i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'","update"); >&#xe642;</i>'
+					+'<i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i>'
+					+'</td>'
 					+ '</tr>';
 		}
 		$("#exposed_table_tbody").append(trs);

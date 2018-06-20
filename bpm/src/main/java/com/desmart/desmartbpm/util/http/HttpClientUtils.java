@@ -196,11 +196,6 @@ public class HttpClientUtils {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		HttpReturnStatus httpReturnStatus = doDel("http://192.168.2.127:9200/code");
-		System.out.println(httpReturnStatus.getMsg());
-	}
-
 	public static HttpReturnStatus doDel(String url) {
 		HttpReturnStatus result = new HttpReturnStatus();
 		HttpDelete httpDelete = new HttpDelete(url);

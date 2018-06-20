@@ -67,7 +67,7 @@
 			<div class="top">
 				新增字典
 			</div>
-			<form class="layui-form form-horizontal" action="sysDictionary/saveSysDictionaryData" method="post"  onsubmit="return validateCallback(this,updatesuccess);">
+			<form class="layui-form form-horizontal" action="sysDictionary/saveSysDictionaryData" method="post"  onsubmit="return validateCallback(this,addsuccess);">
 				<div class="middle" style="height:auto;" >
 					  <div class="layui-form-item"  style="margin-top:20px;">
 					    <label class="layui-form-label">字典代码</label>

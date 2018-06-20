@@ -52,4 +52,18 @@ public interface DhInterfaceParameterMapper {
 	 * @return
 	 */
 	DhInterfaceParameter selectByparaUid(String paraUid);
+	
+	/**
+	 * 根据指定参数 查询接口参数
+	 * @param paraUid
+	 * @return
+	 */
+	List<DhInterfaceParameter> byQueryParameter(DhInterfaceParameter dhInterfaceParameter);
+	
+	/**
+	 * 删除Array的子参数
+	 * @param paraUid
+	 * @return
+	 */
+	int deleteArrayParameter(DhInterfaceParameter dhInterfaceParameter);
 }

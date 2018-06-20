@@ -24,7 +24,6 @@
 <style type="text/css">
 .display_content2 {
 	min-height: auto;
-	margin-left: -430px;
 }
 .cancel2_btn{margin-top:15px}
 </style>
@@ -34,12 +33,12 @@
 	<div class="layui-container" style="margin-top: 20px; width: 100%;">
 		<div class="search_area">
 			<div class="layui-row layui-form">
+				<form action="interfaces/queryDhInterfaceByTitle"  method="post"  onsubmit="return search(this);">
 				<div class="layui-col-md2">
-					<input id="interfaceName" type="text" placeholder="接口名称"
-						class="layui-input">
+					<input id="interfaceName" type="text" placeholder="接口名称" class="layui-input" name="intTitle" >
 				</div>
 				<div class="layui-col-md2">
-					<select id="interfaceType" name="interfaceType">
+					<select id="interfaceType" name="intType">
 						<option value="">请选择接口类型</option>
 						<option value="webservice">webservice</option>
 						<option value="restapi">restapi</option>
@@ -47,7 +46,7 @@
 					</select>
 				</div>
 				<div class="layui-col-md2">
-					<select id="interfaceState" name="interfaceState">
+					<select id="interfaceState" name="intStatus">
 						<option value="">请选择接口状态</option>
 						<option value="enabled">启用</option>
 						<option value="disabled">停用</option>
@@ -56,8 +55,9 @@
 				<div class="layui-col-md2" style="text-align: right; width: 280px">
 					<button class="layui-btn layui-btn-sm">查询接口</button>
 					<button id="addInterfaces"
-						class="layui-btn layui-btn-sm create_btn">新增接口</button>
+						class="layui-btn layui-btn-sm create_btn" type="button">新增接口</button>
 				</div>
+				</form>
 			</div>
 		</div>
 		<div>
@@ -116,7 +116,6 @@
 							<th>是否必须</th>
 							<th>日期格式</th>
 							<th>父参数</th>
-							<th>xml参数</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -164,7 +163,7 @@
 						<div class="layui-col-md6">
 							<label class="layui-form-label">接口类型*:</label>
 							<div class="layui-input-inline">
-								<select id="intType" name="intType">
+								<select id="intType" name="intType" lay-filter="intType">
 									<option value="">请选择</option>
 									<option value="webservice">webservice</option>
 									<option value="restapi">restapi</option>
@@ -185,7 +184,7 @@
 				</div>
 				<div class="layui-form-item">
 					<div class="layui-row">
-						<div class="layui-col-md6">
+						<div class="layui-col-md6 intCallMethodDiv" >
 							<label class="layui-form-label">接口方法名:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="intCallMethod" name="intCallMethod"
@@ -205,6 +204,14 @@
 						</div>
 					</div>
 				</div>
+				<div class="layui-col-md11 intXml" >
+				  <div class="layui-form-item layui-form-text">
+				 	<label class="layui-form-label">XML:</label>
+				    <div class="layui-input-block">
+				      <textarea placeholder="" class="layui-textarea" name="intXml" ></textarea>
+				    </div>
+				  </div>
+				</div>				
 				<div class="layui-form-item">
 					<div class="layui-row">
 						<div class="layui-col-md6">
@@ -236,73 +243,80 @@
 
 	<!-- 新增接口参数表单 -->
 	<div class="display_container4" id="exposed_table2_container">
-		<div class="display_content2" style="overflow: visible;">
+		<div class="display_content2 boundInterfaceParameter" >
 			<div class="top" style="color: red;">绑定接口参数</div>
 			<label style="color: red;">带*的参数为必填</label> <input id="intUid"
 				type="hidden" />
 			<form id="form2" class="layui-form" action="javascript:void(0);" style="margin-top: 30px;">
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">参数名称*:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraName" name="paraName"
-								lay-verify="paraName" autocomplete="off" class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<label class="layui-form-label">参数名称*:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="paraName" name="paraName"
+									lay-verify="paraName" autocomplete="off" class="layui-input required">
+							</div>
 						</div>
+						<div class="layui-col-md6">
+							<label class="layui-form-label">参数类型*:</label>
+							<div class="layui-input-inline">
+								<select name="paraType" class="require" lay-filter="paraType">
+									<option value="String">String</option>
+									<option value="Integer">Integer</option>
+									<option value="Double">Double</option>
+									<option value="Boolean">Boolean</option>
+									<option value="Date">Date</option>
+									<option value="Array">Array</option>
+								</select>
+							</div>
+						  </div>
 					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">参数类型*:</label>
-						<div class="layui-input-inline">
-							<select name="paraType" class="require" lay-filter="paraType">
-								<option value="String">String</option>
-								<option value="Integer">Integer</option>
-								<option value="Double">Double</option>
-								<option value="Boolean">Boolean</option>
-								<option value="Date">Date</option>
-								<option value="Array">Array</option>
-							</select>
+				</div>
+				
+				<div class="layui-form-item">
+					<div class="layui-row">
+						<div class="layui-col-md12">
+							<label class="layui-form-label">参数描述:</label>
+							<div class="layui-input-block">
+								<input type="text" id="paraDescription" name="paraDescription"
+									lay-verify="paraDescription" autocomplete="off"
+									class="layui-input paraDescription required" />
+							</div>
 						</div>
 					</div>
 				</div>
-
 				<div class="layui-form-item">
-					<label class="layui-form-label">参数描述:</label>
-					<div class="layui-input-block">
-						<input type="text" id="paraDescription" name="paraDescription"
-							lay-verify="paraDescription" autocomplete="off"
-							class="layui-input paraDescription" />
-					</div>
-				</div>
-				<div class="layui-form-item">
-					<div class="layui-inline paraSize">
-						<label class="layui-form-label">参数长度:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraSize" name="paraSize"
-								lay-verify="paraSize" autocomplete="off" class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6 paraSize">
+							<label class="layui-form-label">参数长度:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="paraSize" name="paraSize"
+									lay-verify="paraSize" autocomplete="off" class="layui-input number">
+							</div>
 						</div>
-					</div>
-					
-					
-					<div class="layui-inline dateFormat" style="display:none;">
-						<label class="layui-form-label">日期格式:</label>
-						<div class="layui-input-inline">
-							<input type="text"  name="dateFormat"  placeholder="例如:yyyy-MM-dd" lay-verify="paraSize"   autocomplete="off" class="layui-input">
+						
+						<div class="layui-col-md6 dateFormat">
+							<label class="layui-form-label">日期格式:</label>
+							<div class="layui-input-inline">
+								<input type="text"  name="dateFormat"  placeholder="例如:yyyy-MM-dd" class="layui-input">
+							</div>
 						</div>
-					</div>
-					
-					
-					<div class="layui-inline  isMust">
-						<label class="layui-form-label">是否必须*:</label>
-						<div class="layui-input-inline">
-							<input id="isMust" type="checkbox" name="isMust"
-								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
-								value="false">
+						
+						
+						<div class="layui-col-md6  isMust">
+							<label class="layui-form-label">是否必须*:</label>
+							<div class="layui-input-inline">
+								<input id="isMust" type="checkbox" name="isMust"
+									lay-skin="switch" lay-filter="switch4" lay-text="true|false"
+									value="false">
+							</div>
 						</div>
 					</div>
 				</div>
 
 				<div id="arryParameterDiv" >
 					<div class="layui-form-item">
-					  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter();" style="float: right;margin: 0 15px 0;" >
+					  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter('add');" style="float: right;margin: 0 15px 0;" >
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					</div>
@@ -324,7 +338,6 @@
 									<th>参数长度</th>
 									<th>是否必须</th>
 									<th>日期格式</th>
-									<th>xml参数</th>
 									<th>操作</th>
 								</tr>
 							</thead>
@@ -343,7 +356,7 @@
 	<div class="display_container5" id="exposed_table3_container">
 		<div class="display_content2" style="overflow: visible;">
 			<div class="top" style="color: red;">修改接口</div>
-			<form class="layui-form" action="" style="margin-top: 30px;">
+			<form id="updaArrayForm" class="layui-form" action="javascript:void(0);" style="margin-top: 30px;">
 				<input id="intUid2" style="display: none;" />
 				<div class="layui-form-item">
 					<div class="layui-inline">
@@ -367,7 +380,7 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口类型:</label>
 						<div class="layui-input-inline">
-							<select id="intType2" name="intType2">
+							<select id="intType2" name="intType2" lay-filter="intType1">
 								<option value="webservice">webservice</option>
 								<option value="restapi">restapi</option>
 								<option value="rpc">rpc</option>
@@ -383,8 +396,8 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">接口方法名:</label>
+					<div class="layui-inline intCallMethodDiv1">
+						<label class="layui-form-label intCallMethod1">接口方法名:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="intCallMethod2" name="intCallMethod2"
 								lay-verify="text" autocomplete="off" class="layui-input">
@@ -398,6 +411,14 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="layui-form-item layui-form-text intXml1">
+				 	<label class="layui-form-label">XML:</label>
+				    <div class="layui-input-block">
+				      <textarea placeholder="" class="layui-textarea" name="intXml"  id="intXml1"></textarea>
+				    </div>
+				  </div>
+				
 				<div class="layui-form-item">
 					<div class="layui-inline">
 						<label class="layui-form-label">登陆密码:</label>
@@ -421,97 +442,120 @@
 			</div>
 		</div>
 	</div>
+	
+	
 	<div class="display_container6" id="exposed_table3_container">
-		<div class="display_content2">
-			<div class="top" style="color: red;">修改接口参数</div>
+		<div class="display_content2  boundInterfaceParameter">
+			<div class="top" style="color: red;">修改绑定接口参数</div>
 			<form class="layui-form" action="" style="margin-top: 30px;">
-				<input id="intUid3" style="display: none;" /> <input id="paraUid3"
-					style="display: none;" />
+				<input id="intUid3" type="hidden" /> 
+				<input id="paraUid3" type="hidden"  name="paraUid" />
+			
 				<div class="layui-form-item">
-					<!-- <div class="layui-inline">
-						<label class="layui-form-label">参数索引:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraIndex3" name="paraIndex"
-								lay-verify="paraIndex" autocomplete="off" class="layui-input"
-								value="">
+					<div class="layui-row">
+						<div class="layui-col-md6">
+							<label class="layui-form-label">参数名称*:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="paraName3" name="paraName"
+									lay-verify="paraName" autocomplete="off" class="layui-input required">
+							</div>
 						</div>
-					</div> -->
-					<div class="layui-inline">
-						<label class="layui-form-label">参数名称:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraName3" name="paraName"
-								lay-verify="paraName" autocomplete="off" class="layui-input"
-								value="">
-						</div>
+						<div class="layui-col-md6">
+							<label class="layui-form-label">参数类型*:</label>
+							<div class="layui-input-inline">
+								<select name="paraType" class="require" id="paraType3"  lay-filter="paraType3">
+									<option value="String">String</option>
+									<option value="Integer">Integer</option>
+									<option value="Double">Double</option>
+									<option value="Boolean">Boolean</option>
+									<option value="Date">Date</option>
+									<option value="Array">Array</option>
+								</select>
+							</div>
+						  </div>
 					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">参数类型:</label>
-						<div class="layui-input-inline">
-							<select id="paraType3" name="paraType" lay-filter="paraType" >
-								<option value="String">String</option>
-								<option value="Integer">Integer</option>
-								<option value="Double">Double</option>
-								<option value="Boolean">Boolean</option>
-								<option value="Date">Date</option>
-								<option value="Array">Array</option>
-							</select>
+				</div>
+				
+				<div class="layui-form-item">
+					<div class="layui-row">
+						<div class="layui-col-md12">
+							<label class="layui-form-label">参数描述:</label>
+							<div class="layui-input-block">
+								<input type="text" id="paraDescription3" name="paraDescription"
+									lay-verify="paraDescription" autocomplete="off"
+									class="layui-input paraDescription required" />
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<div class="layui-inline">
-						<label class="layui-form-label">参数长度:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraSize3" name="paraSize"
-								lay-verify="paraSize" autocomplete="off" class="layui-input">
+					<div class="layui-row">
+						<div class="layui-col-md6 paraSize3">
+							<label class="layui-form-label">参数长度:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="paraSize3" name="paraSize"
+									lay-verify="paraSize" autocomplete="off" class="layui-input number">
+							</div>
 						</div>
-					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">参数描述:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="paraDescription3" name="paraDescription"
-								lay-verify="text" autocomplete="off" class="layui-input"
-								value="">
+						
+						
+						<div class="layui-col-md6 dateFormat3" style="display:none;">
+							<label class="layui-form-label">日期格式:</label>
+							<div class="layui-input-inline">
+								<input type="text"  name="dateFormat" id="dateFormat3" placeholder="例如:yyyy-MM-dd" lay-verify="paraSize"   autocomplete="off" class="layui-input">
+							</div>
 						</div>
-					</div>
-					<div class="layui-inline">
-						<label class="layui-form-label">是否多值:</label>
-						<div class="layui-input-inline">
-							<input id="multiValue3" type="checkbox" name="multiValue"
-								lay-skin="switch" lay-filter="switch3" lay-text="true|false"
-								value="false">
+						
+						
+						<div class="layui-col-md6">
+							<label class="layui-form-label">是否必须*:</label>
+							<div class="layui-input-inline">
+								<input id="isMust3" type="checkbox" name="isMust"
+									lay-skin="switch" lay-filter="switch4" lay-text="true|false"
+									value="false">
+							</div>
 						</div>
 					</div>
 				</div>
+			<div id="arryParameterDiv3" >
 				<div class="layui-form-item">
-
-					<div class="layui-inline">
-						<label class="layui-form-label">多值分隔符:</label>
-						<div class="layui-input-inline">
-							<input type="text" id="multiSeparator3" name="multiSeparator"
-								lay-verify="multiSeparator" autocomplete="off"
-								class="layui-input">
-						</div>
-					</div>
+				  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter('update');" style="float: right;margin: 0 15px 0;" >
+				    <i class="layui-icon">&#xe654;</i>
+				  </button>
 				</div>
-				<div class="layui-form-item">
-
-					<div class="layui-inline">
-						<label class="layui-form-label">是否必须:</label>
-						<div class="layui-input-inline">
-							<input id="isMust3" type="checkbox" name="isMust"
-								lay-skin="switch" lay-filter="switch4" lay-text="true|false"
-								value="false">
-						</div>
-					</div>
+				<div class="middle1">
+					<table class="layui-table backlog_table"
+						lay-even lay-skin="nob">
+						<colgroup>
+							<col>
+							<col>
+							<col>
+							<col>
+							<col>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>参数名称</th>
+								<th>参数描述</th>
+								<th>参数类型</th>
+								<th>参数长度</th>
+								<th>是否必须</th>
+								<th>日期格式</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="childNodeParameterTbody3" ></tbody>
+					</table>
 				</div>
-			</form>
-			<div class="foot">
-				<button id="sure5_btn" class="layui-btn layui-btn sure5_btn">确定</button>
-				<button id="cancel5_btn" class="layui-btn layui-btn cancel5_btn">取消</button>
 			</div>
+			
+			<div class="foot">
+				<button  class="layui-btn layui-btn" lay-submit="" lay-filter="updateParameterFilter" >确定</button>
+				<!-- <button id="sure5_btn" class="layui-btn layui-btn sure5_btn">确定</button> -->
+				<button  class="layui-btn layui-btn" type="button" onclick="closePopup('display_container6','class');" >取消</button>
+			</div>
+		</form>
 		</div>
-	</div>
 	</div>
 </body>
 
@@ -522,7 +566,7 @@
 
 <!-- 新增array接口参数表单 -->
 <div class="display_container4" id="chilNodeParameterContainer">
-	<div class="display_content2" style="overflow: visible;">
+	<div class="display_content2 boundInterfaceParameter" >
 		<div class="top" style="color: red;">绑定接口参数</div>
 		<label style="color: red;">带*的参数为必填</label>
 		<form class="layui-form" id="chilNodeParameterForm"
@@ -532,7 +576,7 @@
 					<label class="layui-form-label">参数名称*:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraName" lay-verify="paraName"
-							autocomplete="off" class="layui-input">
+							autocomplete="off" class="layui-input required">
 					</div>
 				</div>
 				<div class="layui-inline">
@@ -562,7 +606,7 @@
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
-							autocomplete="off" class="layui-input">
+							autocomplete="off" class="layui-input number">
 					</div>
 				</div>
 				
@@ -588,14 +632,83 @@
 					onclick="closePopup('chilNodeParameterContainer','id');">取消</button>
 			</div>
 		</form>
+		<input type="hidden" id="addArrayInAddOrUpdate" />
 	</div>
 </div>
 <!-- 新增array接口参数表单 -->
 
+<!-- 修改array接口参数表单 -->
+<div class="display_container4" id="updateInterfaceParameter">
+	<div class="display_content2 boundInterfaceParameter">
+		<div class="top" style="color: red;">修改绑定接口参数</div>
+		<label style="color: red;">带*的参数为必填</label>
+		<form class="layui-form" id="updateInterfaceParameterForm"
+			action="javascript:void(0);" style="margin-top: 30px;">
+			<input  type="hidden" name="paraUid" />
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">参数名称*:</label>
+					<div class="layui-input-inline">
+						<input type="text" name="paraName" lay-verify="paraName"
+							autocomplete="off" class="layui-input required">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">参数类型*:</label>
+					<div class="layui-input-inline">
+						<select name="paraType"  lay-filter="paraType2" id="paraType2" >
+							<option value="String">String</option>
+							<option value="Integer">Integer</option>
+							<option value="Double">Double</option>
+							<option value="Boolean">Boolean</option>
+							<option value="Date">Date</option>
+						</select>
+					</div>
+				</div>
+			</div>
 
-
-
-
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数描述:</label>
+				<div class="layui-input-block">
+					<input type="text" name="paraDescription"
+						lay-verify="paraDescription" autocomplete="off"
+						class="layui-input paraDescription" />
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline paraSize2">
+					<label class="layui-form-label">参数长度:</label>
+					<div class="layui-input-inline">
+						<input type="text" name="paraSize" lay-verify="paraSize"
+							autocomplete="off" class="layui-input number">
+					</div>
+				</div>
+				
+				<div class="layui-inline dateFormat2" style="display:none;">
+					<label class="layui-form-label">日期格式:</label>
+					<div class="layui-input-inline">
+						<input type="text"  name="dateFormat"  placeholder="例如:yyyy-MM-dd" lay-verify="paraSize"   autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				
+				<div class="layui-inline isMust2">
+					<label class="layui-form-label">是否必须*:</label>
+					<div class="layui-input-inline">
+						<input type="checkbox" name="isMust" id="isMust2"  lay-skin="switch"  lay-filter="isMustCheckUpd" lay-text="true|false" />
+					</div>
+				</div>
+			</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn" lay-submit=""
+					lay-filter="updateAddChildNodeParameter">确定</button>
+				<button class="layui-btn layui-btn"
+					onclick="closePopup('updateInterfaceParameter','id');">取消</button>
+			</div>
+			<input type="hidden" id="updateArrayInAddOrUpdate"  />
+		</form>
+	</div>
+</div>
+<!-- 修改array接口参数表单 -->
 
 
 

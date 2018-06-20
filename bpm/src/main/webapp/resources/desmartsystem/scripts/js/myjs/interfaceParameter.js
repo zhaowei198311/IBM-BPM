@@ -9,8 +9,8 @@ function getPath(){
 }
 
 //弹出接口测试页面
-function textInterface(intUid){
-	var url = getPath() + '/interfaces/interfaceTest?intUid='+intUid;
+function textInterface(intUid,intTitle){
+	var url = getPath() + '/interfaces/interfaceTest?intUid='+intUid+'&intTitle='+intTitle;
     layer.open({
         type: 2,
         title: false,
@@ -19,7 +19,7 @@ function textInterface(intUid){
         shade: 0.3,
         skin: 'layui-layer-molv',
         btn: ['关闭'],
-        area: ['689px', '492px'],
+        area: ['689px', '600px'],
         content: [url],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
@@ -101,7 +101,7 @@ function isEmpty(val){
 
 
 
-
+var arrayTh;
 layui.use(['form', 'layedit', 'laydate'], function(){
 	var form = layui.form
 	
@@ -111,6 +111,11 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	})
 	
 	form.on('select(paraType)', function(data){
+		var value=data.value;
+		byParameterTypeHideAndShowElement(value,"");
+	});
+	
+	form.on('select(paraType2)', function(data){
 		var value=data.value;
 		byParameterTypeHideAndShowElement(value,"");
 	});
@@ -135,16 +140,60 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		byParameterTypeHideAndShowElement(value,"3");
 	});
 	
+	form.on('select(paraType2)', function(data){
+		var value=data.value;
+		byParameterTypeHideAndShowElement(value,"2");
+		
+		$("").appendTo('');
+		
+	});
 	
-	//新增子参数
+	
+	//新增array参数
 	form.on('submit(confimAddChildNodeParameter)', function(data){
 		var $form = $("#chilNodeParameterForm");
 		if (!$form.valid()) {
 			return false;
 		}
 		var field=data.field;
-		if (typeof(field.isMust) == "undefined")
-		{
+		if (typeof(field.isMust) == "undefined"){
+			field.isMust='false';
+		}
+		
+		var addArrayInAddOrUpdate =	$('#addArrayInAddOrUpdate').val();
+		
+		var childNodeParameterTbody;
+		console.log(addArrayInAddOrUpdate);
+		if(addArrayInAddOrUpdate=='add'){
+			childNodeParameterTbody=$('#childNodeParameterTbody');
+		}else{
+			childNodeParameterTbody=$('#childNodeParameterTbody3');
+		}
+		
+		var str='<tr value="'+encodeURI(JSON.stringify(field))+'">';
+		str+='<td>'+field.paraName+'</td>';
+		str+='<td>'+field.paraType+'</td>';
+		str+='<td>'+field.paraDescription+'</td>';
+		str+='<td>'+isEmpty(field.paraSize)+'</td>';
+		str+='<td>'+field.isMust+'</td>';
+		str+='<td>'+isEmpty(field.dateFormat)+'</td>';
+		//str+='<td>'+isEmpty(field.paraXml)+'</td>';
+		str+='<td><i class="layui-icon" title="修改参数" onclick=updateTr(this,"'+addArrayInAddOrUpdate+'"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>';
+		$(childNodeParameterTbody).append(str);
+		//layer.alert('绑定成功');
+		$('#chilNodeParameterForm')[0].reset();
+		
+	    return false;
+	});
+	
+	//修改array参数
+	form.on('submit(updateAddChildNodeParameter)', function(data){
+		var $form = $("#chilNodeParameterForm");
+		if (!$form.valid()) {
+			return false;
+		}
+		var field=data.field;
+		if (typeof(field.isMust) == "undefined"){
 			field.isMust='false';
 		}
 		var str='<tr value="'+encodeURI(JSON.stringify(field))+'">';
@@ -154,11 +203,10 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		str+='<td>'+isEmpty(field.paraSize)+'</td>';
 		str+='<td>'+field.isMust+'</td>';
 		str+='<td>'+isEmpty(field.dateFormat)+'</td>';
-//		str+='<td>'+isEmpty(field.paraXml)+'</td>';
-		str+='<td><i class="layui-icon" title="修改参数" onclick="updateTr(this);" >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>';
-		$('#childNodeParameterTbody').append(str);
-		layer.alert('绑定成功');
+		str+='<td><i class="layui-icon" title="修改参数" onclick=updateTr(this,"update"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>';
 		$('#chilNodeParameterForm')[0].reset();
+		$(arrayTh).parent().parent().after(str);
+		$(arrayTh).parent().parent().remove();
 	    return false;
 	});
 	
@@ -210,6 +258,50 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	    return false;
 	});
 	
+	
+	//修改参数
+	form.on('submit(updateParameterFilter)', function(data){
+		var $form = $("#updaArrayForm");
+		if (!$form.valid()) {
+			return false;
+		}
+		var intUid=$('#intUid').val();
+		var arrayParameter=new Array();
+		var field=data.field;
+		
+		
+		
+		if (typeof(field.isMust) == "undefined"){
+			field.isMust='false';
+		}
+		field.intUid=intUid;
+		arrayParameter.push(field);
+		
+		$('#arryParameterDiv3 table tbody tr').each(function(index,value){
+			var value=$(value).attr('value');
+			var valueJson=JSON.parse(decodeURI(value));
+			valueJson.intUid=intUid;
+			arrayParameter.push(valueJson);
+		});
+		
+		$.ajax({
+			url : 'interfaceParamers/saveOrUpdate',
+			type : 'POST',
+			dataType : 'json',
+			contentType:"application/json",
+			data : JSON.stringify(arrayParameter),
+			success : function(result) {
+				if(result.success==true){
+					layer.alert(result.msg);
+					closePopup('exposed_table3_container','id');
+					getParamersInfo(intUid);
+				}else{
+					layer.alert(result.msg);
+				}
+			}
+		})
+	    return false;
+	});
 });
 
 
@@ -248,8 +340,7 @@ function getParameter(paraUid){
 		form.on('switch(switch4)', function(data) {
 			var ckd = this.checked ? 'true' : 'false';
 			document.getElementById("isMust3").value = ckd;
-		})
-		
+		});
 		$.ajax({
 			url : 'interfaceParamers/queryByparaId',
 			type : 'POST',
@@ -258,9 +349,7 @@ function getParameter(paraUid){
 				paraUid : paraUid
 			},
 			success : function(result) {
-				
 				byParameterTypeHideAndShowElement(result.paraType,'3');
-				
 				$(".display_container6").css("display", "block");
 				$("#paraUid3").val(result.paraUid);
 				$("#paraIndex3").val(result.paraIndex);
@@ -269,15 +358,46 @@ function getParameter(paraUid){
 				$("#paraType3").val(result.paraType);
 				$("#paraSize3").val(result.paraSize);
 				$("#multiSeparator3").val(result.multiSeparator);
-				
 				$("#dateFormat3").val(result.dateFormat);
-				
 				if(result.isMust=="true"){
 					document.getElementById('isMust3').checked  = true;
 				}else{
 					document.getElementById('isMust3').checked  = false;
 				}
 				$("#intUid3").val(result.intUid);
+				
+				var rtParaType=result.paraType;
+				if(rtParaType=='Array'){
+					$('#paraType3').attr('disabled','disabled');
+				}else{
+					$('#paraType3').removeAttr('disabled','disabled');
+				}
+				
+				
+				$.ajax({
+					url : 'interfaceParamers/byQueryParameter',
+					type : 'POST',
+					dataType : 'json',
+					data : {
+						paraParent : paraUid
+					},
+					success : function(result) {
+						updArrayTableList(result);
+					}
+				});
+				
+				/*var paraParent = result.paraParent;
+				var paraType=$('#paraType3 option:last').val();
+				if(paraParent!=null){
+					if(paraType=='Array'){
+						$('#paraType3 option:last').remove();
+					}
+				}else{
+					if(paraType!='Array'){
+						$('#paraType3').append('<option value="Array">Array</option>');
+					}
+				}*/
+				
 				form.render();
 			}
 		});
@@ -285,19 +405,78 @@ function getParameter(paraUid){
 
 }
 
+
+//修改array参数
+function updArrayTableList(result){
+	// 渲染数据
+	$("#childNodeParameterTbody3").empty();
+	for (var i = 0; i < result.length; i++) {
+		var str='<tr value="'+encodeURI(JSON.stringify(result[i]))+'">';
+		str+='<td>'+result[i].paraName+'</td>';
+		str+='<td>'+result[i].paraType+'</td>';
+		str+='<td>'+result[i].paraDescription+'</td>';
+		str+='<td>'+isEmpty(result[i].paraSize)+'</td>';
+		str+='<td>'+result[i].isMust+'</td>';
+		str+='<td>'+isEmpty(result[i].dateFormat)+'</td>';
+		str+='<td><i class="layui-icon" title="修改参数" onclick=updateTr(this,"update"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>';
+		$('#childNodeParameterTbody3').append(str);
+	}
+}
+
+
+
 //删除当前tr
 function deleteTr(ts){
 	$(ts).parent().parent().remove();
 }
 
-function updateTr(ts){
+function updateTr(ts,addOrUpdate){
+	
+	arrayTh=ts;
 	var value=$(ts).parent().parent().attr('value');
 	var valueJson=JSON.parse(decodeURI(value));
+	popupDivAndReset('updateInterfaceParameter','id');
+	$('#updateInterfaceParameterForm input').each(function(index,element){
+		var name=$(element).attr('name');
+		if(name!=undefined){
+			var value=valueJson[name];
+			$(element).val(value);
+		}
+	});
+	
+	
+	$("#paraType2").val(valueJson.paraType);
+	
+	if(valueJson.isMust=="true"){
+		document.getElementById('isMust2').checked  = true;
+	}else{
+		document.getElementById('isMust2').checked  = false;
+	}
+	
+	layui.use([ 'layer', 'form' ], function() {
+		var form = layui.form, layer = layui.layer, $ = layui.jquery;
+		form.on('switch(isMustCheckUpd)', function(data) {
+			var ckd = this.checked ? 'true' : 'false';
+			document.getElementById("isMust2").value = ckd;
+		});
+		form.render();
+	});
+	
+	
+	$('#updateArrayInAddOrUpdate').val(addOrUpdate);
+	
+	//alert('修改绑定接口参数');
+	byParameterTypeHideAndShowElement(valueJson.paraType,2);
 }
 
+
+
 //添加array参数
-function addArrayParameter(){
+function addArrayParameter(addOrUpdate){
 	popupDivAndReset('chilNodeParameterContainer','id');
+	
+	$('#addArrayInAddOrUpdate').val(addOrUpdate);
+	
 	byParameterTypeHideAndShowElement('String',1);
 }
 
@@ -318,22 +497,15 @@ function popupDivAndReset(chooser,chooserType){
 	$('form',$dailogs).find("input, select, textarea").removeClass('error');
 }
 
+
+
 //关闭
 function closePopup(chooser,chooserType){
-	var $dailogs;
+	var $dailogs;	
 	if(chooserType=='id'){
 		$dailogs=$('#'+chooser);
 	}else if(chooserType=='class'){
 		$dailogs=$('.'+chooser);
 	}
 	$dailogs.css("display","none");
-}
-
-$(function(){
-	test('fasdfsa');
-});
-
-function test(name){
-	var bb='<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" fasdfsa xmlns:web="http://webservice.lyfwebservice.ibm.com">';
-	console.log(bb);
 }

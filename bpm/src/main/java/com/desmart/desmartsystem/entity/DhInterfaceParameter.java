@@ -3,6 +3,8 @@
  */
 package com.desmart.desmartsystem.entity;
 
+import java.util.List;
+
 /**  
 * <p>Title: DhInterfaceParameter</p>  
 * <p>Description: </p>  
@@ -37,6 +39,8 @@ public class DhInterfaceParameter {
 	private String paraParentName; 
 	
 	private String dateFormat;//时间格式
+	
+	private List<DhInterfaceParameter> dhInterfaceParameters;
 	
 	/**
 	 * @return the paraUid
@@ -207,6 +211,16 @@ public class DhInterfaceParameter {
 
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
+	}
+	
+	
+
+	public List<DhInterfaceParameter> getDhInterfaceParameters() {
+		return dhInterfaceParameters;
+	}
+
+	public void setDhInterfaceParameters(List<DhInterfaceParameter> dhInterfaceParameters) {
+		this.dhInterfaceParameters = dhInterfaceParameters;
 	}
 
 	/**

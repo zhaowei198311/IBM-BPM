@@ -50,13 +50,39 @@ public class DhInterfaceParameterController {
 	@RequestMapping(value = "/add")
 	@ResponseBody
 	public ServerResponse saveInterfaceParamers(@RequestBody List<DhInterfaceParameter> dhInterfaceParameterList) {
-		return dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameterList);
+		
+		try {
+			dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameterList);
+			return ServerResponse.createBySuccessMessage("添加成功");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage("添加失败");
+		}
+	}
+	
+	@RequestMapping(value = "/saveOrUpdate")
+	@ResponseBody
+	public ServerResponse saveOrUpdate(@RequestBody List<DhInterfaceParameter> dhInterfaceParameterList) {
+		try {
+			dhInterfaceParameterService.saveOrUpdate(dhInterfaceParameterList);
+			return ServerResponse.createBySuccessMessage("修改成功");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage("添加失败");
+		}
 	}
 	
 	@RequestMapping(value = "/update")
 	@ResponseBody
 	public ServerResponse updateInterfaceParamers(DhInterfaceParameter dhInterfaceParameter) {
-		return dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
+		try {
+			dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
+			return ServerResponse.createBySuccessMessage("修改成功");
+		} catch (Exception e) {
+			return ServerResponse.createByErrorMessage("修改失败");
+		}
 	}
 	
 	@RequestMapping(value = "/delete")
@@ -64,16 +90,23 @@ public class DhInterfaceParameterController {
 	public ServerResponse deleteInterfaceParamers(String paraUid) {
 		try {
 			dhInterfaceParameterService.delDhInterfaceParameter(paraUid);
+			return ServerResponse.createBySuccessMessage("删除成功");
 		} catch (Exception e) {
 			return ServerResponse.createByErrorMessage("删除失败");
 		}
-		return ServerResponse.createBySuccessMessage("删除成功");
 	}
 	
 	@RequestMapping(value = "/queryByparaId")
 	@ResponseBody
 	public DhInterfaceParameter queryByparaUid(String paraUid) {
 		return dhInterfaceParameterService.selectByparaUid(paraUid);
+	}
+	
+	
+	@RequestMapping(value = "/byQueryParameter")
+	@ResponseBody
+	public List<DhInterfaceParameter> byQueryParameter(DhInterfaceParameter dhInterfaceParameter) {
+		return dhInterfaceParameterService.byQueryParameter(dhInterfaceParameter);
 	}
 	
 	@RequestMapping(value = "/homePage")

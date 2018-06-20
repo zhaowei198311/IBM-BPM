@@ -25,6 +25,8 @@ public interface DhInterfaceParameterService {
 
 	
 	
+	
+	
 	/**
 	 * @param intUid 接口定义id
 	 * @return 根据 定义接口id  查询 返回一个list 接口参数数据
@@ -51,10 +53,26 @@ public interface DhInterfaceParameterService {
 	 */
 	ServerResponse updateDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter);
 	
+	
+	/**
+	 * 修改或添加参数
+	 * @param 
+	 * @return 
+	 */
+	void	saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception;
+	
 	/**
 	 * 根据id查询参数
 	 * @param paraUid 参数id
 	 * @return
 	 */
 	DhInterfaceParameter selectByparaUid(String paraUid);
+	
+	
+	
+	/**
+	 * @param 
+	 * @return  根据指定参数查询集合
+	 */
+	List<DhInterfaceParameter> byQueryParameter(DhInterfaceParameter dhInterfaceParameter);
 }

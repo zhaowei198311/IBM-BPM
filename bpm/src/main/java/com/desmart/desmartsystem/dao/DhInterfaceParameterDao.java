@@ -52,4 +52,6 @@ public interface DhInterfaceParameterDao {
 	 * @return
 	 */
 	DhInterfaceParameter selectByparaUid(String paraUid);
+
+	
 }

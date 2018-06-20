@@ -3,13 +3,16 @@
  */
 package com.desmart.desmartsystem.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.common.Const;
@@ -60,10 +63,11 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	 * @see com.desmart.desmartbpm.service.DhInterfaceParameterService#saveDhInterfaceParametere(com.desmart.desmartbpm.entity.DhInterfaceParameter)
 	 */
 	@Override
+	@Transactional
 	public ServerResponse saveDhInterfaceParametere(List<DhInterfaceParameter> dhInterfaceParameterList) {
 		
 		int size=dhInterfaceParameterList.size();
-		if(size>0) {//添加数组类型参数
+		if(size>1) {//添加数组类型参数
 			
 			String paraParent="";
 			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
@@ -74,12 +78,14 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 					paraParent=paraUid;
 				}else{
 					dhInterfaceParameter.setParaParent(paraParent);
-				}
+				} 
 				dhInterfaceParameter.setParaUid(paraUid);
 				dhInterfaceParameterMapper.save(dhInterfaceParameter);
 			}
 		}else {//添加非array类型参数
 			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+				String paraUid=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();
+				dhInterfaceParameter.setParaUid(paraUid);
 				dhInterfaceParameterMapper.save(dhInterfaceParameter);
 			}
 		}
@@ -106,6 +112,61 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	public List<DhInterfaceParameter> querybyintUid(String intUid) {
 		// TODO Auto-generated method stub
 		return dhInterfaceParameterMapper.listAll(intUid);
+	}
+
+
+	@Override
+	public List<DhInterfaceParameter> byQueryParameter(DhInterfaceParameter dhInterfaceParameter) {
+		// TODO Auto-generated method stub
+		return dhInterfaceParameterMapper.byQueryParameter(dhInterfaceParameter);
+	}
+
+	@Override
+	
+	@Transactional
+	public void saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception {
+		// TODO Auto-generated method stub
+		
+		String paraParent="";
+		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+			String paraUid=dhInterfaceParameter.getParaUid();
+			String paraType=dhInterfaceParameter.getParaType();
+			if(paraType.equals(Const.PARAMETER_TYPE_ARRAY)) {
+				paraParent=paraUid;
+			}
+		}
+		
+		
+		DhInterfaceParameter ifp=new DhInterfaceParameter();
+		List<DhInterfaceParameter> dhInterfaceParameters=new ArrayList<DhInterfaceParameter>();
+		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+			String paraUid = dhInterfaceParameter.getParaUid();
+			if(StringUtils.isNotBlank(paraUid)) {//如果主键不为空进行修改操作
+				dhInterfaceParameters.add(dhInterfaceParameter);
+			}
+		}
+		ifp.setDhInterfaceParameters(dhInterfaceParameters);
+		ifp.setParaParent(paraParent);
+		//删除掉不在集合中的数据
+		if(dhInterfaceParameters.size()>0) {
+			dhInterfaceParameterMapper.deleteArrayParameter(ifp);
+		}
+		
+		
+
+		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+			String paraUid=dhInterfaceParameter.getParaUid();
+			if(StringUtils.isNotBlank(paraUid)) {//如果主键不为空进行修改操作
+				dhInterfaceParameterMapper.update(dhInterfaceParameter);
+			}else {//为空进行添加
+				String paraUidNew=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();
+				dhInterfaceParameter.setParaUid(paraUidNew);
+				dhInterfaceParameter.setParaParent(paraParent);
+				dhInterfaceParameterMapper.save(dhInterfaceParameter);
+			}
+		}
+		
+		
 	}
 	
 }

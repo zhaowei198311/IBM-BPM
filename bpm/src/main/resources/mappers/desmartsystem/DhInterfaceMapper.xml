@@ -29,7 +29,7 @@
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
 		SELECT
 		<include refid="Base_Column_List" />
-		FROM DH_INTERFACE
+		FROM DH_INTERFACE di ORDER BY di.create_date desc
 	</select>
 	
 	<insert id="save" parameterType="com.desmart.desmartsystem.entity.DhInterface">
@@ -56,7 +56,7 @@
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE FROM DH_INTERFACE 
 		<where>
-			INT_UID = #{intUid}
+			INT_UID = #{intUid} 
 		</where>
 	</delete>
 	

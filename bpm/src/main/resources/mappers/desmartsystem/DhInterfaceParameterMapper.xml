@@ -36,10 +36,19 @@
 	</sql>
 	
 	<select id="listAll" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
-		SELECT <include refid="ListAll_Column" /> FROM DH_INTERFACE_PARAMETER ip LEFT JOIN DH_INTERFACE_PARAMETER ip1 on ip.para_parent=ip1.para_parent
+		SELECT <include refid="ListAll_Column" /> FROM DH_INTERFACE_PARAMETER ip LEFT JOIN DH_INTERFACE_PARAMETER ip1 on ip.para_parent=ip1.PARA_UID
 		<where>
 			ip.INT_UID = #{intUid}
 		</where>
+		order by ip.para_index asc
+	</select>
+	
+	
+	<select id="byQueryParameter" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter" resultType="com.desmart.desmartsystem.entity.DhInterfaceParameter" >
+		SELECT <include refid="Base_Column_List" /> FROM DH_INTERFACE_PARAMETER dip where 1=1
+		<if test="paraParent!=null and paraParent!='' ">
+			and PARA_PARENT=#{paraParent}
+		</if>
 	</select>
 	
 	<insert id="save" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
@@ -49,7 +58,7 @@
 		VALUES
 		(
 			#{paraUid},
-			#{paraIndex},
+			seq_para_index.nextval,
 			#{paraName},
 			#{paraDescription},
 			#{paraType},
@@ -66,9 +75,20 @@
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE FROM DH_INTERFACE_PARAMETER 
 		<where>
-			PARA_UID = #{paraUid}
+			PARA_UID = #{paraUid} 
 		</where>
 	</delete>
+	
+	
+	<delete id="deleteArrayParameter" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
+		DELETE FROM DH_INTERFACE_PARAMETER WHERE PARA_UID NOT IN 
+		<foreach collection="dhInterfaceParameters" item="item"  open="(" separator="," close=")" >
+			#{item.paraUid}
+		</foreach>
+		and para_parent = #{paraParent}
+	</delete>
+	
+	
 	
 	<update id="update" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
 		UPDATE DH_INTERFACE_PARAMETER

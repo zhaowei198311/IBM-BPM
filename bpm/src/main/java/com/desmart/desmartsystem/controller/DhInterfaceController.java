@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartsystem.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.DhInterface;
+import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 
 /**
@@ -34,10 +36,28 @@ public class DhInterfaceController {
 
 	@Autowired
 	private DhInterfaceService dhInterfaceService;
+	@Autowired
+	private DhInterfaceParameterService dhInterfaceParameterService;
 
 	@RequestMapping(value = "/index")
 	public ModelAndView index() {
 		ModelAndView modev = new ModelAndView("desmartsystem/interfaceManagement");
+		return modev;
+	}
+	
+	@RequestMapping(value = "/interfaceTest")
+	public ModelAndView interfaceTest(String intUid,String intTitle) {
+		try {
+			intTitle=new String(intTitle.getBytes("iso8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ModelAndView modev = new ModelAndView("desmartsystem/usermanagement/interface/interfaceTest");
+		modev.addObject("intUid", intUid);
+		modev.addObject("intTitle", intTitle);
+		modev.addObject("dhInterfaceParameterList", dhInterfaceParameterService.querybyintUid(intUid));
 		return modev;
 	}
 	
