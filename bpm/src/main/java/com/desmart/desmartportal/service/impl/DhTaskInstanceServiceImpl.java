@@ -1048,7 +1048,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// TODO Auto-generated method stub
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
-		List<DhTaskInstance> resultList = dhTaskInstanceMapper.loadPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance);
+		dhTaskInstance.setTaskStatus("32");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
@@ -1157,7 +1158,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhTaskInstance.setDhProcessInstance(dhProcessInstance);
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");
-		List<DhTaskInstance> resultList = dhTaskInstanceMapper.loadPageTaskByClosedByCondition(null, null, dhTaskInstance);
+		dhTaskInstance.setTaskStatus("12,-2,32");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(null, null, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}

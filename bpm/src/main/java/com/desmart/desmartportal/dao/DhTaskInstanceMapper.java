@@ -153,7 +153,7 @@ public interface DhTaskInstanceMapper {
 	 * @param pageSize
 	 * @return
 	 */
-	List<DhTaskInstance> loadPageTaskByClosedByCondition(
+	List<DhTaskInstance> selectPageTaskByClosedByCondition(
 			@Param("startTime")Date startTime,
 			@Param("endTime")Date endTime,
 			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);

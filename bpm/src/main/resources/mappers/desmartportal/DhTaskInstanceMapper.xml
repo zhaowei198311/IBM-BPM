@@ -709,7 +709,7 @@
 		</where>
 	</select>
 	
-	<select id="loadPageTaskByClosedByCondition" 
+	<select id="selectPageTaskByClosedByCondition" 
 	parameterType="map"
 		resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT <include refid="TaskAndProcess_Column_List"/>
@@ -719,9 +719,11 @@
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
-			AND T.TASK_STATUS IN (12,-2,32)
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			<if test="dhTaskInstance.taskStatus != null and dhTaskInstance.taskStatus !='' ">
+				AND T.TASK_STATUS IN (${dhTaskInstance.taskStatus})
+			</if>
 			<if test="dhTaskInstance.dhProcessInstance != null ">
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
 				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
