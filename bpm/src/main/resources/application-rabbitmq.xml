@@ -36,8 +36,8 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 
 	<!-- 定义direct exchange，绑定queueTest -->
 	<!-- 交换机定义 -->
-	<!-- 交换机：一个交换机可以绑定多个队列，一个队列也可以绑定到多个交换机上。 如果没有队列绑定到交换机上，则发送到该交换机上的信息则会丢失。 
-		direct模式:消息与一个特定的路由器完全匹配，才会转发 topic模式:按规则转发消息，最灵活 -->
+	<!-- 交换机：一个交换机可以绑定多个队列，一个队列也可以绑定到多个交换机上。 如果没有队列绑定到交换机上，则发送到该交换机上的信息则会丢失。 direct模式:消息与一个特定的路由器完全匹配，才会转发, 
+	     topic模式:按规则转发消息，最灵活,Fanout：无Routing Key概念，相当于广播模式，将消息分发给所有绑定FanoutExchange中的Queue,Fanout：无Routing Key概念，相当于广播模式，将消息分发给所有绑定FanoutExchange中的Queue -->
 	<rabbit:direct-exchange name="stepExchange" durable="true" auto-delete="false" declared-by="connectAdmin" >
 		<rabbit:bindings>
 			<rabbit:binding queue="stepQueue" key="stepQueueKey"></rabbit:binding>
