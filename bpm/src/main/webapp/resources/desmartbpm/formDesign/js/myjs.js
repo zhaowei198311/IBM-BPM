@@ -865,6 +865,8 @@ $(function () {
             	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
             }else if($(inputDiv.children()[0]).attr("title") == "choose_value"){
             	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            }else if($(inputDiv.children()[0]).attr("title") == "choose_depart"){
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
             }else {
                 $(inputDiv.children()[0]).css("width", colNum * colWidth - 18);
             }
@@ -1697,6 +1699,8 @@ $(function () {
                 } else if ($(inputDiv.children()[0]).attr("title") == "choose_user"){
                 	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
                 } else if ($(inputDiv.children()[0]).attr("title") == "choose_value"){
+                	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+                } else if ($(inputDiv.children()[0]).attr("title") == "choose_depart"){
                 	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
                 } else {
                     $(inputDiv.children()[0]).css("width", colNum * colWidth - 18);

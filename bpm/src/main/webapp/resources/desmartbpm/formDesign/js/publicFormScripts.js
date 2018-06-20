@@ -579,7 +579,11 @@ $(document).ready(function () {
 	                    	if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_user']").length > 0){
 	                        	inputId = "choose_user_" + inputId;
 	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_value']").length > 0){
-	                        	inputId = "choose_value_" + inputId;
+                                inputId = "choose_value_" + inputId;
+                            }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_depart']").length > 0){
+	                        	inputId = "choose_depart_" + inputId;
+	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_form']").length > 0){
+	                        	inputId = "choose_form_" + inputId;
 	                        }else{
 	                            inputId = "text_" + inputId;
 	                        }
@@ -617,7 +621,17 @@ $(document).ready(function () {
                 $("#" + temp).parent().parent().find(".subDiv").find("input[type='checkbox']").length > 0) {
                 $("#" + temp).parent().parent().find(".subDiv").find("input").attr("class", inputId).attr("name", inputId);
             } else {
-                $($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
+                if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_form']").length > 0){
+            		$("#" + temp).parent().parent().find(".subDiv").find("input[type='hidden']").attr("id",inputId);
+            		$("#" + temp).parent().parent().find(".subDiv").find("span[title='choose_form']").attr("id",inputId+"_view");
+            	}else if($("#" + temp).parent().parent().find(".subDiv").find("table").length > 0){
+            		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
+            		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).find("th").each(function(){
+            			$(this).attr({"id":inputId+"_"+_getRandomString(2),"name":inputId+"_"+_getRandomString(2)});
+            		});
+            	}else{
+            		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
+            	}
             }
             $("#" + temp).trigger("click");
         }
@@ -676,8 +690,10 @@ $(document).ready(function () {
         layer.load(1);
         downloadLayoutSrc();
         publicFormContent += formatJs;
-        var dynHtml = publicFormContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var preHtml = webpage.replace(/\"/g, "\"");
+        var dynHtml = dynContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
+        var preHtml = webpage.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
         var url = common.getPath() + "/formManage/preIndex";
         var preParam = {
             formName: $("#formName").val(),
@@ -865,14 +881,32 @@ function saveHtml() {
                                             { //表格
                                                 filedAttr.fldCodeName = subObj.attr("name");
                                                 filedAttr.fldName = "数据表格";
-                                                filedAttr.multiValue = "false";
+                                                filedAttr.multiValue = "true";
+                                                filedAttr.multiSeparator = ",";
                                                 filedAttr.fldType = "object";
                                                 jsonArr.push(filedAttr);
+                                                var thArr = subObj.find("thead th");
+                                                thArr.each(function(index){
+                                                	var filedAttr1 = {
+                                                        fldIndex: subDivArr.length+index, //索引
+                                                        formUid: formUid, //表单Id
+                                                        fldCodeName: $(this).attr("name"), //字段编码Id
+                                                        fldName: $(this).text().trim(), //字段名
+                                                        fldDescription: "", //字段描述
+                                                        fldType: "object_"+$(this).attr("col-type"), //字段类型
+                                                        fldSize: "", //字段长度
+                                                        multiSeparator: "", //多值分隔符
+                                                        multiValue: "false" //是否多值
+                                                    };
+                                                    jsonArr.push(filedAttr1);
+                                                });
                                                 break;
                                             };
                                         case "DIV":
                                             { //选人组件，弹框选值组件
-                                                if (subObj.attr("title") == "choose_user" || subObj.attr("title") == "choose_value") {
+                                                if (subObj.attr("title") == "choose_user" 
+                                                    || subObj.attr("title") == "choose_value"
+                                                    || subObj.attr("title") == "choose_depart") {
                                                     filedAttr.fldCodeName = subObj.attr("name");
                                                     filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                     filedAttr.multiValue = "false";
@@ -1006,9 +1040,36 @@ function saveHtml() {
                                                 jsonArr.push(filedAttr);
                                                 break;
                                             };
+                                        case "TABLE":
+	                                        { //表格
+	                                            filedAttr.fldCodeName = subObj.attr("name");
+	                                            filedAttr.fldName = "数据表格";
+	                                            filedAttr.multiValue = "true";
+	                                            filedAttr.multiSeparator = ",";
+	                                            filedAttr.fldType = "object";
+	                                            jsonArr.push(filedAttr);
+	                                            var thArr = subObj.find("thead th");
+	                                            thArr.each(function(index){
+                                                	var filedAttr1 = {
+                                                        fldIndex: subDivArr.length+index, //索引
+                                                        formUid: formUid, //表单Id
+                                                        fldCodeName: $(this).attr("name"), //字段编码Id
+                                                        fldName: $(this).text().trim(), //字段名
+                                                        fldDescription: "", //字段描述
+                                                        fldType: "object_"+$(this).attr("col-type"), //字段类型
+                                                        fldSize: "", //字段长度
+                                                        multiSeparator: "", //多值分隔符
+                                                        multiValue: "false" //是否多值
+                                                    };
+                                                    jsonArr.push(filedAttr1);
+                                                });
+	                                            break;
+	                                        };
                                         case "DIV":
                                             { //选人组件，弹框选值组件
-                                                if (subObj.attr("title") == "choose_user" || subObj.attr("title") == "choose_value") {
+                                                if (subObj.attr("title") == "choose_user" 
+                                                    || subObj.attr("title") == "choose_value"
+                                                    || subObj.attr("title") == "choose_depart") {
                                                     filedAttr.fldCodeName = subObj.attr("name");
                                                     filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                     filedAttr.multiValue = "false";

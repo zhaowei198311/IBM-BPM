@@ -797,6 +797,7 @@ function saveHtml() {
     $.ajax({
         url: common.getPath() + "/formManage/isBindStep",
         method: "post",
+        async:false,
         data: {
             "formUids": formUidArr
         },
@@ -823,6 +824,7 @@ function saveHtml() {
                     $.ajax({
                         url: common.getPath() + "/formManage/upadteFormContent",
                         method: "post",
+                        async:false,
                         traditional: true, //传递数组给后台
                         contentType: "application/json",
                         data: JSON.stringify(formParam),
@@ -978,6 +980,7 @@ function saveHtml() {
                                         $.ajax({ //添加表单字段数据
                                             url: common.getPath() + "/formField/saveFormField",
                                             method: "post",
+                                            async:false,
                                             dataType: "json",
                                             contentType: "application/json",
                                             data: JSON.stringify(jsonArr),
@@ -1013,6 +1016,7 @@ function saveHtml() {
                     $.ajax({ //添加表单数据
                         url: common.getPath() + "/formManage/saveForm",
                         method: "post",
+                        async:false,
                         dataType: "json",
                         contentType: "application/json",
                         data: JSON.stringify(formParam),
@@ -1167,6 +1171,7 @@ function saveHtml() {
                                         $.ajax({ //添加表单字段数据
                                             url: common.getPath() + "/formField/saveFormField",
                                             method: "post",
+                                            async:false,
                                             dataType: "json",
                                             contentType: "application/json",
                                             data: JSON.stringify(jsonArr),

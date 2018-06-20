@@ -625,14 +625,14 @@
 			var formName = $("#copy-sel-form-name").val().trim();
 			var formDescription = $("#copy-sel-form-description").val().trim();
 			
-			$.ajax({
+			/* $.ajax({
 				url:common.getPath()+"/formManage/queryFormByName",
 				method:"post",
 				data:{
 					dynTitle:formName
 				},
 				success:function(result){
-					if(result.status==0){
+					if(result.status==0){ */
 						$.ajax({
 							url:common.getPath()+"/formManage/copyForm",
 							method:"post",
@@ -653,9 +653,9 @@
 								}
 							}
 						});
-					}else{
+					/* }else{
 						layer.alert("表单名已存在，不能重复");
-					}
+					} */
 				}
 			});			
 		}
@@ -698,7 +698,9 @@
         		var formInfo = list[i];
         		var sortNum = startSort + i;
                 var updateTime = "";
-        		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
+        		trs += '<tr data-formuid="'+formInfo.dynUid
+        					+'" data-prouid="'+formInfo.proUid
+        					+'" data-proversion="'+formIdfo.proVersion+'">'
         					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -780,23 +782,23 @@
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
 			}else{
-				$.ajax({
+				/* $.ajax({
 					url:common.getPath()+"/formManage/queryFormByName",
 					method:"post",
 					data:{
 						dynTitle:formName
 					},
 					success:function(result){
-						if(result.status==0){
+						if(result.status==0){ */
 							var href = "/formManage/designForm?formName="+formName
 									+"&formDescription="+$("#form-description").val().trim()
 									+"&proUid="+pageConfig.proUid
 									+"&proVersion="+pageConfig.proVerUid;
 							window.location.href = common.getPath()+href;
 							$(".display_container").css("display", "none");
-						}else{
+						/* }else{
 							layer.alert("表单名已存在，不能重复");
-						}
+						} */
 					}
 				});
 			}
@@ -830,14 +832,14 @@
 					}
 				});
 			}else{
-				$.ajax({
+				/* $.ajax({
 					url:common.getPath()+"/formManage/queryFormByName",
 					method:"post",
 					data:{
 						dynTitle:formName
 					},
 					success:function(result){
-						if(result.status==0){
+						if(result.status==0){ */
 							$.ajax({
 								url:common.getPath()+"/formManage/updateFormInfo",
 								method:"post",
@@ -856,9 +858,9 @@
 									}
 								}
 							});
-						}else{
+						/* }else{
 							layer.alert("表单名已存在，不能重复");
-						}
+						} */
 					}
 				});
 			}
@@ -933,14 +935,14 @@
 			var formName = $("#copy-form-name").val().trim();
 			var formDescription = $("#copy-form-description").val().trim();
 			
-			$.ajax({
+			/* $.ajax({
 				url:common.getPath()+"/formManage/queryFormByName",
 				method:"post",
 				data:{
 					dynTitle:formName
 				},
 				success:function(result){
-					if(result.status==0){
+					if(result.status==0){ */
 						$.ajax({
 							url:common.getPath()+"/formManage/copyForm",
 							method:"post",
@@ -961,9 +963,9 @@
 								}
 							}
 						});
-					}else{
+					/* }else{
 						layer.alert("表单名已存在，不能重复");
-					}
+					} */
 				}
 			});
 		}
