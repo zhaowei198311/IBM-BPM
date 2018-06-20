@@ -116,21 +116,21 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 			log.info("TriggerMQConsumer消费者中解析jsonObject to bean 出错...");
 			e.printStackTrace();
 		}
-		// 判断是否为触发器
-		if (null != dhStep) {
-			String stepObjectUid = dhStep.getStepObjectUid();
-			if (null != stepObjectUid && "" != stepObjectUid) {
-				String[] split = stepObjectUid.split(":");
-				if (!"trigger".equals(split[0])) {
-					return;
-				}
-			}
-		}
 		
 		//调用触发器方法
 		DhStep nextStep = dhStep;
 		while (nextStep != null) {
 			try {
+				// 判断是否为触发器
+				if (null != nextStep) {
+					String stepObjectUid = nextStep.getStepObjectUid();
+					if (null != stepObjectUid && "" != stepObjectUid) {
+						String[] split = stepObjectUid.split(":");
+						if (!"trigger".equals(split[0])) {
+							return;
+						}
+					}
+				}
 				dhTriggerService.invokeTrigger(wac, String.valueOf(dhProcessInstance.getInsId()), dhStep.getStepObjectUid());
 			} catch (Exception e) {
 				DhTriggerException dhTriggerException = new DhTriggerException();
