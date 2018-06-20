@@ -220,11 +220,12 @@ public interface DhTaskInstanceService {
 	 * @param pageNum
 	 * @param pageSize
 	 * @param insTitle
+	 * @param insInitUser
 	 * @param insStatusId
 	 * @param proAppId
 	 * @param proUid
 	 * @return
-	 */
-	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(DhTaskInstance dhTaskInstance,
-			Integer pageNum, Integer pageSize,String insTitle,Integer insStatusId,String proAppId, String proUid);
+	 */ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize, String insTitle, String insInitUser, Integer insStatusId,
+			String proAppId, String proUid);
 }

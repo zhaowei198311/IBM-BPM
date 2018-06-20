@@ -83,6 +83,14 @@
 				<div class="layui-col-xs2">
 					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
 				</div>
+				<div class="layui-col-xs2">
+								<select id="insInitUser" class="layui-input-block group_select" name="group"
+									lay-verify="required">
+									<option value="">请选择发起人</option>
+									<option value="allUser">全体人员</option>
+									<option value="current">本人</option>
+								</select>
+				</div>
 				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
@@ -205,6 +213,7 @@
 		var processType = $('#processType').val();
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
+		var insInitUser = $("#insInitUser").val();
 		// 按条件查询 流程
 		$.ajax({
 			url : 'taskInstance/loadPageTaskByStartProcess',
@@ -214,6 +223,7 @@
 				pageNum : pageConfig.pageNum,
 				pageSize : pageConfig.pageSize,
 				insTitle : processName,
+				insInitUser : insInitUser,
 				insStatusId : processType,
 				proUid : proUid,
 				proAppId : proAppId

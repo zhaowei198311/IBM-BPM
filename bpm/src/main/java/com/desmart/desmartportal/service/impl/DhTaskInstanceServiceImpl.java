@@ -1138,7 +1138,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String insTitle,
-			Integer insStatusId,String proAppId,String proUid) {
+			String insInitUser,Integer insStatusId,String proAppId,String proUid) {
 		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhTaskInstance.setUsrUid(currentUserUid);
         DhProcessInstance dhProcessInstance = new DhProcessInstance();
@@ -1155,6 +1155,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if(insTitle!=null && !"".equals(insTitle)) {
         		dhProcessInstance.setInsTitle(insTitle);
         	}
+        if(insInitUser!=null && "current".equals(insInitUser)) {
+    		dhProcessInstance.setInsInitUser(currentUserUid);
+    	}
         dhTaskInstance.setDhProcessInstance(dhProcessInstance);
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");

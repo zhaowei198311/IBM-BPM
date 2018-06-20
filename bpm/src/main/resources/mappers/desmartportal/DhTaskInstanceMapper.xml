@@ -729,6 +729,11 @@
 				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
 				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
 			</if>
+			
+			<if test="dhTaskInstance.dhProcessInstance.insInitUser != null 
+				and dhTaskInstance.dhProcessInstance.insInitUser !='' ">
+				AND p.INS_INIT_USER = #{dhTaskInstance.dhProcessInstance.insInitUser}
+			</if>
 			<if test="dhTaskInstance.dhProcessInstance.proUid != null 
 				and dhTaskInstance.dhProcessInstance.proUid !=''">
 				AND p.pro_Uid = #{dhTaskInstance.dhProcessInstance.proUid}

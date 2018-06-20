@@ -284,11 +284,13 @@ public class DhTaskInstanceController {
 			DhTaskInstance dhTaskInstance
 			,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
-			,@RequestParam("insTitle")String insTitle,@RequestParam("insStatusId")Integer insStatusId
+			,@RequestParam("insTitle")String insTitle
+			,@RequestParam("insInitUser")String insInitUser
+			,@RequestParam("insStatusId")Integer insStatusId
 			,@RequestParam("proUid")String proUid
 			,@RequestParam("proAppId")String proAppId) {
 		
 		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess( dhTaskInstance
-				, pageNum, pageSize,insTitle,insStatusId,proAppId,proUid);
+				, pageNum, pageSize,insTitle,insInitUser,insStatusId,proAppId,proUid);
 	}
 }
