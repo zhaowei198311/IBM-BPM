@@ -176,9 +176,14 @@
 							<select id="creatorInfo" lay-filter="creatorInfo">
 									<option value="">请选择部门</option>
 									<c:forEach items="${userDepartmentList}" var="item">
-									<c:if test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
+									<c:choose>
+									<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
 										<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-									</c:if>
+									</c:when>
+									<c:otherwise>
+									<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+									</c:otherwise>
+									</c:choose>
 									</c:forEach>
 							</select></td>
 						</tr>
