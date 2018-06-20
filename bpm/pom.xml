@@ -51,7 +51,7 @@
 		</dependency>
 		
 		
-		<!-- sap joc -->
+		<!-- sapJco -->
 		<dependency>
 			<groupId>com.sap</groupId>
 			<artifactId>sapjco3</artifactId>
