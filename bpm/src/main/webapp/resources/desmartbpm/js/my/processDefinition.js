@@ -463,13 +463,13 @@ function copyProcess(){
 	var proUid = ck.data('prouid');
 	var proVerUid = ck.data('proveruid');
 	var proAppId = ck.data('proappid');
-	
+
 	var checkList_1 = $("[name='definition_ck']:checked");
 	var ck_1 = checkList_1.eq(0);
 	var proUidNew = ck_1.data('prouid');
 	var proVerUidNew = ck_1.data('proveruid');
 	var proAppIdNew = ck_1.data('proappid');
-	
+
 	$.ajax({
 		async: false,
 		url: common.getPath() + "/processDefinition/copySimilarProcess",

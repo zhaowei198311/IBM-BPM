@@ -1022,6 +1022,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 	}
 
+	@Override
     public ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData) {
         Set<BpmActivityMeta> endProcessNodes = routingData.getEndProcessNodes();
         for (Iterator<BpmActivityMeta> it = endProcessNodes.iterator(); it.hasNext();) {
@@ -1034,11 +1035,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
         }
         Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
-        DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
-        DhProcessInstance selective = new DhProcessInstance(mainProcessInstance.getInsUid());
-        selective.setInsFinishDate(new Date());
-        selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
-        dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
+        if (mainEndNodes.size() > 0) {
+            DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
+            DhProcessInstance selective = new DhProcessInstance(mainProcessInstance.getInsUid());
+            selective.setInsFinishDate(new Date());
+            selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
+            dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
+        }
         return ServerResponse.createBySuccess();
     }
 
