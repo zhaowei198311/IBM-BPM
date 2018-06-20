@@ -11,7 +11,7 @@
 		FORM_UID,PUBLIC_FORM_UID
 	</sql>
 	
-	<sql id="FromField_Column">
+	<sql id="FormField_Column">
 		F.FLD_UID,F.FLD_CODE_NAME,F.FLD_INDEX,
 		F.FLD_NAME,F.FLD_DESCRIPTION,F.FLD_TYPE,
 		F.FLD_SIZE,F.MULTI_SEPARATOR,F.MULTI_VALUE,
@@ -22,10 +22,12 @@
 	
 	<select id="listPublicFormFieldByFormUid" parameterType="java.lang.String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
 		SELECT 
-		<include refid="FromField_Column"/>
-		FROM  BPM_FORM_FIELD F
+		<include refid="FormField_Column"/>
+		FROM BPM_FORM_FIELD F
 		<where>
-		F.FORM_UID IN (SELECT R.PUBLIC_FORM_UID from BPM_FORM_RELE_PUBLIC_FORM R WHERE R.FORM_UID=#{formUid})
+		F.FORM_UID IN (
+			SELECT R.PUBLIC_FORM_UID from BPM_FORM_RELE_PUBLIC_FORM R WHERE R.FORM_UID=#{formUid}
+		)and fld_type != 'title'
 		</where>
 	</select>
 	

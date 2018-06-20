@@ -227,7 +227,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 
 	@Override
 	public ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid) {
-		List<BpmFormField> FormFiled = bpmFormFieldMapper.queryFormFieldByFormUid(formUid); // 表单字段
+		List<BpmFormField> FormFiled = bpmFormFieldMapper.queryNotTitleFormFieldByFormUid(formUid); // 表单字段
 		List<BpmFormField> publicFormFiled = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid); // 子表单字段
 		List<BpmFormField> resultList = new ArrayList<>();
 		resultList.addAll(FormFiled);

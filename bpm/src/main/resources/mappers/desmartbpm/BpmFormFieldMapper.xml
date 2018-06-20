@@ -121,4 +121,12 @@
  		from bpm_form_field
  		where fld_description = #{fldUid}
  	</select>
+ 	
+ 	<select id="queryNotTitleFormFieldByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+ 		select <include refid="base_column"/> 
+ 		from bpm_form_field 
+		where form_uid = #{dynUid}
+		and fld_type != 'title'
+		order by fld_index
+ 	</select>
 </mapper>
