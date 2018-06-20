@@ -792,7 +792,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			case "toActivities":
 				log.info("驳回到指定环节");
 				//查询可选配置
-				List<DhActivityReject> dhActivityRejects = dhActivityRejectMapper.listByActivityId(activityId);
+				List<DhActivityReject> dhActivityRejects = dhActivityRejectMapper.listByActivityId(currentbpmActivityMeta3.getSourceActivityId());
 				
 				// 选择环节
 				List<DhRoutingRecord> dhRoutingRecordList2 = dhRoutingRecordMapper
