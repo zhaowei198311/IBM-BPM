@@ -655,9 +655,9 @@
 						});
 					/* }else{
 						layer.alert("表单名已存在，不能重复");
-					} */
+					} 
 				}
-			});			
+			});	*/		
 		}
 		
 		//复制快照--根据流程定义(proUid,proVerUid)
@@ -798,9 +798,9 @@
 							$(".display_container").css("display", "none");
 						/* }else{
 							layer.alert("表单名已存在，不能重复");
-						} */
+						} 
 					}
-				});
+				});*/
 			}
 		}
 		
@@ -860,9 +860,9 @@
 							});
 						/* }else{
 							layer.alert("表单名已存在，不能重复");
-						} */
+						} 
 					}
-				});
+				});*/
 			}
 		}
 		
@@ -965,10 +965,10 @@
 						});
 					/* }else{
 						layer.alert("表单名已存在，不能重复");
-					} */
+					}
 				}
-			});
-		}
+			});*/
+		} 
 		
 		//点击修改按钮
 		function updateFormModal(obj){
