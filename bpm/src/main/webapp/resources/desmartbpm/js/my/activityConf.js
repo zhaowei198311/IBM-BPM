@@ -503,13 +503,14 @@ $(function() {
 										+ '<div class="layui-col-md6">'
 										+ '<label class="layui-form-label" style="width: 100px">表单参数'+index+'</label>'
 										+ '<div class="layui-input-inline">'
-										+ '<select id="tableParam'+index+'">'
+										+ '<select id="tableParam'+index+'" lay-search>'
 										+ '</select>'
 										+ '</div>'
 										+ '</div>'
 										+ '</div>'
 										+ '</div>';
-								$("#col_md5").append(trs)
+								$("#col_" +
+										"md5").append(trs)
 								}
 								form.render();
 							},
@@ -1066,7 +1067,7 @@ function triggerEdit(triggerUid){
 						+ '<div class="layui-col-md6">'
 						+ '<label class="layui-form-label" style="width: 100px">表单参数'+index+'</label>'
 						+ '<div class="layui-input-inline">'
-						+ '<select id="tableParam'+index+'">'
+						+ '<select id="tableParam'+index+'" lay-search>'
 						+ '<option value="'+fldCodeName+'">'
 						+ fldCodeName
 						+ '</option>'

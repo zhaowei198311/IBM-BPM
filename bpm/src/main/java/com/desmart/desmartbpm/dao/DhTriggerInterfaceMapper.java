@@ -68,6 +68,11 @@ public interface DhTriggerInterfaceMapper {
 	 * 批量修改
 	 */
 	int updateBatch(@Param("tinList")List<DhTriggerInterface> tinList);
+	
+	/**
+	 * 根据表单ID 删除映射数据信息
+	 */
+	int deleteByDynUid(String dynUid);
 
 	/**
 	 * 根据触发器id获得接口触发器

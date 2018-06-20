@@ -159,7 +159,16 @@
 		<where>
 			TIN_UID = #{tinUid}
 		</where>
-	</delete>
+	</delete> 
+	
+	<delete id="deleteByDynUid" parameterType="java.lang.String">
+		DELETE
+		FORM
+		DH_TRIGGER_INTERFACE
+		<where>
+			DYN_UID = #{dynUid}
+		</where>
+	</delete> 
 
 	<update id="updateByPrimaryKey" parameterType="java.lang.String">
 		UPDATE

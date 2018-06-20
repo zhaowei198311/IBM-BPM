@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper" >
+	
+	<resultMap id="BpmFormRelePublicFormMap" type="java.util.Map">
+		<result column="FORM_UID"					property="formUid"/>
+		<result column="PUBLIC_FORM_UID"			property="publicFormUid"/>
+	</resultMap>
+	
+	<sql id="Base_Column">
+		FORM_UID,PUBLIC_FORM_UID
+	</sql>
+	
+	<sql id="FromField_Column">
+		F.FLD_UID,F.FLD_CODE_NAME,F.FLD_INDEX,
+		F.FLD_NAME,F.FLD_DESCRIPTION,F.FLD_TYPE,
+		F.FLD_SIZE,F.MULTI_SEPARATOR,F.MULTI_VALUE,
+		F.FLD_FOREIGN_KEY_TABLE,F.FLD_DYN_NAME,F.FLD_DYN_UID,
+		F.FLD_FILTER,F.FORM_UID
+	</sql>
+	
+	
+	<select id="listPublicFormFieldByFormUid" parameterType="java.lang.String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		SELECT 
+		<include refid="FromField_Column"/>
+		FROM  BPM_FORM_FIELD F
+		<where>
+		F.FORM_UID IN (SELECT R.PUBLIC_FORM_UID from BPM_FORM_RELE_PUBLIC_FORM R WHERE R.FORM_UID=#{formUid})
+		</where>
+	</select>
+	
+</mapper>

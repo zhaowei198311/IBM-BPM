@@ -934,7 +934,16 @@
 						style="margin-top: 20px; width: 730px;">
 						<legend>当前参数对照</legend>
 					</fieldset>
-					<div id="update_param"></div>
+					<div class="layui-tab layui-tab-brief">
+						<ul class="layui-tab-title">
+							<li class="layui-this">输入参数</li>
+							<li>输出参数</li>
+						</ul>
+					<div class="layui-tab-content">
+						<div id="update_param" class="layui-tab-item layui-show"></div>
+    					<div class="layui-tab-item">内容2</div>
+  					</div>
+					</div>
 				</div>
 			</div>
 			<div class="foot">
@@ -1246,7 +1255,16 @@
 						style="margin-top: 20px; width: 750px;">
 						<legend>参数对照</legend>
 					</fieldset>
-					<div id="col_md5"></div>
+					<div class="layui-tab layui-tab-brief">
+						<ul class="layui-tab-title">
+							<li class="layui-this">输入参数</li>
+							<li>输出参数</li>
+						</ul>
+					<div class="layui-tab-content">
+						<div id="col_md5" class="layui-tab-item layui-show"></div>
+    					<div class="layui-tab-item">内容2</div>
+  					</div>
+					</div>
 				</div>
 			</div>
 			<div class="foot">

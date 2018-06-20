@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
+import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
@@ -32,6 +33,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	
 	@Autowired
 	private DhStepMapper dhStepMapper;
+	
+	@Autowired
+	private BpmFormRelePublicFormMapper bpmFormRelePublicFormMapper;
 	
 	@Override
 	public ServerResponse saveFormField(BpmFormField[] fields) {
@@ -223,7 +227,11 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 
 	@Override
 	public ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid) {
-		List<BpmFormField> resultList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		List<BpmFormField> FormFiled = bpmFormFieldMapper.queryFormFieldByFormUid(formUid); // 表单字段
+		List<BpmFormField> publicFormFiled = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid); // 子表单字段
+		List<BpmFormField> resultList = new ArrayList<>();
+		resultList.addAll(FormFiled);
+		resultList.addAll(publicFormFiled);
 		return ServerResponse.createBySuccess(resultList);
 	}
 }
