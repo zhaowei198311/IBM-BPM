@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -19,6 +20,8 @@ import com.desmart.desmartbpm.entity.InsData;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 @Repository
 public class InsDataDaoImpl implements InsDataDao{
@@ -56,18 +59,20 @@ public class InsDataDaoImpl implements InsDataDao{
 	public void insertInsData() {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByDate();
-//			Update update = new Update();
-//			JSONObject $insData = null;
-			InsData insData = new InsData();
+			
+			DBObject dbObject = new BasicDBObject();
+			
+			BasicDBObject fieldsObject=new BasicDBObject();
+			fieldsObject.put("_id", true);
+			mongoTemplate.find(new BasicQuery("{}", "{'_id':1}"), String.class, "insData");
+			Update update = new Update();
+			JSONObject $insData = null;
+//			InsData insData = new InsData();
 			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
-//				$insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-//				update.set("processData", $insData.getJSONObject("processData"));
-//				update.set("formData", $insData.getJSONObject("formData"));
-//				mongoTemplate.upsert(Query.query(Criteria.where("_id").is(dhProcessInstance.getInsUid())), 
-//						update, InsData.class, "test");
-				mongoTemplate.save(dhProcessInstance.getInsUid() + dhProcessInstance.getInsData(), "insData");
-				
+				$insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+				$insData.put("_id", dhProcessInstance.getInsUid());
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
