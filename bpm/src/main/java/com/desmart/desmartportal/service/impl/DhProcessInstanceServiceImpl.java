@@ -833,11 +833,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
 		JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
 		JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
-		int insId = routeData.getIntValue("insId");
+        // 目标环节
 		String activityBpdId = routeData.getString("activityBpdId");
 		String userUid = routeData.getString("userUid");
 		String taskUid = taskData.getString("taskUid");
-		String currActivityId = taskData.getString("activityId");
+
 
 		// 判断驳回的任务是否存在
 		if (StringUtils.isBlank(taskUid)) {
@@ -847,36 +847,33 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (sourceTask == null || !"12".equals(sourceTask.getTaskStatus())) {
             return ServerResponse.createByErrorMessage("任务不存在，或状态异常");
         }
+		String currActivityId = sourceTask.getTaskActivityId();
 
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(sourceTask.getInsUid());
+		if (dhProcessInstance == null) return ServerResponse.createByErrorMessage("流程实例不存在");
 
-        int taskId = taskData.getIntValue("taskId");
-		log.info("驳回流程开始......");
-		log.info("流程标识为:" + routeData.getString("insId"));
-		if (insId == 0 || StringUtils.isBlank(activityBpdId) || StringUtils.isBlank(userUid)) {
-			return ServerResponse.createByErrorMessage("缺少必要参数");
-		}
-		
+        int taskId = sourceTask.getTaskId();
+		int insId = dhProcessInstance.getInsId();
 		
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
 		// 获取树流程信息
 		HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
-		if(returnStatus.getCode()!=200) {
+		if(HttpReturnStatusUtil.isErrorResult(returnStatus)) {
 			return ServerResponse.createByErrorMessage("查询树流程信息出错");
 		}
-		// 查询token
+
+		// 获得任务的token
 		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
 		Map<Object, Object> resultMap = ExecutionTreeUtil.getTokenIdAndPreTokenIdByTaskId(taskId, jsonObject);
 		String tokenId = String.valueOf(resultMap.get("tokenId"));
 		String parentTokenId = String.valueOf(resultMap.get("parentTokenId"));
-		
-		// 通过activityBpdId 去查询 环节配置表 获取 activityId 然后去查询变量
-				//String currActivityId = sourceTask.getTaskActivityId();//当前环节
+
 				
 		BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+		// 获得目标节点
 		BpmActivityMeta targetActivityMeta = bpmActivityMetaService
-						.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, currActivityMeta.getParentActivityId()
+				.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, currActivityMeta.getParentActivityId()
 								, currActivityMeta.getSnapshotId());
 		String actcAssignVariable = targetActivityMeta.getDhActivityConf().getActcAssignVariable();
 		// 数据信息
@@ -885,6 +882,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		dataList.add(userUid);
 		// todo  判断驳回到的这个环节，在配置中的处理人变量是哪个，pubBo设置对应的变量
 		CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, dataList);
+
 		Map<String, HttpReturnStatus> httpMap = bpmProcessUtil.setDataAndMoveToken(insId, activityBpdId, pubBo,tokenId);
 		if (httpMap.get("moveTokenResult").getCode() == 200) {
 

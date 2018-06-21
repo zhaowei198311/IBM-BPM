@@ -284,6 +284,16 @@
         and status = 12
         order by task_id
     </select>
+
+    <select id="listTasksByDhSynTaskRetryList" resultMap="relationMap" parameterType="java.util.List">
+      select <include refid="relationColumnList"/>, lux.user_name
+      from lsw_task t
+      left join LSW_USR_XREF lux on t.user_id = lux.user_id
+      where t.task_id in
+      <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
+        #{item.taskId}
+      </foreach>
+    </select>
     
     <select id="getGroupInfo" resultType="com.desmart.desmartbpm.entity.engine.GroupAndMember"> 
         select group_id groupId, listagg(user_name, ',')  within group(order by group_id) members
@@ -292,5 +302,7 @@
 		        left join LSW_USR_XREF lux on lugm.user_id = lux.user_id) 
 		group by group_id
     </select>
+
+
 
 </mapper>

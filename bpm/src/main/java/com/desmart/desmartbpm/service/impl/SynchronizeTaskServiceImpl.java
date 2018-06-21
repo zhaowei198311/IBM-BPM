@@ -1,11 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,6 +8,8 @@ import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.ExecutionTreeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
+import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -20,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,7 +74,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
-
+    @Autowired
+    private DhSynTaskRetryMapper dhSynTaskRetryMapper;
     
     /**
      * 从引擎同步任务
@@ -86,14 +83,22 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     //@Scheduled(cron = "0/20 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
-        List<LswTask> newLswTaskList = getNewTasks();
-        Map<Integer, String> groupInfo = getGroupInfo();
-        generateDhTaskInstance(newLswTaskList, groupInfo);
+        List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
+        Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        startFirstSynchronize(newLswTaskList, groupInfo); // 开始同步任务
         LOG.info("==================  拉取任务结束  ===============");
     }
-    
+
+    public void retrySynchronizeTask() {
+        LOG.info("==================  开始重试拉取任务  ===============");
+        List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
+        Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        startRetrySynchronize(newLswTaskList, groupInfo); // 开始同步任务
+        LOG.info("==================  重试拉取任务结束  ===============");
+    }
+
     @Transactional
-    public void generateDhTaskInstance(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+    public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         List<DhTaskInstance> dhTaskList = new ArrayList<>();
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -101,18 +106,18 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             Map<String, Object> data = null;
             try {
                 // 分析一个引擎任务
-                data =  handleLswTask(lswTask, groupInfo, globalConfig);
+                data =  analyseLswTask(lswTask, groupInfo, globalConfig);
             } catch (Exception e) {
-               LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
+                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
+                // 将任务记录到重试表中
+                saveTaskToRetryTable(lswTask);
+                continue;
             }
-            if (data != null) {
+            if (data != null && data.get("dhTaskList") != null) {
                 dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
                 agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
             }
         }
-        LOG.info("同步新任务：" + dhTaskList.size() + "个");
-        LOG.info("产生代理记录：" + agentRecordList.size() + "个");
-
         for(DhTaskInstance task : dhTaskList) {
         	dhTaskInstanceMapper.insertTask(task);
         	//发送邮件通知
@@ -121,42 +126,59 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
         }
-        
+
+        LOG.info("同步新任务：" + dhTaskList.size() + "个");
+        LOG.info("产生代理记录：" + agentRecordList.size() + "个");
+    }
+
+
+    @Transactional
+    public void startRetrySynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+        List<DhTaskInstance> dhTaskList = new ArrayList<>();
+        List<DhAgentRecord> agentRecordList = new ArrayList<>();
+        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+        for (LswTask lswTask : newLswTaskList) {
+            Map<String, Object> data = null;
+            try {
+                // 分析一个引擎任务
+                data =  analyseLswTask(lswTask, groupInfo, globalConfig);
+            } catch (Exception e) {
+                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
+                // 更新重试次数
+                updateRetryCount(lswTask);
+                continue;
+            }
+            if (data != null && data.get("dhTaskList") != null) {
+                dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
+                agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
+            }
+        }
+        for(DhTaskInstance task : dhTaskList) {
+            dhTaskInstanceMapper.insertTask(task);
+            //发送邮件通知
+            //dhSendEmail(task);
+        }
+        if (agentRecordList.size() > 0) {
+            dhAgentRecordMapper.insertBatch(agentRecordList);
+        }
+
+        LOG.info("重试同步任务产生新任务：" + dhTaskList.size() + "个");
+        LOG.info("重试同步任务产生代理记录：" + agentRecordList.size() + "个");
     }
     
-    private void dhSendEmail(DhTaskInstance task) {
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(task.getInsUid());
-		String proAppId = dhProcessInstance.getProAppId();
-		String activityBpdId = task.getActivityBpdId();
-		String snapshotId = dhProcessInstance.getProVerUid();
-		String bpdId = dhProcessInstance.getProUid();
-		BpmActivityMeta bpmActivityMeta = bpmActivityMetaService.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
-		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
-			List<String> toList = new ArrayList<>();
-			if(task.getUsrUid()!=null&&!"".equals(task.getUsrUid())) {
-				toList.add(task.getUsrUid());
-			}
-			if(task.getTaskDelegateUser()!=null&&!"".equals(task.getTaskDelegateUser())) {
-				toList.add(task.getTaskDelegateUser());
-			}
-			for (String to : toList) {
-				String subject = "邮件通知";
-				String body = "邮件通知";
-				sendEmailService.sendingEmail(to, subject, body);
-			}
-		}
-	}
-
 	/**
-     * 处理一个引擎任务
-     * @param lswTask
-     * @param groupInfo
+     * 分析引擎中的一个任务，转化为平台任务和代理记录
+     * @param lswTask  引擎中的任务
+     * @param groupInfo 临时组的信息
+     * @param globalConfig  全局配置文件
      * @return
+     *   key: dhTaskList  转化后的平台任务列表
+     *   key: agentRecordList  这个任务的代理记录
      */
-    private Map<String, Object> handleLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
+    private Map<String, Object> analyseLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
         System.out.println("开始分析任务编号：" + lswTask.getTaskId());
-        Map<String, Object> result = Maps.newHashMap();
-        
+        Map<String, Object> result = new HashMap<>();
+
         // 流程图上的元素id
         String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
         int insId = lswTask.getBpdInstanceId().intValue(); // 流程实例id
@@ -232,8 +254,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance, bpmActivityMeta, preMeta);
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
         
-        
-        
+
         // 查看是否允许代理
         if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
             // 查看这个流程有没有代理人
@@ -264,7 +285,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      */
     private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
             List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta, BpmActivityMeta preMeta) {
-        List<DhTaskInstance> taskList = Lists.newArrayList();
+        List<DhTaskInstance> taskList = new ArrayList<>();
         
         // 计算到期时间
         DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
@@ -285,6 +306,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskId(lswTask.getTaskId());
             dhTask.setUsrUid(orgionUserUid);
             dhTask.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
+            // 设置任务循环类型
             String loopType = bpmActivityMeta.getLoopType();
             if (BpmActivityMeta.LOOP_TYPE_NONE.equals(loopType)) {
                 dhTask.setTaskType(DhTaskInstance.TYPE_NORMAL);
@@ -310,8 +332,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, String> groupInfo) {
         List<String> uidList = Lists.newArrayList();
         if (lswTask.getUserId() != -1) {
+            // 引擎中分配到个人
             uidList.add(lswTask.getUserName());
         } else {
+            // 引擎中分配给临时组
             Long groupId = lswTask.getGroupId();
             String uidStr = groupInfo.get(groupId.intValue());
             if (StringUtils.isNotBlank(uidStr)) {
@@ -327,9 +351,24 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      */
     private List<LswTask> getNewTasks() {
         int maxTaskId = dhTaskInstanceService.getMaxTaskIdInDb();
-        return lswTaskMapper.listNewTasks(3151);
+        return lswTaskMapper.listNewTasks(maxTaskId);
     }
-    
+
+    private List<LswTask> getNewTasksForRetry() {
+        // 获得表中需要重试的记录
+        List<DhSynTaskRetry> dhSynTaskRetries = dhSynTaskRetryMapper.listUnFinishedTasks();
+        // 从引擎中获得对应的任务
+        if (dhSynTaskRetries.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return lswTaskMapper.listTasksByDhSynTaskRetryList(dhSynTaskRetries);
+        }
+    }
+
+    /**
+     * 获得人与临时组的映射关系
+     * @return   key: 临时组id, value: 成员1,成员2,成员3...
+     */
     private Map<Integer, String> getGroupInfo() {
         List<GroupAndMember> groupInfoList = lswTaskMapper.getGroupInfo();
         Map<Integer, String> map = Maps.newHashMap();
@@ -338,8 +377,52 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         return map;
     }
-    
 
 
-   
+    private void dhSendEmail(DhTaskInstance task) {
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(task.getInsUid());
+        String proAppId = dhProcessInstance.getProAppId();
+        String activityBpdId = task.getActivityBpdId();
+        String snapshotId = dhProcessInstance.getProVerUid();
+        String bpdId = dhProcessInstance.getProUid();
+        BpmActivityMeta bpmActivityMeta = bpmActivityMetaService.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
+        if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
+            List<String> toList = new ArrayList<>();
+            if(task.getUsrUid()!=null&&!"".equals(task.getUsrUid())) {
+                toList.add(task.getUsrUid());
+            }
+            if(task.getTaskDelegateUser()!=null&&!"".equals(task.getTaskDelegateUser())) {
+                toList.add(task.getTaskDelegateUser());
+            }
+            for (String to : toList) {
+                String subject = "邮件通知";
+                String body = "邮件通知";
+                sendEmailService.sendingEmail(to, subject, body);
+            }
+        }
+    }
+
+    /**
+     * 在重试记录中插入一条记录
+     * @param lswTask 引擎中的任务
+     * @return
+     */
+    private int saveTaskToRetryTable(LswTask lswTask) {
+        DhSynTaskRetry dhSynTaskRetry = new DhSynTaskRetry();
+        dhSynTaskRetry.setId(EntityIdPrefix.DH_SYN_TASK_RETRY + UUID.randomUUID().toString());
+        dhSynTaskRetry.setTaskId(lswTask.getTaskId());
+        dhSynTaskRetry.setRetryCount(0);
+        dhSynTaskRetry.setStatus(0);
+        return dhSynTaskRetryMapper.insert(dhSynTaskRetry);
+    }
+
+    /**
+     * 更新重试次数
+     * @param lswTask 平台中的任务
+     * @return
+     */
+    private int updateRetryCount(LswTask lswTask) {
+        return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
+    }
+
 }

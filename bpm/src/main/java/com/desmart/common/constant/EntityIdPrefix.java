@@ -80,5 +80,8 @@ public class EntityIdPrefix {
     /** 简单循环任务的任务处理人 */
 	public static final String DH_TASK_HANDLER = "task_handler:";
 	/** triggerMQ消费者执行出错异常类 */
-	public static final String DH_TRIGGER_EXCEPTION = "trigger_exception";
+	public static final String DH_TRIGGER_EXCEPTION = "trigger_exception:";
+
+    /** 同步任务重试记录 */
+	public static final String DH_SYN_TASK_RETRY = "syn_task_retry:";
 }

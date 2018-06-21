@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.enginedao;
 import java.util.List;
 import java.util.Map;
 
+import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 
@@ -20,9 +21,15 @@ public interface LswTaskMapper {
     List<LswTask> listNewTasks(int taskId);
     
     /**
-     * 获得所有临时组，和组成员的信息
+     * 获得所有临时组，和组成员的信息, 使用","分隔成员信息
      * @return
      */
     List<GroupAndMember> getGroupInfo();
+
+    /**
+     *
+     */
+    List<LswTask> listTasksByDhSynTaskRetryList(List<DhSynTaskRetry> list);
+
     
 }

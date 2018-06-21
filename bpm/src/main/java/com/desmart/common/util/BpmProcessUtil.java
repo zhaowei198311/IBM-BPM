@@ -242,6 +242,43 @@ public class BpmProcessUtil {
         }
         return resultMap;
 	}
+
+    /**
+     * 移动token
+     * @param insId  流程实例编号
+     * @param flowObjectId   流程图上元素id
+     * @param tokenId  tokenId
+     * @return
+     */
+    public HttpReturnStatus moveToken(Integer insId, String flowObjectId, String tokenId) {
+        HttpReturnStatus result = null;
+        RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+
+        try {
+            String host = this.bpmGlobalConfig.getBpmServerHost();
+            // 设置数据成功, 移动token
+            String moveTokenUrl = host + "rest/bpm/wle/v1/process/"+insId;
+            Map<String, Object> postMap = new HashMap<>();
+            postMap.put("action", "moveToken");
+            postMap.put("resume", "true");
+            postMap.put("parts", "data|header|executionTree");
+            postMap.put("target", flowObjectId);
+            postMap.put("tokenId", tokenId);
+            // 调用RESTfual API
+            result = restUtil.sendPost(moveTokenUrl, postMap);
+        } catch (Exception e) {
+            log.error("移动令牌失败，实例ID: " + insId + ", flowObjectId: " + flowObjectId, e);
+            result = new HttpReturnStatus();
+            result.setCode(-1);
+            result.setMsg(e.toString());
+
+        } finally {
+            restUtil.close();
+        }
+        return result;
+    }
+
+
 	
 	public HttpReturnStatus getProcessModel(String proAppId, String bpdId, String snapshotId) {
 	    RestUtil restUtil = new RestUtil(bpmGlobalConfig);

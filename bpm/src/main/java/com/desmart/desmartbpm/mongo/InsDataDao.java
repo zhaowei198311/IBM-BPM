@@ -4,29 +4,29 @@ import java.util.List;
 
 import com.desmart.desmartbpm.entity.InsData;
 
-public interface InsDataDao{
+public interface InsDataDao {
 	/**
 	 * 
-	 * @Title: queryFormData  
+	 * @Title: queryInsData
 	 * @Description: 根据字段名和值查询Json数据  
 	 * @param @param key
 	 * @param @param value
 	 * @param @return  
-	 * @return List<FormData>  
+	 * @return List<InsData>
 	 * @throws
 	 */
 	List<InsData> queryInsData(String key, String value);
 	
 	/**
 	 * 
-	 * @Title: queryFormData  
+	 * @Title: queryInsData
 	 * @Description: 分页查询  
 	 * @param @param key
 	 * @param @param value
 	 * @param @param start
 	 * @param @param size
 	 * @param @return  
-	 * @return List<FormData>  
+	 * @return List<InsData>
 	 * @throws
 	 */
 	List<InsData> queryInsData(String key, String value, int page, int size);
