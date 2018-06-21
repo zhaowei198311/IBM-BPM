@@ -39,4 +39,15 @@ public interface InsDataDao {
 	 * @throws
 	 */
 	void insertInsData();
+	
+	/**
+	 * 
+	 * @Title: queryTask  
+	 * @Description: 判断集合是否有该字段，如果有则返回其值  
+	 * @param @param task
+	 * @param @return  
+	 * @return String  
+	 * @throws
+	 */
+	String queryTask(String task);
 }

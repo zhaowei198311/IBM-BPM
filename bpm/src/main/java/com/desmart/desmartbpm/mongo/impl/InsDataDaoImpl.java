@@ -34,7 +34,7 @@ public class InsDataDaoImpl implements InsDataDao{
 	public List<InsData> queryInsData(String key, String value) {
 		Criteria criteria = Criteria.where("formData."+ key +".value").is(value);
 		Query query = new Query(criteria);
-		List<InsData> formData = mongoTemplate.find(query, InsData.class);
+		List<InsData> formData = mongoTemplate.find(query, InsData.class, "insData");
 		return formData;
 	}
 
@@ -48,7 +48,7 @@ public class InsDataDaoImpl implements InsDataDao{
 		}
 		query.limit(size);
 		query.skip(page * (size-1));
-		List<InsData> formData = mongoTemplate.find(query, InsData.class);
+		List<InsData> formData = mongoTemplate.find(query, InsData.class, "insData");
 		return formData;
 	}
 
@@ -56,24 +56,26 @@ public class InsDataDaoImpl implements InsDataDao{
 	public void insertInsData() {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByDate();
-//			List<InsData> insDataList = new LinkedList<>();
-//			InsData insData = new InsData();
-			Update update = new Update();
-			JSONObject $insData = null;
+//			Update update = new Update();
+//			JSONObject $insData = null;
+			InsData insData = new InsData();
 			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
-				$insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-				update.set("processData", $insData.getJSONObject("processData"));
-				update.set("formData", $insData.getJSONObject("formData"));
-//				insData.setInsUid(dhProcessInstance.getInsUid());
-//				insData.setProcessData();
-//				insData.setFormData($insData.getString("formData"));
-//				insDataList.add(insData);
-				mongoTemplate.upsert(Query.query(Criteria.where("_id").is(dhProcessInstance.getInsUid())), 
-						update, InsData.class, "test");
+//				$insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+//				update.set("processData", $insData.getJSONObject("processData"));
+//				update.set("formData", $insData.getJSONObject("formData"));
+//				mongoTemplate.upsert(Query.query(Criteria.where("_id").is(dhProcessInstance.getInsUid())), 
+//						update, InsData.class, "test");
+				mongoTemplate.save(dhProcessInstance.getInsUid() + dhProcessInstance.getInsData(), "insData");
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String queryTask(String task) {
+		return mongoTemplate.findById(task, String.class, "task");
 	}
 
 }
