@@ -197,7 +197,7 @@ public class ExecutionTreeUtil {
 	 * (与getTokenIdAndPreTokenIdByTaskId方法不同，此方法返回的preTokenId为检索到的createdTaskIDs与上级createdTaskIDs相同的父级的tokenId)
 	 * @param taskId ： 任务ID
 	 * @param json ：由流程详细信息转化来的JSONObject
-	 * @return Map中的key ： 1）tokenId 2) preTokenId
+	 * @return Map{"tokenId":"***"}
 	 */
 	public static final Map<Object, Object> getTokenIdAndLastTokenIdByTaskId(int taskId, JSONObject json) {
 		
