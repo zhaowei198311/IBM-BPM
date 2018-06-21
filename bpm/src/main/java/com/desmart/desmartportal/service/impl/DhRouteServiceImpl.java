@@ -1118,11 +1118,11 @@ public class DhRouteServiceImpl implements DhRouteService {
         boolean moved = false;
         if (routingData.getNormalNodes().size() > 0) {
             // 预测有后续节点，查看执行树上是否包含后续任务节点信息
-            moved = ExecutionTreeUtil.isExecutionTreeContainsFlowObjectId(routingData.getNormalNodes().iterator().next().getActivityBpdId(),
+            moved = ProcessDataUtil.isExecutionTreeContainsFlowObjectId(routingData.getNormalNodes().iterator().next().getActivityBpdId(),
                     processData);
         } else {
             // 预测没有后续节点，查看流程实例是否已经执行完毕
-            moved = ExecutionTreeUtil.isProcessFinished(processData);
+            moved = ProcessDataUtil.isProcessFinished(processData);
         }
 
         if (moved) {

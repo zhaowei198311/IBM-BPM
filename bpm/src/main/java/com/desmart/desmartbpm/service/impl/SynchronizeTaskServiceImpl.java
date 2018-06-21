@@ -5,7 +5,7 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.common.util.ExecutionTreeUtil;
+import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
@@ -192,7 +192,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
         int taskId = lswTask.getTaskId();
-        Map<Object, Object> tokenMap = ExecutionTreeUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
+        Map<Object, Object> tokenMap = ProcessDataUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
             return null;
