@@ -62,5 +62,14 @@ public interface DhProcessInstanceMapper {
      * 根据流程实例编号，和token停留的节点来查找指定流程
 	 */
 	DhProcessInstance getByInsIdAndTokenActivityId(@Param("insId") int insId, @Param("tokenActivityId")String tokenActivityId);
-
+	
+	/**
+	 * 
+	 * @Title: queryInsDataByDate  
+	 * @Description: 查询创建时间是前一天的所有数据  
+	 * @param @return  
+	 * @return List<DhProcessInstance>  
+	 * @throws
+	 */
+	List<DhProcessInstance> queryInsDataByDate();
 }

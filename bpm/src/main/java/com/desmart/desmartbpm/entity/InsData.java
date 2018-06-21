@@ -7,26 +7,30 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "test")
 public class InsData {
 	@Id
-	private String id;
+	private String insUid;
 	
 	private String processData;
 	
 	private String formData;
 	
+	public InsData(){
+		
+	}
+	
 	@PersistenceConstructor
-	public InsData(String id, String processData, String formData) {
+	public InsData(String insUid, String processData, String formData) {
 		super();
-		this.id = id;
+		this.insUid = insUid;
 		this.processData = processData;
 		this.formData = formData;
 	}
 
-	public String getId() {
-		return id;
+	public String getInsUid() {
+		return insUid;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setInsUid(String insUid) {
+		this.insUid = insUid;
 	}
 
 	public String getProcessData() {

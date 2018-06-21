@@ -20,7 +20,7 @@ public interface InsDataDao{
 	/**
 	 * 
 	 * @Title: queryFormData  
-	 * @Description: TODO  
+	 * @Description: 分页查询  
 	 * @param @param key
 	 * @param @param value
 	 * @param @param start
@@ -30,4 +30,13 @@ public interface InsDataDao{
 	 * @throws
 	 */
 	List<InsData> queryInsData(String key, String value, int page, int size);
+	/**
+	 * 
+	 * @Title: insertInsData  
+	 * @Description: 定时查询InsData然后插入MongoDB中  
+	 * @param @return  
+	 * @return   
+	 * @throws
+	 */
+	void insertInsData();
 }

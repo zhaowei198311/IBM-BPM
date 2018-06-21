@@ -338,4 +338,10 @@
 			and PRO_APP_ID = #{proAppId}
 		</where>
 	</update>
+	
+	<select id="queryInsDataByDate" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+		SELECT INS_UID, INS_DATA FROM DH_PROCESS_INSTANCE
+		WHERE TRUNC(INS_CREATE_DATE) = TRUNC(SYSDATE-1)
+		OR TRUNC(INS_UPDATE_DATE) = TRUNC(SYSDATE-1)
+	</select>
 </mapper>
