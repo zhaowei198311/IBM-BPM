@@ -68,7 +68,7 @@ layui.use(['form', 'layedit', 'laydate','jquery'], function(){
   var form = layui.form;
   var $ = layui.jquery;
   //初始化所属组别下拉框
-  pbInitCombox($,form,'dictTypeCd=quarz_job_group','jobGroupName');
+  pbInitCombox($,form,'dicUid=dicbea3b258-604c-4aca-8c02-83b2315edcf8','jobGroupName');
    //监听提交
    form.on('submit(btnSubmit)', function(data){
    //layer.msg(JSON.stringify(data.field));
