@@ -73,9 +73,4 @@ public class InsDataDaoImpl implements InsDataDao{
 		}
 	}
 
-	@Override
-	public String queryTask(String task) {
-		return mongoTemplate.findById(task, String.class, "task");
-	}
-
 }
