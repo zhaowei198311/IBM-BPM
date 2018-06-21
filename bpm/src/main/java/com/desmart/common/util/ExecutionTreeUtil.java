@@ -184,7 +184,107 @@ public class ExecutionTreeUtil {
         JSONObject data = processData.getJSONObject("data");
         return "STATE_FINISHED".equalsIgnoreCase(data.getString("state"));
     }
+    
+    
+	/**
+	 * 从流程详细信息中获得指定任务的tokenId和父tokenId
+	 * (与getTokenIdAndPreTokenIdByTaskId方法不同，此方法返回的preTokenId为检索到的createdTaskIDs与上级createdTaskIDs相同的父级的tokenId)
+	 * @param taskId ： 任务ID
+	 * @param json ：由流程详细信息转化来的JSONObject
+	 * @return Map中的key ： 1）tokenId 2) preTokenId
+	 */
+	public static final Map<Object, Object> getTokenIdAndLastTokenIdByTaskId(int taskId, JSONObject json) {
+		
+		int flag = 0;
+		// 解析jsonObject
+		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
+		JSONArray jsonArray = jsonObject.getJSONArray("children");
+		//ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
+		// 第一次遍历children数组对象
+		HashMap<Object, Object> hashMap = new HashMap<>();
+		for (Iterator iterator = jsonArray.iterator(); iterator.hasNext();) {
+			ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
+			JSONObject object = (JSONObject) iterator.next();
+			if (null != object.get("createdTaskIDs")) {
+				// 此处比较createdTaskIDs数组中是否包含taskId
+				JSONArray taskIdsArray = object.getJSONArray("createdTaskIDs");
+				for (int i = 0; i < taskIdsArray.size(); i++) {
+					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
+						hashMap.put("tokenId", object.get("tokenId"));
+						// 第一次循环时，preTokenId为null
+						hashMap.put("preTokenId", null);
+						return hashMap;
+					}
+				}
+			} else {
+				// 每次循环下级时候把此级tokenId放入list中
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("tokenId", object.get("tokenId"));
+				map.put("flowObjectId", object.get("flowObjectId"));
+				preTokenIdList.add(map);
+				JSONArray jsonArray2 = object.getJSONArray("children");
+				HashMap<Object, Object> utilMap = getTokenIdAndLastTokenIdUtil(jsonArray2, taskId, preTokenIdList, flag);
+				if (utilMap != null) {
+					return utilMap;
+				} /*else {
+					System.out.println("未查到结果...");
+				}*/
+			}
+		}
+		return null;
+	}
 
+	/**
+	 * getTokenIdAndLastTokenIdByTaskId工具方法（递归用）
+	 * @param jsonArray   children对象数组
+	 * @param taskId    接收参数taskId
+	 * @param preTokenIdList  从父节点开始，每个节点公用一个list，存此级下的所有数据
+	 * @param flag   标志位，每深入一级，flag+1
+	 * @return
+	 */
+	private static HashMap<Object, Object> getTokenIdAndLastTokenIdUtil(JSONArray jsonArray, int taskId,
+			ArrayList<HashMap<String, Object>> preTokenIdList, int flag) {
 
+		for (Iterator<?> iterator = jsonArray.iterator(); iterator.hasNext();) {
+			HashMap<Object, Object> map = new HashMap<>();
+			JSONObject object = (JSONObject) iterator.next();
+			if (null != object.get("createdTaskIDs")) {
+				JSONArray taskIdsArray = object.getJSONArray("createdTaskIDs");
+				for (int i = 0; i < taskIdsArray.size(); i++) {
+					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
+						map.put("tokenId", object.get("tokenId"));
+						// 此处赋值上级preTokenId
+						String flowObjectId = (String) object.get("flowObjectId");
+						for (int j = flag; j >= 0; j--) {
+							if (preTokenIdList.get(j) != null) {
+								if (preTokenIdList.get(j).get("flowObjectId") != null
+										&& !preTokenIdList.get(j).get("flowObjectId").equals(flowObjectId)) {
+									map.put("preTokenId", preTokenIdList.get(j).get("tokenId"));
+									return map;
+								}
+							} else {
+								map.put("preTokenId", null);
+							}
+						}
+						return map;
+					}
+				}
+			}
+			HashMap<String, Object> currentNodeMap = new HashMap<>();
+			currentNodeMap.put("tokenId", object.get("tokenId"));
+			currentNodeMap.put("flowObjectId", object.get("flowObjectId"));
+			preTokenIdList.add(currentNodeMap);
+			JSONArray jsonArray2 = object.getJSONArray("children");
+			//每深入一级，flag加1
+			flag++;
+			if (null != jsonArray2) {
+				HashMap<Object, Object> util = getTokenIdAndLastTokenIdUtil(jsonArray2, taskId, preTokenIdList, flag);
+				if (util != null) {
+					return util;
+				}
+			}
+		}
+		return null;
+	}
 
 }
