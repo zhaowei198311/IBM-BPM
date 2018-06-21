@@ -316,7 +316,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		JSONObject dataJson = JSONObject.parseObject(data);
 		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
 		JSONObject processDataIn = JSONObject.parseObject(String.valueOf(dataJson.get("processData")));
-		JSONObject formData = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
+		JSONObject formDataIn = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
         JSONArray routeData = JSONObject.parseArray(String.valueOf(dataJson.get("routeData")));
 
 		Integer taskId = Integer.parseInt(taskData.getString("taskId"));
@@ -353,21 +353,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         BpmActivityMeta currTaskNode = bpmActivityMetaServiceImpl.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
 
-        // 检查是否需要更新insTitle
-		if (canEditInsTitle(currTask, currProcessInstance)) {
-            String insTitle = processDataIn.getString("insTitle");
-            if (StringUtils.isBlank(insTitle) || insTitle.trim().length()>30) {
-                return ServerResponse.createByErrorMessage("流程标题异常");
-            }
-            currProcessInstance.setInsTitle(insTitle);
-        }
-
         // 整合formdata
         JSONObject mergedFormData = new JSONObject();
         JSONObject insJson = JSONObject.parseObject(currProcessInstance.getInsData());
-        if (StringUtils.isNotBlank(formData.toJSONString())) {
-            mergedFormData = FormDataUtil.formDataCombine(formData, insJson.getJSONObject("formData"));
+        JSONObject processDataJson = insJson.getJSONObject("processData");
+
+        if (StringUtils.isNotBlank(formDataIn.toJSONString())) {
+            mergedFormData = FormDataUtil.formDataCombine(formDataIn, insJson.getJSONObject("formData"));
         }
+
+		// 检查是否需要更新insTitle
+		if (canEditInsTitle(currTask, currProcessInstance)) {
+			String insTitle = processDataIn.getString("insTitle");
+			if (StringUtils.isBlank(insTitle) || insTitle.trim().length()>30) {
+				return ServerResponse.createByErrorMessage("流程标题异常");
+			}
+			currProcessInstance.setInsTitle(insTitle);
+			processDataJson.put("insTitle", insTitle);
+			insJson.put("processData", processDataJson);
+		}
 
         // 根据配置保存审批意见
         ServerResponse response = dhapprovalOpinionServiceImpl.saveDhApprovalOpiionWhenSubmitTask(currTask, dhActivityConf, dataJson);
@@ -398,7 +402,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 获得下个节点的路由信息
-        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, formData);
+        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, mergedFormData);
 
         // 判断Token是否移动
         boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask);
