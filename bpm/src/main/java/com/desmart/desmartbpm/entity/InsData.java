@@ -5,7 +5,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "test")
-public class FormData {
+public class InsData {
 	@Id
 	private String id;
 	
@@ -14,7 +14,7 @@ public class FormData {
 	private String formData;
 	
 	@PersistenceConstructor
-	public FormData(String id, String processData, String formData) {
+	public InsData(String id, String processData, String formData) {
 		super();
 		this.id = id;
 		this.processData = processData;

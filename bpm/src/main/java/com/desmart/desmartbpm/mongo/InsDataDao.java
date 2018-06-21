@@ -2,9 +2,9 @@ package com.desmart.desmartbpm.mongo;
 
 import java.util.List;
 
-import com.desmart.desmartbpm.entity.FormData;
+import com.desmart.desmartbpm.entity.InsData;
 
-public interface FormDataDao{
+public interface InsDataDao{
 	/**
 	 * 
 	 * @Title: queryFormData  
@@ -15,7 +15,7 @@ public interface FormDataDao{
 	 * @return List<FormData>  
 	 * @throws
 	 */
-	List<FormData> queryFormData(String key, String value);
+	List<InsData> queryInsData(String key, String value);
 	
 	/**
 	 * 
@@ -29,5 +29,5 @@ public interface FormDataDao{
 	 * @return List<FormData>  
 	 * @throws
 	 */
-	List<FormData> queryFormData(String key, String value, int page, int size);
+	List<InsData> queryInsData(String key, String value, int page, int size);
 }

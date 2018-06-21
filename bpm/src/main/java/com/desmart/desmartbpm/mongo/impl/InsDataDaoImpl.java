@@ -11,26 +11,26 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.desmart.desmartbpm.entity.FormData;
-import com.desmart.desmartbpm.mongo.FormDataDao;
+import com.desmart.desmartbpm.entity.InsData;
+import com.desmart.desmartbpm.mongo.InsDataDao;
 
 @Repository
-public class FormDataDaoImpl implements FormDataDao{
+public class InsDataDaoImpl implements InsDataDao{
 	
 	@Resource
     @Qualifier("mongoTemplate")
     private MongoTemplate mongoTemplate;
 	
 	@Override
-	public List<FormData> queryFormData(String key, String value) {
+	public List<InsData> queryInsData(String key, String value) {
 		Criteria criteria = Criteria.where("formData."+ key +".value").is(value);
 		Query query = new Query(criteria);
-		List<FormData> formData = mongoTemplate.find(query, FormData.class);
+		List<InsData> formData = mongoTemplate.find(query, InsData.class);
 		return formData;
 	}
 
 	@Override
-	public List<FormData> queryFormData(String key, String value, int page, int size) {
+	public List<InsData> queryInsData(String key, String value, int page, int size) {
 		Criteria criteria = new Criteria();
 		Query query = new Query();
 		if (!key.isEmpty()) {
@@ -39,7 +39,7 @@ public class FormDataDaoImpl implements FormDataDao{
 		}
 		query.limit(size);
 		query.skip(page * (size-1));
-		List<FormData> formData = mongoTemplate.find(query, FormData.class);
+		List<InsData> formData = mongoTemplate.find(query, InsData.class);
 		return formData;
 	}
 
