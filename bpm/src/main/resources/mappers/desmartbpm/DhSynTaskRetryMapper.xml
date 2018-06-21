@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhSynTaskRetryMapper" >
+  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
+    <id column="ID" property="id" />
+    <result column="TASK_ID" property="taskId" />
+    <result column="RETRY_COUNT" property="retryCount" />
+    <result column="STATUS" property="status" />
+    <result column="LAST_RETRY_TIME" property="lastRetryTime" />
+    <result column="CREATE_TIME" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from DH_SYN_TASK_RETRY
+    where ID = #{id}
+  </select>
+
+  <select id="listUnFinishedTasks" resultType="com.desmart.desmartbpm.entity.DhSynTaskRetry">
+    select <include refid="Base_Column_List"/>
+    from DH_SYN_TASK_RETRY
+    where status = 0 and retry_count <![CDATA[ < ]]> 5
+  </select>
+
+  <select id="queryByTaskId" parameterType="int" resultType="com.desmart.desmartbpm.entity.DhSynTaskRetry">
+    select <include refid="Base_Column_List"/>
+    from DH_SYN_TASK_RETRY
+    where task_id = #{taskId}
+  </select>
+
+  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
+    insert into DH_SYN_TASK_RETRY (ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME)
+    values (#{id}, #{taskId}, #{retryCount}, #{status}, #{lastRetryTime}, sysdate)
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
+    update DH_SYN_TASK_RETRY
+    <set >
+      <if test="taskId != null" >
+        TASK_ID = #{taskId},
+      </if>
+      <if test="retryCount != null" >
+        RETRY_COUNT = #{retryCount},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status},
+      </if>
+      <if test="lastRetryTime != null" >
+        LAST_RETRY_TIME = #{lastRetryTime},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
+    update DH_SYN_TASK_RETRY
+    set TASK_ID = #{taskId},
+      RETRY_COUNT = #{retryCount},
+      STATUS = #{status},
+      LAST_RETRY_TIME = #{lastRetryTime}
+    where ID = #{id}
+  </update>
+
+  <update id="updateRetryCountByTaskId" parameterType="int">
+    update DH_SYN_TASK_RETRY
+    set
+      RETRY_COUNT = RETRY_COUNT + 1,
+      LAST_RETRY_TIME = sysdate
+    where task_id = #{taskId}
+  </update>
+</mapper>
