@@ -5,6 +5,8 @@ package com.desmart.desmartportal.entity;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+
 /**  
 * <p>Title: 流程实例实体类</p>  
 * <p>Description:  </p>  
@@ -34,7 +36,7 @@ public class DhProcessInstance {
     public static final String STATUS_SUSPENDED = "6";
     public static final int STATUS_ID_SUSPENDED = 6;
 	
-	
+	@Id
 	private String insUid; // 流程实例ID
 	
 	private String insTitle; // 流程实例标题

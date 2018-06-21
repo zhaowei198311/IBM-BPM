@@ -1,9 +1,7 @@
 package com.desmart.desmartbpm.mongo.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +10,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.desmartbpm.entity.InsData;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 @Repository
 public class InsDataDaoImpl implements InsDataDao{
@@ -34,15 +27,15 @@ public class InsDataDaoImpl implements InsDataDao{
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
 	@Override
-	public List<InsData> queryInsData(String key, String value) {
+	public List<String> queryInsData(String key, String value) {
 		Criteria criteria = Criteria.where("formData."+ key +".value").is(value);
 		Query query = new Query(criteria);
-		List<InsData> formData = mongoTemplate.find(query, InsData.class, "insData");
+		List<String> formData = mongoTemplate.find(query, String.class, "insData");
 		return formData;
 	}
 
 	@Override
-	public List<InsData> queryInsData(String key, String value, int page, int size) {
+	public List<String> queryInsData(String key, String value, int page, int size) {
 		Criteria criteria = new Criteria();
 		Query query = new Query();
 		if (!key.isEmpty()) {
@@ -51,7 +44,7 @@ public class InsDataDaoImpl implements InsDataDao{
 		}
 		query.limit(size);
 		query.skip(page * (size-1));
-		List<InsData> formData = mongoTemplate.find(query, InsData.class, "insData");
+		List<String> formData = mongoTemplate.find(query, String.class, "insData");
 		return formData;
 	}
 
@@ -59,19 +52,17 @@ public class InsDataDaoImpl implements InsDataDao{
 	public void insertInsData() {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByDate();
-			
-			DBObject dbObject = new BasicDBObject();
-			
-			BasicDBObject fieldsObject=new BasicDBObject();
-			fieldsObject.put("_id", true);
-			mongoTemplate.find(new BasicQuery("{}", "{'_id':1}"), String.class, "insData");
-			Update update = new Update();
-			JSONObject $insData = null;
+			// 所有id集合
+			List<DhProcessInstance> list = mongoTemplate.find(new BasicQuery("{}"), DhProcessInstance.class, "insData");
 //			InsData insData = new InsData();
-			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
-				$insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-				$insData.put("_id", dhProcessInstance.getInsUid());
-			}
+			String id = "";
+			// 需要插入的数据
+			List<DhProcessInstance> newDpiList = new LinkedList<>();
+			// 需要更新的数据
+			List<DhProcessInstance> updateDpiList = new LinkedList<>();
+			boolean flag = false;
+			mongoTemplate.insert(dhProcessInstanceList, "insData");
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
