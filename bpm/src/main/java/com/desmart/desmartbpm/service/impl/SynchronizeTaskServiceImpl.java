@@ -10,6 +10,7 @@ import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
+import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
@@ -76,6 +77,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
     private DhSynTaskRetryMapper dhSynTaskRetryMapper;
+    @Autowired
+    private TaskMongoDao taskMongoDao;
+
     
     /**
      * 从引擎同步任务
@@ -86,6 +90,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
         Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
         startFirstSynchronize(newLswTaskList, groupInfo); // 开始同步任务
+
         LOG.info("==================  拉取任务结束  ===============");
     }
 
@@ -350,8 +355,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @return
      */
     private List<LswTask> getNewTasks() {
-        int maxTaskId = dhTaskInstanceService.getMaxTaskIdInDb();
-        return lswTaskMapper.listNewTasks(maxTaskId);
+        // 从mongodb中获得最后一次同步的任务编号
+        int lastTaskIdSynchronized = taskMongoDao.queryLastSynchronizedTaskId();
+        return lswTaskMapper.listNewTasks(lastTaskIdSynchronized);
     }
 
     private List<LswTask> getNewTasksForRetry() {
@@ -424,5 +430,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private int updateRetryCount(LswTask lswTask) {
         return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
     }
+
 
 }

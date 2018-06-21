@@ -1,9 +1,12 @@
 package com.desmart.desmartbpm.entity.engine;
 
+import org.springframework.data.annotation.Id;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class LswTask {
+
     private Integer taskId;
 
     private String tip;

@@ -17,7 +17,12 @@ public interface LswTaskMapper {
     int updateByPrimaryKeySelective(LswTask record);
 
     int updateByPrimaryKey(LswTask record);
-    
+
+    /**
+     * 从引擎中搜索 任务id大于 指定id的任务， 按任务id从小到大排序
+     * @param taskId
+     * @return
+     */
     List<LswTask> listNewTasks(int taskId);
     
     /**
@@ -27,7 +32,9 @@ public interface LswTaskMapper {
     List<GroupAndMember> getGroupInfo();
 
     /**
-     *
+     * 根据重试记录查询引擎中指定的任务
+     * @param list
+     * @return
      */
     List<LswTask> listTasksByDhSynTaskRetryList(List<DhSynTaskRetry> list);
 
