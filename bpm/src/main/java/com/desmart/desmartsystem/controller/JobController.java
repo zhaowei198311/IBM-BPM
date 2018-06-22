@@ -39,7 +39,7 @@ public class JobController {
 	@Autowired
 	private QuartzService quartzService;
 	
-	@Autowired
+	//@Autowired
 	private Scheduler scheduler;
 	
 	
