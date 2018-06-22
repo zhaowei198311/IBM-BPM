@@ -157,13 +157,13 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="form-name" name="formName" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单描述</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="form-description" name="formDescription" class="layui-input">
 					    </div>
 					  </div>				  
 					</form>
@@ -184,13 +184,13 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="update-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="update-form-name" name="formName" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单描述</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="update-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="update-form-description" name="formDescription" class="layui-input">
 					    </div>
 					  </div>				  
 					</form>
@@ -256,13 +256,13 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="copy-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="copy-form-name" name="formName" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单描述</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="copy-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="copy-form-description" name="formDescription" class="layui-input">
 					    </div>
 					  </div>				  
 					</form>
@@ -302,13 +302,13 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="copy-sel-form-name" name="formName" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="copy-sel-form-name" name="formName" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">表单描述</label>
 					    <div class="layui-input-block">
-					      <input type="text" id="copy-sel-form-description" name="formDescription" required  lay-verify="required" value="" autocomplete="off" class="layui-input">
+					      <input type="text" id="copy-sel-form-description" name="formDescription" class="layui-input">
 					    </div>
 					  </div>				  
 					</form>

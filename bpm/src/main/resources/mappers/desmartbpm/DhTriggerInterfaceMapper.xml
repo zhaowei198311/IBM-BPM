@@ -240,11 +240,14 @@
 		</foreach>
 	</update>
 
-	<select id="queryTriIntByTriUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+	<select id="queryTriIntByTriUidAndType" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM
 		DH_TRIGGER_INTERFACE
 		where tri_uid = #{triUid}
+		<if test="parameterType!=null and !parameterType.trim().isEmpty()">
+			and parameter_type = #{parameterType}
+		</if>
 	</select>
 </mapper>

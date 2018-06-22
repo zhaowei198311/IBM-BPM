@@ -33,7 +33,6 @@ public interface DhTriggerService {
      */
     int saveTrigger(DhTrigger dhTrigger);
     /**
-     * 
      * @Title: invokeTrigger  
      * @Description: 通过反射调用类的方法  
      * @param @param triUid
@@ -41,7 +40,7 @@ public interface DhTriggerService {
      * @return DhTrigger
      * @throws
      */
-    void invokeTrigger(WebApplicationContext wac, String insUid, String triUid);
+    void invokeTrigger(WebApplicationContext wac, String insUid, String triUid) throws Exception;
     
     /**
      * 反射调用选人触发器

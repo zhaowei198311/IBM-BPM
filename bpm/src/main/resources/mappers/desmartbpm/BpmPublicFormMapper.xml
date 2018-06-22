@@ -38,7 +38,7 @@
 	<insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		insert into bpm_public_form(<include refid="base_column"/>)
 		values(#{publicFormUid},#{publicFormName},#{publicFormDescription},#{publicFormContent},
-			#{publicFormWebpage},#{publicFormCode},'00035438',sysdate)
+			#{publicFormWebpage},#{publicFormCode},#{creator},sysdate)
 	</insert>
 	
 	<update id="updateFormContent" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">

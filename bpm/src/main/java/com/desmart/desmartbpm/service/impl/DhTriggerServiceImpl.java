@@ -95,69 +95,123 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	}
 
 	@Override
-	public void invokeTrigger(WebApplicationContext wac, String insUid, String triUid){
+	public void invokeTrigger(WebApplicationContext wac, String insUid, String triUid) throws Exception{
 		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
 		if ("javaclass".equals(dhTrigger.getTriType())) {
-			try {
-				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
-				Object obj = clz.newInstance();
-				JSONObject jb = JSONObject.parseObject(dhTrigger.getTriParam());
-				Method md = obj.getClass().getDeclaredMethod("execute", 
-						new Class []{WebApplicationContext.class, String.class,
-								org.json.JSONObject.class});
-				md.invoke(obj, new Object[]{wac, insUid, jb});
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
+			Object obj = clz.newInstance();
+			JSONObject jb = JSONObject.parseObject(dhTrigger.getTriParam());
+			Method md = obj.getClass().getDeclaredMethod("execute",
+					new Class[] { WebApplicationContext.class, String.class, org.json.JSONObject.class });
+			md.invoke(obj, new Object[] { wac, insUid, jb });
 		}else if("interface".equals(dhTrigger.getTriType())) {
-			try {
-				String insData = dhProcessInstanceMapper.selectByPrimaryKey(insUid).getInsData();
-				JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
-				List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUid(triUid);
-				String intUid = dhTrigger.getTriWebbot();
-				String inputParameter = "\"inputParameter\":{";
-				for(int i=0;i<dhTriggerInterfaceList.size();i++) {
-					DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
-					String fieldCodeName = triInt.getFldCodeName();
-					String paramName = triInt.getParaName();
-					BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),fieldCodeName);
-					if(null==formField) {
-						List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
-						for(String publicFormUid:publicFormUidList) {
-							formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid,fieldCodeName);
-							if(null!=formField) {
-								break;
-							}
-						} 
-					}
-					if("object".equals(formField.getFldType())) {
-						/*List<BpmFormField> tableFieldList = bpmFormFieldMapper.queryFieldByTableFldUid(formField.getFldUid());
-						for(int j=0;j<tableFieldList.size();j++) {
-							BpmFormField tableField = tableFieldList.get(i);
-							
-						}*/
-					}else {
-						String fieldValue = FormDataUtil.getStringValue(fieldCodeName, formDataObj);
-						if(null == fieldValue) {
-							fieldValue = "";
-						}
-						inputParameter += "\""+paramName+"\":\""+fieldValue+"\"";
-						if(i!=dhTriggerInterfaceList.size()-1) {
-							inputParameter += ",";
-						}
-					}
-				}
-				inputParameter += "}";
-				String paramJson = "{\"intUid\":\""+intUid+"\","+inputParameter+"}";
-				JSONObject paramObj = JSONObject.parseObject(paramJson);
-				Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
-				System.out.println(JSONObject.toJSONString(json));
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
+			transferInterface(insUid, triUid, dhTrigger);
 		}
 	}
 
+	/**
+	 * 调用接口传递参数并接收返回值
+	 */
+	private void transferInterface(String insUid, String triUid, DhTrigger dhTrigger) throws Exception {
+		String insData = dhProcessInstanceMapper.selectByPrimaryKey(insUid).getInsData();
+		JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
+		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,
+				"inputParameter");
+		String intUid = dhTrigger.getTriWebbot();
+		String inputParameter = "\"inputParameter\":{";
+		for (int i = 0; i < dhTriggerInterfaceList.size(); i++) {
+			DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
+			String fieldCodeName = triInt.getFldCodeName();
+			String paramName = triInt.getParaName();
+			BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
+					fieldCodeName);
+			if (null == formField) {
+				List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+				for (String publicFormUid : publicFormUidList) {
+					formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
+					if (null != formField) {
+						break;
+					}
+				}
+			}
+			if ("object".equals(formField.getFldType())) {
+				/*List<BpmFormField> tableFieldList = bpmFormFieldMapper.queryFieldByTableFldUid(formField.getFldUid());
+				for (int j = 0; j < tableFieldList.size(); j++) {
+					BpmFormField tableField = tableFieldList.get(i);
+
+				}*/
+			} else {
+				String fieldValue = FormDataUtil.getStringValue(fieldCodeName,formDataObj);
+				if (null == fieldValue) {
+					fieldValue = "";
+				}
+				inputParameter += "\"" + paramName + "\":\"" + fieldValue + "\"";
+				if (i != dhTriggerInterfaceList.size() - 1) {
+					inputParameter += ",";
+				}
+			}
+		}
+		inputParameter += "}";
+		String paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
+		JSONObject paramObj = JSONObject.parseObject(paramJson);
+		Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
+		handleInterfaceData(json, insUid, triUid);
+	}
+	
+	/**
+	 * 处理接口json返回值更新对应的formData
+	 */
+	private void handleInterfaceData(Json json,String insUid, String triUid){
+		if(!json.isSuccess()) {
+			throw new PlatformException(json.getMsg());
+		}
+		String jsonStr = json.getMsg();
+		JSONObject jsonObj = JSONObject.parseObject(jsonStr);
+		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,"outputParameter");
+		String formDataStr = "{";
+		for(int i=0;i<dhTriggerInterfaceList.size();i++) {
+			DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
+			String paramName = triInt.getParaName();
+			String returnValue = jsonObj.getString(paramName);
+			String fieldCodeName = triInt.getFldCodeName();
+			BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
+					fieldCodeName);
+			if (null == formField) {
+				List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+				for (String publicFormUid : publicFormUidList) {
+					formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
+					if (null != formField) {
+						break;
+					}
+				}
+			}
+			if ("object".equals(formField.getFldType())) {
+				/*List<BpmFormField> tableFieldList = bpmFormFieldMapper.queryFieldByTableFldUid(formField.getFldUid());
+				for (int j = 0; j < tableFieldList.size(); j++) {
+					BpmFormField tableField = tableFieldList.get(i);
+
+				}*/
+			} else {
+				if(null == returnValue) {
+					returnValue = "";
+				}
+				formDataStr += "\""+fieldCodeName+"\":{\"value\":\""+returnValue+"\"}";
+				if (i != dhTriggerInterfaceList.size() - 1) {
+					formDataStr += ",";
+				}
+			}
+		}//end for
+		formDataStr += "}";
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+		String insData = dhProcessInstance.getInsData();
+		JSONObject oldObj = JSONObject.parseObject(insData).getJSONObject("formData");
+		JSONObject formDataObj = FormDataUtil.formDataCombine(JSONObject.parseObject(formDataStr), oldObj);
+		JSONObject insDataObj = JSONObject.parseObject(insData);
+		insDataObj.put("formData", formDataObj);
+		String newInsData = insDataObj.toJSONString();
+		dhProcessInstance.setInsData(newInsData);
+		dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+	}
 
 	@Override
 	public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid){

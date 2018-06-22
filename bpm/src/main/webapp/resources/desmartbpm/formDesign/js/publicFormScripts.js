@@ -690,7 +690,7 @@ $(document).ready(function () {
         layer.load(1);
         downloadLayoutSrc();
         publicFormContent += formatJs;
-        var dynHtml = dynContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        var dynHtml = publicFormContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
         var preHtml = webpage.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");

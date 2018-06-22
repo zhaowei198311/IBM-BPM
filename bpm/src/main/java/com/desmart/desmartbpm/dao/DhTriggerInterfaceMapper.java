@@ -72,5 +72,5 @@ public interface DhTriggerInterfaceMapper {
 	/**
 	 * 根据触发器id获得接口触发器
 	 */
-	List<DhTriggerInterface> queryTriIntByTriUid(String triUid);
+	List<DhTriggerInterface> queryTriIntByTriUidAndType(@Param("triUid")String triUid,@Param("parameterType")String parameterType);
 }

@@ -37,7 +37,8 @@ public class HttpRequestUtils {
      * @return
      */
     public static String httpPost(String url,JSONObject jsonParam, boolean noNeedResponse){
-        //post请求返回结果
+    	//url = "http://localhost:8088/bpm/sysUser/getSysUser?userUid=00011178";
+    	//post请求返回结果
         DefaultHttpClient httpClient = new DefaultHttpClient();
         String jsonResult = null;
         HttpPost method = new HttpPost(url);
@@ -67,6 +68,7 @@ public class HttpRequestUtils {
                 }
             }
         } catch (IOException e) {
+        	e.printStackTrace();
             logger.error("post请求提交失败:" + url, e);
         }
         return jsonResult;
