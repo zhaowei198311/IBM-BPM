@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -281,5 +282,26 @@ public class AccessoryFileUploadController {
           map.put("percent", percent);          //百分比数字
           map.put("percentText", percent+"%");  //百分比文本
 		return ServerResponse.createBySuccess(map);
+	}
+	
+	@RequestMapping("/loadImageData")
+	@ResponseBody
+	public ServerResponse loadImageData(DhInstanceDocument dhInstanceDocument,
+				HttpServletRequest request) {
+		
+		String demoImagePath = request.getSession().getServletContext()
+				.getRealPath("/resources/desmartportal/upload/demo/");
+		return accessoryFileUploadServiceImpl.loadImageData(dhInstanceDocument,demoImagePath);
+	}
+	
+	@RequestMapping("/uploadEditData")
+	@ResponseBody
+	public ServerResponse uploadEditData(@RequestBody Map map) {
+		return accessoryFileUploadServiceImpl.uploadEditData(map);
+	}
+	@RequestMapping("/deleteTemporaryFile")
+	@ResponseBody
+	public ServerResponse deleteTemporaryFile(String absoulteImgPath) {
+		return accessoryFileUploadServiceImpl.deleteTemporaryFile(absoulteImgPath);
 	}
 }

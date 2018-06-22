@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,4 +72,29 @@ public interface AccessoryFileUploadService {
 	 */
 	public ServerResponse updateAccessoryFile(MultipartFile multipartFile
 			,DhInstanceDocument dhInstanceDocument,String activityId,String taskUid);
+	/**
+	 * 根据主键查询
+	 * @param appDocUid
+	 * @return
+	 */
+	public DhInstanceDocument selectByPrimaryKey(String appDocUid);
+	/**
+	 * 加载wPaint插件中的图片
+	 * @param dhInstanceDocument
+	 * @param demoImagePath
+	 * @return
+	 */
+	public ServerResponse loadImageData(DhInstanceDocument dhInstanceDocument, String demoImagePath);
+	/**
+	 * 保存编辑后的图片数据
+	 * @param map
+	 * @return
+	 */
+	public ServerResponse uploadEditData(Map map);
+	/**
+	 * 根据绝地路径删除文件
+	 * @param absoulteImgPath
+	 * @return
+	 */
+	public ServerResponse deleteTemporaryFile(String absoulteImgPath);
 }

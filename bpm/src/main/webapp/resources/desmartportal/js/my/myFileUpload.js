@@ -273,6 +273,11 @@ function loadFileList(){
 		      if(taskStatus!="32"&&taskStatus!="-2"){
 		    	  info += "<button onclick='deleteAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
 		      }
+		      
+		      if(result.data[i].appDocType=="image/png"||result.data[i].appDocType=="image/jpeg"){
+		    	  info += "<button onclick='editAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>编辑</button>"			        
+		      }
+		      
 		      info += "</td></tr>"; 
 			tagTbody.append(info);
 		}
@@ -753,3 +758,12 @@ function hideProgress(){
     };
 
 }( jQuery ));
+
+/**
+ * 附件编辑方法--调用myWPaint.js中的方法
+ * @param a
+ * @returns
+ */
+function editAccessoryFile(a){
+	loadImageData(a);
+}

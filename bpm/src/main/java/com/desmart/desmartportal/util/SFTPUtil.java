@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.util;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,7 +161,7 @@ public class SFTPUtil {
     }
     
     /**
-     * 获得文件的输入流
+     * 获得文件的输入流中的内容
      * @param gcfg 全局变量
      * @param directory 上传到该目录 
      * @param filename 文件名
@@ -169,10 +170,21 @@ public class SFTPUtil {
     	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
     	String result = null;
     	try {
-    		
 			sftp.cd(gcfg.getSftpPath()+directory);
 			InputStream input = sftp.get(filename);
+			//拷贝读取到的文件流  
+          	ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+            byte[] buffer = new byte[1024];  
+            int len;  
+            while ((len = input.read(buffer)) > -1 ) {  
+                baos.write(buffer, 0, len);  
+            }  
+            baos.flush();  
+            InputStream newInput = new ByteArrayInputStream(baos.toByteArray());  
+            newInput = new ByteArrayInputStream(baos.toByteArray());
 			result = readInputStream(input);
+			newInput.close();
+			baos.close();
 			input.close();
 			logout();
 	    	return ServerResponse.createBySuccess(result);
@@ -194,8 +206,8 @@ public class SFTPUtil {
             bos.write(buffer, 0, len);  
         }  
         bos.close();  
-        return new String(bos.toByteArray(),"utf-8");
-    }  
+        return new String(bos.toByteArray(),"UTF-8");
+    } 
 	
 	 /**
      * 获得服务器文件输入流
@@ -298,5 +310,43 @@ public class SFTPUtil {
 			logout();
 			e.printStackTrace();
 		}
+    }
+    
+    public void uploadOutputStreamByBatyes(BpmGlobalConfig gcfg,String directory
+    		,String sftpFileName,byte[] bytes) throws SftpException, IOException {
+    	login(gcfg.getSftpUserName(), gcfg.getSftpPassword(), gcfg.getSftpIp(), gcfg.getSftpPort());
+    	try {     
+            sftp.cd(gcfg.getSftpPath());  
+            sftp.cd(directory);    
+        } catch (SftpException e) {
+            //目录不存在，则创建文件夹  
+            String [] dirs=directory.split("/");  
+            String tempPath=gcfg.getSftpPath();  
+            for(String dir:dirs){  
+                if(null== dir || "".equals(dir)) {
+                	continue;  
+                }
+                tempPath+="/"+dir;  
+                try{   
+                    sftp.cd(tempPath);  
+                }catch(SftpException ex){ 
+                    sftp.mkdir(tempPath);  
+                    sftp.cd(tempPath);  
+                }  
+            }  
+        }    
+        OutputStream outputStream = sftp.put(directory+sftpFileName); //上传文件所需要的输出流  
+        byte[] bs = new byte[4096];
+        int num = 0;
+        while (num<=bytes.length) {
+			for (int i = 0; i < bs.length; i++) {
+				bs[i] = bytes[num+i];
+			}
+        	outputStream.write(bs);
+        	num=num+bs.length;
+		}
+		outputStream.flush();
+		outputStream.close();
+        logout();
     }
 }

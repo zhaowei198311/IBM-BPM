@@ -20,11 +20,30 @@
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
-    <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+    <!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script> -->
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
+	
+<!-- jQuery -->
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.1.8.2.min.js"></script>
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.core.min.js"></script>
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.widget.min.js"></script>
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.mouse.min.js"></script>
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.draggable.min.js"></script>
+
+<!-- wColorPicker -->  
+<link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/inc/wColorPicker.css"/>  
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/wColorPicker.js"></script>  
+  
+<!-- wPaint -->  
+<link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css"/>  
+<script type="text/javascript" src="resources/desmartportal/wPaint-master/wPaint.js"></script>  
+
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
+
+<script type="text/javascript" src="resources/desmartportal/js/my/myWPaint.js"></script>
+    
     <style type="text/css">
        .container-fluid {
             padding-right: 0px;
@@ -34,6 +53,28 @@
 
         #upload_file_modal {
             display: none;
+        }
+        
+        .display_container_image_edit{
+            	z-index: 11;
+        	    color: #717171;
+   				padding: 20px;
+   				width: 100%;
+            	height: 100%;
+    			background: #fff;
+    			position: fixed;
+    			left: 2%;
+   				top: 5%;
+    			box-shadow: 0 0 10px #ccc;
+    			display: none;
+        }
+        .display_content_image_edit{
+        		z-index: 11;
+   				width: 100%;
+            	height: 100%;
+            	background: #fff;
+    			box-shadow: 0 0 10px #ccc;
+    			overflow: scroll;
         }
 
         .display_content_accessory_file {
@@ -142,7 +183,7 @@
         <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
-        <input id="canEditInsTitle" value="${canEditInsTitle}" />
+        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span id="approvalData" style="display: none;">${approvalData}</span>
@@ -497,6 +538,25 @@
 					<button class="layui-btn layui-btn-primary cancel5_btn">取消</button>
 				</div>				
 			</div>
+	</div>
+	<!-- 附件图片编辑 -->
+	<div class="display_container_image_edit" >
+		<div class="top">附件图片编辑</div>
+		<img onclick="closeImageEdit()" style="position: absolute;left: 90%;bottom: 92%;" 
+			alt="关闭" src="resources/desmartportal/images/close.jpg">
+		<div class="display_content_image_edit" >
+		<div id="imgEditMain" >
+		<input style="display: none;" id="imgEditAccessoryFileData" >
+		<table>
+		<tr>
+			<td>
+				<div id="wPaint" style="position:relative; width:500px; height:1000px;
+					 background:#CACACA; border:solid black 1px;"></div>
+			</td>
+		</tr>
+		</table>
+		</div>
+		</div>
 	</div>
 </body>
 
