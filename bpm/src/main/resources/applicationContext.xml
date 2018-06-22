@@ -35,7 +35,7 @@
     </bean>
 
 
- 	<import resource="classpath:quartz.xml"/>
+	<!--<import resource="classpath:quartz.xml"/> -->
     <import resource="spring-datasource.xml"/>
     <import resource="spring-enginedatasource.xml"/>
 	<import resource="spring-shiro.xml"/>
