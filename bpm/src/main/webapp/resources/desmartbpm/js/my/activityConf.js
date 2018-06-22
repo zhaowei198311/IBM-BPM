@@ -1270,32 +1270,62 @@ function triggerEdit(triggerUid){
 		})
 		
 		$("#triggerSave").click(function(){
-			var arr = new Array();
-			var dataList = $("#update_param").find(".layui-form-item").find(".layui-row");
-			for (var i = 0; i < dataList.length; i++) {
-				var inputArr = $(dataList[i]).find("input");
-				var info = {triUid : triggerUid,
-						activityId : $("#activityId").val(),
-						paraName : $(inputArr[0]).val(),
-						fldCodeName : $(dataList[i]).find("option:selected").val()};
-				arr.push(info);
+			// 判断是修改 输出参数 还是 输入参数
+			if($("#paramterType").val() == "inputParameter"){
+				// 输入参数
+				var arr = new Array();
+				var dataList = $("#update_param").find(".layui-form-item").find(".layui-row");
+				for (var i = 0; i < dataList.length; i++) {
+					var inputArr = $(dataList[i]).find("input");
+					var info = {triUid : triggerUid,
+							activityId : $("#activityId").val(),
+							paraName : $(inputArr[0]).val(),
+							fldCodeName : $(dataList[i]).find("option:selected").val(),
+							parameterType : $("#paramterType").val()};
+					arr.push(info);
+				}
+				$.ajax({
+					url : common.getPath() + '/dhTriggerInterface/updateBatch',
+					type : 'post',
+					dataType : 'json',
+					data : JSON.stringify(arr),
+					contentType: "application/json;charset=utf-8",
+					success : function(result){
+						layer.alert("修改成功")
+					},
+					error : function(result){
+						layer.alert("修改失败")
+					}			
+				})
+			}else{
+				var arr = new Array();
+				var dataList = $("#update_param2").find(".layui-form-item").find(".layui-row");
+				for (var i = 0; i < dataList.length; i++) {
+					var inputArr = $(dataList[i]).find("input");
+					var info = {triUid : triggerUid,
+							activityId : $("#activityId").val(),
+							paraName : $(inputArr[0]).val(),
+							fldCodeName : $(dataList[i]).find("option:selected").val(),
+							parameterType : $("#paramterType").val()};
+					arr.push(info);
+				}
+				$.ajax({
+					url : common.getPath() + '/dhTriggerInterface/updateBatch',
+					type : 'post',
+					dataType : 'json',
+					data : JSON.stringify(arr),
+					contentType: "application/json;charset=utf-8",
+					success : function(result){
+						layer.alert("修改成功")
+					},
+					error : function(result){
+						layer.alert("修改失败")
+					}			
+				})
 			}
-			$.ajax({
-				url : common.getPath() + '/dhTriggerInterface/updateBatch',
-				type : 'post',
-				dataType : 'json',
-				data : JSON.stringify(arr),
-				contentType: "application/json;charset=utf-8",
-				success : function(result){
-					layer.alert("修改成功")
-				},
-				error : function(result){
-					layer.alert("修改失败")
-				}			
-			})
 		})
 		
-		layui.use(['layer', 'form', 'jquery', 'element' ], function(){
+	layui.use(['layer', 'form', 'jquery', 'element' ], function(){
 	  var element = layui.element , layer = layui.layer;
 	  var form = layui.form;
 	  var $ = layui.jquery;
@@ -1325,17 +1355,14 @@ function triggerEdit(triggerUid){
 				},
 				success : function(result){
 					if(result.status == 0){
-						alert('输出 参数查询 成功~~~')
 						var list = result.data;
 						var startNum = 1;
 						var formId  = "";
 						for (var i = 0; i < list.length; i++) {
 							var num1 = i + startNum
-							alert(list[i].paraName + "~~~~"+ list[i].fldCodeName + "~~~~~~" + num1)
 							$("#interfaceParam"+num1).val(list[i].paraName);
-							console.log($("#tableParam"+num1).html());
-							// $('#tableParam2 option[text='+list[i].fldCodeName+']').attr("selected", true);
-							$("#tableParam"+num1).val("Fesx");
+							$("#tableParam"+num1+" option[value='"+list[i].fldCodeName+"']").attr("selected",true); 
+							form.render('select');
 						}
 						form.render();
 					}
@@ -1344,6 +1371,14 @@ function triggerEdit(triggerUid){
 					layer.alert('查询失败')
 				}
 			})
+			var itemList = $("#update_param2").find(".layui-form-item");
+				for (var j = 0; j < itemList.length+1; j++) {
+					$("#tableParam"+j+" option").each(function() {
+					text = $(this).text();
+					if($("#tableParam"+j+" option:contains("+text+")").length > 1)
+					$("#tableParam"+j+" option:contains("+text+"):gt(0)").remove();
+					});
+				}
 			form.render();
 		  }else{
 			  $("#paramterType").val("inputParameter");
@@ -1354,7 +1389,42 @@ function triggerEdit(triggerUid){
 					$(".tablelabel"+jNum2).text("输入表单参数"+jNum2)			
 				}
 				// 查询 输入参数  修改
-				
+				$.ajax({
+					url : common.getPath() + '/dhTriggerInterface/selectTriggerAndForm',
+					type : 'post',
+					async:false,
+					dataType : 'json',
+					data : {
+						triUid : triggerUid,
+						activityId : $("#activityId").val(),
+						parameterType : $("#paramterType").val()
+					},
+					success : function(result){
+						if(result.status == 0){
+							var list = result.data;
+							var startNum = 1;
+							var formId  = "";
+							for (var i = 0; i < list.length; i++) {
+								var num1 = i + startNum
+								$("#interfaceParam"+num1).val(list[i].paraName);
+								$("#tableParam"+num1+" option[value='"+list[i].fldCodeName+"']").attr("selected",true); 
+								form.render('select');
+							}
+							form.render();
+						}
+					},
+					error : function(result){
+						layer.alert('查询失败')
+					}
+				})
+				var itemList = $("#update_param").find(".layui-form-item");
+					for (var j = 0; j < itemList.length+1; j++) {
+						$("#tableParam"+j+" option").each(function() {
+						text = $(this).text();
+						if($("#tableParam"+j+" option:contains("+text+")").length > 1)
+						$("#tableParam"+j+" option:contains("+text+"):gt(0)").remove();
+						});
+					}
 				form.render();
 		  }
 	  });

@@ -236,6 +236,8 @@
 				ACTIVITY_ID = #{item.activityId}
 				AND
 				PARA_NAME = #{item.paraName}
+				AND
+				PARAMETER_TYPE = #{item.parameterType}
 			</where>
 		</foreach>
 	</update>
