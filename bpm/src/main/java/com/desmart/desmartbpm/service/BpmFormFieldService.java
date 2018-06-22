@@ -40,7 +40,12 @@ public interface BpmFormFieldService {
 	ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid);
 
 	/**
-	 * 根据表单id获得该表单中动态表格的各个字段(按表格名分组)
+	 * 根据表单id获得该表单中所有的动态表格
 	 */
-	ServerResponse<Map<String,List<BpmFormField>>> queryFormTabFieldByFormUid(String formUid);
+	ServerResponse<List<BpmFormField>> queryFormTabByFormUid(String formUid);
+
+	/**
+	 * 根据表单id和表格名获得表单中某个表格的字段
+	 */
+	ServerResponse<List<BpmFormField>> queryFormTabFieldByFormUidAndTabName(String formUid, String tableName);
 }

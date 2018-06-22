@@ -94,8 +94,8 @@ public interface BpmFormFieldMapper {
 	List<BpmFormField> queryFormTabByFormUid(String formUid);
 
 	/**
-	 * 根据表格id找到表格中字段集合
+	 * 根据表格id和表格名找到表格中字段集合
 	 */
-	List<BpmFormField> queryFormTabFieldByFormIdAndTabName(@Param("formUid")String formUid,
+	List<BpmFormField> queryFormTabFieldByFormUidAndTabName(@Param("formUid")String formUid,
 			@Param("tableName")String tableName);
 }

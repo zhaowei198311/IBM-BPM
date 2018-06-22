@@ -138,7 +138,7 @@
  		order by fld_index
  	</select>
  	
- 	<select id="queryFormTabFieldByFormIdAndTabName" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+ 	<select id="queryFormTabFieldByFormUidAndTabName" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmFormField">
  		select <include refid="base_column"/>
  		from bpm_form_field
  		where form_uid = #{formUid}

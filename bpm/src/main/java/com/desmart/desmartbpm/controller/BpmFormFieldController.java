@@ -71,13 +71,26 @@ public class BpmFormFieldController {
 	
 
 	/**
-	 * 根据表单id获得该表单中动态表格的各个字段(按表格名分组)
+	 * 根据表单id获得该表单中所有的动态表格
 	 */
-	@RequestMapping(value = "/queryFormTabFieldByFormUid")
+	@RequestMapping(value = "/queryFormTabByFormUid")
 	@ResponseBody
-	public ServerResponse queryFormTabFieldByFormUid(String formUid) {
+	public ServerResponse queryFormTabByFormUid(String formUid) {
 		try {
-			return bpmFormFieldService.queryFormTabFieldByFormUid(formUid);
+			return bpmFormFieldService.queryFormTabByFormUid(formUid);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
+	/**
+	 * 根据表单id获得该表单中所有的动态表格
+	 */
+	@RequestMapping(value = "/queryFormTabFieldByFormUidAndTabName")
+	@ResponseBody
+	public ServerResponse queryFormTabFieldByFormUidAndTabName(String formUid,String tableName) {
+		try {
+			return bpmFormFieldService.queryFormTabFieldByFormUidAndTabName(formUid,tableName);
 		}catch(Exception e) {
 			return ServerResponse.createByError();
 		}

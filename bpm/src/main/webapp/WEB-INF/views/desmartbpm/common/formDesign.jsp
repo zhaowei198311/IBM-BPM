@@ -1707,7 +1707,7 @@
 							</div>
 						</div>
 						<div class="form-group col-xs-12 data-table-set">
-							<label class="col-xs-2 col-sm-offset-2 control-label">
+							<label class="col-xs-2 col-sm-offset-1 control-label">
 								列头文本
 								<span style="color:red;float:left;">*</span>
 							</label>

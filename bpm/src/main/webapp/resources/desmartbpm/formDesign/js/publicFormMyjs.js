@@ -533,7 +533,7 @@ function showDataTableModal(obj) {
         var thName = thObj.attr("name");
         var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
             '<label class="col-xs-2 col-sm-offset-1 control-label">' +
-            '表格列头<span style="color:red;float:left;">*</span>' +
+            '列头文本<span style="color:red;float:left;">*</span>' +
             '</label>' +
             '<div class="col-xs-1">' +
             '<input type="text" class="col-xs-12 col data-table-head"' +
@@ -585,7 +585,7 @@ function showDataTableModal(obj) {
         for (var i = 0; i < forNum; i++) {
             var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
                 '<label class="col-xs-2 col-sm-offset-2 control-label">' +
-                '表格列头<span style="color:red;float:left;">*</span>' +
+                '列头文本<span style="color:red;float:left;">*</span>' +
                 '</label>' +
                 '<div class="col-xs-1">' +
                 '<input type="text" class="col-xs-12 col data-table-head"' +
@@ -612,6 +612,7 @@ function showDataTableModal(obj) {
         for (var i = 0; i < thObjArr.length; i++) {
             var thObj = $(thObjArr[i]);
             $($(".data-table-head")[i]).val(thObj.text());
+            $($(".data-table-head-name")[i]).val(thObj.attr("name"));
             $($(".data-table-type")[i]).val(thObj.attr("col-type"));
         }
     }); //end blur
