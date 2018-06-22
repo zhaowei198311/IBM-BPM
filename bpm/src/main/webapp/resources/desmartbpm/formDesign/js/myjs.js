@@ -19,9 +19,9 @@ function saveEvent() {
     if (view.find("input").length == 0) {
         inputObj = view.find("textarea");
     }
-    var onchangeStr = $("#textAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\"");
-    var onfocusStr = $("#textAddEventModal textarea[title='onfocus']").val().replace(/\"/g, "\"");
-    var onkeypreStr = $("#textAddEventModal textarea[title='onkeypress']").val().replace(/\"/g, "\"");
+    var onchangeStr = $("#textAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\'");
+    var onfocusStr = $("#textAddEventModal textarea[title='onfocus']").val().replace(/\"/g, "\'");
+    var onkeypreStr = $("#textAddEventModal textarea[title='onkeypress']").val().replace(/\"/g, "\'");
     inputObj.attr({
         "onchange": onchangeStr,
         "onfocus": onfocusStr,

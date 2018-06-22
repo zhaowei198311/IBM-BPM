@@ -1,5 +1,4 @@
 var form = null;
-var viewHtml = null;
 var view = null;
 /*动态表单渲染js*/
 $(function(){
@@ -42,7 +41,6 @@ function drawPage() {
     var tableHead = '<table class="layui-table form-sub">' + '<tbody>';
     var formHtml = tableHead;
     view = $(".container-fluid");
-    viewHtml = view.html();
     //将关联子表单内容添加进来
     addPublicFormContent(view);
     view.addClass("layui-form");
