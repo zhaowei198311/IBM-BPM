@@ -236,5 +236,12 @@ public interface DhTaskInstanceService {
 	 */
 	boolean canEditInsTitle(DhTaskInstance taskInstance, DhProcessInstance processInstance);
 
+	/**
+	 * 驳回任务
+	 * @param data
+	 * @return
+	 */
+	ServerResponse rejectTask(String data);
+
 
 }

@@ -3,14 +3,12 @@
  */
 package com.desmart.desmartportal.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
@@ -21,7 +19,6 @@ import com.desmart.desmartportal.service.DhDraftsService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**
@@ -160,7 +157,7 @@ public class MenusController {
 			return mv;
 		}
 		// 等待加签 跳转 已办详情页面
-		if(DhTaskInstance.STATUS_WAIT_ADD.equals(checkDhTaskInstance.getTaskStatus())) {
+		if(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(checkDhTaskInstance.getTaskStatus())) {
 			ModelAndView mv = new ModelAndView("desmartportal/finished_detail");
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
 			if (serverResponse.isSuccess()) {

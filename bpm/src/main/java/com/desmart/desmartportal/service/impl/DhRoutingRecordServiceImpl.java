@@ -76,6 +76,20 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     }
 
     @Override
+    public DhRoutingRecord generateRejectTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmActivityMeta targetNode) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(taskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(taskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_REJECT_TASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
+        String activityTo = targetNode.getActivityId();
+        dhRoutingRecord.setActivityTo(activityTo);
+        return dhRoutingRecord;
+    }
+
+    @Override
     public ServerResponse loadDhRoutingRecords(String insUid) {
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
         dhRoutingRecord.setInsUid(insUid);
@@ -106,7 +120,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
                 String matchedTaskType = DhTaskInstance.TYPE_NORMAL + ";" +DhTaskInstance.TYPE_SIMPLE_LOOP + ";" + DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP;
                 if (activityToStr.contains(taskActivityId)
                         && matchedTaskType.contains(taskType)
-                        && (taskStatus.equals(DhTaskInstance.STATUS_RECEIVED) || taskStatus.equals(DhTaskInstance.STATUS_WAIT_ADD))) {
+                        && (taskStatus.equals(DhTaskInstance.STATUS_RECEIVED) || taskStatus.equals(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH))) {
                     dhTaskHandlers.add(taskInstance);
                 }
             }

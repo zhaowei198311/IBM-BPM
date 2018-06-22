@@ -103,7 +103,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		// 如果当前任务已添加会签任务，则不能执行提交操作
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		if (dhTaskInstance != null) {
-			if (DhTaskInstance.STATUS_WAIT_ADD.equals(dhTaskInstance.getTaskStatus())) {
+			if (DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(dhTaskInstance.getTaskStatus())) {
 				return ServerResponse.createByErrorMessage("当前任务已经暂挂，请等会签人审批结束!");
 			}
 		}

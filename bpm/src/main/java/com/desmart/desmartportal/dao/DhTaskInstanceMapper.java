@@ -26,11 +26,11 @@ public interface DhTaskInstanceMapper {
 	
 	DhTaskInstance selectByPrimaryKey(String taskUid);
 	
-	int updateByPrimaryKey(DhTaskInstance taskInstance);
+	int updateByPrimaryKeySelective(DhTaskInstance taskInstance);
 	
 	int deleteByPrimaryKey(String taskUid);
 	
-	void insertTask(DhTaskInstance taskInstance);
+	int insertTask(DhTaskInstance taskInstance);
 	
 	int selectByusrUid(String usrUid);
 	
@@ -69,12 +69,11 @@ public interface DhTaskInstanceMapper {
 	
 	/**
 	 * 更改除指定任务之外的其它任务编号的任务的状态
-	 * @param taskId
-	 * @param taskStatus
+	 * @param taskId 任务id
+	 * @param  taskUid 任务主键
 	 * @return
 	 */
-	int updateOtherTaskStatusByTaskId(@Param("taskUid")String taskUid,
-			@Param("taskId")Integer taskId, @Param("taskStatus")String taskStatus);
+	int abandonOtherUnfinishedTaskByTaskId(@Param("taskUid")String taskUid, @Param("taskId")Integer taskId);
 	
 	/**
 	 * 根据任务实例查询任务数据和流程
@@ -200,4 +199,14 @@ public interface DhTaskInstanceMapper {
 	 * @throws
 	 */
 	DhTaskInstance getBytaskTypeAndUsrUid(DhTaskInstance dhTaskInstance);
+
+	/**
+	 * 作废指定流程在指定节点的其他没完成的任务
+	 * @param taskActivityId  任务节点id
+	 * @param taskUid  任务主键
+	 * @param insUid 流程实例主键
+	 * @return
+	 */
+	int abandonOtherUnfinishedTasksOnTaskActivityId(@Param("taskUid")String taskUid, @Param("taskActivityId")String taskActivityId,
+													@Param("insUid")String insUid);
 }

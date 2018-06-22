@@ -152,12 +152,7 @@ public class DhProcessInstanceController {
 		return dhProcessInstanceService.queryRejectByActivity(activityId,insUid);
 	}
 	
-	@RequestMapping(value = "/rejectProcess")
-	@ResponseBody
-	public ServerResponse Reject(@RequestParam(value = "data", required = false) String data) {
-		return dhProcessInstanceService.rejectProcess(data);
-	}
-	
+
 	@RequestMapping(value = "/queryProInstanceByInsUid")
 	@ResponseBody
 	public ServerResponse queryProInstanceByInsUid(@RequestParam(value = "insUid")String insUid) {

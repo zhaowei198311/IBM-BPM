@@ -67,7 +67,7 @@ $(function () {
 		    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
 		    
 		    $.ajax({
-		        url: 'processInstance/rejectProcess',
+		        url: 'taskInstance/rejectTask',
 		        type: 'POST',
 		        dataType: 'json',
 		        data: {

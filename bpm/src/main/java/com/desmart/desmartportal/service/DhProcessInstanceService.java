@@ -77,12 +77,12 @@ public interface DhProcessInstanceService {
 
 	/**
 	 * 发起流程成功后，提交第一个任务
-	 * @param taskId
-	 * @param firstHumanActivity
-	 * @param dhProcessInstance
-	 * @param routingData
-	 * @param pubBo
-	 * @param dataJson
+	 * @param taskId  任务id
+	 * @param firstHumanActivity   任务节点
+	 * @param dhProcessInstance  主流程
+	 * @param routingData  预测的下个环节信息
+	 * @param pubBo  引擎中对象
+	 * @param dataJson  发起流程时提交的信息
 	 * @return
 	 */
 	ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance dhProcessInstance,
@@ -104,7 +104,7 @@ public interface DhProcessInstanceService {
 	
 	/**
 	 * 根据流程定义创建草稿的流程实例
-	 * @param dhProcessDefinition
+	 * @param dhProcessDefinition 流程定义
 	 * @return
 	 */
 	DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition
@@ -122,15 +122,6 @@ public interface DhProcessInstanceService {
 	 */
 	ServerResponse<List<Map<String,Object>>> queryRejectByActivity(String activityId,String insUid);
 
-	
-	/**
-	 * 驳回流程
-	 * @param insId 引擎实例id
-	 * @param activityId 环节id
-	 * @param user 用户id
-	 * @return
-	 */
-	ServerResponse rejectProcess(String data);
 
 	/**
 	 * 根据流程实例编号，和tokenId来确定一个子流程实例
@@ -152,6 +143,7 @@ public interface DhProcessInstanceService {
 	 */
 	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
 																 String tokenId, String creatorId, String departNo, String companyNumber);
+
 	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
 
 	/**
@@ -167,6 +159,7 @@ public interface DhProcessInstanceService {
 	 * @param currProcessInstance 流程实例编号
 	 * @param routingData 下个环节路由信息
 	 * @param pubBo  向引擎传值的对象
+	 * @param  processDataJson  流程实例信息，RESTful API获得
 	 * @return
 	 */
 	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,

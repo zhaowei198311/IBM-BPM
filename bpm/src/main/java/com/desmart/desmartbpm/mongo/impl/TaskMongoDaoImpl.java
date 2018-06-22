@@ -62,4 +62,18 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
         if (itemStr == null) return 0;
         return JSON.parseObject(itemStr).getIntValue("value");
     }
+
+    @Override
+    public List<LockedTask> getAllLockedTasks() {
+        List<LockedTask> lockedTasks = mongoTemplate.findAll(LockedTask.class, LockedTask.LOCKED_TASK_COLLECTION_NAME);
+        return lockedTasks;
+    }
+
+    @Override
+    public void batchSaveLockedTasks(List<LockedTask> list) {
+        if (list != null && list.size() > 0) {
+            mongoTemplate.insert(list, LockedTask.LOCKED_TASK_COLLECTION_NAME);
+        }
+
+    }
 }

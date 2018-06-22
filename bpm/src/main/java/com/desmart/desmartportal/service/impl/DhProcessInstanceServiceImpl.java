@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -37,15 +39,6 @@ import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.BpmFormField;
-import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhActivityReject;
-import com.desmart.desmartbpm.entity.DhObjectPermission;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.exception.PlatformException;
@@ -100,22 +93,16 @@ import com.github.pagehelper.PageInfo;
 public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 	private Logger log = Logger.getLogger(DhProcessInstanceServiceImpl.class);
-
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
-
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
-
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
-
 	@Autowired
 	private SysUserMapper sysUserMapper;
-
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
-
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
 	@Autowired
@@ -128,7 +115,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private BpmFormManageService bpmFormManageService;
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
-
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
 	@Autowired
@@ -149,7 +135,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
 	private DhRoutingRecordService dhRoutingRecordService;
-
+	@Autowired
+	private TaskMongoDao taskMongoDao;
 
 	/**
 	 * 查询所有流程实例
@@ -366,6 +353,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			JSONObject startProcessDataJson = JSON.parseObject(result.getMsg());
             int insId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getString("piid"));
             int taskId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid"));
+            // 锁住这个任务防止拉取
+            taskMongoDao.saveLockedTask(new LockedTask(taskId, new Date(), LockedTask.REASON_FIRST_TASK_OF_PROCESS));
+
 			// 在pubBo中设置实例编号，供网关环节决策使用
 			pubBo.setInstanceId(String.valueOf(insId));
 
@@ -429,21 +419,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return assembleResponse;
         }
 
-        // 创建第一个任务实例，第一个任务一定属于主流程
-        DhTaskInstance taskInstance = new DhTaskInstance();
-        taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
-        taskInstance.setUsrUid(currentUserUid);
-        taskInstance.setActivityBpdId(firstHumanActivity.getActivityBpdId());
-        taskInstance.setTaskData(dataJson.toJSONString());
-        taskInstance.setTaskId(taskId);
-        taskInstance.setTaskTitle(firstHumanActivity.getActivityName());
-        taskInstance.setInsUid(mainProcessInstance.getInsUid());
-        taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
-        taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-        taskInstance.setTaskInitDate(new Date());
-        taskInstance.setTaskFinishDate(new Date());
-        taskInstance.setTaskActivityId(firstHumanActivity.getActivityId());
-        dhTaskInstanceMapper.insertTask(taskInstance);
+		DhTaskInstance taskInstance = generateFirstTaskOfMainProcess(taskId, firstHumanActivity, dataJson.toJSONString(), mainProcessInstance);
+		dhTaskInstanceMapper.insertTask(taskInstance);
 
         // 任务完成后 保存到流转信息表里面
         ServerResponse<DhRoutingRecord> generateRountingRecordResponse =
@@ -827,117 +804,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return null;
 	}
 
-	@Override
-	public ServerResponse rejectProcess(String data) {
-		JSONObject jsonBody = JSONObject.parseObject(data);
-		JSONObject routeData = JSONObject.parseObject(String.valueOf(jsonBody.get("routeData")));
-		JSONObject approvalData = JSONObject.parseObject(String.valueOf(jsonBody.get("approvalData")));// 获取审批信息
-		JSONObject taskData = JSONObject.parseObject(String.valueOf(jsonBody.get("taskData")));
-        // 目标环节
-		String targetActivityBpdId = routeData.getString("activityBpdId");
-		String userUid = routeData.getString("userUid");
-		String taskUid = taskData.getString("taskUid");
-
-
-		// 判断驳回的任务是否存在
-		if (StringUtils.isBlank(taskUid)) {
-		    return ServerResponse.createByErrorMessage("缺少任务信息");
-        }
-        DhTaskInstance sourceTask = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
-        if (sourceTask == null || !"12".equals(sourceTask.getTaskStatus())) {
-            return ServerResponse.createByErrorMessage("任务不存在，或状态异常");
-        }
-
-		String currActivityId = sourceTask.getTaskActivityId();
-		BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
-		// 判断当前节点能否驳回
-		if (!"TRUE".equals(currActivityMeta.getDhActivityConf().getActcCanReject())) {
-			return ServerResponse.createByErrorMessage("当前节点不允许驳回");
-		}
-
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(sourceTask.getInsUid());
-		if (dhProcessInstance == null) return ServerResponse.createByErrorMessage("流程实例不存在");
-
-        int taskId = sourceTask.getTaskId();
-		int insId = dhProcessInstance.getInsId();
-		
-		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-		// 获取树流程信息
-		HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
-		if(HttpReturnStatusUtil.isErrorResult(returnStatus)) {
-			return ServerResponse.createByErrorMessage("查询树流程信息出错");
-		}
-
-		// 获得任务的token
-		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
-		String tokenId = ProcessDataUtil.getTokenIdOfTask(taskId, jsonObject);
-
-		// 获得目标节点
-		BpmActivityMeta targetActivityMeta = bpmActivityMetaService
-				.getByActBpdIdAndParentActIdAndProVerUid(targetActivityBpdId, currActivityMeta.getParentActivityId()
-								, currActivityMeta.getSnapshotId());
-		String actcAssignVariable = targetActivityMeta.getDhActivityConf().getActcAssignVariable();
-
-		HttpReturnStatus httpReturnStatus = bpmProcessUtil.moveToken(insId, targetActivityBpdId, tokenId);
-		if (HttpReturnStatusUtil.isErrorResult(httpReturnStatus)) {
-			return ServerResponse.createByErrorMessage("驳回失败");
-		}
-
-		JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
-		// 驳回节点上产生的任务
-        List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(targetActivityBpdId, processData);
-        // todo 重新分配任务
-
-        // 驳回成功修改当前用户任务状态为 完成
-		String insUid = dhProcessInstance.getInsUid();
-		DhTaskInstance dhTaskInstance = new DhTaskInstance();
-		dhTaskInstance.setInsUid(insUid);
-		List<DhTaskInstance> DhTaskInstanceList = dhTaskInstanceMapper.selectAllTask(dhTaskInstance);
-		String taskTitle = "";
-		String currentUser = "";
-		for (DhTaskInstance dhTaskInstance2 : DhTaskInstanceList) {
-			/**
-			 * 这里的用户判断 应该是获取当前登陆的用户 因为是我驳回的 ， 相反user是驳回给谁 哪一个人， 跟当前用户无关 ， 这里只是修改我本人的状态
-			 * ----完成任务(注：如果是并行任务需要修改其他人的任务状态为-1废弃)
-			 */
-			currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-			taskTitle = dhTaskInstance2.getTaskTitle();
-			if (currentUser.equals(dhTaskInstance2.getUsrUid())
-					&& DhTaskInstance.STATUS_RECEIVED.equals(dhTaskInstance2.getTaskStatus())) {
-				dhTaskInstanceMapper.updateOtherTaskStatusByTaskId(dhTaskInstance2.getUsrUid(),
-						dhTaskInstance2.getTaskId(), DhTaskInstance.STATUS_CLOSED);
-
-			}
-		}
-		// 保存流转信息
-		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-		dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
-		dhRoutingRecord.setInsUid(insUid);
-		dhRoutingRecord.setActivityName(taskTitle);
-		dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_REJECT_TASK);
-		dhRoutingRecord.setUserUid(currentUser);
-
-		String activityTo = targetActivityMeta.getActivityId();
-		dhRoutingRecord.setActivityTo(activityTo);
-		dhRoutingRecord.setActivityId(currActivityId);
-
-		dhRoutingRecordMapper.insert(dhRoutingRecord);
-		// 保存审批意见
-		String aprOpiComment = approvalData.getString("aprOpiComment");
-		String aprStatus = "驳回";
-		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
-		dhApprovalOpinion.setAprOpiId(EntityIdPrefix.DH_APPROVAL_OPINION + String.valueOf(UUID.randomUUID()));
-		dhApprovalOpinion.setInsUid(insUid);
-		dhApprovalOpinion.setTaskUid(taskUid);
-		dhApprovalOpinion.setAprUserId(currentUser);
-		dhApprovalOpinion.setAprOpiComment(aprOpiComment);
-		dhApprovalOpinion.setAprStatus(aprStatus);
-		dhApprovalOpinion.setActivityId(currActivityId);
-		dhApprovalOpinionService.insertDhApprovalOpinion(dhApprovalOpinion);
-		return ServerResponse.createBySuccess();
-
-	}
 
 	public DhProcessInstance queryByInsIdAndTokenId(int insId, String tokenId) {
 		DhProcessInstance selective = new DhProcessInstance();
@@ -950,7 +816,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return list.get(0);
         }
     }
-
 
 
 	@Override
@@ -1145,5 +1010,25 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         insData.put("formData", formData);
         return insData;
     }
+
+    private DhTaskInstance generateFirstTaskOfMainProcess(int taskId, BpmActivityMeta taskNode, String taskData, DhProcessInstance mainProcess) {
+		// 创建第一个任务实例，第一个任务一定属于主流程
+		DhTaskInstance taskInstance = new DhTaskInstance();
+		taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
+		taskInstance.setUsrUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		taskInstance.setActivityBpdId(taskNode.getActivityBpdId());
+		taskInstance.setTaskData(taskData);
+		taskInstance.setTaskId(taskId);
+		taskInstance.setTaskTitle(taskNode.getActivityName());
+		taskInstance.setInsUid(mainProcess.getInsUid());
+		taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
+		taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+		taskInstance.setTaskInitDate(new Date());
+		taskInstance.setTaskFinishDate(new Date());
+		taskInstance.setTaskActivityId(taskNode.getActivityId());
+		return taskInstance;
+	}
+
+
 
 }

@@ -15,7 +15,7 @@ public class DhTaskInstance {
 	public static final String TYPE_NORMAL = "normal";
 	/** 简单循环任务 */
     public static final String TYPE_SIMPLE_LOOP = "simpleLoop";
-    /** 多实例循环任务 跟随引擎中的描述M大写*/
+    /** 多实例循环任务 跟随引擎中的描述M大写不要改动 */
     public static final String TYPE_MULT_IINSTANCE_LOOP = "MultiInstanceLoop";
     /** 传阅任务 */
     public static final String TYPE_TRANSFER = "transfer";
@@ -25,50 +25,42 @@ public class DhTaskInstance {
     public static final String TYPE_SIMPLE_LOOPADD = "simpleLoopAdd";
     /** 并行加签任务 */
     public static final String TYPE_MULTI_INSTANCE_LOOPADD = "multiInstanceLoopAdd";
-    /** 暂停  */
-    public static final String STATUS_WAIT_ADD = "-2";
-    
-    
+    /** 等待加签结束  */
+    public static final String STATUS_WAIT_ALL_ADD_FINISH = "-2";
+    /**  等待上一个人加签结束 **/
+	public static final String STATUS_WAIT_TO_ADD = "-3";
 	/**
 	 *  新任务
 	 */
 	public static final String 	STATUS_NEW = "11";
-	
 	/**
 	 *  接收到任务
 	 */
 	public static final String 	STATUS_RECEIVED = "12";
-	
 	/**
 	 *  回复任务
 	 */
 	public static final String 	STATUS_REPLIED = "13";
-	
 	/**
 	 *  转发任务
 	 */
 	public static final String 	STATUS_FORWARDED = "14";
-	
 	/**
 	 *  传送任务
 	 */
 	public static final String 	STATUS_SENT = "21";
-	
 	/**
 	 *  
 	 */
 	public static final String 	STATUS_ACTIONED = "31";
-	
 	/**
 	 *  任务关闭
 	 */
 	public static final String 	STATUS_CLOSED = "32";
-	
 	/**
 	 *  任务废弃
 	 */
 	public static final String 	STATUS_DISCARD = "-1";
-	
 	/**
 	 * 
 	 */
@@ -78,7 +70,6 @@ public class DhTaskInstance {
 	 *  删除任务
 	 */
 	public static final String 	STATUS_DELETED = "91";
-	
 	/**
 	 *  警报任务
 	 */

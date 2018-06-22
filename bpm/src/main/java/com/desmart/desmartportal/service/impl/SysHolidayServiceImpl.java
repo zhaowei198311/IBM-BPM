@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.service.impl.DhActivityConfServiceImpl;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.dao.SysHolidayMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -109,7 +108,7 @@ public class SysHolidayServiceImpl implements SysHolidayService{
 		while (true) {
 			if (spendHours < timeAmount) {
 				dhTaskInstance.setRemainHours(timeAmount - spendHours);
-				dhTaskInstanceMapper.updateByPrimaryKey(dhTaskInstance);
+				dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
 				break;
 			}
 			spendHours -= 24;

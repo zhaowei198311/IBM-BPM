@@ -82,10 +82,26 @@ public class DhTaskInstanceController {
 		try {
 			return dhTaskInstanceService.perform(data);
 		} catch (Exception e) {
-			LOG.error("完成任务失败，提交数据：" + data);
+			LOG.error("完成任务失败，提交数据：" + data, e);
 			return ServerResponse.createByErrorMessage("完成任务失败");
 		}
 
+	}
+
+	/**
+	 * 驳回任务
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value = "/rejectTask")
+	@ResponseBody
+	public ServerResponse Reject(@RequestParam(value = "data") String data) {
+		try {
+			return dhTaskInstanceService.rejectTask(data);
+		} catch (Exception e) {
+			LOG.error("完成任务失败，提交数据：" + data, e);
+			return ServerResponse.createByErrorMessage("驳回任务失败");
+		}
 	}
 	
 	/**

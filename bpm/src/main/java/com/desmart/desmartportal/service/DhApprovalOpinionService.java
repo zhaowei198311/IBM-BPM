@@ -36,11 +36,19 @@ public interface DhApprovalOpinionService {
 	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion);
 
 	/**
-	 * 保存提交任务时的审批记录
+	 * 为提交任务插入审批意见，如果不需要填审批意见，返回成功
 	 * @param currTask  当前任务
 	 * @param dhActivityConf  当前节点配置
 	 * @param dataJson  提交上来的data
 	 * @return
 	 */
 	ServerResponse saveDhApprovalOpiionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson);
+
+	/**
+	 * 为驳回操作插入审批意见
+	 * @param currTask 当前任务
+	 * @param dataJson 提交上来的data
+	 * @return
+	 */
+	ServerResponse saveDhApprovalOpiionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson);
 }

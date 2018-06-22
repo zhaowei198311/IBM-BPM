@@ -48,7 +48,6 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion) {
-		// TODO Auto-generated method stub
 		List<DhApprovalOpinion> list = getDhApprovalObinionList(dhApprovalOpinion);
 		if(list!=null&&list.size()>0) {
 			DhApprovalOpinion dhApprovalOpinion2 = list.get(list.size()-1);
@@ -89,6 +88,26 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
 		dhApprovalOpinion.setAprOpiComment(aprOpiComment);
 		dhApprovalOpinion.setAprStatus("通过");
+		return this.insertDhApprovalOpinion(dhApprovalOpinion);
+	}
+
+	@Override
+	public ServerResponse saveDhApprovalOpiionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson) {
+
+		JSONObject approvalData = dataJson.getJSONObject("approvalData");// 获取审批信息
+		if (approvalData == null) {
+			return ServerResponse.createByErrorMessage("缺少审批意见");
+		}
+		String aprOpiComment = approvalData.getString("aprOpiComment");
+		if (StringUtils.isBlank(aprOpiComment)) {
+			return ServerResponse.createByErrorMessage("缺少审批意见");
+		}
+		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+		dhApprovalOpinion.setInsUid(currTask.getInsUid());
+		dhApprovalOpinion.setTaskUid(currTask.getTaskUid());
+		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
+		dhApprovalOpinion.setAprOpiComment(aprOpiComment);
+		dhApprovalOpinion.setAprStatus("驳回");
 		return this.insertDhApprovalOpinion(dhApprovalOpinion);
 	}
 

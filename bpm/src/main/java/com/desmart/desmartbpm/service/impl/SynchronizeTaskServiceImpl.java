@@ -10,6 +10,7 @@ import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
+import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -18,9 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
@@ -84,13 +85,14 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     /**
      * 从引擎同步任务
      */
-    //@Scheduled(cron = "0/20 * * * * ?")
+    @Scheduled(cron = "0/20 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
         Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
+        newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startFirstSynchronize(newLswTaskList, groupInfo); // 开始同步任务
-
         LOG.info("==================  拉取任务结束  ===============");
     }
 
@@ -98,6 +100,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         LOG.info("==================  开始重试拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
         Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
+        newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startRetrySynchronize(newLswTaskList, groupInfo); // 开始同步任务
         LOG.info("==================  重试拉取任务结束  ===============");
     }
@@ -131,7 +135,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
         }
-
+        // 记录最后一个同步的任务
+        updateLastSynchronizedTaskId(newLswTaskList);
         LOG.info("同步新任务：" + dhTaskList.size() + "个");
         LOG.info("产生代理记录：" + agentRecordList.size() + "个");
     }
@@ -184,9 +189,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         System.out.println("开始分析任务编号：" + lswTask.getTaskId());
         Map<String, Object> result = new HashMap<>();
 
-        // 流程图上的元素id
-        String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();
+        int taskId = lswTask.getTaskId();
         int insId = lswTask.getBpdInstanceId().intValue(); // 流程实例id
+        String activityBpdId = lswTask.getCreatedByBpdFlowObjectId();// 流程图上的元素id
 
         // 获得任务所属的流程实例, 并定位环节节点
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
@@ -196,7 +201,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             return null;
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
-        int taskId = lswTask.getTaskId();
+
+
+
         Map<Object, Object> tokenMap = ProcessDataUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
             LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
@@ -431,5 +438,30 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
     }
 
+    private Set<Integer> getAllLockedTaskIds() {
+        Set<Integer> allLockedTaskIds = new HashSet<>();
+        List<LockedTask> allLockedTasks = taskMongoDao.getAllLockedTasks();
+        for (LockedTask lockedTask : allLockedTasks) {
+            allLockedTaskIds.add(lockedTask.getTaskId());
+        }
+        return allLockedTaskIds;
+    }
 
+    private List<LswTask> excludeLockedTasks(List<LswTask> taskList, Set<Integer> allLockedTaskIds) {
+        Iterator<LswTask> iterator = taskList.iterator();
+        while (iterator.hasNext()) {
+            LswTask lswTask = iterator.next();
+            if (allLockedTaskIds.contains(lswTask.getTaskId())) {
+                iterator.remove();
+            }
+        }
+        return taskList;
+    }
+
+    private void updateLastSynchronizedTaskId(List<LswTask> synchronizedTaskList) {
+        if (synchronizedTaskList == null || synchronizedTaskList.isEmpty()) {
+            return;
+        }
+        taskMongoDao.saveOrUpdateLastSynchronizedTaskId(synchronizedTaskList.get(synchronizedTaskList.size() - 1).getTaskId());
+    }
 }

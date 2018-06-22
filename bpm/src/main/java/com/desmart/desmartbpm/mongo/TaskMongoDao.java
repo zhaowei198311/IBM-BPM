@@ -26,6 +26,12 @@ public interface TaskMongoDao {
 	 */
 	LockedTask queryLockTaskByTaskId(int taskId);
 
+	/**
+	 * 获得所有被锁住的任务
+	 * @return
+	 */
+	List<LockedTask> getAllLockedTasks();
+
 
 	/**
 	 * 删除被锁的任务
@@ -39,6 +45,9 @@ public interface TaskMongoDao {
 	 * @param lockedTask
 	 */
 	void saveLockedTask(LockedTask lockedTask);
+
+	void batchSaveLockedTasks(List<LockedTask> list);
+
 
 
 }
