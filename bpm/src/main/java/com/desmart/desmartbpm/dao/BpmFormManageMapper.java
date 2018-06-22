@@ -31,7 +31,8 @@ public interface BpmFormManageMapper {
 	/**
 	 * 根据表单名查询表单
 	 */
-	BpmForm queryFormByName(String dynTitle);
+	BpmForm queryProFormByName(@Param("dynTitle")String dynTitle,
+				@Param("proUid")String proUid,@Param("proVersion")String proVersion);
 
 	/**
 	 * 根据表单Id查询表单

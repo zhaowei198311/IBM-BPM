@@ -51,9 +51,12 @@
         order by create_time desc
     </select>
     
-    <select id="queryFormByName" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmForm">
+    <select id="queryProFormByName" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
     	select <include refid="base_column"/>
-    	from bpm_form where dyn_title = #{dynTitle}
+    	from bpm_form 
+    	where dyn_title = #{dynTitle}
+    	and pro_uid = #{proUid}
+    	and pro_version = #{proVersion}
     </select>
     
     <select id="queryFormByFormUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.BpmForm">

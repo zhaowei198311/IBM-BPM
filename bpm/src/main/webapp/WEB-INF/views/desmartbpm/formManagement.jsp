@@ -347,6 +347,8 @@
 	    var copyFromFlag = false;//是否可以复制表单的控制变量
 	    var oldFormName = "";//修改表单信息时表单的旧名称
 	    var oldFormDescription = "";//修改表单信息时的旧描述
+	    var oldProUid = "";//修改表单信息时的流程id
+	    var oldProVersion = "";//修改表单信息时的流程版本id
 	    var updateFormId = "";//修改表单时表单的Id
 	    var copyFormId = "";//复制表单时表单的Id
 	    var copyFormSelId = "";//复制表单到其他快照时表单的Id
@@ -625,14 +627,16 @@
 			var formName = $("#copy-sel-form-name").val().trim();
 			var formDescription = $("#copy-sel-form-description").val().trim();
 			
-			/* $.ajax({
-				url:common.getPath()+"/formManage/queryFormByName",
+			$.ajax({
+				url:common.getPath()+"/formManage/queryProFormByName",
 				method:"post",
 				data:{
-					dynTitle:formName
+					dynTitle:formName,
+					proUid:proUid,
+					proVersion:proVersion
 				},
 				success:function(result){
-					if(result.status==0){ */
+					if(result.status==0){ 
 						$.ajax({
 							url:common.getPath()+"/formManage/copyForm",
 							method:"post",
@@ -653,11 +657,11 @@
 								}
 							}
 						});
-					/* }else{
-						layer.alert("表单名已存在，不能重复");
+					}else{
+						layer.alert("同一个流程定义表单名不能重复");
 					} 
 				}
-			});	*/		
+			});	
 		}
 		
 		//复制快照--根据流程定义(proUid,proVerUid)
@@ -759,7 +763,9 @@
         		var sortNum = startSort + i;
         		var createTime = "";
                 var updateTime = "";
-        		trs += '<tr data-formuid="'+formInfo.dynUid+'">'
+        		trs += '<tr data-formuid="'+formInfo.dynUid
+        					+'" data-prouid="'+formInfo.proUid
+        					+'" data-proversion="'+formInfo.proversion+'">'
         					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>';
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -782,25 +788,27 @@
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
 			}else{
-				/* $.ajax({
-					url:common.getPath()+"/formManage/queryFormByName",
+				$.ajax({
+					url:common.getPath()+"/formManage/queryProFormByName",
 					method:"post",
 					data:{
-						dynTitle:formName
+						dynTitle:formName,
+						proUid:pageConfig.proUid,
+						proVersion:pageConfig.proVerUid
 					},
 					success:function(result){
-						if(result.status==0){ */
+						if(result.status==0){
 							var href = "/formManage/designForm?formName="+formName
 									+"&formDescription="+$("#form-description").val().trim()
 									+"&proUid="+pageConfig.proUid
 									+"&proVersion="+pageConfig.proVerUid;
 							window.location.href = common.getPath()+href;
 							$(".display_container").css("display", "none");
-						/* }else{
-							layer.alert("表单名已存在，不能重复");
+						}else{
+							layer.alert("同一个流程定义表单名不能重复");
 						} 
 					}
-				});*/
+				});
 			}
 		}
 		
@@ -832,14 +840,16 @@
 					}
 				});
 			}else{
-				/* $.ajax({
-					url:common.getPath()+"/formManage/queryFormByName",
+				$.ajax({
+					url:common.getPath()+"/formManage/queryProFormByName",
 					method:"post",
 					data:{
-						dynTitle:formName
+						dynTitle:formName,
+						proUid:oldProUid,
+						proVersion:oldProVersion
 					},
 					success:function(result){
-						if(result.status==0){ */
+						if(result.status==0){
 							$.ajax({
 								url:common.getPath()+"/formManage/updateFormInfo",
 								method:"post",
@@ -858,11 +868,11 @@
 									}
 								}
 							});
-						/* }else{
-							layer.alert("表单名已存在，不能重复");
+						}else{
+							layer.alert("同一个流程定义表单名不能重复");
 						} 
 					}
-				});*/
+				});
 			}
 		}
 		
@@ -899,7 +909,7 @@
 						data:{"formUids":checkedFormUid},
 						traditional: true,//传递数组给后台
 						success:function(result){
-							//if(result.status==0){//未绑定
+							if(result.status==0){//未绑定
 								$.ajax({
 									url:common.getPath()+"/formManage/deleteForm",
 									method:"post",
@@ -919,9 +929,9 @@
 										}
 									}
 								});// end delete
-							/* }else{
+							}else{
 								layer.alert("该表单已被步骤绑定");
-							} */
+							}
 						}
 					});//end ajax
 				});//end layer.confirm
@@ -935,14 +945,16 @@
 			var formName = $("#copy-form-name").val().trim();
 			var formDescription = $("#copy-form-description").val().trim();
 			
-			/* $.ajax({
-				url:common.getPath()+"/formManage/queryFormByName",
+			$.ajax({
+				url:common.getPath()+"/formManage/queryProFormByName",
 				method:"post",
 				data:{
-					dynTitle:formName
+					dynTitle:formName,
+					proUid:proUid,
+					proVersion:proVersion
 				},
 				success:function(result){
-					if(result.status==0){ */
+					if(result.status==0){
 						$.ajax({
 							url:common.getPath()+"/formManage/copyForm",
 							method:"post",
@@ -963,11 +975,11 @@
 								}
 							}
 						});
-					/* }else{
-						layer.alert("表单名已存在，不能重复");
+					}else{
+						layer.alert("同一个流程定义表单名不能重复");
 					}
 				}
-			});*/
+			});
 		} 
 		
 		//点击修改按钮
@@ -978,6 +990,8 @@
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
 			oldFormDescription = dynDescription;
 			oldFormName = dynTitle;
+			oldProUid = trObj.data("prouid");
+			oldProVersion = trObj.data("proversion");
 			$("#update-form-name").val(dynTitle);
 			$("#update-form-description").val(dynDescription);
 			$(".display_container2").css("display", "block");

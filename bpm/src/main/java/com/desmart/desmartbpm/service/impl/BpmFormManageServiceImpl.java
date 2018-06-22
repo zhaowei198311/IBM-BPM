@@ -55,8 +55,8 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	@Override
-	public ServerResponse queryFormByName(String dynTitle) {
-		BpmForm bpmForm = bpmFormManageMapper.queryFormByName(dynTitle);
+	public ServerResponse queryProFormByName(String dynTitle,String proUid,String proVersion) {
+		BpmForm bpmForm = bpmFormManageMapper.queryProFormByName(dynTitle,proUid,proVersion);
 		if(null==bpmForm) {
 			return ServerResponse.createBySuccess();
 		}else {

@@ -27,7 +27,7 @@ public interface BpmFormManageService {
 	/**
 	 * 通过表单名查询表单
 	 */
-	ServerResponse queryFormByName(String dynTitle);
+	ServerResponse queryProFormByName(String dynTitle,String proUid,String proVersion);
 
 	/**
 	 * 通过表单ID查询表单

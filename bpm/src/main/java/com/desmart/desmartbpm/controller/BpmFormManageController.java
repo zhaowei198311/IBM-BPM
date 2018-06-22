@@ -161,10 +161,10 @@ public class BpmFormManageController {
 	/**
 	 * 根据表单名查询表单是否存在
 	 */
-	@RequestMapping(value = "/queryFormByName")
+	@RequestMapping(value = "/queryProFormByName")
 	@ResponseBody
-	public ServerResponse queryFormByName(String dynTitle) {
-		return bpmFormManageService.queryFormByName(dynTitle);
+	public ServerResponse queryProFormByName(String dynTitle,String proUid,String proVersion) {
+		return bpmFormManageService.queryProFormByName(dynTitle,proUid,proVersion);
 	}
 	
 	/**
