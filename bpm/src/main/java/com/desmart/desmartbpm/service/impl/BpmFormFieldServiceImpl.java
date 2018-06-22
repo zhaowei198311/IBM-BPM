@@ -234,4 +234,25 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		resultList.addAll(publicFormFiled);
 		return ServerResponse.createBySuccess(resultList);
 	}
+	
+	@Override
+	public ServerResponse<Map<String,List<BpmFormField>>> queryFormTabFieldByFormUid(String formUid) {
+		Map<String,List<BpmFormField>> fldListMap = new HashMap<>();
+		//先查询object类型的字段
+		List<BpmFormField> objList = bpmFormFieldMapper.queryFormTabByFormUid(formUid);
+		if(objList.isEmpty()) {
+			throw new PlatformException("找不到对应的表格");
+		}
+		//再根据object类型的子段id查询object_类型的字段
+		for(BpmFormField tableObj:objList) {
+			String tableName = tableObj.getFldCodeName();
+			String tableUid = tableObj.getFldUid();
+			List<BpmFormField> objFieldList = bpmFormFieldMapper.queryFormTabFieldByFormIdAndTabName(formUid,tableName);
+			if(objFieldList.isEmpty()) {
+				throw new PlatformException("找不到对应的表格字段");
+			}
+			fldListMap.put(tableUid, objFieldList);
+		}
+		return ServerResponse.createBySuccess(fldListMap);
+	}
 }

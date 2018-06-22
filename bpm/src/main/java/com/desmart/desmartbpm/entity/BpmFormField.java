@@ -19,7 +19,7 @@ public class BpmFormField {
 	private String multiValue;
 	private String fldForeignKeyTable;//参考的业务表
 	private String fldDynName;//参考的业务表字段名
-	private String fldDybUid;//参考的业务表字段Id
+	private String fldDynUid;//参考的业务表字段Id
 	private String fldFilter;//是否为过滤字段--报表
 	private String formUid;
 	
@@ -91,11 +91,11 @@ public class BpmFormField {
 	public void setFldDynName(String fldDynName) {
 		this.fldDynName = fldDynName;
 	}
-	public String getFldDybUid() {
-		return fldDybUid;
+	public String getFldDynUid() {
+		return fldDynUid;
 	}
-	public void setFldDybUid(String fldDybUid) {
-		this.fldDybUid = fldDybUid;
+	public void setFldDynUid(String fldDynUid) {
+		this.fldDynUid = fldDynUid;
 	}
 	public String getFldFilter() {
 		return fldFilter;
@@ -119,7 +119,7 @@ public class BpmFormField {
 	public BpmFormField() {}
 	public BpmFormField(String fldUid, String fldCodeName, Integer fldIndex, String fldName, String fldDescription,
 			String fldType, Integer fldSize, String multiSeparator, String multiValue, String fldForeignKeyTable,
-			String fldDynName, String fldDybUid, String fldFilter, String formUid, List<String> opActionList) {
+			String fldDynName, String fldDynUid, String fldFilter, String formUid, List<String> opActionList) {
 		super();
 		this.fldUid = fldUid;
 		this.fldCodeName = fldCodeName;
@@ -132,7 +132,7 @@ public class BpmFormField {
 		this.multiValue = multiValue;
 		this.fldForeignKeyTable = fldForeignKeyTable;
 		this.fldDynName = fldDynName;
-		this.fldDybUid = fldDybUid;
+		this.fldDynUid = fldDynUid;
 		this.fldFilter = fldFilter;
 		this.formUid = formUid;
 		this.opActionList = opActionList;
@@ -142,8 +142,8 @@ public class BpmFormField {
 		return "BpmFormField [fldUid=" + fldUid + ", fldCodeName=" + fldCodeName + ", fldIndex=" + fldIndex
 				+ ", fldName=" + fldName + ", fldDescription=" + fldDescription + ", fldType=" + fldType + ", fldSize="
 				+ fldSize + ", multiSeparator=" + multiSeparator + ", multiValue=" + multiValue
-				+ ", fldForeignKeyTable=" + fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDybUid="
-				+ fldDybUid + ", fldFilter=" + fldFilter + ", formUid=" + formUid + ", opActionList=" + opActionList
+				+ ", fldForeignKeyTable=" + fldForeignKeyTable + ", fldDynName=" + fldDynName + ", fldDynUid="
+				+ fldDynUid + ", fldFilter=" + fldFilter + ", formUid=" + formUid + ", opActionList=" + opActionList
 				+ "]";
 	}
 }

@@ -87,4 +87,15 @@ public interface BpmFormFieldMapper {
 	 * 根据表单id查询非title的表单字段
 	 */
 	List<BpmFormField> queryNotTitleFormFieldByFormUid(String formUid);
+
+	/**
+	 * 根据表单id查询表单中的表格集合
+	 */
+	List<BpmFormField> queryFormTabByFormUid(String formUid);
+
+	/**
+	 * 根据表格id找到表格中字段集合
+	 */
+	List<BpmFormField> queryFormTabFieldByFormIdAndTabName(@Param("formUid")String formUid,
+			@Param("tableName")String tableName);
 }
