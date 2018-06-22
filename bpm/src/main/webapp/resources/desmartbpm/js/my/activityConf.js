@@ -607,7 +607,6 @@ $(function() {
 						layer.alert('表单参数不能为空')
 						return;
 					}else{
-						// var options = document.getElementsByTagName("option");
 						var selects = $("#col_md6").find("select").not($(dataList[i]).find("select"));
 						for (var j = 0; j < selects.length; j++) {
 							if($(dataList[i]).find("option:selected").val() == selects[j].value){
@@ -624,7 +623,8 @@ $(function() {
 								fldCodeName : $(dataList[i]).find("option:selected").val()};
 						arr.push(info);
 					}
-			/*		$.ajax({
+					}
+					$.ajax({
 						url : common.getPath() + '/dhTriggerInterface/insertBatch',
 						type : 'post',
 						dataType : 'json',
@@ -633,27 +633,39 @@ $(function() {
 						success : function (result){
 							layer.alert('参数映射成功')
 							$("#triggerInterface_container").css("display","none");
-							loadActivityConf(actcUid);
 						},
 						error : function (result){
 							layer.alert('参数映射出错')
 						}
-					})*/
-					}	
+					})
 			}else{
 				// 输入
 				var dataList = $("#col_md5").find(".layui-form-item").find(".layui-row");
 				for (var i = 0; i < dataList.length; i++) {
 					var inputArr = $(dataList[i]).find("input");
-					var info = {triUid : triUid,
-							intUid : intUid,
-							dynUid : formId,
-							activityId : $("#activityId").val(),
-							paraName : $(inputArr[0]).val(),
-							parameterType : $("#paramterType").val(),
-							fldCodeName : $(dataList[i]).find("option:selected").val()};
-					arr.push(info);
-				}
+				    var options = $(dataList[i]).find("option:selected").val()
+					if($(dataList[i]).find("option:selected").val() == null){
+						layer.alert('表单参数不能为空')
+						return;
+					}else{
+						// var options = document.getElementsByTagName("option");
+						var selects = $("#col_md5").find("select").not($(dataList[i]).find("select"));
+						for (var j = 0; j < selects.length; j++) {
+							if($(dataList[i]).find("option:selected").val() == selects[j].value){
+								layer.alert('参数不能相同')
+								return;
+							}
+						}
+						var info = {triUid : triUid,
+								intUid : intUid,
+								dynUid : formId,
+								activityId : $("#activityId").val(),
+								paraName : $(inputArr[0]).val(),
+								parameterType : $("#paramterType").val(),
+								fldCodeName : $(dataList[i]).find("option:selected").val()};
+						arr.push(info);
+					}
+					}
 				$.ajax({
 					url : common.getPath() + '/dhTriggerInterface/insertBatch',
 					type : 'post',
@@ -662,8 +674,8 @@ $(function() {
 					data :JSON.stringify(arr),
 					success : function (result){
 						layer.alert('参数映射成功')
-						$("#triggerInterface_container").css("display","none");
-						loadActivityConf(actcUid);
+						//$("#triggerInterface_container").css("display","none");
+						//loadActivityConf(actcUid);
 					},
 					error : function (result){
 						layer.alert('参数映射出错')
@@ -1140,6 +1152,7 @@ function triggerEdit(triggerUid){
 	$.ajax({
 		url : common.getPath() + '/dhTriggerInterface/selectTriggerAndForm',
 		type : 'post',
+		async:false,
 		dataType : 'json',
 		data : {
 			triUid : triggerUid,
@@ -1282,10 +1295,7 @@ function triggerEdit(triggerUid){
 			})
 		})
 		
-	})
-}
-
-layui.use(['layer', 'form', 'jquery', 'element' ], function(){
+		layui.use(['layer', 'form', 'jquery', 'element' ], function(){
 	  var element = layui.element , layer = layui.layer;
 	  var form = layui.form;
 	  var $ = layui.jquery;
@@ -1302,6 +1312,38 @@ layui.use(['layer', 'form', 'jquery', 'element' ], function(){
 				$(".interfacelabel"+jNum).text("输出接口参数"+jNum);
 				$(".tablelabel"+jNum).text("输出表单参数"+jNum);	
 			}
+			// 查询 输出参数  修改
+			$.ajax({
+				url : common.getPath() + '/dhTriggerInterface/selectTriggerAndForm',
+				type : 'post',
+				async:false,
+				dataType : 'json',
+				data : {
+					triUid : triggerUid,
+					activityId : $("#activityId").val(),
+					parameterType : $("#paramterType").val()
+				},
+				success : function(result){
+					if(result.status == 0){
+						alert('输出 参数查询 成功~~~')
+						var list = result.data;
+						var startNum = 1;
+						var formId  = "";
+						for (var i = 0; i < list.length; i++) {
+							var num1 = i + startNum
+							alert(list[i].paraName + "~~~~"+ list[i].fldCodeName + "~~~~~~" + num1)
+							$("#interfaceParam"+num1).val(list[i].paraName);
+							console.log($("#tableParam"+num1).html());
+							// $('#tableParam2 option[text='+list[i].fldCodeName+']').attr("selected", true);
+							$("#tableParam"+num1).val("Fesx");
+						}
+						form.render();
+					}
+				},
+				error : function(result){
+					layer.alert('查询失败')
+				}
+			})
 			form.render();
 		  }else{
 			  $("#paramterType").val("inputParameter");
@@ -1311,10 +1353,15 @@ layui.use(['layer', 'form', 'jquery', 'element' ], function(){
 					$(".interfacelabel"+jNum2).text("输入接口参数"+jNum2)	
 					$(".tablelabel"+jNum2).text("输入表单参数"+jNum2)			
 				}
+				// 查询 输入参数  修改
+				
 				form.render();
 		  }
 	  });
-});
+})
+		
+	})
+}
 
 
 // 渲染权限信息表格

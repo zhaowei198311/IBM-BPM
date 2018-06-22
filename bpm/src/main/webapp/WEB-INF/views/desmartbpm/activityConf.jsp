@@ -1245,6 +1245,10 @@
 		<div class="display_content3" style="height: 450px;">
 			<div class="top">参数映射</div>
 			<div class="layui-row layui-form" style="margin-top: 10px">
+			    <div class="layui-tab-item layui-show">
+      				1. 请先配置 输入参数 ，再配置输出参数。
+      			<br>2. 如果没有输出参数 则不需要配置	
+    			</div>
 				<div class="layui-col-md5" style="width: 730px;">
 					<fieldset class="layui-elem-field layui-field-title"
 						style="margin-top: 20px; width: 750px;">
