@@ -33,6 +33,8 @@ public class DhTriggerInterface {
 	
 	private String fldCodeName; // 字段编码
 	
+	private String parameterType; // 参数类型
+	
 	private BpmForm bpmForm; // 表单实体类
 
 	/**
@@ -167,6 +169,20 @@ public class DhTriggerInterface {
 	public BpmForm getBpmForm() {
 		return bpmForm;
 	}
+	
+	/**
+	 * @return the parameterType
+	 */
+	public String getParameterType() {
+		return parameterType;
+	}
+
+	/**
+	 * @param tinUid the parameterType to set
+	 */
+	public void setParameterType(String parameterType) {
+		this.parameterType = parameterType;
+	}
 
 	/**
 	 * @param bpmForm the bpmForm to set
@@ -199,7 +215,7 @@ public class DhTriggerInterface {
 	 * @param bpmForm
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String activityId, String paraName, String fldCodeName, BpmForm bpmForm) {
+			Date createTime, String activityId, String paraName, String fldCodeName, String parameterType, BpmForm bpmForm) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -210,6 +226,7 @@ public class DhTriggerInterface {
 		this.activityId = activityId;
 		this.paraName = paraName;
 		this.fldCodeName = fldCodeName;
+		this.parameterType = parameterType;
 		this.bpmForm = bpmForm;
 	}
 
@@ -220,7 +237,7 @@ public class DhTriggerInterface {
 	public String toString() {
 		return "DhTriggerInterface [tinUid=" + tinUid + ", triUid=" + triUid + ", intUid=" + intUid + ", dynUid="
 				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", activityId=" + activityId
-				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", bpmForm=" + bpmForm + "]";
+				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", parameterType=" + parameterType + ", bpmForm=" + bpmForm + "]";
 	}
 
 }

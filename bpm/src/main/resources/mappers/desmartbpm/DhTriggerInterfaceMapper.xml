@@ -11,6 +11,7 @@
 		<result column="ACTIVITY_ID" property="activityId" />
 		<result column="PARA_NAME" property="paraName" />
 		<result column="FLD_CODE_NAME" property="fldCodeName" />
+		<result column="PARAMETER_TYPE" property="parameterType" />
 	</resultMap>
 
 	<resultMap id="DhTriggerInterfaceAndFormMap"
@@ -24,6 +25,7 @@
 		<result column="ACTIVITY_ID" property="activityId" />
 		<result column="PARA_NAME" property="paraName" />
 		<result column="FLD_CODE_NAME" property="fldCodeName" />
+		<result column="PARAMETER_TYPE" property="parameterType" />
 		<association property="bpmForm"
 			javaType="com.desmart.desmartbpm.entity.BpmForm">
 			<id column="DYN_UID" property="dynUid" />
@@ -41,13 +43,13 @@
 	<sql id="Base_Column_List">
 		TIN_UID,TRI_UID,INT_UID,
 		DYN_UID,CREATOR,CREATE_TIME,ACTIVITY_ID,
-		PARA_NAME,FLD_CODE_NAME
+		PARA_NAME,FLD_CODE_NAME,PARAMETER_TYPE
 	</sql>
 
 	<sql id="Condition_Column_List">
 		T.TIN_UID,T.TRI_UID,T.INT_UID,
 		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTIVITY_ID,
-		T.PARA_NAME,T.FLD_CODE_NAME,M.DYN_TITLE
+		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,M.DYN_TITLE
 	</sql>
 
 	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
@@ -84,6 +86,9 @@
 			<if test="fldCodeName != null and fldCodeName !=''">
 				AND FLD_CODE_NAME = #{fldCodeName}
 			</if>
+			<if test="parameterType != null and parameterType !=''">
+				AND PARAMETER_TYPE = #{parameterType}
+			</if>
 		</where>
 	</select>
 
@@ -109,6 +114,8 @@
 			TRI_UID = #{triUid}
 			AND
 			ACTIVITY_ID = #{activityId}
+			AND 
+			PARAMETER_TYPE = #{parameterType}
 		</where>
 	</select>
 
@@ -128,7 +135,8 @@
 		sysdate,
 		#{activityId},
 		#{paraName},
-		#{fldCodeName}
+		#{fldCodeName},
+		#{parameterType}
 		)
 	</insert>
 
@@ -147,7 +155,8 @@
 			sysdate,
 			#{item.activityId},
 			#{item.paraName},
-			#{item.fldCodeName}
+			#{item.fldCodeName},
+			#{item.parameterType}
 			FROM DUAL
 		</foreach>
 	</insert>
@@ -201,6 +210,9 @@
 				</if>
 				<if test="fldCodeName != null and fldCodeName !=''">
 					FLD_CODE_NAME = #{fldCodeName}
+				</if>
+				<if test="parameterType != null and parameterType !=''">
+					PARAMETER_TYPE = #{parameterType}
 				</if>
 			</trim>
 		</set>

@@ -417,14 +417,16 @@ $(function() {
 		$("#chooseTrigger_container").show();
 	});
 
-	layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
+	layui.use([ 'laypage', 'layer', 'form', 'jquery', 'element'], function() {
 		var laypage = layui.laypage, layer = layui.layer, form = layui.form;
 		var $ = layui.jquery;
+		var element = layui.element;
 		// “确认”选择触发器
 		$("#chooseTrigger_sureBtn").click(
 				function() {
 					$("#table_sel").empty();
 					$("#col_md5").empty();
+					$("#col_md6").empty();
 					var cks = $("[name='tri_check']:checked");
 					if (!cks.length) {
 						$("#" + triggerToEdit).val('');
@@ -494,23 +496,23 @@ $(function() {
 										+ '<div class="layui-row">'
 										+ '<div class="layui-col-md6">'
 										+ '<div class="layui-inline">'
-										+ '<label class="layui-form-label" style="width: 100px">接口参数'+index+'</label>'
+										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输入接口参数'+index+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" value="'+paraName+'">'
 										+ '</div>'
 										+ '</div>'
 										+ '</div>'
 										+ '<div class="layui-col-md6">'
-										+ '<label class="layui-form-label" style="width: 100px">表单参数'+index+'</label>'
+										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输入表单参数'+index+'</label>'
 										+ '<div class="layui-input-inline">'
-										+ '<select id="tableParam'+index+'" lay-search>'
+										+ '<select id="tableParam'+index+'" lay-search onchange="queryOption(this)">'
 										+ '</select>'
 										+ '</div>'
 										+ '</div>'
 										+ '</div>'
 										+ '</div>';
-								$("#col_" +
-										"md5").append(trs)
+								$("#col_md5").append(trs)
+								$("#col_md6").append(trs)
 								}
 								form.render();
 							},
@@ -526,6 +528,7 @@ $(function() {
 
 		form.on('select(table_sel)', function(data) {
 			$("#col_md5").find(".layui-form-item").find(".layui-row").find("select").empty();
+			$("#col_md6").find(".layui-form-item").find(".layui-row").find("select").empty();
 			var data = data.value; // 表单id
 			// 截取字符串
 			var formId = data.substring(0,data.indexOf('|')); // 表单ID
@@ -544,10 +547,16 @@ $(function() {
 						var fldCodeName = result.data[i].fldCodeName; // 字段名
 						var indexs = startNum + i
 						// 获取 接口参数的数据
-						 var trs = '<option id="">'
+						 var trs = '<option value="'+result.data[i].fldCodeName+'">'
 						 + result.data[i].fldCodeName
 						 + '</option>';		
 						var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+						for (var j = 0; j < dataTableList.length; j++) {
+							var inputArr = $(dataTableList[j]).find("select");
+							//$(inputArr).empty();
+							$(inputArr).append(trs);				
+						}
+						var dataTableList = $("#col_md6").find(".layui-form-item").find(".layui-row");
 						for (var j = 0; j < dataTableList.length; j++) {
 							var inputArr = $(dataTableList[j]).find("select");
 							//$(inputArr).empty();
@@ -561,8 +570,22 @@ $(function() {
 				}
 			})
 		})
-		
-		$("#paramMapping_sureBtn").click(function() {
+	
+	function queryOption(o) {
+			alert("1")
+    var options = document.getElementsByTagName("option");
+    for (var i = 0; i < options.length; i++) {
+        op = o.options[o.selectedIndex]
+        if (!options[i].selected) continue;
+        if (op != options[i] && options[i].value == o.value) {
+            alert("选择值重复");
+            o.value = "";
+            return;
+        }
+    }
+}	
+
+	$("#paramMapping_sureBtn").click(function() {
 			var triUid ="";
 			$('input[name="tri_check"]:checked').each(function(){ 
 				triUid =$(this).val(); 
@@ -573,35 +596,115 @@ $(function() {
 			var formId = data.substring(0,data.indexOf('|')); // 表单ID
 			var intUid = data.substring(data.indexOf('i')); // 参数ID
 			var arr = new Array();
-			var dataList = $("#col_md5").find(".layui-form-item").find(".layui-row");
-			for (var i = 0; i < dataList.length; i++) {
-				var inputArr = $(dataList[i]).find("input");
-				var info = {triUid : triUid,
-						intUid : intUid,
-						dynUid : formId,
-						activityId : $("#activityId").val(),
-						paraName : $(inputArr[0]).val(),
-						fldCodeName : $(dataList[i]).find("option:selected").val()};
-				arr.push(info);
-			}
-			$.ajax({
-				url : common.getPath() + '/dhTriggerInterface/insertBatch',
-				type : 'post',
-				dataType : 'json',
-				contentType: "application/json",
-				data :JSON.stringify(arr),
-				success : function (result){
-					layer.alert('参数映射成功')
-					$("#triggerInterface_container").css("display","none");
-					loadActivityConf(actcUid);
-				},
-				error : function (result){
-					layer.alert('参数映射出错')
+			// 判断是 输入还是输出 保存
+			if($("#paramterType").val() == 'outputParameter'){
+				// 输出
+				var dataList = $("#col_md6").find(".layui-form-item").find(".layui-row");
+				for (var i = 0; i < dataList.length; i++) {
+					var inputArr = $(dataList[i]).find("input");
+				    var options = $(dataList[i]).find("option:selected").val()
+					if($(dataList[i]).find("option:selected").val() == null){
+						layer.alert('表单参数不能为空')
+						return;
+					}else{
+						// var options = document.getElementsByTagName("option");
+						var selects = $("#col_md6").find("select").not($(dataList[i]).find("select"));
+						for (var j = 0; j < selects.length; j++) {
+							if($(dataList[i]).find("option:selected").val() == selects[j].value){
+								layer.alert('参数不能相同')
+								return;
+							}
+						}
+						var info = {triUid : triUid,
+								intUid : intUid,
+								dynUid : formId,
+								activityId : $("#activityId").val(),
+								paraName : $(inputArr[0]).val(),
+								parameterType : $("#paramterType").val(),
+								fldCodeName : $(dataList[i]).find("option:selected").val()};
+						arr.push(info);
+					}
+			/*		$.ajax({
+						url : common.getPath() + '/dhTriggerInterface/insertBatch',
+						type : 'post',
+						dataType : 'json',
+						contentType: "application/json",
+						data :JSON.stringify(arr),
+						success : function (result){
+							layer.alert('参数映射成功')
+							$("#triggerInterface_container").css("display","none");
+							loadActivityConf(actcUid);
+						},
+						error : function (result){
+							layer.alert('参数映射出错')
+						}
+					})*/
+					}	
+			}else{
+				// 输入
+				var dataList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+				for (var i = 0; i < dataList.length; i++) {
+					var inputArr = $(dataList[i]).find("input");
+					var info = {triUid : triUid,
+							intUid : intUid,
+							dynUid : formId,
+							activityId : $("#activityId").val(),
+							paraName : $(inputArr[0]).val(),
+							parameterType : $("#paramterType").val(),
+							fldCodeName : $(dataList[i]).find("option:selected").val()};
+					arr.push(info);
 				}
-			})
+				$.ajax({
+					url : common.getPath() + '/dhTriggerInterface/insertBatch',
+					type : 'post',
+					dataType : 'json',
+					contentType: "application/json",
+					data :JSON.stringify(arr),
+					success : function (result){
+						layer.alert('参数映射成功')
+						$("#triggerInterface_container").css("display","none");
+						loadActivityConf(actcUid);
+					},
+					error : function (result){
+						layer.alert('参数映射出错')
+					}
+				})
+			}
 		});
-		
 	});
+	
+	layui.use(['layer', 'form', 'jquery', 'element' ], function(){
+		  var element = layui.element , layer = layui.layer;
+		  var form = layui.form;
+		  var $ = layui.jquery;
+		  //一些事件监听
+		  element.on('tab(addParamter)', function(data){
+			  var index = data.index; // 得到当前Tab的所在下标
+			  var sortNum = 1;
+			  if(index == 1){
+				// 输出参数
+				  $("#paramterType").val("outputParameter");
+			//	document.getElmentById("paramterType").value="outputParameter";
+				var dataTableList = $("#col_md6").find(".layui-form-item").find(".layui-row");
+				for (var i = 0; i < dataTableList.length; i++) {
+					var jNum = sortNum + i
+					$(".interfacelabel"+jNum).text("输出接口参数"+jNum);
+					$(".tablelabel"+jNum).text("输出表单参数"+jNum);	
+				}
+				form.render();
+			  }else{
+				  $("#paramterType").val("inputParameter");
+			//	  document.getElmentById("paramterType").value="inputParameter";
+					var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+					for (var j = 0; j < dataTableList.length; j++) {
+						var jNum2 = sortNum + j
+						$(".interfacelabel"+jNum2).text("输入接口参数"+jNum2)	
+						$(".tablelabel"+jNum2).text("输入表单参数"+jNum2)		
+					}
+					form.render();
+			  }
+		  });
+	});	
 
 	// “取消”选择触发器
 	$("#chooseTrigger_cancelBtn").click(function() {
@@ -1027,8 +1130,9 @@ function formFieldEdit(data) {
 }
 // 修改之前 查询触发器数据信息
 function triggerEdit(triggerUid){
-	layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
+	layui.use([ 'laypage', 'layer', 'form', 'jquery', 'element' ], function() {
 		var laypage = layui.laypage, layer = layui.layer, form = layui.form;
+		var element = layui.element;
 		var $ = layui.jquery;
 	$(".display_container8").css("display", "block");
 	var actcUid = getCurrentActcUid();
@@ -1039,11 +1143,13 @@ function triggerEdit(triggerUid){
 		dataType : 'json',
 		data : {
 			triUid : triggerUid,
-			activityId : $("#activityId").val()
+			activityId : $("#activityId").val(),
+			parameterType : $("#paramterType").val()
 		},
 		success : function(result){
 			console.info(result);
 			$("#update_param").empty();
+			$("#update_param2").empty();
 			if(result.status == 0){
 				var list = result.data;
 				var sortNum = 1;
@@ -1058,14 +1164,14 @@ function triggerEdit(triggerUid){
 						+ '<div class="layui-row">'
 						+ '<div class="layui-col-md6">'
 						+ '<div class="layui-inline">'
-						+ '<label class="layui-form-label" style="width: 100px">接口参数'+index+'</label>'
+						+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输入接口参数'+index+'</label>'
 						+ '<div class="layui-input-inline">'
 						+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" value="'+paraName+'">'
 						+ '</div>'
 						+ '</div>'
 						+ '</div>'
 						+ '<div class="layui-col-md6">'
-						+ '<label class="layui-form-label" style="width: 100px">表单参数'+index+'</label>'
+						+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输入表单参数'+index+'</label>'
 						+ '<div class="layui-input-inline">'
 						+ '<select id="tableParam'+index+'" lay-search>'
 						+ '<option value="'+fldCodeName+'">'
@@ -1080,6 +1186,7 @@ function triggerEdit(triggerUid){
 							 + list[0].bpmForm.dynTitle
 							 + '</option>'
 				$("#update_param").append(trs)
+				$("#update_param2").append(trs)
 				$("#tb_Trigger").append(trs2)
 				}
 				$.ajax({
@@ -1090,6 +1197,7 @@ function triggerEdit(triggerUid){
 						formUid : formId
 					},
 					success : function (result){	
+						// 输入
 						for (var i = 0; i < result.data.length; i++) {
 							var fldIndex = result.data[i].fldIndex; // 字段索引下标
 							var fldCodeName = result.data[i].fldCodeName; // 字段名
@@ -1106,6 +1214,30 @@ function triggerEdit(triggerUid){
 							} 
 						/*删除重复项*/ 
 						var itemList = $("#update_param").find(".layui-form-item");
+						for (var j = 0; j < itemList.length+1; j++) {
+								$("#tableParam"+j+" option").each(function() {
+									text = $(this).text();
+									if($("#tableParam"+j+" option:contains("+text+")").length > 1)
+										$("#tableParam"+j+" option:contains("+text+"):gt(0)").remove();
+								});
+						}
+						// 输出
+						for (var i = 0; i < result.data.length; i++) {
+							var fldIndex = result.data[i].fldIndex; // 字段索引下标
+							var fldCodeName = result.data[i].fldCodeName; // 字段名
+							var indexs = startNum + i
+							// 获取 接口参数的数据
+							 var trs = '<option value="'+result.data[i].fldCodeName+'">'
+							 + result.data[i].fldCodeName
+							 + '</option>';		
+							var dataTableList = $("#update_param2").find(".layui-form-item").find(".layui-row");
+							for (var j = 0; j < dataTableList.length; j++) {
+								var inputArr = $(dataTableList[j]).find("select");
+								$(inputArr).append(trs);				
+							}
+							} 
+						/*删除重复项*/ 
+						var itemList = $("#update_param2").find(".layui-form-item");
 						for (var j = 0; j < itemList.length+1; j++) {
 								$("#tableParam"+j+" option").each(function() {
 									text = $(this).text();
@@ -1149,8 +1281,40 @@ function triggerEdit(triggerUid){
 				}			
 			})
 		})
+		
 	})
 }
+
+layui.use(['layer', 'form', 'jquery', 'element' ], function(){
+	  var element = layui.element , layer = layui.layer;
+	  var form = layui.form;
+	  var $ = layui.jquery;
+	  //一些事件监听
+	  element.on('tab(updatParamter)', function(data){
+		  var index = data.index; // 得到当前Tab的所在下标
+		  var sortNum = 1;
+		  if(index == 1){
+			// 输出参数
+			$("#paramterType").val("outputParameter");
+			var dataTableList = $("#update_param2").find(".layui-form-item").find(".layui-row");
+			for (var i = 0; i < dataTableList.length; i++) {
+				var jNum = sortNum + i
+				$(".interfacelabel"+jNum).text("输出接口参数"+jNum);
+				$(".tablelabel"+jNum).text("输出表单参数"+jNum);	
+			}
+			form.render();
+		  }else{
+			  $("#paramterType").val("inputParameter");
+				var dataTableList = $("#update_param").find(".layui-form-item").find(".layui-row");
+				for (var j = 0; j < dataTableList.length; j++) {
+					var jNum2 = sortNum + j
+					$(".interfacelabel"+jNum2).text("输入接口参数"+jNum2)	
+					$(".tablelabel"+jNum2).text("输入表单参数"+jNum2)			
+				}
+				form.render();
+		  }
+	  });
+});
 
 
 // 渲染权限信息表格
