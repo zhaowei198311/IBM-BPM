@@ -2,6 +2,8 @@ package com.desmart.desmartbpm.mongo;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 public interface InsDataDao {
 	/**
 	 * 
@@ -13,7 +15,7 @@ public interface InsDataDao {
 	 * @return List<InsData>
 	 * @throws
 	 */
-	List<String> queryInsData(String key, String value);
+	List<JSONObject> queryInsData(String key, String value);
 	
 	/**
 	 * 
@@ -27,7 +29,9 @@ public interface InsDataDao {
 	 * @return List<InsData>
 	 * @throws
 	 */
-	List<String> queryInsData(String key, String value, int page, int size);
+	List<JSONObject> queryInsData(String key, String value, int page, int size);
+	
+	
 	/**
 	 * 
 	 * @Title: insertInsData  

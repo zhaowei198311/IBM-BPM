@@ -10,8 +10,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -27,15 +31,25 @@ public class InsDataDaoImpl implements InsDataDao{
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
 	@Override
-	public List<String> queryInsData(String key, String value) {
-		Criteria criteria = Criteria.where("formData."+ key +".value").is(value);
-		Query query = new Query(criteria);
-		List<String> formData = mongoTemplate.find(query, String.class, "insData");
-		return formData;
+	public List<JSONObject> queryInsData(String key, String value) {
+		Query query = new Query();
+		if (value.contains(",")) {
+			String[] values = value.split(",");
+			String reg = "";
+			for (String string : values) {
+				reg += ".*" + string;
+			}
+			query.addCriteria(Criteria.where("formData."+ key +".value").regex(reg));
+		}else {
+			Criteria criteria = Criteria.where("formData."+ key +".value").regex(".*" + value + ".*");
+			query.addCriteria(criteria);
+		}
+		List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
+		return insData;
 	}
 
 	@Override
-	public List<String> queryInsData(String key, String value, int page, int size) {
+	public List<JSONObject> queryInsData(String key, String value, int page, int size) {
 		Criteria criteria = new Criteria();
 		Query query = new Query();
 		if (!key.isEmpty()) {
@@ -44,26 +58,52 @@ public class InsDataDaoImpl implements InsDataDao{
 		}
 		query.limit(size);
 		query.skip(page * (size-1));
-		List<String> formData = mongoTemplate.find(query, String.class, "insData");
-		return formData;
+		List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
+		return insData;
 	}
-
+	
+//	@Scheduled(cron = "0/20 * * * * ?")
 	@Override
 	public void insertInsData() {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByDate();
-			// 所有id集合
-			List<DhProcessInstance> list = mongoTemplate.find(new BasicQuery("{}"), DhProcessInstance.class, "insData");
-//			InsData insData = new InsData();
-			String id = "";
+
+			JSONObject insData = null;
+			// 需要处理的数据
+			List<JSONObject> insDataList = new LinkedList<>();
+			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
+				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+				insData.put("_id", dhProcessInstance.getInsUid());
+				insDataList.add(insData);
+			}
+			// 数据库已存数据
+			List<JSONObject> idS = mongoTemplate.find(new BasicQuery("{}","{'_id':1}"), JSONObject.class, Const.INS_DATA);
+			List<String> $ids = new LinkedList<>();
+			for (JSONObject jsonObject : idS) {
+				$ids.add(jsonObject.getString("_id"));
+			}
 			// 需要插入的数据
-			List<DhProcessInstance> newDpiList = new LinkedList<>();
+			List<JSONObject> insertInsDataList = new LinkedList<>();
 			// 需要更新的数据
-			List<DhProcessInstance> updateDpiList = new LinkedList<>();
-			boolean flag = false;
-			mongoTemplate.insert(dhProcessInstanceList, "insData");
-			
-			
+			List<JSONObject> updateInsDataList = new LinkedList<>();
+			for (JSONObject jsonObject : insDataList) {
+				if ($ids.contains(jsonObject.get("_id"))) {
+					updateInsDataList.add(jsonObject);
+				}else {
+					insertInsDataList.add(jsonObject);
+				}	
+			}
+			if (!insertInsDataList.isEmpty()) {
+				mongoTemplate.insert(insertInsDataList, Const.INS_DATA);
+			}
+			if (!updateInsDataList.isEmpty()) {
+				Update update = new Update();
+				for (JSONObject jsonObject : updateInsDataList) {
+					update.set("processData", jsonObject.get("processData"));
+					update.set("formData", jsonObject.get("formData"));
+					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(jsonObject.get("_id"))), update, Const.INS_DATA);
+				}
+			}	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
