@@ -16,7 +16,7 @@
     3.mongoTemplate：与数据库接口交互的主要实现类
     -->
 
-    <mongo:mongo-client id="mongoClient" host="127.0.0.1" port="27017">
+    <mongo:mongo-client id="mongoClient" host="${mongo.host}" port="${mongo.port}">
          <mongo:client-options write-concern="SAFE"
                           connections-per-host="${mongo.connectionsPerHost}"
                           threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
@@ -25,7 +25,7 @@
                           socket-timeout="${mongo.socketTimeout}"/>
     </mongo:mongo-client>
 
-    <mongo:db-factory id="mongoDbFactory" dbname="bpm" mongo-ref="mongoClient"/>
+    <mongo:db-factory id="mongoDbFactory" dbname="${mongo.dbname}" mongo-ref="mongoClient"/>
 
     <!-- Spring提供的mongodb操作模板-->
     <mongo:template id="mongoTemplate" db-factory-ref="mongoDbFactory" write-concern="NORMAL"/>
