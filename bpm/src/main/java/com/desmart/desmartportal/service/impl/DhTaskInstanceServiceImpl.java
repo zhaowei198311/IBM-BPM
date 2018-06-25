@@ -1282,10 +1282,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 获得任务处理人
 		String taskOwner = routeData.getString("userUid");
 		BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        HttpReturnStatus applyTastReturnStatus = taskUtil.applyTask(taskIdList.get(0), taskOwner);
-        if (HttpReturnStatusUtil.isErrorResult(applyTastReturnStatus)) {
-            log.error("重新分配任务失败，任务id:" + taskIdList.get(0));
-        }
+		ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), taskOwner);
+		if (!serverResponse.isSuccess()) {
+			log.error("重新分配失败");
+		}
 
 		saveTaskToRetryTable(taskIdList.get(0));
 		unlockTask(taskIdList.get(0));

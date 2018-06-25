@@ -38,5 +38,6 @@ public interface LswTaskMapper {
      */
     List<LswTask> listTasksByDhSynTaskRetryList(List<DhSynTaskRetry> list);
 
+    LswTask queryTaskByTaskId(int taskId);
     
 }

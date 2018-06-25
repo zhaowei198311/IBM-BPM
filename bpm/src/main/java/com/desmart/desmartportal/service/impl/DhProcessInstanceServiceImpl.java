@@ -864,6 +864,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         for (Iterator<BpmActivityMeta> it = endProcessNodes.iterator(); it.hasNext();) {
             BpmActivityMeta item = it.next();
             DhProcessInstance subInstance = dhProcessInstanceMapper.getByInsIdAndTokenActivityId(insId, item.getActivityId());
+            // 判断执行树下是否没有任务
+
             DhProcessInstance selective = new DhProcessInstance(subInstance.getInsUid());
             selective.setInsFinishDate(new Date());
             selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);

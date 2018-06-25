@@ -144,7 +144,7 @@ public class RestUtil {
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpResponse response = null;
         try {
-            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-Language", "zh-CN");
             httpPost.setEntity(new StringEntity(postContent, "UTF-8"));

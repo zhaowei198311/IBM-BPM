@@ -30,4 +30,12 @@ public interface DhSynTaskRetryMapper {
      * @return
      */
     int updateRetryCountByTaskId(int taskId);
+
+    /**
+     * 成功拉取后的更新
+     * @param taskId
+     * @return
+     */
+    int completeRetrySynTask(int taskId);
+
 }

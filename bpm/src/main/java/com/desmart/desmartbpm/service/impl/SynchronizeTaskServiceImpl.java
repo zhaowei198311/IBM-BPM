@@ -11,6 +11,7 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
+import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -97,6 +98,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         LOG.info("==================  拉取任务结束  ===============");
     }
 
+    @Scheduled(cron = "0 * * * * ?")
     public void retrySynchronizeTask() {
         LOG.info("==================  开始重试拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
@@ -153,6 +155,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             try {
                 // 分析一个引擎任务
                 data =  analyseLswTask(lswTask, groupInfo, globalConfig);
+                completeRetrySynTask(lswTask.getTaskId());
             } catch (Exception e) {
                 LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
                 // 更新重试次数
@@ -166,7 +169,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         for(DhTaskInstance task : dhTaskList) {
             dhTaskInstanceMapper.insertTask(task);
-            //发送邮件通知
+            // todo 发送邮件通知
             //dhSendEmail(task);
         }
         if (agentRecordList.size() > 0) {
@@ -198,8 +201,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
         HttpReturnStatus processDataResult = bpmProcessUtil.getProcessData(insId);
         if (HttpReturnStatusUtil.isErrorResult(processDataResult)) {
-            LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
-            return null;
+            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
 
@@ -207,8 +209,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
         Map<Object, Object> tokenMap = ProcessDataUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
-            LOG.error("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
-            return null;
+            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
         }
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
@@ -217,8 +218,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             // 如果父token是null，说明当前任务属于主流程
             dhProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             if (dhProcessInstance == null) {
-                LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
-                return null;
+                throw new PlatformException("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
             }
             bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, "0",
                     dhProcessInstance.getProVerUid());
@@ -226,8 +226,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             // 如果父token是存在，说明当前任务属于子流程
             dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, (String)tokenMap.get("preTokenId"));
             if (dhProcessInstance == null) {
-                LOG.error("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
-                return null;
+                throw new PlatformException("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
             }
             bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, dhProcessInstance.getTokenActivityId(),
                     dhProcessInstance.getProVerUid());
@@ -236,8 +235,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
         // 查看环节的任务类型
         if (bpmActivityMeta == null) {
-            LOG.error("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
-            return null;
+            throw new PlatformException("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
         }
         String proAppId = dhProcessInstance.getProAppId();
         String proUid = dhProcessInstance.getProUid();
@@ -439,6 +437,17 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
     }
 
+    /**
+     * 更新retryTask的状态为完成
+     */
+    private int completeRetrySynTask(int taskId) {
+        return dhSynTaskRetryMapper.completeRetrySynTask(taskId);
+    }
+
+    /**
+     * 获得所有被锁住的任务
+     * @return
+     */
     private Set<Integer> getAllLockedTaskIds() {
         Set<Integer> allLockedTaskIds = new HashSet<>();
         List<LockedTask> allLockedTasks = taskMongoDao.getAllLockedTasks();
@@ -448,6 +457,12 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return allLockedTaskIds;
     }
 
+    /**
+     * 从查到的任务中去除被锁的任务
+     * @param taskList
+     * @param allLockedTaskIds
+     * @return
+     */
     private List<LswTask> excludeLockedTasks(List<LswTask> taskList, Set<Integer> allLockedTaskIds) {
         Iterator<LswTask> iterator = taskList.iterator();
         while (iterator.hasNext()) {
@@ -459,6 +474,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         return taskList;
     }
 
+    /**
+     * 更新同步程序最后同步的任务id
+     * @param synchronizedTaskList
+     */
     private void updateLastSynchronizedTaskId(List<LswTask> synchronizedTaskList) {
         if (synchronizedTaskList == null || synchronizedTaskList.isEmpty()) {
             return;

@@ -594,7 +594,7 @@
 
 	<update id="abandonOtherUnfinishedTasksOnTaskActivityId" parameterType="map">
 		update
-			dhTaskInstance
+			DH_TASK_INSTANCE
 		set
 			task_status = -1
 		where

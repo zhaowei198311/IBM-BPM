@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.desmart.common.constant.ServerResponse;
+import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.json.JSONArray;
@@ -51,33 +53,27 @@ public class BpmTaskUtil {
         try {
             // 将任务分配给当前用户
             result = this.applyTask(taskId, currentUserUid);
-            if (!HttpReturnStatusUtil.isErrorResult(result)) {
-                // 将分配任务返回的信息放入返回值
-                resultMap.put("assignTaskResult", result);
-                // 查看是否分配任务成功
-                JSONObject jsoResult = new JSONObject(result.getMsg());
-                String status = jsoResult.optString("status", "");
-                if (StringUtils.isNotBlank(status) && !"error".equals(status)) {
-                    Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
-                    resultMap.putAll((Map)setDataResult);
-                    Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
-                    if (errorMap.isEmpty() && !HttpReturnStatusUtil.isErrorResult(result)) {
-                        result = this.completeTask(taskId);
-                        resultMap.put("commitTaskResult", result);
-                        if (HttpReturnStatusUtil.isErrorResult(result)) {
-                            resultMap.put("errorResult", result);
-                        }
-                    } else if (!errorMap.isEmpty()) {
-                        resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
-                    } else {
-                        resultMap.put("errorResult", result);
-                    }
+
+            // 不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
+            resultMap.put("assignTaskResult", result);
+
+            Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
+            resultMap.putAll((Map)setDataResult);
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
+            if (errorMap.isEmpty()) {
+                result = this.completeTask(taskId);
+                resultMap.put("commitTaskResult", result);
+                if (HttpReturnStatusUtil.isErrorResult(result)) {
+                    resultMap.put("errorResult", result);
                 }
+            } else if (!errorMap.isEmpty()) {
+                resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
             } else {
                 resultMap.put("errorResult", result);
             }
+
         } catch (Exception e) {
-            log.error("发起流程失败", e);
+            log.error("完成任务失败，任务id：" + taskId, e);
             HttpReturnStatus errorStatus = new HttpReturnStatus();
             errorStatus.setCode(-1);
             errorStatus.setMsg(e.toString());
@@ -244,7 +240,42 @@ public class BpmTaskUtil {
     public HttpReturnStatus completeTask(Integer taskId) {
         return this.doTaskAction(taskId, "finish", "");
     }
-    
+
+
+    public ServerResponse changeOwnerOfLaswTask(int taskId, String userUid) {
+        ServerResponse serverResponse = null;
+        HttpReturnStatus result = null;
+        RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+
+        String host = this.bpmGlobalConfig.getBpmformsHost();
+        StringBuilder url = new StringBuilder(host + "lswTask/changeOwnerOfLswTask");
+        JSONObject json = new JSONObject();
+        json.put("taskId", taskId);
+        json.put("userUid", userUid);
+        System.out.println(url.toString());
+        System.out.println(json.toString());
+        try {
+            result = restUtil.doPost(url.toString(), json.toString());
+            if (result.getCode() == 200) {
+                JSONObject resJson = new JSONObject(result.getMsg());
+                int status = resJson.getInt("status");
+                String msg = resJson.getString("msg");
+                if (status == 0) {
+                    serverResponse = ServerResponse.createBySuccess();
+                } else {
+                    serverResponse = ServerResponse.createByErrorMessage(msg);
+                }
+            } else {
+                serverResponse = ServerResponse.createByErrorMessage("分配任务失败");
+            }
+        } catch (Exception e) {
+            log.error("分配任务失败, 任务id: " + taskId, e);
+            serverResponse = ServerResponse.createByErrorMessage("分配任务失败");
+        } finally {
+            restUtil.close();
+        }
+        return serverResponse;
+    }
     
 }
 

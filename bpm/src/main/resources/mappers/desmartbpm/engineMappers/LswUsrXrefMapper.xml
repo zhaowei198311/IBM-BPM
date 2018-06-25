@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartbpm.enginedao.LswUsrXrefMapper">
+    <sql id="baseColumnList">
+        USER_ID,
+        USER_NAME,
+        FULL_NAME,
+        PROVIDER
+    </sql>
+
+    <select id="queryByUserUid" parameterType="string" resultType="com.desmart.desmartbpm.entity.engine.LswUsrXref">
+      select <include refid="baseColumnList"/>
+      from lsw_usr_xref
+      where user_name = #{userUid}
+    </select>
+
+
+</mapper>
