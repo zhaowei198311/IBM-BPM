@@ -47,10 +47,12 @@
 		where form_uid = #{formUid} 
 		<choose>
 			<when test="fieldType!=null and !fieldType.trim().isEmpty()">
-				and fld_type = #{fieldType}
+				and (fld_type = 'title' or fld_type='object')
 			</when>
 			<otherwise>
-				and fld_type != 'title' and fld_type not like '%object_%'
+				and fld_type != 'title' 
+				and fld_type != 'object'
+				and fld_type not like '%object_%'
 			</otherwise>
 		</choose>
 		order by fld_index

@@ -64,7 +64,7 @@ public interface BpmFormFieldMapper {
 	BpmFormField queryFieldByFldUid(String fldUid);
 
 	/**
-	 * 根据表单查找某个类型的字段集合
+	 * 根据表单查找具体类型的字段集合(类型为空-->普通字段集合,类型不为空-->区块字段集合)
 	 */
 	List<BpmFormField> queryFormFieldByFormUidAndType(@Param("formUid")String formUid, @Param("fieldType")String fieldType);
 

@@ -144,6 +144,10 @@ function toShowRouteBar () {
     	layer.alert("流程标题过长，请重新填写");
     	return;
     }
+    //必填项验证，勿删
+    /*if(!common.validateFormMust("startProcess_btn")){
+    	return;
+    }*/
     $.ajax({
     	url:"dhRoute/showRouteBar",
     	method:"post",

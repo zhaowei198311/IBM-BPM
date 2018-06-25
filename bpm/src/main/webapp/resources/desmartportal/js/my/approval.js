@@ -460,12 +460,6 @@ function checkUserData() {
     var companyNumber = $("#companyNum").val();
     var formData =common.getDesignFormData();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-    	$("#myApprovalOpinion").focus();
-    	layer.alert("请填写审批意见");
-    	return;
-    }
-
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
     	layer.alert("缺少流程发起人信息");
     	return;
@@ -473,6 +467,15 @@ function checkUserData() {
     if (!checkInsTitle()) {
         layer.alert("流程标题过长或未填写");
         return
+    }
+    //必填项验证，勿删
+    /*if(!common.validateFormMust("startProcess_btn")){
+    	return;
+    }*/
+    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
+    	$("#myApprovalOpinion").focus();
+    	layer.alert("请填写审批意见");
+    	return;
     }
     $.ajax({
     	url:"dhRoute/showRouteBar",
