@@ -356,6 +356,7 @@
     	left join sys_user su on taskIns.usr_uid = su.user_uid
     	,DH_PROCESS_META meta
     	where ins.pro_uid = meta.pro_uid and ins.pro_app_id = meta.pro_app_id
+    	and ins.ins_status_id != -2
     	<if test="insTitle != null and insTitle != '' ">
     		and ins.ins_title like concat(concat('%',#{insTitle}), '%') 
     	</if>
