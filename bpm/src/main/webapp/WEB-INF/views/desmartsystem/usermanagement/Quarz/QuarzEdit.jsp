@@ -82,38 +82,37 @@
 	
 layui.use(['form', 'layedit', 'laydate','jquery'], function(){
   var form = layui.form;
+  
+  
   var $ = layui.jquery;
   var data =JSON.parse(decodeURIComponent(getRequestParam().obj));
-  //初始化所属组别下拉框
   
+  //初始化所属组别下拉框
   pbInitCombox($,form,'dicUid=dicbea3b258-604c-4aca-8c02-83b2315edcf8','jobGroupName',data.jobGroupName);
   
-  
    //监听提交
-   form.on('submit(btnSubmit)', function(data){
-   // layer.msg(JSON.stringify(data.field));
-   console.log($('#quartzEditForm').serialize()+"&cronExpr="+$('#cron').val());
-   var index = layer.load(1);//开启进度条
-      $.ajax({
-		url : '<%=request.getContextPath()%>/quarz/editJob.do',
-		data :$('#quartzEditForm').serialize()+"&cronExpr="+$('#cron').val(),
-		type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
-		dataType : 'json',
-		success : function(obj) {
-			layer.close(index);//关闭   
-			if (obj.success) {
-				pubUtil.msg(obj.msg,layer,1,function(){
-					$("#close").click();
-				},500);
-			} else {
-				pubUtil.msg(obj.msg,layer,2,function(){
+//    form.on('submit(btnSubmit)', function(data){
+//    var index = layer.load(1);//开启进度条
+//       $.ajax({
+<%-- 		url : '<%=request.getContextPath()%>/quarz/editJob.do', --%>
+// 		data :$('#quartzEditForm').serialize()+"&cronExpr="+$('#cron').val(),
+// 		type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
+// 		dataType : 'json',
+// 		success : function(obj) {
+// 			layer.close(index);//关闭   
+// 			if (obj.success) {
+// 				pubUtil.msg(obj.msg,layer,1,function(){
+// 					$("#close").click();
+// 				},500);
+// 			} else {
+// 				pubUtil.msg(obj.msg,layer,2,function(){
 					
-				},5*1000);
-			}
-		}
-	});
-    return false;
-  });
+// 				},5*1000);
+// 			}
+// 		}
+// 	});
+//     return false;
+//   });
     
 });
 

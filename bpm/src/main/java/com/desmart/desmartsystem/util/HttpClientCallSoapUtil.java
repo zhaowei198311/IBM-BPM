@@ -105,6 +105,7 @@ public class HttpClientCallSoapUtil {
 	}
 
 	public static void main(String[] args) {
+		
 		String querySoapXml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://webservice.lyfwebservice.ibm.com\">\n" + 
 				"   <soapenv:Header/>\n" + 
 				"   <soapenv:Body>\n" + 

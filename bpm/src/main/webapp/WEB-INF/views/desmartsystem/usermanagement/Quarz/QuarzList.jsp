@@ -51,27 +51,18 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 	  var element = layui.element; //元素操作
 	  var index = layer.load(1);//开启进度条
 	  
-	  
 	  //绑定table
 	  table.render({
 		  elem: '#table' ,//table id
 		  url: '<%=request.getContextPath()%>/quarz/datagrid.do',
 				method : 'POST', //方式
 				page : false,//是否开启分页
-				//limits : [ 10, 20, 30, 60, 90, 100 ],
-				//limit : 20, //默认采用20
-				//cellMinWidth: 120,
-				//even : true, //开启隔行背景
 				id : 'searchID',
 				done: function(res, curr, count){
 					//加载后回调
 					layer.close(index);//关闭   
-					/* noAuthTip(res);//无权限提示 */
 				},
-				cols : [ [ //标题栏
-				/* {
-					checkbox: true
-				}, */
+				cols : [ [
 				{
 					field : 'jobName',
 					title : '任务名称',
@@ -120,11 +111,6 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				}
 			});
 
-			//监听表格复选框选择
-			  table.on('checkbox(table)', function(data){
-				  //layer.alert(JSON.stringify(data));
-			  });
-			  
 			//打开新增按钮
 			function openAdd() {
 					layer.open({
@@ -349,26 +335,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 			});
 			
 		   var active = {
-			/* btnDelAll: function(){ //批量删除
-		      var checkStatus = table.checkStatus('searchID');
-		      var data = checkStatus.data;
-		      //layer.alert(JSON.stringify(data));
-		      if(data.length==0){
-		    	  pubUtil.msg("请至少选择一条要删除的记录",layer,2,function(){
-				});
-		    	 return;
-		      }
-		      var ids='';
-		      for(var i=0;i<data.length;i++){
-		    	  if(i!=(data.length-1)){
-		    		  ids+=data[i].nid+",";
-		    	  }else{
-		    		  ids+=data[i].nid;
-		    	  }
-		      }
-		      openDelete(ids);
-		    }
-		    , */btnAdd: function(){ //新增操作
+			btnAdd: function(){ //新增操作
 		    	openAdd();
 		    }
 		  };

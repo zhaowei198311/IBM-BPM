@@ -15,7 +15,8 @@
 		<result column="CREATE_DATE"  			property="createDate"/>
 		<result column="UPDATE_DATE"  			property="updateDate"/>
 		
-		<result column="INT_XML"  			property="intXml"/>
+		<result column="INT_REQUEST_XML"  			property="intRequestXml"/>
+		<result column="INT_RESPONSE_XML"  			property="intResponseXml"/>
 		
 	</resultMap>
 
@@ -23,7 +24,7 @@
 		INT_UID, INT_TITLE, INT_DESCRIPTION,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
-		CREATE_DATE, UPDATE_DATE,INT_XML
+		CREATE_DATE, UPDATE_DATE,INT_REQUEST_XML,INT_RESPONSE_XML
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
@@ -48,7 +49,8 @@
 			#{intLoginPwd},
 			#{intStatus},
 			sysdate,
-			#{intXml},
+			#{intRequestXml,jdbcType=VARCHAR},
+			#{intResponseXml,jdbcType=VARCHAR},
 			sysdate
 		)
 	</insert>
@@ -105,8 +107,11 @@
 			<if test="intStatus != null and intStatus != ''">
 				INT_STATUS = #{intStatus},
 			</if>
-			<if test="intXml != null and intXml != ''">
-				INT_XML = #{intXml},
+			<if test="intRequestXml != null and intRequestXml != ''">
+				INT_REQUEST_XML = #{intRequestXml},
+			</if>
+			<if test="intResponseXml != null and intResponseXml != ''">
+				INT_RESPONSE_XML = #{intResponseXml},
 			</if>
 			  UPDATE_DATE = sysdate
 			<where>

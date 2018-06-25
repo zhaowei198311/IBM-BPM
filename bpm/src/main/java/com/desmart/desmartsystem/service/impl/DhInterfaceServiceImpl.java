@@ -61,7 +61,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 * @see com.desmart.desmartbpm.service.DhInterfaceService#saveDhInterface()
 	 */
 	@Override
-	public int saveDhInterface(DhInterface dhInterface) {
+	public int saveDhInterface(DhInterface dhInterface)  throws Exception {
 		dhInterface.setIntUid(EntityIdPrefix.DH_INTERFACE_META + UUID.randomUUID().toString());
 		int resultCount = dhInterfaceMapper.save(dhInterface);
 		return resultCount;

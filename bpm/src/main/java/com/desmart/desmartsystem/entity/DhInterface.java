@@ -35,6 +35,8 @@ public class DhInterface {
 	
 	
 	private String intXml;//webservice参数
+	private String intRequestXml;
+	private String intResponseXml;
 	
 	/**
 	 * @return the intUid
@@ -232,5 +234,23 @@ public class DhInterface {
 	public void setIntXml(String intXml) {
 		this.intXml = intXml;
 	}
+
+	public String getIntRequestXml() {
+		return intRequestXml;
+	}
+
+	public void setIntRequestXml(String intRequestXml) {
+		this.intRequestXml = intRequestXml;
+	}
+
+	public String getIntResponseXml() {
+		return intResponseXml;
+	}
+
+	public void setIntResponseXml(String intResponseXml) {
+		this.intResponseXml = intResponseXml;
+	}
+	
+	
 
 }

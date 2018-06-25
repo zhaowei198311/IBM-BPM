@@ -116,6 +116,7 @@
 							<th>是否必须</th>
 							<th>日期格式</th>
 							<th>父参数</th>
+							<th>输入/输出</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -204,14 +205,25 @@
 						</div>
 					</div>
 				</div>
-				<div class="layui-col-md11 intXml" >
+				
+				<div class="layui-col-md11 intRequestXml" >
 				  <div class="layui-form-item layui-form-text">
-				 	<label class="layui-form-label">XML:</label>
+				 	<label class="layui-form-label">requset:</label>
 				    <div class="layui-input-block">
-				      <textarea placeholder="" class="layui-textarea" name="intXml" ></textarea>
+				      <textarea placeholder="" class="layui-textarea" name="intRequestXml" ></textarea>
 				    </div>
 				  </div>
-				</div>				
+				</div>		
+				
+				<div class="layui-col-md11 intResponseXml" >
+				  <div class="layui-form-item layui-form-text">
+				 	<label class="layui-form-label">response:</label>
+				    <div class="layui-input-block">
+				      <textarea placeholder="" class="layui-textarea" name="intResponseXml" ></textarea>
+				    </div>
+				  </div>
+				</div>	
+						
 				<div class="layui-form-item">
 					<div class="layui-row">
 						<div class="layui-col-md6">
@@ -291,7 +303,7 @@
 							<label class="layui-form-label">参数长度:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="paraSize" name="paraSize"
-									lay-verify="paraSize" autocomplete="off" class="layui-input number">
+									lay-verify="paraSize" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						
@@ -310,6 +322,15 @@
 									lay-skin="switch" lay-filter="switch4" lay-text="true|false"
 									value="false">
 							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+					<div class="layui-col-md6 ">
+						<label class="layui-form-label">输入/输出:</label>
+						<div class="layui-input-inline">
+							<input  type="checkbox" name="paraInOut" lay-skin="switch" lay-filter="paraInOut"  lay-text="输出|输入"  />
 						</div>
 					</div>
 				</div>
@@ -357,7 +378,7 @@
 		<div class="display_content2" style="overflow: visible;">
 			<div class="top" style="color: red;">修改接口</div>
 			<form id="updaArrayForm" class="layui-form" action="javascript:void(0);" style="margin-top: 30px;">
-				<input id="intUid2" style="display: none;" />
+				<input id="intUid2" style="display: none;" name="intUid" />
 				<div class="layui-form-item">
 					<div class="layui-inline">
 						<label class="layui-form-label">接口名称:</label>
@@ -412,12 +433,23 @@
 					</div>
 				</div>
 				
-				<div class="layui-form-item layui-form-text intXml1">
-				 	<label class="layui-form-label">XML:</label>
+				<div class="layui-col-md11 intRequestXml1" >
+				  <div class="layui-form-item layui-form-text">
+				 	<label class="layui-form-label">requset:</label>
 				    <div class="layui-input-block">
-				      <textarea placeholder="" class="layui-textarea" name="intXml"  id="intXml1"></textarea>
+				      <textarea placeholder="" class="layui-textarea" id="intRequestXml2" name="intRequestXml" ></textarea>
 				    </div>
 				  </div>
+				</div>		
+				
+				<div class="layui-col-md11 intResponseXml1" >
+				  <div class="layui-form-item layui-form-text">
+				 	<label class="layui-form-label">response:</label>
+				    <div class="layui-input-block">
+				      <textarea placeholder="" class="layui-textarea" id="intResponseXml2" name="intResponseXml" ></textarea>
+				    </div>
+				  </div>
+				</div>	
 				
 				<div class="layui-form-item">
 					<div class="layui-inline">
@@ -494,7 +526,7 @@
 							<label class="layui-form-label">参数长度:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="paraSize3" name="paraSize"
-									lay-verify="paraSize" autocomplete="off" class="layui-input number">
+									lay-verify="paraSize" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						
@@ -510,13 +542,21 @@
 						<div class="layui-col-md6">
 							<label class="layui-form-label">是否必须*:</label>
 							<div class="layui-input-inline">
-								<input id="isMust3" type="checkbox" name="isMust"
-									lay-skin="switch" lay-filter="switch4" lay-text="true|false"
-									value="false">
+								<input id="isMust3" type="checkbox" name="isMust" lay-skin="switch" lay-filter="switch4" lay-text="true|false" />
 							</div>
 						</div>
 					</div>
 				</div>
+				
+				<div class="layui-form-item">
+					<div class="layui-col-md6 ">
+						<label class="layui-form-label">输入/输出:</label>
+						<div class="layui-input-inline">
+							<input type="checkbox" name="paraInOut"   lay-skin="switch"  lay-filter="paraInOut" lay-text="输出|输入"  />
+						</div>
+					</div>
+				</div>
+				
 			<div id="arryParameterDiv3" >
 				<div class="layui-form-item">
 				  <button class="layui-btn layui-btn-sm" type="button" onclick="addArrayParameter('update');" style="float: right;margin: 0 15px 0;" >
@@ -606,7 +646,7 @@
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
-							autocomplete="off" class="layui-input number">
+							autocomplete="off" class="layui-input">
 					</div>
 				</div>
 				
@@ -680,7 +720,7 @@
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
-							autocomplete="off" class="layui-input number">
+							autocomplete="off" class="layui-input">
 					</div>
 				</div>
 				

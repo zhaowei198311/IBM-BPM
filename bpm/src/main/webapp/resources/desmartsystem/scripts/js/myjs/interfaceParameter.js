@@ -9,8 +9,8 @@ function getPath(){
 }
 
 //弹出接口测试页面
-function textInterface(intUid,intTitle){
-	var url = getPath() + '/interfaces/interfaceTest?intUid='+intUid+'&intTitle='+intTitle;
+function textInterface(intUid,intTitle,paraInOut){
+	var url = getPath() + '/interfaces/interfaceTest?intUid='+intUid+'&intTitle='+intTitle+'&paraInOut='+paraInOut;
     layer.open({
         type: 2,
         title: false,
@@ -82,13 +82,16 @@ function byParameterTypeHideAndShowElement(paraType,selector){
 
 function interfaceInputShowAndHide(intType,selector){
 	var intCallMethodDiv=$('.intCallMethodDiv'+selector);
-	var intXml=$('.intXml'+selector);
+	var intRequestXml=$('.intRequestXml'+selector);
+	var intResponseXml=$('.intResponseXml'+selector);
 	if(intType=='webservice'){
-		intXml.show();
+		intRequestXml.show();
+		intResponseXml.show();
 		intCallMethodDiv.hide();
 	}else{
 		intCallMethodDiv.show();
-		intXml.hide();
+		intRequestXml.hide();
+		intResponseXml.hide();
 	}
 }
 
@@ -100,6 +103,21 @@ function isEmpty(val){
 };
 
 
+
+function returnField(field){
+	if (typeof(field.isMust) == "undefined"){
+		field.isMust='false';
+	}else{
+		field.isMust='true';
+	}
+	
+	if (typeof(field.paraInOut) == "undefined"){
+		field.paraInOut='input';
+	}else{
+		field.paraInOut='output';
+	}
+	return field;
+}
 
 var arrayTh;
 layui.use(['form', 'layedit', 'laydate'], function(){
@@ -143,9 +161,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	form.on('select(paraType2)', function(data){
 		var value=data.value;
 		byParameterTypeHideAndShowElement(value,"2");
-		
-		$("").appendTo('');
-		
 	});
 	
 	
@@ -155,10 +170,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		if (!$form.valid()) {
 			return false;
 		}
-		var field=data.field;
-		if (typeof(field.isMust) == "undefined"){
-			field.isMust='false';
-		}
+		
+		var field=returnField(data.field);
 		
 		var addArrayInAddOrUpdate =	$('#addArrayInAddOrUpdate').val();
 		
@@ -192,10 +205,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		if (!$form.valid()) {
 			return false;
 		}
-		var field=data.field;
-		if (typeof(field.isMust) == "undefined"){
-			field.isMust='false';
-		}
+		var field=returnField(data.field);
+		
 		var str='<tr value="'+encodeURI(JSON.stringify(field))+'">';
 		str+='<td>'+field.paraName+'</td>';
 		str+='<td>'+field.paraType+'</td>';
@@ -221,14 +232,9 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 		var intUid=$('#intUid').val();
 		var arrayParameter=new Array();
-		var field=data.field;
-		if (typeof(field.isMust) == "undefined")
-		{
-			field.isMust='false';
-		}
+		var field=returnField(data.field);
 		field.intUid=intUid;
 		arrayParameter.push(field);
-		
 		
 		$('#arryParameterDiv table tbody tr').each(function(index,value){
 			var value=$(value).attr('value');
@@ -236,7 +242,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			valueJson.intUid=intUid;
 			arrayParameter.push(valueJson);
 		});
-		
 		$.ajax({
 			url : 'interfaceParamers/add',
 			type : 'POST',
@@ -251,8 +256,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				}else{
 					layer.alert(result.msg);
 				}
-				
-				
 			}
 		})
 	    return false;
@@ -267,13 +270,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 		var intUid=$('#intUid').val();
 		var arrayParameter=new Array();
-		var field=data.field;
+		var field=returnField(data.field);
 		
-		
-		
-		if (typeof(field.isMust) == "undefined"){
-			field.isMust='false';
-		}
 		field.intUid=intUid;
 		arrayParameter.push(field);
 		
@@ -333,14 +331,52 @@ function deleteParameter(paraUid,intUid) {
 	});
 }
 
+//编辑和修改checkbox选中
+function  checkboxChecked(result,selector){
+	
+	var element=$('.'+selector);
+	var paraTypeElement=$('select[name="paraType"]',element);
+	var isMustElement=$('input[name="isMust"]',element);
+	var paraInOutElement=$('input[name="paraInOut"]',element);
+	
+	
+	var rtParaType=result.paraType;
+	if(rtParaType=='Array'){
+		$(paraTypeElement).attr('disabled','disabled');
+	}else{
+		$(paraTypeElement).removeAttr('disabled','disabled');
+	}
+	
+	if(result.isMust=="true"){
+		$(isMustElement).attr('checked','checked');
+	}else{
+		$(isMustElement).removeAttr('checked');
+	}
+	
+	var paraInOut = result.paraInOut;
+	if(paraInOut=='input'){
+		$(paraInOutElement).attr('checked','checked');
+	}else{
+		$(paraInOutElement).removeAttr('checked');
+	}
+	
+	var paraParent = result.paraParent;
+	var paraType=$('option:last',paraTypeElement).val();
+	if(paraParent!=null){
+		if(paraType=='Array'){
+			$(paraTypeElement).find('option:last').remove();
+		}
+	}else{
+		if(paraType!='Array'){
+			$(paraTypeElement).append('<option value="Array">Array</option>');
+		}
+	}
+	
+}
 
 function getParameter(paraUid){
 	layui.use([ 'layer', 'form' ], function() {
-		var form = layui.form, layer = layui.layer, $ = layui.jquery;
-		form.on('switch(switch4)', function(data) {
-			var ckd = this.checked ? 'true' : 'false';
-			document.getElementById("isMust3").value = ckd;
-		});
+		var form = layui.form;
 		$.ajax({
 			url : 'interfaceParamers/queryByparaId',
 			type : 'POST',
@@ -359,20 +395,9 @@ function getParameter(paraUid){
 				$("#paraSize3").val(result.paraSize);
 				$("#multiSeparator3").val(result.multiSeparator);
 				$("#dateFormat3").val(result.dateFormat);
-				if(result.isMust=="true"){
-					document.getElementById('isMust3').checked  = true;
-				}else{
-					document.getElementById('isMust3').checked  = false;
-				}
 				$("#intUid3").val(result.intUid);
 				
-				var rtParaType=result.paraType;
-				if(rtParaType=='Array'){
-					$('#paraType3').attr('disabled','disabled');
-				}else{
-					$('#paraType3').removeAttr('disabled','disabled');
-				}
-				
+				checkboxChecked(result,'display_container6');
 				
 				$.ajax({
 					url : 'interfaceParamers/byQueryParameter',
@@ -385,19 +410,6 @@ function getParameter(paraUid){
 						updArrayTableList(result);
 					}
 				});
-				
-				/*var paraParent = result.paraParent;
-				var paraType=$('#paraType3 option:last').val();
-				if(paraParent!=null){
-					if(paraType=='Array'){
-						$('#paraType3 option:last').remove();
-					}
-				}else{
-					if(paraType!='Array'){
-						$('#paraType3').append('<option value="Array">Array</option>');
-					}
-				}*/
-				
 				form.render();
 			}
 		});

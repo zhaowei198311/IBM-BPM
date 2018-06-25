@@ -20,6 +20,7 @@ import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
+import com.desmart.desmartsystem.util.IterfaceValidate;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -43,6 +44,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	public ServerResponse<PageInfo<List<DhInterfaceParameter>>> listDhInterfaceParameter(String intUid, Integer pageNum,
 			Integer pageSize) {
+		pageSize=100;
 		PageHelper.startPage(pageNum, pageSize);
 		List<DhInterfaceParameter> interfaceParameterlist = dhInterfaceParameterMapper.listAll(intUid);
 		PageInfo<List<DhInterfaceParameter>> pageInfo = new PageInfo(interfaceParameterlist);
@@ -65,19 +67,33 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	@Transactional
 	public ServerResponse saveDhInterfaceParametere(List<DhInterfaceParameter> dhInterfaceParameterList) {
-		
 		int size=dhInterfaceParameterList.size();
-		if(size>1) {//添加数组类型参数
+		
+		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			
+			String dateFarmat = dhInterfaceParameter.getDateFormat();
+			if(StringUtils.isNotBlank(dateFarmat)) {
+				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				if(!bol) {
+					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
+				}
+			}
+		}
+		
+		
+		if(size>1) {//添加数组类型参数
 			String paraParent="";
+			String paraInOut="";
 			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 				String paraUid=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();
 				dhInterfaceParameter.setParaUid(paraUid);
 				String paraType=dhInterfaceParameter.getParaType();
 				if(paraType.equals(Const.PARAMETER_TYPE_ARRAY)) {
 					paraParent=paraUid;
+					paraInOut=dhInterfaceParameter.getParaInOut();
 				}else{
 					dhInterfaceParameter.setParaParent(paraParent);
+					dhInterfaceParameter.setParaInOut(paraInOut);
 				} 
 				dhInterfaceParameter.setParaUid(paraUid);
 				dhInterfaceParameterMapper.save(dhInterfaceParameter);
@@ -89,7 +105,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 				dhInterfaceParameterMapper.save(dhInterfaceParameter);
 			}
 		}
-		return ServerResponse.createBySuccess();
+		return ServerResponse.createBySuccessMessage("创建成功");
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +113,17 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	 */
 	@Override
 	public ServerResponse updateDhInterfaceParametere(DhInterfaceParameter dhInterfaceParameter) {
-		return ServerResponse.createBySuccess(dhInterfaceParameterMapper.update(dhInterfaceParameter));
+		if(dhInterfaceParameter!=null) {
+			String dateFarmat = dhInterfaceParameter.getDateFormat();
+			if(StringUtils.isNotBlank(dateFarmat)) {
+				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				if(!bol) {
+					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
+				}
+			}
+		}
+		dhInterfaceParameterMapper.update(dhInterfaceParameter);
+		return ServerResponse.createBySuccessMessage("修改成功");
 	}
 
 	/* (non-Javadoc)
@@ -124,8 +150,20 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	
 	@Transactional
-	public void saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception {
+	public ServerResponse saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception {
 		// TODO Auto-generated method stub
+		
+		
+		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+			String dateFarmat = dhInterfaceParameter.getDateFormat();
+			if(StringUtils.isNotBlank(dateFarmat)) {
+				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				if(!bol) {
+					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
+				}
+			}
+		}
+		
 		
 		String paraParent="";
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
@@ -166,7 +204,8 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 			}
 		}
 		
-		
+		return ServerResponse.createBySuccessMessage("修改成功");
 	}
+	
 	
 }

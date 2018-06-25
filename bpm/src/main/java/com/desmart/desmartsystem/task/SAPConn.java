@@ -101,26 +101,25 @@ public class SAPConn {
 	        String message="";//调用接口返回信息  
 	        try {  
 	            //调用ZRFC_GET_REMAIN_SUM函数  
-	            function = destination.getRepository().getFunction("ZIFFI_TBPM_LIFNR");  
+	            function = destination.getRepository().getFunction("ZIFFI_TBPM_PERSON");  
 	            JCoParameterList input = function.getImportParameterList();  
 	            //采购凭证号  
-	            input.setValue("LIFNR_IN", "00025513");  
+	            input.setValue("PERNR_IN", "00025513");  
 	            function.execute(destination); 
-	            function.getExportParameterList();
-	            System.out.println(function.getName());//函数名称
-	            
-	            System.out.println(function.getExportParameterList());
-	            
-	            System.out.println(function.getFunctionTemplate());
-	            
-	            System.out.println(function.getImportParameterList());
-	            
-	            System.out.println(function.getTableParameterList());
-	            
-	            
-	            //function.getTableParameterList().getFieldIterator();
-	            //JCoParameterList tblexport = function.getTableParameterList();
-	            //System.out.println(tblexport);
+	         // 获取RFC返回的字段值
+	            JCoParameterList exportParam = function.getExportParameterList();
+	            JCoParameterList exportTable= function.getTableParameterList();
+
+	            JCoTable getTable1 = exportTable.getTable("ITB_OUT");// 这是调用后 RFC 返回的表名
+	           System.out.println(getTable1);
+	             boolean loopFlag1 = !getTable1.isEmpty(); //判断 这张表中有木有数据
+	             
+	             
+	            while(loopFlag1){ //循环获取数据 
+	                String PERNR = getTable1.getString("PERNR");  //根据表字段来获取值
+	                System.out.println(PERNR);
+	                loopFlag1 = getTable1.nextRow(); // 移动到下一行
+	            }
 	        }catch (Exception e) {  
 	            e.printStackTrace();  
 	        }  

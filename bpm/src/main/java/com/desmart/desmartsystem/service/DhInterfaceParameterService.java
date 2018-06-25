@@ -59,7 +59,7 @@ public interface DhInterfaceParameterService {
 	 * @param 
 	 * @return 
 	 */
-	void	saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception;
+	ServerResponse	saveOrUpdate(List<DhInterfaceParameter> dhInterfaceParameterList) throws Exception;
 	
 	/**
 	 * 根据id查询参数

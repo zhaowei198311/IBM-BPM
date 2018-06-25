@@ -88,21 +88,11 @@
 				url : 'interfaces/update',
 				type : 'POST',
 				dataType : 'text',
-				data : {
-					intTitle : $("#intTitle2").val(),
-					intDescription : $("#intDescription2").val(),
-					intType : $("#intType2").val(),
-					intUrl : $("#intUrl2").val(),
-					intCallMethod : $("#intCallMethod2").val(),
-					intLoginUser : $("#intLoginUser2").val(),
-					intLoginPwd : $("#intLoginPwd2").val(),
-					intStatus : $("#intStatus2").val(),
-					intUid : $("#intUid2").val(),
-					intXml : $("#intXml1").val()
-					
-				},
+				data :$('#updaArrayForm').serialize(),
 				success : function(result) {
+					
 					window.location.href = "interfaces/index";
+					
 				}
 			})
 		})
@@ -323,23 +313,16 @@
 				$.ajax({
 					url : 'interfaces/add',
 					type : 'POST',
-					dataType : 'text',
-					data : {
-						intTitle : $("#intTitle").val(),
-						intDescription : $("#intDescription").val(),
-						intType : $("#intType").val(),
-						intUrl : $("#intUrl").val(),
-						intCallMethod : $("#intCallMethod").val(),
-						intLoginUser : $("#intLoginUser").val(),
-						intLoginPwd : $("#intLoginPwd").val(),
-						intStatus : $("#intStatus").val(),
-						intXml:$("#intXml").val()
-						
-					},
+					dataType : 'json',
+					data : $('#form1').serialize(),
 					success : function(result) {
 						// 添加成功后 ajxa跳转 查询controller
-						layer.msg('添加成功');
-						window.location.href = "interfaces/index";
+						if(result.success==true){
+							layer.alert(result.msg);
+							window.location.href = "interfaces/index";
+						}else{
+							layer.alert(result.msg);
+						}
 					}
 				})
 			})
@@ -439,7 +422,7 @@
 					+ '<td id="requestUrl" onclick=urls("'
 					+ meta.intUrl + '")>' + meta.intUrl + '</td>' + '<td>'
 					+ meta.intCallMethod + '</td>' + '<td>'+status+'</td>' + '<td>'
-					+ '<i class="layui-icon"  title="接口测试" style="font-size:17px;" onclick=textInterface("'+meta.intUid+'","'+meta.intTitle+'")  >&#xe64c;</i>'
+					+ '<i class="layui-icon"  title="接口测试" style="font-size:17px;" onclick=textInterface("'+meta.intUid+'","'+meta.intTitle+'","input")  >&#xe64c;</i>'
 					
 					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
 //					+ '<i class="layui-icon"  title="新增参数"  onclick=add("'
@@ -471,27 +454,12 @@
 	
 
 	function add() {
-		
 		$('#arryParameterDiv').hide();
-		
 		var  fomr2=$("#form2");
 		fomr2.validate().resetForm();
 		fomr2[0].reset();
 		byParameterTypeHideAndShowElement('String','');
-		
-		// 绑定参数页面
-		layui.use([ 'layer', 'form' ], function() {
-			var form = layui.form, layer = layui.layer, $ = layui.jquery;
-			form.on('switch(switch3)', function(data) {
-				var ckd = this.checked ? 'true' : 'false';
-				document.getElementById("multiValue").value = ckd;
-			})
-			form.on('switch(switch4)', function(data) {
-				var ckd2 = this.checked ? 'true' : 'false';
-				document.getElementById("isMust").value = ckd2;
-			})
-			$("#exposed_table2_container").css("display", "block");
-		});
+		$("#exposed_table2_container").css("display", "block");
 	}
 
 	function del(intUid) {
@@ -504,13 +472,18 @@
 			$.ajax({
 				url : 'interfaces/del',
 				type : 'POST',
-				dataType : 'text',
+				dataType : 'json',
 				data : {
 					intUid : intUid
 				},
 				success : function(result) {
 					// 删除成功后 ajxa跳转 查询controller
-					window.location.href = "interfaces/index";
+					if(result.success==true){
+						layer.alert(result.msg);
+						window.location.href = "interfaces/index";
+					}else{
+						layer.alert(result.msg);
+					}
 				}
 			})
 			layer.close(index);
@@ -547,9 +520,17 @@
 					$("#intCallMethod2").val(result.intCallMethod);
 					$("#intLoginUser2").val(result.intLoginUser);
 					$("#intLoginPwd2").val(result.intLoginPwd);
+					
+					$("#intLoginPwd2").val(result.intLoginPwd);
+					
+					console.log(result.intResponseXml);
+					console.log(result.intRequestXml);
+					$("#intResponseXml2").val(result.intResponseXml);
+					$("#intRequestXml2").val(result.intRequestXml);
+					
 					interfaceInputShowAndHide(result.intType,1);
 					
-					$("#intXml1").val(result.intXml);
+					//$("#intXml1").val(result.intXml);
 					form.render();
 				}
 			})
@@ -579,8 +560,6 @@
 
 	// 请求数据成功
 	function drawTable2(pageInfo) {
-		
-		
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
 		pageConfig.total = pageInfo.total;
@@ -592,24 +571,17 @@
 
 		var list = pageInfo.list;
 		var startSort = pageInfo.startRow;//开始序号
-		var trs = "";
+		
 		
 		
 		var sortNumTow=1;
 		var displaySrotNum="";
 		
+		
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
-			
-			
 			var sortNum = startSort + i;
-//			var multiValue = "";
 			var isMust = "";
-//			if(meta.multiValue == "true"){
-//				multiValue = "是"
-//			}else{
-//				multiValue = "否"
-//			}
 			
 			if(meta.isMust == "true"){
 				isMust = "是"
@@ -618,46 +590,68 @@
 			}
 			
 			var paraParenName = meta.paraParentName;
-			if(meta.paraParentName==null){
+			var paraType = meta.paraType;
+			
+			if(paraParenName==null){
 				displaySrotNum=sortNumTow++;
 			}else{
 				displaySrotNum="";
 			}
-			trs += '<tr>'
-					+'<td>'
-					+displaySrotNum
-					+ '</td>'
-					+ '<td>'
-					+ meta.paraName
-					+ '</td>'
-					+ '<td>'
-					+ meta.paraDescription
-					+ '</td>'
-					+ '<td>'
-					+ meta.paraType
-					+ '</td>'
-					+ '<td>'
-					+ isEmpty(meta.paraSize)
-					+ '</td>'
-					/*+ '<td>'
-					+ meta.multiSeparator
-					+ '</td>'
-					+ '<td>'
-					+ multiValue
-					+ '</td>'*/
-					+ '<td>'
-					+ isMust
-					+ '</td>'
-					+ '<td>'+ isEmpty(meta.dateFormat)+ '</td>'
-					+ '<td>'+ isEmpty(meta.paraParentName)+ '</td>'
-//					+ '<td>'+ isEmpty(meta.intXml)+ '</td>'
-					+'<td>'
-					+'<i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'","update"); >&#xe642;</i>'
-					+'<i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i>'
-					+'</td>'
-					+ '</tr>';
+			
+			if(paraParenName==null){
+				var trs='<tr>';
+				trs+='<td>'+displaySrotNum+'</td>';
+				trs+='<td>'+meta.paraName+'</td>';
+				trs+='<td>'+meta.paraDescription+'</td>';
+				trs+='<td>'+meta.paraType+'</td>';
+				trs+='<td>'+isEmpty(meta.paraSize)+'</td>';
+				trs+='<td>'+isMust+'</td>';
+				trs+='<td>'+isEmpty(meta.dateFormat)+'</td>';
+				trs+='<td>'+isEmpty(meta.paraParentName)+'</td>';
+				
+				if(isEmpty(meta.paraInOut)=='input'){
+					trs+='<td>输入</td>';
+				}else{
+					trs+='<td>输出</td>';
+				}
+				
+				trs+='<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'","update"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i></td>';
+				trs+='</tr>';
+				$("#exposed_table_tbody").append(trs);
+			}
+			
+			if(paraType=='Array'){
+				var paraUid = meta.paraUid;
+				$.ajax({
+					url : 'interfaceParamers/byQueryParameter',
+					type : 'POST',
+					dataType : 'json',
+					async:false,
+					data : {paraParent : paraUid},
+					success : function(result) {
+						for (var j = 0; j < result.length; j++) {
+							var trs='<tr>';
+							trs+='<td></td>';
+							trs+='<td>'+result[j].paraName+'</td>';
+							trs+='<td>'+result[j].paraDescription+'</td>';
+							trs+='<td>'+result[j].paraType+'</td>';
+							trs+='<td>'+isEmpty(result[j].paraSize)+'</td>';
+							trs+='<td>'+result[j].isMust+'</td>';
+							trs+='<td>'+isEmpty(result[j].dateFormat)+'</td>';
+							trs+='<td>'+isEmpty(result[j].paraParentName)+'</td>';
+							if(isEmpty(result[j].paraInOut)=='input'){
+								trs+='<td>输入</td>';
+							}else{
+								trs+='<td>输出</td>';
+							}
+							trs+='<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+result[j].paraUid+'","update"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick=deleteParameter("'+result[j].paraUid+'","'+result[j].intUid+'"); >&#xe640;</i></td>';
+							trs+='</tr>';
+							$("#exposed_table_tbody").append(trs);
+						}
+					}
+				});
+			}
 		}
-		$("#exposed_table_tbody").append(trs);
 	}
 	
 	

@@ -37,8 +37,6 @@ public class XmlParsing {
 	
 	
 	public static void main(String[] args) throws Exception {
-		
-		
 		JSONArray josnArray=new JSONArray();
 		
 		JSONObject jsonObject1=new JSONObject();
@@ -59,8 +57,6 @@ public class XmlParsing {
 		jsonObject.put("Z_WERKS", "111111");
 		jsonObject.put("Z_BUKRS", "333333");
 		jsonObject.put("ITB_IN",josnArray);
-		
-		
 		String xml="<ZIFSD_TBPM_MATNR\n" + 
 				"	xmlns=\"http://schemas.laiyifen.com/saprfcs\">\n" + 
 				"	<PNO>20180503_195401</PNO>\n" + 
@@ -147,5 +143,8 @@ public class XmlParsing {
 	        getNodes(e,jsonObject);//递归  
 	    }  
 	} 
+	
+	
+	
 	
 }

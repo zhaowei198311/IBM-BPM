@@ -34,7 +34,7 @@ public interface DhInterfaceService {
 	 * @param dhInterface 接口实体
 	 * @return
 	 */
-	int saveDhInterface(DhInterface dhInterface);
+	int saveDhInterface(DhInterface dhInterface) throws Exception;
 
 	/**
 	 * 根据接口名称 进行模糊查询
