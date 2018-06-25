@@ -61,7 +61,7 @@
 			<div>
 				<div class="layui-tab">
 				  	<ul class="layui-tab-title">
-					    <li class="unread">未读通知</li>
+					    <li class="unread layui-this">未读通知</li>
 					    <li class="read">已读通知</li>
 				  	</ul>
 				  	<div class="layui-tab-content">
@@ -314,11 +314,7 @@ function doPage() {
 			},
 			success : function(result){
 				// 渲染到抄送
-				if(result == 0){
-					$("#transfer_icon").css("display", "none");
-				}else{
-					$("#transfer_icon").text(result);
-				}
+				$("#transfer_icon").text(result);
 			}
 		})
 	}
@@ -337,6 +333,7 @@ function doPage() {
 		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		
 		getTaskInstanceInfo(taskStatus);
+		getUserTask(taskStatus);
 	}
 	//进入未读任务详情页面，则更改taskStatus
 	function updateTaskStatus(taskUid,taskStatus){

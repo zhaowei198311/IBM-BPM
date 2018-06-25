@@ -106,8 +106,8 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				String fieldCodeName = formField.getFldCodeName();
 				String fieldType = formField.getFldType();
 				String opAction = objPer.getOpAction();
-				//判断该字段是否为标题
-				if("title".equals(fieldType)){
+				//判断该字段是否为标题或表格
+				if("title".equals(fieldType) || "object".equals(fieldType)){
 					if(opAction.equals("VIEW")) {
 						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
 					}else if(opAction.equals("HIDDEN")){
@@ -159,7 +159,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			BpmFormField formField = formFieldList.get(i);
 			String fieldType = formField.getFldType();
 			//判断该字段是否为标题
-			if("title".equals(fieldType)){
+			if("title".equals(fieldType) || "object".equals(fieldType)){
 				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
 				DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,formField.getFldUid());
 				if(null==objPer) {

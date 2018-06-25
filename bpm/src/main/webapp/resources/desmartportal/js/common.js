@@ -381,7 +381,10 @@ var common = {
 					tableJson += ",";
 				}
 			});
-			tableJson += "]}";
+			tableJson += "],\"type\":\"table\"}";
+			if(i!=tableArr.length-1){
+				tableJson += ",";
+			}
 			json += tableJson;
 		}
 		
@@ -402,7 +405,7 @@ var common = {
 		var json = JSON.parse(jsonStr)
 		for(var name in json){
 			var paramObj = json[name];
-			/*var type = paramObj.type;
+			var type = paramObj.type;
 			if(type=="table"){
 				var valueArr = paramObj.value;
 				var trObj = $("[name='"+name+"']").find("tbody tr").html();
@@ -419,7 +422,7 @@ var common = {
 						}
 					});
 				}
-			}*/
+			}
 			var tagName = $("[name='"+name+"']").prop("tagName");
 			switch(tagName){
 				case "INPUT":{
@@ -490,6 +493,7 @@ var common = {
 				$(this).css("display","none");
 				if($(this).prev().prop("tagName")=="P"){
 					var pText = $(this).prev()[0].firstChild.data.trim();
+					console.log(pText);
 					if($(this).attr("title")==pText){
 						$(this).prev().css("display","none");
 					}
@@ -585,55 +589,78 @@ var common = {
 			var paramObj = json[name];
 			var display = paramObj["display"];
 			var edit = paramObj["edit"];
-			if(display=="none"){
-				$("[name='"+name+"']").parent().css("display","none");
-				var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
-				var tableArr = $("#formSet").find(".layui-table");
-				for(var i=0;i<tableArr.length;i++){
-					var talbeTitle = $(tableArr[i]).attr("title");
-					if(talbeTitle==pTitle){
-						$(tableArr[i]).css("display","none");
-						break;
-					}
-				}
-			}
 			if(edit=="no"){
-				var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
-				var tableArr = $("#formSet").find(".layui-table");
-				for(var i=0;i<tableArr.length;i++){
-					var talbeTitle = $(tableArr[i]).attr("title");
+				if($("[name='"+name+"']").prop("tagName")=="P"){
+					var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
+					var tableArr = $("#formSet").find(".layui-table");
+					for(var i=0;i<tableArr.length;i++){
+						var talbeTitle = $(tableArr[i]).attr("title");
+						if(talbeTitle==pTitle){
+							var tdArr = $(tableArr[i]).find("td");
+							tdArr.each(function(){
+								var tdObj = $(this);
+								var fieldCodeName = "";
+								if(tdObj.find("input[type='text']").length!=0){
+									fieldCodeName = tdObj.find("input[type='text']").attr("name");
+								}
+								if(tdObj.find("input[type='tel']").length!=0){
+									fieldCodeName = tdObj.find("input[type='tel']").attr("name");
+								} 
+								if(tdObj.find("input[type='date']").length!=0){
+									fieldCodeName = tdObj.find("input[type='date']").attr("name");
+								}
+								if(tdObj.find("input[type='radio']").length!=0){
+									fieldCodeName = tdObj.find("input[type='radio']").attr("name");
+								}
+								if(tdObj.find("input[type='checkbox']").length!=0){
+									fieldCodeName = tdObj.find("input[type='checkbox']").attr("name");
+								}
+								if(tdObj.find("select").length!=0){
+									fieldCodeName = tdObj.find("select").attr("name");
+								}
+								if(tdObj.find("textarea").length!=0){
+									fieldCodeName = tdObj.find("textarea").attr("name");
+								}
+								common.fieldNoEditPermission(fieldCodeName);
+							});
+							break;
+						}
+					}
+				}else if($("[name='"+name+"']").prop("tagName")=="TABLE"){
+					var tableObj = $("[name='"+name+"']");
+					var tdArr = tableObj.find("td");
+					var fieldCodeName = "";
+					tdArr.each(function(){
+						if($(this).find("input").length != 0){
+							$(this).find("input").attr("disabled","true");
+						}else{
+							$(this).find("i").css("color","#F5F5F5");
+							$(this).find("i").attr("title","禁用").removeAttr("onclick");
+						}
+					});
+				}
+			}//end edit
+			if(display=="none"){
+				if($("[name='"+name+"']").prop("tagName")=="P"){
+					$("[name='"+name+"']").parent().css("display","none");
+					var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
+					var tableArr = $("#formSet").find(".layui-table");
+					for(var i=0;i<tableArr.length;i++){
+						var talbeTitle = $(tableArr[i]).attr("title");
+						if(talbeTitle==pTitle){
+							$(tableArr[i]).css("display","none");
+							break;
+						}
+					}
+				}else if($("[name='"+name+"']").prop("tagName")=="TABLE"){
+					$("[name='"+name+"']").css("display","none");
+					var talbeTitle = $("[name='"+name+"']").attr("title");
+					var pTitle = $("[name='"+name+"']").prev()[0].firstChild.data.trim();
 					if(talbeTitle==pTitle){
-						var tdArr = $(tableArr[i]).find("td");
-						tdArr.each(function(){
-							var tdObj = $(this);
-							var fieldCodeName = "";
-							if(tdObj.find("input[type='text']").length!=0){
-								fieldCodeName = tdObj.find("input[type='text']").attr("name");
-							}
-							if(tdObj.find("input[type='tel']").length!=0){
-								fieldCodeName = tdObj.find("input[type='tel']").attr("name");
-							} 
-							if(tdObj.find("input[type='date']").length!=0){
-								fieldCodeName = tdObj.find("input[type='date']").attr("name");
-							}
-							if(tdObj.find("input[type='radio']").length!=0){
-								fieldCodeName = tdObj.find("input[type='radio']").attr("name");
-							}
-							if(tdObj.find("input[type='checkbox']").length!=0){
-								fieldCodeName = tdObj.find("input[type='checkbox']").attr("name");
-							}
-							if(tdObj.find("select").length!=0){
-								fieldCodeName = tdObj.find("select").attr("name");
-							}
-							if(tdObj.find("textarea").length!=0){
-								fieldCodeName = tdObj.find("textarea").attr("name");
-							}
-							common.fieldNoEditPermission(fieldCodeName);
-						});
-						break;
+						$("[name='"+name+"']").prev().css("display","none");
 					}
 				}
-			}
+			}//end display
 		}
 	},
 	//普通字段的打印权限控制

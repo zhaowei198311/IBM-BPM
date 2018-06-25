@@ -892,8 +892,12 @@ function formTable() {
 												+ '" lay-skin="primary">'
 												+ (index + 1) + '</td>';
 										trs += '<td>' + this.dynTitle + '</td>'
-										trs += '<td>' + this.dynDescription
-												+ '</td>'
+									if(this.dynDescription!=null){
+										trs += '<td>' + this.dynDescription;
+									}else{
+										trs += '<td>';
+									}
+										trs += '</td>'
 										trs += '</tr>';
 									});
 					$("#form_tbody").append(trs);
