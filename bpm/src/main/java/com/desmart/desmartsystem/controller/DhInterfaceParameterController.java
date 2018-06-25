@@ -43,46 +43,49 @@ public class DhInterfaceParameterController {
 	
 	@RequestMapping(value = "/index")
 	@ResponseBody
-	public ServerResponse listAll(@RequestParam(value="intUid") String intUid,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+	public ServerResponse listAll(@RequestParam(value="intUid") String intUid,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="100")Integer pageSize) {
 		return dhInterfaceParameterService.listDhInterfaceParameter(intUid, pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/add")
 	@ResponseBody
 	public ServerResponse saveInterfaceParamers(@RequestBody List<DhInterfaceParameter> dhInterfaceParameterList) {
-		
+		ServerResponse s=null;
 		try {
-			dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameterList);
-			return ServerResponse.createBySuccessMessage("添加成功");
+			s=dhInterfaceParameterService.saveDhInterfaceParametere(dhInterfaceParameterList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			return ServerResponse.createByErrorMessage("添加失败");
+			return ServerResponse.createByErrorMessage("创建失败");
 		}
+		return s;
 	}
 	
 	@RequestMapping(value = "/saveOrUpdate")
 	@ResponseBody
 	public ServerResponse saveOrUpdate(@RequestBody List<DhInterfaceParameter> dhInterfaceParameterList) {
+		
+		ServerResponse sr=null;
 		try {
-			dhInterfaceParameterService.saveOrUpdate(dhInterfaceParameterList);
-			return ServerResponse.createBySuccessMessage("修改成功");
+			sr=dhInterfaceParameterService.saveOrUpdate(dhInterfaceParameterList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			return ServerResponse.createByErrorMessage("添加失败");
+			return ServerResponse.createByErrorMessage("修改失败");
 		}
+		return sr;
 	}
 	
 	@RequestMapping(value = "/update")
 	@ResponseBody
 	public ServerResponse updateInterfaceParamers(DhInterfaceParameter dhInterfaceParameter) {
+		ServerResponse r=null;
 		try {
-			dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
-			return ServerResponse.createBySuccessMessage("修改成功");
+			r=dhInterfaceParameterService.updateDhInterfaceParametere(dhInterfaceParameter);
 		} catch (Exception e) {
 			return ServerResponse.createByErrorMessage("修改失败");
 		}
+		return r;
 	}
 	
 	@RequestMapping(value = "/delete")
