@@ -6,6 +6,7 @@ package com.desmart.desmartportal.controller;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.jsqlparser.schema.Server;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,7 @@ public class DhTaskInstanceController {
 	 */
 	@RequestMapping(value = "/rejectTask")
 	@ResponseBody
-	public ServerResponse Reject(@RequestParam(value = "data") String data) {
+	public ServerResponse rejectTask(@RequestParam(value = "data") String data) {
 		try {
 			return dhTaskInstanceService.rejectTask(data);
 		} catch (Exception e) {
@@ -308,5 +309,18 @@ public class DhTaskInstanceController {
 		
 		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess( dhTaskInstance
 				, pageNum, pageSize,insTitle,insInitUser,insStatusId,proAppId,proUid);
+	}
+
+
+	@RequestMapping("/revokeTask")
+	@ResponseBody
+	public ServerResponse revokeTask(String taskUid) {
+		try {
+			return dhTaskInstanceService.revokeTask(taskUid);
+		} catch (Exception e) {
+			LOG.error("取回任务失败", e);
+			return ServerResponse.createByErrorMessage("取回任务失败");
+		}
+
 	}
 }

@@ -243,5 +243,11 @@ public interface DhTaskInstanceService {
 	 */
 	ServerResponse rejectTask(String data);
 
+	/**
+	 * 取回任务
+	 * @param taskUid  任务主键
+	 * @return
+	 */
+	ServerResponse revokeTask(String taskUid);
 
 }

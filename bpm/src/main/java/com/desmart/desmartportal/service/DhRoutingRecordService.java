@@ -43,4 +43,11 @@ public interface DhRoutingRecordService {
 	 * @return
 	 */
 	ServerResponse loadDhRoutingRecords(String insUid);
+
+	/**
+	 * 找到指定任务的路由记录
+	 * @param dhTaskInstance
+	 * @return
+	 */
+	DhRoutingRecord getRoutingRecordOfTask(DhTaskInstance dhTaskInstance);
 }

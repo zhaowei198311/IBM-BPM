@@ -9,6 +9,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,6 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Override
 	public List<DhRoutingRecord> getDhRoutingRecordListByCondition(DhRoutingRecord dhRoutingRecord) {
-		// TODO Auto-generated method stub
 		return dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
 	}
 
@@ -149,6 +149,24 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
             }
         }
         return null;
+    }
+
+
+    public DhRoutingRecord getRoutingRecordOfTask(DhTaskInstance dhTaskInstance) {
+        DhRoutingRecord recordSelective = new DhRoutingRecord();
+        recordSelective.setInsUid(dhTaskInstance.getInsUid());
+        recordSelective.setActivityId(dhTaskInstance.getTaskActivityId());
+        // 路由类型是完成任务
+        recordSelective.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
+        // 设置路由操作人
+        recordSelective.setUserUid(dhTaskInstance.getTaskDelegateUser() == null ?
+                dhTaskInstance.getUsrUid() : dhTaskInstance.getTaskDelegateUser());
+        PageHelper.orderBy("CREATE_TIME DESC");
+        List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordMapper.listBySelective(recordSelective);
+        if (dhRoutingRecords.isEmpty()) {
+            return null;
+        }
+        return dhRoutingRecords.get(0);
     }
 
 }

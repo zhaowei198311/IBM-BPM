@@ -20,10 +20,10 @@
   FROM DH_ROUTING_RECORD drr left join sys_user su on drr.user_uid = su.user_uid
   where 1 = 1 
   <if test="insUid != null and insUid != '' ">
-  and drr.ins_uid = #{insUid}
+    and drr.ins_uid = #{insUid}
   </if>
   <if test="activityId != null and activityId !='' ">
-  and drr.activity_id = #{activityId}
+    and drr.activity_id = #{activityId}
   </if>
   order by drr.create_time asc
   </select>
@@ -55,5 +55,34 @@
         and rr.ins_uid = #{insUid}
     order by rr.create_time desc
  </select>
- 
+
+    <select id="listBySelective" parameterType="com.desmart.desmartportal.entity.DhRoutingRecord"
+            resultType="com.desmart.desmartportal.entity.DhRoutingRecord">
+        SELECT <include refid="Base_Column_List"/>
+        FROM DH_ROUTING_RECORD
+        <where>
+            <if test="routeUid != null">
+                and route_uid = #{routeUid}
+            </if>
+            <if test="insUid != null">
+                and ins_uid = #{insUid}
+            </if>
+            <if test="activityName != null">
+                and activity_Name = #{activityName}
+            </if>
+            <if test="routeType != null">
+                and route_Type = #{routeType}
+            </if>
+            <if test="userUid != null">
+                and user_Uid = #{userUid}
+            </if>
+            <if test="activityId != null">
+                and activity_Id = #{activityId}
+            </if>
+            <if test="activityTo != null">
+                and activity_To = #{activityTo}
+            </if>
+        </where>
+    </select>
+
 </mapper>

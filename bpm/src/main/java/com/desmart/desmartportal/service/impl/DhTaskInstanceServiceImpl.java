@@ -1342,6 +1342,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return dhTaskInstanceMapper.updateByPrimaryKeySelective(taskInstanceSelective);
 	}
 
+	/**
+	 * 在重试拉取任务列表中插入一条数据
+	 * @param taskId
+	 * @return
+	 */
 	private int saveTaskToRetryTable(int taskId) {
 		DhSynTaskRetry dhSynTaskRetry = new DhSynTaskRetry();
 		dhSynTaskRetry.setId(EntityIdPrefix.DH_SYN_TASK_RETRY + UUID.randomUUID().toString());
@@ -1349,6 +1354,88 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		dhSynTaskRetry.setRetryCount(0);
 		dhSynTaskRetry.setStatus(0);
 		return dhSynTaskRetryMapper.insert(dhSynTaskRetry);
+	}
+
+	@Override
+	@Transactional
+	public ServerResponse revokeTask(String taskUid) {
+		if (StringUtils.isBlank(taskUid)) {
+			return ServerResponse.createByErrorMessage("参数异常");
+		}
+
+		DhTaskInstance currTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (currTaskInstance == null || !DhTaskInstance.STATUS_CLOSED.equals(currTaskInstance.getTaskStatus())) {
+			return ServerResponse.createByErrorMessage("任务不存在，或状态异常");
+		}
+
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
+        if (dhProcessInstance == null) return ServerResponse.createByErrorMessage("流程实例不存在");
+
+		String currActivityId = currTaskInstance.getTaskActivityId();
+		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+
+		if (!canTaskBeRevoke(currTaskInstance, currTaskNode)) {
+            return ServerResponse.createByErrorMessage("任务不可取回");
+        }
+
+        int taskId = currTaskInstance.getTaskId();
+        int insId = dhProcessInstance.getInsId();
+
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        // 获取执行树信息
+        HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
+        if(HttpReturnStatusUtil.isErrorResult(returnStatus)) {
+            return ServerResponse.createByErrorMessage("查询树流程信息出错");
+        }
+
+
+
+
+
+		return null;
+	}
+
+	/**
+	 * 判断任务是否能被取回
+	 * @param taskInstance
+	 * @param taskNode
+	 * @return
+	 */
+	private boolean canTaskBeRevoke(DhTaskInstance taskInstance, BpmActivityMeta taskNode) {
+		if (!BpmActivityMeta.LOOP_TYPE_NONE.equals(taskNode.getLoopType())) {
+			return false;
+		}
+		DhActivityConf currTaskNodeConf = taskNode.getDhActivityConf();
+		if (!"TRUE".equals(currTaskNodeConf.getActcCanRevoke())) {
+			return false;
+		}
+		// 任务是不是当前用户提交的
+		String currUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		if (taskInstance.getTaskDelegateUser() == null) {
+			// 没有被代理，查看当前用户是不是任务处理人
+			if (!taskInstance.getUsrUid().equals(currUserUid)) {
+				return false;
+			}
+		} else {
+			// 代理的任务，查看当前用户是不是代理人
+			if (!taskInstance.getTaskDelegateUser().equals(currUserUid)) {
+				return false;
+			}
+		}
+
+        DhRoutingRecord routingRecordOfTask = dhRoutingRecordService.getRoutingRecordOfTask(taskInstance);
+		// 如果路由信息不包含to不能取回
+		if (routingRecordOfTask == null || routingRecordOfTask.getActivityTo() == null) {
+		    return false;
+        }
+
+        // todo 查询现在的任务有没有被打开过
+
+
+        return true;
+
+
 	}
 
 }

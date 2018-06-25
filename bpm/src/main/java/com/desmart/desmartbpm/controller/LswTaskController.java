@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 操作引擎中的lswTask
+ */
 @Controller
 @RequestMapping(value = "/lswTask")
 public class LswTaskController {
@@ -21,6 +24,11 @@ public class LswTaskController {
     @Autowired
     private LswTaskService lswTaskService;
 
+    /**
+     * 修改任务的处理人
+     * @param data  json类型数据包含 taskId 和 userUid
+     * @return
+     */
     @RequestMapping(value = "/changeOwnerOfLswTask", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse changeOwnerOfLswTask(@RequestBody String data) {

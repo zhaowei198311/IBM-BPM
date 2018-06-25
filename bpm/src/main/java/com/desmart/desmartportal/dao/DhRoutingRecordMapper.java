@@ -29,4 +29,7 @@ public interface DhRoutingRecordMapper {
 	 * @return
 	 */
 	List<DhRoutingRecord> listPreRoutingRecord(@Param("insUid")String insUid, @Param("currActivityId")String currActivityId);
+
+
+	List<DhRoutingRecord> listBySelective(DhRoutingRecord dhRoutingRecord);
 }
