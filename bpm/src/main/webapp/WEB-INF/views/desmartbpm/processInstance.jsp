@@ -157,6 +157,19 @@ function drawTable(pageInfo, data) {
 		var item = list[i];
 		var sortNum = startSort + i;
 		
+		if(item.insStatus=='1'){
+			item.insStatus = '运转中';
+		}else if(item.insStatus=='2'){
+			item.insStatus = '完成';
+		}else if(item.insStatus=='3'){
+			item.insStatus = '失败';
+		}else if(item.insStatus=='4'){
+			item.insStatus = '终止';
+		}else if(item.insStatus=='5'){
+			item.insStatus = '未启动';
+		}else if(item.insStatus=='6'){
+			item.insStatus = '暂停';
+		}
 		trs += '<tr>'
 				+'<td>'
 				+ '<input type="checkbox" onclick="invertSelection(this)" name="checkProcessIns" value="'+item.insUid+'" lay-skin="primary">'
