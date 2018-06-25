@@ -9,8 +9,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.util.*;
+import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
@@ -109,6 +112,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private DhProcessDefinitionService dhProcessDefinitionService;
 	@Autowired
 	private TaskMongoDao taskMongoDao;
+	@Autowired
+	private DhSynTaskRetryMapper dhSynTaskRetryMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -1213,9 +1218,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 
 		String currActivityId = currTaskInstance.getTaskActivityId();
-		BpmActivityMeta currActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
-		// 判断当前节点能否驳回
-		if (!"TRUE".equals(currActivityMeta.getDhActivityConf().getActcCanReject())) {
+		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+
+		// 判断当前节点能否驳回, 如果不是普通节点不允许驳回
+		if (!"TRUE".equals(currTaskNode.getDhActivityConf().getActcCanReject())
+				|| !"none".equals(currTaskNode.getLoopType())) {
 			return ServerResponse.createByErrorMessage("当前节点不允许驳回");
 		}
 
@@ -1242,8 +1249,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 		// 获得目标节点
 		BpmActivityMeta targetNode = bpmActivityMetaService
-				.getByActBpdIdAndParentActIdAndProVerUid(targetActivityBpdId, currActivityMeta.getParentActivityId()
-						, currActivityMeta.getSnapshotId());
+				.getByActBpdIdAndParentActIdAndProVerUid(targetActivityBpdId, currTaskNode.getParentActivityId()
+						, currTaskNode.getSnapshotId());
 		String actcAssignVariable = targetNode.getDhActivityConf().getActcAssignVariable();
 
 		// 完成现在的任务
@@ -1280,10 +1287,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             log.error("重新分配任务失败，任务id:" + taskIdList.get(0));
         }
 
-        return ServerResponse.createBySuccess();
+		saveTaskToRetryTable(taskIdList.get(0));
+		unlockTask(taskIdList.get(0));
 
+        return ServerResponse.createBySuccess();
 	}
 
+	/**
+	 * 锁住驳回后还没有重新分配的任务
+	 * @param taskIdList
+	 */
 	private void lockTasksForRejectTaskByTaskIdList(List<Integer> taskIdList) {
 		if (taskIdList == null || taskIdList.isEmpty()) {
 			return;
@@ -1293,6 +1306,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			lockedTasks.add(new LockedTask(taskId, new Date(), LockedTask.REASON_REJECT_TASK));
 		}
 		taskMongoDao.batchSaveLockedTasks(lockedTasks);
+	}
+
+	/**
+	 * 将任务从锁住的任务中去除
+	 * @param taskId
+	 * @return
+	 */
+	private int unlockTask(int taskId) {
+		return taskMongoDao.removeLockedTask(taskId);
 	}
 
 	/**
@@ -1319,4 +1341,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		taskInstanceSelective.setTaskData(taskData);
 		return dhTaskInstanceMapper.updateByPrimaryKeySelective(taskInstanceSelective);
 	}
+
+	private int saveTaskToRetryTable(int taskId) {
+		DhSynTaskRetry dhSynTaskRetry = new DhSynTaskRetry();
+		dhSynTaskRetry.setId(EntityIdPrefix.DH_SYN_TASK_RETRY + UUID.randomUUID().toString());
+		dhSynTaskRetry.setTaskId(taskId);
+		dhSynTaskRetry.setRetryCount(0);
+		dhSynTaskRetry.setStatus(0);
+		return dhSynTaskRetryMapper.insert(dhSynTaskRetry);
+	}
+
 }
