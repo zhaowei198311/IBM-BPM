@@ -72,4 +72,16 @@ public interface DhProcessInstanceMapper {
 	 * @throws
 	 */
 	List<DhProcessInstance> queryInsDataByDate();
+	/**
+	 * 根据条件查询流程管理界面展示
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	List<DhProcessInstance> getProcesssInstanceListByCondition(DhProcessInstance dhProcessInstance);
+	/**
+	 * 根据insid修改流程实例
+	 * @param itemList
+	 * @return
+	 */
+	Integer updateProcessInstanceByInsId(DhProcessInstance dhProcessInstance);
 }

@@ -344,4 +344,43 @@
 		WHERE TRUNC(INS_CREATE_DATE) = TRUNC(SYSDATE-1)
 		OR TRUNC(INS_UPDATE_DATE) = TRUNC(SYSDATE-1)
 	</select>
+	
+	<select id="getProcesssInstanceListByCondition" 
+    		resultType="com.desmart.desmartportal.entity.DhProcessInstance"
+    		parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
+    	select ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name
+    	,listagg(taskIns.task_title,';') within group (order by taskIns.task_uid) as taskTitle,
+        listagg(su.user_name,';') within group (order by taskIns.task_uid) as handleUserName
+    	from DH_PROCESS_INSTANCE ins left join 
+    	DH_TASK_INSTANCE taskIns on ins.ins_uid = taskIns.ins_uid
+    	left join sys_user su on taskIns.usr_uid = su.user_uid
+    	,DH_PROCESS_META meta
+    	where ins.pro_uid = meta.pro_uid and ins.pro_app_id = meta.pro_app_id
+    	<if test="insTitle != null and insTitle != '' ">
+    		and ins.ins_title like concat(concat('%',#{insTitle}), '%') 
+    	</if>
+    	<if test="handleUserName != null and handleUserName != '' ">
+    		and su.user_name like concat(concat('%',#{handleUserName}), '%') 
+    	</if>
+    	group by ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name
+    </select>
+    <update id="updateProcessInstanceByInsId" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
+   
+            UPDATE DH_PROCESS_INSTANCE 
+            <set>
+            <if test="insStatus !=null and insStatus !=''">
+                INS_STATUS = #{insStatus},
+            </if>
+
+            <if test="insStatusId !=null ">
+                INS_STATUS_ID = #{insStatusId},
+            </if>
+            <if test="insUpdateDate !=null ">
+            	ins_update_date = #{insUpdateDate},
+            </if>
+
+            </set>
+            where ins_id = #{insId}
+        
+    </update>
 </mapper>

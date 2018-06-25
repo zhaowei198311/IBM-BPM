@@ -87,7 +87,9 @@ public class DhProcessInstance {
 	private String proName; // 流程名
 	private String departName;
 	private String companyName;
-	private String initUserFullname;
+	private String initUserFullname;//流程实例发起人
+	private String handleUserName;//任务处理人
+	private String taskTitle;//任务标题
 
 	public DhProcessInstance() {
 
@@ -449,6 +451,22 @@ public class DhProcessInstance {
 
 	public void setInsBusinessKey(String insBusinessKey) {
 		this.insBusinessKey = insBusinessKey;
+	}
+
+	public String getHandleUserName() {
+		return handleUserName;
+	}
+
+	public void setHandleUserName(String handleUserName) {
+		this.handleUserName = handleUserName;
+	}
+
+	public String getTaskTitle() {
+		return taskTitle;
+	}
+
+	public void setTaskTitle(String taskTitle) {
+		this.taskTitle = taskTitle;
 	}
 
 	/**

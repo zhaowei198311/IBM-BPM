@@ -2,7 +2,7 @@ var form = null;
 /* 动态表单渲染js */
 $(function(){
 	
-	//拉取全局配置
+	// 拉取全局配置
 	loadGlobalConfig();
 	
 	$("#upload-file").click(function(){
@@ -23,9 +23,13 @@ $(function(){
   			}
 		  var re = new RegExp(",","g");
 		  var formatStr = fileFormat.replace(re,"|");
-			 /* var maxFileSize = $(".hidden-value").find(".maxFileSize").val();
-			  var maxFileCount = $(".hidden-value").find(".maxFileCount").val();
-			  var fileFormat = $(".hidden-value").find(".fileFormat").val();*/
+			 /*
+				 * var maxFileSize =
+				 * $(".hidden-value").find(".maxFileSize").val(); var
+				 * maxFileCount =
+				 * $(".hidden-value").find(".maxFileCount").val(); var
+				 * fileFormat = $(".hidden-value").find(".fileFormat").val();
+				 */
 		  var btnButtom = $(".foot_accessory_file").find(".listAction");
 			  var dragDiv = $("#upload_file_modal").find(".layui-upload-drag");
 			  // 拖拽上传
@@ -74,12 +78,16 @@ $(function(){
 			            var tr = $(['<tr id="upload-'+ index +'">'
 			              ,'<td>'+ file.name +'</td>'
 			              ,'<td>'+ fileSize +'</td>'
-			              ,/*'<td><input type="text" style="width:70px;" /></td>'
-			              ,'<td><input type="text" style="width:70px;" /></td>'
-			              ,'<td><input type="text" /></td>'
-			              ,*/'<td>等待上传</td>'
+			              ,/*
+							 * '<td><input type="text" style="width:70px;" /></td>' ,'<td><input
+							 * type="text" style="width:70px;" /></td>' ,'<td><input
+							 * type="text" /></td>' ,
+							 */'<td>等待上传</td>'
 			              ,'<td>'
-			              	/*,'<button class="layui-btn layui-btn-mini demo-upload ">上传</button>'*/
+			              	/*
+							 * ,'<button class="layui-btn layui-btn-mini
+							 * demo-upload ">上传</button>'
+							 */
 			                ,'<button class="layui-btn layui-btn-mini demo-reload layui-hide">重传</button>'
 			                ,'<button class="layui-btn layui-btn-mini layui-btn-danger demo-delete">删除</button>'
 			              ,'</td>'
@@ -90,9 +98,10 @@ $(function(){
 			              obj.upload(index, file);
 			            });
 			            // 单个上传
-			            /*tr.find('.demo-upload').on('click', function(){
-			              obj.upload(index, file);
-			            });*/
+			            /*
+						 * tr.find('.demo-upload').on('click', function(){
+						 * obj.upload(index, file); });
+						 */
 			            
 			            // 删除
 			            tr.find('.demo-delete').on('click', function(){
@@ -168,7 +177,8 @@ $(function(){
 			          var tr = demoListView.find('tr#upload-'+ index)
 			          ,tds = tr.children();
 			          tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
-			          //tds.eq(3).find('.demo-upload').addClass('layui-hide');// 隐藏上传
+			          // tds.eq(3).find('.demo-upload').addClass('layui-hide');//
+						// 隐藏上传
 			          tds.eq(3).find('.demo-reload').removeClass('layui-hide'); // 显示重传
 			          layer.closeAll('loading');
 			        }
@@ -197,9 +207,10 @@ $(function(){
 	
 	// 全选
 	
-	  $("#all-file-check").click(function(){ var checkeNodes=
-	  $(".layui-table.upload-file-table").find(".file-check");
-	  checkeNodes.prop("checked",$(this).prop("checked")); });
+	  $("#all-file-check").click(function(){ 
+		  var checkeNodes=$(".layui-table.upload-file-table").find(".file-check");
+		  checkeNodes.prop("checked",$(this).prop("checked")); 
+	  });
 	 
 });
 var maxFileSize = "";
@@ -225,12 +236,14 @@ function loadGlobalConfig(){
  
 
 // 反选
-  function invertSelection(a){ var checkeNodes=
-	  $(".layui-table.upload-file-table").find(".file-check"); var checkedNodes=
-	  $(".layui-table.upload-file-table").find(".file-check:checked");
+  function invertSelection(a){ 
+	  var checkeNodes= $(".layui-table.upload-file-table").find(".file-check");
+	  var checkedNodes= $(".layui-table.upload-file-table").find(".file-check:checked");
 	  if(checkedNodes.length==checkeNodes.length){
-	  $("#all-file-check").prop("checked",$(a).prop("checked")); }else
-	  if(checkedNodes.length==0){ $("#all-file-check").prop("checked",false); } 
+		  $("#all-file-check").prop("checked",$(a).prop("checked")); 
+		}else{ 
+		  $("#all-file-check").prop("checked",false); 
+		} 
 	  };
 
 // 加载已上传的文件列表
@@ -256,8 +269,8 @@ function loadFileList(){
 		     /*
 				 * +"<td>"+result.data[i].appDocTags+"</td>" +"<td>"+result.data[i].appDocTitle+"</td>"
 				 *//*
-		      +"<td>"+result.data[i].appDocComment+"</td>"	
-		      +"<td>"+result.data[i].appDocType+"</td>"	*/		      
+					 * +"<td>"+result.data[i].appDocComment+"</td>" +"<td>"+result.data[i].appDocType+"</td>"
+					 */		      
 		      +"<td>"+result.data[i].appUserName+"</td>"	
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td>";
@@ -337,10 +350,10 @@ function loadFileList(){
 			    	layer.alert(res.msg);
 			    	loadFileList();
 			    	layer.closeAll('loading');
-			      //上传完毕回调
+			      // 上传完毕回调
 			    }
 			    ,error: function(res){
-			      //请求异常回调
+			      // 请求异常回调
 			    	layer.alert(res.msg);
 			    	layer.closeAll('loading');
 			    }
@@ -371,7 +384,7 @@ function batchDown(){
 			}
 		}
 		if(params != undefined && params.length>0){
-			//layer.load(1);
+			// layer.load(1);
 		batchPost(url,params);
 		}else{
 			return;
@@ -384,7 +397,7 @@ function singleDown(a){
   var url = common.getPath()+"/accessoryFileUpload/singleFileDown.do";
   var appDocFileName = $(a).parent().parent().find("td").eq(1).text();
   var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
-  //layer.load(1);
+  // layer.load(1);
   post(url,{appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl});
 };
 
@@ -422,9 +435,10 @@ function batchPost(URL, PARAMS) {
 	document.body.appendChild(temp_form);      
 	temp_form.submit();
 	temp_form.remove();
-	//Ajax刷新进度条
-	 /*$("#Progress").empty();
-	 showProgress();*/
+	// Ajax刷新进度条
+	 /*
+		 * $("#Progress").empty(); showProgress();
+		 */
     window.setTimeout(function(){
        var timer=window.setInterval(function(){
          $.ajax({
@@ -437,8 +451,8 @@ function batchPost(URL, PARAMS) {
                      window.clearInterval(timer);
                      hideProgress();
                  }else{
-                	 //$.data($.fn.circliful,"percent",result.data.percent)
-                	 //settings.precent=result.data.percent;
+                	 // $.data($.fn.circliful,"percent",result.data.percent)
+                	 // settings.precent=result.data.percent;
                 	 $("#Progress").data("percent",result.data.percent);
                 	 $("#Progress").empty();
                 	 showProgress();
@@ -458,7 +472,7 @@ function batchPost(URL, PARAMS) {
     isFirstExport=false;
 } 
 
-//显示历史版本附件
+// 显示历史版本附件
 function showHistoryFile(a){
 	var appDocIdCard = $(a).val();
 	$.ajax({
@@ -491,7 +505,7 @@ function showHistoryFile(a){
 	});
 	$("#showHistoryModal").css("display","block");
 }
-//隐藏历史版本附件模态框
+// 隐藏历史版本附件模态框
 function hideHistoryFile(){
 	$("#showHistoryModal").css("display","none");
 }
@@ -533,22 +547,22 @@ function deleteAccessoryFile(a){
 		});
 }
 
-//附件进度条js开始
-//显示进度条
+// 附件进度条js开始
+// 显示进度条
 var isFirstExport=true;
 function showProgress(){
     $("#Mask").css("height",$(document).height());
     $("#Mask").css("width",$(document).width());
     $("#Mask").show();
-    //if(isFirstExport){
+    // if(isFirstExport){
         $("#Progress").circliful();
-    //}else{
-        //$("#Progress .circle-text").text("0%");
-        //$("#Progress .circle-info").text("导出进度");
+    // }else{
+        // $("#Progress .circle-text").text("0%");
+        // $("#Progress .circle-info").text("导出进度");
         $("#Progress").show();
-    //}
+    // }
 }  
-//隐藏进度条
+// 隐藏进度条
 function hideProgress(){
     $("#Mask").hide();
     $("#Progress").empty();
@@ -557,16 +571,17 @@ function hideProgress(){
 
 (function( $ ) {
 	
-	 //滚动条事件    
+	 // 滚动条事件
     $(window).scroll(function() {    
-        //获取窗口一半的高度+滚动条高度    
+        // 获取窗口一半的高度+滚动条高度
         var offsetTop = $(window).scrollTop() + $(window).height() / 2;    
-        //改变样式 显示     
-        //$("#test").show();    
-        //改变样式 top 高度    
+        // 改变样式 显示
+        // $("#test").show();
+        // 改变样式 top 高度
         $("#Progress").animate({ top: offsetTop + "px" }, { duration: 600, queue: false });    
-        //改变left 位置    
-        //$("#test").animate({ left: $(window).width() - 40 + "px" }, { duration: 600, queue: false });    
+        // 改变left 位置
+        // $("#test").animate({ left: $(window).width() - 40 + "px" }, {
+		// duration: 600, queue: false });
     });    
 	
     
@@ -718,7 +733,7 @@ function hideProgress(){
                 } else {
                     fill = settings.fillColor;
                 }
-              //animate foreground circle
+              // animate foreground circle
               function animate(current) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -744,9 +759,9 @@ function hideProgress(){
 
                 if (curPerc < endPercent) {
                      curPerc += curStep;
-                     //requestAnimationFrame(function () {
+                     // requestAnimationFrame(function () {
                          animate(Math.min(curPerc, endPercent) / 100);
-                     //});
+                     // });
                 }
 
              }
@@ -761,6 +776,7 @@ function hideProgress(){
 
 /**
  * 附件编辑方法--调用myWPaint.js中的方法
+ * 
  * @param a
  * @returns
  */

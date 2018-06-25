@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.github.pagehelper.PageInfo;
 
@@ -209,4 +210,17 @@ public interface DhTaskInstanceMapper {
 	 */
 	int abandonOtherUnfinishedTasksOnTaskActivityId(@Param("taskUid")String taskUid, @Param("taskActivityId")String taskActivityId,
 													@Param("insUid")String insUid);
+	/*
+	 * 通过insUid集合批量的查询任务
+	 */
+	public List<DhTaskInstance> getDhTaskInstancesByBatch(@Param("itemList")List<DhProcessInstance> itemList);
+
+	/**
+	 * 批量修改任务状态
+	 * @param itemList
+	 * @param dhTaskInstance
+	 * @return
+	 */
+	public Integer updateTaskStatusByBatch(@Param("itemList")List<DhTaskInstance> itemList
+								,@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
 }

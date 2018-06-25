@@ -864,4 +864,31 @@
 			AND FROM_TASK_UID = #{fromTaskUid}
 		</where>
 	</select>
+	
+	<select id="getDhTaskInstancesByBatch" resultType="com.desmart.desmartportal.entity.DhTaskInstance"
+			parameterType="java.util.List">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+  		<foreach collection="itemList" index="index" item="item" open="(" separator="or" close=")">     
+  			ins_uid=#{item.insUid}
+   		</foreach>
+  		</where>
+	</select>
+	<update id="updateTaskStatusByBatch" parameterType="map">
+		begin  
+        <foreach collection="itemList" item="item" index="index" separator=";" > 
+            update DH_TASK_INSTANCE 
+            <set>
+            <if test="dhTaskInstance.taskStatus !=null and dhTaskInstance.taskStatus !=''">
+                task_status = #{dhTaskInstance.taskStatus},
+            </if>
+            <if test="dhTaskInstance.insUpdateDate != null ">
+            	INS_UPDATE_DATE = #{dhTaskInstance.insUpdateDate},
+            </if>
+		    </set>
+            where task_uid = #{item.taskUid}
+            </foreach>
+        ;end;
+	</update>
 </mapper>
