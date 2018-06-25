@@ -162,7 +162,7 @@
 			#{item.activityId},
 			#{item.paraName},
 			#{item.fldCodeName},
-			#{item.parameterType}
+			#{item.parameterType},
 			#{item.paraUid}
 			FROM DUAL
 		</foreach>

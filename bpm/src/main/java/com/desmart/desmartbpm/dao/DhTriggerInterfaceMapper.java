@@ -73,4 +73,9 @@ public interface DhTriggerInterfaceMapper {
 	 * 根据触发器id获得接口触发器
 	 */
 	List<DhTriggerInterface> queryTriIntByTriUidAndType(@Param("triUid")String triUid,@Param("parameterType")String parameterType);
+	
+	/**
+	 * 根据表单id 删除
+	 */
+	int deleteByDynUid(String dynUid);
 }
