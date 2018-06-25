@@ -40,6 +40,8 @@ public class DhInterfaceParameter {
 	
 	private String dateFormat;//时间格式
 	
+	private String	paraInOut;
+	
 	private List<DhInterfaceParameter> dhInterfaceParameters;
 	
 	/**
@@ -214,6 +216,14 @@ public class DhInterfaceParameter {
 	}
 	
 	
+
+	public String getParaInOut() {
+		return paraInOut;
+	}
+
+	public void setParaInOut(String paraInOut) {
+		this.paraInOut = paraInOut;
+	}
 
 	public List<DhInterfaceParameter> getDhInterfaceParameters() {
 		return dhInterfaceParameters;
