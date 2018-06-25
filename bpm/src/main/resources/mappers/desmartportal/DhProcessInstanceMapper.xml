@@ -339,10 +339,15 @@
 		</where>
 	</update>
 	
-	<select id="queryInsDataByDate" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT INS_UID, INS_DATA FROM DH_PROCESS_INSTANCE
-		WHERE TRUNC(INS_CREATE_DATE) = TRUNC(SYSDATE-1)
-		OR TRUNC(INS_UPDATE_DATE) = TRUNC(SYSDATE-1)
+	<select id="queryInsDataByUser" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
+		SELECT <include refid="Base_Column_List" /> 
+		FROM DH_PROCESS_INSTANCE
+		<where>
+			INS_UID IN (
+			SELECT DISTINCT INS_UID FROM DH_TASK_INSTANCE
+			WHERE USR_UID = #{usrUid}
+			)
+		</where>
 	</select>
 	
 	<select id="getProcesssInstanceListByCondition" 

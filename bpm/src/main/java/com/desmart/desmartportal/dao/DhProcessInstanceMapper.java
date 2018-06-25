@@ -65,13 +65,15 @@ public interface DhProcessInstanceMapper {
 	
 	/**
 	 * 
-	 * @Title: queryInsDataByDate  
-	 * @Description: 查询创建时间是前一天的所有数据  
+	 * @Title: queryInsDataByUser  
+	 * @Description: 查询流程实例  
+	 * @param @param usrUid
+	 * @param @param insUid
 	 * @param @return  
-	 * @return List<DhProcessInstance>  
+	 * @return List<DhTaskInstance>  
 	 * @throws
 	 */
-	List<DhProcessInstance> queryInsDataByDate();
+	List<DhProcessInstance> queryInsDataByUser(@Param("usrUid")String usrUid, @Param("insUid")String insUid);
 	/**
 	 * 根据条件查询流程管理界面展示
 	 * @param dhProcessInstance

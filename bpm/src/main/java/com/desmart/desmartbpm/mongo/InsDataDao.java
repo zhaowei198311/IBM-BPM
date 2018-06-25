@@ -15,7 +15,7 @@ public interface InsDataDao {
 	 * @return List<InsData>
 	 * @throws
 	 */
-	List<JSONObject> queryInsData(String key, String value);
+	List<JSONObject> queryInsData(String key, String value, String usrUid, String insUid);
 	
 	/**
 	 * 
@@ -29,7 +29,8 @@ public interface InsDataDao {
 	 * @return List<InsData>
 	 * @throws
 	 */
-	List<JSONObject> queryInsData(String key, String value, int page, int size);
+	List<JSONObject> queryInsData(String key, String value, int page, int size, 
+								String usrUid, String insUid);
 	
 	
 	/**
@@ -40,5 +41,5 @@ public interface InsDataDao {
 	 * @return   
 	 * @throws
 	 */
-	void insertInsData();
+//	void insertInsData(String usrUid, String insUid);
 }
