@@ -572,7 +572,8 @@ var common = {
 			$("[name='"+name+"']").next().find(".layui-edge").css("display","none");
 		}
 		if($("[name='"+name+"']").attr("title")=="choose_user" 
-			|| $("[name='"+name+"']").attr("title")=="choose_value"){
+			|| $("[name='"+name+"']").attr("title")=="choose_value"
+			|| $("[name='"+name+"']").attr("title")=="choose_depart"){
 			$("[name='"+name+"']").parent().find("i").css("display","none");
 			$("[name='"+name+"']").css("width","100%");
 		}
@@ -629,13 +630,13 @@ var common = {
 				}else if($("[name='"+name+"']").prop("tagName")=="TABLE"){
 					var tableObj = $("[name='"+name+"']");
 					var tdArr = tableObj.find("td");
+					tableObj.find("th[col-type='tool']").remove();
 					var fieldCodeName = "";
 					tdArr.each(function(){
 						if($(this).find("input").length != 0){
 							$(this).find("input").attr("disabled","true");
 						}else{
-							$(this).find("i").css("color","#F5F5F5");
-							$(this).find("i").attr("title","禁用").removeAttr("onclick");
+							$(this).remove();
 						}
 					});
 				}
