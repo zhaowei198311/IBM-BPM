@@ -515,16 +515,17 @@ function showTextBlockModal(obj) {
     $("#text-block-col").val(textCol);
 }
 
+//数据表格
 function showDataTableModal(obj) {
     $("#dataTableModal").modal("show");
 
     view = $(obj).parent().next().next();
     var tableObj = view.find(".subDiv table");
+    var label = tableObj.attr("table-label");
     var id = tableObj.attr("id");
     var name = tableObj.attr("name");
     var thObjArr = tableObj.find("thead th");
     var thNum = thObjArr.length;
-    var tableLabel = tableObj.attr("table-label");
     $("#dataTableModal .data-table-set").remove();
     for (var i = 0; i < thObjArr.length; i++) {
         var thObj = $(thObjArr[i]);
@@ -619,7 +620,7 @@ function showDataTableModal(obj) {
     $("#data-table-id").val(id);
     $("#data-table-name").val(name);
     $("#data-table-number").val(thNum);
-    $("#data-table-label").val(tableLabel);
+    $("#data-table-label").val(label);
 }
 
 //根据数据字典id获得数据字典名称

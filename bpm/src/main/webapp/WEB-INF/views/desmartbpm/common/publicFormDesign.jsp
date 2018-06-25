@@ -460,7 +460,7 @@
 										<div class="preview">数据表格</div>
 										<div class="view">
 											<div class="subDiv">
-												<table class="table table-bordered">
+												<table class="table table-bordered" table-label="数据表格">
 													<thead>
 														<tr>
 															<th col-type="text">1</th>
@@ -1648,12 +1648,9 @@
 
 					<form>
 						<div class="form-group">
-							<label class="col-xs-2 col-sm-offset-2 control-label">
-								标签
-								<span style="color:red;float:left;">*</span>
-							</label>
+							<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
 							<div class="col-xs-7">
-								<input type="text" class="form-control" id="data-table-label" placeholder="请输入组件name">
+								<input type="text" class="form-control" id="data-table-label" value="text" placeholder="请输入组件标签">
 							</div>
 						</div>
 						<div class="form-group">

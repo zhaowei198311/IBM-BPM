@@ -362,7 +362,8 @@ function downloadLayoutSrc() {
             ["onkeypress"],
             ["value"],
             ["name"],
-            ["title"]
+            ["title"],
+            ["table-label"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -907,7 +908,7 @@ function saveHtml() {
                                         case "TABLE":
                                             { //表格
                                                 filedAttr.fldCodeName = subObj.attr("name");
-                                                filedAttr.fldName = "数据表格";
+                                                filedAttr.fldName = subObj.attr("table-label");
                                                 filedAttr.multiValue = "true";
                                                 filedAttr.multiSeparator = ",";
                                                 filedAttr.fldType = "object";
@@ -1099,7 +1100,7 @@ function saveHtml() {
                                         case "TABLE":
 	                                        { //表格
 	                                            filedAttr.fldCodeName = subObj.attr("name");
-	                                            filedAttr.fldName = "数据表格";
+	                                            filedAttr.fldName = subObj.attr("table-label");
 	                                            filedAttr.multiValue = "true";
 	                                            filedAttr.multiSeparator = ",";
 	                                            filedAttr.fldType = "object";

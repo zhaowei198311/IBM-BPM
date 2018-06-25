@@ -113,15 +113,19 @@ function drawPage() {
                     		trHtml +='</td>';
                     	}
                     	trHtml += '</tr>';
+                    	var tableLabel = tableObj.attr("table-label");
                     	tableObj.append("<tbody>"+trHtml+"</tbody>");
-                    	formHtml += "<table class='layui-table data-table' name='"+tableObj.attr("name")+"'>"+tableObj.html()+"</table>";
+                    	formHtml += "<p class='title_p'>"+tableLabel
+                    		+"<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><table class='layui-table data-table' name='"
+                    		+tableObj.attr("name")+"' title='"+tableLabel+"'>"+tableObj.html()
+                    		+"</table>";
                         formHtml += tableHead;
                 	}else if(pObj.length!=0){
                 		if(pObj.attr("title")=="table_title"){
                 			//表单块标题
                         	column.find("p").addClass("title_p");
                         	column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
-                            pHtml = column.html();
+                            pHtml = column.find(".subDiv").html();
                             var pText = column.find("p")[0].firstChild.data.trim();
                             flag = false;
                             if (column.find(".title_p").length != 0) {
@@ -317,7 +321,7 @@ function drawPage() {
                     if (column.find("p").length != 0) {
                     	column.find("p").addClass("title_p");
                         column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
-                        pHtml = column.html();
+                        pHtml = column.find(".subDiv").html();
                         formHtml = formHtml.substring(0, formHtml.length - 4);
                         formHtml += "</tbody></table>";
                         formHtml += pHtml;
@@ -364,7 +368,11 @@ function drawPage() {
                 	}
                 	trHtml += '</tr>';
                 	tableObj.append("<tbody>"+trHtml+"</tbody>");
-                	formHtml += "<table class='layui-table data-table' name='"+tableObj.attr("name")+"'>"+tableObj.html()+"</table>";
+                	var tableLabel = tableObj.attr("table-label");
+                	formHtml += "<p class='title_p'>"+tableLabel
+		            		+"<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><table class='layui-table data-table' name='"
+		            		+tableObj.attr("name")+"' title='"+tableLabel+"'>"+tableObj.html()
+		            		+"</table>";
                     formHtml += tableHead;
                 } else {
                     flag = true;
@@ -570,8 +578,10 @@ function drawPage() {
 
 function showTable(obj){
 	var pText = $(obj).parent()[0].firstChild.data.trim();
-	console.log(pText);
-	$("table[title='"+pText+"']").slideToggle("slow");
+	var tableText = $(obj).parent().next().attr("title");
+	if(pText == tableText){
+		$(obj).parent().next().slideToggle("slow");
+	}
 }
 
 /**
