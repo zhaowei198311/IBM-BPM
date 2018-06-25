@@ -59,12 +59,13 @@
             	z-index: 11;
         	    color: #717171;
    				padding: 20px;
-   				width: 100%;
+   				width: 95%;
             	height: 100%;
     			background: #fff;
     			position: fixed;
-    			left: 2%;
-   				top: 5%;
+   				left: 1%;
+    			top: 1%;
+    			right: 1%;
     			box-shadow: 0 0 10px #ccc;
     			display: none;
         }
@@ -542,7 +543,7 @@
 	<!-- 附件图片编辑 -->
 	<div class="display_container_image_edit" >
 		<div class="top">附件图片编辑</div>
-		<img onclick="closeImageEdit()" style="position: absolute;left: 90%;bottom: 92%;" 
+		<img onclick="closeImageEdit()" style="position: absolute;left: 94%;bottom: 92%;" 
 			alt="关闭" src="resources/desmartportal/images/close.jpg">
 		<div class="display_content_image_edit" >
 		<div id="imgEditMain" >
