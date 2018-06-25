@@ -48,12 +48,12 @@ public class DhInterfaceController {
 	
 	@RequestMapping(value = "/interfaceTest")
 	public ModelAndView interfaceTest(String intUid,String intTitle,String paraInOut) {
-		/*try {
+		try {
 			intTitle=new String(intTitle.getBytes("iso8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		ModelAndView modev = new ModelAndView("desmartsystem/usermanagement/interface/interfaceTest");
 		modev.addObject("intUid", intUid);
 		modev.addObject("intTitle", intTitle);
