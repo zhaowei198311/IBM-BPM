@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -28,6 +29,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -361,6 +363,46 @@ public class RestUtil {
                 e.printStackTrace();
             }
         }
+        return result;
+    }
+    
+    /**
+     * 调用PUT请求
+     * @param request
+     * @param url
+     * @param params
+     * @return
+     */
+    public HttpReturnStatus doPut(String url, Map<String, Object> params) {
+        HttpReturnStatus result = new HttpReturnStatus();
+        String debugMsg = "";
+        HttpPut httpPut = new HttpPut(url);
+        RequestConfig reqcfg = HttpClientUtils.getRequestConfig(this.bpmGlobalConfig.getBpmClientTimeout());
+        httpPut.setConfig(reqcfg);
+        List<NameValuePair> nvParams = new ArrayList();
+        Iterator var10 = params.keySet().iterator();
+
+        String withName;
+        while(var10.hasNext()) {
+            withName = (String)var10.next();
+            debugMsg = debugMsg + withName + "=" + params.get(withName).toString() + ", ";
+            nvParams.add(new BasicNameValuePair(withName, params.get(withName).toString()));
+        }
+
+        try {
+            httpPut.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpPut.setHeader("Accept", "application/json");
+            httpPut.setHeader("Content-Language", "zh-CN");
+            httpPut.setEntity(new UrlEncodedFormEntity(nvParams, Charsets.UTF_8));
+            CloseableHttpResponse response = this.httpClient.execute(httpPut, context);
+            String msg = EntityUtils.toString(response.getEntity(), "UTF-8");
+            result.setCode(response.getStatusLine().getStatusCode());
+            result.setMsg(msg);
+            response.close();
+        } catch (Exception var13) {
+            LOG.error("put请求失败！", var13);
+        }
+
         return result;
     }
     

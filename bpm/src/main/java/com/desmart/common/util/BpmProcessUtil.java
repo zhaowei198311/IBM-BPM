@@ -1,6 +1,5 @@
 package com.desmart.common.util;
 
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,9 +14,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.util.rest.RestUtil;
+import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -312,7 +310,7 @@ public class BpmProcessUtil {
         try {
             String host = bpmGlobalConfig.getBpmServerHost();
             host = host.endsWith("/") ? host : host + "/";
-            String url = host + "rest/bpm/wle/v1/visual/processModel/{0}?{1}";
+	        String url = host + "rest/bpm/wle/v1/processModel/{0}?{1}";
             String params = "projectId=" + proAppId;
             if (StringUtils.isNotBlank(snapshotId)) {
                 params = params + "&snapshotId=" + snapshotId;
@@ -331,7 +329,36 @@ public class BpmProcessUtil {
         return result;
 	}
 
+	/**
+	 * 终止流程实例
+	 * @param request
+	 * @param instanceId
+	 * @return
+	 */
+	public HttpReturnStatus terminateInstance(String instanceId) {
+		HttpReturnStatus result = null;
+		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
 
+		try {
+			String host = this.bpmGlobalConfig.getBpmServerHost();
+			host = host.endsWith("/") ? host : host + "/";
+			String url = host + "rest/bpm/wle/v1/process/{0}";
+			Map<String, Object> pmap = new HashMap();
+			url = MessageFormat.format(url, instanceId);
+			url = url + "?action=terminate";
+			result = restUtil.doPut(url, pmap);
+			if (BpmClientUtils.isErrorResult(result)) {
+				log.error("停止流程实例失败！\r\n" + result.getMsg());
+				result.setCode(-1);
+			}
+		} catch (Exception var7) {
+			log.error("停止流程实例出错，instanceId：" + instanceId, var7);
+			result.setCode(-1);
+			result.setMsg(var7.toString());
+		}
+
+		return result;
+	}
 
 
 }
