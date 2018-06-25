@@ -12,6 +12,7 @@
 		<result column="PARA_NAME" property="paraName" />
 		<result column="FLD_CODE_NAME" property="fldCodeName" />
 		<result column="PARAMETER_TYPE" property="parameterType" />
+		<result column="PARA_UID" property="paraUid" />
 	</resultMap>
 
 	<resultMap id="DhTriggerInterfaceAndFormMap"
@@ -26,6 +27,7 @@
 		<result column="PARA_NAME" property="paraName" />
 		<result column="FLD_CODE_NAME" property="fldCodeName" />
 		<result column="PARAMETER_TYPE" property="parameterType" />
+		<result column="PARA_UID" property="paraUid" />
 		<association property="bpmForm"
 			javaType="com.desmart.desmartbpm.entity.BpmForm">
 			<id column="DYN_UID" property="dynUid" />
@@ -43,13 +45,13 @@
 	<sql id="Base_Column_List">
 		TIN_UID,TRI_UID,INT_UID,
 		DYN_UID,CREATOR,CREATE_TIME,ACTIVITY_ID,
-		PARA_NAME,FLD_CODE_NAME,PARAMETER_TYPE
+		PARA_NAME,FLD_CODE_NAME,PARAMETER_TYPE,PARA_UID
 	</sql>
 
 	<sql id="Condition_Column_List">
 		T.TIN_UID,T.TRI_UID,T.INT_UID,
 		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTIVITY_ID,
-		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,M.DYN_TITLE
+		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,T.PARA_UID,M.DYN_TITLE
 	</sql>
 
 	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
@@ -88,6 +90,9 @@
 			</if>
 			<if test="parameterType != null and parameterType !=''">
 				AND PARAMETER_TYPE = #{parameterType}
+			</if>
+			<if test="paraUid != null and paraUid !=''">
+				AND PARA_UID = #{paraUid}
 			</if>
 		</where>
 	</select>
@@ -136,7 +141,8 @@
 		#{activityId},
 		#{paraName},
 		#{fldCodeName},
-		#{parameterType}
+		#{parameterType},
+		#{paraUid}
 		)
 	</insert>
 
@@ -157,6 +163,7 @@
 			#{item.paraName},
 			#{item.fldCodeName},
 			#{item.parameterType}
+			#{item.paraUid}
 			FROM DUAL
 		</foreach>
 	</insert>
@@ -214,6 +221,9 @@
 				<if test="parameterType != null and parameterType !=''">
 					PARAMETER_TYPE = #{parameterType}
 				</if>
+				<if test="paraUid != null and paraUid !=''">
+					PARA_UID = #{paraUid}
+			</if>
 			</trim>
 		</set>
 		<where>
