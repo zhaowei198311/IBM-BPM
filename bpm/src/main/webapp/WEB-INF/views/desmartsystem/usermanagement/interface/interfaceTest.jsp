@@ -23,7 +23,7 @@
 	  <legend>${intTitle} 请求参数</legend>
 	</fieldset> 
 	<!-- <form class="layui-form form-inline" method="post" action="interfaceExecute/interfaceSchedule"  onsubmit="return submitInterface(this);"> -->
-	<form class="layui-form"  method="post" action="" >
+	<form class="layui-form interfaceForm"  method="post" action="" >
 		<input type="hidden"  value="${intUid}" id="intUid" />
 			<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 				<div class="layui-form-item">
