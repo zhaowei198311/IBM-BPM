@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.DhInterface;
+import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 
@@ -46,18 +47,25 @@ public class DhInterfaceController {
 	}
 	
 	@RequestMapping(value = "/interfaceTest")
-	public ModelAndView interfaceTest(String intUid,String intTitle) {
+	public ModelAndView interfaceTest(String intUid,String intTitle,String paraInOut) {
 		/*try {
 			intTitle=new String(intTitle.getBytes("iso8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		
 		ModelAndView modev = new ModelAndView("desmartsystem/usermanagement/interface/interfaceTest");
 		modev.addObject("intUid", intUid);
 		modev.addObject("intTitle", intTitle);
-		modev.addObject("dhInterfaceParameterList", dhInterfaceParameterService.querybyintUid(intUid));
+		
+		
+		//接口参数查询参数
+		DhInterfaceParameter dhInterfaceParameter=new DhInterfaceParameter();
+		dhInterfaceParameter.setIntUid(intUid);
+		dhInterfaceParameter.setParaInOut(paraInOut);
+		
+		
+		modev.addObject("dhInterfaceParameterList", dhInterfaceParameterService.byQueryParameter(dhInterfaceParameter));
 		return modev;
 	}
 	
@@ -70,20 +78,42 @@ public class DhInterfaceController {
 
 	@RequestMapping(value = "/add")
 	@ResponseBody
-	public void addDhInterface(DhInterface dhInterface) {
-		dhInterfaceService.saveDhInterface(dhInterface);
+	public  ServerResponse addDhInterface(DhInterface dhInterface) {
+		try {
+			dhInterfaceService.saveDhInterface(dhInterface);
+			return ServerResponse.createBySuccessMessage("添加成功");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage("添加失败!");
+		}
 	}
 
 	@RequestMapping(value = "/del")
 	@ResponseBody
-	public void deleteDhInterface(@RequestParam(value = "intUid") String interfaceId) {
-		dhInterfaceService.delDhInterface(interfaceId);
+	public ServerResponse deleteDhInterface(@RequestParam(value = "intUid") String interfaceId) {
+		try {
+			dhInterfaceService.delDhInterface(interfaceId);
+			return ServerResponse.createBySuccessMessage("删除成功");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage("删除失败!");
+		}
 	}
+	
 	
 	@RequestMapping(value = "/update")
 	@ResponseBody
-	public void updateDhInterface(DhInterface dhInterface) {
-		dhInterfaceService.updateDhInterface(dhInterface);
+	public ServerResponse updateDhInterface(DhInterface dhInterface) {
+		try {
+			dhInterfaceService.updateDhInterface(dhInterface);
+			return ServerResponse.createBySuccessMessage("修改成功");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ServerResponse.createByErrorMessage("修改失败!");
+		}
 	}
 	
 	@RequestMapping(value = "/queryDhInterfaceById")
