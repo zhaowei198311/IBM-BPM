@@ -7,6 +7,7 @@
 <title>流程实例管理</title>
 <%@include file="common/head.jsp" %>
 <%@include file="common/tag.jsp" %>
+<link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/my.css" media="all">
 <link href="<%=basePath%>/resources/desmartbpm/css/layui.css" rel="stylesheet"/>
 <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/modules/laydate/default/laydate.css" />
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/jquery-3.3.1.js" ></script>
