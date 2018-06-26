@@ -152,7 +152,7 @@ public interface DhProcessInstanceService {
 	 * @param routingData  下个环节的路由信息
 	 * @return
 	 */
-	ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData);
+	ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, JSONObject processDataJson);
 
 	/**
 	 * 根据当前任务所在的流程实例、下个环节的路由信息、提交的pubBo来创建子流程，如果不需要创建返回sucess

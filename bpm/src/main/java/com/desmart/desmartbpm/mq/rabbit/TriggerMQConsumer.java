@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
+import com.desmart.desmartportal.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -24,10 +26,6 @@ import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartbpm.service.DhTriggerExceptionService;
 import com.desmart.desmartbpm.service.DhTriggerService;
-import com.desmart.desmartportal.entity.BpmRoutingData;
-import com.desmart.desmartportal.entity.CommonBusinessObject;
-import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
@@ -56,7 +54,10 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	@Autowired
 	private DhRouteService dhRouteServiceImpl;
 	@Autowired
-	DhTriggerService dhTriggerService;
+	private DhTriggerService dhTriggerService;
+	@Autowired
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
+
 	
 	private WebApplicationContext wac;
 
@@ -86,6 +87,8 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		JSONObject processInstanceJson = json.getJSONObject("currProcessInstance");
 		JSONObject pubBoJson = json.getJSONObject("pubBo");// CommonBusinessObject
 		JSONObject routingDataJson = json.getJSONObject("routingData");
+		JSONObject routingRecordJson = json.getJSONObject("routingRecord");
+
 
 		// 初始化
 		DhTaskInstance dhTaskInstance = null;
@@ -93,7 +96,8 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		DhProcessInstance dhProcessInstance = null;
 		CommonBusinessObject pubBo = null;
 		BpmRoutingData routingData = null;
-		
+		DhRoutingRecord dhRoutingRecord = null;
+
 		//jsonObject转javaBean对象
 		try {
 			if (null != taskInstanceJson) {
@@ -112,6 +116,10 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 			if (null != routingDataJson) {
 				routingData = (BpmRoutingData) JSONObject.toJavaObject(taskInstanceJson, BpmRoutingData.class);
 			}
+			if (null != routingDataJson) {
+				dhRoutingRecord = (DhRoutingRecord) JSONObject.toJavaObject(routingRecordJson, DhRoutingRecord.class);
+			}
+
 		} catch (Exception e) {
 			log.info("TriggerMQConsumer消费者中解析jsonObject to bean 出错...");
 			e.printStackTrace();
@@ -149,26 +157,36 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		}
 		
         //  调用api 完成任务
+		int taskId = dhTaskInstance.getTaskId();
+		int insId = dhProcessInstance.getInsId();
+
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(dhTaskInstance.getTaskId(), pubBo);
-        Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-        if (errorMap.get("errorResult") == null) {
-            ServerResponse<JSONObject> didMoveResponse = dhRouteServiceImpl.didTokenMove(dhProcessInstance.getInsId(), routingData);
-            if (didMoveResponse.isSuccess()) {
-                JSONObject processData = didMoveResponse.getData();
-                if (processData != null) {
-                    // 关闭需要结束的流程
-                    dhProcessInstanceService.closeProcessInstanceByRoutingData(dhProcessInstance.getInsId(), routingData);
-                    // 创建需要创建的子流程
-                    dhProcessInstanceService.createSubProcessInstanceByRoutingData(dhProcessInstance, routingData, pubBo, processData);
-                }
-            } else {
-            	log.error("判断TOKEN是否移动失败，流程实例编号：" + dhProcessInstance.getInsId() + " 任务主键：" + dhTaskInstance.getTaskId());
-            }
-        } else {
-            throw new PlatformException("调用RESTful API完成任务失败");
-        }
+		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
+		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+		Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+		if (errorMap.get("errorResult") == null) {
+			// 判断实际TOKEN是否移动了
+			ServerResponse<JSONObject> didTokenMoveResponse = dhRouteServiceImpl.didTokenMove(insId, routingData);
+			if (didTokenMoveResponse.isSuccess()) {
+				JSONObject processData = didTokenMoveResponse.getData();
+				if (processData != null) {
+					// 实际Token移动了
+					// 关闭需要结束的流程
+					dhRoutingRecordMapper.insert(dhRoutingRecord);
+					dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
+					// 创建需要创建的子流程
+					dhProcessInstanceService.createSubProcessInstanceByRoutingData(dhProcessInstance, routingData, pubBo, processData);
+				} else {
+					// 实际Token没有移动, 更新流转信息
+					dhRoutingRecord.setActivityTo(null);
+					dhRoutingRecordMapper.insert(dhRoutingRecord);
+				}
+			} else {
+				log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + dhTaskInstance.getInsUid());
+			}
+		} else {
+			throw new PlatformException("调用RESTful API完成任务失败");
+		}
 	}
 
 }

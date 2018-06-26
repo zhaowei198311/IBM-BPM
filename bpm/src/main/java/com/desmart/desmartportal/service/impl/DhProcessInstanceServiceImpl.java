@@ -860,12 +860,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
 
 	@Override
-    public ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData) {
+    public ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, JSONObject processDataJson) {
         Set<BpmActivityMeta> endProcessNodes = routingData.getEndProcessNodes();
         for (Iterator<BpmActivityMeta> it = endProcessNodes.iterator(); it.hasNext();) {
             BpmActivityMeta item = it.next();
             DhProcessInstance subInstance = dhProcessInstanceMapper.getByInsIdAndTokenActivityId(insId, item.getActivityId());
             // 判断执行树下是否没有任务
+
 
             DhProcessInstance selective = new DhProcessInstance(subInstance.getInsUid());
             selective.setInsFinishDate(new Date());
@@ -875,6 +876,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
         Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
         if (mainEndNodes.size() > 0) {
+        	// 判断主流程是否结束
+
             DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             DhProcessInstance selective = new DhProcessInstance(mainProcessInstance.getInsUid());
             selective.setInsFinishDate(new Date());

@@ -9,7 +9,7 @@ public class JSONUtils {
     }
 
     /**
-     * 将新的JSONObject的属性更新到老的JSONObject
+     * 将新的JSONObject的属性更新到老的JSONObject,SignCount不更新
      * @param newObj
      * @param oldObj 原先的对象
      * @return
@@ -25,6 +25,7 @@ public class JSONUtils {
             if (newObjVal != null && oldObjVal != null) {
                 combinedObjVal = combine(newObjVal, oldObjVal);
             } else {
+                // 如果是signCount就直接设置为新对象中的值
                 combinedObjVal = newObj.get(key.toString());
             }
         }

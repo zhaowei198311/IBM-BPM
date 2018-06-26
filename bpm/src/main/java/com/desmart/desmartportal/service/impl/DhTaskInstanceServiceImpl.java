@@ -420,7 +420,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                         // 实际Token移动了
                         // 关闭需要结束的流程
                         dhRoutingRecordMapper.insert(routingRecord);
-                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData);
+                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
                         // 创建需要创建的子流程
                         dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
                     } else {
