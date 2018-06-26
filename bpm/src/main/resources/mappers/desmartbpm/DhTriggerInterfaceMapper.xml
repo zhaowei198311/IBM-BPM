@@ -40,6 +40,22 @@
 			<result column="CREATE_TIME" property="createTime" />
 			<result column="DYN_WEBPAGE" property="dynWebpage" />
 		</association>
+		<association property="dhInterfaceParameter"
+			javaType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
+			<id column="PARA_UID" property="paraUid" />
+			<result column="PARA_INDEX" property="paraIndex" />
+			<result column="PARA_NAME" property="paraName" />
+			<result column="PARA_DESCRIPTION" property="paraDescription" />
+			<result column="PARA_TYPE" property="paraType" />
+			<result column="PARA_SIZE" property="paraSize" />
+			<result column="MULTI_SEPARATOR" property="multiSeparator" />
+			<result column="MULTI_VALUE" property="multiValue" />
+			<result column="IS_MUST" property="isMust" />
+			<result column="INT_UID" property="intUid" />
+			<result column="PARA_PARENT" property="paraParent" />
+			<result column="DATE_FORMAT" property="dateFormat" />
+			<result column="PARA_INOUT" property="paraInOut" />
+		</association>
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -51,7 +67,8 @@
 	<sql id="Condition_Column_List">
 		T.TIN_UID,T.TRI_UID,T.INT_UID,
 		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTIVITY_ID,
-		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,T.PARA_UID,M.DYN_TITLE
+		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,T.PARA_UID,M.DYN_TITLE,
+		I.PARA_TYPE,I.PARA_PARENT,I.PARA_INDEX
 	</sql>
 
 	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
@@ -113,8 +130,8 @@
 		SELECT
 		<include refid="Condition_Column_List" />
 		FROM
-		DH_TRIGGER_INTERFACE T LEFT JOIN BPM_FORM M
-		ON T.DYN_UID = M.DYN_UID
+		(DH_TRIGGER_INTERFACE T LEFT JOIN BPM_FORM M ON T.DYN_UID = M.DYN_UID) 
+		LEFT JOIN Dh_INTERFACE_PARAMETER I ON T.PARA_UID = I.PARA_UID
 		<where>
 			TRI_UID = #{triUid}
 			AND

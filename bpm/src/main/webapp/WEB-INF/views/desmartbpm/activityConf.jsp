@@ -919,11 +919,11 @@
 		</div>
 	</div>
 	<!-- 修改触发器弹出框 -->
-	<div class="display_container8" id="editTrigger">
-		<div class="display_content3">
+	<div class="display_container8" id="editTrigger" >
+		<div class="display_content3" style="height: 400px;">
 			<div class="top">修改参数映射</div>
 			<div class="layui-row layui-form" style="margin-top: 10px">
-				<div class="middle1" style="height: 300px;" class="layui-row">
+				<div class="middle1" style="width: 730px;">
 					<fieldset class="layui-elem-field layui-field-title"
 						style="margin-top: 20px; width: 730px;">
 						<legend>当前表单</legend>
@@ -931,7 +931,7 @@
 					<select id="tb_Trigger" name="tb_Trigger" lay-filter="tb_Trigger" disabled="disabled">
 					</select>
 					<fieldset class="layui-elem-field layui-field-title"
-						style="margin-top: 20px; width: 730px;">
+						style="margin-top: 20px; width: 750px;">
 						<legend>当前参数对照</legend>
 					</fieldset>
 					<div class="layui-tab layui-tab-brief" lay-filter="updatParamter">
@@ -940,9 +940,21 @@
 							<li>输出参数</li>
 						</ul>
 					<div class="layui-tab-content">
+						<fieldset class="layui-elem-field layui-field-title"
+							style="margin-top: 20px; width: 750px;">
+								<legend>普通参数映射</legend>
+						</fieldset>
 						<div id="update_param" class="layui-tab-item layui-show"></div>
     					<div id="update_param2" class="layui-tab-item"></div>
   					</div>
+  					<div class="update_list" style="display: none;">
+    						<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px; width: 750px;">
+								<legend>集合参数映射</legend>
+							</fieldset>
+    				</div>
+    				<div class="update_mod" class="layui-tab-item" ></div>
+    				<input id="formUid" style="display: none;"/>
+    				<input id="triContent" style="display: none;"/>
 					</div>
 				</div>
 			</div>
@@ -1247,14 +1259,15 @@
 			<div class="layui-row layui-form" style="margin-top: 10px">
 			    <div class="layui-tab-item layui-show">
       				1. 请先配置 输入参数 ，再配置输出参数。
-      			<br>2. 如果没有输出参数 则不需要配置	
+      			<br>2. 如果没有输出参数 则不需要配置。	
+      			<br>3. 集合参数配置 需要先选择集合对象 再根据集合对象下的属性进行映射。	
     			</div>
 				<div class="layui-col-md5" style="width: 730px;">
 					<fieldset class="layui-elem-field layui-field-title"
 						style="margin-top: 20px; width: 750px;">
 						<legend>选择表单</legend>
 					</fieldset>
-					<select id="table_sel" name="table_sel" lay-filter="table_sel">
+					<select id="table_sel" class="table_sel" name="table_sel" lay-filter="table_sel">
 					</select>
 					<fieldset class="layui-elem-field layui-field-title"
 						style="margin-top: 20px; width: 750px;">
@@ -1266,8 +1279,20 @@
 							<li>输出参数</li>
 						</ul>
 					<div class="layui-tab-content">
+						<fieldset class="layui-elem-field layui-field-title"
+						style="margin-top: 20px; width: 750px;">
+							<legend>普通参数映射</legend>
+						</fieldset>
 						<div id="col_md5" class="layui-tab-item layui-show"></div>
     					<div id="col_md6" class="layui-tab-item"></div>
+    					<div class="col_list" style="display: none;">
+    						<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px; width: 750px;">
+								<legend>集合参数映射</legend>
+							</fieldset>
+    					</div>
+    					<div class="list_mod" class="layui-tab-item"></div>
+    					<input id="formUid" style="display: none;"/>
+    					<input id="triContent" style="display: none;"/>
   					</div>
 					</div>
 				</div>

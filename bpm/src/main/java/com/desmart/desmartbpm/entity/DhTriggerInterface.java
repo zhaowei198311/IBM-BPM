@@ -5,6 +5,8 @@ package com.desmart.desmartbpm.entity;
 
 import java.util.Date;
 
+import com.desmart.desmartsystem.entity.DhInterfaceParameter;
+
 /**  
 * <p>Title: 触发器接口中间表</p>  
 * <p>Description: </p>  
@@ -38,6 +40,8 @@ public class DhTriggerInterface {
 	private String paraUid; // 接口参数ID
 	
 	private BpmForm bpmForm; // 表单实体类
+	
+	private DhInterfaceParameter dhInterfaceParameter; // 接口参数实体类
 
 	/**
 	 * @return the tinUid
@@ -214,6 +218,20 @@ public class DhTriggerInterface {
 		return DH_TRIGGER_INTERFACE;
 	}
 	
+	/**
+	 * @return the dhInterfaceParameter
+	 */
+	public DhInterfaceParameter getDhInterfaceParameter() {
+		return dhInterfaceParameter;
+	}
+
+	/**
+	 * @param dhInterfaceParameter the dhInterfaceParameter to set
+	 */
+	public void setDhInterfaceParameter(DhInterfaceParameter dhInterfaceParameter) {
+		this.dhInterfaceParameter = dhInterfaceParameter;
+	}
+
 	public DhTriggerInterface() {
 		
 	}
@@ -231,7 +249,7 @@ public class DhTriggerInterface {
 	 * @param bpmForm
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String activityId, String paraName, String fldCodeName, String parameterType, String paraUid, BpmForm bpmForm) {
+			Date createTime, String activityId, String paraName, String fldCodeName, String parameterType, String paraUid, BpmForm bpmForm, DhInterfaceParameter dhInterfaceParameter) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -244,6 +262,7 @@ public class DhTriggerInterface {
 		this.fldCodeName = fldCodeName;
 		this.parameterType = parameterType;
 		this.bpmForm = bpmForm;
+		this.dhInterfaceParameter = dhInterfaceParameter;
 		this.paraUid = paraUid;
 	}
 
@@ -254,7 +273,9 @@ public class DhTriggerInterface {
 	public String toString() {
 		return "DhTriggerInterface [tinUid=" + tinUid + ", triUid=" + triUid + ", intUid=" + intUid + ", dynUid="
 				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", activityId=" + activityId
-				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", parameterType=" + parameterType + ", paraUid=" + paraUid + ", bpmForm=" + bpmForm + "]";
+				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", parameterType=" + parameterType
+				+ ", paraUid=" + paraUid + ", bpmForm=" + bpmForm + ", dhInterfaceParameter=" + dhInterfaceParameter
+				+ "]";
 	}
 
 }
