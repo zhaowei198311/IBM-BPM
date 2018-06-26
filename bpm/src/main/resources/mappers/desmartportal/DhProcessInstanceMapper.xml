@@ -353,22 +353,21 @@
 	<select id="getProcesssInstanceListByCondition" 
     		resultType="com.desmart.desmartportal.entity.DhProcessInstance"
     		parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
-    	select ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name
-    	,listagg(taskIns.task_title,';') within group (order by taskIns.task_uid) as taskTitle,
-        listagg(su.user_name,';') within group (order by taskIns.task_uid) as handleUserName
-    	from DH_PROCESS_INSTANCE ins left join 
-    	DH_TASK_INSTANCE taskIns on ins.ins_uid = taskIns.ins_uid
-    	left join sys_user su on taskIns.usr_uid = su.user_uid
-    	,DH_PROCESS_META meta
+    	select ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name,su.user_name as initUserFullname, 
+        (select listagg(task_title,';') within group (order by task_uid) from dh_task_instance 
+        where ins_uid = ins.ins_uid and (task_status = '12' or task_status = '-2' )) as taskTitle,
+        (select listagg(su.user_name,';') within group (order by task_uid) from dh_task_instance taskInfo left join sys_user su on taskInfo.usr_uid = su.user_uid 
+        where ins_uid = ins.ins_uid and (task_status = '12' or task_status = '-2' ))as handleUserName
+    	from DH_PROCESS_INSTANCE ins left join SYS_USER su on ins.INS_INIT_USER = su.user_uid ,DH_PROCESS_META meta
     	where ins.pro_uid = meta.pro_uid and ins.pro_app_id = meta.pro_app_id
     	and ins.ins_status_id != -2
     	<if test="insTitle != null and insTitle != '' ">
     		and ins.ins_title like concat(concat('%',#{insTitle}), '%') 
     	</if>
-    	<if test="handleUserName != null and handleUserName != '' ">
-    		and su.user_name like concat(concat('%',#{handleUserName}), '%') 
+    	<if test="initUserFullname != null and initUserFullname != '' ">
+    		and su.user_name like concat(concat('%',#{initUserFullname}), '%') 
     	</if>
-    	group by ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name
+    	
     </select>
     <update id="updateProcessInstanceByInsId" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
    

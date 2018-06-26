@@ -24,7 +24,7 @@
 								<input type="text" placeholder="流程实例标题"  class="layui-input" id="process-insTitle-search">
 								</div>
 								<div class="layui-col-xs2">
-								<input type="text" placeholder="处理人姓名"  class="layui-input" id="process-handleUserName-search">
+								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
 								</div>
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
 						        <button class="layui-btn layui-btn-sm">暂停流程实例</button>
@@ -55,6 +55,7 @@
 							      <th>实例ID</th>
 							      <th>实例状态</th>
 							      <th>流程实例标题</th>
+							      <th>流程发起人</th>
 							      <th>当前活动任务</th>
 							      <th>任务处理人</th>
 							    </tr> 
@@ -74,7 +75,7 @@
 var pageConfig = {
 	pageNum : 1,
 	pageSize : 8,
-	handleUserName: "",
+	initUserFullname: "",
 	insTitle : "",
 	total : 0
 }
@@ -119,7 +120,7 @@ function getProcesssInstance(){
 		data : {
 			pageNum : pageConfig.pageNum,
 			pageSize : pageConfig.pageSize,
-			handleUserName: pageConfig.handleUserName,
+			initUserFullname: pageConfig.initUserFullname,
 			insTitle : pageConfig.insTitle
 		},
 		beforeSend: function(){
@@ -188,8 +189,13 @@ function drawTable(pageInfo, data) {
 				+ item.insTitle
 				+ '</td>' 
 				+ '<td>'
-				+ item.taskTitle
+				+ item.initUserFullname
 				+ '</td>'
+				+ '<td>';
+				if(item.taskTitle!=null && item.taskTitle!=""){
+					trs += item.taskTitle;
+				}
+				trs += '</td>'
 				+ '<td>';
 				if(item.handleUserName!=null && item.handleUserName!=""){
 					trs += item.handleUserName;
@@ -202,7 +208,7 @@ function drawTable(pageInfo, data) {
 }
 //模糊查询
 function search(){
-	pageConfig.handleUserName = $("#process-handleUserName-search").val();
+	pageConfig.initUserFullname = $("#process-initUserFullname-search").val();
 	pageConfig.insTitle = $("#process-insTitle-search").val();
 
 	getProcesssInstance();
