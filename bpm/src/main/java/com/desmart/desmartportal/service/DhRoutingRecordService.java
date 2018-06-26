@@ -38,6 +38,13 @@ public interface DhRoutingRecordService {
 	DhRoutingRecord generateRejectTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmActivityMeta targetNode);
 
 	/**
+	 * 为取回操作生成流转信息
+	 * @param finishedTaskInstance
+	 * @return
+	 */
+	DhRoutingRecord generateRevokeTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance finishedTaskInstance);
+
+	/**
 	 * 根据流程实例主键加载流转记录
 	 * @param insUid
 	 * @return
@@ -45,9 +52,11 @@ public interface DhRoutingRecordService {
 	ServerResponse loadDhRoutingRecords(String insUid);
 
 	/**
-	 * 找到指定任务的路由记录
-	 * @param dhTaskInstance
+	 * 获得指定流程实例，在指定节点上，指定人员的最近一条流转记录
+	 * @param insUid  流程实例主键
+	 * @param taskNode  任务节点
+	 * @param userUid  用户主键
 	 * @return
 	 */
-	DhRoutingRecord getRoutingRecordOfTask(DhTaskInstance dhTaskInstance);
+	DhRoutingRecord getNearlyRoutingRecordOnTaskNode(String insUid, BpmActivityMeta taskNode, String userUid);
 }

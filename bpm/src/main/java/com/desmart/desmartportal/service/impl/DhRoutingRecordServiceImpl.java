@@ -47,7 +47,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
 		dhRoutingRecord.setInsUid(taskInstance.getInsUid());
 		dhRoutingRecord.setActivityName(taskInstance.getTaskTitle());
-		dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
+		dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK);
 		// 路由记录发生人
 		dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
@@ -81,10 +81,24 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
         dhRoutingRecord.setInsUid(taskInstance.getInsUid());
         dhRoutingRecord.setActivityName(taskInstance.getTaskTitle());
-        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_Type_REJECT_TASK);
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_REJECT_TASK);
         dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
         dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
         String activityTo = targetNode.getActivityId();
+        dhRoutingRecord.setActivityTo(activityTo);
+        return dhRoutingRecord;
+    }
+
+    @Override
+    public DhRoutingRecord generateRevokeTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance finishedTaskInstance) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(finishedTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(finishedTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_REVOKE_TASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(finishedTaskInstance.getTaskActivityId());
+        String activityTo = finishedTaskInstance.getTaskActivityId();
         dhRoutingRecord.setActivityTo(activityTo);
         return dhRoutingRecord;
     }
@@ -152,15 +166,12 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     }
 
 
-    public DhRoutingRecord getRoutingRecordOfTask(DhTaskInstance dhTaskInstance) {
+    public DhRoutingRecord getNearlyRoutingRecordOnTaskNode(String insUid, BpmActivityMeta taskNode, String userUid) {
         DhRoutingRecord recordSelective = new DhRoutingRecord();
-        recordSelective.setInsUid(dhTaskInstance.getInsUid());
-        recordSelective.setActivityId(dhTaskInstance.getTaskActivityId());
-        // 路由类型是完成任务
-        recordSelective.setRouteType(DhRoutingRecord.ROUTE_Type_SUBMIT_TASK);
+        recordSelective.setInsUid(insUid);
+        recordSelective.setActivityId(taskNode.getActivityId());
         // 设置路由操作人
-        recordSelective.setUserUid(dhTaskInstance.getTaskDelegateUser() == null ?
-                dhTaskInstance.getUsrUid() : dhTaskInstance.getTaskDelegateUser());
+        recordSelective.setUserUid(userUid);
         PageHelper.orderBy("CREATE_TIME DESC");
         List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordMapper.listBySelective(recordSelective);
         if (dhRoutingRecords.isEmpty()) {

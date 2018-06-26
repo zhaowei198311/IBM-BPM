@@ -55,7 +55,6 @@ import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
-import com.desmart.desmartportal.entity.DhApprovalOpinion;
 import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
@@ -721,7 +720,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 					// 过滤掉其他的数据信息 只需要 类型为 发起流程的环节信息---此处如果进入到子流程驳回，那么应该只会驳回到子流程的发起节点才正确
 					//BpmActivityMeta bpmActivityMeta3 = bpmActivityMetaMapper
 							//.queryByPrimaryKey(dhRoutingRecord2.getActivityId());
-					//if (DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {//满足不了应该
+					//if (DhRoutingRecord.ROUTE_TYPE_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {//满足不了应该
 					BpmActivityMeta toBpmActivityMeta = new BpmActivityMeta();
 					if("0".equals(currentbpmActivityMeta3.getParentActivityId())) {//主流程
 						// 获得主流程开始节点
@@ -786,8 +785,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 						}
 					}
 					if(bpmActivityMeta4!=null) {
-					if (DhRoutingRecord.ROUTE_Type_SUBMIT_TASK.equals(dhRoutingRecord3.getRouteType())
-							|| DhRoutingRecord.ROUTE_Type_START_PROCESS.equals(dhRoutingRecord3.getRouteType())) {
+					if (DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK.equals(dhRoutingRecord3.getRouteType())
+							|| DhRoutingRecord.ROUTE_TYPE_START_PROCESS.equals(dhRoutingRecord3.getRouteType())) {
 						Map<String, Object> toActivitiesMap = new HashMap<>();
 						toActivitiesMap.put("insId", insId);
 						toActivitiesMap.put("activityBpdId", bpmActivityMeta4.getActivityBpdId());
