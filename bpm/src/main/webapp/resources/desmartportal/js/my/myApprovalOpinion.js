@@ -165,8 +165,28 @@ function loadDhroutingRecords(){
 				+"<div>("+(i+1)+")</div>"
 				+"<div>"+result.data.dhRoutingRecords[i].userName+"</div>"
 				+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
-				+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>"
-				+"<div>"+datetimeFormat_1(date)+"</div>"
+				+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>";
+				switch(result.data.dhRoutingRecords[i].routeType){
+					case "submitTask":
+						info += "<div>通过</div>";
+						break;
+					case "revokeTask":
+						info += "<div>取回任务</div>";
+						break;
+					case "transferTask":
+						info += "<div>发起传阅</div>";
+						break;
+					case "rejectTask":
+						info += "<div>驳回</div>";
+						break;
+					case "addTask":
+						info += "<div>发起会签任务</div>";
+						break;
+					case "finishAddTask":
+						info += "<div>完成会签任务</div>";
+						break;
+				}
+	    		info += "<div>"+datetimeFormat_1(date)+"</div>"
 				+"</li>";
 	    		$("#transferProcess").append(info);
 			}
