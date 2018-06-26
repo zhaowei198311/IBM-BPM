@@ -12,6 +12,7 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/jquery-3.3.1.js" ></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/processInstance.js"></script>
 </head>
 <body>
 <div class="layui-container" style="margin-top:20px;width:100%;">  
@@ -27,9 +28,9 @@
 								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
 								</div>
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
-						        <button class="layui-btn layui-btn-sm">暂停流程实例</button>
-						        <button class="layui-btn layui-btn-sm">恢复流程实例</button>
-						        <button class="layui-btn layui-btn-sm" onclick="stopProcessIns();">终止流程实例</button>
+						        <button class="layui-btn layui-btn-sm" onclick="pauseProcessIns();">暂停流程实例</button>
+						        <button class="layui-btn layui-btn-sm" onclick="resumeProcessIns();">恢复流程实例</button>
+						        <button class="layui-btn layui-btn-sm" onclick="terminateProcessIns();">终止流程实例</button>
 						        <button class="layui-btn layui-btn-sm">重试流程实例</button>
 						        <button class="layui-btn layui-btn-sm">重新路由实例</button>
 						        <button class="layui-btn layui-btn-sm">查找流程实例</button>
@@ -212,46 +213,6 @@ function search(){
 	pageConfig.insTitle = $("#process-insTitle-search").val();
 
 	getProcesssInstance();
-}
-
-//终止流程实例
-function stopProcessIns(){
-	if(checkChecked()){
-		var insUid = $("input[type='checkbox'][name='checkProcessIns']:checked").val();
-		$.ajax({
-			url : common.getPath()+'/dhProcessInsManage/stopProcessIns',
-			type : 'post',
-			dataType : 'json',
-			data : {
-				"insUid" : insUid
-			},
-			beforeSend: function(){
-				layer.load(1);
-			},
-			success : function(result){
-				layer.alert(result.msg);
-				if (result.status == 0) {
-					getProcesssInstance();
-				}
-				layer.closeAll("loading");
-			},error : function(){
-				layer.closeAll("loading");
-			}
-		})
-	}else{
-		return;
-	}
-}
-
-//判断只允许选中一个流程实例
-function checkChecked(){
-	var checkedNodes= $("input[type='checkbox'][name='checkProcessIns']:checked");
-	if(checkedNodes.length==1){
-		return true;
-	}else{
-		layer.alert("请选择一个流程实例进行操作！");
-		return false;
-	}
 }
 
 //反选

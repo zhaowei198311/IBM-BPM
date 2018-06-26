@@ -156,8 +156,8 @@
 		drawUp				 : null,				// function to call at end of draw
 		menu 				 : ['undo', 'redo', 'clear','rectangle','ellipse','line','pencil','text','eraser','fillColor','lineWidth','strokeColor','refresh','save'], // menu items - appear in order they are set
 		menuOrientation		 : 'horizontal',		// orinetation of menu (horizontal, vertical)
-		menuOffsetX			 : 5,					// offset for menu (left)
-		menuOffsetY			 : 5,					// offset for menu (top)
+		menuOffsetX			 : 100,					// offset for menu (right)
+		menuOffsetY			 : 20,					// offset for menu (top)
         menuTitles           : {                    // icon titles, replace any of the values to customize
                                     'undo': 'undo',
                                     'redo': 'redo',
@@ -811,7 +811,7 @@
 			//menu
 			return this.menu = 
 			$('<div class="_wPaint_menu _wPaint_menu_' + $canvas.settings.menuOrientation + '"></div>')
-			.css({position: 'fixed', left: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY})
+			.css({position: 'fixed', right: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY})
 			.draggable({
 				handle: menuHandle, 
 				drag: function(){_self.moveTextMenu(_self, _self.textMenu)}, 

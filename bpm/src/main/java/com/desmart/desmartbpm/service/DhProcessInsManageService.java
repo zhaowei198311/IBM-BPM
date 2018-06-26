@@ -26,5 +26,17 @@ public interface DhProcessInsManageService {
 	 * @param dhProcessInstance
 	 * @return
 	 */
-	ServerResponse stopProcessIns(DhProcessInstance dhProcessInstance);
+	ServerResponse terminateProcessIns(DhProcessInstance dhProcessInstance);
+	/**
+	 * 暂停流程实例
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse pauseProcessIns(DhProcessInstance dhProcessInstance);
+	/**
+	 * 恢复流程实例
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse resumeProcessIns(DhProcessInstance dhProcessInstance);
 }

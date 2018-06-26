@@ -215,9 +215,15 @@ public interface DhTaskInstanceMapper {
 	/**
 	 * 批量修改任务状态
 	 * @param itemList
-	 * @param dhTaskInstance
+	 * @param dhTaskInstance 用来传递任务状态
 	 * @return
 	 */
 	public Integer updateTaskStatusByBatch(@Param("itemList")List<DhTaskInstance> itemList
 								,@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+	/**
+	 * 批量修改任务
+	 * @param itemList
+	 * @return
+	 */
+	public Integer updateTaskByBatch(@Param("itemList")List<DhTaskInstance> itemList);
 }

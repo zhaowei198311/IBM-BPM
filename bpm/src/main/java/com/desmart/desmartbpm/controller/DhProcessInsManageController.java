@@ -32,9 +32,19 @@ public class DhProcessInsManageController {
 		return dhProcessInstanceService.getProcesssInstanceListByCondition(pageNum, pageSize, dhProcessInstance);
 	}
 	
-	@RequestMapping("/stopProcessIns")
+	@RequestMapping("/terminateProcessIns")
 	@ResponseBody
-	public ServerResponse stopProcessIns(DhProcessInstance dhProcessInstance) {
-		return dhProcessInstanceService.stopProcessIns(dhProcessInstance);
+	public ServerResponse terminateProcessIns(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.terminateProcessIns(dhProcessInstance);
+	}
+	@RequestMapping("/pauseProcessIns")
+	@ResponseBody
+	public ServerResponse pauseProcessIns(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.pauseProcessIns(dhProcessInstance);
+	}
+	@RequestMapping("/resumeProcessIns")
+	@ResponseBody
+	public ServerResponse resumeProcessIns(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.resumeProcessIns(dhProcessInstance);
 	}
 }

@@ -246,7 +246,7 @@
 		<where>
 		T.INS_UID = P.INS_UID 
 			AND P.INS_INIT_USER = S.USER_ID
-			AND T.TASK_STATUS IN (12,-2)
+			AND T.TASK_STATUS IN ('12','-2')
 			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			 	AND (T.USR_UID = #{usrUid}
@@ -596,11 +596,11 @@
 		update
 			DH_TASK_INSTANCE
 		set
-			task_status = -1
+			task_status = '-1'
 		where
 			task_activity_id = #{taskActivityId}
 			and ins_uid = #{insUid}
-			and task_status != 32
+			and task_status != '32'
 			and task_uid != #{taskUid}
 	</update>
 
@@ -675,7 +675,7 @@
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
-			AND T.TASK_STATUS IN (12,-2)
+			AND T.TASK_STATUS IN ('12','-2')
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.dhProcessInstance != null ">
@@ -715,7 +715,7 @@
 		FROM
 		DH_TASK_INSTANCE
 		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS IN (12,-2)
+			USR_UID = #{usrUid} AND TASK_STATUS IN ('12','-2')
 			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 		</where>
@@ -793,7 +793,7 @@
 		FROM
 		DH_TASK_INSTANCE
 		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS = 32
+			USR_UID = #{usrUid} AND TASK_STATUS = '32'
 			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 		</where>
@@ -885,6 +885,22 @@
             </if>
             <if test="dhTaskInstance.insUpdateDate != null ">
             	INS_UPDATE_DATE = #{dhTaskInstance.insUpdateDate},
+            </if>
+		    </set>
+            where task_uid = #{item.taskUid}
+            </foreach>
+        ;end;
+	</update>
+	<update id="updateTaskByBatch" parameterType="java.util.List">
+		begin  
+        <foreach collection="itemList" item="item" index="index" separator=";" > 
+            update DH_TASK_INSTANCE 
+            <set>
+            <if test="item.taskStatus !=null and item.taskStatus !=''">
+                task_status = #{item.taskStatus},
+            </if>
+            <if test="item.insUpdateDate != null ">
+            	INS_UPDATE_DATE = #{item.insUpdateDate},
             </if>
 		    </set>
             where task_uid = #{item.taskUid}

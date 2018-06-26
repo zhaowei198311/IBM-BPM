@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateUtil;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.service.DhProcessInsManageService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -46,7 +47,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 	
 	@Override
 	@Transactional
-	public ServerResponse stopProcessIns(DhProcessInstance dhProcessInstance) {
+	public ServerResponse terminateProcessIns(DhProcessInstance dhProcessInstance) {
 		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
 		DhProcessInstance processInstance = new DhProcessInstance();
 		processInstance.setInsId(dhProcessInstance.getInsId());
@@ -60,14 +61,96 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 		if(count>0) {
 			DhTaskInstance dhTaskInstance = new DhTaskInstance();
 			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
-			dhProcessInstance.setInsUpdateDate(updateDate);
+			dhTaskInstance.setInsUpdateDate(updateDate);
 			dhTaskInstanceMapper.updateTaskStatusByBatch(taskInstances,dhTaskInstance);
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-			bpmProcessUtil.terminateInstance(String.valueOf(dhProcessInstance.getInsId()));
-			return ServerResponse.createBySuccessMessage("终止流程实例成功！");
+			HttpReturnStatus httpReturn = bpmProcessUtil.terminateInstance(String.valueOf(dhProcessInstance.getInsId()));
+			if(httpReturn.getCode()==-1) {
+				try {
+					throw new RuntimeException(httpReturn.getMsg());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return ServerResponse.createByErrorMessage("终止流程实例失败！");
+			}else {
+				return ServerResponse.createBySuccessMessage("终止流程实例成功！");
+			}
 		}else {
 			return ServerResponse.createByErrorMessage("终止流程实例失败！");
+		}
+	}
+
+	@Override
+	@Transactional
+	public ServerResponse pauseProcessIns(DhProcessInstance dhProcessInstance) {
+		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
+		if(DhProcessInstance.STATUS_ID_ACTIVE==dhProcessInstance.getInsStatusId()) {
+		DhProcessInstance processInstance = new DhProcessInstance();
+		processInstance.setInsId(dhProcessInstance.getInsId());
+		List<DhProcessInstance> dhProcessInstances = dhProcessInstanceMapper.queryBySelective(processInstance);
+		List<DhTaskInstance> taskInstances = dhTaskInstanceMapper.getDhTaskInstancesByBatch(dhProcessInstances);
+		processInstance.setInsStatus(DhProcessInstance.STATUS_SUSPENDED);
+		processInstance.setInsStatusId(DhProcessInstance.STATUS_ID_SUSPENDED);
+		Date updateDate = DateUtil.format(new Date());
+		processInstance.setInsUpdateDate(updateDate);
+		Integer count = dhProcessInstanceMapper.updateProcessInstanceByInsId(processInstance);
+		if(count>0) {
+			for (DhTaskInstance dhTaskInstance : taskInstances) {
+				dhTaskInstance.setInsUpdateDate(updateDate);
+				dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_PAUSE+dhTaskInstance.getTaskStatus());
+			}
+			dhTaskInstanceMapper.updateTaskByBatch(taskInstances);
+			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+			HttpReturnStatus httpReturn = bpmProcessUtil.pauseInstance(String.valueOf(dhProcessInstance.getInsId()));
+			if(httpReturn.getCode()==-1) {
+				throw new RuntimeException(httpReturn.getMsg());
+			}else {
+				return ServerResponse.createBySuccessMessage("暂停流程实例成功！");
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("暂停流程实例失败！");
+		}
+		}else {
+			return ServerResponse.createByErrorMessage("请选择运转中的流程实例");
+		}
+	}
+
+	@Override
+	@Transactional
+	public ServerResponse resumeProcessIns(DhProcessInstance dhProcessInstance) {
+		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
+		if(DhProcessInstance.STATUS_ID_SUSPENDED == dhProcessInstance.getInsStatusId()) {
+		DhProcessInstance processInstance = new DhProcessInstance();
+		processInstance.setInsId(dhProcessInstance.getInsId());
+		List<DhProcessInstance> dhProcessInstances = dhProcessInstanceMapper.queryBySelective(processInstance);
+		List<DhTaskInstance> taskInstances = dhTaskInstanceMapper.getDhTaskInstancesByBatch(dhProcessInstances);
+		processInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
+		processInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
+		Date updateDate = DateUtil.format(new Date());
+		processInstance.setInsUpdateDate(updateDate);
+		Integer count = dhProcessInstanceMapper.updateProcessInstanceByInsId(processInstance);
+		if(count>0) {
+			for (DhTaskInstance dhTaskInstance : taskInstances) {
+				dhTaskInstance.setInsUpdateDate(updateDate);
+				dhTaskInstance.setTaskStatus(dhTaskInstance.getTaskStatus()
+						.replaceAll(DhTaskInstance.STATUS_PAUSE, ""));
+			}
+			dhTaskInstanceMapper.updateTaskByBatch(taskInstances);
+			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+			HttpReturnStatus httpReturn = bpmProcessUtil.resumeInstance(String.valueOf(dhProcessInstance.getInsId()));
+			if(httpReturn.getCode()==-1) {
+				throw new RuntimeException(httpReturn.getMsg());
+			}else {
+				return ServerResponse.createBySuccessMessage("恢复流程实例成功！");
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("恢复流程实例失败！");
+		}
+		}else {
+			return ServerResponse.createByErrorMessage("请选择暂挂的流程实例");
 		}
 	}
 }
