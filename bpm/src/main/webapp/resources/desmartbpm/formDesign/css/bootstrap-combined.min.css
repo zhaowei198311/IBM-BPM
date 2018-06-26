@@ -5185,7 +5185,7 @@ a.thumbnail:hover, a.thumbnail:focus {
 }
 
 .modal.fade.in {
-    top: 10%;
+    top: 3%;
 }
 
 .modal-header {
@@ -5204,7 +5204,7 @@ a.thumbnail:hover, a.thumbnail:focus {
 .modal-body {
     position: relative;
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 370px;
     padding: 15px;
 }
 
