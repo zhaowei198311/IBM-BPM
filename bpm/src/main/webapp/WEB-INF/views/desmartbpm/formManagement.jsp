@@ -704,7 +704,7 @@
                 var updateTime = "";
         		trs += '<tr data-formuid="'+formInfo.dynUid
         					+'" data-prouid="'+formInfo.proUid
-        					+'" data-proversion="'+formIdfo.proVersion+'">'
+        					+'" data-proversion="'+formInfo.proVersion+'">'
         					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
