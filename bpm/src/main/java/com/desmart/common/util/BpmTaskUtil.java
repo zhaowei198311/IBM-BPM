@@ -248,7 +248,8 @@ public class BpmTaskUtil {
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
 
         String host = this.bpmGlobalConfig.getBpmformsHost();
-        StringBuilder url = new StringBuilder(host + "lswTask/changeOwnerOfLswTask");
+        String webContext = this.bpmGlobalConfig.getBpmformsWebContext();
+        StringBuilder url = new StringBuilder(host + webContext + "/lswTask/changeOwnerOfLswTask");
         JSONObject json = new JSONObject();
         json.put("taskId", taskId);
         json.put("userUid", userUid);

@@ -335,15 +335,18 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
         }
 
+
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		// 传递第一个环节处理人信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
+        pubBo.setSmartformsHost(bpmGlobalConfig.getBpmformsHost() + bpmGlobalConfig.getBpmformsWebContext());
 		String firstUserVarname = firstHumanActivity.getDhActivityConf().getActcAssignVariable();
 		List<String> creatorIdList = new ArrayList<>();
 		creatorIdList.add(currentUserUid);
 		CommonBusinessObjectUtils.setNextOwners(firstUserVarname, pubBo, creatorIdList);
 
 		// 调用API 发起一个流程
-		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
         HttpReturnStatus result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
 

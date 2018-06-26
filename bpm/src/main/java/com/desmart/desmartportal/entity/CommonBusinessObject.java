@@ -52,7 +52,7 @@ public class CommonBusinessObject implements Cloneable, Serializable {
     private String procAppId;
     private String snapshotId;
     private String taskOwner;
-    private String smartformsHost;
+    private String smartformsHost;  // 平台地址 + 上下文  http:10.0.4.201:8088/bpm
     private String sysMsg;
     private int signCount_0;
     private int signCount_1;
