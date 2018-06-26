@@ -37,7 +37,7 @@
 						        <button class="layui-btn layui-btn-sm">重试流程实例</button>
 						        <button class="layui-btn layui-btn-sm">重新路由实例</button>
 						        <!-- <button class="layui-btn layui-btn-sm">查找流程实例</button> -->
-						        <button class="layui-btn layui-btn-sm">获取实例信息</button>
+						        <button class="layui-btn layui-btn-sm" onclick="getProcessInsInfo()">获取实例信息</button>
 							</div>
 						</div>
 					</div>
