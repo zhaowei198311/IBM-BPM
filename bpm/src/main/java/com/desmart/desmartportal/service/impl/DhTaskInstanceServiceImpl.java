@@ -1046,14 +1046,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		String[] usrUidArray = usrUid.split(";");
 		// 错误提示
 		String errorInformation = "";
-		SysUser sysUser = new SysUser();
-		for (String string : usrUidArray) {
-			sysUser.setUserName(string);
-			List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
-			dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
+		//SysUser sysUser = new SysUser();
+		for (String userUid : usrUidArray) {
+			//sysUser.setUserName(string);
+			SysUser sysUser = sysUserMapper.queryByPrimaryKey(userUid);
+			dhTaskInstance.setUsrUid(sysUser.getUserId());
 			DhTaskInstance dti = dhTaskInstanceMapper.getBytaskTypeAndUsrUid(dhTaskInstance);
 			if (dti != null) {
-				errorInformation += string + ",";
+				errorInformation += sysUser.getUserUid() + ",";
 			}else {
 				dhTaskInstance.setTaskUid("task_instance:" + UUID.randomUUID());
 				dhTaskInstanceMapper.insertTask(dhTaskInstance);

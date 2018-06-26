@@ -251,7 +251,7 @@ function addSure(){
 // 抄送确认
 function transferSure(){
 	var taskUid = $("#taskUid").val();
-	var usrUid = $("#handleUser1_view").val();
+	var usrUid = $("#handleUser1").val();
 	var activityId = $("#activityId").val();
 	if (usrUid == null || usrUid == "") {
 		layer.alert("请选择人员!");
