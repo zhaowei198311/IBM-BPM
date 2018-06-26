@@ -13,7 +13,7 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>待办任务</title>
+<title>门店生命周期-任务实例</title>
 <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
 <link rel="stylesheet"
 	href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
@@ -62,7 +62,7 @@
 							<div class="layui-input-block">
 								<select id="processType" class="layui-input-block group_select" name="group"
 									lay-verify="required">
-									<option value="">请选择流程状态</option>
+									<option value=""></option>
 									<option value="">所有</option>
 									<option value="1">待处理</option>
 									<option value="6">已结束</option>
@@ -73,12 +73,10 @@
 					</div>
 				</div>
 				<div style="display: none;">
-					<input id="proUid" value="${proUid}" style="display: none;">
-					<input id="proAppId" value="${proAppId}" style="display: none;">
-					<input id="verUid" value="${verUid}" style="display: none;">
-					<input id="proName" value="${proName}" style="display: none;">
-					<input id="categoryName" value="${categoryName}"
-						style="display: none;">
+				<input id="insUid" value="${insUid}" style="display: none;">
+<%-- 					<input id="proUid" value="${proUid}" style="display: none;"> --%>
+<%-- 					<input id="proAppId" value="${proAppId}" style="display: none;"> --%>
+<%-- 					<input id="proVerUid" value="${proVerUid}" style="display: none;"> --%>
 				</div>
 				<div class="layui-col-xs2">
 					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
@@ -99,7 +97,7 @@
 		</div>
 		<div>
 			<p class="table_list">
-				<i class="layui-icon">&#xe61d;</i>共3条任务
+				<i class="layui-icon">&#xe61d;</i>共<span id="number"></span>条任务
 			</p>
 			<table class="layui-table" lay-even lay-skin="nob">
 				<colgroup>
@@ -115,9 +113,9 @@
 				<thead>
 					<tr>
 						<th>序号</th>
-					    <th>流程标题</th>
-					    <th>流程实例状态</th>
 					    <th>任务标题</th>
+					    <th>任务类型</th>
+					    <th>任务状态</th>
 					    <th>上一环节提交人</th>
 					    <th>流程发起人</th>
 					    <th>接收时间</th>
@@ -159,11 +157,9 @@
         </div>
     </div>
 </body>
-</html>
-
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js" ></script>
 <script>
 
 		// 为翻页提供支持
@@ -209,11 +205,12 @@
 	} */
 	var index;
 	function queryProcess(){
-		var processName = $('#processName').val();
-		var processType = $('#processType').val();
-		var proUid = $('#proUid').val();
-		var proAppId = $('#proAppId').val();
-		var insInitUser = $("#insInitUser").val();
+		var insUid = $('#insUid').val();
+// 		var processName = $('#processName').val();
+// 		var processType = $('#processType').val();
+// 		var proUid = $('#proUid').val();
+// 		var proAppId = $('#proAppId').val();
+// 		var insInitUser = $("#insInitUser").val();
 		// 按条件查询 流程
 		$.ajax({
 			url : 'taskInstance/loadPageTaskByStartProcess',
@@ -222,11 +219,12 @@
 			data : {
 				pageNum : pageConfig.pageNum,
 				pageSize : pageConfig.pageSize,
-				insTitle : processName,
-				insInitUser : insInitUser,
-				insStatusId : processType,
-				proUid : proUid,
-				proAppId : proAppId
+// 				insTitle : processName,
+// 				insInitUser : insInitUser,
+// 				insStatusId : processType,
+// 				proUid : proUid,
+// 				proAppId : proAppId
+				insUid: insUid
 			},
 			beforeSend: function () {
 		        index = layer.load(1);
@@ -248,6 +246,7 @@
 		pageConfig.pageNum = pageInfo.pageNum;
 		pageConfig.pageSize = pageInfo.pageSize;
 		pageConfig.total = pageInfo.total;
+		$('#number').text(pageConfig.total);
 		doPage();
 		// 渲染数据
 		$("#processType_table_tbody").html('');
@@ -411,3 +410,4 @@
 		}
 	}
 </script>
+</html>

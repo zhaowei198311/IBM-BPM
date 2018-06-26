@@ -164,4 +164,23 @@ public interface DhProcessInstanceService {
 	 */
 	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,
 														 CommonBusinessObject pubBo, JSONObject processDataJson);
+	
+	/**
+	 * 
+	 * @Title: queryProcessInstanceByIds  
+	 * @Description: TODO  
+	 * @param @param key
+	 * @param @param value
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @param usrUid
+	 * @param @param proUid
+	 * @param @param proAppId
+	 * @param @param sign
+	 * @param @return  
+	 * @return ServerResponse<List<JSONObject>>  
+	 * @throws
+	 */
+	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String key, String value, Integer pageNum, Integer pageSize, 
+															String usrUid, String proUid, String proAppId, String sign);
 }

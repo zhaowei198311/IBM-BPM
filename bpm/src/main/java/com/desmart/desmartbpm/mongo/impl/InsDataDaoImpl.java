@@ -28,50 +28,45 @@ public class InsDataDaoImpl implements InsDataDao{
 	
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
-	
-	@Override
-	public List<JSONObject> queryInsData(String key, String value, String usrUid, String insUid) {
-		Query query = new Query();
-		if (value.contains(",")) {
-			String[] values = value.split(",");
-			String reg = "";
-			for (String string : values) {
-				reg += ".*" + string;
-			}
-			query.addCriteria(Criteria.where("formData."+ key +".value").regex(reg));
-		}else {
-			Criteria criteria = Criteria.where("formData."+ key +".value").regex(".*" + value + ".*");
-			query.addCriteria(criteria);
-		}
-		List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
-		return insData;
-	}
 
 	@Override
-	public List<JSONObject> queryInsData(String key, String value, int page, int size, 
-										String usrUid, String insUid) {
-		Query query = new Query();
-		if (value.contains(",")) {
-			String[] values = value.split(",");
-			String reg = "";
-			for (String string : values) {
-				reg += ".*" + string;
+	public List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
+			String usrUid, String proUid, String proAppId, String sign) {
+		// 将数据插入mongo insData 集合中
+		try {
+			if (sign.equals(true)) {
+				insertInsData(usrUid, proUid, proAppId);
 			}
-			query.addCriteria(Criteria.where("formData."+ key +".value").regex(reg));
-		}else {
-			Criteria criteria = Criteria.where("formData."+ key +".value").regex(".*" + value + ".*");
-			query.addCriteria(criteria);
+			Query query = new Query();
+			if (!key.isEmpty()) {
+				if (value.contains(",")) {
+					String[] values = value.split(",");
+					String reg = "";
+					for (String string : values) {
+						reg += ".*" + string;
+					}
+					query.addCriteria(Criteria.where("formData."+ key +".value").regex(reg));
+				}else {
+					Criteria criteria = Criteria.where("formData."+ key +".value").regex(".*" + value + ".*");
+					query.addCriteria(criteria);
+				}
+			}
+			// 查询数量
+			int count = (int) mongoTemplate.count(query, Const.INS_DATA);
+			query.limit(pageSize);
+			query.skip(pageSize * (pageNum-1));
+			List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
+			insData.add(JSONObject.parseObject("{'count':'"+ count +"'}"));
+			return insData;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		query.limit(size);
-		query.skip(page * (size-1));
-		List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
-		return insData;
+		return null;
 	}
 	
-//	@Scheduled(cron = "0/20 * * * * ?")
-	public void insertInsData(String usrUid, String insUid) {
+	public void insertInsData(String usrUid, String proUid, String proAppId) {
 		try {
-			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, insUid);
+			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, proUid, proAppId);
 			
 			JSONObject insData = null;
 			// 需要处理的数据

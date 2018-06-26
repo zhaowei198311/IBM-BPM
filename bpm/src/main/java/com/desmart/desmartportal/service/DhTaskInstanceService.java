@@ -86,7 +86,6 @@ public interface DhTaskInstanceService {
 	 * @param @param bpmActivityMeta
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<?> queryProgressBar(String activityId, String taskUid);
 	
@@ -97,7 +96,6 @@ public interface DhTaskInstanceService {
 	 * @param @param dhTaskInstance
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator);
 
@@ -114,7 +112,6 @@ public interface DhTaskInstanceService {
 	 * @param @param taskUid
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<Map<String, Object>> toAddSign(String taskUid);
 	
@@ -126,7 +123,6 @@ public interface DhTaskInstanceService {
 	 * @param @param approvalContent
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent);
 	/**
@@ -173,7 +169,6 @@ public interface DhTaskInstanceService {
 	 * @param @param dhTaskInstance
 	 * @param @return  
 	 * @return ServerResponse<PageInfo<List<DhTaskInstance>>>  
-	 * @throws
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(Date startTime, Date endTime,
 																DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize);
@@ -184,7 +179,6 @@ public interface DhTaskInstanceService {
 	 * @param @param dhTaskInstance
 	 * @param @return  
 	 * @return Integer  
-	 * @throws
 	 */
 	Integer queryTransferNumber(DhTaskInstance dhTaskInstance);
 	
@@ -195,7 +189,6 @@ public interface DhTaskInstanceService {
 	 * @param @param taskUid
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<?> updateTaskStatusOfTransfer(String taskUid);
 	
@@ -206,7 +199,6 @@ public interface DhTaskInstanceService {
 	 * @param @param taskUid
 	 * @param @return  
 	 * @return ServerResponse<?>  
-	 * @throws
 	 */
 	ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId);
 
@@ -221,9 +213,9 @@ public interface DhTaskInstanceService {
 	 * @param proAppId
 	 * @param proUid
 	 * @return
-	 */ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(DhTaskInstance dhTaskInstance,
-			Integer pageNum, Integer pageSize, String insTitle, String insInitUser, Integer insStatusId,
-			String proAppId, String proUid);
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(
+													Integer pageNum, Integer pageSize, String insUid, String usrUid);
 
 	/**
 	 * 判断当前任务能否编辑insTitle

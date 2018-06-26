@@ -295,22 +295,31 @@ public class DhTaskInstanceController {
 	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId){
 		return dhTaskInstanceService.transferSure(taskUid, usrUid, activityId);
 	}
+	
+	/**
+	 * 
+	 * @Title: loadPageTaskByStartProcess  
+	 * @Description: 门店生命周期-任务实例页面查询  
+	 * @param @param dhTaskInstance
+	 * @param @param pageNum
+	 * @param @param pageSize
+	 * @param @param insTitle
+	 * @param @param insInitUser
+	 * @param @param insStatusId
+	 * @param @param proUid
+	 * @param @param proAppId
+	 * @param @return  
+	 * @return ServerResponse<PageInfo<List<DhTaskInstance>>>  
+	 * @throws
+	 */
 	@RequestMapping("/loadPageTaskByStartProcess")
 	@ResponseBody
-	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByStartProcess(
-			DhTaskInstance dhTaskInstance
-			,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
-			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
-			,@RequestParam("insTitle")String insTitle
-			,@RequestParam("insInitUser")String insInitUser
-			,@RequestParam("insStatusId")Integer insStatusId
-			,@RequestParam("proUid")String proUid
-			,@RequestParam("proAppId")String proAppId) {
-		
-		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess( dhTaskInstance
-				, pageNum, pageSize,insTitle,insInitUser,insStatusId,proAppId,proUid);
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByStartProcess(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
+																					@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,
+																					@RequestParam("insUid")String insUid) {
+		String usrUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess(pageNum, pageSize, insUid, usrUid);
 	}
-
 
 	@RequestMapping("/revokeTask")
 	@ResponseBody
@@ -321,6 +330,5 @@ public class DhTaskInstanceController {
 			LOG.error("取回任务失败", e);
 			return ServerResponse.createByErrorMessage("取回任务失败");
 		}
-
 	}
 }

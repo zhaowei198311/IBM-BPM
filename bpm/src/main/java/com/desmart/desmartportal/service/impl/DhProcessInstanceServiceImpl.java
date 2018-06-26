@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,7 +60,6 @@ import com.desmart.desmartportal.entity.DhDrafts;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
@@ -121,8 +121,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Autowired
 	private BpmFormFieldService bpmFormFieldService;
 	@Autowired
-	private DhApprovalOpinionService dhApprovalOpinionService;
-	@Autowired
 	private DhActivityRejectMapper dhActivityRejectMapper;
 	@Autowired
 	private DhObjectPermissionMapper dhObjectPermissionMapper;
@@ -136,6 +134,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private DhRoutingRecordService dhRoutingRecordService;
 	@Autowired
 	private TaskMongoDao taskMongoDao;
+	@Autowired
+	private InsDataDao insDataDao;
 
 	/**
 	 * 查询所有流程实例
@@ -361,8 +361,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			// 更新网关决策服务中间表数据
             dhRouteService.updateGatewayRouteResult(insId, routingData);
 
-			// 如果有循环任务记录处理人信息
-			List<DhTaskHandler> taskHandlerList = dhRouteService.saveTaskHandlerOfLoopTask(insId, routeData);
+			dhRouteService.saveTaskHandlerOfLoopTask(insId, routeData);
 
             // 更新草稿流程实例的状态
             DhProcessInstance instanceSelective = new DhProcessInstance();
@@ -404,7 +403,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	public ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance mainProcessInstance,
                                           BpmRoutingData routingData,
                                           CommonBusinessObject pubBo, JSONObject dataJson) {
-        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         // 获得流流程编号,和第一个任务的编号
         int insId = mainProcessInstance.getInsId();
 
@@ -450,7 +449,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		try {
 			log.info("流程图查看......");
 			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-			RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+			new RestUtil(bpmGlobalConfig);
 			HttpClientUtils httpClientUtils = new HttpClientUtils();
 			String result = httpClientUtils.checkLoginIbm(
 					"http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/instances?instanceIds=[" + insId
@@ -712,7 +711,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				SysUser sysUser = new SysUser();
 				sysUser.setUserUid(insInitUser);
 				SysUser sysUser2 = sysUserMapper.findById(sysUser);
-				String UserName = sysUser2.getUserName();
+				sysUser2.getUserName();
 				// 获得流转数据中的发起流程的环节id
 				Map<String, Object> toProcessStartMap = new HashMap<>();
 				
@@ -1030,6 +1029,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return taskInstance;
 	}
 
+	@Override
+	public ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String key, String value, Integer pageNum, Integer pageSize,
+															String usrUid, String proUid, String proAppId, String sign) {
+		List<JSONObject> processInstanceList = insDataDao.queryInsData(key, value, pageNum, pageSize, usrUid, proUid, proAppId, sign);
+		return ServerResponse.createBySuccess(processInstanceList);
+	}
 
-
+    
 }

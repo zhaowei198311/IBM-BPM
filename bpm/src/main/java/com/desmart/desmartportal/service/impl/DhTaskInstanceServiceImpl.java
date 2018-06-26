@@ -74,8 +74,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Autowired
 	private DhActivityConfMapper dhActivityConfMapper;
 	@Autowired
-	private DhProcessFormService dhProcessFormService;
-	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Autowired
 	private SysHolidayService sysHolidayService;
@@ -105,8 +103,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     private DhProcessInstanceService dhProcessInstanceService;
     @Autowired
     private MqProducerService mqProducerService;
-	@Autowired
-	private DhProcessDefinitionService dhProcessDefinitionService;
 	@Autowired
 	private TaskMongoDao taskMongoDao;
 	@Autowired
@@ -296,7 +292,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
 
-        String insUid = currProcessInstance.getInsUid();
+        currProcessInstance.getInsUid();
         Integer insId = currProcessInstance.getInsId();
         BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
@@ -449,7 +445,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("routingData", routingData); // 预判的下个环节信息
 			map.put("routingRecord", routingRecord); // 流转记录
             String paramStr = JSON.toJSONString(map);
-            boolean result = mqProducerService.sendMessage("stepQueueKey", paramStr);
+            mqProducerService.sendMessage("stepQueueKey", paramStr);
             return ServerResponse.createBySuccess();
         }
     }
@@ -1103,28 +1099,28 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByStartProcess(
-			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String insTitle,
-			String insInitUser,Integer insStatusId,String proAppId,String proUid) {
-		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        dhTaskInstance.setUsrUid(currentUserUid);
-        DhProcessInstance dhProcessInstance = new DhProcessInstance();
-        DhProcessDefinition processDefintion = dhProcessDefinitionService
-				.getStartAbleProcessDefinition(proAppId,
-						proUid);
-        if(processDefintion==null) {
-        	return ServerResponse.createByErrorMessage("该流程版本有异常");
-        			}
-        dhProcessInstance.setProAppId(proAppId);
-        dhProcessInstance.setProUid(proUid);
-        dhProcessInstance.setProVerUid(processDefintion.getProVerUid());
-        dhProcessInstance.setInsStatusId(insStatusId);
-        if(insTitle!=null && !"".equals(insTitle)) {
-        		dhProcessInstance.setInsTitle(insTitle);
-        	}
-        if(insInitUser!=null && "current".equals(insInitUser)) {
-    		dhProcessInstance.setInsInitUser(currentUserUid);
-    	}
-        dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+												Integer pageNum, Integer pageSize, String insUid, String usrUid) {
+//		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        DhTaskInstance dhTaskInstance = new DhTaskInstance();
+		dhTaskInstance.setUsrUid(usrUid);
+//        DhProcessInstance dhProcessInstance = new DhProcessInstance();
+//        DhProcessDefinition processDefintion = dhProcessDefinitionService
+//				.getStartAbleProcessDefinition(proAppId,
+//						proUid);
+//        if(processDefintion==null) {
+//        	return ServerResponse.createByErrorMessage("该流程版本有异常");
+//        			}
+//        dhProcessInstance.setProAppId(proAppId);
+//        dhProcessInstance.setProUid(proUid);
+//        dhProcessInstance.setProVerUid(processDefintion.getProVerUid());
+//        dhProcessInstance.setInsStatusId(insStatusId);
+//        if(insTitle!=null && !"".equals(insTitle)) {
+//        		dhProcessInstance.setInsTitle(insTitle);
+//        	}
+//        if(insInitUser!=null && "current".equals(insInitUser)) {
+//    		dhProcessInstance.setInsInitUser(currentUserUid);
+//    	}
+//        dhTaskInstance.setDhProcessInstance(dhProcessInstance);
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("12,-2,32");
@@ -1165,6 +1161,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public ServerResponse rejectTask(String data) {
 		JSONObject dataJson = JSONObject.parseObject(data);
 		JSONObject routeData = JSONObject.parseObject(String.valueOf(dataJson.get("routeData")));
+		JSONObject.parseObject(String.valueOf(dataJson.get("approvalData")));
 		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
 		// 目标环节
 		String targetActivityBpdId = routeData.getString("activityBpdId");

@@ -91,19 +91,44 @@ public class MenusController {
 		
 		return mv;
 	}
-
 	
-	@RequestMapping("/processType")
-	public ModelAndView processType(@RequestParam(value = "proUid",required = false) String proUid,
-			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "verUid",required = false) String verUid,
-			@RequestParam(value = "proName",required = false) String proName,
-			@RequestParam(value = "categoryName",required = false) String categoryName) {
-		ModelAndView mv = new ModelAndView("desmartportal/processType");
+	/**
+	 * 
+	 * @Title: processInstance  
+	 * @Description: 门店生命周期-流程实例页面  
+	 * @param @param proUid
+	 * @param @param proAppId
+	 * @param @return  
+	 * @return ModelAndView  
+	 * @throws
+	 */
+	@RequestMapping("/processInstanceByUser")
+	public ModelAndView processInstance(@RequestParam(value = "proUid",required = false) String proUid,
+									@RequestParam(value = "proAppId",required = false) String proAppId) {
+		ModelAndView mv = new ModelAndView("desmartportal/processInstance");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
-		mv.addObject("verUid", verUid);
-		mv.addObject("proName", proName);
-		mv.addObject("categoryName", categoryName);
+		return mv;
+	}
+	
+	/**
+	 * 
+	 * @Title: processType  
+	 * @Description: 门店生命周期-任务实例页面  
+	 * @param @param insUid
+	 * @param @return  
+	 * @return ModelAndView  
+	 * @throws
+	 */
+	@RequestMapping("/processType")
+	public ModelAndView processType(String insUid) {
+		ModelAndView mv = new ModelAndView("desmartportal/processType");
+		mv.addObject("insUid", insUid);
+//		mv.addObject("proUid", proUid);
+//		mv.addObject("proAppId", proAppId);
+//		mv.addObject("verUid", verUid);
+//		mv.addObject("proName", proName);
+//		mv.addObject("categoryName", categoryName);
 		return mv;
 	}
 	

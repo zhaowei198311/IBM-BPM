@@ -96,7 +96,7 @@
 										<ul class="nav2">
 											<c:forEach items="${info.value}" var="process">
 												<li class="li2"><a
-													href="menus/processType?proUid=${process.proUid}&proAppId=${process.proAppId}"
+													href="menus/processInstanceByUser?proUid=${process.proUid}&proAppId=${process.proAppId}"
 													target="iframe0">${process.proName}</a></li>
 												<h1 style="clear: both;"></h1>
 											</c:forEach>

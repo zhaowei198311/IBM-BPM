@@ -172,4 +172,25 @@ public class DhProcessInstanceController {
 			return ServerResponse.createByError();
 		}
 	}
+	
+	/**
+	 * 
+	 * @Title: queryProcessInstanceByIds  
+	 * @Description: 根据proUid，proAppId以及当前用户id查询流程实例  
+	 * @param @param dhProcessInstance
+	 * @param @return  
+	 * @return ServerResponse  
+	 */
+	@RequestMapping(value = "/queryProcessInstanceByIds")
+	@ResponseBody
+	public ServerResponse<?> queryProcessInstanceByIds(@RequestParam(value = "proUid", required = true) String proUid,
+													@RequestParam(value = "proAppId", required = true) String proAppId,
+													@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+													@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+													@RequestParam(value = "key", required = true) String key,
+													@RequestParam(value = "value", required = true) String value,
+													@RequestParam(value = "sign", required = true) String sign){
+		String usrUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER); 
+		return dhProcessInstanceService.queryProcessInstanceByIds(key, value, pageNum, pageSize, usrUid, proUid, proAppId, sign);
+	}
 }

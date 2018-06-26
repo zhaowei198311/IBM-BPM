@@ -347,6 +347,8 @@
 			SELECT DISTINCT INS_UID FROM DH_TASK_INSTANCE
 			WHERE USR_UID = #{usrUid}
 			)
+			AND PRO_UID = #{proUid}
+			AND PRO_APP_ID = #{proAppId}
 		</where>
 	</select>
 	

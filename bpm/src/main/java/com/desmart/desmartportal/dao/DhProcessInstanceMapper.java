@@ -73,7 +73,9 @@ public interface DhProcessInstanceMapper {
 	 * @return List<DhTaskInstance>  
 	 * @throws
 	 */
-	List<DhProcessInstance> queryInsDataByUser(@Param("usrUid")String usrUid, @Param("insUid")String insUid);
+	List<DhProcessInstance> queryInsDataByUser(@Param("usrUid")String usrUid,
+												@Param("proUid")String proUid,
+												@Param("proAppId")String proAppId);
 	/**
 	 * 根据条件查询流程管理界面展示
 	 * @param dhProcessInstance
