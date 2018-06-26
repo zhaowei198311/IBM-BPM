@@ -1076,6 +1076,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 												Integer pageNum, Integer pageSize, String insUid, String usrUid) {
 //		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         DhTaskInstance dhTaskInstance = new DhTaskInstance();
+        dhTaskInstance.setInsUid(insUid);
 		dhTaskInstance.setUsrUid(usrUid);
 //        DhProcessInstance dhProcessInstance = new DhProcessInstance();
 //        DhProcessDefinition processDefintion = dhProcessDefinitionService

@@ -91,7 +91,7 @@
 				</div>
 				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
-					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
+<!-- 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button> -->
 					<button class="layui-btn" onclick="back()">返回</button>
 				</div>
 			</div>

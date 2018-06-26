@@ -51,6 +51,8 @@ public class InsDataDaoImpl implements InsDataDao{
 					query.addCriteria(criteria);
 				}
 			}
+			query.addCriteria(Criteria.where("proUid").is(proUid));
+			query.addCriteria(Criteria.where("proAppId").is(proAppId));
 			// 查询数量
 			int count = (int) mongoTemplate.count(query, Const.INS_DATA);
 			query.limit(pageSize);
@@ -67,13 +69,14 @@ public class InsDataDaoImpl implements InsDataDao{
 	public void insertInsData(String usrUid, String proUid, String proAppId) {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, proUid, proAppId);
-			
 			JSONObject insData = null;
 			// 需要处理的数据
 			List<JSONObject> insDataList = new LinkedList<>();
 			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
 				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
 				insData.put("_id", dhProcessInstance.getInsUid());
+				insData.put("proUid", dhProcessInstance.getProUid());
+				insData.put("proAppId", dhProcessInstance.getProAppId());
 				insData.put("insTitle", dhProcessInstance.getInsTitle());
 				insData.put("insStatus", dhProcessInstance.getInsStatus());
 				insData.put("insCreateDate", dhProcessInstance.getInsCreateDate());
@@ -86,6 +89,7 @@ public class InsDataDaoImpl implements InsDataDao{
 			for (JSONObject jsonObject : idS) {
 				$ids.add(jsonObject.getString("_id"));
 			}
+			mongoTemplate.insert(dhProcessInstanceList, Const.INS_DATA);
 			// 需要插入的数据
 			List<JSONObject> insertInsDataList = new LinkedList<>();
 			// 需要更新的数据
