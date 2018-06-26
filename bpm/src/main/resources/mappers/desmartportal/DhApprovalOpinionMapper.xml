@@ -16,7 +16,7 @@
 		<if test="activityId != null and activityId != ''">
 			and dao.activity_id = #{activityId}
 		</if>
-		order by dao.apr_opi_index asc
+		order by dao.APR_DATE desc
 	</select>
 
 	<insert id="insert"
