@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse insertDhApprovalOpinion(DhApprovalOpinion dhApprovalOpinion) {
 		List<DhApprovalOpinion> list = getDhApprovalObinionList(dhApprovalOpinion);
-		if(list!=null&&list.size()>0) {
+		if(list != null && list.size() > 0) {
 			DhApprovalOpinion dhApprovalOpinion2 = list.get(list.size()-1);
 			dhApprovalOpinion.setAprOpiIndex(dhApprovalOpinion2.getAprOpiIndex()+1);
 			dhApprovalOpinion.setAprTimeNumber(dhApprovalOpinion2.getAprTimeNumber()+1);
@@ -54,8 +55,8 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 			dhApprovalOpinion.setAprOpiIndex(0);
 			dhApprovalOpinion.setAprTimeNumber(0);
 		}
-		dhApprovalOpinion.setAprDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 		dhApprovalOpinion.setAprOpiId(EntityIdPrefix.DH_APPROVAL_OPINION+UUIDTool.getUUID());
+		dhApprovalOpinion.setAprDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		dhApprovalOpinion.setAprUserId(creator);
 		Integer count = insert(dhApprovalOpinion);
@@ -67,7 +68,7 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 	}
 
 	@Override
-	public ServerResponse saveDhApprovalOpiionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson) {
+	public ServerResponse saveDhApprovalOpinionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson) {
 		if (!"TRUE".equals(dhActivityConf.getActcCanApprove())) {
 			return ServerResponse.createBySuccess();
 		}
@@ -89,8 +90,7 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 	}
 
 	@Override
-	public ServerResponse saveDhApprovalOpiionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson) {
-
+	public ServerResponse saveDhApprovalOpinionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson) {
 		JSONObject approvalData = dataJson.getJSONObject("approvalData");// 获取审批信息
 		if (approvalData == null) {
 			return ServerResponse.createByErrorMessage("缺少审批意见");
@@ -105,6 +105,20 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
 		dhApprovalOpinion.setAprOpiComment(aprOpiComment);
 		dhApprovalOpinion.setAprStatus("驳回");
+		return this.insertDhApprovalOpinion(dhApprovalOpinion);
+	}
+
+	@Override
+	public ServerResponse saveDhApprovalOpinionWhenFinishAdd(DhTaskInstance currTask, String content) {
+		if (StringUtils.isBlank(content)) {
+			return ServerResponse.createByErrorMessage("缺少审批意见");
+		}
+		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+		dhApprovalOpinion.setInsUid(currTask.getInsUid());
+		dhApprovalOpinion.setTaskUid(currTask.getTaskUid());
+		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
+		dhApprovalOpinion.setAprOpiComment(content);
+		dhApprovalOpinion.setAprStatus("会签意见");
 		return this.insertDhApprovalOpinion(dhApprovalOpinion);
 	}
 

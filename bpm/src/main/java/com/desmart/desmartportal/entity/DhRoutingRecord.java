@@ -5,19 +5,19 @@ import java.util.Date;
 
 public class DhRoutingRecord {
     /**流转类型 发起流程操作 */
-    public static final String ROUTE_TYPE_START_PROCESS = "startProcess";
-    /**流转类型 提交任务 */
-    public static final String ROUTE_TYPE_SUBMIT_TASK = "submitTask";
-    /**流转类型 取回任务 */
-    public static final String ROUTE_TYPE_REVOKE_TASK = "revokeTask";
-    /**流转类型 传阅 */
-    public static final String ROUTE_TYPE_TRANSFER_TASK = "transferTask";
-    /**流传类型 驳回 */
-    public static final String ROUTE_TYPE_REJECT_TASK = "rejectTask";
-    /**流转类型 加签 */
-    public static final String ROUTE_TYPE_ADD_TASK = "addTask";
-    /**流转类型 加签完成 */
-    public static final String ROUTE_TYPE_FINISH_ADDTASK = "finishAddTask";
+	public static final String ROUTE_TYPE_START_PROCESS = "startProcess";
+	/**流转类型 提交任务 */
+	public static final String ROUTE_TYPE_SUBMIT_TASK = "submitTask";
+	/**流转类型 取回任务 */
+	public static final String ROUTE_TYPE_REVOKE_TASK = "revokeTask";
+	/**流转类型 传阅 */
+	public static final String ROUTE_TYPE_TRANSFER_TASK = "transferTask";
+	/**流传类型 驳回 */
+	public static final String ROUTE_TYPE_REJECT_TASK = "rejectTask";
+	/**流转类型 加签 */
+	public static final String ROUTE_TYPE_ADD_TASK = "addTask";
+	/**流转类型 加签完成 */
+	public static final String ROUTE_TYPE_FINISH_ADDTASK = "finishAddTask";
     
 	private String routeUid;//流转id
 	private String insUid;//流程实例uid

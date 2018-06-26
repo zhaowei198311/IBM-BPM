@@ -90,7 +90,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     }
 
     @Override
-    public DhRoutingRecord generateRevokeTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance finishedTaskInstance) {
+    public DhRoutingRecord generateRevokeTaskRoutingRecord(DhTaskInstance finishedTaskInstance) {
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
         dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
         dhRoutingRecord.setInsUid(finishedTaskInstance.getInsUid());
@@ -102,6 +102,31 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setActivityTo(activityTo);
         return dhRoutingRecord;
     }
+
+    @Override
+    public DhRoutingRecord generateAddTaskRoutingRecord(DhTaskInstance currTaskInstance) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(currTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_ADD_TASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        return dhRoutingRecord;
+    }
+
+    @Override
+    public DhRoutingRecord generateFinishAddTaskRoutingRecord(DhTaskInstance currTaskInstance) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(currTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_FINISH_ADDTASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        return dhRoutingRecord;
+    }
+
 
     @Override
     public ServerResponse loadDhRoutingRecords(String insUid) {

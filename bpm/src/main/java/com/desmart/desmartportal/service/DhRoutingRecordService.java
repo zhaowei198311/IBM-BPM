@@ -42,7 +42,22 @@ public interface DhRoutingRecordService {
 	 * @param finishedTaskInstance
 	 * @return
 	 */
-	DhRoutingRecord generateRevokeTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance finishedTaskInstance);
+	DhRoutingRecord generateRevokeTaskRoutingRecord(DhTaskInstance finishedTaskInstance);
+
+	/**
+	 * 为加签生成流转信息
+	 * @param currTaskInstance
+	 * @return
+	 */
+	DhRoutingRecord generateAddTaskRoutingRecord(DhTaskInstance currTaskInstance);
+
+	/**
+	 * 为完成加签生成流转信息
+	 * @param currTaskInstance
+	 * @return
+	 */
+	DhRoutingRecord generateFinishAddTaskRoutingRecord(DhTaskInstance currTaskInstance);
+
 
 	/**
 	 * 根据流程实例主键加载流转记录

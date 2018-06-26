@@ -318,7 +318,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 
         // 根据配置保存审批意见
-        ServerResponse response = dhapprovalOpinionService.saveDhApprovalOpiionWhenSubmitTask(currTask, dhActivityConf, dataJson);
+        ServerResponse response = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTask, dhActivityConf, dataJson);
         if (!response.isSuccess()) {
             throw new PlatformException(response.getMsg());
         }
@@ -754,15 +754,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			}
 
 			// 路由表记录
-			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
-			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-			dhRoutingRecord.setActivityName(dti.getTaskTitle());
-			dhRoutingRecord.setRouteType("addTask");
-			dhRoutingRecord.setUserUid(dti.getUsrUid());
-			dhRoutingRecord.setActivityId(activityId);
-//			dhRoutingRecord.setActivityTo(activityId);
+			DhRoutingRecord dhRoutingRecord = dhRoutingRecordService.generateAddTaskRoutingRecord(dhTaskInstance);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
+
 			// 会签开始时，保存主任务的审批剩余时间
 			sysHolidayService.remainHour(currentTaskUid, activityId);
 			
@@ -890,32 +884,21 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		try {
 			// 当前任务
 			DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+			if (dhTaskInstance == null) return ServerResponse.createByErrorMessage("任务不存在");
+
 			// 判断taskType类型
 			String type = dhTaskInstance.getTaskType();
+
 			// 插入审批意见
-			DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
-			dhApprovalOpinion.setAprOpiId("apr_idea:"+UUID.randomUUID());
-			dhApprovalOpinion.setInsUid(dhTaskInstance.getInsUid());
-			dhApprovalOpinion.setTaskUid(taskUid);
-			dhApprovalOpinion.setAprOpiIndex(0);
-			dhApprovalOpinion.setAprUserId(dhTaskInstance.getUsrUid());
-			dhApprovalOpinion.setAprTimeNumber(0);
-			dhApprovalOpinion.setAprOpiComment(approvalContent);
-			dhApprovalOpinion.setAprStatus("ok");
-			dhApprovalOpinion.setAprDate(new Timestamp(System.currentTimeMillis()));
-			dhApprovalOpinion.setActivityId(activityId);
-			dhapprovalOpinionService.insert(dhApprovalOpinion);
-			
-			// 路由表记录
-			DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-			dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
-			dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-			dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-			dhRoutingRecord.setRouteType("finishAddTask");
-			dhRoutingRecord.setUserUid(dhTaskInstance.getUsrUid());
-			dhRoutingRecord.setActivityId(activityId);
-//			dhRoutingRecord.setActivityTo(activityId);
+            ServerResponse saveApprovalResponse = dhapprovalOpinionService.saveDhApprovalOpinionWhenFinishAdd(dhTaskInstance, approvalContent);
+            if (!saveApprovalResponse.isSuccess()) {
+                return saveApprovalResponse;
+            }
+
+            // 保存流转记录
+            DhRoutingRecord dhRoutingRecord = dhRoutingRecordService.generateFinishAddTaskRoutingRecord(dhTaskInstance);
 			dhRoutingRecordMapper.insert(dhRoutingRecord);
+
 			// 说明：如果taskType为 normalAdd，则一人完成加签即可
 			if (DhTaskInstance.TYPE_NORMAL_ADD.equals(type)) {
 				// 将主任务状态回归到正常状态
@@ -989,7 +972,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(Date startTime, Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize) {
-		// TODO Auto-generated method stub
+
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
 		dhTaskInstance.setTaskStatus("32");
@@ -1000,14 +983,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Override
 	public Integer selectBackLogByusrUid(String usrUid) {
-		// TODO Auto-generated method stub
+
 		return dhTaskInstanceMapper.selectBackLogByusrUid(usrUid);
 	}
 
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
 			Integer pageNum, Integer pageSize) {
-		// TODO Auto-generated method stub
+
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("32");
@@ -1081,18 +1064,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (Arrays.equals(usrUidArray, check)) {
 			return ServerResponse.createByErrorMessage(errorInformation.substring(0, errorInformation.length()-1)+"已经抄送过!");
 		}
-		// 路由表记录
-		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
-		dhRoutingRecord.setRouteUid("routing_record:"+UUID.randomUUID());
-		dhRoutingRecord.setInsUid(dhTaskInstance.getInsUid());
-		dhRoutingRecord.setActivityName(dhTaskInstance.getTaskTitle());
-		dhRoutingRecord.setRouteType("addTask");
-		dhRoutingRecord.setUserUid(dhTaskInstance.getUsrUid());
-		dhRoutingRecord.setActivityId(activityId);
-//		dhRoutingRecord.setActivityTo(activityId);
-		dhRoutingRecordMapper.insert(dhRoutingRecord);
+
 		if (!errorInformation.isEmpty()) {
-			return ServerResponse.createByErrorMessage(errorInformation.substring(0,errorInformation.length()-1) + "已经抄送过,其他人员操作成功!");
+			return ServerResponse.createByErrorMessage(errorInformation.substring(0, errorInformation.length()-1) + "已经抄送过,其他人员操作成功!");
 		}
 		return ServerResponse.createBySuccess();
 	}
@@ -1219,7 +1193,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		abandonRelationTaskOnTaskNode(currTaskInstance);
 
 		// 保存审批意见
-		dhapprovalOpinionService.saveDhApprovalOpiionWhenRejectTask(currTaskInstance, dataJson);
+		dhapprovalOpinionService.saveDhApprovalOpinionWhenRejectTask(currTaskInstance, dataJson);
 
 		// 保存流转记录
 		DhRoutingRecord routingRecord = dhRoutingRecordService.generateRejectTaskRoutingRecordByTaskAndRoutingData(currTaskInstance, targetNode);
@@ -1343,7 +1317,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         abandonDhTaskInstance(dataForRevoke.getCurrTaskInstances());
 
         // 增加一条流转记录
-        DhRoutingRecord routingRecord = dhRoutingRecordService.generateRevokeTaskRoutingRecordByTaskAndRoutingData(finishedTaskInstance);
+        DhRoutingRecord routingRecord = dhRoutingRecordService.generateRevokeTaskRoutingRecord(finishedTaskInstance);
         dhRoutingRecordMapper.insert(routingRecord);
 
         // 调用RESTful API 取回
@@ -1492,8 +1466,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     }
 
 
-
-
     /**
      * 获得流程实例在指定节点上的任务
      * @param insUid
@@ -1509,8 +1481,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
     /**
      * 获得流程实例当前信息
-     * @param insId
-     * @return
+     * @param insId 流程实例编号
+     * @return data中包含httpReturnStatus 的 msg
      */
     private ServerResponse<String> getProcessData(int insId) {
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();

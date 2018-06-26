@@ -29,7 +29,7 @@ public interface DhApprovalOpinionService {
 	 */
 	public List<DhApprovalOpinion> getDhApprovalObinionList(DhApprovalOpinion dhApprovalOpinion);
 	/**
-	 * 新增审批意见
+	 * 插入审批意见
 	 * @param dhApprovalOpinion
 	 * @return
 	 */
@@ -42,7 +42,7 @@ public interface DhApprovalOpinionService {
 	 * @param dataJson  提交上来的data
 	 * @return
 	 */
-	ServerResponse saveDhApprovalOpiionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson);
+	ServerResponse saveDhApprovalOpinionWhenSubmitTask(DhTaskInstance currTask, DhActivityConf dhActivityConf, JSONObject dataJson);
 
 	/**
 	 * 为驳回操作插入审批意见
@@ -50,5 +50,14 @@ public interface DhApprovalOpinionService {
 	 * @param dataJson 提交上来的data
 	 * @return
 	 */
-	ServerResponse saveDhApprovalOpiionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson);
+	ServerResponse saveDhApprovalOpinionWhenRejectTask(DhTaskInstance currTask, JSONObject dataJson);
+
+	/**
+	 * 为完成加签任务保存审批意见
+	 * @param currTask 当前任务
+	 * @param content  审批意见
+	 * @return
+	 */
+	ServerResponse saveDhApprovalOpinionWhenFinishAdd(DhTaskInstance currTask, String content);
+
 }

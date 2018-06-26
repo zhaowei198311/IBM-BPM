@@ -116,9 +116,7 @@ public interface DhTaskInstanceService {
 	ServerResponse<Map<String, Object>> toAddSign(String taskUid);
 	
 	/**
-	 * 
-	 * @Title: finishAdd  
-	 * @Description: 会签人审批完成  
+	 * 会签任务审批完成
 	 * @param @param taskUid
 	 * @param @param approvalContent
 	 * @param @return  
