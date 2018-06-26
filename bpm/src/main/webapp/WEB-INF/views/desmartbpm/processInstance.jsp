@@ -28,13 +28,15 @@
 								<div class="layui-col-xs2">
 								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
 								</div>
+								<div class="layui-col-xs1" style="width: 4%;">
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
+								</div>
 						        <button class="layui-btn layui-btn-sm" onclick="pauseProcessIns();">暂停流程实例</button>
 						        <button class="layui-btn layui-btn-sm" onclick="resumeProcessIns();">恢复流程实例</button>
 						        <button class="layui-btn layui-btn-sm" onclick="terminateProcessIns();">终止流程实例</button>
 						        <button class="layui-btn layui-btn-sm">重试流程实例</button>
 						        <button class="layui-btn layui-btn-sm">重新路由实例</button>
-						        <button class="layui-btn layui-btn-sm">查找流程实例</button>
+						        <!-- <button class="layui-btn layui-btn-sm">查找流程实例</button> -->
 						        <button class="layui-btn layui-btn-sm">获取实例信息</button>
 							</div>
 						</div>
