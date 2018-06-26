@@ -34,7 +34,7 @@ public class InsDataDaoImpl implements InsDataDao{
 			String usrUid, String proUid, String proAppId, String sign) {
 		// 将数据插入mongo insData 集合中
 		try {
-			if (sign.equals(true)) {
+			if ("true".equals(sign)) {
 				insertInsData(usrUid, proUid, proAppId);
 			}
 			Query query = new Query();

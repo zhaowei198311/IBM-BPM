@@ -92,6 +92,7 @@
 				<div class="layui-col-xs3" style="text-align: right;">
 					<button class="layui-btn" onclick="queryProcess()">查询</button>
 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
+					<button class="layui-btn" onclick="back()">返回</button>
 				</div>
 			</div>
 		</div>
@@ -320,7 +321,6 @@
 		});
 	}
 	
-	
 	function startProcess(insBusinessKey) {
 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
 		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
@@ -408,6 +408,10 @@
 		}else if(taskStatus == 32){
 			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
 		}
+	}
+	// 返回
+	function back() {
+		window.location.href = 'javascript:history.go(-1)';
 	}
 </script>
 </html>

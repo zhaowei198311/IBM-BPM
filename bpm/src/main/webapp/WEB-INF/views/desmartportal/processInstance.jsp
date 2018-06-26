@@ -79,9 +79,9 @@
 				<div class="layui-col-xs2">
 					<input id="fieldValue" type="text" placeholder="字段值" class="layui-input">			
 				</div>
-				<div class="layui-col-xs3" style="text-align: right;">
+				<div class="layui-col-xs3" style="margin-left: 25px;">
 					<button class="layui-btn" onclick="queryProcessInstance(false)">查询</button>
-<!-- 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button> -->
+					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
 				</div>
 			</div>
 		</div>
@@ -204,7 +204,7 @@
 					+ '<td>'
 					+ sortNum
 					+ '</td>'
-					+ '<td style = "cursor:pointer;" onclick=openTaskInstance('+this._id+')>'
+					+ '<td style = "cursor:pointer;" onclick=openTaskInstance("'+this._id+'")>'
 					+ this.insTitle
 					+ '</td>'
 					+ '<td>'
@@ -247,71 +247,70 @@
 	function openTaskInstance(insUid){
 		window.location.href = 'menus/processType?insUid=' + insUid;
 	}
+	function startProcess(insBusinessKey) {
+		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
+		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
+		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
+			layer.alert("请选择业务关键字");
+			return;
+		}
+		}
+		var proUid = $('#proUid').val();
+		var proAppId = $('#proAppId').val();
+		var verUid = $('#verUid').val();
+		var proName = $('#proName').val();
+		var categoryName = $('#categoryName').val();
+		window.location.href = 'menus/startProcess?proUid=' + proUid
+				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
+				+ proName + '&categoryName=' + categoryName
+				+'&insBusinessKey='+insBusinessKey;
+	}
 	
-// 	function startProcess(insBusinessKey) {
-// 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
-// 		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
-// 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
-// 			layer.alert("请选择业务关键字");
-// 			return;
-// 		}
-// 		}
-// 		var proUid = $('#proUid').val();
-// 		var proAppId = $('#proAppId').val();
-// 		var verUid = $('#verUid').val();
-// 		var proName = $('#proName').val();
-// 		var categoryName = $('#categoryName').val();
-// 		window.location.href = 'menus/startProcess?proUid=' + proUid
-// 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
-// 				+ proName + '&categoryName=' + categoryName
-// 				+'&insBusinessKey='+insBusinessKey;
-// 	}
-	
-// 	function checkedBusinesskey(){
-// 		var proUid = $('#proUid').val();
-// 		var proAppId = $('#proAppId').val();
-// 		var verUid = $('#verUid').val();
-// 		$.ajax({
-// 			url:"processInstance/checkedBusinesskey",
-// 			type : 'POST',
-// 			dataType : 'json',
-// 			beforeSend: function() {
-// 			    layer.load(1);
-// 			},
-// 			data : {
-// 				proUid : proUid,
-// 				proAppId : proAppId,
-// 				proVerUid : verUid
-// 			},
-// 			success : function(result) {
-// 				if(result.status == 0){
-// 					if(result.data.flag==1){
-// 						startProcess(result.data.stepBusinessKey);
-// 					}else{
-//                         layer.closeAll('loading');
-// 						$("#checkedBusinessKey").find(".showBusinessList").empty();
-// 						for (var i = 0; i < result.data.length; i++) {
-// 						var info = '<tr><td><input type="radio" name="insBusinessKey" '
-// 						+'value="'
-// 						+ result.data[i]
-// 						+'" >'+(i+1)+'</td>'
-// 	                    +'<td style="text-align: center;">'
-// 	                   	+ result.data[i]
-// 	                    +'</td></tr>';
-// 	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
-// 						}
-// 						$("#checkedBusinessKey").show();
-// 					}
-// 				}else{
-//                     layer.closeAll('loading');
-// 					layer.alert(result.msg);
-// 				}
-// 			},
-// 			error : function(){
-//                 layer.closeAll('loading');
-// 				layer.alert("发起流程异常");
-// 			}
-// 		})		
-// 	}
+	function checkedBusinesskey(){
+		var proUid = $('#proUid').val();
+		var proAppId = $('#proAppId').val();
+		var verUid = $('#verUid').val();
+		$.ajax({
+			url:"processInstance/checkedBusinesskey",
+			type : 'POST',
+			dataType : 'json',
+			beforeSend: function() {
+			    layer.load(1);
+			},
+			data : {
+				proUid : proUid,
+				proAppId : proAppId,
+				proVerUid : verUid
+			},
+			success : function(result) {
+				if(result.status == 0){
+					if(result.data.flag==1){
+						startProcess(result.data.stepBusinessKey);
+					}else{
+                        layer.closeAll('loading');
+						$("#checkedBusinessKey").find(".showBusinessList").empty();
+						for (var i = 0; i < result.data.length; i++) {
+						var info = '<tr><td><input type="radio" name="insBusinessKey" '
+						+'value="'
+						+ result.data[i]
+						+'" >'+(i+1)+'</td>'
+	                    +'<td style="text-align: center;">'
+	                   	+ result.data[i]
+	                    +'</td></tr>';
+	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
+						}
+						$("#checkedBusinessKey").show();
+					}
+				}else{
+                    layer.closeAll('loading');
+					layer.alert(result.msg);
+				}
+			},
+			error : function(){
+                layer.closeAll('loading');
+				layer.alert("发起流程异常");
+			}
+		})		
+	}
 </script>
 </html>
