@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -418,7 +418,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
 		
 		String imageData = map.get("image").toString();
-		byte[] decoder = Base64.getDecoder().decode(imageData.replace("data:image/png;base64,","").getBytes());
+		byte[] decoder = Base64.decodeBase64(imageData.replace("data:image/png;base64,","").getBytes());
 		try {
 			InputStream newInput = new ByteArrayInputStream(decoder);  
 			SFTPUtil sftp = new SFTPUtil();
