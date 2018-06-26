@@ -553,7 +553,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         } else {
             resultMap.put("showResponsibility", "TRUE");
         }
-        
+
+        // 记录任务被打开
+        taskMongoDao.saveOpenedTask(new OpenedTask(dhTaskInstance.getTaskUid(), dhTaskInstance.getTaskId(), new Date()));
         
         String insDataStr = dhprocessInstance.getInsData();
         JSONObject insData = JSON.parseObject(insDataStr);
@@ -823,7 +825,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
         }
         String fieldPermissionInfo = fieldPermissionResponse.getData();
-        
+
+        // 判断任务是否能被取回
+        DataForRevoke dataForRevoke = getDataForRevoke(dhTaskInstance, currTaskNode, dhprocessInstance);
+
+
         resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currTaskNode);
         resultMap.put("activityConf", currTaskNode.getDhActivityConf());
@@ -831,6 +837,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         resultMap.put("processInstance", dhprocessInstance);
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
+	    resultMap.put("canBeRevoke", dataForRevoke != null ? "TRUE" : "FALSE");
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 
@@ -1337,7 +1344,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 
         // 作废现在的任务
-        abandonDhTaskInstance(dataForRevoke.getCurrTaskInstance());
+        abandonDhTaskInstance(dataForRevoke.getCurrTaskInstances());
 
         // 增加一条流转记录
         DhRoutingRecord routingRecord = dhRoutingRecordService.generateRevokeTaskRoutingRecordByTaskAndRoutingData(finishedTaskInstance);
@@ -1371,14 +1378,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
     /**
      * 作废指定任务
-     * @param currTaskInstance
+     * @param taskList
      * @return
      */
-    private int abandonDhTaskInstance(DhTaskInstance currTaskInstance) {
+    private void abandonDhTaskInstance(List<DhTaskInstance> taskList) {
         DhTaskInstance taskSelective = new DhTaskInstance();
-        taskSelective.setTaskUid(currTaskInstance.getTaskUid());
-        taskSelective.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
-        return dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+        for (DhTaskInstance task : taskList) {
+            taskSelective.setTaskUid(task.getTaskUid());
+            taskSelective.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
+            dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+        }
     }
 
     /**
@@ -1393,7 +1402,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return null;
         }
 
-        if (!BpmActivityMeta.LOOP_TYPE_NONE.equals(finishedTaskNode.getLoopType())) {
+        // 如果已完成的任务不是普通节点任务，不允许取回
+        if (!BpmActivityMeta.LOOP_TYPE_NONE.equals(finishedTaskNode.getLoopType())
+                || !finishedTaskInstance.getTaskType().equals(DhTaskInstance.TYPE_NORMAL)) {
             return null;
         }
         DhActivityConf finishedTaskNodeConf = finishedTaskNode.getDhActivityConf();
@@ -1401,13 +1412,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return null;
         }
 
-        String nextactivitiesStr = finishedTaskNode.getNextactivities();
-        if (StringUtils.isBlank(nextactivitiesStr) || nextactivitiesStr.endsWith(",")) {
+        String activityToStr = finishedTaskNode.getActivityTo();
+        if (StringUtils.isBlank(activityToStr) || activityToStr.endsWith(",")) {
             return null;
         }
 
         // 检查下个直接连接点的类型
-        BpmActivityMeta nodeAfterTaskNode = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(nextactivitiesStr,
+        BpmActivityMeta nodeAfterTaskNode = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityToStr,
                 finishedTaskNode.getParentActivityId(), finishedTaskNode.getSnapshotId());
 
         // 只有下个节点非循环人工节点才能撤回
@@ -1455,16 +1466,18 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 }
             }
         }
-        // 此时tasksOnAfterNode集合中留下的是尚未被处理的任务,应该只有一个
+        // 此时tasksOnAfterNode集合中留下的是尚未被处理的任务由普通任务派生
         if (tasksOnAfterNode.isEmpty()) {
             return null;
         }
 
-        // todo 查询现在的任务有没有被打开过
-
         // 获得任务的token
         DhTaskInstance currTaskInstance = tasksOnAfterNode.get(0);
         int currTaskId = currTaskInstance.getTaskId();
+
+        // todo 查询现在的任务有没有被打开过
+        boolean hasOpened = taskMongoDao.hasTaskBeenOpened(currTaskId);
+        if (hasOpened) return null;
 
         ServerResponse<String> processDataResponse = getProcessData(dhProcessInstance.getInsId());
         if (!processDataResponse.isSuccess()) {
@@ -1475,7 +1488,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         DataForRevoke dataForRevoke = new DataForRevoke();
         dataForRevoke.setInsId(dhProcessInstance.getInsId());
         dataForRevoke.setTokenId(tokenId);
-        dataForRevoke.setCurrTaskInstance(currTaskInstance);
+        dataForRevoke.setCurrTaskInstances(tasksOnAfterNode);
         dataForRevoke.setRoutingRecordToRemove(routingRecordOfTask);
         dataForRevoke.setTargetActivityBpdId(finishedTaskNode.getActivityBpdId());
         dataForRevoke.setFinishedTask(finishedTaskInstance);

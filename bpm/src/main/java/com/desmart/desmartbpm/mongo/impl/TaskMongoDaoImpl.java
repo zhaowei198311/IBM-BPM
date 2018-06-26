@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.LockedTask;
+import com.desmart.desmartbpm.entity.OpenedTask;
 import com.mongodb.WriteResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,6 +48,11 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
     }
 
     @Override
+    public void saveOpenedTask(OpenedTask openedTask) {
+        mongoTemplate.insert(openedTask, OpenedTask.OPENED_TASK_COLLECTION_NAME);
+    }
+
+    @Override
     public int saveOrUpdateLastSynchronizedTaskId(int taskId) {
         Query qurey = new Query(new Criteria("_id").is(Const.LAST_SYNCHRONIZED_TASK_ID_KEY));
         Update update = new Update();
@@ -76,4 +82,21 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
         }
 
     }
+
+    @Override
+    public boolean hasTaskBeenOpened(int taskId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("taskId").is(taskId));
+        long count = mongoTemplate.count(query, OpenedTask.OPENED_TASK_COLLECTION_NAME);
+        return count > 0;
+    }
+
+    @Override
+    public boolean hasTaskBeenOpened(String taskUid) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(taskUid));
+        long count = mongoTemplate.count(query, OpenedTask.OPENED_TASK_COLLECTION_NAME);
+        return count > 0;
+    }
+
 }

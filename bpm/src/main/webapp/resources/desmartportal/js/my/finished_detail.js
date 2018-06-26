@@ -42,3 +42,31 @@ $(function () {
 function back() {
 	window.location.href = 'javascript:history.go(-1)';
 }
+
+function revokeTask(taskUid) {
+    $.ajax({
+        url : "taskInstance/revokeTask",
+        type : "post",
+        dataType : "json",
+        data : {
+            "taskUid": taskUid
+		},
+        beforeSend : function(){
+            layer.load(1);
+        },
+        success : function(result){
+            layer.closeAll('loading');
+            if(result.status == 0){
+				layer.alert('取回成功，请去待办页面处理', function () {
+                    window.history.back();
+                });
+            }else{
+                layer.alert(result.msg);
+            }
+        },
+        error : function(){
+            layer.closeAll('loading');
+            layer.alert('操作失败');
+        }
+    });
+}

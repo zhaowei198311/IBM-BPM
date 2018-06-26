@@ -47,10 +47,12 @@ public class DhActivityConfController {
             mv.addObject("processDefinition", definition);
             LswSnapshot lswSnapshot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(definition.getProVerUid());
             mv.addObject("lswSnapshot", lswSnapshot);
-        } 
-        response = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid);
-        mv.addObject("firstHumanMeta", ((BpmActivityMeta)response.getData()).getActivityId());
-        mv.addObject("firstHumanMeteConf", ((BpmActivityMeta)response.getData()).getDhActivityConf().getActcUid());
+        }
+
+        BpmActivityMeta firstHumanMeta = bpmActivityMetaService.getFirstUserTaskMetaOfMainProcess(proAppId, proUid, proVerUid);
+        //response = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid);
+        mv.addObject("firstHumanMeta", firstHumanMeta.getActivityId());
+        mv.addObject("firstHumanMeteConf", firstHumanMeta.getDhActivityConf().getActcUid());
         ServerResponse<List<BpmActivityMeta>> humanActivitiesResponse = bpmActivityMetaService.getHumanActivitiesOfDhProcessDefinition(proAppId, proUid, proVerUid);
         mv.addObject("humanActivities", humanActivitiesResponse.getData());
         

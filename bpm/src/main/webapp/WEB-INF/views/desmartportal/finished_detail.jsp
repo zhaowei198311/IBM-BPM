@@ -138,11 +138,15 @@
         <input id="actcCanEditAttach" value="${activityConf.actcCanEditAttach}" style="display: none;">
         <input id="actcCanUploadAttach" value="${activityConf.actcCanUploadAttach}" style="display: none;">
         <input id="actcCanDeleteAttach" value="${activityConf.actcCanDeleteAttach}" style="display: none;">
+        <input id="canBeRevoke" type="hidden" value="${canBeRevoke}"/>
         <span id="insData" style="display: none;">${processInstance.insData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
+            <c:if test="${canBeRevoke == 'TRUE'}" >
+                <button class="layui-btn layui-btn-sm" onclick="revokeTask('${taskInstance.taskUid}');">取回</button>
+            </c:if>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
         </span>
     </div>

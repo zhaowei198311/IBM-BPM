@@ -13,7 +13,8 @@ import org.springframework.data.annotation.Id;
 * @author zhaowei  
 * @date 2018年5月9日  
 */
-public class DhProcessInstance {
+public class
+DhProcessInstance {
 	/** 未发起的草稿 */
     public static final String STATUS_DRAFT = "draft";
     public static final int STATUS_ID_DRAFT = -2; 

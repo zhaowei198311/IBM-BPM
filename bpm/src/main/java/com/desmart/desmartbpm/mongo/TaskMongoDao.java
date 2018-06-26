@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.mongo;
 
 import com.desmart.desmartbpm.entity.LockedTask;
+import com.desmart.desmartbpm.entity.OpenedTask;
 
 import java.util.List;
 
@@ -46,8 +47,29 @@ public interface TaskMongoDao {
 	 */
 	void saveLockedTask(LockedTask lockedTask);
 
+	/**
+	 * 批量插入被锁任务
+	 * @param list
+	 */
 	void batchSaveLockedTasks(List<LockedTask> list);
 
+	/**
+	 * 保存被打开过的任务
+	 * @param openedTask
+	 */
+	void saveOpenedTask(OpenedTask openedTask);
 
+	/**
+	 * 指定编号的任务是否已被打开过
+	 * @param taskId
+	 * @return
+	 */
+	boolean hasTaskBeenOpened(int taskId);
 
+	/**
+	 * 指定主键的任务是否已经被打开过
+	 * @param taskUid
+	 * @return
+	 */
+	boolean hasTaskBeenOpened(String taskUid);
 }
