@@ -110,6 +110,10 @@ public class DhTaskInstance {
 	 */
 	public static final String 	STATUS_COLLABORATION = "72";
 	
+	/**
+	 * 标记任务暂停
+	 */
+	public static final String STATUS_PAUSE = "P";
 	
 	private String taskUid; // 任务id(主键)
 

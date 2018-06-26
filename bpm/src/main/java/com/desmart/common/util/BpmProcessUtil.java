@@ -359,6 +359,66 @@ public class BpmProcessUtil {
 
 		return result;
 	}
+	
+	/**
+	 * 暂停流程实例
+	 * @param instanceId
+	 * @return
+	 */
+	public HttpReturnStatus pauseInstance(String instanceId) {
+		HttpReturnStatus result = null;
+		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+
+		try {
+			String host = this.bpmGlobalConfig.getBpmServerHost();
+			host = host.endsWith("/") ? host : host + "/";
+			String url = host + "rest/bpm/wle/v1/process/{0}";
+			Map<String, Object> pmap = new HashMap();
+			url = MessageFormat.format(url, instanceId);
+			url = url + "?action=suspend";
+			result = restUtil.doPut(url, pmap);
+			if (BpmClientUtils.isErrorResult(result)) {
+				log.error("暂停流程实例失败！\r\n" + result.getMsg());
+				result.setCode(-1);
+			}
+		} catch (Exception var7) {
+			log.error("暂停流程实例出错，instanceId：" + instanceId, var7);
+			result.setCode(-1);
+			result.setMsg(var7.toString());
+		}
+
+		return result;
+	}
+
+	/**
+	 * 恢复流程实例
+	 * @param instanceId
+	 * @return
+	 */
+	public HttpReturnStatus resumeInstance(String instanceId) {
+		HttpReturnStatus result = null;
+		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+
+		try {
+			String host = this.bpmGlobalConfig.getBpmServerHost();
+			host = host.endsWith("/") ? host : host + "/";
+			String url = host + "rest/bpm/wle/v1/process/{0}";
+			Map<String, Object> pmap = new HashMap();
+			url = MessageFormat.format(url, instanceId);
+			url = url + "?action=resume";
+			result = restUtil.doPut(url, pmap);
+			if (BpmClientUtils.isErrorResult(result)) {
+				log.error("恢复流程实例失败！\r\n" + result.getMsg());
+				result.setCode(-1);
+			}
+		} catch (Exception var7) {
+			log.error("恢复流程实例出错，instanceId：" + instanceId, var7);
+			result.setCode(-1);
+			result.setMsg(var7.toString());
+		}
+
+		return result;
+	}
 
 
 }
