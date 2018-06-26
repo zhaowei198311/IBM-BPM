@@ -216,7 +216,7 @@ function addSure(){
 	var taskUid = $("#taskUid").val();
 	var taskId = $("#taskId").val();
 	var insUid = $("#insUid").val();
-	var usrUid = $("#handleUser_view").val();
+	var usrUid = $("#handleUser").val();
 	var taskActivityId = $("#activityId").val();
 	var taskType = $(".layui-form_1 option:selected").val();
 	if (usrUid == null || usrUid == "") {

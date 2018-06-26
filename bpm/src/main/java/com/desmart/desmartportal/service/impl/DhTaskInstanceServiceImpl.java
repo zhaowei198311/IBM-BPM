@@ -718,11 +718,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			int num = 1;
 			// 下一个加签任务taskUid
 			String toTaskUid = "";
-			SysUser sysUser = new SysUser();
-			for (String string : usrUids) {
-				sysUser.setUserName(string);
-				List<SysUser> sysUserList = sysUserMapper.selectAll(sysUser);
-				dhTaskInstance.setUsrUid(sysUserList.get(0).getUserId());
+			
+			for (String userUid : usrUids) {
+				SysUser sysUser = sysUserMapper.queryByPrimaryKey(userUid);
+				dhTaskInstance.setUsrUid(sysUser.getUserId());
 				// 验证当前人员是否已经加签
 				DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.getByUserAndFromTaskUid(dhTaskInstance);
 				if (checkDhTaskInstance == null) {
@@ -749,7 +748,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhTaskInstanceMapper.insertTask(dhTaskInstance);
 					num++;
 				}else {
-					completedSigning += string+",";
+					completedSigning += sysUser.getUserUid()+",";
 				}	
 			}
 			// 如果会签人全部都已经会签过，则直接返回
