@@ -11,6 +11,8 @@ public class Const {
     
     //绑定接口参数类型
     public static final String PARAMETER_TYPE_ARRAY = "Array";
+    //接口状态
+    public static final String INATERFACE_DISABLED_STATUS = "disabled";
     
     public interface TimeUnit {
         public static final String HOUR = "hour";

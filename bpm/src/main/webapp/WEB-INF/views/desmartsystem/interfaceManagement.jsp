@@ -143,7 +143,7 @@
 								<label class="layui-form-label">接口名称*:</label>
 								<div class="layui-input-inline">
 									<input type="text" id="intTitle" name="intTitle"
-										lay-verify="intTitle" autocomplete="off" class="layui-input">
+										lay-verify="intTitle" autocomplete="off" class="layui-input required">
 								</div>
 							</div>
 						</div>
@@ -153,7 +153,7 @@
 								<div class="layui-input-inline">
 									<input type="text" id="intDescription" name="intDescription"
 										lay-verify="intDescription" autocomplete="off"
-										class="layui-input">
+										class="layui-input required">
 								</div>
 							</div>
 						</div>
@@ -164,7 +164,7 @@
 						<div class="layui-col-md6">
 							<label class="layui-form-label">接口类型*:</label>
 							<div class="layui-input-inline">
-								<select id="intType" name="intType" lay-filter="intType">
+								<select id="intType" name="intType" lay-filter="intType" class="required">
 									<option value="">请选择</option>
 									<option value="webservice">webservice</option>
 									<option value="restapi">restapi</option>
@@ -177,7 +177,7 @@
 								<label class="layui-form-label">接口地址*:</label>
 								<div class="layui-input-inline">
 									<input type="text" id="intUrl" name="intUrl"
-										lay-verify="intUrl" autocomplete="off" class="layui-input">
+										lay-verify="intUrl" autocomplete="off" class="layui-input required">
 								</div>
 							</div>
 						</div>
@@ -190,7 +190,7 @@
 							<div class="layui-input-inline">
 								<input type="text" id="intCallMethod" name="intCallMethod"
 									lay-verify="intCallMethod" autocomplete="off"
-									class="layui-input">
+									class="layui-input required">
 							</div>
 						</div>
 						<div class="layui-col-md6">
@@ -199,7 +199,7 @@
 								<div class="layui-input-inline">
 									<input type="text" id="intLoginUser" name="intLoginUser"
 										lay-verify="intLoginUser" autocomplete="off"
-										class="layui-input">
+										class="layui-input required">
 								</div>
 							</div>
 						</div>
@@ -230,7 +230,7 @@
 							<label class="layui-form-label">登陆密码:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="intLoginPwd" name="intLoginPwd"
-									lay-verify="intLoginPwd" autocomplete="off" class="layui-input">
+									lay-verify="intLoginPwd" autocomplete="off" class="layui-input required">
 							</div>
 						</div>
 						<div class="layui-col-md6">
@@ -383,16 +383,16 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口名称:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intTitle2" name="intTitle2"
-								lay-verify="text" autocomplete="off" class="layui-input"
+							<input type="text" id="intTitle2" name="intTitle"
+								lay-verify="text" autocomplete="off" class="layui-input required"
 								value="">
 						</div>
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label">接口描述:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intDescription2" name="intDescription2"
-								lay-verify="text" autocomplete="off" class="layui-input"
+							<input type="text" id="intDescription2" name="intDescription"
+								lay-verify="text" autocomplete="off" class="layui-input required"
 								value="">
 						</div>
 					</div>
@@ -401,7 +401,7 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口类型:</label>
 						<div class="layui-input-inline">
-							<select id="intType2" name="intType2" lay-filter="intType1">
+							<select id="intType2" name="intType" lay-filter="intType1">
 								<option value="webservice">webservice</option>
 								<option value="restapi">restapi</option>
 								<option value="rpc">rpc</option>
@@ -411,8 +411,8 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">接口地址:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intUrl2" name="intUrl2" lay-verify="text"
-								autocomplete="off" class="layui-input">
+							<input type="text" id="intUrl2" name="intUrl" lay-verify="text"
+								autocomplete="off" class="layui-input required">
 						</div>
 					</div>
 				</div>
@@ -420,15 +420,15 @@
 					<div class="layui-inline intCallMethodDiv1">
 						<label class="layui-form-label intCallMethod1">接口方法名:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intCallMethod2" name="intCallMethod2"
-								lay-verify="text" autocomplete="off" class="layui-input">
+							<input type="text" id="intCallMethod2" name="intCallMethod"
+								lay-verify="text" autocomplete="off" class="layui-input required">
 						</div>
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label">登录用户名:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intLoginUser2" name="intLoginUser2"
-								lay-verify="text" autocomplete="off" class="layui-input">
+							<input type="text" id="intLoginUser2" name="intLoginUser"
+								lay-verify="text" autocomplete="off" class="layui-input required">
 						</div>
 					</div>
 				</div>
@@ -456,7 +456,7 @@
 						<label class="layui-form-label">登陆密码:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="intLoginPwd2" name="intLoginPwd"
-								lay-verify="text" autocomplete="off" class="layui-input">
+								lay-verify="text" autocomplete="off" class="layui-input required">
 						</div>
 					</div>
 					<div class="layui-inline">
@@ -541,13 +541,13 @@
 						<div class="layui-col-md6">
 							<label class="layui-form-label">是否必须*:</label>
 							<div class="layui-input-inline">
-								<input id="isMust3" type="checkbox" name="isMust" lay-skin="switch" lay-filter="isMust" lay-text="true|false" />
+								<input id="isMust3" type="checkbox" name="isMust" lay-skin="switch" lay-filter="switch4" lay-text="true|false" />
 							</div>
 						</div>
 					</div>
 				</div>
 				
-				<div class="layui-form-item">
+				<div class="layui-form-item" id="paraInOut" >
 					<div class="layui-col-md6 ">
 						<label class="layui-form-label">输入/输出:</label>
 						<div class="layui-input-inline">

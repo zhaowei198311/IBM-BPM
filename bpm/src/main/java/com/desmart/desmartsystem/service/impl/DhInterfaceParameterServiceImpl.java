@@ -70,7 +70,6 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		int size=dhInterfaceParameterList.size();
 		
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
-			
 			String dateFarmat = dhInterfaceParameter.getDateFormat();
 			if(StringUtils.isNotBlank(dateFarmat)) {
 				boolean bol = InterfaceValidate.dateFormat(dateFarmat);
@@ -80,10 +79,10 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 			}
 		}
 		
-		
 		if(size>1) {//添加数组类型参数
 			String paraParent="";
 			String paraInOut="";
+			System.out.println(paraInOut);
 			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 				String paraUid=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();
 				dhInterfaceParameter.setParaUid(paraUid);
@@ -166,11 +165,13 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		
 		
 		String paraParent="";
+		String paraInOut="";
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			String paraUid=dhInterfaceParameter.getParaUid();
 			String paraType=dhInterfaceParameter.getParaType();
 			if(paraType.equals(Const.PARAMETER_TYPE_ARRAY)) {
 				paraParent=paraUid;
+				paraInOut=dhInterfaceParameter.getParaInOut();
 			}
 		}
 		
@@ -185,6 +186,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		}
 		ifp.setDhInterfaceParameters(dhInterfaceParameters);
 		ifp.setParaParent(paraParent);
+		
 		//删除掉不在集合中的数据
 		if(dhInterfaceParameters.size()>0) {
 			dhInterfaceParameterMapper.deleteArrayParameter(ifp);
@@ -195,6 +197,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			String paraUid=dhInterfaceParameter.getParaUid();
 			if(StringUtils.isNotBlank(paraUid)) {//如果主键不为空进行修改操作
+				dhInterfaceParameter.setParaInOut(paraInOut);
 				dhInterfaceParameterMapper.update(dhInterfaceParameter);
 			}else {//为空进行添加
 				String paraUidNew=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();

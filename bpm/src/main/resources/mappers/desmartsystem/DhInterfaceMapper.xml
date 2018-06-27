@@ -49,9 +49,9 @@
 			#{intLoginPwd},
 			#{intStatus},
 			sysdate,
+			sysdate,
 			#{intRequestXml,jdbcType=VARCHAR},
-			#{intResponseXml,jdbcType=VARCHAR},
-			sysdate
+			#{intResponseXml,jdbcType=VARCHAR}
 		)
 	</insert>
 	
@@ -89,7 +89,7 @@
 			<if test="intDescription != null and intDescription != ''">
 				INT_DESCRIPTION = #{intDescription},
 			</if>
-			<if test="intType != null and intType != ''">
+			<if test="intType != null and intType != '' ">
 				INT_TYPE = #{intType},
 			</if>
 			<if test="intUrl != null and intUrl != ''">
@@ -107,10 +107,10 @@
 			<if test="intStatus != null and intStatus != ''">
 				INT_STATUS = #{intStatus},
 			</if>
-			<if test="intRequestXml != null and intRequestXml != ''">
+			<if test="intRequestXml != null">
 				INT_REQUEST_XML = #{intRequestXml},
 			</if>
-			<if test="intResponseXml != null and intResponseXml != ''">
+			<if test="intResponseXml != null">
 				INT_RESPONSE_XML = #{intResponseXml},
 			</if>
 			  UPDATE_DATE = sysdate

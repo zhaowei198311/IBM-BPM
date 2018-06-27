@@ -87,11 +87,17 @@ function interfaceInputShowAndHide(intType,selector){
 	if(intType=='webservice'){
 		intRequestXml.show();
 		intResponseXml.show();
+		
+		$(intRequestXml).find('textarea[name="intRequestXml"]').attr('required','required');
+		$(intResponseXml).find('textarea[name="intResponseXml"]').attr('required','required');
+		
 		intCallMethodDiv.hide();
 	}else{
 		intCallMethodDiv.show();
 		intRequestXml.hide();
 		intResponseXml.hide();
+		$(intRequestXml).find('textarea[name="intRequestXml"]').removeAttr('required');
+		$(intResponseXml).find('textarea[name="intResponseXml"]').removeAttr('required');
 	}
 }
 
@@ -248,6 +254,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			valueJson.intUid=intUid;
 			arrayParameter.push(valueJson);
 		});
+		
 		$.ajax({
 			url : 'interfaceParamers/add',
 			type : 'POST',
@@ -361,10 +368,11 @@ function  checkboxChecked(result,selector){
 	
 	var paraInOut = result.paraInOut;
 	if(paraInOut=='input'){
-		$(paraInOutElement).attr('checked','checked');
-	}else{
 		$(paraInOutElement).removeAttr('checked');
+	}else{
+		$(paraInOutElement).attr('checked','checked');
 	}
+	
 	
 	var paraParent = result.paraParent;
 	var paraType=$('option:last',paraTypeElement).val();
@@ -372,15 +380,18 @@ function  checkboxChecked(result,selector){
 		if(paraType=='Array'){
 			$(paraTypeElement).find('option:last').remove();
 		}
+		$('#paraInOut').hide();
 	}else{
 		if(paraType!='Array'){
 			$(paraTypeElement).append('<option value="Array">Array</option>');
 		}
+		$('#paraInOut').show();
 	}
-	
+	console.log('1111111');
 }
 
 function getParameter(paraUid){
+	popupDivAndReset('display_container6','class');
 	layui.use([ 'layer', 'form' ], function() {
 		var form = layui.form;
 		$.ajax({
@@ -392,18 +403,21 @@ function getParameter(paraUid){
 			},
 			success : function(result) {
 				byParameterTypeHideAndShowElement(result.paraType,'3');
-				$(".display_container6").css("display", "block");
+				
+				//$(".display_container6").css("display", "block");
+				
 				$("#paraUid3").val(result.paraUid);
 				$("#paraIndex3").val(result.paraIndex);
 				$("#paraName3").val(result.paraName);
 				$("#paraDescription3").val(result.paraDescription);
-				$("#paraType3").val(result.paraType);
 				$("#paraSize3").val(result.paraSize);
 				$("#multiSeparator3").val(result.multiSeparator);
 				$("#dateFormat3").val(result.dateFormat);
 				$("#intUid3").val(result.intUid);
 				
 				checkboxChecked(result,'display_container6');
+				
+				$("#paraType3").val(result.paraType);
 				
 				$.ajax({
 					url : 'interfaceParamers/byQueryParameter',
@@ -492,9 +506,7 @@ function updateTr(ts,addOrUpdate){
 //添加array参数
 function addArrayParameter(addOrUpdate){
 	popupDivAndReset('chilNodeParameterContainer','id');
-	
 	$('#addArrayInAddOrUpdate').val(addOrUpdate);
-	
 	byParameterTypeHideAndShowElement('String',1);
 }
 

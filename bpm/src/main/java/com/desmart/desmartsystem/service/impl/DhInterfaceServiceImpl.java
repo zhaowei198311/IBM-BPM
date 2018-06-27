@@ -16,6 +16,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.dao.DhInterfaceMapper;
 import com.desmart.desmartsystem.entity.DhInterface;
+import com.desmart.desmartsystem.enums.InterfaceType;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -63,6 +64,12 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	@Override
 	public int saveDhInterface(DhInterface dhInterface)  throws Exception {
 		dhInterface.setIntUid(EntityIdPrefix.DH_INTERFACE_META + UUID.randomUUID().toString());
+		
+		String intType =InterfaceType.WEBSERVICE.getCode();
+		if(!intType.equals(dhInterface.getIntType())) {
+			dhInterface.setIntRequestXml(null);
+			dhInterface.setIntResponseXml(null);
+		}
 		int resultCount = dhInterfaceMapper.save(dhInterface);
 		return resultCount;
 	}
@@ -99,6 +106,11 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 */
 	@Override
 	public int updateDhInterface(DhInterface dhInterface) {
+		String intType =InterfaceType.WEBSERVICE.getCode();
+		if(!intType.equals(dhInterface.getIntType())) {
+			dhInterface.setIntRequestXml("");
+			dhInterface.setIntResponseXml("");
+		}
 		int result = dhInterfaceMapper.update(dhInterface);
 		return result;
 	}
