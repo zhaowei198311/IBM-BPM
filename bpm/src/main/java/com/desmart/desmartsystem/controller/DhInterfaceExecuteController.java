@@ -43,9 +43,6 @@ public class DhInterfaceExecuteController extends  BaseController{
 	public Json interfaceSchedule(@RequestBody JSONObject jsonObject) {
 		Json j=new Json();
 		try {
-			
-			
-			
 			j.setSuccess(true);
 			j.setMsg("接口调用成功");
 			j=dhInterfaceExecuteService.interfaceSchedule(jsonObject);

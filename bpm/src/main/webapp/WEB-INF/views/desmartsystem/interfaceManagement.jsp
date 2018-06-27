@@ -53,7 +53,7 @@
 					</select>
 				</div>
 				<div class="layui-col-md2" style="text-align: right; width: 280px">
-					<button class="layui-btn layui-btn-sm">查询接口</button>
+					<button class="layui-btn layui-btn-sm serch_interface">查询接口</button>
 					<button id="addInterfaces"
 						class="layui-btn layui-btn-sm create_btn" type="button">新增接口</button>
 				</div>
@@ -455,15 +455,14 @@
 					<div class="layui-inline">
 						<label class="layui-form-label">登陆密码:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intLoginPwd2" name="intLoginPwd2"
+							<input type="text" id="intLoginPwd2" name="intLoginPwd"
 								lay-verify="text" autocomplete="off" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-inline">
 						<label class="layui-form-label">接口状态:</label>
 						<div class="layui-input-inline">
-							<input id="intStatus2" type="checkbox" name="intStatus2"
-								lay-skin="switch" lay-filter="switch2" lay-text="启用|停用" value="">
+							<input id="intStatus2" type="checkbox" name="intStatus" lay-skin="switch" lay-filter="intStatusUpd" lay-text="启用|停用" >
 						</div>
 					</div>
 				</div>
@@ -542,7 +541,7 @@
 						<div class="layui-col-md6">
 							<label class="layui-form-label">是否必须*:</label>
 							<div class="layui-input-inline">
-								<input id="isMust3" type="checkbox" name="isMust" lay-skin="switch" lay-filter="switch4" lay-text="true|false" />
+								<input id="isMust3" type="checkbox" name="isMust" lay-skin="switch" lay-filter="isMust" lay-text="true|false" />
 							</div>
 						</div>
 					</div>

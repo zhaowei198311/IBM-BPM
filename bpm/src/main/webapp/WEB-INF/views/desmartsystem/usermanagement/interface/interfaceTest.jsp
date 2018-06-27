@@ -23,7 +23,7 @@
 	  <legend>${intTitle} 请求参数</legend>
 	</fieldset> 
 	<!-- <form class="layui-form form-inline" method="post" action="interfaceExecute/interfaceSchedule"  onsubmit="return submitInterface(this);"> -->
-	<form class="layui-form interfaceForm"  method="post" action="" >
+		<form class="layui-form interfaceForm"  method="post" action="javascript:void(0);" >
 		<input type="hidden"  value="${intUid}" id="intUid" />
 			<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 				<div class="layui-form-item">
@@ -31,17 +31,20 @@
 				    <label class="layui-form-label">${dhInterfaceParameter.paraDescription}</label>
 				    <div class="layui-input-inline">
 				      <input name="${dhInterfaceParameter.paraName}"  maxlength="${dhInterfaceParameter.paraSize}"    autocomplete="off" class="layui-input  
-				       <c:if test="${dhInterfaceParameter.isMust=='false'}">
+				       <c:if test="${dhInterfaceParameter.isMust=='true'}">
 				       		required
 				       </c:if>
 				       <c:if test="${dhInterfaceParameter.paraType=='Date'}">
 				       		dateISO
 				       </c:if>"
-				       type="text">
+				       type="text" >
 				    </div>
 			      </c:if>
 			  </div>
 			</c:forEach>
+			
+			<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="btnSubmit"  id="btnSubmit" style="display: none;"></button>
+		</form>
 			
 			<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 				<c:if test="${dhInterfaceParameter.paraType=='Array'}">
@@ -49,6 +52,7 @@
 				</c:if>
 			</c:forEach>
 			
+			<form action="javascript:void(0);" method="post" id="childrenForm">
 			<div id="childParameter" style="width:95%;margin-left: 18px;" > 
 			  <table class="layui-table" id="interfaceParameterTable" >
 			    <colgroup>
@@ -71,7 +75,16 @@
 			    	<tr>
 			    		<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 							<c:if test="${dhInterfaceParameter.paraType!='Array' && not empty dhInterfaceParameter.paraParent}">
-								 <td name="${dhInterfaceParameter.paraName}" ><input  class="layui-input" style="height: 28px;" type="text" /></td>
+								 <td name="${dhInterfaceParameter.paraName}" >
+								 	<input name="${dhInterfaceParameter.paraName}"  style="height: 28px;" maxlength="${dhInterfaceParameter.paraSize}"    autocomplete="off" class="layui-input  
+							       <c:if test="${dhInterfaceParameter.isMust=='true'}">
+							       		required
+							       </c:if>
+							       <c:if test="${dhInterfaceParameter.paraType=='Date'}">
+							       		dateISO
+							       </c:if>"
+							       type="text">
+								 </td>
 							</c:if>
 						</c:forEach>
 						<td><i class="layui-icon" onclick="addTr(this);" >&#xe654;</i><i class="layui-icon" onclick="deleteTr(this);" >&#xe640;</i></td>
@@ -79,14 +92,15 @@
 			    </tbody>
 			  </table>
 			</div>
+			</form>
 	
 		<div class="layui-form-item">
 			<label class="layui-form-label"></label>
 		    <div class="layui-input-inline">
-		      <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="btnSubmit" >发送请求</button>
+		      <button class="layui-btn layui-btn-sm" id="sendRequest" >发送请求</button>
 		    </div>
 		  </div>	
-	</form>
+	
 	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
 	  <legend>响应信息</legend>
 	</fieldset>
@@ -116,20 +130,39 @@
 		}
 	}
 	
-	$('#reseponse').val('');
+	$(function() {
+		$('#sendRequest').click(function(){
+			$('#btnSubmit').click();
+		});	
+	});
+	
 	
 	layui.use(['form', 'layedit', 'laydate','jquery'], function(){
-		  var form = layui.form;
-		  var array=$('#array').val();
-		  
-		  if(typeof array != 'undefined'){
-			  $('#childParameter').show();
-		  }else{
-			  $('#childParameter').empty();
-		  }
-	  
+	   var form = layui.form;
+	   var array=$('#array').val();
+	   
+	   if(typeof array != 'undefined'){
+	 	  $('#childParameter').show();
+	   }else{
+	 	  $('#childParameter').empty();
+	   }
+	   
 	   //监听提交
 	   form.on('submit(btnSubmit)', function(data){
+		 var $paraform=$('.interfaceForm');
+		 var $childrenForm=$('#childrenForm');
+		 
+		 $paraform.valid();
+		 if (!$paraform.valid()) {
+				return false;
+		 }
+		 
+		 $childrenForm.valid()
+		 if (!$childrenForm.valid()) {
+				return false;
+		 }
+		 
+		 
 		  var item=[];
 		  var $tr=$('#interfaceParameterList tr');
 		  var trLength = $tr.length;
@@ -151,13 +184,7 @@
 			   item.push(strJson);
 		   });
 		   
-		   
-		   var $form=$('.layui-form');
-		   if (!$form.valid()) {
-				return false;
-		   }
-		   
-		   var length=$form.find('input').length;
+		   var length=$paraform.find('input').length;
 		   if(length==1){
 			   layer.alert('请配置请求参数!');
 			   return false;
@@ -171,10 +198,8 @@
 			  intUid:$('#intUid').val(),
 			  inputParameter:data.field,
 		   }
-		   
-		   console.log(parameter);
-		   
-		 $.ajax({
+		  //console.log(parameter);
+			$.ajax({
 				type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
 				dataType : 'json',
 				url : '<%=request.getContextPath()%>/interfaceExecute/interfaceSchedule',

@@ -4,9 +4,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class IterfaceValidate {
+public class InterfaceValidate {
 	
 	
+	
+	/**
+	 *日期验证
+	 * @param dataFormat
+	 * @return
+	 */
 	public static boolean dateFormat(String dataFormat) {
 		boolean bl =true;
 		try {

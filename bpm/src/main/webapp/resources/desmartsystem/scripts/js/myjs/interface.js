@@ -46,18 +46,6 @@
 		// 加载数据
 		getInterfaceInfo();
 
-		$(".create_btn").click(function() {
-			layui.use([ 'layer', 'form' ], function() {
-				var form = layui.form, layer = layui.layer, $ = layui.jquery;
-				$(".display_container").css("display", "block");
-
-				form.on('switch(switch1)', function(data) {
-					var ckd = this.checked ? 'enabled' : 'disabled';
-					document.getElementById("intStatus").value = ckd;
-				})
-			})
-		})
-
 		$(".cancel_btn").click(function() {
 			$(".display_container").css("display", "none");
 			$("#form1").validate().resetForm();
@@ -65,241 +53,51 @@
 		$(".cancel2_btn").click(function() {
 			$(".display_container3").css("display", "none");
 		})
-		$(".sure2_btn").click(function() {
-			// 修改保存当前接口参数配置
-			updateParames();
-		})
+		
+		
 		$(".cancel3_btn").click(function() {
 			$(".display_container4").css("display", "none");
-			//$("#form2").validate().resetForm();
 		})
-		$(".sure3_btn").click(function() {
-			// 确定给 当前接口 添加新的参数
-			if ($("#form2").valid()) {
-				addParames();
-			}
-		})
+		
 		$(".cancel4_btn").click(function() {
 			$(".display_container5").css("display", "none");
 		})
+		
+		
 		$(".sure4_btn").click(function() {
-			// 修改 当前接口  interfaces/update
+			var $form = $('#updaArrayForm');
+			if(!$form.valid()){
+				return false;
+			};
+			var url = $form.serialize();
+			var intStatus = $('#intStatus').val();
+			if(intStatus=='disabled'){
+				url+='&intStatus='+intStatus;
+			}
 			$.ajax({
 				url : 'interfaces/update',
 				type : 'POST',
 				dataType : 'text',
-				data :$('#updaArrayForm').serialize(),
+				data :url,
 				success : function(result) {
-					
-					window.location.href = "interfaces/index";
-					
-				}
-			})
-		})
-
-		$(".cancel5_btn").click(function() {
-			$(".display_container6").css("display", "none");
-		})
-
-		// 修改接口参数配置
-		$(".sure5_btn").click(function() {
-			var intUid=$('#intUid').val();
-			$.ajax({
-				url : 'interfaceParamers/update',
-				type : 'POST',
-				dataType : 'json',
-				data : {
-					paraUid : $("#paraUid3").val(),
-					paraIndex : $("#paraIndex3").val(),
-					paraName : $("#paraName3").val(),
-					paraDescription : $("#paraDescription3").val(),
-					paraType : $("#paraType3").val(),
-					paraSize : $("#paraSize3").val(),
-					multiSeparator : $("#multiSeparator3").val(),
-					multiValue : $("#multiValue3").val(),
-					isMust : $("#isMust3").val(),
-					dateFormat : $("#dateFormat3").val()
-				},
-				success : function(result){
-					if (result.success==true){
+					if(result.success==true){
 						layer.alert(result.msg);
-						closePopup('display_container6','class');
-						getParamersInfo(intUid);
+						$('.serch_interface').click();
 					}else{
 						layer.alert(result.msg);
 					}
 				}
-			})
+			});
 		})
-
-		// 根据id 修改接口参数页面
-		$(".update2_btn").click(function() {
-			layui.use([ 'layer', 'form' ], function() {
-				var form = layui.form, layer = layui.layer, $ = layui.jquery;
-				form.on('switch(switch3)', function(data) {
-					var ckd = this.checked ? 'true' : 'false';
-					document.getElementById("multiValue3").value = ckd;
-				})
-				form.on('switch(switch4)', function(data) {
-					var ckd = this.checked ? 'true' : 'false';
-					document.getElementById("isMust3").value = ckd;
-				})
-
-				$("input[name='eCheck']:checked").each(function() {
-					var cks = $("[name='eCheck']:checked")
-					if (cks.length < 1) {
-						layer.alert("请选择一个接口参数");
-						return;
-					}
-					if (cks.length > 1) {
-						layer.alert("请选择一个接口参数，不能选择多个");
-						return;
-					}
-
-					$.ajax({
-						url : 'interfaceParamers/queryByparaId',
-						type : 'POST',
-						dataType : 'json',
-						data : {
-							paraUid : this.value
-						},
-						success : function(result) {
-							$(".display_container6").css("display", "block");
-							$("#paraUid3").val(result.paraUid);
-							$("#paraIndex3").val(result.paraIndex);
-							$("#paraName3").val(result.paraName);
-							$("#paraDescription3").val(result.paraDescription);
-							$("#paraType3").val(result.paraType);
-							$("#paraSize3").val(result.paraSize);
-							$("#multiSeparator3").val(result.multiSeparator);
-							if(result.multiValue=="true"){
-								document.getElementById('multiValue3').checked  = true;
-							}else{
-								document.getElementById('multiValue3').checked  = false;
-							}
-							if(result.isMust=="true"){
-								document.getElementById('isMust3').checked  = true;
-							}else{
-								document.getElementById('isMust3').checked  = false;
-							}
-							$("#intUid3").val(result.intUid);
-							form.render();
-						}
-					});
-				})
-			})
-		})
-
-		// 多表单验证
-		$("#form1").validate({
-			rules : {
-				intTitle : {
-					required : true
-				},
-				intType : {
-					required : true
-				},
-				intUrl : {
-					required : true
-				},
-				intStatus : {
-					required : true
-				}
-			}
-		});
-
-		$("#form2").validate({
-			rules : {
-				paraIndex : {
-					required : true
-				},
-				paraName : {
-					required : true
-				},
-				paraType : {
-					required : true
-				}
-			}
-		});
 
 	})
 
-	function updateParames() {
-		$("input[name='eCheck']:checked").each(function() {
-			$.ajax({
-				url : 'interfaceParamers/update',
-				type : 'POST',
-				dataType : 'text',
-				data : {
-					paraIndex : $("#paraIndex").val(),
-					paraName : $("#paraName").val(),
-					paraDescription : $("#paraDescription").val(),
-					paraType : $("#paraType").val(),
-					paraSize : $("#paraSize").val(),
-					multiSeparator : $("#multiSeparator").val(),
-					multiValue : $("#multiValue").val(),
-					isMust : $("#isMust").val(),
-					paraUid : this.value
-				},
-				success : function(result) {
-					window.location.href = "trigger/index";
-					layer.alert('修改成功')
-				}
-			})
-		})
-	}
 
-	function addParames() {
-		
-		var array=new Array()
-		array.push({
-				paraIndex : $("#paraIndex").val(),
-				paraName : $("#paraName").val(),
-				paraDescription : $("#paraDescription").val(),
-				paraType : $("#paraType").val(),
-				paraSize : $("#paraSize").val(),
-				multiSeparator : $("#multiSeparator").val(),
-				multiValue : $("#multiValue").val(),
-				isMust : $("#isMust").val(),
-				dateFormat : $("#dateFormat").val(),
-				intUid : $("#intUid").val()
-			});
-		array.push({
-			paraIndex : $("#paraIndex").val(),
-			paraName : $("#paraName").val(),
-			paraDescription : $("#paraDescription").val(),
-			paraType : $("#paraType").val(),
-			paraSize : $("#paraSize").val(),
-			multiSeparator : $("#multiSeparator").val(),
-			multiValue : $("#multiValue").val(),
-			isMust : $("#isMust").val(),
-			intUid : $("#intUid").val()
-		});
-		
-		
-		$.ajax({
-			url : 'interfaceParamers/add',
-			type : 'POST',
-			dataType : 'json',
-			contentType:"application/json",
-			data : JSON.stringify(array),
-			success : function(result) {
-				//window.location.href = "interfaces/index";
-				
-			}
-		})
-	}
 
 	$("#addInterfaces").click(function() {
-		//$(".display_container").css("display", "block");
 		interfaceInputShowAndHide("","");
+		$('#intStatus').val('disabled');
 		popupDivAndReset('display_container','class');
-		layui.use('laydate', function() {
-			var laydate = layui.laydate
-			laydate.render({
-				elem : '#interfaceCreateDate'
-			});
-		})
 	})
 
 	$("#cancel_btn").click(function() {
@@ -307,68 +105,32 @@
 	})
 
 	$("#sure_btn").click(function() {
-		if ($("#form1").valid()) {
-			layui.use([ 'layer', 'form' ], function() {
-				var form = layui.form, layer = layui.layer, $ = layui.jquery;
-				$.ajax({
-					url : 'interfaces/add',
-					type : 'POST',
-					dataType : 'json',
-					data : $('#form1').serialize(),
-					success : function(result) {
-						// 添加成功后 ajxa跳转 查询controller
-						if(result.success==true){
-							layer.alert(result.msg);
-							window.location.href = "interfaces/index";
-						}else{
-							layer.alert(result.msg);
-						}
-					}
-				})
-			})
+		
+		if(!$("#form1").valid()){
+			return false;
+		};
+		var url = $('#form1').serialize();
+		var intStatus = $('#intStatus').val();
+		if(intStatus=='disabled'){
+			url+='&intStatus='+intStatus;
 		}
-	})
-
-	// 详情 按钮
-	$(".details_btn").click(function() {
-		$("input[name='eCheck']:checked").each(function() {
-			// 请求ajax
-			$.ajax({
-				url : '',
-				type : 'POST',
-				dataType : 'text',
-				data : {
-					intUid : this.value
-				},
-				success : function(result) {
-
+		
+		$.ajax({
+			url : 'interfaces/add',
+			type : 'POST',
+			dataType : 'json',
+			data : url,
+			success : function(result) {
+				if(result.success==true){
+					layer.alert(result.msg);
+					window.location.reload();
+				}else{
+					layer.alert(result.msg);
 				}
-			})
-		})
+			}
+		});
 	})
 
-	// 查看
-//	$(".select_btn").click(function() {
-//		var interfaceName = $("#interfaceName").val();
-//		var interfaceType = $("#interfaceType").val();
-//		var interfaceState = $("#interfaceState").val();
-//		$.ajax({
-//			url : 'interfaces/queryDhInterfaceByTitle',
-//			type : 'POST',
-//			dataType : 'json',
-//			data : {
-//				intTitle : interfaceName,
-//				intType : interfaceType,
-//				intStatus : interfaceState
-//			},
-//			success : function(result) {
-//				// 成功的时候返回json数据 然后 进行展示
-//				if (result.status == 0) {
-//					drawTable(result.data);
-//				}
-//			}
-//		})
-//	})
 
 	function getInterfaceInfo() {
 		$.ajax({
@@ -425,8 +187,6 @@
 					+ '<i class="layui-icon"  title="接口测试" style="font-size:17px;" onclick=textInterface("'+meta.intUid+'","'+meta.intTitle+'","input")  >&#xe64c;</i>'
 					
 					+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
-//					+ '<i class="layui-icon"  title="新增参数"  onclick=add("'
-//					+ meta.intUid + '")>&#xe60a;</i>'
 					+ '<i class="layui-icon"  title="删除接口"  onclick=del("'
 					+ meta.intUid + '") >&#xe640;</i>'
 					+ '<i class="layui-icon"  title="绑定参数"  onclick=info("'
@@ -436,21 +196,15 @@
 
 	}
 
-	// url 监听事件
-	function urls(url) {
-	}
 
 	// 按钮事件
 	function info(intUid) {
 		// “接口参数详情”按钮
 		$("#exposed_table_container").css("display", "block");
-		
 		//给新增参数页面赋接口uid
 		$("#intUid").val(intUid);
-		
 		getParamersInfo(intUid);
 	}
-	
 	
 
 	function add() {
@@ -477,10 +231,9 @@
 					intUid : intUid
 				},
 				success : function(result) {
-					// 删除成功后 ajxa跳转 查询controller
 					if(result.success==true){
 						layer.alert(result.msg);
-						window.location.href = "interfaces/index";
+						$('.serch_interface').click();
 					}else{
 						layer.alert(result.msg);
 					}
@@ -490,14 +243,15 @@
 		});
 	}
 
+	
 	function updatate(intUid) {
 		// 修改接口页面
 		layui.use([ 'layer', 'form' ], function() {
 			var form = layui.form, layer = layui.layer, $ = layui.jquery;
-			form.on('switch(switch2)', function(data) {
+			form.on('switch(intStatusUpd)', function(data) {
 				var ckd = this.checked ? 'enabled' : 'disabled';
 				document.getElementById("intStatus2").value = ckd;
-			})
+			});
 			$.ajax({
 				url : 'interfaces/queryDhInterfaceById',
 				type : 'POST',
@@ -520,24 +274,16 @@
 					$("#intCallMethod2").val(result.intCallMethod);
 					$("#intLoginUser2").val(result.intLoginUser);
 					$("#intLoginPwd2").val(result.intLoginPwd);
-					
 					$("#intLoginPwd2").val(result.intLoginPwd);
-					
-					console.log(result.intResponseXml);
-					console.log(result.intRequestXml);
 					$("#intResponseXml2").val(result.intResponseXml);
 					$("#intRequestXml2").val(result.intRequestXml);
 					
-					interfaceInputShowAndHide(result.intType,1);
 					
-					//$("#intXml1").val(result.intXml);
+					interfaceInputShowAndHide(result.intType,1);
 					form.render();
 				}
 			})
 		})
-	}
-
-	function getInterfaceById(intUid) {
 	}
 
 	function getParamersInfo(intUid) {
@@ -568,30 +314,21 @@
 		if (pageInfo.total == 0) {
 			return;
 		}
-
 		var list = pageInfo.list;
 		var startSort = pageInfo.startRow;//开始序号
-		
-		
-		
 		var sortNumTow=1;
 		var displaySrotNum="";
-		
-		
 		for (var i = 0; i < list.length; i++) {
 			var meta = list[i];
 			var sortNum = startSort + i;
 			var isMust = "";
-			
 			if(meta.isMust == "true"){
 				isMust = "是"
 			}else{
 				isMust = "否"
 			}
-			
 			var paraParenName = meta.paraParentName;
 			var paraType = meta.paraType;
-			
 			if(paraParenName==null){
 				displaySrotNum=sortNumTow++;
 			}else{
@@ -608,13 +345,11 @@
 				trs+='<td>'+isMust+'</td>';
 				trs+='<td>'+isEmpty(meta.dateFormat)+'</td>';
 				trs+='<td>'+isEmpty(meta.paraParentName)+'</td>';
-				
 				if(isEmpty(meta.paraInOut)=='input'){
 					trs+='<td>输入</td>';
 				}else{
 					trs+='<td>输出</td>';
 				}
-				
 				trs+='<td><i class="layui-icon" title="修改参数" onclick=getParameter("'+meta.paraUid+'","update"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick=deleteParameter("'+meta.paraUid+'","'+meta.intUid+'"); >&#xe640;</i></td>';
 				trs+='</tr>';
 				$("#exposed_table_tbody").append(trs);
@@ -653,7 +388,6 @@
 			}
 		}
 	}
-	
 	
 	// 退出
 	function back(){

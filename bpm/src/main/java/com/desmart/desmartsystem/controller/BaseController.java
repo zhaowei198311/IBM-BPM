@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/baseController")
 public class BaseController {
 
+	
+	
 	private Logger logger = Logger.getLogger(BaseController.class);
 
 	//接口日志

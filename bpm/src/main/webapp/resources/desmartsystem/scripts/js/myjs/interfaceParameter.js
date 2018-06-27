@@ -128,6 +128,12 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		$(this).val(ckd2);
 	})
 	
+	form.on('switch(intStatus)', function(data) {
+		var ckd = this.checked ? 'enabled' : 'disabled';
+		document.getElementById("intStatus").value = ckd;
+	});
+	
+	
 	form.on('select(paraType)', function(data){
 		var value=data.value;
 		byParameterTypeHideAndShowElement(value,"");

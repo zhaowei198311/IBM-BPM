@@ -104,7 +104,7 @@ public class SAPConn {
 	            function = destination.getRepository().getFunction("ZIFFI_TBPM_PERSON");  
 	            JCoParameterList input = function.getImportParameterList();  
 	            //采购凭证号  
-	            input.setValue("PERNR_IN", "00025513");  
+	            input.setValue("PERNR_IN", "fasdfafasdfafasdfa");  
 	            function.execute(destination); 
 	         // 获取RFC返回的字段值
 	            JCoParameterList exportParam = function.getExportParameterList();

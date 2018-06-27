@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.desmart.desmartsystem.dao.DhInterfaceLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.desmart.desmartsystem.entity.DhInterfaceLog">
+		<result column="DIL_UID" property="dilUid" />
+		<result column="INT_UID" property="intUid" />
+		<result column="DIL_REQUEST" property="dilRequest" jdbcType="CLOB"/>
+		<result column="DIL_RESPONSE" property="dilResponse" jdbcType="CLOB"/>
+		<result column="DIL_ERRORMSG" property="dilErrormsg" />
+		<result column="CREATEUSER" property="createuser" />
+		<result column="CREATEDATE" property="createdate" />
+	</resultMap>
+
+
+	<sql id="BaseMapper">
+		dil_uid,int_uid,dil_request,dil_response,dil_errormsg,createuser,createdate
+	</sql>
+
+	<insert id="insert" parameterType="com.desmart.desmartsystem.entity.DhInterfaceLog" >
+		INSERT INTO DH_INTERFACE_LOG (
+		<include refid="BaseMapper"></include>)
+		VALUES
+		(#{dilUid},
+		#{intUid},
+		#{dilRequest},
+		#{dilResponse},
+		#{dilErrormsg},
+		#{createuser},
+		#{createdate})
+	</insert>
+
+</mapper>

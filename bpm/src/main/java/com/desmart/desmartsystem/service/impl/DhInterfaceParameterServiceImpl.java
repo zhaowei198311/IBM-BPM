@@ -20,7 +20,7 @@ import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
-import com.desmart.desmartsystem.util.IterfaceValidate;
+import com.desmart.desmartsystem.util.InterfaceValidate;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -73,7 +73,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 			
 			String dateFarmat = dhInterfaceParameter.getDateFormat();
 			if(StringUtils.isNotBlank(dateFarmat)) {
-				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				boolean bol = InterfaceValidate.dateFormat(dateFarmat);
 				if(!bol) {
 					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
 				}
@@ -116,7 +116,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		if(dhInterfaceParameter!=null) {
 			String dateFarmat = dhInterfaceParameter.getDateFormat();
 			if(StringUtils.isNotBlank(dateFarmat)) {
-				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				boolean bol = InterfaceValidate.dateFormat(dateFarmat);
 				if(!bol) {
 					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
 				}
@@ -157,7 +157,7 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			String dateFarmat = dhInterfaceParameter.getDateFormat();
 			if(StringUtils.isNotBlank(dateFarmat)) {
-				boolean bol = IterfaceValidate.dateFormat(dateFarmat);
+				boolean bol = InterfaceValidate.dateFormat(dateFarmat);
 				if(!bol) {
 					return ServerResponse.createByErrorMessage(dhInterfaceParameter.getParaName()+"日期格式不正确!");
 				}
