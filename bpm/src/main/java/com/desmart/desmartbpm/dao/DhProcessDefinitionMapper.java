@@ -15,6 +15,18 @@ public interface DhProcessDefinitionMapper {
 
     List<DhProcessDefinition> listBySelective(DhProcessDefinition dhProcessDefinition);
 
+    /**
+     * 根据应用库id， 流程图id， 流程版本来更新全部字段
+     * @param dhProcessDefinition
+     * @return
+     */
+    int updateByProAppIdAndProUidAndProVerUid(DhProcessDefinition dhProcessDefinition);
+
+    /**
+     * 根据应用库id， 流程图id， 流程版本来更新不为空字段
+     * @param dhProcessDefinition
+     * @return
+     */
     int updateByProAppIdAndProUidAndProVerUidSelective(DhProcessDefinition dhProcessDefinition);
     
     List<DhProcessDefinition> listAll();
@@ -50,36 +62,7 @@ public interface DhProcessDefinitionMapper {
      * @throws
      */
     DhProcessDefinition getProcessById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
-    /**
-     * 
-     * @Title: getDhObjectPermissionById  
-     * @Description: 根据proUid,proVerUid,proAppId获取对象权限  
-     * @param @param dhObjectPermission
-     * @param @return  
-     * @return DhObjectPermission
-     * @throws
-     */
-    List<DhObjectPermission> listDhObjectPermissionById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
-    /**
-     * 
-     * @Title: saveDhObjectPermissionById  
-     * @Description: TODO  
-     * @param @param dhObjectPermission
-     * @param @return  
-     * @return int
-     * @throws
-     */
-    int saveDhObjectPermissionById(DhObjectPermission dhObjectPermission);
-    /**
-     * 
-     * @Title: deleteDhObjectPermissionById  
-     * @Description: 删除对象权限表根据proUid，proVerUid，proAppId  
-     * @param @param proUid
-     * @param @param proVeruid
-     * @param @param proAppId
-     * @param @return  
-     * @return int
-     * @throws
-     */
-    int deleteDhObjectPermissionById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
+
+
+
 }

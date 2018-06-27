@@ -325,6 +325,9 @@ $(function() {
 							actcCanApprove : {
 								required : true
 							},
+							actcCanSkipFromReject: {
+								required: true
+							},
 							actcCanUploadAttach : {
 								required : true
 							},
@@ -2362,6 +2365,14 @@ function initConf(map) {
 			$(this).prop("checked", false);
 		}
 	});
+    $('input[name="actcCanSkipFromReject"]').each(function() {
+        if ($(this).val() == conf.actcCanSkipFromReject) {
+            $(this).prop("checked", true);
+        } else {
+            $(this).prop("checked", false);
+        }
+    });
+
 	$('input[name="actcCanChooseUser"]').each(function() {
 		if ($(this).val() == conf.actcCanChooseUser) {
 			$(this).prop("checked", true);

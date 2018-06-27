@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DataForSkipFromReject;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 
 import com.desmart.desmartportal.entity.DhRoutingRecord;
@@ -58,7 +59,12 @@ public interface DhRoutingRecordService {
 	 */
 	DhRoutingRecord generateFinishAddTaskRoutingRecord(DhTaskInstance currTaskInstance);
 
-
+	/**
+	 * 为跳转到驳回的节点生成流转信息
+	 * @param dataForSkipFromReject
+	 * @return
+	 */
+	DhRoutingRecord generateSkipFromRejectRoutingRecord(DataForSkipFromReject dataForSkipFromReject);
 	/**
 	 * 根据流程实例主键加载流转记录
 	 * @param insUid
@@ -66,14 +72,28 @@ public interface DhRoutingRecordService {
 	 */
 	ServerResponse loadDhRoutingRecords(String insUid);
 
+
 	/**
-	 * 获得指定流程实例，在指定节点上，指定人员的最近一条流转记录
-	 * @param insUid  流程实例主键
-	 * @param taskNode  任务节点
-	 * @param userUid  用户主键
+	 * 获得流程实例的所有流转记录，倒序排序
+	 * @param insUid 实例主键
 	 * @return
 	 */
-	DhRoutingRecord getNearlyRoutingRecordOnTaskNode(String insUid, BpmActivityMeta taskNode, String userUid);
+	List<DhRoutingRecord> getAllRoutingRecordOfProcessInstance(String insUid);
+
+	/**
+	 * 提交指定任务的流转记录
+	 * @param taskUid
+	 * @return
+	 */
+	DhRoutingRecord getSubmitRoutingRecordOfTask(String taskUid);
+
+	/**
+	 * 根据任务主键查找对应的流转记录，可能有多条（提交又取回的情况）
+	 * @param taskUid
+	 * @return
+	 */
+	List<DhRoutingRecord> getRoutingRecordOfTask(String taskUid);
+
 
 	/**
 	 * 为撤转流程实例生成流转信息

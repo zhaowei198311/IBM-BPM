@@ -342,4 +342,17 @@ public class ProcessDataUtil {
         return taskIdList;
     }
 
+	/**
+	 * 判断流程执行树中是否包含指定tokenId
+	 * @param tokenId
+	 * @param data 流程实例数据
+	 * @return
+	 */
+    public static boolean containsTokenId(String tokenId, JSONObject data) {
+		JSONObject dataJson = data.getJSONObject("data");
+        String executionTreeStr = dataJson.getString("executionTree");
+        String targetStr =  "tokenId\":\"" + tokenId;
+        return executionTreeStr.contains(targetStr);
+	}
+
 }

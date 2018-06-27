@@ -33,7 +33,15 @@ public interface DhObjectPermissionService {
      *    key: permissionStartTeamView  角色组显示
      */
     ServerResponse getPermissionStartOfProcess(String proAppId, String proUid, String proVerUid);
-    
+
+    /**
+     * 删除指定流程定义的发起权限
+     * @param proAppId 应用库id
+     * @param proUid  流程图id
+     * @param proVerUid  版本id
+     * @return
+     */
+    int deletePermissionListOfStartProcess(String proAppId, String proUid, String proVerUid);
     
     /**
      * 根据对象属性实体查询 信息
@@ -41,6 +49,17 @@ public interface DhObjectPermissionService {
      * @return
      */
     List<DhObjectPermission> getDhObjectPermissionInfo(DhObjectPermission dhObjectPermission);
+
+    /**
+     * 列出流程定义发起人权限列表
+     * @param proAppId 应用库id
+     * @param proUid  流程图id
+     * @param proVerUid  版本id
+     * @return
+     */
+    List<DhObjectPermission> getPermissionListOfStartProcess(String proAppId, String proUid, String proVerUid);
+
+
 
     /**
      * 根据步骤ID查表单字段权限信息(不包括打印)

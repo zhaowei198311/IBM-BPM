@@ -17,6 +17,7 @@ import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DataForSkipFromReject;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -57,6 +58,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		// 路由记录发生人
 		dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
+		dhRoutingRecord.setTaskUid(taskInstance.getTaskUid());
 		String activityTo = null;
         StringBuilder activityToBuilder = new StringBuilder();
 
@@ -92,6 +94,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
         String activityTo = targetNode.getActivityId();
         dhRoutingRecord.setActivityTo(activityTo);
+        dhRoutingRecord.setTaskUid(taskInstance.getTaskUid());
         return dhRoutingRecord;
     }
 
@@ -106,6 +109,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setActivityId(finishedTaskInstance.getTaskActivityId());
         String activityTo = finishedTaskInstance.getTaskActivityId();
         dhRoutingRecord.setActivityTo(activityTo);
+        dhRoutingRecord.setTaskUid(finishedTaskInstance.getTaskUid());
         return dhRoutingRecord;
     }
 
@@ -118,6 +122,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_ADD_TASK);
         dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
         dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
         return dhRoutingRecord;
     }
 
@@ -130,9 +135,24 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_FINISH_ADDTASK);
         dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
         dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
         return dhRoutingRecord;
     }
 
+    @Override
+    public DhRoutingRecord generateSkipFromRejectRoutingRecord(DataForSkipFromReject dataForSkipFromReject) {
+	    DhTaskInstance currTaskInstance = dataForSkipFromReject.getCurrTask();
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(currTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        dhRoutingRecord.setActivityTo(dataForSkipFromReject.getTargetNode().getActivityId());
+        dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
+        return dhRoutingRecord;
+    }
 
     @Override
     public ServerResponse loadDhRoutingRecords(String insUid) {
@@ -197,19 +217,40 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     }
 
 
-    public DhRoutingRecord getNearlyRoutingRecordOnTaskNode(String insUid, BpmActivityMeta taskNode, String userUid) {
+
+    @Override
+    public List<DhRoutingRecord> getAllRoutingRecordOfProcessInstance(String insUid) {
         DhRoutingRecord recordSelective = new DhRoutingRecord();
         recordSelective.setInsUid(insUid);
-        recordSelective.setActivityId(taskNode.getActivityId());
-        // 设置路由操作人
-        recordSelective.setUserUid(userUid);
         PageHelper.orderBy("CREATE_TIME DESC");
+        return dhRoutingRecordMapper.listBySelective(recordSelective);
+    }
+
+    @Override
+    public DhRoutingRecord getSubmitRoutingRecordOfTask(String taskUid) {
+        DhRoutingRecord recordSelective = new DhRoutingRecord();
+        recordSelective.setTaskUid(taskUid);
         List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordMapper.listBySelective(recordSelective);
         if (dhRoutingRecords.isEmpty()) {
             return null;
         }
-        return dhRoutingRecords.get(0);
+        for (DhRoutingRecord dhRoutingRecord : dhRoutingRecords) {
+            if (dhRoutingRecord.getRouteType().equals(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK)) {
+                return dhRoutingRecord;
+            }
+
+        }
+        return null;
     }
+
+
+    @Override
+    public List<DhRoutingRecord> getRoutingRecordOfTask(String taskUid) {
+        DhRoutingRecord recordSelective = new DhRoutingRecord();
+        recordSelective.setTaskUid(taskUid);
+        return dhRoutingRecordMapper.listBySelective(recordSelective);
+    }
+
 
 
 	@Override
@@ -224,7 +265,9 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
         String activityTo = tagetActivityMeta.getActivityId();
         dhRoutingRecord.setActivityTo(activityTo);
+        dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
         return dhRoutingRecord;
 	}
+
 
 }

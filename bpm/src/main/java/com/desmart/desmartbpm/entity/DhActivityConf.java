@@ -94,6 +94,8 @@ public class DhActivityConf {
     private String actcCanTransfer;  // 传阅
     
     private String actcResponsibility;
+
+    private String actcCanSkipFromReject;  // 驳回后能否直接回到此环节
     
     // 非表中字段
     private String actcOuttimeTriggerTitle; // 超时触发器名称
@@ -122,10 +124,18 @@ public class DhActivityConf {
     private String rejectActivities;
     private String rejectActivitiesView;
 
+
     public DhActivityConf() {
-       
+
     }
-    
+
+    public String getActcCanSkipFromReject() {
+        return actcCanSkipFromReject;
+    }
+
+    public void setActcCanSkipFromReject(String actcCanSkipFromReject) {
+        this.actcCanSkipFromReject = actcCanSkipFromReject;
+    }
 
     public String getActcUid() {
         return actcUid;

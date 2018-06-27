@@ -292,7 +292,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
 
-        currProcessInstance.getInsUid();
         Integer insId = currProcessInstance.getInsId();
         BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
         DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
@@ -521,6 +520,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    
 	    // 查看能否编辑insTitle
         boolean canEditInsTitle = canEditInsTitle(dhTaskInstance, dhprocessInstance);
+        // 查看是否能提交到驳回的环节
+        DataForSkipFromReject dataForSkipFromReject = getDataForSkipFromReject(dhTaskInstance, dhprocessInstance);
 
         List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
         if (steps.isEmpty()) {
@@ -578,6 +579,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("taskInstance", dhTaskInstance);
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    resultMap.put("canEditInsTitle", canEditInsTitle);
+	    resultMap.put("dataForSkipFromReject", dataForSkipFromReject);
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 	
@@ -1263,8 +1265,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	/**
 	 * 完成任务时，更新任务实例状态和提交内容
-	 * @param dhTaskInstance
-	 * @param taskData
+	 * @param dhTaskInstance 任务实例
+	 * @param taskData 提交上来的所有数据
 	 * @return
 	 */
 	private int updateDhTaskInstanceWhenFinishTask(DhTaskInstance dhTaskInstance, String taskData) {
@@ -1279,7 +1281,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	/**
 	 * 在重试拉取任务列表中插入一条数据
-	 * @param taskId
+	 * @param taskId  任务编号
 	 * @return
 	 */
 	private int saveTaskToRetryTable(int taskId) {
@@ -1348,6 +1350,105 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		return ServerResponse.createBySuccess();
 	}
 
+	public ServerResponse skipFromReject(String data) {
+		if (StringUtils.isBlank(data)) {
+			return ServerResponse.createByErrorMessage("缺少必要参数");
+		}
+		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+
+		JSONObject dataJson = JSONObject.parseObject(data);
+		JSONObject taskData = JSONObject.parseObject(String.valueOf(dataJson.get("taskData")));
+		JSONObject formDataIn = JSONObject.parseObject(String.valueOf(dataJson.get("formData")));
+
+		String taskUid = taskData.getString("taskUid");
+		// 根据任务标识和用户 去查询流程 实例
+		DhTaskInstance currTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (currTaskInstance == null) {
+			return ServerResponse.createByErrorMessage("当前任务不存在!");
+		}
+		// 校验任务状态
+		if (!"12".equals(currTaskInstance.getTaskStatus())) {// 检查任务是否重复提交
+			return ServerResponse.createByErrorMessage("任务已经被提交或暂停");
+		}
+		// 校验任务类型
+		String taskType = currTaskInstance.getTaskType();
+		if (!(DhTaskInstance.TYPE_SIMPLE_LOOP.equals(taskType) || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equalsIgnoreCase(taskType)
+				|| DhTaskInstance.TYPE_NORMAL.equals(taskType))) {
+			return ServerResponse.createByErrorMessage("任务类型异常");
+		}
+		if (!checkTaskUser(currTaskInstance, currentUserUid)) {// 检查任务是否有权限提交
+			return ServerResponse.createByErrorMessage("提交失败，您没有完成任务的权限");
+		}
+
+		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(currTaskInstance.getTaskActivityId());
+
+		// 获得流程实例
+		DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
+		if (currProcessInstance == null) {
+			return ServerResponse.createByErrorMessage("流程实例不存在");
+		}
+
+		// 获取跳转需要的信息
+        DataForSkipFromReject dataForSkipFromReject = getDataForSkipFromReject(currTaskInstance, currProcessInstance);
+		if (dataForSkipFromReject == null) {
+		    return ServerResponse.createByErrorMessage("提交到驳回环节失败");
+        }
+
+        // 更新流程实例信息
+        // 整合formdata
+        JSONObject insJson = JSONObject.parseObject(currProcessInstance.getInsData());
+        JSONObject mergedFormData = insJson.getJSONObject("formData");
+        if (StringUtils.isNotBlank(formDataIn.toJSONString())) {
+            mergedFormData = FormDataUtil.formDataCombine(formDataIn, insJson.getJSONObject("formData"));
+        }
+        insJson.put("formData", mergedFormData);
+        currProcessInstance.setInsUpdateDate(new Date());
+        currProcessInstance.setInsData(insJson.toJSONString());
+        dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
+
+        // 保存审批意见
+        ServerResponse saveApprovalOpinionResponse = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTaskInstance,
+                currTaskNode.getDhActivityConf(), dataJson);
+		if (!saveApprovalOpinionResponse.isSuccess()) {
+            return saveApprovalOpinionResponse;
+        }
+
+        // 保存流转记录
+        DhRoutingRecord routingRecord = dhRoutingRecordService.generateSkipFromRejectRoutingRecord(dataForSkipFromReject);
+		dhRoutingRecordMapper.insert(routingRecord);
+
+        // 完成任务，设置数据
+        updateDhTaskInstanceWhenFinishTask(currTaskInstance, data);
+
+		// 移动token
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        HttpReturnStatus httpReturnStatus = bpmProcessUtil.moveToken(dataForSkipFromReject.getInsId(),
+                dataForSkipFromReject.getTargetNode().getActivityBpdId(), dataForSkipFromReject.getTokenId());
+        if (HttpReturnStatusUtil.isErrorResult(httpReturnStatus)) {
+            throw new PlatformException("调用API 取回失败");
+        }
+        // API 调用成功的情况，获取新任务
+        JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
+        List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(dataForSkipFromReject.getTargetNode().getActivityBpdId(), processData);
+        // 阻止拉取任务
+        lockTasksForRejectTaskByTaskIdList(taskIdList);
+        // 重新分配
+        BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
+        ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), currentUserUid);
+        if (!serverResponse.isSuccess()) {
+            log.error("重新分配失败");
+        }
+
+        saveTaskToRetryTable(taskIdList.get(0));
+        unlockTask(taskIdList.get(0));
+
+        return ServerResponse.createBySuccess();
+	}
+
+
+
+
     /**
      * 作废指定任务
      * @param taskList
@@ -1363,7 +1464,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     }
 
     /**
-	 * 获得指定任务取回需要的tokenId
+	 * 获得取回任务需要的信息，如果不能取回任务返回null
 	 * @param finishedTaskInstance  已办任务实例
 	 * @param finishedTaskNode  已办任务的节点
      * @param dhProcessInstance  任务所属实例
@@ -1413,8 +1514,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             }
         }
 
-        DhRoutingRecord routingRecordOfTask = dhRoutingRecordService.getNearlyRoutingRecordOnTaskNode(finishedTaskInstance.getInsUid(),
-                finishedTaskNode, currUserUid);
+        // 找到完成任务时的流转记录
+        DhRoutingRecord routingRecordOfTask = dhRoutingRecordService.getSubmitRoutingRecordOfTask(finishedTaskInstance.getTaskUid());
+
         // 如果路由信息不包含to不能取回, 如果最后的操作不是提交不能取回
         if (routingRecordOfTask == null || routingRecordOfTask.getActivityTo() == null
                 || !routingRecordOfTask.getRouteType().equals(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK)) {
@@ -1434,6 +1536,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 iterator.remove();
             } else {
                 if (!DhTaskInstance.STATUS_RECEIVED.equals(task.getTaskStatus())) {
+                    // 如果状态不是待处理，就不允许取回
                     return null;
                 }
             }
@@ -1447,7 +1550,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         DhTaskInstance currTaskInstance = tasksOnAfterNode.get(0);
         int currTaskId = currTaskInstance.getTaskId();
 
-        // todo 查询现在的任务有没有被打开过
+        // 查询现在的任务有没有被打开过
         boolean hasOpened = taskMongoDao.hasTaskBeenOpened(currTaskId);
         if (hasOpened) return null;
 
@@ -1467,9 +1570,62 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         return dataForRevoke;
     }
 
+	/**
+	 * 获得跳转到驳回关节需要的信息，如果不能跳转到驳回环节返null
+	 * @param currTaskInstance  当前任务
+	 * @param dhProcessInstance 当前流程实例
+	 * @return
+	 */
+    private DataForSkipFromReject getDataForSkipFromReject(DhTaskInstance currTaskInstance, DhProcessInstance dhProcessInstance) {
+		// 最近路由到这个节点的路由记录是不是驳回
+        List<DhRoutingRecord> routingRecords = dhRoutingRecordService.getAllRoutingRecordOfProcessInstance(dhProcessInstance.getInsUid());
+        if (routingRecords.isEmpty()) return null;
+
+        // 获得流转到当前任务节点的最近一条流转记录
+        DhRoutingRecord routingRecordToCurrTaskNode = null;
+        for (DhRoutingRecord routingRecord : routingRecords) {
+            if (routingRecord.getActivityTo().equals(currTaskInstance.getTaskActivityId())) {
+                routingRecordToCurrTaskNode = routingRecord;
+                break;
+            }
+        }
+        if (routingRecordToCurrTaskNode == null
+                || !DhRoutingRecord.ROUTE_TYPE_REJECT_TASK.equals(routingRecordToCurrTaskNode.getRouteType())) {
+            return null;
+        }
+        // 获得驳回节点信息
+        BpmActivityMeta targetNode = bpmActivityMetaMapper.queryByPrimaryKey(routingRecordToCurrTaskNode.getActivityId());
+        if (targetNode == null) return null;
+
+        // 查看配置是否允许直接回到改环节
+        if (!"TRUE".equals(targetNode.getDhActivityConf().getActcCanSkipFromReject())) {
+            return null;
+        }
+
+        // 找到触发这个驳回的任务
+        DhTaskInstance rejectTask = dhTaskInstanceMapper.selectByPrimaryKey(routingRecordToCurrTaskNode.getTaskUid());
+
+        // 获得当前任务的tokenId
+        ServerResponse<String> processDataResponse = getProcessData(dhProcessInstance.getInsId());
+        if (!processDataResponse.isSuccess()) {
+            return null;
+        }
+        String tokenId = ProcessDataUtil.getTokenIdOfTask(currTaskInstance.getTaskId(), JSON.parseObject(processDataResponse.getData()));
+        if (StringUtils.isBlank(tokenId)) {
+            return null;
+        }
+
+        DataForSkipFromReject dataForSkipFromReject = new DataForSkipFromReject();
+        dataForSkipFromReject.setInsId(dhProcessInstance.getInsId());
+        dataForSkipFromReject.setTokenId(tokenId);
+        dataForSkipFromReject.setCurrTask(currTaskInstance);
+        dataForSkipFromReject.setTargetNode(targetNode);
+        dataForSkipFromReject.setNewTaskOwner(rejectTask.getUsrUid());
+        return dataForSkipFromReject;
+	}
 
     /**
-     * 获得流程实例在指定节点上的任务
+     * 获得流程实例在指定节点上的任务， 按完成时间倒序排列
      * @param insUid
      * @param activityId
      * @return
@@ -1480,6 +1636,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         taskSelective.setTaskActivityId(activityId);
         return dhTaskInstanceMapper.selectAllTask(taskSelective);
     }
+
 
     /**
      * 获得流程实例当前信息
@@ -1496,7 +1653,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         return ServerResponse.createBySuccess(returnStatus.getMsg());
 
     }
-
 
 
 }

@@ -242,4 +242,10 @@ public interface DhTaskInstanceService {
 	 */
 	Integer abandonRelationTaskOnTaskNode(DhTaskInstance currTaskInstance);
 
+	/**
+	 * 跳转到被驳回的环节
+	 * @param data
+	 * @return
+	 */
+	ServerResponse skipFromReject(String data);
 }

@@ -366,6 +366,13 @@
 															</div>
 														</div>
 														<div class="layui-form-item">
+															<label class="layui-form-label">是否允许驳回后直达</label>
+															<div class="layui-input-block">
+																<input type="radio" name="actcCanSkipFromReject" value="TRUE" title="允许直达">
+																<input type="radio" name="actcCanSkipFromReject" value="FALSE" title="不允许直达">
+															</div>
+														</div>
+														<div class="layui-form-item">
 															<label class="layui-form-label">环节排序号</label>
 															<div class="layui-input-block">
 																<input type="text" name="actcSort" required

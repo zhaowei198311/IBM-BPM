@@ -1027,7 +1027,8 @@ public class DhRouteServiceImpl implements DhRouteService {
             BpmActivityMeta normalNode = it.next();
             if (normalNode.getParentActivityId().equals(currTaskNode.getParentActivityId())) {
                 // 指定节点的处理人是否是空
-                if (StringUtils.isBlank(assignMap.get(normalNode.getActivityId()))) {
+				String userUids = assignMap.get(normalNode.getActivityId());
+                if (StringUtils.isBlank(userUids) || "null".equals(userUids)) {
                     return false;
                 }
             }

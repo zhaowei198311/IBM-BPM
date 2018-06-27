@@ -185,6 +185,8 @@
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
+        <input id="skipFromReject_newTaskOwner" type="hidden" value="${dataForSkipFromReject.newTaskOwner}"/>
+        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span id="approvalData" style="display: none;">${approvalData}</span>

@@ -17,6 +17,7 @@ import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -346,7 +347,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		CommonBusinessObjectUtils.setNextOwners(firstUserVarname, pubBo, creatorIdList);
 
 		// 调用API 发起一个流程
-
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
         HttpReturnStatus result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
 
@@ -865,9 +865,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         for (Iterator<BpmActivityMeta> it = endProcessNodes.iterator(); it.hasNext();) {
             BpmActivityMeta item = it.next();
             DhProcessInstance subInstance = dhProcessInstanceMapper.getByInsIdAndTokenActivityId(insId, item.getActivityId());
-            // 判断执行树下是否没有任务
-
-
+            // 判断代表子流程的tokenId是否在执行树中存在
+			if (ProcessDataUtil.containsTokenId(subInstance.getTokenId(), processDataJson)) {
+				continue;
+			}
             DhProcessInstance selective = new DhProcessInstance(subInstance.getInsUid());
             selective.setInsFinishDate(new Date());
             selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
@@ -875,9 +876,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
         }
         Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
-        if (mainEndNodes.size() > 0) {
+        if (mainEndNodes.size() > 0 && ProcessDataUtil.isProcessFinished(processDataJson)) {
         	// 判断主流程是否结束
-
             DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             DhProcessInstance selective = new DhProcessInstance(mainProcessInstance.getInsUid());
             selective.setInsFinishDate(new Date());

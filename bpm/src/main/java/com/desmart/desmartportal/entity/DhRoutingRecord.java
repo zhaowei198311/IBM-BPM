@@ -29,6 +29,8 @@ public class DhRoutingRecord {
 	private Date createTime;//操作时间
 	private String activityId;//环节id
 	private String activityTo;//流转到的节点activityId  逗号分隔
+	private String taskUid;  // 产生这条流转记录的任务
+
 	//不在表内，关联查询
 	private String userName;//操作人姓名
 	private String station;//操作人岗位身份
@@ -92,6 +94,19 @@ public class DhRoutingRecord {
 	public void setActivityTo(String activityTo) {
 		this.activityTo = activityTo;
 	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getTaskUid() {
+		return taskUid;
+	}
+
+	public void setTaskUid(String taskUid) {
+		this.taskUid = taskUid;
+	}
+
 	@Override
 	public String toString() {
 		return "DhRoutingRecord [routeUid=" + routeUid + ", insUid=" + insUid + ", activityName=" + activityName

@@ -109,6 +109,29 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         }
     }
 
+    @Override
+    public List<DhObjectPermission> getPermissionListOfStartProcess(String proAppId, String proUid, String proVerUid) {
+        DhObjectPermission selective = new DhObjectPermission();
+        selective.setProAppId(proAppId);
+        selective.setProUid(proUid);
+        selective.setProVerUid(proVerUid);
+        selective.setOpObjType(DhObjectPermissionObjType.PROCESS.getCode());
+        selective.setOpAction(DhObjectPermissionAction.START.getCode());
+        return dhObjectPermissionMapper.listByDhObjectPermissionSelective(selective);
+    }
+
+    @Override
+    public int deletePermissionListOfStartProcess(String proAppId, String proUid, String proVerUid) {
+        DhObjectPermission selective = new DhObjectPermission();
+        selective.setProAppId(proAppId);
+        selective.setProUid(proUid);
+        selective.setProVerUid(proVerUid);
+        selective.setOpObjType(DhObjectPermissionObjType.PROCESS.getCode());
+        selective.setOpAction(DhObjectPermissionAction.START.getCode());
+        return dhObjectPermissionMapper.delectByDhObjectPermissionSelective(selective);
+    }
+
+
 	@Override
     public ServerResponse getPermissionStartOfProcess(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {

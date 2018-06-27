@@ -171,6 +171,7 @@ public class MenusController {
 		String taskType = checkDhTaskInstance.getTaskType();
 		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(taskType) || DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(taskType)
 				|| DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(taskType)) {
+			// 如果是会签的任务
 			ModelAndView mv = new ModelAndView("desmartportal/addSign");
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toAddSign(taskUid);
 			if (serverResponse.isSuccess()) {
@@ -193,6 +194,8 @@ public class MenusController {
 	        }
 			return mv;
 		}
+
+		// 普通的待办任务
 		ModelAndView mv = new ModelAndView("desmartportal/approval");
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {

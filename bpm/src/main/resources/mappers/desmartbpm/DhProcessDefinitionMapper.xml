@@ -89,6 +89,42 @@
         order by pd.create_date desc
     </select>
 
+    <update id="updateByProAppIdAndProUidAndProVerUid" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+        update DH_PROCESS_DEFINITION
+        <set>
+            LAST_MODIFIED_USER = #{lastModifiedUser},
+            LAST_MODIFIED_DATE = sysdate,
+            PRO_PARENT = #{proParent},
+            PRO_TIME = #{proTime},
+            PRO_TIME_UNIT = #{proTimeUnit},
+            PRO_STATUS = #{proStatus},
+            PRO_TYPE_DAY = #{proTypeDay},
+            PRO_TYPE = #{proType},
+            PRO_ASSIGNMENT = #{proAssignment},
+            PRO_SHOW_MAP = #{proShowMap},
+            PRO_SHOW_MESSAGE = #{proShowMessage},
+            PRO_SUBPROCESS = #{proSubprocess},
+            PRO_TRI_START = #{proTriStart},
+            PRO_TRI_DELETED = #{proTriDeleted},
+            PRO_TRI_CANCELED = #{proTriCanceled},
+            PRO_TRI_PAUSED = #{proTriPaused},
+            PRO_TRI_UNPAUSED = #{proTriUnpaused},
+            PRO_TRI_REASSIGNED = #{proTriReassigned},
+            PRO_TYPE_PROCESS = #{proTypeProcess},
+            PRO_SHOW_DELEGATE = #{proShowDelegate},
+            PRO_SHOW_DYNAFORM = #{proShowDynaform},
+            PRO_HEIGHT = #{proHeight},
+            PRO_WIDTH = #{proWidth},
+            PRO_TITLE_X = #{proTitleX},
+            PRO_TITLE_Y = #{proTitleY},
+            PRO_DEBUG = #{proDebug},
+            PRO_DYNAFORMS = #{proDynaforms},
+            PRO_DERIVATION_SCREEN_TPL = #{proDerivationScreenTpl},
+            IS_ALL_USER_START = #{isAllUserStart}
+        </set>
+        where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid} and PRO_VER_UID = #{proVerUid}
+    </update>
+
     <update id="updateByProAppIdAndProUidAndProVerUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">
         update DH_PROCESS_DEFINITION
         <set>
@@ -213,43 +249,8 @@
     	and PRO_APP_ID = #{proAppId}
     </select>
     
-    <select id="listDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
-    	select * from DH_OBJECT_PERMISSION
-    	where PRO_UID = #{proUid}   	
-    	and PRO_VER_UID = #{proVerUid} 
-    	and PRO_APP_ID = #{proAppId}
-    </select>
+
+
     
-    <insert id="saveDhObjectPermissionById" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
-    	insert into DH_OBJECT_PERMISSION (
-    		OP_UID,
-    		PRO_APP_ID,
-    		PRO_UID,
-    		PRO_VER_UID,
-    		STEP_UID,
-    		OP_PARTICIPATE_TYPE,
-    		OP_PARTICIPATE_UID,
-    		OP_OBJ_TYPE,
-    		OP_OBJ_UID,
-    		OP_ACTION
-    	)values (
-    		#{opUid},
-    		#{proAppId},
-    		#{proUid},
-    		#{proVerUid},
-    		#{stepUid},
-    		#{opParticipateType},
-    		#{opParticipateUid},
-    		#{opObjType},
-    		#{opObjUid},
-    		#{opAction}   		
-    	)  	
-    </insert>
-    
-    <delete id="deleteDhObjectPermissionById" parameterType="java.lang.String">
-    	delete from DH_OBJECT_PERMISSION
-    	where PRO_UID = #{proUid} 	
-    	and PRO_VER_UID = #{proVerUid} 
-    	and PRO_APP_ID = #{proAppId} 
-    </delete>
+
 </mapper>

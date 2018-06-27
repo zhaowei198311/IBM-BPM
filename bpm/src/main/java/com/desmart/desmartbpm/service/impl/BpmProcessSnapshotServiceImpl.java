@@ -479,8 +479,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanSkip(null);
         conf.setActcCanChooseUser(Const.Boolean.FALSE);
         conf.setActcChooseableHandlerType(DhActivityConfAssignType.ALL_USER.getCode());
-        conf.setActcCanTransfer(Const.Boolean.FALSE); // 是否允许
+        conf.setActcCanTransfer(Const.Boolean.FALSE); // 是否允许抄送
         conf.setActcResponsibility(null); // 职责描述
+        conf.setActcCanSkipFromReject(Const.Boolean.FALSE); // 是否允许驳回后直接提交回来
         return conf;
     }
     

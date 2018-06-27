@@ -1,22 +1,17 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.desmartbpm.common.EntityIdPrefix;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -530,37 +525,37 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      */
     public void synchronizationProcess(String proUid, String proVerUid, String proAppId,
     								String proUidNew, String proVerUidNew, String proAppIdNew){
-//    	// 老流程信息
-//		DhProcessDefinition similarProcess = new DhProcessDefinition();
-//		similarProcess = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
-//		// 新流程
-//		DhProcessDefinition processNew = new DhProcessDefinition();
-//		processNew = dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
-//		similarProcess.setProUid(processNew.getProUid());
-//		similarProcess.setProVerUid(processNew.getProVerUid());
-//		similarProcess.setProAppId(processNew.getProAppId());
-//		similarProcess.setProStatus(processNew.getProStatus());
-////    	similarProcess.setLastModifiedDate(processNew.getLastModifiedDate());
-//		similarProcess.setLastModifiedUser(processNew.getLastModifiedUser());
-//		similarProcess.setCreateDate(processNew.getCreateDate());
-//		similarProcess.setCreateUser(processNew.getCreateUser());
-//		// 更新DH_PROCESS_DEFINITION表
-//		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(similarProcess);
+    	// 老流程信息
+		DhProcessDefinition processDefinition = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
+
+		// 新流程
+		DhProcessDefinition processNew =  dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
+
+        BeanUtils.copyProperties(processDefinition, processNew, new String[]{"proVerUid", "proStatus", "lastModifiedDate", "createDate", "createUser"});
+        processNew.setLastModifiedDate(new Date());
+        processNew.setLastModifiedUser((String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+
+		// 更新DH_PROCESS_DEFINITION表
+		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUid(processNew);
+
     	// 老流程权限信息
-		List<DhObjectPermission> dhObjectPermissionList = dhProcessDefinitionMapper.listDhObjectPermissionById(proUid, proVerUid, proAppId);
+		List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionService.getPermissionListOfStartProcess(proAppId, proUid, proVerUid);
 		if (dhObjectPermissionList.size() > 0) {
 			// 删除新流程的权限信息，重新添加
-			dhProcessDefinitionMapper.deleteDhObjectPermissionById(proUidNew, proVerUidNew, proAppIdNew);
-			
-			for (DhObjectPermission dop : dhObjectPermissionList) {
-				dop.setOpUid("obj_perm:"+UUID.randomUUID().toString());
-				dop.setProUid(proUidNew);
-				dop.setProVerUid(proVerUidNew);
-				dop.setProAppId(proAppIdNew);
-				// 新增 DH_OBJECT_PERMISSION表
-				dhProcessDefinitionMapper.saveDhObjectPermissionById(dop);
+            dhObjectPermissionService.deletePermissionListOfStartProcess(proAppIdNew, proUidNew, proVerUidNew);
+
+			List<DhObjectPermission> newPermissionList = new ArrayList<>();
+			for (DhObjectPermission permission : dhObjectPermissionList) {
+				permission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
+				permission.setProUid(proUidNew);
+				permission.setProVerUid(proVerUidNew);
+				permission.setProAppId(proAppIdNew);
+                newPermissionList.add(permission);
 			}
+			dhObjectPermissionMapper.saveBatch(newPermissionList);
 		}
+
+
     }
     
     /**

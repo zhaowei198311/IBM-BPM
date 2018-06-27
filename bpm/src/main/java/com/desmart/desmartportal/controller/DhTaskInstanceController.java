@@ -104,7 +104,23 @@ public class DhTaskInstanceController {
 			return ServerResponse.createByErrorMessage("驳回任务失败");
 		}
 	}
-	
+
+	/**
+	 * 跳转到驳回的环节
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value = "/skipFromReject")
+	@ResponseBody
+	public ServerResponse skipFromReject(@RequestParam(value = "data") String data) {
+		try {
+			return dhTaskInstanceService.skipFromReject(data);
+		} catch (Exception e) {
+			LOG.error("完成任务失败，提交数据：" + data, e);
+			return ServerResponse.createByErrorMessage("驳回任务失败");
+		}
+	}
+
 	/**
 	 * |
 	 * @Title: queryProgressBar  
@@ -215,7 +231,7 @@ public class DhTaskInstanceController {
 	}
 	
 	/**
-	 * 
+	 * 查询抄送已读/未读任务
 	 * @Title: queryTransfer  
 	 * @Description: 查询抄送已读/未读任务  
 	 * @param @param dhTaskInstance
