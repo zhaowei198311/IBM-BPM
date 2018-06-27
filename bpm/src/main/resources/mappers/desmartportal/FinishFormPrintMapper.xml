@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartportal.dao.FinishFormPrintMapper">
+	<insert id="saveFormPrintContent" parameterType="map">
+		insert into 
+		dh_print_form_content(form_uid,form_content) 
+		values(#{formUid},#{webpage})
+	</insert>
+	
+	<select id="queryPrintContentByFormUid" parameterType="string" resultType="string">
+		select form_content 
+		from dh_print_form_content
+		where form_uid = #{formUid}
+	</select>
+	
+	<delete id="deletePrintContentByFormUid" parameterType="string">
+		delete from dh_print_form_content
+		where form_uid = #{formUid}
+	</delete>
+</mapper>

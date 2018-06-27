@@ -178,6 +178,8 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
 				if(null!=printObjPer) {
 					titlePrintJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
+				}else {
+					titlePrintJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"no\"},";
 				}
 			}else {
 				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
@@ -198,6 +200,8 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
 				if(null!=printObjPer) {
 					printJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
+				}else {
+					printJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"no\"},";
 				}
 			}
 		}

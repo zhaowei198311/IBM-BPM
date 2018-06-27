@@ -666,11 +666,75 @@ var common = {
 	},
 	//普通字段的打印权限控制
 	fieldPrintPermission:function(json){
-		
+		for(var name in json){
+			var paramObj = json[name];
+			var print = paramObj["print"];
+			var oldPrint = $("[name='"+name+"']").attr("print");
+			if(print=="no" && oldPrint!="yes"){
+				$("[name='"+name+"']").attr("print","no");
+			}else if(print=="yes"){
+				$("[name='"+name+"']").attr("print","yes");
+			}
+		}
+		//common.printTableP();
+	},
+	//当表单中某块信息全都不可打印时，title也要不打印
+	printTableP:function(){
+		var tableArr = $("#formSet").find(".layui-table");
+		tableArr.each(function(){
+			var tdArr = $(this).find("td");
+			var flag = true;
+			tdArr.each(function(){
+				if($(this).find("p").length==0 && $(this).find("[print='yes']").length!=0){
+					flag = false;
+				}
+			});
+			if(flag){
+				if($(this).prev().prop("tagName")=="P"){
+					var pText = $(this).prev()[0].firstChild.data.trim();
+					if($(this).attr("title")==pText){
+						$(this).prev().attr("print","no");
+					}
+				}
+				$(this).attr("print","no");
+			}else{
+				$(this).attr("print","yes");
+				$(this).prev().attr("print","yes");
+			}
+		});
 	},
 	//标题字段的打印权限控制
 	titlePrintPermission:function(json){
-		
+		for(var name in json){
+			var paramObj = json[name];
+			var print = paramObj["print"];
+			if(print=="no"){
+				$("[name='"+name+"']").attr("print","no");
+				if($("[name='"+name+"']").prop("tagName")=="P"){
+					var pText = $("[name='"+name+"']")[0].firstChild.data.trim();
+					$(".form-sub").each(function(){
+						var tableTitle = $(this).attr("title");
+						if(tableTitle == pText){
+							$(this).attr("print","yes");
+							$(this).find("[print='yes']").attr("print","no");
+						}
+					});
+				}
+			}else if(print=="yes"){
+				$("[name='"+name+"']").attr("print","yes");
+				console.log($("[name='"+name+"']").prop("tagName"));
+				if($("[name='"+name+"']").prop("tagName")=="P"){
+					var pText = $("[name='"+name+"']")[0].firstChild.data.trim();
+					$(".form-sub").each(function(){
+						var tableTitle = $(this).attr("title");
+						if(tableTitle == pText){
+							$(this).attr("print","yes");
+							$(this).find("[print='no']").attr("print","yes");
+						}
+					});
+				}
+			}
+		}
 	},
 	//验证动态表单必填项
 	validateFormMust:function(id){

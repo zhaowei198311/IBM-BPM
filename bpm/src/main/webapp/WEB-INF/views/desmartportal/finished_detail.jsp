@@ -147,6 +147,9 @@
             <c:if test="${canBeRevoke == 'TRUE'}" >
                 <button class="layui-btn layui-btn-sm" onclick="revokeTask('${taskInstance.taskUid}');">取回</button>
             </c:if>
+            <c:if test="${taskInstance.taskStatus=='32'}">
+            	<button class="layui-btn layui-btn-sm" onclick="prePrintIndex()">打印预览</button>
+            </c:if>
             <button class="layui-btn layui-btn-sm" onclick="back()">退出</button>
         </span>
     </div>
@@ -188,7 +191,7 @@
                 </tbody>
             </table>
             <div id="formSet">${bpmForm.dynWebpage }</div>
-            
+            <div id="preViewForm"></div>
             <div class="option_container">
                 <div class="layui-tab">
                     <ul class="layui-tab-title">
