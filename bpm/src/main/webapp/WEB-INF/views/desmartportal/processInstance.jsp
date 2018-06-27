@@ -111,33 +111,63 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
+		<!-- 选择业务关键字 -->
+	<div id="checkedBusinessKey" style="display: none;"
+		class="display_content_ins_business_key">
+		<div class="top">选择业务关键字</div>
+		<div class="upload_overflow_middle">
+			<div class="layui-upload">
+				<div class="layui-upload-list">
+					<table class="layui-table">
+						<colgroup>
+							<col width="10%">
+							<col>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th style="text-align: center;">业务关键字</th>
+							</tr>
+						</thead>
+						<tbody class="showBusinessList">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="foot_ins_business_key">
+			<button class="layui-btn layui-btn sure_btn" onclick="startProcess()">确定</button>
+			<button class="layui-btn layui-btn cancel_btn"
+				onclick="$('#checkedBusinessKey').hide()">取消</button>
+		</div>
+	</div>
 </body>
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js" ></script>
 <script>
+	// 为翻页提供支持
+	var pageConfig = {
+		pageNum : 1,
+		pageSize : 10,
+		total : 0
+	}
 
-		// 为翻页提供支持
-		var pageConfig = {
-			pageNum : 1,
-			pageSize : 10,
-			total : 0
-		}
-
-		layui.use([ 'laypage', 'layer' ], function() {
-			var laypage = layui.laypage, layer = layui.layer;
-			//完整功能
-			laypage.render({
-				elem : 'lay_page',
-				count : 50,
-				limit : 10,
-				layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
-				jump : function(obj) {
-					console.log(obj)
-				}
-			});
+	layui.use([ 'laypage', 'layer' ], function() {
+		var laypage = layui.laypage, layer = layui.layer;
+		//完整功能
+		laypage.render({
+			elem : 'lay_page',
+			count : 50,
+			limit : 10,
+			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+			jump : function(obj) {
+				console.log(obj)
+			}
 		});
-	
+	});
+
 	$(document).ready(function() {
 		var sign = true;
 		// 加载数据
@@ -145,7 +175,7 @@
 	});
 
 	var index;
-	function queryProcessInstance(sign){
+	function queryProcessInstance(sign) {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
 		var key = $('#fieldName').val();
@@ -160,28 +190,29 @@
 				pageSize : pageConfig.pageSize,
 				proUid : proUid,
 				proAppId : proAppId,
-				key: key,
-				value: value,
-				sign: sign
+				key : key,
+				value : value,
+				sign : sign
 			},
-			beforeSend: function () {
-		        index = layer.load(1);
-		    },
-			success : function(result){
-				if(result.status==0){
-				drawTable(result.data);
-				}else{
+			beforeSend : function() {
+				index = layer.load(1);
+			},
+			success : function(result) {
+				if (result.status == 0) {
+					drawTable(result.data);
+				} else {
 					layer.alert(result.msg);
 				}
 				layer.close(index);
-			},error : function(){
+			},
+			error : function() {
 				layer.close(index);
 			}
 		})
 	}
 
 	function drawTable(data) {
-		pageConfig.total = data[data.length-1].count;
+		pageConfig.total = data[data.length - 1].count;
 		// 数据总数
 		$('#number').text(pageConfig.total);
 		// 分页
@@ -193,31 +224,28 @@
 		}
 		data.pop();
 		var trs = "";
-		$(data).each(function(i){
-			var sortNum = i+1;
-			var createDate = datetimeFormat_1(new Date(this.insCreateDate));
-			var finishDate = "";
-			if(this.insFinishDate != null && this.insFinishDate != ""){
-				finishDate = datetimeFormat_1(new Date(this.insFinishDate));
-			}
-			trs += '<tr>'
-					+ '<td>'
-					+ sortNum
-					+ '</td>'
-					+ '<td style = "cursor:pointer;" onclick=openTaskInstance("'+this._id+'")>'
-					+ this.insTitle
-					+ '</td>'
-					+ '<td>'
-					+ this.insStatus
-					+ '</td>'
-					+ '<td>'
-					+ createDate
-					+ '</td>' 
-					+ '<td>'
-					+ finishDate
-					+ '</td>'
-					+ '</tr>';
-		});
+		$(data)
+				.each(
+						function(i) {
+							var sortNum = i + 1;
+							var createDate = datetimeFormat_1(new Date(
+									this.insCreateDate));
+							var finishDate = "";
+							if (this.insFinishDate != null
+									&& this.insFinishDate != "") {
+								finishDate = datetimeFormat_1(new Date(
+										this.insFinishDate));
+							}
+							trs += '<tr>'
+									+ '<td>'
+									+ sortNum
+									+ '</td>'
+									+ '<td style = "cursor:pointer;" onclick=openTaskInstance("'
+									+ this._id + '")>' + this.insTitle
+									+ '</td>' + '<td>' + this.insStatus
+									+ '</td>' + '<td>' + createDate + '</td>'
+									+ '<td>' + finishDate + '</td>' + '</tr>';
+						});
 		$("#processInstance_tbody").append(trs);
 	}
 
@@ -244,16 +272,19 @@
 		});
 	}
 	// 单击行跳转至任务实例页面
-	function openTaskInstance(insUid){
+	function openTaskInstance(insUid) {
 		window.location.href = 'menus/processType?insUid=' + insUid;
 	}
 	function startProcess(insBusinessKey) {
-		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
-		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
-		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
-			layer.alert("请选择业务关键字");
-			return;
-		}
+		if (insBusinessKey == null || insBusinessKey == ''
+				|| insBusinessKey == undefined) {
+			insBusinessKey = $(".showBusinessList").find(
+					"input[name='insBusinessKey']:checked").val();
+			if (insBusinessKey == null || insBusinessKey == ''
+					|| insBusinessKey == undefined) {
+				layer.alert("请选择业务关键字");
+				return;
+			}
 		}
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
@@ -263,54 +294,58 @@
 		window.location.href = 'menus/startProcess?proUid=' + proUid
 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
 				+ proName + '&categoryName=' + categoryName
-				+'&insBusinessKey='+insBusinessKey;
+				+ '&insBusinessKey=' + insBusinessKey;
 	}
-	
-	function checkedBusinesskey(){
+
+	function checkedBusinesskey() {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
 		var verUid = $('#verUid').val();
-		$.ajax({
-			url:"processInstance/checkedBusinesskey",
-			type : 'POST',
-			dataType : 'json',
-			beforeSend: function() {
-			    layer.load(1);
-			},
-			data : {
-				proUid : proUid,
-				proAppId : proAppId,
-				proVerUid : verUid
-			},
-			success : function(result) {
-				if(result.status == 0){
-					if(result.data.flag==1){
-						startProcess(result.data.stepBusinessKey);
-					}else{
-                        layer.closeAll('loading');
-						$("#checkedBusinessKey").find(".showBusinessList").empty();
-						for (var i = 0; i < result.data.length; i++) {
-						var info = '<tr><td><input type="radio" name="insBusinessKey" '
+		$
+				.ajax({
+					url : "processInstance/checkedBusinesskey",
+					type : 'POST',
+					dataType : 'json',
+					beforeSend : function() {
+						layer.load(1);
+					},
+					data : {
+						proUid : proUid,
+						proAppId : proAppId,
+						proVerUid : verUid
+					},
+					success : function(result) {
+						if (result.status == 0) {
+							if (result.data.flag == 1) {
+								startProcess(result.data.stepBusinessKey);
+							} else {
+								layer.closeAll('loading');
+								$("#checkedBusinessKey").find(
+										".showBusinessList").empty();
+								for (var i = 0; i < result.data.length; i++) {
+									var info = '<tr><td><input type="radio" name="insBusinessKey" '
 						+'value="'
 						+ result.data[i]
-						+'" >'+(i+1)+'</td>'
-	                    +'<td style="text-align: center;">'
-	                   	+ result.data[i]
-	                    +'</td></tr>';
-	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
+						+'" >'
+											+ (i + 1)
+											+ '</td>'
+											+ '<td style="text-align: center;">'
+											+ result.data[i] + '</td></tr>';
+									$("#checkedBusinessKey").find(
+											".showBusinessList").append(info);
+								}
+								$("#checkedBusinessKey").show();
+							}
+						} else {
+							layer.closeAll('loading');
+							layer.alert(result.msg);
 						}
-						$("#checkedBusinessKey").show();
+					},
+					error : function() {
+						layer.closeAll('loading');
+						layer.alert("发起流程异常");
 					}
-				}else{
-                    layer.closeAll('loading');
-					layer.alert(result.msg);
-				}
-			},
-			error : function(){
-                layer.closeAll('loading');
-				layer.alert("发起流程异常");
-			}
-		})		
+				})
 	}
 </script>
 </html>
