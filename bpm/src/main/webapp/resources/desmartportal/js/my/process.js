@@ -145,9 +145,9 @@ function toShowRouteBar () {
     	return;
     }
     //必填项验证，勿删
-    /*if(!common.validateFormMust("startProcess_btn")){
+    if(!common.validateFormMust("startProcess_btn")){
     	return;
-    }*/
+    }
     $.ajax({
     	url:"dhRoute/showRouteBar",
     	method:"post",
