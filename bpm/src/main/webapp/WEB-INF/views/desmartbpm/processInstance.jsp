@@ -14,6 +14,66 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/processInstance.js"></script>
+<style type="text/css">
+.display_container5_custom{
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 8;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+.display_content5_custom{
+    overflow-y: auto;
+    color: #717171;
+    padding: 20px;
+    width: 570px;
+    height: 400px;
+    background: #fff;
+    position: absolute;
+    margin: 80px 0 0 -306px;
+    left: 50%;
+    box-shadow: 0 0 10px #ccc;
+}
+.display_container6_custom{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background: rgba(0,0,0,0.3);
+    width: 100%;
+    height: 100%;
+}
+.display_content6_custom{
+	overflow-y: auto;
+    color: #717171;
+    padding: 20px;
+    width: 550px;
+    height: 400px;
+    background: #fff;
+    position: absolute;
+    margin: 70px 0 0 -375px;
+    left: 50%;
+    box-shadow: 0 0 10px #ccc;
+}
+.colorli {
+	background-color: #9DA5EC;
+	color: white;
+}
+.layui-form-label-custom{
+    float: left;
+    display: block;
+    padding: 9px 15px;
+    width: 50%;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: right;
+}
+</style>
+
 </head>
 <body>
 <div class="layui-container" style="margin-top:20px;width:100%;">  
@@ -36,7 +96,7 @@
 						        <button class="layui-btn layui-btn-sm" onclick="resumeProcessIns();">恢复流程实例</button>
 						        <button class="layui-btn layui-btn-sm" onclick="terminateProcessIns();">终止流程实例</button>
 						        <!-- <button class="layui-btn layui-btn-sm">重试流程实例</button> -->
-						        <button class="layui-btn layui-btn-sm" onclick="trunOffProcessIns();">撤转流程实例</button>
+						        <button class="layui-btn layui-btn-sm" onclick="toTrunOffProcessIns();">撤转流程实例</button>
 						        <!-- <button class="layui-btn layui-btn-sm">查找流程实例</button> -->
 						        <button class="layui-btn layui-btn-sm" onclick="getProcessInsInfo()">获取实例信息</button>
 							</div>
@@ -75,7 +135,7 @@
 		  	</div>
 		</div>
 		<!-- 查看流程实例信息 -->
-	<div class="display_container5">
+	<div id="processIns-text-div" class="display_container5">
 		<div class="display_content5" style="height: 430px;">
 			<div class="top">查看流程实例信息</div>
 			<div class="middle1" style="height: 320px;">
@@ -85,6 +145,100 @@
 			</div>
 			<div class="foot" style="padding-top: 1.4%;">
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">关闭</button>
+			</div>
+		</div>
+	</div>
+	<!-- 流程撤转 -->
+	<div id="processIns-trun-off-div" class="display_container5_custom">
+		<div class="display_content5_custom" style="height: 430px;">
+			<div class="top">流程撤转</div>
+			<div class="middle1" style="height: 320px;">
+				<div class="layui-form" style="padding-top: 4%;padding-right: 4%;">
+					<div class="layui-form-item">
+						<label class="layui-form-label">活动的任务</label>
+						<div class="layui-input-block">
+							<select id="activity_task" name="activity_task" lay-verify="required">
+									
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">目标环节</label>
+						<div class="layui-input-block">
+							<input type="hidden" name="trunOffActivities"
+							 id="trunOffActivities" /> 
+							 <input type="text" placeholder="请选择要跳转至的环节"
+							 name="trunOffActivities_view" id="trunOffActivities_view"
+							 value="" autocomplete="off" class="layui-input" disabled="disabled">  
+							 <i class="layui-icon choose_num" id="chooseActivity_i"
+							 title="选择环节">&#xe615;</i> 
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">任务处理人</label>
+						<div class="layui-input-block" style="position: relative;">
+							 <input type="text" name="handleUser_view" 
+								 id="handleUser_view" autocomplete="off"
+								 placeholder="请选择任务处理人"
+								 class="layui-input" disabled="disabled"> <i
+								 class="layui-icon choose_user" id="choose_handle_user"
+								 title="选择处理人">&#xe612;</i>
+						 </div>
+						<input type="hidden" id="handleUser" name="handleUser" />
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">撤转原因</label>
+						<div class="layui-input-block">
+							<textarea id="trunOffCause" name="trunOffCause" style="width: 100%;height: 100px;">
+							
+							</textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="foot">
+				<label class="layui-form-label-custom" style="color: red;">(注意：如果不选择目标环节,则默认为当前选中的任务更改任务处理人)</label>
+				<div class="layui-input-block" style="position: relative;">
+				<button type="button" onclick="showProcessInsMap();"
+					class="layui-btn layui-btn sure_btn">流程图</button>
+				<button type="button" onclick="trunOffProcessIns();"
+					class="layui-btn layui-btn sure_btn">确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+						onclick="$('#processIns-trun-off-div').hide();">取消</button>
+				</div>
+				</div>
+		</div>
+	</div>
+	<!-- 选择目标环节 -->
+	<div class="display_container6_custom" id="choose_activity_container">
+		<div class="display_content6_custom" style="height: 500px; width: 700px;">
+			<div class="top">选择目标环节</div>
+			<div class="middle6" style="height: 400px; width: 700px;">
+				<div class="left_div"
+					style="float: left; width: 290px; height: 350px; margin: 10px 0 0 10px; padding: 10px; overflow-y: scroll;"
+					class="show_user_div">
+					<ul id="left_activity_ul">
+					</ul>
+				</div>
+				<div class="middle_div">
+					<button onclick="moveActivityToRight();"
+						class="layui-btn layui-btn-sm" style="margin-top: 150px;">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+					<br> <br>
+					<button onclick="moveActivityToLeft();"
+						class="layui-btn layui-btn-sm">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+				</div>
+				<div class="right_div"
+					style="float: left; width: 280px; height: 350px; margin-top: 10px; padding: 10px; overflow-y: scroll;">
+					<ul id="right_activity_ul">
+					</ul>
+				</div>
+				<h1 style="clear: both;"></h1>
+			</div>
+			<div class="foot">
+				<button class="layui-btn layui-btn sure_btn"
+					id="chooseActivities_sureBtn">确定</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+					onclick="$('#choose_activity_container').hide();">取消</button>
 			</div>
 		</div>
 	</div>

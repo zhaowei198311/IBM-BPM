@@ -18,6 +18,8 @@ public class DhRoutingRecord {
 	public static final String ROUTE_TYPE_ADD_TASK = "addTask";
 	/**流转类型 加签完成 */
 	public static final String ROUTE_TYPE_FINISH_ADDTASK = "finishAddTask";
+	/**流转类型 管理员撤转*/
+	public static final String ROUTE_TYPE_TRUN_OFF_TASK = "trunOffTask";
     
 	private String routeUid;//流转id
 	private String insUid;//流程实例uid

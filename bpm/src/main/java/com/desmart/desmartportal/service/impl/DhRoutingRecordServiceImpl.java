@@ -1,25 +1,31 @@
 package com.desmart.desmartportal.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartportal.entity.BpmRoutingData;
-import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.github.pagehelper.PageHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.github.pagehelper.PageHelper;
 @Service
 public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 
@@ -204,5 +210,21 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         }
         return dhRoutingRecords.get(0);
     }
+
+
+	@Override
+	public DhRoutingRecord generateTrunOffTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance currTaskInstance,
+			BpmActivityMeta tagetActivityMeta) {
+		DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(currTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_TRUN_OFF_TASK);
+        dhRoutingRecord.setUserUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+        dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        String activityTo = tagetActivityMeta.getActivityId();
+        dhRoutingRecord.setActivityTo(activityTo);
+        return dhRoutingRecord;
+	}
 
 }

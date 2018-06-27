@@ -1,21 +1,37 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
+import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhProcessInsManageService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhRoutingRecordService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
@@ -35,6 +51,16 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
+	@Autowired
+	private BpmActivityMetaService bpmActivityMetaService;
+	@Autowired
+	private BpmActivityMetaMapper bpmActivityMetaMapper;
+	@Autowired
+	private DhTaskInstanceService dhTaskInstanceService;
+	@Autowired
+	private DhRoutingRecordService dhRoutingRecordService;
+	@Autowired
+	private DhRoutingRecordMapper dhRoutingRecordMapper;
 
 	@Override
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> getProcesssInstanceListByCondition(Integer pageNum,Integer pageSize,
@@ -163,8 +189,104 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 	}
 
 	@Override
-	public ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance) {
+	public ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance) {
+		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
+		if(DhProcessInstance.STATUS_ID_ACTIVE==dhProcessInstance.getInsStatusId()) {
+			ServerResponse serverResponse = bpmActivityMetaService
+					.getHumanActivitiesOfDhProcessDefinition(dhProcessInstance.getProAppId()
+							,dhProcessInstance.getProUid(),dhProcessInstance.getProVerUid());
+			if(serverResponse.isSuccess()) {
+			DhTaskInstance dhTaskInstance = new DhTaskInstance();
+			dhTaskInstance.setInsUid(dhProcessInstance.getInsUid());
+			List<DhTaskInstance> list = dhTaskInstanceMapper
+				.selectBackLogTaskInfoByCondition(null, null, dhTaskInstance);
+			Map<String, Object> data = new HashMap<>();
+			data.put("activityMetaList", serverResponse.getData());
+			data.put("taskList", list);
+			return ServerResponse.createBySuccess(data);
+			}else {
+				return serverResponse;
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("请选择运转中的流程实例");
+		}
+	}
+
+	@Override
+	public ServerResponse trunOffProcessIns(String taskUid, String activityId, String userUid, String trunOffCause) {
+			// 判断选择的任务是否存在
+		if (StringUtils.isBlank(taskUid)) {
+				return ServerResponse.createByErrorMessage("缺少任务信息");
+		}
+		DhTaskInstance currTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if (currTaskInstance == null || !"12".equals(currTaskInstance.getTaskStatus())) {
+				return ServerResponse.createByErrorMessage("任务不存在，或状态异常");
+		}
+		String currActivityId = currTaskInstance.getTaskActivityId();
+		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
+
+		// 判断当前节点能否撤转, 如果不是普通节点不允许撤转
+		if (!"TRUE".equals(currTaskNode.getDhActivityConf().getActcCanReject())
+				|| !"none".equals(currTaskNode.getLoopType())) {
+			return ServerResponse.createByErrorMessage("当前节点不允许撤转");
+		}
 		
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
+		if (dhProcessInstance == null) return ServerResponse.createByErrorMessage("流程实例不存在");
+
+		int taskId = currTaskInstance.getTaskId();
+		int insId = dhProcessInstance.getInsId();
+		
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		// 获取树流程信息
+		HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
+		if(HttpReturnStatusUtil.isErrorResult(returnStatus)) {
+			return ServerResponse.createByErrorMessage("查询树流程信息出错");
+		}
+
+		// 获得任务的token
+		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
+		String tokenId = ProcessDataUtil.getTokenIdOfTask(taskId, jsonObject);
+		if (StringUtils.isBlank(tokenId)) {
+			return ServerResponse.createByErrorMessage("撤转失败，找不到tokenID");
+		}
+		//目标环节
+		BpmActivityMeta targetActivityMeta = bpmActivityMetaService.queryByPrimaryKey(activityId);
+		
+		
+		if( targetActivityMeta != null) {//目标环节不为空，即撤转任务
+		// 保存流转记录
+		DhRoutingRecord routingRecord = dhRoutingRecordService
+				.generateTrunOffTaskRoutingRecordByTaskAndRoutingData(currTaskInstance, targetActivityMeta);
+		dhRoutingRecordMapper.insert(routingRecord);
+		
+		String targetActivityBpdId = targetActivityMeta.getActivityBpdId();
+		
+		//关闭当前的任务
+		List<DhTaskInstance> taskInstances = new ArrayList<>();
+		taskInstances.add(currTaskInstance);
+		Date updateDate = DateUtil.format(new Date());
+		DhTaskInstance dhTaskInstance = new DhTaskInstance();
+		dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
+		dhTaskInstance.setInsUpdateDate(updateDate);
+		dhTaskInstanceMapper.updateTaskStatusByBatch(taskInstances,dhTaskInstance);
+		
+		// 关闭关联的任务（同一个节点上的任务）
+		dhTaskInstanceService.abandonRelationTaskOnTaskNode(currTaskInstance);
+		
+		HttpReturnStatus httpReturnStatus = bpmProcessUtil.moveToken(insId, targetActivityBpdId, tokenId);
+		if (HttpReturnStatusUtil.isErrorResult(httpReturnStatus)) {
+			throw new PlatformException("调用API 撤转失败");
+		}
+		//移动token成功
+		JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
+		//List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(targetActivityBpdId, processData);
+		// 阻止拉取任务
+		//lockTasksForRejectTaskByTaskIdList(taskIdList);
+		}else {//目标环节为空，即更换任务处理人
+			
+		}
 		return null;
 	}
 }

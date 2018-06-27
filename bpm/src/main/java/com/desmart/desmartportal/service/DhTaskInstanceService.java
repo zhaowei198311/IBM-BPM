@@ -235,5 +235,11 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	ServerResponse revokeTask(String taskUid);
+	/**
+	 * 作废与当前任务相关的关联任务（同一个节点上）
+	 * @param taskInstance
+	 * @return
+	 */
+	Integer abandonRelationTaskOnTaskNode(DhTaskInstance currTaskInstance);
 
 }

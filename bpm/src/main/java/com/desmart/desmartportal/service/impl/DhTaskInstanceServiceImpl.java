@@ -1255,7 +1255,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * 作废与当前任务相关的关联任务（同一个节点上）
 	 * @param taskInstance
 	 */
-	private int abandonRelationTaskOnTaskNode(DhTaskInstance taskInstance) {
+	@Override
+	public Integer abandonRelationTaskOnTaskNode(DhTaskInstance taskInstance) {
 		return dhTaskInstanceMapper.abandonOtherUnfinishedTasksOnTaskActivityId(taskInstance.getTaskUid(), taskInstance.getTaskActivityId(),
 				taskInstance.getInsUid());
 	}

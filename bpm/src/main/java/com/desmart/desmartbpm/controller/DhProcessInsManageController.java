@@ -54,7 +54,14 @@ public class DhProcessInsManageController {
 	}
 	@RequestMapping("/trunOffProcessIns")
 	@ResponseBody
-	public ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance) {
-		return dhProcessInstanceService.trunOffProcessIns(dhProcessInstance);
+	public ServerResponse trunOffProcessIns(String taskUid,String activityId,
+			String userUid,String trunOffCause) {
+		return dhProcessInstanceService.trunOffProcessIns(taskUid,activityId
+				,userUid,trunOffCause);
+	}
+	@RequestMapping("/toTrunOffProcessIns")
+	@ResponseBody
+	public ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.toTrunOffProcessIns(dhProcessInstance);
 	}
 }

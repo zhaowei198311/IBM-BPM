@@ -46,9 +46,22 @@ public interface DhProcessInsManageService {
 	 */
 	ServerResponse getProcessInsInfo(DhProcessInstance dhProcessInstance);
 	/**
-	 * 撤转流程实例
+	 * 查询撤转流程实例所需要展示的信息
+	 * taskUid 当前选中的任务uid
+	 * activityId 目标环节的主键
+	 * userUid 选择的任务处理人
+	 * trunOffCause 撤转原因
+	 * @param taskUid
+	 * @param activityId
+	 * @param userUid
+	 * @param trunOffCause
+	 * @return
+	 */
+	ServerResponse trunOffProcessIns(String taskUid, String activityId, String userUid, String trunOffCause);
+	/**
+	 * 查询撤转流程实例所需要展示的信息
 	 * @param dhProcessInstance
 	 * @return
 	 */
-	ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance);
+	ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance);
 }

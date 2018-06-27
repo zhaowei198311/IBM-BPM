@@ -241,7 +241,12 @@ public class BpmTaskUtil {
         return this.doTaskAction(taskId, "finish", "");
     }
 
-
+    /**
+     * 重新分配引擎中的任务处理人，修改引擎数据库
+     * @param taskId
+     * @param userUid 用户主键，只能传一个人
+     * @return
+     */
     public ServerResponse changeOwnerOfLaswTask(int taskId, String userUid) {
         ServerResponse serverResponse = null;
         HttpReturnStatus result = null;

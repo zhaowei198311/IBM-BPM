@@ -703,8 +703,13 @@
 				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
 				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
-			AND (T.USR_UID = #{dhTaskInstance.usrUid} 
-			or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			<if test="dhTaskInstance.usrUid != null and dhTaskInstance.usrUid !='' ">
+				AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+				or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			</if>
+			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != '' ">
+				AND T.INS_UID = #{dhTaskInstance.insUid}
+			</if>
 		</where>
 		ORDER BY P.INS_CREATE_DATE DESC
 	</select>
@@ -783,8 +788,10 @@
 				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
 				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
 			</if>
-			AND (T.USR_UID = #{dhTaskInstance.usrUid} 
-			or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			<if test="dhTaskInstance.usrUid != null and dhTaskInstance.usrUid !='' ">
+				AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+				or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			</if>
 		</where>
 		ORDER BY P.INS_CREATE_DATE DESC
 	</select>

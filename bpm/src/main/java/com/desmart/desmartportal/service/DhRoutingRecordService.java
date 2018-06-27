@@ -74,4 +74,13 @@ public interface DhRoutingRecordService {
 	 * @return
 	 */
 	DhRoutingRecord getNearlyRoutingRecordOnTaskNode(String insUid, BpmActivityMeta taskNode, String userUid);
+
+	/**
+	 * 为撤转流程实例生成流转信息
+	 * @param currTaskInstance
+	 * @param tagetActivityMeta
+	 * @return
+	 */
+	DhRoutingRecord generateTrunOffTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance currTaskInstance,
+			BpmActivityMeta tagetActivityMeta);
 }
