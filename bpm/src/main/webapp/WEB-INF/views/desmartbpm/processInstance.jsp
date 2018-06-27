@@ -31,11 +31,12 @@
 								<div class="layui-col-xs1" style="width: 4%;">
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
 								</div>
+								<button class="layui-btn layui-btn-sm" onclick="showProcessInsMap();">查看流程图</button>
 						        <button class="layui-btn layui-btn-sm" onclick="pauseProcessIns();">暂停流程实例</button>
 						        <button class="layui-btn layui-btn-sm" onclick="resumeProcessIns();">恢复流程实例</button>
 						        <button class="layui-btn layui-btn-sm" onclick="terminateProcessIns();">终止流程实例</button>
-						        <button class="layui-btn layui-btn-sm">重试流程实例</button>
-						        <button class="layui-btn layui-btn-sm">重新路由实例</button>
+						        <!-- <button class="layui-btn layui-btn-sm">重试流程实例</button> -->
+						        <button class="layui-btn layui-btn-sm" onclick="trunOffProcessIns();">撤转流程实例</button>
 						        <!-- <button class="layui-btn layui-btn-sm">查找流程实例</button> -->
 						        <button class="layui-btn layui-btn-sm" onclick="getProcessInsInfo()">获取实例信息</button>
 							</div>
@@ -73,6 +74,20 @@
 			    </div>
 		  	</div>
 		</div>
+		<!-- 查看流程实例信息 -->
+	<div class="display_container5">
+		<div class="display_content5" style="height: 430px;">
+			<div class="top">查看流程实例信息</div>
+			<div class="middle1" style="height: 320px;">
+				<textarea id="processIns-text-content" style="height: 500px;width: 99.6%;">
+					
+				</textarea>
+			</div>
+			<div class="foot" style="padding-top: 1.4%;">
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">关闭</button>
+			</div>
+		</div>
+	</div>
 </body>
 <script type="text/javascript">
 //为翻页提供支持
@@ -162,22 +177,22 @@ function drawTable(pageInfo, data) {
 		var item = list[i];
 		var sortNum = startSort + i;
 		
-		if(item.insStatus=='1'){
+		if(item.insStatusId == 1 ){
 			item.insStatus = '运转中';
-		}else if(item.insStatus=='2'){
+		}else if(item.insStatusId == 2){
 			item.insStatus = '完成';
-		}else if(item.insStatus=='3'){
+		}else if(item.insStatusId == 3){
 			item.insStatus = '失败';
-		}else if(item.insStatus=='4'){
+		}else if(item.insStatusId == 4){
 			item.insStatus = '终止';
-		}else if(item.insStatus=='5'){
+		}else if(item.insStatusId == 5){
 			item.insStatus = '未启动';
-		}else if(item.insStatus=='6'){
+		}else if(item.insStatusId == 6){
 			item.insStatus = '暂停';
 		}
 		trs += '<tr>'
 				+'<td>'
-				+ '<input type="checkbox" onclick="invertSelection(this)" name="checkProcessIns" value="'+item.insUid+'" lay-skin="primary">'
+				+ '<input type="checkbox" data-insid ='+item.insId+' onclick="invertSelection(this)" name="checkProcessIns" value="'+item.insUid+'" lay-skin="primary">'
 				+ sortNum 
 				+ '</td>' 
 				+ '<td>'

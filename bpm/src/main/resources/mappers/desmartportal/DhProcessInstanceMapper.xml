@@ -355,7 +355,7 @@
 	<select id="getProcesssInstanceListByCondition" 
     		resultType="com.desmart.desmartportal.entity.DhProcessInstance"
     		parameterType="com.desmart.desmartportal.entity.DhProcessInstance">
-    	select ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS,meta.pro_name,su.user_name as initUserFullname, 
+    	select ins.INS_UID,ins.ins_id,ins.INS_TITLE,ins.INS_STATUS_ID,meta.pro_name,su.user_name as initUserFullname, 
         (select listagg(task_title,';') within group (order by task_uid) from dh_task_instance 
         where ins_uid = ins.ins_uid and (task_status = '12' or task_status = '-2' )) as taskTitle,
         (select listagg(su.user_name,';') within group (order by task_uid) from dh_task_instance taskInfo left join sys_user su on taskInfo.usr_uid = su.user_uid 

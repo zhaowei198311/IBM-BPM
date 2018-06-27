@@ -39,4 +39,16 @@ public interface DhProcessInsManageService {
 	 * @return
 	 */
 	ServerResponse resumeProcessIns(DhProcessInstance dhProcessInstance);
+	/**
+	 * 查询流程实例信息
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse getProcessInsInfo(DhProcessInstance dhProcessInstance);
+	/**
+	 * 撤转流程实例
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance);
 }

@@ -67,12 +67,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
 			HttpReturnStatus httpReturn = bpmProcessUtil.terminateInstance(String.valueOf(dhProcessInstance.getInsId()));
 			if(httpReturn.getCode()==-1) {
-				try {
 					throw new RuntimeException(httpReturn.getMsg());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return ServerResponse.createByErrorMessage("终止流程实例失败！");
 			}else {
 				return ServerResponse.createBySuccessMessage("终止流程实例成功！");
 			}
@@ -152,5 +147,24 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService{
 		}else {
 			return ServerResponse.createByErrorMessage("请选择暂挂的流程实例");
 		}
+	}
+
+	@Override
+	public ServerResponse getProcessInsInfo(DhProcessInstance dhProcessInstance) {
+		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+		HttpReturnStatus httpReturn = bpmProcessUtil.getProcessData(dhProcessInstance.getInsId());
+		if(httpReturn.getCode()!=-1) {
+			return ServerResponse.createBySuccessMessage(httpReturn.getMsg());
+		}else {
+			return ServerResponse.createByErrorMessage(httpReturn.getMsg());
+		}
+	}
+
+	@Override
+	public ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance) {
+		
+		return null;
 	}
 }

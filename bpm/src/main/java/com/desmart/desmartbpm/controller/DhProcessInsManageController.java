@@ -47,4 +47,14 @@ public class DhProcessInsManageController {
 	public ServerResponse resumeProcessIns(DhProcessInstance dhProcessInstance) {
 		return dhProcessInstanceService.resumeProcessIns(dhProcessInstance);
 	}
+	@RequestMapping("/getProcessInsInfo")
+	@ResponseBody
+	public ServerResponse getProcessInsInfo(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.getProcessInsInfo(dhProcessInstance);
+	}
+	@RequestMapping("/trunOffProcessIns")
+	@ResponseBody
+	public ServerResponse trunOffProcessIns(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.trunOffProcessIns(dhProcessInstance);
+	}
 }
