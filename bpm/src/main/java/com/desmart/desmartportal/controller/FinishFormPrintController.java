@@ -68,7 +68,7 @@ public class FinishFormPrintController {
 			String webpage = (String) response.getData();
 			mv.addObject("webpage", webpage);
 		}
-		//finishFormPrintService.deletePrintContentByFormUid(formUid);
+		finishFormPrintService.deletePrintContentByFormUid(formUid);
 		return mv;
 	}
 }

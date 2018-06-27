@@ -78,4 +78,24 @@ public interface DhTriggerInterfaceMapper {
 	 * 根据表单id 删除
 	 */
 	int deleteByDynUid(String dynUid);
+
+	/**
+	 * 根据触发器id、参数id以及参数类型找到对应的触发器接口映射对象
+	 * @param triUid
+	 * @param paraUid
+	 * @param paramType
+	 * @return
+	 */
+	DhTriggerInterface queryTriIntByInCondition(@Param("triUid")String triUid, @Param("paramUid")String paramUid,
+			@Param("paramType")String paramType);
+
+	/**
+	 * 根据触发器id、表单字段name以及参数类型找到对应的触发器接口映射对象
+	 * @param triUid
+	 * @param tableFieldCodeName
+	 * @param paramType
+	 * @return
+	 */
+	DhTriggerInterface queryTriIntByOutCondition(@Param("triUid")String triUid, @Param("fldCodeName")String tableFieldCodeName, 
+			@Param("paramType")String paramType);
 }

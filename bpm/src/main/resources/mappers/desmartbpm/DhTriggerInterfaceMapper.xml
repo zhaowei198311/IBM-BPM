@@ -70,12 +70,32 @@
 		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,T.PARA_UID,M.DYN_TITLE,
 		I.PARA_TYPE,I.PARA_PARENT,I.PARA_INDEX
 	</sql>
+	
+	<select id="queryTriIntByInCondition" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		DH_TRIGGER_INTERFACE
+		where TRI_UID = #{triUid}
+		and PARA_UID = #{paramUid}
+		and PARAMETER_TYPE = #{paramType}
+	</select>
+	
+	<select id="queryTriIntByOutCondition" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		DH_TRIGGER_INTERFACE
+		where TRI_UID = #{triUid}
+		and fld_code_name = #{fldCodeName}
+		and PARAMETER_TYPE = #{paramType}
+	</select>
 
 	<select id="selectByCondition" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface"
 		parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		SELECT
 		<include refid="Base_Column_List" />
-		FORM
+		FROM
 		DH_TRIGGER_INTERFACE
 		<where>
 			<if test="tinUid != null and tinUid != ''">

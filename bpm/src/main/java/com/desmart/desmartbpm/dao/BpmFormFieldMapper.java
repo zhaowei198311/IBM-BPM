@@ -79,11 +79,6 @@ public interface BpmFormFieldMapper {
 	BpmFormField queryFieldByFldUidAndCodeName(@Param("formUid")String dynUid, @Param("fieldCodeName")String fieldCodeName);
 
 	/**
-	 * 根据表单中表格的id查询表格中所有字段
-	 */
-	List<BpmFormField> queryFieldByTableFldUid(String fldUid);
-
-	/**
 	 * 根据表单id查询非title的表单字段
 	 */
 	List<BpmFormField> queryNotTitleFormFieldByFormUid(String formUid);
