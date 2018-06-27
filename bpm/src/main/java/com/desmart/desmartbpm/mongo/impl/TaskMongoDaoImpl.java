@@ -18,6 +18,8 @@ import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -97,6 +99,18 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
         query.addCriteria(Criteria.where("_id").is(taskUid));
         long count = mongoTemplate.count(query, OpenedTask.OPENED_TASK_COLLECTION_NAME);
         return count > 0;
+    }
+
+    @Override
+    public void lockTasksForRejectTaskByTaskIdList(List<Integer> taskIdList, String reason) {
+        if (taskIdList == null || taskIdList.isEmpty()) {
+            return;
+        }
+        List<LockedTask> lockedTasks = new ArrayList<>();
+        for (Integer taskId : taskIdList) {
+            lockedTasks.add(new LockedTask(taskId, new Date(), reason));
+        }
+        batchSaveLockedTasks(lockedTasks);
     }
 
 }
