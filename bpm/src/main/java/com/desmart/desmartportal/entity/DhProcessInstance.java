@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**  
 * <p>Title: 流程实例实体类</p>  
 * <p>Description:  </p>  
@@ -69,6 +71,8 @@ DhProcessInstance {
 	private Date insUpdateDate; // 流程实例更新日期
 	
 	private String insData; // 流程实例数据
+	/** 非查询字段 */
+	private JSONObject insData$;
 
 	private Double insDuration; // 流程实例持续时间
 
@@ -468,6 +472,14 @@ DhProcessInstance {
 
 	public void setTaskTitle(String taskTitle) {
 		this.taskTitle = taskTitle;
+	}
+	
+	public JSONObject getinsData$() {
+		return insData$;
+	}
+
+	public void setinsData$(JSONObject insData$) {
+		this.insData$ = insData$;
 	}
 
 	/**

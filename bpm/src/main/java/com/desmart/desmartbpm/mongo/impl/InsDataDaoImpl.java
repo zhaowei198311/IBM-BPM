@@ -45,9 +45,9 @@ public class InsDataDaoImpl implements InsDataDao{
 					for (String string : values) {
 						reg += ".*" + string;
 					}
-					query.addCriteria(Criteria.where("formData."+ key +".value").regex(reg));
+					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(reg));
 				}else {
-					Criteria criteria = Criteria.where("formData."+ key +".value").regex(".*" + value + ".*");
+					Criteria criteria = Criteria.where("insData$.formData."+ key +".value").regex(".*" + value + ".*");
 					query.addCriteria(criteria);
 				}
 			}
@@ -70,49 +70,63 @@ public class InsDataDaoImpl implements InsDataDao{
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, proUid, proAppId);
 			JSONObject insData = null;
-			// 需要处理的数据
-			List<JSONObject> insDataList = new LinkedList<>();
-			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
-				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-				insData.put("_id", dhProcessInstance.getInsUid());
-				insData.put("proUid", dhProcessInstance.getProUid());
-				insData.put("proAppId", dhProcessInstance.getProAppId());
-				insData.put("insTitle", dhProcessInstance.getInsTitle());
-				insData.put("insStatus", dhProcessInstance.getInsStatus());
-				insData.put("insCreateDate", dhProcessInstance.getInsCreateDate());
-				insData.put("insFinishDate", dhProcessInstance.getInsFinishDate());
-				insDataList.add(insData);
-			}
 			// 数据库已存数据
 			List<JSONObject> idS = mongoTemplate.find(new BasicQuery("{}","{'_id':1}"), JSONObject.class, Const.INS_DATA);
 			List<String> $ids = new LinkedList<>();
 			for (JSONObject jsonObject : idS) {
 				$ids.add(jsonObject.getString("_id"));
 			}
-			mongoTemplate.insert(dhProcessInstanceList, Const.INS_DATA);
-			// 需要插入的数据
-			List<JSONObject> insertInsDataList = new LinkedList<>();
-			// 需要更新的数据
-			List<JSONObject> updateInsDataList = new LinkedList<>();
 			
-			for (JSONObject jsonObject : insDataList) {
-				if ($ids.contains(jsonObject.get("_id"))) {
-					updateInsDataList.add(jsonObject);
+			// 需要插入的数据
+			List<DhProcessInstance> insertDhProcessInstance = new LinkedList<>();
+			// 需要更新的数据
+			List<DhProcessInstance> updateDhProcessInstance = new LinkedList<>();
+			
+			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
+				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+//				insData.put("_id", dhProcessInstance.getInsUid());
+//				insData.put("proUid", dhProcessInstance.getProUid());
+//				insData.put("proAppId", dhProcessInstance.getProAppId());
+//				insData.put("insTitle", dhProcessInstance.getInsTitle());
+//				insData.put("insStatus", dhProcessInstance.getInsStatus());
+//				insData.put("insCreateDate", dhProcessInstance.getInsCreateDate());
+//				insData.put("insFinishDate", dhProcessInstance.getInsFinishDate());
+				dhProcessInstance.setinsData$(insData);
+				if ($ids.contains(dhProcessInstance.getInsUid())) {
+					updateDhProcessInstance.add(dhProcessInstance);
 				}else {
-					insertInsDataList.add(jsonObject);
-				}	
-			}
-			if (!insertInsDataList.isEmpty()) {
-				mongoTemplate.insert(insertInsDataList, Const.INS_DATA);
-			}
-			if (!updateInsDataList.isEmpty()) {
-				Update update = new Update();
-				for (JSONObject jsonObject : updateInsDataList) {
-					update.set("processData", jsonObject.get("processData"));
-					update.set("formData", jsonObject.get("formData"));
-					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(jsonObject.get("_id"))), update, Const.INS_DATA);
+					insertDhProcessInstance.add(dhProcessInstance);
 				}
 			}
+			if (!insertDhProcessInstance.isEmpty()) {
+				mongoTemplate.insert(insertDhProcessInstance, Const.INS_DATA);
+			}
+			if (!updateDhProcessInstance.isEmpty()) {
+				Update update = new Update();
+				for (DhProcessInstance dhProcessInstance : updateDhProcessInstance) {			
+					update.set("insData$", JSONObject.parse(dhProcessInstance.getInsData()));
+					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(dhProcessInstance.getInsUid())), update, Const.INS_DATA);
+				}
+			}
+			
+//			for (JSONObject jsonObject : insDataList) {
+//				if ($ids.contains(jsonObject.get("_id"))) {
+//					updateInsDataList.add(jsonObject);
+//				}else {
+//					insertInsDataList.add(jsonObject);
+//				}	
+//			}
+//			if (!insertInsDataList.isEmpty()) {
+//				mongoTemplate.insert(insertInsDataList, Const.INS_DATA);
+//			}
+//			if (!updateInsDataList.isEmpty()) {
+//				Update update = new Update();
+//				for (JSONObject jsonObject : updateInsDataList) {
+//					update.set("processData", jsonObject.get("processData"));
+//					update.set("formData", jsonObject.get("formData"));
+//					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(jsonObject.get("_id"))), update, Const.INS_DATA);
+//				}
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

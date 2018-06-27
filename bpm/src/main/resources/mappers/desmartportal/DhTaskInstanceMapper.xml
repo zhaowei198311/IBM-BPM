@@ -729,10 +729,12 @@
 		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
 		<where>
 			T.INS_UID = P.INS_UID 
-			AND
-			P.INS_INIT_USER = S.USER_ID
+			AND P.INS_INIT_USER = S.USER_ID
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">
+				AND T.INS_UID = #{dhTaskInstance.insUid}
+			</if>
 			<if test="dhTaskInstance.taskStatus != null and dhTaskInstance.taskStatus !='' ">
 				AND T.TASK_STATUS IN (${dhTaskInstance.taskStatus})
 			</if>

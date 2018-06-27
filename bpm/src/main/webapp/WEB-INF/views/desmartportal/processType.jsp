@@ -114,8 +114,8 @@
 				<thead>
 					<tr>
 						<th>序号</th>
+					    <th>流程实例标题</th>
 					    <th>任务标题</th>
-					    <th>任务类型</th>
 					    <th>任务状态</th>
 					    <th>上一环节提交人</th>
 					    <th>流程发起人</th>
@@ -264,6 +264,14 @@
 			var InitDate = datetimeFormat_1(agentOdate);
 			var agentOdate1 = new Date(meta.taskFinishDate);
 			var finishDate = datetimeFormat_1(agentOdate1);
+			var status = '';
+			if (meta.taskStatus == 12) {
+				status = '接收任务';
+			}else if (meta.taskStatus == -2) {
+				status = '等待加签结束';
+			}else if (meta.taskStatus == 32) {
+				status = '任务关闭';
+			}
 			trs += '<tr ondblclick=dbGoToTask(this)'
 					+'><td id="'+meta.taskUid+'">'
 					+ sortNum
@@ -273,10 +281,10 @@
 					+ meta.dhProcessInstance.insTitle
 					+ '</td>'
 					+ '<td>'
-					+ meta.dhProcessInstance.insStatus
+					+ meta.taskTitle
 					+ '</td>'
 					+ '<td>'
-					+ meta.taskTitle
+					+ status
 					+ '</td><td>';
 					if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
 						trs += meta.taskPreviousUsrUsername;
@@ -321,72 +329,72 @@
 		});
 	}
 	
-	function startProcess(insBusinessKey) {
-		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
-		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
-		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
-			layer.alert("请选择业务关键字");
-			return;
-		}
-		}
-		var proUid = $('#proUid').val();
-		var proAppId = $('#proAppId').val();
-		var verUid = $('#verUid').val();
-		var proName = $('#proName').val();
-		var categoryName = $('#categoryName').val();
-		window.location.href = 'menus/startProcess?proUid=' + proUid
-				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
-				+ proName + '&categoryName=' + categoryName
-				+'&insBusinessKey='+insBusinessKey;
-	}
+// 	function startProcess(insBusinessKey) {
+// 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){	
+// 		insBusinessKey = $(".showBusinessList").find("input[name='insBusinessKey']:checked").val();
+// 		if(insBusinessKey==null||insBusinessKey==''||insBusinessKey == undefined){
+// 			layer.alert("请选择业务关键字");
+// 			return;
+// 		}
+// 		}
+// 		var proUid = $('#proUid').val();
+// 		var proAppId = $('#proAppId').val();
+// 		var verUid = $('#verUid').val();
+// 		var proName = $('#proName').val();
+// 		var categoryName = $('#categoryName').val();
+// 		window.location.href = 'menus/startProcess?proUid=' + proUid
+// 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
+// 				+ proName + '&categoryName=' + categoryName
+// 				+'&insBusinessKey='+insBusinessKey;
+// 	}
 	
-	function checkedBusinesskey(){
-		var proUid = $('#proUid').val();
-		var proAppId = $('#proAppId').val();
-		var verUid = $('#verUid').val();
-		$.ajax({
-			url:"processInstance/checkedBusinesskey",
-			type : 'POST',
-			dataType : 'json',
-			beforeSend: function() {
-			    layer.load(1);
-			},
-			data : {
-				proUid : proUid,
-				proAppId : proAppId,
-				proVerUid : verUid
-			},
-			success : function(result) {
-				if(result.status == 0){
-					if(result.data.flag==1){
-						startProcess(result.data.stepBusinessKey);
-					}else{
-                        layer.closeAll('loading');
-						$("#checkedBusinessKey").find(".showBusinessList").empty();
-						for (var i = 0; i < result.data.length; i++) {
-						var info = '<tr><td><input type="radio" name="insBusinessKey" '
-						+'value="'
-						+ result.data[i]
-						+'" >'+(i+1)+'</td>'
-	                    +'<td style="text-align: center;">'
-	                   	+ result.data[i]
-	                    +'</td></tr>';
-	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
-						}
-						$("#checkedBusinessKey").show();
-					}
-				}else{
-                    layer.closeAll('loading');
-					layer.alert(result.msg);
-				}
-			},
-			error : function(){
-                layer.closeAll('loading');
-				layer.alert("发起流程异常");
-			}
-		})
+// 	function checkedBusinesskey(){
+// 		var proUid = $('#proUid').val();
+// 		var proAppId = $('#proAppId').val();
+// 		var verUid = $('#verUid').val();
+// 		$.ajax({
+// 			url:"processInstance/checkedBusinesskey",
+// 			type : 'POST',
+// 			dataType : 'json',
+// 			beforeSend: function() {
+// 			    layer.load(1);
+// 			},
+// 			data : {
+// 				proUid : proUid,
+// 				proAppId : proAppId,
+// 				proVerUid : verUid
+// 			},
+// 			success : function(result) {
+// 				if(result.status == 0){
+// 					if(result.data.flag==1){
+// 						startProcess(result.data.stepBusinessKey);
+// 					}else{
+//                         layer.closeAll('loading');
+// 						$("#checkedBusinessKey").find(".showBusinessList").empty();
+// 						for (var i = 0; i < result.data.length; i++) {
+// 						var info = '<tr><td><input type="radio" name="insBusinessKey" '
+// 						+'value="'
+// 						+ result.data[i]
+// 						+'" >'+(i+1)+'</td>'
+// 	                    +'<td style="text-align: center;">'
+// 	                   	+ result.data[i]
+// 	                    +'</td></tr>';
+// 	                    $("#checkedBusinessKey").find(".showBusinessList").append(info);
+// 						}
+// 						$("#checkedBusinessKey").show();
+// 					}
+// 				}else{
+//                     layer.closeAll('loading');
+// 					layer.alert(result.msg);
+// 				}
+// 			},
+// 			error : function(){
+//                 layer.closeAll('loading');
+// 				layer.alert("发起流程异常");
+// 			}
+// 		})
 		
-	}
+// 	}
 	function goToTask(a){
 		var taskUid = $(a).prev().attr("id");
 		var taskStatus = $(a).data("taskstatus");

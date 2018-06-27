@@ -100,14 +100,15 @@ public class MenusController {
 	 * @param @param proAppId
 	 * @param @return  
 	 * @return ModelAndView  
-	 * @throws
 	 */
 	@RequestMapping("/processInstanceByUser")
 	public ModelAndView processInstance(@RequestParam(value = "proUid",required = false) String proUid,
-									@RequestParam(value = "proAppId",required = false) String proAppId) {
+										@RequestParam(value = "proAppId",required = false) String proAppId,
+										@RequestParam(value = "proName",required = false) String proName) {
 		ModelAndView mv = new ModelAndView("desmartportal/processInstance");
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
+		mv.addObject("proName", proName);
 		return mv;
 	}
 	
@@ -118,7 +119,6 @@ public class MenusController {
 	 * @param @param insUid
 	 * @param @return  
 	 * @return ModelAndView  
-	 * @throws
 	 */
 	@RequestMapping("/processType")
 	public ModelAndView processType(String insUid) {

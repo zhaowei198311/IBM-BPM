@@ -58,10 +58,11 @@
 				<div style="display: none;">
 					<input id="proUid" value="${proUid}" style="display: none;">
 					<input id="proAppId" value="${proAppId}" style="display: none;">
+					<input id="proName" value="${proName}" style="display: none;">
 				</div>
 				<div class="layui-col-xs3">
 					<div class="layui-form-pane">
-						<div class="layui-form-item">
+						<div class="layui-form-this">
 <!-- 							<label class="layui-form-label" style="cursor: pointer;">刷新</label> -->
 							<div class="layui-input-block">
 								<select id="searchType" class="layui-input-block group_select" name="group"
@@ -100,10 +101,14 @@
 				<thead>
 					<tr>
 						<th>序号</th>
+						<th>流程名称</th>
+						<th>实例ID</th>
+						<th>实例状态</th>
 					    <th>流程实例标题</th>
-					    <th>流程实例状态</th>
+					    <th>流程发起人</th>
 					    <th>流程实例创建时间</th>
 					    <th>流程实例完成时间</th>
+					    <th>操作</th>
 					</tr>
 				</thead>
 				<tbody id="processInstance_tbody"/>
@@ -224,28 +229,45 @@
 		}
 		data.pop();
 		var trs = "";
-		$(data)
-				.each(
-						function(i) {
-							var sortNum = i + 1;
-							var createDate = datetimeFormat_1(new Date(
-									this.insCreateDate));
-							var finishDate = "";
-							if (this.insFinishDate != null
-									&& this.insFinishDate != "") {
-								finishDate = datetimeFormat_1(new Date(
-										this.insFinishDate));
-							}
-							trs += '<tr>'
-									+ '<td>'
-									+ sortNum
-									+ '</td>'
-									+ '<td style = "cursor:pointer;" onclick=openTaskInstance("'
-									+ this._id + '")>' + this.insTitle
-									+ '</td>' + '<td>' + this.insStatus
-									+ '</td>' + '<td>' + createDate + '</td>'
-									+ '<td>' + finishDate + '</td>' + '</tr>';
-						});
+		// 流程名称
+		var proName = $('#proName').val();
+		$(data).each(function(i) {
+				var sortNum = i + 1;
+				var createDate = datetimeFormat_1(new Date(
+						this.insCreateDate));
+				var finishDate = "";
+				if (this.insFinishDate != null
+						&& this.insFinishDate != "") {
+					finishDate = datetimeFormat_1(new Date(
+							this.insFinishDate));
+				}
+				if(this.insStatusId=='1'){
+					this.insStatus = '运转中';
+				}else if(this.insStatusId=='2'){
+					this.insStatus = '完成';
+				}else if(this.insStatusId=='3'){
+					this.insStatus = '失败';
+				}else if(this.insStatusId=='4'){
+					this.insStatus = '终止';
+				}else if(this.insStatusId=='5'){
+					this.insStatus = '未启动';
+				}else if(this.insStatusId=='6'){
+					this.insStatus = '暂停';
+				}
+				trs += '<tr style = "cursor:pointer;" ondblclick=openTaskInstance("'+ this._id +'")>'
+						+ '<td>'+ sortNum +'</td>'
+						+ '<td>'+ proName +'</td>'
+						+ '<td>'+ this.insId +'</td>'
+						+ '<td>'+ this.insStatus +'</td>'
+						+ '<td>'+ this.insTitle +'</td>'
+						+ '<td>'+ this.initUserFullname +'</td>'
+						+ '<td>'+ createDate +'</td>'
+						+ '<td>'+ finishDate +'</td>'
+						+ '<td>'
+						+ '<i class="layui-icon layui-icon-search" onclick=openTaskInstance("'+ this._id +'")></i>'
+						+ '</td>'
+						+ '</tr>';
+		});
 		$("#processInstance_tbody").append(trs);
 	}
 
