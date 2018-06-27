@@ -69,6 +69,13 @@ public class InsDataDaoImpl implements InsDataDao{
 	public void insertInsData(String usrUid, String proUid, String proAppId) {
 		try {
 			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, proUid, proAppId);
+//			// 测试插入查询性能
+//			List<DhProcessInstance> test = new LinkedList<>();
+//			for (int i = 0; i < 12; i++) {
+//				test.addAll(dhProcessInstanceList);
+//			}
+//			mongoTemplate.insert(test, Const.INS_DATA);
+			
 			JSONObject insData = null;
 			// 数据库已存数据
 			List<JSONObject> idS = mongoTemplate.find(new BasicQuery("{}","{'_id':1}"), JSONObject.class, Const.INS_DATA);
@@ -84,13 +91,6 @@ public class InsDataDaoImpl implements InsDataDao{
 			
 			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
 				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-//				insData.put("_id", dhProcessInstance.getInsUid());
-//				insData.put("proUid", dhProcessInstance.getProUid());
-//				insData.put("proAppId", dhProcessInstance.getProAppId());
-//				insData.put("insTitle", dhProcessInstance.getInsTitle());
-//				insData.put("insStatus", dhProcessInstance.getInsStatus());
-//				insData.put("insCreateDate", dhProcessInstance.getInsCreateDate());
-//				insData.put("insFinishDate", dhProcessInstance.getInsFinishDate());
 				dhProcessInstance.setinsData$(insData);
 				if ($ids.contains(dhProcessInstance.getInsUid())) {
 					updateDhProcessInstance.add(dhProcessInstance);

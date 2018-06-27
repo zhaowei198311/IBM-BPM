@@ -159,19 +159,19 @@
 		total : 0
 	}
 
-	layui.use([ 'laypage', 'layer' ], function() {
-		var laypage = layui.laypage, layer = layui.layer;
-		//完整功能
-		laypage.render({
-			elem : 'lay_page',
-			count : 50,
-			limit : 10,
-			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
-			jump : function(obj) {
-				console.log(obj)
-			}
-		});
-	});
+// 	layui.use([ 'laypage', 'layer' ], function() {
+// 		var laypage = layui.laypage, layer = layui.layer;
+// 		//完整功能
+// 		laypage.render({
+// 			elem : 'lay_page',
+// 			count : 50,
+// 			limit : 10,
+// 			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+// 			jump : function(obj) {
+// // 				console.log(obj)
+// 			}
+// 		});
+// 	});
 
 	$(document).ready(function() {
 		var sign = true;
@@ -233,13 +233,10 @@
 		var proName = $('#proName').val();
 		$(data).each(function(i) {
 				var sortNum = i + 1;
-				var createDate = datetimeFormat_1(new Date(
-						this.insCreateDate));
+				var createDate = datetimeFormat_1(new Date(this.insCreateDate));
 				var finishDate = "";
-				if (this.insFinishDate != null
-						&& this.insFinishDate != "") {
-					finishDate = datetimeFormat_1(new Date(
-							this.insFinishDate));
+				if (this.insFinishDate != null && this.insFinishDate != "") {
+					finishDate = datetimeFormat_1(new Date(this.insFinishDate));
 				}
 				if(this.insStatusId=='1'){
 					this.insStatus = '运转中';
