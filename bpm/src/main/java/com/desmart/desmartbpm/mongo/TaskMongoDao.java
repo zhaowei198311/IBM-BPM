@@ -78,5 +78,5 @@ public interface TaskMongoDao {
 	 * @param taskIdList  任务编号
 	 * @param reason  锁任务的原因,常量  例子： LOCKED_TASK_COLLECTION_NAME
 	 */
-	void lockTasksForRejectTaskByTaskIdList(List<Integer> taskIdList, String reason);
+	void batchlockTasks(List<Integer> taskIdList, String reason);
 }

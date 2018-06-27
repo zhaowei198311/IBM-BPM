@@ -102,7 +102,7 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
     }
 
     @Override
-    public void lockTasksForRejectTaskByTaskIdList(List<Integer> taskIdList, String reason) {
+    public void batchlockTasks(List<Integer> taskIdList, String reason) {
         if (taskIdList == null || taskIdList.isEmpty()) {
             return;
         }
