@@ -138,7 +138,7 @@
 		parameterType="java.lang.String">
 		SELECT
 		<include refid="Base_Column_List" />
-		FORM
+		FROM
 		DH_TRIGGER_INTERFACE
 		<where>
 			TIN_UID = #{tinUid}
@@ -207,7 +207,7 @@
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
 		DELETE
-		FORM
+		FROM
 		DH_TRIGGER_INTERFACE
 		<where>
 			TIN_UID = #{tinUid}
@@ -216,7 +216,7 @@
 	
 	<delete id="deleteByDynUid" parameterType="java.lang.String">
 		DELETE
-		FORM
+		FROM
 		DH_TRIGGER_INTERFACE
 		<where>
 			DYN_UID = #{dynUid}
