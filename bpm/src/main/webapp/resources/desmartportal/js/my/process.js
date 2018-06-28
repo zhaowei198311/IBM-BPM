@@ -70,7 +70,8 @@ var saveDraftsData = function () {
                 // 发起流程             
                 var finalData = {};
                 // 表单数据
-                var formData = common.getDesignFormData();
+                var jsonStr = common.getDesignFormData();
+                var formData = JSON.parse(jsonStr);
                 finalData.formData = formData;
                 // 流程数据
                 var processData = {};
@@ -100,7 +101,7 @@ var saveDraftsData = function () {
                 // 保存草稿数据                   
                 var insUid = $("#insUid").val();
                 var userId = $("#userId").val();
-                var insTitle = $("#insTitle").val();
+                var insTitle = $("#insTitle_input").val();
                 $.ajax({
                     url: "drafts/saveDrafts",
                     method: "post",
