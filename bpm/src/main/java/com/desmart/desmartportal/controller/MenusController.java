@@ -38,17 +38,12 @@ public class MenusController {
 	
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
-
-	
 	@Autowired
 	private DhDraftsService dhDraftsService;
-	
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
-	
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
-	
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	
@@ -166,13 +161,14 @@ public class MenusController {
 	 */
 	@RequestMapping("approval")
 	public ModelAndView toDealTask(@RequestParam(value="taskUid") String taskUid) {
+		ModelAndView mv = new ModelAndView();
 		// 判断该任务是否为加签任务
 		DhTaskInstance checkDhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		String taskType = checkDhTaskInstance.getTaskType();
 		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(taskType) || DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(taskType)
 				|| DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(taskType)) {
 			// 如果是会签的任务
-			ModelAndView mv = new ModelAndView("desmartportal/addSign");
+			mv.setViewName("desmartportal/addSign");
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toAddSign(taskUid);
 			if (serverResponse.isSuccess()) {
 	            mv.addAllObjects(serverResponse.getData());
@@ -184,7 +180,7 @@ public class MenusController {
 		}
 		// 等待加签 跳转 已办详情页面
 		if(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(checkDhTaskInstance.getTaskStatus())) {
-			ModelAndView mv = new ModelAndView("desmartportal/finished_detail");
+			mv.setViewName("desmartportal/finished_detail");
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
 			if (serverResponse.isSuccess()) {
 	            mv.addAllObjects(serverResponse.getData());
@@ -196,7 +192,7 @@ public class MenusController {
 		}
 
 		// 普通的待办任务
-		ModelAndView mv = new ModelAndView("desmartportal/approval");
+		mv.setViewName("desmartportal/approval");
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {
             mv.addAllObjects(serverResponse.getData());

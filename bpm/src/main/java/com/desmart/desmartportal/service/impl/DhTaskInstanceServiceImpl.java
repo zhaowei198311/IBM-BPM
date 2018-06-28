@@ -531,9 +531,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
 
-        // todo 调用表单前的触发器
-
 	    DhStep formStep = dhStepService.getFormStepOfStepList(steps);
+
+        // 调用表单前的触发器
+        ServerResponse executeStepResponse = dhStepService.executeStepBeforeFormStep(steps.get(0), dhTaskInstance);
+        if (!executeStepResponse.isSuccess()) {
+            return executeStepResponse;
+        }
+        // 触发器调用过后重新获取流程实例
+        dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
 
         ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
         if (!getFormResponse.isSuccess()) {

@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.desmart.desmartbpm.service.DhTriggerService;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +34,14 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.github.pagehelper.PageHelper;
+import org.springframework.util.StopWatch;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 @Service
 public class DhStepServiceImpl implements DhStepService {
-    @Autowired
-    private DhActivityConfMapper dhActivityConfMapper;
+    private static final Logger log = LoggerFactory.getLogger(DhStepServiceImpl.class);
+
     @Autowired
     private BpmActivityMetaMapper bpmActivityMetaMapper;
     @Autowired
@@ -41,9 +50,10 @@ public class DhStepServiceImpl implements DhStepService {
     private DhTriggerMapper dhTriggerMapper;
     @Autowired
     private DhObjectPermissionMapper dhObjectPermissionMapper;
-    
     @Autowired
     private BpmFormManageMapper bpmFormManageMapper;
+    @Autowired
+    private DhTriggerService dhTriggerService;
     
     @Override
     public ServerResponse create(DhStep dhStep) {
@@ -403,5 +413,27 @@ public class DhStepServiceImpl implements DhStepService {
         }
     }
 
-    
+    @Override
+    public ServerResponse executeStepBeforeFormStep(DhStep firstStep, DhTaskInstance dhTaskInstance) {
+        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+        DhStep step = firstStep;
+        while (step != null) {
+            // 如果当前步骤是表单步骤返回调用成功
+            if (DhStep.TYPE_FORM.equals(step.getStepType())) {
+                return ServerResponse.createBySuccess();
+            }
+            if (StringUtils.isNotBlank(step.getStepObjectUid())) {
+                try {
+                    dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step.getStepObjectUid());
+                } catch (Exception e) {
+                    log.error("调用step失败：stepUid:" + step.getStepUid() + "任务实例id：" + dhTaskInstance.getTaskUid(), e);
+                    return ServerResponse.createByErrorMessage("表单前触发器调用失败");
+                }
+            }
+            step = getNextStepOfCurrStep(step);
+        }
+        return ServerResponse.createBySuccess();
+    }
+
+
 }

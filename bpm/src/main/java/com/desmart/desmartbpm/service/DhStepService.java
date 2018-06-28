@@ -7,6 +7,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 
 public interface DhStepService {
     
@@ -88,11 +89,17 @@ public interface DhStepService {
 
     /**
      * 找到指定环节对应的表单步骤，如果提供的关键字没有对应表单步骤，进一步查询默认关键字有没有表单步骤
-     * @param currTaskNode
-     * @param stepBusinessKey
+     * @param currTaskNode  任务节点
+     * @param stepBusinessKey 步骤关键字
      * @return
      */
     DhStep getFormStepOfTaskNode(BpmActivityMeta currTaskNode, String stepBusinessKey);
 
+    /**
+     * 执行表单步骤前的步骤
+     * @param firstStep
+     * @return
+     */
+    ServerResponse executeStepBeforeFormStep(DhStep firstStep, DhTaskInstance dhTaskInstance);
 
 }    

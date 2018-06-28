@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,25 +45,20 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
-    
     @Autowired
 	private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
-    
     @Autowired
     private BpmFormManageMapper bpmFormManageMapper;
-    
     @Autowired
     private BpmFormFieldMapper bpmFormFieldMapper;
-    
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
-    
     @Autowired
     private DhInterfaceParameterService dhInterfaceParameterService;
-
     @Autowired
     private DhInterfaceExecuteService dhInterfaceExecuteService;
-    
+
+
     @Override
     public ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
@@ -103,9 +99,9 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		if ("javaclass".equals(dhTrigger.getTriType())) {
 			Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
 			Object obj = clz.newInstance();
-			JSONObject jb = JSONObject.parseObject(dhTrigger.getTriParam());
+			JSONObject jb = JSON.parseObject(dhTrigger.getTriParam());
 			Method md = obj.getClass().getDeclaredMethod("execute",
-					new Class[] { WebApplicationContext.class, String.class, org.json.JSONObject.class });
+					new Class[] { WebApplicationContext.class, String.class, JSONObject.class });
 			md.invoke(obj, new Object[] { wac, insUid, jb });
 		}else if("interface".equals(dhTrigger.getTriType())) {
 			transferInterface(insUid, triUid, dhTrigger);

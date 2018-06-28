@@ -44,7 +44,7 @@ public interface DhProcessInstanceService {
 	 * @param insUid
 	 * @return int类型 判断修改
 	 */
-	int updateByPrimaryKey(String insUid);
+	int updateByPrimaryKeySelective(DhProcessInstance dhProcessInstance);
 	
 	/**
 	 * 根据流程实例主键 删除流程实例

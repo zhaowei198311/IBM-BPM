@@ -8,8 +8,7 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 import org.springframework.web.context.WebApplicationContext;
 
 
-
-public class DemoJavaClass implements DhJavaClassTriggerTemplate {
+public class DemoJavaClass2 implements DhJavaClassTriggerTemplate {
 
 	@Override
 	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject) {
@@ -24,8 +23,8 @@ public class DemoJavaClass implements DhJavaClassTriggerTemplate {
         // 改变formData
 
         JSONObject obj = new JSONObject();
-        obj.put("value", "这个是新插入的值1");
-        formData.put("新的值1", obj);
+        obj.put("value", "这个是新插入的值2");
+        formData.put("新的值2", jsonObject.getString("value"));
 
         dhProcessInstance.setInsData(insDataJson.toJSONString());
         dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);

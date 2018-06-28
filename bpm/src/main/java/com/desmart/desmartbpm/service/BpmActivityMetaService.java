@@ -34,7 +34,7 @@ public interface BpmActivityMetaService {
     ServerResponse<List<Map<String, Object>>> getActivitiyMetasForConfig(String proAppId, String proUid, String proVerUid);
     
     /**
-     * 获取流程定义的所有人工环节
+     * 获取流程定义的所有人工环节, 只包含原生的，不包含外链的
      * @param proAppId
      * @param proUid
      * @param proVerUid

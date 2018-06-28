@@ -175,15 +175,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 * 根据流程实例主键 修改流程
 	 */
 	@Override
-	public int updateByPrimaryKey(String insUid) {
-		log.info("");
-		try {
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.info("");
-		return 0;
+	public int updateByPrimaryKeySelective(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 	}
 
 	/**
@@ -488,7 +481,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		insData.put("processData", processData);
 
 		processInstance.setInsData(insData.toJSONString());
-		// processInstance.setInsStatus("run");
+		processInstance.setInsUpdateDate(new Date());
 		return processInstance;
 	}
 
@@ -514,6 +507,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		DhProcessDefinition processDefintion = null;
 		DhProcessInstance processInstance = null;
 
+		DhDrafts dhDrafts = null;
 		String formData = "{}";
 		if (StringUtils.isBlank(insUid)) {
 			// 不是草稿箱来的
@@ -523,6 +517,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			}
 			if(checkPermissionStart(processDefintion)) {
 				processInstance = this.generateDraftProcessInstance(processDefintion, insBusinessKey);
+				dhProcessInstanceMapper.insertProcess(processInstance);
 			}else {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
@@ -539,7 +534,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			}
 			proAppId = processInstance.getProAppId();
 			proUid = processInstance.getProUid();
-			DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
+			dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
 			JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
 			formData = jsonObj.getString("formData");
 			JSONObject processData = jsonObj.getJSONObject("processData");
@@ -567,7 +562,20 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			return ServerResponse.createByErrorMessage("找不到表单步骤");
 		}
 
-		// todo 调用表单步骤前的触发器
+		// 调用表单步骤前的触发器
+		DhTaskInstance tempTask = new DhTaskInstance();
+		tempTask.setInsUid(processInstance.getInsUid());
+		ServerResponse executeStepResponse = dhStepService.executeStepBeforeFormStep(steps.get(0), tempTask);
+		if (!executeStepResponse.isSuccess()) {
+			return ServerResponse.createByErrorMessage(executeStepResponse.getMsg());
+		}
+		// 触发器调用过后重新获取流程实例
+		processInstance = getByInsUid(processInstance.getInsUid());
+		// 混合草稿中fromData数据并更新
+		JSONObject insDataJson = JSON.parseObject(processInstance.getInsData());
+
+
+
 
 		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService
 				.queryFieldPermissionByStepUid(formStep.getStepUid());
@@ -582,9 +590,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		BpmForm bpmForm = (BpmForm) getFormResponse.getData();
 
-		if (StringUtils.isBlank(insUid)) {
-			dhProcessInstanceMapper.insertProcess(processInstance);
-		}
 
 		// 是否显示环节权责控制
 		if (StringUtils.isBlank(dhActivityConf.getActcResponsibility())

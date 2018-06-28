@@ -7,11 +7,13 @@ import java.util.UUID;
 
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.entity.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSONObject;
@@ -58,8 +60,6 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
 
-	
-	private WebApplicationContext wac;
 
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
@@ -79,8 +79,9 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 
 	}
 
+	// 消费消息
 	public void execute(JSONObject json, Message mqMessage) {
-
+		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
 		// 解析数据，转为bean对象
 		JSONObject taskInstanceJson = json.getJSONObject("currTaskInstance");
 		JSONObject dhStepJson = json.getJSONObject("dhStep");
@@ -126,20 +127,12 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		}
 		
 		//调用触发器方法
-		DhStep nextStep = dhStep;
-		while (nextStep != null) {
+		DhStep step = dhStep;
+		while (step != null) {
 			try {
-				// 判断是否为触发器
-				if (null != nextStep) {
-					String stepObjectUid = nextStep.getStepObjectUid();
-					if (null != stepObjectUid && "" != stepObjectUid) {
-						String[] split = stepObjectUid.split(":");
-						if (!"trigger".equals(split[0])) {
-							return;
-						}
-					}
+				if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
+					dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep.getStepObjectUid());
 				}
-				dhTriggerService.invokeTrigger(wac, String.valueOf(dhProcessInstance.getInsId()), dhStep.getStepObjectUid());
 			} catch (Exception e) {
 				DhTriggerException dhTriggerException = new DhTriggerException();
 	        	dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
@@ -153,7 +146,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	        	int result = dhTriggerExceptionService.save(dhTriggerException);
 	        	return;
 			}
-			nextStep = dhStepService.getNextStepOfCurrStep(nextStep);
+			step = dhStepService.getNextStepOfCurrStep(step);
 		}
 		
         //  调用api 完成任务

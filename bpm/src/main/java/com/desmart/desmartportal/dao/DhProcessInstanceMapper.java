@@ -24,7 +24,8 @@ public interface DhProcessInstanceMapper {
      * 查询满足条件的流程实例
      */
 	List <DhProcessInstance> queryBySelective(DhProcessInstance processInstance);
-	
+
+
 	/**
 	 * 根据主键查询流程实例
 	 */
@@ -34,7 +35,7 @@ public interface DhProcessInstanceMapper {
 	
 	int deleteByPrimaryKey(String insUid);
 	
-	void insertProcess(DhProcessInstance processInstance);
+	int insertProcess(DhProcessInstance processInstance);
 	
 	/**
 	 * 查找指定流程编号的所有实例
