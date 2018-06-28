@@ -386,7 +386,7 @@
                                     <span></span>
                                 </p>
                                 <p>
-                                    <font>当前处理状态：</font>
+                                    <font>当前处理环节：</font>
                                     <span></span>
                                 </p>
                                 <p>

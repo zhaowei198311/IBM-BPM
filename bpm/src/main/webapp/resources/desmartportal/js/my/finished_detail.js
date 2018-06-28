@@ -80,6 +80,7 @@ function prePrintIndex(){
 	giveFormSetValue(jsonStr);
 	prePrint();
 	var webpage = $("#preViewForm").html();
+	layer.load(1);
 	$.ajax({
 		url:common.getPath()+"/finishFormPrint/toPDF",
 		method:"post",
@@ -90,7 +91,13 @@ function prePrintIndex(){
 		success:function(result){
 			if(result.status == 0){
 				window.open(result.data);
+			}else{
+				layer.alert("生成预览页失败");
 			}
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.closeAll("loading");
 		}
 	});
 }

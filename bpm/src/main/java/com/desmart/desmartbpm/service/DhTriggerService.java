@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.context.WebApplicationContext;
 
@@ -37,15 +38,16 @@ public interface DhTriggerService {
      * @return
      */
     int saveTrigger(DhTrigger dhTrigger);
+    
     /**
      * @Title: invokeTrigger  
      * @Description: 通过反射调用类的方法  
      * @param @param triUid
      * @param @return  
-     * @return DhTrigger
+     * @return ServerResponse
      * @throws
      */
-    void invokeTrigger(WebApplicationContext wac, String insUid, String triUid) throws Exception;
+    ServerResponse<Map<String, String>> invokeTrigger(WebApplicationContext wac, String insUid, String triUid);
     
     /**
      * 反射调用选人触发器

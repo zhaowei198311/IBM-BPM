@@ -21,14 +21,15 @@
         CREATE_TIME,
         MQ_MESSAGE,
         ERROR_MESSAGE,
-        REQUEST_PARAM
+        REQUEST_PARAM,
+        STATUS
     </sql>
 
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
         insert into DH_TRIGGER_EXCEPTION 
             (<include refid="base_column"/>)
         values (
-            #{id},#{taskId}, #{stepId},#{insId},#{createTime},#{mqMessage},#{errorMessage},#{requestParam}
+            #{id},#{taskId}, #{stepId},#{insId},#{createTime},#{mqMessage},#{errorMessage},#{requestParam},#{status}
         )
     </insert>
    

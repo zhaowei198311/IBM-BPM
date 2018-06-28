@@ -1,10 +1,11 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
@@ -94,137 +96,157 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	}
 
 	@Override
-	public void invokeTrigger(WebApplicationContext wac, String insUid, String triUid) throws Exception{
+	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, String triUid){
 		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+		Map<String,String> resultMap = new HashMap<>();
 		if ("javaclass".equals(dhTrigger.getTriType())) {
-			Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
-			Object obj = clz.newInstance();
-			JSONObject jb = JSON.parseObject(dhTrigger.getTriParam());
-			Method md = obj.getClass().getDeclaredMethod("execute",
-					new Class[] { WebApplicationContext.class, String.class, JSONObject.class });
-			md.invoke(obj, new Object[] { wac, insUid, jb });
+			try {
+				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
+				Object obj = clz.newInstance();
+				JSONObject jb = JSON.parseObject(dhTrigger.getTriParam());
+				Method md = obj.getClass().getDeclaredMethod("execute",
+						new Class[] { WebApplicationContext.class, String.class, JSONObject.class });
+				md.invoke(obj, new Object[] { wac, insUid, jb });
+				resultMap.put("status", "0");
+			}catch(Exception e) {
+				resultMap.put("status", "1");
+				resultMap.put("msg", e.getMessage());
+				return ServerResponse.createBySuccess(resultMap);
+			}
 		}else if("interface".equals(dhTrigger.getTriType())) {
-			transferInterface(insUid, triUid, dhTrigger);
+			return transferInterface(insUid, triUid, dhTrigger);
 		}
+		return ServerResponse.createBySuccess(resultMap);
 	}
 
 	/**
 	 * 调用接口传递参数并接收返回值
 	 */
-	private void transferInterface(String insUid, String triUid, DhTrigger dhTrigger) throws Exception {
-		//获得表单数据
-		String insData = dhProcessInstanceMapper.selectByPrimaryKey(insUid).getInsData();
-		JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
-		//获得接口输入触发器集合
-		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,
-				"inputParameter");
-		//获得对应的接口id
-		String intUid = dhTrigger.getTriWebbot();
-		String inputParameter = "\"inputParameter\":{";
-		for (int i = 0; i < dhTriggerInterfaceList.size(); i++) {
-			DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
-			//获得接口参数映射的表单name
-			String fieldCodeName = triInt.getFldCodeName();
-			//获得接口参数name
-			String paramName = triInt.getParaName();
-			BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
-					fieldCodeName);
-			if (null == formField) {
-				//查询该字段是否为子表单中的字段
-				List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
-				for (String publicFormUid : publicFormUidList) {
-					formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
-					//找到对应的表单字段
-					if (null != formField) {
-						break;
+	private ServerResponse<Map<String, String>> transferInterface(String insUid, String triUid, DhTrigger dhTrigger){
+		String paramJson = "";
+		Map<String,String> resultMap = new HashMap<>();
+		try {
+			//获得表单数据
+			String insData = dhProcessInstanceMapper.selectByPrimaryKey(insUid).getInsData();
+			JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
+			//获得接口输入触发器集合
+			List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,
+					"inputParameter");
+			//获得对应的接口id
+			String intUid = dhTrigger.getTriWebbot();
+			String inputParameter = "\"inputParameter\":{";
+			for (int i = 0; i < dhTriggerInterfaceList.size(); i++) {
+				DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
+				//获得接口参数映射的表单name
+				String fieldCodeName = triInt.getFldCodeName();
+				//获得接口参数name
+				String paramName = triInt.getParaName();
+				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
+						fieldCodeName);
+				if (null == formField) {
+					//查询该字段是否为子表单中的字段
+					List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+					for (String publicFormUid : publicFormUidList) {
+						formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
+						//找到对应的表单字段
+						if (null != formField) {
+							break;
+						}
 					}
 				}
-			}
-			//判断表单字段类型
-			if ("object".equals(formField.getFldType())) {
-				//获得对应输入list类型的参数下所有普通参数集合
-				DhInterfaceParameter dhInterfaceParameter = new DhInterfaceParameter();
-				dhInterfaceParameter.setIntUid(intUid);
-				dhInterfaceParameter.setParaParent(triInt.getParaUid());
-				dhInterfaceParameter.setParaType("input");
-				List<DhInterfaceParameter> paramList = dhInterfaceParameterService.byQueryParameter(dhInterfaceParameter);
-				//获得表格对应的数据
-				String fieldValue = FormDataUtil.getStringValue(fieldCodeName,formDataObj);
-				if(null==fieldValue || "".equals(fieldValue)) {
-					continue;
-				}
-				JSONArray tableData = JSONArray.parseArray(fieldValue);
-				inputParameter += "\""+paramName+"\":[";
-				for(int k=0;k<tableData.size();k++) {
-					//获得insData中对应的fieldValue
-					inputParameter += "{";
-					for(int j=0;j<paramList.size();j++) {
-						DhInterfaceParameter interParam = paramList.get(j);
-						//获得对应的参数name
-						String childParamName = interParam.getParaName();
-						//获得参数对应的触发器接口映射对象
-						DhTriggerInterface childTriInter = dhTriggerInterfaceMapper.queryTriIntByInCondition(triUid,
-									interParam.getParaUid(),"inputParameter");
-						if(null==childTriInter) {
-							continue;
-						}
-						//获得对应的表格字段
-						String tableFieldCodeName = childTriInter.getFldCodeName();
-						BpmFormField tableField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
-								tableFieldCodeName);
-						//查询字段是否为子表单中字段
-						if (null == tableField) {
-							List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
-							for (String publicFormUid : publicFormUidList) {
-								tableField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, tableFieldCodeName);
-								//找到对应的表格字段
-								if (null != tableField) {
-									break;
+				//判断表单字段类型
+				if ("object".equals(formField.getFldType())) {
+					//获得对应输入list类型的参数下所有普通参数集合
+					DhInterfaceParameter dhInterfaceParameter = new DhInterfaceParameter();
+					dhInterfaceParameter.setIntUid(intUid);
+					dhInterfaceParameter.setParaParent(triInt.getParaUid());
+					dhInterfaceParameter.setParaType("input");
+					List<DhInterfaceParameter> paramList = dhInterfaceParameterService.byQueryParameter(dhInterfaceParameter);
+					//获得表格对应的数据
+					String fieldValue = FormDataUtil.getStringValue(fieldCodeName,formDataObj);
+					if(null==fieldValue || "".equals(fieldValue)) {
+						continue;
+					}
+					JSONArray tableData = JSONArray.parseArray(fieldValue);
+					inputParameter += "\""+paramName+"\":[";
+					for(int k=0;k<tableData.size();k++) {
+						//获得insData中对应的fieldValue
+						inputParameter += "{";
+						for(int j=0;j<paramList.size();j++) {
+							DhInterfaceParameter interParam = paramList.get(j);
+							//获得对应的参数name
+							String childParamName = interParam.getParaName();
+							//获得参数对应的触发器接口映射对象
+							DhTriggerInterface childTriInter = dhTriggerInterfaceMapper.queryTriIntByInCondition(triUid,
+										interParam.getParaUid(),"inputParameter");
+							if(null==childTriInter) {
+								continue;
+							}
+							//获得对应的表格字段
+							String tableFieldCodeName = childTriInter.getFldCodeName();
+							BpmFormField tableField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
+									tableFieldCodeName);
+							//查询字段是否为子表单中字段
+							if (null == tableField) {
+								List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+								for (String publicFormUid : publicFormUidList) {
+									tableField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, tableFieldCodeName);
+									//找到对应的表格字段
+									if (null != tableField) {
+										break;
+									}
 								}
 							}
+							JSONObject tableJson = tableData.getJSONObject(k);
+							String tableFieldCodeValue = tableJson.get(tableFieldCodeName).toString();
+							inputParameter += "\""+childParamName+"\":\""+tableFieldCodeValue+"\"";
+							if(j!=tableData.size()-1) {
+								inputParameter += ",";
+							}
 						}
-						JSONObject tableJson = tableData.getJSONObject(k);
-						String tableFieldCodeValue = tableJson.get(tableFieldCodeName).toString();
-						inputParameter += "\""+childParamName+"\":\""+tableFieldCodeValue+"\"";
-						if(j!=tableData.size()-1) {
+						inputParameter += "}";
+						if(k!=paramList.size()-1) {
 							inputParameter += ",";
 						}
 					}
-					inputParameter += "}";
-					if(k!=paramList.size()-1) {
+					inputParameter += "]";
+				//表格中的字段
+				} else if (formField.getFldType().indexOf("object_")!=-1) {
+					continue;
+				} else {
+					//获得insData中指定字段的value
+					String fieldValue = FormDataUtil.getStringValue(fieldCodeName,formDataObj);
+					if (null == fieldValue) {
+						fieldValue = "";
+					}
+					//将参数name和value拼接成接口需要的格式
+					inputParameter += "\"" + paramName + "\":\"" + fieldValue + "\"";
+					if (i != dhTriggerInterfaceList.size() - 1) {
 						inputParameter += ",";
 					}
 				}
-				inputParameter += "]";
-			//表格中的字段
-			} else if (formField.getFldType().indexOf("object_")!=-1) {
-				continue;
-			} else {
-				//获得insData中指定字段的value
-				String fieldValue = FormDataUtil.getStringValue(fieldCodeName,formDataObj);
-				if (null == fieldValue) {
-					fieldValue = "";
-				}
-				//将参数name和value拼接成接口需要的格式
-				inputParameter += "\"" + paramName + "\":\"" + fieldValue + "\"";
-				if (i != dhTriggerInterfaceList.size() - 1) {
-					inputParameter += ",";
-				}
 			}
+			inputParameter += "}";
+			paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
+			JSONObject paramObj = JSONObject.parseObject(paramJson);
+			//调用接口处理数据并接收回调数据
+			Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
+			//处理回调数据
+			handleInterfaceData(json, insUid, triUid);
+			resultMap.put("status", "0");
+		}catch(Exception e) {
+			resultMap.put("status", "1");
+			resultMap.put("msg", e.getMessage());
+			resultMap.put("param", paramJson);
+			return ServerResponse.createBySuccess(resultMap);
 		}
-		inputParameter += "}";
-		String paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
-		JSONObject paramObj = JSONObject.parseObject(paramJson);
-		//调用接口处理数据并接收回调数据
-		Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
-		//处理回调数据
-		handleInterfaceData(json, insUid, triUid);
+		return ServerResponse.createBySuccess(resultMap);
 	}
 	
 	/**
 	 * 处理接口json返回值更新对应的formData
 	 */
-	private void handleInterfaceData(Json json,String insUid, String triUid){
+	private void handleInterfaceData(Json json,String insUid, String triUid) throws Exception{
 		if(!json.isSuccess()) {
 			throw new PlatformException(json.getMsg());
 		}

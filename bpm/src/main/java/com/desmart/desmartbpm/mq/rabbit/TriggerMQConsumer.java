@@ -129,22 +129,26 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		//调用触发器方法
 		DhStep step = dhStep;
 		while (step != null) {
-			try {
-				if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-					dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep.getStepObjectUid());
+			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
+				dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep.getStepObjectUid());
+			}
+			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
+				ServerResponse<Map<String, String>> response = dhTriggerService.invokeTrigger(wac, String.valueOf(dhProcessInstance.getInsId()), dhStep.getStepObjectUid());
+				Map<String,String> resultMap = response.getData();
+				if(resultMap.get("status").equals("1")) {
+					DhTriggerException dhTriggerException = new DhTriggerException();
+			        dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
+			        dhTriggerException.setCreateTime(new Date());
+			        dhTriggerException.setInsId(String.valueOf(dhProcessInstance.getInsId()));
+			        dhTriggerException.setMqMessage(String.valueOf(mqMessage));
+			        dhTriggerException.setStepId(dhStep.getStepUid());
+			        dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
+			        dhTriggerException.setRequestParam(resultMap.get("param"));
+			        dhTriggerException.setErrorMessage(resultMap.get("msg"));
+			        dhTriggerException.setStatus("true");
+			        int result = dhTriggerExceptionService.save(dhTriggerException);
+			        return;
 				}
-			} catch (Exception e) {
-				DhTriggerException dhTriggerException = new DhTriggerException();
-	        	dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
-	        	dhTriggerException.setCreateTime(new Date());
-	        	dhTriggerException.setInsId(String.valueOf(dhProcessInstance.getInsId()));
-	        	dhTriggerException.setMqMessage(String.valueOf(mqMessage));
-	        	dhTriggerException.setStepId(dhStep.getStepUid());
-	        	dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
-	        	dhTriggerException.setRequestParam(String.valueOf(mqMessage.getBody()));
-	        	dhTriggerException.setErrorMessage(e.toString());
-	        	int result = dhTriggerExceptionService.save(dhTriggerException);
-	        	return;
 			}
 			step = dhStepService.getNextStepOfCurrStep(step);
 		}

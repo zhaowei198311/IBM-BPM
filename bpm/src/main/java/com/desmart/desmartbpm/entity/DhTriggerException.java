@@ -28,6 +28,7 @@ public class DhTriggerException implements Serializable{
 	
 	private String requestParam;  //请求参数
 	
+	private String status;//异常数据状态
 	
 	public String getId() {
 		return id;
@@ -93,5 +94,11 @@ public class DhTriggerException implements Serializable{
 		this.requestParam = requestParam;
 	}
 
+	public String getStatus() {
+		return status;
+	}
 
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }
