@@ -152,52 +152,59 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 					});
 				}
 			})
+			// 隐藏 参数
+			
+			$("#triParam").attr('disabled',true)
+			$("#triParam").addClass("layui-disabled")
 			form.render();
+		}else{
+			$("#triParam").attr('disabled',false)
+			$("#triParam").removeClass("layui-disabled")
 		}
 	});
-	
-	function byParameterTypeHideAndShowElement(paraType,selector){
-		var triWebbot=$('.triWebbot'); // 触发器执行命令
-		var trijiekou=$('.triInterface'); // 选择接口
-		var triParam = $('.triParam'); // 参数
-		var triType = $('.triType');
-		switch (paraType) {
-		case 'sql':
-			triWebbot.show();
-			triParam.show();
-			trijiekou.hide();
-			clearTableData();
-			break;
-		case 'javaclass':
-			triWebbot.show();
-			triParam.show();
-			trijiekou.hide();
-			clearTableData();
-			break;
-		case 'interface':
-			trijiekou.css("display", "block");
-			triParam.show();
-			triWebbot.hide();
-			$("#triWebbotType").empty();
-			clearTableData();
-			break;	
-		case 'script':
-			triWebbot.show();
-			triParam.show();
-			trijiekou.hide();
-			clearTableData();
-			break;	
-		}
-		form.render();
-	}
-	
-	function clearTableData(){
-		 $("#triWebbot").val("");
-		 $("#triParam").val("");
-		 $("#triTitle").val("");
-		 $("#triDescription").val("");
-	}
 });
+}
+
+
+function byParameterTypeHideAndShowElement(paraType,selector){
+	var triWebbot=$('.triWebbot'); // 触发器执行命令
+	var trijiekou=$('.triInterface'); // 选择接口
+	var triParam = $('.triParam'); // 参数
+	var triType = $('.triType');
+	switch (paraType) {
+	case 'sql':
+		triWebbot.show();
+		triParam.show();
+		trijiekou.hide();
+		clearTableData();
+		break;
+	case 'javaclass':
+		triWebbot.show();
+		triParam.show();
+		trijiekou.hide();
+		clearTableData();
+		break;
+	case 'interface':
+		trijiekou.css("display", "block");
+		triParam.show();
+		triWebbot.hide();
+		$("#triWebbotType").empty();
+		clearTableData();
+		break;	
+	case 'script':
+		triWebbot.show();
+		triParam.show();
+		trijiekou.hide();
+		clearTableData();
+		break;	
+	}
+}
+
+function clearTableData(){
+	 $("#triWebbot").val("");
+	 $("#triParam").val("");
+	 $("#triTitle").val("");
+	 $("#triDescription").val("");
 }
 
 
@@ -216,6 +223,75 @@ layer.confirm('是否删除该触发器？', {icon: 3, title:'提示'}, function
 	})
 	  layer.close(index);
 	}); 
+}
+
+function updatate(triUid){
+	$("#triUid").val(triUid)
+	$("#triWebbotType2").empty();
+	var triWebbot = "";
+	layui.use(['form','layer','jquery'], function(){
+		layer = layui.layer, form = layui.form;
+		var $= layui.jquery;
+		$(".display_container2").css("display", "block");
+		$.ajax({
+			url : common.getPath()+'/trigger/serachByPrimarkey',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				triUid : triUid
+			},
+			success : function(result){
+				console.info(result)
+				if(result.status == 0){
+					byParameterTypeHideAndShowElement(result.data.triType,"");
+					$("#triType2").attr('disabled',true)
+					$("#triType2").addClass("layui-disabled")
+					triWebbot = result.data.triWebbot
+					if(result.data.triType == "interface"){
+						$("#triParam2").attr('disabled',true)
+						$("#triParam2").addClass("layui-disabled")
+						// 请求ajax 获取接口数据
+						$.ajax({
+							url : common.getPath()+'/interfaces/queryDhInterfaceList',
+							type : 'post',
+							dataType : 'json',
+							data : {
+								},
+							success : function(result){
+								var data = result.data.list;
+								for(var i=0; i<data.length; i++){
+									var trs = '<option value="'+data[i].intUid+'">'
+										+ data[i].intTitle
+										+ '</option>';
+									$("#triWebbotType2").append(trs)
+								} 
+								// 添加完 接口后 默认选中 查出对应接口
+								$("#triWebbotType2 option[value='"+triWebbot+"']").attr("selected",true); 
+								form.render();
+							},
+							error : function (){
+								layer.msg('查询接口异常', {
+									icon : 5
+								});
+							}
+						})
+					}else{
+						$("#triParam2").attr('disabled',false)
+						$("#triParam2").removeClass("layui-disabled")
+					}
+					$("#triTitle2").val(result.data.triTitle);
+					$("#triDescription2").val(result.data.triDescription);
+					$("#triParam2").val(result.data.triParam);
+					$("#triWebbot2").val(result.data.triWebbot);
+					$("#triType2").val(result.data.triType); 
+					form.render();
+				}
+			},
+			error : function(result){
+				layer.alert('查询失败')
+			}
+		})
+	})
 }
 
 $(".search_btn").click(function(){
@@ -243,6 +319,7 @@ $(".display_container").css("display", "block");
 
 $(".cancel_btn").click(function(){
 $(".display_container").css("display", "none");
+$(".display_container2").css("display", "none");
 $("#form1").validate().resetForm();
 })
 
@@ -284,4 +361,55 @@ $(".sure_btn").click(function(){
 		}else{
 			layer.alert('参数不能为空')
 		}
+})
+
+// 修改触发器
+$(".update_btn").click(function() {
+	if($("#triType2").val() == "interface"){
+		$.ajax({
+			url : common.getPath()+'/trigger/update',
+			type : 'POST',
+			dataType : 'text',
+			data : {
+				triTitle : $("#triTitle2").val(),
+				triDescription : $("#triDescription2").val(),
+				triType : $("#triType2").val(),
+				triWebbot : $("#triWebbotType2").val(),
+				triParam : $("#triParam2").val(),
+				triUid : $("#triUid").val()
+			},
+			success : function(result){
+				layer.alert('修改成功', function(index){
+					window.location.href =  common.getPath()+ '/trigger/index'
+					layer.close(index);
+				});      
+			},
+			error : function(result) {
+				layer.alert("修改失败");
+			}
+		})
+	}else{
+		$.ajax({
+			url : common.getPath()+'/trigger/update',
+			type : 'POST',
+			dataType : 'text',
+			data : {
+				triTitle : $("#triTitle2").val(),
+				triDescription : $("#triDescription2").val(),
+				triType : $("#triType2").val(),
+				triWebbot : $("#triWebbot2").val(),
+				triParam : $("#triParam2").val(),
+				triUid : $("#triUid").val()
+			},
+			success : function(result){
+				layer.alert('修改成功', function(index){
+					window.location.href =  common.getPath()+ '/trigger/index'
+					layer.close(index);
+				});      
+			},
+			error : function(result) {
+				layer.alert("修改失败");
+			}
+		})
+	}
 })

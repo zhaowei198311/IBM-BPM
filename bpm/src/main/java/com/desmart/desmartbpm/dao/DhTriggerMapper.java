@@ -25,4 +25,9 @@ public interface DhTriggerMapper {
      * @return 
      */
     int delete (String triUid);
+    
+    /**
+     * 修改触发器
+     */
+    int updateDhTrigger(DhTrigger dhTrigger);
 }

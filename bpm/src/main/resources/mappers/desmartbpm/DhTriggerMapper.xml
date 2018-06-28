@@ -68,4 +68,32 @@
 			TRI_UID = #{triUid}
 		</where>
 	</delete>
+	
+	<update id="updateDhTrigger" parameterType="com.desmart.desmartbpm.entity.DhTrigger">
+		update dh_trigger 
+		<set>
+			<if test="triTitle != null and triTitle != ''">
+			TRI_TITLE = #{triTitle},
+			</if>
+			<if test="triDescription != null and triDescription !=''">
+			TRI_DESCRIPTION = #{triDescription},
+			</if>
+			<if test="triType != null and triType != ''">
+			TRI_TYPE = #{triType},
+			</if>
+			<if test="triWebbot != null and triWebbot != ''">
+			TRI_WEBBOT = #{triWebbot},
+			</if>
+			<if test="triParam != null and triParam !=''">
+			TRI_PARAM = #{triParam},
+			</if>
+			<if test="updator != null and updator !=''">
+			UPDATOR = #{updator},
+			</if>
+			UPDATE_TIME = sysdate
+		</set>
+		<where>
+			TRI_UID = #{triUid}
+		</where>
+	</update>
 </mapper>

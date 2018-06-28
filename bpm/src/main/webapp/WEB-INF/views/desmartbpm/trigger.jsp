@@ -74,15 +74,6 @@
 					<div class="layui-form-item">
 						<div class="layui-row">
 							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
-									<div class="layui-input-inline">
-										<input type="text" id="triTitle" name="triTitle"
-											lay-verify="triTitle" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-							<div class="layui-col-md6">
 								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
 								<div class="layui-input-inline">
 									<select id="triType" name="triType" lay-filter="triType">
@@ -92,6 +83,15 @@
 										<option value="interface">interface</option>
 										<option value="javaclass">javaclass</option>
 									</select>
+								</div>
+							</div>
+							<div class="layui-col-md6">
+								<div class="layui-inline">
+									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
+									<div class="layui-input-inline">
+										<input type="text" id="triTitle" name="triTitle"
+											lay-verify="triTitle" autocomplete="off" class="layui-input">
+									</div>
 								</div>
 							</div>
 						</div>
@@ -123,7 +123,7 @@
 								<div class="layui-input-inline" id="div_triWebbot">
 									<input id="triWebbot" name="triWebbot" type="text"
 										lay-verify="triWebbot" autocomplete="off"
-										class="layui-input paraDescription" />
+										class="layui-input paraDescription" style="width: 568px" placeholder="若触发器为javaclass类型，请输入java反射类"/>
 								</div>
 							</div>
 						</div>
@@ -147,6 +147,90 @@
 				</div>
 			</div>
 		</div>
+		
+		
+		<div class="display_container2">
+		<input id="triUid" style="display: none;">
+			<div class="display_content3">
+				<div class="top" style="color: red;">修改触发器</div>
+				<form id="form2" class="layui-form" action=""
+					style="margin-top: 30px;">
+					<div class="layui-form-item">
+						<div class="layui-row">
+							<div class="layui-col-md6">
+								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
+								<div class="layui-input-inline">
+									<select id="triType2" name="triType2" lay-filter="triType2">
+										<option value="script">script</option>
+										<option value="sql">sql</option>
+										<option value="interface">interface</option>
+										<option value="javaclass">javaclass</option>
+									</select>
+								</div>
+							</div>
+							<div class="layui-col-md6">
+								<div class="layui-inline">
+									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
+									<div class="layui-input-inline">
+										<input type="text" id="triTitle2" name="triTitle2"
+											lay-verify="triTitle2" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-row">
+							<div class="layui-col-md6">
+								<div class="layui-inline">
+									<label class="layui-form-label" style="width: 100px">触发器描述:</label>
+									<div class="layui-input-inline">
+										<input width="80%" type="text" id="triDescription2" name="triDescription2"
+											lay-verify="triDescription2" autocomplete="off" class="layui-input">
+									</div>
+								</div>
+							</div>
+							<div class="layui-col-md6">
+								<label class="layui-form-label" style="width: 100px">触发器参数:</label>
+								<div class="layui-input-inline">
+									<input type="text" id="triParam2" name="triParam2"
+										lay-verify="triParam2" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-form-item triWebbot">
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
+								<div class="layui-input-inline" id="div_triWebbot">
+									<input id="triWebbot2" name="triWebbot2" type="text"
+										lay-verify="triWebbot2" autocomplete="off"
+										class="layui-input trigerWebbot" style="width: 568px"/>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item ">
+						<div class="layui-form-item triInterface" style="display:none;">
+							<div class="layui-inline">
+								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
+								<div class="layui-input-inline">
+									<select id="triWebbotType2" class="trigerWebbot" name="triWebbotType2"
+										lay-filter="triWebbotType2">
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="foot">
+					<button id="update_btn" class="layui-btn layui-btn update_btn">确定</button>
+					<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
+				</div>
+			</div>
+		</div>
+		
 	</div>
 </body>
 </html>

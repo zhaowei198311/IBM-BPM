@@ -19,6 +19,11 @@ public interface DhTriggerService {
     ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize);
     
     /**
+     * 根据主键查询触发器 
+     */
+    ServerResponse getTriggerByPrimarkey(String triUid);
+    
+    /**
      * 根据id 删除触发器
      * @param triUid
      * @return
@@ -50,4 +55,9 @@ public interface DhTriggerService {
      * @return
      */
     public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid);
+    
+    /**
+     * 触发器修改
+     */
+    int updateTrigger(DhTrigger dhTrigger);
 }

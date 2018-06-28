@@ -347,5 +347,24 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		}
 		return ServerResponse.createByErrorMessage("触发器调用异常，该触发器目前只开放javaClass调用");
 	}
+
+
+	/**
+	 * 根据主键查询除法器 返回list
+	 */
+	@Override
+	public ServerResponse getTriggerByPrimarkey(String triUid) {
+		DhTrigger dhtrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+		return ServerResponse.createBySuccess(dhtrigger);
+	}
+
+
+	/**
+	 * 修改触发器
+	 */
+	@Override
+	public int updateTrigger(DhTrigger dhTrigger) {
+		return dhTriggerMapper.updateDhTrigger(dhTrigger);
+	}
 	
 }
