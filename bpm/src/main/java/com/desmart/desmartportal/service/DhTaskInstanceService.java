@@ -248,4 +248,10 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	ServerResponse skipFromReject(String data);
+	/**
+	 * 在重试拉取任务列表中插入一条数据
+	 * @param taskId  任务编号
+	 * @return
+	 */
+	public int saveTaskToRetryTable(int taskId);
 }

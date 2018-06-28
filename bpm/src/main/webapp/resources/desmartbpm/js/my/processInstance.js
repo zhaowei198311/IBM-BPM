@@ -138,6 +138,12 @@ function trunOffProcessIns(){
 			layer.alert("请选择任务处理人");
 			return;
 		}
+		var userArr = userUid.split(";");
+		if(activityId == "" || activityId == null){
+			if(userArr.length > 1){
+				layer.alert("更换任务处理人只能选择一个任务处理人");
+			}
+		}
 		
 		$.ajax({
 			url : common.getPath()+'/dhProcessInsManage/trunOffProcessIns',

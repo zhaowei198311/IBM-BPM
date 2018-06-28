@@ -1284,7 +1284,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * @param taskId  任务编号
 	 * @return
 	 */
-	private int saveTaskToRetryTable(int taskId) {
+	@Override
+	public int saveTaskToRetryTable(int taskId) {
 		DhSynTaskRetry dhSynTaskRetry = new DhSynTaskRetry();
 		dhSynTaskRetry.setId(EntityIdPrefix.DH_SYN_TASK_RETRY + UUID.randomUUID().toString());
 		dhSynTaskRetry.setTaskId(taskId);
