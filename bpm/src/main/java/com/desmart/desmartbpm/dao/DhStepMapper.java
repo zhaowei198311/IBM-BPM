@@ -85,4 +85,14 @@ public interface DhStepMapper {
      * @return
      */
     Integer updateBatchDhStep(@Param("updateList")List<DhStep> updateList);
+    
+    /**
+     * 
+     * @Title: queryDhStepByProUidAndProAppId  
+     * @Description: 根据proUid和proAppId查询且去掉stepObjectUid重复字段  
+     * @param dhStep
+     * @return  
+     * @return List<DhStep>
+     */
+    List<DhStep> queryDhStepByProUidAndProAppId(DhStep dhStep);
 }

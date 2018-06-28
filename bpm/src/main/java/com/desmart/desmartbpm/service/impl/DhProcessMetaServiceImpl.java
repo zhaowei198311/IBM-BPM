@@ -393,19 +393,12 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         DhStep dhStep = new DhStep();
         dhStep.setProUid(proUid);
         dhStep.setProAppId(proAppId);
-        List<DhStep> dhStepList = dhStepMapper.listBySelective(dhStep);
-        int num = 0;
-        for (DhStep ds : dhStepList) {
-			if ("form".equals(ds.getStepType())) {
-				num++;
-			}
-		}
+        List<DhStep> dhStepList = dhStepMapper.queryDhStepByProUidAndProAppId(dhStep);
+
         // formId集合
-        String[] forms = new String[num];
+        String[] forms = new String[dhStepList.size()];
         for (int j = 0; j < forms.length; j++) {
-        	if ("form".equals(dhStepList.get(j).getStepType())) {
-        		forms[j] = dhStepList.get(j).getStepObjectUid();
-			}	
+    		forms[j] = dhStepList.get(j).getStepObjectUid();	
 		}
         // 批量删除表单
         bpmFormManageService.deleteForm(forms);

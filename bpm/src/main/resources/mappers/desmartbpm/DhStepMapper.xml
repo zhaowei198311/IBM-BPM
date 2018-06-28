@@ -301,4 +301,13 @@
             </foreach>
         ;end;
 	</update>
+	
+	<select id="queryDhStepByProUidAndProAppId" resultType="com.desmart.desmartbpm.entity.DhStep">
+		SELECT DISTINCT STEP_OBJECT_UID FROM DH_STEP
+		<where>
+			PRO_UID = #{proUid}
+			AND PRO_APP_ID = #{proAppId}
+			AND STEP_TYPE = 'form'
+		</where>
+	</select>
 </mapper>
