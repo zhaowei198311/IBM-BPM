@@ -38,11 +38,7 @@
 <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css"/>  
 <script type="text/javascript" src="resources/desmartportal/wPaint-master/wPaint.js"></script>  
 
-<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
 
-<script type="text/javascript" src="resources/desmartportal/js/my/myWPaint.js"></script>
     
     <style type="text/css">
        .container-fluid {
@@ -185,8 +181,9 @@
         <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
         <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
         <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
-        <input id="skipFromReject_newTaskOwner" type="hidden" value="${dataForSkipFromReject.newTaskOwner}"/>
+        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}"/>
         <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
+        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}"/>
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span id="approvalData" style="display: none;">${approvalData}</span>
@@ -270,10 +267,12 @@
             </table>
             
             <div id="formSet">${bpmForm.dynWebpage }</div>
+
+            <!-- 下个环节信息 -->
             <div class="display_container2">
 				<div class="display_content2">
 					<div class="top">
-						选择下一环节
+						下个环节信息
 					</div>
 					<div class="middle2">
 						<table class="layui-table">
@@ -288,22 +287,22 @@
 						</table>
 					</div>
 					<div class="foot">
-						<button class="layui-btn sure_btn" onclick="agree();">确定</button>
+						<button class="layui-btn sure_btn" onclick="doSubmit();">确定</button>
 						<button class="layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container2').css('display','none')">取消</button>
 					</div>				
 				</div>
 			</div>
+
             <div class="option_container">
                 <p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
             <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
                 ${activityConf.actcResponsibility }
             </div>
-                <p class="title_p" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
-                <div class="layui-form" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>
-                    <!--<label class="layui-form-label">审批意见</label>
-				      	<div class="layui-input-block">-->
+                <p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
+                <div class="layui-form" id="approve_div" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>
+
                     <textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion" style="margin-bottom: 10px;"></textarea>
-                    <!--</div>-->
+
                     <div style="margin-top: 10px;">
                         <label class="layui-form-label">常用语</label>
                         <div class="layui-input-block">
@@ -562,9 +561,14 @@
 		</div>
 	</div>
 </body>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
 
-</html>
+<script type="text/javascript" src="resources/desmartportal/js/my/myWPaint.js"></script>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 <!-- 审批信息js -->
 <script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
+</html>
+

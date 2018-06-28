@@ -35,10 +35,10 @@
                 <div class="layui-col-md10">
                     <div class="search_area">
                         <div class="layui-row layui-form">
-                            <div class="layui-col-md2">
+                            <div class="layui-col-md3">
                                 <input id="proName_input" type="text" placeholder="流程名称"  class="layui-input">
                             </div>
-                            <div class="layui-col-md3" style="text-align:right;width: 65%">
+                            <div class="layui-col-md9" style="text-align:left;width: 65%;padding-left:20px;">
                                     <button class="layui-btn" id="searchMeat_btn">查询</button>
                                     <button class="layui-btn create_btn" id="show_expose_btn">添加</button>
                                     <button class="layui-btn delete_btn" id="meta_del_btn" style="background: #FF5151">删除</button>

@@ -268,8 +268,7 @@ public class BpmTaskUtil {
                 if (status == 0) {
                     serverResponse = ServerResponse.createBySuccess();
                 } else {
-                	String msg = resJson.getString("msg");
-                    serverResponse = ServerResponse.createByErrorMessage(msg);
+                    serverResponse = ServerResponse.createByErrorMessage(resJson.optString("msg", ""));
                 }
             } else {
                 serverResponse = ServerResponse.createByErrorMessage("分配任务失败");

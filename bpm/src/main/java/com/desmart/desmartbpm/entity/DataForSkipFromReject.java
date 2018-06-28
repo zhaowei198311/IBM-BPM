@@ -10,6 +10,7 @@ public class DataForSkipFromReject {
     private String tokenId; // 需要移动的token
     private BpmActivityMeta targetNode;  // token移动的目标节点
     private String newTaskOwner;  // 新任务处理人
+    private String newTaskOwnerName; // 新任务处理人姓名
 
     private DhTaskInstance currTask; // 当前任务
 
@@ -51,5 +52,13 @@ public class DataForSkipFromReject {
 
     public void setCurrTask(DhTaskInstance currTask) {
         this.currTask = currTask;
+    }
+
+    public String getNewTaskOwnerName() {
+        return newTaskOwnerName;
+    }
+
+    public void setNewTaskOwnerName(String newTaskOwnerName) {
+        this.newTaskOwnerName = newTaskOwnerName;
     }
 }

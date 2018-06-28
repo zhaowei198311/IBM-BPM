@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.util.*;
@@ -317,10 +318,12 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 
         // 根据配置保存审批意见
-        ServerResponse response = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTask, dhActivityConf, dataJson);
-        if (!response.isSuccess()) {
-            throw new PlatformException(response.getMsg());
-        }
+		if (needApprovalOpinion(currTaskNode, currProcessInstance)) {
+			ServerResponse response = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTask, dhActivityConf, dataJson);
+			if (!response.isSuccess()) {
+				throw new PlatformException(response.getMsg());
+			}
+		}
 
         // 修改当前任务实例状态为已完成
 		updateDhTaskInstanceWhenFinishTask(currTask, data);
@@ -580,6 +583,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("fieldPermissionInfo",fieldPermissionInfo);
 	    resultMap.put("canEditInsTitle", canEditInsTitle);
 	    resultMap.put("dataForSkipFromReject", dataForSkipFromReject);
+	    resultMap.put("needApprovalOpinion", needApprovalOpinion(currTaskNode, dhprocessInstance));
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 	
@@ -1212,7 +1216,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 驳回节点上产生的任务
 		List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(targetActivityBpdId, processData);
 		// 阻止拉取任务
-		lockTasksForRejectTaskByTaskIdList(taskIdList);
+		taskMongoDao.batchlockTasks(taskIdList, LockedTask.REASON_REJECT_TASK);
 
 		// todo 重新分配任务
 		// 获得任务处理人
@@ -1229,20 +1233,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         return ServerResponse.createBySuccess();
 	}
 
-	/**
-	 * 锁住驳回后还没有重新分配的任务
-	 * @param taskIdList
-	 */
-	private void lockTasksForRejectTaskByTaskIdList(List<Integer> taskIdList) {
-		if (taskIdList == null || taskIdList.isEmpty()) {
-			return;
-		}
-		List<LockedTask> lockedTasks = new ArrayList<>();
-		for (Integer taskId : taskIdList) {
-			lockedTasks.add(new LockedTask(taskId, new Date(), LockedTask.REASON_REJECT_TASK));
-		}
-		taskMongoDao.batchSaveLockedTasks(lockedTasks);
-	}
+
 
 	/**
 	 * 将任务从锁住的任务中去除
@@ -1337,7 +1328,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
         List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(dataForRevoke.getTargetActivityBpdId(), processData);
         // 阻止拉取任务
-        lockTasksForRejectTaskByTaskIdList(taskIdList);
+        taskMongoDao.batchlockTasks(taskIdList, LockedTask.REASON_REVOKE_TASK);
         // 重新分配
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
         ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), currUserUid);
@@ -1408,11 +1399,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 保存审批意见
-        ServerResponse saveApprovalOpinionResponse = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTaskInstance,
-                currTaskNode.getDhActivityConf(), dataJson);
-		if (!saveApprovalOpinionResponse.isSuccess()) {
-            return saveApprovalOpinionResponse;
-        }
+		if (needApprovalOpinion(currTaskNode, currProcessInstance)) {
+			ServerResponse saveApprovalOpinionResponse = dhapprovalOpinionService.saveDhApprovalOpinionWhenSubmitTask(currTaskInstance,
+					currTaskNode.getDhActivityConf(), dataJson);
+			if (!saveApprovalOpinionResponse.isSuccess()) {
+				return saveApprovalOpinionResponse;
+			}
+		}
 
         // 保存流转记录
         DhRoutingRecord routingRecord = dhRoutingRecordService.generateSkipFromRejectRoutingRecord(dataForSkipFromReject);
@@ -1433,7 +1426,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
         List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(dataForSkipFromReject.getTargetNode().getActivityBpdId(), processData);
         // 阻止拉取任务
-        lockTasksForRejectTaskByTaskIdList(taskIdList);
+        taskMongoDao.batchlockTasks(taskIdList, LockedTask.REASON_SKIP_FROM_REJECT);
         // 重新分配
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
         ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), currentUserUid);
@@ -1447,7 +1440,29 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         return ServerResponse.createBySuccess();
 	}
 
-
+    /**
+     * 判断此环节是否需要填审批意见
+     * @param taskNode
+     * @return
+     */
+    private boolean needApprovalOpinion(BpmActivityMeta taskNode, DhProcessInstance dhProcessInstance) {
+        BpmActivityMeta firstNode = null;
+        // 如果是流程的第一个任务，不用填审批意见
+        if ("0".equals(dhProcessInstance.getInsParent())) {
+            // 任务属于主流程
+            firstNode = bpmActivityMetaService.getFirstUserTaskMetaOfMainProcess(dhProcessInstance.getProAppId(),
+                    dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
+        } else {
+            firstNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(
+                    bpmActivityMetaMapper.queryByPrimaryKey(dhProcessInstance.getTokenActivityId()));
+        }
+        if (firstNode.getActivityId().equals(taskNode.getActivityId())) {
+            return false;
+        }
+        // 其他情况看配置
+        DhActivityConf dhActivityConf = taskNode.getDhActivityConf();
+        return dhActivityConf.getActcCanApprove().equals("TRUE") ? true : false;
+    }
 
 
     /**
@@ -1605,6 +1620,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 找到触发这个驳回的任务
         DhTaskInstance rejectTask = dhTaskInstanceMapper.selectByPrimaryKey(routingRecordToCurrTaskNode.getTaskUid());
+        SysUser rejectUser = sysUserMapper.queryByPrimaryKey(rejectTask.getUsrUid());
 
         // 获得当前任务的tokenId
         ServerResponse<String> processDataResponse = getProcessData(dhProcessInstance.getInsId());
@@ -1622,6 +1638,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSkipFromReject.setCurrTask(currTaskInstance);
         dataForSkipFromReject.setTargetNode(targetNode);
         dataForSkipFromReject.setNewTaskOwner(rejectTask.getUsrUid());
+        dataForSkipFromReject.setNewTaskOwnerName(rejectUser.getUserName());
         return dataForSkipFromReject;
 	}
 

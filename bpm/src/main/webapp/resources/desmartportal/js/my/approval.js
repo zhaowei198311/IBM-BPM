@@ -1,3 +1,12 @@
+// bool值记录提交时是否需要填写审批意见
+var needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
+// bool值记录是否能直接跳跃提交 回到驳回处
+var canSkipFromReject = false;
+if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
+    canSkipFromReject = true;
+}
+
+
 function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
     if (actcCanChooseUser == 'FALSE') {
         return false;
@@ -40,14 +49,15 @@ layui.use('layedit', function () {
 });
 
 $(function () {
-	
+
 	$("#middle10").on("click", ":checkbox", function(){
 		if($(this).prop("checked")){
 			$("#middle10 :checkbox").prop("checked", false);
             $(this).prop("checked", true);
          }
 	});
-	
+
+	// "驳回" 确认
 	$("#reject_btn").click(function (){
 		$('input[name="check"]:checked').each(function(){ 
 			var aprOpiComment = $("#myApprovalOpinion").val();
@@ -299,24 +309,24 @@ function processView(insId) {
     })
 }
 
-function agree() {
-	var inputArr = $("table input");
+// 确认提交
+function doSubmit() {
+    if (canSkipFromReject) {
+        skipFromReject();
+    } else {
+        submitTask();
+    }
+}
+
+// 提交任务的方法
+function submitTask() {
     var taskId = $("#taskId").val();
     var taskUid = $("#taskUid").val();
-    var activityId = ""
-    var userUid = ""
-    //var insData = $("#insData").text();
-    $('.getUser').each(function () {
-        activityId = $(this).attr('id');
-        userUid = $(this).val();
-    });
-
     var insUid = $("#insUid").val();//流程实例id--ins_uid
-    //var apr_activityId = $("#activityId").val();//环节id，activity_id
-    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-    	$("#myApprovalOpinion").focus();
-    	layer.alert("请填写审批意见");
+    // 获取审批意见
+    var aprOpiComment = $("#myApprovalOpinion").val();
+    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
+        alertNeedApprovalOpinion();
     	return;
     }else{
     	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
@@ -339,9 +349,6 @@ function agree() {
     processData.insTitle = $("#insTitle_input").val().trim();
     finalData.processData = processData;
 
-    var activityId = ""
-    var userUid = ""
-    //var insData = $("#insData").text();
     // 路由数据
     var routeData = [];
     var lackNextOwner = false;
@@ -380,7 +387,6 @@ function agree() {
                 layer.alert('提交成功', function(){
                 	window.history.back();
                 });
-                
             }else{
                 layer.alert(result.msg);
             }
@@ -393,13 +399,68 @@ function agree() {
     });
 }
 
+// 提交至驳回节点的方法
+function skipFromReject() {
+    var taskUid = $("#taskUid").val();
+    // 获取审批意见
+    var aprOpiComment = $("#myApprovalOpinion").val();
+    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
+        alertNeedApprovalOpinion();
+        return;
+    }else{
+        aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
+    }
+    // 发起流程
+    var finalData = {};
+    // 表单数据
+    var formData = JSON.parse(common.getDesignFormData());
+    // 流程数据
+    var processData = {};
+    processData.insUid = $("#insUid").val();
+    processData.insTitle = $("#insTitle_input").val().trim();
+    finalData.processData = processData;
+    finalData.formData = formData;
+    finalData.taskData = {"taskUid": taskUid};
+    finalData.approvalData = {"aprOpiComment": aprOpiComment};
+
+    $.ajax({
+        url: 'taskInstance/skipFromReject',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            'data': JSON.stringify(finalData)
+        },
+        beforeSend: function () {
+            layer.load(1);
+        },
+        success: function(result) {
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                layer.alert('提交成功', function(){
+                    window.history.back();
+                });
+            }else{
+                layer.alert(result.msg);
+            }
+            $(".display_container").hide();
+        },
+        error: function () {
+            layer.closeAll('loading');
+            layer.alert('提交失败');
+        }
+    });
+
+
+}
+
+
+// 点击“驳回”按钮触发的动作
 function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
     var insUid = $("#insUid").val();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-   	$("#myApprovalOpinion").focus();
-   	layer.alert("请填写审批意见");
+    if(aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined){
+        alertNeedApprovalOpinion();
     	return;
     }
     $.ajax({
@@ -454,11 +515,11 @@ $(function () {
     form.render();
 });
 
-//提交流程-->选人
+// 单击"提交"按钮
 function checkUserData() {
     var departNo = $("#departNo").val();
     var companyNumber = $("#companyNum").val();
-    var formData =common.getDesignFormData();
+    // var formData =common.getDesignFormData();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
     	layer.alert("缺少流程发起人信息");
@@ -472,130 +533,156 @@ function checkUserData() {
     if(!common.validateFormMust("startProcess_btn")){
     	return;
     }
-    if(aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined){
-    	$("#myApprovalOpinion").focus();
-    	layer.alert("请填写审批意见");
+    if(needApprovalOpinion && (aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined)){
+        alertNeedApprovalOpinion();
     	return;
     }
-    $.ajax({
-    	url:"dhRoute/showRouteBar",
-    	method:"post",
-    	data:{
-    		"taskUid": $("#taskUid").val(),
-        	"insUid":$("#insUid").val(),
-            "activityId":$("#activityId").val(),
-        	"departNo":departNo,
-        	"companyNum":companyNumber,
-        	"formData":formData
-    	},
-    	beforeSend: function(){
-        	layer.load(1);
-    	}
-    	,
-        success:function(result){
-        	if(result.status==0){
-        		$("#choose_user_tbody").empty();
-            	var activityMetaList = result.data;
-            	var chooseUserDiv = "";
-            	if(activityMetaList.length==0){
-            		chooseUserDiv += '<tr>'
-                		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
-						+'<td>流程结束</td>'
-						+'<th class="approval_th">处理人</th>'
-						+'<td></td>'
-					+'</tr>';
-            	}else{
-            		for(var i=0;i<activityMetaList.length;i++){
-                    	var activityMeta = activityMetaList[i];
-                    	chooseUserDiv += '<tr>'
-                    		+'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
-    						+'<td>'+activityMeta.activityName+'</td>'
-    						+'<th class="approval_th">处理人</th>'
-    						+'<td>';
-    					if(activityMeta.userName!=null && activityMeta.userName!=""){
-    						chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
-    					}else{
-    						chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
-    					}
-    					chooseUserDiv += '</td>'
-    						+'<th style="text-align:center;">'
-    						 +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
-    							+'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-    							+activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
-    							+'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
-    								+'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
-    								+'data-looptype="'+activityMeta.loopType+'" />'
-    							+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
-    						+'</th>'							     
-    					+'</tr>';
-                	}//end for
-            	}
-            	$("#choose_user_tbody").append(chooseUserDiv);
-            	$(".display_container2").css("display","block"); //end
-            	layer.closeAll("loading");
-            }else {
-            	layer.closeAll("loading");
-        		layer.alert(result.msg);
-        	}
-    	}
-	});	
+    if (canSkipFromReject) {
+        showRouteBarForSkipFromReject();
+    } else {
+        showRouteBar();
+    }
 }
+
+// 为提交任务显示选人栏
+function showRouteBar() {
+    $.ajax({
+        url:"dhRoute/showRouteBar",
+        method:"post",
+        data:{
+            "taskUid": $("#taskUid").val(),
+            "insUid":$("#insUid").val(),
+            "activityId":$("#activityId").val(),
+            "departNo": $("#departNo").val(),
+            "companyNum": $("#companyNum").val(),
+            "formData": common.getDesignFormData()
+        },
+        beforeSend: function(){
+            layer.load(1);
+        }
+        ,
+        success:function(result){
+            if(result.status==0){
+                $("#choose_user_tbody").empty();
+                var activityMetaList = result.data;
+                var chooseUserDiv = "";
+                if(activityMetaList.length==0){
+                    chooseUserDiv += '<tr>'
+                        +'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
+                        +'<td>流程结束</td>'
+                        +'<th class="approval_th">处理人</th>'
+                        +'<td></td>'
+                        +'</tr>';
+                }else{
+                    for(var i=0;i<activityMetaList.length;i++){
+                        var activityMeta = activityMetaList[i];
+                        chooseUserDiv += '<tr>'
+                            +'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
+                            +'<td>'+activityMeta.activityName+'</td>'
+                            +'<th class="approval_th">处理人</th>'
+                            +'<td>';
+                        if(activityMeta.userName!=null && activityMeta.userName!=""){
+                            chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
+                        }else{
+                            chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" name="addAgentPerson" class="layui-input" style="border-width:0px;padding:0px;" readonly>'
+                        }
+                        chooseUserDiv += '</td>'
+                            +'<th style="text-align:center;">'
+                            +'<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
+                            +'","false","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
+                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
+                            +'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+                            +'data-looptype="'+activityMeta.loopType+'" />'
+                            +'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
+                            +'</th>'
+                            +'</tr>';
+                    }//end for
+                }
+                $("#choose_user_tbody").append(chooseUserDiv);
+                $(".display_container2").css("display","block"); //end
+                layer.closeAll("loading");
+            }else {
+                layer.closeAll("loading");
+                layer.alert(result.msg);
+            }
+        }
+    });
+}
+
+// 为直接跳转到驳回人显示环节栏
+function showRouteBarForSkipFromReject() {
+    var targetNodeName = $('#skipFromReject_targetNodeName').val();
+    var newTaskOwnerName = $('#skipFromReject_newTaskOwnerName').val();
+    $("#choose_user_tbody").empty();
+    var str = '<tr>'
+             +   '<th class="approval_th"><label for="link_name1">下一环节</label></th>'
+             +   '<td>' + targetNodeName + '</td>'
+             +   '<th class="approval_th">处理人</th>'
+             +   '<td>' + newTaskOwnerName + '</td>'
+             + '</tr>';
+
+    $("#choose_user_tbody").append(str);
+    $(".display_container2").show();
+}
+
 /**
  * 保存草稿表单数据的方法
  */
 var index2 = null;
 function saveDraftsInfo() {
-                var control = true; //用于控制复选框出现重复值
-                var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-                
-             // 发起流程             
-                var finalData = {};
-                // 表单数据
-                var jsonStr = common.getDesignFormData();
-                var formData = JSON.parse(jsonStr);
-                
-                finalData.formData = formData;
-                
-                var aprOpiComment = $("#myApprovalOpinion").val();
-                aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
-    		    var taskUid = $("#taskUid").val();
-    		    var taskId = $("#taskId").val();
-                finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
-                finalData.approvalData = {"aprOpiComment":aprOpiComment};
-                // 保存草稿数据                   
-                var insUid = $("#insUid").val();
-               
-                var insTitle = $("#insTitle_input").val();
-                $.ajax({
-                    url: common.getPath()+"/drafts/saveDrafts",
-                    method: "post",
-                    async: false,
-                    data: {
-                    	dfsTitle: insTitle,
-                        dfsData: JSON.stringify(finalData),
-                        insUid: insUid,
-                        taskUid: taskUid
-                    },
-                    beforeSend: function () {
-                        index2 = layer.load(1);
-                    },
-                    success: function (result) {
-                    	if(result>0){
-                        layer.close(index2);
-                        layer.alert('保存成功')
-                    	}else{
-                    		layer.close(index2);
-                            layer.alert('保存失败')
-                    	}
-                    },
-                    error: function (){
-                    	layer.close(index2);
-                        layer.alert('保存异常')
-                    }
-                });
+    var control = true; //用于控制复选框出现重复值
+    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
+
+ // 发起流程
+    var finalData = {};
+    // 表单数据
+    var jsonStr = common.getDesignFormData();
+    var formData = JSON.parse(jsonStr);
+
+    finalData.formData = formData;
+
+    var aprOpiComment = $("#myApprovalOpinion").val();
+    aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
+    var taskUid = $("#taskUid").val();
+    var taskId = $("#taskId").val();
+    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+    finalData.approvalData = {"aprOpiComment":aprOpiComment};
+    // 保存草稿数据
+    var insUid = $("#insUid").val();
+
+    var insTitle = $("#insTitle_input").val();
+    $.ajax({
+        url: common.getPath()+"/drafts/saveDrafts",
+        method: "post",
+        async: false,
+        data: {
+            dfsTitle: insTitle,
+            dfsData: JSON.stringify(finalData),
+            insUid: insUid,
+            taskUid: taskUid
+        },
+        beforeSend: function () {
+            index2 = layer.load(1);
+        },
+        success: function (result) {
+            if(result>0){
+            layer.close(index2);
+            layer.alert('保存成功')
+            }else{
+                layer.close(index2);
+                layer.alert('保存失败')
+            }
+        },
+        error: function (){
+            layer.close(index2);
+            layer.alert('保存异常')
+        }
+    });
     //end
 }
 
+// 检查流程标题有没有填写
 function checkInsTitle() {
     if ($('#canEditInsTitle').val() == 'true') {
         var insTitle = $("#insTitle_input").val();
@@ -609,4 +696,12 @@ function checkInsTitle() {
     } else {
         return true;
     }
+}
+
+// 提醒填写审批意见
+function alertNeedApprovalOpinion() {
+    $('#approve_p').show();
+    $('#approve_div').show();
+    $("#myApprovalOpinion").focus();
+    layer.alert("请填写审批意见");
 }

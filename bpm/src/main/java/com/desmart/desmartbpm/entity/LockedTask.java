@@ -17,6 +17,10 @@ public class LockedTask {
     public static final String REASON_FIRST_TASK_OF_PROCESS = "firstTaskOfProcess";
     /** 驳回任务  */
     public static final String REASON_REJECT_TASK = "rejectTask";
+    /** 取回任务 */
+    public static final String REASON_REVOKE_TASK = "revokeTask";
+    /** 跳转到驳回 */
+    public static final String REASON_SKIP_FROM_REJECT = "skipFromReject";
     /** 撤转任务 */
     public static final String REASON_TRUN_OFF_TASK = "trunOffTask";
 
