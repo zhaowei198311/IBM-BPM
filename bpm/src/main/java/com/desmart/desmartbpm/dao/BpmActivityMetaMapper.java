@@ -103,4 +103,10 @@ public interface BpmActivityMetaMapper {
      */
     List<BpmActivityMeta> queryByConditionToSource(@Param("proAppId")String proAppId, @Param("proUid")String proUid
     		, @Param("proVerUid")String proVerUid);
+    /**
+     * 根据activityId查询子级节点,可加其它条件
+     * @param bpmActivityMeta
+     * @return
+     */
+    List<BpmActivityMeta> queryChildrenMetaByCondition(BpmActivityMeta bpmActivityMeta);
 }

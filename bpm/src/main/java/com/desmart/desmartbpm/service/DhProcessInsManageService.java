@@ -64,4 +64,10 @@ public interface DhProcessInsManageService {
 	 * @return
 	 */
 	ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance);
+	/**
+	 * 根据流程实例查询可供撤转的环节列表
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse getCanTrunOffActivityMetas(DhProcessInstance dhProcessInstance);
 }

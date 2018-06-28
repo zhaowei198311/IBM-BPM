@@ -1600,7 +1600,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // 获得流转到当前任务节点的最近一条流转记录
         DhRoutingRecord routingRecordToCurrTaskNode = null;
         for (DhRoutingRecord routingRecord : routingRecords) {
-            if (routingRecord.getActivityTo().equals(currTaskInstance.getTaskActivityId())) {
+            if (currTaskInstance.getTaskActivityId().equals(routingRecord.getActivityTo())) {
                 routingRecordToCurrTaskNode = routingRecord;
                 break;
             }

@@ -185,6 +185,9 @@ function loadDhroutingRecords(){
 					case "finishAddTask":
 						info += "<div>完成会签任务</div>";
 						break;
+					case "trunOffTask":
+						info += "<div>管理员撤转任务</div>";
+						break;
 				}
 	    		info += "<div>"+datetimeFormat_1(date)+"</div>"
 				+"</li>";

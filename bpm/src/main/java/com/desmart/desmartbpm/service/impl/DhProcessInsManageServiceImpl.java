@@ -74,6 +74,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> getProcesssInstanceListByCondition(Integer pageNum,
 			Integer pageSize, DhProcessInstance dhProcessInstance) {
 		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("ins.INS_UPDATE_DATE DESC");
 		List<DhProcessInstance> resultList = dhProcessInstanceMapper
 				.getProcesssInstanceListByCondition(dhProcessInstance);
 		PageInfo<List<DhProcessInstance>> pageInfo = new PageInfo(resultList);
@@ -204,9 +205,9 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 	public ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance) {
 		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
 		if (DhProcessInstance.STATUS_ID_ACTIVE == dhProcessInstance.getInsStatusId()) {
-			ServerResponse serverResponse = bpmActivityMetaService.getHumanActivitiesOfDhProcessDefinition(
-					dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
+			ServerResponse serverResponse = this.getCanTrunOffActivityMetas(dhProcessInstance);
 			if (serverResponse.isSuccess()) {
+				
 				DhTaskInstance dhTaskInstance = new DhTaskInstance();
 				dhTaskInstance.setInsUid(dhProcessInstance.getInsUid());
 				List<DhTaskInstance> list = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(null, null,
@@ -330,5 +331,37 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 			}	
 		}
 		return ServerResponse.createBySuccessMessage("撤转流程实例成功");
+	}
+
+	@Override
+	public ServerResponse getCanTrunOffActivityMetas(DhProcessInstance dhProcessInstance) {
+		BpmActivityMeta selective = new BpmActivityMeta(dhProcessInstance.getProAppId()
+					, dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
+        selective.setBpmTaskType(BpmActivityMeta.BPM_TASK_TYPE_USER_TASK);
+        List<BpmActivityMeta> humanActivities = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+
+		List<BpmActivityMeta> bpmActivityMetas = new ArrayList<>();
+		if(dhProcessInstance.getTokenActivityId()!=null) {//子流程
+			//找到当前流程实例所停留的主流程的环节
+			BpmActivityMeta currActivityMeta = bpmActivityMetaService
+					.queryByPrimaryKey(dhProcessInstance.getTokenActivityId());
+			BpmActivityMeta selective1 = new BpmActivityMeta();
+			selective1.setActivityId(currActivityMeta.getActivityId());
+			selective1.setBpmTaskType(BpmActivityMeta.BPM_TASK_TYPE_USER_TASK);
+			//根据所停留的主流程环节找出子级的环节节点
+			bpmActivityMetas = bpmActivityMetaMapper
+					.queryChildrenMetaByCondition(selective1);
+		}else {//主流程
+			//过滤出主流程的人工环节节点
+			List<BpmActivityMeta> mainMetas = bpmActivityMetaService
+							.filterBasicActivity(humanActivities);
+			//过滤内连子流程环节--parentId不等于0的
+			for (BpmActivityMeta bpmActivityMeta : mainMetas) {
+				if(StringUtils.equals(bpmActivityMeta.getParentActivityId(), "0")) {
+					bpmActivityMetas.add(bpmActivityMeta);
+				}
+			}
+		}
+		return ServerResponse.createBySuccess(bpmActivityMetas);
 	}
 }

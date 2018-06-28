@@ -379,4 +379,15 @@
     	where BPD_ID = #{bpdId}
     	and PRO_APP_ID = #{proAppId}
     </delete>
+    <select id="queryChildrenMetaByCondition" 
+    		parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta"
+    		resultType="com.desmart.desmartbpm.entity.BpmActivityMeta" >
+    	select
+		<include refid="Base_Column_List" />
+		from BPM_ACTIVITY_META
+		where PARENT_ACTIVITY_ID = #{activityId}
+		<if test="bpmTaskType != null and bpmTaskType != '' ">
+			AND BPM_TASK_TYPE = #{bpmTaskType}
+		</if>
+  	</select>
 </mapper>

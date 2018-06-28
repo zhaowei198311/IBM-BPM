@@ -115,7 +115,7 @@
 							</colgroup>
 							<thead>
 							    <tr>
-							      <th><input type="checkbox" id="checked-All-ins" title='全选' lay-skin="primary"> 序号</th>
+							      <th><!-- <input type="checkbox" id="checked-All-ins" title='全选' lay-skin="primary">  -->序号</th>
 							      <th>流程名称</th>
 							      <th>实例ID</th>
 							      <th>实例状态</th>
@@ -257,10 +257,10 @@ $(document).ready(function() {
 	// 加载数据
 	getProcesssInstance();
 	//全选
-	$("#checked-All-ins").click(function(){ 
+	/* $("#checked-All-ins").click(function(){ 
 		var checkeNodes= $("input[type='checkbox'][name='checkProcessIns']");
 	    checkeNodes.prop("checked",$(this).prop("checked")); 
-	});
+	}); */
 })
 
 // 分页
@@ -390,12 +390,16 @@ function search(){
 //反选
 function invertSelection(a){ 
 	var checkeNodes= $("input[type='checkbox'][name='checkProcessIns']"); 
-	var checkedNodes= $("input[type='checkbox'][name='checkProcessIns']:checked");
-	if(checkedNodes.length==checkeNodes.length){
+	//var checkedNodes= $("input[type='checkbox'][name='checkProcessIns']:checked");
+	if($(a).prop("checked")==true){
+	checkeNodes.prop("checked",false);
+	$(a).prop("checked",true);
+	}
+	/* if(checkedNodes.length==checkeNodes.length){
 	   	  $("#checked-All-ins").prop("checked",$(a).prop("checked")); 
 	   }else{ 
 		  $("#checked-All-ins").prop("checked",false); 
-	} 
+	}  */
 };
 </script>
 </html>
