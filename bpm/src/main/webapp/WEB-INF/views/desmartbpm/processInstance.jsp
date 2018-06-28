@@ -37,28 +37,7 @@
     left: 50%;
     box-shadow: 0 0 10px #ccc;
 }
-.display_container6_custom{
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background: rgba(0,0,0,0.3);
-    width: 100%;
-    height: 100%;
-}
-.display_content6_custom{
-	overflow-y: auto;
-    color: #717171;
-    padding: 20px;
-    width: 550px;
-    height: 400px;
-    background: #fff;
-    position: absolute;
-    margin: 70px 0 0 -375px;
-    left: 50%;
-    box-shadow: 0 0 10px #ccc;
-}
+
 .colorli {
 	background-color: #9DA5EC;
 	color: white;
@@ -210,29 +189,23 @@
 		</div>
 	</div>
 	<!-- 选择目标环节 -->
-	<div class="display_container6_custom" id="choose_activity_container">
-		<div class="display_content6_custom" style="height: 500px; width: 700px;">
+	<div class="display_container5_custom" id="choose_activity_container">
+		<div class=display_content5_custom style="height: 430px;">
 			<div class="top">选择目标环节</div>
-			<div class="middle6" style="height: 400px; width: 700px;">
-				<div class="left_div"
-					style="float: left; width: 290px; height: 350px; margin: 10px 0 0 10px; padding: 10px; overflow-y: scroll;"
-					class="show_user_div">
-					<ul id="left_activity_ul">
-					</ul>
-				</div>
-				<div class="middle_div">
-					<button onclick="moveActivityToRight();"
-						class="layui-btn layui-btn-sm" style="margin-top: 150px;">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
-					<br> <br>
-					<button onclick="moveActivityToLeft();"
-						class="layui-btn layui-btn-sm">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
-				</div>
-				<div class="right_div"
-					style="float: left; width: 280px; height: 350px; margin-top: 10px; padding: 10px; overflow-y: scroll;">
-					<ul id="right_activity_ul">
-					</ul>
-				</div>
-				<h1 style="clear: both;"></h1>
+			<div class="middle1" style="height: 320px;">
+			<table width="100%;" height="100%;" class="layui-table">
+			<colgroup>
+				<col> 
+				<col> 
+			</colgroup>
+			<thead>
+				<tr><th style="text-align: center;">序号</th>
+					<th style="text-align: center;">环节名称</th></tr>
+			</thead>
+			<tbody id="choose_activity_tbody">
+			
+			</tbody>
+			</table>
 			</div>
 			<div class="foot">
 				<button class="layui-btn layui-btn sure_btn"
@@ -395,11 +368,7 @@ function invertSelection(a){
 	checkeNodes.prop("checked",false);
 	$(a).prop("checked",true);
 	}
-	/* if(checkedNodes.length==checkeNodes.length){
-	   	  $("#checked-All-ins").prop("checked",$(a).prop("checked")); 
-	   }else{ 
-		  $("#checked-All-ins").prop("checked",false); 
-	}  */
+
 };
 </script>
 </html>

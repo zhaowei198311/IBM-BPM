@@ -205,7 +205,7 @@ function showProcessInsMap(){
 		return;
 	}
 }
-var activitysStr = "";
+//var activitysStr = "";
 function toTrunOffProcessIns(){
 	if(checkChecked()){
 		var insUid = $("input[type='checkbox'][name='checkProcessIns']:checked").val();
@@ -230,11 +230,19 @@ function toTrunOffProcessIns(){
 					$("#trunOffCause").val("");
 					activitysStr = "";
 					for (var i = 0; i < result.data.activityMetaList.length; i++) {
-						activitysStr += '<li data-activityid="'+result.data.activityMetaList[i].activityId+'">' 
-								+result.data.activityMetaList[i].activityName+'</li>';
+						/*activitysStr += '<li data-activityid="'+result.data.activityMetaList[i].activityId+'">' 
+								+result.data.activityMetaList[i].activityName+'</li>';*/
+						activitysStr += '<tr><td style= "text-align: center;">'
+								+'<input type="checkbox" name = "choose_activity_checkbox" '
+								+' onclick = "checkedActivity(this)" value ="'
+								+result.data.activityMetaList[i].activityId+'"/> </td>'
+								+'<td style= "text-align: center;">'
+								+result.data.activityMetaList[i].activityName+'</td></tr>';
 					}
+					$("#choose_activity_tbody").append(activitysStr);
+					//$("#left_activity_ul").append(activitysStr);
+					
 					var tasksStr = '<option value=""> --请选择-- </option>';
-					$("#left_activity_ul").append(activitysStr);
 					for (var i = 0; i < result.data.taskList.length; i++) {
 						if(result.data.taskList[i].taskStatus == "12"){
 							tasksStr += '<option value="'+result.data.taskList[i].taskUid+'">'
@@ -267,61 +275,20 @@ $(function(){
 		common.chooseUser('handleUser', 'false');
 	});
 	// “选择环节”
-	$("#chooseActivity_i").click(function() {
-		$("#right_activity_ul").empty();
-		$("#left_activity_ul").empty();
-		$("#left_activity_ul").append(activitysStr);
-		var choosedValue = $("#trunOffActivities").val();
-		if (!choosedValue) {
-			$("#choose_activity_container").show();
-			return;
-		}
-		var chooseIds = choosedValue.split(";");
-		$("#left_activity_ul li").each(function() {
-			var activityid = $(this).data('activityid');
-			if ($.inArray(activityid, chooseIds) != -1) {
-				$(this).appendTo($("#right_activity_ul"));
-			}
-		});
+	$("#chooseActivity_i").click(function(){
 		$("#choose_activity_container").show();
-	})
-	$("#chooseActivities_sureBtn").click(function() {
-		var val = '';
-		var val_view = '';
-		$("#right_activity_ul li").each(function() {
-			val += $(this).data('activityid');
-			val_view += $(this).html();
-		});
-		$("#trunOffActivities").val(val);
-		$("#trunOffActivities_view").val(val_view);
-		$("#choose_activity_container").hide();
 	});
-
-	$("#choose_activity_container").on('click', 'li', function() {
-		if ($(this).hasClass('colorli')) {
-			$(this).removeClass('colorli');
-		} else {
-			$(this).addClass('colorli');
-		}
+	//确定选中环节
+	$("#chooseActivities_sureBtn").click(function(){
+		$("#trunOffActivities").val("");
+		$("#trunOffActivities_view").val("");
+		var checkedNode= $("input[type='checkbox'][name='choose_activity_checkbox']:checked"); 
+		$("#trunOffActivities").val(checkedNode.val());
+		var checkedNode_view = checkedNode.parent().next().text();
+		$("#trunOffActivities_view").val(checkedNode_view);
+		$('#choose_activity_container').hide();
 	});
 });
-
-function moveActivityToRight() {
-	$("#left_activity_ul li.colorli").each(function() {
-		if($("#right_activity_ul li").length<1){//只允许选择一个撤回目标环节
-			$(this).removeClass("colorli");
-			$(this).appendTo($("#right_activity_ul"));
-		}else{
-			layer.alert("只允许选择一个撤回目标环节");
-		}
-	});
-}
-function moveActivityToLeft() {
-	$("#right_activity_ul li.colorli").each(function() {
-		$(this).removeClass("colorli");
-		$(this).appendTo($("#left_activity_ul"));
-	});
-}
 
 //判断只允许选中一个流程实例
 function checkChecked(){
@@ -331,5 +298,13 @@ function checkChecked(){
 	}else{
 		layer.alert("请选择一个流程实例进行操作！");
 		return false;
+	}
+}
+//只选择一个目标环节
+function checkedActivity(a){
+	var checkeNodes= $("input[type='checkbox'][name='choose_activity_checkbox']"); 
+	if($(a).prop("checked")==true){
+	checkeNodes.prop("checked",false);
+	$(a).prop("checked",true);
 	}
 }
