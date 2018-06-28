@@ -39,6 +39,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	
 	@Override
 	public ServerResponse saveFormField(BpmFormField[] fields) {
+		//批量插入表单字段
 		List<BpmFormField> fieldList = new ArrayList<>();
 		for(BpmFormField field:fields) {
 			field.setFldUid(EntityIdPrefix.BPM_FORM_FIELD+UUID.randomUUID().toString());
@@ -59,7 +60,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		List<BpmFormField> publicFormFieldList = bpmFormFieldMapper.queryPublicFormFieldByFormUid(formUid,fieldType);
 		fieldList.addAll(publicFormFieldList);
 		for(BpmFormField field:fieldList) {
+			//获得对象权限信息表中某个步骤下指定表单的权限信息集合
 			List<String> opActionList = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
+			//当权限集合为0或权限集合为1但权限为打印时，给集合添加可编辑权限
 			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
 				opActionList.add("EDIT");
 			}
@@ -71,13 +74,16 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Override
 	public ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions) {
 		int countRow = 0;
+		//删除旧的权限信息
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
 			bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
 		}
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
+			//查看权限对象的权限是否为编辑，编辑不用存入数据库
 			if("EDIT".equals(dhObjectPermission.getOpAction())) {
 				countRow++;
 			}else{
+				//将字段权限信息存入数据库
 				dhObjectPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
 				countRow += bpmFormFieldMapper.saveFormFieldPermission(dhObjectPermission);
 			}
@@ -95,10 +101,13 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		if(objPermissList.size()==0) {
 			return ServerResponse.createBySuccess("{}");
 		}else {
+			//普通字段的权限json字符串
 			String jsonStr = "{";
+			//标题字段和表格字段的json字符串
 			String titleJsonStr = "{";
 			for(int i=0;i<objPermissList.size();i++) {
 				DhObjectPermission objPer = objPermissList.get(i);
+				//获得权限的字段对象
 				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid());
 				if(null==formField) {
 					continue;
@@ -108,6 +117,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				String opAction = objPer.getOpAction();
 				//判断该字段是否为标题或表格
 				if("title".equals(fieldType) || "object".equals(fieldType)){
+					//判断权限的类型
 					if(opAction.equals("VIEW")) {
 						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
 					}else if(opAction.equals("HIDDEN")){
@@ -231,16 +241,18 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 
 	@Override
 	public ServerResponse<List<BpmFormField>> queryFieldByFormUid(String formUid) {
-		List<BpmFormField> FormFiled = bpmFormFieldMapper.queryNotTitleFormFieldByFormUid(formUid); // 表单字段
+		//根据表单id获得表单字段以及关联的子表单下的字段
+		List<BpmFormField> formFiled = bpmFormFieldMapper.queryNotTitleFormFieldByFormUid(formUid); // 表单字段
 		List<BpmFormField> publicFormFiled = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid); // 子表单字段
 		List<BpmFormField> resultList = new ArrayList<>();
-		resultList.addAll(FormFiled);
+		resultList.addAll(formFiled);
 		resultList.addAll(publicFormFiled);
 		return ServerResponse.createBySuccess(resultList);
 	}
 	
 	@Override
 	public ServerResponse<List<BpmFormField>> queryFormTabByFormUid(String formUid) {
+		//根据表单id查询表格字段集合
 		List<BpmFormField> objList = bpmFormFieldMapper.queryFormTabByFormUid(formUid);
 		if(objList.isEmpty()) {
 			throw new PlatformException("找不到对应的表单表格");
@@ -250,6 +262,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 
 	@Override
 	public ServerResponse<List<BpmFormField>> queryFormTabFieldByFormUidAndTabName(String formUid, String tableName) {
+		//根据表单id和表格字段集合查询表格中所有的字段集合
 		List<BpmFormField> objFieldList = bpmFormFieldMapper.queryFormTabFieldByFormUidAndTabName(formUid,tableName);
 		if(objFieldList.isEmpty()) {
 			throw new PlatformException("找不到对应的表单表格字段");

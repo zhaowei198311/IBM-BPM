@@ -52,6 +52,9 @@ public class BpmFormManageController {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	
+	/**
+	 * 进入流程表单管理页面
+	 */
 	@RequestMapping(value = "/index")
 	public ModelAndView toIndex(String proUid,String proVersion) {
 		ModelAndView mv = new ModelAndView("desmartbpm/formManagement");
@@ -99,15 +102,19 @@ public class BpmFormManageController {
 	@RequestMapping(value = "/getTreeData")
 	@ResponseBody
 	public String getTreeData() {
+		//获得所有的流程分类集合
 		List<DhProcessCategory> categoryList = dhProcessCategoryService.listAll();
         DhProcessCategory dhProcessCategory = new DhProcessCategory();
         dhProcessCategory.setCategoryUid("rootCategory");
         dhProcessCategory.setCategoryName("流程分类");
         dhProcessCategory.setCategoryParent("0");
         categoryList.add(dhProcessCategory);
+        //获得所有的流程元集合
         List<DhProcessMeta> metaList = dhProcessMetaService.listAll();
+        //获得所有的流程定义集合
         List<DhProcessDefinition> definitionList = bpmFormManageService.listDefinitionAll();
         List<ZTreeNode> nodesToShow = new ArrayList<ZTreeNode>();
+        //流程分类在前端显示的对象
         for (DhProcessCategory category : categoryList) {
             ZTreeNode node = new ZTreeNode();
             node.setId(category.getCategoryUid());
@@ -118,6 +125,7 @@ public class BpmFormManageController {
             nodesToShow.add(node);
         }
         Set<String> metaProUidSet = new HashSet<>();
+        //流程元在前端显示的对象
         for (DhProcessMeta meta : metaList) {
             ZTreeNode node = new ZTreeNode();
             node.setId(meta.getProUid());
@@ -128,11 +136,13 @@ public class BpmFormManageController {
             node.setIcon("../resources/desmartbpm/images/2.png");
             nodesToShow.add(node);
         }
-        
+        //流程定义在前端显示的对象
         for(DhProcessDefinition definition : definitionList) {
         	ZTreeNode node = new ZTreeNode();
+        	//判断proUid是否有对应流程元
         	if(metaProUidSet.contains(definition.getProUid())) {
         		node.setId(definition.getProVerUid());
+        		//获得某个流程定义的版本名
         		String proVerName = dhProcessDefinitionService
         				.getLswSnapshotBySnapshotId(definition.getProVerUid())
         				.getName();

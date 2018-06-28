@@ -71,7 +71,7 @@
     <insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	insert into bpm_form(<include refid="base_column"/>)
     	values(#{dynUid},#{dynTitle},#{dynDescription},#{dynWebpage},
-    		#{dynContent},#{proUid},#{proVersion},'00035438',sysdate)
+    		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate)
     </insert>
     
     <update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmForm">

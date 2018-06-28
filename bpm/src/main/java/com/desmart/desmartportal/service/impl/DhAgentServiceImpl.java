@@ -68,10 +68,13 @@ public class DhAgentServiceImpl implements DhAgentService {
 	 */
 	@Override
 	public ServerResponse<PageInfo<List<DhAgent>>> selectAgentList(Integer pageNum, Integer pageSize, String person) {
+		//获取当前用户
 		String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		PageHelper.startPage(pageNum, pageSize);
+		//根据当前用户和代理人查询代理信息集合
 		List<DhAgent> resultList = dhAgentMapper.selectAgentList(currUser,person);
 		for(DhAgent dhAgent:resultList) {
+			//查询代理信息是否代理全部流程
 			if("TRUE".equals(dhAgent.getAgentIsAll())) {
 				DhProcessMeta dhProcessMeta = new DhProcessMeta();
 				dhProcessMeta.setProMetaUid("allProMeta");
@@ -80,6 +83,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 				dhProcessMetaList.add(dhProcessMeta);
 				dhAgent.setDhProcessMetaList(dhProcessMetaList);
 			} else {
+				//获得所有的代理流程集合
 				dhAgent.setDhProcessMetaList(queryDhProcessMetaByAgentId(dhAgent.getAgentId()));
 			}
 		}
@@ -92,6 +96,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 	 */
 	private List<DhProcessMeta> queryDhProcessMetaByAgentId(String agentId){
 		List<DhProcessMeta> dhProcessMetaList = new ArrayList<>();
+		//根据流程库id，流程id查询对应的流程元集合
 		for(DhAgentProInfo dhAgentProInfo:dhAgentMapper.queryDhAgentProInfoByAgentId(agentId)) {
 			DhProcessMeta dhProcessMeta = dhProcessMetaMapper
 					.queryByProAppIdAndProUid(dhAgentProInfo.getProAppId(), dhAgentProInfo.getProUid());
@@ -103,13 +108,17 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Override
 	public Map<String, String> getDelegateResult(String proAppid, String proUid, String userUid) {
 		Map<String,String> agentInfoMap = new HashMap<String, String>();
+		//查询用户当前的代理信息
 		List<DhAgent> dhAgentList = dhAgentMapper.getDelegateByUserId(userUid);
 		if(dhAgentList.size()>=1) {
+			//判断是否全部代理
 			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
+				//返回代理的代理信息id和代理人id
 				agentInfoMap.put("delegateUser",dhAgentList.get(0).getAgentClientele());
 				agentInfoMap.put("agentId", dhAgentList.get(0).getAgentId());
 				return agentInfoMap;
 			}else {
+				//查询当前时间指定流程的代理信息
 				DhAgent dhAgent = dhAgentMapper.getDelegateResult(proAppid,proUid,userUid);
 				if(null == dhAgent) {
 					return null;
@@ -147,11 +156,14 @@ public class DhAgentServiceImpl implements DhAgentService {
 		dhAgent.setAgentSdate(new Timestamp(agentSdate.getTime()));
 		dhAgent.setAgentEdate(new Timestamp(agentEdate.getTime()));
 		dhAgent.setAgentIsAll(agentIsAll);
+		//添加代理信息
 		if(1!=dhAgentMapper.addAgentInfo(dhAgent)) {
 			throw new PlatformException("添加代理信息失败");
 		}else {
+			//判断是否全部代理
 			if(agentIsAll.equals("FALSE")) {
 				int result = 0;
+				//未全部代理，将代理的流程添加到中间表
 				for(DhProcessMeta meta:metaList) {
 					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
 					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId,
@@ -170,8 +182,10 @@ public class DhAgentServiceImpl implements DhAgentService {
 	public ServerResponse<List<DhProcessMeta>> queryConformProMeta(Date agentSdate, Date agentEdate,
 			String[] agentProMetaUidArr) {
 		String agentOperator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		//查询某个时间段内当前用户的代理信息
 		List<DhAgent> dhAgentList = dhAgentMapper.queryAgentInfoByUserAndDate(agentOperator,agentSdate,agentEdate);
 		if(dhAgentList.size()==1) {
+			//当代理信息只有一条并且为全部代理
 			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
 				throw new PlatformException("在该时间段内有目标流程已被代理");
 			}
@@ -180,6 +194,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		List<DhProcessMeta> metaList = new ArrayList<>();
 		for(String agentProMetaUid:agentProMetaUidArr) {
 			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
+			//判断某个流程在时间段内是否被代理
 			if(dhAgentMapper.queryAgentProInfoBySelective(agentSdate,agentEdate,meta,agentOperator).isEmpty()) {
 				metaList.add(meta);
 			}else {
@@ -192,15 +207,18 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Override
 	public ServerResponse<List<DhProcessMeta>> queryConformProMetaNotSelf(DhAgent dhAgent, String[] agentProMetaUidArr) {
 		String agentOperator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		//查询当前用户在某个时间段内排除指定代理外的其他代理信息集合
 		List<DhAgent> dhAgentList = dhAgentMapper.queryAgentInfoByUserAndDateNotSelf(
 				dhAgent.getAgentId(),agentOperator,dhAgent.getAgentSdate(),dhAgent.getAgentEdate());
 		if(dhAgentList.size()==1) {
+			//判断查询的代理集合是否为一条全部代理信息
 			if("TRUE".equals(dhAgentList.get(0).getAgentIsAll())) {
 				throw new PlatformException("在该时间段内有目标流程已被代理");
 			}
 		}
-		
+		//再判断该用户这次要代理的是否为全部流程
 		if("allProMeta".equals(agentProMetaUidArr[0])) {
+			//当前用户在时间段内有其他的流程代理信息
 			if(dhAgentList.size()>=1) {
 				throw new PlatformException("在该时间段内有目标流程已被代理");
 			}
@@ -209,6 +227,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		List<DhProcessMeta> metaList = new ArrayList<>();
 		for(String agentProMetaUid:agentProMetaUidArr) {
 			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
+			//查询时间段内当前用户排除指定代理信息外是否存在指定流程的代理信息
 			if(dhAgentMapper.queryAgentProInfoBySelectiveNotSelf(dhAgent.getAgentId(),
 					dhAgent.getAgentSdate(),dhAgent.getAgentEdate(),meta,agentOperator).isEmpty()) {
 				metaList.add(meta);
@@ -226,11 +245,14 @@ public class DhAgentServiceImpl implements DhAgentService {
 		if(1!=updateRow) {
 			throw new PlatformException("修改代理设置信息失败");
 		}else {
+			//删除旧代理信息代理的流程信息
 			dhAgentMapper.deleteAgentProById(dhAgent.getAgentId());
+			//判断新代理信息是否代理全部流程
 			if(dhAgent.getAgentIsAll().equals("FALSE")) {
 				int addRow = 0;
 				for(DhProcessMeta meta:metaList) {
 					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
+					//添加代理流程信息
 					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId, 
 							dhAgent.getAgentId(), meta.getProAppId(), meta.getProUid());
 					addRow += dhAgentMapper.addAgentProInfo(agentProInfo);
@@ -245,6 +267,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 
 	@Override
 	public ServerResponse<List<DhProcessMeta>> listProMeta(String[] agentProMetaUidArr) {
+		//根据流程元id集合批量查询流程元集合
 		List<DhProcessMeta> metaList = new ArrayList<>();
 		for(String agentProMetaUid:agentProMetaUidArr) {
 			DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(agentProMetaUid);
@@ -255,6 +278,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 
 	@Override
 	public ServerResponse updateAgentStatus(DhAgent dhAgent) {
+		//修改代理信息的状态
 		int updateRow = dhAgentMapper.updateAgentStatus(dhAgent);
 		if(1!=updateRow) {
 			throw new PlatformException("修改代理信息失败");

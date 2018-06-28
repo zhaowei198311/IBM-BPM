@@ -45,6 +45,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	
 	@Override
 	public ServerResponse listFormByFormName(String formName, Integer pageNum, Integer pageSize) {
+		//分页显示公共表单的方法
 		PageHelper.startPage(pageNum, pageSize,"create_time desc");
 		List<BpmPublicForm> formList = bpmPublicFormMapper.listFormByFormName(formName);
 		PageInfo<List<BpmPublicForm>> pageInfo = new PageInfo(formList);
@@ -53,10 +54,12 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse queryFormByFormNameAndCode(String formName,String formCode) {
+		//查询表单名是否存在
 		BpmPublicForm bpmPublicForm = bpmPublicFormMapper.queryFormByFormName(formName);
 		if(null!=bpmPublicForm) {
 			throw new PlatformException("已存在表单名为"+formName+"的表单");
 		}
+		//查询表单编码是否存在
 		BpmPublicForm publicForm = bpmPublicFormMapper.queryFormByFormCode(formCode);
 		if(null!=publicForm) {
 			throw new PlatformException("已存在表单编码为"+formCode+"的表单");
@@ -66,10 +69,13 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse isBindMainForm(String[] formUids) {
+		//查询子表单是否被绑定
 		for(String formUid:formUids) {
+			//查询是否绑定主表单
 			List<String> mainFormUidList = bpmPublicFormMapper.isBindMainForm(formUid);
 			if(!mainFormUidList.isEmpty()) {
 				for(String mainFormUid:mainFormUidList) {
+					//查询是否绑定步骤
 					List<DhStep> stepList = bpmFormManageMapper.isBindStep(mainFormUid);
 					if(!stepList.isEmpty()) {
 						throw new PlatformException("该子表单已被主表单绑定");
@@ -82,6 +88,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse saveForm(BpmPublicForm bpmPublicForm) {
+		//保存表单信息
 		String publicFormUid = EntityIdPrefix.BPM_PUBLIC_FORM + UUID.randomUUID().toString();
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		bpmPublicForm.setPublicFormUid(publicFormUid);
@@ -95,18 +102,22 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse upadteFormContent(BpmPublicForm bpmPublicForm) {
+		//修改表单内容
 		int countRow = bpmPublicFormMapper.updateFormContent(bpmPublicForm);
 		if(countRow!=1) {
 			throw new PlatformException("表单内容修改失败");
 		}
 		List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(bpmPublicForm.getPublicFormUid());
+		//删除表单字段权限信息
 		deleteFieldPermiss(filedList);
+		//删除旧字段集合
 		bpmFormFieldMapper.deleteFormField(bpmPublicForm.getPublicFormUid());
 		return ServerResponse.createBySuccess();
 	}
 
 	@Override
 	public ServerResponse queryFormByFormUid(String formUid) {
+		//根据表单id查询表单信息
 		BpmPublicForm bpmPublicForm = bpmPublicFormMapper.queryFormByFormUid(formUid);
 		if(null==bpmPublicForm) {
 			return ServerResponse.createByError();
@@ -117,6 +128,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse updateFormInfo(BpmPublicForm bpmPublicForm) throws Exception {
+		//修改表单基本信息
 		int updateRow = bpmPublicFormMapper.updateFormInfo(bpmPublicForm);
 		if(1!=updateRow) {
 			throw new PlatformException("修改表单属性失败");
@@ -126,6 +138,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 
 	@Override
 	public ServerResponse deleteForm(String[] formUids) {
+		//批量删除表单
 		for(String formUid:formUids) {
 			BpmPublicForm bpmPublicForm = bpmPublicFormMapper.queryFormByFormUid(formUid);
 			if(null==bpmPublicForm) {

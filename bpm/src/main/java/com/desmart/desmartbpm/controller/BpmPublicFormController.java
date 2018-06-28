@@ -32,11 +32,17 @@ public class BpmPublicFormController {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	
+	/**
+	 * 转到公共表单的管理页面
+	 */
 	@RequestMapping(value = "/index")
 	public ModelAndView index() {
 		return new ModelAndView("desmartbpm/publicForm");
 	}
 	
+	/**
+	 * 转到表单设计器
+	 */
 	@RequestMapping(value = "/designForm")
 	public ModelAndView designForm(String formUid,String formName,String formDescription,
 			String dynHtml,String formCode) {

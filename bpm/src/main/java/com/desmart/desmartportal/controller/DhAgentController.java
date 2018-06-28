@@ -132,6 +132,7 @@ public class DhAgentController {
     public ServerResponse updateAgentStatus(DhAgent dhAgent,String[] agentProMetaUidArr) {
     	try {
     		if("ENABLED".equals(dhAgent.getAgentStatus())) {
+    			//判断要启用的代理是否与其他代理起冲突
     			dhAgentService.queryConformProMetaNotSelf(dhAgent,agentProMetaUidArr);
         	}
 	    	return dhAgentService.updateAgentStatus(dhAgent);
