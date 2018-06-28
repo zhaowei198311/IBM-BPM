@@ -140,8 +140,9 @@ function trunOffProcessIns(){
 		}
 		var userArr = userUid.split(";");
 		if(activityId == "" || activityId == null){
-			if(userArr.length > 1){
+			if(userArr.length > 1 && userArr[1] != "" ){
 				layer.alert("更换任务处理人只能选择一个任务处理人");
+				return;
 			}
 		}
 		
@@ -160,9 +161,11 @@ function trunOffProcessIns(){
 			},
 			success : function(result){
 				if (result.status == 0) {
-					
+					getProcesssInstance();
+					layer.alert("撤转流程实例成功");
+					$("#processIns-trun-off-div").hide();
 				}else{
-					
+					layer.alert(result.msg);
 				}
 				layer.closeAll("loading");
 			},error : function(){
@@ -202,7 +205,7 @@ function showProcessInsMap(){
 		return;
 	}
 }
-
+var activitysStr = "";
 function toTrunOffProcessIns(){
 	if(checkChecked()){
 		var insUid = $("input[type='checkbox'][name='checkProcessIns']:checked").val();
@@ -225,12 +228,12 @@ function toTrunOffProcessIns(){
 					$("#handleUser").val("");
 					$("#handleUser_view").val("");
 					$("#trunOffCause").val("");
-					var activitysStr = "";
-					var tasksStr = '<option value=""> --请选择-- </option>';
+					activitysStr = "";
 					for (var i = 0; i < result.data.activityMetaList.length; i++) {
-						activitysStr += '<li data-activityId="'+result.data.activityMetaList[i].activityId+'">' 
+						activitysStr += '<li data-activityid="'+result.data.activityMetaList[i].activityId+'">' 
 								+result.data.activityMetaList[i].activityName+'</li>';
 					}
+					var tasksStr = '<option value=""> --请选择-- </option>';
 					$("#left_activity_ul").append(activitysStr);
 					for (var i = 0; i < result.data.taskList.length; i++) {
 						if(result.data.taskList[i].taskStatus == "12"){
@@ -266,15 +269,17 @@ $(function(){
 	// “选择环节”
 	$("#chooseActivity_i").click(function() {
 		$("#right_activity_ul").empty();
-		var choosedValue = $("#rejectActivities").val();
+		$("#left_activity_ul").empty();
+		$("#left_activity_ul").append(activitysStr);
+		var choosedValue = $("#trunOffActivities").val();
 		if (!choosedValue) {
 			$("#choose_activity_container").show();
 			return;
 		}
 		var chooseIds = choosedValue.split(";");
 		$("#left_activity_ul li").each(function() {
-			var activityBpdId = $(this).data('activitybpdid');
-			if ($.inArray(activityBpdId, chooseIds) != -1) {
+			var activityid = $(this).data('activityid');
+			if ($.inArray(activityid, chooseIds) != -1) {
 				$(this).appendTo($("#right_activity_ul"));
 			}
 		});
@@ -284,7 +289,7 @@ $(function(){
 		var val = '';
 		var val_view = '';
 		$("#right_activity_ul li").each(function() {
-			val += $(this).data('activitybpdid');
+			val += $(this).data('activityid');
 			val_view += $(this).html();
 		});
 		$("#trunOffActivities").val(val);

@@ -265,10 +265,10 @@ public class BpmTaskUtil {
             if (result.getCode() == 200) {
                 JSONObject resJson = new JSONObject(result.getMsg());
                 int status = resJson.getInt("status");
-                String msg = resJson.getString("msg");
                 if (status == 0) {
                     serverResponse = ServerResponse.createBySuccess();
                 } else {
+                	String msg = resJson.getString("msg");
                     serverResponse = ServerResponse.createByErrorMessage(msg);
                 }
             } else {

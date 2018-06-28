@@ -238,11 +238,9 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(currActivityId);
 
 		// 判断当前节点能否撤转, 如果不是普通节点不允许撤转
-		if (!"TRUE".equals(currTaskNode.getDhActivityConf().getActcCanReject())
-				|| !"none".equals(currTaskNode.getLoopType())) {
+		if (!"none".equals(currTaskNode.getLoopType())) {
 			return ServerResponse.createByErrorMessage("当前节点不允许撤转");
 		}
-
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTaskInstance.getInsUid());
 		if (dhProcessInstance == null)
 			return ServerResponse.createByErrorMessage("流程实例不存在");
@@ -268,6 +266,10 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 		BpmActivityMeta targetActivityMeta = bpmActivityMetaService.queryByPrimaryKey(activityId);
 		Date updateDate = DateUtil.format(new Date());
 		if (targetActivityMeta != null) {// 目标环节不为空，即撤转任务
+			//判断目标节点能否撤转
+			if (!"none".equals(targetActivityMeta.getLoopType())) {
+				return ServerResponse.createByErrorMessage("目标节点不允许撤转");
+			}
 			// 保存流转记录
 			DhRoutingRecord routingRecord = dhRoutingRecordService
 					.generateTrunOffTaskRoutingRecordByTaskAndRoutingData(currTaskInstance, targetActivityMeta);
@@ -301,7 +303,8 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 				BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
 				ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), taskOwner);
 				if (!serverResponse.isSuccess()) {
-					throw new RuntimeException("重新分配失败");
+					log.error("重新分配失败");
+					return serverResponse;
 				}	
 			}
 
@@ -322,7 +325,8 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 			ServerResponse serverResponse = 
 						taskUtil.changeOwnerOfLaswTask(currTaskInstance.getTaskId(), userUids[0]);
 			if (!serverResponse.isSuccess()) {
-				throw new RuntimeException("重新分配失败");
+				log.error("重新分配失败");
+				return serverResponse;
 			}	
 		}
 		return ServerResponse.createBySuccessMessage("撤转流程实例成功");
