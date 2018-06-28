@@ -118,12 +118,13 @@
 		<div class="display_content5" style="height: 430px;">
 			<div class="top">查看流程实例信息</div>
 			<div class="middle1" style="height: 320px;">
-				<textarea id="processIns-text-content" style="height: 500px;width: 99.6%;">
+				<textarea id="processIns-text-content" style="height: 99.4%;width: 99.6%;">
 					
 				</textarea>
 			</div>
 			<div class="foot" style="padding-top: 1.4%;">
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">关闭</button>
+				<button class="layui-btn layui-btn layui-btn-primary"
+						onclick="$('#processIns-text-div').hide();">关闭</button>
 			</div>
 		</div>
 	</div>
