@@ -90,7 +90,7 @@
 						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
 							<ul class="nav1">
-								<c:forEach items="${listmap}" var="info">
+<%-- 								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
 											></a>
 										<ul class="nav2">
@@ -101,7 +101,7 @@
 												<h1 style="clear: both;"></h1>
 											</c:forEach>
 										</ul></li>
-								</c:forEach>
+								</c:forEach> --%>
 							</ul>
 						</div>
 					</div>
@@ -228,5 +228,45 @@
 	</script>
 </body>
 </html>
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script>	
+$(function(){ 
+	$.ajax({
+		url : 'processCategory/queryByParent',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			categoryParent : 'rootCategory'
+		},
+		success : function(result){
+			var list = result
+			console.info(list)
+			for (var i = 0; i < list.length; i++) {
+				var trs = '<li class="oneCategory" value="'+list[i].categoryUid+'"><a>'
+						+ list[i].categoryName
+						+ '>'
+						+ '</a></li>';
+				$(".nav1").append(trs)
+			}
+		},
+		error : function(result){
+			layer.alert("查询门店生命周期失败")
+		}
+	})
+	
+	
+	$(".nav1").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
+			  function() {
+				  // 鼠标悬停 查询数据
+				  var category = $(".oneCategory").val();
+				  alert(category)
+			  }, function() {
+				  // 鼠标离开
+			  }
+			)
+});
 
+</script>
 
