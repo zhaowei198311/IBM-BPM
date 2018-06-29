@@ -95,6 +95,7 @@ DhProcessInstance {
 	private String initUserFullname;//流程实例发起人
 	private String handleUserName;//任务处理人
 	private String taskTitle;//任务标题
+	private String relationUsers;//任务处理人，任务代理人
 
 	public DhProcessInstance() {
 
@@ -474,12 +475,20 @@ DhProcessInstance {
 		this.taskTitle = taskTitle;
 	}
 	
-	public JSONObject getinsData$() {
+	public JSONObject getInsData$() {
 		return insData$;
 	}
 
-	public void setinsData$(JSONObject insData$) {
+	public void setInsData$(JSONObject insData$) {
 		this.insData$ = insData$;
+	}
+	
+	public String getRelationUsers() {
+		return relationUsers;
+	}
+
+	public void setRelationUsers(String relationUsers) {
+		this.relationUsers = relationUsers;
 	}
 
 	/**

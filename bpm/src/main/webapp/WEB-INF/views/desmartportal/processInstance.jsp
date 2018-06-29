@@ -217,6 +217,7 @@
 	}
 
 	function drawTable(data) {
+		// 查询结果总数
 		pageConfig.total = data[data.length - 1].count;
 		// 数据总数
 		$('#number').text(pageConfig.total);
@@ -227,6 +228,7 @@
 		if (data.length == 0) {
 			return;
 		}
+		// 移除数组最后一个元素
 		data.pop();
 		var trs = "";
 		// 流程名称
@@ -320,51 +322,50 @@
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
 		var verUid = $('#verUid').val();
-		$
-				.ajax({
-					url : "processInstance/checkedBusinesskey",
-					type : 'POST',
-					dataType : 'json',
-					beforeSend : function() {
-						layer.load(1);
-					},
-					data : {
-						proUid : proUid,
-						proAppId : proAppId,
-						proVerUid : verUid
-					},
-					success : function(result) {
-						if (result.status == 0) {
-							if (result.data.flag == 1) {
-								startProcess(result.data.stepBusinessKey);
-							} else {
-								layer.closeAll('loading');
-								$("#checkedBusinessKey").find(
-										".showBusinessList").empty();
-								for (var i = 0; i < result.data.length; i++) {
-									var info = '<tr><td><input type="radio" name="insBusinessKey" '
-						+'value="'
-						+ result.data[i]
-						+'" >'
-											+ (i + 1)
-											+ '</td>'
-											+ '<td style="text-align: center;">'
-											+ result.data[i] + '</td></tr>';
-									$("#checkedBusinessKey").find(
-											".showBusinessList").append(info);
-								}
-								$("#checkedBusinessKey").show();
-							}
-						} else {
-							layer.closeAll('loading');
-							layer.alert(result.msg);
-						}
-					},
-					error : function() {
+		$.ajax({
+			url : "processInstance/checkedBusinesskey",
+			type : 'POST',
+			dataType : 'json',
+			beforeSend : function() {
+				layer.load(1);
+			},
+			data : {
+				proUid : proUid,
+				proAppId : proAppId,
+				proVerUid : verUid
+			},
+			success : function(result) {
+				if (result.status == 0) {
+					if (result.data.flag == 1) {
+						startProcess(result.data.stepBusinessKey);
+					} else {
 						layer.closeAll('loading');
-						layer.alert("发起流程异常");
+						$("#checkedBusinessKey").find(
+								".showBusinessList").empty();
+						for (var i = 0; i < result.data.length; i++) {
+							var info = '<tr><td><input type="radio" name="insBusinessKey" '
+									+'value="'
+									+ result.data[i]
+									+'" >'
+									+ (i + 1)
+									+ '</td>'
+									+ '<td style="text-align: center;">'
+									+ result.data[i] + '</td></tr>';
+							$("#checkedBusinessKey").find(
+									".showBusinessList").append(info);
+						}
+						$("#checkedBusinessKey").show();
 					}
-				})
+				} else {
+					layer.closeAll('loading');
+					layer.alert(result.msg);
+				}
+			},
+			error : function() {
+				layer.closeAll('loading');
+				layer.alert("发起流程异常");
+			}
+		})
 	}
 </script>
 </html>
