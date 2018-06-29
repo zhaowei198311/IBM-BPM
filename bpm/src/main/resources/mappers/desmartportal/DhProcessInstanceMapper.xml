@@ -346,7 +346,7 @@
 			FROM dh_task_instance WHERE task_status != '-1' GROUP BY ins_uid) t
 		<where>
 			ins.INS_UID = t.INS_UID
-			<if test="insCreateDate != null">
+			<if test="startTime != null">
 			AND ins.INS_UPDATE_DATE &gt;= #{startTime}
 			AND ins.INS_UPDATE_DATE &lt;= #{endTime}
 			</if>
