@@ -26,7 +26,7 @@ public class Const {
     public static final String LAST_SYNCHRONIZED_TASK_ID_KEY = "lastSynTaskId";
 
     /** mongodb中保存的同步任务最后同步的任务id的集合 */
-    public static final String LAST_SYNCHRONIZED_TASK_ID_COLLECTION_NAME = "lastSynTaskCollection";
+    public static final String COMMON_COLLECTION_NAME = "commonKeyValue";
     
     /** mongodb insData集合 */
     public static final String INS_DATA = "insData";

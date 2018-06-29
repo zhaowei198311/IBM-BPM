@@ -3,12 +3,10 @@ package com.desmart.desmartbpm.mongo.impl;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.entity.OpenedTask;
 import com.mongodb.WriteResult;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -59,14 +57,14 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
         Query qurey = new Query(new Criteria("_id").is(Const.LAST_SYNCHRONIZED_TASK_ID_KEY));
         Update update = new Update();
         update.set("value", taskId);
-        WriteResult result = mongoTemplate.upsert(qurey, update, Const.LAST_SYNCHRONIZED_TASK_ID_COLLECTION_NAME);
+        WriteResult result = mongoTemplate.upsert(qurey, update, Const.COMMON_COLLECTION_NAME);
         return result.getN();
     }
 
     @Override
     public int queryLastSynchronizedTaskId() {
         String itemStr = mongoTemplate.findById(Const.LAST_SYNCHRONIZED_TASK_ID_KEY, String.class,
-                Const.LAST_SYNCHRONIZED_TASK_ID_COLLECTION_NAME);
+                Const.COMMON_COLLECTION_NAME);
         if (itemStr == null) return 0;
         return JSON.parseObject(itemStr).getIntValue("value");
     }
