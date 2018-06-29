@@ -17,20 +17,9 @@ public interface InsDataDao {
 	 * @param usrUid
 	 * @param proUid
 	 * @param proAppId
-	 * @param sign
 	 * @return  
 	 * @return List<JSONObject>
 	 */
 	List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
-								String usrUid, String proUid, String proAppId, String sign);
-	
-	
-//	/**
-//	 * 
-//	 * @Title: insertInsData  
-//	 * @Description: 定时查询InsData然后插入MongoDB中  
-//	 * @param @return  
-//	 * @return   
-//	 */
-//	void insertInsData(String usrUid, String insUid);
+								String usrUid, String proUid, String proAppId);
 }

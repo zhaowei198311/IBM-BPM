@@ -188,9 +188,8 @@ public class DhProcessInstanceController {
 													@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 													@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
 													@RequestParam(value = "key", required = true) String key,
-													@RequestParam(value = "value", required = true) String value,
-													@RequestParam(value = "sign", required = true) String sign){
+													@RequestParam(value = "value", required = true) String value){
 		String usrUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER); 
-		return dhProcessInstanceService.queryProcessInstanceByIds(key, value, pageNum, pageSize, usrUid, proUid, proAppId, sign);
+		return dhProcessInstanceService.queryProcessInstanceByIds(key, value, pageNum, pageSize, usrUid, proUid, proAppId);
 	}
 }

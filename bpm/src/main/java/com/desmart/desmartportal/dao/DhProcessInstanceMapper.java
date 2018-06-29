@@ -75,8 +75,8 @@ public interface DhProcessInstanceMapper {
 	 * @return List<DhTaskInstance>  
 	 * @throws
 	 */
-	List<DhProcessInstance> queryInsDataByUser(@Param("insCreateDate")Date insCreateDate,
-												@Param("insFinishDate")Date insFinishDate);
+	List<DhProcessInstance> queryInsDataByUser(@Param("startTime")Date startTime,
+												@Param("endTime")Date endTime);
 	/**
 	 * 根据条件查询流程管理界面展示
 	 * @param dhProcessInstance

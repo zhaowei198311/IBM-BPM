@@ -81,7 +81,7 @@
 					<input id="fieldValue" type="text" placeholder="字段值" class="layui-input">			
 				</div>
 				<div class="layui-col-xs3" style="margin-left: 25px;">
-					<button class="layui-btn" onclick="queryProcessInstance(false)">查询</button>
+					<button class="layui-btn" onclick="queryProcessInstance()">查询</button>
 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
 				</div>
 			</div>
@@ -105,7 +105,7 @@
 						<th>实例ID</th>
 						<th>实例状态</th>
 					    <th>流程实例标题</th>
-					    <th>流程发起人</th>
+<!-- 					    <th>流程发起人</th> -->
 					    <th>流程实例创建时间</th>
 					    <th>流程实例完成时间</th>
 					    <th>操作</th>
@@ -174,13 +174,13 @@
 // 	});
 
 	$(document).ready(function() {
-		var sign = true;
+// 		var sign = true;
 		// 加载数据
-		queryProcessInstance(sign);
+		queryProcessInstance();
 	});
 
 	var index;
-	function queryProcessInstance(sign) {
+	function queryProcessInstance() {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
 		var key = $('#fieldName').val();
@@ -196,8 +196,7 @@
 				proUid : proUid,
 				proAppId : proAppId,
 				key : key,
-				value : value,
-				sign : sign
+				value : value
 			},
 			beforeSend : function() {
 				index = layer.load(1);
@@ -259,7 +258,7 @@
 						+ '<td>'+ this.insId +'</td>'
 						+ '<td>'+ this.insStatus +'</td>'
 						+ '<td>'+ this.insTitle +'</td>'
-						+ '<td>'+ this.initUserFullname +'</td>'
+// 						+ '<td>'+ this.initUserFullname +'</td>'
 						+ '<td>'+ createDate +'</td>'
 						+ '<td>'+ finishDate +'</td>'
 						+ '<td>'
@@ -286,7 +285,7 @@
 					pageConfig.pageNum = obj.curr;
 					pageConfig.pageSize = obj.limit;
 					if (!first) {
-						queryProcessInstance(false);
+						queryProcessInstance();
 					}
 				}
 			});

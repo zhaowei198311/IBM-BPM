@@ -340,15 +340,15 @@
 	</update>
 	
 	<select id="queryInsDataByUser" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT <include refid="realationColumnList" />,t.relationUsers
+		SELECT <include refid="realationColumnList" />,t.relation_users
 		FROM DH_PROCESS_INSTANCE ins,(SELECT ins_uid,listagg(usr_uid,';') within GROUP(ORDER BY ins_uid) ||';'|| 
-			listagg(task_delegate_user,';') within GROUP(ORDER BY ins_uid) relationUsers
+			listagg(task_delegate_user,';') within GROUP(ORDER BY ins_uid) relation_users
 			FROM dh_task_instance WHERE task_status != '-1' GROUP BY ins_uid) t
 		<where>
 			ins.INS_UID = t.INS_UID
-			<if test="insCreateDate != null and insCreateDate != ''">
-			ins.INS_CREATE_DATE BETWEEN to_date(#{insCreateDate},'yyyy-mm-dd hh24:mi:ss') 
-			AND to_date(#{insFinishDate},'yyyy-mm-dd hh24:mi:ss')
+			<if test="insCreateDate != null">
+			AND ins.INS_UPDATE_DATE &gt;= #{startTime}
+			AND ins.INS_UPDATE_DATE &lt;= #{endTime}
 			</if>
 		</where>
 	</select>

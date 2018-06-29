@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Resource;
 
-import org.omg.CORBA.Current;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +12,7 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import com.alibaba.fastjson.JSONObject;
@@ -33,12 +33,10 @@ public class InsDataDaoImpl implements InsDataDao{
 
 	@Override
 	public List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
-			String usrUid, String proUid, String proAppId, String sign) {
+			String usrUid, String proUid, String proAppId) {
 		// 将数据插入mongo insData 集合中
 		try {
-//			if ("true".equals(sign)) {
-//				insertInsData(usrUid, proUid, proAppId);
-//			}
+//			insertInsData();
 			Query query = new Query();
 			if (!key.isEmpty()) {
 				if (value.contains("，")) {
@@ -49,10 +47,10 @@ public class InsDataDaoImpl implements InsDataDao{
 					}
 					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(reg));
 				}else {
-					Criteria criteria = Criteria.where("insData$.formData."+ key +".value").regex(".*" + value + ".*");
-					query.addCriteria(criteria);
+					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(".*" + value + ".*"));
 				}
 			}
+			query.addCriteria(Criteria.where("relationUsers").regex(".*" + usrUid + ".*"));
 			query.addCriteria(Criteria.where("proUid").is(proUid));
 			query.addCriteria(Criteria.where("proAppId").is(proAppId));
 			// 查询数量
@@ -68,48 +66,64 @@ public class InsDataDaoImpl implements InsDataDao{
 		return null;
 	}
 	
-	public void insertInsData(String usrUid, String proUid, String proAppId) {
+	/**
+	 * 
+	 * @Title: insertInsData  
+	 * @Description: 定时将查询的数据同步到mongo insData集合 ,间隔为10分钟   
+	 * @return void
+	 */
+	@Scheduled(cron="0 0/10 * * * ? ")
+	public void insertInsData() {
+		System.out.println("========开始同步mongo insData集合数据=========");
+		Date startTime = null;
+		Date endTime = null;
 		try {
-//			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(usrUid, proUid, proAppId);
+			JSONObject lastTime = mongoTemplate.findOne(new Query(Criteria.where("_id").is("insFinishDate")), JSONObject.class, Const.COMMON_COLLECTION_NAME);			
+			if (lastTime != null) {
+				long $lastTime = Long.parseLong(lastTime.getString("value"));
+				startTime = new Date($lastTime);
+				endTime = new Date($lastTime + 10*60*1000L);
+			}
+			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(startTime, endTime);
 			// 测试插入查询性能
 //			System.err.println("========开始a " + new Date().getTime());
 //			mongoTemplate.insert(dhProcessInstanceList, Const.INS_DATA);
 //			System.err.println("========结束 " + new Date().getTime());
 			
+			JSONObject insData = null;
+			// 数据库已存数据
+			List<JSONObject> idS = mongoTemplate.find(new BasicQuery("{}","{'_id':1}"), JSONObject.class, Const.INS_DATA);
+			List<String> $ids = new LinkedList<>();
+			for (JSONObject jsonObject : idS) {
+				$ids.add(jsonObject.getString("_id"));
+			}
 			
-//			JSONObject insData = null;
-//			// 数据库已存数据
-//			List<JSONObject> idS = mongoTemplate.find(new BasicQuery("{}","{'_id':1}"), JSONObject.class, Const.INS_DATA);
-//			List<String> $ids = new LinkedList<>();
-//			for (JSONObject jsonObject : idS) {
-//				$ids.add(jsonObject.getString("_id"));
-//			}
-//			
-//			// 需要插入的数据
-//			List<DhProcessInstance> insertDhProcessInstance = new LinkedList<>();
-//			// 需要更新的数据
-//			List<DhProcessInstance> updateDhProcessInstance = new LinkedList<>();
-//			
-//			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
-//				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-//				dhProcessInstance.setinsData$(insData);
-//				if ($ids.contains(dhProcessInstance.getInsUid())) {
-//					updateDhProcessInstance.add(dhProcessInstance);
-//				}else {
-//					insertDhProcessInstance.add(dhProcessInstance);
-//				}
-//			}
-//			if (!insertDhProcessInstance.isEmpty()) {
-//				mongoTemplate.insert(insertDhProcessInstance, Const.INS_DATA);
-//			}
-//			if (!updateDhProcessInstance.isEmpty()) {
-//				Update update = new Update();
-//				for (DhProcessInstance dhProcessInstance : updateDhProcessInstance) {			
-//					update.set("insData$", JSONObject.parse(dhProcessInstance.getInsData()));
-//					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(dhProcessInstance.getInsUid())), update, Const.INS_DATA);
-//				}
-//			}
+			// 需要插入的数据
+			List<DhProcessInstance> insertDhProcessInstance = new LinkedList<>();
+			// 需要更新的数据
+			List<DhProcessInstance> updateDhProcessInstance = new LinkedList<>();
 			
+			for (DhProcessInstance dhProcessInstance : dhProcessInstanceList) {
+				insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+				dhProcessInstance.setInsData$(insData);
+				if ($ids.contains(dhProcessInstance.getInsUid())) {
+					updateDhProcessInstance.add(dhProcessInstance);
+				}else {
+					insertDhProcessInstance.add(dhProcessInstance);
+				}
+			}
+			if (!insertDhProcessInstance.isEmpty()) {
+				mongoTemplate.insert(insertDhProcessInstance, Const.INS_DATA);
+			}
+			if (!updateDhProcessInstance.isEmpty()) {
+				Update update = new Update();
+				for (DhProcessInstance dhProcessInstance : updateDhProcessInstance) {			
+					update.set("insData$", JSONObject.parse(dhProcessInstance.getInsData()));
+					mongoTemplate.updateMulti(new Query(new Criteria("_id").is(dhProcessInstance.getInsUid())), update, Const.INS_DATA);
+				}
+			}
+			mongoTemplate.save("{'_id':'insFinishDate','value':'"+new Date().getTime()+"'}", Const.COMMON_COLLECTION_NAME);
+			System.out.println("========结束同步mongo insData集合数据=========");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

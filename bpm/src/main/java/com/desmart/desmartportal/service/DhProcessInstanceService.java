@@ -182,5 +182,5 @@ public interface DhProcessInstanceService {
 	 * @throws
 	 */
 	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String key, String value, Integer pageNum, Integer pageSize, 
-															String usrUid, String proUid, String proAppId, String sign);
+															String usrUid, String proUid, String proAppId);
 }
