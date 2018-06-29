@@ -946,9 +946,9 @@
 				+ '<td>' + agentEdate + '</td>'
 				+ '<td id="'+meta.agentClientele+'">' + meta.agentClienteleName +'</td>';
 			if(agentStatus){
-				trs += 	'<td><input name="agentStatus" checked type="checkbox" lay-skin="switch" lay-text="启用|停用" lay-filter="isUse"></td>';
+				trs += 	'<td><input name="agentStatus" checked type="checkbox" lay-skin="switch" lay-text="on|off" lay-filter="isUse"></td>';
 			}else{
-				trs += 	'<td><input name="agentStatus" type="checkbox" lay-skin="switch" lay-text="启用|停用" lay-filter="isUse"></td>';
+				trs += 	'<td><input name="agentStatus" type="checkbox" lay-skin="switch" lay-text="on|off" lay-filter="isUse"></td>';
 			}
 			trs	+= '<td><i class="layui-icon" title="修改代理设置" onclick=update(this)>&#xe642;</i>'
 				+ '<i class="layui-icon" title="删除代理设置" onclick=del("'+ meta.agentId + '")>&#xe640;</i>'
@@ -959,9 +959,6 @@
 		layui.use('form', function(){
 			var form = layui.form; 
 			form.render('checkbox');
-			$("input[name='agentStatus']").click(function(){
-				
-			});
 			form.on('switch(isUse)', function(data){
 				var agentId = $(this).parent().parent().data("agentid");
 				var agentProArr = $(this).parent().parent().find("#updateAgentProcessIds").val().split(";");
