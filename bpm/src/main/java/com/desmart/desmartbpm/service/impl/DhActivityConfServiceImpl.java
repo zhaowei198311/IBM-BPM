@@ -30,6 +30,7 @@ import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.enums.DhActivityAssignAssignType;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
+import com.desmart.desmartbpm.enums.DhActivityConfOuttimeNotifyType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
 import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhActivityConfService;
@@ -623,60 +624,38 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         selective.setActaType(DhActivityAssignType.OUTTIME_NOTIFY.getCode());
         dhActivityAssignMapper.deleteBySelective(selective);
         // 超时通知人员
-        String outtimeUser = dhActivityConf.getOuttimeUser();
-        if (StringUtils.isNotBlank(outtimeUser)) {
-            List<String> userIdList = Arrays.asList(outtimeUser.split(";"));
-            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
-            if (userIdList.size() != userList.size()) {
-                return ServerResponse.createByErrorMessage("超时通知用户不存在");
-            }
-            for (SysUser user : userList) {
-                DhActivityAssign assign = new DhActivityAssign();
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(activityId);
-                assign.setActaType(DhActivityAssignType.OUTTIME_NOTIFY.getCode());
-                assign.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
-                assign.setActaAssignId(user.getUserUid());
-                assignList.add(assign);
-            }
-        }
-        // 超时通知角色
-        String outtimeRole = dhActivityConf.getOuttimeRole();
-        if (StringUtils.isNotBlank(outtimeRole)) {
-            List<String> roleIdList = Arrays.asList(outtimeRole.split(";"));
-            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(roleIdList);
-            if (roleIdList.size() != roleList.size()) {
-                return ServerResponse.createByErrorMessage("超时通知角色不存在");
-            }
-            for (SysRole role : roleList) {
-                DhActivityAssign assign = new DhActivityAssign();
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(activityId);
-                assign.setActaType(DhActivityAssignType.OUTTIME_NOTIFY.getCode());
-                assign.setActaAssignType(DhActivityAssignAssignType.ROLE.getCode());
-                assign.setActaAssignId(role.getRoleUid());
-                assignList.add(assign);
-            }
-        }
-        // 超时通知角色组
-        String outtimeTeam = dhActivityConf.getOuttimeTeam();
-        if (StringUtils.isNotBlank(outtimeTeam)) {
-            List<String> teamIdList = Arrays.asList(outtimeTeam.split(";"));
-            List<SysTeam> teamList = sysTeamMapper.listByPrimaryKeyList(teamIdList);
-            if (teamIdList.size() != teamList.size()) {
-                return ServerResponse.createByErrorMessage("超时通知角色不存在");
-            }
-            for (SysTeam team : teamList) {
-                DhActivityAssign assign = new DhActivityAssign();
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(activityId);
-                assign.setActaType(DhActivityAssignType.OUTTIME_NOTIFY.getCode());
-                assign.setActaAssignType(DhActivityAssignAssignType.TEAM.getCode());
-                assign.setActaAssignId(team.getTeamUid());
-                assignList.add(assign);
-            }
-        }       
-        
+        DhActivityConfOuttimeNotifyType eumType = 
+        		DhActivityConfOuttimeNotifyType.codeOf(dhActivityConf.getActcOuttimeNotifyType());
+		if (eumType != null) {
+			switch (eumType) {
+			case USERS:
+				String outtimeUser = dhActivityConf.getOuttimeUser();
+				if (StringUtils.isNotBlank(outtimeUser)) {
+					List<String> userIdList = Arrays.asList(outtimeUser.split(";"));
+					List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
+					if (userIdList.size() != userList.size()) {
+						return ServerResponse.createByErrorMessage("超时通知用户不存在");
+					}
+					for (SysUser user : userList) {
+						DhActivityAssign assign = new DhActivityAssign();
+						assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+						assign.setActivityId(activityId);
+						assign.setActaType(DhActivityAssignType.OUTTIME_NOTIFY.getCode());
+						assign.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
+						assign.setActaAssignId(user.getUserUid());
+						assignList.add(assign);
+					}
+				}
+				break;
+			case HANDLER_USER:
+				break;
+			case HANDLER_USER_SUPERIOR:
+				break;
+
+			default:
+				break;
+			}
+		}
         if (assignList.size() > 0) {
             dhActivityAssignMapper.insertBatch(assignList);
         }

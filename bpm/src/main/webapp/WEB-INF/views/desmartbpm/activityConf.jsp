@@ -575,9 +575,24 @@
 																</select>
 															</div>
 														</div>
+													</div>
 														<!-- 超时通知 -->
+														<div class="layui-col-md6">
+															<div class="layui-form-item">
+																<label class="layui-form-label">超时通知人员</label>
+																<div class="layui-input-block">
+																	<select name="actcOuttimeNotifyType"
+																		lay-filter=outtimeNotifyType
+																		lay-verify="required">
+																		<option value="">-请选择-</option>
+																		<option value="handlerUser">处理人</option>
+																		<option value="handlerUserSuperior">处理人的上级</option>
+																		<option value="users">指定人员</option>
+																	</select>
+																</div>
+															</div>
 														<div class="layui-form-item " id="outtimeUser_div">
-															<label class="layui-form-label">超时通知人员</label>
+															<label class="layui-form-label">人员</label>
 															<div class="layui-input-block"
 																style="position: relative;">
 																<input type="hidden" id="outtimeUser" name="outtimeUser" />
@@ -588,33 +603,6 @@
 																	title="选择人员">&#xe612;</i>
 															</div>
 														</div>
-														<div class="layui-form-item" id="outtimeRole_div">
-															<label class="layui-form-label">超时通知角色</label>
-															<div class="layui-input-block"
-																style="position: relative;">
-																<input type="hidden" id="outtimeRole" name="outtimeRole"
-																	value="" autocomplete="off" class="layui-input">
-																<input type="text" id="outtimeRole_view"
-																	name="outtimeRole_view" value="" autocomplete="off"
-																	class="layui-input"> <i
-																	id="choose_outtime_role" class="layui-icon choose_role"
-																	title="选择角色">&#xe612;</i>
-															</div>
-														</div>
-														<div class="layui-form-item " id="outtimeTeam_div">
-															<label class="layui-form-label">超时通知角色组</label>
-															<div class="layui-input-block"
-																style="position: relative;">
-																<input type="hidden" id="outtimeTeam" name="outtimeTeam"
-																	value="" autocomplete="off" class="layui-input">
-																<input type="text" id="outtimeTeam_view"
-																	name="outtimeTeam_view" value="" autocomplete="off"
-																	class="layui-input"> <i
-																	id="choose_outtime_team" class="layui-icon choose_role"
-																	title="选择角色组">&#xe612;</i>
-															</div>
-														</div>
-
 													</div>
 												</div>
 												<div class="layui-row">

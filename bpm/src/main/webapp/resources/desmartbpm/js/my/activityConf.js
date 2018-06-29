@@ -87,12 +87,20 @@ layui.use('form', function() {
 			$("#chooseableHandleUser_div").hide();
 			$("#chooseableHandleField_div").hide();
 			$("#chooseableHandleTrigger_div").hide();
-		} else if (data.value = 'byTrigger') {
+		} else if (data.value == 'byTrigger') {
 			$("#chooseableHandleRole_div").hide();
 			$("#chooseableHandleTeam_div").hide();
 			$("#chooseableHandleUser_div").hide();
 			$("#chooseableHandleField_div").hide();
 			$("#chooseableHandleTrigger_div").show();
+		}
+	});
+	
+	form.on('select(outtimeNotifyType)',function(data){
+		if(data.value == 'users'){
+			$("#outtimeUser_div").show();
+		}else{
+			$("#outtimeUser_div").hide();
 		}
 	});
 
@@ -393,13 +401,20 @@ $(function() {
 					actcOuttimeTemplate : {
 						maxlength : 100,
 						required : function(element) {
-							if ($('input[name="outtimeUser"]').val()
-									|| $('input[name="outtimeRole"]').val()
-									|| $('input[name="outtimeTeam"]').val()) {
+							if ($('select[name="actcOuttimeNotifyType"]').val()!="") {
 								return true;
 							} else {
 								return false;
 							}
+						}
+					},
+					outtimeUser : {
+						required : function(element) {
+						if($('select[name="actcOuttimeNotifyType"]').val()=="users"){
+							return true;
+						}else{
+							return false;
+						}
 						}
 					}
 				},
@@ -2587,6 +2602,7 @@ function initConf(map) {
 	$("#chooseableHandleTeam_div").hide();
 	$("#chooseableHandleField_div").hide();
 	$("#chooseableHandleTrigger_div").hide();
+	$("#outtimeUser_div").hide();
 
 	$('input[name="actcUid"]').val(conf.actcUid);
 	$('input[name="actcSort"]').val(conf.actcSort);
@@ -2596,7 +2612,13 @@ function initConf(map) {
 	$('input[name="actcOuttimeTriggerTitle"]')
 			.val(conf.actcOuttimeTriggerTitle);
 	$('input[name="actcOuttimeTemplate"]').val(conf.actcOuttimeTemplate);
-
+	$('select[name="actcOuttimeNotifyType"]').val(conf.actcOuttimeNotifyType);
+	if (conf.actcOuttimeNotifyType == "users") {
+		$("#outtimeUser_div").show();
+	} else {
+		$("#outtimeUser_div").hide();
+	}
+	
 	$('textarea[name="actcResponsibility"]').val(conf.actcResponsibility);
 
 	$('select[name="actcTimeunit"]').val(conf.actcTimeunit);
