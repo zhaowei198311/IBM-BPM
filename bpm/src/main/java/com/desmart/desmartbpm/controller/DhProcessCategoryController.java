@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -137,5 +138,11 @@ public class DhProcessCategoryController {
     @ResponseBody
     public ServerResponse<?> enableCategory(String metaUid){
     	return dhProcessCategoryService.enableCategory(metaUid);
+    }
+    
+    @RequestMapping(value = "/queryByParent")
+    @ResponseBody
+    public List<DhProcessCategory> queryByParent(@RequestParam("categoryParent")String categoryParent){
+    	return dhProcessCategoryService.listByCategoryParent(categoryParent);
     }
 }

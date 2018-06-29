@@ -217,5 +217,10 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 		}
 		return ServerResponse.createByError();
 	}
+
+	@Override
+	public List<DhProcessCategory> listByCategoryParent(String categoryParent) {
+		return dhProcessCategoryMapper.listByCategoryParent(categoryParent);
+	}
     
 }
