@@ -340,18 +340,16 @@
 	</update>
 	
 	<select id="queryInsDataByUser" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT <include refid="realationColumnList" />
-		,sys.USER_NAME initUserFullname
-		FROM DH_PROCESS_INSTANCE ins
-		,SYS_USER sys
+		SELECT <include refid="realationColumnList" />,t.relationUsers
+		FROM DH_PROCESS_INSTANCE ins,(SELECT ins_uid,listagg(usr_uid,';') within GROUP(ORDER BY ins_uid) ||';'|| 
+			listagg(task_delegate_user,';') within GROUP(ORDER BY ins_uid) relationUsers
+			FROM dh_task_instance WHERE task_status != '-1' GROUP BY ins_uid) t
 		<where>
-			ins.INS_UID IN (
-			SELECT DISTINCT INS_UID FROM DH_TASK_INSTANCE
-			WHERE USR_UID = #{usrUid}
-			)
-			AND ins.PRO_UID = #{proUid}
-			AND ins.PRO_APP_ID = #{proAppId}
-			AND ins.INS_INIT_USER = sys.USER_UID
+			ins.INS_UID = t.INS_UID
+			<if test="insCreateDate != null and insCreateDate != ''">
+			ins.INS_CREATE_DATE BETWEEN to_date(#{insCreateDate},'yyyy-mm-dd hh24:mi:ss') 
+			AND to_date(#{insFinishDate},'yyyy-mm-dd hh24:mi:ss')
+			</if>
 		</where>
 	</select>
 	

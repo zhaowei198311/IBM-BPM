@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -74,9 +75,8 @@ public interface DhProcessInstanceMapper {
 	 * @return List<DhTaskInstance>  
 	 * @throws
 	 */
-	List<DhProcessInstance> queryInsDataByUser(@Param("usrUid")String usrUid,
-												@Param("proUid")String proUid,
-												@Param("proAppId")String proAppId);
+	List<DhProcessInstance> queryInsDataByUser(@Param("insCreateDate")Date insCreateDate,
+												@Param("insFinishDate")Date insFinishDate);
 	/**
 	 * 根据条件查询流程管理界面展示
 	 * @param dhProcessInstance
