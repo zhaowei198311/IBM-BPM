@@ -231,20 +231,36 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
-<script>	
+<script type="text/javascript" >	
 $(function(){ 
+	
+	queryByParent('rootCategory');
+	
+	$(".nav1 .oneCategory").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
+			  function() {
+				  // 鼠标悬停 查询数据
+				  var categoryuid = $(this).data("categoryuid");
+				  
+			  }, function() {
+				  // 鼠标离开
+			  }
+			);
+});
+
+function queryByParent(categoryuid){
 	$.ajax({
 		url : 'processCategory/queryByParent',
 		type : 'post',
 		dataType : 'json',
+		async:false, 
 		data : {
-			categoryParent : 'rootCategory'
+			categoryParent : categoryuid
 		},
 		success : function(result){
 			var list = result
 			console.info(list)
 			for (var i = 0; i < list.length; i++) {
-				var trs = '<li class="oneCategory" value="'+list[i].categoryUid+'"><a>'
+				var trs = '<li class="oneCategory" data-categoryuid="'+list[i].categoryUid+'"><a>'
 						+ list[i].categoryName
 						+ '>'
 						+ '</a></li>';
@@ -255,18 +271,6 @@ $(function(){
 			layer.alert("查询门店生命周期失败")
 		}
 	})
-	
-	
-	$(".nav1").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
-			  function() {
-				  // 鼠标悬停 查询数据
-				  var category = $(".oneCategory").val();
-				  alert(category)
-			  }, function() {
-				  // 鼠标离开
-			  }
-			)
-});
-
+};
 </script>
 
