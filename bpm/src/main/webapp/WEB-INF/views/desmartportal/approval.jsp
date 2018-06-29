@@ -71,7 +71,7 @@
             	height: 100%;
             	background: #fff;
     			box-shadow: 0 0 10px #ccc;
-    			overflow: scroll;
+    			
         }
 
         .display_content_accessory_file {
@@ -547,16 +547,12 @@
 		<img onclick="closeImageEdit()" style="position: absolute;left: 94%;bottom: 92%;" 
 			alt="关闭" src="resources/desmartportal/images/close.jpg">
 		<div class="display_content_image_edit" >
-		<div id="imgEditMain" >
+		<div id="imgEditMain" style="width: 100%;height: 88%;overflow:  scroll;">
+		
 		<input style="display: none;" id="imgEditAccessoryFileData" >
-		<table>
-		<tr>
-			<td>
-				<div id="wPaint" style="position:relative; width:500px; height:1000px;
-					 background:#CACACA; border:solid black 1px;"></div>
-			</td>
-		</tr>
-		</table>
+			<div id="wPaint" style="position:relative; width:500px; height:1000px;
+					background:#CACACA; border:solid black 1px;"></div>
+		
 		</div>
 		</div>
 	</div>
