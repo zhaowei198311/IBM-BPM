@@ -100,7 +100,8 @@
 													target="iframe0">${process.proName}</a></li>
 												<h1 style="clear: both;"></h1>
 											</c:forEach>
-										</ul></li>
+										</ul>
+									</li>
 								</c:forEach> --%>
 							</ul>
 						</div>
@@ -240,7 +241,7 @@ $(function(){
 			  function() {
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
-				  
+				  queryPorcess(categoryuid)
 			  }, function() {
 				  // 鼠标离开
 			  }
@@ -260,7 +261,7 @@ function queryByParent(categoryuid){
 			var list = result
 			console.info(list)
 			for (var i = 0; i < list.length; i++) {
-				var trs = '<li class="oneCategory" data-categoryuid="'+list[i].categoryUid+'"><a>'
+				var trs = '<li class="oneCategory" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
 						+ list[i].categoryName
 						+ '>'
 						+ '</a></li>';
@@ -272,5 +273,35 @@ function queryByParent(categoryuid){
 		}
 	})
 };
+
+
+function queryPorcess(categoryuid){
+	$.ajax({
+		url : 'processMeta/listByCategoryUid',
+		type : 'post',
+		dataType : 'json',
+		async:false, 
+		data : {
+			categoryUid : categoryuid,
+			proName : null
+		},
+		success : function(result){
+			var list = result.data
+			console.info(list)
+			for (var i = 0; i < list.length; i++) {
+				var trs = '<ul class="nav2">'
+						+ '<li class="li2"><a href="" target="iframe0">'
+						+ list[i].proName
+						+ '</a></li>'
+						+ '<h1 style="clear: both;"></h1>'
+						+ '</ul>';
+				$(".viewProcess").append(trs)
+			}
+		},
+		error : function(result){
+		}
+	})
+}
+
 </script>
 
