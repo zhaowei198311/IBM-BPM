@@ -130,9 +130,6 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		DhStep step = dhStep;
 		while (step != null) {
 			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-				dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep.getStepObjectUid());
-			}
-			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
 				ServerResponse<Map<String, String>> response = dhTriggerService.invokeTrigger(wac, String.valueOf(dhProcessInstance.getInsId()), dhStep.getStepObjectUid());
 				Map<String,String> resultMap = response.getData();
 				if(resultMap.get("status").equals("1")) {
