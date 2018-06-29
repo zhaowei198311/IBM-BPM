@@ -87,7 +87,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     /**
      * 从引擎同步任务
      */
-    @Scheduled(cron = "0/20 * * * * ?")
+    //@Scheduled(cron = "0/20 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
@@ -98,7 +98,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         LOG.info("==================  拉取任务结束  ===============");
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
     public void retrySynchronizeTask() {
         LOG.info("==================  开始重试拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务

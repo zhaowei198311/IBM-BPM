@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.common.util.*;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
@@ -29,13 +30,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.common.util.BpmTaskUtil;
-import com.desmart.common.util.CommonBusinessObjectUtils;
-import com.desmart.common.util.ProcessDataUtil;
-import com.desmart.common.util.FormDataUtil;
-import com.desmart.common.util.HttpReturnStatusUtil;
-import com.desmart.common.util.RestUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
@@ -508,7 +502,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		DhProcessInstance processInstance = null;
 
 		DhDrafts dhDrafts = null;
-		String formData = "{}";
 		if (StringUtils.isBlank(insUid)) {
 			// 不是草稿箱来的
 			processDefintion = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
@@ -535,11 +528,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			proAppId = processInstance.getProAppId();
 			proUid = processInstance.getProUid();
 			dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
-			JSONObject jsonObj = JSONObject.parseObject(dhDrafts.getDfsData());
-			formData = jsonObj.getString("formData");
-			JSONObject processData = jsonObj.getJSONObject("processData");
-			resultMap.put("departNo", processData.getString("departNo"));
-			resultMap.put("companyNumber", processData.getString("companyNumber"));
+			// 将草稿中选择的部门和组织信息带到页面上
+			JSONObject jsonObjDraft = JSONObject.parseObject(dhDrafts.getDfsData());
+			JSONObject processDataDraft = jsonObjDraft.getJSONObject("processData");
+			resultMap.put("departNo", processDataDraft.getString("departNo"));
+			resultMap.put("companyNumber", processDataDraft.getString("companyNumber"));
+			// 将草稿中的insTitle带到页面上
 			resultMap.put("dhDrafts", dhDrafts);
 		}
 
@@ -572,10 +566,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 触发器调用过后重新获取流程实例
 		processInstance = getByInsUid(processInstance.getInsUid());
 		// 混合草稿中fromData数据并更新
-		JSONObject insDataJson = JSON.parseObject(processInstance.getInsData());
-
-
-
+		if (dhDrafts != null) {
+			processInstance = InsDataUtil.mergeDraftDataForStartProcess(dhDrafts, processInstance);
+		}
 
 		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService
 				.queryFieldPermissionByStepUid(formStep.getStepUid());
@@ -590,7 +583,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 		BpmForm bpmForm = (BpmForm) getFormResponse.getData();
 
-
 		// 是否显示环节权责控制
 		if (StringUtils.isBlank(dhActivityConf.getActcResponsibility())
 				|| "<br>".equals(dhActivityConf.getActcResponsibility())) {
@@ -603,7 +595,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		resultMap.put("bpmForm", bpmForm);
 		resultMap.put("fieldPermissionInfo", fieldPermissionInfo);
 		resultMap.put("processDefinition", processDefintion);
-		resultMap.put("formData", formData);
+		resultMap.put("formData", FormDataUtil.getFormDataStringFromProcessInstance(processInstance));
 		resultMap.put("bpmActivityMeta", firstHumanMeta);
 		resultMap.put("dhActivityConf", dhActivityConf);
 		resultMap.put("userDepartmentList", userDepartmentList);

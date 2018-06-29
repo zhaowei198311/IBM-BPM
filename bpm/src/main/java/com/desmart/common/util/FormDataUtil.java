@@ -5,6 +5,7 @@ package com.desmart.common.util;
 
 import java.util.Iterator;
 
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -59,7 +60,19 @@ public class FormDataUtil {
 	    }
 	    
 	}
-	
+
+    /**
+     * 从流程实例中得到 String类型的formData
+     * @param dhProcessInstance
+     * @return
+     */
+	public static String getFormDataStringFromProcessInstance(DhProcessInstance dhProcessInstance) {
+		JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
+        JSONObject formDataJson = insDataJson.getJSONObject("formData");
+        return formDataJson.toJSONString();
+    }
+
+
 	public static void main(String[] args) {
 		FormDataUtil a = new FormDataUtil();
 

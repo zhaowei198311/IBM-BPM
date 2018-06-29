@@ -6,6 +6,16 @@ if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNode
     canSkipFromReject = true;
 }
 
+$(function () {
+    layui.use(['form'], function () {
+        form = layui.form;
+    });
+    common.giveFormSetValue($("#formData").text());
+    var fieldPermissionInfo = $("#fieldPermissionInfo").text();
+    common.giveFormFieldPermission(fieldPermissionInfo);
+    form.render();
+});
+
 
 function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
     if (actcCanChooseUser == 'FALSE') {
@@ -501,19 +511,7 @@ function back() {
 //数据信息
 var view = $(".container-fluid");
 var form = null;
-$(function () {
-   
-    layui.use(['form'], function () {
-        form = layui.form;
-    });
-    console.log($("#formData").text());
-    
-    common.giveFormSetValue($("#formData").text());
-    form.render();
-    var fieldPermissionInfo = $("#fieldPermissionInfo").text();
-    common.giveFormFieldPermission(fieldPermissionInfo);
-    form.render();
-});
+
 
 // 单击"提交"按钮
 function checkUserData() {

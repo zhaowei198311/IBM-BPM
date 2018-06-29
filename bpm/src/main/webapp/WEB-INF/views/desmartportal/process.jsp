@@ -176,14 +176,14 @@
 							<select id="creatorInfo" lay-filter="creatorInfo">
 									<option value="">请选择部门</option>
 									<c:forEach items="${userDepartmentList}" var="item">
-									<c:choose>
-									<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
-										<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-									</c:when>
-									<c:otherwise>
-									<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-									</c:otherwise>
-									</c:choose>
+										<c:choose>
+										<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
+											<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+										</c:when>
+										<c:otherwise>
+										<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+										</c:otherwise>
+										</c:choose>
 									</c:forEach>
 							</select></td>
 						</tr>
@@ -374,6 +374,7 @@
 		}
 		var formFieldPer = $("#fieldPermissionInfo").text().trim();
 		common.giveFormFieldPermission(formFieldPer);
+        form.render();
 	});
 
 </script>
