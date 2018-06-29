@@ -90,7 +90,7 @@
 						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
 							<ul class="nav1">
-<%-- 								<c:forEach items="${listmap}" var="info">
+ 								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
 											></a>
 										<ul class="nav2">
@@ -102,7 +102,7 @@
 											</c:forEach>
 										</ul>
 									</li>
-								</c:forEach> --%>
+								</c:forEach>
 							</ul>
 						</div>
 					</div>
@@ -229,7 +229,7 @@
 	</script>
 </body>
 </html>
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
+<!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" >	
@@ -239,11 +239,12 @@ $(function(){
 	
 	$(".nav1 .oneCategory").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
 			  function() {
+				 //  $(".nav").find("ul").not(".nav1").remove();
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
-				  queryPorcess(categoryuid)
+				  queryPorcess(categoryuid);
 			  }, function() {
-				  // 鼠标离开
+				  
 			  }
 			);
 });
@@ -261,7 +262,8 @@ function queryByParent(categoryuid){
 			var list = result
 			console.info(list)
 			for (var i = 0; i < list.length; i++) {
-				var trs = '<li class="oneCategory" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
+				var id = list[i].categoryUid.split(":")[1];
+				var trs = '<li class="oneCategory" id="'+id+'" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
 						+ list[i].categoryName
 						+ '>'
 						+ '</a></li>';
@@ -286,8 +288,11 @@ function queryPorcess(categoryuid){
 			proName : null
 		},
 		success : function(result){
-			var list = result.data
+			var list = result.data.list;
 			console.info(list)
+			var id = categoryuid.split(":")[1];
+			var selective = "#"+id;
+			//$(selective).parent().find("li").not(selective).find("ul").remove();
 			for (var i = 0; i < list.length; i++) {
 				var trs = '<ul class="nav2">'
 						+ '<li class="li2"><a href="" target="iframe0">'
@@ -295,8 +300,9 @@ function queryPorcess(categoryuid){
 						+ '</a></li>'
 						+ '<h1 style="clear: both;"></h1>'
 						+ '</ul>';
-				$(".viewProcess").append(trs)
+				$(selective).append(trs)
 			}
+			$(".nav2").show();
 		},
 		error : function(result){
 		}
@@ -304,4 +310,4 @@ function queryPorcess(categoryuid){
 }
 
 </script>
-
+ -->
