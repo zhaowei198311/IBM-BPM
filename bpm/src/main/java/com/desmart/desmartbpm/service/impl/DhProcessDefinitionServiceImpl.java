@@ -112,26 +112,31 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     @Autowired
     private DhRouteService dhRouteService;
     
-    
-    public ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize) {
+
+    public ServerResponse listProcessDefinitionsIncludeUnSynchronizedByMetaUid(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
 
+        // 验证流程元数据是否存在
         DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
         if (dhProcessMeta == null) {
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
 
+        // 找到库中所有满足条件的流程定义
         DhProcessDefinition selective = new DhProcessDefinition();
         selective.setProUid(dhProcessMeta.getProUid());
+        selective.setProAppId(dhProcessMeta.getProAppId());
         List<DhProcessDefinition> definitionInDb = dhProcessDefinitionMapper.listBySelective(selective);
+
+        // 记录平台库中存在的版本号
         Set<String> versionInDb = new HashSet<>();
         for (DhProcessDefinition definition : definitionInDb) {
             versionInDb.add(definition.getProVerUid());
         }
 
-        // 所有公开的流程中获得这个流程的公开版本
+        // 所有公开的流程中获得这个流程公开的版本信息
         List<Map<String, String>> exposedItemList = getAllExposedProcess();
         List<Map<String, String>> matchedItemList = getMatchedItem(exposedItemList, dhProcessMeta.getProUid(), dhProcessMeta.getProAppId());
         Set<String> matchedSnapshots = new HashSet<>();
@@ -145,36 +150,12 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             } 
             matchedSnapshots.add(item.get("snapshotId"));
         }
+        // 至此得到了所有需要的流程定义
 
+        // 初步装配vo列表
         List<DhProcessDefinitionVo> voList = new ArrayList<>();
-        for (Map<String, String> item : matchedItemList) {
-            DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
-            vo.setProName(dhProcessMeta.getProName());
-            vo.setProAppId(dhProcessMeta.getProAppId());
-            vo.setProUid(dhProcessMeta.getProUid());
-            vo.setProVerUid(item.get("snapshotId"));
-            vo.setProStatus("未同步");
-            vo.setUpdator("");
-            vo.setUpdateTime("");
-            voList.add(vo);
-        }
-
-        for (DhProcessDefinition definition : definitionInDb) {
-            DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
-            vo.setProName(dhProcessMeta.getProName());
-            vo.setProAppId(dhProcessMeta.getProAppId());
-            vo.setProUid(dhProcessMeta.getProUid());
-            vo.setProVerUid(definition.getProVerUid());
-            // 流程定义状态
-            if (DhProcessDefinition.STATUS_SYNCHRONIZED.equals(definition.getProStatus())) {
-                vo.setProStatus("已同步");
-            } else if (DhProcessDefinition.STATUS_ENABLED.equals(definition.getProStatus())) {
-                vo.setProStatus("已启用");
-            }
-            vo.setUpdator(definition.getUpdatorFullName());
-            vo.setUpdateTime(DateFmtUtils.formatDate(definition.getLastModifiedDate(), "yyyy-MM-dd HH:mm:ss"));
-            voList.add(vo);
-        }
+        voList.addAll(assembleDhProcessDefinitionVoListFromExposedItem(matchedItemList, dhProcessMeta.getProName()));
+        voList.addAll(assembleDhProcessDefinitionVoListFromDhprcessDefinition(definitionInDb));
 
         List<DhProcessDefinitionVo> voToShow = new ArrayList<>();
         int total = voList.size();
@@ -189,7 +170,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             }
         }
 
-        // 装配流程版本信息
+        // 为vo列表装配流程版本信息
         assembleSnapshotInfo(voToShow);
         PageInfo pageInfo = new PageInfo(voToShow);
         pageInfo.setStartRow(startRow + 1);
@@ -268,7 +249,14 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
     /**
      * 获得所有公开的流程信息
-     * @return Map中的属性 procAppName, procAppId, bpdName, bpdId, snapshotId, snapshotCreated, branchId
+     * @return Map中的属性
+     *  procAppName:  测试子流程
+     *  procAppId: 2066.9c66d06c-dd8d-4fee-b351-78635d532a83
+     *  bpdName:  13号线
+     *  bpdId:  25.28d0bcc8-1c61-4d11-9cf9-8e3714410b02
+     *  snapshotId:   2064.b3403659-99c3-469d-b0e8-dc87ed256294
+     *  snapshotCreated:  2018-06-11T09:19:09Z
+     *  branchId
      */
     private List<Map<String, String>> getAllExposedProcess() {
         BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
@@ -318,7 +306,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
 
     /**
-     *
+     * 为流程定义VO装配快照版本信息  是否激活、快照创建时间、快照名称
      */
     private void assembleSnapshotInfo(List<DhProcessDefinitionVo> volist) {
         List<LswSnapshot> snapshotList = lswSnapshotMapper.listAll();
@@ -876,4 +864,53 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 		}
 		return ServerResponse.createBySuccess();
 	}
+
+    /**
+     * 将引擎中满足条件的流程定义装配成vo对象
+     * @param matchedItemList
+     * @return
+     */
+	private List<DhProcessDefinitionVo> assembleDhProcessDefinitionVoListFromExposedItem(List<Map<String, String>> matchedItemList, String proName){
+        List<DhProcessDefinitionVo> voList = new ArrayList<>();
+        for (Map<String, String> item : matchedItemList) {
+            DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
+            vo.setProName(proName);
+            vo.setProAppId(item.get("procAppId"));
+            vo.setProUid(item.get("bpdId"));
+            vo.setProVerUid(item.get("snapshotId"));
+            vo.setProStatus("未同步");
+            vo.setUpdator("");
+            vo.setUpdateTime("");
+            voList.add(vo);
+        }
+        return voList;
+    }
+
+    /**
+     * 将引擎中的流程定义对象装配为vo对象
+     * @param definitionList
+     * @return
+     */
+    private List<DhProcessDefinitionVo> assembleDhProcessDefinitionVoListFromDhprcessDefinition(List<DhProcessDefinition> definitionList){
+        List<DhProcessDefinitionVo> voList = new ArrayList<>();
+        for (DhProcessDefinition definition : definitionList) {
+            DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
+            vo.setProName(definition.getProName());
+            vo.setProAppId(definition.getProAppId());
+            vo.setProUid(definition.getProUid());
+            vo.setProVerUid(definition.getProVerUid());
+            // 流程定义状态
+            if (DhProcessDefinition.STATUS_SYNCHRONIZED.equals(definition.getProStatus())) {
+                vo.setProStatus("已同步");
+            } else if (DhProcessDefinition.STATUS_ENABLED.equals(definition.getProStatus())) {
+                vo.setProStatus("已启用");
+            }
+            vo.setUpdator(definition.getUpdatorFullName());
+            vo.setUpdateTime(DateFmtUtils.formatDate(definition.getLastModifiedDate(), "yyyy-MM-dd HH:mm:ss"));
+            voList.add(vo);
+        }
+        return voList;
+    }
+
+
 }

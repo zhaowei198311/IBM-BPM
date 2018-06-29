@@ -149,15 +149,31 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     }
 
 	@Override
-	public ServerResponse<?> changeThePosition(String meteUid, String categoryUid) {
-		DhProcessMeta dhProcessMeta = new DhProcessMeta();
-		dhProcessMeta.setProMetaUid(meteUid);
-		dhProcessMeta.setCategoryUid(categoryUid);
-		int count = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
-		if (count > 0) {
-			return ServerResponse.createBySuccess();
+	public ServerResponse<?> changeTheCategoryOfProcessMeta(String meteUid, String categoryUid) {
+        if (StringUtils.isBlank(categoryUid) || StringUtils.isBlank(meteUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        if (categoryUid.equals("rootCategory")) {
+            return ServerResponse.createByErrorMessage("元数据不能绑定在根分类下");
+        }
+
+        DhProcessMeta meta = dhProcessMetaMapper.queryByProMetaUid(meteUid);
+        if (meta == null) {
+            return ServerResponse.createByErrorMessage("流程元数据不存在");
+        }
+        DhProcessCategory category = dhProcessCategoryMapper.queryByCategoryUid(categoryUid);
+        if (category == null) {
+            return ServerResponse.createByErrorMessage("流程分类不存在");
+        }
+
+        DhProcessMeta metaSelective = new DhProcessMeta();
+		metaSelective.setProMetaUid(meteUid);
+		metaSelective.setCategoryUid(categoryUid);
+		int count = dhProcessMetaMapper.updateByProMetaUidSelective(metaSelective);
+		if (count == 0) {
+			return ServerResponse.createByErrorMessage("改变元数据分类失败");
 		}
-		return ServerResponse.createByError();
+		return ServerResponse.createBySuccess();
 	}
 
 	@Override

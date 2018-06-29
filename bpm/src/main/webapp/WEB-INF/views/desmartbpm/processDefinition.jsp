@@ -26,22 +26,21 @@
                 <div class="layui-col-md10">
                     <div class="search_area">
                         <div class="layui-row layui-form">
-                            <div class="layui-col-md2">
-                                <input type="text" placeholder="流程名称"  class="layui-input">
+                            <div class="layui-col-md3">
+                                <input type="text" placeholder="流程名称"  class="layui-input" id="proName_input">
                             </div>
-                            <div class="layui-col-md10" style="text-align:right;">
-                                    <button class="layui-btn layui-btn-sm" >查询</button>
-                                    <button class="layui-btn layui-btn-sm create_btn">添加</button>
-                                    <button class="layui-btn layui-btn-sm delete_btn">删除</button>
+                            <div class="layui-col-md9" style="text-align:left;padding-left:20px;line-height:38px;">
+                                    <button class="layui-btn layui-btn-sm" id="searchByProName_btn">查询</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">同步快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="enable_btn">启用</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess"">拷贝</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess">拷贝</button>
+                                    <!--
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm">导入</button>
+                                    -->
                             </div>
                         </div>
                     </div>
@@ -61,7 +60,7 @@
                                 <tr>
                                   <th>序号</th>
                                   <th>流程名称</th>
-                                  <th>快照号</th>
+                                  <!-- <th>快照号</th> -->
                                   <th>快照名称</th>
                                   <th>激活状态</th>
                                   <th>快照创建时间</th>
@@ -148,49 +147,9 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.exedit.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/processDefinition.js"></script>
 <script>
-	// 为翻页提供支持
-	var pageConfig = {
-	    pageNum: 1,
-	    pageSize: 10,
-	    total: 0,
-        metaUid: ""
-	};
 
-    var setting = {
-            view: {
-                selectedMulti: false
-            },
-            data: {
-                simpleData: {
-                    enable: true,
-                    idKey: "id",
-                    pIdKey: "pid",
-                    rootPId: "rootCategory"
-                }
-            },
-            callback: {
-                onClick: zTreeOnClick// 点击回调
-            }
-    };
 	
      $(document).ready(function(){
-         // 加载树
-         $.ajax({
-        	 url: common.getPath() + "/processMeta/getTreeData",
-        	 type: "post",
-        	 data: {},
-        	 dataType: "json",
-        	 success: function(result) {
-        		 $.fn.zTree.init($("#treeDemo"), setting, result);
-        		 if (getCookie("processDefinition_selectedMetaUid")) {
-        			 var treeObject = $.fn.zTree.getZTreeObj("treeDemo");
-        			 var node = treeObject.getNodeByParam("id", getCookie("processDefinition_selectedMetaUid"));
-        			 treeObject.selectNode(node, true);
-        		 }
-        		 
-        	 }
-         });
-         
          $(".create_btn").click(function(){
              $(".display_container3").css("display","block");
          })

@@ -81,8 +81,8 @@
             <if test="proUid != null">
                 and pm.PRO_UID = #{proUid}
             </if>
-            <if test="proName != null">
-                and pm.PRO_NAME = #{proName}
+            <if test="proName != null and !proName.trim().isEmpty()">
+                and pm.PRO_NAME like '%' || #{proName} || '%'
             </if>
             <if test="categoryUid != null">
                 and pm.CATEGORY_UID = #{categoryUid}

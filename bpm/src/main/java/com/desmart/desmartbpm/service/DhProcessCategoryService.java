@@ -41,7 +41,7 @@ public interface DhProcessCategoryService {
      * @return: ServerResponse<?>
      * @throws
      */
-    ServerResponse<?> changeThePosition(String metaUid, String categoryUid);
+    ServerResponse<?> changeTheCategoryOfProcessMeta(String metaUid, String categoryUid);
     
     /**
      * 

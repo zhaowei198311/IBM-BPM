@@ -12,6 +12,7 @@ import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -58,15 +59,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
-    private BpmActivityMetaMapper bpmActivityMetaMapper;
-    @Autowired
     private DhProcessInstanceService dhProcessInstanceService;
     @Autowired
     private DhAgentService dhAgentService;
     @Autowired
     private DhAgentRecordMapper dhAgentRecordMapper;
-    @Autowired
-    private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
     private SysHolidayService sysHolidayService;
     @Autowired
@@ -81,7 +78,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private DhSynTaskRetryMapper dhSynTaskRetryMapper;
     @Autowired
     private TaskMongoDao taskMongoDao;
-
+    @Autowired
+    private CommonMongoDao commonMongoDao;
 
     
     /**
@@ -204,8 +202,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
-
-
 
         Map<Object, Object> tokenMap = ProcessDataUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
         if (tokenMap == null || tokenMap.get("tokenId") == null) {
@@ -362,7 +358,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      */
     private List<LswTask> getNewTasks() {
         // 从mongodb中获得最后一次同步的任务编号
-        int lastTaskIdSynchronized = taskMongoDao.queryLastSynchronizedTaskId();
+        Integer lastTaskIdSynchronized = commonMongoDao.getIntValue(Const.LAST_SYNCHRONIZED_TASK_ID_KEY);
+        lastTaskIdSynchronized = lastTaskIdSynchronized == null ? 0 : lastTaskIdSynchronized;
         return lswTaskMapper.listNewTasks(lastTaskIdSynchronized);
     }
 
@@ -482,6 +479,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         if (synchronizedTaskList == null || synchronizedTaskList.isEmpty()) {
             return;
         }
-        taskMongoDao.saveOrUpdateLastSynchronizedTaskId(synchronizedTaskList.get(synchronizedTaskList.size() - 1).getTaskId());
+        LswTask lastSynTask = synchronizedTaskList.get(synchronizedTaskList.size() - 1);
+        commonMongoDao.set(Const.LAST_SYNCHRONIZED_TASK_ID_KEY, lastSynTask.getTaskId());
     }
 }

@@ -13,11 +13,11 @@ import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 public interface DhProcessDefinitionService {
 
     /**
-     * 列出指定的流程元数据相关的所有流程定义
-     * @param metaUid
+     * 列出指定的流程元数据相关的所有流程定义, 包括未同步的公开的流程
+     * @param metaUid  流程元数据主键
      * @return
      */
-    ServerResponse listProcessDefinitionsIncludeUnSynchronized(String metaUid, Integer pageNum, Integer pageSize);
+    ServerResponse listProcessDefinitionsIncludeUnSynchronizedByMetaUid(String metaUid, Integer pageNum, Integer pageSize);
 
     /**
      * 获得指定的流程定义

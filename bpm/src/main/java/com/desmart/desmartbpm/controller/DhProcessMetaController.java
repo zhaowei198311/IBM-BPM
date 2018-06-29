@@ -74,8 +74,6 @@ public class DhProcessMetaController {
     
     /**
      * 创建流程元数据，与分类绑定
-     * @param categoryUid  分类id
-     * @param metaInfo  要绑定的流程元数据
      * @return
      */
     @RequestMapping(value = "/create")
@@ -98,7 +96,7 @@ public class DhProcessMetaController {
     
     /**
      * 删除流程元数据
-     * @param data
+     * @param metaUid
      * @return
      */
     @RequestMapping(value = "/remove")
@@ -113,7 +111,7 @@ public class DhProcessMetaController {
     }
     
     /**
-     * 获取用于生成树的信息
+     * 获取用于生成树的信息（包含分类和元数据）
      */
     @RequestMapping(value = "/getTreeData")
     @ResponseBody
@@ -147,6 +145,20 @@ public class DhProcessMetaController {
         }
         return JSON.toJSONString(nodesToShow);
     }
-    
 
+    /**
+     * 模糊查询满足流程名的所有元数据
+     * @param proName
+     * @return
+     */
+    @RequestMapping(value = "/searchByProName")
+    @ResponseBody
+    public ServerResponse<List<DhProcessMeta>> searchByProName(String proName) {
+        try {
+            return ServerResponse.createBySuccess(dhProcessMetaService.searchByProName(proName));
+        } catch (Exception e) {
+            LOG.error("查询流程元数据失败", e);
+            return ServerResponse.createByErrorMessage("查询流程元数据失败");
+        }
+    }
 }

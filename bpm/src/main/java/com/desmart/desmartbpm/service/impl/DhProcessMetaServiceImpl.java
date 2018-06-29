@@ -431,11 +431,16 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
 
     }
 
-
     @Override
     public List<DhProcessMeta> listAll() {
-        
         return dhProcessMetaMapper.listAll();
+    }
+
+    @Override
+    public List<DhProcessMeta> searchByProName(String proName) {
+        DhProcessMeta selective = new DhProcessMeta();
+        selective.setProName(proName);
+        return dhProcessMetaMapper.listByDhProcessMetaSelective(selective);
     }
     
 }

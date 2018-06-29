@@ -55,7 +55,7 @@ public class BpmTaskUtil {
             result = this.applyTask(taskId, currentUserUid);
 
             // 不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
-            resultMap.put("assignTaskResult", result);
+            //resultMap.put("assignTaskResult", result);
 
             Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
             resultMap.putAll((Map)setDataResult);

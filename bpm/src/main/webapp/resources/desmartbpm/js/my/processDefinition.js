@@ -1,9 +1,53 @@
+// 为翻页提供支持
+var pageConfig = {
+    pageNum: 1,
+    pageSize: 10,
+    total: 0,
+    metaUid: "",
+	proName: ""
+};
+
+var setting = {
+    view: {
+        selectedMulti: true
+    },
+    data: {
+        simpleData: {
+            enable: true,
+            idKey: "id",
+            pIdKey: "pid",
+            rootPId: "rootCategory"
+        }
+    },
+    callback: {
+        onClick: zTreeOnClick// 点击回调
+    }
+};
+
+
 $(function() {
+    // 加载树
+    $.ajax({
+        url: common.getPath() + "/processMeta/getTreeData",
+        type: "post",
+        data: {},
+        dataType: "json",
+        success: function(result) {
+            $.fn.zTree.init($("#treeDemo"), setting, result);
+            if (getCookie("processDefinition_selectedMetaUid")) {
+                var treeObject = $.fn.zTree.getZTreeObj("treeDemo");
+                var node = treeObject.getNodeByParam("id", getCookie("processDefinition_selectedMetaUid"));
+                treeObject.selectNode(node, true);
+            }
+        }
+    });
+
+	// 选中之前选择的节点
 	if (getCookie("processDefinition_selectedMetaUid")) {
 		pageConfig.metaUid = getCookie("processDefinition_selectedMetaUid");
-		getInfo();
+		getInfo();  // 获取数据
 	} else {
-		doPage();
+		doPage(); // 刷新分页栏
 	}
 	
 });
@@ -48,6 +92,7 @@ function getInfo() {
 	});
 }
 
+// 绘制表格
 function drawTable(pageInfo) {
 	pageConfig.pageNum = pageInfo.pageNum;
 	pageConfig.pageSize = pageInfo.pageSize;
@@ -80,25 +125,25 @@ function drawTable(pageInfo) {
 				+ '<td>'
 				+ vo.proName
 				+ '</td>'
-				+ '<td>'
-				+ vo.proVerUid
-				+ '</td>'
-				+ '<td>'
+				// + '<td>'
+				// + vo.proVerUid
+				// + '</td>'
+				+ '<td attr="verName">'
 				+ vo.verName
 				+ '</td>'
-				+ '<td>'
+				+ '<td attr="isActive">'
 				+ vo.isActive
 				+ '</td>'
-				+ '<td>'
+				+ '<td attr="createTime">'
 				+ vo.verCreateTime
 				+ '</td>'
-				+ '<td>'
+				+ '<td attr="status">'
 				+ vo.proStatus
 				+ '</td>'
-				+ '<td>'
+				+ '<td  attr="updator">'
 				+ vo.updator
 				+ '</td>'
-				+ '<td>'
+				+ '<td  attr="updateTime">'
 				+ vo.updateTime
 				+ '</td>'
 				+ '</tr>';
@@ -176,9 +221,9 @@ $(function() {
 					    		var ck = $("#definitionList_tbody :checkbox:checked");
 					    		if (ck.data('proveruid') == vo.proVerUid) {
 					    			var $tr = ck.parent().parent();
-					    			$tr.find("td").eq(6).html(vo.proStatus); // 状态
-					    			$tr.find("td").eq(7).html(vo.updator); // 修改人
-					    			$tr.find("td").eq(8).html(vo.updateTime); // 修改时间
+					    			$tr.find('td[attr=status]').html(vo.proStatus); // 状态
+					    			$tr.find("td[attr=updator]").html(vo.updator); // 修改人
+					    			$tr.find("td[attr=updateTime]").html(vo.updateTime); // 修改时间
 					    		}
 					    	} else {
 					    		layer.alert(result.msg);
@@ -230,12 +275,12 @@ $(function() {
 				success : function(result) {
 					if (result.status == 0) {
 						$("#definitionList_tbody tr").each(function() {
-							var status = $(this).find("td").eq(6).html();
+							var status = $(this).find('td[attr=status]').html();
 							if (status == '已启用') {
-								$(this).find("td").eq(6).html('已同步');
+								$(this).find('td[attr=status]').html('已同步');
 							}
 						});
-						ck.parent().parent().find("td").eq(6).html("已启用");
+						ck.parent().parent().find('td[attr=status]').html("已启用");
 						layer.alert("启用成功");
 					}
 				}
@@ -243,58 +288,78 @@ $(function() {
 		});
 		
 	});
-	
-	// “流程配置”按钮
-	$("#toEditDefinition_btn")
-			.click(
-					function() {
-						var cks = $("[name='definition_ck']:checked");
-						if (!cks.length) {
-							layer.alert("请选择一个流程定义");
-							return;
-						}
-						if (cks.length > 1) {
-							layer.alert("请选择一个流程定义，不能选择多个");
-							return;
-						}
-						var ck = cks.eq(0);
-						var proUid = ck.data('prouid');
-						var proVerUid = ck.data('proveruid');
-						var proAppId = ck.data('proappid');
 
-						$
-								.ajax({
-									url : common.getPath()
-											+ "/processDefinition/tryEditDefinition",
-									dataType : "json",
-									type : "post",
-									data : {
-										"proUid" : proUid,
-										"proVerUid" : proVerUid,
-										"proAppId" : proAppId
-									},
-									success : function(result) {
-										if (result.status == 0) {
-											window.location.href = common
-													.getPath()
-													+ "/processDefinition/editDefinition?proUid="
-													+ proUid
-													+ "&proAppId="
-													+ proAppId
-													+ "&proVerUid="
-													+ proVerUid;
-										} else {
-											layer.alert(result.msg);
-										}
-									},
-									error : function() {
-										layer.alert("流程配置异常，请稍后再试");
-									}
-								});
-					});
+	// “流程配置”按钮
+    $("#toEditDefinition_btn")
+        .click(function () {
+            var cks = $("[name='definition_ck']:checked");
+            if (!cks.length) {
+                layer.alert("请选择一个流程定义");
+                return;
+            }
+            if (cks.length > 1) {
+                layer.alert("请选择一个流程定义，不能选择多个");
+                return;
+            }
+            var ck = cks.eq(0);
+            var proUid = ck.data('prouid');
+            var proVerUid = ck.data('proveruid');
+            var proAppId = ck.data('proappid');
+
+            $.ajax({
+                url: common.getPath() + "/processDefinition/tryEditDefinition",
+                dataType: "json",
+                type: "post",
+                data: {
+                    "proUid": proUid,
+                    "proVerUid": proVerUid,
+                    "proAppId": proAppId
+                },
+                success: function (result) {
+                    if (result.status == 0) {
+                        window.location.href = common
+                                .getPath() + "/processDefinition/editDefinition?proUid=" + proUid + "&proAppId=" + proAppId +
+                            "&proVerUid=" + proVerUid;
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                },
+                error: function () {
+                    layer.alert("流程配置异常，请稍后再试");
+                }
+            });
+        });
+
+	// 查询按钮
+    $('#searchByProName_btn').click(function(){
+        $.ajax({
+            url: common.getPath() + "/processMeta/searchByProName",
+            dataType: "json",
+            type: "post",
+            data: {
+				'proName': $('#proName_input').val()
+            },
+			beforeSend: function(){
+				layer.load(1);
+			},
+            success: function (result) {
+            	layer.closeAll('loading');
+                if (result.status == 0) {
+					selectNodeOnTree(result.data);
+                } else {
+                    layer.alert(result.msg);
+                }
+            },
+            error: function () {
+                layer.closeAll('loading');
+                layer.alert("查询失败");
+            }
+        });
+	});
 });
 
 $(function() {
+	// 查看"快照流程图"
 	$("#snapshotFlowChart_btn").click(function() {
 		var cks = $("[name='definition_ck']:checked")
 		if (!cks.length) {
@@ -332,6 +397,7 @@ $(function() {
 		})
 	})
 
+	// "流程配置"按钮
 	$("#toEditActivityConf_btn").click(
 			function() {
 				var cks = $("[name='definition_ck']:checked");
@@ -486,18 +552,55 @@ function copyProcess(){
 			proAppIdNew : proAppIdNew
 		},
 		success: function(data) {
+			layer.closeAll('loading');
 			if (data.status == 0) {
 				layer.alert("拷贝成功！");
 				$(".display_container8").css("display","none");
 			}else {
-				layer.alert("拷贝失败！");
-				console.log(data.msg);
+				layer.alert(data.msg);
 			}
 			layer.closeAll("loading");
 		},
 		error : function() {
-			layer.alert('拷贝失败');
-			layer.closeAll("loading");
+            layer.closeAll("loading");
+            layer.alert('拷贝失败');
 		}
 	})
+}
+
+// 选择符合的节点
+function selectNodeOnTree(metaList) {
+    var treeObject = $.fn.zTree.getZTreeObj("treeDemo");
+	var nodesNeedBeExpand = [];
+    for (var i = 0; i < metaList.length; i++) {
+    	nodesNeedBeExpand.push(metaList.categoryUid);
+	}
+
+	var allNodes = treeObject.transformToArray(treeObject.getNodes());
+    for (var i = 0; i < allNodes.length; i++) {
+        var currNode = allNodes[i];
+        var index = $.inArray(currNode.id, nodesNeedBeExpand);
+        if (index == -1) {
+            // 不是需折叠的
+            treeObject.expandNode(currNode, false);
+        } else {
+            treeObject.expandNode(currNode, true);
+        }
+    }
+
+    for (var i = 0; i < metaList.length; i++) {
+        var meta = metaList[i];
+        if (i == 0) {
+            // 选中节点
+            var node = treeObject.getNodeByParam("id", meta.proMetaUid);
+            treeObject.selectNode(node, true, true);
+        } else {
+            // 选中节点
+            var node = treeObject.getNodeByParam("id", meta.proMetaUid);
+            treeObject.selectNode(node, true, true);
+        }
+
+    }
+
+
 }

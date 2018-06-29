@@ -1182,13 +1182,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
 		// 获取树流程信息
-		HttpReturnStatus returnStatus = bpmProcessUtil.getProcessData(insId);
-		if(HttpReturnStatusUtil.isErrorResult(returnStatus)) {
+		HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
+		if(HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
 			return ServerResponse.createByErrorMessage("查询树流程信息出错");
 		}
 
 		// 获得任务的token
-		JSONObject jsonObject = JSONObject.parseObject(returnStatus.getMsg());
+		JSONObject jsonObject = JSONObject.parseObject(processDataReturnStatus.getMsg());
 		String tokenId = ProcessDataUtil.getTokenIdOfTask(taskId, jsonObject);
 		if (StringUtils.isBlank(tokenId)) {
 			return ServerResponse.createByErrorMessage("驳回失败，找不到tokenID");
@@ -1224,7 +1224,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 阻止拉取任务
 		taskMongoDao.batchlockTasks(taskIdList, LockedTask.REASON_REJECT_TASK);
 
-		// todo 重新分配任务
+		// 重新分配任务
 		// 获得任务处理人
 		String taskOwner = routeData.getString("userUid");
 		BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);

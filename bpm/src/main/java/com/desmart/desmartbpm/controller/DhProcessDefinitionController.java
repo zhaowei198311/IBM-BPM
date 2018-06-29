@@ -59,7 +59,7 @@ public class DhProcessDefinitionController {
                                                       @RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
                                                       @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
 
-        return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronized(metaUid, pageNum, pageSize);
+        return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronizedByMetaUid(metaUid, pageNum, pageSize);
     }
 
     /**

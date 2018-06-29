@@ -53,23 +53,6 @@ public class TaskMongoDaoImpl implements TaskMongoDao {
     }
 
     @Override
-    public int saveOrUpdateLastSynchronizedTaskId(int taskId) {
-        Query qurey = new Query(new Criteria("_id").is(Const.LAST_SYNCHRONIZED_TASK_ID_KEY));
-        Update update = new Update();
-        update.set("value", taskId);
-        WriteResult result = mongoTemplate.upsert(qurey, update, Const.COMMON_COLLECTION_NAME);
-        return result.getN();
-    }
-
-    @Override
-    public int queryLastSynchronizedTaskId() {
-        String itemStr = mongoTemplate.findById(Const.LAST_SYNCHRONIZED_TASK_ID_KEY, String.class,
-                Const.COMMON_COLLECTION_NAME);
-        if (itemStr == null) return 0;
-        return JSON.parseObject(itemStr).getIntValue("value");
-    }
-
-    @Override
     public List<LockedTask> getAllLockedTasks() {
         List<LockedTask> lockedTasks = mongoTemplate.findAll(LockedTask.class, LockedTask.LOCKED_TASK_COLLECTION_NAME);
         return lockedTasks;

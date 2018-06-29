@@ -8,19 +8,6 @@ import java.util.List;
 public interface TaskMongoDao {
 
 	/**
-	 * 更新最后同步的任务id
-	 * @param taskId
-	 * @return
-	 */
-	int saveOrUpdateLastSynchronizedTaskId(int taskId);
-
-	/**
-	 * 查询最后被同步的任务id
-	 * @return
-	 */
-	int queryLastSynchronizedTaskId();
-
-	/**
 	 * 根据键查询对应的value， 没有则返回null
 	 * @param taskId 键
 	 * @return

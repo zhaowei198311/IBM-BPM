@@ -43,7 +43,17 @@ public interface DhProcessMetaService {
      * @return
      */
     ServerResponse removeProcessMeta(String uid);
-    
+
+    /**
+     * 获得所有流程元数据
+     * @return
+     */
     List<DhProcessMeta> listAll();
-    
+
+    /**
+     * 根据流程名模糊查询匹配的流程元数据
+     * @param proName
+     * @return
+     */
+    List<DhProcessMeta> searchByProName(String proName);
 }

@@ -80,7 +80,7 @@ public class DhProcessCategoryController {
     }
     
     /**
-     * 
+     * 改变元数据在分类树的位置
      * @Title: changeThePosition  
      * @Description: 改变源数据在分类树的位置  
      * @param: @param metaUid
@@ -89,10 +89,10 @@ public class DhProcessCategoryController {
      * @return: ServerResponse<?>
      * @throws
      */
-    @RequestMapping(value = "/changeThePosition")
+    @RequestMapping(value = "/changeTheCategoryOfProcessMeta")
     @ResponseBody
     public ServerResponse<?> changeThePosition(String metaUid, String categoryUid){
-    	return dhProcessCategoryService.changeThePosition(metaUid, categoryUid);
+    	return dhProcessCategoryService.changeTheCategoryOfProcessMeta(metaUid, categoryUid);
     }
     
     /**
