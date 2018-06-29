@@ -4,6 +4,18 @@
 });*/
 var img = null;
 function loadImageData(a){
+	window.onbeforeunload = function()
+	{
+		deleteTemporaryFile();
+	}
+	
+	//为左侧菜单栏添加click事件
+	$(".layui-nav.layui-nav-tree").on('click',function () {
+		layer.alert('sss');
+	})
+	$("#imgEditMain").bind('click',function(){
+		layer.alert('sss');
+	})
     //var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");
 /*
@@ -144,10 +156,12 @@ function closeImageEdit(){
 	layer.confirm('是否保存修改?', function(index){
 		upload_image();
 		layer.close(index);
+		
 		$(".display_container_image_edit").css("display", "none");
 	},function(index){
 		deleteTemporaryFile();
 		layer.close(index);
+		
 		$(".display_container_image_edit").css("display", "none");
 	});
 	
