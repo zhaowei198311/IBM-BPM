@@ -244,7 +244,6 @@ $(function(){
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
 				  queryPorcess(categoryuid);
-				  queryByParent(categoryuid);
 			  }, function() {
 				  
 			  }
@@ -278,6 +277,30 @@ function queryByParent(categoryuid){
 	})
 };
 
+function queryNextGategory(categoryuid,trs){
+	$.ajax({
+		url : 'processCategory/queryByParent',
+		type : 'post',
+		dataType : 'json',
+		async:false, 
+		data : {
+			categoryParent : categoryuid
+		},
+		success : function(result){
+			var list = result
+			for (var i = 0; i < list.length; i++) {
+				var id = list[i].categoryUid.split(":")[1];
+				trs += '<li class="oneCategory" id="'+id+'" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
+						+ list[i].categoryName
+						+ '>'
+						+ '</a></li>';
+			}
+		},
+		error : function(result){
+			layer.alert("查询门店生命周期失败")
+		}
+	})
+};
 
 function queryPorcess(categoryuid){
 	$.ajax({
@@ -296,6 +319,7 @@ function queryPorcess(categoryuid){
 			var selective = "#"+id;
 			//$(selective).parent().find("li").not(selective).find("ul").remove();
 			var trs = '<ul class="nav2">';
+			queryNextGategory(categoryuid,trs);
 			for (var i = 0; i < list.length; i++) {
 				 trs += '<li class="li2"><a href="" target="iframe0">'
 						+ list[i].proName
