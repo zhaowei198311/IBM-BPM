@@ -113,16 +113,18 @@
 			    </div>
 		  	</div>
 		</div>
-		<!-- 查看流程实例信息 -->
+		<!-- 编辑流程实例信息 -->
 	<div id="processIns-text-div" class="display_container5">
 		<div class="display_content5" style="height: 430px;">
-			<div class="top">查看流程实例信息</div>
+			<div class="top">编辑流程实例信息</div>
 			<div class="middle1" style="height: 320px;">
 				<textarea id="processIns-text-content" style="height: 99.4%;width: 99.6%;">
 					
 				</textarea>
 			</div>
 			<div class="foot" style="padding-top: 1.4%;">
+				<button class="layui-btn layui-btn layui-btn-primary"
+						onclick="saveProcessInsData();">保存</button>
 				<button class="layui-btn layui-btn layui-btn-primary"
 						onclick="$('#processIns-text-div').hide();">关闭</button>
 			</div>

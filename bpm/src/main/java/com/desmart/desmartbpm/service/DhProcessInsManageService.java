@@ -70,4 +70,10 @@ public interface DhProcessInsManageService {
 	 * @return
 	 */
 	ServerResponse getCanTrunOffActivityMetas(DhProcessInstance dhProcessInstance);
+	/**
+	 * 保存流程实例信息
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse saveProcessInsData(DhProcessInstance dhProcessInstance);
 }

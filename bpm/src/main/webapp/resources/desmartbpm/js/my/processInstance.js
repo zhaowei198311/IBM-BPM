@@ -104,12 +104,11 @@ function getProcessInsInfo(){
 				layer.load(1);
 			},
 			success : function(result){
-				var jsonObject = JSON.parse(result.msg);
 				if (result.status == 0) {
-					$("#processIns-text-content").val(JSON.stringify(jsonObject.data));
+					$("#processIns-text-content").val(result.data);
 					$("#processIns-text-div").show();
 				}else{
-					layer.alert(jsonObject.status);
+					layer.alert(result.msg);
 				}
 				layer.closeAll("loading");
 			},error : function(){
@@ -267,6 +266,40 @@ function toTrunOffProcessIns(){
 	}else{
 		return;
 	}
+}
+
+//保存流程实例信息
+function saveProcessInsData(){
+	layer.confirm('确定保存修改？', {
+		  btn: ['确定', '取消'] 
+		}, function(index){
+			if(checkChecked()){
+			var insUid = $("input[type='checkbox'][name='checkProcessIns']:checked").val();
+			var insData = $("#processIns-text-content").val();
+			$.ajax({
+				url : common.getPath()+'/dhProcessInsManage/saveProcessInsData',
+				type : 'post',
+				dataType : 'json',
+				data : {
+					"insUid" : insUid,
+					"insData" : insData 
+				},
+				beforeSend: function(){
+					layer.load(1);
+				},
+				success : function(result){
+					layer.alert(result.msg);
+					layer.closeAll("loading");
+				},error : function(){
+					layer.alert("保存流程实例信息出现异常");
+					layer.closeAll("loading");
+				}
+			})
+			}
+			layer.close(index);
+		},function(index){
+			layer.close(index);
+		});
 }
 
 $(function(){

@@ -513,7 +513,7 @@ function hideHistoryFile(){
 function deleteAccessoryFile(a){
 	layer.confirm('确认删除？', {
 		  btn: ['确定', '取消'] 
-		}, function(index, layero){
+		}, function(index){
 	var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
     var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");		  
@@ -523,7 +523,7 @@ function deleteAccessoryFile(a){
 		  taskUid = null;
 	  }
     	$.ajax({
-    		url : common.getPath()+"accessoryFileUpload/deleteAccessoryFile.do",
+    		url : common.getPath()+"/accessoryFileUpload/deleteAccessoryFile.do",
     		type : 'POST',
     		dataType : 'json',
     		data : {

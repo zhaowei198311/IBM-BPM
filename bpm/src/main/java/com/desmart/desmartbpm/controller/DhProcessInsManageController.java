@@ -64,4 +64,9 @@ public class DhProcessInsManageController {
 	public ServerResponse toTrunOffProcessIns(DhProcessInstance dhProcessInstance) {
 		return dhProcessInstanceService.toTrunOffProcessIns(dhProcessInstance);
 	}
+	@RequestMapping("/saveProcessInsData")
+	@ResponseBody
+	public ServerResponse saveProcessInsData(DhProcessInstance dhProcessInstance) {
+		return dhProcessInstanceService.saveProcessInsData(dhProcessInstance);
+	}
 }

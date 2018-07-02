@@ -192,14 +192,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 	@Override
 	public ServerResponse getProcessInsInfo(DhProcessInstance dhProcessInstance) {
 		dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
-		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-		HttpReturnStatus httpReturn = bpmProcessUtil.getProcessData(dhProcessInstance.getInsId());
-		if (httpReturn.getCode() != -1) {
-			return ServerResponse.createBySuccessMessage(httpReturn.getMsg());
-		} else {
-			return ServerResponse.createByErrorMessage(httpReturn.getMsg());
-		}
+		return ServerResponse.createBySuccess(dhProcessInstance.getInsData());
 	}
 
 	@Override
@@ -364,5 +357,30 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 			}
 		}
 		return ServerResponse.createBySuccess(bpmActivityMetas);
+	}
+
+	@Override
+	public ServerResponse saveProcessInsData(DhProcessInstance dhProcessInstance) {
+		String insData = dhProcessInstance.getInsData();
+		if(!StringUtils.isBlank(insData)) {
+			try {
+	            JSONObject.parseObject(insData);
+	        } catch (Exception ex) {
+	            try {
+	                JSONObject.parseArray(insData);
+	            } catch (Exception ex1) {
+	                return ServerResponse.createByErrorMessage("保存流程实例信息失败,"+ex1.getMessage());
+	            }
+	        }
+			dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
+			Integer count = dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+			if(count>0) {
+				return ServerResponse.createBySuccessMessage("保存流程实例信息成功");
+			}else {
+				return ServerResponse.createByErrorMessage("保存流程实例信息失败");
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("保存流程实例信息失败,信息格式错误");
+		}
 	}
 }
