@@ -10,12 +10,12 @@ function loadImageData(a){
 	}
 	
 	//为左侧菜单栏添加click事件
-	$(".layui-nav.layui-nav-tree").on('click',function () {
+	/*$(".layui-nav.layui-nav-tree").on('click',function () {
 		layer.alert('sss');
 	})
 	$("#imgEditMain").bind('click',function(){
 		layer.alert('sss');
-	})
+	})*/
     //var appDocIdCard = $(a).val();
     var appDocUid = $(a).data("appdocuid");
 /*
