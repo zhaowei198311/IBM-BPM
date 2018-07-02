@@ -384,7 +384,7 @@ function queryPorcess(categoryuid){
 									+ '&proAppId='
 									+ list[i].proAppId
 									+ '&proName='
-									+ list[i].proAppId
+									+ list[i].proName
 									+ '" target="iframe0">'
 									+ list[i].proName
 									+ '</a></li>'
