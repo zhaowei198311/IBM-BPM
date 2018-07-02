@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.common.exception.PlatformException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfOuttimeNotifyType;
 import com.desmart.desmartbpm.enums.DhActivityConfRejectType;
-import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.service.DhActivityConfService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartsystem.dao.SysRoleMapper;

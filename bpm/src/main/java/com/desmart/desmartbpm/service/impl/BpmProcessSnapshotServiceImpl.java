@@ -9,6 +9,9 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.util.HttpReturnStatusUtil;
+import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     private BpmActivityMetaMapper bpmActivityMetaMapper;
     @Autowired
     private DhActivityConfMapper dhActivityConfMapper;
+    @Autowired
+    private DhProcessMetaMapper dhProcessMetaMapper;
 
 
     
@@ -77,27 +82,24 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     }
 
     public JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId) {
-        JSONArray results = new JSONArray();
+        JSONArray iteamsJsonArr = null;
         BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
-        
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
         HttpReturnStatus result = bpmProcessUtil.getVisualModel(processAppId, bpdId, snapshotId);
         
-        if (StringUtils.isNotBlank(result.getMsg())) {
+        if (!HttpReturnStatusUtil.isErrorResult(result)) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
             if ("200".equalsIgnoreCase(datas.getString("status"))) {
                 JSONObject data = datas.getJSONObject("data");
                 if (data != null) {
-                    results = data.getJSONArray("items");
+                    iteamsJsonArr = data.getJSONArray("items");
                 }
             }
+        } else {
+            throw new PlatformException("getVisualModel失败");
         }
 
-        if (results == null) {
-            results = new JSONArray();
-        }
-
-        return results;
+        return iteamsJsonArr;
     }
 
     @Transactional
@@ -192,7 +194,13 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> nodeToIncludeList = DataListUtils.cloneList(nodesSelected, BpmActivityMeta.class);
         
         if (nodeToIncludeList.size() == 0) {
-            throw new PlatformException("外链的流程不存在，或未被同步, 外链流程bpd_id: " + externalNode.getExternalId() + ", snapshot_id: " + externalNode.getSnapshotId());
+            // 找到未被同步的流程图，并提醒
+            DhProcessMeta processMetaLacked = dhProcessMetaMapper.queryByProAppIdAndProUid(externalNode.getProAppId(), externalNode.getExternalId());
+            if (processMetaLacked != null) {
+                throw new PlatformException("外链的流程未被同步, 外链流程名：" + processMetaLacked.getProName());
+            } else {
+                throw new PlatformException("外链的流程未被加入流程元数据：bpd_id：" + externalNode.getExternalId());
+            }
         }
         
         // 为同步的节点设置新的主键并记录老的主键

@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.exception;
+package com.desmart.common.exception;
 
 /**
  * 所有节点尝试连接失败

@@ -22,7 +22,7 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
-import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhAgentMapper;
 import com.desmart.desmartportal.entity.DhAgent;

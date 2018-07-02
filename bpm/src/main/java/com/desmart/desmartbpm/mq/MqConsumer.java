@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.desmart.desmartbpm.exception.MqNodeFailException;
+import com.desmart.common.exception.MqNodeFailException;
 import com.desmart.desmartbpm.util.PropertiesUtil;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.rabbitmq.client.AMQP;

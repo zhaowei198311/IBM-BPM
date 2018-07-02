@@ -12,12 +12,11 @@ import javax.annotation.PreDestroy;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-import com.desmart.desmartbpm.exception.MqAllNodesFailException;
-import com.desmart.desmartbpm.exception.MqNodeFailException;
+import com.desmart.common.exception.MqAllNodesFailException;
+import com.desmart.common.exception.MqNodeFailException;
 import com.desmart.desmartbpm.util.PropertiesUtil;
-import com.desmart.desmartbpm.exception.MqException;
+import com.desmart.common.exception.MqException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;

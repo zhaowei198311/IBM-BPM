@@ -39,7 +39,7 @@
         #{proTriStart}, #{proTriDeleted}, #{proTriCanceled},
         #{proTriPaused}, #{proTriUnpaused}, #{proTriReassigned},
         #{proTypeProcess}, #{proShowDelegate}, #{proShowDynaform},
-        #{lastModifiedDate}, #{lastModifiedUser},
+        sysdate, #{lastModifiedUser},
         sysdate, #{createUser}, #{proHeight},
         #{proWidth}, #{proTitleX}, #{proTitleY},
         #{proDebug}, #{proDynaforms}, #{proDerivationScreenTpl},

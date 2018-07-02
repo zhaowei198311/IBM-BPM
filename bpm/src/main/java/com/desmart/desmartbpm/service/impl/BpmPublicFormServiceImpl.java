@@ -20,7 +20,7 @@ import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
 import com.desmart.desmartbpm.util.SFTPUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;

@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
@@ -11,7 +12,6 @@ import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
-import com.desmart.desmartbpm.exception.PlatformException;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;

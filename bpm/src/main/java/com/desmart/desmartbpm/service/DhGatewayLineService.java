@@ -4,17 +4,16 @@ import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
 public interface DhGatewayLineService {
     
     /**
      * 生成网关连接线
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
+     * @param dhProcessDefinition
      * @return
      */
-    ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid);
+    ServerResponse generateGatewayLine(DhProcessDefinition dhProcessDefinition);
     
     /**
      * 判断是否需要为流程定义生成网关连接线记录

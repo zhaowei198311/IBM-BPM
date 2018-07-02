@@ -24,7 +24,7 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.github.pagehelper.PageHelper;

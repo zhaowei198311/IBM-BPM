@@ -1,4 +1,4 @@
-package com.desmart.desmartbpm.exception;
+package com.desmart.common.exception;
 
 /**
  * 获取连接失败

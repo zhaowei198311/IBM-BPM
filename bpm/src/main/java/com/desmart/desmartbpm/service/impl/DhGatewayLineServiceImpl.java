@@ -2,15 +2,9 @@ package com.desmart.desmartbpm.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
+import java.util.*;
+import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
+import com.desmart.common.exception.PlatformException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.dom4j.Attribute;
@@ -23,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -42,7 +35,7 @@ import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.engine.LswBpd;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+
 import com.desmart.desmartbpm.util.DateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
 import com.desmart.desmartbpm.util.rest.RestUtil;
@@ -57,7 +50,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     @Autowired
     private LswBpdMapper lswBpdMapper;
     @Autowired
-    private DhProcessDefinitionService dhProcessDefinitionService;
+    private DhProcessDefinitionMapper dhProcessDefinitionMapper;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
@@ -67,44 +60,34 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     @Autowired
     private DatRuleMapper datRuleMapper;
     
-    
-    public ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid) {
-        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
-            return ServerResponse.createByErrorMessage("参数异常");
-        }
-        DhProcessDefinition dhProcessDefinition = dhProcessDefinitionService.getDhProcessDefinition(proAppId, proUid, proVerUid);
-        if (dhProcessDefinition == null) {
-            return ServerResponse.createByErrorMessage("找不到此流程定义");
-        }
-        
-        List<Map<String, Object>> prepareData = prepareData(proAppId, proUid, proVerUid);
+
+    @Transactional(value = "transactionManager")
+    public ServerResponse generateGatewayLine(DhProcessDefinition dhProcessDefinition) {
+        List<Map<String, Object>> prepareData = prepareData(dhProcessDefinition.getProAppId(),
+                dhProcessDefinition.getProUid(), dhProcessDefinition.getProVerUid());
         analysisData(prepareData, dhProcessDefinition);
         return ServerResponse.createBySuccess();
     }
-    
+
+
     public boolean needGenerateGatewayLine(String proAppId, String proUid, String proVerUid) {
         BpmActivityMeta metaSelective = new BpmActivityMeta(proAppId, proUid, proVerUid);
         metaSelective.setActivityType("gateway");
         List<BpmActivityMeta> gatewayList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        Iterator<BpmActivityMeta> iterator = gatewayList.iterator();
+        while (iterator.hasNext()) {
+            BpmActivityMeta gatewayMeta = iterator.next();
+            if (!gatewayMeta.getActivityId().equals(gatewayMeta.getSourceActivityId())) {
+                // 如果源节点id与自身id不同，说明不是源节点，不需要为它生成网关连接线
+                iterator.remove();
+            }
+        }
         if (gatewayList.size() == 0) {
             // 如果图中没有网关，返回不需要生成网关
             return false;
         }
-        
-        BpmActivityMeta firstGatewayMeta = null;
-        for (BpmActivityMeta gatewayMeta : gatewayList) {
-            if (gatewayMeta.getActivityId().equals(gatewayMeta.getSourceActivityId())) {
-                firstGatewayMeta = gatewayMeta;
-                break;
-            }
-        }
-        if (firstGatewayMeta == null) {
-            return false;
-        }
-        // 查看这个环节有没有配置
-        int count = dhGatewayLineMapper.countByActivityId(firstGatewayMeta.getActivityId());
-        // 如果没配置就返回true
-        return count == 0;
+        // 如果包含网关环节，返回true
+        return true;
     }
     
     
@@ -140,8 +123,9 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
         return dataList;
     }
     
-    @Transactional
+    @Transactional(value = "transactionManager")
     public void analysisData(List<Map<String, Object>> mapList, DhProcessDefinition dhProcessDefinition) {
+        // 遍历处理Map中的visualModel和byteData数据
         for (Map<String, Object> map : mapList) {
             JSONObject data = (JSONObject)map.get("visualModel");
             JSONArray itemArray = data.getJSONArray("items");
@@ -162,7 +146,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                 }
             }
             
-            // 2. 找到所有的连接线
+            // 2. 找到所有的连接线，并装配成DhGatewayLine对象
             JSONArray linkArray = data.getJSONArray("links");
             for (Object link : linkArray) {
                 String stratId = ((JSONObject)link).getString("start");
@@ -172,8 +156,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                     String activityBpdId = ((JSONObject)link).getString("id");
                     String endId = ((JSONObject)link).getString("end");
                     boolean isDefault = ((JSONObject)link).getBoolean("needDefaultMarker");
-                    
-                    
+
                     DhGatewayLine gatewayLine = new DhGatewayLine();
                     gatewayLine.setGatewayLineUid(EntityIdPrefix.DH_GATEWAY_LINE + UUID.randomUUID().toString());
                     // 设置起点的activityId
@@ -219,7 +202,11 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                        // 如果不是默认的线路
                        if (StringUtils.equals("FALSE", gatewayLine.getIsDefault())) {
                            String condition = idConditionMap.get(gatewayLine.getActivityBpdId());
-                           if (condition != null) {
+                           if (StringUtils.isNotBlank(condition)) {
+                               // 如果condition中不含有 tw.decision.routeResult 返回异常
+                               if (!condition.contains("tw.decision.routeResult")) {
+                                   throw new PlatformException("流程图网关环节配置异常");
+                               }
                                int firstIndex = condition.indexOf("\"");
                                int lastIndex = condition.lastIndexOf("\"");
                                if (firstIndex < lastIndex) {
@@ -229,7 +216,11 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                                    datRule.setRuleName("result==\"" + condition + "\"");
                                    gatewayLine.setRuleId(datRule.getRuleId());
                                    ruleList.add(datRule);
+                               } else {
+                                   throw new PlatformException("流程图网关环节配置异常");
                                }
+                           } else {
+                               throw new PlatformException("流程图网关环节配置异常");
                            }
                        } 
                     }
@@ -240,7 +231,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                         datRuleMapper.batchInsertDatRule(ruleList);
                     }
                 } catch (DocumentException e) {
-                    LOG.error("解析网关XML错误", e);
+                    throw new PlatformException("解析网关XML错误", e);
                 }
                 
                 

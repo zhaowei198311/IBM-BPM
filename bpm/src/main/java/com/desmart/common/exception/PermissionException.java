@@ -1,4 +1,6 @@
-package com.desmart.desmartbpm.exception;
+package com.desmart.common.exception;
+
+import com.desmart.common.exception.PlatformException;
 
 /**
  * 权限异常

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTriggerException;
-import com.desmart.desmartbpm.exception.PlatformException;
+
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartbpm.service.DhTriggerExceptionService;
 import com.desmart.desmartbpm.service.DhTriggerService;

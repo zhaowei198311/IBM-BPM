@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 
@@ -52,11 +53,7 @@ import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
-import com.desmart.desmartbpm.exception.PermissionException;
-import com.desmart.desmartbpm.service.BpmFormManageService;
-import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.service.DhObjectPermissionService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
+import com.desmart.common.exception.PermissionException;
 import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.util.rest.RestUtil;
@@ -111,7 +108,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DatRuleConditionMapper datRuleConditionMapper;
     @Autowired
     private DhRouteService dhRouteService;
-    
+    @Autowired
+    private DhGatewayLineService dhGatewayLineService;
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronizedByMetaUid(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -182,44 +180,38 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
     }
 
-    @Transactional
+    @Transactional(value = "transactionManager")
     public ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
         
-        DhProcessDefinition definitionSelective = new DhProcessDefinition();
-        definitionSelective.setProVerUid(proVerUid);
-        definitionSelective.setProAppId(proAppId);
-        definitionSelective.setProUid(proUid);
+        DhProcessDefinition definitionSelective = new DhProcessDefinition(proAppId, proUid, proVerUid);
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
+
         String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         if (list.size() == 0) { 
-            // 同步环节
+            // 如果该流程定义不存在于数据库， 生成环节信息——BpmProcessMeta
             bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
             // 插入新流程定义记录
-            DhProcessDefinition dhProcessDefinition = new DhProcessDefinition();
-            dhProcessDefinition.setProUid(proUid);
-            dhProcessDefinition.setProAppId(proAppId);
-            dhProcessDefinition.setProVerUid(proVerUid);
+            DhProcessDefinition dhProcessDefinition = new DhProcessDefinition(proAppId, proUid, proVerUid);
             dhProcessDefinition.setCreateUser(currentUser);
+            dhProcessDefinition.setLastModifiedUser(currentUser);
             dhProcessDefinition.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
             dhProcessDefinition.setIsAllUserStart("FALSE");
             int countRow = dhProcessDefinitionMapper.save(dhProcessDefinition);
-            if (countRow > 0) {
-                return ServerResponse.createBySuccess();
-            } else {
+            if (countRow <= 0) {
                 return ServerResponse.createByErrorMessage("同步失败");
             }
+            // 如果需要生成网关连接线
+            if (dhGatewayLineService.needGenerateGatewayLine(proAppId, proUid, proVerUid)) {
+                return dhGatewayLineService.generateGatewayLine(dhProcessDefinition);
+            } else{
+                return ServerResponse.createBySuccess();
+            }
         } else {
-            // 更新流程定义状态
-            DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
-            selective.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
-            selective.setLastModifiedUser(currentUser);
-            dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(selective);
-            return ServerResponse.createBySuccess();
+            return ServerResponse.createByErrorMessage("该版本已经同步过");
         }
-        
         
     }
 

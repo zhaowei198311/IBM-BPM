@@ -14,7 +14,7 @@ import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.util.*;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.entity.*;
-import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
 import com.desmart.desmartportal.entity.*;

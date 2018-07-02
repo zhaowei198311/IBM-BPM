@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
-import com.desmart.desmartbpm.exception.PlatformException;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 

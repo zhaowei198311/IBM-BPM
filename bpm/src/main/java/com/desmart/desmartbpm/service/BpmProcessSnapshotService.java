@@ -13,7 +13,7 @@ public interface BpmProcessSnapshotService {
 
 
     /**
-     * 同步环节
+     * 同步环节, 生成平台的环节信息
      * @param request  httpRequest
      * @param bpdId  流程图ID
      * @param snapshotId 引擎中快照版本
@@ -22,7 +22,14 @@ public interface BpmProcessSnapshotService {
      */
     void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
 
-    /** 获得虚拟节点  */
+    /**
+     * 获得 VisualModel 中的 items数组
+     * @param request
+     * @param bpdId
+     * @param snapshotId
+     * @param processAppId
+     * @return
+     */
     JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
     
 

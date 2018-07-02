@@ -76,17 +76,7 @@ public class DhProcessDefinitionController {
 
         try {
             ServerResponse serverResponse = dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
-            if (serverResponse.isSuccess()) {
-                // 判断是否需要同步网关路线
-                boolean needGenerateGatewayLine = dhGatewayLineService.needGenerateGatewayLine(proAppId, proUid, proVerUid);
-                if (needGenerateGatewayLine) {
-                    return dhGatewayLineService.generateGatewayLine(proAppId, proUid, proVerUid);
-                } else {
-                    return serverResponse;
-                }
-            } else {
-                return serverResponse;
-            }
+            return serverResponse;
         } catch (PlatformException pe) {
             LOG.error("同步环节失败", pe);
             return ServerResponse.createByErrorMessage(pe.getMessage());
