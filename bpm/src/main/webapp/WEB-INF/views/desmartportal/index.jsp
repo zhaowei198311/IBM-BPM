@@ -248,6 +248,17 @@ $(function(){
 				  
 			  }
 			);
+	
+	$(".nav1 .viewProcess").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
+			  function() {
+				   $(".nav").find("ul").not(".nav1").remove();
+				  // 鼠标悬停 查询数据
+				  var categoryuid = $(this).data("categoryuid");
+				  queryPorcess(categoryuid);
+			  }, function() {
+				  
+			  }
+			);
 });
 
 function queryByParent(categoryuid){
@@ -304,16 +315,15 @@ function queryNextGategory(categoryuid){
 var trs = "";
 function queryPorcess(categoryuid){
 	$.ajax({
-		url : 'processMeta/listByCategoryUid',
+		url : 'processMeta/searchByCategoryUid',
 		type : 'post',
 		dataType : 'json',
 		async:false, 
 		data : {
-			categoryUid : categoryuid,
-			proName : null
+			categoryUid : categoryuid
 		},
 		success : function(result){
-			var list = result.data.list;
+			var list = result.data;
 			console.info(list)
 			var id = categoryuid.split(":")[1];
 			var selective = "#"+id;
