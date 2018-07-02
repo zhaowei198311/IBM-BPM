@@ -240,7 +240,7 @@ $(function(){
 	
 	$(".nav1 .oneCategory").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
 			  function() {
-				  $(".nav").find("ul").not(".nav1").remove();
+				   $(".nav").find("ul").not(".nav1").remove();
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
 				  queryPorcess(categoryuid);
@@ -295,15 +295,15 @@ function queryPorcess(categoryuid){
 			var id = categoryuid.split(":")[1];
 			var selective = "#"+id;
 			//$(selective).parent().find("li").not(selective).find("ul").remove();
+			var trs = '<ul class="nav2">';
 			for (var i = 0; i < list.length; i++) {
-				var trs = '<ul class="nav2">'
-						+ '<li class="li2"><a href="" target="iframe0">'
+				 trs += '<li class="li2"><a href="" target="iframe0">'
 						+ list[i].proName
 						+ '</a></li>'
-						+ '<h1 style="clear: both;"></h1>'
-						+ '</ul>';
-				$(selective).append(trs)
+						+ '<h1 style="clear: both;"></h1>';
 			}
+			trs+='</ul>';
+				$(selective).append(trs)
 			$(".nav2").show();
 		},
 		error : function(result){
