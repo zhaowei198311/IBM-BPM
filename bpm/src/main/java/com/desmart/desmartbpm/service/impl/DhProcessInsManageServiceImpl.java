@@ -369,7 +369,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 	            try {
 	                JSONObject.parseArray(insData);
 	            } catch (Exception ex1) {
-	                return ServerResponse.createByErrorMessage("保存流程实例信息失败,"+ex1.getMessage());
+	                return ServerResponse.createByErrorMessage("保存流程实例信息失败,格式不符合JSON规范");
 	            }
 	        }
 			dhProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
