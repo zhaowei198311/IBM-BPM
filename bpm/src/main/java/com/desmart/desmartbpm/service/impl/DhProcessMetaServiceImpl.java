@@ -443,5 +443,10 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         selective.setProName(proName);
         return dhProcessMetaMapper.listByDhProcessMetaSelective(selective);
     }
+
+	@Override
+	public List<DhProcessMeta> searchByCategory(String categoryUid) {
+		return dhProcessMetaMapper.listByCategoryUid(categoryUid);
+	}
     
 }

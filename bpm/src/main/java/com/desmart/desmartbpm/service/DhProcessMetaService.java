@@ -56,4 +56,9 @@ public interface DhProcessMetaService {
      * @return
      */
     List<DhProcessMeta> searchByProName(String proName);
+    
+    /**
+     * 根据分类id 查询流程实例
+     */
+    List<DhProcessMeta> searchByCategory(String categoryUid);
 }

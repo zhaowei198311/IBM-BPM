@@ -68,4 +68,11 @@ public interface DhProcessMetaMapper {
      * @return
      */
     int removeByProMetaUid(String proceeMetaUid);
+    
+    /**
+     * 根据分类id 查询所有流程实例
+     * @param categoryUid 分类id
+     * @return
+     */
+    List<DhProcessMeta> listByCategoryUid(@Param("categoryUid")String categoryUid);
 }

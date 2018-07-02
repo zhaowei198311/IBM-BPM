@@ -122,4 +122,10 @@
         where PRO_META_UID = #{proMetaUid}
     </delete>
     
+    <select id="listByCategoryUid" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+    	select <include refid="base_column"/> 
+        from dh_process_meta 
+        where CATEGORY_UID = #{categoryUid}
+    </select>
+    
 </mapper>

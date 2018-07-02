@@ -161,4 +161,15 @@ public class DhProcessMetaController {
             return ServerResponse.createByErrorMessage("查询流程元数据失败");
         }
     }
+    
+    @RequestMapping(value = "/searchByCategoryUid")
+    @ResponseBody
+    public ServerResponse<List<DhProcessMeta>> searchByCategoryUid(String categoryUid) {
+        try {
+            return ServerResponse.createBySuccess(dhProcessMetaService.searchByCategory(categoryUid));
+        } catch (Exception e) {
+            LOG.error("查询流程元数据失败", e);
+            return ServerResponse.createByErrorMessage("查询流程元数据失败");
+        }
+    }
 }
