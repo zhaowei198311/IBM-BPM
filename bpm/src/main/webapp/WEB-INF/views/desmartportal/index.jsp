@@ -90,7 +90,7 @@
 						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
 							<ul class="nav1">
- 								<c:forEach items="${listmap}" var="info">
+<%--  								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
 											></a>
 										<ul class="nav2">
@@ -102,7 +102,7 @@
 											</c:forEach>
 										</ul>
 									</li>
-								</c:forEach>
+								</c:forEach> --%>
 							</ul>
 						</div>
 					</div>
@@ -229,7 +229,8 @@
 	</script>
 </body>
 </html>
-<!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
+
+<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" >	
@@ -239,10 +240,11 @@ $(function(){
 	
 	$(".nav1 .oneCategory").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
 			  function() {
-				 //  $(".nav").find("ul").not(".nav1").remove();
+				  $(".nav").find("ul").not(".nav1").remove();
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
 				  queryPorcess(categoryuid);
+				  queryByParent(categoryuid);
 			  }, function() {
 				  
 			  }
@@ -310,4 +312,3 @@ function queryPorcess(categoryuid){
 }
 
 </script>
- -->
