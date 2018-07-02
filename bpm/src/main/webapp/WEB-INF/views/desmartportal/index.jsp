@@ -24,7 +24,7 @@
 <link rel="stylesheet"
 	href="resources/desmartportal/css/menus/jquery-menus.css" />
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
-
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 </head>
 <body class="layui-layout-body">
 
@@ -89,7 +89,7 @@
 					<div class="menu_detail1">
 						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
-							<ul class="nav1">
+							<ul class="nav1" style="overflow:yes;">
 <%--  								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
 											></a>
@@ -233,6 +233,7 @@
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="text/javascript" >	
 $(function(){ 
 	
@@ -248,17 +249,7 @@ $(function(){
 				  
 			  }
 			);
-	
-	$(".nav1 .viewProcess").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
-			  function() {
-				   $(".nav").find("ul").not(".nav1").remove();
-				  // 鼠标悬停 查询数据
-				  var categoryuid = $(this).data("categoryuid");
-				  queryPorcess(categoryuid);
-			  }, function() {
-				  
-			  }
-			);
+
 });
 
 function queryByParent(categoryuid){
@@ -328,10 +319,10 @@ function queryPorcess(categoryuid){
 			var id = categoryuid.split(":")[1];
 			var selective = "#"+id;
 			//$(selective).parent().find("li").not(selective).find("ul").remove();
-			trs = '<ul class="nav2">';
+			trs = '<ul class="nav2" style="overflow:yes;">';
 			queryNextGategory(categoryuid);
 			for (var i = 0; i < list.length; i++) {
-				 trs += '<li class="li2"><a href="" target="iframe0">'
+				 trs += '<li class="li2"><a href="menus/processInstanceByUser?proUid='+list[i].proUid+'&proAppId='+list[i].proAppId+'&proName='+list[i].proAppId+'" target="iframe0">'
 						+ list[i].proName
 						+ '</a></li>'
 						+ '<h1 style="clear: both;"></h1>';
