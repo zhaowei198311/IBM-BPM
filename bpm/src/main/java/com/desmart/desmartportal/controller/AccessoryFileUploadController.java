@@ -76,6 +76,7 @@ public class AccessoryFileUploadController {
 	@RequestMapping("singleFileDown.do")
 	public void singleFileDown(DhInstanceDocument dhInstanceDocument, HttpServletResponse response) {
 		// System.out.println(dhInstanceDocument.getAppDocFileName());
+		dhInstanceDocument = accessoryFileUploadServiceImpl.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
 		OutputStream out = null;
 		try {
 			String fileName = dhInstanceDocument.getAppDocFileName();
@@ -84,7 +85,7 @@ public class AccessoryFileUploadController {
 			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));  
 			response.setCharacterEncoding("UTF-8"); 
 			response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
-			response.setContentType("application/x-msdownload"); // 设置内容类型为下载类型
+			response.setContentType(dhInstanceDocument.getAppDocType()); // 设置返回内容的mime类型
 			
 			out = response.getOutputStream(); // 创建页面返回方式为输出流，会自动弹出下载框
 

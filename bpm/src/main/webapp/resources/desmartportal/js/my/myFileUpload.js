@@ -275,7 +275,7 @@ function loadFileList(){
 		      +"<td>"+datetimeFormat_1(result.data[i].appDocCreateDate)+"</td>"	
 		      +"<td>";
 		      
-			  info += "<button onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+			  info += "<button value ='"+result.data[i].appDocUid+"' onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
 		     
 		      if(taskStatus!="32"&&taskStatus!="-2"){
 		    	  info += "<button class='layui-btn layui-btn-primary layui-btn-sm layui-update-file' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>更新附件</button>"
@@ -395,10 +395,9 @@ function batchDown(){
 // 单个下载触发事件
 function singleDown(a){
   var url = common.getPath()+"/accessoryFileUpload/singleFileDown.do";
-  var appDocFileName = $(a).parent().parent().find("td").eq(1).text();
-  var appDocFileUrl = $(a).parent().parent().find("td").eq(0).find("input[name='appDocFileUrl']").val();
+  var appDocUid = $(a).val();
   // layer.load(1);
-  post(url,{appDocFileName :appDocFileName,appDocFileUrl:appDocFileUrl});
+  post(url,{"appDocUid" : appDocUid});
 };
 
 // 文件下载(单个下载)
@@ -493,7 +492,7 @@ function showHistoryFile(a){
 					+"<td>"+result.data[i].appUserName+"</td>"
 					+"<td>"+result.data[i].updateUserName+"</td>"
 					+"<td>"+datetimeFormat_1(result.data[i].appDocUpdateDate)+"</td>"
-					+"<td><button onclick='singleDown(this)'" 
+					+"<td><button value ='"+result.data[i].appDocUid+"' onclick='singleDown(this)'" 
 					+" class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
 					+"</td></tr>";
 					tbody.append(info);
