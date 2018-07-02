@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.desmart.desmartbpm.entity.DatRule;
-import com.desmart.desmartbpm.exception.PlatformException;
 
 
 /**
