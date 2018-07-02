@@ -548,10 +548,12 @@
 	
 	//add根据分类Id获得流程元集合数据
 	function getMetaInfo(categoryUid){
-		layer.load(1);
 		$.ajax({
 			url:"agent/listByCategoryUid",
 			method:"post",
+			beforeSend:function(){
+				layer.load(1);
+			},
 			data:{
 				categoryUid:categoryUid,
 				proName:$("#search_processName").val()
@@ -574,16 +576,21 @@
 					}
 				}
 				layer.closeAll('loading');
-			}//end success
+			},//end success
+			error:function(){
+				layer.closeAll('loading');
+			}
 		});
 	}
 	
 	//update根据分类Id获得流程元集合数据
 	function getUpdateMetaInfo(categoryUid){
-		layer.load(1);
 		$.ajax({
 			url:"agent/listByCategoryUid",
 			method:"post",
+			beforeSend:function(){
+				layer.load(1);
+			},
 			data:{
 				categoryUid:categoryUid,
 				proName:$("#update_search_processName").val()
@@ -613,7 +620,10 @@
 					} 
 				}
 				layer.closeAll('loading');
-			}//end success
+			},//end success
+			error:function(){
+				layer.closeAll('loading');
+			}
 		});
 	}
 	
@@ -632,7 +642,6 @@
 		var agentSdate = $("#addAgentSdate").val();
 		var agentEdate = $("#addAgentEdate").val();
 		var agentPerson = $("#addAgentPerson").val().replace(";","");
-		layer.load(1);
 		//判断值不为空
 		if(agentSdate!=null && agentSdate!="" && agentEdate!=null && agentEdate!=""
 			&& agentPerson!=null && agentPerson!="" && proMetaUidArr.length!=0){
@@ -648,6 +657,9 @@
 				$.ajax({
 					url:"agent/addAgentInfo",
 					method:"post",
+					beforeSend:function(){
+						layer.load(1);
+					},
 					traditional: true,//传递数组给后台
 					data:{
 						agentProMetaUidArr:proMetaUidArr,
@@ -664,6 +676,9 @@
 						}else{
 							layer.alert(result.msg);
 						}
+						layer.closeAll('loading');
+					},
+					error:function(){
 						layer.closeAll('loading');
 					}
 				});
@@ -690,7 +705,6 @@
 		var updateAgentSdate = $("#updateAgentSdate").val();
 		var updateAgentEdate = $("#updateAgentEdate").val();
 		var updateAgentPerson = $("#updateAgentPerson").val().replace(";","");
-		layer.load(1);
 		//判断值不为空
 		if(updateAgentSdate!=null && updateAgentSdate!="" && updateAgentEdate!=null && updateAgentEdate!=""
 			&& updateAgentPerson!=null && updateAgentPerson!="" && updateProMetaUidArr.length!=0){
@@ -706,6 +720,9 @@
 				$.ajax({
 					url:"agent/updateAgentInfo",
 					method:"post",
+					beforeSend:function(){
+						layer.load(1);
+					},
 					traditional: true,//传递数组给后台
 					data:{
 						agentId:updateAgentId,
@@ -724,6 +741,9 @@
 						}else{
 							layer.alert(result.msg);
 						}
+						layer.closeAll('loading');
+					},
+					error:function(){
 						layer.closeAll('loading');
 					}
 				});
