@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.mongo;
 
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -20,7 +21,8 @@ public interface InsDataDao {
 	 * @return  
 	 * @return List<JSONObject>
 	 */
-	List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
+	List<JSONObject> queryInsData(String status, String processName, Date startTime, Date endTime,
+								Integer pageNum, Integer pageSize, 
 								String usrUid, String proUid, String proAppId);
 	
 	/**

@@ -61,26 +61,31 @@
 					<input id="proName" value="${proName}" style="display: none;">
 				</div>
 				<div class="layui-col-xs3">
-					<div class="layui-form-pane">
-						<div class="layui-form-this">
+<!-- 					<div class="layui-form-pane"> -->
+<!-- 						<div class="layui-form-this"> -->
 <!-- 							<label class="layui-form-label" style="cursor: pointer;">刷新</label> -->
 							<div class="layui-input-block">
 								<select id="searchType" class="layui-input-block group_select" name="group"
 									lay-verify="required">
-									<option value="formData">表单字段</option>
-									<option value="processData">流程字段</option>
+									<option value="">全部</option>
+									<option value="1">运转中</option>
+									<option value="2">完成</option>
+									<option value="3">失败</option>
+									<option value="4">终止</option>
+									<option value="5">未启动</option>
+									<option value="6">暂停</option>
 								</select>
 							</div>
-						</div>
-					</div>
+<!-- 						</div> -->
+<!-- 					</div> -->
 				</div>
 				<div class="layui-col-xs2">
-					<input id="fieldName" type="text" placeholder="字段名" class="layui-input">
+					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
 				</div>
-				<div class="layui-col-xs2">
-					<input id="fieldValue" type="text" placeholder="字段值" class="layui-input">			
+				<div class="layui-col-xs2" style="width: 24%">
+					<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
 				</div>
-				<div class="layui-col-xs3" style="margin-left: 25px;">
+				<div class="layui-col-xs2" style="margin-left: 5%">
 					<button class="layui-btn" onclick="queryProcessInstance()">查询</button>
 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
 				</div>
@@ -159,19 +164,14 @@
 		total : 0
 	}
 
-// 	layui.use([ 'laypage', 'layer' ], function() {
-// 		var laypage = layui.laypage, layer = layui.layer;
-// 		//完整功能
-// 		laypage.render({
-// 			elem : 'lay_page',
-// 			count : 50,
-// 			limit : 10,
-// 			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
-// 			jump : function(obj) {
-// // 				console.log(obj)
-// 			}
-// 		});
-// 	});
+	layui.use('laydate', function(){
+		var laydate = layui.laydate;
+		  	laydate.render({
+		    elem: '#init-startTime-search',
+		    type: 'datetime',
+		    range: true
+		});
+	});
 
 	$(document).ready(function() {
 // 		var sign = true;
@@ -183,8 +183,14 @@
 	function queryProcessInstance() {
 		var proUid = $('#proUid').val();
 		var proAppId = $('#proAppId').val();
-		var key = $('#fieldName').val();
-		var value = $('#fieldValue').val();
+// 		var key = $('#fieldName').val();
+// 		var value = $('#fieldValue').val();
+		// 流程状态
+		var status = $('#searchType').val();
+		var processName = $('#processName').val();
+		var time = $("#init-startTime-search").val();
+		var timeArray = time.split(' - ');
+		var endTime = null;
 		// 按条件查询 流程实例
 		$.ajax({
 			url : 'processInstance/queryProcessInstanceByIds',
@@ -195,8 +201,12 @@
 				pageSize : pageConfig.pageSize,
 				proUid : proUid,
 				proAppId : proAppId,
-				key : key,
-				value : value
+// 				key : key,
+// 				value : value
+				status: status,
+				processName: processName,
+				startTime: timeArray[0],
+				endTime: timeArray[1]
 			},
 			beforeSend : function() {
 				index = layer.load(1);

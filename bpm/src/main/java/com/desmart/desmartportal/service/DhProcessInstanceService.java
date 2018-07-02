@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -181,6 +182,7 @@ public interface DhProcessInstanceService {
 	 * @return ServerResponse<List<JSONObject>>  
 	 * @throws
 	 */
-	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String key, String value, Integer pageNum, Integer pageSize, 
+	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
+															Integer pageNum, Integer pageSize, 
 															String usrUid, String proUid, String proAppId);
 }

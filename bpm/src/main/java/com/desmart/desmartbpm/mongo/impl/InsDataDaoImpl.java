@@ -32,22 +32,43 @@ public class InsDataDaoImpl implements InsDataDao{
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 
 	@Override
-	public List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
+	public List<JSONObject> queryInsData(String status, String processName, Date startTime, Date endTime, 
+			Integer pageNum, Integer pageSize, 
 			String usrUid, String proUid, String proAppId) {
 		// 将数据插入mongo insData 集合中
 		try {
 //			insertInsData();
 			Query query = new Query();
-			if (!key.isEmpty()) {
-				if (value.contains("，")) {
-					String[] values = value.split("，");
-					String reg = "";
-					for (String string : values) {
-						reg += ".*" + string;
-					}
-					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(reg));
+//			if (!key.isEmpty()) {
+//				if (value.contains("，")) {
+//					String[] values = value.split("，");
+//					String reg = "";
+//					for (String string : values) {
+//						reg += ".*" + string;
+//					}
+//					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(reg));
+//				}else {
+//					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(".*" + value + ".*"));
+//				}
+//			}
+			// 流程实例状态
+			if (!status.isEmpty()) {
+				query.addCriteria(Criteria.where("insStatusId").is(Integer.parseInt(status)));
+			}
+			// 流程实例标题
+			if (!processName.isEmpty()) {
+				query.addCriteria(Criteria.where("insTitle").regex(".*" + processName + ".*"));
+			}
+			// 流程实例创建时间查询范围
+			if (startTime == null) {
+				if (endTime != null) {
+					query.addCriteria(Criteria.where("insCreateDate").lt(endTime));
+				}
+			}else {
+				if (endTime == null) {
+					query.addCriteria(Criteria.where("insCreateDate").gte(startTime));
 				}else {
-					query.addCriteria(Criteria.where("insData$.formData."+ key +".value").regex(".*" + value + ".*"));
+					query.addCriteria(Criteria.where("insCreateDate").gte(startTime).lt(endTime));
 				}
 			}
 			query.addCriteria(Criteria.where("relationUsers").regex(".*" + usrUid + ".*"));

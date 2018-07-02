@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartportal.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -187,9 +189,11 @@ public class DhProcessInstanceController {
 													@RequestParam(value = "proAppId", required = true) String proAppId,
 													@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
 													@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-													@RequestParam(value = "key", required = true) String key,
-													@RequestParam(value = "value", required = true) String value){
+													@RequestParam(value = "status", required = true) String status,
+													@RequestParam(value = "processName", required = true) String processName,
+													@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date startTime,
+													@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date endTime){
 		String usrUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER); 
-		return dhProcessInstanceService.queryProcessInstanceByIds(key, value, pageNum, pageSize, usrUid, proUid, proAppId);
+		return dhProcessInstanceService.queryProcessInstanceByIds(status, processName, startTime, endTime, pageNum, pageSize, usrUid, proUid, proAppId);
 	}
 }
