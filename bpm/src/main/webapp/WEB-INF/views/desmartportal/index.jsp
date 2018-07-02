@@ -236,68 +236,118 @@
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="text/javascript" >	
 $(function(){ 
+
 	
 	queryByParent('rootCategory');
 	
 	$(".nav1 .oneCategory").hover(//为li绑定了鼠标进入和鼠标移开的两个参数
 			  function() {
-				   $(".nav").find("ul").not(".nav1").remove();
+				  $(".nav1 .oneCategory").not(this).children("ul").hide();
 				  // 鼠标悬停 查询数据
 				  var categoryuid = $(this).data("categoryuid");
-				  queryPorcess(categoryuid);
+				  var child_ul = $(this).children("ul");
+				  if (child_ul.length <= 0) {
+				  	var categoryuid = $(this).data("categoryuid");
+				  	queryPorcess(categoryuid);
+			  	  }
+				  $(this).children("ul").show();
 			  }, function() {
-				  
+				  $(this).children("ul").hide();
 			  }
 			);
 
 });
 
-function queryByParent(categoryuid){
-	$.ajax({
-		url : 'processCategory/queryByParent',
-		type : 'post',
-		dataType : 'json',
-		async:false, 
-		data : {
-			categoryParent : categoryuid
-		},
-		success : function(result){
-			var list = result
-			console.info(list)
-			for (var i = 0; i < list.length; i++) {
-				var id = list[i].categoryUid.split(":")[1];
-				var trs = '<li class="oneCategory" id="'+id+'" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
-						+ list[i].categoryName
-						+ '>'
-						+ '</a></li>';
-				$(".nav1").append(trs)
-			}
-		},
-		error : function(result){
-			layer.alert("查询门店生命周期失败")
+	function overViewProcess(a) {
+		//$(a).parent().parent().children("li").not($(a).parent()).hide();
+		// 鼠标悬停 查询数据
+		var categoryuid = $(a).data("categoryuid");
+		var child_ul = $(a).children("ul");
+		if (child_ul.length <= 0) {
+			queryPorcess(categoryuid);
 		}
-	})
-};
+		$(a).children("ul").show();
+	}
+	
+	function outViewProcess(a){
+		$(a).children("ul").hide();
+	}
 
-function queryNextGategory(categoryuid){
-	$.ajax({
-		url : 'processCategory/queryByParent',
-		type : 'post',
-		dataType : 'json',
-		async:false, 
-		data : {
-			categoryParent : categoryuid
-		},
-		success : function(result){
-			var list = result
-			for (var i = 0; i < list.length; i++) {
-				var id = list[i].categoryUid.split(":")[1];
-				trs += '<li class="oneCategory" id="'+id+'" data-categoryuid="'+list[i].categoryUid+'"><a class="viewProcess">'
-						+ list[i].categoryName
-						+ '>'
-						+ '</a></li>';
+	function queryByParent(categoryuid) {
+		$.ajax({
+					url : 'processCategory/queryByParent',
+					type : 'post',
+					dataType : 'json',
+					async : false,
+					data : {
+						categoryParent : categoryuid
+					},
+					success : function(result) {
+						var list = result
+						console.info(list)
+						for (var i = 0; i < list.length; i++) {
+							var id = list[i].categoryUid.split(":")[1];
+							var trs = '<li class="oneCategory" id="'+id+'" data-categoryuid="'+list[i].categoryUid+'"><a>'
+									+ list[i].categoryName + '>' + '</a></li>';
+							$(".nav1").append(trs)
+						}
+					},
+					error : function(result) {
+						layer.alert("查询门店生命周期失败")
+					}
+				})
+	};
+
+	function queryNextGategory(categoryuid) {
+		$.ajax({
+			url : 'processCategory/queryByParent',
+			type : 'post',
+			dataType : 'json',
+			async : false,
+			data : {
+				categoryParent : categoryuid
+			},
+			success : function(result) {
+				var list = result
+				for (var i = 0; i < list.length; i++) {
+					var id = list[i].categoryUid.split(":")[1];
+					trs += '<li onmouseover="overViewProcess(this);" onmouseout="outViewProcess(this);" id="' + id
+							+ '" data-categoryuid="' + list[i].categoryUid
+							+ '"><a>' + list[i].categoryName + '>'
+							+ '</a></li>';
+				}
+			},
+			error : function(result) {
+				layer.alert("查询门店生命周期失败")
 			}
-		},
+		})
+	};
+	var trs = "";
+	function queryPorcess(categoryuid) {
+		$.ajax({
+			url : 'processMeta/searchByCategoryUid',
+			type : 'post',
+			dataType : 'json',
+			async : false,
+			data : {
+				categoryUid : categoryuid
+			},
+			success : function(result) {
+				var list = result.data;
+				console.info(list)
+				var id = categoryuid.split(":")[1];
+				var selective = "#" + id;
+				//$(selective).parent().find("li").not(selective).find("ul").remove();
+				trs = '<ul class="nav2">';
+				queryNextGategory(categoryuid);
+				for (var i = 0; i < list.length; i++) {
+					trs += '<li class="li2"><a href="" target="iframe0">'
+							+ list[i].proName + '</a></li>'
+							+ '<h1 style="clear: both;"></h1>';
+				}
+				trs += '</ul>';
+				$(selective).append(trs)
+			},
 		error : function(result){
 			layer.alert("查询门店生命周期失败")
 		}
@@ -305,35 +355,39 @@ function queryNextGategory(categoryuid){
 };
 var trs = "";
 function queryPorcess(categoryuid){
-	$.ajax({
-		url : 'processMeta/searchByCategoryUid',
-		type : 'post',
-		dataType : 'json',
-		async:false, 
-		data : {
-			categoryUid : categoryuid
-		},
-		success : function(result){
-			var list = result.data;
-			console.info(list)
-			var id = categoryuid.split(":")[1];
-			var selective = "#"+id;
-			//$(selective).parent().find("li").not(selective).find("ul").remove();
-			trs = '<ul class="nav2" style="overflow:yes;">';
-			queryNextGategory(categoryuid);
-			for (var i = 0; i < list.length; i++) {
-				 trs += '<li class="li2"><a href="menus/processInstanceByUser?proUid='+list[i].proUid+'&proAppId='+list[i].proAppId+'&proName='+list[i].proAppId+'" target="iframe0">'
-						+ list[i].proName
-						+ '</a></li>'
-						+ '<h1 style="clear: both;"></h1>';
-			}
-			trs+='</ul>';
-				$(selective).append(trs)
-			$(".nav2").show();
-		},
-		error : function(result){
-		}
-	})
-}
 
+	$.ajax({
+					url : 'processMeta/searchByCategoryUid',
+					type : 'post',
+					dataType : 'json',
+					async : false,
+					data : {
+						categoryUid : categoryuid
+					},
+					success : function(result) {
+						var list = result.data;
+						console.info(list)
+						var id = categoryuid.split(":")[1];
+						var selective = "#" + id;
+						trs = '<ul class="nav2" style="overflow:yes;">';
+						queryNextGategory(categoryuid);
+						for (var i = 0; i < list.length; i++) {
+							trs += '<li class="li2"><a href="menus/processInstanceByUser?proUid='
+									+ list[i].proUid
+									+ '&proAppId='
+									+ list[i].proAppId
+									+ '&proName='
+									+ list[i].proAppId
+									+ '" target="iframe0">'
+									+ list[i].proName
+									+ '</a></li>'
+									+ '<h1 style="clear: both;"></h1>';
+						}
+						trs += '</ul>';
+						$(selective).append(trs);
+					},
+					error : function(result) {
+					}
+				})
+	}
 </script>
