@@ -59,6 +59,7 @@ function loadImageData(a){
 			// 加载完成获取宽高
 			img.onload = function(){
 				$("#wPaint").css({"width":img.width+"px","height":img.height+"px"});
+				$("#wPaint").children('canvas:first').css({"width":img.width+"px","height":img.height+"px"});
 				//$("#imgEditMain").css({"width":img.width+"px","height":img.height+"px"});
 				$(".display_container_image_edit").css("display", "block");
 				
