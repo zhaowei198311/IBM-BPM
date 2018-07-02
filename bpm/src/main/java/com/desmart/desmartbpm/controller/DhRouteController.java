@@ -21,7 +21,12 @@ public class DhRouteController {
 	
 	@Autowired
 	private DhRouteService dhRouteService;
-	
+
+	/**
+	 * 展示下个环节名称和处理人的工具栏
+	 * @param parameter
+	 * @return
+	 */
 	@RequestMapping(value = "/showRouteBar")
 	@ResponseBody
 	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter) {
@@ -29,15 +34,15 @@ public class DhRouteController {
 												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
         return response;
     }
-	
-	
-	
-	
-	//可选处理人获取
+
+
+	/**
+	 * 获得可选处理人信息，当可选处理人为全体时不会访问此url
+ 	 */
 	@RequestMapping("/choosableHandler")
 	@ResponseBody
-	public ServerResponse choosableHandler(@RequestParam Map<String, String> parameter,HttpServletRequest request){
+	public ServerResponse choosableHandler(@RequestParam Map<String, String> parameter, HttpServletRequest request){
 		return dhRouteService.choosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
-				,request);
+				,request, parameter.get("taskUid"));
 	}
 }

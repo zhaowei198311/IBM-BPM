@@ -69,11 +69,11 @@ public class SysUserController {
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){
 		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/assign_personnel");
-		model.addObject("assignPersonnel",JSONObject.toJSON(assignPersonnel));
+		model.addObject("assignPersonnel", JSONObject.toJSON(assignPersonnel));
 		return model;
 	}
-	
-	
+
+
 	@RequestMapping(value="/select_personnel")
 	public ModelAndView select_personnel(String id, String isSingle){
 		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/select_personnel");

@@ -11,6 +11,7 @@ public class AssignPersonnel {
 	private String oganizationIdOfcreator;
 	private String actcCanChooseUser;
 	private String actcChooseableHandlerType;
+	private String taskUid;
 	
 	public String getId() {
 		return id;
@@ -73,5 +74,12 @@ public class AssignPersonnel {
 	public void setActcChooseableHandlerType(String actcChooseableHandlerType) {
 		this.actcChooseableHandlerType = actcChooseableHandlerType;
 	}
-	
+
+	public String getTaskUid() {
+		return taskUid;
+	}
+
+	public void setTaskUid(String taskUid) {
+		this.taskUid = taskUid;
+	}
 }

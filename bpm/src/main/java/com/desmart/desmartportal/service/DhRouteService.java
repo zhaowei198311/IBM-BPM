@@ -20,7 +20,7 @@ import com.desmart.desmartsystem.entity.SysUser;
 public interface DhRouteService {
 	
 	/**
-	 * 查询获取环节处理人
+	 * 展示当前环节的下个环节与默认处理人信息
 	 * @param insUid 流程实例id
 	 * @param  activityId 当前环节id
 	 * @param  departNo 部门
@@ -69,7 +69,7 @@ public interface DhRouteService {
      * @return
      */
 	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData
-			,HttpServletRequest request);
+			,HttpServletRequest request, String taskUid);
 
 	/**
 	 * 更新网关决策的中间表
@@ -82,6 +82,7 @@ public interface DhRouteService {
 	
     /**
      * 找到流程中指定环节的上一环节
+	 * 并将任务处理人放入： userUid属性 和 userName属性
      * @param dhProcessInstance
      * @param bpmActivityMeta
      * @return

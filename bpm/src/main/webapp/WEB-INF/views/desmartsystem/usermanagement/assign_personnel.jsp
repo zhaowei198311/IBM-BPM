@@ -95,6 +95,7 @@
 		var actcCanChooseUser=assignPersonnel.actcCanChooseUser;
 		var actcAssignType=assignPersonnel.actcAssignType;
 		var actcChooseableHandlerType=assignPersonnel.actcChooseableHandlerType;
+		var taskUid = assignPersonnel.taskUid || '';
 		
 		$(function(){
 			console.log(actcChooseableHandlerType);
@@ -154,7 +155,14 @@
 				$.ajax({
 					type:'post',
 					url:'dhRoute/choosableHandler',
-					data:{insUid:insUid,companyNum:companyNum,departNo:departNo,activityId:elementId,formData:formData},
+					data:{
+					    'insUid': insUid,
+                        'companyNum': companyNum,
+                        'departNo': departNo,
+                        'activityId': elementId,
+                        'formData': formData,
+                        'taskUid': taskUid
+					},
 					dataType:'json',
 					success: function (result){
 						var $ul=$("#usersul");

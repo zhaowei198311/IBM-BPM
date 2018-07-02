@@ -187,7 +187,7 @@
         <span id="formData" style="display: none;">${formData}</span>
         <span id="listStr" style="display: none;">${listStr}</span>
         <span id="approvalData" style="display: none;">${approvalData}</span>
-        <span style="padding-left: 10px; color: #777; font-size: 18px;">门店生命周期流程</span>
+        <span style="padding-left: 10px; color: #777; font-size: 18px;">${processInstance.proName}</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="processView(${processInstance.insId})">流程图</button>
             <%-- <button class="layui-btn layui-btn-sm" >保存</button> --%>
