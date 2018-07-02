@@ -196,6 +196,32 @@ var common = {
 			 })
 		  }	
 	 },
+    // url: 访问路径， data： 传递的数据是一个对象， 成功时的回调函数，调用时自动传入 restult.data errMsg: error时的输出
+    doPostAjax: function doPostAjax(params) {
+        $.ajax({
+            'url': params.url,
+            'type': 'post',
+            'dataType': 'json',
+            'data': params.data,
+            'beforeSend': function(){
+                layer.load(1);
+            },
+            'success': function(result) {
+                layer.closeAll('loading');
+                if (result.status == 0) {
+                    if (params.fn) {
+                        params.fn(result.data);
+                    }
+                } else {
+                    layer.alert(restult.msg);
+                }
+            },
+            error: function() {
+                layer.closeAll('loading');
+                layer.alert('操作失败，请稍后再试');
+            }
+        });
+    }
 	
 };
 // 如果要设置过期时间以秒为单位

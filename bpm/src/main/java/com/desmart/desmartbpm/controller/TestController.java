@@ -6,6 +6,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.constant.ServerResponse;
+import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
+import org.apache.poi.util.SystemOutLogger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
@@ -219,6 +222,17 @@ public class TestController extends BaseWebController {
         ModelAndView mv = new ModelAndView("desmartbpm/error");
         mv.addObject("errorMessage", "流程实例不存在");
         return mv;
+    }
+
+    @RequestMapping(value = "/testAjax")
+    @ResponseBody
+    public ServerResponse<List<String>> testAjax(String name, String age) {
+        System.out.println("name: " + name + "   age: " +  age);
+        List<String> metaList = new ArrayList<>();
+        metaList.add("hello");
+        metaList.add("world");
+        metaList.add("java");
+        return ServerResponse.createBySuccess(metaList);
     }
     
 }

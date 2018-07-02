@@ -66,30 +66,20 @@ function zTreeOnClick(event, treeId, treeNode) {
 
 function getInfo() {
 	// 查询
-	$.ajax({
-		url : common.getPath()
-				+ "/processDefinition/listDefinitionByProcessMeta",
-		dataType : "json",
-		beforeSend : function(){
-			layer.load(1);
-		},
-		data : {
-			"metaUid" : pageConfig.metaUid,
-			"pageNum" : pageConfig.pageNum,
-			"pageSize" : pageConfig.pageSize
-		},
-		type : "post",
-		success : function(result) {
-			layer.closeAll('loading');
-			if (result.status == 0) {
-				setCookie("processDefinition_selectedMetaUid", pageConfig.metaUid, 7200);
-				drawTable(result.data);
-			}
-		}, 
-		error: function(){
-			layer.closeAll('loading');
-		}
+    common.doPostAjax({
+		'url': common.getPath() + "/processDefinition/listDefinitionByProcessMeta",
+        'data': {
+            "metaUid" : pageConfig.metaUid,
+            "pageNum" : pageConfig.pageNum,
+            "pageSize" : pageConfig.pageSize
+        },
+		'fn': function(data) {
+            setCookie("processDefinition_selectedMetaUid", pageConfig.metaUid, 7200);
+            drawTable(data);
+        }
 	});
+
+
 }
 
 // 绘制表格
@@ -332,29 +322,13 @@ $(function() {
 
 	// 查询按钮
     $('#searchByProName_btn').click(function(){
-        $.ajax({
-            url: common.getPath() + "/processMeta/searchByProName",
-            dataType: "json",
-            type: "post",
-            data: {
+        common.doPostAjax({
+			'url': common.getPath() + "/processMeta/searchByProName",
+			'data': {
 				'proName': $('#proName_input').val()
-            },
-			beforeSend: function(){
-				layer.load(1);
 			},
-            success: function (result) {
-            	layer.closeAll('loading');
-                if (result.status == 0) {
-					selectNodeOnTree(result.data);
-                } else {
-                    layer.alert(result.msg);
-                }
-            },
-            error: function () {
-                layer.closeAll('loading');
-                layer.alert("查询失败");
-            }
-        });
+			'fn': selectNodeOnTree
+		});
 	});
 });
 
@@ -571,14 +545,18 @@ function copyProcess(){
 // 选择符合的节点
 function selectNodeOnTree(metaList) {
     var treeObject = $.fn.zTree.getZTreeObj("treeDemo");
+    treeObject.refresh();
 	var nodesNeedBeExpand = [];
     for (var i = 0; i < metaList.length; i++) {
-    	nodesNeedBeExpand.push(metaList.categoryUid);
+    	nodesNeedBeExpand.push(metaList[i].categoryUid);
 	}
 
 	var allNodes = treeObject.transformToArray(treeObject.getNodes());
     for (var i = 0; i < allNodes.length; i++) {
         var currNode = allNodes[i];
+        if (currNode.itemType == 'processMeta' || currNode.id == 'rootCategory') {
+        	continue;
+		}
         var index = $.inArray(currNode.id, nodesNeedBeExpand);
         if (index == -1) {
             // 不是需折叠的
@@ -587,19 +565,11 @@ function selectNodeOnTree(metaList) {
             treeObject.expandNode(currNode, true);
         }
     }
-
+	// 选中命中的节点
     for (var i = 0; i < metaList.length; i++) {
         var meta = metaList[i];
-        if (i == 0) {
-            // 选中节点
-            var node = treeObject.getNodeByParam("id", meta.proMetaUid);
-            treeObject.selectNode(node, true, true);
-        } else {
-            // 选中节点
-            var node = treeObject.getNodeByParam("id", meta.proMetaUid);
-            treeObject.selectNode(node, true, true);
-        }
-
+        var node = treeObject.getNodeByParam("id", meta.proMetaUid);
+        treeObject.selectNode(node, true, true);
     }
 
 
