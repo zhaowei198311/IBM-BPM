@@ -89,7 +89,7 @@
 					<div class="menu_detail1">
 						<input id="userId" value="${userId}" style="display: none;">
 						<div class="nav" style="margin-top: 50%">
-							<ul class="nav1" style="overflow:yes;">
+							<ul class="nav1">
 <%--  								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
 											></a>
