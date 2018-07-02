@@ -264,8 +264,6 @@ var common = {
 					}
 				}
 					;
-				case "tel":
-					;
 				case "date":{
 					var name = $(inputArr[i]).attr("name");
 					if(name==null || name==""){
@@ -275,6 +273,17 @@ var common = {
 						.val().trim();
 					textJson = "\"" + name + "\":{\"value\":\""
 						+ value + "\"}";
+					break;
+				};
+				case "tel":{
+					var name = $(inputArr[i]).attr("name");
+					if(name==null || name==""){
+						break;
+					}
+					var value = $("[name='" + name + "']")
+						.val().trim();
+					textJson = "\"" + name + "\":{\"value\":"
+						+ value + "}";
 					break;
 				};
 				case "radio": {
@@ -369,7 +378,12 @@ var common = {
 						var tdName = $(this).data("label");
 						if(tdName!="" && tdName!=null){
 							var tdValue = $(this).find("input").val();
-							tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+							var tdInputType = $(this).find("input").attr("type");
+							if(tdInputType=="number" || tdInputType=="tel"){
+								tableJson += "\""+tdName+"\":"+tdValue+"";
+							}else{
+								tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+							}
 							if(tdIndex!=tdArr.length-2){
 								tableJson += ","
 							}
