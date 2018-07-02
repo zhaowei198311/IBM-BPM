@@ -277,7 +277,7 @@ function queryByParent(categoryuid){
 	})
 };
 
-function queryNextGategory(categoryuid,trs){
+function queryNextGategory(categoryuid){
 	$.ajax({
 		url : 'processCategory/queryByParent',
 		type : 'post',
@@ -301,7 +301,7 @@ function queryNextGategory(categoryuid,trs){
 		}
 	})
 };
-
+var trs = "";
 function queryPorcess(categoryuid){
 	$.ajax({
 		url : 'processMeta/listByCategoryUid',
@@ -318,8 +318,8 @@ function queryPorcess(categoryuid){
 			var id = categoryuid.split(":")[1];
 			var selective = "#"+id;
 			//$(selective).parent().find("li").not(selective).find("ul").remove();
-			var trs = '<ul class="nav2">';
-			queryNextGategory(categoryuid,trs);
+			trs = '<ul class="nav2">';
+			queryNextGategory(categoryuid);
 			for (var i = 0; i < list.length; i++) {
 				 trs += '<li class="li2"><a href="" target="iframe0">'
 						+ list[i].proName
