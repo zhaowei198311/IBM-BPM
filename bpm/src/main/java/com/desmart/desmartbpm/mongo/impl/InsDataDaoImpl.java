@@ -72,19 +72,18 @@ public class InsDataDaoImpl implements InsDataDao{
 	 * @Description: 定时将查询的数据同步到mongo insData集合 ,间隔为10分钟   
 	 * @return void
 	 */
-	@Scheduled(cron="0 0/10 * * * ? ")
+//	@Scheduled(cron="0 0/10 * * * ? ")
+	@Override
 	public void insertInsData() {
 		System.out.println("========开始同步mongo insData集合数据=========");
 		Date startTime = null;
-		Date endTime = null;
 		try {
 			JSONObject lastTime = mongoTemplate.findOne(new Query(Criteria.where("_id").is("insFinishDate")), JSONObject.class, Const.COMMON_COLLECTION_NAME);			
 			if (lastTime != null) {
 				long $lastTime = Long.parseLong(lastTime.getString("value"));
 				startTime = new Date($lastTime);
-				endTime = new Date($lastTime + 10*60*1000L);
 			}
-			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(startTime, endTime);
+			List<DhProcessInstance> dhProcessInstanceList = dhProcessInstanceMapper.queryInsDataByUser(startTime, new Date());
 			// 测试插入查询性能
 //			System.err.println("========开始a " + new Date().getTime());
 //			mongoTemplate.insert(dhProcessInstanceList, Const.INS_DATA);

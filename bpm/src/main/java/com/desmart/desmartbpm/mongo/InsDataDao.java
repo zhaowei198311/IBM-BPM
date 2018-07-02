@@ -22,4 +22,12 @@ public interface InsDataDao {
 	 */
 	List<JSONObject> queryInsData(String key, String value, Integer pageNum, Integer pageSize, 
 								String usrUid, String proUid, String proAppId);
+	
+	/**
+	 * 
+	 * @Title: insertInsData  
+	 * @Description: 定时将查询的流程实例数据同步到MongoDB insData集合    
+	 * @return void
+	 */
+	void insertInsData();
 }
