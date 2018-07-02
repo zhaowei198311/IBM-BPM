@@ -65,7 +65,7 @@
 								<li class="layui-nav-item"><a href="agent/index"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe6b2;</i><span>
 											代理设置</span></a></li>
-								<li class="layui-nav-item"><a href="javascript:void(0)"
+								<li id="shopLife" class="layui-nav-item"><a href="javascript:void(0)"
 									target="iframe0" class="detail_menu1"><i class="layui-icon"
 										style="left: 40px">&#xe68e;</i><span> 门店生命周期</span></a></li>
 								<li class="layui-nav-item"><a href="drafts/index"
@@ -234,7 +234,16 @@
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" >	
 $(function(){ 
-
+	
+	// 门店生命周期鼠标悬停事件  加颜色
+	$("#shopLife").hover(
+		function () {
+			
+		},
+		function () {
+			
+		}	
+	);
 	
 	queryByParent('rootCategory');
 	

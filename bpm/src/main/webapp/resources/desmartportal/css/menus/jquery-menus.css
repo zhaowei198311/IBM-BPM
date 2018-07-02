@@ -6,7 +6,7 @@
 
 		ul{
 			list-style: none;
-			background: #fff;
+			background: #3A3F48;
 		}
 
 		.nav2{
@@ -30,13 +30,13 @@
 			height: 36px;
 			line-height: 36px;
 			text-decoration: none;
-			color: #000000;
+			color: #fff;
 			text-align: center;
 		}
 
 		.nav1 a:hover{
 			background: #069683;
-			color: #000000;
+			color: #fff;
 			transition: all 1s;
 		}
 
@@ -59,15 +59,15 @@
 		}
 /*悬浮不同的nav中的li 设置不同颜色*/
 		.li1:hover{
-			background: #fff;
+			background: #3A3F48;
 		}
 
 		.li2:hover{
-			background: #fff;
+			background: #3A3F48;
 		}
 
 		.li3:hover{
-			background: #fff;
+			background: #3A3F48;
 		}
 /*	设置绝对定位 从nav1的ul开始，相对定位是nav中的li，也就是ul的父级元素
 	因为nav1的宽度是110px;所以想让nav1下的ul紧贴nav1，设置left110-px,最好是 110px;
@@ -83,12 +83,12 @@
 
 /*就是当鼠标悬浮在li1 上面的时候，让他子元素中的 nav2 显示可见  当鼠标悬浮在nv2中的li2 上面的时候，则让他子元素中的 nav3 显示可见*/
 		.li1:hover .nav2{
-			background: #fff;
+			background: #3A3F48;
 			display: block;
 		}
 
 		.li2:hover .nav3{
-			background: #fff;
+			background: #3A3F48;
 			display: block;
 		}
 
