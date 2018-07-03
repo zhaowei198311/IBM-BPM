@@ -15,13 +15,13 @@ layui.use('form', function(){
     
 });
 
-var reg=new RegExp("<br>","g"); // 创建正则RegExp对象
+//var reg=new RegExp("<br>","g"); // 创建正则RegExp对象
 $(function(){
 	var approvalJsonStr = $("#approvalData").text();
 	if(approvalJsonStr!=null && approvalJsonStr!=''){
 		var approvalData = JSON.parse(approvalJsonStr);
 		if(approvalData.aprOpiComment!=null && approvalData.aprOpiComment!= ''){
-			var info = approvalData.aprOpiComment.replace(reg,"\n");
+			//var info = approvalData.aprOpiComment.replace(reg,"\n");
 			$("#myApprovalOpinion").val(info);
 		}
 	}
@@ -43,7 +43,7 @@ function loadDhApprovalOpinionList(){
 	    	 $("#approve_record").empty();
 	    	 var info = '<h1 style="clear: both;"></h1>';
 	    	 for (var i = 0; i < result.data.length; i++) {
-	    		 var aprOpiComment = result.data[i].aprOpiComment.replace(reg,"\n");
+	    		 //var aprOpiComment = result.data[i].aprOpiComment.replace(reg,"\n");
 	    		 info += '<li>'
 						+'<table>'
 						+'<tr>'
@@ -69,7 +69,7 @@ function loadDhApprovalOpinionList(){
 						+'<tr>'
 							+'<th valign=top>审批意见：</th>'
 							+'<td>'
-							+aprOpiComment
+							+result.data[i].aprOpiComment
 							+'</td>'
 						+'</tr>'
 						+'</table>'
