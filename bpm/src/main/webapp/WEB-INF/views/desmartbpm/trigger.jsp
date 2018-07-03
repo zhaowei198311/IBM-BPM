@@ -37,15 +37,15 @@
 		<div>
 			<table class="layui-table backlog_table " lay-even lay-skin="nob">
 				<colgroup>
-					<col width="8%">
-					<col width="15%">
-					<col width="15%">
-					<col width="9%">
+					<col width="3%">
+					<col width="13%">
+					<col width="10%">
+					<col width="7%">
 					<col width="25%">
 					<col width="15%">
-					<col width="8%">
-					<col width="8%">
-					<col width="8%">
+					<col width="7%">
+					<col width="20%">
+					<col width="7%">
 				</colgroup>
 				<thead>
 					<tr>
@@ -64,7 +64,7 @@
 			</table>
 		</div>
 		<div id="lay_page"></div>
-
+		
 		<div class="display_container">
 			<div class="display_content3">
 				<div class="top" style="color: red;">新增触发器</div>

@@ -76,8 +76,8 @@ for (var i = 0; i < list.length; i++) {
 	}
 //	alert(meta.triWebbot.length)
 	// 触发执行命令太长 需要修改
-	if(meta.triWebbot.length>20){
-		triwebot = beautySub(meta.triWebbot,20);
+	if(meta.triWebbot.length>15){
+		triwebot = beautySub(meta.triWebbot,15);
 	}else{
 		triwebot = meta.triWebbot
 	}
@@ -93,10 +93,10 @@ for (var i = 0; i < list.length; i++) {
 			+ '<td>'
 			+ meta.triType 
 			+ '</td>' 
-			+ '<td>' 
+			+ '<td title="'+meta.triWebbot+'">' 
 			+ triwebot
 			+ '</td>' 
-			+ '<td>' 
+			+ '<td >' 
 			+ triPamaer
 			+ '</td>' 
 			+ '<td>'
