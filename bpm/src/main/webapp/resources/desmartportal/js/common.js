@@ -282,8 +282,12 @@ var common = {
 					}
 					var value = $("[name='" + name + "']")
 						.val().trim();
-					textJson = "\"" + name + "\":{\"value\":"
+					if(isNaN(parseInt(value))&&(value=="" || value==null)){
+						textJson = "\"" + name + "\":{\"value\":\"\"}";
+					}else{
+						textJson = "\"" + name + "\":{\"value\":"
 						+ value + "}";
+					}
 					break;
 				};
 				case "radio": {
@@ -380,7 +384,11 @@ var common = {
 							var tdValue = $(this).find("input").val();
 							var tdInputType = $(this).find("input").attr("type");
 							if(tdInputType=="number" || tdInputType=="tel"){
-								tableJson += "\""+tdName+"\":"+tdValue+"";
+								if(isNaN(parseInt(value))&&(value=="" || value==null)){
+									tableJson += "\""+tdName+"\":\"\"";
+								}else{
+									tableJson += "\""+tdName+"\":"+tdValue+"";
+								}
 							}else{
 								tableJson += "\""+tdName+"\":\""+tdValue+"\"";
 							}
