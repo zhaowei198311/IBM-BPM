@@ -25,13 +25,13 @@ layui.use('form', function(){
     
 });
 
-var reg=new RegExp("<br>","g"); //创建正则RegExp对象        
+//var reg=new RegExp("<br>","g"); //创建正则RegExp对象        
 $(function(){
 	var approvalJsonStr = $("#approvalData").text();
 	if(approvalJsonStr!=null && approvalJsonStr!=''){
 		var approvalData = JSON.parse(approvalJsonStr);
 		if(approvalData.aprOpiComment!=null && approvalData.aprOpiComment!= ''){
-			var info = approvalData.aprOpiComment.replace(reg,"\n");
+			//var info = approvalData.aprOpiComment.replace(reg,"\n");
 			$("#myApprovalOpinion").val(info);
 		}
 	}
@@ -53,7 +53,7 @@ function loadDhApprovalOpinionList(){
 	    	 $("#approval_tbody").empty();
 	    	 for (var i = 0; i < result.data.length; i++) {
 	    		 
-	    		 var aprOpiComment = result.data[i].aprOpiComment.replace(reg,"\n");
+	    		 //var aprOpiComment = result.data[i].aprOpiComment.replace(reg,"\n");
 	    	 var info = "<tr>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>环节名称</th>"
 			      +"<td>"+result.data[i].activityName+"</td>"
@@ -68,7 +68,7 @@ function loadDhApprovalOpinionList(){
 			      +"</tr> <tr>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批意见</th>"
 			     /* +"<td colspan='9'><textarea class='layui-textarea'>"+aprOpiComment+"</textarea></td>"*/
-			      +"<td colspan='9'>"+aprOpiComment+"</td>"
+			      +"<td colspan='9'>"+result.data[i].aprOpiComment+"</td>"
 			      +"</tr>";
 	    	 $("#approval_tbody").append(info);
 	    	 }
