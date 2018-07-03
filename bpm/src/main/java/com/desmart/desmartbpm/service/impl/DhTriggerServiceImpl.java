@@ -115,6 +115,10 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			}
 		}else if("interface".equals(dhTrigger.getTriType())) {
 			return transferInterface(insUid, triUid, dhTrigger);
+		}else{
+			resultMap.put("status", "1");
+			resultMap.put("msg", "触发器类型为："+dhTrigger.getTriType());
+			return ServerResponse.createBySuccess(resultMap);
 		}
 		return ServerResponse.createBySuccess(resultMap);
 	}
