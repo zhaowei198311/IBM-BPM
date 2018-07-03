@@ -7,6 +7,9 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -76,6 +79,7 @@ public class InsDataDaoImpl implements InsDataDao{
 			query.addCriteria(Criteria.where("proAppId").is(proAppId));
 			// 查询数量
 			int count = (int) mongoTemplate.count(query, Const.INS_DATA);
+			query.with(new Sort(new Order(Direction.DESC,"insCreateDate")));
 			query.limit(pageSize);
 			query.skip(pageSize * (pageNum-1));
 			List<JSONObject> insData = mongoTemplate.find(query, JSONObject.class, Const.INS_DATA);
