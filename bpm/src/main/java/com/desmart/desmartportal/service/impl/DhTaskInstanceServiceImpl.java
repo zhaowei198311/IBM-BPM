@@ -441,8 +441,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("pubBo", pubBo);
 			map.put("routingData", routingData); // 预判的下个环节信息
 			map.put("routingRecord", routingRecord); // 流转记录
-            String paramStr = JSON.toJSONString(map);
-            mqProducerService.sendMessage("stepQueueKey", paramStr);
+            //String paramStr = JSON.toJSONString(map);
+            //mqProducerService.sendMessage("stepQueueKey", paramStr);
+			mqProducerService.sendMessage("mytestQueue", map);
             return ServerResponse.createBySuccess();
         }
     }
@@ -496,7 +497,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	
 	public ServerResponse<Map<String, Object>> toDealTask(String taskUid) {
 	    Map<String, Object> resultMap = new HashMap<>();
-	    
 	    if (StringUtils.isBlank(taskUid)) {
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
 	    }

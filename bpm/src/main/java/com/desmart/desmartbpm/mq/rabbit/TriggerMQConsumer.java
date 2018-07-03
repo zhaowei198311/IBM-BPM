@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.entity.*;
@@ -116,7 +117,8 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 				pubBo = (CommonBusinessObject) JSONObject.toJavaObject(pubBoJson, CommonBusinessObject.class);
 			}
 			if (null != routingDataJson) {
-				routingData = (BpmRoutingData) JSONObject.toJavaObject(taskInstanceJson, BpmRoutingData.class);
+				// 复杂对象特别处理
+				routingData = JSONObject.parseObject(routingDataJson.toString(), new TypeReference<BpmRoutingData>(){});
 			}
 			if (null != routingDataJson) {
 				dhRoutingRecord = (DhRoutingRecord) JSONObject.toJavaObject(routingRecordJson, DhRoutingRecord.class);
@@ -131,7 +133,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		DhStep step = dhStep;
 		while (step != null) {
 			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-				ServerResponse<Map<String, String>> response = dhTriggerService.invokeTrigger(wac, String.valueOf(dhProcessInstance.getInsId()), dhStep.getStepObjectUid());
+				ServerResponse<Map<String, String>> response = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep.getStepObjectUid());
 				Map<String,String> resultMap = response.getData();
 				if(resultMap.get("status").equals("1")) {
 					DhTriggerException dhTriggerException = new DhTriggerException();
@@ -157,7 +159,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(taskId, pubBo);
 		Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
 		if (errorMap.get("errorResult") == null) {
 			// 判断实际TOKEN是否移动了
@@ -166,13 +168,13 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 				JSONObject processData = didTokenMoveResponse.getData();
 				if (processData != null) {
 					// 实际Token移动了
-					// 关闭需要结束的流程
 					dhRoutingRecordMapper.insert(dhRoutingRecord);
+					// 关闭需要结束的流程
 					dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
 					// 创建需要创建的子流程
 					dhProcessInstanceService.createSubProcessInstanceByRoutingData(dhProcessInstance, routingData, pubBo, processData);
 				} else {
-					// 实际Token没有移动, 更新流转信息
+					// 实际Token没有移动,可能是并行的任务没有被完成， 更新流转信息，去掉to的部分
 					dhRoutingRecord.setActivityTo(null);
 					dhRoutingRecordMapper.insert(dhRoutingRecord);
 				}

@@ -57,20 +57,20 @@ public class MenusController {
 		return "desmartportal/index";
 	}
 
+
+	/**
+	 * 跳转到待办列表页面
+	 * @return
+	 */
 	@RequestMapping("/backlog")
 	public ModelAndView backlog() {
 		ModelAndView mv = new ModelAndView("desmartportal/backlog");
 		return mv;
 	}
 
-	@RequestMapping("/backlogDetail")
-	public ModelAndView backlogDetail() {
-		ModelAndView mv = new ModelAndView("desmartportal/backlog_detail");
-		return mv;
-	}
 	
 	/**
-	 * 新建一个流程页面，进入发起流程的页面
+	 * 跳转到发起流程的页面
 	 * @param proUid 流程id
 	 * @param proAppId 流程应用库id
 	 * @return
@@ -80,7 +80,6 @@ public class MenusController {
 			@RequestParam(value = "proAppId",required = false) String proAppId, @RequestParam(value = "insUid",required = false) String insUid
 			,String insBusinessKey) {
 	    ModelAndView mv = new ModelAndView("desmartportal/process");
-	    
 	    ServerResponse<Map<String, Object>> startResponse = dhProcessInstanceService.toStartProcess(proAppId, proUid, insUid,insBusinessKey);
 	    if (startResponse.isSuccess()) {
 	        mv.addAllObjects(startResponse.getData());
@@ -88,7 +87,6 @@ public class MenusController {
 	        mv.setViewName("/desmartbpm/error");
 	        mv.addObject("errorMessage", startResponse.getMsg());
 	    }
-		
 		return mv;
 	}
 	
@@ -113,9 +111,9 @@ public class MenusController {
 	}
 	
 	/**
-	 * 
+	 * 展示流程实例对应的相关任务
 	 * @Title: processType  
-	 * @Description: 门店生命周期-任务实例页面  
+	 * @Description:
 	 * @param @param insUid
 	 * @param @return  
 	 * @return ModelAndView  

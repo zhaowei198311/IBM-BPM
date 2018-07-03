@@ -32,7 +32,7 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
     
 	<!--定义queue -->
 	<!-- durable: 是否持久化, exclusive: 仅创建者可以使用的私有队列，断开后自动删除 ,auto-delete: 当所有消费端连接断开后，是否自动删除队列 -->
-	<rabbit:queue id="stepQueue" name="stepQueue" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<rabbit:queue id="mytestQueue" name="mytestQueue" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
 
 	<!-- 定义direct exchange，绑定queueTest -->
 	<!-- 交换机定义 -->
@@ -40,7 +40,8 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 	     topic模式:按规则转发消息，最灵活,Fanout：无Routing Key概念，相当于广播模式，将消息分发给所有绑定FanoutExchange中的Queue,Fanout：无Routing Key概念，相当于广播模式，将消息分发给所有绑定FanoutExchange中的Queue -->
 	<rabbit:direct-exchange name="stepExchange" durable="true" auto-delete="false" declared-by="connectAdmin" >
 		<rabbit:bindings>
-			<rabbit:binding queue="stepQueue" key="stepQueueKey"></rabbit:binding>
+			<!--<rabbit:binding queue="stepQueue" key="stepQueueKey"></rabbit:binding> -->
+			<rabbit:binding queue="mytestQueue" key="mytestQueue"></rabbit:binding>
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 
@@ -50,7 +51,7 @@ http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 
 	<!-- queue litener 观察监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
 	<rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual" prefetch="1"><!-- acknowledge="auto" concurrency= "4" prefetch="1"-->
-		<rabbit:listener queues="stepQueue" ref="triggerMQConsumer" />
+		<rabbit:listener queues="mytestQueue" ref="triggerMQConsumer" />
 	</rabbit:listener-container>
 	
 	<!-- 同一个队列个多消费者 -->

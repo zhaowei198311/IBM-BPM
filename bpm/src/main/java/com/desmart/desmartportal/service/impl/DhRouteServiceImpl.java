@@ -1280,14 +1280,12 @@ public class DhRouteServiceImpl implements DhRouteService {
             // 预测没有后续节点，查看流程实例是否已经执行完毕
             moved = ProcessDataUtil.isProcessFinished(processData);
         }
-
         if (moved) {
             return ServerResponse.createBySuccess(processData);
         } else {
             return ServerResponse.createBySuccess();
         }
     }
-
 
     public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
 	    int insId = 0;

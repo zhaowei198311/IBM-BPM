@@ -320,6 +320,13 @@ $(function() {
             });
         });
 
+    // input添加回车提交事件
+    $('#proName_input').keydown(function(event){
+    	if (event.keyCode == 13) {
+            $('#searchByProName_btn').click();
+		}
+	});
+
 	// 查询按钮
     $('#searchByProName_btn').click(function(){
         common.doPostAjax({
