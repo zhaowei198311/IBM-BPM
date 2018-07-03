@@ -52,6 +52,14 @@
                             </shiro:hasPermission> 
                             </dl>
                         </li>
+                        <li class="layui-nav-item">
+                        	<a href="javascript:;"><i class="layui-icon">&#xe629;</i> 报表管理</a>
+                            <dl class="layui-nav-child">
+                            <shiro:hasPermission name="dhProcessRetrieve:processRetrieve">
+                              <dd><a href="<%=basePath%>/dhProcessRetrieve/processRetrieve" target="iframe0">检索条件配置</a></dd>
+                            </shiro:hasPermission>
+                            </dl>
+                        </li>
                         <shiro:hasPermission name="interfaces:index">
                           <li class="layui-nav-item"><a href="interfaces/index" target="iframe0"><i class="layui-icon">&#xe614;</i> 接口管理</a></li>
                         </shiro:hasPermission>

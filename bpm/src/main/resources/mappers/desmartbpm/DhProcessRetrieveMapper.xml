@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhProcessRetrieveMapper" >
+    <sql id="base_column">
+         RETRIEVE_UID, PRO_APP_ID, PRO_UID, FIELD_LABEL
+         , FIELD_NAME, ELEMENT_TYPE, IS_SCOPE, DATA_SOURCE
+         ,CREATE_TIME,CREATE_USER_UID,DATA_SET
+    </sql>
+    
+    <sql id="relation_column">
+       pr.RETRIEVE_UID,  pr.PRO_APP_ID,  pr.PRO_UID ,  pr.FIELD_LABEL
+       ,  pr.FIELD_NAME,  pr.ELEMENT_TYPE,  pr.IS_SCOPE,  pr.DATA_SOURCE
+       ,pr.CREATE_TIME,pr.CREATE_USER_UID,pr.DATA_SET
+    </sql>
+    
+    <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
+    	INSERT INTO DH_PROCESS_RETRIEVE (<include refid="base_column"/>) 
+    	VALUES (#{retrieveUid}, #{proAppId}, #{proUid}
+    	, #{fieldLabel}, #{fieldName}, #{elementType}, #{isScope}, #{dataSource}
+    	,#{createTime},#{createUserUid},#{dataSet})
+    </insert>
+    
+    <update id="update" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
+    	UPDATE DH_PROCESS_RETRIEVE 
+    	<set>
+    	<if test="proAppId != null and proAppId != '' ">
+    		PRO_APP_ID = #{proAppId},
+    	</if>
+    	<if test="proUid != null and proUid != '' ">
+    		 PRO_UID = #{proUid},
+    	</if>
+    	<if test="fieldLabel != null and fieldLabel != '' ">
+    		FIELD_LABEL = #{fieldLabel},
+    	</if>
+    	<if test="fieldName != null and fieldName != '' ">
+    		 FIELD_NAME = #{fieldName},
+    	</if>
+    	<if test="elementType != null and elementType != '' ">
+    		ELEMENT_TYPE = #{elementType},
+    	</if>
+    	<if test="isScope != null and isScope != '' ">
+    		IS_SCOPE = #{isScope},
+    	</if>
+    	<if test="dataSource != null and dataSource != '' ">
+    		DATA_SOURCE = #{dataSource},
+    	</if>
+    	<if test="dataSet != null and dataSet != '' ">
+    		DATA_SET = #{dataSet}
+    	</if>
+    	</set>
+    	WHERE RETRIEVE_UID = #{retrieveUid}
+    </update>
+    
+    <delete id="delete" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
+    	DELETE FROM DH_PROCESS_RETRIEVE WHERE RETRIEVE_UID = #{retrieveUid}
+    </delete>
+    
+    <select id="getDhprocessRetrievesByCondition" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve"
+    	resultType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
+    	SELECT <include refid="relation_column"/>,su.user_name
+    	FROM DH_PROCESS_RETRIEVE pr left join sys_user su 
+    	on pr.create_user_uid = su.user_uid 
+    	WHERE 1 = 1 
+    	<if test="retrieveUid != null and retrieveUid != '' ">
+    		and	retrieve_uid = #{retrieveUid}
+    	</if>
+    	<if test="proAppId != null and proAppId != '' ">
+    		and PRO_APP_ID = #{proAppId}
+    	</if>
+    	<if test="proUid != null and proUid != '' ">
+    		and PRO_UID = #{proUid}
+    	</if>
+    </select>
+</mapper>

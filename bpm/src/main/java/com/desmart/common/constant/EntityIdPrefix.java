@@ -84,4 +84,7 @@ public class EntityIdPrefix {
 
     /** 同步任务重试记录 */
 	public static final String DH_SYN_TASK_RETRY = "syn_task_retry:";
+	
+	/** 流程检索字段前缀 **/
+	public static final String DH_PROCESS_RETRIEVE = "process_retrieve:";
 }

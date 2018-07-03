@@ -81,6 +81,8 @@
                 <!-- 流程管理控制 -->
                 /processCategory/index=perms[processCategory:index]
                 /processDefinition/index=perms[processDefinition:index]
+                <!-- 报表管理 -->
+                /dhProcessRetrieve/processRetrieve=perms[dhProcessRetrieve:processRetrieve]
                 <!-- 接口管理 -->
                 /interfaces/index=perms[interfaces:index]
                 <!-- 触发器管理 -->
