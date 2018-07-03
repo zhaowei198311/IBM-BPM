@@ -1,0 +1,303 @@
+/*布局样式*/
+.mobile_container{
+    width:100%;
+    margin:auto;
+}
+
+.mobile_top{
+    width: 100%;
+    height: 40px;
+    position: fixed;
+    top:0px;
+    border-bottom: 1px solid #ccc;
+	box-shadow: 0 0 3px #f2f2f2;
+	padding-bottom: 2px;
+	z-index: 10;
+	background: #2E3238;
+    color: #F2f2f2;
+}
+
+.top_left{
+	width:17%;
+	text-align:left;
+	float:left;
+	margin:6px 0 0 10px;
+}
+.top_content{
+	width:60%;
+	float:left;
+	text-align: center;
+	font-size: 16px;
+	margin-top:8px;
+}
+.top_right{
+	width:17%;
+	text-align:right;
+	float:right;
+	margin:6px 10px 0 0;
+}
+
+.mobile_middle{
+	margin-top:50px;
+	width:100%;
+}
+
+.mobile_bottom{
+	color: #A0A0A0;
+    width: 100%;
+    height: 40px;
+    position: fixed;
+    bottom:0px;
+    float:right;
+    border-top: 1px solid #ccc;
+    box-shadow: 0 0 3px #f2f2f2;
+    z-index: 10;
+    background: #fff;
+}
+/*下面按钮样式*/
+.mobile_menu{
+	height:100%;
+}
+.mobile_menu li{
+	list-style:none;
+	float:left;
+	text-align:center;
+	width:25%;
+	height:100%;
+	font-size: 14px;
+	border-left: 1px solid #f2f2f2;
+	margin: 0 -1px 0 0;
+	z-index: 0;
+}
+.mobile_menu li p{
+	font-size: 10px;
+}
+.mobile_menu li:hover{ 
+	border-left: 1px solid #f2f2f2; 
+	z-index: 1; 
+}
+
+/*中间内容部分样式*/
+.middle_content{
+	display: none;
+	height:auto;
+}
+#form_content_div{
+	display: block;
+}
+#record_div{
+	padding:3px 10px;
+}
+
+/*操作按钮部分*/
+#child_menu{
+	display: none;
+	background: #3A3F45;
+    padding: 5px;
+    width: 30%;
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    color:#f2f2f2;
+}
+#child_menu dd{
+	text-align: center;
+	padding: 13px 0;
+    border-bottom: 1px solid #CCC;
+}
+#child_menu a{
+	color:#f2f2f2;
+}
+#child_menu a:hover{
+	color:#009688;
+}
+
+/*审批意见*/
+#myApprovalOpinion{
+	resize:none;
+	height:150px;
+}
+#fu_label{
+	width:50px;
+	margin-left:10px;
+	padding:9px 0px;
+}
+#frequently_used{
+	margin-left:70px;
+	margin-right:10px;
+	margin-top:3px;
+}
+#approve_record li{
+	text-align: left;
+}
+#approve_record li table{
+	width:90%;
+	margin:auto;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+#approve_record li table th{
+	width:30%;
+	padding:5px 0px;
+}
+#approve_record li table td{
+	width:70%;
+	padding:5px 0px;
+}
+
+.handle_div{
+	width:100%;
+	margin-bottom:10px;
+	background: #FBFBFB;
+	padding:10px 0;
+	border: 1px solid #e6e6e6;
+}
+.handle_div table,.handle_div tbody{
+	width:100%;
+}
+.handle_div table th{
+	width:30%;
+	padding-left:10px;
+	padding-right:10px;
+}
+.handle_div table td{
+	width:80%;
+}
+.handle_btn{
+	background: #AAA;
+}
+#submit_btn{
+	background: #009688;
+}
+.handle_table{
+	width:100%;
+	margin-top:10px;
+	padding-top:5px;
+	border-top:1px solid #E6E6E6; 
+}
+#countersign_table{
+	display: none;
+}
+#reject_table{
+	display: none;
+}
+#transfer_table{
+	display: none;
+}
+
+/*同意处理*/
+.handle_table tr{
+	height:40px;
+}
+#transfer_table input,#reject_table input,#submit_table input{
+	width:85%;
+	float: left;
+}
+#transfer_table i,#submit_table i{
+	float: left;
+	padding-top:3px;
+	padding-left:2px;
+}
+#countersign_table #countersign_person_view{
+	width:85%;
+	float: left;
+}
+#countersign_table .choose_countersign_person{
+	float: left;
+	padding-top:3px;
+	padding-left:2px;
+}
+#countersign_table #countersign_type{
+	width:85%;
+	height:28px;
+}
+#countersign_table select{
+	height:100%;
+}
+.layui-layer-page{
+	width:100%;
+	left:0px;
+}
+/*驳回*/
+
+/*选人*/
+#choose_user_div{
+	display: none;
+}
+.choose_head{
+	border-bottom: 1px solid #f2f2f2;
+	height:40px;
+	margin:5px 0;
+	padding-bottom:3px;
+}
+.search_div{
+	float: left;
+	width: 70%;
+	margin-left:10px;
+}
+.sure_div{
+	float: right;
+	width: 20%;
+	text-align: center;
+}
+.choose_body{
+	height:238px;
+	overflow-y:auto;
+}
+.choose_body table{
+	width:90%;
+	margin:auto;
+}
+.choose_body tr{
+	height:35px;
+	border-bottom:1px solid #f2f2f2;
+}
+.choose_body td{
+	text-align: center;
+}
+.choose_first_th{
+	width:10%;
+}
+.choose_second_th{
+	width:45%;
+}
+.choose_three_th{
+	width:45%;
+}
+/*流转记录*/
+.tab_ul li{
+	width:99%;
+}
+
+/*表单内容*/
+.layui-table .list_title{
+	font-size: 14px;
+}
+#formTitle{
+	padding-bottom:0px;padding-top:5px;border-bottom:0px;
+}
+#formNum{
+	padding-top:0px;padding-bottom:3px;border-top:0px;
+}
+input[disabled], .layui-select-disabled .layui-disabled {
+    border-width: 0px;
+    background: #fbfbfb;
+}
+.mobile_container .layui-table td {
+    padding: 5px 10px;
+}
+.mobile_container .layui-table{
+	background: #fbfbfb;
+}
+.layui-input, .layui-select, .layui-textarea{
+	height:30px;
+}
+.layui-form-select dl{
+	top:30px;
+}
+.layui-form-select dl dd, .layui-form-select dl dt{
+	line-height:33px;
+}
+
+
+

@@ -5,6 +5,8 @@ package com.desmart.desmartportal.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.RequestSourceUtil;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
@@ -46,6 +49,8 @@ public class MenusController {
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
+	@Autowired
+	private HttpServletRequest request;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -190,9 +195,15 @@ public class MenusController {
 	        }
 			return mv;
 		}
-
-		// 普通的待办任务
-		mv.setViewName("desmartportal/approval");
+		
+		boolean isMobile = RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"));
+		if(isMobile) {
+			// 移动端普通的待办任务
+			mv.setViewName("desmartportal/mobile_approval");
+		}else {
+			// 普通的待办任务
+			mv.setViewName("desmartportal/approval");
+		}
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toDealTask(taskUid);
 		if (serverResponse.isSuccess()) {
             mv.addAllObjects(serverResponse.getData());

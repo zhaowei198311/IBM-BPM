@@ -168,7 +168,6 @@
     	<input id="departNo" type="hidden" value="${processInstance.departNo}"/>
     	<input id="companyNum" type="hidden" value="${processInstance.companyNumber}"/>
        	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
-        <input id="formId" value="${formId}" style="display: none;">
         <input id="proUid" value="${processInstance.proUid}" style="display: none;">
         <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
         <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
