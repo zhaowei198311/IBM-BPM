@@ -10,4 +10,10 @@ public interface SynchronizeTaskService {
      * 同步重试记录表中未被拉取的任务
      */
     void retrySynchronizeTask();
+
+    /**
+     * 同步指定任务
+     * @param taskId
+     */
+    void SynchronizeTask(int taskId);
 }

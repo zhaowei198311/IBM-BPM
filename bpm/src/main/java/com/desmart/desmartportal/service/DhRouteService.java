@@ -72,6 +72,16 @@ public interface DhRouteService {
 			,HttpServletRequest request, String taskUid);
 
 	/**
+	 * 获得指定节点的默认处理人
+	 * @param taskNode  指定节点
+	 * @param preTaskOwner  上个环节任务处理人
+	 * @param dhProcessInstance  流程实例
+	 * @param mergedFormData  当前的formData信息
+	 * @return
+	 */
+	List<String> getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, String preTaskOwner, DhProcessInstance dhProcessInstance, JSONObject mergedFormData);
+
+	/**
 	 * 更新网关决策的中间表
 	 * @param currActivityMeta
 	 * @param insId
@@ -81,13 +91,21 @@ public interface DhRouteService {
 	ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData);
 	
     /**
-     * 找到流程中指定环节的上一环节
+     * 找流转到指定环节的上一环节（含有处理人信息）, 包含驳回的，跳转的
 	 * 并将任务处理人放入： userUid属性 和 userName属性
      * @param dhProcessInstance
      * @param bpmActivityMeta
      * @return
      */
 	ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta);
+
+	/**
+	 * 找到基于流程图的上个环节（含有处理人信息）， 基于流程图上的上个环节，不含取回的、驳回的
+	 * @param sourceNode  目标节点
+	 * @param dhProcessInstance  流程实例
+	 * @return
+	 */
+	ServerResponse<BpmActivityMeta> getPreActivityByDiagram(DhProcessInstance dhProcessInstance, BpmActivityMeta sourceNode);
 
 	/**
 	 * 根据源环节与表单数据，获得下个环节的信息

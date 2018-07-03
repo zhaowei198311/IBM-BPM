@@ -715,53 +715,45 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				// 获得流转数据中的发起流程的环节id
 				Map<String, Object> toProcessStartMap = new HashMap<>();
 				
-				//for (DhRoutingRecord dhRoutingRecord2 : dhRoutingRecordList) {
-					// 过滤掉其他的数据信息 只需要 类型为 发起流程的环节信息---此处如果进入到子流程驳回，那么应该只会驳回到子流程的发起节点才正确
-					//BpmActivityMeta bpmActivityMeta3 = bpmActivityMetaMapper
-							//.queryByPrimaryKey(dhRoutingRecord2.getActivityId());
-					//if (DhRoutingRecord.ROUTE_TYPE_START_PROCESS.equals(dhRoutingRecord2.getRouteType())) {//满足不了应该
-					BpmActivityMeta toBpmActivityMeta = new BpmActivityMeta();
-					if("0".equals(currentbpmActivityMeta3.getParentActivityId())) {//主流程
-						// 获得主流程开始节点
-				        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(
-				        		currentbpmActivityMeta3.getProAppId(), currentbpmActivityMeta3.getBpdId()
-				        		, currentbpmActivityMeta3.getSnapshotId());
+				BpmActivityMeta toBpmActivityMeta = new BpmActivityMeta();
+				if("0".equals(currentbpmActivityMeta3.getParentActivityId())) {//主流程
+					// 获得主流程开始节点
+					BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(
+							currentbpmActivityMeta3.getProAppId(), currentbpmActivityMeta3.getBpdId()
+							, currentbpmActivityMeta3.getSnapshotId());
 
-				        // 获得开始节点往后的路由信息
-				        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, null);
+					// 获得开始节点往后的路由信息
+					BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, null);
 
-				        // 获得第一个人工节点
-				        toBpmActivityMeta = routingDataOfMainStartNode.getNormalNodes().iterator().next();	
-					}else {//子流程
-						BpmActivityMeta parentBpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currentbpmActivityMeta3.getParentActivityId());
-						toBpmActivityMeta = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(parentBpmActivityMeta);	
-					}
-						toProcessStartMap.put("insId", insId);
-						toProcessStartMap.put("activityBpdId", toBpmActivityMeta.getActivityBpdId());
-						toProcessStartMap.put("activityName", toBpmActivityMeta.getActivityName());
-						
-						dhRoutingRecord.setActivityId(toBpmActivityMeta.getActivityId());
-						List<DhRoutingRecord> dhRoutingRecordList = dhRoutingRecordMapper
-								.getDhRoutingRecordListByCondition(dhRoutingRecord);//排序方式是create_time asc
-						String userId = dhRoutingRecordList.get(dhRoutingRecordList.size()-1).getUserUid();
-						String userName = dhRoutingRecordList.get(dhRoutingRecordList.size()-1).getUserName();
-						toProcessStartMap.put("userId", userId);
-						toProcessStartMap.put("userName", userName);
-						activitiMapList.add(toProcessStartMap);
-					//}
-				//}
+					// 获得第一个人工节点
+					toBpmActivityMeta = routingDataOfMainStartNode.getNormalNodes().iterator().next();
+				}else {//子流程
+					BpmActivityMeta parentBpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(currentbpmActivityMeta3.getParentActivityId());
+					toBpmActivityMeta = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(parentBpmActivityMeta);
+				}
+				toProcessStartMap.put("insId", insId);
+				toProcessStartMap.put("activityBpdId", toBpmActivityMeta.getActivityBpdId());
+				toProcessStartMap.put("activityName", toBpmActivityMeta.getActivityName());
+				// 任务处理人即流程发起人
+				toProcessStartMap.put("userId", dhProcessInstance.getInsInitUser());
+				toProcessStartMap.put("userName", dhProcessInstance.getInitUserFullname());
+				activitiMapList.add(toProcessStartMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toPreActivity":
 				log.info("驳回到上个环节");
 				// 上个环节
 				Map<String, Object> toPreActivityMap = new HashMap<>();
-				ServerResponse<BpmActivityMeta> bpmActivityMeta2 = dhRouteService.getPreActivity(dhProcessInstance,
+				ServerResponse<BpmActivityMeta> preActiivtyResponse = dhRouteService.getPreActivityByDiagram(dhProcessInstance,
 						currentbpmActivityMeta3);
-				toPreActivityMap.put("userId", bpmActivityMeta2.getData().getUserUid());
-				toPreActivityMap.put("userName", bpmActivityMeta2.getData().getUserName());
+				if (!preActiivtyResponse.isSuccess()) {
+					return ServerResponse.createByErrorMessage("获取可驳回环节失败");
+				}
+				BpmActivityMeta preMeta = preActiivtyResponse.getData();
+				toPreActivityMap.put("userId", preMeta.getUserUid());
+				toPreActivityMap.put("userName", preMeta.getUserName());
 				toPreActivityMap.put("insId", insId);
-				toPreActivityMap.put("activityBpdId", bpmActivityMeta2.getData().getActivityBpdId());
-				toPreActivityMap.put("activityName", bpmActivityMeta2.getData().getActivityName());
+				toPreActivityMap.put("activityBpdId", preMeta.getActivityBpdId());
+				toPreActivityMap.put("activityName", preMeta.getActivityName());
 				activitiMapList.add(toPreActivityMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toActivities":

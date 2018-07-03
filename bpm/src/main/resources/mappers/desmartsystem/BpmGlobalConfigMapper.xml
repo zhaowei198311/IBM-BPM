@@ -295,4 +295,5 @@
 		where CONFIG_ID = #{configId}
 	</update>
 
+
 </mapper>

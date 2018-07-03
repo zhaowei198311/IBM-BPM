@@ -153,7 +153,7 @@ public class DhTaskInstance {
 	
 	private String taskDelegateUser; // 任务代理人
 	
-	private Integer synNumber; // 同步编号，记录任务同步
+	private Integer synNumber; //  -1 的任务是要自动提交的
 	
 	private DhProcessInstance dhProcessInstance; // 流程实例
 	

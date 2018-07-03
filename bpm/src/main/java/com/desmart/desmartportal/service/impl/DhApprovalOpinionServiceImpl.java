@@ -60,7 +60,7 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		dhApprovalOpinion.setAprUserId(creator);
 		Integer count = insert(dhApprovalOpinion);
-		if(count>0) {
+		if(count > 0) {
 			return ServerResponse.createBySuccessMessage("添加成功！");
 		}else {
 			return ServerResponse.createByErrorMessage("添加失败！");
@@ -122,7 +122,22 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 		return this.insertDhApprovalOpinion(dhApprovalOpinion);
 	}
 
-
+	@Override
+	public ServerResponse saveDhApprovalOpinionWhenAutoCommit(DhTaskInstance currTask, String adminUid) {
+		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
+		dhApprovalOpinion.setAprOpiId(EntityIdPrefix.DH_APPROVAL_OPINION + UUIDTool.getUUID());
+		dhApprovalOpinion.setAprDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
+		dhApprovalOpinion.setAprOpiIndex(0);
+		dhApprovalOpinion.setAprTimeNumber(0);
+		dhApprovalOpinion.setAprUserId(adminUid);
+		dhApprovalOpinion.setInsUid(currTask.getInsUid());
+		dhApprovalOpinion.setTaskUid(currTask.getTaskUid());
+		dhApprovalOpinion.setActivityId(currTask.getTaskActivityId());
+		dhApprovalOpinion.setAprOpiComment("管理员自动提交");
+		dhApprovalOpinion.setAprStatus("自动提交");
+		return dhApprovalOpinionMapper.insert(dhApprovalOpinion) > 0 ? ServerResponse.createBySuccess()
+				: ServerResponse.createByErrorMessage("保存审批意见失败");
+	}
 
 
 }

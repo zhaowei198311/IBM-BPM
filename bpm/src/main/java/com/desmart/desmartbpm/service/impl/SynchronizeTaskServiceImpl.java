@@ -107,6 +107,19 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         LOG.info("==================  重试拉取任务结束  ===============");
     }
 
+    public void SynchronizeTask(int taskId) {
+        LOG.info("==================  开始拉取指定任务 ===============");
+        List<LswTask> newLswTaskList = new ArrayList<>();
+        LswTask lswTask = lswTaskMapper.queryTaskByTaskId(taskId);
+        if (lswTask == null) {
+            return;
+        }
+        newLswTaskList.add(lswTask);
+        Map<Integer, String> groupInfo = getGroupInfo();
+        startFirstSynchronize(newLswTaskList, groupInfo);
+        LOG.info("==================  拉取指定任务结束 ===============");
+    }
+
     @Transactional
     public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         List<DhTaskInstance> dhTaskList = new ArrayList<>();
@@ -228,19 +241,15 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     dhProcessInstance.getProVerUid());
         }
 
-
         // 查看环节的任务类型
         if (bpmActivityMeta == null) {
             throw new PlatformException("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
         }
-        String proAppId = dhProcessInstance.getProAppId();
-        String proUid = dhProcessInstance.getProUid();
-        String proVerUid = dhProcessInstance.getProVerUid();
-        
+
         // 查看任务表中是否已经有这个任务id的任务
         boolean taskExists = dhTaskInstanceService.isTaskExists(lswTask.getTaskId());
         if (taskExists) {
-            dhTaskInstanceMapper.updateSynNumberByTaskId(lswTask.getTaskId(), lswTask.getTaskId());
+            // dhTaskInstanceMapper.updateSynNumberByTaskId(lswTask.getTaskId(), lswTask.getTaskId());
             return null;
         }
 
@@ -258,7 +267,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
         }
         
-        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance, bpmActivityMeta, preMeta);
+        List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance,
+                bpmActivityMeta, preMeta, globalConfig);
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
         
 
@@ -289,11 +299,17 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
     /**
      * 根据条件生成平台中的任务
+     * @param lswTask  引擎中任务
+     * @param orgionUserUidList  引擎中的任务处理人，可能由临时组转换得到
+     * @param dhProcessInstance 流程实例
+     * @param bpmActivityMeta  任务环节
+     * @param preMeta  上个环节
+     * @return
      */
     private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
-            List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta, BpmActivityMeta preMeta) {
+            List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta,
+                                                        BpmActivityMeta preMeta, BpmGlobalConfig bpmGlobalConfig) {
         List<DhTaskInstance> taskList = new ArrayList<>();
-        
         // 计算到期时间
         DhActivityConf conf = bpmActivityMeta.getDhActivityConf();
         Double timeAmount = 1.0;
@@ -305,7 +321,15 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             timeUnit = conf.getActcTimeunit();
         }
         Date dueDate = sysHolidayService.calculateDueDate(lswTask.getRcvdDatetime(), timeAmount, timeUnit);
-        
+
+        // 判断是否能自动提交
+        boolean canAutoCommit = canTaskBeAutoCommited(orgionUserUidList, bpmActivityMeta, preMeta, dhProcessInstance);
+        if (canAutoCommit) {
+            // 将任务分配给管理员
+            orgionUserUidList.remove(0);
+            orgionUserUidList.add(bpmGlobalConfig.getBpmAdminName());
+        }
+
         for (String orgionUserUid : orgionUserUidList) {
             DhTaskInstance dhTask = new DhTaskInstance();
             dhTask.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
@@ -324,9 +348,12 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             }
             dhTask.setTaskStatus(lswTask.getStatus());
             dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
-            dhTask.setInsUpdateDate(dhProcessInstance.getInsUpdateDate());
             dhTask.setTaskInitDate(lswTask.getRcvdDatetime());
-            dhTask.setSynNumber(lswTask.getTaskId());
+            if (canAutoCommit) {
+                dhTask.setSynNumber(-1);  // 自动提交的任务，将synNumber设为 -1
+            } else {
+                dhTask.setSynNumber(lswTask.getTaskId());
+            }
             dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
             dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
             dhTask.setTaskDueDate(dueDate);
@@ -334,6 +361,43 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             taskList.add(dhTask);
         }
         return taskList;
+    }
+
+    private boolean canTaskBeAutoCommited(List<String> orgionUserUidList, BpmActivityMeta bpmActivityMeta,
+                                          BpmActivityMeta preMeta, DhProcessInstance dhProcessInstance) {
+        if (!"TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanAutocommit()) || orgionUserUidList.size() > 1) {
+            // 如果本环节不允许自动提交，或者引擎中的处理人不是只有一个人
+            return false;
+        }
+        // 上个环节处理人 是 引擎中的处理人
+        if (preMeta == null || !orgionUserUidList.get(0).equals(preMeta.getUserUid())) {
+            return false;
+        }
+        // 下个环节只有一个，
+        String activityTo = bpmActivityMeta.getActivityTo();
+        if (StringUtils.isBlank(activityTo) || activityTo.contains(",")) {
+            return false;
+        }
+        // 如果上个环节的toActivity中不包含当前环节，说明不是正常提交上来的，不能自动提交
+        if (!preMeta.getActivityTo().contains(bpmActivityMeta.getActivityBpdId())) {
+            return false;
+        }
+        // 获得下个节点信息, 下个环节是普通的人员节点
+        BpmActivityMeta nextNode = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityTo, bpmActivityMeta.getParentActivityId(),
+                bpmActivityMeta.getSnapshotId());
+        if (nextNode == null) {
+            return false;
+        }
+        if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(nextNode.getBpmTaskType())
+                || !BpmActivityMeta.LOOP_TYPE_NONE.equals(nextNode.getLoopType())) {
+            return false;
+        }
+        // 下个环节是有处理人的才能自动提交
+        // 计算下个环节的默认处理人， 对下个环节来说，上个环节的处理人就是 orgionUserUidList.get(0)
+        JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
+        List<String> taskOwnerOfNextTask = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextNode, orgionUserUidList.get(0), dhProcessInstance,
+                insDataJson.getJSONObject("formData"));
+        return taskOwnerOfNextTask.size() > 0;
     }
 
     private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, String> groupInfo) {

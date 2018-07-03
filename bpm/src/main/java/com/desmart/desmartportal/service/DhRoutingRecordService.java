@@ -19,6 +19,12 @@ public interface DhRoutingRecordService {
 	 */
 	List<DhRoutingRecord> getDhRoutingRecordListByCondition(DhRoutingRecord dhRoutingRecord);
 
+	/**
+	 * 保存流转信息
+	 * @param dhRoutingRecord
+	 * @return
+	 */
+	int saveDhRoutingRecord(DhRoutingRecord dhRoutingRecord);
 
 	/**
 	 * 提交任务后生成流转信息
@@ -65,6 +71,17 @@ public interface DhRoutingRecordService {
 	 * @return
 	 */
 	DhRoutingRecord generateSkipFromRejectRoutingRecord(DataForSkipFromReject dataForSkipFromReject);
+
+	/**
+	 * 为自动提交生成流转信息
+	 * @param currTaskInstance
+	 * @param tagetActivityMeta
+	 * @param adminUid  管理员id
+	 * @return
+	 */
+	DhRoutingRecord generateAutoCommitRoutingRecord(DhTaskInstance currTaskInstance, BpmActivityMeta tagetActivityMeta
+			, String adminUid);
+
 	/**
 	 * 根据流程实例主键加载流转记录
 	 * @param insUid
@@ -81,14 +98,14 @@ public interface DhRoutingRecordService {
 	List<DhRoutingRecord> getAllRoutingRecordOfProcessInstance(String insUid);
 
 	/**
-	 * 提交指定任务的流转记录
+	 * 提交指定任务的流转记录，如果任务对应的流转记录中不是提交，返回null
 	 * @param taskUid
 	 * @return
 	 */
 	DhRoutingRecord getSubmitRoutingRecordOfTask(String taskUid);
 
 	/**
-	 * 根据任务主键查找对应的流转记录，可能有多条（提交又取回的情况）
+	 * 根据任务主键查找对应的流转记录，可能有多条（提交又取回的情况有一条提交记录，一条取回记录是关联的task）
 	 * @param taskUid
 	 * @return
 	 */

@@ -3,46 +3,31 @@
  */
 package com.desmart.desmartportal.service.impl;
 
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-
-import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.common.util.*;
-import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
-import com.desmart.desmartbpm.entity.*;
-import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.mongo.TaskMongoDao;
-import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
-import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartportal.service.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.*;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
+import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.mongo.TaskMongoDao;
+import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.*;
+import com.desmart.desmartportal.service.*;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -50,6 +35,17 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -281,7 +277,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 || DhTaskInstance.TYPE_NORMAL.equals(taskType))) {
             return ServerResponse.createByErrorMessage("任务类型异常");
         }
-
 
         if (!checkTaskUser(currTask, currentUserUid)) {// 检查任务是否有权限提交
             return ServerResponse.createByErrorMessage("提交失败，您没有完成任务的权限");
@@ -1239,8 +1234,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         return ServerResponse.createBySuccess();
 	}
 
-
-
 	/**
 	 * 将任务从锁住的任务中去除
 	 * @param taskId
@@ -1266,13 +1259,26 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * @param taskData 提交上来的所有数据
 	 * @return
 	 */
-	private int updateDhTaskInstanceWhenFinishTask(DhTaskInstance dhTaskInstance, String taskData) {
+	@Override
+	public int updateDhTaskInstanceWhenFinishTask(DhTaskInstance dhTaskInstance, String taskData) {
 		// 修改当前任务实例状态为已完成
 		DhTaskInstance taskInstanceSelective = new DhTaskInstance();
 		taskInstanceSelective.setTaskUid(dhTaskInstance.getTaskUid());
 		taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 		taskInstanceSelective.setTaskFinishDate(new Date());
 		taskInstanceSelective.setTaskData(taskData);
+		return dhTaskInstanceMapper.updateByPrimaryKeySelective(taskInstanceSelective);
+	}
+
+	@Override
+	public int updateDhTaskInstanceWhenAutoCommit(DhTaskInstance dhTaskInstance, String originalUser) {
+		// 修改当前任务实例状态为已完成
+		DhTaskInstance taskInstanceSelective = new DhTaskInstance();
+		taskInstanceSelective.setTaskUid(dhTaskInstance.getTaskUid());
+		taskInstanceSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+		taskInstanceSelective.setTaskFinishDate(new Date());
+		taskInstanceSelective.setTaskData("{}");
+		taskInstanceSelective.setUsrUid(originalUser);  // 任务还给初始人
 		return dhTaskInstanceMapper.updateByPrimaryKeySelective(taskInstanceSelective);
 	}
 

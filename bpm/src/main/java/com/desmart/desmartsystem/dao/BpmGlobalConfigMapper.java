@@ -21,4 +21,6 @@ public interface BpmGlobalConfigMapper {
     int updateByPrimaryKeySelective(BpmGlobalConfig record);
 
     int updateByPrimaryKey(BpmGlobalConfig record);
+
+
 }

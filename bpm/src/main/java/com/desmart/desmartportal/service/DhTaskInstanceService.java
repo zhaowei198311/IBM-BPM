@@ -253,5 +253,21 @@ public interface DhTaskInstanceService {
 	 * @param taskId  任务编号
 	 * @return
 	 */
-	public int saveTaskToRetryTable(int taskId);
+	int saveTaskToRetryTable(int taskId);
+
+	/**
+	 * 完成任务时，更新任务实例状态
+	 * @param dhTaskInstance  完成的任务实例
+	 * @param taskData  用户提交上来的数据
+	 * @return
+	 */
+	int updateDhTaskInstanceWhenFinishTask(DhTaskInstance dhTaskInstance, String taskData);
+
+	/**
+	 * 自动提交时，更新任务实例状态
+	 * @param dhTaskInstance  完成的任务实例
+	 * @param taskData  用户提交上来的数据
+	 * @return
+	 */
+	int updateDhTaskInstanceWhenAutoCommit(DhTaskInstance dhTaskInstance, String originalUser);
 }

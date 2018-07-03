@@ -1,54 +1,46 @@
 package com.desmart.desmartportal.service.impl;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.*;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
-import com.desmart.desmartbpm.entity.*;
-import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartsystem.entity.*;
-import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
+import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
+import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
-import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.service.DatRuleConditionService;
-import com.desmart.desmartbpm.service.DatRuleService;
-import com.desmart.desmartbpm.service.DhGatewayLineService;
-import com.desmart.desmartbpm.service.DhTriggerService;
-import com.desmart.desmartbpm.service.DroolsEngineService;
+import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartportal.dao.DhGatewayRouteResultMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.*;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.util.ArrayUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Service
 public class DhRouteServiceImpl implements DhRouteService {
@@ -283,133 +275,134 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(activityMetaList);
 	}
 
-//	// 获得环节的默认处理人
-//	public void getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, DhTaskInstance preTask, DhProcessInstance dhProcessInstance, JSONObject mergedFormData) {
-//		List<String> ownerIdList = new ArrayList<>();
-//		String userUid = "";
-//		String userName = "";
-//
-//		String departNo = dhProcessInstance.getDepartNo();
-//		String companyNum = dhProcessInstance.getCompanyNumber();
-//
-//		DhActivityConf dhActivityConf = taskNode.getDhActivityConf();
-//		String actcAssignType = dhActivityConf.getActcAssignType();
-//		DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
-//		String activityId = taskNode.getSourceActivityId();
-//		if (assignTypeEnum == DhActivityConfAssignType.NONE) {
-//			// 没有默认处理人
-//		}
-//
-//		// 获得数据库中保存的  DH_ACTIVITY_ASSIGN 默认处理人
-//		DhActivityAssign selective = new DhActivityAssign();
-//		selective.setActivityId(activityId);
-//		selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
-//		List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
-//		// 获得被分配[人|角色|角色组]的 数据
-//		List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-//		switch (assignTypeEnum) {
-//			// 角色相关
-//			case ROLE:
-//			case ROLE_AND_DEPARTMENT:
-//			case ROLE_AND_COMPANY:
-//				SysRoleUser roleUser = new SysRoleUser();
-//				roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
-//
-//				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
-//					roleUser.setCompanyCode(companyNum);
-//				}
-//				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
-//						StringBuffer str = new StringBuffer(departNo);
-//						String result = recursionSelectDepartMent(departNo, str);
-//						roleUser.setDepartUid(result);
-//				}
-//				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-//				for (SysRoleUser sysRoleUser : roleUsers) {
-//					userUid += sysRoleUser.getUserUid() + ";";
-//					userName += sysRoleUser.getUserName() + ";";
-//				}
-//				break;
-//			// 角色组相关
-//			case TEAM:
-//			case TEAM_AND_DEPARTMENT:
-//			case TEAM_AND_COMPANY:
-//				SysTeamMember sysTeamMember = new SysTeamMember();
-//				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
-//					if (StringUtils.isNotBlank(departNo)) {
-//						sysTeamMember.setCompanyCode(companyNum);
-//					}
-//				}
-//				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
-//					if (StringUtils.isNotBlank(companyNum)) {
-//						if (StringUtils.isNotBlank(companyNum)) {
-//							StringBuffer str = new StringBuffer(departNo);
-//							String result = recursionSelectDepartMent(departNo, str);
-//							sysTeamMember.setDepartUid(result);
-//						}
-//					}
-//				}
-//
-//				sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
-//				List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-//				for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
-//					userUid += sysTeamMember2.getUserUid() + ";";
-//					userName += sysTeamMember2.getUserName() + ";";
-//				}
-//				break;
-//			// 当前处理人的上级
-//			case LEADER_OF_PRE_ACTIVITY_USER:
-//				ServerResponse<BpmActivityMeta> serverResponse = getPreActivity(dhProcessInstance, bpmActivityMeta);
-//				BpmActivityMeta activityMetaNew = serverResponse.getData();
-//				if (activityMetaNew != null) {
-//					String activityMetaUserUid = activityMetaNew.getUserUid();
-//					SysUser previousActivityUser = sysUserMapper.queryByPrimaryKey(activityMetaUserUid);// 上个环节处理人
-//					SysUser leader = sysUserMapper.queryByPrimaryKey(previousActivityUser.getUserId());// 上个环节处理人上级
-//					userUid += leader.getManagernumber() + ";";
-//					userName += leader.getUserName() + ";";
-//				}
-//				break;
-//			// 指定处理人
-//			case USERS:
-//				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
-//				for (SysUser sysUser : userItem) {
-//					userUid += sysUser.getUserUid() + ";";
-//					userName += sysUser.getUserName() + ";";
-//				}
-//				break;
-//			// 流程发起人
-//			case PROCESS_CREATOR: // 流程发起人
-//				idList = new ArrayList<String>();
-//				idList.add(insInitUser);
-//				List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList);
-//				for (SysUser sysUser : userList) {
-//					userUid += sysUser.getUserUid() + ";";
-//					userName += sysUser.getUserName() + ";";
-//				}
-//				break;
-//			// 根据表单字段选
-//			case BY_FIELD:
-//				if (assignList.size() > 0) {
-//					String field = assignList.get(0).getActaAssignId();
-//					dhActivityConf.setHandleField(field);
-//					JSONObject jsonObject = formJson.getJSONObject(field);
-//					idList = new ArrayList<String>();
-//					if (jsonObject != null) {
-//						String value = jsonObject.getString("value");
-//						idList.add(value);
-//					}
-//					if (idList.size() > 0) {
-//						List<SysUser> users = sysUserMapper.listByPrimaryKeyList(idList);
-//						for (SysUser sysUser : users) {
-//							userUid += sysUser.getUserUid() + ";";
-//							userName += sysUser.getUserName() + ";";
-//						}
-//					}
-//				}
-//				break;
-//			default:
-//				break;
-//		}
-//	}
+    @Override
+	public List<String> getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, String preTaskOwner, DhProcessInstance dhProcessInstance, JSONObject mergedFormData) {
+		List<String> ownerIdList = new ArrayList<>();
+		String userUid = "";
+		String departNo = dhProcessInstance.getDepartNo();
+		String companyNum = dhProcessInstance.getCompanyNumber();
+
+		DhActivityConf dhActivityConf = taskNode.getDhActivityConf();
+		String actcAssignType = dhActivityConf.getActcAssignType();
+		DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+		String activityId = taskNode.getSourceActivityId();
+		if (assignTypeEnum == DhActivityConfAssignType.NONE) {
+		    // 如果没有默认处理人，返回空集合
+			return ownerIdList;
+		}
+
+		// 获得数据库中保存的  DH_ACTIVITY_ASSIGN 默认处理人
+		DhActivityAssign selective = new DhActivityAssign();
+		selective.setActivityId(activityId);
+		selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
+		List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+		// 获得被分配[人|角色|角色组]的 数据
+		List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
+
+		switch (assignTypeEnum) {
+			// 角色相关
+			case ROLE:
+			case ROLE_AND_DEPARTMENT:
+			case ROLE_AND_COMPANY:
+				SysRoleUser roleUser = new SysRoleUser();
+				roleUser.setRoleUid(ArrayUtil.toArrayString(idList));
+				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
+					roleUser.setCompanyCode(companyNum);
+				}
+				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
+						StringBuffer str = new StringBuffer(departNo);
+						String result = recursionSelectDepartMent(departNo, str);
+						roleUser.setDepartUid(result);
+				}
+				List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
+				for (SysRoleUser sysRoleUser : roleUsers) {
+					userUid += sysRoleUser.getUserUid() + ";";
+				}
+				break;
+			// 角色组相关
+			case TEAM:
+			case TEAM_AND_DEPARTMENT:
+			case TEAM_AND_COMPANY:
+				SysTeamMember sysTeamMember = new SysTeamMember();
+				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
+					if (StringUtils.isNotBlank(departNo)) {
+						sysTeamMember.setCompanyCode(companyNum);
+					}
+				}
+				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
+					if (StringUtils.isNotBlank(companyNum)) {
+						if (StringUtils.isNotBlank(companyNum)) {
+							StringBuffer str = new StringBuffer(departNo);
+							String result = recursionSelectDepartMent(departNo, str);
+							sysTeamMember.setDepartUid(result);
+						}
+					}
+				}
+
+				sysTeamMember.setTeamUid(ArrayUtil.toArrayString(idList));
+				List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
+				for (SysTeamMember sysTeamMember2 : sysTeamMembers) {
+					userUid += sysTeamMember2.getUserUid() + ";";
+				}
+				break;
+			// 当前处理人的上级
+			case LEADER_OF_PRE_ACTIVITY_USER:
+                SysUser preTaskUser = sysUserMapper.queryByPrimaryKey(preTaskOwner);
+                SysUser leaderOfPreTaskUser = sysUserMapper.queryByPrimaryKey(preTaskUser.getManagernumber());
+                userUid += leaderOfPreTaskUser.getUserUid() + ";";
+                break;
+			// 指定处理人
+			case USERS:
+				List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(idList);
+				for (SysUser sysUser : userItem) {
+					userUid += sysUser.getUserUid() + ";";
+				}
+				break;
+			// 流程发起人
+			case PROCESS_CREATOR: // 流程发起人
+				idList = new ArrayList<String>();
+				idList.add(dhProcessInstance.getInsInitUser());
+				List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList);
+				for (SysUser sysUser : userList) {
+					userUid += sysUser.getUserUid() + ";";
+				}
+				break;
+			// 根据表单字段选
+			case BY_FIELD:
+				if (assignList.size() > 0) {
+					String field = assignList.get(0).getActaAssignId();
+					dhActivityConf.setHandleField(field);
+					JSONObject jsonObject = mergedFormData.getJSONObject(field);
+					idList = new ArrayList<String>();
+					if (jsonObject != null) {
+						String value = jsonObject.getString("value");
+						idList.add(value);
+					}
+					if (idList.size() > 0) {
+						List<SysUser> users = sysUserMapper.listByPrimaryKeyList(idList);
+						for (SysUser sysUser : users) {
+							userUid += sysUser.getUserUid() + ";";
+						}
+					}
+				}
+				break;
+			default:
+				break;
+		}
+        // 去除重复的值
+        if (StringUtils.isNotBlank(userUid)) {
+            String userUidArray[] = userUid.split(";");
+            Set<String> set = new HashSet<String>();
+            for (int i = 0; i < userUidArray.length; i++) {
+                String userUidNext = userUidArray[i];
+                if (set.add(userUidNext)) {
+                    ownerIdList.add(userUidNext);
+                }
+            }
+
+        }
+        return ownerIdList;
+	}
 
 
 	private String recursionSelectDepartMent(String departNo,StringBuffer str) {
@@ -865,7 +858,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		// 查找流转到这个环节的流转记录，上个环节处理人为流转记录的生成人
 		List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper
 				.listPreRoutingRecord(dhProcessInstance.getInsUid(), bpmActivityMeta.getActivityId());
-		if (preRoutingRecordList.size() == 0) {
+		if (preRoutingRecordList.isEmpty()) {
 			return ServerResponse.createByErrorMessage("获取上个环节失败");
 		}
 		DhRoutingRecord preRoutingRecord = preRoutingRecordList.get(0);
@@ -873,9 +866,37 @@ public class DhRouteServiceImpl implements DhRouteService {
 		BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(preRoutingRecord.getActivityId());
 		// 找到路由记录对应的任务
         DhTaskInstance taskInstance = dhTaskInstanceMapper.selectByPrimaryKey(preRoutingRecord.getTaskUid());
+        // 装配处理人信息
         preMeta.setUserUid(taskInstance.getUsrUid());
 		SysUser preUser = sysUserMapper.queryByPrimaryKey(taskInstance.getUsrUid());
 		preMeta.setUserName(preUser.getUserName());
+		return ServerResponse.createBySuccess(preMeta);
+	}
+
+	@Override
+	public ServerResponse<BpmActivityMeta> getPreActivityByDiagram(DhProcessInstance dhProcessInstance,
+                                                                   BpmActivityMeta sourceNode) {
+		List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper
+				.listPreRoutingRecord(dhProcessInstance.getInsUid(), sourceNode.getActivityId());
+		// 找出其中是submitTask的记录
+        DhRoutingRecord routingRecordWhenSubmit = null;
+        for (DhRoutingRecord routingRecord : preRoutingRecordList) {
+            if (DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK.equals(routingRecord.getRouteType())
+                    || DhRoutingRecord.ROUTE_TYPE_AUTOCOMMIT.equals(routingRecord.getRouteType())) {
+                // 提交或自动提交的记录满足条件
+                routingRecordWhenSubmit = routingRecord;
+                break;
+            }
+        }
+        if (routingRecordWhenSubmit == null) {
+            return ServerResponse.createByErrorMessage("获取上个环节失败");
+        }
+        DhTaskInstance taskInstance = dhTaskInstanceMapper.selectByPrimaryKey(routingRecordWhenSubmit.getTaskUid());
+        BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(routingRecordWhenSubmit.getActivityId());
+        // 装配处理人信息
+        preMeta.setUserUid(taskInstance.getUsrUid());
+        SysUser preUser = sysUserMapper.queryByPrimaryKey(taskInstance.getUsrUid());
+        preMeta.setUserName(preUser.getUserName());
 		return ServerResponse.createBySuccess(preMeta);
 	}
 

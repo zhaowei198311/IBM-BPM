@@ -23,7 +23,7 @@ public interface DhRoutingRecordMapper {
 	int insert(DhRoutingRecord dhRoutingRecord);
 	
 	/**
-	 * 根据流程实例主键，传入的环节id，查找传入环节的上一个环节，根据create_time倒序排列
+	 * 按时间倒序排列 toActivityId为指定节点的流转记录
 	 * @param insUid
 	 * @param currActivityId
 	 * @return

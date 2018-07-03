@@ -37,12 +37,11 @@ public class BpmTaskUtil {
     }
     
     /**
-     * 设置任务中的pubBo变量，同时运行人工任务中的脚本自然完成任务
+     * 设置任务中的pubBo变量, 并完成任务
      * @param taskId
      * @param pubBo
      * @return  Map中的信息： 
      *              assignTaskResult
-     *              
      */
     public Map<String, HttpReturnStatus> commitTask(Integer taskId, CommonBusinessObject pubBo) {
         HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
@@ -83,6 +82,53 @@ public class BpmTaskUtil {
         }
         return resultMap;
     }
+
+
+    /**
+     * 设置任务中的pubBo变量，并完成任务，不分配用户
+     * @param taskId
+     * @param pubBo
+     * @return  Map中的信息：
+     *              assignTaskResult
+     */
+    public Map<String, HttpReturnStatus> commitTaskWithOutUserInSession(Integer taskId, CommonBusinessObject pubBo) {
+        HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
+        RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+        HttpReturnStatus result = new HttpReturnStatus();
+        //String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+
+        try {
+            // 将任务分配给当前用户
+            //result = this.applyTask(taskId, currentUserUid);
+            // 不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
+            //resultMap.put("assignTaskResult", result);
+            Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
+            resultMap.putAll((Map)setDataResult);
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
+            if (errorMap.isEmpty()) {
+                result = this.completeTask(taskId);
+                resultMap.put("commitTaskResult", result);
+                if (HttpReturnStatusUtil.isErrorResult(result)) {
+                    resultMap.put("errorResult", result);
+                }
+            } else if (!errorMap.isEmpty()) {
+                resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
+            } else {
+                resultMap.put("errorResult", result);
+            }
+
+        } catch (Exception e) {
+            log.error("完成任务失败，任务id：" + taskId, e);
+            HttpReturnStatus errorStatus = new HttpReturnStatus();
+            errorStatus.setCode(-1);
+            errorStatus.setMsg(e.toString());
+            resultMap.put("errorResult", errorStatus);
+        } finally {
+            restUtil.close();
+        }
+        return resultMap;
+    }
+
     
     /**
      * 将任务分配给某人

@@ -188,6 +188,9 @@ function loadDhroutingRecords(){
 					case "trunOffTask":
 						info += "<div>管理员撤转任务</div>";
 						break;
+					case "autoCommit":
+                        info += "<div>管理员自动提交</div>";
+                        break;
 				}
 	    		info += "<div>"+datetimeFormat_1(date)+"</div>"
 				+"</li>";

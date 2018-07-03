@@ -36,14 +36,18 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
     @Autowired
     private DhTaskInstanceService taskInstanceService;
-
-
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
+
 	@Override
 	public List<DhRoutingRecord> getDhRoutingRecordListByCondition(DhRoutingRecord dhRoutingRecord) {
 		return dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
 	}
+
+    @Override
+	public int saveDhRoutingRecord(DhRoutingRecord dhRoutingRecord) {
+        return dhRoutingRecordMapper.insert(dhRoutingRecord);
+    }
 
 
     @Override
@@ -79,7 +83,6 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
             }
             dhRoutingRecord.setActivityTo(activityTo);
         }
-
         return ServerResponse.createBySuccess(dhRoutingRecord);
     }
 
@@ -238,7 +241,6 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
             if (dhRoutingRecord.getRouteType().equals(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK)) {
                 return dhRoutingRecord;
             }
-
         }
         return null;
     }
@@ -269,5 +271,20 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         return dhRoutingRecord;
 	}
 
+    @Override
+    public DhRoutingRecord generateAutoCommitRoutingRecord(DhTaskInstance currTaskInstance, BpmActivityMeta tagetActivityMeta
+        , String adminUid) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTaskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(currTaskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_AUTOCOMMIT);
+        dhRoutingRecord.setUserUid(adminUid); // 路由人是管理员
+        dhRoutingRecord.setActivityId(currTaskInstance.getTaskActivityId());
+        String activityTo = tagetActivityMeta.getActivityId();
+        dhRoutingRecord.setActivityTo(activityTo);
+        dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
+        return dhRoutingRecord;
+    }
 
 }

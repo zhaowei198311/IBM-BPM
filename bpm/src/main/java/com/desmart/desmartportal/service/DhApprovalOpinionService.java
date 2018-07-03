@@ -60,4 +60,11 @@ public interface DhApprovalOpinionService {
 	 */
 	ServerResponse saveDhApprovalOpinionWhenFinishAdd(DhTaskInstance currTask, String content);
 
+	/**
+	 * 为自动提交保存审批意见
+	 * @param currTask 被自动提交的任务实例
+	 * @param adminUid 管理员id
+	 * @return
+	 */
+	ServerResponse saveDhApprovalOpinionWhenAutoCommit(DhTaskInstance currTask, String adminUid);
 }

@@ -19,7 +19,12 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 */
 @Repository
 public interface DhTaskInstanceMapper {
-	
+
+	/**
+	 * 检索满足 条件的任务实例
+	 * @param taskInstance
+	 * @return
+	 */
 	List <DhTaskInstance> selectAllTask(DhTaskInstance taskInstance);
 	
 	DhTaskInstance selectByPrimaryKey(String taskUid);
