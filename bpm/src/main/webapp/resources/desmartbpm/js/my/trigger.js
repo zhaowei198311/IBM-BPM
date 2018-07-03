@@ -55,6 +55,8 @@ if (pageInfo.total == 0) {
 var list = pageInfo.list;
 var startSort = pageInfo.startRow;// 开始序号
 var trs = "";
+var triPamaer = "";
+var triwebot = "";
 for (var i = 0; i < list.length; i++) {
 	var meta = list[i];
 	var sortNum = startSort + i;
@@ -65,6 +67,19 @@ for (var i = 0; i < list.length; i++) {
 	}
 	if (meta.updateTime) {
 		updateTime = common.dateToString(new Date(meta.updateTime));
+	}
+	// 判断参数为空
+	if(meta.triParam == null || meta.triParam  == ''){
+		triPamaer = "没有参数"
+	}else{
+		triPamaer = meta.triParam;
+	}
+//	alert(meta.triWebbot.length)
+	// 触发执行命令太长 需要修改
+	if(meta.triWebbot.length>20){
+		triwebot = beautySub(meta.triWebbot,20);
+	}else{
+		triwebot = meta.triWebbot
 	}
 	trs += '<tr><td>'
 			+ sortNum 
@@ -79,13 +94,13 @@ for (var i = 0; i < list.length; i++) {
 			+ meta.triType 
 			+ '</td>' 
 			+ '<td>' 
-			+ meta.triWebbot
+			+ triwebot
 			+ '</td>' 
 			+ '<td>' 
-			+ meta.triParam 
+			+ triPamaer
 			+ '</td>' 
 			+ '<td>'
-			+ meta.creator 
+			+ meta.sysUser.userName
 			+ '</td>' 
 			+ '<td>' 
 			+ createTime 
@@ -413,3 +428,12 @@ $(".update_btn").click(function() {
 		})
 	}
 })
+
+// 字符转换
+function beautySub(str, len) {
+    var reg = /[\u4e00-\u9fa5]/g,    //专业匹配中文
+        slice = str.substring(0, len),
+        chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
+        realen = slice.length*2 - chineseCharNum;
+    return str.substr(0, realen) + (realen < str.length ? "..." : "");
+}

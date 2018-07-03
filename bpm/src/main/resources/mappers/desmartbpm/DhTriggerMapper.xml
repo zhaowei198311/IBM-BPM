@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhTriggerMapper" >
+	<resultMap id="triggerMap" type="java.util.Map" >
+		<result column="TRI_UID"			property="triUid"/>
+		<result column="TRI_TITLE"			property="triTitle"/>
+		<result column="TRI_DESCRIPTION"	property="triDescription"/>
+		<result column="TRI_TYPE"			property="triType"/>
+		<result column="TRI_WEBBOT"			property="triWebbot"/>
+		<result column="TRI_PARAM"			property="triParam"/>
+		<result column="CREATOR"			property="creator"/>
+		<result column="CREATE_TIME"		property="createTime"/>
+		<result column="UPDATOR"			property="updator"/>
+		<result column="UPDATE_TIME"		property="updateTime"/>
+	</resultMap>
+	
+	<resultMap id="triggerAndUserMap" type="com.desmart.desmartbpm.entity.DhTrigger">
+		<result column="TRI_UID"			property="triUid"/>
+		<result column="TRI_TITLE"			property="triTitle"/>
+		<result column="TRI_DESCRIPTION"	property="triDescription"/>
+		<result column="TRI_TYPE"			property="triType"/>
+		<result column="TRI_WEBBOT"			property="triWebbot"/>
+		<result column="TRI_PARAM"			property="triParam"/>
+		<result column="CREATOR"			property="creator"/>
+		<result column="CREATE_TIME"		property="createTime"/>
+		<result column="UPDATOR"			property="updator"/>
+		<result column="UPDATE_TIME"		property="updateTime"/>
+		<association property="sysUser" javaType="com.desmart.desmartsystem.entity.SysUser">
+			<result column="USER_UID" property="userUid" />
+			<result column="USER_NO" property="userNo" />
+			<result column="USER_ID" property="userId" />
+			<result column="USER_NAME" property="userName" />
+			<result column="ORDER_INDEX" property="orderIndex" />
+			<result column="PASSWORD" property="password" />
+			<result column="DEPART_UID" property="departUid" />
+			<result column="IS_MANAGER" property="isManager" />
+			<result column="WORK_CALENDAR" property="workCalendar" />
+			<result column="OFFICE_TEL" property="officeTel" />
+			<result column="OFFICE_FAX" property="officeFax" />
+			<result column="MOBILE" property="mobile" />
+			<result column="EMAIL" property="email" />
+			<result column="USER_IP" property="userIp" />
+			<result column="IS_SINGLE_LOGIN" property="isSingleLogin" />
+			<result column="WORK_STATUS" property="workStatus" />
+			<result column="SESSION_TIME" property="sessionTime" />
+			<result column="WECHAT" property="wechat" />
+			<result column="EXT1" property="ext1" />
+			<result column="EXT2" property="ext2" />
+			<result column="EXT3" property="ext3" />
+			<result column="EXT4" property="ext4" />
+			<result column="EXT5" property="ext5" />
+			<result column="REPORT_TO" property="reportTo" />
+			<result column="IS_CLOSED" property="isClosed" />
+			<result column="CLOSE_DATE" property="closeDate" />
+			<result column="BEGIN_DATE" property="beginDate" />
+			<result column="END_DATE" property="endDate" />
+			<result column="CREATE_DATE" property="createDate" />
+			<result column="UPDATE_DATE" property="updateDate" />
+			<result column="SESSION_TIME" property="sessionTime" />
+			<result column="COSTCENTER" property="costCenter" />
+			<result column="COMPANYNUMBER" property="companynumber" />
+			<result column="DEPARTMENTNUMBER" property="departmetNumber" />
+			<result column="EMPLOYEETYPE" property="employeeType" />
+			<result column="DEPART_NAME" property="departName" />
+			<result column="ACCOUNT_TYPE" property="accountType" />
+		</association>
+	</resultMap>
+
+
     <sql id="base_column">
         TRI_UID,
         TRI_TITLE,
@@ -12,6 +78,20 @@
         CREATE_TIME,
         UPDATOR,
         UPDATE_TIME
+    </sql>
+    
+     <sql id="Coludition_column">
+        T.TRI_UID,
+        T.TRI_TITLE,
+        T.TRI_DESCRIPTION,
+        T.TRI_TYPE,
+        T.TRI_WEBBOT,
+        T.TRI_PARAM,
+        T.CREATOR,
+        T.CREATE_TIME,
+        T.UPDATOR,
+        T.UPDATE_TIME,
+        S.USER_NAME
     </sql>
     
     <sql id="relation_column">
@@ -49,11 +129,12 @@
         where tri_Uid = #{triUid}
     </select>
 
-    <select id="searchBySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger" resultType="com.desmart.desmartbpm.entity.DhTrigger">
-        select <include refid="base_column"/> from dh_trigger
+    <select id="searchBySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger" resultMap="triggerAndUserMap" >
+        select <include refid="Coludition_column"/> from dh_trigger T , sys_user S
         <where>
+        	T.CREATOR = S.USER_UID
             <if test="triTitle != null and !triTitle.trim().isEmpty()" >
-                tri_title like '%' || #{triTitle} || '%'
+                and tri_title like '%' || #{triTitle} || '%'
             </if>
             <if test="triType != null and !triType.trim().isEmpty()" >
                 and tri_type = #{triType}
