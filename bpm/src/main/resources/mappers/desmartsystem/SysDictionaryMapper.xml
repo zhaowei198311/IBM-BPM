@@ -47,12 +47,11 @@
 		<include refid="Base_Column_List" />
 		from SYS_DICTIONARY
 		where 1=1
-		
 		<if test="dicCode != null and dicCode!='' ">
 			and DIC_CODE like '%'||#{dicCode}||'%'
 		</if>	
 		
-		<if test="dicName != null and dicCode!='' ">
+		<if test="dicName != null and dicName!='' ">
 			and DIC_NAME like '%'||#{dicName}||'%'
 		</if>	
 		
