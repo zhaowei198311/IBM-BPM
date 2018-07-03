@@ -190,7 +190,6 @@
 		var processName = $('#processName').val();
 		var time = $("#init-startTime-search").val();
 		var timeArray = time.split(' - ');
-		var endTime = null;
 		// 按条件查询 流程实例
 		$.ajax({
 			url : 'processInstance/queryProcessInstanceByIds',
