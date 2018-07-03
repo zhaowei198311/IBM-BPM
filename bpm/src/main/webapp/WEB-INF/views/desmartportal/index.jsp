@@ -49,29 +49,29 @@
 									src="resources/desmartportal/images/logo.png" class="mini_logo" /></li>
 								<li style="text-align: center; margin-bottom: 20px;"><span
 									class="system_title">BPM系统</span></li>
-								<li class="layui-nav-item layui-this"><a
+								<li class="layui-nav-item layui-this"><a class="typeColor"
 									href="menus/backlog" target="iframe0"><i class="layui-icon"
 										style="left: 40px">&#xe60e;</i><span> 待办任务<span
 											class="layui-badge" id="daiban_icon"></span></span> </a></li>
-								<li class="layui-nav-item"><a href="menus/notRedProcess"
+								<li class="layui-nav-item"><a class="typeColor" href="menus/notRedProcess"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe645;</i><span>
 											抄送</span></a></li>
-								<li class="layui-nav-item"><a href="menus/finishProcess"
+								<li class="layui-nav-item"><a class="typeColor" href="menus/finishProcess"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#x1005;</i><span>
 											已办任务</span></a></li>
 								<!--<li class="layui-nav-item"><a href="read.html" target="iframe0"><i class="layui-icon">&#xe615;</i><span> 通知查询</span></a></li>
 							 	<li class="layui-nav-item"><a href="draft.html" target="iframe0"><i class="layui-icon">&#xe624;</i><span>草稿箱</span></a></li>
 							 	<li class="layui-nav-item"><a href="new_tail.html" target="iframe0"><i class="layui-icon">&#xe609;</i> <span> 发起跟踪</span></a></li>-->
-								<li class="layui-nav-item"><a href="agent/index"
+								<li class="layui-nav-item"><a class="typeColor" href="agent/index"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe6b2;</i><span>
 											代理设置</span></a></li>
-								<li id="shopLife" class="layui-nav-item"><a href="javascript:void(0)"
+								<li class="layui-nav-item"><a id="shopLife" href="javascript:void(0)"
 									target="iframe0" class="detail_menu1"><i class="layui-icon"
 										style="left: 40px">&#xe68e;</i><span> 门店生命周期</span></a></li>
-								<li class="layui-nav-item"><a href="drafts/index"
+								<li class="layui-nav-item"><a class="typeColor" href="drafts/index"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe640;</i>
 										<span> 草稿箱</span></a></li>
-								<li class="layui-nav-item"><a href="javascript:void(0)"
+								<li class="layui-nav-item"><a class="typeColor" href="javascript:void(0)"
 									target="iframe0"><i class="layui-icon" style="left: 40px">&#xe629;</i>
 										<span> 报表</span></a></li>
 								<!--<i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i>-->
@@ -87,10 +87,11 @@
 						class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
 						<input id="userId" value="${userId}" style="display: none;">
-						<div class="nav" style="margin-top: 50%">
+						<!--  -->
+						<div class="nav" style="margin-top: 50%;">
 							<ul class="nav1" style="width: 200px;">
 <%--  								<c:forEach items="${listmap}" var="info">
-									<li class="li1 haizei"><a>${fn:substringAfter(info.key, ",")}
+									<li class="li1 haizei" style="position:relative;"><a>${fn:substringAfter(info.key, ",")}
 											></a>
 										<ul class="nav2">
 											<c:forEach items="${info.value}" var="process">
@@ -103,6 +104,9 @@
 									</li>
 								</c:forEach> --%>
 							</ul>
+						</div>
+						<div class="tab2">
+							
 						</div>
 					</div>
 				</div>
@@ -238,12 +242,20 @@ $(function(){
 	// 门店生命周期鼠标悬停事件  加颜色
 	$("#shopLife").hover(
 		function () {
-			
-		},
-		function () {
-			
-		}	
+			$(".typeColor").not(this).css("background-color","#3A3F48");
+			$("#shopLife").css("background-color","#009688");
+		}
 	);
+	$(".typeColor").click(function(){
+		$(".typeColor").not(this).css("background-color","#3A3F48");
+		$("#shopLife").css("background-color","#3A3F48");
+		$(this).css("background-color","#009688");
+	})
+	
+	function color(){
+		alert("a")
+		$("#shopLife").css("background-color","#3A3F48");
+	}
 	
 	queryByParent('rootCategory');
 	
@@ -258,11 +270,19 @@ $(function(){
 				  	queryPorcess(categoryuid);
 			  	  }
 				  $(this).children("ul").show();
+				  // 修改背景色
+				  $(this).css("background-color","#069683");
 			  }, function() {
-				  $(this).children("ul").hide();
+				  $(this).css("background-color","");
 			  }
 			);
-
+	
+	$(".nav1 .nav2").hover(
+			function() {
+				$("a").css("background-color","#069683");
+			}
+	);
+	
 });
 
 	function overViewProcess(a) {
