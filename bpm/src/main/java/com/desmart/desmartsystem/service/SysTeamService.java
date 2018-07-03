@@ -21,4 +21,6 @@ public interface SysTeamService extends IService<SysTeam,String> {
 	public SysTeam selectByPrimary(SysTeam sysTeam);
 	
 	List<SysTeam> selectFilterNode(SysTeam entity);
+	
+	SysTeam select(SysTeam entity);
 }

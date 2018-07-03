@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.desmartsystem.entity.SysRole;
 import com.desmart.desmartsystem.entity.SysTeam;
 import com.desmart.desmartsystem.service.SysTeamService;
 import com.desmart.desmartsystem.util.PagedResult;
@@ -84,6 +85,26 @@ public class SysTeamController {
 			e.printStackTrace();
 			return "{\"msg\":\"error\"}";
 		}
+	}
+	
+	@ResponseBody  
+	@RequestMapping(value="teamexists")
+	public boolean teamexists(SysTeam sysTeam) {
+	 String encode = "UTF-8";      
+	 String teamName = sysTeam.getTeamName();
+	 String teamNameNew = sysTeam.getTeamName();
+       try {      
+           if (teamName.equals(new String(teamName.getBytes(encode), encode))) {      //判断是不是GB2312
+        	   teamNameNew=new String(teamNameNew.getBytes("iso8859-1"),"utf-8");
+            }      
+           sysTeam.setTeamName(teamNameNew);
+	   		if(sysTeamService.select(sysTeam)!=null){
+	   			return false;  
+	   		}
+        } catch (Exception e) {      
+        	return false;
+        }      
+		return true;  
 	}
 	
 	@RequestMapping("/addSysTeam")

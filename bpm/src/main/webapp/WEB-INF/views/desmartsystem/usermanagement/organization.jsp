@@ -34,7 +34,7 @@
 						    	<input type="text" placeholder="组织代码"  name="departNo" class="layui-input">
 							</div>
 							<div class="layui-col-md1" style="text-align:right;">
-							    <button class="layui-btn" >查询</button>
+							    <button class="layui-btn" type="button" onclick="pageBreak(1);" >查询</button>
 							</div>
 						</div>
 						<input type="hidden" name="departParent" id="departParent" >

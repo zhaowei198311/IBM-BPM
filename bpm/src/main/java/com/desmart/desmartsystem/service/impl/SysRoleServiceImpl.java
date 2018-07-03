@@ -1,5 +1,6 @@
 package com.desmart.desmartsystem.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +46,14 @@ public class SysRoleServiceImpl  implements SysRoleService {
 	@Override
 	public int insert(SysRole entity) {
 		// TODO Auto-generated method stub
+		entity.setCreateDate(new Date());
 		return sysRoleMapper.insert(entity);
 	}
 
 	@Override
 	public int insertSelective(SysRole entity) {
 		// TODO Auto-generated method stub
+		entity.setCreateDate(new Date());
 		return sysRoleMapper.insertSelective(entity);
 	}
 
@@ -63,12 +66,14 @@ public class SysRoleServiceImpl  implements SysRoleService {
 	@Override
 	public int updateByPrimaryKeySelective(SysRole entity) {
 		// TODO Auto-generated method stub
+		entity.setUpdateDate(new Date());
 		return sysRoleMapper.updateByPrimaryKey(entity);
 	}
 
 	@Override
 	public int updateByPrimaryKey(SysRole entity) {
 		// TODO Auto-generated method stub
+		entity.setUpdateDate(new Date());
 		return sysRoleMapper.updateByPrimaryKey(entity);
 	}
 
@@ -86,5 +91,11 @@ public class SysRoleServiceImpl  implements SysRoleService {
 	public List<SysRole> selectAll(SysRole entity) {
 		// TODO Auto-generated method stub
 		return sysRoleMapper.selectAll(entity);
+	}
+
+	@Override
+	public SysRole select(SysRole entity) {
+		// TODO Auto-generated method stub
+		return sysRoleMapper.select(entity);
 	}
 }

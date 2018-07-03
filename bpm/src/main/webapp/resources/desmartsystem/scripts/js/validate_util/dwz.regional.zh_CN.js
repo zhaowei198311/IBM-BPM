@@ -25,7 +25,8 @@
 			
 			alphanumeric: "字母、数字、下划线",
 			lettersonly: "必须是字母",
-			phone: "数字、空格、括号"
+			phone: "数字、空格、括号",
+			mobilePhone:"请正确填写您的手机号码"
 			
 		});
 	}

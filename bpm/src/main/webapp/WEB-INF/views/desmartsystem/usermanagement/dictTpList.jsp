@@ -31,7 +31,7 @@
 							<input type="text" name="dicName" placeholder="请输入字典类型名称" lay-search="" autocomplete="off" class="layui-input"/>
 						</div>
 						<div class="layui-col-md1" style="text-align:right;">
-							<button class="layui-btn create_btn" type="submit">检索</button>
+							<button class="layui-btn create_btn" type="button" onclick="pageBreak(1);">检索</button>
 						</div>
 						<div class="layui-col-md1" style="text-align:right;">
 							<button class="layui-btn create_btn" type="button"  onclick="adddialog()">新建</button>

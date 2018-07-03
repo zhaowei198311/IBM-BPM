@@ -13,8 +13,8 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/myjs/public.js"></script>	
 <!-- 公共组件 -->
 <jsp:include page="../common/pbPlugins.jsp"></jsp:include>
-<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script>
-<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script>
+<%-- <script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script> --%>
+<%-- <script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script> --%>
 </head>
 <body>
 	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="" id="quartzEditForm">
@@ -28,12 +28,7 @@
 			<div class="layui-inline">
 				<label class="layui-form-label" style="color:#F00">类型</label>
 				<div class="layui-input-inline">
-					<select name="jobGroupName" id="jobGroupName" lay-verify="required">
-						<option value="">选择类型</option>
-						<option value="同步数据">同步数据</option>
-						<option value="BPM接口调用">BPM接口调用</option>
-						<option value="普通调度">普通调度</option>
-        			</select>
+					<select name="jobGroupName" id="jobGroupName" lay-verify="required"></select>
 				</div>
 			</div>
 		</div>
@@ -80,41 +75,41 @@
 	    });
 	});
 	
-layui.use(['form', 'layedit', 'laydate','jquery'], function(){
-  var form = layui.form;
-  
-  
-  var $ = layui.jquery;
-  var data =JSON.parse(decodeURIComponent(getRequestParam().obj));
-  
-  //初始化所属组别下拉框
-  pbInitCombox($,form,'dicUid=dicbea3b258-604c-4aca-8c02-83b2315edcf8','jobGroupName',data.jobGroupName);
-  
-   //监听提交
-//    form.on('submit(btnSubmit)', function(data){
-//    var index = layer.load(1);//开启进度条
-//       $.ajax({
-<%-- 		url : '<%=request.getContextPath()%>/quarz/editJob.do', --%>
-// 		data :$('#quartzEditForm').serialize()+"&cronExpr="+$('#cron').val(),
-// 		type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
-// 		dataType : 'json',
-// 		success : function(obj) {
-// 			layer.close(index);//关闭   
-// 			if (obj.success) {
-// 				pubUtil.msg(obj.msg,layer,1,function(){
-// 					$("#close").click();
-// 				},500);
-// 			} else {
-// 				pubUtil.msg(obj.msg,layer,2,function(){
-					
-// 				},5*1000);
-// 			}
-// 		}
-// 	});
-//     return false;
-//   });
-    
-});
+	layui.use(['form', 'layedit', 'laydate','jquery'], function(){
+		  var form = layui.form;
+		  var $ = layui.jquery;
+		  var data =JSON.parse(decodeURIComponent(getRequestParam().obj));
+		  //初始化所属组别下拉框
+		  
+		  pbInitCombox($,form,'dicUid=dicbea3b258-604c-4aca-8c02-83b2315edcf8','jobGroupName',data.jobGroupName);
+		  
+		  
+		   //监听提交
+		   form.on('submit(btnSubmit)', function(data){
+		   // layer.msg(JSON.stringify(data.field));
+		   var index = layer.load(1);//开启进度条
+		      $.ajax({
+				url : '<%=request.getContextPath()%>/quarz/editJob.do',
+				data :$('#quartzEditForm').serialize()+"&cronExpr="+$('#cron').val(),
+				type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
+				dataType : 'json',
+				success : function(obj) {
+					layer.close(index);//关闭   
+					if (obj.success) {
+						pubUtil.msg(obj.msg,layer,1,function(){
+							$("#close").click();
+						},500);
+					} else {
+						pubUtil.msg(obj.msg,layer,2,function(){
+							
+						},5*1000);
+					}
+				}
+			});
+		    return false;
+		  });
+		    
+		});
 
 
 //按钮的点击事件

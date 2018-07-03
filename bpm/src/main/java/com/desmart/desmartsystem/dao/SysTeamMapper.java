@@ -28,4 +28,6 @@ public interface SysTeamMapper {
     
     List<SysTeam> selectFilterNode(SysTeam entity);
     
+    SysTeam select(SysTeam record);
+    
 }

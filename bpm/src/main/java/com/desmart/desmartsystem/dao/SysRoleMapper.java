@@ -23,4 +23,6 @@ public interface SysRoleMapper {
     List<SysRole> selectAll(SysRole entity);
     
     List<SysRole> listByPrimaryKeyList(List<String> list);
+    
+    SysRole select(SysRole entity);
 }

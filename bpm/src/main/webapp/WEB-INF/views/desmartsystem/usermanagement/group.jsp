@@ -87,7 +87,7 @@ ul {
 					<label class="layui-form-label">角色组名称</label>
 					<div class="layui-input-block">
 						<input type="text" name="teamName" required lay-verify="required"
-							placeholder="请输入角色组名称" autocomplete="off" class="layui-input">
+							placeholder="请输入角色组名称"  remote="sysTeam/teamexists"   autocomplete="off" class="layui-input">
 					</div>
 				</div>
 
@@ -249,17 +249,17 @@ ul {
 <div class="display_container4">
 	<div class="display_content4" style="min-height: auto;">
 		<div class="top">绑定角色</div>
-		<!-- <div style="height:50px;">
-				<div class="layui-inline">
-		      <label class="layui-form-label" style="width: auto;">角色名称：</label>
-		      <div class="layui-input-inline">
-		        <input name="roleName" id="jsbd_roleName"  autocomplete="off"  style="display:inline;" class="layui-input" type="tel" />
-		      </div>
-		      <div class="layui-input-inline" style="margin-left: 20px;">
-		        	<button class="layui-btn" onclick="selectByNameRole();">查询</button>
-		      </div>
-		    </div>
-			</div> -->
+		<div style="height:50px;">
+			<div class="layui-inline">
+	      <label class="layui-form-label" style="width: auto;">角色名称：</label>
+	      <div class="layui-input-inline">
+	        <input name="roleName" id="jsbd_roleName"  autocomplete="off"  style="display:inline;" class="layui-input" type="tel" />
+	      </div>
+	      <div class="layui-input-inline" style="margin-left: 20px;">
+	        	<button class="layui-btn" onclick="selectByNameRole();">查询</button>
+	      </div>
+	    </div>
+		</div>
 		<form class="form-horizontal" action="sysTeamMember/addSysTeamMember"
 			method="post" onsubmit="return validateCallback(this,addsuccess2);">
 			<div class="middle1" style="height: 350px;">
@@ -352,39 +352,34 @@ ul {
 	};
 
 	function selectoptions(url, select) {
-		$
-				.ajax({
-					url : url, //后台webservice里的方法名称  
-					type : "post",
-					dataType : "json",
-					success : function(data) {
-						for (var i = 0; i < select.length; i++) {
-							$("#" + select[i]).empty();
-							var optionstring = "";
-							$(data)
-									.each(
-											function() {
-												optionstring += "<option value=\"" + this.teamUid + "\" >"
-														+ this.teamName
-														+ "</option>";
-											});
-							$("#" + select[i]).prepend(optionstring);
-							$("#" + select[i]).first().prepend(
-									"<option value='' selected='selected'>"
-											+ language.please_select
-											+ "</option>");
-						}
-					}
-				});
+		$.ajax({
+			url : url, //后台webservice里的方法名称  
+			type : "post",
+			dataType : "json",
+			success : function(data) {
+				for (var i = 0; i < select.length; i++) {
+					$("#" + select[i]).empty();
+					var optionstring = "";
+					$(data)
+							.each(
+									function() {
+										optionstring += "<option value=\"" + this.teamUid + "\" >"
+												+ this.teamName
+												+ "</option>";
+									});
+					$("#" + select[i]).prepend(optionstring);
+					$("#" + select[i]).first().prepend(
+							"<option value='' selected='selected'>"
+									+ language.please_select
+									+ "</option>");
+				}
+			}
+		});
 	}
 
 	function selectByNameRole() {
-		var userUid = $('.userUid').val();
-		var deparUid = $('.departUid').val();
-
-		var roleName = $('#jsbd_roleName').val();
-
-		openBusinessRoleBindings(userUid, departUid, roleName);
+		var teamUid=$('.teamUid').val();
+		openBusinessRoleBindings(teamUid,'secondTime');
 	};
 
 	function delete_user() {
@@ -427,7 +422,7 @@ ul {
 									+ this.teamUid
 									+ '&ext1=user","addRoleTema")  >&#xe654;</i>';
 							str += '<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'
-									+ this.teamUid + '"); >&#xe612;</i>';
+									+ this.teamUid + ',theFirstTime"); >&#xe612;</i>';
 							str += '<i class="layui-icon delete_btn" onclick=ajaxTodo("sysTeam/deleteSysTeam?teamUid='
 									+ this.teamUid + '","del") >&#xe640;</i>';
 							str += '</td>';
@@ -436,57 +431,53 @@ ul {
 	}
 
 	//打开业务角色绑定
-	function openBusinessRoleBindings(teamUid) {
+	function openBusinessRoleBindings(teamUid,openModel) {
+		
+		if(openModel=='theFirstTime'){
+			$('#jsbd_roleName').val('');
+		}
+		
 		var xz = document.getElementById('checkAll_a');
 		xz.checked = false;
 		$('.teamUid').val(teamUid);
 		$(".display_container4").css("display", "block");
 		$("#businessRoleTable").empty();
-		$
-				.ajax({
-					type : 'POST',
-					url : 'sysTeamMember/allSysTeamMember?memberType=role&teamUid='
-							+ teamUid,
-					dataType : "json",
-					cache : false,
-					success : function(data1) {
-						$
-								.ajax({
-									type : 'POST',
-									url : 'sysRole/roleList?roleType=1',
-									dataType : "json",
-									cache : false,
-									success : function(data) {
-										$(data)
-												.each(
-														function(i) {
-															var str = '<tr>';
-															var roleUid = this.roleUid
-															var checkbox = '<td><input type="checkbox" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'
-																	+ (i + 1)
-																	+ '</td>';
-															for (var i = 0, l = data1.length; i < l; i++) {
-																for ( var key in data1[i]) {
-																	if (data1[i][key] == roleUid) {
-																		checkbox = '<td><input type="checkbox" checked="checked" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'
-																				+ (i + 1)
-																				+ '</td>';
-																	}
-																}
-															}
-															str += checkbox;
-															str += '<td>'
-																	+ this.roleName
-																	+ '</td>';
-															str += '</tr>';
-															$(
-																	"#businessRoleTable")
-																	.append(str);
-														});
+		/* $('#jsbd_roleName').val(''); */
+		$.ajax({
+				type : 'POST',
+				url : 'sysTeamMember/allSysTeamMember',
+				dataType : "json",
+				cache : false,
+				data:{memberType:'role',teamUid:teamUid},
+				success : function(data1) {
+					$.ajax({
+						type : 'POST',
+						url : 'sysRole/roleList',
+						dataType : "json",
+						cache : false,
+						data:{roleType:1,isClosed:1,roleName:$('#jsbd_roleName').val()},
+						success : function(data) {
+							
+							$(data).each(function(i) {
+								var str = '<tr>';
+								var roleUid = this.roleUid
+								var checkbox = '<td><input type="checkbox" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'+ (i + 1)+ '</td>';
+								for (var i = 0, l = data1.length; i < l; i++) {
+									for ( var key in data1[i]) {
+										if (data1[i][key] == roleUid) {
+											checkbox = '<td><input type="checkbox" checked="checked" name="userUid" value="'+this.roleUid+'" lay-skin="primary">'+ (i + 1)+ '</td>';
+										}
 									}
-								});
-					}
-				});
+								}
+								str += checkbox;
+								str += '<td>'+ this.roleName+ '</td>';
+								str += '</tr>';
+								$("#businessRoleTable").append(str);
+							});
+						}
+					});
+				}
+			});
 	}
 
 	function addUserRoleSuccess(data) {

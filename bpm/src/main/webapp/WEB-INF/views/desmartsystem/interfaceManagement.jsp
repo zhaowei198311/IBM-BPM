@@ -165,7 +165,7 @@
 							<label class="layui-form-label">接口类型*:</label>
 							<div class="layui-input-inline">
 								<select id="intType" name="intType" lay-filter="intType" class="required">
-									<option value="">请选择</option>
+									<option value="">请选择接口类型</option>
 									<option value="webservice">webservice</option>
 									<option value="restapi">restapi</option>
 									<option value="rpc">rpc</option>
@@ -375,7 +375,7 @@
 		</div>
 	</div>
 	<div class="display_container5" id="exposed_table3_container">
-		<div class="display_content2" style="overflow: visible;">
+		<div class="display_content2">
 			<div class="top" style="color: red;">修改接口</div>
 			<form id="updaArrayForm" class="layui-form" action="javascript:void(0);" style="margin-top: 30px;">
 				<input id="intUid2" style="display: none;" name="intUid" />

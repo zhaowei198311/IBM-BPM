@@ -41,10 +41,10 @@
 								    <input type="text"  placeholder="类型"  name="employeeType" class="layui-input">				    
 								</div> -->
 								<div class="layui-col-md1" style="text-align:right;">
-								        <button class="layui-btn" >查询</button>
+								        <button class="layui-btn" type="button" onclick="pageBreak(1);" >查询</button>
 								</div>
 								<div class="layui-col-md1" style="text-align:right;">
-								    <button class="layui-btn create_btn" >新建</button>
+								    <button class="layui-btn create_btn" type="button" >新建</button>
 								</div>
 								<!-- <div class="layui-col-md1" style="text-align:right;margin-left: 20px;">
 								   <button class="layui-btn" type="button" onclick="synchronizationAppointUser();" >同步指定用户</button>
@@ -103,13 +103,13 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">邮箱</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input" />
+				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">手机号码</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="mobile" required  lay-verify="required" placeholder="请输入手机号码" autocomplete="off" class="layui-input" />
+				      <input type="text" name="mobile" required  lay-verify="required" placeholder="请输入手机号码" autocomplete="off" class="layui-input mobilePhone" />
 				    </div>
 				  </div>
 				   <div class="layui-form-item">
@@ -160,13 +160,13 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">邮箱</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input" />
+				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">手机号码</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="mobile" required  lay-verify="required" placeholder="请输入手机号码" autocomplete="off" class="layui-input" />
+				      <input type="text" name="mobile" required  lay-verify="required" placeholder="请输入手机号码" autocomplete="off" class="layui-input mobilePhone" />
 				    </div>
 				  </div>
 				   <div class="layui-form-item">
@@ -329,7 +329,7 @@
 					</table>	
 				</div>
 				<div class="foot" style="margin: 15px 10px 0;">
-					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container3').css('display','none');">取消</button>
+					<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="closeDepartmentOfBinding();">关闭</button>
 				</div>
 				</div>
 			</div>
@@ -594,16 +594,17 @@
 			$("#businessRoleTable").empty();
 			$.ajax({
 				type:'POST',
-				url:'sysRoleUser/allSysRoleUser?mapType=1&userUid='+userUid,
+				url:'sysRoleUser/allSysRoleUser',
 				dataType:"json",
+				data:{mapType:1,userUid:userUid},
 				cache: false,
 				success: function(data1){
 					
 					$.ajax({
 						type:'POST',
-						url:'sysRole/roleList?roleType=1',
+						url:'sysRole/roleList',
 						dataType:"json",
-						data:{roleName:roleName},
+						data:{roleName:roleName,roleType:1,isClosed:1},
 						cache: false,
 						success: function(data){
 							$(data).each(function(i){
@@ -674,9 +675,10 @@
 					
 					$.ajax({
 						type:'POST',
-						url:'sysRole/roleList?roleType=0',
+						url:'sysRole/roleList',
 						dataType:"json",
 						cache: false,
+						data:{roleType:0,isClosed:1},
 						success: function(data){
 							$(data).each(function(i){
 								var index=i+1;

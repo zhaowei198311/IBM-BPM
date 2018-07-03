@@ -43,9 +43,23 @@
     		and ROLE_NAME LIKE CONCAT(CONCAT('%',#{roleName}),'%')
     	</if>
     	
+    	<if test="isClosed != null">
+    		and IS_CLOSED = #{isClosed}
+    	</if>
+    	
       <if test="roleType != null" >
          and ROLE_TYPE=#{roleType}
       </if>
+      order by create_date
+  </select>
+  
+  <select id="select" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_ROLE  where 1=1 
+    <if test="roleName != null">
+    		and ROLE_NAME = #{roleName}
+    	</if>
   </select>
   
     <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
@@ -237,9 +251,6 @@
       <if test="endDate != null" >
         END_DATE = #{endDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createDate != null" >
-        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="updateDate != null" >
         UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
       </if>
@@ -263,7 +274,7 @@
       CLOSE_DATE = #{closeDate,jdbcType=TIMESTAMP},
       BEGIN_DATE = #{beginDate,jdbcType=TIMESTAMP},
       END_DATE = #{endDate,jdbcType=TIMESTAMP},
-      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+<!--       CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}, -->
       UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
       DESCRIBE = #{describe,jdbcType=VARCHAR}
     where ROLE_UID = #{roleUid,jdbcType=VARCHAR}

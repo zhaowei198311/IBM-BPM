@@ -68,7 +68,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input"/>
+				      <input type="text" name="roleName"   lay-verify="required" remote="sysRole/roleexists"     placeholder="请输入角色名称" autocomplete="off" class="layui-input required"/>
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -198,7 +198,7 @@
 						var str='';
 						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
 						str+="<input type='hidden' name='userUid' value='"+userUid+"'/>";
-						str+="<input type='hidden' name='departUid' value='"+departUid+"'/>";
+// 						str+="<input type='hidden' name='departUid' value='"+departUid+"'/>";
 						str+="</li>";
 						$("#user_add").append(str);
 						index++;
@@ -227,7 +227,7 @@
 				if(type=='addUserRole'){
 					str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName;
 					str+="<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
-					str+="<input type='hidden' name='departUid' value='"+this.departUid+"'/>";
+// 					str+="<input type='hidden' name='departUid' value='"+this.departUid+"'/>";
 					str+="</li>";
 				}else{
 					str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';

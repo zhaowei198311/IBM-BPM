@@ -165,13 +165,13 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		
 		
 		String paraParent="";
-		String paraInOut="";
+		String paraParentInOut="";
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			String paraUid=dhInterfaceParameter.getParaUid();
 			String paraType=dhInterfaceParameter.getParaType();
 			if(paraType.equals(Const.PARAMETER_TYPE_ARRAY)) {
 				paraParent=paraUid;
-				paraInOut=dhInterfaceParameter.getParaInOut();
+				paraParentInOut=dhInterfaceParameter.getParaInOut();
 			}
 		}
 		
@@ -197,7 +197,9 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
 			String paraUid=dhInterfaceParameter.getParaUid();
 			if(StringUtils.isNotBlank(paraUid)) {//如果主键不为空进行修改操作
-				dhInterfaceParameter.setParaInOut(paraInOut);
+				if(StringUtils.isNoneBlank(paraParentInOut)) {
+					dhInterfaceParameter.setParaInOut(paraParentInOut);
+				};
 				dhInterfaceParameterMapper.update(dhInterfaceParameter);
 			}else {//为空进行添加
 				String paraUidNew=EntityIdPrefix.DH_INTERFACE_PARAMETER + UUID.randomUUID().toString();

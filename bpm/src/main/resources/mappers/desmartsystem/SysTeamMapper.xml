@@ -50,6 +50,13 @@
     </if>
   </select>
   
+   <select id="select" resultMap="BaseResultMap" parameterType="com.desmart.desmartsystem.entity.SysTeam" >
+    select * from sys_team t where 1=1
+    <if test="teamName!=null">
+    	and TEAM_NAME=#{teamName}
+    </if>
+  </select>
+  
   <select id="selectFilterNode" resultMap="BaseResultMap" parameterType="com.desmart.desmartsystem.entity.SysTeam">
  		SELECT * FROM SYS_TEAM WHERE TEAM_UID NOT IN (SELECT t.TEAM_UID FROM SYS_TEAM 	t start with  t.TEAM_UID  = #{teamUid} connect by t.PARENT_ID=prior t.TEAM_UID
 		UNION ALL 

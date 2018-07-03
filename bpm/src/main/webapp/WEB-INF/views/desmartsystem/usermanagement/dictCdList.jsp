@@ -21,6 +21,10 @@
 				<div class="layui-row">
 					<form class="form-inline layui-form" method="post" action="sysDictionary/getSysDictionaryDataList"  onsubmit="return search(this);">
 						<input type="hidden" name="pageNo" id="pageNo" value="1" />
+						
+						<div class="layui-col-md2">
+							<input type="text" name="dicCode" placeholder="请输入字典代码" class="layui-input"/>
+						</div>
 						<div class="layui-col-md2">
 							<input type="text" name="dicDataName" placeholder="请输入字典名称" class="layui-input"/>
 						</div>
@@ -28,7 +32,7 @@
 							<select  name="dicUid" class="dictTypeCd"   lay-verify="required"  lay-search="" ></select>
 						</div>
 						<div class="layui-col-md1" style="text-align:right;">
-							<button class="layui-btn create_btn" type="submit">检索</button>
+							<button class="layui-btn" type="button" onclick="pageBreak(1);">检索</button>
 						</div>
 						<div class="layui-col-md1" style="text-align:right;">
 							<button class="layui-btn create_btn" type="button"  onclick="adddialog()">新建</button>
@@ -72,13 +76,13 @@
 					  <div class="layui-form-item"  style="margin-top:20px;">
 					    <label class="layui-form-label">字典代码</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input" />
+					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input required" />
 					    </div>
 					  </div>
 				  	  <div class="layui-form-item">
 					    <label class="layui-form-label">字典名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input" />
+					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input required" />
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
@@ -96,7 +100,7 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">排序号</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input" onkeyup="value=value.replace(/[^\d]/g,'') "/>
+					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input required" onkeyup="value=value.replace(/[^\d]/g,'') "/>
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
@@ -126,13 +130,13 @@
 					  <div class="layui-form-item"  style="margin-top:20px;">
 					    <label class="layui-form-label">字典代码</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input" />
+					      <input type="text" name="dicDataCode" required lay-verify="required" autocomplete="off" class="layui-input required" />
 					    </div>
 					  </div>
 				  	  <div class="layui-form-item">
 					    <label class="layui-form-label">字典名称</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input" />
+					      <input type="text" name="dicDataName" required lay-verify="required" autocomplete="off" class="layui-input required" />
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
@@ -150,7 +154,7 @@
 					  <div class="layui-form-item">
 					    <label class="layui-form-label">排序号</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input" onkeyup="value=value.replace(/[^\d]/g,'') "/>
+					      <input type="text" name="dicDataSort" autocomplete="off" class="layui-input required" onkeyup="value=value.replace(/[^\d]/g,'') "/>
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
@@ -190,10 +194,16 @@
 				str+='<td>' + (data.beginNum+i) + '</td>';
 				str+='<td>' + this.dicDataCode + '</td>';
 				str+='<td>' + this.dicDataName + '</td>';
-				str+='<td>' + this.sysDictionary.dicCode + '</td>';
-				str+='<td>' + this.sysDictionary.dicName + '</td>';
+				
+				if(this.sysDictionary!=null){
+					str+='<td>' + this.sysDictionary.dicCode + '</td>';
+					str+='<td>' + this.sysDictionary.dicName + '</td>';
+				}else{
+					str+='<td></td>';
+					str+='<td></td>';
+				}
 				str+='<td>' + isEmpty(this.dicDataDescription) + '</td>';
-				str+='<td>' + this.dicDataSort + '</td>';
+				str+='<td>' + isEmpty(this.dicDataSort) + '</td>';
 				if(this.dicDataStatus == 'on'){str+='<td>启用</td>';}else{str+='<td>禁用</td>';}
 		        str+='<td>';
 		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysDictionary/getSysDictionaryDataById?dicDataUid='+this.dicDataUid+'","edit") >&#xe642;</i>';

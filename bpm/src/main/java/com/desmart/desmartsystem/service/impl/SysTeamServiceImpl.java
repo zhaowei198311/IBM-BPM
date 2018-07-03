@@ -109,4 +109,10 @@ public class SysTeamServiceImpl implements SysTeamService {
 		
 		return sysTeamMapper.selectFilterNode(entity);
 	}
+
+	@Override
+	public SysTeam select(SysTeam entity) {
+		// TODO Auto-generated method stub
+		return sysTeamMapper.select(entity);
+	}
 }

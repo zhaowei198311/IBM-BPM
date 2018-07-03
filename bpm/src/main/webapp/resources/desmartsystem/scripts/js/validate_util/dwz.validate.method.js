@@ -12,6 +12,12 @@
 			return this.optional(element) || /^[a-z]+$/i.test(value);
 		}, "Letters only please"); 
 		
+		jQuery.validator.addMethod("mobilePhone", function(value, element) {
+			var length = value.length;
+			var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+			return this.optional(element) || (length == 11 && mobile.test(value));
+		}, "Please fill in your mobile phone number correctly");
+		
 		$.validator.addMethod("phone", function(value, element) {
 			return this.optional(element) || /^[0-9 \(\)]{7,30}$/.test(value);
 		}, "Please specify a valid phone number");
@@ -49,12 +55,15 @@
 			}
 		}, "Please fix this field.");
 		
+		
+		
 		$.validator.addClassRules({
 			date: {date: true},
 			alphanumeric: { alphanumeric: true },
 			lettersonly: { lettersonly: true },
 			phone: { phone: true },
-			postcode: {postcode: true}
+			postcode: {postcode: true},
+			mobilePhone:{mobilePhone: true}
 		});
 		$.validator.setDefaults({errorElement:"span"});
 		$.validator.autoCreateRanges = true;

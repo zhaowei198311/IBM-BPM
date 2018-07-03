@@ -17,6 +17,13 @@ function addUserDepartment(data){
 	}
 }
 
+
+
+function closeDepartmentOfBinding(){
+	$('.display_container3').css('display','none');
+	pageBreak();
+}
+
 //提交用户和部门
 function submitUserDeaprtment(ts){
 	var companyCode=$('#companyCode').val();

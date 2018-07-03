@@ -74,14 +74,14 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" placeholder="请输入角色名称" autocomplete="off" class="layui-input">
+				      <input type="text" name="roleName"   lay-verify="required" remote="sysRole/roleexists" placeholder="角色名称" autocomplete="off" class="layui-input required">
 				    </div>
 				  </div>
 				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="describe"  value="" autocomplete="off" placeholder="请输入描述" class="layui-input">
+				      <input type="text" name="describe"  value="" autocomplete="off" placeholder="描述" class="layui-input">
 				    </div>
 				  </div>
 				  
@@ -115,14 +115,14 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" value="普通用户" autocomplete="off" class="layui-input">
+				      <input type="text" name="roleName" required  lay-verify="required" remote="sysRole/roleexists"    value="角色名称" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
 				  
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">描述</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="describe"  value=""  maxlength="200" autocomplete="off" placeholder="请输入描述" class="layui-input">
+				      <input type="text" name="describe"  value=""  maxlength="200" autocomplete="off" placeholder="描述" class="layui-input">
 				    </div>
 				  </div>
 				  

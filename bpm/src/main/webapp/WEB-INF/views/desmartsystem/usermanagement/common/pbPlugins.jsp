@@ -11,15 +11,17 @@
 			success : function(result) {
 				var data=result.data;
 				$("#"+id).empty("");
-				$("#"+id).append('<option selected="" value="">请选择</option>');
+				$("#"+id).append('<option  value="">请选择</option>');
 				for(var i=0;i<data.length;i++){
-					if(data[i].dicDataName==value){
-						$("#"+id).append('<option selected="" value='+data[i].dicDataName+'>'+data[i].dicDataName+'</option>');
+					if(data[i].dicDataCode==value){
+						$("#"+id).append('<option selected="selected" value='+data[i].dicDataCode+'>'+data[i].dicDataName+'</option>');
 					}else{
-						$("#"+id).append('<option value='+data[i].dicDataName+'>'+data[i].dicDataName+'</option>');
+						$("#"+id).append('<option  value='+data[i].dicDataCode+'>'+data[i].dicDataName+'</option>');
 					}
 				}
 				form.render();//重新渲染
+			},complete: function(){
+				
 			}
 		});
 	}
@@ -41,8 +43,6 @@
 					}else{
 						$("#"+id).append('<option value='+data[i][idField]+'>'+data[i][textField]+'</option>');
 					}
-					
-					
 				}
 				form.render();//重新渲染
 			}

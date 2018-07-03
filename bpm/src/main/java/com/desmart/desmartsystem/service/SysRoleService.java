@@ -18,4 +18,6 @@ public interface SysRoleService extends IService<SysRole,String> {
 	
 	
 	List<SysRole> selectAll(SysRole entity);
+	
+	SysRole select(SysRole entity);
 }

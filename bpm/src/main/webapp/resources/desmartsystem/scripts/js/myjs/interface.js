@@ -5,6 +5,11 @@ var pageConfig = {
 	total : 0
 }
 
+var index;
+$.ajaxSetup({beforeSend : function(){index=layer.load(1);}
+,complete: function () {layer.close(index)}
+});
+
 layui.use([ 'laypage', 'layer' ], function() {
 	var laypage = layui.laypage, layer = layui.layer;
 	// 完整功能
@@ -103,26 +108,33 @@ $("#cancel_btn").click(function() {
 })
 
 $("#sure_btn").click(function() {
+	
 	if (!$("#form1").valid()) {
 		return false;
-	}
-	;
+	};
+	
 
 	var url = $('#form1').serialize();
 	var intStatus = $('#intStatus').val();
 	if (intStatus == 'disabled') {
 		url += '&intStatus=' + intStatus;
 	}
-
+	
+	if($("#intType").val()==''){
+		layer.alert('请选择接口类型!');
+		return false;
+	};
+	
 	$.ajax({
 		url : 'interfaces/add',
 		type : 'POST',
 		dataType : 'json',
 		data : url,
 		success : function(result) {
-			if (result.success == true) {
+			if (result.success) {
 				layer.alert(result.msg);
-				window.location.reload();
+				getInterfaceInfo();
+				closePopup('display_container', 'class');
 			} else {
 				layer.alert(result.msg);
 			}

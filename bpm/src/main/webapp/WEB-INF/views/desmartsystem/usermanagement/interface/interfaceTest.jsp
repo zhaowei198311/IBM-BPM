@@ -34,10 +34,18 @@
 				       <c:if test="${dhInterfaceParameter.isMust=='true'}">
 				       		required
 				       </c:if>
-				       <c:if test="${dhInterfaceParameter.paraType=='Date'}">
-				       		dateISO
-				       </c:if>"
-				       type="text" >
+				        <c:if test="${dhInterfaceParameter.paraType=='Interger'}">
+				       		digits
+				       </c:if>
+				       <c:if test="${dhInterfaceParameter.paraType=='Double'}">
+				       		number
+				       </c:if>
+				       "
+				       type="text" 
+				        <c:if test="${dhInterfaceParameter.paraType=='Date'}">
+				       		placeholder="${dhInterfaceParameter.dateFormat}"
+				       </c:if>
+				        />
 				    </div>
 			      </c:if>
 			  </div>
@@ -112,7 +120,10 @@
 </body>
 <script type="text/javascript" src="resources/desmartsystem/scripts/js/myjs/public.js"></script>
 <script type="text/javascript">
-
+	var index;
+	$.ajaxSetup({beforeSend : function(){index=layer.load(1);}
+	,complete: function () {layer.close(index)}
+	});
 	function addTr(ts){
 		var parenthtml=$(ts).parents("tr").html();
 		var str="<tr>";
