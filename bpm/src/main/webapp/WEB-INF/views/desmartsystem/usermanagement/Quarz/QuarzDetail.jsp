@@ -12,6 +12,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <jsp:include page="../common/inc.jsp"></jsp:include>
+<style type="text/css">
+	.choose_user{position:absolute;right:10px;top:8px;cursor:pointer;z-index:1;}
+</style>
 </head>
 <body>
 	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="">
@@ -31,13 +34,13 @@
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label" >类路径</label>
-			<div class="layui-input-block">
+			<div class="layui-input-block" style="width: 78%;">
 				<input type="text" name="clazz"  maxlength="50" autocomplete="off" class="layui-input" />
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label" >表达式</label>
-			<div class="layui-input-block">
+			<div class="layui-input-block" style="width: 28%;" >
 				<input type="text" name="cronExpr"  maxlength="50" autocomplete="off" class="layui-input" />
 			</div>
 		</div>

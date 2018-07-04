@@ -4,29 +4,19 @@
 <head>
 <meta charset="utf-8">
 <title>新增</title>
-<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.css" rel="stylesheet">
-<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/font/font-awesome.min.css" rel="stylesheet">
-<link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.css" rel="stylesheet">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/layui.css" media="all" />
-<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/jquery-2.1.4.min.js"></script>
-<script type="text/javascript"src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/layui.all.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/myjs/public.js"></script>	
-<!-- 公共组件 -->
-<jsp:include page="../common/pbPlugins.jsp"></jsp:include>
-<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script>
-<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script>
+<jsp:include page="../common/inc.jsp"></jsp:include>
 </head>
 <body>
 	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="" id="quartzAddForm" >
 		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label" style="color:#F00">任务名</label>
+				<label class="layui-form-label" >任务名</label>
 				<div class="layui-input-inline">
 					<input type="text" name="jobName"  lay-verify="required" autocomplete="off" class="layui-input" />
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label" style="color:#F00">类型</label>
+				<label class="layui-form-label" >类型</label>
 				<div class="layui-input-inline">
 					<select name="jobGroupName" lay-verify="required" id="jobGroupName">
         			</select>
@@ -34,36 +24,25 @@
 			</div>
 		</div>
 		<div class="layui-form-item">
-				<label class="layui-form-label" style="color:#F00">类路径</label>
-				<div class="layui-input-block" style="width: 74%;">
+				<label class="layui-form-label" >类路径</label>
+				<div class="layui-input-block" style="width: 78%;">
 					<input type="text" name="clazz"  lay-verify="required" autocomplete="off" class="layui-input" />
 				</div>
 		</div>
-	</form>
-	<div class="container">
-		<form role="form" class="form-inline .layui-form-pane">
-			<div class="form-group" style="width:30%;">
-				<label class="layui-form-label" style="color:#F00">表达式</label>
-				<input id="cron" class="form-control" />
+		<div class="layui-form-item">
+			<label class="layui-form-label" >表达式</label>
+			<div class="layui-input-block" style="width: 28%;">
+				<input type="text" name="cronExpr"   lay-verify="required"  maxlength="50"  autocomplete="off" class="layui-input" />
 			</div>
-		</form>
-	</div>
-	
-	<div class="layui-form-item">
-		<div class="layui-input-block" style="float: right; margin-right: 80px; margin-top: 130px;">
-			<button class="layui-btn" lay-submit="" lay-filter="btnSubmit">保存</button>
-			<button class="layui-btn layui-btn-primary" id="close">关闭</button>
 		</div>
-	</div>
-	
-	<script>
-	
-	$(function() {
-	    $("#cron").cronGen({
-	    	direction : 'right'
-	    });
-	});
-	
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="float: right;margin-right: 20px;">
+				<button class="layui-btn" lay-submit="" lay-filter="btnSubmit">保存</button>
+				<button class="layui-btn layui-btn-primary" id="close">关闭</button>
+			</div>
+		</div>
+	</form>
+<script>
 layui.use(['form', 'layedit', 'laydate','jquery'], function(){
   var form = layui.form;
   var $ = layui.jquery;
@@ -75,7 +54,7 @@ layui.use(['form', 'layedit', 'laydate','jquery'], function(){
    var index = layer.load(1);//开启进度条
      $.ajax({
 		url : '<%=request.getContextPath()%>/quarz/add.do',
-		data :$('#quartzAddForm').serialize()+"&cronExpr="+$('#cron').val(),
+		data :$('#quartzAddForm').serialize(),
 		type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
 		dataType : 'json',
 		success : function(obj) {
@@ -124,8 +103,6 @@ $('button#treeSelect').on('click', function() {
 		  }
 	    });
 });
-
-
 </script>
 </body>
 </html>
