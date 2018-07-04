@@ -80,7 +80,7 @@ public class SysRoleController {
 	@ResponseBody  
 	@RequestMapping(value="roleexists")
 	public boolean roleexists(SysRole sysRole) {
-	 String encode = "UTF-8";      
+	 String encode = "iso8859-1";      
 	 String roleName = sysRole.getRoleName();
 	 String roleNameNew = sysRole.getRoleName();
        try {      

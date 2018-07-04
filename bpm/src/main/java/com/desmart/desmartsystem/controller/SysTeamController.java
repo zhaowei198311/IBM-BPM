@@ -90,7 +90,7 @@ public class SysTeamController {
 	@ResponseBody  
 	@RequestMapping(value="teamexists")
 	public boolean teamexists(SysTeam sysTeam) {
-	 String encode = "UTF-8";      
+	 String encode = "iso8859-1";      
 	 String teamName = sysTeam.getTeamName();
 	 String teamNameNew = sysTeam.getTeamName();
        try {      

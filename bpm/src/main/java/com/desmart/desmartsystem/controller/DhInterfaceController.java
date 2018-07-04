@@ -48,7 +48,7 @@ public class DhInterfaceController {
 	
 	@RequestMapping(value = "/interfaceTest")
 	public ModelAndView interfaceTest(String intUid,String intTitle,String paraInOut) {
-       String encode = "UTF-8";      
+       String encode = "iso8859-1";      
        try {      
            if (intTitle.equals(new String(intTitle.getBytes(encode), encode))) {      //判断是不是GB2312
         	   intTitle=new String(intTitle.getBytes("iso8859-1"),"utf-8");
