@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +34,18 @@ public class SysDepartmentServiceImpl   implements SysDepartmentService {
 	@Override
 	public int insert(SysDepartment entity) throws Exception {
 		// TODO Auto-generated method stub
+		if(StringUtils.isBlank(entity.getDepartAdmins())) {
+			entity.setDepartAdmins("00000000");
+		};
 		return sysDepartmentDao.insert(entity);
 	}
 
 	@Override
 	public int update(SysDepartment entity) throws Exception {
 		// TODO Auto-generated method stub
+		if(StringUtils.isBlank(entity.getDepartAdmins())) {
+			entity.setDepartAdmins("00000000");
+		};
 		return sysDepartmentDao.update(entity);
 	}
 

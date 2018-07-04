@@ -221,16 +221,16 @@
 					DEPART_PARENT = #{departParent},
 				</if>
 				<if test="displayName != null">
-					DEPART_NAME = #{displayName},
+					DISPLAY_NAME = #{displayName},
 				</if>
 				<if test="departName != null">
-					DEPART_NO = #{departName},
+					departName = #{departName},
 				</if>
 				<if test="departNo != null">
-					DEPART_ADMINS = #{departNo},
+					DEPART_NO = #{departUid},
 				</if>	
 				<if test="departAdmins != null">
-					CREATE_DATE = #{departAdmins},
+					DEPART_ADMINS = #{departAdmins},
 				</if>	
 				<if test="updateDate != null">
 					UPDATE_DATE = #{updateDate}
