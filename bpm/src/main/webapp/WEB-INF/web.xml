@@ -7,7 +7,7 @@
   </welcome-file-list>
   
   	<session-config>
-		<session-timeout>300</session-timeout>
+		<session-timeout>30</session-timeout>
 	</session-config>
 	
   	<filter>
