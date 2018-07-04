@@ -14,10 +14,10 @@ public class RequestSourceUtil {
 	public static boolean isMobileDevice(String requestHeader) {
 		/*
 		 * android : 所有android设备
-		 * mac os : iphone ipad
+		 * mac ios : iphone ipad
 		 * windows phone:Nokia等windows系统的手机
 		 */
-		String[] deviceArray = new String[] { "android", "mac os", "windows phone" };
+		String[] deviceArray = new String[] { "android", "mac ios", "windows phone" };
 		if (requestHeader == null) {
 			return false;
 		}
