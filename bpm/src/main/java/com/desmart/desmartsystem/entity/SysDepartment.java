@@ -112,6 +112,8 @@ public class SysDepartment implements Serializable {
 	
 	private String displayName;
 	
+	private String departParentName;
+	
 	private List<SysUserDepartment> sysUserDepartmentList;
 
 
@@ -315,4 +317,13 @@ public class SysDepartment implements Serializable {
 		this.displayName = displayName;
 	}
 
+	public String getDepartParentName() {
+		return departParentName;
+	}
+
+	public void setDepartParentName(String departParentName) {
+		this.departParentName = departParentName;
+	}
+
+	
 }

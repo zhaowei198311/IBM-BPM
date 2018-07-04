@@ -54,7 +54,7 @@
 		    END_DATE,
 		    CREATE_DATE,
 		    UPDATE_DATE,
-		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) departParentName
 		    from Sys_Department d where 1=1 
 		    
 		    <if test="departNo!=null and departNo!='' ">
@@ -73,7 +73,7 @@
 	 		<if test="ext1!= null and ext1!=''" > 
 	 			and d.DEPART_UID not in (SELECT	 ud.DEPART_UID FROM SYS_USER_DEPARTMENT ud where ud.USER_UID=#{ext1})
 	 		</if>
-	 		
+	 		order by d.create_date
 	  </select>
 	  
 	  
@@ -107,7 +107,10 @@
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
-	  		select * from Sys_Department
+	  		select * from Sys_Department  d
+	  		<if test="departUid != null">
+	  			DEPART_UID = #{departUid}
+	  		</if>
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
@@ -122,7 +125,7 @@
 		      )
 		    values (#{departUid,jdbcType=VARCHAR}, #{departParent,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
 		      #{departName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, #{departDesc,jdbcType=VARCHAR}, 
-		      #{departNo,jdbcType=VARCHAR}, #{departLayer,jdbcType=DECIMAL}, #{departAdmins,jdbcType=VARCHAR}, 
+		      #{departUid,jdbcType=VARCHAR}, #{departLayer,jdbcType=DECIMAL}, #{departAdmins,jdbcType=VARCHAR}, 
 		      #{departZone,jdbcType=VARCHAR}, #{companyUid,jdbcType=VARCHAR}, #{ext1,jdbcType=VARCHAR}, 
 		      #{ext2,jdbcType=VARCHAR}, #{workCalendar,jdbcType=VARCHAR}, #{ext3,jdbcType=VARCHAR}, 
 		      #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{departType,jdbcType=VARCHAR}, 
@@ -152,11 +155,11 @@
 				   #{item.departName,jdbcType=VARCHAR},
 				   #{item.departNo,jdbcType=VARCHAR},
 				   #{item.departAdmins,jdbcType=VARCHAR},
-				   #{item.createDate,jdbcType=TIMESTAMP},
 				   #{item.updateDate,jdbcType=TIMESTAMP}
 				  FROM DUAL
 	        </foreach>  
       </insert>
+      
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysDepartment" resultMap="BaseResultMap" >
 	  		select 
@@ -183,7 +186,7 @@
 		    END_DATE,
 		    CREATE_DATE,
 		    UPDATE_DATE,
-		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) EXT1
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) departParentName
 		    from  Sys_Department d where d.DEPART_UID=#{departUid}
 	  </select>
 	  
@@ -202,15 +205,37 @@
 	  </select>
 	  
 	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysDepartment">
-	  		DELETE FROM SYS_RESOURCE where RESOUCE_UID=#{resouceUid}
+	  		DELETE FROM SYS_DEPARTMENT WHERE DEPART_UID=#{departUid}
 	  </delete>
 	  
 	  <update id="update" parameterType="com.desmart.desmartsystem.entity.SysDepartment" >
-	  		 update SYS_DEPARTMENT set DEPART_PARENT=#{departParent,jdbcType=VARCHAR}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR}, 
-		     DEPART_NAME=#{departName,jdbcType=VARCHAR}, ORDER_INDEX=#{orderIndex,jdbcType=DECIMAL}, DEPART_DESC=#{departDesc,jdbcType=VARCHAR}, 
-		     DEPART_NO=#{departNo,jdbcType=VARCHAR}, DEPART_LAYER=#{departLayer,jdbcType=DECIMAL}, DEPART_ADMINS=#{departAdmins,jdbcType=VARCHAR}, 
-		     DEPART_ZONE=#{departZone,jdbcType=VARCHAR}, COMPANY_UID=#{companyUid,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
-		     where DEPART_UID = #{departUid,jdbcType=VARCHAR}
+<!-- 	  		 update SYS_DEPARTMENT set DEPART_PARENT=#{departParent,jdbcType=VARCHAR}, DISPLAY_NAME=#{displayName,jdbcType=VARCHAR},  -->
+<!-- 		     DEPART_NAME=#{departName,jdbcType=VARCHAR}, ORDER_INDEX=#{orderIndex,jdbcType=DECIMAL}, DEPART_DESC=#{departDesc,jdbcType=VARCHAR},  -->
+<!-- 		     DEPART_NO=#{departNo,jdbcType=VARCHAR}, DEPART_LAYER=#{departLayer,jdbcType=DECIMAL}, DEPART_ADMINS=#{departAdmins,jdbcType=VARCHAR},  -->
+<!-- 		     DEPART_ZONE=#{departZone,jdbcType=VARCHAR}, COMPANY_UID=#{companyUid,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP} -->
+<!-- 		     where DEPART_UID = #{departUid,jdbcType=VARCHAR} -->
+			update SYS_DEPARTMENT
+			<set>
+				<if test="departParent != null">
+					DEPART_PARENT = #{departParent},
+				</if>
+				<if test="displayName != null">
+					DEPART_NAME = #{displayName},
+				</if>
+				<if test="departName != null">
+					DEPART_NO = #{departName},
+				</if>
+				<if test="departNo != null">
+					DEPART_ADMINS = #{departNo},
+				</if>	
+				<if test="departAdmins != null">
+					CREATE_DATE = #{departAdmins},
+				</if>	
+				<if test="updateDate != null">
+					UPDATE_DATE = #{updateDate}
+				</if>			
+			</set>
+			where DEPART_UID = #{departUid}
 	  </update>
 	  
 	  <select id="getSysDepartmentByDepartNo" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">

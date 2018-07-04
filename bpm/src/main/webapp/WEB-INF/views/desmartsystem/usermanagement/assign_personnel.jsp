@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-			<div class="query_user" style="width:85%;margin:10px 5px 0 20px;">
+			<div class="query_user" style="width:85%;margin:10px 5px 0 25px;">
 				<div>
 					<form class="form-inline" method="post" action="sysUser/userList"  onsubmit="return searchReturn(this,setUserList);">
 					<table>

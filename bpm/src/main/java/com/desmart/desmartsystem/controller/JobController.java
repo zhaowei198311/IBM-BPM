@@ -47,6 +47,11 @@ public class JobController {
 	public String quarzList(){
 		return "desmartsystem/usermanagement/Quarz/QuarzList";
 	}
+	
+	@RequestMapping(value="/quarzCron")
+	public String QuarzCron(){
+		return "desmartsystem/usermanagement/Quarz/QuarzCron";
+	}
 
 	@RequestMapping(value="/quarzAdd")
 	public String quarzAdd(){

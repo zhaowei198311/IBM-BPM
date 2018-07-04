@@ -23,7 +23,7 @@
 		<div class="container">
 			<div class="search_area">
 				<div class="layui-row layui-form">	
-					<a onclick="javascript: window.history.go(-1);return false;" ><button class="layui-btn layui-btn-primary layui-btn-sm">返回</button></a>
+					<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript: window.history.go(-1);return false;">返回</button>
 					<span style="float:right;">
 						<button class="layui-btn  layui-btn-sm create_btn" onclick="adddialog();" >新建</button>
 					</span>

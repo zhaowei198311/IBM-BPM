@@ -39,7 +39,7 @@ var common = {
     	    type: 2,
     	    title: '选择人员',
     	    shadeClose: true,
-    	    shade: 0.8,
+    	    shade: 0.3,
     	    area: ['615px', '492px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
@@ -55,7 +55,7 @@ var common = {
             type: 2,
             title: '角色选择',
             shadeClose: true,
-            shade: 0.8,
+            shade: 0.3,
             area: ['790px', '580px'],
             content: common.chooseRolePath(elementId, isSingle),
             success: function(layero, lockIndex) {
@@ -74,7 +74,7 @@ var common = {
             type: 2,
             title: '角色组选择',
             shadeClose: true,
-            shade: 0.8,
+            shade: 0.3,
             area: ['790px', '580px'],
             content: common.chooseTeamPath(elementId, isSingle),
             success: function(layero, lockIndex) {

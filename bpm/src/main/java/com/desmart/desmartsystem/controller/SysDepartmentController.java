@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDepartment;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.SysDepartmentService;
@@ -95,10 +96,23 @@ public class SysDepartmentController {
 		return sysDepartmentService.findById(sysDepartment);
 	}
 	
+	@ResponseBody  
+	@RequestMapping(value="departmentExists")
+	public boolean departmentExists(SysDepartment sysDepartment) {
+		if(sysDepartmentService.select(sysDepartment)!=null){
+			return false;  
+		}
+		return true;  
+	}
+	
 	@RequestMapping("/updateSysDepartment")
 	@ResponseBody
 	public String updateSysDepartment(SysDepartment sysDepartment) {
 		try {	
+			String admins[] = sysDepartment.getDepartAdmins().split(";");
+			for (String string : admins) {
+				sysDepartment.setDepartAdmins(string);
+			}
 			sysDepartmentService.update(sysDepartment);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
@@ -111,6 +125,10 @@ public class SysDepartmentController {
 	@ResponseBody
 	public String insertSysDepartment(SysDepartment sysDepartment) {
 		try {	
+			String admins[] = sysDepartment.getDepartAdmins().split(";");
+			for (String string : admins) {
+				sysDepartment.setDepartAdmins(string);
+			}
 			sysDepartmentService.insert(sysDepartment);
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {

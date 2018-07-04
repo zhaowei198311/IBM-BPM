@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<div class="middle_temp">	
-				<div style="float:left;width:220px;height: 240px;margin-left: 3px;">
+				<div style="float:left;width:220px;height: 240px;margin-left: 15px;">
 					<ul id="treeDemo" class="ztree" style="width: 220px; height: 250px; -moz-user-select: none;"></ul>
 				</div>
 				
