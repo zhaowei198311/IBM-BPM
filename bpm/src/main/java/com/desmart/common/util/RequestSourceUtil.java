@@ -6,27 +6,26 @@ package com.desmart.common.util;
  * @since 2018/07/02
  */
 public class RequestSourceUtil {
+	private final static String[] agent = { "Android", "iPhone", "iPod","iPad", "Windows Phone", "MQQBrowser" }; //定义移动端请求的所有可能类型
+
 	/**
 	 * 根据请求头判断请求来源
 	 * @param requestHeader
 	 * @return true为手机端，false为pc端
 	 */
-	public static boolean isMobileDevice(String requestHeader) {
-		/*
-		 * android : 所有android设备
-		 * mac ios : iphone ipad
-		 * windows phone:Nokia等windows系统的手机
-		 */
-		String[] deviceArray = new String[] { "android", "mac ios", "windows phone" };
-		if (requestHeader == null) {
-			return false;
-		}
-		requestHeader = requestHeader.toLowerCase();
-		for (int i = 0; i < deviceArray.length; i++) {
-			if (requestHeader.indexOf(deviceArray[i]) > 0) {
-				return true;
+	public static boolean isMobileDevice(String ua) {
+		boolean flag = false;
+		if (!ua.contains("Windows NT") || (ua.contains("Windows NT") && ua.contains("compatible; MSIE 9.0;"))) {
+			// 排除 苹果桌面系统
+			if (!ua.contains("Windows NT") && !ua.contains("Macintosh")) {
+				for (String item : agent) {
+					if (ua.contains(item)) {
+						flag = true;
+						break;
+					}
+				}
 			}
 		}
-		return false;
+		return flag;
 	}
 }
