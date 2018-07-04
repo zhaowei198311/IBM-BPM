@@ -127,7 +127,7 @@
 
 			getUserTask();
 			// 定时 去查询我的 代办任务
-			window.setInterval(getUserTask, 30000);
+			window.setInterval(getUserTask,30000);
 
 			$(".layui-nav-item a").mouseover(
 					function() {
@@ -223,8 +223,15 @@
 					// 渲染到待办
 					if (result == 0) {
 						$("#daiban_icon").css("display", "none");
-					} else {
+					}else if(result > 0){
 						$("#daiban_icon").text(result);
+					}else {
+						layer.msg("登陆超时！请重新登陆！",function(){
+							window.location.reload();
+						});
+						/* layer.alert("登陆超时！请重新登陆！",function(){
+							window.location.reload();
+						}); */
 					}
 				}
 			})
