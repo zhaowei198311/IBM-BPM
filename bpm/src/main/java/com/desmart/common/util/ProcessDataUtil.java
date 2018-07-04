@@ -21,14 +21,18 @@ public class ProcessDataUtil {
 	 */
 	public static final Map<Object, Object> getTokenIdAndPreTokenIdByTaskId(int taskId, JSONObject json) {
 		
+		//标志位，每深入一级，flag+1（children数组递归的次数）
 		int flag = 0;
-		// 解析jsonObject
+		
+		// 解析jsonObject得到目标数据
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
-		//ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
+		
 		// 第一次遍历children数组对象
 		HashMap<Object, Object> hashMap = new HashMap<>();
+		//System.out.println(jsonArray.size());
 		for (Iterator iterator = jsonArray.iterator(); iterator.hasNext();) {
+			//首次遍历时，每次新建一个list，往下递归时需把这个list穿进去，递归中也用这个list
 			ArrayList<HashMap<String, Object>> preTokenIdList = new ArrayList<>();
 			JSONObject object = (JSONObject) iterator.next();
 			if (null != object.get("createdTaskIDs")) {
@@ -38,7 +42,7 @@ public class ProcessDataUtil {
 					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
 						hashMap.put("tokenId", object.get("tokenId"));
 						// 第一次循环时，preTokenId为null
-						hashMap.put("preTokenId", null);
+						//hashMap.put("preTokenId", null);
 						return hashMap;
 					}
 				}
@@ -50,15 +54,25 @@ public class ProcessDataUtil {
 					HashMap<String, Object> map = new HashMap<>();
 					map.put("tokenId", object.get("tokenId"));
 					map.put("flowObjectId", object.get("flowObjectId"));
+					/*HashMap<Object, Object> hashMap2 = new HashMap<>();
+					hashMap2.put(flag, hashMap2);*/
 					preTokenIdList.add(map);
 					HashMap<Object, Object> utilMap = util(jsonArray2, taskId, preTokenIdList, flag);
-					
-					return utilMap;
+					if (utilMap != null) {
+						
+						if(utilMap.get("preTokenId") != null) {
+							utilMap.put("tokenId", utilMap.get("preTokenId"));
+						}
+						utilMap.remove("preTokenId");
+						return utilMap;
+						
+					}
 				}
-				/*else {
+				 /*else {
 					System.out.println("未查到结果...");
 				}*/
 			}
+			
 		}
 		return null;
 	}
