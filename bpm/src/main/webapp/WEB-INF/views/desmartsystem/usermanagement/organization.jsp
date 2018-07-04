@@ -153,15 +153,15 @@
 						    <label class="layui-form-label">上级部门</label>
 						    <div class="layui-input-block">
 							   <input type="hidden" name="departParent" id="departParentOne"  class="layui-input" /> 
-							  <input type="text" id="departParentOne_view" placeholder="上级部门"   autocomplete="off" class="layui-input required" disabled="disabled" /> 
+							  <input type="text" id="departParentOne_view" placeholder="上级部门"   autocomplete="off" class="layui-input" required  readonly="readonly" /> 
 							  <i onclick="chooseDepartment('departParentOne');" class="layui-icon choose_user" title="选择角色">&#xe612;</i>
 						    </div>
 						  </div>
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">部门负责人</label>
 						    <div class="layui-input-block">
-						      <input type="hidden"  required  lay-verify="required" placeholder="部门负责人"  id="departAdminsOne_view"   autocomplete="off" class="layui-input" disabled="disabled" />
-						      <input type="text" name="departAdmins" id="departAdminsOne"  class="layui-input"/>
+						      <input type="hidden" name="departAdmins" id="departAdminsOne"  class="layui-input"/>
+						      <input type="text"  required  lay-verify="required" placeholder="部门负责人"  id="departAdminsOne_view"   autocomplete="off" class="layui-input" readonly="readonly" />
 						      <i onclick="chooseUser('departAdminsOne');" class="layui-icon choose_user"  title="选择人员">&#xe613;</i>
 						    </div>
 						  </div>
@@ -204,7 +204,7 @@
 						    <label class="layui-form-label">上级部门</label>
 						    <div class="layui-input-block">
 						    <input type="hidden" id="departParentTwo" name="departParent" class="layui-input"   autocomplete="off" />
-						      <input type="text"    lay-verify="required" id="departParentTwo_view"  name="departParentName" placeholder="上级部门" disabled="disabled"   autocomplete="off" class="layui-input required" />
+						      <input type="text"    lay-verify="required" id="departParentTwo_view"  name="departParentName" placeholder="上级部门" readonly="readonly"   autocomplete="off" class="layui-input required" />
 						    	<i onclick="chooseDepartment('departParentTwo');" class="layui-icon choose_user" title="选择角色">&#xe612;</i>
 						    </div>
 						  </div>
@@ -212,7 +212,7 @@
 						    <label class="layui-form-label">部门负责人</label>
 						    <div class="layui-input-block">
 						    	<input type="hidden" name="departAdmins" id="departAdminsTow"  class="layui-input"/>
-								<input type="text" required  lay-verify="required" name="userName"  placeholder="部门负责人"  id="departAdminsTow_view"  disabled="disabled"   autocomplete="off" class="layui-input" />
+								<input type="text"  lay-verify="required" name="userName"  placeholder="部门负责人"  id="departAdminsTow_view"  readonly="readonly"  autocomplete="off" class="layui-input" />
 						    	 <i onclick="chooseUser('departAdminsTow');" class="layui-icon choose_user"  title="选择人员">&#xe613;</i>
 						    </div>
 						  </div>
