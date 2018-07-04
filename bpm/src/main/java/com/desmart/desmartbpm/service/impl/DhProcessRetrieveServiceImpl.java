@@ -59,6 +59,7 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 		dhProcessRetrieve.setProAppId(dhProcessMeta.getProAppId());
 		dhProcessRetrieve.setProUid(dhProcessMeta.getProUid());
 		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("create_time desc,update_time desc");
 		List<DhProcessRetrieve> list = dhProcessRetrieveMapper.getDhprocessRetrievesByCondition(dhProcessRetrieve);
 		PageInfo<List<DhProcessRetrieve>> pageInfo = new PageInfo(list);
 		return ServerResponse.createBySuccess(pageInfo);
@@ -72,7 +73,9 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 		dhProcessRetrieve.setRetrieveUid(EntityIdPrefix.DH_PROCESS_RETRIEVE+UUID.randomUUID().toString());
 		dhProcessRetrieve.setCreateUserUid(currUserUid);
 		dhProcessRetrieve.setCreateTime(currDate);
+		if(DhProcessRetrieve.TYPE_BY_SELECT.equals(dhProcessRetrieve.getElementType())){
 		dhProcessRetrieve.setDataSource(DhProcessRetrieve.SOURCE_BY_DICTIONARIES);
+		}
 		DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
 		dhProcessRetrieve.setProAppId(dhProcessMeta.getProAppId());
 		dhProcessRetrieve.setProUid(dhProcessMeta.getProUid());
@@ -81,6 +84,33 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 			return ServerResponse.createBySuccessMessage("新增成功");
 		}else {
 			return ServerResponse.createByErrorMessage("新增失败");
+		}
+	}
+
+	@Override
+	public ServerResponse updateProcessRetrieve(DhProcessRetrieve dhProcessRetrieve) {
+		String currUserUid = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+		Date currDate = DateUtil.format(new Date());
+		dhProcessRetrieve.setUpdateTime(currDate);
+		dhProcessRetrieve.setUpdateUserUid(currUserUid);
+		if(DhProcessRetrieve.TYPE_BY_SELECT.equals(dhProcessRetrieve.getElementType())){
+			dhProcessRetrieve.setDataSource(DhProcessRetrieve.SOURCE_BY_DICTIONARIES);
+		}
+		Integer count = this.update(dhProcessRetrieve);
+		if(count>0) {
+			return ServerResponse.createBySuccessMessage("修改成功");
+		}else {
+			return ServerResponse.createByErrorMessage("修改失败");
+		}
+	}
+
+	@Override
+	public ServerResponse deleteProcessRetrieve(DhProcessRetrieve dhProcessRetrieve) {
+		Integer count = this.delete(dhProcessRetrieve);
+		if(count>0) {
+			return ServerResponse.createBySuccessMessage("删除成功");
+		}else {
+			return ServerResponse.createByErrorMessage("删除失败");
 		}
 	}
 	

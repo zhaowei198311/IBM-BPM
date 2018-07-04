@@ -38,4 +38,16 @@ public interface DhProcessRetrieveService {
 	 */
 	public ServerResponse addProcessRetrieve(DhProcessRetrieve dhProcessRetrieve
 				,String metaUid);
+	/**
+	 * 修改检索字段
+	 * @param dhProcessRetrieve
+	 * @return
+	 */
+	public ServerResponse updateProcessRetrieve(DhProcessRetrieve dhProcessRetrieve);
+	/**
+	 * 删除检索字段
+	 * @param dhProcessRetrieve
+	 * @return
+	 */
+	public ServerResponse deleteProcessRetrieve(DhProcessRetrieve dhProcessRetrieve);
 }

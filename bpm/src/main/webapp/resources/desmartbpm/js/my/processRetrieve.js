@@ -102,7 +102,8 @@ function drawTable(pageInfo) {
 		var sortNum = startSort + i;
 
 		trs += '<tr>'
-				+ '<td><input type="checkbox" value="'+vo.retrieveUid+'"'
+				+ '<td><input type="checkbox" data-dataset="'+vo.dataSet+'" data-dicname = "'
+				+ vo.dicName+'" value="'+vo.retrieveUid+'"/>'
 				+ sortNum
 				+ '</td>'
 				+ '<td>'
@@ -121,16 +122,24 @@ function drawTable(pageInfo) {
 					trs+='否'
 				}
 			trs += '</td>'
-				+ '<td>'
-				+ vo.dataSource
-				+ '</td>'
-				+ '<td>'
-				+ common.dateToString(new Date(vo.createTime))
-				+ '</td>'
+				+ '<td>';
+				if(vo.dataSource != null){
+					trs +=  vo.dataSource
+				}
+			trs +='</td>'
 				+ '<td>'
 				+ vo.userName
-				+ '</td>'
-				+ '</tr>';
+				+ '</td><td>'
+				+ common.dateToString(new Date(vo.createTime))
+				+ '</td><td>';
+				if(vo.updateUserName!=null){
+					trs += vo.updateUserName
+				}
+			trs +='</td><td>';
+				if(vo.updateTime!=null){
+					trs += common.dateToString(new Date(vo.updateTime))
+				}
+			trs +='</td></tr>';
 	}
 	$("#definitionList_tbody").append(trs);
 
@@ -224,6 +233,8 @@ layui.use('form', function() {
 			$("input[name='isScope'][value='FALSE']").prop("checked",true);
 			$(".source-by-dictionaries").show();
 		}else{
+			$("#dataSet_view").val("");
+			$("#dataSet").val("");
 			$(".source-by-dictionaries").hide();
 		}
 		if(data.value == "date"){
@@ -282,10 +293,10 @@ function selectData(obj) {
 }
 
 /**
- * 提交新增流程检索字段
+ * 提交新增、修改流程检索字段
  * @returns
  */
-function submitAddProcessRetrieve(){
+function submitOperationProcessRetrieve(){
 	if (!$('#addProcessRetrieve_form').valid()) {
 		layer.alert("验证失败，请检查后提交");
 		return;
@@ -298,7 +309,7 @@ function submitAddProcessRetrieve(){
 	var formData = $('#addProcessRetrieve_form').serializeArray();
 	//var data = formData +"&"+{"metaUid":metaUid};
 	$.ajax({
-		url: common.getPath() + "/dhProcessRetrieve/addProcessRetrieve?metaUid="+metaUid,
+		url: common.getPath() + "/dhProcessRetrieve/operationProcessRetrieve?metaUid="+metaUid,
 		dataType:"json",
 		data:formData,
 		beforeSend:function(){
@@ -313,8 +324,76 @@ function submitAddProcessRetrieve(){
 			layer.closeAll("loading");
 		},
 		error:function(){
-			layer.alert("新增异常");
+			layer.alert("操作异常");
 			layer.closeAll("loading");
 		}
 	});
+}
+/**删除检索字段**/
+function deleteProcessRetrieve(){
+	if($("#definitionList_tbody :checkbox:checked").length!=1){
+		layer.alert("请选择一个流程检索字段进行删除");
+		return;
+	}
+	var metaUid = getCookie("processDefinition_selectedMetaUid");
+	if(metaUid == null || metaUid == undefined || metaUid == ""){
+		layer.alert("请选择一个流程元数据进行操作");
+		return;
+	}
+	var retrieveUid = $("#definitionList_tbody :checkbox:checked").val();
+	$.ajax({
+		url: common.getPath() + "/dhProcessRetrieve/deleteProcessRetrieve",
+		dataType:"json",
+		data:{"retrieveUid":retrieveUid},
+		beforeSend:function(){
+			layer.load(1);
+		},
+		success:function(result){
+			layer.alert(result.msg);
+			if(result.status==0){
+				getInfo();
+			}
+			$('.display_container5').hide();
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.alert("删除异常");
+			layer.closeAll("loading");
+		}
+	});
+}
+
+/** 修改检索字段 **/
+function updateProcessRetrieve(){
+	if($("#definitionList_tbody :checkbox:checked").length!=1){
+		layer.alert("请选择一个流程检索字段进行修改");
+		return;
+	}
+	$("#retrieveTitle").text("修改检索字段");
+	$("input[name='retrieveUid']").val($("#definitionList_tbody :checkbox:checked").val());
+	var tr = $("#definitionList_tbody :checkbox:checked").parent().parent();
+	$("input[name='fieldLabel']").val(tr.find("td").eq(1).text());
+	$("input[name='fieldName']").val(tr.find("td").eq(2).text());
+	$("#elementType").val(tr.find("td").eq(3).text());
+	if(tr.find("td").eq(4).text()=="是"){
+		$("input[name='isScope'][value='TRUE']").prop("checked",true);
+	}else{
+		$("input[name='isScope'][value='FALSE']").prop("checked",true);
+	}
+	if(tr.find("td").eq(5).text()=="数据字典拉取"){
+		$("#dataSet").val($("#definitionList_tbody :checkbox:checked").data("dataset"));
+		$("#dataSet_view").val($("#definitionList_tbody :checkbox:checked").data("dicname"));
+	}
+	layui.form.render();
+	var data = {};
+	data.value = $("#elementType").val();
+	layui.event.call($("#elementType"),'form','select(elementTypeFilter)',data);
+	$(".display_container5").show();
+}
+
+/**新增检索字段**/
+function addProcessRetrieve(){
+	$("input[name='retrieveUid']").val("");
+	$('#retrieveTitle').text('新增检索字段');
+	$('.display_container5').show();
 }

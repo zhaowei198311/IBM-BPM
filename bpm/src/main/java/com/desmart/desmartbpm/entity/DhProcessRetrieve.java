@@ -5,6 +5,9 @@ import java.util.Date;
 public class DhProcessRetrieve {
 	public static final String SOURCE_BY_DICTIONARIES = "数据字典拉取";
 	public static final String SOURCE_BY_HAND = "手动填写";
+	public static final String TYPE_BY_INPUT = "input";
+	public static final String TYPE_BY_DATE = "date";
+	public static final String TYPE_BY_SELECT = "select";
 	private String retrieveUid;
 	private String proAppId;
 	private String proUid;
@@ -16,9 +19,13 @@ public class DhProcessRetrieve {
 	private Date createTime;
 	private String createUserUid;
 	private String dataSet;
+	private String updateUserUid;
+	private Date updateTime;
 	
 	/**不在表内**/
 	private String userName;
+	private String dicName;
+	private String updateUserName;//修改人
 	
 	public String getRetrieveUid() {
 		return retrieveUid;
@@ -92,12 +99,38 @@ public class DhProcessRetrieve {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	public String getDicName() {
+		return dicName;
+	}
+	public void setDicName(String dicName) {
+		this.dicName = dicName;
+	}
+	public String getUpdateUserUid() {
+		return updateUserUid;
+	}
+	public void setUpdateUserUid(String updateUserUid) {
+		this.updateUserUid = updateUserUid;
+	}
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+	public String getUpdateUserName() {
+		return updateUserName;
+	}
+	public void setUpdateUserName(String updateUserName) {
+		this.updateUserName = updateUserName;
+	}
 	@Override
 	public String toString() {
 		return "DhProcessRetrieve [retrieveUid=" + retrieveUid + ", proAppId=" + proAppId + ", proUid=" + proUid
 				+ ", fieldLabel=" + fieldLabel + ", fieldName=" + fieldName + ", elementType=" + elementType
 				+ ", isScope=" + isScope + ", dataSource=" + dataSource + ", createTime=" + createTime
-				+ ", createUserUid=" + createUserUid + ", dataSet=" + dataSet + ", userName=" + userName + "]";
+				+ ", createUserUid=" + createUserUid + ", dataSet=" + dataSet + ", updateUserUid=" + updateUserUid
+				+ ", updateTime=" + updateTime + ", userName=" + userName + ", dicName=" + dicName + ", updateUserName="
+				+ updateUserName + "]";
 	}
 	
 }

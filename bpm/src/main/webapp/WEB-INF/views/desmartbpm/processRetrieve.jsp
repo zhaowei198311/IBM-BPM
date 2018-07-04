@@ -42,19 +42,23 @@
                             </div>
                             <div class="layui-col-md9" style="text-align:left;padding-left:20px;line-height:38px;">
                                     <button class="layui-btn layui-btn-sm" id="searchByProName_btn">查询流程</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm " onclick="$('.display_container5').show();">新增检索字段</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " onclick="addProcessRetrieve();">新增检索字段</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " onclick="updateProcessRetrieve();">修改检索字段</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm " onclick="deleteProcessRetrieve();">删除检索字段</button>
                             </div>
                         </div>
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
                         <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:1300px;">
-                            <colgroup>
-                                <col>
+                           <colgroup>
+                                <col width="4%;">
                                 <col>
                                 <col>
                                 <col>
                                 <col>
                                 <col> 
+                                <col>
+                                <col>
                                 <col>
                                 <col>
                             </colgroup>
@@ -66,8 +70,10 @@
                                   <th>界面元素类型</th>
                                   <th>是否范围</th>
                                   <th>数据来源</th>
-                                  <th>创建时间</th>
                                   <th>创建人</th>
+                                  <th>创建时间</th>
+                                  <th>修改人</th>
+                                  <th>修改时间</th>
                                 </tr> 
                             </thead>
                             <tbody id="definitionList_tbody"></tbody>
@@ -79,9 +85,10 @@
         </div>
        <div class="display_container5">
 		<div class="display_content5" style="height: 410px;">
-			<div class="top">新增检索字段</div>
+			<div class="top"><label id="retrieveTitle"></label></div>
 			<div class="middle1" style="height: 300px;">
 				<form id="addProcessRetrieve_form" class="layui-form" action="">
+					<input name="retrieveUid" type="hidden">
 					<div class="layui-form-item">
 						<label class="layui-form-label">字段标签</label>
 						<div class="layui-input-block-custom">
@@ -121,7 +128,7 @@
 						<label class="layui-form-label" style="width: 100px;">选择数据分类</label>
 						<div class="layui-input-block-custom" style="position: relative;">
 							<input type="text" id="dataSet_view" placeholder="请选择数据分类"
-								name="dataSetTitle" value="" autocomplete="off"
+								name="dataSet_view" value="" autocomplete="off"
 								class="layui-input" disabled="disabled">
 							<input type="hidden" id="dataSet" name="dataSet">
 							<i onclick="selectData(this);" class="layui-icon choose_num"
@@ -159,7 +166,7 @@
 				</form>
 			</div>
 			<div class="foot">
-				<button type="button" onclick="submitAddProcessRetrieve();"
+				<button type="button" onclick="submitOperationProcessRetrieve();"
 					class="layui-btn layui-btn sure_btn">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary" onclick="$('.display_container5').hide();">取消</button>
 			</div>

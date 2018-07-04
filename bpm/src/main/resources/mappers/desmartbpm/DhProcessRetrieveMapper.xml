@@ -4,20 +4,20 @@
     <sql id="base_column">
          RETRIEVE_UID, PRO_APP_ID, PRO_UID, FIELD_LABEL
          , FIELD_NAME, ELEMENT_TYPE, IS_SCOPE, DATA_SOURCE
-         ,CREATE_TIME,CREATE_USER_UID,DATA_SET
+         ,CREATE_TIME,CREATE_USER_UID,DATA_SET,UPDATE_USER_UID,UPDATE_TIME
     </sql>
     
     <sql id="relation_column">
        pr.RETRIEVE_UID,  pr.PRO_APP_ID,  pr.PRO_UID ,  pr.FIELD_LABEL
        ,  pr.FIELD_NAME,  pr.ELEMENT_TYPE,  pr.IS_SCOPE,  pr.DATA_SOURCE
-       ,pr.CREATE_TIME,pr.CREATE_USER_UID,pr.DATA_SET
+       ,pr.CREATE_TIME,pr.CREATE_USER_UID,pr.DATA_SET,pr.UPDATE_USER_UID,pr.UPDATE_TIME
     </sql>
     
     <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
     	INSERT INTO DH_PROCESS_RETRIEVE (<include refid="base_column"/>) 
     	VALUES (#{retrieveUid}, #{proAppId}, #{proUid}
     	, #{fieldLabel}, #{fieldName}, #{elementType}, #{isScope}, #{dataSource}
-    	,#{createTime},#{createUserUid},#{dataSet})
+    	,#{createTime},#{createUserUid},#{dataSet},#{updateUserUid},#{updateTime})
     </insert>
     
     <update id="update" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
@@ -47,6 +47,12 @@
     	<if test="dataSet != null and dataSet != '' ">
     		DATA_SET = #{dataSet}
     	</if>
+    	<if test="updateUserUid != null and updateUserUid != '' ">
+    		UPDATE_USER_UID = #{updateUserUid},
+    	</if>
+    	<if test="updateTime != null ">
+    		UPDATE_TIME = #{updateTime}
+    	</if>
     	</set>
     	WHERE RETRIEVE_UID = #{retrieveUid}
     </update>
@@ -57,9 +63,11 @@
     
     <select id="getDhprocessRetrievesByCondition" parameterType="com.desmart.desmartbpm.entity.DhProcessRetrieve"
     	resultType="com.desmart.desmartbpm.entity.DhProcessRetrieve">
-    	SELECT <include refid="relation_column"/>,su.user_name
+    	SELECT <include refid="relation_column"/>,su.user_name,sd.dic_name,usu.user_name as update_user_name
     	FROM DH_PROCESS_RETRIEVE pr left join sys_user su 
-    	on pr.create_user_uid = su.user_uid 
+    	on pr.create_user_uid = su.user_uid left join SYS_DICTIONARY sd 
+    	on pr.data_set = sd.dic_uid left join sys_user usu 
+    	on pr.update_user_uid = usu.user_uid 
     	WHERE 1 = 1 
     	<if test="retrieveUid != null and retrieveUid != '' ">
     		and	retrieve_uid = #{retrieveUid}

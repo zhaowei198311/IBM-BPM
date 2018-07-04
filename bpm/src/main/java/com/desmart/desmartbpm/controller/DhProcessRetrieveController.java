@@ -28,10 +28,19 @@ public class DhProcessRetrieveController {
 				,Integer pageNum,Integer pageSize) {
 		return dhProcessRetrieveService.queryProcessRetrieve(metaUid,pageNum,pageSize);
 	}
-	@RequestMapping("/addProcessRetrieve")
+	@RequestMapping("/operationProcessRetrieve")
 	@ResponseBody
-	public ServerResponse addProcessRetrieve(DhProcessRetrieve dhProcessRetrieve
+	public ServerResponse operationProcessRetrieve(DhProcessRetrieve dhProcessRetrieve
 				,String metaUid) {
-		return dhProcessRetrieveService.addProcessRetrieve(dhProcessRetrieve,metaUid);
+		if(dhProcessRetrieve.getRetrieveUid()!=null&&!"".equals(dhProcessRetrieve.getRetrieveUid())) {
+			return dhProcessRetrieveService.updateProcessRetrieve(dhProcessRetrieve);
+		}else {
+			return dhProcessRetrieveService.addProcessRetrieve(dhProcessRetrieve,metaUid);
+		}
+	}
+	@RequestMapping("/deleteProcessRetrieve")
+	@ResponseBody
+	public ServerResponse deleteProcessRetrieve(DhProcessRetrieve dhProcessRetrieve) {
+		return dhProcessRetrieveService.deleteProcessRetrieve(dhProcessRetrieve);
 	}
 }
