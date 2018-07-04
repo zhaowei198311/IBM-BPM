@@ -98,7 +98,7 @@ public class GetFormDataServiceImpl implements GetFormDataService {
 	        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
 
 	        // 获得开始节点往后的路由信息
-	        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, new JSONObject());
+	        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, new JSONObject());
 
 	        // 获得第一个人工节点
 	        BpmActivityMeta firstHumanActivity = routingDataOfMainStartNode.getNormalNodes().iterator().next();

@@ -70,7 +70,9 @@ public class BpmActivityMeta implements Serializable {
     
     private String userUid;//环节下的用户id
     private String userName;//环节下的用户名
-    
+    private BpmActivityMeta firstTaskNode;  // 当节点表示一个子流程时，暂存它对应的第一个任务节点
+
+
     public BpmActivityMeta(){
         
     }
@@ -363,8 +365,15 @@ public class BpmActivityMeta implements Serializable {
 		return userName;
 	}
 
+    public BpmActivityMeta getFirstTaskNode() {
+        return firstTaskNode;
+    }
 
-	public void setUserName(String userName) {
+    public void setFirstTaskNode(BpmActivityMeta firstTaskNode) {
+        this.firstTaskNode = firstTaskNode;
+    }
+
+    public void setUserName(String userName) {
 		this.userName = userName;
 	}
 

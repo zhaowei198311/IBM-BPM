@@ -39,13 +39,6 @@ public interface DhRouteService {
 	 */
 	List<BpmActivityMeta> getNextActivitiesForRoutingBar(BpmActivityMeta sourceActivityMeta, JSONObject formData);
 
-	/**
-	 * 为创建路由记录，获得下个环节的信息
-	 * @param sourceActivityMeta
-	 * @param routingData
-	 * @return
-	 */
-	List<BpmActivityMeta> getNextActiviesForRoutingRecord(BpmActivityMeta sourceActivityMeta, BpmRoutingData routingData);
 
 	/**
 	 * 装配处理人信息
@@ -107,13 +100,6 @@ public interface DhRouteService {
 	 */
 	ServerResponse<BpmActivityMeta> getPreActivityByDiagram(DhProcessInstance dhProcessInstance, BpmActivityMeta sourceNode);
 
-	/**
-	 * 根据源环节与表单数据，获得下个环节的信息
-	 * @param sourceNode
-	 * @param formData
-	 * @return
-	 */
-	BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData);
 
 	/**
 	 * 根据网关环节和表单内容给出唯一的输出连接线
@@ -164,19 +150,26 @@ public interface DhRouteService {
 	 */
 	List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData);
 
-	/**
-	 * 更新流程实例下，简单循环任务的处理人信息
-	 * @param list
-	 * @return
-	 */
-	int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list);
+
 
 	/**
-	 * 为没有分配发起人的子流程装配处理人
+	 * 为不能指定处理人的节点装配处理人
+	 * 提交人是子流程的最后一个人时
+	 * 1. 子流程衔接另一个子流程
+	 * 2. 子流程衔接普通节点
 	 * @param subProcessInstance
 	 * @param pubBo
 	 * @param routingData
 	 * @return
 	 */
-	CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance subProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData);
+	CommonBusinessObject assembleTaskOwnerForNodesCannotChoose(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
+															   CommonBusinessObject pubBo, BpmRoutingData routingData);
+
+	/**
+	 * 获得下个环节的路由信息
+	 * @param sourceNode
+	 * @param formData
+	 * @return
+	 */
+	BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData);
 }

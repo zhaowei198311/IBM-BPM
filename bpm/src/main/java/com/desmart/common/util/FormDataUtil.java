@@ -72,6 +72,12 @@ public class FormDataUtil {
         return formDataJson.toJSONString();
     }
 
+    public static JSONObject getFormDataJsonFromProcessInstance(DhProcessInstance dhProcessInstance) {
+		JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
+		return insDataJson.getJSONObject("formData");
+	}
+
+
 
 	public static void main(String[] args) {
 		FormDataUtil a = new FormDataUtil();

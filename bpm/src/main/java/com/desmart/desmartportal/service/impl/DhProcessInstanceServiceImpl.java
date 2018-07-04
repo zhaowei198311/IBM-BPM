@@ -311,12 +311,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         // 获得主流程开始节点
         BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
         // 获得开始节点往后的路由信息
-        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, mergedFromData);
+        BpmRoutingData routingDataOfMainStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, mergedFromData);
         // 获得第一个人工节点
         BpmActivityMeta firstHumanActivity = routingDataOfMainStartNode.getNormalNodes().iterator().next();
 
         // 获得第一个人工环节后的路由信息
-        BpmRoutingData routingData = dhRouteService.getRoutingDataOfNextActivityTo(firstHumanActivity, mergedFromData);
+        BpmRoutingData routingData = dhRouteService.getBpmRoutingData(firstHumanActivity, mergedFromData);
 
         // 检查用户传递的选人信息是否全面
         if (!dhRouteService.checkRouteData(firstHumanActivity, routeData, routingData)) {
@@ -723,7 +723,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 							, currentbpmActivityMeta3.getSnapshotId());
 
 					// 获得开始节点往后的路由信息
-					BpmRoutingData routingDataOfMainStartNode = dhRouteService.getRoutingDataOfNextActivityTo(startNodeOfMainProcess, null);
+					BpmRoutingData routingDataOfMainStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, null);
 
 					// 获得第一个人工节点
 					toBpmActivityMeta = routingDataOfMainStartNode.getNormalNodes().iterator().next();

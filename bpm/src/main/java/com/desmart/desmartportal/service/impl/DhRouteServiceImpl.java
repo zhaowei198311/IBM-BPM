@@ -31,6 +31,7 @@ import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.*;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.util.ArrayUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -425,9 +426,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 		// 如果source节点所属的流程结束了，不需要选后面的人，不然需要选择后面的人
         if (routingData.getEndProcessNodes().size() == 0) {
+        	// 如果没有遇到结束节点，返回所有normalNodes
             result = new ArrayList<>(routingData.getNormalNodes());
         } else if (!"0".equals(sourceActivityMeta.getParentActivityId())) {
-
+        	// 如果任务不在主流程上
             BpmActivityMeta parentMeta = new BpmActivityMeta(sourceActivityMeta.getParentActivityId());
             if (routingData.getEndProcessNodes().contains(parentMeta)) {
                 // 如果sourceMeta对应的流程已经结束，不需要选择下个环节的人
@@ -439,53 +441,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return result;
 	}
 
-	@Override
-	public List<BpmActivityMeta> getNextActiviesForRoutingRecord(BpmActivityMeta sourceActivityMeta, BpmRoutingData routingData) {
-        List<BpmActivityMeta> result = new ArrayList<>();
-        if (routingData.getMainEndNodes().size() > 0) {
-            // 如果主流程结束，返回空集合
-            return result;
-        }
-        // 如果source节点所属的流程结束了，不需要选后面的人，不然需要选择后面的人
-        if (routingData.getEndProcessNodes().size() == 0) {
-            result = new ArrayList<>(routingData.getNormalNodes());
-        } else if (!"0".equals(sourceActivityMeta.getParentActivityId())) {
 
-            BpmActivityMeta parentMeta = new BpmActivityMeta(sourceActivityMeta.getParentActivityId());
-            if (routingData.getEndProcessNodes().contains(parentMeta)) {
-                // 如果sourceMeta对应的流程已经结束，不需要选择下个环节的人
-
-            } else {
-                result = new ArrayList<>(routingData.getNormalNodes());
-            }
-        }
-        return result;
-    }
 
 	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
         BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
         return routingData.getNormalNodes();
     }
 
-	/**
-	 * 将连线连接的人工环节加入移除列表，如果连线连接的不是人工环节，连接点后续的人工环节加入移除列表
-	 * 
-	 * @param activityIdsToRemove
-	 * @param line
-	 */
-	private void addHumanActivityToRemoveList(List<String> activityIdsToRemove, DhGatewayLine line) {
-		BpmActivityMeta activityMeta = bpmActivityMetaMapper.queryByPrimaryKey(line.getToActivityId());
-		if (isHumanActivity(activityMeta)) {
-			activityIdsToRemove.add(line.getToActivityId());
-		} else {
-			List<BpmActivityMeta> nextToMetaList = bpmActivityMetaService.getNextToActivity(activityMeta);
-			if (nextToMetaList.size() > 0) {
-				for (BpmActivityMeta item : nextToMetaList) {
-					activityIdsToRemove.add(item.getActivityId());
-				}
-			}
-		}
-	}
 
 	/**
 	 * 从表单中取出网关判断需要的参数
@@ -900,8 +862,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(preMeta);
 	}
 
-	@Override
-    public BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
+
+
+
+    private BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
         BpmRoutingData result = new BpmRoutingData();
         result.setSourceNode(sourceNode);
 
@@ -1287,39 +1251,20 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
     }
 
-    public int updateDhTaskHandlerOfSimpleLoopTask(List<DhTaskHandler> list) {
-	    int insId = 0;
-	    Set<String> taskActivityIds = new HashSet<>();
-        for (DhTaskHandler item : list) {
-            if (!taskActivityIds.contains(item.getTaskActivityId())) {
-                insId = item.getInsId().intValue();
-                taskActivityIds.add(item.getTaskActivityId());
-            }
-        }
-        dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, new ArrayList<>(taskActivityIds));
-        return dhTaskHandlerMapper.insertBatch(list);
-    }
 
     @Override
-    public CommonBusinessObject assembleInitUserOfSubProcess(DhProcessInstance subProcessInstance, CommonBusinessObject pubBo, BpmRoutingData routingData) {
+    public CommonBusinessObject assembleTaskOwnerForNodesCannotChoose(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
+                                                                      CommonBusinessObject pubBo, BpmRoutingData routingData) {
+        // 管理员作为没有发起人时的处理人
+	    BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        List<String> adminUidList = new ArrayList<>();
+        adminUidList.add(bpmGlobalConfig.getBpmAdminName());
+
 		// 找到满足条件的所有子流程, 代表子流程的节点和作为出发点的节点不是平级的
-        List<BpmActivityMeta> processNodesToAssemble = findNodesIdentifySubProcessNeedToAssemble(routingData);
+        List<BpmActivityMeta> processNodesToAssemble = routingData.getGetStartProcessNodesOnOtherDeepLevel();
         for (BpmActivityMeta nodeIdentifySubProcess : processNodesToAssemble) {
             // 找到发起节点
-            BpmActivityMeta firstTaskNode = null;
-            Set<BpmActivityMeta> normalNodes = routingData.getNormalNodes();
-            for (Iterator<BpmActivityMeta> it = normalNodes.iterator(); it.hasNext();) {
-                BpmActivityMeta normalNode = it.next();
-                if (normalNode.getParentActivityId().equals(nodeIdentifySubProcess.getActivityId())) {
-                    firstTaskNode = normalNode;
-                    break;
-                }
-            }
-            // 管理员作为没有发起人时的处理人
-            BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-            List<String> adminUidList = new ArrayList<>();
-            adminUidList.add(bpmGlobalConfig.getBpmAdminName());
-
+            BpmActivityMeta firstTaskNode = nodeIdentifySubProcess.getFirstTaskNode();
             // 获得第一个节点的默认处理人
             DhActivityConf activityConf = firstTaskNode.getDhActivityConf();
             String actcAssignType = activityConf.getActcAssignType();
@@ -1336,8 +1281,8 @@ public class DhRouteServiceImpl implements DhRouteService {
             selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
             List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
             List<String> idList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-            String departNo = subProcessInstance.getDepartNo();
-            String companyNum = subProcessInstance.getCompanyNumber();
+            String departNo = currProcessInstance.getDepartNo();
+            String companyNum = currProcessInstance.getCompanyNumber();
             String userUidStr = "";
             switch (assignTypeEnum) {
                 case ROLE:
@@ -1387,12 +1332,12 @@ public class DhRouteServiceImpl implements DhRouteService {
                     break;
                 case PROCESS_CREATOR:
                     // 流程发起人, 则使用触发次流程的那个流程的流程发起人
-                    userUidStr += subProcessInstance.getInsInitUser() + ";";
+                    userUidStr += currProcessInstance.getInsInitUser() + ";";
                     break;
                 case BY_FIELD:// 根据表单字段选
                     if (assignList.size() > 0) {
                         String field = assignList.get(0).getActaAssignId();
-                        JSONObject obj = JSON.parseObject(subProcessInstance.getInsData());
+                        JSONObject obj = JSON.parseObject(currProcessInstance.getInsData());
                         JSONObject formData = obj.getJSONObject("formData");
                         String value = FormDataUtil.getStringValue(field, formData);
                         if (value != null) {
@@ -1408,34 +1353,91 @@ public class DhRouteServiceImpl implements DhRouteService {
                 CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
                 continue;
             }
-            // 分配给userUidStr对应的人
+            // 因为是流程发起人，分配给userUidStr对应的第一个人
             List<String> initUser = new ArrayList<>();
             initUser.add(userUidStr.split(";")[0]);
             CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, initUser);
         }
+
+        List<BpmActivityMeta> taskNodesOnOtherDeepLevel = routingData.getTaskNodesOnOtherDeepLevel();
+        if (!taskNodesOnOtherDeepLevel.isEmpty()) {
+            for (BpmActivityMeta taskNode : taskNodesOnOtherDeepLevel) {
+                // todo  需要修正为对的流程实例
+                List<String> defaultTaskOwners = this.getDefaultTaskOwnerOfTaskNode(taskNode, currTask.getUsrUid(), currProcessInstance,
+                        FormDataUtil.getFormDataJsonFromProcessInstance(currProcessInstance));
+                if (defaultTaskOwners == null && defaultTaskOwners.isEmpty()) {
+                    // 如果没有默认处理人，就使用管理员
+                    defaultTaskOwners = adminUidList;
+                }
+                // 获得相应的变量和signCount
+                String assignVariable = taskNode.getDhActivityConf().getActcAssignVariable();
+                CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, defaultTaskOwners);
+                // 看是否需要signCount
+                if (!BpmActivityMeta.LOOP_TYPE_NONE.equals(taskNode.getLoopType())) {
+                    String signCountVariable = taskNode.getDhActivityConf().getSignCountVarname();
+                    CommonBusinessObjectUtils.setOwnerSignCount(signCountVariable, pubBo, defaultTaskOwners.size());
+                }
+            }
+        }
         return pubBo;
     }
 
-    /**
-     * 根据routingData得到需要被分配发起人的子流程节点，代表子流程的节点和作为出发点的节点不是平级的
-     * @param routingData
-     * @return
-     */
-    private List<BpmActivityMeta> findNodesIdentifySubProcessNeedToAssemble(BpmRoutingData routingData) {
-        List<BpmActivityMeta> result = new ArrayList<>();
-        Set<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodes();
-        if (startProcessNodes.isEmpty()) {
-            return result;
-        }
-        BpmActivityMeta sourceNode = routingData.getSourceNode();
 
-        for (Iterator<BpmActivityMeta> it = startProcessNodes.iterator(); it.hasNext();) {
-            BpmActivityMeta startProcessNode = it.next();
-            if (!startProcessNode.getParentActivityId().equals(sourceNode.getParentActivityId())) {
-                result.add(startProcessNode);
-            }
+
+    @Override
+    public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
+        BpmRoutingData routingData = this.getRoutingDataOfNextActivityTo(sourceNode, formData);
+        /*  将noramalNodes整理为4类数据
+         *  1. 与sourceNode平级的userTaskNode(要选人)
+         *  2. 与sourceNode平级的 processStartNode对应的userTaskNode （要选人）
+         *  3. 其他startNode下个的userTask （不可选人）
+         *  4. 其他普通的userTask （不可选人）
+         *
+         *  startProcessNodes 分为两类
+         *  1. 与起始任务平级的 代表子流程的节点
+         *  2. 与起始任务不平级的 代表子流程的节点
+         */
+        if (routingData.getNormalNodes().isEmpty()) {
+            return routingData;
         }
-        return result;
+        List<BpmActivityMeta> normalNodes = DataListUtils.cloneList(new ArrayList<>(routingData.getNormalNodes()), BpmActivityMeta.class);
+        Iterator<BpmActivityMeta> iterator = normalNodes.iterator();
+        // 先选择出平级的任务节点
+        // 选择出 平级的子流程的起草节点
+        // 选择出 不平级的子流程的起草节点
+        // 剩下的是第4类节点
+        while (iterator.hasNext()) {
+            BpmActivityMeta taskNode = iterator.next();
+            if (taskNode.getParentActivityId().equals(sourceNode.getParentActivityId())) {
+                routingData.getTaskNodesOnSameDeepLevel().add(taskNode);
+                iterator.remove();
+            }
+        } // 选出了平级节点
+
+        if (!routingData.getStartProcessNodes().isEmpty()) {
+            for (BpmActivityMeta processNode : routingData.getStartProcessNodes()) {
+                for (BpmActivityMeta taskNode : normalNodes) {
+                    // 找到子流程的第一个任务节点
+                    if (taskNode.getParentActivityId().equals(processNode.getActivityId())) {
+                        processNode.setFirstTaskNode(taskNode);
+                        normalNodes.remove(taskNode);
+                        break;
+                    }
+                }
+
+                if (processNode.getParentActivityId().equals(sourceNode.getParentActivityId())) {
+                    // 代表子流程的节点与任务节点平级
+                    routingData.getStartProcessNodesOnSameDeepLevel().add(processNode);
+                    routingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel().add(processNode.getFirstTaskNode());
+                } else {
+                    // 代表子流程的节点与任务节点不平级
+                    routingData.getGetStartProcessNodesOnOtherDeepLevel().add(processNode);
+                    routingData.getFirstTaskNodesOfStartProcessOnOtherDeepLevel().add(processNode.getFirstTaskNode());
+                }
+            }
+        }// 装配完成子流程的起始任务节点，剩下的是与起始节点不平级的任务节点
+        routingData.getTaskNodesOnOtherDeepLevel().addAll(normalNodes);
+        return routingData;
     }
 
 }

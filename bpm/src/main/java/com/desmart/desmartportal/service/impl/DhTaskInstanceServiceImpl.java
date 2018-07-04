@@ -338,7 +338,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 获得下个节点的路由信息
-        BpmRoutingData routingData = dhRouteServiceImpl.getRoutingDataOfNextActivityTo(currTaskNode, mergedFormData);
+        BpmRoutingData routingData = dhRouteServiceImpl.getBpmRoutingData(currTaskNode, mergedFormData);
 
         // 判断Token是否移动
         boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask);
@@ -381,7 +381,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhRouteServiceImpl.saveTaskHandlerOfLoopTask(insId, routeData);
 
         // 装配无法选择处理人的子流程发起人信息
-		dhRouteServiceImpl.assembleInitUserOfSubProcess(currProcessInstance, pubBo, routingData);
+		dhRouteServiceImpl.assembleTaskOwnerForNodesCannotChoose(currTask, currProcessInstance, pubBo, routingData);
 
         // 更新网关决策条件
         if (routingData.getGatewayNodes().size() > 0) {
