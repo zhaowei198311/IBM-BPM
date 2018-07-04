@@ -75,6 +75,7 @@
                 /dhApprovalOpinion/**=authc
                 /agent/**=authc
                 /accessoryFileUpload/**=authc
+                /processCategory/**=authc
                 <!-- 表单管理 -->
                 /formManage/index=perms[formManage:index]
                 /publicForm/index=perms[publicForm:index]
