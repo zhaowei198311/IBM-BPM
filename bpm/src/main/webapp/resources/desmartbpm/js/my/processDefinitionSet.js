@@ -150,7 +150,6 @@ $(function() {
 
     // “确认”选择触发器
     $("#chooseTrigger_sureBtn").click(function () {
-    	alert('asdadsad')
         var cks = $("[name='tri_check']:checked");
         if (!cks.length) {
             $("#" + triggerToEdit).val('');
@@ -264,7 +263,7 @@ function drawTable(pageInfo) {
     if (pageInfo.total == 0) {
         return;
     }
-
+    var triParam = "";
     var list = pageInfo.list;
     var startSort = pageInfo.startRow;//开始序号
     var trs = "";
@@ -278,11 +277,14 @@ function drawTable(pageInfo) {
         } else {
             tempWebbot = trigger.triWebbot;
         }
-        if (trigger.triParam != null && trigger.triParam.length > 20) {
+        if (trigger.triParam == null || trigger.triParam == ""){
+        	tempParam = "没有参数"
+        } else if (trigger.triParam.length > 20){
             tempParam = trigger.triParam.substring(0, 20) + "...";
         } else {
-            tempParam = trigger.triParam;
+        	tempParam = trigger.triParam;
         }
+
         console.log(tempWebbot)
         trs += '<tr><td><input type="checkbox" name="tri_check" value="' + trigger.triUid + '" lay-skin="primary">'+ sortNum +'</td>'
             + '<td>'+trigger.triTitle+'</td>'
