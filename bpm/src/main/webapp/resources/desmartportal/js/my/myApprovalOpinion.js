@@ -68,7 +68,7 @@ function loadDhApprovalOpinionList(){
 			      +"</tr> <tr>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批意见</th>"
 			     /* +"<td colspan='9'><textarea class='layui-textarea'>"+aprOpiComment+"</textarea></td>"*/
-			      +"<td colspan='9'>"+aprOpiComment+"</td>"
+			      +"<td colspan='9'><pre>"+aprOpiComment+"</pre></td>"
 			      +"</tr>";
 	    	 $("#approval_tbody").append(info);
 	    	 }
