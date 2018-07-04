@@ -31,8 +31,9 @@
 		</div>
 		<div class="layui-form-item">
 			<label class="layui-form-label" >表达式</label>
-			<div class="layui-input-block" style="width: 28%;">
-				<input type="text" name="cronExpr"   lay-verify="required"  maxlength="50"  autocomplete="off" class="layui-input" />
+			<div class="layui-input-block">
+				<span  onclick="generateCron();" style="color:red;float:right;margin-top:10px;margin-right:160px;cursor:pointer;" >在线Cron表达生成器</span>
+				<input type="text" name="cronExpr"  style="width: 200px;"  lay-verify="required"  maxlength="50"  autocomplete="off" class="layui-input" />
 			</div>
 		</div>
 		<div class="layui-form-item">
@@ -43,6 +44,11 @@
 		</div>
 	</form>
 <script>
+
+function generateCron(){
+	window.open('http://cron.qqe2.com/');
+}
+
 layui.use(['form', 'layedit', 'laydate','jquery'], function(){
   var form = layui.form;
   var $ = layui.jquery;
