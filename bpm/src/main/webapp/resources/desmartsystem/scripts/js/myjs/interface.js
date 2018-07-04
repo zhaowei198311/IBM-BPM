@@ -143,13 +143,15 @@ $("#sure_btn").click(function() {
 })
 
 function getInterfaceInfo() {
+	$('#interfaceSearch').serializeArray();
+	
 	$.ajax({
 		url : 'interfaces/queryDhInterfaceList',
 		type : 'post',
 		dataType : 'json',
 		data : {
 			pageNum : pageConfig.pageNum,
-			pageSize : pageConfig.pageSize,
+			pageSize : pageConfig.pageSize
 		},
 		success : function(result) {
 			if (result.status == 0) {

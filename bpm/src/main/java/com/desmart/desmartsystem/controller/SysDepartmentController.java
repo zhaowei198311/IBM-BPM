@@ -107,6 +107,18 @@ public class SysDepartmentController {
 		}
 	}
 	
+	@RequestMapping("/insertSysDepartment")
+	@ResponseBody
+	public String insertSysDepartment(SysDepartment sysDepartment) {
+		try {	
+			sysDepartmentService.insert(sysDepartment);
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace(); 
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
 	@RequestMapping("/deleteSysDepartment")
 	@ResponseBody
 	public String deleteSysDepartment(SysDepartment sysDepartment) {

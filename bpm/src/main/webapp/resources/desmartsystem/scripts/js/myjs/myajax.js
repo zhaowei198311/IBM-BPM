@@ -176,6 +176,14 @@ function edit(data){
 	$('form',$dailogs).find("input, select, textarea").removeClass('error');
 }
 
+function choosableEdit(data,selector){
+	var $dailogs=$('.'+selector);
+	$dailogs.css("display","block");
+	$('form',$dailogs)[0].reset();
+	$('form',$dailogs).formEdit(data);
+	$('form',$dailogs).validate().resetForms();
+	$('form',$dailogs).find("input, select, textarea").removeClass('error');
+}
 
 
 //添加和修改

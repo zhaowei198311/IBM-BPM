@@ -33,7 +33,7 @@
 	<div class="layui-container" style="margin-top: 20px; width: 100%;">
 		<div class="search_area">
 			<div class="layui-row layui-form">
-				<form action="interfaces/queryDhInterfaceByTitle"  method="post"  onsubmit="return search(this);">
+				<form action="interfaces/queryDhInterfaceByTitle"  method="post"  onsubmit="return search(this);"  id="interfaceSearch">
 				<div class="layui-col-md2">
 					<input id="interfaceName" type="text" placeholder="接口名称" class="layui-input" name="intTitle" >
 				</div>

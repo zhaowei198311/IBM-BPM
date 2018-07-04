@@ -13,7 +13,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   		<title>待办任务</title>
   		<%@ include file="common/common.jsp" %>
-  		
+  		<style>
+  			.display_content1{height: auto;}
+  		</style>
 	</head>
 	<body>
 		<div class="layui-container" style="margin-top:20px;width:100%;">  
@@ -35,6 +37,9 @@
 							</div>
 							<div class="layui-col-md1" style="text-align:right;">
 							    <button class="layui-btn" type="button" onclick="pageBreak(1);" >查询</button>
+							</div>
+							<div class="layui-col-md1" style="text-align:right;">
+							    <button class="layui-btn create_btn" type="button"  id="addDepartment"   >新建</button>
 							</div>
 						</div>
 						<input type="hidden" name="departParent" id="departParent" >
@@ -71,55 +76,144 @@
 			    </div>
 		  	</div>
 		  	
-		  	<div class="display_container1">
-				<div class="display_content1" style="height: 450px;margin: 5px 0 0 -290px;">
+			
+			<div class="display_container1 departmentDetail">
+				<div class="display_content1">
 					<div class="top">
 						查看部门
 					</div>
-					<div class="middle" style="height: 350px;">
-						<form class="layui-form form-horizontal"  method="post"  action="" style="margin-top:30px;"  >
-						  <div class="layui-form-item">
+					<div class="middle" style="height: auto;">
+						<form class="layui-form form-horizontal"  method="post"  action=""  >
+						  <div class="layui-form-item" style="margin-top:20px;" >
 						    <label class="layui-form-label">部门名称</label>
 						    <div class="layui-input-block">
-						      <input type="text" name="departName" disabled  lay-verify="required" autocomplete="off" class="layui-input">
+						      <input type="text" name="departName" disabled  placeholder="部门名称" lay-verify="required" autocomplete="off" class="layui-input">
 						    </div>
 						  </div>
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">部门代码</label>
 						    <div class="layui-input-block">
-						      <input type="text" name="departNo" disabled  lay-verify="required" autocomplete="off" class="layui-input">
+						      <input type="text" name="departNo" disabled  lay-verify="required"  remote="sysUser/userexists" placeholder="部门代码" autocomplete="off" class="layui-input">
 						    </div>
 						  </div>
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">上级部门名称</label>
 						    <div class="layui-input-block">
-						      <input type="text" name="ext1" disabled  lay-verify="required" autocomplete="off" class="layui-input">
+						      <input type="text" name="ext1" disabled  lay-verify="required" placeholder="上级部门名称" autocomplete="off" class="layui-input">
 						    </div>
 						  </div>
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">上级部门代码</label>
 						    <div class="layui-input-block">
-						      <input type="text" name="departParent" disabled  lay-verify="required" autocomplete="off" class="layui-input">
+						      <input type="text" name="departParent" disabled  lay-verify="required" placeholder="上级部门代码"  autocomplete="off" class="layui-input">
 						    </div>
 						  </div>
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">部门负责人</label>
 						    <div class="layui-input-block">
-						      <input type="text" name="departAdmins" disabled  lay-verify="required" autocomplete="off" class="layui-input">
+						      <input type="text" name="departAdmins" disabled  lay-verify="required" placeholder="部门负责人" autocomplete="off" class="layui-input">
 						    </div>
 						  </div>
 						</form>
-					</div>
+						</div>
 					<div class="foot">
-						<button class="layui-btn layui-btn layui-btn-primary cancel_btn" style="margin-top: 20px;" type="button">取消</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="dgclose('departmentDetail');" style="margin-top: 10px;margin-left:7px;" type="button" >取消</button>
 					</div>
 				</div>
 			</div>	
+			
+			<div class="display_container1 addDeaprtement">
+				<div class="display_content1">
+					<div class="top">
+						新增部门
+					</div>
+						<form class="layui-form form-horizontal"  method="post"  action="sysDepartment/insertSysDepartment"  >
+					<div class="middle" style="height: auto;">
+						<div class="layui-form-item" style="margin-top:20px;">
+						    <label class="layui-form-label">部门代码</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departNo" required  lay-verify="required" placeholder="部门代码" autocomplete="off" class="layui-input">
+						    </div>
+						  </div>
+						 <div class="layui-form-item">
+						    <label class="layui-form-label">部门名称</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departName" required  lay-verify="required"  placeholder="部门名称" autocomplete="off" class="layui-input">
+						    </div>
+						  </div>
+						   <div class="layui-form-item">
+						    <label class="layui-form-label">上级部门</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departParent" required  lay-verify="required" placeholder="上级部门"  autocomplete="off" class="layui-input">
+						    </div>
+						  </div>
+						   <div class="layui-form-item">
+						    <label class="layui-form-label">部门负责人</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departAdmins" required  lay-verify="required" placeholder="部门负责人"  autocomplete="off" class="layui-input">
+						    </div>
+						  </div>
+					</div>
+					<div class="foot">
+						<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_synAppointUser" onclick="dgclose('addDeaprtement');" type="button">取消</button>
+					</div>
+					</form>
+				</div>
+			</div>	
+			
+			
+			<div class="display_container1 updateDeaprtement">
+				<div class="display_content1">
+					<div class="top">
+						修改部门
+					</div>
+					<form class="layui-form form-horizontal"  method="post"  action="sysDepartment/updateSysDepartment"  >
+					<div class="middle"  style="height: auto;">
+							<div class="layui-form-item" style="margin-top:20px;">
+						    <label class="layui-form-label">部门代码</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departNo" required  lay-verify="required" placeholder="部门代码"  autocomplete="off" class="layui-input" />
+						    </div>
+						  </div>
+						  <div class="layui-form-item">
+						    <label class="layui-form-label">部门名称</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departName" required  lay-verify="required" placeholder="部门名称" autocomplete="off" class="layui-input" />
+						    </div>
+						  </div>
+						   <div class="layui-form-item">
+						    <label class="layui-form-label">上级部门</label>
+						    <div class="layui-input-block">
+						      <input type="text" name="departParent" required  lay-verify="required" placeholder="上级部门"    autocomplete="off" class="layui-input" />
+						    </div>
+						  </div>
+						   <div class="layui-form-item">
+						    <label class="layui-form-label">部门负责人</label>
+						    <div class="layui-input-block">
+								<input type="text" name="departAdmins" required  lay-verify="required" placeholder="部门负责人"    autocomplete="off" class="layui-input" />
+						    </div>
+						  </div>
+					</div>
+					<div class="foot">
+						<button class="layui-btn layui-btn sure_btn" type="submit">确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary cancel_synAppointUser" onclick="dgclose('updateDeaprtement');" type="button">取消</button>
+					</div>
+					</form>
+				</div>
+			</div>	
+			
 		  	
 		  		<script>
 		  		
 		  		
 				$(function(){
+					
+					$('#addDepartment').click(function(){	
+						opendialog('addDeaprtement');
+					});
+					
+					
 					var url='sysDepartment/treeDisplay';
 					//tree展示
 					setting.callback={onClick: onClick}
@@ -127,9 +221,6 @@
 					
 					pageBreak($('#pageNo').val());
 					
-					$(".cancel_btn").click(function(){
-						$(".display_container1").css("display","none");
-					})
 				})
 				
 				function onClick(e, treeId, treeNode) {
@@ -157,10 +248,21 @@
 			         	str+='<td>' + this.ext1 + '</td>';
 			         	str+='<td>' + this.departParent + '</td>';
 			         	str+='<td>' + this.departAdmins + '</td>';
-			         	/* str+='<td>' + userName(this.sysUserDepartmentList,this.departAdmins) + '</td>'; */
-				        str+='<td><i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","edit")>&#xe60a;</i></tr>';
+			         	str+='<td>';
+			         	str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","updateDeaprtement") >&#xe642;</i>';
+				        str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","departmentDetail")>&#xe60a;</i>';
+				        str+='</td>';
+				        str+='</tr>';
 			         	$("#tabletr").append(str);
 			         });
+				}
+				
+				function updateDeaprtement(data){
+					choosableEdit(data,'updateDeaprtement');
+				}
+				
+				function departmentDetail(data){
+					choosableEdit(data,'departmentDetail');
 				}
 		
 	</script>

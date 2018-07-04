@@ -9,12 +9,13 @@
 <link href="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.css" rel="stylesheet">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/desmartsystem/styles/css/layui.css" media="all" />
 <script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/jquery-2.1.4.min.js"></script>
+<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script>
+<script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script>
 <script type="text/javascript"src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/desmartsystem/scripts/js/myjs/public.js"></script>	
 <!-- 公共组件 -->
 <jsp:include page="../common/pbPlugins.jsp"></jsp:include>
-<%-- <script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/cronGen.js"></script> --%>
-<%-- <script src="<%=request.getContextPath()%>/resources/desmartsystem/cron-generator/cron-generator/bootstrap.min.js"></script> --%>
+
 </head>
 <body>
 	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="" id="quartzEditForm">
@@ -69,11 +70,11 @@
 	</div>
 	<script>
 	
-	$(function() {
-	    $("#cron").cronGen({
-	    	direction : 'right'
-	    });
-	});
+// 	$(function() {
+// 	    $("#cron").cronGen({
+// 	    	direction : 'right'
+// 	    });
+// 	});
 	
 	layui.use(['form', 'layedit', 'laydate','jquery'], function(){
 		  var form = layui.form;
@@ -82,7 +83,6 @@
 		  //初始化所属组别下拉框
 		  
 		  pbInitCombox($,form,'dicUid=dicbea3b258-604c-4aca-8c02-83b2315edcf8','jobGroupName',data.jobGroupName);
-		  
 		  
 		   //监听提交
 		   form.on('submit(btnSubmit)', function(data){

@@ -537,7 +537,7 @@
 	         	str+='<td>' + this.userUid + '</td>';
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
 	         	/* str+='<td>' + isEmpty(this.employeeType) + '</td>'; */
-	         	str+='<td>' + this.mobile + '</td>';
+	         	str+='<td>' + isEmpty(this.mobile) + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
