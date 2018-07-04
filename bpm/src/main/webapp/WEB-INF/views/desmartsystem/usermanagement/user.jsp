@@ -11,7 +11,7 @@
 		<base href="<%=basePath%>">
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  		<title>待办任务</title>
+  		<title>用户管理</title>
   		<%@ include file="common/common.jsp" %>
   		<script src="resources/desmartsystem/scripts/js/myjs/department.js" type="text/javascript"></script>
 	</head>

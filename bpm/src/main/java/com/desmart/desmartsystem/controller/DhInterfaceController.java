@@ -126,11 +126,9 @@ public class DhInterfaceController {
 	
 	@RequestMapping(value = "/queryDhInterfaceByTitle")
 	@ResponseBody
-	public ServerResponse listDhInterfaceByTitle(@RequestParam(value = "intTitle") String intTitle,
-			@RequestParam(value = "intType") String intType,
-			@RequestParam(value = "intStatus") String intStatus,
+	public ServerResponse listDhInterfaceByTitle(
 			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,String intTitle,String intType,String intStatus) {
 		Map<String, Object> paramsMap = new HashMap<>();
 		paramsMap.put("intTitle", intTitle);
 		paramsMap.put("intType", intType);

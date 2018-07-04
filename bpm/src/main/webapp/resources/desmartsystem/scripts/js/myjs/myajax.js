@@ -360,13 +360,15 @@ function pageBreak(pageNo){
 	search(form);
 };
 
+var page={pageSize:10}
+
 //查询
 function search(form){
 	var $form = $(form);
 	var _submitFn = function(){
 		$.ajax({
 			type: form.method || 'POST',
-			url:$form.attr("action"),
+			url:$form.attr("action")+"?pageSize="+page.pageSize,
 			data:$form.serializeArray(),
 			dataType:"json",
 			success: function(data){	
@@ -419,6 +421,7 @@ function table(data) {
               //obj包含了当前分页的所有参数  
         	  data.pageNo = obj.curr;
         	  data.pageSize = obj.limit;
+        	  page.pageSize=obj.limit;
               if (!first) {
               	pageBreak(obj.curr);
               }
