@@ -15,13 +15,13 @@ layui.use('form', function(){
     
 });
 
-//var reg=new RegExp("<br>","g"); // 创建正则RegExp对象
+var reg=new RegExp("<br>","g"); // 创建正则RegExp对象
 $(function(){
 	var approvalJsonStr = $("#approvalData").text();
 	if(approvalJsonStr!=null && approvalJsonStr!=''){
 		var approvalData = JSON.parse(approvalJsonStr);
 		if(approvalData.aprOpiComment!=null && approvalData.aprOpiComment!= ''){
-			//var info = approvalData.aprOpiComment.replace(reg,"\n");
+			var info = approvalData.aprOpiComment.replace(reg,"\n");
 			$("#myApprovalOpinion").val(info);
 		}
 	}
