@@ -32,10 +32,10 @@
 					<div class="search_area">
 						<div class="layui-row layui-form">
 							<div class="layui-col-md2">
-						    	<input type="text" placeholder="组织名称"  name="departName" class="layui-input">
+						    	<input type="text" placeholder="部门名称"  name="departName" class="layui-input">
 							</div>
 							<div class="layui-col-md2">
-						    	<input type="text" placeholder="组织代码"  name="departNo" class="layui-input">
+						    	<input type="text" placeholder="部门代码"  name="departNo" class="layui-input">
 							</div>
 							<div class="layui-col-md1" style="text-align:right;">
 							    <button class="layui-btn" type="button" onclick="pageBreak(1);" >查询</button>
@@ -160,8 +160,8 @@
 						   <div class="layui-form-item">
 						    <label class="layui-form-label">部门负责人</label>
 						    <div class="layui-input-block">
-						      <input type="hidden" name="departAdmins" id="departAdminsOne"  class="layui-input"/>
-						      <input type="text"  required  lay-verify="required" placeholder="部门负责人"  id="departAdminsOne_view"   autocomplete="off" class="layui-input" disabled="disabled" />
+						      <input type="hidden"  required  lay-verify="required" placeholder="部门负责人"  id="departAdminsOne_view"   autocomplete="off" class="layui-input" disabled="disabled" />
+						      <input type="text" name="departAdmins" id="departAdminsOne"  class="layui-input"/>
 						      <i onclick="chooseUser('departAdminsOne');" class="layui-icon choose_user"  title="选择人员">&#xe613;</i>
 						    </div>
 						  </div>
@@ -212,7 +212,7 @@
 						    <label class="layui-form-label">部门负责人</label>
 						    <div class="layui-input-block">
 						    	<input type="hidden" name="departAdmins" id="departAdminsTow"  class="layui-input"/>
-								<input type="text" required  lay-verify="required" placeholder="部门负责人"  id="departAdminsTow_view"  disabled="disabled"   autocomplete="off" class="layui-input" />
+								<input type="text" required  lay-verify="required" name="userName"  placeholder="部门负责人"  id="departAdminsTow_view"  disabled="disabled"   autocomplete="off" class="layui-input" />
 						    	 <i onclick="chooseUser('departAdminsTow');" class="layui-icon choose_user"  title="选择人员">&#xe613;</i>
 						    </div>
 						  </div>

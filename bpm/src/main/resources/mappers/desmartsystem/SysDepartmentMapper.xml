@@ -58,7 +58,7 @@
 		    from Sys_Department d where 1=1 
 		    
 		    <if test="departNo!=null and departNo!='' ">
-		    	and d.depart_no LIKE CONCAT(CONCAT('%',#{departNo},'%')) 
+		    	and d.DEPART_NO LIKE CONCAT(CONCAT('%',#{departNo}),'%')
 		    </if>
 		    
 	 		<if test="departName!= null and departName!='' ">
@@ -186,7 +186,8 @@
 		    END_DATE,
 		    CREATE_DATE,
 		    UPDATE_DATE,
-		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) departParentName
+		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) departParentName,
+		    (SELECT u.USER_NAME FROM SYS_USER u WHERE u.USER_ID=d.DEPART_ADMINS) userName
 		    from  Sys_Department d where d.DEPART_UID=#{departUid}
 	  </select>
 	  
