@@ -143,16 +143,11 @@ $("#sure_btn").click(function() {
 })
 
 function getInterfaceInfo() {
-	$('#interfaceSearch').serializeArray();
-	
 	$.ajax({
-		url : 'interfaces/queryDhInterfaceList',
+		url : 'interfaces/queryDhInterfaceByTitle',
 		type : 'post',
 		dataType : 'json',
-		data : {
-			pageNum : pageConfig.pageNum,
-			pageSize : pageConfig.pageSize
-		},
+		data :$('#interfaceSearch').serialize()+"&pageNum="+pageConfig.pageNum+"&pageSize="+pageConfig.pageSize,
 		success : function(result) {
 			if (result.status == 0) {
 				drawTable(result.data);
