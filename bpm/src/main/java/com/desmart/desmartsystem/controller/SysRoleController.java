@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,12 +84,19 @@ public class SysRoleController {
 	 String encode = "iso8859-1";      
 	 String roleName = sysRole.getRoleName();
 	 String roleNameNew = sysRole.getRoleName();
+	 String roleUid = sysRole.getRoleUid();
        try {      
            if (roleName.equals(new String(roleName.getBytes(encode), encode))) {      //判断是不是GB2312
         	   roleNameNew=new String(roleNameNew.getBytes("iso8859-1"),"utf-8");
             }      
            sysRole.setRoleName(roleNameNew);
-	   		if(sysRoleService.select(sysRole)!=null){
+           SysRole role = sysRoleService.select(sysRole);
+	   		if(role!=null){
+	   			if(StringUtils.isNotBlank(roleUid)) {
+	   				if(roleUid.equals(role.getRoleUid())) {
+	   					return true;
+	   				}
+	   			};
 	   			return false;  
 	   		}
         } catch (Exception e) {      

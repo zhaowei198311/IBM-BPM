@@ -74,7 +74,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName"   lay-verify="required" remote="sysRole/roleexists" placeholder="角色名称" autocomplete="off" class="layui-input required">
+				      <input type="text" name="roleName"   lay-verify="required" remote="sysRole/roleexists" data-msg-remote="角色名称已存在请重新输入!"  placeholder="角色名称" autocomplete="off" class="layui-input required">
 				    </div>
 				  </div>
 				  
@@ -115,7 +115,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" remote="sysRole/roleexists"    value="角色名称" autocomplete="off" class="layui-input">
+				      <input type="text" name="roleName" required  lay-verify="required"  id="roleName" remote="sysRole/roleexists"   data-msg-remote="角色名称已存在请重新输入!" value="角色名称" autocomplete="off" class="layui-input">
 				    </div>
 				  </div>
 				  
@@ -210,13 +210,18 @@
 	         		str+='<td>隐藏</td>';
 	         	}
 		        str+='<td>';
-		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","edit") >&#xe642;</i>';
+		        str+='<i class="layui-icon edit_user" onclick=ajaxTodo("sysRole/getSysRole?roleUid='+this.roleUid+'","editRole") >&#xe642;</i>';
 		        str+='<i class="layui-icon add_user" onclick=openRoleUsers("'+this.roleUid+'")  >&#xe654;</i>';
 		        /* str+='<i class="layui-icon jurisdiction_btn" onclick=openResourceDialog("'+this.roleUid+'"); >&#xe6b2;</i>'; */
 		        str+='<i class="layui-icon delete_btn" onclick=ajaxTodo("sysRole/deleteSysRole?roleUid='+this.roleUid+'","del") >&#xe640;</i>';
 		        str+='</td>';
 	         	$("#tabletr").append(str);
 	         });
+		}
+		
+		function editRole(data){
+			edit(data);
+			$('#roleName').attr('remote','sysRole/roleexists?roleUid='+data.roleUid);
 		}
 	</script>
 	</body>

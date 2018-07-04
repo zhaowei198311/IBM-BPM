@@ -134,8 +134,7 @@ ul {
 				<div class="layui-form-item">
 					<label class="layui-form-label">角色组名称</label>
 					<div class="layui-input-block">
-						<input type="text" name="teamName" required lay-verify="required"
-							value="" autocomplete="off" class="layui-input">
+						<input type="text" name="teamName" required lay-verify="required" value="" autocomplete="off" class="layui-input" id="teamName" />
 					</div>
 				</div>
 
@@ -314,41 +313,20 @@ ul {
 				$("#businessRoleTable :checkbox").prop("checked", false);
 			}
 		});
-	})
+	});
+	
 
 	function addsuccess2(data) {
 		returnSuccess(data, 'display_container4');
 	}
 
 	function adddialog1() {
-		/* var select=['parentId'];
-		selectoptions('sysTeam/sysTeamList',select); */
 		adddialog();
 	};
 
 	function edit1(data) {
 		edit(data);
-		/* var select=['parentId1'];
-		$.ajax({  
-		    url: 'sysTeam/selectFilterNode',    //后台webservice里的方法名称  
-		    type: "post",
-		    data:{teamUid:data.teamUid},
-		    dataType: "json",  
-		    success: function (data1) {
-		    	for (var i = 0; i < select.length; i++) {
-		    		$("#"+select[i]).empty();
-		        	var optionstring="";
-		        	$(data1).each(function(){
-		        		if(data.teamUid!=this.teamUid){
-		        			optionstring+="<option value=\"" + this.teamUid + "\" >" + this.teamName + "</option>";
-		        		}
-		        	});
-		        	$("#"+select[i]).prepend(optionstring);
-		        	$("#"+select[i]).first().prepend("<option value='' selected='selected'>"+language.please_select+"</option>");
-				}
-		    	
-		    }
-		}); */
+		$('#teamName').attr('remote','sysTeam/teamexists?teamUid='+data.teamUid);
 	};
 
 	function selectoptions(url, select) {

@@ -3,6 +3,7 @@ package com.desmart.desmartsystem.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,12 +94,21 @@ public class SysTeamController {
 	 String encode = "iso8859-1";      
 	 String teamName = sysTeam.getTeamName();
 	 String teamNameNew = sysTeam.getTeamName();
+	 String teamUid = sysTeam.getTeamUid();
        try {      
            if (teamName.equals(new String(teamName.getBytes(encode), encode))) {      //判断是不是GB2312
         	   teamNameNew=new String(teamNameNew.getBytes("iso8859-1"),"utf-8");
             }      
            sysTeam.setTeamName(teamNameNew);
-	   		if(sysTeamService.select(sysTeam)!=null){
+           
+           SysTeam team = sysTeamService.select(sysTeam);
+           
+	   		if(team!=null){
+	   			if(StringUtils.isNotBlank(teamUid)) {
+	   				if(teamUid.equals(team.getTeamUid())) {
+	   					return true;
+	   				};
+	   			}
 	   			return false;  
 	   		}
         } catch (Exception e) {      
