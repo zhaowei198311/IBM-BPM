@@ -96,6 +96,7 @@ public class MyRealm extends AuthorizingRealm {
         session.setAttribute("_currUserNum", username);
         session.setAttribute("_password", password);
         session.setAttribute(Const.CURRENT_USER, userList.get(0).getUserId());
+        //session.setTimeout(30000);
         System.out.println("***********shiro login  end**************");
         return authenticationInfo;
 	}
