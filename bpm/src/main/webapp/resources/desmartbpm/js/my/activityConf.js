@@ -1338,7 +1338,7 @@ function formTable() {
 												+ '" lay-skin="primary">'
 												+ (index + 1) + '</td>';
 										trs += '<td>' + this.dynTitle + '</td>'
-									if(this.dynDescription!=null){
+									if(this.dynDescription!=null || this.dynDescription!=""){
 										trs += '<td>' + this.dynDescription;
 									}else{
 										trs += '<td>';
@@ -2558,8 +2558,12 @@ function updateFormTable(formUid) {
 													+ (index + 1) + '</td>';
 										}
 										trs += '<td>' + this.dynTitle + '</td>'
-										trs += '<td>' + this.dynDescription
-												+ '</td>'
+										if(this.dynDescription!=null && this.dynDescription!=""){
+											trs += '<td>' + this.dynDescription
+											+ '</td>'
+										}else{
+											trs += '<td></td>'
+										}
 										trs += '</tr>';
 									});
 					$("#update_step_form_tbody").append(trs);
