@@ -25,8 +25,6 @@
 	    	</if>
 	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
 	        	and bmf.dyn_title like '%${formTitle}%' 
-	        	or bmf.dyn_description like '%${formTitle}%'
-	        	or pm.pro_name like '%${formTitle}%'
 	        </if>
         </where>
         order by create_time desc
@@ -44,8 +42,6 @@
 	        </foreach>
 	    	<if test="formTitle != null and !formTitle.trim().isEmpty()">
 	        	and bmf.dyn_title like '%${formTitle}%' 
-	        	or bmf.dyn_description like '%${formTitle}%'
-	        	or pm.pro_name like '%${formTitle}%'
 	        </if>
         </where>
         order by create_time desc
