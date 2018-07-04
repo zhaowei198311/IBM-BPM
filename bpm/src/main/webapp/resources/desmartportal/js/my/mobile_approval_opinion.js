@@ -68,9 +68,9 @@ function loadDhApprovalOpinionList(){
 						+'</tr>'
 						+'<tr>'
 							+'<th valign=top>审批意见：</th>'
-							+'<td>'
+							+'<td><pre>'
 							+result.data[i].aprOpiComment
-							+'</td>'
+							+'</pre></td>'
 						+'</tr>'
 						+'</table>'
 						+'</li>';
