@@ -1000,7 +1000,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
-		dhTaskInstance.setTaskStatus("32");
+		dhTaskInstance.setTaskStatus("'32'");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
@@ -1105,7 +1105,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 //        dhTaskInstance.setDhProcessInstance(dhProcessInstance);
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");
-		dhTaskInstance.setTaskStatus("12,-2,32");
+		dhTaskInstance.setTaskStatus("'12','-2','32'");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(null, null, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
