@@ -76,7 +76,7 @@ public class MyRealm extends AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		
-		System.out.println("***********shiro login  start**************");
+		log.info("***********shiro login  start**************");
 		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
         String username = usernamePasswordToken.getUsername();
         String password = new String((char[])token.getCredentials());
@@ -96,8 +96,8 @@ public class MyRealm extends AuthorizingRealm {
         session.setAttribute("_currUserNum", username);
         session.setAttribute("_password", password);
         session.setAttribute(Const.CURRENT_USER, userList.get(0).getUserId());
-        //session.setTimeout(30000);
-        System.out.println("***********shiro login  end**************");
+        session.setTimeout(1800000);
+        log.info("***********shiro login  end**************");
         return authenticationInfo;
 	}
 
