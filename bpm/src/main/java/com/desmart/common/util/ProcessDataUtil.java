@@ -15,15 +15,14 @@ public class ProcessDataUtil {
 
 	/**
 	 * 从流程详细信息中获得指定任务的tokenId和父tokenId(代表子流程)
+	 * 拉取任务时确定它归属于哪个流程实例
 	 * @param taskId ： 任务ID
 	 * @param json ：由流程详细信息转化来的JSONObject
 	 * @return Map中的key ： 1）tokenId 2) preTokenId
 	 */
 	public static final Map<Object, Object> getTokenIdAndPreTokenIdByTaskId(int taskId, JSONObject json) {
-		
 		//标志位，每深入一级，flag+1（children数组递归的次数）
 		int flag = 0;
-		
 		// 解析jsonObject得到目标数据
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
@@ -127,7 +126,8 @@ public class ProcessDataUtil {
 
 	/**
 	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId
-	 * @param json： JSONObject对象
+	 * 为创建子流程的虚拟实例服务
+	 * @param json： 代表ProcessData的JSONObject对象
 	 * @param preFlowObjectId：代表子流程的节点的元素id
 	 * @param childFlowObjectId：代表子流程第一个任务节点的元素id
 	 * @return 代表子流程的节点上的tokenId
@@ -196,7 +196,12 @@ public class ProcessDataUtil {
         return executionTreeStr.contains(flowObjectId);
     }
 
-    public static boolean isProcessFinished(JSONObject processData) {
+	/**
+	 * 查看流程实例是否已结束
+	 * @param processData
+	 * @return
+	 */
+	public static boolean isProcessFinished(JSONObject processData) {
         JSONObject data = processData.getJSONObject("data");
         return "STATE_FINISHED".equalsIgnoreCase(data.getString("state"));
     }

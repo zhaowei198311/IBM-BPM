@@ -143,7 +143,7 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
-																 String tokenId, String creatorId, String departNo, String companyNumber);
+																 String tokenId, String creatorId);
 
 	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
 

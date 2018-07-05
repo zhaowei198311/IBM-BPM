@@ -1308,13 +1308,8 @@ public class DhRouteServiceImpl implements DhRouteService {
         return result;
 	}
 
-	/**
-	 * 根据当前流程和代表子流程的节点得到子流程的父流程实例
-	 * @param currProcessInstance  当前流程实例
-	 * @param nodeIdentifyProcess  代表子流程的节点
-	 * @return
-	 */
-	private DhProcessInstance getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(DhProcessInstance currProcessInstance,
+
+	public DhProcessInstance getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(DhProcessInstance currProcessInstance,
 																								  BpmActivityMeta nodeIdentifyProcess) {
         /* 代表子流程的节点的父级节点，
             当这个节点是"0" 说明子流程的父级流程是主流程
@@ -1323,7 +1318,8 @@ public class DhRouteServiceImpl implements DhRouteService {
         String parentActivityId = nodeIdentifyProcess.getParentActivityId();
         if ("0".equals(parentActivityId)) {
             // 返回主流程
-            if (currProcessInstance.getInsId() == -1) {
+            if (currProcessInstance.getInsStatusId().intValue() == DhProcessInstance.STATUS_ID_DRAFT) {
+                // 如果当前流程是草稿状态， 父级流程就是当前流程
                 return currProcessInstance;
             } else {
                 return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());

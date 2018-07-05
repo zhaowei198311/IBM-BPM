@@ -183,4 +183,13 @@ public interface DhRouteService {
 	 */
 	ServerResponse choosableHandlerMove(String insUid, String activityId, String departNo, String companyNum, String formData
 			,HttpServletRequest request, String taskUid, String userUidArrStr,String condition);
+
+	/**
+	 * 根据当前流程和代表子流程的节点得到子流程的父流程实例
+	 * @param currProcessInstance  当前流程实例
+	 * @param nodeIdentifyProcess  代表子流程的节点
+	 * @return
+	 */
+	DhProcessInstance getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(DhProcessInstance currProcessInstance,
+																						  BpmActivityMeta nodeIdentifyProcess);
 }
