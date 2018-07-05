@@ -355,7 +355,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 			}
 		}
-		return resultList == null ? new ArrayList<>() : resultList;
+		return resultList == null ? new ArrayList<SysUser>() : resultList;
 	}
 
 	private String recursionSelectDepartMent(String departNo,StringBuffer str) {
