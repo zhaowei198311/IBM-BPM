@@ -68,7 +68,7 @@ function loadDhApprovalOpinionList(){
 						+'</tr>'
 						+'<tr>'
 							+'<th valign=top>审批意见：</th>'
-							+'<td><pre>'
+							+'<td><pre style="background-color: #FFFFFF;border: 0px;">'
 				if(result.data[i].aprOpiComment.length>50){
 					info += '<span class="partComment">'
 						+result.data[i].aprOpiComment.substring(0,50)
