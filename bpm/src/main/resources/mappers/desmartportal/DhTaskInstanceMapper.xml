@@ -741,7 +741,7 @@
 				AND T.INS_UID = #{dhTaskInstance.insUid}
 			</if>
 			<if test="dhTaskInstance.taskStatus != null and dhTaskInstance.taskStatus !='' ">
-				AND T.TASK_STATUS IN (#{dhTaskInstance.taskStatus})
+				AND T.TASK_STATUS IN (${dhTaskInstance.taskStatus})
 			</if>
 			<if test="dhTaskInstance.dhProcessInstance != null ">
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
