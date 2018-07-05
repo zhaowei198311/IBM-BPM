@@ -184,6 +184,9 @@
 #transfer_table{
 	display: none;
 }
+.approve_demand{
+	margin-left:10px;
+}
 
 /*同意处理*/
 .handle_table tr{
@@ -193,9 +196,14 @@
 	width:85%;
 	float: left;
 }
-#transfer_table i,#submit_table i{
+#transfer_table i{
 	float: left;
 	padding-top:3px;
+	padding-left:2px;
+}
+#submit_table .choose_user1{
+	float: left;
+	padding-top:10px;
 	padding-left:2px;
 }
 #countersign_table #countersign_person_view{
@@ -227,7 +235,7 @@
 .choose_head{
 	border-bottom: 1px solid #f2f2f2;
 	height:40px;
-	margin:5px 0;
+	margin:5px 0 0 0;
 	padding-bottom:3px;
 }
 .search_div{
@@ -241,7 +249,7 @@
 	text-align: center;
 }
 .choose_body{
-	height:238px;
+	height:245px;
 	overflow-y:auto;
 }
 .choose_body table{
@@ -255,14 +263,38 @@
 .choose_body td{
 	text-align: center;
 }
-.choose_first_th{
-	width:10%;
-}
 .choose_second_th{
-	width:45%;
+	width:50%;
 }
 .choose_three_th{
-	width:45%;
+	width:50%;
+}
+
+.choose_user_name_ul{
+	width:85%;
+	float: left;
+	min-height: 30px;
+}
+.choose_user_name_ul li{
+	list-style:none;
+	float:left;
+	text-align:center;
+	height:100%;
+	font-size: 14px;
+	margin:10px -5px 0px 0px;
+}
+.choose_user_name_span{
+	padding:5px 2px;
+	border-radius:2px;
+	border: 1px solid #CCC;
+	float: left;
+    width: 80px;
+}
+.delete_choose_user{
+	position: relative;
+	top:-10px;
+	right:10px;
+	font-size: 23px;
 }
 /*流转记录*/
 .tab_ul li{

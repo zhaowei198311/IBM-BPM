@@ -6,7 +6,7 @@
 <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
 <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
-	
+
 <!-- jQuery -->
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 

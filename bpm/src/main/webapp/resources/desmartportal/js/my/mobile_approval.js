@@ -5,6 +5,12 @@ var canSkipFromReject = false;
 if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
     canSkipFromReject = true;
 }
+
+var pageConfig = {
+	pageNum:1,
+	pageSize:14
+}
+
 var form = null;
 $(function () {
     layui.use(['form'], function () {
@@ -20,14 +26,66 @@ $(function () {
     $("#submit_btn").click(function(){
     	checkUserData();
     });
+    
+    userAsync();
 });
 
+//用于异步加载数据的参数
+var asyncActcChooseableHandlerType = "";
+var asyncActivityId = "";
+var elementId = "";
+//用户异步加载
+function userAsync() {
+	var start = $('.choose_body table').offset().top; ;
+	var move = 0;
+	$(".choose_body").scroll(function(){
+		var end = $('.choose_body table').offset().top; 
+		if(end<start){
+			move = start-end;
+			if(move >= 240){
+				if(pageConfig.pageNum==1){
+					pageConfig.pageNum = pageConfig.pageNum+2;
+				}else{
+					pageConfig.pageNum ++;
+				}
+				pageConfig.pageSize = 7;
+				queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+				start = end;
+			}
+		}else{
+			start = end;
+		}
+	});
+}
 
 function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
 	if (actcCanChooseUser == 'FALSE') {
         return false;
     }
-    if(actcChooseableHandlerType!='allUser'){
+	asyncActcChooseableHandlerType = actcChooseableHandlerType;
+	asyncActivityId = activityId;
+	elementId = "submit_table";
+	queryUserByActc(actcChooseableHandlerType,activityId,elementId,true);
+	openChooseUserDiv();
+}
+
+//全局选人的方法
+function getUser(obj,isMulti,id){
+	elementId = id;
+	activityId = $("#activityId").val();
+	queryUserByActc("allUser",activityId,elementId,isMulti);
+	openChooseUserDiv();
+}
+
+//根据条件查询用户列表
+function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti){
+	var userObjArr = $("#"+elementId+" .delete_choose_user");
+	var userUidArrStr = "";
+	userObjArr.each(function(){
+		var userUid = $(this).attr("value");
+		userUidArrStr += userUid+";"
+	});
+	if(actcChooseableHandlerType!='allUser'){
 		var insUid=$("#insUid").val();
 		var formData=$("#formData").text();
 		var companyNum=$("#companyNum").val();
@@ -35,7 +93,7 @@ function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseab
 		var taskUid=$('#taskUid').val();
 		$.ajax({
 			type:'post',
-			url:'dhRoute/choosableHandler',
+			url:'dhRoute/choosableHandlerMove',
 			beforeSend:function(){
 				layer.load(1);
 			},
@@ -45,12 +103,15 @@ function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseab
                 'departNo': departNo,
                 'activityId': activityId,
                 'formData': formData,
-                'taskUid': taskUid
+                'taskUid': taskUid,
+                'userUidArrStr':userUidArrStr,
+                'condition':$("#search_input").val()
 			},
 			dataType:'json',
 			success: function (result){
+				$("#choose_user_tbody").empty();
 				if(result.status==0){
-					drawChooseUserTable(result.data);
+					drawChooseUserTable(result.data,isMulti,elementId);
 				}else{
 					$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
 				}
@@ -62,13 +123,26 @@ function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseab
 		});	
 	}else{
 		$.ajax({
-			url:"sysUser/userList",
+			url:"sysUser/allSysUserMove",
 			beforeSend:function(){
 				layer.load(1);
 			},
 			method:'post',
+			data:{
+				pageNo:pageConfig.pageNum,
+				pageSize:pageConfig.pageSize,
+				userUidArrStr:userUidArrStr,
+                condition:$("#search_input").val()
+			},
 			success:function(result){
-				drawChooseUserTable(result);
+				if(pageConfig.pageNum==1){
+					$("#choose_user_tbody").empty();
+				}
+				if(result.status==0){
+					drawChooseUserTable(result.data.list,isMulti,elementId);
+				}else{
+					$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+				}
 				layer.closeAll("loading");
 			},
 			error:function(){
@@ -78,17 +152,22 @@ function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseab
 	}
 }
 
+//模糊查询
+function searchChooseUser(){
+	pageConfig.pageNum = 1;
+	pageConfig.pageSize = 14;
+	queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+}
+
 //渲染选人的表格
-function drawChooseUserTable(data){
-	$("#choose_user_tbody").empty();
+function drawChooseUserTable(data,isMulti,elementId){
 	if(data.length==0){
 		$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
 	}else{
 		var trHtml = "";
 		for(var i=0;i<data.length;i++){
 			var item = data[i];
-			trHtml += "<tr>"
-				+"<td><input type='checkbox' name='checkUser' value='"+item.userUid+"' lay-skin='primary'/></td>"
+			trHtml += "<tr onclick='clickUserFun(this,"+isMulti+",\""+elementId+"\");'>"
 				+"<td>"+item.userUid+"</td>"
 				+"<td>"+item.userName+"</td>"
 				+"</tr>";
@@ -96,6 +175,10 @@ function drawChooseUserTable(data){
 		$("#choose_user_tbody").append(trHtml);
 	}
 	form.render();
+}
+
+//打开选人层
+function openChooseUserDiv(){
 	//页面层
 	layer.open({
 		type: 1
@@ -107,14 +190,34 @@ function drawChooseUserTable(data){
     	,shade: 0.3
     	,anim:2
     	,resize:false
-    	,area: ['width:100%', '292px']
+    	,area: ['width:100%', '300px']
 		,success:function(){
 			
 		}
 		,end:function(){
+			pageConfig.pageNum = 1;
+			pageConfig.pageSize = 14;
 			$("#choose_user_div").css("display","none");
 		}
 	});
+}
+
+//点击行
+function clickUserFun(obj,isMulti,elementId){
+	var userUid = $(obj).find("td:eq(0)").text().trim();
+	var userName = $(obj).find("td:eq(1)").text().trim();
+	var liHtml = '<li><div class="choose_user_name_span">'+userName
+		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
+		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+	if(isMulti){
+		$("#"+elementId+" .choose_user_name_ul ul").append(liHtml);
+	}
+	if(asyncActcChooseableHandlerType=='allUser'){
+		pageConfig.pageNum = $(obj).parent().find("tr").length+1;
+		pageConfig.pageSize = 1;
+		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+	}
+	$(obj).css("display","none");
 }
 
 layui.use('layedit', function () {
@@ -137,8 +240,10 @@ layui.use('layedit', function () {
 });
 
 $(function () {
-
-	$("#middle10").on("click", ":checkbox", function(){
+	$("#reject_btn").click(function (){
+		queryRejectByActivitiy();
+	});
+	/*$("#middle10").on("click", ":checkbox", function(){
 		if($(this).prop("checked")){
 			$("#middle10 :checkbox").prop("checked", false);
             $(this).prop("checked", true);
@@ -254,7 +359,7 @@ $(function () {
     // 驳回
     $(".cancel5_btn").click(function() {
     	$(".display_container8").css("display","none");
-    });
+    });*/
 
     // 查询审批进度剩余进度百分比
     var activityId = $("#activityId").val();
@@ -541,11 +646,11 @@ function skipFromReject() {
 function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
     var insUid = $("#insUid").val();
-    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+    /*var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined){
         alertNeedApprovalOpinion();
     	return;
-    }
+    }*/
     $.ajax({
         url: 'processInstance/queryRejectByActivity',
         type: 'POST',
@@ -559,13 +664,26 @@ function queryRejectByActivitiy() {
         },
         success: function (result) {
             layer.close(index);
-        		$("#middle10").empty();
+        		$("#reject_table table").empty();
             	var rejectMapList = result.data;
             	var rejectDiv = "";
             	for(var i=0;i<rejectMapList.length;i++){
-                	rejectDiv += "<li><input type='checkbox' name='check' value='"+rejectMapList[i].insId+"+"+rejectMapList[i].activityBpdId+"+"+rejectMapList[i].userId+"'/><label>"+rejectMapList[i].activityName+"————审批人:"+rejectMapList[i].userName+"</label></li>";    
-                	}//end for
-            	$("#middle10").append(rejectDiv);
+            		rejectDiv += '<tr>'
+								+'<th>驳回至：</th>'
+								+'<td>'
+								+'<span style="float:left;width:10%;">'
+								+'<input type="checkbox" name="check" lay-skin="primary" '
+								+'value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId
+									+'+'+rejectMapList[i].userId+'"/>'
+								+'</span> '
+								+'<span style="float:left;width:80%;">'
+								+rejectMapList[i].activityName+'————审批人:'+rejectMapList[i].userName
+								+'</span>'
+								+'</td>'
+								+'</tr>';
+                }//end for
+            	$("#reject_table table").append(rejectDiv);
+            	form.render();
         },
         error: function (result) {
             layer.close(index);
@@ -574,7 +692,6 @@ function queryRejectByActivitiy() {
             });
         }
     });
-    $(".display_container8").css("display","block");
 }
 
 function back() {
@@ -657,17 +774,28 @@ function showRouteBar() {
                             +'<th class="approval_th">处理人：</th>'
                             +'<td>';
                         if(activityMeta.userName!=null && activityMeta.userName!=""){
-                            chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" value="'+activityMeta.userName+'" name="addAgentPerson" class="layui-input" style="padding:0px;" readonly>'
+                        	var userNameArr = activityMeta.userName.split(";");
+                        	chooseUserDiv += "<div class='choose_user_name_ul'><ul>";
+                        	for(var j=0;j<userNameArr.length;j++){
+                        		var userName = userNameArr[j];
+                        		var userUid = activityMeta.userUid.split(";")[j];
+                        		if(userName != "" && userName != null){
+                        			chooseUserDiv += '<li><div class="choose_user_name_span">'+userName
+                        				+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
+                        				+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+                        		}
+                        	}
+                        	chooseUserDiv += "</ul></div>";
                         }else{
-                            chooseUserDiv += '<input type="text" id="'+activityMeta.activityId+'_view" name="addAgentPerson" class="layui-input" style="padding:0px;" readonly>'
+                            chooseUserDiv += '';
                         }
                         chooseUserDiv += '<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
                             +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe612;</i> '
+                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe770;</i> '
                             +'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
                             +'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
                             +'data-looptype="'+activityMeta.loopType+'" />'
-                            +'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'
+                            /*+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'*/
                             +'</td></tr>';
                     }//end for
                 }
@@ -679,6 +807,11 @@ function showRouteBar() {
             }
         }
     });
+}
+
+//删除已选处理人
+function deleteAssembleUser(obj){
+	$(obj).parent().parent().remove();
 }
 
 // 为直接跳转到驳回人显示环节栏

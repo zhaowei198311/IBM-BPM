@@ -45,4 +45,19 @@ public class DhRouteController {
 		return dhRouteService.choosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
 				,request, parameter.get("taskUid"));
 	}
+	
+	/**
+	 * 移动端可选处理人信息，当可选处理人为全体时不会访问此url
+	 */
+	@RequestMapping("/choosableHandlerMove")
+	@ResponseBody
+	public ServerResponse choosableHandlerMove(@RequestParam Map<String, String> parameter, HttpServletRequest request){
+		try {
+			return dhRouteService.choosableHandlerMove(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"),
+					parameter.get("companyNum"), parameter.get("formData"),request, parameter.get("taskUid"),
+					parameter.get("userUidArrStr"),parameter.get("condition"));
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 }

@@ -167,4 +167,20 @@ public interface DhRouteService {
 	 * @return
 	 */
 	BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData);
+
+	/**
+	 * 异步查询符合条件的用户
+	 * @param insUid
+	 * @param activityId
+	 * @param departNo
+	 * @param companyNum
+	 * @param formData
+	 * @param request
+	 * @param taskUid
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	ServerResponse choosableHandlerMove(String insUid, String activityId, String departNo, String companyNum, String formData
+			,HttpServletRequest request, String taskUid, String userUidArrStr,String condition);
 }

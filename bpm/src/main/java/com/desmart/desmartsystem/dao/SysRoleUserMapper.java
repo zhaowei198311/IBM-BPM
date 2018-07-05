@@ -2,6 +2,7 @@ package com.desmart.desmartsystem.dao;
 
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysRoleUser;
@@ -24,7 +25,6 @@ public interface SysRoleUserMapper {
     
     
     List<SysRoleUser> selectAll(SysRoleUser entity);
-    
     
     //查询角色下的用户用;号分割
     List<SysRoleUser> selectByRoleUser(SysRoleUser entity);

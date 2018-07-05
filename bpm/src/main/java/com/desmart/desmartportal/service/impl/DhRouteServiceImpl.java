@@ -31,6 +31,9 @@ import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.*;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.util.ArrayUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -1262,4 +1265,24 @@ public class DhRouteServiceImpl implements DhRouteService {
         return routingData;
     }
 
+	@Override
+	public ServerResponse choosableHandlerMove(String insUid, String activityId, String departNo,
+			String companyNum, String formData, HttpServletRequest request, String taskUid,
+			String userUidArrStr,String condition) {
+		List<SysUser> userList = choosableHandler(insUid, activityId, departNo, companyNum, formData, request, taskUid).getData();
+		List<SysUser> returnUserList = new ArrayList<>();
+		for(SysUser user:userList) {
+			//判断用户是否为已选处理人
+			if(userUidArrStr!=null && userUidArrStr!="" && userUidArrStr.indexOf(user.getUserUid())!=-1) {
+				continue;
+			}
+			//判断用户是否为
+			if(condition!=null && condition!="" && user.getUserUid().indexOf(condition)==-1 
+					&& user.getUserName().indexOf(condition)==-1) {
+				continue;
+			}
+			returnUserList.add(user);
+		}
+		return ServerResponse.createBySuccess(returnUserList);
+	}
 }

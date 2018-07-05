@@ -122,7 +122,21 @@
 	 		 order by u.UPDATE_DATE
 	  </select>
 	  
-	  
+	  <select id="allSysUserMove" parameterType="map" resultMap="BaseResultMap">
+	  	select * from sys_user u 
+	  	where 1=1
+	  		<if test="userUidArr!=null and userUidArr.length!=0">
+		  		and u.user_uid not in
+			  	<foreach collection="userUidArr" index="index" item="userUid" open="(" separator="," close=")">
+			  		#{userUid}
+			  	</foreach>
+	  		</if>
+		  	<if test="condition!=null and !condition.trim().isEmpty()">
+		  		and (u.user_uid like '%'||#{condition}||'%'
+		  			or u.user_name like '%'||#{condition}||'%')
+		  	</if>
+	  	order by u.user_uid
+	  </select>
 	  
 	  <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
 	  		select * from sys_user u 

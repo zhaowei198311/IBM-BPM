@@ -69,8 +69,22 @@ function loadDhApprovalOpinionList(){
 						+'<tr>'
 							+'<th valign=top>审批意见：</th>'
 							+'<td><pre>'
-							+result.data[i].aprOpiComment
-							+'</pre></td>'
+				if(result.data[i].aprOpiComment.length>50){
+					info += '<span class="partComment">'
+						+result.data[i].aprOpiComment.substring(0,50)
+						+"......"
+						+'</span>'
+						+'<span class="hiddenAprOpiComment" style="display:none">'
+						+result.data[i].aprOpiComment
+						+'<p>&nbsp;</p><p class="retractAllComment" style="color:#009688" onclick="retractAllFun(this);">'
+						+'点击收起 <i class="layui-icon" style="font-size:14px">&#xe619;</i></p>'
+						+'</span>'
+						+'<p>&nbsp;</p><p class="extendAllComment" style="color:#009688" onclick="extendAllFun(this);">'
+						+'展开全部 <i class="layui-icon" style="font-size:14px">&#xe61a;</i></p>';
+				}else{
+					info += result.data[i].aprOpiComment
+				}
+	    		info +='</pre></td>'
 						+'</tr>'
 						+'</table>'
 						+'</li>';
@@ -82,6 +96,20 @@ function loadDhApprovalOpinionList(){
 	     }
 	});
 	
+}
+
+//展开一条审批意见的方法
+function extendAllFun(obj){
+	$(obj).css("display","none");
+	$(obj).parent().find(".partComment").css("display","none");
+	$(obj).parent().find(".hiddenAprOpiComment").css("display","block");
+}
+
+//收起一条审批意见的方法
+function retractAllFun(obj){
+	$(obj).parent().css("display","none");
+	$(obj).parent().parent().find(".partComment").css("display","block");
+	$(obj).parent().parent().find(".extendAllComment").css("display","block");
 }
 
 function save(){

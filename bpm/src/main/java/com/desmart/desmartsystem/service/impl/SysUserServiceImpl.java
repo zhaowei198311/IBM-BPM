@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
@@ -14,6 +15,7 @@ import com.desmart.desmartsystem.service.SysUserService;
 import com.desmart.desmartsystem.util.BeanUtil;
 import com.desmart.desmartsystem.util.PagedResult;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
@@ -86,5 +88,16 @@ public class SysUserServiceImpl implements SysUserService {
 		List<SysUser> userList = sysUserDao.login(username, password);
 		return userList;
 	}
-	
+
+	@Override
+	public ServerResponse allSysUserMove(String userUidArrStr, Integer pageNo, Integer pageSize, String condition) {
+		PageHelper.startPage(pageNo,pageSize);
+		String[] userUidArr = userUidArrStr.split(";");
+		if(userUidArr.length==1 && (null==userUidArr[0]||userUidArr[0]=="")) {
+			userUidArr = null;
+		}
+		List<SysUser> userList = sysUserDao.allSysUserMove(userUidArr,condition);
+		PageInfo<List<SysUser>> info = new PageInfo(userList);
+		return ServerResponse.createBySuccess(info);
+	}
 }

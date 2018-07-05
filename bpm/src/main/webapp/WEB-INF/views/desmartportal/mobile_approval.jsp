@@ -132,7 +132,7 @@
 	                </tbody>
 	            </table>
 				<div id="formSet">
-					<%-- ${bpmForm.dynWebpage} --%>
+					${bpmForm.dynWebpage}
 				</div>
 			</div>
 			<div class="middle_content" id="approve_div">
@@ -144,9 +144,9 @@
 								<th>处理方式：</th>
 								<td>
 									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn">同意</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn">会签</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn">驳回</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn">传阅</button>
+									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
+									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
+									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
 								</td>
 							</tr>
 						</table>
@@ -160,9 +160,11 @@
 								<tr>
 									<th>处理人：</th>
 									<td>
-										<input id="countersign_person_view" value="马亚伟" type="text" class="layui-input" readonly/>
-										<i class="layui-icon choose_countersign_person" onclick="getUser(this)">&#xe612;</i> 
-										<input id="countersign_person" type="hidden" value="00011178"/>
+										<div class="choose_user_name_ul">
+											<ul></ul>
+										</div>
+										<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe770;</i> 
+										<input id="countersign_person" type="hidden"/>
 									</td>
 								</tr>
 								<tr>
@@ -180,15 +182,8 @@
 							</table>
 						</div>
 						<div class="handle_table" id="reject_table">
-							<table>
-								<tr>
-									<th>驳回至：</th>
-									<td><span style="float:left;width:10%;"><input type="checkbox" lay-skin="primary"/></span> <span style="float:left;width:80%;">标准节点节点节点1————审批人:马亚伟</span></td>
-								</tr>
-								<tr>
-									<th>驳回至：</th>
-									<td><span style="float:left;width:10%;"><input type="checkbox" lay-skin="primary"/></span> <span style="float:left;width:80%;">标准节点2————审批人:马亚伟</span></td>
-								</tr>
+							<table class="layui-form">
+								
 							</table>
 						</div>
 						<div class="handle_table" id="transfer_table">
@@ -196,9 +191,11 @@
 								<tr>
 									<th>抄送至：</th>
 									<td>
-										<input id="transfer_person_view" value="马亚伟" type="text" class="layui-input"/>
-										<i class="layui-icon choose_transfer_person" onclick="getUser(this)">&#xe612;</i> 
-										<input id="transfer_person" type="hidden" value="00011178"/>
+										<div class="choose_user_name_ul">
+											<ul></ul>
+										</div>
+										<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe770;</i> 
+										<input id="transfer_person" type="hidden"/>
 									</td>
 								</tr>
 							</table>
@@ -206,7 +203,7 @@
 					</div>
 					<div id="suggestion">
 						<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-			            <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
+			            <div class="layui-form approve_demand" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
 			                ${activityConf.actcResponsibility }
 			            </div>
 			            <p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
@@ -265,17 +262,16 @@
         <div id="choose_user_div">
         	<div class="choose_head">
         		<div class="search_div">
-        			<input type="text" class="layui-input" placeholder="工号/姓名--搜索" style="height:38px;"/>
+        			<input type="text" id="search_input" class="layui-input" placeholder="工号/姓名--搜索" style="height:38px;"/>
         		</div>
         		<div class="sure_div">
-        			<input type="button" class="layui-btn" value="确认"/>
+        			<input type="button" class="layui-btn" onclick="searchChooseUser();" value="搜索"/>
         		</div>
         	</div>
         	<div class="choose_body layui-form">
         		<table>
         			<thead>
         				<tr>
-        					<th class="choose_first_th"><input type="checkbox" name="checkAllUser" onclick="" lay-skin="primary"/> </th>
         					<th class="choose_second_th">员工号</th>
         					<th class="choose_three_th">员工姓名</th>
         				</tr>

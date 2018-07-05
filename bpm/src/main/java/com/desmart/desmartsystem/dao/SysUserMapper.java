@@ -22,4 +22,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	int insertBatch(@Param("lists")List<SysUser> lists);
 	SysUser queryByPrimaryKey(String userUid);
 	public List<SysUser> login(@Param(value="username")String username, @Param(value="password")String password);
+	public List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
 }

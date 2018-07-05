@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysTeam;
@@ -108,12 +110,28 @@ public class SysUserController {
 		return queryByPage; 
 	}
 	
+	/**
+	 * 移动端模糊查询全部用户并分页
+	 * @param sysUser
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value="/allSysUserMove")
+	@ResponseBody
+	public ServerResponse allSysUserMove(String userUidArrStr,Integer pageNo,Integer pageSize,String condition){
+		try {
+			return sysUserService.allSysUserMove(userUidArrStr,pageNo,pageSize,condition);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
 	@RequestMapping(value="/userList")
 	@ResponseBody
 	public List<SysUser> userList(SysUser sysUser){
 		return sysUserService.selectAll(sysUser);
 	}
-	
 	
 	//根据用id返回用户集合
 	@RequestMapping(value="/userByIds")
