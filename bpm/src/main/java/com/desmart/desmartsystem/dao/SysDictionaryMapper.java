@@ -147,4 +147,10 @@ public interface SysDictionaryMapper {
 	 * 根据数据字典id以及数据字典内容获得启用的数据字典内容
 	 */
 	List<SysDictionaryData> listOnDicDataBydicUid(@Param("dicUid")String dicUid, @Param("dicDataName")String dicDataName);
+	
+	/**
+	 * 移动端根据数据字典id获得除已选外的数据字典内容（不分页）
+	 */
+	List<SysDictionaryData> listOnDicDataBydicUidMove(@Param("dicUid")String dicUid,
+			@Param("dicDataUid")String dicDataUid, @Param("condition")String condition);
 }

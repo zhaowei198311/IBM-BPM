@@ -2,6 +2,9 @@ package com.desmart.desmartsystem.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 
 /**
@@ -17,4 +20,7 @@ public interface SysUserDepartmentMapper extends BaseMapper<SysUserDepartment> {
 	public List<SysUserDepartment> selectUserDepartmentView(SysUserDepartment sysUserDepartment);
 	
 	int updateUserDepartment(SysUserDepartment sysUserDepartment);
+
+	public List<SysDepartment> allSysDepartmentMove(@Param("departUid")String departUid, @Param("pageNo")Integer pageNo, 
+			@Param("pageSize")Integer pageSize, @Param("condition")String condition);
 }

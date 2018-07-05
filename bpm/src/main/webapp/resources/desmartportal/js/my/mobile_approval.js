@@ -21,27 +21,37 @@ $(function () {
     common.giveFormFieldPermission(fieldPermissionInfo);
     form.render();
     
+    userAsync();
+    
+    departAsync();
+    
     checkUserData();
-    //点击ti
+    //点击提交
     $("#submit_btn").click(function(){
     	checkUserData();
     });
-    
-    userAsync();
 });
 
 //用于异步加载数据的参数
 var asyncActcChooseableHandlerType = "";
 var asyncActivityId = "";
 var elementId = "";
+var eleObj = "";
+
+//用于关闭和开启选择页面的变量
+var openChooseFlag = true;
+var index = "";
+
 //用户异步加载
 function userAsync() {
-	var start = $('.choose_body table').offset().top; ;
+	var start = $('#choose_user_table table').offset().top; ;
 	var move = 0;
-	$(".choose_body").scroll(function(){
-		var end = $('.choose_body table').offset().top; 
+	$("#choose_user_table").scroll(function(){
+		var end = $('#choose_user_table table').offset().top; 
+		console.log(end+","+start);
 		if(end<start){
 			move = start-end;
+			console.log(move);
 			if(move >= 240){
 				if(pageConfig.pageNum==1){
 					pageConfig.pageNum = pageConfig.pageNum+2;
@@ -49,7 +59,12 @@ function userAsync() {
 					pageConfig.pageNum ++;
 				}
 				pageConfig.pageSize = 7;
-				queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+				if(elementId!="" && elementId!=null){
+					queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+				}else{
+					asyncActcChooseableHandlerType = "allUser";
+					queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
+				}
 				start = end;
 			}
 		}else{
@@ -58,6 +73,7 @@ function userAsync() {
 	});
 }
 
+//通过选择下个环节可选处理人的方法
 function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseableHandlerType) {
 	if (actcCanChooseUser == 'FALSE') {
         return false;
@@ -65,26 +81,44 @@ function getConductor(activityId, actcCanChooseUser, actcAssignType,actcChooseab
 	asyncActcChooseableHandlerType = actcChooseableHandlerType;
 	asyncActivityId = activityId;
 	elementId = "submit_table";
-	queryUserByActc(actcChooseableHandlerType,activityId,elementId,true);
+	queryUserByActc(actcChooseableHandlerType,activityId,elementId,true,eleObj);
+	$(".choose_head").css("display","none");
+	$("#choose_user_search_div").css("display","block");
+	$(".choose_body").css("display","none");
+	$("#choose_user_table").css("display","block");
 	openChooseUserDiv();
 }
 
 //全局选人的方法
 function getUser(obj,isMulti,id){
+	eleObj = obj;
 	elementId = id;
+	jQuery('html,body').animate({
+	    scrollTop: $(obj).parent().offset().top-50
+	}, 300);
 	activityId = $("#activityId").val();
-	queryUserByActc("allUser",activityId,elementId,isMulti);
+	queryUserByActc("allUser",activityId,elementId,isMulti,eleObj);
+	$(".choose_head").css("display","none");
+	$("#choose_user_search_div").css("display","block");
+	$(".choose_body").css("display","none");
+	$("#choose_user_table").css("display","block");
 	openChooseUserDiv();
 }
 
 //根据条件查询用户列表
-function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti){
-	var userObjArr = $("#"+elementId+" .delete_choose_user");
+function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,obj){
 	var userUidArrStr = "";
-	userObjArr.each(function(){
-		var userUid = $(this).attr("value");
+	if(elementId!="" && elementId!=null){
+		var userObjArr = $("#"+elementId+" .delete_choose_user");
+		userObjArr.each(function(){
+			var userUid = $(this).attr("value");
+			userUidArrStr += userUid+";"
+		});
+	}else{
+		var userUid = $(obj).parent().find("input[type='hidden']").val();
 		userUidArrStr += userUid+";"
-	});
+	}
+	
 	if(actcChooseableHandlerType!='allUser'){
 		var insUid=$("#insUid").val();
 		var formData=$("#formData").text();
@@ -105,15 +139,15 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti)
                 'formData': formData,
                 'taskUid': taskUid,
                 'userUidArrStr':userUidArrStr,
-                'condition':$("#search_input").val()
+                'condition':$("#search_user_input").val()
 			},
 			dataType:'json',
 			success: function (result){
 				$("#choose_user_tbody").empty();
 				if(result.status==0){
-					drawChooseUserTable(result.data,isMulti,elementId);
+					drawChooseUserTable(result.data,isMulti,elementId,obj);
 				}else{
-					$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+					$("#choose_user_tbody").append("<th colspan='2'>未找到符合条件的数据</th>");
 				}
 				layer.closeAll("loading");
 			},
@@ -132,16 +166,16 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti)
 				pageNo:pageConfig.pageNum,
 				pageSize:pageConfig.pageSize,
 				userUidArrStr:userUidArrStr,
-                condition:$("#search_input").val()
+                condition:$("#search_user_input").val()
 			},
 			success:function(result){
 				if(pageConfig.pageNum==1){
 					$("#choose_user_tbody").empty();
 				}
 				if(result.status==0){
-					drawChooseUserTable(result.data.list,isMulti,elementId);
+					drawChooseUserTable(result.data.list,isMulti,elementId,obj);
 				}else{
-					$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+					$("#choose_user_tbody").append("<th colspan='2'>未找到符合条件的数据</th>");
 				}
 				layer.closeAll("loading");
 			},
@@ -152,15 +186,21 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti)
 	}
 }
 
-//模糊查询
+//模糊查询选人的方法
 function searchChooseUser(){
 	pageConfig.pageNum = 1;
 	pageConfig.pageSize = 14;
-	queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+	if(elementId!="" && elementId!=null){
+		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+	}else{
+		asyncActcChooseableHandlerType = "allUser";
+		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
+	}
 }
 
 //渲染选人的表格
-function drawChooseUserTable(data,isMulti,elementId){
+function drawChooseUserTable(data,isMulti,elementId,obj){
+	eleObj = obj;
 	if(data.length==0){
 		$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
 	}else{
@@ -174,15 +214,189 @@ function drawChooseUserTable(data,isMulti,elementId){
 		}
 		$("#choose_user_tbody").append(trHtml);
 	}
-	form.render();
 }
 
-//打开选人层
+//选择具体数据字典分类的数据内容
+function chooseDicData(obj) {
+	eleObj = obj;
+	jQuery('html,body').animate({
+	    scrollTop: $(obj).parent().offset().top-50
+	}, 300);
+	var dicUid = $(obj).parent().find("input[type='text']").attr("database_type");
+	var dicDataUid = $(obj).parent().find("input[type='hidden']").val();
+	$.ajax({
+		url: "sysDictionary/listOnDicDataBydicUidMove",
+		method: "post",
+		async:false,
+		data: {
+			dicDataUid:dicDataUid,
+			dicUid: dicUid,
+			condition:$("#search_value_input").val()
+		},
+		success: function(result){
+			$("#choose_value_tbody").empty();
+			if(result.status==0){
+				drawDicDataTable(result.data);
+				$(".choose_head").css("display","none");
+				$("#choose_value_search_div").css("display","block");
+				$(".choose_body").css("display","none");
+				$("#choose_value_table").css("display","block");
+				if(openChooseFlag){
+					openChooseFlag = false;
+					openChooseUserDiv();
+				}
+			}else{
+				$("#choose_value_tbody").append("<th colspan='2'>未找到符合条件的数据</th>");
+			}
+		}
+	});
+}
+
+//模糊查询数据字典表格数据的方法
+function searchDicData(){
+	chooseDicData(eleObj);
+}
+
+//渲染选择数据字典的表格
+function drawDicDataTable(data){
+	if(data.length==0){
+		$("#choose_value_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+	}else{
+		var trHtml = "";
+		for(var i=0;i<data.length;i++){
+			var item = data[i];
+			trHtml += "<tr onclick='clickValueFun(this);' value='"+item.dicDataUid+"'>"
+				+"<td>"+item.dicDataName+"</td>";
+			if(item.dicDataDescription!=null && item.dicDataDescription!=""){
+				trHtml += "<td>"+item.dicDataDescription+"</td>";
+			}else{
+				trHtml += "<td></td>";
+			}
+			trHtml += "</tr>";
+		}
+		$("#choose_value_tbody").append(trHtml);
+	}
+}
+
+//点击数据字典表格行
+function clickValueFun(obj){
+	var dicDataUid = $(obj).attr("value");
+	var dicDataName = $(obj).find("td:eq(0)").text().trim();
+	$(obj).css("display","none");
+	$(eleObj).parent().find("input[type='text']").val(dicDataName);
+	$(eleObj).parent().find("input[type='hidden']").val(dicDataUid);
+	chooseDicData(eleObj);
+	layer.close(index);
+}
+
+//选择部门的分页条件
+var pageConfigDepart = {
+	pageNum:1,
+	pageSize:14
+}
+
+//动态选部门的方法
+function desChooseDepart(obj) {
+	eleObj = obj;
+	jQuery('html,body').animate({
+	    scrollTop: $(obj).parent().offset().top-50
+	}, 300);
+	var departUid = $(obj).parent().find("input[type='hidden']").val();
+	$.ajax({
+		url:"sysDepartment/allSysDepartmentMove",
+		method:"post",
+		data:{
+			pageNo:pageConfigDepart.pageNum,
+			pageSize:pageConfigDepart.pageSize,
+			departUid:departUid,
+			condition:$("#search_depart_input").val()
+		},
+		success:function(result){
+			if(pageConfigDepart.pageNum==1){
+				$("#choose_depart_tbody").empty();
+			}
+			if(result.status==0){
+				drawChooseDepartTable(result.data.list);
+				$(".choose_head").css("display","none");
+				$("#choose_depart_search_div").css("display","block");
+				$(".choose_body").css("display","none");
+				$("#choose_depart_table").css("display","block");
+				if(openChooseFlag){
+					openChooseFlag = false;
+					openChooseUserDiv();
+				}
+			}else{
+				$("#choose_depart_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+			}
+		}
+	});
+}
+
+//渲染选择部门的表格
+function drawChooseDepartTable(data){
+	if(data.length==0){
+		$("#choose_depart_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
+	}else{
+		var trHtml = "";
+		for(var i=0;i<data.length;i++){
+			var item = data[i];
+			trHtml += "<tr onclick='clickDepartFun(this);' value='"+item.dicDataUid+"'>"
+				+"<td>"+item.departUid+"</td>"
+				+"<td>"+item.departName+"</td>"
+				+"</tr>"; 
+		}
+		$("#choose_depart_tbody").append(trHtml);
+	}
+}
+
+//选择部门的行点击事件
+function clickDepartFun(obj){
+	var departUid = $(obj).find("td:eq(0)").text().trim();
+	var departName = $(obj).find("td:eq(1)").text().trim();
+	$(obj).css("display","none");
+	$(eleObj).parent().find("input[type='text']").val(departName);
+	$(eleObj).parent().find("input[type='hidden']").val(departUid);
+	desChooseDepart(eleObj);
+	layer.close(index);
+}
+
+//模糊查询部门的方法
+function searchChooseDepart(obj){
+	pageConfigDepart.pageNum = 1;
+	pageSize = 14;
+	desChooseDepart(eleObj);
+}
+
+//部门异步加载
+function departAsync() {
+	var start = $('#choose_depart_table table').offset().top; ;
+	var move = 0;
+	$("#choose_depart_table").scroll(function(){
+		var end = $('#choose_depart_table table').offset().top; 
+		if(end<start){
+			move = start-end;
+			if(move >= 240){
+				if(pageConfigDepart.pageNum==1){
+					pageConfigDepart.pageNum = pageConfigDepart.pageNum+2;
+				}else{
+					pageConfigDepart.pageNum ++;
+				}
+				pageConfigDepart.pageSize = 7;
+				desChooseDepart(eleObj);
+				start = end;
+			}
+		}else{
+			start = end;
+		}
+	});
+}
+
+//打开选择层
 function openChooseUserDiv(){
 	//页面层
-	layer.open({
+	index = layer.open({
 		type: 1
-		,content: $("#choose_user_div")
+		,content: $("#choose_div")
 		,offset: 'b'
 		,title: false
     	,shadeClose: true
@@ -197,7 +411,11 @@ function openChooseUserDiv(){
 		,end:function(){
 			pageConfig.pageNum = 1;
 			pageConfig.pageSize = 14;
-			$("#choose_user_div").css("display","none");
+			openChooseFlag = true;
+			$("#choose_div").css("display","none");
+			$("#search_depart_input").val("");
+			$("#search_value_input").val("");
+			$("#search_user_input").val("");
 		}
 	});
 }
@@ -211,11 +429,19 @@ function clickUserFun(obj,isMulti,elementId){
 		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
 	if(isMulti){
 		$("#"+elementId+" .choose_user_name_ul ul").append(liHtml);
-	}
-	if(asyncActcChooseableHandlerType=='allUser'){
-		pageConfig.pageNum = $(obj).parent().find("tr").length+1;
-		pageConfig.pageSize = 1;
-		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true);
+		if(asyncActcChooseableHandlerType=='allUser'){
+			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
+			pageConfig.pageSize = 1;
+			queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+		}
+	}else{
+		pageConfig.pageNum = 1;
+		pageConfig.pageSize = 14;
+		$(eleObj).parent().find("input[type='text']").val(userName);
+		$(eleObj).parent().find("input[type='hidden']").val(userUid);
+		asyncActcChooseableHandlerType = "allUser";
+		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
+		layer.close(index);
 	}
 	$(obj).css("display","none");
 }
@@ -663,7 +889,7 @@ function queryRejectByActivitiy() {
             index = layer.load(1);
         },
         success: function (result) {
-            layer.close(index);
+        	if(result.status==0){
         		$("#reject_table table").empty();
             	var rejectMapList = result.data;
             	var rejectDiv = "";
@@ -684,6 +910,8 @@ function queryRejectByActivitiy() {
                 }//end for
             	$("#reject_table table").append(rejectDiv);
             	form.render();
+        	}
+        	layer.close(index);
         },
         error: function (result) {
             layer.close(index);

@@ -57,6 +57,19 @@
 	 			and UD.IS_MANAGER =#{isManager}
 	 		</if>
 	 </select>
+	 
+	 <select id="allSysDepartmentMove" parameterType="map" resultType="com.desmart.desmartsystem.entity.SysDepartment">
+	  	SELECT d.DEPART_NAME,d.DEPART_UID FROM SYS_DEPARTMENT d 
+	 		where 1=1
+		    <if test="departUid!=null and !departUid.trim().isEmpty()">
+		    	and d.depart_uid != #{departUid}
+		    </if>
+		    <if test="condition!=null and !condition.trim().isEmpty()">
+		    	and (d.depart_uid like '%'||#{condition}||'%'
+		    		or d.depart_name like ''||#{condition}||'%')
+		    </if>
+		    order by d.DEPART_UID
+	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
 	  		select * from SYS_USER_DEPARTMENT d where 1=1

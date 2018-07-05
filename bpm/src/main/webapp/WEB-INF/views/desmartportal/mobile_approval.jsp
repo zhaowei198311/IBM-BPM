@@ -58,7 +58,7 @@
             	<i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
             	<dl id="child_menu">
             		<dd><a href="javascript:void(0);">提交</a></dd>
-	            	<dd><a href="">保存草稿</a></dd>
+	            	<dd><a href="javascript:void(0);" onclick="saveDraftsInfo();">保存草稿</a></dd>
             	</dl>
             </div>
         </div>
@@ -131,7 +131,7 @@
 	                    </tr>
 	                </tbody>
 	            </table>
-				<div id="formSet">
+				<div id="formSet" style="padding-bottom:10px;">
 					${bpmForm.dynWebpage}
 				</div>
 			</div>
@@ -259,16 +259,32 @@
 				<li><i class="layui-icon menu_btn" title="record" onclick="menuBtnClick(this)">&#xe60e;</i><p>记录</p></li>
 			</ul>
         </div>
-        <div id="choose_user_div">
-        	<div class="choose_head">
-        		<div class="search_div">
-        			<input type="text" id="search_input" class="layui-input" placeholder="工号/姓名--搜索" style="height:38px;"/>
+        <div id="choose_div">
+        	<div class="choose_head" id="choose_user_search_div">
+        		<div class="search_div" >
+        			<input type="text" id="search_user_input" class="layui-input" placeholder="工号/姓名--搜索" style="height:38px;"/>
         		</div>
         		<div class="sure_div">
         			<input type="button" class="layui-btn" onclick="searchChooseUser();" value="搜索"/>
         		</div>
         	</div>
-        	<div class="choose_body layui-form">
+        	<div class="choose_head" id="choose_value_search_div">
+        		<div class="search_div" >
+        			<input type="text" id="search_value_input" class="layui-input" placeholder="数据字典名/说明--搜索" style="height:38px;"/>
+        		</div>
+        		<div class="sure_div">
+        			<input type="button" class="layui-btn" onclick="searchDicData();" value="搜索"/>
+        		</div>
+        	</div>
+        	<div class="choose_head" id="choose_depart_search_div">
+        		<div class="search_div" >
+        			<input type="text" id="search_depart_input" class="layui-input" placeholder="部门编号/部门名称--搜索" style="height:38px;"/>
+        		</div>
+        		<div class="sure_div">
+        			<input type="button" class="layui-btn" onclick="searchChooseDepart();" value="搜索"/>
+        		</div>
+        	</div>
+        	<div class="choose_body layui-form" id="choose_user_table">
         		<table>
         			<thead>
         				<tr>
@@ -277,6 +293,32 @@
         				</tr>
         			</thead>
         			<tbody id="choose_user_tbody">
+        				
+        			</tbody>
+        		</table>
+        	</div>
+        	<div class="choose_body layui-form" id="choose_value_table">
+        		<table>
+        			<thead>
+        				<tr>
+        					<th class="choose_second_th">字典数据名</th>
+        					<th class="choose_three_th">字典数据说明</th>
+        				</tr>
+        			</thead>
+        			<tbody id="choose_value_tbody">
+        				
+        			</tbody>
+        		</table>
+        	</div>
+        	<div class="choose_body layui-form" id="choose_depart_table">
+        		<table>
+        			<thead>
+        				<tr>
+        					<th class="choose_second_th">部门编码</th>
+        					<th class="choose_three_th">部门名称</th>
+        				</tr>
+        			</thead>
+        			<tbody id="choose_depart_tbody">
         				
         			</tbody>
         		</table>

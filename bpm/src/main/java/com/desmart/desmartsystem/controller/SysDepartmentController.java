@@ -81,6 +81,24 @@ public class SysDepartmentController {
 		return queryByPage; 
 	}
 	
+	/**
+	 * 移动端带分页查询除某个部门外的部门列表
+	 * @param sysDepartment
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping(value="/allSysDepartmentMove")
+	@ResponseBody
+	public ServerResponse allSysDepartmentMove(String departUid,
+			Integer pageNo,Integer pageSize,String condition){
+		try {
+			return sysUserDepartmentService.allSysDepartmentMove(departUid,pageNo,pageSize,condition);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByError();
+		}
+	}
 	
 	@RequestMapping(value="/treeDisplay")
 	@ResponseBody

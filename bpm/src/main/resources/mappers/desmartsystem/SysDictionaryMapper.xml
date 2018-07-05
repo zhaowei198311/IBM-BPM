@@ -224,4 +224,18 @@
 			and dic_data_name like '%'||#{dicDataName}||'%'
 		</if>
 	</select>
+	
+	<select id="listOnDicDataBydicUidMove" parameterType="map" resultType="com.desmart.desmartsystem.entity.SysDictionaryData">
+		select 
+		<include refid="Base_Column_List1" />
+		from SYS_DICTIONARY_DATA
+		where dic_uid=#{dicUid} and dic_data_status='on'
+		<if test="condition != null and !condition.trim().isEmpty()">
+			and (dic_data_name like '%'||#{condition}||'%'
+				or DIC_DATA_DESCRIPTION like '%'||#{condition}||'%')
+		</if>
+		<if test="dicDataUid !=null and !dicDataUid.trim().isEmpty()">
+			and dic_data_uid != #{dicDataUid}
+		</if>
+	</select>
 </mapper>

@@ -16,7 +16,6 @@
   		<link href="resources/desmartportal/css/layui.css" rel="stylesheet"/>
   		<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
   		<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
-  		
 	</head>
 	<body>
 		<div class="container">

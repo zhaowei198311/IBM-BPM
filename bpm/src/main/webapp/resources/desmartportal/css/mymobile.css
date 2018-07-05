@@ -249,6 +249,7 @@
 	text-align: center;
 }
 .choose_body{
+	display:none;
 	height:245px;
 	overflow-y:auto;
 }
@@ -324,12 +325,13 @@ input[disabled], .layui-select-disabled .layui-disabled {
 .layui-input, .layui-select, .layui-textarea{
 	height:30px;
 }
-.layui-form-select dl{
-	top:30px;
-}
 .layui-form-select dl dd, .layui-form-select dl dt{
 	line-height:33px;
 }
 
+/*表单中选择人员、部门以及数据字典数据的样式*/
+.choose_head{
+	display:none;
+}
 
 

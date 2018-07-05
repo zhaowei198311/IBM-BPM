@@ -152,4 +152,10 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 		PageInfo<List<SysDictionaryData>> pageInfo = new PageInfo(dicList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
+
+	@Override
+	public ServerResponse listOnDicDataBydicUidMove(String dicUid, String dicDataUid, String condition) {
+		List<SysDictionaryData> dicDataList = sysDictionaryMapper.listOnDicDataBydicUidMove(dicUid,dicDataUid,condition);
+		return ServerResponse.createBySuccess(dicDataList);
+	}
 }

@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
-import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.entity.SysUserDepartment;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
+import com.desmart.desmartsystem.util.PagedResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * <p>
@@ -65,6 +69,15 @@ public class SysUserDepartmentServiceImpl  implements SysUserDepartmentService {
 	public List<SysUserDepartment> selectUserDepartmentView(SysUserDepartment sysUserDepartment) {
 		// TODO Auto-generated method stub
 		return sysUserDepartmentDao.selectUserDepartmentView(sysUserDepartment);
+	}
+
+	@Override
+	public ServerResponse allSysDepartmentMove(String departUid, Integer pageNo,
+			Integer pageSize,String condition) {
+		PageHelper.startPage(pageNo,pageSize);
+		List<SysDepartment> departList = sysUserDepartmentDao.allSysDepartmentMove(departUid,pageNo,pageSize,condition);
+		PageInfo<List<SysDepartment>> info = new PageInfo(departList);
+		return ServerResponse.createBySuccess(info);
 	}
 	
 	

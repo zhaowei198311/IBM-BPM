@@ -3,7 +3,7 @@
 <!--<link href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet">
 <link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">-->
 <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
-<link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mymobile_layui.css" rel="stylesheet" />
 <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
 
@@ -146,5 +146,55 @@
 	left: 70%;
 	margin-top: 10%;
 }
+    .layui-table td{
+    	padding:3px 15px;
+    	height: 30px;
+    }
+    input[lay-key][readonly]{
+   	 	cursor: pointer;
+    	border-width: 1px;
+    	background:#F2F2F2;
+    }
+    .data-table .layui-input{
+    	border-radius:2px;
+    	height: 30px;
+    	width: 75%;
+    	float: right;
+    }
+    .data-table .layui-form-select dl{
+		min-width: 70%;
+		left: 30%;
+		top: 38px;
+    }
+    .data-table .layui-form-select .layui-edge {
+	    top: 17px;
+    }
+    .data-table {
+        border: 0;
+    }
+    .data-table thead,.data-table .td_title {
+        display: none;
+    }
+    .data-table tr {
+        padding-top: 10px;
+        display: block;
+        border-bottom: 1px solid #ddd;
+    }
+    .data-table td {
+        display: block;
+        text-align: right;
+        border-bottom: 1px dotted #ccc;
+    }
+    .data-table td:before {
+        content: attr(data-label);
+        float: left;
+        text-transform: uppercase;
+    }
+    .layui-table td, .layui-table th{
+    	border-width: 0px;
+    }
+    .td_title {
+    	text-align: left;
+    }
 </style>
 <link href="resources/desmartportal/css/mymobile.css" rel="stylesheet" />

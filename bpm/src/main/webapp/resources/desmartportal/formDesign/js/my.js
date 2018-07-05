@@ -421,7 +421,7 @@ function showTable(obj) {
 	var pText = $(obj).parent()[0].firstChild.data.trim();
 	var tableText = $(obj).parent().next().attr("title");
 	if (pText == tableText) {
-		$(obj).parent().next().slideToggle("slow");
+		$(obj).parent().next().slideToggle(100);
 	}
 }
 

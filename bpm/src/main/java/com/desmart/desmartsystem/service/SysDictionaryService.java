@@ -136,4 +136,9 @@ public interface SysDictionaryService {
 	 * 根据数据字典id获得启用的数据字典详细信息(分页)
 	 */
 	ServerResponse getOnSysDictionaryDataList(Integer pageNum,Integer pageSize,String dicUid);
+	
+	/**
+	 * 移动端根据数据字典id获得除已选外的数据字典内容（不分页）
+	 */
+	ServerResponse listOnDicDataBydicUidMove(String dicUid, String dicDataUid, String condition);
 }

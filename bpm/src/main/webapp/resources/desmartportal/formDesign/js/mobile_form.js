@@ -26,13 +26,12 @@ function addPublicFormContent(view) {
 					var publicFormHtml = divObj.parent().parent().parent().find(".container-fluid").html();
 					divObj.parent().parent().parent().html(publicFormHtml);
 				} else {
-					layer.alert("子表单内容读取失败");
+					layer.alert("子表单内容读取失败,请退出重试");
 					divObj.parent().parent().parent().html("");
 				}
 			}
 		});
 	});
-	console.log(view.html());
 }
 
 var chooseInputWidth = new Array();
@@ -60,6 +59,7 @@ function drawPage() {
 					column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
 					var pText = column.find("p")[0].firstChild.data.trim();
 					pHtml = column.html();
+					console.log(pHtml);
 					formHtml = formHtml.substring(0, formHtml.length - 4);
 					formHtml += "</tbody></table>";
 					formHtml += pHtml;
@@ -67,52 +67,129 @@ function drawPage() {
 				} else {
 					continue;
 				}
-			} else if (column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0) {
-				flag = false;
-				formHtml = formHtml.substring(0, formHtml.length - 4);
-				formHtml += "</tbody></table>";
+			} else if (column.find(".subDiv").length != 0 && column.find(".labelDiv").length == 0
+					|| column.find(".subDiv").find("div[title='choose_user']").length != 0
+					|| column.find(".subDiv").find("div[title='choose_value']").length != 0
+					|| column.find(".subDiv").find("div[title='choose_depart']").length != 0) {
 				var subDivObj = column.find(".subDiv");
 				var tableObj = subDivObj.find("table");
-				tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
-				var thObjArr = tableObj.find("thead th");
-				var trHtml = '<tr>';
-				for (var i = 0; i < thObjArr.length; i++) {
-					var thObj = $(thObjArr[i]);
-					trHtml += '<td data-label="' + thObj.text().trim() + '">';
-					switch (thObj.attr("col-type")) {
-						case "text": {
-							trHtml += '<input type="text" class="layui-input"/>';
-							break;
+				var pObj = subDivObj.find("p");
+				if(tableObj.length!=0){
+					flag = false;
+					formHtml = formHtml.substring(0, formHtml.length - 4);
+					formHtml += "</tbody></table>";
+					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
+					var thObjArr = tableObj.find("thead th");
+					var trHtml = '<tr>';
+					for (var i = 0; i < thObjArr.length; i++) {
+						var thObj = $(thObjArr[i]);
+						trHtml += '<td data-label="' + thObj.text().trim() + '">';
+						switch (thObj.attr("col-type")) {
+							case "text": {
+								trHtml += '<input type="text" class="layui-input"/>';
+								break;
+							}
+							case "number": {
+								trHtml += '<input type="tel" class="layui-input"/>';
+								break;
+							}
+							case "date": {
+								trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+								break;
+							}
+							case "select": {
+								trHtml += '<select></select>';
+								break;
+							}
+							case "tool": {
+								trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' +
+									'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
+								break;
+							};
 						}
-						case "number": {
-							trHtml += '<input type="tel" class="layui-input"/>';
-							break;
-						}
-						case "date": {
-							trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
-							break;
-						}
-						case "select": {
-							trHtml += '<select></select>';
-							break;
-						}
-						case "tool": {
-							trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' +
-								'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
-							break;
-						};
+						trHtml += '</td>';
 					}
-					trHtml += '</td>';
+					trHtml += '</tr>';
+					tableObj.append("<tbody>" + trHtml + "</tbody>");
+					var tableLabel = tableObj.attr("table-label");
+					formHtml += "<p class='title_p'>" + tableLabel
+						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><table class='layui-table data-table' name='"
+						+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
+						+ "</table>";
+					formHtml += tableHead;
+				} else if (pObj.length != 0) {
+					if (pObj.attr("title") == "table_title") {
+						//表单块标题
+						column.find("p").addClass("title_p");
+						column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
+						pHtml = column.find(".subDiv").html();
+						var pText = column.find("p")[0].firstChild.data.trim();
+						flag = false;
+						if (column.find(".title_p").length != 0) {
+							formHtml = formHtml.substring(0, formHtml.length - 4);
+							formHtml += "</tbody></table>";
+							formHtml += pHtml;
+							formHtml += '<table class="layui-table form-sub" title=' + pText + '>' + '<tbody>';
+						} else {
+							continue;
+						}
+					}
+				} else if (column.find(".subDiv").find("div[title='choose_user']").length != 0) {
+					var labelDivObj = column.find(".labelDiv");
+					var labelDivCol = labelDivObj.attr("col");
+					var subDivObj = column.find(".subDiv div[title='choose_user']");
+					var subDivCol = subDivObj.attr("col");
+					var labelHtml = $(labelDivObj).html();
+					var subDivId = $(subDivObj).attr("id");
+					$(subDivObj).find("span").remove();
+					chooseInputWidth.push("90%");
+					$(subDivObj).append('<i class="layui-icon" title="choose_user" id="' + subDivId + '" onclick="getUser(this,false,\'\')">&#xe612;</i>');
+					var subHtml = $(subDivObj).html();
+					if (!isNaN(labelDivCol)) {
+						formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:70px">' + labelHtml + '</td>';
+					}
+
+					if (!isNaN(subDivCol)) {
+						formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+					}
+				} else if (column.find(".subDiv").find("div[title='choose_value']").length != 0) {
+					var labelDivObj = column.find(".labelDiv");
+					var labelDivCol = labelDivObj.attr("col");
+					var subDivObj = column.find(".subDiv div[title='choose_value']");
+					var subDivCol = subDivObj.attr("col");
+					var labelHtml = $(labelDivObj).html();
+					var subDivId = $(subDivObj).attr("id");
+					$(subDivObj).find("span").remove();
+					chooseInputWidth.push("90%");
+					$(subDivObj).append('<i class="layui-icon" title="choose_value" id="' + subDivId + '" onclick="chooseDicData(this);">&#xe615;</i>');
+					var subHtml = $(subDivObj).html();
+					if (!isNaN(labelDivCol)) {
+						formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:70px">' + labelHtml + '</td>';
+					}
+
+					if (!isNaN(subDivCol)) {
+						formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+					}
+				} else if (column.find(".subDiv").find("div[title='choose_depart']").length != 0) {
+					var labelDivObj = column.find(".labelDiv");
+					var labelDivCol = labelDivObj.attr("col");
+					var subDivObj = column.find(".subDiv div[title='choose_depart']");
+					var subDivCol = subDivObj.attr("col");
+					var labelHtml = $(labelDivObj).html();
+					var subDivId = $(subDivObj).attr("id");
+					$(subDivObj).find("span").remove();
+					chooseInputWidth.push("90%");
+					$(subDivObj).append('<i class="layui-icon" title="choose_depart" id="' + subDivId + '" onclick="desChooseDepart(this);">&#xe62e;</i>');
+					var subHtml = $(subDivObj).html();
+					if (!isNaN(labelDivCol)) {
+						formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:70px">' + labelHtml + '</td>';
+					}
+
+					if (!isNaN(subDivCol)) {
+						formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
+					}
 				}
-				trHtml += '</tr>';
-				tableObj.append("<tbody>" + trHtml + "</tbody>");
-				var tableLabel = tableObj.attr("table-label");
-				formHtml += "<p class='title_p'>" + tableLabel
-					+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><table class='layui-table data-table' name='"
-					+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
-					+ "</table>";
-				formHtml += tableHead;
-			} else {
+			} else {//普通组件
 				flag = true;
 				if (column.find(".subDiv").length > 1) {
 					column.find(".subDiv").each(function (index) {
@@ -145,7 +222,7 @@ function drawPage() {
 						}
 
 						if (!isNaN(labelDivCol)) {
-							formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:240px">' + labelHtml + '</td>';
+							formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:70px">' + labelHtml + '</td>';
 						}
 
 						if (!isNaN(subDivCol)) {
@@ -317,7 +394,7 @@ function showTable(obj) {
 	var pText = $(obj).parent()[0].firstChild.data.trim();
 	var tableText = $(obj).parent().next().attr("title");
 	if (pText == tableText) {
-		$(obj).parent().next().slideToggle("slow");
+		$(obj).parent().next().slideToggle(100);
 	}
 }
 
@@ -344,25 +421,6 @@ function getDataToSelect(obj, dicUid) {
 			}
 		}
 	});
-}
-
-//动态选人的方法
-function desChooseUser(obj) {
-	var hideId = $(obj).parent().find("input[type='hidden']").prop("id");
-	common.chooseUser(hideId, 'false');
-}
-
-//动态选部门的方法
-function desChooseDepart(obj) {
-	var hideId = $(obj).parent().find("input[type='hidden']").prop("id");
-	common.chooseDepart(hideId);
-}
-
-//选择具体数据字典分类的数据内容
-function chooseDicData(obj) {
-	var elementId = $(obj).parent().find("input[type='hidden']").prop("id");
-	var dicUid = $(obj).parent().find("input[type='text']").attr("database_type");
-	common.chooseDicData(elementId, dicUid);
 }
 
 function addDataRow(obj) {
