@@ -127,7 +127,7 @@ public class ProcessDataUtil {
 
 	/**
 	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId
-	 * @param json： JSONObject对象
+	 * @param json： 代表ProcessData的JSONObject对象
 	 * @param preFlowObjectId：代表子流程的节点的元素id
 	 * @param childFlowObjectId：代表子流程第一个任务节点的元素id
 	 * @return 代表子流程的节点上的tokenId

@@ -16,6 +16,7 @@ import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -395,9 +396,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         // 下个环节是有处理人的才能自动提交
         // 计算下个环节的默认处理人， 对下个环节来说，上个环节的处理人就是 orgionUserUidList.get(0)
         JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
-        List<String> taskOwnerOfNextTask = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextNode, orgionUserUidList.get(0), dhProcessInstance,
+        List<SysUser> defaultOwnerList = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextNode, orgionUserUidList.get(0), dhProcessInstance,
                 insDataJson.getJSONObject("formData"));
-        return taskOwnerOfNextTask.size() > 0;
+        return defaultOwnerList.size() > 0;
     }
 
     private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, String> groupInfo) {

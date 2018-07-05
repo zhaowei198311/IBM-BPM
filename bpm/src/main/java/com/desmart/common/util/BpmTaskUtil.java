@@ -279,7 +279,7 @@ public class BpmTaskUtil {
     }
     
     /**
-     * 完成任务
+     * 直接完成任务，不分配处理人，不修改pubBo值
      * @param taskId
      * @return
      */

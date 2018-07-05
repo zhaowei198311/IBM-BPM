@@ -23,7 +23,7 @@ public class BpmRoutingData {
     private List<BpmActivityMeta> taskNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始节点不平级的任务节点
     private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel = new ArrayList<>();  // 不属于当前流程子流程的流程的第一个任务节点
     private List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = new ArrayList<>();  // 与起始任务平级的代表子流程的节点
-    private List<BpmActivityMeta> getStartProcessNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始任务不平级的代表子流程的节点
+    private List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始任务不平级的代表子流程的节点
 
 
     public void includeAll(BpmRoutingData bpmRouteingData) {
@@ -62,12 +62,12 @@ public class BpmRoutingData {
         this.startProcessNodesOnSameDeepLevel = startProcessNodesOnSameDeepLevel;
     }
 
-    public List<BpmActivityMeta> getGetStartProcessNodesOnOtherDeepLevel() {
-        return getStartProcessNodesOnOtherDeepLevel;
+    public List<BpmActivityMeta> getStartProcessNodesOnOtherDeepLevel() {
+        return startProcessNodesOnOtherDeepLevel;
     }
 
-    public void setGetStartProcessNodesOnOtherDeepLevel(List<BpmActivityMeta> getStartProcessNodesOnOtherDeepLevel) {
-        this.getStartProcessNodesOnOtherDeepLevel = getStartProcessNodesOnOtherDeepLevel;
+    public void setStartProcessNodesOnOtherDeepLevel(List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel) {
+        this.startProcessNodesOnOtherDeepLevel = startProcessNodesOnOtherDeepLevel;
     }
 
     public List<BpmActivityMeta> getTaskNodesOnOtherDeepLevel() {

@@ -6,6 +6,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.CommonBusinessObjectUtils;
+import com.desmart.common.util.DataListUtils;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -23,6 +24,7 @@ import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -118,10 +120,10 @@ public class AutoCommitServiceImpl implements AutoCommitService {
         BpmActivityMeta preMeta = preActivityReturn.getData();
         String originalUser = preMeta.getUserUid(); // 任务实际所有者
         JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
-        List<String> taskOwnerIdList = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextTaskNode, originalUser,
+        List<SysUser> defaultTaskOwnerList = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextTaskNode, originalUser,
                 dhProcessInstance, insDataJson.getJSONObject("formData"));
-        if (taskOwnerIdList.size() == 0) {
-            return;
+        if (defaultTaskOwnerList.size() == 0) {
+            throw new PlatformException("自动提交失败，缺少默认处理人");
         }
         // 保存流转记录
         DhRoutingRecord routingRecord = dhRoutingRecordService.generateAutoCommitRoutingRecord(currTask,
@@ -136,7 +138,7 @@ public class AutoCommitServiceImpl implements AutoCommitService {
 
         String assignVariable = currTaskConf.getActcAssignVariable();
         CommonBusinessObject pubBo = new CommonBusinessObject(dhProcessInstance.getInsId());
-        CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, taskOwnerIdList);
+        CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, DataListUtils.transformUserListToUserIdList(defaultTaskOwnerList));
 
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
         Map<String, HttpReturnStatus> commitTaskReturn = taskUtil.commitTaskWithOutUserInSession(currTask.getTaskId(), pubBo);

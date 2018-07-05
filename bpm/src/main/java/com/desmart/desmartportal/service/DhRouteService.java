@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,15 +31,6 @@ public interface DhRouteService {
 	 */
 	ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId, 
 												String departNo, String companyNum, String formData);
-	
-	/**
-	 * 根据表单数据和环节找到接下来会流转到的环节，供路由工具栏展示使用
-	 * @param sourceActivityMeta
-	 * @param formData
-	 * @return
-	 */
-	List<BpmActivityMeta> getNextActivitiesForRoutingBar(BpmActivityMeta sourceActivityMeta, JSONObject formData);
-
 
 	/**
 	 * 装配处理人信息
@@ -65,14 +57,17 @@ public interface DhRouteService {
 			,HttpServletRequest request, String taskUid);
 
 	/**
-	 * 获得指定节点的默认处理人
+	 * 获得指定节点的默认处理人，如果没有处理人，不设置为管理员，返回空集合
 	 * @param taskNode  指定节点
 	 * @param preTaskOwner  上个环节任务处理人
 	 * @param dhProcessInstance  流程实例
 	 * @param mergedFormData  当前的formData信息
-	 * @return
+	 * @return 不会返回null
+	 * 返回值map包含的内容：
+	 * idList 处理人工号集合 不会为null
+	 * nameList 处理人对象集合  不会为null
 	 */
-	List<String> getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, String preTaskOwner, DhProcessInstance dhProcessInstance, JSONObject mergedFormData);
+	List<SysUser> getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, String preTaskOwner, DhProcessInstance dhProcessInstance, JSONObject mergedFormData);
 
 	/**
 	 * 更新网关决策的中间表

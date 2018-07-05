@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -504,5 +505,18 @@ public class SysUser implements Serializable {
 	public void setSysUserDepartmentList(List<SysUserDepartment> sysUserDepartmentList) {
 		this.sysUserDepartmentList = sysUserDepartmentList;
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SysUser sysUser = (SysUser) o;
+		return Objects.equals(userUid, sysUser.userUid);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(userUid);
+	}
 }

@@ -18,8 +18,13 @@ public class ArrayUtil {
 			}
    	  return String.valueOf(buf);
      }
-	 
-	 public static List<String> getIdListFromDhActivityAssignList(List<DhActivityAssign> assignList) {
+
+	/**
+	 * 从分配列表中，取出被分配权限的对象id
+	 * @param assignList
+	 * @return
+	 */
+	public static List<String> getIdListFromDhActivityAssignList(List<DhActivityAssign> assignList) {
          List<String> idList = new ArrayList<>();
          for (DhActivityAssign assign : assignList) {
              idList.add(assign.getActaAssignId());
