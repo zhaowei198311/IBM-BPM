@@ -111,6 +111,7 @@ public class InsDataDaoImpl implements InsDataDao{
 				JSONObject jsonObject = jsonArray.getJSONObject(i);//获得表单对象
 				String fieldName = jsonObject.getString("name");//获得表单字段名
 				String dataValue = jsonObject.getString("value");//获得表单字段的值
+				String key = "insData$.formData."+fieldName+".value";//查询MongoDB字段key
 				DhProcessRetrieve dhProcessRetrieve = null;
 				for (DhProcessRetrieve item : list) {
 					if(item.getFieldName().equals(fieldName)) {
@@ -127,10 +128,10 @@ public class InsDataDaoImpl implements InsDataDao{
 							if(dataArr!=null && dataArr.length>1) {
 								Double minNumber = Double.valueOf(dataArr[0]);
 								Double maxNumber = Double.valueOf(dataArr[1]);
-								criteria.and(fieldName).gte(minNumber).lte(maxNumber);
+								criteria.and(key).gte(minNumber).lte(maxNumber);
 							}
 						}else {
-							criteria.and(fieldName).regex(".*" + dataValue + ".*");
+							criteria.and(key).regex(".*" + dataValue + ".*");
 						}
 						
 						break;
@@ -140,20 +141,20 @@ public class InsDataDaoImpl implements InsDataDao{
 							if(dataArr!=null && dataArr.length>1) {
 								Date startTime = DateUtil.stringtoDate(dataArr[0]);
 								Date endTime = DateUtil.stringtoDate(dataArr[1]);
-								criteria.and(fieldName).gte(startTime).lte(endTime);
+								criteria.and(key).gte(startTime).lte(endTime);
 							}
 						}else {
 								//模糊查询选择日期当天的数据
 							if(dataValue!=null&&!"".equals(dataValue)) {
 								SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 								String retrieveTime = simpleDateFormat.format(dataValue);
-								criteria.and(fieldName).regex(".*"+retrieveTime+".*");
+								criteria.and(key).regex(".*"+retrieveTime+".*");
 							}
 						}
 						break;
 					case DhProcessRetrieve.TYPE_BY_SELECT:
 							if(dataValue!=null&&!"".equals(dataValue)) {
-								criteria.and(fieldName).is(dataValue);
+								criteria.and(key).is(dataValue);
 							}
 						break;
 
