@@ -131,7 +131,9 @@ public class InsDataDaoImpl implements InsDataDao{
 								criteria.and(key).gte(minNumber).lte(maxNumber);
 							}
 						}else {
-							criteria.and(key).regex(".*" + dataValue + ".*");
+							if(!"".equals(dataValue)) {
+								criteria.and(key).regex(".*" + dataValue + ".*");
+							}
 						}
 						
 						break;
@@ -139,15 +141,15 @@ public class InsDataDaoImpl implements InsDataDao{
 						if(Const.Boolean.TRUE.equals(dhProcessRetrieve.getIsScope())) {
 							String[] dataArr = dataValue.toString().split(" - ");
 							if(dataArr!=null && dataArr.length>1) {
-								Date startTime = DateUtil.stringtoDate(dataArr[0]);
-								Date endTime = DateUtil.stringtoDate(dataArr[1]);
+								String startTime = dataArr[0];
+								String endTime = dataArr[1];
 								criteria.and(key).gte(startTime).lte(endTime);
 							}
 						}else {
 								//模糊查询选择日期当天的数据
 							if(dataValue!=null&&!"".equals(dataValue)) {
 								SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-								String retrieveTime = simpleDateFormat.format(dataValue);
+								String retrieveTime = simpleDateFormat.format(DateUtil.stringtoDate(dataValue));
 								criteria.and(key).regex(".*"+retrieveTime+".*");
 							}
 						}
