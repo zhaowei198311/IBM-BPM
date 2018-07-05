@@ -7,8 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysTeamMember;
 import com.desmart.desmartsystem.service.SysTeamMemberService;
 
@@ -36,7 +38,7 @@ public class SysTeamMemberController {
 	@ResponseBody
 	public String adSysTeamMember(SysTeamMember sysTeamMember) {
 		try {	
-			sysTeamMemberService.delete(sysTeamMember);
+			//sysTeamMemberService.delete(sysTeamMember);
 			String userUid=sysTeamMember.getUserUid();
 			if(StringUtils.isNotBlank(userUid)) {
 				String[]  roleUser=userUid.split(",");
@@ -44,6 +46,23 @@ public class SysTeamMemberController {
 					sysTeamMember.setUserUid(string);
 					sysTeamMemberService.insert(sysTeamMember);
 				}
+			}
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
+	
+	
+	//批量删除
+	@RequestMapping("/deleteSysTeamMembers")
+	@ResponseBody
+	public String deleteSysTeamMembers(@RequestParam(value="memberUids[]") String[] memberUids) {
+		try {
+			for (String string : memberUids) {
+				sysTeamMemberService.deleteByPrimaryKey(string);
 			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {

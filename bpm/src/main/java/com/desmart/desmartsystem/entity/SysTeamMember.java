@@ -16,6 +16,8 @@ public class SysTeamMember {
     
     private String companyCode;
     private String departUid;
+    
+    private String roleName;
 
     
     public String getUserName() {
@@ -80,6 +82,14 @@ public class SysTeamMember {
 
 	public void setDepartUid(String departUid) {
 		this.departUid = departUid;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
     
 }

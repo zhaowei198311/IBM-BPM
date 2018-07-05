@@ -11,6 +11,11 @@
   <sql id="Base_Column_List" >
     MEMBER_UID, TEAM_UID, USER_UID, MEMBER_TYPE, ORDER_INDEX
   </sql>
+  
+  <sql id="SelectAll_Column_List" >
+    tm.MEMBER_UID, tm.TEAM_UID, tm.USER_UID, tm.MEMBER_TYPE, tm.ORDER_INDEX,r.ROLE_NAME
+  </sql>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -18,16 +23,25 @@
     where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
   </select>
   
-   <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultMap="BaseResultMap">
- 		select <include refid="Base_Column_List" />  from SYS_TEAM_MEMBER where 1=1
+  <resultMap id="SelectAllResultMap" type="com.desmart.desmartsystem.entity.SysTeamMember" >
+    <id column="MEMBER_UID" property="memberUid" jdbcType="VARCHAR" />
+    <result column="TEAM_UID" property="teamUid" jdbcType="VARCHAR" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="MEMBER_TYPE" property="memberType" jdbcType="VARCHAR" />
+    <result column="ORDER_INDEX" property="orderIndex" jdbcType="DECIMAL" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysTeamMember"  resultMap="SelectAllResultMap">
+ 		select <include refid="SelectAll_Column_List" /> from SYS_TEAM_MEMBER tm left join sys_role r on tm.USER_UID=r.ROLE_UID where 1=1
       	<if test="teamUid != null" >
-		    and TEAM_UID=#{teamUid}
+		    and tm.TEAM_UID=#{teamUid}
 		</if>
 		<if test="memberType != null" >
-			and MEMBER_TYPE=#{memberType}
+			and tm.MEMBER_TYPE=#{memberType}
 		</if>
 		<if test="userUid != null" >
-			and USER_UID=#{userUid}
+			and tm.USER_UID=#{userUid}
 		</if>
   </select>
   
@@ -50,7 +64,7 @@
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_TEAM_MEMBER
-    where TEAM_UID = #{teamUid,jdbcType=VARCHAR}
+    where MEMBER_UID = #{memberUid,jdbcType=VARCHAR}
   </delete>
   
   <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysTeamMember" >

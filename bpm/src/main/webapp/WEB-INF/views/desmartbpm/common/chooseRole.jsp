@@ -72,7 +72,7 @@ $(function () {
         url: common.getPath() + "/sysRole/roleList",
         dataType: "json",
         type: "post",
-        data: {},
+        data: {roleType:1,isClosed:1},
         success: function (list) {
             init(list)
         }

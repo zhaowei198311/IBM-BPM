@@ -540,7 +540,7 @@
 	         	str+='<td>' + isEmpty(this.mobile) + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
-	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'+this.userUid+'","'+this.departUid+'"); >&#xe612;</i>';
+	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=bindingRole("'+this.userUid+'"); >&#xe612;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定系统角色"  onclick=openSystemRoleBinding("'+this.userUid+'","'+this.departUid+'"); >&#xe614;</i>';
 	         	str+='<i class="layui-icon link_system" title="绑定部门"  onclick=departmentOfBinding("'+this.userUid+'"); >&#xe631;</i>';
 	         	/* str+='<i class="layui-icon" title="查看详情" onclick=userDetail("'+this.userUid+'")>&#xe60a;</i>'; */
@@ -628,6 +628,29 @@
 					
 				}
 			});
+		}
+		
+		
+		//打开业务角色绑定
+		function bindingRole(userUid){
+	    	layer.open({
+	            type: 2,
+	            title: false,
+	            closeBtn: false,
+	            shadeClose: false,
+	            shade: 0.3,
+	            area: ['770px', '560px'],
+	            content: 'sysRole/bindingRole?userUid='+userUid,
+	            success: function(layero, lockIndex) {
+	            	var body = layer.getChildFrame('body', lockIndex);
+	            	body.find('button#cancel_btn').on('click', function () {
+	                    layer.close(lockIndex);
+	                });
+	            	body.find('button#sure_btn').on('click', function () {
+	                    layer.close(lockIndex);
+	                });
+	            }
+	        }); 
 		}
 		
 		function addsuccess1(data){

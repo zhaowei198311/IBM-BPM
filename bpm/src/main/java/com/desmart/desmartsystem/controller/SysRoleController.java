@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.desmartsystem.entity.SysRole;
 import com.desmart.desmartsystem.entity.SysUser;
@@ -41,7 +42,13 @@ public class SysRoleController {
 		return "desmartsystem/usermanagement/role";
 	}
 	
-	
+	//绑定业务角色
+	@RequestMapping(value="/bindingRole")
+	public ModelAndView bindingRole(String userUid){
+		ModelAndView ml =new ModelAndView("desmartsystem/usermanagement/bindingRole");
+		ml.addObject("userUid", userUid);
+		return ml;
+	}
 	
 	
 	@RequestMapping(value="/allSysRole")

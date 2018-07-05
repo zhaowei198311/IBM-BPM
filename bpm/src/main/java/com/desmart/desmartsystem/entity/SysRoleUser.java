@@ -24,6 +24,10 @@ public class SysRoleUser {
     
     private String companyCode;
     
+    private String roleName;
+    
+    private String isClosed;
+    
     
 
     public List<SysUser> getUsers() {
@@ -105,6 +109,23 @@ public class SysRoleUser {
 	public void setCompanyCode(String companyCode) {
 		this.companyCode = companyCode;
 	}
-    
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public String getIsClosed() {
+		return isClosed;
+	}
+
+	public void setIsClosed(String isClosed) {
+		this.isClosed = isClosed;
+	}
+	
+	
     
 }

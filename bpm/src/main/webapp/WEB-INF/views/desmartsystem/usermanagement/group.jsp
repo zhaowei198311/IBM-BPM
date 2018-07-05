@@ -399,14 +399,37 @@ ul {
 							str += '<i class="layui-icon add_user" onclick=ajaxTodo("sysTeam/getSysTeamRole?teamUid='
 									+ this.teamUid
 									+ '&ext1=user","addRoleTema")  >&#xe654;</i>';
-							str += '<i class="layui-icon link_role" title="绑定业务角色" onclick=openBusinessRoleBindings("'
-									+ this.teamUid + ',theFirstTime"); >&#xe612;</i>';
+// 							str += '<i class="layui-icon link_role" title="绑定业务角色" onclick=teamBindingRole("'+ this.teamUid + ',theFirstTime"); >&#xe612;</i>';
+							str += '<i class="layui-icon link_role" title="绑定业务角色" onclick=teamBindingRole("'+ this.teamUid + '"); >&#xe612;</i>';
 							str += '<i class="layui-icon delete_btn" onclick=ajaxTodo("sysTeam/deleteSysTeam?teamUid='
 									+ this.teamUid + '","del") >&#xe640;</i>';
 							str += '</td>';
 							$("#tabletr").append(str);
 						});
 	}
+	
+	//打开业务角色绑定
+	function teamBindingRole(teamUid){
+    	layer.open({
+            type: 2,
+            title: false,
+            closeBtn: false,
+            shadeClose: false,
+            shade: 0.3,
+            area: ['770px', '560px'],
+            content: 'sysTeam/teamBindingRole?teamUid='+teamUid,
+            success: function(layero, lockIndex) {
+            	var body = layer.getChildFrame('body', lockIndex);
+            	body.find('button#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            	body.find('button#sure_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        }); 
+	}
+	
 
 	//打开业务角色绑定
 	function openBusinessRoleBindings(teamUid,openModel) {

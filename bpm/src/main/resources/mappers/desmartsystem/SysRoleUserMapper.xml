@@ -16,6 +16,26 @@
     	<result column="USER_NAME" property="userName" /> 
      </collection> 
   </resultMap>
+  
+  
+  <resultMap id="SelectAllResultMap" type="com.desmart.desmartsystem.entity.SysRoleUser" >
+    <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
+    <result column="MAP_TYPE" property="mapType" jdbcType="DECIMAL" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+    <result column="ROLE_UID" property="roleUid" jdbcType="VARCHAR" />
+    <result column="IS_MANAGER" property="isManager" jdbcType="DECIMAL" />
+    <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+    <result column="USER_NAME" property="userName"  />
+    <result column="ROLE_NAME" property="roleName"  />
+    
+    <collection property="users" column="USER_UID" ofType="com.desmart.desmartsystem.entity.SysUser"> 
+    	<result column="USER_UID" property="userUid" /> 
+    	<result column="USER_NAME" property="userName" /> 
+     </collection> 
+  </resultMap>
+  
+  
   <sql id="Base_Column_List" >
     MAP_UID, MAP_TYPE, USER_UID, DEPART_UID, ROLE_UID, IS_MANAGER, IS_SHOW
   </sql>
@@ -24,14 +44,23 @@
     	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID
   </sql>
   
+   <sql id="selectAll_Column" >
+    	r.MAP_UID, r.MAP_TYPE, r.USER_UID, r.DEPART_UID, r.ROLE_UID, r.IS_MANAGER, r.IS_SHOW,u.USER_NAME,u.USER_UID,role.ROLE_NAME
+  </sql>
+  
+  
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r left join Sys_USER u on u.USER_UID=r.USER_UID where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
+    	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r 
+    	left join Sys_USER u on u.USER_UID=r.USER_UID 
+    	where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
   
-   <select id="selectAll" resultMap="BaseResultMap" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
-    select 
-    <include refid="RoleUser_Column_List" />
-    from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID where 1=1 
+   <select id="selectAll" resultMap="SelectAllResultMap" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
+    select  <include refid="selectAll_Column" />
+    from SYS_ROLE_USER  r 
+    left join SYS_ROLE role on role.role_Uid=r.role_Uid 
+    left join Sys_USER u on u.USER_UID=r.USER_UID where 1=1 
      
      <if test="roleUid!=null">
      		and r.role_Uid=#{roleUid}
@@ -44,6 +73,12 @@
       <if test="mapType != null" >
          and r.MAP_TYPE=#{mapType}
       </if>
+      
+      <if test="isClosed != null" >
+         and role.IS_CLOSED=#{isClosed}
+      </if>
+      
+      
   </select>
   
   <select id="selectByRoleUser" resultType="com.desmart.desmartsystem.entity.SysRoleUser" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
@@ -73,6 +108,10 @@
 	    delete from SYS_ROLE_USER where 1=1
 	    <if test="userUid!=null and userUid!='' ">
 	    	and USER_UID = #{userUid}
+	    </if>
+	    
+	    <if test="mapUid!=null and mapUid!='' ">
+	    	and MAP_UID = #{mapUid}
 	    </if>
 	    
 	     <if test="mapType!=null and mapType!='' ">

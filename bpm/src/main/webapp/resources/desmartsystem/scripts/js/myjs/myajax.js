@@ -1,8 +1,8 @@
 
-var index;
-$.ajaxSetup({beforeSend : function(){index=layer.load(1);}
-,complete: function () {layer.close(index)}
-});
+//var index;
+//$.ajaxSetup({beforeSend : function(){index=layer.load(1);}
+//,complete: function () {layer.close(index)}
+//});
 
 var language= {
 	query_no_data:'查询无数据',

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartsystem.entity.SysRoleUser;
@@ -87,6 +88,7 @@ public class SysRoleUserController {
 		}
 	}
 	
+	
 	@RequestMapping("/insertRoleUser")
 	@ResponseBody
 	public String insertRoleUser(SysRoleUser sysRoleUser) {
@@ -115,6 +117,23 @@ public class SysRoleUserController {
 	public String deleteSysRoleUser(String roleUid) {
 		try {	
 			sysRoleUserService.deleteByPrimaryKey(roleUid);
+			return "{\"msg\":\"success\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"msg\":\"error\"}";
+		}
+	}
+	
+	//批量删除
+	@RequestMapping("/deleteSysRoleUsers")
+	@ResponseBody
+	public String deleteSysRoleUsers(@RequestParam(value="mapUids[]") String[] mapUids) {
+		try {
+			for (String string : mapUids) {
+				SysRoleUser roleUser= new SysRoleUser();
+				roleUser.setMapUid(string);
+				sysRoleUserService.delete(roleUser);
+			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();

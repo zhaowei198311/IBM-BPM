@@ -293,8 +293,8 @@
 			         	str+='<td>' + this.departParent + '</td>';
 			         	str+='<td>' + this.departAdmins + '</td>';
 			         	str+='<td>';
-			         	str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","updateDeaprtement") >&#xe642;</i>';
 				        str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","departmentDetail")>&#xe60a;</i>';
+			         	str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/getSysDepartment?departUid='+this.departUid+'","updateDeaprtement") >&#xe642;</i>';
 				        str+='<i class="layui-icon" onclick=ajaxTodo("sysDepartment/deleteSysDepartment?departUid='+this.departUid+'","del")>&#xe640;</i>';
 				        str+='</td>';
 				        str+='</tr>';
