@@ -138,12 +138,18 @@ public class DhRouteServiceImpl implements DhRouteService {
             return ServerResponse.createByErrorMessage("缺少必要参数");
         }
 	    DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-        if (insUid == null) {
+        if (currProcessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
+
+        // 未发起的流程，预先装配页面传来的部门和公司编码
+        if (currProcessInstance.getInsId() == -1) {
+            currProcessInstance.setCompanyNumber(companyNum);
+            currProcessInstance.setDepartNo(departNo);
+        }
+
 	    // dhTaskInstance区别 是不是发起流程的第一个任务
 		DhTaskInstance dhTaskInstance = null;
-
         if (StringUtils.isNotBlank(taskUid)) {
             // 如果当前任务存在
             dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
