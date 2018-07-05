@@ -1027,8 +1027,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Override
 	public ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
 															Integer pageNum, Integer pageSize,
-															String usrUid, String proUid, String proAppId) {
-		List<JSONObject> processInstanceList = insDataDao.queryInsData(status, processName, startTime, endTime, pageNum, pageSize, usrUid, proUid, proAppId);
+															String usrUid, String proUid, String proAppId,String retrieveData) {
+		
+		JSONArray jsonArray = JSONArray.parseArray(retrieveData);
+		List<JSONObject> processInstanceList = 
+				insDataDao.queryInsData(status, processName, startTime, endTime, pageNum, pageSize
+										, usrUid, proUid, proAppId,jsonArray);
 		return ServerResponse.createBySuccess(processInstanceList);
 	}
 

@@ -192,8 +192,9 @@ public class DhProcessInstanceController {
 													@RequestParam(value = "status", required = true) String status,
 													@RequestParam(value = "processName", required = true) String processName,
 													@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date startTime,
-													@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date endTime){
+													@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date endTime,
+													@RequestParam(value="retrieveData",required=false)String retrieveData){
 		String usrUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER); 
-		return dhProcessInstanceService.queryProcessInstanceByIds(status, processName, startTime, endTime, pageNum, pageSize, usrUid, proUid, proAppId);
+		return dhProcessInstanceService.queryProcessInstanceByIds(status, processName, startTime, endTime, pageNum, pageSize, usrUid, proUid, proAppId,retrieveData);
 	}
 }

@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessRetrieve;
 
@@ -50,4 +52,19 @@ public interface DhProcessRetrieveService {
 	 * @return
 	 */
 	public ServerResponse deleteProcessRetrieve(DhProcessRetrieve dhProcessRetrieve);
+	/**
+	 * 装配动态搜索所需的数据
+	 * @param proAppId
+	 * @param proUid
+	 * @return
+	 */
+	public ServerResponse assembleProcessRetrieveList(String proAppId, String proUid);
+	/**
+	 * 检查检索字段在同一个流程元数据是否已经存在
+	 * @param proAppId
+	 * @param proUid
+	 * @param fieldName
+	 * @return
+	 */
+	public List<DhProcessRetrieve> checkeFieldName(String proAppId, String proUid,String fieldName);
 }

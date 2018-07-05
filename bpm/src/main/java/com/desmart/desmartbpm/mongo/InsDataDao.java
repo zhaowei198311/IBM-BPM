@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.mongo;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public interface InsDataDao {
@@ -18,12 +19,13 @@ public interface InsDataDao {
 	 * @param usrUid
 	 * @param proUid
 	 * @param proAppId
+	 * @param jsonArray
 	 * @return  
 	 * @return List<JSONObject>
 	 */
 	List<JSONObject> queryInsData(String status, String processName, Date startTime, Date endTime,
 								Integer pageNum, Integer pageSize, 
-								String usrUid, String proUid, String proAppId);
+								String usrUid, String proUid, String proAppId,JSONArray jsonArray);
 	
 	/**
 	 * 

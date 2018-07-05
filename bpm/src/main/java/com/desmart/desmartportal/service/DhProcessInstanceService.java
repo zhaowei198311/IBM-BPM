@@ -178,11 +178,12 @@ public interface DhProcessInstanceService {
 	 * @param @param proUid
 	 * @param @param proAppId
 	 * @param @param sign
+	 * @param retrieveData
 	 * @param @return  
 	 * @return ServerResponse<List<JSONObject>>  
 	 * @throws
 	 */
 	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
 															Integer pageNum, Integer pageSize, 
-															String usrUid, String proUid, String proAppId);
+															String usrUid, String proUid, String proAppId,String retrieveData);
 }

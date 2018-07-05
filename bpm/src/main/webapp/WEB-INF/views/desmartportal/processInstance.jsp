@@ -85,7 +85,50 @@
 				<div class="layui-col-xs3" style="width: 24%">
 					<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
 				</div>
-				<div class="layui-col-xs3" style="margin-left: 1vw;">
+				<c:forEach var="item" items="${processRetrieveList }">
+				
+				<c:choose>
+					<c:when test="${item.elementType eq 'input' }">
+					<c:if test="${item.isScope eq 'TRUE'}">
+					<div class="layui-col-xs2 process-retrieve">
+						<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input is_scope first_input">
+					</div>
+					<div class="layui-col-xs2 process-retrieve">
+						<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input is_scope">
+					</div>
+					</c:if>
+					<c:if test="${item.isScope eq 'FALSE'}">
+					<div class="layui-col-xs2 process-retrieve">
+						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input">
+					</div>
+					</c:if>
+					</c:when>
+					<c:when test="${item.elementType eq 'date' }">
+					<c:if test="${item.isScope eq 'TRUE'}">
+					<div class="layui-col-xs3 process-retrieve" style="width: 24%">
+						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_scope" >
+					</div>
+					</c:if>
+					<c:if test="${item.isScope eq 'FALSE'}">
+					<div class="layui-col-xs2 process-retrieve">
+						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_no_scope" >
+					</div>
+					</c:if>
+					</c:when>
+					<c:when test="${item.elementType eq 'select' }">
+					<div class="layui-col-xs2 process-retrieve">
+						<select class="layui-input-block group_select" name="${item.fieldName }"
+									lay-verify="required">
+									<option value="">${item.fieldLabel }:全部</option>
+								<c:forEach var="dataItem" items="${item.dictionaryDatas }">
+									<option value="${dataItem.dicDataCode }">${dataItem.dicDataName }</option>
+								</c:forEach>
+						</select>
+					</div>
+					</c:when>
+				</c:choose>
+				</c:forEach>
+				<div class="layui-col-xs3" style="margin-top: 0.1%;margin-left: 0.1%;">
 					<button class="layui-btn" onclick="queryProcessInstance()">查询</button>
 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
 				</div>
@@ -171,6 +214,18 @@
 		    type: 'datetime',
 		    range: true
 		});
+		var laydate = layui.laydate;
+		  	laydate.render({
+		    elem: '.date_scope',
+		    type: 'datetime',
+		    range: true
+		});
+		var laydate = layui.laydate;
+		  	laydate.render({
+		    elem: '.date_no_scope',
+		    type: 'datetime',
+		    range: false
+		});
 	});
 
 	$(document).ready(function() {
@@ -190,6 +245,10 @@
 		var processName = $('#processName').val();
 		var time = $("#init-startTime-search").val();
 		var timeArray = time.split(' - ');
+		
+		//组装动态的检索数据
+		var retrieveData = getRetrieveData();
+		
 		// 按条件查询 流程实例
 		$.ajax({
 			url : 'processInstance/queryProcessInstanceByIds',
@@ -205,7 +264,8 @@
 				status: status,
 				processName: processName,
 				startTime: timeArray[0],
-				endTime: timeArray[1]
+				endTime: timeArray[1],
+				retrieveData: JSON.stringify(retrieveData)
 			},
 			beforeSend : function() {
 				index = layer.load(1);
@@ -302,7 +362,7 @@
 	}
 	// 单击行跳转至任务实例页面
 	function openTaskInstance(insUid) {
-		window.location.href = 'menus/processType?insUid=' + insUid;
+		window.location.href = 'menus/tasksOfProcessInstance?insUid=' + insUid;
 	}
 	function startProcess(insBusinessKey) {
 		if (insBusinessKey == null || insBusinessKey == ''
@@ -375,5 +435,49 @@
 			}
 		})
 	}
+	//金额数字正则
+	function doVersion(v){
+		if(!/^\d+(\.||\d+)(\.||\d+)$/.test(v.value)){
+	        return v.value = v.value.substr(0, v.value.length - 1);
+	    }else{
+	    	var lastChar = v.value.substr(v.value.length-1);
+			var lastNextChar = v.value.substr(v.value.length - 2);
+			if(!/^\d+/.test(lastChar)&&!/^\d+/.test(lastNextChar)){
+	        	return v.value = v.value.substr(0, v.value.length - 1);
+			}
+	    }
+		//判断是否超过长度
+	    if(v.value.length > 10){
+	        return v.value = v.value.substr(0, 9);
+	    }
+	}
+	//组装动态生成的检索条件数据
+	function getRetrieveData(){
+		var retrieveData = new Array();
+		var scopeInputs = $(".process-retrieve").children("input.is_scope.first_input");
+		var noScopeInputs = $(".process-retrieve").children("input").not(".is_scope");
+		var selects = $(".process-retrieve").children("select");
+		for (var i = 0; i < scopeInputs.length; i++) {
+			var name = scopeInputs.eq(i).attr("name");
+			var value = $("input[name='"+name+"']").eq(0).val()+" - "+$("input[name='"+name+"']").eq(1).val();
+			var data = {name : name,value : value };
+			retrieveData.push(data);
+		}
+		for (var i = 0; i < noScopeInputs.length; i++) {
+			var name = noScopeInputs.eq(i).attr("name");
+			var value = $("input[name='"+name+"']").val();
+			var data = {name : name,value : value };
+			retrieveData.push(data);
+		}
+		for (var i = 0; i < selects.length; i++) {
+			var name = selects.eq(i).attr("name");
+			var value = $("select[name='"+name+"']").val();
+			var data = {name : name,value : value };
+			retrieveData.push(data);
+		}
+		
+		return retrieveData;
+	}
+		
 </script>
 </html>

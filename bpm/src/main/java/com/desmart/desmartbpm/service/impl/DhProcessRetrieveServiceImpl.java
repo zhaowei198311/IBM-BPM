@@ -18,6 +18,8 @@ import com.desmart.desmartbpm.dao.DhProcessRetrieveMapper;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhProcessRetrieve;
 import com.desmart.desmartbpm.service.DhProcessRetrieveService;
+import com.desmart.desmartsystem.dao.SysDictionaryMapper;
+import com.desmart.desmartsystem.entity.SysDictionaryData;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -30,12 +32,12 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 	
 	@Autowired
 	private DhProcessRetrieveMapper dhProcessRetrieveMapper;
-	
 	@Autowired
-	private DhProcessMetaMapper dhProcessMetaMapper;
-	
+	private DhProcessMetaMapper dhProcessMetaMapper;	
 	@Autowired
 	private DhProcessRetrieveMapper dhPorcessRetrieveMapper;
+	@Autowired
+	private SysDictionaryMapper sysDictionarymapper;
 	
 	@Override
 	public Integer insert(DhProcessRetrieve dhProcessRetrieve) {
@@ -68,6 +70,12 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 	@Override
 	@Transactional
 	public ServerResponse addProcessRetrieve(DhProcessRetrieve dhProcessRetrieve,String metaUid) {
+		List<DhProcessRetrieve> list = 
+				this.checkeFieldName(dhProcessRetrieve.getProAppId()
+						, dhProcessRetrieve.getProUid(), dhProcessRetrieve.getFieldName());
+		if(list!=null&&list.size()>0) {
+			return ServerResponse.createByErrorMessage("新增失败，字段已经存在");
+		}
 		String currUserUid = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		Date currDate = DateUtil.format(new Date());
 		dhProcessRetrieve.setRetrieveUid(EntityIdPrefix.DH_PROCESS_RETRIEVE+UUID.randomUUID().toString());
@@ -89,6 +97,13 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 
 	@Override
 	public ServerResponse updateProcessRetrieve(DhProcessRetrieve dhProcessRetrieve) {
+		List<DhProcessRetrieve> list = 
+				this.checkeFieldName(dhProcessRetrieve.getProAppId()
+						, dhProcessRetrieve.getProUid(), dhProcessRetrieve.getFieldName());
+		if(list!=null&&list.size()>0 && 
+				!list.get(0).getRetrieveUid().equals(dhProcessRetrieve.getRetrieveUid())) {
+			return ServerResponse.createByErrorMessage("修改失败，字段已经存在");
+		}
 		String currUserUid = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 		Date currDate = DateUtil.format(new Date());
 		dhProcessRetrieve.setUpdateTime(currDate);
@@ -112,6 +127,34 @@ public class DhProcessRetrieveServiceImpl implements DhProcessRetrieveService {
 		}else {
 			return ServerResponse.createByErrorMessage("删除失败");
 		}
+	}
+
+	@Override
+	public ServerResponse assembleProcessRetrieveList(String proAppId, String proUid) {
+		DhProcessRetrieve selective = new DhProcessRetrieve();
+		selective.setProAppId(proAppId);
+		selective.setProUid(proUid);
+		List<DhProcessRetrieve> processRetrieves = 
+				dhProcessRetrieveMapper.getDhprocessRetrievesByCondition(selective);
+		SysDictionaryData selective1 = new SysDictionaryData();
+		for (DhProcessRetrieve dhProcessRetrieve : processRetrieves) {
+			if(DhProcessRetrieve.TYPE_BY_SELECT.equals(dhProcessRetrieve.getElementType())) {
+				selective1.setDicUid(dhProcessRetrieve.getDataSet());
+				dhProcessRetrieve.setDictionaryDatas(sysDictionarymapper.selectSysDictionaryDataListById(selective1));
+			}
+		}
+		return ServerResponse.createBySuccess(processRetrieves);
+	}
+
+	@Override
+	public List<DhProcessRetrieve> checkeFieldName(String proAppId, String proUid, String fieldName) {
+		DhProcessRetrieve selective = new DhProcessRetrieve();
+		selective.setProAppId(proAppId);
+		selective.setProUid(proUid);
+		selective.setFieldName(fieldName);
+		List<DhProcessRetrieve> list = dhProcessRetrieveMapper.getDhprocessRetrievesByCondition(selective);
+		
+		return list;
 	}
 	
 	

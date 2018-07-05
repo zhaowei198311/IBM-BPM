@@ -224,7 +224,7 @@ layui.use('form', function() {
 	var form = layui.form;
 	form.on('select(elementTypeFilter)', function(data) {
 		if(data.value == "input"){
-			$("input[name='isScope'][value='TRUE']").prop("checked",true);
+			//$("input[name='isScope'][value='TRUE']").prop("checked",true);
 			$(".is-scope").show();
 		}else{
 			$(".is-scope").hide();
@@ -238,8 +238,8 @@ layui.use('form', function() {
 			$(".source-by-dictionaries").hide();
 		}
 		if(data.value == "date"){
-			$("input[name='isScope'][value='FALSE']").prop("checked",true);
-			$(".is-scope").hide();
+			//$("input[name='isScope'][value='TRUE']").prop("checked",true);
+			$(".is-scope").show();
 			$(".source-by-dictionaries").hide();
 		}
 		form.render("radio");
@@ -394,6 +394,8 @@ function updateProcessRetrieve(){
 /**新增检索字段**/
 function addProcessRetrieve(){
 	$("input[name='retrieveUid']").val("");
+	$("input[name='isScope'][value='TRUE']").prop("checked",true);
 	$('#retrieveTitle').text('新增检索字段');
+	layui.form.render("radio");
 	$('.display_container5').show();
 }

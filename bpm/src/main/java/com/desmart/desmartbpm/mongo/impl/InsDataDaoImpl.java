@@ -1,8 +1,10 @@
 package com.desmart.desmartbpm.mongo.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.util.DateUtil;
 import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.dao.DhProcessRetrieveMapper;
+import com.desmart.desmartbpm.entity.DhProcessRetrieve;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -33,15 +38,20 @@ public class InsDataDaoImpl implements InsDataDao{
 	
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
+	@Autowired
+	private DhProcessRetrieveMapper dhProcessRetrieveMapper;
 
 	@Override
 	public List<JSONObject> queryInsData(String status, String processName, Date startTime, Date endTime, 
 			Integer pageNum, Integer pageSize, 
-			String usrUid, String proUid, String proAppId) {
+			String usrUid, String proUid, String proAppId,JSONArray jsonArray) {
 		// 将数据插入mongo insData 集合中
 		try {
 //			insertInsData();
 			Query query = new Query();
+			Criteria criteria = new Criteria();
+			//组装动态条件
+			criteria = this.assembleDynamicCondition(jsonArray,criteria,proAppId,proUid);
 //			if (!key.isEmpty()) {
 //				if (value.contains("，")) {
 //					String[] values = value.split("，");
@@ -56,27 +66,28 @@ public class InsDataDaoImpl implements InsDataDao{
 //			}
 			// 流程实例状态
 			if (!status.isEmpty()) {
-				query.addCriteria(Criteria.where("insStatusId").is(Integer.parseInt(status)));
+				criteria.and("insStatusId").is(Integer.parseInt(status));
 			}
 			// 流程实例标题
 			if (!processName.isEmpty()) {
-				query.addCriteria(Criteria.where("insTitle").regex(".*" + processName + ".*"));
+				criteria.and("insTitle").regex(".*" + processName + ".*");
 			}
 			// 流程实例创建时间查询范围
 			if (startTime == null) {
 				if (endTime != null) {
-					query.addCriteria(Criteria.where("insCreateDate").lt(endTime));
+					criteria.and("insCreateDate").lt(endTime);
 				}
 			}else {
 				if (endTime == null) {
-					query.addCriteria(Criteria.where("insCreateDate").gte(startTime));
+					criteria.and("insCreateDate").gte(startTime);
 				}else {
-					query.addCriteria(Criteria.where("insCreateDate").gte(startTime).lt(endTime));
+					criteria.and("insCreateDate").gte(startTime).lt(endTime);
 				}
 			}
-			query.addCriteria(Criteria.where("relationUsers").regex(".*" + usrUid + ".*"));
-			query.addCriteria(Criteria.where("proUid").is(proUid));
-			query.addCriteria(Criteria.where("proAppId").is(proAppId));
+			criteria.and("relationUsers").regex(".*" + usrUid + ".*");
+			criteria.and("proUid").is(proUid);
+			criteria.and("proAppId").is(proAppId);
+			query.addCriteria(criteria);
 			// 查询数量
 			int count = (int) mongoTemplate.count(query, Const.INS_DATA);
 			query.with(new Sort(new Order(Direction.DESC,"insCreateDate")));
@@ -90,7 +101,71 @@ public class InsDataDaoImpl implements InsDataDao{
 		}
 		return null;
 	}
-	
+	//组装动态的检索条件
+	private Criteria assembleDynamicCondition(JSONArray jsonArray, Criteria criteria, String proAppId, String proUid) {
+		DhProcessRetrieve selective = new DhProcessRetrieve();
+		selective.setProAppId(proAppId);selective.setProUid(proUid);
+		List<DhProcessRetrieve> list = dhProcessRetrieveMapper.getDhprocessRetrievesByCondition(selective);
+		if(list!=null && list.size()>0) {
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);//获得表单对象
+				String fieldName = jsonObject.getString("name");//获得表单字段名
+				String dataValue = jsonObject.getString("value");//获得表单字段的值
+				DhProcessRetrieve dhProcessRetrieve = null;
+				for (DhProcessRetrieve item : list) {
+					if(item.getFieldName().equals(fieldName)) {
+						dhProcessRetrieve = item;
+						break;
+					}
+				}
+				if(dhProcessRetrieve!=null) {
+					String elementType = dhProcessRetrieve.getElementType();
+					switch (elementType) {
+					case DhProcessRetrieve.TYPE_BY_INPUT:
+						if(Const.Boolean.TRUE.equals(dhProcessRetrieve.getIsScope())) {
+							String[] dataArr = dataValue.toString().split(" - ");
+							if(dataArr!=null && dataArr.length>1) {
+								Double minNumber = Double.valueOf(dataArr[0]);
+								Double maxNumber = Double.valueOf(dataArr[1]);
+								criteria.and(fieldName).gte(minNumber).lte(maxNumber);
+							}
+						}else {
+							criteria.and(fieldName).regex(".*" + dataValue + ".*");
+						}
+						
+						break;
+					case DhProcessRetrieve.TYPE_BY_DATE:
+						if(Const.Boolean.TRUE.equals(dhProcessRetrieve.getIsScope())) {
+							String[] dataArr = dataValue.toString().split(" - ");
+							if(dataArr!=null && dataArr.length>1) {
+								Date startTime = DateUtil.stringtoDate(dataArr[0]);
+								Date endTime = DateUtil.stringtoDate(dataArr[1]);
+								criteria.and(fieldName).gte(startTime).lte(endTime);
+							}
+						}else {
+								//模糊查询选择日期当天的数据
+							if(dataValue!=null&&!"".equals(dataValue)) {
+								SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+								String retrieveTime = simpleDateFormat.format(dataValue);
+								criteria.and(fieldName).regex(".*"+retrieveTime+".*");
+							}
+						}
+						break;
+					case DhProcessRetrieve.TYPE_BY_SELECT:
+							if(dataValue!=null&&!"".equals(dataValue)) {
+								criteria.and(fieldName).is(dataValue);
+							}
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return criteria;
+	}
+
 	/**
 	 * 
 	 * @Title: insertInsData  

@@ -1,6 +1,9 @@
 package com.desmart.desmartbpm.entity;
 
 import java.util.Date;
+import java.util.List;
+
+import com.desmart.desmartsystem.entity.SysDictionaryData;
 
 public class DhProcessRetrieve {
 	public static final String SOURCE_BY_DICTIONARIES = "数据字典拉取";
@@ -26,6 +29,7 @@ public class DhProcessRetrieve {
 	private String userName;
 	private String dicName;
 	private String updateUserName;//修改人
+	private List<SysDictionaryData> dictionaryDatas;//关联的字典内容
 	
 	public String getRetrieveUid() {
 		return retrieveUid;
@@ -123,6 +127,12 @@ public class DhProcessRetrieve {
 	public void setUpdateUserName(String updateUserName) {
 		this.updateUserName = updateUserName;
 	}
+	public List<SysDictionaryData> getDictionaryDatas() {
+		return dictionaryDatas;
+	}
+	public void setDictionaryDatas(List<SysDictionaryData> dictionaryDatas) {
+		this.dictionaryDatas = dictionaryDatas;
+	}
 	@Override
 	public String toString() {
 		return "DhProcessRetrieve [retrieveUid=" + retrieveUid + ", proAppId=" + proAppId + ", proUid=" + proUid
@@ -130,7 +140,7 @@ public class DhProcessRetrieve {
 				+ ", isScope=" + isScope + ", dataSource=" + dataSource + ", createTime=" + createTime
 				+ ", createUserUid=" + createUserUid + ", dataSet=" + dataSet + ", updateUserUid=" + updateUserUid
 				+ ", updateTime=" + updateTime + ", userName=" + userName + ", dicName=" + dicName + ", updateUserName="
-				+ updateUserName + "]";
+				+ updateUserName + ", dictionaryDatas=" + dictionaryDatas + "]";
 	}
 	
 }

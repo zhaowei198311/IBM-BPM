@@ -45,7 +45,7 @@
     		DATA_SOURCE = #{dataSource},
     	</if>
     	<if test="dataSet != null and dataSet != '' ">
-    		DATA_SET = #{dataSet}
+    		DATA_SET = #{dataSet},
     	</if>
     	<if test="updateUserUid != null and updateUserUid != '' ">
     		UPDATE_USER_UID = #{updateUserUid},
@@ -77,6 +77,9 @@
     	</if>
     	<if test="proUid != null and proUid != '' ">
     		and PRO_UID = #{proUid}
+    	</if>
+    	<if test="fieldName != null and fieldName != '' ">
+    		and FIELD_NAME = #{fieldName}
     	</if>
     </select>
 </mapper>

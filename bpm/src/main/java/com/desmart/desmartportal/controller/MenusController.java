@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.RequestSourceUtil;
+import com.desmart.desmartbpm.service.DhProcessRetrieveService;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
@@ -51,6 +52,8 @@ public class MenusController {
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
 	private HttpServletRequest request;
+	@Autowired
+	private DhProcessRetrieveService dhProcessRetrieveService;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -103,7 +106,12 @@ public class MenusController {
 	public ModelAndView processInstance(@RequestParam(value = "proUid",required = false) String proUid,
 										@RequestParam(value = "proAppId",required = false) String proAppId,
 										@RequestParam(value = "proName",required = false) String proName) {
+		
 		ModelAndView mv = new ModelAndView("desmartportal/processInstance");
+		ServerResponse serverResponse = dhProcessRetrieveService.assembleProcessRetrieveList(proAppId,proUid);
+		if(serverResponse.isSuccess()) {
+			mv.addObject("processRetrieveList",serverResponse.getData());
+		}
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("proName", proName);
@@ -112,15 +120,15 @@ public class MenusController {
 	
 	/**
 	 * 展示流程实例对应的相关任务
-	 * @Title: processType  
+	 * @Title: tasksOfProcessInstance  
 	 * @Description:
 	 * @param @param insUid
 	 * @param @return  
 	 * @return ModelAndView  
 	 */
-	@RequestMapping("/processType")
+	@RequestMapping("/tasksOfProcessInstance")
 	public ModelAndView processType(String insUid) {
-		ModelAndView mv = new ModelAndView("desmartportal/processType");
+		ModelAndView mv = new ModelAndView("desmartportal/tasksOfProcessInstance");
 		mv.addObject("insUid", insUid);
 //		mv.addObject("proUid", proUid);
 //		mv.addObject("proAppId", proAppId);

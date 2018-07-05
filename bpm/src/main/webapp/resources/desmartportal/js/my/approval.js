@@ -336,6 +336,7 @@ function submitTask() {
     var insUid = $("#insUid").val();//流程实例id--ins_uid
     // 获取审批意见
     var aprOpiComment = $("#myApprovalOpinion").val();
+    console.log($("#myApprovalOpinion").val());
     if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
         alertNeedApprovalOpinion();
     	return;
@@ -642,6 +643,7 @@ function saveDraftsInfo() {
     finalData.formData = formData;
 
     var aprOpiComment = $("#myApprovalOpinion").val();
+    console.log($("#myApprovalOpinion").val());
     aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
     var taskUid = $("#taskUid").val();
     var taskId = $("#taskId").val();
