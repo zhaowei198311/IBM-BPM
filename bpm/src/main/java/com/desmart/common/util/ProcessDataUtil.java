@@ -42,7 +42,7 @@ public class ProcessDataUtil {
 					if (String.valueOf(taskId).equals(taskIdsArray.get(i))) {
 						hashMap.put("tokenId", object.get("tokenId"));
 						// 第一次循环时，preTokenId为null
-						//hashMap.put("preTokenId", null);
+						hashMap.put("preTokenId", null);
 						return hashMap;
 					}
 				}
@@ -60,10 +60,10 @@ public class ProcessDataUtil {
 					HashMap<Object, Object> utilMap = util(jsonArray2, taskId, preTokenIdList, flag);
 					if (utilMap != null) {
 						
-						if(utilMap.get("preTokenId") != null) {
+						/*if(utilMap.get("preTokenId") != null) {
 							utilMap.put("tokenId", utilMap.get("preTokenId"));
 						}
-						utilMap.remove("preTokenId");
+						utilMap.remove("preTokenId");*/
 						return utilMap;
 						
 					}
@@ -127,7 +127,7 @@ public class ProcessDataUtil {
 
 	/**
 	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId
-	 * @param json： 代表ProcessData的JSONObject对象
+	 * @param json： JSONObject对象
 	 * @param preFlowObjectId：代表子流程的节点的元素id
 	 * @param childFlowObjectId：代表子流程第一个任务节点的元素id
 	 * @return 代表子流程的节点上的tokenId
