@@ -64,6 +64,11 @@ var saveDraftsData = function () {
     $("#saveInfoBtn")
         .click(
             function (e) {
+            	
+            	if($.trim($("#insTitle_input").val())==null || $.trim($("#insTitle_input").val())==""){
+            		layer.alert("流程标题不能为空");
+            		return;
+            	}            	
                 e.preventDefault();
                 var control = true; //用于控制复选框出现重复值
                 var checkName = ""; //用于获得复选框的class值，分辨多个复选框
@@ -118,7 +123,14 @@ var saveDraftsData = function () {
                     },
                     success: function (result) {
                         layer.close(index2);
-                        layer.alert('保存成功')
+                        layer.alert('保存成功', function(index){
+                        	window.history.back();
+                        	  layer.close(index);
+                        	});  
+                    },
+                    error : function (result){
+                        layer.close(index2);
+                        layer.alert('保存失败')
                     }
                 });
             });
