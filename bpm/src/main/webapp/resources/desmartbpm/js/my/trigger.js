@@ -57,6 +57,7 @@ var startSort = pageInfo.startRow;// 开始序号
 var trs = "";
 var triPamaer = "";
 var triwebot = "";
+var triDescription = "";
 for (var i = 0; i < list.length; i++) {
 	var meta = list[i];
 	var sortNum = startSort + i;
@@ -74,12 +75,21 @@ for (var i = 0; i < list.length; i++) {
 	}else{
 		triPamaer = meta.triParam;
 	}
+	
+	if(meta.triDescription == null || meta.triDescription == ''){
+		triDescription = "没有描述";
+	}else{
+		triDescription = meta.triDescription;
+	}
+	
 //	alert(meta.triWebbot.length)
 	// 触发执行命令太长 需要修改
-	if(meta.triWebbot.length>15){
+	if(meta.triWebbot != null && meta.triWebbot.length>15){
 		triwebot = beautySub(meta.triWebbot,15);
-	}else{
+	}else if(meta.triWebbot != null){
 		triwebot = meta.triWebbot
+	}else{
+		triwebot = "没有执行命令"
 	}
 	trs += '<tr><td>'
 			+ sortNum 
@@ -88,7 +98,7 @@ for (var i = 0; i < list.length; i++) {
 			+ meta.triTitle 
 			+ '</td>'
 			+ '<td>' 
-			+ meta.triDescription 
+			+ triDescription
 			+ '</td>' 
 			+ '<td>'
 			+ meta.triType 
