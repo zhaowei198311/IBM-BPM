@@ -64,7 +64,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			List<String> opActionList = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
 			//当权限集合为0或权限集合为1但权限为打印时，给集合添加可编辑权限
 			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
-				opActionList.add("EDIT");
+				opActionList.add("VIEW");
 			}
 			field.setOpActionList(opActionList);
 		}
@@ -80,7 +80,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		}
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
 			//查看权限对象的权限是否为编辑，编辑不用存入数据库
-			if("EDIT".equals(dhObjectPermission.getOpAction())) {
+			if("VIEW".equals(dhObjectPermission.getOpAction())) {
 				countRow++;
 			}else{
 				//将字段权限信息存入数据库
@@ -98,13 +98,28 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
 		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
 		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUidNotPrint(stepUid);
+		//普通字段的权限json字符串
+		String jsonStr = "{";
+		//标题字段和表格字段的json字符串
+		String titleJsonStr = "{";
 		if(objPermissList.size()==0) {
-			return ServerResponse.createBySuccess("{}");
+			String formUid = dhStepMapper.selectByPrimaryKey(stepUid).getStepObjectUid();
+			List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
+			List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+			fieldList.addAll(publicFieldList);
+			for(int i=0;i<fieldList.size();i++) {
+				BpmFormField field = fieldList.get(i);
+				String fieldType = field.getFldType();
+				String fieldCodeName = field.getFldCodeName();
+				//判断该字段是否为标题或表格
+				if("title".equals(fieldType) || "object".equals(fieldType)){
+					//判断权限的类型
+					titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+				}else {
+					jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+				}
+			}
 		}else {
-			//普通字段的权限json字符串
-			String jsonStr = "{";
-			//标题字段和表格字段的json字符串
-			String titleJsonStr = "{";
 			for(int i=0;i<objPermissList.size();i++) {
 				DhObjectPermission objPer = objPermissList.get(i);
 				//获得权限的字段对象
@@ -118,36 +133,36 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				//判断该字段是否为标题或表格
 				if("title".equals(fieldType) || "object".equals(fieldType)){
 					//判断权限的类型
-					if(opAction.equals("VIEW")) {
-						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+					if(opAction.equals("EDIT")) {
+						continue;
 					}else if(opAction.equals("HIDDEN")){
 						titleJsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
 					}else {
-						continue;
+						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
 					}
 				}else {
-					if(opAction.equals("VIEW")) {
-						jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
+					if(opAction.equals("EDIT")) {
+						continue;
 					}else if(opAction.equals("HIDDEN")){
 						jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
 					}else {
-						continue;
+						jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
 					}
 				}
 			}
-			if(jsonStr.endsWith(",")) {
-				jsonStr = jsonStr.substring(0, jsonStr.length()-1);
-			}
-			jsonStr += "}";
-			if(titleJsonStr.endsWith(",")) {
-				titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
-			}
-			titleJsonStr += "}";
-			String json = "{\"fieldJsonStr\":"+jsonStr
-					+",\"titleJsonStr\":"+titleJsonStr
-					+"}";
-			return ServerResponse.createBySuccess(json);
 		}
+		if(jsonStr.endsWith(",")) {
+			jsonStr = jsonStr.substring(0, jsonStr.length()-1);
+		}
+		jsonStr += "}";
+		if(titleJsonStr.endsWith(",")) {
+			titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
+		}
+		titleJsonStr += "}";
+		String json = "{\"fieldJsonStr\":"+jsonStr
+				+",\"titleJsonStr\":"+titleJsonStr
+				+"}";
+		return ServerResponse.createBySuccess(json);
 	}
 
 	@Override
@@ -176,12 +191,12 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 				}else {
 					String opAction = objPer.getOpAction();
-					if(opAction.equals("VIEW")) {
-						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
+					if(opAction.equals("EDIT")) {
+						continue;
 					}else if(opAction.equals("HIDDEN")){
 						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
 					}else {
-						continue;
+						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 					}
 				}
 				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)
@@ -198,12 +213,12 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 				}else {
 					String opAction = objPer.getOpAction();
-					if(opAction.equals("VIEW")) {
-						jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
+					if(opAction.equals("EDIT")) {
+						continue;
 					}else if(opAction.equals("HIDDEN")){
 						jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
 					}else {
-						continue;
+						jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 					}
 				}
 				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)

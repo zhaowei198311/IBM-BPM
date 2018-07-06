@@ -657,6 +657,10 @@ var common = {
 					tdArr.each(function(){
 						if($(this).find("input").length != 0){
 							$(this).find("input").attr("disabled","true");
+							var type = $(this).find("input").attr("type");
+							if(type="data"){
+								$(this).find("input").attr("type","text");
+							}
 						}else{
 							$(this).remove();
 						}
