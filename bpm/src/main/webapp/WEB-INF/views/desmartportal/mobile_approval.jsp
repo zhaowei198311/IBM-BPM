@@ -57,7 +57,7 @@
 		        <span id="approvalData" style="display: none;">${approvalData}</span>
             	<i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
             	<dl id="child_menu">
-            		<dd><a href="javascript:void(0);">提交</a></dd>
+            		<dd><a href="javascript:void(0);" onclick="submitTaskByHandleType();">提交</a></dd>
 	            	<dd><a href="javascript:void(0);" onclick="saveDraftsInfo();">保存草稿</a></dd>
             	</dl>
             </div>
@@ -143,7 +143,7 @@
 							<tr>
 								<th>处理方式：</th>
 								<td>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn">同意</button>
+									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn" data-this="this">同意</button>
 									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
 									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
 									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
@@ -253,10 +253,10 @@
         </div>
         <div class="mobile_bottom">
 			<ul class="mobile_menu">
-				<li style="color:#009688;"><i class="layui-icon menu_btn" title="form_content" onclick="menuBtnClick(this)">&#xe63c;</i><p>内容</p></li>
-				<li><i class="layui-icon menu_btn" title="approve" onclick="menuBtnClick(this)">&#xe642;</i><p>审批</p></li>
-				<li><i class="layui-icon menu_btn" title="file" onclick="menuBtnClick(this)">&#xe67c;</i><p>附件</p></li>
-				<li><i class="layui-icon menu_btn" title="record" onclick="menuBtnClick(this)">&#xe60e;</i><p>记录</p></li>
+				<li style="color:#009688;"><i class="layui-icon menu_btn" id="form_content" title="form_content" onclick="menuBtnClick(this)">&#xe63c;</i><p>内容</p></li>
+				<li><i class="layui-icon menu_btn" title="approve" id="approve" onclick="menuBtnClick(this)">&#xe642;</i><p>审批</p></li>
+				<li><i class="layui-icon menu_btn" title="file" id="file" onclick="menuBtnClick(this)">&#xe67c;</i><p>附件</p></li>
+				<li><i class="layui-icon menu_btn" title="record" id="record" onclick="menuBtnClick(this)">&#xe60e;</i><p>记录</p></li>
 			</ul>
         </div>
         <div id="choose_div">

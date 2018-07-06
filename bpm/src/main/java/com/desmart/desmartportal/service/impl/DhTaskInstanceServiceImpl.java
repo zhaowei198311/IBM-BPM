@@ -873,6 +873,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
         }
+        // 是否显示环节权责控制
+        if (StringUtils.isBlank(currMeta.getDhActivityConf().getActcResponsibility()) 
+        		|| "<br>".equals(currMeta.getDhActivityConf().getActcResponsibility())) {
+            resultMap.put("showResponsibility", "FALSE");
+        } else {
+            resultMap.put("showResponsibility", "TRUE");
+        }
         String fieldPermissionInfo = fieldPermissionResponse.getData();
         
         resultMap.put("bpmForm", bpmForm);

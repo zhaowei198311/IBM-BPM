@@ -58,7 +58,7 @@ public class AutoCommitServiceImpl implements AutoCommitService {
     @Autowired
     private DhApprovalOpinionService dhApprovalOpinionService;
 
-    //@Scheduled(cron = "0/20 * * * * ?")
+    @Scheduled(cron = "0/20 * * * * ?")
     public void startAutoCommit() {
         LOG.info("开始自动提交");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();

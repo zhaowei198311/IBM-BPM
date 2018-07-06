@@ -1,10 +1,7 @@
 // bool值记录提交时是否需要填写审批意见
-var needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
+var needApprovalOpinion = "";
 // bool值记录是否能直接跳跃提交 回到驳回处
 var canSkipFromReject = false;
-if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
-    canSkipFromReject = true;
-}
 
 var pageConfig = {
 	pageNum:1,
@@ -13,7 +10,11 @@ var pageConfig = {
 
 var form = null;
 $(function () {
-    layui.use(['form'], function () {
+	needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
+	if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
+	    canSkipFromReject = true;
+	}
+	layui.use(['form'], function () {
         form = layui.form;
     });
     common.giveFormSetValue($("#formData").text());
@@ -26,7 +27,7 @@ $(function () {
     departAsync();
     
     checkUserData();
-    //点击提交
+    //点击通过
     $("#submit_btn").click(function(){
     	checkUserData();
     });
@@ -60,7 +61,12 @@ function userAsync() {
 				}
 				pageConfig.pageSize = 7;
 				if(elementId!="" && elementId!=null){
-					queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+					if(elementId=="submit_table"){
+						queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+					}else{
+						asyncActcChooseableHandlerType = "allUser";
+						queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+					}
 				}else{
 					asyncActcChooseableHandlerType = "allUser";
 					queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
@@ -191,7 +197,12 @@ function searchChooseUser(){
 	pageConfig.pageNum = 1;
 	pageConfig.pageSize = 14;
 	if(elementId!="" && elementId!=null){
-		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+		if(elementId=="submit_table"){
+			queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+		}else{
+			asyncActcChooseableHandlerType = "allUser";
+			queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,true,eleObj);
+		}
 	}else{
 		asyncActcChooseableHandlerType = "allUser";
 		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
@@ -469,124 +480,7 @@ $(function () {
 	$("#reject_btn").click(function (){
 		queryRejectByActivitiy();
 	});
-	/*$("#middle10").on("click", ":checkbox", function(){
-		if($(this).prop("checked")){
-			$("#middle10 :checkbox").prop("checked", false);
-            $(this).prop("checked", true);
-         }
-	});
-
-	// "驳回" 确认
-	$("#reject_btn").click(function (){
-		$('input[name="check"]:checked').each(function(){ 
-			var aprOpiComment = $("#myApprovalOpinion").val();
-		    var taskId = $("#taskId").val();
-		    var taskUid = $("#taskUid").val();
-		    var finalData = {};
-		    // 路由数据
-		    var routeData = {};
-		    var item = {};
-		    var str = $(this).val();
-		    var insId = str.substring(0,str.indexOf("+"));
-		    var userUid = str.substring(str.lastIndexOf("+") + 1);
-		    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
-		    var activityId = $("#activityId").val();
-		    finalData.routeData = {"insId":insId,"userUid":userUid,"activityBpdId":activityBpdId};
-		    finalData.taskData = {"taskId":taskId,"taskUid":taskUid,"activityId":activityId};
-		    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
-		    
-		    $.ajax({
-		        url: 'taskInstance/rejectTask',
-		        type: 'POST',
-		        dataType: 'json',
-		        data: {
-		        	data : JSON.stringify(finalData)
-		        },
-		        beforeSend: function () {
-		            index = layer.load(1);
-		        },
-		        success: function (result) {
-		            layer.close(index);
-		        	if(result.status == 0){
-		        		layer.msg('驳回成功', {
-		        			  icon: 1,
-		        			  time: 2000 //2秒关闭（如果不配置，默认是3秒）
-		        			}, function(){
-		        				window.history.back();
-		        			});   
-		        	}else{
-		        		layer.alert('驳回失败', {
-			                icon: 2
-			            });
-		        	}
-		        },
-		        error: function (result) {
-		            layer.close(index);
-		            layer.alert('驳回失败', {
-		                icon: 2
-		            });
-		        }
-		    });
-		 }) 
-	})
-
-    $(".add_row")
-        .click(
-            function () {
-                var le = $(".create_table tbody tr").length + 1;
-                $(".create_table")
-                    .append(
-                        $('<tr>' +
-                            '<td>' +
-                            le +
-                            '</td>' +
-                            '<td><input type="text" class="txt"/></td>' +
-                            '<td><input type="text" class="txt"/></td>' +
-                            '<td><input type="text" class="txt"/></td>' +
-                            '<td><input type="text" class="txt"/></td>' +
-                            '<td><i class="layui-icon delete_row">&#xe640;</i></td>' +
-                            '</tr>'));
-                $(".delete_row").click(function () {
-                    $(this).parent().parent().remove();
-                });
-            });
-    $(".delete_row").click(function () {
-        $(this).parent().parent().remove();
-    });
-    $(".upload").click(function () {
-        $(".upload_file").click();
-    });
-    
-    // 会签
-    $("#add").click(function() {
-    	$("#handleUser_view").val("");
-    	$(".display_container7").css("display","block");
-    });
-    // 会签选择处理人（人员）
-    $("#choose_handle_user").click(function() {
-    	common.chooseUser('handleUser', 'false');
-    });
-    
-    // 抄送
-    $("#transfer").click(function(){
-    	$("#handleUser1_view").val("");
-    	$(".display_container6").css("display","block");
-    }); 
-    // 抄送选择处理人（人员）
-    $("#choose_handle_user1").click(function() {
-    	common.chooseUser('handleUser1', 'false');
-    });
-    
-    $(".cancel_btn").click(function() {
-    	$(".display_container7").css("display","none");
-    	$(".display_container6").css("display","none");
-    });
-    
-    // 驳回
-    $(".cancel5_btn").click(function() {
-    	$(".display_container8").css("display","none");
-    });*/
-
+	
     // 查询审批进度剩余进度百分比
     var activityId = $("#activityId").val();
     var taskUid = $("#taskUid").val();
@@ -635,12 +529,343 @@ $(function () {
     });
 });
 
+//提交按钮的触发事件
+function submitTaskByHandleType(){
+	$(".handle_table").each(function(){
+		var display = $(this).css("display");
+		if(display=="block"){
+			var id = $(this).prop("id");
+			switch(id){
+				case "submit_table":{
+					if (canSkipFromReject) {
+				        skipFromReject();
+				    } else {
+				        submitTask();
+				    }
+					break;
+				}
+				case "countersign_table":{
+					addSure();
+					break;
+				}
+				case "reject_table":{
+					rejectSure();
+					break;
+				}
+				case "transfer_table":{
+					transferSure();
+					break;
+				}
+			}
+		}
+	});
+}
+
+// 提交通过任务的方法
+function submitTask() {
+    var taskId = $("#taskId").val();
+    var taskUid = $("#taskUid").val();
+    var insUid = $("#insUid").val();//流程实例id--ins_uid
+    var departNo = $("#departNo").val();
+    var companyNumber = $("#companyNum").val();
+    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+    if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
+    	layer.alert("缺少流程发起人信息");
+    	return;
+    }
+    // 获取审批意见
+    var aprOpiComment = $("#myApprovalOpinion").val();
+    console.log($("#myApprovalOpinion").val());
+    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
+        alertNeedApprovalOpinion();
+    	return;
+    }else{
+    	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
+    }
+    // 校验标题有没有填写
+    if (!checkInsTitle()) {
+    	$(".mobile_menu li").css({"color":"#A0A0A0"});
+    	$(".mobile_menu #form_content").parent().css({"color":"#009688"});
+    	var id = $(".mobile_menu #form_content").attr("title");
+    	$(".middle_content").css("display","none");
+    	$("#"+id+"_div").css("display","block");
+        layer.alert("流程标题过长或未填写");
+        return
+    }
+    //必填项验证，勿删
+    if(!common.validateFormMust("startProcess_btn")){
+    	return;
+    }
+    // 发起流程             
+    var finalData = {};
+    // 表单数据
+    var jsonStr = common.getDesignFormData();
+    var formData = JSON.parse(jsonStr);
+    
+    finalData.formData = formData;
+    // 流程数据
+    var processData = {};
+    processData.insUid = $("#insUid").val();
+    processData.insTitle = $("#insTitle_input").val().trim();
+    finalData.processData = processData;
+    
+    var handleUserIds = "";
+    $("#submit_table .delete_choose_user").each(function(){
+    	handleUserIds += $(this).attr("value")+";";
+    });
+    
+    // 路由数据
+    var routeData = [];
+    var lackNextOwner = false;
+    $(".getUser").each(function () {
+        var item = {};
+        item.activityId = $(this).attr('id');
+        item.userUid = handleUserIds;
+        console.log(item.userUid);
+        if (item.userUid == null || item.userUid == undefined || item.userUid.trim() == '') {
+            lackNextOwner = true;
+        }
+        item.assignVarName = $(this).data("assignvarname");
+        item.signCountVarName =  $(this).data("signcountvarname");
+        item.loopType = $(this).data("looptype");
+        routeData.push(item);
+    });
+    if(lackNextOwner){
+    	layer.alert('提交失败,未配置下一环节处理人');
+    	return;
+    }
+    finalData.routeData = routeData;
+    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
+    finalData.approvalData = {"aprOpiComment":aprOpiComment};
+    $.ajax({
+        url: 'taskInstance/finshedTask',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            data: JSON.stringify(finalData)
+        },
+        beforeSend: function () {
+            layer.load(1);
+        },
+        success: function (result) {
+        	layer.closeAll('loading'); 
+            if (result.status == 0) {
+                layer.alert('提交成功', function(){
+                	window.history.back();
+                });
+            }else{
+                layer.alert(result.msg);
+            }
+            $(".display_container").css("display","none"); 
+        },
+        error: function (result) {
+        	layer.closeAll('loading'); 
+            layer.alert('提交失败');
+        }
+    });
+}
+
+//提交至驳回节点的方法
+function skipFromReject() {
+    var taskUid = $("#taskUid").val();
+    // 获取审批意见
+    var aprOpiComment = $("#myApprovalOpinion").val();
+    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
+        alertNeedApprovalOpinion();
+        return;
+    }else{
+        aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
+    }
+	// 校验标题有没有填写
+    if (!checkInsTitle()) {
+    	$(".mobile_menu li").css({"color":"#A0A0A0"});
+    	$(".mobile_menu #form_content").parent().css({"color":"#009688"});
+    	var id = $(".mobile_menu #form_content").attr("title");
+    	$(".middle_content").css("display","none");
+    	$("#"+id+"_div").css("display","block");
+        layer.alert("流程标题过长或未填写");
+        return
+    }
+    //必填项验证，勿删
+    if(!common.validateFormMust("startProcess_btn")){
+    	return;
+    }
+    // 发起流程
+    var finalData = {};
+    // 表单数据
+    var formData = JSON.parse(common.getDesignFormData());
+    // 流程数据
+    var processData = {};
+    processData.insUid = $("#insUid").val();
+    processData.insTitle = $("#insTitle_input").val().trim();
+    finalData.processData = processData;
+    finalData.formData = formData;
+    finalData.taskData = {"taskUid": taskUid};
+    finalData.approvalData = {"aprOpiComment": aprOpiComment};
+
+    $.ajax({
+        url: 'taskInstance/skipFromReject',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            'data': JSON.stringify(finalData)
+        },
+        beforeSend: function () {
+            layer.load(1);
+        },
+        success: function(result) {
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                layer.alert('提交成功', function(){
+                    window.history.back();
+                });
+            }else{
+                layer.alert(result.msg);
+            }
+            $(".display_container").hide();
+        },
+        error: function () {
+            layer.closeAll('loading');
+            layer.alert('提交失败');
+        }
+    });
+}
+
+// 点击“驳回”按钮触发的动作
+function queryRejectByActivitiy() {
+    var activityId = $("#activityId").val();
+    var insUid = $("#insUid").val();
+    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
+    $.ajax({
+        url: 'processInstance/queryRejectByActivity',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+        	activityId : activityId,
+        	insUid : insUid
+        },
+        beforeSend: function () {
+            index = layer.load(1);
+        },
+        success: function (result) {
+        	if(result.status==0){
+        		$("#reject_table table").empty();
+            	var rejectMapList = result.data;
+            	var rejectDiv = "";
+            	for(var i=0;i<rejectMapList.length;i++){
+            		rejectDiv += '<tr>'
+								+'<th>驳回至：</th>'
+								+'<td>'
+								+'<span style="float:left;width:10%;">'
+								+'<input type="checkbox" name="check" lay-skin="primary" '
+								+'value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId
+									+'+'+rejectMapList[i].userId+'"/>'
+								+'</span> '
+								+'<span style="float:left;width:80%;">'
+								+rejectMapList[i].activityName+'————审批人:'+rejectMapList[i].userName
+								+'</span>'
+								+'</td>'
+								+'</tr>';
+                }//end for
+            	$("#reject_table table").append(rejectDiv);
+            	form.render();
+        	}
+        	layer.close(index);
+        },
+        error: function (result) {
+            layer.close(index);
+            layer.alert('查询驳回环节失败', {
+                icon: 2
+            });
+        }
+    });
+}
+
+function rejectSure(){
+	$('input[name="check"]:checked').each(function(){ 
+		var aprOpiComment = $("#myApprovalOpinion").val();
+	    var taskId = $("#taskId").val();
+	    var taskUid = $("#taskUid").val();
+	    // 获取审批意见
+	    var aprOpiComment = $("#myApprovalOpinion").val();
+	    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
+	        alertNeedApprovalOpinion();
+	        return;
+	    }else{
+	        aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
+	    }
+		// 校验标题有没有填写
+	    if (!checkInsTitle()) {
+	    	$(".mobile_menu li").css({"color":"#A0A0A0"});
+	    	$(".mobile_menu #form_content").parent().css({"color":"#009688"});
+	    	var id = $(".mobile_menu #form_content").attr("title");
+	    	$(".middle_content").css("display","none");
+	    	$("#"+id+"_div").css("display","block");
+	        layer.alert("流程标题过长或未填写");
+	        return
+	    }
+	    //必填项验证，勿删
+	    if(!common.validateFormMust("startProcess_btn")){
+	    	return;
+	    }
+	    var finalData = {};
+	    // 路由数据
+	    var routeData = {};
+	    var item = {};
+	    var str = $(this).val();
+	    var insId = str.substring(0,str.indexOf("+"));
+	    var userUid = str.substring(str.lastIndexOf("+") + 1);
+	    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
+	    var activityId = $("#activityId").val();
+	    finalData.routeData = {"insId":insId,"userUid":userUid,"activityBpdId":activityBpdId};
+	    finalData.taskData = {"taskId":taskId,"taskUid":taskUid,"activityId":activityId};
+	    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
+	    
+	    $.ajax({
+	        url: 'taskInstance/rejectTask',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: {
+	        	data : JSON.stringify(finalData)
+	        },
+	        beforeSend: function () {
+	            index = layer.load(1);
+	        },
+	        success: function (result) {
+	            layer.close(index);
+	        	if(result.status == 0){
+	        		layer.msg('驳回成功', {
+	        			  icon: 1,
+	        			  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+	        			}, function(){
+	        				window.history.back();
+	        			});   
+	        	}else{
+	        		layer.alert('驳回失败', {
+		                icon: 2
+		            });
+	        	}
+	        },
+	        error: function (result) {
+	            layer.close(index);
+	            layer.alert('驳回失败', {
+	                icon: 2
+	            });
+	        }
+	    });
+	 }) 
+}
+
 // 加签确定
 function addSure(){
 	var taskUid = $("#taskUid").val();
 	var taskId = $("#taskId").val();
 	var insUid = $("#insUid").val();
-	var usrUid = $("#handleUser").val();
+	var handleUserIds = "";
+	$("#countersign_table .delete_choose_user").each(function(){
+		handleUserIds += $(this).attr("value")+";";
+	});
+	var usrUid = handleUserIds;
 	var taskActivityId = $("#activityId").val();
 	var taskType = $(".layui-form_1 option:selected").val();
 	if (usrUid == null || usrUid == "") {
@@ -675,7 +900,11 @@ function addSure(){
 // 抄送确认
 function transferSure(){
 	var taskUid = $("#taskUid").val();
-	var usrUid = $("#handleUser1").val();
+	var handleUserIds = "";
+	$("#transfer_table .delete_choose_user").each(function(){
+		handleUserIds += $(this).attr("value")+";";
+	});
+	var usrUid = handleUserIds;
 	var activityId = $("#activityId").val();
 	if (usrUid == null || usrUid == "") {
 		layer.alert("请选择人员!");
@@ -723,205 +952,6 @@ function processView(insId) {
     })
 }
 
-// 确认提交
-function doSubmit() {
-    if (canSkipFromReject) {
-        skipFromReject();
-    } else {
-        submitTask();
-    }
-}
-
-// 提交任务的方法
-function submitTask() {
-    var taskId = $("#taskId").val();
-    var taskUid = $("#taskUid").val();
-    var insUid = $("#insUid").val();//流程实例id--ins_uid
-    // 获取审批意见
-    var aprOpiComment = $("#myApprovalOpinion").val();
-    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
-        alertNeedApprovalOpinion();
-    	return;
-    }else{
-    	aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>"); 
-    }
-    // 校验标题有没有填写
-    if (!checkInsTitle()) {
-        layer.alert("流程标题过长或未填写");
-        return
-    }
-    // 发起流程             
-    var finalData = {};
-    // 表单数据
-    var jsonStr = common.getDesignFormData();
-    var formData = JSON.parse(jsonStr);
-    
-    finalData.formData = formData;
-    // 流程数据
-    var processData = {};
-    processData.insUid = $("#insUid").val();
-    processData.insTitle = $("#insTitle_input").val().trim();
-    finalData.processData = processData;
-
-    // 路由数据
-    var routeData = [];
-    var lackNextOwner = false;
-    $('.getUser').each(function () {
-        var item = {};
-        item.activityId = $(this).attr('id');
-        item.userUid = $(this).val();
-        if (item.userUid == null || item.userUid == undefined || item.userUid.trim() == '') {
-            lackNextOwner = true;
-        }
-        item.assignVarName = $(this).data("assignvarname");
-        item.signCountVarName =  $(this).data("signcountvarname");
-        item.loopType = $(this).data("looptype");
-        routeData.push(item);
-    });
-    if(lackNextOwner){
-    	layer.alert('提交失败,未配置下一环节处理人');
-    	return;
-    }
-    finalData.routeData = routeData;
-    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
-    finalData.approvalData = {"aprOpiComment":aprOpiComment};
-    $.ajax({
-        url: 'taskInstance/finshedTask',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            data: JSON.stringify(finalData)
-        },
-        beforeSend: function () {
-            layer.load(1);
-        },
-        success: function (result) {
-        	layer.closeAll('loading'); 
-            if (result.status == 0) {
-                layer.alert('提交成功', function(){
-                	window.history.back();
-                });
-            }else{
-                layer.alert(result.msg);
-            }
-            $(".display_container").css("display","none"); 
-        },
-        error: function (result) {
-        	layer.closeAll('loading'); 
-            layer.alert('提交失败');
-        }
-    });
-}
-
-// 提交至驳回节点的方法
-function skipFromReject() {
-    var taskUid = $("#taskUid").val();
-    // 获取审批意见
-    var aprOpiComment = $("#myApprovalOpinion").val();
-    if(needApprovalOpinion && (aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined)){
-        alertNeedApprovalOpinion();
-        return;
-    }else{
-        aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
-    }
-    // 发起流程
-    var finalData = {};
-    // 表单数据
-    var formData = JSON.parse(common.getDesignFormData());
-    // 流程数据
-    var processData = {};
-    processData.insUid = $("#insUid").val();
-    processData.insTitle = $("#insTitle_input").val().trim();
-    finalData.processData = processData;
-    finalData.formData = formData;
-    finalData.taskData = {"taskUid": taskUid};
-    finalData.approvalData = {"aprOpiComment": aprOpiComment};
-
-    $.ajax({
-        url: 'taskInstance/skipFromReject',
-        type: 'post',
-        dataType: 'json',
-        data: {
-            'data': JSON.stringify(finalData)
-        },
-        beforeSend: function () {
-            layer.load(1);
-        },
-        success: function(result) {
-            layer.closeAll('loading');
-            if (result.status == 0) {
-                layer.alert('提交成功', function(){
-                    window.history.back();
-                });
-            }else{
-                layer.alert(result.msg);
-            }
-            $(".display_container").hide();
-        },
-        error: function () {
-            layer.closeAll('loading');
-            layer.alert('提交失败');
-        }
-    });
-
-
-}
-
-
-// 点击“驳回”按钮触发的动作
-function queryRejectByActivitiy() {
-    var activityId = $("#activityId").val();
-    var insUid = $("#insUid").val();
-    /*var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if(aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined){
-        alertNeedApprovalOpinion();
-    	return;
-    }*/
-    $.ajax({
-        url: 'processInstance/queryRejectByActivity',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-        	activityId : activityId,
-        	insUid : insUid
-        },
-        beforeSend: function () {
-            index = layer.load(1);
-        },
-        success: function (result) {
-        	if(result.status==0){
-        		$("#reject_table table").empty();
-            	var rejectMapList = result.data;
-            	var rejectDiv = "";
-            	for(var i=0;i<rejectMapList.length;i++){
-            		rejectDiv += '<tr>'
-								+'<th>驳回至：</th>'
-								+'<td>'
-								+'<span style="float:left;width:10%;">'
-								+'<input type="checkbox" name="check" lay-skin="primary" '
-								+'value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId
-									+'+'+rejectMapList[i].userId+'"/>'
-								+'</span> '
-								+'<span style="float:left;width:80%;">'
-								+rejectMapList[i].activityName+'————审批人:'+rejectMapList[i].userName
-								+'</span>'
-								+'</td>'
-								+'</tr>';
-                }//end for
-            	$("#reject_table table").append(rejectDiv);
-            	form.render();
-        	}
-        	layer.close(index);
-        },
-        error: function (result) {
-            layer.close(index);
-            layer.alert('查询驳回环节失败', {
-                icon: 2
-            });
-        }
-    });
-}
-
 function back() {
 	window.location.href = 'javascript:history.go(-1)';
 }
@@ -933,26 +963,6 @@ var form = null;
 
 // 单击"提交"按钮
 function checkUserData() {
-	var departNo = $("#departNo").val();
-    var companyNumber = $("#companyNum").val();
-    // var formData =common.getDesignFormData();
-    var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
-    if (departNo==null || departNo=="" || companyNum=="" || companyNum==null) {
-    	layer.alert("缺少流程发起人信息");
-    	return;
-    }
-    if (!checkInsTitle()) {
-        layer.alert("流程标题过长或未填写");
-        return
-    }
-    //必填项验证，勿删
-    if(!common.validateFormMust("startProcess_btn")){
-    	return;
-    }
-    if(needApprovalOpinion && (aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined)){
-        alertNeedApprovalOpinion();
-    	return;
-    }
     if (canSkipFromReject) {
         showRouteBarForSkipFromReject();
     } else {
@@ -1008,9 +1018,15 @@ function showRouteBar() {
                         		var userName = userNameArr[j];
                         		var userUid = activityMeta.userUid.split(";")[j];
                         		if(userName != "" && userName != null){
-                        			chooseUserDiv += '<li><div class="choose_user_name_span">'+userName
+                        			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){
+                        				chooseUserDiv += '<li style="margin-right:15px;"><div class="choose_user_name_span">'+userName
+                        				+'</div><span><i class="layui-icon delete_choose_user" style="display:none" value="'+userUid
+                        				+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+                        			}else{
+                        				chooseUserDiv += '<li><div class="choose_user_name_span">'+userName
                         				+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
                         				+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+                        			}
                         		}
                         	}
                         	chooseUserDiv += "</ul></div>";
@@ -1020,10 +1036,10 @@ function showRouteBar() {
                         chooseUserDiv += '<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
                             +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
                             +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe770;</i> '
-                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'" '
-                            +'data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable+'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
+                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
                             +'data-looptype="'+activityMeta.loopType+'" />'
-                            /*+'<input type="hidden"  id="choosable_'+activityMeta.activityId+'"  value="'+activityMeta.userUid+'"  />'*/
                             +'</td></tr>';
                     }//end for
                 }
@@ -1046,16 +1062,20 @@ function deleteAssembleUser(obj){
 function showRouteBarForSkipFromReject() {
     var targetNodeName = $('#skipFromReject_targetNodeName').val();
     var newTaskOwnerName = $('#skipFromReject_newTaskOwnerName').val();
-    $("#choose_user_tbody").empty();
-    var str = '<tr>'
-             +   '<th class="approval_th"><label for="link_name1">下一环节</label></th>'
-             +   '<td>' + targetNodeName + '</td>'
-             +   '<th class="approval_th">处理人</th>'
-             +   '<td>' + newTaskOwnerName + '</td>'
-             + '</tr>';
-
-    $("#choose_user_tbody").append(str);
-    $(".display_container2").show();
+    $("#submit_table table").empty();
+    var chooseUserDiv = '<tr>'
+    				+'<th class="approval_th">下一环节：</th>'
+                    +'<td>'+targetNodeName+'</td>'
+                    +'</tr>'
+                    +'<tr>'
+                    +'<th class="approval_th">处理人：</th>'
+                    +'<td>'
+			            +'<div class="choose_user_name_ul"><ul>'
+						    +'<li><div class="choose_user_name_span" style="margin-right:15px">'+newTaskOwnerName
+							+'</div></li>'
+						+'</ul></div>'
+					+'</td>';
+    $("#submit_table table").append(chooseUserDiv);
 }
 
 /**
@@ -1066,7 +1086,7 @@ function saveDraftsInfo() {
     var control = true; //用于控制复选框出现重复值
     var checkName = ""; //用于获得复选框的class值，分辨多个复选框
 
- // 发起流程
+    // 发起流程
     var finalData = {};
     // 表单数据
     var jsonStr = common.getDesignFormData();
@@ -1132,8 +1152,11 @@ function checkInsTitle() {
 
 // 提醒填写审批意见
 function alertNeedApprovalOpinion() {
-    $('#approve_p').show();
-    $('#approve_div').show();
+	$(".mobile_menu li").css({"color":"#A0A0A0"});
+	$(".mobile_menu #approve").parent().css({"color":"#009688"});
+	var id = $(".mobile_menu #approve").attr("title");
+	$(".middle_content").css("display","none");
+	$("#"+id+"_div").css("display","block");
     $("#myApprovalOpinion").focus();
     layer.alert("请填写审批意见");
 }
