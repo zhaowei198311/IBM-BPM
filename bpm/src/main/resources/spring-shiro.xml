@@ -102,6 +102,7 @@
                 /sysTeam/group=perms[sysTeam:group]
                 /sysDictionary/dictCdList=perms[sysDictionary:dictCdList]
                 /sysUser/globalConfig=perms[sysUser:globalConfig]
+                /dhNotifyTemplate/notifyTemplate=perms[dhNotifyTemplate:notifyTemplate]
                 <!-- /menus/**=perms[menus:*]  --> 
             </value>
         </property>

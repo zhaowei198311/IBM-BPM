@@ -81,10 +81,11 @@
 							</div>
 						</div>
 					</div>
-					<div style="width:100%;overflow-x:auto;">				
+					<div style="width:100%;overflow-x:auto;">
+						<div style="width: 1500px;">		
 						<table class="layui-table backlog_table">
 							<colgroup>
-								<col width="7%">
+								<col width="5%">
 							    <col>
 							    <col>
 							    <col>
@@ -107,7 +108,8 @@
 							<tbody id="proMet_table_tbody" >
 							    
 							</tbody>
-						</table>				
+						</table>	
+						</div>					
 					</div>
 					<div id="lay_page"></div>
 			    </div>

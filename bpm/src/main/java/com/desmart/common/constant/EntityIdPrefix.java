@@ -87,4 +87,7 @@ public class EntityIdPrefix {
 	
 	/** 流程检索字段前缀 **/
 	public static final String DH_PROCESS_RETRIEVE = "process_retrieve:";
+	
+	/** 通知模板前缀 **/
+	public static final String DH_NOTIFY_TEMPLATE = "notify_template:";
 }

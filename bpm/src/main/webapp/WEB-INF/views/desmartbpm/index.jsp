@@ -69,7 +69,7 @@
                         <shiro:hasPermission name="quarz:quarzList">
                           <li class="layui-nav-item"><a href="quarz/quarzList" target="iframe0"><i class="layui-icon">&#xe857;</i>定时任务管理</a></li>
                         </shiro:hasPermission>
-                        <li class="layui-nav-item"><a href="<%=basePath%>/dhProcessInsManage/toProcessInsManage" target="iframe0"><i class="layui-icon">&#xe629;</i> 流程实例管理</a></li>
+                        <li class="layui-nav-item"><a href="<%=basePath%>/dhProcessInsManage/toProcessInsManage" target="iframe0"><i class="layui-icon">&#xe62c;</i> 流程实例管理</a></li>
                         <li class="layui-nav-item">
 						     <a href="javascript:;"><i class="layui-icon">&#xe614;</i> 系统管理</a>
 						    <dl class="layui-nav-child">
@@ -96,7 +96,10 @@
 						    </shiro:hasPermission>
 						    <shiro:hasPermission name="sysDictionary:dictCdList">
 						      <dd><a href="sysDictionary/dictCdList" target="iframe0">数据字典</a></dd>
-						    </shiro:hasPermission>   
+						    </shiro:hasPermission>  
+						    <shiro:hasPermission name="dhNotifyTemplate:notifyTemplate">
+						      <dd><a href="dhNotifyTemplate/notifyTemplate" target="iframe0">通知模板管理</a></dd>
+						    </shiro:hasPermission> 
 						    <shiro:hasPermission name="sysUser:globalConfig">
 						      <dd><a href="sysUser/globalConfig" target="iframe0">全局配置管理</a></dd>
 						    </shiro:hasPermission>

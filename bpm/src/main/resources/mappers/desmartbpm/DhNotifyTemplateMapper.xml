@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhNotifyTemplateMapper" >
+    <sql id="base_column">
+         TEMPLATE_UID, TEMPLATE_NAME, TEMPLATE_TYPE, TEMPLATE_CONTENT
+         , CREATE_USER_UID, CREATE_TIME, UPDATE_USER_UID, UPDATE_TIME
+    </sql>
+    
+    <sql id="relation_column">
+       nt.TEMPLATE_UID, nt.TEMPLATE_NAME, nt.TEMPLATE_TYPE, nt.TEMPLATE_CONTENT
+       , nt.CREATE_USER_UID, nt.CREATE_TIME, nt.UPDATE_USER_UID, nt.UPDATE_TIME
+    </sql>
+    
+    <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+    	INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>) 
+    	VALUES (#{templateUid}, #{templateName}, #{templateType}
+    	, #{templateContent}, #{createUserUid}, #{createTime}, #{updateUserUid}, #{updateTime})
+    </insert>
+    
+    <update id="update" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+    	UPDATE DH_NOTIFY_TEMPLATE 
+    	<set>
+    	<if test="templateName != null and templateName != '' ">
+    		template_Name = #{templateName},
+    	</if>
+    	<if test="templateType != null and templateType != '' ">
+    		 template_Type = #{templateType},
+    	</if>
+    	<if test="templateContent != null and templateContent != '' ">
+    		template_Content = #{templateContent},
+    	</if>
+    	<if test="updateUserUid != null and updateUserUid != '' ">
+    		UPDATE_USER_UID = #{updateUserUid},
+    	</if>
+    	<if test="updateTime != null ">
+    		UPDATE_TIME = #{updateTime}
+    	</if>
+    	</set>
+    	WHERE template_Uid = #{templateUid}
+    </update>
+    
+    <delete id="delete" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+    	DELETE FROM DH_NOTIFY_TEMPLATE WHERE template_Uid = #{templateUid}
+    </delete>
+    
+    <select id="getDhNotifyTemplatesByCondition" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate"
+    	resultType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+    	SELECT <include refid="relation_column"/>,su.user_name,usu.user_name as update_user_name
+    	FROM DH_NOTIFY_TEMPLATE nt left join sys_user su 
+    	on nt.create_user_uid = su.user_uid left join sys_user usu 
+    	on nt.update_user_uid = usu.user_uid 
+    	WHERE 1 = 1 
+    	<if test="templateUid != null and templateUid != '' ">
+    		and	template_Uid = #{templateUid}
+    	</if>
+    	<if test="templateName != null and templateName != '' ">
+    		and template_Name like concat('%',concat(#{templateName},'%'))
+    	</if>
+    	<if test="templateType != null and templateType != '' ">
+    		and template_Type = #{templateType}
+    	</if>
+    </select>
+</mapper>
