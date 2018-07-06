@@ -359,6 +359,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
             dhTask.setTaskDueDate(dueDate);
             dhTask.setTaskActivityId(bpmActivityMeta.getActivityId());
+
             taskList.add(dhTask);
         }
         return taskList;

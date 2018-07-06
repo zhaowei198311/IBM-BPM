@@ -18,6 +18,7 @@ public class BpmForm {
 	private String creator;
 	private String creatorFullName;//不是本表，连接查询得到
 	private Date createTime;
+	private String formNoExpression;   // 表单编号生成表达式
 	
 	private String dynWebpage;
 	
@@ -44,8 +45,16 @@ public class BpmForm {
 		this.proVerName = proVerName;
 	}
 
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getFormNoExpression() {
+		return formNoExpression;
+	}
 
-
+	public void setFormNoExpression(String formNoExpression) {
+		this.formNoExpression = formNoExpression;
+	}
 	public String getDynUid() {
 		return dynUid;
 	}

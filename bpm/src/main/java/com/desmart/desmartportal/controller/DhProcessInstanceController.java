@@ -12,6 +12,8 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +44,14 @@ import com.desmart.desmartportal.util.http.HttpClientUtils;
 @Controller
 @RequestMapping(value = "/processInstance")
 public class DhProcessInstanceController {
-	
 	private Logger log = Logger.getLogger(DhProcessInstanceController.class);
 
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
-
 	@Autowired
 	private DhTaskInstanceService dhTaskInstanceService;
+	@Autowired
+	private BpmGlobalConfigService bpmGlobalConfigService;
 
     /**
      * 发起流程的方法
@@ -87,14 +89,20 @@ public class DhProcessInstanceController {
 		
 		return null;	
 	}
-	
+
+    /**
+     * 返回引擎提供的展示指定流程实例图的url
+     * @param insId
+     * @return
+     */
 	@RequestMapping(value = "/viewProcess")
 	@ResponseBody
 	public String viewProcess(String insId) {
 		// 查看流程图 需要流程实例  这一步目的是 去 掉用IBM 做一次 登陆验证
-		HttpClientUtils httpUtils = new HttpClientUtils();
-		String url = "http://10.0.4.201:9080/teamworks/executecf?modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f&tw.local.processInstanceId="+insId;
-		httpUtils.checkApiLogin("get", url, null);
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		String url = bpmGlobalConfig.getBpmServerHost() + "teamworks/executecf?" +
+                "modelID=1.36bdcc65-8d6a-4635-85cf-57cab68a7e45&branchID=2063.34a0ce6e-631b-465d-b0dc-414c39fb893f" +
+                "&tw.local.processInstanceId="+insId;
 		return url;
 	}
 

@@ -419,26 +419,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     }
 
 
-	/**
-	 * 查看流程图
-	 */
-	@Override
-	public String viewProcessImage(String insId) {
-		try {
-			log.info("流程图查看......");
-			BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-			new RestUtil(bpmGlobalConfig);
-			HttpClientUtils httpClientUtils = new HttpClientUtils();
-			String result = httpClientUtils.checkLoginIbm(
-					"http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/instances?instanceIds=[" + insId
-							+ "]&showCurrentActivites=true&showExecutionPath=true&showNote=true&showColor=true&image=true");
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@Override
 	public DhProcessInstance generateDraftProcessInstance(DhProcessDefinition dhProcessDefinition,String insBusinessKey) {
 		DhProcessInstance processInstance = new DhProcessInstance();
@@ -846,10 +826,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if (ProcessDataUtil.containsTokenId(subInstance.getTokenId(), processDataJson)) {
 				continue;
 			}
+
+            // 更新实例状态
             DhProcessInstance selective = new DhProcessInstance(subInstance.getInsUid());
             selective.setInsFinishDate(new Date());
             selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
-            // todo 完成流程触发器
             dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
         }
         Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
@@ -933,13 +914,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         subInstance.setInsInitUser(creatorId);
         subInstance.setCompanyNumber(parentInstance.getCompanyNumber());
         subInstance.setDepartNo(parentInstance.getDepartNo());
-        subInstance.setInsBusinessKey(parentInstance.getInsBusinessKey());  // 流程关键字
         subInstance.setTokenId(tokenId);
-        subInstance.setTokenActivityId(processNode.getActivityId());
+		subInstance.setTokenActivityId(processNode.getActivityId());
+		// 从当前流程中获得新实例的流程关键字
+		subInstance.setInsBusinessKey(InsDataUtil.getBusinessKeyOfNextProcess(currProcessInstance));  // 流程关键字
 
-        // 从父流程实例中获取自己表单中name相同的值作为子流程的数据
-        JSONObject insData = assembleinsDataOfSubProcess(subInstance, parentInstance);
-        subInstance.setInsData(insData.toJSONString());
+		// 从父流程实例中获取自己表单中name相同的值作为子流程的数据
+        //JSONObject insData = assembleinsDataOfSubProcess(subInstance, parentInstance);
+        //subInstance.setInsData(insData.toJSONString());
         return subInstance;
     }
 

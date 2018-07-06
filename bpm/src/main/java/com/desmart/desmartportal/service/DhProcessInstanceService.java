@@ -95,13 +95,7 @@ public interface DhProcessInstanceService {
 	 * @return
 	 */
 	ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid,String insBusinessKey);
-	
-	/**
-	 * 根据流程实例id  查看流程图
-	 * @param insId 流程实例id(引擎中的id)
-	 * @return
-	 */
-	String viewProcessImage(String insId);
+
 	
 	/**
 	 * 根据流程定义创建草稿的流程实例

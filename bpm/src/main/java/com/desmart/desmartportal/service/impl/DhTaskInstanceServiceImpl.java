@@ -331,7 +331,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             dhTaskInstanceMapper.abandonOtherUnfinishedTaskByTaskId(taskUid, taskId);
         }
 
-        // 修改流程实例信息
+        // 更新流程实例信息
         insJson.put("formData", mergedFormData);
         currProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
         currProcessInstance.setInsData(insJson.toJSONString());
@@ -414,14 +414,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 if (didTokenMoveResponse.isSuccess()) {
                     JSONObject processData = didTokenMoveResponse.getData();
                     if (processData != null) {
-                        // 实际Token移动了
-                        // 关闭需要结束的流程
+                        // 确认Token移动了, 插入流转记录
                         dhRoutingRecordMapper.insert(routingRecord);
+                        // 关闭需要结束的流程
                         dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
                         // 创建需要创建的子流程
                         dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
                     } else {
-                        // 实际Token没有移动, 更新流转信息
+                        // 确认Token没有移动, 更新流转信息
                         routingRecord.setActivityTo(null);
                         dhRoutingRecordMapper.insert(routingRecord);                    }
                 } else {

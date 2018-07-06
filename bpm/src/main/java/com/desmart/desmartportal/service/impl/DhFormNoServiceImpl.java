@@ -7,6 +7,9 @@ import com.desmart.desmartportal.service.DhFormNoService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Service
 public class DhFormNoServiceImpl implements DhFormNoService {
     private Logger log = Logger.getLogger(DhFormNoServiceImpl.class);
@@ -35,5 +38,21 @@ public class DhFormNoServiceImpl implements DhFormNoService {
         oldFormNoJSONArray.add(newObject);
 
         return null;
+    }
+
+
+    /**
+     * 生成一个表单号
+     * @return
+     */
+    private String generateFormNo() {
+
+
+        return null;
+    }
+
+    public static void main(String[] args){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        System.out.println(sdf.format(new Date()));
     }
 }

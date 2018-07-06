@@ -7,6 +7,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.service.SynchronizeTaskService;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
 import org.apache.poi.util.SystemOutLogger;
 import org.apache.shiro.SecurityUtils;
@@ -45,7 +48,10 @@ public class TestController extends BaseWebController {
     private MqSendUtil mqSendUtil;
     @Autowired
     private DhProcessMetaService dhProcessService;
-    
+    @Autowired
+    private SynchronizeTaskService synchronizeTaskService;
+    @Autowired
+    private DhTaskInstanceMapper dhTaskInstanceMapper;
     
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -234,5 +240,24 @@ public class TestController extends BaseWebController {
         metaList.add("java");
         return ServerResponse.createBySuccess(metaList);
     }
-    
+
+
+    @RequestMapping(value= "/synTask")
+    @ResponseBody
+    public String synTask(int taskId) {
+        synchronizeTaskService.SynchronizeTask(taskId);
+        return "done";
+    }
+
+    @RequestMapping(value = "/listTask")
+    @ResponseBody
+    public List<DhTaskInstance> listTask(int taskId) {
+
+        DhTaskInstance taskSelective = new DhTaskInstance();
+        taskSelective.setTaskId(taskId);
+        return dhTaskInstanceMapper.selectAllTask(taskSelective);
+    }
+
+
+
 }
