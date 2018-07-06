@@ -106,7 +106,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">角色名称</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="roleName" required  lay-verify="required" id="roleName" remote="sysRole/roleexists"   data-msg-remote="角色名称已存在请重新输入!" placeholder="请输入角色名称" autocomplete="off" class="layui-input" />
+				      <input type="text" name="roleName" required  lay-verify="required" id="roleName" remote="sysRole/roleexists"   data-msg-remote="角色名称已存在!" placeholder="请输入角色名称" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">

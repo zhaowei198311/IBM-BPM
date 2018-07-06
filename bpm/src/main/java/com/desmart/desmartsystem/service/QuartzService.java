@@ -7,5 +7,10 @@ import com.desmart.desmartsystem.entity.JobEntity;
 
 public interface QuartzService {
 
+	/**
+	 * 添加job
+	 * @param dhInterface job
+	 * @return
+	 */
 	public void addJob(JobEntity job, HttpServletResponse response,JobController jobController);
 }

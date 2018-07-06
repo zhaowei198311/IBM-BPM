@@ -45,22 +45,23 @@ public class SysUserController {
 	@Autowired
 	private SysUserDepartmentService sysUserDepartmentService;
 	
-	@RequestMapping(value="/index")
-	public String drafts(){
-		return "desmartsystem/usermanagement/index";
-	}
 	
-	@RequestMapping(value="/NewFile")
-	public String NewFile(){
-		System.out.println("afsd");
-		return "desmartsystem/usermanagement/NewFile";
-	}
-	
+	/**
+	 * 全局管理配置页面跳转
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value="/globalConfig")
 	public String globalConfig(){
 		return "desmartsystem/usermanagement/globalConfig";
 	}
 	
+	
+	/**
+	 * 用户选择角色
+	 * @param userUid
+	 * @return
+	 */
 	@RequestMapping(value="/userChooseRole")
 	public ModelAndView userChooseRole(String userUid){
 		ModelAndView mode=new ModelAndView("desmartsystem/usermanagement/common/userChooseRole");
@@ -68,6 +69,12 @@ public class SysUserController {
 		return mode;
 	}
 	
+	
+	/**
+	 * 环节配置选人
+	 * @param AssignPersonnel
+	 * @return
+	 */
 	@RequestMapping(value="/assign_personnel")
 	public ModelAndView assign_personnel(AssignPersonnel assignPersonnel){
 		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/assign_personnel");
@@ -75,7 +82,12 @@ public class SysUserController {
 		return model;
 	}
 
-
+	/**
+	 * 角色 用户 角色组 选人
+	 * @param String id 
+	 * * @param String isSingle
+	 * @return
+	 */
 	@RequestMapping(value="/select_personnel")
 	public ModelAndView select_personnel(String id, String isSingle){
 		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/select_personnel");
@@ -84,16 +96,27 @@ public class SysUserController {
 		return model;
 	}
 	
+	/**
+	 * 组织管理页面跳转
+	 */
 	@RequestMapping(value="/organization")
 	public String organization(){
 		return "desmartsystem/usermanagement/organization";
 	}
 	
+	
+	/**
+	 * 用户管理页面跳转
+	 */
 	@RequestMapping(value="/user")
 	public String user(){
 		return "desmartsystem/usermanagement/user";
 	}
 	
+	
+	/**
+	 * 根据条件分页查询所有用户
+	 */
 	@RequestMapping(value="/allSysUser")
 	@ResponseBody
 	public PagedResult<SysUser> allSysUser(SysUser sysUser,Integer pageNo,Integer pageSize){
@@ -127,13 +150,20 @@ public class SysUserController {
 		}
 	}
 	
+	
+	/**
+	 * 根据条件查询用户列表
+	 */
 	@RequestMapping(value="/userList")
 	@ResponseBody
 	public List<SysUser> userList(SysUser sysUser){
 		return sysUserService.selectAll(sysUser);
 	}
 	
-	//根据用id返回用户集合
+	
+	/**
+	 * 根据,号用户id 返回用户集合
+	 */
 	@RequestMapping(value="/userByIds")
 	@ResponseBody 
 	public List<SysUser> userByIds(String userIds){
@@ -149,7 +179,9 @@ public class SysUserController {
 		return userList;
 	}
 	
-	
+	/**
+	 * 根据用户id返回用户信息
+	 */
 	@RequestMapping(value = "/userDetail")
     public ModelAndView userDetail(SysUser sysUser) {
 		ModelAndView moAndView=new ModelAndView("desmartsystem/usermanagement/edit_user");
@@ -157,12 +189,19 @@ public class SysUserController {
         return moAndView;
     }
  	
+	
+	/**
+	 * 根据用户id返回用户信息
+	 */
 	@RequestMapping("/getSysUser")
 	@ResponseBody
 	public SysUser getSysUser(SysUser sysUser) {
 		return sysUserService.findById(sysUser);
 	}
 	
+	/**
+	 * 修改用户信息
+	 */
 	@RequestMapping("/updateSysUser")
 	@ResponseBody
 	public String updateSysUser(SysUser sysUser) {
@@ -175,6 +214,10 @@ public class SysUserController {
 		}
 	}
 	
+	
+	/**
+	 * 添加用户信息
+	 */
 	@RequestMapping("/addSysUser")
 	@ResponseBody
 	public String addSysUser(SysUser sysUser) {
@@ -195,6 +238,10 @@ public class SysUserController {
 		}
 	}
 	
+	
+	/**
+	 * 根据用户userUid判断当前用户名是否重复
+	 */
 	@ResponseBody  
 	@RequestMapping(value="userexists")
 	public boolean userexists(SysUser cpUser) {
@@ -204,6 +251,9 @@ public class SysUserController {
 		return true;  
 	}
 	
+	/**
+	 * 删除用户信息
+	 */
 	@RequestMapping("/deleteSysUser")
 	@ResponseBody
 	public String deleteSysUser(SysUser sysUser) {

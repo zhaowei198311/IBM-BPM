@@ -13,5 +13,11 @@ import com.desmart.desmartsystem.entity.SysCompany;
  * @since 2018-05-22
  */
 public interface SysCompanyService extends BaseService<SysCompany> {
+	
+	/**
+     * 查询所有公司
+     * @param selectAll
+     * @param sysCompany
+     */
 	public List<SysCompany> selectAll(SysCompany sysCompany);
 }
