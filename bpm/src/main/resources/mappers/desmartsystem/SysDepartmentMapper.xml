@@ -223,7 +223,7 @@
 					DISPLAY_NAME = #{displayName},
 				</if>
 				<if test="departName != null">
-					departName = #{departName},
+					DEPART_NAME = #{departName},
 				</if>
 				<if test="departNo != null">
 					DEPART_NO = #{departUid},
