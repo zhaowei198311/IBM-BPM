@@ -5,6 +5,8 @@ public enum DhTriggerType {
     JAVACLASS("javaclass", "java类"),
     SCRIPT("script", "脚本"),
     SQL("sql", "SQL"),
+    CHOOSE_USER("chooseUser", "选人触发器"),
+    VALIDATE("validate", "校验触发器"),
     INTERFACE("interface", "接口");
 
     private final String code;
