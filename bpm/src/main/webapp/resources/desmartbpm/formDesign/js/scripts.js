@@ -363,7 +363,8 @@ function downloadLayoutSrc() {
             ["value"],
             ["name"],
             ["title"],
-            ["table-label"]
+            ["table-label"],
+            ["isleading"]
         ]
     });
     $("#download-layout").html(formatSrc);

@@ -363,7 +363,8 @@ function downloadLayoutSrc() {
             ["value"],
             ["name"],
             ["title"],
-            ["table-label"]
+            ["table-label"],
+            ["isleading"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -793,6 +794,7 @@ function saveHtml() {
                     var formParam = {
                         publicFormUid: formUid,
                         publicFormName: $("#formName").val(),
+                        publicFormCode:formCode,
                         publicFormDescription: $("#formDescription").val(),
                         publicFormWebpage: webpage,
                         publicFormContent: publicFormContent
@@ -957,6 +959,7 @@ function saveHtml() {
                     var formParam = {
                         publicFormName: $("#formName").val(),
                         publicFormDescription: $("#formDescription").val(),
+                        publicFormCode:formCode,
                         publicFormWebpage: webpage,
                         publicFormContent: publicFormContent
                     };

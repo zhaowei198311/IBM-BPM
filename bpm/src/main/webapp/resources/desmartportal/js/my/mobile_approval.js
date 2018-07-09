@@ -49,10 +49,8 @@ function userAsync() {
 	var move = 0;
 	$("#choose_user_table").scroll(function(){
 		var end = $('#choose_user_table table').offset().top; 
-		console.log(end+","+start);
 		if(end<start){
 			move = start-end;
-			console.log(move);
 			if(move >= 240){
 				if(pageConfig.pageNum==1){
 					pageConfig.pageNum = pageConfig.pageNum+2;

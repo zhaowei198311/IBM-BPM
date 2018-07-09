@@ -525,14 +525,16 @@ function showDataTableModal(obj) {
     var id = tableObj.attr("id");
     var name = tableObj.attr("name");
     var thObjArr = tableObj.find("thead th");
+    var isleading = tableObj.attr("isleading");
     var thNum = thObjArr.length;
     $("#dataTableModal .data-table-set").remove();
     for (var i = 0; i < thObjArr.length; i++) {
         var thObj = $(thObjArr[i]);
         var thText = thObj.text();
         var thName = thObj.attr("name");
+        var moveView = thObj.attr("move-view");
         var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
-            '<label class="col-xs-2 col-sm-offset-1 control-label">' +
+            '<label class="col-xs-1 control-label">' +
             '列头文本<span style="color:red;float:left;">*</span>' +
             '</label>' +
             '<div class="col-xs-1">' +
@@ -540,7 +542,7 @@ function showDataTableModal(obj) {
             ' style="width:70px;" value="' + thText + '">' +
             '</div>' +
             '<label class="col-xs-1 col-sm-offset-1 control-label">' +
-			'列头name' +
+			'列头name<span style="color:red;float:left;">*</span>' +
 			'</label>' +
 			'<div class="col-xs-1">' +
 			'<input type="text" class="col-xs-12 col data-table-head-name"'+
@@ -575,7 +577,22 @@ function showDataTableModal(obj) {
                     break;
                 }
         }
-        thSetHtml += '</select></div></div>';
+        thSetHtml += '</select></div>'
+        	+'<label class="col-xs-1 control-label">'
+        	+'移动端显示'
+        	+'</label>'
+        	+'<div class="col-xs-2">'
+        	+'<select class="data-table-move-view col-xs-12">';
+        if(moveView){
+        	thSetHtml += '<option value="true" selected>是</option>'
+        		+'<option value="false">否</option>'
+        }else{
+        	thSetHtml += '<option value="true">是</option>'
+        		+'<option value="false" selected>否</option>'
+        }
+        thSetHtml += '</select>'
+        	+'</div>'
+        	+'</div>';
         $("#dataTableModal form").append(thSetHtml);
     }
 
@@ -584,7 +601,7 @@ function showDataTableModal(obj) {
         $("#dataTableModal .data-table-set").remove();
         for (var i = 0; i < forNum; i++) {
             var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
-                '<label class="col-xs-2 col-sm-offset-1 control-label">' +
+                '<label class="col-xs-1 control-label">' +
                 '列头文本<span style="color:red;float:left;">*</span>' +
                 '</label>' +
                 '<div class="col-xs-1">' +
@@ -592,7 +609,7 @@ function showDataTableModal(obj) {
                 ' style="width:70px;">' +
                 '</div>' +
                 '<label class="col-xs-1 col-sm-offset-1 control-label">' +
-    			'列头name' +
+    			'列头name<span style="color:red;float:left;">*</span>' +
     			'</label>' +
     			'<div class="col-xs-1">' +
     			'<input type="text" class="col-xs-12 col data-table-head-name" style="width:70px;">' +
@@ -605,7 +622,17 @@ function showDataTableModal(obj) {
                 '<option value="text">文本框</option>' +
                 '<option value="number">数字框</option>' +
                 '<option value="date">日期文本框</option>' +
-                '</select></div></div>';
+                '</select></div>'+
+                '<label class="col-xs-1 control-label">'+
+				'移动端显示'+
+				'</label>'+
+				'<div class="col-xs-2">'+
+					'<select class="data-table-move-view col-xs-12">'+
+						'<option value="true" selected>是</option>'+
+						'<option value="false">否</option>'+
+					'</select>'+
+				'</div>'+
+                '</div>';
             $("#dataTableModal form").append(thSetHtml);
         } //end for
 
@@ -618,6 +645,7 @@ function showDataTableModal(obj) {
     }); //end blur
 
     $("#data-table-id").val(id);
+    $("#data-table-isleading").prop("checked",isleading);
     $("#data-table-name").val(name);
     $("#data-table-number").val(thNum);
     $("#data-table-label").val(label);
@@ -1465,23 +1493,35 @@ $(function () {
         });
         if (id == "" || id == null || name == null || name == "" || thContentFlag) {
             $("#data-table-warn").modal('show');
+            jQuery('#dataTableModal .modal-body').animate({
+        	    scrollTop: $("#data-table-warn").parent().offset().top-150
+        	}, 300);
         } else if (nameIsRepeat(name)) { //判断组件name是否重复
             $("#data-table-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
             $("#data-table-warn").modal('show');
+            jQuery('#dataTableModal .modal-body').animate({
+        	    scrollTop: $("#data-table-warn").parent().offset().top-150
+        	}, 300);
         } else {
             var tableObj = view.find("table");
             var tableLabel = $("#data-table-label").val().trim();
+            var isleading = $("#data-table-isleading").prop("checked");
             tableObj.attr({
                 "id": id,
                 "name": name,
-                "table-label":tableLabel
+                "table-label":tableLabel,
+                "isleading":isleading
             });
             var tableThArr = $(".data-table-head");
             var tableThNameArr = $(".data-table-head-name");
             var flag = true;
             tableThNameArr.each(function(){
-            	if(nameIsRepeat($(this).val().trim())){
-                	flag = false;
+                if($(this).val()==null || $(this).val()==""){
+            		flag = false;
+            	}else{
+                    if(nameIsRepeat($(this).val().trim())){
+                        flag = false;
+                    }
                 }
             });
             if(flag){
@@ -1490,6 +1530,7 @@ $(function () {
                     var tableThObj = $(tableThArr[i]);
                     var tableThName = $(tableThNameArr[i]);
                     var tableThType = $($(".data-table-type")[i]);
+                    var moveView = $($(".data-table-move-view")[i]);
                     var thHtml = "<th col-type='" + tableThType.val() + "' name='"+tableThName.val().trim()+"'>" + tableThObj.val() + "</th>";
                     tableObj.find("thead tr").append(thHtml);
                 }
@@ -1497,8 +1538,11 @@ $(function () {
                 $("#data-table-warn").modal('hide');
                 $("#dataTableModal").modal("hide");
             }else{
-            	$("#data-table-warn").html("<strong>警告！</strong>您输入的列头name重复，请重新输入");
+            	$("#data-table-warn").html("<strong>警告！</strong>您输入的列头name有问题，请重新输入");
                 $("#data-table-warn").modal('show');
+                jQuery('#dataTableModal .modal-body').animate({
+                    scrollTop: $("#data-table-warn").parent().offset().top-150
+                }, 300);
             }
         }
     });

@@ -1695,6 +1695,15 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<div class="col-sm-offset-4 col-xs-7">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" id="data-table-isleading">是否可以导入数据
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-xs-2 col-sm-offset-2 control-label">
 								表格列数
 								<span style="color:red;float:left;">*</span>
@@ -1704,7 +1713,7 @@
 							</div>
 						</div>
 						<div class="form-group col-xs-12 data-table-set">
-							<label class="col-xs-2 col-sm-offset-1 control-label">
+							<label class="col-xs-2 control-label">
 								列头文本
 								<span style="color:red;float:left;">*</span>
 							</label>
@@ -1725,6 +1734,15 @@
 									<option value="text" selected>文本框</option>
 									<option value="number">数字框</option>
 									<option value="date">日期文本框</option>
+								</select>
+							</div>
+							<label class="col-xs-1 col-sm-offset-1 control-label">
+								移动端显示
+							</label>
+							<div class="col-xs-2">
+								<select class="data-table-move-view col-xs-12">
+									<option value="true" selected>是</option>
+									<option value="false">否</option>
 								</select>
 							</div>
 						</div>

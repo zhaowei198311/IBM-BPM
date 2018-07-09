@@ -81,36 +81,49 @@ function drawPage() {
 					formHtml = formHtml.substring(0, formHtml.length - 4);
 					formHtml += "</tbody></table>";
 					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
-					var thObjArr = tableObj.find("thead th");
-					var trHtml = '<tr>';
-					for (var i = 0; i < thObjArr.length; i++) {
-						var thObj = $(thObjArr[i]);
-						trHtml += '<td data-label="' + thObj.text().trim() + '">';
-						switch (thObj.attr("col-type")) {
-							case "text": {
-								trHtml += '<input type="text" class="layui-input"/>';
-								break;
+					var isleading = tableObj.attr("isleading");
+					if(isleading){
+						var thObjArr = tableObj.find("thead th");
+						var id = tableObj.attr("id")+_getRandomString(2);
+						var trHtml = '<tr>';
+						for (var i = 0; i < thObjArr.length; i++) {
+							var thObj = $(thObjArr[i]);
+							if(thObj.attr("col-type")=="tool"){
+								trHtml += '<td data-label="' + thObj.text().trim() + '" width="120px">'
+									+'<button class="layui-btn load_data_file" id="'+id+'" type="button">导入数据文件</button></td>';
+							}else{
+								trHtml += '<td data-label="' + thObj.text().trim() + '"></td>';
 							}
-							case "number": {
-								trHtml += '<input type="tel" class="layui-input"/>';
-								break;
-							}
-							case "date": {
-								trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
-								break;
-							}
-							case "select": {
-								trHtml += '<select></select>';
-								break;
-							}
-							case "tool": {
-								trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' +
-									'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
-								break;
-							};
 						}
-						trHtml += '</td>';
+					}else{
+						var thObjArr = tableObj.find("thead th");
+						var trHtml = '<tr>';
+						for (var i = 0; i < thObjArr.length; i++) {
+							var thObj = $(thObjArr[i]);
+							trHtml += '<td data-label="' + thObj.text().trim() + '">';
+							switch (thObj.attr("col-type")) {
+								case "text": {
+									trHtml += '<input type="text" class="layui-input"/>';
+									break;
+								}
+								case "number": {
+									trHtml += '<input type="tel" class="layui-input"/>';
+									break;
+								}
+								case "date": {
+									trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+									break;
+								}
+								case "tool": {
+									trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' +
+										'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
+									break;
+								};
+							}
+							trHtml += '</td>';
+						}
 					}
+					
 					trHtml += '</tr>';
 					var tableLabel = tableObj.attr("table-label");
 					tableObj.append("<tbody>" + trHtml + "</tbody>");
@@ -355,8 +368,9 @@ function drawPage() {
 		$(this).css({ "display": "inline", "width": chooseInputWidth[index] }).attr("readonly", true);
 	});
 
-	layui.use(['form', 'layedit', 'laydate'], function () {
-		form = layui.form, layer = layui.layer, layedit = layui.layedit, laydate = layui.laydate;
+	layui.use(['form', 'layedit', 'laydate', 'upload'], function () {
+		form = layui.form, layer = layui.layer, layedit = layui.layedit
+				, laydate = layui.laydate,upload = layui.upload;
 
 		form.render();
 
@@ -412,6 +426,18 @@ function drawPage() {
 			laydate.render({
 				elem: '#' + dateInputId,
 				trigger: 'click'
+			});
+		});
+		
+		view.find(".load_data_file").each(function(){
+			upload.render({ //允许上传的文件后缀
+			    elem: $(this)
+			    ,url: '/upload/'
+			    ,accept: 'file' //普通文件
+			    ,exts: 'xls,xlsx' //只允许上传
+			    ,done: function(res){
+			      console.log(res)
+			    }
 			});
 		});
 	});
@@ -543,3 +569,14 @@ jQuery.fn.number = function () {
 		return false;
 	});
 }; 
+
+function _getRandomString(len) {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+}
