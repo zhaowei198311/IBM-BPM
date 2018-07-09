@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.desmart.desmartbpm.mq.rabbit.MQProducer;
 
-import com.desmart.desmartbpm.mq.MqSendUtil;
+
 
 public class RabbitMQTest {
 
