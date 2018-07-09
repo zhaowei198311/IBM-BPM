@@ -1338,7 +1338,7 @@ function formTable() {
 												+ '" lay-skin="primary">'
 												+ (index + 1) + '</td>';
 										trs += '<td>' + this.dynTitle + '</td>'
-									if(this.dynDescription!=null || this.dynDescription!=""){
+									if(this.dynDescription!=null && this.dynDescription!=""){
 										trs += '<td>' + this.dynDescription;
 									}else{
 										trs += '<td>';
@@ -2524,7 +2524,7 @@ function stepEdit(data) {
 // 修改环节关联表单信息
 var updateFormUid = "";// 要修改步骤的关联表单
 $("#update_search_form_btn").click(function() {
-	(updateFormUid);
+	updateFormTable(updateFormUid);
 });
 
 function updateFormTable(formUid) {
@@ -2591,6 +2591,7 @@ function stepFormEdit(data) {
 	}
 	$('#eidtstepUid').val(dates.stepUid);
 	layui.form.render();
+	updateFormUid = dates.stepObjectUid;
 	updateFormTable(dates.stepObjectUid);
 }
 
