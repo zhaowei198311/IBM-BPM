@@ -1,4 +1,4 @@
-package com.desmart.desmartportal.util;
+package com.desmart.common.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

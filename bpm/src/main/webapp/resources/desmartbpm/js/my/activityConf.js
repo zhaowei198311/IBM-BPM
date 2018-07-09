@@ -2863,7 +2863,7 @@ function drawTable(pageInfo) {
 		var sortNum = startSort + i;
 		var tempWebbot;
 		var tempParam;
-		if (trigger.triWebbot.length > 20) {
+		if (trigger.triWebbot != null && trigger.triWebbot.length > 20) {
 			tempWebbot = trigger.triWebbot.substring(0, 20) + "...";
 		} else {
 			tempWebbot = trigger.triWebbot;

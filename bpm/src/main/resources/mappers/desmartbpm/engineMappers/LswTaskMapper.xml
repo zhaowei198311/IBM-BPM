@@ -305,7 +305,7 @@
 		group by group_id
     </select>
 
-    <select id="queryTaskByTaskId" parameterType="int" resultType="com.desmart.desmartbpm.entity.engine.LswTask">
+    <select id="queryTaskByTaskId" parameterType="int" resultMap="relationMap">
       select <include refid="relationColumnList"/>, lux.user_name
       from lsw_task t
       left join LSW_USR_XREF lux on t.user_id = lux.user_id

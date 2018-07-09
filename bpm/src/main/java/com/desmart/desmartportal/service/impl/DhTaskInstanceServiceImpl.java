@@ -443,7 +443,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("routingRecord", routingRecord); // 流转记录
             //String paramStr = JSON.toJSONString(map);
             //mqProducerService.sendMessage("stepQueueKey", paramStr);
-			mqProducerService.sendMessage("mytestQueue", map);
+			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
             return ServerResponse.createBySuccess();
         }
     }

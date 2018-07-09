@@ -3,12 +3,12 @@
 <mapper namespace="com.desmart.desmartbpm.dao.BpmFormManageMapper" >
 
     <sql id="base_column">
-        DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_WEBPAGE,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME
+        DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_WEBPAGE,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME,FORM_NO_EXPRESSION
     </sql>
     
     <sql id="select_column">
         bmf.DYN_UID,bmf.DYN_TITLE,bmf.DYN_DESCRIPTION,bmf.DYN_WEBPAGE,
-        bmf.DYN_CONTENT,bmf.PRO_UID,bmf.PRO_VERSION,bmf.CREATOR,bmf.CREATE_TIME
+        bmf.DYN_CONTENT,bmf.PRO_UID,bmf.PRO_VERSION,bmf.CREATOR,bmf.CREATE_TIME,bmf.FORM_NO_EXPRESSION
     </sql>
     
     <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
@@ -67,12 +67,12 @@
     <insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	insert into bpm_form(<include refid="base_column"/>)
     	values(#{dynUid},#{dynTitle},#{dynDescription},#{dynWebpage},
-    		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate)
+    		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate,#{formNoExpression})
     </insert>
     
     <update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	update bpm_form 
-    	set dyn_title = #{dynTitle},dyn_description = #{dynDescription}
+    	set dyn_title = #{dynTitle},dyn_description = #{dynDescription},FORM_NO_EXPRESSION = #{formNoExpression}
     	where dyn_uid = #{dynUid}
     </update>
     

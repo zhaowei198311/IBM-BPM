@@ -26,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.mq.MqSendUtil;
 import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.service.TestService;
@@ -44,8 +43,6 @@ public class TestController extends BaseWebController {
     private BpmGlobalConfigService bpmGlobalConfigService; 
     @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
-    //@Autowired
-    private MqSendUtil mqSendUtil;
     @Autowired
     private DhProcessMetaService dhProcessService;
     @Autowired
