@@ -333,6 +333,22 @@ function drawPage() {
 
 		form.render();
 
+		view.find("input[type='radio']").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var filter = $(this).attr("lay-filter");
+			form.on('radio('+filter+')',function(){
+				$(this).trigger("click");
+			});
+		});
+		
+		view.find("input[type='checkbox']").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var filter = $(this).attr("lay-filter");
+			form.on('checkbox('+filter+')',function(){
+				$(this).trigger("click");
+			});
+		});
+		
 		view.find("input[type='text']").each(function () {
 			$(this).blur(function () {
 				if ($(this).attr("regx") != null && $(this).attr("regx") != "" &&

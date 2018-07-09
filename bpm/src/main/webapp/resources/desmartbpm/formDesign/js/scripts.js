@@ -721,6 +721,7 @@ $(document).ready(function () {
             formName: $("#formName").val(),
             formDescription: $("#formDescription").val(),
             formUid: $("#formUid").val(),
+            formNoExpression:$("#formNoExpression").val(),
             webpage: preHtml,
             dynHtml: dynHtml
         };
@@ -820,6 +821,7 @@ function saveHtml() {
                         proVersion: $("#proVersion").val(),
                         dynTitle: $("#formName").val(),
                         dynDescription: $("#formDescription").val(),
+                        formNoExpression:$("#formNoExpression").val(),
                         dynWebpage: webpage,
                         dynContent: dynContent
                     };
@@ -1012,6 +1014,7 @@ function saveHtml() {
                         proVersion: $("#proVersion").val(),
                         dynTitle: $("#formName").val(),
                         dynDescription: $("#formDescription").val(),
+                        formNoExpression:$("#formNoExpression").val(),
                         dynWebpage: webpage,
                         dynContent: dynContent
                     };
@@ -1156,7 +1159,7 @@ function saveHtml() {
                             		async:false,
                             		traditional: true,//传递数组给后台
                             		data:{
-                            			formUid:$("#downloadModal #formUid").val(),
+                            			formUid:result2.data,
                             			publicFormUidArr:publicFormUidArr
                             		},
                             		success:function(result){

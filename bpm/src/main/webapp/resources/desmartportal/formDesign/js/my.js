@@ -372,6 +372,22 @@ function drawPage() {
 		form = layui.form, layer = layui.layer, layedit = layui.layedit
 				, laydate = layui.laydate,upload = layui.upload;
 
+		view.find("input[type='radio']").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var filter = $(this).attr("lay-filter");
+			form.on('radio('+filter+')',function(){
+				$(this).trigger("click");
+			});
+		});
+		
+		view.find("input[type='checkbox']").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var filter = $(this).attr("lay-filter");
+			form.on('checkbox('+filter+')',function(){
+				$(this).trigger("click");
+			});
+		});
+		
 		form.render();
 
 		view.find("input[type='text']").each(function () {

@@ -31,7 +31,7 @@
 				color: #717171;
 				padding: 20px;
 				width: 400px;
-				height: 300px;
+				height: 400px;
 				background: #fff;
 				position: absolute;
 				margin: 100px 0 0 -200px;
@@ -91,6 +91,28 @@
 				border: 1px solid #ccc;
 				position: relative;
 				padding: 0 10px;
+			}
+			
+			.display_content{
+				height:400px;
+			}
+			
+			.middle{
+				height:295px;
+			}
+			
+			.expression-cue{
+				border: 1px solid #CCC;
+				border-radius: 5px;
+				height:90px;
+				width:98%;
+				margin:auto;
+				margin-top:-10px;
+				font-size: 12px;
+				padding-top: 4px;
+    			padding-left: 4px;
+    			color:#028467;
+    			font-weight: bold;
 			}
 		</style>
 	</head>
@@ -165,6 +187,16 @@
 					    <div class="layui-input-block">
 					      <input type="text" id="form-description" name="formDescription" class="layui-input">
 					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单编号生成规则</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="form-no-expression" name="formNoExpression" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item expression-cue">
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -192,6 +224,16 @@
 					    <div class="layui-input-block">
 					      <input type="text" id="update-form-description" name="formDescription" class="layui-input">
 					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单编号生成规则</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="update-form-no-expression" name="formNoExpression" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item expression-cue">
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -264,6 +306,16 @@
 					    <div class="layui-input-block">
 					      <input type="text" id="copy-form-description" name="formDescription" class="layui-input">
 					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单编号生成规则</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-form-no-expression" name="formNoExpression" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item expression-cue">
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -310,7 +362,17 @@
 					    <div class="layui-input-block">
 					      <input type="text" id="copy-sel-form-description" name="formDescription" class="layui-input">
 					    </div>
-					  </div>				  
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单编号生成规则</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-sel-form-no-expression" name="formNoExpression" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item expression-cue">
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
+					  </div>						  
 					</form>
 				</div>
 				<div class="foot">
@@ -347,6 +409,7 @@
 	    var copyFromFlag = false;//是否可以复制表单的控制变量
 	    var oldFormName = "";//修改表单信息时表单的旧名称
 	    var oldFormDescription = "";//修改表单信息时的旧描述
+	    var oldFormNoExpression = "";//修改表单信息时的旧编号生成规则
 	    var oldProUid = "";//修改表单信息时的流程id
 	    var oldProVersion = "";//修改表单信息时的流程版本id
 	    var updateFormId = "";//修改表单时表单的Id
@@ -581,6 +644,8 @@
 					if(oldFormDes!=null && oldFormDes!=""){
 						$("#copy-form-description").val(oldFormDes+"_copy");
 					}
+					var copyFormNoExpression = checkSel.parent().parent().data("expression");
+					$("#copy-form-no-expression").val(copyFormNoExpression);
 					$(".display_container_copy").css("display", "block");
 				}else{
 					layer.alert("请选择一个要复制的表单");
@@ -600,6 +665,8 @@
 					if(oldFormDes!=null && oldFormDes!=""){
 						$("#copy-sel-form-description").val(oldFormDes+"_copy");
 					}
+					var copyFormNoExpression = checkInput.parent().parent().data("expression");
+					$("#copy-sel-form-no-expression").val(copyFormNoExpression);
 					$(".display_sel_copy").css("display","block");
 				}else{
 					layer.alert("一次只能复制一个表单");
@@ -626,7 +693,10 @@
 			var proVersion = copyFormSelVerId;
 			var formName = $("#copy-sel-form-name").val().trim();
 			var formDescription = $("#copy-sel-form-description").val().trim();
-			
+			var formNoExpression = $("#copy-sel-form-no-expression").val().trim();
+			if(!isStandardExpression(formNoExpression)){
+				return;
+			}
 			$.ajax({
 				url:common.getPath()+"/formManage/queryProFormByName",
 				method:"post",
@@ -645,7 +715,8 @@
 								dynTitle:formName,
 								dynDescription:formDescription,
 								proUid:proUid,
-								proVersion:proVersion
+								proVersion:proVersion,
+								formNoExpression:formNoExpression
 							},
 							success:function(result2){
 								if(result2.status==0){
@@ -704,7 +775,8 @@
                 var updateTime = "";
         		trs += '<tr data-formuid="'+formInfo.dynUid
         					+'" data-prouid="'+formInfo.proUid
-        					+'" data-proversion="'+formInfo.proVersion+'">'
+        					+'" data-proversion="'+formInfo.proVersion
+        					+'" data-expression="'+formInfo.formNoExpression+'">'
         					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -765,7 +837,8 @@
                 var updateTime = "";
         		trs += '<tr data-formuid="'+formInfo.dynUid
         					+'" data-prouid="'+formInfo.proUid
-        					+'" data-proversion="'+formInfo.proversion+'">'
+        					+'" data-proversion="'+formInfo.proVersion
+        					+'" data-expression="'+formInfo.formNoExpression+'">'
         					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>';
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -775,8 +848,10 @@
         		}
         		trs += '<td>'+formInfo.proMetaName+'</td>'
 	            			+'<td>'+formInfo.proVerName+'</td>'
-        		            + '<td><i class="layui-icon" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'+
-        		            ' <i class="layui-icon" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
+        		            + '<td><i class="layui-icon" data-expression="'+formInfo.formNoExpression
+        		            +'" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'+
+        		            ' <i class="layui-icon" data-expression="'+formInfo.formNoExpression
+        		            +'" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
         		            + '</tr>';
         	}
         	$("#formInfo-table-tbody").append(trs);
@@ -785,9 +860,13 @@
       	//新建表单--跳转到表单设计器页面
 		function createForm(){
 			var formName = $("#form-name").val().trim();
+			var formNoExpression = $("#form-no-expression").val().trim();
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
 			}else{
+				if(!isStandardExpression(formNoExpression)){
+					return;
+				}
 				$.ajax({
 					url:common.getPath()+"/formManage/queryProFormByName",
 					method:"post",
@@ -798,11 +877,15 @@
 					},
 					success:function(result){
 						if(result.status==0){
-							var href = "/formManage/designForm?formName="+formName
-									+"&formDescription="+$("#form-description").val().trim()
-									+"&proUid="+pageConfig.proUid
-									+"&proVersion="+pageConfig.proVerUid;
-							window.location.href = common.getPath()+href;
+							var href = "/formManage/designForm";
+							var param = {
+								formName:formName,
+								formDescription:$("#form-description").val().trim(),
+								proUid:pageConfig.proUid,
+								proVersion:pageConfig.proVerUid,
+								formNoExpression:formNoExpression
+							};
+							post(common.getPath()+href,param);
 							$(".display_container").css("display", "none");
 						}else{
 							layer.alert("同一个流程定义表单名不能重复");
@@ -812,22 +895,48 @@
 			}
 		}
 		
+      	//判断表单编号生成规则是否符合标准
+      	function isStandardExpression(formNoExpression){
+      		if(formNoExpression==null || formNoExpression==""){
+				layer.alert("请填写表单编号生成规则");
+				return false;
+			}
+			var strArr = formNoExpression.match(/{[^}]+}/g);
+			if(null==strArr || strArr.length<=0){
+				layer.alert("请输入语法正确的变量");
+				return false;
+			}
+			for(var i=0;i<strArr.length;i++){
+				var str = strArr[i];
+				var regx = new RegExp(/^{(num[1-9])}/);
+				if(str.indexOf("yyyy-MM-dd")==-1 
+						&& !regx.test(str)){
+					layer.alert("请输入语法正确的变量");
+					return false;
+				}
+			}
+			return true;
+      	}
+      	
 		//修改表单信息
 		function updateForm(){
 			var formName = $("#update-form-name").val().trim();
 			var formDescription = $("#update-form-description").val().trim();
+			var formNoExpression = $("#update-form-no-expression").val().trim();
+			if(!isStandardExpression(formNoExpression)){
+				return;
+			}
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
-			}else if(oldFormName==formName && oldFormDescription==formDescription){
-				$(".display_container2").css("display", "none");
-			}else if(oldFormName==formName && oldFormDescription!=formDescription){
+			}else if(oldFormName==formName){
 				$.ajax({
 					url:common.getPath()+"/formManage/updateFormInfo",
 					method:"post",
 					data:{
 						dynUid:updateFormId,
 						dynTitle:formName,
-						dynDescription:formDescription
+						dynDescription:formDescription,
+						formNoExpression:formNoExpression
 					},
 					success:function(result2){
 						if(result2.status==0){
@@ -856,7 +965,8 @@
 								data:{
 									dynUid:updateFormId,
 									dynTitle:formName,
-									dynDescription:formDescription
+									dynDescription:formDescription,
+									formNoExpression:formNoExpression
 								},
 								success:function(result2){
 									if(result2.status==0){
@@ -880,14 +990,21 @@
 		function updateFormContent(obj){
 			var trObj = $(obj).parent().parent();
 			var formId = trObj.data("formuid");
+			var proUid = trObj.data("prouid");
+			var proVersion = trObj.data("proversion");
 			var dynTitle = $(trObj.find("td")[1]).text().trim();
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
-			var href = "/formManage/designForm?formUid="+formId
-					+"&formName="+dynTitle
-					+"&formDescription="+dynDescription
-					+"&proUid="+pageConfig.proUid	//当用户未点击流程定义时，表单内容中包含了流程定义Id及版本Id
-					+"&proVersion="+pageConfig.proVerUid;
-			window.location.href = common.getPath()+href;
+			var formNoExpression = trObj.data("expression");
+			var href = "/formManage/designForm";
+			var param = {
+				formUid:formId,
+				formName:dynTitle,
+				formDescription:dynDescription,
+				proUid:proUid,
+				proVersion:proVersion,
+				formNoExpression:formNoExpression
+			};
+			post(common.getPath()+href,param);
 		}
 		
 		//删除表单
@@ -944,7 +1061,10 @@
 			var proVersion = pageConfig.proVerUid;
 			var formName = $("#copy-form-name").val().trim();
 			var formDescription = $("#copy-form-description").val().trim();
-			
+			var formNoExpression = $("#copy-form-no-expression").val().trim();
+			if(!isStandardExpression(formNoExpression)){
+				return;
+			}
 			$.ajax({
 				url:common.getPath()+"/formManage/queryProFormByName",
 				method:"post",
@@ -963,7 +1083,8 @@
 								dynTitle:formName,
 								dynDescription:formDescription,
 								proUid:proUid,
-								proVersion:proVersion
+								proVersion:proVersion,
+								formNoExpression:formNoExpression
 							},
 							success:function(result2){
 								if(result2.status==0){
@@ -988,12 +1109,15 @@
 			updateFormId = trObj.data("formuid");
 			var dynTitle = $(trObj.find("td")[1]).text().trim();
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
+			var formNoExpression = $(obj).data("expression");
 			oldFormDescription = dynDescription;
 			oldFormName = dynTitle;
 			oldProUid = trObj.data("prouid");
 			oldProVersion = trObj.data("proversion");
+			oldFormNoExpression = formNoExpression;
 			$("#update-form-name").val(dynTitle);
 			$("#update-form-description").val(dynDescription);
+			$("#update-form-no-expression").val(formNoExpression);
 			$(".display_container2").css("display", "block");
 		}
 		
@@ -1043,4 +1167,21 @@
 		    }  
 		    return pwd;  
 		} 
+		
+		function post(URL, PARAMS) {
+		    var temp_form = document.createElement("form");
+		    temp_form.action = URL;
+		    // temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+		    temp_form.method = "post";
+		    temp_form.style.display = "none";
+		    for (var x in PARAMS) {
+		        var opt = document.createElement("textarea");
+		        opt.name = x;
+		        opt.value = PARAMS[x];
+		        temp_form.appendChild(opt);
+		    }
+		    document.body.appendChild(temp_form);
+		    temp_form.submit();
+		    temp_form.remove();
+		}
 </script>

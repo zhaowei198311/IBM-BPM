@@ -2195,6 +2195,7 @@
 					<input type="hidden" id="proVersion" value="${proVersion}" />
 					<input type="hidden" id="formName" value="${formName}" />
 					<input type="hidden" id="formDescription" value="${formDescription}" />
+					<input type="hidden" id="formNoExpression" value="${formNoExpression}"/>
 					<input type="hidden" id="nameArr" value="">
 					<input type="hidden" id="publicFormUidArr" value="">
 					<span style="display:none;" id="dynHtml">${ dynHtml }</span>

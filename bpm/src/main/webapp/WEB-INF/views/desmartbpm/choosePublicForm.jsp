@@ -54,7 +54,7 @@
 	//分页控件的参数
 	var pageConfig = {
 		pageNum: 1,
-		pageSize: 10,
+		pageSize: 5,
 		total: 0
 	}
 

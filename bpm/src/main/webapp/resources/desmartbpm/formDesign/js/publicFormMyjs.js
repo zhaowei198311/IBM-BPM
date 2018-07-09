@@ -49,7 +49,7 @@ function textAddEventModal(obj) {
 //显示填写select组件事件脚本的js
 function saveSelectEvent() {
     var inputObj = view.find("select");
-    var onchangeStr = $("#selectAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\"");
+    var onchangeStr = $("#selectAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\'");
     inputObj.attr({
         "onchange": onchangeStr
     });
@@ -68,7 +68,7 @@ function saveClickEvent() {
     if (subObj.length == 0) {
         subObj = view.find("input[type='checkbox']");
     }
-    var onclickStr = $("#clickAddEventModal textarea[title='onclick']").val().replace(/\"/g, "\"");
+    var onclickStr = $("#clickAddEventModal textarea[title='onclick']").val().replace(/\"/g, "\'");
     subObj.attr({
         "onclick": onclickStr
     });
@@ -1280,14 +1280,14 @@ $(function () {
                 if(radioText != "" && radioText != null && radioValue!=null && radioValue!="") {
                     var html = "<label class='radio'>" +
                         "<input type='radio' class='" + id + "' id='" + id + i 
-                        + "' name='" + formCode+"_"+name + "' value='"+radioValue+"'/>" +
+                        + "' name='" + formCode+"_"+name + "' lay-filter='"+formCode+"_"+name+"' value='"+radioValue+"'/>" +
                         radioText +
                         "</label>";
                     parentDivObj.append(html);
                 }else{
                 	var html = "<label class='radio'>" +
                     "<input type='radio' class='" + id + "' id='" + id + i 
-                    + "' name='" + formCode+"_"+name + "' value='radioValue'/>radioValue</label>";
+                    + "' name='" + formCode+"_"+name + "' lay-filter='"+formCode+"_"+name+"' value='radioValue'/>radioValue</label>";
                 	parentDivObj.append(html);
                 }
                 if(i==0){
@@ -1341,12 +1341,12 @@ $(function () {
                 if(checkboxText!=null && checkboxText!="" && checkboxValue!=null && checkboxValue!=""){
                 	html += "<label class='checkbox'>" +
 	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
-	                    + "' name='" + formCode+"_"+name + "' value='"+checkboxValue+"'/>"+checkboxText+
+	                    + "' name='" + formCode+"_"+name + "' lay-filter='"+formCode+"_"+name+"' value='"+checkboxValue+"'/>"+checkboxText+
 	                    "</label>";
                 }else{
                 	html += "<label class='checkbox'>" +
 	                    "<input type='checkbox' class='" + id + "' id='" + id + i 
-	                    + "' name='" + formCode+"_"+name + "' value='checkboxValue'/>checkboxText" +
+	                    + "' name='" + formCode+"_"+name + "' lay-filter='"+formCode+"_"+name+"' value='checkboxValue'/>checkboxText" +
 	                    "</label>";
                 }
                 parentDivObj.append(html);

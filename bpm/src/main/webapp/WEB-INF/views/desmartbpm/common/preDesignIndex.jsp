@@ -84,6 +84,7 @@
 		<input type="hidden" id="formDescription" value="${formDescription}"/>
 		<input type="hidden" id="proUid" value="${proUid}"/>
 		<input type="hidden" id="proVersion" value="${proVersion}"/>
+		<input type="hidden" id="formNoExpression" value="${formNoExpression}"/>
 		<span id="dynHtml" style="display:none;">${dynHtml}</span>
         <span id="test" style="float: right; padding-right: 20px;">
             <button class="layui-btn layui-btn-sm" onclick="returnEdit()">返回编辑</button>
@@ -133,6 +134,7 @@
 			formName:$("#formName").val(),
 			formDescription:$("#formDescription").val(),
 			formUid:$("#formUid").val(),
+			formNoExpression:$("#formNoExpression").val(),
 			dynHtml:dynContent 
 		};
 		post(url,preParam);

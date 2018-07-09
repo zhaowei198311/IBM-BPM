@@ -49,9 +49,6 @@ public class BpmFormManageController {
 	@Autowired
 	private DhProcessDefinitionService dhProcessDefinitionService;
 	
-	@Autowired
-	private BpmGlobalConfigService bpmGlobalConfigService;
-	
 	/**
 	 * 进入流程表单管理页面
 	 */
@@ -68,7 +65,7 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/preIndex")
 	public ModelAndView preIndex(String proUid,String proVersion,String formUid,
-			String formName,String formDescription,String dynHtml,String webpage) {
+			String formName,String formDescription,String dynHtml,String webpage,String formNoExpression) {
 		ModelAndView mv = new ModelAndView("desmartbpm/common/preDesignIndex");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
@@ -77,6 +74,7 @@ public class BpmFormManageController {
 		mv.addObject("proVersion", proVersion);
 		mv.addObject("webpage", webpage);
 		mv.addObject("dynHtml", dynHtml);
+		mv.addObject("formNoExpression",formNoExpression);
         return mv;
 	}
 	
@@ -85,7 +83,7 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/designForm")
 	public ModelAndView designForm(String formName,String formDescription,String formUid,
-			String proUid,String proVersion,String dynHtml) {
+			String proUid,String proVersion,String dynHtml,String formNoExpression) {
 		ModelAndView mv = new ModelAndView("desmartbpm/common/formDesign");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
@@ -93,6 +91,7 @@ public class BpmFormManageController {
 		mv.addObject("formUid", formUid);
 		mv.addObject("proVersion", proVersion);
 		mv.addObject("dynHtml", dynHtml);
+		mv.addObject("formNoExpression",formNoExpression);
 		return mv;
 	}
 	
@@ -192,7 +191,12 @@ public class BpmFormManageController {
 	@RequestMapping(value = "/saveForm")
 	@ResponseBody
 	public ServerResponse saveForm(@RequestBody BpmForm bpmForm) {
-		return bpmFormManageService.saveForm(bpmForm);
+		try {
+			return bpmFormManageService.saveForm(bpmForm);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ServerResponse.createByError();
+		}
 	}
 	
 	

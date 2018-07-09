@@ -245,6 +245,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		bpmForm.setDynUid(newFormUid);//重新生成唯一主键
         String currUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         bpmForm.setCreator(currUser);
+        bpmForm.setFormNoExpression(oldBpmForm.getFormNoExpression());
         bpmForm.setDynWebpage(oldBpmForm.getDynWebpage());
         bpmForm.setDynContent(oldBpmForm.getDynContent());
         int countRow = bpmFormManageMapper.saveForm(bpmForm);

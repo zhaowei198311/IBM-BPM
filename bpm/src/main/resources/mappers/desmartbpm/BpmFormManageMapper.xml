@@ -3,7 +3,8 @@
 <mapper namespace="com.desmart.desmartbpm.dao.BpmFormManageMapper" >
 
     <sql id="base_column">
-        DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_WEBPAGE,DYN_CONTENT,PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME,FORM_NO_EXPRESSION
+        DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_WEBPAGE,DYN_CONTENT,
+        PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME,FORM_NO_EXPRESSION
     </sql>
     
     <sql id="select_column">
