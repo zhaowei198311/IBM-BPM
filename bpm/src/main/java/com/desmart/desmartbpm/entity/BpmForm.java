@@ -45,9 +45,6 @@ public class BpmForm {
 		this.proVerName = proVerName;
 	}
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
 	public String getFormNoExpression() {
 		return formNoExpression;
 	}
