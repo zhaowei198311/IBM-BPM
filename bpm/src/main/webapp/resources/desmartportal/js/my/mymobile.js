@@ -9,6 +9,12 @@ $(function(){
 		e.stopPropagation();
 		$("#child_menu").toggle(150);
 	});
+	
+	$(".layui-fixbar-top").click(function(){
+		jQuery('html,body').animate({
+		    scrollTop: 0
+		}, 300);
+	});
 });
 
 window.onclick=function(){

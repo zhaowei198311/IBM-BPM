@@ -40,6 +40,7 @@
 .mobile_middle{
 	margin-top:50px;
 	width:100%;
+	overflow-y: auto;
 }
 
 .mobile_bottom{
@@ -334,4 +335,45 @@ input[disabled], .layui-select-disabled .layui-disabled {
 	display:none;
 }
 
+/*回到顶部的css*/
+.layui-fixbar {
+    position: fixed;
+    right: 10px;
+    bottom: 45px;
+    z-index: 9999;
+}
+.layui-fixbar .layui-fixbar-top {
+    font-size: 30px;
+    border-radius: 50%;
+}
+.layui-fixbar li {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    margin-bottom: 1px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 30px;
+    background-color: #9F9F9F;
+    color: #fff;
+    border-radius: 2px;
+    opacity: .95;
+}
+
+/*上传附件*/
+#loadFile_div li{
+	text-align: left;
+}
+#loadFile_div li table {
+    width: 90%;
+    margin: auto;
+}
+#loadFile_div th{
+	width:30%;
+    padding: 5px 0px;
+}
+#loadFile_div td{
+	width:70%;
+    padding: 5px 0px;
+}
 
