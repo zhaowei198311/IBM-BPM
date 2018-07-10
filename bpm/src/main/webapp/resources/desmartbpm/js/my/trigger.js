@@ -159,6 +159,7 @@ layui.use([ 'laypage', 'layer', 'form', 'jquery' ], function() {
 				type : 'post',
 				dataType : 'json',
 				data : {
+					intStatus : 'enabled'
 				},
 				success : function(result){
 					var data = result.data.list;

@@ -40,6 +40,11 @@ public interface DhInterfaceMapper {
 	List <DhInterface> listAll();
 	
 	/**
+	 * 根据状态查询所有接口
+	 */
+	List <DhInterface> listAllByStatus(String intStatus);
+	
+	/**
 	 * 根据条件模糊查询 
 	 * @return list返回界面
 	 */

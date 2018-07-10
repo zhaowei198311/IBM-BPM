@@ -26,6 +26,8 @@
 						<option value="sql">sql</option>
 						<option value="interface">interface</option>
 						<option value="javaclass">javaclass</option>
+						<option value="chooseUser">chooseUser</option>
+						<option value="validate">validate</option>
 					</select>
 				</div>
 				<div class="layui-col-md2" style="text-align: right; width: 180px">
@@ -82,6 +84,8 @@
 										<option value="sql">sql</option>
 										<option value="interface">interface</option>
 										<option value="javaclass">javaclass</option>
+										<option value="chooseUser">chooseUser</option>
+										<option value="validate">validate</option>
 									</select>
 								</div>
 							</div>
@@ -165,6 +169,8 @@
 										<option value="sql">sql</option>
 										<option value="interface">interface</option>
 										<option value="javaclass">javaclass</option>
+										<option value="chooseUser">chooseUser</option>
+										<option value="validate">validate</option>
 									</select>
 								</div>
 							</div>

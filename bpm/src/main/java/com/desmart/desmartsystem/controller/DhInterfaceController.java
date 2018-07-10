@@ -73,9 +73,9 @@ public class DhInterfaceController {
 	
 	@RequestMapping(value = "/queryDhInterfaceList")
 	@ResponseBody
-	public ServerResponse queryDhInterface(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
+	public ServerResponse queryDhInterface(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,@RequestParam(value="intStatus")String intStatus) {
         // todo
-        return  dhInterfaceService.listDhInterface(pageNum, pageSize);
+        return  dhInterfaceService.listDhInterfaceByStatus(pageNum, pageSize, intStatus);
 	}
 
 	@RequestMapping(value = "/add")

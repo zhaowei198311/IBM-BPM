@@ -122,4 +122,19 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	public DhInterface selectDhInterfaceByid(String intUid) {
 		return dhInterfaceMapper.selectByintUid(intUid);
 	}
+
+	/* (non-Javadoc)
+	 * @see com.desmart.desmartsystem.service.DhInterfaceService#listDhInterfaceByStatus(java.lang.Integer, java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	public ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByStatus(Integer pageNum, Integer pageSize,
+			String intStatus) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<DhInterface> interfacelist = dhInterfaceMapper.listAllByStatus(intStatus);
+		if (null == interfacelist || interfacelist.size() == 0) {
+			LOG.info("查询接口出错,出错类为{}", DhInterfaceServiceImpl.class);
+		}
+		PageInfo<List<DhInterface>> pageInfo = new PageInfo(interfacelist);
+		return  ServerResponse.createBySuccess(pageInfo);
+	}
 }

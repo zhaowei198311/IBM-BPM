@@ -490,6 +490,11 @@ $(function() {
 											+ '</option>';
 									$("#table_sel").append(trs)
 								}
+								$("#table_sel option").each(function() {
+									text = $(this).text();
+									if($("#table_sel option:contains("+text+")").length > 1)
+										$("#table_sel option:contains("+text+"):gt(0)").remove();
+								});
 								form.render();
 							},
 							error : function(result) {
@@ -654,16 +659,17 @@ $(function() {
 					formUid : formId
 				},
 				success : function(result){
-					console.info(result)
-					for (var i = 0; i < result.data.length; i++) {
-						 var trs = '<option value="'+result.data[i].fldCodeName+'">'
-						 + result.data[i].fldCodeName
-						 + '</option>';		
-						var dataTableList = $(".list_mod").find(".layui-form-item").find(".layui-row");
-						for (var j = 0; j < dataTableList.length; j++) {
-							var inputArr = $(dataTableList[j]).find(".listParam");
-							//$(inputArr).empty();
-							$(inputArr).append(trs);
+					if(result.data.length != 0){
+						for (var i = 0; i < result.data.length; i++) {
+							 var trs = '<option value="'+result.data[i].fldCodeName+'">'
+							 + result.data[i].fldCodeName
+							 + '</option>';		
+							var dataTableList = $(".list_mod").find(".layui-form-item").find(".layui-row");
+							for (var j = 0; j < dataTableList.length; j++) {
+								var inputArr = $(dataTableList[j]).find(".listParam");
+								//$(inputArr).empty();
+								$(inputArr).append(trs);
+							}
 						}
 					}
 				},
@@ -917,11 +923,21 @@ $(function() {
 									+ '</option>';
 							$("#table_sel").append(trs)
 						}
+						$("#table_sel option").each(function() {
+							text = $(this).text();
+							if($("#table_sel option:contains("+text+")").length > 1)
+								$("#table_sel option:contains("+text+"):gt(0)").remove();
+						});
 						form.render();
 					},
 					error : function(result) {
 						layer.alert('查询环节出错')
 					}
+				});
+				$("#table_sel option").each(function() {
+					text = $(this).text();
+					if($("#table_sel option:contains("+text+")").length > 1)
+						$("#table_sel option:contains("+text+"):gt(0)").remove();
 				});
 			//	document.getElmentById("paramterType").value="outputParameter";
 				var dataTableList = $("#col_md6").find(".layui-form-item").find(".layui-row");
@@ -1051,6 +1067,11 @@ $(function() {
 										+ '</option>';
 								$("#table_sel").append(trs)
 							}
+							$("#table_sel option").each(function() {
+								text = $(this).text();
+								if($("#table_sel option:contains("+text+")").length > 1)
+									$("#table_sel option:contains("+text+"):gt(0)").remove();
+							});
 							form.render();
 						},
 						error : function(result) {

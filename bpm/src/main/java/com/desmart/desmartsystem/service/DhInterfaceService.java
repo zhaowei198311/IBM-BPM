@@ -60,4 +60,12 @@ public interface DhInterfaceService {
 	 * @return
 	 */
 	DhInterface selectDhInterfaceByid (String intUid);
+	
+	/**
+	 * 根据接口状态查询所有接口
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhInterface>>> listDhInterfaceByStatus(Integer pageNum, Integer pageSize, String intStatus);
 }
