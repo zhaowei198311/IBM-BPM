@@ -87,7 +87,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
 	public ServerResponse saveFile(MultipartFile[] multipartFiles, String uploadModels, String appUid
-			, String taskId,String activityId,String taskUid) {
+			,String activityId,String taskUid) {
 		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
 		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		
@@ -162,7 +162,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			        	dhInstanceDocument.setAppDocComment(jObject.get("appDocComment").toString());
 			        	dhInstanceDocument.setDocVersion(0);//文件版本
 			        	dhInstanceDocument.setAppUid(appUid);
-			        	dhInstanceDocument.setTaskId(taskId);
+			        	dhInstanceDocument.setTaskId(activityId);
 			        	dhInstanceDocument.setUserUid(creator);
 			        	dhInstanceDocument.setAppDocType(file.getContentType());
 			        	dhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
@@ -231,6 +231,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    DhInstanceDocument selectCondition = new DhInstanceDocument();
 	    selectCondition.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
 	    selectCondition.setAppDocIsHistory(Const.Boolean.TRUE);
+	    selectCondition.setAppDocTags(DhInstanceDocument.DOC_TAGS_PROCESS);//表示是流程附件
 	    list = accessoryFileUploadMapper.loadFileListByCondition(selectCondition);//得到当前标识的历史版本文件，将其也一并修改
 	    //dhInstanceDocument.setAppDocFileUrl("null");
 	    list.add(dhInstanceDocument);
@@ -294,7 +295,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
             newDhInstanceDocument.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
             newDhInstanceDocument.setDocVersion(oldDhInstanceDocument.getDocVersion()+1);
             newDhInstanceDocument.setAppUid(dhInstanceDocument.getAppUid());
-            newDhInstanceDocument.setTaskId(dhInstanceDocument.getTaskId());
+            newDhInstanceDocument.setTaskId(activityId);
             newDhInstanceDocument.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(currentDate)));
             newDhInstanceDocument.setUserUid(creator);
             
@@ -451,7 +452,8 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	}
 
 	@Override
-	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument) {
+	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
+				,String taskUid,String activityId) {
 		CommonsMultipartFile cf= (CommonsMultipartFile)multipartFile; 
         DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
         File file = fi.getStoreLocation();
@@ -459,7 +461,59 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		if(excelUtil.checkExcelTitleAndSort(file,GoodsStateModifyForm.class)) {
 			ServerResponse serverResponse = excelUtil.checkExcelContent(file,GoodsStateModifyForm.class);
 			if(serverResponse.isSuccess()) {
-				
+				String myFileName = multipartFile.getOriginalFilename();
+				if (myFileName.trim() != "") {
+					// 当前新增文件
+					InputStream inputStream;
+					try {
+						inputStream = multipartFile.getInputStream();
+						String creator = (String) SecurityUtils.getSubject().getSession()
+								.getAttribute(Const.CURRENT_USER);
+						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+						String currTime = simpleDateFormat.format(new Date());
+						Date currentDate = DateUtil.format(new Date());
+						DhInstanceDocument newDhInstanceDocument = new DhInstanceDocument();
+						String directory = "/AccessoryFile/";
+						String[] dateStrings = currTime.split("-");
+						directory += dateStrings[0] + "/" + dateStrings[1] + "/" + dateStrings[2] + "/";// 获取文件上传目录
+						// 年/月/日/当前时间戳+文件名
+						String newFileName = DateUtil.datetoString(currentDate) + myFileName;
+
+						newDhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);//数据表格文件
+						newDhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);
+						newDhInstanceDocument.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
+						newDhInstanceDocument.setAppUid(dhInstanceDocument.getAppUid());
+						newDhInstanceDocument.setTaskId(dhInstanceDocument.getTaskId());
+						newDhInstanceDocument
+								.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(currentDate)));
+						newDhInstanceDocument.setUserUid(creator);
+
+						String uuId = UUIDTool.getUUID();
+						newDhInstanceDocument.setAppDocFileName(myFileName);
+						newDhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT + uuId);
+						newDhInstanceDocument.setAppDocFileUrl(directory + newFileName);// 文件ftp存储路径
+						newDhInstanceDocument.setAppDocType(multipartFile.getContentType());
+						newDhInstanceDocument.setAppDocIndex(1);
+						newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// 是否被删除
+						List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
+						insert.add(newDhInstanceDocument);
+						accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
+						try {
+							SFTPUtil sftp = new SFTPUtil();
+							sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName,
+									inputStream);
+						} catch (SftpException e) {
+							LOG.error("保存附件失败", e);
+							return ServerResponse.createByErrorMessage("上传文件失败！");
+						}
+					} catch (IOException e1) {
+						LOG.error("保存附件失败", e1);
+						return ServerResponse.createByErrorMessage("上传文件失败！");
+					}
+					return ServerResponse.createBySuccessMessage("上传文件成功！");
+				} else {
+					return ServerResponse.createByErrorMessage("上传文件失败,文件不存在");
+				}
 			}else {
 				return ServerResponse.createByErrorMessage("上传失败,"+serverResponse.getMsg());
 			}
@@ -467,10 +521,6 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		}else {
 			return ServerResponse.createByErrorMessage("上传失败,首部的列名及排列顺序与模板文件的不一致");
 		}
-
-
-
-		return null;
 	}
 		
 }

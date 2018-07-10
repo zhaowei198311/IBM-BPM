@@ -57,11 +57,10 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse saveFile(@RequestParam("files") MultipartFile[] multipartFiles,
 			@RequestParam("uploadModels") String uploadModels, @RequestParam("appUid") String appUid,
-			@RequestParam("taskId") String taskId,
 			@RequestParam("activityId")String activityId
 			,@RequestParam("taskUid")String taskUid) {
 		return accessoryFileUploadServiceImpl.saveFile(multipartFiles, uploadModels
-				, appUid, taskId,activityId,taskUid);
+				, appUid,activityId,taskUid);
 	}
 
 	@RequestMapping(value = "loadFileList.do")
@@ -309,7 +308,17 @@ public class AccessoryFileUploadController {
 	}
 	@RequestMapping(value = "/uploadXlsOrXlsxFile")
 	@ResponseBody
-	public ServerResponse uploadXlsOrXlsxFile(@RequestParam("file")MultipartFile multipartFile,DhInstanceDocument dhInstanceDocument) {	
-		return accessoryFileUploadServiceImpl.uploadXlsOrXlsxFile(multipartFile,dhInstanceDocument);
+	public ServerResponse uploadXlsOrXlsxFile(@RequestParam("file")MultipartFile multipartFile,DhInstanceDocument dhInstanceDocument
+				,@RequestParam("taskUid")String taskUid,@RequestParam("activityId")String activityId) {	
+		return accessoryFileUploadServiceImpl.uploadXlsOrXlsxFile(multipartFile,dhInstanceDocument,taskUid,activityId);
+	}
+	@RequestMapping(value = "/loadDataFormFileList")
+	@ResponseBody
+	public ServerResponse<List<DhInstanceDocument>> loadDataFormFileList(DhInstanceDocument dhInstanceDocument) {// 加载已上传的数据表格文件列表
+		dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// normal表示没有被删除
+		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);// 表示不是历史文件
+		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);//表示是
+		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
+		return ServerResponse.createBySuccess(list);
 	}
 }

@@ -24,7 +24,7 @@ public interface AccessoryFileUploadMapper {
 	public List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName
 			,@Param("appDocUid")String appDocUid);
 	/**
-	 * 根据条件查询附件列表
+	 * 根据条件查询文件列表
 	 * @param dhInstanceDocument
 	 * @return
 	 */

@@ -60,6 +60,9 @@
    <if test="appDocIdCard != null and appDocIdCard != '' ">
     and APP_DOC_ID_CARD = #{appDocIdCard}
    </if>
+    <if test="appDocTags != null and appDocTags != '' ">
+    and app_doc_tags = #{appDocTags}
+   </if>
    </select>
    
    <update id="updateFileByKeys" 

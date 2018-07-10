@@ -47,13 +47,12 @@ public interface AccessoryFileUploadService {
 	 * @param multipartFiles
 	 * @param uploadModels
 	 * @param appUid
-	 * @param taskId
 	 * @param actcCanUploadAttach
 	 * @param taskUid
 	 * @return
 	 */
 	public ServerResponse saveFile(MultipartFile[] multipartFiles,String uploadModels,
-			String appUid,String taskId,String activityId,String taskUid);
+			String appUid,String activityId,String taskUid);
 	/**
 	 * 文件删除
 	 * @param dhInstanceDocument
@@ -101,7 +100,9 @@ public interface AccessoryFileUploadService {
 	 * 上传数据表格文件
 	 * @param multipartFile
 	 * @param dhInstanceDocument
+	 * @param activityId 
+	 * @param taskUid 
 	 * @return
 	 */
-	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument);
+	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument, String taskUid, String activityId);
 }

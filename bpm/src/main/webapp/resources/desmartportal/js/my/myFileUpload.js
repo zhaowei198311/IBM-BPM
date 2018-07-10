@@ -31,7 +31,6 @@ $(function(){
 		  
 		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
-		  var taskId = $("#activityId").val();
 		  var activityId = $("#activityId").val();	
   		  var taskUid = $("#taskUid").val();
   		  if(taskUid == undefined){
@@ -155,7 +154,6 @@ $(function(){
 			  			}
 
 	        	      this.data = {"appUid":appUid
-					    	,"taskId":taskId
 					    	,"activityId":activityId,"taskUid":taskUid
 					    	,uploadModels:'{"uploadModels":['+uploadModels+']}'};
 		    		// this.data = {uploadModels:uploadModels.toString()};
@@ -314,7 +312,6 @@ function loadFileList(){
 			var updateElem = $(this);
 			var fileCount = 0;
 			var appUid = $("#insUid").val();
-		    var taskId = $("#activityId").val();
 		    var appDocIdCard = updateElem.val();
 		    var appDocUid = updateElem.data("appdocuid");
 			var activityId = $("#activityId").val();	
@@ -330,7 +327,7 @@ function loadFileList(){
 			  var updateAccessoryFile = upload.render({
 				  elem: updateElem
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
-				    ,data: {"appUid":appUid,"taskId":taskId
+				    ,data: {"appUid":appUid
 				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
 				    	,"activityId":activityId,"taskUid":taskUid,"appDocTags":"process"}
 				    ,exts: formatStr
