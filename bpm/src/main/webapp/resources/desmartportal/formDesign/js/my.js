@@ -444,22 +444,6 @@ function drawPage() {
 				trigger: 'click'
 			});
 		});
-		
-		view.find(".load_data_file").each(function(){
-			upload.render({ //允许上传的文件后缀
-			    elem: $(this)
-			    ,url: common.getPath() +'/accessoryFileUpload/uploadXlsOrXlsxFile'
-			    ,accept: 'file' //普通文件
-			    ,exts: 'xls|xlsx' //只允许上传
-			    ,done: function(res){
-			      if(res.status==0){
-			    	  
-			      }else{
-			    	  layer.alert(res.msg);
-			      }
-			    }
-			});
-		});
 	});
 }
 

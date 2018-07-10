@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,21 +98,21 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 
 	@Override
 	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
-		//根据stepId去权限表中找字段的权限(VIEW--只读，HIDDEN--隐藏)
-		List<DhObjectPermission> objPermissList = dhObjectPermissionService.getFieldPermissionByStepUidNotPrint(stepUid);
 		//普通字段的权限json字符串
 		String jsonStr = "{";
 		//标题字段和表格字段的json字符串
 		String titleJsonStr = "{";
-		if(objPermissList.size()==0) {
-			String formUid = dhStepMapper.selectByPrimaryKey(stepUid).getStepObjectUid();
-			List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
-			List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
-			fieldList.addAll(publicFieldList);
-			for(int i=0;i<fieldList.size();i++) {
-				BpmFormField field = fieldList.get(i);
-				String fieldType = field.getFldType();
-				String fieldCodeName = field.getFldCodeName();
+		String formUid = dhStepMapper.selectByPrimaryKey(stepUid).getStepObjectUid();
+		List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
+		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+		fieldList.addAll(publicFieldList);
+		for(int i=0;i<fieldList.size();i++) {
+			BpmFormField field = fieldList.get(i);
+			String fieldType = field.getFldType();
+			String fieldCodeName = field.getFldCodeName();
+			String fldUid = field.getFldUid();
+			DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid, fldUid);
+			if(null == objPer) {
 				//判断该字段是否为标题或表格
 				if("title".equals(fieldType) || "object".equals(fieldType)){
 					//判断权限的类型
@@ -118,17 +120,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				}else {
 					jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
 				}
-			}
-		}else {
-			for(int i=0;i<objPermissList.size();i++) {
-				DhObjectPermission objPer = objPermissList.get(i);
-				//获得权限的字段对象
-				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUid(objPer.getOpObjUid());
-				if(null==formField) {
-					continue;
-				}
-				String fieldCodeName = formField.getFldCodeName();
-				String fieldType = formField.getFldType();
+			}else {
 				String opAction = objPer.getOpAction();
 				//判断该字段是否为标题或表格
 				if("title".equals(fieldType) || "object".equals(fieldType)){

@@ -652,14 +652,15 @@ var common = {
 				}else if($("[name='"+name+"']").prop("tagName")=="TABLE"){
 					var tableObj = $("[name='"+name+"']");
 					var tdArr = tableObj.find("td");
-					tableObj.find("th[col-type='tool']").remove();
+					tableObj.find("th[col-type='tool']").remove();					
+					tableObj.find("td[data-label='操作']").remove();
 					var fieldCodeName = "";
 					tdArr.each(function(){
 						if($(this).find("input").length != 0){
 							$(this).find("input").attr("disabled","true");
-							var type = $(this).find("input").attr("type");
-							if(type="data"){
-								$(this).find("input").attr("type","text");
+							var type = $(this).find("input").get(0).getAttribute("type");
+							if(type="date"){
+								$(this).find("input").get(0).setAttribute("type","text");
 							}
 						}else{
 							$(this).remove();

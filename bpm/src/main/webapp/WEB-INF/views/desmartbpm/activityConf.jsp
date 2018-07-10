@@ -1536,7 +1536,7 @@
 					}
 				});
 	})
-
+	
 	//编辑 只读  隐藏
 	function radiocheckAll(dataLength) {
 		var $table = $("#field_permissions_table");
@@ -1575,7 +1575,7 @@
 		} else if (EDIT == dataLength) {
 			$('#titleradioedit').click();
 		} else {
-			$("#editFieldPermissions input[name=radioAll]").prop("checked",
+			$("#editFieldPermissions input[name=titleradioAll]").prop("checked",
 					false);
 		}
 	}

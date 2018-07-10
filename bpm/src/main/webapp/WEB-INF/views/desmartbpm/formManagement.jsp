@@ -113,6 +113,7 @@
     			padding-left: 4px;
     			color:#028467;
     			font-weight: bold;
+    			overflow-x: hidden;
 			}
 		</style>
 	</head>
