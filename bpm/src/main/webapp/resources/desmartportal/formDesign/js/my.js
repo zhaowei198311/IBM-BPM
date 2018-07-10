@@ -89,8 +89,8 @@ function drawPage() {
 						for (var i = 0; i < thObjArr.length; i++) {
 							var thObj = $(thObjArr[i]);
 							if(thObj.attr("col-type")=="tool"){
-								trHtml += '<td data-label="' + thObj.text().trim() + '" width="120px">'
-									+'<button class="layui-btn load_data_file" id="'+id+'" type="button">导入数据文件</button></td>';
+								trHtml += '<td data-label="' + thObj.text().trim() + '" style="max-width:100px;min-width:50px;">'
+									+'<button class="layui-btn load_data_file" id="'+id+'" style="width:100%;padding:0 10px;" type="button">导入数据文件</button></td>';
 							}else{
 								trHtml += '<td data-label="' + thObj.text().trim() + '"></td>';
 							}

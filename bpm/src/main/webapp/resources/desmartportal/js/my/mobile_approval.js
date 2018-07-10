@@ -1029,7 +1029,8 @@ function showRouteBar() {
                         	}
                         	chooseUserDiv += "</ul></div>";
                         }else{
-                            chooseUserDiv += '';
+                        	chooseUserDiv += "<div class='choose_user_name_ul'><ul>"
+                        				+ '</ul></div>';
                         }
                         chooseUserDiv += '<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
                             +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
