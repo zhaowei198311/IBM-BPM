@@ -131,7 +131,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
                 }
                 //如果名称不为“”,说明该文件存在，否则说明该文件不存在  
                 if(myFileName.trim() !=""){  
-                    String directory ="/AccessoryFile/";
+                    String directory = DhInstanceDocument.DOC_PROCESS_DIRECTORY;
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     String[] dateStrings = simpleDateFormat.format(new Date()).split("-");
                     directory+=dateStrings[0]+"/"+dateStrings[1]+"/"+dateStrings[2]+"/";//获取文件上传目录
@@ -285,7 +285,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 				inputStream = multipartFile.getInputStream();
 			
 			DhInstanceDocument newDhInstanceDocument = new DhInstanceDocument();
-			String directory ="/AccessoryFile/";
+			String directory = DhInstanceDocument.DOC_PROCESS_DIRECTORY;
             String[] dateStrings = currTime.split("-");
             directory+=dateStrings[0]+"/"+dateStrings[1]+"/"+dateStrings[2]+"/";//获取文件上传目录
             // 年/月/日/当前时间戳+文件名
@@ -389,7 +389,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		String currTime = simpleDateFormat.format(new Date());
 		Date currentDate = DateUtil.format(new Date());
 		
-		String directory = "/AccessoryFile/";
+		String directory = DhInstanceDocument.DOC_PROCESS_DIRECTORY;
         String[] dateStrings = currTime.split("-");
         directory+=dateStrings[0]+"/"+dateStrings[1]+"/"+dateStrings[2]+"/";//获取文件上传目录
        
@@ -454,13 +454,24 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument
 				,String taskUid,String activityId) {
-		CommonsMultipartFile cf= (CommonsMultipartFile)multipartFile; 
-        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
-        File file = fi.getStoreLocation();
-        ExcelUtil excelUtil = ExcelUtil.getInstance();
-		if(excelUtil.checkExcelTitleAndSort(file,GoodsStateModifyForm.class)) {
-			ServerResponse serverResponse = excelUtil.checkExcelContent(file,GoodsStateModifyForm.class);
-			if(serverResponse.isSuccess()) {
+		//判断是否已经上传了文件数据
+		DhInstanceDocument selective = new DhInstanceDocument();
+		//selective.setTaskId(activityId);
+		selective.setAppUid(dhInstanceDocument.getAppUid());
+		selective.setAppDocStatus(Const.FileStatus.NORMAL);
+		selective.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);
+		selective.setAppDocIsHistory(Const.Boolean.FALSE);
+		List<DhInstanceDocument> checkList = this.loadFileListByCondition(selective);
+		if (checkList != null && checkList.size() > 0) {
+			return ServerResponse.createByErrorMessage("导入失败,只能导入一个数据文件");
+		}
+		CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+		DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+		File file = fi.getStoreLocation();
+		ExcelUtil excelUtil = ExcelUtil.getInstance();
+		if (excelUtil.checkExcelTitleAndSort(file, GoodsStateModifyForm.class)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(file, GoodsStateModifyForm.class);
+			if (serverResponse.isSuccess()) {
 				String myFileName = multipartFile.getOriginalFilename();
 				if (myFileName.trim() != "") {
 					// 当前新增文件
@@ -473,17 +484,17 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 						String currTime = simpleDateFormat.format(new Date());
 						Date currentDate = DateUtil.format(new Date());
 						DhInstanceDocument newDhInstanceDocument = new DhInstanceDocument();
-						String directory = "/AccessoryFile/";
+						String directory = DhInstanceDocument.DOC_DATAFORM_DIRECTORY;
 						String[] dateStrings = currTime.split("-");
 						directory += dateStrings[0] + "/" + dateStrings[1] + "/" + dateStrings[2] + "/";// 获取文件上传目录
 						// 年/月/日/当前时间戳+文件名
 						String newFileName = DateUtil.datetoString(currentDate) + myFileName;
 
-						newDhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);//数据表格文件
+						newDhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);// 数据表格文件
 						newDhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);
 						newDhInstanceDocument.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
 						newDhInstanceDocument.setAppUid(dhInstanceDocument.getAppUid());
-						newDhInstanceDocument.setTaskId(dhInstanceDocument.getTaskId());
+						newDhInstanceDocument.setTaskId(activityId);
 						newDhInstanceDocument
 								.setAppDocCreateDate(Timestamp.valueOf(DateUtil.datetoString(currentDate)));
 						newDhInstanceDocument.setUserUid(creator);
@@ -494,6 +505,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 						newDhInstanceDocument.setAppDocFileUrl(directory + newFileName);// 文件ftp存储路径
 						newDhInstanceDocument.setAppDocType(multipartFile.getContentType());
 						newDhInstanceDocument.setAppDocIndex(1);
+						newDhInstanceDocument.setDocVersion(0);
 						newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// 是否被删除
 						List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 						insert.add(newDhInstanceDocument);
@@ -502,25 +514,53 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 							SFTPUtil sftp = new SFTPUtil();
 							sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName,
 									inputStream);
+							return ServerResponse.createBySuccessMessage("导入文件成功");
 						} catch (SftpException e) {
 							LOG.error("保存附件失败", e);
-							return ServerResponse.createByErrorMessage("上传文件失败！");
+							return ServerResponse.createByErrorMessage("导入文件失败！");
 						}
 					} catch (IOException e1) {
 						LOG.error("保存附件失败", e1);
-						return ServerResponse.createByErrorMessage("上传文件失败！");
+						return ServerResponse.createByErrorMessage("导入文件失败！");
 					}
-					return ServerResponse.createBySuccessMessage("上传文件成功！");
+
 				} else {
-					return ServerResponse.createByErrorMessage("上传文件失败,文件不存在");
+					return ServerResponse.createByErrorMessage("导入文件失败,文件不存在");
 				}
-			}else {
-				return ServerResponse.createByErrorMessage("上传失败,"+serverResponse.getMsg());
+			} else {
+				return ServerResponse.createByErrorMessage("导入失败," + serverResponse.getMsg());
 			}
-			
-		}else {
-			return ServerResponse.createByErrorMessage("上传失败,首部的列名及排列顺序与模板文件的不一致");
+
+		} else {
+			return ServerResponse.createByErrorMessage("导入失败,首部的列名及排列顺序与模板文件的不一致");
 		}
 	}
+
+	@Override
+	public ServerResponse deleteDataFormFileList(DhInstanceDocument dhInstanceDocument, String taskUid) {
+
+		DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+		if(dhTaskInstance==null||!DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 		
+		BpmActivityMeta bpmActivityMeta = bpmActivityMetaMapper.queryByPrimaryKey(dhInstanceDocument.getTaskId());
+		if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanDeleteAttach())) {
+	    //逻辑删除--批量修改方法
+	    List<DhInstanceDocument> list = new ArrayList<DhInstanceDocument>();
+	    list.add(dhInstanceDocument);
+	    String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+	    for (DhInstanceDocument dhInstanceDocument2 : list) {
+	    	dhInstanceDocument2.setAppDocStatus(Const.FileStatus.DEL);//del表示删除
+	    	dhInstanceDocument2.setAppDocUpdateDate(DateUtil.format(new Date()));
+	    	dhInstanceDocument2.setUpdateUserUid(creator);
+		}
+	    int count = updateFileByKeys(list);
+	    	return ServerResponse.createBySuccessMessage("删除成功！");
+		}else {
+			return ServerResponse.createByErrorMessage("删除权限验证失败！");
+		}
+		}else {
+			return ServerResponse.createByErrorMessage("任务已完成，无法操作数据文件");
+		}
+	}
+
 }

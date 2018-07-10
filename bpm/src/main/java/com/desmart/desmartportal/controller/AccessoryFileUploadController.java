@@ -317,8 +317,23 @@ public class AccessoryFileUploadController {
 	public ServerResponse<List<DhInstanceDocument>> loadDataFormFileList(DhInstanceDocument dhInstanceDocument) {// 加载已上传的数据表格文件列表
 		dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// normal表示没有被删除
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);// 表示不是历史文件
-		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);//表示是
+		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_DATAFORM);//表示是数据表格文件
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
+	}
+	@RequestMapping("/loadTemplateFile")
+	@ResponseBody
+	public ServerResponse loadTemplateFile(DhInstanceDocument dhInstanceDocument) {
+		dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// normal表示没有被删除
+		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);
+		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_TEMPLATE);//表示是模板文件
+		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
+		return ServerResponse.createBySuccess(list);
+	}
+	@RequestMapping("deleteDataFormFileList")
+	@ResponseBody
+	public ServerResponse deleteDataFormFileList(DhInstanceDocument dhInstanceDocument,
+						@RequestParam(value = "taskUid",required=false)String taskUid) {
+		return accessoryFileUploadServiceImpl.deleteDataFormFileList(dhInstanceDocument,taskUid);
 	}
 }

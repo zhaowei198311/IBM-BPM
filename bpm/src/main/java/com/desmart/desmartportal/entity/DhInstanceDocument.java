@@ -9,6 +9,10 @@ public class DhInstanceDocument {
     }  
     public static final String DOC_TAGS_PROCESS="process";//流程附件
     public static final String DOC_TAGS_DATAFORM="dataform";//数据表格文件
+    public static final String DOC_TAGS_TEMPLATE="template";//数据表格模板文件
+    public static final String DOC_PROCESS_DIRECTORY = "/AccessoryFile/";//流程附件目录了
+    public static final String DOC_DATAFORM_DIRECTORY ="/AccessoryFile/DataForm/";//数据表单文件目录
+    public static final String DOC_TEMPLATE_DIRECTORY="/AccessoryFile/DataForm/Template/";//数据表格模板文件目录
     
 	private String appDocUid; //流程实例文件UID 
 	private String appDocFileName; //文件名

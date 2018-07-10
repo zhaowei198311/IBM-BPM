@@ -105,4 +105,11 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument, String taskUid, String activityId);
+	/**
+	 * 删除数据表格文件
+	 * @param dhInstanceDocument
+	 * @param taskUid
+	 * @return
+	 */
+	public ServerResponse deleteDataFormFileList(DhInstanceDocument dhInstanceDocument, String taskUid);
 }

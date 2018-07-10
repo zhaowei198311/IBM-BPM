@@ -3,17 +3,28 @@ var form = null;
 $(function(){
 	//表格上传文件
 	$("#formSet").find(".load_data_file").each(function(){
+		var appUid = $("#insUid").val();
+		var activityId = $("#activityId").val();	
+  		var taskUid = $("#taskUid").val();	
+  	    var fileCount = 0;
 		upload.render({ //允许上传的文件后缀
 		    elem: $(this)
 		    ,url: common.getPath() +'/accessoryFileUpload/uploadXlsOrXlsxFile'
 		    ,accept: 'file' //普通文件
+			,data: {"appUid":appUid,"activityId":activityId,"taskUid":taskUid}
 		    ,exts: 'xls|xlsx' //只允许上传
+		    ,before: function(obj){
+			     	layer.load(1);
+			    }
 		    ,done: function(res){
-		      if(res.status==0){
-		    	  
-		      }else{
-		    	  layer.alert(res.msg);
-		      }
+		    	if(res.status==0){//上传成功，加载数据
+		    		loadDataFormFileList();
+		    	}
+		    	layer.alert(res.msg);
+		    	layer.closeAll("loading");
+		    }
+		    ,error: function(index, upload){
+		    	layer.closeAll("loading");
 		    }
 		});
 	});
@@ -217,7 +228,8 @@ $(function(){
 
 	});
 	
-	loadFileList();
+	loadFileList();//加载附件列表
+	loadDataFormFileList();//加载数据表格文件列表
 	
 	// 全选
 	
@@ -785,6 +797,64 @@ function hideProgress(){
     };
 
 }( jQuery ));
+//下载数据表格模板文件
+function downTemplateFile(){
+	 var url = common.getPath()+"/accessoryFileUpload/singleFileDown.do";
+	 var appDocUid = $("#dataFormTemplateDocUid").val();
+	 post(url,{"appDocUid" : "123456"});
+}
+//加载数据表格文件
+function loadDataFormFileList(){
+	//var activityId = $("#activityId").val();
+	var appUid = $("#insUid").val();
+	$.post('accessoryFileUpload/loadDataFormFileList'
+		,{"appUid":appUid}
+		,function(result){
+		$("td[data-label='操作数据']").empty();
+		$("td[data-label='文件名称']").html("");
+		$("td[data-label='上传人']").html("");
+		$("td[data-label='上传时间']").html("");
+		for (var i = 0; i < result.data.length; i++) {
+			$("td[data-label='文件名称']").html(result.data[i].appDocFileName);
+			$("td[data-label='上传人']").html(result.data[i].appUserName);
+			$("td[data-label='上传时间']").html(datetimeFormat_1(result.data[i].appDocCreateDate));
+			 var info = "<button value ='"+result.data[i].appDocUid+"' onclick='singleDown(this)' class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载数据文件</button>"
+		     		  +"<button onclick='deleteDataFormFileList(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' data-appdocuid = '"+result.data[i].appDocUid+"'>删除数据文件</button>"
+			 $("td[data-label='操作数据']").append(info);
+		}
+		});
+}
+function deleteDataFormFileList(a){
+	layer.confirm('确认删除？', {
+		  btn: ['确定', '取消'] 
+		}, function(index){
+	  var appDocUid = $(a).data("appdocuid");		  
+	  var activityId = $("#activityId").val();
+	  var taskUid = $("#taskUid").val();
+	  if(taskUid == undefined){
+		  taskUid = null;
+	  }
+  	$.ajax({
+  		url : common.getPath()+"/accessoryFileUpload/deleteDataFormFileList",
+  		type : 'POST',
+  		dataType : 'json',
+  		data : {
+			"appDocUid":appDocUid,
+			"taskId":activityId,
+			"taskUid":taskUid
+			},
+		success : function(data) {
+			loadDataFormFileList();
+			layer.alert(data.msg);
+		  },
+		error : function(data) {
+			layer.alert(data.msg);
+		  }
+   });
+		}, function(index){
+			 layer.close(index)
+		});
+}
 
 /**
  * 附件编辑方法--调用myWPaint.js中的方法

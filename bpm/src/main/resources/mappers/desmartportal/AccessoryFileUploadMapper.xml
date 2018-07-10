@@ -63,6 +63,9 @@
     <if test="appDocTags != null and appDocTags != '' ">
     and app_doc_tags = #{appDocTags}
    </if>
+   <if test=" taskId != null and taskId !='' ">
+  	 and task_id = #{taskId}
+   </if>
    </select>
    
    <update id="updateFileByKeys" 
