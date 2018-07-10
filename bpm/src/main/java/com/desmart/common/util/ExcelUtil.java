@@ -132,8 +132,9 @@ public class ExcelUtil {
 	*/
 	public boolean equalsArrays(Sheet sheet, Map<Integer, String> map) {
 		boolean check = true;
-		for (int k = 0; k < sheet.getColumns(); k++) {
-			if (!sheet.getCell(k, 0).getContents().equals(map.get(k))) {
+		//for (int k = 0; k < sheet.getColumns(); k++) {
+		for (int k = 0; k < map.keySet().size(); k++) {
+			if (!sheet.getCell(k, 4).getContents().equals(map.get(k))) {//目前写死，第5行是头部
 				check = false;
 				break;
 			}
@@ -153,9 +154,9 @@ public class ExcelUtil {
 		StringBuilder result = new StringBuilder();
 		result.append("");
 		int size = sheet.getRows();
-		Cell[] heads = sheet.getRow(0);
+		Cell[] heads = sheet.getRow(4);//目前写死，第5行为头部
 		Map<Integer, ExcelHelper> map = loadExcelAnnotationFieldVlaue(clazz);
-		for (int i = 1; i < size; i++) {
+		for (int i = 5; i < size; i++) {//目前写死，从第6行开始检验
 			Cell[] cells = sheet.getRow(i);
 			int len = cells.length;
 			for (int j = 0; j < len; j++) {
@@ -209,7 +210,7 @@ public class ExcelUtil {
 
 				if (warnning) {
 					if (result.toString().indexOf(heads[j].getContents()) == -1) {
-						result.append("[" + heads[j].getContents()+":第"+i+"行第"+j+"列出现错误"+ "]").append(",");
+						result.append("[" + heads[j].getContents()+":第"+(i+1)+"行第"+(j+1)+"列出现错误"+ "]").append(",");
 					}
 				}
 			}
