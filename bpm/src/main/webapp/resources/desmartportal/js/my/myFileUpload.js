@@ -124,7 +124,7 @@ $(function(){
 			        		var appDocFileName =tds.eq(0).text();
 			        		var appDocTitle = "";
 						    var appDocComment = "";
-						    var appDocTags = "";
+						    var appDocTags = "process";
 						    var appDocComment = "";
 						    var uploadModel = '{"appDocFileName":"'+appDocFileName+'","appDocTitle":"'+appDocTitle+'","appDocComment":"'+appDocComment
 						    		+'","appDocTags":"'+appDocTags+'"}';
@@ -316,7 +316,7 @@ function loadFileList(){
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
 				    ,data: {"appUid":appUid,"taskId":taskId
 				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
-				    	,"activityId":activityId,"taskUid":taskUid}
+				    	,"activityId":activityId,"taskUid":taskUid,"appDocTags":"process"}
 				    ,exts: formatStr
 				    ,field: "file"
 			    ,before: function(obj){

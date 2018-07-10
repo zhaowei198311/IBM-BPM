@@ -448,11 +448,15 @@ function drawPage() {
 		view.find(".load_data_file").each(function(){
 			upload.render({ //允许上传的文件后缀
 			    elem: $(this)
-			    ,url: '/upload/'
+			    ,url: common.getPath() +'/accessoryFileUpload/uploadXlsOrXlsxFile'
 			    ,accept: 'file' //普通文件
-			    ,exts: 'xls,xlsx' //只允许上传
+			    ,exts: 'xls|xlsx' //只允许上传
 			    ,done: function(res){
-			      console.log(res)
+			      if(res.status==0){
+			    	  
+			      }else{
+			    	  layer.alert(res.msg);
+			      }
 			    }
 			});
 		});

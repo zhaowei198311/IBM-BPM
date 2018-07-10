@@ -7,6 +7,9 @@ public class DhInstanceDocument {
     public DhInstanceDocument() {  
           
     }  
+    public static final String DOC_TAGS_PROCESS="process";//流程附件
+    public static final String DOC_TAGS_DATAFORM="dataform";//数据表格文件
+    
 	private String appDocUid; //流程实例文件UID 
 	private String appDocFileName; //文件名
 	private String appDocFileUrl;//文件ftp存储路径

@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.excelForm.GoodsStateModifyForm;
+import com.desmart.common.util.ExcelUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -444,6 +448,29 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
             }
         } 
 		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument) {
+		CommonsMultipartFile cf= (CommonsMultipartFile)multipartFile; 
+        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
+        File file = fi.getStoreLocation();
+        ExcelUtil excelUtil = ExcelUtil.getInstance();
+		if(excelUtil.checkExcelTitleAndSort(file,GoodsStateModifyForm.class)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(file,GoodsStateModifyForm.class);
+			if(serverResponse.isSuccess()) {
+				
+			}else {
+				return ServerResponse.createByErrorMessage("上传失败,"+serverResponse.getMsg());
+			}
+			
+		}else {
+			return ServerResponse.createByErrorMessage("上传失败,首部的列名及排列顺序与模板文件的不一致");
+		}
+
+
+
+		return null;
 	}
 		
 }

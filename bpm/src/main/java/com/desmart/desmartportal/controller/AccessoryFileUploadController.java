@@ -67,8 +67,9 @@ public class AccessoryFileUploadController {
 	@RequestMapping(value = "loadFileList.do")
 	@ResponseBody
 	public ServerResponse<List<DhInstanceDocument>> loadFileList(DhInstanceDocument dhInstanceDocument) {// 加载已上传附件列表
-		dhInstanceDocument.setAppDocStatus("normal");// normal表示没有被删除
+		dhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// normal表示没有被删除
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.FALSE);// 表示不是历史文件
+		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_PROCESS);//表示是流程附件
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
 	}
@@ -257,6 +258,7 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse loadHistoryFile(DhInstanceDocument dhInstanceDocument) {
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
+		dhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_PROCESS);//表示是流程附件
 		List<DhInstanceDocument> list = accessoryFileUploadServiceImpl.loadFileListByCondition(dhInstanceDocument);
 		return ServerResponse.createBySuccess(list);
 	}
@@ -304,5 +306,10 @@ public class AccessoryFileUploadController {
 	@ResponseBody
 	public ServerResponse deleteTemporaryFile(String absoulteImgPath) {
 		return accessoryFileUploadServiceImpl.deleteTemporaryFile(absoulteImgPath);
+	}
+	@RequestMapping(value = "/uploadXlsOrXlsxFile")
+	@ResponseBody
+	public ServerResponse uploadXlsOrXlsxFile(@RequestParam("file")MultipartFile multipartFile,DhInstanceDocument dhInstanceDocument) {	
+		return accessoryFileUploadServiceImpl.uploadXlsOrXlsxFile(multipartFile,dhInstanceDocument);
 	}
 }

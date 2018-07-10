@@ -97,4 +97,11 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse deleteTemporaryFile(String absoulteImgPath);
+	/**
+	 * 上传数据表格文件
+	 * @param multipartFile
+	 * @param dhInstanceDocument
+	 * @return
+	 */
+	public ServerResponse uploadXlsOrXlsxFile(MultipartFile multipartFile, DhInstanceDocument dhInstanceDocument);
 }
