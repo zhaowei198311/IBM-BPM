@@ -1102,6 +1102,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Override
 	public ServerResponse<JSONObject> didTokenMove(int insId, BpmRoutingData routingData) {
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfigService.getFirstActConfig());
+		// 获得流程详细信息
         HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
         if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
             return ServerResponse.createByErrorMessage("查看流程状态失败");

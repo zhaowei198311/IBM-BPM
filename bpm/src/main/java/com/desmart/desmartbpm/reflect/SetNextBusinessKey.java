@@ -8,7 +8,9 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import org.springframework.web.context.WebApplicationContext;
 
-
+/**
+ * 设置发起下个流程时使用的关键字
+ */
 public class SetNextBusinessKey implements DhJavaClassTriggerTemplate {
 
 	@Override

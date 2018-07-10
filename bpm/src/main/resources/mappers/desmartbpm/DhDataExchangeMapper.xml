@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhDataExchangeMapper" >
+	<sql id="baseColumn" >
+		ins_id, identity, ins_uid
+	</sql>
+	
+	<insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhDataExchange">
+		insert into dh_data_exchange(<include refid="baseColumn"/>) values(
+			#{insId}, #{identity}, #{insUid}
+		)
+	</insert>
+
+	<update id="updateByInsUidByInsIdAndIdentity" parameterType="com.desmart.desmartbpm.entity.DhDataExchange">
+		update dh_data_exchange
+		set ins_uid = #{insUid}
+		where ins_Id = #{insId} and identity = #{identity}
+	</update>
+
+	<select id="getInsUidByInsIdAndIdentity" resultType="java.lang.String">
+		select ins_uid from dh_data_exchange
+		where ins_id = #{insId} and identity = #{identity}
+	</select>
+
+
+
+</mapper>

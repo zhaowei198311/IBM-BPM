@@ -30,6 +30,7 @@ public class DemoJavaClass implements DhJavaClassTriggerTemplate {
         dhProcessInstance.setInsData(insDataJson.toJSONString());
         dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);
 
+
     }
 
 }
