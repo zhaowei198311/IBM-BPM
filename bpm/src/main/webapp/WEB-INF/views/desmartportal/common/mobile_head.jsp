@@ -152,8 +152,6 @@
     }
     input[lay-key][readonly]{
    	 	cursor: pointer;
-    	border-width: 1px;
-    	background:#F2F2F2;
     }
     .data-table .layui-input{
     	border-radius:2px;

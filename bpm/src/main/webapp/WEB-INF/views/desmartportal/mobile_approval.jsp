@@ -350,7 +350,7 @@
         	</div>
         </div>
 		<ul class="layui-fixbar">
-			<li class="layui-icon layui-fixbar-top" lay-type="top" style="display: list-item;">
+			<li class="layui-icon layui-fixbar-top" lay-type="top" style="display: none;">
 				&#xe604;
 			</li>
 		</ul>

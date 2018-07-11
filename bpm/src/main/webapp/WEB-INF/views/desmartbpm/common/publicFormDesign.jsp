@@ -2108,7 +2108,7 @@
 			</div>
 
 			<!-- 修改组件事件脚本 -->
-			<div class="modal hide fade" role="dialog" id="editEventModal">
+			<!-- <div class="modal hide fade" role="dialog" id="editEventModal">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
 					<h3></h3>
@@ -2122,7 +2122,7 @@
 					<a class="btn btn-primary" data-dismiss="modal" onclick="saveEditEvent();">确认</a>
 					<a class="btn btn-primary" data-dismiss="modal" id="cancelEditEvent">取消</a>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- 文件上传模态框 -->
 			<div class="modal fade" id="myModal" style="display:none;" role="dialog" aria-labelledby="myModalLabel">
