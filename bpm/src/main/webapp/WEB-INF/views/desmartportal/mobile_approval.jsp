@@ -230,26 +230,6 @@
 			<div class="middle_content" id="file_div">
 				<ul id="loadFile_div" class="tab_ul">
 					<h1 style="clear: both;"></h1>
-					<li>
-						<table>
-							<tr>
-								<th>附件名称：</th>
-								<td>123.txt</td>
-							</tr>
-							<tr>
-								<th>上传人：</th>
-								<td>马亚伟</td>
-							</tr>
-							<tr>
-								<th>上传时间：</th>
-								<td>2018-07-10  14:19:24</td>
-							</tr>
-							<tr>
-								<th>操作：</th>
-								<td>下载附件</td>
-							</tr>
-						</table>
-					</li>
 					<h1 style="clear: both;"></h1>
 				</ul>
 			</div>
@@ -350,7 +330,7 @@
         	</div>
         </div>
 		<ul class="layui-fixbar">
-			<li class="layui-icon layui-fixbar-top" lay-type="top" style="display: none;">
+			<li class="layui-icon layui-fixbar-top" lay-type="top" style="display: list-item;">
 				&#xe604;
 			</li>
 		</ul>
