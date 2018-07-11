@@ -108,7 +108,9 @@ body {
 }
 
 .popover-info {
-	position: relative;
+	position: absolute;
+    top: 0px;
+    right: 0px;
 }
 
 .popover-info .popover {
@@ -366,4 +368,9 @@ a.language-selected {
 
 textarea {
 	resize:none;
+}
+
+.control-label{
+	position: relative;
+    padding-right: 5px;
 }
