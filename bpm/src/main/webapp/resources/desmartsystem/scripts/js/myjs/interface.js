@@ -98,8 +98,9 @@ $(document).ready(function() {
 })
 
 $("#addInterfaces").click(function() {
+	$('#titleTop').text('新增接口');
 	interfaceInputShowAndHide("", "");
-	$('#intStatus').val('disabled');
+	$('#intStatus').val('enabled');
 	popupDivAndReset('display_container', 'class');
 })
 
@@ -209,19 +210,42 @@ function drawTable(pageInfo, data) {
 				+ status
 				+ '</td>'
 				+ '<td>'
-				+ '<i class="layui-icon"  title="接口测试" style="font-size:17px;" onclick=textInterface("'
-				+ meta.intUid + '","' + meta.intTitle
-				+ '","input")  >&#xe64c;</i>'
-
-				+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'
-				+ meta.intUid + '") >&#xe642;</i>'
-				+ '<i class="layui-icon"  title="删除接口"  onclick=del("'
-				+ meta.intUid + '") >&#xe640;</i>'
-				+ '<i class="layui-icon"  title="绑定参数"  onclick=info("'
-				+ meta.intUid + '")>&#xe614;</i>' + '</td>' + '</tr>'
+				+ '<i class="layui-icon" title="复制接口" onclick=copyInterface("'+ meta.intUid + '"); ><img src="resources/desmartsystem/images/face/copy.png" style="height:16px; width:16px;margin-right:4px;margin-bottom:4px;" /></i>'
+				+ '<i class="layui-icon"  title="接口测试" style="font-size:16px;" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input")  >&#xe64c;</i>'
+				+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
+				+ '<i class="layui-icon"  title="删除接口"  onclick=del("'+ meta.intUid + '") >&#xe640;</i>'
+				+ '<i class="layui-icon"  title="绑定参数"  onclick=info("'+ meta.intUid + '")>&#xe614;</i>' + '</td>' + '</tr>'
 	}
 	$("#proMet_table_tbody").append(trs);
 
+}
+
+//复制接口
+function copyInterface(intUid){
+		$('#titleTop').text('复制接口');
+		// 复制接口页面
+		popupDivAndReset('display_container','class');
+		$.ajax({
+			url : 'interfaces/queryDhInterfaceById',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				intUid : intUid
+			},
+			success : function(result) {
+				$("#intDescription").val("");
+				$('#intStatus').val('enabled');
+				$("#intType").val(result.intType);
+				$("#intTitle").val('');
+				$("#intUrl").val(result.intUrl);
+				$("#intCallMethod").val('');
+				$("#intLoginUser").val(result.intLoginUser);
+				$("#intLoginPwd").val(result.intLoginPwd);
+				$("#intRequestXmlAdd").val('');
+				$("#intResponseXmlAdd").val('');
+				interfaceInputShowAndHide(result.intType,'');
+			}
+		})
 }
 
 // 按钮事件
@@ -259,7 +283,8 @@ function del(intUid) {
 			success : function(result) {
 				if (result.success == true) {
 					layer.alert(result.msg);
-					$('.serch_interface').click();
+					//$('.serch_interface').click();
+					getInterfaceInfo();
 				} else {
 					layer.alert(result.msg);
 				}
@@ -288,7 +313,7 @@ function updatate(intUid) {
 				intUid : intUid
 			},
 			success : function(result) {
-				$("#exposed_table3_container").css("display", "block");
+				//$("#exposed_table3_container").css("display", "block");
 				$("#intUid2").val(result.intUid);
 				$("#intDescription2").val(result.intDescription);
 				if (result.intStatus == "enabled") {

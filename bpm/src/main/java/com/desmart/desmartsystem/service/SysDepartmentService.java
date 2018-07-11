@@ -16,8 +16,34 @@ import com.desmart.desmartsystem.util.PagedResult;
  * @since 2018-04-09
  */
 public interface SysDepartmentService extends BaseService<SysDepartment> {
+	
+	/**
+     * 查询所有部门
+     * @param queryByPage
+     * @param SysDepartment
+     */
 	PagedResult<SysDepartment> queryByPage(SysDepartment entity,Integer pageNo,Integer pageSize);
+	
+	
+	
+	/**
+     * 部门树形菜单
+     * @param queryByPage
+     * @param SysDepartment
+     */
 	public List<TreeNode> selectTree(TreeNode entity);
+	
+	/**
+     * 根据
+     * @param queryByPage
+     * @param SysDepartment
+     */
 	ServerResponse queryDepartByNoAndName(SysDepartment sysDepartment);
+	
+	/**
+     * 根据departUid
+     * @param queryDepartParentsByDepartId
+     * @param SysDepartment
+     */
 	ServerResponse<List<SysDepartment>> queryDepartParentsByDepartId(String departUid);
 }
