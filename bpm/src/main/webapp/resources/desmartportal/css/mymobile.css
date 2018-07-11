@@ -338,7 +338,7 @@ input[disabled], .layui-select-disabled .layui-disabled {
 /*回到顶部的css*/
 .layui-fixbar {
     position: fixed;
-    right: 10px;
+    right: 4px;
     bottom: 45px;
     z-index: 9999;
 }
