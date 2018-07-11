@@ -1,14 +1,132 @@
 .mobile_container{
 	width:100%;
-	height:100%;
+	overflow-y:scroll;
 }
-.mobile_top,.mobile_bottom{
-	width:100%;
-	height:10%;
-	background: #CCC;
+.mobile_top{
+	width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 0 3px #f2f2f2;
+    padding-bottom: 2px;
+    z-index: 10;
+    background: #2E3238;
+    color: #F2f2f2;
 }
 .mobile_middle{
 	width:100%;
-	height:90%;
-	background: #009688;
+	height:auto;
+}
+
+/*顶部*/
+#operate_menu{
+	font-size: 20px;
+    vertical-align: -2px;
+}
+.top_content {
+    width: 60%;
+    float: right;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 8px;
+}
+.top_left{
+	float: left;
+	width:20%;
+}
+.top_right{
+	float: right;
+	padding-top:8px;
+	padding-right:3px;
+	width:20%;
+	text-align: right;
+}
+
+/*列表内容*/
+.table_list{
+	margin:4px;
+}
+.tab_ul li {
+    padding: 10px 0;
+    list-style: none;
+    width: 99%;
+    margin-bottom:7px;
+    text-align: center;
+    border: 1px solid #e6e6e6;
+    color: #777;
+    background: #FBFBFB;
+    position: relative;
+}
+#backlog_list table{
+	text-align: left;
+	width: 90%;
+    margin: auto;
+    font-size: 13px;
+}
+#backlog_list table tr{
+	height: 19px;
+}
+#backlog_list th{
+	width:40%;
+}
+#backlog_list td{
+	width:60%;
+}
+.is_agent span{
+	padding:5px 6px;
+	border: 1px solid #ccc;
+	background: #f2f2f2;
+	border-radius: 50%;
+}
+.is_agent{
+	position: absolute;
+	top:8px;
+	right:5px;
+}
+.task_status{
+	position: absolute;
+	top:40px;
+	right:5px;
+}
+.task_status span{
+	padding:5px;
+	border: 1px solid #ccc;
+	background: #f2f2f2;
+	border-radius: 5px;
+}
+/*筛选条件div*/
+.layui-layer-page {
+    width: 100%;
+    left: 0px;
+}
+#filter_div {
+	background: #fbfbfb;
+	height:100%;
+	-webkit-overflow-scrolling : touch;
+}
+#filter_div table{
+	width:90%;
+	margin:auto;
+}
+#filter_div table tr{
+	height:49px;
+	border-bottom: 1px solid #CCC;
+}
+#filter_div input[type='text']{
+	background: #fbfbfb;
+	border-width:0px;
+}
+#filter_div input[type='date']{
+	background: #fbfbfb;
+	border-width:0px;
+}
+#filter_div table th{
+	text-align: right;
+	width:40%;
+}
+#filter_div table td{
+	text-align: left;
+	width:60%;
+}
+.filter_btn{
+	width:100px;
 }

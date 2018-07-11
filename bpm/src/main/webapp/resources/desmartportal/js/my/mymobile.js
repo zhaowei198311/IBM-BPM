@@ -14,7 +14,6 @@ $(function(){
 		jQuery('html,body').animate({
 		    scrollTop: 0
 		}, 300);
-		$(".layui-fixbar-top").css("display","none");
 	});
 });
 
@@ -61,14 +60,12 @@ function handleBtnClick(obj){
 	}
 }
 
-function isTop(){
+/*setInterval(function isTop(){
 	var top = $('html')[0].scrollTop;
+	console.log(top);
 	if(top==0){
 		$(".layui-fixbar-top").css("display","none");
 	}else{
 		$(".layui-fixbar-top").css("display","list-item");
 	}
-	setTimeout("isTop()",500);
-}
-
-setTimeout("isTop()",500);
+},500);*/
