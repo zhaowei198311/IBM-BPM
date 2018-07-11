@@ -920,8 +920,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		subInstance.setInsBusinessKey(InsDataUtil.getBusinessKeyOfNextProcess(currProcessInstance));  // 流程关键字
 
 		// 从父流程实例中获取自己表单中name相同的值作为子流程的数据
-        //JSONObject insData = assembleinsDataOfSubProcess(subInstance, parentInstance);
-        //subInstance.setInsData(insData.toJSONString());
+        JSONObject insData = assembleinsDataOfSubProcess(subInstance);
+        subInstance.setInsData(insData.toJSONString());
         return subInstance;
     }
 
@@ -931,7 +931,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
      * @param subInstance
      * @return
      */
-    private JSONObject assembleinsDataOfSubProcess(DhProcessInstance subInstance, DhProcessInstance parentInstance) {
+    private JSONObject assembleinsDataOfSubProcess(DhProcessInstance subInstance) {
         JSONObject insData = new JSONObject();
         // processData部分
         JSONObject processData = new JSONObject();
@@ -941,30 +941,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         processData.put("insTitle", subInstance.getInsTitle());
         processData.put("insInitUser", subInstance.getInsInitUser());
         insData.put("processData", processData);
-
         // formData部分
         JSONObject formData = new JSONObject();
-        BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(subInstance.getTokenActivityId());
-        BpmActivityMeta firstTaskNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
-        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstTaskNode, subInstance.getInsBusinessKey());
-        if (formStepOfTaskNode != null) {
-            // 根据表单字段获取值
-            String formUid = formStepOfTaskNode.getStepObjectUid(); // 获得表单主键
-            ServerResponse<List<BpmFormField>> response = bpmFormFieldService.queryFieldByFormUid(formUid);
-            List<BpmFormField> allFields = response.getData();
-            JSONObject parentInsData = JSON.parseObject(parentInstance.getInsData());
-            JSONObject parentFormData = parentInsData.getJSONObject("formData");
-            for (BpmFormField field : allFields) {
-                String fldCodeName = field.getFldCodeName(); // 字段name属性
-                if (StringUtils.isNotBlank(fldCodeName)) {
-                    JSONObject obj = parentFormData.getJSONObject(fldCodeName);
-                    if (obj != null) {
-                        formData.put(fldCodeName, obj);
-                    }
-                }
-            }
-
-        }
         insData.put("formData", formData);
         return insData;
     }
