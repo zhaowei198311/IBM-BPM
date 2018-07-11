@@ -51,7 +51,7 @@ public class DhInterfaceExecuteController extends  BaseController{
 			logger.error(e.getMessage());
 			j.setSuccess(false);
 			e.printStackTrace();
-			j.setMsg("接口调用失败:" + e.getMessage());
+			j.setMsg("接口调用失败");
 		}
 		return 	j;
 	}

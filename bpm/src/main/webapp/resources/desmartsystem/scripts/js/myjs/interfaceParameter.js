@@ -125,6 +125,29 @@ function returnField(field){
 	return field;
 }
 
+//function parameterShowHidden(showOrHidden,selector){
+//	var paraSizeElement='.paraSize'+selector;
+//	var isMustElement='.isMust'+selector;
+//	var paraTypeElement='#paraType'+selector;
+//	
+//	var dateFormatElement='.dateFormat'+selector;
+//	
+//	var paraType=$(paraTypeElement).val();
+//	
+//	if(showOrHidden=='show'){
+//		if(paraType!='Date'){
+//			$(paraSizeElement).show();
+//		}else{
+//			$(dateFormatElement).show();
+//		}
+//		$(isMustElement).show();
+//	}else{
+//		$(dateFormatElement).hide();
+//		$(paraSizeElement).hide();
+//		$(isMustElement).hide();
+//	}
+//}
+
 var arrayTh;
 layui.use(['form', 'layedit', 'laydate'], function(){
 	var form = layui.form
@@ -140,10 +163,20 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	});
 	
 	
+	//绑定接口参数zzho
 	form.on('select(paraType)', function(data){
 		var value=data.value;
 		byParameterTypeHideAndShowElement(value,"");
 	});
+	
+	//绑定接口参数输入/输出字段
+//	form.on('switch(paraInOut)', function(data){
+//		if(this.checked){
+//			parameterShowHidden('hide','');
+//		}else{
+//			parameterShowHidden('show','');
+//		}
+//	});
 	
 	form.on('select(paraType2)', function(data){
 		var value=data.value;
@@ -176,6 +209,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	});
 	
 	
+	
+	
 	//新增array参数
 	form.on('submit(confimAddChildNodeParameter)', function(data){
 		var $form = $("#chilNodeParameterForm");
@@ -188,7 +223,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var addArrayInAddOrUpdate =	$('#addArrayInAddOrUpdate').val();
 		
 		var childNodeParameterTbody;
-		console.log(addArrayInAddOrUpdate);
 		if(addArrayInAddOrUpdate=='add'){
 			childNodeParameterTbody=$('#childNodeParameterTbody');
 		}else{
@@ -387,7 +421,6 @@ function  checkboxChecked(result,selector){
 		}
 		$('#paraInOut').show();
 	}
-	console.log('1111111');
 }
 
 function getParameter(paraUid){

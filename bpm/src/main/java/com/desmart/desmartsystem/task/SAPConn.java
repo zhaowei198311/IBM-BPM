@@ -7,11 +7,9 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.alibaba.fastjson.JSONObject;
 import com.sap.conn.jco.JCoDestination;
 import com.sap.conn.jco.JCoDestinationManager;
 import com.sap.conn.jco.JCoException;
-import com.sap.conn.jco.JCoField;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
@@ -27,30 +25,14 @@ public class SAPConn {
 	private static final String ABAP_AS_POOLED = "ZIF_EIP_HR_PERSON";
 	public static void sapConfiguration(String JCO_ASHOST,String JCO_USER,String JCO_PASSWD){
 		Properties connectProperties = new Properties();
-		connectProperties.setProperty(DestinationDataProvider.JCO_ASHOST, "10.1.0.43");//服务器
-		//connectProperties.setProperty(DestinationDataProvider.JCO_ASHOST, JCO_ASHOST);
+		//connectProperties.setProperty(DestinationDataProvider.JCO_ASHOST, "10.1.0.178");//服务器
+		connectProperties.setProperty(DestinationDataProvider.JCO_ASHOST, JCO_ASHOST);
 		connectProperties.setProperty(DestinationDataProvider.JCO_SYSNR,  "00");        //系统编号
 		connectProperties.setProperty(DestinationDataProvider.JCO_CLIENT, "800");       //SAP集团
-		connectProperties.setProperty(DestinationDataProvider.JCO_USER,   "00004456");  //SAP用户名
-		connectProperties.setProperty(DestinationDataProvider.JCO_PASSWD, "chen0808");     //密码
-		
-		//connectProperties.setProperty(DestinationDataProvider.JCO_USER,JCO_USER);
-		//connectProperties.setProperty(DestinationDataProvider.JCO_PASSWD, JCO_PASSWD);
-		
-		connectProperties.setProperty(DestinationDataProvider.JCO_LANG,   "zh");        //登录语言
-		connectProperties.setProperty(DestinationDataProvider.JCO_POOL_CAPACITY, "3");  //最大连接数  
-		connectProperties.setProperty(DestinationDataProvider.JCO_PEAK_LIMIT, "10");     //最大连接线程
-		
-		createDataFile(ABAP_AS_POOLED, "jcoDestination", connectProperties);
-	}
-	
-	static {
-		Properties connectProperties = new Properties();
-		connectProperties.setProperty(DestinationDataProvider.JCO_ASHOST, "10.1.0.43");//服务器
-		connectProperties.setProperty(DestinationDataProvider.JCO_SYSNR,  "00");        //系统编号
-		connectProperties.setProperty(DestinationDataProvider.JCO_CLIENT, "800");       //SAP集团
-		connectProperties.setProperty(DestinationDataProvider.JCO_USER,   "00004456");  //SAP用户名
-		connectProperties.setProperty(DestinationDataProvider.JCO_PASSWD, "chen0808");     //密码
+		//connectProperties.setProperty(DestinationDataProvider.JCO_USER,   "00004456");  //SAP用户名
+		//connectProperties.setProperty(DestinationDataProvider.JCO_PASSWD, "chen0808");     //密码
+		connectProperties.setProperty(DestinationDataProvider.JCO_USER,JCO_USER);
+		connectProperties.setProperty(DestinationDataProvider.JCO_PASSWD, JCO_PASSWD);
 		connectProperties.setProperty(DestinationDataProvider.JCO_LANG,   "zh");        //登录语言
 		connectProperties.setProperty(DestinationDataProvider.JCO_POOL_CAPACITY, "3");  //最大连接数  
 		connectProperties.setProperty(DestinationDataProvider.JCO_PEAK_LIMIT, "10");     //最大连接线程

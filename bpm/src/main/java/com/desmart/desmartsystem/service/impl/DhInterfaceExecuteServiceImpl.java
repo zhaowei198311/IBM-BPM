@@ -129,9 +129,10 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 							}
 						}
 					}
-					
-					//判断如果是integer  double 
-					if (paraType.equals(InterfaceParameterType.INTEGER.getCode())||paraType.equals(InterfaceParameterType.DOUBLE.getCode())) {
+
+					// 判断如果是integer double
+					if (paraType.equals(InterfaceParameterType.INTEGER.getCode())
+							|| paraType.equals(InterfaceParameterType.DOUBLE.getCode())) {
 						if (StringUtils.isNoneBlank(value)) {
 							if (!StringUtils.isNumeric(value)) {
 								json.setSuccess(false);
@@ -143,7 +144,6 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 				}
 			}
 		}
-		
 
 		// 接口类型
 		if (intType.equals(InterfaceType.RPC.getCode())) {
@@ -156,83 +156,90 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 			Iterator<String> iterator = parameters.iterator();
 			while (iterator.hasNext()) {
 				String key = (String) iterator.next();
-				String paraType="";
+				String paraType = "";
 				for (DhInterfaceParameter dhInterfaceParameter : interfaceParameterItem) {
 					String paraName = dhInterfaceParameter.getParaName();
 					String intUidNew = dhInterfaceParameter.getIntUid();
-					if(paraName.equals(key)&&intUidNew.equals(intUid)) {
-						paraType=dhInterfaceParameter.getParaType();
+					if (paraName.equals(key) && intUidNew.equals(intUid)) {
+						paraType = dhInterfaceParameter.getParaType();
 					}
 				}
-				if(!paraType.equals(InterfaceParameterType.ARRAY.getCode())) {
+				if (!paraType.equals(InterfaceParameterType.ARRAY.getCode())) {
 					String value = inputParameter.getString(key);
 					input.setValue(key, value);
-				}else{//array参数拼装
+				} else {// array参数拼装
 					JCoTable fields = function.getTableParameterList().getTable(key);
 					String value = inputParameter.getString(key);
-					JSONArray jsonArray=JSON.parseArray(value);
+					JSONArray jsonArray = JSON.parseArray(value);
 					fields.appendRows(jsonArray.size());
 					for (int i = 0; i < jsonArray.size(); i++) {
 						fields.setRow(i);
 						JSONObject jsonObjectA = JSONObject.parseObject(jsonArray.getString(i));
 						for (Map.Entry<String, Object> entry : jsonObjectA.entrySet()) {
-					        fields.setValue(entry.getKey(), entry.getValue());
-					    }
+							fields.setValue(entry.getKey(), entry.getValue());
+						}
 					}
 				}
 			}
 			function.execute(destination);
-			
-			JCoTable data = function.getTableParameterList().getTable("ITB_OUT");
-			System.out.println(data);
-			
+
 			JCoParameterList tblexport = function.getTableParameterList();
-			// 查询指定接口下的输出类型的参数
+			// 查询指定接口下输出类型的参数
 			DhInterfaceParameter dfParameter = new DhInterfaceParameter();
 			dfParameter.setIntUid(intUid);
 			dfParameter.setParaInOut(InterfaceParameterType.OUTPUT.getCode());
-			List<DhInterfaceParameter> dhInterfaceParameterList = dhInterfaceParameterService.byQueryParameter(dfParameter);
-
+			List<DhInterfaceParameter> dhInterfaceParameterList = dhInterfaceParameterService
+					.byQueryParameter(dfParameter);
 			JSONArray jsonArray = new JSONArray();
 			// 参数拼接
-//			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
-//				// 参数类型
-//				String paraType = dhInterfaceParameter.getParaType();
-//				// 参数名称
-//				String paraName = dhInterfaceParameter.getParaName();
-//				// 参数UId
-//				String paraUid = dhInterfaceParameter.getParaUid();
-//				if (paraType.equals(InterfaceParameterType.ARRAY.getCode())) {
-//					JCoTable getTable1 = tblexport.getTable(paraName);
-//					boolean loopFlag1 = !getTable1.isEmpty(); // 判断 这张表中有木有数据
-//					while (loopFlag1) {
-//						JSONObject jSONObject = new JSONObject();
-//						// 得到返回参数懂填入
-//						for (DhInterfaceParameter ifl : dhInterfaceParameterList) {
-//							String iflParaParent = ifl.getParaParent();
-//							if (StringUtils.isNoneBlank(iflParaParent)) {
-//								if (iflParaParent.equals(paraUid)) {// 获取Array子参数
-//									String iflParaName = ifl.getParaName();
-//									String value = getTable1.getString(iflParaName);
-//									jSONObject.put(iflParaName, value);
-//								}
-//							}
-//						}
-//						jsonArray.add(jSONObject);
-//						loopFlag1 = getTable1.nextRow();// 移动到下一行
-//					}
-//				}
-//			}
+			for (DhInterfaceParameter dhInterfaceParameter : dhInterfaceParameterList) {
+				// 参数类型
+				String paraType = dhInterfaceParameter.getParaType();
+				// 参数名称
+				String paraName = dhInterfaceParameter.getParaName();
+				// 参数UId
+				String paraUid = dhInterfaceParameter.getParaUid();
+				if (paraType.equals(InterfaceParameterType.ARRAY.getCode())) {
+					JCoTable getTable1 = tblexport.getTable(paraName);
+					boolean loopFlag1 = !getTable1.isEmpty(); // 判断 这张表中有木有数据
+					while (loopFlag1) {
+						JSONObject jSONObject = new JSONObject();
+						// 得到返回参数填入
+						for (DhInterfaceParameter ifl : dhInterfaceParameterList) {
+							String iflParaParent = ifl.getParaParent();
+							if (StringUtils.isNoneBlank(iflParaParent)) {
+								if (iflParaParent.equals(paraUid)) {// 获取Array子参数
+									String iflParaName = ifl.getParaName();
+									String value = getTable1.getString(iflParaName);
+									jSONObject.put(iflParaName, value);
+								}
+							}
+						}
+						jsonArray.add(jSONObject);
+						loopFlag1 = getTable1.nextRow();// 移动到下一行
+					}
+				}
+			}
 			json.setSuccess(true);
 			json.setMsg(JSON.toJSONString(jsonArray.toArray()));
 			json.setObj(jsonArray.toArray());
-
+			
+			
+//			String result = function.getTableParameterList().getTable("RETURN").getString("TYPE");// 调用接口返回状态
+//			String message = function.getTableParameterList().getTable("RETURN").getString("MESSAGE");// 调用接口返回信息
+//
+//			if (result.equals("E")) {
+//				System.out.println("调用返回状态--->" + result + ";调用返回信息--->" + message);
+//				json.setSuccess(true);
+//				json.setMsg(message);
+//			} else {
+//				
+//			}
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
-			// SAPConn.sapConfiguration(intUrl, intLoginUser, intLoginPwd);
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
 			String xml = HttpClientCallSoapUtil.doPostSoap1_2(intUrl, soapRequestData, "");
-			json.setSuccess(true);
-			json.setMsg("查询成功");
+			//json.setSuccess(true);
+			//json.setMsg("查询成功");
 
 			// 返回参数格式拼接
 			List<String> responseConfig = new ArrayList<String>();
@@ -251,7 +258,6 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 		dhInterfaceLog.setDilRequest(inputParameter.toJSONString());
 		dhInterfaceLog.setDilResponse(json.getMsg());
 		dhInterfaceLog.setIntUid(intUid);
-
 		dhInterfaceLogMapper.insert(dhInterfaceLog);
 		return json;
 	}

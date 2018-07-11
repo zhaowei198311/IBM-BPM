@@ -71,7 +71,7 @@
 					<col width="15%">
 					<col width="10%">
 					<col width="10%">
-					<col width="3%">
+					<col width="11%">
 				</colgroup>
 				<thead>
 					<tr>
@@ -132,7 +132,7 @@
 	<div class="display_container">
 		<div class="display_content2">
 
-			<div class="top" style="color: red;">新增接口</div>
+			<div class="top" style="color: red;" id="titleTop">新增接口</div>
 			<label class="layui-input-label" style="color: red;">带*为必填参数</label>
 			<form id="form1" class="layui-form" action=""
 				style="margin-top: 30px;">
@@ -210,7 +210,7 @@
 				  <div class="layui-form-item layui-form-text">
 				 	<label class="layui-form-label">requset:</label>
 				    <div class="layui-input-block">
-				      <textarea placeholder="" class="layui-textarea" name="intRequestXml" ></textarea>
+				      <textarea placeholder="" class="layui-textarea" id="intRequestXmlAdd" name="intRequestXml" ></textarea>
 				    </div>
 				  </div>
 				</div>		
@@ -219,7 +219,7 @@
 				  <div class="layui-form-item layui-form-text">
 				 	<label class="layui-form-label">response:</label>
 				    <div class="layui-input-block">
-				      <textarea placeholder="" class="layui-textarea" name="intResponseXml" ></textarea>
+				      <textarea placeholder="" class="layui-textarea"  id="intResponseXmlAdd" name="intResponseXml" ></textarea>
 				    </div>
 				  </div>
 				</div>	
@@ -230,7 +230,7 @@
 							<label class="layui-form-label">登陆密码:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="intLoginPwd" name="intLoginPwd"
-									lay-verify="intLoginPwd" autocomplete="off" class="layui-input required">
+									lay-verify="intLoginPwd" autocomplete="off" class="layui-input required" />
 							</div>
 						</div>
 						<div class="layui-col-md6">
@@ -238,8 +238,7 @@
 								<label class="layui-form-label">接口状态*:</label>
 								<div class="layui-input-inline">
 									<input id="intStatus" type="checkbox" name="intStatus"
-										lay-skin="switch" lay-filter="intStatus" lay-text="启用|停用"
-										value="disabled">
+										lay-skin="switch" lay-filter="intStatus" lay-text="启用|停用" checked="checked" />
 								</div>
 							</div>
 						</div>
@@ -302,8 +301,8 @@
 						<div class="layui-col-md6 paraSize">
 							<label class="layui-form-label">参数长度:</label>
 							<div class="layui-input-inline">
-								<input type="text" id="paraSize" name="paraSize"
-									lay-verify="paraSize" autocomplete="off" class="layui-input">
+								<input type="text" id="paraSize" name="paraSize" 
+									lay-verify="paraSize" autocomplete="off" class="layui-input digits">
 							</div>
 						</div>
 						
@@ -525,7 +524,7 @@
 							<label class="layui-form-label">参数长度:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="paraSize3" name="paraSize"
-									lay-verify="paraSize" autocomplete="off" class="layui-input">
+									lay-verify="paraSize" autocomplete="off" class="layui-input digits">
 							</div>
 						</div>
 						
@@ -621,7 +620,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">参数类型*:</label>
 					<div class="layui-input-inline">
-						<select name="paraType" class="require" lay-filter="paraType1" >
+						<select name="paraType" class="require" lay-filter="paraInOut" >
 							<option value="String">String</option>
 							<option value="Integer">Integer</option>
 							<option value="Double">Double</option>
@@ -645,7 +644,7 @@
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
-							autocomplete="off" class="layui-input">
+							autocomplete="off" class="layui-input digits">
 					</div>
 				</div>
 				
@@ -719,7 +718,7 @@
 					<label class="layui-form-label">参数长度:</label>
 					<div class="layui-input-inline">
 						<input type="text" name="paraSize" lay-verify="paraSize"
-							autocomplete="off" class="layui-input">
+							autocomplete="off" class="layui-input digits">
 					</div>
 				</div>
 				
