@@ -389,6 +389,15 @@ function drawPage() {
 			});
 		});
 		
+		view.find("select").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var id = $(this).prop("id");
+			var filter = $(this).attr("lay-filter");
+			form.on('select('+filter+')',function(){
+				$("#"+id).trigger("change");
+			});
+		});
+		
 		form.render();
 
 		view.find("input[type='text']").each(function () {
