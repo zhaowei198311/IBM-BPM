@@ -305,6 +305,7 @@
 		FROM
 		DH_TRIGGER_INTERFACE
 		where tri_uid = #{triUid}
+		and step_uid = #{stepUid}
 		<if test="parameterType!=null and !parameterType.trim().isEmpty()">
 			and parameter_type = #{parameterType}
 		</if>

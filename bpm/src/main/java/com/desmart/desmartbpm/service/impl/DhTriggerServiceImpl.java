@@ -23,6 +23,7 @@ import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
 import com.desmart.desmartbpm.service.DhTriggerService;
@@ -93,7 +94,8 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	}
 
 	@Override
-	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, String triUid){
+	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep){
+		String triUid = dhStep.getStepObjectUid();
 		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
 		Map<String,String> resultMap = new HashMap<>();
 		if ("javaclass".equals(dhTrigger.getTriType())) {
@@ -111,7 +113,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				return ServerResponse.createBySuccess(resultMap);
 			}
 		}else if("interface".equals(dhTrigger.getTriType())) {
-			return transferInterface(insUid, triUid, dhTrigger);
+			return transferInterface(insUid, dhStep, dhTrigger);
 		}else{
 			resultMap.put("status", "1");
 			resultMap.put("msg", "触发器类型为："+dhTrigger.getTriType());
@@ -123,8 +125,10 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	/**
 	 * 调用接口传递参数并接收返回值
 	 */
-	private ServerResponse<Map<String, String>> transferInterface(String insUid, String triUid, DhTrigger dhTrigger){
+	private ServerResponse<Map<String, String>> transferInterface(String insUid, DhStep dhStep, DhTrigger dhTrigger){
 		String paramJson = "";
+		String triUid = dhStep.getStepObjectUid();
+		String stepUid = dhStep.getStepUid();
 		Map<String,String> resultMap = new HashMap<>();
 		try {
 			//获得表单数据
@@ -132,7 +136,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			JSONObject formDataObj = JSONObject.parseObject(insData).getJSONObject("formData");
 			//获得接口输入触发器集合
 			List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,
-					"inputParameter");
+					stepUid,"inputParameter");
 			//获得对应的接口id
 			String intUid = dhTrigger.getTriWebbot();
 			String inputParameter = "\"inputParameter\":{";
@@ -233,7 +237,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			//调用接口处理数据并接收回调数据
 			Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
 			//处理回调数据
-			handleInterfaceData(json, insUid, triUid);
+			handleInterfaceData(json, insUid, dhStep);
 			resultMap.put("status", "0");
 		}catch(Exception e) {
 			resultMap.put("status", "1");
@@ -247,14 +251,16 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	/**
 	 * 处理接口json返回值更新对应的formData
 	 */
-	private void handleInterfaceData(Json json,String insUid, String triUid) throws Exception{
+	private void handleInterfaceData(Json json,String insUid, DhStep dhStep) throws Exception{
 		if(!json.isSuccess()) {
 			throw new PlatformException(json.getMsg());
 		}
+		String triUid = dhStep.getStepObjectUid();
+		String stepUid = dhStep.getStepUid();
 		String jsonStr = json.getMsg();
 		JSONObject jsonObj = JSONObject.parseObject(jsonStr);
 		//获得输出类型的触发器接口映射对象集合
-		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,"outputParameter");
+		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,stepUid,"outputParameter");
 		String formDataStr = "{";
 		for(int i=0;i<dhTriggerInterfaceList.size();i++) {
 			DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);

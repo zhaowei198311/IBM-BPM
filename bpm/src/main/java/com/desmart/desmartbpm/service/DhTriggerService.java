@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 
 public interface DhTriggerService {
@@ -42,12 +43,12 @@ public interface DhTriggerService {
     /**
      * @Title: invokeTrigger  
      * @Description: 通过反射调用类的方法  
-     * @param @param triUid
+     * @param @param 
      * @param @return  
      * @return ServerResponse
      * @throws
      */
-    ServerResponse<Map<String, String>> invokeTrigger(WebApplicationContext wac, String insUid, String triUid);
+    ServerResponse<Map<String, String>> invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep);
     
     /**
      * 反射调用选人触发器
