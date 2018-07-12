@@ -405,11 +405,11 @@ function drawPage() {
 		dateInput.prop("readonly", true);
 		dateInput.each(function () {
 			$(this).next().remove();
-			var dateInputId = $(this).prop("id");
-			// 日期
-			laydate.render({
-				elem: '#' + dateInputId,
-				trigger: 'click'
+			var id = $(this).prop("id");
+			var calendar = new lCalendar();
+			calendar.init({
+				'trigger': '#'+id,
+				'type': 'date'
 			});
 		});
 	});

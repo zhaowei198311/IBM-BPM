@@ -12,7 +12,8 @@
 
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/mymobile.js"></script>
-
+<script type="text/javascript" src="resources/desmartportal/lCalendar/js/lCalendar.js"></script>
+<link href="resources/desmartportal/lCalendar/css/lCalendar.css" rel="stylesheet" />
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/mobile_form.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <!-- 附件上传js -->
