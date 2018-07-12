@@ -81,13 +81,13 @@
 }
 .is_agent{
 	position: absolute;
-	bottom:68px;
+	bottom:60px;
 	right:5px;
 }
 .task_status{
 	position: absolute;
-	bottom:37px;
-	right:5px;
+	bottom: 60px;
+    right: 40px;
 }
 .task_status span{
 	padding:5px;
