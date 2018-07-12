@@ -419,7 +419,6 @@ var common = {
 		}
 		json += "}";
 		json = json.replace(/\t/g,"");
-		console.log(json);
 		return json;
 	},
 	//传入表单json数据给表单组件赋值
@@ -433,7 +432,6 @@ var common = {
 				var trObj = $("[name='"+name+"']").find("tbody tr").html();
 				$("[name='"+name+"']").find("tbody").html("");
 				for(var i=0;i<valueArr.length;i++){
-					console.log(name);
 					$("[name='"+name+"']").find("tbody").append("<tr>"+trObj+"</tr>");
 					var valueObj = valueArr[i];
 					var tdArr = $("[name='"+name+"']").find("tbody tr:eq("+i+")").find("td");
@@ -515,7 +513,6 @@ var common = {
 				$(this).css("display","none");
 				if($(this).prev().prop("tagName")=="P"){
 					var pText = $(this).prev()[0].firstChild.data.trim();
-					console.log(pText);
 					if($(this).attr("title")==pText){
 						$(this).prev().css("display","none");
 					}
@@ -525,7 +522,6 @@ var common = {
 	},
 	//根据字段权限json给动态表单组件设置权限
 	giveFormFieldPermission:function(jsonStr){
-		console.log(jsonStr);
 		var json = JSON.parse(jsonStr);
 		for(var name in json){
 			var perJsonStr = json[name];
@@ -749,7 +745,6 @@ var common = {
 				}
 			}else if(print=="yes"){
 				$("[name='"+name+"']").attr("print","yes");
-				console.log($("[name='"+name+"']").prop("tagName"));
 				if($("[name='"+name+"']").prop("tagName")=="P"){
 					var pText = $("[name='"+name+"']")[0].firstChild.data.trim();
 					$(".form-sub").each(function(){
