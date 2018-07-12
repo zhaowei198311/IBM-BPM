@@ -31,6 +31,8 @@ public class DhTriggerInterface {
 	
 	private String activityId; // 环节ID
 	
+	private String stepUid; // 步骤ID
+	
 	private String paraName; // 接口参数
 	
 	private String fldCodeName; // 字段编码
@@ -55,20 +57,6 @@ public class DhTriggerInterface {
 	 */
 	public void setTinUid(String tinUid) {
 		this.tinUid = tinUid;
-	}
-	
-	/**
-	 * @return the paraUid
-	 */
-	public String getParaUid() {
-		return paraUid;
-	}
-
-	/**
-	 * @param paraUid the paraUid to set
-	 */
-	public void setParaUid(String paraUid) {
-		this.paraUid = paraUid;
 	}
 
 	/**
@@ -142,17 +130,31 @@ public class DhTriggerInterface {
 	}
 
 	/**
-	 * @return the actcUid
+	 * @return the activityId
 	 */
 	public String getActivityId() {
 		return activityId;
 	}
 
 	/**
-	 * @param actcUid the actcUid to set
+	 * @param activityId the activityId to set
 	 */
-	public void setActivityId(String actcUid) {
-		this.activityId = actcUid;
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+
+	/**
+	 * @return the stepUid
+	 */
+	public String getStepUid() {
+		return stepUid;
+	}
+
+	/**
+	 * @param stepUid the stepUid to set
+	 */
+	public void setStepUid(String stepUid) {
+		this.stepUid = stepUid;
 	}
 
 	/**
@@ -184,13 +186,6 @@ public class DhTriggerInterface {
 	}
 
 	/**
-	 * @return the bpmForm
-	 */
-	public BpmForm getBpmForm() {
-		return bpmForm;
-	}
-	
-	/**
 	 * @return the parameterType
 	 */
 	public String getParameterType() {
@@ -198,10 +193,31 @@ public class DhTriggerInterface {
 	}
 
 	/**
-	 * @param tinUid the parameterType to set
+	 * @param parameterType the parameterType to set
 	 */
 	public void setParameterType(String parameterType) {
 		this.parameterType = parameterType;
+	}
+
+	/**
+	 * @return the paraUid
+	 */
+	public String getParaUid() {
+		return paraUid;
+	}
+
+	/**
+	 * @param paraUid the paraUid to set
+	 */
+	public void setParaUid(String paraUid) {
+		this.paraUid = paraUid;
+	}
+
+	/**
+	 * @return the bpmForm
+	 */
+	public BpmForm getBpmForm() {
+		return bpmForm;
 	}
 
 	/**
@@ -211,13 +227,6 @@ public class DhTriggerInterface {
 		this.bpmForm = bpmForm;
 	}
 
-	/**
-	 * @return the dhTriggerInterface
-	 */
-	public static String getDhTriggerInterface() {
-		return DH_TRIGGER_INTERFACE;
-	}
-	
 	/**
 	 * @return the dhInterfaceParameter
 	 */
@@ -231,7 +240,7 @@ public class DhTriggerInterface {
 	public void setDhInterfaceParameter(DhInterfaceParameter dhInterfaceParameter) {
 		this.dhInterfaceParameter = dhInterfaceParameter;
 	}
-
+	
 	public DhTriggerInterface() {
 		
 	}
@@ -243,13 +252,18 @@ public class DhTriggerInterface {
 	 * @param dynUid
 	 * @param creator
 	 * @param createTime
-	 * @param actcUid
+	 * @param activityId
+	 * @param stepUid
 	 * @param paraName
 	 * @param fldCodeName
+	 * @param parameterType
+	 * @param paraUid
 	 * @param bpmForm
+	 * @param dhInterfaceParameter
 	 */
 	public DhTriggerInterface(String tinUid, String triUid, String intUid, String dynUid, String creator,
-			Date createTime, String activityId, String paraName, String fldCodeName, String parameterType, String paraUid, BpmForm bpmForm, DhInterfaceParameter dhInterfaceParameter) {
+			Date createTime, String activityId, String stepUid, String paraName, String fldCodeName,
+			String parameterType, String paraUid, BpmForm bpmForm, DhInterfaceParameter dhInterfaceParameter) {
 		super();
 		this.tinUid = tinUid;
 		this.triUid = triUid;
@@ -258,12 +272,13 @@ public class DhTriggerInterface {
 		this.creator = creator;
 		this.createTime = createTime;
 		this.activityId = activityId;
+		this.stepUid = stepUid;
 		this.paraName = paraName;
 		this.fldCodeName = fldCodeName;
 		this.parameterType = parameterType;
+		this.paraUid = paraUid;
 		this.bpmForm = bpmForm;
 		this.dhInterfaceParameter = dhInterfaceParameter;
-		this.paraUid = paraUid;
 	}
 
 	/* (non-Javadoc)
@@ -273,9 +288,10 @@ public class DhTriggerInterface {
 	public String toString() {
 		return "DhTriggerInterface [tinUid=" + tinUid + ", triUid=" + triUid + ", intUid=" + intUid + ", dynUid="
 				+ dynUid + ", creator=" + creator + ", createTime=" + createTime + ", activityId=" + activityId
-				+ ", paraName=" + paraName + ", fldCodeName=" + fldCodeName + ", parameterType=" + parameterType
-				+ ", paraUid=" + paraUid + ", bpmForm=" + bpmForm + ", dhInterfaceParameter=" + dhInterfaceParameter
-				+ "]";
+				+ ", stepUid=" + stepUid + ", paraName=" + paraName + ", fldCodeName=" + fldCodeName
+				+ ", parameterType=" + parameterType + ", paraUid=" + paraUid + ", bpmForm=" + bpmForm
+				+ ", dhInterfaceParameter=" + dhInterfaceParameter + "]";
 	}
+
 
 }
