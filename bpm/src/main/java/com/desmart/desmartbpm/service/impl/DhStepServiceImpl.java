@@ -424,7 +424,7 @@ public class DhStepServiceImpl implements DhStepService {
             }
             if (StringUtils.isNotBlank(step.getStepObjectUid())) {
                 try {
-                    dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step.getStepObjectUid());
+                    dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step);
                 } catch (Exception e) {
                     log.error("调用step失败：stepUid:" + step.getStepUid() + "任务实例id：" + dhTaskInstance.getTaskUid(), e);
                     return ServerResponse.createByErrorMessage("表单前触发器调用失败");
