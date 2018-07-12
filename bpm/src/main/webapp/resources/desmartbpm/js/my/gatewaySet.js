@@ -375,7 +375,13 @@ function editDateRuleCondition(a){
 	$("#valueOperator").find("option[value='"+valueOperator+"']").prop("selected",true);
 	var rightValueType = $(a).parent().find("td").eq(4).text(); 
 	$("#rightValueType").find("option[value='"+rightValueType+"']").prop("selected",true);
-	var conditionOperator = $(a).parent().find("td").eq(5).text(); 
+	var conditionOperator = "";
+	conditionOperator = $(a).parent().find("td").eq(5).text(); 
+	if(conditionOperator=="&&"){
+		conditionOperator+=":与";
+	}else{
+		conditionOperator+=":或";
+	}
 	$("#conditionOperator").find("option[value='"+conditionOperator+"']").prop("selected",true);
 	var leftValue = $(a).parent().find("td").eq(1).text(); 
 	$("#addDatRule").find("input[name='leftValue']").val(leftValue);
