@@ -85,13 +85,14 @@
 						<div style="width: 1500px;">		
 						<table class="layui-table backlog_table">
 							<colgroup>
-								<col width="5%">
-							    <col>
-							    <col>
-							    <col>
-							    <col>
-							    <col>
-							    <col>
+								<col width="5%;">
+							    <col width="10%;">
+							    <col width="5%;">
+							    <col width="5%;">
+							    <col width="10%;">
+							    <col width="5%;">
+							    <col width="45%;">
+							    <col width="15%;">
 							</colgroup>
 							<thead>
 							    <tr>
