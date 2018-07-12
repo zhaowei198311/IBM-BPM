@@ -32,7 +32,6 @@ function addPublicFormContent(view) {
 			}
 		});
 	});
-	console.log(view.html());
 }
 
 var chooseInputWidth = new Array();
