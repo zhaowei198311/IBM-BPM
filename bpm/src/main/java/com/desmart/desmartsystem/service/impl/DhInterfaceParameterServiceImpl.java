@@ -211,6 +211,12 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 		
 		return ServerResponse.createBySuccessMessage("修改成功");
 	}
-	
-	
+
+	@Override
+	public List<DhInterfaceParameter> listByIntUidList(List<String> intUidList) {
+		if (intUidList == null || intUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return dhInterfaceParameterMapper.listByIntUidList(intUidList);
+	}
 }

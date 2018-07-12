@@ -62,4 +62,11 @@ public interface DhTriggerService {
      * 触发器修改
      */
     int updateTrigger(DhTrigger dhTrigger);
+
+    /**
+     * 根据触发器id集合获取触发器
+     * @param triggerUidList
+     * @return 符合条件的触发器
+     */
+    List<DhTrigger> listByTriggerUidList(List<String> triggerUidList);
 }

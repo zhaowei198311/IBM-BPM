@@ -9,9 +9,14 @@
     <result column="IS_DEFAULT" property="isDefault" jdbcType="VARCHAR" />
     <result column="RULE_ID" property="ruleId" jdbcType="VARCHAR" />
   </resultMap>
+
   <sql id="Base_Column_List" >
     GATEWAY_LINE_UID, ACTIVITY_ID, TO_ACTIVITY_ID, ROUTE_RESULT, IS_DEFAULT, RULE_ID
   </sql>
+  <sql id="Relation_Column_List" >
+    l.GATEWAY_LINE_UID, l.ACTIVITY_ID, l.TO_ACTIVITY_ID, l.ROUTE_RESULT, l.IS_DEFAULT, l.RULE_ID
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -166,4 +171,24 @@
 	   	</foreach>
    	</where> 
    </select>
+
+  <select id="listAllGatewayLineOfProcessDefinition" resultMap="BaseResultMap" parameterType="map">
+    select <include refid="Relation_Column_List"/> from DH_GATEWAY_LINE l
+    where exists(
+        select 1 from BPM_ACTIVITY_META m
+        where m.PRO_APP_ID = #{proAppId}
+        and m.bpd_id = #{proUid}
+        and m.snapshot_id = #{proVerUid}
+        and m.activity_id = l.activity_id
+    )
+  </select>
+
+  <select id="listByGatewayActivityIdList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
+      select <include refid="Base_Column_List"/> from DH_GATEWAY_LINE
+      <where>
+          <foreach collection="list" item="item" separator="or"> activity_id = #{item} </foreach>
+      </where>
+  </select>
+
+
 </mapper>

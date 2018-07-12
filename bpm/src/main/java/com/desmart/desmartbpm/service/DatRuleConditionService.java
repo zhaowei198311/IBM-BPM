@@ -70,4 +70,11 @@ public interface DatRuleConditionService {
 	 * @return
 	 */
 	ServerResponse update(DatRuleCondition datRuleCondition);
+
+	/**
+	 * 根据规则id列表找到所有 ruleCondition
+	 * @param ruleIdList
+	 * @return
+	 */
+	List<DatRuleCondition> listByRuleIdList(List<String> ruleIdList);
 }

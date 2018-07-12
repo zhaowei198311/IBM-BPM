@@ -81,4 +81,6 @@ public interface DatRuleService {
 	 * @return
 	 */
 	public List<Map<String,Object>> loadRightDetailsList(String activityId);
+
+	List<DatRule> listByRuleIdList(List<String> ruleIdList);
 }

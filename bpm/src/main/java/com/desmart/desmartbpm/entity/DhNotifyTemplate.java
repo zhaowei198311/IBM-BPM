@@ -2,6 +2,12 @@ package com.desmart.desmartbpm.entity;
 
 import java.util.Date;
 
+/**
+ * 短信模版、邮件模版
+ * 1. 任务到达通知模版（短信、邮件）
+ * 2. 任务超时通知模版（短信、邮件）
+ * 3. ...
+ */
 public class DhNotifyTemplate {
 	public static final String MAIL_NOTIFY_TEMPLATE = "MAIL_NOTIFY_TEMPLATE";//邮件类型
 	public static final String MESSAGE_NOTIFY_TEMPLATE = "MESSAGE_NOTIFY_TEMPLATE";//短信类型

@@ -22,4 +22,11 @@ public interface BpmFormRelePublicFormMapper {
 	 * 根据表单id 查询所有子表单数据信息
 	 */
 	List<BpmFormField> listPublicFormFieldByFormUid(String formUid);
+
+	/**
+	 * 根据表单id列表列出相关的公共子表单
+	 * @param formUidList
+	 * @return
+	 */
+	List<String> listPublicFormUidByFormUidList(List<String> formUidList);
 }

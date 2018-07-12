@@ -48,4 +48,11 @@ public interface BpmFormFieldService {
 	 * 根据表单id和表格名获得表单中某个表格的字段
 	 */
 	ServerResponse<List<BpmFormField>> queryFormTabFieldByFormUidAndTabName(String formUid, String tableName);
+
+	/**
+	 * 根据表单id集合获得所有的表单字段
+	 * @param formUidList 表单id集合
+	 * @return
+	 */
+	List<BpmFormField> listByFormUidList(List<String> formUidList);
 }

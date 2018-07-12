@@ -23,16 +23,18 @@ public interface DhInterfaceParameterService {
 	 */
 	ServerResponse<PageInfo<List<DhInterfaceParameter>>> listDhInterfaceParameter(String intUid,Integer pageNum, Integer pageSize);
 
-	
-	
-	
-	
 	/**
 	 * @param intUid 接口定义id
 	 * @return 根据 定义接口id  查询 返回一个list 接口参数数据
 	 */
 	List<DhInterfaceParameter> querybyintUid(String intUid);
 
+	/**
+	 * 根据接口主键，查询多个接口的参数
+	 * @param intUidList 接口主键集合
+	 * @return
+	 */
+	List<DhInterfaceParameter> listByIntUidList(List<String> intUidList);
 	
 	/**
 	 * @param paraUid 需要删除的接口参数

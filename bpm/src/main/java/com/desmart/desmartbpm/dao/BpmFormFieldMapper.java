@@ -93,4 +93,11 @@ public interface BpmFormFieldMapper {
 	 */
 	List<BpmFormField> queryFormTabFieldByFormUidAndTabName(@Param("formUid")String formUid,
 			@Param("tableName")String tableName);
+
+	/**
+	 * 根据表单id获得所有关联的字段
+	 * @param formUidList
+	 * @return
+	 */
+	List<BpmFormField> listByFormUidList(List<String> formUidList);
 }

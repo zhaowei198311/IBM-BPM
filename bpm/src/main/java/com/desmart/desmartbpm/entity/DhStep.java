@@ -23,7 +23,8 @@ public class DhStep {
     // 非表字段
     private String triTitle;
     private String formName;
-    
+    private String activityId; // 连表得到
+
     public DhStep() {
         
     }
@@ -110,7 +111,15 @@ public class DhStep {
     public void setStepMode(String stepMode) {
         this.stepMode = stepMode;
     }
-    
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
+    }
+
     public String getTriTitle() {
         return triTitle;
     }

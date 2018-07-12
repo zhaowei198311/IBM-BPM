@@ -113,8 +113,15 @@
     select <include refid="Base_Column_List" /> from DH_ACTIVITY_ASSIGN
     where activity_id = #{activityId}
   </select>
-  
-  <delete id="deleteByActivityIds" parameterType="list">
+
+    <select id="listByActivityIdList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhActivityAssign">
+        select <include refid="Base_Column_List" /> from DH_ACTIVITY_ASSIGN
+        <where>
+            <foreach collection="list" separator="or" item="item"> activity_id = #{item} </foreach>
+        </where>
+    </select>
+
+    <delete id="deleteByActivityIds" parameterType="list">
       delete from DH_ACTIVITY_ASSIGN 
       where activity_id in
       <foreach collection="list" item="item" open="(" separator="," close=")"> 

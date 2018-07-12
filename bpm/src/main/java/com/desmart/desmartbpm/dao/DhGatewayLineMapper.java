@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.dao;
 import java.util.List;
 
 import com.desmart.desmartbpm.entity.DhGatewayLine;
+import org.apache.ibatis.annotations.Param;
 
 public interface DhGatewayLineMapper {
     int deleteByPrimaryKey(String gatewayLineUid);
@@ -63,4 +64,23 @@ public interface DhGatewayLineMapper {
      * @throws
      */
     List<DhGatewayLine> listByActivityIds(List<String> activityIds);
+
+
+    /**
+     * 获得指定流程定义下的所有的网关连接线
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    List<DhGatewayLine> listAllGatewayLineOfProcessDefinition(@Param("proAppId") String proAppId,
+                                                              @Param("proUid") String proUid,
+                                                              @Param("proVerUid") String proVerUid);
+
+    /**
+     * 根据网关的activityId集合获得对应的连接线
+     * @param activityIdList 网关环节的id 集合
+     * @return
+     */
+    List<DhGatewayLine> listByGatewayActivityIdList(List<String> activityIdList);
 }

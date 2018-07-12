@@ -276,4 +276,12 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		}
 		return ServerResponse.createBySuccess(objFieldList);
 	}
+
+	@Override
+	public List<BpmFormField> listByFormUidList(List<String> formUidList) {
+		if (formUidList == null || formUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return bpmFormFieldMapper.listByFormUidList(formUidList);
+	}
 }

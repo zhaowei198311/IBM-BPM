@@ -27,6 +27,13 @@ public interface DhStepMapper {
     
     List<DhStep> listBySelective(DhStep selective);
 
+    /**
+     * 获得流程定义相关的步骤(带activity_id)
+     * @return
+     */
+    List<DhStep> listStepsOfProcessDefinition(@Param("proAppId") String proAppId,
+                                              @Param("proUid") String proUid,
+                                              @Param("proVerUid") String proVerUid);
     
     /**
      * 获得最大的步骤序号

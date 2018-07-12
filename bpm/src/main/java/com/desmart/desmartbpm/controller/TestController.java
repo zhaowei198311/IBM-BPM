@@ -256,5 +256,11 @@ public class TestController extends BaseWebController {
     }
 
 
+    @RequestMapping(value = "/testGetFile")
+    @ResponseBody
+    public String testGetFile(HttpServletRequest request, String proAppId, String proUid, String proVerUid) {
 
+        System.out.println(proAppId + " | " + proUid + " | " + proVerUid);
+        return "done";
+    }
 }

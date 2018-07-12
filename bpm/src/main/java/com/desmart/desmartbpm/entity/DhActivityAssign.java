@@ -3,6 +3,10 @@ package com.desmart.desmartbpm.entity;
 /**
  * 分派关系
  * 如：任务处理人指定为某角色，超时通知指定某人
+ * 1. 指定任务默认处理人 activity_id -> role1...
+ * 2. 指定任务可选处理人 activity_id -> user1...
+ * 3. 指定环节超时通知人 activity_id -> user1...
+ *
  */
 public class DhActivityAssign {
     

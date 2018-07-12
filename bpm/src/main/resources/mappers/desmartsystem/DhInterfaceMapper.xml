@@ -138,5 +138,12 @@
 			INT_UID = #{intUid}
 		</where>
 	</select>
-	
+
+	<select id="listByIntUidList" parameterType="list" resultType="com.desmart.desmartsystem.entity.DhInterface">
+		SELECT <include refid="Base_Column_List"/> from DH_INTERFACE
+		<where>
+			<foreach collection="list" item="item" separator="or"> int_uid = #{item} </foreach>
+		</where>
+	</select>
+
 </mapper>

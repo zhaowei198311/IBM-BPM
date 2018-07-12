@@ -102,4 +102,13 @@ public interface DhStepService {
      */
     ServerResponse executeStepBeforeFormStep(DhStep firstStep, DhTaskInstance dhTaskInstance);
 
+    /**
+     * 获得指定流程定义下的所有步骤
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    List<DhStep> listAllStepsOfProcessDefinition(String proAppId, String proUid, String proVerUid);
+
 }    

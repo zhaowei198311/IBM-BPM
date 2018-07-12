@@ -13,6 +13,13 @@ public interface DhTriggerMapper {
     DhTrigger getByPrimaryKey(String triUid);
 
     /**
+     * 根据触发器主键查询触发器
+     * @param triggerUidList 触发器主键集合
+     * @return
+     */
+    List<DhTrigger> listByTriggerUidList(List<String> triggerUidList);
+
+    /**
      * 根据条件检索
      * @param dhTrigger
      * @return
@@ -30,4 +37,6 @@ public interface DhTriggerMapper {
      * 修改触发器
      */
     int updateDhTrigger(DhTrigger dhTrigger);
+
+
 }

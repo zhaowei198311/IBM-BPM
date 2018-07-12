@@ -2,6 +2,9 @@ package com.desmart.desmartbpm.entity;
 
 /**
  * 对象权限
+ * 1. 流程发起权限
+ * 2. 表单字段(区段)显示/编辑权限
+ *
  * @author yaoyunqing
  *
  */

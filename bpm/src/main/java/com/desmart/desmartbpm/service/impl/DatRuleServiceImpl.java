@@ -526,4 +526,13 @@ public class DatRuleServiceImpl implements DatRuleService {
 		}
 		return map;
 	}
+
+	@Override
+	public List<DatRule> listByRuleIdList(List<String> ruleIdList) {
+		if (ruleIdList == null || ruleIdList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return datRuleMapper.listByRuleIds(ruleIdList);
+	}
+
 }

@@ -69,14 +69,14 @@
 			</foreach>
 		</where>
 	</delete>
-	
+
 	<select id="listByRuleIds" parameterType="list" resultType="com.desmart.desmartbpm.entity.DatRule">
 		SELECT * FROM DAT_RULE
 		<where>
-			RULE_ID IN
-			<foreach collection="list" item="item" open="(" separator="," close=")">
-				#{item}
+			<foreach collection="list" item="item" open="" separator="or" close="">
+				rule_id = #{item}
 			</foreach>
 		</where>
 	</select>
+
 </mapper>

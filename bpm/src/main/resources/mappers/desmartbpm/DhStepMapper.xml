@@ -310,4 +310,17 @@
 			AND STEP_TYPE = 'form'
 		</where>
 	</select>
+
+    <select id="listStepsOfProcessDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhStep">
+        select <include refid="relationColumn"/>, m.activity_id activityId
+        from dh_step s
+        left join bpm_activity_meta m
+            on s.pro_Uid = m.bpd_id
+            and s.pro_app_id = m.pro_app_id
+            and s.pro_ver_uid = m.snapshot_id
+            and s.activity_bpd_id = m.activity_bpd_id
+        where s.pro_app_id = #{proAppId}
+            and s.pro_ver_uid = #{proVerUid}
+            and s.pro_uid = #{proUid}
+    </select>
 </mapper>

@@ -69,4 +69,11 @@ public interface BpmPublicFormMapper {
 	 * 根据表单编码查询到公共表单对象
 	 */
 	BpmPublicForm queryFormByFormCode(String formCode);
+
+	/**
+	 * 根据公共表单的id集合获得对应的公共表单
+	 * @param publicFormUidList
+	 * @return
+	 */
+	List<BpmPublicForm> listByPublicFormUidList(List<String> publicFormUidList);
 }

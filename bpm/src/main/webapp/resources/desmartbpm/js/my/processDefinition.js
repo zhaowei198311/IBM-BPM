@@ -279,6 +279,34 @@ $(function() {
 		
 	});
 
+	// “导出”按钮
+	$('#exportBtn').click(function(){
+        var cks = $("[name='definition_ck']:checked");
+        if (!cks.length) {
+            layer.alert("请选择一个流程定义");
+            return;
+        }
+        if (cks.length > 1) {
+            layer.alert("请选择一个流程定义，不能选择多个");
+            return;
+        }
+        var ck = cks.eq(0);
+        alert(111)
+        var param = {
+        	"url": common.getPath() + '/testGetFile',
+			"data": {
+        		"proUid": ck.data('prouid'),
+                "proVerUid": ck.data('proveruid'),
+                "proAppId": ck.data('proappid')
+			},
+			"fn": function() {
+
+			}
+		};
+        common.doPostAjax(param);
+	});
+
+
 	// “流程配置”按钮
     $("#toEditDefinition_btn")
         .click(function () {

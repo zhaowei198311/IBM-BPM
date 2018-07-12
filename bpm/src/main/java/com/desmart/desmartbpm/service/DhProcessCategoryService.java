@@ -85,4 +85,11 @@ public interface DhProcessCategoryService {
      * @return ServerResponse<?>  
      */
     List<DhProcessCategory> listByCategoryParent(String categoryParent);
+
+    /**
+     * 根据分类id获得一个分类集合，包含这个uid对应的分类与它所有的父分类，不包含根分类
+     * @param categoryUid
+     * @return
+     */
+    List<DhProcessCategory> getCategoryAndAllParentCategory(String categoryUid);
 }

@@ -144,4 +144,16 @@
  		where form_uid = #{formUid}
  		and fld_description = #{tableName}
  	</select>
+
+    <select id="listByFormUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.BpmFormField">
+		select <include refid="base_column"/>
+		from bpm_form_field
+		<where>
+			<foreach collection="list" item="item" separator="or" >
+				form_uid = #{item}
+			</foreach>
+		</where>
+	</select>
+
+
 </mapper>
