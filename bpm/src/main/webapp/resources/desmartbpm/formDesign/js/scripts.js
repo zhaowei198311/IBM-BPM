@@ -364,7 +364,8 @@ function downloadLayoutSrc() {
             ["name"],
             ["title"],
             ["table-label"],
-            ["isleading"]
+            ["isleading"],
+            ["move-view"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -604,6 +605,8 @@ $(document).ready(function () {
 	                        	inputId = "choose_depart_" + inputId;
 	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='choose_form']").length > 0){
 	                        	inputId = "choose_form_" + inputId;
+	                        }else if($("#" + temp).parent().parent().find(".subDiv").find("input[title='hidden_text']").length > 0){
+	                        	inputId = "hidden_text_" + inputId;
 	                        }else{
 	                            inputId = "text_" + inputId;
 	                        }
@@ -853,8 +856,13 @@ function saveHtml() {
                                         case "INPUT":
                                             {
                                                 filedAttr.fldCodeName = subObj.attr("name");
-                                                filedAttr.fldName = subDivObj.prev().find("label").text();
                                                 filedAttr.multiValue = "false";
+                                                if(subObj.attr("title")=="hidden_text"){
+                                                	filedAttr.fldName = "隐藏域";
+                                                	filedAttr.fldType = "hidden";
+                                                	break;
+                                                }
+                                                filedAttr.fldName = subDivObj.prev().find("label").text();
                                                 switch (subObj.attr("type")) {
                                                     case "text":
                                                         {
@@ -1045,9 +1053,14 @@ function saveHtml() {
                                     switch (subObj.prop("tagName")) {
                                         case "INPUT":
                                             {
-                                                filedAttr.fldCodeName = subObj.attr("name");
-                                                filedAttr.fldName = subDivObj.prev().find("label").text();
-                                                filedAttr.multiValue = "false";
+	                                        	filedAttr.fldCodeName = subObj.attr("name");
+	                                            filedAttr.multiValue = "false";
+	                                            if(subObj.attr("title")=="hidden_text"){
+	                                            	filedAttr.fldName = "隐藏域";
+	                                            	filedAttr.fldType = "hidden";
+	                                            	break;
+	                                            }
+	                                            filedAttr.fldName = subDivObj.prev().find("label").text();
                                                 switch (subObj.attr("type")) {
                                                     case "text":
                                                         {

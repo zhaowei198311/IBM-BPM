@@ -76,6 +76,7 @@ function drawPage() {
 				var subDivObj = column.find(".subDiv");
 				var tableObj = subDivObj.find("table");
 				var pObj = subDivObj.find("p");
+				var hiddenObj = subDivObj.find("input[title='hidden_text']");
 				if (tableObj.length != 0) {
 					flag = false;
 					formHtml = formHtml.substring(0, formHtml.length - 4);
@@ -227,6 +228,11 @@ function drawPage() {
 					if (!isNaN(subDivCol)) {
 						formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
 					}
+				}else if(hiddenObj.length!=0){
+					var subDivObj = column.find(".subDiv input[title='hidden_text']");
+					var subDivId = $(subDivObj).attr("id");
+					var subHtml = $(subDivObj).parent().html();
+					formHtml += '<td class="td_sub" style="display:none">' + subHtml + '</td>';
 				}
 			} else {
 				//普通组件
