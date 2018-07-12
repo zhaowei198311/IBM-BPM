@@ -282,7 +282,7 @@ var common = {
 					}
 					var value = $("[name='" + name + "']")
 						.val().trim();
-					if(isNaN(parseInt(value))&&(value=="" || value==null)){
+					if(value=="" || value==null || isNaN(value)){
 						textJson = "\"" + name + "\":{\"value\":\"\"}";
 					}else{
 						textJson = "\"" + name + "\":{\"value\":"
@@ -384,7 +384,7 @@ var common = {
 							var tdValue = $(this).find("input").val();
 							var tdInputType = $(this).find("input").attr("type");
 							if(tdInputType=="number" || tdInputType=="tel"){
-								if(isNaN(parseInt(value))&&(value=="" || value==null)){
+								if(value=="" || value==null || isNaN(value)){
 									tableJson += "\""+tdName+"\":\"\"";
 								}else{
 									tableJson += "\""+tdName+"\":"+tdValue+"";

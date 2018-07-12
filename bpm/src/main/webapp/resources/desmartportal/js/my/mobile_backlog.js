@@ -1,4 +1,16 @@
 var index = "";
+//异步请求的分页参数
+var pageConfig = {
+	pageNum:1,
+	pageSize:8,
+	createProcessUserName : "",
+	taskPreviousUsrUsername: "",
+	insTitle : "",
+	startTime : null,
+	endTime: null,
+	total : 0
+};
+
 $(function(){
 	var calendar1 = new lCalendar();
 	calendar1.init({
@@ -11,6 +23,12 @@ $(function(){
 		'trigger': '#end_time',
 		'type': 'date'
 	});
+	
+	// 加载数据
+	getTaskInstanceInfo();
+	
+	//异步加载代办列表
+	userAsync();
 });
 
 //打开筛选条件div的方法
@@ -38,4 +56,175 @@ function fiterDivShow(){
 //确认搜索条件的方法
 function queryTask(){
 	layer.close(index);
+}
+
+//异步加载代办列表
+function userAsync() {
+	var move = 0;
+	$(window).scroll(function(){
+		var scrollTop = $(window).scrollTop(); 
+		console.log(scrollTop);
+		if(scrollTop-move>=450){
+			move = scrollTop;
+			if(pageConfig.pageNum==1){
+				pageConfig.pageNum = 3;
+			}else{
+				pageConfig.pageNum++;
+			}
+			pageConfig.pageSize=4;
+			getTaskInstanceInfo();
+		}
+	});
+}
+
+//查询用户的代办
+function getTaskInstanceInfo(){
+	$.ajax({
+		url : 'taskInstance/loadBackLog',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			pageNum : pageConfig.pageNum,
+			pageSize : pageConfig.pageSize,
+			createProcessUserName : pageConfig.createProcessUserName,
+			taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
+			insTitle : pageConfig.insTitle,
+			startTime : pageConfig.startTime,
+			endTime: pageConfig.endTime
+		},
+		success : function(result){
+			if (result.status == 0) {
+				drawTable(result.data);
+			}
+		}
+	})
+}
+
+//渲染代办表格
+function drawTable(data) {
+	// 渲染数据
+	if(pageConfig.pageNum==1){
+		$("#backlog_list").html('');
+		var total = data.total;
+		var totalHtml = '<p class="table_list">'
+			+'<i class="layui-icon">&#xe61d;</i>共<span id="daiban_icon">'
+			+total+'</span>条任务'
+			+'</p>';
+		$("#backlog_list").append(totalHtml);
+	}
+	var list = data.list;
+	var liHtml = "";
+	var type = "";
+	var status = "";
+	for (var i = 0; i < list.length; i++) {
+		var meta = list[i];
+		if(meta.taskStatus==12){
+			status = "待处理";
+		}
+		if(meta.taskStatus==-2){
+			status = "等待加签结束";
+		}
+		var agentOdate = new Date(meta.taskInitDate);
+		var InitDate = datetimeFormat_1(agentOdate);
+		liHtml += '<li onclick=openApproval("'+meta.taskUid+'")>'
+			+'<table>'
+			+'<tr>'
+			+'<th>流程标题：</th>'
+			+'<td>'+meta.dhProcessInstance.insTitle+'</td>'
+			+'</tr>'
+			+'<tr>'
+			+'<th>环节名称：</th>'
+			+'<td>'+meta.taskTitle+'</td>'
+			+'</tr>'
+			+'<tr>'
+			+'<th>上一环节处理人：</th>'
+			+'<td>';
+		if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
+			liHtml += meta.taskPreviousUsrUsername;
+		}
+		liHtml+='</td>'
+			+'</tr>'
+			+'<tr>'
+			+'<th>流程创建人：</th>'
+			+'<td>';
+		if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
+			liHtml += meta.sysUser.userName;
+		}
+		liHtml+='</td>'
+			+'</tr>'
+			+'<tr>'
+			+'<th>任务接收时间：</th>'
+			+'<td>'+InitDate+'</td>'
+			+'</tr>'
+			+'<tr>'
+			+'<th colspan="2">';
+		
+		liHtml+=taskProgerss(meta.taskActivityId,meta.taskUid);
+			
+		liHtml+='</th>'
+			+'</tr>'
+			+'</table>';
+		if(meta.taskDelegateUser != null && meta.taskDelegateUser !=""){
+			liHtml+='<div class="is_agent">'
+				+'<span>代</span>'
+				+'</div>';
+		}
+		liHtml+='<div class="task_status">'
+			+'<span>'+status+'</span>'
+			+'</div>'
+			+'</li>';
+	}
+	$("#backlog_list").append(liHtml);
+	
+	// 加载进度条
+    layui.use('element', function () {
+        var $ = layui.jquery,
+            element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+        
+        element.render();
+    });
+}
+
+//查询任务的完成进度
+function taskProgerss(activityId,taskUid){
+	var proHtml = "";
+	// 查询审批进度剩余进度百分比
+    $.ajax({
+        async: false,
+        url: common.getPath() + "/taskInstance/queryProgressBar",
+        type: "post",
+        dataType: "json",
+        data: {
+        	activityId: activityId,
+            taskUid: taskUid
+        },
+        success: function (data) {
+            var result = data.data;
+            // 剩余时间
+            var hour = result.hour;
+            // 剩余时间百分比
+            var percent = result.percent;
+            if (data.status == 0) {
+            	proHtml = '<div class="layui-progress layui-progress-big" lay-filter="progressBar" style="position: relative;">'
+            		+'<div class="layui-progress-bar" lay-percent="'+percent+'%"></div>';
+                if (hour == -1) {
+                	proHtml += "<span class='progress_time' style='right: 1%;'>审批已超时</span>";
+                } else {
+                	proHtml += "<span class='progress_time' style='right: 1%;'>审批剩余时间" + hour + "小时</span>";             
+                }
+                proHtml+='</div>';
+            } else {
+            	proHtml = '<div class="layui-progress layui-progress-big" lay-filter="progressBar" '
+            		+'加载失败'
+            		+'lay-showPercent="yes" style="position: relative;">';
+            }
+        }
+    });
+    
+    return proHtml;
+}
+
+//打开 代办的 详细页面
+function openApproval(taskUid){
+	window.location.href = 'menus/approval?taskUid='+taskUid;
 }

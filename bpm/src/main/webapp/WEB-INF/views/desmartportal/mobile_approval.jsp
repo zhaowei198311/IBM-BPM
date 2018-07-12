@@ -27,7 +27,7 @@
     <div class="mobile_container">
         <div class="mobile_top">
             <div class="top_left">
-            	<i class="layui-icon">&#xe65c;</i>
+            	<i class="layui-icon" onclick="back()">&#xe65c;</i>
             </div>
             <div class="top_content">
             	<span>${processInstance.proName}</span>
