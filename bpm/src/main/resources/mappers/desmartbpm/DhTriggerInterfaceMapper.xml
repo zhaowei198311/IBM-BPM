@@ -5,6 +5,7 @@
 		<result column="TIN_UID" property="tinUid" />
 		<result column="TRI_UID" property="triUid" />
 		<result column="INT_UID" property="intUid" />
+		<result column="STEP_UID" property="stepUid" />
 		<result column="DYN_UID" property="dynUid" />
 		<result column="CREATOR" property="creator" />
 		<result column="CREATE_TIME" property="createTime" />
@@ -20,6 +21,7 @@
 		<result column="TIN_UID" property="tinUid" />
 		<result column="TRI_UID" property="triUid" />
 		<result column="INT_UID" property="intUid" />
+		<result column="STEP_UID" property="stepUid" />
 		<result column="DYN_UID" property="dynUid" />
 		<result column="CREATOR" property="creator" />
 		<result column="CREATE_TIME" property="createTime" />
@@ -59,13 +61,13 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		TIN_UID,TRI_UID,INT_UID,
+		TIN_UID,TRI_UID,INT_UID,STEP_UID,
 		DYN_UID,CREATOR,CREATE_TIME,ACTIVITY_ID,
 		PARA_NAME,FLD_CODE_NAME,PARAMETER_TYPE,PARA_UID
 	</sql>
 
 	<sql id="Condition_Column_List">
-		T.TIN_UID,T.TRI_UID,T.INT_UID,
+		T.TIN_UID,T.TRI_UID,T.INT_UID,T.STEP_UID,
 		T.DYN_UID,T.CREATOR,T.CREATE_TIME,T.ACTIVITY_ID,
 		T.PARA_NAME,T.FLD_CODE_NAME,T.PARAMETER_TYPE,T.PARA_UID,M.DYN_TITLE,
 		I.PARA_TYPE,I.PARA_PARENT,I.PARA_INDEX
@@ -106,6 +108,9 @@
 			</if>
 			<if test="intUid != null and intUid != ''">
 				AND INT_UID = #{intUid}
+			</if>
+			<if test="stepUid != null and stepUid != ''">
+				AND STEP_UID = #{stepUid}
 			</if>
 			<if test="dynUid != null and dynUid !=''">
 				AND DYN_UID = #{dynUid}
@@ -172,6 +177,7 @@
 		#{tinUid},
 		#{triUid},
 		#{intUid},
+		#{stepUid},
 		#{dynUid},
 		#{creator},
 		sysdate,
@@ -193,6 +199,7 @@
 			#{item.tinUid},
 			#{item.triUid},
 			#{item.intUid},
+			#{item.stepUid},
 			#{item.dynUid},
 			#{item.creator},
 			sysdate,
@@ -236,6 +243,9 @@
 				</if>
 				<if test="intUid != null and intUid != ''">
 					INT_UID = #{intUid}
+				</if>
+				<if test="stepUid != null and stepUid != ''">
+					STEP_UID = #{stepUid}
 				</if>
 				<if test="dynUid != null and dynUid !=''">
 					DYN_UID = #{dynUid}
