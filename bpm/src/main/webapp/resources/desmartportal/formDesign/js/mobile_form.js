@@ -83,6 +83,10 @@ function drawPage() {
 					var trHtml = '<tr>';
 					for (var i = 0; i < thObjArr.length; i++) {
 						var thObj = $(thObjArr[i]);
+						if(!thObj.attr("move-view")){
+							thObj.css("display","none");
+							break;
+						}
 						trHtml += '<td data-label="' + thObj.text().trim() + '">';
 						switch (thObj.attr("col-type")) {
 							case "text": {
@@ -188,6 +192,11 @@ function drawPage() {
 					if (!isNaN(subDivCol)) {
 						formHtml += '<td class="td_sub" colspan=' + subDivCol + '>' + subHtml + '</td>';
 					}
+				}else if(hiddenObj.length!=0){
+					var subDivObj = column.find(".subDiv input[title='hidden_text']");
+					var subDivId = $(subDivObj).attr("id");
+					var subHtml = $(subDivObj).parent().html();
+					formHtml += '<td class="td_sub" style="display:none">' + subHtml + '</td>';
 				}
 			} else {//普通组件
 				flag = true;

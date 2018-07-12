@@ -191,6 +191,27 @@
 											</div>
 										</div>
 									</div>
+									<!-- 隐藏文本框 -->
+									<div class="box box-element ui-draggable">
+										<a href="#close" class="remove label label-important">
+											<i class="icon-remove icon-white"></i>删除
+										</a>
+										<span class="drag label">
+											<i class="icon-move"></i>拖动
+										</span>
+										<span class="configuration">
+											<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showHiddenModal(this);" role="button" data-toggle="modal">编辑
+											</button>
+										</span>
+										<div class="preview">隐藏文本框</div>
+										<div class="view">
+											<div class="form-group">
+												<div class="subDiv" col="1">
+													<input type="text" title="hidden_text" class="layui-input" col="1"/>
+												</div>
+											</div>
+										</div>
+									</div>
 									<!-- 数字文本框 -->
 									<div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
@@ -764,6 +785,45 @@
 				<div class="modal-footer">
 					<a id="save-text-content" class="btn btn-primary">保存</a>
 					<a class="btn btn-primary" data-dismiss="modal" onclick='$("#text-warn").modal("hide");'>取消</a>
+				</div>
+			</div>
+			
+			<!-- 设置隐藏文本框的属性 -->
+			<div class="modal hide fade" role="dialog" id="hiddenModal">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>隐藏文本框属性</h3>
+				</div>
+				<div class="modal-body">
+					<div id="hidden-text-warn" class="hide alert alert-warning">
+						<strong>警告！</strong>必须填写标
+						<span style="color:red;">*</span>的属性。
+					</div>
+
+					<form>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								ID
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="hidden-text-id" placeholder="请输入组件ID" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								name
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="hidden-text-name" placeholder="请输入组件name">
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<a id="save-hidden-text-content" class="btn btn-primary">保存</a>
+					<a class="btn btn-primary" data-dismiss="modal" onclick='$("#hidden-text-warn").modal("hide");'>取消</a>
 				</div>
 			</div>
 

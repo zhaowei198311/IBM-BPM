@@ -126,6 +126,20 @@ function showTextModal(obj) {
     }
 };
 
+//设置隐藏文本框的属性
+function showHiddenModal(obj){
+	$("#hiddenModal").modal("show");
+
+    view = $(obj).parent().next().next();
+    var inputObj = view.find("input");
+    var id = inputObj.attr("id");
+    var name = inputObj.attr("name").replace(formCode+"_","");
+    oldName = name;
+
+    $("#hidden-text-name").val(name);
+    $("#hidden-text-id").val(id);
+}
+
 //设置数字文本框属性的模态框
 function showNumberModal(obj) {
     $("#numberModal").modal("show");
@@ -1057,6 +1071,28 @@ $(function () {
         }
     });
 
+    //保存隐藏文本框的属性编辑
+    $("#save-hidden-text-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#hidden-text-id").val();
+        var name = $("#hidden-text-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#hidden-text-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#hidden-text-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#hidden-text-warn").modal('show');
+        } else {
+            var inputObj = view.find("input");
+            inputObj.attr({
+                "id": id,
+                "name": formCode+"_"+name
+            });
+
+            $("#hidden-text-warn").modal('hide');
+            $("#hiddenModal").modal("hide");
+        }
+    });
+    
     //保存数字文本框的属性编辑
     $("#save-number-content").click(function (e) {
         e.preventDefault();
