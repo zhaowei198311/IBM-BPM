@@ -134,7 +134,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 					if (datRuleCondition.getRuleVersion() == null) {
 						datRuleCondition.setRuleVersion(0);// 设置优先级默认为0
 					}
-					linkedList.addFirst(datRuleCondition);
+					linkedList.addLast(datRuleCondition);
 				}
 				List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
 				StringBuffer sb = new StringBuffer("Map(");
@@ -399,7 +399,7 @@ public class DatRuleServiceImpl implements DatRuleService {
 		}
 		linkedList = datRuleConditionServiceImpl.getDatruleConditionByRuleId(datRuleCondition.getRuleId());
 		if(datRuleCondition.getConditionId()==null||"".equals(datRuleCondition.getConditionId())) {
-			linkedList.addFirst(datRuleCondition);
+			linkedList.addLast(datRuleCondition);
 		}
 		String ruleProcess = createRuleProcess(linkedList);
 		DatRule datRule = new DatRule();
