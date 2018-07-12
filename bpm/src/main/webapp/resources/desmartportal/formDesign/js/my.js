@@ -83,7 +83,7 @@ function drawPage() {
 					formHtml += "</tbody></table>";
 					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
 					var isleading = tableObj.attr("isleading");
-					if(isleading){
+					if(isleading=="true"){
 						var thObjArr = tableObj.find("thead th");
 						var id = tableObj.attr("id")+_getRandomString(2);
 						var trHtml = '<tr>';

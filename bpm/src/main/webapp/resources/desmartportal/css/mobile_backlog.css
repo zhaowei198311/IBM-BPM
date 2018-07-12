@@ -11,10 +11,12 @@
     z-index: 10;
     background: #2E3238;
     color: #F2f2f2;
+    position: fixed;
 }
 .mobile_middle{
 	width:100%;
 	height:auto;
+	margin-top: 50px;
 }
 
 /*顶部*/
@@ -79,12 +81,12 @@
 }
 .is_agent{
 	position: absolute;
-	top:8px;
+	bottom:68px;
 	right:5px;
 }
 .task_status{
 	position: absolute;
-	top:40px;
+	bottom:37px;
 	right:5px;
 }
 .task_status span{
@@ -99,6 +101,7 @@
     left: 0px;
 }
 #filter_div {
+	display:none;
 	background: #fbfbfb;
 	height:100%;
 	-webkit-overflow-scrolling : touch;

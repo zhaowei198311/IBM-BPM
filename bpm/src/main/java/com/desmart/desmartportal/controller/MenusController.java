@@ -67,7 +67,15 @@ public class MenusController {
 	 */
 	@RequestMapping("/backlog")
 	public ModelAndView backlog() {
-		ModelAndView mv = new ModelAndView("desmartportal/backlog");
+		ModelAndView mv = new ModelAndView();
+		boolean isMobile = RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"));
+		if(isMobile) {
+			// 移动端普通的待办任务
+			mv.setViewName("desmartportal/mobile_backlog");
+		}else {
+			// 普通的待办任务
+			mv.setViewName("desmartportal/backlog");
+		}
 		return mv;
 	}
 

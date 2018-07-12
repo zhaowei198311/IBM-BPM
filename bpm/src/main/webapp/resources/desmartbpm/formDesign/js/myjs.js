@@ -659,7 +659,9 @@ function showDataTableModal(obj) {
     }); //end blur
 
     $("#data-table-id").val(id);
-    $("#data-table-isleading").prop("checked",isleading);
+    if(isleading=="true"){
+    	$("#data-table-isleading").prop("checked",isleading);
+    }
     $("#data-table-name").val(name);
     $("#data-table-number").val(thNum);
     $("#data-table-label").val(label);
