@@ -211,10 +211,11 @@ function drawTable(pageInfo, data) {
 				+ '</td>'
 				+ '<td>'
 				+ '<i class="layui-icon" title="复制接口" onclick=copyInterface("'+ meta.intUid + '"); ><img src="resources/desmartsystem/images/face/copy.png" style="height:16px; width:16px;margin-right:4px;margin-bottom:4px;" /></i>'
-				+ '<i class="layui-icon"  title="接口测试" style="font-size:16px;" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input")  >&#xe64c;</i>'
+				//+ '<i class="layui-icon"  title="接口测试" style="font-size:16px;" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input")  >&#xe64c;</i>'
+				+ '<i class="layui-icon" title="接口测试" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input"); ><img src="resources/desmartsystem/images/interface.png" style="height:16px; width:16px;margin-bottom:4px;" /></i>'
 				+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
 				+ '<i class="layui-icon"  title="删除接口"  onclick=del("'+ meta.intUid + '") >&#xe640;</i>'
-				+ '<i class="layui-icon"  title="绑定参数"  onclick=info("'+ meta.intUid + '")>&#xe614;</i>' + '</td>' + '</tr>'
+				+ '<i class="layui-icon" style="font-size:17px;"  title="绑定参数"  onclick=info("'+ meta.intUid + '")>&#xe716;</i>' + '</td>' + '</tr>'
 	}
 	$("#proMet_table_tbody").append(trs);
 
