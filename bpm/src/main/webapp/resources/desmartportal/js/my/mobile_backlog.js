@@ -55,18 +55,24 @@ function fiterDivShow(){
 
 //确认搜索条件的方法
 function queryTask(){
+	pageConfig.createProcessUserName = $("#process_staff").val().trim();
+	pageConfig.taskPreviousUsrUsername = $("#last_activity_staff").val().trim();
+	pageConfig.insTitle = $("#process_instance_title").val().trim();
+	pageConfig.startTime = $("#start_time").val().trim();
+	pageConfig.endTime = $("#end_time").val().trim();
+	pageConfig.pageNum = 1;
+	pageConfig.pageSize = 8;
+	getTaskInstanceInfo();
 	layer.close(index);
 }
 
 //异步加载代办列表
 function userAsync() {
-	var move = 0;
 	$(window).scroll(function(){
-		var scrollTop = $(window).scrollTop(); 
-		console.log(scrollTop);
-		if(scrollTop-move>=450){
-			move = scrollTop;
-			if(pageConfig.pageNum==1){
+		//监听事件内容
+		if(getScrollHeight() == getWindowHeight() + getDocumentTop()){
+			//当滚动条到底时,这里是触发内容
+		    if(pageConfig.pageNum==1){
 				pageConfig.pageNum = 3;
 			}else{
 				pageConfig.pageNum++;
@@ -82,6 +88,9 @@ function getTaskInstanceInfo(){
 	$.ajax({
 		url : 'taskInstance/loadBackLog',
 		type : 'post',
+		beforeSend:function(){
+			layer.load(1);
+		},
 		dataType : 'json',
 		data : {
 			pageNum : pageConfig.pageNum,
@@ -96,6 +105,10 @@ function getTaskInstanceInfo(){
 			if (result.status == 0) {
 				drawTable(result.data);
 			}
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.closeAll("loading");
 		}
 	})
 }
@@ -227,4 +240,38 @@ function taskProgerss(activityId,taskUid){
 //打开 代办的 详细页面
 function openApproval(taskUid){
 	window.location.href = 'menus/approval?taskUid='+taskUid;
+}
+
+//文档高度
+function  getDocumentTop()  {
+	var  scrollTop  =  0,  bodyScrollTop  =  0,  documentScrollTop  =  0;
+	if  (document.body)  {
+		bodyScrollTop  =  document.body.scrollTop;
+	}
+	if  (document.documentElement)  {
+		documentScrollTop  =  document.documentElement.scrollTop;
+	}
+	scrollTop  =  (bodyScrollTop  -  documentScrollTop  >  0)  ?  bodyScrollTop  :  documentScrollTop;     return  scrollTop;
+}
+
+//可视窗口高度
+function  getWindowHeight()  {
+	var  windowHeight  =  0;     if  (document.compatMode  ==  "CSS1Compat")  {
+		windowHeight  =  document.documentElement.clientHeight;
+	}  else  {
+		windowHeight  =  document.body.clientHeight;
+	}
+	return  windowHeight;
+}
+
+//滚动条滚动高度
+function  getScrollHeight()  {
+	var  scrollHeight  =  0,  bodyScrollHeight  =  0,  documentScrollHeight  =  0;
+	if  (document.body)  {
+		bodyScrollHeight  =  document.body.scrollHeight;
+	}
+	if  (document.documentElement)  {
+		documentScrollHeight  =  document.documentElement.scrollHeight;
+	}
+	scrollHeight  =  (bodyScrollHeight  -  documentScrollHeight  >  0)  ?  bodyScrollHeight  :  documentScrollHeight;     return  scrollHeight;
 }
