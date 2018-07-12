@@ -64,4 +64,12 @@ public interface DhInterfaceMapper {
 	 * @return
 	 */
 	DhInterface selectByintUid (String intUid);
+
+	/**
+	 * 根据id集合，查找多个接口
+	 * @param intUidList
+	 * @return
+	 */
+	List<DhInterface> listByIntUidList(List<String> intUidList);
+
 }

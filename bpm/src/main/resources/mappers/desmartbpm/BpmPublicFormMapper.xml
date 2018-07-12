@@ -78,4 +78,14 @@
 		from bpm_public_form
 		where public_form_code = #{formCode}
 	</select>
+
+    <select id="listByPublicFormUidList" resultType="com.desmart.desmartbpm.entity.BpmPublicForm" parameterType="list">
+		select <include refid="base_column"/>
+		from bpm_public_form
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				public_form_uid = #{item}
+			</foreach>
+		</where>
+	</select>
 </mapper>

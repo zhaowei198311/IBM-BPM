@@ -20,7 +20,7 @@ public interface DhObjectPermissionService {
     
 
     /**
-     * 查询制定流程定义的发起权限
+     * 查询指定流程定义的发起权限
      * @param proAppId 应用库id
      * @param proUid 流程id
      * @param proVerUid 流程版本id
@@ -75,4 +75,11 @@ public interface DhObjectPermissionService {
 	 * 根据步骤id和表单字段id查询字段打印权限信息
 	 */
 	DhObjectPermission getFieldPrintPermissionByStepUidAndFldUid(String stepUid, String fldUid);
+
+    /**
+     * 根据步骤id集合获得所有相关的权限
+     * @param stepUidList
+     * @return
+     */
+	List<DhObjectPermission> listByStepUidList(List<String> stepUidList);
 }

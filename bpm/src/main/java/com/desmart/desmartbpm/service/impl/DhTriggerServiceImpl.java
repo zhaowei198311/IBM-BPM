@@ -1,10 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -391,6 +388,15 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	@Override
 	public int updateTrigger(DhTrigger dhTrigger) {
 		return dhTriggerMapper.updateDhTrigger(dhTrigger);
+	}
+
+
+	@Override
+	public List<DhTrigger> listByTriggerUidList(List<String> triggerUidList) {
+		if (triggerUidList == null || triggerUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return dhTriggerMapper.listByTriggerUidList(triggerUidList);
 	}
 	
 }

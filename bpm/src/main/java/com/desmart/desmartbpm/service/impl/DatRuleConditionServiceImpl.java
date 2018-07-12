@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,6 +78,12 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 		}
 	}
 
-	
+	@Override
+	public List<DatRuleCondition> listByRuleIdList(List<String> ruleIdList) {
+		if (ruleIdList == null || ruleIdList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return datRuleConditionMapper.listByRuleIds(ruleIdList);
+	}
 
 }

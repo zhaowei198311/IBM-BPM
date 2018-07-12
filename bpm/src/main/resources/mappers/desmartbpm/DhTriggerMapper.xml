@@ -142,8 +142,15 @@
         </where>
 
     </select>
-	
-	<delete id="delete" parameterType="java.lang.String">
+
+	<select id="listByTriggerUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhTrigger">
+		select <include refid="base_column"/> from dh_trigger
+		<where>
+			<foreach collection="list" item="item" separator="or"> tri_uid = #{item} </foreach>
+		</where>
+	</select>
+
+    <delete id="delete" parameterType="java.lang.String">
 		delete from dh_trigger 
 		<where>
 			TRI_UID = #{triUid}

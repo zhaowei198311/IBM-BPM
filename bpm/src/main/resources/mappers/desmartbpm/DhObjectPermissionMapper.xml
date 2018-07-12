@@ -127,4 +127,12 @@
     	where step_uid = #{stepUid} and op_obj_uid = #{fldUid}
     		and OP_ACTION ='PRINT'
     </select>
+
+    <select id="listByStepUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+        select <include refid="base_column"/>
+        from dh_object_permission
+        <where>
+            <foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
+        </where>
+    </select>
 </mapper>

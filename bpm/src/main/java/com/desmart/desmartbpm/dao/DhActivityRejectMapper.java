@@ -19,6 +19,13 @@ public interface DhActivityRejectMapper {
      */
     List<DhActivityReject> listByActivityId(String activityId);
 
+    /**
+     * 列出指定的所有活动环节可以驳回的环节
+     * @param activityIdList
+     * @return
+     */
+    List<DhActivityReject> listByActivityIdList(List<String> activityIdList);
+
     DhActivityReject selectByPrimaryKey(String actrUid);
 
     int updateByPrimaryKeySelective(DhActivityReject record);
@@ -38,4 +45,6 @@ public interface DhActivityRejectMapper {
      * @throws
      */
     int deleteByActivityIds(List<String> activityIds);
+
+
 }

@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartsystem.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -137,4 +138,13 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 		PageInfo<List<DhInterface>> pageInfo = new PageInfo(interfacelist);
 		return  ServerResponse.createBySuccess(pageInfo);
 	}
+
+	@Override
+	public List<DhInterface> listDhInterfaceByIntUidList(List<String> intUidList) {
+		if (intUidList == null || intUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return dhInterfaceMapper.listByIntUidList(intUidList);
+	}
+
 }

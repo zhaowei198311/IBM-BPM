@@ -37,10 +37,8 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="enable_btn">启用</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess">拷贝</button>
-                                    <!--
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">导出</button>
-                                    <button class="layui-btn layui-btn-primary layui-btn-sm">导入</button>
-                                    -->
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="exportBtn">导出</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="importBtn">导入</button>
                             </div>
                         </div>
                     </div>

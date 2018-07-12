@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
@@ -65,4 +66,11 @@ public interface BpmPublicFormService {
 	 * 根据表单id和公共表单id查询是否有相同的关联信息
 	 */
 	ServerResponse queryReleByFormUidAndPublicFormUid(String formUid, String publicFormUid);
+
+	/**
+	 * 根据公共表单id集合获得对应的公共表单
+	 * @param publicFormUidList
+	 * @return
+	 */
+	List<BpmPublicForm> listByPublicFormUidList(List<String> publicFormUidList);
 }

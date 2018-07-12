@@ -378,5 +378,17 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return bpmActivityMetaList;
     }
 
+    @Override
+    public List<BpmActivityMeta> listAllBpmActivityMeta(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return new ArrayList<>();
+        }
+        BpmActivityMeta metaSelective = new BpmActivityMeta();
+        metaSelective.setProAppId(proAppId);
+        metaSelective.setBpdId(proUid);
+        metaSelective.setSnapshotId(proVerUid);
+        return bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+    }
+
     
 }

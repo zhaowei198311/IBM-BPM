@@ -51,7 +51,7 @@
                             <input type="text" name="proTime"   lay-verify="required" value="${definition.proTime}" autocomplete="off" class="layui-input" />
                         </div>
                     </div>
-                    <div class="layui-form-item">
+                    <div class="layui-form-item" style="display: none;">
                         <label class="layui-form-label">最终信息汇总表单</label>
                         <div class="layui-input-block">
                             <input type="text" name="proDynaforms"  lay-verify="required" value="${definition.proDynaforms}" autocomplete="off" class="layui-input" />
@@ -70,7 +70,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-form-item">
+                    <div class="layui-form-item" style="display: none;">
                         <label class="layui-form-label">发送邮件通知的模板</label>
                         <div class="layui-input-block">
                             <input type="text" name="proDerivationScreenTpl"  lay-verify="required" value="${definition.proDerivationScreenTpl}" autocomplete="off" class="layui-input" />
@@ -79,8 +79,8 @@
                 </div>
             </div>
         </form>
-        <p class="title_p">触发器配置</p>
-        <form class="layui-form" action="" id="form2">
+        <p class="title_p" style="display: none;">触发器配置</p>
+        <form class="layui-form" action="" id="form2" style="display: none;">
             <div class="layui-row">
                 <div class="layui-col-md6">
                     <div class="layui-form-item">

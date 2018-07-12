@@ -223,4 +223,12 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
 	public DhObjectPermission getFieldPrintPermissionByStepUidAndFldUid(String stepUid, String fldUid) {
 		return dhObjectPermissionMapper.getFieldPrintPermissionByStepUidAndFldUid(stepUid,fldUid);
 	}
+
+	@Override
+    public List<DhObjectPermission> listByStepUidList(List<String> stepUidList) {
+        if (stepUidList == null || stepUidList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dhObjectPermissionMapper.listByStepUidList(stepUidList);
+    }
 }

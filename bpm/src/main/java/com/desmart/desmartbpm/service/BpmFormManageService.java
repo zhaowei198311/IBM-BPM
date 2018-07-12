@@ -63,4 +63,12 @@ public interface BpmFormManageService {
 	 * 根据表单判断表单是否被步骤绑定
 	 */
 	ServerResponse isBindStep(String[] formUids);
+	
+	/**
+	 * 获得指定流程定义的所有表单
+	 * @param proUid
+	 * @param proVerUid
+	 * @return
+	 */
+	List<BpmForm> listAllFormsOfProcessDefinition(String proUid, String proVerUid);
 }

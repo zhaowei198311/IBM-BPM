@@ -66,4 +66,11 @@ public interface DhInterfaceParameterMapper {
 	 * @return
 	 */
 	int deleteArrayParameter(DhInterfaceParameter dhInterfaceParameter);
+
+	/**
+	 * 根据接口主键，查询多个接口的参数
+	 * @param intUidList 接口主键集合
+	 * @return
+	 */
+    List<DhInterfaceParameter> listByIntUidList(List<String> intUidList);
 }

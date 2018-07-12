@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -286,5 +287,16 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			}
 		}
 		return ServerResponse.createBySuccess();
+	}
+	
+	@Override
+	public List<BpmForm> listAllFormsOfProcessDefinition(String proUid, String proVerUid) {
+		if (StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+			return new ArrayList<>();
+		}
+		BpmForm formSelective = new BpmForm();
+		formSelective.setProUid(proUid);
+		formSelective.setProVersion(proVerUid);
+	    return bpmFormManageMapper.listBySelective(formSelective);
 	}
 }

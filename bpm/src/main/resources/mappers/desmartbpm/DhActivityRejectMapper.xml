@@ -62,7 +62,14 @@
     and fm.PARENT_ACTIVITY_ID = am.PARENT_ACTIVITY_ID
     and fm.SNAPSHOT_ID = am.SNAPSHOT_ID
   </select>
-  
+
+    <select id="listByActivityIdList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhActivityReject">
+        select <include refid="Base_Column_List"/> from DH_ACTIVITY_REJECT
+        <where>
+            <foreach collection="list" item="item" separator="or"> activity_id = #{item} </foreach>
+        </where>
+    </select>
+
     <insert id="insertBatch"  parameterType="list">
         insert into DH_ACTIVITY_REJECT (<include refid="Base_Column_List"/>) 
         <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">

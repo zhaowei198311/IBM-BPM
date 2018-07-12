@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.entity;
 
 /**
  * 允许驳回的活动信息
+ * activity_id -> activity_bpd_id
  */
 public class DhActivityReject {
     private String actrUid;  // 主键

@@ -31,4 +31,13 @@
 		</where>
 	</select>
 	
+	<select id="listPublicFormUidByFormUidList" parameterType="list" resultType="string">
+		SELECT public_form_uid FROM BPM_FORM_RELE_PUBLIC_FORM
+		<where>
+			<foreach collection="list" item="item" open="" separator="or" close="">
+				form_uid = #{item}
+			</foreach>
+		</where>
+	</select>
+	
 </mapper>

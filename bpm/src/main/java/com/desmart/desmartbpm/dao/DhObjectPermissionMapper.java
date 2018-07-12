@@ -52,4 +52,11 @@ public interface DhObjectPermissionMapper {
 	 * 根据步骤id和字段id找到字段打印权限信息
 	 */
 	DhObjectPermission getFieldPrintPermissionByStepUidAndFldUid(@Param("stepUid")String stepUid, @Param("fldUid")String fldUid);
+
+    /**
+     * 根据步骤id集合获得所有相关的权限
+     * @param stepUidList
+     * @return
+     */
+    List<DhObjectPermission> listByStepUidList(List<String> stepUidList);
 }

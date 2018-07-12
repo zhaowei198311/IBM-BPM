@@ -33,6 +33,18 @@ public interface DhActivityAssignMapper {
     int deleteBySelective(DhActivityAssign dhActivityAssign);
     
     int insertBatch(List<DhActivityAssign> list);
-    
+
+    /**
+     * 根据环节id列出所有相关记录
+     * @param activityId
+     * @return
+     */
     List<DhActivityAssign> listByActivityId(String activityId);
+
+    /**
+     * 根据环节id集合列出所有相关记录
+     * @param activityIdList
+     * @return
+     */
+    List<DhActivityAssign> listByActivityIdList(List<String> activityIdList);
 }

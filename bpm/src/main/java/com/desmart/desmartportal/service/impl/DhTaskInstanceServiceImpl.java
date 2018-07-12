@@ -494,7 +494,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		return dhTaskInstanceMapper.countByTaskId(taskId) > 0;
 	}
-	
+
+	@Transactional
 	public ServerResponse<Map<String, Object>> toDealTask(String taskUid) {
 	    Map<String, Object> resultMap = new HashMap<>();
 	    if (StringUtils.isBlank(taskUid)) {

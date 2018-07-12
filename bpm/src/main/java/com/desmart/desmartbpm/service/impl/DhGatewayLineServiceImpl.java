@@ -326,4 +326,17 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
 	public List<DhGatewayLine> getGateWayLinesByCondition(DhGatewayLine dhGatewayLine) {
 		return dhGatewayLineMapper.getGateWayLinesByCondition(dhGatewayLine);
 	}
+
+    @Override
+    public List<DhGatewayLine> listAllGateWayLineOfProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        return dhGatewayLineMapper.listAllGatewayLineOfProcessDefinition(proAppId, proUid, proVerUid);
+    }
+
+    @Override
+    public List<DhGatewayLine> listByGatewayActivityIdList(List<String> activityIdList) {
+        if (activityIdList == null || activityIdList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dhGatewayLineMapper.listByGatewayActivityIdList(activityIdList);
+    }
 }

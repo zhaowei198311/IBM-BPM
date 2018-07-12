@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
+import org.springframework.amqp.rabbit.support.PublisherCallbackChannelImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -239,4 +240,13 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		}
 		return ServerResponse.createBySuccess();
 	}
+
+	@Override
+	public List<BpmPublicForm> listByPublicFormUidList(List<String> publicFormUidList) {
+		if (publicFormUidList == null || publicFormUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return bpmPublicFormMapper.listByPublicFormUidList(publicFormUidList);
+	}
+
 }

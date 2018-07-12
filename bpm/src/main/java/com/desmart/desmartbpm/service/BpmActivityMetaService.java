@@ -133,10 +133,19 @@ public interface BpmActivityMetaService {
 
     /**
      * 找到主流程的第一个人工服务节点
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
+     * @param proAppId 应用库id
+     * @param proUid 图id
+     * @param proVerUid 版本id
      * @return
      */
     BpmActivityMeta getFirstUserTaskMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 列出一个流程定义的所有环节
+     * @param proAppId 应用库id
+     * @param proUid 图id
+     * @param proVerUid 版本id
+     * @return
+     */
+    List<BpmActivityMeta> listAllBpmActivityMeta(String proAppId, String proUid, String proVerUid);
 }

@@ -435,5 +435,13 @@ public class DhStepServiceImpl implements DhStepService {
         return ServerResponse.createBySuccess();
     }
 
+    @Override
+    public List<DhStep> listAllStepsOfProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return new ArrayList<>();
+        }
+
+        return dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, proVerUid);
+    }
 
 }
