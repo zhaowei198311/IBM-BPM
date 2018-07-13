@@ -81,13 +81,24 @@ function drawPage() {
 					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
 					var thObjArr = tableObj.find("thead th");
 					var trHtml = '<tr>';
+					var colFlag = true;
 					for (var i = 0; i < thObjArr.length; i++) {
 						var thObj = $(thObjArr[i]);
-						if(!thObj.attr("move-view")){
+						if(thObj.attr("move-view")=="flase"){
 							thObj.css("display","none");
 							break;
 						}
-						trHtml += '<td data-label="' + thObj.text().trim() + '">';
+						if(colFlag){
+							colFlag = false;
+							trHtml += '<td data-label="' + thObj.text().trim() + '" onclick="showDataTr(this)">'
+								+'<span style="color:#009688">查看详情  &gt;&gt;</span>'
+								+'</td>'
+								+'<td data-label="操作">'
+								+'<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' 
+								+'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
+						}
+						
+						trHtml += '<td data-label="' + thObj.text().trim() + '" style="display:none;">';
 						switch (thObj.attr("col-type")) {
 							case "text": {
 								trHtml += '<input type="text" class="layui-input"/>';
@@ -317,7 +328,7 @@ function drawPage() {
 		getDataToSelect(this, $(this).attr("database_type"));
 	});
 
-	view.find("input[type='tel']").desNumber();
+	$("#formSet").find("input[type='tel']").desNumber();
 
 	//给选人组件调整样式
 	var chooseUserInputArr = view.find("i[title='choose_user']").parent().find("input[type='text']");
@@ -504,6 +515,8 @@ jQuery.fn.desNumber = function () {
 	this.bind("blur", function () {
 		if (this.value.slice(-1) == ".") {
 			this.value = this.value.slice(0, this.value.length - 1);
+		}else if(/^[\u4e00-\u9fa5]/.test(this.value)){
+			this.value = "";
 		}
 	});
 };

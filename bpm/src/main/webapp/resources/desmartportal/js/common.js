@@ -384,7 +384,7 @@ var common = {
 							var tdValue = $(this).find("input").val();
 							var tdInputType = $(this).find("input").attr("type");
 							if(tdInputType=="number" || tdInputType=="tel"){
-								if(value=="" || value==null || isNaN(value)){
+								if(tdValue=="" || tdValue==null || isNaN(tdValue)){
 									tableJson += "\""+tdName+"\":\"\"";
 								}else{
 									tableJson += "\""+tdName+"\":"+tdValue+"";

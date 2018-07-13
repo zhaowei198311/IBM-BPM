@@ -335,5 +335,39 @@
 			</li>
 		</ul>
 	</div>
+	<div id="table_tr_container">
+		<div id="tr_con_top">
+			<div id="tr_top_left">
+				<i class="layui-icon" onclick="backApproval()">&#xe65c;</i>
+			</div>
+			<div id="tr_top_right">
+				<span>数据详情</span>
+			</div>
+		</div>
+		<div id="tr_con_content">
+			<p class="title_p">数据表格</p>
+			<table id="tr_table" class="layui-table">
+				<tr>
+				    <td data-label="1">
+				        <input type="tel" class="layui-input">
+				    </td>
+				    <td data-label="2">
+				        <input type="text" class="layui-input">
+				    </td>
+				    <td data-label="3">
+				        <input type="text" class="layui-input">
+				    </td>
+				    <td data-label="4">
+				        <input type="tel" class="layui-input">
+				    </td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </body>
+<script type="text/javascript">
+	$(function(){
+		$(".data-table").find("input[type='tel']").desNumber();
+	});
+</script>
 </html>

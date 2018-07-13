@@ -24,7 +24,7 @@
 				</div>
 			</div>
 		</div>
-		<div style="width: 100%; overflow-x: auto;">
+		<div style="width: 100%;height: 240px;overflow-x: auto;">
 			<table class="layui-table backlog_table" lay-even lay-skin="nob">
 				<colgroup>
 					<col>

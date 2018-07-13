@@ -351,7 +351,11 @@
 		</div>
 	</div>
 </body>
-
+<script type="text/javascript">
+	$(function(){
+		$(".data-table").find("input[type='tel']").desNumber();
+	});
+</script>
 </html>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
