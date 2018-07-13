@@ -32,4 +32,11 @@ public interface DhNotifyTemplateMapper {
 	 * @return
 	 */
 	public List<DhNotifyTemplate> getDhNotifyTemplatesByCondition(DhNotifyTemplate dhNotifyTemplate);
+
+	/**
+	 * 根据模版id集合查询多个模版
+	 * @param templateUidList 模版id集合
+	 * @return
+	 */
+    List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList);
 }

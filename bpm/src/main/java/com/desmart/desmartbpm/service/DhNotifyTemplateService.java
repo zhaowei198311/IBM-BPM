@@ -3,6 +3,8 @@ package com.desmart.desmartbpm.service;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhNotifyTemplate;
 
+import java.util.List;
+
 public interface DhNotifyTemplateService {
 	
 	/**
@@ -12,7 +14,7 @@ public interface DhNotifyTemplateService {
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public ServerResponse pageDhNotifyTemplateListByCondition(Integer pageNum
+	ServerResponse pageDhNotifyTemplateListByCondition(Integer pageNum
 						,Integer pageSize,DhNotifyTemplate dhNotifyTemplate);
 
 	/**
@@ -20,18 +22,25 @@ public interface DhNotifyTemplateService {
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public ServerResponse deleteNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
+	ServerResponse deleteNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
 
 	/**
 	 * 修改通知模板
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public ServerResponse addNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
+	ServerResponse addNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
 	/**
 	 * 删除模板
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public ServerResponse updateNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
+	ServerResponse updateNotifyTemplate(DhNotifyTemplate dhNotifyTemplate);
+
+	/**
+	 * 根据模版主键列表，获得多个模版
+	 * @param templateUidList 模版主键列表
+	 * @return
+	 */
+	List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList);
 }

@@ -293,17 +293,11 @@ $(function() {
         var ck = cks.eq(0);
         alert(111)
         var param = {
-        	"url": common.getPath() + '/testGetFile',
-			"data": {
-        		"proUid": ck.data('prouid'),
-                "proVerUid": ck.data('proveruid'),
-                "proAppId": ck.data('proappid')
-			},
-			"fn": function() {
-
-			}
+			"proUid": ck.data('prouid'),
+			"proVerUid": ck.data('proveruid'),
+			"proAppId": ck.data('proappid')
 		};
-        common.doPostAjax(param);
+        downLoadFile(common.getPath() + '/processDefinition/export', param);
 	});
 
 
@@ -606,6 +600,22 @@ function selectNodeOnTree(metaList) {
         var node = treeObject.getNodeByParam("id", meta.proMetaUid);
         treeObject.selectNode(node, true, true);
     }
+}
 
-
+// 文件下载(单个下载)
+function downLoadFile(URL, PARAMS) {
+    var temp_form = document.createElement("form");
+    temp_form .action = URL;
+    // temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+    temp_form .method = "post";
+    temp_form .style.display = "none";
+    for (var x in PARAMS) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = PARAMS[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    temp_form.submit();
+    temp_form.remove();
 }
