@@ -567,7 +567,7 @@ function showDataTableModal(obj) {
             '<label class="col-xs-1 col-sm-offset-1 control-label">' +
             '列组件类型' +
             '</label>' +
-            '<div class="col-xs-1">' +
+            '<div class="col-xs-2">' +
             '<select class="data-table-type col-xs-12">';
         var thType = thObj.attr("col-type");
         switch (thType) {
@@ -597,9 +597,9 @@ function showDataTableModal(obj) {
         	+'<label class="col-xs-1 control-label">'
         	+'移动端显示'
         	+'</label>'
-        	+'<div class="col-xs-2">'
-        	+'<select class="data-table-move-view col-xs-12">';
-        if(moveView){
+        	+'<div class="col-xs-1">'
+        	+'<select class="data-table-move-view col-xs-12" style="width: 50px;">';
+        if(moveView=="true"){
         	thSetHtml += '<option value="true" selected>是</option>'
         		+'<option value="false">否</option>'
         }else{
@@ -643,7 +643,7 @@ function showDataTableModal(obj) {
 				'移动端显示'+
 				'</label>'+
 				'<div class="col-xs-1">'+
-					'<select class="data-table-move-view col-xs-12">'+
+					'<select class="data-table-move-view col-xs-12" style="width: 50px;">'+
 						'<option value="true" selected>是</option>'+
 						'<option value="false">否</option>'+
 					'</select>'+

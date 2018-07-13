@@ -566,5 +566,10 @@
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 <!-- 审批信息js -->
 <script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$(".data-table").find("input[type='tel']").desNumber();
+	});
+</script>
 </html>
 

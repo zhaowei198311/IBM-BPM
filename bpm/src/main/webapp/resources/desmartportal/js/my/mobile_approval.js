@@ -1224,3 +1224,22 @@ function post(URL, PARAMS) {
 	temp_form.submit();   
 	temp_form.remove();
 }
+
+//点击行到行详情页面
+function showDataTr(obj){
+	var trHtml = $(obj).parent().html();
+	var tableTitle = $(obj).parent().parent().parent().attr("title");
+	$("#tr_con_content title_p").text(tableTitle);
+	$("#tr_con_content #tr_table").html(trHtml);
+	$("#tr_con_content #tr_table").find("td").each(function(){
+		if($(this).css("display")=="none"){
+			var value = $(this).find("input").val();
+			$(this).find("input").val(value);
+			$(this).css("display","block");
+		}else{
+			$(this).css("display","none");
+		}
+	});
+	$(".mobile_container").css("display","none");
+	$("#table_tr_container").css("display","block");
+}

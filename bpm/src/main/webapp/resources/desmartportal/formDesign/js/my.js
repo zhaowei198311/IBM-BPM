@@ -57,6 +57,7 @@ function drawPage() {
 				if (column.find(".title_p").length != 0) {
 					//表单块标题
 					column.find("p").addClass("title_p");
+					column.find("p").removeAttr("title");
 					column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
 					pHtml = column.html();
 					var pText = column.find("p")[0].firstChild.data.trim();
@@ -137,6 +138,7 @@ function drawPage() {
 					if (pObj.attr("title") == "table_title") {
 						//表单块标题
 						column.find("p").addClass("title_p");
+						column.find("p").removeAttr("title");
 						column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
 						pHtml = column.find(".subDiv").html();
 						var pText = column.find("p")[0].firstChild.data.trim();
@@ -355,7 +357,7 @@ function drawPage() {
 	});
 
 	view.find("input[type='tel']").desNumber();
-
+	
 	//给选人组件调整样式
 	var chooseUserInputArr = view.find("i[title='choose_user']").parent().find("input[type='text']");
 	chooseUserInputArr.each(function (index) {
@@ -570,6 +572,8 @@ jQuery.fn.desNumber = function () {
 	this.bind("blur", function () {
 		if (this.value.slice(-1) == ".") {
 			this.value = this.value.slice(0, this.value.length - 1);
+		}else if(/^[\u4e00-\u9fa5]/.test(this.value)){
+			this.value = "";
 		}
 	});
 };

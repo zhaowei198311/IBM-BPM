@@ -154,7 +154,7 @@
     input[lay-key][readonly]{
    	 	cursor: pointer;
     }
-    .data-table .layui-input{
+    .data-table .layui-input,#tr_table .layui-input{
     	border-radius:2px;
     	height: 30px;
     	width: 75%;
@@ -168,28 +168,39 @@
     .data-table .layui-form-select .layui-edge {
 	    top: 17px;
     }
-    .data-table {
+    .data-table{
         border: 0;
+    }
+    #tr_table{
+     	border: 0;
+        background: #fbfbfb;
     }
     .data-table thead,.data-table .td_title {
         display: none;
     }
-    .data-table tr {
+    .data-table tr,#tr_table tr {
         padding-top: 10px;
         display: block;
         border-bottom: 1px solid #ddd;
     }
-    .data-table td {
+    #tr_table tr {
+    	padding-top: 10px;
+        display: block;
+        border-bottom: 0px solid #ddd;
+        padding-bottom: 10px;
+    }
+    .data-table td,#tr_table td {
         display: block;
         text-align: right;
         border-bottom: 1px dotted #ccc;
     }
-    .data-table td:before {
+    .data-table td:before,#tr_table td:before {
         content: attr(data-label);
         float: left;
         text-transform: uppercase;
     }
-    .layui-table td, .layui-table th{
+    .layui-table td, .layui-table th,
+    #tr_table td,#tr_table th{
     	border-width: 0px;
     }
     .td_title {

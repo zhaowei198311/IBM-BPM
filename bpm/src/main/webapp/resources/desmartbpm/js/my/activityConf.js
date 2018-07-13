@@ -2281,8 +2281,8 @@ function drawPerTable(result, perTableId, title) {
 	$("#" + perTableId + " tbody").empty();
 	var trs = '';
 	$(result.data)
-			.each(
-					function(index, val) {
+			.each(function(index, val) {
+					if($(this).fldType != "hidden"){
 						trs += '<tr>';
 						trs += '<td>' + (index + 1);
 						trs += '<input type="hidden" name="fldUid" value="'
@@ -2433,7 +2433,8 @@ function drawPerTable(result, perTableId, title) {
 							}
 						}
 						trs += '</tr>';
-					});
+					}
+				});
 	$("#" + perTableId + " tbody").append(trs);
 	if (title != null && title != "") {
 		radiocheckAlltitle(result.data.length);
@@ -3164,7 +3165,6 @@ function addStep() {
 	var $activeLi = $("#my_collapse li.link_active");
 	var actcUid = getCurrentActcUid();
 	var activityId = $("#activityId").val();
-	alert(activityId)
 	var activityBpdId = $activeLi.data('activitybpdid');
 	var stepBusinessKey;
 	// console.log($('input[name="stepType"]:checked').val());
