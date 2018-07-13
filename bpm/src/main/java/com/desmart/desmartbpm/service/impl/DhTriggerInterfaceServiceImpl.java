@@ -3,6 +3,7 @@
  */
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,12 @@ public class DhTriggerInterfaceServiceImpl implements DhTriggerInterfaceService 
 		}
 		dhTriggerInterfaceMapper.updateBatch(tinList);
 		return ServerResponse.createBySuccess();
+	}
+
+	public List<DhTriggerInterface> listByStepUidList(List<String> stepUidList) {
+		if (stepUidList == null || stepUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return dhTriggerInterfaceMapper.listByStepUidList(stepUidList);
 	}
 }

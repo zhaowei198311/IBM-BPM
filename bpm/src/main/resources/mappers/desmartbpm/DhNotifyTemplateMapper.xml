@@ -60,4 +60,11 @@
     		and template_Type = #{templateType}
     	</if>
     </select>
+
+    <select id="listByTemplateUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+		select <include refid="base_column"/> from dh_notify_template
+		<where>
+			<foreach collection="list" item="item" separator="or"> template_uid = #{item} </foreach>
+		</where>
+	</select>
 </mapper>

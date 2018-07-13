@@ -1,13 +1,19 @@
 package com.desmart.desmartbpm.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.desmartbpm.service.SynchronizeTaskService;
+import com.desmart.desmartbpm.entity.DhTransferData;
+import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
@@ -26,9 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
-import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.service.TestService;
 import com.desmart.desmartbpm.util.http.BpmTaskUtils;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.BpmRouteConditionResult;
@@ -49,6 +52,8 @@ public class TestController extends BaseWebController {
     private SynchronizeTaskService synchronizeTaskService;
     @Autowired
     private DhTaskInstanceMapper dhTaskInstanceMapper;
+    @Autowired
+    private DhTransferService dhTransferService;
     
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -258,9 +263,37 @@ public class TestController extends BaseWebController {
 
     @RequestMapping(value = "/testGetFile")
     @ResponseBody
-    public String testGetFile(HttpServletRequest request, String proAppId, String proUid, String proVerUid) {
-
+    public String testGetFile(HttpServletRequest request, HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
         System.out.println(proAppId + " | " + proUid + " | " + proVerUid);
+        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportData(proAppId, proUid, proVerUid);
+        if (dhTransferDataServerResponse.isSuccess()) {
+            DhTransferData transferData = dhTransferDataServerResponse.getData();
+            String dataStr = JSON.toJSONString(transferData);
+            OutputStream out = null;
+            BufferedOutputStream bufOut = null;
+            String fileName = "export.json";
+            try {
+                response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+                fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+                response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
+                response.setCharacterEncoding("UTF-8");
+                out = response.getOutputStream();
+                bufOut = new BufferedOutputStream(out);
+                bufOut.write(dataStr.getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (bufOut != null) {
+                    try {
+                        bufOut.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+        }
         return "done";
     }
 }

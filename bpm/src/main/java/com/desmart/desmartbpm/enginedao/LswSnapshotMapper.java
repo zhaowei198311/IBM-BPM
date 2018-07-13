@@ -12,6 +12,7 @@ public interface LswSnapshotMapper {
     List<LswSnapshot> listAll();
     
     LswSnapshot queryBySnapshotId(String snapshotId);
-    
+
+
     
 }

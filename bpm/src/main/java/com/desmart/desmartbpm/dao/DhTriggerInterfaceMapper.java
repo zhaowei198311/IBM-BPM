@@ -99,4 +99,12 @@ public interface DhTriggerInterfaceMapper {
 	 */
 	DhTriggerInterface queryTriIntByOutCondition(@Param("triUid")String triUid, @Param("fldCodeName")String tableFieldCodeName, 
 			@Param("paramType")String paramType);
+
+
+	/**
+	 * 根据步骤id获得所有需要的映射参数信息
+	 * @param stepUidList
+	 * @return
+	 */
+	List<DhTriggerInterface> listByStepUidList(List<String> stepUidList);
 }

@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -74,5 +75,15 @@ public class DhNotifyTemplateServiceImpl implements DhNotifyTemplateService {
 			return ServerResponse.createByErrorMessage("修改通知模板失败");
 		}
 	}
+
+	@Override
+	public List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList) {
+		if (templateUidList == null || templateUidList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return dhNotifyTemplateMapper.listByTemplateUidList(templateUidList);
+	}
+
+
 
 }

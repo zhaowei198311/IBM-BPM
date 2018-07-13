@@ -1,9 +1,18 @@
 package com.desmart.desmartbpm.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
+import com.desmart.desmartbpm.entity.DhTransferData;
+import com.desmart.desmartbpm.service.*;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +26,6 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.service.DhGatewayLineService;
-import com.desmart.desmartbpm.service.DhProcessCategoryService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
-import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.util.http.HttpClientUtils;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 
@@ -40,6 +45,8 @@ public class DhProcessDefinitionController {
     private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
     private DhGatewayLineService dhGatewayLineService;
+    @Autowired
+    private DhTransferService dhTransferService;
     
     @RequestMapping(value = "/index")
     @ResponseBody
@@ -207,5 +214,39 @@ public class DhProcessDefinitionController {
             LOG.error("启用流程失败", e);
             return ServerResponse.createByErrorMessage("启用流程失败");
         }
+    }
+
+    @RequestMapping(value = "/export")
+    public void testGetFile(HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
+        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportData(proAppId, proUid, proVerUid);
+        if (!dhTransferDataServerResponse.isSuccess()) {
+            return ;
+        }
+        DhTransferData transferData = dhTransferDataServerResponse.getData();
+        OutputStream out = null;
+        BufferedOutputStream bufOut = null;
+        try {
+            String dataStr = JSON.toJSONString(transferData);
+            String fileName = dhTransferService.getExportFileName(transferData.getFirstProcessDefinition());
+            fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+            response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
+            out = response.getOutputStream();
+            bufOut = new BufferedOutputStream(out);
+            bufOut.write(dataStr.getBytes("UTF-8"));
+        } catch (Exception e) {
+            LOG.error("导出流程失败", e);
+        } finally {
+            if (bufOut != null) {
+                try {
+                    bufOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

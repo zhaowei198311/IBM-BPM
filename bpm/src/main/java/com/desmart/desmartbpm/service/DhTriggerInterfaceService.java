@@ -30,4 +30,11 @@ public interface DhTriggerInterfaceService {
 	 * 批量修改参数映射
 	 */
 	ServerResponse updateBatch(List<DhTriggerInterface> tinList);
+
+	/**
+	 * 查询多个步骤的参数映射
+	 * @param stepUidList
+	 * @return
+	 */
+	List<DhTriggerInterface> listByStepUidList(List<String> stepUidList);
 }

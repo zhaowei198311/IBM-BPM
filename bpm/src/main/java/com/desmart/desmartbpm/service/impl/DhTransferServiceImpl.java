@@ -5,7 +5,9 @@ import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartsystem.entity.DhInterface;
@@ -65,7 +67,12 @@ public class DhTransferServiceImpl implements DhTransferService {
     private DhInterfaceService dhInterfaceService;
     @Autowired
     private DhInterfaceParameterService dhInterfaceParameterService;
-
+    @Autowired
+    private DhTriggerInterfaceService dhTriggerInterfaceService;
+    @Autowired
+    private DhNotifyTemplateService dhNotifyTemplateService;
+    @Autowired
+    private LswSnapshotMapper lswSnapshotMapper;
 
 
     public ServerResponse<DhTransferData> exportData(String proAppId, String proUid, String proVerUid) {
@@ -160,54 +167,63 @@ public class DhTransferServiceImpl implements DhTransferService {
 
         // 获得所有的步骤
         List<DhStep> dhStepList = dhStepService.listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
+        transferData.setStepList(dhStepList);
         List<String> stepUidList = this.getIdentityListOfObjectList(dhStepList);
         // 获得Step相关的 权限信息， 字段，区块可见性
         List<DhObjectPermission> permissionListOfField = dhObjectPermissionService.listByStepUidList(stepUidList);
         transferData.addAllToObjectPermissionList(permissionListOfField);
 
         // 汇总处理trigger
-
-
-
+        this.assembleTriggerAndInterface(triggerIdSetToInclude, transferData);
+        // 汇总处理template
+        this.assembleNotifyTemplateList(notifyTemplateIdSet, transferData);
         return ServerResponse.createBySuccess(transferData);
     }
 
+
+
     /**
-     * 获得所有在流程定义表上绑定的触发器id
+     * 获得所有在流程定义表上绑定的触发器id（去重）
      * @param dhProcessDefinition  流程定义
      * @return
      */
     private List<String> getTriggerIdListOnDhProcessDefinition(DhProcessDefinition dhProcessDefinition) {
         List<String> triggerIdList = new ArrayList<>();
         // 取消触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriCanceled())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriCanceled())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriCanceled())) {
             triggerIdList.add(dhProcessDefinition.getProTriCanceled());
         }
         // 删除触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriDeleted())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriDeleted())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriDeleted())) {
             triggerIdList.add(dhProcessDefinition.getProTriDeleted());
         }
         // 暂停触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriPaused())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriPaused())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriPaused())) {
             triggerIdList.add(dhProcessDefinition.getProTriPaused());
         }
         // 重新分配触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriReassigned())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriReassigned())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriReassigned())) {
             triggerIdList.add(dhProcessDefinition.getProTriReassigned());
         }
         // 恢复触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriUnpaused())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriUnpaused())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriUnpaused())) {
             triggerIdList.add(dhProcessDefinition.getProTriUnpaused());
         }
         // 发起触发器
-        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriStart())) {
+        if (StringUtils.isNotBlank(dhProcessDefinition.getProTriStart())
+                && !triggerIdList.contains(dhProcessDefinition.getProTriStart())) {
             triggerIdList.add(dhProcessDefinition.getProTriStart());
         }
         return triggerIdList;
     }
 
     /**
-     * 获得环节配置中的绑定触发器id集合
+     * 获得环节配置中的绑定触发器id集合（去重）
      * @param confList
      * @return
      */
@@ -217,7 +233,8 @@ public class DhTransferServiceImpl implements DhTransferService {
             return result;
         }
         for (DhActivityConf conf : confList) {
-            if (StringUtils.isNotBlank(conf.getActcOuttimeTrigger())) {
+            if (StringUtils.isNotBlank(conf.getActcOuttimeTrigger())
+                    && !result.contains(conf.getActcOuttimeTrigger())) {
                 result.add(conf.getActcOuttimeTrigger());
             }
         }
@@ -369,25 +386,26 @@ public class DhTransferServiceImpl implements DhTransferService {
     }
 
     /**
-     * 根据触发器id列表装配需要的触发器以及接口
+     * 根据触发器id列表，装配需要的触发器、接口、接口参数、参数映射信息
      * trigger
      * interface
      * dh_interface_parameter
      * triggerInterface
-     * @param triggerUidList
+     * @param triggerUidSet
+     * @param transferData  封装导出信息的类
      * @return
      */
-    private DhTransferData assembleTriggerAndInterface(List<String> triggerUidList, DhTransferData transferData) {
-        List<DhTrigger> dhTriggerList = dhTriggerService.listByTriggerUidList(triggerUidList);
+    private void assembleTriggerAndInterface(Set<String> triggerUidSet, DhTransferData transferData) {
+        List<DhTrigger> dhTriggerList = dhTriggerService.listByTriggerUidList(new ArrayList<>(triggerUidSet));
         if (dhTriggerList.isEmpty()) {
-            return transferData;
+            return;
         }
         // 1. 装配触发器
         transferData.setTriggerList(dhTriggerList);
         // 检查是否包含有接口相关的触发器
         List<DhTrigger> interfaceTypeTriggers = getTriggerTypeIsInterface(dhTriggerList);
         if (interfaceTypeTriggers.isEmpty()) {
-            return transferData;
+            return;
         }
         // 如果有接口相关的触发器，遍历步骤，通过步骤来装配具体的触发器
         List<String> interfaceTriggerIdList = this.getIdentityListOfObjectList(interfaceTypeTriggers);
@@ -399,18 +417,16 @@ public class DhTransferServiceImpl implements DhTransferService {
         // 3. 装配接口参数
         List<DhInterfaceParameter> interfaceParameterList = dhInterfaceParameterService.listByIntUidList(intUidList);
         transferData.setInterfaceParameterList(interfaceParameterList);
-
-        // 4. 装配trigger_interface
+        // 4. 装配trigger_interface 接口与表单的映射
+        List<String> interfaceStepUidList = new ArrayList<>();
         for (DhStep dhStep : transferData.getStepList()) {
             if (interfaceTriggerIdList.contains(dhStep.getStepObjectUid())) {
                 // 如果这个步骤对应的触发器是接口触发器， 装配表单参数和接口参数的映射规则
-                String activityId = dhStep.getActivityId();
-
+                interfaceStepUidList.add(dhStep.getStepUid());
             }
         }
-
-
-        return transferData;
+        List<DhTriggerInterface> triggerInterfaceList = dhTriggerInterfaceService.listByStepUidList(interfaceStepUidList);
+        transferData.setTriggerInterfaceList(triggerInterfaceList);
     }
 
     /**
@@ -433,19 +449,37 @@ public class DhTransferServiceImpl implements DhTransferService {
      * @param interfaceTypeTriggers 类型是接口的触发器
      * @return
      */
-        private List<String> getInterfaceIdListByInterfaceTypeTriggers(List<DhTrigger> interfaceTypeTriggers) {
-            List<String> result = new ArrayList<>();
-            if (interfaceTypeTriggers == null || interfaceTypeTriggers.isEmpty()) {
-                return result;
-            }
-            for (DhTrigger trigger : interfaceTypeTriggers) {
-                if (StringUtils.isNotBlank(trigger.getTriWebbot())
-                        && DhTriggerType.INTERFACE.getCode().equals(trigger.getTriType())
-                        && !result.contains(trigger.getTriWebbot())) {
-                    result.add(trigger.getTriWebbot());
-                }
-            }
+    private List<String> getInterfaceIdListByInterfaceTypeTriggers(List<DhTrigger> interfaceTypeTriggers) {
+        List<String> result = new ArrayList<>();
+        if (interfaceTypeTriggers == null || interfaceTypeTriggers.isEmpty()) {
             return result;
         }
+        for (DhTrigger trigger : interfaceTypeTriggers) {
+            if (StringUtils.isNotBlank(trigger.getTriWebbot())
+                    && DhTriggerType.INTERFACE.getCode().equals(trigger.getTriType())
+                    && !result.contains(trigger.getTriWebbot())) {
+                result.add(trigger.getTriWebbot());
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 根据模版id集合获得需要的模版
+     * @param notifyTemplateIdSet  模版id集合
+     * @param transferData 封装导出数据的集合
+     */
+    private void assembleNotifyTemplateList(Set<String> notifyTemplateIdSet, DhTransferData transferData) {
+        if (notifyTemplateIdSet == null || notifyTemplateIdSet.isEmpty()) {
+            return;
+        }
+        List<DhNotifyTemplate> notifyTemplateList = dhNotifyTemplateService.listByTemplateUidList(new ArrayList<>(notifyTemplateIdSet));
+        transferData.setNotifyTemplateList(notifyTemplateList);
+    }
+
+    public String getExportFileName(DhProcessDefinition dhProcessDefinition) {
+        LswSnapshot snapshot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(dhProcessDefinition.getProVerUid());
+        return dhProcessDefinition.getProName() + "_" + snapshot.getName() + ".json";
+    }
 
 }
