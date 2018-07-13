@@ -57,7 +57,14 @@ public interface DhTriggerInterfaceMapper {
 	 * @param tinUid
 	 * @return
 	 */
-	int updateByPrimaryKey(String tinUid);
+	int updateByPrimaryKey(DhTriggerInterface dhTriggerInterface);
+	
+	/**
+	 * 根据触发器id修改
+	 * @param tinUid
+	 * @return
+	 */
+	int updateByTriggerUid(DhTriggerInterface dhTriggerInterface);
 	
 	/**
 	 * 批量插入

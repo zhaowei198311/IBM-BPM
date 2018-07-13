@@ -121,7 +121,7 @@
 			<if test="createTime != null">
 				AND CREATE_TIME = #{createTime}
 			</if>
-			<if test="actcUid != null and actcUid !=''">
+			<if test="activityId != null and activityId !=''">
 				AND ACTIVITY_ID = #{activityId}
 			</if>
 			<if test="paraName != null and paraName !=''">
@@ -230,7 +230,7 @@
 		</where>
 	</delete> 
 
-	<update id="updateByPrimaryKey" parameterType="java.lang.String">
+	<update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		UPDATE
 		DH_TRIGGER_INTERFACE
 		<set>
@@ -256,7 +256,7 @@
 				<if test="createTime != null">
 					CREATE_TIME = #{createTime}
 				</if>
-				<if test="actcUid != null and actcUid !=''">
+				<if test="activityId != null and activityId !=''">
 					ACTIVITY_ID = #{activityId}
 				</if>
 				<if test="paraName != null and paraName !=''">
@@ -274,9 +274,20 @@
 			</trim>
 		</set>
 		<where>
-			<trim prefix="WHERE">
-				TIN_UID = #{tinUid}
-			</trim>
+			TIN_UID = #{tinUid}
+		</where>
+	</update>
+	
+	<update id="updateByTriggerUid" parameterType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+		UPDATE
+		DH_TRIGGER_INTERFACE
+		<set>
+			STEP_UID = #{stepUid},
+		</set>
+		<where>
+			TRI_UID = #{triUid}
+			AND
+			ACTIVITY_ID = #{activityId}
 		</where>
 	</update>
 

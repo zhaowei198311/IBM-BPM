@@ -23,6 +23,7 @@ import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
+import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.BpmForm;
@@ -30,6 +31,7 @@ import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
+import com.desmart.desmartbpm.entity.DhTriggerInterface;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
@@ -54,9 +56,11 @@ public class DhStepServiceImpl implements DhStepService {
     private BpmFormManageMapper bpmFormManageMapper;
     @Autowired
     private DhTriggerService dhTriggerService;
+    @Autowired
+    private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
     
     @Override
-    public ServerResponse create(DhStep dhStep) {
+    public ServerResponse create(DhStep dhStep,String actcUid) {
         if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
                 || StringUtils.isBlank(dhStep.getStepObjectUid())) {
@@ -68,7 +72,7 @@ public class DhStepServiceImpl implements DhStepService {
         if (list.size() == 0) {
             return ServerResponse.createByErrorMessage("此环节不存在");
         }
-        
+        String stepUid = EntityIdPrefix.DH_STEP + UUID.randomUUID().toString();
         String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
         if (stepTypeEnum == null) {
@@ -96,8 +100,15 @@ public class DhStepServiceImpl implements DhStepService {
             if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
                 return ServerResponse.createByErrorMessage("触发器不存在");
             }
+            // 触发器类型的话 需要给 参数映射配置 添加步骤id
+            DhTriggerInterface dhTriggerInterface = new DhTriggerInterface();
+            dhTriggerInterface.setStepUid(stepUid);
+            dhTriggerInterface.setActivityId(actcUid);
+            dhTriggerInterface.setTriUid(dhStep.getStepObjectUid());
+            dhTriggerInterfaceMapper.updateByTriggerUid(dhTriggerInterface);
+            log.info(actcUid);
         }
-        dhStep.setStepUid(EntityIdPrefix.DH_STEP + UUID.randomUUID().toString());
+        dhStep.setStepUid(stepUid);
         dhStep.setStepSort(generateStepSort(dhStep));
         dhStepMapper.insert(dhStep);
         return ServerResponse.createBySuccess();
