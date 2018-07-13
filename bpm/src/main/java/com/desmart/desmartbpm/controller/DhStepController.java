@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.common.constant.ServerResponse;
@@ -22,9 +23,9 @@ public class DhStepController {
     
     @RequestMapping(value = "/create")
     @ResponseBody
-    public ServerResponse createStep(DhStep dhStep) {
+    public ServerResponse createStep(DhStep dhStep,@RequestParam(value="actcUid")String actcUid) {
         try {
-            return dhStepService.create(dhStep);
+            return dhStepService.create(dhStep,actcUid);
         } catch (Exception e) {
             LOG.error("创建步骤失败", e);
             return ServerResponse.createByErrorMessage("创建步骤失败");

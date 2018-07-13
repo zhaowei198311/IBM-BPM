@@ -16,7 +16,7 @@ public interface DhStepService {
      * @param dhStep
      * @return
      */
-    ServerResponse create(DhStep dhStep);
+    ServerResponse create(DhStep dhStep,String actcUid);
     
     /**
      * 列出DhActivityConf对应的所有步骤

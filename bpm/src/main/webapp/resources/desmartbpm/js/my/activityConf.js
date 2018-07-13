@@ -3163,6 +3163,8 @@ function addStep() {
 	var stepObjectUid;
 	var $activeLi = $("#my_collapse li.link_active");
 	var actcUid = getCurrentActcUid();
+	var activityId = $("#activityId").val();
+	alert(activityId)
 	var activityBpdId = $activeLi.data('activitybpdid');
 	var stepBusinessKey;
 	// console.log($('input[name="stepType"]:checked').val());
@@ -3243,7 +3245,8 @@ function addStep() {
 				"activityBpdId" : activityBpdId,
 				"stepBusinessKey" : stepBusinessKey,
 				"stepType" : stepType,
-				"stepObjectUid" : stepObjectUid
+				"stepObjectUid" : stepObjectUid,
+				"actcUid" : activityId
 			},
 			success : function(result) {
 				if (result.status == 0) {
