@@ -686,6 +686,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 					// 随机生成俩个字母
 					char a=(char)(int)(Math.random()*26+97);
 					char b=(char)(int)(Math.random()*26+97);
+					//获得老步骤id
+					String oldStepUid = dhStep.getStepUid();
 					// 老流程formUid
 					String stepObjectUid = dhStep.getStepObjectUid();
 					sameOldStepObjectUid = stepObjectUid;
@@ -712,8 +714,12 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 					List<Map<String, Object>> fldUidList = bpmFormFieldMapper.listFldUidByFormUid(stepObjectUid, sr.getData().toString());
 
 					// 拷贝表单字典权限
+					DhObjectPermission dhObjPer = new DhObjectPermission();
+					dhObjPer.setStepUid(oldStepUid);
 					for (Map<String, Object> map : fldUidList) {
-						List<DhObjectPermission> oldDhObjectPermissionlist = dhObjectPermissionMapper.getDhObjectPermissionByFldUid(map.get("FLD_UID").toString());
+						//获得map集合中FLD_UID的值
+						dhObjPer.setOpObjUid(map.get("FLD_UID").toString());
+						List<DhObjectPermission> oldDhObjectPermissionlist = dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjPer);
 						for(DhObjectPermission oldDhObjectPermission:oldDhObjectPermissionlist) {
 							if (oldDhObjectPermission != null) {
 								oldDhObjectPermission.setOpUid("obj_perm:"+UUID.randomUUID());
