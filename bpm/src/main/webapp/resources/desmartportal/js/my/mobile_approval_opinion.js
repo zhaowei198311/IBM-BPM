@@ -2,6 +2,7 @@ var editIndex;
 layui.use('form', function(){
     var form = layui.form;
 	form.on('select(useselfChange)', function(data) {
+		$("#myApprovalOpinion").val("");
 		if (data.value != '-1') {
 			if ($("#myApprovalOpinion").val() == null
 					|| $("#myApprovalOpinion").val() == '') {

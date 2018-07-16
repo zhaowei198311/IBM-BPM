@@ -3,6 +3,7 @@ layui.use('form', function(){
     var form = layui.form;
     form.on('select(useselfChange)', function(data){
     		//$("#demo").val("");
+    	$("#myApprovalOpinion").val("");
     	    if(data.value!='-1'){
     	    	//$("#demo").val(data.value);
     	    	//alert($("#demo").val());
