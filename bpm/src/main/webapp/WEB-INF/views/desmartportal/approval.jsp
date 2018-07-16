@@ -41,7 +41,7 @@
 <!-- wPaint -->  
 <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css"/>  
 <script type="text/javascript" src="resources/desmartportal/wPaint-master/wPaint.js"></script>  
-
+<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
 
     
     <style type="text/css">
@@ -561,7 +561,6 @@
 		</div>
 	</div>
 </body>
-<script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/myWPaint.js"></script>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
