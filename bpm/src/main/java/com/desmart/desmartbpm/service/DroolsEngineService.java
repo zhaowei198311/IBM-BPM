@@ -59,9 +59,11 @@ public class DroolsEngineService {
 				System.setProperty("drools.dateformat", "yyyy-MM-dd HH:mm:ss");
 				Map<String, Object> param = new HashMap<String, Object>();
 				param.put("ruleProcess", datRule.getRuleProcess());
-				param.put("effective", datRule.getStartTime());
+				//param.put("effective", datRule.getStartTime());
 				/*param.put("expires", datRule.getEndTime());*/
-				param.put("expires", DateUtil.getDateAddDay(datRule.getStartTime(), 20));
+				//param.put("expires", DateUtil.getDateAddDay(datRule.getStartTime(), 20));
+				param.put("effective",   "2001-11-1 00:00:00");
+		        param.put("expires", "2019-12-12 23:59:59");
 				param.put("ruleName", "ruleName");
 				String ruleContent = (new FreeMarkUtil()).getHtml("DroolsTemplate.ftl", param);
 				System.out.println("执行的规则:" + ruleContent);
@@ -108,6 +110,6 @@ public class DroolsEngineService {
 			return data1;
 		}
 	}
-
+	
 	
 }
