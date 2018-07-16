@@ -178,6 +178,8 @@
         <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
         <input id="insUid" value="${processInstance.insUid}" style="display: none;">
         <input id="insId" value="${processInstance.insId}" style="display: none;">
+        <input id="userName" type="hidden" value="${processInstance.initUserFullname}"/>
+        <input id="insBusinessKey" type="hidden" value="${processInstance.insBusinessKey}"/>
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
         <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
