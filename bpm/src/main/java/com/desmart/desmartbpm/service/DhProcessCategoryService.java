@@ -92,4 +92,19 @@ public interface DhProcessCategoryService {
      * @return
      */
     List<DhProcessCategory> getCategoryAndAllParentCategory(String categoryUid);
+
+    /**
+     * 根据分类主键列表获得多个的分类信息
+     * @param categoryUidList  分类的主键列表
+     * @return
+     */
+    List<DhProcessCategory> listByCategoryUidList(List<String> categoryUidList);
+
+    /**
+     * 批量插入分类
+     * @param categoryUidList
+     * @return
+     */
+    int insertBatch(List<DhProcessCategory> categoryUidList);
+
 }

@@ -4,15 +4,14 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.zip.CheckedInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
-import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.DhTransferData;
 import com.desmart.desmartbpm.service.*;
-import com.desmart.desmartportal.entity.DhTaskInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
@@ -216,9 +216,16 @@ public class DhProcessDefinitionController {
         }
     }
 
-    @RequestMapping(value = "/export")
-    public void testGetFile(HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
-        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportData(proAppId, proUid, proVerUid);
+    /**
+     * 导出指定的流程定义
+     * @param response
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     */
+    @RequestMapping(value = "/exportProcessDefinition")
+    public void exportProcessDefinition(HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
+        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportProcessDefinition(proAppId, proUid, proVerUid);
         if (!dhTransferDataServerResponse.isSuccess()) {
             return ;
         }
@@ -227,7 +234,7 @@ public class DhProcessDefinitionController {
         BufferedOutputStream bufOut = null;
         try {
             String dataStr = JSON.toJSONString(transferData);
-            String fileName = dhTransferService.getExportFileName(transferData.getFirstProcessDefinition());
+            String fileName = dhTransferService.getExportFileName(transferData.getProcessDefinitionList().get(0));
             fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
             response.setHeader("Content-disposition", "attachment; filename=" + fileName);
             response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
@@ -247,6 +254,58 @@ public class DhProcessDefinitionController {
                 }
             }
         }
-
     }
+
+    /**
+     * 导入一个流程定义
+     * @param file 导入的文件
+     * @return
+     */
+    @RequestMapping(value = "/importProcessDefinition")
+    @ResponseBody
+    public ServerResponse importProcessDefinition(@RequestParam("file") MultipartFile file) {
+        try {
+            ServerResponse<DhTransferData> serverResponse = dhTransferService.trunFileIntoDhTransferData(file);
+            if (!serverResponse.isSuccess()) return serverResponse;
+            // 进一步解析
+            return dhTransferService.importProcessDefinition(serverResponse.getData());
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("导入流程失败");
+        }
+    }
+
+    /**
+     * 导入一个流程定义前，校验状态
+     * @param file
+     * @return
+     *  status = 0 && data = add  可以导入
+     *  status = 0 && data = override  确认是否覆盖
+     *  status != 0 文件错误
+     */
+    @RequestMapping(value = "/checkImportDefinitionStatus")
+    @ResponseBody
+    public ServerResponse checkImportDefinitionStatus(@RequestParam("file") MultipartFile file) {
+        try {
+            ServerResponse<DhTransferData> turnIntoResponse = dhTransferService.trunFileIntoDhTransferData(file);
+            if (!turnIntoResponse.isSuccess()) return turnIntoResponse;
+            DhTransferData transferData = turnIntoResponse.getData();
+            ServerResponse validateResponse = dhTransferService.validateTransferDataForImportProcessDefinition(transferData);
+            if (!validateResponse.isSuccess()) return validateResponse;
+            // 文件基本校验通过
+            DhProcessDefinition processDefinition = transferData.getProcessDefinitionList().get(0);
+            DhProcessDefinition definitionInDb = dhProcessDefinitionService.getDhProcessDefinition(processDefinition.getProAppId(),
+                    processDefinition.getProUid(), processDefinition.getProVerUid());
+            if (definitionInDb == null) {
+                // 属于新加的流程
+                return ServerResponse.createBySuccess("add");
+            } else {
+                // 确认是否需要覆盖
+                return ServerResponse.createBySuccess("override");
+            }
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("导入流程失败");
+        }
+    }
+
+
 }

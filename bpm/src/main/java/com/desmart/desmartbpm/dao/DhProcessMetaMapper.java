@@ -75,4 +75,18 @@ public interface DhProcessMetaMapper {
      * @return
      */
     List<DhProcessMeta> listByCategoryUid(@Param("categoryUid")String categoryUid);
+
+    /**
+     * 根据数据中的 proAppId 和 proUid 查找匹配的流程元数据
+     * @param processMetaList
+     * @return
+     */
+    List<DhProcessMeta> listByProcessMetaLsit(List<DhProcessMeta> processMetaList);
+
+    /**
+     * 批量插入元数据
+     * @param processMetaList
+     * @return
+     */
+    int insertBatch(List<DhProcessMeta> processMetaList);
 }

@@ -1054,10 +1054,11 @@ public class DhRouteServiceImpl implements DhRouteService {
         return true;
 	}
 
-	public boolean willFinishTaskMoveToken(DhTaskInstance currTask) {
+	@Override
+	public boolean willFinishTaskMoveToken(DhTaskInstance currTask, int insId) {
         String taskType = currTask.getTaskType();
         if (taskType.endsWith("Add") || taskType.equals(DhTaskInstance.TYPE_TRANSFER)) {
-            // 加签的会签任务, 传阅任务
+            // 加签的任务, 传阅任务
             return false;
         } else if (taskType.equals(DhTaskInstance.TYPE_NORMAL)) {
             // 普通任务
@@ -1065,15 +1066,13 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
 
         // 查找指定任务编号和任务类型的任务
-        int taskId = currTask.getTaskId(); // 任务编号
+		// 当前流程实例在这个环节的任务
         DhTaskInstance selective = new DhTaskInstance();
         selective.setInsUid(currTask.getInsUid());
         selective.setTaskType(taskType);
         selective.setTaskActivityId(currTask.getTaskActivityId());
-        // 当前流程实例在这个环节的任务
-        DhProcessInstance processInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
         List<DhTaskInstance> matchedTasks = dhTaskInstanceMapper.selectAllTask(selective);
-        List<DhTaskHandler> handlerList = dhTaskHandlerMapper.listByInsIdAndTaskActivityId(processInstance.getInsId(), currTask.getTaskActivityId());
+        List<DhTaskHandler> handlerList = dhTaskHandlerMapper.listByInsIdAndTaskActivityId(insId, currTask.getTaskActivityId());
         Date handlerRecordCteateTime = handlerList.get(0).getCreateTime(); // DhTaskHandler表的数据保存时间
         // 过滤掉在记录时间之前的任务
         Iterator<DhTaskInstance> it = matchedTasks.iterator();

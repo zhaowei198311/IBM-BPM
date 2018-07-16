@@ -289,26 +289,6 @@ public class DhTransferData {
         this.interfaceParameterList = interfaceParameterList;
     }
 
-    /**
-     * 获得流程元数据集合中的第一个流程元数据
-     * @return
-     */
-    public DhProcessMeta getFirstProcessMeta() {
-        if (this.processMetaList.isEmpty()) {
-            return null;
-        }
-        return this.processMetaList.get(0);
-    }
 
-    /**
-     * 获得流程定义集合中的第一个流程定义
-     * @return
-     */
-    public DhProcessDefinition getFirstProcessDefinition() {
-        if (this.processDefinitionList.isEmpty()) {
-            return null;
-        }
-        return this.processDefinitionList.get(0);
-    }
 
 }

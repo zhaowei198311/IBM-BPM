@@ -24,7 +24,7 @@ public class FormDataUtil {
 	private Logger log = Logger.getLogger(FormDataUtil.class);
 	
 	/**
-	 * 将新的Formdata 覆盖 旧的 Formdata
+	 * 将新的Formdata 覆盖 旧的 Formdata， 返回老的formData
 	 * @param oldObj 旧的json对象
 	 * @param newObj 新的json对象
 	 */

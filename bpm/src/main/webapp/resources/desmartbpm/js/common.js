@@ -213,7 +213,7 @@ var common = {
                         params.fn(result.data);
                     }
                 } else {
-                    layer.alert(restult.msg);
+                    layer.alert(result.msg);
                 }
             },
             error: function() {

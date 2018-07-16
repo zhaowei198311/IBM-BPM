@@ -5,7 +5,9 @@ import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhTransferData;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ public interface DhTransferService {
 	 * @param proVerUid
 	 * @return
 	 */
-	ServerResponse<DhTransferData> exportData(String proAppId, String proUid, String proVerUid);
+	ServerResponse<DhTransferData> exportProcessDefinition(String proAppId, String proUid, String proVerUid);
 
 	/**
 	 * 生成导出文件的文件名
@@ -29,4 +31,26 @@ public interface DhTransferService {
 	 * @return
 	 */
 	String getExportFileName(DhProcessDefinition dhProcessDefinition);
+
+	/**
+	 * 将文件转化为供解析的对象
+	 * @param file 上传的文件
+	 * @return
+	 * @throws IOException
+	 */
+	ServerResponse<DhTransferData> trunFileIntoDhTransferData(MultipartFile file);
+
+	/**
+	 * 导入一个流程定义, 如果重复则覆盖
+	 * @param transferData  迁移使用的数据
+	 * @return
+	 */
+	ServerResponse importProcessDefinition(DhTransferData transferData);
+
+	/**
+	 * 校验用来导入流程的数据 有效性
+	 * @param transferData 迁移的数据
+	 * @return 满足条件返回success
+	 */
+	ServerResponse validateTransferDataForImportProcessDefinition(DhTransferData transferData);
 }

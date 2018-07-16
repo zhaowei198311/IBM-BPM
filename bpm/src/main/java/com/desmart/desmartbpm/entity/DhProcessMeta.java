@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 流程定义元数据
@@ -123,9 +124,27 @@ public class DhProcessMeta {
                 + ", updatorFullName=" + updatorFullName + "]";
     }
 
-    
-   
-    
-    
-    
+
+    /**
+     * 比较规则， proAppId与proUid都相等，则视为相等
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DhProcessMeta that = (DhProcessMeta) o;
+        return Objects.equals(proAppId, that.proAppId) &&
+                Objects.equals(proUid, that.proUid);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(proAppId, proUid);
+    }
+
+
+
 }

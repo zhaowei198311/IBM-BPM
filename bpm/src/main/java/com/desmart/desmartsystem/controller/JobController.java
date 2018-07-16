@@ -32,7 +32,7 @@ import com.desmart.desmartsystem.service.QuartzService;
 import com.desmart.desmartsystem.util.DatagridForLayUI;
 import com.desmart.desmartsystem.util.Json;
 
-@Controller
+//@Controller
 @RequestMapping("/quarz")
 public class JobController {
 

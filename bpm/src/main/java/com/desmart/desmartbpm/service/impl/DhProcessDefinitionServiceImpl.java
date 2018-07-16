@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.service.*;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -904,5 +906,25 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         return voList;
     }
 
+    @Override
+    public List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList) {
+        if (CollectionUtils.isEmpty(processDefinitionList)) {
+            return new ArrayList<>();
+        }
+        return dhProcessDefinitionMapper.listByDhPocessDefinitionList(processDefinitionList);
+    }
 
+    @Override
+    public ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        DhProcessDefinition dhProcessDefinition = getDhProcessDefinition(proAppId, proUid, proVerUid);
+        if (dhProcessDefinition == null) {
+            return ServerResponse.createBySuccess();
+        }
+        // 判断流程定义是否已启用
+        if (DhProcessDefinition.STATUS_ENABLED.equals(dhProcessDefinition.getProStatus())) {
+            return ServerResponse.createByErrorMessage("启用中的流程不能删除");
+        }
+
+        return null;
+    }
 }

@@ -16,8 +16,6 @@ import com.desmart.desmartbpm.entity.DhTransferData;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
-import org.apache.poi.util.SystemOutLogger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
@@ -26,7 +24,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.util.BpmTaskUtil;
@@ -265,7 +265,7 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public String testGetFile(HttpServletRequest request, HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
         System.out.println(proAppId + " | " + proUid + " | " + proVerUid);
-        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportData(proAppId, proUid, proVerUid);
+        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportProcessDefinition(proAppId, proUid, proVerUid);
         if (dhTransferDataServerResponse.isSuccess()) {
             DhTransferData transferData = dhTransferDataServerResponse.getData();
             String dataStr = JSON.toJSONString(transferData);
@@ -296,4 +296,23 @@ public class TestController extends BaseWebController {
         }
         return "done";
     }
+
+    @RequestMapping(value = "importFile")
+    @ResponseBody
+    public ServerResponse importFile(@RequestParam("file") MultipartFile file) {
+
+        if (file != null) {
+            //getRealPath获得的是本地文件系统的路径即
+            // String uploadPath = request.getServletContext().getRealPath("upload");
+            //System.out.println(uploadPath);
+            try {
+                dhTransferService.trunFileIntoDhTransferData(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return ServerResponse.createByErrorMessage("上传失败");
+    }
+
+
 }
