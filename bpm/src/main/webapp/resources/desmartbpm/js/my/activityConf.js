@@ -3207,7 +3207,8 @@ function addStep() {
 				"activityBpdId" : activityBpdId,
 				"stepBusinessKey" : stepBusinessKey,
 				"stepType" : stepType,
-				"stepObjectUid" : stepObjectUid
+				"stepObjectUid" : stepObjectUid,
+				"actcUid" : ""
 			},
 			beforeSend : function(){
 				layer.load(1);
