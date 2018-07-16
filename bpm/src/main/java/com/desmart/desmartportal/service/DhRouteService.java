@@ -126,7 +126,7 @@ public interface DhRouteService {
 	 * @param currTask
 	 * @return
 	 */
-	boolean willFinishTaskMoveToken(DhTaskInstance currTask);
+	boolean willFinishTaskMoveToken(DhTaskInstance currTask, int insId);
 
 	/**
 	 * 判断token是否真实移动——移动到下个人员任务节点，或者导致流程结束

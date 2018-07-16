@@ -63,6 +63,12 @@ public interface DhProcessDefinitionMapper {
      */
     DhProcessDefinition getProcessById(@Param("proUid") String proUid, @Param("proVerUid") String proVeruid, @Param("proAppId") String proAppId);
 
+    /**
+     * 根据传入的流程定义的 proAppId proUid proVerUid 3项，查找数据库中对应的流程
+     * @param processDefinitionList
+     * @return
+     */
+    List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
 
 
 }

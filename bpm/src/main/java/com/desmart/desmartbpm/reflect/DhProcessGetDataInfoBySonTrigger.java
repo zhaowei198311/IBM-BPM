@@ -22,7 +22,16 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
                     "to": "sap_num_copy"
                 }
             ]
-        }
+        },
+		 {
+		 "identity": "第二个标识",
+			 "exchange": [
+			 {
+				 "from": "sap_num",
+				 "to": "sap_num_copy"
+			 }
+			 ]
+		 }
     ]
         
 }

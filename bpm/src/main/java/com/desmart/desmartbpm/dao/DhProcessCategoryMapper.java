@@ -16,7 +16,7 @@ public interface DhProcessCategoryMapper {
     
     /**
      * 根据父分类列出子分类
-     * @param categoryUid 指定uid
+     * @param categoryParent 指定父分类id
      */
     List<DhProcessCategory> listByCategoryParent(String categoryParent);
     
@@ -27,6 +27,18 @@ public interface DhProcessCategoryMapper {
     int updateByCategoryUidSelective(DhProcessCategory dhProcessCategory);
     
     int removeBatchByCategoryList(List<DhProcessCategory> categoryList);
-    
-    
+
+    /**
+     * 根据分类id集合获得多个分类
+     * @param categoryUidList
+     * @return
+     */
+    List<DhProcessCategory> listByCategoryUidList(List<String> categoryUidList);
+
+    /**
+     * 批量插入分类
+     * @param categoryList
+     * @return
+     */
+    int insertBatch(List<DhProcessCategory> categoryList);
 }

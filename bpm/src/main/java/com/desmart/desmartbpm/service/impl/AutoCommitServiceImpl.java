@@ -122,7 +122,7 @@ public class AutoCommitServiceImpl implements AutoCommitService {
         JSONObject insDataJson = JSON.parseObject(dhProcessInstance.getInsData());
         List<SysUser> defaultTaskOwnerList = dhRouteService.getDefaultTaskOwnerOfTaskNode(nextTaskNode, originalUser,
                 dhProcessInstance, insDataJson.getJSONObject("formData"));
-        if (defaultTaskOwnerList.size() == 0) {
+        if (defaultTaskOwnerList.isEmpty()) {
             throw new PlatformException("自动提交失败，缺少默认处理人");
         }
         // 保存流转记录

@@ -23,6 +23,10 @@ var setting = {
         onClick: zTreeOnClick// 点击回调
     }
 };
+var importUrl = {
+    'tryImportUrl': common.getPath() + '/processDefinition/checkImportDefinitionStatus',
+    'importDefinitionUrl': common.getPath() + '/processDefinition/importProcessDefinition'
+};
 
 
 $(function() {
@@ -291,14 +295,15 @@ $(function() {
             return;
         }
         var ck = cks.eq(0);
-        alert(111)
         var param = {
 			"proUid": ck.data('prouid'),
 			"proVerUid": ck.data('proveruid'),
 			"proAppId": ck.data('proappid')
 		};
-        downLoadFile(common.getPath() + '/processDefinition/export', param);
+        downLoadFile(common.getPath() + '/processDefinition/exportProcessDefinition', param);
 	});
+
+
 
 
 	// “流程配置”按钮

@@ -1,9 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +19,7 @@ import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
@@ -266,9 +264,17 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
     }
 
 
+    @Override
+    public List<DhProcessCategory> listByCategoryUidList(List<String> categoryUidList) {
+        if (CollectionUtils.isEmpty(categoryUidList)) {
+            return new ArrayList<>();
+        }
+        return dhProcessCategoryMapper.listByCategoryUidList(categoryUidList);
+    }
 
-
-
-
-    
+    @Override
+    public int insertBatch(List<DhProcessCategory> categoryUidList) {
+        if (CollectionUtils.isEmpty(categoryUidList)) return 0;
+        return dhProcessCategoryMapper.insertBatch(categoryUidList);
+    }
 }

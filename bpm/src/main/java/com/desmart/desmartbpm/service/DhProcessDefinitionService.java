@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,4 +122,23 @@ public interface DhProcessDefinitionService {
      * @throws
      */
     ServerResponse checkWhetherLinkSynchronization(BpmActivityMeta bpmActivityMeta);
+
+
+    /**
+     * 根据传入的流程定义的 proAppId proUid proVerUid 3项，查找数据库中对应的流程
+     * @param processDefinitionList
+     * @return
+     */
+    List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
+
+    /**
+     * 删除指定流程定义，并删除关联的表数据
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid);
+
+
 }
