@@ -1,8 +1,11 @@
+// bool值记录是否能直接跳跃提交 回到驳回处
+var canSkipFromReject = false;
+// bool值记录提交时是否需要填写审批意见
+var needApprovalOpinion = "";
 $(function () {
 	// bool值记录提交时是否需要填写审批意见
-	var needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
-	// bool值记录是否能直接跳跃提交 回到驳回处
-	var canSkipFromReject = false;
+	needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
+	
 	if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
 	    canSkipFromReject = true;
 	}
