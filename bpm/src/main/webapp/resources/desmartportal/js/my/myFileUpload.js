@@ -209,9 +209,6 @@ $(function(){
 			        }
 			  });
 			  
-			  
-			  
-			  
 			  dragDiv.get(0).addEventListener("dragenter", function(e){ 
 				    e.stopPropagation(); 
 				    e.preventDefault(); 
