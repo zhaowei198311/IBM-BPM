@@ -1225,8 +1225,10 @@ function post(URL, PARAMS) {
 	temp_form.remove();
 }
 
+var scrollTop = 0;
 //点击行到行详情页面
 function showDataTr(obj){
+	scrollTop = $(obj).offset().top;
 	var trHtml = $(obj).parent().html();
 	var tableTitle = $(obj).parent().parent().parent().attr("title");
 	$("#tr_con_content title_p").text(tableTitle);
@@ -1242,4 +1244,12 @@ function showDataTr(obj){
 	});
 	$(".mobile_container").css("display","none");
 	$("#table_tr_container").css("display","block");
+}
+
+function backApproval(){
+	jQuery('html,body').animate({
+	    scrollTop: scrollTop-80
+	}, 300);
+	$(".mobile_container").css("display","block");
+	$("#table_tr_container").css("display","none");
 }
