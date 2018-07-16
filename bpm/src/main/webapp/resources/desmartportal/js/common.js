@@ -423,6 +423,7 @@ var common = {
 	},
 	//传入表单json数据给表单组件赋值
 	giveFormSetValue:function(jsonStr){
+		console.log(jsonStr);
 		var json = JSON.parse(jsonStr)
 		for(var name in json){
 			var paramObj = json[name];
