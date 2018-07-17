@@ -34,6 +34,8 @@ import com.desmart.desmartbpm.service.DatRuleService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
 import com.desmart.desmartbpm.util.DateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
+import org.springframework.util.CollectionUtils;
+
 @Service
 public class DatRuleServiceImpl implements DatRuleService {
 
@@ -533,6 +535,14 @@ public class DatRuleServiceImpl implements DatRuleService {
 			return new ArrayList<>();
 		}
 		return datRuleMapper.listByRuleIds(ruleIdList);
+	}
+
+	@Override
+	public int removeByRuleIdList(List<String> ruleIdList) {
+		if (CollectionUtils.isEmpty(ruleIdList)) {
+			return 0;
+		}
+		return datRuleMapper.deleteByRuleIds(ruleIdList);
 	}
 
 }

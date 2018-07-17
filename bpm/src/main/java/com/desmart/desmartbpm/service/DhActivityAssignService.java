@@ -14,4 +14,18 @@ public interface DhActivityAssignService {
      */
     List<DhActivityAssign> listByActivityIdList(List<String> activityIdList);
 
+    /**
+     * 根据环节id集合，批量删除
+     * @param activityIdList
+     * @return
+     */
+    int removeByActivityIdList(List<String> activityIdList);
+
+    /**
+     * 批量插入
+     * @param dhActivityAssignList
+     * @return
+     */
+    int insertBatch(List<DhActivityAssign> dhActivityAssignList);
+
 }

@@ -25,7 +25,6 @@ public interface DhStepService {
      */
     ServerResponse<List<DhStep>> getStepOfDhActivityConf(DhActivityConf conf);
     
-    
     /**
      * 更新步骤
      * @param dhStep
@@ -110,5 +109,19 @@ public interface DhStepService {
      * @return
      */
     List<DhStep> listAllStepsOfProcessDefinition(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 根据步骤id主键集合删除步骤
+     * @param stepUidList
+     * @return
+     */
+    int removeByStepUidList(List<String> stepUidList);
+
+    /**
+     * 批量插入步骤
+     * @param stepList
+     * @return
+     */
+    int insertBatch(List<DhStep> stepList);
 
 }    

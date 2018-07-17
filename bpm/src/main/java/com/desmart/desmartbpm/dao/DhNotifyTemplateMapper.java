@@ -8,30 +8,40 @@ import com.desmart.desmartbpm.entity.DhNotifyTemplate;
 
 @Repository
 public interface DhNotifyTemplateMapper {
+
 	/**
 	 * 新增
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public Integer insert(DhNotifyTemplate dhNotifyTemplate);
+	Integer insert(DhNotifyTemplate dhNotifyTemplate);
+
 	/**
-	 * 删除
-	 * @param DhNotifyTemplate
+	 * 批量插入
+	 * @param notifyTemplateList
 	 * @return
 	 */
-	public Integer delete(DhNotifyTemplate dhNotifyTemplate);
+	int insertBatch(List<DhNotifyTemplate> notifyTemplateList);
+
+	/**
+	 * 删除
+	 * @param dhNotifyTemplate
+	 * @return
+	 */
+	Integer delete(DhNotifyTemplate dhNotifyTemplate);
+
 	/**
 	 * 修改
-	 * @param DhNotifyTemplate
+	 * @param dhNotifyTemplate
 	 * @return
 	 */
 	public Integer update(DhNotifyTemplate dhNotifyTemplate);
 	/**
 	 * 根据条件查询通知模板
-	 * @param DhNotifyTemplate
+	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public List<DhNotifyTemplate> getDhNotifyTemplatesByCondition(DhNotifyTemplate dhNotifyTemplate);
+	List<DhNotifyTemplate> getDhNotifyTemplatesByCondition(DhNotifyTemplate dhNotifyTemplate);
 
 	/**
 	 * 根据模版id集合查询多个模版
@@ -39,4 +49,7 @@ public interface DhNotifyTemplateMapper {
 	 * @return
 	 */
     List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList);
+
+
+
 }

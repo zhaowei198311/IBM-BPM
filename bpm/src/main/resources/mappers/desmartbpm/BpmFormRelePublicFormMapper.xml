@@ -34,10 +34,29 @@
 	<select id="listPublicFormUidByFormUidList" parameterType="list" resultType="string">
 		SELECT public_form_uid FROM BPM_FORM_RELE_PUBLIC_FORM
 		<where>
-			<foreach collection="list" item="item" open="" separator="or" close="">
+			<foreach collection="list" item="item" separator="or" >
 				form_uid = #{item}
 			</foreach>
 		</where>
 	</select>
+
+	<select id="listByFormUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.BpmFormRelePublicForm">
+		select <include refid="Base_Column"/> from BPM_FORM_RELE_PUBLIC_FORM
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				form_uid = #{item}
+			</foreach>
+		</where>
+	</select>
+
+
+	<delete id="removeByFormUidList" parameterType="list">
+		delete from BPM_FORM_RELE_PUBLIC_FORM
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				form_uid = #{item}
+			</foreach>
+		</where>
+	</delete>
 	
 </mapper>

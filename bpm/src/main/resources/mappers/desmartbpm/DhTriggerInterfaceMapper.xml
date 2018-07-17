@@ -313,8 +313,7 @@
 	<select id="queryTriIntByTriUidAndType" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		SELECT
 		<include refid="Base_Column_List" />
-		FROM
-		DH_TRIGGER_INTERFACE
+		FROM DH_TRIGGER_INTERFACE
 		where tri_uid = #{triUid}
 		and step_uid = #{stepUid}
 		<if test="parameterType!=null and !parameterType.trim().isEmpty()">
@@ -328,4 +327,11 @@
 			<foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
 		</where>
 	</select>
+
+	<delete id="removeByStepUidList" parameterType="list">
+		delete FROM DH_TRIGGER_INTERFACE
+		<where>
+			<foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
+		</where>
+	</delete>
 </mapper>

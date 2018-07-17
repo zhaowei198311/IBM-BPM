@@ -45,7 +45,7 @@ public interface DhTransferService {
 	 * @param transferData  迁移使用的数据
 	 * @return
 	 */
-	ServerResponse importProcessDefinition(DhTransferData transferData);
+	ServerResponse startImportProcessDefinition(DhTransferData transferData);
 
 	/**
 	 * 校验用来导入流程的数据 有效性
@@ -53,4 +53,14 @@ public interface DhTransferService {
 	 * @return 满足条件返回success
 	 */
 	ServerResponse validateTransferDataForImportProcessDefinition(DhTransferData transferData);
+
+
+	/**
+	 * 删除指定流程定义，并删除关联的表数据
+	 * @param proAppId
+	 * @param proUid
+	 * @param proVerUid
+	 * @return
+	 */
+	ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid);
 }

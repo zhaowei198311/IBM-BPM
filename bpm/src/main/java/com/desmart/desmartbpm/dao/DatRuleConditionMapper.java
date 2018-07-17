@@ -65,7 +65,7 @@ public interface DatRuleConditionMapper {
 	Integer batchDelete(@Param("list")List<DatRuleCondition> datRuleConditions);
 	
 	/**
-	 * 
+	 * 根据ruleIds进行批量删除
 	 * @Title: deleteByRuleIds  
 	 * @Description: 根据ruleIds进行批量删除  
 	 * @param @param ruleIds
@@ -83,4 +83,6 @@ public interface DatRuleConditionMapper {
 	 * @return
 	 */
 	Integer update(DatRuleCondition datRuleCondition);
+
+
 }

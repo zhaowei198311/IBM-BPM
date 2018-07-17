@@ -920,17 +920,5 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         return dhProcessDefinitionMapper.listByDhPocessDefinitionList(processDefinitionList);
     }
 
-    @Override
-    public ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid) {
-        DhProcessDefinition dhProcessDefinition = getDhProcessDefinition(proAppId, proUid, proVerUid);
-        if (dhProcessDefinition == null) {
-            return ServerResponse.createBySuccess();
-        }
-        // 判断流程定义是否已启用
-        if (DhProcessDefinition.STATUS_ENABLED.equals(dhProcessDefinition.getProStatus())) {
-            return ServerResponse.createByErrorMessage("启用中的流程不能删除");
-        }
 
-        return null;
-    }
 }

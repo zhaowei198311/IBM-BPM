@@ -42,6 +42,7 @@ import com.desmart.desmartsystem.entity.SysRole;
 import com.desmart.desmartsystem.entity.SysTeam;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.google.common.collect.Lists;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhActivityConfServiceImpl implements DhActivityConfService {
@@ -231,8 +232,24 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         return ServerResponse.createBySuccess();
     }
 
+    @Override
+    public int removeByActcUidList(List<String> actcUidList) {
+        if (CollectionUtils.isEmpty(actcUidList)) {
+            return 0;
+        }
+        return dhActivityConfMapper.deleteByActivityIds(actcUidList);
+    }
 
-	/**
+    @Override
+    public int insertBatch(List<DhActivityConf> dhActivityConfList) {
+        if (CollectionUtils.isEmpty(dhActivityConfList)) {
+            return 0;
+        }
+        return dhActivityConfMapper.insertBatch(dhActivityConfList);
+    }
+
+
+    /**
      * 为环节更新可选处理人信息
      * @param dhActivityConf
      * @return

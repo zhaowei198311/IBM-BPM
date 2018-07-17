@@ -131,14 +131,7 @@ public interface DhProcessDefinitionService {
      */
     List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
 
-    /**
-     * 删除指定流程定义，并删除关联的表数据
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
-     * @return
-     */
-    ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid);
+
 
 
 }

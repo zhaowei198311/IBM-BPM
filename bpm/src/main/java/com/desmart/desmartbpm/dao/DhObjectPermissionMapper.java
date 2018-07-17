@@ -59,4 +59,11 @@ public interface DhObjectPermissionMapper {
      * @return
      */
     List<DhObjectPermission> listByStepUidList(List<String> stepUidList);
+
+    /**
+     * 根据步骤id集合删除所有相关的权限
+     * @param stepUidList
+     * @return
+     */
+    int removeByStepUidList(List<String> stepUidList);
 }

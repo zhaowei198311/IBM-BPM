@@ -61,4 +61,12 @@ public interface DhProcessMetaService {
      * 根据分类id 查询流程实例
      */
     List<DhProcessMeta> searchByCategory(String categoryUid);
+
+    /**
+     * 根据流程应用库id与流程图id查找元数据
+     * @param proAppId
+     * @param proUid
+     * @return
+     */
+    DhProcessMeta getByProAppIdAndProUid(String proAppId, String proUid);
 }

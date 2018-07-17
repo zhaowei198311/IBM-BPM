@@ -43,4 +43,14 @@ public interface DhNotifyTemplateService {
 	 * @return
 	 */
 	List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList);
+
+	/**
+	 * 批量插入
+	 * @param notifyTemplateList
+	 * @return
+	 */
+	int insertBatch(List<DhNotifyTemplate> notifyTemplateList);
+
+
+
 }

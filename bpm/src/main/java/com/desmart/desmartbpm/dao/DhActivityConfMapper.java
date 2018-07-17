@@ -12,6 +12,8 @@ public interface DhActivityConfMapper {
 
     int insert(DhActivityConf dhActivityConf);
 
+    int insertBatch(List<DhActivityConf> dhActivityConfList);
+
     DhActivityConf selectByPrimaryKey(String actcUid);
 
     int updateByPrimaryKeySelective(DhActivityConf selective);
@@ -30,5 +32,7 @@ public interface DhActivityConfMapper {
      * @throws
      */
     int deleteByActivityIds(List<String> activityIds);
-    
+
+
+
 }

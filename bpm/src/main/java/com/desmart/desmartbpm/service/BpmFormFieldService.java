@@ -55,4 +55,11 @@ public interface BpmFormFieldService {
 	 * @return
 	 */
 	List<BpmFormField> listByFormUidList(List<String> formUidList);
+
+	/**
+	 * 根据表单主键列表批量删除
+	 * @param formUidList
+	 * @return
+	 */
+	int removeByFormUidList(List<String> formUidList);
 }

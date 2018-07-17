@@ -30,6 +30,7 @@ import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -175,6 +176,14 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			}
 		}
 		return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public int removeFormsByFormUidList(List<String> formUidList) {
+		if (CollectionUtils.isEmpty(formUidList)) {
+			return 0;
+		}
+		return bpmFormManageMapper.removeFormsByFormUidList(formUidList);
 	}
 
 	private void deleteFieldPermiss(List<BpmFormField> fieldList) {

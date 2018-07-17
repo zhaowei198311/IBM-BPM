@@ -83,4 +83,11 @@ public interface DhGatewayLineMapper {
      * @return
      */
     List<DhGatewayLine> listByGatewayActivityIdList(List<String> activityIdList);
+
+    /**
+     * 根据主键批量删除
+     * @param gatewayLineUidList
+     * @return
+     */
+    int removeByGatewayLineUidList(List<String> gatewayLineUidList);
 }

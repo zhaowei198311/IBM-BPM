@@ -17,7 +17,19 @@
             #{categoryUid}, #{categoryParent}, #{categoryName}, #{categoryIcon}
         )
     </insert>
-    
+
+    <insert id="insertBatch" parameterType="list">
+        insert into DH_PROCESS_CATEGORY (<include refid="base_column"/>)
+        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+            select
+            #{item.categoryUid},
+            #{item.categoryParent},
+            #{item.categoryName},
+            #{item.categoryIcon}
+            from dual
+        </foreach>
+    </insert>
+
     <select id="listByCategoryParent" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhProcessCategory">
         select <include refid="base_column"/> from DH_PROCESS_CATEGORY
         where category_parent = #{categoryParent}
@@ -31,7 +43,14 @@
     <select id="listAll" resultType="com.desmart.desmartbpm.entity.DhProcessCategory">
         select <include refid="base_column"/> from DH_PROCESS_CATEGORY
     </select>
-    
+
+    <select id="listByCategoryUidList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhProcessCategory">
+        select <include refid="base_column"/> from DH_PROCESS_CATEGORY
+        <where>
+            <foreach collection="list" item="item" separator="or"> category_uid = #{item} </foreach>
+        </where>
+    </select>
+
     <update id="updateByCategoryUidSelective" parameterType="com.desmart.desmartbpm.entity.DhProcessCategory">
         update DH_PROCESS_CATEGORY
         <set>

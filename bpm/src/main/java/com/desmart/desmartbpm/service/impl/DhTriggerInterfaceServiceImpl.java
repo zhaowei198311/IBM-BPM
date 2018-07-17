@@ -60,4 +60,12 @@ public class DhTriggerInterfaceServiceImpl implements DhTriggerInterfaceService 
 		}
 		return dhTriggerInterfaceMapper.listByStepUidList(stepUidList);
 	}
+
+	@Override
+	public int removeByStepUidList(List<String> stepUidList) {
+		if (stepUidList == null || stepUidList.isEmpty()) {
+			return 0;
+		}
+		return dhTriggerInterfaceMapper.removeByStepUidList(stepUidList);
+	}
 }

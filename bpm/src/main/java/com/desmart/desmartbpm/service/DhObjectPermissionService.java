@@ -82,4 +82,22 @@ public interface DhObjectPermissionService {
      * @return
      */
 	List<DhObjectPermission> listByStepUidList(List<String> stepUidList);
+
+    /**
+     * 根据步骤id集合删除所有相关的权限
+     * @param stepUidList
+     * @return
+     */
+	int removeByStepUidList(List<String> stepUidList);
+
+    /**
+     * 根据3个要素删除相关权限
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    int removeByProAppIdAndProUidAndProVerUid(String proAppId, String proUid, String proVerUid);
+
+
 }

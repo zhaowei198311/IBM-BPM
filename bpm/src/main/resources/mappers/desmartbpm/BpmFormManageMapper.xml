@@ -102,22 +102,31 @@
 	    </if>
     </select>
     
-    <select id="isBindStep" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhStep">
+    <select id="isBindStep" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhStep">
     	select * from dh_step
     	where step_object_uid = #{formUid} 
     </select>
     
-    <select id="queryMetaNameByProUid" parameterType="String" resultType="String">
+    <select id="queryMetaNameByProUid" parameterType="string" resultType="string">
     	select pro_name
         from dh_process_meta 
         where pro_uid = #{proUid}
     </select>
     
-    <delete id="deleteFormRelePublicForm" parameterType="String">
+    <delete id="deleteFormRelePublicForm" parameterType="string">
     	delete from bpm_form_rele_public_form where form_uid = #{formUid}
     </delete>
-    
-    <select id="queryFormReleByFormUid" parameterType="String" resultType="String">
+
+	<delete id="removeFormsByFormUidList" parameterType="list">
+		delete from bpm_form
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				dyn_uid = #{item}
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="queryFormReleByFormUid" parameterType="string" resultType="string">
     	select public_form_uid
     	from bpm_form_rele_public_form 
     	where form_uid = #{formUid}

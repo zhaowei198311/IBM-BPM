@@ -4,24 +4,23 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.DateUtil;
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
-import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
-import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
-import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
-import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
+import com.desmart.desmartbpm.dao.*;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
+import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +78,19 @@ public class DhTransferServiceImpl implements DhTransferService {
     private DhNotifyTemplateService dhNotifyTemplateService;
     @Autowired
     private DhProcessDefinitionMapper dhProcessDefinitionMapper;
+    @Autowired
+    private DhActivityConfService dhActivityConfService;
+    @Autowired
+    private BpmActivityMetaMapper bpmActivityMetaMapper;
+    @Autowired
+    private DhGatewayLineMapper dhGatewayLineMapper;
+    @Autowired
+    private DatRuleMapper datRuleMapper;
+    @Autowired
+    private DatRuleConditionMapper datRuleConditionMapper;
+    @Autowired
+    private DhObjectPermissionMapper dhObjectPermissionMapper;
+
 
 
     public ServerResponse<DhTransferData> exportProcessDefinition(String proAppId, String proUid, String proVerUid) {
@@ -95,22 +107,25 @@ public class DhTransferServiceImpl implements DhTransferService {
         transferData.addToProcessDefinitionList(dhProcessDefinition);
 
         // 获得流程元数据信息
+        /*
         DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
         if (dhProcessMeta == null) {
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
         transferData.addToProcessMetaList(dhProcessMeta);
-
+        */
         // 获得分类信息
+        /*
         List<DhProcessCategory> categoryList = dhProcessCategoryService.getCategoryAndAllParentCategory(dhProcessMeta.getCategoryUid());
         if (categoryList.isEmpty() && !dhProcessMeta.getCategoryUid().equals("rootCategory")) {
             return ServerResponse.createByErrorMessage("流程分类信息异常");
         }
         transferData.addAllToCategoryList(categoryList);
+        */
 
         // 记录需要引入的触发器的主键
-        Set<String> triggerIdSetToInclude = new HashSet<>();
-        triggerIdSetToInclude.addAll(getTriggerIdListOnDhProcessDefinition(transferData.getProcessDefinitionList().get(0)));
+        // Set<String> triggerIdSetToInclude = new HashSet<>();
+        // triggerIdSetToInclude.addAll(getTriggerIdListOnDhProcessDefinition(transferData.getProcessDefinitionList().get(0)));
 
         // 获得此流程定义的发起权限
         List<DhObjectPermission> permissionListOfStartProcess = dhObjectPermissionService.getPermissionListOfStartProcess(proAppId, proUid, proVerUid);
@@ -118,17 +133,20 @@ public class DhTransferServiceImpl implements DhTransferService {
 
         // 查找对应的表单
         List<BpmForm> bpmForms = bpmFormManageService.listAllFormsOfProcessDefinition(proUid, proVerUid);
-        List<String> formUidList = this.getIdentityListOfObjectList(bpmForms);
         transferData.setFormList(bpmForms);
+        // 自有的表单主键集合
+        List<String> formUidList = this.getIdentityListOfObjectList(bpmForms);
+        List<BpmFormRelePublicForm> bpmFormRelePublicFormList = bpmFormRelePublicFormMapper.listByFormUidList(formUidList);
+        // 保存中间表记录
+        transferData.setFormRelePublicFormList(bpmFormRelePublicFormList);
         // 根据formUid集合获得引用的 公共子表单 BPM_FORM_RELE_PUBLIC_FORM
-        List<String> pubFormUidList = bpmFormRelePublicFormMapper.listPublicFormUidByFormUidList(formUidList);
-        List<BpmPublicForm> bpmPublicForms = bpmPublicFormService.listByPublicFormUidList(pubFormUidList);
-        transferData.setPublicFormList(bpmPublicForms);
+        // List<String> pubFormUidList = bpmFormRelePublicFormMapper.listPublicFormUidByFormUidList(formUidList);
+        // List<BpmPublicForm> bpmPublicForms = bpmPublicFormService.listByPublicFormUidList(pubFormUidList);
+        // transferData.setPublicFormList(bpmPublicForms);
         // 获得表单字段集合(包括普通表单的字段和公共表单的字段)
-        formUidList.addAll(pubFormUidList); // 将共用子表单的id和普通表单的id结合
+        // formUidList.addAll(pubFormUidList); // 将共用子表单的id和普通表单的id结合
         List<BpmFormField> bpmFormFields = bpmFormFieldService.listByFormUidList(formUidList);
         transferData.setFormFieldList(bpmFormFields);
-
 
         // 获得所有环节
         List<BpmActivityMeta> activityMetaList = bpmActivityMetaService.listAllBpmActivityMeta(proAppId, proUid, proVerUid);
@@ -136,8 +154,8 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage("流程环节信息异常");
         }
         transferData.addAllToBpmActivityMetaList(activityMetaList);
-        List<String> sourceUserActivityIdList = this.getSourceUserActivityIdList(activityMetaList); // 所有环节的activity_id集合
-        List<String> sourceGatewayActiivtyIdList = this.getSourceGatewayActivityIdList(activityMetaList);
+        List<String> sourceUserActivityIdList = this.getSourceUserActivityIdList(activityMetaList); // 所有原生流程环节
+        List<String> sourceGatewayActiivtyIdList = this.getSourceGatewayActivityIdList(activityMetaList); // 所有原生网关环节
 
         // 获得所有的网关连接线
         List<DhGatewayLine> dhGatewayLines = dhGatewayLineService.listByGatewayActivityIdList(sourceGatewayActiivtyIdList);
@@ -158,33 +176,35 @@ public class DhTransferServiceImpl implements DhTransferService {
         List<DhActivityReject> activityRejectList = this.getAllActivityRejectByActiivtyIdList(sourceUserActivityIdList);
         transferData.setActivityRejectList(activityRejectList);
 
-        // 获得流程环节的配置
-        List<DhActivityConf> activityConfList = this.getActivityConfListByActivityMetaList(activityMetaList);
-        transferData.setActivityConfList(activityConfList);
+        // 获得原生流程环节的配置
+        List<DhActivityConf> sourceActivityConfList = this.getSourceActivityConfListByActivityMetaList(activityMetaList);
+        transferData.setActivityConfList(sourceActivityConfList);
 
         // 记录需要的所有模版id
-        Set<String> notifyTemplateIdSet = new HashSet<>();
+        // Set<String> notifyTemplateIdSet = new HashSet<>();
         // 获得环节配置有关的模版id
-        List<String> notifyTemplateIdListFromActivityConfList = this.getNotifyTemplateIdListFromActivityConfList(activityConfList);
-        notifyTemplateIdSet.addAll(notifyTemplateIdListFromActivityConfList);
+        // List<String> notifyTemplateIdListFromActivityConfList = this.getNotifyTemplateIdListFromActivityConfList(sourceActivityConfList);
+        // notifyTemplateIdSet.addAll(notifyTemplateIdListFromActivityConfList);
         // 获得环节配置上的触发器id
-        List<String> triggerIdListFromActivityConfList = this.getTriggerIdListFromActivityConfList(activityConfList);
-        triggerIdSetToInclude.addAll(triggerIdListFromActivityConfList);
+        // List<String> triggerIdListFromActivityConfList = this.getTriggerIdListFromActivityConfList(sourceActivityConfList);
+        // triggerIdSetToInclude.addAll(triggerIdListFromActivityConfList);
         // 获得所有的步骤
         List<DhStep> dhStepList = dhStepService.listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
         transferData.setStepList(dhStepList);
         List<String> stepUidList = this.getIdentityListOfObjectList(dhStepList);
+        List<DhTriggerInterface> triggerInterfaceList = this.getDhTriggerInterfaceList(dhStepList);
+        transferData.setTriggerInterfaceList(triggerInterfaceList);
         // 获得步骤关联的触发器
-        List<String> triggerIdFromStepList = this.getTriggerIdListFromStepList(dhStepList);
-        triggerIdSetToInclude.addAll(triggerIdFromStepList);
+        // List<String> triggerIdFromStepList = this.getTriggerIdListFromStepList(dhStepList);
+        // triggerIdSetToInclude.addAll(triggerIdFromStepList);
+
         // 获得Step相关的 权限信息， 字段，区块可见性
         List<DhObjectPermission> permissionListOfField = dhObjectPermissionService.listByStepUidList(stepUidList);
         transferData.addAllToObjectPermissionList(permissionListOfField);
-
         // 汇总处理trigger
-        this.assembleTriggerAndInterface(triggerIdSetToInclude, transferData);
+        // this.assembleTriggerAndInterface(triggerIdSetToInclude, transferData);
         // 汇总处理template
-        this.assembleNotifyTemplateList(notifyTemplateIdSet, transferData);
+        // this.assembleNotifyTemplateList(notifyTemplateIdSet, transferData);
         return ServerResponse.createBySuccess(transferData);
     }
 
@@ -321,28 +341,32 @@ public class DhTransferServiceImpl implements DhTransferService {
     }
 
     /**
-     * 获得对象集合的标识符id 集合
+     * 获得对象集合的标识符id 集合(去重)
      * @param objList  对象集合
      * @param <T>
      * @return
      */
     private <T> List<String>  getIdentityListOfObjectList(List<T> objList) {
         List<String> result = new ArrayList<>();
-        if (objList == null || objList.isEmpty()) {
+        if (CollectionUtils.isEmpty(objList)) {
             return result;
         }
-        for (T t : objList) {
+        for (T item : objList) {
             String identity = null;
-            if (t instanceof BpmForm) {
-                identity = ((BpmForm) t).getDynUid();
-            } else if (t instanceof DhStep) {
-                identity = ((DhStep) t).getStepUid();
-            } else if (t instanceof BpmActivityMeta) {
-                identity = ((BpmActivityMeta)t).getActivityId();
-            } else if (t instanceof DhTrigger) {
-                identity = ((DhTrigger)t).getTriUid();
-            } else if (t instanceof DhProcessCategory) {
-                identity = ((DhProcessCategory)t).getCategoryUid();
+            if (item instanceof BpmForm) {
+                identity = ((BpmForm) item).getDynUid();
+            } else if (item instanceof DhStep) {
+                identity = ((DhStep) item).getStepUid();
+            } else if (item instanceof BpmActivityMeta) {
+                identity = ((BpmActivityMeta)item).getActivityId();
+            } else if (item instanceof DhTrigger) {
+                identity = ((DhTrigger)item).getTriUid();
+            } else if (item instanceof DhProcessCategory) {
+                identity = ((DhProcessCategory)item).getCategoryUid();
+            } else if (item instanceof DhGatewayLine) {
+                identity = ((DhGatewayLine)item).getGatewayLineUid();
+            } else if (item instanceof DhNotifyTemplate) {
+                identity = ((DhNotifyTemplate)item).getTemplateUid();
             }
             if (StringUtils.isNotBlank(identity) && !result.contains(identity)) {
                 result.add(identity);
@@ -388,24 +412,38 @@ public class DhTransferServiceImpl implements DhTransferService {
         return result;
     }
 
-
-
     /**
-     * 根据环节列表获得配置列表
+     * 根据环节列表获得所有原生环节的配置列表
      * @param activityMetaList
      * @return
      */
-    private List<DhActivityConf> getActivityConfListByActivityMetaList(List<BpmActivityMeta> activityMetaList) {
+    private List<DhActivityConf> getSourceActivityConfListByActivityMetaList(List<BpmActivityMeta> activityMetaList) {
         List<DhActivityConf> confList = new ArrayList<>();
         if (activityMetaList == null || activityMetaList.isEmpty()) {
             return confList;
         }
-        for (BpmActivityMeta bpmActivityMeta : activityMetaList) {
-            if (bpmActivityMeta.getDhActivityConf() != null) {
-                confList.add(bpmActivityMeta.getDhActivityConf());
+        for (BpmActivityMeta activityMeta : activityMetaList) {
+            if (activityMeta.getActivityId().equals(activityMeta.getSourceActivityId())
+                && activityMeta.getDhActivityConf() != null) {
+                confList.add(activityMeta.getDhActivityConf());
             }
         }
         return confList;
+    }
+
+    private List<DhTriggerInterface> getDhTriggerInterfaceList(List<DhStep> stepList) {
+        List<String> triggerStepIdList = new ArrayList<>();
+        for (DhStep step : stepList) {
+            if (DhStep.TYPE_TRIGGER.equals(step.getStepType())) {
+                triggerStepIdList.add(step.getStepUid());
+            }
+        }
+        if (triggerStepIdList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dhTriggerInterfaceService.listByStepUidList(triggerStepIdList);
+
+
     }
 
     /**
@@ -553,21 +591,49 @@ public class DhTransferServiceImpl implements DhTransferService {
 
     @Transactional
     @Override
-    public ServerResponse importProcessDefinition(DhTransferData transferData) {
+    public ServerResponse startImportProcessDefinition(DhTransferData transferData) {
         ServerResponse serverResponse = validateTransferDataForImportProcessDefinition(transferData);
-        if (!serverResponse.isSuccess()) return serverResponse;
-        // 校验通过开始导入
-        // 导入流程定义
-        ServerResponse importDefinitionResponse = importProcessDefinitionList(transferData.getProcessDefinitionList());
-        if (!importDefinitionResponse.isSuccess()) {
-            return importDefinitionResponse;
+        if (!serverResponse.isSuccess()) {
+            return serverResponse;
         }
-        // 导入分类
-        importCategoryList(transferData.getCategoryList());
-        // 导入流程元数据
-        importProcessMeta(transferData.getProcessMetaList());
+        DhProcessDefinition definition = transferData.getProcessDefinitionList().get(0);
+        // 检查元数据是否存在
+        DhProcessMeta processMeta = dhProcessMetaService.getByProAppIdAndProUid(definition.getProAppId(), definition.getProUid());
+        if (processMeta == null) {
+            return ServerResponse.createBySuccessMessage("请先添加流程元数据");
+        }
+        // 删除流程定义即关联数据
+        ServerResponse removeResponse = this.removeProcessDefinition(definition.getProAppId(),
+                definition.getProUid(), definition.getProVerUid());
+        if (!removeResponse.isSuccess()) {
+            return removeResponse;
+        }
+        // 导入流程定义
+        ServerResponse insertDefinitionResponse = insertProcessDefinitionRecord(definition);
+        if (!insertDefinitionResponse.isSuccess()) {
+            return insertDefinitionResponse;
+        }
 
-
+        // 导入环节信息
+        importActivityMetaList(transferData);
+        // 导入环节配置
+        importActivityConfList(transferData);
+        // 导入网关连接线
+        importGatewayLineList(transferData);
+        // 导入规则
+        importRuleList(transferData);
+        // 导入规则条件
+        importRuleConditionList(transferData);
+        // 导入步骤
+        importStepList(transferData);
+        // 导入分派记录(任务、超时处理人)
+        importActivityAssignList(transferData);
+        // 导入可回退环节配置
+        importActivityRejectList(transferData);
+        // 导入权限信息
+        importObjectPermissionList(transferData);
+        // 导入表单相关内容
+        // importFormInfo(transferData);
 
         return ServerResponse.createBySuccess();
     }
@@ -592,34 +658,58 @@ public class DhTransferServiceImpl implements DhTransferService {
     }
 
     /**
-     * 先删除原先的流程定义相关所有表记录，再导入流程定义
-     * @param processDefinitionList 需要导入的流程定义
+     * 导入流程元数据
+     * @param dhTransferData
      */
-    private ServerResponse importProcessDefinitionList(List<DhProcessDefinition> processDefinitionList) {
-        if (CollectionUtils.isEmpty(processDefinitionList)) {
-            throw new PlatformException("流程定义不存在");
+    private void importProcessMeta(DhTransferData dhTransferData) {
+        DhProcessMeta processMeta = dhTransferData.getProcessMetaList().get(0);
+        DhProcessMeta metaInDb = dhProcessMetaService.getByProAppIdAndProUid(processMeta.getProAppId(), processMeta.getProUid());
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        if (metaInDb == null) {
+            // 新增
+            processMeta.setCreator(currUserUid);
+            processMeta.setCreateTime(date);
+            processMeta.setUpdateUser(currUserUid);
+            processMeta.setLastUpdateTime(date);
+            processMeta.setProMetaStatus(DhProcessMeta.STATUS_ON); // 元数据状态
+            dhProcessMetaMapper.save(processMeta);
+        } else {
+            // 更新
+            DhProcessMeta metaSelective = new DhProcessMeta();
+            BeanUtils.copyProperties(processMeta, metaSelective);
+            metaSelective.setProMetaUid(metaInDb.getProMetaUid());
+            metaSelective.setUpdateUser(currUserUid);
+            metaSelective.setLastUpdateTime(date);
+            metaSelective.setProMetaStatus(metaInDb.getProMetaStatus()); // 元数据状态不变
+            dhProcessMetaMapper.updateByProMetaUidSelective(metaSelective);
         }
-        DhProcessDefinition definitionToImport = processDefinitionList.get(0);
+    }
 
-        ServerResponse removeResponse = dhProcessDefinitionService.removeProcessDefinition(definitionToImport.getProAppId(),
-                definitionToImport.getProUid(), definitionToImport.getProVerUid());
-        if (!removeResponse.isSuccess()) {
-            return removeResponse;
-        }
+
+    /**
+     * 插入流程定义
+     * @param processDefinition 需要导入的流程定义
+     */
+    private ServerResponse insertProcessDefinitionRecord(DhProcessDefinition processDefinition) {
         // 插入流程定义记录
-        definitionToImport.setCreateUser(getCurrentUserUid());
-        definitionToImport.setLastModifiedUser(getCurrentUserUid());
-        definitionToImport.setLastModifiedDate(new Date());
-        dhProcessDefinitionMapper.save(definitionToImport);
-        return ServerResponse.createBySuccess();
+        processDefinition.setCreateUser(getCurrentUserUid());
+        processDefinition.setLastModifiedUser(getCurrentUserUid());
+        processDefinition.setLastModifiedDate(new Date());
+        processDefinition.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
+        int count = dhProcessDefinitionMapper.save(processDefinition);
+        return count == 1 ? ServerResponse.createBySuccess() : ServerResponse.createByErrorMessage("保存失败");
     }
 
     /**
      * 导入流程分类列表
-     * @param categoryList 分类集合
+     * @param transferData 
      */
-    private void importCategoryList(List<DhProcessCategory> categoryList) {
-        if (CollectionUtils.isEmpty(categoryList)) return;
+    private void importCategoryList(DhTransferData transferData) {
+        List<DhProcessCategory> categoryList = transferData.getCategoryList();
+        if (CollectionUtils.isEmpty(categoryList)) {
+            return;
+        }
         // data中的分类主键
         List<String> uidListInData = this.getIdentityListOfObjectList(categoryList);
         // DB中的分类主键
@@ -631,7 +721,164 @@ public class DhTransferServiceImpl implements DhTransferService {
         }
     }
 
+    /**
+     * 导入环节
+     * @param transferData
+     */
+    private void importActivityMetaList(DhTransferData transferData) {
+        List<BpmActivityMeta> activityMetaList = transferData.getBpmActivityMetaList();
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        for (BpmActivityMeta activityMeta : activityMetaList) {
+            activityMeta.setCreator(currUserUid);
+            activityMeta.setCreateTime(date);
+            activityMeta.setUpdateBy(currUserUid);
+            activityMeta.setUpdateTime(date);
+        }
+        bpmActivityMetaMapper.saveBatch(activityMetaList);
+    }
 
+    /**
+     * 导入环节配置
+     * @param transferData
+     */
+    private void importActivityConfList(DhTransferData transferData) {
+        List<DhActivityConf> activityConfList = transferData.getActivityConfList();
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        for (DhActivityConf activityConf : activityConfList) {
+            activityConf.setUpdator(currUserUid);
+            activityConf.setUpdateTime(date);
+        }
+        dhActivityConfService.insertBatch(activityConfList);
+    }
+
+    /**
+     * 导入网关连接线
+     * @param transferData
+     */
+    private void importGatewayLineList(DhTransferData transferData) {
+        List<DhGatewayLine> gatewayLineList = transferData.getGatewayLineList();
+        if (!CollectionUtils.isEmpty(gatewayLineList)) {
+            dhGatewayLineMapper.insertBatch(gatewayLineList);
+        }
+    }
+
+    /**
+     * 导入规则
+     * @param transferData
+     */
+    private void importRuleList(DhTransferData transferData) {
+        List<DatRule> ruleList = transferData.getRuleList();
+        if (CollectionUtils.isEmpty(ruleList)) {
+            return ;
+        }
+        String dateStr = DateUtil.datetoString(new Date());
+        String currUserUid = getCurrentUserUid();
+        for (DatRule rule : ruleList) {
+            rule.setCreator(currUserUid);
+            rule.setCreateTime(dateStr);
+            rule.setStartTime(dateStr);
+        }
+        datRuleMapper.batchInsertDatRule(ruleList);
+    }
+
+    /**
+     * 导入规则条件
+     * @param transferData
+     */
+    private void importRuleConditionList(DhTransferData transferData) {
+        List<DatRuleCondition> ruleConditionList = transferData.getRuleConditionList();
+        if (CollectionUtils.isEmpty(ruleConditionList)) {
+            return;
+        }
+        String currUserUid = getCurrentUserUid();
+        String dateStr = DateUtil.datetoString(new Date());
+        for (DatRuleCondition ruleCondition : ruleConditionList) {
+            ruleCondition.setCreator(currUserUid);
+            ruleCondition.setCreateTime(dateStr);
+        }
+        datRuleConditionMapper.inserToDatRuleCondition(ruleConditionList);
+    }
+
+    /**
+     * 导入步骤
+     * @param transferData
+     */
+    private void importStepList(DhTransferData transferData) {
+        List<DhStep> stepList = transferData.getStepList();
+        if (CollectionUtils.isEmpty(stepList)) {
+            return;
+        }
+        dhStepService.insertBatch(stepList);
+    }
+
+    /**
+     * 导入分派记录
+     * @param transferData
+     */
+    private void importActivityAssignList(DhTransferData transferData) {
+        List<DhActivityAssign> activityAssignList = transferData.getActivityAssignList();
+        if (CollectionUtils.isEmpty(activityAssignList)) {
+            return;
+        }
+        dhActivityAssignService.insertBatch(activityAssignList);
+    }
+
+    /**
+     * 导入可回退环节配置
+     * @param transferData
+     */
+    private void importActivityRejectList(DhTransferData transferData) {
+        List<DhActivityReject> activityRejectList = transferData.getActivityRejectList();
+        if (CollectionUtils.isEmpty(activityRejectList)) {
+            return;
+        }
+        dhActivityRejectMapper.insertBatch(activityRejectList);
+    }
+
+    /**
+     * 导入通知模版
+     * @param transferData
+     */
+    private void importNotifyTemplateList(DhTransferData transferData) {
+        List<DhNotifyTemplate> notifyTemplateList = transferData.getNotifyTemplateList();
+        if (CollectionUtils.isEmpty(notifyTemplateList)) {
+            return;
+        }
+        List<String> templateUidList = getIdentityListOfObjectList(notifyTemplateList);
+        // 查询出引擎中已有的模版
+        List<DhNotifyTemplate> dhNotifyTemplatesInDb = dhNotifyTemplateService.listByTemplateUidList(templateUidList);
+        if (!CollectionUtils.isEmpty(dhNotifyTemplatesInDb)) {
+            // 去除重复
+            List<String> templateUidListInDb = getIdentityListOfObjectList(dhNotifyTemplatesInDb);
+            this.removeElementByIdentityList(notifyTemplateList, templateUidListInDb);
+        }
+        // 如果去除已经存在的后不剩了，就结束
+        if (CollectionUtils.isEmpty(notifyTemplateList)) {
+            return;
+        }
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        for (DhNotifyTemplate notifyTemplate : notifyTemplateList) {
+            notifyTemplate.setCreateUserUid(currUserUid);
+            notifyTemplate.setCreateTime(date);
+            notifyTemplate.setUpdateUserUid(currUserUid);
+            notifyTemplate.setUpdateTime(date);
+        }
+        dhNotifyTemplateService.insertBatch(notifyTemplateList);
+    }
+
+    /**
+     * 导入权限信息
+     */
+    private void importObjectPermissionList(DhTransferData transferData) {
+        List<DhObjectPermission> objectPermissionList = transferData.getObjectPermissionList();
+        if (CollectionUtils.isEmpty(objectPermissionList)) {
+            return;
+        }
+        dhObjectPermissionMapper.saveBatch(objectPermissionList);
+    }
 
     /**
      * 从对象集合中去除 标识符对应的对象
@@ -646,9 +893,15 @@ public class DhTransferServiceImpl implements DhTransferService {
         }
         Iterator<T> iterator = objectList.iterator();
         while (iterator.hasNext()) {
-            T t = iterator.next();
-            if (t instanceof DhProcessCategory) {
-                if (identityList.contains(((DhProcessCategory) t).getCategoryUid())) iterator.remove();
+            T item = iterator.next();
+            if (item instanceof DhProcessCategory) {
+                if (identityList.contains(((DhProcessCategory) item).getCategoryUid())) {
+                    iterator.remove();
+                }
+            } else if (item instanceof DhNotifyTemplate) {
+                if (identityList.contains(((DhNotifyTemplate) item).getTemplateUid())) {
+                    iterator.remove();
+                }
             }
 
         }
@@ -663,14 +916,9 @@ public class DhTransferServiceImpl implements DhTransferService {
         } else if (transferData.getProcessDefinitionList().size() > 1) {
             return ServerResponse.createByErrorMessage("检测到流程定义大于一条");
         }
-        // 校验分类
-        if (CollectionUtils.isEmpty(transferData.getCategoryList())) {
-            return ServerResponse.createByErrorMessage("缺少分类信息");
-        }
-        // 校验元数据
-        if (CollectionUtils.isEmpty(transferData.getProcessMetaList())) {
-            return ServerResponse.createByErrorMessage("缺少元数据信息");
-        }
+        DhProcessDefinition definition = transferData.getProcessDefinitionList().get(0);
+
+
         // 校验环节信息
         if (CollectionUtils.isEmpty(transferData.getBpmActivityMetaList())) {
             return ServerResponse.createByErrorMessage("缺少环节信息");
@@ -679,7 +927,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         if (CollectionUtils.isEmpty(transferData.getActivityConfList())) {
             return ServerResponse.createByErrorMessage("缺少环节配置信息");
         }
-
         return ServerResponse.createBySuccess();
     }
 
@@ -688,4 +935,71 @@ public class DhTransferServiceImpl implements DhTransferService {
     }
 
 
+    @Transactional
+    @Override
+    public ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        DhProcessDefinition dhProcessDefinition = dhProcessDefinitionService.getDhProcessDefinition(proAppId, proUid, proVerUid);
+        if (dhProcessDefinition == null) { // 流程定义不存在直接返回成功
+            return ServerResponse.createBySuccess();
+        }
+        // 判断流程定义是否已启用
+        if (DhProcessDefinition.STATUS_ENABLED.equals(dhProcessDefinition.getProStatus())) {
+            return ServerResponse.createByErrorMessage("启用中的流程不能删除");
+        }
+        // 删除流程定义表中记录
+        DhProcessDefinition definitionSelective = new DhProcessDefinition(proAppId, proUid, proVerUid);
+        int countRow = dhProcessDefinitionMapper.deleteBySelective(definitionSelective);
+        if (countRow == 0) {
+            return ServerResponse.createByErrorMessage("删除流程定义失败");
+        }
+        // 删除流程定义相关权限（不含步骤相关）
+        dhObjectPermissionService.removeByProAppIdAndProUidAndProVerUid(proAppId, proUid, proVerUid);
+        List<BpmActivityMeta> activityMetaList = bpmActivityMetaService.listAllBpmActivityMeta(proAppId, proUid, proVerUid);
+        List<String> activityIdList = this.getIdentityListOfObjectList(activityMetaList);
+        List<String> sourceUserActivityIdList = this.getSourceUserActivityIdList(activityMetaList); // 所有环节的activity_id集合
+        List<String> sourceGatewayActiivtyIdList = this.getSourceGatewayActivityIdList(activityMetaList); // 所有原生网关环节
+        // 获得所有的步骤
+        List<DhStep> stepList = dhStepService.listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
+        List<String> stepUidList = this.getIdentityListOfObjectList(stepList);
+        // 删除表单字段相关权限
+        dhObjectPermissionService.removeByStepUidList(stepUidList);
+        // 删除接口触发器有关的参数映射记录
+        dhTriggerInterfaceService.removeByStepUidList(stepUidList);
+        // 删除步骤
+        dhStepService.removeByStepUidList(stepUidList);
+        // 删除分配明细
+        dhActivityAssignService.removeByActivityIdList(sourceUserActivityIdList);
+        // 删除可供驳回的环节记录
+        dhActivityRejectMapper.deleteByActivityIds(sourceUserActivityIdList);
+        // 删除环节配置信息
+        List<DhActivityConf> sourceActivityConfList = this.getSourceActivityConfListByActivityMetaList(activityMetaList);
+        List<String> confIdList = this.getIdentityListOfObjectList(sourceActivityConfList);
+        dhActivityConfService.removeByActcUidList(confIdList);
+        // 获得所有的网关连接线
+        List<DhGatewayLine> dhGatewayLines = dhGatewayLineService.listByGatewayActivityIdList(sourceGatewayActiivtyIdList);
+        List<String> gatewayLineUidList = this.getIdentityListOfObjectList(dhGatewayLines);
+        // 获得所有规则
+        List<String> ruleIdList = this.getRuleIdListByDhGatewayLines(dhGatewayLines);
+        // 删除规则
+        datRuleService.removeByRuleIdList(ruleIdList);
+        // 删除条件
+        datRuleConditionService.removeByRuleIdList(ruleIdList);
+        // 删除网关连接线
+        dhGatewayLineService.removeByGatewayLineUidList(gatewayLineUidList);
+        // 删除所有环节
+        bpmActivityMetaService.removeByActivityIdList(activityIdList);
+        // 查找对应的表单
+        List<BpmForm> bpmForms = bpmFormManageService.listAllFormsOfProcessDefinition(proUid, proVerUid);
+        List<String> formUidList = this.getIdentityListOfObjectList(bpmForms);
+        // 删除表单字段
+        bpmFormFieldService.removeByFormUidList(formUidList);
+        // 删除表单与公共表单关联关系
+        if (!CollectionUtils.isEmpty(formUidList)) {
+            bpmFormRelePublicFormMapper.removeByFormUidList(formUidList);
+        }
+        // 删除表单
+        bpmFormManageService.removeFormsByFormUidList(formUidList);
+
+        return ServerResponse.createBySuccess();
+    }
 }

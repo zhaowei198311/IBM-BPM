@@ -448,5 +448,23 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
 	public List<DhProcessMeta> searchByCategory(String categoryUid) {
 		return dhProcessMetaMapper.listByCategoryUid(categoryUid);
 	}
-    
+
+	@Override
+    public DhProcessMeta getByProAppIdAndProUid(String proAppId, String proUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid)) {
+            return null;
+        }
+        DhProcessMeta processMetaSelective = new DhProcessMeta();
+        processMetaSelective.setProAppId(proAppId);
+        processMetaSelective.setProUid(proUid);
+        List<DhProcessMeta> processMetaList = dhProcessMetaMapper.listByDhProcessMetaSelective(processMetaSelective);
+        if (processMetaList.isEmpty()) {
+            return null;
+        }
+        if (processMetaList.size() > 1) {
+            throw new PlatformException("流程元数据重复");
+        }
+        return processMetaList.get(0);
+    }
+
 }

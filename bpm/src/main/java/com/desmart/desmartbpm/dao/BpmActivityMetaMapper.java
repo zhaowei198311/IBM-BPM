@@ -32,9 +32,16 @@ public interface BpmActivityMetaMapper {
      */
     int save(BpmActivityMeta bpmActivityMeta);
 
+    /**
+     * 批量插入
+     * @param bpmActivityMetaList
+     * @return
+     */
+    int saveBatch(List<BpmActivityMeta> bpmActivityMetaList);
+
     /** 根据activityId批量删除  */
     int batchRemoveByPrimaryKey(List<BpmActivityMeta> bpmActivityMetaList);
-    
+
     /**
      * 根据主键选择性的更新字段
      * @param bpmActivityMeta
@@ -109,4 +116,11 @@ public interface BpmActivityMetaMapper {
      * @return
      */
     List<BpmActivityMeta> queryChildrenMetaByCondition(BpmActivityMeta bpmActivityMeta);
+
+    /**
+     * 根据环节id批量删除
+     * @param activityIdList
+     * @return
+     */
+    int removeByActivityIdList(List<String> activityIdList);
 }

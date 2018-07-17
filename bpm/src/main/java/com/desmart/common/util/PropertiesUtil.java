@@ -18,7 +18,7 @@ public class PropertiesUtil {
     private static Properties props;
 
     static {
-        String fileName = "desmartbpm.properties";
+        String fileName = "datasource.properties";
         props = new Properties();
         try {
             // 通过静态块获取classpath下的配置文件
