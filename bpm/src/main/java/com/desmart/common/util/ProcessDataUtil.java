@@ -133,6 +133,56 @@ public class ProcessDataUtil {
 	 * @return 代表子流程的节点上的tokenId
 	 */
 	public static String getTokenIdIdentifySubProcess(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
+		
+		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
+		JSONArray jsonArray = jsonObject.getJSONArray("children");
+		// 第一次遍历children数组对象
+		String result = getTokenIdIdentifySubProcessUtil(jsonArray,preFlowObjectId, childFlowObjectId);
+		return result;
+	}
+	
+	/**
+	 * getTokenIdIdentifySubProcess工具方法
+	 * @param jsonArray
+	 * @param preFlowObjectId
+	 * @param childFlowObjectId
+	 * @return
+	 */
+	private static String getTokenIdIdentifySubProcessUtil(JSONArray jsonArray, String preFlowObjectId,
+			String childFlowObjectId) {
+		String result = null;
+		lable:for (Iterator iterator = jsonArray.iterator(); iterator.hasNext();) {
+			JSONObject object = (JSONObject) iterator.next();
+			if (preFlowObjectId.equals(object.get("flowObjectId"))) {
+				JSONArray childArray = object.getJSONArray("children");
+				if (null != childArray) {
+					String jsonStr = childArray.toString();
+					if(null != jsonStr && "" != jsonStr ) {
+						if(jsonStr.indexOf(childFlowObjectId) != -1) {
+							object.remove("children");
+							result = (String) object.get("tokenId");
+							break lable;
+						}
+					}
+				}
+			}else {
+				JSONArray jsonArray2 = object.getJSONArray("children");
+				if(null != jsonArray2) {
+					result = getTokenIdIdentifySubProcessUtil(jsonArray2, preFlowObjectId, childFlowObjectId );
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 此方法已废弃
+	 * @param json
+	 * @param preFlowObjectId
+	 * @param childFlowObjectId
+	 * @return
+	 */
+	public static String getTokenIdIdentifySubProcessBack(JSONObject json, String preFlowObjectId, String childFlowObjectId) {
 
 		JSONObject jsonObject = json.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
 		JSONArray jsonArray = jsonObject.getJSONArray("children");
