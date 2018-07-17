@@ -106,7 +106,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">表单编码</label>
                             <div class="layui-input-block">
-                                <input type="text" id="update_form_code" name="update_form_code" autocomplete="off" class="layui-input">
+                                <input type="text" id="update_form_code" name="update_form_code" autocomplete="off" class="layui-input" readonly="readonly">
                             </div>
                         </div>
                         <div class="layui-form-item">

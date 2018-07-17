@@ -82,7 +82,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
 		}
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
-			//查看权限对象的权限是否为编辑，编辑不用存入数据库
+			//查看权限对象的权限是否为只读，只读不用存入数据库
 			if("VIEW".equals(dhObjectPermission.getOpAction())) {
 				countRow++;
 			}else{
