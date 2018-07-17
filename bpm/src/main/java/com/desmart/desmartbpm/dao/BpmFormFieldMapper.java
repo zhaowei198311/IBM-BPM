@@ -14,7 +14,7 @@ public interface BpmFormFieldMapper {
 	/**
 	 * 保存表单字段信息
 	 */
-	int saveFormField(@Param("fields")List<BpmFormField> fields);
+	int insertBatch(@Param("fields")List<BpmFormField> fields);
 
 	/**
 	 * 删除表单字段信息

@@ -239,7 +239,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 				newFields.add(field);
 			}
 			//将所有的字段信息批量插入表中
-			int countRow = bpmFormFieldMapper.saveFormField(newFields);
+			int countRow = bpmFormFieldMapper.insertBatch(newFields);
 			if(countRow!=fieldSize) {
 				throw new PlatformException("表单字段复制异常");
 			}

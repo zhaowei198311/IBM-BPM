@@ -78,4 +78,5 @@ public interface BpmFormManageService {
 	 * @return
 	 */
 	List<BpmForm> listAllFormsOfProcessDefinition(String proUid, String proVerUid);
+
 }

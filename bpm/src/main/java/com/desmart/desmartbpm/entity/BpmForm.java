@@ -97,7 +97,7 @@ public class BpmForm {
 	public Date getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 	public String getCreator() {

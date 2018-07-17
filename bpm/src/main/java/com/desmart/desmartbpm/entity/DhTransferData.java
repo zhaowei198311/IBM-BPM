@@ -10,6 +10,7 @@ import java.util.List;
  * 维护迁移一个流程定义需要的数据
  */
 public class DhTransferData {
+    public static final String ATTRIBUTE_IN_SESSION = "processDefinitionTransferData";
 
     private List<DhProcessCategory> categoryList = new ArrayList<>();
     private List<DhProcessMeta> processMetaList = new ArrayList<>();

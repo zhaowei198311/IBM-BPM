@@ -1,12 +1,10 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
-import org.springframework.amqp.rabbit.support.PublisherCallbackChannelImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,15 +15,11 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.BpmPublicFormMapper;
-import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
-import com.desmart.desmartbpm.util.SFTPUtil;
-import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -195,7 +189,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 				field.setFormUid(newFormUid);
 				newFields.add(field);
 			}
-			int countRow = bpmFormFieldMapper.saveFormField(newFields);
+			int countRow = bpmFormFieldMapper.insertBatch(newFields);
 			if(countRow!=fieldSize) {
 				throw new PlatformException("表单字段复制异常");
 			}

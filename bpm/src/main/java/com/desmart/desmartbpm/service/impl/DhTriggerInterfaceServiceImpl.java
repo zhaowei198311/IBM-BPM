@@ -29,7 +29,7 @@ public class DhTriggerInterfaceServiceImpl implements DhTriggerInterfaceService 
 	
 	@Override
 	public ServerResponse insertBatch(List<DhTriggerInterface> tinList) {
-		if(tinList!=null) {
+		if(tinList!=null && !tinList.isEmpty()) {
 			dhTriggerInterfaceMapper.insertBatch(tinList);
 			return ServerResponse.createBySuccess();
 		}

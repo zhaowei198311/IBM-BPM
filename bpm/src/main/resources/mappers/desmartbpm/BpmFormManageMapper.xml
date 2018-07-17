@@ -70,6 +70,17 @@
     	values(#{dynUid},#{dynTitle},#{dynDescription},#{dynWebpage},
     		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate,#{formNoExpression})
     </insert>
+
+	<insert id="insertFormBatch" parameterType="list">
+		begin
+		<foreach collection="list" item="item" separator=";">
+			insert into bpm_form(<include refid="base_column"/>) values(
+				#{item.dynUid},#{item.dynTitle},#{item.dynDescription},#{item.dynWebpage, jdbcType=CLOB},
+				#{item.dynContent, jdbcType=CLOB},#{item.proUid},#{item.proVersion},#{item.creator},sysdate,#{item.formNoExpression}
+			)
+		</foreach>
+		;end;
+	</insert>
     
     <update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	update bpm_form 
@@ -137,4 +148,6 @@
 		bpm_form_rele_public_form(form_uid,public_form_uid)
 		values(#{formUid},#{publicFormUid})
 	</insert>
+
+
 </mapper>

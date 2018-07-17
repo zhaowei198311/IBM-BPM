@@ -23,11 +23,6 @@ var setting = {
         onClick: zTreeOnClick// 点击回调
     }
 };
-var importUrl = {
-    'tryImportUrl': common.getPath() + '/processDefinition/checkImportDefinitionStatus',
-    'importDefinitionUrl': common.getPath() + '/processDefinition/importProcessDefinition'
-};
-
 
 $(function() {
     // 加载树
@@ -53,7 +48,56 @@ $(function() {
 	} else {
 		doPage(); // 刷新分页栏
 	}
-	
+
+    layui.use('upload', function () {
+        var $ = layui.jquery,
+            upload = layui.upload;
+        upload.render({
+            elem: $("#importBtn"),
+            url: importProcessDefinition.URL.tryImportDefinition,
+            data: {
+            },
+            exts: "json",
+            field: "file",
+            before: function (obj) {
+                layer.load(1);
+            },
+            done: function (result) {
+            	console.log(result.data);
+                layer.closeAll('loading');
+            	if (result.status == 0) {
+                    if (result.data == 'new') {
+                    	// 发现是新流程定义
+                        var confirmIndex = layer.confirm('请确认导入流程定义', {
+                            btn: ['导入', '取消']
+                        }, function () {
+                            importProcessDefinition.importProcessDefinition();
+                            layer.close(confirmIndex); // 关闭confirm层
+                        }, function () {
+                            importProcessDefinition.cancelProcessDefinition();
+                        });
+					} else {
+						// 发现已有此流程定义
+                        var confirmIndex = layer.confirm('流程定义已存在，是否要覆盖原配置', {
+                            btn: ['覆盖', '取消']
+                        }, function () {
+                            importProcessDefinition.importProcessDefinition();
+                            layer.close(confirmIndex); // 关闭confirm层
+                        }, function () {
+                            importProcessDefinition.cancelProcessDefinition();
+                        });
+					}
+				} else {
+                    layer.alert(result.msg);
+				}
+            },
+            error: function (result) {
+                layer.closeAll('loading');
+                layer.alert(result.msg);
+            }
+        });
+    });
+
 });
 
 function zTreeOnClick(event, treeId, treeNode) {
@@ -303,7 +347,9 @@ $(function() {
         downLoadFile(common.getPath() + '/processDefinition/exportProcessDefinition', param);
 	});
 
+	$("#importBtn").click(function() {
 
+	});
 
 
 	// “流程配置”按钮
@@ -624,3 +670,47 @@ function downLoadFile(URL, PARAMS) {
     temp_form.submit();
     temp_form.remove();
 }
+
+// 导入流程定义
+var importProcessDefinition = {
+    URL: {
+        tryImportDefinition: common.getPath() + '/transfer/tryImportDefinition',
+        sureImportProcessDefinition: common.getPath() + '/transfer/sureImportProcessDefinition',
+        cancelImportProcessDefinition: common.getPath() + '/transfer/cancelImportProcessDefinition'
+    },
+    importProcessDefinition: function () {
+		$.ajax({
+			url: importProcessDefinition.URL.sureImportProcessDefinition,
+			type: 'post',
+			data: {},
+			dataType: 'json',
+			beforeSend: function () {
+				layer.load(1);
+            },
+			success: function (result) {
+                layer.closeAll('loading');
+				if (result.status == 0) {
+					layer.alert("导入成功");
+				} else {
+                    layer.alert(result.msg);
+				}
+            },
+			error: function () {
+                layer.alert("导入失败，请稍后再试");
+            }
+		});
+    },
+    cancelProcessDefinition: function () {
+        $.ajax({
+            url: importProcessDefinition.URL.cancelImportProcessDefinition,
+            type: 'post',
+            data: {},
+            dataType: 'json',
+            success: function (result) {
+            },
+            error: function () {
+            }
+        });
+    }
+
+};

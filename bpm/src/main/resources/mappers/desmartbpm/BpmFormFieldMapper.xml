@@ -14,9 +14,9 @@
     <sql id="field_pre_column">
     	op_uid,step_uid,op_obj_type,op_obj_uid,op_action
     </sql>
-    <insert id="saveFormField" parameterType="list">
+    <insert id="insertBatch" parameterType="list">
 		insert into bpm_form_field(<include refid="base_column"/>)
-		<foreach collection="fields" item="item" index="index" close=")" open="(" separator="union">
+		<foreach collection="fields" item="item" separator="union all">
 			select
 			#{item.fldUid},
 			#{item.fldCodeName},
@@ -58,7 +58,7 @@
 		order by fld_index
 	</select>
 	
-	<select id="queryFieldByFieldIdAndStepId" parameterType="map" resultType="String">
+	<select id="queryFieldByFieldIdAndStepId" parameterType="map" resultType="string">
 		select op_action
 		from dh_object_permission
 		where step_uid = #{stepUid} and op_obj_uid = #{fieldUid}
