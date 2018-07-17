@@ -516,6 +516,7 @@ var common = {
 					var pText = $(this).prev()[0].firstChild.data.trim();
 					if($(this).attr("title")==pText){
 						$(this).prev().css("display","none");
+						$(this).prev().find(".tip_span").remove();
 					}
 				}
 			}
@@ -554,13 +555,16 @@ var common = {
 			var paramObj = json[name];
 			var display = paramObj["display"];
 			if(display=="none"){
-				var tagType = $("[name='"+name+"']").attr("type");
-				$("[name='"+name+"']").parent().css("display","none");
-				$("[name='"+name+"']").parent().prev().css("display","none");
 				if(tagType=="radio" || tagType=="checkbox"){
 					$("[name='"+name+"']").parent().css("display","none");
 					$("[name='"+name+"']").parent().prev().css("display","none");
+					$("[name='"+name+"']").parent().prev().find(".tip_span").remove();
+					continue;
 				}
+				var tagType = $("[name='"+name+"']").attr("type");
+				$("[name='"+name+"']").parent().css("display","none");
+				$("[name='"+name+"']").parent().prev().css("display","none");
+				$("[name='"+name+"']").parent().prev().find(".tip_span").remove();
 			}
 			var edit = paramObj["edit"];
 			if(edit=="no"){
