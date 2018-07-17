@@ -304,6 +304,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			newDhInstanceDocument.setAppDocUid(EntityIdPrefix.DH_INSTANCE_DOCUMENT+uuId);
 			newDhInstanceDocument.setAppDocFileUrl(directory+newFileName);//文件ftp存储路径
 			newDhInstanceDocument.setAppDocType(multipartFile.getContentType());newDhInstanceDocument.setAppDocIndex(1);
+			newDhInstanceDocument.setAppDocTags(DhInstanceDocument.DOC_TAGS_PROCESS);//表示是流程附件
 			newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
 			List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 			insert.add(newDhInstanceDocument);

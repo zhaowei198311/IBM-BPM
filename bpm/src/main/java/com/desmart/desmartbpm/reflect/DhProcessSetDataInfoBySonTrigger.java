@@ -67,7 +67,11 @@ public class DhProcessSetDataInfoBySonTrigger implements DhJavaClassTriggerTempl
 		
 					String formKey = mappingRelationObj.getString("from");
 					String toKey = mappingRelationObj.getString("to");//从当前流程实例读数据写入到目标流程
-					Object form = formDataJsonSource.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					//Object form = formDataJsonSource.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					Object form = formDataJsonSource.get(formKey);
+					if(form == null) {
+						form = "";
+					}
 					formDataJson.put(toKey, form);
 			}
 	        insDataJson.put("formData", formDataJson);

@@ -63,6 +63,7 @@ $(function(){
 			  ,uploadListIns = upload.render({
 			    elem: dragDiv
 			    ,url: 'accessoryFileUpload/saveFile.do'
+			    ,accept: 'file' //普通文件
 			    ,auto: false// 不自动上传
 			    ,exts: formatStr
 			    ,multiple: true
@@ -336,6 +337,7 @@ function loadFileList(){
 			  var updateAccessoryFile = upload.render({
 				  elem: updateElem
 				    ,url: common.getPath()+'/accessoryFileUpload/updateAccessoryFile.do'
+				    ,accept: 'file' //普通文件
 				    ,data: {"appUid":appUid
 				    	,"appDocIdCard":appDocIdCard,"appDocUid":appDocUid
 				    	,"activityId":activityId,"taskUid":taskUid,"appDocTags":"process"}
