@@ -13,8 +13,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.springframework.org/schema/rabbit 
 http://www.springframework.org/schema/rabbit/spring-rabbit-1.6.xsd">
 
-	<!-- 加载数据库配置文件 -->
-	<context:property-placeholder location="classpath:desmartbpm.properties" ignore-unresolvable="true" />
+	<!--&lt;!&ndash; 加载数据库配置文件 &ndash;&gt;-->
+	<!--<context:property-placeholder location="classpath:desmartbpm.properties" ignore-unresolvable="true" />-->
 
 	<!--配置connection-factory，指定连接rabbit server参数 -->
     <rabbit:connection-factory id="connectionFactory" username="${rabbitmq.username}" password="${rabbitmq.password}" host="${rabbitmq.host}" port="${rabbitmq.port}" virtual-host="${rabbitmq.virtual.host}" />

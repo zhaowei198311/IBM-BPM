@@ -9,7 +9,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,7 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.github.pagehelper.PageHelper;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -453,6 +454,22 @@ public class DhStepServiceImpl implements DhStepService {
         }
 
         return dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, proVerUid);
+    }
+
+    @Override
+    public int removeByStepUidList(List<String> stepUidList) {
+        if (CollectionUtils.isEmpty(stepUidList)) {
+            return 0;
+        }
+        return dhStepMapper.removeByStepUidList(stepUidList);
+    }
+
+    @Override
+    public int insertBatch(List<DhStep> stepList) {
+        if (CollectionUtils.isEmpty(stepList)) {
+            return 0;
+        }
+        return dhStepMapper.insertBatchDhStep(stepList);
     }
 
 }

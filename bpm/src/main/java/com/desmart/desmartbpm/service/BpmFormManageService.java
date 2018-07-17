@@ -35,9 +35,16 @@ public interface BpmFormManageService {
 	ServerResponse queryFormByFormUid(String formUid);
 
 	/**
-	 * 删除表单数据
+	 * 批量删除表单，包括关联表中的数据
 	 */
 	ServerResponse deleteForm(String[] formUids);
+
+	/**
+	 * 根据表单主键批量删除表单（不删除其他关联表数据）
+	 * @param formUidList
+	 * @return
+	 */
+	int removeFormsByFormUidList(List<String> formUidList);
 
 	/**
 	 * 复制表单

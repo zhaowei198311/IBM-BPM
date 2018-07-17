@@ -72,7 +72,7 @@
 
     <insert id="insertBatch"  parameterType="list">
         insert into DH_ACTIVITY_REJECT (<include refid="Base_Column_List"/>) 
-        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+        <foreach collection="list" item="item"  separator="union all">
             select
             #{item.actrUid},
             #{item.activityId},
@@ -88,10 +88,11 @@
     
     <delete id="deleteByActivityIds" parameterType="list">
         delete from DH_ACTIVITY_REJECT 
-        where activity_id in
-        <foreach collection="list" item="item" open="(" separator="," close=")">
-        	#{item}
-        </foreach>
+        <where>
+            <foreach collection="list" item="item"  separator="or">
+                activity_id = #{item}
+            </foreach>
+        </where>
     </delete>
     
 </mapper>

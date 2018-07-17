@@ -102,4 +102,11 @@ public interface DhStepMapper {
      * @return List<DhStep>
      */
     List<DhStep> queryDhStepByProUidAndProAppId(DhStep dhStep);
+
+    /**
+     * 根据步骤id主键，批量删除
+     * @param stepUidList
+     * @return
+     */
+    int removeByStepUidList(List<String> stepUidList);
 }

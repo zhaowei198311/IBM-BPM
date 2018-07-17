@@ -88,4 +88,11 @@ public interface BpmFormManageMapper {
 	 * 添加主表单与子表单之间的关联信息
 	 */
 	int saveFormRelePublicForm(@Param("formUid")String formUid, @Param("publicFormUid")String publicFormUid);
+
+	/**
+	 * 根据表单主键批量删除
+	 * @param formUidList
+	 * @return
+	 */
+	int removeFormsByFormUidList(List<String> formUidList);
 }

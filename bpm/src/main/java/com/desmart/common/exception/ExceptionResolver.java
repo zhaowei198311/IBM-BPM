@@ -23,12 +23,11 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         LOG.error("{} Exception", request.getRequestURI(), ex);
         ModelAndView modelAndView = new ModelAndView();
         if (ex instanceof PlatformException) {
-            modelAndView.setViewName("bpm/error");
+            modelAndView.setViewName("desmartbpm/error");
             modelAndView.addObject("msg", ex.getMessage());
         } else {
-            modelAndView.setViewName("bpm/error");
+            modelAndView.setViewName("desmartbpm/error");
         }
-
         return modelAndView;
     }
 

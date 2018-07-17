@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,4 +26,22 @@ public class DhActivityAssignServiceImpl implements DhActivityAssignService {
         }
         return dhActivityAssignMapper.listByActivityIdList(activityIdList);
     }
+
+    @Override
+    public int removeByActivityIdList(List<String> activityIdList) {
+        if (CollectionUtils.isEmpty(activityIdList)) {
+            return 0;
+        }
+        return dhActivityAssignMapper.deleteByActivityIds(activityIdList);
+    }
+
+    @Override
+    public int insertBatch(List<DhActivityAssign> dhActivityAssignList) {
+        if (CollectionUtils.isEmpty(dhActivityAssignList)) {
+            return 0;
+        }
+        return dhActivityAssignMapper.insertBatch(dhActivityAssignList);
+    }
+
+
 }

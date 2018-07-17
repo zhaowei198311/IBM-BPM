@@ -121,68 +121,23 @@
 	</select>
 	  
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-		insert into BPM_ACTIVITY_META (
-			ACTIVITY_ID,
-			ACTIVITY_BPD_ID,
-			ACTIVITY_GROUP_NAME,
-			ACTIVITY_NAME,
-			ACTIVITY_TO,
-			ACTIVITY_TYPE,
-			BPD_ID,
-			BPM_TASK_TYPE,
-			CREATE_TIME,
-			CREATOR,
-			DEEP_LEVEL,
-			EXTERNAL_ID,
-			HANDLE_SIGN_TYPE,
-			LOOP_TYPE,
-			MI_ORDER,
-			NOTE_TYPE,
-			PARENT_ACTIVITY_BPD_ID,
-			PO_ID,
-			SNAPSHOT_ID,
-			SNAPSHOT_UID,
-			STEP_ID,
-			TYPE,
-			UPDATE_BY,
-			UPDATE_TIME,
-			ACTIVITY_ALT_NAME,
-			PRO_APP_ID,
-			SORT_NUM,
-			PARENT_ACTIVITY_ID,
-			SOURCE_ACTIVITY_ID
-		)
+		insert into BPM_ACTIVITY_META (<include refid="Base_Column_List" />)
 		values (
-			#{activityId},
-			#{activityBpdId},
-			#{activityGroupName},
-			#{activityName},
-			#{activityTo},
-			#{activityType},
-			#{bpdId},
-			#{bpmTaskType},
-			sysdate,
-			#{creator},
-			#{deepLevel},
-			#{externalId},
-			#{handleSignType},
-			#{loopType},
-			#{miOrder},
-			#{noteType},
-			#{parentActivityBpdId},
-			#{poId},
-			#{snapshotId},
-			#{snapshotUid},
-			#{stepId},
-			#{type},
-			#{updateBy},
-			#{updateTime},
-			#{activityAltName},
-			#{proAppId},
-			#{sortNum},
-			#{parentActivityId},
-			#{sourceActivityId}
+			#{activityId}, #{activityBpdId}, #{activityGroupName}, #{activityName}, #{activityTo}, #{activityType},
+            #{bpdId}, #{bpmTaskType}, sysdate, #{creator}, #{deepLevel}, #{externalId}, #{handleSignType}, #{loopType},
+            #{miOrder}, #{noteType}, #{parentActivityBpdId}, #{poId}, #{snapshotId}, #{snapshotUid}, #{stepId}, #{type},
+            #{updateBy}, #{updateTime}, #{activityAltName}, #{proAppId}, #{sortNum}, #{parentActivityId}, #{sourceActivityId}
 		)
+	</insert>
+
+	<insert id="saveBatch" parameterType="list">
+		insert into BPM_ACTIVITY_META (<include refid="Base_Column_List" />)
+		<foreach collection="list" item="item" separator="union all">
+			(select #{item.activityId}, #{item.activityBpdId}, #{item.activityGroupName}, #{item.activityName}, #{item.activityTo}, #{item.activityType},
+			#{item.bpdId}, #{item.bpmTaskType}, sysdate, #{item.creator}, #{item.deepLevel}, #{item.externalId}, #{item.handleSignType}, #{item.loopType},
+			#{item.miOrder}, #{item.noteType}, #{item.parentActivityBpdId}, #{item.poId}, #{item.snapshotId}, #{item.snapshotUid}, #{item.stepId}, #{item.type},
+			#{item.updateBy}, #{item.updateTime}, #{item.activityAltName}, #{item.proAppId}, #{item.sortNum}, #{item.parentActivityId}, #{item.sourceActivityId} from dual)
+		</foreach>
 	</insert>
 
 	<select id="queryByBpmActivityMetaSelective" parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta"
@@ -381,7 +336,17 @@
     	where BPD_ID = #{bpdId}
     	and PRO_APP_ID = #{proAppId}
     </delete>
-    <select id="queryChildrenMetaByCondition" 
+
+	<delete id="removeByActivityIdList" parameterType="list">
+		delete from BPM_ACTIVITY_META
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				activity_id = #{item}
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="queryChildrenMetaByCondition"
     		parameterType="com.desmart.desmartbpm.entity.BpmActivityMeta"
     		resultType="com.desmart.desmartbpm.entity.BpmActivityMeta" >
     	select

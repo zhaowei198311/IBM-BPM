@@ -50,9 +50,9 @@ public interface DatRuleMapper {
 	List<DatRule> batchSelectDatRule(@Param("keySet")Set<String> ruleIds);
 	
 	/**
-	 * 
+	 * 根据ruleIds进行批量删除
 	 * @Title: deleteByRuleIds  
-	 * @Description: 根据ruleIds进行批量删除  
+	 * @Description:
 	 * @param @param ruleIds
 	 * @param @return  
 	 * @return int  
@@ -61,13 +61,15 @@ public interface DatRuleMapper {
 	int deleteByRuleIds(List<String> ruleIds);
 	
 	/**
-	 * 
+	 * 根据ruleIds进行批量查询
 	 * @Title: listByRuleIds  
-	 * @Description: 根据ruleIds进行批量查询  
+	 * @Description:
 	 * @param @param ruleIds
 	 * @param @return  
 	 * @return List<DatRule>  
 	 * @throws
 	 */
 	List<DatRule> listByRuleIds(List<String> ruleIds);
+
+
 }

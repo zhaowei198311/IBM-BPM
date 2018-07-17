@@ -115,6 +115,28 @@
     )
   </insert>
 
+  <insert id="insertBatch" parameterType="list">
+      insert into DH_ACTIVITY_CONF (<include refid="Base_Column_List"/>)
+      <foreach collection="list" separator="union all" item="item">
+          (select #{item.actcUid}, #{item.activityId}, #{item.actcSort},
+          #{item.actcTime}, #{item.actcTimeunit}, #{item.actcAssignType},
+          #{item.actcAssignVariable}, #{item.signCountVarname}, #{item.actcCanEditAttach},
+          #{item.actcCanUploadAttach}, #{item.actcCanDelegate}, #{item.actcCanDeleteAttach},
+          #{item.actcCanMessageNotify}, #{item.actcCanMailNotify},
+          #{item.actcMailNotifyTemplate}, #{item.actcCanReject},
+          #{item.actcRejectType}, #{item.actcCanRevoke}, #{item.actcCanAutocommit},
+          #{item.actcCanAdd}, #{item.actcCanUserToField}, #{item.actcCanAuditToField},
+          #{item.actcCanApprove}, #{item.actcUserToField}, #{item.actcAuditToField},
+          #{item.actcOuttimeTrigger}, #{item.actcOuttimeTemplate},
+          #{item.actcDescription}, #{item.actcDefTitle}, #{item.actcDefSubjectMessage},
+          #{item.actcDefMessage}, #{item.actcDefDescription}, #{item.actcAlert},
+          #{item.actcPriorityVariable}, #{item.actcCanCancel}, #{item.actcCanPause},
+          #{item.actcCanSkip}, #{item.updator}, #{item.updateTime}, #{item.actcCanChooseUser},
+          #{item.actcCanTransfer}, #{item.actcResponsibility}, #{item.actcChooseableHandlerType},
+          #{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject}, #{item.actcOuttimeNotifyType} from dual)
+      </foreach>
+  </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
     update DH_ACTIVITY_CONF
     <set >
@@ -303,9 +325,10 @@
 
   <delete id="deleteByActivityIds" parameterType="list">
     delete from DH_ACTIVITY_CONF
-    where ACTIVITY_ID in
-    <foreach collection="list" item="item" open="(" separator="," close=")">
-      #{item}
-    </foreach>
+    <where>
+        <foreach collection="list" item="item" separator="or">
+          ACTC_UID = #{item}
+        </foreach>
+    </where>
   </delete>
 </mapper>

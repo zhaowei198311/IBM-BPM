@@ -3,6 +3,8 @@ package com.desmart.desmartbpm.service;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 
+import java.util.List;
+
 public interface DhActivityConfService {
     
     /**
@@ -18,4 +20,18 @@ public interface DhActivityConfService {
      * @return
      */
     ServerResponse updateDhActivityConf(DhActivityConf dhActivityConf);
+
+    /**
+     * 根据配置主键，批量删除
+     * @param actcUidList
+     * @return
+     */
+    int removeByActcUidList(List<String> actcUidList);
+
+    /**
+     * 批量插入
+     * @param dhActivityConfList
+     * @return
+     */
+    int insertBatch(List<DhActivityConf> dhActivityConfList);
 }

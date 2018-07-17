@@ -18,7 +18,19 @@
             #{updateUser}, #{lastUpdateTime}, #{categoryUid}, #{proDisplay}, #{proMetaStatus}
         )
     </insert>
-    
+
+    <insert id="insertBatch" parameterType="list">
+        insert into dh_process_meta (<include refid="base_column"/>)
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator="union">
+            select
+            #{item.categoryUid},
+            #{item.categoryParent},
+            #{item.categoryName},
+            #{item.categoryIcon}
+            from dual
+        </foreach>
+    </insert>
+
     <select id="countByProAppIdAndProUid" resultType="int">
         select count(1) from dh_process_meta 
         where PRO_APP_ID = #{proAppId} and PRO_UID = #{proUid}
@@ -127,5 +139,14 @@
         from dh_process_meta 
         where CATEGORY_UID = #{categoryUid}
     </select>
-    
+
+    <select id="listByProcessMetaLsit" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        select <include refid="base_column"/> from dh_process_meta
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                (pro_app_id = #{item.proAppId} and pro_uid = #{item.proUid})
+            </foreach>
+        </where>
+    </select>
+
 </mapper>

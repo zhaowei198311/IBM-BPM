@@ -148,4 +148,12 @@ public interface BpmActivityMetaService {
      * @return
      */
     List<BpmActivityMeta> listAllBpmActivityMeta(String proAppId, String proUid, String proVerUid);
+
+    /**
+     * 根据环节主键批量删除
+     * @param activityIdList
+     * @return
+     */
+    int removeByActivityIdList(List<String> activityIdList);
+
 }

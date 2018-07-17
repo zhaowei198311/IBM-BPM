@@ -114,4 +114,11 @@ public interface DhTriggerInterfaceMapper {
 	 * @return
 	 */
 	List<DhTriggerInterface> listByStepUidList(List<String> stepUidList);
+
+	/**
+	 * 根据步骤id列表删除相关参数映射
+	 * @param stepUidList
+	 * @return
+	 */
+    int removeByStepUidList(List<String> stepUidList);
 }

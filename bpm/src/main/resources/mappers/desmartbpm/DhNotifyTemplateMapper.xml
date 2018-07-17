@@ -16,7 +16,15 @@
     	VALUES (#{templateUid}, #{templateName}, #{templateType}
     	, #{templateContent}, #{createUserUid}, #{createTime}, #{updateUserUid}, #{updateTime})
     </insert>
-    
+
+    <insert id="insertBatch" parameterType="list">
+		INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>)
+		<foreach collection="list" item="item" separator="union all">
+			select #{item.templateUid}, #{item.templateName}, #{item.templateType}, #{item.templateContent},
+			#{item.createUserUid}, #{item.createTime}, #{item.updateUserUid}, #{item.updateTime} from dual
+		</foreach>
+	</insert>
+
     <update id="update" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
     	UPDATE DH_NOTIFY_TEMPLATE 
     	<set>

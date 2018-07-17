@@ -31,7 +31,12 @@ public interface DhActivityRejectMapper {
     int updateByPrimaryKeySelective(DhActivityReject record);
 
     int updateByPrimaryKey(DhActivityReject record);
-    
+
+    /**
+     * 批量新增
+     * @param list
+     * @return
+     */
     int insertBatch(List<DhActivityReject> list);
     
     int deleteByActivityId(String activityId);

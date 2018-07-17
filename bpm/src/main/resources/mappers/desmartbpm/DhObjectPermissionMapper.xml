@@ -18,7 +18,7 @@
     
     <insert id="saveBatch"  parameterType="list">
         insert into DH_OBJECT_PERMISSION (<include refid="base_column"/>)
-        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
+        <foreach collection="list" item="item"  separator="union all">
 	        select
 		        #{item.opUid}, #{item.proAppId}, #{item.proUid},
 				#{item.proVerUid}, #{item.stepUid}, #{item.opParticipateType},
@@ -63,7 +63,7 @@
             </if>
         </where>
     </delete>
-    
+
     <select id="listByDhObjectPermissionSelective" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
         select <include refid="base_column"/> from dh_object_permission
         <where>
@@ -135,4 +135,11 @@
             <foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
         </where>
     </select>
+
+    <delete id="removeByStepUidList" parameterType="list">
+        delete from dh_object_permission
+        <where>
+            <foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
+        </where>
+    </delete>
 </mapper>

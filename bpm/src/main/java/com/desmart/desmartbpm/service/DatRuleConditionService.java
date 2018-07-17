@@ -77,4 +77,11 @@ public interface DatRuleConditionService {
 	 * @return
 	 */
 	List<DatRuleCondition> listByRuleIdList(List<String> ruleIdList);
+
+	/**
+	 * 根据规则主键集合批量删除
+	 * @param ruleIdList
+	 * @return
+	 */
+	int removeByRuleIdList(List<String> ruleIdList);
 }

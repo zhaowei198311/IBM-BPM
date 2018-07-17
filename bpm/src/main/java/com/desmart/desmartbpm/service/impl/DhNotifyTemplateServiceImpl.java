@@ -18,6 +18,7 @@ import com.desmart.desmartbpm.entity.DhNotifyTemplate;
 import com.desmart.desmartbpm.service.DhNotifyTemplateService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhNotifyTemplateServiceImpl implements DhNotifyTemplateService {
@@ -54,7 +55,7 @@ public class DhNotifyTemplateServiceImpl implements DhNotifyTemplateService {
 		dhNotifyTemplate.setCreateUserUid(currentUserUid);
 		dhNotifyTemplate.setCreateTime(currDate);
 		Integer count = dhNotifyTemplateMapper.insert(dhNotifyTemplate);
-		if(count>0) {
+		if(count > 0) {
 			return ServerResponse.createBySuccessMessage("新增通知模板成功");
 		}else {
 			return ServerResponse.createByErrorMessage("新增通知模板失败");
@@ -84,6 +85,13 @@ public class DhNotifyTemplateServiceImpl implements DhNotifyTemplateService {
 		return dhNotifyTemplateMapper.listByTemplateUidList(templateUidList);
 	}
 
+	@Override
+	public int insertBatch(List<DhNotifyTemplate> notifyTemplateList) {
+		if (CollectionUtils.isEmpty(notifyTemplateList)) {
+			return 0;
+		}
+		return dhNotifyTemplateMapper.insertBatch(notifyTemplateList);
+	}
 
 
 }

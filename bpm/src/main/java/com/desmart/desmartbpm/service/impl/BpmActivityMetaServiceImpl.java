@@ -390,5 +390,13 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
         return bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
     }
 
-    
+    @Override
+    public int removeByActivityIdList(List<String> activityIdList) {
+        if (CollectionUtils.isEmpty(activityIdList)) {
+            return 0;
+        }
+        return bpmActivityMetaMapper.removeByActivityIdList(activityIdList);
+    }
+
+
 }

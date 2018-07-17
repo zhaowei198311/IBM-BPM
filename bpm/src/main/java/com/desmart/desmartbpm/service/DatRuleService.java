@@ -47,6 +47,13 @@ public interface DatRuleService {
 	int deleteDatRule(DatRule datRule);
 
 	/**
+	 * 根据规则id集合批量删除
+	 * @param ruleIdList
+	 * @return
+	 */
+	int removeByRuleIdList(List<String> ruleIdList);
+
+	/**
 	 * 新增规则
 	 * @param itemList1
 	 * @param activityId

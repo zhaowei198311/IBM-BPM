@@ -111,15 +111,9 @@
   
   <insert id="insertBatch"  parameterType="list">
     insert into DH_GATEWAY_LINE (<include refid="Base_Column_List" />) 
-    <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
-        select
-        #{item.gatewayLineUid},
-        #{item.activityId},
-        #{item.toActivityId},
-        #{item.routeResult},
-        #{item.isDefault},
-        #{item.ruleId}
-        from dual
+    <foreach collection="list" item="item"  separator="union all">
+        (select #{item.gatewayLineUid}, #{item.activityId}, #{item.toActivityId}, #{item.routeResult},
+        #{item.isDefault}, #{item.ruleId} from dual)
     </foreach>
   </insert> 
   
@@ -153,8 +147,17 @@
    		</foreach>
    	</where>	
    </delete>
-   
-   <select id="listByActivityId" parameterType="string" 
+
+    <delete id="removeByGatewayLineUidList" parameterType="list">
+        delete from DH_GATEWAY_LINE
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                GATEWAY_LINE_UID = #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="listByActivityId" parameterType="string"
    			resultType="com.desmart.desmartbpm.entity.DhGatewayLine">
    	SELECT dgl.*,bam.ACTIVITY_BPD_ID FROM DH_GATEWAY_LINE dgl
    	LEFT JOIN BPM_ACTIVITY_META bam ON dgl.ACTIVITY_ID = bam.ACTIVITY_ID

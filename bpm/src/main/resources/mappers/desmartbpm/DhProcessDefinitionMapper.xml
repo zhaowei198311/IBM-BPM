@@ -55,6 +55,9 @@
 			<if test="proAppId != null">
 				and PRO_APP_ID = #{proAppId}
 			</if>
+            <if test="proVerUid != null">
+                and pro_ver_uid = #{proVerUid}
+            </if>
 		</where>
 	</delete>
 
@@ -248,9 +251,15 @@
     	and PRO_VER_UID = #{proVerUid}
     	and PRO_APP_ID = #{proAppId}
     </select>
-    
 
+    <select id="listByDhPocessDefinitionList" parameterType="list" resultType="com.desmart.desmartbpm.entity.DhProcessDefinition">
+        select <include refid="base_column"/> from DH_PROCESS_DEFINITION
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                (pro_app_id=#{item.proAppId} and pro_uid=#{item.proUid} and pro_ver_uid=#{item.proVerUid})
+            </foreach>
+        </where>
+    </select>
 
-    
 
 </mapper>

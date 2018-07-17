@@ -23,6 +23,7 @@ import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -283,5 +284,13 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			return new ArrayList<>();
 		}
 		return bpmFormFieldMapper.listByFormUidList(formUidList);
+	}
+
+	@Override
+	public int removeByFormUidList(List<String> formUidList) {
+		if (CollectionUtils.isEmpty(formUidList)) {
+			return 0;
+		}
+		return bpmFormFieldMapper.removeByFormUidList(formUidList);
 	}
 }

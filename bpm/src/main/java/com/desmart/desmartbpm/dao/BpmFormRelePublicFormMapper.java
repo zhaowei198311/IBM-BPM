@@ -5,6 +5,7 @@ package com.desmart.desmartbpm.dao;
 
 import java.util.List;
 
+import com.desmart.desmartbpm.entity.BpmFormRelePublicForm;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.BpmFormField;
@@ -29,4 +30,19 @@ public interface BpmFormRelePublicFormMapper {
 	 * @return
 	 */
 	List<String> listPublicFormUidByFormUidList(List<String> formUidList);
+
+	/**
+	 * 根据表单主键列出关联关系
+	 * @param formUidList
+	 * @return
+	 */
+	List<BpmFormRelePublicForm> listByFormUidList(List<String> formUidList);
+
+
+	/**
+	 * 根据表单主键集合，批量删除与公共表单的关联关系
+	 * @param formUidList
+	 * @return
+	 */
+	int removeByFormUidList(List<String> formUidList);
 }

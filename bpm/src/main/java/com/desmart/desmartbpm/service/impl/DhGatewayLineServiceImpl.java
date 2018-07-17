@@ -41,6 +41,7 @@ import com.desmart.desmartbpm.util.UUIDTool;
 import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhGatewayLineServiceImpl implements DhGatewayLineService {
@@ -338,5 +339,13 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
             return new ArrayList<>();
         }
         return dhGatewayLineMapper.listByGatewayActivityIdList(activityIdList);
+    }
+
+    @Override
+    public int removeByGatewayLineUidList(List<String> gatewayLineUidList) {
+        if (CollectionUtils.isEmpty(gatewayLineUidList)) {
+            return 0;
+        }
+        return dhGatewayLineMapper.removeByGatewayLineUidList(gatewayLineUidList);
     }
 }

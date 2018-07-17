@@ -134,6 +134,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> externalNodeList = new ArrayList<>(); // bascicNode中的外链节点
         
         int sortNum = 0;
+        List<DhActivityConf> confListToInsert = new ArrayList<>();
         for (BpmActivityMeta basticActivityMeta : basicActivityMetaList) {
             LOG.error(basticActivityMeta.getActivityName());
         	String activityBpdId = basticActivityMeta.getActivityBpdId();
@@ -145,9 +146,10 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         	}
         	
         	basticActivityMeta.setSortNum(sortNum);
-            bpmActivityMetaMapper.save(basticActivityMeta);
+            // 改为批量插入 bpmActivityMetaMapper.save(basticActivityMeta);
             if (isHumanActivity(basticActivityMeta)) {
-                dhActivityConfMapper.insert(createDefaultActivityConf(basticActivityMeta.getActivityId()));
+                // 改为批量插入 dhActivityConfMapper.insert(createDefaultActivityConf(basticActivityMeta.getActivityId()));
+                confListToInsert.add(createDefaultActivityConf(basticActivityMeta.getActivityId()));
             }
             if ("CalledProcess".equals(basticActivityMeta.getBpmTaskType())) {
                 // 如果这个环节是外链子流程，加入待处理列表
@@ -155,7 +157,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
             }
             sortNum++;
         }
-        
+        bpmActivityMetaMapper.saveBatch(basicActivityMetaList);
+        dhActivityConfMapper.insertBatch(confListToInsert);
+
         // 引入外链流程的节点，找出所有外链节点
         if (externalNodeList.size() == 0) {
             return;
@@ -165,19 +169,20 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         List<BpmActivityMeta> allNodeToInclude = new ArrayList<>();
         // 记录刚拉进来的时候
         
-        List<BpmActivityMeta> newList = null;
-        for (int i=0; i<externalNodeList.size(); i++) {
+
+        for (int i = 0; i < externalNodeList.size(); i++) {
             allNodeToInclude.addAll(includeCalledProcess(externalNodeList.get(i)));
         }
         System.out.println("需要被纳入流程的总环节数：" + allNodeToInclude.size());
         
         for (BpmActivityMeta item : allNodeToInclude) {
             item.setSortNum(sortNum);
-            bpmActivityMetaMapper.save(item);
             sortNum++;
         }
-        
-        
+        if (!allNodeToInclude.isEmpty()) {
+            bpmActivityMetaMapper.saveBatch(allNodeToInclude);
+        }
+
     }
     
     

@@ -275,11 +275,12 @@
 			</if>
 		</where>
 	</delete>
-	
-	<insert id="insertBatchDhStep" parameterType="list">
+
+
+    <insert id="insertBatchDhStep" parameterType="list">
 	INSERT INTO DH_STEP (STEP_UID, PRO_UID, PRO_VER_UID, ACTIVITY_BPD_ID, STEP_TYPE, STEP_OBJECT_UID
 	, STEP_CONDITION, STEP_SORT, STEP_MODE, PRO_APP_ID, STEP_BUSINESS_KEY) 
-		<foreach collection="insertList" item="item" index="index"  close=")" open="(" separator="union">
+		<foreach collection="insertList" item="item"  separator="union all">
 	        select
 	            #{item.stepUid}, #{item.proUid}, #{item.proVerUid}, #{item.activityBpdId}
 	            , #{item.stepType},#{item.stepObjectUid}, #{item.stepCondition}
@@ -317,4 +318,13 @@
             and pro_ver_uid = #{proVerUid}
             and pro_uid = #{proUid}
     </select>
+
+    <delete id="removeByStepUidList" parameterType="list">
+        delete from DH_STEP
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                step_uid = #{item}
+            </foreach>
+        </where>
+    </delete>
 </mapper>

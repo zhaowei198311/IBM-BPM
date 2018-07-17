@@ -13,6 +13,8 @@ import com.desmart.desmartbpm.entity.DatRule;
 import com.desmart.desmartbpm.entity.DatRuleCondition;
 import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DatRuleService;
+import org.springframework.util.CollectionUtils;
+
 @Service
 public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 
@@ -84,6 +86,14 @@ public class DatRuleConditionServiceImpl implements DatRuleConditionService {
 			return new ArrayList<>();
 		}
 		return datRuleConditionMapper.listByRuleIds(ruleIdList);
+	}
+
+	@Override
+	public int removeByRuleIdList(List<String> ruleIdList) {
+		if (CollectionUtils.isEmpty(ruleIdList)) {
+			return 0;
+		}
+		return datRuleConditionMapper.deleteByRuleIds(ruleIdList);
 	}
 
 }

@@ -231,4 +231,22 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         }
         return dhObjectPermissionMapper.listByStepUidList(stepUidList);
     }
+
+    @Override
+    public int removeByStepUidList(List<String> stepUidList) {
+        if (stepUidList == null || stepUidList.isEmpty()) {
+            return 0;
+        }
+        return dhObjectPermissionMapper.removeByStepUidList(stepUidList);
+    }
+
+    @Override
+    public int removeByProAppIdAndProUidAndProVerUid(String proAppId, String proUid, String proVerUid) {
+        DhObjectPermission permissionSelective = new DhObjectPermission();
+        permissionSelective.setProAppId(proAppId);
+        permissionSelective.setProUid(proUid);
+        permissionSelective.setProVerUid(proVerUid);
+        return dhObjectPermissionMapper.delectByDhObjectPermissionSelective(permissionSelective);
+    }
+
 }

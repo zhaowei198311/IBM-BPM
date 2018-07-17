@@ -211,7 +211,7 @@ public static Date stringtoDate(String sdate){
 }
 
 /**
- * date转String
+ * date转String 格式 "yyyy-MM-dd HH:mm:ss"
  */
 public static String datetoString(Date date){
 	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

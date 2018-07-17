@@ -31,7 +31,12 @@ public interface DhActivityAssignMapper {
     int deleteByActivityIds(List<String> activityIds);
     
     int deleteBySelective(DhActivityAssign dhActivityAssign);
-    
+
+    /**
+     * 批量插入
+     * @param list
+     * @return
+     */
     int insertBatch(List<DhActivityAssign> list);
 
     /**
@@ -47,4 +52,6 @@ public interface DhActivityAssignMapper {
      * @return
      */
     List<DhActivityAssign> listByActivityIdList(List<String> activityIdList);
+
+
 }

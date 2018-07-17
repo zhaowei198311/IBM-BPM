@@ -37,4 +37,11 @@ public interface DhTriggerInterfaceService {
 	 * @return
 	 */
 	List<DhTriggerInterface> listByStepUidList(List<String> stepUidList);
+
+	/**
+	 * 根据步骤id删除多个映射记录
+	 * @param stepUidList
+	 * @return
+	 */
+	int removeByStepUidList(List<String> stepUidList);
 }
