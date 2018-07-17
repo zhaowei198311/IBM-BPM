@@ -58,7 +58,11 @@ public class DhProcessSetDataInfoByMainTrigger implements DhJavaClassTriggerTemp
 			
 					String formKey = mappingRelationObj.getString("from");
 					String toKey = mappingRelationObj.getString("to");//往主流程实例读数据写入数据
-					Object form = formDataJsonSource.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					//Object form = formDataJsonSource.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					Object form = formDataJsonSource.get(formKey);
+					if(form == null) {
+						form = "";
+					}
 					formDataJson.put(toKey, form);
 			
 			}

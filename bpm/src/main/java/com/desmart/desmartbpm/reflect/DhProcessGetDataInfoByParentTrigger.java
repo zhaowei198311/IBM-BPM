@@ -55,7 +55,11 @@ public class DhProcessGetDataInfoByParentTrigger implements DhJavaClassTriggerTe
 			
 					String formKey = mappingRelationObj.getString("from");
 					String toKey = mappingRelationObj.getString("to");//从目标实例读数据写入到当前数据
-					Object form = formDataJson.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					//Object form = formDataJson.getOrDefault(formKey, "");//返回指定键被映射到的值，如果此映射不包含键的映射，则返回defaultValue。
+					Object form = formDataJson.get(formKey);
+					if(form == null) {
+						form = "";
+					}
 					formDataJsonSource.put(toKey, form);
 			
 			}
