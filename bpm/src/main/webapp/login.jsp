@@ -11,7 +11,7 @@
 <head>
 <base href="<%=basePath%>">
 <meta charset="utf-8">
-<title>登陆</title>
+<title>登录</title>
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
@@ -114,7 +114,7 @@ h4 {
 						</div>
 						<form class="layui-form">
 							<button class="layui-btn layui-btn-fluid" lay-submit
-								lay-filter="LAY-user-login-submit">登 陆</button>
+								lay-filter="LAY-user-login-submit">登 录</button>
 						</form>
 					</div>
 				</div>
@@ -153,7 +153,7 @@ h4 {
 				console.log(data.status);
 				//console.log(data.success);
 				if(data.status == 0){
-					layer.msg('登陆成功');
+					layer.msg('登录成功');
 					location.href = "user/menus";
 				}else{
 					layer.msg('用户名/密码错误');
