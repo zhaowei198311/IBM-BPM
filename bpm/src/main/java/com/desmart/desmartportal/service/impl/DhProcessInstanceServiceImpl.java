@@ -883,7 +883,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
             DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, startProcessNode,
                     tokenId, owners.get(0));
-            // todo 发起流程的触发器
+
             dhProcessInstanceMapper.insertProcess(subProcessInstacne);
         }
 

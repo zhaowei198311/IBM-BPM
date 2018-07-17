@@ -29,6 +29,13 @@ public interface BpmFormManageMapper {
 	int saveForm(BpmForm bpmForm);
 
 	/**
+	 * 批量新增表单
+	 * @param bpmFormList
+	 * @return
+	 */
+	int insertFormBatch(List<BpmForm> bpmFormList);
+
+	/**
 	 * 根据表单名查询表单
 	 */
 	BpmForm queryProFormByName(@Param("dynTitle")String dynTitle,

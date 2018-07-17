@@ -8,7 +8,7 @@
 	</resultMap>
 	
 	<sql id="Base_Column">
-		FORM_UID,PUBLIC_FORM_UID
+		FORM_UID, PUBLIC_FORM_UID
 	</sql>
 	
 	<sql id="FormField_Column">
@@ -18,8 +18,15 @@
 		F.FLD_FOREIGN_KEY_TABLE,F.FLD_DYN_NAME,F.FLD_DYN_UID,
 		F.FLD_FILTER,F.FORM_UID
 	</sql>
-	
-	
+
+	<insert id="insertBatch" parameterType="list">
+		insert into bpm_form_rele_public_form (<include refid="Base_Column"/>)
+		<foreach collection="list" item="item" separator="union all">
+			select #{item.formUid}, #{item.publicFormUid} from dual
+		</foreach>
+	</insert>
+
+
 	<select id="listPublicFormFieldByFormUid" parameterType="java.lang.String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
 		SELECT 
 		<include refid="FormField_Column"/>

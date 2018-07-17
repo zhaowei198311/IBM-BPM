@@ -28,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -90,6 +91,10 @@ public class DhTransferServiceImpl implements DhTransferService {
     private DatRuleConditionMapper datRuleConditionMapper;
     @Autowired
     private DhObjectPermissionMapper dhObjectPermissionMapper;
+    @Autowired
+    private BpmFormManageMapper bpmFormManageMapper;
+    @Autowired
+    private BpmFormFieldMapper bpmFormFieldMapper;
 
 
 
@@ -367,6 +372,8 @@ public class DhTransferServiceImpl implements DhTransferService {
                 identity = ((DhGatewayLine)item).getGatewayLineUid();
             } else if (item instanceof DhNotifyTemplate) {
                 identity = ((DhNotifyTemplate)item).getTemplateUid();
+            } else if (item instanceof DhActivityConf) {
+                identity = ((DhActivityConf)item).getActcUid();
             }
             if (StringUtils.isNotBlank(identity) && !result.contains(identity)) {
                 result.add(identity);
@@ -613,7 +620,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         if (!insertDefinitionResponse.isSuccess()) {
             return insertDefinitionResponse;
         }
-
         // 导入环节信息
         importActivityMetaList(transferData);
         // 导入环节配置
@@ -632,8 +638,14 @@ public class DhTransferServiceImpl implements DhTransferService {
         importActivityRejectList(transferData);
         // 导入权限信息
         importObjectPermissionList(transferData);
-        // 导入表单相关内容
-        // importFormInfo(transferData);
+        // 导入自有表单
+        importFormList(transferData);
+        // 导入自有表单字段
+        importFormFieldList(transferData);
+        // 导入自有表单与公共表单的关联关系
+        importFormRelePublicFormList(transferData);
+        // 导入接口的参数映射
+        importTriggerInterfaceList(transferData);
 
         return ServerResponse.createBySuccess();
     }
@@ -908,6 +920,67 @@ public class DhTransferServiceImpl implements DhTransferService {
         return objectList;
     }
 
+    /**
+     * 导入自有表单信息
+     * @param transferData
+     */
+    private void importFormList(DhTransferData transferData) {
+        List<BpmForm> formList = transferData.getFormList();
+        if (CollectionUtils.isEmpty(formList)) {
+            return;
+        }
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        for (BpmForm form : formList) {
+            form.setCreator(currUserUid);
+            form.setCreateTime(date);
+            //bpmFormManageMapper.saveForm(form);
+        }
+        bpmFormManageMapper.insertFormBatch(formList);
+    }
+
+    /**
+     * 导入自有表单字段
+     * @param transferData
+     */
+    private void importFormFieldList(DhTransferData transferData) {
+        List<BpmFormField> formFieldList = transferData.getFormFieldList();
+        if (CollectionUtils.isEmpty(formFieldList)) {
+            return;
+        }
+        bpmFormFieldMapper.insertBatch(formFieldList);
+    }
+
+    /**
+     * 导入自有表单与公共表单的关联关系
+     * @param transferData
+     */
+    private void importFormRelePublicFormList(DhTransferData transferData) {
+        List<BpmFormRelePublicForm> formRelationList = transferData.getFormRelePublicFormList();
+        if (CollectionUtils.isEmpty(formRelationList)) {
+            return;
+        }
+        bpmFormRelePublicFormMapper.insertBatch(formRelationList);
+    }
+
+    /**
+     * 导入接口的参数映射
+     * @param transferData
+     */
+    private void importTriggerInterfaceList(DhTransferData transferData) {
+        List<DhTriggerInterface> triggerInterfaceList = transferData.getTriggerInterfaceList();
+        if (CollectionUtils.isEmpty(triggerInterfaceList)) {
+            return;
+        }
+        String currUserUid = getCurrentUserUid();
+        Date date = new Date();
+        for (DhTriggerInterface triggerInterface : triggerInterfaceList) {
+            triggerInterface.setCreator(currUserUid);
+            triggerInterface.setCreateTime(date);
+        }
+        dhTriggerInterfaceService.insertBatch(triggerInterfaceList);
+    }
+
     @Override
     public ServerResponse validateTransferDataForImportProcessDefinition(DhTransferData transferData) {
         // 校验流程定义
@@ -916,9 +989,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         } else if (transferData.getProcessDefinitionList().size() > 1) {
             return ServerResponse.createByErrorMessage("检测到流程定义大于一条");
         }
-        DhProcessDefinition definition = transferData.getProcessDefinitionList().get(0);
-
-
         // 校验环节信息
         if (CollectionUtils.isEmpty(transferData.getBpmActivityMetaList())) {
             return ServerResponse.createByErrorMessage("缺少环节信息");
@@ -930,6 +1000,10 @@ public class DhTransferServiceImpl implements DhTransferService {
         return ServerResponse.createBySuccess();
     }
 
+    /**
+     * 获得当前用户主键
+     * @return
+     */
     private String getCurrentUserUid() {
         return (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
     }

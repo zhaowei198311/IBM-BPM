@@ -190,11 +190,8 @@
 	</insert>
 
 	<insert id="insertBatch" parameterType="list">
-		INSERT INTO DH_TRIGGER_INTERFACE (
-		<include refid="Base_Column_List" />
-		)
-		<foreach collection="tinList" item="item" index="index" close=")"
-			open="(" separator="union all">
+		INSERT INTO DH_TRIGGER_INTERFACE (<include refid="Base_Column_List" />)
+		<foreach collection="tinList" item="item" separator="union all">
 			SELECT
 			#{item.tinUid},
 			#{item.triUid},

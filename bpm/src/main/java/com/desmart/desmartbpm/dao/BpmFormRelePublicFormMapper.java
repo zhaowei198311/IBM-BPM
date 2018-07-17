@@ -45,4 +45,11 @@ public interface BpmFormRelePublicFormMapper {
 	 * @return
 	 */
 	int removeByFormUidList(List<String> formUidList);
+
+	/**
+	 * 批量插入
+	 * @param list
+	 * @return
+	 */
+	int insertBatch(List<BpmFormRelePublicForm> list);
 }

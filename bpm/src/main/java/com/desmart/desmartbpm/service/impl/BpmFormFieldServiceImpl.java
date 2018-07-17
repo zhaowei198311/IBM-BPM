@@ -3,9 +3,7 @@ package com.desmart.desmartbpm.service.impl;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +46,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			field.setFldUid(EntityIdPrefix.BPM_FORM_FIELD+UUID.randomUUID().toString());
 			fieldList.add(field);
 		}
-		int countRow = bpmFormFieldMapper.saveFormField(fieldList);
+		int countRow = bpmFormFieldMapper.insertBatch(fieldList);
 		if(countRow>0) {
 			return ServerResponse.createBySuccess();
 		}else {
