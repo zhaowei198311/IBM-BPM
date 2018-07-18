@@ -25,7 +25,21 @@
 .display_content2 {
 	min-height: auto;
 }
+table{
+	table-layout:fixed;
+}
+#arryParameterDiv3 table{
+	table-layout:auto;
+}
+
 .cancel2_btn{margin-top:15px}
+/*溢出部分样式*/  
+.txt-ell {   
+    whitewhite-space:nowrap;  /* 强制在一行显示   */  
+    overflow:hidden;    /*  溢出的内容切割隐藏   */  
+    text-overflow:ellipsis; /*当内联溢出块容器时，将溢出部分替换为…   */  
+    word-break:keep-all; /*允许在单词内换行   */  
+} 
 </style>
 </head>
 
@@ -64,13 +78,13 @@
 			<table class="layui-table backlog_table" lay-even lay-skin="nob"
 				lay-filter="demo">
 				<colgroup>
-					<col width="8%">
+					<col width="4%">
 					<col width="10%">
 					<col width="10%">
 					<col width="9%">
 					<col width="15%">
 					<col width="10%">
-					<col width="10%">
+					<col width="7%">
 					<col width="11%">
 				</colgroup>
 				<thead>
@@ -90,21 +104,24 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
-	<div class="display_container3" id="exposed_table_container">
-		<div class="display_content2">
+	<div class="display_container3" id="exposed_table_container" >
+		<div class="display_content2" style="top:10%;margin:0px;right: 10%;left:10%;" >
 			<div class="top">接口参数配置</div>
 			<button class="layui-btn layui-btn-sm"
 				style="float: right; margin: 0 15px 15px 0;" onclick="add();">添加</button>
 			<div class="middle1">
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
-						<col>
-						<col>
-						<col>
-						<col>
-						<col>
-						<col>
-						<col>
+						<col width="5%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="8%">
+						<col width="7%">
 					</colgroup>
 					<thead>
 						<tr>
@@ -125,7 +142,7 @@
 			</div>
 			<div class="foot">
 				<!-- <button class="layui-btn update2_btn"></button> -->
-				<button class="layui-btn cancel2_btn">关闭</button>
+				<button class="layui-btn layui-btn-primary cancel2_btn">关闭</button>
 			</div>
 		</div>
 	</div>
@@ -247,14 +264,14 @@
 			</form>
 			<div class="foot">
 				<button id="sure_btn" class="layui-btn layui-btn sure_btn">确定</button>
-				<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
+				<button id="cancel_btn" class="layui-btn layui-btn-primary cancel_btn">取消</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- 新增接口参数表单 -->
 	<div class="display_container4" id="exposed_table2_container">
-		<div class="display_content2 boundInterfaceParameter" >
+		<div class="display_content2 boundInterfaceParameter"  style="left:47%;" >
 			<div class="top" style="color: red;">绑定接口参数</div>
 			<label style="color: red;">带*的参数为必填</label> <input id="intUid"
 				type="hidden" />
@@ -368,7 +385,7 @@
 			<div class="foot">
 				<!-- <button id="sure3_btn" class="layui-btn layui-btn sure3_btn" lay-submit="" lay-filter="addParameterFilter" >确定</button> -->
 				<button  class="layui-btn layui-btn" lay-submit="" lay-filter="addParameterFilter" >确定</button>
-				<button id="cancel3_btn" class="layui-btn layui-btn cancel3_btn">取消</button>
+				<button id="cancel3_btn" class="layui-btn layui-btn-primary cancel3_btn">取消</button>
 			</div>
 			</form>
 		</div>
@@ -468,14 +485,14 @@
 			</form>
 			<div class="foot">
 				<button id="sure4_btn" class="layui-btn layui-btn sure4_btn">确定</button>
-				<button id="cancel4_btn" class="layui-btn layui-btn cancel4_btn">取消</button>
+				<button id="cancel4_btn" class="layui-btn layui-btn-primary cancel4_btn">取消</button>
 			</div>
 		</div>
 	</div>
 	
 	
 	<div class="display_container6" id="exposed_table3_container">
-		<div class="display_content2  boundInterfaceParameter">
+		<div class="display_content2  boundInterfaceParameter" >
 			<div class="top" style="color: red;">修改绑定接口参数</div>
 			<form class="layui-form" action="" style="margin-top: 30px;">
 				<input id="intUid3" type="hidden" /> 
@@ -590,7 +607,7 @@
 			<div class="foot">
 				<button  class="layui-btn layui-btn" lay-submit="" lay-filter="updateParameterFilter" >确定</button>
 				<!-- <button id="sure5_btn" class="layui-btn layui-btn sure5_btn">确定</button> -->
-				<button  class="layui-btn layui-btn" type="button" onclick="closePopup('display_container6','class');" >取消</button>
+				<button  class="layui-btn layui-btn-primary" type="button" onclick="closePopup('display_container6','class');" >取消</button>
 			</div>
 		</form>
 		</div>
@@ -666,7 +683,7 @@
 			<div class="foot">
 				<button class="layui-btn layui-btn" lay-submit=""
 					lay-filter="confimAddChildNodeParameter">确定</button>
-				<button class="layui-btn layui-btn"
+				<button class="layui-btn layui-btn-primary"
 					onclick="closePopup('chilNodeParameterContainer','id');">取消</button>
 			</div>
 		</form>
@@ -739,7 +756,7 @@
 			<div class="foot">
 				<button class="layui-btn layui-btn" lay-submit=""
 					lay-filter="updateAddChildNodeParameter">确定</button>
-				<button class="layui-btn layui-btn"
+				<button class="layui-btn layui-btn-primary"
 					onclick="closePopup('updateInterfaceParameter','id');">取消</button>
 			</div>
 			<input type="hidden" id="updateArrayInAddOrUpdate"  />
