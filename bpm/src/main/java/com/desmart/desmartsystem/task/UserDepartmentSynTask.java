@@ -51,160 +51,164 @@ import com.ibm.lyfwebservice.webservice.CommonOrganizationInterfaceServiceLocato
  * @since 2018-04-11
  **/
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath*:spring.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations={"classpath*:spring.xml"})
 public class UserDepartmentSynTask implements Job {
 	
 	
-	@Autowired
-	private SysDepartmentMapper sysDepartmentMapper;
-	
-	@Autowired
-	private SysUserMapper sysUserMapper;
-	
-	@Autowired
-	private SysUserDepartmentMapper sysUserDepartmentMapper;
-	
-	
-	@Test
-	//同步全部部门信息
-	public void runDepartmentAll() throws Exception{
-		CommonOrganizationInterfaceService commonOrganizationInterfaceService=new CommonOrganizationInterfaceServiceLocator();
-		CommonOrganizationField commonOrganizationField = commonOrganizationInterfaceService.getCommonOrganizationInterface(new URL("http://10.1.0.90/LyfWebService/services/CommonOrganizationInterface")).sendOrganization("LYF_ALL_OFFICE", "", "TFlGX0FMTF9PRkZJQ0U=");
-		Organization[] org=commonOrganizationField.getOrg();
-		List<SysDepartment>  sysDepartments=new ArrayList<SysDepartment>();
-		for (Organization organization : org) {
-			SysDepartment sysDepartment=new SysDepartment();
-			sysDepartment.setDepartUid("sysDepartment:"+UUIDTool.getUUID());
-			sysDepartment.setDepartParent(organization.getLyfSupervisoryDepartment());
-			sysDepartment.setDisplayName(organization.getDisplayName());
-			sysDepartment.setDepartName(organization.getName());
-			sysDepartment.setDepartNo(organization.getO());
-			sysDepartment.setDepartAdmins(organization.getDeplead());
-			sysDepartment.setCreateDate(new Date());
-			sysDepartments.add(sysDepartment);
-		}
-		sysDepartmentMapper.inserBatch(sysDepartments);
-	}
-	
-	@Test
-	//同步全部用户信息
-	public void runUserAll(){
-		try {
-			//获取所有部门数据
-			Map<String, SysDepartment> sysDepartmentMap=new HashMap<String, SysDepartment>();
-			List<SysDepartment>  sysDepartments=sysDepartmentMapper.selectDesmarts();
-			for (SysDepartment sysDepartment : sysDepartments) {
-				sysDepartmentMap.put(sysDepartment.getDepartNo(), sysDepartment);
-			}
-			CommonInterfaceService servie = new CommonInterfaceServiceLocator();
-			CommonEmployeeField sendEmployee = servie.getCommonInterface(new URL("http://10.1.0.90/LyfWebService/services/CommonInterface")).sendEmployee("LYF_ALL_OFFICE","","TFlGX0FMTF9PRkZJQ0U=");
-			List<SysUser> sysUsers=new ArrayList<SysUser>();
-			EmployeeInfo[] emp = sendEmployee.getEmp();
-			int i=0;
-			for (EmployeeInfo employeeInfo : emp) {
-				SysUser sysUser=new SysUser();
-				sysUser.setUserUid(employeeInfo.getUid());//用户代码
-				sysUser.setUserNo(employeeInfo.getUid());
-				sysUser.setUserId(employeeInfo.getUid());
-				sysUser.setUserName(employeeInfo.getCn());
-				sysUser.setUserNameUs(employeeInfo.getLyfchinesepinyin());
-				sysUser.setSn(employeeInfo.getSn());
-				sysUser.setGivenname(employeeInfo.getGivenname());
-				String sex=employeeInfo.getLyfsex();
-				if(StringUtils.isNotBlank(sex)) {
-					sysUser.setSex(Short.valueOf(sex));
-				}
-				sysUser.setHomeplace(employeeInfo.getLyfhomeplace());
-				sysUser.setPassport(employeeInfo.getLyfpassport());
-				sysUser.setBirthday(employeeInfo.getLyfbirthday());
-				//sysUser.setOrderIndex(1);
-				sysUser.setPassword("123456");
-				
-				sysUser.setDepartUid(employeeInfo.getDepartmentNumber());
-				
-				sysUser.setOfficeTel(employeeInfo.getTelephonenumber());
-				sysUser.setOfficeFax(employeeInfo.getTelexnumber());
-				sysUser.setMobile(employeeInfo.getMobile());
-				sysUser.setEmail(employeeInfo.getMail());
-				sysUser.setWorkStatus(employeeInfo.getErPersonStatus());
-				sysUser.setSessionTime(30);
-				sysUser.setStation(employeeInfo.getLyfstation());
-				sysUser.setStationcode(employeeInfo.getLyfstationcode());
-				sysUser.setManagernumber(employeeInfo.getLyfmanagernumber());
-				sysUser.setCostCenter(employeeInfo.getLyfcostcenter());
-				sysUser.setCompanynumber(employeeInfo.getLyfcompanynumber());
-				sysUser.setDepartmetNumber(employeeInfo.getDepartmentNumber());
-				String level=employeeInfo.getLyflevel();
-				if(StringUtils.isNotBlank(level)) {
-					sysUser.setLevels(employeeInfo.getLyflevel());
-				}
-				sysUser.setReportTo(employeeInfo.getLyfmanagernumber());
-				if(StringUtils.isNotBlank(employeeInfo.getLyfhireday())) {
-					DateUtil.strToDate(employeeInfo.getLyfhireday(), "yyyyMMdd");
-				}
-				if(StringUtils.isNotBlank(employeeInfo.getLyfbirthday())) {
-					DateUtil.strToDate(employeeInfo.getLyfbirthday(), "yyyyMMdd");
-				}
-				sysUser.setCreateDate(new Date());
-				sysUsers.add(sysUser);
-				i++;
-				if(i%1000==0) {
-					sysUserMapper.insertBatch(sysUsers);
-					for (SysUser sUser1 : sysUsers) {
-						String departNumber=sUser1.getDepartmetNumber();
-						if(StringUtils.isNotBlank(departNumber)) {
-							SysUserDepartment sysUserDepartment=new SysUserDepartment();
-							sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
-							sysUserDepartment.setUserUid(sUser1.getUserUid());
-							SysDepartment department=sysDepartmentMap.get(departNumber);
-							if(department!=null) {
-								sysUserDepartment.setDepartUid(department.getDepartUid());
-								if(department.getDepartAdmins().equals(sUser1.getUserId())) {
-									sysUserDepartment.setIsManager("true");
-								}else {
-									sysUserDepartment.setIsManager("false");
-								}
-							}else {
-								sysUserDepartment.setIsManager("false");
-							}
-							sysUserDepartmentMapper.insert(sysUserDepartment);
-						}
-					}
-					sysUsers=new ArrayList<SysUser>();
-				}
-			}
-			if(sysUsers.size()>0) {
-				sysUserMapper.insertBatch(sysUsers);
-				for (SysUser sUser1 : sysUsers) {
-					String departNumber=sUser1.getDepartmetNumber();
-					if(StringUtils.isNotBlank(departNumber)) {
-						SysUserDepartment sysUserDepartment=new SysUserDepartment();
-						sysUserDepartment.setUduid(UUIDTool.getUUID());
-						sysUserDepartment.setUserUid(sUser1.getUserUid());
-						SysDepartment department=sysDepartmentMap.get(departNumber);
-						if(department!=null) {
-							sysUserDepartment.setDepartUid(department.getDepartUid());
-							if(department.getDepartAdmins().equals(sUser1.getUserId())) {
-								sysUserDepartment.setIsManager("true");
-							}else {
-								sysUserDepartment.setIsManager("false");
-							}
-						}else {
-							sysUserDepartment.setIsManager("false");
-						}
-						sysUserDepartmentMapper.insert(sysUserDepartment);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@Autowired
+//	private SysDepartmentMapper sysDepartmentMapper;
+//	
+//	@Autowired
+//	private SysUserMapper sysUserMapper;
+//	
+//	@Autowired
+//	private SysUserDepartmentMapper sysUserDepartmentMapper;
+//	
+//	
+//	@Test
+//	//同步全部部门信息
+//	public void runDepartmentAll() throws Exception{
+//		CommonOrganizationInterfaceService commonOrganizationInterfaceService=new CommonOrganizationInterfaceServiceLocator();
+//		CommonOrganizationField commonOrganizationField = commonOrganizationInterfaceService.getCommonOrganizationInterface(new URL("http://10.1.0.90/LyfWebService/services/CommonOrganizationInterface")).sendOrganization("LYF_ALL_OFFICE", "", "TFlGX0FMTF9PRkZJQ0U=");
+//		Organization[] org=commonOrganizationField.getOrg();
+//		List<SysDepartment>  sysDepartments=new ArrayList<SysDepartment>();
+//		for (Organization organization : org) {
+//			SysDepartment sysDepartment=new SysDepartment();
+//			sysDepartment.setDepartUid("sysDepartment:"+UUIDTool.getUUID());
+//			sysDepartment.setDepartParent(organization.getLyfSupervisoryDepartment());
+//			sysDepartment.setDisplayName(organization.getDisplayName());
+//			sysDepartment.setDepartName(organization.getName());
+//			sysDepartment.setDepartNo(organization.getO());
+//			sysDepartment.setDepartAdmins(organization.getDeplead());
+//			sysDepartment.setCreateDate(new Date());
+//			sysDepartments.add(sysDepartment);
+//		}
+//		sysDepartmentMapper.inserBatch(sysDepartments);
+//	}
+//	
+//	@Test
+//	//同步全部用户信息
+//	public void runUserAll(){
+//		try {
+//			//获取所有部门数据
+//			Map<String, SysDepartment> sysDepartmentMap=new HashMap<String, SysDepartment>();
+//			List<SysDepartment>  sysDepartments=sysDepartmentMapper.selectDesmarts();
+//			for (SysDepartment sysDepartment : sysDepartments) {
+//				sysDepartmentMap.put(sysDepartment.getDepartNo(), sysDepartment);
+//			}
+//			CommonInterfaceService servie = new CommonInterfaceServiceLocator();
+//			CommonEmployeeField sendEmployee = servie.getCommonInterface(new URL("http://10.1.0.90/LyfWebService/services/CommonInterface")).sendEmployee("LYF_ALL_OFFICE","","TFlGX0FMTF9PRkZJQ0U=");
+//			List<SysUser> sysUsers=new ArrayList<SysUser>();
+//			EmployeeInfo[] emp = sendEmployee.getEmp();
+//			int i=0;
+//			for (EmployeeInfo employeeInfo : emp) {
+//				SysUser sysUser=new SysUser();
+//				sysUser.setUserUid(employeeInfo.getUid());//用户代码
+//				sysUser.setUserNo(employeeInfo.getUid());
+//				sysUser.setUserId(employeeInfo.getUid());
+//				sysUser.setUserName(employeeInfo.getCn());
+//				sysUser.setUserNameUs(employeeInfo.getLyfchinesepinyin());
+//				sysUser.setSn(employeeInfo.getSn());
+//				sysUser.setGivenname(employeeInfo.getGivenname());
+//				String sex=employeeInfo.getLyfsex();
+//				if(StringUtils.isNotBlank(sex)) {
+//					sysUser.setSex(Short.valueOf(sex));
+//				}
+//				sysUser.setHomeplace(employeeInfo.getLyfhomeplace());
+//				sysUser.setPassport(employeeInfo.getLyfpassport());
+//				sysUser.setBirthday(employeeInfo.getLyfbirthday());
+//				//sysUser.setOrderIndex(1);
+//				sysUser.setPassword("123456");
+//				
+//				sysUser.setDepartUid(employeeInfo.getDepartmentNumber());
+//				
+//				sysUser.setOfficeTel(employeeInfo.getTelephonenumber());
+//				sysUser.setOfficeFax(employeeInfo.getTelexnumber());
+//				sysUser.setMobile(employeeInfo.getMobile());
+//				sysUser.setEmail(employeeInfo.getMail());
+//				sysUser.setWorkStatus(employeeInfo.getErPersonStatus());
+//				sysUser.setSessionTime(30);
+//				sysUser.setStation(employeeInfo.getLyfstation());
+//				sysUser.setStationcode(employeeInfo.getLyfstationcode());
+//				sysUser.setManagernumber(employeeInfo.getLyfmanagernumber());
+//				sysUser.setCostCenter(employeeInfo.getLyfcostcenter());
+//				sysUser.setCompanynumber(employeeInfo.getLyfcompanynumber());
+//				sysUser.setDepartmetNumber(employeeInfo.getDepartmentNumber());
+//				String level=employeeInfo.getLyflevel();
+//				if(StringUtils.isNotBlank(level)) {
+//					sysUser.setLevels(employeeInfo.getLyflevel());
+//				}
+//				sysUser.setReportTo(employeeInfo.getLyfmanagernumber());
+//				if(StringUtils.isNotBlank(employeeInfo.getLyfhireday())) {
+//					DateUtil.strToDate(employeeInfo.getLyfhireday(), "yyyyMMdd");
+//				}
+//				if(StringUtils.isNotBlank(employeeInfo.getLyfbirthday())) {
+//					DateUtil.strToDate(employeeInfo.getLyfbirthday(), "yyyyMMdd");
+//				}
+//				sysUser.setCreateDate(new Date());
+//				sysUsers.add(sysUser);
+//				i++;
+//				if(i%1000==0) {
+//					sysUserMapper.insertBatch(sysUsers);
+//					for (SysUser sUser1 : sysUsers) {
+//						String departNumber=sUser1.getDepartmetNumber();
+//						if(StringUtils.isNotBlank(departNumber)) {
+//							SysUserDepartment sysUserDepartment=new SysUserDepartment();
+//							sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
+//							sysUserDepartment.setUserUid(sUser1.getUserUid());
+//							SysDepartment department=sysDepartmentMap.get(departNumber);
+//							if(department!=null) {
+//								sysUserDepartment.setDepartUid(department.getDepartUid());
+//								if(department.getDepartAdmins().equals(sUser1.getUserId())) {
+//									sysUserDepartment.setIsManager("true");
+//								}else {
+//									sysUserDepartment.setIsManager("false");
+//								}
+//							}else {
+//								sysUserDepartment.setIsManager("false");
+//							}
+//							sysUserDepartmentMapper.insert(sysUserDepartment);
+//						}
+//					}
+//					sysUsers=new ArrayList<SysUser>();
+//				}
+//			}
+//			if(sysUsers.size()>0) {
+//				sysUserMapper.insertBatch(sysUsers);
+//				for (SysUser sUser1 : sysUsers) {
+//					String departNumber=sUser1.getDepartmetNumber();
+//					if(StringUtils.isNotBlank(departNumber)) {
+//						SysUserDepartment sysUserDepartment=new SysUserDepartment();
+//						sysUserDepartment.setUduid(UUIDTool.getUUID());
+//						sysUserDepartment.setUserUid(sUser1.getUserUid());
+//						SysDepartment department=sysDepartmentMap.get(departNumber);
+//						if(department!=null) {
+//							sysUserDepartment.setDepartUid(department.getDepartUid());
+//							if(department.getDepartAdmins().equals(sUser1.getUserId())) {
+//								sysUserDepartment.setIsManager("true");
+//							}else {
+//								sysUserDepartment.setIsManager("false");
+//							}
+//						}else {
+//							sysUserDepartment.setIsManager("false");
+//						}
+//						sysUserDepartmentMapper.insert(sysUserDepartment);
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	//每天执行同步
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
+		
+		CompanySys companySys=new CompanySys();
+		companySys.executeSysCompany();
+		
 		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
 		SysDepartmentMapper sysDepartmentMapper = wac.getBean(SysDepartmentMapper.class);
 		SysUserMapper sysUserMapper = wac.getBean(SysUserMapper.class);
