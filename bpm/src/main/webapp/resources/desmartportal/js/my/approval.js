@@ -544,7 +544,7 @@ function checkUserData() {
 function showRouteBar() {
     $.ajax({
         url:"dhRoute/showRouteBar",
-        method:"post",
+        type:"post",
         data:{
             "taskUid": $("#taskUid").val(),
             "insUid":$("#insUid").val(),
