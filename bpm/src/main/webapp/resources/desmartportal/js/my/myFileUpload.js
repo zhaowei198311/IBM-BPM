@@ -33,7 +33,7 @@ $(function(){
 	loadGlobalConfig();
 	
 	$("#upload-file").click(function(){
-		$("#upload_file_modal").css("display","block");
+		$(".display_container_file").css("display","block");
 	});
 	
 	layui.use('upload', function(){
@@ -389,7 +389,7 @@ function loadFileList(){
 // 隐藏上传文件的模态框
 function cancelClick(obj){
 	loadFileList();
-	$("#upload_file_modal").css("display","none");
+	$(".display_container_file").css("display","none");
 }
 
 // 批量下载触发事件
@@ -574,7 +574,7 @@ function deleteAccessoryFile(a){
 // 显示进度条
 var isFirstExport=true;
 function showProgress(){
-    $("#Mask").css("height",$(document).height());
+    $("#Mask").css("height",$(document).height()+100);
     $("#Mask").css("width",$(document).width());
     $("#Mask").show();
     // if(isFirstExport){
@@ -597,7 +597,7 @@ function hideProgress(){
 	 // 滚动条事件
     $(window).scroll(function() {    
         // 获取窗口一半的高度+滚动条高度
-        var offsetTop = $(window).scrollTop() + $(window).height() / 2;    
+        var offsetTop = $(window).scrollTop() + $(window).height() / 2+100;    
         // 改变样式 显示
         // $("#test").show();
         // 改变样式 top 高度

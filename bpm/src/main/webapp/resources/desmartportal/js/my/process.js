@@ -4,9 +4,9 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     var area=[];
     if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
-    	area=['615px', '492px'];
+    	area=['695px', '530px'];
     }else{
-    	area=['615px', '492px'];
+    	area=['695px', '530px'];
     }
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=';
@@ -34,7 +34,7 @@ $(function () {
     toShowRouteBar(); 
     var dateStr = common.dateToSimpleString(new Date());
     // 为流程创建日期赋值
-    $("#createDate").val(dateStr);
+    $("#createDate").text("填写时间："+dateStr);
 })
 
 /**

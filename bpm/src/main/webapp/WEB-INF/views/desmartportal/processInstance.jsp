@@ -31,6 +31,17 @@
             top: 16%;
             box-shadow: 0 0 10px #ccc;
         }
+        
+        #checkedBusinessKey {
+        	display:none;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    z-index: 10;
+		    background: rgba(255, 255, 255, 0.8);
+		    width: 100%;
+		    height: 100%;
+		}
 
         .foot_ins_business_key{
             text-align: right;
@@ -52,7 +63,8 @@
 </style>
 </head>
 <body>
-	<div class="container">
+	<div class="layui-fluid">
+		<div class="body_content">
 		<div class="search_area">
 			<div class="layui-row layui-form" style="margin-bottom: 1vw;">
 				<div style="display: none;">
@@ -60,77 +72,106 @@
 					<input id="proAppId" value="${proAppId}" style="display: none;">
 					<input id="proName" value="${proName}" style="display: none;">
 				</div>
-				<div class="layui-col-xs2">
-<!-- 					<div class="layui-form-pane"> -->
-<!-- 						<div class="layui-form-this"> -->
-<!-- 							<label class="layui-form-label" style="cursor: pointer;">刷新</label> -->
-							<!-- <div class="layui-input-block"> -->
-								<select id="searchType" class="layui-input-block group_select" name="group"
-									lay-verify="required">
-									<option value="">全部</option>
-									<option value="1">运转中</option>
-									<option value="2">完成</option>
-									<option value="3">失败</option>
-									<option value="4">终止</option>
-									<option value="5">未启动</option>
-									<option value="6">暂停</option>
-								</select>
-							<!-- </div> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
+				<div class="layui-row layui-form">
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程实例状态</label>
+						<div class="layui-input-block">
+							<select id="searchType" class="layui-input-block group_select"
+								name="group" lay-verify="required">
+								<option value="">全部</option>
+								<option value="1">运转中</option>
+								<option value="2">完成</option>
+								<option value="3">失败</option>
+								<option value="4">终止</option>
+								<option value="5">未启动</option>
+								<option value="6">暂停</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">上一环节处理人</label>
+						<div class="layui-input-block">
+							<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
+						</div>
+					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程标题</label>
+						<div class="layui-input-block">
+							<input id="processName" type="text" placeholder="流程实例标题" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md3" style="text-align: center;"> 
+						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="queryProcessInstance()">查询</button>
+						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="checkedBusinesskey()">发起新流程</button>
+					</div>
 				</div>
-				<div class="layui-col-xs2">
-					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
-				</div>
-				<div class="layui-col-xs3" style="width: 24%">
-					<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
-				</div>
-				<c:forEach var="item" items="${processRetrieveList }">
-				
-				<c:choose>
-					<c:when test="${item.elementType eq 'input' }">
-					<c:if test="${item.isScope eq 'TRUE'}">
-					<div class="layui-col-xs2 process-retrieve">
-						<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input is_scope first_input">
+				<div class="layui-row layui-form">
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程实例创建时间</label>
+						<div class="layui-input-block">
+							<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
+						</div>
 					</div>
-					<div class="layui-col-xs2 process-retrieve">
-						<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input is_scope">
-					</div>
-					</c:if>
-					<c:if test="${item.isScope eq 'FALSE'}">
-					<div class="layui-col-xs2 process-retrieve">
-						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input">
-					</div>
-					</c:if>
-					</c:when>
-					<c:when test="${item.elementType eq 'date' }">
-					<c:if test="${item.isScope eq 'TRUE'}">
-					<div class="layui-col-xs3 process-retrieve" style="width: 24%">
-						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_scope" >
-					</div>
-					</c:if>
-					<c:if test="${item.isScope eq 'FALSE'}">
-					<div class="layui-col-xs2 process-retrieve">
-						<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_no_scope" >
-					</div>
-					</c:if>
-					</c:when>
-					<c:when test="${item.elementType eq 'select' }">
-					<div class="layui-col-xs2 process-retrieve">
-						<select class="layui-input-block group_select" name="${item.fieldName }"
-									lay-verify="required">
-									<option value="">${item.fieldLabel }:全部</option>
-								<c:forEach var="dataItem" items="${item.dictionaryDatas }">
-									<option value="${dataItem.dicDataCode }">${dataItem.dicDataName }</option>
-								</c:forEach>
-						</select>
-					</div>
-					</c:when>
-				</c:choose>
-				</c:forEach>
-				<div class="layui-col-xs3" style="margin-top: 0.1%;margin-left: 0.1%;">
-					<button class="layui-btn" onclick="queryProcessInstance()">查询</button>
-					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button>
+					<c:forEach var="item" items="${processRetrieveList }" varStatus="st">
+						<c:choose>
+							<c:when test="${item.elementType eq 'input' }">
+							<c:if test="${item.isScope eq 'TRUE'}">
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(min)" class="layui-input is_scope first_input">
+								</div>
+							</div>
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(max)" class="layui-input is_scope">
+								</div>
+							</div>
+							</c:if>
+							<c:if test="${item.isScope eq 'FALSE'}">
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input">
+								</div>
+							</div>
+							</c:if>
+							</c:when>
+							<c:when test="${item.elementType eq 'date' }">
+							<c:if test="${item.isScope eq 'TRUE'}">
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_scope">
+								</div>
+							</div>
+							</c:if>
+							<c:if test="${item.isScope eq 'FALSE'}">
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_no_scope">
+								</div>
+							</div>
+							</c:if>
+							</c:when>
+							<c:when test="${item.elementType eq 'select' }">
+							<div class="layui-col-md3 process-retrieve">
+								<label class="layui-form-label">${item.fieldLabel }</label>
+								<div class="layui-input-block">
+									<select class="layui-input-block group_select"
+										name="${item.fieldName }" lay-verify="required">
+										<option value="">${item.fieldLabel }:全部</option>
+										<c:forEach var="dataItem" items="${item.dictionaryDatas }">
+											<option value="${dataItem.dicDataCode }">${dataItem.dicDataName }</option>
+										</c:forEach>
+									</select>
+								</div>
+							</div>
+							</c:when>
+						</c:choose>
+					</c:forEach>
 				</div>
 			</div>
 		</div>
@@ -153,7 +194,6 @@
 						<th>实例ID</th>
 						<th>实例状态</th>
 					    <th>流程实例标题</th>
-<!-- 					    <th>流程发起人</th> -->
 					    <th>流程实例创建时间</th>
 					    <th>流程实例完成时间</th>
 					    <th>操作</th>
@@ -164,35 +204,37 @@
 		</div>
 		<div id="lay_page"></div>
 	</div>
+	</div>
 		<!-- 选择业务关键字 -->
-	<div id="checkedBusinessKey" style="display: none;"
-		class="display_content_ins_business_key">
-		<div class="top">选择业务关键字</div>
-		<div class="upload_overflow_middle">
-			<div class="layui-upload">
-				<div class="layui-upload-list">
-					<table class="layui-table">
-						<colgroup>
-							<col width="10%">
-							<col>
-						</colgroup>
-						<thead>
-							<tr>
-								<th>序号</th>
-								<th style="text-align: center;">业务关键字</th>
-							</tr>
-						</thead>
-						<tbody class="showBusinessList">
-
-						</tbody>
-					</table>
+	<div id="checkedBusinessKey">
+		<div class="display_content_ins_business_key">
+			<div class="top">选择业务关键字</div>
+			<div class="upload_overflow_middle">
+				<div class="layui-upload">
+					<div class="layui-upload-list">
+						<table class="layui-table">
+							<colgroup>
+								<col width="10%">
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th style="text-align: center;">业务关键字</th>
+								</tr>
+							</thead>
+							<tbody class="showBusinessList">
+	
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="foot_ins_business_key">
-			<button class="layui-btn layui-btn sure_btn" onclick="startProcess()">确定</button>
-			<button class="layui-btn layui-btn cancel_btn"
-				onclick="$('#checkedBusinessKey').hide()">取消</button>
+			<div class="foot_ins_business_key">
+				<button class="layui-btn layui-btn sure_btn" onclick="startProcess()">确定</button>
+				<button class="layui-btn layui-btn cancel_btn"
+					onclick="$('#checkedBusinessKey').hide()">取消</button>
+			</div>
 		</div>
 	</div>
 </body>
@@ -411,7 +453,7 @@
 						$("#checkedBusinessKey").find(
 								".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {
-							var info = '<tr><td><input type="radio" name="insBusinessKey" '
+							var info = '<tr onclick="busKeyOnclick(this)" style="cursor: pointer;"><td><input type="radio" name="insBusinessKey" '
 									+'value="'
 									+ result.data[i]
 									+'" >'
@@ -434,6 +476,10 @@
 				layer.alert("发起流程异常");
 			}
 		})
+	}
+	//选择关键字点击行选中
+	function busKeyOnclick(obj){
+		$(obj).find("input[type='radio']").prop("checked",true);
 	}
 	//金额数字正则
 	function doVersion(v){

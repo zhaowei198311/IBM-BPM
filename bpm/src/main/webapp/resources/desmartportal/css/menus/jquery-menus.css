@@ -27,15 +27,15 @@
 		.nav1 a{
 			display: block;
 			width: 100px;
-			height: 36px;
-			line-height: 36px;
+			height: 45px;
+    		line-height: 45px;
 			text-decoration: none;
 			color: #fff;
 			text-align: center;
 		}
 
 		.nav1 a:hover{
-			background: #069683;
+			background: #1890ff;
 			color: #fff;
 			transition: all 1s;
 		}
@@ -43,10 +43,11 @@
 
 		.nav1 li{
 			position: relative;
+			line-height: 45px;
 		}
 
 		li{
-			text-align: center;
+			/*text-align: center;*/
 		}
 
 		.nav1{

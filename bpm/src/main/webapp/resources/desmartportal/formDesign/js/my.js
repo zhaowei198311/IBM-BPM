@@ -37,7 +37,7 @@ function addPublicFormContent(view) {
 var chooseInputWidth = new Array();
 //渲染页面的方法
 function drawPage() {
-	var tableHead = '<table class="layui-table form-sub">' + '<tbody>';
+	var tableHead = '<div class="table_container"><table class="layui-table form-sub basic_information" lay-skin="nob">' + '<tbody>';
 	var formHtml = tableHead;
 	view = $(".container-fluid");
 	//将关联子表单内容添加进来
@@ -62,9 +62,9 @@ function drawPage() {
 					pHtml = column.html();
 					var pText = column.find("p")[0].firstChild.data.trim();
 					formHtml = formHtml.substring(0, formHtml.length - 4);
-					formHtml += "</tbody></table>";
-					formHtml += pHtml;
-					formHtml += '<table class="layui-table form-sub" title=' + pText + '>' + '<tbody>';
+					formHtml += "</tbody></table><div>";
+					formHtml += "<div class='table_container'>"+pHtml;
+					formHtml += '<table class="layui-table form-sub basic_information" lay-skin="nob" title=' + pText + '>' + '<tbody>';
 				} else {
 					continue;
 				}
@@ -80,7 +80,7 @@ function drawPage() {
 				if (tableObj.length != 0) {
 					flag = false;
 					formHtml = formHtml.substring(0, formHtml.length - 4);
-					formHtml += "</tbody></table>";
+					formHtml += "</tbody></table></div>";
 					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
 					var isleading = tableObj.attr("isleading");
 					if(isleading=="true"){
@@ -129,10 +129,11 @@ function drawPage() {
 					trHtml += '</tr>';
 					var tableLabel = tableObj.attr("table-label");
 					tableObj.append("<tbody>" + trHtml + "</tbody>");
-					formHtml += "<p class='title_p'>" + tableLabel
-						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><table class='layui-table data-table' name='"
+					formHtml += "<div class='table_container'><p class='title_p'>" + tableLabel
+						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p>"
+						+"<div style='padding:0px 20px 5px;margin-bottom:10px;'><table class='layui-table data-table basic_information' lay-skin='nob name='"
 						+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
-						+ "</table>";
+						+ "</table></div></div>";
 					formHtml += tableHead;
 				} else if (pObj.length != 0) {
 					if (pObj.attr("title") == "table_title") {
@@ -145,9 +146,9 @@ function drawPage() {
 						flag = false;
 						if (column.find(".title_p").length != 0) {
 							formHtml = formHtml.substring(0, formHtml.length - 4);
-							formHtml += "</tbody></table>";
-							formHtml += pHtml;
-							formHtml += '<table class="layui-table form-sub" title=' + pText + '>' + '<tbody>';
+							formHtml += "</tbody></table></div>";
+							formHtml += "<div class='table_container'>"+pHtml;
+							formHtml += '<table class="layui-table form-sub basic_information" lay-skin="nob" title=' + pText + '>' + '<tbody>';
 						} else {
 							continue;
 						}
@@ -292,7 +293,7 @@ function drawPage() {
 					var subHtml = "";
 					if ($(labelDivObj).next().find(".editor_textarea").length == 1) {
 						formHtml = formHtml.substring(0, formHtml.length - 4);
-						formHtml += "</tbody></table>";
+						formHtml += "</tbody></table></div>";
 						labelHtml = "<p class='title_p'>" + $(labelDivObj).text() + "</p>";
 						subHtml = "<div class='layui-form'>" + $(subDivObj).html() + "</div>";
 						formHtml += labelHtml;
@@ -332,19 +333,9 @@ function drawPage() {
 			formHtml += "</tr>";
 		}
 	}); //end rowObj for	
-	formHtml += "</tbody></table>";
+	formHtml += "</tbody></table></div>";
 	view.html(formHtml);
-	var userAgent = navigator.userAgent;
-	if (userAgent.indexOf("compatible") == -1 && userAgent.indexOf("Edge") == -1) {
-		if ($(window).width() > 568) {
-			var colWidth = $(window).width() / 12;
-			view.find("col").width(colWidth);
-		} else {
-			var tableArr = view.find(".layui-table");
-			$("colgroup").remove();
-		}
-	}
-
+	
 	var explainArr = $(".td_sub_explain");
 	explainArr.each(function () {
 		$(this).find("p").prepend('<img src="' + common.getPath() + '/resources/desmartportal/images/top_star.png" class="star_img">');
