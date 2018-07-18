@@ -811,7 +811,7 @@
 			//menu
 			return this.menu = 
 			$('<div class="_wPaint_menu _wPaint_menu_' + $canvas.settings.menuOrientation + '"></div>')
-			.css({position: 'fixed', right: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY})
+			.css({position: 'fixed', right: $canvas.settings.menuOffsetX, top: $canvas.settings.menuOffsetY+40})
 			.draggable({
 				handle: menuHandle, 
 				drag: function(){_self.moveTextMenu(_self, _self.textMenu)}, 

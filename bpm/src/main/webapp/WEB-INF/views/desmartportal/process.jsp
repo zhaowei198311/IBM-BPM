@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%
 	String path = request.getContextPath();
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
@@ -16,9 +17,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link
-	href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css"
-	rel="stylesheet">
 <link href="resources/desmartportal/formDesign/css/layoutit.css"
 	rel="stylesheet">
 <link
@@ -40,8 +38,26 @@
 	zoom: 1;
 }
 
-#upload_file_modal {
+.display_container_file {
 	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
+}
+
+#showHistoryModal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.8);
+	width: 100%;
+	height: 100%;
 }
 
 .display_content_accessory_file {
@@ -121,13 +137,12 @@
 </head>
 
 <body>
-<!---Mask是遮罩，Progress是进度条-->
 	<div>
       <div id="Mask"></div>
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
-	<div class="search_area top_btn">
-	    <input type="hidden" id="departNo" value="${departNo}" />
+	<div class="search_area top_btn" id="layerDemo">
+        <input type="hidden" id="departNo" value="${departNo}" />
 	    <input type="hidden" id="companyNum" value="${companyNumber}" />
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
 	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
@@ -140,214 +155,203 @@
 	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;" />
 	    <span id="formData" style="display: none;">${ formData }</span>
 	    <span id="fieldPermissionInfo" style="display: none;">${ fieldPermissionInfo }</span>
-	    <span style="padding-left: 10px; color: #777; font-size: 18px;">${processDefinition.proName}</span>
-	    <span style="float: right; padding-right: 20px;">
-	        <button id="saveInfoBtn" class="layui-btn  layui-btn-sm">保存草稿</button>
-	        <button id="startProcess_btn" class="layui-btn layui-btn-sm">提交</button>
-	        <button class="layui-btn layui-btn-sm back_btn" onclick="back()">退出</button>
-	    </span>
-	</div>
-	<div class="container" style="width: 96%">
-		<div class="content">
-			<form action="" class="layui-form">
-				<table class="layui-table">
+	    <span style="padding-left: 10px; color: #777; font-size: 18px;display: none;">${processDefinition.proName}</span>
+        <div class="layui-row">
+            <div class="layui-col-md8">
+                <img src="resources/desmartportal/images/icon.png" class="icon"/>
+                <span class="table_title">${bpmForm.dynTitle}</span>
+            </div>
+            <div class="layui-col-md4">
+                <span style="float: right; padding-right: 40px;">
+                    <button id="saveInfoBtn" class="layui-btn layui-btn-normal layui-btn-sm">保存草稿</button>
+                    <button id="startProcess_btn" class="layui-btn layui-btn-sm layui-btn-normal submit_btn">提交</button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm back_btn" onclick="back()">退出</button>
+                </span>
+            </div>
+        </div>
+        <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
+            <div class="layui-col-md4">姓名：${currentUser.userName}(${currentUser.userId})</div>
+            <div class="layui-col-md4" id="createDate">
+            	
+            </div>
+        </div>
+        <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
+            <div class="layui-col-md4 layui-form">
+            	<label class="layui-form-label" style="padding: 9px 0px;text-align:left;width:42px;">部门：</label>
+				<div class="layui-input-block" style="margin-left:42px;">
+					<select id="creatorInfo" lay-filter="creatorInfo">
+						<option value="">请选择部门</option>
+						<c:forEach items="${userDepartmentList}" var="item">
+							<c:choose>
+								<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
+									<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+								</c:when>
+								<c:otherwise>
+									<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</select>
+				</div>
+            </div>
+            <!-- <div class="layui-col-md4" style="text-align: right;">
+               	 表单编号：
+                <span style="color: #1890ff;">1000-10185-BG-60</span>
+            </div> -->
+        </div>
+    </div>
+
+	<div class="layui-fluid" style="padding-top: 120px;">
+		<div class="table_content">
+			<div class="table_container">
+				<p class="title_p">流程标题</p>
+				<table class="layui-table basic_information" lay-skin="nob">
 					<tbody>
 						<tr>
-							<th colspan="12" class="list_title">${bpmForm.dynTitle} <span
-								style="float: right; font-size: 14px; font-weight: normal;">表单编号：${formId}</span>
-							</th>
-						</tr>
-						<tr>
-							<td class="td_title" colspan="1" style="width: 120px">工号</td>
-							<td class="sub_title" colspan="5">
-							 <input type="text" name="userId" value="${currentUser.userId}" class="layui-input" readonly>
-							</td>
-							<td class="td_title" colspan="1" style="width: 120px">姓名</td>
-							<td class="sub_title" colspan="5">
-							 <input type="text" name="userName" value="${currentUser.userName}" class="layui-input" readonly></td>
-						</tr>
-						<tr>
-							<td class="td_title" style="width: 120px" colspan="1">创建日期</td>
-							<td class="sub_title" colspan="5">
-							<input type="text" name="createDate" id="createDate" value="" class="layui-input" readonly>
-							</td>
-							<td class="td_title" style="width: 120px" colspan="1">所属部门</td>
-							<td class="sub_title" colspan="5">
-							<select id="creatorInfo" lay-filter="creatorInfo">
-									<option value="">请选择部门</option>
-									<c:forEach items="${userDepartmentList}" var="item">
-										<c:choose>
-										<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
-											<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-										</c:when>
-										<c:otherwise>
-										<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-										</c:otherwise>
-										</c:choose>
-									</c:forEach>
-							</select></td>
+							<td class="td_title" colspan="1" style="width: 120px">流程标题</td>
+							<td class="sub_title" colspan="5"><input type="text"
+								id="insTitle_input" class="layui-input"
+								value="${dhDrafts.dfsTitle }"></td>
 						</tr>
 					</tbody>
 				</table>
-			</form>
-            <p class="title_p">流程标题</p>
-            <table class="layui-table">
-                <tbody>
-                    <tr>
-                        <td class="td_title" colspan="1" style="width: 120px">流程标题</td>
-                        <td class="sub_title" colspan="5">
-                             <input type="text" id="insTitle_input" class="layui-input" 
-                             	value="${dhDrafts.dfsTitle }">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- 动态表单区域 -->
+			</div>
+			<!-- 动态表单区域 -->
 			<div id="formSet">${bpmForm.dynWebpage }</div>
+
+			<div class="table_container">
+				<p class="title_p">附件上传</p>
+				<div class="layui-tab-item layui-show"
+					style="height: auto; padding: 10px 20px 20px">
+					<table class="layui-table upload-file-table" style="margin: 0;">
+						<colgroup>
+							<col width="5%">
+							<col width="20%">
+							<col width="10%">
+							<col width="20%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th><input style='cursor: default;' id="all-file-check"
+									type="checkbox"></th>
+								<th>附件名称</th>
+								<th>上传人</th>
+								<th>上传时间</th>
+								<th>
+									<button class="layui-btn layui-btn-primary layui-btn-sm upload"
+										id="upload-file"
+										style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
+									<button onclick="batchDown()"
+										class="layui-btn layui-btn-primary layui-btn-sm "
+										id="batch-down-file" style="margin-left: 20px;">批量下载</button>
+									<div class="hidden-value">
+										<input class="maxFileSize" value="20" type="hidden" /> <input
+											class="maxFileCount" value="10" type="hidden" /> <input
+											class="fileFormat"
+											value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx"
+											type="hidden" />
+									</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
 			<div class="display_container2">
 				<div class="display_content2">
-					<div class="top" style="line-height:50px;">
-						选择下一环节
-					</div>
+					<div class="top" style="line-height: 50px;">选择下一环节</div>
 					<div class="middle2">
 						<table class="layui-table">
 							<col width="19%">
-						    <col>
-						    <col width="15%">
-						    <col>
-						    <col width="10%">
-						    <tbody id="choose_user_tbody">
-							    
-							</tbody>	
+							<col>
+							<col width="15%">
+							<col>
+							<col width="10%">
+							<tbody id="choose_user_tbody">
+
+							</tbody>
 						</table>
 					</div>
 					<div class="foot">
 						<button class="layui-btn sure_btn" onclick="submitProcess();">确定</button>
-						<button class="layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container2').css('display','none')">取消</button>
-					</div>				
+						<button class="layui-btn layui-btn-primary cancel_btn"
+							onclick="$('.display_container2').css('display','none')">取消</button>
+					</div>
 				</div>
 			</div>
-			<!-- 环节权责区域 -->
-			<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-            <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
-                ${dhActivityConf.actcResponsibility }
-            </div>
-			<div class="layui-tab">
-				<ul class="layui-tab-title">
-					<li class="layui-this">附件</li>
-				</ul>
-				<div class="layui-tab-content" style="padding: 0;">
-				    <!-- 附件区域 -->
-					<div class="layui-tab-item layui-show" style="height: auto;">
-                            <table class="layui-table upload-file-table" style="margin: 0;">
-                                <colgroup>
-                                    <col width="5%">
-                                    <col width="20%">
-                                    <col width="10%">
-                                    <col width="20%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <input style = 'cursor: default;' id="all-file-check" type="checkbox"> <!-- 序号 -->
-                                        </th>
-                                        <th>附件名称</th>
-                                        <!-- 
-									      <th>附件说明</th>
-									      <th>附件类型</th> -->
-                                        <th>上传人</th>
-                                        <th>上传时间</th>
-                                        <th>
-                                            <button class="layui-btn layui-btn-primary layui-btn-sm upload" id="upload-file" style="margin-left: 20px;<c:if test="${activityConf.actcCanUploadAttach =='FALSE'}" >display:none;</c:if>">上传附件</button>
-                                            <button onclick="batchDown()" class="layui-btn layui-btn-primary layui-btn-sm " id="batch-down-file" style="margin-left:20px;">批量下载</button>
-                                            <div class="hidden-value">
-                                                <input class="maxFileSize" value="20" type="hidden" />
-                                                <input class="maxFileCount" value="10" type="hidden" />
-                                                <input class="fileFormat" value="jpg,png,xls,xlsx,doc,docx,txt,pdf,ppt,pptx" type="hidden" />
-                                            </div>
-                                            <!-- <input type="file" class="upload_file"/> -->
-                                            <!-- <input style="margin-left:20px;" class="layui-btn layui-btn-primary btn btn-primary file" value="上传附件" id="button-EafH" type="button" /> -->
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-				</div>
-			</div>
-
-
 		</div>
 	</div>
 
 	<!-- 附件上传模态框 -->
-	<div class="display_content_accessory_file" id="upload_file_modal">
-		<div class="top">文件上传</div>
-		<div class="upload_overflow_middle">
-			<div class="layui-upload-drag" style="width: 94.5%;">
-				<i class="layui-icon"></i>
-				<p>点击上传，或将文件拖拽到此处</p>
-			</div>
-			<div class="layui-upload">
-				<div class="layui-upload-list">
-					<table class="layui-table">
-						<thead>
-							<tr>
-								<th>文件名</th>
-								<th>大小</th>
-								<!-- <th>文件标题</th>
-										<th>文件标签</th>
-										<th>文件说明</th> -->
-								<th>状态</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody class="fileList"></tbody>
-					</table>
+	<div class="display_container_file">
+		<div class="display_content_accessory_file" id="upload_file_modal">
+			<div class="top">文件上传</div>
+			<div class="upload_overflow_middle">
+				<div class="layui-upload-drag" style="width: 94.5%;">
+					<i class="layui-icon"></i>
+					<p>点击上传，或将文件拖拽到此处</p>
+				</div>
+				<div class="layui-upload">
+					<div class="layui-upload-list">
+						<table class="layui-table">
+							<thead>
+								<tr>
+									<th>文件名</th>
+									<th>大小</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody class="fileList"></tbody>
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="foot_accessory_file">
-			<button type="button" onclick="checkDraftsExtis()" class="layui-btn listAction" >开始上传</button>
-			<button class="layui-btn layui-btn-primary "
-				onclick="cancelClick(this)">关闭</button>
+			<div class="foot_accessory_file">
+				<button type="button" onclick="checkDraftsExtis()" class="layui-btn listAction" >开始上传</button>
+				<button class="layui-btn layui-btn-primary "
+					onclick="cancelClick(this)">关闭</button>
+			</div>
 		</div>
 	</div>
 
-	<div id="showHistoryModal" style="display: none;"
-		class="display_content_accessory_file">
-		<div class="top">历史版本</div>
-		<div class="upload_overflow_middle">
-			<div class="layui-upload">
-				<div class="layui-upload-list">
-					<table class="layui-table">
-						<colgroup>
-							<col width="10%">
-							<col width="20%">
-							<col width="10%">
-							<col width="10%">
-							<col width="20%">
-							<col width="10%">
-						</colgroup>
-						<thead>
-							<tr>
-								<th>文件版本</th>
-								<th>文件名</th>
-								<th>上传人</th>
-								<th>修改人</th>
-								<th>修改时间</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody class="showHistoryList"></tbody>
-					</table>
+	<div id="showHistoryModal">
+		<div class="display_content_accessory_file">
+			<div class="top">历史版本</div>
+			<div class="upload_overflow_middle">
+				<div class="layui-upload">
+					<div class="layui-upload-list">
+						<table class="layui-table">
+							<colgroup>
+								<col width="10%">
+								<col width="20%">
+								<col width="10%">
+								<col width="10%">
+								<col width="20%">
+								<col width="10%">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>文件版本</th>
+									<th>文件名</th>
+									<th>上传人</th>
+									<th>修改人</th>
+									<th>修改时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody class="showHistoryList"></tbody>
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="foot_history_file">
-			<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
-				onclick="hideHistoryFile()">关闭</button>
+			<div class="foot_history_file">
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+					onclick="hideHistoryFile()">关闭</button>
+			</div>
 		</div>
 	</div>
 </body>

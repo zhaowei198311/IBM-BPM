@@ -31,7 +31,9 @@ import com.desmart.desmartportal.service.DhProcessFormService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.UserProcessService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import com.desmart.desmartsystem.service.SysUserService;
 
 
 /**
@@ -58,6 +60,9 @@ public class UsersController {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	
+	@Autowired
+	private SysUserService sysUserService;
+	
 	private Logger log = Logger.getLogger(UsersController.class);
 	
 	@RequestMapping(value = "/logins")
@@ -76,14 +81,25 @@ public class UsersController {
         return ServerResponse.createBySuccess("成功登陆");
 	}
 	
+	@RequestMapping(value = "/logout")
+	public ModelAndView logout() {
+		SecurityUtils.getSubject().logout();
+		ModelAndView mv = new ModelAndView("desmartportal/login");
+		return mv;
+	}
+	
 	@RequestMapping(value = "/menus")
 	public ModelAndView menus() {
 		ModelAndView mv = new ModelAndView("desmartportal/index");
 		// 判断用户可以发起那些流程的 权限 菜单等
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		SysUser sysUser = new SysUser();
+		sysUser.setUserUid(creator);
+		String userName = sysUserService.findById(sysUser).getUserName();
 		Map<String, List<DhProcessMeta>> resultList = userProcessService.selectByMenusProcess();
 		mv.addObject("listmap",resultList);
 		mv.addObject("userId",creator);
+		mv.addObject("userName",userName);
 		return mv;
 	}
 	

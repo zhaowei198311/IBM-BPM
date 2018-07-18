@@ -30,7 +30,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
         title: '选择人员',
         shadeClose: true,
         shade: 0.3,
-        area: ['615px', '492px'],
+        area: ['695px', '530px'],
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
@@ -202,15 +202,8 @@ $(function () {
             if (data.status == 0) {
                 if (hour == -1) {
                     $(".layui-progress").append('<span class="progress_time">审批已超时</span>');
-                    $(".progress_time").css('right', '4%');
                 } else {
                     $(".layui-progress").append('<span class="progress_time">审批剩余时间' + hour + '小时</span>');
-                    var num = 89 - percent;
-                    if (num > 0) {
-                    	$(".progress_time").css('right', num + '%');
-					} else {
-						$(".progress_time").css('right', '15%');
-					}                
                 }
                 // 加载进度条
                 layui.use('element', function () {
@@ -315,7 +308,8 @@ function processView(insId) {
                 title: '流程图',
                 shadeClose: true,
                 shade: 0.3,
-                area: ['790px', '580px'],
+                offset:"80px",
+                area: ['790px', '530px'],
                 content: result
             });
         }

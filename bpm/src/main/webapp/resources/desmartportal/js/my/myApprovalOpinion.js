@@ -166,7 +166,7 @@ function loadDhroutingRecords(){
 				+"<div>("+(i+1)+")</div>"
 				+"<div>"+result.data.dhRoutingRecords[i].userName+"</div>"
 				+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
-				+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>";
+				+"<div style='height: 36px;'>"+result.data.dhRoutingRecords[i].activityName+"</div>";
 				switch(result.data.dhRoutingRecords[i].routeType){
 					case "submitTask":
 						info += "<div>通过</div>";
