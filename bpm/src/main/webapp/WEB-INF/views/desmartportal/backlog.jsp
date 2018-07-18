@@ -154,14 +154,10 @@
     $(document).ready(function () {
         // 加载数据
         getTaskInstanceInfo();
-        // 定时 去查询我的 代办任务
-        getUserTask();
-        window.setInterval(getUserTask, 60000);
     })
 
     // 刷新
     function refresh() {
-        getUserTask();
         getTaskInstanceInfo();
     }
 
@@ -305,20 +301,6 @@
         }
         $("#proMet_table_tbody").append(trs);
 
-    }
-
-    // 获取用户有多少代办
-    function getUserTask() {
-        $.ajax({
-            url: 'taskInstance/todoTask',
-            type: 'POST',
-            dataType: 'text',
-            data: {},
-            success: function (result) {
-                // 渲染到待办
-            	$("#daiban_icon").text(result);
-            }
-        })
     }
 
     // 打开 代办的 详细页面

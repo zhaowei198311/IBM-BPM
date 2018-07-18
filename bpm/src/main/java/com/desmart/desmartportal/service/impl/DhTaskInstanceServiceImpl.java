@@ -995,12 +995,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	@Override
-	public Integer selectBackLogByusrUid(String usrUid) {
-
-		return dhTaskInstanceMapper.selectBackLogByusrUid(usrUid);
-	}
-
-	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
 			Integer pageNum, Integer pageSize) {
 

@@ -264,7 +264,7 @@
 				</div>
 			</div>
 			<div class="table_container">
-				<p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
+				<p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批信息</p>
 				<div style="padding:10px 20px 20px;">
 					<div class="layui-form" id="approve_div" style="<c:if test="${needApprovalOpinion == false}">display:none;</c:if>">
 						<textarea placeholder="意见留言" class="layui-textarea"
