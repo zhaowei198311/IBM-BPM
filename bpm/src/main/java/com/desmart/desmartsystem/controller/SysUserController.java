@@ -61,6 +61,10 @@ public class SysUserController {
 		return "desmartsystem/usermanagement/globalConfig";
 	}
 	
+	@RequestMapping(value="/test")
+	public String test(){
+		return "desmartsystem/test";
+	}
 	
 	/**
 	 * 用户选择角色
