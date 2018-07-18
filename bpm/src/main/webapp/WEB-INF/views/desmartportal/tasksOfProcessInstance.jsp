@@ -52,111 +52,85 @@
 </style>
 </head>
 <body>
-	<div class="container">
-		<div class="search_area">
-			<div class="layui-row layui-form">
-				<div class="layui-col-xs3">
-					<div class="layui-form-pane">
-						<div class="layui-form-item">
-							<label class="layui-form-label" style="cursor: pointer;">刷新</label>
-							<div class="layui-input-block">
-								<select id="processType" class="layui-input-block group_select" name="group"
-									lay-verify="required">
-									<option value=""></option>
-									<option value="">所有</option>
-									<option value="1">待处理</option>
-									<option value="6">已结束</option>
-									<option value="4">暂停中</option>
-								</select>
-							</div>
+	<div class="layui-fluid">
+		<div class="body_content">
+			<div class="search_area">
+				<div class="layui-row layui-form">
+					<div style="display: none;">
+						<input id="insUid" value="${insUid}" style="display: none;">
+						<input id="proUid" value="${proUid}" style="display: none;">
+						<input id="proAppId" value="${proAppId}" style="display: none;">
+						<input id="proVerUid" value="${proVerUid}" style="display: none;">
+					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">任务实例状态</label>
+						<div class="layui-input-block">
+							<select id="processType" class="layui-input-block group_select" name="group"
+								lay-verify="required">
+								<option value=""></option>
+								<option value="">所有</option>
+								<option value="1">待处理</option>
+								<option value="6">已结束</option>
+								<option value="4">暂停中</option>
+							</select>
 						</div>
 					</div>
-				</div>
-				<div style="display: none;">
-				<input id="insUid" value="${insUid}" style="display: none;">
-<%-- 					<input id="proUid" value="${proUid}" style="display: none;"> --%>
-<%-- 					<input id="proAppId" value="${proAppId}" style="display: none;"> --%>
-<%-- 					<input id="proVerUid" value="${proVerUid}" style="display: none;"> --%>
-				</div>
-				<div class="layui-col-xs2">
-					<input id="processName" type="text" placeholder="流程标题" class="layui-input">
-				</div>
-				<div class="layui-col-xs2">
-								<select id="insInitUser" class="layui-input-block group_select" name="group"
-									lay-verify="required">
-									<option value="">请选择发起人</option>
-									<option value="allUser">全体人员</option>
-									<option value="current">本人</option>
-								</select>
-				</div>
-				<div class="layui-col-xs3" style="text-align: right;">
-					<button class="layui-btn" onclick="queryProcess()">查询</button>
-<!-- 					<button class="layui-btn" onclick="checkedBusinesskey()">发起新流程</button> -->
-					<button class="layui-btn" onclick="back()">返回</button>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程标题</label>
+						<div class="layui-input-block">
+							<input id="processName" type="text" placeholder="流程标题" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程发起人</label>
+						<div class="layui-input-block">
+							<select id="insInitUser" class="layui-input-block group_select" name="group"
+								lay-verify="required">
+								<option value="">请选择发起人</option>
+								<option value="allUser">全体人员</option>
+								<option value="current">本人</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-col-md3" style="text-align: center;">
+						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="queryProcess()">查询</button>
+						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="back()">返回</button>
+					</div>
 				</div>
 			</div>
+			<div>
+				<p class="table_list">
+					<i class="layui-icon">&#xe61d;</i>共<span id="number"></span>条任务
+				</p>
+				<table class="layui-table" lay-even lay-skin="nob">
+					<colgroup>
+						 	<col width="5%">
+						    <col>
+						    <col>
+						    <col>
+						    <col> 
+						    <col> 
+						    <col>
+						    <col>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>序号</th>
+						    <th>流程实例标题</th>
+						    <th>任务标题</th>
+						    <th>任务状态</th>
+						    <th>上一环节提交人</th>
+						    <th>流程发起人</th>
+						    <th>接收时间</th>
+						    <th>处理时间</th>
+						</tr>
+					</thead>
+					<tbody id="processType_table_tbody"/>
+				</table>
+			</div>
+			<div id="lay_page"></div>
 		</div>
-		<div>
-			<p class="table_list">
-				<i class="layui-icon">&#xe61d;</i>共<span id="number"></span>条任务
-			</p>
-			<table class="layui-table" lay-even lay-skin="nob">
-				<colgroup>
-					 	<col width="5%">
-					    <col>
-					    <col>
-					    <col>
-					    <col> 
-					    <col> 
-					    <col>
-					    <col>
-				</colgroup>
-				<thead>
-					<tr>
-						<th>序号</th>
-					    <th>流程实例标题</th>
-					    <th>任务标题</th>
-					    <th>任务状态</th>
-					    <th>上一环节提交人</th>
-					    <th>流程发起人</th>
-					    <th>接收时间</th>
-					    <th>处理时间</th>
-					</tr>
-				</thead>
-				<tbody id="processType_table_tbody"/>
-			</table>
-		</div>
-		<div id="lay_page"></div>
 	</div>
-	<!-- 选择业务关键字 -->
-	 <div id="checkedBusinessKey" style="display: none;" class="display_content_ins_business_key">
-        <div class="top">选择业务关键字</div>
-        <div class="upload_overflow_middle">
-            <div class="layui-upload">
-                <div class="layui-upload-list">
-                    <table class="layui-table">
-                        <colgroup>
-                            <col width="10%">
-                            <col>
-                        </colgroup>
-                        <thead>
-                            <tr>
-                            <th>序号</th>
-                            <th style="text-align: center;">业务关键字</th>
-                            </tr>
-                        </thead>
-                        <tbody class="showBusinessList">
-                        	
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="foot_ins_business_key">
-        	<button class="layui-btn layui-btn sure_btn" onclick="startProcess()">确定</button>
-            <button class="layui-btn layui-btn cancel_btn" onclick="$('#checkedBusinessKey').hide()">取消</button>
-        </div>
-    </div>
 </body>
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>

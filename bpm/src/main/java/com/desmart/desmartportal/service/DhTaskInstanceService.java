@@ -134,12 +134,6 @@ public interface DhTaskInstanceService {
 			Date startTime,
 			Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize);
-	/**
-	 * 根据用户查询待办数量
-	 * @param usrUid
-	 * @return
-	 */
-	Integer selectBackLogByusrUid(String usrUid);
 
 	/**
 	 * 根据条件查询已办

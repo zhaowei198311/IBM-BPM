@@ -66,113 +66,111 @@
 	<div class="layui-fluid">
 		<div class="body_content">
 		<div class="search_area">
-			<div class="layui-row layui-form" style="margin-bottom: 1vw;">
+			<div class="layui-row layui-form">
 				<div style="display: none;">
 					<input id="proUid" value="${proUid}" style="display: none;">
 					<input id="proAppId" value="${proAppId}" style="display: none;">
 					<input id="proName" value="${proName}" style="display: none;">
 				</div>
-				<div class="layui-row layui-form">
-					<div class="layui-col-md3">
-						<label class="layui-form-label">流程实例状态</label>
-						<div class="layui-input-block">
-							<select id="searchType" class="layui-input-block group_select"
-								name="group" lay-verify="required">
-								<option value="">全部</option>
-								<option value="1">运转中</option>
-								<option value="2">完成</option>
-								<option value="3">失败</option>
-								<option value="4">终止</option>
-								<option value="5">未启动</option>
-								<option value="6">暂停</option>
-							</select>
-						</div>
-					</div>
-					<div class="layui-col-md3">
-						<label class="layui-form-label">上一环节处理人</label>
-						<div class="layui-input-block">
-							<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
-						</div>
-					</div>
-					<div class="layui-col-md3">
-						<label class="layui-form-label">流程标题</label>
-						<div class="layui-input-block">
-							<input id="processName" type="text" placeholder="流程实例标题" class="layui-input">
-						</div>
-					</div>
-					<div class="layui-col-md3" style="text-align: center;"> 
-						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="queryProcessInstance()">查询</button>
-						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="checkedBusinesskey()">发起新流程</button>
+				<div class="layui-col-md3">
+					<label class="layui-form-label">流程实例状态</label>
+					<div class="layui-input-block">
+						<select id="searchType" class="layui-input-block group_select"
+							name="group" lay-verify="required">
+							<option value="">全部</option>
+							<option value="1">运转中</option>
+							<option value="2">完成</option>
+							<option value="3">失败</option>
+							<option value="4">终止</option>
+							<option value="5">未启动</option>
+							<option value="6">暂停</option>
+						</select>
 					</div>
 				</div>
-				<div class="layui-row layui-form">
-					<div class="layui-col-md3">
-						<label class="layui-form-label">流程实例创建时间</label>
-						<div class="layui-input-block">
-							<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
-						</div>
+				<div class="layui-col-md3">
+					<label class="layui-form-label">上一环节处理人</label>
+					<div class="layui-input-block">
+						<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
 					</div>
-					<c:forEach var="item" items="${processRetrieveList }" varStatus="st">
-						<c:choose>
-							<c:when test="${item.elementType eq 'input' }">
-							<c:if test="${item.isScope eq 'TRUE'}">
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(min)" class="layui-input is_scope first_input">
-								</div>
-							</div>
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(max)" class="layui-input is_scope">
-								</div>
-							</div>
-							</c:if>
-							<c:if test="${item.isScope eq 'FALSE'}">
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input">
-								</div>
-							</div>
-							</c:if>
-							</c:when>
-							<c:when test="${item.elementType eq 'date' }">
-							<c:if test="${item.isScope eq 'TRUE'}">
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_scope">
-								</div>
-							</div>
-							</c:if>
-							<c:if test="${item.isScope eq 'FALSE'}">
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_no_scope">
-								</div>
-							</div>
-							</c:if>
-							</c:when>
-							<c:when test="${item.elementType eq 'select' }">
-							<div class="layui-col-md3 process-retrieve">
-								<label class="layui-form-label">${item.fieldLabel }</label>
-								<div class="layui-input-block">
-									<select class="layui-input-block group_select"
-										name="${item.fieldName }" lay-verify="required">
-										<option value="">${item.fieldLabel }:全部</option>
-										<c:forEach var="dataItem" items="${item.dictionaryDatas }">
-											<option value="${dataItem.dicDataCode }">${dataItem.dicDataName }</option>
-										</c:forEach>
-									</select>
-								</div>
-							</div>
-							</c:when>
-						</c:choose>
-					</c:forEach>
 				</div>
+				<div class="layui-col-md3">
+					<label class="layui-form-label">流程标题</label>
+					<div class="layui-input-block">
+						<input id="processName" type="text" placeholder="流程实例标题" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-col-md3" style="text-align: center;"> 
+					<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="queryProcessInstance()">查询</button>
+					<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="checkedBusinesskey()">发起新流程</button>
+				</div>
+			</div>
+			<div class="layui-row layui-form">
+				<div class="layui-col-md3">
+					<label class="layui-form-label">流程实例创建时间</label>
+					<div class="layui-input-block">
+						<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
+					</div>
+				</div>
+				<c:forEach var="item" items="${processRetrieveList }" varStatus="st">
+					<c:choose>
+						<c:when test="${item.elementType eq 'input' }">
+						<c:if test="${item.isScope eq 'TRUE'}">
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(min)" class="layui-input is_scope first_input">
+							</div>
+						</div>
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<input onkeyup="doVersion(this);" name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }(max)" class="layui-input is_scope">
+							</div>
+						</div>
+						</c:if>
+						<c:if test="${item.isScope eq 'FALSE'}">
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input">
+							</div>
+						</div>
+						</c:if>
+						</c:when>
+						<c:when test="${item.elementType eq 'date' }">
+						<c:if test="${item.isScope eq 'TRUE'}">
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_scope">
+							</div>
+						</div>
+						</c:if>
+						<c:if test="${item.isScope eq 'FALSE'}">
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<input name ="${item.fieldName }" type="text" placeholder="${item.fieldLabel }" class="layui-input date_no_scope">
+							</div>
+						</div>
+						</c:if>
+						</c:when>
+						<c:when test="${item.elementType eq 'select' }">
+						<div class="layui-col-md3 process-retrieve">
+							<label class="layui-form-label">${item.fieldLabel }</label>
+							<div class="layui-input-block">
+								<select class="layui-input-block group_select"
+									name="${item.fieldName }" lay-verify="required">
+									<option value="">${item.fieldLabel }:全部</option>
+									<c:forEach var="dataItem" items="${item.dictionaryDatas }">
+										<option value="${dataItem.dicDataCode }">${dataItem.dicDataName }</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+						</c:when>
+					</c:choose>
+				</c:forEach>
 			</div>
 		</div>
 		<div>

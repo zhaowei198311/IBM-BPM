@@ -240,18 +240,13 @@
 	<!-- 用户查询代办 -->
 	<select id="selectByusrUid" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
-		SELECT COUNT(*)
-		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S 
-		<where>
-		T.INS_UID = P.INS_UID 
-			AND P.INS_INIT_USER = S.USER_ID
-			AND T.TASK_STATUS IN ('12','-2')
-			AND T.TASK_TYPE IN ('normal','simpleLoop','multiInstanceLoop'
-			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-			 	AND (T.USR_UID = #{usrUid}
-			or T.TASK_DELEGATE_USER = #{usrUid} )
-		</where>
+		SELECT count(task_uid)
+		FROM DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		where T.INS_UID = P.INS_UID 
+		AND P.INS_INIT_USER = S.USER_ID 
+		AND  T.TASK_STATUS IN ('12','-2') 
+		AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop','add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+		and T.USR_UID = #{usrUid}
 	</select>
 
 	<!-- 用户查询代办 -->
@@ -713,18 +708,6 @@
 		</where>
 		ORDER BY P.INS_CREATE_DATE DESC
 	</select>
-	<!-- 用户查询待办 -->
-	<select id="selectBackLogByusrUid" parameterType="java.lang.String"
-		resultType="java.lang.Integer">
-		SELECT COUNT(*)
-		FROM
-		DH_TASK_INSTANCE
-		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS IN ('12','-2')
-			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
-			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-		</where>
-	</select>
 	
 	<select id="selectPageTaskByClosedByCondition" 
 	parameterType="map"
@@ -798,14 +781,15 @@
 	<!-- 用户查询已办 -->
 	<select id="alreadyClosedTaskByusrUid" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
-		SELECT COUNT(*)
+		SELECT COUNT(task_uid)
 		FROM
-		DH_TASK_INSTANCE
-		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS = '32'
-			AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		where T.INS_UID = P.INS_UID 
+			AND P.INS_INIT_USER = S.USER_ID
+			AND TASK_STATUS = '32'
+			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-		</where>
+			AND USR_UID = #{usrUid}
 	</select>
 	
 	<!-- 查询抄送任务 （未读/已读）-->

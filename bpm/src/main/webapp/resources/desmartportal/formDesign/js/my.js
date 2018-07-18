@@ -131,7 +131,7 @@ function drawPage() {
 					tableObj.append("<tbody>" + trHtml + "</tbody>");
 					formHtml += "<div class='table_container'><p class='title_p'>" + tableLabel
 						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p>"
-						+"<div style='padding:0px 20px 5px;margin-bottom:10px;'><table class='layui-table data-table basic_information' lay-skin='nob' name='"
+						+"<div style='padding:0px 20px 5px;margin-bottom:10px;'><table class='layui-table data-table basic_information' name='"
 						+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
 						+ "</table></div></div>";
 					formHtml += tableHead;
@@ -159,8 +159,8 @@ function drawPage() {
 							var subHtml = subDivObj.html();
 							formHtml += '<td class="td_sub_explain" colspan=' + subDivCol + '>' + subHtml + '</td>';
 						} else {//表格行的头部
-							var subHtml = subDivObj.html();
-							formHtml += '<td class="td_sub" rowspan=' + subDivRow + '>' + subHtml + '</td>';
+							var subHtml = subDivObj.text();
+							formHtml += '<td><p>'+ subHtml + '</p></td>'
 							isContinue = true;
 						}
 					}
@@ -241,9 +241,7 @@ function drawPage() {
 				flag = true;
 				if (isContinue) {
 					column.find(".subDiv").each(function (index) {
-						if (index != 0) {
-							formHtml += '<tr>';
-						}
+						formHtml += '<tr>';
 						var labelDivObj = $(column.find(".labelDiv")[index]);
 						var labelDivCol = labelDivObj.attr("col");
 						var subDivObj = $(column.find(".subDiv")[index]);
@@ -270,7 +268,7 @@ function drawPage() {
 						}
 
 						if (!isNaN(labelDivCol)) {
-							formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:240px">' + labelHtml + '</td>';
+							formHtml += '<td class="td_title" colspan=' + labelDivCol + ' style="width:200px">' + labelHtml + '</td>';
 						}
 
 						if (!isNaN(subDivCol)) {

@@ -189,15 +189,6 @@ public class DhTaskInstanceController {
 				, endTime, dhTaskInstance, pageNum, pageSize);
 	}
 	
-	@RequestMapping("/todoTask")
-	@ResponseBody
-	public Integer todoTask(String userId) {
-		if(userId==null) {
-			userId  = String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		}
-		return dhTaskInstanceService.selectBackLogByusrUid(userId);
-	}
-	
 	@RequestMapping("/loadPageTaskByClosed")
 	@ResponseBody
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosed(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime

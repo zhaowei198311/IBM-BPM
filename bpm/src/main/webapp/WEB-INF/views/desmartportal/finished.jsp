@@ -178,7 +178,6 @@
 			getTaskInstanceInfo();
 			// 定数刷新
 			getUserTask();
-			window.setInterval(getUserTask, 60000);
 		})
 		
 		// 获取用户有多少已办
@@ -259,8 +258,8 @@
 				}
 				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ '<td>' + sortNum + '</td>'
-					+'<td><span onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
-					+ '<td onclick=openFinishedDetail("'+meta.taskUid+'")>'
+					+'<td><span style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
+					+ '<td>'
 					+ meta.taskTitle 
 					+ '</td>' 
 					+ '<td>';

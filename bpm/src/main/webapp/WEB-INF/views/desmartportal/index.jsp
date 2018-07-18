@@ -75,7 +75,10 @@
 									</a>
 									<dl class="layui-nav-child">
 										<dd id="approvalTask" class="layui-this">
-											<a href="menus/backlog" target="iframe0" class="typeColor">待办任务</a>
+											<a href="menus/backlog" target="iframe0" class="typeColor">
+												待办任务
+												<span class="layui-badge" id="daiban_icon">0</span>
+											</a>
 										</dd>
 										<dd id="finishedTask">
 											<a href="menus/finishProcess" target="iframe0" class="typeColor">已办任务</a>
@@ -120,7 +123,7 @@
 			</div>
 			<div class="layui-body" id="LAY_app_body" style="margin-bottom: 40px;">
 				<div class="layadmin-tabsbody-item layui-show">
-					<iframe src="menus/backlog" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
+					<iframe src="menus/backlog" id="frameContent" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
 						<input id="userId" value="${userId}" style="display: none;">
 						<!--  -->
@@ -164,6 +167,7 @@
 			
 			getUserTask();
 			// 定时 去查询我的 代办任务
+			//window.setTimeout(getUserTask, 100);
 			window.setInterval(getUserTask, 30000);
 
 			$(".layui-nav-item a").mouseover(
@@ -256,8 +260,16 @@
 					// 渲染到待办
 					if (result == 0) {
 						$("#daiban_icon").css("display", "none");
+						window.setTimeout(function(){
+							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
+							$(daibanObj).text(result);
+						},10);
 					} else if (result > 0) {
 						$("#daiban_icon").text(result);
+						window.setTimeout(function(){
+							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
+							$(daibanObj).text(result);
+						},10);
 					} else {
 						layer.msg("登陆超时！请重新登陆！", function () {
 							window.location.reload();
