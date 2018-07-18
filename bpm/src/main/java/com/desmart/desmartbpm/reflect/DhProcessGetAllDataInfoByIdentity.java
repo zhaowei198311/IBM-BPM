@@ -15,7 +15,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 
 /**
- * 通过标识符数组从目标流程的流程实例中获取数据 参数格式 { "data":[ { "identity": "第一个标识", "exchange": [ {
+ * 通过标识符数组从目标流程的流程实例中获取数据 参数格式 { "data":[ { "identity": "第一个标识":"exchange": [ {
  * "isOverrides":"TRUE" //是否覆盖当前数据TRUE/FALSE } ] } ]
  * 
  * }
