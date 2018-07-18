@@ -563,6 +563,8 @@ jQuery.fn.desNumber = function () {
 			this.value = this.value.slice(0, this.value.length - 1);
 		}else if(/^[\u4e00-\u9fa5]/.test(this.value)){
 			this.value = "";
+		}else if(/^[a-zA-Z]/.test(this.value)){
+			this.value = "";
 		}
 	});
 };

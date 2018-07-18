@@ -818,7 +818,7 @@ var common = {
 			
 			if(value=="" || value==null){
 				var eleId = $("[name='"+name+"']").prop("id");
-				var Y = $('#'+eleId).offset().top-100;
+				var Y = $('#'+eleId).offset().top-170;
 				$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请填写必填项 "+text, {icon: 2});
