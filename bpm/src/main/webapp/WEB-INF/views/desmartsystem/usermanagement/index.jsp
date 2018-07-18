@@ -33,7 +33,7 @@
                          <li class="layui-nav-item">
                         	<a href="interfaces/index" target="iframe0"><i class="layui-icon">&#xe614;</i> 接口管理</a>
                         </li>
-                        <li class="layui-nav-item"><a href="<%=basePath%>/dfkd" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
+                        <li class="layui-nav-item"><a href="<%=basePath%>/trigger/index" target="iframe0"><i class="layui-icon">&#xe6b2;</i> 触发器管理</a></li>
                         <li class="layui-nav-item">
                         	<a href="quarz/quarzList" target="iframe0"><i class="layui-icon">&#xe857;</i>定时任务管理</a>
                         </li>
