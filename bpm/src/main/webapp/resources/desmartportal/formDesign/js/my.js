@@ -131,7 +131,7 @@ function drawPage() {
 					tableObj.append("<tbody>" + trHtml + "</tbody>");
 					formHtml += "<div class='table_container'><p class='title_p'>" + tableLabel
 						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p>"
-						+"<div style='padding:0px 20px 5px;margin-bottom:10px;'><table class='layui-table data-table basic_information' lay-skin='nob name='"
+						+"<div style='padding:0px 20px 5px;margin-bottom:10px;'><table class='layui-table data-table basic_information' lay-skin='nob' name='"
 						+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
 						+ "</table></div></div>";
 					formHtml += tableHead;
