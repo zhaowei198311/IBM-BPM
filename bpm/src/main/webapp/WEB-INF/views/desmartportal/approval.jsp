@@ -178,7 +178,7 @@
         <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
         <input id="insUid" value="${processInstance.insUid}" style="display: none;">
         <input id="insId" value="${processInstance.insId}" style="display: none;">
-        <input id="userName" style="display: none;" value="${processInstance.initUserFullname}" />
+        <input id="userName" style="display: none;" value="${taskInstance.usrUid}" />
         <input id="insBusinessKey" style="display: none;" value="${processInstance.insBusinessKey}" />
         <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
         <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
