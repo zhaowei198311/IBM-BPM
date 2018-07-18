@@ -18,74 +18,94 @@
   		<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
 	</head>
 	<body>
-		<div class="container">
-			<div class="search_area">
-				<div class="layui-row layui-form">
-					<div class="layui-col-xs1">
-					    <div class="layui-form-pane">
-					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>    
-					       </div>					    	     
-					    </div>
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="流程创建人姓名"  class="layui-input" id="task-createProcessUserName-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="上一环节处理人姓名"  class="layui-input" id="task-taskPreviousUsrUsername-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="流程实例标题"  class="layui-input" id="task-insTitle-search">
-					</div>
-				<!-- </div>
-				<div class="layui-row layui-form"> -->
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
-					</div>
-					<div class="layui-col-xs1">
-					    <div class="layui-form-pane"  style="float: right;">
-					    	<div class="layui-form-item">
-					    	<div class="layui-col-xs1" >
-					        <button class="layui-btn" onclick="search()">查询</button>
+		<div class="layui-fluid">
+	        <div class="backlog_div">
+	            <div class="layui-row">
+	                <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
+	                    <div class="backlog_title">我的已办</div>
+	                    <div class="backlog_detail"><span id="yiban_icon">3</span>个任务</div>
+	                </div>
+	                <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
+	                    <div class="backlog_title">本周任务平均处理时间</div>
+	                    <div class="backlog_detail">1天32分钟</div>
+	                </div>
+	                <div class="layui-col-md4">
+	                    <div class="backlog_title">本周完成任务数</div>
+	                    <div class="backlog_detail">24个任务</div>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="body_content">
+	        	<div class="search_area">
+	        		<div class="layui-row layui-form">
+						<div class="layui-col-md3">
+							<label class="layui-form-label">流程创建人</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="流程创建人姓名" class="layui-input" id="task-createProcessUserName-search">
 							</div>
-					        </div>					    	     
-					    </div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">上一环节处理人</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
+							</div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">流程标题</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="流程实例标题" class="layui-input" id="task-insTitle-search">
+							</div>
+						</div>
+						<div class="layui-col-md3" style="text-align: center;"> 
+							<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="search()">查询</button>
+							<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="resetSearch()">重置</button>
+						</div>
 					</div>
+					<div class="layui-row">
+						<div class="layui-col-md3">
+							<label class="layui-form-label">开始时间</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="开始时间" class="layui-input" id="init-startTime-search">
+							</div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">结束时间</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
+							</div>
+						</div>
+					</div>
+	        	</div>
+	        	<div style="margin-top:5px;">
+					<table class="layui-table backlog_table" lay-even lay-skin="nob">
+						<colgroup>
+						    <col>
+						    <col>
+						    <col>
+						    <col>
+						    <col> 
+						    <col> 
+						    <col>
+						</colgroup>
+						<thead>
+						    <tr>
+						      <th>序号</th>
+						      <th>流程标题</th>
+						      <th>任务标题</th>
+						      <th>上一环节提交人</th>
+						      <th>流程发起人</th>
+						      <!-- <th>任务类型</th> -->
+						      <th>接收时间</th>
+						      <th>处理时间</th>
+						      <th>跟踪</th>
+						    </tr> 
+						</thead>
+						<tbody id="proMet_table_tbody" />
+					</table>
 				</div>
-			</div>
-			<div>
-				<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="yiban_icon"></span>条任务</p>
-				<table class="layui-table backlog_table" lay-even lay-skin="nob">
-					<colgroup>
-					    <col>
-					    <col>
-					    <col>
-					    <col>
-					    <col> 
-					    <col> 
-					    <col>
-					</colgroup>
-					<thead>
-					    <tr>
-					      <th>序号</th>
-					      <th>流程标题</th>
-					      <th>任务标题</th>
-					      <th>上一环节提交人</th>
-					      <th>流程发起人</th>
-					      <!-- <th>任务类型</th> -->
-					      <th>接收时间</th>
-					      <th>处理时间</th>
-					      <th>跟踪</th>
-					    </tr> 
-					</thead>
-					<tbody id="proMet_table_tbody" />
-				</table>
-			</div>
-			<div id="lay_page"></div>
-		</div>
+				<div id="lay_page"></div>
+	        </div>
+        </div>
 		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
 		<!--IE8只能支持jQuery1.9-->
@@ -220,13 +240,15 @@
 			for (var i = 0; i < list.length; i++) {
 				var meta = list[i];
 				var sortNum = startSort + i;
-				var meta = list[i];
 				var agentOdate = new Date(meta.taskInitDate);
 				var InitDate = datetimeFormat_1(agentOdate);
-					//agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
-				var agentOdate1 = new Date(meta.taskFinishDate);
-				var finishDate = datetimeFormat_1(agentOdate1);
-					//agentOdate1.getFullYear()+"-"+(agentOdate1.getMonth()+1)+"-"+agentOdate1.getDate()+"   "+agentOdate1.getHours()+":"+agentOdate1.getMinutes()+":"+agentOdate1.getSeconds();
+				//agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
+				var finishDate = "";
+				if(meta.taskFinishDate!=null && meta.taskFinishDate!=""){
+					var agentOdate1 = new Date(meta.taskFinishDate);
+					finishDate = datetimeFormat_1(agentOdate1);
+				}
+				//agentOdate1.getFullYear()+"-"+(agentOdate1.getMonth()+1)+"-"+agentOdate1.getDate()+"   "+agentOdate1.getHours()+":"+agentOdate1.getMinutes()+":"+agentOdate1.getSeconds();
 				var insTitle = meta.dhProcessInstance.insTitle;
 				var insId = meta.dhProcessInstance.insId;
 				/* if(meta.taskType=='normal'){
@@ -319,11 +341,20 @@
 		                type: 2,
 		                title: '流程图',
 		                shadeClose: true,
+		                offset:"50px",
 		                shade: 0.3,
-		                area: ['790px', '580px'],
+		                area: ['790px', '570px'],
 		                content: result
 		            });
 		        }
 		    });
 		}
+		//重置模糊查询的条件
+	    function resetSearch(){
+	    	 $("#task-createProcessUserName-search").val("");
+	         $("#task-taskPreviousUsrUsername-search").val("");
+	         $("#task-insTitle-search").val("");
+	         $("#init-startTime-search").val("");
+	         $("#init-endTime-search").val("");
+	    }
 	</script>

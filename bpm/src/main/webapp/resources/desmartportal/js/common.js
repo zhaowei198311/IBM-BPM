@@ -609,11 +609,13 @@ var common = {
 	},
 	//标题字段的可见性、可编辑性控制
 	titlePermissionNoPrint:function(json){
+		console.log(json);
 		for(var name in json){
 			var paramObj = json[name];
 			var display = paramObj["display"];
 			var edit = paramObj["edit"];
 			if(edit=="no"){
+				console.log($("[name='"+name+"']").prop("tagName"));
 				if($("[name='"+name+"']").prop("tagName")=="P"){
 					var pTitle = $("[name='"+name+"']")[0].firstChild.data.trim();
 					var tableArr = $("#formSet").find(".layui-table");
