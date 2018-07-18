@@ -675,6 +675,8 @@
 			}
 		}
 		
+		var bbb=0;
+		console.log(bbb=="0");
 		
 		//打开系统角色绑定
 		function openSystemRoleBinding(userUid,departUid){
