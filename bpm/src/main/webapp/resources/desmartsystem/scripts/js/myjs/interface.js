@@ -198,9 +198,7 @@ function drawTable(pageInfo, data) {
 				+ '<td>'
 				+ meta.intType
 				+ '</td>'
-				+ '<td id="requestUrl" onclick=urls("'
-				+ meta.intUrl
-				+ '")>'
+				+ '<td id="requestUrl" class="txt-ell">'
 				+ meta.intUrl
 				+ '</td>'
 				+ '<td>'
@@ -212,7 +210,7 @@ function drawTable(pageInfo, data) {
 				+ '<td>'
 				+ '<i class="layui-icon" title="复制接口" onclick=copyInterface("'+ meta.intUid + '"); ><img src="resources/desmartsystem/images/face/copy.png" style="height:16px; width:16px;margin-right:4px;margin-bottom:4px;" /></i>'
 				//+ '<i class="layui-icon"  title="接口测试" style="font-size:16px;" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input")  >&#xe64c;</i>'
-				+ '<i class="layui-icon" title="接口测试" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input"); ><img src="resources/desmartsystem/images/interface.png" style="height:16px; width:16px;margin-bottom:4px;" /></i>'
+				+ '<i class="layui-icon" title="接口测试" onclick=textInterface("'+ meta.intUid + '","' + encodeURI(meta.intTitle)+ '","input"); ><img src="resources/desmartsystem/images/interface.png" style="height:16px; width:16px;margin-bottom:4px;" /></i>'
 				+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
 				+ '<i class="layui-icon"  title="删除接口"  onclick=del("'+ meta.intUid + '") >&#xe640;</i>'
 				+ '<i class="layui-icon" style="font-size:17px;"  title="绑定参数"  onclick=info("'+ meta.intUid + '")>&#xe716;</i>' + '</td>' + '</tr>'
@@ -269,8 +267,7 @@ function add() {
 
 function del(intUid) {
 	layer.confirm('是否删除该接口？', {
-		btn : [ '确定', '取消' ], // 按钮
-		shade : false
+		btn : [ '确定', '取消' ]
 	// 不显示遮罩
 	}, function(index) {
 		// 提交表单的代码，然后用 layer.close 关闭就可以了，取消可以省略 ajax请求

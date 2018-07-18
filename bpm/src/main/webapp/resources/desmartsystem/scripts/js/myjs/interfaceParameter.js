@@ -32,7 +32,6 @@ function textInterface(intUid,intTitle,paraInOut){
     });
 }
 
-
 function search(form){
 	var $form = $(form);
 	var _submitFn = function(){
@@ -186,11 +185,13 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	form.on('select(intType)', function(data){
 		var value=data.value;
 		interfaceInputShowAndHide(value,'');
+		alert('11');
 	});
 	
 	form.on('select(intType1)', function(data){
 		var value=data.value;
 		interfaceInputShowAndHide(value,'1');
+		alert('22');
 	});
 	
 	form.on('select(paraType1)', function(data){
