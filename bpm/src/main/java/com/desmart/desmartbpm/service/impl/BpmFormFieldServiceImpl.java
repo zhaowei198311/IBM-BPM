@@ -1,7 +1,5 @@
 package com.desmart.desmartbpm.service.impl;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -182,9 +180,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 				}else {
 					String opAction = objPer.getOpAction();
-					if(opAction.equals("EDIT")) {
-						continue;
-					}else if(opAction.equals("HIDDEN")){
+					if(opAction.equals("HIDDEN")){
 						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
 					}else {
 						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
@@ -204,9 +200,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
 				}else {
 					String opAction = objPer.getOpAction();
-					if(opAction.equals("EDIT")) {
-						continue;
-					}else if(opAction.equals("HIDDEN")){
+					if(opAction.equals("HIDDEN")){
 						jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
 					}else {
 						jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
