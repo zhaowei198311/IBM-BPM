@@ -4,6 +4,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhTransferData;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartbpm.service.DhTransferService;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 管理导入导出的控制器
@@ -50,29 +53,40 @@ public class DhTranserController {
                 return turnIntoResponse;
             }
             DhTransferData transferData = turnIntoResponse.getData();
+            // 对数据进行初步校验
             ServerResponse validateResponse = dhTransferService.validateTransferDataForImportProcessDefinition(transferData);
             if (!validateResponse.isSuccess()) {
                 return validateResponse;
             }
-            // 文件基本校验通过
-            // 将文件数据保存在session中
-            session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
             DhProcessDefinition processDefinition = transferData.getProcessDefinitionList().get(0);
             String proAppId = processDefinition.getProAppId(),
                     proUid = processDefinition.getProUid(),
                     proVerUid = processDefinition.getProVerUid();
 
             DhProcessMeta processMeta = dhProcessMetaService.getByProAppIdAndProUid(proAppId, proUid);
+            // 在引擎的库中查找此快照
+            LswSnapshot lswSnapShot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(proVerUid);
+            if (lswSnapShot == null ) {
+                return ServerResponse.createByErrorMessage("请先在流程引擎中导入此快照");
+            }
             if (processMeta == null) {
                 return ServerResponse.createByErrorMessage("请先添加流程元数据");
             }
+            // 将文件数据保存在session中
+            session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+            Map<String, String> data = new HashMap<>();
+            data.put("proName", processMeta.getProName());
+            data.put("snapshotName", lswSnapShot.getName());
+
             DhProcessDefinition definitionInDb = dhProcessDefinitionService.getDhProcessDefinition(proAppId, proUid, proVerUid);
             if (definitionInDb == null) {
                 // 属于新加的流程
-                return ServerResponse.createBySuccess("new");
+                data.put("exists", "FALSE");
+                return ServerResponse.createBySuccess(data);
             } else {
                 // 确认是否需要覆盖
-                return ServerResponse.createBySuccess("override");
+                data.put("exists", "TRUE");
+                return ServerResponse.createBySuccess(data);
             }
         } catch (Exception e) {
             LOG.error("尝试导入流程失败", e);
@@ -83,7 +97,6 @@ public class DhTranserController {
 
     /**
      * 导入一个流程定义
-     * @param file 导入的文件
      * @return
      */
     @RequestMapping(value = "/sureImportProcessDefinition")

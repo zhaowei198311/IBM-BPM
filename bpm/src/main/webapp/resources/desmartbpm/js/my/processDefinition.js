@@ -50,9 +50,8 @@ $(function() {
 	}
 
     layui.use('upload', function () {
-        var $ = layui.jquery,
-            upload = layui.upload;
-        upload.render({
+
+        layui.upload.render({
             elem: $("#importBtn"),
             url: importProcessDefinition.URL.tryImportDefinition,
             data: {
@@ -63,12 +62,13 @@ $(function() {
                 layer.load(1);
             },
             done: function (result) {
-            	console.log(result.data);
                 layer.closeAll('loading');
             	if (result.status == 0) {
-                    if (result.data == 'new') {
+            		var data = result.data;
+                    if (data.exists == 'FALSE') {
                     	// 发现是新流程定义
-                        var confirmIndex = layer.confirm('请确认导入流程定义', {
+                        var confirmIndex = layer.confirm('<p>请确认导入流程定义</p><p><b>流程名：</b>' + data.proName + '</p>'
+							+ '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
                             btn: ['导入', '取消']
                         }, function () {
                             importProcessDefinition.importProcessDefinition();
@@ -78,7 +78,8 @@ $(function() {
                         });
 					} else {
 						// 发现已有此流程定义
-                        var confirmIndex = layer.confirm('流程定义已存在，是否要覆盖原配置', {
+                        var confirmIndex = layer.confirm('<p>流程定义已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>流程名：</b>' + data.proName + '</p>'
+                            + '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
                             btn: ['覆盖', '取消']
                         }, function () {
                             importProcessDefinition.importProcessDefinition();
@@ -346,11 +347,6 @@ $(function() {
 		};
         downLoadFile(common.getPath() + '/processDefinition/exportProcessDefinition', param);
 	});
-
-	$("#importBtn").click(function() {
-
-	});
-
 
 	// “流程配置”按钮
     $("#toEditDefinition_btn")
