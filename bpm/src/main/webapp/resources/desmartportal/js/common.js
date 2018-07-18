@@ -767,12 +767,15 @@ var common = {
 	},
 	//验证动态表单必填项
 	validateFormMust:function(id){
-		var mustObjArr = $("#formSet table .tip_span");
+		var mustObjArr = $("#formSet table:visible").find(" .tip_span");
 		var value = "";
 		var name = "";
 		var flag = true;
 		for(var i=0;i<mustObjArr.length;i++){
 			var mustObj = $(mustObjArr[i]);
+			if(mustObj.css("display")=="none"){
+				continue;
+			}
 			var inputObj = $(mustObj.parent().next().find("input")[0]);
 			var selectObj = $(mustObj.parent().next().find("select")[0]);
 			var textareaObj = $(mustObj.parent().next().find("textarea")[0]);
