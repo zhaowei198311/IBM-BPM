@@ -28,8 +28,16 @@
 table{
 	table-layout:fixed;
 }
-#arryParameterDiv3 table{
+/* #arryParameterDiv3 table{ */
+/* 	table-layout:auto; */
+/* } */
+
+#arryParameterDiv table{
 	table-layout:auto;
+}
+
+.boundInterfaceParameter{
+	left:46%
 }
 
 .cancel2_btn{margin-top:15px}
@@ -109,12 +117,12 @@ table{
 			<div class="top">接口参数配置</div>
 			<button class="layui-btn layui-btn-sm"
 				style="float: right; margin: 0 15px 15px 0;" onclick="add();">添加</button>
-			<div class="middle1">
+			<div class="middle1" style="height:360px;">
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
 					<colgroup>
 						<col width="5%">
 						<col width="8%">
-						<col width="8%">
+						<col width="10%">
 						<col width="8%">
 						<col width="8%">
 						<col width="8%">
@@ -578,15 +586,17 @@ table{
 				    <i class="layui-icon">&#xe654;</i>
 				  </button>
 				</div>
-				<div class="middle1">
+				<div class="middle1" style="width: 599px;">
 					<table class="layui-table backlog_table"
 						lay-even lay-skin="nob">
 						<colgroup>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
+							<col width="15%">
+							<col width="15%">
+							<col width="14%">
+							<col width="14%">
+							<col width="14%">
+							<col width="14%">
+							<col width="13%">
 						</colgroup>
 						<thead>
 							<tr>
@@ -637,7 +647,7 @@ table{
 				<div class="layui-inline">
 					<label class="layui-form-label">参数类型*:</label>
 					<div class="layui-input-inline">
-						<select name="paraType" class="require" lay-filter="paraInOut" >
+						<select name="paraType" class="require" lay-filter="paraType1" >
 							<option value="String">String</option>
 							<option value="Integer">Integer</option>
 							<option value="Double">Double</option>
