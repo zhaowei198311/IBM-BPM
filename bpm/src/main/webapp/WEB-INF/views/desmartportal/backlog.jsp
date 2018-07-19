@@ -24,15 +24,15 @@
             <div class="layui-row">
                 <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
                     <div class="backlog_title">我的待办</div>
-                    <div class="backlog_detail"><span id="daiban_icon">3</span>个任务</div>
+                    <div class="backlog_detail"><span id="daiban_icon">0</span>个任务</div>
                 </div>
                 <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
                     <div class="backlog_title">本周任务平均处理时间</div>
-                    <div class="backlog_detail">1天32分钟</div>
+                    <div class="backlog_detail">0分钟</div>
                 </div>
                 <div class="layui-col-md4">
                     <div class="backlog_title">本周完成任务数</div>
-                    <div class="backlog_detail">24个任务</div>
+                    <div class="backlog_detail">0个任务</div>
                 </div>
             </div>
         </div>

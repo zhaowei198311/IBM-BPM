@@ -9,7 +9,7 @@
   <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 <![endif]-->
 <%@include file="head.jsp"%>
-<link href="<%=basePath%>/resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet">
+<%-- <link href="<%=basePath%>/resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet"> --%>
 <link href="<%=basePath%>/resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css" rel="stylesheet">
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/js/common.js"></script>

@@ -19,6 +19,16 @@
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+    <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+	<!-- 附件上传js -->
+	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
+	<!-- 审批信息js -->
+	<script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
+	
+	<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/my/finished_detail.js"></script>
     <style type="text/css">
         .container-fluid {
             padding-right: 0px;
@@ -404,13 +414,3 @@
 	</div>
 </body>
 </html>
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
-<!-- 附件上传js -->
-<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
-<!-- 审批信息js -->
-<script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
-
-<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/my/finished_detail.js"></script>
