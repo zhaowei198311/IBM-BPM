@@ -146,7 +146,7 @@
                 <span class="table_title">${bpmForm.dynTitle}</span>
             </div>
             <div class="layui-col-md6">
-            	<span id="test" style="float: right; padding-right: 20px;">
+            	<span id="test" style="float: right; padding-right: 40px;">
 		        	<button class="layui-btn layui-btn-sm layui-btn-normal" onclick="approvalCompletion()">提交</button>
 		            <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="processView(${processInstance.insId})">流程图</button>
 		            <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="back()">退出</button>

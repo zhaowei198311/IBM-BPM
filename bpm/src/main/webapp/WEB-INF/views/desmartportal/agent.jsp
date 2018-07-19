@@ -170,45 +170,50 @@
 <title>代理设置页面</title>
 </head>
 <body>
-	<div class="layui-container" style="margin-top: 20px; width: 100%;">
-		<div class="search_area">
-			<div class="layui-row layui-form">
-				<div class="layui-col-md3">
-					<input id="agentPerson" type="text" placeholder="代理人" class="layui-input" style="width:250px;">
-				</div>
-				<div class="layui-col-md3" style="text-align: left; width: 200px">
-					<button class="layui-btn select_btn" onclick="search()">查询</button>
-					<button class="layui-btn select_btn" onclick="add()">新增</button>
+	<div class="layui-fluid">
+		<div class="body_content">
+            <div class="search_area">
+				<div class="layui-row layui-form">
+					<div class="layui-col-md3">
+						<label class="layui-form-label">代理人</label>
+						<div class="layui-input-block">
+							<input id="agentPerson" type="text" placeholder="代理人" class="layui-input" style="width:250px;">
+						</div>
+					</div>
+					<div class="layui-col-md3" style="text-align: center;"> 
+						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="search()">查询</button>
+						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="add()">新增</button>
+					</div>
 				</div>
 			</div>
+			<div style="margin-top: 5px;">
+				<table class="layui-table backlog_table layui-form" lay-even lay-skin="nob"
+					lay-filter="demo" style="table-layout: fixed;">
+					<colgroup>
+						<col width="9%">
+						<col width="25%">
+						<col width="18%">
+						<col width="18%">
+						<col width="10%">
+						<col width="10%">
+						<col width="10%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="allSel" onclick="onClickHander(this);" lay-ignore> 序号</th>
+							<th class="process_name_td">代理的流程名称</th>
+							<th>代理开始时间</th>
+							<th>代理结束时间</th>
+							<th>代理人</th>
+							<th>代理状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="agent_table_tbody"></tbody>
+				</table>
+			</div>
+			<div id="lay_page"></div>
 		</div>
-		<div>
-			<table class="layui-table backlog_table layui-form" lay-even lay-skin="nob"
-				lay-filter="demo" style="table-layout: fixed;">
-				<colgroup>
-					<col width="9%">
-					<col width="25%">
-					<col width="18%">
-					<col width="18%">
-					<col width="10%">
-					<col width="10%">
-					<col width="10%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th><input type="checkbox" name="allSel" onclick="onClickHander(this);" lay-ignore> 序号</th>
-						<th class="process_name_td">代理的流程名称</th>
-						<th>代理开始时间</th>
-						<th>代理结束时间</th>
-						<th>代理人</th>
-						<th>代理状态</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody id="agent_table_tbody"></tbody>
-			</table>
-		</div>
-		<div id="lay_page"></div>
 	</div>
 	
 	<!-- 新增代理信息 -->
@@ -477,6 +482,7 @@
 	    	    title: '选择流程',
 	    	    shadeClose: true,
 	    	    shade: 0.3,
+	    	    offset:"50px",
 	    	    area: ['600px', '540px'],
 	    	    content: $("#choose_agent_process_box"),
 	    	    cancel: function(index, layero){ 
@@ -493,6 +499,10 @@
 	    	    		$("#choose_agent_process_box").css("display","none");
 	    	    		layer.close(lockIndex);
 	    	        });
+	    	    },
+	    	    end:function(layero, lockIndex){
+	    	    	$("#choose_agent_process_box").css("display","none");
+	    	    	layer.close(lockIndex);
 	    	    }
 			});
 		});//end click
@@ -520,6 +530,10 @@
 	    	    		$("#update_choose_agent_process_box").css("display","none");
 	    	    		layer.close(lockIndex);
 	    	        });
+	    	    },
+	    	    end:function(layero, lockIndex){
+	    	    	$("#update_choose_agent_process_box").css("display","none");
+	    	    	layer.close(lockIndex);
 	    	    }
 			});
 		});//end click

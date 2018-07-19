@@ -22,6 +22,7 @@
 	<![endif]-->
     <title>待办任务</title>
     <%@include file="common/mobile_head.jsp" %>
+    <script type="text/javascript" src="resources/desmartportal/js/my/mobile_approval.js"></script>
 </head>
 <body style="background-color: #f2f2f2;margin-bottom:40px;">
     <div class="mobile_container">

@@ -172,7 +172,11 @@ function drawTable(data) {
 			+'<tr>'
 			+'<th colspan="2">';
 		
-		liHtml+=taskProgerss(meta.taskActivityId,meta.taskUid);
+		if(meta.taskType=="normal"){
+			liHtml+=taskProgerss(meta.taskActivityId,meta.taskUid);
+		}else{
+			liHtml+=taskProgerss("",meta.taskUid);
+		}
 			
 		liHtml+='</th>'
 			+'</tr>'
