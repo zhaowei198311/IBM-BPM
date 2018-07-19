@@ -44,9 +44,10 @@ public class DhProcessGetAllDataInfoOnFirstMeta implements DhJavaClassTriggerTem
 		if (checkList != null && checkList.size() == 1) {
 			DhProcessInstance dhProcessInstance = dhProcessInstanceService.getByInsUid(insUid);
 			JSONObject insDataJsonSource = JSON.parseObject(dhProcessInstance.getInsData());
-            JSONObject formDataJsonSource = new JSONObject();//保存当前环节表单数据
-			ServerResponse<List<BpmFormField>> serverResponse = bpmFormFieldService.queryFieldByFormUid(checkList.get(0).getStepObjectUid());
-			List<BpmFormField> formFieldList = serverResponse.getData();//获得当前环节的所有表单字段集合
+			JSONObject formDataJsonSource = new JSONObject();// 保存当前环节表单数据
+			ServerResponse<List<BpmFormField>> serverResponse = bpmFormFieldService
+					.queryFieldByFormUid(checkList.get(0).getStepObjectUid());
+			List<BpmFormField> formFieldList = serverResponse.getData();// 获得当前环节的所有表单字段集合
 			int insId = dhProcessInstance.getInsId();
 			// 获得标识符和数据字段映射的数组
 			JSONArray jsonArray = jsonObject.getJSONArray("data");
@@ -54,34 +55,31 @@ public class DhProcessGetAllDataInfoOnFirstMeta implements DhJavaClassTriggerTem
 
 				JSONObject dataObject = jsonArray.getJSONObject(i);
 				String identity = dataObject.getString("identity");
-				JSONArray exchangeArr = dataObject.getJSONArray("exchange");
 
 				// 根据设置的标识符和流程实例编号，获得需要的流程实例主键
 				String targetInsUid = dataExchangeMapper.getInsUidByInsIdAndIdentity(insId, identity);
 				if (targetInsUid == null) {
 					throw new PlatformException("获取数据失败");
 				}
-				for (int j = 0; j < exchangeArr.size(); j++) {
 
-					// 得到目标实例并获得数据
-					DhProcessInstance targetProcessInstance = dhProcessInstanceService.getByInsUid(targetInsUid);
-					JSONObject insDataJson = JSON.parseObject(targetProcessInstance.getInsData());
-					JSONObject formDataJson = insDataJson.getJSONObject("formData");
+				// 得到目标实例并获得数据
+				DhProcessInstance targetProcessInstance = dhProcessInstanceService.getByInsUid(targetInsUid);
+				JSONObject insDataJson = JSON.parseObject(targetProcessInstance.getInsData());
+				JSONObject formDataJson = insDataJson.getJSONObject("formData");
 
-						Object key;
-						for (Iterator<BpmFormField> var3 = formFieldList.iterator(); var3.hasNext();) {
-							key = var3.next().getFldCodeName();
-							if (formDataJson.get(key) != null) { // 目标的值为空的时候，不替换值到当前表单中去
-								formDataJsonSource.put((String) key, formDataJson.get(key));
-							}
-						}
-
+				Object key;
+				for (Iterator<BpmFormField> var3 = formFieldList.iterator(); var3.hasNext();) {
+					key = var3.next().getFldCodeName();
+					if (formDataJson.get(key) != null) { // 目标的值为空的时候，不替换值到当前表单中去
+						formDataJsonSource.put((String) key, formDataJson.get(key));
+					}
 				}
+
 			}
 			insDataJsonSource.put("formData", formDataJsonSource);
 			dhProcessInstance.setInsData(insDataJsonSource.toJSONString());
 			dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);// 将数据写入到当前流程实例中
-		}else {
+		} else {
 			throw new PlatformException("环节表单步骤配置出现异常");
 		}
 
