@@ -199,7 +199,11 @@ public class MenusController {
 		}
 		// 等待加签 跳转 已办详情页面
 		if(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(checkDhTaskInstance.getTaskStatus())) {
-			mv.setViewName("desmartportal/finished_detail");
+			if(RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"))) {
+				mv.setViewName("desmartportal/mobile_finished_detail");
+			}else {
+				mv.setViewName("desmartportal/finished_detail");
+			}
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
 			if (serverResponse.isSuccess()) {
 	            mv.addAllObjects(serverResponse.getData());
@@ -248,6 +252,9 @@ public class MenusController {
 	@RequestMapping("/finshed_detail")
 	public ModelAndView toFinshedDetail(@RequestParam(value="taskUid") String taskUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/finished_detail");
+		if(RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"))) {
+			mv.setViewName("desmartportal/mobile_finished_detail");
+		}
 		ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toFinshedTaskDetail(taskUid);
 		if (serverResponse.isSuccess()) {
             mv.addAllObjects(serverResponse.getData());

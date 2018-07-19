@@ -22,7 +22,7 @@
 	<![endif]-->
     <title>待办任务</title>
     <%@include file="common/mobile_head.jsp" %>
-    <script type="text/javascript" src="resources/desmartportal/js/my/mobile_approval.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/my/mobile_finished_detail.js"></script>
 </head>
 <body style="background-color: #f2f2f2;margin-bottom:40px;">
     <div class="mobile_container">
@@ -35,9 +35,10 @@
             </div>
             <div class="top_right">
             	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
-		    	<input id="departNo" type="hidden" value="${processInstance.departNo}"/>
-		    	<input id="companyNum" type="hidden" value="${processInstance.companyNumber}"/>
+		    	<input type="hidden" id="departNo" value="${processInstance.departNo}"/> 
+		    	<input type="hidden" id="companyNum" value="${processInstance.companyNumber}"/> 
 		       	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
+		        <input id="formId" value="${bpmForm.dynUid}" style="display: none;">
 		        <input id="proUid" value="${processInstance.proUid}" style="display: none;">
 		        <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
 		        <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
@@ -49,18 +50,18 @@
 		        <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
 		        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
 		        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
-		        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
-		        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}"/>
-		        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
-		        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}"/>
-		        <span id="formData" style="display: none;">${formData}</span>
+		        <input id="actcCanEditAttach" value="${activityConf.actcCanEditAttach}" style="display: none;">
+		        <input id="actcCanUploadAttach" value="${activityConf.actcCanUploadAttach}" style="display: none;">
+		        <input id="actcCanDeleteAttach" value="${activityConf.actcCanDeleteAttach}" style="display: none;">
+		        <input id="canBeRevoke" type="hidden" value="${canBeRevoke}"/>
+		        <span id="insData" style="display: none;">${processInstance.insData}</span>
 		        <span id="listStr" style="display: none;">${listStr}</span>
-		        <span id="approvalData" style="display: none;">${approvalData}</span>
-            	<i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
+		        <i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
+		        <c:if test="${canBeRevoke == 'TRUE'}" >
             	<dl id="child_menu">
-            		<dd><a href="javascript:void(0);" onclick="submitTaskByHandleType();">提交</a></dd>
-	            	<dd><a href="javascript:void(0);" onclick="saveDraftsInfo();">保存草稿</a></dd>
+            		<dd><a href="javascript:void(0);" onclick="revokeTask('${taskInstance.taskUid}');">提交</a></dd>
             	</dl>
+		        </c:if>	
             </div>
         </div>
         <div class="mobile_middle">
@@ -118,16 +119,7 @@
 	                    <tr>
 	                        <td class="td_title" colspan="1" style="width: 70px">流程标题</td>
 	                        <td class="sub_title" colspan="3">
-	                            <c:choose>
-	                                <%-- 可编辑标题 --%>
-	                                <c:when test="${canEditInsTitle == true}">
-	                                    <input type="text" id="insTitle_input" class="layui-input" />
-	                                </c:when>
-	                                <%-- 不可编辑标题 --%>
-	                                <c:otherwise>
-	                                    <input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled/>
-	                                </c:otherwise>
-	                            </c:choose>
+	                        	<input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled/>
 	                        </td>
 	                    </tr>
 	                </tbody>
@@ -137,92 +129,6 @@
 				</div>
 			</div>
 			<div class="middle_content" id="approve_div">
-				<div class="layui-form">
-					<h1 style="clear: both;"></h1>
-					<div class="handle_div">
-						<table>
-							<tr>
-								<th>处理方式：</th>
-								<td>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn" data-this="this">同意</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
-								</td>
-							</tr>
-						</table>
-						<div class="handle_table" id="submit_table">
-							<table>
-							
-							</table>
-						</div>
-						<div class="handle_table" id="countersign_table">
-							<table>
-								<tr>
-									<th>处理人：</th>
-									<td>
-										<div class="choose_user_name_ul">
-											<ul></ul>
-										</div>
-										<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe770;</i> 
-										<input id="countersign_person" type="hidden"/>
-									</td>
-								</tr>
-								<tr>
-									<th>会签方式：</th>
-									<td>
-										<div id="countersign_type">
-											<select class="layui-form_1 layui-select" lay-filter="useselfChange">
-					                            <option value="normalAdd">随机会签</option>
-					                            <option value="simpleLoopAdd">顺序会签</option>
-					                            <option value="multiInstanceLoopAdd">并行会签</option>
-					                        </select>
-				                       	</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="handle_table" id="reject_table">
-							<table class="layui-form">
-								
-							</table>
-						</div>
-						<div class="handle_table" id="transfer_table">
-							<table>
-								<tr>
-									<th>抄送至：</th>
-									<td>
-										<div class="choose_user_name_ul">
-											<ul></ul>
-										</div>
-										<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe770;</i> 
-										<input id="transfer_person" type="hidden"/>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-					<div id="suggestion">
-						<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-			            <div class="layui-form approve_demand" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
-			                ${activityConf.actcResponsibility }
-			            </div>
-			            <p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
-                		<div class="layui-form" id="approve_div" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>
-							<textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion"></textarea>
-							<div style="padding: 10px 0px 5px 0px;">
-								<label class="layui-form-label" id="fu_label">常用语</label>
-								<div class="layui-input-block" id="frequently_used">
-									<select class="layui-form" lay-filter="useselfChange">
-										<option value="-1">--请选择--</option>
-										<option value="通过">通过</option>
-										<option value="驳回">驳回</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 				<p class="title_p" style="margin-top: 0px;">历史审批意见</p>
 				<ul id="approve_record" class="tab_ul">
 					
@@ -264,71 +170,6 @@
 				<li><i class="layui-icon menu_btn" title="file" id="file" onclick="menuBtnClick(this)">&#xe67c;</i><p>附件</p></li>
 				<li><i class="layui-icon menu_btn" title="record" id="record" onclick="menuBtnClick(this)">&#xe60e;</i><p>记录</p></li>
 			</ul>
-        </div>
-        <div id="choose_div">
-        	<div class="choose_head" id="choose_user_search_div">
-        		<div class="search_div" >
-        			<input type="text" id="search_user_input" class="layui-input" placeholder="工号/姓名--搜索" style="height:38px;"/>
-        		</div>
-        		<div class="sure_div">
-        			<input type="button" class="layui-btn" onclick="searchChooseUser();" value="搜索"/>
-        		</div>
-        	</div>
-        	<div class="choose_head" id="choose_value_search_div">
-        		<div class="search_div" >
-        			<input type="text" id="search_value_input" class="layui-input" placeholder="数据字典名/说明--搜索" style="height:38px;"/>
-        		</div>
-        		<div class="sure_div">
-        			<input type="button" class="layui-btn" onclick="searchDicData();" value="搜索"/>
-        		</div>
-        	</div>
-        	<div class="choose_head" id="choose_depart_search_div">
-        		<div class="search_div" >
-        			<input type="text" id="search_depart_input" class="layui-input" placeholder="部门编号/部门名称--搜索" style="height:38px;"/>
-        		</div>
-        		<div class="sure_div">
-        			<input type="button" class="layui-btn" onclick="searchChooseDepart();" value="搜索"/>
-        		</div>
-        	</div>
-        	<div class="choose_body layui-form" id="choose_user_table">
-        		<table>
-        			<thead>
-        				<tr>
-        					<th class="choose_second_th">员工号</th>
-        					<th class="choose_three_th">员工姓名</th>
-        				</tr>
-        			</thead>
-        			<tbody id="choose_user_tbody">
-        				
-        			</tbody>
-        		</table>
-        	</div>
-        	<div class="choose_body layui-form" id="choose_value_table">
-        		<table>
-        			<thead>
-        				<tr>
-        					<th class="choose_second_th">字典数据名</th>
-        					<th class="choose_three_th">字典数据说明</th>
-        				</tr>
-        			</thead>
-        			<tbody id="choose_value_tbody">
-        				
-        			</tbody>
-        		</table>
-        	</div>
-        	<div class="choose_body layui-form" id="choose_depart_table">
-        		<table>
-        			<thead>
-        				<tr>
-        					<th class="choose_second_th">部门编码</th>
-        					<th class="choose_three_th">部门名称</th>
-        				</tr>
-        			</thead>
-        			<tbody id="choose_depart_tbody">
-        				
-        			</tbody>
-        		</table>
-        	</div>
         </div>
 		<ul class="layui-fixbar">
 			<li class="layui-icon layui-fixbar-top" lay-type="top" style="display: list-item;">
