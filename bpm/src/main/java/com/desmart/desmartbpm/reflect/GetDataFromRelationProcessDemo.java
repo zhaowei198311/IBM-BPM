@@ -1,14 +1,15 @@
 package com.desmart.desmartbpm.reflect;
 
+import org.springframework.web.context.WebApplicationContext;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
-import com.desmart.desmartbpm.entity.DhDataExchange;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 设置主流程范围内交互数据用的标识
@@ -16,7 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class GetDataFromRelationProcessDemo implements DhJavaClassTriggerTemplate {
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject param) {
+	public void execute(WebApplicationContext ac, String insUid, JSONObject param,DhStep dhStep) {
 	    // 需要通过哪个标识来找关联流程
 	    String identity = "第一个标识";
 

@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 
@@ -26,7 +27,7 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 public class DhProcessGetAllDataInfoByIdentity implements DhJavaClassTriggerTemplate {
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject) {
+	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject,DhStep dhStep) {
 		// 获得bean
 		DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 		DhDataExchangeMapper dataExchangeMapper = ac.getBean(DhDataExchangeMapper.class);
