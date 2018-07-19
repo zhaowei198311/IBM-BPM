@@ -18,8 +18,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<link rel="stylesheet" href="resources/desmartportal/css/layui.css" media="all">
 	<link rel="stylesheet" href="resources/desmartportal/css/admin.css" media="all">
-	<link rel="stylesheet" href="resources/desmartportal/css/menus/jquery-menus.css" />
 	<link rel="stylesheet" href="resources/desmartportal/css/my.css" />
+	<link rel="stylesheet" href="resources/desmartportal/css/menus/jquery-menus.css" />
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
@@ -128,7 +128,7 @@
 						<input id="userId" value="${userId}" style="display: none;">
 						<!--  -->
 						<div class="nav">
-							<ul class="nav1" style="width: 200px;">
+							<ul class="nav1" style="width:200px;">
 								<%--  								<c:forEach items="${listmap}" var="info">
 									<li class="li1 haizei" style="position:relative;"><a>${fn:substringAfter(info.key, ",")}
 											></a>
@@ -159,6 +159,20 @@
 	</div>
 	<script>
 		$(function () {
+			$(".menu_detail1").click(function(){
+				$(".layui-nav-item a").not(".detail_menu1").not(
+				".detail_menu2").each(function () {
+				$(".menu_detail1").css("display", "none");
+				$(".menu_detail2").css("display", "none");
+			});
+			if($(".nav").is(":hidden")){
+				$(".layui-nav.layui-nav-tree").find(".layui-this").find("a").css("background-color", "#1890ff").css("color","#fff");
+				var id = $(".layui-nav.layui-nav-tree").find(".layui-this").find("a").attr("id");
+				if(id!="shopLife"){
+					$("#shopLife").css("background-color", "#001529").css("color","#B3B9BF");
+				}
+			}
+			});			
 			layui.use('element', function () {
 				var element = layui.element;
 				
@@ -170,13 +184,20 @@
 			//window.setTimeout(getUserTask, 100);
 			window.setInterval(getUserTask, 30000);
 
-			$(".layui-nav-item a").mouseover(
+			$(".layui-nav-item a").not("#shopLife").mouseover(
 				function () {
 					$(".layui-nav-item a").not(".detail_menu1").not(
 						".detail_menu2").each(function () {
 						$(".menu_detail1").css("display", "none");
 						$(".menu_detail2").css("display", "none");
 					});
+					if($(".nav").is(":hidden")){
+						$(".layui-nav.layui-nav-tree").find(".layui-this").find("a").css("background-color", "#1890ff").css("color","#fff");
+						var id = $(".layui-nav.layui-nav-tree").find(".layui-this").find("a").attr("id");
+						if(id!="shopLife"){
+							$("#shopLife").css("background-color", "#001529").css("color","#B3B9BF");
+						}
+					}
 				});
 			$(".detail_menu1").mouseover(function () {
 				$(".menu_detail1").css("display", "block");
@@ -296,6 +317,8 @@
 			function () {
 				$(".typeColor").css("background-color", "#001529").css("color","#B3B9BF");
 				$("#shopLife").css("background-color", "#1890ff").css("color","#fff");
+			},function(){
+				
 			}
 		);
 		$(".typeColor").click(function () {
@@ -483,6 +506,8 @@
 	}
 	
 	function hideHead(){
+		$(".layui-nav.layui-nav-tree").find(".layui-this").removeClass("layui-this");
+		$("#shopLife").parent().addClass("layui-this");
 		$(".layui-breadcrumb").css("display","none");
 	}
 </script>
