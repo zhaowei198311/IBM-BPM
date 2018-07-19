@@ -1,10 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<!--<link href="resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet">
-<link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">-->
 <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
 <link href="resources/desmartportal/css/mymobile_layui.css" rel="stylesheet" />
-<link href="resources/desmartportal/css/my.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mobile_my.css" rel="stylesheet" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
 
 <!-- jQuery -->

@@ -75,7 +75,7 @@
 									</a>
 									<dl class="layui-nav-child">
 										<dd id="approvalTask" class="layui-this">
-											<a href="menus/backlog" target="iframe0" class="typeColor">
+											<a href="menus/backlog" target="iframe0" class="typeColor" onclick="getUserTask();">
 												待办任务
 												<span class="layui-badge" id="daiban_icon">0</span>
 											</a>
@@ -300,7 +300,7 @@
 		);
 		$(".typeColor").click(function () {
 			if($(this).parent().prop("id")=="approvalTask" || $(this).parent().prop("id")=="finishedTask"){
-				var text = $(this).text();
+				var text = $(this)[0].firstChild.data.trim();
 				$(".layui-breadcrumb").find("a:eq(0)").text("我的任务");
 				$(".layui-breadcrumb").find("cite").text(text);
 				$(".layui-breadcrumb").css("display","block");
