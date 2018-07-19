@@ -307,7 +307,13 @@
 		</foreach>
 	</update>
 
-	<select id="queryTriIntByTriUidAndType" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
+    <update id="updateParaUid" parameterType="map">
+		update DH_TRIGGER_INTERFACE
+		set para_uid = #{newUid}
+		where para_uid = #{oldUid}
+	</update>
+
+    <select id="queryTriIntByTriUidAndType" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerInterface">
 		SELECT
 		<include refid="Base_Column_List" />
 		FROM DH_TRIGGER_INTERFACE
@@ -330,5 +336,14 @@
 		<where>
 			<foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
 		</where>
+	</delete>
+	
+	<delete id="removeByParaUidList" parameterType="list">
+	    delete from DH_TRIGGER_INTERFACE
+	    <where>
+	        <foreach collection="list" item="item" separator="or">
+	            para_uid = #{item}
+	        </foreach>
+	    </where>
 	</delete>
 </mapper>

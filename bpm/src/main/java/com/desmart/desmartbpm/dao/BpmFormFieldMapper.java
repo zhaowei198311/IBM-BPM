@@ -17,7 +17,8 @@ public interface BpmFormFieldMapper {
 	int insertBatch(@Param("fields")List<BpmFormField> fields);
 
 	/**
-	 * 删除表单字段信息
+	 * 删除指定表单的所有字段信息
+	 * @param  formUid 表单主键
 	 */
 	int deleteFormField(String formUid);
 
@@ -100,6 +101,7 @@ public interface BpmFormFieldMapper {
 	 * @return
 	 */
 	List<BpmFormField> listByFormUidList(List<String> formUidList);
+
 
 	/**
 	 * 根据表单主键列表批量删除

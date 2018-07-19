@@ -124,9 +124,9 @@
 		</foreach>
 		and para_parent = #{paraParent}
 	</delete>
-	
-	
-	
+
+
+
 	<update id="update" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
 		UPDATE DH_INTERFACE_PARAMETER
 		<set>

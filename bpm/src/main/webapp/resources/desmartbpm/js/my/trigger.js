@@ -539,7 +539,5 @@ var transferTrigger = {
         });
     }
 
-
-
 };
 

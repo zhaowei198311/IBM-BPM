@@ -69,7 +69,7 @@ public interface DhTransferService {
 	ServerResponse<DhTransferData> exportTrigger(String triUid);
 
 	/**
-	 * 触发器导入前的准备
+	 * 导入触发器前的准备
 	 * @param file 用户上传的文件
 	 * @param session httpSession
 	 * @return  map中的值
@@ -92,7 +92,7 @@ public interface DhTransferService {
 	ServerResponse<DhTransferData> exportInterface(String intUid);
 
 	/**
-	 * 导入前的准备
+	 * 导入接口前的准备
 	 * @param file
 	 * @param session
 	 * @return
@@ -100,9 +100,32 @@ public interface DhTransferService {
 	ServerResponse tryImportInterface(MultipartFile file, HttpSession session);
 
 	/**
-	 * 开始导入触发器
+	 * 开始导入接口
 	 * @param transferData
 	 * @return
 	 */
-	ServerResponse startImprtInterface(DhTransferData transferData);
+	ServerResponse startImportInterface(DhTransferData transferData);
+
+	/**
+	 * 导入公共表单前的准备
+	 * @param file
+	 * @param session
+	 * @return
+	 */
+    ServerResponse tryImportPublicForm(MultipartFile file, HttpSession session);
+
+	/**
+	 * 导出公共表单
+	 * @param intUid
+	 * @return
+	 */
+	ServerResponse<DhTransferData> exportPublicForm(String publicFormUid);
+
+	/**
+	 * 开始导入公共表单
+	 * @param transferData
+	 * @return
+	 */
+	ServerResponse startImprtPublicForm(DhTransferData transferData);
+
 }

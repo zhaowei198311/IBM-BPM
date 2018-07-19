@@ -51,6 +51,8 @@ $(document).ready(function() {
 	// 加载数据
 	getInterfaceInfo();
 
+    transferInterface.init();
+
 	$(".cancel_btn").click(function() {
 		$(".display_container").css("display", "none");
 		$("#form1").validate().resetForm();
@@ -482,13 +484,80 @@ var transferInterface = {
         cancelImportInterface: 'transfer/cancelImportTransferData'
 	},
 	init: function () {
-		
+        // 导入按钮
+        layui.use('upload', function () {
+            layui.upload.render({
+                elem: $("#importBtn"),
+                url: transferInterface.URL.tryImportInterface,
+                data: {},
+                exts: "json",
+                field: "file",
+                before: function (obj) {
+                    layer.load(1);
+                },
+                done: function (result) {
+                    layer.closeAll('loading');
+                    if (result.status == 0) {
+                        var data = result.data;
+                        if (data.exists == 'FALSE') {
+                            // 新的触发器
+                            var confirmIndex = layer.confirm('<p>请确认导入接口</p><p><b>接口标题：</b>' + data.formName + '</p>', {
+                                btn: ['导入', '取消']
+                            }, function () {
+                                transferInterface.importInterface();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferInterface.URL.cancelImportInterface);
+                            });
+                        } else {
+                            // 发现已有此触发器
+                            var confirmIndex = layer.confirm('<p>接口已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>接口标题：</b>' + data.formName + '</p>', {
+                                btn: ['覆盖', '取消']
+                            }, function () {
+                                transferInterface.importInterface();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferInterface.URL.cancelImportInterface);
+                            });
+                        }
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                },
+                error: function (result) {
+                    layer.closeAll('loading');
+                    layer.alert(result.msg);
+                }
+            });
+        });
     },
 	exportInterface: function (intUid) {
 		downLoadFile(transferInterface.URL.exportInterface, {"intUid": intUid});
+    },
+	importInterface: function () {
+        $.ajax({
+            url : transferInterface.URL.sureImportInterface,
+            type : 'post',
+            dataType : 'json',
+            data : {},
+            before: function () {
+                layer.load(1);
+            },
+            success : function (result) {
+                layer.closeAll('loading');
+                if(result.status == 0 ){
+                    layer.alert('导入成功');
+                }else{
+                    layer.alert(result.msg);
+                }
+            },
+            error : function () {
+                layer.closeAll('loading');
+                layer.alert('导入失败，请稍后再试');
+            }
+        });
     }
-
-}
+};
 
 function downLoadFile(URL, PARAMS) {
     var temp_form = document.createElement("form");

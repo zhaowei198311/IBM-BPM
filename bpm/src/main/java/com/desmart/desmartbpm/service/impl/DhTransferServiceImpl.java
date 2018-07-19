@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.DateUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.*;
@@ -19,6 +20,7 @@ import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.drools.core.command.runtime.rule.FromExternalFactHandleCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.crypto.Mac;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
@@ -103,6 +104,11 @@ public class DhTransferServiceImpl implements DhTransferService {
     private DhInterfaceMapper dhInterfaceMapper;
     @Autowired
     private DhInterfaceParameterMapper dhInterfaceParameterMapper;
+    @Autowired
+    private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
+    @Autowired
+    private BpmPublicFormMapper bpmPublicFormMapper;
+
 
 
     public ServerResponse<DhTransferData> exportProcessDefinition(String proAppId, String proUid, String proVerUid) {
@@ -381,6 +387,8 @@ public class DhTransferServiceImpl implements DhTransferService {
                 identity = ((DhNotifyTemplate)item).getTemplateUid();
             } else if (item instanceof DhActivityConf) {
                 identity = ((DhActivityConf)item).getActcUid();
+            } else if (item instanceof DhInterfaceParameter) {
+                identity = ((DhInterfaceParameter)item).getParaUid();
             }
             if (StringUtils.isNotBlank(identity) && !result.contains(identity)) {
                 result.add(identity);
@@ -1130,7 +1138,7 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage("缺少触发器信息");
         }
         if (triggerList.size() > 1) {
-            return ServerResponse.createByErrorMessage("触发器数量过多");
+            return ServerResponse.createByErrorMessage("文件中触发器数量过多");
         }
         DhTrigger trigger = triggerList.get(0);
         Map<String, String> result = new HashMap<>();
@@ -1171,6 +1179,9 @@ public class DhTransferServiceImpl implements DhTransferService {
 
     @Override
     public ServerResponse<DhTransferData> exportInterface(String intUid) {
+        if (StringUtils.isBlank(intUid)){
+            return ServerResponse.createByErrorMessage("缺少接口标识");
+        }
         DhInterface dhInterface = dhInterfaceService.getByIntUid(intUid);
         if (dhInterface == null) {
             return ServerResponse.createByErrorMessage("此接口不存在");
@@ -1210,7 +1221,7 @@ public class DhTransferServiceImpl implements DhTransferService {
 
     @Transactional
     @Override
-    public ServerResponse startImprtInterface(DhTransferData transferData) {
+    public ServerResponse startImportInterface(DhTransferData transferData) {
         List<DhInterface> interfaceList = transferData.getInterfaceList();
         if (CollectionUtils.isEmpty(interfaceList)) {
             return ServerResponse.createByErrorMessage("缺少接口信息");
@@ -1229,48 +1240,215 @@ public class DhTransferServiceImpl implements DhTransferService {
             }
             return ServerResponse.createBySuccess();
         }
-        dhInterfaceMapper.update(dhInterface); // 更新接口
-        if (CollectionUtils.isEmpty(intParamListFromData)) {
-            return ServerResponse.createBySuccess();
-        }
-        List<DhInterfaceParameter> intParamListFromDb = dhInterfaceParameterMapper.listAll(dhInterface.getIntUid());
-        List<Map<String, String>> mapListToUpdate = new ArrayList<>();
-        List<String> idToDeleteFromtriggerParameter = new ArrayList<>();
+        // 更新接口表
+        dhInterfaceMapper.update(dhInterface);
 
+        List<DhInterfaceParameter> intParamListFromDb = dhInterfaceParameterMapper.listAll(dhInterface.getIntUid());
+        // 装配级联code
+        assembleCascadeParaNameForList(intParamListFromData);
+        assembleCascadeParaNameForList(intParamListFromDb);
+        List<Map<String, String>> mapListToUpdate = new ArrayList<>();  // 记录要更新主键的列表
+        List<String> paraUidListToRemoveFromTriggerInterface = new ArrayList<>();
+        boolean matched = false;
         for (DhInterfaceParameter paramFromDb : intParamListFromDb) {
-            boolean matched = false;
+            matched = false;
             for (DhInterfaceParameter paramFromData : intParamListFromData) {
-                // 是否命中(paramName相同，输入/输出类型相同)
-                if (paramFromDb.getParaName().equals(paramFromData.getParaName())
-                    && paramFromDb.getParaInOut().equals(paramFromData.getParaInOut())) {
-                    if (!paramFromDb.getParaUid().equals(paramFromData.getParaUid())) {
-                        // 字段匹配主键不相同，需要更新中间表
+                // 是否命中(级联code相同)
+                if (paramFromData.getCascadeParaName().equals(paramFromDb.getCascadeParaName())) {
+                    matched = true;
+                    if (!paramFromData.getParaUid().equals(paramFromData.getParaUid())) {
                         Map<String, String> map = new HashMap<>();
                         map.put("oldUid", paramFromDb.getParaUid());
                         map.put("newUid", paramFromData.getParaUid());
                         mapListToUpdate.add(map);
                     }
-                    matched = true;
                     break;
                 }
             }
             if (!matched) {
                 // 如果新版中没有相同的，就要删除
-                idToDeleteFromtriggerParameter.add(paramFromDb.getParaUid());
+                paraUidListToRemoveFromTriggerInterface.add(paramFromDb.getParaUid());
             }
         }
         // 全量删除老的参数
         if (!CollectionUtils.isEmpty(intParamListFromDb)) {
-
+            dhInterfaceParameterMapper.deleteByIntUid(dhInterface.getIntUid());
         }
         // 全量插入新的参数
-
-        // 更新中间表中新老相同的部分
-
+        if (!CollectionUtils.isEmpty(intParamListFromData)) {
+            dhInterfaceParameterMapper.insertBatch(intParamListFromData);
+        }
+        // 更新triggerInterface表中新老相同的部分
+        if (!mapListToUpdate.isEmpty()) {
+            for (Map<String, String> map : mapListToUpdate) {
+                dhTriggerInterfaceMapper.updateParaUid(map.get("oldUid"), map.get("newUid"));
+            }
+        }
         // 删除中间表中老的存在，新版不存在的字段
-
-        return null;
+        if (!CollectionUtils.isEmpty(paraUidListToRemoveFromTriggerInterface)) {
+            dhTriggerInterfaceMapper.removeByParaUidList(paraUidListToRemoveFromTriggerInterface);
+        }
+        return ServerResponse.createBySuccess();
     }
+
+    @Override
+    public ServerResponse tryImportPublicForm(MultipartFile file, HttpSession session) {
+        ServerResponse<DhTransferData> turnTransferDataResponse = this.turnJsonFileIntoDhTransferData(file);
+        if (!turnTransferDataResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
+        }
+        DhTransferData transferData = turnTransferDataResponse.getData();
+        List<BpmPublicForm> pubFormList = transferData.getPublicFormList();
+        if (CollectionUtils.isEmpty(pubFormList)) {
+            return ServerResponse.createByErrorMessage("缺少表单信息");
+        }
+        if (pubFormList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件中表单数量过多");
+        }
+        BpmPublicForm pubForm = pubFormList.get(0);
+        Map<String, String> result = new HashMap<>();
+        result.put("formName", pubForm.getPublicFormName());
+        BpmPublicForm pubFormExists = bpmPublicFormMapper.queryFormByFormUid(pubForm.getPublicFormUid());
+        if (pubFormExists == null) {
+            result.put("exists", "FALSE");
+        } else {
+            result.put("exists", "TRUE");
+        }
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        return ServerResponse.createBySuccess(result);
+    }
+
+    @Override
+    public ServerResponse<DhTransferData> exportPublicForm(String publicFormUid) {
+        if (StringUtils.isBlank(publicFormUid)){
+            return ServerResponse.createByErrorMessage("缺少表单标识");
+        }
+        BpmPublicForm pubForm = bpmPublicFormMapper.queryFormByFormUid(publicFormUid);
+        if (pubForm == null) {
+            return ServerResponse.createByErrorMessage("此表单不存在");
+        }
+        DhTransferData transferData = new DhTransferData();
+        transferData.addToPublicFormList(pubForm);
+        transferData.setFormFieldList(bpmFormFieldMapper.queryFormFieldByFormUid(publicFormUid));
+        return ServerResponse.createBySuccess(transferData);
+    }
+
+    @Override
+    public ServerResponse startImprtPublicForm(DhTransferData transferData) {
+        List<BpmPublicForm> publicFormList = transferData.getPublicFormList();
+        if (CollectionUtils.isEmpty(publicFormList)) {
+            return ServerResponse.createByErrorMessage("缺少表单信息");
+        }
+        if (publicFormList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，表单数量过多");
+        }
+        BpmPublicForm pubForm = publicFormList.get(0);
+        List<BpmFormField> formFieldListFromData = bpmFormFieldMapper.queryFormFieldByFormUid(pubForm.getPublicFormUid());
+        BpmPublicForm pubFormExists = bpmPublicFormMapper.queryFormByFormUid(pubForm.getPublicFormUid());
+        if (pubFormExists == null) {
+            // 新增表单
+            pubForm.setCreator(getCurrentUserUid());
+            bpmPublicFormMapper.saveForm(pubForm);
+            if (!CollectionUtils.isEmpty(formFieldListFromData)) {
+                bpmFormFieldMapper.insertBatch(formFieldListFromData);
+            }
+            return ServerResponse.createBySuccess();
+        }
+        // 更新公共表单表
+        bpmPublicFormMapper.updateByPrimayKeySelective(pubForm);
+
+        List<BpmFormField> bpmFormFieldListFromDb = bpmFormFieldMapper.queryFormFieldByFormUid(pubFormExists.getPublicFormUid());
+        List<Map<String, String>> mapListToUpdate = new ArrayList<>();  // 记录要更新主键的列表
+        List<String> fieldUidToRemove = new ArrayList<>();
+        boolean matched = false;
+        for (BpmFormField formFieldFromDb : bpmFormFieldListFromDb) {
+            matched = false;
+            for (BpmFormField formFieldFromData: formFieldListFromData) {
+                if (formFieldFromData.getFldCodeName().equals(formFieldFromDb.getFldCodeName())) {
+                    matched = true;
+                    if (!formFieldFromData.getFldUid().equals(formFieldFromDb.getFldUid())) {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("oldUid", formFieldFromDb.getFldUid());
+                        map.put("newUid", formFieldFromData.getFldUid());
+                        mapListToUpdate.add(map);
+                    }
+                    break;
+                }
+            }
+            if (!matched) {
+                // 如果新版中没有相同的，就要删除
+                fieldUidToRemove.add(formFieldFromDb.getFldUid());
+            }
+        }
+        // 全量删除老的字段
+        if (!CollectionUtils.isEmpty(bpmFormFieldListFromDb)) {
+            bpmFormFieldMapper.deleteFormField(pubForm.getPublicFormUid());
+        }
+        // 全量插入新的字段
+        if (!CollectionUtils.isEmpty(formFieldListFromData)) {
+            bpmFormFieldMapper.insertBatch(formFieldListFromData);
+        }
+        // 更新权限表中老字段的主键
+        if (!mapListToUpdate.isEmpty()) {
+            for (Map<String, String> map : mapListToUpdate) {
+                dhObjectPermissionMapper.updateformFieldUidToNewFieldUid(map.get("oldUid"), map.get("newUid"));
+            }
+        }
+        // 删除中间权限表中在新版本被移除的字段的权限信息
+        if (!CollectionUtils.isEmpty(fieldUidToRemove)) {
+            dhObjectPermissionMapper.removeByOpObjUidList(fieldUidToRemove);
+        }
+        return ServerResponse.createBySuccess();
+    }
+
+    /**
+     * 为集合中的参数添加级联的参数名用于比较
+     * in:name|studnet|students   in:address|student|students
+     */
+    private void assembleCascadeParaNameForList(List<DhInterfaceParameter> paramList) {
+        if (CollectionUtils.isEmpty(paramList)) {
+            return;
+        }
+        Map<String, DhInterfaceParameter> map = new HashMap<>(); // 参数主键 - code映射
+        for (DhInterfaceParameter param : paramList) {
+            map.put(param.getParaUid(), param);
+        }
+        for (DhInterfaceParameter param : paramList) {
+            if (param.getParaParent() == null) {
+                param.setCascadeParaName(param.getParaInOut() + ":" + param.getParaName());
+            } else {
+                StringBuilder sb = new StringBuilder();
+                assembleCascadeParamName(sb, param, map);
+                param.setCascadeParaName(sb.toString());
+            }
+        }
+
+    }
+
+    /**
+     * 生成接口参数的级联code
+     * @param sb   递归结束后，保存级联的code值
+     * @param param 接口参数
+     * @param map 主键与对象的对应关系map
+     */
+    private void assembleCascadeParamName(StringBuilder sb, DhInterfaceParameter param, Map<String, DhInterfaceParameter> map) {
+        if (sb.length() == 0) {
+            sb.append(param.getParaInOut()).append(":").append(param.getParaName());
+        } else {
+            sb.append("|").append(param.getParaName());
+        }
+        String parentId = param.getParaParent();
+        if (parentId == null) {
+            return;
+        }
+        DhInterfaceParameter parentParam = map.get(parentId);
+        if (parentParam == null) {
+            throw new PlatformException("参数层级异常，参数名：" + param.getParaName()
+                    + "  参数id：" + param.getParaUid() + " 父级id：" + param.getParaParent());
+        }
+        assembleCascadeParamName(sb, parentParam, map);
+    }
+
 
 
 }

@@ -68,8 +68,8 @@ table{
 				</div>
 				<div class="layui-col-md2" style="text-align: right; width: 280px">
 					<button class="layui-btn layui-btn-sm serch_interface">查询接口</button>
-					<button id="addInterfaces"
-						class="layui-btn layui-btn-sm create_btn" type="button">新增接口</button>
+					<button id="addInterfaces" class="layui-btn layui-btn-sm create_btn" type="button">新增接口</button>
+					<button id="importBtn" class="layui-btn layui-btn-sm create_btn" type="button">导入</button>
 				</div>
 				</form>
 			</div>

@@ -80,4 +80,12 @@ public interface DhInterfaceParameterMapper {
 	 * @return
 	 */
     List<DhInterfaceParameter> listByIntUidList(List<String> intUidList);
+
+	/**
+	 * 删除指定接口的所有参数
+	 * @param intUid 接口主键
+	 * @return
+	 */
+	int deleteByIntUid(String intUid);
+
 }

@@ -26,8 +26,14 @@
 				#{item.opAction}
 	        from dual
         </foreach>
-    </insert>  
-    
+    </insert>
+
+    <update id="updateformFieldUidToNewFieldUid" parameterType="map">
+        update DH_OBJECT_PERMISSION
+        set op_obj_uid = #{newFieldUid}
+        where op_obj_uid = #{oldFieldUid}
+    </update>
+
     <delete id="delectByDhObjectPermissionSelective" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" >
         delete from DH_OBJECT_PERMISSION
         <where>
@@ -139,7 +145,18 @@
     <delete id="removeByStepUidList" parameterType="list">
         delete from dh_object_permission
         <where>
-            <foreach collection="list" item="item" separator="or"> step_uid = #{item} </foreach>
+            <foreach collection="list" item="item" separator="or">
+                step_uid = #{item}
+            </foreach>
+        </where>
+    </delete>
+    
+    <delete id="removeByOpObjUidList" parameterType="list">
+        delete from dh_object_permission
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                op_obj_type = #{item}
+            </foreach>
         </where>
     </delete>
 </mapper>
