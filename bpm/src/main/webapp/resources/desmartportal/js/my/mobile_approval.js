@@ -34,6 +34,9 @@ $(function () {
     
     //加载已上传的附件
     loadFileList();
+    
+    //驳回环节复选框只选择一个
+    checkOne();
 });
 
 //用于异步加载数据的参数
@@ -758,7 +761,7 @@ function queryRejectByActivitiy() {
 								+'<th>驳回至：</th>'
 								+'<td>'
 								+'<span style="float:left;width:10%;">'
-								+'<input type="checkbox" name="check" lay-skin="primary" '
+								+'<input type="checkbox" name="check" lay-filter="rejectCheck" lay-skin="primary" '
 								+'value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId
 									+'+'+rejectMapList[i].userId+'"/>'
 								+'</span> '
@@ -780,6 +783,14 @@ function queryRejectByActivitiy() {
             });
         }
     });
+}
+
+function checkOne(){
+	form.on('checkbox(rejectCheck)', function(data){
+		$("input[name='check']").prop("checked",false);
+		$(data.elem).prop("checked",true);
+		form.render();
+	});  
 }
 
 function rejectSure(){

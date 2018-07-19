@@ -240,6 +240,7 @@ function taskProgerss(activityId,taskUid){
 function openApproval(taskUid){
 	layer.load(1);
 	window.location.href = 'menus/approval?taskUid='+taskUid;
+	layer.closeAll("loading");
 }
 
 //文档高度
