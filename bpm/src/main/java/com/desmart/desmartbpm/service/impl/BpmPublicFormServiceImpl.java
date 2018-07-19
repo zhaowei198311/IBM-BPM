@@ -84,7 +84,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	@Override
 	public ServerResponse saveForm(BpmPublicForm bpmPublicForm) {
 		//保存表单信息
-		String publicFormUid = EntityIdPrefix.BPM_PUBLIC_FORM + UUID.randomUUID().toString();
+		String publicFormUid = bpmPublicForm.getPublicFormCode();
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		bpmPublicForm.setPublicFormUid(publicFormUid);
 		bpmPublicForm.setCreator(creator);
