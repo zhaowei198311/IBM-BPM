@@ -68,7 +68,7 @@
 		VALUES
 		(
 			#{paraUid},
-			seq_para_index.nextval,
+			(select max(PARA_INDEX)+1 from  DH_INTERFACE_PARAMETER),
 			#{paraName},
 			#{paraDescription},
 			#{paraType},
@@ -87,7 +87,7 @@
 		<foreach collection="list" item="item" separator="union all">
 			select
 			#{item.paraUid},
-			#{item.paraIndex},
+			(select max(PARA_INDEX)+1 from  DH_INTERFACE_PARAMETER),
 			#{item.paraName},
 			#{item.paraDescription},
 			#{item.paraType},

@@ -79,4 +79,10 @@ public interface DhInterfaceParameterService {
 	 * @return  根据指定参数查询集合
 	 */
 	List<DhInterfaceParameter> byQueryParameter(DhInterfaceParameter dhInterfaceParameter);
+	
+	/**
+	 * @param 
+	 * @return 查询所有的参数
+	 */
+	List<DhInterfaceParameter> interfaceParameterList(DhInterfaceParameter dhInterfaceParameter);
 }
