@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.desmart.desmartbpm.service.DhTriggerService;
@@ -435,12 +436,14 @@ public class DhStepServiceImpl implements DhStepService {
                 return ServerResponse.createBySuccess();
             }
             if (StringUtils.isNotBlank(step.getStepObjectUid())) {
-                try {
-                    dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step);
-                } catch (Exception e) {
-                    log.error("调用step失败：stepUid:" + step.getStepUid() + "任务实例id：" + dhTaskInstance.getTaskUid(), e);
-                    return ServerResponse.createByErrorMessage("表单前触发器调用失败");
-                }
+           
+                   ServerResponse response = dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step);
+                   Map map = (Map) response.getData();
+                   if("1".equals(map.get("status"))) {
+                	   log.error("调用step失败：stepUid:" + step.getStepUid() + "任务实例id：" + dhTaskInstance.getTaskUid(), map.get("msg"));
+                       return ServerResponse.createByErrorMessage("表单前触发器调用失败");
+                   }
+        
             }
             step = getNextStepOfCurrStep(step);
         }
