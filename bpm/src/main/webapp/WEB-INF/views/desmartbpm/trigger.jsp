@@ -10,6 +10,20 @@
 	rel="stylesheet" media="all">
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css"
 	rel="stylesheet" media="all" />
+	<style>
+		.display_content_accessory_file {
+			display: none;
+			color: #717171;
+			padding: 20px;
+			width: 70%;
+			height: 60%;
+			background: #fff;
+			position: fixed;
+			left: 12.5%;
+			top: 16%;
+			box-shadow: 0 0 10px #ccc;
+		}
+	</style>
 </head>
 <body>
 	<div class="layui-container" style="margin-top: 20px; width: 100%;">
@@ -30,9 +44,10 @@
 						<option value="validate">validate</option>
 					</select>
 				</div>
-				<div class="layui-col-md2" style="text-align: right; width: 180px">
+				<div class="layui-col-md8" style="text-align: left; padding-left:15px;">
 					<button class="layui-btn search_btn" id="searchMeat_btn">查询</button>
 					<button class="layui-btn create_btn" id="show_expose_btn">添加</button>
+					<button class="layui-btn create_btn" id="importBtn">导入</button>
 				</div>
 			</div>
 		</div>
@@ -236,10 +251,47 @@
 				</div>
 			</div>
 		</div>
-		
+		<!-- 批量导入触发器 -->
+		<div class="display_content_accessory_file" id="upload_file_modal">
+			<div class="top">文件上传</div>
+			<div class="upload_overflow_middle">
+				<div class="layui-upload-drag" style="width: 94.5%;">
+					<i class="layui-icon"></i>
+					<p>点击上传，或将文件拖拽到此处</p>
+				</div>
+				<div class="layui-upload">
+					<div class="layui-upload-list">
+						<table class="layui-table">
+							<colgroup>
+								<col width="5%">
+								<col width="20%">
+								<col width="10%">
+								<col width="20%">
+							</colgroup>
+							<thead>
+							<tr>
+								<th>文件名</th>
+								<th>大小</th>
+								<!-- <th>文件标题</th>
+                                        <th>文件标签</th>
+                                        <th>文件说明</th> -->
+								<th>状态</th>
+								<th>操作</th>
+							</tr>
+							</thead>
+							<tbody class="fileList"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="foot_accessory_file">
+				<button type="button" class="layui-btn listAction">开始上传</button>
+				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">关闭</button>
+			</div>
+		</div>
 	</div>
-</body>
-</html>
 <script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/lay/modules/laypage.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/my/trigger.js"></script>
+</body>
+</html>

@@ -36,7 +36,7 @@ public interface DhTriggerMapper {
     /**
      * 修改触发器
      */
-    int updateDhTrigger(DhTrigger dhTrigger);
+    int updateByPrimayKeySelective(DhTrigger dhTrigger);
 
 
 }

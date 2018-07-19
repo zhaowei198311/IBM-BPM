@@ -18,12 +18,14 @@ import com.github.pagehelper.PageInfo;
 public interface DhInterfaceParameterService {
 	
 	/**
+	 * 根据 定义接口id  查询 返回一个list 接口参数数据
 	 * @param intUid 接口定义id
 	 * @return 根据 定义接口id  查询 返回一个list 接口参数数据
 	 */
 	ServerResponse<PageInfo<List<DhInterfaceParameter>>> listDhInterfaceParameter(String intUid,Integer pageNum, Integer pageSize);
 
 	/**
+	 * 根据 定义接口id  查询 返回一个list 接口参数数据
 	 * @param intUid 接口定义id
 	 * @return 根据 定义接口id  查询 返回一个list 接口参数数据
 	 */

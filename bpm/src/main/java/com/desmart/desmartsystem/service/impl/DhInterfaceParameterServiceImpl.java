@@ -135,7 +135,9 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 
 	@Override
 	public List<DhInterfaceParameter> querybyintUid(String intUid) {
-		// TODO Auto-generated method stub
+		if (StringUtils.isBlank(intUid)){
+		    return new ArrayList<>();
+		}
 		return dhInterfaceParameterMapper.listAll(intUid);
 	}
 

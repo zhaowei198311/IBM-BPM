@@ -1,14 +1,11 @@
 package com.desmart.desmartbpm.service;
 
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.desmartbpm.entity.DatRule;
-import com.desmart.desmartbpm.entity.DatRuleCondition;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.entity.DhTransferData;
+import com.desmart.desmartbpm.entity.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,12 +30,12 @@ public interface DhTransferService {
 	String getExportFileName(DhProcessDefinition dhProcessDefinition);
 
 	/**
-	 * 将文件转化为供解析的对象
+	 * 将JSON文件转化为DhTransferData对象
 	 * @param file 上传的文件
 	 * @return
 	 * @throws IOException
 	 */
-	ServerResponse<DhTransferData> trunFileIntoDhTransferData(MultipartFile file);
+	ServerResponse<DhTransferData> turnJsonFileIntoDhTransferData(MultipartFile file);
 
 	/**
 	 * 导入一个流程定义, 如果重复则覆盖
@@ -63,4 +60,49 @@ public interface DhTransferService {
 	 * @return
 	 */
 	ServerResponse removeProcessDefinition(String proAppId, String proUid, String proVerUid);
+
+	/**
+	 * 导出触发器， 如果触发器是接口类型，会带出接口的信息
+	 * @param triUid 触发器主键
+	 * @return
+	 */
+	ServerResponse<DhTransferData> exportTrigger(String triUid);
+
+	/**
+	 * 触发器导入前的准备
+	 * @param file 用户上传的文件
+	 * @param session httpSession
+	 * @return  map中的值
+	 * exists: "TRUE"   triTitle: "标题"
+	 */
+	ServerResponse<Map<String, String>> tryImportTrigger(MultipartFile file, HttpSession session);
+
+	/**
+	 * 导入触发器
+	 * @param transferData session中保存的信息
+	 * @return
+	 */
+	ServerResponse startImprtTrigger(DhTransferData transferData);
+
+	/**
+	 * 导出接口
+	 * @param intUid
+	 * @return
+	 */
+	ServerResponse<DhTransferData> exportInterface(String intUid);
+
+	/**
+	 * 导入前的准备
+	 * @param file
+	 * @param session
+	 * @return
+	 */
+	ServerResponse tryImportInterface(MultipartFile file, HttpSession session);
+
+	/**
+	 * 开始导入触发器
+	 * @param transferData
+	 * @return
+	 */
+	ServerResponse startImprtInterface(DhTransferData transferData);
 }

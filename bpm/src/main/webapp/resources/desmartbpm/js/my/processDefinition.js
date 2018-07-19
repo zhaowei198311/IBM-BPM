@@ -50,7 +50,6 @@ $(function() {
 	}
 
     layui.use('upload', function () {
-
         layui.upload.render({
             elem: $("#importBtn"),
             url: importProcessDefinition.URL.tryImportDefinition,
@@ -345,7 +344,7 @@ $(function() {
 			"proVerUid": ck.data('proveruid'),
 			"proAppId": ck.data('proappid')
 		};
-        downLoadFile(common.getPath() + '/processDefinition/exportProcessDefinition', param);
+        downLoadFile(common.getPath() + '/transfer/exportProcessDefinition', param);
 	});
 
 	// “流程配置”按钮
@@ -672,7 +671,7 @@ var importProcessDefinition = {
     URL: {
         tryImportDefinition: common.getPath() + '/transfer/tryImportDefinition',
         sureImportProcessDefinition: common.getPath() + '/transfer/sureImportProcessDefinition',
-        cancelImportProcessDefinition: common.getPath() + '/transfer/cancelImportProcessDefinition'
+        cancelImportProcessDefinition: common.getPath() + '/transfer/cancelImporTransferData'
     },
     importProcessDefinition: function () {
 		$.ajax({
@@ -697,16 +696,7 @@ var importProcessDefinition = {
 		});
     },
     cancelProcessDefinition: function () {
-        $.ajax({
-            url: importProcessDefinition.URL.cancelImportProcessDefinition,
-            type: 'post',
-            data: {},
-            dataType: 'json',
-            success: function (result) {
-            },
-            error: function () {
-            }
-        });
+        $.post(importProcessDefinition.URL.cancelImportProcessDefinition);
     }
 
 };

@@ -1,9 +1,9 @@
 package com.desmart.desmartbpm.service.impl;
 
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.DateUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.*;
@@ -11,9 +11,10 @@ import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.*;
+import com.desmart.desmartsystem.dao.DhInterfaceMapper;
+import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
-import com.desmart.desmartsystem.entity.TreeNode;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.Mac;
+import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -95,7 +97,12 @@ public class DhTransferServiceImpl implements DhTransferService {
     private BpmFormManageMapper bpmFormManageMapper;
     @Autowired
     private BpmFormFieldMapper bpmFormFieldMapper;
-
+    @Autowired
+    private DhTriggerMapper dhTriggerMapper;
+    @Autowired
+    private DhInterfaceMapper dhInterfaceMapper;
+    @Autowired
+    private DhInterfaceParameterMapper dhInterfaceParameterMapper;
 
 
     public ServerResponse<DhTransferData> exportProcessDefinition(String proAppId, String proUid, String proVerUid) {
@@ -551,7 +558,10 @@ public class DhTransferServiceImpl implements DhTransferService {
     }
 
     @Override
-    public ServerResponse<DhTransferData> trunFileIntoDhTransferData(MultipartFile file) {
+    public ServerResponse<DhTransferData> turnJsonFileIntoDhTransferData(MultipartFile file) {
+        if (file == null || file.getSize() == 0) {
+            return ServerResponse.createByErrorMessage("文件不能为空");
+        }
         String originalFilename = file.getOriginalFilename();
         if (!originalFilename.endsWith(".json")) {
             return ServerResponse.createByErrorMessage("文件格式异常，请检查后重新上传");
@@ -592,8 +602,14 @@ public class DhTransferServiceImpl implements DhTransferService {
             }
         }
         String info = sb.toString();
-        DhTransferData dhTransferData = JSONObject.parseObject(info, new TypeReference<DhTransferData>() {});
-        return ServerResponse.createBySuccess(dhTransferData);
+        try {
+            DhTransferData dhTransferData = JSONObject.parseObject(info, new TypeReference<DhTransferData>() {
+            });
+            return ServerResponse.createBySuccess(dhTransferData);
+        } catch (JSONException e) {
+            return ServerResponse.createByErrorMessage("文件内容不符合要求");
+        }
+
     }
 
     @Transactional
@@ -1076,4 +1092,185 @@ public class DhTransferServiceImpl implements DhTransferService {
 
         return ServerResponse.createBySuccess();
     }
+
+    @Override
+    public ServerResponse<DhTransferData> exportTrigger(String triUid) {
+        if (StringUtils.isBlank(triUid)) {
+            return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+        DhTrigger trigger = dhTriggerService.getTriggerByTriUid(triUid);
+        if (trigger == null) {
+            return ServerResponse.createByErrorMessage("没有找到此触发器");
+        }
+        DhTransferData transferData = new DhTransferData();
+        transferData.addToTriggerList(trigger);
+        // 如果不是接口类型的触发器，直接返回
+        if (!DhTriggerType.INTERFACE.getCode().equals(trigger.getTriType())) {
+            return ServerResponse.createBySuccess(transferData);
+        }
+        // 获得接口信息
+        String intUid = trigger.getTriWebbot();
+        if (StringUtils.isBlank(intUid)) {
+            return ServerResponse.createByErrorMessage("缺少接口参数");
+        }
+
+        return ServerResponse.createBySuccess(transferData);
+    }
+
+    @Override
+    public ServerResponse<Map<String, String>> tryImportTrigger(MultipartFile file, HttpSession session) {
+        ServerResponse<DhTransferData> turnTransferDataResponse = this.turnJsonFileIntoDhTransferData(file);
+        if (!turnTransferDataResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
+        }
+        // 校验tirgger数量
+        DhTransferData transferData = turnTransferDataResponse.getData();
+        List<DhTrigger> triggerList = transferData.getTriggerList();
+        if (CollectionUtils.isEmpty(triggerList)) {
+            return ServerResponse.createByErrorMessage("缺少触发器信息");
+        }
+        if (triggerList.size() > 1) {
+            return ServerResponse.createByErrorMessage("触发器数量过多");
+        }
+        DhTrigger trigger = triggerList.get(0);
+        Map<String, String> result = new HashMap<>();
+        result.put("triTitle", trigger.getTriTitle());
+        DhTrigger triggerExists = dhTriggerService.getTriggerByTriUid(trigger.getTriUid());
+        if (triggerExists == null) {
+            result.put("exists", "FALSE");
+        } else {
+            result.put("exists", "TRUE");
+        }
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        return ServerResponse.createBySuccess(result);
+
+    }
+
+    @Transactional
+    @Override
+    public ServerResponse startImprtTrigger(DhTransferData transferData) {
+        List<DhTrigger> triggerList = transferData.getTriggerList();
+        if (CollectionUtils.isEmpty(triggerList)) {
+            return ServerResponse.createByErrorMessage("缺少触发器信息");
+        }
+        if (triggerList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，触发器数量过多");
+        }
+        DhTrigger trigger = triggerList.get(0);
+        DhTrigger triggerExists = dhTriggerService.getTriggerByTriUid(trigger.getTriUid());
+        String currUserUid = getCurrentUserUid();
+        trigger.setUpdator(currUserUid);
+        if (triggerExists == null) { // 如果不存在，新增
+            trigger.setCreator(currUserUid);
+            dhTriggerMapper.save(trigger);
+        } else { // 如果存在，覆盖
+            dhTriggerMapper.updateByPrimayKeySelective(trigger);
+        }
+       return ServerResponse.createBySuccess();
+    }
+
+    @Override
+    public ServerResponse<DhTransferData> exportInterface(String intUid) {
+        DhInterface dhInterface = dhInterfaceService.getByIntUid(intUid);
+        if (dhInterface == null) {
+            return ServerResponse.createByErrorMessage("此接口不存在");
+        }
+        DhTransferData transferData = new DhTransferData();
+        transferData.addToInterfaceList(dhInterface);
+        // 获取接口参数
+        transferData.addAllToInterfaceParameterList(dhInterfaceParameterService.querybyintUid(intUid));
+        return ServerResponse.createBySuccess(transferData);
+    }
+
+    @Override
+    public ServerResponse tryImportInterface(MultipartFile file, HttpSession session) {
+        ServerResponse<DhTransferData> turnTransferDataResponse = this.turnJsonFileIntoDhTransferData(file);
+        if (!turnTransferDataResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
+        }
+        DhTransferData transferData = turnTransferDataResponse.getData();
+        List<DhInterface> interfaceList = transferData.getInterfaceList();
+        if (CollectionUtils.isEmpty(interfaceList)) {
+            return ServerResponse.createByErrorMessage("缺少接口信息");
+        } else if (interfaceList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，接口数量过多");
+        }
+        DhInterface dhInterface = interfaceList.get(0);
+        Map<String, String> result = new HashMap<>();
+        result.put("intTitle", dhInterface.getIntTitle());
+        DhInterface interfaceExists = dhInterfaceService.getByIntUid(dhInterface.getIntUid());
+        if (interfaceExists == null) {
+            result.put("exists", "FALSE");
+        } else {
+            result.put("exists", "TRUE");
+        }
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        return ServerResponse.createBySuccess(result);
+    }
+
+    @Transactional
+    @Override
+    public ServerResponse startImprtInterface(DhTransferData transferData) {
+        List<DhInterface> interfaceList = transferData.getInterfaceList();
+        if (CollectionUtils.isEmpty(interfaceList)) {
+            return ServerResponse.createByErrorMessage("缺少接口信息");
+        }
+        if (interfaceList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，接口数量过多");
+        }
+        DhInterface dhInterface = interfaceList.get(0);
+        List<DhInterfaceParameter> intParamListFromData = transferData.getInterfaceParameterList();
+        // 查看数据库中是否已存在
+        DhInterface interfaceExists = dhInterfaceService.getByIntUid(dhInterface.getIntUid());
+        if (interfaceExists == null) { // 新增接口
+            dhInterfaceMapper.save(dhInterface);
+            if (!CollectionUtils.isEmpty(intParamListFromData)) {
+                dhInterfaceParameterMapper.insertBatch(intParamListFromData);
+            }
+            return ServerResponse.createBySuccess();
+        }
+        dhInterfaceMapper.update(dhInterface); // 更新接口
+        if (CollectionUtils.isEmpty(intParamListFromData)) {
+            return ServerResponse.createBySuccess();
+        }
+        List<DhInterfaceParameter> intParamListFromDb = dhInterfaceParameterMapper.listAll(dhInterface.getIntUid());
+        List<Map<String, String>> mapListToUpdate = new ArrayList<>();
+        List<String> idToDeleteFromtriggerParameter = new ArrayList<>();
+
+        for (DhInterfaceParameter paramFromDb : intParamListFromDb) {
+            boolean matched = false;
+            for (DhInterfaceParameter paramFromData : intParamListFromData) {
+                // 是否命中(paramName相同，输入/输出类型相同)
+                if (paramFromDb.getParaName().equals(paramFromData.getParaName())
+                    && paramFromDb.getParaInOut().equals(paramFromData.getParaInOut())) {
+                    if (!paramFromDb.getParaUid().equals(paramFromData.getParaUid())) {
+                        // 字段匹配主键不相同，需要更新中间表
+                        Map<String, String> map = new HashMap<>();
+                        map.put("oldUid", paramFromDb.getParaUid());
+                        map.put("newUid", paramFromData.getParaUid());
+                        mapListToUpdate.add(map);
+                    }
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                // 如果新版中没有相同的，就要删除
+                idToDeleteFromtriggerParameter.add(paramFromDb.getParaUid());
+            }
+        }
+        // 全量删除老的参数
+        if (!CollectionUtils.isEmpty(intParamListFromDb)) {
+
+        }
+        // 全量插入新的参数
+
+        // 更新中间表中新老相同的部分
+
+        // 删除中间表中老的存在，新版不存在的字段
+
+        return null;
+    }
+
+
 }

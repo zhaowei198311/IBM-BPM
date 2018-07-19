@@ -216,46 +216,5 @@ public class DhProcessDefinitionController {
         }
     }
 
-    /**
-     * 导出指定的流程定义
-     * @param response
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
-     */
-    @RequestMapping(value = "/exportProcessDefinition")
-    public void exportProcessDefinition(HttpServletResponse response, String proAppId, String proUid, String proVerUid) {
-        ServerResponse<DhTransferData> dhTransferDataServerResponse = dhTransferService.exportProcessDefinition(proAppId, proUid, proVerUid);
-        if (!dhTransferDataServerResponse.isSuccess()) {
-            return ;
-        }
-        DhTransferData transferData = dhTransferDataServerResponse.getData();
-        OutputStream out = null;
-        BufferedOutputStream bufOut = null;
-        try {
-            String dataStr = JSON.toJSONString(transferData);
-            String fileName = dhTransferService.getExportFileName(transferData.getProcessDefinitionList().get(0));
-            fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
-            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-            response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=UTF-8"); // 设置编码字符
-            out = response.getOutputStream();
-            bufOut = new BufferedOutputStream(out);
-            bufOut.write(dataStr.getBytes("UTF-8"));
-        } catch (Exception e) {
-            LOG.error("导出流程失败", e);
-        } finally {
-            if (bufOut != null) {
-                try {
-                    bufOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
 
 }

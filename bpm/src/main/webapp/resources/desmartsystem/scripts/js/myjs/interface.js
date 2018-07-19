@@ -212,6 +212,7 @@ function drawTable(pageInfo, data) {
 				//+ '<i class="layui-icon"  title="接口测试" style="font-size:16px;" onclick=textInterface("'+ meta.intUid + '","' + meta.intTitle+ '","input")  >&#xe64c;</i>'
 				+ '<i class="layui-icon" title="接口测试" onclick=textInterface("'+ meta.intUid + '","' + encodeURI(meta.intTitle)+ '","input"); ><img src="resources/desmartsystem/images/interface.png" style="height:16px; width:16px;margin-bottom:4px;" /></i>'
 				+ '<i class="layui-icon"  title="修改接口"  onclick=updatate("'+ meta.intUid + '") >&#xe642;</i>'
+            	+ '<i class="layui-icon"  title="导出接口"  onclick=transferInterface.exportInterface("'+ meta.intUid + '") >&#xe601;</i>'
 				+ '<i class="layui-icon"  title="删除接口"  onclick=del("'+ meta.intUid + '") >&#xe640;</i>'
 				+ '<i class="layui-icon" style="font-size:17px;"  title="绑定参数"  onclick=info("'+ meta.intUid + '")>&#xe716;</i>' + '</td>' + '</tr>'
 	}
@@ -470,4 +471,38 @@ function drawTable2(pageInfo) {
 // 退出
 function back() {
 	window.location.href = 'javascript:history.go(-1)';
+}
+
+
+var transferInterface = {
+	URL: {
+        exportInterface: 'transfer/exportInterface',
+        tryImportInterface: 'transfer/tryImportInterface',
+        sureImportInterface: 'transfer/sureImportInterface',
+        cancelImportInterface: 'transfer/cancelImportTransferData'
+	},
+	init: function () {
+		
+    },
+	exportInterface: function (intUid) {
+		downLoadFile(transferInterface.URL.exportInterface, {"intUid": intUid});
+    }
+
+}
+
+function downLoadFile(URL, PARAMS) {
+    var temp_form = document.createElement("form");
+    temp_form .action = URL;
+    // temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+    temp_form .method = "post";
+    temp_form .style.display = "none";
+    for (var x in PARAMS) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = PARAMS[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    temp_form.submit();
+    temp_form.remove();
 }

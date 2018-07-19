@@ -59,7 +59,7 @@ public interface DhInterfaceService {
 	 * @param dhInterface
 	 * @return
 	 */
-	DhInterface selectDhInterfaceByid (String intUid);
+	DhInterface getByIntUid(String intUid);
 	
 	/**
 	 * 根据接口状态查询所有接口

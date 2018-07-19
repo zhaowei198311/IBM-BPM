@@ -221,6 +221,22 @@ var common = {
                 layer.alert('操作失败，请稍后再试');
             }
         });
+    },
+    downLoadFile: function(URL, PARAMS) {
+        var temp_form = document.createElement("form");
+        temp_form .action = URL;
+        // temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
+        temp_form .method = "post";
+        temp_form .style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            temp_form .appendChild(opt);
+        }
+        document.body.appendChild(temp_form);
+        temp_form.submit();
+        temp_form.remove();
     }
 	
 };

@@ -157,7 +157,7 @@
 		</where>
 	</delete>
 	
-	<update id="updateDhTrigger" parameterType="com.desmart.desmartbpm.entity.DhTrigger">
+	<update id="updateByPrimayKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger">
 		update dh_trigger 
 		<set>
 			<if test="triTitle != null and triTitle != ''">

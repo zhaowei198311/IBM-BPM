@@ -3,7 +3,6 @@
  */
 package com.desmart.desmartsystem.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,7 +120,7 @@ public class DhInterfaceController {
 	@RequestMapping(value = "/queryDhInterfaceById")
 	@ResponseBody
 	public DhInterface selectDhInterfaceByid(@RequestParam(value = "intUid")String intUid) {
-		return dhInterfaceService.selectDhInterfaceByid(intUid);
+		return dhInterfaceService.getByIntUid(intUid);
 	}
 	
 	@RequestMapping(value = "/queryDhInterfaceByTitle")

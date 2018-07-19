@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +121,10 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	 * @see com.desmart.desmartsystem.service.DhInterfaceService#selectDhInterfaceByid(com.desmart.desmartsystem.entity.DhInterface)
 	 */
 	@Override
-	public DhInterface selectDhInterfaceByid(String intUid) {
+	public DhInterface getByIntUid(String intUid) {
+		if (StringUtils.isBlank(intUid)){
+		    return null;
+		}
 		return dhInterfaceMapper.selectByintUid(intUid);
 	}
 

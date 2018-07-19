@@ -306,7 +306,7 @@ public class TestController extends BaseWebController {
             // String uploadPath = request.getServletContext().getRealPath("upload");
             //System.out.println(uploadPath);
             try {
-                dhTransferService.trunFileIntoDhTransferData(file);
+               // dhTransferService.trunJsonFileIntoJavaObject(file, "");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -314,5 +314,16 @@ public class TestController extends BaseWebController {
         return ServerResponse.createByErrorMessage("上传失败");
     }
 
+    @RequestMapping(value = "/testMultiUpload")
+    @ResponseBody
+    public ServerResponse testMultiUpload(@RequestParam("file") MultipartFile file, String field1) {
+        String fileName = file.getOriginalFilename();
+        System.out.println(fileName);
+        if (fileName.startsWith("2")) {
+            return ServerResponse.createByErrorCodeMessage(1, "上传失败");
+        }
+        System.out.println(field1);
+        return ServerResponse.createBySuccess(fileName);
+    }
 
 }

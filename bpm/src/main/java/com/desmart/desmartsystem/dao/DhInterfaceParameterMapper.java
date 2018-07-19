@@ -24,6 +24,13 @@ public interface DhInterfaceParameterMapper {
 	 * @return
 	 */
 	int save(DhInterfaceParameter dhInterfaceParameter);
+
+	/**
+	 * 批量插入
+	 * @param dhInterfaceParameterList
+	 * @return
+	 */
+	int insertBatch(List<DhInterfaceParameter> dhInterfaceParameterList);
 	
 	/**
 	 * 删除接口参数

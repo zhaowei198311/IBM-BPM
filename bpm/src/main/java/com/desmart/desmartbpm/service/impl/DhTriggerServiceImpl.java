@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.service.impl;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -393,7 +394,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	 */
 	@Override
 	public int updateTrigger(DhTrigger dhTrigger) {
-		return dhTriggerMapper.updateDhTrigger(dhTrigger);
+		return dhTriggerMapper.updateByPrimayKeySelective(dhTrigger);
 	}
 
 
@@ -404,5 +405,13 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		}
 		return dhTriggerMapper.listByTriggerUidList(triggerUidList);
 	}
-	
+
+	@Override
+	public DhTrigger getTriggerByTriUid(String triUid) {
+		if (StringUtils.isBlank(triUid)){
+		    return null;
+		}
+        return dhTriggerMapper.getByPrimaryKey(triUid);
+    }
+
 }
