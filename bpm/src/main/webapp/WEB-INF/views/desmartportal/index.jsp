@@ -263,13 +263,13 @@
 						window.setTimeout(function(){
 							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
 							$(daibanObj).text(result);
-						},10);
+						},100);
 					} else if (result > 0) {
 						$("#daiban_icon").text(result);
 						window.setTimeout(function(){
 							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
 							$(daibanObj).text(result);
-						},10);
+						},100);
 					} else {
 						layer.msg("登陆超时！请重新登陆！", function () {
 							window.location.reload();
