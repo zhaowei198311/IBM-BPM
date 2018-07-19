@@ -82,7 +82,27 @@
 			#{paraInOut,jdbcType=VARCHAR}
 		)
 	</insert>
-	
+	<insert id="insertBatch" parameterType="list">
+		insert into DH_INTERFACE_PARAMETER(<include refid="Base_Column_List"/>)
+		<foreach collection="list" item="item" separator="union all">
+			select
+			#{item.paraUid},
+			#{item.paraIndex},
+			#{item.paraName},
+			#{item.paraDescription},
+			#{item.paraType},
+			#{item.paraSize},
+			#{item.multiSeparator},
+			#{item.multiValue},
+			#{item.isMust},
+			#{item.intUid},
+			#{item.paraParent},
+			#{item.dateFormat},
+			#{item.paraInOut}
+			from dual
+		</foreach>
+	</insert>
+
 	<delete id="delete" parameterType="java.lang.String">
 		DELETE FROM DH_INTERFACE_PARAMETER 
 		<where>

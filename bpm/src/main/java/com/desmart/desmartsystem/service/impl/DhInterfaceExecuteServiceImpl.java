@@ -61,7 +61,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 			return json;
 		}
 
-		DhInterface dhInterface = dhInterfaceService.selectDhInterfaceByid(intUid);
+		DhInterface dhInterface = dhInterfaceService.getByIntUid(intUid);
 		jsonObject.put("dhinterface", dhInterface);
 		String intType = dhInterface.getIntType();
 

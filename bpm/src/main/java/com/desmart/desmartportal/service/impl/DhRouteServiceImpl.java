@@ -14,6 +14,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.util.*;
+import com.desmart.desmartbpm.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -29,25 +31,12 @@ import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.BpmFindNextNodeException;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.common.util.CommonBusinessObjectUtils;
-import com.desmart.common.util.DataListUtils;
-import com.desmart.common.util.FormDataUtil;
-import com.desmart.common.util.HttpReturnStatusUtil;
-import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DatRule;
-import com.desmart.desmartbpm.entity.DatRuleCondition;
-import com.desmart.desmartbpm.entity.DhActivityAssign;
-import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhGatewayLine;
-import com.desmart.desmartbpm.entity.DhTaskHandler;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -127,7 +116,7 @@ public class DhRouteServiceImpl implements DhRouteService {
     private DhTaskHandlerMapper dhTaskHandlerMapper;
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
-
+	private ThreadBoolean threadBoolean = new ThreadBoolean();
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
@@ -370,6 +359,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
         BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
+        threadBoolean.setFalse();
         return routingData.getNormalNodes();
     }
 
@@ -804,12 +794,17 @@ public class DhRouteServiceImpl implements DhRouteService {
                     result.includeAll(getNowActivity(node, formData));
                 } else if ("gatewayAnd".equals(activityType)) {
                     // 并行网关
+					threadBoolean.setTrue();
                     List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
                     for (BpmActivityMeta node : directNextNodes) {
                         result.includeAll(getNowActivity(node, formData));
                     }
                 } else if ("gatewayOr".equals(activityType)) {
                     // 包容网关
+					if (threadBoolean.getValue()) {
+						// 如果经过包容网关前经过了并行网关， 不再往后找
+						return result;
+					}
                     List<BpmActivityMeta> directNextNodes = findDirectNextNodes(directNextNode);
                     for (BpmActivityMeta node : directNextNodes) {
                         result.includeAll(getNowActivity(node, formData));
@@ -875,12 +870,17 @@ public class DhRouteServiceImpl implements DhRouteService {
                 result.includeAll(getNowActivity(node, formData));
             } else if ("gatewayAnd".equals(activityType)) {
                 // 并行网关
+				threadBoolean.setTrue();
                 List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
                 for (BpmActivityMeta node : directNextNodes) {
                     result.includeAll(getNowActivity(node, formData));
                 }
             } else if ("gatewayOr".equals(activityType)) {
                 // 包容网关
+				if (threadBoolean.getValue()) {
+					// 如果经过包容网关前经过了并行网关， 不再往后找
+					return result;
+				}
                 List<BpmActivityMeta> directNextNodes = findDirectNextNodes(nowActivity);
                 for (BpmActivityMeta node : directNextNodes) {
                     result.includeAll(getNowActivity(node, formData));
@@ -1333,6 +1333,7 @@ public class DhRouteServiceImpl implements DhRouteService {
     @Override
     public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
         BpmRoutingData routingData = this.getRoutingDataOfNextActivityTo(sourceNode, formData);
+        threadBoolean.setFalse();
         /*  将noramalNodes整理为4类数据
          *  1. 与sourceNode平级的userTaskNode(要选人)
          *  2. 与sourceNode平级的 processStartNode对应的userTaskNode （要选人）

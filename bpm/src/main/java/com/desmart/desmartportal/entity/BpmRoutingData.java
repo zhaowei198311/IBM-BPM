@@ -134,6 +134,7 @@ public class BpmRoutingData {
         this.startProcessNodes = startProcessNodes;
     }
 
+
     public Set<BpmActivityMeta> getEndProcessNodes() {
         return endProcessNodes;
     }

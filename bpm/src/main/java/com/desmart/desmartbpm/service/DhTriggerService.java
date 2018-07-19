@@ -70,4 +70,12 @@ public interface DhTriggerService {
      * @return 符合条件的触发器
      */
     List<DhTrigger> listByTriggerUidList(List<String> triggerUidList);
+
+    /**
+     * 根据触发器主键查找触发器
+     * @param triUid
+     * @return
+     */
+    DhTrigger getTriggerByTriUid(String triUid);
+
 }
