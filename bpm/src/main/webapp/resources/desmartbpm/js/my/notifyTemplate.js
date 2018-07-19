@@ -64,7 +64,7 @@ function showNotifyTemplate(a){
 	$("#operation-title").text("查看通知模板");
 	$("#submitOperation").css("display","none");
 	$(".cancel_btn").text("关闭");
-	var tr= $(a).parent().parent().parent();
+	var tr= $(a).parent().parent();
 	$("input[name='templateName']").val(tr.find("td").eq(1).text());
 	$("#templateContent").val(tr.find("td").eq(3).find("pre").text());
 	var templateType = tr.find("td").eq(2).data("templatetype");
