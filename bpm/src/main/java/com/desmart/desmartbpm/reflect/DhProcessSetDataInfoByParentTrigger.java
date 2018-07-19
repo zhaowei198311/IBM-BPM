@@ -5,6 +5,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 /**
@@ -29,7 +30,7 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 public class DhProcessSetDataInfoByParentTrigger implements DhJavaClassTriggerTemplate {
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject) {
+	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject,DhStep dhStep) {
 		 // 获得bean
 	    DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 	    

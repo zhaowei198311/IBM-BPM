@@ -1,14 +1,14 @@
 package com.desmart.desmartbpm.reflect;
 
-import com.alibaba.fastjson.JSON;
+import org.springframework.web.context.WebApplicationContext;
+
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
 import com.desmart.desmartbpm.entity.DhDataExchange;
+import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * 设置主流程范围内交互数据用的标识
@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class SetProcessInstanceIdentity implements DhJavaClassTriggerTemplate {
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject param) {
+	public void execute(WebApplicationContext ac, String insUid, JSONObject param,DhStep dhStep) {
 	    String identity = null;
         if (param == null || (identity = param.getString("identity")) == null) {
             throw new PlatformException("缺少必要的参数，调用失败");
