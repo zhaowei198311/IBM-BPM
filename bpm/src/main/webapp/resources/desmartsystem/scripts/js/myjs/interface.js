@@ -200,7 +200,7 @@ function drawTable(pageInfo, data) {
 				+ '<td>'
 				+ meta.intType
 				+ '</td>'
-				+ '<td id="requestUrl" class="txt-ell">'
+				+ '<td id="requestUrl" class="txt-ell" title="'+meta.intUrl+'">'
 				+ meta.intUrl
 				+ '</td>'
 				+ '<td>'
@@ -341,34 +341,30 @@ function updatate(intUid) {
 
 function getParamersInfo(intUid) {
 	$.ajax({
-		url : 'interfaceParamers/index',
+		url : 'interfaceParamers/byQueryParameter',
 		type : 'post',
 		dataType : 'json',
 		data : {
-			intUid : intUid,
-			pageNum : pageConfig.pageNum,
-			pageSize : pageConfig.pageSize
+			intUid : intUid
 		},
 		success : function(result) {
-			if (result.status == 0) {
-				drawTable2(result.data)
-			}
+			drawTable2(result);
 		}
 	})
 }
 
 // 请求数据成功
-function drawTable2(pageInfo) {
-	pageConfig.pageNum = pageInfo.pageNum;
-	pageConfig.pageSize = pageInfo.pageSize;
-	pageConfig.total = pageInfo.total;
+function drawTable2(data) {
+//	pageConfig.pageNum = pageInfo.pageNum;
+//	pageConfig.pageSize = pageInfo.pageSize;
+//	pageConfig.total = pageInfo.total;
 	// 渲染数据
 	$("#exposed_table_tbody").html('');
-	if (pageInfo.total == 0) {
+	if (data.length == 0) {
 		return;
 	}
-	var list = pageInfo.list;
-	var startSort = pageInfo.startRow;// 开始序号
+	var list = data;
+	var startSort =0;// 开始序号
 	var sortNumTow = 1;
 	var displaySrotNum = "";
 	for (var i = 0; i < list.length; i++) {

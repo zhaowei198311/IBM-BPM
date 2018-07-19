@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.common.EntityIdPrefix;
 import com.desmart.desmartsystem.dao.DhInterfaceMapper;
+import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.enums.InterfaceType;
 import com.desmart.desmartsystem.service.DhInterfaceService;
@@ -41,6 +42,8 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 
 	@Autowired
 	private DhInterfaceMapper dhInterfaceMapper;
+	@Autowired
+	private DhInterfaceParameterMapper dhInterfaceParameterMapper;
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +88,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	public void delDhInterface(String Interfaceid) {
 		if (Interfaceid != null) {
 			dhInterfaceMapper.delete(Interfaceid);
-			dhInterfaceMapper.deleteByIntUid(Interfaceid);
+			dhInterfaceParameterMapper.deleteByIntUid(Interfaceid);
 		}else {
 			LOG.info("删除接口模块出错，出错类为"+DhInterfaceServiceImpl.class);
 		}

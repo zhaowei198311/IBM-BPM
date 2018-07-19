@@ -124,28 +124,6 @@ function returnField(field){
 	return field;
 }
 
-//function parameterShowHidden(showOrHidden,selector){
-//	var paraSizeElement='.paraSize'+selector;
-//	var isMustElement='.isMust'+selector;
-//	var paraTypeElement='#paraType'+selector;
-//	
-//	var dateFormatElement='.dateFormat'+selector;
-//	
-//	var paraType=$(paraTypeElement).val();
-//	
-//	if(showOrHidden=='show'){
-//		if(paraType!='Date'){
-//			$(paraSizeElement).show();
-//		}else{
-//			$(dateFormatElement).show();
-//		}
-//		$(isMustElement).show();
-//	}else{
-//		$(dateFormatElement).hide();
-//		$(paraSizeElement).hide();
-//		$(isMustElement).hide();
-//	}
-//}
 
 var arrayTh;
 layui.use(['form', 'layedit', 'laydate'], function(){
@@ -168,32 +146,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		byParameterTypeHideAndShowElement(value,"");
 	});
 	
-	//绑定接口参数输入/输出字段
-//	form.on('switch(paraInOut)', function(data){
-//		if(this.checked){
-//			parameterShowHidden('hide','');
-//		}else{
-//			parameterShowHidden('show','');
-//		}
-//	});
-	
-	form.on('select(paraType2)', function(data){
-		var value=data.value;
-		byParameterTypeHideAndShowElement(value,"");
-	});
-	
-	form.on('select(intType)', function(data){
-		var value=data.value;
-		interfaceInputShowAndHide(value,'');
-		alert('11');
-	});
-	
-	form.on('select(intType1)', function(data){
-		var value=data.value;
-		interfaceInputShowAndHide(value,'1');
-		alert('22');
-	});
-	
 	form.on('select(paraType1)', function(data){
 		var value=data.value;
 		byParameterTypeHideAndShowElement(value,"1");
@@ -210,6 +162,15 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	});
 	
 	
+	form.on('select(intType)', function(data){
+		var value=data.value;
+		interfaceInputShowAndHide(value,'');
+	});
+	
+	form.on('select(intType1)', function(data){
+		var value=data.value;
+		interfaceInputShowAndHide(value,'1');
+	});
 	
 	
 	//新增array参数
@@ -479,8 +440,8 @@ function updArrayTableList(result){
 	for (var i = 0; i < result.length; i++) {
 		var str='<tr value="'+encodeURI(JSON.stringify(result[i]))+'">';
 		str+='<td>'+result[i].paraName+'</td>';
+		str+='<td class="txt-ell" >'+result[i].paraDescription+'</td>';
 		str+='<td>'+result[i].paraType+'</td>';
-		str+='<td>'+result[i].paraDescription+'</td>';
 		str+='<td>'+isEmpty(result[i].paraSize)+'</td>';
 		str+='<td>'+result[i].isMust+'</td>';
 		str+='<td>'+isEmpty(result[i].dateFormat)+'</td>';
