@@ -44,7 +44,6 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 	@Override
 	public ServerResponse<PageInfo<List<DhInterfaceParameter>>> listDhInterfaceParameter(String intUid, Integer pageNum,
 			Integer pageSize) {
-		pageSize=100;
 		PageHelper.startPage(pageNum, pageSize);
 		List<DhInterfaceParameter> interfaceParameterlist = dhInterfaceParameterMapper.listAll(intUid);
 		PageInfo<List<DhInterfaceParameter>> pageInfo = new PageInfo(interfaceParameterlist);
@@ -220,5 +219,11 @@ public class DhInterfaceParameterServiceImpl implements DhInterfaceParameterServ
 			return new ArrayList<>();
 		}
 		return dhInterfaceParameterMapper.listByIntUidList(intUidList);
+	}
+
+	@Override
+	public List<DhInterfaceParameter> interfaceParameterList(DhInterfaceParameter dhInterfaceParameter) {
+		// TODO Auto-generated method stub
+		return dhInterfaceParameterMapper.byQueryParameter(dhInterfaceParameter);
 	}
 }
