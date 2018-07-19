@@ -79,7 +79,7 @@ function drawTable(pageInfo) {
         if (meta.triDescription == null || meta.triDescription == '') {
             triDescription = "没有描述";
         } else {
-            triDescription = meta.triDescription;
+            triDescription = beautySub(meta.triDescription, 5);
         }
 
         //	alert(meta.triWebbot.length)
