@@ -29,7 +29,7 @@
 		where public_form_name = #{formName}
 	</select>
 	
-	<select id="isBindMainForm" parameterType="String" resultType="String">
+	<select id="isBindMainForm" parameterType="String" resultType="string">
 		select form_uid 
 		from bpm_form_rele_public_form
 		where public_form_uid = #{formUid}
@@ -53,6 +53,28 @@
 		from bpm_public_form
 		where public_form_uid = #{formUid}
 	</select>
+	
+	<update id="updateByPrimayKeySelective" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
+		update bpm_public_form
+		<set>
+			<if test="publicFormName != null">
+				public_form_name = #{publicFormName},
+			</if>
+			<if test="publicFormDescription != null">
+				public_form_description = #{publicFormDescription},
+			</if>
+			<if test="publicFormCode != null">
+				public_form_code = #{publicFormCode},
+			</if>
+			<if test="publicFormContent != null">
+				public_form_content = #{publicFormContent},
+			</if>
+			<if test="publicFormWebpage != null">
+				public_form_webpage = #{publicFormWebpage}
+			</if>
+		</set>
+		where public_form_uid = #{publicFormUid}
+	</update>
 	
 	<update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		update bpm_public_form

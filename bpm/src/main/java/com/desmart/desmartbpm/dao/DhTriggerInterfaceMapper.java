@@ -121,4 +121,19 @@ public interface DhTriggerInterfaceMapper {
 	 * @return
 	 */
     int removeByStepUidList(List<String> stepUidList);
+
+	/**
+	 * 更新接口参数的主键
+	 * @param oldUid  旧的主键
+	 * @param newUid  新的主键
+	 * @return
+	 */
+    int updateParaUid(@Param("oldUid")String oldUid, @Param("newUid")String newUid);
+
+	/**
+	 * 根据接口参数主键 删除有关的所有记录
+	 * @param paramUidList
+	 * @return
+	 */
+	int removeByParaUidList(List<String> paraUidList);
 }

@@ -272,7 +272,7 @@ public class DhTransferController {
                 return ServerResponse.createByErrorMessage("导入接口失败, 请重试");
             }
             // 开始导入
-            return dhTransferService.startImprtInterface(transferData);
+            return dhTransferService.startImportInterface(transferData);
         } catch (Exception e) {
             LOG.error("导入接口失败", e);
             session.removeAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
@@ -280,5 +280,39 @@ public class DhTransferController {
         }
     }
 
+    @RequestMapping(value = "/exportPublicForm")
+    @ResponseBody
+    public void exportPublicForm(String publicFormUid, HttpServletResponse response) {
+        ServerResponse<DhTransferData> exportInterfaceResponse = dhTransferService.exportPublicForm(publicFormUid);
+        if (exportInterfaceResponse.isSuccess()) {
+            DhTransferData transferData = exportInterfaceResponse.getData();
+            this.writeObjectAsJsonFile(response, transferData,
+                    "[公共表单]" + transferData.getFormList().get(0).getDynTitle());
+        }
+        return;
+    }
 
+    @RequestMapping(value = "/tryImportPublicForm")
+    @ResponseBody
+    public ServerResponse tryImportPublicForm(@RequestParam("file") MultipartFile file, HttpSession session) {
+        return dhTransferService.tryImportPublicForm(file, session);
+    }
+
+
+    @RequestMapping(value = "/sureImportPublicForm")
+    @ResponseBody
+    public ServerResponse sureImportPublicForm(HttpSession session) {
+        try {
+            DhTransferData transferData = (DhTransferData) session.getAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
+            if (transferData == null) {
+                return ServerResponse.createByErrorMessage("导入公共表单失败, 请重试");
+            }
+            // 开始导入
+            return dhTransferService.startImprtPublicForm(transferData);
+        } catch (Exception e) {
+            LOG.error("导入公共表单失败", e);
+            session.removeAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
+            return ServerResponse.createByErrorMessage("导入公共表单失败");
+        }
+    }
 }

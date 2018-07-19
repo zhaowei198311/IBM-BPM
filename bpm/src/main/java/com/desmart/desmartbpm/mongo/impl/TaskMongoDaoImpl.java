@@ -22,8 +22,8 @@ import java.util.List;
 
 @Repository
 public class TaskMongoDaoImpl implements TaskMongoDao {
-	
-	@Resource
+
+    @Resource
     @Qualifier("mongoTemplate")
     private MongoTemplate mongoTemplate;
 

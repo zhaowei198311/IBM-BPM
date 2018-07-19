@@ -66,4 +66,19 @@ public interface DhObjectPermissionMapper {
      * @return
      */
     int removeByStepUidList(List<String> stepUidList);
+
+    /**
+     * 将权限表中表单字段id更新为新的表单字段id
+     * @param oldFieldUid 老的表单字段主键
+     * @param newFieldUid 新的表单字段主键
+     * @return
+     */
+    int updateformFieldUidToNewFieldUid(@Param("oldFieldUid")String oldFieldUid, @Param("newFieldUid")String newFieldUid);
+
+    /**
+     * 根据opObjUid集合删除 对应的记录
+     * @param opObjUidList
+     * @return
+     */
+    int removeByOpObjUidList(List<String> opObjUidList);
 }

@@ -4,13 +4,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 锁住阻止拉取的任务
  */
-@Document
-public class LockedTask {
+public class LockedTask implements Serializable{
     /** 存放锁任务的mongo collection名称  */
     public static final String LOCKED_TASK_COLLECTION_NAME = "lockedTaskCollection";
     /** 主流程的第一个任务  */
@@ -33,7 +33,7 @@ public class LockedTask {
 
     }
 
-    @PersistenceConstructor
+
     public LockedTask(Integer taskId, Date lockTime, String lockedReason) {
         this.taskId = taskId;
         this.lockTime = lockTime;

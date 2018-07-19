@@ -43,7 +43,10 @@ public class DhInterfaceParameter {
 	private String	paraInOut;
 	
 	private List<DhInterfaceParameter> dhInterfaceParameters;
-	
+
+	// 非表中字段
+	private String cascadeParaName; // 级联的参数名
+
 	/**
 	 * @return the paraUid
 	 */
@@ -231,6 +234,14 @@ public class DhInterfaceParameter {
 
 	public void setDhInterfaceParameters(List<DhInterfaceParameter> dhInterfaceParameters) {
 		this.dhInterfaceParameters = dhInterfaceParameters;
+	}
+
+	public String getCascadeParaName() {
+		return cascadeParaName;
+	}
+
+	public void setCascadeParaName(String cascadeParaName) {
+		this.cascadeParaName = cascadeParaName;
 	}
 
 	/**

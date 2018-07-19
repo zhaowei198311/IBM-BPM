@@ -50,10 +50,11 @@ public interface BpmPublicFormMapper {
 	int updateFormInfo(BpmPublicForm bpmPublicForm);
 
 	/**
-	 * 根据表单id修改表单文件名
+	 * 根据传入参数选择性更新
+	 * @param bpmPublicForm
+	 * @return
 	 */
-	int updateFormFilenameByFormUid(@Param("publicFormUid")String publicFormUid, 
-			@Param("formFilename")String updateFilename);
+	int updateByPrimayKeySelective(BpmPublicForm bpmPublicForm);
 
 	/**
 	 * 根据表单Id删除表单
