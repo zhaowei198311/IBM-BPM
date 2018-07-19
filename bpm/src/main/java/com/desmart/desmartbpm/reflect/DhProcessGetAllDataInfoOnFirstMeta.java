@@ -3,7 +3,6 @@ package com.desmart.desmartbpm.reflect;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSON;
@@ -11,7 +10,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
@@ -22,9 +20,7 @@ import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 
 /**
- * 通过标识符数组从目标流程的流程实例中获取数据 参数格式 { "data":[ { "identity": "第一个标识"} ] } ]
- * 
- * }
+ * 通过标识符数组从目标流程的流程实例中获取数据 参数格式 { "data":[ { "identity": "第一个标识"} ] }
  * 
  * @author lys
  *
