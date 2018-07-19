@@ -73,7 +73,7 @@ function drawTable(pageInfo) {
         if (meta.triParam == null || meta.triParam == '') {
             triPamaer = "没有参数"
         } else {
-            triPamaer = meta.triParam;
+            triPamaer = beautySub(meta.triParam, 15);
         }
 
         if (meta.triDescription == null || meta.triDescription == '') {
@@ -106,7 +106,7 @@ function drawTable(pageInfo) {
             + '<td title="' + meta.triWebbot + '">'
             + triwebot
             + '</td>'
-            + '<td >'
+			+ '<td title=\''+meta.triParam+'\'>' 
             + triPamaer
             + '</td>'
             + '<td>'
