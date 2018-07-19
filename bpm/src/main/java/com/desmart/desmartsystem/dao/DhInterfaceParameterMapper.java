@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 
 /**  
