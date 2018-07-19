@@ -71,5 +71,11 @@ public interface DhInterfaceMapper {
 	 * @return
 	 */
 	List<DhInterface> listByIntUidList(List<String> intUidList);
-
+	
+	/**
+	 * 根据接口uid删除接口参数
+	 * @param deleteByIntUid
+	 * @return
+	 */
+	List<DhInterface> deleteByIntUid(String intUid);
 }

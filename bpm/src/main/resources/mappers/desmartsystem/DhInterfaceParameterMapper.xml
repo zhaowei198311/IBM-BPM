@@ -111,6 +111,12 @@
 	</delete>
 	
 	
+	<!-- 删除接口下的参数 -->
+	<delete id="deleteByIntUid" parameterType="java.lang.String"  >
+		DELETE FROM DH_INTERFACE_PARAMETER where INT_UID = #{intUid}
+	</delete>
+	
+	
 	<delete id="deleteArrayParameter" parameterType="com.desmart.desmartsystem.entity.DhInterfaceParameter">
 		DELETE FROM DH_INTERFACE_PARAMETER WHERE PARA_UID NOT IN 
 		<foreach collection="dhInterfaceParameters" item="item"  open="(" separator="," close=")" >

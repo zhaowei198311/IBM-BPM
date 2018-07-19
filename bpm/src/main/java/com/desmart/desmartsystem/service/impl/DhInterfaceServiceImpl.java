@@ -85,6 +85,7 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 	public void delDhInterface(String Interfaceid) {
 		if (Interfaceid != null) {
 			dhInterfaceMapper.delete(Interfaceid);
+			dhInterfaceMapper.deleteByIntUid(Interfaceid);
 		}else {
 			LOG.info("删除接口模块出错，出错类为"+DhInterfaceServiceImpl.class);
 		}

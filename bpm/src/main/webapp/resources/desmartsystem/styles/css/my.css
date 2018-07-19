@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 }
-
+body{background:#fff;}
 .left {
 	float: left;
 	width: 220px;
