@@ -172,19 +172,21 @@ public class DhTaskInstanceController {
 			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
 			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
-			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName) {
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
+			,@RequestParam("proName")String proName) {
 		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhTaskInstance.setUsrUid(currentUserUid);
-        if(insTitle!=null && !"".equals(insTitle)) {
+        if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
         	DhProcessInstance dhProcessInstance = new DhProcessInstance();
-        		dhProcessInstance.setInsTitle(insTitle);
-        		dhTaskInstance.setDhProcessInstance(dhProcessInstance);
-        	}
-        	if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
-        		SysUser sysUser = new SysUser();
-        		sysUser.setUserName(createProcessUserName);
-        		dhTaskInstance.setSysUser(sysUser);
-        	}
+        	dhProcessInstance.setInsTitle(insTitle);
+        	dhProcessInstance.setProName(proName);
+        	dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        }
+        if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        	SysUser sysUser = new SysUser();
+        	sysUser.setUserName(createProcessUserName);
+        	dhTaskInstance.setSysUser(sysUser);
+        }
 		return dhTaskInstanceService.selectBackLogTaskInfoByCondition(startTime
 				, endTime, dhTaskInstance, pageNum, pageSize);
 	}
@@ -195,19 +197,21 @@ public class DhTaskInstanceController {
 			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
 			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
-			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName) {
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
+			,@RequestParam("proName")String proName) {
 		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhTaskInstance.setUsrUid(currentUserUid);
-        if(insTitle!=null && !"".equals(insTitle)) {
+        if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
         	DhProcessInstance dhProcessInstance = new DhProcessInstance();
-        		dhProcessInstance.setInsTitle(insTitle);
-        		dhTaskInstance.setDhProcessInstance(dhProcessInstance);
-        	}
-        	if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
-        		SysUser sysUser = new SysUser();
-        		sysUser.setUserName(createProcessUserName);
-        		dhTaskInstance.setSysUser(sysUser);
-        	}
+        	dhProcessInstance.setInsTitle(insTitle);
+        	dhProcessInstance.setProName(proName);
+        	dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        }
+        if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        	SysUser sysUser = new SysUser();
+        	sysUser.setUserName(createProcessUserName);
+        	dhTaskInstance.setSysUser(sysUser);
+        }
 		return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
 				, endTime, dhTaskInstance, pageNum, pageSize);
 	}

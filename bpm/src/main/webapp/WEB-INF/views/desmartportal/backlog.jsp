@@ -64,6 +64,12 @@
 				</div>
 				<div class="layui-row">
 					<div class="layui-col-md3">
+						<label class="layui-form-label">流程名称</label>
+						<div class="layui-input-block">
+							<input type="text" placeholder="流程名称" class="layui-input" id="task-proName-search">
+						</div>
+					</div>
+					<div class="layui-col-md3">
 						<label class="layui-form-label">开始时间</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="开始时间" class="layui-input" id="init-startTime-search">
@@ -92,6 +98,7 @@
                     <thead>
                         <tr>
                             <th>序号</th>
+                            <th>流程名称</th>
                             <th>流程标题</th>
                             <th>环节名称</th>
                             <th>是否代理</th>
@@ -131,6 +138,7 @@
         createProcessUserName: "",
         taskPreviousUsrUsername: "",
         insTitle: "",
+        proName : "",
         startTime: null,
         endTime: null,
         total: 0
@@ -220,6 +228,7 @@
                 pageSize: pageConfig.pageSize,
                 createProcessUserName: pageConfig.createProcessUserName,
                 taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
+               	proName: pageConfig.proName,
                 insTitle: pageConfig.insTitle,
                 startTime: pageConfig.startTime,
                 endTime: pageConfig.endTime
@@ -271,7 +280,10 @@
             trs += '<tr ondblclick=openApproval("' + meta.taskUid + '")>' +
                 '<td>' +
                 sortNum +
-                '</td>' +
+                '</td>'+
+                '<td>' +
+                meta.dhProcessInstance.proName +
+                '</td>'+
                 '<td style= "cursor:pointer;" onclick="openApproval(\'' + meta.taskUid + '\');">' +
                 meta.dhProcessInstance.insTitle +
                 '</td>' +
@@ -312,6 +324,7 @@
         pageConfig.createProcessUserName = $("#task-createProcessUserName-search").val();
         pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
         pageConfig.insTitle = $("#task-insTitle-search").val();
+        pageConfig.proName = $("#task-proName-search").val();  
         pageConfig.startTime = $("#init-startTime-search").val() == "" ? null : $("#init-startTime-search").val();
         pageConfig.endTime = $("#init-endTime-search").val() == "" ? null : $("#init-endTime-search").val();
 
