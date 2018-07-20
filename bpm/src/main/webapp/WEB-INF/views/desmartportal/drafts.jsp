@@ -27,59 +27,45 @@
 <title>回收站页面</title>
 </head>
 <body>
-	<div class="layui-container" style="margin-top: 20px; width: 100%;">
-		<div class="search_area">
-			<div class="layui-row layui-form">
-				<div class="layui-col-md2">
-					<input id="dfsTitle" type="text" placeholder="草稿名称"
-						class="layui-input">
-				</div>
-				<div class="layui-col-md2" style="text-align: right; width: 80px">
-					<button class="layui-btn select_btn" onclick="search()">查询</button>
+	<div class="layui-fluid">
+		<div class="body_content">
+            <div class="search_area">
+				<div class="layui-row layui-form">
+					<div class="layui-col-md3">
+						<label class="layui-form-label">草稿名称</label>
+						<div class="layui-input-block">
+							<input id="dfsTitle" type="text" placeholder="草稿名称" class="layui-input">
+						</div>
+					</div>
 				</div>
 			</div>
+			
+			<div style="margin-top:5px;">
+				<table class="layui-table backlog_table" lay-even lay-skin="nob"
+					lay-filter="demo">
+					<colgroup>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+						<col>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>草稿名称</th>
+							<th>创建人</th>
+							<th>创建日期</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="drafts_table_tbody" />
+				</table>
+			</div>
+			<div id="lay_page"></div>
 		</div>
-		<div>
-			<table class="layui-table backlog_table" lay-even lay-skin="nob"
-				lay-filter="demo">
-				<colgroup>
-					<col>
-					<col>
-					<col>
-					<col>
-					<col>
-					<col>
-				</colgroup>
-				<thead>
-					<tr>
-						<th>序号</th>
-						<th>草稿名称</th>
-						<th>创建人</th>
-						<th>创建日期</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody id="drafts_table_tbody" />
-			</table>
-		</div>
-		<div id="lay_page"></div>
 	</div>
-	<!-- 	<div class="display_container">
-		<div class="display_content" style="width: 350px;height: 500px;">
-			<div class="top">
-				草稿数据
-			</div>
-			<div class="middle" style="height:400px;">
-				<form class="layui-form form-horizontal" method="post" action="agent/saveAgent" style="margin-top:30px;" id="draftForm">
-				 
-				</form>
-			</div>
-			<div class="foot">
-				<button class="layui-btn layui-btn sure_btn" type="button" onclick="formSubmit();" >确定</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancel()">取消</button>
-			</div>
-		</div>
-	</div> -->
 </body>
 </html>
 <script type="text/javascript"

@@ -19,84 +19,101 @@
   		
 	</head>
 	<body>
-		<div class="container">
-			<!-- 搜索区 -->
-			<div class="search_area">
-				<div class="layui-row layui-form">
-					<div class="layui-col-xs1">
-					    <div class="layui-form-pane">
-					    	<div class="layui-form-item">
-					          	<label class="layui-form-label" style="cursor:pointer;" onclick="refresh()">刷新</label>    
-					       </div>					    	     
-					    </div>
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="流程创建人姓名"  class="layui-input" id="task-createProcessUserName-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="上一环节处理人姓名"  class="layui-input" id="task-taskPreviousUsrUsername-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text" placeholder="流程实例标题"  class="layui-input" id="task-insTitle-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="开始时间"  class="layui-input" id="init-startTime-search">
-					</div>
-					<div class="layui-col-xs2">
-						<input type="text"  placeholder="结束时间"  class="layui-input" id="init-endTime-search">
-					</div>
-					<div class="layui-col-xs1">
-					    <div class="layui-form-pane"  style="float: right;">
-					    	<div class="layui-form-item">
-					    	<div class="layui-col-xs1" >
-					        <button class="layui-btn" onclick="search()">查询</button>
+		<div class="layui-fluid">
+			<div class="backlog_div">
+	            <div class="layui-row">
+	                <div class="layui-col-md6" style="border-right: 1px solid #e8e8e8;">
+	                    <div class="backlog_title">未阅通知</div>
+	                    <div class="backlog_detail"><span id="weiyue_icon">0</span>个任务</div>
+	                </div>
+	                
+	                <div class="layui-col-md6">
+	                    <div class="backlog_title">已阅通知</div>
+	                    <div class="backlog_detail"><span id="yiyue_icon">0</span>个任务</div>
+	                </div>
+	            </div>
+	        </div>
+	        
+	        <div class="body_content">
+	            <div class="search_area">
+					<div class="layui-row layui-form">
+						<div class="layui-col-md3">
+							<label class="layui-form-label">流程创建人</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="流程创建人姓名"  class="layui-input" id="task-createProcessUserName-search">
 							</div>
-					        </div>					    	     
-					    </div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">上一环节处理人</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
+							</div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">流程标题</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="流程实例标题" class="layui-input" id="task-insTitle-search">
+							</div>
+						</div>
+						<div class="layui-col-md3" style="text-align: center;"> 
+							<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="search()">查询</button>
+							<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="resetSearch()">重置</button>
+						</div>
+					</div>
+					<div class="layui-row">
+						<div class="layui-col-md3">
+							<label class="layui-form-label">开始时间</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="开始时间" class="layui-input" id="init-startTime-search">
+							</div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">结束时间</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
+							</div>
+						</div>
 					</div>
 				</div>
+				
+				<div style="margin-top:5px;">
+					<div class="layui-tab">
+					  	<ul class="layui-tab-title">
+						    <li class="unread layui-this">未读通知</li>
+						    <li class="read">已读通知</li>
+					  	</ul>
+					  	<div class="layui-tab-content">
+						    <div class="layui-tab-item layui-show">
+								<table class="layui-table backlog_table" lay-even lay-skin="nob">
+									<colgroup>
+									    <col>
+									    <col>
+									    <col>
+									    <col>
+									    <col>
+									    <col>
+									    <col>
+									    <col>
+									</colgroup>
+									<thead>
+									    <tr>
+									      <th>序号</th>
+									      <th>流程标题</th>
+									      <th>环节名称</th>
+									      <th>是否代理</th>
+									      <th>任务状态</th>
+									      <th>上一环节处理人</th>
+									      <th>流程创建人</th>
+									      <th>抄送时间</th>
+									    </tr> 
+									</thead>
+									<tbody id="transferBody" />
+								</table>
+						    </div>
+					  	</div>
+					</div>			
+				</div>
 			</div>
-			
-			<!-- 表格数据区 -->
-			<div>
-				<div class="layui-tab">
-				  	<ul class="layui-tab-title">
-					    <li class="unread layui-this">未读通知</li>
-					    <li class="read">已读通知</li>
-				  	</ul>
-				  	<div class="layui-tab-content">
-					    <div class="layui-tab-item layui-show">
-					    	<p class="table_list"><i class="layui-icon">&#xe61d;</i>共<span id="transfer_icon"></span>条任务</p>
-							<table class="layui-table backlog_table" lay-even lay-skin="nob">
-								<colgroup>
-								    <col>
-								    <col>
-								    <col>
-								    <col>
-								    <col>
-								    <col>
-								    <col>
-								    <col>
-								</colgroup>
-								<thead>
-								    <tr>
-								      <th>序号</th>
-								      <th>流程标题</th>
-								      <th>环节名称</th>
-								      <th>是否代理</th>
-								      <th>任务状态</th>
-								      <th>上一环节处理人</th>
-								      <th>流程创建人</th>
-								      <th>抄送时间</th>
-								    </tr> 
-								</thead>
-								<tbody id="transferBody" />
-							</table>
-					    </div>
-				  	</div>
-				</div>			
-			</div>
-			
 		</div>
 		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
@@ -145,26 +162,20 @@ $(document).ready(function() {
 	// 初始化进入未读
 	getTaskInstanceInfo(taskStatus);
 	// 查询我的 抄送任务
-	getUserTask(taskStatus);
+	getUserTask("12","weiyue_icon");
+	
+	getUserTask("32","yiyue_icon");
 	// 未读
 	$('.unread').click(function(){
 		taskStatus = '12';
 		getTaskInstanceInfo(taskStatus);
-		getUserTask(taskStatus);
 	})
 	// 已读
 	$('.read').click(function(){
 		taskStatus = '32';
 		getTaskInstanceInfo(taskStatus);
-		getUserTask(taskStatus);
 	})
 })
-
-// 刷新
-function refresh(){
-	getUserTask(taskStatus);
-	getTaskInstanceInfo(taskStatus);
-}
 
 // 分页
 function doPage() {
@@ -304,7 +315,7 @@ function doPage() {
 	}
 	
 	// 获取用户有多少未读/已读任务
-	function getUserTask(taskStatus){
+	function getUserTask(taskStatus,eleId){
 		$.ajax({
 			url : 'taskInstance/queryTransferNumber',
 			type : 'POST',
@@ -314,11 +325,18 @@ function doPage() {
 			},
 			success : function(result){
 				// 渲染到抄送
-				$("#transfer_icon").text(result);
+				$("#"+eleId).text(result);
 			}
 		})
 	}
-	
+	//重置模糊查询的条件
+    function resetSearch(){
+    	 $("#task-createProcessUserName-search").val("");
+         $("#task-taskPreviousUsrUsername-search").val("");
+         $("#task-insTitle-search").val("");
+         $("#init-startTime-search").val("");
+         $("#init-endTime-search").val("");
+    }
 	// 打开 抄送详情页面
 	function openApproval(taskUid){
 		updateTaskStatus(taskUid,taskStatus);
