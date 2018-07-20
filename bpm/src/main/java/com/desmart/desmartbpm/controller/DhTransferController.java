@@ -187,7 +187,7 @@ public class DhTransferController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/cancelImporTransferData")
+    @RequestMapping(value = "/cancelImportTransferData")
     @ResponseBody
     public ServerResponse cancelImportProcessDefinition(HttpSession session) {
         session.removeAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
@@ -252,7 +252,6 @@ public class DhTransferController {
             this.writeObjectAsJsonFile(response, transferData,
                     "[接口]" + transferData.getInterfaceList().get(0).getIntTitle());
         }
-        return;
     }
 
 
@@ -280,18 +279,27 @@ public class DhTransferController {
         }
     }
 
+    /**
+     * 导出子表单
+     * @param publicFormUid  子表单主键
+     * @param response
+     */
     @RequestMapping(value = "/exportPublicForm")
-    @ResponseBody
     public void exportPublicForm(String publicFormUid, HttpServletResponse response) {
         ServerResponse<DhTransferData> exportInterfaceResponse = dhTransferService.exportPublicForm(publicFormUid);
         if (exportInterfaceResponse.isSuccess()) {
             DhTransferData transferData = exportInterfaceResponse.getData();
             this.writeObjectAsJsonFile(response, transferData,
-                    "[公共表单]" + transferData.getFormList().get(0).getDynTitle());
+                    "[公共表单]" + transferData.getPublicFormList().get(0).getPublicFormName());
         }
-        return;
     }
 
+    /**
+     * 导入子表单前的准备
+     * @param file
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/tryImportPublicForm")
     @ResponseBody
     public ServerResponse tryImportPublicForm(@RequestParam("file") MultipartFile file, HttpSession session) {
@@ -299,20 +307,76 @@ public class DhTransferController {
     }
 
 
+    /**
+     * 导入子表单
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/sureImportPublicForm")
     @ResponseBody
     public ServerResponse sureImportPublicForm(HttpSession session) {
         try {
             DhTransferData transferData = (DhTransferData) session.getAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
             if (transferData == null) {
-                return ServerResponse.createByErrorMessage("导入公共表单失败, 请重试");
+                return ServerResponse.createByErrorMessage("导入子表单失败, 请重试");
             }
             // 开始导入
-            return dhTransferService.startImprtPublicForm(transferData);
+            return dhTransferService.startImportPublicForm(transferData);
         } catch (Exception e) {
-            LOG.error("导入公共表单失败", e);
+            LOG.error("导入子表单失败", e);
             session.removeAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
-            return ServerResponse.createByErrorMessage("导入公共表单失败");
+            return ServerResponse.createByErrorMessage("导入子表单失败");
         }
     }
+
+
+    /**
+     * 导出通知模版
+     * @param templateUid 通知模版主键
+     * @param response
+     */
+    @RequestMapping(value = "/exportNotifyTemplate")
+    public void exportNotifyTemplate(String templateUid, HttpServletResponse response) {
+        ServerResponse<DhTransferData> exportInterfaceResponse = dhTransferService.exportNotifyTemplate(templateUid);
+        if (exportInterfaceResponse.isSuccess()) {
+            DhTransferData transferData = exportInterfaceResponse.getData();
+            this.writeObjectAsJsonFile(response, transferData,
+                    "[通知模版]" + transferData.getNotifyTemplateList().get(0).getTemplateName());
+        }
+    }
+
+    /**
+     * 导入通知模版的准备
+     * @param file
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/tryImportNotifyTemplate")
+    @ResponseBody
+    public ServerResponse tryImportNotifyTemplate(@RequestParam("file") MultipartFile file, HttpSession session) {
+        return dhTransferService.tryImportPublicForm(file, session);
+    }
+
+    /**
+     * 导入通知模版
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/sureImportNotifyTemplate")
+    @ResponseBody
+    public ServerResponse sureImportNotifyTemplate(HttpSession session) {
+        try {
+            DhTransferData transferData = (DhTransferData) session.getAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
+            if (transferData == null) {
+                return ServerResponse.createByErrorMessage("导入通知模版失败, 请重试");
+            }
+            // 开始导入
+            return dhTransferService.startImportNotifyTemplate(transferData);
+        } catch (Exception e) {
+            LOG.error("导入通知模版失败", e);
+            session.removeAttribute(DhTransferData.ATTRIBUTE_IN_SESSION);
+            return ServerResponse.createByErrorMessage("导入通知模版失败");
+        }
+    }
+
 }

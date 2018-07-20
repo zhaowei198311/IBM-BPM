@@ -28,14 +28,14 @@ public interface DhNotifyTemplateMapper {
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	Integer delete(DhNotifyTemplate dhNotifyTemplate);
+	int delete(DhNotifyTemplate dhNotifyTemplate);
 
 	/**
 	 * 修改
 	 * @param dhNotifyTemplate
 	 * @return
 	 */
-	public Integer update(DhNotifyTemplate dhNotifyTemplate);
+	int update(DhNotifyTemplate dhNotifyTemplate);
 	/**
 	 * 根据条件查询通知模板
 	 * @param dhNotifyTemplate
@@ -50,6 +50,11 @@ public interface DhNotifyTemplateMapper {
 	 */
     List<DhNotifyTemplate> listByTemplateUidList(List<String> templateUidList);
 
-
+	/**
+	 * 根据模版id查询模版
+	 * @param templateUid
+	 * @return
+	 */
+	DhNotifyTemplate getByTemplateUid(String templateUid);
 
 }

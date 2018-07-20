@@ -24,6 +24,8 @@ $(function() {
 		$(".display_container1").css("display","none");
 		$(".display_container2").css("display","none");
 	});
+
+    transferPublicForm.init();
 });
 
 //查询所有的公共表单数据
@@ -88,6 +90,7 @@ function drawTable(pageInfo) {
 				+ formInfo.creatorName
 				+ '</td>'
 				+ '<td><i class="layui-icon" onclick="updateFormModal(this);" title="修改表单属性">&#xe642;</i>'
+                + ' <i class="layui-icon" onclick="transferPublicForm.exportPublicForm(\'' + formInfo.publicFormUid + '\')" title="导出表单">&#xe601;</i>'
 				+ ' <i class="layui-icon" onclick="updateFormContent(this);" title="修改表单内容">&#xe60a;</i></td>'
 				+ '</tr>';
 	}
@@ -488,4 +491,91 @@ $.fn.onlyNumAlpha = function () {
 			}
 		}
 	});
+};
+
+var transferPublicForm = {
+    URL: {
+        exportPublicForm: common.getPath() + '/transfer/exportPublicForm',
+        tryImportPublicForm: common.getPath() + '/transfer/tryImportPublicForm',
+        sureImportPublicForm: common.getPath() + '/transfer/sureImportPublicForm',
+        cancelImportPublicForm: common.getPath() + '/transfer/cancelImportTransferData'
+    },
+    init: function () {
+        // 导入按钮
+        layui.use('upload', function () {
+            layui.upload.render({
+                elem: $("#importBtn"),
+                url: transferPublicForm.URL.tryImportPublicForm,
+                data: {},
+                exts: "json",
+                field: "file",
+                before: function (obj) {
+                    layer.load(1);
+                },
+                done: function (result) {
+                    layer.closeAll('loading');
+                    if (result.status == 0) {
+                        var data = result.data;
+                        if (data.exists == 'FALSE') {
+                            // 新的子表单
+                            var confirmIndex = layer.confirm('<p>请确认导入子表单</p><p><b>子表单标题：</b>' + data.formName + '</p>', {
+                                btn: ['导入', '取消']
+                            }, function () {
+                                transferPublicForm.importPublicForm();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferPublicForm.URL.cancelImportPublicForm);
+                            });
+                        } else {
+                            // 发现已有此子表单
+                            var confirmIndex = layer.confirm('<p>子表单已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>子表单标题：</b>' + data.formName + '</p>', {
+                                btn: ['覆盖', '取消']
+                            }, function () {
+                                transferPublicForm.importPublicForm();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferPublicForm.URL.cancelImportPublicForm);
+                            });
+                        }
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                },
+                error: function (result) {
+                    layer.closeAll('loading');
+                    layer.alert(result.msg);
+                }
+            });
+        });
+
+    },
+    exportPublicForm: function (publicFormUid) {
+        if (!publicFormUid) {
+            layer.alert('出错了，请刷新页面再试');
+        }
+        common.downLoadFile(transferPublicForm.URL.exportPublicForm, {'publicFormUid': publicFormUid});
+    },
+    importPublicForm: function () {
+        $.ajax({
+            url : transferPublicForm.URL.sureImportPublicForm,
+            type : 'post',
+            dataType : 'json',
+            data : {},
+            before: function () {
+                layer.load(1);
+            },
+            success : function (result) {
+                layer.closeAll('loading');
+                if(result.status == 0 ){
+                    layer.alert('导入成功');
+                }else{
+                    layer.alert(result.msg);
+                }
+            },
+            error : function () {
+                layer.closeAll('loading');
+                layer.alert('导入失败，请稍后再试');
+            }
+        });
+    }
 };
