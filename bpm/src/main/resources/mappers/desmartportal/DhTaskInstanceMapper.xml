@@ -79,6 +79,7 @@
 			<result column="INS_DRIVE_FOLDER_UID" property="insDriveFolderUid" />
 			<result column="INS_ROUTING_DATA" property="insRoutingData" />
 			<result column="COMPANY_NUMBER" property="companyNumber" />
+			<result column="PRO_NAME" property="proName" />
 		</association>
 		<association property="sysUser" javaType="com.desmart.desmartsystem.entity.SysUser">
 			<result column="USER_UID" property="userUid" />
@@ -663,13 +664,15 @@
 	<select id="selectBackLogTaskInfoByCondition" 
 	parameterType="map"
 		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME
 		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		<where>
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
+			AND P.PRO_APP_ID = PM.PRO_APP_ID
+			AND P.PRO_UID = PM.PRO_UID
 			AND T.TASK_STATUS IN ('12','-2')
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
@@ -677,6 +680,10 @@
 			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
 				and dhTaskInstance.dhProcessInstance.insTitle!='' ">
 				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proName != null 
+				and dhTaskInstance.dhProcessInstance.proName!='' ">
+				AND PM.PRO_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.proName}),'%')
 			</if>
 			</if>
 			<if test="dhTaskInstance.sysUser != null ">
@@ -712,12 +719,14 @@
 	<select id="selectPageTaskByClosedByCondition" 
 	parameterType="map"
 		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME
 		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		<where>
 			T.INS_UID = P.INS_UID 
 			AND P.INS_INIT_USER = S.USER_ID
+			AND P.PRO_APP_ID = PM.PRO_APP_ID
+			AND P.PRO_UID = PM.PRO_UID
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">
@@ -731,7 +740,10 @@
 				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
 				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
 			</if>
-			
+			<if test="dhTaskInstance.dhProcessInstance.proName != null 
+				and dhTaskInstance.dhProcessInstance.proName!='' ">
+				AND PM.PRO_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.proName}),'%')
+			</if>
 			<if test="dhTaskInstance.dhProcessInstance.insInitUser != null 
 				and dhTaskInstance.dhProcessInstance.insInitUser !='' ">
 				AND p.INS_INIT_USER = #{dhTaskInstance.dhProcessInstance.insInitUser}

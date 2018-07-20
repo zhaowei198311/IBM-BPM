@@ -988,7 +988,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
-		dhTaskInstance.setTaskStatus("32");
+		//dhTaskInstance.setTaskStatus("32");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
