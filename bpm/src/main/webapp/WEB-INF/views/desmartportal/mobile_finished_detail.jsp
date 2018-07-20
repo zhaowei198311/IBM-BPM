@@ -20,7 +20,7 @@
 	  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 	  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 	<![endif]-->
-    <title>待办任务</title>
+    <title>已办任务</title>
     <%@include file="common/mobile_head.jsp" %>
     <script type="text/javascript" src="resources/desmartportal/js/my/mobile_finished_detail.js"></script>
 </head>
@@ -59,7 +59,7 @@
 		        <i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
 		        <c:if test="${canBeRevoke == 'TRUE'}" >
             	<dl id="child_menu">
-            		<dd><a href="javascript:void(0);" onclick="revokeTask('${taskInstance.taskUid}');">提交</a></dd>
+            		<dd><a href="javascript:void(0);" onclick="revokeTask('${taskInstance.taskUid}');">取回</a></dd>
             	</dl>
 		        </c:if>	
             </div>
@@ -76,14 +76,6 @@
 	                    <tr>
 	                    	<th colspan="4" class="list_title" id="formNum">
 	                        	<span style="float: right; font-size: 10px; font-weight: normal;">流程编号：1000-10185-BG-60</span>
-	                        </th>
-	                    </tr>
-	                    <tr>
-	                        <th colspan="4">
-	                            <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;">
-	                                <div class="layui-progress-bar" lay-percent="0%"></div>
-	                                <!--<span class="progress_time">审批剩余时间6小时</span> -->
-	                            </div>
 	                        </th>
 	                    </tr>
 	                    <tr>
