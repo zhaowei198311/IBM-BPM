@@ -458,7 +458,7 @@ var transferTrigger = {
     	exportTrigger: common.getPath() + '/transfer/exportTrigger',
         tryImportTrigger: common.getPath() + '/transfer/tryImportTrigger',
         sureImportTrigger: common.getPath() + '/transfer/sureImportTrigger',
-        cancelImportTrigger: common.getPath() + '/transfer/cancelImporTransferData'
+        cancelImportTrigger: common.getPath() + '/transfer/cancelImportTransferData'
     },
     init: function () {
         // 导入按钮

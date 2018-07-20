@@ -240,6 +240,28 @@ public class DhInterfaceParameter {
 		return cascadeParaName;
 	}
 
+	@Override
+	public String toString() {
+		return "DhInterfaceParameter{" +
+				"paraUid='" + paraUid + '\'' +
+				", paraIndex=" + paraIndex +
+				", paraName='" + paraName + '\'' +
+				", paraDescription='" + paraDescription + '\'' +
+				", paraType='" + paraType + '\'' +
+				", paraSize=" + paraSize +
+				", multiSeparator='" + multiSeparator + '\'' +
+				", multiValue='" + multiValue + '\'' +
+				", isMust='" + isMust + '\'' +
+				", intUid='" + intUid + '\'' +
+				", paraParent='" + paraParent + '\'' +
+				", paraParentName='" + paraParentName + '\'' +
+				", dateFormat='" + dateFormat + '\'' +
+				", paraInOut='" + paraInOut + '\'' +
+				", dhInterfaceParameters=" + dhInterfaceParameters +
+				", cascadeParaName='" + cascadeParaName + '\'' +
+				'}';
+	}
+
 	public void setCascadeParaName(String cascadeParaName) {
 		this.cascadeParaName = cascadeParaName;
 	}

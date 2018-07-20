@@ -497,7 +497,7 @@ var transferInterface = {
                         var data = result.data;
                         if (data.exists == 'FALSE') {
                             // 新的触发器
-                            var confirmIndex = layer.confirm('<p>请确认导入接口</p><p><b>接口标题：</b>' + data.formName + '</p>', {
+                            var confirmIndex = layer.confirm('<p>请确认导入接口</p><p><b>接口标题：</b>' + data.intTitle + '</p>', {
                                 btn: ['导入', '取消']
                             }, function () {
                                 transferInterface.importInterface();
@@ -507,7 +507,7 @@ var transferInterface = {
                             });
                         } else {
                             // 发现已有此触发器
-                            var confirmIndex = layer.confirm('<p>接口已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>接口标题：</b>' + data.formName + '</p>', {
+                            var confirmIndex = layer.confirm('<p>接口已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>接口标题：</b>' + data.intTitle + '</p>', {
                                 btn: ['覆盖', '取消']
                             }, function () {
                                 transferInterface.importInterface();

@@ -24,6 +24,7 @@
                                 <button class="layui-btn create_btn" onclick="showCreateFormModal()">新增</button>
                                 <button class="layui-btn delete_btn" style="background: #FF5151" onclick="deleteForm()">删除</button>
                                 <button class="layui-btn copy_btn" onclick="showCopyFormModal()">复制</button>
+                                <button class="layui-btn copy_btn" id="importBtn">导入</button>
                             </div>
                         </div>
                     </div>

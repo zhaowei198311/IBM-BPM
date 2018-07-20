@@ -116,7 +116,7 @@ public interface DhTransferService {
 
 	/**
 	 * 导出公共表单
-	 * @param intUid
+	 * @param publicFormUid 公共表单主键
 	 * @return
 	 */
 	ServerResponse<DhTransferData> exportPublicForm(String publicFormUid);
@@ -126,6 +126,27 @@ public interface DhTransferService {
 	 * @param transferData
 	 * @return
 	 */
-	ServerResponse startImprtPublicForm(DhTransferData transferData);
+	ServerResponse startImportPublicForm(DhTransferData transferData);
 
+	/**
+	 * 导出通知模版
+	 * @param templateUid 通知模版主键
+	 * @return
+	 */
+    ServerResponse<DhTransferData> exportNotifyTemplate(String templateUid);
+
+	/**
+	 * 准备导入通知模版
+	 * @param file
+	 * @param session
+	 * @return
+	 */
+	ServerResponse tryImportNotifyTemplate(MultipartFile file, HttpSession session);
+
+	/**
+	 * 导入通知模版
+	 * @param transferData
+	 * @return
+	 */
+	ServerResponse startImportNotifyTemplate(DhTransferData transferData);
 }

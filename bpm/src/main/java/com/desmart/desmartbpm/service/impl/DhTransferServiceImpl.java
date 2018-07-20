@@ -19,8 +19,8 @@ import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.shiro.SecurityUtils;
-import org.drools.core.command.runtime.rule.FromExternalFactHandleCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -108,6 +108,8 @@ public class DhTransferServiceImpl implements DhTransferService {
     private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
     @Autowired
     private BpmPublicFormMapper bpmPublicFormMapper;
+    @Autowired
+    private DhNotifyTemplateMapper dhNotifyTemplateMapper;
 
 
 
@@ -1256,7 +1258,7 @@ public class DhTransferServiceImpl implements DhTransferService {
                 // 是否命中(级联code相同)
                 if (paramFromData.getCascadeParaName().equals(paramFromDb.getCascadeParaName())) {
                     matched = true;
-                    if (!paramFromData.getParaUid().equals(paramFromData.getParaUid())) {
+                    if (!paramFromData.getParaUid().equals(paramFromDb.getParaUid())) {
                         Map<String, String> map = new HashMap<>();
                         map.put("oldUid", paramFromDb.getParaUid());
                         map.put("newUid", paramFromData.getParaUid());
@@ -1300,10 +1302,10 @@ public class DhTransferServiceImpl implements DhTransferService {
         DhTransferData transferData = turnTransferDataResponse.getData();
         List<BpmPublicForm> pubFormList = transferData.getPublicFormList();
         if (CollectionUtils.isEmpty(pubFormList)) {
-            return ServerResponse.createByErrorMessage("缺少表单信息");
+            return ServerResponse.createByErrorMessage("缺少子表单信息");
         }
         if (pubFormList.size() > 1) {
-            return ServerResponse.createByErrorMessage("文件中表单数量过多");
+            return ServerResponse.createByErrorMessage("文件中子表单数量过多");
         }
         BpmPublicForm pubForm = pubFormList.get(0);
         Map<String, String> result = new HashMap<>();
@@ -1333,17 +1335,18 @@ public class DhTransferServiceImpl implements DhTransferService {
         return ServerResponse.createBySuccess(transferData);
     }
 
+    @Transactional
     @Override
-    public ServerResponse startImprtPublicForm(DhTransferData transferData) {
+    public ServerResponse startImportPublicForm(DhTransferData transferData) {
         List<BpmPublicForm> publicFormList = transferData.getPublicFormList();
         if (CollectionUtils.isEmpty(publicFormList)) {
-            return ServerResponse.createByErrorMessage("缺少表单信息");
+            return ServerResponse.createByErrorMessage("缺少子表单信息");
         }
         if (publicFormList.size() > 1) {
-            return ServerResponse.createByErrorMessage("文件内容异常，表单数量过多");
+            return ServerResponse.createByErrorMessage("文件内容异常，子表单数量过多");
         }
         BpmPublicForm pubForm = publicFormList.get(0);
-        List<BpmFormField> formFieldListFromData = bpmFormFieldMapper.queryFormFieldByFormUid(pubForm.getPublicFormUid());
+        List<BpmFormField> formFieldListFromData = transferData.getFormFieldList();
         BpmPublicForm pubFormExists = bpmPublicFormMapper.queryFormByFormUid(pubForm.getPublicFormUid());
         if (pubFormExists == null) {
             // 新增表单
@@ -1400,6 +1403,70 @@ public class DhTransferServiceImpl implements DhTransferService {
         }
         return ServerResponse.createBySuccess();
     }
+
+    @Override
+    public ServerResponse<DhTransferData> exportNotifyTemplate(String templateUid) {
+        if (StringUtils.isBlank(templateUid)){
+            return ServerResponse.createByErrorMessage("缺少通知模版标识");
+        }
+        DhNotifyTemplate notifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(templateUid);
+        if (notifyTemplate == null) {
+            return ServerResponse.createByErrorMessage("此通知模版不存在");
+        }
+        DhTransferData transferData = new DhTransferData();
+        transferData.addToNotifyTemplateList(notifyTemplate);
+        return ServerResponse.createBySuccess(transferData);
+    }
+
+    @Override
+    public ServerResponse tryImportNotifyTemplate(MultipartFile file, HttpSession session) {
+        ServerResponse<DhTransferData> turnTransferDataResponse = this.turnJsonFileIntoDhTransferData(file);
+        if (!turnTransferDataResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
+        }
+        DhTransferData transferData = turnTransferDataResponse.getData();
+        List<DhNotifyTemplate> notifyTemplateList = transferData.getNotifyTemplateList();
+        if (CollectionUtils.isEmpty(notifyTemplateList)) {
+            return ServerResponse.createByErrorMessage("缺少通知模版信息");
+        } else if (notifyTemplateList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，通知模版数量过多");
+        }
+        DhNotifyTemplate notifyTemplate = transferData.getNotifyTemplateList().get(0);
+        Map<String, String> result = new HashMap<>();
+        result.put("templateName", notifyTemplate.getTemplateName());
+        if (dhNotifyTemplateMapper.getByTemplateUid(notifyTemplate.getTemplateUid()) == null) {
+            result.put("exists", "FALSE");
+        } else {
+            result.put("exists", "TRUE");
+        }
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        return ServerResponse.createBySuccess(result);
+    }
+
+    @Transactional
+    @Override
+    public ServerResponse startImportNotifyTemplate(DhTransferData transferData) {
+        List<DhNotifyTemplate> notifyTemplateList = transferData.getNotifyTemplateList();
+        if (CollectionUtils.isEmpty(notifyTemplateList)) {
+            return ServerResponse.createByErrorMessage("缺少通知模版信息");
+        }
+        if (notifyTemplateList.size() > 1) {
+            return ServerResponse.createByErrorMessage("文件内容异常，通知模版数量过多");
+        }
+        DhNotifyTemplate notifyTemplate = notifyTemplateList.get(0);
+        DhNotifyTemplate notifyTemplateInDb = dhNotifyTemplateMapper.getByTemplateUid(notifyTemplate.getTemplateUid());
+        String currUserUid = getCurrentUserUid();
+        if (notifyTemplateInDb == null) {
+            notifyTemplate.setCreateUserUid(currUserUid);
+            notifyTemplate.setUpdateUserUid(currUserUid);
+            dhNotifyTemplateMapper.insert(notifyTemplate);
+        } else {
+            notifyTemplate.setUpdateUserUid(currUserUid);
+            dhNotifyTemplateMapper.update(notifyTemplate);
+        }
+        return ServerResponse.createBySuccess();
+    }
+
 
     /**
      * 为集合中的参数添加级联的参数名用于比较
