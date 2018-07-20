@@ -567,6 +567,7 @@ var transferPublicForm = {
             success : function (result) {
                 layer.closeAll('loading');
                 if(result.status == 0 ){
+                    queryFormByName();
                     layer.alert('导入成功');
                 }else{
                     layer.alert(result.msg);

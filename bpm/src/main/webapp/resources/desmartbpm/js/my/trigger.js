@@ -527,6 +527,7 @@ var transferTrigger = {
             success : function (result) {
                 layer.closeAll('loading');
                 if(result.status == 0 ){
+                    getTriggerInfo();
                     layer.alert('导入成功');
                 }else{
                     layer.alert(result.msg);

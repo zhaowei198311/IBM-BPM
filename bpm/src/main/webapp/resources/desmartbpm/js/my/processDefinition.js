@@ -49,54 +49,6 @@ $(function() {
 		doPage(); // 刷新分页栏
 	}
 
-    layui.use('upload', function () {
-        layui.upload.render({
-            elem: $("#importBtn"),
-            url: importProcessDefinition.URL.tryImportDefinition,
-            data: {
-            },
-            exts: "json",
-            field: "file",
-            before: function (obj) {
-                layer.load(1);
-            },
-            done: function (result) {
-                layer.closeAll('loading');
-            	if (result.status == 0) {
-            		var data = result.data;
-                    if (data.exists == 'FALSE') {
-                    	// 发现是新流程定义
-                        var confirmIndex = layer.confirm('<p>请确认导入流程定义</p><p><b>流程名：</b>' + data.proName + '</p>'
-							+ '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
-                            btn: ['导入', '取消']
-                        }, function () {
-                            importProcessDefinition.importProcessDefinition();
-                            layer.close(confirmIndex); // 关闭confirm层
-                        }, function () {
-                            importProcessDefinition.cancelProcessDefinition();
-                        });
-					} else {
-						// 发现已有此流程定义
-                        var confirmIndex = layer.confirm('<p>流程定义已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>流程名：</b>' + data.proName + '</p>'
-                            + '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
-                            btn: ['覆盖', '取消']
-                        }, function () {
-                            importProcessDefinition.importProcessDefinition();
-                            layer.close(confirmIndex); // 关闭confirm层
-                        }, function () {
-                            importProcessDefinition.cancelProcessDefinition();
-                        });
-					}
-				} else {
-                    layer.alert(result.msg);
-				}
-            },
-            error: function (result) {
-                layer.closeAll('loading');
-                layer.alert(result.msg);
-            }
-        });
-    });
 
 });
 
@@ -397,6 +349,9 @@ $(function() {
 
 	// 查询按钮
     $('#searchByProName_btn').click(function(){
+    	if (!$('#proName_input').val()) {
+    		return;
+		}
         common.doPostAjax({
 			'url': common.getPath() + "/processMeta/searchByProName",
 			'data': {
@@ -673,6 +628,56 @@ var importProcessDefinition = {
         sureImportProcessDefinition: common.getPath() + '/transfer/sureImportProcessDefinition',
         cancelImportProcessDefinition: common.getPath() + '/transfer/cancelImporTransferData'
     },
+	init: function() {
+        layui.use('upload', function () {
+            layui.upload.render({
+                elem: $("#importBtn"),
+                url: importProcessDefinition.URL.tryImportDefinition,
+                data: {
+                },
+                exts: "json",
+                field: "file",
+                before: function (obj) {
+                    layer.load(1);
+                },
+                done: function (result) {
+                    layer.closeAll('loading');
+                    if (result.status == 0) {
+                        var data = result.data;
+                        if (data.exists == 'FALSE') {
+                            // 发现是新流程定义
+                            var confirmIndex = layer.confirm('<p>请确认导入流程定义</p><p><b>流程名：</b>' + data.proName + '</p>'
+                                + '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
+                                btn: ['导入', '取消']
+                            }, function () {
+                                importProcessDefinition.importProcessDefinition();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                importProcessDefinition.cancelProcessDefinition();
+                            });
+                        } else {
+                            // 发现已有此流程定义
+                            var confirmIndex = layer.confirm('<p>流程定义已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>流程名：</b>' + data.proName + '</p>'
+                                + '<p><b>快照名：</b>' + data.snapshotName + '</p>', {
+                                btn: ['覆盖', '取消']
+                            }, function () {
+                                importProcessDefinition.importProcessDefinition();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                importProcessDefinition.cancelProcessDefinition();
+                            });
+                        }
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                },
+                error: function (result) {
+                    layer.closeAll('loading');
+                    layer.alert(result.msg);
+                }
+            });
+        });
+	},
     importProcessDefinition: function () {
 		$.ajax({
 			url: importProcessDefinition.URL.sureImportProcessDefinition,
@@ -685,6 +690,7 @@ var importProcessDefinition = {
 			success: function (result) {
                 layer.closeAll('loading');
 				if (result.status == 0) {
+					getInfo();
 					layer.alert("导入成功");
 				} else {
                     layer.alert(result.msg);

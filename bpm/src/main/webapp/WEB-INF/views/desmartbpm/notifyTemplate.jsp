@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/my.css" media="all">
 <link href="<%=basePath%>/resources/desmartbpm/css/layui.css" rel="stylesheet"/>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
-<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/notifyTemplate.js"></script>
+
 <style type="text/css">
 .display_container5_custom{
     display: none;
@@ -71,6 +71,8 @@
 								<button class="layui-btn layui-btn-sm" onclick="addNotifyTemplate();">新增模板</button>
 						        <button class="layui-btn layui-btn-sm" onclick="updateNotifyTemplate();">修改模板</button>
 						        <button class="layui-btn layui-btn-sm" onclick="deleteNotifyTemplate();">删除模板</button>
+						        <button class="layui-btn layui-btn-sm" id="exportBtn">导出模版</button>
+						        <button class="layui-btn layui-btn-sm" id="importBtn">导入模版</button>
 							</div>
 						</div>
 					</div>
@@ -158,147 +160,10 @@
 				</div>
 		</div>
 	</div>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/notifyTemplate.js"></script>
 </body>
 <script type="text/javascript">
-//为翻页提供支持
-var pageConfig = {
-	pageNum : 1,
-	pageSize : 8,
-	templateName: "",
-	templateType : "",
-	total : 0
-}
 
-$(document).ready(function() {
-	// 加载数据
-	pageNotifyTemplate();
-
-})
-
-//分页
-function doPage() {
-	layui.use([ 'laypage', 'layer' ], function() {
-		var laypage = layui.laypage, layer = layui.layer;
-		//完整功能
-		laypage.render({
-			elem : 'lay_page',
-			curr : pageConfig.pageNum,
-			count : pageConfig.total,
-			limit : pageConfig.pageSize,
-			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
-			jump : function(obj, first) {
-				// obj包含了当前分页的所有参数  
-				pageConfig.pageNum = obj.curr;
-				pageConfig.pageSize = obj.limit;
-				if (!first) {
-					pageNotifyTemplate();
-				}
-			}
-		});
-	});
-}
-function pageNotifyTemplate(){
-	$.ajax({
-		url : common.getPath()+'/dhNotifyTemplate/pageNotifyTemplateList',
-		type : 'post',
-		dataType : 'json',
-		data : {
-			pageNum : pageConfig.pageNum,
-			pageSize : pageConfig.pageSize,
-			templateName: pageConfig.templateName,
-			templateType : pageConfig.templateType
-		},
-		beforeSend: function(){
-			layer.load(1);
-		},
-		success : function(result){
-			if (result.status == 0) {
-				drawTable(result.data);
-			}
-			layer.closeAll("loading");
-		},error : function(){
-			layer.closeAll("loading");
-		}
-	})
-}
-
-function drawTable(pageInfo, data) {
-	pageConfig.pageNum = pageInfo.pageNum;
-	pageConfig.pageSize = pageInfo.pageSize;
-	pageConfig.total = pageInfo.total;
-	doPage();
-	// 渲染数据
-	$("#template_table_tbody").html('');
-	if (pageInfo.total == 0) {
-		return;
-	}
-
-	var list = pageInfo.list;
-	var startSort = pageInfo.startRow;//开始序号
-	var trs = "";
-	var type = "";
-	var status = "";
-	var delegateFlag= "";
-	for (var i = 0; i < list.length; i++) {
-		var item = list[i];
-		var sortNum = startSort + i;
-		var notifyTemplateType = "";
-		if(item.templateType == "MAIL_NOTIFY_TEMPLATE"){
-			notifyTemplateType = "邮件模板";
-		}else if(item.templateType == "MESSAGE_NOTIFY_TEMPLATE"){
-			notifyTemplateType = "短信模板";
-		}
-		trs += '<tr>'
-				+'<td>'
-				+ '<input type="checkbox" onclick="invertSelection(this)" name="checkNotifyTemplate" value="'+item.templateUid+'" lay-skin="primary">'
-				+ sortNum 
-				+ '</td>' 
-				+ '<td>'
-				+ item.templateName
-				+ '</td>' 
-				+ '<td data-templatetype="'+item.templateType+'">'
-				+ notifyTemplateType
-				+ '</td>'
-				+ '<td><pre style="display: none;">'
-				+ item.templateContent
-				+ '</pre><a style="cursor:pointer" onclick="showNotifyTemplate(this);">点击查看</a></td>' 
-				+ '<td>';
-			trs += item.userName
-				+ '</td>' 
-				+ '<td>'
-				+ common.dateToString(new Date(item.createTime))
-				+ '</td>'
-				+ '<td>';
-				if(item.updateUserName!=null && item.updateUserName!=""){
-					trs += item.updateUserName;
-				}
-				trs += '</td>'
-				+ '<td>';
-				if(item.updateTime!=null && item.updateTime!=""){
-					trs += common.dateToString(new Date(item.updateTime));
-				}
-				trs += '</td>'					
-				+ '</tr>';
-	}
-	$("#template_table_tbody").append(trs);
-
-}
-//模糊查询
-function search(){
-	pageConfig.templateName = $("#template-name-search").val();
-	pageConfig.templateType = $("#template-type-search").val();
-
-	pageNotifyTemplate();
-}
-
-function invertSelection(a){ 
-	var checkeNodes= $("input[type='checkbox'][name='checkNotifyTemplate']"); 
-	if($(a).prop("checked")==true){
-	checkeNodes.prop("checked",false);
-	$(a).prop("checked",true);
-	}
-
-};
 
 </script>
 </html>

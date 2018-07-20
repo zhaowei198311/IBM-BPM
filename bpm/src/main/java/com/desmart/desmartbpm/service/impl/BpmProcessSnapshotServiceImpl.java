@@ -40,6 +40,7 @@ import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import sun.awt.PlatformFont;
 
 @Service
 public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService {
@@ -66,6 +67,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
         HttpReturnStatus result = bpmProcessUtil.getProcessModel(processAppId, bpdId, snapshotId);
+        if (HttpReturnStatusUtil.isErrorResult(result)) {
+            throw new PlatformException("调用RESTFul 接口失败");
+        }
         
         if (StringUtils.isNotBlank(result.getMsg())) {
             JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
@@ -425,17 +429,6 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
 
         }
         return subBpmActivityMetas;
-    }
-
-    /**
-     * 根据活动的bpdId,和版本的主键查看数据库中是否已有此环节
-     * @param bpdId
-     * @param snapshotUid
-     * @return
-     */
-    private boolean isActivityMetaExists(String bpdId, String snapshotUid) {
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByActivityBpdIdAndSnapshotUid(bpdId, snapshotUid);
-        return list.size() > 0;
     }
     
     /**

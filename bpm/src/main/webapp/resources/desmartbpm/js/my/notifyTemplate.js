@@ -1,3 +1,145 @@
+//为翻页提供支持
+var pageConfig = {
+    pageNum : 1,
+    pageSize : 8,
+    templateName: "",
+    templateType : "",
+    total : 0
+}
+
+$(document).ready(function() {
+    // 加载数据
+    pageNotifyTemplate();
+    transferNotifyTemplate.init();
+
+})
+
+//分页
+function doPage() {
+    layui.use([ 'laypage', 'layer' ], function() {
+        var laypage = layui.laypage, layer = layui.layer;
+        //完整功能
+        laypage.render({
+            elem : 'lay_page',
+            curr : pageConfig.pageNum,
+            count : pageConfig.total,
+            limit : pageConfig.pageSize,
+            layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+            jump : function(obj, first) {
+                // obj包含了当前分页的所有参数
+                pageConfig.pageNum = obj.curr;
+                pageConfig.pageSize = obj.limit;
+                if (!first) {
+                    pageNotifyTemplate();
+                }
+            }
+        });
+    });
+}
+function pageNotifyTemplate(){
+    $.ajax({
+        url : common.getPath()+'/dhNotifyTemplate/pageNotifyTemplateList',
+        type : 'post',
+        dataType : 'json',
+        data : {
+            pageNum : pageConfig.pageNum,
+            pageSize : pageConfig.pageSize,
+            templateName: pageConfig.templateName,
+            templateType : pageConfig.templateType
+        },
+        beforeSend: function(){
+            layer.load(1);
+        },
+        success : function(result){
+            if (result.status == 0) {
+                drawTable(result.data);
+            }
+            layer.closeAll("loading");
+        },error : function(){
+            layer.closeAll("loading");
+        }
+    })
+}
+
+function drawTable(pageInfo, data) {
+    pageConfig.pageNum = pageInfo.pageNum;
+    pageConfig.pageSize = pageInfo.pageSize;
+    pageConfig.total = pageInfo.total;
+    doPage();
+    // 渲染数据
+    $("#template_table_tbody").html('');
+    if (pageInfo.total == 0) {
+        return;
+    }
+
+    var list = pageInfo.list;
+    var startSort = pageInfo.startRow;//开始序号
+    var trs = "";
+    var type = "";
+    var status = "";
+    var delegateFlag= "";
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var sortNum = startSort + i;
+        var notifyTemplateType = "";
+        if(item.templateType == "MAIL_NOTIFY_TEMPLATE"){
+            notifyTemplateType = "邮件模板";
+        }else if(item.templateType == "MESSAGE_NOTIFY_TEMPLATE"){
+            notifyTemplateType = "短信模板";
+        }
+        trs += '<tr>'
+            +'<td>'
+            + '<input type="checkbox" onclick="invertSelection(this)" name="checkNotifyTemplate" value="'+item.templateUid+'" lay-skin="primary">'
+            + sortNum
+            + '</td>'
+            + '<td>'
+            + item.templateName
+            + '</td>'
+            + '<td data-templatetype="'+item.templateType+'">'
+            + notifyTemplateType
+            + '</td>'
+            + '<td><pre style="display: none;">'
+            + item.templateContent
+            + '</pre><a style="cursor:pointer" onclick="showNotifyTemplate(this);">点击查看</a></td>'
+            + '<td>';
+        trs += item.userName
+            + '</td>'
+            + '<td>'
+            + common.dateToString(new Date(item.createTime))
+            + '</td>'
+            + '<td>';
+        if(item.updateUserName!=null && item.updateUserName!=""){
+            trs += item.updateUserName;
+        }
+        trs += '</td>'
+            + '<td>';
+        if(item.updateTime!=null && item.updateTime!=""){
+            trs += common.dateToString(new Date(item.updateTime));
+        }
+        trs += '</td>'
+            + '</tr>';
+    }
+    $("#template_table_tbody").append(trs);
+
+}
+//模糊查询
+function search(){
+    pageConfig.templateName = $("#template-name-search").val();
+    pageConfig.templateType = $("#template-type-search").val();
+
+    pageNotifyTemplate();
+}
+
+function invertSelection(a){
+    var checkeNodes= $("input[type='checkbox'][name='checkNotifyTemplate']");
+    if($(a).prop("checked")==true){
+        checkeNodes.prop("checked",false);
+        $(a).prop("checked",true);
+    }
+
+};
+
+
 function addNotifyTemplate(){
 	$("#operation-title").text("新增通知模板");
 	$("#submitOperation").text("新增");
@@ -119,3 +261,97 @@ $("#operationTemplateForm").validate({
 		
 	}
 });
+
+var transferNotifyTemplate = {
+    URL: {
+        exportNotifyTemplate: common.getPath() + '/transfer/exportNotifyTemplate',
+        tryImportNotifyTemplate: common.getPath() + '/transfer/tryImportNotifyTemplate',
+        sureImportNotifyTemplate: common.getPath() + '/transfer/sureImportNotifyTemplate',
+        cancelImportNotifyTemplate: common.getPath() + '/transfer/cancelImportTransferData'
+    },
+    init: function () {
+        // 导入按钮
+        layui.use('upload', function () {
+            layui.upload.render({
+                elem: $("#importBtn"),
+                url: transferNotifyTemplate.URL.tryImportNotifyTemplate,
+                data: {},
+                exts: "json",
+                field: "file",
+                before: function (obj) {
+                    layer.load(1);
+                },
+                done: function (result) {
+                    layer.closeAll('loading');
+                    if (result.status == 0) {
+                        var data = result.data;
+                        if (data.exists == 'FALSE') {
+                            // 新的通知模版
+                            var confirmIndex = layer.confirm('<p>请确认导入通知模版</p><p><b>通知模版标题：</b>' + data.templateName + '</p>', {
+                                btn: ['导入', '取消']
+                            }, function () {
+                                transferNotifyTemplate.importNotifyTemplate();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferNotifyTemplate.URL.cancelImportNotifyTemplate);
+                            });
+                        } else {
+                            // 发现已有此通知模版
+                            var confirmIndex = layer.confirm('<p>通知模版已存在，<b style="color:red;">是否覆盖配置</b></p><p><b>通知模版标题：</b>' + data.templateName + '</p>', {
+                                btn: ['覆盖', '取消']
+                            }, function () {
+                                transferNotifyTemplate.importNotifyTemplate();
+                                layer.close(confirmIndex); // 关闭confirm层
+                            }, function () {
+                                $.post(transferNotifyTemplate.URL.cancelImportNotifyTemplate);
+                            });
+                        }
+                    } else {
+                        layer.alert(result.msg);
+                    }
+                },
+                error: function (result) {
+                    layer.closeAll('loading');
+                    layer.alert(result.msg);
+                }
+            });
+        });
+        //导出按钮
+        $('#exportBtn').click(transferNotifyTemplate.exportNotifyTemplate);
+
+    },
+    exportNotifyTemplate: function (templateUid) {
+        var $cks = $('input[name="checkNotifyTemplate"]:checked');
+        if ($cks.length == 0 || $cks.length > 1) {
+            layer.alert('请选择一个通知模版');
+            return;
+        }
+        var templateUid = $cks.eq(0).val();
+        common.downLoadFile(transferNotifyTemplate.URL.exportNotifyTemplate, {'templateUid': templateUid});
+    },
+    importNotifyTemplate: function () {
+        $.ajax({
+            url : transferNotifyTemplate.URL.sureImportNotifyTemplate,
+            type : 'post',
+            dataType : 'json',
+            data : {},
+            before: function () {
+                layer.load(1);
+            },
+            success : function (result) {
+                layer.closeAll('loading');
+                if(result.status == 0 ){
+                    pageNotifyTemplate();
+                    layer.alert('导入成功');
+                }else{
+                    layer.alert(result.msg);
+                }
+            },
+            error : function () {
+                layer.closeAll('loading');
+                layer.alert('导入失败，请稍后再试');
+            }
+        });
+    }
+
+};
