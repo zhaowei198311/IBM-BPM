@@ -8,6 +8,7 @@ var pageConfig = {
 	insTitle : "",
 	startTime : null,
 	endTime: null,
+	proName:"",
 	total : 0
 };
 
@@ -45,7 +46,7 @@ function fiterDivShow(){
     	,anim:2
     	,zIndex:100
     	,resize:false
-    	,area: ['width:100%', '300px']
+    	,area: ['width:100%', '350px']
 		,end:function(){
 			$("#filter_div").css("display","none");
 			$("body").css({"position":""});
@@ -60,6 +61,7 @@ function queryTask(){
 	pageConfig.insTitle = $("#process_instance_title").val().trim();
 	pageConfig.startTime = $("#start_time").val().trim();
 	pageConfig.endTime = $("#end_time").val().trim();
+	pageConfig.proName = $("#proName").val().trim();
 	pageConfig.pageNum = 1;
 	pageConfig.pageSize = 8;
 	getTaskInstanceInfo();
@@ -99,7 +101,8 @@ function getTaskInstanceInfo(){
 			taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
 			insTitle : pageConfig.insTitle,
 			startTime : pageConfig.startTime,
-			endTime: pageConfig.endTime
+			endTime: pageConfig.endTime,
+			proName:pageConfig.proName
 		},
 		success : function(result){
 			if (result.status == 0) {
@@ -141,6 +144,12 @@ function drawTable(data) {
 		var InitDate = datetimeFormat_1(agentOdate);
 		liHtml += '<li onclick=openApproval("'+meta.taskUid+'")>'
 			+'<table>'
+			+'<tr>'
+			+'<th>流程名称：</th>'
+			+'<td>' 
+            +meta.dhProcessInstance.proName 
+            +'</td>'
+			+'</tr>'
 			+'<tr>'
 			+'<th>流程标题：</th>'
 			+'<td>'+meta.dhProcessInstance.insTitle+'</td>'

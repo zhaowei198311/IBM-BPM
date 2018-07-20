@@ -93,6 +93,12 @@
 					</td>
 				</tr>
 				<tr>
+					<th>流程名称：</th>
+					<td>
+						<input type="text" class="layui-input" id="proName" placeholder="请输入流程名称"/>
+					</td>
+				</tr>
+				<tr>
 					<th>开始时间：</th>
 					<td>
 						<input type="text" class="layui-input" id="start_time" placeholder="请输入开始时间" readonly="readonly" data-lcalendar="1900-01-1,2099-12-31"/>

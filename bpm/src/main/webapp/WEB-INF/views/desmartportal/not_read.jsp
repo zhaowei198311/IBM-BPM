@@ -168,11 +168,25 @@ $(document).ready(function() {
 	// 未读
 	$('.unread').click(function(){
 		taskStatus = '12';
+		pageConfig.pageNum = 0;
+		pageConfig.pageSize = 10;
+		pageConfig.createProcessUserName = $("#task-createProcessUserName-search").val();
+		pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
+		pageConfig.insTitle = $("#task-insTitle-search").val();
+		pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
+		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		getTaskInstanceInfo(taskStatus);
 	})
 	// 已读
 	$('.read').click(function(){
 		taskStatus = '32';
+		pageConfig.pageNum = 1;
+		pageConfig.pageSize = 10;
+		pageConfig.createProcessUserName = $("#task-createProcessUserName-search").val();
+		pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
+		pageConfig.insTitle = $("#task-insTitle-search").val();
+		pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
+		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		getTaskInstanceInfo(taskStatus);
 	})
 })

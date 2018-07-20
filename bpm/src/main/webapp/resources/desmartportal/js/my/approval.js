@@ -306,6 +306,7 @@ function processView(insId) {
             layer.open({
                 type: 2,
                 title: '流程图',
+                //maxmin:true,
                 shadeClose: true,
                 shade: 0.3,
                 offset:"80px",

@@ -20,7 +20,7 @@
 	  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 	  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 	<![endif]-->
-    <title>已办任务</title>
+    <title>加签任务</title>
     <%@include file="common/mobile_head.jsp" %>
     <script type="text/javascript" src="resources/desmartportal/js/my/mobile_finished_detail.js"></script>
 </head>
@@ -57,11 +57,9 @@
 		        <span id="insData" style="display: none;">${processInstance.insData}</span>
 		        <span id="listStr" style="display: none;">${listStr}</span>
 		        <i class="layui-icon" id="operate_menu" title="菜单">&#xe671;</i>
-		        <c:if test="${canBeRevoke == 'TRUE'}" >
             	<dl id="child_menu">
-            		<dd><a href="javascript:void(0);" onclick="revokeTask('${taskInstance.taskUid}');">取回</a></dd>
+            		<dd><a href="javascript:void(0);" onclick="approvalCompletion();">提交</a></dd>
             	</dl>
-		        </c:if>	
             </div>
         </div>
         <div class="mobile_middle">
@@ -76,6 +74,14 @@
 	                    <tr>
 	                    	<th colspan="4" class="list_title" id="formNum">
 	                        	<span style="float: right; font-size: 10px; font-weight: normal;">流程编号：1000-10185-BG-60</span>
+	                        </th>
+	                    </tr>
+	                    <tr>
+	                        <th colspan="4">
+	                            <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;">
+	                                <div class="layui-progress-bar" lay-percent="0%"></div>
+	                                <!--<span class="progress_time">审批剩余时间6小时</span> -->
+	                            </div>
 	                        </th>
 	                    </tr>
 	                    <tr>
@@ -121,6 +127,28 @@
 				</div>
 			</div>
 			<div class="middle_content" id="approve_div">
+				<div class="layui-form">
+					<div id="suggestion">
+						<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
+			            <div class="layui-form approve_demand" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
+			                ${activityConf.actcResponsibility }
+			            </div>
+			            <p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
+                		<div class="layui-form" id="approve_div" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>
+							<textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion"></textarea>
+							<div style="padding: 10px 0px 5px 0px;">
+								<label class="layui-form-label" id="fu_label">常用语</label>
+								<div class="layui-input-block" id="frequently_used">
+									<select class="layui-form" lay-filter="useselfChange">
+										<option value="-1">--请选择--</option>
+										<option value="通过">通过</option>
+										<option value="驳回">驳回</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<p class="title_p" style="margin-top: 0px;">历史审批意见</p>
 				<ul id="approve_record" class="tab_ul">
 					
@@ -203,5 +231,97 @@
 	$(function(){
 		$(".data-table").find("input[type='tel']").desNumber();
 	});
+</script>
+<script type="text/javascript">
+//初始化加载进度条
+$(function(){
+	var taskUid = $('#taskUid').val();
+	$.ajax({
+		async: false,
+		url: common.getPath() + '/taskInstance/queryProgressBar',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			activityId: '',
+			taskUid: taskUid
+		},
+		success: function(data){
+            var result = data.data;
+            // 剩余时间
+            var hour = result.hour;
+            // 剩余时间百分比
+            var percent = result.percent;
+            if (data.status == 0) {
+                if (hour == -1) {
+                    $(".layui-progress").append('<span class="progress_time">审批已超时</span>');
+                    $(".progress_time").css('right', '2%');
+                } else {
+                    $(".layui-progress").append('<span class="progress_time">审批剩余时间' + hour + '小时</span>');
+                    $(".progress_time").css('right', '2%');          
+                }
+                // 加载进度条
+                layui.use('element', function () {
+                    var $ = layui.jquery,
+                        element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+                    // 延迟加载
+                    setTimeout(function () {
+                    	if (percent > 50) {
+                            $('.layui-progress-bar').css('background-color', '#FFFF33');
+                        }
+                        if (percent > 80) {
+                            $('.layui-progress-bar').css('background-color', 'red');
+                        }
+                        element.progress('progressBar', percent + '%');
+                    }, 500);
+                });
+            } else {
+                $(".layui-progress").append('<span class="progress_time">加载失败!</span>');
+            }
+		}
+	})
+});
+// 提交
+function approvalCompletion(){
+	var taskUid = $('#taskUid').val();
+	var activityId = $('#activityId').val();
+	// 审批意见
+	var approvalContent = $("#myApprovalOpinion").val();//审批意见
+    if(approvalContent == null || approvalContent == "" || approvalContent == undefined){
+    	alertNeedApprovalOpinion();
+    	return;
+    }
+	$.ajax({
+		async: false,
+		url: common.getPath() + '/taskInstance/finishAdd',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			taskUid: taskUid,
+			activityId: activityId,
+			approvalContent: approvalContent
+		},
+		success: function(data){
+			console.log("data: "+data);
+			layer.closeAll('loading');
+			if (data.status == 0) {
+				layer.alert("提交成功！", function(){
+                	window.history.back();
+                });
+			}else {
+				layer.alert(data.msg);
+			}
+		}
+	})
+}
+//提醒填写审批意见
+function alertNeedApprovalOpinion() {
+	$(".mobile_menu li").css({"color":"#A0A0A0"});
+	$(".mobile_menu #approve").parent().css({"color":"#009688"});
+	var id = $(".mobile_menu #approve").attr("title");
+	$(".middle_content").css("display","none");
+	$("#"+id+"_div").css("display","block");
+    $("#myApprovalOpinion").focus();
+    layer.alert("请填写审批意见");
+}
 </script>
 </html>
