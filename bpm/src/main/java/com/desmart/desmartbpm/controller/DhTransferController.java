@@ -354,7 +354,7 @@ public class DhTransferController {
     @RequestMapping(value = "/tryImportNotifyTemplate")
     @ResponseBody
     public ServerResponse tryImportNotifyTemplate(@RequestParam("file") MultipartFile file, HttpSession session) {
-        return dhTransferService.tryImportPublicForm(file, session);
+        return dhTransferService.tryImportNotifyTemplate(file, session);
     }
 
     /**
