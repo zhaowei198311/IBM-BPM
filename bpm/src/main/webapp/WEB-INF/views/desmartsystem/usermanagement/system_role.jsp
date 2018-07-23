@@ -196,7 +196,7 @@
 					var name=$userLi.text();
 					if($.inArray(userUid, userids)==-1){
 						var str='';
-						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
+						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name+"("+userUid+")";
 						str+="<input type='hidden' name='userUid' value='"+userUid+"'/>";
 // 						str+="<input type='hidden' name='departUid' value='"+departUid+"'/>";
 						str+="</li>";
@@ -225,7 +225,7 @@
 				//$('#roleUid').val(this.roleUid);
 				var str='';
 				if(type=='addUserRole'){
-					str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName;
+					str+="<li value='"+this.userUid+"' onclick='selectClick(this);'>"+this.userName+"("+this.userUid+")";
 					str+="<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
 // 					str+="<input type='hidden' name='departUid' value='"+this.departUid+"'/>";
 					str+="</li>";

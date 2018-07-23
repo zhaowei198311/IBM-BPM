@@ -141,4 +141,9 @@ public interface SysDictionaryService {
 	 * 移动端根据数据字典id获得除已选外的数据字典内容（不分页）
 	 */
 	ServerResponse listOnDicDataBydicUidMove(String dicUid, String dicDataUid, String condition);
+	
+	/**
+	 * 批量删除数据字典数据
+	 */
+	ServerResponse<?> deleteSysDictionaryDataList(String[] dicDataUidArr);
 }

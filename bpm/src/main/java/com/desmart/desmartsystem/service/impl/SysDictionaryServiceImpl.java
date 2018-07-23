@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartsystem.dao.SysDictionaryMapper;
 import com.desmart.desmartsystem.entity.SysDictionary;
@@ -157,5 +158,16 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 	public ServerResponse listOnDicDataBydicUidMove(String dicUid, String dicDataUid, String condition) {
 		List<SysDictionaryData> dicDataList = sysDictionaryMapper.listOnDicDataBydicUidMove(dicUid,dicDataUid,condition);
 		return ServerResponse.createBySuccess(dicDataList);
+	}
+
+	@Override
+	public ServerResponse<?> deleteSysDictionaryDataList(String[] dicDataUidArr) {
+		for(String dicDataUid:dicDataUidArr) {
+			int rowCount = sysDictionaryMapper.deleteSysDictionaryData(dicDataUid);
+			if(rowCount!=1) {
+				throw new PlatformException("删除数据字典数据失败");
+			}
+		}
+		return ServerResponse.createBySuccess();
 	}
 }
