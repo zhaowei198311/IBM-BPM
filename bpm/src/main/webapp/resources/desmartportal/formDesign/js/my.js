@@ -416,17 +416,21 @@ function drawPage() {
 		});
 
 		var dateInput = view.find(".date");
-		if ($(window).width() < 568) {
-			dateInput.attr("type", "text");
-		}
+		dateInput.attr("type", "text");
 		dateInput.prop("readonly", true);
 		dateInput.each(function () {
+			var isDatetime = $(this).attr("date_type");
+			var dateType = "date";
+			if(isDatetime=="true"){
+				dateType = "datetime";
+			}
 			$(this).next().remove();
 			var dateInputId = $(this).prop("id");
 			// 日期
 			laydate.render({
 				elem: '#' + dateInputId,
-				trigger: 'click'
+				trigger: 'click',
+				type: dateType
 			});
 		});
 	});
