@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhTransferData;
 import com.desmart.desmartbpm.service.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,11 @@ public class DhProcessDefinitionController {
     private DhGatewayLineService dhGatewayLineService;
     @Autowired
     private DhTransferService dhTransferService;
-    
+
+    /**
+     * 跳转到流程定义首页
+     * @return
+     */
     @RequestMapping(value = "/index")
     @ResponseBody
     public ModelAndView toIndex() {
@@ -56,17 +61,23 @@ public class DhProcessDefinitionController {
     }
     
     /**
-     * 根据流程元数据，列出数据库中的流程定义，和公开的流程中相关的版本
-     * @param metaUid
+     * 根据流程元数据，和流程定义的状态列出对应的流程定义
+     * @param metaUid  流程元数据id
+     * @param proStatus 流程定义状态 all; enabled; synchronized
      * @return
      */
     @RequestMapping(value = "/listDefinitionByProcessMeta")
     @ResponseBody
-    public ServerResponse listDefinitionByProcessMeta(String metaUid,
+    public ServerResponse listDefinitionByProcessMeta(String metaUid, String proStatus,
                                                       @RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
                                                       @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
-
-        return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronizedByMetaUid(metaUid, pageNum, pageSize);
+        if (StringUtils.isBlank(proStatus)) {
+            return ServerResponse.createByErrorMessage("参数异常：流程定义状态");
+        }else if ("all".equals(proStatus)) {
+            return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronizedByMetaUid(metaUid, pageNum, pageSize);
+        } else {
+            return dhProcessDefinitionService.listProcessDefinitionByMetaUidAndStatus(metaUid, proStatus, pageNum, pageSize);
+        }
     }
 
     /**

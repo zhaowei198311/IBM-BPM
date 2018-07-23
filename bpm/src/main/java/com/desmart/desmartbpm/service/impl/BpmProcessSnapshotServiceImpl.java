@@ -108,7 +108,7 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
 
     @Transactional
     /**
-     * 根据RESTful API 返回的流程图信息解析为 环节表
+     * 根据RESTful API 返回的流程图信息生成 环节表
      * @param request
      * @param diagram  图信息
      * @param snapshotId 快照版本
@@ -488,6 +488,9 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcCanTransfer(Const.Boolean.FALSE); // 是否允许抄送
         conf.setActcResponsibility(null); // 职责描述
         conf.setActcCanSkipFromReject(Const.Boolean.FALSE); // 是否允许驳回后直接提交回来
+        conf.setActcIsSystemTask(Const.Boolean.FALSE); // 是否系统任务
+        conf.setActcIsDelay(Const.Boolean.FALSE); // 是否延时
+        conf.setActcDelayType(null); // 延时类型
         return conf;
     }
     

@@ -7,11 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 维护迁移一个流程定义需要的数据
+ * 封装数据迁移的信息
  */
 public class DhTransferData {
     public static final String ATTRIBUTE_IN_SESSION = "transferDataInSession";
+    /** 数据类型：流程定义   */
+    public static final String TYPE_PROCESS_DEFINITION = "processDefinition";
+    /** 数据类型： 触发器  */
+    public static final String TYPE_TRIGGER = "trigger";
+    /** 数据类型：接口   */
+    public static final String TYPE_INTERFACE = "interface";
+    /** 数据类型： 子表单  */
+    public static final String TYPE_PUBLIC_FORM = "publicForm";
+    /** 数据类型：通知模版   */
+    public static final String TYPE_NOTIFY_TEMPLATE = "notifyTemplate";
 
+    private String type;
     private List<DhProcessCategory> categoryList;
     private List<DhProcessMeta> processMetaList;
     private List<DhProcessDefinition> processDefinitionList;
@@ -371,6 +382,27 @@ public class DhTransferData {
         this.interfaceParameterList = interfaceParameterList;
     }
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+    public boolean isProcessDefinitionData() {
+        return (this.type == null || !TYPE_PROCESS_DEFINITION.equals(this.type)) ? false : true;
+    }
+    public boolean isTriggerData() {
+        return (this.type == null || !TYPE_TRIGGER.equals(this.type)) ? false : true;
+    }
+    public boolean isInterfaceData() {
+        return (this.type == null || !TYPE_INTERFACE.equals(this.type)) ? false : true;
+    }
+    public boolean isPublicFormData() {
+        return (this.type == null || !TYPE_PUBLIC_FORM.equals(this.type)) ? false : true;
+    }
+    public boolean isNotifyTemplateData() {
+        return (this.type == null || !TYPE_NOTIFY_TEMPLATE.equals(this.type)) ? false : true;
+    }
 
 }

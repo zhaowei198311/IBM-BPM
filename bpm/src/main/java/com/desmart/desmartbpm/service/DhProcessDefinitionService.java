@@ -21,6 +21,16 @@ public interface DhProcessDefinitionService {
     ServerResponse listProcessDefinitionsIncludeUnSynchronizedByMetaUid(String metaUid, Integer pageNum, Integer pageSize);
 
     /**
+     * 根据流程元数据和流程状态来查询符合条件的流程定义
+     * @param metaUid 流程元数据id
+     * @param proStatus 流程定义状态
+     * @param pageNum  页号
+     * @param pageSize 每页数量
+     * @return
+     */
+    ServerResponse listProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize);
+
+    /**
      * 获得指定的流程定义
      */
     DhProcessDefinition getDhProcessDefinition(String proAppId, String proUid, String proVerUid);
@@ -130,7 +140,6 @@ public interface DhProcessDefinitionService {
      * @return
      */
     List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
-
 
 
 

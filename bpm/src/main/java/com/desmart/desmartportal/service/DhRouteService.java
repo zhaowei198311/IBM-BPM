@@ -1,7 +1,6 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -140,10 +139,11 @@ public interface DhRouteService {
 	/**
 	 * 根据流程实例编号和下个环节路由信息得到简单循环任务的处理人列表
 	 * @param insId  流程实例编号
-	 * @param routeData  下个环节路由数据
+	 * @param bpmRoutingData  下个环节路由数据
+	 * @param pubBo
 	 * @return
 	 */
-	List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData);
+	List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, BpmRoutingData bpmRoutingData, CommonBusinessObject pubBo);
 
 
 
@@ -159,6 +159,19 @@ public interface DhRouteService {
 	 */
 	CommonBusinessObject assembleTaskOwnerForNodesCannotChoose(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
 															   CommonBusinessObject pubBo, BpmRoutingData routingData);
+
+	/**
+	 * 为系统任务装配下一步的默认处理人, 与assembleTaskOwnerForNodesCannotChoose互补
+	 * 1. firstTaskNodesOfStartProcessOnSameDeepLevel
+	 * 2. taskNodesOnSameDeepLevel
+	 * @param currTask
+	 * @param currProcessInstance
+	 * @param pubBo
+	 * @param routingData
+	 * @return
+	 */
+	CommonBusinessObject assembleTaskOwnerForSystemTask(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
+														CommonBusinessObject pubBo, BpmRoutingData routingData);
 
 	/**
 	 * 获得下个环节的路由信息

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,8 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 
 
     @Override
-	public ServerResponse<DhRoutingRecord> generateSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData, boolean willTokenMove) {
+	public DhRoutingRecord generateSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance,
+                                                             BpmRoutingData bpmRoutingData, boolean willTokenMove) {
         BpmActivityMeta taskNode = bpmActivityMetaService.queryByPrimaryKey(taskInstance.getTaskActivityId());
 
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
@@ -69,9 +71,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         if (willTokenMove) {
             // 如果token要移动的话，处理接下来的人员环节
             Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
-            Iterator<BpmActivityMeta> it = normalNodes.iterator();
-            while (it.hasNext()) {
-                BpmActivityMeta nextNode = it.next();
+            for (BpmActivityMeta nextNode : normalNodes) {
                 if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
                     // 说明此环节和当前任务环节在同一个层级
                     activityToBuilder.append(nextNode.getActivityId()).append(",");
@@ -83,8 +83,38 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
             }
             dhRoutingRecord.setActivityTo(activityTo);
         }
-        return ServerResponse.createBySuccess(dhRoutingRecord);
+        return dhRoutingRecord;
     }
+
+    @Override
+    public DhRoutingRecord generateSystemTaskRoutingRecord(BpmActivityMeta taskNode, DhTaskInstance currTask,
+                                                           String systemUser, BpmRoutingData bpmRoutingData) {
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(currTask.getInsUid());
+        dhRoutingRecord.setActivityName(currTask.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_FINISH_SYSTEM_TASK);
+        dhRoutingRecord.setUserUid(systemUser);
+        dhRoutingRecord.setActivityId(currTask.getTaskActivityId());
+        dhRoutingRecord.setTaskUid(currTask.getTaskUid());
+        String activityTo = null;
+        StringBuilder activityToBuilder = new StringBuilder();
+        // 如果token要移动的话，处理接下来的人员环节
+        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        for (BpmActivityMeta nextNode : normalNodes) {
+            if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
+                // 说明此环节和当前任务环节在同一个层级
+                activityToBuilder.append(nextNode.getActivityId()).append(",");
+            }
+        }
+        if (activityToBuilder.length() > 0) {
+            activityTo = activityToBuilder.toString();
+            activityTo = activityTo.substring(0, activityTo.length() - 1);
+        }
+        dhRoutingRecord.setActivityTo(activityTo);
+	    return dhRoutingRecord;
+    }
+
 
     @Override
     public DhRoutingRecord generateRejectTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmActivityMeta targetNode) {

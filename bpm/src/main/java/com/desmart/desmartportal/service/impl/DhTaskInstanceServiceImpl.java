@@ -47,17 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-/**
- * <p>
- * Title: TaskInstanceServiceImpl
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author zhaowei
- * @date 2018年5月11日
- */
+
 @Service
 public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
@@ -81,7 +71,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Autowired
 	private DhApprovalOpinionService dhapprovalOpinionService;
 	@Autowired
-	private DhRouteService dhRouteServiceImpl;
+	private DhRouteService dhRouteService;
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaService;
 	@Autowired
@@ -315,9 +305,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		DhActivityConf dhActivityConf = currTaskNode.getDhActivityConf();
 		// 获得下个节点的路由信息
-		BpmRoutingData routingData = dhRouteServiceImpl.getBpmRoutingData(currTaskNode, mergedFormData);
+		BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(currTaskNode, mergedFormData);
 		// 检查用户传递的选人信息是否全面
-		if (!dhRouteServiceImpl.checkRouteData(currTaskNode, routeData, routingData)) {
+		if (!dhRouteService.checkRouteData(currTaskNode, routeData, bpmRoutingData)) {
 			return ServerResponse.createByErrorMessage("缺少下个环节的处理人信息");
 		}
 
@@ -329,7 +319,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			}
 		}
         // 修改当前任务实例状态为已完成
-		updateDhTaskInstanceWhenFinishTask(currTask, data);
+		this.updateDhTaskInstanceWhenFinishTask(currTask, data);
 		//如果任务为类型为normal，则将其它相同任务id的任务废弃
 		if(DhTaskInstance.TYPE_NORMAL.equals(currTask.getTaskType())) {
 			dhTaskInstanceMapper.abandonOtherUnfinishedTaskByTaskId(taskUid, taskId);
@@ -344,12 +334,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 判断Token是否移动
-        boolean willTokenMove = dhRouteServiceImpl.willFinishTaskMoveToken(currTask, insId);
+        boolean willTokenMove = dhRouteService.willFinishTaskMoveToken(currTask, insId);
 
         // 任务完成后 保存到流转信息表里面
-        ServerResponse<DhRoutingRecord> generateRoutingRecordResponse =
-                dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, routingData, willTokenMove);
-        DhRoutingRecord routingRecord = generateRoutingRecordResponse.getData();
+		DhRoutingRecord routingRecord = dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, bpmRoutingData, willTokenMove);
 
         // ========================== 根据预判token是否移动，区别处理
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -369,27 +357,21 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 装配处理人信息
         CommonBusinessObject pubBo = new CommonBusinessObject(insId);
-        ServerResponse<CommonBusinessObject> serverResponse = dhRouteServiceImpl.assembleCommonBusinessObject(pubBo, routeData);
+        ServerResponse<CommonBusinessObject> serverResponse = dhRouteService.assembleCommonBusinessObject(pubBo, routeData);
         if (!serverResponse.isSuccess()) {
             throw new PlatformException("装配处理人信息失败，缺少下个环节处理人信息");
         }
-        // 如果下个环节有循环任务（保存/更新）处理人信息
-        dhRouteServiceImpl.saveTaskHandlerOfLoopTask(insId, routeData);
 
         // 装配用户无法选择的处理人信息
-		dhRouteServiceImpl.assembleTaskOwnerForNodesCannotChoose(currTask, currProcessInstance, pubBo, routingData);
+		dhRouteService.assembleTaskOwnerForNodesCannotChoose(currTask, currProcessInstance, pubBo, bpmRoutingData);
+
+		// 如果下个环节有循环任务（保存/更新）处理人信息
+		dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
 
         // 更新网关决策条件
-        if (routingData.getGatewayNodes().size() > 0) {
-            ExecutorService executorService = threadPoolProvideService.getThreadPoolToUpdateRouteResult();
-            Future<Boolean> future = executorService.submit(new SaveRouteResultCallable(dhRouteServiceImpl, insId, routingData));
-            Boolean updateSucess = true;
-            try {
-                updateSucess = future.get(2, TimeUnit.SECONDS); // 最多等待2秒
-            } catch (Exception e) {
-                updateSucess = false;
-            }
-            if (!updateSucess) {
+        if (bpmRoutingData.getGatewayNodes().size() > 0) {
+			ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
+            if (!updateResponse.isSuccess()) {
                 throw new PlatformException("更新网关决策中间表失败");
             }
         }
@@ -406,16 +388,16 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
                 // 判断实际TOKEN是否移动了
-                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteServiceImpl.didTokenMove(insId, routingData);
+                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
                 if (didTokenMoveResponse.isSuccess()) {
                     JSONObject processData = didTokenMoveResponse.getData();
                     if (processData != null) {
                         // 确认Token移动了, 插入流转记录
                         dhRoutingRecordMapper.insert(routingRecord);
                         // 关闭需要结束的流程
-                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
+                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, processData);
                         // 创建需要创建的子流程
-                        dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
+                        dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, bpmRoutingData, pubBo, processData);
                     } else {
                         // 确认Token没有移动, 更新流转信息
                         routingRecord.setActivityTo(null);
@@ -437,7 +419,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			map.put("currTaskInstance", currTask);
 			map.put("dhStep", nextStep);
 			map.put("pubBo", pubBo);
-			map.put("routingData", routingData); // 预判的下个环节信息
+			map.put("routingData", bpmRoutingData); // 预判的下个环节信息
 			map.put("routingRecord", routingRecord); // 流转记录
             //String paramStr = JSON.toJSONString(map);
             //mqProducerService.sendMessage("stepQueueKey", paramStr);

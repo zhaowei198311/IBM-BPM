@@ -29,6 +29,9 @@ public interface DhTransferService {
 	 */
 	String getExportFileName(DhProcessDefinition dhProcessDefinition);
 
+
+	ServerResponse tryImportProcessDefinition(MultipartFile file, HttpSession session);
+
 	/**
 	 * 将JSON文件转化为DhTransferData对象
 	 * @param file 上传的文件

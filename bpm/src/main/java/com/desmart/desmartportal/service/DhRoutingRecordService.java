@@ -33,8 +33,19 @@ public interface DhRoutingRecordService {
 	 * @param  willTokenMove token是否移动，当token移动记录 activityTo
 	 * @return
 	 */
-	ServerResponse<DhRoutingRecord> generateSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData,
+	DhRoutingRecord generateSubmitTaskRoutingRecordByTaskAndRoutingData(DhTaskInstance taskInstance, BpmRoutingData bpmRoutingData,
 																						boolean willTokenMove);
+
+	/**
+	 * 为系统任务生成流转记录
+	 * @param taskNode 任务节点
+	 * @param currTask  当前任务实例
+	 * @param systemUser  系统提交员id
+	 * @param bpmRoutingData 流转信息
+	 * @return
+	 */
+	DhRoutingRecord generateSystemTaskRoutingRecord(BpmActivityMeta taskNode, DhTaskInstance currTask,
+													String systemUser, BpmRoutingData bpmRoutingData);
 
 	/**
 	 * 驳回任务后记录流转信息

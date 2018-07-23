@@ -94,6 +94,10 @@ public class BpmActivityMeta implements Serializable {
         this.activityBpdId = activityBpdId;
     }
 
+    /**
+     * 返回 0 或者 父activityId
+     * @return
+     */
     public String getParentActivityId() {
         return parentActivityId;
     }
