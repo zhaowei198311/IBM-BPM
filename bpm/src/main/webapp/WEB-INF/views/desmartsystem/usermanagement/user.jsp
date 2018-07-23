@@ -534,7 +534,7 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.userName + '</td>';
-	         	str+='<td>' + this.userUid + '</td>';
+	         	str+='<td>' + this.userId + '</td>';
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
 	         	/* str+='<td>' + isEmpty(this.employeeType) + '</td>'; */
 	         	str+='<td>' + isEmpty(this.mobile) + '</td>';
