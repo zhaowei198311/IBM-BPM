@@ -943,9 +943,14 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-4 col-xs-7">
-								<div class="checkbox">
+								<div class="checkbox col-xs-3">
 									<label>
 										<input type="checkbox" id="date-must">必须
+									</label>
+								</div>
+								<div class="checkbox col-xs-4">
+									<label>
+										<input type="checkbox" id="date-type">是否需要时分秒
 									</label>
 								</div>
 							</div>

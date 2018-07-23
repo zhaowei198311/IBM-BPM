@@ -365,7 +365,8 @@ function downloadLayoutSrc() {
             ["title"],
             ["table-label"],
             ["isleading"],
-            ["move-view"]
+            ["move-view"],
+            ["date_type"]
         ]
     });
     $("#download-layout").html(formatSrc);

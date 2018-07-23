@@ -189,6 +189,7 @@ function showDateModal(obj) {
     var id = inputObj.attr("id");
     var place = inputObj.attr("placeholder");
     var name = inputObj.attr("name").replace(formCode+"_","");
+    var dateType = inputObj.attr("date_type");
     var textWidth = inputObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -200,7 +201,11 @@ function showDateModal(obj) {
     $("#date-label").val(label);
     $("#date-name").val(name);
     $("#date-id").val(id);
-
+    if(dateType=="true"){
+    	$("#date-type").prop("checked",true);
+    }else{
+    	$("#date-type").prop("checked",false);
+    }
     $("#date-place").val(place);
     $("#date-width").val(textCol);
     $("#date-label-width").val(textLabelCol);
@@ -1155,7 +1160,8 @@ $(function () {
             var defaultVal = $("#date-default-value").val();
             var place = $("#date-place").val();
             var isMust = $("#date-must").is(':checked');
-
+            var dateType = $("#date-type").prop("checked");
+            alert(dateType);
             var textWidth = $("#date-width").val() * colWidth;
             var textLabelWidth = $("#date-label-width").val() * colWidth;
 
@@ -1166,9 +1172,10 @@ $(function () {
             inputObj.attr({
                 "id": id,
                 "placeholder": place,
+                "date_type":dateType,
                 "name": formCode+"_"+name
             });
-
+            alert(inputObj.attr("date_type"));
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#date-label-width").val());
             inputObj.parent().css("width", textWidth - 18).attr("col", $("#date-width").val());
             inputObj.css("width", textWidth - 18 - dateIconWidth).attr("col", $("#date-width").val());
