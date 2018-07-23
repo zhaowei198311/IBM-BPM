@@ -943,27 +943,6 @@ function transferSure(){
 	})
 }
 
-function processView(insId) {
-    $.ajax({
-        url: 'processInstance/viewProcess',
-        type: 'post',
-        dataType: 'text',
-        data: {
-            insId: insId
-        },
-        success: function (result) {
-            layer.open({
-                type: 2,
-                title: '流程图',
-                shadeClose: true,
-                shade: 0.3,
-                area: ['790px', '580px'],
-                content: result
-            });
-        }
-    })
-}
-
 function back() {
 	window.location.href = 'javascript:history.go(-1)';
 }

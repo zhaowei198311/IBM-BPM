@@ -295,26 +295,7 @@ function transferSure(){
 }
 
 function processView(insId) {
-    $.ajax({
-        url: 'processInstance/viewProcess',
-        type: 'post',
-        dataType: 'text',
-        data: {
-            insId: insId
-        },
-        success: function (result) {
-            layer.open({
-                type: 2,
-                title: '流程图',
-                //maxmin:true,
-                shadeClose: true,
-                shade: 0.3,
-                offset:"80px",
-                area: ['790px', '530px'],
-                content: result
-            });
-        }
-    })
+	window.parent.openProView(insId);
 }
 
 // 确认提交
