@@ -114,10 +114,13 @@
 	<select id="selectByCondition" resultType="com.desmart.desmartportal.entity.DhDrafts"
 		parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
-		<include refid="Relation_Column_List"/>
+		<include refid="Relation_Column_List"/>,meta.pro_name proName
 		FROM
 		DH_DRAFTS d 
 		left join sys_user s on d.DFS_CREATOR = s.user_id
+		left join dh_process_instance ins on d.ins_uid = ins.ins_uid
+		left join dh_process_meta meta
+		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
 		where 1 = 1
 		<if test="dfsCreator != null and dfsCreator != ''">
 			and d.DFS_CREATOR =	#{dfsCreator}

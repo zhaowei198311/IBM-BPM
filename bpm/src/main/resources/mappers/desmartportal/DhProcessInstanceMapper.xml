@@ -370,6 +370,9 @@
     	<if test="initUserFullname != null and initUserFullname != '' ">
     		and su.user_name like concat(concat('%',#{initUserFullname}), '%') 
     	</if>
+    	<if test="insStatusId != null ">
+    		and ins.ins_Status_Id = #{insStatusId}
+    	</if>
     	
     </select>
     <update id="updateProcessInstanceByInsId" parameterType="com.desmart.desmartportal.entity.DhProcessInstance">

@@ -57,6 +57,7 @@
 					<thead>
 						<tr>
 							<th>序号</th>
+							<th>流程名称</th>
 							<th>草稿名称</th>
 							<th>创建人</th>
 							<th>创建日期</th>
@@ -140,6 +141,9 @@
 					+ (agentOdate.getMonth() + 1) + "-" + agentOdate.getDate(); */
 			trs += '<tr><td id="aa">'
 					+ sortNum
+					+ '</td>'
+					+ '<td>'
+					+ meta.proName
 					+ '</td>'
 					+ '<td>'
 					+ meta.dfsTitle

@@ -45,11 +45,15 @@
 .layui-form-label-custom{
     float: left;
     display: block;
-    padding: 9px 15px;
+    padding: 9px 1%;
     width: 50%;
     font-weight: 400;
     line-height: 20px;
     text-align: right;
+}
+.layui-input-block-custom {
+    margin-left: 52%;
+    min-height: 36px;
 }
 </style>
 
@@ -61,11 +65,26 @@
 					<div class="search_area">
 						<div class="layui-row layui-form">
 							<div class="layui-col-xs12" style="text-align:right;">
-								<div class="layui-col-xs2">
-								<input type="text" placeholder="流程实例标题"  class="layui-input" id="process-insTitle-search">
+								<div class="layui-col-md2">
+								<label class="layui-form-label-custom">流程实例状态</label>
+								<div class="layui-input-block-custom">
+									<select id="insStatusId" class="layui-input-block group_select"
+										name="group" lay-verify="required">
+										<option value="">全部</option>
+										<option value="1">运转中</option>
+										<option value="2">完成</option>
+										<option value="3">失败</option>
+										<option value="4">终止</option>
+										<option value="5">未启动</option>
+										<option value="6">暂停</option>
+									</select>
+								</div>
+								</div>
+								<div class="layui-col-xs1">
+								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
 								</div>
 								<div class="layui-col-xs2">
-								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
+								<input type="text" placeholder="流程实例标题"  class="layui-input" id="process-insTitle-search">
 								</div>
 								<div class="layui-col-xs1" style="width: 4%;">
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
@@ -223,12 +242,17 @@
 	</div>
 </body>
 <script type="text/javascript">
+layui.use('form', function(){
+	var form = layui.form;
+	form.render("select");
+});
 //为翻页提供支持
 var pageConfig = {
 	pageNum : 1,
 	pageSize : 8,
 	initUserFullname: "",
 	insTitle : "",
+	insStatusId : "",
 	total : 0
 }
 
@@ -273,7 +297,8 @@ function getProcesssInstance(){
 			pageNum : pageConfig.pageNum,
 			pageSize : pageConfig.pageSize,
 			initUserFullname: pageConfig.initUserFullname,
-			insTitle : pageConfig.insTitle
+			insTitle : pageConfig.insTitle,
+			insStatusId : pageConfig.insStatusId
 		},
 		beforeSend: function(){
 			layer.load(1);
@@ -362,7 +387,7 @@ function drawTable(pageInfo, data) {
 function search(){
 	pageConfig.initUserFullname = $("#process-initUserFullname-search").val();
 	pageConfig.insTitle = $("#process-insTitle-search").val();
-
+	pageConfig.insStatusId = $("#insStatusId").val();
 	getProcesssInstance();
 }
 

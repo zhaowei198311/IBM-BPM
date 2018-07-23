@@ -28,6 +28,8 @@ public class DhDrafts {
 	private String taskUid; // 任务实例Uid
 	
 	private String userName;//创建人姓名，不在表内
+	
+	private String proName;//流程名称 不在表内
 
 	/**
 	 * @return the dfsId
@@ -128,6 +130,14 @@ public class DhDrafts {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	
+	public String getProName() {
+		return proName;
+	}
+
+	public void setProName(String proName) {
+		this.proName = proName;
 	}
 
 	public DhDrafts() {
