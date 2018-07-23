@@ -6,7 +6,10 @@ public class DhActivityConf {
     public static final String TIME_UNIT_HOUR = "hour";
     public static final String TIME_UNIT_DAY = "day";
     public static final String TIME_UNIT_MONTH = "month";
-    
+    public static final String DELAY_TYPE_NONE = "none";
+    public static final String DELAY_TYPE_TIME = "time";
+    public static final String DELAY_TYPE_FIELD = "field";
+
     private String actcUid;
 
     private String activityId;
@@ -101,9 +104,13 @@ public class DhActivityConf {
 
     private String actcIsSystemTask;  // 是否系统任务
 
-    private String actcIsDelay;  // 是否延迟
+    private String actcDelayType; // 延迟类型  none  time   field
 
-    private String actcDelayType; // 延迟类型
+    private Integer actcDelayTime;  // 延时时间数量
+
+    private String actcDelayTimeunit;  // 延时时间单位
+
+    private String actcDelayField;  // 指定延时提交任务的时间点的表单字段
     
     // 非表中字段
     private String actcOuttimeTriggerTitle; // 超时触发器名称
@@ -736,13 +743,6 @@ public class DhActivityConf {
         this.actcIsSystemTask = actcIsSystemTask;
     }
 
-    public String getActcIsDelay() {
-        return actcIsDelay;
-    }
-
-    public void setActcIsDelay(String actcIsDelay) {
-        this.actcIsDelay = actcIsDelay;
-    }
 
     public String getActcDelayType() {
         return actcDelayType;
@@ -752,52 +752,41 @@ public class DhActivityConf {
         this.actcDelayType = actcDelayType;
     }
 
+    public Integer getActcDelayTime() {
+        return actcDelayTime;
+    }
+
+    public void setActcDelayTime(Integer actcDelayTime) {
+        this.actcDelayTime = actcDelayTime;
+    }
+
+
+
+    public String getActcDelayField() {
+        return actcDelayField;
+    }
+
+    public void setActcDelayField(String actcDelayField) {
+        this.actcDelayField = actcDelayField;
+    }
+
+    public String getActcDelayTimeunit() {
+        return actcDelayTimeunit;
+    }
+
+    public void setActcDelayTimeunit(String actcDelayTimeunit) {
+        this.actcDelayTimeunit = actcDelayTimeunit;
+    }
+
     public String getActcMailNotifyTemplateView() {
-		return actcMailNotifyTemplateView;
+		return this.actcMailNotifyTemplateView;
 	}
 
 	public void setActcMailNotifyTemplateView(String actcMailNotifyTemplateView) {
 		this.actcMailNotifyTemplateView = actcMailNotifyTemplateView;
 	}
 
-	@Override
-	public String toString() {
-		return "DhActivityConf [actcUid=" + actcUid + ", activityId=" + activityId + ", actcSort=" + actcSort
-				+ ", actcTime=" + actcTime + ", actcTimeunit=" + actcTimeunit + ", actcAssignType=" + actcAssignType
-				+ ", actcChooseableHandlerType=" + actcChooseableHandlerType + ", actcOuttimeNotifyType="
-				+ actcOuttimeNotifyType + ", actcAssignVariable=" + actcAssignVariable + ", signCountVarname="
-				+ signCountVarname + ", actcCanEditAttach=" + actcCanEditAttach + ", actcCanUploadAttach="
-				+ actcCanUploadAttach + ", actcCanDelegate=" + actcCanDelegate + ", actcCanDeleteAttach="
-				+ actcCanDeleteAttach + ", actcCanMessageNotify=" + actcCanMessageNotify + ", actcCanMailNotify="
-				+ actcCanMailNotify + ", actcMailNotifyTemplate=" + actcMailNotifyTemplate
-				+ ", actcMessageNotifyTemplate=" + actcMessageNotifyTemplate + ", actcCanReject=" + actcCanReject
-				+ ", actcRejectType=" + actcRejectType + ", actcCanRevoke=" + actcCanRevoke + ", actcCanAutocommit="
-				+ actcCanAutocommit + ", actcCanAdd=" + actcCanAdd + ", actcCanUserToField=" + actcCanUserToField
-				+ ", actcCanAuditToField=" + actcCanAuditToField + ", actcCanApprove=" + actcCanApprove
-				+ ", actcUserToField=" + actcUserToField + ", actcAuditToField=" + actcAuditToField
-				+ ", actcOuttimeTrigger=" + actcOuttimeTrigger + ", actcOuttimeTemplate=" + actcOuttimeTemplate
-				+ ", actcDescription=" + actcDescription + ", actcDefTitle=" + actcDefTitle + ", actcDefSubjectMessage="
-				+ actcDefSubjectMessage + ", actcDefMessage=" + actcDefMessage + ", actcDefDescription="
-				+ actcDefDescription + ", actcAlert=" + actcAlert + ", actcPriorityVariable=" + actcPriorityVariable
-				+ ", actcCanCancel=" + actcCanCancel + ", actcCanPause=" + actcCanPause + ", actcCanSkip=" + actcCanSkip
-				+ ", updator=" + updator + ", updateTime=" + updateTime + ", actcCanChooseUser=" + actcCanChooseUser
-				+ ", actcCanTransfer=" + actcCanTransfer + ", actcResponsibility=" + actcResponsibility
-				+ ", actcCanSkipFromReject=" + actcCanSkipFromReject + ", actcIsSystemTask=" + actcIsSystemTask
-				+ ", actcIsDelay=" + actcIsDelay + ", actcDelayType=" + actcDelayType + ", actcOuttimeTriggerTitle="
-				+ actcOuttimeTriggerTitle + ", handleUser=" + handleUser + ", handleUserView=" + handleUserView
-				+ ", handleRole=" + handleRole + ", handleRoleView=" + handleRoleView + ", handleTeam=" + handleTeam
-				+ ", handleTeamView=" + handleTeamView + ", handleField=" + handleField + ", chooseableHandleUser="
-				+ chooseableHandleUser + ", chooseableHandleUserView=" + chooseableHandleUserView
-				+ ", chooseableHandleRole=" + chooseableHandleRole + ", chooseableHandleRoleView="
-				+ chooseableHandleRoleView + ", chooseableHandleTeam=" + chooseableHandleTeam
-				+ ", chooseableHandleTeamView=" + chooseableHandleTeamView + ", chooseableHandleField="
-				+ chooseableHandleField + ", chooseableHandleTriggerTitle=" + chooseableHandleTriggerTitle
-				+ ", chooseableHandleTrigger=" + chooseableHandleTrigger + ", outtimeUser=" + outtimeUser
-				+ ", outtimeUserView=" + outtimeUserView + ", outtimeRole=" + outtimeRole + ", outtimeRoleView="
-				+ outtimeRoleView + ", outtimeTeam=" + outtimeTeam + ", outtimeTeamView=" + outtimeTeamView
-				+ ", rejectActivities=" + rejectActivities + ", rejectActivitiesView=" + rejectActivitiesView
-				+ ", actcMailNotifyTemplateView=" + actcMailNotifyTemplateView + "]";
-	}
+	
 
 
 	

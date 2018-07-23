@@ -489,8 +489,10 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         conf.setActcResponsibility(null); // 职责描述
         conf.setActcCanSkipFromReject(Const.Boolean.FALSE); // 是否允许驳回后直接提交回来
         conf.setActcIsSystemTask(Const.Boolean.FALSE); // 是否系统任务
-        conf.setActcIsDelay(Const.Boolean.FALSE); // 是否延时
-        conf.setActcDelayType(null); // 延时类型
+        conf.setActcDelayType(DhActivityConf.DELAY_TYPE_NONE); // 延时类型 默认不延时
+        conf.setActcDelayTime(1);
+        conf.setActcDelayTimeunit(DhActivityConf.TIME_UNIT_DAY);
+        conf.setActcDelayField(null);
         return conf;
     }
     

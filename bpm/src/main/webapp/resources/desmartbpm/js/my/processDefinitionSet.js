@@ -45,7 +45,7 @@ $(function() {
     $('#form1').validate({
         rules : {
             proTime : {
-                number : true
+                positiveInteger5 : true
             },
             proDynaforms: {
             	maxlength: 100

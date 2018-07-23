@@ -254,7 +254,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             return null;
         }
 
-        // 创建出 DhTaskInstance
+
         // 引擎分配任务的人，再考虑代理情况
         List<String> orgionUserUidList = getHandlerListOfTask(lswTask, groupInfo);
         
@@ -267,11 +267,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             preMeta = new BpmActivityMeta();
             LOG.error("解析上个环节出错, 任务id: " + lswTask.getTaskId());
         }
-        
+        // 创建 DhTaskInstance
         List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance,
                 bpmActivityMeta, preMeta, globalConfig);
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
-        
 
         // 查看是否允许代理
         if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
@@ -323,14 +322,32 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         Date dueDate = sysHolidayService.calculateDueDate(lswTask.getRcvdDatetime(), timeAmount, timeUnit);
 
-        // 判断是否能自动提交
-        boolean canAutoCommit = canTaskBeAutoCommited(orgionUserUidList, bpmActivityMeta, preMeta, dhProcessInstance);
-        if (canAutoCommit) {
+        int synNumber = 0;
+        // 判断是否系统任务
+        if ("TRUE".equals(conf.getActcIsSystemTask())) {
+            // 进一步判断是否是延时任务
+            if (DhActivityConf.DELAY_TYPE_NONE.equals(conf.getActcDelayType())) {
+                // 非延时的系统任务
+                synNumber = -2;
+            } else {
+                // 延时任务
+                synNumber = -3;
+            }
             // 将任务分配给管理员
             orgionUserUidList.remove(0);
             orgionUserUidList.add(bpmGlobalConfig.getBpmAdminName());
+        } else {
+            // 如果不是系统任务，判断能否自动提交
+            if (canTaskBeAutoCommited(orgionUserUidList, bpmActivityMeta, preMeta, dhProcessInstance)) {
+                // 将任务分配给管理员
+                orgionUserUidList.remove(0);
+                orgionUserUidList.add(bpmGlobalConfig.getBpmAdminName());
+                synNumber = -1;
+            }
         }
 
+
+        // 为每个处理人创建任务
         for (String orgionUserUid : orgionUserUidList) {
             DhTaskInstance dhTask = new DhTaskInstance();
             dhTask.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
@@ -340,31 +357,34 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhTask.setActivityBpdId(bpmActivityMeta.getActivityBpdId());
             // 设置任务循环类型
             String loopType = bpmActivityMeta.getLoopType();
-            if (BpmActivityMeta.LOOP_TYPE_NONE.equals(loopType)) {
+            if (BpmActivityMeta.LOOP_TYPE_NONE.equals(loopType)) { // 普通任务
                 dhTask.setTaskType(DhTaskInstance.TYPE_NORMAL);
-            } else if (BpmActivityMeta.LOOP_TYPE_SIMPLE_LOOP.equals(loopType)) {
+            } else if (BpmActivityMeta.LOOP_TYPE_SIMPLE_LOOP.equals(loopType)) { // 简单循环任务
                 dhTask.setTaskType(DhTaskInstance.TYPE_SIMPLE_LOOP);
-            } else if (BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) {
+            } else if (BpmActivityMeta.LOOP_TYPE_MULTI_INSTANCE_LOOP.equals(loopType)) { // 多实例循环任务
                 dhTask.setTaskType(DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP);
             }
             dhTask.setTaskStatus(lswTask.getStatus());
             dhTask.setTaskTitle(bpmActivityMeta.getActivityName());
             dhTask.setTaskInitDate(lswTask.getRcvdDatetime());
-            if (canAutoCommit) {
-                dhTask.setSynNumber(-1);  // 自动提交的任务，将synNumber设为 -1
-            } else {
-                dhTask.setSynNumber(lswTask.getTaskId());
-            }
+            dhTask.setSynNumber(synNumber != 0 ? synNumber : lswTask.getTaskId());
             dhTask.setTaskPreviousUsrUid(preMeta.getUserUid());
             dhTask.setTaskPreviousUsrUsername(preMeta.getUserName());
             dhTask.setTaskDueDate(dueDate);
             dhTask.setTaskActivityId(bpmActivityMeta.getActivityId());
-
             taskList.add(dhTask);
         }
         return taskList;
     }
 
+    /**
+     * 判断任务是否能自动提交
+     * @param orgionUserUidList  原始处理人列表
+     * @param bpmActivityMeta 环节
+     * @param preMeta 上个环节
+     * @param dhProcessInstance 流程实例
+     * @return
+     */
     private boolean canTaskBeAutoCommited(List<String> orgionUserUidList, BpmActivityMeta bpmActivityMeta,
                                           BpmActivityMeta preMeta, DhProcessInstance dhProcessInstance) {
         if (!"TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanAutocommit()) || orgionUserUidList.size() > 1) {

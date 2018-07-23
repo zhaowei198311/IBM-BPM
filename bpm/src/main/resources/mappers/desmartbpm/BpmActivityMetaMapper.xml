@@ -21,7 +21,8 @@
 	    ac.ACTC_DEF_TITLE, ac.ACTC_DEF_SUBJECT_MESSAGE, ac.ACTC_DEF_MESSAGE, ac.ACTC_DEF_DESCRIPTION,
 	    ac.ACTC_ALERT, ac.ACTC_PRIORITY_VARIABLE, ac.ACTC_CAN_CANCEL, ac.ACTC_CAN_PAUSE, ac.ACTC_CAN_SKIP,
 	    ac.UPDATOR, ac.UPDATE_TIME, ac.actc_can_choose_user, ac.actc_can_transfer,ac.ACTC_RESPONSIBILITY,ac.ACTC_CHOOSEABLE_HANDLER_TYPE,
-	    AC.ACTC_CAN_SKIP_FROM_REJECT, ac.actc_Outtime_Notify_Type, ac.ACTC_IS_SYSTEM_TASK, ac.ACTC_IS_DELAY, ac.ACTC_DELAY_TYPE
+	    AC.ACTC_CAN_SKIP_FROM_REJECT, ac.actc_Outtime_Notify_Type, ac.ACTC_IS_SYSTEM_TASK, ac.ACTC_DELAY_TYPE,
+	    ac.actc_delay_time, ac.actc_delay_timeunit, ac.actc_delay_field
 	</sql>
 	
 	<resultMap id="mapWithConf" type="com.desmart.desmartbpm.entity.BpmActivityMeta" >
@@ -99,8 +100,10 @@
 			    <result column="ACTC_CAN_SKIP_FROM_REJECT" jdbcType="VARCHAR" property="actcCanSkipFromReject" />
 			    <result column="actc_Outtime_Notify_Type" jdbcType="VARCHAR" property="actcOuttimeNotifyType" />
 				<result column="ACTC_IS_SYSTEM_TASK" property="actcIsSystemTask" jdbcType="VARCHAR"/>
-				<result column="ACTC_IS_DELAY" property="actcIsDelay" jdbcType="VARCHAR"/>
 				<result column="ACTC_DELAY_TYPE" property="actcDelayType" jdbcType="VARCHAR"/>
+				<result column="ACTC_DELAY_TIME" property="actcDelayTime" jdbcType="INTEGER"/>
+				<result column="ACTC_DELAY_TIMEUNIT" property="actcDelayTimeunit" jdbcType="VARCHAR"/>
+				<result column="ACTC_DELAY_FIELD" property="actcDelayField" jdbcType="VARCHAR"/>
 	    </association>
     </resultMap>
 	  

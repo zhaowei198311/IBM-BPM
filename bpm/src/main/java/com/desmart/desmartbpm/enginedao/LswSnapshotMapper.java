@@ -13,7 +13,7 @@ public interface LswSnapshotMapper {
 
     /**
      * 根据快照版本id列表查询多个快照
-     * @param snapshotIdList  没有"25."前缀的快照id
+     * @param snapshotIdList  没有"2064."前缀的快照id
      * @return
      */
     List<LswSnapshot> listBySnapshotIdList(List<String> snapshotIdList);
