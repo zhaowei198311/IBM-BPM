@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.controller;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.ZTreeNode;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessCategoryService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -110,7 +112,7 @@ public class BpmFormManageController {
         categoryList.add(dhProcessCategory);
         //获得所有的流程元集合
         List<DhProcessMeta> metaList = dhProcessMetaService.listAll();
-        //获得所有的流程定义集合
+        //获得所有的流程定义对象的集合
         List<DhProcessDefinition> definitionList = bpmFormManageService.listDefinitionAll();
         List<ZTreeNode> nodesToShow = new ArrayList<ZTreeNode>();
         //流程分类在前端显示的对象
@@ -142,10 +144,7 @@ public class BpmFormManageController {
         	if(metaProUidSet.contains(definition.getProUid())) {
         		node.setId(definition.getProVerUid());
         		//获得某个流程定义的版本名
-        		String proVerName = dhProcessDefinitionService
-        				.getLswSnapshotBySnapshotId(definition.getProVerUid())
-        				.getName();
-            	node.setName(proVerName);//页面上显示流程下某个版本
+            	node.setName(definition.getVerName());//页面上显示流程下某个版本
                 node.setPid(definition.getProUid());
                 node.setItemType("processDefinition");
                 node.setIcon("../resources/desmartbpm/images/3.png");

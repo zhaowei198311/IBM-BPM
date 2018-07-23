@@ -29,7 +29,9 @@
                 <div class="layui-side-scroll">        
                 <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
                     <ul class="layui-nav layui-nav-tree layui-nav-side">
-                        <li class="logo"><img src="<%=basePath%>/resources/desmartbpm/images/logo.gif"/></li>
+                        <li class="logo">
+                        	<img src="<%=basePath%>/resources/desmartbpm/images/logo.gif"/>
+                        </li>
                         <li class="layui-nav-item">
                             <a href="javascript:;"><i class="layui-icon">&#xe609;</i> 流程管理</a>
                             <dl class="layui-nav-child">
