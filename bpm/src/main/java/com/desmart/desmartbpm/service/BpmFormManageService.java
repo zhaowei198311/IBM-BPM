@@ -1,7 +1,7 @@
 package com.desmart.desmartbpm.service;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmForm;
@@ -15,7 +15,7 @@ public interface BpmFormManageService {
 			String proVerUid, Integer pageNum,Integer pageSize);
 
 	/**
-	 * 获得所有的流程定义对象(DH)
+	 * 获得所有的流程定义对象的快照名称(DH)
 	 */
 	List<DhProcessDefinition> listDefinitionAll();
 

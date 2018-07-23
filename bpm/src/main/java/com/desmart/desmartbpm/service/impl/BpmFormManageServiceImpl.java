@@ -1,7 +1,9 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,12 +21,14 @@ import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -51,10 +55,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 	private BpmFormFieldMapper bpmFormFieldMapper;
 	
 	@Autowired
-	private DhProcessDefinitionService dhProcessDefinitionService;
+	private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
 	
 	@Autowired
-	private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
+	private LswSnapshotMapper lswSnapshotMapper;
 	
 	@Override
 	public ServerResponse queryProFormByName(String dynTitle,String proUid,String proVersion) {
@@ -85,12 +89,22 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			PageHelper.startPage(pageNum, pageSize);
 			//获得表单数据
 			List<BpmForm> formList = bpmFormManageMapper.listFormByProDefinition(formTitle,proUid,proVerUid);
+			List<String> snapshotIdList = new ArrayList<>();
+			//获得表单所属快照id集合
 			for(BpmForm bpmForm:formList) {
-				//查询该表单绑定的流程定义是否被废弃
-				if(null!=dhProcessDefinitionService.getLswSnapshotBySnapshotId(bpmForm.getProVersion())) {
-					String proVerName = dhProcessDefinitionService
-	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
-					bpmForm.setProVerName(proVerName);
+				String notPrefixProVerUid = bpmForm.getProVersion().replace("2064.", "");
+				snapshotIdList.add(notPrefixProVerUid);
+			}
+			//根据快照id集合获得快照对象集合
+			List<LswSnapshot> lswSnapshotList = lswSnapshotMapper.listBySnapshotIdList(snapshotIdList);
+			//将对应的快照名称赋值给form对象
+			for(BpmForm bpmForm:formList) {
+				String notPrefixProVerUid = bpmForm.getProVersion().replace("2064.", "");
+				for(LswSnapshot lswSnapshot:lswSnapshotList) {
+					if(notPrefixProVerUid.equals(lswSnapshot.getSnapshotId())) {
+						bpmForm.setProVerName(lswSnapshot.getName());
+						break;
+					}
 				}
 			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
@@ -105,12 +119,22 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			PageHelper.startPage(pageNum, pageSize);
 			//获得的数据
 			List<BpmForm> formList = bpmFormManageMapper.listFormByProUidList(metaList,formTitle);
+			List<String> snapshotIdList = new ArrayList<>();
+			//获得表单所属快照id集合
 			for(BpmForm bpmForm:formList) {
-				//查询该表单绑定的流程定义是否被废弃
-				if(null!=dhProcessDefinitionService.getLswSnapshotBySnapshotId(bpmForm.getProVersion())) {
-					String proVerName = dhProcessDefinitionService
-	        				.getLswSnapshotBySnapshotId(bpmForm.getProVersion()).getName();
-					bpmForm.setProVerName(proVerName);
+				String notPrefixProVerUid = bpmForm.getProVersion().replace("2064.", "");
+				snapshotIdList.add(notPrefixProVerUid);
+			}
+			//根据快照id集合获得快照对象集合
+			List<LswSnapshot> lswSnapshotList = lswSnapshotMapper.listBySnapshotIdList(snapshotIdList);
+			//将对应的快照名称赋值给form对象
+			for(BpmForm bpmForm:formList) {
+				String notPrefixProVerUid = bpmForm.getProVersion().replace("2064.", "");
+				for(LswSnapshot lswSnapshot:lswSnapshotList) {
+					if(notPrefixProVerUid.equals(lswSnapshot.getSnapshotId())) {
+						bpmForm.setProVerName(lswSnapshot.getName());
+						break;
+					}
 				}
 			}
 			PageInfo<List<BpmForm>> pageInfo = new PageInfo(formList);
@@ -120,8 +144,28 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 
 	@Override
 	public List<DhProcessDefinition> listDefinitionAll() {
-		//查询所有的流程定义集合
-		return dhProcessDefinitionMapper.listAll();
+		List<DhProcessDefinition> dhProcessDefinitionList = dhProcessDefinitionMapper.listAll();
+		List<DhProcessDefinition> resultList = new ArrayList<>();
+		List<String> snapshotIdList = new ArrayList<>();
+		for(DhProcessDefinition dhProcessDefinition:dhProcessDefinitionList) {
+			String proVerUid = dhProcessDefinition.getProVerUid().replace("2064.", "");
+			snapshotIdList.add(proVerUid);
+		}
+		List<LswSnapshot> lswSnapshotList = lswSnapshotMapper.listBySnapshotIdList(snapshotIdList);
+		for(DhProcessDefinition dhProcessDefinition:dhProcessDefinitionList) {
+			String proVerUid = dhProcessDefinition.getProVerUid().replace("2064.", "");	
+			for(LswSnapshot lswSnapshot:lswSnapshotList) {
+				if(proVerUid.equals(lswSnapshot.getSnapshotId())) {
+					DhProcessDefinition newDhProDef = new DhProcessDefinition();
+					newDhProDef.setProUid(dhProcessDefinition.getProUid());
+					newDhProDef.setProVerUid(dhProcessDefinition.getProVerUid());
+					newDhProDef.setVerName(lswSnapshot.getName());
+					resultList.add(newDhProDef);
+					break;
+				}
+			}
+		}
+		return resultList;
 	}
 
 	@Override
