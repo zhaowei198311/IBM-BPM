@@ -202,8 +202,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		str+='<td><i class="layui-icon" title="修改参数" onclick=updateTr(this,"'+addArrayInAddOrUpdate+'"); >&#xe642;</i> <i class="layui-icon" title="删除参数" onclick="deleteTr(this);" >&#xe640;</i></td>';
 		$(childNodeParameterTbody).append(str);
 		//layer.alert('绑定成功');
+		byParameterTypeHideAndShowElement('String',"1");
 		$('#chilNodeParameterForm')[0].reset();
-		
 	    return false;
 	});
 	

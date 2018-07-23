@@ -12,7 +12,7 @@
 <head>
 <base href="<%=basePath%>">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>测试接口页面</title>
+<title>接口测试</title>
 <%@ include file="../common/common.jsp" %>
 <style type="text/css">
 	.layui-form-label{width: 110px;}
@@ -61,7 +61,7 @@
 			</c:forEach>
 			
 			<form action="javascript:void(0);" method="post" id="childrenForm">
-			<div id="childParameter" style="width:95%;margin-left: 18px;" > 
+			<div id="childParameter" style="width:95%;margin-left: 18px;overflow-y:scroll" > 
 			  <table class="layui-table" id="interfaceParameterTable" >
 			    <colgroup>
 			      <col>
@@ -84,7 +84,7 @@
 			    		<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 							<c:if test="${dhInterfaceParameter.paraType!='Array' && not empty dhInterfaceParameter.paraParent}">
 								 <td name="${dhInterfaceParameter.paraName}" >
-								 	<input name="${dhInterfaceParameter.paraName}"  style="height: 28px;" maxlength="${dhInterfaceParameter.paraSize}"    autocomplete="off" class="layui-input  
+								 	<input name="${dhInterfaceParameter.paraName}"  style="height: 28px;width:190px;" maxlength="${dhInterfaceParameter.paraSize}"    autocomplete="off" class="layui-input  
 							       <c:if test="${dhInterfaceParameter.isMust=='true'}">
 							       		required
 							       </c:if>
