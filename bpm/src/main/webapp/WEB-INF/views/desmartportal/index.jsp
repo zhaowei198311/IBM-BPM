@@ -510,4 +510,31 @@
 		$("#shopLife").parent().addClass("layui-this");
 		$(".layui-breadcrumb").css("display","none");
 	}
+	
+	function openProView(insId){
+		$.ajax({
+	        url: 'processInstance/viewProcess',
+	        type: 'post',
+	        dataType: 'text',
+	        data: {
+	            insId: insId
+	        },
+	        success: function (result) {
+	            var index = layer.open({
+	                type: 2,
+	                title: '流程图',
+	                shadeClose: true,
+	                offset: ['50px', '20%'],
+	                shade: 0.3,
+	                maxmin:true,
+	                area: ['890px', '570px'],
+	                content: result
+	            });
+	            console.log(index);
+	            layer.style(index, {
+	            	zoom:1.1
+	            });
+	        }
+	    });
+	}
 </script>

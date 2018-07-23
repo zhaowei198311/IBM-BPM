@@ -346,25 +346,7 @@
 		
 		//跟踪流程图
 		function processView(insId) {
-			$.ajax({
-		        url: 'processInstance/viewProcess',
-		        type: 'post',
-		        dataType: 'text',
-		        data: {
-		            insId: insId
-		        },
-		        success: function (result) {
-		            layer.open({
-		                type: 2,
-		                title: '流程图',
-		                shadeClose: true,
-		                offset:"50px",
-		                shade: 0.3,
-		                area: ['790px', '570px'],
-		                content: result
-		            });
-		        }
-		    });
+			window.parent.openProView(insId);
 		}
 		//重置模糊查询的条件
 	    function resetSearch(){
