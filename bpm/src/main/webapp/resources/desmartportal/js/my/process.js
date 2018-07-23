@@ -166,6 +166,10 @@ function toShowRouteBar () {
     if(!common.validateRegx()){
     	return;
     }
+    //表单提交验证方法，可在设计表单时重构
+    if(!check_before_submit()){
+    	return;
+    }
     $.ajax({
     	url:"dhRoute/showRouteBar",
     	method:"post",
@@ -348,5 +352,11 @@ function checkDraftsExtis(){
 		
 	});
 	}
+}
+
+//提交前验证方法
+function check_before_submit(){
+	console.log("1");
+	return true;
 }
 
