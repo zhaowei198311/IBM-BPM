@@ -4,7 +4,6 @@ layui.use('form',function(){
 		if (data.value == "MAIL_NOTIFY_TEMPLATE") {
 			$('#templateSubjectDiv').show();
 		} else {
-			$("#templateSubject").val("");
 			$('#templateSubjectDiv').hide();
 		}
 	});
@@ -246,6 +245,9 @@ function submitOperation(){
 	if (!$('#operationTemplateForm').valid()) {
 		layer.alert("验证失败，请检查后提交");
 		return;
+	}
+	if($("input[name='templateType']:checked").val()=='MESSAGE_NOTIFY_TEMPLATE'){
+		$("#templateSubject").val("");
 	}
 	var fromData = $('#operationTemplateForm').serializeArray();
 	$.ajax({
