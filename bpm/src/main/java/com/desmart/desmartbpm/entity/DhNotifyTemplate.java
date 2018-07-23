@@ -14,7 +14,8 @@ public class DhNotifyTemplate {
 	private String templateUid;
 	private String templateName;
 	private String templateType;
-	private String templateContent;//模板内容
+	private String templateSubject;//模板主题，邮件
+	private String templateContent;//模板主体内容
 	private String createUserUid;
 	private Date createTime;
 	private String updateUserUid;
@@ -84,12 +85,19 @@ public class DhNotifyTemplate {
 	public void setUpdateUserName(String updateUserName) {
 		this.updateUserName = updateUserName;
 	}
+	public String getTemplateSubject() {
+		return templateSubject;
+	}
+	public void setTemplateSubject(String templateSubject) {
+		this.templateSubject = templateSubject;
+	}
 	@Override
 	public String toString() {
 		return "DhNotifyTemplate [templateUid=" + templateUid + ", templateName=" + templateName + ", templateType="
-				+ templateType + ", templateContent=" + templateContent + ", createUserUid=" + createUserUid
-				+ ", createTime=" + createTime + ", updateUserUid=" + updateUserUid + ", updateTime=" + updateTime
-				+ ", userName=" + userName + ", updateUserName=" + updateUserName + "]";
+				+ templateType + ", templateSubject=" + templateSubject + ", templateContent=" + templateContent
+				+ ", createUserUid=" + createUserUid + ", createTime=" + createTime + ", updateUserUid=" + updateUserUid
+				+ ", updateTime=" + updateTime + ", userName=" + userName + ", updateUserName=" + updateUserName + "]";
 	}
+	
 	
 }

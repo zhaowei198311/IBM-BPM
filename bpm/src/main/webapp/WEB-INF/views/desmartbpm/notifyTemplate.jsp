@@ -27,10 +27,10 @@
     color: #717171;
     padding: 20px;
     width: 570px;
-    height: 468px;
+    height: 483px;
     background: #fff;
     position: absolute;
-    margin: 60px 0 0 -306px;
+    margin: 2% 0 0 -306px;
     left: 50%;
     box-shadow: 0 0 10px #ccc;
 }
@@ -68,9 +68,9 @@
 								</select>
 							</div>
 								<button style="margin-left:1%;" class="layui-btn layui-btn-sm" onclick="search();">查询</button>
-								<button class="layui-btn layui-btn-sm" onclick="addNotifyTemplate();">新增模板</button>
+								<button class="layui-btn layui-btn-sm" onclick="addNotifyTemplate();">新增模板</button><!-- 
 						        <button class="layui-btn layui-btn-sm" onclick="updateNotifyTemplate();">修改模板</button>
-						        <button class="layui-btn layui-btn-sm" onclick="deleteNotifyTemplate();">删除模板</button>
+						        <button class="layui-btn layui-btn-sm" onclick="deleteNotifyTemplate();">删除模板</button> -->
 						        <button class="layui-btn layui-btn-sm" id="exportBtn">导出模版</button>
 						        <button class="layui-btn layui-btn-sm" id="importBtn">导入模版</button>
 							</div>
@@ -94,11 +94,13 @@
 							      <th></th>
 							      <th>模板名称</th>
 							      <th>模板类型</th>
-							      <th>模板内容</th>
+							      <th>邮件主题</th>
+							      <th>主体内容</th>
 							      <th>创建人</th>
 							      <th>创建时间</th>
 							      <th>修改人</th>
 							      <th>修改时间</th>
+							      <th>操作</th>
 							    </tr> 
 							</thead>
 							<tbody id="template_table_tbody" >
@@ -115,7 +117,7 @@
 	<div id="notifyt-template-div" class="display_container5_custom">
 		<div class="display_content5_custom" >
 			<div class="top"><label id="operation-title"></label></div>
-			<div class="middle1" style="height: 356px;">
+			<div class="middle1" style="height: 371px;">
 				<div class="layui-form" style="padding-top: 4%;padding-right: 4%;">
 				<form id="operationTemplateForm" action="" class="layui-form">
 					<input id="templateUid" name="templateUid" type="hidden">
@@ -129,13 +131,19 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">模板类型</label>
 						<div class="layui-input-block">
-							<input class="layui-radio" type="radio" name="templateType" value="MAIL_NOTIFY_TEMPLATE" checked title="邮件模板"/> 
-							<input class="layui-radio" type="radio" name="templateType" value="MESSAGE_NOTIFY_TEMPLATE"  title="短信模板"/>	
+							<input class="layui-radio" lay-filter="templateTypeFilter" type="radio" name="templateType" value="MAIL_NOTIFY_TEMPLATE" checked title="邮件模板"/> 
+							<input class="layui-radio" lay-filter="templateTypeFilter"  type="radio" name="templateType" value="MESSAGE_NOTIFY_TEMPLATE"  title="短信模板"/>	
 						</div>
 					</div>
-					
+					<div class="layui-form-item"  id="templateSubjectDiv">
+						<label class="layui-form-label">邮件主题</label>
+						<div class="layui-input-block">
+							<input id="templateSubject" class="layui-input" name="templateSubject"
+							 required lay-verify="required" placeholder="请输入" >
+						</div>
+					</div>
 					<div class="layui-form-item">
-						<label class="layui-form-label">模板内容</label>
+						<label class="layui-form-label">主体内容</label>
 						<div class="layui-input-block">
 							<textarea id="templateContent" name="templateContent" lay-verify="required"
 							   		 required class="layui-textarea" style="width: 100%;height:175px;">

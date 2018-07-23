@@ -3,25 +3,26 @@
 <mapper namespace="com.desmart.desmartbpm.dao.DhNotifyTemplateMapper" >
     <sql id="base_column">
          TEMPLATE_UID, TEMPLATE_NAME, TEMPLATE_TYPE, TEMPLATE_CONTENT
-         , CREATE_USER_UID, CREATE_TIME, UPDATE_USER_UID, UPDATE_TIME
+         , CREATE_USER_UID, CREATE_TIME, UPDATE_USER_UID, UPDATE_TIME,TEMPLATE_SUBJECT
     </sql>
     
     <sql id="relation_column">
        nt.TEMPLATE_UID, nt.TEMPLATE_NAME, nt.TEMPLATE_TYPE, nt.TEMPLATE_CONTENT
-       , nt.CREATE_USER_UID, nt.CREATE_TIME, nt.UPDATE_USER_UID, nt.UPDATE_TIME
+       , nt.CREATE_USER_UID, nt.CREATE_TIME, nt.UPDATE_USER_UID, nt.UPDATE_TIME, nt.TEMPLATE_SUBJECT
     </sql>
     
     <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
     	INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>) 
     	VALUES (#{templateUid}, #{templateName}, #{templateType}
-    	, #{templateContent}, #{createUserUid}, sysdate, #{updateUserUid}, sysdate)
+    	, #{templateContent}, #{createUserUid}, sysdate, #{createUserUid}, sysdate, #{templateSubject})
     </insert>
 
     <insert id="insertBatch" parameterType="list">
 		INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>)
 		<foreach collection="list" item="item" separator="union all">
 			select #{item.templateUid}, #{item.templateName}, #{item.templateType}, #{item.templateContent},
-			#{item.createUserUid}, sysdate, #{item.updateUserUid}, sysdate from dual
+			#{item.createUserUid}, sysdate, #{createUserUid}, sysdate, #{item.TEMPLATE_SUBJECT} from dual
+
 		</foreach>
 	</insert>
 
@@ -40,7 +41,10 @@
 			<if test="updateUserUid != null and updateUserUid != '' ">
 				UPDATE_USER_UID = #{updateUserUid},
 			</if>
-				UPDATE_TIME = sysdate
+				UPDATE_TIME = sysdate,
+    	<if test="templateSubject != null and templateSubject != '' ">
+    		TEMPLATE_SUBJECT = #{templateSubject}
+    	</if>
     	</set>
     	WHERE template_Uid = #{templateUid}
     </update>
