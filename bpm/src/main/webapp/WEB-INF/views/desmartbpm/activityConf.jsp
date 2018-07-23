@@ -540,6 +540,55 @@
 										<div class="layui-tab-item">
 											<form class="layui-form" action="" id="sla_form">
 												<div class="layui-row">
+													<!-- 左侧-->
+													<div class="layui-col-md6">
+														<div class="layui-form-item">
+															<label class="layui-form-label">是否系统任务节点</label>
+															<div class="layui-input-block">
+																<input type="radio" name="actcIsSystemTask" lay-filter="isSystemTask" value="TRUE" title="是">
+																<input type="radio" name="actcIsSystemTask" lay-filter="isSystemTask" value="FALSE" title="否">
+															</div>
+														</div>
+														<div class="layui-form-item" attr="delay-detail-time">
+															<label class="layui-form-label">延时时长</label>
+															<div class="layui-input-block">
+																<input type="text" name="actcDelayTime" value="" autocomplete="off" class="layui-input">
+															</div>
+														</div>
+														<div class="layui-form-item" attr="delay-detail-field">
+															<label class="layui-form-label">时间点字段</label>
+															<div class="layui-input-block">
+																<input type="text" name="actcDelayField" value="" autocomplete="off" class="layui-input">
+															</div>
+														</div>
+													</div>
+													<!-- 右侧-->
+													<div class="layui-col-md6">
+														<div class="layui-form-item" attr="delay-detail-type">
+															<label class="layui-form-label">延时类型</label>
+															<div class="layui-input-block">
+																<select name="actcDelayType" lay-verify="required" lay-filter="delayType">
+																	<option value="none">不延时</option>
+																	<option value="time">延时指定时间后提交</option>
+																	<option value="field">根据字段指定提交时间点</option>
+																</select>
+															</div>
+														</div>
+														<div class="layui-form-item" attr="delay-detail-time">
+															<label class="layui-form-label">延时时间单位</label>
+															<div class="layui-input-block">
+																<select name="actcDelayTimeunit" lay-verify="required">
+																	<option value="hour">小时</option>
+																	<option value="day">天</option>
+																	<option value="month">月</option>
+																</select>
+															</div>
+														</div>
+													</div>
+												</div><!-- row end -->
+
+												<div class="layui-row">
+													<!-- 左侧栏 -->
 													<div class="layui-col-md6">
 														<div class="layui-form-item">
 															<label class="layui-form-label">运行时长</label>
@@ -570,6 +619,7 @@
 															</div>
 														</div>
 													</div>
+													<!-- 右侧栏 -->
 													<div class="layui-col-md6">
 														<div class="layui-form-item">
 															<label class="layui-form-label">运行时间单位</label>
@@ -581,22 +631,20 @@
 																</select>
 															</div>
 														</div>
-													</div>
-														<!-- 超时通知 -->
-														<div class="layui-col-md6">
-															<div class="layui-form-item">
-																<label class="layui-form-label">超时通知人员</label>
-																<div class="layui-input-block">
-																	<select name="actcOuttimeNotifyType"
-																		lay-filter=outtimeNotifyType
-																		lay-verify="required">
-																		<option value="">-请选择-</option>
-																		<option value="handlerUser">处理人</option>
-																		<option value="handlerUserSuperior">处理人的上级</option>
-																		<option value="users">指定人员</option>
-																	</select>
-																</div>
+
+														<div class="layui-form-item">
+															<label class="layui-form-label">超时通知人员</label>
+															<div class="layui-input-block">
+																<select name="actcOuttimeNotifyType"
+																	lay-filter=outtimeNotifyType
+																	lay-verify="required">
+																	<option value="">-请选择-</option>
+																	<option value="handlerUser">处理人</option>
+																	<option value="handlerUserSuperior">处理人的上级</option>
+																	<option value="users">指定人员</option>
+																</select>
 															</div>
+														</div>
 														<div class="layui-form-item " id="outtimeUser_div">
 															<label class="layui-form-label">人员</label>
 															<div class="layui-input-block"
@@ -611,6 +659,7 @@
 														</div>
 													</div>
 												</div>
+
 												<div class="layui-row">
 													<div class="layui-col-md12">
 														<div class="layui-form-item ">
@@ -1327,9 +1376,7 @@
         +' data-parentActivityId="${humanActivity.parentActivityId}" '
         +' data-activityBpdId="${humanActivity.activityBpdId}">${humanActivity.activityName}</li></c:forEach>';
 
-	window.onload = function() {
 
-	}
 	layui.use('laydate', function() {
 		var laydate = layui.laydate;
 		laydate.render({

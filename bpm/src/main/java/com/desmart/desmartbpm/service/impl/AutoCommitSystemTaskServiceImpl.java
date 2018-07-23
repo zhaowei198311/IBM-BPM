@@ -75,6 +75,22 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         logger.info("处理系统任务完成");
     }
 
+    public void startAutoCommitSystemDelayTask() {
+        logger.info("开始处理系统延时任务");
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        // 获得待处理列表
+        List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit(bpmGlobalConfig);
+        for (DhTaskInstance taskInstance : taskList) {
+            try {
+                this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
+            } catch (Exception e) {
+                logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
+            }
+        }
+        logger.info("处理系统延时任务完成");
+    }
+
+
     /**
      * 提交系统任务
      * @param currTask 任务实例
@@ -164,6 +180,25 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         }
     }
 
+
+    public void checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
+        BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
+        if (currTaskNode == null) {
+            throw new PlatformException("系统延时任务处理失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
+        }
+        DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
+        if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
+            throw new PlatformException("系统延时任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
+        }
+        if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
+                || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
+            throw new PlatformException("系统延时任务任务类型异常，不能处理循环任务，taskUid：" + currTask.getTaskUid());
+        }
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
+    }
+
+
+
     /**
      * 获得未处理的系统任务列表
      * @param bpmGlobalConfig
@@ -177,5 +212,13 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         return dhTaskInstanceMapper.selectAllTask(taskSelective);
     }
 
+
+    private List<DhTaskInstance> getSystemDelayTaskListToAutoCommit(BpmGlobalConfig bpmGlobalConfig) {
+        DhTaskInstance taskSelective = new DhTaskInstance();
+        taskSelective.setUsrUid(bpmGlobalConfig.getBpmAdminName());
+        taskSelective.setSynNumber(-3); // synNumer为-3的是系统延时任务
+        taskSelective.setTaskStatus(DhTaskInstance.STATUS_RECEIVED); // 状态是已收到
+        return dhTaskInstanceMapper.selectAllTask(taskSelective);
+    }
 
 }

@@ -309,4 +309,19 @@ function delCookie(name) {
     var cval = getCookie(name);    
     if (cval != null) document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();   
 
-} 
+}
+
+// validate添加验证 1-5位正整数
+jQuery.validator.addMethod('positiveInteger5', function (value, element) {
+    if (!/^[0-9]*[1-9][0-9]*$/.exec(value) || +value > 99999) {
+        return false;
+    }
+    return true;
+}, '请输入1-5位正整数');
+
+jQuery.validator.addMethod('positiveInteger', function (value, element) {
+    if (!/^[0-9]*[1-9][0-9]*$/.exec(value)) {
+        return false;
+    }
+    return true;
+}, '请输入1-5位正整数');

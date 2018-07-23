@@ -196,10 +196,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         selective.setProAppId(dhProcessMeta.getProAppId());
         selective.setProStatus(proStatus);
         List<DhProcessDefinition> definitionInDb = dhProcessDefinitionMapper.listBySelective(selective);
+        PageInfo pageInfo = new PageInfo(definitionInDb);
         List<DhProcessDefinitionVo> voList = assembleDhProcessDefinitionVoListFromDhprcessDefinition(definitionInDb);
         // 为vo列表装配流程版本信息
         assembleSnapshotInfo(voList);
-        PageInfo pageInfo = new PageInfo(voList);
+        pageInfo.setList(voList);
         return ServerResponse.createBySuccess(pageInfo);
     }
 
@@ -334,7 +335,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             snapshotIdList.add(temp.substring(temp.indexOf(".") + 1, temp.length()));
         }
         List<LswSnapshot> snapshotList = lswSnapshotMapper.listBySnapshotIdList(snapshotIdList);
-        // map中的键为: 没有"25."前缀的快照版本
+        // map中的键为: 没有"2064."前缀的快照版本
         Map<String, LswSnapshot> map = new HashMap<>();
         for (LswSnapshot lswSnapshot : snapshotList) {
             map.put(lswSnapshot.getSnapshotId(), lswSnapshot);

@@ -13,6 +13,58 @@ var pageConfig = {
 	triType : ""
 };
 
+// 对于系统任务相关的配置
+var systemTask = {
+    initListener : function (form) { // 元素的值变化时的操作 form 是layui.form
+        form.on('radio(isSystemTask)', function(data) {
+            if (data.value == "TRUE") {
+                $('div[attr^=delay-detail-type]').show();
+                if ($('input[name=actcDelayType]').val() == 'time') {
+                    $('div[attr^=delay-detail-time]').show();
+				} else if ($('input[name=actcDelayType]').val() == 'field') {
+                    $('div[attr^=delay-detail-field]').show();
+				}
+            } else {
+                $('div[attr^=delay-detail-]').hide();
+            }
+        });
+        form.on('select(delayType)', function (data) {
+            if (data.value == "none") {
+                $('div[attr^=delay-detail-time]').hide();
+                $('div[attr^=delay-detail-field]').hide();
+			} else if(data.value == "time") {
+                $('div[attr^=delay-detail-time]').show();
+                $('div[attr^=delay-detail-field]').hide();
+			} else {
+                $('div[attr^=delay-detail-field]').show();
+                $('div[attr^=delay-detail-time]').hide();
+			}
+        });
+    },
+    initValue: function (conf) {
+        $('div[attr^=delay-detail-]').hide();
+        // 初始化input-text
+        $('input[name="actcDelayTime"]').val(conf.actcDelayTime);
+        $('input[name="actcDelayField"]').val(conf.actcDelayField);
+        // 初始化select
+        $('select[name="actcDelayType"]').val(conf.actcDelayType);
+        $('select[name="actcDelayTimeunit"]').val(conf.actcDelayTimeunit);
+        // 初始化radio
+        $('input[name="actcIsSystemTask"]').each(function() {
+            $(this).prop("checked", $(this).val() == conf.actcIsSystemTask ? true : false);
+        });
+        // 控制显示隐藏
+        if (conf.actcIsSystemTask == 'TRUE') {
+            $('div[attr=delay-detail-type]').show();
+            if (conf.actcDelayType == 'time') {
+                $('div[attr=delay-detail-time]').show();
+            } else if (conf.actcDelayType == 'field') {
+                $('div[attr=delay-detail-field]').show();
+            }
+        }
+    }
+}
+
 layui.use('form', function() {
 	var form = layui.form;
 	form.on('select(assignType)', function(data) {
@@ -181,6 +233,8 @@ layui.use('form', function() {
 			$('#actcChooseableHandler').hide();
 		}
 	});
+
+    systemTask.initListener(form);
 });
 
 // 页面加载完成
@@ -387,13 +441,24 @@ $(function() {
 						maxlength : 666
 					},
 					actcTime : {
-						number : true
+                        positiveInteger5: true
+					},
+					actcDelayTime : {
+                        positiveInteger5: true,
+						required: function (element) {
+							return $('select[name=actcDelayType]').val()=='time';
+                        }
 					},
 					actcTimeunit : {
 						required : function(element) {
 							return $('input[name="actcMailNotifyTemplate"]')
 									.val().trim().length > 0;
 						}
+					},
+					actcDelayTimeunit: {
+                        required: function (element) {
+                            return $('select[name=actcDelayType]').val()=='time';
+                        }
 					},
 					actcOuttimeTrigger : {
 						maxlength : 60
@@ -416,8 +481,15 @@ $(function() {
 							return false;
 						}
 						}
+					},
+					actcDelayField: {
+                        required: function (element) {
+                            return $('select[name=actcDelayType]').val()=='field';
+                        },
+						maxlength: 30
 					}
 				},
+
 				messages : {
 					actcOuttimeTemplate : {
 						required : "选择了超时通知人，未指定模版"
@@ -2633,7 +2705,9 @@ function initConf(map) {
 	$("#chooseableHandleField_div").hide();
 	$("#chooseableHandleTrigger_div").hide();
 	$("#outtimeUser_div").hide();
+    systemTask.initValue(conf);
 
+    // 初始化输入框
 	$('input[name="actcUid"]').val(conf.actcUid);
 	$('input[name="actcSort"]').val(conf.actcSort);
 	$('input[name="actcTime"]').val(conf.actcTime);
@@ -2844,7 +2918,6 @@ function initConf(map) {
 	$('input[name="actcMailNotifyTemplate"]').val(conf.actcMailNotifyTemplate);
 	$('input[name="actcMailNotifyTemplate_view"]').val(conf.actcMailNotifyTemplateView);
 
-	layui.form.render();
 	layui.use('layedit', function() {
 		var layedit = layui.layedit;
 		editIndex = layedit.build('editDemo', {
@@ -2852,9 +2925,13 @@ function initConf(map) {
 					'center', 'right' ]
 		}); // 建立编辑器
 	});
+
+    layui.form.render();
 	// 记录当前的数据，用于判断数据是否变动
 	preFormData = getFormData();
 }
+
+
 
 /* 向服务器请求数据 */
 function getTriggerInfo() {
@@ -3368,8 +3445,6 @@ function deleteStep(stepUid) {
 	});
 }
 
-function submitAddDatRule() {
-}
 
 function resortStep(stepUid, resortType) {
 	$.ajax({
@@ -3399,3 +3474,6 @@ function getCurrentActcUid() {
 	var actcUid = $activeLi.data('uid');
 	return actcUid;
 }
+
+
+
