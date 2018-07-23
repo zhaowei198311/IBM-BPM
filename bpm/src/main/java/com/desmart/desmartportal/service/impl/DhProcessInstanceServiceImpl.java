@@ -19,7 +19,6 @@ import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +57,6 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
-import com.desmart.desmartportal.util.http.HttpClientUtils;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
@@ -340,7 +338,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 			// 更新网关决策服务中间表数据
             dhRouteService.updateGatewayRouteResult(insId, routingData);
-			dhRouteService.saveTaskHandlerOfLoopTask(insId, routeData);
+			dhRouteService.saveTaskHandlerOfLoopTask(insId, routingData, pubBo);
 
             // 更新草稿流程实例的状态
             DhProcessInstance instanceSelective = new DhProcessInstance();
@@ -399,9 +397,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		dhTaskInstanceMapper.insertTask(taskInstance);
 
         // 任务完成后 保存到流转信息表里面
-        ServerResponse<DhRoutingRecord> generateRountingRecordResponse =
+        DhRoutingRecord dhRoutingRecord =
                 dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
-        dhRoutingRecordMapper.insert(generateRountingRecordResponse.getData());
+        dhRoutingRecordMapper.insert(dhRoutingRecord);
 
         // 完成第一个任务
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();

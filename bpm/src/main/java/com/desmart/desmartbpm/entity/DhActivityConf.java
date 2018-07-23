@@ -98,6 +98,12 @@ public class DhActivityConf {
     private String actcResponsibility;
 
     private String actcCanSkipFromReject;  // 驳回后能否直接回到此环节
+
+    private String actcIsSystemTask;  // 是否系统任务
+
+    private String actcIsDelay;  // 是否延迟
+
+    private String actcDelayType; // 延迟类型
     
     // 非表中字段
     private String actcOuttimeTriggerTitle; // 超时触发器名称
@@ -721,7 +727,31 @@ public class DhActivityConf {
 		this.actcOuttimeNotifyType = actcOuttimeNotifyType;
 	}
 
-	@Override
+    public String getActcIsSystemTask() {
+        return actcIsSystemTask;
+    }
+
+    public void setActcIsSystemTask(String actcIsSystemTask) {
+        this.actcIsSystemTask = actcIsSystemTask;
+    }
+
+    public String getActcIsDelay() {
+        return actcIsDelay;
+    }
+
+    public void setActcIsDelay(String actcIsDelay) {
+        this.actcIsDelay = actcIsDelay;
+    }
+
+    public String getActcDelayType() {
+        return actcDelayType;
+    }
+
+    public void setActcDelayType(String actcDelayType) {
+        this.actcDelayType = actcDelayType;
+    }
+
+    @Override
 	public String toString() {
 		return "DhActivityConf [actcUid=" + actcUid + ", activityId=" + activityId + ", actcSort=" + actcSort
 				+ ", actcTime=" + actcTime + ", actcTimeunit=" + actcTimeunit + ", actcAssignType=" + actcAssignType

@@ -14,35 +14,33 @@
     <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
     	INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>) 
     	VALUES (#{templateUid}, #{templateName}, #{templateType}
-    	, #{templateContent}, #{createUserUid}, #{createTime}, #{updateUserUid}, #{updateTime})
+    	, #{templateContent}, #{createUserUid}, sysdate, #{updateUserUid}, sysdate)
     </insert>
 
     <insert id="insertBatch" parameterType="list">
 		INSERT INTO DH_NOTIFY_TEMPLATE (<include refid="base_column"/>)
 		<foreach collection="list" item="item" separator="union all">
 			select #{item.templateUid}, #{item.templateName}, #{item.templateType}, #{item.templateContent},
-			#{item.createUserUid}, #{item.createTime}, #{item.updateUserUid}, #{item.updateTime} from dual
+			#{item.createUserUid}, sysdate, #{item.updateUserUid}, sysdate from dual
 		</foreach>
 	</insert>
 
     <update id="update" parameterType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
     	UPDATE DH_NOTIFY_TEMPLATE 
     	<set>
-    	<if test="templateName != null and templateName != '' ">
-    		template_Name = #{templateName},
-    	</if>
-    	<if test="templateType != null and templateType != '' ">
-    		 template_Type = #{templateType},
-    	</if>
-    	<if test="templateContent != null and templateContent != '' ">
-    		template_Content = #{templateContent},
-    	</if>
-    	<if test="updateUserUid != null and updateUserUid != '' ">
-    		UPDATE_USER_UID = #{updateUserUid},
-    	</if>
-    	<if test="updateTime != null ">
-    		UPDATE_TIME = #{updateTime}
-    	</if>
+			<if test="templateName != null and templateName != '' ">
+				template_Name = #{templateName},
+			</if>
+			<if test="templateType != null and templateType != '' ">
+				 template_Type = #{templateType},
+			</if>
+			<if test="templateContent != null and templateContent != '' ">
+				template_Content = #{templateContent},
+			</if>
+			<if test="updateUserUid != null and updateUserUid != '' ">
+				UPDATE_USER_UID = #{updateUserUid},
+			</if>
+				UPDATE_TIME = sysdate
     	</set>
     	WHERE template_Uid = #{templateUid}
     </update>
@@ -75,4 +73,10 @@
 			<foreach collection="list" item="item" separator="or"> template_uid = #{item} </foreach>
 		</where>
 	</select>
+
+    <select id="getByTemplateUid" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhNotifyTemplate">
+		select <include refid="base_column"/> from dh_notify_template
+		where template_uid = #{templateUid}
+	</select>
+
 </mapper>

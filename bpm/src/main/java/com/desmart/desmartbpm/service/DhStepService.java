@@ -62,6 +62,7 @@ public interface DhStepService {
     DhStep getNextStepOfCurrStep(DhStep dhStep);
     
     /**
+     * ******* 重要 ****************
      * 根据step关键字，获得指定环节的可用步骤，如果指定关键字没有可用步骤，返回默认关键字的可用步骤，按步骤序号正序排序
      * @param bpmActivityMeta
      * @param stepBusinessKey

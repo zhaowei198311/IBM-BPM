@@ -29,7 +29,14 @@
                             <div class="layui-col-md3">
                                 <input type="text" placeholder="流程名称"  class="layui-input" id="proName_input">
                             </div>
-                            <div class="layui-col-md9" style="text-align:left;padding-left:20px;line-height:38px;">
+                            <div class="layui-col-md2">
+                                <select id="proStatusSel" name="proStauts"  lay-filter="proStatus">
+                                    <option value="enabled">已启用</option>
+                                    <option value="synchronized">已同步</option>
+                                    <option value="all">全部</option>
+                                </select>
+                            </div>
+                            <div class="layui-col-md7" style="text-align:left;padding-left:20px;line-height:38px;">
                                     <button class="layui-btn layui-btn-sm" id="searchByProName_btn">查询</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>

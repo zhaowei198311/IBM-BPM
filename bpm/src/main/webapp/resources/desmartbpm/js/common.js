@@ -222,21 +222,39 @@ var common = {
             }
         });
     },
-    downLoadFile: function(URL, PARAMS) {
-        var temp_form = document.createElement("form");
-        temp_form .action = URL;
-        // temp_form .target = "_blank"; 如需新打开窗口 form 的target属性要设置为'_blank'
-        temp_form .method = "post";
-        temp_form .style.display = "none";
-        for (var x in PARAMS) {
-            var opt = document.createElement("textarea");
-            opt.name = x;
-            opt.value = PARAMS[x];
-            temp_form .appendChild(opt);
+    downLoadFile: function(url, params) {
+        // 首先创建一个用来发送数据的iframe.
+        var iframe = document.createElement('iframe')
+        iframe.name = 'iframePost';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        var form = document.createElement('form');
+        var node = document.createElement('input');
+        // 注册iframe的load事件处理程序,如果你需要在响应返回时执行一些操作的话.
+        iframe.addEventListener('load', function () {
+            if (iframe.contentDocument.body.innerText) {
+                var val = iframe.contentDocument.body.innerText;
+                var pattern = /^(msg:).+$/;
+                if (pattern.exec(val)) {
+                    layer.alert(val.replace('msg:', ''));
+                }
+            }
+        });
+        form.action = url;
+        // 在指定的iframe中执行form
+        form.target = iframe.name;
+        form.method = 'post';
+        for (var name in params) {
+            node.name = name;
+            node.value = params[name].toString()
+            form.appendChild(node.cloneNode())
         }
-        document.body.appendChild(temp_form);
-        temp_form.submit();
-        temp_form.remove();
+        // 表单元素需要添加到主文档中.
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        form.submit();
+        // 表单提交后,就可以删除这个表单,不影响下次的数据发送.
+        document.body.removeChild(form);
     }
 	
 };

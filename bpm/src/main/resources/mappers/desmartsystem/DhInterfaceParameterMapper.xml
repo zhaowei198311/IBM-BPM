@@ -91,14 +91,14 @@
 			#{item.paraName},
 			#{item.paraDescription},
 			#{item.paraType},
-			#{item.paraSize},
+			#{item.paraSize, jdbcType=INTEGER},
 			#{item.multiSeparator},
 			#{item.multiValue},
 			#{item.isMust},
 			#{item.intUid},
-			#{item.paraParent},
-			#{item.dateFormat},
-			#{item.paraInOut}
+			#{item.paraParent, jdbcType=VARCHAR},
+			#{item.dateFormat, jdbcType=VARCHAR},
+			#{item.paraInOut, jdbcType=VARCHAR}
 			from dual
 		</foreach>
 	</insert>

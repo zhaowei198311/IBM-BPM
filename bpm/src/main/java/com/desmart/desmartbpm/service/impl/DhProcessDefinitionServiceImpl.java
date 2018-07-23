@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.service.*;
+import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 
@@ -117,13 +118,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (StringUtils.isBlank(metaUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
-
         // 验证流程元数据是否存在
         DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
         if (dhProcessMeta == null) {
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
-
         // 找到库中所有满足条件的流程定义
         DhProcessDefinition selective = new DhProcessDefinition();
         selective.setProUid(dhProcessMeta.getProUid());
@@ -135,7 +134,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         for (DhProcessDefinition definition : definitionInDb) {
             versionInDb.add(definition.getProVerUid());
         }
-
         // 所有公开的流程中获得这个流程公开的版本信息
         List<Map<String, String>> exposedItemList = getAllExposedProcess();
         List<Map<String, String>> matchedItemList = getMatchedItem(exposedItemList, dhProcessMeta.getProUid(), dhProcessMeta.getProAppId());
@@ -180,6 +178,29 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
         return ServerResponse.createBySuccess(pageInfo);
 
+    }
+
+    @Override
+    public ServerResponse listProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(metaUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        // 验证流程元数据是否存在
+        DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
+        if (dhProcessMeta == null) {
+            return ServerResponse.createByErrorMessage("流程元数据不存在");
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        DhProcessDefinition selective = new DhProcessDefinition();
+        selective.setProUid(dhProcessMeta.getProUid());
+        selective.setProAppId(dhProcessMeta.getProAppId());
+        selective.setProStatus(proStatus);
+        List<DhProcessDefinition> definitionInDb = dhProcessDefinitionMapper.listBySelective(selective);
+        List<DhProcessDefinitionVo> voList = assembleDhProcessDefinitionVoListFromDhprcessDefinition(definitionInDb);
+        // 为vo列表装配流程版本信息
+        assembleSnapshotInfo(voList);
+        PageInfo pageInfo = new PageInfo(voList);
+        return ServerResponse.createBySuccess(pageInfo);
     }
 
     @Transactional(value = "transactionManager")
@@ -303,14 +324,24 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      * 为流程定义VO装配快照版本信息  是否激活、快照创建时间、快照名称
      */
     private void assembleSnapshotInfo(List<DhProcessDefinitionVo> volist) {
-        List<LswSnapshot> snapshotList = lswSnapshotMapper.listAll();
+        if (CollectionUtils.isEmpty(volist)) {
+            return;
+        }
+        List<String> snapshotIdList = new ArrayList<>();
+        String temp = null;
+        for (DhProcessDefinitionVo vo : volist) {
+            temp = vo.getProVerUid();
+            snapshotIdList.add(temp.substring(temp.indexOf(".") + 1, temp.length()));
+        }
+        List<LswSnapshot> snapshotList = lswSnapshotMapper.listBySnapshotIdList(snapshotIdList);
+        // map中的键为: 没有"25."前缀的快照版本
         Map<String, LswSnapshot> map = new HashMap<>();
         for (LswSnapshot lswSnapshot : snapshotList) {
             map.put(lswSnapshot.getSnapshotId(), lswSnapshot);
         }
 
         for (DhProcessDefinitionVo vo : volist) {
-            String temp = vo.getProVerUid();
+            temp = vo.getProVerUid();
             String snapshotUid = temp.substring(temp.indexOf(".") + 1, temp.length());
             LswSnapshot snapshot = map.get(snapshotUid);
             vo.setVerName(snapshot.getName());

@@ -47,6 +47,9 @@
     <result column="ACTC_MESSAGE_NOTIFY_TEMPLATE" property="actcMessageNotifyTemplate" jdbcType="VARCHAR" />
     <result column="ACTC_CAN_SKIP_FROM_REJECT" property="actcCanSkipFromReject" jdbcType="VARCHAR"/>
   	<result column="ACTC_OUTTIME_NOTIFY_TYPE" property="actcOuttimeNotifyType" jdbcType="VARCHAR"/>
+    <result column="ACTC_IS_SYSTEM_TASK" property="actcIsSystemTask" jdbcType="VARCHAR"/>
+    <result column="ACTC_IS_DELAY" property="actcIsDelay" jdbcType="VARCHAR"/>
+    <result column="ACTC_DELAY_TYPE" property="actcDelayType" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List" >
     ACTC_UID, ACTIVITY_ID, ACTC_SORT, ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, ACTC_ASSIGN_VARIABLE,
@@ -58,7 +61,7 @@
     ACTC_DEF_TITLE, ACTC_DEF_SUBJECT_MESSAGE, ACTC_DEF_MESSAGE, ACTC_DEF_DESCRIPTION,
     ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP,
     UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY,ACTC_CHOOSEABLE_HANDLER_TYPE
-    ,ACTC_MESSAGE_NOTIFY_TEMPLATE, ACTC_CAN_SKIP_FROM_REJECT,ACTC_OUTTIME_NOTIFY_TYPE
+    ,ACTC_MESSAGE_NOTIFY_TEMPLATE, ACTC_CAN_SKIP_FROM_REJECT,ACTC_OUTTIME_NOTIFY_TYPE, ACTC_IS_SYSTEM_TASK, ACTC_IS_DELAY, ACTC_DELAY_TYPE
   </sql>
   <sql id="relationColumn" >
     atc.ACTC_UID, atc.ACTIVITY_ID, atc.ACTC_SORT, atc.ACTC_TIME, atc.ACTC_TIMEUNIT, atc.ACTC_ASSIGN_TYPE, atc.ACTC_ASSIGN_VARIABLE,
@@ -71,7 +74,7 @@
     atc.ACTC_ALERT, atc.ACTC_PRIORITY_VARIABLE, atc.ACTC_CAN_CANCEL, atc.ACTC_CAN_PAUSE, atc.ACTC_CAN_SKIP,
     atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY,
     atc.ACTC_CHOOSEABLE_HANDLER_TYPE,atc.ACTC_MESSAGE_NOTIFY_TEMPLATE, atc.ACTC_CAN_SKIP_FROM_REJECT
-    ,atc.ACTC_OUTTIME_NOTIFY_TYPE
+    ,atc.ACTC_OUTTIME_NOTIFY_TYPE, atc.ACTC_IS_SYSTEM_TASK, atc.ACTC_IS_DELAY, atc.ACTC_DELAY_TYPE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
@@ -110,15 +113,15 @@
       #{actcDefMessage,jdbcType=VARCHAR}, #{actcDefDescription,jdbcType=VARCHAR}, #{actcAlert,jdbcType=VARCHAR},
       #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR},
       #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{actcCanChooseUser},
-      #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType},#{actcMessageNotifyTemplate}, #{actcCanSkipFromReject}
-      ,#{actcOuttimeNotifyType}
+      #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType},#{actcMessageNotifyTemplate}, #{actcCanSkipFromReject},
+      #{actcOuttimeNotifyType}, #{actcIsSystemTask}, #{actcIsDelay}, #{actcDelayType}
     )
   </insert>
 
   <insert id="insertBatch" parameterType="list">
       insert into DH_ACTIVITY_CONF (<include refid="Base_Column_List"/>)
       <foreach collection="list" separator="union all" item="item">
-          (select #{item.actcUid}, #{item.activityId}, #{item.actcSort},
+          select #{item.actcUid}, #{item.activityId}, #{item.actcSort},
           #{item.actcTime}, #{item.actcTimeunit}, #{item.actcAssignType},
           #{item.actcAssignVariable}, #{item.signCountVarname}, #{item.actcCanEditAttach},
           #{item.actcCanUploadAttach}, #{item.actcCanDelegate}, #{item.actcCanDeleteAttach},
@@ -133,7 +136,8 @@
           #{item.actcPriorityVariable}, #{item.actcCanCancel}, #{item.actcCanPause},
           #{item.actcCanSkip}, #{item.updator}, #{item.updateTime}, #{item.actcCanChooseUser},
           #{item.actcCanTransfer}, #{item.actcResponsibility}, #{item.actcChooseableHandlerType},
-          #{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject}, #{item.actcOuttimeNotifyType} from dual)
+          #{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject}, #{item.actcOuttimeNotifyType},
+          #{item.actcIsSystemTask}, #{item.actcIsDelay}, #{item.actcDelayType} from dual
       </foreach>
   </insert>
 
@@ -268,7 +272,16 @@
         ACTC_CAN_SKIP_FROM_REJECT = #{actcCanSkipFromReject},
       </if>
       <if test="actcOuttimeNotifyType != null and actcOuttimeNotifyType != '' ">
-      	ACTC_OUTTIME_NOTIFY_TYPE = #{actcOuttimeNotifyType}
+      	ACTC_OUTTIME_NOTIFY_TYPE = #{actcOuttimeNotifyType},
+      </if>
+      <if test="actcIsSystemTask != null and actcIsSystemTask != '' ">
+        ACTC_IS_SYSTEM_TASK = #{actcIsSystemTask},
+      </if>
+      <if test="actcIsDelay != null and actcIsDelay != '' ">
+        ACTC_IS_DELAY = #{actcIsDelay},
+      </if>
+      <if test="actcDelayType != null and actcDelayType != '' ">
+        ACTC_DELAY_TYPE = #{actcDelayType}
       </if>
     </set>
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
@@ -319,7 +332,10 @@
     ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType},
     ACTC_MESSAGE_NOTIFY_TEMPLATE = #{actcMessageNotifyTemplate},
     ACTC_CAN_SKIP_FROM_REJECT = #{actcCanSkipFromReject},
-    ACTC_OUTTIME_NOTIFY_TYPE = #{actcOuttimeNotifyType}
+    ACTC_OUTTIME_NOTIFY_TYPE = #{actcOuttimeNotifyType},
+    ACTC_IS_SYSTEM_TASK = #{actcIsSystemTask},
+    ACTC_IS_DELAY = #{actcIsDelay},
+    ACTC_DELAY_TYPE = #{actcDelayType}
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>
 

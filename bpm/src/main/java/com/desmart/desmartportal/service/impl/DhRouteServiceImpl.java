@@ -464,30 +464,25 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-	public List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, JSONArray routeData) {
+	public List<DhTaskHandler> saveTaskHandlerOfLoopTask(int insId, BpmRoutingData bpmRoutingData, CommonBusinessObject pubBo) {
 	    List<DhTaskHandler> taskHandlerList = new ArrayList<>();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, -2);
 		Date nowDate = calendar.getTime(); // 记录的时间减去两秒
-        for (int i = 0; i < routeData.size(); i++) {
-            JSONObject item = (JSONObject) routeData.get(i);
-            String activityId = item.getString("activityId");
-            String userUids = item.getString("userUid");
-            String loopType = item.getString("loopType");
-
+        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        for (BpmActivityMeta normalNode : normalNodes) {
+            String loopType = normalNode.getLoopType();
             if (DhTaskInstance.TYPE_SIMPLE_LOOP.equalsIgnoreCase(loopType)
                     || DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP.equalsIgnoreCase(loopType)) {
-                List<String> userIdList = Arrays.asList(userUids.split(";"));
-                List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
-                if (userIdList.size() != userList.size()) {
-                    throw new PlatformException("处理人信息异常");
-                }
-                for (String userUid : userIdList) {
+                // 如果是多实例任务, 从pubBo中取出处理人
+                String assignVarname = normalNode.getDhActivityConf().getActcAssignVariable();
+                List<String> nextOwners = CommonBusinessObjectUtils.getNextOwners(assignVarname, pubBo);
+                for (String userUid : nextOwners) {
                     DhTaskHandler dhTaskHandler = new DhTaskHandler();
                     dhTaskHandler.setHandleUid(EntityIdPrefix.DH_TASK_HANDLER + UUID.randomUUID().toString());
                     dhTaskHandler.setUserUid(userUid);
                     dhTaskHandler.setInsId(Long.valueOf(insId));
-                    dhTaskHandler.setTaskActivityId(activityId);
+                    dhTaskHandler.setTaskActivityId(normalNode.getActivityId());
                     dhTaskHandler.setStatus("on");
 					dhTaskHandler.setCreateTime(nowDate);
                     taskHandlerList.add(dhTaskHandler);
@@ -497,6 +492,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		if (taskHandlerList.isEmpty()) {
         	return taskHandlerList;
 		}
+		// 删除以往的数据
 		List<String> taskActivityIds = new ArrayList<>();
 		for (DhTaskHandler item : taskHandlerList) {
 			if (!taskActivityIds.contains(item.getTaskActivityId())) {
@@ -504,6 +500,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 		}
 		dhTaskHandlerMapper.deleteByInsIdAndTaskActivityIdList(insId, taskActivityIds);
+		// 插入此次的数据
 		dhTaskHandlerMapper.insertBatch(taskHandlerList);
         return taskHandlerList;
     }
@@ -1171,6 +1168,55 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
         return pubBo;
     }
+	@Override
+	public CommonBusinessObject assembleTaskOwnerForSystemTask(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
+																	  CommonBusinessObject pubBo, BpmRoutingData routingData) {
+		// 管理员作为没有发起人时的处理人
+		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+		List<String> adminUidList = new ArrayList<>();
+		adminUidList.add(bpmGlobalConfig.getBpmAdminName());
+
+		// 所有代表子流程的节点
+        List<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodesOnSameDeepLevel();
+        startProcessNodes.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
+
+        for (BpmActivityMeta nodeIdentifySubProcess : startProcessNodes) {
+            // 找到发起节点
+            BpmActivityMeta firstTaskNode = nodeIdentifySubProcess.getFirstTaskNode();
+            List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, nodeIdentifySubProcess);
+            String actcAssignVariable = firstTaskNode.getDhActivityConf().getActcAssignVariable();
+            if (defaultTaskOwners.isEmpty()) {
+                CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
+            } else {
+                CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo,
+                        DataListUtils.transformUserListToUserIdList(defaultTaskOwners));
+            }
+        }
+
+        List<BpmActivityMeta> taskNodesExcludeFirstTask = routingData.getTaskNodesOnSameDeepLevel();
+        taskNodesExcludeFirstTask.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
+        if (!taskNodesExcludeFirstTask.isEmpty()) {
+            for (BpmActivityMeta taskNode : taskNodesExcludeFirstTask) {
+                // todo yao 需要修正为对的流程实例
+                List<SysUser> defaultOwnerList = this.getDefaultTaskOwnerOfTaskNode(taskNode, currTask.getUsrUid(), currProcessInstance,
+                        FormDataUtil.getFormDataJsonFromProcessInstance(currProcessInstance));
+                List<String> taskOwnerIdList = adminUidList;
+                if (!defaultOwnerList.isEmpty()) {
+                    // 如果有处理人，则不使用默认处理人
+                    taskOwnerIdList = DataListUtils.transformUserListToUserIdList(defaultOwnerList);
+                }
+                // 获得相应的变量和signCount
+                String assignVariable = taskNode.getDhActivityConf().getActcAssignVariable();
+                CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, taskOwnerIdList);
+                // 看是否需要signCount
+                if (!BpmActivityMeta.LOOP_TYPE_NONE.equals(taskNode.getLoopType())) {
+                    String signCountVariable = taskNode.getDhActivityConf().getSignCountVarname();
+                    CommonBusinessObjectUtils.setOwnerSignCount(signCountVariable, pubBo, taskOwnerIdList.size());
+                }
+            }
+        }
+        return pubBo;
+	}
 
 	/**
 	 * 计算流程起草环节的默认处理人， 当没有时返回空集合

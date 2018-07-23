@@ -126,27 +126,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         DhTransferData transferData = new DhTransferData();
         transferData.addToProcessDefinitionList(dhProcessDefinition);
 
-        // 获得流程元数据信息
-        /*
-        DhProcessMeta dhProcessMeta = dhProcessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
-        if (dhProcessMeta == null) {
-            return ServerResponse.createByErrorMessage("流程元数据不存在");
-        }
-        transferData.addToProcessMetaList(dhProcessMeta);
-        */
-        // 获得分类信息
-        /*
-        List<DhProcessCategory> categoryList = dhProcessCategoryService.getCategoryAndAllParentCategory(dhProcessMeta.getCategoryUid());
-        if (categoryList.isEmpty() && !dhProcessMeta.getCategoryUid().equals("rootCategory")) {
-            return ServerResponse.createByErrorMessage("流程分类信息异常");
-        }
-        transferData.addAllToCategoryList(categoryList);
-        */
-
-        // 记录需要引入的触发器的主键
-        // Set<String> triggerIdSetToInclude = new HashSet<>();
-        // triggerIdSetToInclude.addAll(getTriggerIdListOnDhProcessDefinition(transferData.getProcessDefinitionList().get(0)));
-
         // 获得此流程定义的发起权限
         List<DhObjectPermission> permissionListOfStartProcess = dhObjectPermissionService.getPermissionListOfStartProcess(proAppId, proUid, proVerUid);
         transferData.addAllToObjectPermissionList(permissionListOfStartProcess);
@@ -159,12 +138,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         List<BpmFormRelePublicForm> bpmFormRelePublicFormList = bpmFormRelePublicFormMapper.listByFormUidList(formUidList);
         // 保存中间表记录
         transferData.setFormRelePublicFormList(bpmFormRelePublicFormList);
-        // 根据formUid集合获得引用的 公共子表单 BPM_FORM_RELE_PUBLIC_FORM
-        // List<String> pubFormUidList = bpmFormRelePublicFormMapper.listPublicFormUidByFormUidList(formUidList);
-        // List<BpmPublicForm> bpmPublicForms = bpmPublicFormService.listByPublicFormUidList(pubFormUidList);
-        // transferData.setPublicFormList(bpmPublicForms);
-        // 获得表单字段集合(包括普通表单的字段和公共表单的字段)
-        // formUidList.addAll(pubFormUidList); // 将共用子表单的id和普通表单的id结合
         List<BpmFormField> bpmFormFields = bpmFormFieldService.listByFormUidList(formUidList);
         transferData.setFormFieldList(bpmFormFields);
 
@@ -200,31 +173,17 @@ public class DhTransferServiceImpl implements DhTransferService {
         List<DhActivityConf> sourceActivityConfList = this.getSourceActivityConfListByActivityMetaList(activityMetaList);
         transferData.setActivityConfList(sourceActivityConfList);
 
-        // 记录需要的所有模版id
-        // Set<String> notifyTemplateIdSet = new HashSet<>();
-        // 获得环节配置有关的模版id
-        // List<String> notifyTemplateIdListFromActivityConfList = this.getNotifyTemplateIdListFromActivityConfList(sourceActivityConfList);
-        // notifyTemplateIdSet.addAll(notifyTemplateIdListFromActivityConfList);
-        // 获得环节配置上的触发器id
-        // List<String> triggerIdListFromActivityConfList = this.getTriggerIdListFromActivityConfList(sourceActivityConfList);
-        // triggerIdSetToInclude.addAll(triggerIdListFromActivityConfList);
         // 获得所有的步骤
         List<DhStep> dhStepList = dhStepService.listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
         transferData.setStepList(dhStepList);
         List<String> stepUidList = this.getIdentityListOfObjectList(dhStepList);
         List<DhTriggerInterface> triggerInterfaceList = this.getDhTriggerInterfaceList(dhStepList);
         transferData.setTriggerInterfaceList(triggerInterfaceList);
-        // 获得步骤关联的触发器
-        // List<String> triggerIdFromStepList = this.getTriggerIdListFromStepList(dhStepList);
-        // triggerIdSetToInclude.addAll(triggerIdFromStepList);
 
         // 获得Step相关的 权限信息， 字段，区块可见性
         List<DhObjectPermission> permissionListOfField = dhObjectPermissionService.listByStepUidList(stepUidList);
         transferData.addAllToObjectPermissionList(permissionListOfField);
-        // 汇总处理trigger
-        // this.assembleTriggerAndInterface(triggerIdSetToInclude, transferData);
-        // 汇总处理template
-        // this.assembleNotifyTemplateList(notifyTemplateIdSet, transferData);
+        transferData.setType(DhTransferData.TYPE_PROCESS_DEFINITION);
         return ServerResponse.createBySuccess(transferData);
     }
 
@@ -625,6 +584,9 @@ public class DhTransferServiceImpl implements DhTransferService {
     @Transactional
     @Override
     public ServerResponse startImportProcessDefinition(DhTransferData transferData) {
+        if (transferData == null || !transferData.isProcessDefinitionData()) {
+            return ServerResponse.createByErrorMessage("缺少数据，请重新导入");
+        }
         ServerResponse serverResponse = validateTransferDataForImportProcessDefinition(transferData);
         if (!serverResponse.isSuccess()) {
             return serverResponse;
@@ -1123,8 +1085,57 @@ public class DhTransferServiceImpl implements DhTransferService {
         if (StringUtils.isBlank(intUid)) {
             return ServerResponse.createByErrorMessage("缺少接口参数");
         }
-
+        transferData.setType(DhTransferData.TYPE_TRIGGER);
         return ServerResponse.createBySuccess(transferData);
+    }
+
+    @Override
+    public ServerResponse tryImportProcessDefinition(MultipartFile file, HttpSession session) {
+        ServerResponse<DhTransferData> turnIntoResponse = this.turnJsonFileIntoDhTransferData(file);
+        if (!turnIntoResponse.isSuccess()) {
+            return turnIntoResponse;
+        }
+        DhTransferData transferData = turnIntoResponse.getData();
+        if (!transferData.isProcessDefinitionData()) {
+            return ServerResponse.createByErrorMessage("文件内包含的数据类型错误");
+        }
+        // 对数据进行初步校验
+        ServerResponse validateResponse = this.validateTransferDataForImportProcessDefinition(transferData);
+        if (!validateResponse.isSuccess()) {
+            return validateResponse;
+        }
+        DhProcessDefinition processDefinition = transferData.getProcessDefinitionList().get(0);
+        String proAppId = processDefinition.getProAppId(),
+                proUid = processDefinition.getProUid(),
+                proVerUid = processDefinition.getProVerUid();
+
+        DhProcessMeta processMeta = dhProcessMetaService.getByProAppIdAndProUid(proAppId, proUid);
+        // 在引擎的库中查找此快照
+        LswSnapshot lswSnapShot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(proVerUid);
+        if (lswSnapShot == null ) {
+            return ServerResponse.createByErrorMessage("请先在流程引擎中导入此快照");
+        }
+        if (processMeta == null) {
+            return ServerResponse.createByErrorMessage("请先添加流程元数据");
+        }
+        // 将文件数据保存在session中
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        Map<String, String> data = new HashMap<>();
+        data.put("proName", processMeta.getProName());
+        data.put("snapshotName", lswSnapShot.getName());
+
+        DhProcessDefinition definitionInDb = dhProcessDefinitionService.getDhProcessDefinition(proAppId, proUid, proVerUid);
+        session.setAttribute(DhTransferData.ATTRIBUTE_IN_SESSION, transferData);
+        if (definitionInDb == null) {
+            // 属于新加的流程
+            data.put("exists", "FALSE");
+            return ServerResponse.createBySuccess(data);
+        } else {
+            // 确认是否需要覆盖
+            data.put("exists", "TRUE");
+            return ServerResponse.createBySuccess(data);
+        }
+
     }
 
     @Override
@@ -1135,6 +1146,9 @@ public class DhTransferServiceImpl implements DhTransferService {
         }
         // 校验tirgger数量
         DhTransferData transferData = turnTransferDataResponse.getData();
+        if (!transferData.isTriggerData()) {
+            return ServerResponse.createByErrorMessage("文件内包含的数据类型错误");
+        }
         List<DhTrigger> triggerList = transferData.getTriggerList();
         if (CollectionUtils.isEmpty(triggerList)) {
             return ServerResponse.createByErrorMessage("缺少触发器信息");
@@ -1159,6 +1173,9 @@ public class DhTransferServiceImpl implements DhTransferService {
     @Transactional
     @Override
     public ServerResponse startImprtTrigger(DhTransferData transferData) {
+        if (transferData == null || !transferData.isTriggerData()) {
+            return ServerResponse.createByErrorMessage("缺少数据，请重新导入");
+        }
         List<DhTrigger> triggerList = transferData.getTriggerList();
         if (CollectionUtils.isEmpty(triggerList)) {
             return ServerResponse.createByErrorMessage("缺少触发器信息");
@@ -1192,6 +1209,7 @@ public class DhTransferServiceImpl implements DhTransferService {
         transferData.addToInterfaceList(dhInterface);
         // 获取接口参数
         transferData.addAllToInterfaceParameterList(dhInterfaceParameterService.querybyintUid(intUid));
+        transferData.setType(DhTransferData.TYPE_INTERFACE);
         return ServerResponse.createBySuccess(transferData);
     }
 
@@ -1202,6 +1220,9 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
         }
         DhTransferData transferData = turnTransferDataResponse.getData();
+        if (!transferData.isInterfaceData()) {
+            return ServerResponse.createByErrorMessage("文件内包含的数据类型错误");
+        }
         List<DhInterface> interfaceList = transferData.getInterfaceList();
         if (CollectionUtils.isEmpty(interfaceList)) {
             return ServerResponse.createByErrorMessage("缺少接口信息");
@@ -1224,6 +1245,9 @@ public class DhTransferServiceImpl implements DhTransferService {
     @Transactional
     @Override
     public ServerResponse startImportInterface(DhTransferData transferData) {
+        if (transferData == null || !transferData.isInterfaceData()) {
+            return ServerResponse.createByErrorMessage("缺少数据，请重新导入");
+        }
         List<DhInterface> interfaceList = transferData.getInterfaceList();
         if (CollectionUtils.isEmpty(interfaceList)) {
             return ServerResponse.createByErrorMessage("缺少接口信息");
@@ -1300,6 +1324,9 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
         }
         DhTransferData transferData = turnTransferDataResponse.getData();
+        if (!transferData.isPublicFormData()) {
+            return ServerResponse.createByErrorMessage("文件内包含的数据类型错误");
+        }
         List<BpmPublicForm> pubFormList = transferData.getPublicFormList();
         if (CollectionUtils.isEmpty(pubFormList)) {
             return ServerResponse.createByErrorMessage("缺少子表单信息");
@@ -1332,12 +1359,16 @@ public class DhTransferServiceImpl implements DhTransferService {
         DhTransferData transferData = new DhTransferData();
         transferData.addToPublicFormList(pubForm);
         transferData.setFormFieldList(bpmFormFieldMapper.queryFormFieldByFormUid(publicFormUid));
+        transferData.setType(DhTransferData.TYPE_PUBLIC_FORM);
         return ServerResponse.createBySuccess(transferData);
     }
 
     @Transactional
     @Override
     public ServerResponse startImportPublicForm(DhTransferData transferData) {
+        if (transferData == null || !transferData.isPublicFormData()) {
+            return ServerResponse.createByErrorMessage("缺少数据，请重新导入");
+        }
         List<BpmPublicForm> publicFormList = transferData.getPublicFormList();
         if (CollectionUtils.isEmpty(publicFormList)) {
             return ServerResponse.createByErrorMessage("缺少子表单信息");
@@ -1415,6 +1446,7 @@ public class DhTransferServiceImpl implements DhTransferService {
         }
         DhTransferData transferData = new DhTransferData();
         transferData.addToNotifyTemplateList(notifyTemplate);
+        transferData.setType(DhTransferData.TYPE_NOTIFY_TEMPLATE);
         return ServerResponse.createBySuccess(transferData);
     }
 
@@ -1425,6 +1457,9 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage(turnTransferDataResponse.getMsg());
         }
         DhTransferData transferData = turnTransferDataResponse.getData();
+        if (!transferData.isNotifyTemplateData()) {
+            return ServerResponse.createByErrorMessage("文件内包含的数据类型错误");
+        }
         List<DhNotifyTemplate> notifyTemplateList = transferData.getNotifyTemplateList();
         if (CollectionUtils.isEmpty(notifyTemplateList)) {
             return ServerResponse.createByErrorMessage("缺少通知模版信息");
@@ -1446,6 +1481,9 @@ public class DhTransferServiceImpl implements DhTransferService {
     @Transactional
     @Override
     public ServerResponse startImportNotifyTemplate(DhTransferData transferData) {
+        if (transferData == null || !transferData.isNotifyTemplateData()) {
+            return ServerResponse.createByErrorMessage("缺少数据，请重新导入");
+        }
         List<DhNotifyTemplate> notifyTemplateList = transferData.getNotifyTemplateList();
         if (CollectionUtils.isEmpty(notifyTemplateList)) {
             return ServerResponse.createByErrorMessage("缺少通知模版信息");
