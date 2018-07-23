@@ -76,7 +76,7 @@
 					<button class="layui-btn layui-btn-primary layui-btn-sm"
 						id="snapshotFlowChart_btn">快照流程图</button>
 					<button class="layui-btn layui-btn-primary layui-btn-sm"
-						onclick="saveFrom='saveBtn';save('');">保存</button>
+						onclick="save('');">保存</button>
 
 				</span>
 			</div>
@@ -1397,44 +1397,41 @@
 			$(".display_container8").css("display", "none");
 		})
 
-		$(".edit_role")
-				.click(
-						function() {
-							$(".display_container4").css("display", "block");
-							$
-									.ajax({
-										url : common.getPath()
-												+ "/formField/queryFieldByFormUidAndStepId",
-										type : "post",
-										dataType : "json",
-										data : {
-											stepUid : stepUid,
-											formUid : formUid
-										},
-										success : function(result) {
-											$('#field_permissions_table')
-													.empty();
-											var trs = '';
-											$(result.data)
-													.each(
-															function(index) {
-																trs += '<tr>';
-																trs += '<td><input type="checkbox" name="tri_check" value="' + this.dynUid + '" lay-skin="primary">'
-																		+ (index + 1)
-																		+ '</td>';
-																trs += '<td>'
-																		+ this.dynTitle
-																		+ '</td>'
-																trs += '<td>'
-																		+ this.dynDescription
-																		+ '</td>'
-																trs += '</tr>';
-															});
-											$("#field_permissions_table")
-													.append(trs);
-										}
-									});
-						})
+		//流程图
+		$("#snapshotFlowChart_btn").click(function() {
+			window.parent.openProView(proUid,proVerUid,proAppId);
+		});
+		
+		$(".edit_role").click(function() {	
+			$(".display_container4").css("display", "block");
+			$.ajax({
+				url : common.getPath()+ "/formField/queryFieldByFormUidAndStepId",
+				type : "post",
+				dataType : "json",
+				data : {
+					stepUid : stepUid,
+					formUid : formUid
+				},
+				success : function(result) {
+					$('#field_permissions_table').empty();
+					var trs = '';
+					$(result.data).each(function(index) {
+						trs += '<tr>';
+						trs += '<td><input type="checkbox" name="tri_check" value="' + this.dynUid + '" lay-skin="primary">'
+							+ (index + 1)
+							+ '</td>';
+						trs += '<td>'
+							+ this.dynTitle
+							+ '</td>'
+						trs += '<td>'
+							+ this.dynDescription
+							+ '</td>'
+						trs += '</tr>';
+					});
+					$("#field_permissions_table").append(trs);
+				}
+			});
+		});
 
 		$("#sure_btn").click(function() {
 			$(".display_container3").css("display", "none");
@@ -1589,7 +1586,7 @@
 					}
 				});
 	})
-	
+
 	//编辑 只读  隐藏
 	function radiocheckAll(dataLength) {
 		var $table = $("#field_permissions_table");
@@ -1628,8 +1625,8 @@
 		} else if (EDIT == dataLength) {
 			$('#titleradioedit').click();
 		} else {
-			$("#editFieldPermissions input[name=titleradioAll]").prop("checked",
-					false);
+			$("#editFieldPermissions input[name=titleradioAll]").prop(
+					"checked", false);
 		}
 	}
 

@@ -1,5 +1,8 @@
 *{margin:0;padding:0;}
-body{background:#fff;}
+body{
+	background:#fff;
+	zoom:90%;
+}
 .left{float:left;width:220px;}
 .logo{text-align:center;}
 .logo img{margin:20px;}

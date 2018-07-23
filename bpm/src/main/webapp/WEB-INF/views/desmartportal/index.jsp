@@ -530,7 +530,6 @@
 	                area: ['890px', '570px'],
 	                content: result
 	            });
-	            console.log(index);
 	            layer.style(index, {
 	            	zoom:1.1
 	            });
