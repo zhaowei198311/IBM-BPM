@@ -37,6 +37,9 @@
 							<input id="dfsTitle" type="text" placeholder="草稿名称" class="layui-input">
 						</div>
 					</div>
+					<div class="layui-col-md3" style="text-align: center;"> 
+						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="search()">查询</button>
+					</div>
 				</div>
 			</div>
 			

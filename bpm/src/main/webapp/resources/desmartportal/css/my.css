@@ -473,7 +473,7 @@ a {
 
 .display_container6 {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
@@ -1088,4 +1088,7 @@ input[disabled],.layui-select-disabled .layui-disabled{
 
 .tip_span {
     top: 13px;
+}
+#formSet td{
+	font-size: 12px;
 }
