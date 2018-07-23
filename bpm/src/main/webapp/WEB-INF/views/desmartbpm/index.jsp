@@ -126,6 +126,35 @@
   </div>
   <script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 </body>
+<script type="text/javascript">
+	//弹出大屏流程图
+	function openProView(proUid,proVerUid,proAppId){
+		$.ajax({
+			url : common.getPath() + "/processDefinition/snapshotFlowChart",
+			dataType : "text",
+			type : "POST",
+			data : {
+				"proUid" : proUid,
+				"proVerUid" : proVerUid,
+				"proAppId" : proAppId
+			},
+			success : function(result) {
+				var index = layer.open({
+					type : 2,
+					title : '流程快照',
+					shadeClose : true,
+					shade : 0.3,
+					maxmin:true,
+					area : [ '790px', '580px' ],
+					content : result
+				});
+				layer.style(index, {
+	            	zoom:1.1
+	            });
+			}
+		});
+	}
+</script>
 </html>
 
 
