@@ -832,6 +832,32 @@ var common = {
 		}
 		return flag;
 	},
+	//验证动态表单正则
+	validateRegx:function(){
+		var flag = true;
+		$("#formSet table:visible").find("input[type='text']").each(function () {
+			if ($(this).attr("regx") != null && $(this).attr("regx") != "" &&
+				$(this).val() != null && $(this).val() != "") {
+				reg = new RegExp($(this).attr("regx").trim(), "g");
+				if (!reg.test($(this).val())) {
+					var regxCue = $(this).attr("regx_cue");
+					if (regxCue != null && regxCue != "") {
+						layer.msg(regxCue, {
+							icon: 2
+						});
+					} else {
+						layer.msg("输入框的值与正则表达式不匹配", {
+							icon: 2
+						});
+					}
+					var Y = $(this).offset().top-170;
+					$("body,html").animate({scrollTop: Y}, 500);
+					flag = false;
+				}
+			} //end if
+		});
+		return flag;
+	}
 };
 
 function datetimeFormat_1(longTypeDate){  
