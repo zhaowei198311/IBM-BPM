@@ -530,6 +530,10 @@ function checkUserData() {
     if(!common.validateFormMust("startProcess_btn")){
     	return;
     }
+    //表单组件正则验证
+    if(!common.validateRegx()){
+    	return;
+    }
     if(needApprovalOpinion && (aprOpiComment==null || aprOpiComment == "" || aprOpiComment == undefined)){
         alertNeedApprovalOpinion();
     	return;

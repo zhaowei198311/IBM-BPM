@@ -396,27 +396,6 @@ function drawPage() {
 		
 		form.render();
 
-		view.find("input[type='text']").each(function () {
-			$(this).blur(function () {
-				if ($(this).attr("regx") != null && $(this).attr("regx") != "" &&
-					$(this).val() != null && $(this).val() != "") {
-					reg = new RegExp($(this).attr("regx"), "g");
-					if (!reg.test($(this).val())) {
-						var regxCue = $(this).attr("regx_cue");
-						if (regxCue != null && regxCue != "") {
-							layer.msg(regxCue, {
-								icon: 2
-							});
-						} else {
-							layer.msg("输入框的值与正则表达式不匹配", {
-								icon: 2
-							});
-						}
-					}
-				} //end if
-			});
-		});
-
 		view.find(".editor_textarea").each(function () {
 			var editorId = $(this).prop("id");
 			var editor = layedit.build(editorId, {

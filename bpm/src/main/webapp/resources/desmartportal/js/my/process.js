@@ -162,6 +162,10 @@ function toShowRouteBar () {
     if(!common.validateFormMust("startProcess_btn")){
     	return;
     }
+    //表单组件正则验证
+    if(!common.validateRegx()){
+    	return;
+    }
     $.ajax({
     	url:"dhRoute/showRouteBar",
     	method:"post",
