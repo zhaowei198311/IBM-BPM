@@ -29,7 +29,7 @@ import com.desmart.desmartsystem.util.UUIDTool;
 
 /**
  * <p>
- *  鍓嶇鎺у埗鍣�
+ *  用户控制器
  * </p>
  *
  * @author xsf
@@ -231,6 +231,7 @@ public class SysUserController {
 	@ResponseBody
 	public String addSysUser(SysUser sysUser) {
 		try {	
+			sysUser.setUserId(sysUser.getUserUid());
 			sysUserService.insert(sysUser);
 			String departUid=sysUser.getDepartUid();
 			if(departUid!=null) {

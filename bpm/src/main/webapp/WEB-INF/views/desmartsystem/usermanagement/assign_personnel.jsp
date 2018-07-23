@@ -141,7 +141,7 @@
 			for (var i = 0; i < name.length; i++) {
 				if(name[i]!=''){
 					var str='';
-					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i]+"</li>";
+					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i]+"("+id[i]+")</li>";
 					$user_li.append(str);
 				}
 			}
@@ -216,7 +216,7 @@
 			$("#usersul").empty();
 			$(data).each(function(index){
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'" actcCanChooseUser="true"  onclick="selectClick(this)" name="userUid">'+this.userName+'</li>';
+				str+='<li type="hidden" value="'+this.userUid+'" actcCanChooseUser="true"  onclick="selectClick(this)" name="userUid">'+this.userName+'('+this.userUid+')</li>';
 				$ul.append(str);
 			});
 		};

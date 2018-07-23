@@ -140,6 +140,20 @@ public class SysDictionaryController {
 			return "{\"msg\":\"error\"}";
 		}
 	}
+	
+	/**
+	 * 批量删除数据字典
+	 */
+	@RequestMapping(value="/deleteSysDictionaryDataList")
+	@ResponseBody
+	public ServerResponse<?> deleteSysDictionaryDataList(@RequestParam("dicDataUidArr")String[] dicDataUidArr){
+		try{
+			return sysDictionaryService.deleteSysDictionaryDataList(dicDataUidArr);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
+	
 	/**
 	 * 
 	 * @Title: updateSysDictionary  

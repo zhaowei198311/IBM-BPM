@@ -37,6 +37,9 @@
 						<div class="layui-col-md1" style="text-align:right;">
 							<button class="layui-btn create_btn" type="button"  onclick="adddialog()">新建</button>
 						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button class="layui-btn delete_btn" style="background: #FF5151" onclick="deleteDicCd();">删除</button>
+						</div>
 					</form>
 				</div>						
 			</div>
@@ -49,7 +52,7 @@
 					</colgroup>
 					<thead>
 					    <tr>
-					      <th>序号</th>
+					      <th><input type="checkbox" name="dic_data_list" onclick="onClickHander(this)"/>序号</th>
 					      <th>字典代码</th>
 					      <th>字典名称</th>
 					      <th>字典类型代码</th>
@@ -186,12 +189,78 @@
 			dictTypeSelect('sysDictionary/listAllOnSysDictionary','.dictTypeCd');
 			
 		})
+		//批量删除
+		function deleteDicCd(){
+			var dicDataUidArr = new Array();
+			var checkArr = $("#tabletr").find("input[name='dic_one']");
+			if(checkArr.length<1){
+				layer.alert("请至少选择一条数据");
+			}else{
+				checkArr.each(function(){
+					dicDataUidArr.push($(this).val());
+				});
+				layer.confirm("确认删除数据字典？", function(){
+					$.ajax({
+						url:"sysDictionary/deleteSysDictionaryDataList",
+						data:{dicDataUidArr:dicDataUidArr},
+						method:"post",
+						beforeSend:function(){
+							layer.load(1);
+						},
+						traditional:true,
+						success:function(result){
+							if(result.status==0){
+								pageBreak(1);
+								$("input[name='dic_data_list']").prop("checked",false);
+								layer.alert("删除成功");
+							}else{
+								layer.alert("删除失败");
+							}
+							layer.closeAll("loading");
+						},
+						error:function(){
+							layer.closeAll("loading");
+						}
+					});
+				});
+			}
+		}
+		//复选框全选，取消全选
+		function onClickHander(obj){
+			if(obj.checked){
+				$("input[name='dic_one']").prop("checked",true);
+			}else{
+				$("input[name='dic_one']").prop("checked",false);
+			}
+		}
+		
+		//复选框分选
+		function onClickSel(obj){
+			if(obj.checked){
+				var allSel = false;
+				$("input[name='dic_one']").each(function(){
+					if(!$(this).is(":checked")){
+						allSel = true;
+					}
+				});
+				
+				//如果有checkbox没有被选中
+				if(allSel){
+					$("input[name='dic_data_list']").prop("checked",false);
+				}else{
+					$("input[name='dic_data_list']").prop("checked",true);
+				}
+			}else{
+				$("input[name='dic_data_list']").prop("checked",false);
+			}
+		}
+		
 		//table数据显示
 		function tabledata(dataList,data){
 			var dataList = data.dataList;
 			$(dataList).each(function(i){//重新生成
 				var str='<tr>';
-				str+='<td>' + (data.beginNum+i) + '</td>';
+				str+='<td><input value="'+this.dicDataUid+'" type="checkbox" name="dic_one" onclick="onClickSel(this)"> ' + (data.beginNum+i) + '</td>';
 				str+='<td>' + this.dicDataCode + '</td>';
 				str+='<td>' + this.dicDataName + '</td>';
 				
