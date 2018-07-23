@@ -70,7 +70,7 @@ function pageNotifyTemplate(){
 	})
 }
 
-function drawTable(pageInfo, data) {
+function drawTable(pageInfo) {
 	pageConfig.pageNum = pageInfo.pageNum;
 	pageConfig.pageSize = pageInfo.pageSize;
 	pageConfig.total = pageInfo.total;
