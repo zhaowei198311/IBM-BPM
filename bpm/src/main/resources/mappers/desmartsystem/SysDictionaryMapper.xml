@@ -179,6 +179,10 @@
 		where DIC_DATA_UID = #{dicDataUid}
 	</delete>
 	
+	<delete id="deleteBydicUid" parameterType="java.lang.String">
+		DELETE FROM SYS_DICTIONARY_DATA WHERE DIC_UID=#{dicUid}
+	</delete>
+	
 	<update id="updateSysDictionaryData" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData">
 		update SYS_DICTIONARY_DATA
 		<set>

@@ -109,17 +109,17 @@
 	 		</if>
 	 		
 	 		<if test="departUid!=null and departUid!='' ">
-	 			and U.USER_UID IN (SELECT d.USER_UID from  SYS_USER_DEPARTMENT  d WHERE	d.DEPART_UID=#{departUid})
+	 			and U.USER_UID IN (SELECT d.USER_UID from  SYS_USER_DEPARTMENT_VW  d WHERE	d.DEPART_UID=#{departUid})
 	 		</if>
 	 		
 	 		<if test="departName!=null  and departName!='' ">
-	 			and  EXISTS(SELECT	ud.USER_UID FROM SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID  WHERE ud.USER_UID=u.USER_UID and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%'))
+	 			and  EXISTS(SELECT	ud.USER_UID FROM SYS_USER_DEPARTMENT_VW ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID  WHERE ud.USER_UID=u.USER_UID and d.DEPART_NAME LIKE CONCAT(CONCAT('%',#{departName}),'%'))
 	 		</if>
 	 		
 	 		<if test="employeeType!=null and employeeType!='' ">
 	 			and u.employeeType LIKE CONCAT(CONCAT('%',#{employeeType}),'%') 
 	 		</if>
-	 		 order by u.user_id
+	 		 order by u.create_date desc
 	  </select>
 	  
 	  <select id="allSysUserMove" parameterType="map" resultMap="BaseResultMap">
@@ -324,7 +324,7 @@
     where USER_UID = #{userUid,jdbcType=VARCHAR}
   </update>
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUser" resultMap="BaseResultMap" >
-	  		select u.*,d.* from sys_user u left join sys_department d on u.departmentnumber=d.depart_no where u.USER_UID=#{userUid}
+	  		select u.*,d.* from sys_user u left join sys_department d on u.depart_Uid=d.depart_Uid where u.USER_UID=#{userUid}
 	  </select>
 	  
 	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysUser">

@@ -153,4 +153,9 @@ public interface SysDictionaryMapper {
 	 */
 	List<SysDictionaryData> listOnDicDataBydicUidMove(@Param("dicUid")String dicUid,
 			@Param("dicDataUid")String dicDataUid, @Param("condition")String condition);
+	
+	/**
+	 * 根据dicUid删除字典
+	 */
+	int deleteBydicUid(String dicUid);
 }

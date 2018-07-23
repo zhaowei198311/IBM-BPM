@@ -105,8 +105,6 @@ public class UserDepartmentSynTask implements Job {
 //			for (EmployeeInfo employeeInfo : emp) {
 //				SysUser sysUser=new SysUser();
 //				sysUser.setUserUid(employeeInfo.getUid());//用户代码
-//				sysUser.setUserNo(employeeInfo.getUid());
-//				sysUser.setUserId(employeeInfo.getUid());
 //				sysUser.setUserName(employeeInfo.getCn());
 //				sysUser.setUserNameUs(employeeInfo.getLyfchinesepinyin());
 //				sysUser.setSn(employeeInfo.getSn());
@@ -151,51 +149,10 @@ public class UserDepartmentSynTask implements Job {
 //				i++;
 //				if(i%1000==0) {
 //					sysUserMapper.insertBatch(sysUsers);
-//					for (SysUser sUser1 : sysUsers) {
-//						String departNumber=sUser1.getDepartmetNumber();
-//						if(StringUtils.isNotBlank(departNumber)) {
-//							SysUserDepartment sysUserDepartment=new SysUserDepartment();
-//							sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
-//							sysUserDepartment.setUserUid(sUser1.getUserUid());
-//							SysDepartment department=sysDepartmentMap.get(departNumber);
-//							if(department!=null) {
-//								sysUserDepartment.setDepartUid(department.getDepartUid());
-//								if(department.getDepartAdmins().equals(sUser1.getUserId())) {
-//									sysUserDepartment.setIsManager("true");
-//								}else {
-//									sysUserDepartment.setIsManager("false");
-//								}
-//							}else {
-//								sysUserDepartment.setIsManager("false");
-//							}
-//							sysUserDepartmentMapper.insert(sysUserDepartment);
-//						}
-//					}
-//					sysUsers=new ArrayList<SysUser>();
 //				}
 //			}
 //			if(sysUsers.size()>0) {
 //				sysUserMapper.insertBatch(sysUsers);
-//				for (SysUser sUser1 : sysUsers) {
-//					String departNumber=sUser1.getDepartmetNumber();
-//					if(StringUtils.isNotBlank(departNumber)) {
-//						SysUserDepartment sysUserDepartment=new SysUserDepartment();
-//						sysUserDepartment.setUduid(UUIDTool.getUUID());
-//						sysUserDepartment.setUserUid(sUser1.getUserUid());
-//						SysDepartment department=sysDepartmentMap.get(departNumber);
-//						if(department!=null) {
-//							sysUserDepartment.setDepartUid(department.getDepartUid());
-//							if(department.getDepartAdmins().equals(sUser1.getUserId())) {
-//								sysUserDepartment.setIsManager("true");
-//							}else {
-//								sysUserDepartment.setIsManager("false");
-//							}
-//						}else {
-//							sysUserDepartment.setIsManager("false");
-//						}
-//						sysUserDepartmentMapper.insert(sysUserDepartment);
-//					}
-//				}
 //			}
 //		} catch (Exception e) {
 //			e.printStackTrace();
@@ -276,7 +233,6 @@ public class UserDepartmentSynTask implements Job {
 			SysUserDepartment sysUserDepartment=new SysUserDepartment();
 			sysUserDepartment.setDepartUid(sysDepartment.getDepartUid());
 			sysUserDepartmentMapper.delete(sysUserDepartment);
-			
 			sysDepartmentMapper.delete(sysDepartment);
 		}
 		
@@ -303,8 +259,6 @@ public class UserDepartmentSynTask implements Job {
 		for (EmployeeInfo employeeInfo : emp) {
 			SysUser sysUser=new SysUser();
 			sysUser.setUserUid(employeeInfo.getUid());//用户代码
-			sysUser.setUserNo(employeeInfo.getUid());
-			sysUser.setUserId(employeeInfo.getUid());
 			sysUser.setUserName(employeeInfo.getCn());
 			sysUser.setUserNameUs(employeeInfo.getLyfchinesepinyin());
 			sysUser.setSn(employeeInfo.getSn());
@@ -330,7 +284,6 @@ public class UserDepartmentSynTask implements Job {
 			sysUser.setManagernumber(employeeInfo.getLyfmanagernumber());
 			sysUser.setCostCenter(employeeInfo.getLyfcostcenter());
 			sysUser.setCompanynumber(employeeInfo.getLyfcompanynumber());
-			sysUser.setDepartmetNumber(employeeInfo.getDepartmentNumber());
 			String level=employeeInfo.getLyflevel();
 			if(StringUtils.isNotBlank(level)) {
 				sysUser.setLevels(employeeInfo.getLyflevel());
@@ -359,8 +312,6 @@ public class UserDepartmentSynTask implements Job {
 			if(user!=null) {
 				if(changeType.equals("U")) {
 					//获取修改前的部门信息
-					String departmentNumber=user.getDepartmetNumber();
-					sysUser.setExt1(departmentNumber);
 					sysUser.setUpdateDate(new Date());
 					updateSysUser.add(sysUser);
 				}else if(changeType.equals("D")) {
@@ -376,116 +327,15 @@ public class UserDepartmentSynTask implements Job {
 		
 		//添加
 		sysUserMapper.insertBatch(insertSysUser);
-		for (SysUser sUser1 : insertSysUser) {
-			String departNumber=sUser1.getDepartmetNumber();
-			if(StringUtils.isNotBlank(departNumber)) {
-				SysUserDepartment sysUserDepartment=new SysUserDepartment();
-				sysUserDepartment.setUduid(UUIDTool.getUUID());
-				sysUserDepartment.setUserUid(sUser1.getUserUid());
-				SysDepartment department=sysDepartmentMap.get(departNumber);
-				if(department!=null) {
-					sysUserDepartment.setDepartUid(department.getDepartUid());
-					if(department.getDepartAdmins().equals(sUser1.getUserId())) {
-						sysUserDepartment.setIsManager("true");
-					}else {
-						sysUserDepartment.setIsManager("false");
-					}
-				}else {
-					sysUserDepartment.setIsManager("false");
-				}
-				sysUserDepartmentMapper.insert(sysUserDepartment);
-			}
-		}
-		sysUsers=new ArrayList<SysUser>();
 		
 		//修改用户
 		for (SysUser sysUser : updateSysUser) {
-			String departmentNumber_old=sysUser.getExt1();
-			String departmentNumber_new=sysUser.getDepartmetNumber();
-			String userid=sysUser.getUserId();
-			
-			//如果第一次同步没有部门   第二次有就进行添加操作
-			if(StringUtils.isBlank(departmentNumber_old)&&StringUtils.isNotBlank(departmentNumber_new)) {
-				SysUserDepartment sysUserDepartment=new SysUserDepartment();
-				sysUserDepartment.setUduid(UUIDTool.getUUID());
-				sysUserDepartment.setUserUid(sysUser.getUserUid());
-				SysDepartment department=sysDepartmentMap.get(departmentNumber_new);
-				if(department!=null) {
-					//先删除掉自己配置可能和同步的部门一样的数据
-					SysUserDepartment D=new SysUserDepartment();
-					D.setUserUid(sysUser.getUserUid());
-					D.setDepartUid(department.getDepartUid());
-					sysUserDepartmentMapper.delete(D);
-					
-					//添加部门信息
-					sysUserDepartment.setDepartUid(department.getDepartUid());
-					if(department.getDepartAdmins().equals(userid)) {
-						sysUserDepartment.setIsManager("true");
-					}else {
-						sysUserDepartment.setIsManager("false");
-					}
-				}else {
-					sysUserDepartment.setIsManager("false");
-				}
-				sysUserDepartmentMapper.insert(sysUserDepartment);
-			}else if(StringUtils.isNotBlank(departmentNumber_old)&&StringUtils.isBlank(departmentNumber_new)){//第一次有部门 第二次没同步到部门
-				
-				//删除部门
-				SysDepartment department=sysDepartmentMap.get(departmentNumber_old);
-				if(department!=null) {
-					SysUserDepartment D=new SysUserDepartment();
-					D.setUserUid(sysUser.getUserUid());
-					D.setDepartUid(department.getDepartUid());
-					sysUserDepartmentMapper.delete(D);
-				}
-			}else if(StringUtils.isNotBlank(departmentNumber_old)&&StringUtils.isNotBlank(departmentNumber_new)) {//两次都有部门同步到部门然后把部门改掉的情况
-				
-				//删除部门
-				SysDepartment department_old=sysDepartmentMap.get(departmentNumber_old);
-				if(department_old!=null) {
-					SysUserDepartment D=new SysUserDepartment();
-					D.setUserUid(sysUser.getUserUid());
-					D.setDepartUid(department_old.getDepartUid());
-					sysUserDepartmentMapper.delete(D);
-				}
-				
-				//删除部门
-				SysDepartment department_new=sysDepartmentMap.get(departmentNumber_new);
-				if(department_new!=null) {
-					SysUserDepartment D=new SysUserDepartment();
-					D.setUserUid(sysUser.getUserUid());
-					D.setDepartUid(department_new.getDepartUid());
-					sysUserDepartmentMapper.delete(D);
-				}
-				
-				//添加部门
-				String departNumber=sysUser.getDepartmetNumber();
-				if(StringUtils.isNotBlank(departNumber)) {
-					SysUserDepartment sysUserDepartment=new SysUserDepartment();
-					sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
-					sysUserDepartment.setUserUid(sysUser.getUserUid());
-					SysDepartment department=sysDepartmentMap.get(departNumber);
-					if(department!=null&&department.getDepartNo()!=null) {
-						sysUserDepartment.setDepartUid(department.getDepartUid());
-						if(department.getDepartAdmins().equals(userid)) {
-							sysUserDepartment.setIsManager("true");
-						}else {
-							sysUserDepartment.setIsManager("false");
-						}
-						sysUserDepartmentMapper.insert(sysUserDepartment);
-					}
-				}
-			}
 			sysUserMapper.update(sysUser);
 		}
 		
 		//删除
 		for (SysUser sysUser : deleteSysUser) {
 			sysUserMapper.delete(sysUser);
-			//删除用户下部门
-			SysUserDepartment sysUserDepartment=new SysUserDepartment();
-			sysUserDepartment.setUserUid(sysUser.getUserUid());
-			sysUserDepartmentMapper.delete(sysUserDepartment);
 		}
 	}
 	

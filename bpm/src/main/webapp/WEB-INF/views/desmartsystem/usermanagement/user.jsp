@@ -14,6 +14,12 @@
   		<title>用户管理</title>
   		<%@ include file="common/common.jsp" %>
   		<script src="resources/desmartsystem/scripts/js/myjs/department.js" type="text/javascript"></script>
+  		
+  		<style>
+  			.display_content1{height: auto;}
+  			.choose_user{position:absolute;right:10px;top:8px;cursor:pointer;z-index:1;}
+  		</style>
+  		
 	</head>
 	<body>
 		<div class="layui-container" style="margin-top:20px;width:100%;">  
@@ -103,7 +109,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">邮箱</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
+				      <input type="text" name="email"  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -118,15 +124,23 @@
 				      <input type="text" name="costCenter" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
-				   <!-- <div class="layui-form-item">
+
+				  
+				  <div class="layui-form-item">
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
-				    	<div class="tree" id="demo"  >
-				    		<input type="hidden"  name="departmetNumber" id="departmetNumber"/>
-							<ul id="treeDemo"  class="ztree" departmetNumber="departmetNumber" style="width:auto;height:130px;"></ul>
-						</div>
+					   <input type="text" name="departUid" id="departUid_I"  class="layui-input" style="display: none;"/> 
+					  <input type="text" id="departUid_I_view" placeholder="上级部门"   autocomplete="off" class="layui-input" required  readonly="readonly" /> 
+					  <i onclick="chooseDepartment('departUid_I');" class="layui-icon choose_user" title="选择部门">&#xe612;</i>
 				    </div>
-				  </div> -->
+				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">公司</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
+				    </div>
+				  </div>
 			</div>
 			<div class="foot">
 				<input  type="hidden" name="accountType" value="1"/>
@@ -160,7 +174,7 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">邮箱</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
+				      <input type="text" name="email"   lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input email" />
 				    </div>
 				  </div>
 				  <div class="layui-form-item">
@@ -175,24 +189,23 @@
 				      <input type="text" name="costCenter" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
 				    </div>
 				  </div>
-				  <!-- <div class="layui-form-item">
-				    <label class="layui-form-label">部门名称</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="departName"  id="departName"  required  lay-verify="required" placeholder="请输入部门" autocomplete="off" class="layui-input" />
-				    </div>
-				  </div> -->
 				  
-				   <!-- <div class="layui-form-item">
+				  
+				  <div class="layui-form-item">
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
-				    	<div class="tree" id="demo"  >
-				    		<input type="hidden"  name="companyNumber" id="companyNumber_b"/>
-				    		<input type="hidden"  name="departUid" id="departUid_b"/>
-				    		<input type="hidden"  name="departmetNumber" id="departmetNumber_b"/>
-							<ul id="treeDemo1"  class="ztree" depart="departUid_b" company="companyNumber_b" departmetNumber="departmetNumber_b" style="width:auto;height:130px;"></ul>
-						</div>
+				    <input type="text" id="departUid_U" name="departUid" class="layui-input"   autocomplete="off" style="display: none;" />
+				      <input type="text"    lay-verify="required" id="departUid_U_view"  name="departName" placeholder="上级部门" readonly="readonly"   autocomplete="off" class="layui-input required" />
+				    	<i onclick="chooseDepartment('departUid_U');" class="layui-icon choose_user" title="选择部门">&#xe612;</i>
 				    </div>
-				  </div> -->
+				  </div>
+				  
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">公司</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
+				    </div>
+				  </div>
 			</div>
 			<div class="foot">
 				<!-- <input  type="hidden" name="userUid" /> -->
@@ -400,7 +413,15 @@
 			</div>
 		</div>
 	
+		<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 		<script>
+		
+		
+		//选择部门
+  		function chooseDepartment(id){
+  			common.chooseDepart(id);
+  		}
+		
 		$(function(){
 			
 			$(".create_btn").click(function(){

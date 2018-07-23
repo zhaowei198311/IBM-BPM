@@ -32,7 +32,7 @@ public class SysTeamMemberServiceImpl implements SysTeamMemberService {
 	@Override
 	public int insert(SysTeamMember entity) {
 		// TODO Auto-generated method stub
-		entity.setMemberUid(UUIDTool.getUUID());
+		entity.setMemberUid("sysTeamMember"+UUIDTool.getUUID());
 		return sysTeamMemberMapper.insert(entity);
 	}
 
