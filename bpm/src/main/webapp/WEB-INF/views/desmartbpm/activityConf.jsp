@@ -505,9 +505,15 @@
 														</div>
 														<div class="layui-form-item">
 															<label class="layui-form-label">邮件通知模板</label>
-															<div class="layui-input-block">
-																<input type="text" name="actcMailNotifyTemplate"
-																	value="" autocomplete="off" class="layui-input">
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="hidden" name="actcMailNotifyTemplate"
+																	id="actcMailNotifyTemplate" /> <input type="text"
+																	name="actcMailNotifyTemplate_view" id="actcMailNotifyTemplate_view"
+																	value="" autocomplete="off" class="layui-input"
+																	disabled="disabled"> <i
+																	class="layui-icon choose_num" id="chooseEmailTemplate_i"
+																	title="选择邮件模板">&#xe615;</i>
 															</div>
 														</div>
 														<div class="layui-form-item">
