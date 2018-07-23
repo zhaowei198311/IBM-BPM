@@ -154,7 +154,7 @@
 						    <div class="layui-input-block">
 							   <input type="hidden" name="departParent" id="departParentOne"  class="layui-input" /> 
 							  <input type="text" id="departParentOne_view" placeholder="上级部门"   autocomplete="off" class="layui-input" required  readonly="readonly" /> 
-							  <i onclick="chooseDepartment('departParentOne');" class="layui-icon choose_user" title="选择角色">&#xe612;</i>
+							  <i onclick="chooseDepartment('departParentOne');" class="layui-icon choose_user" title="选择部门">&#xe612;</i>
 						    </div>
 						  </div>
 						   <div class="layui-form-item">

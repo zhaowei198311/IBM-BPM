@@ -52,7 +52,8 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 
 	@Override
 	public int delete(String dicUid) {
-		return sysDictionaryMapper.delete(dicUid);
+		sysDictionaryMapper.delete(dicUid);
+		return sysDictionaryMapper.deleteBydicUid(dicUid);
 	}
 
 	@Override

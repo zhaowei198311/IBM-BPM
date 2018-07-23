@@ -25,6 +25,9 @@ public class SysUserDepartment implements Serializable {
 	private String companyCode;
 	private String companyName;
 	
+	//是否可以删除
+	private String canDelete;
+	
 	private SysCompany sysCompany;
 	
 	public String getUduid() {
@@ -133,6 +136,14 @@ public class SysUserDepartment implements Serializable {
 
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
+	}
+
+	public String getCanDelete() {
+		return canDelete;
+	}
+
+	public void setCanDelete(String canDelete) {
+		this.canDelete = canDelete;
 	}
 	
 }

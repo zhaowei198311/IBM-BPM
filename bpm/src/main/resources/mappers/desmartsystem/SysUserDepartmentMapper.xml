@@ -13,6 +13,7 @@
 	    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
 	    <result column="COMPANY_CODE" property="companyCode" jdbcType="VARCHAR" />
 	    
+	    <result column="CAN_DELETE" property="canDelete" />
 	    
 	    	
 	    <association property="sysCompany"  javaType="com.desmart.desmartsystem.entity.SysCompany"  >
@@ -35,16 +36,24 @@
 	    </association>
   </resultMap>
   
+  
+  
+  	  <sql id="Base_Column_List" >
+	    	ud.UDUID,ud.USER_UID,ud.DEPART_UID,ud.COMPANY_CODE,ud.IS_MANAGER,ud.CAN_DELETE
+	  </sql>
+	  
 	  <select id="selectUserDepartmentView" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap">
-	  		select user_department.*,d.DEPART_NAME from (SELECT d.UDUID,d.DEPART_UID,d.USER_UID FROM SYS_USER_DEPARTMENT d) user_department   LEFT JOIN	sys_department d on user_department.DEPART_UID=d.DEPART_UID
+	  		select <include refid="Base_Column_List" />,d.DEPART_NAME from (SELECT <include refid="Base_Column_List" /> FROM SYS_USER_DEPARTMENT_VW ud) ud   LEFT JOIN	sys_department d on ud.DEPART_UID=d.DEPART_UID
 	  		 where 1=1
 			<if test="userUid!=null">
 	 			and user_Uid = #{userUid}
 	 		</if>
 	  </select>
   
+  
+  	
   	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
-	 		SELECT	ud.UDUID,ud.USER_UID,d.DEPART_NAME,d.DEPART_NO,u.USER_NAME,ud.IS_MANAGER,c.COMPANY_CODE,c.COMPANY_NAME  FROM	 SYS_USER_DEPARTMENT ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID left JOIN SYS_COMPANY c on ud.COMPANY_CODE=c.COMPANY_CODE	 		
+	 		SELECT	<include refid="Base_Column_List" />,d.DEPART_NAME,d.DEPART_NO,u.USER_NAME,c.COMPANY_CODE,c.COMPANY_NAME   FROM	 SYS_USER_DEPARTMENT_VW ud LEFT JOIN  SYS_DEPARTMENT d on ud.DEPART_UID=d.DEPART_UID LEFT JOIN SYS_USER u on ud.USER_UID=u.USER_UID left JOIN SYS_COMPANY c on ud.COMPANY_CODE=c.COMPANY_CODE	 		
 	 		where 1=1
 	 		<if test="userUid!=null and userUid!='' ">
 	 			and ud.user_Uid = #{userUid}
@@ -72,15 +81,15 @@
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment"  resultMap="BaseResultMap">
-	  		select * from SYS_USER_DEPARTMENT d where 1=1
+	  		select <include refid="Base_Column_List" /> from SYS_USER_DEPARTMENT_VW ud where 1=1
 	  		<if test="uduid!=null">
-				and d.UDUID=#{uduid} 
+				and ud.UDUID=#{uduid} 
 	  		</if>
 	  		<if test="userUid!=null">
-	  			and d.user_uid =#{userUid}
+	  			and ud.user_uid =#{userUid}
 	  		</if>
 	  		<if test="departUid!=null">
-	  			and d.depart_uid=#{departUid}
+	  			and ud.depart_uid=#{departUid}
 	  		</if>
 	  </select>
 		
@@ -90,7 +99,7 @@
 	 </insert>
 	  
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" resultMap="BaseResultMap" >
-	  		select * from SYS_USER_DEPARTMENT u where u.UDUID=#{uduid}
+	  		select <include refid="Base_Column_List" /> from SYS_USER_DEPARTMENT_VW ud where ud.UDUID=#{uduid}
 	  </select>
 	  
 	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment">

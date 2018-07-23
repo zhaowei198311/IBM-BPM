@@ -33,6 +33,9 @@
             border: aliceblue;
             margin: 20px;
         }
+		li{
+			font-size:14px;
+		}
     </style>
 </head>
 <body>
