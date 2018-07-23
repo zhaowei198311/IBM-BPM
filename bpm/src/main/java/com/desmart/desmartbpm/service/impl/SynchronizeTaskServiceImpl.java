@@ -1,23 +1,18 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.common.util.ProcessDataUtil;
-import com.desmart.common.util.HttpReturnStatusUtil;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
-import com.desmart.desmartbpm.entity.DhSynTaskRetry;
-import com.desmart.desmartbpm.entity.LockedTask;
-import com.desmart.desmartbpm.mongo.CommonMongoDao;
-import com.desmart.desmartbpm.mongo.TaskMongoDao;
-import com.desmart.desmartportal.service.*;
-import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.entity.SysUser;
-import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +20,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
+import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
+import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.DhNotifyTemplateMapper;
+import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhNotifyTemplate;
+import com.desmart.desmartbpm.entity.DhSynTaskRetry;
+import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
+import com.desmart.desmartbpm.mongo.CommonMongoDao;
+import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
 import com.desmart.desmartportal.dao.DhAgentRecordMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -43,6 +51,14 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhAgentService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.service.SysHolidayService;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -81,7 +97,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private TaskMongoDao taskMongoDao;
     @Autowired
     private CommonMongoDao commonMongoDao;
-
+    @Autowired
+    private DhNotifyTemplateMapper dhNotifyTemplateMapper;
     
     /**
      * 从引擎同步任务
@@ -476,6 +493,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
     private void dhSendEmail(DhTaskInstance task) {
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(task.getInsUid());
+        JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+		JSONObject formData = insData.getJSONObject("formData");
         String proAppId = dhProcessInstance.getProAppId();
         String activityBpdId = task.getActivityBpdId();
         String snapshotId = dhProcessInstance.getProVerUid();
@@ -489,10 +508,40 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             if(task.getTaskDelegateUser()!=null&&!"".equals(task.getTaskDelegateUser())) {
                 toList.add(task.getTaskDelegateUser());
             }
-            for (String to : toList) {
-                String subject = "邮件通知";
-                String body = "邮件通知";
-                sendEmailService.sendingEmail(to, subject, body);
+            if (StringUtils.isNotEmpty(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())) {
+	            DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(
+	            		bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
+	            for (String to : toList) {
+	                String subject = dhNotifyTemplate.getTemplateSubject();
+	                String body = dhNotifyTemplate.getTemplateContent();
+	                Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}"); 
+	    	        Matcher matcher = pattern.matcher(body); 
+	    	        while(matcher.find()){ 
+	    	            String t = matcher.group(1);
+	    	            switch (t) {
+						case "name":
+							body.replaceAll("{name}", to);
+							break;
+						case "proName":
+							body.replaceAll("{proName}", dhProcessInstance.getProName());
+							break;	
+						case "proNo":
+							body.replaceAll("{proNo}", "proNo");
+							break;	
+						case "approvalUrl":
+							String approvalUrl = "172.19.55.94:8090/bpm/user/menus/approval?taskUid=" + task.getTaskUid();
+							body.replaceAll("{approvalUrl}", approvalUrl);
+							break;	
+						default:
+							String filedValue = formData.getString(t);
+							if(filedValue!=null) {
+								body.replaceAll("{"+t+"}",filedValue);
+							}
+							break;
+						}
+	    	        }
+	                sendEmailService.sendingEmail(to, subject, body);
+	            }
             }
         }
     }
