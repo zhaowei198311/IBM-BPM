@@ -1,24 +1,6 @@
 //跟踪流程图
 function processView(insId) {
-	console.log(common.getDesignFormData());
-	$.ajax({
-		url : 'processInstance/viewProcess',
-		type : 'post',
-		dataType : 'text',
-		data : {
-			insId : insId
-		},
-		success : function(result) {
-			layer.open({
-				type : 2,
-				title : '流程图',
-				shadeClose : true,
-				shade : 0.3,
-				area : [ '790px', '580px' ],
-				content : result
-			});
-		}
-	});
+	window.parent.openProView(insId);
 }
 
 //数据信息
