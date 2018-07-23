@@ -34,6 +34,25 @@ var common = {
     chooseTeamPath : function(id, isSingle) {
     	return common.getPath() + "/test/chooseTeam?id=" + id +"&isSingle=" + isSingle; 
     },
+    chooseNotifyTemplatePath : function (id, templateType){
+    	return common.getPath() + "/dhNotifyTemplate/select_template?id=" + id +"&templateType=" + templateType; 
+    },
+    chooseNotifyTemplate : function(elementId, templateType) {
+    	layer.open({
+    	    type: 2,
+    	    title: '选择模板',
+    	    shadeClose: true,
+    	    shade: 0.3,
+    	    area: ['60%', '95%'],
+    	    content: common.chooseNotifyTemplatePath(elementId, templateType),
+    	    success: function (layero, lockIndex) {
+    	        var body = layer.getChildFrame('body', lockIndex);
+    	        body.find('button#close').on('click', function () {
+    	            layer.close(lockIndex);
+    	        });
+    	    }
+    	}); 
+    },
     chooseUser: function(elementId, isSingle) {
     	layer.open({
     	    type: 2,

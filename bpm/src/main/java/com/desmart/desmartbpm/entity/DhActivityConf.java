@@ -131,6 +131,7 @@ public class DhActivityConf {
     private String outtimeTeamView;
     private String rejectActivities;
     private String rejectActivitiesView;
+    private String actcMailNotifyTemplateView;
 
 
     public DhActivityConf() {
@@ -751,7 +752,15 @@ public class DhActivityConf {
         this.actcDelayType = actcDelayType;
     }
 
-    @Override
+    public String getActcMailNotifyTemplateView() {
+		return actcMailNotifyTemplateView;
+	}
+
+	public void setActcMailNotifyTemplateView(String actcMailNotifyTemplateView) {
+		this.actcMailNotifyTemplateView = actcMailNotifyTemplateView;
+	}
+
+	@Override
 	public String toString() {
 		return "DhActivityConf [actcUid=" + actcUid + ", activityId=" + activityId + ", actcSort=" + actcSort
 				+ ", actcTime=" + actcTime + ", actcTimeunit=" + actcTimeunit + ", actcAssignType=" + actcAssignType
@@ -773,7 +782,8 @@ public class DhActivityConf {
 				+ ", actcCanCancel=" + actcCanCancel + ", actcCanPause=" + actcCanPause + ", actcCanSkip=" + actcCanSkip
 				+ ", updator=" + updator + ", updateTime=" + updateTime + ", actcCanChooseUser=" + actcCanChooseUser
 				+ ", actcCanTransfer=" + actcCanTransfer + ", actcResponsibility=" + actcResponsibility
-				+ ", actcCanSkipFromReject=" + actcCanSkipFromReject + ", actcOuttimeTriggerTitle="
+				+ ", actcCanSkipFromReject=" + actcCanSkipFromReject + ", actcIsSystemTask=" + actcIsSystemTask
+				+ ", actcIsDelay=" + actcIsDelay + ", actcDelayType=" + actcDelayType + ", actcOuttimeTriggerTitle="
 				+ actcOuttimeTriggerTitle + ", handleUser=" + handleUser + ", handleUserView=" + handleUserView
 				+ ", handleRole=" + handleRole + ", handleRoleView=" + handleRoleView + ", handleTeam=" + handleTeam
 				+ ", handleTeamView=" + handleTeamView + ", handleField=" + handleField + ", chooseableHandleUser="
@@ -785,7 +795,8 @@ public class DhActivityConf {
 				+ ", chooseableHandleTrigger=" + chooseableHandleTrigger + ", outtimeUser=" + outtimeUser
 				+ ", outtimeUserView=" + outtimeUserView + ", outtimeRole=" + outtimeRole + ", outtimeRoleView="
 				+ outtimeRoleView + ", outtimeTeam=" + outtimeTeam + ", outtimeTeamView=" + outtimeTeamView
-				+ ", rejectActivities=" + rejectActivities + ", rejectActivitiesView=" + rejectActivitiesView + "]";
+				+ ", rejectActivities=" + rejectActivities + ", rejectActivitiesView=" + rejectActivitiesView
+				+ ", actcMailNotifyTemplateView=" + actcMailNotifyTemplateView + "]";
 	}
 
 

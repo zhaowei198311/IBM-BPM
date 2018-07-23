@@ -43,4 +43,17 @@ public class DhNotifyTemplateController {
 			return dhNotifyTemplateService.addNotifyTemplate(dhNotifyTemplate);
 		}
 	}
+	/**
+	 * 选择模板
+	 * @param String id 
+	 * @param String templateType
+	 * @return
+	 */
+	@RequestMapping(value="/select_template")
+	public ModelAndView select_personnel(String id, String templateType){
+		ModelAndView model = new ModelAndView("desmartsystem/usermanagement/select_template");
+		model.addObject("id",id);
+		model.addObject("templateType",templateType);
+		return model;
+	}
 }

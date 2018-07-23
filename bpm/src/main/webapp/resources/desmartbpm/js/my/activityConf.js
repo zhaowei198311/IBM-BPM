@@ -1221,7 +1221,10 @@ $(function() {
 		getTriggerInfo();
 		$("#chooseTrigger_container").show();
 	});
-
+	// 选择邮件通知模板
+	$("#chooseEmailTemplate_i").click(function() {
+		common.chooseNotifyTemplate('actcMailNotifyTemplate', 'MAIL_NOTIFY_TEMPLATE');
+	});
 	// 选择超时通知人（人员）
 	$("#choose_outtime_user").click(function() {
 		common.chooseUser('outtimeUser', 'false');
@@ -2836,6 +2839,10 @@ function initConf(map) {
 		$("#rejectType_div").hide();
 		$("#rejectActivities_div").hide();
 	}
+	
+	//绑定通知模板信息
+	$('input[name="actcMailNotifyTemplate"]').val(conf.actcMailNotifyTemplate);
+	$('input[name="actcMailNotifyTemplate_view"]').val(conf.actcMailNotifyTemplateView);
 
 	layui.form.render();
 	layui.use('layedit', function() {
