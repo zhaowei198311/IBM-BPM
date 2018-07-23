@@ -145,9 +145,9 @@
 				</div>
 			</div>
 			<div class="foot">
-				<label class="layui-form-label-custom" style="color: red;">注意：(name)即通知的人员姓名
-				,(title)即邮件标题,(proName)即流程名,(proNo)即流程编号,(approvalUrl)即办理任务的请求路径,
-				[fieldName]中fieldName可以为表单字段的字段名
+				<label class="layui-form-label-custom" style="color: red;">注意：{name}即通知的人员姓名
+				,{proName}即流程名,{proNo}即流程编号,{approvalUrl}即办理任务的请求路径,
+				{fieldName}中fieldName可以为表单字段的字段名
 				</label>
 				<div class="layui-input-block" style="position: relative;">
 				<button id="submitOperation" type="button" onclick="submitOperation();"
