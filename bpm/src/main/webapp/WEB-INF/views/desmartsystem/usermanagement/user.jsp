@@ -68,8 +68,8 @@
 							      <th>姓名</th>
 							      <th>用户名</th>
 							      <th>部门</th>
-							      <!-- <th>类型</th> -->
 							      <th>联系电话</th>
+							      <th>上级领导</th>
 							      <th>操作</th>
 							    </tr>  
 							</thead>
@@ -534,10 +534,11 @@
 				var str='<tr>';
 				str+='<td>' + (data.beginNum+i) + '</td>';
 	         	str+='<td>' + this.userName + '</td>';
-	         	str+='<td>' + this.userId + '</td>';
+	         	str+='<td>' + this.userUid + '</td>';
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
 	         	/* str+='<td>' + isEmpty(this.employeeType) + '</td>'; */
 	         	str+='<td>' + isEmpty(this.mobile) + '</td>';
+	         	str+='<td>' + isEmpty(this.managernumber) + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=bindingRole("'+this.userUid+'"); >&#xe612;</i>';
