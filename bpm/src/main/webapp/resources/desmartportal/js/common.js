@@ -35,12 +35,12 @@ var common = {
     	return common.getPath() + "/test/chooseTeam?id=" + id +"&isSingle=" + isSingle; 
     },
     chooseUser: function(elementId, isSingle) {
-    	layer.open({
+    	var index = layer.open({
     	    type: 2,
     	    title: '选择人员',
     	    shadeClose: true,
     	    shade: 0.3,
-    	    area: ['695px', '530px'],
+    	    area: ['615px', '480px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);
@@ -49,9 +49,12 @@ var common = {
     	        });
     	    }
     	}); 
+    	layer.style(index, {
+        	zoom:1.1
+        });
     },
     chooseRole: function(elementId, isSingle) {
-    	layer.open({
+    	var index = layer.open({
             type: 2,
             title: '角色选择',
             shadeClose: true,
@@ -67,10 +70,13 @@ var common = {
                     layer.close(lockIndex);
                 });
             }
-        }); 
+        });
+    	layer.style(index, {
+        	zoom:1.1
+        });
     },
     chooseTeam: function(elementId, isSingle) {
-        layer.open({
+        var index = layer.open({
             type: 2,
             title: '角色组选择',
             shadeClose: true,
@@ -87,13 +93,16 @@ var common = {
                 });
             }
         }); 
+        layer.style(index, {
+        	zoom:1.1
+        });
     },
     //选择数据字典分类的路径
     chooseDictionaryPath:function(id) {
     	return common.getPath() + "/sysDictionary/selectDictionary?elementId=" + id; 
     },
     chooseDictionary:function(elementId){
-    	layer.open({
+    	var index = layer.open({
             type: 2,
             title: '数据字典分类选择',
             shadeClose: true,
@@ -110,13 +119,16 @@ var common = {
                 });
             }
         }); 
+    	layer.style(index, {
+        	zoom:1.1
+        });
     },
     //选择数据字典内容的路径
     chooseDicDataPath:function(id,dicUid) {
     	return common.getPath() + "/sysDictionary/selectDicData?elementId=" + id +"&dicUid="+dicUid; 
     },
     chooseDicData:function(elementId,dicUid){
-    	layer.open({
+    	var index=layer.open({
             type: 2,
             title: '数据字典详细数据选择',
             shadeClose: true,
@@ -133,13 +145,16 @@ var common = {
                 });
             }
         }); 
+    	layer.style(index, {
+        	zoom:1.1
+        });
     },
     //选择部门的路径
     chooseDepartPath:function(id) {
     	return common.getPath() + "/sysDepartment/chooseDepartment?elementId=" + id ; 
     },
     chooseDepart:function(elementId){
-    	layer.open({
+    	var index = layer.open({
             type: 2,
             title: '选择部门',
             shadeClose: true,
@@ -153,6 +168,9 @@ var common = {
     	        });
             }
         }); 
+    	layer.style(index, {
+        	zoom:1.1
+        });
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();

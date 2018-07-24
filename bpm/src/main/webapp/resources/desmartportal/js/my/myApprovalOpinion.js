@@ -61,7 +61,14 @@ function loadDhApprovalOpinionList(){
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批状态</th>"
 			      +"<td>"+result.data[i].aprStatus+"</td>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批人</th>"
-			      +"<td>"+result.data[i].aprUserName+"</td>"
+			      +"<td>";
+	    	 var taskHandleUserName = result.data[i].taskHandleUserName;
+    		 if(taskHandleUserName==null || taskHandleUserName==""){
+    			 info += result.data[i].aprUserName;
+    		 }else{
+    			 info += taskHandleUserName+"("+result.data[i].aprUserName+"代理)";
+    		 }
+			 info += "</td>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>岗位名称</th>"
 			      +"<td>"+result.data[i].aprStation+"</td>"
 			      +"<th style='background-color: #F2F2F2;color:#000000;' class='approval_th'>审批时间</th>"
@@ -161,13 +168,20 @@ function loadDhroutingRecords(){
 	    	 }
 	    	 $("#transferProcess").find("li").remove();
 	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
-	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
-	    		var info = "<li>"
-				+"<div>("+(i+1)+")</div>"
-				+"<div>"+result.data.dhRoutingRecords[i].userName+"</div>"
-				+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
-				+"<div style='height: 36px;'>"+result.data.dhRoutingRecords[i].activityName+"</div>";
-				switch(result.data.dhRoutingRecords[i].routeType){
+	    		 var date = new Date(result.data.dhRoutingRecords[i].createTime);
+	    		 var info = "<li>"
+					+"<div>("+(i+1)+")</div>"
+					+"<div>";
+	    		 var taskHandleUserName = result.data.dhRoutingRecords[i].taskHandleUserName;
+	    		 if(taskHandleUserName==null || taskHandleUserName==""){
+	    			 info += result.data.dhRoutingRecords[i].userName;
+	    		 }else{
+	    			 info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
+	    		 }
+	    		 info += "</div>"
+	    			 +"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
+	    			 +"<div style='height: 36px;'>"+result.data.dhRoutingRecords[i].activityName+"</div>";
+	    		 switch(result.data.dhRoutingRecords[i].routeType){
 					case "submitTask":
 						info += "<div>通过</div>";
 						break;

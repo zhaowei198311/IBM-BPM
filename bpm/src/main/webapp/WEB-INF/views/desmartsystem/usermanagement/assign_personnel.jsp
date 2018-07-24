@@ -130,6 +130,8 @@
 				});	
 				window.parent.document.getElementById(elementId).value=useruid;
 				window.parent.document.getElementById(elementId+"_view").value=useruname;
+				var title = useruname.replace(/;/g,"\n");
+				window.parent.document.getElementById(elementId+"_view").title=title;
 			 	$('#close').click();
 			});
 			
@@ -140,8 +142,9 @@
 			var name = window.parent.document.getElementById(elementId+"_view").value.split(';');
 			for (var i = 0; i < name.length; i++) {
 				if(name[i]!=''){
+					var newName = name[i].replace(/\(.*?\)/g,'');
 					var str='';
-					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+name[i]+"("+id[i]+")</li>";
+					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+newName+"("+id[i]+")</li>";
 					$user_li.append(str);
 				}
 			}

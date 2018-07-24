@@ -103,21 +103,13 @@
 		.layui-radio-disbaled{
 			display:none;
 		}
-		
-		
-		.layui-progress-bar {
- 		  display: block;
- 		  min-width: 8px;
- 		  height: 12px;
- 		  background: #2067c5;
- 		  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(left, #2067c5, #24c1fc);
- 		  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -moz-linear-gradient(left, #2067c5, #24c1fc);
- 		  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -o-linear-gradient(left, #2067c5, #24c1fc);
- 		  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), linear-gradient(to right, #2067c5, #24c1fc);
- 		  border-radius: 4px;
- 		  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
- 		  box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
- 		}
+ 		
+ 		.display_content6 {
+            width: 40%;
+            height: 100px;
+            left: 70%;
+            margin-top: 10%;
+        }
     </style>
 </head>
 
@@ -159,6 +151,9 @@
             <div class="layui-col-md6">
             	<span style="float: right; padding-right: 40px;">
 		        	<button class="layui-btn layui-btn-sm layui-btn-normal chart" onclick="processView(${processInstance.insId})">流程图</button>
+		            <c:if test="${activityConf.actcCanTransfer =='FALSE' && taskInstance.taskType!='transfer'}">
+		            <button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer">传阅</button>
+		            </c:if>
 		            <c:if test="${canBeRevoke == 'TRUE'}" >
 		            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="revokeTask('${taskInstance.taskUid}');">取回</button>
 		            </c:if>
@@ -221,11 +216,11 @@
 	                                    <col width="8%">
 	                                    <col width="6%">
 	                                    <col width="8%">
-	                                    <col width="8%">
-	                                    <col width="8%">
-	                                    <col width="12%">
-	                                    <col width="8%">
-	                                    <col width="20%">
+	                                    <col width="13%">
+										<col width="8%">
+										<col width="12%">
+										<col width="8%">
+										<col width="15%">
 	                                </colgroup>
 	                                <tbody id="approval_tbody">
 	                                </tbody>
@@ -300,6 +295,22 @@
 	            </div>
 			</div>
 		</div>
+		
+		<!-- 抄送选择人员 -->
+	    <div class="display_container6" style="display: none;">
+	        <div class="display_content6">
+	            <label class="layui-form-label" style="width: 30px;">人员</label>
+	            <div class="layui-input-block" style="position:relative;margin-left: 60px;">
+	                <input type="hidden" id="handleUser1" name="handleUser1" />
+	                <input type="text" id="handleUser1_view" name="handleUser1_view" autocomplete="off" class="layui-input" disabled="disabled">
+	                <i class="layui-icon choose_user" id="choose_handle_user1" title="选择人员">&#xe612;</i>
+	            </div>
+	            <div class="foot" style="margin-top: 25px;">
+	                <button class="layui-btn layui-btn sure_btn" onclick="transferSure()">确定</button>
+	                <button class="layui-btn layui-btn cancel_btn">取消</button>
+	            </div>
+	        </div>
+	    </div>
 	</div>
     <!--IE8只能支持jQuery1.9-->
     <!--[if lte IE 8]>

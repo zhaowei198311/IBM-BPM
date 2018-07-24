@@ -16,16 +16,19 @@
  
  <select id="getDhRoutingRecordListByCondition" resultType="com.desmart.desmartportal.entity.DhRoutingRecord"
   parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">
-  SELECT drr.*,su.user_name as userName,su.station as station 
-  FROM DH_ROUTING_RECORD drr left join sys_user su on drr.user_uid = su.user_uid
-  where 1 = 1 
-  <if test="insUid != null and insUid != '' ">
-    and drr.ins_uid = #{insUid}
-  </if>
-  <if test="activityId != null and activityId !='' ">
-    and drr.activity_id = #{activityId}
-  </if>
-  order by drr.create_time asc
+  SELECT <include refid="relationColumnList"/>,su.user_name as userName,su.station as station,
+  		ti.USR_UID as taskHandleUserId,ti.TASK_DELEGATE_USER as agentUserUid
+  FROM DH_ROUTING_RECORD rr left join sys_user su on rr.user_uid = su.user_uid
+        left join dh_task_instance ti on rr.task_uid = ti.task_uid 
+  <where>
+	  <if test="insUid != null and insUid != '' ">
+	    and rr.ins_uid = #{insUid}
+	  </if>
+	  <if test="activityId != null and activityId !='' ">
+	    and rr.activity_id = #{activityId}
+	  </if>
+  </where>
+  order by rr.create_time asc
   </select>
   
   <insert id="insert" parameterType="com.desmart.desmartportal.entity.DhRoutingRecord">

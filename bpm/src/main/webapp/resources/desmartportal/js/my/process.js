@@ -4,13 +4,13 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     var area=[];
     if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
-    	area=['695px', '530px'];
+    	area=['615px', '480px'];
     }else{
-    	area=['695px', '530px'];
+    	area=['615px', '480px'];
     }
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=';
-    layer.open({
+    var index = layer.open({
         type: 2,
         title: '选择人员',
         shadeClose: true,
@@ -25,6 +25,9 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
                 //location.reload();//刷新
             });
         }
+    });
+    layer.style(index, {
+    	zoom:1.1
     });
 }
 

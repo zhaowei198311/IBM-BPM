@@ -291,7 +291,7 @@
 				fileFormat:fileFormat
 			},
 			success : function(result) {
-				layer.open({
+				var index = layer.open({
 					title:'信息'
 					,shade : 0.3
 					,content: '保存成功！',
@@ -299,6 +299,9 @@
 						window.location.href = "globalConfig/globalConfig";
 				      }
 				}); 
+				layer.style(index, {
+			    	zoom:1.1
+			    });
 			}
 		})
 	}

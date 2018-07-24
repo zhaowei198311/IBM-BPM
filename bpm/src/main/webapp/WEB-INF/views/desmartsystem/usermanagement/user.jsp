@@ -655,7 +655,7 @@
 		
 		//打开业务角色绑定
 		function bindingRole(userUid){
-	    	layer.open({
+	    	var index = layer.open({
 	            type: 2,
 	            title: false,
 	            closeBtn: false,
@@ -673,6 +673,9 @@
 	                });
 	            }
 	        }); 
+	    	layer.style(index, {
+	        	zoom:1.1
+	        });
 		}
 		
 		function addsuccess1(data){

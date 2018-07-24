@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,19 +19,38 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhApprovalOpinionMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
 import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.UUIDTool;
+import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartsystem.entity.SysUser;
 
 @Service
 public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 
 	@Autowired
 	private DhApprovalOpinionMapper dhApprovalOpinionMapper;
+	
+	@Autowired
+	private SysUserMapper sysUserMapper;
+	
 	@Override
 	public List<DhApprovalOpinion> loadDhApprovalOpinionListByCondition(DhApprovalOpinion dhApprovalOpinion) {
-		return dhApprovalOpinionMapper.loadDhApprovalOpinionListByCondition(dhApprovalOpinion);
+		List<DhApprovalOpinion> dhApprovalOpinionList = dhApprovalOpinionMapper.loadDhApprovalOpinionListByCondition(dhApprovalOpinion);
+		for(DhApprovalOpinion oldApprovalOpinion:dhApprovalOpinionList) {
+			//判断审批人是否和任务实例上的代理人id一致
+			if(oldApprovalOpinion.getAprUserId().equals(oldApprovalOpinion.getAgentUserUid())) {
+				//若一致，则审批记录上的用户为代理人，再查询出任务所属人的信息
+				SysUser sysUser = sysUserMapper.queryByPrimaryKey(oldApprovalOpinion.getTaskHandleUserId());
+				oldApprovalOpinion.setTaskHandleUserName(sysUser.getUserName());
+				oldApprovalOpinion.setAprStation(sysUser.getStation());
+			}else {
+				continue;
+			}
+		}
+		return dhApprovalOpinionList;
 	}
 
 	@Override

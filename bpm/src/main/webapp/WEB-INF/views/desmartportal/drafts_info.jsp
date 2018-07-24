@@ -317,7 +317,7 @@
 		var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle
 				+ '&actcCanChooseUser=' + actcCanChooseUser
 				+ '&actcAssignType=' + actcAssignType;
-		layer.open({
+		var index = layer.open({
 			type : 2,
 			title : '选择人员',
 			shadeClose : true,
@@ -333,6 +333,9 @@
 				});
 			}
 		});
+		layer.style(index, {
+	    	zoom:1.1
+	    });
 	}
 
 	function deleteDraftsInfo(id) {

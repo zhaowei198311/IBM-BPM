@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper
-	namespace="com.desmart.desmartportal.dao.DhApprovalOpinionMapper">
+<mapper namespace="com.desmart.desmartportal.dao.DhApprovalOpinionMapper">
+	<sql id="select_base_column">
+		ao.activity_id,ao.apr_opi_id,ao.ins_uid,ao.task_uid,ao.apr_opi_index,ao.apr_user_id,
+		ao.apr_time_number,ao.apr_opi_comment,ao.apr_status,ao.apr_date
+	</sql>
 	<select id="loadDhApprovalOpinionListByCondition"
 		parameterType="com.desmart.desmartportal.entity.DhApprovalOpinion"
 		resultType="com.desmart.desmartportal.entity.DhApprovalOpinion">
-		select dao.*,su.user_name as aprUserName,su.station as aprStation
-		,bam.activity_name as activityName from DH_Approval_Opinion dao
-		left join Sys_User su on dao.apr_user_id = su.user_uid
-		left join bpm_activity_meta bam on dao.activity_id = bam.activity_id
-		where 1 = 1
+		select <include refid="select_base_column"/>,su.user_name as aprUserName,
+			su.station as aprStation,bam.activity_name as activityName,
+			ti.usr_uid as taskHandleUserId,ti.task_delegate_user as agentUserUid
+		from DH_Approval_Opinion ao
+			left join Sys_User su on ao.apr_user_id = su.user_uid
+			left join bpm_activity_meta bam on ao.activity_id = bam.activity_id
+			left join dh_task_instance ti on ao.task_uid = ti.task_uid 
+		<where>
 		<if test="insUid != null and insUid != '' ">
-			and dao.ins_uid = #{insUid}
+			and ao.ins_uid = #{insUid}
 		</if>
 		<if test="activityId != null and activityId != ''">
-			and dao.activity_id = #{activityId}
+			and ao.activity_id = #{activityId}
 		</if>
-		order by dao.APR_DATE desc
+		</where>
+		order by ao.APR_DATE desc
 	</select>
 
 	<insert id="insert"
