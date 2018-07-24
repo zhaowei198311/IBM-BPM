@@ -40,7 +40,7 @@ public class InsDataUtil {
     }
 
     /**
-     * 从流程实例中获得下个流程的流程关键字，
+     * 从流程实例中获得下个流程的流程关键字
      * 当找不到时返回 default
      * @param dhProcessInstance
      * @return
@@ -52,12 +52,12 @@ public class InsDataUtil {
         if (processDataJson != null) {
             String nextBusinessKey = processDataJson.getString("nextBusinessKey");
             if (StringUtils.isBlank(nextBusinessKey)) {
-                return "default";
+                return dhProcessInstance.getInsBusinessKey();
             } else {
                 return nextBusinessKey;
             }
         } else {
-            return "default";
+            return dhProcessInstance.getInsBusinessKey();
         }
     }
 

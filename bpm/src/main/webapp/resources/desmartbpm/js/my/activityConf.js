@@ -18,11 +18,13 @@ var systemTask = {
     initListener : function (form) { // 元素的值变化时的操作 form 是layui.form
         form.on('radio(isSystemTask)', function(data) {
             if (data.value == "TRUE") {
-                $('div[attr^=delay-detail-type]').show();
-                if ($('input[name=actcDelayType]').val() == 'time') {
-                    $('div[attr^=delay-detail-time]').show();
-				} else if ($('input[name=actcDelayType]').val() == 'field') {
-                    $('div[attr^=delay-detail-field]').show();
+                $('div[attr=delay-detail-type]').show();
+                if ($('select[name=actcDelayType]').val() == 'time') {
+                    $('div[attr=delay-detail-time]').show();
+                    $('div[attr=delay-detail-field]').hide();
+				} else if ($('select[name=actcDelayType]').val() == 'field') {
+                    $('div[attr=delay-detail-field]').show();
+                    $('div[attr=delay-detail-time]').hide();
 				}
             } else {
                 $('div[attr^=delay-detail-]').hide();
@@ -30,14 +32,14 @@ var systemTask = {
         });
         form.on('select(delayType)', function (data) {
             if (data.value == "none") {
-                $('div[attr^=delay-detail-time]').hide();
-                $('div[attr^=delay-detail-field]').hide();
+                $('div[attr=delay-detail-time]').hide();
+                $('div[attr=delay-detail-field]').hide();
 			} else if(data.value == "time") {
-                $('div[attr^=delay-detail-time]').show();
-                $('div[attr^=delay-detail-field]').hide();
+                $('div[attr=delay-detail-time]').show();
+                $('div[attr=delay-detail-field]').hide();
 			} else {
-                $('div[attr^=delay-detail-field]').show();
-                $('div[attr^=delay-detail-time]').hide();
+                $('div[attr=delay-detail-field]').show();
+                $('div[attr=delay-detail-time]').hide();
 			}
         });
     },
@@ -433,10 +435,31 @@ $(function() {
 						}
 					});
 
+	// 自定义验证规则
+    jQuery.validator.addMethod('actcDelayTimeRule', function (value, element) {
+        if ($('select[name=actcDelayType]').val()=='time' && $('input[name=actcIsSystemTask]').val()=='TRUE') {
+            if (!/^[0-9]*[1-9][0-9]*$/.exec(value) || +value > 99999) {
+                return false;
+			}
+			return true;
+		} else {
+        	return true;
+		}
+    }, '请输入1-5位正整数');
+    jQuery.validator.addMethod('actcDelayFieldRule', function (value, element) {
+        if ($('select[name=actcDelayType]').val()=='field' && $('input[name=actcIsSystemTask]').val()=='TRUE') {
+            if (!value || value.trim().length == 0) {
+                return false;
+            }
+            return true;
+        } else {
+            return true;
+        }
+    }, '请输入表示时间的表单字段');
+
 	$('#sla_form').validate(
 			{
 				rules : {
-
 					actcResponsibility : {
 						maxlength : 666
 					},
@@ -444,10 +467,7 @@ $(function() {
                         positiveInteger5: true
 					},
 					actcDelayTime : {
-                        positiveInteger5: true,
-						required: function (element) {
-							return $('select[name=actcDelayType]').val()=='time';
-                        }
+                        actcDelayTimeRule: true
 					},
 					actcTimeunit : {
 						required : function(element) {
@@ -457,7 +477,7 @@ $(function() {
 					},
 					actcDelayTimeunit: {
                         required: function (element) {
-                            return $('select[name=actcDelayType]').val()=='time';
+                            return $('select[name=actcDelayType]').val()=='time' && $('input[name=actcIsSystemTask]').val()=='TRUE';
                         }
 					},
 					actcOuttimeTrigger : {
@@ -483,9 +503,7 @@ $(function() {
 						}
 					},
 					actcDelayField: {
-                        required: function (element) {
-                            return $('select[name=actcDelayType]').val()=='field';
-                        },
+                        actcDelayFieldRule: true,
 						maxlength: 30
 					}
 				},

@@ -552,7 +552,7 @@ function showRouteBar() {
                 $("#choose_user_tbody").empty();
                 var activityMetaList = result.data;
                 var chooseUserDiv = "";
-                if(activityMetaList.length==0){
+                if(activityMetaList.length == 0){
                     chooseUserDiv += '<tr>'
                         +'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
                         +'<td>流程结束</td>'
