@@ -258,7 +258,7 @@ public interface DhTaskInstanceService {
 	int updateDhTaskInstanceWhenFinishTask(DhTaskInstance dhTaskInstance, String taskData);
 
 	/**
-	 * 自动提交时，更新任务实例状态
+	 * 自动提交时，更新任务实例状态, 将任务还给初始处理人
 	 * @param dhTaskInstance  完成的任务实例
 	 * @param taskData  用户提交上来的数据
 	 * @return

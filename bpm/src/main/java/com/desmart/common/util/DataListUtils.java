@@ -95,11 +95,11 @@ public class DataListUtils {
      * @return
      */
     public static String transformUserListToUserIdStr(List<SysUser> userList) {
-        String result = "";
+        StringBuilder sb = new StringBuilder();
         for (SysUser user : userList) {
-            result += user.getUserUid() + ";";
+            sb.append(user.getUserUid()).append(";");
         }
-        return result;
+        return sb.toString();
     }
 
     /**
@@ -108,11 +108,11 @@ public class DataListUtils {
      * @return
      */
     public static String transformUserListToUserNameStr(List<SysUser> userList) {
-        String result = "";
+        StringBuilder sb = new StringBuilder();
         for (SysUser user : userList) {
-            result += user.getUserName() + ";";
+            sb.append(user.getUserName()).append("(").append(user.getUserUid()).append(");");
         }
-        return result;
+        return sb.toString();
     }
 
     public static void main(String[] args) {

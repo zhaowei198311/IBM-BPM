@@ -410,6 +410,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (errorMap.get("errorResult") != null) {
             throw new PlatformException("提交第一个任务失败，流程实例id：" + insId);
         }
+		try { // 等待半秒给引擎处理处理时间
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
         // 如果需要创建子流程，就创建
         createSubProcessInstanceByRoutingData(mainProcessInstance, routingData, pubBo, null);
 		closeProcessInstanceByRoutingData(insId, routingData, null);
@@ -572,7 +577,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
     /**
      * 查看当前用户有没有发起指定流程的权限
-     * @param processDefintion
+     * @param processDefintion 需要发起的流程定义
      * @return
      */
 	private boolean checkPermissionStart(DhProcessDefinition processDefintion) {
@@ -633,11 +638,15 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 					break;
 				}
 			}
-			
 		}
 		return flag;
 	}
 
+	/**
+	 * 从给定的步骤列表中，找到第一个表单步骤，步骤列表是已按序号排序的
+	 * @param stepList
+	 * @return
+	 */
 	private DhStep getFirstFormStepOfStepList(List<DhStep> stepList) {
 		for (DhStep dhStep : stepList) {
 			if (DhStep.TYPE_FORM.equals(dhStep.getStepType())) {
