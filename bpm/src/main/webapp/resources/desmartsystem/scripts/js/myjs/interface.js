@@ -74,17 +74,32 @@ $(document).ready(function() {
 		if (!$form.valid()) {
 			return false;
 		}
-		var url = $form.serialize();
+		
+		var formArray = $form.serializeArray();
+		
 		var intStatus = $('#intStatus2').val();
-		if (intStatus == 'disabled') {
-			url += '&intStatus=' + intStatus;
+		
+		layui.use('layedit', function(){
+			var layedit = layui.layedit;
+			for (var i = 0; i < formArray.length; i++) {
+				
+				if(formArray[i].name=='intDescription'){
+					formArray[i].value=layedit.getContent(layeditIndex);
+				}
+				
+			}
+			
+		});
+		
+		if (intStatus == 'disabled' || intStatus=='on') {
+			formArray[formArray.length]={name:'intStatus',value:'disabled'}
 		}
 		
 		$.ajax({
 			url : 'interfaces/update',
 			type : 'POST',
 			dataType : 'json',
-			data : url,
+			data : formArray,
 			success : function(result) {
 				if (result.success == true) {
 					layer.alert(result.msg);
@@ -103,8 +118,29 @@ $("#addInterfaces").click(function() {
 	$('#titleTop').text('新增接口');
 	interfaceInputShowAndHide("", "");
 	$('#intStatus').val('enabled');
+	
+	textAreaBuild('intDescription','');
+	
 	popupDivAndReset('display_container', 'class');
 })
+
+var layeditIndex;
+function textAreaBuild(id,text){
+	layui.use('layedit', function(){
+	  var layedit = layui.layedit;
+	  layeditIndex=layedit.build(id,{
+		  height: 180,
+		  width:400,
+		  hideTool:['link' //超链接
+			  ,'unlink' //清除链接
+			  ,'face' //表情
+			  ,'image' //插入图片
+			  ,'help' //帮助
+			  ]
+	  });
+	  
+	});
+}
 
 $("#cancel_btn").click(function() {
 	$(".display_container").css("display", "none")
@@ -116,11 +152,24 @@ $("#sure_btn").click(function() {
 		return false;
 	};
 	
-
-	var url = $('#form1').serialize();
+	var formArray = $('#form1').serializeArray();
+	
 	var intStatus = $('#intStatus').val();
+	
+	
+	
+	
+	layui.use('layedit', function(){
+		var layedit = layui.layedit;
+		for (var i = 0; i < formArray.length; i++) {
+			if(formArray[i].name=='intDescription'){
+				formArray[i].value=layedit.getContent(layeditIndex);
+			}
+		}
+	});
+	
 	if (intStatus == 'disabled') {
-		url += '&intStatus=' + intStatus;
+		formArray[formArray.length]={name:'intStatus',value:intStatus}
 	}
 	
 	if($("#intType").val()==''){
@@ -132,7 +181,7 @@ $("#sure_btn").click(function() {
 		url : 'interfaces/add',
 		type : 'POST',
 		dataType : 'json',
-		data : url,
+		data : formArray,
 		success : function(result) {
 			if (result.success) {
 				layer.alert(result.msg);
@@ -195,7 +244,7 @@ function drawTable(pageInfo, data) {
 				+ meta.intTitle
 				+ '</td>'
 				+ '<td>'
-				+ meta.intDescription
+				+ isEmpty(meta.intLabel)
 				+ '</td>'
 				+ '<td>'
 				+ meta.intType
@@ -243,8 +292,11 @@ function copyInterface(intUid){
 				$("#intCallMethod").val('');
 				$("#intLoginUser").val(result.intLoginUser);
 				$("#intLoginPwd").val(result.intLoginPwd);
+				$("#intLabel").val(result.intLabel);
 				$("#intRequestXmlAdd").val('');
 				$("#intResponseXmlAdd").val('');
+				
+				
 				interfaceInputShowAndHide(result.intType,'');
 			}
 		})
@@ -300,6 +352,8 @@ function updatate(intUid) {
 	
 	popupDivAndReset('display_container5','class');
 	
+	
+	
 	layui.use([ 'layer', 'form' ], function() {
 		var form = layui.form, layer = layui.layer, $ = layui.jquery;
 		form.on('switch(intStatusUpd)', function(data) {
@@ -331,9 +385,16 @@ function updatate(intUid) {
 				$("#intLoginPwd2").val(result.intLoginPwd);
 				$("#intResponseXml2").val(result.intResponseXml);
 				$("#intRequestXml2").val(result.intRequestXml);
+				$("#intLabel2").val(result.intLabel);
+				textAreaBuild('intDescription2','');
+				$("#intDescription2").val(result.intDescription);
+				
+				
 
 				interfaceInputShowAndHide(result.intType, 1);
 				form.render();
+				
+				
 			}
 		})
 	})

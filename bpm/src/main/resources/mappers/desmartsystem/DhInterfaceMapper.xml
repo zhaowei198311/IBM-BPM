@@ -18,10 +18,11 @@
 		<result column="INT_REQUEST_XML"  			property="intRequestXml"/>
 		<result column="INT_RESPONSE_XML"  			property="intResponseXml"/>
 		
+		<result column="INT_LABEL"  property="intLabel"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		INT_UID, INT_TITLE, INT_DESCRIPTION,
+		INT_UID, INT_TITLE, INT_DESCRIPTION,INT_LABEL,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
 		CREATE_DATE, UPDATE_DATE,INT_REQUEST_XML,INT_RESPONSE_XML
@@ -51,7 +52,8 @@
 		(
 			#{intUid},
 			#{intTitle},
-			#{intDescription},
+			#{intDescription,jdbcType=VARCHAR},
+			#{intLabel,jdbcType=VARCHAR},
 			#{intType},
 			#{intUrl},
 			#{intCallMethod},
@@ -99,6 +101,11 @@
 			<if test="intDescription != null and intDescription != ''">
 				INT_DESCRIPTION = #{intDescription},
 			</if>
+			
+			<if test="intLabel != null and intLabel != '' ">
+				INT_LABEL = #{intLabel},
+			</if>
+			
 			<if test="intType != null and intType != '' ">
 				INT_TYPE = #{intType},
 			</if>
