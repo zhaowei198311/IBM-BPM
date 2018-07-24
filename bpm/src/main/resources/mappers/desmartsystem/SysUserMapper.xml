@@ -119,7 +119,7 @@
 	 		<if test="employeeType!=null and employeeType!='' ">
 	 			and u.employeeType LIKE CONCAT(CONCAT('%',#{employeeType}),'%') 
 	 		</if>
-	 		 order by u.create_date desc
+	 		 order by u.user_uid asc
 	  </select>
 	  
 	  <select id="allSysUserMove" parameterType="map" resultMap="BaseResultMap">
