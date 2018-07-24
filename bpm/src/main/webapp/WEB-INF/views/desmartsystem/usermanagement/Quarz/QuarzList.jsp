@@ -56,7 +56,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 		  elem: '#table' ,//table id
 		  url: '<%=request.getContextPath()%>/quarz/datagrid.do',
 				method : 'POST', //方式
-				page : false,//是否开启分页
+				page: true,//是否开启分页
 				id : 'searchID',
 				done: function(res, curr, count){
 					//加载后回调
@@ -278,10 +278,10 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				layer.open({
 			        title: '确认删除' //显示标题栏
 			        ,closeBtn: false
-			        ,area: '300px;'
+			        //,area: '300px;'
 			        ,shade: 0.3
 			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-			        ,btn: ['删除', '关闭']
+			        ,btn: ['确定', '取消']
 			        ,content: '您是否要删除当前选中的记录？'
 			        ,success: function(layero){
 			          var btn = layero.find('.layui-layer-btn');
