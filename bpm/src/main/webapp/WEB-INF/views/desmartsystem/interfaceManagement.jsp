@@ -118,20 +118,21 @@ table {
 			<table class="layui-table backlog_table" lay-even lay-skin="nob"
 				lay-filter="demo">
 				<colgroup>
-					<col width="4%">
+					<col width="5%">
+					<col>
 					<col width="10%">
 					<col width="10%">
-					<col width="9%">
-					<col width="15%">
+					<col>
+					<col>
 					<col width="10%">
-					<col width="7%">
-					<col width="11%">
+					<col>
 				</colgroup>
 				<thead>
 					<tr>
 						<th>序号</th>
 						<th>接口名称</th>
-						<th>接口描述</th>
+						<th>接口标签</th>
+<!-- 						<th>接口描述</th> -->
 						<th>接口类型</th>
 						<th>接口访问地址</th>
 						<th>接口访问方法名</th>
@@ -208,11 +209,9 @@ table {
 						</div>
 						<div class="layui-col-md6">
 							<div class="layui-inline">
-								<label class="layui-form-label">接口描述:</label>
+								<label class="layui-form-label">接口标签:</label>
 								<div class="layui-input-inline">
-									<input type="text" id="intDescription" name="intDescription"
-										lay-verify="intDescription" autocomplete="off"
-										class="layui-input required">
+									<input type="text"  name="intLabel" lay-verify="text" autocomplete="off" class="layui-input">
 								</div>
 							</div>
 						</div>
@@ -256,7 +255,7 @@ table {
 						</div>
 						<div class="layui-col-md6">
 							<div class="layui-inline">
-								<label class="layui-form-label">登录用户名:</label>
+								<label class="layui-form-label">用户名:</label>
 								<div class="layui-input-inline">
 									<input type="text" id="intLoginUser" name="intLoginUser"
 										lay-verify="intLoginUser" autocomplete="off"
@@ -290,13 +289,14 @@ table {
 				<div class="layui-form-item">
 					<div class="layui-row">
 						<div class="layui-col-md6">
-							<label class="layui-form-label">登陆密码:</label>
+							<label class="layui-form-label">密码:</label>
 							<div class="layui-input-inline">
 								<input type="text" id="intLoginPwd" name="intLoginPwd"
 									lay-verify="intLoginPwd" autocomplete="off"
 									class="layui-input required" />
 							</div>
 						</div>
+						
 						<div class="layui-col-md6">
 							<div class="layui-inline">
 								<label class="layui-form-label">接口状态:</label>
@@ -309,6 +309,15 @@ table {
 						</div>
 					</div>
 				</div>
+				
+				<div class="layui-form-item layui-form-text">
+				    <label class="layui-form-label">接口描述</label>
+				    <div class="layui-input-block">
+				      <textarea id="intDescription" name="intDescription"  style="display: none;"  ></textarea>
+				    </div>
+				  </div>
+				
+				
 			</form>
 			<div class="foot">
 				<button id="sure_btn" class="layui-btn layui-btn sure_btn">确定</button>
@@ -465,11 +474,9 @@ table {
 						</div>
 					</div>
 					<div class="layui-inline">
-						<label class="layui-form-label">接口描述:</label>
+						<label class="layui-form-label">接口标签:</label>
 						<div class="layui-input-inline">
-							<input type="text" id="intDescription2" name="intDescription"
-								lay-verify="text" autocomplete="off"
-								class="layui-input required" value="">
+							<input type="text" id="intLabel2" name="intLabel" lay-verify="text" autocomplete="off"  class="layui-input" value="">
 						</div>
 					</div>
 				</div>
@@ -502,7 +509,7 @@ table {
 						</div>
 					</div>
 					<div class="layui-inline">
-						<label class="layui-form-label">登录用户名:</label>
+						<label class="layui-form-label">用户名:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="intLoginUser2" name="intLoginUser"
 								lay-verify="text" autocomplete="off"
@@ -533,7 +540,7 @@ table {
 
 				<div class="layui-form-item">
 					<div class="layui-inline">
-						<label class="layui-form-label">登陆密码:</label>
+						<label class="layui-form-label">密码:</label>
 						<div class="layui-input-inline">
 							<input type="text" id="intLoginPwd2" name="intLoginPwd"
 								lay-verify="text" autocomplete="off"
@@ -548,11 +555,17 @@ table {
 						</div>
 					</div>
 				</div>
+				
+			   <div class="layui-form-item layui-form-text">
+			    <label class="layui-form-label">接口描述:</label>
+			    <div class="layui-input-block">
+			      <textarea id="intDescription2"  name="intDescription"  style="display: none;"  ></textarea>
+			    </div>
+			  </div>
 			</form>
 			<div class="foot">
 				<button id="sure4_btn" class="layui-btn layui-btn sure4_btn">确定</button>
-				<button id="cancel4_btn"
-					class="layui-btn layui-btn-primary cancel4_btn">取消</button>
+				<button id="cancel4_btn" class="layui-btn layui-btn-primary cancel4_btn">取消</button>
 			</div>
 		</div>
 	</div>
