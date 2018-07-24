@@ -37,7 +37,7 @@ public class BpmTaskUtil {
     }
     
     /**
-     * 设置任务中的pubBo变量, 并完成任务
+     * 设置任务中的pubBo变量, 尝试将任务分配给当前用户，并完成任务
      * @param taskId
      * @param pubBo
      * @return  Map中的信息： 
@@ -46,18 +46,16 @@ public class BpmTaskUtil {
     public Map<String, HttpReturnStatus> commitTask(Integer taskId, CommonBusinessObject pubBo) {
         HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
-        HttpReturnStatus result = new HttpReturnStatus();
+        HttpReturnStatus result = null;
         String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         
         try {
             // 将任务分配给当前用户
-            result = this.applyTask(taskId, currentUserUid);
-
-            // 不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
-            //resultMap.put("assignTaskResult", result);
-
+            this.applyTask(taskId, currentUserUid);
+            /* //不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
+            resultMap.put("assignTaskResult", result);*/
             Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
-            resultMap.putAll((Map)setDataResult);
+            resultMap.putAll(setDataResult);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
             if (errorMap.isEmpty()) {
                 result = this.completeTask(taskId);
@@ -65,10 +63,8 @@ public class BpmTaskUtil {
                 if (HttpReturnStatusUtil.isErrorResult(result)) {
                     resultMap.put("errorResult", result);
                 }
-            } else if (!errorMap.isEmpty()) {
-                resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
-            } else {
-                resultMap.put("errorResult", result);
+            } else{
+                resultMap.put("errorResult", errorMap.get("errorResult"));
             }
 
         } catch (Exception e) {
@@ -94,16 +90,10 @@ public class BpmTaskUtil {
     public Map<String, HttpReturnStatus> commitTaskWithOutUserInSession(Integer taskId, CommonBusinessObject pubBo) {
         HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
-        HttpReturnStatus result = new HttpReturnStatus();
-        //String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-
+        HttpReturnStatus result = null;
         try {
-            // 将任务分配给当前用户
-            //result = this.applyTask(taskId, currentUserUid);
-            // 不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
-            //resultMap.put("assignTaskResult", result);
             Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
-            resultMap.putAll((Map)setDataResult);
+            resultMap.putAll(setDataResult);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
             if (errorMap.isEmpty()) {
                 result = this.completeTask(taskId);
@@ -111,10 +101,8 @@ public class BpmTaskUtil {
                 if (HttpReturnStatusUtil.isErrorResult(result)) {
                     resultMap.put("errorResult", result);
                 }
-            } else if (!errorMap.isEmpty()) {
-                resultMap.put("errorResult", (HttpReturnStatus)errorMap.get("errorResult"));
             } else {
-                resultMap.put("errorResult", result);
+                resultMap.put("errorResult", errorMap.get("errorResult"));
             }
 
         } catch (Exception e) {
@@ -132,13 +120,22 @@ public class BpmTaskUtil {
     
     /**
      * 将任务分配给某人
+     * @param taskId  任务id
+     * @param userUid  用户工号/主键
      * @return
      */
     public HttpReturnStatus applyTask(Integer taskId, String userUid) {
         String params = "&toUser=" + userUid;
         return doTaskAction(taskId, "assign", params);
     }
-    
+
+    /**
+     * 对任务进行各种操作的底层方法
+     * @param taskId
+     * @param actionName
+     * @param params
+     * @return
+     */
     private HttpReturnStatus doTaskAction(Integer taskId, String actionName, String params) {
         HttpReturnStatus result = null;
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
@@ -159,7 +156,6 @@ public class BpmTaskUtil {
         } finally {
             restUtil.close();
         }
-        
         return result;
     }
     
@@ -171,14 +167,12 @@ public class BpmTaskUtil {
     public HttpReturnStatus getTaskData(Integer taskId) {
         HttpReturnStatus result = null;
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
-        
         try {
             String host = this.bpmGlobalConfig.getBpmServerHost();
             String url = host + "rest/bpm/wle/v1/task" + "/" + taskId;
             Map<String, Object> params = new HashMap();
             params.put("action", "getData");
             params.put("fields", "pubBo");
-            
             result = restUtil.doGet(url, params);
         } catch (Exception e) {
             log.error("获得任务信息失败,任务ID：" + taskId, e);
@@ -199,7 +193,6 @@ public class BpmTaskUtil {
      */
     public Map<String, HttpReturnStatus> setTaskData(Integer taskId, CommonBusinessObject pubBo) {
         Map<String, HttpReturnStatus> resultMap = new HashMap<>();
-        
         try {
             HttpReturnStatus getTaskResult = this.getTaskData(taskId);
             if (!HttpReturnStatusUtil.isErrorResult(getTaskResult)) {
@@ -288,8 +281,8 @@ public class BpmTaskUtil {
     }
 
     /**
-     * 重新分配引擎中的任务处理人，修改引擎数据库
-     * @param taskId
+     * 重新分配引擎中的任务处理人，操作的是引擎数据库
+     * @param taskId 任务id
      * @param userUid 用户主键，只能传一个人
      * @return
      */

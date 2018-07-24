@@ -16,10 +16,7 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartportal.service.DhProcessInstanceService;
-import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhRoutingRecordService;
-import com.desmart.desmartportal.service.ThreadPoolProvideService;
+import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -66,8 +63,10 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     private DhProcessInstanceService dhProcessInstanceService;
     @Autowired
     private MqProducerService mqProducerService;
+    @Autowired
+    private DhTaskInstanceService dhTaskInstanceService;
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "55 * * * * ?")
     @Override
     public void startAutoCommitSystemTask() {
         logger.info("开始处理系统任务");
@@ -84,7 +83,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         logger.info("处理系统任务完成");
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "55 * * * * ?")
     public void startAutoCommitSystemDelayTask() {
         logger.info("开始处理系统延时任务");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -145,6 +144,8 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         // 生成流转记录
         DhRoutingRecord routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
                 currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
+        // 修改任务状态
+        dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
 
         // 获得步骤
         List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());

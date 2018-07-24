@@ -1,6 +1,5 @@
 package com.desmart.desmartbpm.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartsystem.entity.SysUser;
 
 @Controller
 @RequestMapping(value = "/dhRoute")
@@ -42,7 +40,7 @@ public class DhRouteController {
 	@RequestMapping("/choosableHandler")
 	@ResponseBody
 	public ServerResponse choosableHandler(@RequestParam Map<String, String> parameter, HttpServletRequest request){
-		return dhRouteService.choosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
+		return dhRouteService.getChoosableHandler(parameter.get("insUid"), parameter.get("activityId"), parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData")
 				,request, parameter.get("taskUid"));
 	}
 	

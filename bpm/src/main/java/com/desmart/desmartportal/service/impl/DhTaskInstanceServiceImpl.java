@@ -336,7 +336,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // 判断Token是否移动
         boolean willTokenMove = dhRouteService.willFinishTaskMoveToken(currTask, insId);
 
-        // 任务完成后 保存到流转信息表里面
+        // 生成流转信息
 		DhRoutingRecord routingRecord = dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(currTask, bpmRoutingData, willTokenMove);
 
         // ========================== 根据预判token是否移动，区别处理
@@ -387,8 +387,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
-                // 判断实际TOKEN是否移动了
-                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
+				ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
                 if (didTokenMoveResponse.isSuccess()) {
                     JSONObject processData = didTokenMoveResponse.getData();
                     if (processData != null) {
@@ -1632,7 +1631,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSkipFromReject.setCurrTask(currTaskInstance);
         dataForSkipFromReject.setTargetNode(targetNode);
         dataForSkipFromReject.setNewTaskOwner(rejectTask.getUsrUid());
-        dataForSkipFromReject.setNewTaskOwnerName(rejectUser.getUserName());
+        dataForSkipFromReject.setNewTaskOwnerName(rejectUser.getUserName() + "(" + rejectTask.getUsrUid() + ");");
         return dataForSkipFromReject;
 	}
 

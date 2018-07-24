@@ -129,7 +129,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 			e.printStackTrace();
 		}
 		
-		//调用触发器方法
+		//调用触发器方法, 如果是触发器步骤执行，遇到表单步骤略过
 		DhStep step = dhStep;
 		while (step != null) {
 			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {

@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.*;
 import com.desmart.desmartbpm.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -30,7 +32,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.BpmFindNextNodeException;
-import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
@@ -137,7 +138,7 @@ public class DhRouteServiceImpl implements DhRouteService {
             currProcessInstance.setDepartNo(departNo);
         }
 
-	    // dhTaskInstance区别 是不是发起流程的第一个任务
+	    // 通过dhTaskInstance区别 是不是发起流程的第一个任务
 		DhTaskInstance dhTaskInstance = null;
         if (StringUtils.isNotBlank(taskUid)) {
             // 如果当前任务存在
@@ -158,7 +159,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		JSONObject oldObj = JSONObject.parseObject(insDate).getJSONObject("formData");
         JSONObject mergedFormJson = FormDataUtil.formDataCombine(newObj, oldObj);
 
-		// 获得下个环节的信息，如果不需要为下个环节选人，不会列出
+		// 获得下个环节的信息
         BpmRoutingData routingData = this.getBpmRoutingData(taskNode, mergedFormJson);
 
         List<BpmActivityMeta> taskNodesOnSameDeepLevel = routingData.getTaskNodesOnSameDeepLevel();
@@ -166,13 +167,17 @@ public class DhRouteServiceImpl implements DhRouteService {
         String preTaskOwner = dhTaskInstance == null ? (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)
                 : dhTaskInstance.getUsrUid();
 
-		for (BpmActivityMeta meta : taskNodesOnSameDeepLevel) {
-            List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfTaskNode(meta, preTaskOwner, currProcessInstance,
+		for (BpmActivityMeta nextTaskNode : taskNodesOnSameDeepLevel) {
+            List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfTaskNode(nextTaskNode, preTaskOwner, currProcessInstance,
                     FormDataUtil.getFormDataJsonFromProcessInstance(currProcessInstance));
             // 加入集合
-            resultNodeList.add(meta);
-            meta.setUserUid(DataListUtils.transformUserListToUserIdStr(defaultTaskOwnerList));
-            meta.setUserName(DataListUtils.transformUserListToUserNameStr(defaultTaskOwnerList));
+            resultNodeList.add(nextTaskNode);
+            nextTaskNode.setUserUid(DataListUtils.transformUserListToUserIdStr(defaultTaskOwnerList));
+            nextTaskNode.setUserName(DataListUtils.transformUserListToUserNameStr(defaultTaskOwnerList));
+            // 如果是系统任务，不允许选择可选处理人
+            if (Const.Boolean.TRUE.equals(nextTaskNode.getDhActivityConf().getActcIsSystemTask())) {
+				nextTaskNode.getDhActivityConf().setActcCanChooseUser(Const.Boolean.FALSE);
+			}
         }
         // 为自己的子流程选择默认处理人
         List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = routingData.getStartProcessNodesOnSameDeepLevel();
@@ -194,6 +199,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 	    List<SysUser> result = new ArrayList<>();
 
 		DhActivityConf dhActivityConf = taskNode.getDhActivityConf();
+		// 如果任务是系统任务，使用管理员
+		if ("TRUE".equals(dhActivityConf.getActcIsSystemTask())) {
+			return this.getAdminUserList();
+		}
+
 		String actcAssignType = dhActivityConf.getActcAssignType();
 		DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
 		if (assignTypeEnum == DhActivityConfAssignType.NONE) {
@@ -321,7 +331,26 @@ public class DhRouteServiceImpl implements DhRouteService {
         return result;
 	}
 
-
+	/**
+	 * 获得管理员用户列表
+	 * @return 集合中含有一个管理员数据
+	 */
+	private List<SysUser> getAdminUserList() {
+		BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+		if (globalConfig == null) {
+			throw new PlatformException("获得系统管理员向信息失败");
+		}
+		if (StringUtils.isBlank(globalConfig.getBpmAdminName())) {
+			throw new PlatformException("获得系统管理员向信息失败");
+		}
+		SysUser adminUser = sysUserMapper.queryByPrimaryKey(globalConfig.getBpmAdminName());
+		if (adminUser == null) {
+			throw new PlatformException("获得系统管理员向信息失败");
+		}
+		List<SysUser> result = new ArrayList<>();
+		result.add(adminUser);
+		return result;
+	}
 
 	/**
 	 * 将包含重复id的字符串转换为用户列表，并去除重复
@@ -508,8 +537,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 
 	@Override
-	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo,
-			String companyNum, String formData, HttpServletRequest request, String taskUid) {
+	public ServerResponse<List<SysUser>> getChoosableHandler(String insUid, String activityId, String departNo,
+															 String companyNum, String formData, HttpServletRequest request, String taskUid) {
         if (StringUtils.isBlank(companyNum) || StringUtils.isBlank(departNo) || StringUtils.isBlank(activityId)) {
             return ServerResponse.createByErrorMessage("缺少必要参数");
         }
@@ -655,9 +684,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 			break;
 		case BY_TRIGGER:// 根据触发器选择
 			String triUid = objIdList.get(0);
-			WebApplicationContext webApplicationContext = WebApplicationContextUtils
-					.getWebApplicationContext(request.getServletContext());
-			ServerResponse invokeTriggerResponse = dhTriggerService.invokeChooseUserTrigger(webApplicationContext, insUid,
+			WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
+			ServerResponse invokeTriggerResponse = dhTriggerService.invokeChooseUserTrigger(wac, insUid,
 					triUid);
 			if (invokeTriggerResponse.isSuccess()) {
 				List<String> userIds = (List<String>) invokeTriggerResponse.getData();
@@ -749,8 +777,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 
-
-
+	/**
+	 * 获得BpmRoutingData的底层方法
+	 * @param sourceNode
+	 * @param formData
+	 * @return
+	 */
     private BpmRoutingData getRoutingDataOfNextActivityTo(BpmActivityMeta sourceNode, JSONObject formData) {
         BpmRoutingData result = new BpmRoutingData();
         result.setSourceNode(sourceNode);
@@ -832,7 +864,13 @@ public class DhRouteServiceImpl implements DhRouteService {
         return result;
     }
 
-    public BpmRoutingData getNowActivity (BpmActivityMeta nowActivity, JSONObject formData) {
+	/**
+	 * 获得BpmRoutingData的底层方法
+	 * @param nowActivity
+	 * @param formData
+	 * @return
+	 */
+	public BpmRoutingData getNowActivity (BpmActivityMeta nowActivity, JSONObject formData) {
         BpmRoutingData result = new BpmRoutingData();
         String type = nowActivity.getType();
         String activityType = nowActivity.getActivityType();
@@ -909,7 +947,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	/**
 	 * 根据代表子流程的节点，获得它的start节点直接相连的节点
-	 * 
+	 * @param subProcessNode 代表子流程的节点
 	 * @return
 	 */
 	private List<BpmActivityMeta> findDirectNextNodesOfStartNodeBySubProcessNode(BpmActivityMeta subProcessNode) {
@@ -1097,6 +1135,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	@Override
 	public ServerResponse<JSONObject> didTokenMove(int insId, BpmRoutingData routingData) {
+		// 判断实际TOKEN是否移动了
+		try { // 等待半秒给引擎处理处理时间
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfigService.getFirstActConfig());
 		// 获得流程详细信息
         HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
@@ -1437,7 +1481,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	public ServerResponse choosableHandlerMove(String insUid, String activityId, String departNo,
 			String companyNum, String formData, HttpServletRequest request, String taskUid,
 			String userUidArrStr,String condition) {
-		List<SysUser> userList = choosableHandler(insUid, activityId, departNo, companyNum, formData, request, taskUid).getData();
+		List<SysUser> userList = getChoosableHandler(insUid, activityId, departNo, companyNum, formData, request, taskUid).getData();
 		List<SysUser> returnUserList = new ArrayList<>();
 		for(SysUser user:userList) {
 			//判断用户是否为已选处理人

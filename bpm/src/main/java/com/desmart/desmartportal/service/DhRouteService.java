@@ -46,14 +46,20 @@ public interface DhRouteService {
 	 * @return
 	 */
 	Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
-	
-	 /**
-     * 获取环节可选处理人
-     * @param activityUid
-     * @return
-     */
-	public ServerResponse<List<SysUser>> choosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData
-			,HttpServletRequest request, String taskUid);
+
+	/**
+	 * 获取指定环节的可选处理人
+	 * @param insUid  流程实例主键
+	 * @param activityId  指定环节
+	 * @param departNo    部门编号
+	 * @param companyNum  公司编码
+	 * @param formData    表单数据
+	 * @param request     HttpServletRequest
+	 * @param taskUid     任务主键
+	 * @return
+	 */
+	ServerResponse<List<SysUser>> getChoosableHandler(String insUid, String activityId, String departNo, String companyNum, String formData
+			, HttpServletRequest request, String taskUid);
 
 	/**
 	 * 获得指定节点的默认处理人，如果没有处理人，不设置为管理员，返回空集合

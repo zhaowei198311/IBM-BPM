@@ -100,10 +100,11 @@ public interface BpmActivityMetaService {
     List<BpmActivityMeta> filterBasicActivity(List<BpmActivityMeta> bpmActivityMetaList);
 
     /**
-     * 根据环节的 元素id和父元素的主键来查找唯一的一个环节
-     * @param activityBpdId
-     * @param parentActivityId
-     * @param proVerUid
+     * 根据环节的 元素id、父元素的主键、版本号 来查找唯一的一个环节
+     * 因为父元素可能是"0" 所以需要版本来辅助判断
+     * @param activityBpdId  被查找元素的元素id
+     * @param parentActivityId   被查找元素的父元素id 可能是一个activity_id 也可能是 "0"
+     * @param proVerUid  被查找元素所属版本
      * @return
      */
     BpmActivityMeta getByActBpdIdAndParentActIdAndProVerUid(String activityBpdId, String parentActivityId, String proVerUid);
