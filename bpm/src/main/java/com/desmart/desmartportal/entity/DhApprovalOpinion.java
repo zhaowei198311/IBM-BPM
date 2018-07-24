@@ -19,6 +19,11 @@ public class DhApprovalOpinion {
 	private String activityName;//环节名称
 	private String aprUserName;//审批用户名称
 	private String aprStation;//审批用户岗位
+	
+	private String taskHandleUserId;//任务实例处理人id
+	private String taskHandleUserName;//任务实例处理人姓名
+	private String agentUserUid;//任务实例代理人id
+	private String agentUserName;//任务实例代理人姓名
 	public String getAprOpiId() {
 		return aprOpiId;
 	}
@@ -97,15 +102,28 @@ public class DhApprovalOpinion {
 	public void setActivityId(String activityId) {
 		this.activityId = activityId;
 	}
-	@Override
-	public String toString() {
-		return "DhApprovalOpinion [aprOpiId=" + aprOpiId + ", insUid=" + insUid + ", taskUid=" + taskUid
-				+ ", aprOpiIndex=" + aprOpiIndex + ", aprUserId=" + aprUserId + ", aprTimeNumber=" + aprTimeNumber
-				+ ", aprOpiComment=" + aprOpiComment + ", aprStatus=" + aprStatus + ", aprDate=" + aprDate
-				+ ", activityId=" + activityId + ", activityName=" + activityName + ", aprUserName=" + aprUserName
-				+ ", aprStation=" + aprStation + "]";
+	public String getTaskHandleUserId() {
+		return taskHandleUserId;
 	}
-	
-	
-	
+	public void setTaskHandleUserId(String taskHandleUserId) {
+		this.taskHandleUserId = taskHandleUserId;
+	}
+	public String getTaskHandleUserName() {
+		return taskHandleUserName;
+	}
+	public void setTaskHandleUserName(String taskHandleUserName) {
+		this.taskHandleUserName = taskHandleUserName;
+	}
+	public String getAgentUserUid() {
+		return agentUserUid;
+	}
+	public void setAgentUserUid(String agentUserUid) {
+		this.agentUserUid = agentUserUid;
+	}
+	public String getAgentUserName() {
+		return agentUserName;
+	}
+	public void setAgentUserName(String agentUserName) {
+		this.agentUserName = agentUserName;
+	}
 }

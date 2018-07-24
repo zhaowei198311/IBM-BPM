@@ -25,12 +25,12 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=' + $('#taskUid').val();
-    layer.open({
+    var index = layer.open({
         type: 2,
         title: '选择人员',
         shadeClose: true,
         shade: 0.3,
-        area: ['695px', '530px'],
+        area: ['615px', '480px'],
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
@@ -39,6 +39,9 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
                 layer.close(lockIndex);
             });
         }
+    });
+    layer.style(index, {
+    	zoom:1.1
     });
 }
 

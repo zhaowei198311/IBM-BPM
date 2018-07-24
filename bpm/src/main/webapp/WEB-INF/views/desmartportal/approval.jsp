@@ -297,11 +297,11 @@
 										<col width="8%">
 										<col width="6%">
 										<col width="8%">
-										<col width="8%">
+										<col width="13%">
 										<col width="8%">
 										<col width="12%">
 										<col width="8%">
-										<col width="20%">
+										<col width="15%">
 									</colgroup>
 									<tbody id="approval_tbody">
 									</tbody>
@@ -378,15 +378,15 @@
 
 		<!-- 下个环节信息 -->
         <div class="display_container2">
-            <div class="display_content2">
+            <div class="display_content2" style="width:700px;left:44%">
                 <div class="top">下个环节信息</div>
                 <div class="middle2">
                     <table class="layui-table">
-                        <col width="19%">
-                        <col>
-                        <col width="15%">
-                        <col>
-                        <col width="10%">
+                        <col width="14%">
+                        <col width="35%">
+                        <col width="13%">
+                        <col width="33%">
+                        <col width="7%">
                         <tbody id="choose_user_tbody">
 
                         </tbody>

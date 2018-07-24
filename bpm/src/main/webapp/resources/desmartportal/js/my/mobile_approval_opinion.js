@@ -57,7 +57,14 @@ function loadDhApprovalOpinionList(){
 						+'</tr>'
 						+'<tr>'
 							+'<th>审批人：</th>'
-							+'<td>'+result.data[i].aprUserName+'</td>'
+							+'<td>';
+	    		 var taskHandleUserName = result.data[i].taskHandleUserName;
+	    		 if(taskHandleUserName==null || taskHandleUserName==""){
+	    			 info += result.data[i].aprUserName;
+	    		 }else{
+	    			 info += taskHandleUserName+"("+result.data[i].aprUserName+"代理)";
+	    		 }
+	    		 info += '</td>'
 						+'</tr>'
 						+'<tr>'
 							+'<th>岗位：</th>'
@@ -195,10 +202,16 @@ function loadDhroutingRecords(){
 	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
 	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
 	    		var info = "<li>"
-				+"<div>("+(i+1)+")</div>"
-				+"<div>"+result.data.dhRoutingRecords[i].userName+"</div>"
-				+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
-				+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>";
+	    			+"<div>("+(i+1)+")</div>";
+	    		var taskHandleUserName = result.data.dhRoutingRecords[i].taskHandleUserName;
+	    		if(taskHandleUserName==null || taskHandleUserName==""){
+	    			info += result.data.dhRoutingRecords[i].userName;
+	    		}else{
+	    			info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
+	    		}
+	    		info += "</div>"
+					+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
+					+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>";
 				switch(result.data.dhRoutingRecords[i].routeType){
 					case "submitTask":
 						info += "<div>通过</div>";

@@ -410,7 +410,7 @@ ul {
 	
 	//打开业务角色绑定
 	function teamBindingRole(teamUid){
-    	layer.open({
+    	var index = layer.open({
             type: 2,
             title: false,
             closeBtn: false,
@@ -427,7 +427,10 @@ ul {
                     layer.close(lockIndex);
                 });
             }
-        }); 
+        });
+    	layer.style(index, {
+        	zoom:1.1
+        });
 	}
 	
 

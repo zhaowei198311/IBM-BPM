@@ -19,6 +19,17 @@ $(function () {
     var fieldPermissionInfo = $("#fieldPermissionInfo").text();
     common.giveFormFieldPermission(fieldPermissionInfo);
     form.render();
+    
+    // 抄送
+    $("#transfer").click(function(){
+    	$("#handleUser1_view").val("");
+    	$(".display_container6").css("display","block");
+    }); 
+    
+    // 抄送选择处理人（人员）
+    $("#choose_handle_user1").click(function() {
+    	common.chooseUser('handleUser1', 'false');
+    });
 });
 
 function back() {
@@ -282,4 +293,34 @@ function revokeTask(taskUid) {
             layer.alert('操作失败');
         }
     });
+}
+
+//抄送确认
+function transferSure(){
+	var taskUid = $("#taskUid").val();
+	var usrUid = $("#handleUser1").val();
+	var activityId = $("#activityId").val();
+	if (usrUid == null || usrUid == "") {
+		layer.alert("请选择人员!");
+		return;
+	}
+	$.ajax({
+		async: false,
+		url: common.getPath() + '/taskInstance/transferSure',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			taskUid: taskUid,
+			usrUid: usrUid,
+			activityId: activityId
+		},
+		success: function(data){
+			if (data.status == 0) {
+				layer.alert("操作成功!");
+				$('.display_container6').css("display","none");
+			}else {
+				layer.alert(data.msg);
+			}
+		}
+	})
 }

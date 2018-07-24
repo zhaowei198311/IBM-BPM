@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysUser;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +42,24 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     private DhTaskInstanceService taskInstanceService;
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
+	@Autowired
+	private SysUserMapper sysUserMapper;
 
 	@Override
 	public List<DhRoutingRecord> getDhRoutingRecordListByCondition(DhRoutingRecord dhRoutingRecord) {
-		return dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
+		List<DhRoutingRecord> dhRoutingRecordList = dhRoutingRecordMapper.getDhRoutingRecordListByCondition(dhRoutingRecord);
+		for(DhRoutingRecord oldRoutingRecord:dhRoutingRecordList) {
+			//判读流转信息中的处理人id是否和代理人id相同
+			if(oldRoutingRecord.getUserUid().equals(oldRoutingRecord.getAgentUserUid())) {
+				//当流转信息中处理人id和代理人id相同时，查询对应的任务实例中的处理人信息
+				SysUser handler = sysUserMapper.queryByPrimaryKey(oldRoutingRecord.getTaskHandleUserId());
+				oldRoutingRecord.setTaskHandleUserName(handler.getUserName());
+				oldRoutingRecord.setStation(handler.getStation());
+			}else {
+				continue;
+			}
+		}
+		return dhRoutingRecordList;
 	}
 
     @Override

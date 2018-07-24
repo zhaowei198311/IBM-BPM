@@ -477,7 +477,7 @@
 		
 		//弹出选择流程信息的弹层
 		$("#choose_agent_process").click(function(){
-			layer.open({
+			var index = layer.open({
 				type: 1,
 	    	    title: '选择流程',
 	    	    shadeClose: true,
@@ -505,11 +505,14 @@
 	    	    	layer.close(lockIndex);
 	    	    }
 			});
+			layer.style(index, {
+		    	zoom:1.1
+		    });
 		});//end click
 		
 		//弹出选择流程信息的弹层
 		$("#update_choose_agent_process").click(function(){
-			layer.open({
+			var index = layer.open({
 				type: 1,
 	    	    title: '选择流程',
 	    	    shadeClose: true,
@@ -536,6 +539,9 @@
 	    	    	layer.close(lockIndex);
 	    	    }
 			});
+			layer.style(index, {
+		    	zoom:1.1
+		    });
 		});//end click
 	});
 	

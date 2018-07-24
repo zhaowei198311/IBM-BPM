@@ -39,6 +39,12 @@ public class DhRoutingRecord {
 	//不在表内，关联查询
 	private String userName;//操作人姓名
 	private String station;//操作人岗位身份
+	
+	private String taskHandleUserId;//任务实例处理人id
+	private String taskHandleUserName;//任务实例处理人姓名
+	private String agentUserUid;//任务实例代理人id
+	private String agentUserName;//任务实例代理人姓名
+	
 	public String getRouteUid() {
 		return routeUid;
 	}
@@ -111,13 +117,28 @@ public class DhRoutingRecord {
 	public void setTaskUid(String taskUid) {
 		this.taskUid = taskUid;
 	}
-
-	@Override
-	public String toString() {
-		return "DhRoutingRecord [routeUid=" + routeUid + ", insUid=" + insUid + ", activityName=" + activityName
-				+ ", routeType=" + routeType + ", userUid=" + userUid + ", createTime=" + createTime + ", activityId="
-				+ activityId + ", activityTo=" + activityTo + ", userName=" + userName + ", station=" + station + "]";
+	public String getAgentUserUid() {
+		return agentUserUid;
 	}
-	
-	
+	public void setAgentUserUid(String agentUserUid) {
+		this.agentUserUid = agentUserUid;
+	}
+	public String getAgentUserName() {
+		return agentUserName;
+	}
+	public void setAgentUserName(String agentUserName) {
+		this.agentUserName = agentUserName;
+	}
+	public String getTaskHandleUserId() {
+		return taskHandleUserId;
+	}
+	public void setTaskHandleUserId(String taskHandleUserId) {
+		this.taskHandleUserId = taskHandleUserId;
+	}
+	public String getTaskHandleUserName() {
+		return taskHandleUserName;
+	}
+	public void setTaskHandleUserName(String taskHandleUserName) {
+		this.taskHandleUserName = taskHandleUserName;
+	}
 }

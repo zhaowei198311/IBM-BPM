@@ -11,7 +11,7 @@ function getPath(){
 //弹出接口测试页面
 function textInterface(intUid,intTitle,paraInOut){
 	var url = getPath() + '/interfaces/interfaceTest?intUid='+intUid+'&intTitle='+intTitle+'&paraInOut='+paraInOut;
-    layer.open({
+    var index = layer.open({
         type: 2,
         title: false,
         closeBtn: false,
@@ -29,6 +29,9 @@ function textInterface(intUid,intTitle,paraInOut){
                 //location.reload();//刷新
             });
         }
+    });
+    layer.style(index, {
+    	zoom:1.1
     });
 }
 
