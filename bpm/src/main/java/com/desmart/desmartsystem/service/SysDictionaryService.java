@@ -1,6 +1,7 @@
 package com.desmart.desmartsystem.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.desmart.desmartsystem.util.PagedResult;
 import com.desmart.common.constant.ServerResponse;
@@ -146,4 +147,10 @@ public interface SysDictionaryService {
 	 * 批量删除数据字典数据
 	 */
 	ServerResponse<?> deleteSysDictionaryDataList(String[] dicDataUidArr);
+	/**
+	 * 导入数据字典数据
+	 * @param multipartFile
+	 * @return
+	 */
+	public ServerResponse importSysDictionaryData(MultipartFile multipartFile);
 }

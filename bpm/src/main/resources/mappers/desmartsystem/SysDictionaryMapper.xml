@@ -67,7 +67,7 @@
 		</if>
 	</select>
 	
-	<select id="selectSysDictionaryByCode" parameterType="java.lang.String" resultType="com.desmart.desmartsystem.entity.SysDictionary">
+	<select id="selectSysDictionaryByCode" parameterType="com.desmart.desmartsystem.entity.SysDictionary" resultType="com.desmart.desmartsystem.entity.SysDictionary">
 		select 
 		<include refid="Base_Column_List" />
 		from SYS_DICTIONARY
@@ -241,5 +241,42 @@
 		<if test="dicDataUid !=null and !dicDataUid.trim().isEmpty()">
 			and dic_data_uid != #{dicDataUid}
 		</if>
+	</select>
+	
+	<insert id="insertByBatch" parameterType="java.util.List">
+			insert into SYS_DICTIONARY_DATA(
+			DIC_DATA_UID,
+			DIC_DATA_CODE,
+			DIC_DATA_NAME,
+			DIC_UID,
+			DIC_DATA_DESCRIPTION,
+			DIC_DATA_SORT,
+			DIC_DATA_STATUS,
+			CREATE_DATE,
+			CREATE_BY
+		)
+		<foreach collection="itemList" item="item" close=")" open="("
+			   	separator="union all">
+		SELECT 
+			#{item.dicDataUid},
+			#{item.dicDataCode},
+			#{item.dicDataName},
+			#{item.dicUid},
+			#{item.dicDataDescription},
+			#{item.dicDataSort},	
+			#{item.dicDataStatus},
+			sysdate,
+			#{item.createBy}
+		from dual
+		</foreach>
+	</insert>
+	<select id="selectByDataCodeBatch" resultType="com.desmart.common.excelForm.SysDictionaryDataForm"
+			parameterType="java.util.List">
+			SELECT dic_data_code FROM SYS_DICTIONARY_DATA
+			<where>
+			<foreach collection="itemList" item="item" separator="or" close=")" open="(">
+			 	dic_data_code = #{item.dicDataCode}
+			</foreach>
+			</where>
 	</select>
 </mapper>
