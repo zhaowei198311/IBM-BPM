@@ -416,9 +416,9 @@ function drawPage() {
 		});
 
 		var dateInput = view.find(".date");
-		dateInput.attr("type", "text");
 		dateInput.prop("readonly", true);
 		dateInput.each(function () {
+			$(this)[0].type = "text";
 			var isDatetime = $(this).attr("date_type");
 			var dateType = "date";
 			if(isDatetime=="true"){
