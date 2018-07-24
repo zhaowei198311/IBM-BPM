@@ -1,6 +1,10 @@
 package com.desmart.desmartsystem.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -19,6 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.SendMail;
+import com.desmart.desmartbpm.dao.DhNotifyTemplateMapper;
+import com.desmart.desmartbpm.entity.DhNotifyTemplate;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
@@ -32,8 +44,10 @@ public class SendEmailServiceImpl implements SendEmailService {
     
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
-    
-   
+    @Autowired
+    private DhNotifyTemplateMapper dhNotifyTemplateMapper;
+    @Autowired
+    private DhProcessInstanceMapper dhProcessInstanceMapper;
     
     /**
      * 初始化方法，使用配置中的用户名密码
@@ -98,4 +112,58 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
         }
     }
+	@Override
+	public ServerResponse dhSendEmail(DhTaskInstance taskInstance, String notifyTemplateUid) {
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(taskInstance.getInsUid());
+		JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+		JSONObject formData = insData.getJSONObject("formData");
+		List<String> toList = new ArrayList<>();
+		if (taskInstance.getUsrUid() != null && !"".equals(taskInstance.getUsrUid())) {
+			toList.add(taskInstance.getUsrUid());
+		}
+		if (taskInstance.getTaskDelegateUser() != null && !"".equals(taskInstance.getTaskDelegateUser())) {
+			toList.add(taskInstance.getTaskDelegateUser());
+		}
+		DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(notifyTemplateUid);
+		String subject = dhNotifyTemplate.getTemplateSubject();
+		String body = dhNotifyTemplate.getTemplateContent();
+		body = body.replaceAll("\\n|\\r\\n","<br/>");
+		body = body.replaceAll(" ","&nbsp;");
+		Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");
+		Matcher matcher = pattern.matcher(body);
+		while (matcher.find()) {
+			String t = matcher.group(1);
+			switch (t) {
+			case "name":
+				body = body.replaceAll("\\{name\\}", "name");
+				break;
+			case "proName":
+				body = body.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
+				break;
+			case "proNo":
+				body = body.replaceAll("\\{proNo\\}", "proNo");
+				break;
+			case "approvalUrl":
+				String approvalUrl = "<a href= 'http://172.19.54.163:8090/bpm/user/menus/approval?taskUid=" + taskInstance.getTaskUid()+"'>点击前往</a>";
+				body = body.replaceAll("\\{approvalUrl\\}", approvalUrl);
+				break;
+			default:
+				JSONObject filedValue = formData.getJSONObject(t);
+				if (filedValue != null) {
+					body = body.replaceAll("\\{" + t + "\\}", filedValue.getString("value"));
+				}
+				break;
+			}
+		}
+			SendMail sendMail = SendMail.getInstaance();
+			List<String> toListTest = new ArrayList<>();
+	    	toList.add("helloSSM@163.com");
+	    	toList.add("1254431331@qq.com");
+			if(sendMail.send(subject, body, toListTest)) {
+				return ServerResponse.createBySuccess();
+			}else {
+				return ServerResponse.createByError();
+			}
+
+	}
 }

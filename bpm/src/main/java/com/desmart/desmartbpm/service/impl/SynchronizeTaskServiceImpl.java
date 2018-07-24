@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,12 +29,10 @@ import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.DhNotifyTemplateMapper;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhNotifyTemplate;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
@@ -97,8 +93,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     private TaskMongoDao taskMongoDao;
     @Autowired
     private CommonMongoDao commonMongoDao;
-    @Autowired
-    private DhNotifyTemplateMapper dhNotifyTemplateMapper;
     
     /**
      * 从引擎同步任务
@@ -162,7 +156,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         for(DhTaskInstance task : dhTaskList) {
         	dhTaskInstanceMapper.insertTask(task);
         	//发送邮件通知
-        	//dhSendEmail(task);
+        	//sendEmailService.dhSendEmail(task, notifyTemplateUid);
         }
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
@@ -488,62 +482,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             map.put(groupAndMember.getGroupId(), groupAndMember.getMembers());
         }
         return map;
-    }
-
-
-    private void dhSendEmail(DhTaskInstance task) {
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(task.getInsUid());
-        JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-		JSONObject formData = insData.getJSONObject("formData");
-        String proAppId = dhProcessInstance.getProAppId();
-        String activityBpdId = task.getActivityBpdId();
-        String snapshotId = dhProcessInstance.getProVerUid();
-        String bpdId = dhProcessInstance.getProUid();
-        BpmActivityMeta bpmActivityMeta = bpmActivityMetaService.getBpmActivityMeta(proAppId, activityBpdId, snapshotId, bpdId);
-        if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
-            List<String> toList = new ArrayList<>();
-            if(task.getUsrUid()!=null&&!"".equals(task.getUsrUid())) {
-                toList.add(task.getUsrUid());
-            }
-            if(task.getTaskDelegateUser()!=null&&!"".equals(task.getTaskDelegateUser())) {
-                toList.add(task.getTaskDelegateUser());
-            }
-            if (StringUtils.isNotEmpty(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())) {
-	            DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(
-	            		bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
-	            for (String to : toList) {
-	                String subject = dhNotifyTemplate.getTemplateSubject();
-	                String body = dhNotifyTemplate.getTemplateContent();
-	                Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}"); 
-	    	        Matcher matcher = pattern.matcher(body); 
-	    	        while(matcher.find()){ 
-	    	            String t = matcher.group(1);
-	    	            switch (t) {
-						case "name":
-							body.replaceAll("{name}", to);
-							break;
-						case "proName":
-							body.replaceAll("{proName}", dhProcessInstance.getProName());
-							break;	
-						case "proNo":
-							body.replaceAll("{proNo}", "proNo");
-							break;	
-						case "approvalUrl":
-							String approvalUrl = "172.19.55.94:8090/bpm/user/menus/approval?taskUid=" + task.getTaskUid();
-							body.replaceAll("{approvalUrl}", approvalUrl);
-							break;	
-						default:
-							String filedValue = formData.getString(t);
-							if(filedValue!=null) {
-								body.replaceAll("{"+t+"}",filedValue);
-							}
-							break;
-						}
-	    	        }
-	                sendEmailService.sendingEmail(to, subject, body);
-	            }
-            }
-        }
     }
 
     /**
