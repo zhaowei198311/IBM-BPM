@@ -37,6 +37,7 @@ public class DhInterface {
 	private String intXml;//webservice参数
 	private String intRequestXml;
 	private String intResponseXml;
+	private String intLabel;
 	
 	/**
 	 * @return the intUid
@@ -250,7 +251,13 @@ public class DhInterface {
 	public void setIntResponseXml(String intResponseXml) {
 		this.intResponseXml = intResponseXml;
 	}
-	
-	
+
+	public String getIntLabel() {
+		return intLabel;
+	}
+
+	public void setIntLabel(String intLabel) {
+		this.intLabel = intLabel;
+	}
 
 }
