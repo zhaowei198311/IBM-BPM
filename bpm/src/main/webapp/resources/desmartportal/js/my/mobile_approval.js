@@ -600,6 +600,14 @@ function submitTask() {
     if(!common.validateFormMust("startProcess_btn")){
     	return;
     }
+    //表单组件正则验证
+    if(!common.validateRegx()){
+    	return;
+    }
+    //表单提交验证方法，可在设计表单时重构
+    if(!check_before_submit()){
+    	return;
+    }
     // 发起流程             
     var finalData = {};
     // 表单数据
@@ -689,10 +697,6 @@ function skipFromReject() {
     	$("#"+id+"_div").css("display","block");
         layer.alert("流程标题过长或未填写");
         return
-    }
-    //必填项验证，勿删
-    if(!common.validateFormMust("startProcess_btn")){
-    	return;
     }
     // 发起流程
     var finalData = {};
@@ -815,10 +819,6 @@ function rejectSure(){
 	    	$("#"+id+"_div").css("display","block");
 	        layer.alert("流程标题过长或未填写");
 	        return
-	    }
-	    //必填项验证，勿删
-	    if(!common.validateFormMust("startProcess_btn")){
-	    	return;
 	    }
 	    var finalData = {};
 	    // 路由数据
@@ -1242,4 +1242,10 @@ function backApproval(){
 	}, 300);
 	$(".mobile_container").css("display","block");
 	$("#table_tr_container").css("display","none");
+}
+
+//提交前验证方法
+function check_before_submit(){
+	console.log("1");
+	return true;
 }
