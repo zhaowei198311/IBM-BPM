@@ -20,5 +20,10 @@ public interface AutoCommitSystemTaskService {
      */
     void submitSystemTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig);
 
+    /**
+     * 开始处理系统延时任务
+     */
+    void startAutoCommitSystemDelayTask();
+
 
 }

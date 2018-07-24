@@ -69,11 +69,12 @@ import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
-
 	private Logger log = Logger.getLogger(DhProcessInstanceServiceImpl.class);
+
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	@Autowired
@@ -409,10 +410,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (errorMap.get("errorResult") != null) {
             throw new PlatformException("提交第一个任务失败，流程实例id：" + insId);
         }
-
         // 如果需要创建子流程，就创建
         createSubProcessInstanceByRoutingData(mainProcessInstance, routingData, pubBo, null);
-
+		closeProcessInstanceByRoutingData(insId, routingData, null);
         return ServerResponse.createBySuccess();
     }
 
@@ -817,6 +817,20 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Override
     public ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, JSONObject processDataJson) {
         Set<BpmActivityMeta> endProcessNodes = routingData.getEndProcessNodes();
+		Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
+		if (CollectionUtils.isEmpty(endProcessNodes) && CollectionUtils.isEmpty(mainEndNodes)) {
+			return ServerResponse.createBySuccess();
+		}
+		if (processDataJson == null) {
+			// 获得processData数据
+			BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
+			HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
+			if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
+				return ServerResponse.createByErrorMessage("通过RESTful API获得流程实例信息失败");
+			}
+			processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
+		}
         for (Iterator<BpmActivityMeta> it = endProcessNodes.iterator(); it.hasNext();) {
             BpmActivityMeta item = it.next();
             DhProcessInstance subInstance = dhProcessInstanceMapper.getByInsIdAndTokenActivityId(insId, item.getActivityId());
@@ -831,7 +845,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             selective.setInsStatusId(DhProcessInstance.STATUS_ID_COMPLETED);
             dhProcessInstanceMapper.updateByPrimaryKeySelective(selective);
         }
-        Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
         if (mainEndNodes.size() > 0 && ProcessDataUtil.isProcessFinished(processDataJson)) {
         	// 判断主流程是否结束
             DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);

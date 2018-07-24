@@ -312,16 +312,18 @@ function delCookie(name) {
 }
 
 // validate添加验证 1-5位正整数
-jQuery.validator.addMethod('positiveInteger5', function (value, element) {
-    if (!/^[0-9]*[1-9][0-9]*$/.exec(value) || +value > 99999) {
+if (jQuery.validator) {
+    jQuery.validator.addMethod('positiveInteger5', function (value, element) {
+        if (/^[0-9]*[1-9][0-9]*$/.exec(value) && +value <= 99999) {
+            return true;
+        }
         return false;
-    }
-    return true;
-}, '请输入1-5位正整数');
+    }, '请输入1-5位正整数');
 
-jQuery.validator.addMethod('positiveInteger', function (value, element) {
-    if (!/^[0-9]*[1-9][0-9]*$/.exec(value)) {
+    jQuery.validator.addMethod('positiveInteger', function (value, element) {
+        if (/^[0-9]*[1-9][0-9]*$/.exec(value)) {
+            return true;
+        }
         return false;
-    }
-    return true;
-}, '请输入1-5位正整数');
+    }, '请输入1-5位正整数');
+}
