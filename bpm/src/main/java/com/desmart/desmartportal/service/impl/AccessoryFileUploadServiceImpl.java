@@ -470,8 +470,8 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		DiskFileItem fi = (DiskFileItem) cf.getFileItem();
 		File file = fi.getStoreLocation();
 		ExcelUtil excelUtil = ExcelUtil.getInstance();
-		if (excelUtil.checkExcelTitleAndSort(file, GoodsStateModifyForm.class)) {
-			ServerResponse serverResponse = excelUtil.checkExcelContent(file, GoodsStateModifyForm.class);
+		if (excelUtil.checkExcelTitleAndSort(file, GoodsStateModifyForm.class,4)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(file, GoodsStateModifyForm.class,4);
 			if (serverResponse.isSuccess()) {
 				String myFileName = multipartFile.getOriginalFilename();
 				if (myFileName.trim() != "") {

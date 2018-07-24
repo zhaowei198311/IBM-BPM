@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
@@ -340,5 +341,16 @@ public class SysDictionaryController {
 	public ServerResponse getOnSysDictionaryDataList(@RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
 			@RequestParam(value="pageSize",defaultValue="10") Integer pageSize,String dicUid) {
 		return sysDictionaryService.getOnSysDictionaryDataList(pageNum,pageSize,dicUid);
+	}
+	
+	/**
+	 * 批量导入数据字典内容数据
+	 * @param multipartFile
+	 * @return
+	 */
+	@RequestMapping(value = "/importSysDictionaryData")
+	@ResponseBody
+	public ServerResponse importSysDictionaryData(@RequestParam("file")MultipartFile multipartFile) {
+		return sysDictionaryService.importSysDictionaryData(multipartFile);
 	}
 }

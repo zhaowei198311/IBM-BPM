@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.excelForm.SysDictionaryDataForm;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
 /**
@@ -158,4 +159,17 @@ public interface SysDictionaryMapper {
 	 * 根据dicUid删除字典
 	 */
 	int deleteBydicUid(String dicUid);
+	
+	/**
+	 * 批量新增数据字典数据
+	 * @param itemList
+	 * @return
+	 */
+	Integer insertByBatch(@Param("itemList")List<SysDictionaryData> itemList);
+	/**
+	 * 批量查询数据字典编码
+	 * @param itemList
+	 * @return
+	 */
+	List<SysDictionaryDataForm> selectByDataCodeBatch(@Param("itemList")List<SysDictionaryDataForm> itemList);
 }

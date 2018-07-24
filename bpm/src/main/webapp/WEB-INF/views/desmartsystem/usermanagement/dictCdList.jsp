@@ -40,6 +40,9 @@
 						<div class="layui-col-md1" style="text-align:right;">
 							<button class="layui-btn delete_btn" style="background: #FF5151" onclick="deleteDicCd();">删除</button>
 						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button id="importButton" class="layui-btn create_btn" type="button" >批量导入</button>
+						</div>
 					</form>
 				</div>						
 			</div>
@@ -302,7 +305,30 @@
 		        }
 		    });
 		}
-
+		$(function(){
+			layui.use('upload',function(){
+				var upload = layui.upload;
+				upload.render({ //允许上传的文件后缀
+				    elem: $("#importButton")
+				    ,url: 'sysDictionary/importSysDictionaryData'
+				    ,accept: 'file' //普通文件
+				    ,exts: 'xls|xlsx' //只允许上传
+				    ,before: function(obj){
+					     	layer.load(1);
+					    }
+				    ,done: function(res){
+				    	if(res.status==0){//上传成功，加载数据
+				    		pageBreak(1);
+				    	}
+				    	layer.alert(res.msg);
+				    	layer.closeAll("loading");
+				    }
+				    ,error: function(index, upload){
+				    	layer.closeAll("loading");
+				    }
+				});
+			});
+		});
 	</script>
 	</body>
 	

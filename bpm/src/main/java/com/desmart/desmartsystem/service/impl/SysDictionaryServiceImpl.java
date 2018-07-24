@@ -1,14 +1,25 @@
 package com.desmart.desmartsystem.service.impl;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.excelForm.SysDictionaryDataForm;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.entity.BpmForm;
+import com.desmart.common.util.ExcelUtil;
+import com.desmart.desmartbpm.common.Const;
+import com.desmart.desmartbpm.util.UUIDTool;
 import com.desmart.desmartsystem.dao.SysDictionaryMapper;
 import com.desmart.desmartsystem.entity.SysDictionary;
 import com.desmart.desmartsystem.entity.SysDictionaryData;
@@ -17,6 +28,8 @@ import com.desmart.desmartsystem.util.BeanUtil;
 import com.desmart.desmartsystem.util.PagedResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import jxl.Sheet;
 /**
  * 
  * @ClassName: SysDictionaryServiceImpl  
@@ -171,4 +184,106 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 		}
 		return ServerResponse.createBySuccess();
 	}
+	
+
+	@Override
+	@Transactional
+	public ServerResponse importSysDictionaryData(MultipartFile multipartFile) {
+		//判断是否已经上传了文件数据
+		CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+		DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+		File file = fi.getStoreLocation();
+		ExcelUtil excelUtil = ExcelUtil.getInstance();
+		if (excelUtil.checkExcelTitleAndSort(file, SysDictionaryDataForm.class,0)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(file, SysDictionaryDataForm.class,0);
+			if (serverResponse.isSuccess()) {
+				String myFileName = multipartFile.getOriginalFilename();
+				if (myFileName.trim() != "") {
+					InputStream inputStream;
+					try {
+						inputStream = multipartFile.getInputStream();
+						// 读取数据
+						ServerResponse<Sheet> serverResponse2 = excelUtil.loadSheet(inputStream);
+						if(!serverResponse2.isSuccess()) {
+							return serverResponse2;
+						}
+						List<SysDictionaryDataForm> dictionaryDataFormList = excelUtil
+									.importExcelToEntity(serverResponse2.getData(), SysDictionaryDataForm.class,0);
+						
+						//验证数据字典代码是否有重复
+						Boolean flag = true;
+						for (SysDictionaryDataForm sysDictionaryDataForm : dictionaryDataFormList) {
+							Integer count = 0;
+							String key = sysDictionaryDataForm.getDicDataCode();
+							for (SysDictionaryDataForm sysDictionaryDataForm2 : dictionaryDataFormList) {
+								if(key!=null&&key.equals(sysDictionaryDataForm2.getDicDataCode())) {
+									count++;
+								}
+							}
+							if(count>1) {
+								flag = false;
+								break;
+							}
+						}
+						if(flag == false) {
+							return ServerResponse.createByErrorMessage("导入数据失败,数据字典代码不能重复。");
+						}
+						
+						List<SysDictionaryDataForm> checkDataCodeList = sysDictionaryMapper.selectByDataCodeBatch(dictionaryDataFormList);
+						if(checkDataCodeList!=null&&checkDataCodeList.size()>0) {
+							StringBuffer mStringBuffer = new StringBuffer();
+							for (SysDictionaryDataForm sysDictionaryDataForm : checkDataCodeList) {
+								mStringBuffer.append(sysDictionaryDataForm.getDicDataCode()+",");
+							}
+							return ServerResponse.createByErrorMessage("导入数据失败,数据字典代码:"
+							+mStringBuffer.substring(0, mStringBuffer.length()-1)+"不能重复。");
+						}
+						
+						String creator = (String) SecurityUtils.getSubject().getSession()
+								.getAttribute(Const.CURRENT_USER);
+						//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+						//String currTime = simpleDateFormat.format(new Date());
+						//Date currentDate = DateUtil.format(new Date());
+						
+						SysDictionary sysDictionary = new SysDictionary();
+						List<SysDictionaryData> insertList = new ArrayList<>();
+						for (int i=0;i<dictionaryDataFormList.size();i++) {
+							sysDictionary.setDicCode(dictionaryDataFormList.get(i).getDicCode());
+							List<SysDictionary> checkList = sysDictionaryMapper.selectSysDictionaryByCode(sysDictionary);
+							if (checkList!=null&&checkList.size() > 0) {
+								SysDictionaryData sysDictionaryData = new SysDictionaryData();
+								String uuId = UUIDTool.getUUID();
+								sysDictionaryData.setDicDataUid("dic_data"+uuId);
+								sysDictionaryData.setDicUid(checkList.get(0).getDicUid());
+								sysDictionaryData.setDicDataName(dictionaryDataFormList.get(i).getDicDataName());
+								sysDictionaryData.setDicDataDescription(dictionaryDataFormList.get(i).getDicDataDescription());
+								sysDictionaryData.setDicDataSort(dictionaryDataFormList.get(i).getDicDataSort());
+								sysDictionaryData.setDicDataCode(dictionaryDataFormList.get(i).getDicDataCode());
+								sysDictionaryData.setCreateBy(creator);
+								//sysDictionaryData.setCreateDate(currentDate);
+								sysDictionaryData.setDicDataStatus("on");
+								insertList.add(sysDictionaryData);
+							}else {
+								throw new PlatformException("导入数据失败,第"+(i+1)+"行数据字典类型不存在");
+							}
+						}
+						sysDictionaryMapper.insertByBatch(insertList);
+						return ServerResponse.createBySuccessMessage("导入数据成功！共"+insertList.size()+"成功");
+						} catch (Exception e) {
+							e.printStackTrace();
+							return ServerResponse.createByErrorMessage("导入数据失败,数据转换异常。"+e.getMessage());
+						}
+					
+				} else {
+					return ServerResponse.createByErrorMessage("导入数据失败,文件不存在");
+				}
+			} else {
+				return ServerResponse.createByErrorMessage("导入数据失败," + serverResponse.getMsg());
+			}
+
+		} else {
+			return ServerResponse.createByErrorMessage("导入数据失败,首部的列名及排列顺序与模板文件的不一致");
+		}
+	}
+
 }

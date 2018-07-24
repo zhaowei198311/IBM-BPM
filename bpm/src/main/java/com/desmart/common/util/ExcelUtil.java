@@ -124,17 +124,17 @@ public class ExcelUtil {
 	}
 
 	/**
-	* 比较Excel的头字段与实体类的showname数量、名称及顺序是否一致
-	* 
+	* 比较Excel的头字段与实体类的showname数量、名称及顺序是否一致,headNum从0开始
 	* @param sheet
 	* @param map
+	* @param headNum
 	* @return
 	*/
-	public boolean equalsArrays(Sheet sheet, Map<Integer, String> map) {
+	public boolean equalsArrays(Sheet sheet, Map<Integer, String> map,Integer headNum) {
 		boolean check = true;
 		//for (int k = 0; k < sheet.getColumns(); k++) {
 		for (int k = 0; k < map.keySet().size(); k++) {
-			if (!sheet.getCell(k, 4).getContents().equals(map.get(k))) {//目前写死，第5行是头部
+			if (!sheet.getCell(k, headNum).getContents().equals(map.get(k))) {//目前写死，第5行是头部
 				check = false;
 				break;
 			}
@@ -147,16 +147,17 @@ public class ExcelUtil {
 	* 
 	* @param sheet
 	* @param clazz
+	* @param headNum 从0开始
 	* @return
 	* @throws Exception
 	*/
-	public String checkExcelContent(Sheet sheet, Class<?> clazz) throws Exception {
+	public String checkExcelContent(Sheet sheet, Class<?> clazz,Integer headNum) throws Exception {
 		StringBuilder result = new StringBuilder();
 		result.append("");
 		int size = sheet.getRows();
-		Cell[] heads = sheet.getRow(4);//目前写死，第5行为头部
+		Cell[] heads = sheet.getRow(headNum);//目前写死，第5行为头部
 		Map<Integer, ExcelHelper> map = loadExcelAnnotationFieldVlaue(clazz);
-		for (int i = 5; i < size; i++) {//目前写死，从第6行开始检验
+		for (int i = headNum+1; i < size; i++) {//目前写死，从第6行开始检验
 			Cell[] cells = sheet.getRow(i);
 			int len = cells.length;
 			for (int j = 0; j < len; j++) {
@@ -223,14 +224,15 @@ public class ExcelUtil {
 	* 
 	* @param sheet
 	* @param clazz
+	* @param headNum 头部行数 从0开始
 	* @return
 	* @throws Exception
 	*/
-	public <T> List<T> importExcelToEntity(Sheet sheet, Class<T> clazz) throws Exception {
+	public <T> List<T> importExcelToEntity(Sheet sheet, Class<T> clazz,Integer headNum) throws Exception {
 		List<T> list = new ArrayList<>();
 		Map<Integer, ExcelHelper> map = loadExcelAnnotationFieldVlaue(clazz);
 		int size = sheet.getRows();
-		for (int i = 1; i < size; i++) {
+		for (int i = headNum+1; i < size; i++) {
 			Cell[] cells = sheet.getRow(i);
 			int len = cells.length;
 			T t = (T) clazz.newInstance();
@@ -315,9 +317,10 @@ public class ExcelUtil {
 	 * 验证Excel文件首部的列名及排列顺序是否跟定义的类一致
 	 * 
 	 * @param file
+	 * @param headNum 从0开始
 	 * @return
 	 */
-	public static boolean checkExcelTitleAndSort(File file,Class claszz) {
+	public static boolean checkExcelTitleAndSort(File file,Class claszz,Integer headNum) {
 		InputStream stream = null;
 		Workbook rwb = null;
 		Boolean check = false;
@@ -328,7 +331,7 @@ public class ExcelUtil {
 			// 获取文件的指定工作表 默认的第一个
 			Sheet sheet = rwb.getSheet(0);
 			Map<Integer, String> titleAndSortMap = ExcelUtil.getInstance().getExcelFieldName(claszz);
-			check = ExcelUtil.getInstance().equalsArrays(sheet, titleAndSortMap);
+			check = ExcelUtil.getInstance().equalsArrays(sheet, titleAndSortMap,headNum);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -350,9 +353,10 @@ public class ExcelUtil {
 	 * 验证Excel文件的内容格式是否正确
 	 * 
 	 * @param file
+	 * @param headNum 从0开始
 	 * @return
 	 */
-	public static ServerResponse checkExcelContent(File file,Class claszz) {
+	public static ServerResponse checkExcelContent(File file,Class claszz,Integer headNum) {
 		InputStream stream = null;
 		Workbook rwb = null;
 		String result = "";
@@ -364,7 +368,7 @@ public class ExcelUtil {
 			// 获取文件的指定工作表 默认的第一个
 			Sheet sheet = rwb.getSheet(0);
 			// 如有验证失败，该方法会返回错字段的字段名称
-			result = ExcelUtil.getInstance().checkExcelContent(sheet, claszz);
+			result = ExcelUtil.getInstance().checkExcelContent(sheet, claszz,headNum);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -384,6 +388,19 @@ public class ExcelUtil {
 			return ServerResponse.createBySuccess();
 		} else {
 			return ServerResponse.createByErrorMessage(result);
+		}
+	}
+	
+	public static ServerResponse<Sheet> loadSheet(InputStream inputStream) {
+		Workbook rwb = null;
+		try {
+			// 获取Excel文件对象
+			rwb = Workbook.getWorkbook(inputStream);
+			// 获取文件的指定工作表 默认的第一个
+			Sheet sheet = rwb.getSheet(0);
+			return ServerResponse.createBySuccess(sheet);
+		}catch (Exception e) {
+			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
 
