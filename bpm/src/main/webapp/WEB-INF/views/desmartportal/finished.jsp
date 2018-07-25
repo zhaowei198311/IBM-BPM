@@ -293,10 +293,8 @@
 				}
 				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ '<td>' + sortNum + '</td>'
-					+
-	                '<td>' 
-	                +
-	                meta.dhProcessInstance.proName 
+					+ '<td>' 
+	                + meta.dhProcessInstance.proName 
 					+ '</td>'
 					+'<td><span style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
 					+ '<td>'

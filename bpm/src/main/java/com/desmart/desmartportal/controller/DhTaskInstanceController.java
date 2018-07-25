@@ -243,13 +243,16 @@ public class DhTaskInstanceController {
 																		@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
 																		@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,
 																		@RequestParam("insTitle")String insTitle,
+																		@RequestParam("proName")String proName,
+																		@RequestParam("isAgent")String isAgent,
 																		@RequestParam("createProcessUserName")String createProcessUserName,
 																		DhTaskInstance dhTaskInstance){
 		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		dhTaskInstance.setUsrUid(currentUserUid);
         if(insTitle!=null && !"".equals(insTitle)) {
-    	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        	DhProcessInstance dhProcessInstance = new DhProcessInstance();
     		dhProcessInstance.setInsTitle(insTitle);
+    		dhProcessInstance.setProName(proName);
     		dhTaskInstance.setDhProcessInstance(dhProcessInstance);
     	}
     	if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
@@ -257,7 +260,7 @@ public class DhTaskInstanceController {
     		sysUser.setUserName(createProcessUserName);
     		dhTaskInstance.setSysUser(sysUser);
     	}
-		return dhTaskInstanceService.queryTransfer(startTime, endTime, dhTaskInstance, pageNum, pageSize);
+		return dhTaskInstanceService.queryTransfer(startTime, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
 	}
 	
 	/**

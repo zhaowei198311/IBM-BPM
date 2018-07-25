@@ -252,21 +252,6 @@
 		and (T.USR_UID = #{usrUid} or T.TASK_DELEGATE_USER = #{usrUid})
 	</select>
 
-	<!-- 用户查询已办 -->
-	<select id="selectByusrUidFinsh" parameterType="java.lang.String"
-		resultType="java.lang.Integer">
-		SELECT COUNT(task_uid)
-		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
-		where T.INS_UID = P.INS_UID 
-		AND P.INS_INIT_USER = S.USER_ID 
-		AND P.PRO_APP_ID = PM.PRO_APP_ID
-		AND P.PRO_UID = PM.PRO_UID
-		AND T.TASK_STATUS = '32' 
-		AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop','add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-		and (T.USR_UID = #{usrUid} or T.TASK_DELEGATE_USER = #{usrUid})
-	</select>
-
 	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
 		UPDATE
 		DH_TASK_INSTANCE
@@ -833,25 +818,28 @@
 		resultType="java.lang.Integer">
 		SELECT COUNT(task_uid)
 		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		where T.INS_UID = P.INS_UID 
-			AND P.INS_INIT_USER = S.USER_ID
-			AND TASK_STATUS = '32'
-			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
-			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-			AND USR_UID = #{usrUid}
+		AND P.INS_INIT_USER = S.USER_ID 
+		AND P.PRO_APP_ID = PM.PRO_APP_ID
+		AND P.PRO_UID = PM.PRO_UID
+		AND T.TASK_STATUS = '32' 
+		AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop','add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+		and (T.USR_UID = #{usrUid} or T.TASK_DELEGATE_USER = #{usrUid})
 	</select>
 	
 	<!-- 查询抄送任务 （未读/已读）-->
 	<select id="queryTransferByTypeAndStatus" parameterType="map"
 			resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME
 		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		<where>
 			T.INS_UID = P.INS_UID 
 			AND
 			P.INS_INIT_USER = S.USER_ID
+			AND P.PRO_APP_ID = PM.PRO_APP_ID
+			AND P.PRO_UID = PM.PRO_UID
 			AND T.TASK_STATUS = #{dhTaskInstance.taskStatus}
 			AND T.TASK_TYPE = 'transfer'
 			<if test="dhTaskInstance.dhProcessInstance != null ">
@@ -865,6 +853,22 @@
 				and dhTaskInstance.sysUser.userName !='' ">
 				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
 			</if>
+			</if>
+			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
+				<choose>
+					<when test="isAgent=='false'">
+						AND T.TASK_DELEGATE_USER is null
+					</when>
+					<!-- 代理人是本人 -->
+					<when test="isAgent=='1' or isAgent==1">
+						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
+					</when>
+					<!-- 代理人是其他人 -->
+					<when test="isAgent=='2' or isAgent==2">
+						AND T.TASK_DELEGATE_USER is not null 
+						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
+					</when>
+				</choose>
 			</if>
 			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
 				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
