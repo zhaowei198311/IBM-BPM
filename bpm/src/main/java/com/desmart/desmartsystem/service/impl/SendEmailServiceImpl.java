@@ -30,8 +30,10 @@ import com.desmart.desmartbpm.dao.DhNotifyTemplateMapper;
 import com.desmart.desmartbpm.entity.DhNotifyTemplate;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysEmailUtilBean;
+import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
 import com.desmart.desmartsystem.service.SendingEmailService;
@@ -48,6 +50,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private DhNotifyTemplateMapper dhNotifyTemplateMapper;
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
     
     /**
      * 初始化方法，使用配置中的用户名密码
@@ -113,47 +117,75 @@ public class SendEmailServiceImpl implements SendEmailService {
         }
     }
 	@Override
-	public ServerResponse dhSendEmail(DhTaskInstance taskInstance, String notifyTemplateUid) {
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(taskInstance.getInsUid());
-		JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
-		JSONObject formData = insData.getJSONObject("formData");
-		List<String> toUserUidList = new ArrayList<>();
-		if (taskInstance.getUsrUid() != null && !"".equals(taskInstance.getUsrUid())) {
-			toUserUidList.add(taskInstance.getUsrUid());
+	public ServerResponse dhSendEmail(SysEmailUtilBean sysEmailUtilBean) {
+		if(sysEmailUtilBean==null) {
+			return ServerResponse.createByErrorMessage("发送邮件失败，缺少必要参数");
 		}
-		if (taskInstance.getTaskDelegateUser() != null && !"".equals(taskInstance.getTaskDelegateUser())) {
-			toUserUidList.add(taskInstance.getTaskDelegateUser());
+		if((sysEmailUtilBean.getToUserNoList()==null&&sysEmailUtilBean.getToEmailList()==null)
+				||(sysEmailUtilBean.getToUserNoList()==null&&sysEmailUtilBean.getToEmailList().size()==0)
+				||(sysEmailUtilBean.getToUserNoList().size()==0&&sysEmailUtilBean.getToEmailList()==null)
+				||(sysEmailUtilBean.getToUserNoList().size()==0&&sysEmailUtilBean.getToEmailList().size()==0)) {
+			return ServerResponse.createByErrorMessage("发送邮件失败，收件人不能为空");
 		}
-		DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(notifyTemplateUid);
+		List<String> toList = new ArrayList<>();
+		if(sysEmailUtilBean.getToEmailList()!=null&&sysEmailUtilBean.getToEmailList().size()>0) {
+			toList.addAll(sysEmailUtilBean.getToEmailList());
+		}
+		//根据工号查询邮箱地址
+		if(sysEmailUtilBean.getToUserNoList()!=null&&sysEmailUtilBean.getToUserNoList().size()>0) {
+			List<SysUser> list = sysUserMapper.listByPrimaryKeyList(sysEmailUtilBean.getToUserNoList());
+			if(list!=null&&list.size()>0) {
+				for (SysUser sysUser : list) {
+					toList.add(sysUser.getEmail());
+				}
+			}
+		}
+		
+		
+		DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(sysEmailUtilBean.getNotifyTemplateUid());
 		String subject = dhNotifyTemplate.getTemplateSubject();
 		String body = dhNotifyTemplate.getTemplateContent();
 		body = body.replaceAll("\\n|\\r\\n","<br/>");
 		body = body.replaceAll(" ","&nbsp;");
-		Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");
-		Matcher matcher = pattern.matcher(body);
-
-		/*case "name":
-			body = body.replaceAll("\\{name\\}", "name");
-			break;*/
-		while (matcher.find()) {
-			String t = matcher.group(1);
-			switch (t) {
-			case "proName":
-				body = body.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
-				break;
-			case "proNo":
-				body = body.replaceAll("\\{proNo\\}", "proNo");
-				break;
-			case "approvalUrl":
-				String approvalUrl = "<a href= 'http://172.19.54.163:8090/bpm/user/menus/approval?taskUid=" + taskInstance.getTaskUid()+"'>点击前往</a>";
-				body = body.replaceAll("\\{approvalUrl\\}", approvalUrl);
-				break;
-			default:
-				JSONObject filedValue = formData.getJSONObject(t);
-				if (filedValue != null) {
-					body = body.replaceAll("\\{" + t + "\\}", filedValue.getString("value"));
+		/*subject = subject.replaceAll("\\n|\\r\\n","<br/>");
+		subject = subject.replaceAll(" ","&nbsp;");*/
+		
+		if(sysEmailUtilBean.getDhTaskInstance()!=null) {
+			DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(
+								sysEmailUtilBean.getDhTaskInstance().getInsUid());
+			JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
+			JSONObject formData = insData.getJSONObject("formData");
+			
+			Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");
+			Matcher matcher = pattern.matcher(body);
+			while (matcher.find()) {
+				String t = matcher.group(1);
+				switch (t) {
+				case "proName":
+					body = body.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
+					subject = subject.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
+					break;
+				case "proNo":
+					body = body.replaceAll("\\{proNo\\}", "proNo");
+					subject = subject.replaceAll("\\{proNo\\}", "proNo");
+					break;
+				case "hideUrl":
+					String hideUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>请您单击这里进行查看</a>";
+					body = body.replaceAll("\\{hideUrl\\}", hideUrl);
+					break;
+				case "showUrl":
+					String showUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>"
+							+sysEmailUtilBean.getBpmformsHost()+"/bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"</a>";
+					body = body.replaceAll("\\{showUrl\\}", showUrl);
+					break;
+				default:
+					JSONObject filedValue = formData.getJSONObject(t);
+					if (filedValue != null) {
+						body = body.replaceAll("\\{" + t + "\\}", filedValue.getString("value"));
+						subject = subject.replaceAll("\\{" + t + "\\}", filedValue.getString("value"));
+					}
+					break;
 				}
-				break;
 			}
 		}
 			SendMail sendMail = SendMail.getInstaance();

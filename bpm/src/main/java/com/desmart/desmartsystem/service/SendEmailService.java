@@ -2,6 +2,7 @@ package com.desmart.desmartsystem.service;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartsystem.entity.SysEmailUtilBean;
 
 public interface SendEmailService {
 	/**
@@ -15,9 +16,8 @@ public interface SendEmailService {
     
     /**
      * 调用工具类发送邮件
-     * @param taskInstance
-     * @param notifyTemplateUid
+     * @param sysEmailUtilBean
      * @return
      */
-    public ServerResponse dhSendEmail(DhTaskInstance taskInstance,String notifyTemplateUid);
+    public ServerResponse dhSendEmail(SysEmailUtilBean sysEmailUtilBean);
 }
