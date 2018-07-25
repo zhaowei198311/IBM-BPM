@@ -4,9 +4,9 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     var area=[];
     if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
-    	area=['615px', '480px'];
+    	area=['620px', '480px'];
     }else{
-    	area=['615px', '480px'];
+    	area=['620px', '480px'];
     }
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=';
