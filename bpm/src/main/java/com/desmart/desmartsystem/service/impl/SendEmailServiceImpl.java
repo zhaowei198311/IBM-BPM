@@ -117,12 +117,12 @@ public class SendEmailServiceImpl implements SendEmailService {
 		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(taskInstance.getInsUid());
 		JSONObject insData = JSONObject.parseObject(dhProcessInstance.getInsData());
 		JSONObject formData = insData.getJSONObject("formData");
-		List<String> toList = new ArrayList<>();
+		List<String> toUserUidList = new ArrayList<>();
 		if (taskInstance.getUsrUid() != null && !"".equals(taskInstance.getUsrUid())) {
-			toList.add(taskInstance.getUsrUid());
+			toUserUidList.add(taskInstance.getUsrUid());
 		}
 		if (taskInstance.getTaskDelegateUser() != null && !"".equals(taskInstance.getTaskDelegateUser())) {
-			toList.add(taskInstance.getTaskDelegateUser());
+			toUserUidList.add(taskInstance.getTaskDelegateUser());
 		}
 		DhNotifyTemplate dhNotifyTemplate = dhNotifyTemplateMapper.getByTemplateUid(notifyTemplateUid);
 		String subject = dhNotifyTemplate.getTemplateSubject();
@@ -131,12 +131,13 @@ public class SendEmailServiceImpl implements SendEmailService {
 		body = body.replaceAll(" ","&nbsp;");
 		Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");
 		Matcher matcher = pattern.matcher(body);
+
+		/*case "name":
+			body = body.replaceAll("\\{name\\}", "name");
+			break;*/
 		while (matcher.find()) {
 			String t = matcher.group(1);
 			switch (t) {
-			case "name":
-				body = body.replaceAll("\\{name\\}", "name");
-				break;
 			case "proName":
 				body = body.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
 				break;
@@ -157,8 +158,8 @@ public class SendEmailServiceImpl implements SendEmailService {
 		}
 			SendMail sendMail = SendMail.getInstaance();
 			List<String> toListTest = new ArrayList<>();
-	    	toList.add("helloSSM@163.com");
-	    	toList.add("1254431331@qq.com");
+			toListTest.add("helloSSM@163.com");
+			toListTest.add("1254431331@qq.com");
 			if(sendMail.send(subject, body, toListTest)) {
 				return ServerResponse.createBySuccess();
 			}else {

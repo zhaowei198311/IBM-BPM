@@ -136,6 +136,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         List<DhTaskInstance> dhTaskList = new ArrayList<>();
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
+        String notifyTemplateUid = null;
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             Map<String, Object> data = null;
@@ -152,11 +153,16 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
                 agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
             }
+            if(data!=null&&data.get("notifyTemplateUid")!=null&&!"".equals(data.get("notifyTemplateUid"))) {
+            	notifyTemplateUid = data.get("notifyTemplateUid").toString();
+            }
         }
         for(DhTaskInstance task : dhTaskList) {
         	dhTaskInstanceMapper.insertTask(task);
         	//发送邮件通知
-        	//sendEmailService.dhSendEmail(task, notifyTemplateUid);
+        	if(notifyTemplateUid!=null) {
+        		sendEmailService.dhSendEmail(task, notifyTemplateUid);
+        	}
         }
         if (agentRecordList.size() > 0) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
@@ -301,6 +307,13 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     agentRecordList.add(agentRecord);
                 }
             }
+        }
+        
+        if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
+        	if(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate()!=null
+        			&&!"".equals(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())) {
+        		result.put("notifyTemplateUid", bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
+        	}
         }
         
         result.put("dhTaskList", dhTaskList);
