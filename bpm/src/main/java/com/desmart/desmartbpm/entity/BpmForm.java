@@ -19,6 +19,7 @@ public class BpmForm {
 	private String creatorFullName;//不是本表，连接查询得到
 	private Date createTime;
 	private String formNoExpression;   // 表单编号生成表达式
+	private String formNoStatic;
 	
 	private String dynWebpage;
 	
@@ -123,6 +124,14 @@ public class BpmForm {
 	}
 	public void setDynWebpage(String dynWebpage) {
 		this.dynWebpage = dynWebpage;
+	}
+
+	public String getFormNoStatic() {
+		return formNoStatic;
+	}
+
+	public void setFormNoStatic(String formNoStatic) {
+		this.formNoStatic = formNoStatic;
 	}
 
 	@Override
