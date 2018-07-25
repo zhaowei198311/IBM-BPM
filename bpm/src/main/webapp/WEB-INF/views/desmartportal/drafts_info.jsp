@@ -322,7 +322,7 @@
 			title : '选择人员',
 			shadeClose : true,
 			shade : 0.3,
-			area : [ '680px', '520px' ],
+			area : [ '620px', '480px' ],
 			content : [ url, 'yes' ],
 			success : function(layero, lockIndex) {
 				var body = layer.getChildFrame('body', lockIndex);
