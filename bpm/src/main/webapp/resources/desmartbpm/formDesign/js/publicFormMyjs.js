@@ -714,6 +714,13 @@ function showChooseUserModal(obj){
     $("#choose-user-id").val(id);
     $("#choose-user-width").val(textCol);
     $("#choose-user-label-width").val(textLabelCol);
+    
+    var num = view.find(".labelDiv").find("span").length;
+    if (num == 0) {
+        $("#choose-user-must").removeAttr("checked");
+    } else {
+        $("#choose-user-must").attr("checked", "checked");
+    }
 }
 
 //选部门组件
@@ -739,6 +746,13 @@ function showChooseDepartModal(obj){
     $("#choose-depart-id").val(id);
     $("#choose-depart-width").val(textCol);
     $("#choose-depart-label-width").val(textLabelCol);
+    
+    var num = view.find(".labelDiv").find("span").length;
+    if (num == 0) {
+        $("#choose-depart-must").removeAttr("checked");
+    } else {
+        $("#choose-depart-must").attr("checked", "checked");
+    }
 }
 
 //弹框选值
@@ -768,6 +782,13 @@ function showChooseValueModal(obj){
     $("#data_type_view").val(databaseName);
     $("#data_type").val(databaseType);
     $("#choose-value-label-width").val(textLabelCol);
+    
+    var num = view.find(".labelDiv").find("span").length;
+    if (num == 0) {
+        $("#choose-value-must").removeAttr("checked");
+    } else {
+        $("#choose-value-must").attr("checked", "checked");
+    }
 }
 
 var nameArr = new Array();
@@ -1596,6 +1617,7 @@ $(function () {
             var textWidth = $("#choose-user-width").val() * colWidth;
             var textLabelWidth = $("#choose-user-label-width").val() * colWidth;
 
+            var isMust = $("#choose-user-must").is(':checked');
             view.find("label").text(label);
             var subObj = view.find("div[title='choose_user']");
             subObj.attr({
@@ -1609,6 +1631,15 @@ $(function () {
             subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-user-width").val());
             subObj.css("width", textWidth - 18).attr("col", $("#choose-user-width").val());
             subObj.find("input[type='text']").css("width", textWidth - 60);
+            
+            if (isMust) {
+                var num = view.find(".labelDiv").find("span").length;
+                if (num == 0) {
+                    view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                }
+            } else {
+                view.find(".labelDiv").find("span").remove();
+            }
             
             $("#choose-user-warn").modal('hide');
             $("#chooesUserModal").modal("hide");
@@ -1630,6 +1661,7 @@ $(function () {
 
             var textWidth = $("#choose-depart-width").val() * colWidth;
             var textLabelWidth = $("#choose-depart-label-width").val() * colWidth;
+            var isMust = $("#choose-value-must").is(':checked');
 
             view.find("label").text(label);
             var subObj = view.find("div[title='choose_depart']");
@@ -1644,6 +1676,14 @@ $(function () {
             subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-depart-width").val());
             subObj.css("width", textWidth - 18).attr("col", $("#choose-depart-width").val());
             subObj.find("input[type='text']").css("width", textWidth - 60);
+            if (isMust) {
+                var num = view.find(".labelDiv").find("span").length;
+                if (num == 0) {
+                    view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                }
+            } else {
+                view.find(".labelDiv").find("span").remove();
+            }
             
             $("#choose-depart-warn").modal('hide');
             $("#chooesDepartModal").modal("hide");
@@ -1666,6 +1706,7 @@ $(function () {
             var textWidth = $("#choose-value-width").val() * colWidth;
             var textLabelWidth = $("#choose-value-label-width").val() * colWidth;
             var dataType = $("#data_type").val();
+            var isMust = $("#choose-value-must").is(':checked');
             
             view.find("label").text(label);
             var subObj = view.find("div[title='choose_value']");
@@ -1683,6 +1724,14 @@ $(function () {
             subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-value-width").val());
             subObj.css("width", textWidth - 18).attr("col", $("#choose-value-width").val());
             subObj.find("input[type='text']").css("width", textWidth - 60);
+            if (isMust) {
+                var num = view.find(".labelDiv").find("span").length;
+                if (num == 0) {
+                    view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                }
+            } else {
+                view.find(".labelDiv").find("span").remove();
+            }
             
             $("#choose-value-warn").modal('hide');
             $("#chooesValueModal").modal("hide");

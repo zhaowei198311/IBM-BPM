@@ -151,6 +151,7 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_user']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
+					labelDivObj.find("span").addClass("tip_span");
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_user']");
 					var subDivCol = subDivObj.attr("col");
@@ -169,6 +170,7 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_value']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
+					labelDivObj.find("span").addClass("tip_span");
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_value']");
 					var subDivCol = subDivObj.attr("col");
@@ -187,6 +189,7 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_depart']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
+					labelDivObj.find("span").addClass("tip_span");
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_depart']");
 					var subDivCol = subDivObj.attr("col");
