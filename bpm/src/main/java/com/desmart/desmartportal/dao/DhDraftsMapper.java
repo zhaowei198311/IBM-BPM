@@ -21,8 +21,6 @@ public interface DhDraftsMapper {
 	
 	List <DhDrafts> select();
 	
-	List <DhDrafts> selectBydfsTitle(String dfsTitle);
-	
 	int save(DhDrafts drafts);
 	
 	DhDrafts selectBydfsId(String dfsId);

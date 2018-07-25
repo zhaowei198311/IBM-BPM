@@ -32,9 +32,15 @@
             <div class="search_area">
 				<div class="layui-row layui-form">
 					<div class="layui-col-md3">
-						<label class="layui-form-label">草稿名称</label>
+						<label class="layui-form-label">流程名称</label>
 						<div class="layui-input-block">
-							<input id="dfsTitle" type="text" placeholder="草稿名称" class="layui-input">
+							<input id="proName" type="text" placeholder="流程名称" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">流程标题</label>
+						<div class="layui-input-block">
+							<input id="dfsTitle" type="text" placeholder="流程标题" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md3" style="text-align: center;"> 
@@ -58,7 +64,7 @@
 						<tr>
 							<th>序号</th>
 							<th>流程名称</th>
-							<th>草稿名称</th>
+							<th>流程标题</th>
 							<th>创建人</th>
 							<th>创建日期</th>
 							<th>操作</th>
@@ -82,7 +88,9 @@
 	var pageConfig = {
 		pageNum : 1,
 		pageSize : 10,
-		total : 0
+		total : 0,
+		insTitle: "",
+		proName:""
 	}
 
 	layui.use([ 'laypage', 'layer' ], function() {
@@ -112,6 +120,8 @@
 			data : {
 				pageNum : pageConfig.pageNum,
 				pageSize : pageConfig.pageSize,
+				insTitle : pageConfig.insTitle,
+				proName : pageConfig.proName
 			},
 			success : function(result) {
 				drawTable(result.data)
@@ -186,18 +196,11 @@
 	}
 
 	function search() {
-		var title = $("#dfsTitle").val();
-		$.ajax({
-			url : 'drafts/queryDraftsByTitle',
-			type : 'POST',
-			dataType : 'json',
-			data : {
-				dfsTitle : title
-			},
-			success : function(result) {
-				drawTable(result.data)
-			}
-		})
+		pageConfig.pageNum = 1;
+		pageConfig.pageSize = 10;
+		pageConfig.insTitle = $("#dfsTitle").val();
+		pageConfig.proName = $("#proName").val();
+		getDraftsInfo();
 	}
 
 	function del(id) {

@@ -47,16 +47,6 @@
 		</where>
 	</delete>
 	
-	<select id="selectBydfsTitle" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhDrafts">
-		SELECT 
-		<include refid="Base_Column_List"/>
-		FROM
-		DH_DRAFTS
-		<where>
-			DFS_TITLE like '%' || #{dfsTitle} || '%'
-		</where>
-	</select>
-	
 	<insert id="save" parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		INSERT INTO
 		DH_DRAFTS
@@ -121,9 +111,16 @@
 		left join dh_process_instance ins on d.ins_uid = ins.ins_uid
 		left join dh_process_meta meta
 		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
-		where 1 = 1
-		<if test="dfsCreator != null and dfsCreator != ''">
-			and d.DFS_CREATOR =	#{dfsCreator}
-		</if>
+		<where>
+			<if test="dfsCreator != null and dfsCreator != ''">
+				and d.DFS_CREATOR =	#{dfsCreator}
+			</if>
+			<if test="dfsTitle != null and dfsTitle != ''">
+				and d.dfs_title like '%'|| #{dfsTitle} ||'%'
+			</if>
+			<if test="proName != null and proName != ''">
+				and meta.pro_name like '%'|| #{proName} ||'%'
+			</if>
+		</where>
 	</select>
 </mapper>

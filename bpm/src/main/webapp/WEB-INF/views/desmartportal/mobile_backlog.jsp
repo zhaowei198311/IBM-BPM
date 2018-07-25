@@ -15,7 +15,7 @@
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes">  
 	<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">  
-	<title>代办列表</title>
+	<title>待办列表</title>
 	<link href="resources/desmartportal/css/mymobile_layui.css" rel="stylesheet"/>
   	<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
   	<link href="resources/desmartportal/css/mobile_my.css" rel="stylesheet" />

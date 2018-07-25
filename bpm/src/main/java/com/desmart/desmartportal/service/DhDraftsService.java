@@ -31,16 +31,7 @@ public interface DhDraftsService {
 	 * @param pageSize
 	 * @return
 	 */
-	ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize);
-	
-	/**
-	 * 根据草稿标题查询所有数据
-	 * @param title 草稿标题
-	 * @param pageNum
-	 * @param pageSize
-	 * @return
-	 */
-	ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsBydfsTitle(String title, Integer pageNum, Integer pageSize);
+	ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize, String insTitle, String proName);
 	
 	/**
 	 * 保存草稿数据
