@@ -30,12 +30,13 @@ public interface DhProcessMetaService {
     ServerResponse createDhProcessMeta(DhProcessMeta dhProcessMeta);
     
     /**
-     * 重命名流程元数据
+     * 更新流程元数据
      * @param metaUid 元数据主键
      * @param newName 新名
+     * @param proNo
      * @return
      */
-    ServerResponse renameDhProcessMeta(String metaUid, String newName);
+    ServerResponse updateDhProcessMeta(String metaUid, String newName, String proNo);
     
     /**
      * 删除指定的流程元数据

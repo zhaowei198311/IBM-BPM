@@ -49,7 +49,7 @@
     </sql>
 	
 	<select id="queryBySelective" parameterType="com.desmart.desmartportal.entity.DhProcessInstance" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name, su.user_name initUserFullname
+		SELECT <include refid="realationColumnList"/>, meta.pro_Name, meta.pro_no, sd.depart_name, sc.company_name, su.user_name initUserFullname
 		FROM dh_process_instance ins
 		left join dh_process_meta meta
 		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
@@ -136,7 +136,7 @@
 	</select>
 	
 	<select id="selectByPrimaryKey" parameterType="java.lang.String" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-       SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name, su.user_name initUserFullname
+       SELECT <include refid="realationColumnList"/>, meta.pro_Name, meta.pro_no, sd.depart_name, sc.company_name, su.user_name initUserFullname
        FROM dh_process_instance ins
        left join dh_process_meta meta
          on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
@@ -275,7 +275,7 @@
 	</insert>
 	
     <select id="queryByInsId" parameterType="int" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-       SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
+       SELECT <include refid="realationColumnList"/>, meta.pro_Name, meta.pro_no, sd.depart_name, sc.company_name
        FROM dh_process_instance ins
        left join dh_process_meta meta
          on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
@@ -305,7 +305,7 @@
     </select>
 
     <select id="getMainProcessByInsId" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
+		SELECT <include refid="realationColumnList"/>, meta.pro_Name, meta.pro_no, sd.depart_name, sc.company_name
 		FROM dh_process_instance ins
 		left join dh_process_meta meta
 		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
@@ -317,7 +317,7 @@
 	</select>
 
 	<select id="getByInsIdAndTokenActivityId" resultType="com.desmart.desmartportal.entity.DhProcessInstance">
-		SELECT <include refid="realationColumnList"/>, meta.pro_Name, sd.depart_name, sc.company_name
+		SELECT <include refid="realationColumnList"/>, meta.pro_Name, meta.pro_no, sd.depart_name, sc.company_name
 		FROM dh_process_instance ins
 		left join dh_process_meta meta
 		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid

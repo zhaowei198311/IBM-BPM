@@ -341,18 +341,36 @@ $(document).ready(function(){
 
     // 确认修改元数据名称
     $('#editMeta_sureBtn').click(function() {
-        var newName = $('#metarename_input').val();
-        if (!newName.trim()) {
+        var newName = $('#metarename_input').val().trim();
+        var proNo = $('#metaProNo_input').val().trim();
+        if (!newName) {
             layer.alert('请输入新名称');
+            $('#metarename_input').focus();
+            return;
+        }
+        if (newName.length > 30) {
+            layer.alert('名称过长');
+            $('#metarename_input').focus();
+            return;
+        }
+        if (!proNo) {
+            layer.alert('请输入流程编号');
+            $('#metaProNo_input').focus();
+            return;
+        }
+        if (proNo.length > 30) {
+            layer.alert('流程编号过长');
+            $('#metaProNo_input').focus();
             return;
         }
         $.ajax({
-            url: common.getPath() + "/processMeta/rename",
+            url: common.getPath() + "/processMeta/update",
             type: "post",
             dataType: "json",
             data: {
                 "metaUid": metaToEdit,
-                "newName": newName
+                "newName": newName,
+                "proNo": proNo
             },
             success: function(result) {
                 if (result.status == 0) {
@@ -633,7 +651,8 @@ function drawTable(pageInfo) {
         if (meta.lastUpdateTime) {
             updateTime = common.dateToString(new Date(meta.lastUpdateTime));
         }
-        trs += '<tr data-metauid="'+meta.proMetaUid+'" ondblclick="showEditDiv(this);"><td><input type="checkbox" name="proMeta_check" value="' + meta.categoryUid + '" lay-skin="primary">'+ sortNum +'</td>'
+        trs += '<tr data-metauid="'+meta.proMetaUid+'" data-proNo="' + meta.proNo + '" ondblclick="showEditDiv(this);">'
+            + '<td><input type="checkbox" name="proMeta_check" value="' + meta.categoryUid + '" lay-skin="primary">'+ sortNum +'</td>'
             + '<td>'+meta.proName+'</td>'
             + '<td>'+meta.proAppId+'</td>'
             + '<td>'+meta.proUid+'</td>'
@@ -745,6 +764,7 @@ function doPage2() {
 function showEditDiv(tr){
     metaToEdit = $(tr).data('metauid');
     $('#metarename_input').val($(tr).find('td').eq(1).html());
+    $('#metaProNo_input').val($(tr).data('prono'));
     $('#eidtMeta_appIdShow').val($(tr).find('td').eq(2).html());
     $('#eidtMet_bpdIdShow').val($(tr).find('td').eq(3).html());
     $('#eidtMet_displayShow').val($(tr).find('td').eq(4).html());

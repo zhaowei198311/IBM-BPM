@@ -25,6 +25,8 @@ public class BpmForm {
 	
 	private String proMetaName;//流程元名，前台显示
 	private String proVerName;//流程快照名
+	private String formNo;  // 表单流水号
+
 	
 	public BpmForm() {}
 
@@ -124,6 +126,14 @@ public class BpmForm {
 	}
 	public void setDynWebpage(String dynWebpage) {
 		this.dynWebpage = dynWebpage;
+	}
+
+	public String getFormNo() {
+		return formNo;
+	}
+
+	public void setFormNo(String formNo) {
+		this.formNo = formNo;
 	}
 
 	public String getFormNoStatic() {

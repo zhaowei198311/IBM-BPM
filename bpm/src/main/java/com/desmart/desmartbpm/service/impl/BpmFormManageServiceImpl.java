@@ -353,4 +353,12 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		formSelective.setProVersion(proVerUid);
 	    return bpmFormManageMapper.listBySelective(formSelective);
 	}
+
+	@Override
+	public BpmForm getByFormUid(String formUid) {
+		if (StringUtils.isBlank(formUid)) {
+		    return null;
+		}
+		return bpmFormManageMapper.queryFormByFormUid(formUid);
+	}
 }

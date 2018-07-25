@@ -18,6 +18,7 @@ import com.desmart.common.util.*;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
+import com.desmart.desmartportal.service.DhFormNoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -73,7 +74,7 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
-	private Logger log = Logger.getLogger(DhProcessInstanceServiceImpl.class);
+	private Logger logger = Logger.getLogger(DhProcessInstanceServiceImpl.class);
 
 	@Autowired
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
@@ -119,6 +120,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private TaskMongoDao taskMongoDao;
 	@Autowired
 	private InsDataDao insDataDao;
+	@Autowired
+	private DhFormNoService dhFormNoService;
+
 
 	/**
 	 * 查询所有流程实例
@@ -126,7 +130,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectAllProcess(DhProcessInstance processInstance,
 			Integer pageNum, Integer pageSize) {
-		log.info("查询所有process开始");
+		logger.info("查询所有process开始");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
 			List<DhProcessInstance> resultList = dhProcessInstanceMapper.queryBySelective(processInstance);
@@ -135,7 +139,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("查询所有process结束");
+		logger.info("查询所有process结束");
 		return null;
 	}
 
@@ -144,12 +148,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 */
 	@Override
 	public ServerResponse selectByPrimaryKey(String insUid) {
-		log.info("");
+		logger.info("");
 		DhProcessInstance proInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 		if (null == proInstance) {
 			throw new PlatformException("找不到目标流程实例");
 		}
-		log.info("");
+		logger.info("");
 		return ServerResponse.createBySuccess(proInstance);
 	}
 
@@ -166,13 +170,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 */
 	@Override
 	public int deleteByPrimaryKey(String insUid) {
-		log.info("");
+		logger.info("");
 		try {
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		logger.info("");
 		return 0;
 	}
 
@@ -181,7 +185,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	 */
 	@Override
 	public void insertProcess(DhProcessInstance processInstance) {
-		log.info("添加新的流程实例 Start...");
+		logger.info("添加新的流程实例 Start...");
 		try {
 			if (processInstance != null) {
 				dhProcessInstanceMapper.insertProcess(processInstance);
@@ -189,7 +193,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("添加新的流程实例 End...");
+		logger.info("添加新的流程实例 End...");
 	}
 
 	/**
@@ -198,7 +202,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectProcessByUserAndType(
 			DhProcessInstance processInstance, Integer pageNum, Integer pageSize) {
-		log.info("通过用户查询流程实例 Start...");
+		logger.info("通过用户查询流程实例 Start...");
 		List<DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
 		try {
 			PageHelper.startPage(pageNum, pageSize);
@@ -219,7 +223,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("通过用户查询流程实例 End...");
+		logger.info("通过用户查询流程实例 End...");
 		return null;
 	}
 
@@ -229,7 +233,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> queryByStausOrTitle(Map<String, Object> paramMap,
 			Integer pageNum, Integer pageSize) {
-		log.info("模糊查询流程实例 Start...");
+		logger.info("模糊查询流程实例 Start...");
 		List<DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
 		try {
 			PageHelper.startPage(pageNum, pageSize);
@@ -250,7 +254,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("模糊查询流程实例 End...");
+		logger.info("模糊查询流程实例 End...");
 		return null;
 	}
 
@@ -260,14 +264,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (StringUtils.isBlank(data)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
 		}
-		JSONObject dataJson = JSONObject.parseObject(data);
-		JSONObject formDataFromTask = (JSONObject) dataJson.get("formData");
-		JSONArray routeData = dataJson.getJSONArray("routeData");
-		JSONObject processData = (JSONObject) dataJson.get("processData");
-		String insTitle = processData.getString("insTitle");
-		String companyNumber = processData.getString("companyNumber");
-		String departNo = processData.getString("departNo");
-		String insUid = processData.getString("insUid");
+		JSONObject taskDataJson = JSONObject.parseObject(data);
+		JSONObject formDataFromTask = (JSONObject) taskDataJson.get("formData");
+		JSONArray routeDataFromTask = taskDataJson.getJSONArray("routeData");
+		JSONObject processDataFromTask = (JSONObject) taskDataJson.get("processData");
+		String insTitle = processDataFromTask.getString("insTitle");
+		String companyNumber = processDataFromTask.getString("companyNumber");
+		String departNo = processDataFromTask.getString("departNo");
+		String insUid = processDataFromTask.getString("insUid");
 
 		DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
 		if (mainProcessInstance == null || DhProcessInstance.STATUS_ID_DRAFT != mainProcessInstance.getInsStatusId().intValue()) {
@@ -279,8 +283,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String insDataStr = mainProcessInstance.getInsData();
 
 		// 混合提交的表单内容和流程实例中的表单内容
-		JSONObject insData = JSON.parseObject(insDataStr);
-		JSONObject formDataFromIns = insData.getJSONObject("formData");
+		JSONObject insDataJson = JSON.parseObject(insDataStr);
+		JSONObject formDataFromIns = insDataJson.getJSONObject("formData");
 		JSONObject mergedFromData = FormDataUtil.formDataCombine(formDataFromTask, formDataFromIns);
 
 		// 查看可供发起的流程定义版本
@@ -306,10 +310,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         BpmRoutingData routingData = dhRouteService.getBpmRoutingData(firstHumanActivity, mergedFromData);
 		// 生成表单号
         DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstHumanActivity, mainProcessInstance.getInsBusinessKey());
-
+        BpmForm bpmForm = bpmFormManageService.getByFormUid(formStepOfTaskNode.getStepObjectUid());
+        JSONArray formNoListJson = dhFormNoService.updateFormNoListJsonObject(bpmForm, insDataJson.getJSONArray("formNoList"));
 
         // 检查用户传递的选人信息是否全面
-        if (!dhRouteService.checkRouteData(firstHumanActivity, routeData, routingData)) {
+        if (!dhRouteService.checkRouteData(firstHumanActivity, routeDataFromTask, routingData)) {
             return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
         }
 
@@ -352,11 +357,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             instanceSelective.setCompanyNumber(companyNumber);
             instanceSelective.setDepartNo(departNo);
             // 装配insData
-            insData.put("formData", mergedFromData);
-            processData.put("insInitUser", currentUserUid);
-            insData.put("processData", processData);
+            insDataJson.put("formData", mergedFromData);
+            processDataFromTask.put("insInitUser", currentUserUid);
+            insDataJson.put("processData", processDataFromTask);
+            insDataJson.put("formNoList", formNoListJson);
 
-            instanceSelective.setInsData(insData.toJSONString());
+            instanceSelective.setInsData(insDataJson.toJSONString());
             dhProcessInstanceMapper.updateByPrimaryKeySelective(instanceSelective);
             mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(mainProcessInstance.getInsUid());
 
@@ -370,9 +376,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             map.put("dhProcessInstance", mainProcessInstance);
             map.put("routingData", routingData);
             map.put("pubBo", pubBo);
-            map.put("dataJson", dataJson);
+            map.put("dataJson", taskDataJson);
 			return ServerResponse.createBySuccess(map);
 		} else {
+            logger.error("发起流程失败，调用RESTFul API失败。" + result.getMsg());
 			return ServerResponse.createByErrorMessage("发起流程失败");
 		}
 	}
@@ -547,12 +554,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			return ServerResponse.createByErrorMessage("缺少表单权限信息");
 		}
 		String fieldPermissionInfo = fieldPermissionResponse.getData();
-
-		ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
-		if (!getFormResponse.isSuccess()) {
-			return ServerResponse.createByErrorMessage("缺少表单");
-		}
-		BpmForm bpmForm = (BpmForm) getFormResponse.getData();
+        // 获得表单
+		BpmForm bpmForm = bpmFormManageService.getByFormUid(formStep.getStepObjectUid());
 
 		// 是否显示环节权责控制
 		if (StringUtils.isBlank(dhActivityConf.getActcResponsibility())
@@ -582,9 +585,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
      */
 	private boolean checkPermissionStart(DhProcessDefinition processDefintion) {
 		boolean flag = false;
-		log.info("判断---当前用户权限 开始。。。");
+		logger.info("判断---当前用户权限 开始。。。");
 		String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		log.info("当前用户为" + user);
+		logger.info("当前用户为" + user);
 		if(Const.Boolean.TRUE.equals(processDefintion.getIsAllUserStart())) {
 			flag = true;
 		}else {
@@ -679,7 +682,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhRoutingRecord.setInsUid(insUid);
 			switch (rejectType) {
 			case "toProcessStart":
-				log.info("驳回到发起人");
+				logger.info("驳回到发起人");
 				// 发起人
 				// 获得流程发起人
 				String insInitUser = dhProcessInstance.getInsInitUser();
@@ -715,7 +718,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				activitiMapList.add(toProcessStartMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toPreActivity":
-				log.info("驳回到上个环节");
+				logger.info("驳回到上个环节");
 				// 上个环节
 				Map<String, Object> toPreActivityMap = new HashMap<>();
 				ServerResponse<BpmActivityMeta> preActiivtyResponse = dhRouteService.getPreActivityByDiagram(dhProcessInstance,
@@ -732,7 +735,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				activitiMapList.add(toPreActivityMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toActivities":
-				log.info("驳回到指定环节");
+				logger.info("驳回到指定环节");
 				//查询可选配置
 				List<DhActivityReject> dhActivityRejects = dhActivityRejectMapper.listByActivityId(currentbpmActivityMeta3.getSourceActivityId());
 				

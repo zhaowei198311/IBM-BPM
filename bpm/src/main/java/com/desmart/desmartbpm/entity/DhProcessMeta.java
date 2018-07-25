@@ -19,13 +19,15 @@ public class DhProcessMeta {
     private String proAppId;  // 应用库id
     private String proUid; // 流程图id
     private String proName; // 流程名
+    private String categoryUid;  // 流程分类
+    private String proDisplay; // 流程引擎中流程名
+    private String proMetaStatus; // 元数据状态
+    private String proNo;  // 流程编号
+
     private String creator;
     private Date createTime;
     private String updateUser;
     private Date lastUpdateTime;
-    private String categoryUid;  // 流程分类
-    private String proDisplay; // 流程引擎中流程名
-    private String proMetaStatus; // 元数据状态 
     
     // 不再此表中
     private String creatorFullName;
@@ -98,8 +100,15 @@ public class DhProcessMeta {
     public void setUpdatorFullName(String updatorFullName) {
         this.updatorFullName = updatorFullName;
     }
-    
-    
+
+    public String getProNo() {
+        return proNo;
+    }
+
+    public void setProNo(String proNo) {
+        this.proNo = proNo;
+    }
+
     public String getProMetaStatus() {
         return proMetaStatus;
     }

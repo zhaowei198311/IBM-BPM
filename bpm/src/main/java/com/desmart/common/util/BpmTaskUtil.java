@@ -38,8 +38,8 @@ public class BpmTaskUtil {
     
     /**
      * 设置任务中的pubBo变量, 尝试将任务分配给当前用户，并完成任务
-     * @param taskId
-     * @param pubBo
+     * @param taskId 任务编号
+     * @param pubBo  引擎中变量
      * @return  Map中的信息： 
      *              assignTaskResult
      */

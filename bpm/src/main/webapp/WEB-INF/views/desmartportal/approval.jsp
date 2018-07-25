@@ -226,8 +226,10 @@
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
             <div class="layui-col-md4" style="text-align: right;">
-               	 表单编号：
-                <span style="color: #1890ff;">1000-10185-BG-60</span>
+               	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+				<c:if test="${!empty bpmForm.formNo }">
+					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
+				</c:if>
             </div>
         </div>
     </div>
