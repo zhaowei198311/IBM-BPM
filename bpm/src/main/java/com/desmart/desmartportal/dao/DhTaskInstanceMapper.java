@@ -175,7 +175,8 @@ public interface DhTaskInstanceMapper {
 	List<DhTaskInstance> queryTransferByTypeAndStatus(
 						@Param("startTime")Date startTime,
 						@Param("endTime")Date endTime,
-						@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+						@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
+						@Param("isAgent")String isAgent);
 	
 	/**
 	 * 

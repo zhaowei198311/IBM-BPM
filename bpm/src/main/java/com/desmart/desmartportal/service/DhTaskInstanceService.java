@@ -163,7 +163,8 @@ public interface DhTaskInstanceService {
 	 * @return ServerResponse<PageInfo<List<DhTaskInstance>>>  
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(Date startTime, Date endTime,
-																DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize);
+																DhTaskInstance dhTaskInstance,Integer pageNum, 
+																Integer pageSize,String isAgent);
 	/**
 	 * 
 	 * @Title: queryTransferNumber  
