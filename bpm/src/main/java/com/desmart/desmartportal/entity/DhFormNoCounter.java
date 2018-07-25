@@ -6,7 +6,7 @@ import java.util.Date;
  * 描述表单号规则对应的表单号状态
  */
 public class DhFormNoCounter {
-    private String formNoExpersion;
+    private String formNoExpression;
 
     private Integer currentNo;
 
@@ -16,12 +16,12 @@ public class DhFormNoCounter {
 
     private Date updateTime;
 
-    public String getFormNoExpersion() {
-        return formNoExpersion;
+    public String getFormNoExpression() {
+        return formNoExpression;
     }
 
-    public void setFormNoExpersion(String formNoExpersion) {
-        this.formNoExpersion = formNoExpersion == null ? null : formNoExpersion.trim();
+    public void setFormNoExpression(String formNoExpression) {
+        this.formNoExpression = formNoExpression == null ? null : formNoExpression.trim();
     }
 
     public Integer getCurrentNo() {
