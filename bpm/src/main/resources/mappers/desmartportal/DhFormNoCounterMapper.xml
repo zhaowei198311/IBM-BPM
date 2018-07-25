@@ -2,36 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartportal.dao.DhFormNoCounterMapper" >
   <resultMap id="BaseResultMap" type="com.desmart.desmartportal.entity.DhFormNoCounter" >
-    <id column="FORM_NO_EXPERSION" property="formNoExpersion" jdbcType="VARCHAR" />
+    <id column="FORM_NO_EXPRESSION" property="formNoExpression" jdbcType="VARCHAR" />
     <result column="CURRENT_NO" property="currentNo" jdbcType="INTEGER" />
     <result column="IS_DAILY" property="isDaily" jdbcType="VARCHAR" />
     <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
     <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    FORM_NO_EXPERSION, CURRENT_NO, IS_DAILY, CREATE_TIME, UPDATE_TIME
+    FORM_NO_EXPRESSION, CURRENT_NO, IS_DAILY, CREATE_TIME, UPDATE_TIME
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from DH_FORM_NO_COUNTER
-    where FORM_NO_EXPERSION = #{formNoExpersion,jdbcType=VARCHAR}
+    where FORM_NO_EXPRESSION = #{formNoExpression,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from DH_FORM_NO_COUNTER
-    where FORM_NO_EXPERSION = #{formNoExpersion,jdbcType=VARCHAR}
+    where FORM_NO_EXPRESSION = #{formNoExpression,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.desmart.desmartportal.entity.DhFormNoCounter" >
-    insert into DH_FORM_NO_COUNTER (FORM_NO_EXPERSION, CURRENT_NO, IS_DAILY, 
+    insert into DH_FORM_NO_COUNTER (FORM_NO_EXPRESSION, CURRENT_NO, IS_DAILY, 
       CREATE_TIME, UPDATE_TIME)
-    values (#{formNoExpersion,jdbcType=VARCHAR}, #{currentNo,jdbcType=INTEGER}, #{isDaily,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    values (#{formNoExpression,jdbcType=VARCHAR}, #{currentNo,jdbcType=INTEGER}, #{isDaily,jdbcType=VARCHAR},
+      sysdate, sysdate)
   </insert>
   <insert id="insertSelective" parameterType="com.desmart.desmartportal.entity.DhFormNoCounter" >
     insert into DH_FORM_NO_COUNTER
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="formNoExpersion != null" >
-        FORM_NO_EXPERSION,
+      <if test="formNoExpression != null" >
+        FORM_NO_EXPRESSION,
       </if>
       <if test="currentNo != null" >
         CURRENT_NO,
@@ -47,8 +47,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="formNoExpersion != null" >
-        #{formNoExpersion,jdbcType=VARCHAR},
+      <if test="formNoExpression != null" >
+        #{formNoExpression,jdbcType=VARCHAR},
       </if>
       <if test="currentNo != null" >
         #{currentNo,jdbcType=INTEGER},
@@ -80,7 +80,7 @@
         UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where FORM_NO_EXPERSION = #{formNoExpersion,jdbcType=VARCHAR}
+    where FORM_NO_EXPRESSION = #{formNoExpression,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.desmart.desmartportal.entity.DhFormNoCounter" >
     update DH_FORM_NO_COUNTER
@@ -88,6 +88,14 @@
       IS_DAILY = #{isDaily,jdbcType=VARCHAR},
       CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
       UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-    where FORM_NO_EXPERSION = #{formNoExpersion,jdbcType=VARCHAR}
+    where FORM_NO_EXPRESSION = #{formNoExpression,jdbcType=VARCHAR}
   </update>
+
+  <update id="updateByFormNoExpressionAndCurrentNo" parameterType="list">
+      update dh_form_no_counter
+      set current_no = current_no + 1,
+      update_time = sysdate
+      where current_no = #{currentNo} and form_no_expression = #{formNoExpression}
+  </update>
+
 </mapper>

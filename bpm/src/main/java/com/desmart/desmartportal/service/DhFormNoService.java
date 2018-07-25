@@ -1,7 +1,6 @@
 package com.desmart.desmartportal.service;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.entity.DhStep;
 
 /**
@@ -10,9 +9,9 @@ import com.desmart.desmartbpm.entity.DhStep;
 public interface DhFormNoService {
 
     /**
-     * 生成formNo的jsonArray对象
+     * 根据表单步骤和现有的fomNo，生成formNo的jsonArray对象
      * @param formStep
      * @return
      */
-    JSONArray generateFormNoJsonArray(DhStep formStep, JSONArray oldFormNoJSONArray);
+    JSONArray updateFormNoListJsonObject(DhStep formStep, JSONArray oldFormNoJSONArray);
 }

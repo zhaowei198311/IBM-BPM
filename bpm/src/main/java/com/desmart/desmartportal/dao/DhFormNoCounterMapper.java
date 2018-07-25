@@ -3,7 +3,9 @@ package com.desmart.desmartportal.dao;
 
 import com.desmart.desmartportal.entity.DhFormNoCounter;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface DhFormNoCounterMapper {
     int deleteByPrimaryKey(String formNoExpersion);
 
@@ -17,6 +19,6 @@ public interface DhFormNoCounterMapper {
 
     int updateByPrimaryKey(DhFormNoCounter record);
 
-//    int updateByFormNoExpersionAndCurrentNo(@Param("formNoExpression"));
+    int updateByFormNoExpressionAndCurrentNo(@Param("formNoExpression") String formNoExpression, @Param("currentNo") int currentNo);
 
 }
