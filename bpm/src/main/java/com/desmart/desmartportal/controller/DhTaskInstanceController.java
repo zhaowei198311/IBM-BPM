@@ -173,7 +173,7 @@ public class DhTaskInstanceController {
 			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
 			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
-			,@RequestParam("proName")String proName) {
+			,@RequestParam("proName")String proName,@RequestParam("isAgent")String isAgent) {
 		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhTaskInstance.setUsrUid(currentUserUid);
         if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
@@ -188,7 +188,7 @@ public class DhTaskInstanceController {
         	dhTaskInstance.setSysUser(sysUser);
         }
 		return dhTaskInstanceService.selectBackLogTaskInfoByCondition(startTime
-				, endTime, dhTaskInstance, pageNum, pageSize);
+				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
 	}
 	
 	@RequestMapping("/loadPageTaskByClosed")
@@ -198,7 +198,7 @@ public class DhTaskInstanceController {
 			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
 			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
 			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
-			,@RequestParam("proName")String proName) {
+			,@RequestParam("proName")String proName,@RequestParam("isAgent")String isAgent) {
 		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhTaskInstance.setUsrUid(currentUserUid);
         if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
@@ -213,7 +213,7 @@ public class DhTaskInstanceController {
         	dhTaskInstance.setSysUser(sysUser);
         }
 		return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
-				, endTime, dhTaskInstance, pageNum, pageSize);
+				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
 	}
 	
 	@RequestMapping("/alreadyClosedTask")

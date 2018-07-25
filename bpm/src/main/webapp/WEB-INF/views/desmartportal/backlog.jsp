@@ -62,7 +62,7 @@
 						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="resetSearch()">重置</button>
 					</div>
 				</div>
-				<div class="layui-row">
+				<div class="layui-row layui-form">
 					<div class="layui-col-md3">
 						<label class="layui-form-label">流程名称</label>
 						<div class="layui-input-block">
@@ -81,11 +81,24 @@
 							<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
 						</div>
 					</div>
+					<div class="layui-col-md3">
+						<label class="layui-form-label">代理人</label>
+						<div class="layui-input-block">
+							<select id="isAgent" class="layui-input-block group_select"
+								name="group" lay-verify="required">
+								<option value="0" selected>全部</option>
+								<option value="false">无</option>
+								<option value="1">本人</option>
+								<option value="2">非本人</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			</div>
             <div style="margin-top: 5px;">
                 <table class="layui-table" lay-even lay-skin="line">
                     <colgroup>
+                        <col>
                         <col>
                         <col>
                         <col>
@@ -102,7 +115,8 @@
                             <th>流程名称</th>
                             <th>流程标题</th>
                             <th>环节名称</th>
-                            <th>是否代理</th>
+                            <th>任务所属</th>
+                            <th>代理人</th>
                             <th>任务状态</th>
                             <th>上一环节处理人</th>
                             <th>流程创建人</th>
@@ -115,6 +129,9 @@
             <div id="lay_page"></div>
         </div>
     </div>
+    <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
     <!--IE8只能支持jQuery1.9-->
     <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
@@ -127,9 +144,6 @@
 </body>
 
 </html>
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 
 <script>
     // 为翻页提供支持
@@ -140,6 +154,7 @@
         taskPreviousUsrUsername: "",
         insTitle: "",
         proName : "",
+        isAgent:"",
         startTime: null,
         endTime: null,
         total: 0
@@ -159,7 +174,7 @@
             }
         });
     });
-
+    var form = null;
     $(document).ready(function () {
         // 加载数据
         getTaskInstanceInfo();
@@ -224,6 +239,9 @@
             url: 'taskInstance/loadBackLog',
             type: 'post',
             dataType: 'json',
+            beforeSend:function(){
+            	layer.load(1);
+            },
             data: {
                 pageNum: pageConfig.pageNum,
                 pageSize: pageConfig.pageSize,
@@ -231,6 +249,7 @@
                 taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
                	proName: pageConfig.proName,
                 insTitle: pageConfig.insTitle,
+                isAgent:pageConfig.isAgent,
                 startTime: pageConfig.startTime,
                 endTime: pageConfig.endTime
             },
@@ -238,6 +257,10 @@
                 if (result.status == 0) {
                     drawTable(result.data);
                 }
+                layer.closeAll("loading");
+            },
+            error:function(){
+            	layer.closeAll("loading");
             }
         })
     }
@@ -258,7 +281,6 @@
         var trs = "";
         var type = "";
         var status = "";
-        var delegateFlag = "";
         for (var i = 0; i < list.length; i++) {
             var meta = list[i];
             var sortNum = startSort + i;
@@ -267,11 +289,6 @@
             }
             if (meta.taskStatus == -2) {
                 status = "等待加签结束";
-            }
-            if (meta.taskDelegateUser != null && meta.taskDelegateUser != "") {
-                delegateFlag = "是";
-            } else {
-                delegateFlag = "否";
             }
             var agentOdate = new Date(meta.taskInitDate);
             var InitDate = datetimeFormat_1(agentOdate);
@@ -292,8 +309,13 @@
                 meta.taskTitle +
                 '</td>' +
                 '<td>' +
-                delegateFlag +
+                meta.taskHandler +
                 '</td>' +
+                '<td>';
+            if(meta.taskAgentUserName!=null && meta.taskAgentUserName!=""){
+            	trs += meta.taskAgentUserName;
+            }
+            trs += '</td>' +
                 '<td>' +
                 status +
                 '</td>' +
@@ -326,9 +348,10 @@
         pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
         pageConfig.insTitle = $("#task-insTitle-search").val();
         pageConfig.proName = $("#task-proName-search").val();  
+        pageConfig.isAgent = $("#isAgent").val()==0 ? "" : $("#isAgent").val();
         pageConfig.startTime = $("#init-startTime-search").val() == "" ? null : $("#init-startTime-search").val();
         pageConfig.endTime = $("#init-endTime-search").val() == "" ? null : $("#init-endTime-search").val();
-
+		
         getTaskInstanceInfo();
     }
     //重置模糊查询的条件
@@ -338,9 +361,6 @@
          $("#task-insTitle-search").val("");
          $("#init-startTime-search").val("");
          $("#init-endTime-search").val("");
-    }
-    //刷新按钮
-    function reload() {
-        window.location.reload();
+         $("#isAgent").val(0);
     }
 </script>

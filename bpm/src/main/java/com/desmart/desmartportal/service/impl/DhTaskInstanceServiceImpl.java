@@ -965,24 +965,40 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(Date startTime, Date endTime,
-			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize) {
-
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String isAgent) {
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
-		//dhTaskInstance.setTaskStatus("32");
-		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance);
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance, isAgent);
+		for(DhTaskInstance resultTaskInstance:resultList) {
+			String taskHandler = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getUsrUid()).getUserName();
+			resultTaskInstance.setTaskHandler(taskHandler);
+			//判断代理人是否为空
+			if(null!=resultTaskInstance.getTaskDelegateUser() && !"".equals(resultTaskInstance.getTaskDelegateUser())) {
+				String taskAgentUserName = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getTaskDelegateUser()).getUserName();
+				resultTaskInstance.setTaskAgentUserName(taskAgentUserName);
+			}
+		}
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
 
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
-			Integer pageNum, Integer pageSize) {
+			Integer pageNum, Integer pageSize, String isAgent) {
 
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("'32'");
-		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance);
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance, isAgent);
+		for(DhTaskInstance resultTaskInstance:resultList) {
+			String taskHandler = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getUsrUid()).getUserName();
+			resultTaskInstance.setTaskHandler(taskHandler);
+			//判断代理人是否为空
+			if(null!=resultTaskInstance.getTaskDelegateUser() && !"".equals(resultTaskInstance.getTaskDelegateUser())) {
+				String taskAgentUserName = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getTaskDelegateUser()).getUserName();
+				resultTaskInstance.setTaskAgentUserName(taskAgentUserName);
+			}
+		}
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
@@ -1087,7 +1103,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC,TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("'12','-2','32'");
-		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(null, null, dhTaskInstance);
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(null, null, dhTaskInstance, null);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}

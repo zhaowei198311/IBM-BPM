@@ -61,15 +61,15 @@
 							<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="resetSearch()">重置</button>
 						</div>
 					</div>
-					<div class="layui-row">
-					<div class="layui-col-md3">
-						<label class="layui-form-label">流程名称</label>
-						<div class="layui-input-block">
-							<input type="text" placeholder="流程名称" class="layui-input"
-								id="task-proName-search">
+					<div class="layui-row layui-form">
+						<div class="layui-col-md3">
+							<label class="layui-form-label">流程名称</label>
+							<div class="layui-input-block">
+								<input type="text" placeholder="流程名称" class="layui-input"
+									id="task-proName-search">
+							</div>
 						</div>
-					</div>
-					<div class="layui-col-md3">
+						<div class="layui-col-md3">
 							<label class="layui-form-label">开始时间</label>
 							<div class="layui-input-block">
 								<input type="text" placeholder="开始时间" class="layui-input" id="init-startTime-search">
@@ -79,6 +79,18 @@
 							<label class="layui-form-label">结束时间</label>
 							<div class="layui-input-block">
 								<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
+							</div>
+						</div>
+						<div class="layui-col-md3">
+							<label class="layui-form-label">是否代理</label>
+							<div class="layui-input-block">
+								<select id="isAgent" class="layui-input-block group_select"
+									name="group" lay-verify="required">
+									<option value="0" selected>全部</option>
+									<option value="false">无</option>
+									<option value="1">本人</option>
+									<option value="2">非本人</option>
+								</select>
 							</div>
 						</div>
 					</div>
@@ -95,16 +107,18 @@
 						    <col>
 						    <col>
 						    <col>
+						    <col>
 						</colgroup>
 						<thead>
 						    <tr>
 						      <th>序号</th>
 						      <th>流程名称</th>
 						      <th>流程标题</th>
-						      <th>任务标题</th>
+						      <th>环节名称</th>
+						      <th>任务所属</th>
+                              <th>代理人</th>
 						      <th>上一环节提交人</th>
-						      <th>流程发起人</th>
-						      <!-- <th>任务类型</th> -->
+						      <th>流程创建人</th>
 						      <th>接收时间</th>
 						      <th>处理时间</th>
 						      <th>跟踪</th>
@@ -140,6 +154,7 @@
 			taskPreviousUsrUsername: "",
 			insTitle : "",
 			proName : "",
+			isAgent:"",
 			startTime : null,
 			endTime: null,
 			total : 0
@@ -214,6 +229,9 @@
 				url : 'taskInstance/loadPageTaskByClosed',
 				type : 'post',
 				dataType : 'json',
+				beforeSend:function(){
+					layer.load(1);
+				},
 				data : {
 					pageNum : pageConfig.pageNum,
 					pageSize : pageConfig.pageSize,
@@ -221,6 +239,7 @@
 					taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
 					insTitle : pageConfig.insTitle,
 					proName : pageConfig.proName,
+					isAgent:pageConfig.isAgent,
 					startTime : pageConfig.startTime,
 					endTime: pageConfig.endTime
 				},
@@ -228,6 +247,10 @@
 					if(result.status == 0){
 						drawTable(result.data);
 					}
+					layer.closeAll("loading");
+				},
+				error:function(){
+					layer.closeAll("loading");
 				}
 			})
 		}
@@ -279,7 +302,14 @@
 					+ '<td>'
 					+ meta.taskTitle 
 					+ '</td>' 
+					+ '<td>' 
+					+ meta.taskHandler
+	                + '</td>' 
 					+ '<td>';
+				if(meta.taskAgentUserName!=null && meta.taskAgentUserName!=""){
+		           	trs += meta.taskAgentUserName;
+		        }
+				trs += '</td><td>';
 				if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
 					trs += meta.taskPreviousUsrUsername;
 				}
@@ -331,6 +361,7 @@
 			pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
 			pageConfig.insTitle = $("#task-insTitle-search").val();
 			pageConfig.proName = $("#task-proName-search").val();
+			pageConfig.isAgent = $("#isAgent").val()==0 ? "" : $("#isAgent").val();
 			pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
 			pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 			getTaskInstanceInfo();
@@ -355,5 +386,6 @@
 	         $("#task-insTitle-search").val("");
 	         $("#init-startTime-search").val("");
 	         $("#init-endTime-search").val("");
+	         $("#isAgent").val(0);
 	    }
 	</script>

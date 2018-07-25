@@ -242,23 +242,29 @@
 	<select id="selectByusrUid" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
 		SELECT count(task_uid)
-		FROM DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		FROM DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		where T.INS_UID = P.INS_UID 
 		AND P.INS_INIT_USER = S.USER_ID 
-		AND  T.TASK_STATUS IN ('12','-2') 
+		AND P.PRO_APP_ID = PM.PRO_APP_ID
+		AND P.PRO_UID = PM.PRO_UID
+		AND T.TASK_STATUS IN ('12','-2') 
 		AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop','add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
-		and T.USR_UID = #{usrUid}
+		and (T.USR_UID = #{usrUid} or T.TASK_DELEGATE_USER = #{usrUid})
 	</select>
 
-	<!-- 用户查询代办 -->
+	<!-- 用户查询已办 -->
 	<select id="selectByusrUidFinsh" parameterType="java.lang.String"
 		resultType="java.lang.Integer">
-		SELECT COUNT(*)
+		SELECT COUNT(task_uid)
 		FROM
-		DH_TASK_INSTANCE
-		<where>
-			USR_UID = #{usrUid} AND TASK_STATUS = '32'
-		</where>
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
+		where T.INS_UID = P.INS_UID 
+		AND P.INS_INIT_USER = S.USER_ID 
+		AND P.PRO_APP_ID = PM.PRO_APP_ID
+		AND P.PRO_UID = PM.PRO_UID
+		AND T.TASK_STATUS = '32' 
+		AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop','add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+		and (T.USR_UID = #{usrUid} or T.TASK_DELEGATE_USER = #{usrUid})
 	</select>
 
 	<update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
@@ -692,6 +698,22 @@
 				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
 			</if>
 			</if>
+			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
+				<choose>
+					<when test="isAgent=='false'">
+						AND T.TASK_DELEGATE_USER is null
+					</when>
+					<!-- 代理人是本人 -->
+					<when test="isAgent=='1' or isAgent==1">
+						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
+					</when>
+					<!-- 代理人是其他人 -->
+					<when test="isAgent=='2' or isAgent==2">
+						AND T.TASK_DELEGATE_USER is not null 
+						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
+					</when>
+				</choose>
+			</if>
 			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
 				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
 			</if>
@@ -769,6 +791,22 @@
 				and dhTaskInstance.sysUser.userName !='' ">
 				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
 			</if>
+			</if>
+			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
+				<choose>
+					<when test="isAgent=='false'">
+						AND T.TASK_DELEGATE_USER is null
+					</when>
+					<!-- 代理人是本人 -->
+					<when test="isAgent=='1' or isAgent==1">
+						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
+					</when>
+					<!-- 代理人是其他人 -->
+					<when test="isAgent=='2' or isAgent==2">
+						AND T.TASK_DELEGATE_USER is not null 
+						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
+					</when>
+				</choose>
 			</if>
 			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
 				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')

@@ -205,7 +205,7 @@ public class DhProcessInsManageServiceImpl implements DhProcessInsManageService 
 				DhTaskInstance dhTaskInstance = new DhTaskInstance();
 				dhTaskInstance.setInsUid(dhProcessInstance.getInsUid());
 				List<DhTaskInstance> list = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(null, null,
-						dhTaskInstance);
+						dhTaskInstance,null);
 				Map<String, Object> data = new HashMap<>();
 				data.put("activityMetaList", serverResponse.getData());
 				data.put("taskList", list);
