@@ -138,7 +138,8 @@ public interface DhTaskInstanceMapper {
 	List<DhTaskInstance> selectBackLogTaskInfoByCondition(
 			@Param("startTime")Date startTime,
 			@Param("endTime")Date endTime,
-			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
+			@Param("isAgent")String isAgent);
 	
 	/**
 	 * 根据条件查询已办
@@ -152,7 +153,8 @@ public interface DhTaskInstanceMapper {
 	List<DhTaskInstance> selectPageTaskByClosedByCondition(
 			@Param("startTime")Date startTime,
 			@Param("endTime")Date endTime,
-			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
+			@Param("isAgent")String isAgent);
 
 	/**
 	 * 根据用户查询已办数量

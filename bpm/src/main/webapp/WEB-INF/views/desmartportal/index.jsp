@@ -181,7 +181,7 @@
 			
 			getUserTask();
 			// 定时 去查询我的 代办任务
-			//window.setTimeout(getUserTask, 100);
+			window.setTimeout(getUserTask, 100);
 			window.setInterval(getUserTask, 30000);
 
 			$(".layui-nav-item a").not("#shopLife").mouseover(
@@ -281,16 +281,12 @@
 					// 渲染到待办
 					if (result == 0) {
 						$("#daiban_icon").css("display", "none");
-						window.setTimeout(function(){
-							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
-							$(daibanObj).text(result);
-						},100);
+						var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
+						$(daibanObj).text(result);
 					} else if (result > 0) {
 						$("#daiban_icon").text(result);
-						window.setTimeout(function(){
-							var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
-							$(daibanObj).text(result);
-						},100);
+						var daibanObj = document.getElementById("frameContent").contentDocument.getElementById("daiban_icon");
+						$(daibanObj).text(result);
 					} else {
 						layer.msg("登陆超时！请重新登陆！", function () {
 							window.location.reload();

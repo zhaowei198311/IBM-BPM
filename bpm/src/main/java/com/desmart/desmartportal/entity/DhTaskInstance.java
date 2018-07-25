@@ -166,6 +166,11 @@ public class DhTaskInstance {
 	private Double remainHours; // 会签出去时，任务剩余时间
 
 	private String taskActivityId; // 任务停留的节点唯一标识
+	
+	//任务处理人姓名
+	private String taskHandler;
+	//任务代理人姓名
+	private String taskAgentUserName;
 
 	/**
 	 * @return the taskUid
@@ -479,19 +484,6 @@ public class DhTaskInstance {
 		this.remainHours = remainHours;
 	}
 
-	@Override
-	public String toString() {
-		return "DhTaskInstance [taskUid=" + taskUid + ", insUid=" + insUid + ", taskId=" + taskId + ", usrUid=" + usrUid
-				+ ", activityBpdId=" + activityBpdId + ", taskType=" + taskType + ", taskStatus=" + taskStatus
-				+ ", taskTitle=" + taskTitle + ", insUpdateDate=" + insUpdateDate + ", taskPreviousUsrUid="
-				+ taskPreviousUsrUid + ", taskPreviousUsrUsername=" + taskPreviousUsrUsername + ", taskDelegateDate="
-				+ taskDelegateDate + ", taskInitDate=" + taskInitDate + ", taskFinishDate=" + taskFinishDate
-				+ ", taskDueDate=" + taskDueDate + ", taskRiskDate=" + taskRiskDate + ", taskPriority=" + taskPriority
-				+ ", taskData=" + taskData + ", taskDelegateUser=" + taskDelegateUser + ", synNumber=" + synNumber
-				+ ", dhProcessInstance=" + dhProcessInstance + ", sysUser=" + sysUser + ", fromTaskUid=" + fromTaskUid
-				+ ", toTaskUid=" + toTaskUid + ", remainHours=" + remainHours + "]";
-	}
-
 	public DhProcessInstance getDhProcessInstance() {
 		return dhProcessInstance;
 	}
@@ -500,62 +492,19 @@ public class DhTaskInstance {
 		this.dhProcessInstance = dhProcessInstance;
 	}
 
-	/**
-	 * @param taskUid
-	 * @param insUid
-	 * @param taskId
-	 * @param usrUid
-	 * @param activityBpdId
-	 * @param taskType
-	 * @param taskStatus
-	 * @param taskTitle
-	 * @param insUpdateDate
-	 * @param taskPreviousUsrUid
-	 * @param taskPreviousUsrUsername
-	 * @param taskDelegateDate
-	 * @param taskInitDate
-	 * @param taskFinishDate
-	 * @param taskDueDate
-	 * @param taskRiskDate
-	 * @param taskPriority
-	 * @param taskData
-	 * @param taskDelegateUser
-	 * @param synNumber
-	 * @param dhProcessInstance
-	 * @param sysUser
-	 */
-	public DhTaskInstance(String taskUid, String insUid, int taskId, String usrUid, String activityBpdId,
-			String taskType, String taskStatus, String taskTitle, Date insUpdateDate, String taskPreviousUsrUid,
-			String taskPreviousUsrUsername, Date taskDelegateDate, Date taskInitDate, Date taskFinishDate,
-			Date taskDueDate, Date taskRiskDate, String taskPriority, String taskData, String taskDelegateUser,
-			Integer synNumber, DhProcessInstance dhProcessInstance, SysUser sysUser, String fromTaskUid,
-			String toTaskUid, Double remainHours) {
-		super();
-		this.taskUid = taskUid;
-		this.insUid = insUid;
-		this.taskId = taskId;
-		this.usrUid = usrUid;
-		this.activityBpdId = activityBpdId;
-		this.taskType = taskType;
-		this.taskStatus = taskStatus;
-		this.taskTitle = taskTitle;
-		this.insUpdateDate = insUpdateDate;
-		this.taskPreviousUsrUid = taskPreviousUsrUid;
-		this.taskPreviousUsrUsername = taskPreviousUsrUsername;
-		this.taskDelegateDate = taskDelegateDate;
-		this.taskInitDate = taskInitDate;
-		this.taskFinishDate = taskFinishDate;
-		this.taskDueDate = taskDueDate;
-		this.taskRiskDate = taskRiskDate;
-		this.taskPriority = taskPriority;
-		this.taskData = taskData;
-		this.taskDelegateUser = taskDelegateUser;
-		this.synNumber = synNumber;
-		this.dhProcessInstance = dhProcessInstance;
-		this.sysUser = sysUser;
-		this.fromTaskUid = fromTaskUid;
-		this.toTaskUid = toTaskUid;
-		this.remainHours = remainHours;
+	public String getTaskAgentUserName() {
+		return taskAgentUserName;
 	}
-	
+
+	public void setTaskAgentUserName(String taskAgentUserName) {
+		this.taskAgentUserName = taskAgentUserName;
+	}
+
+	public String getTaskHandler() {
+		return taskHandler;
+	}
+
+	public void setTaskHandler(String taskHandler) {
+		this.taskHandler = taskHandler;
+	}
 }

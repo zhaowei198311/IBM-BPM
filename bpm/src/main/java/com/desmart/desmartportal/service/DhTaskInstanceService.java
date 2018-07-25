@@ -133,7 +133,7 @@ public interface DhTaskInstanceService {
 	ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(
 			Date startTime,
 			Date endTime,
-			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize);
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String isAgent);
 
 	/**
 	 * 根据条件查询已办
@@ -145,7 +145,7 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
-			Integer pageNum, Integer pageSize);
+			Integer pageNum, Integer pageSize,String isAgent);
 
 	/**
 	 * 根据用户查询已办数量

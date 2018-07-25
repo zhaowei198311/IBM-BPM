@@ -6,6 +6,7 @@ var pageConfig = {
 	createProcessUserName : "",
 	taskPreviousUsrUsername: "",
 	insTitle : "",
+	isAgent:"",
 	startTime : null,
 	endTime: null,
 	proName:"",
@@ -100,6 +101,7 @@ function getTaskInstanceInfo(){
 			createProcessUserName : pageConfig.createProcessUserName,
 			taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
 			insTitle : pageConfig.insTitle,
+			isAgent:pageConfig.isAgent,
 			startTime : pageConfig.startTime,
 			endTime: pageConfig.endTime,
 			proName:pageConfig.proName
