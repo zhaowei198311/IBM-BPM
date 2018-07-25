@@ -27,11 +27,8 @@ public class QuartzServiceImpl implements QuartzService{
 	private Scheduler scheduler;// 获取调度器
 	
 	public void addJob(JobEntity jobEntity, HttpServletResponse response,JobController jobController) {
-		
 		try {
 			Class s=Class.forName(jobEntity.getClazz());
-			//Class cls=Class.forName(jobEntity.getClazz());
-			//System.out.println(cls.getName());
 			// 创建一项作业
 			JobDetail job = JobBuilder.newJob(s)
 			.withIdentity(jobEntity.getJobName(), jobEntity.getJobGroupName())
@@ -53,26 +50,6 @@ public class QuartzServiceImpl implements QuartzService{
 			.build();
 			// 告诉调度器使用该触发器来安排作业
 			scheduler.scheduleJob(job, trigger);
-			
-			
-			/*========Start=============================================================*/
-			// 创建并注册一个全局的Job Listener
-			//scheduler.getListenerManager().addJobListener(new SimpleJobListener(), EverythingMatcher.allJobs());
-			// 创建并注册一个指定任务的Job Listener
-			//scheduler.getListenerManager().addJobListener(new SimpleJobListener(),KeyMatcher.keyEquals(JobKey.jobKey(jobEntity.getJobName(), jobEntity.getJobGroupName())));
-			/*========End=============================================================*/
-			
-			/*=====Start================================================================*/
-			 // 创建并注册一个全局的Trigger Listener
-	        //scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener("SimpleTrigger"), EverythingMatcher.allTriggers());
-	        
-	        // 创建并注册一个局部的Trigger Listener
-	        //scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener("SimpleTrigger"), KeyMatcher.keyEquals(TriggerKey.triggerKey(jobEntity.getTriggerName(), jobEntity.getTriggerGroupName())));
-	        
-	        /*=======End==============================================================*/
-	        
-	        
-			logger.info("=======================>");
 			
 			// 启动
 			if(!scheduler.isShutdown()){
