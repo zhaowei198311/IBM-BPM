@@ -16,6 +16,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import com.desmart.common.annotation.ExcelBigDecimal;
 import com.desmart.common.annotation.ExcelBoolean;
 import com.desmart.common.annotation.ExcelDate;
@@ -24,9 +35,6 @@ import com.desmart.common.annotation.ExcelValid;
 import com.desmart.common.constant.ExcelHelper;
 import com.desmart.common.constant.ServerResponse;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.Workbook;
 
 /**
  * 动态反射及转换的实体类
@@ -133,8 +141,9 @@ public class ExcelUtil {
 	public boolean equalsArrays(Sheet sheet, Map<Integer, String> map,Integer headNum) {
 		boolean check = true;
 		//for (int k = 0; k < sheet.getColumns(); k++) {
+		Row headRow = sheet.getRow(headNum);
 		for (int k = 0; k < map.keySet().size(); k++) {
-			if (!sheet.getCell(k, headNum).getContents().equals(map.get(k))) {//目前写死，第5行是头部
+			if (!getValue(headRow.getCell(k)).equals(map.get(k))) {//目前写死，第5行是头部
 				check = false;
 				break;
 			}
@@ -154,28 +163,29 @@ public class ExcelUtil {
 	public String checkExcelContent(Sheet sheet, Class<?> clazz,Integer headNum) throws Exception {
 		StringBuilder result = new StringBuilder();
 		result.append("");
-		int size = sheet.getRows();
-		Cell[] heads = sheet.getRow(headNum);//目前写死，第5行为头部
+		int size = sheet.getPhysicalNumberOfRows();
+		Row headRow = sheet.getRow(headNum);//目前写死，第5行为头部
 		Map<Integer, ExcelHelper> map = loadExcelAnnotationFieldVlaue(clazz);
 		for (int i = headNum+1; i < size; i++) {//目前写死，从第6行开始检验
-			Cell[] cells = sheet.getRow(i);
-			int len = cells.length;
+			Row cellRow = sheet.getRow(i);
+			int len = cellRow.getLastCellNum();
 			for (int j = 0; j < len; j++) {
+				
 				boolean warnning = false;
 				ExcelHelper helper = map.get(j);
 				// 判断字段内容是否为非空字段
 				if (!helper.isNullable()) {
-					if (!Validator.isEffective(cells[j].getContents())) {
+					if (!Validator.isEffective(getValue(cellRow.getCell(j)))) {
 						warnning = true;
 					}
 				}
 
 				if (!warnning) {
 					// 判断字段注解是否存在规则过滤
-					if (Validator.isEffective(cells[j].getContents())) {
+					if (Validator.isEffective(getValue(cellRow.getCell(j)))) {
 
 						if (Validator.isEffective(helper.getRegexp())) {
-							if (!Validator.match(helper.getRegexp(), cells[j].getContents())) {
+							if (!Validator.match(helper.getRegexp(), getValue(cellRow.getCell(j)))) {
 								warnning = true;
 							}
 						}
@@ -184,25 +194,25 @@ public class ExcelUtil {
 
 				if (!warnning) {
 					if (Date.class.isAssignableFrom(helper.getClazz())) {
-						if (Validator.isEffective(cells[j].getContents())) {
-							if (!Validator.isValidDate(cells[j].getContents(), helper.getFormat())) {
+						if (Validator.isEffective(getValue(cellRow.getCell(j)))) {
+							if (!Validator.isValidDate(getValue(cellRow.getCell(j)), helper.getFormat())) {
 								warnning = true;
 							}
 						}
 					} else if (Boolean.class.isAssignableFrom(helper.getClazz())) {
 
-						if (!(cells[j].getContents().equals(helper.getFalseName())
-								|| cells[j].getContents().equals(helper.getTrueName()))) {
+						if (!(getValue(cellRow.getCell(j)).equals(helper.getFalseName())
+								|| getValue(cellRow.getCell(j)).equals(helper.getTrueName()))) {
 							warnning = true;
 						}
 					} else if (Integer.class.isAssignableFrom(helper.getClazz())) {
-						if (!Validator.IsNumber(cells[j].getContents())) {
+						if (!Validator.IsNumber(getValue(cellRow.getCell(j)))) {
 							warnning = true;
 						}
 					} else if (BigDecimal.class.isAssignableFrom(helper.getClazz())) {
 						String regexp = "^[+-]?[0-9]+(.[0-9]{1," + (helper.getScale() != null ? helper.getScale() : 2)
 								+ "})?$";
-						if (!(Validator.match(regexp, cells[j].getContents()))) {
+						if (!(Validator.match(regexp, getValue(cellRow.getCell(j))))) {
 							warnning = true;
 						}
 					}
@@ -210,8 +220,8 @@ public class ExcelUtil {
 				}
 
 				if (warnning) {
-					if (result.toString().indexOf(heads[j].getContents()) == -1) {
-						result.append("[" + heads[j].getContents()+":第"+(i+1)+"行第"+(j+1)+"列出现错误"+ "]").append(",");
+					if (result.toString().indexOf(getValue(headRow.getCell(j))) == -1) {
+						result.append("[" + getValue(headRow.getCell(j))+":第"+(i+1)+"行第"+(j+1)+"列出现错误"+ "]").append(",");
 					}
 				}
 			}
@@ -228,13 +238,13 @@ public class ExcelUtil {
 	* @return
 	* @throws Exception
 	*/
-	public <T> List<T> importExcelToEntity(Sheet sheet, Class<T> clazz,Integer headNum) throws Exception {
+	public <T> List<T> importExcelToEntity(Sheet sheet, Class<T> clazz,Integer headNum) throws Exception{
 		List<T> list = new ArrayList<>();
 		Map<Integer, ExcelHelper> map = loadExcelAnnotationFieldVlaue(clazz);
-		int size = sheet.getRows();
+		int size = sheet.getPhysicalNumberOfRows();
 		for (int i = headNum+1; i < size; i++) {
-			Cell[] cells = sheet.getRow(i);
-			int len = cells.length;
+			Row cellRow = sheet.getRow(i);
+			int len = cellRow.getLastCellNum();
 			T t = (T) clazz.newInstance();
 			for (int j = 0; j < len; j++) {
 				ExcelHelper helper = map.get(j);
@@ -242,20 +252,20 @@ public class ExcelUtil {
 				if (!f.isAccessible())
 					f.setAccessible(true);
 				if (Date.class.isAssignableFrom(helper.getClazz())) {
-					if (Validator.isEffective(cells[j].getContents())) {
-						f.set(t, new SimpleDateFormat(helper.getFormat()).parse(cells[j].getContents().toString()));
+					if (Validator.isEffective(getValue(cellRow.getCell(j)))) {
+						f.set(t, new SimpleDateFormat(helper.getFormat()).parse(getValue(cellRow.getCell(j)).toString()));
 					} else {
 						f.set(t, null);
 					}
 				} else if (BigDecimal.class.isAssignableFrom(helper.getClazz())) {
-					f.set(t, BigDecimal.valueOf(Double.valueOf(cells[j].getContents().toString()))
+					f.set(t, BigDecimal.valueOf(Double.valueOf(getValue(cellRow.getCell(j)).toString()))
 							.setScale(helper.getScale() != null ? helper.getScale() : 2, BigDecimal.ROUND_HALF_UP));
 				} else if (Boolean.class.isAssignableFrom(helper.getClazz())) {
-					f.set(t, cells[j].getContents().toString().equals(helper.getTrueName()) ? true : false);
+					f.set(t, getValue(cellRow.getCell(j)).toString().equals(helper.getTrueName()) ? true : false);
 				} else if (String.class.isAssignableFrom(helper.getClazz())) {
-					f.set(t, cells[j].getContents().toString());
+					f.set(t, getValue(cellRow.getCell(j)).toString());
 				} else if (Integer.class.isAssignableFrom(helper.getClazz())) {
-					f.set(t, Integer.valueOf(cells[j].getContents().toString()));
+					f.set(t, Integer.valueOf(getValue(cellRow.getCell(j)).toString()));
 				}
 			}
 			list.add(t);
@@ -320,16 +330,25 @@ public class ExcelUtil {
 	 * @param headNum 从0开始
 	 * @return
 	 */
-	public static boolean checkExcelTitleAndSort(File file,Class claszz,Integer headNum) {
+	public static boolean checkExcelTitleAndSort(MultipartFile multipartFile,Class claszz,Integer headNum) {
 		InputStream stream = null;
 		Workbook rwb = null;
 		Boolean check = false;
 		try {
+			CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+			DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+			File file = fi.getStoreLocation();
 			stream = new FileInputStream(file);
+			String fileName = multipartFile.getOriginalFilename();
 			// 获取Excel文件对象
-			rwb = Workbook.getWorkbook(stream);
+			if(fileName.endsWith("xlsx")){
+				rwb = WorkbookFactory.create(stream);
+				//rwb = new XSSFWorkbook(stream);//2007
+			}else if(fileName.endsWith("xls")){
+				rwb = new HSSFWorkbook(stream);//2003
+			}
 			// 获取文件的指定工作表 默认的第一个
-			Sheet sheet = rwb.getSheet(0);
+			Sheet sheet = rwb.getSheetAt(0);
 			Map<Integer, String> titleAndSortMap = ExcelUtil.getInstance().getExcelFieldName(claszz);
 			check = ExcelUtil.getInstance().equalsArrays(sheet, titleAndSortMap,headNum);
 		} catch (Exception ex) {
@@ -343,7 +362,11 @@ public class ExcelUtil {
 				}
 			}
 			if (rwb != null) {
-				rwb.close();
+				try {
+					rwb.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return check;
@@ -356,17 +379,25 @@ public class ExcelUtil {
 	 * @param headNum 从0开始
 	 * @return
 	 */
-	public static ServerResponse checkExcelContent(File file,Class claszz,Integer headNum) {
+	public static ServerResponse checkExcelContent(MultipartFile multipartFile,Class claszz,Integer headNum) {
 		InputStream stream = null;
 		Workbook rwb = null;
 		String result = "";
 		//Boolean check = false;
 		try {
+			CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+			DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+			File file = fi.getStoreLocation();
 			stream = new FileInputStream(file);
+			String fileName = multipartFile.getOriginalFilename();
 			// 获取Excel文件对象
-			rwb = Workbook.getWorkbook(stream);
+			if(fileName.endsWith("xlsx")){
+				rwb = WorkbookFactory.create(stream);
+			}else if(fileName.endsWith("xls")){
+				rwb = new HSSFWorkbook(stream);//2003
+			}
 			// 获取文件的指定工作表 默认的第一个
-			Sheet sheet = rwb.getSheet(0);
+			Sheet sheet = rwb.getSheetAt(0);
 			// 如有验证失败，该方法会返回错字段的字段名称
 			result = ExcelUtil.getInstance().checkExcelContent(sheet, claszz,headNum);
 		} catch (Exception ex) {
@@ -380,7 +411,11 @@ public class ExcelUtil {
 				}
 			}
 			if (rwb != null) {
-				rwb.close();
+				try {
+					rwb.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		// 如果没有返回错误字段，表示验证通过
@@ -391,17 +426,57 @@ public class ExcelUtil {
 		}
 	}
 	
-	public static ServerResponse<Sheet> loadSheet(InputStream inputStream) {
+	public static ServerResponse<Sheet> loadSheet(MultipartFile multipartFile) {
 		Workbook rwb = null;
 		try {
+			CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+			DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+			File file = fi.getStoreLocation();
+			String fileName = multipartFile.getOriginalFilename();
+			InputStream inputStream = new FileInputStream(file);
 			// 获取Excel文件对象
-			rwb = Workbook.getWorkbook(inputStream);
+			if(fileName.endsWith("xlsx")){
+				rwb = WorkbookFactory.create(inputStream);
+			}else if(fileName.endsWith("xls")){
+				rwb = new HSSFWorkbook(inputStream);//2003
+			}
 			// 获取文件的指定工作表 默认的第一个
-			Sheet sheet = rwb.getSheet(0);
+			Sheet sheet = rwb.getSheetAt(0);
 			return ServerResponse.createBySuccess(sheet);
 		}catch (Exception e) {
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	private static String getValue(Cell cell) {
+    	if(cell==null){
+    		return "---";
+    	}
+        if (cell.getCellType() == cell.CELL_TYPE_BOOLEAN) {
+            return String.valueOf(cell.getBooleanCellValue());
+        } else if (cell.getCellType() == cell.CELL_TYPE_NUMERIC) {
+        	double cur=cell.getNumericCellValue();
+        	long longVal = Math.round(cur);
+        	Object inputValue = null;
+        	if(Double.parseDouble(longVal + ".0") == cur)  
+        	        inputValue = longVal;  
+        	else  
+        	        inputValue = cur; 
+            return String.valueOf(inputValue);
+        } else if(cell.getCellType() == cell.CELL_TYPE_BLANK || cell.getCellType() == cell.CELL_TYPE_ERROR){
+        	return "---";
+        }
+        else {
+            return String.valueOf(cell.getStringCellValue());
+        }
+    }
+    
+  //字符串修剪  去除所有空白符号 ， 问号 ， 中文空格
+	private static String Trim_str(String str){
+        if(str==null)
+            return null;
+        return str.replaceAll("[\\s\\?]", "").replace("　", "");
+    }
 
 }
