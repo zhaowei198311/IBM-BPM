@@ -6,9 +6,11 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.DateTimeUtil;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.service.*;
 import com.github.pagehelper.PageHelper;
+import com.sun.xml.internal.bind.v2.runtime.property.UnmarshallerChain;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 
@@ -147,6 +149,17 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
                 iterator.remove();
             } 
             matchedSnapshots.add(item.get("snapshotId"));
+        }
+        // 对item按照创建时间倒序排序
+        if (matchedItemList.size() > 0) {
+            matchedItemList.sort(new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> o1, Map<String, String> o2) {
+                    Date date1 = DateTimeUtil.strToDate(o1.get("snapshotCreated"), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    Date date2 = DateTimeUtil.strToDate(o2.get("snapshotCreated"), "yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    return (date1.getTime() - date2.getTime()) > 0 ? -1 : 1;
+                }
+            });
         }
         // 至此得到了所有需要的流程定义
 

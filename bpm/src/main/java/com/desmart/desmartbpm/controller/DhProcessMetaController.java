@@ -45,11 +45,12 @@ public class DhProcessMetaController {
     @ResponseBody
     public ServerResponse listProcessMetaByCategoryUid(String categoryUid, String proName, @RequestParam(value="pageNum", defaultValue="1") Integer pageNum, 
             @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
-
+        // 获得转入的分类和其子分类的集合
         ServerResponse<List<DhProcessCategory>> serverResponse = dhProcessCategoryService.listChildrenCategoryAndThisCategory(categoryUid);
         if (!serverResponse.isSuccess()) {
             return serverResponse;
         }
+        // 根据分类列表，分页查询含有的流程元数据
         return dhProcessMetaService.listDhProcessMetaByCategoryList(serverResponse.getData(), proName, pageNum, pageSize);
     }
     
@@ -83,15 +84,16 @@ public class DhProcessMetaController {
     }
     
     /**
-     * 重命名元数据
-     * @param metaUid
-     * @param newName
+     * 修改元数据信息
+     * @param metaUid 元数据主键
+     * @param newName 元数据名称
+     * @param proNo   流程编号
      * @return
      */
-    @RequestMapping(value = "/rename")
+    @RequestMapping(value = "/update")
     @ResponseBody
-    public ServerResponse renameDhProcessMeta(String metaUid, String newName) {
-        return dhProcessMetaService.renameDhProcessMeta(metaUid, newName);
+    public ServerResponse updateDhProcessMeta(String metaUid, String newName, String proNo) {
+        return dhProcessMetaService.updateDhProcessMeta(metaUid, newName, proNo);
     }
     
     /**

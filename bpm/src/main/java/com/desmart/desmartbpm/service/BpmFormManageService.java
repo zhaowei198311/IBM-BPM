@@ -79,4 +79,11 @@ public interface BpmFormManageService {
 	 */
 	List<BpmForm> listAllFormsOfProcessDefinition(String proUid, String proVerUid);
 
+	/**
+	 * 根据表单主键查询表单
+	 * @param formUid  表单主键
+	 * @return
+	 */
+	BpmForm getByFormUid(String formUid);
+
 }

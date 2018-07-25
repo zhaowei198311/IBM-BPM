@@ -3,19 +3,19 @@
 <mapper namespace="com.desmart.desmartbpm.dao.DhProcessMetaMapper" >
     <sql id="base_column">
         PRO_META_UID, PRO_APP_ID, PRO_UID, PRO_NAME, CREATOR, CREATE_TIME, UPDATE_USER, 
-        LAST_UPDATE_TIME, CATEGORY_UID, PRO_DISPLAY, PRO_META_STATUS 
+        LAST_UPDATE_TIME, CATEGORY_UID, PRO_DISPLAY, PRO_META_STATUS, pro_no
     </sql>
     
     <sql id="relation_column">
         pm.PRO_META_UID, pm.PRO_APP_ID, pm.PRO_UID, pm.PRO_NAME, pm.CREATOR, pm.CREATE_TIME, 
-        pm.UPDATE_USER, pm.LAST_UPDATE_TIME, pm.CATEGORY_UID, pm.PRO_DISPLAY, pm.PRO_META_STATUS
+        pm.UPDATE_USER, pm.LAST_UPDATE_TIME, pm.CATEGORY_UID, pm.PRO_DISPLAY, pm.PRO_META_STATUS, pm.pro_no
     </sql>
     
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta">
         insert into dh_process_meta (<include refid="base_column"/>)
         values(
             #{proMetaUid}, #{proAppId}, #{proUid}, #{proName}, #{creator}, sysdate, 
-            #{updateUser}, #{lastUpdateTime}, #{categoryUid}, #{proDisplay}, #{proMetaStatus}
+            #{updateUser}, #{lastUpdateTime}, #{categoryUid}, #{proDisplay}, #{proMetaStatus}, #{proNo}
         )
     </insert>
 
@@ -26,7 +26,8 @@
             #{item.categoryUid},
             #{item.categoryParent},
             #{item.categoryName},
-            #{item.categoryIcon}
+            #{item.categoryIcon},
+            #{item.proNo}
             from dual
         </foreach>
     </insert>
@@ -102,6 +103,9 @@
             <if test="proMetaStatus != null">
                 and pm.PRO_META_STATUS = #{proMetaStatus}
             </if>
+            <if test="proNo != null and !proNo.trim().isEmpty()">
+                and pm.pro_no = #{proNo}
+            </if>
         </where>
     </select>
     
@@ -123,7 +127,10 @@
                 CATEGORY_UID = #{categoryUid},
             </if>
             <if test="proMetaStatus != null">
-                PRO_META_STATUS = #{proMetaStatus}
+                PRO_META_STATUS = #{proMetaStatus},
+            </if>
+            <if test="proNo != null">
+                PRO_NO = #{proNo},
             </if>
         </set>
         where PRO_META_UID = #{proMetaUid}

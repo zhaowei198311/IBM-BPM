@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
-                        <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:1300px;">
+                        <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:100%;">
                             <colgroup>
                                 <col>
                                 <col>

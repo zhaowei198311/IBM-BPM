@@ -43,9 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -94,6 +91,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private TaskMongoDao taskMongoDao;
 	@Autowired
 	private DhSynTaskRetryMapper dhSynTaskRetryMapper;
+	@Autowired
+	private DhFormNoService dhFormNoService;
 
 	/**
 	 * 查询所有流程实例
@@ -280,8 +279,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
         int insId = currProcessInstance.getInsId();
-		JSONObject insJson = JSONObject.parseObject(currProcessInstance.getInsData());
-		JSONObject processDataJson = insJson.getJSONObject("processData");
+		JSONObject insDataJson = JSONObject.parseObject(currProcessInstance.getInsData());
+		JSONObject processDataJson = insDataJson.getJSONObject("processData");
 		// 检查是否需要更新insTitle
 		if (canEditInsTitle(currTask, currProcessInstance)) {
 			String insTitle = processDataIn.getString("insTitle");
@@ -290,10 +289,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			}
 			currProcessInstance.setInsTitle(insTitle);
 			processDataJson.put("insTitle", insTitle);
-			insJson.put("processData", processDataJson);
+			insDataJson.put("processData", processDataJson);
 		}
 		// 整合formdata
-		JSONObject mergedFormData = insJson.getJSONObject("formData"); // 实例中的表单数据
+		JSONObject mergedFormData = insDataJson.getJSONObject("formData"); // 实例中的表单数据
         if (StringUtils.isNotBlank(formDataIn.toJSONString())) {
             mergedFormData = FormDataUtil.formDataCombine(formDataIn, mergedFormData);
         }
@@ -327,10 +326,17 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         //完成任务 删除任务的草稿数据
         dhDraftsMapper.deleteByTaskUid(taskUid);
 
+		// 获得当前步骤
+		DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
+		BpmForm bpmForm = bpmFormManageService.getByFormUid(formStepOfTaskNode.getStepObjectUid());
+		// 更新表单号
+        JSONArray formNoListJsonObject = dhFormNoService.updateFormNoListJsonObject(bpmForm, insDataJson.getJSONArray("formNoList"));
+
         // 更新流程实例信息
-        insJson.put("formData", mergedFormData);
+        insDataJson.put("formData", mergedFormData);
+        insDataJson.put("formNoList", formNoListJsonObject);
         currProcessInstance.setInsUpdateDate(DateUtil.format(new Date()));
-        currProcessInstance.setInsData(insJson.toJSONString());
+        currProcessInstance.setInsData(insDataJson.toJSONString());
         dhProcessInstanceMapper.updateByPrimaryKeySelective(currProcessInstance);
 
         // 判断Token是否移动
@@ -377,8 +383,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         }
 
         // 判断后续有没有触发器需要调用
-        // 获得当前步骤
-        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(currTaskNode, currProcessInstance.getInsBusinessKey());
         DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
         if (nextStep == null) {
             // 没有后续步骤
@@ -500,11 +504,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		DhStep formStep = dhStepService.getFormStepOfStepList(steps); // 从步骤中条选出表单步骤
 		// 获得表单信息
-		ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
-		if (!getFormResponse.isSuccess()) {
-			return ServerResponse.createByErrorMessage("缺少表单");
+		BpmForm bpmForm = bpmFormManageService.getByFormUid(formStep.getStepObjectUid());
+		if (bpmForm == null) {
+			return ServerResponse.createByErrorMessage("找不到表单");
 		}
-		BpmForm bpmForm = (BpmForm)getFormResponse.getData();
 		// 获得表单字段权限信息
 		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep.getStepUid());
 		if (!fieldPermissionResponse.isSuccess()) {
@@ -524,15 +527,15 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
 		JSONObject approvalData = null;
 		String insDataStr = dhprocessInstance.getInsData();
-		JSONObject insData = JSON.parseObject(insDataStr);
-		JSONObject formData = insData.getJSONObject("formData"); // 做页面展示
+		JSONObject insDataJson = JSON.parseObject(insDataStr);
+		JSONObject formData = insDataJson.getJSONObject("formData"); // 做页面展示
 		if(dhDrafts != null &&  StringUtils.isNotBlank(dhDrafts.getDfsData())) {
 			JSONObject dfsData = JSON.parseObject(dhDrafts.getDfsData());
 			// 获得草稿中的表单信息
 			JSONObject dfsFormData = dfsData.getJSONObject("formData");
 			// 将流程实例中的表单信息集合草稿中的信息，但不需要更新到流程实例对象中
-			insData.put("formData", FormDataUtil.formDataCombine(dfsFormData, formData));
-			dhprocessInstance.setInsData(insData.toJSONString());
+			insDataJson.put("formData", FormDataUtil.formDataCombine(dfsFormData, formData));
+			dhprocessInstance.setInsData(insDataJson.toJSONString());
 			approvalData = dfsData.getJSONObject("approvalData");
 		}
 
@@ -549,6 +552,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			resultMap.put("showResponsibility", "TRUE");
 		}
 
+		// 获得表单编号
+		String formNo = dhFormNoService.findFormNoByFormUid(bpmForm.getDynUid(), insDataJson.getJSONArray("formNoList"));
+		bpmForm.setFormNo(formNo);
         // 记录任务被打开
         taskMongoDao.saveOpenedTask(new OpenedTask(dhTaskInstance.getTaskUid(), dhTaskInstance.getTaskId(), new Date()));
 
@@ -790,12 +796,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    
 	    DhStep formStep = dhStepService.getFormStepOfTaskNode(currTaskNode, dhprocessInstance.getInsBusinessKey());
 
-        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
-        if (!getFormResponse.isSuccess()) {
+		BpmForm bpmForm = bpmFormManageService.getByFormUid(formStep.getStepObjectUid());
+        if (bpmForm == null) {
             return ServerResponse.createByErrorMessage("缺少表单");
         }
-        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
-        
+
         ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
@@ -843,12 +848,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (formStep == null) {
             return ServerResponse.createByErrorMessage("找不到表单步骤");
         }
-        ServerResponse getFormResponse = bpmFormManageService.queryFormByFormUid(formStep.getStepObjectUid());
-        if (!getFormResponse.isSuccess()) {
+		BpmForm bpmForm = bpmFormManageService.getByFormUid(formStep.getStepObjectUid());
+        if (bpmForm == null) {
             return ServerResponse.createByErrorMessage("缺少表单");
         }
-        BpmForm bpmForm = (BpmForm)getFormResponse.getData();
-        
+
         ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");

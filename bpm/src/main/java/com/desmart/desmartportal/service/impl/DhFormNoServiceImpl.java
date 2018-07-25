@@ -7,7 +7,6 @@ import com.desmart.common.util.DateTimeUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.dao.DhFormNoCounterMapper;
 import com.desmart.desmartportal.entity.DhFormNoCounter;
 import com.desmart.desmartportal.service.DhFormNoService;
@@ -32,17 +31,10 @@ public class DhFormNoServiceImpl implements DhFormNoService {
 
 
     @Override
-    public JSONArray updateFormNoListJsonObject(DhStep formStep, JSONArray oldFormNoJSONArray) {
+    public JSONArray updateFormNoListJsonObject(BpmForm bpmForm, JSONArray oldFormNoJSONArray) {
         JSONArray result = null;
-        String formUid = formStep.getStepObjectUid();
-        if (StringUtils.isBlank(formUid)) {
-            throw new PlatformException("生成变单号失败，表单不存在");
-        }
-        BpmForm bpmForm = bpmFormManageMapper.queryFormByFormUid(formUid);
-        if (bpmForm == null) {
-            throw new PlatformException("生成变单号失败，表单不存在");
-        }
         String formNo = null;
+        String formUid = bpmForm.getDynUid();
         boolean exist = false;
         if (oldFormNoJSONArray == null || oldFormNoJSONArray.size() == 0) {
             // 创建新的formNoList并返回
@@ -51,6 +43,7 @@ public class DhFormNoServiceImpl implements DhFormNoService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("formUid", formUid);
             jsonObject.put("formNo", formNo);
+            jsonObject.put("formNoStatic", bpmForm.getFormNoStatic());
             newJsonArray.add(jsonObject);
             return newJsonArray;
         }
@@ -74,15 +67,19 @@ public class DhFormNoServiceImpl implements DhFormNoService {
         return oldFormNoJSONArray;
     }
 
-/*
-
-生成规则中可填入任意合法字符，其中的变量请用“{”，“}”
-包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，
-num后面的数字代表位数，注意区分大小写
-规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)
-
- */
-
+    @Override
+    public String findFormNoByFormUid(String formUid, JSONArray formNoListJson) {
+        if (formNoListJson == null) {
+            return null;
+        }
+        for (int i = 0; i < formNoListJson.size(); i++) {
+            JSONObject item = formNoListJson.getJSONObject(i);
+            if (formUid.equals(item.getString("formUid"))) {
+                return item.getString("formNo");
+            }
+        }
+        return null;
+    }
 
     /**
      * 根据表单号生成规则生成一个表单号
@@ -91,16 +88,33 @@ num后面的数字代表位数，注意区分大小写
      */
     private String generateFormNo(String formNoExpression) {
         int affectRow = 0;
-        DhFormNoCounter newCount = new DhFormNoCounter();
+        // 检查是否包含需要替换的字符，如果不包含就直接返回原字符
+        Pattern pattern = Pattern.compile("(\\{yyyy-MM-dd\\})|(\\{yyyyMMdd\\})|(\\{num\\d\\})");
+        Matcher matcher = pattern.matcher(formNoExpression);
+        if (!matcher.find()) {
+            return formNoExpression;
+        }
 
+        DhFormNoCounter newCount = new DhFormNoCounter();
         if (StringUtils.isBlank(formNoExpression)) {
             throw new PlatformException("表单号生成规则为空");
         }
         if (formNoExpression.contains("{yyyy-MM-dd}")) {
             formNoExpression = formNoExpression.replace("{yyyy-MM-dd}", DateTimeUtil.dateToStr(new Date(), "yyyy-MM-dd"));
             newCount.setIsDaily(Const.Boolean.TRUE);
+        } else if (formNoExpression.contains("{yyyyMMdd}")) {
+            formNoExpression = formNoExpression.replace("{yyyyMMdd}", DateTimeUtil.dateToStr(new Date(), "yyyyMMdd"));
+            newCount.setIsDaily(Const.Boolean.TRUE);
+        } else {
+            newCount.setIsDaily(Const.Boolean.FALSE);
         }
         newCount.setFormNoExpression(formNoExpression);
+        // 检查是否需要递增单号
+        pattern = Pattern.compile("\\{num\\d\\}");
+        matcher = pattern.matcher(formNoExpression);
+        if (!matcher.find()) {
+            return formNoExpression;
+        }
         DhFormNoCounter dhFormNoCounter = dhFormNoCounterMapper.selectByPrimaryKey(formNoExpression);
 
         if (dhFormNoCounter == null) {

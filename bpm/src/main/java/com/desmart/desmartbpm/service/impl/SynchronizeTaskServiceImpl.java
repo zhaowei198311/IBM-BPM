@@ -303,7 +303,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             for (DhTaskInstance task : dhTaskList) {
                 Map<String, String> delegateResult = dhAgentService.getDelegateResult(bpmActivityMeta.getProAppId(), bpmActivityMeta.getBpdId(), task.getUsrUid());
                 if (delegateResult != null) {
-                    task.setTaskDelegateUser(delegateResult.get("delegateUser"));
+                    task.setTaskDelegateUser(delegateResult.get("delegateUser"));// 代理人工号
                     task.setTaskDelegateDate(new Date());
                     DhAgentRecord agentRecord = new DhAgentRecord();
                     agentRecord.setAgentDetailId(EntityIdPrefix.DH_AGENT_RECORD + UUID.randomUUID().toString());

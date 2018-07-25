@@ -96,6 +96,7 @@ DhProcessInstance {
 	private String handleUserName;//任务处理人
 	private String taskTitle;//任务标题
 	private String relationUsers;//任务处理人，任务代理人
+	private String proNo; // 流程编号，属于元数据信息
 
 	public DhProcessInstance() {
 
@@ -424,8 +425,14 @@ DhProcessInstance {
 	public void setInsRoutingData(String insRoutingData) {
 		this.insRoutingData = insRoutingData;
 	}
-	
 
+	public String getProNo() {
+		return proNo;
+	}
+
+	public void setProNo(String proNo) {
+		this.proNo = proNo;
+	}
 
 	public String getProName() {
         return proName;

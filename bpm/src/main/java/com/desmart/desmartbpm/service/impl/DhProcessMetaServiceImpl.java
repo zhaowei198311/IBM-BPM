@@ -25,7 +25,6 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
-import com.desmart.desmartbpm.dao.BpmFormManageMapper;
 import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
 import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
@@ -317,8 +316,8 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         
     }
     
-    public ServerResponse renameDhProcessMeta(String metaUid, String newName) {
-        if (StringUtils.isBlank(metaUid) || StringUtils.isBlank(newName)) {
+    public ServerResponse updateDhProcessMeta(String metaUid, String newName, String proNo) {
+        if (StringUtils.isBlank(metaUid) || StringUtils.isBlank(newName) || StringUtils.isBlank(proNo)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
         newName = newName.trim();
@@ -328,20 +327,26 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
             return ServerResponse.createByErrorMessage("此流程元数据不存在");
         } 
         
-        if (newName.equals(dhProcessMeta.getProName())) {
+        if (newName.equals(dhProcessMeta.getProName()) && StringUtils.equals(dhProcessMeta.getProNo(), proNo)) {
             return ServerResponse.createBySuccess();
         }
         
         DhProcessMeta metaSelective = new DhProcessMeta();
         metaSelective.setProName(newName);
-        metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
-        if (dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective).size() > 0) {
-            return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
+        // metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
+        // 指定元数据名的元数据
+        List<DhProcessMeta> metaListExists = dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective);
+        for (DhProcessMeta metaListExist : metaListExists) {
+            // 如果库中的元数据主键与当前元数据不同，说明有同名的元数据存在
+            if (!metaListExist.getProMetaUid().equals(metaUid)) {
+                return ServerResponse.createByErrorMessage("存在同名的元数据，请重新命名");
+            }
         }
-        
+
         String updator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhProcessMeta.setUpdateUser(updator);
-        dhProcessMeta.setProName(newName);
+        dhProcessMeta.setProName(newName.trim());
+        dhProcessMeta.setProNo(proNo.trim());
         int countRow = dhProcessMetaMapper.updateByProMetaUidSelective(dhProcessMeta);
         
         if (countRow > 0) {
