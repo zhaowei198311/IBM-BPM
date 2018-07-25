@@ -53,6 +53,7 @@ import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.entity.SysEmailUtilBean;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
@@ -136,7 +137,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
         List<DhTaskInstance> dhTaskList = new ArrayList<>();
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
-        String notifyTemplateUid = null;
+        SysEmailUtilBean sysEmailUtilBean = null;
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             Map<String, Object> data = null;
@@ -153,15 +154,19 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
                 agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
             }
-            if(data!=null&&data.get("notifyTemplateUid")!=null&&!"".equals(data.get("notifyTemplateUid"))) {
-            	notifyTemplateUid = data.get("notifyTemplateUid").toString();
+            if(data!=null&&data.get("sysEmailUtilBean")!=null) {
+            	sysEmailUtilBean = (SysEmailUtilBean) data.get("sysEmailUtilBean");
             }
         }
+        
+        String bpmformsHost = bpmGlobalConfigService.getFirstActConfig().getBpmformsHost();
         for(DhTaskInstance task : dhTaskList) {
         	dhTaskInstanceMapper.insertTask(task);
         	//发送邮件通知
-        	if(notifyTemplateUid!=null) {
-        		sendEmailService.dhSendEmail(task, notifyTemplateUid);
+        	if(sysEmailUtilBean!=null) {
+        		sysEmailUtilBean.setDhTaskInstance(task);
+        		sysEmailUtilBean.setBpmformsHost(bpmformsHost);
+        		sendEmailService.dhSendEmail(sysEmailUtilBean);
         	}
         }
         if (agentRecordList.size() > 0) {
@@ -288,6 +293,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         List<DhTaskInstance> dhTaskList = generateDhTaskInstance(lswTask, orgionUserUidList, dhProcessInstance,
                 bpmActivityMeta, preMeta, globalConfig);
         List<DhAgentRecord> agentRecordList = new ArrayList<>();
+        
+        //邮件收件人工号集合
+        List<String> toList = new ArrayList<>();
 
         // 查看是否允许代理
         if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
@@ -305,14 +313,21 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     agentRecord.setTaskTitle(bpmActivityMeta.getActivityName());
                     agentRecord.setTaskUid(task.getTaskUid());
                     agentRecordList.add(agentRecord);
+                    toList.add(delegateResult.get("delegateUser"));
+                }else {
+                	toList.add(task.getUsrUid());
                 }
             }
         }
         
         if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
         	if(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate()!=null
-        			&&!"".equals(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())) {
-        		result.put("notifyTemplateUid", bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
+        			&&!"".equals(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())&&toList.size()>0) {
+        		//设置邮箱模板以及邮件收件人工号集合
+        		SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
+        		sysEmailUtilBean.setNotifyTemplateUid(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
+        		sysEmailUtilBean.setToUserNoList(toList);
+        		result.put("sysEmailUtilBean", sysEmailUtilBean);
         	}
         }
         

@@ -138,15 +138,17 @@
 					<div class="layui-form-item"  id="templateSubjectDiv">
 						<label class="layui-form-label">邮件主题</label>
 						<div class="layui-input-block">
-							<input id="templateSubject" class="layui-input" name="templateSubject"
-							 required lay-verify="required" placeholder="请输入" >
+							<textarea id="templateSubject" name="templateSubject" lay-verify="required"
+							   		 required class="layui-textarea" style="width: 100%;height:100px;">
+							
+							</textarea>
 						</div>
 					</div>
 					<div class="layui-form-item">
 						<label class="layui-form-label">主体内容</label>
 						<div class="layui-input-block">
 							<textarea id="templateContent" name="templateContent" lay-verify="required"
-							   		 required class="layui-textarea" style="width: 100%;height:175px;">
+							   		 required class="layui-textarea" style="width: 100%;height:100px;">
 							
 							</textarea>
 						</div>
@@ -158,8 +160,8 @@
 			<!-- {name}即通知的人员姓名
 				, -->
 				<label class="layui-form-label-custom" style="color: red;">注意：
-				{proName}即流程名,{proNo}即流程编号,{approvalUrl}即办理任务的请求路径,
-				{fieldName}中fieldName可以为表单字段的字段名
+				{proName}即流程名,{proNo}即流程编号,{hideUrl}即办理任务隐藏的请求路径,
+				{showUrl}即办理任务显示的请求路径,{fieldName}中fieldName可以为表单字段的字段名
 				</label>
 				<div class="layui-input-block" style="position: relative;">
 				<button id="submitOperation" type="button" onclick="submitOperation();"
