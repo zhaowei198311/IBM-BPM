@@ -88,7 +88,7 @@ public class SendMail {
             Properties properties = new Properties();
             //设置邮件服务器
             properties.setProperty("mail.smtp.host", host);  
-            //properties.setProperty("mail.smtp.port", port);  
+            properties.setProperty("mail.smtp.port", port);  
             properties.setProperty("mail.transport.protocol", protocol);
             properties.setProperty("mail.debug", "true");//设置debug模式  
             Session ssn = null;
