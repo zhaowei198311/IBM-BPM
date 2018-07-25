@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.RequestSourceUtil;
 import com.desmart.desmartbpm.service.DhProcessRetrieveService;
+import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhDraftsService;
@@ -203,8 +205,14 @@ public class MenusController {
 	        }
 			return mv;
 		}
-		// 等待加签 跳转 已办详情页面
-		if(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(checkDhTaskInstance.getTaskStatus())) {
+		
+		String currUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		// 等待加签  代理给人家的任务  跳转 已办详情页面
+		if(DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(checkDhTaskInstance.getTaskStatus())
+			|| (checkDhTaskInstance.getTaskDelegateUser()!=null 
+				&& !"".equals(checkDhTaskInstance.getTaskDelegateUser())
+				&& !currUserUid.equals(checkDhTaskInstance.getTaskDelegateUser()))
+			) {
 			if(RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"))) {
 				mv.setViewName("desmartportal/mobile_finished_detail");
 			}else {

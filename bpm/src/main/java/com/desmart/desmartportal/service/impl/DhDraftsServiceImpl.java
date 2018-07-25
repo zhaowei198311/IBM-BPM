@@ -66,12 +66,14 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	 * 查询所有草稿数据
 	 */
 	@Override
-	public ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize) {
+	public ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize, String insTitle, String proName) {
 		log.info("查询所有草稿数据开始...");
 		try {
 			DhDrafts dhDrafts = new DhDrafts();
 			String dfsCreator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 			dhDrafts.setDfsCreator(dfsCreator);
+			dhDrafts.setDfsTitle(insTitle);
+			dhDrafts.setProName(proName);
 			PageHelper.startPage(pageNum, pageSize);
 			PageHelper.orderBy("DFS_CREATEDATE desc");
 			List<DhDrafts> resultList = dhDraftsMapper.selectByCondition(dhDrafts);
@@ -84,24 +86,6 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 			e.printStackTrace();
 		}
 		log.info("查询所有草稿数据结束...");
-		return null;
-	}
-
-	/**
-	 * 根据草稿名称查询 草稿数据
-	 */
-	@Override
-	public ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsBydfsTitle(String title, Integer pageNum, Integer pageSize) {
-		log.info("根据草稿名称查询草稿数据开始...");
-		try {
-			PageHelper.startPage(pageNum, pageSize);
-			List<DhDrafts> resultList = dhDraftsMapper.selectBydfsTitle(title);
-			PageInfo<List<DhDrafts>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.info("根据草稿名称查询草稿数据结束...");
 		return null;
 	}
 

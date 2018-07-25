@@ -408,6 +408,7 @@ function departAsync() {
 
 //打开选择层
 function openChooseUserDiv(){
+	$("body").css({"position":"fixed"});
 	//页面层
 	index = layer.open({
 		type: 1
@@ -431,7 +432,12 @@ function openChooseUserDiv(){
 			$("#search_depart_input").val("");
 			$("#search_value_input").val("");
 			$("#search_user_input").val("");
+			$("body").css({"position":""});
 		}
+	});
+	layer.style(index,{
+		"margin-top":"5px",
+		"margin-left": "1px"
 	});
 }
 
@@ -439,7 +445,7 @@ function openChooseUserDiv(){
 function clickUserFun(obj,isMulti,elementId){
 	var userUid = $(obj).find("td:eq(0)").text().trim();
 	var userName = $(obj).find("td:eq(1)").text().trim();
-	var liHtml = '<li><div class="choose_user_name_span">'+userName
+	var liHtml = '<li><div class="choose_user_name_span">'+userName+'('+userUid+")"
 		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
 		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
 	if(isMulti){

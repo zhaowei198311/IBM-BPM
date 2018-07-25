@@ -37,22 +37,17 @@ public class DhDraftsController {
 	
 	@RequestMapping(value = "/queryDraftsByList")
 	@ResponseBody
-	public ServerResponse queryDraftsByList(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
-		return dhDraftsService.selectDraftsList(pageNum, pageSize);
+	public ServerResponse queryDraftsByList(@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,
+			@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,
+			@RequestParam("insTitle")String insTitle,
+			@RequestParam("proName")String proName) {
+		return dhDraftsService.selectDraftsList(pageNum, pageSize, insTitle, proName);
 	}
 	
 	@RequestMapping(value = "/deleteDraftsById")
 	@ResponseBody
 	public void deleteDraftsById(@RequestParam(value="dfsId")String dfsId) {
 		dhDraftsService.deleteDraftsBydfsId(dfsId);
-	}
-	
-	@RequestMapping(value = "/queryDraftsByTitle")
-	@ResponseBody
-	public ServerResponse queryDraftsByTitle(@RequestParam(value="dfsTitle")String dfsTitle,
-			@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-			@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
-		return dhDraftsService.selectDraftsBydfsTitle(dfsTitle, pageNum, pageSize);
 	}
 	
 	@RequestMapping(value = "/saveDrafts")

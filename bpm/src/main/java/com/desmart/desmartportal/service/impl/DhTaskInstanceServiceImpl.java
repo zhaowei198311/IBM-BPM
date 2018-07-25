@@ -778,9 +778,17 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
 	    }
 	    DhTaskInstance dhTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+	    String currUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 	    if (dhTaskInstance == null || !DhTaskInstance.STATUS_CLOSED.equals(dhTaskInstance.getTaskStatus())) {
 	      if(!DhTaskInstance.STATUS_WAIT_ALL_ADD_FINISH.equals(dhTaskInstance.getTaskStatus())) {
-	    	  return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");  
+	    	  if(dhTaskInstance.getTaskDelegateUser()!=null 
+					&& !"".equals(dhTaskInstance.getTaskDelegateUser())
+					&& !currUserUid.equals(dhTaskInstance.getTaskDelegateUser())
+				) {
+	    		  dhTaskInstance.setTaskStatus("-2");
+	    	  }else {
+	    		  return ServerResponse.createByErrorMessage("任务不存在或任务状态异常"); 
+	    	  }
 	      }
 	    }
 	    DhProcessInstance dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
