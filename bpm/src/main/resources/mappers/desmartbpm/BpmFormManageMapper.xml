@@ -4,12 +4,13 @@
 
     <sql id="base_column">
         DYN_UID,DYN_TITLE,DYN_DESCRIPTION,DYN_WEBPAGE,DYN_CONTENT,
-        PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME,FORM_NO_EXPRESSION
+        PRO_UID,PRO_VERSION,CREATOR,CREATE_TIME,FORM_NO_EXPRESSION,FORM_NO_STATIC
     </sql>
     
     <sql id="select_column">
         bmf.DYN_UID,bmf.DYN_TITLE,bmf.DYN_DESCRIPTION,bmf.DYN_WEBPAGE,
-        bmf.DYN_CONTENT,bmf.PRO_UID,bmf.PRO_VERSION,bmf.CREATOR,bmf.CREATE_TIME,bmf.FORM_NO_EXPRESSION
+        bmf.DYN_CONTENT,bmf.PRO_UID,bmf.PRO_VERSION,bmf.CREATOR,bmf.CREATE_TIME,
+        bmf.FORM_NO_EXPRESSION,bmf.FORM_NO_STATIC
     </sql>
     
     <select id="listFormByProDefinition" parameterType="map" resultType="com.desmart.desmartbpm.entity.BpmForm">
@@ -68,7 +69,7 @@
     <insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	insert into bpm_form(<include refid="base_column"/>)
     	values(#{dynUid},#{dynTitle},#{dynDescription},#{dynWebpage},
-    		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate,#{formNoExpression})
+    		#{dynContent},#{proUid},#{proVersion},#{creator},sysdate,#{formNoExpression},#{formNoStatic})
     </insert>
 
 	<insert id="insertFormBatch" parameterType="list">
@@ -76,7 +77,8 @@
 		<foreach collection="list" item="item" separator=";">
 			insert into bpm_form(<include refid="base_column"/>) values(
 				#{item.dynUid},#{item.dynTitle},#{item.dynDescription},#{item.dynWebpage, jdbcType=CLOB},
-				#{item.dynContent, jdbcType=CLOB},#{item.proUid},#{item.proVersion},#{item.creator},sysdate,#{item.formNoExpression}
+				#{item.dynContent, jdbcType=CLOB},#{item.proUid},#{item.proVersion},#{item.creator},sysdate,
+				#{item.formNoExpression},#{formNoStatic}
 			)
 		</foreach>
 		;end;
@@ -84,7 +86,8 @@
     
     <update id="updateFormInfo" parameterType="com.desmart.desmartbpm.entity.BpmForm">
     	update bpm_form 
-    	set dyn_title = #{dynTitle},dyn_description = #{dynDescription},FORM_NO_EXPRESSION = #{formNoExpression}
+    	set dyn_title = #{dynTitle},dyn_description = #{dynDescription},
+    		FORM_NO_EXPRESSION = #{formNoExpression},FORM_NO_STATIC = #{formNoStatic}
     	where dyn_uid = #{dynUid}
     </update>
     

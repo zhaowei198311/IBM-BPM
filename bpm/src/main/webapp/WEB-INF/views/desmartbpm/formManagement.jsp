@@ -27,11 +27,10 @@
 				width:800px;
 			}
 			.display_content_copy {
-				overflow-y: auto;
 				color: #717171;
 				padding: 20px;
 				width: 400px;
-				height: 400px;
+				height: 450px;
 				background: #fff;
 				position: absolute;
 				margin: 100px 0 0 -200px;
@@ -50,14 +49,13 @@
 				height: 100%;
 			}
 			.display_content_sel_copy{
-				overflow-y: auto;
 				color: #717171;
 				padding: 20px;
 				width: 400px;
-				height: 300px;
+				height:450px;
 				background: #fff;
 				position: absolute;
-				margin: 100px 0 0 -200px;
+				margin: 5px 0 0 -200px;
 				left: 50%;
 				box-shadow: 0 0 10px #ccc;
 			}
@@ -77,16 +75,16 @@
 				color: #717171;
 				padding: 20px;
 				width: 280px;
-				height: 400px;
+				height:450px;
 				background: #fff;
 				position: absolute;
-				margin: 100px 0 0 -200px;
+				margin: 50px 0 0 -200px;
 				left: 50%;
 				box-shadow: 0 0 10px #ccc;
 			}
 			
 			.middle_copy{
-				height: 300px;
+				height: 360px;
 				width: 96%;
 				border: 1px solid #ccc;
 				position: relative;
@@ -94,17 +92,18 @@
 			}
 			
 			.display_content{
-				height:400px;
+				height:450px;
+				margin-top:50px;
 			}
 			
 			.middle{
-				height:295px;
+				height:360px;
 			}
 			
 			.expression-cue{
 				border: 1px solid #CCC;
 				border-radius: 5px;
-				height:90px;
+				height:95px;
 				width:98%;
 				margin:auto;
 				margin-top:-10px;
@@ -190,14 +189,20 @@
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单编号生成规则</label>
+					    <label class="layui-form-label">表单编号</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="form-no-static" name="formNoStatic" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单流水号生成规则</label>
 					    <div class="layui-input-block">
 					      <input type="text" id="form-no-expression" name="formNoExpression" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item expression-cue">
-					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
-					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyyMMdd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyyMMdd}-{num5} --> 流水号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -227,14 +232,20 @@
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单编号生成规则</label>
+					    <label class="layui-form-label">表单编号</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="update-form-no-static" name="formNoStatic" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单流水号生成规则</label>
 					    <div class="layui-input-block">
 					      <input type="text" id="update-form-no-expression" name="formNoExpression" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item expression-cue">
-					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
-					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyyMMdd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyyMMdd}-{num5} --> 流水号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -309,14 +320,20 @@
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单编号生成规则</label>
+					    <label class="layui-form-label">表单编号</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-form-no-static" name="formNoStatic" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单流水号生成规则</label>
 					    <div class="layui-input-block">
 					      <input type="text" id="copy-form-no-expression" name="formNoExpression" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item expression-cue">
-					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
-					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyyMMdd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyyMMdd}-{num5} --> 流水号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>				  
 					</form>
 				</div>
@@ -365,14 +382,20 @@
 					    </div>
 					  </div>
 					  <div class="layui-form-item">
-					    <label class="layui-form-label">表单编号生成规则</label>
+					    <label class="layui-form-label">表单编号</label>
+					    <div class="layui-input-block">
+					      <input type="text" id="copy-sel-form-no-static" name="formNoStatic" class="layui-input">
+					    </div>
+					  </div>
+					  <div class="layui-form-item">
+					    <label class="layui-form-label">表单流水号生成规则</label>
 					    <div class="layui-input-block">
 					      <input type="text" id="copy-sel-form-no-expression" name="formNoExpression" class="layui-input">
 					    </div>
 					  </div>
 					  <div class="layui-form-item expression-cue">
-					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyy-MM-dd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
-					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyy-MM-dd}-{num5} --> 编号：LYF-HT-20180808-00001(00001自增长)</p>
+					  	<p>生成规则中可填入任意合法字符，其中的变量请用“{”，“}”包起来，变量暂时支持:{yyyyMMdd}、{num数字}，num后面的数字代表位数，注意区分大小写</p>
+					  	<p style="margin-top:4px;">规则：LYF-HT-{yyyyMMdd}-{num5} --> 流水号：LYF-HT-20180808-00001(00001自增长)</p>
 					  </div>						  
 					</form>
 				</div>
@@ -411,6 +434,7 @@
 	    var oldFormName = "";//修改表单信息时表单的旧名称
 	    var oldFormDescription = "";//修改表单信息时的旧描述
 	    var oldFormNoExpression = "";//修改表单信息时的旧编号生成规则
+	    var oldFormNoStatic = "";//修改表单信息时表单信息的固定编号
 	    var oldProUid = "";//修改表单信息时的流程id
 	    var oldProVersion = "";//修改表单信息时的流程版本id
 	    var updateFormId = "";//修改表单时表单的Id
@@ -695,6 +719,7 @@
 			var formName = $("#copy-sel-form-name").val().trim();
 			var formDescription = $("#copy-sel-form-description").val().trim();
 			var formNoExpression = $("#copy-sel-form-no-expression").val().trim();
+			var formNoStatic = $("#copy-sel-form-no-static").val().trim();
 			if(!isStandardExpression(formNoExpression)){
 				return;
 			}
@@ -717,7 +742,8 @@
 								dynDescription:formDescription,
 								proUid:proUid,
 								proVersion:proVersion,
-								formNoExpression:formNoExpression
+								formNoExpression:formNoExpression,
+								formNoStatic:formNoStatic
 							},
 							success:function(result2){
 								if(result2.status==0){
@@ -777,7 +803,9 @@
         		trs += '<tr data-formuid="'+formInfo.dynUid
         					+'" data-prouid="'+formInfo.proUid
         					+'" data-proversion="'+formInfo.proVersion
-        					+'" data-expression="'+formInfo.formNoExpression+'">'
+        					+'" data-expression="'+formInfo.formNoExpression
+        					+'" data-static="'+formInfo.formNoStatic
+        					+'">'
         					+ '<td><input type="checkbox" name="copyFormInfo_check" onclick="onSelOne(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>'
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -839,7 +867,9 @@
         		trs += '<tr data-formuid="'+formInfo.dynUid
         					+'" data-prouid="'+formInfo.proUid
         					+'" data-proversion="'+formInfo.proVersion
-        					+'" data-expression="'+formInfo.formNoExpression+'">'
+        					+'" data-expression="'+formInfo.formNoExpression
+        					+'" data-static="'+formInfo.formNoStatic
+        					+'">'
         					+ '<td><input type="checkbox" name="formInfo_check" onclick="onClickSel(this);" value="' + formInfo.dynUid + '" lay-skin="primary"> '+ sortNum +'</td>'
         		            + '<td>'+formInfo.dynTitle+'</td>';
         		if(formInfo.dynDescription!=null && formInfo.dynDescription!=""){
@@ -862,6 +892,7 @@
 		function createForm(){
 			var formName = $("#form-name").val().trim();
 			var formNoExpression = $("#form-no-expression").val().trim();
+			var formNoStatic = $("#form-no-static").val().trim();
 			if(formName==null || formName==""){
 				layer.alert("请填写表单名");
 			}else{
@@ -884,7 +915,8 @@
 								formDescription:$("#form-description").val().trim(),
 								proUid:pageConfig.proUid,
 								proVersion:pageConfig.proVerUid,
-								formNoExpression:formNoExpression
+								formNoExpression:formNoExpression,
+								formNoStatic:formNoStatic
 							};
 							post(common.getPath()+href,param);
 							$(".display_container").css("display", "none");
@@ -910,7 +942,7 @@
 			for(var i=0;i<strArr.length;i++){
 				var str = strArr[i];
 				var regx = new RegExp(/^{(num[1-9])}/);
-				if(str.indexOf("yyyy-MM-dd")==-1 
+				if(str.indexOf("yyyyMMdd")==-1 
 						&& !regx.test(str)){
 					layer.alert("请输入语法正确的变量");
 					return false;
@@ -924,6 +956,7 @@
 			var formName = $("#update-form-name").val().trim();
 			var formDescription = $("#update-form-description").val().trim();
 			var formNoExpression = $("#update-form-no-expression").val().trim();
+			var formNoStatic = $("#update-form-no-static").val().trim();
 			if(!isStandardExpression(formNoExpression)){
 				return;
 			}
@@ -937,7 +970,8 @@
 						dynUid:updateFormId,
 						dynTitle:formName,
 						dynDescription:formDescription,
-						formNoExpression:formNoExpression
+						formNoExpression:formNoExpression,
+						formNoStatic:formNoStatic
 					},
 					success:function(result2){
 						if(result2.status==0){
@@ -967,7 +1001,8 @@
 									dynUid:updateFormId,
 									dynTitle:formName,
 									dynDescription:formDescription,
-									formNoExpression:formNoExpression
+									formNoExpression:formNoExpression,
+									formNoStatic:formNoStatic
 								},
 								success:function(result2){
 									if(result2.status==0){
@@ -996,6 +1031,7 @@
 			var dynTitle = $(trObj.find("td")[1]).text().trim();
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
 			var formNoExpression = trObj.data("expression");
+			var formNoStatic = trObj.data("static");
 			var href = "/formManage/designForm";
 			var param = {
 				formUid:formId,
@@ -1003,7 +1039,8 @@
 				formDescription:dynDescription,
 				proUid:proUid,
 				proVersion:proVersion,
-				formNoExpression:formNoExpression
+				formNoExpression:formNoExpression,
+				formNoStatic:formNoStatic
 			};
 			post(common.getPath()+href,param);
 		}
@@ -1063,6 +1100,7 @@
 			var formName = $("#copy-form-name").val().trim();
 			var formDescription = $("#copy-form-description").val().trim();
 			var formNoExpression = $("#copy-form-no-expression").val().trim();
+			var formNoStatic = $("copy-form-no-static").val().trim();
 			if(!isStandardExpression(formNoExpression)){
 				return;
 			}
@@ -1085,7 +1123,8 @@
 								dynDescription:formDescription,
 								proUid:proUid,
 								proVersion:proVersion,
-								formNoExpression:formNoExpression
+								formNoExpression:formNoExpression,
+								formNoStatic:formNoStatic
 							},
 							success:function(result2){
 								if(result2.status==0){
@@ -1110,15 +1149,18 @@
 			updateFormId = trObj.data("formuid");
 			var dynTitle = $(trObj.find("td")[1]).text().trim();
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
-			var formNoExpression = $(obj).data("expression");
+			var formNoExpression = trObj.data("expression");
+			var formNoStatic = trObj.data("static");
 			oldFormDescription = dynDescription;
 			oldFormName = dynTitle;
 			oldProUid = trObj.data("prouid");
 			oldProVersion = trObj.data("proversion");
 			oldFormNoExpression = formNoExpression;
+			oldFormNoStatic = formNoStatic;
 			$("#update-form-name").val(dynTitle);
 			$("#update-form-description").val(dynDescription);
 			$("#update-form-no-expression").val(formNoExpression);
+			$("#update-form-no-static").val(formNoStatic);
 			$(".display_container2").css("display", "block");
 		}
 		

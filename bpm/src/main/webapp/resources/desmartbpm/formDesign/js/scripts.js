@@ -726,6 +726,7 @@ $(document).ready(function () {
             formDescription: $("#formDescription").val(),
             formUid: $("#formUid").val(),
             formNoExpression:$("#formNoExpression").val(),
+            formNoStatic:$("#formNoStatic").val(),
             webpage: preHtml,
             dynHtml: dynHtml
         };
@@ -826,6 +827,7 @@ function saveHtml() {
                         dynTitle: $("#formName").val(),
                         dynDescription: $("#formDescription").val(),
                         formNoExpression:$("#formNoExpression").val(),
+                        formNoStatic:$("#formNoStatic").val(),
                         dynWebpage: webpage,
                         dynContent: dynContent
                     };
@@ -1024,6 +1026,7 @@ function saveHtml() {
                         dynTitle: $("#formName").val(),
                         dynDescription: $("#formDescription").val(),
                         formNoExpression:$("#formNoExpression").val(),
+                        formNoStatic:$("#formNoStatic").val(),
                         dynWebpage: webpage,
                         dynContent: dynContent
                     };

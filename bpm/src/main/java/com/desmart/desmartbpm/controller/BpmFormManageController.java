@@ -67,7 +67,7 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/preIndex")
 	public ModelAndView preIndex(String proUid,String proVersion,String formUid,
-			String formName,String formDescription,String dynHtml,String webpage,String formNoExpression) {
+			String formName,String formDescription,String dynHtml,String webpage,String formNoExpression,String formNoStatic) {
 		ModelAndView mv = new ModelAndView("desmartbpm/common/preDesignIndex");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
@@ -77,6 +77,7 @@ public class BpmFormManageController {
 		mv.addObject("webpage", webpage);
 		mv.addObject("dynHtml", dynHtml);
 		mv.addObject("formNoExpression",formNoExpression);
+		mv.addObject("formNoStatic",formNoStatic);
         return mv;
 	}
 	
@@ -85,7 +86,7 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/designForm")
 	public ModelAndView designForm(String formName,String formDescription,String formUid,
-			String proUid,String proVersion,String dynHtml,String formNoExpression) {
+			String proUid,String proVersion,String dynHtml,String formNoExpression,String formNoStatic) {
 		ModelAndView mv = new ModelAndView("desmartbpm/common/formDesign");
 		mv.addObject("formName", formName);
 		mv.addObject("formDescription", formDescription);
@@ -94,6 +95,7 @@ public class BpmFormManageController {
 		mv.addObject("proVersion", proVersion);
 		mv.addObject("dynHtml", dynHtml);
 		mv.addObject("formNoExpression",formNoExpression);
+		mv.addObject("formNoStatic",formNoStatic);
 		return mv;
 	}
 	
