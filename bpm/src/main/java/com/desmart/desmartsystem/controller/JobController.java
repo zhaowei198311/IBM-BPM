@@ -337,8 +337,8 @@ public class JobController {
 				scheduler.deleteJob(jobKey);
 				quartzService.addJob(jobEntity, response, new JobController());
 				JobKey jobKey1=JobKey.jobKey(jobEntity.getJobName(), jobEntity.getJobGroupName());
-				if(jobEntity.getJobStatus().equals("NORMAL")) {
-					scheduler.resumeJob(jobKey1);//暂停
+				if(jobEntity.getJobStatus().equals("PAUSED")) {
+					scheduler.pauseJob(jobKey1);//暂停
 				}
 				j.setSuccess(true);
 				j.setMsg("修改成功！");
