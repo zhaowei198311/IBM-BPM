@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,6 @@ import com.desmart.desmartsystem.util.PagedResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
-import jxl.Sheet;
 /**
  * 
  * @ClassName: SysDictionaryServiceImpl  
@@ -190,25 +190,24 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 	@Transactional
 	public ServerResponse importSysDictionaryData(MultipartFile multipartFile) {
 		//判断是否已经上传了文件数据
-		CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
-		DiskFileItem fi = (DiskFileItem) cf.getFileItem();
-		File file = fi.getStoreLocation();
 		ExcelUtil excelUtil = ExcelUtil.getInstance();
-		if (excelUtil.checkExcelTitleAndSort(file, SysDictionaryDataForm.class,0)) {
-			ServerResponse serverResponse = excelUtil.checkExcelContent(file, SysDictionaryDataForm.class,0);
+		if (excelUtil.checkExcelTitleAndSort(multipartFile, SysDictionaryDataForm.class,0)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(multipartFile, SysDictionaryDataForm.class,0);
 			if (serverResponse.isSuccess()) {
 				String myFileName = multipartFile.getOriginalFilename();
 				if (myFileName.trim() != "") {
-					InputStream inputStream;
-					try {
-						inputStream = multipartFile.getInputStream();
 						// 读取数据
-						ServerResponse<Sheet> serverResponse2 = excelUtil.loadSheet(inputStream);
+						ServerResponse<Sheet> serverResponse2 = excelUtil.loadSheet(multipartFile);
 						if(!serverResponse2.isSuccess()) {
 							return serverResponse2;
 						}
-						List<SysDictionaryDataForm> dictionaryDataFormList = excelUtil
-									.importExcelToEntity(serverResponse2.getData(), SysDictionaryDataForm.class,0);
+						List<SysDictionaryDataForm> dictionaryDataFormList;
+						try {
+							dictionaryDataFormList = excelUtil
+										.importExcelToEntity(serverResponse2.getData(), SysDictionaryDataForm.class,0);
+						} catch (Exception e) {
+							return ServerResponse.createByErrorMessage("导入数据失败,数据转换异常。");
+						}
 						
 						//验证数据字典代码是否有重复
 						Boolean flag = true;
@@ -269,10 +268,6 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 						}
 						sysDictionaryMapper.insertByBatch(insertList);
 						return ServerResponse.createBySuccessMessage("导入数据成功！共"+insertList.size()+"成功");
-						} catch (Exception e) {
-							e.printStackTrace();
-							return ServerResponse.createByErrorMessage("导入数据失败,数据转换异常。"+e.getMessage());
-						}
 					
 				} else {
 					return ServerResponse.createByErrorMessage("导入数据失败,文件不存在");
@@ -282,7 +277,7 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 			}
 
 		} else {
-			return ServerResponse.createByErrorMessage("导入数据失败,首部的列名及排列顺序与模板文件的不一致");
+			return ServerResponse.createByErrorMessage("导入数据失败,数据读取异常");
 		}
 	}
 

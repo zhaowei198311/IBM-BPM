@@ -466,12 +466,12 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		if (checkList != null && checkList.size() > 0) {
 			return ServerResponse.createByErrorMessage("导入失败,只能导入一个数据文件");
 		}
-		CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
+		/*CommonsMultipartFile cf = (CommonsMultipartFile) multipartFile;
 		DiskFileItem fi = (DiskFileItem) cf.getFileItem();
-		File file = fi.getStoreLocation();
+		File file = fi.getStoreLocation();*/
 		ExcelUtil excelUtil = ExcelUtil.getInstance();
-		if (excelUtil.checkExcelTitleAndSort(file, GoodsStateModifyForm.class,4)) {
-			ServerResponse serverResponse = excelUtil.checkExcelContent(file, GoodsStateModifyForm.class,4);
+		if (excelUtil.checkExcelTitleAndSort(multipartFile, GoodsStateModifyForm.class,4)) {
+			ServerResponse serverResponse = excelUtil.checkExcelContent(multipartFile, GoodsStateModifyForm.class,4);
 			if (serverResponse.isSuccess()) {
 				String myFileName = multipartFile.getOriginalFilename();
 				if (myFileName.trim() != "") {
