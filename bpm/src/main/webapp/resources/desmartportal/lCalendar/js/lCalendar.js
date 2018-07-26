@@ -35,6 +35,7 @@ window.lCalendar = (function() {
 				this.maxD = ~~maxArr[2];
 			}
 			this.bindEvent(this.type);
+			this.isChange = params.isChange==null || params.isChange=="" ? "false" : params.isChange;
 		},
 		bindEvent: function(type) {
 			var _self = this;
@@ -682,7 +683,10 @@ window.lCalendar = (function() {
 				var date_dd = parseInt(Math.round(_self.gearDate.querySelector(".date_dd").getAttribute("val"))) + 1;
 				date_dd = date_dd > 9 ? date_dd : '0' + date_dd;
 				_self.trigger.value = (date_yy % passY + _self.minY) + "-" + date_mm + "-" + date_dd;
-				_self.trigger.onchange();
+				console.log(_self.isChange);
+				if(_self.isChange=="true"){
+					_self.trigger.onchange();
+				}
 				closeMobileCalendar(e);
 			}
 			//日期时间确认
@@ -698,7 +702,9 @@ window.lCalendar = (function() {
 				var time_mm = parseInt(Math.round(_self.gearDate.querySelector(".time_mm").getAttribute("val")));
 				time_mm = time_mm > 9 ? time_mm : '0' + time_mm;
 				_self.trigger.value = (date_yy % passY + _self.minY) + "-" + date_mm + "-" + date_dd + " " + (time_hh.length < 2 ? "0" : "") + time_hh + (time_mm.length < 2 ? ":0" : ":") + time_mm;
-				_self.trigger.onchange();
+				if(_self.isChange=="true"){
+					_self.trigger.onchange();
+				}
 				closeMobileCalendar(e);
 			}
 			//时间确认
@@ -713,7 +719,9 @@ window.lCalendar = (function() {
 				
 				
 				_self.trigger.value = (time_hh.length < 2 ? "0" : "") + time_hh + (time_mm.length < 2 ? ":0" : ":") + time_mm+ (time_ss.length < 2 ? ":0" : ":") + time_ss;
-				_self.trigger.onchange();
+				if(_self.isChange=="true"){
+					_self.trigger.onchange();
+				}
 				closeMobileCalendar(e);
 			}
 			_self.trigger.addEventListener('click', {
