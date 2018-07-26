@@ -23,11 +23,17 @@ function saveEvent() {
     var onchangeStr = $("#textAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\'");
     var onfocusStr = $("#textAddEventModal textarea[title='onfocus']").val().replace(/\"/g, "\'");
     var onkeypreStr = $("#textAddEventModal textarea[title='onkeypress']").val().replace(/\"/g, "\'");
-    inputObj.attr({
-        "onchange": onchangeStr,
-        "onfocus": onfocusStr,
-        "onkeypress": onkeypreStr
-    });
+    if(view.find("input").prop("type")=="date"){
+    	inputObj.attr({
+            "onchange": onchangeStr
+        });
+    }else{
+    	inputObj.attr({
+            "onchange": onchangeStr,
+            "onfocus": onfocusStr,
+            "onkeypress": onkeypreStr
+        });
+    }
 }
 
 //显示给文本框添加事件的模态框
@@ -37,13 +43,21 @@ function textAddEventModal(obj) {
     if (view.find("input").length == 0) {
         inputObj = view.find("textarea");
     }
-    var onchangeStr = inputObj.attr("onchange");
-    var onfocusStr = inputObj.attr("onfocus");
-    var onkeypreStr = inputObj.attr("onkeypress");
-    $("#textAddEventModal textarea[title='onchange']").val(onchangeStr);
-    $("#textAddEventModal textarea[title='onfocus']").val(onfocusStr);
-    $("#textAddEventModal textarea[title='onkeypress']").val(onkeypreStr);
-    $("#textAddEventModal").modal("show");
+    if(view.find("input").prop("type")=="date"){
+    	var onchangeStr = inputObj.attr("onchange");
+        $("#textAddEventModal textarea[title='onchange']").val(onchangeStr);
+        $("#textAddEventModal textarea[title='onfocus']").parent().parent().hide();
+        $("#textAddEventModal textarea[title='onkeypress']").parent().parent().hide();
+        $("#textAddEventModal").modal("show");
+    }else{
+    	var onchangeStr = inputObj.attr("onchange");
+        var onfocusStr = inputObj.attr("onfocus");
+        var onkeypreStr = inputObj.attr("onkeypress");
+        $("#textAddEventModal textarea[title='onchange']").val(onchangeStr);
+        $("#textAddEventModal textarea[title='onfocus']").val(onfocusStr);
+        $("#textAddEventModal textarea[title='onkeypress']").val(onkeypreStr);
+        $("#textAddEventModal").modal("show");
+    }
 }
 
 //显示填写select组件事件脚本的js
