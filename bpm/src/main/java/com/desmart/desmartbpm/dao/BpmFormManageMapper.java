@@ -72,31 +72,6 @@ public interface BpmFormManageMapper {
 	int updateFormContent(BpmForm bpmForm);
 
 	/**
-	 * 根据表单Id查询绑定的步骤集合
-	 */
-	List<DhStep> isBindStep(String formUid);
-
-	/**
-	 * 根据快照id获得流程元名称
-	 */
-	String queryMetaNameByProUid(String proUid);
-
-	/**
-	 * 根据表单id删除表单关联信息
-	 */
-	int deleteFormRelePublicForm(String dynUid);
-
-	/**
-	 * 根据表单id查询表单关联信息
-	 */
-	List<String> queryFormReleByFormUid(String dynUid);
-	
-	/**
-	 * 添加主表单与子表单之间的关联信息
-	 */
-	int saveFormRelePublicForm(@Param("formUid")String formUid, @Param("publicFormUid")String publicFormUid);
-
-	/**
 	 * 根据表单主键批量删除
 	 * @param formUidList
 	 * @return

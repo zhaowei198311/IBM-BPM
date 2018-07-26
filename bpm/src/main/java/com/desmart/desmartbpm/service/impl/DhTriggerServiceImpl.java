@@ -21,9 +21,11 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
+import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
+import com.desmart.desmartbpm.entity.BpmFormRelePublicForm;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
@@ -52,6 +54,8 @@ public class DhTriggerServiceImpl implements DhTriggerService {
     private BpmFormManageMapper bpmFormManageMapper;
     @Autowired
     private BpmFormFieldMapper bpmFormFieldMapper;
+    @Autowired
+    private BpmFormRelePublicFormMapper bpmFormRelePublicFormMapper;
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
@@ -151,7 +155,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 						fieldCodeName);
 				if (null == formField) {
 					//查询该字段是否为子表单中的字段
-					List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+					List<String> publicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(triInt.getDynUid());
 					for (String publicFormUid : publicFormUidList) {
 						formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
 						//找到对应的表单字段
@@ -194,7 +198,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 									tableFieldCodeName);
 							//查询字段是否为子表单中字段
 							if (null == tableField) {
-								List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+								List<String> publicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(triInt.getDynUid());
 								for (String publicFormUid : publicFormUidList) {
 									tableField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, tableFieldCodeName);
 									//找到对应的表格字段
@@ -275,7 +279,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 					fieldCodeName);
 			if (null == formField) {
 				//查询字段是否为子表单中的字段
-				List<String> publicFormUidList = bpmFormManageMapper.queryFormReleByFormUid(triInt.getDynUid());
+				List<String> publicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(triInt.getDynUid());
 				for (String publicFormUid : publicFormUidList) {
 					formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
 					if (null != formField) {

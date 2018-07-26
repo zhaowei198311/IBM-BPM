@@ -25,11 +25,6 @@ public interface BpmPublicFormMapper {
 	BpmPublicForm queryFormByFormName(String formName);
 
 	/**
-	 * 根据表单id查询表单是否已被主表单引用
-	 */
-	List<String> isBindMainForm(String formUid);
-
-	/**
 	 * 保存公共表单信息
 	 */
 	int saveForm(BpmPublicForm bpmPublicForm);

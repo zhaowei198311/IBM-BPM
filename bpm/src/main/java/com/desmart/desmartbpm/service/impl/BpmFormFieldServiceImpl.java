@@ -12,6 +12,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
 import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
@@ -29,6 +30,9 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	
 	@Autowired
 	private DhObjectPermissionService dhObjectPermissionService;
+	
+	@Autowired
+	private DhObjectPermissionMapper dhObjectPermissionMapper;
 	
 	@Autowired
 	private DhStepMapper dhStepMapper;
@@ -60,7 +64,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		fieldList.addAll(publicFormFieldList);
 		for(BpmFormField field:fieldList) {
 			//获得对象权限信息表中某个步骤下指定表单的权限信息集合
-			List<String> opActionList = bpmFormFieldMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
+			List<String> opActionList = dhObjectPermissionMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
 			//当权限集合为0或权限集合为1但权限为打印时，给集合添加可编辑权限
 			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
 				opActionList.add("VIEW");
@@ -75,7 +79,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		int countRow = 0;
 		//删除旧的权限信息
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
-			bpmFormFieldMapper.deleteFormFieldPermission(dhObjectPermission);
+			dhObjectPermissionMapper.deleteFormFieldPermission(dhObjectPermission);
 		}
 		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
 			//查看权限对象的权限是否为只读，只读不用存入数据库
@@ -84,7 +88,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			}else{
 				//将字段权限信息存入数据库
 				dhObjectPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
-				countRow += bpmFormFieldMapper.saveFormFieldPermission(dhObjectPermission);
+				countRow += dhObjectPermissionMapper.saveFormFieldPermission(dhObjectPermission);
 			}
 		}
 		if(countRow!=dhObjectPermissions.length) {

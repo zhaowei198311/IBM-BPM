@@ -10,15 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
-import com.desmart.desmartbpm.dao.BpmFormManageMapper;
+import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.BpmPublicFormMapper;
+import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
+import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.BpmPublicForm;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmPublicFormService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,9 +36,13 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	@Autowired 
 	private BpmPublicFormMapper bpmPublicFormMapper;
 	@Autowired
-	private BpmFormManageMapper bpmFormManageMapper;
-	@Autowired
 	private BpmFormFieldMapper bpmFormFieldMapper;
+	@Autowired
+	private DhStepMapper dhStepMapper;
+	@Autowired
+	private BpmFormRelePublicFormMapper bpmFormRelePublicFormMapper;
+	@Autowired
+	private DhObjectPermissionMapper dhObjectPermissionMapper;
 	
 	@Override
 	public ServerResponse listFormByFormName(String formName, Integer pageNum, Integer pageSize) {
@@ -67,11 +73,11 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		//查询子表单是否被绑定
 		for(String formUid:formUids) {
 			//查询是否绑定主表单
-			List<String> mainFormUidList = bpmPublicFormMapper.isBindMainForm(formUid);
+			List<String> mainFormUidList = bpmFormRelePublicFormMapper.isBindMainForm(formUid);
 			if(!mainFormUidList.isEmpty()) {
 				for(String mainFormUid:mainFormUidList) {
 					//查询是否绑定步骤
-					List<DhStep> stepList = bpmFormManageMapper.isBindStep(mainFormUid);
+					List<DhStep> stepList = dhStepMapper.queryStepListByFormUid(mainFormUid);
 					if(!stepList.isEmpty()) {
 						throw new PlatformException("该子表单已被主表单绑定");
 					}
@@ -158,7 +164,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	 */
 	private void deleteFieldPermiss(List<BpmFormField> fieldList) {
 		for(BpmFormField field:fieldList) {
-			bpmFormFieldMapper.deleteFieldPermissById(field.getFldUid());
+			dhObjectPermissionMapper.deleteFieldPermissById(field.getFldUid());
 		}
 	}
 
@@ -217,7 +223,11 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	public ServerResponse saveFormRelePublicForm(String formUid, String[] publicFormUidArr) {
 		for(String publicFormUid:publicFormUidArr) {
 			if(!"".equals(publicFormUid) && null!=publicFormUid) {
-				int countRow = bpmFormManageMapper.saveFormRelePublicForm(formUid,publicFormUid);
+				int count = bpmPublicFormMapper.queryReleByFormUidAndPublicFormUid(formUid, publicFormUid);
+				if(count>=1) {
+					continue;
+				}
+				int countRow = bpmFormRelePublicFormMapper.saveFormRelePublicForm(formUid,publicFormUid);
 				if(1!=countRow) {
 					throw new PlatformException("添加子表单关联失败");
 				}

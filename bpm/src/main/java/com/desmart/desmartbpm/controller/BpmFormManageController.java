@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.FormJSONObject;
 import com.desmart.desmartbpm.entity.BpmForm;
+import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -47,9 +50,6 @@ public class BpmFormManageController {
 	
 	@Autowired
 	private DhProcessMetaService dhProcessMetaService; 
-	
-	@Autowired
-	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	/**
 	 * 进入流程表单管理页面
@@ -189,17 +189,16 @@ public class BpmFormManageController {
 	/**
 	 * 保存表单数据
 	 */
-	@RequestMapping(value = "/saveForm")
+	@RequestMapping(value = "/saveFormContent")
 	@ResponseBody
-	public ServerResponse saveForm(@RequestBody BpmForm bpmForm) {
+	public ServerResponse saveFormContent(@RequestBody FormJSONObject formJsonObj) {
 		try {
-			return bpmFormManageService.saveForm(bpmForm);
+			return bpmFormManageService.saveFormContent(formJsonObj);
 		}catch(Exception e) {
 			e.printStackTrace();
-			return ServerResponse.createByError();
+			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
-	
 	
 	/**
 	 * 修改表单基本信息
@@ -220,9 +219,9 @@ public class BpmFormManageController {
 	 */
 	@RequestMapping(value = "/upadteFormContent")
 	@ResponseBody
-	public ServerResponse upadteFormContent(@RequestBody BpmForm bpmForm) {
+	public ServerResponse upadteFormContent(@RequestBody FormJSONObject formJsonObj) {
 		try {
-			return bpmFormManageService.updateFormContent(bpmForm);
+			return bpmFormManageService.updateFormContent(formJsonObj);
 		} catch (Exception e) {
 			LOG.error("修改表单内容失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());

@@ -29,12 +29,6 @@
 		where public_form_name = #{formName}
 	</select>
 	
-	<select id="isBindMainForm" parameterType="String" resultType="string">
-		select form_uid 
-		from bpm_form_rele_public_form
-		where public_form_uid = #{formUid}
-	</select>
-	
 	<insert id="saveForm" parameterType="com.desmart.desmartbpm.entity.BpmPublicForm">
 		insert into bpm_public_form(<include refid="base_column"/>)
 		values(#{publicFormUid},#{publicFormName},#{publicFormDescription},#{publicFormContent},

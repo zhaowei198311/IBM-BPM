@@ -408,7 +408,7 @@ function departAsync() {
 
 //打开选择层
 function openChooseUserDiv(){
-	$("body").css({"position":"fixed"});
+	$("body").css({"position":"fixed","width":"100%"});
 	//页面层
 	index = layer.open({
 		type: 1
@@ -436,8 +436,7 @@ function openChooseUserDiv(){
 		}
 	});
 	layer.style(index,{
-		"margin-top":"5px",
-		"margin-left": "1px"
+		"margin-top":"5px"
 	});
 }
 

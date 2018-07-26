@@ -3,7 +3,9 @@ package com.desmart.desmartbpm.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.FormJSONObject;
 import com.desmart.desmartbpm.entity.BpmForm;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
@@ -18,11 +20,6 @@ public interface BpmFormManageService {
 	 * 获得所有的流程定义对象的快照名称(DH)
 	 */
 	List<DhProcessDefinition> listDefinitionAll();
-
-	/**
-	 * 添加表单数据
-	 */
-	ServerResponse saveForm(BpmForm bpmForm);
 
 	/**
 	 * 通过表单名查询表单
@@ -64,7 +61,7 @@ public interface BpmFormManageService {
 	/**
 	 * 修改表单内容
 	 */
-	ServerResponse updateFormContent(BpmForm bpmForm);
+	ServerResponse updateFormContent(FormJSONObject formJsonObj);
 
 	/**
 	 * 根据表单判断表单是否被步骤绑定
@@ -85,5 +82,12 @@ public interface BpmFormManageService {
 	 * @return
 	 */
 	BpmForm getByFormUid(String formUid);
+
+	/**
+	 * 根据前台传入的json数据存储表单信息（包括表单字段以及子表单关联信息）
+	 * @param formJsonObj
+	 * @return
+	 */
+	ServerResponse saveFormContent(FormJSONObject formJsonObj);
 
 }

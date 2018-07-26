@@ -26,7 +26,6 @@
 		</foreach>
 	</insert>
 
-
 	<select id="listPublicFormFieldByFormUid" parameterType="java.lang.String" resultType="com.desmart.desmartbpm.entity.BpmFormField">
 		SELECT 
 		<include refid="FormField_Column"/>
@@ -56,7 +55,6 @@
 		</where>
 	</select>
 
-
 	<delete id="removeByFormUidList" parameterType="list">
 		delete from BPM_FORM_RELE_PUBLIC_FORM
 		<where>
@@ -66,4 +64,30 @@
 		</where>
 	</delete>
 	
+	<select id="queryFormReleByFormUid" parameterType="string" resultType="string">
+    	select public_form_uid
+    	from bpm_form_rele_public_form 
+    	where form_uid = #{formUid}
+    </select>
+    
+    <delete id="deleteRele" parameterType="com.desmart.desmartbpm.entity.BpmFormRelePublicForm">
+    	delete from bpm_form_rele_public_form 
+    	where form_uid = #{formUid} and public_form_uid = #{publicFormUid}
+    </delete>
+    
+    <delete id="deleteFormRelePublicForm" parameterType="string">
+    	delete from bpm_form_rele_public_form where form_uid = #{formUid}
+    </delete>
+    
+    <insert id="saveFormRelePublicForm" parameterType="map">
+		insert into 
+		bpm_form_rele_public_form(form_uid,public_form_uid)
+		values(#{formUid},#{publicFormUid})
+	</insert>
+	
+	<select id="isBindMainForm" parameterType="String" resultType="string">
+		select form_uid 
+		from bpm_form_rele_public_form
+		where public_form_uid = #{formUid}
+	</select>
 </mapper>

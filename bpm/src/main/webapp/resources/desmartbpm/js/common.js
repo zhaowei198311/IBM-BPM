@@ -190,9 +190,6 @@ var common = {
                 });
             }
         });
-    	layer.style(index, {
-        	zoom:1.1
-        });
     },
 	dateToString : function(date){   // 将date类型转为 "yyyy-MM-dd HH:mm:ss"
 		var year = date.getFullYear();

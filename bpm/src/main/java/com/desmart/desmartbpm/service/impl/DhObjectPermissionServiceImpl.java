@@ -248,5 +248,4 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         permissionSelective.setProVerUid(proVerUid);
         return dhObjectPermissionMapper.delectByDhObjectPermissionSelective(permissionSelective);
     }
-
 }
