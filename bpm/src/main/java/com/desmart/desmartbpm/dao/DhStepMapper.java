@@ -109,4 +109,11 @@ public interface DhStepMapper {
      * @return
      */
     int removeByStepUidList(List<String> stepUidList);
+    
+    /**
+     * 根据表单id获得绑定该表单的所有步骤集合
+     * @param formUid
+     * @return
+     */
+    List<DhStep> queryStepListByFormUid(String formUid);
 }

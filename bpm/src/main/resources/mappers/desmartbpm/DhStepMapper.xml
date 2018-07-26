@@ -327,4 +327,9 @@
             </foreach>
         </where>
     </delete>
+    
+    <select id="queryStepListByFormUid" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhStep">
+    	select <include refid="Base_Column_List"/> from dh_step
+    	where step_object_uid = #{formUid} 
+    </select>
 </mapper>

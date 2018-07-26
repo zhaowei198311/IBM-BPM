@@ -28,21 +28,6 @@ public interface BpmFormFieldMapper {
 	List<BpmFormField> queryFormFieldByFormUid(@Param("dynUid")String dynUid);
 
 	/**
-	 * 通过字段ID和活动ID获得所属权限信息
-	 */
-	List<String> queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
-			@Param("fieldUid")String fieldUid);
-
-	/**
-	 * 保存某环节上表单字段的权限信息
-	 */
-	int saveFormFieldPermission(DhObjectPermission dhObjectPermission);
-
-	/**
-	 * 根据环节ID和表单字段ID删除字段权限信息
-	 */
-	int deleteFormFieldPermission(DhObjectPermission dhObjectPermission);
-	/**
 	 * 
 	 * @Title: listFldUidByFormUid  
 	 * @Description: 根据新老formUid查询相同FLD_CODE_NAME的FLD_UID  
@@ -53,11 +38,6 @@ public interface BpmFormFieldMapper {
 	 * @throws
 	 */
 	List<Map<String, Object>> listFldUidByFormUid(@Param("oldFormUid")String oldFormUid, @Param("newFormUid")String newFormUid);
-
-	/**
-	 * 根据表单字段Id删除该字段权限
-	 */
-	int deleteFieldPermissById(String fldUid);
 
 	/**
 	 * 根据字段id查询字段对象
@@ -109,4 +89,18 @@ public interface BpmFormFieldMapper {
 	 * @return
 	 */
 	int removeByFormUidList(List<String> formUidList);
+
+	/**
+	 * 根据条件修改表单字段信息
+	 * @param field
+	 * @return
+	 */
+	int updateFormField(BpmFormField field);
+
+	/**
+	 * 根据表单字段id批量删除字段信息
+	 * @param deleteFieldList
+	 * @return
+	 */
+	int deleteFieldBatch(List<BpmFormField> deleteFieldList);
 }

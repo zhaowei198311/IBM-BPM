@@ -81,4 +81,25 @@ public interface DhObjectPermissionMapper {
      * @return
      */
     int removeByOpObjUidList(List<String> opObjUidList);
+
+	/**
+	 * 通过字段ID和活动ID获得所属权限信息
+	 */
+	List<String> queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
+			@Param("fieldUid")String fieldUid);
+	
+	/**
+	 * 保存某环节上表单字段的权限信息
+	 */
+	int saveFormFieldPermission(DhObjectPermission dhObjectPermission);
+
+	/**
+	 * 根据环节ID和表单字段ID删除字段权限信息
+	 */
+	int deleteFormFieldPermission(DhObjectPermission dhObjectPermission);
+	
+	/**
+	 * 根据表单字段Id删除该字段权限
+	 */
+	int deleteFieldPermissById(String fldUid);
 }

@@ -115,21 +115,6 @@
 	    	and dyn_description like '%${dynDescription}%' 
 	    </if>
     </select>
-    
-    <select id="isBindStep" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhStep">
-    	select * from dh_step
-    	where step_object_uid = #{formUid} 
-    </select>
-    
-    <select id="queryMetaNameByProUid" parameterType="string" resultType="string">
-    	select pro_name
-        from dh_process_meta 
-        where pro_uid = #{proUid}
-    </select>
-    
-    <delete id="deleteFormRelePublicForm" parameterType="string">
-    	delete from bpm_form_rele_public_form where form_uid = #{formUid}
-    </delete>
 
 	<delete id="removeFormsByFormUidList" parameterType="list">
 		delete from bpm_form
@@ -139,18 +124,4 @@
 			</foreach>
 		</where>
 	</delete>
-
-	<select id="queryFormReleByFormUid" parameterType="string" resultType="string">
-    	select public_form_uid
-    	from bpm_form_rele_public_form 
-    	where form_uid = #{formUid}
-    </select>
-    
-    <insert id="saveFormRelePublicForm" parameterType="map">
-		insert into 
-		bpm_form_rele_public_form(form_uid,public_form_uid)
-		values(#{formUid},#{publicFormUid})
-	</insert>
-
-
 </mapper>

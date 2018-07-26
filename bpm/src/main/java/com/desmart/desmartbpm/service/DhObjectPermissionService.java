@@ -2,6 +2,8 @@ package com.desmart.desmartbpm.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
@@ -98,6 +100,4 @@ public interface DhObjectPermissionService {
      * @return
      */
     int removeByProAppIdAndProUidAndProVerUid(String proAppId, String proUid, String proVerUid);
-
-
 }
