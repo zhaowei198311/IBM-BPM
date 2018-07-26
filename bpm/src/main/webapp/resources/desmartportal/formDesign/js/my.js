@@ -433,7 +433,10 @@ function drawPage() {
 			laydate.render({
 				elem: '#' + dateInputId,
 				trigger: 'click',
-				type: dateType
+				type: dateType,
+				done:function(){
+					$("#"+dateInputId).trigger("change");
+				}
 			});
 		});
 	});
