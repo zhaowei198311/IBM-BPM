@@ -141,6 +141,12 @@ public interface DhProcessDefinitionService {
      */
     List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
 
-
+    /**
+     * 获得指定应用库，指定版本的所有公开的流程
+     * @param proAppId  引用库id
+     * @param snapshotId  快照id
+     * @return
+     */
+    List<DhProcessDefinition> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId);
 
 }

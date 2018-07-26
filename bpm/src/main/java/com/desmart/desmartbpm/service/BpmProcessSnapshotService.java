@@ -20,7 +20,7 @@ public interface BpmProcessSnapshotService {
      * @param processAppId  流程应用id
      *
      */
-    void processModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
+    void processModel(String bpdId, String snapshotId, String processAppId);
 
     /**
      * 获得 VisualModel 中的 items数组
@@ -30,7 +30,7 @@ public interface BpmProcessSnapshotService {
      * @param processAppId
      * @return
      */
-    JSONArray processVisualModel(HttpServletRequest request, String bpdId, String snapshotId, String processAppId);
+    JSONArray processVisualModel(String bpdId, String snapshotId, String processAppId);
     
 
 }

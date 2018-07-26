@@ -148,7 +148,7 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public Object test(HttpServletRequest request) {
         //bpmProcessSnapshotService.processModel(request, "25.0e089867-84d7-489b-a114-2f8d92c226a9", "", "2066.49fe4fdc-8488-4663-92d1-d1befcb671c2");
-        bpmProcessSnapshotService.processModel(request, "25.0e089867-84d7-489b-a114-2f8d92c226a9", "", "2066.49fe4fdc-8488-4663-92d1-d1befcb671c2");
+        bpmProcessSnapshotService.processModel("25.0e089867-84d7-489b-a114-2f8d92c226a9", "", "2066.49fe4fdc-8488-4663-92d1-d1befcb671c2");
         return "Success";
     }
     
@@ -156,7 +156,7 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/generateActivity.do")
     @ResponseBody
     public String test(HttpServletRequest request, String bpdid, String snapshoutId, String processAppid, String newVersionId) {
-    	bpmProcessSnapshotService.processModel(request, bpdid, snapshoutId, processAppid);
+    	bpmProcessSnapshotService.processModel(bpdid, snapshoutId, processAppid);
         return "success";
     }
     
