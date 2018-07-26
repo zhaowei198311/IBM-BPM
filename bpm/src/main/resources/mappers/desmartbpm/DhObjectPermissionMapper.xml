@@ -166,11 +166,6 @@
 		where step_uid = #{stepUid} and op_obj_uid = #{fieldUid}
 	</select>
 	
-	<insert id="saveFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
-		insert into dh_object_permission(<include refid="field_pre_column"/>)
-		values(#{opUid},#{stepUid},#{opObjType},#{opObjUid},#{opAction})
-	</insert>
-	
 	<delete id="deleteFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
 		delete from dh_object_permission 
 		where op_obj_uid=#{opObjUid} and step_uid=#{stepUid}

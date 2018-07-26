@@ -88,7 +88,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			}else{
 				//将字段权限信息存入数据库
 				dhObjectPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
-				countRow += dhObjectPermissionMapper.saveFormFieldPermission(dhObjectPermission);
+				countRow += dhObjectPermissionMapper.save(dhObjectPermission);
 			}
 		}
 		if(countRow!=dhObjectPermissions.length) {
