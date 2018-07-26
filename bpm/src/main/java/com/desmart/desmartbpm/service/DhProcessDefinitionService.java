@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhProcessDefinitionBo;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 
@@ -48,7 +49,7 @@ public interface DhProcessDefinitionService {
      * @param request httpRequest
      * @return
      */
-    ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request);
+    ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid);
 
     /**
      * 指定的流程定义是否存在，存在的话将满足条件的第一个元素返回在data中
@@ -147,6 +148,6 @@ public interface DhProcessDefinitionService {
      * @param snapshotId  快照id
      * @return
      */
-    List<DhProcessDefinition> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId);
+    List<DhProcessDefinitionBo> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId);
 
 }

@@ -90,10 +90,10 @@ public class DhProcessDefinitionController {
      */
     @RequestMapping(value = "/create")
     @ResponseBody
-    public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
+    public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
 
         try {
-            ServerResponse serverResponse = dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid, request);
+            ServerResponse serverResponse = dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid);
             return serverResponse;
         } catch (PlatformException pe) {
             LOG.error("同步环节失败", pe);
