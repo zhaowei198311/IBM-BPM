@@ -67,26 +67,27 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         String bpmProcessSnapshotId = "";
         // 获得所有活动节点（事件节点、网关、人工活动...）和泳道对象
         JSONArray visualModelData = processVisualModel(bpdId, snapshotId, processAppId);
-        BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
-        
-        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
-        HttpReturnStatus result = bpmProcessUtil.getProcessModel(processAppId, bpdId, snapshotId);
-        if (HttpReturnStatusUtil.isErrorResult(result)) {
-            throw new PlatformException("调用RESTFul 接口失败");
-        }
-        
-        if (StringUtils.isNotBlank(result.getMsg())) {
-            JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
-            if (datas.containsKey("data")) {
-                JSONObject data = datas.getJSONObject("data");
-                if (data.containsKey("Diagram")) {
-                    // 元素的信息（包含连接线信息）
-                    JSONObject diagram = data.getJSONObject("Diagram");
-                    parseDiagram(diagram, snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId);
-                }
+        JSONObject datas = null;
+        String processModelStr = modelMongoDao.getProcessModel(processAppId, bpdId, snapshotId);
+
+        if (processModelStr != null) {
+            datas =JSON.parseObject(processModelStr);
+        } else {
+            BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
+            BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
+            HttpReturnStatus result = bpmProcessUtil.getProcessModel(processAppId, bpdId, snapshotId);
+            if (HttpReturnStatusUtil.isErrorResult(result)) {
+                throw new PlatformException("调用RESTFul 接口失败");
             }
+            datas =  JSON.parseObject(result.getMsg());
+            modelMongoDao.saveProcessModel(processAppId, bpdId, snapshotId, result.getMsg());
         }
-        
+
+        JSONObject data = datas.getJSONObject("data");
+        // 元素的信息（包含连接线信息）
+        JSONObject diagram = data.getJSONObject("Diagram");
+        parseDiagram(diagram, snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId);
+
     }
 
     @Override
@@ -342,7 +343,6 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
 
     /**
      * 解析子流程 返回环节配置，可能是一个可能是多个
-     * @param request
      * @param processAppId
      * @param snapshotId
      * @param bpdId

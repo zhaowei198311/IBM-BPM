@@ -4,9 +4,11 @@ import com.desmart.desmartbpm.mongo.ModelMongoDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,8 @@ public class ModelMongDaoImpl implements ModelMongoDao {
     public static final String VISUAL_MODEL_COLLECTION = "VisualModel";
 
 
-    @Autowired
+    @Resource
+    @Qualifier("mongoTemplate")
     private MongoTemplate mongoTemplate;
 
     public void saveProcessModel(String proAppId, String bpdId, String snapshotId, String content) {

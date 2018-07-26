@@ -10,6 +10,7 @@ import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.service.*;
 import com.github.pagehelper.PageHelper;
 import com.sun.xml.internal.bind.v2.runtime.property.UnmarshallerChain;
@@ -45,18 +46,6 @@ import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.BpmForm;
-import com.desmart.desmartbpm.entity.DatRule;
-import com.desmart.desmartbpm.entity.DatRuleCondition;
-import com.desmart.desmartbpm.entity.DhActivityAssign;
-import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhActivityReject;
-import com.desmart.desmartbpm.entity.DhGatewayLine;
-import com.desmart.desmartbpm.entity.DhObjectPermission;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
-import com.desmart.desmartbpm.entity.DhProcessMeta;
-import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
@@ -221,7 +210,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
 
     @Transactional(value = "transactionManager")
-    public ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
+    public ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
@@ -966,7 +955,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
 
     @Override
-    public List<DhProcessDefinition> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId) {
+    public List<DhProcessDefinitionBo> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(snapshotId)) {
             return null;
         }
@@ -990,9 +979,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
                 }
             }
         }
-        List<DhProcessDefinition> definitionList = new ArrayList<>();
+        List<DhProcessDefinitionBo> definitionList = new ArrayList<>();
         for (String bpdId : bpdIdList) {
-            DhProcessDefinition definition = new DhProcessDefinition(proAppId, bpdId, snapshotId);
+            DhProcessDefinitionBo definition = new DhProcessDefinitionBo(proAppId, bpdId, snapshotId);
             definitionList.add(definition);
         }
         return definitionList;

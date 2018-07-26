@@ -54,6 +54,8 @@ public class TestController extends BaseWebController {
     private DhTaskInstanceMapper dhTaskInstanceMapper;
     @Autowired
     private DhTransferService dhTransferService;
+    @Autowired
+    private DhProcessAppUpdateService dhProcessAppUpdateService;
     
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -325,5 +327,13 @@ public class TestController extends BaseWebController {
         System.out.println(field1);
         return ServerResponse.createBySuccess(fileName);
     }
+
+
+    @RequestMapping(value = "/testUpdateApp")
+    @ResponseBody
+    public ServerResponse testMultiUpload(String proAppId, String proVerUid) {
+        return dhProcessAppUpdateService.pullAllProcessActivityMeta(proAppId, proVerUid);
+    }
+
 
 }
