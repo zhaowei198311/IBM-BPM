@@ -45,7 +45,7 @@ public class AutoMailNotifyServiceImpl implements AutoMailNotifyService {
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
     
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
 	@Override
 	public ServerResponse timeoutMailNotify() {
 		//查询已经超时的任务
