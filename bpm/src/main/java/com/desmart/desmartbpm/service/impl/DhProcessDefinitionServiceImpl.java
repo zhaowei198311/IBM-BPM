@@ -6,7 +6,9 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.exception.PlatformException;
+import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateTimeUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.service.*;
 import com.github.pagehelper.PageHelper;
@@ -68,10 +70,11 @@ import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageInfo;
+import sun.awt.PlatformFont;
 
 @Service
 public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionService {
-    private static final Logger LOG = LoggerFactory.getLogger(DhProcessDefinitionServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DhProcessDefinitionServiceImpl.class);
 
     @Autowired
     private DhProcessDefinitionMapper dhProcessDefinitionMapper;
@@ -229,7 +232,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         if (list.size() == 0) { 
             // 如果该流程定义不存在于数据库， 生成环节信息——BpmProcessMeta
-            bpmProcessSnapshotService.processModel(request, proUid, proVerUid, proAppId);
+            bpmProcessSnapshotService.processModel(proUid, proVerUid, proAppId);
             // 插入新流程定义记录
             DhProcessDefinition dhProcessDefinition = new DhProcessDefinition(proAppId, proUid, proVerUid);
             dhProcessDefinition.setCreateUser(currentUser);
@@ -289,11 +292,8 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      */
     private List<Map<String, String>> getAllExposedProcess() {
         BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
-        String url = bpmcfg.getBpmServerHost() + "rest/bpm/wle/v1/exposed/process";
-
-        RestUtil restUtil = new RestUtil(bpmcfg);
-        HttpReturnStatus procStatus = restUtil.doGet(url, new HashMap<String, Object>());
-        restUtil.close();
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmcfg);
+        HttpReturnStatus procStatus = bpmProcessUtil.getAllExposedProcess();
         List<Map<String, String>> exposeItemList = new ArrayList<>();
         if (!BpmClientUtils.isErrorResult(procStatus)) {
             JSONObject jsoMsg = JSON.parseObject(procStatus.getMsg());
@@ -963,6 +963,39 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return new ArrayList<>();
         }
         return dhProcessDefinitionMapper.listByDhPocessDefinitionList(processDefinitionList);
+    }
+
+    @Override
+    public List<DhProcessDefinition> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(snapshotId)) {
+            return null;
+        }
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        HttpReturnStatus returnStatus = bpmProcessUtil.getAllExposedProcess();
+        if (HttpReturnStatusUtil.isErrorResult(returnStatus)) {
+            throw new PlatformException("调用restful api失败");
+        }
+        JSONObject jsonObject = JSON.parseObject(returnStatus.getMsg());
+        JSONObject dataJson = jsonObject.getJSONObject("data");
+        JSONArray expoItems = dataJson.getJSONArray("exposedItemsList");
+        Set<String> bpdIdList = new HashSet<>();
+        if (expoItems != null) {
+            for(int i = 0; i < expoItems.size(); ++i) {
+                JSONObject jsoItem = expoItems.getJSONObject(i);
+                // 如果快照id和应用库id与参数匹配
+                if (snapshotId.equals(jsoItem.getString("snapshotID"))
+                        && proAppId.equals(jsoItem.getString("processAppID"))) {
+                    bpdIdList.add(jsoItem.getString("itemID"));
+                }
+            }
+        }
+        List<DhProcessDefinition> definitionList = new ArrayList<>();
+        for (String bpdId : bpdIdList) {
+            DhProcessDefinition definition = new DhProcessDefinition(proAppId, bpdId, snapshotId);
+            definitionList.add(definition);
+        }
+        return definitionList;
     }
 
 

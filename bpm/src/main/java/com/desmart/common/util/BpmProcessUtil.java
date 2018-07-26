@@ -355,8 +355,9 @@ public class BpmProcessUtil {
 			log.error("停止流程实例出错，instanceId：" + instanceId, var7);
 			result.setCode(-1);
 			result.setMsg(var7.toString());
+		} finally {
+			restUtil.close();
 		}
-
 		return result;
 	}
 	
@@ -385,6 +386,8 @@ public class BpmProcessUtil {
 			log.error("暂停流程实例出错，instanceId：" + instanceId, var7);
 			result.setCode(-1);
 			result.setMsg(var7.toString());
+		} finally {
+			restUtil.close();
 		}
 
 		return result;
@@ -415,9 +418,29 @@ public class BpmProcessUtil {
 			log.error("恢复流程实例出错，instanceId：" + instanceId, var7);
 			result.setCode(-1);
 			result.setMsg(var7.toString());
+		} finally {
+			restUtil.close();
 		}
-
 		return result;
+	}
+
+	public HttpReturnStatus getAllExposedProcess() {
+		HttpReturnStatus returnStatus = null;
+		RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+
+		try {
+			String host = this.bpmGlobalConfig.getBpmServerHost();
+			host = host.endsWith("/") ? host : host + "/";
+			String url = host + "rest/bpm/wle/v1/exposed/process";
+			returnStatus = restUtil.doGet(url, new HashMap<String, Object>());
+		} catch (Exception e) {
+			log.error("获得公开的流程失败", e);
+			returnStatus.setCode(-1);
+			returnStatus.setMsg(e.toString());
+		} finally {
+			restUtil.close();
+		}
+		return returnStatus;
 	}
 
 
