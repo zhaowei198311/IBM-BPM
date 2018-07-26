@@ -414,9 +414,12 @@ function drawPage() {
 			if(isDatetime=="true"){
 				dateType = "datetime";
 			}
+			var isChange = $(this).attr("onchange")==null || $(this).attr("onchange")=="" ? "false" : "true";
+			console.log(isChange);
 			calendar.init({
 				'trigger': '#'+id,
-				'type': dateType
+				'type': dateType,
+				'isChange':isChange
 			});
 		});
 	});
