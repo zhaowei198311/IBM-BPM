@@ -434,7 +434,8 @@ function drawPage() {
 				elem: '#' + dateInputId,
 				trigger: 'click',
 				type: dateType,
-				done:function(){
+				done:function(value){
+					$("#"+dateInputId).val(value);
 					$("#"+dateInputId).trigger("change");
 				}
 			});
