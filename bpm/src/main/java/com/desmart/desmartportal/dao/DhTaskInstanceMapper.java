@@ -228,4 +228,11 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	public Integer updateTaskByBatch(@Param("itemList")List<DhTaskInstance> itemList);
+
+	/**
+	 * 查询已经超时的任务
+	 * @param selective
+	 * @return
+	 */
+	List<DhTaskInstance> getTimeoutTaskList(DhTaskInstance selective);
 }

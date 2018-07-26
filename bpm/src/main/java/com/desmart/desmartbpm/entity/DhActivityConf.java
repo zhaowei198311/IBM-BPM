@@ -139,6 +139,7 @@ public class DhActivityConf {
     private String rejectActivities;
     private String rejectActivitiesView;
     private String actcMailNotifyTemplateView;
+    private String actcOuttimeTemplateView;//超时通知模板名
 
 
     public DhActivityConf() {
@@ -786,6 +787,14 @@ public class DhActivityConf {
 		this.actcMailNotifyTemplateView = actcMailNotifyTemplateView;
 	}
 
+	public String getActcOuttimeTemplateView() {
+		return actcOuttimeTemplateView;
+	}
+
+	public void setActcOuttimeTemplateView(String actcOuttimeTemplateView) {
+		this.actcOuttimeTemplateView = actcOuttimeTemplateView;
+	}
+	
 	
 
 

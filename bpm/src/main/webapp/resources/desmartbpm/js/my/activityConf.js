@@ -1327,6 +1327,10 @@ $(function() {
 	$("#choose_outtime_team").click(function() {
 		common.chooseTeam('outtimeTeam', 'false');
 	});
+	// 选择超时通知模板
+	$("#chooseOuttimeTemplate_i").click(function() {
+		common.chooseNotifyTemplate('actcOuttimeTemplate', '');
+	});
 	// 新增流程中点击选择触发器
 	$("#choose_stepTri_btn").click(function() {
 		triggerToEdit = 'trigger_of_step';
@@ -2734,6 +2738,7 @@ function initConf(map) {
 	$('input[name="actcOuttimeTriggerTitle"]')
 			.val(conf.actcOuttimeTriggerTitle);
 	$('input[name="actcOuttimeTemplate"]').val(conf.actcOuttimeTemplate);
+	$('input[name="actcOuttimeTemplate_view"]').val(conf.actcOuttimeTemplateView);
 	$('select[name="actcOuttimeNotifyType"]').val(conf.actcOuttimeNotifyType);
 	if (conf.actcOuttimeNotifyType == "users") {
 		$("#outtimeUser_div").show();

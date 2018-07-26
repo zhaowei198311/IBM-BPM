@@ -167,6 +167,8 @@ public class DhTaskInstance {
 
 	private String taskActivityId; // 任务停留的节点唯一标识
 	
+	private Integer timeoutNotifyCount;//超时通知计数
+	
 	//任务处理人姓名
 	private String taskHandler;
 	//任务代理人姓名
@@ -507,4 +509,13 @@ public class DhTaskInstance {
 	public void setTaskHandler(String taskHandler) {
 		this.taskHandler = taskHandler;
 	}
+
+	public Integer getTimeoutNotifyCount() {
+		return timeoutNotifyCount;
+	}
+
+	public void setTimeoutNotifyCount(Integer timeoutNotifyCount) {
+		this.timeoutNotifyCount = timeoutNotifyCount;
+	}
+	
 }

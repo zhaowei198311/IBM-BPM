@@ -128,7 +128,7 @@
 		INS_UPDATE_DATE,TASK_PREVIOUS_USR_UID,TASK_PREVIOUS_USR_USERNAME,TASK_DELEGATE_DATE,
 		TASK_INIT_DATE,TASK_FINISH_DATE,TASK_DUE_DATE,TASK_RISK_DATE,
 		TASK_PRIORITY,TASK_DATA,TASK_DELEGATE_USER,SYN_NUMBER,FROM_TASK_UID,TO_TASK_UID,REMAIN_HOURS,
-		TASK_ACTIVITY_ID
+		TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT
 	</sql>
 	
 	<sql id="TaskAndProcess_Column_List">
@@ -137,7 +137,7 @@
 		T.INS_UPDATE_DATE,T.TASK_PREVIOUS_USR_UID,T.TASK_PREVIOUS_USR_USERNAME,T.TASK_DELEGATE_DATE,
 		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
 		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,T.TO_TASK_UID,T.REMAIN_HOURS,
-		T.TASK_ACTIVITY_ID,
+		T.TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT,
 		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,P.INS_STATUS,S.USER_NAME,S.USER_ID
 	</sql>
 	
@@ -372,7 +372,8 @@
 		#{fromTaskUid},
 		#{toTaskUid},
 		#{remainHours},
-		#{taskActivityId}
+		#{taskActivityId},
+		0
 		)
 	</insert>
 
@@ -415,7 +416,8 @@
 			#{item.fromTaskUid},
 			#{item.toTaskUid},
 			#{item.remainHours},
-			#{item.taskActivityId}
+			#{item.taskActivityId},
+			0
 			from dual
 		</foreach>
 	</insert>
@@ -949,9 +951,21 @@
             <if test="item.insUpdateDate != null ">
             	INS_UPDATE_DATE = #{item.insUpdateDate},
             </if>
+            <if test=" item.timeoutNotifyCount != null and item.timeoutNotifyCount > 0" >
+            	TIMEOUT_NOTIFY_COUNT = #{item.timeoutNotifyCount},
+            </if>
 		    </set>
             where task_uid = #{item.taskUid}
             </foreach>
         ;end;
 	</update>
+	<select id="getTimeoutTaskList" resultType="com.desmart.desmartportal.entity.DhTaskInstance"
+				parameterType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+			TIMEOUT_NOTIFY_COUNT &lt; #{timeoutNotifyCount}
+			AND TASK_DUE_DATE &lt; to_date(to_char(#{taskDueDate},'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss')
+		</where>
+	</select>
 </mapper>
