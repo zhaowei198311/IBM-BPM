@@ -599,9 +599,15 @@
 														</div>
 														<div class="layui-form-item">
 															<label class="layui-form-label">超时通知内容模板</label>
-															<div class="layui-input-block">
-																<input type="text" name="actcOuttimeTemplate" value=""
-																	autocomplete="off" class="layui-input">
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="hidden" name="actcOuttimeTemplate"
+																	id="actcOuttimeTemplate" /> <input type="text"
+																	name="actcOuttimeTemplate_view" id="actcOuttimeTemplate_view"
+																	value="" autocomplete="off" class="layui-input"
+																	disabled="disabled"> <i
+																	class="layui-icon choose_num" id="chooseOuttimeTemplate_i"
+																	title="选择超时通知模板">&#xe615;</i>
 															</div>
 														</div>
 														<div class="layui-form-item ">
