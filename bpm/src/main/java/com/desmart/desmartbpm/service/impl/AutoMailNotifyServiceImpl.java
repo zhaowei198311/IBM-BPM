@@ -114,7 +114,9 @@ public class AutoMailNotifyServiceImpl implements AutoMailNotifyService {
 				}
 			}
 		}
-		dhTaskInstanceMapper.updateTaskByBatch(timeoutTaskList);//批量修改
+		if(timeoutTaskList!=null&&timeoutTaskList.size()>0) {
+			dhTaskInstanceMapper.updateTaskByBatch(timeoutTaskList);//批量修改
+		}
 		System.out.println("超时通知完成");
 		return serverResponse;
 	}
