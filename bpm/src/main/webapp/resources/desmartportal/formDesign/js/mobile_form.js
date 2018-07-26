@@ -372,6 +372,16 @@ function drawPage() {
 			});
 		});
 		
+		view.find("select").each(function(){
+			$(this).attr("lay-filter",$(this).attr("name"));
+			var id = $(this).prop("id");
+			var filter = $(this).attr("lay-filter");
+			form.on('select('+filter+')',function(){
+				$("#"+id).trigger("change");
+			});
+		});
+		form.render();
+		
 		view.find(".editor_textarea").each(function () {
 			var editorId = $(this).prop("id");
 			var editor = layedit.build(editorId, {
@@ -397,10 +407,16 @@ function drawPage() {
 		dateInput.each(function () {
 			$(this).next().remove();
 			var id = $(this).prop("id");
+			var isDatetime = $(this).attr("date_type");
+			var dateType = "date";
+			
 			var calendar = new lCalendar();
+			if(isDatetime=="true"){
+				dateType = "datetime";
+			}
 			calendar.init({
 				'trigger': '#'+id,
-				'type': 'date'
+				'type': dateType
 			});
 		});
 	});
