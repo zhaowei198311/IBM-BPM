@@ -1100,7 +1100,7 @@
 			var formName = $("#copy-form-name").val().trim();
 			var formDescription = $("#copy-form-description").val().trim();
 			var formNoExpression = $("#copy-form-no-expression").val().trim();
-			var formNoStatic = $("copy-form-no-static").val().trim();
+			var formNoStatic = $("#copy-form-no-static").val().trim();
 			if(!isStandardExpression(formNoExpression)){
 				return;
 			}
