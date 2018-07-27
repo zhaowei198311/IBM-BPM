@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartbpm.entity.engine.LswBpd;
 
+import java.util.List;
+import java.util.Map;
+
 @Repository
 public interface LswBpdMapper {
     
@@ -15,5 +18,12 @@ public interface LswBpdMapper {
      * @return
      */
     LswBpd queryByBpdIdAndVersionId(@Param("bpdId")String bpdId, @Param("versionId")String versionId);
-    
+
+    /**
+     * 根据流程图ID和versionId批量查询
+     * @param paramList
+     * @return
+     */
+    List<LswBpd> queryByBpdIdAndVersionIdList(List<Map<String, String>> paramList);
+
 }

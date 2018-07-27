@@ -49,7 +49,7 @@ public interface DhProcessDefinitionService {
      * @param request httpRequest
      * @return
      */
-    ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid);
+    ServerResponse<DhProcessDefinition> createDhProcessDefinition(String proAppId, String proUid, String proVerUid);
 
     /**
      * 指定的流程定义是否存在，存在的话将满足条件的第一个元素返回在data中
@@ -149,5 +149,13 @@ public interface DhProcessDefinitionService {
      * @return
      */
     List<DhProcessDefinitionBo> getExposedProcessDefinitionByProAppIdAndSnapshotId(String proAppId, String snapshotId);
+
+    /**
+     * 查询指定应用库指定版本的所有流程
+     * @param proAppId  应用库id
+     * @param proVerUid   快照版本id
+     * @return
+     */
+    List<DhProcessDefinition> listProcessDefinitionByProAppIdAndProVerUid(String proAppId, String proVerUid);
 
 }

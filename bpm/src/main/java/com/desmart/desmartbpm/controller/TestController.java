@@ -332,8 +332,11 @@ public class TestController extends BaseWebController {
     @RequestMapping(value = "/testUpdateApp")
     @ResponseBody
     public ServerResponse testMultiUpload(String proAppId, String proVerUid) {
-        return dhProcessAppUpdateService.pullAllProcessActivityMeta(proAppId, proVerUid);
+        //return dhProcessAppUpdateService.pullAllProcessActivityMeta(proAppId, proVerUid);
+        return null;
     }
+
+
 
 
 }

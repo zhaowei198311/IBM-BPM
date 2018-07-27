@@ -1,5 +1,10 @@
 package com.desmart.desmartbpm.mongo;
 
+import com.desmart.desmartbpm.entity.engine.LswBpd;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 保存VisualModel的持久层
  */
@@ -20,4 +25,13 @@ public interface ModelMongoDao {
 
     String getVisualModel(String proAppId, String bpdId, String snapshotId);
 
+    void saveLswBpdData(String bpdId, String versionId, String content);
+
+    String getLswBpdData(String bpdId, String versionId);
+
+    /**
+     * 批量以Map的形式保存 lswBpd中的data数据（转成String）
+     * @param lswBpds
+     */
+    void batchSaveLswBpdData(List<LswBpd> lswBpds);
 }
