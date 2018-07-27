@@ -231,16 +231,7 @@ public class SysUserController {
 	@ResponseBody
 	public String addSysUser(SysUser sysUser) {
 		try {	
-			sysUser.setUserId(sysUser.getUserUid());
 			sysUserService.insert(sysUser);
-			String departUid=sysUser.getDepartUid();
-			if(departUid!=null) {
-				SysUserDepartment sysUserDepartment=new SysUserDepartment();
-				sysUserDepartment.setUduid("sysUserDepartment:"+UUIDTool.getUUID());
-				sysUserDepartment.setUserUid(sysUser.getUserUid());
-				sysUserDepartment.setDepartUid(departUid);
-				sysUserDepartmentService.insert(sysUserDepartment);
-			}
 			return "{\"msg\":\"success\"}";
 		} catch (Exception e) {
 			e.printStackTrace();
