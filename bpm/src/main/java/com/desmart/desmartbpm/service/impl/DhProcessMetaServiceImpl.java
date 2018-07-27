@@ -298,9 +298,10 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         // 查找分类下有没有重名的元数据
         DhProcessMeta metaSelective = new DhProcessMeta();
         metaSelective.setProName(dhProcessMeta.getProName());
-        metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
-        if (dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective).size() > 0) {
-            return ServerResponse.createByErrorMessage("分类下存在同名的元数据，请重新命名");
+        //metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
+        List<DhProcessMeta> checkList = dhProcessMetaMapper.queryByProName(metaSelective);
+        if (checkList!=null&&checkList.size() > 0) {
+            return ServerResponse.createByErrorMessage("存在同名的元数据，请重新命名");
         }
         
         dhProcessMeta.setProMetaUid(EntityIdPrefix.DH_PROCESS_META + UUID.randomUUID().toString());
@@ -335,7 +336,7 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         metaSelective.setProName(newName);
         // metaSelective.setCategoryUid(dhProcessMeta.getCategoryUid());
         // 指定元数据名的元数据
-        List<DhProcessMeta> metaListExists = dhProcessMetaMapper.listByDhProcessMetaSelective(metaSelective);
+        List<DhProcessMeta> metaListExists = dhProcessMetaMapper.queryByProName(metaSelective);
         for (DhProcessMeta metaListExist : metaListExists) {
             // 如果库中的元数据主键与当前元数据不同，说明有同名的元数据存在
             if (!metaListExist.getProMetaUid().equals(metaUid)) {
