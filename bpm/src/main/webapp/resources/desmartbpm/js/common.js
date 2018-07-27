@@ -43,7 +43,7 @@ var common = {
     	    title: '选择模板',
     	    shadeClose: true,
     	    shade: 0.3,
-    	    area: ['60%', '95%'],
+    	    area: ['60%', '88%'],
     	    content: common.chooseNotifyTemplatePath(elementId, templateType),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);
