@@ -91,11 +91,13 @@ public class DhProcessDefinition {
     private String proName; // 流程名
     private String categoryUid; // 分类id
     private String verName;
-    
+
     private String permissionStartUser; // 人员发起权限
     private String permissionStartRole; // 角色发起权限
     private String permissionStartTeam; // 角色组发起权限
-    
+
+    private DhProcessDefinition oldProcessDefinition;
+
     public DhProcessDefinition() {
         
     }
@@ -554,7 +556,11 @@ public class DhProcessDefinition {
         return true;
     }
 
-    
-    
-    
+    public DhProcessDefinition getOldProcessDefinition() {
+        return oldProcessDefinition;
+    }
+
+    public void setOldProcessDefinition(DhProcessDefinition oldProcessDefinition) {
+        this.oldProcessDefinition = oldProcessDefinition;
+    }
 }

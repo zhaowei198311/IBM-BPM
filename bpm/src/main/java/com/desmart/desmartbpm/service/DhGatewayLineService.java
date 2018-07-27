@@ -2,6 +2,7 @@ package com.desmart.desmartbpm.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
@@ -54,4 +55,14 @@ public interface DhGatewayLineService {
      * @return
      */
     int removeByGatewayLineUidList(List<String> gatewayLineUidList);
+
+    /**
+     * 从主流程出发，得到主流程和它包含的所有子流程的VisualModel
+     * 获得visualModel "data" 节点下的对象
+     * @param visualModelList
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     */
+    void getVisualModel(List<JSONObject> visualModelList, String proAppId, String proUid, String proVerUid);
 }

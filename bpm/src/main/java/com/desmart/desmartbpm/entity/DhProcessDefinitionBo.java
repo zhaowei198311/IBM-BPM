@@ -8,7 +8,6 @@ public class DhProcessDefinitionBo {
     private String proUid;// 流程id(引擎中流程图id)
     private String proAppId; // 流程应用库id
     private String proVerUid;// 流程版本id（引擎中流程快照id）
-
     private Set<String> externalIdList;  // 含有的外链流程id
 
     public DhProcessDefinitionBo(){}

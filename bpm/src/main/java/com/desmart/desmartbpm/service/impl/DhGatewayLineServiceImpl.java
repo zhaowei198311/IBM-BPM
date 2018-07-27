@@ -1,10 +1,16 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.*;
+
+import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import com.desmart.common.exception.PlatformException;
+import com.desmart.desmartbpm.mongo.ModelMongoDao;
+import com.desmart.desmartbpm.util.http.HttpClientUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.dom4j.Attribute;
@@ -60,6 +66,8 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     private DhGatewayLineMapper dhGatewayLineMapper;
     @Autowired
     private DatRuleMapper datRuleMapper;
+    @Autowired
+    private ModelMongoDao modelMongoDao;
     
 
     @Transactional(value = "transactionManager")
@@ -105,7 +113,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     private List<Map<String, Object>> prepareData(String proAppId, String proUid, String proVerUid) {
         List<Map<String, Object>> dataList = new ArrayList<>();  // 用来返回的数据
         
-        List<JSONObject> visualModelList = new ArrayList<JSONObject>();
+        List<JSONObject> visualModelList = new ArrayList<>();
         getVisualModel(visualModelList, proAppId, proUid, proVerUid);
         // 调用结束，visualModelLsit中是主流程和其内所有内连子流程的VisualModel
         System.out.println(visualModelList.size());
@@ -114,11 +122,21 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
             String versionId = visualModel.getString("poVersionId");
             Map<String, Object> map = new HashMap<>();
             poId = poId.substring(poId.indexOf(".") + 1);
-            LswBpd lswBpd = lswBpdMapper.queryByBpdIdAndVersionId(poId, versionId);
-            if (lswBpd != null) {
-                map.put("visualModel", visualModel);
-                map.put("byteData", lswBpd.getData());
+            String lswBpdDataStr = modelMongoDao.getLswBpdData(poId, versionId);
+            if (lswBpdDataStr == null) {
+                LswBpd lswBpd = lswBpdMapper.queryByBpdIdAndVersionId(poId, versionId);
+                if (lswBpd != null) {
+                    try {
+                        lswBpdDataStr = new String(lswBpd.getData(), "UTF-8");
+                        modelMongoDao.saveLswBpdData(poId, versionId, lswBpdDataStr);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+            map.put("visualModel", visualModel);
+            map.put("bpdData", lswBpdDataStr);
+
             dataList.add(map);
         }
         return dataList;
@@ -177,13 +195,14 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
             
             // 4. 装配条件
             if (gatewayLineList.size() > 0) {
-                byte[] byteData = (byte[])map.get("byteData");
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(byteData);
+                String bpdDataStr = (String)map.get("bpdData");
+                ByteArrayInputStream inputStream = null;
                 SAXReader reader = new SAXReader();
                 Document document = null;
                 // 记录线的路由条件
                 Map<String, String> idConditionMap = new HashMap<>();
                 try {
+                    inputStream = new ByteArrayInputStream(bpdDataStr.getBytes("UTF-8"));
                     document = reader.read(inputStream);
                     Element rootEle = document.getRootElement();
                     // 获得根节点下所有的 flow 节点
@@ -231,7 +250,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                     if (ruleList.size() > 0) {
                         datRuleMapper.batchInsertDatRule(ruleList);
                     }
-                } catch (DocumentException e) {
+                } catch (Exception e) {
                     throw new PlatformException("解析网关XML错误", e);
                 }
                 
@@ -239,22 +258,10 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
             }
             
         }
-        
-        
-        
     }
     
-    
-    /**
-     * 从主流程出发，得到主流程和它包含的所有子流程的VisualModel
-     * 
-     * 获得visualModel "data" 节点下的对象
-     * @param visualModelList
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
-     */
-    private void getVisualModel(List<JSONObject> visualModelList, String proAppId, String proUid, String proVerUid) {
+    @Override
+    public void getVisualModel(List<JSONObject> visualModelList, String proAppId, String proUid, String proVerUid) {
         JSONObject visualModel = getVisualModelData(proUid, proVerUid, proAppId);
         visualModelList.add(visualModel);
         JSONArray itemArr = visualModel.getJSONArray("items");
@@ -272,34 +279,18 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     
     
     public JSONObject getVisualModelData(String bpdId, String snapshotId, String processAppId) {
-        JSONObject results = new JSONObject();
-        BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
-        String host = gcfg.getBpmServerHost();
-        host = host.endsWith("/") ? host : host + "/";
-        String url = host + "rest/bpm/wle/v1/visual/processModel/{0}?{1}";
-        String params = "projectId=" + processAppId;
-        if (StringUtils.isNotBlank(snapshotId)) {
-            params = params + "&snapshotId=" + snapshotId;
-        }
-        url = MessageFormat.format(url, bpdId, params);
-        Map<String, Object> pmap = new HashMap<>();
-        RestUtil restUtil = new RestUtil(gcfg);
-        HttpReturnStatus result = restUtil.doGet(url, pmap);
-        restUtil.close();
-        
-        if (StringUtils.isNotBlank(result.getMsg())) {
-            JSONObject datas = (JSONObject)JSON.parse(result.getMsg());
-            if ("200".equalsIgnoreCase(datas.getString("status"))) {
-                JSONObject data = datas.getJSONObject("data");
-                results = data;
+        String visualModelStr = modelMongoDao.getVisualModel(processAppId, bpdId, snapshotId);
+        if (visualModelStr == null) {
+            BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
+            BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(gcfg);
+            HttpReturnStatus returnStatus = bpmProcessUtil.getVisualModel(processAppId, bpdId, snapshotId);
+            if (HttpReturnStatusUtil.isErrorResult(returnStatus)) {
+                throw new PlatformException("获取VisualModel失败");
             }
+            visualModelStr = returnStatus.getMsg();
         }
-
-        if (results == null) {
-            results = new JSONObject();
-        }
-
-        return results;
+        JSONObject datas = JSON.parseObject(visualModelStr);
+        return datas.getJSONObject("data");
     }
     
     /**

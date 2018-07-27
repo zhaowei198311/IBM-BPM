@@ -144,7 +144,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         // 对item按照创建时间倒序排序
         if (matchedItemList.size() > 0) {
-            matchedItemList.sort(new Comparator<Map<String, String>>() {
+            Collections.sort(matchedItemList, new Comparator<Map<String, String>>() {
                 @Override
                 public int compare(Map<String, String> o1, Map<String, String> o2) {
                     Date date1 = DateTimeUtil.strToDate(o1.get("snapshotCreated"), "yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -210,7 +210,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     }
 
     @Transactional(value = "transactionManager")
-    public ServerResponse createDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
+    public ServerResponse<DhProcessDefinition> createDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
@@ -234,9 +234,14 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             }
             // 如果需要生成网关连接线
             if (dhGatewayLineService.needGenerateGatewayLine(proAppId, proUid, proVerUid)) {
-                return dhGatewayLineService.generateGatewayLine(dhProcessDefinition);
+                ServerResponse generateResponse = dhGatewayLineService.generateGatewayLine(dhProcessDefinition);
+                if (generateResponse.isSuccess()) {
+                    return ServerResponse.createBySuccess(dhProcessDefinition);
+                } else {
+                    throw new PlatformException("生成网关连接线失败");
+                }
             } else{
-                return ServerResponse.createBySuccess();
+                return ServerResponse.createBySuccess(dhProcessDefinition);
             }
         } else {
             return ServerResponse.createByErrorMessage("该版本已经同步过");
@@ -452,8 +457,13 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 			String proUidNew = mapId.get("proUidNew").toString();
 			String proVerUidNew = mapId.get("proVerUidNew").toString();
 			String proAppIdNew = mapId.get("proAppIdNew").toString();
+
 			// 同步流程
-			synchronizationProcess(proUid, proVerUid, proAppId, proUidNew, proVerUidNew, proAppIdNew);
+            // 老流程信息
+            DhProcessDefinition oldDefinition = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
+            // 新流程
+            DhProcessDefinition newDefinition =  dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
+			synchronizationProcess(newDefinition, oldDefinition);
 			
 			Map<String, Object> idS = new HashMap<>();
 			idS.put("proUid", proUid);
@@ -525,53 +535,38 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return list.get(0);
         }
     }
-    
+
     /**
-     * 
-     * @Title: synchronizationProcess  
-     * @Description: 同步流程  
-     * @param @param proUid
-     * @param @param proVerUid
-     * @param @param proAppId
-     * @param @param proUidNew
-     * @param @param proVerUidNew
-     * @param @param proAppIdNew  
-     * @return void
-     * @throws
+     * 更新新版流程定义的流程配置和权限
+     * @param newDefinition
+     * @param oldDefinition
      */
-    public void synchronizationProcess(String proUid, String proVerUid, String proAppId,
-    								String proUidNew, String proVerUidNew, String proAppIdNew){
-    	// 老流程信息
-		DhProcessDefinition processDefinition = dhProcessDefinitionMapper.getProcessById(proUid, proVerUid, proAppId);
-
-		// 新流程
-		DhProcessDefinition processNew =  dhProcessDefinitionMapper.getProcessById(proUidNew, proVerUidNew, proAppIdNew);
-
-        BeanUtils.copyProperties(processDefinition, processNew, new String[]{"proVerUid", "proStatus", "lastModifiedDate", "createDate", "createUser"});
-        processNew.setLastModifiedDate(new Date());
-        processNew.setLastModifiedUser((String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+    public void synchronizationProcess(DhProcessDefinition newDefinition, DhProcessDefinition oldDefinition){
+        BeanUtils.copyProperties(oldDefinition, newDefinition, new String[]{"proVerUid", "proStatus", "lastModifiedDate", "createDate", "createUser"});
+        newDefinition.setLastModifiedDate(new Date());
+        newDefinition.setLastModifiedUser((String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 
 		// 更新DH_PROCESS_DEFINITION表
-		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUid(processNew);
+		dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUid(newDefinition);
 
     	// 老流程权限信息
-		List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionService.getPermissionListOfStartProcess(proAppId, proUid, proVerUid);
+		List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionService.getPermissionListOfStartProcess(oldDefinition.getProAppId(),
+                oldDefinition.getProUid(), oldDefinition.getProVerUid());
 		if (dhObjectPermissionList.size() > 0) {
 			// 删除新流程的权限信息，重新添加
-            dhObjectPermissionService.deletePermissionListOfStartProcess(proAppIdNew, proUidNew, proVerUidNew);
+            dhObjectPermissionService.deletePermissionListOfStartProcess(newDefinition.getProAppId(),
+                    newDefinition.getProUid(), newDefinition.getProVerUid());
 
 			List<DhObjectPermission> newPermissionList = new ArrayList<>();
 			for (DhObjectPermission permission : dhObjectPermissionList) {
 				permission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
-				permission.setProUid(proUidNew);
-				permission.setProVerUid(proVerUidNew);
-				permission.setProAppId(proAppIdNew);
+                permission.setProAppId(newDefinition.getProAppId());
+                permission.setProUid(newDefinition.getProUid());
+                permission.setProVerUid(newDefinition.getProVerUid());
                 newPermissionList.add(permission);
 			}
 			dhObjectPermissionMapper.saveBatch(newPermissionList);
 		}
-
-
     }
     
     /**
@@ -985,6 +980,17 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             definitionList.add(definition);
         }
         return definitionList;
+    }
+
+    @Override
+    public List<DhProcessDefinition> listProcessDefinitionByProAppIdAndProVerUid(String proAppId, String proVerUid) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proVerUid)) {
+            return null;
+        }
+        DhProcessDefinition definitionSelective = new DhProcessDefinition();
+        definitionSelective.setProAppId(proAppId);
+        definitionSelective.setProVerUid(proVerUid);
+        return dhProcessDefinitionMapper.listBySelective(definitionSelective);
     }
 
 

@@ -10,5 +10,15 @@
         from LSW_BPD
         where BPD_ID = #{bpdId} and VERSION_ID = #{versionId}
     </select>
-    
+
+    <select id="queryByBpdIdAndVersionIdList" parameterType="list" resultType="com.desmart.desmartbpm.entity.engine.LswBpd">
+        select <include refid="baseColumnList"/>
+        from LSW_BPD
+        <where>
+            <foreach collection="list" item="item" separator="or">
+                (bpd_id = #{item.bpdId} and version_id = #{item.versionId})
+            </foreach>
+        </where>
+    </select>
+
 </mapper>
