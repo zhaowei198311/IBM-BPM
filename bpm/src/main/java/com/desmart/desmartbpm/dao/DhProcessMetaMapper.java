@@ -89,6 +89,12 @@ public interface DhProcessMetaMapper {
      * @return
      */
     int insertBatch(List<DhProcessMeta> processMetaList);
-
+    
+    /**
+     * 根据流程元数据名称精确查询
+     * @param dhProcessMeta
+     * @return
+     */
+    public List<DhProcessMeta> queryByProName(DhProcessMeta dhProcessMeta);
 
 }

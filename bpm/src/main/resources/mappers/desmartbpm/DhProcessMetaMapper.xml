@@ -155,5 +155,15 @@
             </foreach>
         </where>
     </select>
+    
+     <select id="queryByProName" parameterType="com.desmart.desmartbpm.entity.DhProcessMeta" resultType="com.desmart.desmartbpm.entity.DhProcessMeta">
+        select <include refid="base_column"/>
+        from dh_process_meta 
+        <where>
+            <if test="proName != null and !proName.trim().isEmpty()">
+                and PRO_NAME = #{proName}
+            </if>
+        </where>
+    </select>
 
 </mapper>
