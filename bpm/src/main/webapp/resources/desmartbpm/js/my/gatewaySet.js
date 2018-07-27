@@ -131,12 +131,26 @@ function printFoldHurdle(list) {
         var bpmActivityMeta = list[i];
         
             if (i == 0) {
-                str += '<li data-uid="'+bpmActivityMeta.activityId+'" class="link_active" onclick="clickGatewayLi(this);">'+bpmActivityMeta.activityName+'</li>';
+                str += '<li data-uid="'+bpmActivityMeta.activityId
+                	+'" class="link_active" onclick="clickGatewayLi(this);">';
+                if(bpmActivityMeta.activityName.length>10){
+                	str += bpmActivityMeta.activityName.substring(0,10)+"...";
+                }else{
+                	str += bpmActivityMeta.activityName;
+                }
+                str += '</li>';
                 //$("#gatewaySet_tab_title").append("<li class='layui-this' >"+bpmActivityMeta.activityName+"</li>");
                 $("#gatewayActivityName").val(bpmActivityMeta.activityName);
                 $("#gatewayActivityName").data("activityId",bpmActivityMeta.activityId);
             } else {
-                str += '<li data-uid="'+bpmActivityMeta.activityId+'" onclick="clickGatewayLi(this);">'+bpmActivityMeta.activityName+'</li>';
+                str += '<li data-uid="'+bpmActivityMeta.activityId
+                	+'" onclick="clickGatewayLi(this);">'
+                if(bpmActivityMeta.activityName.length>10){
+                   	str += bpmActivityMeta.activityName.substring(0,10)+"...";
+                }else{
+                	str += bpmActivityMeta.activityName;
+                }
+                str += '</li>';
             }
     }
     str += '</ul>'
