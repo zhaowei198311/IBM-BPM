@@ -1516,8 +1516,13 @@ function printCollapse(list) {
 				str += '<li data-parentActivityId="' + meta.parentActivityId
 						+ '" data-uid="' + meta.actcUid
 						+ '" data-activitybpdid="' + meta.activityBpdId
-						+ '" class="link_active" onclick="clickLi(this);">'
-						+ meta.activityName + '</li>';
+						+ '" class="link_active" onclick="clickLi(this);" title="'+meta.activityName+'">';
+				if(meta.activityName.length>10){
+					str += meta.activityName.substring(0,10)+"...";
+				}else{
+					str += meta.activityName;
+				}
+				str += '</li>';
 				$("#left_activity_ul").empty();
 				$("#left_activity_ul").append(activityStr);
 				var leftLi = $("#left_activity_ul").find("li");
@@ -1531,8 +1536,13 @@ function printCollapse(list) {
 				str += '<li data-parentActivityId="' + meta.parentActivityId
 						+ '" data-uid="' + meta.actcUid
 						+ '" data-activitybpdid="' + meta.activityBpdId
-						+ '" onclick="clickLi(this);">' + meta.activityName
-						+ '</li>';
+						+ '" onclick="clickLi(this);" title="'+meta.activityName+'">';
+				if(meta.activityName.length>10){
+					str += meta.activityName.substring(0,10)+"...";
+				}else{
+					str += meta.activityName;
+				}
+				str += '</li>';
 			}
 		}
 		str += '</ul>' + '</div>' + '</div>';
@@ -1684,6 +1694,9 @@ function formFieldEdit(data) {
 		url : common.getPath() + "/formField/queryFieldByFormUidAndStepId",
 		type : "post",
 		dataType : "json",
+		beforeSend:function(){
+			layer.load(1);
+		},
 		data : {
 			stepUid : dates.stepUid,
 			formUid : dates.stepObjectUid,
@@ -1691,12 +1704,19 @@ function formFieldEdit(data) {
 		},
 		success : function(result) {
 			drawPerTable(result, "field_permissions_table", "");
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.closeAll("loading");
 		}
 	});
 	$.ajax({
 		url : common.getPath() + "/formField/queryFieldByFormUidAndStepId",
 		type : "post",
 		dataType : "json",
+		beforeSend:function(){
+			layer.load(1);
+		},
 		data : {
 			stepUid : dates.stepUid,
 			formUid : dates.stepObjectUid,
@@ -1704,6 +1724,10 @@ function formFieldEdit(data) {
 		},
 		success : function(result) {
 			drawPerTable(result, "title_permissions_table", "title");
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.closeAll("loading");
 		}
 	});
 	// $(".form-horizontal").serialize();

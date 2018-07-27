@@ -1543,6 +1543,9 @@
 						method : "post",
 						dataType : "json",
 						contentType : "application/json",
+						beforeSend:function(){
+							layer.load(1);
+						},
 						data : JSON.stringify(jsonArr),
 						success : function(result) {
 							if (result.status == 0) {
@@ -1552,6 +1555,10 @@
 							} else {
 								layer.alert(result.msg);
 							}
+							layer.closeAll("loading");
+						},
+						error:function(){
+							layer.closeAll("loading");
 						}
 					});
 				})
