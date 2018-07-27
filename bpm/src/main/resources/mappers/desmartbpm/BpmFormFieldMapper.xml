@@ -43,7 +43,7 @@
 	<delete id="deleteFieldBatch" parameterType="com.desmart.desmartbpm.entity.BpmFormField">
 		delete from bpm_form_field where fld_uid in
 		<foreach collection="list" item="item" open="(" separator="," close=")">
-			item.fldUid
+			#{item.fldUid}
 		</foreach>
 	</delete>
 	
