@@ -92,7 +92,7 @@
 			<div class="top">
 				新建用户
 			</div>
-				<form  action="sysUser/addSysUser" method="post"   onsubmit="return validateCallback(this,addsuccess3);">
+				<form  action="sysUser/addSysUser" method="post"  class="layui-form"  onsubmit="return validateCallback(this,addsuccess3);">
 			<div class="middle" style="height: auto;">
 				   <div class="layui-form-item" style="padding-top:20px;">
 				    <label class="layui-form-label">工号</label>
@@ -138,7 +138,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">公司</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
+				    	<select  name="companynumber" class="companyCode" required   lay-search="" style="width: 230px;" lay-verify="required"   ></select>
+<!-- 				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" /> -->
 				    </div>
 				  </div>
 			</div>
@@ -157,7 +158,7 @@
 			<div class="top">
 				修改用户
 			</div>
-				<form  action="sysUser/updateSysUser" method="post"   onsubmit="return validateCallback(this,updatesuccess1);">
+				<form  action="sysUser/updateSysUser" method="post"  class="layui-form"  onsubmit="return validateCallback(this,updatesuccess1);">
 			<div class="middle" style="height: auto;">
 				   <div class="layui-form-item" style="margin-top:20px;">
 				    <label class="layui-form-label">工号</label>
@@ -203,7 +204,8 @@
 				  <div class="layui-form-item">
 				    <label class="layui-form-label">公司</label>
 				    <div class="layui-input-block">
-				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" />
+				    	<select  name="companynumber" class="companyCode" required   lay-search="" style="width: 230px;" lay-verify="required"   ></select>
+<!-- 				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" /> -->
 				    </div>
 				  </div>
 			</div>
@@ -311,7 +313,7 @@
 		
 		<!-- 绑定部门对应的公司 -->
 		<div class="display_container10">
-			<div class="display_content10" style="min-height: auto;padding: 20px 20px 10px; 20px;">
+			<div class="display_content10">
 				<div class="top">
 					<div class="layui-col-md12">绑定公司和部门</div>
 				</div>
