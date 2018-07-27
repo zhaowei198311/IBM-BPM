@@ -28,6 +28,9 @@ public class SysCompanyController {
 	@Autowired
 	private	SysCompanyService sysCompanyService;
 	
+	 /**
+     * 根据条件分页查询公司信息
+     */
 	@RequestMapping(value="/allCompany")
 	@ResponseBody
 	public List<SysCompany> allCompany(SysCompany sysCompany) {
