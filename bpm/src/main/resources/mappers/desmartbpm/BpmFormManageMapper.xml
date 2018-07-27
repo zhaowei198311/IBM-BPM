@@ -78,7 +78,7 @@
 			insert into bpm_form(<include refid="base_column"/>) values(
 				#{item.dynUid},#{item.dynTitle},#{item.dynDescription},#{item.dynWebpage, jdbcType=CLOB},
 				#{item.dynContent, jdbcType=CLOB},#{item.proUid},#{item.proVersion},#{item.creator},sysdate,
-				#{item.formNoExpression},#{formNoStatic}
+				#{item.formNoExpression},#{item.formNoStatic}
 			)
 		</foreach>
 		;end;
