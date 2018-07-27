@@ -64,9 +64,9 @@ function dels(data){
 
 
 $(function(){
+	companySelect('sysCompany/allCompany','.companyCode');
 	$('#add_department_company_btn').click(function(){
 		opendialog('display_container_company_department');
-		companySelect('sysCompany/allCompany','.companyCode');
 	});
 });
 
