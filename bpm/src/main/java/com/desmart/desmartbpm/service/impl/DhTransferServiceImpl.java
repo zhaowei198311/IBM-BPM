@@ -1075,6 +1075,7 @@ public class DhTransferServiceImpl implements DhTransferService {
             return ServerResponse.createByErrorMessage("没有找到此触发器");
         }
         DhTransferData transferData = new DhTransferData();
+        transferData.setType(DhTransferData.TYPE_TRIGGER);  
         transferData.addToTriggerList(trigger);
         // 如果不是接口类型的触发器，直接返回
         if (!DhTriggerType.INTERFACE.getCode().equals(trigger.getTriType())) {
@@ -1085,7 +1086,6 @@ public class DhTransferServiceImpl implements DhTransferService {
         if (StringUtils.isBlank(intUid)) {
             return ServerResponse.createByErrorMessage("缺少接口参数");
         }
-        transferData.setType(DhTransferData.TYPE_TRIGGER);
         return ServerResponse.createBySuccess(transferData);
     }
 
