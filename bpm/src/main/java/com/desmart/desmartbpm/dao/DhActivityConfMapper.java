@@ -10,6 +10,8 @@ import com.desmart.desmartbpm.entity.DhActivityConf;
 public interface DhActivityConfMapper {
     int deleteByPrimaryKey(String actcUid);
 
+    int deleteByPrimaryKeyList(List<String> actcUidList);
+
     int insert(DhActivityConf dhActivityConf);
 
     int insertBatch(List<DhActivityConf> dhActivityConfList);
@@ -33,6 +35,11 @@ public interface DhActivityConfMapper {
      */
     int deleteByActivityIds(List<String> activityIds);
 
-
+    /**
+     * 根据主键批量搜索
+     * @param actcUidList
+     * @return
+     */
+    List<DhActivityConf> listByPrimayKeyList(List<String> actcUidList);
 
 }

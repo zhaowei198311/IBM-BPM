@@ -37,6 +37,7 @@ public class DhProcessAppUpdateController {
     }
 
     @RequestMapping(value = "/pullDefintionByAppIdAndSnapshotId")
+    @ResponseBody
     public ServerResponse pullProcessDefinitionByProAppIdAndProVerUid(String proAppId, String proVerUid) {
         // 准备数据
         ServerResponse<Queue<DhProcessDefinitionBo>> prepareResponse = dhProcessAppUpdateService.prepareData(proAppId, proVerUid);

@@ -24,6 +24,7 @@ import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.mybatis.spring.batch.MyBatisCursorItemReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -116,6 +117,9 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     private ModelMongoDao modelMongoDao;
     @Autowired
     private LswBpdMapper lswBpdMapper;
+    @Autowired
+    private DhActivityConfMapper dhActivityConfMapper;
+
 
     @Transactional
     @Override
@@ -135,15 +139,17 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         }
         List<DhProcessDefinition> newDefintions = newDefinitionResponse.getData();
         // 对比得到新老版本都存在的流程定义
-        List<DhProcessDefinition> definitionsNeedUpdate = findDefinitionNeedUpdate(oldDefinitions, newDefintions);
-        DhProcessDefinition oldDefinition = null;
-        for (DhProcessDefinition newDefinition : definitionsNeedUpdate) {
-            oldDefinition = newDefinition.getOldProcessDefinition();
-            newDefinition.setOldProcessDefinition(null);
-            ServerResponse response = copyConfigFromOldVersion(oldDefinition, newDefinition);
+        List<DhDefinitionCopyData> copyDataList = findDefinitionNeedCopyConfig(oldDefinitions, newDefintions);
+        // 遍历拷贝流程
+        Iterator<DhDefinitionCopyData> iterator = copyDataList.iterator();
+        while (iterator.hasNext()) {
+            DhDefinitionCopyData copyData = iterator.next();
+            ServerResponse response = copyConfigFromOldVersion(copyData);
             if (!response.isSuccess()) {
-                throw new PlatformException("升级版本失败，复制配置失败");
+                logger.error("升级应用库失败，复制老版本流程定义时失败：" + copyData.toString());
+                throw new PlatformException("升级版本失败，复制配置失败:" + copyData.toString());
             }
+            iterator.remove(); // 拷贝完成释放引用
         }
         return ServerResponse.createBySuccess();
     }
@@ -234,6 +240,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         return ServerResponse.createBySuccess(boToPullQueue);
     }
 
+    // 拉取流程定义
     @Transactional
     @Override
     public ServerResponse<List<DhProcessDefinition>> pullAllProcessActivityMeta(Queue<DhProcessDefinitionBo> boToPullQueue) {
@@ -251,16 +258,16 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         return ServerResponse.createBySuccess(newDefintions);
     }
 
-
-    public ServerResponse copyConfigFromOldVersion(DhProcessDefinition oldDefinition, DhProcessDefinition newDefinition) {
+    // 复制配置
+    public ServerResponse copyConfigFromOldVersion(DhDefinitionCopyData copyData) {
         // 1. 拷贝流程定义
-        copyDefinition(oldDefinition, newDefinition);
+        copyDefinition(copyData);
         // 2. 拷贝流程权限
-        copyProcessPermission(oldDefinition, newDefinition);
+        copyProcessPermission(copyData);
         // 3. 拷贝表单
-        DhUpdateData updateData = new DhUpdateData();
-        copyBpmForm(oldDefinition, newDefinition, updateData);
-
+        copyBpmForm(copyData);
+        // 4. 拷贝环节配置
+        copyActivityConf(copyData);
         return ServerResponse.createBySuccess();
     }
 
@@ -307,32 +314,44 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     }
 
     /**
-     * 找到新老版本交替中需要更新的流程定义
+     * 找到新老版本交替中需要拷贝配置的流程定义
      * @param oldProcessDefinitions 老版本流程定义集合
      * @param newProcessDefinitions 新版本流程定义集合
-     * @return
+     * @return  需要拷贝配置的 新老流程对应关系
      */
-    private List<DhProcessDefinition> findDefinitionNeedUpdate(List<DhProcessDefinition> oldProcessDefinitions, List<DhProcessDefinition> newProcessDefinitions) {
-        List<DhProcessDefinition> definitionsNeedUpdate = new ArrayList<>();
+    private List<DhDefinitionCopyData> findDefinitionNeedCopyConfig(List<DhProcessDefinition> oldProcessDefinitions, List<DhProcessDefinition> newProcessDefinitions) {
+        List<DhDefinitionCopyData> copyDataList = new ArrayList<>();
         Map<String, DhProcessDefinition> map = new HashMap<>();
         for (DhProcessDefinition newProcessDefinition : newProcessDefinitions) {
             map.put(newProcessDefinition.getProUid(), newProcessDefinition);
         }
-        DhProcessDefinition definition = null;
+        DhProcessDefinition newDefinition = null;
+        String currentUserUid = getCurrentUserUid();
         for (DhProcessDefinition oldProcessDefinition : oldProcessDefinitions) {
-            if ((definition = map.get(oldProcessDefinition.getProUid())) != null) {
-                definition.setOldProcessDefinition(oldProcessDefinition);
-                definitionsNeedUpdate.add(definition);
+            // 如果老版本的流程在新版本中还存在，视为需要拷贝配置
+            if ((newDefinition = map.get(oldProcessDefinition.getProUid())) != null) {
+                DhDefinitionCopyData copyData = new DhDefinitionCopyData(newDefinition.getProAppId(), newDefinition.getProUid(),
+                        oldProcessDefinition.getProVerUid(), newDefinition.getProVerUid());
+                copyData.setOldDefintion(oldProcessDefinition);
+                copyData.setNewDefinition(newDefinition);
+                copyData.setCurrUserUid(currentUserUid);
+                copyDataList.add(copyData);
             }
         }
-        return definitionsNeedUpdate;
+        return copyDataList;
     }
 
     private String getCurrentUserUid() {
         return (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
     }
 
-    private void copyDefinition(DhProcessDefinition oldDefinition, DhProcessDefinition newDefinition){
+    /**
+     * 复制流程定义上的配置
+     * @param copyData
+     */
+    private void copyDefinition(DhDefinitionCopyData copyData){
+        DhProcessDefinition oldDefinition = copyData.getOldDefintion();
+        DhProcessDefinition newDefinition = copyData.getNewDefinition();
         BeanUtils.copyProperties(oldDefinition, newDefinition, new String[]{"proVerUid", "proStatus", "lastModifiedDate", "createDate", "createUser"});
         newDefinition.setLastModifiedUser(getCurrentUserUid());
         // 更新DH_PROCESS_DEFINITION表
@@ -341,36 +360,32 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
 
     /**
      * 拷贝流程范围的权限
-     * @param oldDefinition
-     * @param newDefinition
+     * @param copyData
      */
-    private void copyProcessPermission(DhProcessDefinition oldDefinition, DhProcessDefinition newDefinition){
-        String proAppId = oldDefinition.getProAppId();
-        String proUid = oldDefinition.getProUid();
+    private void copyProcessPermission(DhDefinitionCopyData copyData){
         DhObjectPermission permissionSelective = new DhObjectPermission();
-        permissionSelective.setProAppId(proAppId);
-        permissionSelective.setProUid(proUid);
-        permissionSelective.setProVerUid(oldDefinition.getProVerUid());
+        permissionSelective.setProAppId(copyData.getProAppId());
+        permissionSelective.setProUid(copyData.getProUid());
+        permissionSelective.setProVerUid(copyData.getOldProVerUid());
         // 老流程权限信息
         List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(permissionSelective);
         if (!CollectionUtils.isEmpty(dhObjectPermissionList)) {
             for (DhObjectPermission permission : dhObjectPermissionList) {
                 permission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
-                permission.setProVerUid(newDefinition.getProVerUid());
+                permission.setProVerUid(copyData.getNewProVerUid());
             }
             dhObjectPermissionMapper.saveBatch(dhObjectPermissionList);
         }
     }
 
-    private void copyBpmForm(DhProcessDefinition oldDefinition, DhProcessDefinition newDefinition, DhUpdateData updateData) {
+    private void copyBpmForm(DhDefinitionCopyData updateData) {
         // 找到此流程定义所有的表单
-        List<BpmForm> bpmForms = bpmFormManageService.listAllFormsOfProcessDefinition(oldDefinition.getProUid(), oldDefinition.getProVerUid());
+        List<BpmForm> bpmForms = bpmFormManageService.listAllFormsOfProcessDefinition(updateData.getProUid(), updateData.getOldProVerUid());
         if (CollectionUtils.isEmpty(bpmForms)) {
             return;
         }
         Map<String, String> oldNewFormUidMap = new HashMap<>();
         Map<String, String> oldNewFieldUidMap = new HashMap<>();
-        String currUserUid = getCurrentUserUid();
 
         List<String> oldFormUids = getIdentityListOfObjectList(bpmForms);
         String oldUid;
@@ -379,10 +394,10 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         for (BpmForm bpmForm : bpmForms) {
             oldUid = bpmForm.getDynUid();
             newUid = EntityIdPrefix.BPM_FORM + UUID.randomUUID().toString();
-            oldNewFormUidMap.put(oldUid, newUid); // 记录新老主键映射关系
             bpmForm.setDynUid(newUid); // 设置新主键
-            bpmForm.setCreator(currUserUid);
-            bpmForm.setProVersion(newDefinition.getProVerUid());
+            oldNewFormUidMap.put(oldUid, newUid); // 记录新老主键映射关系
+            bpmForm.setCreator(updateData.getCurrUserUid());
+            bpmForm.setProVersion(updateData.getNewProVerUid());
         }
         bpmFormManageMapper.insertFormBatch(bpmForms);
         // 复制BPM_FORM_FIELD
@@ -449,4 +464,76 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         return result;
     }
 
+    private void copyActivityConf(DhDefinitionCopyData copyData) {
+        List<BpmActivityMeta> oldActivityMetas = bpmActivityMetaService.listAllBpmActivityMeta(copyData.getProAppId(),
+                copyData.getProUid(), copyData.getOldProVerUid());
+        List<BpmActivityMeta> newActivityMetas = bpmActivityMetaService.listAllBpmActivityMeta(copyData.getProAppId(),
+                copyData.getProUid(), copyData.getNewProVerUid());
+        Map<String, BpmActivityMeta> newUserTaskMap = new HashMap<>(); // 是源环节且是人工环节 键是activityBpdId
+        Map<String, BpmActivityMeta> newGatewayMap = new HashMap<>();  // 是源环节且是网关环节 键是activityBpdId
+        Map<String, String> oldNewUserNodeIdMap = new HashMap<>();
+        Map<String, String> oldNewGatewayNodeIdMap = new HashMap<>();
+        Map<String, String> oldNewConfUidMap = new HashMap<>();
+        List<String> actcUidBeCopyed = new ArrayList<>();
+        List<String> actcUidBeRemove = new ArrayList<>();
+        // 将新环节装入map方便对比
+        for (BpmActivityMeta newActivityMeta : newActivityMetas) {
+            if (newActivityMeta.getActivityId().equals(newActivityMeta.getSourceActivityId())) {
+                if (BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(newActivityMeta.getBpmTaskType())) {
+                    // 是源环节 且 是人工环节
+                    newUserTaskMap.put(newActivityMeta.getActivityBpdId(), newActivityMeta);
+                } else if (BpmActivityMeta.ACTIVITY_TYPE_GATEWAY.equals(newActivityMeta.getActivityType())) {
+                    // 是源环节 且 是排他网关
+                    newGatewayMap.put(newActivityMeta.getActivityBpdId(), newActivityMeta);
+                }
+            }
+        }
+        // 遍历老版本节点与新版本对比
+        BpmActivityMeta bpmActivityMeta;
+        for (BpmActivityMeta oldActivityMeta : oldActivityMetas) {
+            if (oldActivityMeta.getActivityId().equals(oldActivityMeta.getSourceActivityId())) {
+                // 是源环节
+                if (BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(oldActivityMeta.getBpmTaskType())) {
+                    // 是源环节 且 是人工环节
+                    bpmActivityMeta = newUserTaskMap.get(oldActivityMeta.getActivityBpdId());
+                    if (bpmActivityMeta != null) {
+                        oldNewUserNodeIdMap.put(oldActivityMeta.getActivityId(), bpmActivityMeta.getActivityId());
+                        String oldActcUid = oldActivityMeta.getDhActivityConf().getActcUid();
+                        String newActcUid = bpmActivityMeta.getDhActivityConf().getActcUid();
+                        actcUidBeCopyed.add(oldActcUid);
+                        actcUidBeRemove.add(newActcUid);
+                        oldNewConfUidMap.put(oldActcUid, newActcUid);
+                    }
+                } else if (BpmActivityMeta.ACTIVITY_TYPE_GATEWAY.equals(oldActivityMeta.getActivityType())) {
+                    // 是源环节 且 是排他网关
+                    bpmActivityMeta = newUserTaskMap.get(oldActivityMeta.getActivityBpdId());
+                    // 排他网关的输出线一致
+                    if (bpmActivityMeta != null && StringUtils.equals(oldActivityMeta.getActivityTo(), bpmActivityMeta.getActivityTo())) {
+                        oldNewGatewayNodeIdMap.put(oldActivityMeta.getActivityId(), bpmActivityMeta.getActivityId());
+                    }
+                }
+            }
+        }// 至此新老人工节点， 网关环节的对应关系确定
+        copyData.setOldNewUserNodeIdMap(oldNewUserNodeIdMap);
+        copyData.setOldNewGatewayNodeIdMap(oldNewGatewayNodeIdMap);
+
+        // 复制环节配置
+        // 将有对应关系的新环节配置删除，用老的
+        // 获得作为拷贝对象的配置
+        if (actcUidBeCopyed.isEmpty()) {
+            return;
+        }
+        // 1. 批量删除要被覆盖的配置
+        dhActivityConfMapper.deleteByPrimaryKeyList(actcUidBeRemove);
+        List<DhActivityConf> dhActivityConfs = dhActivityConfMapper.listByPrimayKeyList(actcUidBeCopyed); //
+        for (DhActivityConf activityConf : dhActivityConfs) {
+            String newConfUid = oldNewConfUidMap.get(activityConf.getActcUid());
+            String newActivityId = oldNewUserNodeIdMap.get(activityConf.getActivityId());
+            activityConf.setActcUid(newConfUid);
+            activityConf.setActivityId(newActivityId);
+        }
+        String str = JSONObject.toJSONString(dhActivityConfs);
+        dhActivityConfMapper.insertBatch(dhActivityConfs);
+
+    }
 }
