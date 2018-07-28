@@ -139,10 +139,10 @@
 	<insert id="saveBatch" parameterType="list">
 		insert into BPM_ACTIVITY_META (<include refid="Base_Column_List" />)
 		<foreach collection="list" item="item" separator="union all">
-			(select #{item.activityId}, #{item.activityBpdId}, #{item.activityGroupName}, #{item.activityName}, #{item.activityTo}, #{item.activityType},
+			select #{item.activityId}, #{item.activityBpdId}, #{item.activityGroupName}, #{item.activityName}, #{item.activityTo}, #{item.activityType},
 			#{item.bpdId}, #{item.bpmTaskType}, sysdate, #{item.creator}, #{item.deepLevel}, #{item.externalId}, #{item.handleSignType}, #{item.loopType},
 			#{item.miOrder}, #{item.noteType}, #{item.parentActivityBpdId}, #{item.poId}, #{item.snapshotId}, #{item.snapshotUid}, #{item.stepId}, #{item.type},
-			#{item.updateBy}, #{item.updateTime}, #{item.activityAltName}, #{item.proAppId}, #{item.sortNum}, #{item.parentActivityId}, #{item.sourceActivityId} from dual)
+			#{item.updateBy}, #{item.updateTime}, #{item.activityAltName}, #{item.proAppId}, #{item.sortNum}, #{item.parentActivityId}, #{item.sourceActivityId} from dual
 		</foreach>
 	</insert>
 

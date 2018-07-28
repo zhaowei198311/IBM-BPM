@@ -98,8 +98,19 @@
     where activity_id = #{activityId,jdbcType=VARCHAR}
   </select>
 
+  <select id="listByPrimayKeyList" resultMap="BaseResultMap" parameterType="list">
+    select <include refid="Base_Column_List" />
+    from DH_ACTIVITY_CONF
+    <where>
+      <foreach collection="list" item="item" separator="or">
+        actc_uid = #{item}
+      </foreach>
+    </where>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from DH_ACTIVITY_CONF
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </delete>
@@ -126,28 +137,28 @@
   </insert>
 
   <insert id="insertBatch" parameterType="list">
+    begin
+    <foreach collection="list" item="item" separator=";">
       insert into DH_ACTIVITY_CONF (<include refid="Base_Column_List"/>)
-      <foreach collection="list" separator="union all" item="item">
-          select #{item.actcUid}, #{item.activityId}, #{item.actcSort},
-          #{item.actcTime}, #{item.actcTimeunit}, #{item.actcAssignType},
-          #{item.actcAssignVariable}, #{item.signCountVarname}, #{item.actcCanEditAttach},
-          #{item.actcCanUploadAttach}, #{item.actcCanDelegate}, #{item.actcCanDeleteAttach},
-          #{item.actcCanMessageNotify}, #{item.actcCanMailNotify},
-          #{item.actcMailNotifyTemplate}, #{item.actcCanReject},
-          #{item.actcRejectType}, #{item.actcCanRevoke}, #{item.actcCanAutocommit},
-          #{item.actcCanAdd}, #{item.actcCanUserToField}, #{item.actcCanAuditToField},
-          #{item.actcCanApprove}, #{item.actcUserToField}, #{item.actcAuditToField},
-          #{item.actcOuttimeTrigger}, #{item.actcOuttimeTemplate},
-          #{item.actcDescription}, #{item.actcDefTitle}, #{item.actcDefSubjectMessage},
-          #{item.actcDefMessage}, #{item.actcDefDescription}, #{item.actcAlert},
-          #{item.actcPriorityVariable}, #{item.actcCanCancel}, #{item.actcCanPause},
-          #{item.actcCanSkip}, #{item.updator}, #{item.updateTime}, #{item.actcCanChooseUser},
-          #{item.actcCanTransfer}, #{item.actcResponsibility}, #{item.actcChooseableHandlerType},
-          #{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject}, #{item.actcOuttimeNotifyType},
-          #{item.actcIsSystemTask}, #{item.actcDelayType}, #{item.actcDelayTime, jdbcType=INTEGER},
-          #{item.actcDelayTimeunit}, #{item.actcDelayField}
-          from dual
-      </foreach>
+      values (#{item.actcUid,jdbcType=VARCHAR}, #{item.activityId,jdbcType=VARCHAR}, #{item.actcSort,jdbcType=INTEGER},
+      #{item.actcTime,jdbcType=FLOAT}, #{item.actcTimeunit,jdbcType=VARCHAR}, #{item.actcAssignType,jdbcType=VARCHAR},
+      #{item.actcAssignVariable,jdbcType=VARCHAR}, #{item.signCountVarname,jdbcType=VARCHAR}, #{item.actcCanEditAttach,jdbcType=VARCHAR},
+      #{item.actcCanUploadAttach,jdbcType=VARCHAR}, #{item.actcCanDelegate,jdbcType=VARCHAR}, #{item.actcCanDeleteAttach,jdbcType=VARCHAR},
+      #{item.actcCanMessageNotify,jdbcType=VARCHAR}, #{item.actcCanMailNotify,jdbcType=VARCHAR},
+      #{item.actcMailNotifyTemplate,jdbcType=VARCHAR}, #{item.actcCanReject,jdbcType=VARCHAR},
+      #{item.actcRejectType,jdbcType=VARCHAR}, #{item.actcCanRevoke,jdbcType=VARCHAR}, #{item.actcCanAutocommit,jdbcType=VARCHAR},
+      #{item.actcCanAdd,jdbcType=VARCHAR}, #{item.actcCanUserToField,jdbcType=VARCHAR}, #{item.actcCanAuditToField,jdbcType=VARCHAR},
+      #{item.actcCanApprove,jdbcType=VARCHAR}, #{item.actcUserToField,jdbcType=VARCHAR}, #{item.actcAuditToField,jdbcType=VARCHAR},
+      #{item.actcOuttimeTrigger,jdbcType=VARCHAR}, #{item.actcOuttimeTemplate,jdbcType=VARCHAR},
+      #{item.actcDescription,jdbcType=VARCHAR}, #{item.actcDefTitle,jdbcType=VARCHAR}, #{item.actcDefSubjectMessage,jdbcType=VARCHAR},
+      #{item.actcDefMessage,jdbcType=VARCHAR}, #{item.actcDefDescription,jdbcType=VARCHAR}, #{item.actcAlert,jdbcType=VARCHAR},
+      #{item.actcPriorityVariable,jdbcType=VARCHAR}, #{item.actcCanCancel,jdbcType=VARCHAR}, #{item.actcCanPause,jdbcType=VARCHAR},
+      #{item.actcCanSkip,jdbcType=VARCHAR}, #{item.updator,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.actcCanChooseUser},
+      #{item.actcCanTransfer}, #{item.actcResponsibility, jdbcType=CLOB}, #{item.actcChooseableHandlerType},#{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject},
+      #{item.actcOuttimeNotifyType}, #{item.actcIsSystemTask}, #{item.actcDelayType}, #{item.actcDelayTime}, #{item.actcDelayTimeunit}, #{item.actcDelayField}
+      )
+    </foreach>
+    ;end;
   </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhActivityConf" >
@@ -362,8 +373,17 @@
     delete from DH_ACTIVITY_CONF
     <where>
         <foreach collection="list" item="item" separator="or">
-          ACTC_UID = #{item}
+          activity_id = #{item}
         </foreach>
+    </where>
+  </delete>
+
+  <delete id="deleteByPrimaryKeyList" parameterType="list">
+    delete from DH_ACTIVITY_CONF
+    <where>
+      <foreach collection="list" item="item" separator="or">
+        activity_id = #{item}
+      </foreach>
     </where>
   </delete>
 </mapper>

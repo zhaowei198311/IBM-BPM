@@ -236,7 +236,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         if (CollectionUtils.isEmpty(actcUidList)) {
             return 0;
         }
-        return dhActivityConfMapper.deleteByActivityIds(actcUidList);
+        return dhActivityConfMapper.deleteByPrimaryKeyList(actcUidList);
     }
 
     @Override
