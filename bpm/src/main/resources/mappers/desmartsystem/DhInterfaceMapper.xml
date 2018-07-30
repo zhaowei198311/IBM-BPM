@@ -22,10 +22,10 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		INT_UID, INT_TITLE, INT_DESCRIPTION,INT_LABEL,
+		INT_UID, INT_TITLE,INT_LABEL,
 		INT_TYPE, INT_URL, INT_CALL_METHOD,
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
-		CREATE_DATE, UPDATE_DATE,INT_REQUEST_XML,INT_RESPONSE_XML
+		CREATE_DATE, UPDATE_DATE,INT_REQUEST_XML,INT_RESPONSE_XML,INT_DESCRIPTION
 	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
@@ -52,7 +52,6 @@
 		(
 			#{intUid},
 			#{intTitle},
-			#{intDescription,jdbcType=VARCHAR},
 			#{intLabel,jdbcType=VARCHAR},
 			#{intType},
 			#{intUrl},
@@ -63,7 +62,8 @@
 			sysdate,
 			sysdate,
 			#{intRequestXml,jdbcType=VARCHAR},
-			#{intResponseXml,jdbcType=VARCHAR}
+			#{intResponseXml,jdbcType=VARCHAR},
+			#{intDescription,jdbcType=CLOB}
 		)
 	</insert>
 	
@@ -98,10 +98,6 @@
 			<if test="intTitle != null and intTitle != ''">
 				INT_TITLE = #{intTitle},
 			</if>
-			<if test="intDescription != null and intDescription != ''">
-				INT_DESCRIPTION = #{intDescription},
-			</if>
-			
 			<if test="intLabel != null and intLabel != '' ">
 				INT_LABEL = #{intLabel},
 			</if>
@@ -130,7 +126,8 @@
 			<if test="intResponseXml != null">
 				INT_RESPONSE_XML = #{intResponseXml},
 			</if>
-			  UPDATE_DATE = sysdate
+			  UPDATE_DATE = sysdate,
+			  INT_DESCRIPTION = #{intDescription,jdbcType=CLOB}
 			<where>
 				INT_UID = #{intUid}
 			</where>
