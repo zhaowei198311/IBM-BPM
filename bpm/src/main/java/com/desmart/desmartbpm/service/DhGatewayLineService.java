@@ -1,20 +1,26 @@
 package com.desmart.desmartbpm.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 
 public interface DhGatewayLineService {
-    
+
     /**
      * 生成网关连接线
-     * @param dhProcessDefinition
+     * @param proAppId  应用库id
+     * @param proUid    图id
+     * @param proVerUid  版本快照id
+     * @param bpdIdMetaMap  源生环节的bpdId与环节的映射关系
      * @return
      */
-    ServerResponse generateGatewayLine(DhProcessDefinition dhProcessDefinition);
+    ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid,
+                                       Map<String, BpmActivityMeta> bpdIdMetaMap);
     
     /**
      * 判断是否需要为流程定义生成网关连接线记录

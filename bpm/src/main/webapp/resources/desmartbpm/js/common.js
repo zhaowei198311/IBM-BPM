@@ -248,6 +248,8 @@ var common = {
                 if (result.status == 0) {
                     if (params.fn) {
                         params.fn(result.data);
+                    } else {
+                        layer.alert("操作成功");
                     }
                 } else {
                     layer.alert(result.msg);

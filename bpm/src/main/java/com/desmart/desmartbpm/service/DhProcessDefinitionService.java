@@ -3,8 +3,6 @@ package com.desmart.desmartbpm.service;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
@@ -29,7 +27,16 @@ public interface DhProcessDefinitionService {
      * @param pageSize 每页数量
      * @return
      */
-    ServerResponse listProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize);
+    ServerResponse listSynchronizedProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize);
+
+    /**
+     * 列出未同步的流程定义
+     * @param metaUid 流程元数据id
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    ServerResponse listUnsynchronizedProcessDefinitionByMetaUidAndStatus(String metaUid, Integer pageNum, Integer pageSize);
 
     /**
      * 获得指定的流程定义
@@ -158,4 +165,9 @@ public interface DhProcessDefinitionService {
      */
     List<DhProcessDefinition> listProcessDefinitionByProAppIdAndProVerUid(String proAppId, String proVerUid);
 
+    /**
+     * 重新载入公开的流程
+     * @return
+     */
+    ServerResponse reloadExposedItems();
 }

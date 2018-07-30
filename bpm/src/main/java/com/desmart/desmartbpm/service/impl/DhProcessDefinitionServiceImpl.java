@@ -1,27 +1,38 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
+import com.desmart.desmartbpm.dao.*;
 import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.service.*;
 import com.github.pagehelper.PageHelper;
-import com.sun.xml.internal.bind.v2.runtime.property.UnmarshallerChain;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -32,19 +43,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
-import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
-import com.desmart.desmartbpm.dao.BpmFormManageMapper;
-import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
-import com.desmart.desmartbpm.dao.DatRuleMapper;
-import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
-import com.desmart.desmartbpm.dao.DhActivityConfMapper;
-import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
-import com.desmart.desmartbpm.dao.DhGatewayLineMapper;
-import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
-import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
-import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
-import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
@@ -52,14 +50,12 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
 import com.desmart.common.exception.PermissionException;
 import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
-import com.desmart.desmartbpm.util.rest.RestUtil;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageInfo;
-import sun.awt.PlatformFont;
 
 @Service
 public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionService {
@@ -107,6 +103,12 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private DhRouteService dhRouteService;
     @Autowired
     private DhGatewayLineService dhGatewayLineService;
+    @Autowired
+    private CommonMongoDao commonMongoDao;
+    @Autowired
+    private BpmExposedItemMapper bpmExposedItemMapper;
+
+
 
     public ServerResponse listProcessDefinitionsIncludeUnSynchronizedByMetaUid(String metaUid, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
@@ -185,8 +187,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
     }
 
+
+
     @Override
-    public ServerResponse listProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize) {
+    public ServerResponse listSynchronizedProcessDefinitionByMetaUidAndStatus(String metaUid, String proStatus, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(metaUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
@@ -209,6 +213,30 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         return ServerResponse.createBySuccess(pageInfo);
     }
 
+    @Override
+    public ServerResponse listUnsynchronizedProcessDefinitionByMetaUidAndStatus(String metaUid, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(metaUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        // 验证流程元数据是否存在
+        DhProcessMeta processMeta = dhProcessMetaMapper.queryByProMetaUid(metaUid);
+        if (processMeta == null) {
+            return ServerResponse.createByErrorMessage("流程元数据不存在");
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listUnSynchronizedByProAppIdAndBpdId(processMeta.getProAppId(), processMeta.getProUid());
+        PageInfo pageInfo = new PageInfo(exposedItems);
+        if (CollectionUtils.isEmpty(exposedItems)) {
+            return ServerResponse.createBySuccess(pageInfo);
+        }
+        // 如果不为空则封装
+        List<DhProcessDefinitionVo> voList = assembleDhProcessDefinitionVoListFromExposedItems(exposedItems, processMeta.getProName());
+        // 为vo列表装配流程版本信息
+        assembleSnapshotInfo(voList);
+        pageInfo.setList(voList);
+        return ServerResponse.createBySuccess(pageInfo);
+    }
+
     @Transactional(value = "transactionManager")
     public ServerResponse<DhProcessDefinition> createDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
@@ -219,7 +247,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
 
         String currentUser = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        if (list.size() == 0) { 
+        if (CollectionUtils.isEmpty(list)) {
             // 如果该流程定义不存在于数据库， 生成环节信息——BpmProcessMeta
             bpmProcessSnapshotService.processModel(proUid, proVerUid, proAppId);
             // 插入新流程定义记录
@@ -232,17 +260,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             if (countRow <= 0) {
                 return ServerResponse.createByErrorMessage("同步失败");
             }
-            // 如果需要生成网关连接线
-            if (dhGatewayLineService.needGenerateGatewayLine(proAppId, proUid, proVerUid)) {
-                ServerResponse generateResponse = dhGatewayLineService.generateGatewayLine(dhProcessDefinition);
-                if (generateResponse.isSuccess()) {
-                    return ServerResponse.createBySuccess(dhProcessDefinition);
-                } else {
-                    throw new PlatformException("生成网关连接线失败");
-                }
-            } else{
-                return ServerResponse.createBySuccess(dhProcessDefinition);
-            }
+            return ServerResponse.createBySuccess(dhProcessDefinition);
         } else {
             return ServerResponse.createByErrorMessage("该版本已经同步过");
         }
@@ -941,6 +959,28 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         return voList;
     }
 
+    /**
+     * 将未公开的流程对象转换为Vo
+     * @param exposedItems
+     * @return
+     */
+    private List<DhProcessDefinitionVo> assembleDhProcessDefinitionVoListFromExposedItems(List<BpmExposedItem> exposedItems, String proName){
+        List<DhProcessDefinitionVo> voList = new ArrayList<>();
+        for (BpmExposedItem item : exposedItems) {
+            DhProcessDefinitionVo vo = new DhProcessDefinitionVo();
+            vo.setProName(proName);
+            vo.setProAppId(item.getProAppId());
+            vo.setProUid(item.getBpdId());
+            vo.setProVerUid(item.getSnapshotId());
+            vo.setProStatus("未同步");
+            vo.setUpdator("");
+            vo.setUpdateTime("");
+            voList.add(vo);
+        }
+        return voList;
+    }
+
+
     @Override
     public List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList) {
         if (CollectionUtils.isEmpty(processDefinitionList)) {
@@ -991,6 +1031,96 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         definitionSelective.setProAppId(proAppId);
         definitionSelective.setProVerUid(proVerUid);
         return dhProcessDefinitionMapper.listBySelective(definitionSelective);
+    }
+
+    @Override
+    public ServerResponse reloadExposedItems() {
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        String reloadTimeStr = commonMongoDao.getStringValue(CommonMongoDao.EXPOSED_ITEM_RELOAD_TIME);
+        if (reloadTimeStr != null) {
+            Date reloadTime = DateTimeUtil.strToDate(reloadTimeStr);
+            if (reloadTime.getTime() + 60000 > System.currentTimeMillis()) {
+                // 距离上次同步不足60秒
+                return ServerResponse.createByErrorMessage("距离上次同步不足60秒，请稍后同步");
+            }
+        }
+        // 记录最新同步时间并开始同步
+        commonMongoDao.set(CommonMongoDao.EXPOSED_ITEM_RELOAD_TIME, DateTimeUtil.dateToStr(new Date()));
+        String responseContent = null;
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = HttpClients.custom().build();
+            HttpClientContext context = HttpClientContext.create();
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            Credentials credentials = new UsernamePasswordCredentials(bpmGlobalConfig.getBpmAdminName(), bpmGlobalConfig.getBpmAdminPsw());
+            credsProvider.setCredentials(AuthScope.ANY, credentials);
+            context.setCredentialsProvider(credsProvider);
+            String host = bpmGlobalConfig.getBpmServerHost();
+            host = host.endsWith("/") ? host : host + "/";
+            String url = host + "rest/bpm/wle/v1/exposed/process";
+            HttpGet httpGet = new HttpGet(url);//HTTP Get请求(POST雷同)
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(60000).setConnectTimeout(60000).build();//设置请求和传输超时时间
+            httpGet.setConfig(requestConfig);
+            httpGet.setHeader("Content-Type", "application/json");
+            httpGet.setHeader("Content-Language", "zh-CN");
+            HttpResponse response = httpClient.execute(httpGet, context);//执行请求
+            responseContent = EntityUtils.toString(response.getEntity(), "UTF-8");
+        } catch (IOException e) {
+            logger.error("调用RESTFul API失败", e);
+            return ServerResponse.createByErrorMessage("调用RESTFul API失败");
+        } finally {
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        List<BpmExposedItem> exposedItems = new ArrayList<>();
+        JSONObject jsoMsg = JSON.parseObject(responseContent);
+        JSONObject jsoData = jsoMsg.getJSONObject("data");
+        JSONArray jayExpoItems = jsoData.getJSONArray("exposedItemsList");
+        if (jayExpoItems != null) {
+            System.out.println(jayExpoItems.size());
+            Set<String> itemIdentity = new HashSet<>();
+            for(int i = 0; i < jayExpoItems.size(); ++i) {
+                JSONObject jsoItem = jayExpoItems.getJSONObject(i);
+                if ("process".equals(jsoItem.getString("type")) && false == jsoItem.getBooleanValue("tip")) {
+                    BpmExposedItem item = new BpmExposedItem();
+                    item.setProAppId(jsoItem.getString("processAppID"));
+                    item.setProAppName(jsoItem.getString("processAppName"));
+                    item.setBpdId(jsoItem.getString("itemID"));
+                    item.setBpdName(jsoItem.getString("display"));
+                    item.setSnapshotId(jsoItem.getString("snapshotID"));
+                    item.setSnapshotName(jsoItem.getString("snapshotName"));
+                    item.setBatchId(jsoItem.getString("branchID"));
+                    String dateStr = jsoItem.getString("snapshotCreatedOn");
+                    item.setSnapshotCreateTime(DateTimeUtil.strToDate(dateStr, "yyyy-MM-dd'T'HH:mm:ss'Z'"));
+                    String identity = item.getProAppId() + item.getBpdId() + item.getSnapshotId();
+                    if (itemIdentity.add(identity)) {
+                        exposedItems.add(item);
+                    }
+                }
+            }
+            return resaveExposedItem(exposedItems);
+        }
+        return ServerResponse.createBySuccess();
+    }   
+
+    /**
+     * 删除已有的公开的流程，并重新保存
+     * @param bpmExposedItems
+     * @return
+     */
+    @Transactional
+    public ServerResponse resaveExposedItem(List<BpmExposedItem> bpmExposedItems) {
+        bpmExposedItemMapper.removeAll();
+        if (!CollectionUtils.isEmpty(bpmExposedItems)) {
+            int affectRows = bpmExposedItemMapper.insertBatch(bpmExposedItems);
+            return affectRows > 0 ? ServerResponse.createBySuccess() : ServerResponse.createByErrorMessage("更新公开的流程失败");
+        }
+        return ServerResponse.createBySuccess();
     }
 
 

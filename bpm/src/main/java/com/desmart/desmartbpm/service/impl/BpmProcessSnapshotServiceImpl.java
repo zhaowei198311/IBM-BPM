@@ -13,6 +13,7 @@ import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.mongo.ModelMongoDao;
+import com.desmart.desmartbpm.service.DhGatewayLineService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,8 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
     private DhProcessMetaMapper dhProcessMetaMapper;
     @Autowired
     private ModelMongoDao modelMongoDao;
+    @Autowired
+    private DhGatewayLineService dhGatewayLineService;
 
 
     @Override
@@ -87,7 +90,6 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         // 元素的信息（包含连接线信息）
         JSONObject diagram = data.getJSONObject("Diagram");
         parseDiagram(diagram, snapshotId, bpdId, visualModelData, processAppId, bpmProcessSnapshotId);
-
     }
 
     @Override
@@ -149,16 +151,19 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         
         int sortNum = 0;
         List<DhActivityConf> confListToInsert = new ArrayList<>();
+        boolean containsGateway = false; // 记录是否有排他网关
+        Map<String, BpmActivityMeta> bpdIdMetaMap = new HashMap<>(); // 记录bpdId与BpmActivityMeta关系
         for (BpmActivityMeta basticActivityMeta : basicActivityMetaList) {
-            LOG.error(basticActivityMeta.getActivityName());
-        	String activityBpdId = basticActivityMeta.getActivityBpdId();
+            bpdIdMetaMap.put(basticActivityMeta.getActivityBpdId(), basticActivityMeta);
+            if (BpmActivityMeta.ACTIVITY_TYPE_GATEWAY.equals(basticActivityMeta.getActivityType())) {
+                containsGateway = true;  // 如果是排他网关，记录
+            }
         	// 设置父activityId 没有则为"0"
         	if ("0".equals(basticActivityMeta.getParentActivityBpdId())) {
         	    basticActivityMeta.setParentActivityId("0");
         	} else {
         	    basticActivityMeta.setParentActivityId(actBpdIdAndActIdMap.get(basticActivityMeta.getParentActivityBpdId()));
         	}
-        	
         	basticActivityMeta.setSortNum(sortNum);
             // 改为批量插入 bpmActivityMetaMapper.save(basticActivityMeta);
             if (isHumanActivity(basticActivityMeta)) {
@@ -175,26 +180,33 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
         dhActivityConfMapper.insertBatch(confListToInsert);
 
         // 引入外链流程的节点，找出所有外链节点
-        if (externalNodeList.size() == 0) {
-            return;
-        }
-        
-        System.out.println("主流程中存在外接节点个数：" + externalNodeList.size());
-        List<BpmActivityMeta> allNodeToInclude = new ArrayList<>();
-        // 记录刚拉进来的时候
-        
+        if (externalNodeList.size() > 0) {
+            System.out.println("主流程中存在外接节点个数：" + externalNodeList.size());
+            List<BpmActivityMeta> allNodeToInclude = new ArrayList<>();
+            // 记录刚拉进来的时候
 
-        for (int i = 0; i < externalNodeList.size(); i++) {
-            allNodeToInclude.addAll(includeCalledProcess(externalNodeList.get(i)));
+
+            for (int i = 0; i < externalNodeList.size(); i++) {
+                allNodeToInclude.addAll(includeCalledProcess(externalNodeList.get(i)));
+            }
+            System.out.println("需要被纳入流程的总环节数：" + allNodeToInclude.size());
+
+            for (BpmActivityMeta item : allNodeToInclude) {
+                item.setSortNum(sortNum);
+                sortNum++;
+            }
+            if (!allNodeToInclude.isEmpty()) {
+                bpmActivityMetaMapper.saveBatch(allNodeToInclude);
+            }
         }
-        System.out.println("需要被纳入流程的总环节数：" + allNodeToInclude.size());
-        
-        for (BpmActivityMeta item : allNodeToInclude) {
-            item.setSortNum(sortNum);
-            sortNum++;
-        }
-        if (!allNodeToInclude.isEmpty()) {
-            bpmActivityMetaMapper.saveBatch(allNodeToInclude);
+
+        // 生成网关连接线
+        if (containsGateway) {
+            ServerResponse generateResponse = dhGatewayLineService.generateGatewayLine(processAppId, bpdId, snapshotId,
+                    bpdIdMetaMap);
+            if (!generateResponse.isSuccess()) {
+                throw new PlatformException("生成网关连接线失败");
+            }
         }
 
     }
