@@ -71,10 +71,11 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     
 
     @Transactional(value = "transactionManager")
-    public ServerResponse generateGatewayLine(DhProcessDefinition dhProcessDefinition) {
-        List<Map<String, Object>> prepareData = prepareData(dhProcessDefinition.getProAppId(),
-                dhProcessDefinition.getProUid(), dhProcessDefinition.getProVerUid());
-        analysisData(prepareData, dhProcessDefinition);
+    public ServerResponse generateGatewayLine(String proAppId, String proUid, String proVerUid,
+                                              Map<String, BpmActivityMeta> bpdIdMetaMap) {
+        List<Map<String, Object>> prepareData = prepareData(proAppId,
+                proUid, proVerUid);
+        analysisData(prepareData, bpdIdMetaMap);
         return ServerResponse.createBySuccess();
     }
 
@@ -102,13 +103,13 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
     
     /**
      * 收集生成网关连接线需要的数据，Map中的值： 
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
+     * @param proAppId 应用库id
+     * @param proUid 图id
+     * @param proVerUid 版本id
      * @return 
      *  一个map集合，其中的key  
      *  1）visualModel（JSONObject）   
-     *  2）byteData（字节数组）
+     *  2）bpdData（引擎中图数据，字符串类型的xml数据）
      */
     private List<Map<String, Object>> prepareData(String proAppId, String proUid, String proVerUid) {
         List<Map<String, Object>> dataList = new ArrayList<>();  // 用来返回的数据
@@ -136,32 +137,27 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
             }
             map.put("visualModel", visualModel);
             map.put("bpdData", lswBpdDataStr);
-
             dataList.add(map);
         }
         return dataList;
     }
     
     @Transactional(value = "transactionManager")
-    public void analysisData(List<Map<String, Object>> mapList, DhProcessDefinition dhProcessDefinition) {
-        // 遍历处理Map中的visualModel和byteData数据
+    public void analysisData(List<Map<String, Object>> mapList, Map<String, BpmActivityMeta> idMetaMap) {
+        // 遍历处理Map中的visualModel和byteData数据————即主流程和每个子流程中的网关
         for (Map<String, Object> map : mapList) {
             JSONObject data = (JSONObject)map.get("visualModel");
             JSONArray itemArray = data.getJSONArray("items");
             List<DhGatewayLine> gatewayLineList = new ArrayList<>();
             // 1. 得到所有的排他网关
-            Map<String, BpmActivityMeta> idMetaMap = new HashMap<>();
+
             Set<String> gatewayIds = new HashSet<>();
             for (Object item : itemArray) {
                 // 如果这个环节是排他网关
                 if (StringUtils.equals("gateway", ((JSONObject)item).getString("type"))) {
                     String activityBpdId = ((JSONObject)item).getString("id");
-                    List<BpmActivityMeta> list = bpmActivityMetaService.getBpmActivityMeta(activityBpdId, dhProcessDefinition.getProVerUid(), 
-                            dhProcessDefinition.getProUid());
-                    if (list.size() > 0) {
-                        idMetaMap.put(activityBpdId, list.get(0));
-                        gatewayIds.add(activityBpdId);
-                    }
+                    // 找到这个环节
+                    gatewayIds.add(activityBpdId);
                 }
             }
             
@@ -183,11 +179,7 @@ public class DhGatewayLineServiceImpl implements DhGatewayLineService {
                     // 设置是否默认路径
                     gatewayLine.setIsDefault(isDefault ? "TRUE" : "FALSE");
                     // 设置结束点activityId
-                    List<BpmActivityMeta> list = bpmActivityMetaService.getBpmActivityMeta(endId, dhProcessDefinition.getProVerUid(), 
-                            dhProcessDefinition.getProUid());
-                    if (list.size() > 0) {
-                        gatewayLine.setToActivityId(list.get(0).getActivityId());
-                    }
+                    gatewayLine.setToActivityId(idMetaMap.get(endId).getActivityId());
                     gatewayLine.setActivityBpdId(activityBpdId);
                     gatewayLineList.add(gatewayLine);
                 }

@@ -1,16 +1,9 @@
 package com.desmart.desmartbpm.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.desmart.desmartbpm.entity.DhProcessMeta;
-import com.desmart.desmartbpm.entity.DhTransferData;
 import com.desmart.desmartbpm.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
@@ -73,10 +65,10 @@ public class DhProcessDefinitionController {
                                                       @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
         if (StringUtils.isBlank(proStatus)) {
             return ServerResponse.createByErrorMessage("参数异常：流程定义状态");
-        }else if ("all".equals(proStatus)) {
-            return dhProcessDefinitionService.listProcessDefinitionsIncludeUnSynchronizedByMetaUid(metaUid, pageNum, pageSize);
+        }else if ("unsynchronized".equals(proStatus)) {
+            return dhProcessDefinitionService.listUnsynchronizedProcessDefinitionByMetaUidAndStatus(metaUid, pageNum, pageSize);
         } else {
-            return dhProcessDefinitionService.listProcessDefinitionByMetaUidAndStatus(metaUid, proStatus, pageNum, pageSize);
+            return dhProcessDefinitionService.listSynchronizedProcessDefinitionByMetaUidAndStatus(metaUid, proStatus, pageNum, pageSize);
         }
     }
 
@@ -85,7 +77,6 @@ public class DhProcessDefinitionController {
      * @param proAppId  应用库id
      * @param proUid  流程图id
      * @param proVerUid 版本快照id
-     * @param request
      * @return
      */
     @RequestMapping(value = "/create")
@@ -227,5 +218,15 @@ public class DhProcessDefinitionController {
         }
     }
 
+    /**
+     * 刷新公开的流程
+     * @return
+     */
+    @RequestMapping(value = "/reloadExposedItems")
+    @ResponseBody
+    public ServerResponse reloadExposedItems() {
+        return dhProcessDefinitionService.reloadExposedItems();
+
+    }
 
 }

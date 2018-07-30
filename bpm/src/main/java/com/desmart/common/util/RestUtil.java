@@ -57,7 +57,6 @@ public class RestUtil {
         Credentials credentials = new UsernamePasswordCredentials(bpmGlobalConfig.getBpmAdminName(), bpmGlobalConfig.getBpmAdminPsw());
         credsProvider.setCredentials(AuthScope.ANY, credentials);
         context.setCredentialsProvider(credsProvider);
-        
     }
     
     /** 
@@ -107,7 +106,7 @@ public class RestUtil {
                 }
             }
             HttpGet httpGet = new HttpGet(url);
-            RequestConfig reqcfg = HttpClientUtils.getRequestConfig(this.bpmGlobalConfig.getBpmClientTimeout());
+            RequestConfig reqcfg = HttpClientUtils.getRequestConfig(this.bpmGlobalConfig.getBpmClientTimeout()); // 设置超时时间
             httpGet.setConfig(reqcfg);
             httpGet.setHeader("Content-Type", "application/json");
             httpGet.setHeader("Content-Language", "zh-CN");

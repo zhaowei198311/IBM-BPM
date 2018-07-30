@@ -9,6 +9,8 @@ import java.util.List;
  * 用来保存键值类型的数据，数据结构：{"_id": "name", "value": "张三"}   {"_id": "age", "value": 12}
  */
 public interface CommonMongoDao {
+	public static final String EXPOSED_ITEM_RELOAD_TIME = "exposedItemReloadTime";
+
 
 	/**
 	 * 设置键值，如果这个键已经有值，覆盖掉原值

@@ -55,6 +55,7 @@
                         <button class="layui-btn hide_btn" id="hide_btn">隐藏</button>
                         <button class="layui-btn close_btn" id="close_btn">关闭</button>
                         <button class="layui-btn enable_btn" id="enable_btn">启用</button>
+                        <button class="layui-btn " id="reloadExposedItem_btn">同步公开的流程</button>
                     </div>
                 </div>
             </div>

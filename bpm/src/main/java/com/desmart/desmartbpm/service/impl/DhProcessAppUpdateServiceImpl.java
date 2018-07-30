@@ -388,8 +388,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         Map<String, String> oldNewFieldUidMap = new HashMap<>();
 
         List<String> oldFormUids = getIdentityListOfObjectList(bpmForms);
-        String oldUid;
-        String newUid;
+        String oldUid, newUid;
         // 复制BPM_FORM
         for (BpmForm bpmForm : bpmForms) {
             oldUid = bpmForm.getDynUid();
@@ -407,7 +406,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
                 oldUid = formField.getFldUid();
                 newUid = EntityIdPrefix.BPM_FORM_FIELD + UUID.randomUUID().toString();
                 formField.setFldUid(newUid); // 设置新主键
-                oldNewFieldUidMap.put(oldUid, newUid);
+                oldNewFieldUidMap.put(oldUid, newUid); // 记录映射关系
                 formField.setFormUid(oldNewFormUidMap.get(oldUid)); // 设置表单号
             }
             bpmFormFieldMapper.insertBatch(formFields);
@@ -418,7 +417,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
             for (BpmFormRelePublicForm relation : relations) {
                 relation.setFormUid(oldNewFormUidMap.get(relation.getFormUid()));
             }
-            bpmFormRelePublicFormMapper.insertBatch(relations);
+            bpmFormRelePublicFormMapper.insertBatch(relations); // 将表单号换为新的表单号
         }
         updateData.setOldNewFormUidMap(oldNewFormUidMap);
         updateData.setOldNewFieldUidMap(oldNewFieldUidMap);
@@ -474,8 +473,8 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         Map<String, String> oldNewUserNodeIdMap = new HashMap<>();
         Map<String, String> oldNewGatewayNodeIdMap = new HashMap<>();
         Map<String, String> oldNewConfUidMap = new HashMap<>();
-        List<String> actcUidBeCopyed = new ArrayList<>();
-        List<String> actcUidBeRemove = new ArrayList<>();
+        List<String> actcUidSource = new ArrayList<>();
+        List<String> actcUidBeReplace = new ArrayList<>();
         // 将新环节装入map方便对比
         for (BpmActivityMeta newActivityMeta : newActivityMetas) {
             if (newActivityMeta.getActivityId().equals(newActivityMeta.getSourceActivityId())) {
@@ -496,44 +495,48 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
                 if (BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(oldActivityMeta.getBpmTaskType())) {
                     // 是源环节 且 是人工环节
                     bpmActivityMeta = newUserTaskMap.get(oldActivityMeta.getActivityBpdId());
-                    if (bpmActivityMeta != null) {
-                        oldNewUserNodeIdMap.put(oldActivityMeta.getActivityId(), bpmActivityMeta.getActivityId());
+                    if (bpmActivityMeta != null) { // 说明此环节在新版本中也存在
+                        oldNewUserNodeIdMap.put(oldActivityMeta.getActivityId(), bpmActivityMeta.getActivityId()); // 记录映射关系
                         String oldActcUid = oldActivityMeta.getDhActivityConf().getActcUid();
                         String newActcUid = bpmActivityMeta.getDhActivityConf().getActcUid();
-                        actcUidBeCopyed.add(oldActcUid);
-                        actcUidBeRemove.add(newActcUid);
+                        actcUidSource.add(oldActcUid);
+                        actcUidBeReplace.add(newActcUid);
                         oldNewConfUidMap.put(oldActcUid, newActcUid);
                     }
                 } else if (BpmActivityMeta.ACTIVITY_TYPE_GATEWAY.equals(oldActivityMeta.getActivityType())) {
                     // 是源环节 且 是排他网关
                     bpmActivityMeta = newUserTaskMap.get(oldActivityMeta.getActivityBpdId());
-                    // 排他网关的输出线一致
+                    // 排他网关后接的节点一致
                     if (bpmActivityMeta != null && StringUtils.equals(oldActivityMeta.getActivityTo(), bpmActivityMeta.getActivityTo())) {
                         oldNewGatewayNodeIdMap.put(oldActivityMeta.getActivityId(), bpmActivityMeta.getActivityId());
                     }
                 }
             }
-        }// 至此新老人工节点， 网关环节的对应关系确定
+        }// 至此新老版本人工节点， 网关环节的对应关系确定
         copyData.setOldNewUserNodeIdMap(oldNewUserNodeIdMap);
         copyData.setOldNewGatewayNodeIdMap(oldNewGatewayNodeIdMap);
 
         // 复制环节配置
         // 将有对应关系的新环节配置删除，用老的
         // 获得作为拷贝对象的配置
-        if (actcUidBeCopyed.isEmpty()) {
+        if (actcUidSource.isEmpty()) {
             return;
         }
-        // 1. 批量删除要被覆盖的配置
-        dhActivityConfMapper.deleteByPrimaryKeyList(actcUidBeRemove);
-        List<DhActivityConf> dhActivityConfs = dhActivityConfMapper.listByPrimayKeyList(actcUidBeCopyed); //
+        // 批量删除要被覆盖的环节配置
+        dhActivityConfMapper.deleteByPrimaryKeyList(actcUidBeReplace);
+        // 查询出老版的配置
+        List<DhActivityConf> dhActivityConfs = dhActivityConfMapper.listByPrimayKeyList(actcUidSource); 
+        String newConfUid, newActivityId, oldActivityId, oldConfUid;
         for (DhActivityConf activityConf : dhActivityConfs) {
-            String newConfUid = oldNewConfUidMap.get(activityConf.getActcUid());
-            String newActivityId = oldNewUserNodeIdMap.get(activityConf.getActivityId());
-            activityConf.setActcUid(newConfUid);
-            activityConf.setActivityId(newActivityId);
+            oldConfUid = activityConf.getActcUid();
+            oldActivityId = activityConf.getActivityId();
+            newConfUid = oldNewConfUidMap.get(oldConfUid);
+            newActivityId = oldNewUserNodeIdMap.get(oldActivityId);
+            activityConf.setActcUid(newConfUid); // 将老配置换上新的主键
+            activityConf.setActivityId(newActivityId); // 将老配置关联的环节换为新环节
         }
         String str = JSONObject.toJSONString(dhActivityConfs);
-        dhActivityConfMapper.insertBatch(dhActivityConfs);
+        dhActivityConfMapper.insertBatch(dhActivityConfs); // 批量插入
 
     }
 }

@@ -553,6 +553,10 @@ $(document).ready(function(){
             commonMethod(url);
         }
     })
+
+    // 重新加载
+    $("#reloadExposedItem_btn").click(reloadExposedItems);
+
 });
 // 隐藏,关闭,启用功能公共验证方法
 function commonCheck(sign){
@@ -770,4 +774,13 @@ function showEditDiv(tr){
     $('#eidtMet_displayShow').val($(tr).find('td').eq(4).html());
     $('#editMeta_container').show();
     $('#metarename_input').focus();
+}
+
+function reloadExposedItems() {
+    var param = {
+        url: common.getPath() + "/processDefinition/reloadExposedItems",
+        data: {}
+    };
+    common.doPostAjax(param);
+
 }

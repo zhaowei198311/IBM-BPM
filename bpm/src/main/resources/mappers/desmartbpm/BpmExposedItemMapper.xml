@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.BpmExposedItemMapper">
+
+    <sql id="Base_Column_List">
+        PRO_APP_ID, BPD_ID, SNAPSHOT_ID, PRO_APP_NAME, BPD_NAME, SNAPSHOT_NAME, SNAPSHOT_CREATE_TIME,
+        BATCH_ID
+    </sql>
+    <sql id="relationColumn">
+        e.PRO_APP_ID, e.BPD_ID, e.SNAPSHOT_ID, e.PRO_APP_NAME, e.BPD_NAME, e.SNAPSHOT_NAME, e.SNAPSHOT_CREATE_TIME,
+        e.BATCH_ID
+    </sql>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into bpm_exposed_item (<include refid="Base_Column_List"/>)
+        <foreach collection="collection" item="item" separator="union all">
+            select
+                #{item.proAppId, jdbcType=VARCHAR},
+                #{item.bpdId, jdbcType=VARCHAR},
+                #{item.snapshotId, jdbcType=VARCHAR},
+                #{item.proAppName, jdbcType=VARCHAR},
+                #{item.bpdName, jdbcType=VARCHAR},
+                #{item.snapshotName, jdbcType=VARCHAR},
+                #{item.snapshotCreateTime, jdbcType=TIMESTAMP},
+                #{item.batchId, jdbcType=VARCHAR}
+            from dual
+        </foreach>
+    </insert>
+
+    <delete id="removeAll">
+        delete from bpm_exposed_item
+    </delete>
+
+    <select id="listUnSynchronizedByProAppIdAndBpdId" resultType="com.desmart.desmartbpm.service.BpmExposedItem">
+        select <include refid="relationColumn"/>
+        from bpm_exposed_item e
+        left join DH_PROCESS_DEFINITION d
+            on e.PRO_APP_ID = d.PRO_APP_ID
+            and e.BPD_ID = d.PRO_UID
+            and e.SNAPSHOT_ID = d.PRO_VER_UID
+        where
+            d.pro_ver_uid is null
+            and e.pro_app_id = #{proAppId}
+            and e.bpd_id = #{bpdId}
+    </select>
+
+
+</mapper>
