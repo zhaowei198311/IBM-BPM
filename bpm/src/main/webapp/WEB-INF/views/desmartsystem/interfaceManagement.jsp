@@ -50,31 +50,11 @@ table {
 	margin-top: 15px
 }
 
-/
-溢出部分样式 /  
 .txt-ell {
 	whitewhite-space: nowrap;
-	/
-	强制在一行显示
-	/
-	overflow
-	:
-	hidden;
-	/
-	溢出的内容切割隐藏
-	/
-	text-overflow
-	:
-	ellipsis;
-	/
-	当内联溢出块容器时，将溢出部分替换为…
-	/
-	word-break
-	:
-	keep-all;
-	/
-	允许在单词内换行
-	/
+	overflow:hidden;
+	text-overflow:ellipsis;
+	word-break:keep-all;
 }
 </style>
 </head>
