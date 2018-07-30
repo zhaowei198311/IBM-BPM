@@ -66,8 +66,8 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 		String intType = dhInterface.getIntType();
 
 		String intCallMethod = dhInterface.getIntCallMethod(); // 执行方法
-		String intLoginPwd = dhInterface.getIntLoginPwd(); // 用户名
-		String intLoginUser = dhInterface.getIntLoginUser();// 密码
+		String intLoginPwd = dhInterface.getIntLoginPwd(); // 密码
+		String intLoginUser = dhInterface.getIntLoginUser();// 用户名
 		String intUrl = dhInterface.getIntUrl();// 接口Url
 
 		String requestXml = dhInterface.getIntRequestXml(); // 请求xml
@@ -237,7 +237,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 //			}
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
-			String xml = HttpClientCallSoapUtil.doPostSoap1_2(intUrl, soapRequestData, "");
+			String xml = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
 			//json.setSuccess(true);
 			//json.setMsg("查询成功");
 
