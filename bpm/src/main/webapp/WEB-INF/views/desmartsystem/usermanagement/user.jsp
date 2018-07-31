@@ -130,7 +130,7 @@
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
 					   <input type="text" name="departUid" id="departUid_I"  class="layui-input" style="display: none;"/> 
-					  <input type="text" id="departUid_I_view" placeholder="上级部门"   autocomplete="off" class="layui-input" required  readonly="readonly" /> 
+					  <input type="text" id="departUid_I_view" placeholder="部门"   autocomplete="off" class="layui-input" required  readonly="readonly" /> 
 					  <i onclick="chooseDepartment('departUid_I');" class="layui-icon choose_user" title="选择部门">&#xe612;</i>
 				    </div>
 				  </div>
@@ -142,6 +142,17 @@
 <!-- 				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" /> -->
 				    </div>
 				  </div>
+				  
+				   <div class="layui-form-item">
+				    <label class="layui-form-label">上级领导</label>
+				    <div class="layui-input-block">
+				      <input type="hidden" name="managernumber" id="managernumber"  class="layui-input"/>
+				      <input type="text"  required  lay-verify="required" placeholder="上级领导"   id="managernumber_view"   autocomplete="off" class="layui-input" readonly="readonly" />
+				      <i onclick="chooseUser('managernumber');" class="layui-icon choose_user"  title="选择上级领导">&#xe613;</i>
+				    </div>
+				  </div>
+				  
+				  
 			</div>
 			<div class="foot">
 				<input  type="hidden" name="accountType" value="1"/>
@@ -196,7 +207,7 @@
 				    <label class="layui-form-label">部门</label>
 				    <div class="layui-input-block">
 				    <input type="text" id="departUid_U" name="departUid" class="layui-input"   autocomplete="off" style="display: none;" />
-				      <input type="text"    lay-verify="required" id="departUid_U_view"  name="departName" placeholder="上级部门" readonly="readonly"   autocomplete="off" class="layui-input required" />
+				      <input type="text"    lay-verify="required" id="departUid_U_view"  name="departName" placeholder="部门" readonly="readonly"   autocomplete="off" class="layui-input required" />
 				    	<i onclick="chooseDepartment('departUid_U');" class="layui-icon choose_user" title="选择部门">&#xe612;</i>
 				    </div>
 				  </div>
@@ -208,6 +219,16 @@
 <!-- 				      <input type="text" name="companynumber" required  lay-verify="required" placeholder="请输入成本中心" autocomplete="off" class="layui-input" /> -->
 				    </div>
 				  </div>
+				  
+				   <div class="layui-form-item">
+				    <label class="layui-form-label">上级领导</label>
+				    <div class="layui-input-block">
+				      <input type="hidden" name="managernumber" id="managernumberUpd"  class="layui-input"/>
+				      <input type="text"  required  lay-verify="required" placeholder="上级领导"  name="managerName" id="managernumberUpd_view"   autocomplete="off" class="layui-input" readonly="readonly" />
+				      <i onclick="chooseUser('managernumberUpd');" class="layui-icon choose_user"  title="选择上级领导">&#xe613;</i>
+				    </div>
+				  </div>
+				  
 			</div>
 			<div class="foot">
 				<!-- <input  type="hidden" name="userUid" /> -->
@@ -561,7 +582,7 @@
 	         	str+='<td>' + depart(this.sysUserDepartmentList,this.departName) + '</td>';
 	         	/* str+='<td>' + isEmpty(this.employeeType) + '</td>'; */
 	         	str+='<td>' + isEmpty(this.mobile) + '</td>';
-	         	str+='<td>' + isEmpty(this.managernumber) + '</td>';
+	         	str+='<td>' + isEmpty(this.managerName) + '</td>';
 	         	str+='<td>';
 	         	str+='<i class="layui-icon" onclick=ajaxTodo("sysUser/getSysUser?userUid='+this.userUid+'","editUser") >&#xe642;</i>';
 	         	str+='<i class="layui-icon link_role" title="绑定业务角色" onclick=bindingRole("'+this.userUid+'"); >&#xe612;</i>';
@@ -577,6 +598,10 @@
 	         });
 		}
 		
+		//选择人员
+  		function chooseUser(id){
+  			common.chooseUser(id,'true');
+  		}
 		
 		
 		//打开用户编辑对话框
