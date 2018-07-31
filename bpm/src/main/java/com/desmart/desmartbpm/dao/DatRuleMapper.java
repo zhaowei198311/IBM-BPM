@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -71,5 +72,10 @@ public interface DatRuleMapper {
 	 */
 	List<DatRule> listByRuleIds(List<String> ruleIds);
 
-
+	/**
+	 * 批量更新规则的执行逻辑
+	 * @param rules
+	 * @return
+	 */
+	int batchUpdateRuleProcessByPrimaryKey(Collection<DatRule> rules);
 }

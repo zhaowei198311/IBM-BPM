@@ -382,7 +382,7 @@
     delete from DH_ACTIVITY_CONF
     <where>
       <foreach collection="list" item="item" separator="or">
-        activity_id = #{item}
+        actc_uid = #{item}
       </foreach>
     </where>
   </delete>

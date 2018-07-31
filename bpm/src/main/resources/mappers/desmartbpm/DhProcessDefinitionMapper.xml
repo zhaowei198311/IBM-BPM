@@ -89,7 +89,7 @@
                 and pd.PRO_STATUS = #{proStatus}
             </if>
         </where>
-        order by pd.create_date desc
+
     </select>
 
     <update id="updateByProAppIdAndProUidAndProVerUid" parameterType="com.desmart.desmartbpm.entity.DhProcessDefinition">

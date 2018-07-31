@@ -90,4 +90,9 @@ public class EntityIdPrefix {
 	
 	/** 通知模板前缀 **/
 	public static final String DH_NOTIFY_TEMPLATE = "notify_template:";
+
+    /**
+     * 规则条件前缀
+     */
+	public static final String DAT_RULE_CONDITION = "rule_cond:";
 }
