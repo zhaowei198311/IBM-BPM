@@ -61,7 +61,7 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r 
     	left join Sys_USER u on u.USER_UID=r.USER_UID 
-    	where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
+    	where MAP_UID = #{mapUid,jdbcType=VARCHAR}
   </select>
   
    <select id="selectByRoleUid" resultMap="SysRoleUserResultMap" parameterType="java.lang.String" >
