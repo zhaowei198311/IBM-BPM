@@ -88,15 +88,15 @@
 					</div>
 				</div>
 				<div class="layui-col-md3">
-					<label class="layui-form-label">上一环节处理人</label>
-					<div class="layui-input-block">
-						<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
-					</div>
-				</div>
-				<div class="layui-col-md3">
 					<label class="layui-form-label">流程标题</label>
 					<div class="layui-input-block">
 						<input id="processName" type="text" placeholder="流程实例标题" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-col-md3">
+					<label class="layui-form-label">流程实例创建时间</label>
+					<div class="layui-input-block">
+						<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
 					</div>
 				</div>
 				<div class="layui-col-md3" style="text-align: center;"> 
@@ -105,12 +105,6 @@
 				</div>
 			</div>
 			<div class="layui-row layui-form">
-				<div class="layui-col-md3">
-					<label class="layui-form-label">流程实例创建时间</label>
-					<div class="layui-input-block">
-						<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
-					</div>
-				</div>
 				<c:forEach var="item" items="${processRetrieveList }" varStatus="st">
 					<c:choose>
 						<c:when test="${item.elementType eq 'input' }">

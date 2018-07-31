@@ -311,8 +311,10 @@ function loadFileList(){
 		    	  info += "<button onclick='deleteAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>删除</button>"
 		      }
 		      
-		      if(result.data[i].appDocType=="image/png"||result.data[i].appDocType=="image/jpeg"){
-		    	  info += "<button onclick='editAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>编辑</button>"			        
+		      if($("#taskStatus").length!=0){
+		    	  if( taskStatus!="32"&&taskStatus!="-2" && (result.data[i].appDocType=="image/png"||result.data[i].appDocType=="image/jpeg")){
+			    	  info += "<button onclick='editAccessoryFile(this)' class='layui-btn layui-btn-primary layui-btn-sm' style='margin-left:20px;' value = '"+result.data[i].appDocIdCard+"' data-appdocuid = '"+result.data[i].appDocUid+"'>编辑</button>"			        
+			      }
 		      }
 		      
 		      info += "</td></tr>"; 
