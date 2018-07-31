@@ -764,8 +764,8 @@ $(function() {
 				data : {
 					formUid : formId
 				},
-				success : function (result){	
-					for (var i = 0; i < result.data.length; i++) {
+				success : function (result){
+					for (var i = 0; result.status==0&&i < result.data.length; i++) {
 						var fldIndex = result.data[i].fldIndex; // 字段索引下标
 						var fldCodeName = result.data[i].fldCodeName; // 字段名
 						var indexs = startNum + i
@@ -1926,7 +1926,7 @@ function triggerEdit(triggerUid){
 					},
 					success : function (result){	
 						// 输入
-						for (var i = 0; i < result.data.length; i++) {
+						for (var i = 0; result.status==0&&i < result.data.length; i++) {
 							var fldIndex = result.data[i].fldIndex; // 字段索引下标
 							var fldCodeName = result.data[i].fldCodeName; // 字段名
 							var indexs = startNum + i
@@ -2180,7 +2180,7 @@ function triggerEdit(triggerUid){
 								},
 								success : function (result){	
 									// 输入
-									for (var i = 0; i < result.data.length; i++) {
+									for (var i = 0; result.status==0&&i < result.data.length; i++) {
 										var fldIndex = result.data[i].fldIndex; // 字段索引下标
 										var fldCodeName = result.data[i].fldCodeName; // 字段名
 										var indexs = startNum + i
@@ -2391,7 +2391,7 @@ function triggerEdit(triggerUid){
 								},
 								success : function (result){	
 									// 输入
-									for (var i = 0; i < result.data.length; i++) {
+									for (var i = 0; result.status==0&&i < result.data.length; i++) {
 										var fldIndex = result.data[i].fldIndex; // 字段索引下标
 										var fldCodeName = result.data[i].fldCodeName; // 字段名
 										var indexs = startNum + i
