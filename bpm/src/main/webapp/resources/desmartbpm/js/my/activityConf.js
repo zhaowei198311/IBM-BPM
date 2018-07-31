@@ -3041,7 +3041,7 @@ function initConf(map) {
 	$('input[name="actcExteriorNotifyTemplate_view"]').val(conf.actcExteriorNotifyTemplateView);
 	$('#exteriorNotifyMail').manifest('remove');
 	//$("#exteriorNotifyMail").val("");
-	if (conf.actcInteriorNotifyType=='') {
+	if (conf.actcInteriorNotifyType==''||conf.actcInteriorNotifyType==null) {
 		$("#interiorNotifyUser_div").hide();
 		$("#interiorNotifyRole_div").hide();
 	}else{

@@ -27,7 +27,7 @@
     color: #717171;
     padding: 20px;
     width: 570px;
-    height: 483px;
+    height: 501px;
     background: #fff;
     position: absolute;
     margin: 2% 0 0 -306px;
@@ -160,7 +160,7 @@
 			<!-- {name}即通知的人员姓名
 				, -->
 				<label class="layui-form-label-custom" style="color: red;">注意：
-				{proName}即流程名,{proNo}即流程编号,{hideUrl}即办理任务隐藏的请求路径,
+				{proName}即流程名,{insTitle}即流程实例标题,{proNo}即流程编号,{hideUrl}即办理任务隐藏的请求路径,
 				{showUrl}即办理任务显示的请求路径,{fieldName}中fieldName可以为表单字段的字段名
 				</label>
 				<div class="layui-input-block" style="position: relative;">
