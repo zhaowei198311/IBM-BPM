@@ -42,4 +42,7 @@
 	<import resource="spring-timer.xml"/>
 	<import resource="application-rabbitmq.xml"/>
 	<import resource="mongo.xml"/>
+	
+	<!-- 启动AspectJ支持   只对扫描过的bean有效 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
 </beans>
