@@ -2,9 +2,9 @@ package com.desmart.common.excelForm;
 
 import java.util.Date;
 
-import com.desmart.common.annotation.ExcelBoolean;
-import com.desmart.common.annotation.ExcelDate;
-import com.desmart.common.annotation.ExcelField;
+import com.desmart.common.annotation.excel.ExcelBoolean;
+import com.desmart.common.annotation.excel.ExcelDate;
+import com.desmart.common.annotation.excel.ExcelField;
 import com.desmart.common.constant.ExcelEnum;
 /**
  * 商品状态修改申请表
