@@ -808,7 +808,7 @@
 								<span style="color:red;float:left;">*</span>
 							</label>
 							<div class="col-xs-7">
-								<input type="text" class="form-control" id="hidden-text-label" placeholder="请输入组件ID" readonly>
+								<input type="text" class="form-control" id="hidden-text-label" placeholder="请输入组件ID">
 							</div>
 						</div>
 						<div class="form-group">

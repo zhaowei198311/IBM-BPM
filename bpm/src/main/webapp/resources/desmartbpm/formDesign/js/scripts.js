@@ -842,6 +842,7 @@ function saveHtml() {
                     	}
 						filedAttr.fldName = "隐藏域";
 						filedAttr.fldType = "hidden";
+						jsonArr.push(filedAttr);
 						break;
 					}
 					filedAttr.fldName = subDivObj.prev().find("label").text();
