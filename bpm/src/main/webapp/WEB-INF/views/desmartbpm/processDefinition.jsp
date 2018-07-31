@@ -51,16 +51,6 @@
                     </div>
                     <div style="width:100%;overflow-x:auto;">               
                         <table class="layui-table backlog_table" lay-even lay-skin="nob" style="width:100%;">
-                            <colgroup>
-                                <col>
-                                <col>
-                                <col>
-                                <col>
-                                <col>
-                                <col> 
-                                <col>
-                                <col>
-                            </colgroup>
                             <thead>
                                 <tr>
                                   <th>序号</th>
@@ -88,12 +78,6 @@
                 </div>
                 <div class="middle1">
                     <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
                         <thead>
                             <tr>
                               <th><input type="checkbox" name="" title='全选' lay-skin="primary"> 序号</th>
@@ -120,12 +104,6 @@
                 </div>
                 <div class="middle1" style="height: 75%;width: 98%">
                     <table class="layui-table backlog_table" lay-even lay-skin="nob">
-                        <colgroup>
-                            <col>
-                            <col>
-                            <col>
-                            <col>
-                        </colgroup>
                         <thead>
                             <tr>
                               <th><input type="checkbox" name="" lay-skin="primary"> 序号</th>
@@ -145,19 +123,19 @@
             </div>
         </div>
     </body>
-    <%--<div> 拉取指定版本图--%>
-        <%--<form action="<%=basePath%>/processAppUpdate/pullDefintionByAppIdAndSnapshotId" >--%>
-            <%--proAppId<input type="text" name="proAppId" value="2066.740849e3-3831-4a48-a92e-cf45175c12c2"/>--%>
-            <%--proVerUid<input type="text" name="proVerUid"/>--%>
-            <%--<input type="submit" value="submit">--%>
-        <%--</form>升级到指定版本--%>
-        <%--<form action="<%=basePath%>/processAppUpdate/updateToNewVersion" >--%>
-            <%--proAppId<input type="text" name="proAppId" value="2066.740849e3-3831-4a48-a92e-cf45175c12c2"/>--%>
-            <%--oldProVerUid<input type="text" name="oldProVerUid" value="2064.f3c67a63-3f59-4286-8b77-c86eac77a4a0"/>--%>
-            <%--newProVerUid<input type="text" name="newProVerUid" value="2064.4d98c6eb-250f-4154-a053-5b072853a586"/>--%>
-            <%--<input type="submit" value="submit">--%>
-        <%--</form>--%>
-    <%--</div>--%>
+    <div> 拉取指定版本图
+        <form action="<%=basePath%>/processAppUpdate/pullDefintionByAppIdAndSnapshotId" >
+            proAppId<input type="text" name="proAppId" value="2066.740849e3-3831-4a48-a92e-cf45175c12c2"/>
+            proVerUid<input type="text" name="proVerUid"/>
+            <input type="submit" value="submit">
+        </form>升级到指定版本
+        <form action="<%=basePath%>/processAppUpdate/updateToNewVersion" >
+            proAppId<input type="text" name="proAppId" value="2066.740849e3-3831-4a48-a92e-cf45175c12c2"/>
+            oldProVerUid<input type="text" name="oldProVerUid" value="2064.f3c67a63-3f59-4286-8b77-c86eac77a4a0"/>
+            newProVerUid<input type="text" name="newProVerUid" value="2064.4d98c6eb-250f-4154-a053-5b072853a586"/>
+            <input type="submit" value="submit">
+        </form>
+    </div>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.excheck.js"></script>

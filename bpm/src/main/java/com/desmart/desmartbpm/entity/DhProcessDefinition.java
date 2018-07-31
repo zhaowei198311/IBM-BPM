@@ -59,7 +59,7 @@ public class DhProcessDefinition {
 
     private String lastModifiedUser;// 最后更新人
 
-    private String createDate;// 创建时间
+    private Date createDate;// 创建时间
 
     private String createUser;// 创建人
 
@@ -293,11 +293,11 @@ public class DhProcessDefinition {
         this.lastModifiedUser = lastModifiedUser;
     }
 
-    public String getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 

@@ -25,7 +25,15 @@
     UPDATE DAT_RULE SET RULE_VERSION = RULE_VERSION+1,
     RULE_PROCESS = #{ruleProcess} where rule_id = #{ruleId}
    </update>
-    
+
+    <update id="batchUpdateRuleProcessByPrimaryKey" parameterType="java.util.Collection">
+		BEGIN
+		<foreach collection="collection" item="item" >
+			update DAT_RULE set rule_process = #{item.ruleProcess} where rule_id = #{item.ruleId};
+		</foreach>
+		END;
+	</update>
+
     <select id="getPreRulesLikeRuleName" parameterType="map"
     resultType="com.desmart.desmartbpm.entity.DatRule">
     select * from dat_rule where rule_name like CONCAT(CONCAT('%',#{activityId}),'%')

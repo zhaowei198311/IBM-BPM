@@ -9,7 +9,7 @@ public class DhActivityReject {
 
     private String activityId;  // 活动id
 
-    private String actrRejectActivity;  // 可以驳回的活动id
+    private String actrRejectActivity;  // 可以驳回的活动 activity_bpd_id
     
     // 非此表字段
     private String activityName;

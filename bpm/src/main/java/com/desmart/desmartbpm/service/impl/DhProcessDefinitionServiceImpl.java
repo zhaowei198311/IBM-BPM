@@ -200,6 +200,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
         PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("pd.create_date desc");
         DhProcessDefinition selective = new DhProcessDefinition();
         selective.setProUid(dhProcessMeta.getProUid());
         selective.setProAppId(dhProcessMeta.getProAppId());
@@ -224,6 +225,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             return ServerResponse.createByErrorMessage("流程元数据不存在");
         }
         PageHelper.startPage(pageNum, pageSize);
+        PageHelper.orderBy("snapshot_create_time desc"); // 按快照创建时间倒序排列
         List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listUnSynchronizedByProAppIdAndBpdId(processMeta.getProAppId(), processMeta.getProUid());
         PageInfo pageInfo = new PageInfo(exposedItems);
         if (CollectionUtils.isEmpty(exposedItems)) {
@@ -1086,7 +1088,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
             Set<String> itemIdentity = new HashSet<>();
             for(int i = 0; i < jayExpoItems.size(); ++i) {
                 JSONObject jsoItem = jayExpoItems.getJSONObject(i);
-                if ("process".equals(jsoItem.getString("type")) && false == jsoItem.getBooleanValue("tip")) {
+                if ("process".equals(jsoItem.getString("type"))) {
                     BpmExposedItem item = new BpmExposedItem();
                     item.setProAppId(jsoItem.getString("processAppID"));
                     item.setProAppName(jsoItem.getString("processAppName"));
