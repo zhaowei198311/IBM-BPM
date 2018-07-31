@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -26,13 +27,23 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.SendMail;
+import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhNotifyTemplateMapper;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhNotifyTemplate;
+import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.DhActivityConfService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysEmailUtilBean;
+import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
@@ -52,7 +63,16 @@ public class SendEmailServiceImpl implements SendEmailService {
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
-    
+    @Autowired
+    private DhProcessInstanceService dhProcessInstanceService;
+    @Autowired
+    private BpmActivityMetaService bpmActivityMetaService;
+    @Autowired
+    private DhActivityConfMapper dhActivityConfMapper;
+    @Autowired
+    private DhActivityConfService dhActivityConfService;
+    @Autowired
+    private SysRoleUserMapper sysRoleUserMapper;
     /**
      * 初始化方法，使用配置中的用户名密码
      */
@@ -170,13 +190,21 @@ public class SendEmailServiceImpl implements SendEmailService {
 					subject = subject.replaceAll("\\{proNo\\}", "proNo");
 					break;
 				case "hideUrl":
-					String hideUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>请您单击这里进行查看</a>";
-					body = body.replaceAll("\\{hideUrl\\}", hideUrl);
+					if(StringUtils.isNotBlank(sysEmailUtilBean.getDhTaskInstance().getTaskUid())) {
+						String hideUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>请您单击这里进行查看</a>";
+						body = body.replaceAll("\\{hideUrl\\}", hideUrl);
+					}else {
+						body = body.replaceAll("\\{hideUrl\\}", "");
+					}
 					break;
 				case "showUrl":
-					String showUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>"
-							+sysEmailUtilBean.getBpmformsHost()+"/bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"</a>";
-					body = body.replaceAll("\\{showUrl\\}", showUrl);
+					if(StringUtils.isNotBlank(sysEmailUtilBean.getDhTaskInstance().getTaskUid())) {
+						String showUrl = "<a href= '"+sysEmailUtilBean.getBpmformsHost()+"bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"'>"
+								+sysEmailUtilBean.getBpmformsHost()+"/bpm/user/menus/approval?taskUid=" + sysEmailUtilBean.getDhTaskInstance().getTaskUid()+"</a>";
+						body = body.replaceAll("\\{showUrl\\}", showUrl);
+					}else {
+						body = body.replaceAll("\\{showUrl\\}", "");
+					}
 					break;
 				default:
 					JSONObject filedValue = formData.getJSONObject(t);
@@ -192,11 +220,78 @@ public class SendEmailServiceImpl implements SendEmailService {
 			List<String> toListTest = new ArrayList<>();
 			toListTest.add("helloSSM@163.com");
 			toListTest.add("1254431331@qq.com");
-			if(sendMail.send(subject, body, toListTest)) {
-				return ServerResponse.createBySuccess();
+			if(toListTest!=null&&toListTest.size()>0) {
+				if(sendMail.send(subject, body, toListTest)) {
+					return ServerResponse.createBySuccess();
+				}else {
+					return ServerResponse.createByErrorMessage("邮件发送失败");
+				}
 			}else {
-				return ServerResponse.createByError();
+				return ServerResponse.createByErrorMessage("邮件通知人为空");
 			}
 
+	}
+	@Override
+	public ServerResponse analyseBpmActivityMetaConfToSendMail(String insUid,DhStep dhStep) {
+		DhProcessInstance dhProcessInstance = dhProcessInstanceService.getByInsUid(insUid);
+		BpmActivityMeta currActivityMeta = bpmActivityMetaService.getBpmActivityMeta(dhProcessInstance.getProAppId()
+					, dhStep.getActivityBpdId(), dhProcessInstance.getProVerUid(), dhProcessInstance.getProUid());
+		String bpmformsHost = bpmGlobalConfigService.getFirstActConfig().getBpmformsHost();
+		if(currActivityMeta!=null) {
+			DhActivityConf dhActivityConf = 
+					dhActivityConfMapper.selectByPrimaryKey(currActivityMeta.getDhActivityConf().getActcUid());
+			  //加载通知指定人信息
+			ServerResponse serverResponse = dhActivityConfService.loadInteriorNotifyOfActivity(dhActivityConf);
+			if(!serverResponse.isSuccess()) {
+				return serverResponse;
+			}
+			serverResponse = dhActivityConfService.loadExteriorNotifyOfActivity(dhActivityConf);
+			if(!serverResponse.isSuccess()) {
+				return serverResponse;
+			}
+			
+			//因为内部通知和外部通知模板不同，所以需要分别发送通知
+			List<String> interiorUserList = new ArrayList<>();
+			if(StringUtils.isNotBlank(dhActivityConf.getInteriorNotifyRole())) {
+				String[] roleNos = dhActivityConf.getInteriorNotifyRole().split(";");
+				for (int i = 0; i < roleNos.length; i++) {
+					List<SysRoleUser> sysRoleUsers = sysRoleUserMapper.selectByRoleUid(roleNos[i]);
+					for (SysRoleUser sysRoleUser : sysRoleUsers) {
+						interiorUserList.add(sysRoleUser.getUserUid());
+					}
+				}
+			}
+			if (StringUtils.isNotBlank(dhActivityConf.getInteriorNotifyUser())) {
+				String[] userNos = dhActivityConf.getInteriorNotifyUser().split(";");
+				for (int i = 0; i < userNos.length; i++) {
+					interiorUserList.add(userNos[i]);
+				}
+			}
+			if(interiorUserList.size()>0) {
+				SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
+				DhTaskInstance dhTaskInstance = new DhTaskInstance();
+				dhTaskInstance.setInsUid(dhProcessInstance.getInsUid());//用来发送邮件时查询流程实例数据
+				sysEmailUtilBean.setDhTaskInstance(dhTaskInstance);
+				sysEmailUtilBean.setToUserNoList(interiorUserList);
+				sysEmailUtilBean.setBpmformsHost(bpmformsHost);
+				sysEmailUtilBean.setNotifyTemplateUid(dhActivityConf.getActcInteriorNotifyTemplate());
+				
+				this.dhSendEmail(sysEmailUtilBean);
+			}
+			if(dhActivityConf.getExteriorNotifyMailList()!=null&&dhActivityConf.getExteriorNotifyMailList().size()>0) {
+				SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
+				DhTaskInstance dhTaskInstance = new DhTaskInstance();
+				dhTaskInstance.setInsUid(dhProcessInstance.getInsUid());//用来发送邮件时查询流程实例数据
+				sysEmailUtilBean.setDhTaskInstance(dhTaskInstance);
+				sysEmailUtilBean.setToEmailList(dhActivityConf.getExteriorNotifyMailList());
+				sysEmailUtilBean.setBpmformsHost(bpmformsHost);
+				sysEmailUtilBean.setNotifyTemplateUid(dhActivityConf.getActcExteriorNotifyTemplate());
+				
+				this.dhSendEmail(sysEmailUtilBean);
+			}
+		}else {
+			return ServerResponse.createByErrorMessage("获取环节配置信息失败");
+		}
+		return null;
 	}
 }

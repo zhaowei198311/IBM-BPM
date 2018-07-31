@@ -869,7 +869,8 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
      * @param dhActivityConf
      * @return
      */
-    private ServerResponse loadInteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
+    @Override
+    public ServerResponse loadInteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
         String actcAssignType = dhActivityConf.getActcInteriorNotifyType();
         DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
         String activityId = dhActivityConf.getActivityId();
@@ -925,7 +926,8 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
      * @param dhActivityConf
      * @return
      */
-    private ServerResponse loadExteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
+    @Override
+    public ServerResponse loadExteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
     	String actcAssignType = dhActivityConf.getActcAssignType();
         DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
         String activityId = dhActivityConf.getActivityId();
