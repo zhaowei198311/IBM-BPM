@@ -120,7 +120,9 @@
 				window.parent.document.getElementById(elementId).value=useruid;
 				window.parent.document.getElementById(elementId+"_view").value=useruname;
 				var title = useruname.replace(/;/g,"\n");
-				window.parent.document.getElementById(elementId+"_view").title=title;
+				if(isSingle=='true'){
+					window.parent.document.getElementById(elementId+"_view").title=title;
+				}
 			 	$('#close').click();
 			});
 			

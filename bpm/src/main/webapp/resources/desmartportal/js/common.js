@@ -228,7 +228,9 @@ var common = {
 			var checkJson = "";
 			switch (type) {
 				case "text": {
-					if ($(inputArr[i]).prop("class") == "layui-input layui-unselect" 
+					var inputTitle = $(inputArr[i]).attr("title");
+					if (typeof(inputTitle) == "undefined"
+						||$(inputArr[i]).prop("class") == "layui-input layui-unselect" 
 						|| $(inputArr[i]).prop("class") == "layui-input layui-unselect layui-disabled") {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");
@@ -251,7 +253,9 @@ var common = {
 						}
 						var userNameArr = $(inputArr[i]).val().trim();
 						var userIdArr = $(inputArr[i]).parent().find("input[type='hidden']")
-									.val().trim();
+									.val().trim().replace(";","");
+						console.log(userNameArr);
+						console.log(userIdArr);
 						textJson = "\"" + name + "\":{\"value\":\""
 							+ userIdArr + "\",\"description\":\"" + userNameArr + "\"}";
 						break;
