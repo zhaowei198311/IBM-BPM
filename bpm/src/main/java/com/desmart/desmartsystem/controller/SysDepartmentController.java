@@ -66,18 +66,6 @@ public class SysDepartmentController {
 	@ResponseBody
 	public PagedResult<SysDepartment> allSysDepartment(SysDepartment sysDepartment,Integer pageNo,Integer pageSize){
 		PagedResult<SysDepartment> queryByPage=sysDepartmentService.queryByPage(sysDepartment,pageNo,pageSize);
-		
-		List<SysDepartment> sysDepartmentList=new ArrayList<SysDepartment>();
-		List<SysDepartment> sysDepartments=queryByPage.getDataList();
-		for (SysDepartment sysDepartment1 : sysDepartments) {
-			SysUserDepartment sUserDepartment=new SysUserDepartment();
-			sUserDepartment.setDepartUid(sysDepartment1.getDepartUid());
-			sUserDepartment.setIsManager("true");
-			sysDepartment1.setSysUserDepartmentList(sysUserDepartmentService.selectAll(sUserDepartment));
-			sysDepartmentList.add(sysDepartment1);
-		}
-		queryByPage.setDataList(sysDepartmentList);
-		
 		return queryByPage; 
 	}
 	
