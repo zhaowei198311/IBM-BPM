@@ -14,7 +14,7 @@ public class DhOperLog implements Serializable{
 	
 	//日志类别
 	public static final String systemLog = "systemLog";
-	public static final String errorLog = "systemLog";
+	public static final String errorLog = "errorLog";
 	
 	//id主键
 	private String id;
