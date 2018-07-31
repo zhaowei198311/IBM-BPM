@@ -147,9 +147,11 @@ function showHiddenModal(obj){
     var inputObj = view.find("input");
     var id = inputObj.attr("id");
     var name = inputObj.attr("name");
+    var label = inputObj.attr("hidden-label");
     oldName = name;
 
     $("#hidden-text-name").val(name);
+    $("#hidden-text-label").val(label);
     $("#hidden-text-id").val(id);
 }
 
@@ -1138,9 +1140,11 @@ $(function () {
             $("#hidden-text-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
             $("#hidden-text-warn").modal('show');
         } else {
+        	var label = $("#hidden-text-label").val().trim();
             var inputObj = view.find("input");
             inputObj.attr({
                 "id": id,
+                "hidden-label":label,
                 "name": name
             });
 

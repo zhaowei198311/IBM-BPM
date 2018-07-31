@@ -98,4 +98,12 @@ public interface DhAgentMapper {
 	 * 通过用户Id查询用户当前代理信息
 	 */
 	List<DhAgent> getDelegateByUserId(String userUid);
+
+	/**
+	 * 批量插入代理信息
+	 * @param agentId
+	 * @param metaList
+	 * @return
+	 */
+	int insertBatch(@Param("agentProInfoList")List<DhAgentProInfo> agentProInfoList);
 }

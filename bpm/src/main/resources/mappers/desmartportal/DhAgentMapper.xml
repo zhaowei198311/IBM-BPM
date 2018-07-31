@@ -139,4 +139,16 @@
 		  and agent_edate >= sysdate
 		  and agent_status = 'ENABLED'
 	</select>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		insert into dh_agent_proinfo(<include refid="base_agent_proinfo_column_List"/>)
+		<foreach collection="agentProInfoList" item="item" separator="union all">
+			select
+			#{item.agentProInfoId},
+			#{item.agentId},
+			#{item.proAppId},
+			#{item.proUid}
+			from dual
+		</foreach>
+	</insert>
 </mapper>

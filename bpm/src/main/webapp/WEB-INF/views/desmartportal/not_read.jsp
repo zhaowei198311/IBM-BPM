@@ -80,18 +80,6 @@
 								<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
 							</div>
 						</div>
-						<div class="layui-col-md3">
-							<label class="layui-form-label">是否代理</label>
-							<div class="layui-input-block">
-								<select id="isAgent" class="layui-input-block group_select"
-									name="group" lay-verify="required">
-									<option value="0" selected>全部</option>
-									<option value="false">无</option>
-									<option value="1">本人</option>
-									<option value="2">非本人</option>
-								</select>
-							</div>
-						</div>
 					</div>
 				</div>
 				
@@ -121,9 +109,7 @@
 									      	<th>流程名称</th>
 				                            <th>流程标题</th>
 				                            <th>环节名称</th>
-				                            <th>任务所属</th>
-				                            <th>代理人</th>
-				                            <th>上一环节处理人</th>
+				                            <th>抄送人员</th>
 				                            <th>流程创建人</th>
 									      	<th>抄送时间</th>
 									    </tr> 
@@ -159,7 +145,6 @@ var pageConfig = {
 	taskPreviousUsrUsername: "",
 	insTitle : "",
 	proName : "",
-	isAgent:"",
 	startTime : null,
 	endTime: null,
 	total : 0
@@ -197,7 +182,6 @@ $(document).ready(function() {
 		pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
 		pageConfig.insTitle = $("#task-insTitle-search").val();
 		pageConfig.proName = $("#task-proName-search").val();
-		pageConfig.isAgent = $("#isAgent").val()==0 ? "" : $("#isAgent").val();
 		pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
 		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		getTaskInstanceInfo(taskStatus);
@@ -211,7 +195,6 @@ $(document).ready(function() {
 		pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
 		pageConfig.insTitle = $("#task-insTitle-search").val();
 		pageConfig.proName = $("#task-proName-search").val();
-		pageConfig.isAgent = $("#isAgent").val()==0 ? "" : $("#isAgent").val();
 		pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
 		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		getTaskInstanceInfo(taskStatus);
@@ -281,7 +264,6 @@ function doPage() {
 				taskPreviousUsrUsername: pageConfig.taskPreviousUsrUsername,
 				insTitle : pageConfig.insTitle,
 				proName : pageConfig.proName,
-				isAgent : pageConfig.isAgent,
 				startTime : pageConfig.startTime,
 				endTime: pageConfig.endTime,
 				taskStatus: taskStatus
@@ -342,14 +324,6 @@ function doPage() {
 					+ '<td>'
 					+ meta.taskTitle
 					+ '</td>'
-					+ '<td>'
-					+ meta.taskHandler
-					+ '</td>' 
-					+ '<td>';
-			if(meta.taskAgentUserName!=null && meta.taskAgentUserName!=""){
-	           	trs += meta.taskAgentUserName;
-	        }
-			trs +='</td>' 
 					+ '<td>';
 			if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
 				trs += meta.taskPreviousUsrUsername;
@@ -403,7 +377,6 @@ function doPage() {
 		pageConfig.taskPreviousUsrUsername = $("#task-taskPreviousUsrUsername-search").val();
 		pageConfig.insTitle = $("#task-insTitle-search").val();
 		pageConfig.proName = $("#task-proName-search").val();
-		pageConfig.isAgent = $("#isAgent").val()==0 ? "" : $("#isAgent").val();
 		pageConfig.startTime = $("#init-startTime-search").val()==""?null:$("#init-startTime-search").val();
 		pageConfig.endTime = $("#init-endTime-search").val()==""?null:$("#init-endTime-search").val();
 		

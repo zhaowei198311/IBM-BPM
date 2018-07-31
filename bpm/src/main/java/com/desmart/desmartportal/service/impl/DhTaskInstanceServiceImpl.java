@@ -1024,19 +1024,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> queryTransfer(Date startTime, Date endTime,
-											DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize,
-											String isAgent) {
+											DhTaskInstance dhTaskInstance,Integer pageNum, Integer pageSize) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.queryTransferByTypeAndStatus(startTime, endTime, dhTaskInstance,isAgent);
-		for(DhTaskInstance resultTaskInstance:dhTaskInstanceList) {
-			String taskHandler = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getUsrUid()).getUserName();
-			resultTaskInstance.setTaskHandler(taskHandler);
-			//判断代理人是否为空
-			if(null!=resultTaskInstance.getTaskDelegateUser() && !"".equals(resultTaskInstance.getTaskDelegateUser())) {
-				String taskAgentUserName = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getTaskDelegateUser()).getUserName();
-				resultTaskInstance.setTaskAgentUserName(taskAgentUserName);
-			}
-		}
+		List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.queryTransferByTypeAndStatus(startTime, endTime, dhTaskInstance);
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(dhTaskInstanceList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}

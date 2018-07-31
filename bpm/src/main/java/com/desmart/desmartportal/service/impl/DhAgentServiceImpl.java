@@ -25,8 +25,13 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhAgentMapper;
+import com.desmart.desmartportal.dao.DhAgentRecordMapper;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhAgent;
 import com.desmart.desmartportal.entity.DhAgentProInfo;
+import com.desmart.desmartportal.entity.DhAgentRecord;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhAgentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -46,19 +51,57 @@ public class DhAgentServiceImpl implements DhAgentService {
 	@Autowired
 	private DhProcessMetaMapper dhProcessMetaMapper;
 	
+	@Autowired
+	private DhAgentRecordMapper dhAgentRecordMapper;
+	
+	@Autowired
+	private DhTaskInstanceMapper dhTaskInstanceMapper;
+	
+	@Autowired
+	private DhProcessInstanceMapper dhProcessInstanceMapper;
+	
 	/**
 	 * 根据代理Id删除代理数据
 	 */
 	@Override
 	public ServerResponse deleteAgentByAgentId(String agentId) {
+		ServerResponse response = revokeAgentTask(agentId);
+		if(!response.isSuccess()) {
+			throw new PlatformException(response.getMsg());
+		}
+		//删除代理信息
 		int delAgent = dhAgentMapper.deleteByAgentId(agentId);
 		if(delAgent!=1) {
 			throw new PlatformException("删除代理信息失败");
 		}
+		//删除代理的流程信息
 		int agentProSize = dhAgentMapper.queryDhAgentProInfoByAgentId(agentId).size();
 		int delAgentPro = dhAgentMapper.deleteAgentProById(agentId);
 		if(delAgentPro!=agentProSize) {
 			throw new PlatformException("删除代理流程信息失败");
+		}
+		//删除代理记录信息
+		int deleteCount = dhAgentRecordMapper.deleteByAgentId(agentId);
+		if(deleteCount<0) {
+			throw new PlatformException("删除代理记录信息失败");
+		}
+		return ServerResponse.createBySuccess();
+	}
+
+	/**
+	 * 根据代理信息id取回被代理的但是还未完成的任务
+	 * @param agentId
+	 * @return 
+	 */
+	private ServerResponse revokeAgentTask(String agentId) {
+		//获得代理的且未完成的记录集合
+		List<String> revokeTaskUidList = dhTaskInstanceMapper.queryNotFinishedAgentRecordListByAgentId(agentId);
+		if(revokeTaskUidList.size()>0) {
+			//批量修改这些任务实例的代理人为空
+			int updateCount = dhTaskInstanceMapper.updateDelegateUserBatch(revokeTaskUidList);
+			if(updateCount!=revokeTaskUidList.size()) {
+				throw new PlatformException("删除任务代理人失败");
+			}
 		}
 		return ServerResponse.createBySuccess();
 	}
@@ -249,16 +292,33 @@ public class DhAgentServiceImpl implements DhAgentService {
 			dhAgentMapper.deleteAgentProById(dhAgent.getAgentId());
 			//判断新代理信息是否代理全部流程
 			if(dhAgent.getAgentIsAll().equals("FALSE")) {
-				int addRow = 0;
+				List<DhAgentProInfo> agentProInfoList = new ArrayList<>();
 				for(DhProcessMeta meta:metaList) {
+					DhAgentProInfo dhAgentProInfo = new DhAgentProInfo();
 					String agentProInfoId = EntityIdPrefix.DH_AGENT_PRO_INFO + UUID.randomUUID().toString();
-					//添加代理流程信息
-					DhAgentProInfo agentProInfo = new DhAgentProInfo(agentProInfoId, 
-							dhAgent.getAgentId(), meta.getProAppId(), meta.getProUid());
-					addRow += dhAgentMapper.addAgentProInfo(agentProInfo);
+					dhAgentProInfo.setAgentProInfoId(agentProInfoId);
+					dhAgentProInfo.setAgentId(dhAgent.getAgentId());
+					dhAgentProInfo.setProAppId(meta.getProAppId());
+					dhAgentProInfo.setProUid(meta.getProUid());
+					agentProInfoList.add(dhAgentProInfo);
 				}
-				if(addRow != metaList.size()) {
-					throw new PlatformException("修改代理流程失败");
+				if(!agentProInfoList.isEmpty()) {
+					int addRow = dhAgentMapper.insertBatch(agentProInfoList);
+					if(addRow != metaList.size()) {
+						throw new PlatformException("修改代理流程失败");
+					}
+				}
+				//修改的代理信息为已启用
+				if("ENABLED".equals(dhAgent.getAgentStatus())) {
+					List<String> revokeTaskUidList = dhTaskInstanceMapper.queryNoFinishedTaskUidListByCondition(
+							dhAgent.getAgentId(),metaList);
+					if(revokeTaskUidList.size()>0) {
+						//批量修改这些任务实例的代理人为空
+						int updateCount = dhTaskInstanceMapper.updateDelegateUserBatch(revokeTaskUidList);
+						if(updateCount!=revokeTaskUidList.size()) {
+							throw new PlatformException("删除任务代理人失败");
+						}
+					}
 				}
 			}
 		}
@@ -278,6 +338,13 @@ public class DhAgentServiceImpl implements DhAgentService {
 
 	@Override
 	public ServerResponse updateAgentStatus(DhAgent dhAgent) {
+		//禁用代理信息时取回还未完成的代理任务
+		if("DISABLED".equals(dhAgent.getAgentStatus())) {
+			ServerResponse response = revokeAgentTask(dhAgent.getAgentId());
+			if(!response.isSuccess()) {
+				throw new PlatformException(response.getMsg());
+			}
+		}
 		//修改代理信息的状态
 		int updateRow = dhAgentMapper.updateAgentStatus(dhAgent);
 		if(1!=updateRow) {

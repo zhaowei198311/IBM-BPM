@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 
@@ -175,8 +177,7 @@ public interface DhTaskInstanceMapper {
 	List<DhTaskInstance> queryTransferByTypeAndStatus(
 						@Param("startTime")Date startTime,
 						@Param("endTime")Date endTime,
-						@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
-						@Param("isAgent")String isAgent);
+						@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
 	
 	/**
 	 * 
@@ -235,4 +236,26 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	List<DhTaskInstance> getTimeoutTaskList(DhTaskInstance selective);
+
+	/**
+	 * 根据传入的任务主键id集合删除对应任务的代理人
+	 * @param revokeTaskUidList
+	 * @return
+	 */
+	int updateDelegateUserBatch(List<String> revokeTaskUidList);
+
+	/**
+	 * 根据流程库id，流程id以及代理id获得需要取回的任务id集合
+	 * @param agentId
+	 * @param metaList
+	 * @return
+	 */
+	List<String> queryNoFinishedTaskUidListByCondition(@Param("agentId")String agentId, @Param("metaList")List<DhProcessMeta> metaList);
+
+	/**
+     * 根据代理信息id取回被代理的但是还未完成的任务
+     * @param agentId
+     * @return
+     */
+	List<String> queryNotFinishedAgentRecordListByAgentId(String agentId);
 }

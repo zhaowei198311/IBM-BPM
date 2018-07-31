@@ -244,7 +244,6 @@ public class DhTaskInstanceController {
 																		@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,
 																		@RequestParam("insTitle")String insTitle,
 																		@RequestParam("proName")String proName,
-																		@RequestParam("isAgent")String isAgent,
 																		@RequestParam("createProcessUserName")String createProcessUserName,
 																		DhTaskInstance dhTaskInstance){
 		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
@@ -260,7 +259,7 @@ public class DhTaskInstanceController {
     		sysUser.setUserName(createProcessUserName);
     		dhTaskInstance.setSysUser(sysUser);
     	}
-		return dhTaskInstanceService.queryTransfer(startTime, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+		return dhTaskInstanceService.queryTransfer(startTime, endTime, dhTaskInstance, pageNum, pageSize);
 	}
 	
 	/**
