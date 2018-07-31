@@ -31,7 +31,6 @@ import com.github.pagehelper.PageInfo;
  * @since 2018年5月24日
  */
 @Service
-@Transactional
 public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 	@Autowired 
 	private BpmPublicFormMapper bpmPublicFormMapper;
@@ -87,6 +86,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		return ServerResponse.createBySuccess();
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse saveForm(BpmPublicForm bpmPublicForm) {
 		//保存表单信息
@@ -101,6 +101,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		return ServerResponse.createBySuccess(publicFormUid);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse upadteFormContent(BpmPublicForm bpmPublicForm) {
 		//修改表单内容
@@ -137,6 +138,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		return ServerResponse.createBySuccess();
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse deleteForm(String[] formUids) {
 		//批量删除表单
@@ -168,6 +170,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
 		}
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse copyForm(BpmPublicForm bpmPubilcForm) {
 		String newFilename = bpmPubilcForm.getPublicFormName()+".html";
@@ -219,6 +222,7 @@ public class BpmPublicFormServiceImpl implements BpmPublicFormService{
         return newFormUid;
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse saveFormRelePublicForm(String formUid, String[] publicFormUidArr) {
 		for(String publicFormUid:publicFormUidArr) {

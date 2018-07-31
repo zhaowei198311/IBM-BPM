@@ -557,10 +557,8 @@ function showRouteBar() {
                 var chooseUserDiv = "";
                 if(activityMetaList.length == 0){
                     chooseUserDiv += '<tr>'
-                        +'<th class="approval_th"><label for="link_name1">下一环节</label></th>'
-                        +'<td>流程结束</td>'
-                        +'<th class="approval_th">处理人</th>'
-                        +'<td></td>'
+                        +'<th class="approval_th"><label for="link_name1" colspan="2">下一环节</label></th>'
+                        +'<td colspan="2">流程结束</td>'
                         +'</tr>';
                 }else{
                     for(var i=0;i<activityMetaList.length;i++){
