@@ -289,10 +289,11 @@
       select <include refid="relationColumnList"/>, lux.user_name
       from lsw_task t
       left join LSW_USR_XREF lux on t.user_id = lux.user_id
-      where t.task_id in
-      <foreach collection="collection" item="item" index="index" open="(" separator="," close=")">
-        #{item.taskId}
-      </foreach>
+      <where>
+        <foreach collection="collection" item="item" separator="or">
+          t.task_id = #{item.taskId}
+        </foreach>
+      </where>
     </select>
   
 

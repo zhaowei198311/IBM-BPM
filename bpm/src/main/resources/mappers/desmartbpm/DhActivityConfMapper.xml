@@ -141,7 +141,8 @@
       #{actcPriorityVariable,jdbcType=VARCHAR}, #{actcCanCancel,jdbcType=VARCHAR}, #{actcCanPause,jdbcType=VARCHAR},
       #{actcCanSkip,jdbcType=VARCHAR}, #{updator,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{actcCanChooseUser},
       #{actcCanTransfer}, #{actcResponsibility}, #{actcChooseableHandlerType},#{actcMessageNotifyTemplate}, #{actcCanSkipFromReject},
-      #{actcOuttimeNotifyType}, #{actcIsSystemTask}, #{actcDelayType}, #{actcDelayTime}, #{actcDelayTimeunit}, #{actcDelayField}
+      #{actcOuttimeNotifyType}, #{actcIsSystemTask}, #{actcDelayType}, #{actcDelayTime}, #{actcDelayTimeunit}, #{actcDelayField},
+      #{actcInteriorNotifyType}, #{actcInteriorNotifyTemplate}, #{actcExteriorNotifyType}, #{actcExteriorNotifyTemplate}
     )
   </insert>
 
@@ -164,7 +165,8 @@
       #{item.actcPriorityVariable,jdbcType=VARCHAR}, #{item.actcCanCancel,jdbcType=VARCHAR}, #{item.actcCanPause,jdbcType=VARCHAR},
       #{item.actcCanSkip,jdbcType=VARCHAR}, #{item.updator,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.actcCanChooseUser},
       #{item.actcCanTransfer}, #{item.actcResponsibility, jdbcType=CLOB}, #{item.actcChooseableHandlerType},#{item.actcMessageNotifyTemplate}, #{item.actcCanSkipFromReject},
-      #{item.actcOuttimeNotifyType}, #{item.actcIsSystemTask}, #{item.actcDelayType}, #{item.actcDelayTime}, #{item.actcDelayTimeunit}, #{item.actcDelayField}
+      #{item.actcOuttimeNotifyType}, #{item.actcIsSystemTask}, #{item.actcDelayType}, #{item.actcDelayTime}, #{item.actcDelayTimeunit}, #{item.actcDelayField},
+      #{item.actcInteriorNotifyType}, #{item.actcInteriorNotifyTemplate}, #{item.actcExteriorNotifyType}, #{item.actcExteriorNotifyTemplate}
       )
     </foreach>
     ;end;

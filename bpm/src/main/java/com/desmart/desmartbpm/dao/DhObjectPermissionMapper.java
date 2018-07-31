@@ -97,4 +97,14 @@ public interface DhObjectPermissionMapper {
 	 * 根据表单字段Id删除该字段权限
 	 */
 	int deleteFieldPermissById(String fldUid);
+
+	/**
+	 * 查询流程定义范围的权限， 比如发起权限
+	 * @param proAppId 应用库id
+	 * @param proUid   图id
+	 * @param proVerUid 版本id
+	 * @return
+	 */
+	List<DhObjectPermission> listProcessDefinitionScopePermission(@Param("proAppId") String proAppId,
+																	@Param("proUid") String proUid, @Param("proVerUid") String proVerUid);
 }

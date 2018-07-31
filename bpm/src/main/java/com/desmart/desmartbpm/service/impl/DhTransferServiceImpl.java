@@ -126,8 +126,8 @@ public class DhTransferServiceImpl implements DhTransferService {
         DhTransferData transferData = new DhTransferData();
         transferData.addToProcessDefinitionList(dhProcessDefinition);
 
-        // 获得此流程定义的发起权限
-        List<DhObjectPermission> permissionListOfStartProcess = dhObjectPermissionService.getPermissionListOfStartProcess(proAppId, proUid, proVerUid);
+        // 获得此流程定义范围的权限
+        List<DhObjectPermission> permissionListOfStartProcess = dhObjectPermissionMapper.listProcessDefinitionScopePermission(proAppId, proUid, proVerUid);
         transferData.addAllToObjectPermissionList(permissionListOfStartProcess);
 
         // 查找对应的表单

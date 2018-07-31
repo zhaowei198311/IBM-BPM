@@ -22,7 +22,8 @@
 	    ac.ACTC_ALERT, ac.ACTC_PRIORITY_VARIABLE, ac.ACTC_CAN_CANCEL, ac.ACTC_CAN_PAUSE, ac.ACTC_CAN_SKIP,
 	    ac.UPDATOR, ac.UPDATE_TIME, ac.actc_can_choose_user, ac.actc_can_transfer,ac.ACTC_RESPONSIBILITY,ac.ACTC_CHOOSEABLE_HANDLER_TYPE,
 	    AC.ACTC_CAN_SKIP_FROM_REJECT, ac.actc_Outtime_Notify_Type, ac.ACTC_IS_SYSTEM_TASK, ac.ACTC_DELAY_TYPE,
-	    ac.actc_delay_time, ac.actc_delay_timeunit, ac.actc_delay_field
+	    ac.actc_delay_time, ac.actc_delay_timeunit, ac.actc_delay_field, ac.actc_interior_notify_type, ac.actc_interior_notify_template,
+	    ac.actc_exterior_notify_type, ac.actc_exterior_notify_template
 	</sql>
 	
 	<resultMap id="mapWithConf" type="com.desmart.desmartbpm.entity.BpmActivityMeta" >
