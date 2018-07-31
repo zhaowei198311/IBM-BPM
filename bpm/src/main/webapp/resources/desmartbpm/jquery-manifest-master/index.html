@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <title>Manifest &mdash; Example 1</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.ui.widget.min.js"></script>
+    <script src="js/jquery.marcopolo.min.js"></script>
+    <script src="js/jquery.manifest.js"></script>
+    <script>
+      $(function () {
+        $('#input').manifest();
+		
+		$('#locations').manifest({
+          formatDisplay: function (data, $item, $mpItem) {
+            return data.name;
+          },
+          formatValue: function (data, $value, $item, $mpItem) {
+            return data.id;
+          },
+          marcoPolo: {
+            data: {
+              client_id: 'EDCKXTNEIH2UJLGHEXUUAKPLNRHCNS0URQZNCLH10YZQLBES',
+              client_secret: 'XUBZENVXNNK1ORU4GDDO22B0TBZZWW2QXW3H3O5CYC0JQ0RU',
+              intent: 'global',
+              limit: 20,
+              v: '20130826'
+            },
+            formatData: function (data) {
+              return data.response.venues;
+            },
+            formatItem: function (data, $item) {
+              return data.name;
+            },
+            minChars: 3,
+            param: 'query'
+          },
+          required: true
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Manifest1</h1>
+      <h2>Try it Out</h2>
+      <form action="#" method="post">
+        <input type="text" name="input" id="input" autocomplete="off">
+      </form>
+      <h2>How it Works</h2>
+     
+     
+     <h1>Manifest2</h1>
+      <h2>Try it Out</h2>
+      <form action="https://api.foursquare.com/v2/venues/search?callback=?" method="get">
+        <input type="text" name="locations" id="locations">
+        <img src="css/busy.gif">
+      </form>
+      <h2>How it Works</h2>
+     
+    </div>
+    
+    
+
+    
+  </body>
+</html>

@@ -8,7 +8,8 @@ public enum DhActivityAssignAssignType {
     TEAM("team", "角色组"),
     ROLE("role", "角色"),
     FIELD("field", "表单字段"),
-	TRIGGER("trigger","触发器");
+	TRIGGER("trigger","触发器"),
+	EMAIL("email","邮箱地址");
 
     private final String code;
     private final String value;

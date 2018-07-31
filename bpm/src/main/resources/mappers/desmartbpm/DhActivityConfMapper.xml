@@ -52,6 +52,10 @@
     <result column="ACTC_DELAY_TIME" property="actcDelayTime" jdbcType="INTEGER"/>
     <result column="ACTC_DELAY_TIMEUNIT" property="actcDelayTimeunit" jdbcType="VARCHAR"/>
     <result column="ACTC_DELAY_FIELD" property="actcDelayField" jdbcType="VARCHAR"/>
+    <result column="ACTC_INTERIOR_NOTIFY_TYPE" property="actcInteriorNotifyType" jdbcType="VARCHAR"/>
+    <result column="ACTC_INTERIOR_NOTIFY_TEMPLATE" property="actcInteriorNotifyTemplate" jdbcType="VARCHAR"/>
+    <result column="ACTC_EXTERIOR_NOTIFY_TYPE" property="actcExteriorNotifyType" jdbcType="VARCHAR"/>
+    <result column="ACTC_EXTERIOR_NOTIFY_TEMPLATE" property="actcExteriorNotifyTemplate" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List" >
     ACTC_UID, ACTIVITY_ID, ACTC_SORT, ACTC_TIME, ACTC_TIMEUNIT, ACTC_ASSIGN_TYPE, ACTC_ASSIGN_VARIABLE,
@@ -64,7 +68,8 @@
     ACTC_ALERT, ACTC_PRIORITY_VARIABLE, ACTC_CAN_CANCEL, ACTC_CAN_PAUSE, ACTC_CAN_SKIP,
     UPDATOR, UPDATE_TIME, ACTC_CAN_CHOOSE_USER, ACTC_CAN_TRANSFER, ACTC_RESPONSIBILITY,ACTC_CHOOSEABLE_HANDLER_TYPE,
     ACTC_MESSAGE_NOTIFY_TEMPLATE, ACTC_CAN_SKIP_FROM_REJECT,ACTC_OUTTIME_NOTIFY_TYPE, ACTC_IS_SYSTEM_TASK, ACTC_DELAY_TYPE,
-    actc_delay_time, actc_delay_timeunit, actc_delay_field
+    actc_delay_time, actc_delay_timeunit, actc_delay_field,ACTC_INTERIOR_NOTIFY_TYPE,ACTC_INTERIOR_NOTIFY_TEMPLATE,
+    ACTC_EXTERIOR_NOTIFY_TYPE,ACTC_EXTERIOR_NOTIFY_TEMPLATE
   </sql>
   <sql id="relationColumn" >
     atc.ACTC_UID, atc.ACTIVITY_ID, atc.ACTC_SORT, atc.ACTC_TIME, atc.ACTC_TIMEUNIT, atc.ACTC_ASSIGN_TYPE, atc.ACTC_ASSIGN_VARIABLE,
@@ -78,16 +83,20 @@
     atc.UPDATOR, atc.UPDATE_TIME, atc.ACTC_CAN_CHOOSE_USER, atc.ACTC_CAN_TRANSFER, atc.ACTC_RESPONSIBILITY,
     atc.ACTC_CHOOSEABLE_HANDLER_TYPE,atc.ACTC_MESSAGE_NOTIFY_TEMPLATE, atc.ACTC_CAN_SKIP_FROM_REJECT,
     atc.ACTC_OUTTIME_NOTIFY_TYPE, atc.ACTC_IS_SYSTEM_TASK, atc.ACTC_DELAY_TYPE,
-    atc.actc_delay_time, atc.actc_delay_timeunit, atc.actc_delay_field
+    atc.actc_delay_time, atc.actc_delay_timeunit, atc.actc_delay_field,atc.ACTC_INTERIOR_NOTIFY_TYPE,
+    atc.ACTC_INTERIOR_NOTIFY_TEMPLATE,atc.ACTC_EXTERIOR_NOTIFY_TYPE,atc.ACTC_EXTERIOR_NOTIFY_TEMPLATE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="relationColumn" />, tri1.tri_title actcOuttimeTriggerTitle,dnt.template_name actcMailNotifyTemplateView
-    ,outdnt.template_name actcOuttimeTemplateView
+    ,outdnt.template_name actcOuttimeTemplateView,indnt.template_name actcInteriorNotifyTemplateView
+    ,exdnt.template_name actcExteriorNotifyTemplateView
     from DH_ACTIVITY_CONF atc
     left join dh_trigger tri1 on atc.ACTC_OUTTIME_TRIGGER = tri1.tri_uid
     left join dh_notify_template dnt on atc.actc_mail_notify_template = dnt.template_uid
     left join dh_notify_template outdnt on atc.ACTC_OUTTIME_TEMPLATE = outdnt.template_uid
+    left join dh_notify_template indnt on atc.ACTC_INTERIOR_NOTIFY_TEMPLATE = indnt.template_uid
+    left join dh_notify_template exdnt on atc.ACTC_EXTERIOR_NOTIFY_TEMPLATE = exdnt.template_uid
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </select>
 
@@ -364,7 +373,12 @@
       ACTC_DELAY_TYPE = #{actcDelayType},
       ACTC_DELAY_TIME = #{actcDelayTime},
       ACTC_DELAY_TIMEUNIT = #{actcDelayTimeunit},
-      ACTC_DELAY_FIELD = #{actcDelayField}
+      ACTC_DELAY_FIELD = #{actcDelayField},
+      ACTC_INTERIOR_NOTIFY_TYPE = #{actcInteriorNotifyType},
+      ACTC_INTERIOR_NOTIFY_TEMPLATE = #{actcInteriorNotifyTemplate},
+      ACTC_EXTERIOR_NOTIFY_TYPE = #{actcExteriorNotifyType},
+      ACTC_EXTERIOR_NOTIFY_TEMPLATE = #{actcExteriorNotifyTemplate}
+      
     </set>
     where ACTC_UID = #{actcUid,jdbcType=VARCHAR}
   </update>

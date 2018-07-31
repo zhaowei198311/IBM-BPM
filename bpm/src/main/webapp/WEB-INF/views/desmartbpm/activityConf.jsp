@@ -7,6 +7,9 @@
 <%@include file="common/tag.jsp"%>
 <link rel="stylesheet"
 	href="<%=basePath%>/resources/desmartbpm/css/my.css" media="all">
+	<link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/css/reset.css">
+
+    <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/css/styles.css">
 <style>
 .layui-form-label {
 	width: 140px;
@@ -665,6 +668,91 @@
 														</div>
 													</div>
 												</div>
+												
+												<!-- 配置邮件通知指定人 开始-->
+												<div class="layui-row">
+													<!-- 左侧栏 -->
+													<div class="layui-col-md6">
+														
+														<div class="layui-form-item">
+															<label class="layui-form-label">内部通知内容模板</label>
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="hidden" name="actcInteriorNotifyTemplate"
+																	id="actcInteriorNotifyTemplate" /> <input type="text"
+																	name="actcInteriorNotifyTemplate_view" id="actcInteriorNotifyTemplate_view"
+																	value="" autocomplete="off" class="layui-input"
+																	disabled="disabled"> <i
+																	class="layui-icon choose_num" id="chooseInteriorNotifyTemplate_i"
+																	title="选择内部通知模板">&#xe615;</i>
+															</div>
+														</div>
+														<div class="layui-form-item">
+															<label class="layui-form-label">外部通知内容模板</label>
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="hidden" name="actcExteriorNotifyTemplate"
+																	id="actcExteriorNotifyTemplate" /> <input type="text"
+																	name="actcExteriorNotifyTemplate_view" id="actcExteriorNotifyTemplate_view"
+																	value="" autocomplete="off" class="layui-input"
+																	disabled="disabled"> <i
+																	class="layui-icon choose_num" id="chooseExteriorNotifyTemplate_i"
+																	title="选择外部通知模板">&#xe615;</i>
+															</div>
+														</div>
+													</div>
+													<!-- 右侧栏 -->
+													<div class="layui-col-md6">
+
+														<div class="layui-form-item">
+															<label class="layui-form-label">内部通知人员</label>
+															<div class="layui-input-block">
+																<select name="actcInteriorNotifyType"
+																	lay-filter=interiorNotifyType
+																	lay-verify="required">
+																	<option value="">-请选择-</option>
+																	<option value="role">角色</option>
+																	<option value="users">指定人员</option>
+																</select>
+															</div>
+														</div>
+														<div class="layui-form-item " id="interiorNotifyUser_div"
+														 	style="display: none;">
+															<label class="layui-form-label">人员</label>
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="hidden" id="interiorNotifyUser" name="interiorNotifyUser" />
+																<input type="text" name="interiorNotifyUser_view"
+																	id="interiorNotifyUser_view" value="" autocomplete="off"
+																	class="layui-input"> <i
+																	class="layui-icon choose_user" id="choose_interior_notify_user"
+																	title="选择人员">&#xe612;</i>
+															</div>
+														</div>
+														<div class="layui-form-item" id="interiorNotifyRole_div"
+															style="display: none;">
+															<label class="layui-form-label">角色</label>
+															<div class="layui-input-block"
+																style="position: relative;">
+																<input type="text" id="interiorNotifyRole_view"
+																	name="interiorNotifyRole_view" value="" autocomplete="off"
+																	class="layui-input" disabled="disabled"> <i
+																	id="choose_interior_notify_role" class="layui-icon choose_role"
+																	title="选择角色">&#xe612;</i>
+															</div>
+															<input type="hidden" id="interiorNotifyRole" name="interiorNotifyRole" />
+														</div>
+														
+													</div>
+													
+												</div>
+												<div class="layui-row">
+													<label class="layui-form-label">外部通知邮箱地址</label>
+													<div class="layui-input-block">
+															<input  type="text" name="exteriorNotifyMail" id="exteriorNotifyMail" autocomplete="off">																
+													</div>
+												</div>
+												<!-- 配置邮件通知指定人结束 -->
 
 												<div class="layui-row">
 													<div class="layui-col-md12">
@@ -1364,7 +1452,9 @@
 	<!-- 参数映射弹框结束 -->
 
 </body>
-
+<script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.ui.widget.min.js"></script>
+<script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.marcopolo.min.js"></script>
+<script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.manifest.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript"
@@ -1396,6 +1486,9 @@
 		});
 	});
 	$(function() {
+		//初始化邮箱地址输入框
+		$('#exteriorNotifyMail').manifest();
+		
 		$(".cancel_btn").click(function() {
 			$(".display_container4").css("display", "none");
 			$(".display_container10").css("display", "none");
