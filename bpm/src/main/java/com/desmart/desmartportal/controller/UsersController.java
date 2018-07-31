@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.desmartbpm.common.Const;
@@ -65,6 +66,7 @@ public class UsersController {
 	
 	private Logger log = Logger.getLogger(UsersController.class);
 	
+	@Log(description="用户访问登录接口")
 	@RequestMapping(value = "/logins")
 	@ResponseBody
 	public ServerResponse login(String username, String password, HttpServletRequest request) throws Exception {
@@ -81,6 +83,7 @@ public class UsersController {
         return ServerResponse.createBySuccess("成功登陆");
 	}
 	
+	@Log(description="用户退出系统")
 	@RequestMapping(value = "/logout")
 	public ModelAndView logout() {
 		SecurityUtils.getSubject().logout();
@@ -88,6 +91,7 @@ public class UsersController {
 		return mv;
 	}
 	
+	@Log(description="登陆后首页面需要访问的数据")
 	@RequestMapping(value = "/menus")
 	public ModelAndView menus() {
 		ModelAndView mv = new ModelAndView("desmartportal/index");
