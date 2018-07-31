@@ -18,7 +18,7 @@ public class PropertiesUtil {
     private static Properties props;
 
     static {
-        String fileName = "datasource.properties";
+        String fileName = "datasourceDev.properties";
         props = new Properties();
         try {
             // 通过静态块获取classpath下的配置文件
