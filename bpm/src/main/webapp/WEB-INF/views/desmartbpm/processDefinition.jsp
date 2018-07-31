@@ -123,7 +123,7 @@
             </div>
         </div>
     </body>
-    <div> 拉取指定版本图
+    <div style="display: none;"> 拉取指定版本图
         <form action="<%=basePath%>/processAppUpdate/pullDefintionByAppIdAndSnapshotId" >
             proAppId<input type="text" name="proAppId" value="2066.740849e3-3831-4a48-a92e-cf45175c12c2"/>
             proVerUid<input type="text" name="proVerUid"/>
