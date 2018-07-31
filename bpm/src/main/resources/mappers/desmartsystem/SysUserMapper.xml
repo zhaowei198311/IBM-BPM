@@ -102,7 +102,7 @@
 	
 	
 	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
-	 		SELECT u.*,u1.USER_NAME manager_name FROM SYS_USER u LEFT JOIN SYS_USER u1 on u.USER_UID = u1.USER_UID  where 1=1
+	 		SELECT u.*,u1.USER_NAME manager_name FROM SYS_USER u LEFT JOIN SYS_USER u1 on u.managernumber = u1.USER_UID  where 1=1
 	 		<if test="userName !=null and userName !='' ">
 	 			and u.USER_NAME LIKE CONCAT(CONCAT('%',#{userName}),'%') 
 	 		</if>
