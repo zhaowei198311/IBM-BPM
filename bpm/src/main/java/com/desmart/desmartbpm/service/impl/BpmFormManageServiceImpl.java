@@ -40,7 +40,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 @Service
-@Transactional
 public class BpmFormManageServiceImpl implements BpmFormManageService{
 	@Autowired
 	private BpmFormManageMapper bpmFormManageMapper;
@@ -190,6 +189,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return ServerResponse.createBySuccess();
 	}
 	
+	@Transactional
 	@Override
 	public ServerResponse deleteForm(String[] formUids) {
 		//批量删除表单
@@ -221,6 +221,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return ServerResponse.createBySuccess();
 	}
 
+	@Transactional
 	@Override
 	public int removeFormsByFormUidList(List<String> formUidList) {
 		if (CollectionUtils.isEmpty(formUidList)) {
@@ -247,6 +248,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		dhObjectPermissionMapper.deleteBatchSelective(dhObjectPerList);
 	}
 	
+	@Transactional
 	@Override
 	public ServerResponse copyForm(BpmForm bpmForm) {
 		//查询表单是否存在
@@ -327,6 +329,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return ServerResponse.createBySuccess(bpmFormList);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse updateFormContent(FormJSONObject formJsonObj) {
 		BpmForm bpmForm = formJsonObj.getForm();
@@ -467,6 +470,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return bpmFormManageMapper.queryFormByFormUid(formUid);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse saveFormContent(FormJSONObject formJsonObj) {
 		BpmForm bpmForm = formJsonObj.getForm();

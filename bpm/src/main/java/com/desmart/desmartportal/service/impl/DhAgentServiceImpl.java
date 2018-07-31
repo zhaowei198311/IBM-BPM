@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.desmart.desmartportal.service.impl;
 
 import java.sql.Timestamp;
@@ -43,7 +40,6 @@ import com.github.pagehelper.PageInfo;
 * @date 2018年5月18日  
 */
 @Service
-@Transactional
 public class DhAgentServiceImpl implements DhAgentService {
 	@Autowired
 	private DhAgentMapper dhAgentMapper;
@@ -63,6 +59,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 	/**
 	 * 根据代理Id删除代理数据
 	 */
+	@Transactional
 	@Override
 	public ServerResponse deleteAgentByAgentId(String agentId) {
 		ServerResponse response = revokeAgentTask(agentId);
@@ -186,6 +183,7 @@ public class DhAgentServiceImpl implements DhAgentService {
         return ServerResponse.createBySuccess(metalist);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse addAgentInfo(Date agentSdate, Date agentEdate, 
 			List<DhProcessMeta> metaList, String agentPerson,String agentIsAll) {
@@ -281,6 +279,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		return ServerResponse.createBySuccess(metaList);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse updateAgentInfo(DhAgent dhAgent, List<DhProcessMeta> metaList) {
 		//修改代理设置
@@ -336,6 +335,7 @@ public class DhAgentServiceImpl implements DhAgentService {
 		return ServerResponse.createBySuccess(metaList);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse updateAgentStatus(DhAgent dhAgent) {
 		//禁用代理信息时取回还未完成的代理任务

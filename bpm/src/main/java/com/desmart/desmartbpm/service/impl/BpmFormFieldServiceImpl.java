@@ -23,7 +23,6 @@ import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import org.springframework.util.CollectionUtils;
 
 @Service
-@Transactional
 public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Autowired
 	private BpmFormFieldMapper bpmFormFieldMapper;
@@ -40,6 +39,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Autowired
 	private BpmFormRelePublicFormMapper bpmFormRelePublicFormMapper;
 	
+	@Transactional
 	@Override
 	public ServerResponse saveFormField(BpmFormField[] fields) {
 		//批量插入表单字段
@@ -74,6 +74,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		return ServerResponse.createBySuccess(fieldList);
 	}
 
+	@Transactional
 	@Override
 	public ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions) {
 		int countRow = 0;
@@ -282,6 +283,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		return bpmFormFieldMapper.listByFormUidList(formUidList);
 	}
 
+	@Transactional
 	@Override
 	public int removeByFormUidList(List<String> formUidList) {
 		if (CollectionUtils.isEmpty(formUidList)) {
