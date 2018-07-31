@@ -11,7 +11,7 @@
 		<result column="RESPONSE_PARAM" property="responseParam" />
 		<result column="METHOD_DESCRIPTIONH" property="methodDescription" />
 		<result column="PATH" property="path" />
-		<result column="CREAT_TIME" property="creatTime" />
+		<result column="CREATE_TIME" property="creatTime" />
 		<result column="ATTACH" property="attach" />
 	</resultMap> -->
 
@@ -25,7 +25,7 @@
 		RESPONSE_PARAM,
 		METHOD_DESCRIPTIONH,
 		PATH,
-		CREAT_TIME,
+		CREATE_TIME,
 		ATTACH
 	</sql>
 
