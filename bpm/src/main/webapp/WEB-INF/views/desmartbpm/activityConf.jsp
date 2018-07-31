@@ -67,6 +67,9 @@
 #handleTeam_div .error {
 	margin-left: 170px;
 }
+#interiorNotifyRole-error{
+	margin-left: 32%;
+}
 </style>
 </head>
 <body>

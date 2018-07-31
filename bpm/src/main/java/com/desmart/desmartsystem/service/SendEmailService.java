@@ -23,7 +23,7 @@ public interface SendEmailService {
     public ServerResponse dhSendEmail(SysEmailUtilBean sysEmailUtilBean);
     
     /**
-     * 分析环节配置用于发送邮件
+     * 分析环节指定通知人配置信息并组装数据发送邮件
      * @param insUid
      * @param dhStep
      * @return

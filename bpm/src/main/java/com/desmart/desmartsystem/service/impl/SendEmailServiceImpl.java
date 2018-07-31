@@ -141,10 +141,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 		if(sysEmailUtilBean==null) {
 			return ServerResponse.createByErrorMessage("发送邮件失败，缺少必要参数");
 		}
-		if((sysEmailUtilBean.getToUserNoList()==null&&sysEmailUtilBean.getToEmailList()==null)
-				||(sysEmailUtilBean.getToUserNoList()==null&&sysEmailUtilBean.getToEmailList().size()==0)
-				||(sysEmailUtilBean.getToUserNoList().size()==0&&sysEmailUtilBean.getToEmailList()==null)
-				||(sysEmailUtilBean.getToUserNoList().size()==0&&sysEmailUtilBean.getToEmailList().size()==0)) {
+		if(sysEmailUtilBean.getToUserNoList()==null&&sysEmailUtilBean.getToEmailList()==null) {
 			return ServerResponse.createByErrorMessage("发送邮件失败，收件人不能为空");
 		}
 		List<String> toList = new ArrayList<>();
@@ -184,6 +181,10 @@ public class SendEmailServiceImpl implements SendEmailService {
 				case "proName":
 					body = body.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
 					subject = subject.replaceAll("\\{proName\\}", dhProcessInstance.getProName());
+					break;
+				case "insTitle":
+					body = body.replaceAll("\\{insTitle\\}", dhProcessInstance.getInsTitle());
+					subject = subject.replaceAll("\\{insTitle\\}", dhProcessInstance.getInsTitle());
 					break;
 				case "proNo":
 					body = body.replaceAll("\\{proNo\\}", "proNo");
