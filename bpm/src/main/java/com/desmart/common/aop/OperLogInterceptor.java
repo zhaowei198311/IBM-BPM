@@ -62,6 +62,17 @@ public class OperLogInterceptor {
 		String serviceMthodDescription = getServiceMthodDescription(pjd);
 		String host = InetAddress.getLocalHost().getHostAddress().toString();//获取ip地址
 	    //String host = request.getRemoteHost().get; //ip
+		String userId = null;//此处解决登录/登出session中信息冲突问题
+		String userName = null;
+		//访问登录接口是，session中没有任何内容，此处会报空指针
+		try {  
+			userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
+			userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
+		} catch (Exception e1) {
+			//空指针处理
+			userId = null;   
+			userName = null;
+		}
 		Object proceed = null;
 		try {
 			proceed = pjd.proceed(); //必须放在获取用户id之前
@@ -69,7 +80,7 @@ public class OperLogInterceptor {
 			e.printStackTrace();
 			operLog.setMethodDescription(e.toString());  //e.toString()和e..getMessage()区别
 		}
-		//获取相应内容
+		//获取响应内容
 		try {
 			ServerResponse serverResponse = (ServerResponse)proceed; //判断是否为ServerResponse对象
 			operLog.setResponseParam("返回信息:" + serverResponse.getMsg() +";"+ "返回状态:" + serverResponse.getStatus()+";" + "返回数据:" + serverResponse.getData());
@@ -80,14 +91,10 @@ public class OperLogInterceptor {
 		}
 		
 		//获取当前用户id及当前用户姓名
-	    String
-	    
-	    
-	    userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
-	    String userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
-	   /* SysUser sysUser = new SysUser();
-	    sysUser.setUserId(userId);
-	    SysUser user = sysUserService.select(sysUser);*/
+		if(userId == null || userName == null) {
+			userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
+			userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
+		}
 		StringBuffer requestURL = request.getRequestURL();
 		String path = new String(requestURL);
 		
