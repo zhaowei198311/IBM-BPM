@@ -88,6 +88,10 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         // 加载超时通知人信息
         loadOuttimeNotifyInfo(dhActivityConf);
         
+        //加载通知指定人信息
+        loadInteriorNotifyOfActivity(dhActivityConf);
+        loadExteriorNotifyOfActivity(dhActivityConf);
+        
         Map<String, Object> result = new HashMap<>();
         result.put("conf", dhActivityConf);
         
@@ -224,6 +228,25 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
             throw new PlatformException(serverResponse.getMsg());
         }
         
+        //记录通知指定人开始
+        String activityId = dhActivityConf.getActivityId();
+        // 删除之前的通知指定人的记录
+        DhActivityAssign selective = new DhActivityAssign();
+        selective.setActivityId(activityId);
+        selective.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+        dhActivityAssignMapper.deleteBySelective(selective);
+        //记录内部通知内容
+        serverResponse = updateInteriorNotifyInfo(dhActivityConf);
+        if (!serverResponse.isSuccess()) {
+            throw new PlatformException(serverResponse.getMsg());
+        }
+        //记录外部通知内容
+        serverResponse = updateExteriorNotifyInfo(dhActivityConf);
+        if (!serverResponse.isSuccess()) {
+            throw new PlatformException(serverResponse.getMsg());
+        }
+        //记录指定通知人结束
+        
         String updator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
         dhActivityConf.setUpdator(updator);
         dhActivityConfMapper.updateByPrimaryKey(dhActivityConf);
@@ -231,7 +254,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         return ServerResponse.createBySuccess();
     }
 
-    @Override
+	@Override
     public int removeByActcUidList(List<String> actcUidList) {
         if (CollectionUtils.isEmpty(actcUidList)) {
             return 0;
@@ -673,11 +696,112 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
 			}
 		}
         if (assignList.size() > 0) {
-            dhActivityAssignMapper.insertBatch(assignList);
+        	try {
+        		dhActivityAssignMapper.insertBatch(assignList);
+			} catch (Exception e) {
+				return ServerResponse.createByErrorMessage(e.getMessage());
+			}
         }
         return ServerResponse.createBySuccess();
         
     }
+    /**
+     * 更新内部通知人信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse updateInteriorNotifyInfo(DhActivityConf dhActivityConf) {
+    	String activityId = dhActivityConf.getActivityId();
+    	List<DhActivityAssign> assignList = Lists.newArrayList();
+    	DhActivityConfAssignType eumType = 
+    			DhActivityConfAssignType.codeOf(dhActivityConf.getActcInteriorNotifyType());
+    	if(eumType!=null) {
+    		switch (eumType) {
+			case USERS:
+				String interiorNotifyUser = dhActivityConf.getInteriorNotifyUser();
+				if (StringUtils.isNotBlank(interiorNotifyUser)) {
+					List<String> userIdList = Arrays.asList(interiorNotifyUser.split(";"));
+					List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(userIdList);
+					if (userIdList.size() != userList.size()) {
+						return ServerResponse.createByErrorMessage("内部通知用户不存在");
+					}
+					for (SysUser user : userList) {
+						DhActivityAssign assign = new DhActivityAssign();
+						assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+						assign.setActivityId(activityId);
+						assign.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+						assign.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
+						assign.setActaAssignId(user.getUserUid());
+						assignList.add(assign);
+					}
+				}
+				break;
+			case ROLE:
+		            String interiorNotifyRole = dhActivityConf.getInteriorNotifyRole();
+		            if (StringUtils.isBlank(interiorNotifyRole)) {
+		                return ServerResponse.createByErrorMessage("缺少通知人信息");
+		            }
+		            List<String> roleIdList = Arrays.asList(interiorNotifyRole.split(";"));
+		            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(roleIdList);
+		            if (roleIdList.size() != roleList.size()) {
+		                return ServerResponse.createByErrorMessage("通知人信息错误");
+		            }
+		            for (SysRole role : roleList) {
+		                DhActivityAssign assign = new DhActivityAssign();
+		                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+		                assign.setActivityId(activityId);
+		                assign.setActaAssignType(DhActivityAssignAssignType.ROLE.getCode());
+		                assign.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+		                assign.setActaAssignId(role.getRoleUid());
+		                assignList.add(assign);
+		            }
+				break;
+			default:
+				break;
+			}
+    		if (assignList.size() > 0) {
+            	try {
+            		dhActivityAssignMapper.insertBatch(assignList);
+    			} catch (Exception e) {
+    				return ServerResponse.createByErrorMessage(e.getMessage());
+    			}
+            }
+    	}
+    	return ServerResponse.createBySuccess();
+    }
+    
+    /**
+     * 更新外部通知人信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse updateExteriorNotifyInfo(DhActivityConf dhActivityConf) {
+    	String activityId = dhActivityConf.getActivityId();
+    	List<DhActivityAssign> assignList = Lists.newArrayList();
+    	dhActivityConf.setActcExteriorNotifyType(DhActivityConfAssignType.BY_EMAIL.getCode());
+    	if(dhActivityConf.getExteriorNotifyMailList()!=null&&dhActivityConf.getExteriorNotifyMailList().size()>0) {
+    		List<String> emailList = dhActivityConf.getExteriorNotifyMailList();
+    		for (String emailAddress : emailList) {
+				DhActivityAssign assign = new DhActivityAssign();
+    			assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+	            assign.setActivityId(activityId);
+	            assign.setActaAssignType(DhActivityAssignAssignType.EMAIL.getCode());
+	            assign.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+	            assign.setActaAssignId(emailAddress);
+	            assignList.add(assign);
+			}
+    	}
+    		
+    		if (assignList.size() > 0) {
+            	try {
+            		dhActivityAssignMapper.insertBatch(assignList);
+    			} catch (Exception e) {
+    				return ServerResponse.createByErrorMessage(e.getMessage());
+    			}
+            }
+    	return ServerResponse.createBySuccess();
+	}
+
     
     /**
      * 加载驳回环节的信息
@@ -739,6 +863,86 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         dhActivityConf.setOuttimeTeamView(outtimeTeamView);
         
         return ServerResponse.createBySuccess();
+    }
+    /**
+     * 加载内部通知信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse loadInteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
+        String actcAssignType = dhActivityConf.getActcInteriorNotifyType();
+        DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+        String activityId = dhActivityConf.getActivityId();
+        if (assignTypeEnum == null) {
+            return ServerResponse.createByErrorMessage("通知人类型不符合要求");
+        }
+        DhActivityAssign selective = new DhActivityAssign();
+        selective.setActivityId(activityId);
+        selective.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+        List<DhActivityAssign> assignList = new ArrayList<>();
+        		
+        List<String> idList = null;
+        String str = "";
+        String strView = "";
+        switch (assignTypeEnum) {
+        case ROLE:
+        	selective.setActaAssignType(DhActivityAssignAssignType.ROLE.getCode());
+        	assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+            if (assignList.size() == 0) {
+                return ServerResponse.createByErrorMessage("缺少通知人信息");
+            }
+            idList = getIdListFromDhActivityAssignList(assignList);
+            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(idList); 
+            for (SysRole role : roleList) {
+                str += role.getRoleUid() + ";";
+                strView += role.getRoleName() + ";";
+            }
+            dhActivityConf.setInteriorNotifyRole(str);
+            dhActivityConf.setInteriorNotifyRoleView(strView);
+            break;
+        case USERS:
+        	selective.setActaAssignType(DhActivityAssignAssignType.USER.getCode());
+        	assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+            if (assignList.size() == 0) {
+                return ServerResponse.createByErrorMessage("缺少通知人信息");
+            }
+            idList = getIdListFromDhActivityAssignList(assignList);
+            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList); 
+            for (SysUser sysUser : userList) {
+                str += sysUser.getUserUid() + ";";
+                strView += sysUser.getUserName() + ";";
+            }
+            dhActivityConf.setInteriorNotifyUser(str);
+            dhActivityConf.setInteriorNotifyUserView(strView);
+            break;
+        default:
+            break; 
+        }
+        return ServerResponse.createBySuccess();
+    }
+    /**
+     * 加载外部通知信息
+     * @param dhActivityConf
+     * @return
+     */
+    private ServerResponse loadExteriorNotifyOfActivity(DhActivityConf dhActivityConf) {
+    	String actcAssignType = dhActivityConf.getActcAssignType();
+        DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+        String activityId = dhActivityConf.getActivityId();
+        if (assignTypeEnum == null) {
+            return ServerResponse.createByErrorMessage("通知人类型不符合要求");
+        }
+    	 DhActivityAssign selective = new DhActivityAssign();
+         selective.setActivityId(activityId);
+         selective.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+         selective.setActaAssignType(DhActivityAssignAssignType.EMAIL.getCode());
+         List<DhActivityAssign> assignList =  dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+         if (assignList.size() == 0) {
+             return ServerResponse.createByErrorMessage("缺少通知人信息");
+         }
+         List<String> idList = getIdListFromDhActivityAssignList(assignList);
+         dhActivityConf.setExteriorNotifyMailList(idList);
+         return ServerResponse.createBySuccess();
     }
 }
 

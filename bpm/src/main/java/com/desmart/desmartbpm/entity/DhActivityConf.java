@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class DhActivityConf {
     public static final String TIME_UNIT_HOUR = "hour";
@@ -112,6 +113,11 @@ public class DhActivityConf {
 
     private String actcDelayField;  // 指定延时提交任务的时间点的表单字段
     
+    private String actcInteriorNotifyType;
+    private String actcInteriorNotifyTemplate;
+    private String actcExteriorNotifyType;
+    private String actcExteriorNotifyTemplate;
+    
     // 非表中字段
     private String actcOuttimeTriggerTitle; // 超时触发器名称
     private String handleUser;  // 默认处理人
@@ -140,8 +146,14 @@ public class DhActivityConf {
     private String rejectActivitiesView;
     private String actcMailNotifyTemplateView;
     private String actcOuttimeTemplateView;//超时通知模板名
-
-
+    private String actcInteriorNotifyTemplateView;//内部通知模板名
+    private String actcExteriorNotifyTemplateView;//外部通知模板名
+    private String interiorNotifyUser;//内部通知人员
+    private String interiorNotifyRole;//内部通知角色
+    private String interiorNotifyUserView;
+    private String interiorNotifyRoleView;
+    private String exteriorNotifyMail;
+    private List<String> exteriorNotifyMailList;//外部通知人邮箱集合
     public DhActivityConf() {
 
     }
@@ -794,9 +806,102 @@ public class DhActivityConf {
 	public void setActcOuttimeTemplateView(String actcOuttimeTemplateView) {
 		this.actcOuttimeTemplateView = actcOuttimeTemplateView;
 	}
-	
-	
 
+	public String getActcInteriorNotifyType() {
+		return actcInteriorNotifyType;
+	}
+
+	public void setActcInteriorNotifyType(String actcInteriorNotifyType) {
+		this.actcInteriorNotifyType = actcInteriorNotifyType;
+	}
+
+	public String getActcInteriorNotifyTemplate() {
+		return actcInteriorNotifyTemplate;
+	}
+
+	public void setActcInteriorNotifyTemplate(String actcInteriorNotifyTemplate) {
+		this.actcInteriorNotifyTemplate = actcInteriorNotifyTemplate;
+	}
+
+	public String getActcExteriorNotifyType() {
+		return actcExteriorNotifyType;
+	}
+
+	public void setActcExteriorNotifyType(String actcExteriorNotifyType) {
+		this.actcExteriorNotifyType = actcExteriorNotifyType;
+	}
+
+	public String getActcExteriorNotifyTemplate() {
+		return actcExteriorNotifyTemplate;
+	}
+
+	public void setActcExteriorNotifyTemplate(String actcExteriorNotifyTemplate) {
+		this.actcExteriorNotifyTemplate = actcExteriorNotifyTemplate;
+	}
+
+	public String getActcInteriorNotifyTemplateView() {
+		return actcInteriorNotifyTemplateView;
+	}
+
+	public void setActcInteriorNotifyTemplateView(String actcInteriorNotifyTemplateView) {
+		this.actcInteriorNotifyTemplateView = actcInteriorNotifyTemplateView;
+	}
+
+	public String getActcExteriorNotifyTemplateView() {
+		return actcExteriorNotifyTemplateView;
+	}
+
+	public void setActcExteriorNotifyTemplateView(String actcExteriorNotifyTemplateView) {
+		this.actcExteriorNotifyTemplateView = actcExteriorNotifyTemplateView;
+	}
+
+	public String getInteriorNotifyUser() {
+		return interiorNotifyUser;
+	}
+
+	public void setInteriorNotifyUser(String interiorNotifyUser) {
+		this.interiorNotifyUser = interiorNotifyUser;
+	}
+
+	public String getInteriorNotifyRole() {
+		return interiorNotifyRole;
+	}
+
+	public void setInteriorNotifyRole(String interiorNotifyRole) {
+		this.interiorNotifyRole = interiorNotifyRole;
+	}
+
+	public String getInteriorNotifyUserView() {
+		return interiorNotifyUserView;
+	}
+
+	public void setInteriorNotifyUserView(String interiorNotifyUserView) {
+		this.interiorNotifyUserView = interiorNotifyUserView;
+	}
+
+	public String getInteriorNotifyRoleView() {
+		return interiorNotifyRoleView;
+	}
+
+	public void setInteriorNotifyRoleView(String interiorNotifyRoleView) {
+		this.interiorNotifyRoleView = interiorNotifyRoleView;
+	}
+
+	public String getExteriorNotifyMail() {
+		return exteriorNotifyMail;
+	}
+
+	public void setExteriorNotifyMail(String exteriorNotifyMail) {
+		this.exteriorNotifyMail = exteriorNotifyMail;
+	}
+
+	public List<String> getExteriorNotifyMailList() {
+		return exteriorNotifyMailList;
+	}
+
+	public void setExteriorNotifyMailList(List<String> exteriorNotifyMailList) {
+		this.exteriorNotifyMailList = exteriorNotifyMailList;
+	}
 
 	
 }

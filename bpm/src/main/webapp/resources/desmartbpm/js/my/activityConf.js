@@ -157,6 +157,19 @@ layui.use('form', function() {
 			$("#outtimeUser_div").hide();
 		}
 	});
+	
+	form.on('select(interiorNotifyType)',function(data){
+		if(data.value == 'role'){
+			$("#interiorNotifyRole_div").show();
+			$("#interiorNotifyUser_div").hide();
+		}else if(data.value == 'users'){
+			$("#interiorNotifyRole_div").hide();
+			$("#interiorNotifyUser_div").show();
+		}else{
+			$("#interiorNotifyRole_div").hide();
+			$("#interiorNotifyUser_div").hide();
+		}
+	})
 
 	form.on('select(rejectType)', function(data) {
 		if (data.value == "toActivities") {
@@ -505,6 +518,45 @@ $(function() {
 					actcDelayField: {
                         actcDelayFieldRule: true,
 						maxlength: 30
+					},
+					interiorNotifyUser : {
+						required : function(element) {
+						if($('select[name="actcInteriorNotifyType"]').val()=="users"){
+							return true;
+						}else{
+							return false;
+						}
+						}
+					},
+					interiorNotifyRole : {
+						required : function(element) {
+						if($('select[name="actcInteriorNotifyType"]').val()=="role"){
+							return true;
+						}else{
+							return false;
+						}
+						}
+					},
+					actcInteriorNotifyTemplate : {
+						maxlength : 100,
+						required : function(element) {
+							if ($('select[name="actcInteriorNotifyType"]').val()!="") {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					},
+					actcExteriorNotifyTemplate : {
+						maxlength : 100,
+						required : function(element) {
+							if ($('#exteriorNotifyMail').manifest('values')!=null
+									&&$('#exteriorNotifyMail').manifest('values').length>0) {
+								return true;
+							} else {
+								return false;
+							}
+						}
 					}
 				},
 
@@ -1330,6 +1382,22 @@ $(function() {
 	// 选择超时通知模板
 	$("#chooseOuttimeTemplate_i").click(function() {
 		common.chooseNotifyTemplate('actcOuttimeTemplate', '');
+	});
+	//选择内部通知模板
+	$("#chooseInteriorNotifyTemplate_i").click(function(){
+		common.chooseNotifyTemplate('actcInteriorNotifyTemplate', 'MAIL_NOTIFY_TEMPLATE');
+	})
+	//选择外部通知模板
+	$("#chooseExteriorNotifyTemplate_i").click(function(){
+		common.chooseNotifyTemplate('actcExteriorNotifyTemplate', 'MAIL_NOTIFY_TEMPLATE');
+	})
+	// 选择内部通知人（人员）
+	$("#choose_interior_notify_user").click(function() {
+		common.chooseUser('interiorNotifyUser', 'false');
+	});
+	// 选择内部通知（角色）
+	$("#choose_interior_notify_role").click(function() {
+		common.chooseRole('interiorNotifyRole', 'false');
 	});
 	// 新增流程中点击选择触发器
 	$("#choose_stepTri_btn").click(function() {
@@ -2964,6 +3032,37 @@ function initConf(map) {
 	//绑定通知模板信息
 	$('input[name="actcMailNotifyTemplate"]').val(conf.actcMailNotifyTemplate);
 	$('input[name="actcMailNotifyTemplate_view"]').val(conf.actcMailNotifyTemplateView);
+	
+	//绑定通知指定人信息
+	$('select[name="actcInteriorNotifyType"]').val(conf.actcInteriorNotifyType);
+	$('input[name="actcInteriorNotifyTemplate"]').val(conf.actcInteriorNotifyTemplate);
+	$('input[name="actcInteriorNotifyTemplate_view"]').val(conf.actcInteriorNotifyTemplateView);
+	$('input[name="actcExteriorNotifyTemplate"]').val(conf.actcExteriorNotifyTemplate);
+	$('input[name="actcExteriorNotifyTemplate_view"]').val(conf.actcExteriorNotifyTemplateView);
+	$('#exteriorNotifyMail').manifest('remove');
+	//$("#exteriorNotifyMail").val("");
+	if (conf.actcInteriorNotifyType=='') {
+		$("#interiorNotifyUser_div").hide();
+		$("#interiorNotifyRole_div").hide();
+	}else{
+		if(conf.actcInteriorNotifyType=="users"){
+			$("#interiorNotifyUser").val(conf.interiorNotifyUser);
+			$("#interiorNotifyUser_view").val(conf.interiorNotifyUserView);
+			$("#interiorNotifyUser_div").show();
+			$("#interiorNotifyRole_div").hide();
+		}else if(conf.actcInteriorNotifyType=="role"){
+			$("#interiorNotifyRole").val(conf.interiorNotifyRole);
+			$("#interiorNotifyRole_view").val(conf.interiorNotifyRoleView);
+			$("#interiorNotifyUser_div").hide();
+			$("#interiorNotifyRole_div").show();
+		}
+	}
+	if(conf.exteriorNotifyMailList!=null){
+		for (var i = 0; i < conf.exteriorNotifyMailList.length; i++) {
+			 $('#exteriorNotifyMail').manifest('add', conf.exteriorNotifyMailList[i],null,true,false);
+		}
+	}
+	
 
 	layui.use('layedit', function() {
 		var layedit = layui.layedit;
@@ -3073,7 +3172,7 @@ function showHandleDiv(assignType) {
 		$("#handleTeam_div").hide();
 		$("#handleUser_div").hide();
 		$("#handleField_div").hide();
-	} else if (assignType == "teamAndCompany" || assignType == "teamAndCompany"
+	} else if (assignType == "teamAndCompany" || assignType == "teamAndDepartment"
 			|| assignType == "team") {
 		$("#handleRole_div").hide();
 		$("#handleTeam_div").show();
@@ -3163,11 +3262,21 @@ function save(actcUid) {
 	if ($("#humanActivity_li").hasClass("layui-this")) {
 		// 提交环节配置变更
 		layui.layedit.sync(editIndex);
+		//设置邮箱地址的值
+		/*var emailValues = $('#exteriorNotifyMail').manifest('values');
+		var str = "";
+		for (var i = 0; i < emailValues.length; i++) {
+			str += emailValues[i]+";";
+		}
+		//$("#exteriorNotifyMail").val(str);
+		*/
 		if (!$('#config_form').valid() || !$('#sla_form').valid()) {
 			layer.alert("验证失败，请检查后提交");
 			return;
 		}
+		
 		var info = getFormData();
+
 		$.ajax({
 			url : common.getPath() + "/activityConf/update",
 			type : "post",
@@ -3197,6 +3306,7 @@ function save(actcUid) {
 				}
 			},
 			error : function() {
+				$("#exteriorNotifyMail").val("");
 				layer.alert('操作失败');
 			}
 		});
