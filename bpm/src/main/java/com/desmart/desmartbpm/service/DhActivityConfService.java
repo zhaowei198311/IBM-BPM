@@ -1,9 +1,9 @@
 package com.desmart.desmartbpm.service;
 
+import java.util.List;
+
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-
-import java.util.List;
 
 public interface DhActivityConfService {
     
@@ -34,4 +34,16 @@ public interface DhActivityConfService {
      * @return
      */
     int insertBatch(List<DhActivityConf> dhActivityConfList);
+    /**
+     * 加载内部通知信息
+     * @param dhActivityConf
+     * @return
+     */
+    public ServerResponse loadInteriorNotifyOfActivity(DhActivityConf dhActivityConf);
+    /**
+     * 加载外部通知信息
+     * @param dhActivityConf
+     * @return
+     */
+    public ServerResponse loadExteriorNotifyOfActivity(DhActivityConf dhActivityConf);
 }

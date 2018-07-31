@@ -16,7 +16,15 @@
     	<result column="USER_NAME" property="userName" /> 
      </collection> 
   </resultMap>
-  
+  <resultMap id = "SysRoleUserResultMap"  type="com.desmart.desmartsystem.entity.SysRoleUser" >
+   <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
+    <result column="MAP_TYPE" property="mapType" jdbcType="DECIMAL" />
+    <result column="USER_UID" property="userUid" jdbcType="VARCHAR" />
+    <result column="DEPART_UID" property="departUid" jdbcType="VARCHAR" />
+    <result column="ROLE_UID" property="roleUid" jdbcType="VARCHAR" />
+    <result column="IS_MANAGER" property="isManager" jdbcType="DECIMAL" />
+    <result column="IS_SHOW" property="isShow" jdbcType="DECIMAL" />
+  </resultMap>
   
   <resultMap id="SelectAllResultMap" type="com.desmart.desmartsystem.entity.SysRoleUser" >
     <id column="MAP_UID" property="mapUid" jdbcType="VARCHAR" />
@@ -54,6 +62,11 @@
     	select <include refid="RoleUser_Column_List" /> from SYS_ROLE_USER r 
     	left join Sys_USER u on u.USER_UID=r.USER_UID 
     	where ROLE_UID = #{mapUid,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectByRoleUid" resultMap="SysRoleUserResultMap" parameterType="java.lang.String" >
+    	select <include refid="Base_Column_List" /> from SYS_ROLE_USER
+    	where ROLE_UID = #{roleUid,jdbcType=VARCHAR}
   </select>
   
    <select id="selectAll" resultMap="SelectAllResultMap" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >

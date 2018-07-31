@@ -28,4 +28,11 @@ public interface SysRoleUserMapper {
     
     //查询角色下的用户用;号分割
     List<SysRoleUser> selectByRoleUser(SysRoleUser entity);
+    
+    /**
+     * 根据角色uid查询所有映射集合
+     * @param roleUid
+     * @return
+     */
+    List<SysRoleUser> selectByRoleUid(String roleUid);
 }
