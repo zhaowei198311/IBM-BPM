@@ -1,6 +1,7 @@
 package com.desmart.common.excelForm;
 
-import com.desmart.common.annotation.ExcelField;
+import com.desmart.common.annotation.excel.ExcelField;
+
 /**
  * 数据字典Excel导入类
  * @author lys
