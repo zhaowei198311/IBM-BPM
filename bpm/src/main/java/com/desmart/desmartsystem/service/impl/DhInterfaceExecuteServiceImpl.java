@@ -223,24 +223,9 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 			json.setSuccess(true);
 			json.setMsg(JSON.toJSONString(jsonArray.toArray()));
 			json.setObj(jsonArray.toArray());
-			
-			
-//			String result = function.getTableParameterList().getTable("RETURN").getString("TYPE");// 调用接口返回状态
-//			String message = function.getTableParameterList().getTable("RETURN").getString("MESSAGE");// 调用接口返回信息
-//
-//			if (result.equals("E")) {
-//				System.out.println("调用返回状态--->" + result + ";调用返回信息--->" + message);
-//				json.setSuccess(true);
-//				json.setMsg(message);
-//			} else {
-//				
-//			}
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
 			String xml = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
-			//json.setSuccess(true);
-			//json.setMsg("查询成功");
-
 			// 返回参数格式拼接
 			List<String> responseConfig = new ArrayList<String>();
 			TestXML.testGetRoot(responseXml, responseConfig);
