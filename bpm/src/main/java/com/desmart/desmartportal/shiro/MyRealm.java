@@ -76,28 +76,22 @@ public class MyRealm extends AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		
-		log.info("***********shiro login  start**************");
 		UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken)token;
         String username = usernamePasswordToken.getUsername();
         String password = new String((char[])token.getCredentials());
 
-        System.out.println("username: " + username + ", password: " + password);
+        log.info("用户登录：username: " + username + ", password: " + password);
         //login
         //List<SysUser> userList = sysUserService.login(username, DataTool.encodeMD5(password));
         List<SysUser> userList = sysUserService.login(username, password);
         if (userList.size() == 0) { 
         	 throw new UnknownAccountException();//没找到帐号  
         }  
-        /*if (!"liubei".equals(username) && !"caocao".equals(username)) {
-            throw new AuthenticationException("用户不存在");
-        }*/
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, password.toCharArray(), this.getName());
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute("_currUserNum", username);
-        session.setAttribute("_password", password);
+        session.setAttribute("userName", userList.get(0).getUserName());
         session.setAttribute(Const.CURRENT_USER, userList.get(0).getUserId());
         session.setTimeout(1800000);
-        log.info("***********shiro login  end**************");
         return authenticationInfo;
 	}
 
