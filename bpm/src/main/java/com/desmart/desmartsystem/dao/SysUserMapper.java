@@ -23,4 +23,5 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	SysUser queryByPrimaryKey(String userUid);
 	public List<SysUser> login(@Param(value="username")String username, @Param(value="password")String password);
 	public List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
+	public SysUser selectById(@Param(value="userId")String userId);
 }
