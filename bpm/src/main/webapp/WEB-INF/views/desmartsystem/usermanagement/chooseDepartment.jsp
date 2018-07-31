@@ -103,22 +103,24 @@
 			treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 			elementId='${elementId}';
 			var departNo = window.parent.document.getElementById(elementId).value;
-			$.ajax({
-				url:"sysDepartment/queryDepartByNoAndName",
-				method:"post",
-				async:false,
-				data:{
-					departNo:departNo
-				},
-				success:function(result){
-					if(result.status==0){
-						var departObj = result.data;
-						selectedNode = departObj;
-						treeObj.expandAll(false);
-						asyncExpandNodes(departObj);
+			if(departNo!=null && departNo!=""){
+				$.ajax({
+					url:"sysDepartment/queryDepartByNoAndName",
+					method:"post",
+					async:false,
+					data:{
+						departNo:departNo
+					},
+					success:function(result){
+						if(result.status==0){
+							var departObj = result.data;
+							selectedNode = departObj;
+							treeObj.expandAll(false);
+							asyncExpandNodes(departObj);
+						}
 					}
-				}
-			});
+				});
+			}
 			
 			//获得组织树种被选中的节点对象
 			$("#addDepart").click(function(){
