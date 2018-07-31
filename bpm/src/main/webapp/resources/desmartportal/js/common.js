@@ -228,9 +228,7 @@ var common = {
 			var checkJson = "";
 			switch (type) {
 				case "text": {
-					var inputTitle = $(inputArr[i]).attr("title");
-					if (typeof(inputTitle) == "undefined"
-						||$(inputArr[i]).prop("class") == "layui-input layui-unselect" 
+					if ($(inputArr[i]).prop("class") == "layui-input layui-unselect" 
 						|| $(inputArr[i]).prop("class") == "layui-input layui-unselect layui-disabled") {
 						var name = $(inputArr[i]).parent()
 							.parent().prev().prop("name");

@@ -181,7 +181,6 @@
 			
 			getUserTask();
 			// 定时 去查询我的 代办任务
-			window.setTimeout(getUserTask, 100);
 			window.setInterval(getUserTask, 30000);
 
 			$(".layui-nav-item a").not("#shopLife").mouseover(
