@@ -129,7 +129,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         newLswTaskList.add(lswTask);
         Map<Integer, String> groupInfo = getGroupInfo();
-        startFirstSynchronize(newLswTaskList, groupInfo);
+        synchronizeSingleTask(newLswTaskList, groupInfo);
         LOG.info("==================  拉取指定任务结束 ===============");
     }
 
@@ -212,6 +212,50 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
         LOG.info("重试同步任务产生新任务：" + dhTaskList.size() + "个");
         LOG.info("重试同步任务产生代理记录：" + agentRecordList.size() + "个");
+    }
+
+    @Transactional
+    public void synchronizeSingleTask(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+        List<DhTaskInstance> dhTaskList = new ArrayList<>();
+        List<DhAgentRecord> agentRecordList = new ArrayList<>();
+        SysEmailUtilBean sysEmailUtilBean = null;
+        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+        for (LswTask lswTask : newLswTaskList) {
+            Map<String, Object> data = null;
+            try {
+                // 分析一个引擎任务
+                data =  analyseLswTask(lswTask, groupInfo, globalConfig);
+            } catch (Exception e) {
+                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
+                // 将任务记录到重试表中
+                saveTaskToRetryTable(lswTask);
+                continue;
+            }
+            if (data != null && data.get("dhTaskList") != null) {
+                dhTaskList.addAll((List<DhTaskInstance>) data.get("dhTaskList"));
+                agentRecordList.addAll((List<DhAgentRecord>)data.get("agentRecordList"));
+            }
+            if(data!=null&&data.get("sysEmailUtilBean")!=null) {
+                sysEmailUtilBean = (SysEmailUtilBean) data.get("sysEmailUtilBean");
+            }
+        }
+
+        String bpmformsHost = bpmGlobalConfigService.getFirstActConfig().getBpmformsHost();
+        for(DhTaskInstance task : dhTaskList) {
+            dhTaskInstanceMapper.insertTask(task);
+            //发送邮件通知
+            if(sysEmailUtilBean!=null) {
+                sysEmailUtilBean.setDhTaskInstance(task);
+                sysEmailUtilBean.setBpmformsHost(bpmformsHost);
+                sendEmailService.dhSendEmail(sysEmailUtilBean);
+            }
+        }
+        if (agentRecordList.size() > 0) {
+            dhAgentRecordMapper.insertBatch(agentRecordList);
+        }
+        // 记录最后一个同步的任务
+        LOG.info("同步新任务：" + dhTaskList.size() + "个");
+        LOG.info("产生代理记录：" + agentRecordList.size() + "个");
     }
     
 	/**
