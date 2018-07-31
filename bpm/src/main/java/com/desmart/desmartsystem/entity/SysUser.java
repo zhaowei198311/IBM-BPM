@@ -113,6 +113,9 @@ public class SysUser implements Serializable {
 
 	private String departName;
 	private String employeeType;
+	
+	private String managerName;
+	
 	public String getUserUid() {
 		return userUid;
 	}
@@ -519,4 +522,13 @@ public class SysUser implements Serializable {
 
 		return Objects.hash(userUid);
 	}
+
+	public String getManagerName() {
+		return managerName;
+	}
+
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+	
 }
