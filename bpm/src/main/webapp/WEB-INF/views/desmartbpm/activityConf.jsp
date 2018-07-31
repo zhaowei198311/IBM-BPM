@@ -1276,9 +1276,9 @@
 		</div>
 	</div>
 	<div class="display_container6" id="choose_activity_container">
-		<div class="display_content6" style="height: 500px; width: 700px;">
+		<div class="display_content6" style="height: 500px; width: 730px;">
 			<div class="top">选择退回环节</div>
-			<div class="middle6" style="height: 400px; width: 700px;">
+			<div class="middle6" style="height: 400px; width: 715px;">
 				<div class="left_div"
 					style="float: left; width: 290px; height: 350px; margin: 10px 0 0 10px; padding: 10px; overflow-y: scroll;"
 					class="show_user_div">
