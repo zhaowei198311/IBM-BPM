@@ -124,6 +124,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     private DhStepMapper dhStepMapper;
 
 
+    // 准备数据
     @Transactional
     @Override
     public ServerResponse updateProcessApp(String proAppId, String oldProVerUid, String newProVerUid, Queue<DhProcessDefinitionBo> definitionBoQueue) {
@@ -154,10 +155,9 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
             }
             iterator.remove(); // 拷贝完成释放引用
         }
+        //if (1 == 1) throw new PlatformException("主动抛出");
         return ServerResponse.createBySuccess();
     }
-
-    // 准备数据
     @Override
     public ServerResponse<Queue<DhProcessDefinitionBo>> prepareData(String proAppId, String newProVerUid) {
         List<DhProcessDefinitionBo> exposedDefinitionList = dhProcessDefinitionService.getExposedProcessDefinitionByProAppIdAndSnapshotId(proAppId, newProVerUid);
@@ -377,13 +377,9 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
      * @param copyData
      */
     private void copyProcessPermission(DhDefinitionCopyData copyData){
-        // todo 流程相关
-        DhObjectPermission permissionSelective = new DhObjectPermission();
-        permissionSelective.setProAppId(copyData.getProAppId());
-        permissionSelective.setProUid(copyData.getProUid());
-        permissionSelective.setProVerUid(copyData.getOldProVerUid());
         // 老流程权限信息
-        List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(permissionSelective);
+        List<DhObjectPermission> dhObjectPermissionList = dhObjectPermissionMapper.listProcessDefinitionScopePermission(
+                copyData.getProAppId(), copyData.getProUid(), copyData.getOldProVerUid());
         if (!CollectionUtils.isEmpty(dhObjectPermissionList)) {
             for (DhObjectPermission permission : dhObjectPermissionList) {
                 permission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
@@ -395,44 +391,56 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
 
     private void copyBpmForm(DhDefinitionCopyData updateData) {
         // 找到此流程定义所有的表单
-        List<BpmForm> bpmForms = bpmFormManageService.listAllFormsOfProcessDefinition(updateData.getProUid(), updateData.getOldProVerUid());
-        if (CollectionUtils.isEmpty(bpmForms)) {
+        List<BpmForm> oldForms = bpmFormManageService.listAllFormsOfProcessDefinition(updateData.getProUid(), updateData.getOldProVerUid());
+        if (CollectionUtils.isEmpty(oldForms)) {
             return;
         }
         Map<String, String> oldNewFormUidMap = new HashMap<>();
         Map<String, String> oldNewFieldUidMap = new HashMap<>();
 
-        List<String> oldFormUids = getIdentityListOfObjectList(bpmForms);
+        List<String> oldFormUids = getIdentityListOfObjectList(oldForms);
         String oldUid, newUid;
+        List<BpmForm> newForms = new ArrayList<>();
         // 复制BPM_FORM
-        for (BpmForm bpmForm : bpmForms) {
-            oldUid = bpmForm.getDynUid();
+        for (BpmForm oldForm : oldForms) {
+            BpmForm newForm = new BpmForm();
+            BeanUtils.copyProperties(oldForm, newForm);
+            oldUid = oldForm.getDynUid();
             newUid = EntityIdPrefix.BPM_FORM + UUID.randomUUID().toString();
-            bpmForm.setDynUid(newUid); // 设置新主键
+            newForm.setDynUid(newUid); // 设置新主键
+            newForm.setCreator(updateData.getCurrUserUid());
+            newForm.setProVersion(updateData.getNewProVerUid());
             oldNewFormUidMap.put(oldUid, newUid); // 记录新老主键映射关系
-            bpmForm.setCreator(updateData.getCurrUserUid());
-            bpmForm.setProVersion(updateData.getNewProVerUid());
+            newForms.add(newForm);
         }
-        bpmFormManageMapper.insertFormBatch(bpmForms);
+        bpmFormManageMapper.insertFormBatch(newForms);
         // 复制BPM_FORM_FIELD
-        List<BpmFormField> formFields = bpmFormFieldMapper.listByFormUidList(oldFormUids);
-        if (!CollectionUtils.isEmpty(formFields)) {
-            for (BpmFormField formField : formFields) {
-                oldUid = formField.getFldUid();
+        List<BpmFormField> oldFormFields = bpmFormFieldMapper.listByFormUidList(oldFormUids);
+        List<BpmFormField> newFormFields = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(oldFormFields)) {
+            for (BpmFormField oldFormField : oldFormFields) {
+                BpmFormField newFormField = new BpmFormField();
+                BeanUtils.copyProperties(oldFormField, newFormField);
+                oldUid = oldFormField.getFldUid();
                 newUid = EntityIdPrefix.BPM_FORM_FIELD + UUID.randomUUID().toString();
-                formField.setFldUid(newUid); // 设置新主键
+                newFormField.setFldUid(newUid); // 设置新主键
+                newFormField.setFormUid(oldNewFormUidMap.get(oldUid)); // 设置表单号
                 oldNewFieldUidMap.put(oldUid, newUid); // 记录映射关系
-                formField.setFormUid(oldNewFormUidMap.get(oldUid)); // 设置表单号
+                newFormFields.add(newFormField);
             }
-            bpmFormFieldMapper.insertBatch(formFields);
+            bpmFormFieldMapper.insertBatch(newFormFields);
         }
         // 为新的表单关联子表单
-        List<BpmFormRelePublicForm> relations = bpmFormRelePublicFormMapper.listByFormUidList(oldFormUids);
-        if (!CollectionUtils.isEmpty(relations)) {
-            for (BpmFormRelePublicForm relation : relations) {
-                relation.setFormUid(oldNewFormUidMap.get(relation.getFormUid()));
+        List<BpmFormRelePublicForm> oldRelations = bpmFormRelePublicFormMapper.listByFormUidList(oldFormUids);
+        List<BpmFormRelePublicForm> newRelations = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(oldRelations)) {
+            for (BpmFormRelePublicForm oldRelation : oldRelations) {
+                BpmFormRelePublicForm newRelation = new BpmFormRelePublicForm();
+                newRelation.setFormUid(oldNewFormUidMap.get(oldRelation.getFormUid()));
+                newRelation.setPublicFormUid(oldRelation.getPublicFormUid());
+                newRelations.add(newRelation);
             }
-            bpmFormRelePublicFormMapper.insertBatch(relations); // 将表单号换为新的表单号
+            bpmFormRelePublicFormMapper.insertBatch(newRelations);
         }
         updateData.setOldNewFormUidMap(oldNewFormUidMap);
         updateData.setOldNewFieldUidMap(oldNewFieldUidMap);
@@ -505,17 +513,21 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         // 批量删除要被覆盖的环节配置
         dhActivityConfMapper.deleteByPrimaryKeyList(actcUidBeReplace);
         // 查询出老版的配置
-        List<DhActivityConf> dhActivityConfs = dhActivityConfMapper.listByPrimayKeyList(actcUidSource); 
+        List<DhActivityConf> oldConfs = dhActivityConfMapper.listByPrimayKeyList(actcUidSource);
+        List<DhActivityConf> newConfs = new ArrayList<>();
         String newConfUid, newActivityId, oldActivityId, oldConfUid;
-        for (DhActivityConf activityConf : dhActivityConfs) {
-            oldConfUid = activityConf.getActcUid();
-            oldActivityId = activityConf.getActivityId();
+        for (DhActivityConf oldConf : oldConfs) {
+            DhActivityConf newConf = new DhActivityConf();
+            BeanUtils.copyProperties(oldConf, newConf);
+            oldConfUid = oldConf.getActcUid();
+            oldActivityId = oldConf.getActivityId();
             newConfUid = oldNewConfUidMap.get(oldConfUid);
             newActivityId = copyData.getNewActIdByOldActId(oldActivityId);
-            activityConf.setActcUid(newConfUid); // 将老配置换上新的主键
-            activityConf.setActivityId(newActivityId); // 将老配置关联的环节换为新环节
+            newConf.setActcUid(newConfUid); // 将老配置换上新的主键
+            newConf.setActivityId(newActivityId); // 将老配置关联的环节换为新环节
+            newConfs.add(newConf);
         }
-        dhActivityConfMapper.insertBatch(dhActivityConfs); // 批量插入
+        dhActivityConfMapper.insertBatch(newConfs); // 批量插入
     }
 
     /**
@@ -591,14 +603,18 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         // 更新规则的条件
         // 查询老规则的条件, 修改后批量插入
         List<DatRuleCondition> oldConditions = datRuleConditionMapper.listByRuleIds(oldRuleIds);
+        List<DatRuleCondition> newConditions = new ArrayList<>();
         if (!CollectionUtils.isEmpty(oldConditions)) {
             for (DatRuleCondition oldCondition : oldConditions) {
-                oldCondition.setConditionId(EntityIdPrefix.DAT_RULE_CONDITION + UUID.randomUUID().toString());
-                oldCondition.setRuleId(oldNewRuleIdMap.get(oldCondition.getRuleId()));
-                oldCondition.setCreator(copyData.getCurrUserUid());
-                oldCondition.setRuleVersion(0);
+                DatRuleCondition newCondition = new DatRuleCondition();
+                BeanUtils.copyProperties(oldCondition, newCondition);
+                newCondition.setConditionId(EntityIdPrefix.DAT_RULE_CONDITION + UUID.randomUUID().toString());
+                newCondition.setRuleId(oldNewRuleIdMap.get(oldCondition.getRuleId()));
+                newCondition.setCreator(copyData.getCurrUserUid());
+                newCondition.setRuleVersion(0);
+                newConditions.add(newCondition);
             }
-            datRuleConditionMapper.inserToDatRuleCondition(oldConditions);
+            datRuleConditionMapper.inserToDatRuleCondition(newConditions);
         }
 
     }
@@ -645,12 +661,16 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         }
         // 获得分配信息
         List<DhActivityAssign> oldAssigns = dhActivityAssignMapper.listByActivityIdList(copyData.getOldMatchedUserNodeActIds());
+        List<DhActivityAssign> newAssigns = new ArrayList<>();
         if (!CollectionUtils.isEmpty(oldAssigns)) {
-            for (DhActivityAssign assign : oldAssigns) {
-                assign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
-                assign.setActivityId(oldNewUserNodeActIdMap.get(assign.getActivityId())); // 设置为新环节activity_id
+            for (DhActivityAssign oldAssign : oldAssigns) {
+                DhActivityAssign newAssign = new DhActivityAssign();
+                BeanUtils.copyProperties(oldAssign, newAssign);
+                newAssign.setActaUid(EntityIdPrefix.DH_ACTIVITY_ASSIGN + UUID.randomUUID().toString());
+                newAssign.setActivityId(oldNewUserNodeActIdMap.get(oldAssign.getActivityId())); // 设置为新环节activity_id
+                newAssigns.add(newAssign);
             }
-            dhActivityAssignMapper.insertBatch(oldAssigns);
+            dhActivityAssignMapper.insertBatch(newAssigns);
         }
     }
 
@@ -690,12 +710,21 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
 
         // 查找老的字段权限
         List<DhObjectPermission> oldFieldPermissions = dhObjectPermissionMapper.listByStepUidList(new ArrayList<>(oldNewStepUidMap.keySet()));
+        List<DhObjectPermission> newFieldPermissions = new ArrayList<>();
         if (!CollectionUtils.isEmpty(oldFieldPermissions)) {
             for (DhObjectPermission oldFieldPermission : oldFieldPermissions) {
-                oldFieldPermission.setOpObjUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
-                oldFieldPermission.setStepUid(oldNewStepUidMap.get(oldFieldPermission.getStepUid()));
-
+                DhObjectPermission newFieldPermission = new DhObjectPermission();
+                BeanUtils.copyProperties(oldFieldPermission, newFieldPermission);
+                newFieldPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString()); // 新主键
+                newFieldPermission.setStepUid(oldNewStepUidMap.get(oldFieldPermission.getStepUid())); // 修改步骤id
+                newFieldPermission.setProVerUid(copyData.getNewProVerUid()); // 修改版本
+                // 根据老的字段权限上的字段主键找到新的对应的字段主键
+                String newFieldUid = copyData.getNewFieldUidByOldFieldUid(oldFieldPermission.getOpObjUid());
+                // 如果新版本表单字段里没有对应的，说明该字段是公共表单的字段，维持原样即可
+                newFieldPermission.setOpObjUid(newFieldUid == null ? oldFieldPermission.getOpObjUid() : newFieldUid);
+                newFieldPermissions.add(newFieldPermission);
             }
+            dhObjectPermissionMapper.saveBatch(newFieldPermissions);
         }
 
     }

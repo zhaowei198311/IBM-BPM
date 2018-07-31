@@ -99,7 +99,7 @@ public class DhDefinitionCopyData {
                         String oldActcUid = oldActivityMeta.getDhActivityConf().getActcUid();
                         String newActcUid = bpmActivityMeta.getDhActivityConf().getActcUid();
                         matchedUserNodeActBpdIds.add(oldActivityMeta.getActivityBpdId());
-                        oldMatchedUserNodeActIds.add(oldActcUid);
+                        oldMatchedUserNodeActIds.add(oldActivityMeta.getActivityId());
                         actcUidSource.add(oldActcUid);
                         actcUidBeReplace.add(newActcUid);
                         oldNewConfUidMap.put(oldActcUid, newActcUid);
@@ -366,6 +366,15 @@ public class DhDefinitionCopyData {
      */
     public BpmActivityMeta getNewActivityMetaByActBpdId(String newActivityBpdId) {
         return newSourceActivityActBpdIdMap.get(newActivityBpdId);
+    }
+
+    /**
+     * 根据老的字段id获得对应的新字段id
+     * @param oldFieldUid
+     * @return
+     */
+    public String getNewFieldUidByOldFieldUid(String oldFieldUid) {
+        return oldNewFieldUidMap.get(oldFieldUid);
     }
 
     @Override

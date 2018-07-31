@@ -165,9 +165,15 @@
 		from dh_object_permission
 		where step_uid = #{stepUid} and op_obj_uid = #{fieldUid}
 	</select>
-	
-	<delete id="deleteFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
-		delete from dh_object_permission 
+
+    <select id="listProcessDefinitionScopePermission" parameterType="map"
+            resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+        select <include refid="base_column"/> from dh_object_permission
+        where pro_app_id = #{proAppId} and pro_uid = #{proUid} and pro_ver_uid = #{proVerUid} and op_action = 'START'
+    </select>
+
+    <delete id="deleteFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
+		delete from dh_object_permission
 		where op_obj_uid=#{opObjUid} and step_uid=#{stepUid}
 	</delete>
 	
