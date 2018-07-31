@@ -856,22 +856,6 @@
 				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
 			</if>
 			</if>
-			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
-				<choose>
-					<when test="isAgent=='false'">
-						AND T.TASK_DELEGATE_USER is null
-					</when>
-					<!-- 代理人是本人 -->
-					<when test="isAgent=='1' or isAgent==1">
-						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
-					</when>
-					<!-- 代理人是其他人 -->
-					<when test="isAgent=='2' or isAgent==2">
-						AND T.TASK_DELEGATE_USER is not null 
-						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
-					</when>
-				</choose>
-			</if>
 			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
 				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
 			</if>
@@ -968,4 +952,41 @@
 			AND TASK_DUE_DATE &lt; to_date(to_char(#{taskDueDate},'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss')
 		</where>
 	</select>
+	
+	<update id="updateDelegateUserBatch" parameterType="list">
+		update dh_task_instance
+		set task_delegate_user = ''
+		<where>
+			<foreach collection="list" item="taskUid" separator="or">
+				task_uid = #{taskUid}
+			</foreach>
+		</where>
+	</update>
+	
+	<select id="queryNoFinishedTaskUidListByCondition" parameterType="map" resultType="String">
+		select ti.task_uid
+		from dh_task_instance ti left join dh_agent_reocrd ar on ar.task_uid = ti.task_uid
+        <where>
+        	ar.agent_id = #{agentId} 
+        	and ti.task_status != '32'
+        	and ti.task_type !='transfer'
+        	and ti.ins_uid not in (
+        		select ins_uid from dh_process_instance
+        		<where>
+		        	<foreach collection="metaList" item="meta" separator="or">
+			        	pro_app_id != #{meta.proAppId} and pro_uid != #{meta.proUid}
+			        </foreach>
+		        </where>
+		    )
+        </where> 
+	</select>
+	
+	<select id="queryNotFinishedAgentRecordListByAgentId" parameterType="String" resultType="String">
+    	select ti.task_uid
+    	from dh_task_instance ti left join dh_agent_reocrd ar
+    		on ar.task_uid = ti.task_uid
+    	where ar.agent_id = #{agentId} 
+    		and ti.task_status != '32' 
+    		and ti.task_type !='transfer'
+    </select>
 </mapper>

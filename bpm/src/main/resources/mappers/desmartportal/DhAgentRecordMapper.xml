@@ -12,6 +12,9 @@
   <sql id="Base_Column_List" >
     AGENT_RECORD_ID, AGENT_ID, PRO_NAME, TASK_UID, TASK_TITLE, AGENT_USER
   </sql>
+  <sql id="select_not_finished_Column_List" >
+    ar.AGENT_RECORD_ID, ar.AGENT_ID, ar.PRO_NAME, ar.TASK_UID, ar.TASK_TITLE, ar.AGENT_USER
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -117,4 +120,8 @@
             from dual
         </foreach>
     </insert> 
+    
+    <delete id="deleteByAgentId" parameterType="String">
+    	delete from dh_agent_reocrd where agent_id = #{agentId}
+    </delete>
 </mapper>

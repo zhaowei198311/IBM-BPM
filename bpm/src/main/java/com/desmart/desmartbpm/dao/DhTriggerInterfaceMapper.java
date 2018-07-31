@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
 
 /**  
@@ -136,4 +137,11 @@ public interface DhTriggerInterfaceMapper {
 	 * @return
 	 */
 	int removeByParaUidList(List<String> paraUidList);
+
+	/**
+	 * 根据传入的字段信息集合批量删除接口触发器参数集合
+	 * @param deleteFieldList
+	 * @return
+	 */
+	int deleteTriIntBatchByFieldInfo(List<BpmFormField> deleteFieldList);
 }

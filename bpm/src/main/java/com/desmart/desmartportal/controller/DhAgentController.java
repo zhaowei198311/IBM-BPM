@@ -111,7 +111,7 @@ public class DhAgentController {
     		ServerResponse<List<DhProcessMeta>> serverResponse;
     		//判断代理是否启用
     		if("ENABLED".equals(dhAgent.getAgentStatus())) {
-    			//先判断除目标代理以外的代理中是否有目标代理流程
+    			//判断这些流程在某个时间段是否已经被分配，符合要求返回流程元集合
     	    	serverResponse = dhAgentService.queryConformProMetaNotSelf(dhAgent,agentProMetaUidArr);
     		}else {
     			serverResponse = dhAgentService.listProMeta(agentProMetaUidArr);
@@ -120,6 +120,7 @@ public class DhAgentController {
     	} catch(PlatformException e) {
     		return ServerResponse.createByErrorMessage(e.getMessage());
     	} catch(Exception e) {
+    		e.printStackTrace();
     		return ServerResponse.createByErrorMessage("修改代理失败");
     	}
     }

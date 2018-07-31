@@ -367,6 +367,7 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		
 		if(deleteFieldList.size()!=0) {
 			int deleteFieldRow = bpmFormFieldMapper.deleteFieldBatch(deleteFieldList);
+			dhTriggerInterfaceMapper.deleteTriIntBatchByFieldInfo(deleteFieldList);
 			if(deleteFieldList.size()!=deleteFieldRow) {
 				throw new PlatformException("删除字段信息失败");
 			}

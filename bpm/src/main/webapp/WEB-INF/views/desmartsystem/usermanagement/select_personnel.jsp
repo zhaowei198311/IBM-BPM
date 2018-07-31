@@ -132,7 +132,7 @@
 			console.log(id);
 			for (var i = 0; i < name.length; i++) {
 				if(name[i]!=''){
-					var newName = name.replace(/\(.*?\)/g,'');
+					var newName = name[i].replace(/\(.*?\)/g,'');
 					var str='';
 					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+newName+"("+id[i]+")</li>";
 					$user_li.append(str);

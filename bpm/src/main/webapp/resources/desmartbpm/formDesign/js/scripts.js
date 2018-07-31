@@ -835,6 +835,11 @@ function saveHtml() {
 					filedAttr.fldCodeName = subObj.attr("name");
 					filedAttr.multiValue = "false";
 					if (subObj.attr("title") == "hidden_text") {
+						if(subObj.attr("hidden-label").val()!=null &&subObj.attr("hidden-label").val()!=""){
+                    		filedAttr.fldName = subObj.attr("hidden-label").val().trim;
+                    	}else{
+                    		filedAttr.fldName = "隐藏域";
+                    	}
 						filedAttr.fldName = "隐藏域";
 						filedAttr.fldType = "hidden";
 						break;

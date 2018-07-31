@@ -346,4 +346,13 @@
 	        </foreach>
 	    </where>
 	</delete>
+	
+	<delete id="deleteTriIntBatchByFieldInfo" parameterType="list">
+		delete from dh_trigger_interface
+		<where>
+			<foreach collection="list" item="item" separator="or">
+				dyn_uid = #{item.formUid} and fld_code_name = #{item.fldCodeName}
+			</foreach>
+		</where>
+	</delete>
 </mapper>

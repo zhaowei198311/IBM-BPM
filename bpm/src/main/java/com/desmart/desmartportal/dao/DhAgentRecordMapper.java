@@ -20,7 +20,11 @@ public interface DhAgentRecordMapper {
     int updateByPrimaryKey(DhAgentRecord record);
     
     int insertBatch(List<DhAgentRecord> list);
-    
-    
-    
+
+	/**
+	 * 根据代理id删除代理记录
+	 * @param agentId
+	 * @return
+	 */
+	int deleteByAgentId(String agentId);
 }

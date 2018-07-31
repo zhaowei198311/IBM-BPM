@@ -9,7 +9,8 @@
 		<%@include file="formDesHead.jsp" %>
 	</head>
 
-	<body style="min-height: 660px; cursor: auto; background: url(../resources/desmartbpm/formDesign/img/builderBg.png) repeat"
+	<body style="min-height: 660px; cursor: auto;  zoom:0.9;
+		background: url(../resources/desmartbpm/formDesign/img/builderBg.png) repeat"
 	    class="edit">
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
@@ -801,6 +802,15 @@
 					</div>
 
 					<form>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								标签
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="hidden-text-label" placeholder="请输入组件ID" readonly>
+							</div>
+						</div>
 						<div class="form-group">
 							<label class="col-xs-2 col-sm-offset-2 control-label">
 								ID
