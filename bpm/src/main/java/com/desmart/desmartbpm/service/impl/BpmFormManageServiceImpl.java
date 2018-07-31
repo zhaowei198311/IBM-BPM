@@ -207,13 +207,14 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			dhTriggerInterfaceMapper.deleteByDynUid(formUid);
 			//获得表单所有的字段
 			List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+			int fieldListSize = filedList.size();
 			//批量删除字段权限
 			deleteFieldPermiss(filedList,formUid);
 			//删除表单关联子表单的信息
 			bpmFormRelePublicFormMapper.deleteFormRelePublicForm(formUid);
 			//删除表单字段
 			int fieldCountRow = bpmFormFieldMapper.deleteFormField(formUid);
-			if(fieldCountRow!=filedList.size()) {
+			if(fieldCountRow!=fieldListSize) {
 				throw new PlatformException("删除表单字段失败");
 			}
 		}
@@ -232,15 +233,18 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		List<BpmFormField> publicFormFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
 		fieldList.addAll(publicFormFieldList);
 		List<DhStep> dhStepList = dhStepMapper.queryStepListByFormUid(formUid);
+		List<DhObjectPermission> dhObjectPerList = new ArrayList<>();
 		//删除字段权限信息
 		for(BpmFormField field:fieldList) {
 			for(DhStep dhStep:dhStepList) {
 				DhObjectPermission dhObjectPermission = new DhObjectPermission();
 				dhObjectPermission.setOpObjUid(field.getFldUid());
 				dhObjectPermission.setStepUid(dhStep.getStepUid());
-				dhObjectPermissionMapper.delectByDhObjectPermissionSelective(dhObjectPermission);
+				dhObjectPerList.add(dhObjectPermission);
+				//dhObjectPermissionMapper.delectByDhObjectPermissionSelective(dhObjectPermission);
 			}
 		}
+		dhObjectPermissionMapper.deleteBatchSelective(dhObjectPerList);
 	}
 	
 	@Override
@@ -502,9 +506,11 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			bpmFormRelePublicForm.setPublicFormUid(publicFormUid);
 			bpmFormRelePublicFormList.add(bpmFormRelePublicForm);
 		}
-		int insertReleRow = bpmFormRelePublicFormMapper.insertBatch(bpmFormRelePublicFormList);
-		if(insertReleRow!=publicFormUidArr.length-blankCount) {
-			throw new PlatformException("新增表单关联子表单信息失败");
+		if(!bpmFormRelePublicFormList.isEmpty()) {
+			int insertReleRow = bpmFormRelePublicFormMapper.insertBatch(bpmFormRelePublicFormList);
+			if(insertReleRow!=publicFormUidArr.length-blankCount) {
+				throw new PlatformException("新增表单关联子表单信息失败");
+			}
 		}
 		return ServerResponse.createBySuccess();
 	}

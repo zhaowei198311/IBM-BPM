@@ -105,6 +105,12 @@ public interface DhObjectPermissionMapper {
 	 * @param proVerUid 版本id
 	 * @return
 	 */
-	List<DhObjectPermission> listProcessDefinitionScopePermission(@Param("proAppId") String proAppId,
-																	@Param("proUid") String proUid, @Param("proVerUid") String proVerUid);
+	List<DhObjectPermission> listProcessDefinitionScopePermission(@Param("proAppId") String proAppId,														@Param("proUid") String proUid, @Param("proVerUid") String proVerUid);
+
+	/**
+	 * 根据传入的对象权限集合批量删除
+	 * @param dhObjectPerList
+	 * @return
+	 */
+	int deleteBatchSelective(@Param("list")List<DhObjectPermission> dhObjectPerList);
 }

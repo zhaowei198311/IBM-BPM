@@ -1,4 +1,5 @@
 var form = null;
+var fileCount = 0;
 /* 动态表单渲染js */
 $(function(){
 	//表格上传文件
@@ -6,7 +7,7 @@ $(function(){
 		var appUid = $("#insUid").val();
 		var activityId = $("#activityId").val();	
   		var taskUid = $("#taskUid").val();	
-  	    var fileCount = 0;
+  	    var dataFileCount = 0;
 		upload.render({ //允许上传的文件后缀
 		    elem: $(this)
 		    ,url: common.getPath() +'/accessoryFileUpload/uploadXlsOrXlsxFile'
@@ -40,7 +41,6 @@ $(function(){
 		  var $ = layui.jquery
 		  ,upload = layui.upload;
 		  
-		  var fileCount = 0;
 		  var appUid = $("#insUid").val();
 		  var activityId = $("#activityId").val();	
   		  var taskUid = $("#taskUid").val();
@@ -226,16 +226,14 @@ $(function(){
 
 	});
 	
-	loadFileList();//加载附件列表
+	loadFileList(true);//加载附件列表
 	loadDataFormFileList();//加载数据表格文件列表
-	
+
 	// 全选
-	
-	  $("#all-file-check").click(function(){ 
-		  var checkeNodes=$(".layui-table.upload-file-table").find(".file-check");
-		  checkeNodes.prop("checked",$(this).prop("checked")); 
-	  });
-	 
+	$("#all-file-check").click(function(){ 
+		var checkeNodes=$(".layui-table.upload-file-table").find(".file-check");
+		checkeNodes.prop("checked",$(this).prop("checked")); 
+	});
 });
 var maxFileSize = "";
 var maxFileCount = "";
@@ -271,7 +269,7 @@ function loadGlobalConfig(){
 	  };
 
 // 加载已上传的文件列表
-function loadFileList(){
+function loadFileList(isFirst){
 	var appUid = $("#insUid").val();
 	var taskStatus = $("#taskStatus").val();
 	$.post('accessoryFileUpload/loadFileList.do'
@@ -320,6 +318,9 @@ function loadFileList(){
 		      info += "</td></tr>"; 
 			tagTbody.append(info);
 		}
+		if(isFirst){
+			fileCount = result.data.length
+		};
 		$(".layui-update-file").each(function(){
 			var updateElem = $(this);
 			var fileCount = 0;
@@ -374,7 +375,7 @@ function loadFileList(){
 			    }
 			    ,done: function(res){
 			    	layer.alert(res.msg);
-			    	loadFileList();
+			    	loadFileList(false);
 			    	layer.closeAll('loading');
 			      // 上传完毕回调
 			    }
@@ -390,7 +391,7 @@ function loadFileList(){
 }
 // 隐藏上传文件的模态框
 function cancelClick(obj){
-	loadFileList();
+	loadFileList(false);
 	$(".display_container_file").css("display","none");
 }
 
@@ -560,7 +561,8 @@ function deleteAccessoryFile(a){
 			"taskUid":taskUid
 			},
 		success : function(data) {
-			loadFileList();
+			fileCount--;
+			loadFileList(false);
 			layer.alert(data.msg);
 		  },
 		error : function(data) {

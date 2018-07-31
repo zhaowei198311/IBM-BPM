@@ -33,6 +33,44 @@
         set op_obj_uid = #{newFieldUid}
         where op_obj_uid = #{oldFieldUid}
     </update>
+    
+    <delete id="deleteBatchSelective" parameterType="list">
+    	delete from dh_object_permission
+    	<where>
+	    	<foreach collection="list" item="item" separator="or">
+	    		<if test="opUid != null">
+	                OP_UID = #{item.opUid}
+	            </if>
+	            <if test="proAppId != null">
+	                and pro_app_id = #{item.proAppId}
+	            </if>
+	            <if test="proUid != null">
+	                and pro_uid = #{item.proUid}
+	            </if>
+	            <if test="proVerUid != null">
+	                and pro_ver_uid  = #{item.proVerUid}
+	            </if>
+	            <if test="stepUid != null">
+	                and STEP_UID = #{item.stepUid}
+	            </if>
+	            <if test="opParticipateType != null">
+	                and op_participate_type = #{item.opParticipateType}
+	            </if>
+	            <if test="opParticipateUid != null">
+	                and op_participate_uid = #{item.opParticipateUid}
+	            </if>
+	            <if test="opObjType != null">
+	                and op_obj_type = #{item.opObjType}
+	            </if>
+	            <if test="opObjUid != null">
+	                and op_obj_uid = #{item.opObjUid}
+	            </if>
+	            <if test="opAction != null">
+	                and op_action = #{item.opAction}
+	            </if>
+	    	</foreach>
+    	</where>
+    </delete>
 
     <delete id="delectByDhObjectPermissionSelective" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" >
         delete from DH_OBJECT_PERMISSION

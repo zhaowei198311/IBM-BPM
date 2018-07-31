@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%
 	String path = request.getContextPath();
@@ -142,8 +143,16 @@
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
 	<div class="search_area top_btn" id="layerDemo">
-        <input type="hidden" id="departNo" value="${departNo}" />
-	    <input type="hidden" id="companyNum" value="${companyNumber}" />
+		<c:choose>
+			<c:when test="${fn:length(userDepartmentList)==1}">
+				<input type="hidden" id="departNo" value="${userDepartmentList[0].departNo}" />
+				<input type="hidden" id="companyNum" value="${userDepartmentList[0].sysCompany.companyCode}" />
+			</c:when>
+			<c:otherwise>
+				<input type="hidden" id="departNo" value="${departNo}" />
+				<input type="hidden" id="companyNum" value="${companyNumber}" />
+			</c:otherwise>
+		</c:choose>
 	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
 	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
 	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
@@ -179,19 +188,26 @@
             <div class="layui-col-md4 layui-form">
             	<label class="layui-form-label" style="padding: 9px 0px;text-align:left;width:42px;">部门：</label>
 				<div class="layui-input-block" style="margin-left:42px;">
-					<select id="creatorInfo" lay-filter="creatorInfo">
-						<option value="">请选择部门</option>
-						<c:forEach items="${userDepartmentList}" var="item">
-							<c:choose>
-								<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
-									<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-								</c:when>
-								<c:otherwise>
-									<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
-					</select>
+					<c:choose>
+						<c:when test="${fn:length(userDepartmentList)==1}">
+							${userDepartmentList[0].departName} - ${userDepartmentList[0].sysCompany.companyName }
+						</c:when>
+						<c:otherwise>
+							<select id="creatorInfo" lay-filter="creatorInfo">
+								<option value="">请选择部门</option>
+								<c:forEach items="${userDepartmentList}" var="item">
+									<c:choose>
+										<c:when test="${item.departNo eq departNo && item.companyCode eq companyNumber}">
+											<option selected="selected" value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+										</c:when>
+										<c:otherwise>
+											<option value="${item.departNo},${item.companyCode}">${item.departName} - ${item.sysCompany.companyName }</option>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
+							</select>
+						</c:otherwise>
+					</c:choose>
 				</div>
             </div>
 			<div class="layui-col-md4" style="text-align: right;">
