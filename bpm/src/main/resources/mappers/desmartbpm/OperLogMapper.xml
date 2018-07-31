@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.OperLogMapper">
+	<!-- <resultMap id="logMap" type="java.util.Map">
+		<result column="ID" property="id" />
+		<result column="USER_ID" property="userId" />
+		<result column="USER_NAME" property="userName" />
+		<result column="HOST" property="host" />
+		<result column="LOG_TYPE" property="logType" />
+		<result column="REQUEST_PARAM" property="requestParam" />
+		<result column="RESPONSE_PARAM" property="responseParam" />
+		<result column="METHOD_DESCRIPTIONH" property="methodDescription" />
+		<result column="PATH" property="path" />
+		<result column="CREAT_TIME" property="creatTime" />
+		<result column="ATTACH" property="attach" />
+	</resultMap> -->
+
+	<sql id="base_column">
+		ID,
+		USER_ID,
+		USER_NAME,
+		HOST,
+		LOG_TYPE,
+		REQUEST_PARAM,
+		RESPONSE_PARAM,
+		METHOD_DESCRIPTIONH,
+		PATH,
+		CREAT_TIME,
+		ATTACH
+	</sql>
+
+	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhOperLog">
+		insert into DH_OPERLOG (
+		<include refid="base_column" />
+		) values (
+			#{id},#{userId},#{userName},#{host},#{logType},
+			#{requestParam},#{responseParam},#{methodDescription},
+			#{path},sysdate,#{attach}
+		)
+	</insert>
+
+
+</mapper>
