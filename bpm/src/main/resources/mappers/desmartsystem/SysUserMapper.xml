@@ -42,6 +42,8 @@
 		<result column="DEPART_NAME" property="departName" />
 		<result column="ACCOUNT_TYPE" property="accountType" />
 		
+		<result column="MANAGER_NAME" property="managerName" />
+		
 
 		<!-- <association property="sysDepartment"  javaType="com.desmart.desmartsystem.entity.SysDepartment">
 			<result column="DEPART_UID" property="departUid" />
@@ -100,7 +102,7 @@
 	
 	
 	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
-	 		select * from sys_user u  where 1=1
+	 		SELECT u.*,u1.USER_NAME manager_name FROM SYS_USER u LEFT JOIN SYS_USER u1 on u.USER_UID = u1.USER_UID  where 1=1
 	 		<if test="userName !=null and userName !='' ">
 	 			and u.USER_NAME LIKE CONCAT(CONCAT('%',#{userName}),'%') 
 	 		</if>
@@ -147,7 +149,7 @@
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
-	  		select * from Sys_User u where 1=1 
+	  		SELECT u.*,u1.USER_NAME manager_name FROM SYS_USER u LEFT JOIN SYS_USER u1 on u.USER_UID = u1.USER_UID  where 1=1
 	  		<if test="userUid != null and userUid != '' ">
 	  			and USER_UID = #{userUid}
 	  		</if>
@@ -324,7 +326,7 @@
     where USER_UID = #{userUid,jdbcType=VARCHAR}
   </update>
 	  <select id="findById" parameterType="com.desmart.desmartsystem.entity.SysUser" resultMap="BaseResultMap" >
-	  		select u.*,d.* from sys_user u left join sys_department d on u.depart_Uid=d.depart_Uid where u.USER_UID=#{userUid}
+	  		select u.*,d.*,u1.USER_NAME manager_name  from sys_user u LEFT JOIN SYS_USER u1 on u.USER_UID = u1.USER_UID  left join sys_department d on u.depart_Uid=d.depart_Uid where u.USER_UID=#{userUid}
 	  </select>
 	  
 	  <delete id="delete" parameterType="com.desmart.desmartsystem.entity.SysUser">
