@@ -178,6 +178,8 @@
     $(document).ready(function () {
         // 加载数据
         getTaskInstanceInfo();
+        //获得用户有多少待办
+        getUserTask();
     })
 
     // 刷新
@@ -363,4 +365,22 @@
          $("#init-endTime-search").val("");
          $("#isAgent").val(0);
     }
+    
+ 	// 获取用户有多少代办
+	function getUserTask() {
+		$.ajax({
+			url: 'user/todoTask',
+			type: 'POST',
+			dataType: 'text',
+			success: function (result) {
+				// 渲染到待办
+				if (result == 0) {
+					$("#daiban_icon").css("display", "none");
+					$("#daiban_icon").text(result);
+				} else if (result > 0) {
+					$("#daiban_icon").text(result);
+				}
+			}
+		})
+	}
 </script>

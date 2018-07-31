@@ -795,6 +795,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (dhprocessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
+	    JSONObject insDataJson = JSONObject.parseObject(dhprocessInstance.getInsData());
 	    
 	    // 获得当前环节
 	    BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
@@ -817,7 +818,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 判断任务是否能被取回
         DataForRevoke dataForRevoke = getDataForRevoke(dhTaskInstance, currTaskNode, dhprocessInstance);
-
+     	// 获得表单编号
+     	String formNo = dhFormNoService.findFormNoByFormUid(bpmForm.getDynUid(), insDataJson.getJSONArray("formNoList"));
+     	bpmForm.setFormNo(formNo);
 
         resultMap.put("bpmForm", bpmForm);
         resultMap.put("activityMeta", currTaskNode);

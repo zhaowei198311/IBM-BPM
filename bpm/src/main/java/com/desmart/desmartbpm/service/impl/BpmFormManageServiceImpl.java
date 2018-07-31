@@ -334,9 +334,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		//记录需要添加的字段
 		List<BpmFormField> insertFieldList = new ArrayList<>();
 		//记录需要删除的旧表单字段
-		List<BpmFormField> deleteFieldList = oldFieldList;
-		boolean insertFieldFlag = true;
+		List<BpmFormField> deleteFieldList = new ArrayList<>();
 		for(BpmFormField field:bpmFormFieldArr) {
+			boolean insertFieldFlag = true;
 			for(int i=0;i<oldFieldList.size();i++) {
 				BpmFormField oldField = oldFieldList.get(i);
 				//判断新、旧字段的name(同一个表单中字段的唯一标识)
@@ -347,9 +347,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 						throw new PlatformException("修改字段("+field.getFldName()+")信息失败");
 					}
 					//移除旧表单字段集合中的该字段，直至最后删除剩余的字段集合
-					deleteFieldList.remove(i);
+					deleteFieldList.add(oldField);
 					insertFieldFlag = false;
-					continue;
+					break;
 				}
 			}
 			//当新字段未匹配到对应的旧字段，则添加
@@ -364,11 +364,11 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 				throw new PlatformException("新增字段信息失败");
 			}
 		}
-		
-		if(deleteFieldList.size()!=0) {
-			int deleteFieldRow = bpmFormFieldMapper.deleteFieldBatch(deleteFieldList);
-			dhTriggerInterfaceMapper.deleteTriIntBatchByFieldInfo(deleteFieldList);
-			if(deleteFieldList.size()!=deleteFieldRow) {
+		oldFieldList.removeAll(deleteFieldList);
+		if(oldFieldList.size()!=0) {
+			int deleteFieldRow = bpmFormFieldMapper.deleteFieldBatch(oldFieldList);
+			dhTriggerInterfaceMapper.deleteTriIntBatchByFieldInfo(oldFieldList);
+			if(oldFieldList.size()!=deleteFieldRow) {
 				throw new PlatformException("删除字段信息失败");
 			}
 		}
@@ -376,13 +376,13 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		String[] publicFormUidArr = formJsonObj.getPublicFormUidArr();
 		//获得表单关联原来的子表单信息
 		List<String> oldPublicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(bpmForm.getDynUid());
-		//新增关联信息的变量
-		boolean insertReleFlag = true;
 		//记录要添加的关联信息
 		List<BpmFormRelePublicForm> insertReleList = new ArrayList<>(); 
 		//记录要删除的关联信息
-		List<String> deletePublicUidList = oldPublicFormUidList;
+		List<String> deletePublicUidList = new ArrayList<>();
 		for(String publicFormUid:publicFormUidArr) {
+			//新增关联信息的变量
+			boolean insertReleFlag = true;
 			if(publicFormUid==null || "".equals(publicFormUid)) {
 				continue;
 			}
@@ -390,9 +390,9 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 				String oldPublicFormUid = oldPublicFormUidList.get(i);
 				if(publicFormUid.equals(oldPublicFormUid)) {
 					//去除依旧存在的子表单id
-					deletePublicUidList.remove(i);
+					deletePublicUidList.add(oldPublicFormUid);
 					insertReleFlag = false;
-					continue;
+					break;
 				}
 			}
 			if(insertReleFlag) {
@@ -408,10 +408,10 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 				throw new PlatformException("新增表单关联信息失败");
 			}
 		}
-		
+		oldPublicFormUidList.removeAll(deletePublicUidList);
 		//获得绑定该表单的所有步骤集合
 		List<DhStep> dhStepList = dhStepMapper.queryStepListByFormUid(bpmForm.getDynUid());
-		for(String publicFormUid:deletePublicUidList) {
+		for(String publicFormUid:oldPublicFormUidList) {
 			BpmFormRelePublicForm bpmFormRelePublicForm = new BpmFormRelePublicForm(bpmForm.getDynUid(), publicFormUid);
 			int deleteReleRow = bpmFormRelePublicFormMapper.deleteRele(bpmFormRelePublicForm);
 			if(deleteReleRow!=1) {
