@@ -150,7 +150,7 @@ public class SysRoleUserController {
 	@RequestMapping("/getSysRoleUser")
 	@ResponseBody
 	public SysRoleUser getSysRoleUser(SysRoleUser sysRoleUser) {
-		SysRoleUser sysRoleUser1=sysRoleUserService.selectByPrimaryKey(sysRoleUser.getRoleUid());
+		SysRoleUser sysRoleUser1=sysRoleUserService.selectByPrimaryKey(sysRoleUser.getMapUid());
 		if(sysRoleUser1==null) {
 			return sysRoleUser;
 		}
