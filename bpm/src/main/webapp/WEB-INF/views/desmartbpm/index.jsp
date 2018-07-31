@@ -105,6 +105,9 @@
 						    <shiro:hasPermission name="sysUser:globalConfig">
 						      <dd><a href="sysUser/globalConfig" target="iframe0">全局配置管理</a></dd>
 						    </shiro:hasPermission>
+						    <%-- <shiro:hasPermission name="sysUser:globalConfig"> --%>
+						      <dd><a href="operLog/index" target="iframe0">日志管理</a></dd>
+						    <%-- </shiro:hasPermission> --%>
 						    </dl>
 						</li>
                     </ul>
