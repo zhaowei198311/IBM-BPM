@@ -44,7 +44,7 @@ public class DhOperLog implements Serializable{
 	private String path;
 	
 	//请求时间
-	private Date creatTime;
+	private Date createTime;
 	
 	//附加备注
 	private String attach;
@@ -122,11 +122,11 @@ public class DhOperLog implements Serializable{
 	}
 
 	public Date getCreatTime() {
-		return creatTime;
+		return createTime;
 	}
 
 	public void setCreatTime(Date creatTime) {
-		this.creatTime = creatTime;
+		this.createTime = creatTime;
 	}
 
 	public String getAttach() {
@@ -141,7 +141,7 @@ public class DhOperLog implements Serializable{
 	public String toString() {
 		return "OperLog [id=" + id + ", userId=" + userId + ", userName=" + userName + ", host=" + host + ", logType="
 				+ logType + ", requestParam=" + requestParam + ", responseParam=" + responseParam
-				+ ", methodDescription=" + methodDescription + ", path=" + path + ", creatTime=" + creatTime
+				+ ", methodDescription=" + methodDescription + ", path=" + path + ", creatTime=" + createTime
 				+ ", attach=" + attach + "]";
 	}
 	
