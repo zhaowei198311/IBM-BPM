@@ -154,7 +154,7 @@
 	
 	<select id="queryAgentOutByUserUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhAgent">
 		select <include refid="insert_column_List"/>
-		from dh_agent_info
+		from dh_agent_agentinfo
 		where (agent_operator = #{userUid} or
 		agent_clientele = #{userUid})
 		and agent_edate &lt;= sysdate
