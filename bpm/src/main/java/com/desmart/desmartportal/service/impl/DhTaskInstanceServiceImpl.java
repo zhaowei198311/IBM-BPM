@@ -983,9 +983,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		return ServerResponse.createBySuccess();
 	}
+	
 	@Override
+	@Transactional
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(Date startTime, Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String isAgent) {
+		//取回过期的代理任务
+		revokeAgentOutTask();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance, isAgent);
@@ -1003,11 +1007,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	@Override
-	@Transactional
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
 			Integer pageNum, Integer pageSize, String isAgent) {
-		//取回过期的代理任务
-		revokeAgentOutTask();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("'32'");

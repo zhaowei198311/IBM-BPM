@@ -125,9 +125,9 @@
     	delete from dh_agent_reocrd where agent_id = #{agentId}
     </delete>
     
-    <select id="queryAgentRecordListByAgentList" parameterType="list" resultType="com.desmart.desmartportal.entity.DhAgentRecord">
+    <select id="queryAgentRecordListByAgentList" parameterType="list" resultType="String">
     	select ar.task_uid
-    	from dh_agent_record ar left join dh_task_instance ti
+    	from dh_agent_reocrd ar left join dh_task_instance ti
     	on ar.task_uid = ti.task_uid
     	<where>
     		<foreach collection="list" item="item" separator="or">
