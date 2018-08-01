@@ -70,5 +70,11 @@ public interface DhProcessDefinitionMapper {
      */
     List<DhProcessDefinition> listByDhPocessDefinitionList(List<DhProcessDefinition> processDefinitionList);
 
+    /**
+     * 列出去重后的应用库id
+     * @return
+     */
+    List<String> listDistinctProAppId();
+
 
 }

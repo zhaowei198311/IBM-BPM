@@ -31,4 +31,18 @@ public interface BpmExposedItemMapper {
      */
     List<BpmExposedItem> listUnSynchronizedByProAppIdAndBpdId(@Param("proAppId") String proAppId, @Param("bpdId") String bpdId);
 
+
+    /**
+     * 根据应用库id与版本id查询
+     * @param proAppId
+     * @param snapshotId
+     * @return
+     */
+    List<BpmExposedItem> listByProAppIdAndSnapshotId(@Param("proAppId") String proAppId, @Param("snapshotId") String snapshotId);
+
+    /**
+     * 查询去重的应用库id集合
+     * @return
+     */
+    List<String> listDistinctProAppId();
 }

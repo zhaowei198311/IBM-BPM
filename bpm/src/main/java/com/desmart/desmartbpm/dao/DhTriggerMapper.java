@@ -38,5 +38,9 @@ public interface DhTriggerMapper {
      */
     int updateByPrimayKeySelective(DhTrigger dhTrigger);
 
-
+    /**
+     * 获得所有接口类型触发器的主键
+     * @return
+     */
+    List<String> getAllTriUidOfInterfaceTrigger();
 }

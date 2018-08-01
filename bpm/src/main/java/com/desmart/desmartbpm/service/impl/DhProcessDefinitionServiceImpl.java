@@ -996,29 +996,11 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(snapshotId)) {
             return null;
         }
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
-        HttpReturnStatus returnStatus = bpmProcessUtil.getAllExposedProcess();
-        if (HttpReturnStatusUtil.isErrorResult(returnStatus)) {
-            throw new PlatformException("调用restful api失败");
-        }
-        JSONObject jsonObject = JSON.parseObject(returnStatus.getMsg());
-        JSONObject dataJson = jsonObject.getJSONObject("data");
-        JSONArray expoItems = dataJson.getJSONArray("exposedItemsList");
-        Set<String> bpdIdList = new HashSet<>();
-        if (expoItems != null) {
-            for(int i = 0; i < expoItems.size(); ++i) {
-                JSONObject jsoItem = expoItems.getJSONObject(i);
-                // 如果快照id和应用库id与参数匹配
-                if (snapshotId.equals(jsoItem.getString("snapshotID"))
-                        && proAppId.equals(jsoItem.getString("processAppID"))) {
-                    bpdIdList.add(jsoItem.getString("itemID"));
-                }
-            }
-        }
+        List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listByProAppIdAndSnapshotId(proAppId, snapshotId);
+
         List<DhProcessDefinitionBo> definitionList = new ArrayList<>();
-        for (String bpdId : bpdIdList) {
-            DhProcessDefinitionBo definition = new DhProcessDefinitionBo(proAppId, bpdId, snapshotId);
+        for (BpmExposedItem exposedItem : exposedItems) {
+            DhProcessDefinitionBo definition = new DhProcessDefinitionBo(proAppId, exposedItem.getBpdId(), snapshotId);
             definitionList.add(definition);
         }
         return definitionList;

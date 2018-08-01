@@ -150,6 +150,10 @@
 		</where>
 	</select>
 
+    <select id="getAllTriUidOfInterfaceTrigger" resultType="java.lang.String">
+		select tri_uid from dh_trigger where tri_type = 'interface'
+	</select>
+
     <delete id="delete" parameterType="java.lang.String">
 		delete from dh_trigger 
 		<where>

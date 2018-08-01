@@ -282,6 +282,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
             // 8. 拷贝步骤和字段权限
             copyStepAndStepPermission(copyData);
             // 9. 拷贝接口触发器配置
+            copyTriggerInterface(copyData);
         }
         return ServerResponse.createBySuccess();
     }
@@ -339,6 +340,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         for (DhProcessDefinition newProcessDefinition : newProcessDefinitions) {
             map.put(newProcessDefinition.getProUid(), newProcessDefinition);
         }
+        List<String> interfaceTriggerUids = dhTriggerMapper.getAllTriUidOfInterfaceTrigger(); // 接口所有接口类型的触发器主键
         DhProcessDefinition newDefinition = null;
         String currentUserUid = getCurrentUserUid();
         for (DhProcessDefinition oldProcessDefinition : oldProcessDefinitions) {
@@ -349,6 +351,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
                 copyData.setOldDefintion(oldProcessDefinition);
                 copyData.setNewDefinition(newDefinition);
                 copyData.setCurrUserUid(currentUserUid);
+                copyData.setInterfaceTriggerUids(interfaceTriggerUids);
                 copyDataList.add(copyData);
             }
         }
@@ -424,7 +427,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
                 oldUid = oldFormField.getFldUid();
                 newUid = EntityIdPrefix.BPM_FORM_FIELD + UUID.randomUUID().toString();
                 newFormField.setFldUid(newUid); // 设置新主键
-                newFormField.setFormUid(oldNewFormUidMap.get(oldUid)); // 设置表单号
+                newFormField.setFormUid(oldNewFormUidMap.get(oldFormField.getFormUid())); // 设置表单号
                 oldNewFieldUidMap.put(oldUid, newUid); // 记录映射关系
                 newFormFields.add(newFormField);
             }
@@ -690,19 +693,30 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         List<String> matchedUserNodeActBpdIds = copyData.getMatchedUserNodeActBpdIds();
         List<DhStep> newSteps = new ArrayList<>();
         Map<String, String> oldNewStepUidMap = new HashMap<>();
+        List<String> interfaceTriggerUids = copyData.getInterfaceTriggerUids(); // 数据库中所有的接口类型触发器主键集合
+        List<String> oldTriggerInterfaceStepUids = new ArrayList<>(); // 老版本中是接口触发器类型的步骤
         for (DhStep oldStep : oldSteps) {
             if (matchedUserNodeActBpdIds.contains(oldStep.getActivityBpdId())) {
                 // 如果匹配的人工环节中包含此 activity_bpd_id ， 说明要拷贝这个配置
                 DhStep newStep = new DhStep();
+                BeanUtils.copyProperties(oldStep, newStep);
                 String newStepUid = EntityIdPrefix.DH_STEP + UUID.randomUUID().toString();
                 oldNewStepUidMap.put(oldStep.getStepUid(), newStepUid);
-                BeanUtils.copyProperties(oldStep, newStep, new String[]{"proVerUid", "stepUid"});
                 newStep.setStepUid(newStepUid);
+                if (DhStep.TYPE_FORM.equals(oldStep.getStepType())) {
+                    // 如果是表单步骤，需要替换为新的表单编号
+                    newStep.setStepObjectUid(copyData.getNewFormUidByOldFormUid(oldStep.getStepObjectUid()));
+                } else if (DhStep.TYPE_TRIGGER.equals(oldStep.getStepType())
+                        && interfaceTriggerUids.contains(oldStep.getStepObjectUid())) {
+                    // 如果是触发器步骤，且是接口类型的触发器
+                    oldTriggerInterfaceStepUids.add(oldStep.getStepUid());
+                }
                 newStep.setProVerUid(copyData.getNewProVerUid());
                 newSteps.add(newStep);
             }
         }
         copyData.setOldNewStepUidMap(oldNewStepUidMap);
+        copyData.setOldTriggerInterfaceStepUids(oldTriggerInterfaceStepUids);
         if (oldNewStepUidMap.isEmpty()) {
             return;
         }
@@ -725,6 +739,34 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
                 newFieldPermissions.add(newFieldPermission);
             }
             dhObjectPermissionMapper.saveBatch(newFieldPermissions);
+        }
+
+    }
+
+    /**
+     * 拷贝接口类型的触发器需要的配置
+     * @param copyData
+     */
+    private void copyTriggerInterface(DhDefinitionCopyData copyData) {
+        List<String> oldTriggerInterfaceStepUids = copyData.getOldTriggerInterfaceStepUids();
+        if (oldTriggerInterfaceStepUids.isEmpty()) {
+            return;
+        }
+        // 根据步骤获得老版本的相关tirggerInterface数据
+        List<DhTriggerInterface> oldTriggerInterfaces = dhTriggerInterfaceMapper.listByStepUidList(oldTriggerInterfaceStepUids);
+        List<DhTriggerInterface> newTriggerInterfaces = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(oldTriggerInterfaces)) {
+            for (DhTriggerInterface oldTriggerInterface : oldTriggerInterfaces) {
+                DhTriggerInterface newTriggerInterface = new DhTriggerInterface();
+                BeanUtils.copyProperties(oldTriggerInterface, newTriggerInterface);
+                newTriggerInterface.setTinUid(EntityIdPrefix.DH_TRIGGER_INTERFACE + UUID.randomUUID().toString()); // 设置主键
+                newTriggerInterface.setCreator(copyData.getCurrUserUid()); // 设置创建人
+                newTriggerInterface.setDynUid(copyData.getNewFormUidByOldFormUid(oldTriggerInterface.getDynUid())); // 设置表单号
+                newTriggerInterface.setStepUid(copyData.getNewStepUidByOldStepUid(oldTriggerInterface.getStepUid())); // 设置步骤号
+                newTriggerInterface.setActivityId(copyData.getNewActIdByOldActId(oldTriggerInterface.getActivityId())); // 设置环节id
+                newTriggerInterfaces.add(newTriggerInterface);
+            }
+            dhTriggerInterfaceMapper.insertBatch(newTriggerInterfaces);
         }
 
     }

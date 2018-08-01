@@ -95,4 +95,9 @@ public class EntityIdPrefix {
      * 规则条件前缀
      */
 	public static final String DAT_RULE_CONDITION = "rule_cond:";
+
+    /**
+     * 表单字段与接口参数映射表前缀
+     */
+    public static final String DH_TRIGGER_INTERFACE = "triggerInterface:";
 }
