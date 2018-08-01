@@ -96,7 +96,7 @@
   
   <select id="selectByRoleUser" resultType="com.desmart.desmartsystem.entity.SysRoleUser" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
   		SELECT  r.ROLE_UID as roleUid,listagg(u.USER_NAME,';') within group(order by u.USER_UID) as userName,listagg(u.USER_UID,';') within group(order by u.USER_UID) as userUid from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID
-  		left join sys_user_department ud on u.user_uid = ud.user_uid
+  		left join SYS_USER_DEPARTMENT_VW ud on u.user_uid = ud.user_uid
   		where role_uid in (${roleUid})
   		<if test="userUid!=null">
   			and u.user_Uid = #{userUid}
