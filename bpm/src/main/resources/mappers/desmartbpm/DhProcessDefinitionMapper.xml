@@ -261,5 +261,9 @@
         </where>
     </select>
 
+    <select id="listDistinctProAppId" resultType="java.lang.String">
+        select DISTINCT(pro_app_id) from dh_process_definition
+    </select>
+
 
 </mapper>

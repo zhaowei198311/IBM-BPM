@@ -355,4 +355,9 @@
 			</foreach>
 		</where>
 	</delete>
+
+    <delete id="removeByStepUid" parameterType="string">
+		delete from dh_trigger_interface
+		where step_uid = #{stepUid}
+	</delete>
 </mapper>

@@ -21,7 +21,7 @@ public interface LswBpdMapper {
 
     /**
      * 根据流程图ID和versionId批量查询
-     * @param paramList
+     * @param paramListA
      * @return
      */
     List<LswBpd> queryByBpdIdAndVersionIdList(List<Map<String, String>> paramList);

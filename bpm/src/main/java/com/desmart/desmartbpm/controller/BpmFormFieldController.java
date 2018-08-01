@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,9 +13,13 @@ import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 
+import java.util.List;
+
 @RequestMapping(value = "/formField")
 @Controller
 public class BpmFormFieldController {
+	private static final Logger logger = LoggerFactory.getLogger(BpmFormFieldController.class);
+
 	@Autowired
 	private BpmFormFieldService bpmFormFieldService;
 	
@@ -26,6 +32,7 @@ public class BpmFormFieldController {
 		try {
 			return bpmFormFieldService.saveFormField(fields);
 		}catch(Exception e) {
+			logger.error("保存表单字段异常", e);
 			return ServerResponse.createByError();
 		}
 	}
@@ -63,9 +70,10 @@ public class BpmFormFieldController {
 	@ResponseBody
 	public ServerResponse queryFieldByFormUid(String formUid) {
 		try {
-			return bpmFormFieldService.queryFieldByFormUid(formUid);
+            return bpmFormFieldService.queryFieldByFormUid(formUid);
 		}catch(Exception e) {
-			return ServerResponse.createByError();
+			logger.error("获取表单字段异常", e);
+			return ServerResponse.createByErrorMessage("获得表单字段失败");
 		}
 	}
 	

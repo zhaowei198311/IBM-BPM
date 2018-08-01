@@ -34,6 +34,8 @@ public class DhDefinitionCopyData {
 
     private List<String> actcUidSource;
     private List<String> actcUidBeReplace;
+    private List<String> interfaceTriggerUids; // 记录数据库中所有接口类型的触发器主键集合
+    private List<String> oldTriggerInterfaceStepUids;  // 老版本中是接口触发器类型的步骤
 
     public DhDefinitionCopyData(){}
 
@@ -375,6 +377,40 @@ public class DhDefinitionCopyData {
      */
     public String getNewFieldUidByOldFieldUid(String oldFieldUid) {
         return oldNewFieldUidMap.get(oldFieldUid);
+    }
+
+    /**
+     * 根据老的表单id获得对应的新表单id
+     * @param oldFormUid
+     * @return
+     */
+    public String getNewFormUidByOldFormUid(String oldFormUid) {
+        return oldNewFormUidMap.get(oldFormUid);
+    }
+
+    /**
+     * 根据老版的步骤id获取新版本的步骤id
+     * @param oldStepUid
+     * @return
+     */
+    public String getNewStepUidByOldStepUid(String oldStepUid) {
+        return oldNewStepUidMap.get(oldStepUid);
+    }
+
+    public List<String> getInterfaceTriggerUids() {
+        return interfaceTriggerUids;
+    }
+
+    public void setInterfaceTriggerUids(List<String> interfaceTriggerUids) {
+        this.interfaceTriggerUids = interfaceTriggerUids;
+    }
+
+    public List<String> getOldTriggerInterfaceStepUids() {
+        return oldTriggerInterfaceStepUids;
+    }
+
+    public void setOldTriggerInterfaceStepUids(List<String> oldTriggerInterfaceStepUids) {
+        this.oldTriggerInterfaceStepUids = oldTriggerInterfaceStepUids;
     }
 
     @Override

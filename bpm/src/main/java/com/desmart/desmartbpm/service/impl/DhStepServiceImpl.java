@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.DhTriggerService;
-import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.BpmFormManageMapper;
-import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
@@ -38,7 +36,6 @@ import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StopWatch;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -177,9 +174,13 @@ public class DhStepServiceImpl implements DhStepService {
         if (currentStep == null) {
             return ServerResponse.createByErrorMessage("找不到此步骤");
         }
-        if (DhStepType.FORM.getCode().equals(currentStep.getStepType())) {
+        if (DhStep.TYPE_FORM.equals(currentStep.getStepType())) {
             // 如果是表单类型，清除权限
             removeFieldPermissionOfStep(stepUid);
+        } else if (DhStep.TYPE_TRIGGER.equals(currentStep.getStepType())
+                && DhTriggerType.INTERFACE.getCode().equals(currentStep.getTriType())) {
+            // 如果是接口触发器, 删除相关的dhTriggerInterface
+            dhTriggerInterfaceMapper.removeByStepUid(stepUid);
         }
         dhStepMapper.updateStepSortOfRelationStep(currentStep);
         dhStepMapper.deleteByPrimaryKey(stepUid);

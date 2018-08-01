@@ -123,6 +123,8 @@ public interface DhTriggerInterfaceMapper {
 	 */
     int removeByStepUidList(List<String> stepUidList);
 
+    int removeByStepUid(String stepUid);
+
 	/**
 	 * 更新接口参数的主键
 	 * @param oldUid  旧的主键

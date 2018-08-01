@@ -26,7 +26,7 @@
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    <include refid="relationColumn" />, tri.tri_title triTitle, f.dyn_title formName
+    <include refid="relationColumn" />, tri.tri_title triTitle, f.dyn_title formName, tri.tri_type
     from DH_STEP s
     left join dh_trigger tri on s.STEP_OBJECT_UID = tri.tri_uid
     left join bpm_form f on s.STEP_OBJECT_UID = f.DYN_UID

@@ -24,6 +24,7 @@ public class DhStep {
     private String triTitle;
     private String formName;
     private String activityId; // 连表得到
+    private String triType;
 
     public DhStep() {
         
@@ -134,6 +135,14 @@ public class DhStep {
 
     public void setFormName(String formName) {
         this.formName = formName;
+    }
+
+    public String getTriType() {
+        return triType;
+    }
+
+    public void setTriType(String triType) {
+        this.triType = triType;
     }
 
     @Override
