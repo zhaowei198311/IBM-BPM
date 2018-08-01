@@ -3,6 +3,9 @@ package com.desmart.common.aop;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -16,9 +19,12 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
@@ -78,16 +84,36 @@ public class OperLogInterceptor {
 			proceed = pjd.proceed(); //必须放在获取用户id之前
 		} catch (Throwable e) {
 			e.printStackTrace();
-			operLog.setMethodDescription(e.toString());  //e.toString()和e..getMessage()区别
+			//operLog.setMethodDescription(e.toString());  //e.toString()和e..getMessage()区别
+			operLog.setLogType(DhOperLog.errorLog);
+			operLog.setResponseParam("方法执行异常:" + e.toString());
 		}
-		//获取响应内容
+		//获取响应内容   ServerResponse和ModelAndView对象解析，剩余返回类型直接做toString处理
 		try {
 			ServerResponse serverResponse = (ServerResponse)proceed; //判断是否为ServerResponse对象
 			operLog.setResponseParam("返回信息:" + serverResponse.getMsg() +";"+ "返回状态:" + serverResponse.getStatus()+";" + "返回数据:" + serverResponse.getData());
-			operLog.setLogType(DhOperLog.errorLog);
+			//operLog.setLogType(DhOperLog.systemLog);
 		} catch (Exception e) {
-			operLog.setResponseParam(proceed.toString());
-			operLog.setLogType(DhOperLog.systemLog);
+			try {
+				ModelAndView modelAndView = (ModelAndView)proceed; //判断是否为ModelAndView对象
+				//int size = modelAndView.getModel().size();
+				Set<String> keySet = modelAndView.getModel().keySet();
+				String keyString = "";
+				if(keySet.size() > 0) {
+					for (String key:keySet) {
+					   keyString = keyString + key + ";";
+				    }
+				}
+				operLog.setResponseParam(keyString);
+				//operLog.setLogType(DhOperLog.systemLog);
+			} catch (Exception exception) {
+				if(operLog.getResponseParam() != null) {//此处判断是否为切点方法错误         此方法能否具体的判断是不是异常？？？？
+					//operLog.setResponseParam(proceed.toString());
+					//异常信息上边已经做处理了，这里只是区分是不是异常类
+				}else {
+					operLog.setResponseParam(proceed.toString());
+				}
+			}
 		}
 		
 		//获取当前用户id及当前用户姓名
@@ -109,6 +135,9 @@ public class OperLogInterceptor {
 		operLog.setId(UUID.randomUUID().toString());
 		//operLog.setCreatTime(new Date());
 		operLog.setAttach("");
+		if(operLog.getLogType() == null) {
+			operLog.setLogType(DhOperLog.systemLog);
+		}
 		int result = logService.save(operLog);
 		System.out.println(result);
 		return proceed;
