@@ -9,7 +9,7 @@
 		<result column="LOG_TYPE" property="logType" />
 		<result column="REQUEST_PARAM" property="requestParam" />
 		<result column="RESPONSE_PARAM" property="responseParam" />
-		<result column="METHOD_DESCRIPTION" property="methodDescription" />
+		<result column="METHOD_DESCRIPTIONH" property="methodDescription" />
 		<result column="PATH" property="path" />
 		<result column="CREATE_TIME" property="creatTime" />
 		<result column="ATTACH" property="attach" />
@@ -55,7 +55,7 @@
 	<select id="getOperaLogListByCondition" resultType="com.desmart.desmartbpm.entity.DhOperLog"
 			parameterType="com.desmart.desmartbpm.entity.DhOperLog">
 		select <include refid="base_column" />
-		from DH_OPERLOG 1 = 1
+		from DH_OPERLOG 
 		<where>
 		<if test=" userId != null and userId !='' ">
 			and userId = #{userId}
