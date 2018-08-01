@@ -174,7 +174,9 @@ function drawPage() {
 					var labelHtml = $(labelDivObj).html();
 					var subDivId = $(subDivObj).attr("id");
 					$(subDivObj).find("span").remove();
-					if (subDivCol < 4) {
+					if(subDivCol<=3){
+						chooseInputWidth.push("80%");
+					}else if(subDivCol < 4) {
 						chooseInputWidth.push("90%");
 					} else {
 						chooseInputWidth.push("93%");
@@ -480,7 +482,12 @@ function getDataToSelect(obj, dicUid) {
 //动态选人的方法
 function desChooseUser(obj) {
 	var hideId = $(obj).parent().find("input[type='hidden']").prop("id");
-	common.chooseUser(hideId, 'false');
+	var isSingle = $(obj).parent().find("input[type='hidden']").attr("single");
+	if(isSingle!="" && isSingle!=null){
+		common.chooseUser(hideId, isSingle);
+	}else{
+		common.chooseUser(hideId, 'false');
+	}
 }
 
 //动态选部门的方法

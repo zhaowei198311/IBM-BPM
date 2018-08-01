@@ -212,8 +212,13 @@ public class DhTaskInstanceController {
         	sysUser.setUserName(createProcessUserName);
         	dhTaskInstance.setSysUser(sysUser);
         }
-		return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
-				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+        try{
+        	return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
+    				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+        }catch(Exception e){
+        	LOG.error("渲染任务列表失败", e);
+        	return ServerResponse.createByErrorMessage(e.getMessage());
+        }
 	}
 	
 	@RequestMapping("/alreadyClosedTask")

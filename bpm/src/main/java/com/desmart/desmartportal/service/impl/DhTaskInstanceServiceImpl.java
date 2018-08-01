@@ -22,6 +22,8 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhStepService;
+import com.desmart.desmartportal.dao.DhAgentMapper;
+import com.desmart.desmartportal.dao.DhAgentRecordMapper;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
@@ -93,7 +95,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private DhSynTaskRetryMapper dhSynTaskRetryMapper;
 	@Autowired
 	private DhFormNoService dhFormNoService;
-
+	@Autowired
+	private DhAgentMapper dhAgentMapper;
+	@Autowired
+	private DhAgentRecordMapper dhAgentRecordMapper;
 	/**
 	 * 查询所有流程实例
 	 */
@@ -998,9 +1003,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	@Override
+	@Transactional
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
 			Integer pageNum, Integer pageSize, String isAgent) {
-
+		//取回过期的代理任务
+		revokeAgentOutTask();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
 		dhTaskInstance.setTaskStatus("'32'");
@@ -1016,6 +1023,27 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	/**
+	 * 取回代理任务
+	 */
+	private void revokeAgentOutTask() {
+		//获得当前用户id
+		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		//根据当前用户id获得当前用户的代理信息(代理和被代理)
+		List<DhAgent> dhAgentList = dhAgentMapper.queryAgentOutByUserUid(currentUserUid);
+		//根据代理信息id获得要取回的代办任务id集合
+		List<String> revokeTaskUidList = new ArrayList<>();
+		if(!dhAgentList.isEmpty()) {
+			revokeTaskUidList = dhAgentRecordMapper.queryAgentRecordListByAgentList(dhAgentList);
+		}
+		if(!revokeTaskUidList.isEmpty()) {
+			int renokeCount = dhTaskInstanceMapper.updateDelegateUserBatch(revokeTaskUidList);
+			if(renokeCount!=revokeTaskUidList.size()) {
+				throw new PlatformException("取回过期代理任务失败");
+			}
+		}
 	}
 
 	@Override

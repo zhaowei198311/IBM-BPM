@@ -247,10 +247,10 @@ public interface DhTaskInstanceMapper {
 	/**
 	 * 根据流程库id，流程id以及代理id获得需要取回的任务id集合
 	 * @param agentId
-	 * @param metaList
+	 * @param processInsList
 	 * @return
 	 */
-	List<String> queryNoFinishedTaskUidListByCondition(@Param("agentId")String agentId, @Param("metaList")List<DhProcessMeta> metaList);
+	List<String> queryNoFinishedTaskUidListByCondition(@Param("agentId")String agentId, @Param("insList")List<DhProcessInstance> processInsList);
 
 	/**
      * 根据代理信息id取回被代理的但是还未完成的任务
