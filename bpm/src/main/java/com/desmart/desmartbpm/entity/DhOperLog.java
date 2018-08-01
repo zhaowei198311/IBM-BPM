@@ -48,6 +48,10 @@ public class DhOperLog implements Serializable{
 	
 	//附加备注
 	private String attach;
+	
+	//非表中字段
+	private String startTime;
+	private String endTime;
 
 	public String getId() {
 		return id;
@@ -136,13 +140,38 @@ public class DhOperLog implements Serializable{
 	public void setAttach(String attach) {
 		this.attach = attach;
 	}
+	
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
 
 	@Override
 	public String toString() {
-		return "OperLog [id=" + id + ", userId=" + userId + ", userName=" + userName + ", host=" + host + ", logType="
+		return "DhOperLog [id=" + id + ", userId=" + userId + ", userName=" + userName + ", host=" + host + ", logType="
 				+ logType + ", requestParam=" + requestParam + ", responseParam=" + responseParam
-				+ ", methodDescription=" + methodDescription + ", path=" + path + ", creatTime=" + createTime
-				+ ", attach=" + attach + "]";
+				+ ", methodDescription=" + methodDescription + ", path=" + path + ", createTime=" + createTime
+				+ ", attach=" + attach + ", startTime=" + startTime + ", endTime=" + endTime + "]";
 	}
 	
 

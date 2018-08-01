@@ -28,6 +28,19 @@
 		CREATE_TIME,
 		ATTACH
 	</sql>
+	<sql id="relation_column">
+		ol.ID,
+		ol.USER_ID,
+		ol.USER_NAME,
+		ol.HOST,
+		ol.LOG_TYPE,
+		ol.REQUEST_PARAM,
+		ol.RESPONSE_PARAM,
+		ol.METHOD_DESCRIPTIONH,
+		ol.PATH,
+		ol.CREATE_TIME,
+		ol.ATTACH
+	</sql>
 
 	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhOperLog">
 		insert into DH_OPERLOG (
@@ -38,6 +51,28 @@
 			#{path},sysdate,#{attach}
 		)
 	</insert>
+	
+	<select id="getOperaLogListByCondition" resultType="com.desmart.desmartbpm.entity.DhOperLog"
+			parameterType="com.desmart.desmartbpm.entity.DhOperLog">
+		select <include refid="base_column" />
+		from DH_OPERLOG 
+		<where>
+		<if test=" userId != null and userId !='' ">
+			and userId = #{userId}
+		</if>
+		<if test=" logType !=null and logType !='' ">
+			and logType = #{logType}
+		</if>
+		<if test=" startTime != null and startTime != '' and endTime != null and endTime !='' ">
+			AND create_time &gt;=
+				to_date(concat(#{startTime},'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				AND create_time &lt;=
+				to_date(concat(#{endTime},'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		</where>
+	</select>
 
 
 </mapper>
