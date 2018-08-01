@@ -101,26 +101,26 @@
 						</div>
 					</div>
 					<div style="width:100%;overflow-x:auto;">
-						<div style="width: 1500px;">		
+						<div style="width: 100%;">		
 						<table class="layui-table backlog_table">
 							<colgroup>
-								<col width="5%;">
-							    <col width="10%;">
-							    <col width="5%;">
-							    <col width="5%;">
-							    <col width="10%;">
-							    <col width="5%;">
-							    <col width="45%;">
-							    <col width="15%;">
+								<col style="min-width:5%">
+							    <col style="min-width:10%">
+							    <col style="min-width:5%">
+							    <col style="min-width:5%">
+							    <col style="min-width:10%">
+							    <col style="min-width:5%">
+							    <col style="min-width:30%">
+							    <col style="min-width:30%">
 							</colgroup>
 							<thead>
 							    <tr>
 							      <th><!-- <input type="checkbox" id="checked-All-ins" title='全选' lay-skin="primary">  -->序号</th>
 							      <th>流程名称</th>
 							      <th>实例ID</th>
-							      <th>实例状态</th>
+							      <th>状态</th>
 							      <th>流程实例标题</th>
-							      <th>流程发起人</th>
+							      <th>发起人</th>
 							      <th>当前活动任务</th>
 							      <th>任务处理人</th>
 							    </tr> 
@@ -313,7 +313,14 @@ function getProcesssInstance(){
 		}
 	})
 }
-
+//字符转换,截取指定字符长度
+function interceptStr(str, len) {
+    var reg = /[\u4e00-\u9fa5]/g,    //专业匹配中文
+        slice = str.substring(0, len),
+        chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
+        realen = slice.length * 2 - chineseCharNum;
+    return str.substr(0, realen) + (realen < str.length ? "..." : "");
+}
 function drawTable(pageInfo, data) {
 	pageConfig.pageNum = pageInfo.pageNum;
 	pageConfig.pageSize = pageInfo.pageSize;
@@ -348,6 +355,18 @@ function drawTable(pageInfo, data) {
 		}else if(item.insStatusId == 6){
 			item.insStatus = '暂停';
 		}
+		var taskTitle = '';
+		if(item.taskTitle!=null && item.taskTitle!=""){
+			taskTitle = interceptStr(item.taskTitle,15);
+		}
+		var handleUserName ='';
+		if(item.handleUserName!=null && item.handleUserName!=""){
+			handleUserName = interceptStr(item.handleUserName,15);
+		}
+		var insTitle = '';
+		if(item.insTitle!=null && item.insTitle != "" ){
+			insTitle = interceptStr(item.insTitle,15);
+		}
 		trs += '<tr>'
 				+'<td>'
 				+ '<input type="checkbox" data-insid ='+item.insId+' onclick="invertSelection(this)" name="checkProcessIns" value="'+item.insUid+'" lay-skin="primary">'
@@ -362,22 +381,18 @@ function drawTable(pageInfo, data) {
 				+ '<td>'
 				+ item.insStatus
 				+ '</td>' 
-				+ '<td>'
-				+ item.insTitle
+				+ '<td title='+item.insTitle+'>'
+				+ insTitle
 				+ '</td>' 
 				+ '<td>'
 				+ item.initUserFullname
 				+ '</td>'
-				+ '<td>';
-				if(item.taskTitle!=null && item.taskTitle!=""){
-					trs += item.taskTitle;
-				}
-				trs += '</td>'
-				+ '<td>';
-				if(item.handleUserName!=null && item.handleUserName!=""){
-					trs += item.handleUserName;
-				}
-				trs += '</td>'					
+				+ '<td title='+item.taskTitle+'>'
+				+taskTitle
+				+ '</td>'
+				+ '<td title='+item.handleUserName+'>'
+				+handleUserName
+				+ '</td>'					
 				+ '</tr>';
 	}
 	$("#proMet_table_tbody").append(trs);
