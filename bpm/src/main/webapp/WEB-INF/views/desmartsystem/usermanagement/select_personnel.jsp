@@ -120,7 +120,7 @@
 				window.parent.document.getElementById(elementId).value=useruid;
 				window.parent.document.getElementById(elementId+"_view").value=useruname;
 				var title = useruname.replace(/;/g,"\n");
-				if(isSingle=='true'){
+				if(isSingle=='false'){
 					window.parent.document.getElementById(elementId+"_view").title=title;
 				}
 			 	$('#close').click();

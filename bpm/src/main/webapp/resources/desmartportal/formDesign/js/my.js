@@ -169,6 +169,7 @@ function drawPage() {
 					labelDivObj.find("span").addClass("tip_span");
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_user']");
+					subDivObj.find("input[title='choose_user']").attr("choose-type","choose_user");
 					var subDivCol = subDivObj.attr("col");
 					var labelHtml = $(labelDivObj).html();
 					var subDivId = $(subDivObj).attr("id");

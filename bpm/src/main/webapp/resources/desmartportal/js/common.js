@@ -244,7 +244,7 @@ var common = {
 							+ "\":{\"value\":\"" + value
 							+ "\"}";
 						break;
-					}else if($(inputArr[i]).attr("title")=="choose_user"){
+					}else if($(inputArr[i]).attr("choose-type")=="choose_user"){
 						var name = $(inputArr[i]).attr("name");
 						if(name==null || name==""){
 							break;
