@@ -40,6 +40,32 @@ function getTriggerInfo() {
     });
 }
 
+function getInterfaceInfo(){
+	$.ajax({
+		url :  common.getPath() + '/interfaces/queryDhInterfaceList',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"pageNum": pageConfig.pageNum,
+            "pageSize": pageConfig.pageSize,
+			"intStatus" : 'enabled'
+		},
+		beforeSend : function(){
+			index = layer.load(1);
+		},
+		success : function(result){
+			layer.close(index)
+			if (result.status == 0) {
+				console.info(result.data)
+				drawTable2(result.data);
+			}
+		},
+		error : function(){
+			layer.close(index)
+		}
+	})
+}
+
 // 请求数据成功
 function drawTable(pageInfo) {
     pageConfig.pageNum = pageInfo.pageNum;
@@ -127,6 +153,80 @@ function drawTable(pageInfo) {
     }
     $("#trigger_table_tbody").append(trs);
 
+}
+
+
+function drawTable2(pageInfo){
+	 	pageConfig.pageNum = pageInfo.pageNum;
+	    pageConfig.pageSize = pageInfo.pageSize;
+	    pageConfig.total = pageInfo.total;
+	    doPage2();
+	    // 渲染数据
+	    $("#tabletrDetail").html('');
+	    if (pageInfo.total == 0) {
+	        return;
+	    }
+	    
+	    var list = pageInfo.list;
+	    var startSort = pageInfo.startRow;// 开始序号
+	    var trs = "";
+	    var intUrl = "";
+	    for (var i = 0; i < list.length; i++) {
+	        var meta = list[i];
+	        var sortNum = startSort + i;
+	        if (meta.intUrl != null && meta.intUrl.length > 8) {
+	        	intUrl = beautySub(meta.intUrl, 7);
+	        } else if (meta.intUrl != null) {
+	        	intUrl = meta.intUrl
+	        }
+	        trs += '<tr><td>'
+	        	+  '<input type="checkbox" name="interface_check" value="'+meta.intUid+'" onclick="onSelOne(this)"/>'
+	            + sortNum
+	            + '</td>'
+	            + '<td>'
+	            + meta.intTitle
+	            + '</td>'
+	            + '<td>'
+	            + meta.intLabel
+	            + '</td>'
+	            + '<td>'
+	            + meta.intType
+	            + '</td>'
+	            + '<td title="' + meta.intUrl + '">'
+	            + intUrl
+	            + '</td>'
+	            + '</tr>';
+	    }
+	    $("#tabletrDetail").append(trs);
+}
+
+function doPage2(){
+    layui.use(['laypage', 'layer', 'form', 'jquery'], function () {
+        var laypage = layui.laypage, layer = layui.layer, form = layui.form;
+        var $ = layui.jquery;
+        // 完整功能
+        laypage.render({
+            elem: 'lay_page2',
+            curr: pageConfig.pageNum,
+            count: pageConfig.total,
+            limit: pageConfig.pageSize,
+            layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+            jump: function (obj, first) {
+                // obj包含了当前分页的所有参数
+                pageConfig.pageNum = obj.curr;
+                pageConfig.pageSize = obj.limit;
+                if (!first) {
+                	getInterfaceInfo();
+                }
+            }
+        });
+    })
+}
+
+//复选框只能选择一个
+function onSelOne(obj) {
+	$('input[name="interface_check"]').not($(obj))
+			.prop("checked", false);
 }
 
 // 分页
@@ -235,9 +335,35 @@ function clearTableData() {
     $("#triDescription").val("");
 }
 
+function searchInterfaceList(){
+	var intTitle = $("#interfaceName").val();
+	$.ajax({
+		url :  common.getPath() + '/interfaces/queryDhInterfaceByTitle',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"pageNum": pageConfig.pageNum,
+            "pageSize": pageConfig.pageSize,
+			"intStatus" : 'enabled',
+			"intTitle" : intTitle	
+		},
+		beforeSend : function(){
+			index = layer.load(1);
+		},
+		success : function(result){
+			layer.close(index)
+			if (result.status == 0) {
+				drawTable2(result.data);
+			}
+		},
+		error : function(){
+			layer.close(index)
+		}
+	})
+}
 
 function del(triUid) {
-    layer.confirm('是否删除该触发器？', { icon: 3, title: '提示' }, function (index) {
+    layer.confirm('是否删除该触发器？', { title: '提示' }, function (index) {
         $.ajax({
             url: common.getPath() + '/trigger/delete',
             type: 'POST',
@@ -351,6 +477,51 @@ $(".cancel_btn").click(function () {
     $("#form1").validate().resetForm();
 })
 
+$("#close").click(function(){
+	$(".display_container3").css("display", "none");
+})
+//interface_check
+$("#btn_addInterface").click(function(){
+	// 选择添加哪个接口
+	$('input[name="interface_check"]:checked').each(function() {// 遍历每一个名字为interest的复选框，其中选中的执行函数
+		var intTitle = $(this).parent().next().text();
+		var intvalue = $(this).attr('value');
+		$(".display_container3").css("display", "none");
+		$("#addInterface_view").val(intTitle);
+		$("#addInterface").val(intvalue);
+	});
+})
+
+var indx = null;
+$("#chooseInterface").click(function(){
+	// 查询 所有接口
+	$(".display_container3").css("display", "block");
+	$.ajax({
+		url :  common.getPath() + '/interfaces/queryDhInterfaceList',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"pageNum": pageConfig.pageNum,
+            "pageSize": pageConfig.pageSize,
+			"intStatus" : 'enabled'
+		},
+		beforeSend : function(){
+			index = layer.load(1);
+		},
+		success : function(result){
+			layer.close(index)
+			if (result.status == 0) {
+				console.info(result.data)
+				drawTable2(result.data);
+			}
+		},
+		error : function(){
+			layer.close(index)
+		}
+	})
+	
+})
+
 $(".sure_btn").click(function () {
     // 新增触发器
     var triTitle = $("#triTitle").val();
@@ -360,9 +531,8 @@ $(".sure_btn").click(function () {
     var triParam = $("#triParam").val();
     if (triTitle.replace(/(^s*)|(s*$)/g, "").length != 0 && triType != null) {
         var webbot = "";
-        var options = $("#triWebbotType option:selected");
         if ($("#triType").val() == "interface") {
-            webbot = options.val();
+            webbot = $("#addInterface").val();
         } else {
             webbot = $("#triWebbot").val();
         }

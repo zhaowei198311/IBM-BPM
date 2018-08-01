@@ -23,6 +23,7 @@
 			top: 16%;
 			box-shadow: 0 0 10px #ccc;
 		}
+		.choose_interface{position:absolute;right:10px;top:8px;cursor:pointer;z-index:1;}
 	</style>
 </head>
 <body>
@@ -151,10 +152,11 @@
 						<div class="layui-form-item triInterface" style="display:none;">
 							<div class="layui-inline">
 								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
-								<div class="layui-input-inline">
-									<select id="triWebbotType" name="triWebbotType"
-										lay-filter="triWebbotType">
-									</select>
+								<div class="layui-input-inline" style="position: relative;">
+									<input type="hidden" name="addInterface" id="addInterface" value="">
+									<input type="text" name="addInterface_view" id="addInterface_view"
+									class="layui-input" disabled="disabled">
+									<i class="layui-icon choose_interface" id="chooseInterface" title="选择接口">&#xe615;</i>
 								</div>
 							</div>
 						</div>
@@ -251,6 +253,54 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="display_container3">
+			<div class="display_content3">
+				<div class="search_area">
+					<input type="hidden" id="interfaceId" /> <input type="hidden"
+						id="interfaceType" />
+					<div class="layui-row layui-form">
+						<div class="layui-col-md1" style="float: left; width: 250px;">
+							<input type="text" id="interfaceName" placeholder="请输入接口名称"
+								autocomplete="off" class="layui-input" />
+						</div>
+						<div class="layui-col-md1" style="float: left; margin-left: 10px;">
+							<button class="layui-btn create_btn"
+								onclick="searchInterfaceList()">查询</button>
+						</div>
+					</div>
+				</div>
+				<div id="interfaceData">
+					<table class="layui-table" lay-even lay-skin="nob">
+						<colgroup>
+							<col />
+							<col />
+							<col />
+							<col />
+							<col />
+						</colgroup>
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>接口名称</th>
+								<th>接口标签</th>
+								<th>接口类型</th>
+								<th>接口访问地址</th>
+							</tr>
+						</thead>
+						<tbody id="tabletrDetail">
+
+						</tbody>
+					</table>
+					<div id="lay_page2"></div>
+					<div class="foot">
+						<button class="layui-btn layui-btn btn_addInterface" id="btn_addInterface">确定</button>
+						<button class="layui-btn layui-btn layui-btn-primary" id="close">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- 批量导入触发器 -->
 		<div class="display_content_accessory_file" id="upload_file_modal">
 			<div class="top">文件上传</div>

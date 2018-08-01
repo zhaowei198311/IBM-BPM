@@ -661,6 +661,7 @@ $(function() {
 									var paraUid = list[i].paraUid  // 接口参数id
 									var paraType = list[i].paraType  // 接口参数类型
 									var paraParent = list[i].paraParent // 父参数
+									var paraDescription = list[i].paraDescription // 参数描述
 									var index = sortNum + i
 									// 判断有没有list 集合数据 进行映射
 									if(list[i].paraType != "Array" && list[i].paraParent == null){
@@ -668,7 +669,7 @@ $(function() {
 											+ '<div class="layui-row">'
 											+ '<div class="layui-col-md6">'
 											+ '<div class="layui-inline">'
-											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输入接口参数'+index+'</label>'
+											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 											+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -676,7 +677,7 @@ $(function() {
 											+ '</div>'
 											+ '</div>'
 											+ '<div class="layui-col-md6">'
-											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输入表单参数'+index+'</label>'
+											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单参数'+index+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<select id="tableParam'+index+'" lay-search onchange="queryOption(this)">'
 											+ '</select>'
@@ -692,7 +693,7 @@ $(function() {
 											+ '<div class="layui-row">'
 											+ '<div class="layui-col-md6">'
 											+ '<div class="layui-inline">'
-											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合对象'+index+'</label>'
+											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 											+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -700,7 +701,7 @@ $(function() {
 											+ '</div>'
 											+ '</div>'
 											+ '<div class="layui-col-md6">'
-											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合对象'+index+'</label>'
+											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合对象'+index+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<select id="tableParam'+index+'" name="listParam_sel" lay-filter="listParam_sel" class="listParam" lay-search onchange="queryOption(this)">'
 											+ '</select>'
@@ -715,7 +716,7 @@ $(function() {
 											+ '<div class="layui-row">'
 											+ '<div class="layui-col-md6">'
 											+ '<div class="layui-inline">'
-											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合参数'+index+'</label>'
+											+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 											+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -723,7 +724,7 @@ $(function() {
 											+ '</div>'
 											+ '</div>'
 											+ '<div class="layui-col-md6">'
-											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合参数'+index+'</label>'
+											+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合参数'+index+'</label>'
 											+ '<div class="layui-input-inline">'
 											+ '<select id="tableParam'+index+'" name="listfiled_sel"  lay-filter="listfiled_sel" class="listfiled" lay-search onchange="queryOption(this)">'
 											+ '</select>'
@@ -1105,6 +1106,7 @@ $(function() {
 							var paraUid = list[i].paraUid  // 接口参数id
 							var paraType = list[i].paraType  // 接口参数类型
 							var paraParent = list[i].paraParent // 父参数
+							var paraDescription = list[i].paraDescription // 接口参数描述
 							var index = sortNum + i
 							// 判断有没有list 集合数据 进行映射
 							if(list[i].paraType != "Array" && list[i].paraParent == null){
@@ -1112,7 +1114,7 @@ $(function() {
 									+ '<div class="layui-row">'
 									+ '<div class="layui-col-md6">'
 									+ '<div class="layui-inline">'
-									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输出接口参数'+index+'</label>'
+									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 									+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1120,7 +1122,7 @@ $(function() {
 									+ '</div>'
 									+ '</div>'
 									+ '<div class="layui-col-md6">'
-									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输出表单参数'+index+'</label>'
+									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单参数'+index+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<select id="tableParam'+index+'" lay-search onchange="queryOption(this)">'
 									+ '</select>'
@@ -1135,7 +1137,7 @@ $(function() {
 									+ '<div class="layui-row">'
 									+ '<div class="layui-col-md6">'
 									+ '<div class="layui-inline">'
-									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合对象'+index+'</label>'
+									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 									+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1143,7 +1145,7 @@ $(function() {
 									+ '</div>'
 									+ '</div>'
 									+ '<div class="layui-col-md6">'
-									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合对象'+index+'</label>'
+									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合对象'+index+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<select id="tableParam'+index+'" name="listParam_sel" lay-filter="listParam_sel" class="listParam" lay-search onchange="queryOption(this)">'
 									+ '</select>'
@@ -1158,7 +1160,7 @@ $(function() {
 									+ '<div class="layui-row">'
 									+ '<div class="layui-col-md6">'
 									+ '<div class="layui-inline">'
-									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合参数'+index+'</label>'
+									+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 									+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1166,7 +1168,7 @@ $(function() {
 									+ '</div>'
 									+ '</div>'
 									+ '<div class="layui-col-md6">'
-									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合参数'+index+'</label>'
+									+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合参数'+index+'</label>'
 									+ '<div class="layui-input-inline">'
 									+ '<select id="tableParam'+index+'" name="listfiled_sel"  lay-filter="listfiled_sel" class="listfiled" lay-search onchange="queryOption(this)">'
 									+ '</select>'
@@ -1244,6 +1246,7 @@ $(function() {
 								var paraUid = list[i].paraUid  // 接口参数id
 								var paraType = list[i].paraType  // 接口参数类型
 								var paraParent = list[i].paraParent // 父参数
+								var paraDescription = list[i].paraDescription // 接口参数描述
 								var index = sortNum + i
 								// 判断有没有list 集合数据 进行映射
 								if(list[i].paraType != "Array" && list[i].paraParent == null){
@@ -1251,7 +1254,7 @@ $(function() {
 										+ '<div class="layui-row">'
 										+ '<div class="layui-col-md6">'
 										+ '<div class="layui-inline">'
-										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输入接口参数'+index+'</label>'
+										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 										+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1259,7 +1262,7 @@ $(function() {
 										+ '</div>'
 										+ '</div>'
 										+ '<div class="layui-col-md6">'
-										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输入表单参数'+index+'</label>'
+										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单参数'+index+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<select id="tableParam'+index+'" lay-search onchange="queryOption(this)">'
 										+ '</select>'
@@ -1274,7 +1277,7 @@ $(function() {
 										+ '<div class="layui-row">'
 										+ '<div class="layui-col-md6">'
 										+ '<div class="layui-inline">'
-										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合对象'+index+'</label>'
+										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 										+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1282,7 +1285,7 @@ $(function() {
 										+ '</div>'
 										+ '</div>'
 										+ '<div class="layui-col-md6">'
-										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合对象'+index+'</label>'
+										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合对象'+index+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<select id="tableParam'+index+'" name="listParam_sel" lay-filter="listParam_sel" class="listParam" lay-search onchange="queryOption(this)">'
 										+ '</select>'
@@ -1297,7 +1300,7 @@ $(function() {
 										+ '<div class="layui-row">'
 										+ '<div class="layui-col-md6">'
 										+ '<div class="layui-inline">'
-										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合参数'+index+'</label>'
+										+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 										+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1305,7 +1308,7 @@ $(function() {
 										+ '</div>'
 										+ '</div>'
 										+ '<div class="layui-col-md6">'
-										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合参数'+index+'</label>'
+										+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合参数'+index+'</label>'
 										+ '<div class="layui-input-inline">'
 										+ '<select id="tableParam'+index+'" name="listfiled_sel"  lay-filter="listfiled_sel" class="listfiled" lay-search onchange="queryOption(this)">'
 										+ '</select>'
@@ -1838,6 +1841,7 @@ function triggerEdit(triggerUid){
 					var paraUid = list[i].dhInterfaceParameter.paraUid  // 接口参数id
 					var paraType = list[i].dhInterfaceParameter.paraType  // 接口参数类型
 					var paraParent = list[i].dhInterfaceParameter.paraParent // 父参数
+					var paraDescription = list[i].dhInterfaceParameter.paraDescription // 参数描述
 					formName = list[i].bpmForm.dynTitle // 表单名称
 					formId =  list[i].bpmForm.dynUid // 表单ID
 					var index = sortNum + i
@@ -1846,7 +1850,7 @@ function triggerEdit(triggerUid){
 							+ '<div class="layui-row">'
 							+ '<div class="layui-col-md6">'
 							+ '<div class="layui-inline">'
-							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">输入接口参数'+index+'</label>'
+							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 							+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1854,7 +1858,7 @@ function triggerEdit(triggerUid){
 							+ '</div>'
 							+ '</div>'
 							+ '<div class="layui-col-md6">'
-							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">输入表单参数'+index+'</label>'
+							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单参数'+index+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<select id="tableParam'+index+'" lay-search onchange="queryOption(this)">'
 							+ '</select>'
@@ -1870,7 +1874,7 @@ function triggerEdit(triggerUid){
 							+ '<div class="layui-row">'
 							+ '<div class="layui-col-md6">'
 							+ '<div class="layui-inline">'
-							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合对象'+index+'</label>'
+							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 							+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1878,7 +1882,7 @@ function triggerEdit(triggerUid){
 							+ '</div>'
 							+ '</div>'
 							+ '<div class="layui-col-md6">'
-							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合对象'+index+'</label>'
+							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合对象'+index+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<select id="tableParam'+index+'" name="listParam_sel" lay-filter="listParam_sel" class="listParam" lay-search onchange="queryOption(this)">'
 							+ '</select>'
@@ -1893,7 +1897,7 @@ function triggerEdit(triggerUid){
 							+ '<div class="layui-row">'
 							+ '<div class="layui-col-md6">'
 							+ '<div class="layui-inline">'
-							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">接口集合参数'+index+'</label>'
+							+ '<label class="layui-form-label interfacelabel'+index+'" style="width: 100px">'+paraDescription+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<input class="paraUid" value="'+paraUid+'" style="display: none;"/>'
 							+ '<input id="interfaceParam'+index+'" disabled="disabled" readonly="readonly" type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input paraName" value="'+paraName+'">'
@@ -1901,7 +1905,7 @@ function triggerEdit(triggerUid){
 							+ '</div>'
 							+ '</div>'
 							+ '<div class="layui-col-md6">'
-							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">表单集合参数'+index+'</label>'
+							+ '<label class="layui-form-label tablelabel'+index+'" style="width: 100px">集合参数'+index+'</label>'
 							+ '<div class="layui-input-inline">'
 							+ '<select id="tableParam'+index+'" name="listfiled_sel"  lay-filter="listfiled_sel" class="listfiled" lay-search onchange="queryOption(this)">'
 							+ '</select>'
@@ -3476,6 +3480,8 @@ function addStep() {
 			layer.alert('请选择触发器');
 			return;
 		}
+		// 判断参数是否映射
+		
 		$.ajax({
 			url : common.getPath() + "/step/create",
 			type : "post",
