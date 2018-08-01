@@ -99,7 +99,8 @@
 	$(function(){
 		var formHtml = $("#formSet").html();
 		formHtml = formHtml.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-				.replace(/&amp;lc;/g, "(").replace(/&amp;gc;/g, ")");
+				.replace(/&amp;lc;/g, "(").replace(/&amp;gc;/g, ")")
+				.replace(/&amp;/g, "&");
 		$("#formSet").html(formHtml);
 	});
 </script>

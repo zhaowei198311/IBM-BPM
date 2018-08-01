@@ -124,6 +124,10 @@
 					window.parent.document.getElementById(elementId+"_view").title=title;
 				}
 			 	$('#close').click();
+			 	var inputObj = $(window.parent.document.getElementById(elementId+"_view"));
+				if(inputObj.attr("onchange")!=null && inputObj.attr("onchange")!=""){
+					inputObj.trigger("change");
+				}
 			});
 			
 			var $user_li=$("#user_add");

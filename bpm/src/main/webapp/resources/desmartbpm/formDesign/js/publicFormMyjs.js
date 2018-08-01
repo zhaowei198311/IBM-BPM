@@ -36,6 +36,24 @@ function saveEvent() {
     }
 }
 
+//保存选人组件的事件
+function saveChooseUserEvent(){
+	var inputObj = view.find("div[title='choose_user']").find("input[type='text']");
+	var onchangeStr = $("#chooseUserAddEventModal textarea[title='onchange']").val().replace(/\"/g, "\'");
+	inputObj.attr({
+        "onchange": onchangeStr
+    });
+}
+
+//显示给选人组件加事件的模态框
+function chooseAddEventModal(obj){
+	view = $(obj).parent().next().next();
+    var inputObj = view.find("div[title='choose_user']").find("input[type='text']");
+    var onchangeStr = inputObj.attr("onchange");
+    $("#chooseUserAddEventModal textarea[title='onchange']").val(onchangeStr);
+    $("#chooseUserAddEventModal").modal("show");
+}
+
 //显示给文本框添加事件的模态框
 function textAddEventModal(obj) {
     view = $(obj).parent().next().next();

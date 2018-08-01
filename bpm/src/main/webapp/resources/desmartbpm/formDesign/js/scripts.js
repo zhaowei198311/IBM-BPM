@@ -716,9 +716,9 @@ $(document).ready(function () {
         downloadLayoutSrc();
         dynContent += formatJs;
         var dynHtml = dynContent.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;").replace(/&amp;/g, "&");
         var preHtml = webpage.replace(/\"/g, "\"").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;");
+        		.replace(/\(/g, "&amp;lc;").replace(/\)/g, "&amp;gc;").replace(/&amp;/g, "&");
         var url = common.getPath() + "/formManage/preIndex";
         var preParam = {
             proUid: $("#proUid").val(),

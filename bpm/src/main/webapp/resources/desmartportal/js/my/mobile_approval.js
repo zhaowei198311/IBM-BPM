@@ -459,6 +459,10 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 		pageConfig.pageNum = 1;
 		pageConfig.pageSize = 14;
 		$(eleObj).parent().find("input[type='text']").val(userName);
+		var inputObj = $(eleObj).parent().find("input[type='text']");
+		if(inputObj.attr("onchange")!=null && inputObj.attr("onchange")!=""){
+			inputObj.trigger("change");
+		}
 		$(eleObj).parent().find("input[type='hidden']").val(userUid);
 		asyncActcChooseableHandlerType = "allUser";
 		queryUserByActc(asyncActcChooseableHandlerType,asyncActivityId,elementId,false,eleObj);
