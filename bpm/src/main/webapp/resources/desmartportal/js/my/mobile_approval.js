@@ -155,7 +155,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 			success: function (result){
 				$("#choose_user_tbody").empty();
 				if(result.status==0){
-					drawChooseUserTable(result.data,isMulti,elementId,obj);
+					drawChooseUserTable(result.data,isMulti,elementId,obj,activityId);
 				}else{
 					$("#choose_user_tbody").append("<th colspan='2'>未找到符合条件的数据</th>");
 				}
@@ -183,7 +183,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 					$("#choose_user_tbody").empty();
 				}
 				if(result.status==0){
-					drawChooseUserTable(result.data.list,isMulti,elementId,obj);
+					drawChooseUserTable(result.data.list,isMulti,elementId,obj,activityId);
 				}else{
 					$("#choose_user_tbody").append("<th colspan='2'>未找到符合条件的数据</th>");
 				}
@@ -214,7 +214,7 @@ function searchChooseUser(){
 }
 
 //渲染选人的表格
-function drawChooseUserTable(data,isMulti,elementId,obj){
+function drawChooseUserTable(data,isMulti,elementId,obj,activityId){
 	eleObj = obj;
 	if(data.length==0){
 		$("#choose_user_tbody").append("<th colspan='3'>未找到符合条件的数据</th>");
@@ -222,7 +222,7 @@ function drawChooseUserTable(data,isMulti,elementId,obj){
 		var trHtml = "";
 		for(var i=0;i<data.length;i++){
 			var item = data[i];
-			trHtml += "<tr onclick='clickUserFun(this,"+isMulti+",\""+elementId+"\");'>"
+			trHtml += "<tr onclick='clickUserFun(this,"+isMulti+",\""+elementId+"\",\""+activityId+"\");'>"
 				+"<td>"+item.userUid+"</td>"
 				+"<td>"+item.userName+"</td>"
 				+"</tr>";
@@ -441,14 +441,15 @@ function openChooseUserDiv(){
 }
 
 //点击行
-function clickUserFun(obj,isMulti,elementId){
+function clickUserFun(obj,isMulti,elementId,activityId){
 	var userUid = $(obj).find("td:eq(0)").text().trim();
 	var userName = $(obj).find("td:eq(1)").text().trim();
 	var liHtml = '<li><div class="choose_user_name_span">'+userName+'('+userUid+")"
 		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
 		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
 	if(isMulti){
-		$("#"+elementId+" .choose_user_name_ul ul").append(liHtml);
+		var showActivityId = activityId.replace(":","");
+		$("#"+elementId).find("#"+showActivityId).find("ul").append(liHtml);
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
 			pageConfig.pageSize = 1;
@@ -992,21 +993,18 @@ function showRouteBar() {
                     chooseUserDiv += '<tr>'
                         +'<th class="approval_th">下一环节：</th>'
                         +'<td>流程结束</td>'
-                        +'</tr>'
-                        +'<tr>'
-                        +'<th class="approval_th">处理人：</th>'
-                        +'<td></td>'
                         +'</tr>';
                 }else{
                     for(var i=0;i<activityMetaList.length;i++){
                         var activityMeta = activityMetaList[i];
+                        var showActivityId = activityMeta.activityId.replace(":","");
                         chooseUserDiv += '<tr>'
                             +'<th class="approval_th">下一环节：</th>'
                             +'<td>'+activityMeta.activityName+'</td>'
                             +'</tr>'
                             +'<tr>'
                             +'<th class="approval_th">处理人：</th>'
-                            +'<td>';
+                            +'<td id="'+showActivityId+'">';
                         if(activityMeta.userName!=null && activityMeta.userName!=""){
                         	var userNameArr = activityMeta.userName.split(";");
                         	chooseUserDiv += "<div class='choose_user_name_ul'><ul>";
