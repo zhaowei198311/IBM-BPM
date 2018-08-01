@@ -29,6 +29,7 @@ import com.desmart.desmartportal.entity.DhAgent;
 import com.desmart.desmartportal.entity.DhAgentProInfo;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhAgentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -309,19 +310,45 @@ public class DhAgentServiceImpl implements DhAgentService {
 				}
 				//修改的代理信息为已启用
 				if("ENABLED".equals(dhAgent.getAgentStatus())) {
-					List<String> revokeTaskUidList = dhTaskInstanceMapper.queryNoFinishedTaskUidListByCondition(
-							dhAgent.getAgentId(),metaList);
-					if(revokeTaskUidList.size()>0) {
-						//批量修改这些任务实例的代理人为空
-						int updateCount = dhTaskInstanceMapper.updateDelegateUserBatch(revokeTaskUidList);
-						if(updateCount!=revokeTaskUidList.size()) {
-							throw new PlatformException("删除任务代理人失败");
-						}
-					}
+					//调用修改代理信息是取回代理过期的任务
+					revokeAgentOutTask(dhAgent,metaList);
 				}
 			}
 		}
 		return ServerResponse.createBySuccess();
+	}
+
+	/**
+	 * 根据传的代理信息，以及代理的流程信息，取回代理过期的任务
+	 * @param dhAgent
+	 * @param metaList
+	 */
+	private void revokeAgentOutTask(DhAgent dhAgent, List<DhProcessMeta> metaList) {
+		Date currDate = new Date(System.currentTimeMillis());
+		//根据流程库id以及流程元id找到对应的流程实例集合
+		List<DhProcessInstance> processInsList = dhProcessInstanceMapper.queryBatchByProMetaList(metaList);
+		List<String> revokeTaskUidList = new ArrayList<>();
+		if(!processInsList.isEmpty()) {
+			//根据代理的流程信息，获得要取回的任务id集合 --- 获得的是不再代理的流程任务id集合
+			revokeTaskUidList = dhTaskInstanceMapper.queryNoFinishedTaskUidListByCondition(
+					dhAgent.getAgentId(),processInsList);
+			//判断代理结束时间是否比现在要早
+			if(!currDate.before(dhAgent.getAgentEdate())){//当前时间不早于代理时间
+				//获得当前代理的所有流程
+				List<DhTaskInstance> taskInstaceList = dhTaskInstanceMapper.getDhTaskInstancesByBatch(processInsList);
+				for(DhTaskInstance taskIns:taskInstaceList) {
+					revokeTaskUidList.add(taskIns.getTaskUid());
+				}
+			}
+		}
+		//判断过期代理信息对应的任务实例id集合是否为空
+		if(revokeTaskUidList.size()>0) {
+			//批量修改这些任务实例的代理人为空
+			int updateCount = dhTaskInstanceMapper.updateDelegateUserBatch(revokeTaskUidList);
+			if(updateCount!=revokeTaskUidList.size()) {
+				throw new PlatformException("删除任务代理人失败");
+			}
+		}
 	}
 
 	@Override

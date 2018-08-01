@@ -106,4 +106,11 @@ public interface DhAgentMapper {
 	 * @return
 	 */
 	int insertBatch(@Param("agentProInfoList")List<DhAgentProInfo> agentProInfoList);
+
+	/**
+	 * 根据用户id查询当前用户的代理以及被代理的信息
+	 * @param currentUserUid
+	 * @return
+	 */
+	List<DhAgent> queryAgentOutByUserUid(@Param("userUid")String currentUserUid);
 }

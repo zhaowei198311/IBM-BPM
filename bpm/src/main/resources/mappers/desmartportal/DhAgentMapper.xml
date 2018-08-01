@@ -151,4 +151,12 @@
 			from dual
 		</foreach>
 	</insert>
+	
+	<select id="queryAgentOutByUserUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select <include refid="insert_column_List"/>
+		from dh_agent_info
+		where (agent_operator = #{userUid} or
+		agent_clientele = #{userUid})
+		and agent_edate &lt;= sysdate
+	</select>
 </mapper>

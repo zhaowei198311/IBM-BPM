@@ -716,6 +716,7 @@ function showChooseUserModal(obj){
     var subObj = view.find("div[title='choose_user']");
     var id = subObj.attr("id");
     var name = subObj.attr("name").replace(formCode+"_","");
+    var isSingle = subObj.attr("single");
     var textWidth = subObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -730,6 +731,12 @@ function showChooseUserModal(obj){
     $("#choose-user-id").val(id);
     $("#choose-user-width").val(textCol);
     $("#choose-user-label-width").val(textLabelCol);
+    
+    if(isSingle=="true"){
+    	$("#choose-user-single").prop("checked",true);
+    }else{
+    	$("#choose-user-single").prop("checked",false);
+    }
     
     var num = view.find(".labelDiv").find("span").length;
     if (num == 0) {
@@ -945,11 +952,11 @@ $(function () {
             }else if($(inputDiv.children()[0]).prop("type") == "button") {
                 continue;
             }else if($(inputDiv.children()[0]).attr("title") == "choose_user"){
-            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
             }else if($(inputDiv.children()[0]).attr("title") == "choose_value"){
-            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
             }else if($(inputDiv.children()[0]).attr("title") == "choose_depart"){
-            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+            	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
             }else {
                 $(inputDiv.children()[0]).css("width", colNum * colWidth - 18);
             }
@@ -1200,7 +1207,7 @@ $(function () {
             var place = $("#date-place").val();
             var isMust = $("#date-must").is(':checked');
             var dateType = $("#date-type").prop("checked");
-            alert(dateType);
+            
             var textWidth = $("#date-width").val() * colWidth;
             var textLabelWidth = $("#date-label-width").val() * colWidth;
 
@@ -1634,16 +1641,17 @@ $(function () {
 
             var textWidth = $("#choose-user-width").val() * colWidth;
             var textLabelWidth = $("#choose-user-label-width").val() * colWidth;
-
+            var isSingle = $("#choose-user-single").is(":checked");
             var isMust = $("#choose-user-must").is(':checked');
             view.find("label").text(label);
             var subObj = view.find("div[title='choose_user']");
             subObj.attr({
                 "id": id,
-                "name": formCode+"_"+name
+                "name": formCode+"_"+name,
+                "single": isSingle
             });
             subObj.find("input[type='text']").attr({"id":id+"_hide_view","name":formCode+"_"+name});
-            subObj.find("input[type='hidden']").attr("id",id+"_hide");
+            subObj.find("input[type='hidden']").attr({"id":id+"_hide","single":isSingle});
 
             view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#choose-user-label-width").val());
             subObj.parent().css("width", textWidth - 18).attr("col", $("#choose-user-width").val());
@@ -1843,11 +1851,11 @@ $(function () {
                 } else if ($(inputDiv.children()[0]).prop("type") == "button") {
                     continue;
                 } else if ($(inputDiv.children()[0]).attr("title") == "choose_user"){
-                	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+                	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
                 } else if ($(inputDiv.children()[0]).attr("title") == "choose_value"){
-                    $(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+                    $(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
                 } else if ($(inputDiv.children()[0]).attr("title") == "choose_depart"){
-                	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 60);
+                	$(inputDiv.children()[0]).find("input[type='text']").css("width", colNum * colWidth - 75);
                 } else {
                     $(inputDiv.children()[0]).css("width", colNum * colWidth - 18);
                 }

@@ -124,4 +124,16 @@
     <delete id="deleteByAgentId" parameterType="String">
     	delete from dh_agent_reocrd where agent_id = #{agentId}
     </delete>
+    
+    <select id="queryAgentRecordListByAgentList" parameterType="list" resultType="com.desmart.desmartportal.entity.DhAgentRecord">
+    	select ar.task_uid
+    	from dh_agent_record ar left join dh_task_instance ti
+    	on ar.task_uid = ti.task_uid
+    	<where>
+    		<foreach collection="list" item="item" separator="or">
+    			ar.agent_id = #{item.agentId}
+    		</foreach>
+    		and ti.task_status != '32'
+    	</where>
+    </select>
 </mapper>

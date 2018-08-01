@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 
 /**  
@@ -89,4 +90,11 @@ public interface DhProcessInstanceMapper {
 	 * @return
 	 */
 	Integer updateProcessInstanceByInsId(DhProcessInstance dhProcessInstance);
+
+	/**
+	 * 根据传入的流程元数据集合，找到除这些流程元数据的流程实例
+	 * @param metaList
+	 * @return
+	 */
+	List<DhProcessInstance> queryBatchByProMetaList(@Param("list")List<DhProcessMeta> metaList);
 }

@@ -970,14 +970,12 @@
         	ar.agent_id = #{agentId} 
         	and ti.task_status != '32'
         	and ti.task_type !='transfer'
-        	and ti.ins_uid not in (
-        		select ins_uid from dh_process_instance
-        		<where>
-		        	<foreach collection="metaList" item="meta" separator="or">
-			        	pro_app_id != #{meta.proAppId} and pro_uid != #{meta.proUid}
-			        </foreach>
-		        </where>
-		    )
+        	and 
+        	<where>
+		        <foreach collection="insList" item="meta" separator="and">
+			       ti.ins_uid != #{meta.ins_uid}
+			    </foreach>
+		    </where>
         </where> 
 	</select>
 	

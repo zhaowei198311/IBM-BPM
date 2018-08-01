@@ -515,10 +515,10 @@
 													<label>选择人员</label>
 												</div>
 												<div class="subDiv">
-													<div title="choose_user" col="1">
+													<div title="choose_user" col="1" single="false">
 														<input type="text" id="person_hide_view" title="choose_user" class="layui-input" style="float:left" readonly>
-														<input type="hidden" id="person_hide" />
-														<span class="glyphicon glyphicon-user" id="choose_user_btn" style="position:relative;left:2%;font-size:25px;"></span>
+														<input type="hidden" id="person_hide" single="false"/>
+														<span class="glyphicon glyphicon-user" id="choose_user_btn" style="position:relative;font-size:25px;"></span>
 													</div>
 												</div>
 											</div>
@@ -547,7 +547,7 @@
 													<div title="choose_depart" col="1">
 														<input type="text" id="depart_hide_view" title="choose_depart" class="layui-input" style="float:left" readonly>
 														<input type="hidden" id="depart_hide" />
-														<span class="glyphicon glyphicon-tree-conifer" id="choose_depart_btn" style="position:relative;left:2%;font-size:25px;"></span>
+														<span class="glyphicon glyphicon-tree-conifer" id="choose_depart_btn" style="position:relative;font-size:25px;"></span>
 													</div>
 												</div>
 											</div>
@@ -577,7 +577,7 @@
 														<input type="text" id="value_hide_view" title="choose_value" class="layui-input" style="float:left" readonly>
 														<input type="hidden" id="value_hide" class="value_id" />
 														<input type="hidden" id="value_hide_code" class="value_code" />
-														<span class="glyphicon glyphicon-search" id="choose_value_btn" style="position:relative;left:2%;font-size:25px;"></span>
+														<span class="glyphicon glyphicon-search" id="choose_value_btn" style="position:relative;font-size:25px;"></span>
 													</div>
 												</div>
 											</div>
@@ -1941,9 +1941,14 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-4 col-xs-7">
-								<div class="checkbox">
+								<div class="checkbox col-xs-3">
 									<label>
 										<input type="checkbox" id="choose-user-must">必须
+									</label>
+								</div>
+								<div class="checkbox col-xs-4">
+									<label>
+										<input type="checkbox" id="choose-user-single">是否单选
 									</label>
 								</div>
 							</div>
