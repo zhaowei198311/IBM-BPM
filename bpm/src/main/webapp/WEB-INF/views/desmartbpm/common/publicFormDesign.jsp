@@ -507,6 +507,8 @@
 											<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showChooseUserModal(this);" role="button"
 											    data-toggle="modal">编辑
 											</button>
+											<button type="button" class="btn btn-mini" onclick="chooseAddEventModal(this);" role="button" data-toggle="modal">添加事件
+											</button>
 										</span>
 										<div class="preview">选人组件</div>
 										<div class="view">
@@ -2146,6 +2148,39 @@
 				</div>
 				<div class="modal-footer">
 					<a class="btn btn-primary" data-dismiss="modal" onclick="saveEvent();">保存</a>
+					<a class="btn btn-primary" data-dismiss="modal">取消</a>
+				</div>
+			</div>
+			
+			<!-- 给选人组件事件的方法 -->
+			<div class="modal hide fade" role="dialog" id="chooseUserAddEventModal">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>给组件添加事件</h3>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-1 control-label">
+								onchange
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											组件的值改变事件</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<textarea rows="1" class="layui-textarea" title="onchange" style="resize:none;width:100%"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal" onclick="saveChooseUserEvent();">保存</a>
 					<a class="btn btn-primary" data-dismiss="modal">取消</a>
 				</div>
 			</div>

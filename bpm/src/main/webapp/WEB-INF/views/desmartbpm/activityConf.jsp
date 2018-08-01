@@ -983,7 +983,7 @@
 		</form>
 	</div>
 	<div class="display_container4" id="editFieldPermissions">
-		<div class="display_content3" style="width: 600px; height: 400px;">
+		<div class="display_content3" style="width: 700px; height: 402px;">
 			<div class="top">编辑字段权限</div>
 			<div class="middle1" style="height: 300px;" class="layui-row">
 				<div class="layui-form">
