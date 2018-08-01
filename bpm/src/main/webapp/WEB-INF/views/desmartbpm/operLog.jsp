@@ -11,18 +11,7 @@
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css"
 	rel="stylesheet" media="all" />
 	<style>
-		.display_content_accessory_file {
-			display: none;
-			color: #717171;
-			padding: 20px;
-			width: 70%;
-			height: 60%;
-			background: #fff;
-			position: fixed;
-			left: 12.5%;
-			top: 16%;
-			box-shadow: 0 0 10px #ccc;
-		}
+
 	</style>
 </head>
 <body>
@@ -30,24 +19,21 @@
 		<div class="search_area">
 			<div class="layui-row layui-form">
 				<div class="layui-col-md2">
-					<input id="triggerName_input" type="text" placeholder="触发器名称"
+					<input id="userId" type="text" placeholder="操作人工号"
 						class="layui-input">
 				</div>
 				<div class="layui-col-md2">
-					<select id="triggerType_select" name="triggerType">
-						<option value="">请选触发器类型</option>
-						<option value="script">script</option>
-						<option value="sql">sql</option>
-						<option value="interface">interface</option>
-						<option value="javaclass">javaclass</option>
-						<option value="chooseUser">chooseUser</option>
-						<option value="validate">validate</option>
+					<select id="logType" name="logType">
+						<option value="">请选日志类型</option>
+						<option value="systemLog">系统日志</option>
+						<option value="errorLog">错误日志</option>
 					</select>
 				</div>
-				<div class="layui-col-md8" style="text-align: left; padding-left:15px;">
-					<button class="layui-btn search_btn" id="searchMeat_btn">查询</button>
-					<button class="layui-btn create_btn" id="show_expose_btn">添加</button>
-					<button class="layui-btn create_btn" id="importBtn">导入</button>
+				<div class="layui-col-md2">
+						<input type="text" placeholder="日志创建时间" class="layui-input" id=createTime>
+				</div>
+				<div class="layui-col-md2" style="text-align: left; padding-left:15px;">
+					<button class="layui-btn search_btn" onclick="search()">查询</button>
 				</div>
 			</div>
 		</div>
@@ -80,221 +66,184 @@
 						<!-- <th>附加备注</th> -->
 					</tr>
 				</thead>
-				<tbody id="trigger_table_tbody"></tbody>
+				<tbody id="log_table_tbody"></tbody>
 			</table>
 		</div>
 		<div id="lay_page"></div>
-		
-		<div class="display_container">
-			<div class="display_content3">
-				<div class="top" style="color: red;">新增触发器</div>
-				<label class="layui-input-label" style="color: red;">带*为必填参数</label>
-				<form id="form1" class="layui-form" action=""
-					style="margin-top: 30px;">
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
-								<div class="layui-input-inline">
-									<select id="triType" name="triType" lay-filter="triType">
-										<option value="">请选择触发器类型</option>
-										<option value="script">script</option>
-										<option value="sql">sql</option>
-										<option value="interface">interface</option>
-										<option value="javaclass">javaclass</option>
-										<option value="chooseUser">chooseUser</option>
-										<option value="validate">validate</option>
-									</select>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
-									<div class="layui-input-inline">
-										<input type="text" id="triTitle" name="triTitle"
-											lay-verify="triTitle" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器描述:</label>
-									<div class="layui-input-inline">
-										<input width="80%" type="text" id="triDescription" name="triDescription"
-											lay-verify="triTitle" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器参数:</label>
-								<div class="layui-input-inline">
-									<input type="text" id="triParam" name="triParam"
-										lay-verify="triParam" autocomplete="off" class="layui-input">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-form-item triWebbot">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
-								<div class="layui-input-inline" id="div_triWebbot">
-									<input id="triWebbot" name="triWebbot" type="text"
-										lay-verify="triWebbot" autocomplete="off"
-										class="layui-input paraDescription" style="width: 568px" placeholder="若触发器为javaclass类型，请输入java反射类"/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item ">
-						<div class="layui-form-item triInterface" style="display:none;">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
-								<div class="layui-input-inline">
-									<select id="triWebbotType" name="triWebbotType"
-										lay-filter="triWebbotType">
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</form>
-				<div class="foot">
-					<button id="sure_btn" class="layui-btn layui-btn sure_btn">确定</button>
-					<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
-				</div>
-			</div>
-		</div>
-		
-		
-		<div class="display_container2">
-		<input id="triUid" style="display: none;">
-			<div class="display_content3">
-				<div class="top" style="color: red;">修改触发器</div>
-				<form id="form2" class="layui-form" action=""
-					style="margin-top: 30px;">
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
-								<div class="layui-input-inline">
-									<select id="triType2" name="triType2" lay-filter="triType2">
-										<option value="script">script</option>
-										<option value="sql">sql</option>
-										<option value="interface">interface</option>
-										<option value="javaclass">javaclass</option>
-										<option value="chooseUser">chooseUser</option>
-										<option value="validate">validate</option>
-									</select>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
-									<div class="layui-input-inline">
-										<input type="text" id="triTitle2" name="triTitle2"
-											lay-verify="triTitle2" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器描述:</label>
-									<div class="layui-input-inline">
-										<input width="80%" type="text" id="triDescription2" name="triDescription2"
-											lay-verify="triDescription2" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器参数:</label>
-								<div class="layui-input-inline">
-									<input type="text" id="triParam2" name="triParam2"
-										lay-verify="triParam2" autocomplete="off" class="layui-input">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-form-item triWebbot">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
-								<div class="layui-input-inline" id="div_triWebbot">
-									<input id="triWebbot2" name="triWebbot2" type="text"
-										lay-verify="triWebbot2" autocomplete="off"
-										class="layui-input trigerWebbot" style="width: 568px"/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item ">
-						<div class="layui-form-item triInterface" style="display:none;">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
-								<div class="layui-input-inline">
-									<select id="triWebbotType2" class="trigerWebbot" name="triWebbotType2"
-										lay-filter="triWebbotType2">
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</form>
-				<div class="foot">
-					<button id="update_btn" class="layui-btn layui-btn update_btn">确定</button>
-					<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
-				</div>
-			</div>
-		</div>
-		<!-- 批量导入触发器 -->
-		<div class="display_content_accessory_file" id="upload_file_modal">
-			<div class="top">文件上传</div>
-			<div class="upload_overflow_middle">
-				<div class="layui-upload-drag" style="width: 94.5%;">
-					<i class="layui-icon"></i>
-					<p>点击上传，或将文件拖拽到此处</p>
-				</div>
-				<div class="layui-upload">
-					<div class="layui-upload-list">
-						<table class="layui-table">
-							<colgroup>
-								<col width="5%">
-								<col width="20%">
-								<col width="10%">
-								<col width="20%">
-							</colgroup>
-							<thead>
-							<tr>
-								<th>文件名</th>
-								<th>大小</th>
-								<!-- <th>文件标题</th>
-                                        <th>文件标签</th>
-                                        <th>文件说明</th> -->
-								<th>状态</th>
-								<th>操作</th>
-							</tr>
-							</thead>
-							<tbody class="fileList"></tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<div class="foot_accessory_file">
-				<button type="button" class="layui-btn listAction">开始上传</button>
-				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="cancelClick(this)">关闭</button>
-			</div>
-		</div>
+	
 	</div>
 <script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/lay/modules/laypage.js"></script>
-<script src="<%=basePath%>/resources/desmartbpm/js/my/trigger.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	// 加载数据
+	pageOperLog();
+
+})
+//为翻页提供支持
+var pageConfig = {
+	pageNum : 1,
+	pageSize : 10,
+	logType: "",
+	startTime: "",
+	endTime: "",
+	userId: "",
+	total : 0
+}
+
+//分页
+function doPage() {
+	layui.use([ 'laypage', 'layer' ], function() {
+		var laypage = layui.laypage, layer = layui.layer;
+		//完整功能
+		laypage.render({
+			elem : 'lay_page',
+			curr : pageConfig.pageNum,
+			count : pageConfig.total,
+			limit : pageConfig.pageSize,
+			layout : [ 'count', 'prev', 'page', 'next', 'limit', 'skip' ],
+			jump : function(obj, first) {
+				// obj包含了当前分页的所有参数  
+				pageConfig.pageNum = obj.curr;
+				pageConfig.pageSize = obj.limit;
+				if (!first) {
+					pageOperLog();
+				}
+			}
+		});
+	});
+}
+
+function pageOperLog(){
+	$.ajax({
+		url : common.getPath()+'/operLog/pageOperLogList',
+		type : 'post',
+		dataType : 'json',
+		data : {
+			"pageNum" : pageConfig.pageNum,
+			"pageSize" : pageConfig.pageSize,
+			"userId": pageConfig.userId,
+			"logType" : pageConfig.logType,
+			"startTime" : pageConfig.startTime,
+			"endTime" : pageConfig.endTime
+		},
+		beforeSend: function(){
+			layer.load(1);
+		},
+		success : function(result){
+			if (result.status == 0) {
+				drawTable(result.data);
+			}
+			layer.closeAll("loading");
+		},error : function(){
+			layer.closeAll("loading");
+		}
+	})
+}
+//模糊查询
+function search(){
+	pageConfig.userId = $("#userId").val();
+	pageConfig.logType = $("#logType").val();
+	var createTime = $("#createTime").val();
+	if(createTime != null){
+		var createTimeArr = createTime.split(" - ");
+		if(createTimeArr.length>0){
+			pageConfig.startTime = createTimeArr[0];
+			pageConfig.endTime = createTimeArr[1];
+		}
+		
+	}
+	pageOperLog();
+}
+//字符转换,截取指定字符长度
+function interceptStr(str, len) {
+    var reg = /[\u4e00-\u9fa5]/g,    //专业匹配中文
+        slice = str.substring(0, len),
+        chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
+        realen = slice.length * 2 - chineseCharNum;
+    return str.substr(0, realen) + (realen < str.length ? "..." : "");
+}
+function drawTable(pageInfo){
+	pageConfig.pageNum = pageInfo.pageNum;
+	pageConfig.pageSize = pageInfo.pageSize;
+	pageConfig.total = pageInfo.total;
+	doPage();//渲染分页
+	// 渲染数据
+	$("#log_table_tbody").html('');
+	if (pageInfo.total == 0) {
+		return;
+	}
+	var list = pageInfo.list;
+	var startSort = pageInfo.startRow;//开始序号
+	var trs = "";
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var sortNum = startSort + i;
+		var logType = "";
+		if(item.logType == "systemLog"){
+			logType = "系统日志";
+		}else if(item.logType == "errorLog"){
+			logType = "错误日志";
+		}
+		var requestParam = "";
+		if(item.requestParam!=null){
+			requestParam = interceptStr(item.requestParam,15);
+		}
+		var responseParam ="";
+		if(item.responseParam!=null && item.responseParam!=''){
+			responseParam = interceptStr(item.responseParam,15);
+		}
+		var methodDescription ="";
+		if(item.methodDescription!=null && item.methodDescription!=''){
+			methodDescription = interceptStr(item.methodDescription,15);
+		}
+		trs += '<tr>'
+				+'<td>'
+				+ sortNum 
+				+ '</td>' 
+				+ '<td>'
+				+ logType
+				+ '</td>'
+				+ '<td>'
+				+ item.userId
+				+ '</td>'
+				+ '<td>'
+				+ item.userName
+				+ '</td>' 
+				+ '<td>'
+				+ item.host
+				+ '</td>' 
+				+ '<td title="' + item.requestParam + '">'
+				+ requestParam
+			    +'</td>'
+				+ '<td title="' + item.responseParam + '">'
+				+ responseParam
+				+ '</td>'
+				+ '<td>'
+				+ methodDescription
+			    +'</td>'
+				+ '<td>'
+				+ item.path
+				+ '</td>'
+				+ '<td>'
+				+ common.dateToString(new Date(item.createTime))
+				+ '</td>'
+				+ '</tr>';
+	}
+	$("#log_table_tbody").append(trs);
+}
+
+layui.use('laydate', function(){
+	var laydate = layui.laydate;
+  	laydate.render({
+    elem: '#createTime',
+    type: 'datetime',
+    range: true
+});
+});
+
+
+
+</script>
 </body>
 </html>

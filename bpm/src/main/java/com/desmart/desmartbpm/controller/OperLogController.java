@@ -6,7 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhOperLog;
 import com.desmart.desmartbpm.service.OperLogService;
 
 @Controller
@@ -22,6 +25,12 @@ public class OperLogController {
 	public String index() {
 		
 		return "desmartbpm/operLog";
+	}
+	
+	@RequestMapping("/pageOperLogList")
+	@ResponseBody
+	public ServerResponse pageOperLogList(DhOperLog dhOperLog,Integer pageNum,Integer pageSize){	
+		return operLogService.pageOperLogByCondition(dhOperLog, pageNum, pageSize);
 	}
 
 }
