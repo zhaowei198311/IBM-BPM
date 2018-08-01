@@ -38,18 +38,19 @@
 			</div>
 		</div>
 		<div>
-			<table class="layui-table backlog_table " lay-even lay-skin="nob">
+		<div style="width:100%;">
+			 <table class="layui-table backlog_table " lay-even lay-skin="nob" style="width: 100%; table-layout: fixed;">
 				<colgroup>
-					<col width="4%">
-					<col width="8%">
-					<col width="10%">
-					<col width="10%">
-					<col width="8%">
-					<col width="15%">
-					<col width="15%">
-					<col width="10%">
-					<col width="10%">
-					<col width="10%">
+					<col width=3%;>
+					<col width=7%;>
+					<col width=7%;>
+					<col width=7%;>
+					<col width=10%;>
+					<col width=16%;>
+					<col width=16%;>
+					<col width=16%;>
+					<col width=13%;>
+					<col width=10%;>
 				</colgroup>
 				<thead>
 					<tr>
@@ -68,6 +69,7 @@
 				</thead>
 				<tbody id="log_table_tbody"></tbody>
 			</table>
+		</div>
 		</div>
 		<div id="lay_page"></div>
 	
@@ -187,15 +189,19 @@ function drawTable(pageInfo){
 		}
 		var requestParam = "";
 		if(item.requestParam!=null){
-			requestParam = interceptStr(item.requestParam,15);
+			requestParam = interceptStr(item.requestParam,10);
 		}
 		var responseParam ="";
 		if(item.responseParam!=null && item.responseParam!=''){
-			responseParam = interceptStr(item.responseParam,15);
+			responseParam = interceptStr(item.responseParam,10);
 		}
 		var methodDescription ="";
 		if(item.methodDescription!=null && item.methodDescription!=''){
-			methodDescription = interceptStr(item.methodDescription,15);
+			methodDescription = interceptStr(item.methodDescription,10);
+		}
+		var path ="";
+		if(item.path!=null && item.path!=''){
+			path = interceptStr(item.path,10);
 		}
 		trs += '<tr>'
 				+'<td>'
@@ -222,8 +228,8 @@ function drawTable(pageInfo){
 				+ '<td>'
 				+ methodDescription
 			    +'</td>'
-				+ '<td>'
-				+ item.path
+				+ '<td title="' + item.path + '">'
+				+ path
 				+ '</td>'
 				+ '<td>'
 				+ common.dateToString(new Date(item.createTime))
