@@ -43,14 +43,14 @@
 				<colgroup>
 					<col width=3%;>
 					<!-- <col width=7%;> -->
-					<col width=8%;>
-					<col width=13%;>
+					<col width=7%;>
+					<col width=12%;>
 					<col width=10%;>
-					<col width=16%;>
-					<col width=16%;>
-					<col width=16%;>
+					<col width=15%;> 
 					<col width=13%;>
-					<col width=10%;>
+					<col width=13%;>
+					<col width=13%;>
+					<col width=14%;>
 				</colgroup>
 				<thead>
 					<tr>
