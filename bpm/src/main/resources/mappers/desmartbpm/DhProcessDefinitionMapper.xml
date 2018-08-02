@@ -265,5 +265,9 @@
         select DISTINCT(pro_app_id) from dh_process_definition
     </select>
 
+    <select id="listDistinctProVerUidByProAppId" resultType="java.lang.String">
+        select distinct(pro_ver_uid) from dh_process_definition where pro_app_id = #{proAppId}
+    </select>
+
 
 </mapper>

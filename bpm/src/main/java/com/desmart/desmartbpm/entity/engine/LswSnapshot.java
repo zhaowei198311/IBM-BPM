@@ -12,9 +12,9 @@ public class LswSnapshot {
     private String repositoryBranchId;
     private Integer createdByUserId;
     private Date createdOn;
-    private String name;
+    private String name;  // 快照名
     private String acronym;
-    private String description;
+    private String description;  // 快照描述
     private String branchId;
     private String projectId;
     private Integer seqNum;
@@ -32,11 +32,13 @@ public class LswSnapshot {
     private Date activatedOn;
     private String hasSuspendedAllInstances;
     private String status;
-    private String isActive;
+    private String isActive;  // 是否激活
     private String capability;
-    private String isArchived;
-    private Date archivedOn;
+    private String isArchived;   // 是否归档
+    private Date archivedOn; // 归档时间
     private Date lastModified;
+
+
     public String getSnapshotId() {
         return snapshotId;
     }

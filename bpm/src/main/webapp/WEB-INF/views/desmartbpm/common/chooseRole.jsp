@@ -166,7 +166,7 @@ $(function () {
         });
         window.parent.document.getElementById(elementId).value = elementValue;
         window.parent.document.getElementById(elementId + '_view').value = elementValue_view;
-        //window.parent.closeChildWindow();
+
     });
 });
  

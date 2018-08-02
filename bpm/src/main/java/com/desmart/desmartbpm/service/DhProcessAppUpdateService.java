@@ -5,12 +5,33 @@ import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessDefinitionBo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 /**
  * 应用库升级服务
  */
 public interface DhProcessAppUpdateService {
+
+    /**
+     * 获得所有的应用库信息
+     * @return map中数据 的键是 "proAppId", "proAppName"
+     */
+    ServerResponse<List<Map<String, String>>> getAllProcessApp();
+
+    /**
+     * 根据应用库id获得已经同步过的版本
+     * @param proAppId 应用库id
+     * @return map中的数据 键： "snapshotId", "snapshotName", "createTime"
+     */
+    ServerResponse<List<Map<String, String>>> findSynchronizedSnapshotByProAppId(String proAppId);
+
+    /**
+     * 根据应用库id获得为同步过的版本
+     * @param proAppId 应用库id
+     * @return
+     */
+    ServerResponse<List<Map<String, String>>> findUnsynchronizedSnapshotByProAppId(String proAppId);
 
     /**
      * 升级应用库前准备数据
@@ -36,4 +57,7 @@ public interface DhProcessAppUpdateService {
      * @return  返回新版本包含的所有流程定义
      */
     ServerResponse<List<DhProcessDefinition>> pullAllProcessActivityMeta(Queue<DhProcessDefinitionBo> boToPullQueue);
+
+
+
 }

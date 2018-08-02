@@ -39,6 +39,7 @@
                             <div class="layui-col-md7" style="text-align:left;padding-left:20px;line-height:38px;">
                                     <button class="layui-btn layui-btn-sm" id="searchByProName_btn">查询</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="updateAppBtn">升级应用库</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="snapshotFlowChart_btn">快照流程图</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
@@ -46,6 +47,7 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess">拷贝</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="exportBtn">导出</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="importBtn">导入</button>
+
                             </div>
                         </div>
                     </div>

@@ -7,13 +7,18 @@ import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.*;
 import com.desmart.desmartbpm.enginedao.LswBpdMapper;
+import com.desmart.desmartbpm.enginedao.LswProjectMapper;
+import com.desmart.desmartbpm.enginedao.LswSnapshotMapper;
 import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.entity.engine.LswBpd;
+import com.desmart.desmartbpm.entity.engine.LswProject;
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.mongo.ModelMongoDao;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartsystem.dao.DhInterfaceMapper;
@@ -22,6 +27,8 @@ import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
+import com.github.pagehelper.PageHelper;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -41,53 +48,19 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
-    private DhProcessMetaService dhProcessMetaService;
-    @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
-    @Autowired
-    private DhProcessMetaMapper dhProcessMetaMapper;
-    @Autowired
-    private DhProcessCategoryService dhProcessCategoryService;
-    @Autowired
-    private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private DhGatewayLineService dhGatewayLineService;
     @Autowired
-    private DatRuleService datRuleService;
-    @Autowired
-    private DatRuleConditionService datRuleConditionService;
-    @Autowired
     private BpmFormManageService bpmFormManageService;
-    @Autowired
-    private BpmFormFieldService bpmFormFieldService;
     @Autowired
     private BpmFormRelePublicFormMapper bpmFormRelePublicFormMapper;
     @Autowired
-    private BpmPublicFormService bpmPublicFormService;
-    @Autowired
-    private DhStepService dhStepService;
-    @Autowired
-    private DhActivityAssignService dhActivityAssignService;
-    @Autowired
     private DhActivityRejectMapper dhActivityRejectMapper;
     @Autowired
-    private DhTriggerService dhTriggerService;
-    @Autowired
-    private DhInterfaceService dhInterfaceService;
-    @Autowired
-    private DhInterfaceParameterService dhInterfaceParameterService;
-    @Autowired
-    private DhTriggerInterfaceService dhTriggerInterfaceService;
-    @Autowired
-    private DhNotifyTemplateService dhNotifyTemplateService;
-    @Autowired
     private DhProcessDefinitionMapper dhProcessDefinitionMapper;
-    @Autowired
-    private DhActivityConfService dhActivityConfService;
-    @Autowired
-    private BpmActivityMetaMapper bpmActivityMetaMapper;
     @Autowired
     private DhGatewayLineMapper dhGatewayLineMapper;
     @Autowired
@@ -103,15 +76,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
     @Autowired
-    private DhInterfaceMapper dhInterfaceMapper;
-    @Autowired
-    private DhInterfaceParameterMapper dhInterfaceParameterMapper;
-    @Autowired
     private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
-    @Autowired
-    private BpmPublicFormMapper bpmPublicFormMapper;
-    @Autowired
-    private DhNotifyTemplateMapper dhNotifyTemplateMapper;
     @Autowired
     private ModelMongoDao modelMongoDao;
     @Autowired
@@ -122,6 +87,78 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     private DhActivityAssignMapper dhActivityAssignMapper;
     @Autowired
     private DhStepMapper dhStepMapper;
+    @Autowired
+    private BpmExposedItemMapper bpmExposedItemMapper;
+    @Autowired
+    private LswProjectMapper lswProjectMapper;
+    @Autowired
+    private LswSnapshotMapper lswSnapshotMapper;
+
+
+    @Override
+    public ServerResponse<List<Map<String, String>>> getAllProcessApp() {
+        List<Map<String, String>> result = new ArrayList<>();
+        List<String> proAppIds = bpmExposedItemMapper.listDistinctProAppId();
+        if (proAppIds.isEmpty()) {
+            return ServerResponse.createBySuccess(result);
+        }
+        for (int i = 0; i < proAppIds.size(); i++) {
+            String proAppId = proAppIds.get(i);
+            proAppIds.set(i, proAppId.substring(proAppId.indexOf(".") + 1));
+        }
+        List<LswProject> lswProjects = lswProjectMapper.listByProjectIdList(proAppIds);
+        for (LswProject lswProject : lswProjects) {
+            Map<String, String> proApp = new HashMap<>();
+            proApp.put("proAppId", "2066." + lswProject.getProjectId());
+            proApp.put("proAppName", lswProject.getName());
+            result.add(proApp);
+        }
+        return ServerResponse.createBySuccess(result);
+    }
+
+    @Override
+    public ServerResponse<List<Map<String, String>>> findSynchronizedSnapshotByProAppId(String proAppId) {
+        List<Map<String, String>> result = new ArrayList<>();
+        if (StringUtils.isBlank(proAppId)) {
+            return ServerResponse.createByErrorMessage("缺少应用库id");
+        }
+        List<String> proVerUids = dhProcessDefinitionMapper.listDistinctProVerUidByProAppId(proAppId);
+        if (proVerUids.isEmpty()) {
+            return ServerResponse.createBySuccess(result);
+        }
+        for (int i = 0; i < proVerUids.size(); i++) {
+            String proVerUid = proVerUids.get(i);
+            proVerUids.set(i, proVerUid.substring(proVerUid.indexOf(".") + 1));
+        }
+
+        List<LswSnapshot> snapshotList = lswSnapshotMapper.listBySnapshotIdList(proVerUids);
+        for (LswSnapshot snapshot : snapshotList) {
+            Map<String, String> map = new HashMap<>();
+            map.put("snapshotId", "2064." + snapshot.getSnapshotId());
+            map.put("snapshotName", snapshot.getName());
+            map.put("createTime", DateTimeUtil.dateToStr(snapshot.getCreatedOn()));
+            result.add(map);
+        }
+
+        return ServerResponse.createBySuccess(result);
+    }
+
+    @Override
+    public ServerResponse<List<Map<String, String>>> findUnsynchronizedSnapshotByProAppId(String proAppId) {
+        List<Map<String, String>> result = new ArrayList<>();
+        if (StringUtils.isBlank(proAppId)) {
+            return ServerResponse.createByErrorMessage("缺少应用库id");
+        }
+        List<LswSnapshot> snapshotList = bpmExposedItemMapper.listUnsynchronizedSnapshotByProAppId(proAppId);
+        for (LswSnapshot snapshot : snapshotList) {
+            Map<String, String> map = new HashMap<>();
+            map.put("snapshotId", snapshot.getSnapshotId());
+            map.put("snapshotName", snapshot.getName());
+            map.put("createTime", DateTimeUtil.dateToStr(snapshot.getCreatedOn()));
+            result.add(map);
+        }
+        return ServerResponse.createBySuccess(result);
+    }
 
 
     // 准备数据

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Queue;
@@ -45,6 +46,45 @@ public class DhProcessAppUpdateController {
             return prepareResponse;
         }
         return dhProcessAppUpdateService.pullAllProcessActivityMeta(prepareResponse.getData());
+    }
+
+    /**
+     * 获得所有应用库信息
+     * @return
+     */
+    @RequestMapping(value = "/getAllProcessApp")
+    @ResponseBody
+    public ServerResponse getAllProcessApp() {
+        return dhProcessAppUpdateService.getAllProcessApp();
+    }
+
+
+    /**
+     * 根据应用库id获得已经同步过的版本
+     * @param proAppId 应用库id
+     * @return
+     */
+    @RequestMapping(value = "/findSynchronizedSnapshotByProAppId")
+    @ResponseBody
+    public ServerResponse findSynchronizedSnapshotByProAppId(String proAppId) {
+        return dhProcessAppUpdateService.findSynchronizedSnapshotByProAppId(proAppId);
+    }
+
+    /**
+     * 根据应用库id获得未同步过的版本
+     * @param proAppId 应用库id
+     * @return
+     */
+    @RequestMapping(value = "/findUnsynchronizedSnapshotByProAppId")
+    @ResponseBody
+    public ServerResponse findUnsynchronizedSnapshotByProAppId(String proAppId) {
+        return dhProcessAppUpdateService.findUnsynchronizedSnapshotByProAppId(proAppId);
+    }
+
+
+    @RequestMapping(value = "/toAppUpdate")
+    public ModelAndView toAppUpdate() {
+        return new ModelAndView("desmartbpm/common/proAppUpdate");
     }
 
 }

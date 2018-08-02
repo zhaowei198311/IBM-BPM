@@ -1052,8 +1052,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		if (insId == null || StringUtils.isBlank(activityBpdId)) {
 			return ServerResponse.createBySuccess(UUID.randomUUID().toString());
 		}
-		DhGatewayRouteResult routeResult = dhGatewayRouteResultMapper.queryByInsIdAndActivityBpdId(insId,
-				activityBpdId);
+		DhGatewayRouteResult routeResult = dhGatewayRouteResultMapper.queryByInsIdAndActivityBpdId(insId, activityBpdId);
 		if (routeResult == null) {
 			return ServerResponse.createBySuccess(UUID.randomUUID().toString());
 		}

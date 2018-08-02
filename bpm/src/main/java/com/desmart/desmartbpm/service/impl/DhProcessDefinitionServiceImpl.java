@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateTimeUtil;
-import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.*;
 import com.desmart.desmartbpm.entity.*;
@@ -52,7 +50,6 @@ import com.desmart.desmartbpm.util.DateFmtUtils;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
 import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageInfo;
@@ -71,8 +68,6 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     private LswSnapshotMapper lswSnapshotMapper;
     @Autowired
     private BpmProcessSnapshotService bpmProcessSnapshotService;
-    @Autowired
-    private SysUserMapper sysUserMapper;
     @Autowired
     private DhObjectPermissionService dhObjectPermissionService;
     @Autowired
@@ -102,11 +97,10 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
     @Autowired
     private DhRouteService dhRouteService;
     @Autowired
-    private DhGatewayLineService dhGatewayLineService;
-    @Autowired
     private CommonMongoDao commonMongoDao;
     @Autowired
     private BpmExposedItemMapper bpmExposedItemMapper;
+
 
 
 
@@ -226,7 +220,7 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         PageHelper.startPage(pageNum, pageSize);
         PageHelper.orderBy("snapshot_create_time desc"); // 按快照创建时间倒序排列
-        List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listUnSynchronizedByProAppIdAndBpdId(processMeta.getProAppId(), processMeta.getProUid());
+        List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listUnsynItemByProAppIdAndBpdId(processMeta.getProAppId(), processMeta.getProUid());
         PageInfo pageInfo = new PageInfo(exposedItems);
         if (CollectionUtils.isEmpty(exposedItems)) {
             return ServerResponse.createBySuccess(pageInfo);
@@ -1077,6 +1071,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
                     item.setBpdId(jsoItem.getString("itemID"));
                     item.setBpdName(jsoItem.getString("display"));
                     item.setSnapshotId(jsoItem.getString("snapshotID"));
+                    if (StringUtils.isBlank(jsoItem.getString("snapshotName"))) {
+                        continue;
+                    }
                     item.setSnapshotName(jsoItem.getString("snapshotName"));
                     item.setBatchId(jsoItem.getString("branchID"));
                     String dateStr = jsoItem.getString("snapshotCreatedOn");
@@ -1106,6 +1103,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         return ServerResponse.createBySuccess();
     }
+
+
+
 
 
 }

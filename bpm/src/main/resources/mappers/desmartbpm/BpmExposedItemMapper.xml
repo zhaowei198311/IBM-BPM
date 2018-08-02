@@ -31,7 +31,7 @@
         delete from bpm_exposed_item
     </delete>
 
-    <select id="listUnSynchronizedByProAppIdAndBpdId" resultType="com.desmart.desmartbpm.service.BpmExposedItem">
+    <select id="listUnsynItemByProAppIdAndBpdId" resultType="com.desmart.desmartbpm.service.BpmExposedItem">
         select <include refid="relationColumn"/>
         from bpm_exposed_item e
         left join DH_PROCESS_DEFINITION d
@@ -50,7 +50,20 @@
     </select>
 
     <select id="listDistinctProAppId" resultType="java.lang.String">
-        select distinct(pro_app_id) from bpm_exposed_item
+        select distinct(pro_app_id) from BPM_EXPOSED_ITEM
+        union
+        select distinct(pro_app_id) from DH_PROCESS_DEFINITION
+    </select>
+
+    <select id="listUnsynchronizedSnapshotByProAppId"
+            resultType="com.desmart.desmartbpm.entity.engine.LswSnapshot">
+        select t.SNAPSHOT_ID snapshotId, e.snapshot_name name, e.SNAPSHOT_CREATE_TIME createdOn from (
+            select distinct(snapshot_id) from bpm_exposed_item where pro_app_id = #{proAppId}
+            MINUS
+            select distinct(pro_ver_uid) from DH_PROCESS_DEFINITION where pro_app_id = #{proAppId}
+            ) t left join BPM_EXPOSED_ITEM e on t.snapshot_id = e.snapshot_id
+        group by t.snapshot_id, e.snapshot_name, e.SNAPSHOT_CREATE_TIME
+        order by e.SNAPSHOT_CREATE_TIME desc
     </select>
 
 

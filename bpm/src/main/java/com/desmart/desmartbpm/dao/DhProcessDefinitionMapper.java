@@ -76,5 +76,12 @@ public interface DhProcessDefinitionMapper {
      */
     List<String> listDistinctProAppId();
 
+    /**
+     * 根据应用库id，获得
+     * @param proAppId
+     * @return
+     */
+    List<String> listDistinctProVerUidByProAppId(String proAppId);
+
 
 }
