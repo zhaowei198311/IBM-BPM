@@ -74,7 +74,7 @@ table {
 							<option value="">请选择接口类型</option>
 							<option value="webservice">webservice</option>
 							<option value="restapi">restapi</option>
-							<option value="rpc">rpc</option>
+							<option value="rfc">rfc</option>
 						</select>
 					</div>
 					<div class="layui-col-md2">
@@ -207,7 +207,7 @@ table {
 									<option value="">请选择接口类型</option>
 									<option value="webservice">webservice</option>
 									<option value="restapi">restapi</option>
-									<option value="rpc">rpc</option>
+									<option value="rfc">rfc</option>
 								</select>
 							</div>
 						</div>
@@ -467,7 +467,7 @@ table {
 							<select id="intType2" name="intType" lay-filter="intType1">
 								<option value="webservice">webservice</option>
 								<option value="restapi">restapi</option>
-								<option value="rpc">rpc</option>
+								<option value="rfc">rfc</option>
 							</select>
 						</div>
 					</div>
