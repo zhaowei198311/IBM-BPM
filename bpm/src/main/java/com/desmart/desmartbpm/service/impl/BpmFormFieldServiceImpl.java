@@ -125,6 +125,10 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		String jsonStr = "{";
 		//标题字段和表格字段的json字符串
 		String titleJsonStr = "{";
+		//普通字段跳过必填验证的权限
+		String fieldSkipJsonStr = "{";
+		//标题字段和表格字段跳过必填验证的权限
+		String titleSkipJsonStr = "{";
 		String formUid = dhStepMapper.selectByPrimaryKey(stepUid).getStepObjectUid();
 		List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
 		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
@@ -134,6 +138,26 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			String fieldType = field.getFldType();
 			String fieldCodeName = field.getFldCodeName();
 			String fldUid = field.getFldUid();
+			//查询字段是否跳过必填验证的权限
+			DhObjectPermission skipObjPer = dhObjectPermissionMapper.getFieldSkipPermissionByStepUidAndFldUid(stepUid, fldUid);
+			if(null == skipObjPer) {
+				//判断该字段是否为标题或表格
+				if("title".equals(fieldType) || "object".equals(fieldType)){
+					//判断权限的类型
+					titleSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"no\"},";
+				}else {
+					fieldSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"no\"},";
+				}
+			}else {
+				//判断该字段是否为标题或表格
+				if("title".equals(fieldType) || "object".equals(fieldType)){
+					//判断权限的类型
+					titleSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"yes\"},";
+				}else {
+					fieldSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"yes\"},";
+				}
+			}
+			//查询字段的可编辑，只读，隐藏等权限
 			DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid, fldUid);
 			if(null == objPer) {
 				//判断该字段是否为标题或表格
@@ -174,8 +198,18 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
 		}
 		titleJsonStr += "}";
+		if(titleSkipJsonStr.endsWith(",")) {
+			titleSkipJsonStr = titleSkipJsonStr.substring(0, titleSkipJsonStr.length()-1);
+		}
+		titleSkipJsonStr += "}";
+		if(fieldSkipJsonStr.endsWith(",")) {
+			fieldSkipJsonStr = fieldSkipJsonStr.substring(0, fieldSkipJsonStr.length()-1);
+		}
+		fieldSkipJsonStr += "}";
 		String json = "{\"fieldJsonStr\":"+jsonStr
 				+",\"titleJsonStr\":"+titleJsonStr
+				+",\"fieldSkipJsonStr\":"+fieldSkipJsonStr
+				+",\"titleSkipJsonStr\":"+titleSkipJsonStr
 				+"}";
 		return ServerResponse.createBySuccess(json);
 	}

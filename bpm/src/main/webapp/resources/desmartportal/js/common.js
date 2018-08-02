@@ -565,6 +565,14 @@ var common = {
 						common.titlePrintPermission(perJsonStr);
 						break;
 					}
+					case "fieldSkipJsonStr":{
+						common.fieldSkipPermission(perJsonStr);
+						break;
+					}
+					case "titleSkipJsonStr":{
+						common.titleSkipPermission(perJsonStr);
+						break;
+					}
 				}
 			}
 		}
@@ -726,7 +734,7 @@ var common = {
 				$("[name='"+name+"']").attr("print","yes");
 			}
 		}
-		//common.printTableP();
+		common.printTableP();
 	},
 	//当表单中某块信息全都不可打印时，title也要不打印
 	printTableP:function(){
@@ -781,6 +789,35 @@ var common = {
 							$(this).find("[print='no']").attr("print","yes");
 						}
 					});
+				}
+			}
+		}
+	},
+	//跳过普通字段必填验证权限管理
+	fieldSkipPermission:function(json){
+		for(var name in json){
+			var paramObj = json[name];
+			var skip = paramObj["skip"];
+			if(skip=="yes"){
+				var labelObj = $("[name='"+name+"']").parent().prev();
+				console.log(labelObj.find(".tip_span").length);
+				if(labelObj.find(".tip_span").length>=1){
+					labelObj.find(".tip_span").remove();
+				}
+			}
+		}
+	},
+	//跳过标题块或者表格必填验证权限管理
+	titleSkipPermission:function(json){
+		for(var name in json){
+			var paramObj = json[name];
+			var skip = paramObj["skip"];
+			if(skip=="yes"){
+				if($("[name='"+name+"']").prop("tagName")=="P"){
+					var labelObj = $("[name='"+name+"']").next();
+					if(labelObj.find(".tip_span").length>=1){
+						labelObj.find(".tip_span").remove();
+					}
 				}
 			}
 		}
@@ -861,6 +898,7 @@ var common = {
 				reg = new RegExp($(this).attr("regx").trim(), "g");
 				if (!reg.test($(this).val())) {
 					var regxCue = $(this).attr("regx_cue");
+					$(this).focus();
 					if (regxCue != null && regxCue != "") {
 						layer.msg(regxCue, {
 							icon: 2
