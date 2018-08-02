@@ -5,7 +5,7 @@ import java.util.Date;
 import org.quartz.JobDataMap;
 
 public class JobEntity {
-	private int jobId;
+	private int jobId;//任务ID
 
 	private String oldjobName;
 	private String oldjobGroupName;

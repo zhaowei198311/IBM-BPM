@@ -17,7 +17,7 @@ import com.desmart.desmartsystem.controller.JobController;
 import com.desmart.desmartsystem.entity.JobEntity;
 import com.desmart.desmartsystem.service.QuartzService;
 
-//@Service
+@Service
 public class QuartzServiceImpl implements QuartzService{
 	
 	private static Logger logger = LoggerFactory.getLogger(QuartzServiceImpl.class);
