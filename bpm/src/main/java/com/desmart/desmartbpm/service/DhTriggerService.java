@@ -39,14 +39,17 @@ public interface DhTriggerService {
      * @return
      */
     int saveTrigger(DhTrigger dhTrigger);
-    
+
     /**
-     * @Title: invokeTrigger  
-     * @Description: 通过反射调用类的方法  
-     * @param @param 
-     * @param @return  
-     * @return ServerResponse
-     * @throws
+     * 调用触发器
+     * @param wac  web容器
+     * @param insUid 流程实例主键
+     * @param dhStep  步骤
+     * @return
+     *   map中的参数：
+     *   "status": 0 调用成功 1 调用失败
+     *   "msg" 错误信息
+     *   "param" 出错时的接口参数
      */
     ServerResponse<Map<String, String>> invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep);
     
