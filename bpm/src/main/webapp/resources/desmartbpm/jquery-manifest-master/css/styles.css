@@ -22,7 +22,7 @@ h1 {
 h2 {
   color: #C0C0C0;
   font-size: 1.2em;
-  margin: 20px 0;
+  /* margin: 20px 0; 2018-8-1改*/
 }
 
 ol#examples {

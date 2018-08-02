@@ -971,11 +971,9 @@
         	and ti.task_status != '32'
         	and ti.task_type !='transfer'
         	and 
-        	<where>
-		        <foreach collection="insList" item="meta" separator="and">
-			       ti.ins_uid != #{meta.ins_uid}
-			    </foreach>
-		    </where>
+		   	<foreach collection="insList" item="meta" separator="and">
+				ti.ins_uid != #{meta.insUid}
+			</foreach>
         </where> 
 	</select>
 	

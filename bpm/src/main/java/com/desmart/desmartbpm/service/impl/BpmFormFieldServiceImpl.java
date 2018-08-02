@@ -65,11 +65,32 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		for(BpmFormField field:fieldList) {
 			//获得对象权限信息表中某个步骤下指定表单的权限信息集合
 			List<String> opActionList = dhObjectPermissionMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
-			//当权限集合为0或权限集合为1但权限为打印时，给集合添加可编辑权限
-			if(opActionList.size()==0 || opActionList.size()==1 && opActionList.contains("PRINT")) {
-				opActionList.add("VIEW");
+			//新建前台显示的权限信息集合
+			List<String> showOpActionList = new ArrayList<>();
+			//判断权限集合中是否有（可编辑、只读、不可见）等权限
+			if(opActionList.contains("HIDDEN") || opActionList.contains("EDIT")) {
+				if(opActionList.contains("HIDDEN")) {
+					showOpActionList.add("HIDDEN");
+				}
+				if(opActionList.contains("EDIT")) {
+					showOpActionList.add("EDIT");
+				}
+			}else{
+				showOpActionList.add("VIEW");
 			}
-			field.setOpActionList(opActionList);
+			//判断权限集合中是否有打印权限
+			if(opActionList.contains("PRINT")) {
+				showOpActionList.add("PRINT");
+			}else{
+				showOpActionList.add("false");
+			}
+			//判断权限集合中是否有跳过必填验证权限
+			if(opActionList.contains("SKIP")) {
+				showOpActionList.add("SKIP");
+			}else{
+				showOpActionList.add("false");
+			}
+			field.setOpActionList(showOpActionList);
 		}
 		return ServerResponse.createBySuccess(fieldList);
 	}
