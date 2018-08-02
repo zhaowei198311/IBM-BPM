@@ -245,6 +245,28 @@ $(function() {
         });
     });
 
+    // "升级应用库"按钮
+    $('#updateAppBtn').click(function(){
+        var index = layer.open({
+            type: 2,
+            title: '升级应用库',
+            shadeClose: true,
+            shade: 0.3,
+            area: ['760px', '520px'],
+            content: common.getPath() + '/processAppUpdate/toAppUpdate',
+            success: function (layero, lockIndex) {
+                var body = layer.getChildFrame('body', lockIndex);
+                body.find('#cancel_btn').on('click', function () {
+                    layer.close(lockIndex);
+                });
+            }
+        });
+        layer.style(index, {
+            zoom: 1.1
+        });
+    });
+
+
     // 启用版本
     $("#enable_btn").click(function(){
         var cks = $("[name='definition_ck']:checked");
@@ -296,8 +318,7 @@ $(function() {
 
 
     // “流程配置”按钮
-    $("#toEditDefinition_btn")
-        .click(function () {
+    $("#toEditDefinition_btn") .click(function () {
             var cks = $("[name='definition_ck']:checked");
             if (!cks.length) {
                 layer.alert("请选择一个流程定义");
@@ -467,6 +488,9 @@ $(function() {
                 }
             }
         })
+
+
+
     });
 
     // checkbox排他选择

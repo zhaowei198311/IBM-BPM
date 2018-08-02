@@ -17,7 +17,12 @@ public interface LswSnapshotMapper {
      * @return
      */
     List<LswSnapshot> listBySnapshotIdList(List<String> snapshotIdList);
-    
+
+    /**
+     * 根据快照id批量查询，结果按照快照创建时间倒序排列
+     * @param snapshotId  没有"2064."前缀的快照id
+     * @return
+     */
     LswSnapshot queryBySnapshotId(String snapshotId);
 
 

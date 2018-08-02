@@ -24,6 +24,7 @@
                 snapshot_id = #{item}
             </foreach>
         </where>
+        order by CREATED_ON DESC
     </select>
 
 

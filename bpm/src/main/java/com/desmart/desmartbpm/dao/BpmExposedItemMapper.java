@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.dao;
 
+import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.service.BpmExposedItem;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,7 @@ public interface BpmExposedItemMapper {
      * @param bpdId
      * @return
      */
-    List<BpmExposedItem> listUnSynchronizedByProAppIdAndBpdId(@Param("proAppId") String proAppId, @Param("bpdId") String bpdId);
+    List<BpmExposedItem> listUnsynItemByProAppIdAndBpdId(@Param("proAppId") String proAppId, @Param("bpdId") String bpdId);
 
 
     /**
@@ -41,8 +42,10 @@ public interface BpmExposedItemMapper {
     List<BpmExposedItem> listByProAppIdAndSnapshotId(@Param("proAppId") String proAppId, @Param("snapshotId") String snapshotId);
 
     /**
-     * 查询去重的应用库id集合
+     * 查询去重的应用库id集合，包含流程定义表中的和公开的流程中的
      * @return
      */
     List<String> listDistinctProAppId();
+
+    List<LswSnapshot> listUnsynchronizedSnapshotByProAppId(String proAppId);
 }
