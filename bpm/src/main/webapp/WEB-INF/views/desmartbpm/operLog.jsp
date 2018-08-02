@@ -42,9 +42,9 @@
 			 <table class="layui-table backlog_table " lay-even lay-skin="nob" style="width: 100%; table-layout: fixed;">
 				<colgroup>
 					<col width=3%;>
-					<col width=7%;>
-					<col width=7%;>
-					<col width=7%;>
+					<!-- <col width=7%;> -->
+					<col width=8%;>
+					<col width=13%;>
 					<col width=10%;>
 					<col width=16%;>
 					<col width=16%;>
@@ -56,8 +56,8 @@
 					<tr>
 						<th>序号</th>
 						<th>日志类型</th>
-						<th>操作人工号</th>
-						<th>操作人姓名</th>
+						<!-- <th>操作人工号</th> -->
+						<th>操作人</th>
 						<th>主机ip</th>
 						<th>请求参数</th>
 						<th>响应参数</th>
@@ -210,11 +210,11 @@ function drawTable(pageInfo){
 				+ '<td>'
 				+ logType
 				+ '</td>'
-				+ '<td>'
+				/* + '<td>'
 				+ item.userId
-				+ '</td>'
+				+ '</td>' */
 				+ '<td>'
-				+ item.userName
+				+ item.userName + '('+ item.userId + ')'
 				+ '</td>' 
 				+ '<td>'
 				+ item.host
@@ -225,7 +225,7 @@ function drawTable(pageInfo){
 				+ '<td title="' + item.responseParam + '">'
 				+ responseParam
 				+ '</td>'
-				+ '<td>'
+				+ '<td title="' + item.methodDescription + '">'
 				+ methodDescription
 			    +'</td>'
 				+ '<td title="' + item.path + '">'
