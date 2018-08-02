@@ -98,6 +98,22 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		return dhTriggerMapper.save(dhTrigger);
 	}
 
+	/**
+	 * 获得对应异常的详细信息用于保存
+	 * @param e
+	 * @return
+	 */
+	private static String getStackMsg(Exception e) {  
+		StringBuffer sb = new StringBuffer();  
+        sb.append(e.toString() + "\n");
+        StackTraceElement[] stackArray = e.getStackTrace();  
+        for (int i = 0; i < stackArray.length; i++) {  
+            StackTraceElement element = stackArray[i];  
+            sb.append("\t"+element.toString() + "\n");  
+        }  
+        return sb.toString(); 
+    }  
+	
 	@Override
 	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep){
 		String triUid = dhStep.getStepObjectUid();
@@ -115,7 +131,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			}catch(Exception e) {
 				logger.error("调用反射类异常，实例主键：" + insUid, e);
 				resultMap.put("status", "1");
-				resultMap.put("msg", e.getMessage());
+				resultMap.put("msg", getStackMsg(e));
 				return ServerResponse.createBySuccess(resultMap);
 			}
 		}else if("interface".equals(dhTrigger.getTriType())) {
@@ -251,7 +267,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		}catch(Exception e) {
 			logger.error("调用接口失败, 实例uid" + insUid, e);
 			resultMap.put("status", "1");
-			resultMap.put("msg", e.getMessage());
+			resultMap.put("msg", getStackMsg(e));
 			resultMap.put("param", paramJson);
 			return ServerResponse.createBySuccess(resultMap);
 		}

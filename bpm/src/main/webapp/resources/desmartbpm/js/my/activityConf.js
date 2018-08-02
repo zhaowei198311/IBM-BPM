@@ -2580,7 +2580,8 @@ function drawPerTable(result, perTableId, title) {
 
 	$("#" + perTableId + " tbody input[type='checkbox']").each(function() {
 		var name = $(this).attr("name");
-		if(name.indexOf("checkbox")==-1){
+		console.log(name);
+		if(name.indexOf("checkbox")!=-1){
 			if (title != null && title != "") {
 				onClickSeltitle(this);
 			} else {

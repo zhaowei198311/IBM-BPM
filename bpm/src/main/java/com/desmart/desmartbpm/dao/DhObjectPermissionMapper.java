@@ -113,4 +113,12 @@ public interface DhObjectPermissionMapper {
 	 * @return
 	 */
 	int deleteBatchSelective(@Param("list")List<DhObjectPermission> dhObjectPerList);
+
+	/**
+	 * 根据传入的步骤id以及字段id获得对应的字段是否跳过必填验证的权限信息
+	 * @param stepUid
+	 * @param fldUid
+	 * @return
+	 */
+	DhObjectPermission getFieldSkipPermissionByStepUidAndFldUid(@Param("stepUid")String stepUid, @Param("fldUid")String fldUid);
 }
