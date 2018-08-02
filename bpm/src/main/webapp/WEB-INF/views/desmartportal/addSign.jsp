@@ -167,7 +167,7 @@
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
             <div class="layui-col-md4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-md4">填写时间：
+            <div class="layui-col-md2">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
             <div class="layui-col-md6" style="text-align: right;">

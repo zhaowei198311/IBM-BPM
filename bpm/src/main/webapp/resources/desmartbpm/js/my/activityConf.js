@@ -2553,160 +2553,14 @@ function drawPerTable(result, perTableId, title) {
 									}else{
 										trs += '<td><input type="checkbox" name="skipSel'
 											+ title
-											+ '" value="SKIP" onclick="skipSel'
+											+ '" value="SKIP" onclick="onSkipSel'
 											+ title + '(this)"/></td>';
 									}
 									break;
 								};
 							}
 						}
-						/*if (this.opActionList.length == 1) {
-							var opAction = (this.opActionList)[0];
-							if (opAction == 'EDIT') {
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '" checked="checked" value="EDIT"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '"  value="VIEW"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '" value="HIDDEN"/></td>';
-							} else if (opAction == 'VIEW') {
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '"  value="EDIT"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '"  checked="checked"  value="VIEW"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '" value="HIDDEN"/></td>';
-							} else if (opAction == 'HIDDEN') {
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '"  value="EDIT"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '"  value="VIEW"/></td>';
-								trs += '<td><input type="radio"  name="opAction_'
-										+ title
-										+ this.fldUid
-										+ '" checked="checked" value="HIDDEN"/></td>';
-							}
-							trs += '<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'
-									+ title
-									+ '" value="PRINT" onclick="onClickSel'
-									+ title + '(this)"/></td>'
-									+'<td><input type="checkbox" name="skipSel'
-									+ title
-									+ '" value="SKIP" onclick="skipSel'
-									+ title + '(this)"/></td>';
-						} else if (this.opActionList.length == 2) {
-							var opAction0 = (this.opActionList)[0];
-							var opAction1 = (this.opActionList)[1];
-							if (opAction0 == "PRINT") {
-								if (opAction1 == 'EDIT') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" checked="checked" value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" value="HIDDEN"/></td>';
-								} else if (opAction1 == 'VIEW') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  checked="checked"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" value="HIDDEN"/></td>';
-								} else if (opAction1 == 'HIDDEN') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" checked="checked" value="HIDDEN"/></td>';
-								}
-								trs += '<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'
-										+ title
-										+ '" value="PRINT" onclick="onClickSel'
-										+ title + '(this)" checked/></td>'
-							} else if (opAction1 == "PRINT") {
-								if (opAction0 == 'EDIT') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" checked="checked" value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" value="HIDDEN"/></td>';
-								} else if (opAction0 == 'VIEW') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  checked="checked"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" value="HIDDEN"/></td>';
-								} else if (opAction0 == 'HIDDEN') {
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="EDIT"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '"  value="VIEW"/></td>';
-									trs += '<td><input type="radio"  name="opAction_'
-											+ title
-											+ this.fldUid
-											+ '" checked="checked" value="HIDDEN"/></td>';
-								}
-								trs += '<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'
-										+ title
-										+ '" value="PRINT" onclick="onClickSel'
-										+ title + '(this)" checked/></td>'
-							}
-						}*/
 						trs += '</tr>';
-						console.log(trs);
 					}
 				});
 	$("#" + perTableId + " tbody").append(trs);
@@ -2725,10 +2579,19 @@ function drawPerTable(result, perTableId, title) {
 			});
 
 	$("#" + perTableId + " tbody input[type='checkbox']").each(function() {
-		if (title != null && title != "") {
-			onClickSeltitle(this);
-		} else {
-			onClickSel(this);
+		var name = $(this).attr("name");
+		if(name.indexOf("checkbox")==-1){
+			if (title != null && title != "") {
+				onClickSeltitle(this);
+			} else {
+				onClickSel(this);
+			}
+		}else{
+			if (title != null && title != "") {
+				onSkipSeltitle(this);
+			} else {
+				onSkipSel(this);
+			}
 		}
 	});
 }
@@ -2790,6 +2653,66 @@ function onClickSeltitle(obj) {
 		}
 	} else {
 		$("input[name='checkboxAlltitle']").prop("checked", false);
+	}
+}
+
+//跳过必填的复选框全选，取消全选
+function onSkipValidateHander(obj) {
+	if (obj.checked) {
+		$("input[name='skipSel']").prop("checked", true);
+	} else {
+		$("input[name='skipSel']").prop("checked", false);
+	}
+}
+
+//跳过必填的复选框分选
+function onSkipSel(obj) {
+	if (obj.checked) {
+		var allSel = false;
+		$("input[name='skipSel']").each(function() {
+			if (!$(this).is(":checked")) {
+				allSel = true;
+			}
+		});
+
+		// 如果有checkbox没有被选中
+		if (allSel) {
+			$("input[name='skipValidateAll']").prop("checked", false);
+		} else {
+			$("input[name='skipValidateAll']").prop("checked", true);
+		}
+	} else {
+		$("input[name='skipValidateAll']").prop("checked", false);
+	}
+}
+
+//跳过必填的复选框全选，取消全选
+function onSkipValidateHandertitle(obj) {
+	if (obj.checked) {
+		$("input[name='skipSeltitle']").prop("checked", true);
+	} else {
+		$("input[name='skipSeltitle']").prop("checked", false);
+	}
+}
+
+//跳过必填的复选框分选
+function onSkipSeltitle(obj) {
+	if (obj.checked) {
+		var allSel = false;
+		$("input[name='skipSeltitle']").each(function() {
+			if (!$(this).is(":checked")) {
+				allSel = true;
+			}
+		});
+
+		// 如果有checkbox没有被选中
+		if (allSel) {
+			$("input[name='skipValidateAlltitle']").prop("checked", false);
+		} else {
+			$("input[name='skipValidateAlltitle']").prop("checked", true);
+		}
+	} else {
+		$("input[name='skipValidateAlltitle']").prop("checked", false);
 	}
 }
 
