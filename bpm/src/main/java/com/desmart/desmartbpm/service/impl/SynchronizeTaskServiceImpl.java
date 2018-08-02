@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.common.util.TaskTokenInfoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,14 +284,16 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
 
-        Map<Object, Object> tokenMap = ProcessDataUtil.getTokenIdAndPreTokenIdByTaskId(taskId, processData);
-        if (tokenMap == null || tokenMap.get("tokenId") == null) {
+        TaskTokenInfoUtil tokenUtil = new TaskTokenInfoUtil(taskId, processData);
+        String parentProcessTokenId = tokenUtil.getParentTokenId();
+
+        if (tokenUtil.getTokenId() == null) {
             throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
         }
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
         BpmActivityMeta bpmActivityMeta = null; // 任务停留的环节
-        if (tokenMap.get("preTokenId") == null) {
+        if (parentProcessTokenId == null) {
             // 如果父token是null，说明当前任务属于主流程
             dhProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             if (dhProcessInstance == null) {
@@ -300,7 +303,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     dhProcessInstance.getProVerUid());
         } else {
             // 如果父token是存在，说明当前任务属于子流程
-            dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, (String)tokenMap.get("preTokenId"));
+            dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, parentProcessTokenId);
             if (dhProcessInstance == null) {
                 throw new PlatformException("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
             }

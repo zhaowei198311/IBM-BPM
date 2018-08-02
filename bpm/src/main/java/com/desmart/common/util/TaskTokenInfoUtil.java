@@ -22,10 +22,19 @@ public class TaskTokenInfoUtil {
             this.tokenId = tokenId;
             this.flowObjectId = flowObjectId;
         }
-
     }
 
-    public void check(JSONObject jsonObject, String taskId) {
+    /**
+     *
+     * @param taskId  需要确定父流程tokenId的任务id
+     * @param processMsgJson  调用RESTFul API获得的流程实例信息直接转换的JSON对象
+     */
+    public TaskTokenInfoUtil(int taskId, JSONObject processMsgJson) {
+        JSONObject rootJson = processMsgJson.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
+        check(rootJson, String.valueOf(taskId));
+    }
+
+    private void check(JSONObject jsonObject, String taskId) {
         if (this.tokenId != null) { // 说明已经得到了结果
             return;
         }
@@ -39,19 +48,7 @@ public class TaskTokenInfoUtil {
             for (int i = 0; i < createdTaskIDs.size(); i++) {
                 if (createdTaskIDs.getString(i).equals(taskId)) {
                     this.tokenId = tokenId;
-                    stack.pop(); // 将自己弹出
-                    Node parentNode = stack.pop(); // 弹出父级node
-                    if (parentNode.flowObjectId == null) {
-                        parentNode = stack.pop(); // 弹出父级的父级node
-                        this.parentTokenId = parentNode.tokenId;
-                    } else if (StringUtils.equals(flowObjectId, parentNode.flowObjectId)) {
-                        // 父节点的flowObjectId与子节点相同, 再网上找一级
-                        parentNode = stack.pop();
-                        this.parentTokenId = parentNode.tokenId;
-                    } else {
-                        //父节点的flowObjectId与子节点不同
-                        this.parentTokenId = parentNode.tokenId;
-                    }
+                    getParentProcessTokenId(flowObjectId);
                     return;
                 }
             }
@@ -66,36 +63,37 @@ public class TaskTokenInfoUtil {
         if (this.tokenId != null) {
             return;
         }
-        // 遍历完成 弹出一个Node
+        // 遍历完成 弹出当前Node
         stack.pop();
+    }
+
+    /**
+     * 获得当前节点的父流程tokenId
+     * @param currentFlowObjectId 当前节点的flowObjectId
+     * @return
+     */
+    private void getParentProcessTokenId(String currentFlowObjectId) {
+        stack.pop(); // 先将当前节点自身弹出
+        Node node = stack.pop(); // 上级节点
+        if (currentFlowObjectId.equals(node.flowObjectId)) {
+            node = stack.pop();
+        }
+        if ("1".equals(node.nodeId) || stack.isEmpty()) {
+            return;
+        }
+        node = stack.pop();
+        parentTokenId = node.tokenId;
     }
 
     public String getTokenId() {
         return tokenId;
     }
 
-    public void setTokenId(String tokenId) {
-        this.tokenId = tokenId;
-    }
-
     public String getParentTokenId() {
         return parentTokenId;
     }
 
-    public void setParentTokenId(String parentTokenId) {
-        this.parentTokenId = parentTokenId;
-    }
 
-    public static void main(String[] args){
-        String str = FileToStringUtil.getStringFromLocalFile("E:/demo.txt");
-        JSONObject dataJson = JSON.parseObject(str);
-        JSONObject root = dataJson.getJSONObject("data").getJSONObject("executionTree").getJSONObject("root");
-
-        TaskTokenInfoUtil test = new TaskTokenInfoUtil();
-        test.check(root, "102");
-        System.out.println(test.tokenId);
-        System.out.println(test.parentTokenId);
-    }
 
 
 }
