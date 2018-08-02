@@ -18,11 +18,11 @@
             color: white;
         }
         .templi {
-            border: 1px solid blue;
-            font-weight:bold
+            background-color: #9DA5EC;
+            color: white;
         }
         ul{
-            border:1px solid #ccc;
+            width:198px;
         }
         li{
             height:35px;
@@ -41,11 +41,10 @@
             padding-bottom: 10px;
         }
         .p1 {
-            position: absolute;
             height: 30px;
             text-align: center;
-            width: 199px;
-            background-color: #f9dfdf;
+            width: 215px;
+            background-color: #f5f5f5;
             line-height: 30px;
         }
         .divContainer {
@@ -54,7 +53,6 @@
             width:215px;
             height:350px;
             margin:10px 10px 0 10px;
-            overflow-y:scroll;
             border: 1px solid #ccc;
         }
     </style>
@@ -67,24 +65,22 @@
     <div class="middle_temp">
         <div id="temp_left"  class="divContainer">
             <P class="p1">请选择应用库</P>
-            <%--<div class="layui-row" style="width:188px;height:30px;margin-bottom:10px;position: fixed;background-color:white;">--%>
-                <%--<div class="layui-col-sm9">--%>
-                    <%--<input type="text" class="layui-input" id="search_input" style="height:30px;"/>--%>
-                <%--</div>--%>
-                <%--<div class="layui-col-sm3" style="text-align:right;">--%>
-                    <%--<button  class="layui-btn layui-btn-sm"  id="search_btn">查询</button>--%>
-                <%--</div>--%>
-            <%--</div>--%>
-            <ul id="left_ul"  style="width:240px;display:inline;margin-top:30px;"  ></ul>
+            <div style="height:320px;overflow-y: auto">
+                <ul id="left_ul"></ul>
+            </div>
         </div>
 
         <div id="temp_middle"  class=" divContainer" >
             <P class="p1">请选择作为样本的版本</P>
-            <ul id="middle_ul"  style="width:240px;display:inline;"  class="contentUl"></ul>
+            <div style="height:320px;overflow-y: auto">
+                <ul id="middle_ul"  class="contentUl"></ul>
+            </div>
         </div>
         <div id="temp_right" class=" divContainer" >
             <P class="p1">请选择升级到哪个版本</P>
-            <ul id="right_ul"  style="width:240px;display:inline;"></ul>
+            <div style="height:320px;overflow-y: auto">
+                <ul id="right_ul"></ul>
+            </div>
         </div>
         <h1 style="clear:both;"></h1>
     </div>
@@ -282,9 +278,6 @@
                 layer.alert('操作失败请稍后再试');
             }
         });
-        console.log(appId);
-        console.log(oldSnapshotId);
-        console.log(newSnapshotId);
     }
 
 </script>
