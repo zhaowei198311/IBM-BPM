@@ -44,7 +44,7 @@ import com.github.pagehelper.PageInfo;
  */
 @Service
 public class DhTriggerServiceImpl implements DhTriggerService {
-    private static final Logger LOG = LoggerFactory.getLogger(DhTriggerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DhTriggerServiceImpl.class);
 
     @Autowired
     private DhTriggerMapper dhTriggerMapper;
@@ -113,6 +113,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				md.invoke(obj, new Object[] { wac, insUid, jb, dhStep });
 				resultMap.put("status", "0");
 			}catch(Exception e) {
+				logger.error("调用反射类异常，实例主键：" + insUid, e);
 				resultMap.put("status", "1");
 				resultMap.put("msg", e.getMessage());
 				return ServerResponse.createBySuccess(resultMap);
@@ -129,6 +130,9 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 
 	/**
 	 * 调用接口传递参数并接收返回值
+	    map中的参数：
+	 *   "status": 0 调用成功 1 调用失败
+	 *   "msg" 错误信息
 	 */
 	private ServerResponse<Map<String, String>> transferInterface(String insUid, DhStep dhStep, DhTrigger dhTrigger){
 		String paramJson = "";
@@ -245,6 +249,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			handleInterfaceData(json, insUid, dhStep);
 			resultMap.put("status", "0");
 		}catch(Exception e) {
+			logger.error("调用接口失败, 实例uid" + insUid, e);
 			resultMap.put("status", "1");
 			resultMap.put("msg", e.getMessage());
 			resultMap.put("param", paramJson);
@@ -256,7 +261,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	/**
 	 * 处理接口json返回值更新对应的formData
 	 */
-	private void handleInterfaceData(Json json,String insUid, DhStep dhStep) throws Exception{
+	private void handleInterfaceData(Json json,String insUid, DhStep dhStep) throws Exception {
 		if(!json.isSuccess()) {
 			throw new PlatformException(json.getMsg());
 		}
@@ -417,5 +422,15 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		}
         return dhTriggerMapper.getByPrimaryKey(triUid);
     }
+
+    public static void main(String[] args){
+		try {
+			int n = 0/0;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getStackTrace().toString());
+			System.out.println(e.getCause());
+		}
+	}
 
 }
