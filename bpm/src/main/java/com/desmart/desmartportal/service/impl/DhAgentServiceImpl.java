@@ -326,6 +326,9 @@ public class DhAgentServiceImpl implements DhAgentService {
 	private void revokeAgentOutTask(DhAgent dhAgent, List<DhProcessMeta> metaList) {
 		Date currDate = new Date(System.currentTimeMillis());
 		//根据流程库id以及流程元id找到对应的流程实例集合
+		if(metaList.isEmpty()) {
+			return;
+		}
 		List<DhProcessInstance> processInsList = dhProcessInstanceMapper.queryBatchByProMetaList(metaList);
 		List<String> revokeTaskUidList = new ArrayList<>();
 		if(!processInsList.isEmpty()) {

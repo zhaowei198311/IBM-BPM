@@ -2484,7 +2484,83 @@ function drawPerTable(result, perTableId, title) {
 								+ dates.stepUid + '">';
 						trs += '</td>';
 						trs += '<td>' + this.fldName + '</td>';
-						if (this.opActionList.length == 1) {
+						for(var i=0;i<3;i++){
+							var opActionText = (this.opActionList)[i];
+							switch(i){
+								case 0:{
+									if (opActionText == 'EDIT') {
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '" checked="checked" value="EDIT"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '"  value="VIEW"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '" value="HIDDEN"/></td>';
+									} else if (opActionText == 'VIEW') {
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '"  value="EDIT"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '"  checked="checked"  value="VIEW"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '" value="HIDDEN"/></td>';
+									} else if (opActionText == 'HIDDEN') {
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '"  value="EDIT"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '"  value="VIEW"/></td>';
+										trs += '<td><input type="radio"  name="opAction_'
+												+ title
+												+ this.fldUid
+												+ '" checked="checked" value="HIDDEN"/></td>';
+									}
+									break;
+								};
+								case 1:{
+									if (opActionText == 'PRINT') {
+										trs += '<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'
+											+ title
+											+ '" value="PRINT" onclick="onClickSel'
+											+ title + '(this)" checked/></td>';
+									}else{
+										trs += '<td style="border-left:1px solid #CCC"><input type="checkbox" name="checkboxSel'
+											+ title
+											+ '" value="PRINT" onclick="onClickSel'
+											+ title + '(this)"/></td>';
+									}
+									break;
+								};
+								case 2:{
+									if(opActionText == 'SKIP'){
+										trs += '<td><input type="checkbox" name="skipSel'
+											+ title
+											+ '" value="SKIP" onclick="skipSel'
+											+ title + '(this)" checked/></td>';
+									}else{
+										trs += '<td><input type="checkbox" name="skipSel'
+											+ title
+											+ '" value="SKIP" onclick="skipSel'
+											+ title + '(this)"/></td>';
+									}
+									break;
+								};
+							}
+						}
+						/*if (this.opActionList.length == 1) {
 							var opAction = (this.opActionList)[0];
 							if (opAction == 'EDIT') {
 								trs += '<td><input type="radio"  name="opAction_'
@@ -2530,6 +2606,10 @@ function drawPerTable(result, perTableId, title) {
 									+ title
 									+ '" value="PRINT" onclick="onClickSel'
 									+ title + '(this)"/></td>'
+									+'<td><input type="checkbox" name="skipSel'
+									+ title
+									+ '" value="SKIP" onclick="skipSel'
+									+ title + '(this)"/></td>';
 						} else if (this.opActionList.length == 2) {
 							var opAction0 = (this.opActionList)[0];
 							var opAction1 = (this.opActionList)[1];
@@ -2624,8 +2704,9 @@ function drawPerTable(result, perTableId, title) {
 										+ '" value="PRINT" onclick="onClickSel'
 										+ title + '(this)" checked/></td>'
 							}
-						}
+						}*/
 						trs += '</tr>';
+						console.log(trs);
 					}
 				});
 	$("#" + perTableId + " tbody").append(trs);

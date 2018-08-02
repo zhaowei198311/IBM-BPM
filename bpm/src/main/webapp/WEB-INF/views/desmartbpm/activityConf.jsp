@@ -1002,6 +1002,7 @@
 							<col width=80>
 							<col width=80>
 							<col width=80>
+							<col width=80>
 							<col>
 						</colgroup>
 						<thead>
@@ -1017,6 +1018,8 @@
 								<th style="border-left: 1px solid #CCC"><input
 									type="checkbox" name="checkboxAll" id="printAllclick"
 									onclick="onClickHander(this)">是否打印</th>
+								<th><input type="checkbox" name="skipValidateAll" id="skipValidateAllclick" 
+									onclick="onSkipValidateHander(this)">是否跳过必填验证</th>
 							</tr>
 						</thead>
 
@@ -1046,8 +1049,10 @@
 								<th><input type="radio" name="titleradioAll"
 									lay-skin="primary" id="titlehiddenAllclick">隐藏</th>
 								<th style="border-left: 1px solid #CCC"><input
-									type="checkbox" name="checkboxAlltitle" id="printAllclick"
+									type="checkbox" name="checkboxAlltitle" id="titlePrintAllclick"
 									onclick="onClickHandertitle(this)">是否打印</th>
+								<th><input type="checkbox" name="skipValidateAlltitle" id="titleSkipValidateAllclick" 
+									onclick="onSkipValidateHandertitle(this)">是否跳过必填验证</th>
 							</tr>
 						</thead>
 

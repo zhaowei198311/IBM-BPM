@@ -400,7 +400,7 @@
     	select <include refid="Base_Column_List"/> from dh_process_instance
     	<where> 
     		<foreach collection="list" item="meta" separator="or">
-    			pro_app_id == #{meta.proAppId} and pro_uid == #{meta.proUid}
+    			pro_app_id = #{meta.proAppId} and pro_uid = #{meta.proUid}
     		</foreach>
     	</where>
     </select>
