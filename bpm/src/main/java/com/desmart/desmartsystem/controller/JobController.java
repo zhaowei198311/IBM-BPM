@@ -8,10 +8,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -27,12 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.desmart.desmartsystem.entity.JobEntity;
-import com.desmart.desmartsystem.entity.ScheduleJob;
+import com.desmart.desmartsystem.entity.QrtzJobDetails;
+import com.desmart.desmartsystem.service.DhInterfaceService;
+import com.desmart.desmartsystem.service.QrtzJobDetailsService;
 import com.desmart.desmartsystem.service.QuartzService;
 import com.desmart.desmartsystem.util.DatagridForLayUI;
 import com.desmart.desmartsystem.util.Json;
 
-//@Controller
+@Controller
 @RequestMapping("/quarz")
 public class JobController {
 
@@ -42,6 +44,8 @@ public class JobController {
 	@Autowired
 	private Scheduler scheduler;
 	
+	@Autowired
+	private QrtzJobDetailsService qrtzJobDetailsService;
 	
 	@RequestMapping(value="/quarzList")
 	public String quarzList(){
@@ -82,6 +86,18 @@ public class JobController {
 			return j;
 		}
 		
+		
+		QrtzJobDetails  qrtzJobDetails= new QrtzJobDetails();
+		qrtzJobDetails.setJobGroup(job.getJobGroupName());
+		qrtzJobDetails.setJobName(job.getJobName());
+		
+		QrtzJobDetails  qrtzJobDetail= qrtzJobDetailsService.select(qrtzJobDetails);
+		if(qrtzJobDetail!=null) {
+			j.setSuccess(false);
+			j.setMsg("同一个类型下的任务名称必须唯一!");
+			return j;
+		}
+		
 		try {
 			quartzService.addJob(job,response,new JobController());
 			j.setSuccess(true);
@@ -103,8 +119,11 @@ public class JobController {
 	 */
 	@RequestMapping("datagrid.do")
 	@ResponseBody
-	public DatagridForLayUI datagrid() throws SchedulerException{
+	public DatagridForLayUI datagrid(JobEntity jobEntity,int page,int limit) throws SchedulerException{
 		 
+		//page 当前也
+		//limit 每页显示记录数
+		
 		List<JobEntity> jobInfos = new ArrayList<JobEntity>();
 		
 		List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
@@ -130,7 +149,11 @@ public class JobController {
 					jobInfo.setEndTime(trigger.getEndTime());
 					jobInfo.setJobClass(jd.getJobClass().getCanonicalName());
 					jobInfo.setClazz(jd.getJobClass().getCanonicalName());
-					// jobInfo.setDuration(Long.parseLong(jd.getDescription()));
+					
+					if(StringUtils.isNotBlank(jd.getDescription())) {
+						jobInfo.setDuration(Long.parseLong(jd.getDescription()));
+					};
+					
 					Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
 					jobInfo.setJobStatus(triggerState.toString());// NONE无,
 																	// NORMAL正常,
@@ -143,43 +166,18 @@ public class JobController {
 			}
 		}
 		DatagridForLayUI datagridForLayUI=new DatagridForLayUI();
-		long count=jobInfos.size();
-		datagridForLayUI.setCount(count);
-		datagridForLayUI.setData(jobInfos);
+		
+		//每页开始数
+		int star=(page - 1) * limit;
+		//设置总页数
+		int count=jobInfos.size();
+		
+		datagridForLayUI.setCount(Long.valueOf(count));
+		datagridForLayUI.setData(jobInfos.subList(star,count-star>limit?star+limit:count));
 		return datagridForLayUI;
 	}
 	
 
-	/**
-	 * 所有正在运行的job
-	 * 
-	 * @return
-	 * @throws SchedulerException 
-	 */
-	@RequestMapping("/runjob")
-	public String runningJob(Model model) throws SchedulerException {
-		List<JobExecutionContext> executingJobs = scheduler.getCurrentlyExecutingJobs();
-		List<ScheduleJob> jobList = new ArrayList<ScheduleJob>(executingJobs.size());
-		for (JobExecutionContext executingJob : executingJobs) {
-			ScheduleJob job = new ScheduleJob();
-			JobDetail jobDetail = executingJob.getJobDetail();
-			JobKey jobKey = jobDetail.getKey();
-			Trigger trigger = executingJob.getTrigger();
-			job.setJobName(jobKey.getName());
-			job.setJobGroup(jobKey.getGroup());
-			job.setDescription("触发器:" + trigger.getKey());
-			Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
-			job.setJobStatus(triggerState.name());
-			if (trigger instanceof CronTrigger) {
-				CronTrigger cronTrigger = (CronTrigger) trigger;
-				String cronExpression = cronTrigger.getCronExpression();
-				job.setCronExpression(cronExpression);
-			}
-			jobList.add(job);
-		}
-		model.addAttribute("jobList", jobList);
-		return "forward:quartzs/runjob.jsp";
-	}
 	
 	
 	/**
