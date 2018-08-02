@@ -26,10 +26,10 @@
 		VALUES
 		(#{dilUid},
 		#{intUid},
-		#{dilRequest},
-		#{dilResponse},
-		#{dilErrormsg},
-		#{createuser},
+		#{dilRequest,jdbcType=CLOB},
+		#{dilResponse,jdbcType=CLOB},
+		#{dilErrormsg,jdbcType=VARCHAR},
+		#{createuser,jdbcType=VARCHAR},
 		#{createdate})
 	</insert>
 
