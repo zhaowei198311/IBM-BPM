@@ -54,7 +54,7 @@
 		    END_DATE,
 		    CREATE_DATE,
 		    UPDATE_DATE,
-		    (select dd.depart_name from sys_department dd where dd.depart_no=d.depart_parent) departParentName
+		    (select dd.depart_name from sys_department dd where dd.depart_uid=d.depart_parent) departParentName
 		    from Sys_Department d where 1=1 
 		    
 		    <if test="departNo!=null and departNo!='' ">
