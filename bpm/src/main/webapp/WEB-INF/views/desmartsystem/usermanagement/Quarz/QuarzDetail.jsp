@@ -17,7 +17,7 @@
 </style>
 </head>
 <body>
-	<form class="layui-form layui-form-pane" style="margin-top: 20px;" method="post" action="">
+	<form class="layui-form" style="margin-top: 20px;" method="post" action="">
 		<div class="layui-form-item">
 			<div class="layui-inline">
 				<label class="layui-form-label" >任务名称</label>
