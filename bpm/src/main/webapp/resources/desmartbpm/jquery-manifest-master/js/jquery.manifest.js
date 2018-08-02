@@ -603,7 +603,8 @@
             // Append the remove link and hidden values after the display
             // elements of the item.
             $item.append($remove, $value);
-
+            // 记录当前的数据，用于判断数据是否变动
+        	preFormData = getFormData();
             $.when(self._trigger('add', [value, $item, !!initial]))
              .then(function (add) {
                if (add !== false) {

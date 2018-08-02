@@ -3047,7 +3047,7 @@ function initConf(map) {
 	$('input[name="actcInteriorNotifyTemplate_view"]').val(conf.actcInteriorNotifyTemplateView);
 	$('input[name="actcExteriorNotifyTemplate"]').val(conf.actcExteriorNotifyTemplate);
 	$('input[name="actcExteriorNotifyTemplate_view"]').val(conf.actcExteriorNotifyTemplateView);
-	$('#exteriorNotifyMail').manifest('remove');
+	
 	//$("#exteriorNotifyMail").val("");
 	if (conf.actcInteriorNotifyType==''||conf.actcInteriorNotifyType==null) {
 		$("#interiorNotifyUser_div").hide();
@@ -3065,6 +3065,7 @@ function initConf(map) {
 			$("#interiorNotifyRole_div").show();
 		}
 	}
+	$('#exteriorNotifyMail').manifest('remove');
 	if(conf.exteriorNotifyMailList!=null){
 		for (var i = 0; i < conf.exteriorNotifyMailList.length; i++) {
 			 $('#exteriorNotifyMail').manifest('add', conf.exteriorNotifyMailList[i],null,true,false);
