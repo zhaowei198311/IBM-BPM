@@ -28,13 +28,18 @@ public class DhProcessAppUpdateController {
     @RequestMapping(value = "/updateToNewVersion")
     @ResponseBody
     public ServerResponse updateToNewVersion(String proAppId, String oldProVerUid, String newProVerUid) {
-        // 准备数据
-        ServerResponse<Queue<DhProcessDefinitionBo>> prepareResponse = dhProcessAppUpdateService.prepareData(proAppId, newProVerUid);
-        if (!prepareResponse.isSuccess()) {
-            return prepareResponse;
+        try {
+            // 准备数据
+            ServerResponse<Queue<DhProcessDefinitionBo>> prepareResponse = dhProcessAppUpdateService.prepareData(proAppId, newProVerUid);
+            if (!prepareResponse.isSuccess()) {
+                return prepareResponse;
+            }
+            // 开始同步
+            return dhProcessAppUpdateService.updateProcessApp(proAppId, oldProVerUid, newProVerUid, prepareResponse.getData());
+        } catch (Exception e) {
+            logger.error("升级应用库失败", e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
         }
-        // 开始同步
-        return dhProcessAppUpdateService.updateProcessApp(proAppId, oldProVerUid, newProVerUid, prepareResponse.getData());
     }
 
     @RequestMapping(value = "/pullDefintionByAppIdAndSnapshotId")

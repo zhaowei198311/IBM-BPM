@@ -173,7 +173,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         if (CollectionUtils.isEmpty(oldDefinitions)) {
             return ServerResponse.createByErrorMessage("版本升级失败，老版本不存在流程定义");
         }
-
+        // 拉取新版本的环节并生成流程定义
         ServerResponse<List<DhProcessDefinition>> newDefinitionResponse = pullAllProcessActivityMeta(definitionBoQueue);
         if (!newDefinitionResponse.isSuccess()) {
             return newDefinitionResponse;
