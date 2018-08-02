@@ -180,4 +180,12 @@ public interface DhProcessInstanceService {
 	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
 															Integer pageNum, Integer pageSize, 
 															String usrUid, String proUid, String proAppId,String retrieveData);
+
+
+	/**
+	 * 判断当前用户有没有发起指定流程的权限
+	 * @param processDefintion  带版本的流程定义
+	 * @return
+	 */
+	boolean checkPermissionStart(DhProcessDefinition processDefintion);
 }

@@ -100,4 +100,6 @@ public interface DhObjectPermissionService {
      * @return
      */
     int removeByProAppIdAndProUidAndProVerUid(String proAppId, String proUid, String proVerUid);
+
+
 }

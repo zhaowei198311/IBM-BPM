@@ -583,11 +583,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
      * @param processDefintion 需要发起的流程定义
      * @return
      */
-	private boolean checkPermissionStart(DhProcessDefinition processDefintion) {
+	public boolean checkPermissionStart(DhProcessDefinition processDefintion) {
 		boolean flag = false;
-		logger.info("判断---当前用户权限 开始。。。");
 		String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		logger.info("当前用户为" + user);
 		if(Const.Boolean.TRUE.equals(processDefintion.getIsAllUserStart())) {
 			flag = true;
 		}else {

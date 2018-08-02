@@ -95,7 +95,8 @@
         getAllProApp: common.getPath() + '/processAppUpdate/getAllProcessApp',
         getSynchronizedSnapshot: common.getPath() + '/processAppUpdate/findSynchronizedSnapshotByProAppId',
         getUnsynchronizedSnapshot: common.getPath() + '/processAppUpdate/findUnsynchronizedSnapshotByProAppId',
-        updateToNewVersion: common.getPath() + '/processAppUpdate/updateToNewVersion'
+        updateToNewVersion: common.getPath() + '/processAppUpdate/updateToNewVersion',
+        synchronizeApp: common.getPath() + '/processAppUpdate/pullDefintionByAppIdAndSnapshotId'
     }
 
     var ele = {
@@ -173,7 +174,7 @@
         var content = '';
         for (var i = 0; i < apps.length; i++) {
             var app = apps[i];
-            content += '<li type="app" data-id="' + app.proAppId + '">' + app.proAppName + '</li>';
+            content += '<li type="app" data-id="' + app.proAppId + '" data-name="' + app.proAppName + '">' + app.proAppName + '</li>';
         }
         ele.appUl.append(content);
     }
@@ -209,7 +210,7 @@
                 continue;
             }
             var snapshotName = snapshot.snapshotName.length > 10 ? snapshot.snapshotName.substring(0,10) + '...' : snapshot.snapshotName;
-            content += '<li data-id="' + snapshot.snapshotId + '" title="'+ snapshot.snapshotName +'&#10;创建时间：'+ snapshot.createTime +'">'
+            content += '<li data-id="' + snapshot.snapshotId + '" title="'+ snapshot.snapshotName +'&#10;创建时间：'+ snapshot.createTime +'" data-name="' + snapshot.snapshotName + '">'
                 + snapshotName + '</li>';
         }
         ele.synUl.append(content);
@@ -227,31 +228,50 @@
                 continue;
             }
             var snapshotName = snapshot.snapshotName.length > 10 ? snapshot.snapshotName.substring(0,10) + '...' : snapshot.snapshotName;
-            content += '<li data-id="' + snapshot.snapshotId + '" title="'+ snapshot.snapshotName +'&#10;创建时间：'+ snapshot.createTime +'">'
+            content += '<li data-id="' + snapshot.snapshotId + '" title="'+ snapshot.snapshotName +'&#10;创建时间：'+ snapshot.createTime +'" data-name="' + snapshot.snapshotName + '">'
                 + snapshotName + '</li>';
         }
         ele.unsynUl.append(content);
     }
 
     function updateApp() {
-        var li0 = ele.appUl.find(".colorli");
-        var li1 = ele.synUl.find(".colorli");
-        var li2 = ele.unsynUl.find(".colorli");
-        if (li0.length != 1) {
+        var appLi = ele.appUl.find(".colorli");
+        var synLi = ele.synUl.find(".colorli");
+        var unsynLi = ele.unsynUl.find(".colorli");
+        if (appLi.length != 1) {
             layer.alert('请选择应用库');
             return;
         }
-        if (li1.length != 1) {
-            layer.alert('请选择作为样本的版本');
-            return;
-        }
-        if (li2.length != 1) {
+        if (unsynLi.length != 1) {
             layer.alert('请选择想要升级到哪个版本');
             return;
         }
-        var appId = li0.data('id');
-        var oldSnapshotId = li1.data('id');
-        var newSnapshotId = li2.data('id');
+        var appId = appLi.data('id');
+        var newSnapshotId = unsynLi.data('id');
+        if (synLi.length == 1) {
+            // 选择了老版本应用库
+            var oldSnapshotId = synLi.data('id');
+            var confirmIndex = layer.confirm('是否升级应用库？</br><b>应用库：</b>' + appLi.data('name') + '<br>'
+                + '<b>老版本：</b>' + synLi.data('name') + '</br><b>新版本：</b>' + unsynLi.data('name'), {
+                btn: ['确定', '取消']
+            }, function () {
+                layer.close(confirmIndex); // 关闭confirm层
+                doUpdate(appId, oldSnapshotId, newSnapshotId);
+            }, function () {});
+
+        } else if (synLi.length == 0) {
+            // 为选择老版本应用库
+            var confirmIndex = layer.confirm('未选择老版本，是否直接同步应用库不复制配置？</br><b>应用库：</b>' + appLi.data('name') + '<br>'
+                + '<b>新版本：</b>' + unsynLi.data('name'), {
+                btn: ['确定', '取消']
+            }, function () {
+                layer.close(confirmIndex); // 关闭confirm层
+                doSynchronizeApp(appId, newSnapshotId);
+            }, function () {});
+        }
+    }
+
+    function doUpdate(appId, oldSnapshotId, newSnapshotId) {
         $.ajax({
             url: URL.updateToNewVersion,
             type: 'post',
@@ -269,6 +289,34 @@
                 if (result.status == 0) {
                     refreshSnapshots(appId);
                     layer.alert('升级成功');
+                } else {
+                    layer.alert(result.msg);
+                }
+            },
+            error: function() {
+                layer.closeAll('loading');
+                layer.alert('操作失败请稍后再试');
+            }
+        });
+    }
+
+    function doSynchronizeApp(appId,  newSnapshotId) {
+        $.ajax({
+            url: URL.synchronizeApp,
+            type: 'post',
+            data: {
+                proAppId: appId,
+                proVerUid: newSnapshotId
+            },
+            dataType: 'json',
+            beforeSend : function(){
+                layer.load(1);
+            },
+            success : function(result) {
+                layer.closeAll('loading');
+                if (result.status == 0) {
+                    refreshSnapshots(appId);
+                    layer.alert('同步成功');
                 } else {
                     layer.alert(result.msg);
                 }

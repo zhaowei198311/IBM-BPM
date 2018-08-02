@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,8 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
     private SysRoleMapper sysRoleMapper;
     @Autowired
     private SysTeamMapper sysTeamMapper;
+    @Autowired
+    private DhProcessDefinitionMapper dhProcessDefinitionMapper;
     
     @Transactional
 	@Override
@@ -248,4 +251,8 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         permissionSelective.setProVerUid(proVerUid);
         return dhObjectPermissionMapper.delectByDhObjectPermissionSelective(permissionSelective);
     }
+
+
+
+
 }
