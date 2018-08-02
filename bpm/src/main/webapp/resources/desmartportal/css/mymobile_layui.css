@@ -3511,8 +3511,7 @@ body .layui-table-tips .layui-layer-content {
 	-webkit-transition: all .2s;
 	position: relative;
 	line-height: 40px;
-	min-width: 65px;
-	padding: 0 15px;
+	width: 25%;
 	text-align: center;
 	cursor: pointer
 }

@@ -163,17 +163,8 @@
 .handle_div table td{
 	width:80%;
 }
-.handle_btn{
-	background: #AAA;
-}
-#submit_btn{
-	background: #009688;
-}
 .handle_table{
 	width:100%;
-	margin-top:10px;
-	padding-top:5px;
-	border-top:1px solid #E6E6E6; 
 }
 #countersign_table{
 	display: none;

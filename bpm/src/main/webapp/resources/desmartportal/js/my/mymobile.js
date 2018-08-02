@@ -1,7 +1,8 @@
 var form = null;
 $(function(){
-	layui.use(['form', 'layedit', 'laydate'], function () {
-		form = layui.form, layer = layui.layer, layedit = layui.layedit, laydate = layui.laydate;
+	layui.use(['form', 'layedit', 'laydate','element'], function () {
+		form = layui.form, layer = layui.layer, element = layui.element,
+			layedit = layui.layedit, laydate = layui.laydate;
 		form.render();
 	});
 	
@@ -32,8 +33,6 @@ function menuBtnClick(obj){
 
 //选择处理方式
 function handleBtnClick(obj){
-	$(".handle_btn").css("background","#AAA");
-	$(obj).css("background","#009688");
 	$(".handle_table").css("display","none");
 	var handleType = $(obj).text();
 	switch(handleType){

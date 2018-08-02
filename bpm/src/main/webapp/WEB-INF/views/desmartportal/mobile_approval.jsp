@@ -139,67 +139,64 @@
 			<div class="middle_content" id="approve_div">
 				<div class="layui-form">
 					<h1 style="clear: both;"></h1>
-					<div class="handle_div">
-						<table>
-							<tr>
-								<th>处理方式：</th>
-								<td>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn" data-this="this">同意</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
-									<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
-								</td>
-							</tr>
-						</table>
-						<div class="handle_table" id="submit_table">
-							<table>
+					<div class="handle_div layui-tab layui-tab-brief">
+						<ul class="layui-tab-title">
+						    <li onclick="handleBtnClick(this)" id="submit_btn" class="layui-this">同意</li>
+						    <li onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</li>
+						    <li onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</li>
+						    <li onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</li>
+						</ul>
+						<div class="layui-tab-content">
+						    <div class="layui-tab-item handle_table layui-show" id="submit_table">
+						    	<table>
 							
-							</table>
-						</div>
-						<div class="handle_table" id="countersign_table">
-							<table>
-								<tr>
-									<th>处理人：</th>
-									<td>
-										<div class="choose_user_name_ul">
-											<ul></ul>
-										</div>
-										<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe770;</i> 
-										<input id="countersign_person" type="hidden"/>
-									</td>
-								</tr>
-								<tr>
-									<th>会签方式：</th>
-									<td>
-										<div id="countersign_type">
-											<select class="layui-form_1 layui-select" lay-filter="useselfChange">
-					                            <option value="normalAdd">随机会签</option>
-					                            <option value="simpleLoopAdd">顺序会签</option>
-					                            <option value="multiInstanceLoopAdd">并行会签</option>
-					                        </select>
-				                       	</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-						<div class="handle_table" id="reject_table">
-							<table class="layui-form">
+								</table>
+						    </div>
+						    <div class="layui-tab-item handle_table" id="countersign_table">
+						    	<table>
+									<tr>
+										<th>处理人：</th>
+										<td>
+											<div class="choose_user_name_ul">
+												<ul></ul>
+											</div>
+											<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe770;</i> 
+											<input id="countersign_person" type="hidden"/>
+										</td>
+									</tr>
+									<tr>
+										<th>会签方式：</th>
+										<td>
+											<div id="countersign_type">
+												<select class="layui-form_1 layui-select" lay-filter="useselfChange">
+						                            <option value="normalAdd">随机会签</option>
+						                            <option value="simpleLoopAdd">顺序会签</option>
+						                            <option value="multiInstanceLoopAdd">并行会签</option>
+						                        </select>
+					                       	</div>
+										</td>
+									</tr>
+								</table>
+						    </div>
+						    <div class="layui-tab-item handle_table" id="reject_table">
+						    	<table class="layui-form">
 								
-							</table>
-						</div>
-						<div class="handle_table" id="transfer_table">
-							<table>
-								<tr>
-									<th>抄送至：</th>
-									<td>
-										<div class="choose_user_name_ul">
-											<ul></ul>
-										</div>
-										<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe770;</i> 
-										<input id="transfer_person" type="hidden"/>
-									</td>
-								</tr>
-							</table>
+								</table>
+						    </div>
+						    <div class="layui-tab-item handle_table" id="transfer_table">
+						    	<table>
+									<tr>
+										<th>抄送至：</th>
+										<td>
+											<div class="choose_user_name_ul">
+												<ul></ul>
+											</div>
+											<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe770;</i> 
+											<input id="transfer_person" type="hidden"/>
+										</td>
+									</tr>
+								</table>
+						    </div>
 						</div>
 					</div>
 					<div id="suggestion">

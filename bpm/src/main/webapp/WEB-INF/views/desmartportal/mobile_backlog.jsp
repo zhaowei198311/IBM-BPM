@@ -113,7 +113,7 @@
 				<tr>
 					<td colspan="2" id="btn_td" style="text-align: center;">
 						<input type="reset" class="layui-btn filter_btn" value="重置" style="margin-right:30px"/>
-						<input type="button" class="layui-btn filter_btn" value="确定" style="margin-left:30px" onclick="queryTask()"/>
+						<input type="button" class="layui-btn filter_btn" value="搜索" style="margin-left:30px" onclick="queryTask()"/>
 					</td>
 				</tr>
 			</table>
