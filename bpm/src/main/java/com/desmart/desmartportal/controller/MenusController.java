@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.RequestSourceUtil;
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartbpm.service.DhProcessRetrieveService;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
@@ -56,6 +58,8 @@ public class MenusController {
 	private HttpServletRequest request;
 	@Autowired
 	private DhProcessRetrieveService dhProcessRetrieveService;
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -122,6 +126,9 @@ public class MenusController {
 		if(serverResponse.isSuccess()) {
 			mv.addObject("processRetrieveList",serverResponse.getData());
 		}
+		DhProcessDefinition definition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
+		boolean flag = dhProcessInstanceService.checkPermissionStart(definition);
+		mv.addObject("startFlag",flag);
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("proName", proName);
