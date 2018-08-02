@@ -117,6 +117,7 @@
 									<tbody id="transferBody" />
 								</table>
 						    </div>
+						    <div id="lay_page"></div>
 					  	</div>
 					</div>			
 				</div>

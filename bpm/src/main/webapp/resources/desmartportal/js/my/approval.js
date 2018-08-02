@@ -23,6 +23,11 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     if (actcCanChooseUser == 'FALSE') {
         return false;
     }
+    if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
+    	area=['620px', '480px'];
+    }else{
+    	area=['370px', '430px'];
+    }
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=' + $('#taskUid').val();
     var index = layer.open({
@@ -30,7 +35,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
         title: '选择人员',
         shadeClose: true,
         shade: 0.3,
-        area: ['620px', '480px'],
+        area: area,
         content: [url, 'yes'],
         success: function (layero, lockIndex) {
             var body = layer.getChildFrame('body', lockIndex);
