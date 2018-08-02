@@ -68,7 +68,7 @@
 		VALUES
 		(
 			#{paraUid},
-			(select max(PARA_INDEX)+1 from  DH_INTERFACE_PARAMETER),
+			nvl((select max(PARA_INDEX)+1 from  DH_INTERFACE_PARAMETER),1),
 			#{paraName},
 			#{paraDescription},
 			#{paraType},
