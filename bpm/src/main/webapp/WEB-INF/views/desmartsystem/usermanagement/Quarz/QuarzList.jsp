@@ -120,7 +120,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 						shadeClose : false,//点击遮罩关闭
 						shade : 0.3,
 						btnAlign : 'c',
-						area: ['658px', '300px'],
+						area: ['665px', '310px'],
 						closeBtn: 0,
 						content : [ 'quarz/quarzAdd', 'yes'],
 						success : function(layero, lockIndex) {
@@ -143,7 +143,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					shade : 0.3,
 					shift:'0',
 					btnAlign : 'c',
-					area: ['650px', '300px'],
+					area: ['665px', '310px'],
 					closeBtn: 0,
 					content : [ 'quarz/quarzDetail?obj='+encodeURIComponent(JSON.stringify(data)), 'no'],
 					success : function(layero, lockIndex) {
@@ -168,7 +168,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 				      anim: public_anim,
 				      btnAlign: 'c',
 				      shade : 0.3,
-				      area: ['658px', '300px'],
+				      area: ['665px', '310px'],
 				      closeBtn: 0,
 					  content: ['quarz/quarzEdit?obj='+encodeURIComponent(JSON.stringify(data)), 'yes'],
 					  success: function(layero, lockIndex) {
