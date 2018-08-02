@@ -3,6 +3,9 @@ var needApprovalOpinion = "";
 // bool值记录是否能直接跳跃提交 回到驳回处
 var canSkipFromReject = false;
 
+//优化处理方式
+var refurbish = true;
+
 var pageConfig = {
 	pageNum:1,
 	pageSize:14
@@ -27,10 +30,11 @@ $(function () {
     departAsync();
     
     checkUserData();
+    queryRejectByActivitiy();
     //点击通过
-    $("#submit_btn").click(function(){
+    /*$("#submit_btn").click(function(){
     	checkUserData();
-    });
+    });*/
     
     //加载已上传的附件
     loadFileList();
@@ -448,8 +452,12 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
 		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
 	if(isMulti){
-		var showActivityId = activityId.replace(":","");
-		$("#"+elementId).find("#"+showActivityId).find("ul").append(liHtml);
+		if(elementId=="submit_table"){
+			var showActivityId = activityId.replace(":","");
+			$("#"+elementId).find("#"+showActivityId).find("ul").append(liHtml);
+		}else{
+			$("#"+elementId+" .choose_user_name_ul ul").append(liHtml);
+		}
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
 			pageConfig.pageSize = 1;
@@ -491,9 +499,9 @@ layui.use('layedit', function () {
 });
 
 $(function () {
-	$("#reject_btn").click(function (){
+	/*$("#reject_btn").click(function (){
 		queryRejectByActivitiy();
-	});
+	});*/
 	
     // 查询审批进度剩余进度百分比
     var activityId = $("#activityId").val();
