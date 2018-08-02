@@ -67,30 +67,30 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					field : 'jobName',
 					title : '任务名称',
 					align : 'center',
-					width : '200'
+					//width : '200'
 				},
 				{
 					field : 'jobGroupName',
 					title : '类型',
 					align : 'center',
-					width : '200'
+					//width : '200'
 				},{
 					field : 'cronExpr',
 					title : '表达式',
 					align : 'center',
-					width : '300'
+					//width : '300'
 				} ,{
 					field : 'jobStatus',
 					title : '状态',
 					align : 'center',
-					width : '100',
+					//width : '100',
 					templet: '#operStTpl'
 				} , {
 					fixed : 'right',
 					title : '操作',
 					align : 'center',
 					toolbar : '#toobar',
-					width : '250'
+					//width : '250'
 				}] ]
 			});
 
