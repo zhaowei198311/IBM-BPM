@@ -169,15 +169,14 @@
         	<div class="layui-col-md4">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
-            <div class="layui-col-md4" style="text-align: right;">
+            <div class="layui-col-md4">
             	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
             </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
             <div class="layui-col-md4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-md2">&nbsp;</div>
-            <div class="layui-col-md6" style="text-align: right;">
-               	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+            <div class="layui-col-md4">表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span></div>
+            <div class="layui-col-md4">
 				<c:if test="${!empty bpmForm.formNo }">
 					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
 				</c:if>

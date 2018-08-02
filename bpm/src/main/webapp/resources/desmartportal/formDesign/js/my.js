@@ -433,10 +433,11 @@ function drawPage() {
 			$(this).next().remove();
 			var dateInputId = $(this).prop("id");
 			// 日期
-			laydate.render({
+			var index = laydate.render({
 				elem: '#' + dateInputId,
 				trigger: 'click',
 				type: dateType,
+				position: 'fixed',
 				done:function(value){
 					$("#"+dateInputId).val(value);
 					$("#"+dateInputId).trigger("change");

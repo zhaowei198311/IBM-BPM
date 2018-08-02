@@ -72,7 +72,7 @@
 					<ul id="usersul" style="width:240px;display:inline;" >
 					</ul>
 				</div>
-				<div id="temp_button">
+				<div id="temp_button" style="margin:10px;">
 					<br></br>
 					<br></br>
 					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="add_user();">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
@@ -102,10 +102,11 @@
 			console.log(actcChooseableHandlerType=='allUsers');
 			if(actcAssignType=='allUser'||actcChooseableHandlerType=='allUser'){
 				console.log(actcChooseableHandlerType);
-				$('#treeDemo').show();
+				$('#treeDemo').parent().show();
 				$('.query_user').show();
 			}else{
-				$('#treeDemo').hide();
+				$(".middle_temp").css("height","260px");
+				$('#treeDemo').parent().hide();
 				$('.query_user').hide();
 			}
 			var url='sysDepartment/treeDisplay';

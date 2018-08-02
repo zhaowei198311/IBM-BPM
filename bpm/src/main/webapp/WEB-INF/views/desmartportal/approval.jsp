@@ -167,7 +167,7 @@
       <div id="Mask"></div>
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
-    <div class="search_area top_btn" id="layerDemo">
+    <div class="search_area top_btn" id="layerDemo" style="height:113px">
         <span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
         <input id="departNo" type="hidden" value="${processInstance.departNo}" />
         <input id="companyNum" type="hidden" value="${processInstance.companyNumber}" />
@@ -213,31 +213,35 @@
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
             <div class="layui-col-md4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
-            <div class="layui-col-md4" style="position: relative;">
-                <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;top: 5px;">
-                    <div class="layui-progress-bar" lay-percent="0%"></div>
-                    <!--<span class="progress_time">审批剩余时间6小时</span> -->
-                </div>
+            <div class="layui-col-md4">
+            	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
             </div>
-            <div class="layui-col-md4" style="text-align: right;">
+            <div class="layui-col-md4">
             	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
             </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
             <div class="layui-col-md4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-md2">填写时间：
+            <div class="layui-col-md4">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
-            <div class="layui-col-md6" style="text-align: right;">
-               	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+            <div class="layui-col-md4">
 				<c:if test="${!empty bpmForm.formNo }">
 					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
 				</c:if>
             </div>
         </div>
+        <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
+        	<div class="layui-col-md11" style="position: relative;">
+                <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;top: 5px;">
+                    <div class="layui-progress-bar" lay-percent="0%"></div>
+                    <!--<span class="progress_time">审批剩余时间6小时</span> -->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="layui-fluid" style="padding-top: 120px;">
+    <div class="layui-fluid" style="padding-top: 150px;">
 		<div class="table_content">
 			<div class="table_container">
 				<p class="title_p">流程标题</p>

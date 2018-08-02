@@ -210,10 +210,10 @@
 					</c:choose>
 				</div>
             </div>
-			<div class="layui-col-md4" style="text-align: right;">
+			<div class="layui-col-md4">
 				流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
 			</div>
-			<div class="layui-col-md4" style="text-align: right;">
+			<div class="layui-col-md4">
 				表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
 				<%--<c:if test="${!empty bpmForm.formNo }">--%>
 					<%--表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>--%>
