@@ -77,6 +77,10 @@ public class DhInterfaceController {
         return  dhInterfaceService.listDhInterfaceByStatus(pageNum, pageSize, intStatus);
 	}
 
+	
+	/**
+	 * 添加
+	 */
 	@RequestMapping(value = "/add")
 	@ResponseBody
 	public  ServerResponse addDhInterface(DhInterface dhInterface) {
