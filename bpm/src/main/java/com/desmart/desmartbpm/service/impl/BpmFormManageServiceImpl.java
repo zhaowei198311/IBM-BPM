@@ -209,7 +209,14 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 			List<BpmFormField> filedList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
 			int fieldListSize = filedList.size();
 			//批量删除字段权限
-			deleteFieldPermiss(filedList,formUid);
+			List<DhStep> dhStepList = dhStepMapper.queryStepListByFormUid(formUid);
+			List<String> stepUidList = new ArrayList<>();
+			for(DhStep dhStep:dhStepList) {
+				stepUidList.add(dhStep.getStepUid());
+			}
+			if(!stepUidList.isEmpty()) {
+				dhObjectPermissionMapper.removeByStepUidList(stepUidList);
+			}
 			//删除表单关联子表单的信息
 			bpmFormRelePublicFormMapper.deleteFormRelePublicForm(formUid);
 			//删除表单字段
@@ -230,24 +237,6 @@ public class BpmFormManageServiceImpl implements BpmFormManageService{
 		return bpmFormManageMapper.removeFormsByFormUidList(formUidList);
 	}
 
-	private void deleteFieldPermiss(List<BpmFormField> fieldList,String formUid) {
-		List<BpmFormField> publicFormFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
-		fieldList.addAll(publicFormFieldList);
-		List<DhStep> dhStepList = dhStepMapper.queryStepListByFormUid(formUid);
-		List<DhObjectPermission> dhObjectPerList = new ArrayList<>();
-		//删除字段权限信息
-		for(BpmFormField field:fieldList) {
-			for(DhStep dhStep:dhStepList) {
-				DhObjectPermission dhObjectPermission = new DhObjectPermission();
-				dhObjectPermission.setOpObjUid(field.getFldUid());
-				dhObjectPermission.setStepUid(dhStep.getStepUid());
-				dhObjectPerList.add(dhObjectPermission);
-				//dhObjectPermissionMapper.delectByDhObjectPermissionSelective(dhObjectPermission);
-			}
-		}
-		dhObjectPermissionMapper.deleteBatchSelective(dhObjectPerList);
-	}
-	
 	@Transactional
 	@Override
 	public ServerResponse copyForm(BpmForm bpmForm) {
