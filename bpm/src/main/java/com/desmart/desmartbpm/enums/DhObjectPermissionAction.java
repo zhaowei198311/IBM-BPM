@@ -6,7 +6,9 @@ public enum DhObjectPermissionAction {
     HIDDEN("HIDDEN", "隐藏"),
     START("START", "发起"),
     UPLOAD("UPLOAD", "上传"),
-    DOWNLOAD("DOWNLOAD", "下载");
+    DOWNLOAD("DOWNLOAD", "下载"),
+    SKIP("SKIP", "跳过必填验证"),
+    PRINT("PRINT", "打印");
 
     private final String code;
     private final String value;

@@ -527,7 +527,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 
 		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService
-				.queryFieldPermissionByStepUid(formStep.getStepUid());
+				.queryFieldPermissionByStepUid(formStep);
 		if (!fieldPermissionResponse.isSuccess()) {
 			return ServerResponse.createByErrorMessage("缺少表单权限信息");
 		}

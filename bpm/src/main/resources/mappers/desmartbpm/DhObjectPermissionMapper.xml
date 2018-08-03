@@ -217,6 +217,11 @@
         where pro_app_id = #{proAppId} and pro_uid = #{proUid} and pro_ver_uid = #{proVerUid} and op_action = 'START'
     </select>
 
+    <select id="listByStepUid" resultType="com.desmart.desmartbpm.entity.DhObjectPermission" parameterType="string">
+        select <include refid="base_column"/> from dh_object_permission
+        where step_uid = #{stepUid}
+    </select>
+
     <delete id="deleteFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
 		delete from dh_object_permission
 		where op_obj_uid=#{opObjUid} and step_uid=#{stepUid}
