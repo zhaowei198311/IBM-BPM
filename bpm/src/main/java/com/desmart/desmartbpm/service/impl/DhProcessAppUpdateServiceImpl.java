@@ -161,7 +161,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     }
 
 
-    // 准备数据
+
     @Transactional
     @Override
     public ServerResponse updateProcessApp(String proAppId, String oldProVerUid, String newProVerUid, Queue<DhProcessDefinitionBo> definitionBoQueue) {
@@ -197,6 +197,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     }
     @Override
     public ServerResponse<Queue<DhProcessDefinitionBo>> prepareData(String proAppId, String newProVerUid) {
+        // 从BpmExposedItem中获得需要拉取的流程
         List<DhProcessDefinitionBo> exposedDefinitionList = dhProcessDefinitionService.getExposedProcessDefinitionByProAppIdAndSnapshotId(proAppId, newProVerUid);
         if (CollectionUtils.isEmpty(exposedDefinitionList)) {
             return ServerResponse.createByErrorMessage("没有找到符合条件的流程定义");
@@ -288,10 +289,16 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         List<DhProcessDefinition> newDefintions = new ArrayList<>();
         while (!boToPullQueue.isEmpty()) {
             bo = boToPullQueue.poll();
-            ServerResponse<DhProcessDefinition> response = dhProcessDefinitionService.createDhProcessDefinition(bo.getProAppId(),
-                    bo.getProUid(), bo.getProVerUid());
+            ServerResponse<DhProcessDefinition> response = null;
+            try {
+                response = dhProcessDefinitionService.createDhProcessDefinition(bo.getProAppId(),
+                        bo.getProUid(), bo.getProVerUid());
+            } catch (Exception e) {
+                logger.error("创建环节失败，解析环节失败，路程名：" + bo.getProName(), e);
+                throw new PlatformException("创建环节失败，解析环节失败，路程名：" + bo.getProName() + "。" + e.getMessage());
+            }
             if (!response.isSuccess()) {
-                throw new PlatformException("创建环节失败");
+                throw new PlatformException("创建环节失败，解析环节失败，路程名：" + bo.getProName() + response);
             }
             newDefintions.add(response.getData());
         }

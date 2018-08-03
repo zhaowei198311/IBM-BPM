@@ -9,6 +9,7 @@ public class DhProcessDefinitionBo {
     private String proAppId; // 流程应用库id
     private String proVerUid;// 流程版本id（引擎中流程快照id）
     private Set<String> externalIdList;  // 含有的外链流程id
+    private String proName; // 流程名
 
     public DhProcessDefinitionBo(){}
 
@@ -67,5 +68,13 @@ public class DhProcessDefinitionBo {
 
     public void setExternalIdList(Set<String> externalIdList) {
         this.externalIdList = externalIdList;
+    }
+
+    public String getProName() {
+        return proName;
+    }
+
+    public void setProName(String proName) {
+        this.proName = proName;
     }
 }

@@ -130,6 +130,16 @@ public interface DhProcessDefinitionService {
      * @return
      */
     ServerResponse enableProcessDefinition(String proAppId, String proUid, String proVerUid);
+
+
+    /**
+     * 停用一个版本的流程定义
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    ServerResponse disableProcessDefinition(String proAppId, String proUid, String proVerUid);
     
     /**
      * 

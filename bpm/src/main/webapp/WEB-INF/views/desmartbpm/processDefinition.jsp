@@ -26,17 +26,17 @@
                 <div class="layui-col-md10">
                     <div class="search_area">
                         <div class="layui-row layui-form">
-                            <div class="layui-col-md3">
+                            <div class="layui-col-md2">
                                 <input type="text" placeholder="流程名称"  class="layui-input" id="proName_input">
                             </div>
-                            <div class="layui-col-md2">
+                            <div class="layui-col-md1">
                                 <select id="proStatusSel" name="proStauts"  lay-filter="proStatus">
                                     <option value="enabled">已启用</option>
                                     <option value="synchronized">已同步</option>
                                     <option value="unsynchronized">未同步</option>
                                 </select>
                             </div>
-                            <div class="layui-col-md7" style="text-align:left;padding-left:20px;line-height:38px;">
+                            <div class="layui-col-md9" style="text-align:left;padding-left:20px;line-height:38px;">
                                     <button class="layui-btn layui-btn-sm" id="searchByProName_btn">查询</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="synchr_btn">环节同步</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="updateAppBtn">升级应用库</button>
@@ -44,6 +44,7 @@
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditDefinition_btn">流程配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm " id="toEditActivityConf_btn">环节配置</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="enable_btn">启用</button>
+                                    <button class="layui-btn layui-btn-primary layui-btn-sm" id="disable_btn">停用</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="querySimilarProcess">拷贝</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="exportBtn">导出</button>
                                     <button class="layui-btn layui-btn-primary layui-btn-sm" id="importBtn">导入</button>

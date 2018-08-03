@@ -479,6 +479,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Transactional
 	public ServerResponse<Map<String, Object>> toDealTask(String taskUid) {
+		long start = System.currentTimeMillis();
 	    Map<String, Object> resultMap = new HashMap<>();
 	    if (StringUtils.isBlank(taskUid)) {
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
@@ -495,7 +496,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    if (dhprocessInstance == null) {
             return ServerResponse.createByErrorMessage("流程实例不存在");
         }
-
 	    // 获得当前环节
 	    BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(dhTaskInstance.getTaskActivityId());
 	    if (currTaskNode == null) {
@@ -519,7 +519,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			return ServerResponse.createByErrorMessage("缺少表单权限信息");
 		}
 		String fieldPermissionInfo = fieldPermissionResponse.getData();
-
 		// 调用表单前的触发器
 		ServerResponse executeStepResponse = dhStepService.executeStepBeforeFormStep(steps.get(0), dhTaskInstance);
 		if (!executeStepResponse.isSuccess()) {
@@ -527,7 +526,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 		// 触发器调用过后重新获取流程实例
 		dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
-
 		// 结合草稿中的数据
 		DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
 		JSONObject approvalData = null;
@@ -543,7 +541,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			dhprocessInstance.setInsData(insDataJson.toJSONString());
 			approvalData = dfsData.getJSONObject("approvalData");
 		}
-
 	    // 查看此环节特有的操作
 	    // 查看能否编辑insTitle
         boolean canEditInsTitle = canEditInsTitle(dhTaskInstance, dhprocessInstance);
@@ -560,6 +557,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 获得表单编号
 		String formNo = dhFormNoService.findFormNoByFormUid(bpmForm.getDynUid(), insDataJson.getJSONArray("formNoList"));
 		bpmForm.setFormNo(formNo);
+		System.out.println("mark6：" + (System.currentTimeMillis() - start));
         // 记录任务被打开
         taskMongoDao.saveOpenedTask(new OpenedTask(dhTaskInstance.getTaskUid(), dhTaskInstance.getTaskId(), new Date()));
 
@@ -576,6 +574,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("dataForSkipFromReject", dataForSkipFromReject);
 	    resultMap.put("needApprovalOpinion", needApprovalOpinion(currTaskNode, dhprocessInstance));
 	    return ServerResponse.createBySuccess(resultMap);
+
 	}
 
 
