@@ -1072,10 +1072,10 @@
 	</div>
 	<!-- 修改触发器弹出框 -->
 	<div class="display_container8" id="editTrigger" >
-		<div class="display_content3" style="height: 400px;">
+		<div class="display_content3" style="height: 620px; overflow :hidden">
 			<div class="top">修改参数映射</div>
 			<div class="layui-row layui-form" style="margin-top: 10px">
-				<div class="middle1" style="width: 730px;">
+				<div class="middle1" style="width: 730px; height: 500px">
 					<fieldset class="layui-elem-field layui-field-title"
 						style="margin-top: 20px; width: 730px;">
 						<legend>当前表单</legend>
