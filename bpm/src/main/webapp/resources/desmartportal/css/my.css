@@ -113,7 +113,8 @@ a {
     border-bottom: 1px solid #ccc;
     box-shadow: 0 0 5px #ccc;
     padding: 10px 20px;
-    height:85px;
+    height:auto;
+   /* height:85px;/*2018-08-03改*/
 }
 
 /*2018-06-01改*/
