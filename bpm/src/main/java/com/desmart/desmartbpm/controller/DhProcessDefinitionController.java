@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.util.http.HttpClientUtils;
 import com.desmart.desmartbpm.vo.DhProcessDefinitionVo;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
+import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 
 /**
  * 流程定义控制器
@@ -40,6 +43,8 @@ public class DhProcessDefinitionController {
     private DhGatewayLineService dhGatewayLineService;
     @Autowired
     private DhTransferService dhTransferService;
+    @Autowired
+    private BpmGlobalConfigService bpmGlobalConfigService;
 
     /**
      * 跳转到流程定义首页
@@ -146,11 +151,13 @@ public class DhProcessDefinitionController {
         }
     }
     
+    @Log(description="查看流程图模块")
     @RequestMapping(value = "/snapshotFlowChart")
     @ResponseBody
     public String viewFlowChart (String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
-    	LOG.info("请求查看流程图"+proAppId);    	 
-    	String url = "http://10.0.4.201:9080/rest/bpm/wle/v1/visual/processModel/"+proUid+"?snapshotId="+proVerUid+"&image=true";
+    	LOG.info("请求查看流程图"+proAppId);  
+    	BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
+    	String url = gcfg.getBpmServerHost()+"rest/bpm/wle/v1/visual/processModel/"+proUid+"?snapshotId="+proVerUid+"&image=true";
     	HttpClientUtils httpUtils = new HttpClientUtils();
     	// 验证
     	String msg = httpUtils.checkLoginIbm(url);
