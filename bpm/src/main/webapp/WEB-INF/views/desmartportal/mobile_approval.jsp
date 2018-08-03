@@ -50,6 +50,7 @@
 		        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
 		        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
 		        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
+		        <input id="isReject" value="${activityConf.actcCanReject}" style="display: none;"/>
 		        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}"/>
 		        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
 		        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}"/>

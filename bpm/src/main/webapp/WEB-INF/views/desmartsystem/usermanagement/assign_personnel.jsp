@@ -72,18 +72,18 @@
 					<ul id="usersul" style="width:240px;display:inline;" >
 					</ul>
 				</div>
-				<div id="temp_button" style="margin:10px;">
+				<div id="temp_button" style="margin:0 10px 0 10px;">
 					<br></br>
 					<br></br>
-					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="add_user();">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;margin:auto;" onclick="add_user();">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
 					<br></br>
-					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;text-align:left;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+					<button type="button" class="btn btn-default btn-xs" style="font-weight:800;color:blue;margin:auto;" onclick="delete_user();">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
 				</div>
 				<div id="temp_right" style="float:left;width:134px;height:260px;">
 					<ul id="user_add" style="width:240px;display:inline;"></ul>
 				</div>
 			</div>
-			<div class="foot_temp" style="margin:40px 20px 0 0;">
+			<div class="foot_temp" style="margin:20px 20px 0 0;">
 				<button class="layui-btn layui-btn sure_btn" style="float:left;" type="button" id="addpersonnel">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn" id="close" style="float:left;">取消</button>
 			</div>
@@ -98,14 +98,12 @@
 		var taskUid = assignPersonnel.taskUid || '';
 		
 		$(function(){
-			console.log(actcChooseableHandlerType);
-			console.log(actcChooseableHandlerType=='allUsers');
 			if(actcAssignType=='allUser'||actcChooseableHandlerType=='allUser'){
-				console.log(actcChooseableHandlerType);
+				$("#temp_button").find("button").css("margin-left","13px");
 				$('#treeDemo').parent().show();
 				$('.query_user').show();
 			}else{
-				$(".middle_temp").css("height","260px");
+				$(".middle_temp").css("height","295px");
 				$('#treeDemo').parent().hide();
 				$('.query_user').hide();
 			}
