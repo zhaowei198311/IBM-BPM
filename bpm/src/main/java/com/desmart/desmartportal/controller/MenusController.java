@@ -127,7 +127,10 @@ public class MenusController {
 			mv.addObject("processRetrieveList",serverResponse.getData());
 		}
 		DhProcessDefinition definition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
-		boolean flag = dhProcessInstanceService.checkPermissionStart(definition);
+		boolean flag =false;
+		if(definition!=null) {
+			flag = dhProcessInstanceService.checkPermissionStart(definition);
+		}
 		mv.addObject("startFlag",flag);
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
