@@ -29,7 +29,7 @@
 						<option value="errorLog">错误日志</option>
 					</select>
 				</div>
-				<div class="layui-col-md2">
+				<div class="layui-col-md3">
 						<input type="text" placeholder="日志创建时间" class="layui-input" id=createTime>
 				</div>
 				<div class="layui-col-md2" style="text-align: left; padding-left:15px;">
@@ -141,6 +141,17 @@ function pageOperLog(){
 			layer.closeAll("loading");
 		}
 	})
+}
+function formatDate(date) {
+	  var d = new Date(date),
+	    month = '' + (d.getMonth() + 1),
+	    day = '' + d.getDate(),
+	    year = d.getFullYear();
+	 
+	  if (month.length < 2) month = '0' + month;
+	  if (day.length < 2) day = '0' + day;
+	 
+	  return [year, month, day].join('-');
 }
 //模糊查询
 function search(){

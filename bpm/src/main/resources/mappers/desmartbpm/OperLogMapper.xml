@@ -58,18 +58,16 @@
 		from DH_OPERLOG 
 		<where>
 		<if test=" userId != null and userId !='' ">
-			and userId = #{userId}
+			and user_Id = #{userId}
 		</if>
 		<if test=" logType !=null and logType !='' ">
-			and logType = #{logType}
+			and log_Type = #{logType}
 		</if>
 		<if test=" startTime != null and startTime != '' and endTime != null and endTime !='' ">
 			AND create_time &gt;=
-				to_date(concat(#{startTime},'
-				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+				to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
 				AND create_time &lt;=
-				to_date(concat(#{endTime},'
-				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+				to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
 		</if>
 		</where>
 	</select>
