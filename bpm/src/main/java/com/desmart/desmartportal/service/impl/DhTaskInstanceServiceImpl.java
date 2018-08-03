@@ -514,7 +514,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			return ServerResponse.createByErrorMessage("找不到表单");
 		}
 		// 获得表单字段权限信息
-		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep.getStepUid());
+		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep);
 		if (!fieldPermissionResponse.isSuccess()) {
 			return ServerResponse.createByErrorMessage("缺少表单权限信息");
 		}
@@ -814,7 +814,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("缺少表单");
         }
 
-        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep);
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
         }
@@ -868,7 +868,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             return ServerResponse.createByErrorMessage("缺少表单");
         }
 
-        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep.getStepUid());
+        ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFinshedFieldPerMissionByStepUid(formStep);
         if (!fieldPermissionResponse.isSuccess()) {
             return ServerResponse.createByErrorMessage("缺少表单权限信息");
         }

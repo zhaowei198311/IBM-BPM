@@ -1,9 +1,10 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,6 @@ import com.desmart.desmartbpm.dao.BpmFormFieldMapper;
 import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
-import com.desmart.desmartbpm.entity.BpmFormField;
-import com.desmart.desmartbpm.entity.DhObjectPermission;
-import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartbpm.service.DhObjectPermissionService;
@@ -119,184 +117,133 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		return ServerResponse.createBySuccess();
 	}
 
+
 	@Override
-	public ServerResponse<String> queryFieldPermissionByStepUid(String stepUid) {
-		//普通字段的权限json字符串
-		String jsonStr = "{";
-		//标题字段和表格字段的json字符串
-		String titleJsonStr = "{";
-		//普通字段跳过必填验证的权限
-		String fieldSkipJsonStr = "{";
-		//标题字段和表格字段跳过必填验证的权限
-		String titleSkipJsonStr = "{";
-		String formUid = dhStepMapper.selectByPrimaryKey(stepUid).getStepObjectUid();
-		List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
-		List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
-		fieldList.addAll(publicFieldList);
-		for(int i=0;i<fieldList.size();i++) {
-			BpmFormField field = fieldList.get(i);
-			String fieldType = field.getFldType();
-			String fieldCodeName = field.getFldCodeName();
-			String fldUid = field.getFldUid();
-			//查询字段是否跳过必填验证的权限
-			DhObjectPermission skipObjPer = dhObjectPermissionMapper.getFieldSkipPermissionByStepUidAndFldUid(stepUid, fldUid);
-			if(null == skipObjPer) {
-				//判断该字段是否为标题或表格
-				if("title".equals(fieldType) || "object".equals(fieldType)){
-					//判断权限的类型
-					titleSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"no\"},";
-				}else {
-					fieldSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"no\"},";
-				}
-			}else {
-				//判断该字段是否为标题或表格
-				if("title".equals(fieldType) || "object".equals(fieldType)){
-					//判断权限的类型
-					titleSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"yes\"},";
-				}else {
-					fieldSkipJsonStr += "\""+fieldCodeName+"\":{\"skip\":\"yes\"},";
-				}
-			}
-			//查询字段的可编辑，只读，隐藏等权限
-			DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid, fldUid);
-			if(null == objPer) {
-				//判断该字段是否为标题或表格
-				if("title".equals(fieldType) || "object".equals(fieldType)){
-					//判断权限的类型
-					titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
-				}else {
-					jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
-				}
-			}else {
-				String opAction = objPer.getOpAction();
-				//判断该字段是否为标题或表格
-				if("title".equals(fieldType) || "object".equals(fieldType)){
-					//判断权限的类型
-					if(opAction.equals("EDIT")) {
-						continue;
-					}else if(opAction.equals("HIDDEN")){
-						titleJsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
-					}else {
-						titleJsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
-					}
-				}else {
-					if(opAction.equals("EDIT")) {
-						continue;
-					}else if(opAction.equals("HIDDEN")){
-						jsonStr += "\""+fieldCodeName+"\":{\"display\":\"none\"},";
-					}else {
-						jsonStr += "\""+fieldCodeName+"\":{\"edit\":\"no\"},";
-					}
-				}
-			}
-		}
-		if(jsonStr.endsWith(",")) {
-			jsonStr = jsonStr.substring(0, jsonStr.length()-1);
-		}
-		jsonStr += "}";
-		if(titleJsonStr.endsWith(",")) {
-			titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
-		}
-		titleJsonStr += "}";
-		if(titleSkipJsonStr.endsWith(",")) {
-			titleSkipJsonStr = titleSkipJsonStr.substring(0, titleSkipJsonStr.length()-1);
-		}
-		titleSkipJsonStr += "}";
-		if(fieldSkipJsonStr.endsWith(",")) {
-			fieldSkipJsonStr = fieldSkipJsonStr.substring(0, fieldSkipJsonStr.length()-1);
-		}
-		fieldSkipJsonStr += "}";
-		String json = "{\"fieldJsonStr\":"+jsonStr
-				+",\"titleJsonStr\":"+titleJsonStr
-				+",\"fieldSkipJsonStr\":"+fieldSkipJsonStr
-				+",\"titleSkipJsonStr\":"+titleSkipJsonStr
-				+"}";
-		return ServerResponse.createBySuccess(json);
+	public ServerResponse<String> queryFieldPermissionByStepUid(DhStep formStep) {
+        DhFieldPermissionData result = new DhFieldPermissionData();
+        String formUid = formStep.getStepObjectUid();
+        // 获得表单字段
+        List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+        // 获得公共表单字段
+        List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
+		List<BpmFormField> allFields = new ArrayList<>(fieldList);
+		allFields.addAll(publicFieldList);
+		if (CollectionUtils.isEmpty(allFields)) {
+		    // 如果没有表单字段，返回
+            return ServerResponse.createBySuccess(JSON.toJSONString(result));
+        }
+        List<DhObjectPermission> dhObjectPermissions = dhObjectPermissionMapper.listByStepUid(formStep.getStepUid());
+		Set<String> editSet = new HashSet<>();
+		Set<String> hiddenSet = new HashSet<>();
+		Set<String> skipSet = new HashSet<>();
+        for (DhObjectPermission permission : dhObjectPermissions) {
+            DhObjectPermissionAction actionType = DhObjectPermissionAction.codeOf(permission.getOpAction());
+            switch (actionType) {
+                case EDIT: // 编辑
+                    editSet.add(permission.getOpObjUid());
+                    break;
+                case HIDDEN: // 隐藏
+                    hiddenSet.add(permission.getOpObjUid());
+                    break;
+                case SKIP: // 跳过必填验证
+                    skipSet.add(permission.getOpObjUid());
+                    break;
+                default:
+                    break;
+            }
+        }
+        for (BpmFormField field : allFields) {
+            String fieldUid = field.getFldUid();
+            String codeName = field.getFldCodeName();
+            if (BpmFormField.TYPE_TITLE.equals(field.getFldType()) || BpmFormField.TYPE_OBJECT.equals(field.getFldType())) {
+                // 字段是title
+                if (hiddenSet.contains(fieldUid)) { // 配置了隐藏
+                    result.addTitleHiddenPermission(codeName);
+                } else if (editSet.contains(fieldUid)) {
+                    // 配置了可编辑，不放在json
+                } else { // 配置了只读
+                    result.addTitleReadonlyPermission(codeName);
+                }
+                if (skipSet.contains(fieldUid)) { // 配置了跳过必填
+                    result.addTitleSkipPermissionYes(codeName);
+                }
+            } else {
+                // 字段是普通字段
+                if (hiddenSet.contains(fieldUid)) { // 配置了隐藏
+                    result.addFieldHiddenPermission(codeName);
+                } else if (editSet.contains(fieldUid)) {
+                    // 配置了可编辑，不放在json
+                } else { // 配置了只读
+                    result.addFieldReadonlyPermission(codeName);
+                }
+                if (skipSet.contains(fieldUid)) { // 配置了跳过必填
+                    result.addFieldSkipPermissionYes(codeName);
+                }
+            }
+        }
+        return ServerResponse.createBySuccess(JSON.toJSONString(result));
 	}
 
 	@Override
-	public ServerResponse<String> queryFinshedFieldPerMissionByStepUid(String stepUid) {
-		//根据stepUid找到步骤绑定的表单id
-		DhStep dhStep = dhStepMapper.selectByPrimaryKey(stepUid);
-		if(null==dhStep) {
-			return ServerResponse.createBySuccess("{}");
-		}
-		String formUid = dhStep.getStepObjectUid();
-		//再根据表单id找到所有的表单字段对象
-		List<BpmFormField> formFieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
-		formFieldList.addAll(bpmFormFieldMapper.queryPublicFormFieldByFormUid(formUid, ""));
-		String jsonStr = "{";
-		String titleJsonStr = "{";
-		String printJsonStr = "{";
-		String titlePrintJsonStr = "{";
-		for(int i=0;i<formFieldList.size();i++) {
-			BpmFormField formField = formFieldList.get(i);
-			String fieldType = formField.getFldType();
-			//判断该字段是否为标题
-			if("title".equals(fieldType) || "object".equals(fieldType)){
-				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
-				DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,formField.getFldUid());
-				if(null==objPer) {
-					titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
-				}else {
-					String opAction = objPer.getOpAction();
-					if(opAction.equals("HIDDEN")){
-						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
-					}else {
-						titleJsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
-					}
-				}
-				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)
-				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
-				if(null!=printObjPer) {
-					titlePrintJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
-				}else {
-					titlePrintJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"no\"},";
-				}
-			}else {
-				//根据表单字段id和步骤id去对象权限表中找字段权限信息(VIEW--只读，HIDDEN--隐藏)
-				DhObjectPermission objPer = dhObjectPermissionService.getFieldPermissionByStepUidAndFldUidNotPrint(stepUid,formField.getFldUid());
-				if(null==objPer) {
-					jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
-				}else {
-					String opAction = objPer.getOpAction();
-					if(opAction.equals("HIDDEN")){
-						jsonStr += "\""+formField.getFldCodeName()+"\":{\"display\":\"none\"},";
-					}else {
-						jsonStr += "\""+formField.getFldCodeName()+"\":{\"edit\":\"no\"},";
-					}
-				}
-				//根据表单字段id和步骤id去对象权限表中找字段权限信息(PRINT--打印)
-				DhObjectPermission printObjPer = dhObjectPermissionService.getFieldPrintPermissionByStepUidAndFldUid(stepUid,formField.getFldUid());
-				if(null!=printObjPer) {
-					printJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"yes\"},";
-				}else {
-					printJsonStr += "\""+formField.getFldCodeName()+"\":{\"print\":\"no\"},";
-				}
-			}
-		}
-		if(jsonStr.endsWith(",")) {
-			jsonStr = jsonStr.substring(0, jsonStr.length()-1);
-		}
-		jsonStr += "}";
-		if(titleJsonStr.endsWith(",")) {
-			titleJsonStr = titleJsonStr.substring(0, titleJsonStr.length()-1);
-		}
-		titleJsonStr += "}";
-		if(printJsonStr.endsWith(",")) {
-			printJsonStr = printJsonStr.substring(0, printJsonStr.length()-1);
-		}
-		printJsonStr += "}";
-		if(titlePrintJsonStr.endsWith(",")) {
-			titlePrintJsonStr = titlePrintJsonStr.substring(0, titlePrintJsonStr.length()-1);
-		}
-		titlePrintJsonStr += "}";
-		String json = "{\"fieldJsonStr\":"+jsonStr
-					+",\"titleJsonStr\":"+titleJsonStr
-					+",\"fieldPrintJsonStr\":"+printJsonStr
-					+",\"titlePrintJsonStr\":"+titlePrintJsonStr
-					+"}";
-		return ServerResponse.createBySuccess(json);
+	public ServerResponse<String> queryFinshedFieldPerMissionByStepUid(DhStep formStep) {
+        DhFieldPermissionData result = new DhFieldPermissionData();
+        String formUid = formStep.getStepObjectUid();
+        // 获得表单字段
+        List<BpmFormField> fieldList = bpmFormFieldMapper.queryFormFieldByFormUid(formUid);
+        // 获得公共表单字段
+        List<BpmFormField> publicFieldList = bpmFormRelePublicFormMapper.listPublicFormFieldByFormUid(formUid);
+        List<BpmFormField> allFields = new ArrayList<>(fieldList);
+        allFields.addAll(publicFieldList);
+        if (CollectionUtils.isEmpty(allFields)) {
+            // 如果没有表单字段，返回
+            return ServerResponse.createBySuccess(JSON.toJSONString(result));
+        }
+        List<DhObjectPermission> dhObjectPermissions = dhObjectPermissionMapper.listByStepUid(formStep.getStepUid());
+        Set<String> hiddenSet = new HashSet<>();
+        Set<String> printSet = new HashSet<>();
+        for (DhObjectPermission permission : dhObjectPermissions) {
+            DhObjectPermissionAction actionType = DhObjectPermissionAction.codeOf(permission.getOpAction());
+            switch (actionType) {
+                case HIDDEN: // 隐藏
+                    hiddenSet.add(permission.getOpObjUid());
+                    break;
+                case PRINT: // 可打印
+                    printSet.add(permission.getOpObjUid());
+                    break;
+                default:
+                    break;
+            }
+        }
+        for (BpmFormField field : allFields) {
+            String fieldUid = field.getFldUid();
+            String codeName = field.getFldCodeName();
+            if (BpmFormField.TYPE_TITLE.equals(field.getFldType()) || BpmFormField.TYPE_OBJECT.equals(field.getFldType())) {
+                // 字段是title
+                if (hiddenSet.contains(fieldUid)) { // 配置了隐藏
+                    result.addTitleHiddenPermission(codeName);
+                } else { // 没有配置隐藏，就是只读
+                    result.addTitleReadonlyPermission(codeName);
+                }
+                if (printSet.contains(fieldUid)) { // 配置了可打印
+                    result.addTitlePrintPermissionYes(codeName);
+                } else { // 没有配置可打印
+                    result.addTitlePrintPermissionNo(codeName);
+                }
+            } else {
+                // 字段是普通字段
+                if (hiddenSet.contains(fieldUid)) { // 配置了隐藏
+                    result.addFieldHiddenPermission(codeName);
+                } else { // 没有配置隐藏，就是只读
+                    result.addFieldReadonlyPermission(codeName);
+                }
+                if (printSet.contains(fieldUid)) { // 配置了可打印
+                    result.addFieldPrintPermissionYes(codeName);
+                } else { // 没有配置可打印
+                    result.addFieldPrintPermissionNo(codeName);
+                }
+            }
+        }
+		return ServerResponse.createBySuccess(JSON.toJSONString(result));
 	}
 
 	@Override

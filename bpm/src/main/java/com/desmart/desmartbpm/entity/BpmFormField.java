@@ -8,6 +8,17 @@ import java.util.List;
  * @since 2018/4/23
  */
 public class BpmFormField {
+	public static final String TYPE_OBJECT_DATE = "object_date";
+	public static final String TYPE_TITLE = "title";
+	public static final String TYPE_STRING = "string";
+	public static final String TYPE_DATE = "date";
+	public static final String TYPE_OBJECT = "object";
+	public static final String TYPE_HIDDEN = "hidden";
+	public static final String TYPE_OBJECT_NUMBER = "object_number";
+	public static final String TYPE_NUMBER = "number";
+	public static final String TYPE_OBJECT_TEXT = "object_text";
+
+
 	private String fldUid;
 	private String fldCodeName;//字段在html文件中的name
 	private Integer fldIndex;

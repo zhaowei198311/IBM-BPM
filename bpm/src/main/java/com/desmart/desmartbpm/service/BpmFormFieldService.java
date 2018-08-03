@@ -6,6 +6,7 @@ import java.util.Map;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
+import com.desmart.desmartbpm.entity.DhStep;
 
 public interface BpmFormFieldService {
 
@@ -27,12 +28,12 @@ public interface BpmFormFieldService {
 	/**
 	 * 获得某步骤上代办的表单字段的权限信息(返回的是封装了字段权限的json数据)
 	 */
-	ServerResponse<String> queryFieldPermissionByStepUid(String stepUid);
+	ServerResponse<String> queryFieldPermissionByStepUid(DhStep formStep);
 	
 	/**
 	 * 获得某步骤上已办的表单字段权限信息(返回的是封装了字段权限的json数据)
 	 */
-	ServerResponse<String> queryFinshedFieldPerMissionByStepUid(String stepUid);
+	ServerResponse<String> queryFinshedFieldPerMissionByStepUid(DhStep formStep);
 	
 	/**
 	 * 通过表单ID获得所有字段

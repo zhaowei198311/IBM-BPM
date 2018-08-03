@@ -60,6 +60,13 @@ public interface DhObjectPermissionMapper {
      */
     List<DhObjectPermission> listByStepUidList(List<String> stepUidList);
 
+	/**
+	 * 根据步骤id查询权限
+	 * @param stepUid
+	 * @return
+	 */
+	List<DhObjectPermission> listByStepUid(String stepUid);
+
     /**
      * 根据步骤id集合删除所有相关的权限
      * @param stepUidList
