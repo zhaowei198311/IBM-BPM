@@ -47,6 +47,8 @@ public class JobEntity {
 	private String jobObject;
 
 	private Long count;
+	
+	private String description;
 
 	private JobDataMap jobDataMap;
 
@@ -251,4 +253,14 @@ public class JobEntity {
 	public void setOldtriggerGroup(String oldtriggerGroup) {
 		this.oldtriggerGroup = oldtriggerGroup;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 }
