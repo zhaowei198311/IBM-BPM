@@ -621,7 +621,7 @@ $(function() {
 								stepType : stepType
 							},
 							success : function(result) {
-								var chose = '<option>请选择表单</option>';
+								var chose = '<option value="">请选择表单</option>';
 								$("#table_sel").append(chose)
 								for (var i = 0; i < result.data.length; i++) {
 									var trs = '<option value="'
@@ -1055,7 +1055,7 @@ $(function() {
 						stepType : stepType
 					},
 					success : function(result) {
-						var chose = '<option>请选择表单</option>';
+						var chose = '<option value="">请选择表单</option>';
 						$("#table_sel").append(chose)
 						for (var i = 0; i < result.data.length; i++) {
 							var trs = '<option value="'
@@ -1200,7 +1200,7 @@ $(function() {
 							stepType : stepType
 						},
 						success : function(result) {
-							var chose = '<option>请选择表单</option>';
+							var chose = '<option value="">请选择表单</option>';
 							$("#table_sel").append(chose)
 							for (var i = 0; i < result.data.length; i++) {
 								var trs = '<option value="'
