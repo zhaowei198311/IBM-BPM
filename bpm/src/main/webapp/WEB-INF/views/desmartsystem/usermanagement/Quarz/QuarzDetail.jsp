@@ -28,7 +28,7 @@
 			<div class="layui-inline">
 				<label class="layui-form-label" >类型</label>
 				<div class="layui-input-inline">
-					<input type="text" name="jobGroupName" autocomplete="off" class="layui-input" />
+					<input type="text" name="triggerGroupName" autocomplete="off" class="layui-input" />
 				</div>
 			</div>
 		</div>

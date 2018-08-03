@@ -19,23 +19,27 @@
 </style>
 </head>
 <body>
-  <div class="layui-tab">
-  <!-- <ul class="layui-tab-title">
-    <li class="layui-this">功能选择</li>
-    <li>查询选择</li>
-  </ul> -->
-  <div class="layui-tab-content">
-    <div class="layui-tab-item layui-show">
-	  <div class="layui-btn-group" style="margin-left: 10px;">
-			    <button class="layui-btn" data-type="btnAdd" >新增</button>
-			    <!-- <button class="layui-btn layui-btn-danger" data-type="btnDelAll">批量删除</button> -->
-		    </div>
-    </div>
-    
-    <div class="layui-tab-item">
-    	<jsp:include page="QuarzSearch.jsp"></jsp:include>
-    </div>
-  </div>
+<div class="layui-container" style="margin-top: 20px; width: 100%;">
+	<div class="search_area">
+		<div class="layui-row layui-form">
+			<form action="quarz/datagrid.do" method="post" class="layui-form"  id="searchform">
+				<div class="layui-col-md2">
+					<input type="text" placeholder="任务名称"  class="layui-input" name="jobName">
+				</div>
+				<div class="layui-col-md2">
+					<select>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+					</select>
+				</div>
+				<div class="layui-col-md2" style="text-align: right;">
+					<button class="layui-btn" id="btnSearch" type="button">查询</button>
+					<button class="layui-btn" type="button"  data-type="btnAdd" id="openAdd" >新增</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 <table class="layui-hide layui-table" id="table" lay-filter="table" ></table>
 <script>
@@ -70,7 +74,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 					//width : '200'
 				},
 				{
-					field : 'jobGroupName',
+					field : 'triggerGroupName',
 					title : '类型',
 					align : 'center',
 					//width : '200'
@@ -176,7 +180,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 						//绑定解锁按钮的点击事件
 						body.find('button#close').on('click', function() {
 							layer.close(lockIndex);
-							location.reload();//刷新
+							llocation.reload();//刷新
 						});
 						body.find("input[name=nid]").val(data.nid);
 						data.oldjobName=data.jobName;
@@ -340,7 +344,7 @@ layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'elemen
 		    }
 		  };
 		  
-		  $('.layui-btn-group .layui-btn').on('click', function(){
+		  $('#openAdd').on('click', function(){
 		    var type = $(this).data('type');
 		    active[type] ? active[type].call(this) : '';
 		  });
