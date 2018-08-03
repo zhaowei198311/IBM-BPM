@@ -30,7 +30,10 @@ $(function () {
     departAsync();
     
     checkUserData();
-    queryRejectByActivitiy();
+    var isReject = $("#isReject").val();
+    if(isReject!="FALSE"){
+    	queryRejectByActivitiy();
+    }
     //点击通过
     /*$("#submit_btn").click(function(){
     	checkUserData();

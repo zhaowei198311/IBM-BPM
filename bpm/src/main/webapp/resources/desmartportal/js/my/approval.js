@@ -23,11 +23,14 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     if (actcCanChooseUser == 'FALSE') {
         return false;
     }
-    if(actcAssignType=='allUsers'||actcChooseableHandlerType=='allUsers'){
-    	area=['620px', '480px'];
+    var area = [];
+    if(actcAssignType=='allUser'||actcChooseableHandlerType=='allUser'){
+    	area=['640px', '480px'];
     }else{
     	area=['370px', '430px'];
     }
+    console.log(actcAssignType);
+    console.log(actcChooseableHandlerType);
     var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=' + $('#taskUid').val();
     var index = layer.open({
