@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,18 +28,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.desmart.desmartsystem.dao.SysDictionaryMapper;
 import com.desmart.desmartsystem.entity.JobEntity;
 import com.desmart.desmartsystem.entity.QrtzJobDetails;
-import com.desmart.desmartsystem.service.DhInterfaceService;
+import com.desmart.desmartsystem.entity.SysDictionaryData;
 import com.desmart.desmartsystem.service.QrtzJobDetailsService;
 import com.desmart.desmartsystem.service.QuartzService;
 import com.desmart.desmartsystem.util.DatagridForLayUI;
 import com.desmart.desmartsystem.util.Json;
 
-//@Controller
+@Controller
 @RequestMapping("/quarz")
 public class JobController {
 
+	
+	@Autowired
+	SysDictionaryMapper sysDictionaryMapper;
+	
 	@Autowired
 	private QuartzService quartzService;
 
@@ -46,7 +53,7 @@ public class JobController {
 
 	@Autowired
 	private QrtzJobDetailsService qrtzJobDetailsService;
-
+	
 	@RequestMapping(value = "/quarzList")
 	public String quarzList() {
 		return "desmartsystem/usermanagement/Quarz/QuarzList";
@@ -120,18 +127,29 @@ public class JobController {
 	@RequestMapping("datagrid.do")
 	@ResponseBody
 	public DatagridForLayUI datagrid(JobEntity jobEntity, int page, int limit) throws SchedulerException {
-
 		// page 当前也
 		// limit 每页显示记录数
-
 		List<JobEntity> jobInfos = new ArrayList<JobEntity>();
 
+		//获取所有触发器分组名称
 		List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
 
 		for (String triggerGroupName : triggerGroupNames) {
+			
+			
+			String groupTypeName="";
+			SysDictionaryData sysDictionaryData = new SysDictionaryData();
+			sysDictionaryData.setDicDataCode(triggerGroupName);
+			List<SysDictionaryData> sysDictionaryDataList = sysDictionaryMapper.selectSysDictionaryDataByCode(sysDictionaryData);
+			for (SysDictionaryData sysDictionaryData2 : sysDictionaryDataList) {
+				groupTypeName=sysDictionaryData2.getDicDataName();
+			}
+			
+			//获取分组下的触发器
 			Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(triggerGroupName));
 			for (TriggerKey triggerKey : triggerKeySet) {
 				Trigger t = scheduler.getTrigger(triggerKey);
+				
 				if (t instanceof CronTrigger) {
 					CronTrigger trigger = (CronTrigger) t;
 					JobKey jobKey = trigger.getJobKey();
@@ -140,7 +158,7 @@ public class JobController {
 					jobInfo.setJobName(jobKey.getName());
 					jobInfo.setJobGroupName(jobKey.getGroup());
 					jobInfo.setTriggerName(triggerKey.getName());
-					jobInfo.setTriggerGroupName(triggerKey.getGroup());
+					jobInfo.setTriggerGroupName(groupTypeName);
 					jobInfo.setCronExpr(trigger.getCronExpression());
 					jobInfo.setNextFireTime(trigger.getNextFireTime());
 					jobInfo.setPreviousFireTime(trigger.getPreviousFireTime());
@@ -149,22 +167,24 @@ public class JobController {
 					jobInfo.setJobClass(jd.getJobClass().getCanonicalName());
 					jobInfo.setClazz(jd.getJobClass().getCanonicalName());
 
-					if (StringUtils.isNotBlank(jd.getDescription())) {
-						jobInfo.setDuration(Long.parseLong(jd.getDescription()));
-					}
-					;
-
+//					if (StringUtils.isNotBlank(jd.getDescription())) {
+//						jobInfo.setDuration(Long.parseLong(jd.getDescription()));
+//					};
 					Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
-					jobInfo.setJobStatus(triggerState.toString());// NONE无,
-																	// NORMAL正常,
-																	// PAUSED暂停,
-																	// COMPLETE完成,
-																	// ERROR错误,
-																	// BLOCKED阻塞
+					// NONE无, NORMAL正常,PAUSED暂停,COMPLETE完成, ERROR错误,BLOCKED阻塞
+					jobInfo.setJobStatus(triggerState.toString());
 					jobInfos.add(jobInfo);
 				}
 			}
 		}
+		
+		
+		//根据查询条件对list
+		if(StringUtils.isNotBlank(jobEntity.getJobName())) {
+			jobInfos=search(jobEntity.getJobName(),jobInfos);
+		};
+		
+		
 		DatagridForLayUI datagridForLayUI = new DatagridForLayUI();
 
 		// 每页开始数
@@ -175,6 +195,19 @@ public class JobController {
 		datagridForLayUI.setCount(Long.valueOf(count));
 		datagridForLayUI.setData(jobInfos.subList(star, count - star > limit ? star + limit : count));
 		return datagridForLayUI;
+	}
+	
+	
+	public List<JobEntity> search(String jobName,List<JobEntity> jobInfos){
+	   List<JobEntity> results = new ArrayList<JobEntity>();
+	   Pattern pattern = Pattern.compile(jobName);
+	   for(int i=0; i < jobInfos.size(); i++){
+	      Matcher matcher = pattern.matcher(jobInfos.get(i).getJobName());
+	      if(matcher.find()){
+	         results.add(jobInfos.get(i));
+	      }
+	   }
+	   return results;
 	}
 
 	/**
