@@ -895,9 +895,37 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         }
         
         currDefinition.setProStatus(DhProcessDefinition.STATUS_ENABLED);
+        currDefinition.setLastModifiedUser(getCurrentUser());
         dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(currDefinition);
         return ServerResponse.createBySuccess();
     }
+
+    @Override
+    public ServerResponse disableProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        if(StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        DhProcessDefinition selective = new DhProcessDefinition(proAppId, proUid, proVerUid);
+        List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(selective);
+        if (CollectionUtils.isEmpty(list)) {
+            return ServerResponse.createByErrorMessage("找不到此流程定义");
+        }
+        DhProcessDefinition currDefinition = list.get(0);
+        if (!StringUtils.equals(DhProcessDefinition.STATUS_ENABLED, currDefinition.getProStatus())) {
+            return ServerResponse.createByErrorMessage("当前版本未被启用");
+        }
+        // 停用此版本
+        selective.setProStatus(DhProcessDefinition.STATUS_SYNCHRONIZED);
+        selective.setLastModifiedUser(getCurrentUser());
+        int affectRow = dhProcessDefinitionMapper.updateByProAppIdAndProUidAndProVerUidSelective(selective);
+        if (affectRow == 1) {
+            return ServerResponse.createBySuccess();
+        } else {
+            return ServerResponse.createByErrorMessage("停用版本失败");
+        }
+
+    }
+
 
 	@Override
 	public ServerResponse checkWhetherLinkSynchronization(BpmActivityMeta bpmActivityMeta) {
@@ -994,8 +1022,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
         List<DhProcessDefinitionBo> definitionList = new ArrayList<>();
         for (BpmExposedItem exposedItem : exposedItems) {
-            DhProcessDefinitionBo definition = new DhProcessDefinitionBo(proAppId, exposedItem.getBpdId(), snapshotId);
-            definitionList.add(definition);
+            DhProcessDefinitionBo definitionBo = new DhProcessDefinitionBo(proAppId, exposedItem.getBpdId(), snapshotId);
+            definitionBo.setProName(exposedItem.getBpdName());
+            definitionList.add(definitionBo);
         }
         return definitionList;
     }
@@ -1104,7 +1133,9 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
         return ServerResponse.createBySuccess();
     }
 
-
+    private String getCurrentUser() {
+        return (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+    }
 
 
 

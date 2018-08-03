@@ -219,6 +219,25 @@ public class DhProcessDefinitionController {
     }
 
     /**
+     * 停用一个版本
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    @RequestMapping(value = "/disableDefinition")
+    @ResponseBody
+    public ServerResponse disableDefinition(String proAppId, String proUid, String proVerUid) {
+        try {
+            return dhProcessDefinitionService.disableProcessDefinition(proAppId, proUid, proVerUid);
+        } catch(Exception e) {
+            LOG.error("启用流程失败", e);
+            return ServerResponse.createByErrorMessage("启用流程失败");
+        }
+    }
+
+
+    /**
      * 刷新公开的流程
      * @return
      */
