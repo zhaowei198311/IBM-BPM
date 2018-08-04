@@ -46,6 +46,7 @@ public class BpmFormFieldController {
 		try {
 			return bpmFormFieldService.queryFieldByFormIdAndStepId(stepUid,formUid,fieldType);
 		}catch(Exception e) {
+			logger.error("查询字段权限失败", e);
 			return ServerResponse.createByError();
 		}
 	}
@@ -59,6 +60,7 @@ public class BpmFormFieldController {
 		try {
 			return bpmFormFieldService.saveFormFieldPermission(dhObjectPermissions);
 		}catch(Exception e) {
+			logger.error("保存字段权限失败", e);
 			return ServerResponse.createByError();
 		}
 	}

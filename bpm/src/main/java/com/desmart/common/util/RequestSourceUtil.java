@@ -1,12 +1,15 @@
 package com.desmart.common.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 根据请求头获得请求来源
  * @author loser_wu
  * @since 2018/07/02
  */
 public class RequestSourceUtil {
-	private final static String[] agent = { "Android", "iPhone", "iPod","iPad", "Windows Phone", "MQQBrowser" }; //定义移动端请求的所有可能类型
+	private final static String[] agent = { "Android", "iPhone", "iPod", "Windows Phone", "MQQBrowser" }; //定义移动端请求的所有可能类型
 
 	/**
 	 * 根据请求头判断请求来源

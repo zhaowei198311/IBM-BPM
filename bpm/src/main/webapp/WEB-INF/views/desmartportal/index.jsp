@@ -42,7 +42,7 @@
 <body class="layui-layout-body">
 	<div id="LAY_app">
 		<div class="layui-layout layui-layout-admin">
-			<div class="layui-header">
+			<div class="layui-header" style="min-width:1024px;">
 				<div class="layui-nav index_top">
 					<span class="layui-breadcrumb" style="margin-left: 220px;float: left;">
 						<a href="javascript:;">我的任务</a>
@@ -121,7 +121,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="layui-body" id="LAY_app_body" style="margin-bottom: 40px;">
+			<div class="layui-body" id="LAY_app_body" style="margin-bottom: 40px;min-width:1024px;">
 				<div class="layadmin-tabsbody-item layui-show">
 					<iframe src="menus/backlog" id="frameContent" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
@@ -150,7 +150,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="layui-footer">
+			<div class="layui-footer" style="min-width:1024px;">
 				<div class="footer">Copyright &copy; 来伊份 2018</div>
 			</div>
 			<!-- 辅助元素，一般用于移动设备下遮罩 -->
@@ -531,4 +531,43 @@
 	        }
 	    });
 	}
+	
+	// 利用 CSS3 旋转 对根容器逆时针旋转 90 度
+	/* var detectOrient = function() {
+	  var width = window.screen.width/0.9,
+	      height =  window.screen.height/0.9,
+	      $wrapper =  document.getElementById("LAY_app"),
+	      style = "";
+
+	  if( width >= height ){ // 横屏
+	      style += "width:" + width + "px;";  // 注意旋转后的宽高切换
+	      style += "height:" + height + "px;";
+	      style += "-webkit-transform: rotate(0); transform: rotate(0);";
+	      style += "-webkit-transform-origin: 0 0;";
+	      style += "transform-origin: 0 0;";
+	  }
+	  else{ // 竖屏
+	      style += "width:" + height + "px;";
+	      style += "height:" + width + "px;";
+	      style += "-webkit-transform: rotate(90deg); transform: rotate(90deg);";
+	      // 注意旋转中点的处理
+	      style += "-webkit-transform-origin: " + width / 2 + "px " + width / 2 + "px;";
+	      style += "transform-origin: " + width / 2 + "px " + width / 2 + "px;";
+	  }
+	  $wrapper.style.cssText = style;
+	}
+	window.onresize = detectOrient;
+	detectOrient(); 
+	
+	/* var evt = "onorientationchange" in window ? "orientationchange" : "resize";
+    window.addEventListener(evt,resize,false);
+    function resize(fals) {
+	    if(window.orientation == 0 || window.orientation == 180) {
+	    	console.log("竖屏");
+	    	
+	    }else {
+	    	console.log("横屏");
+	    }
+    }
+    resize(true);*/
 </script>

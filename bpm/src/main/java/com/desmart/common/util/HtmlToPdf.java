@@ -40,5 +40,23 @@ public class HtmlToPdf {
         }
         return result;
     }  
+    
+	/*public String getCommand(String sourceFilePath, String targetFilePath) {
+		String system = System.getProperty("os.name");
+		if (system.contains("Windows")) {
+			return "D:\\wkhtmltox\\bin\\wkhtmltopdf.exe " + sourceFilePath + " " + targetFilePath;
+		} else if (system.contains("Linux")) {
+			return "wkhtmltopdf " + sourceFilePath + " " + targetFilePath;
+		}
+		return "";
+	}
+
+	public static void main(String[] args) throws Exception {
+		HtmlToPdf util = new HtmlToPdf();
+		String command = util.getCommand("http://172.19.55.73:8080/bpm/user/menus", "D:\\result.pdf");
+		Process process = Runtime.getRuntime().exec(command);
+		process.waitFor(); // 这个调用比较关键，就是等当前命令执行完成后再往下执行
+		System.out.println("执行完成");
+	}*/
 }
 

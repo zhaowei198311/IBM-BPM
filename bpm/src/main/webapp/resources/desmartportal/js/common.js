@@ -544,6 +544,7 @@ var common = {
 	},
 	//根据字段权限json给动态表单组件设置权限
 	giveFormFieldPermission:function(jsonStr){
+		console.log(jsonStr);
 		var json = JSON.parse(jsonStr);
 		for(var name in json){
 			var perJsonStr = json[name];

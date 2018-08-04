@@ -1063,7 +1063,7 @@
 				</form>
 			</div>
 			<div class="foot">
-				<button class="layui-btn layui-btn " id="filedSave">保存</button>
+				<button class="layui-btn layui-btn " id="filedSave" onclick="saveFieldPermission()">保存</button>
 				<!-- <button class="layui-btn layui-btn " id="filedReadOnly">只读</button> -->
 				<!-- <button class="layui-btn layui-btn " id="filedHide">隐藏</button> -->
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn">取消</button>
@@ -1394,7 +1394,7 @@
 			<div id="lay_page"></div>
 			<div class="foot">
 				<button class="layui-btn layui-btn sure_btn"
-					id="chooseTrigger_sureBtn">确定</button>
+					id="chooseTrigger_sureBtn" onclick="sureChooseTrigger();">确定</button>
 				<button class="layui-btn layui-btn layui-btn-primary cancel_btn"
 					id="chooseTrigger_cancelBtn">取消</button>
 			</div>
@@ -1460,304 +1460,37 @@
 	<!-- 参数映射弹框结束 -->
 
 </body>
+<script type="text/javascript">
+//打开流程图所需要的参数
+var proAppId = '${processDefinition.proAppId}';
+var proUid = '${processDefinition.proUid}';
+var proVerUid = '${processDefinition.proVerUid}';
+
+//初始化第一个环节的信息与配置
+var firstHumanMeta = '${firstHumanMeta}';
+var firstHumanMeteConf = '${firstHumanMeteConf}';
+var activityStr = '<c:forEach items="${humanActivities}" var="humanActivity" varStatus="varStatus"><li ' +
+    ' data-parentActivityId="${humanActivity.parentActivityId}" ' +
+    ' data-activityBpdId="${humanActivity.activityBpdId}">${humanActivity.activityName}</li></c:forEach>';
+</script>
 <script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.ui.widget.min.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.marcopolo.min.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/jquery-manifest-master/js/jquery.manifest.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
+<!--初始化各个参数的js-->
+<script type="text/javascript"
+	src="<%=basePath%>/resources/desmartbpm/js/my/confParamInit.js"></script>
+<!--环节配置的js-->
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/js/my/activityConf.js"></script>
+<!--环节网关配置的js-->
 <script type="text/javascript"
 	src="<%=basePath%>/resources/desmartbpm/js/my/gatewaySet.js"></script>
-
-<script>
-	var proAppId = '${processDefinition.proAppId}';
-	var proUid = '${processDefinition.proUid}';
-	var proVerUid = '${processDefinition.proVerUid}';
-	var firstHumanMeta = '${firstHumanMeta}';
-	var firstHumanMeteConf = '${firstHumanMeteConf}';
-	var activityStr = '<c:forEach items="${humanActivities}" var="humanActivity" varStatus="varStatus"><li '
-        +' data-parentActivityId="${humanActivity.parentActivityId}" '
-        +' data-activityBpdId="${humanActivity.activityBpdId}">${humanActivity.activityName}</li></c:forEach>';
-
-
-	layui.use('laydate', function() {
-		var laydate = layui.laydate;
-		laydate.render({
-			elem : '#test1'
-		});
-	});
-	layui.use('laydate', function() {
-		var laydate = layui.laydate;
-		laydate.render({
-			elem : '#test2'
-		});
-	});
-	$(function() {
-		//初始化邮箱地址输入框
-		$('#exteriorNotifyMail').manifest();
-		
-		$(".cancel_btn").click(function() {
-			$(".display_container4").css("display", "none");
-			$(".display_container10").css("display", "none");
-			$(".display_container5").css("display", "none");
-			$(".display_container8").css("display", "none");
-		})
-
-		//流程图
-		$("#snapshotFlowChart_btn").click(function() {
-			window.parent.openProView(proUid,proVerUid,proAppId);
-		});
-		
-		$(".edit_role").click(function() {	
-			$(".display_container4").css("display", "block");
-			$.ajax({
-				url : common.getPath()+ "/formField/queryFieldByFormUidAndStepId",
-				type : "post",
-				dataType : "json",
-				data : {
-					stepUid : stepUid,
-					formUid : formUid
-				},
-				success : function(result) {
-					$('#field_permissions_table').empty();
-					var trs = '';
-					$(result.data).each(function(index) {
-						trs += '<tr>';
-						trs += '<td><input type="checkbox" name="tri_check" value="' + this.dynUid + '" lay-skin="primary">'
-							+ (index + 1)
-							+ '</td>';
-						trs += '<td>'
-							+ this.dynTitle
-							+ '</td>'
-						trs += '<td>'
-							+ this.dynDescription
-							+ '</td>'
-						trs += '</tr>';
-					});
-					$("#field_permissions_table").append(trs);
-				}
-			});
-		});
-
-		$("#sure_btn").click(function() {
-			$(".display_container3").css("display", "none");
-			$(".display_container5").css("display", "none");
-			$(".display_container6").css("display", "none");
-			$(".display_container10").css("display", "none");
-		})
-		$("#cancel_btn").click(function() {
-			$(".display_container3").css("display", "none");
-			$(".display_container4").css("display", "none");
-			$(".display_container8").css("display", "none");
-			$(".display_container5").css("display", "none");
-			$(".display_container6").css("display", "none");
-			$(".display_container7").css("display", "none");
-			$(".display_container10").css("display", "none");
-		})
-
-		//表单字段权限  保存   只读 隐藏
-		$("#filedSave").click(
-				function() {
-					var $activeLi = $("#my_collapse li.link_active");
-					var actcUid = $activeLi.data('uid');
-
-					var jsonArr = new Array();
-					//普通字段的权限信息
-					var radioSelArr = $("#field_permissions_table tbody").find(
-							"input[type='radio']:checked");
-					radioSelArr.each(function() {
-						var opObjUid = $(this).parent().parent().find(
-								"input[name='fldUid']").val();
-						var stepUid = $(this).parent().parent().find(
-								"input[name='stepUid']").val();
-						var jsonParam = {
-							stepUid : stepUid,//步骤ID
-							opObjUid : opObjUid,//表单字段ID
-							opObjType : "FIELD",
-							opAction : ""//EDIT，HIDDEN，VIEW
-						};
-						var opAction = $(this).val();
-						jsonParam.opAction = opAction;
-						jsonArr.push(jsonParam);
-					});
-
-					var fieldCheckArr = $("#field_permissions_table tbody")
-							.find("input[type='checkbox']:checked");
-					fieldCheckArr.each(function() {
-						var opObjUid = $(this).parent().parent().find(
-								"input[name='fldUid']").val();
-						var stepUid = $(this).parent().parent().find(
-								"input[name='stepUid']").val();
-						var jsonParam = {
-							stepUid : stepUid,//步骤ID
-							opObjUid : opObjUid,//表单字段ID
-							opObjType : "FIELD",
-							opAction : ""//EDIT，HIDDEN，VIEW
-						};
-						var opAction = $(this).val();
-						jsonParam.opAction = opAction;
-						jsonArr.push(jsonParam);
-					});
-
-					//标题块的权限信息
-					var titleRadioSelArr = $("#title_permissions_table tbody")
-							.find("input[type='radio']:checked");
-					titleRadioSelArr.each(function() {
-						var opObjUid = $(this).parent().parent().find(
-								"input[name='fldUid']").val();
-						var stepUid = $(this).parent().parent().find(
-								"input[name='stepUid']").val();
-						var jsonParam = {
-							stepUid : stepUid,//步骤ID
-							opObjUid : opObjUid,//表单字段ID
-							opObjType : "FIELD",
-							opAction : ""//EDIT，HIDDEN，VIEW
-						};
-						var opAction = $(this).val();
-						jsonParam.opAction = opAction;
-						jsonArr.push(jsonParam);
-					});
-
-					var titleCheckArr = $("#title_permissions_table tbody")
-							.find("input[type='checkbox']:checked");
-					titleCheckArr.each(function() {
-						var opObjUid = $(this).parent().parent().find(
-								"input[name='fldUid']").val();
-						var stepUid = $(this).parent().parent().find(
-								"input[name='stepUid']").val();
-						var jsonParam = {
-							stepUid : stepUid,//步骤ID
-							opObjUid : opObjUid,//表单字段ID
-							opObjType : "FIELD",
-							opAction : ""//EDIT，HIDDEN，VIEW
-						};
-						var opAction = $(this).val();
-						jsonParam.opAction = opAction;
-						jsonArr.push(jsonParam);
-					});
-					console.log(JSON.stringify(jsonArr));
-					//给表单字段添加权限
-					$.ajax({
-						url : common.getPath()
-								+ "/formField/saveFormFieldPermission",
-						method : "post",
-						dataType : "json",
-						contentType : "application/json",
-						beforeSend:function(){
-							layer.load(1);
-						},
-						data : JSON.stringify(jsonArr),
-						success : function(result) {
-							if (result.status == 0) {
-								$('#editFieldPermissions').hide();
-								layer.alert("修改成功");
-								loadActivityConf(actcUid);
-							} else {
-								layer.alert(result.msg);
-							}
-							layer.closeAll("loading");
-						},
-						error:function(){
-							layer.closeAll("loading");
-						}
-					});
-				})
-
-		//只读
-		$("#fieldviewAllclick").click(
-				function() {
-					if (this.checked) {
-						$("#field_permissions_table").find(
-								"input[value='VIEW']").prop("checked", true);
-					}
-				});
-
-		//隐藏
-		$("#fieldhiddenAllclick").click(
-				function() {
-					if (this.checked) {
-						$("#field_permissions_table").find(
-								"input[value='HIDDEN']").prop("checked", true);
-					}
-				});
-
-		//只读
-		$("#titleviewAllclick").click(
-				function() {
-					if (this.checked) {
-						$("#title_permissions_table").find(
-								"input[value='VIEW']").prop("checked", true);
-					}
-				});
-
-		//隐藏
-		$("#titlehiddenAllclick").click(
-				function() {
-					if (this.checked) {
-						$("#title_permissions_table").find(
-								"input[value='HIDDEN']").prop("checked", true);
-					}
-				});
-	})
-
-	//编辑 只读  隐藏
-	function radiocheckAll(dataLength) {
-		var $table = $("#field_permissions_table");
-		var HIDDEN = $table.find("input[value='HIDDEN']:checked").length;
-		var VIEW = $table.find("input[value='VIEW']:checked").length;
-		var EDIT = $table.find("input[value='EDIT']:checked").length;
-		if (HIDDEN == dataLength) {
-			$('#fieldhiddenAllclick').click();
-		} else if (VIEW == dataLength) {
-			$('#fieldviewAllclick').click();
-		} else if (EDIT == dataLength) {
-			$('#fieldradioedit').click();
-		} else {
-			$("#editFieldPermissions input[name=radioAll]").prop("checked",
-					false);
-		}
-	}
-
-	function editAllclick(obj) {
-		if (obj.checked) {
-			$("#field_permissions_table").find("input[value='EDIT']").prop(
-					"checked", true);
-		}
-	}
-
-	//编辑 只读  隐藏
-	function radiocheckAlltitle(dataLength) {
-		var $table = $("#title_permissions_table");
-		var HIDDEN = $table.find("input[value='HIDDEN']:checked").length;
-		var VIEW = $table.find("input[value='VIEW']:checked").length;
-		var EDIT = $table.find("input[value='EDIT']:checked").length;
-		if (HIDDEN == dataLength) {
-			$('#titlehiddenAllclick').click();
-		} else if (VIEW == dataLength) {
-			$('#titleviewAllclick').click();
-		} else if (EDIT == dataLength) {
-			$('#titleradioedit').click();
-		} else {
-			$("#editFieldPermissions input[name=titleradioAll]").prop(
-					"checked", false);
-		}
-	}
-
-	function titleeditAllclick(obj) {
-		if (obj.checked) {
-			$("#title_permissions_table").find("input[value='EDIT']").prop(
-					"checked", true);
-		}
-	}
-
-	function show1() {
-		$(".form_table").css("display", "inline-table");
-		$(".trigger_table").css("display", "none");
-	}
-	function show2() {
-		$(".form_table").css("display", "none");
-		$(".trigger_table").css("display", "inline-table");
-	}
-</script>
+<!--环节步骤配置的js-->
+<script type="text/javascript" 
+	src="<%=basePath%>/resources/desmartbpm/js/my/stepConf.js"></script>
+<!--触发器以及接口出发参数映射配置的js-->
+<script type="text/javascript" 
+	src="<%=basePath%>/resources/desmartbpm/js/my/interfaceParamMapping.js"></script>
 </html>

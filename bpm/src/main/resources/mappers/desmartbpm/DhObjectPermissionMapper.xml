@@ -205,10 +205,10 @@
         </where>
     </delete>
     
-    <select id="queryFieldByFieldIdAndStepId" parameterType="map" resultType="string">
-		select op_action
+    <select id="queryFieldPerByStepId" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+		select <include refid="base_column"/>
 		from dh_object_permission
-		where step_uid = #{stepUid} and op_obj_uid = #{fieldUid}
+		where step_uid = #{stepUid}
 	</select>
 
     <select id="listProcessDefinitionScopePermission" parameterType="map"
@@ -222,9 +222,13 @@
         where step_uid = #{stepUid}
     </select>
 
-    <delete id="deleteFormFieldPermission" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission">
+    <delete id="deleteBatchFormFieldPermission" parameterType="list">
 		delete from dh_object_permission
-		where op_obj_uid=#{opObjUid} and step_uid=#{stepUid}
+		<where>
+			<foreach collection="array" index="index" item="item" separator="or">
+				op_obj_uid=#{item.opObjUid} and step_uid=#{item.stepUid}
+			</foreach>
+		</where>
 	</delete>
 	
 	<delete id="deleteFieldPermissById" parameterType="string">

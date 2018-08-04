@@ -22,15 +22,15 @@
     <div class="layui-fluid">
         <div class="backlog_div">
             <div class="layui-row">
-                <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
+                <div class="layui-col-sm4" style="border-right: 1px solid #e8e8e8;">
                     <div class="backlog_title">我的待办</div>
                     <div class="backlog_detail"><span id="daiban_icon">0</span>个任务</div>
                 </div>
-                <div class="layui-col-md4" style="border-right: 1px solid #e8e8e8;">
+                <div class="layui-col-sm4" style="border-right: 1px solid #e8e8e8;">
                     <div class="backlog_title">本周任务平均处理时间</div>
                     <div class="backlog_detail">0分钟</div>
                 </div>
-                <div class="layui-col-md4">
+                <div class="layui-col-sm4">
                     <div class="backlog_title">本周完成任务数</div>
                     <div class="backlog_detail">0个任务</div>
                 </div>
@@ -39,49 +39,49 @@
         <div class="body_content">
             <div class="search_area">
 				<div class="layui-row layui-form">
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">流程创建人</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="流程创建人姓名" class="layui-input" id="task-createProcessUserName-search">
 						</div>
 					</div>
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">上一环节处理人</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
 						</div>
 					</div>
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">流程标题</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="流程实例标题" class="layui-input" id="task-insTitle-search">
 						</div>
 					</div>
-					<div class="layui-col-md3" style="text-align: center;"> 
+					<div class="layui-col-sm3" style="text-align: center;"> 
 						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="search()">查询</button>
 						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="resetSearch()">重置</button>
 					</div>
 				</div>
 				<div class="layui-row layui-form">
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">流程名称</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="流程名称" class="layui-input" id="task-proName-search">
 						</div>
 					</div>
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">开始时间</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="开始时间" class="layui-input" id="init-startTime-search">
 						</div>
 					</div>
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">结束时间</label>
 						<div class="layui-input-block">
 							<input type="text" placeholder="结束时间" class="layui-input" id="init-endTime-search">
 						</div>
 					</div>
-					<div class="layui-col-md3">
+					<div class="layui-col-sm3">
 						<label class="layui-form-label">代理人</label>
 						<div class="layui-input-block">
 							<select id="isAgent" class="layui-input-block group_select"
