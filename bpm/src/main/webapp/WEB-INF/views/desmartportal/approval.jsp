@@ -195,11 +195,11 @@
         <span id="approvalData" style="display: none;">${approvalData}</span>
         <span style="padding-left: 10px; color: #777; font-size: 18px;display: none;">${processInstance.proName}</span>
         <div class="layui-row">
-            <div class="layui-col-md6">
+            <div class="layui-col-sm6">
                 <img src="resources/desmartportal/images/icon.png" class="icon"/>
                 <span class="table_title">${bpmForm.dynTitle}</span>
             </div>
-            <div class="layui-col-md6">
+            <div class="layui-col-sm6">
                 <span style="float: right; padding-right: 40px;">
                     <button class="layui-btn layui-btn-sm layui-btn-normal chart" onclick="processView(${processInstance.insId})">流程图</button>
                     <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
@@ -212,27 +212,27 @@
             </div>
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-md4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
-            <div class="layui-col-md4">
-            	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
-            </div>
-            <div class="layui-col-md4">
-            	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
+            <div class="layui-col-sm3">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
+            <div class="layui-col-sm6">部门：${processInstance.departName} - ${processInstance.companyName}</div>
+            <div class="layui-col-sm3">填写时间：
+                <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
-            <div class="layui-col-md4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-md4">填写时间：
-                <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
+            <div class="layui-col-sm3">
+            	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
             </div>
-            <div class="layui-col-md4">
+            <div class="layui-col-sm6">
 				<c:if test="${!empty bpmForm.formNo }">
 					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
 				</c:if>
             </div>
+            <div class="layui-col-sm3">
+            	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+            </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
-        	<div class="layui-col-md11" style="position: relative;">
+        	<div class="layui-col-sm11" style="position: relative;">
                 <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;top: 5px;">
                     <div class="layui-progress-bar" lay-percent="0%"></div>
                     <!--<span class="progress_time">审批剩余时间6小时</span> -->

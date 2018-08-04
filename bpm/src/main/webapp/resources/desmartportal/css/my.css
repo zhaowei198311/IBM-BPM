@@ -1093,3 +1093,6 @@ input[disabled],.layui-select-disabled .layui-disabled{
 #formSet td{
 	font-size: 12px;
 }
+.layui-btn-sm{
+	padding:0 5px;
+}

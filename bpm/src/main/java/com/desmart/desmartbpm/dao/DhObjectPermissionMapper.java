@@ -92,13 +92,12 @@ public interface DhObjectPermissionMapper {
 	/**
 	 * 通过字段ID和活动ID获得所属权限信息
 	 */
-	List<String> queryFieldByFieldIdAndStepId(@Param("stepUid")String stepUid, 
-			@Param("fieldUid")String fieldUid);
+    List<DhObjectPermission> queryFieldPerByStepId(@Param("stepUid")String stepUid);
 
 	/**
-	 * 根据环节ID和表单字段ID删除字段权限信息
+	 * 根据环节ID和表单字段ID批量删除字段权限信息
 	 */
-	int deleteFormFieldPermission(DhObjectPermission dhObjectPermission);
+	int deleteBatchFormFieldPermission(@Param("array")DhObjectPermission[] dhObjectPermissions);
 	
 	/**
 	 * 根据表单字段Id删除该字段权限

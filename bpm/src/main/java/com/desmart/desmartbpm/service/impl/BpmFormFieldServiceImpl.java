@@ -60,35 +60,23 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		//根据表单id找到所关联的子表单中的所有字段
 		List<BpmFormField> publicFormFieldList = bpmFormFieldMapper.queryPublicFormFieldByFormUid(formUid,fieldType);
 		fieldList.addAll(publicFormFieldList);
+		//通过步骤id查询该步骤的所有的字段权限信息
+		List<DhObjectPermission> objPerList = dhObjectPermissionMapper.queryFieldPerByStepId(stepUid);
 		for(BpmFormField field:fieldList) {
-			//获得对象权限信息表中某个步骤下指定表单的权限信息集合
-			List<String> opActionList = dhObjectPermissionMapper.queryFieldByFieldIdAndStepId(stepUid,field.getFldUid());
-			//新建前台显示的权限信息集合
-			List<String> showOpActionList = new ArrayList<>();
-			//判断权限集合中是否有（可编辑、只读、不可见）等权限
-			if(opActionList.contains("HIDDEN") || opActionList.contains("EDIT")) {
-				if(opActionList.contains("HIDDEN")) {
-					showOpActionList.add("HIDDEN");
+			//当查询的权限集合不存在某字段的权限
+			boolean flag = true;
+			List<String> opActionList = new ArrayList<>();
+			for(DhObjectPermission objPer:objPerList) {
+				if(field.getFldUid().equals(objPer.getOpObjUid())) {
+					opActionList.add(objPer.getOpAction());
+					flag = false;
 				}
-				if(opActionList.contains("EDIT")) {
-					showOpActionList.add("EDIT");
-				}
-			}else{
-				showOpActionList.add("VIEW");
 			}
-			//判断权限集合中是否有打印权限
-			if(opActionList.contains("PRINT")) {
-				showOpActionList.add("PRINT");
-			}else{
-				showOpActionList.add("false");
+			if(flag) {
+				//默认只读
+				opActionList.add("VIEW");
 			}
-			//判断权限集合中是否有跳过必填验证权限
-			if(opActionList.contains("SKIP")) {
-				showOpActionList.add("SKIP");
-			}else{
-				showOpActionList.add("false");
-			}
-			field.setOpActionList(showOpActionList);
+			field.setOpActionList(opActionList);
 		}
 		return ServerResponse.createBySuccess(fieldList);
 	}
@@ -96,22 +84,18 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 	@Transactional
 	@Override
 	public ServerResponse saveFormFieldPermission(DhObjectPermission[] dhObjectPermissions) {
-		int countRow = 0;
 		//删除旧的权限信息
-		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
-			dhObjectPermissionMapper.deleteFormFieldPermission(dhObjectPermission);
-		}
-		for(DhObjectPermission dhObjectPermission:dhObjectPermissions) {
-			//查看权限对象的权限是否为只读，只读不用存入数据库
-			if("VIEW".equals(dhObjectPermission.getOpAction())) {
-				countRow++;
-			}else{
-				//将字段权限信息存入数据库
-				dhObjectPermission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
-				countRow += dhObjectPermissionMapper.save(dhObjectPermission);
+		dhObjectPermissionMapper.deleteBatchFormFieldPermission(dhObjectPermissions);
+		List<DhObjectPermission> insertObjPerList = new ArrayList<>();
+		for(int i=0;i<dhObjectPermissions.length;i++) {
+			DhObjectPermission objPer = dhObjectPermissions[i];
+			if(!"VIEW".equals(objPer.getOpAction())) {
+				objPer.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION+UUID.randomUUID().toString());
+				insertObjPerList.add(objPer);
 			}
 		}
-		if(countRow!=dhObjectPermissions.length) {
+		int countRow = dhObjectPermissionMapper.saveBatch(insertObjPerList);
+		if(countRow!=insertObjPerList.size()) {
 			throw new PlatformException("绑定字段权限失败");
 		}
 		return ServerResponse.createBySuccess();
