@@ -20,13 +20,24 @@ public class OperLogController {
 	
 	@Resource
 	private OperLogService operLogService;
-			
+		
+	/**
+	 * 跳转至系统日志页面
+	 * @return
+	 */
 	@RequestMapping(value="/index")
 	public String index() {
 		
 		return "desmartbpm/operLog";
 	}
 	
+	/**
+	 * 按条件查询系统日志页面
+	 * @param dhOperLog   封装日志类参数
+	 * @param pageNum     当前页数
+	 * @param pageSize    每页显示的数量
+	 * @return
+	 */
 	@RequestMapping("/pageOperLogList")
 	@ResponseBody
 	public ServerResponse pageOperLogList(DhOperLog dhOperLog,Integer pageNum,Integer pageSize){	
