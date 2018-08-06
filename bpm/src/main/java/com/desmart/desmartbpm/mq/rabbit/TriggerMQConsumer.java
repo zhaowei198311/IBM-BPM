@@ -147,7 +147,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
         //  调用api 完成任务
 		int taskId = dhTaskInstance.getTaskId();
 		int insId = dhProcessInstance.getInsId();
-
+		DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhProcessInstance.getInsUid());
 		BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
 		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
 		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(taskId, pubBo);
@@ -163,7 +163,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 					// 关闭需要结束的流程
 					dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, routingData, processData);
 					// 创建需要创建的子流程
-					dhProcessInstanceService.createSubProcessInstanceByRoutingData(dhProcessInstance, routingData, pubBo, processData);
+					dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, routingData, pubBo, processData);
 				} else {
 					// 实际Token没有移动,可能是并行的任务没有被完成， 更新流转信息，去掉to的部分
 					dhRoutingRecord.setActivityTo(null);
