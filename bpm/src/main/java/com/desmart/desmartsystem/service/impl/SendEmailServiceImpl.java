@@ -301,9 +301,9 @@ public class SendEmailServiceImpl implements SendEmailService {
 				
 				this.dhSendEmail(sysEmailUtilBean);
 			}
+			return serverResponse.createBySuccessMessage("邮件通知发送成功");
 		}else {
 			return ServerResponse.createByErrorMessage("获取环节配置信息失败");
 		}
-		return null;
 	}
 }

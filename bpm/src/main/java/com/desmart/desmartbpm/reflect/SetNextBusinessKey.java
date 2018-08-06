@@ -31,7 +31,7 @@ public class SetNextBusinessKey implements DhJavaClassTriggerTemplate {
         } else {
             processData.put("nextBusinessKey", "default");
         }
-
+        insDataJson.put("processData", processData);
         dhProcessInstance.setInsData(insDataJson.toJSONString());
         int count = dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);
         if (count == 0) {
