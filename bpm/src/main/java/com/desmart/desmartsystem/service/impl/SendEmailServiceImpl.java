@@ -218,7 +218,18 @@ public class SendEmailServiceImpl implements SendEmailService {
 			}
 		}
 			SendMail sendMail = SendMail.getInstaance();
+			//List<String> toListTestNo = new ArrayList<>();
+			//toListTestNo.add("00052277");
 			List<String> toListTest = new ArrayList<>();
+			//根据工号查询邮箱地址
+			/*if(toListTestNo!=null&&toListTestNo.size()>0) {
+				List<SysUser> list = sysUserMapper.listByPrimaryKeyList(toListTestNo);
+				if(list!=null&&list.size()>0) {
+					for (SysUser sysUser : list) {
+						toListTest.add(sysUser.getEmail());
+					}
+				}
+			}*/
 			toListTest.add("helloSSM@163.com");
 			toListTest.add("1254431331@qq.com");
 			if(toListTest!=null&&toListTest.size()>0) {
