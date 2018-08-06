@@ -5,7 +5,11 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,10 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import com.desmart.desmartsystem.service.impl.BpmGlobalConfigServiceImpl;
 
-@org.springframework.stereotype.Component
+/**
+ * 此方法可根据当前日期生成当天自增长的id值，格式为 20180806-000111，第二天的数据从20180807-000001开始
+ * @author zbw
+ *
+ */
+@Component
 public class IncrementIdByDateUtil {
 
+	private static final Logger log = LoggerFactory.getLogger(IncrementIdByDateUtil.class);
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	//加锁
@@ -33,7 +44,7 @@ public class IncrementIdByDateUtil {
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			DecimalFormat decimalFormat = new DecimalFormat("000000");//格式化id
 			//如果为空，新增日志及id参数
-			if(null == bpmGlobalConfig.getIncrementIdBydate() && "" == bpmGlobalConfig.getIncrementIdBydate()) {
+			if(null == bpmGlobalConfig.getIncrementIdBydate() || "" == bpmGlobalConfig.getIncrementIdBydate()) {
 				String dateStr = format.format(new Date());
 				JSONObject json = new JSONObject();
 				json.put("date", dateStr);
@@ -52,6 +63,7 @@ public class IncrementIdByDateUtil {
 				parseObject.put("id", idValue+1);
 				bpmGlobalConfig.setIncrementIdBydate(parseObject.toJSONString());
 				bpmGlobalConfigService.updateByPrimaryKeySelective(bpmGlobalConfig);
+				log.info("返回结果{}", result);
 				return result;
 				//idValue = (int) parseObject.get("id");
 			}else {
@@ -67,14 +79,9 @@ public class IncrementIdByDateUtil {
 			// 释放锁
 			lock.unlock();
 		}
+		log.info("返回结果{}", result);
 		return result;
 	}
 
-/*	@ResponseBody
-	@RequestMapping(value="/haha")
-	public String test(){
-		String createId = createId();
-		return createId;
-	}*/
 
 }
