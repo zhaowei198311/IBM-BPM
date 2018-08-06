@@ -965,7 +965,7 @@ function transferSure(){
 }
 
 function back() {
-	window.location.href = 'javascript:history.go(-1)';
+	window.location.href = common.getPath()+'/menus/backlog';
 }
 
 //数据信息
@@ -1234,9 +1234,16 @@ function post(URL, PARAMS) {
 }
 
 var scrollTop = 0;
+var tdObj = null;
 //点击行到行详情页面
 function showDataTr(obj){
+	tdObj = $(obj);
 	scrollTop = $(obj).offset().top;
+	$(obj).parent().find("td").each(function(){
+		if($(this).find("input").val()!=null && $(this).find("input").val()!=""){
+			$(this).find("input").attr("value",$(this).find("input").val().trim());
+		}
+	});
 	var trHtml = $(obj).parent().html();
 	var tableTitle = $(obj).parent().parent().parent().attr("title");
 	$("#tr_con_content title_p").text(tableTitle);
@@ -1249,6 +1256,9 @@ function showDataTr(obj){
 		}else{
 			$(this).css("display","none");
 		}
+		if($(this).attr("data-label").trim()=="操作"){
+			$(this).remove();
+		}
 	});
 	$(".mobile_container").css("display","none");
 	$("#table_tr_container").css("display","block");
@@ -1258,8 +1268,29 @@ function backApproval(){
 	jQuery('html,body').animate({
 	    scrollTop: scrollTop-80
 	}, 300);
-	$(".mobile_container").css("display","block");
-	$("#table_tr_container").css("display","none");
+	/*$("#tr_con_content #tr_table").find("td").each(function(){
+		var inputObj = $(this).find("input");
+		if(inputObj.val()!=null && inputObj.val()!=""){
+			inputObj.attr("value",inputObj.val().trim());
+		}
+	});*/
+	var tdArr = $("#tr_con_content #tr_table").find("td");
+	try{
+		for(var i=0;i<tdArr.length;i++){
+			var td = tdArr[i];
+			var tdVal = "";
+			if($(td).find("input").val()!="" && $(td).find("input").val()!=null){
+				tdVal = $(td).find("input").val().trim();
+			}
+			console.log(tdVal);
+			tdObj.parent().find("td:eq('"+i+"')").next().find("input").attr("value",tdVal);
+		}
+	}catch(e){
+		console.log(e);
+	}finally{
+		$(".mobile_container").css("display","block");
+		$("#table_tr_container").css("display","none");
+	}
 }
 
 //提交前验证方法

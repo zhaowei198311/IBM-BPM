@@ -158,7 +158,7 @@
 		            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="revokeTask('${taskInstance.taskUid}');">取回</button>
 		            </c:if>
 		            <c:if test="${taskInstance.taskStatus=='32'}">
-		            	<button class="layui-btn layui-btn-sm layui-btn-normal" onclick="prePrintIndex()">打印预览</button>
+		            	<button class="layui-btn layui-btn-sm layui-btn-normal" onclick="prePrintIndex()" style="display:none;">打印预览</button>
 		            </c:if>
 		            <button class="layui-btn layui-btn-normal layui-btn-sm back_btn" onclick="back()">退出</button>
 				</span>

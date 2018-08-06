@@ -145,7 +145,7 @@
 	margin-top: 10%;
 }
     .layui-table td{
-    	padding:3px 15px;
+    	padding:7px 15px;
     	height: 30px;
     }
     input[lay-key][readonly]{
@@ -195,6 +195,8 @@
         content: attr(data-label);
         float: left;
         text-transform: uppercase;
+        text-align: left;
+   		max-width: 75px;
     }
     .layui-table td, .layui-table th,
     #tr_table td,#tr_table th{

@@ -222,7 +222,7 @@
         </div>
     </div>
 
-	<div class="layui-fluid" style="padding-top: 120px;">
+	<div class="layui-fluid" style="padding-top: 135px;">
 		<div class="table_content">
 			<div class="table_container">
 				<p class="title_p">流程标题</p>
@@ -280,28 +280,28 @@
 					</table>
 				</div>
 			</div>
+		</div>
+	</div>
 
-			<div class="display_container2">
-				<div class="display_content2">
-					<div class="top" style="line-height: 50px;">选择下一环节</div>
-					<div class="middle2">
-						<table class="layui-table">
-							<col width="19%">
-							<col>
-							<col width="15%">
-							<col>
-							<col width="10%">
-							<tbody id="choose_user_tbody">
+	<div class="display_container2">
+		<div class="display_content2">
+			<div class="top" style="line-height: 50px;">选择下一环节</div>
+			<div class="middle2">
+				<table class="layui-table">
+					<col width="19%">
+					<col>
+					<col width="15%">
+					<col>
+					<col width="10%">
+					<tbody id="choose_user_tbody">
 
-							</tbody>
-						</table>
-					</div>
-					<div class="foot">
-						<button class="layui-btn sure_btn" onclick="submitProcess();">确定</button>
-						<button class="layui-btn layui-btn-primary cancel_btn"
-							onclick="$('.display_container2').css('display','none')">取消</button>
-					</div>
-				</div>
+					</tbody>
+				</table>
+			</div>
+			<div class="foot">
+				<button class="layui-btn sure_btn" onclick="submitProcess();">确定</button>
+				<button class="layui-btn layui-btn-primary cancel_btn"
+					onclick="$('.display_container2').css('display','none')">取消</button>
 			</div>
 		</div>
 	</div>
