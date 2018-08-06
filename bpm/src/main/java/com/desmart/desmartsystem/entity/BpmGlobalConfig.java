@@ -34,6 +34,15 @@ public class BpmGlobalConfig implements Serializable {
     private String fileFormat; //附件上传文件后缀
     private Integer maxFileSize;//附件上次文件最大大小
     private Integer maxFileCount;//附件上次文件最大数量
+    private String incrementIdBydate;//表单或者接口中自增长id
+	public String getIncrementIdBydate() {
+		return incrementIdBydate;
+	}
+
+	public void setIncrementIdBydate(String incrementIdBydate) {
+		this.incrementIdBydate = incrementIdBydate;
+	}
+
 	public BpmGlobalConfig(String configId, String configName, String bpmServerHost, String bpmAdminName,
 			String bpmAdminPsw, String configStatus, Date createTime, Date updateTime, String gmtTimeZone,
 			String bpmformsHost, Integer bpmClientTimeout, String bpmformsWebContext, Integer httpMaxConnection,
