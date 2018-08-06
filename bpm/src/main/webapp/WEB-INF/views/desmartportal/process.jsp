@@ -162,6 +162,7 @@
 	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
 	    <input id="userId" value="${currentUser.userId}" style="display: none;">
 	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;" />
+	    <input id="activityName" value="${activityMeta.activityName}" style="display: none;">
 	    <span id="formData" style="display: none;">${ formData }</span>
 	    <span id="fieldPermissionInfo" style="display: none;">${ fieldPermissionInfo }</span>
 	    <span style="padding-left: 10px; color: #777; font-size: 18px;display: none;">${processDefinition.proName}</span>
