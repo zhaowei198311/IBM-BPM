@@ -13,21 +13,22 @@ var pageConfig = {
 	total : 0
 };
 
+var calendar1 = null;
+var calendar2 = null;
 $(function(){
-	var calendar1 = new lCalendar();
+	// 加载数据
+	getTaskInstanceInfo();
+	
+	calendar1 = new lCalendar();
 	calendar1.init({
 		'trigger': '#start_time',
 		'type': 'date'
 	});
-
-	var calendar2 = new lCalendar();
+	calendar2 = new lCalendar();
 	calendar2.init({
 		'trigger': '#end_time',
 		'type': 'date'
 	});
-	
-	// 加载数据
-	getTaskInstanceInfo();
 	
 	//异步加载代办列表
 	userAsync();
@@ -53,6 +54,30 @@ function fiterDivShow(){
 			$("body").css({"position":""});
 		}
 	});
+	
+	
+	var maxDate = "";
+	$("#start_time").focus(function(){
+		console.log($("#end_time").val());
+		if($("#end_time").val()!=null && $("#end_time").val()!=""){
+			maxDate = $("#end_time").val();
+			calendar1.setDate({
+				'maxDate':maxDate
+			});
+		}
+	});
+
+	
+	var minDate = "";
+	$("#end_time").focus(function(){
+		console.log($("#start_time").val());
+		if($("#start_time").val()!=null && $("#start_time").val()!=""){
+			minDate = $("#start_time").val();
+			calendar2.setDate({
+				'minDate':minDate
+			});
+		}
+	});
 }
 
 //确认搜索条件的方法
@@ -60,8 +85,14 @@ function queryTask(){
 	pageConfig.createProcessUserName = $("#process_staff").val().trim();
 	pageConfig.taskPreviousUsrUsername = $("#last_activity_staff").val().trim();
 	pageConfig.insTitle = $("#process_instance_title").val().trim();
-	pageConfig.startTime = $("#start_time").val().trim();
-	pageConfig.endTime = $("#end_time").val().trim();
+	var startTime = $("#start_time").val().trim();
+	var endTime = $("#end_time").val().trim();
+	if(startTime>endTime){
+		layer.msg("开始时间必须早于结束时间", {icon: 2});
+		return;
+	}
+	pageConfig.startTime = startTime;
+	pageConfig.endTime = endTime;
 	pageConfig.proName = $("#proName").val().trim();
 	pageConfig.pageNum = 1;
 	pageConfig.pageSize = 8;

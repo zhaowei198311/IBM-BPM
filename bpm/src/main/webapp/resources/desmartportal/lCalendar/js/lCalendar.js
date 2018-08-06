@@ -37,6 +37,21 @@ window.lCalendar = (function() {
 			this.bindEvent(this.type);
 			this.isChange = params.isChange==null || params.isChange=="" ? "false" : params.isChange;
 		},
+		setDate:function(params){
+			if(params.minDate!=null && params.minDate!=""){
+				var arr = params.minDate.split("-");
+				this.minY = ~~arr[0];
+				this.minM = ~~arr[1];
+				this.minD = ~~arr[2];
+				console.log(arr);
+			}
+			if(params.maxDate!=null && params.maxDate!=""){
+				var arr = params.maxDate.split("-");
+				this.maxY = ~~arr[0];
+				this.maxM = ~~arr[1];
+				this.maxD = ~~arr[2];
+			}
+		},
 		bindEvent: function(type) {
 			var _self = this;
 			//呼出日期插件
