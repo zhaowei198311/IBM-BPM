@@ -68,9 +68,8 @@ public class OperLogInterceptor {
 		String serviceMthodDescription = getServiceMthodDescription(pjd);
 		String host = InetAddress.getLocalHost().getHostAddress().toString();//获取ip地址
 	    //String host = request.getRemoteHost().get; //ip
-		String userId = null;//此处解决登录/登出session中信息冲突问题
+		String userId = null;//此处解决登录/登出session中信息冲突问题,访问登录接口是，session中没有任何内容，此处会报空指针
 		String userName = null;
-		//访问登录接口是，session中没有任何内容，此处会报空指针
 		try {  
 			userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
 			userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
@@ -81,7 +80,7 @@ public class OperLogInterceptor {
 		}
 		Object proceed = null;
 		try {
-			proceed = pjd.proceed(); //必须放在获取用户id之前
+			proceed = pjd.proceed(); //
 		} catch (Throwable e) {
 			e.printStackTrace();
 			//operLog.setMethodDescription(e.toString());  //e.toString()和e..getMessage()区别
@@ -107,6 +106,9 @@ public class OperLogInterceptor {
 				operLog.setResponseParam(keyString);
 				//operLog.setLogType(DhOperLog.systemLog);
 			} catch (Exception exception) {
+				/*if(((Throwable) proceed).getSuppressed().getClass().getName()) {
+					
+				}*/
 				if(operLog.getResponseParam() != null) {//此处判断是否为切点方法错误         此方法能否具体的判断是不是异常？？？？
 					//operLog.setResponseParam(proceed.toString());
 					//异常信息上边已经做处理了，这里只是区分是不是异常类
