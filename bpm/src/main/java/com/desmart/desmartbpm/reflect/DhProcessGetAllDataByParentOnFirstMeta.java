@@ -6,11 +6,9 @@ import java.util.List;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhStep;
@@ -32,7 +30,6 @@ public class DhProcessGetAllDataByParentOnFirstMeta extends DhOneTimeJavaClassTr
 		// 获得bean
 		DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 		BpmFormFieldService bpmFormFieldService = ac.getBean(BpmFormFieldService.class);
-		DhDataExchangeMapper dataExchangeMapper = ac.getBean(DhDataExchangeMapper.class);
 		DhStepMapper dhStepMapper = ac.getBean(DhStepMapper.class);
 
 		// 找到该环节配置中同步骤关键字的表单关键字
@@ -48,7 +45,6 @@ public class DhProcessGetAllDataByParentOnFirstMeta extends DhOneTimeJavaClassTr
 			ServerResponse<List<BpmFormField>> serverResponse = bpmFormFieldService
 					.queryFieldByFormUid(checkList.get(0).getStepObjectUid());
 			List<BpmFormField> formFieldList = serverResponse.getData();// 获得当前环节的所有表单字段集合
-			int insId = dhProcessInstance.getInsId();
 			
 			String parentInsUid = dhProcessInstance.getInsParent();
 			// 得到目标实例并获得数据——父流程实例

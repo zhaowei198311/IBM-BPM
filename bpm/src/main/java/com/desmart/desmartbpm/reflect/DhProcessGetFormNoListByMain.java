@@ -1,6 +1,5 @@
 package com.desmart.desmartbpm.reflect;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.web.context.WebApplicationContext;
@@ -8,14 +7,10 @@ import org.springframework.web.context.WebApplicationContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
-import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.enums.DhStepType;
-import com.desmart.desmartbpm.service.BpmFormFieldService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
@@ -31,8 +26,6 @@ public class DhProcessGetFormNoListByMain extends DhOneTimeJavaClassTrigger {
 		// 获得bean
 		DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 		DhProcessInstanceMapper dhProcessInstanceMapper = ac.getBean(DhProcessInstanceMapper.class);
-		BpmFormFieldService bpmFormFieldService = ac.getBean(BpmFormFieldService.class);
-		DhDataExchangeMapper dataExchangeMapper = ac.getBean(DhDataExchangeMapper.class);
 		DhStepMapper dhStepMapper = ac.getBean(DhStepMapper.class);
 
 		// 找到该环节配置中同步骤关键字的表单关键字
