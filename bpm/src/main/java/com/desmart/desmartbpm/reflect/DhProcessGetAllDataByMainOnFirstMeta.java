@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.desmartbpm.dao.DhDataExchangeMapper;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhStep;
@@ -31,7 +30,6 @@ public class DhProcessGetAllDataByMainOnFirstMeta extends DhOneTimeJavaClassTrig
 				DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 				DhProcessInstanceMapper dhProcessInstanceMapper = ac.getBean(DhProcessInstanceMapper.class);
 				BpmFormFieldService bpmFormFieldService = ac.getBean(BpmFormFieldService.class);
-				DhDataExchangeMapper dataExchangeMapper = ac.getBean(DhDataExchangeMapper.class);
 				DhStepMapper dhStepMapper = ac.getBean(DhStepMapper.class);
 
 				// 找到该环节配置中同步骤关键字的表单关键字
@@ -62,7 +60,6 @@ public class DhProcessGetAllDataByMainOnFirstMeta extends DhOneTimeJavaClassTrig
 						}
 					}
 
-					/* } */
 					insDataJsonSource.put("formData", formDataJsonSource);
 					dhProcessInstance.setInsData(insDataJsonSource.toJSONString());
 					dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);// 将数据写入到当前流程实例中
