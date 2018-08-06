@@ -32,7 +32,7 @@ public class DhProcessGetDataInfoByMainTrigger implements DhJavaClassTriggerTemp
 
 	@Override
 	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject,DhStep dhStep) {
-		 // 获得bean
+		// 获得bean
 	    DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 	    DhProcessInstanceMapper dhProcessInstanceMapper = ac.getBean(DhProcessInstanceMapper.class);
 	    

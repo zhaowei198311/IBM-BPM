@@ -294,13 +294,14 @@ public class DhStepServiceImpl implements DhStepService {
     }
 
     @Override
-    public List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
+    public List<DhStep> getStepsWithFormByBpmActivityMetaAndStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
         // 查询到源节点
-        BpmActivityMeta sourceMeta = bpmActivityMeta;
-        if (!bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
+        BpmActivityMeta sourceMeta = null;
+        if (bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
+            sourceMeta = bpmActivityMeta;
+        } else {
             sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(bpmActivityMeta.getSourceActivityId());
         }
-
         DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
         stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
         stepSelective.setStepBusinessKey(stepBusinessKey);
@@ -325,6 +326,23 @@ public class DhStepServiceImpl implements DhStepService {
         }
         return new ArrayList<>();
     }
+
+
+    public List<DhStep> getStepsByBpmActivityMetaAndStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey) {
+        // 查询到源节点
+        BpmActivityMeta sourceMeta = null;
+        if (bpmActivityMeta.getSourceActivityId().equals(bpmActivityMeta.getActivityId())){
+            sourceMeta = bpmActivityMeta;
+        } else {
+            sourceMeta = bpmActivityMetaMapper.queryByPrimaryKey(bpmActivityMeta.getSourceActivityId());
+        }
+        DhStep stepSelective = new DhStep(sourceMeta.getProAppId(), sourceMeta.getBpdId(), sourceMeta.getSnapshotId());
+        stepSelective.setActivityBpdId(sourceMeta.getActivityBpdId());
+        stepSelective.setStepBusinessKey(stepBusinessKey);
+        PageHelper.orderBy("STEP_SORT");
+       return dhStepMapper.listBySelective(stepSelective);
+    }
+
 
 	@Override
 	public ServerResponse<List<DhStep>> getStepInfoByCondition(DhStep dhStep) {

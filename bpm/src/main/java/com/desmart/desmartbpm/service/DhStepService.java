@@ -5,7 +5,6 @@ import java.util.List;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 
@@ -64,11 +63,21 @@ public interface DhStepService {
     /**
      * ******* 重要 ****************
      * 根据step关键字，获得指定环节的可用步骤，如果指定关键字没有可用步骤，返回默认关键字的可用步骤，按步骤序号正序排序
+     * 如果这个环节这个关键字有form表单，就使用这个这个关键字，如果没有表单，而默认关键字下有表单返回default关键字的步骤
+     * @param bpmActivityMeta 环节
+     * @param stepBusinessKey  步骤关键字
+     * @return
+     */
+    List<DhStep> getStepsWithFormByBpmActivityMetaAndStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey);
+
+    /**
+     * 根据环节和关键字获得步骤，不关心是否有表单步骤
      * @param bpmActivityMeta
      * @param stepBusinessKey
      * @return
      */
-    List<DhStep> getStepsOfBpmActivityMetaByStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey);
+    List<DhStep> getStepsByBpmActivityMetaAndStepBusinessKey(BpmActivityMeta bpmActivityMeta, String stepBusinessKey);
+
     /**
      * 为该流程所有环节新增表单步骤，同关键字将修改表单uid
      * @param dhStep

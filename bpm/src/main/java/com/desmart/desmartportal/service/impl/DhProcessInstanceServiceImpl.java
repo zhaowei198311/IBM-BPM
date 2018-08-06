@@ -504,7 +504,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				.selectByPrimaryKey(firstHumanMeta.getDhActivityConf().getActcUid());
 
 		// 根据步骤关键字，得到所有这个环节的步骤
-		List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(firstHumanMeta, processInstance.getInsBusinessKey());
+		List<DhStep> steps = dhStepService.getStepsWithFormByBpmActivityMetaAndStepBusinessKey(firstHumanMeta, processInstance.getInsBusinessKey());
 
 		// 获得表单步骤
 		DhStep formStep = getFirstFormStepOfStepList(steps);
@@ -852,7 +852,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	        return ServerResponse.createBySuccess();
         }
         int insId = currProcessInstance.getInsId();
-        DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
+        // DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
 
         if (processDataJson == null) { // 如果没有传入流程实例信息, 主动获取
             BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -873,13 +873,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             String tokenId = ProcessDataUtil.getTokenIdIdentifySubProcess(processDataJson, startProcessNode.getActivityBpdId(),
                     firstUserTaskNode.getActivityBpdId());
 
-			// 找到子流程的上级流程
+			// 找到子流程的上级流程（不一定是当前流程）
 			DhProcessInstance parentProcessInstance = dhRouteService.getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(
 					currProcessInstance, startProcessNode);
 			
             // 从pubBo中获得流程发起人id
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
+            // 创建子流程实例
             DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, startProcessNode,
                     tokenId, owners.get(0));
 
@@ -895,7 +896,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                                                                         String tokenId, String creatorId) {
         DhProcessInstance subInstance = new DhProcessInstance();
         subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
-        subInstance.setInsTitle(parentInstance.getInsTitle() + "-" + processNode.getActivityName()); // 流程标题
+        // 新流程的title是 父流程的title
+        subInstance.setInsTitle(parentInstance.getInsTitle()); // 流程标题与父流程相同
         subInstance.setInsId(parentInstance.getInsId());
         subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
         subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);

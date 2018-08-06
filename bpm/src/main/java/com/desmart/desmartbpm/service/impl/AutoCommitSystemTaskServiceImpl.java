@@ -28,8 +28,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -146,9 +144,11 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
                 currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
         // 修改任务状态
         dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
+        // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
+
 
         // 获得步骤
-        List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
+        List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
         if (steps.isEmpty()) { // 如果没有配置步骤
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
@@ -316,6 +316,17 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         taskSelective.setSynNumber(-3); // synNumer为-3的是系统延时任务
         taskSelective.setTaskStatus(DhTaskInstance.STATUS_RECEIVED); // 状态是已收到
         return dhTaskInstanceMapper.selectAllTask(taskSelective);
+    }
+
+    private boolean isFirstTaskNodeOfSubProcess(BpmActivityMeta taskNode, DhProcessInstance currProcessInstance) {
+        if (DhProcessInstance.INS_PARENT_OF_MAIN_PROCESS.equals(currProcessInstance.getInsParent())) {
+            // 如果是主流程
+            return false;
+        }
+        BpmActivityMeta subProcessNode = bpmActivityMetaService.queryByPrimaryKey(currProcessInstance.getTokenActivityId());
+        BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(subProcessNode);
+
+        return false;
     }
 
 }

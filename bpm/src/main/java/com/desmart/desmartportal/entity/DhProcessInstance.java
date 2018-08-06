@@ -38,7 +38,10 @@ DhProcessInstance {
      /** 流程暂停 */
     public static final String STATUS_SUSPENDED = "6";
     public static final int STATUS_ID_SUSPENDED = 6;
-	
+    /**  */
+	public static final String INS_PARENT_OF_MAIN_PROCESS = "0";
+
+
 	@Id
 	private String insUid; // 流程实例ID
 	

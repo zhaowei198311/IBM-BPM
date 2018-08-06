@@ -100,4 +100,9 @@ public class EntityIdPrefix {
      * 表单字段与接口参数映射表前缀
      */
     public static final String DH_TRIGGER_INTERFACE = "triggerInterface:";
+
+    /**
+     * 触发器调用记录前缀
+     */
+    public static final String DH_TRIGGER_INVOKE_RECORD = "tri_invoke:";
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhTriggerInvokeRecordMapper" >
+  
+	<sql id="baseColumList">
+		invoke_uid, ins_uid, step_uid, invoke_time
+	</sql>
+
+	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTriggerInvokeRecord">
+		insert into dh_trigger_invoke_record (
+			<include refid="baseColumList"/>
+		) values (
+			#{invokeUid}, #{insUid}, #{stepUid}, sysdate
+		)
+	</insert>
+
+
+	<select id="queryByInsUidAndStepUid" resultType="com.desmart.desmartbpm.entity.DhTriggerInvokeRecord">
+		select <include refid="baseColumList"/> from dh_trigger_invoke_record
+		where ins_uid = #{insUid} and step_uid = #{stepUid}
+	</select>
+
+
+</mapper>

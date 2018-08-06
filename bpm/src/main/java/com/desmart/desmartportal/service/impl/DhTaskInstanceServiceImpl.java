@@ -503,7 +503,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    }
 	    DhActivityConf dhActivityConf = dhActivityConfMapper.selectByPrimaryKey(currTaskNode.getDhActivityConf().getActcUid());
 		// 获得表单步骤
-		List<DhStep> steps = dhStepService.getStepsOfBpmActivityMetaByStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
+		List<DhStep> steps = dhStepService.getStepsWithFormByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhprocessInstance.getInsBusinessKey());
 		if (steps.isEmpty()) {
 			return ServerResponse.createByErrorMessage("找不到表单步骤");
 		}
@@ -557,7 +557,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 获得表单编号
 		String formNo = dhFormNoService.findFormNoByFormUid(bpmForm.getDynUid(), insDataJson.getJSONArray("formNoList"));
 		bpmForm.setFormNo(formNo);
-		System.out.println("mark6：" + (System.currentTimeMillis() - start));
         // 记录任务被打开
         taskMongoDao.saveOpenedTask(new OpenedTask(dhTaskInstance.getTaskUid(), dhTaskInstance.getTaskId(), new Date()));
 
@@ -1234,7 +1233,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				.getByActBpdIdAndParentActIdAndProVerUid(targetActivityBpdId, currTaskNode.getParentActivityId()
 						, currTaskNode.getSnapshotId());
 
-		// 完成现在的任务
+		// 完成现在的任务, 驳回也算完成
 		updateDhTaskInstanceWhenFinishTask(currTaskInstance, data);
 
 		// 关闭关联的任务（同一个节点上的任务）
@@ -1247,6 +1246,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		DhRoutingRecord routingRecord = dhRoutingRecordService.generateRejectTaskRoutingRecordByTaskAndRoutingData(currTaskInstance, targetNode);
 		dhRoutingRecordMapper.insert(routingRecord);
 
+		// 移动token
 		HttpReturnStatus httpReturnStatus = bpmProcessUtil.moveToken(insId, targetActivityBpdId, tokenId);
 		if (HttpReturnStatusUtil.isErrorResult(httpReturnStatus)) {
 			throw new PlatformException("调用API 驳回失败");
@@ -1256,7 +1256,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		JSONObject processData = JSON.parseObject(httpReturnStatus.getMsg());
 		// 驳回节点上产生的任务
 		List<Integer> taskIdList = ProcessDataUtil.getActiveTaskIdByFlowObjectId(targetActivityBpdId, processData);
-		// 阻止拉取任务
+		// 锁任务，阻止拉取
 		taskMongoDao.batchlockTasks(taskIdList, LockedTask.REASON_REJECT_TASK);
 
 		// 重新分配任务
@@ -1267,8 +1267,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (!serverResponse.isSuccess()) {
 			log.error("重新分配失败");
 		}
-
+		// 记录到重拉列表，等待再次拉取
 		saveTaskToRetryTable(taskIdList.get(0));
+		// 解锁任务
 		unlockTask(taskIdList.get(0));
 
         return ServerResponse.createBySuccess();
