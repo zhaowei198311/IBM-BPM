@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface CommonMongoDao {
 	public static final String EXPOSED_ITEM_RELOAD_TIME = "exposedItemReloadTime";
-
+	public static final String APP_UPDATE_RECORD = "appUpdateRecord";
 
 	/**
 	 * 设置键值，如果这个键已经有值，覆盖掉原值, 保存到commonKeyValue集合

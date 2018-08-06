@@ -19,6 +19,7 @@ import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.entity.engine.LswBpd;
 import com.desmart.desmartbpm.entity.engine.LswProject;
 import com.desmart.desmartbpm.entity.engine.LswSnapshot;
+import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.ModelMongoDao;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartsystem.dao.DhInterfaceMapper;
@@ -93,6 +94,8 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     private LswProjectMapper lswProjectMapper;
     @Autowired
     private LswSnapshotMapper lswSnapshotMapper;
+    @Autowired
+    private CommonMongoDao commonMongoDao;
 
 
     @Override
@@ -160,47 +163,18 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         return ServerResponse.createBySuccess(result);
     }
 
-
-
-    @Transactional
-    @Override
-    public ServerResponse updateProcessApp(String proAppId, String oldProVerUid, String newProVerUid, Queue<DhProcessDefinitionBo> definitionBoQueue) {
-        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(newProVerUid) || StringUtils.isBlank(oldProVerUid)) {
-            return ServerResponse.createByErrorMessage("参数异常");
-        }
-        // 检查老版本是否存在流程定义
-        List<DhProcessDefinition> oldDefinitions = dhProcessDefinitionService.listProcessDefinitionByProAppIdAndProVerUid(proAppId, oldProVerUid);
-        if (CollectionUtils.isEmpty(oldDefinitions)) {
-            return ServerResponse.createByErrorMessage("版本升级失败，老版本不存在流程定义");
-        }
-        // 拉取新版本的环节并生成流程定义
-        ServerResponse<List<DhProcessDefinition>> newDefinitionResponse = pullAllProcessActivityMeta(definitionBoQueue);
-        if (!newDefinitionResponse.isSuccess()) {
-            return newDefinitionResponse;
-        }
-        List<DhProcessDefinition> newDefintions = newDefinitionResponse.getData();
-        // 对比得到新老版本都存在的流程定义
-        List<DhDefinitionCopyData> copyDataList = findDefinitionNeedCopyConfig(oldDefinitions, newDefintions);
-        // 遍历拷贝流程
-        Iterator<DhDefinitionCopyData> iterator = copyDataList.iterator();
-        while (iterator.hasNext()) {
-            DhDefinitionCopyData copyData = iterator.next();
-            ServerResponse response = copyConfigFromOldVersion(copyData);
-            if (!response.isSuccess()) {
-                logger.error("升级应用库失败，复制老版本流程定义时失败：" + copyData.toString());
-                throw new PlatformException("升级版本失败，复制配置失败:" + copyData.toString());
-            }
-            iterator.remove(); // 拷贝完成释放引用
-        }
-        //if (1 == 1) throw new PlatformException("主动抛出");
-        return ServerResponse.createBySuccess();
-    }
     @Override
     public ServerResponse<Queue<DhProcessDefinitionBo>> prepareData(String proAppId, String newProVerUid) {
+        // 检查此应用库是否已经被同步过
+        String updateIdentity = proAppId + "|" + newProVerUid; // 查看是否有更新记录
+        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD);
+        if (updateTime != null) {
+            return ServerResponse.createByErrorMessage("应用库此版本已经同步过，不能再次同步，同步时间：" + updateTime);
+        }
         // 从BpmExposedItem中获得需要拉取的流程
         List<DhProcessDefinitionBo> exposedDefinitionList = dhProcessDefinitionService.getExposedProcessDefinitionByProAppIdAndSnapshotId(proAppId, newProVerUid);
         if (CollectionUtils.isEmpty(exposedDefinitionList)) {
-            return ServerResponse.createByErrorMessage("没有找到符合条件的流程定义");
+            return ServerResponse.createByErrorMessage("应用库此版本没有公开的流程数据，请先同步公开的流程后再试");
         }
         DhProcessDefinitionBo bo = null;
         Queue<DhProcessDefinitionBo> boToPullQueue = new LinkedList<>();
@@ -281,6 +255,47 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         return ServerResponse.createBySuccess(boToPullQueue);
     }
 
+    @Transactional
+    @Override
+    public ServerResponse updateProcessApp(String proAppId, String oldProVerUid, String newProVerUid, Queue<DhProcessDefinitionBo> definitionBoQueue) {
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(newProVerUid) || StringUtils.isBlank(oldProVerUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        // 检查老版本是否存在流程定义
+        List<DhProcessDefinition> oldDefinitions = dhProcessDefinitionService.listProcessDefinitionByProAppIdAndProVerUid(proAppId, oldProVerUid);
+        if (CollectionUtils.isEmpty(oldDefinitions)) {
+            return ServerResponse.createByErrorMessage("版本升级失败，老版本不存在流程定义");
+        }
+        // 检查是否重复操作
+        String updateIdentity = proAppId + "|" + newProVerUid; // 查看是否有更新记录
+        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD);
+        if (updateTime != null) {
+            return ServerResponse.createByErrorMessage("应用库此版本已经同步过，不能再次同步，同步时间：" + updateTime);
+        }
+        commonMongoDao.set(updateIdentity, DateTimeUtil.dateToStr(new Date()), CommonMongoDao.APP_UPDATE_RECORD);
+        // 拉取新版本的环节并生成流程定义
+        ServerResponse<List<DhProcessDefinition>> newDefinitionResponse = pullAllProcessActivityMeta(definitionBoQueue);
+        if (!newDefinitionResponse.isSuccess()) {
+            return newDefinitionResponse;
+        }
+        List<DhProcessDefinition> newDefintions = newDefinitionResponse.getData();
+        // 对比得到新老版本都存在的流程定义
+        List<DhDefinitionCopyData> copyDataList = findDefinitionNeedCopyConfig(oldDefinitions, newDefintions);
+        // 遍历拷贝流程
+        Iterator<DhDefinitionCopyData> iterator = copyDataList.iterator();
+        while (iterator.hasNext()) {
+            DhDefinitionCopyData copyData = iterator.next();
+            ServerResponse response = copyConfigFromOldVersion(copyData);
+            if (!response.isSuccess()) {
+                logger.error("升级应用库失败，复制老版本流程定义时失败：" + copyData.toString());
+                throw new PlatformException("升级版本失败，复制配置失败:" + copyData.toString());
+            }
+            iterator.remove(); // 拷贝完成释放引用
+        }
+        //if (1 == 1) throw new PlatformException("主动抛出");
+        return ServerResponse.createBySuccess();
+    }
+
     // 拉取流程定义
     @Transactional
     @Override
@@ -330,9 +345,6 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         }
         return ServerResponse.createBySuccess();
     }
-
-
-
 
     /**
      * 根据ProcessModel信息获得所有的外链环节
