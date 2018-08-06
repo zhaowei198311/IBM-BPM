@@ -16,21 +16,21 @@ import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.enums.DhStepType;
 import com.desmart.desmartbpm.service.BpmFormFieldService;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
-
 /**
- * 从父流程的流程实例中获取当前表单字段名对应的所有数据
- * 
+ * 从主流程中获取表单流水号并设置当前流程中的formNoList
  * @author lys
  *
  */
-public class DhProcessGetAllDataByParentOnFirstMeta extends DhOneTimeJavaClassTrigger {
+public class DhProcessGetFormNoListByMain extends DhOneTimeJavaClassTrigger {
 
 	@Override
 	public void doOneTime(WebApplicationContext ac, String insUid, JSONObject jsonObject, DhStep dhStep) {
 		// 获得bean
 		DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
+		DhProcessInstanceMapper dhProcessInstanceMapper = ac.getBean(DhProcessInstanceMapper.class);
 		BpmFormFieldService bpmFormFieldService = ac.getBean(BpmFormFieldService.class);
 		DhDataExchangeMapper dataExchangeMapper = ac.getBean(DhDataExchangeMapper.class);
 		DhStepMapper dhStepMapper = ac.getBean(DhStepMapper.class);
@@ -41,35 +41,29 @@ public class DhProcessGetAllDataByParentOnFirstMeta extends DhOneTimeJavaClassTr
 		selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
 		selective1.setStepType(DhStepType.FORM.getCode());
 		List<DhStep> checkList = dhStepMapper.listBySelective(selective1);
+		String currFormUid = checkList.get(0).getStepObjectUid();//获得当前表单的formuid
 		if (checkList != null && checkList.size() == 1) {
 			DhProcessInstance dhProcessInstance = dhProcessInstanceService.getByInsUid(insUid);
 			JSONObject insDataJsonSource = JSON.parseObject(dhProcessInstance.getInsData());
-			JSONObject formDataJsonSource = new JSONObject();// 保存当前环节表单数据
-			ServerResponse<List<BpmFormField>> serverResponse = bpmFormFieldService
-					.queryFieldByFormUid(checkList.get(0).getStepObjectUid());
-			List<BpmFormField> formFieldList = serverResponse.getData();// 获得当前环节的所有表单字段集合
-			int insId = dhProcessInstance.getInsId();
+			JSONArray currFormNoList = new JSONArray();//保存当前流程实例的formNoList
 			
-			String parentInsUid = dhProcessInstance.getInsParent();
-			// 得到目标实例并获得数据——父流程实例
-			DhProcessInstance targetProcessInstance = dhProcessInstanceService.getByInsUid(parentInsUid);
+			int insId = dhProcessInstance.getInsId();
+			// 得到目标实例并获得数据——主流程实例
+			DhProcessInstance targetProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
 			JSONObject insDataJson = JSON.parseObject(targetProcessInstance.getInsData());
-			JSONObject formDataJson = insDataJson.getJSONObject("formData");
-
-			Object key;
-			for (Iterator<BpmFormField> var3 = formFieldList.iterator(); var3.hasNext();) {
-				key = var3.next().getFldCodeName();
-				if (formDataJson.get(key) != null) { // 目标的值为空的时候，不替换值到当前表单中去
-					formDataJsonSource.put((String) key, formDataJson.get(key));
-				}
+			JSONArray formNoListArr = insDataJson.getJSONArray("formNoList");
+			if(formNoListArr!=null&&formNoListArr.size()>0) {
+				JSONObject formNoItem = formNoListArr.getJSONObject(0);
+				formNoItem.put("formUid", currFormUid);
+				currFormNoList.add(formNoItem);
+				
+				insDataJsonSource.put("formNoList", currFormNoList);
+				dhProcessInstance.setInsData(insDataJsonSource.toJSONString());
+				dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);// 将数据写入到当前流程实例中
 			}
-
-			insDataJsonSource.put("formData", formDataJsonSource);
-			dhProcessInstance.setInsData(insDataJsonSource.toJSONString());
-			dhProcessInstanceService.updateByPrimaryKeySelective(dhProcessInstance);// 将数据写入到当前流程实例中
+			
 		} else {
 			throw new PlatformException("环节表单步骤配置出现异常");
 		}
 	}
-
 }
