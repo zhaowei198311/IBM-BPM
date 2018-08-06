@@ -38,7 +38,7 @@ public class SysTeamMemberController {
 	@ResponseBody
 	public String adSysTeamMember(SysTeamMember sysTeamMember) {
 		try {	
-			sysTeamMemberService.delete(sysTeamMember);
+			//sysTeamMemberService.delete(sysTeamMember);
 			String userUid=sysTeamMember.getUserUid();
 			if(StringUtils.isNotBlank(userUid)) {
 				String[]  roleUser=userUid.split(",");
