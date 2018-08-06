@@ -24,17 +24,10 @@
 		<div class="layui-row layui-form">
 			<form action="quarz/datagrid.do" method="post" class="layui-form"  id="searchform">
 				<div class="layui-col-md2">
-					<input type="text" placeholder="任务名称"  class="layui-input" name="jobName">
-				</div>
-				<div class="layui-col-md2">
-					<select>
-						<option>1</option>
-						<option>2</option>
-						<option>3</option>
-					</select>
+					<input type="text" placeholder="任务名称"  class="layui-input" name="jobName" />
 				</div>
 				<div class="layui-col-md2" style="text-align: right;">
-					<button class="layui-btn" id="btnSearch" type="button">查询</button>
+					<button class="layui-btn" id="btnSearch" type="button" >查询</button>
 					<button class="layui-btn" type="button"  data-type="btnAdd" id="openAdd" >新增</button>
 				</div>
 			</form>
@@ -46,6 +39,16 @@
 	
 	
 layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element'], function(){
+	
+	
+	 //控制点回车提交表单
+	 $("#searchform").keydown( function(e) {
+    	var key = window.event?e.keyCode:e.which;
+    	if(key.toString() == "13"){
+        	return false;
+    	}
+	}); 
+	
 	  var layer = layui.layer; //弹层
 	  var laydate = layui.laydate; //日期
 	  var laypage = layui.laypage; //分页
