@@ -28,10 +28,10 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
  * @author lys
  *
  */
-public class DhProcessGetDataInfoByMainTrigger implements DhJavaClassTriggerTemplate {
+public class DhProcessGetDataInfoByMainTrigger extends DhOneTimeJavaClassTrigger{
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject,DhStep dhStep) {
+	public void doOneTime(WebApplicationContext ac, String insUid, JSONObject jsonObject, DhStep dhStep) {
 		// 获得bean
 	    DhProcessInstanceService dhProcessInstanceService = ac.getBean(DhProcessInstanceService.class);
 	    DhProcessInstanceMapper dhProcessInstanceMapper = ac.getBean(DhProcessInstanceMapper.class);
