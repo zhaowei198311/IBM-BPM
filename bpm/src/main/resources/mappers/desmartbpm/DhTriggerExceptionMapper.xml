@@ -29,7 +29,7 @@
         insert into DH_TRIGGER_EXCEPTION 
             (<include refid="base_column"/>)
         values (
-            #{id},#{taskId}, #{stepId},#{insId},#{createTime},#{mqMessage},#{errorMessage},#{requestParam},#{status}
+            #{id}, #{taskId}, #{stepId}, #{insId}, sysdate, #{mqMessage}, #{errorMessage}, #{requestParam}, #{status}
         )
     </insert>
    

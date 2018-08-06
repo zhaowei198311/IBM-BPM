@@ -124,7 +124,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
 				Object obj = clz.newInstance();
 				JSONObject jb = JSON.parseObject(dhTrigger.getTriParam());
-				Method md = obj.getClass().getDeclaredMethod("execute",
+				Method md = obj.getClass().getMethod("execute",
 						new Class[] { WebApplicationContext.class, String.class, JSONObject.class, DhStep.class });
 				md.invoke(obj, new Object[] { wac, insUid, jb, dhStep });
 				resultMap.put("status", "0");

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.exception.PlatformException;
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.entity.*;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -61,19 +63,16 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	private DhTriggerService dhTriggerService;
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
+	@Autowired
+	private DhProcessInstanceMapper dhProcessInstanceMapper;
 
-
+	// 监听新消息
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
-
-		String str = null;
 		try {
-			str = new String(message.getBody(), "UTF-8");
-			JSONObject jsonObject = JSONObject.parseObject(str);
-			execute(jsonObject, message);
-		} catch (UnsupportedEncodingException e) {
-			log.info("获取message中body内容出错...");
-			e.printStackTrace();
+			execute(message);
+		} catch (Exception e) {
+			log.error("获取message中body内容出错...", e);
 		} finally {
 			// 手动确认消息的消费
 			channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
@@ -82,17 +81,8 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	}
 
 	// 消费消息
-	public void execute(JSONObject json, Message mqMessage) {
-		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-		// 解析数据，转为bean对象
-		JSONObject taskInstanceJson = json.getJSONObject("currTaskInstance");
-		JSONObject dhStepJson = json.getJSONObject("dhStep");
-		JSONObject processInstanceJson = json.getJSONObject("currProcessInstance");
-		JSONObject pubBoJson = json.getJSONObject("pubBo");// CommonBusinessObject
-		JSONObject routingDataJson = json.getJSONObject("routingData");
-		JSONObject routingRecordJson = json.getJSONObject("routingRecord");
-
-
+	@Transactional
+	public void execute(Message mqMessage) {
 		// 初始化
 		DhTaskInstance dhTaskInstance = null;
 		DhStep dhStep = null;
@@ -100,53 +90,54 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		CommonBusinessObject pubBo = null;
 		BpmRoutingData routingData = null;
 		DhRoutingRecord dhRoutingRecord = null;
-
+		String msgBody = null;
+		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
 		//jsonObject转javaBean对象
 		try {
-			if (null != taskInstanceJson) {
-				dhTaskInstance = (DhTaskInstance) JSONObject.toJavaObject(taskInstanceJson, DhTaskInstance.class);
-			}
-			if (null != dhStepJson) {
-				dhStep = (DhStep) JSONObject.toJavaObject(dhStepJson, DhStep.class);
-			}
-			if (null != processInstanceJson) {
-				dhProcessInstance = (DhProcessInstance) JSONObject.toJavaObject(processInstanceJson,
-						DhProcessInstance.class);
-			}
-			if (null != pubBoJson) {
-				pubBo = (CommonBusinessObject) JSONObject.toJavaObject(pubBoJson, CommonBusinessObject.class);
-			}
-			if (null != routingDataJson) {
-				// 复杂对象特别处理
-				routingData = JSONObject.parseObject(routingDataJson.toString(), new TypeReference<BpmRoutingData>(){});
-			}
-			if (null != routingDataJson) {
-				dhRoutingRecord = (DhRoutingRecord) JSONObject.toJavaObject(routingRecordJson, DhRoutingRecord.class);
-			}
-
+			msgBody = new String(mqMessage.getBody(), "UTF-8");
+			JSONObject json = JSONObject.parseObject(msgBody);
+			// String -> jsonObject  解析数据
+			JSONObject taskInstanceJson = json.getJSONObject("currTaskInstance");
+			JSONObject dhStepJson = json.getJSONObject("dhStep");
+			JSONObject processInstanceJson = json.getJSONObject("currProcessInstance");
+			JSONObject pubBoJson = json.getJSONObject("pubBo");// CommonBusinessObject
+			JSONObject routingDataJson = json.getJSONObject("routingData");
+			JSONObject routingRecordJson = json.getJSONObject("routingRecord");
+			// josnObject -> JavaBean
+			dhTaskInstance = JSONObject.toJavaObject(taskInstanceJson, DhTaskInstance.class);
+			dhStep = JSONObject.toJavaObject(dhStepJson, DhStep.class);
+			dhProcessInstance = JSONObject.toJavaObject(processInstanceJson, DhProcessInstance.class);
+			pubBo = JSONObject.toJavaObject(pubBoJson, CommonBusinessObject.class);
+			// 复杂对象特别处理
+			routingData = JSONObject.parseObject(routingDataJson.toString(), new TypeReference<BpmRoutingData>(){});
+			dhRoutingRecord = JSONObject.toJavaObject(routingRecordJson, DhRoutingRecord.class);
 		} catch (Exception e) {
-			log.info("TriggerMQConsumer消费者中解析jsonObject to bean 出错...");
-			e.printStackTrace();
+			log.error("TriggerMQConsumer解析消息出错：消息体" + msgBody , e);
+			if (dhTaskInstance != null) {
+				setProcessStatusError(dhTaskInstance.getInsUid());
+			}
 		}
 		
 		//调用触发器方法, 如果是触发器步骤执行，遇到表单步骤略过
 		DhStep step = dhStep;
 		while (step != null) {
 			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-				ServerResponse<Map<String, String>> response = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep);
-				Map<String,String> resultMap = response.getData();
-				if(resultMap.get("status").equals("1")) {
+				ServerResponse<Map<String, String>> invokeResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep);
+				Map<String,String> invokeResult = invokeResponse.getData();
+				if(invokeResult.get("status").equals("1")) {
+					// status == 1 表示调用出现异常
 					DhTriggerException dhTriggerException = new DhTriggerException();
 			        dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
-			        dhTriggerException.setCreateTime(new Date());
 			        dhTriggerException.setInsId(String.valueOf(dhProcessInstance.getInsId()));
 			        dhTriggerException.setMqMessage(String.valueOf(mqMessage));
 			        dhTriggerException.setStepId(dhStep.getStepUid());
 			        dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
-			        dhTriggerException.setRequestParam(resultMap.get("param"));
-			        dhTriggerException.setErrorMessage(resultMap.get("msg"));
-			        dhTriggerException.setStatus("true");
+			        dhTriggerException.setRequestParam(invokeResult.get("param")); // 记录调用参数
+			        dhTriggerException.setErrorMessage(invokeResult.get("msg"));   // 记录错误信息
+			        dhTriggerException.setStatus(DhTriggerException.STATUS_ERROR); // 记录状态
 			        int result = dhTriggerExceptionService.save(dhTriggerException);
+			        // 修改流程实例状态为异常
+					setProcessStatusError(dhTaskInstance.getInsUid());
 			        return;
 				}
 			}
@@ -184,6 +175,19 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		} else {
 			throw new PlatformException("调用RESTful API完成任务失败");
 		}
+	}
+
+	/**
+	 * 将指定流程实例状态设为异常
+	 * @param insUid  流程实例主键
+	 */
+	public void setProcessStatusError(String insUid) {
+		if (StringUtils.isNotBlank(insUid)) {
+			DhProcessInstance instanceSelective = new DhProcessInstance(insUid);
+			instanceSelective.setInsStatusId(DhProcessInstance.STATUS_ID_FAILED);
+			dhProcessInstanceMapper.updateByPrimaryKeySelective(instanceSelective);
+		}
+
 	}
 
 }

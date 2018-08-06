@@ -9,8 +9,11 @@ import java.util.Date;
  *
  */
 public class DhTriggerException implements Serializable{
-	
 	private static final long serialVersionUID = -7803852253465310676L;
+	/** 出错 */
+	public static final String STATUS_ERROR = "error";
+	/** 已修复 */
+	public static final String STATUS_DONE = "done";
 
 	private String id;  //id主键
 	
