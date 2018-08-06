@@ -9,7 +9,7 @@
 		HTTP_MAX_CONNECTION,
 		PRE_ROUTE_MAX_CONNECTION, SCHEDULER_HOST, UPDATE_TIME, BPM_API_HOST,
 		SFTP_PATH,SFTP_USERNAME,SFTP_PASSWORD,SFTP_IP,SFTP_PORT,
-		MAX_FILE_SIZE,MAX_FILE_COUNT,FILE_FORMAT
+		MAX_FILE_SIZE,MAX_FILE_COUNT,FILE_FORMAT,INCREMENT_ID_BYDATE
 	</sql>
 
 	<select id="queryActiveConfig" resultType="com.desmart.desmartsystem.entity.BpmGlobalConfig">
@@ -263,6 +263,9 @@
 			</if>
 			<if test="fileFormat != null">
 				FILE_FORMAT = #{fileFormat},
+			</if>
+			<if test="incrementIdBydate != null">
+				INCREMENT_ID_BYDATE = #{incrementIdBydate},
 			</if>
 		</set>
 		where CONFIG_ID = #{configId}
