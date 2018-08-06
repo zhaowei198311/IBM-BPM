@@ -122,7 +122,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 		DhStep step = dhStep;
 		while (step != null) {
 			if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-				ServerResponse<Map<String, String>> invokeResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), dhStep);
+				ServerResponse<Map<String, String>> invokeResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), step);
 				Map<String,String> invokeResult = invokeResponse.getData();
 				if(invokeResult.get("status").equals("1")) {
 					// status == 1 表示调用出现异常
