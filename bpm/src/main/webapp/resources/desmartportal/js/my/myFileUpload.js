@@ -209,21 +209,21 @@ $(function(){
 			          layer.closeAll('loading');
 			        }
 			  });
-			  
-			  dragDiv.get(0).addEventListener("dragenter", function(e){ 
-				    e.stopPropagation(); 
-				    e.preventDefault(); 
-				}, false);  
-			  /* document.getElementById(dragId) */
-			  dragDiv.get(0).addEventListener("dragover", function(e){ 
-				    e.stopPropagation(); 
-				    e.preventDefault(); 
-				}, false); 
-			  dragDiv.get(0).addEventListener("drop", function(e){ 
-				    e.stopPropagation(); 
-				    e.preventDefault(); 
-				}, false);
-
+			  if(window.innerWidth>700){
+				  dragDiv.get(0).addEventListener("dragenter", function(e){ 
+					    e.stopPropagation(); 
+					    e.preventDefault(); 
+					}, false);  
+				  /* document.getElementById(dragId) */
+				  dragDiv.get(0).addEventListener("dragover", function(e){ 
+					    e.stopPropagation(); 
+					    e.preventDefault(); 
+					}, false); 
+				  dragDiv.get(0).addEventListener("drop", function(e){ 
+					    e.stopPropagation(); 
+					    e.preventDefault(); 
+					}, false);
+			  }
 	});
 	
 	loadFileList(true);//加载附件列表

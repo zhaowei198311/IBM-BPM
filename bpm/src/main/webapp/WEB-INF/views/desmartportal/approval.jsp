@@ -212,22 +212,22 @@
             </div>
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-sm3">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
-            <div class="layui-col-sm6">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-sm3">填写时间：
+            <div class="layui-col-sm4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
+            <div class="layui-col-sm4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
+            <div class="layui-col-sm4">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
-            <div class="layui-col-sm3">
+            <div class="layui-col-sm4">
             	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
             </div>
-            <div class="layui-col-sm6">
+            <div class="layui-col-sm4">
 				<c:if test="${!empty bpmForm.formNo }">
 					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
 				</c:if>
             </div>
-            <div class="layui-col-sm3">
+            <div class="layui-col-sm4">
             	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
             </div>
         </div>
@@ -384,29 +384,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- 下个环节信息 -->
-        <div class="display_container2">
-            <div class="display_content2" style="width:700px;left:44%">
-                <div class="top">下个环节信息</div>
-                <div class="middle2">
-                    <table class="layui-table">
-                        <col width="14%">
-                        <col width="35%">
-                        <col width="13%">
-                        <col width="33%">
-                        <col width="7%">
-                        <tbody id="choose_user_tbody">
-
-                        </tbody>
-                    </table>
-                </div>
-                <div class="foot">
-                    <button class="layui-btn sure_btn" onclick="doSubmit();">确定</button>
-                    <button class="layui-btn layui-btn-primary cancel_btn" onclick="$('.display_container2').css('display','none')">取消</button>
-                </div>
-            </div>
-        </div>
     </div>
     <!--IE8只能支持jQuery1.9-->
     <!--[if lte IE 8]>
@@ -417,6 +394,29 @@
 		  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
 		  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
+	<!-- 下个环节信息 -->
+	<div class="display_container2">
+		<div class="display_content2" style="width: 700px; left: 44%">
+			<div class="top">下个环节信息</div>
+			<div class="middle2">
+				<table class="layui-table">
+					<col width="14%">
+					<col width="35%">
+					<col width="13%">
+					<col width="33%">
+					<col width="7%">
+					<tbody id="choose_user_tbody">
+
+					</tbody>
+				</table>
+			</div>
+			<div class="foot">
+				<button class="layui-btn sure_btn" onclick="doSubmit();">确定</button>
+				<button class="layui-btn layui-btn-primary cancel_btn"
+					onclick="$('.display_container2').css('display','none')">取消</button>
+			</div>
+		</div>
+	</div>
 	<div class="display_container_file">
 	    <div class="display_content_accessory_file" id="upload_file_modal">
 	        <div class="top">文件上传</div>

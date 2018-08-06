@@ -556,14 +556,16 @@ jQuery.fn.desNumber = function () {
 		if (this.value.slice(0, 1) == ".") {
 			this.value = "";
 		}
+		if(/[^1234567890.]/){
+			this.value = this.value.replace(/[^1234567890.]/g,"");
+		}
+		this.value = this.value.replace(/[^1234567890.]/g,"");
 	});
 	this.bind("blur", function () {
 		if (this.value.slice(-1) == ".") {
 			this.value = this.value.slice(0, this.value.length - 1);
-		}else if(/^[\u4e00-\u9fa5]/.test(this.value)){
-			this.value = "";
-		}else if(/^[a-zA-Z]/.test(this.value)){
-			this.value = "";
+		}else if(/[^1234567890.]/){
+			this.value = this.value.replace(/[^1234567890.]/g,"");
 		}
 	});
 };

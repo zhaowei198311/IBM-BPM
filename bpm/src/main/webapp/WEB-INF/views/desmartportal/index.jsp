@@ -39,10 +39,10 @@
 	</style>
 </head>
 
-<body class="layui-layout-body">
+<body>
 	<div id="LAY_app">
 		<div class="layui-layout layui-layout-admin">
-			<div class="layui-header" style="min-width:1024px;">
+			<div class="layui-header">
 				<div class="layui-nav index_top">
 					<span class="layui-breadcrumb" style="margin-left: 220px;float: left;">
 						<a href="javascript:;">我的任务</a>
@@ -121,7 +121,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="layui-body" id="LAY_app_body" style="margin-bottom: 40px;min-width:1024px;">
+			<div class="layui-body" id="LAY_app_body" style="margin-bottom: 40px;min-width:1250px;">
 				<div class="layadmin-tabsbody-item layui-show">
 					<iframe src="menus/backlog" id="frameContent" name="iframe0" frameborder="0" class="layadmin-iframe"></iframe>
 					<div class="menu_detail1">
@@ -150,7 +150,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="layui-footer" style="min-width:1024px;">
+			<div class="layui-footer">
 				<div class="footer">Copyright &copy; 来伊份 2018</div>
 			</div>
 			<!-- 辅助元素，一般用于移动设备下遮罩 -->

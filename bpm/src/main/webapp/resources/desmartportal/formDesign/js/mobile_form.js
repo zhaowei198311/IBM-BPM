@@ -97,8 +97,9 @@ function drawPage() {
 								+'<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' 
 								+'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
 						}
-						
-						trHtml += '<td data-label="' + thObj.text().trim() + '" style="display:none;">';
+						if(thObj.text().trim()!="操作"){
+							trHtml += '<td data-label="' + thObj.text().trim() + '" style="display:none;">';
+						}
 						switch (thObj.attr("col-type")) {
 							case "text": {
 								trHtml += '<input type="text" class="layui-input"/>';
@@ -116,11 +117,11 @@ function drawPage() {
 								trHtml += '<select></select>';
 								break;
 							}
-							case "tool": {
+							/*case "tool": {
 								trHtml += '<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' +
 									'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
 								break;
-							};
+							};*/
 						}
 						trHtml += '</td>';
 					}
