@@ -19,8 +19,7 @@ public abstract class DhOneTimeJavaClassTrigger implements DhJavaClassTriggerTem
      */
     public final boolean beInvoked(WebApplicationContext ac, String insUid, DhStep dhStep) {
         DhTriggerInvokeRecordMapper dhTriggerInvokeRecordMapper = ac.getBean(DhTriggerInvokeRecordMapper.class);
-        DhTriggerInvokeRecord dhTriggerInvokeRecord = dhTriggerInvokeRecordMapper.queryByInsUidAndStepUid(insUid, dhStep.getStepUid());
-        return dhTriggerInvokeRecord != null;
+        return dhTriggerInvokeRecordMapper.queryByInsUidAndStepUid(insUid, dhStep.getStepUid()).size() > 0;
     }
 
     /**
