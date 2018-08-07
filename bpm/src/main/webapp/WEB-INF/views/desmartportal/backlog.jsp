@@ -342,7 +342,7 @@
 
     // 打开 代办的 详细页面
     function openApproval(taskUid) {
-        window.location.href = 'menus/approval?taskUid=' + taskUid;
+        window.location.href = common.getPath() + '/menus/approval?taskUid=' + taskUid;
     }
     //模糊查询
     function search() {
