@@ -2346,6 +2346,7 @@
 				</div>
 			</div>
 		</div>
+		<script src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
 		<script>
 			function resizeCanvas(size) {
 
