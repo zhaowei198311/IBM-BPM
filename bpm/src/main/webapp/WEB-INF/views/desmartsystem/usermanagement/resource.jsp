@@ -161,7 +161,7 @@
 		}
 		
 		function detail(){
-			window.location.href="sysResource/resource";
+			window.location.href='<%=request.getContextPath()%>/sysResource/resource';
 		}
 
 	</script>

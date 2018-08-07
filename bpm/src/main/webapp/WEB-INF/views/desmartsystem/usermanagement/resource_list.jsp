@@ -144,7 +144,7 @@
 		}
 		
 		function detail(resouceUid){
-			window.location.href="sysResource/resource?resouceUid="+resouceUid;
+			window.location.href='<%=request.getContextPath()%>/sysResource/resource?resouceUid='+resouceUid;
 		}
 
 	</script>
