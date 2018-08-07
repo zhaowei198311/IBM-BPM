@@ -453,16 +453,13 @@ public class DhStepServiceImpl implements DhStepService {
             // 如果当前步骤是表单步骤返回调用成功
             if (DhStep.TYPE_FORM.equals(step.getStepType())) {
                 return ServerResponse.createBySuccess();
-            }
-            if (StringUtils.isNotBlank(step.getStepObjectUid())) {
-           
+            } else if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
                    ServerResponse response = dhTriggerService.invokeTrigger(wac, dhTaskInstance.getInsUid(), step);
                    Map map = (Map) response.getData();
                    if("1".equals(map.get("status"))) {
                 	   log.error("调用step失败：stepUid:" + step.getStepUid() + "任务实例id：" + dhTaskInstance.getTaskUid(), map.get("msg"));
                        return ServerResponse.createByErrorMessage("表单前触发器调用失败");
                    }
-        
             }
             step = getNextStepOfCurrStep(step);
         }

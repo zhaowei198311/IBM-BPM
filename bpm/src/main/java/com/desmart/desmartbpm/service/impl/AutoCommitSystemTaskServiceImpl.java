@@ -144,10 +144,10 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
                 currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
 
         // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
-        if (dhRouteService.isFirstTaskOfSubProcessAndWasRejected(currTaskNode, dhProcessInstance)) {
+        if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
             DhTaskInstance taskSelective = new DhTaskInstance();
             taskSelective.setTaskUid(currTask.getTaskUid());
-            taskSelective.setInsUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
+            taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
             taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
             dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
         } else {
