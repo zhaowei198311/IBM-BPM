@@ -342,7 +342,7 @@ function checkDraftsExtis(){
     var userId = $("#userId").val();
     var insTitle = $("#insTitle").val();
     $.ajax({
-        url: "drafts/checkDraftsExtis",
+        url: common.getPath() +"/drafts/checkDraftsExtis",
         method: "post",
         async: false,
         data: {
