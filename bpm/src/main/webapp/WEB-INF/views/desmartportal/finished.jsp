@@ -209,7 +209,7 @@
 		// 获取用户有多少已办
 		function getUserTask(){
 			$.ajax({
-				url : 'taskInstance/alreadyClosedTask',
+				url : common.getPath() +'/taskInstance/alreadyClosedTask',
 				type : 'POST',
 				dataType : 'text',
 				data : {},
@@ -226,7 +226,7 @@
 		
 		function getTaskInstanceInfo(){
 			$.ajax({
-				url : 'taskInstance/loadPageTaskByClosed',
+				url : common.getPath() +'/taskInstance/loadPageTaskByClosed',
 				type : 'post',
 				dataType : 'json',
 				beforeSend:function(){
@@ -370,7 +370,7 @@
 		}
 		//进入已办详情页面
 		function openFinishedDetail(taskUid){
-			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/finshed_detail?taskUid='+taskUid;
 		}
 		
 		//跟踪流程图
