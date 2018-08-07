@@ -4,6 +4,8 @@ import com.desmart.desmartbpm.entity.DhTriggerInvokeRecord;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DhTriggerInvokeRecordMapper {
 
@@ -20,7 +22,7 @@ public interface DhTriggerInvokeRecordMapper {
      * @param stepUid
      * @return
      */
-    DhTriggerInvokeRecord queryByInsUidAndStepUid(@Param("insUid") String insUid, @Param("stepUid") String stepUid);
+    List<DhTriggerInvokeRecord> queryByInsUidAndStepUid(@Param("insUid") String insUid, @Param("stepUid") String stepUid);
 
 
 }
