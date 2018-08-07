@@ -300,7 +300,7 @@ ul {
 			$(".display_container2").css("display", "none");
 			$(".display_container4").css("display", "none");
 		})
-		var url = 'sysDepartment/treeDisplay';
+		var url = '<%=request.getContextPath()%>/sysDepartment/treeDisplay';
 		setting.callback = {
 			onClick : onClick
 		}
@@ -456,7 +456,7 @@ ul {
 				success : function(data1) {
 					$.ajax({
 						type : 'POST',
-						url : 'sysRole/roleList',
+						url : '<%=request.getContextPath()%>/sysRole/roleList',
 						dataType : "json",
 						cache : false,
 						data:{roleType:1,isClosed:1,roleName:$('#jsbd_roleName').val()},
