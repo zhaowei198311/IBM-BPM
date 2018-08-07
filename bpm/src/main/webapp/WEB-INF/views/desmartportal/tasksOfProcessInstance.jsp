@@ -188,7 +188,7 @@
 // 		var insInitUser = $("#insInitUser").val();
 		// 按条件查询 流程
 		$.ajax({
-			url : 'taskInstance/loadPageTaskByStartProcess',
+			url : common.getPath() +'/taskInstance/loadPageTaskByStartProcess',
 			type : 'post',
 			dataType : 'json',
 			data : {
@@ -373,22 +373,22 @@
 		var taskUid = $(a).prev().attr("id");
 		var taskStatus = $(a).data("taskstatus");
 		if(taskStatus == 12 ){
-			window.location.href = 'menus/approval?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/approval?taskUid='+taskUid;
 		}else if(taskStatus == -2 ){
-			window.location.href = 'menus/approval?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/approval?taskUid='+taskUid;
 		}else if(taskStatus == 32){
-			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/finshed_detail?taskUid='+taskUid;
 		}
 	}
 	function dbGoToTask(a){
 		var taskUid = $(a).find("td").eq(0).attr("id");
 		var taskStatus = $(a).find("td").eq(1).data("taskstatus");
 		if(taskStatus == 12 ){
-			window.location.href = 'menus/approval?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/approval?taskUid='+taskUid;
 		}else if(taskStatus == -2 ){
-			window.location.href = 'menus/approval?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/approval?taskUid='+taskUid;
 		}else if(taskStatus == 32){
-			window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+			window.location.href = common.getPath() +'/menus/finshed_detail?taskUid='+taskUid;
 		}
 	}
 	// 返回
