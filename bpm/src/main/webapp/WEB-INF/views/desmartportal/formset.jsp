@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <title>表单设置</title>
 <%@include file="formset_head.jsp"%>
 <style type="text/css">
