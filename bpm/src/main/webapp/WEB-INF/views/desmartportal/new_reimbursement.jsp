@@ -299,6 +299,7 @@
 </html>
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 	<script>
 		$(function(){
 			$(".add_row").click(function(){
