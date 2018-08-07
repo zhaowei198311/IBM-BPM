@@ -410,7 +410,7 @@
 		var verUid = $('#verUid').val();
 		var proName = $('#proName').val();
 		var categoryName = $('#categoryName').val();
-		window.location.href = 'menus/startProcess?proUid=' + proUid
+		window.location.href = common.getPath() + '/menus/startProcess?proUid=' + proUid
 				+ '&proAppId=' + proAppId + '&verUid=' + verUid + '&proName='
 				+ proName + '&categoryName=' + categoryName
 				+ '&insBusinessKey=' + insBusinessKey;
