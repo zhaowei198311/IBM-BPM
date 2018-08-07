@@ -111,7 +111,7 @@
 		function getOnDicDataList(){
 			// 选中行id
 			$.ajax({
-				url: "sysDictionary/listOnDicDataBydicUid",
+				url: '<%=request.getContextPath()%>/sysDictionary/listOnDicDataBydicUid',
 				method: "post",
 				async:false,
 				data: {

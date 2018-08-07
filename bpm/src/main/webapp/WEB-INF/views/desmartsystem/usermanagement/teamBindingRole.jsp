@@ -104,7 +104,7 @@ $(function () {
         }
         
         $.ajax({
-            url: "sysTeamMember/addSysTeamMember",
+            url: '<%=request.getContextPath()%>/sysTeamMember/addSysTeamMember',
             dataType: "json",
             type: "post",
             data: {userUid:roleIds.join(","),memberType:'role',teamUid:teamUid},
@@ -143,7 +143,7 @@ $(function () {
         }
         
         $.ajax({
-            url: "sysTeamMember/deleteSysTeamMembers",
+            url: '<%=request.getContextPath()%>/sysTeamMember/deleteSysTeamMembers',
             dataType: "json",
             type: "post",
             data: {memberUids:memberUids},
@@ -164,7 +164,7 @@ $(function () {
 
 function searchRole(){
 	$.ajax({
-        url: "sysRole/roleList",
+        url: '<%=request.getContextPath()%>/sysRole/roleList',
         dataType: "json",
         type: "post",
         data: {roleType:1,isClosed:1,roleName:$('#search_input').val()},
@@ -190,7 +190,7 @@ function searchRole(){
 function init() {
 	$.ajax({
 		type:'POST',
-		url:'sysTeamMember/allSysTeamMember',
+		url:'<%=request.getContextPath()%>/sysTeamMember/allSysTeamMember',
 		dataType:"json",
 		data:{memberType:'role',teamUid:teamUid,isClosed:1},
 		cache: false,
@@ -204,7 +204,7 @@ function init() {
 			 
 			 
 			 $.ajax({
-		        url: "sysRole/roleList",
+		        url: '<%=request.getContextPath()%>/sysRole/roleList',
 		        dataType: "json",
 		        type: "post",
 		        data: {roleType:1,isClosed:1,roleName:$('#search_input').val()},
