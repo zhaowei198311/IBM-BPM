@@ -144,7 +144,7 @@
 </body>
 
 </html>
-
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script>
     // 为翻页提供支持
     var pageConfig = {
@@ -238,7 +238,7 @@
 
     function getTaskInstanceInfo() {
         $.ajax({
-            url: 'taskInstance/loadBackLog',
+            url:common.getPath() + '/taskInstance/loadBackLog',
             type: 'post',
             dataType: 'json',
             beforeSend:function(){
@@ -369,7 +369,7 @@
  	// 获取用户有多少代办
 	function getUserTask() {
 		$.ajax({
-			url: 'user/todoTask',
+			url: common.getPath() +'/user/todoTask',
 			type: 'POST',
 			dataType: 'text',
 			success: function (result) {
