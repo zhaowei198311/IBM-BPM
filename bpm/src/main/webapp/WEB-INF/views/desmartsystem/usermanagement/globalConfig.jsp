@@ -194,7 +194,7 @@
 	
 	function getGlobalConfigInfo() {
 		$.ajax({
-			url : 'globalConfig/allGlobalConfig',
+			url : '<%=request.getContextPath()%>/globalConfig/allGlobalConfig',
 			type : 'POST',
 			dataType : 'json',
 			data : {
