@@ -364,6 +364,7 @@
 		</div>
 	</div>
 </body>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript">
 	$(function(){
 		$(".data-table").find("input[type='tel']").desNumber();
