@@ -158,7 +158,7 @@
 				
 				$.ajax({
 					type:'post',
-					url:'dhRoute/choosableHandler',
+					url:'<%=request.getContextPath()%>/dhRoute/choosableHandler',
 					data:{
 					    'insUid': insUid,
                         'companyNum': companyNum,
