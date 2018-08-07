@@ -214,6 +214,34 @@ var common = {
 			 })
 		  }	
 	 },
+	//初始化时间控件
+	initTime:function(){
+		var dateInput = $("#formSet").find(".date");
+		dateInput.prop("readonly", true);
+		layui.use(['laydate'], function () {
+			var laydate = layui.laydate;
+			dateInput.each(function () {
+				$(this)[0].type = "text";
+				var isDatetime = $(this).attr("date_type");
+				var dateType = "date";
+				if(isDatetime=="true"){
+					dateType = "datetime";
+				}
+				var dateInputId = $(this).prop("id");
+				// 日期
+				laydate.render({
+					elem: "#"+dateInputId,
+					trigger: 'click',
+					type: dateType,
+					position: 'fixed',
+					done:function(value){
+						$("#"+dateInputId).val(value);
+						$("#"+dateInputId).trigger("change");
+					}
+				});
+			});
+		});
+	},
 	//抽取页面中动态表单的数据
 	getDesignFormData:function(){
 		var inputArr = $("#formSet .form-sub input");
@@ -410,7 +438,9 @@ var common = {
 									tableJson += "\""+tdName+"\":"+tdValue+"";
 								}
 							}else{
-								tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+								if(tdValue!=null && tdValue!=""){
+									tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+								}
 							}
 							if(tdIndex!=tdArr.length-2){
 								tableJson += ","
@@ -909,7 +939,7 @@ var common = {
 							icon: 2
 						});
 					}
-					var Y = $(this).offset().top-170;
+					var Y = $(this).offset().top-190;
 					$("body,html").animate({scrollTop: Y}, 500);
 					flag = false;
 				}

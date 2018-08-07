@@ -110,7 +110,8 @@ function drawPage() {
 								break;
 							}
 							case "date": {
-								trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+								var layKey = _getRandomString(2);
+								trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'"/>';
 								break;
 							}
 							case "select": {
@@ -417,7 +418,6 @@ function drawPage() {
 				dateType = "datetime";
 			}
 			var isChange = $(this).attr("onchange")==null || $(this).attr("onchange")=="" ? "false" : "true";
-			console.log(isChange);
 			calendar.init({
 				'trigger': '#'+id,
 				'type': dateType,
@@ -512,12 +512,16 @@ jQuery.fn.desNumber = function () {
 		if (this.value.slice(0, 1) == ".") {
 			this.value = "";
 		}
+		if(/[^1234567890.]/){
+			this.value = this.value.replace(/[^1234567890.]/g,"");
+		}
+		this.value = this.value.replace(/[^1234567890.]/g,"");
 	});
 	this.bind("blur", function () {
 		if (this.value.slice(-1) == ".") {
 			this.value = this.value.slice(0, this.value.length - 1);
-		}else if(/^[\u4e00-\u9fa5]/.test(this.value)){
-			this.value = "";
+		}else if(/[^1234567890.]/){
+			this.value = this.value.replace(/[^1234567890.]/g,"");
 		}
 	});
 };
@@ -536,3 +540,14 @@ jQuery.fn.number = function () {
 		return false;
 	});
 }; 
+
+function _getRandomString(len) {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+}

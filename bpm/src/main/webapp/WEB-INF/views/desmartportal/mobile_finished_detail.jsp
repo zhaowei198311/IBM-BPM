@@ -25,7 +25,7 @@
     <script type="text/javascript" src="resources/desmartportal/js/my/mobile_finished_detail.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 </head>
-<body style="background-color: #f2f2f2;margin-bottom:40px;">
+<body style="background-color: #f2f2f2;margin-bottom:80px;">
     <div class="mobile_container">
         <div class="mobile_top">
             <div class="top_left">

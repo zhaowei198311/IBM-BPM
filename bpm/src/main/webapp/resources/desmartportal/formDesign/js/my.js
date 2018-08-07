@@ -1,5 +1,8 @@
 var form = null;
 var view = null;
+var layedit = null;
+var laydate = null;
+var upload = null;
 /*动态表单渲染js*/
 $(function () {
 	drawPage();
@@ -113,7 +116,8 @@ function drawPage() {
 									break;
 								}
 								case "date": {
-									trHtml += '<input type="date" class="layui-input date" id="date_1"/>';
+									var layKey = _getRandomString(2);
+									trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'" lay-key="'+layKey+'"/>';
 									break;
 								}
 								case "tool": {
@@ -399,8 +403,6 @@ function drawPage() {
 				$("#"+id).trigger("change");
 			});
 		});
-		
-		form.render();
 
 		view.find(".editor_textarea").each(function () {
 			var editorId = $(this).prop("id");
@@ -421,7 +423,7 @@ function drawPage() {
 			});
 		});
 
-		var dateInput = view.find(".date");
+		/*var dateInput = view.find(".date");
 		dateInput.prop("readonly", true);
 		dateInput.each(function () {
 			$(this)[0].type = "text";
@@ -430,11 +432,10 @@ function drawPage() {
 			if(isDatetime=="true"){
 				dateType = "datetime";
 			}
-			$(this).next().remove();
 			var dateInputId = $(this).prop("id");
 			// 日期
-			var index = laydate.render({
-				elem: '#' + dateInputId,
+			laydate.render({
+				elem: "#"+dateInputId,
 				trigger: 'click',
 				type: dateType,
 				position: 'fixed',
@@ -443,7 +444,9 @@ function drawPage() {
 					$("#"+dateInputId).trigger("change");
 				}
 			});
-		});
+		});*/
+
+		form.render();
 	});
 }
 
@@ -506,21 +509,20 @@ function chooseDicData(obj) {
 
 function addDataRow(obj) {
 	var trHtml = $(obj).parent().parent().html();
-	var trNum = $(obj).parent().parent().parent().find("tr").length + 1;
-	var layKey = parseInt($(obj).parent().parent().find(".date").attr("lay-key")) + 1;
+	var layKey = _getRandomString(2);
 	$(obj).parent().parent().parent().append("<tr>" + trHtml + "</tr>");
 	$(obj).parent().parent().parent().find("tr:last").find(".layui-input").val("");
-	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + trNum).attr("lay-key", layKey);
+	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + layKey).attr("lay-key", layKey);
 	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
 
 	var dateInput = $(obj).parent().parent().parent().find(".date");
 	if ($(window).width() < 568) {
 		dateInput.attr("type", "text");
 	}
-	dateInput.each(function () {
-		var dateInputId = $(this).prop("id");
-		layui.use(['laydate'], function () {
-			laydate = layui.laydate;
+	layui.use(['laydate'], function () {
+		laydate = layui.laydate;
+		dateInput.each(function () {
+			var dateInputId = $(this).prop("id");
 			laydate.render({
 				elem: '#' + dateInputId,
 				trigger: 'click'
@@ -556,7 +558,7 @@ jQuery.fn.desNumber = function () {
 		if (this.value.slice(0, 1) == ".") {
 			this.value = "";
 		}
-		if(/[^1234567890.]/){
+		if(/[^1234567890.]/.test(this.value)){
 			this.value = this.value.replace(/[^1234567890.]/g,"");
 		}
 		this.value = this.value.replace(/[^1234567890.]/g,"");
@@ -564,7 +566,7 @@ jQuery.fn.desNumber = function () {
 	this.bind("blur", function () {
 		if (this.value.slice(-1) == ".") {
 			this.value = this.value.slice(0, this.value.length - 1);
-		}else if(/[^1234567890.]/){
+		}else if(/[^1234567890.]/.test(this.value)){
 			this.value = this.value.replace(/[^1234567890.]/g,"");
 		}
 	});

@@ -32,6 +32,7 @@
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/city.js"></script>
 <style type="text/css">
 .container-fluid {
 	padding-right: 0px;
@@ -406,6 +407,8 @@
 		var formFieldPer = $("#fieldPermissionInfo").text().trim();
 		common.giveFormFieldPermission(formFieldPer);
         form.render();
+        
+        common.initTime();
 	});
 
 </script>
