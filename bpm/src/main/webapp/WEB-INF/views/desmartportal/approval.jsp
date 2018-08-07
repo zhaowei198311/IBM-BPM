@@ -39,6 +39,7 @@
     <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css" />
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/wPaint.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/city.js"></script>
 
     <style type="text/css">
         .container-fluid {
@@ -570,6 +571,7 @@
 <script type="text/javascript">
     $(function () {
         $(".data-table").find("input[type='tel']").desNumber();
+        common.initTime();
     });
 </script>
 </html>
