@@ -37,6 +37,16 @@ public interface DhRoutingRecordService {
 																						boolean willTokenMove);
 
 	/**
+	 * 为提交第一个节点生成流转信息
+	 * @param taskInstance  任务实例
+	 * @param bpmRoutingData  流转预测信息
+	 * @param userUid  流程发起人
+	 * @return
+	 */
+	DhRoutingRecord generateFirstTaskNodeOfSubProcessRoutingData(DhTaskInstance taskInstance,
+																 BpmRoutingData bpmRoutingData, String userUid);
+
+	/**
 	 * 为系统任务生成流转记录
 	 * @param taskNode 任务节点
 	 * @param currTask  当前任务实例

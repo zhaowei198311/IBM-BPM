@@ -55,7 +55,7 @@ public class TestController extends BaseWebController {
     @Autowired
     private DhTransferService dhTransferService;
     @Autowired
-    private DhProcessAppUpdateService dhProcessAppUpdateService;
+    private DhTriggerStepService dhTriggerStepService;
     
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -337,6 +337,10 @@ public class TestController extends BaseWebController {
     }
 
 
-
+    @RequestMapping(value = "/testRetryException")
+    @ResponseBody
+    public ServerResponse testRetryException(String id) {
+        return dhTriggerStepService.retryErrorStepAndSubmitTask(id);
+    }
 
 }

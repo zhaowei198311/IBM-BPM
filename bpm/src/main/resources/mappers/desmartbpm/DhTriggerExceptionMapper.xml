@@ -2,60 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhTriggerExceptionMapper" >
 
-	<!-- <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhStep" >
-	    <id column="ID" property="id" jdbcType="VARCHAR"/>
-	    <result column="TASK_ID" property="taskId" jdbcType="VARCHAR" />
-	    <result column="STEP_ID" property="stepId" jdbcType="VARCHAR" />
-	    <result column="INS_ID" property="insId" jdbcType="VARCHAR" />
-	    <result column="CREATE_TIME" property="createTime" jdbcType="DATE" />
-	    <result column="MQ_MESSAGE" property="mqMessage" jdbcType="VARCHAR" />
-	    <result column="ERROR_MESSAGE" property="errorMessage" jdbcType="VARCHAR" />
-	    <result column="REQUEST_PARAM" property="requestParam" jdbcType="VARCHAR" />
-	</resultMap> -->
-	
     <sql id="base_column">
-        ID,
-        TASK_ID,
-        STEP_ID,
-        INS_ID,
-        CREATE_TIME,
-        MQ_MESSAGE,
-        ERROR_MESSAGE,
-        REQUEST_PARAM,
-        STATUS
+        ID, TASK_ID, STEP_ID, INS_ID, CREATE_TIME,
+        MQ_MESSAGE, ERROR_MESSAGE, REQUEST_PARAM,
+        STATUS, RETRY_COUNT, task_uid
     </sql>
 
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
-        insert into DH_TRIGGER_EXCEPTION 
-            (<include refid="base_column"/>)
+        insert into DH_TRIGGER_EXCEPTION
+        (<include refid="base_column"/>)
         values (
-            #{id}, #{taskId}, #{stepId}, #{insId}, sysdate, #{mqMessage}, #{errorMessage}, #{requestParam}, #{status}
+        #{id}, #{taskId}, #{stepId}, #{insId}, sysdate, #{mqMessage}, #{errorMessage}, #{requestParam}, #{status}, 0, #{taskUid}
         )
     </insert>
-   
-  <!--   
-    <select id="getByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTrigger">
-        select <include refid="base_column"/> from dh_trigger
-        where tri_Uid = #{triUid}
+
+
+    <select id="qureyByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTriggerException">
+        select <include refid="base_column"/> from DH_TRIGGER_EXCEPTION
+        where id = #{id}
     </select>
 
-    <select id="searchBySelective" parameterType="com.desmart.desmartbpm.entity.DhTrigger" resultType="com.desmart.desmartbpm.entity.DhTrigger">
-        select <include refid="base_column"/> from dh_trigger
-        <where>
-            <if test="triTitle != null and !triTitle.trim().isEmpty()" >
-                tri_title like '%' || #{triTitle} || '%'
-            </if>
-            <if test="triType != null and !triType.trim().isEmpty()" >
-                and tri_type = #{triType}
-            </if>
-        </where>
-
+    <select id="queryByTaskUidAndStepUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerException">
+        select <include refid="base_column"/> from DH_TRIGGER_EXCEPTION
+        where task_uid = #{taskUid} and step_id = #{stepUid}
     </select>
-	
-	<delete id="delete" parameterType="java.lang.String">
-		delete from dh_trigger 
-		<where>
-			TRI_UID = #{triUid}
-		</where>
-	</delete> -->
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
+        update DH_TRIGGER_EXCEPTION
+        <set>
+            <if test="errorMessage != null">
+                error_message = #{errorMessage},
+            </if>
+            <if test="requestParam != null">
+                request_param = #{requestParam},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="retryCount != null">
+                retry_Count = #{retryCount},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
 </mapper>

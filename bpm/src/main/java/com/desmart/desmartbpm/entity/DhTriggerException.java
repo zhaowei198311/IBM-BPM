@@ -32,6 +32,11 @@ public class DhTriggerException implements Serializable{
 	private String requestParam;  //请求参数
 	
 	private String status;//异常数据状态
+
+	private Integer retryCount; // 重试次数 初始为0
+
+	private String taskUid;  // 任务主键
+
 	
 	public String getId() {
 		return id;
@@ -103,5 +108,21 @@ public class DhTriggerException implements Serializable{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Integer getRetryCount() {
+		return retryCount;
+	}
+
+	public String getTaskUid() {
+		return taskUid;
+	}
+
+	public void setTaskUid(String taskUid) {
+		this.taskUid = taskUid;
+	}
+
+	public void setRetryCount(Integer retryCount) {
+		this.retryCount = retryCount;
 	}
 }
