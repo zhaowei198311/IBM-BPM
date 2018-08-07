@@ -44,7 +44,7 @@ function loadDhApprovalOpinionList(){
 	var insUid = $("#insUid").val();//流程实例id--ins_uid
 	//var activityId = $("#activityId").val();//环节id，activity_id
 	$.ajax({
-	     url:"dhApprovalOpinion/loadDhApprovalOpinion.do",
+	     url:common.getPath() +"/dhApprovalOpinion/loadDhApprovalOpinion.do",
 	     type : 'POST',
  		 dataType : 'json',
  		 data : {
@@ -96,7 +96,7 @@ function save(){
 	var activityId = $("#activityId").val();//环节id，activity_id
 	var taskUid = $("#taskUid").val();
 	$.ajax({
-	     url:"dhApprovalOpinion/insertDhApprovalOpinion.do",
+	     url:common.getPath() +"/dhApprovalOpinion/insertDhApprovalOpinion.do",
 	     type : 'POST',
 		 dataType : 'json',
 		 data : {
@@ -125,7 +125,7 @@ function loadDhroutingRecords(){
 	var insId = $("#insId").val();
 	
 	$.ajax({
-	     url:"dhRoutingRecord/loadDhRoutingRecords.do",
+	     url:common.getPath() +"/dhRoutingRecord/loadDhRoutingRecords.do",
 	     type : 'POST',
 	     data : {
 	    	 insUid:insUid,
