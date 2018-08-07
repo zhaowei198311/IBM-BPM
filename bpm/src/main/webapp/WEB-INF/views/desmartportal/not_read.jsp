@@ -124,7 +124,8 @@
 			</div>
 		</div>
 		<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
-		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
+		<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+		<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>	
 		<!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
@@ -252,7 +253,7 @@ function doPage() {
 	
 	function getTaskInstanceInfo(taskStatus){
 		$.ajax({
-			url : 'taskInstance/queryTransfer',
+			url :common.getPath() + '/taskInstance/queryTransfer',
 			type : 'post',
 			dataType : 'json',
 			beforeSend:function(){
@@ -347,7 +348,7 @@ function doPage() {
 	// 获取用户有多少未读/已读任务
 	function getUserTask(taskStatus,eleId){
 		$.ajax({
-			url : 'taskInstance/queryTransferNumber',
+			url : common.getPath() +'/taskInstance/queryTransferNumber',
 			type : 'POST',
 			dataType : 'text',
 			data : {
@@ -370,7 +371,7 @@ function doPage() {
 	// 打开 抄送详情页面
 	function openApproval(taskUid){
 		updateTaskStatus(taskUid,taskStatus);
-		window.location.href = 'menus/finshed_detail?taskUid='+taskUid;
+		window.location.href = common.getPath() +'/menus/finshed_detail?taskUid='+taskUid;
 	}
 	//模糊查询
 	function search(){
@@ -389,7 +390,7 @@ function doPage() {
 		if (taskStatus = 12) {
 			$.ajax({
 				async: false,
-				url: 'taskInstance/updateTaskStatusOfTransfer',
+				url: common.getPath() +'/taskInstance/updateTaskStatusOfTransfer',
 				type: 'post',
 				dataType: 'json',
 				data:{
