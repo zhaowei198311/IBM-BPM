@@ -31,7 +31,7 @@ function getConductor(id, isSingle, actcCanChooseUser, actcAssignType,actcChoose
     }
     console.log(actcAssignType);
     console.log(actcChooseableHandlerType);
-    var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
+    var url = common.getPath()+'/sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle + '&actcCanChooseUser=' + actcCanChooseUser
         + '&actcAssignType=' + actcAssignType +'&actcChooseableHandlerType='+actcChooseableHandlerType + '&taskUid=' + $('#taskUid').val();
     var index = layer.open({
         type: 2,
@@ -101,7 +101,7 @@ $(function () {
 		    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
 		    
 		    $.ajax({
-		        url: 'taskInstance/rejectTask',
+		        url: common.getPath()+'/taskInstance/rejectTask',
 		        type: 'POST',
 		        dataType: 'json',
 		        data: {
@@ -373,7 +373,7 @@ function submitTask() {
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
     finalData.approvalData = {"aprOpiComment":aprOpiComment};
     $.ajax({
-        url: 'taskInstance/finshedTask',
+        url: common.getPath() +'/taskInstance/finshedTask',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -425,7 +425,7 @@ function skipFromReject() {
     finalData.approvalData = {"aprOpiComment": aprOpiComment};
 
     $.ajax({
-        url: 'taskInstance/skipFromReject',
+        url: common.getPath() +'/taskInstance/skipFromReject',
         type: 'post',
         dataType: 'json',
         data: {
@@ -465,7 +465,7 @@ function queryRejectByActivitiy() {
     	return;
     }
     $.ajax({
-        url: 'processInstance/queryRejectByActivity',
+        url: common.getPath() +'/processInstance/queryRejectByActivity',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -544,7 +544,7 @@ function checkUserData() {
 // 为提交任务显示选人栏
 function showRouteBar() {
     $.ajax({
-        url:"dhRoute/showRouteBar",
+        url:common.getPath() +"/dhRoute/showRouteBar",
         type:"post",
         data:{
             "taskUid": $("#taskUid").val(),
