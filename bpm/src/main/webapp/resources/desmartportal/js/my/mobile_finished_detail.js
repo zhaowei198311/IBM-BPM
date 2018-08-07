@@ -23,7 +23,7 @@ function back() {
 //取回
 function revokeTask(taskUid) {
     $.ajax({
-        url : "taskInstance/revokeTask",
+        url : common.getPath() +"/taskInstance/revokeTask",
         type : "post",
         dataType : "json",
         data : {
