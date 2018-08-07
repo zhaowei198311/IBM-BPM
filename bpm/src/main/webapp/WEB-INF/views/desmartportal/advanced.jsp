@@ -143,6 +143,7 @@
 	</div>
 	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js" ></script>
 	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>	
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 	  <!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
