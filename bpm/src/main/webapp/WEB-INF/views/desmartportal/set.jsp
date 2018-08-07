@@ -555,6 +555,7 @@
 		<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.core.js"></script>
 		<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.excheck.js"></script>
 		<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.exedit.js"></script>
+		<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 		<!--IE8只能支持jQuery1.9-->
 	    <!--[if lte IE 8]>
 	    <script src="http://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
