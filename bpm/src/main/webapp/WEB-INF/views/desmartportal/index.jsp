@@ -270,7 +270,7 @@
 		function getUserTask() {
 			var uId = document.getElementById('userId').value;
 			$.ajax({
-				url: 'user/todoTask',
+				url:common.getPath() + '/user/todoTask',
 				type: 'POST',
 				dataType: 'text',
 				data: {
@@ -382,7 +382,7 @@
 
 	function queryByParent(categoryuid) {
 		$.ajax({
-			url: 'processCategory/queryByParent',
+			url: common.getPath() +'/processCategory/queryByParent',
 			type: 'post',
 			dataType: 'json',
 			async: false,
@@ -408,7 +408,7 @@
 
 	function queryNextGategory(categoryuid) {
 		$.ajax({
-			url: 'processCategory/queryByParent',
+			url: common.getPath() +'/processCategory/queryByParent',
 			type: 'post',
 			dataType: 'json',
 			async: false,
@@ -434,7 +434,7 @@
 
 	function queryPorcess(categoryuid) {
 		$.ajax({
-			url: 'processMeta/searchByCategoryUid',
+			url: common.getPath() +'/processMeta/searchByCategoryUid',
 			type: 'post',
 			dataType: 'json',
 			async: false,
@@ -467,7 +467,7 @@
 	function queryPorcess(categoryuid) {
 
 		$.ajax({
-			url: 'processMeta/searchByCategoryUid',
+			url: common.getPath() +'/processMeta/searchByCategoryUid',
 			type: 'post',
 			dataType: 'json',
 			async: false,
@@ -508,7 +508,7 @@
 	
 	function openProView(insId){
 		$.ajax({
-	        url: 'processInstance/viewProcess',
+	        url: common.getPath() +'/processInstance/viewProcess',
 	        type: 'post',
 	        dataType: 'text',
 	        data: {
