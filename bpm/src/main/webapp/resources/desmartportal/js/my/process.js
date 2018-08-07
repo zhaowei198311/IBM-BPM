@@ -86,7 +86,7 @@ var saveDraftsData = function () {
                 finalData.formData = formData;
                 // 流程数据
                 var processData = {};
-                processData.insUid = $("#insUid").val();
+                processData.insUid = ""+$("#insUid").val();
                 processData.departNo = $("#departNo").val();
                 processData.companyNumber = $("#companyNum").val();
                 finalData.processData = processData;
@@ -107,8 +107,8 @@ var saveDraftsData = function () {
                 });
                 finalData.routeData = routeData;
                 // 保存草稿数据                   
-                var insUid = $("#insUid").val();
-                var userId = $("#userId").val();
+                var insUid = ""+$("#insUid").val();
+                var userId = ""+$("#userId").val();
                 var insTitle = $("#insTitle_input").val();
                 $.ajax({
                     url: "drafts/saveDrafts",
@@ -176,7 +176,7 @@ function toShowRouteBar() {
             url: "dhRoute/showRouteBar",
             method: "post",
             data: {
-                insUid: $("#insUid").val(),
+                insUid: ""+$("#insUid").val(),
                 activityId: $("#activityId").val(),
                 departNo: departNo,
                 companyNum: companyNumber,
@@ -242,7 +242,7 @@ function submitProcess(){
     finalData.formData = formData;
     // 流程数据
     var processData = {};
-    processData.insUid = $("#insUid").val();
+    processData.insUid = ""+$("#insUid").val();
     processData.departNo = $("#departNo").val();
     processData.companyNumber = $("#companyNum").val();
     processData.insTitle = $("#insTitle_input").val();
@@ -253,7 +253,8 @@ function submitProcess(){
     $('.getUser').each(function () {
         var item = {};
         item.activityId = $(this).attr('id');
-        item.userUid = $(this).val();
+        item.userUid = ""+$(this).val();
+        console.log(item.userUid);
         if (item.userUid == null || item.userUid == undefined || item.userUid.trim() == '') {
             lackNextOwner = true;
         }
@@ -317,7 +318,7 @@ function checkDraftsExtis(){
     finalData.formData = formData;
     // 流程数据
     var processData = {};
-    processData.insUid = $("#insUid").val();
+    processData.insUid = ""+$("#insUid").val();
     processData.departNo = $("#departNo").val();
     processData.companyNumber = $("#companyNum").val();
     finalData.processData = processData;
@@ -338,7 +339,7 @@ function checkDraftsExtis(){
     });
     finalData.routeData = routeData;
     // 保存草稿数据                   
-    var insUid = $("#insUid").val();
+    var insUid = ""+$("#insUid").val();
     var userId = $("#userId").val();
     var insTitle = $("#insTitle").val();
     $.ajax({

@@ -242,7 +242,7 @@ $(function () {
 function addSure(){
 	var taskUid = $("#taskUid").val();
 	var taskId = $("#taskId").val();
-	var insUid = $("#insUid").val();
+	var insUid = ""+$("#insUid").val();
 	var usrUid = $("#handleUser").val();
 	var taskActivityId = $("#activityId").val();
 	var taskType = $(".layui-form_1 option:selected").val();
@@ -322,7 +322,7 @@ function doSubmit() {
 function submitTask() {
     var taskId = $("#taskId").val();
     var taskUid = $("#taskUid").val();
-    var insUid = $("#insUid").val();//流程实例id--ins_uid
+    var insUid = ""+$("#insUid").val();//流程实例id--ins_uid
     // 获取审批意见
     var aprOpiComment = $("#myApprovalOpinion").val();
     console.log($("#myApprovalOpinion").val());
@@ -346,7 +346,7 @@ function submitTask() {
     finalData.formData = formData;
     // 流程数据
     var processData = {};
-    processData.insUid = $("#insUid").val();
+    processData.insUid = ""+$("#insUid").val();
     processData.insTitle = $("#insTitle_input").val().trim();
     finalData.processData = processData;
 
@@ -356,7 +356,7 @@ function submitTask() {
     $('.getUser').each(function () {
         var item = {};
         item.activityId = $(this).attr('id');
-        item.userUid = $(this).val();
+        item.userUid = ""+$(this).val();
         if (item.userUid == null || item.userUid == undefined || item.userUid.trim() == '') {
             lackNextOwner = true;
         }
@@ -417,7 +417,7 @@ function skipFromReject() {
     var formData = JSON.parse(common.getDesignFormData());
     // 流程数据
     var processData = {};
-    processData.insUid = $("#insUid").val();
+    processData.insUid = ""+$("#insUid").val();
     processData.insTitle = $("#insTitle_input").val().trim();
     finalData.processData = processData;
     finalData.formData = formData;
@@ -458,7 +458,7 @@ function skipFromReject() {
 // 点击“驳回”按钮触发的动作
 function queryRejectByActivitiy() {
     var activityId = $("#activityId").val();
-    var insUid = $("#insUid").val();
+    var insUid = ""+$("#insUid").val();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     if(aprOpiComment == null || aprOpiComment == "" || aprOpiComment == undefined){
         alertNeedApprovalOpinion();
@@ -548,7 +548,7 @@ function showRouteBar() {
         type:"post",
         data:{
             "taskUid": $("#taskUid").val(),
-            "insUid":$("#insUid").val(),
+            "insUid":""+$("#insUid").val(),
             "activityId":$("#activityId").val(),
             "departNo": $("#departNo").val(),
             "companyNum": $("#companyNum").val(),
@@ -645,7 +645,7 @@ function saveDraftsInfo() {
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
     finalData.approvalData = {"aprOpiComment":aprOpiComment};
     // 保存草稿数据
-    var insUid = $("#insUid").val();
+    var insUid = ""+$("#insUid").val();
 
     var insTitle = $("#insTitle_input").val();
     $.ajax({
