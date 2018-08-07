@@ -130,14 +130,14 @@ h4 {
 </html>
 <script type="text/javascript"
 	src="resources/desmartportal/js/jquery-3.3.1.js"></script>
-<script type="text/javascript"
-	src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 
 <script type="text/javascript">
 
 	function login(){
 		$.ajax({
-			url : 'user/logins',
+			url : common.getPath() +'/user/logins',
 			type : 'post',
 			dataType : 'json',
 			data : {
@@ -154,7 +154,7 @@ h4 {
 				//console.log(data.success);
 				if(data.status == 0){
 					layer.msg('登陆成功');
-					location.href = "user/menus";
+					location.href = common.getPath() +"/user/menus";
 				}else{
 					layer.msg('用户名/密码错误');
 				}
