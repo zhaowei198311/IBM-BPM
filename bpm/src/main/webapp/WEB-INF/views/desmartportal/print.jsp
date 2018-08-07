@@ -18,6 +18,7 @@
     <link href="/bpm/resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="/bpm/resources/desmartportal/css/my.css" rel="stylesheet" />
     <link href="/bpm/resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+    <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <title>打印预览</title>
 <style>
 	.layui-form-label {
