@@ -114,7 +114,7 @@
 
 	function getDraftsInfo() {
 		$.ajax({
-			url : 'drafts/queryDraftsByList',
+			url : common.getPath() +'/drafts/queryDraftsByList',
 			type : 'POST',
 			dataType : 'json',
 			data : {
@@ -211,7 +211,7 @@
 		}, function(index) {
 			// 提交表单的代码，然后用 layer.close 关闭就可以了，取消可以省略 ajax请求
 			$.ajax({
-				url : 'drafts/deleteDraftsById',
+				url : common.getPath() +'/drafts/deleteDraftsById',
 				type : 'POST',
 				dataType : 'text',
 				data : {
@@ -227,7 +227,7 @@
 	}
 
 	function showinfo(proUid,proAppId,insUid) {
-		window.location.href = 'menus/startProcess?proUid=' + ""
+		window.location.href = common.getPath() +'/menus/startProcess?proUid=' + ""
 		+ '&proAppId=' + "" + '&insUid=' + insUid
 	}
 
