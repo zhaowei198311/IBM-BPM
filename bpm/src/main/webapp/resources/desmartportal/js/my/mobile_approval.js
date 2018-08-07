@@ -144,7 +144,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 		var taskUid=$('#taskUid').val();
 		$.ajax({
 			type:'post',
-			url:'dhRoute/choosableHandlerMove',
+			url:common.getPath()+'/dhRoute/choosableHandlerMove',
 			beforeSend:function(){
 				layer.load(1);
 			},
@@ -174,7 +174,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 		});	
 	}else{
 		$.ajax({
-			url:"sysUser/allSysUserMove",
+			url:common.getPath()+"/sysUser/allSysUserMove",
 			beforeSend:function(){
 				layer.load(1);
 			},
@@ -247,7 +247,7 @@ function chooseDicData(obj) {
 	var dicUid = $(obj).parent().find("input[type='text']").attr("database_type");
 	var dicDataUid = $(obj).parent().find("input[type='hidden']").val();
 	$.ajax({
-		url: "sysDictionary/listOnDicDataBydicUidMove",
+		url: common.getPath()+"/sysDictionary/listOnDicDataBydicUidMove",
 		method: "post",
 		async:false,
 		data: {
@@ -325,7 +325,7 @@ function desChooseDepart(obj) {
 	}, 300);
 	var departUid = $(obj).parent().find("input[type='hidden']").val();
 	$.ajax({
-		url:"sysDepartment/allSysDepartmentMove",
+		url:common.getPath()+"/sysDepartment/allSysDepartmentMove",
 		method:"post",
 		data:{
 			pageNo:pageConfigDepart.pageNum,
@@ -671,7 +671,7 @@ function submitTask() {
     finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
     finalData.approvalData = {"aprOpiComment":aprOpiComment};
     $.ajax({
-        url: 'taskInstance/finshedTask',
+        url: common.getPath()+'/taskInstance/finshedTask',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -733,7 +733,7 @@ function skipFromReject() {
     finalData.approvalData = {"aprOpiComment": aprOpiComment};
 
     $.ajax({
-        url: 'taskInstance/skipFromReject',
+        url: common.getPath()+'/taskInstance/skipFromReject',
         type: 'post',
         dataType: 'json',
         data: {
@@ -766,7 +766,7 @@ function queryRejectByActivitiy() {
     var insUid = $("#insUid").val();
     var aprOpiComment = $("#myApprovalOpinion").val();//审批意见
     $.ajax({
-        url: 'processInstance/queryRejectByActivity',
+        url: common.getPath()+'/processInstance/queryRejectByActivity',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -855,7 +855,7 @@ function rejectSure(){
 	    finalData.approvalData = {"aprOpiComment":aprOpiComment}; 
 	    
 	    $.ajax({
-	        url: 'taskInstance/rejectTask',
+	        url: common.getPath()+'/taskInstance/rejectTask',
 	        type: 'POST',
 	        dataType: 'json',
 	        data: {
@@ -985,7 +985,7 @@ function checkUserData() {
 // 为提交任务显示选人栏
 function showRouteBar() {
     $.ajax({
-        url:"dhRoute/showRouteBar",
+        url:common.getPath()+"/dhRoute/showRouteBar",
         method:"post",
         data:{
             "taskUid": $("#taskUid").val(),
