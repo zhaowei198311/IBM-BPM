@@ -22,8 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.desmart.desmartportal.common.Const;
-import com.desmart.desmartportal.service.UserProcessService;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartsystem.entity.SysResource;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.SysResourceService;
@@ -89,7 +88,7 @@ public class MyRealm extends AuthorizingRealm {
         }  
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, password.toCharArray(), this.getName());
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute("userName", userList.get(0).getUserName());
+        session.setAttribute(Const.CURRENT_USER_NAME, userList.get(0).getUserName());
         session.setAttribute(Const.CURRENT_USER, userList.get(0).getUserId());
         session.setTimeout(1800000);
         return authenticationInfo;
