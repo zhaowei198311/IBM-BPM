@@ -658,7 +658,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhRoutingRecord.setInsUid(insUid);
 			switch (rejectType) {
 			case "toProcessStart":
-				logger.info("驳回到发起人");
 				// 发起人
 				// 获得流程发起人
 				String insInitUser = dhProcessInstance.getInsInitUser();
@@ -694,7 +693,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				activitiMapList.add(toProcessStartMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toPreActivity":
-				logger.info("驳回到上个环节");
 				// 上个环节
 				Map<String, Object> toPreActivityMap = new HashMap<>();
 				ServerResponse<BpmActivityMeta> preActiivtyResponse = dhRouteService.getPreActivityByDiagram(dhProcessInstance,
@@ -711,7 +709,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 				activitiMapList.add(toPreActivityMap);
 				return ServerResponse.createBySuccess(activitiMapList);
 			case "toActivities":
-				logger.info("驳回到指定环节");
 				//查询可选配置
 				List<DhActivityReject> dhActivityRejects = dhActivityRejectMapper.listByActivityId(currentbpmActivityMeta3.getSourceActivityId());
 				

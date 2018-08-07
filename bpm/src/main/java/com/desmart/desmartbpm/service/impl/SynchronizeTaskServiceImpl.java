@@ -27,7 +27,6 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
-import com.desmart.common.util.ProcessDataUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
@@ -410,9 +409,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
         int synNumber = 0;
         // 判断是否系统任务
-        if ("TRUE".equals(conf.getActcIsSystemTask())) {
-            // 进一步判断是否是延时任务
-            if (DhActivityConf.DELAY_TYPE_NONE.equals(conf.getActcDelayType())) {
+        if ("TRUE".equals(conf.getActcIsSystemTask()) && !dhRouteService.isFirstTaskOfSubProcessAndWasRejected(bpmActivityMeta, dhProcessInstance)) {
+            if (DhActivityConf.DELAY_TYPE_NONE.equals(conf.getActcDelayType())) { // 进一步判断是否是延时任务
                 // 非延时的系统任务
                 synNumber = -2;
             } else {
@@ -428,7 +426,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 // 将任务分配给管理员
                 orgionUserUidList.remove(0);
                 orgionUserUidList.add(bpmGlobalConfig.getBpmAdminName());
-                synNumber = -1;
+                synNumber = -1; // 自动提交任务标识
             }
         }
 
@@ -462,6 +460,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         return taskList;
     }
+
+
 
     /**
      * 判断任务是否能自动提交

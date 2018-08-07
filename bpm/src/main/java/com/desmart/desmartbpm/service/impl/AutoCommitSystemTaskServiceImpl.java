@@ -99,7 +99,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
 
     /**
-     * 提交系统任务
+     * 完成系统任务
      * @param currTask 任务实例
      * @param bpmGlobalConfig 全局配置
      */
@@ -142,10 +142,18 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         // 生成流转记录
         DhRoutingRecord routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
                 currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
-        // 修改任务状态
-        dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
-        // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
 
+        // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
+        if (dhRouteService.isFirstTaskOfSubProcessAndWasRejected(currTaskNode, dhProcessInstance)) {
+            DhTaskInstance taskSelective = new DhTaskInstance();
+            taskSelective.setTaskUid(currTask.getTaskUid());
+            taskSelective.setInsUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
+            taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+            dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+        } else {
+            // 如果只是普通的系统个任务，修改任务状态
+            dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
+        }
 
         // 获得步骤
         List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
@@ -191,7 +199,11 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         }
     }
 
-
+    /**
+     * 检查延时任务是否到了提交的时间点
+     * @param currTask  任务实例
+     * @param bpmGlobalConfig  全局配置
+     */
     public void checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
         BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
         if (currTaskNode == null) {
@@ -208,6 +220,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
 
         if (DhActivityConf.DELAY_TYPE_NONE.equals(currTaskConf.getActcDelayType())) {
+            // 提交系统任务
             this.submitSystemTask(currTask, bpmGlobalConfig);
         } else if (DhActivityConf.DELAY_TYPE_TIME.equals(currTaskConf.getActcDelayType())) {
             // 计算是否到达提交时间: 任务接收时间 + 延时时间 < 当前时间 即处理
@@ -328,5 +341,6 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
         return false;
     }
+
 
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.*;
 import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartportal.service.DhRoutingRecordService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -36,7 +36,6 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
-import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhTaskHandlerMapper;
 import com.desmart.desmartbpm.enums.DhActivityAssignType;
 import com.desmart.desmartbpm.enums.DhActivityConfAssignType;
@@ -76,25 +75,16 @@ public class DhRouteServiceImpl implements DhRouteService {
 	private DhProcessInstanceMapper dhProcessInstanceMapper;
 	@Autowired
 	private DhActivityAssignMapper dhActivityAssignMapper;
-
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaService;
-
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
-
-	@Autowired
-	private DhActivityConfMapper dhActivityConfMapper;
-
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
-
 	@Autowired
 	private SysUserMapper sysUserMapper;
-
 	@Autowired
 	private SysTeamMemberMapper sysTeamMemberMapper;
-
 	@Autowired
 	private DhGatewayLineService dhGatewayLineService;
 	@Autowired
@@ -118,6 +108,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	private ThreadBoolean threadBoolean = new ThreadBoolean();
+	@Autowired
+    private DhRoutingRecordService dhRoutingRecordService;
 
 	@Override
 	public ServerResponse<List<BpmActivityMeta>> showRouteBar(String taskUid, String insUid, String activityId,
@@ -769,7 +761,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
         DhTaskInstance taskInstance = dhTaskInstanceMapper.selectByPrimaryKey(routingRecordWhenSubmit.getTaskUid());
         BpmActivityMeta preMeta = bpmActivityMetaMapper.queryByPrimaryKey(routingRecordWhenSubmit.getActivityId());
-        // 装配处理人信息
+        // 装配处理人信息，即当时任务的所有者
         preMeta.setUserUid(taskInstance.getUsrUid());
         SysUser preUser = sysUserMapper.queryByPrimaryKey(taskInstance.getUsrUid());
         preMeta.setUserName(preUser.getUserName());
@@ -1496,4 +1488,29 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 		return ServerResponse.createBySuccess(returnUserList);
 	}
+
+	public boolean isFirstTaskOfSubProcessAndWasRejected(BpmActivityMeta taskNode, DhProcessInstance processInstance) {
+		if (DhProcessInstance.INS_PARENT_OF_MAIN_PROCESS.equals(processInstance.getInsParent())) {
+			// 如果节点是主流程上的，返回false
+			return false;
+		}
+        BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(processInstance.getTokenActivityId());
+        BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
+        // 校验是不是子流程第一个节点
+        if (!taskNode.getActivityId().equals(firstUserTaskMetaOfSubProcess.getActivityId())) {
+            return false;
+        }
+        // 校验是不是回退回来的
+        DhRoutingRecord latestRecord = dhRoutingRecordService.getLatestRoutingRecordByActivityToAndInsUid(taskNode.getActivityId(), processInstance.getInsUid());
+        if (latestRecord == null) {
+            return false;
+        }
+        if (DhRoutingRecord.ROUTE_TYPE_REJECT_TASK.equals(latestRecord.getRouteType())
+                || DhRoutingRecord.ROUTE_TYPE_TRUN_OFF_TASK.equals(latestRecord.getRouteType())) {
+            // 如果是驳回的或者撤转的
+            return true;
+        }
+        return false;
+    }
+
 }
