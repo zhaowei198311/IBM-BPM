@@ -118,7 +118,7 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public String url1() {
         Subject user = SecurityUtils.getSubject();
-        String _curruser = (String) user.getSession().getAttribute("_currUserNum");
+        String _curruser = (String) user.getSession().getAttribute(Const.CURRENT_USER_NAME);
         System.out.println(user.getSession().getTimeout());
         testService.method1();
         return "hello," + _curruser + "url1 success";
@@ -128,7 +128,7 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public String url2() {
         Subject user = SecurityUtils.getSubject();
-        String _curruser = (String) user.getSession().getAttribute("_currUserNum");
+        String _curruser = (String) user.getSession().getAttribute(Const.CURRENT_USER_NAME);
         System.out.println(user.getSession().getTimeout());
         System.out.println(user.getSession().getLastAccessTime());
         return "hello," + _curruser + "url2 success";
@@ -138,7 +138,7 @@ public class TestController extends BaseWebController {
     @ResponseBody
     public String url3() {
         Subject user = SecurityUtils.getSubject();
-        String _curruser = (String) user.getSession().getAttribute("_currUserNum");
+        String _curruser = (String) user.getSession().getAttribute(Const.CURRENT_USER_NAME);
         System.out.println(user.getSession().getTimeout());
         System.out.println(user.getSession().getLastAccessTime());
         return "hello," + _curruser + " this is  unauthorizedUrl ";

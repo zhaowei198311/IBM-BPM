@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -14,8 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.desmart.desmartbpm.controller.DhProcessMetaController;
-import com.desmart.desmartportal.common.Const;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartsystem.entity.SysResource;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.SysResourceService;
@@ -76,7 +80,7 @@ public class MyRealm extends AuthorizingRealm {
         }*/
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, password.toCharArray(), this.getName());
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute("_currUserNum", username);
+        session.setAttribute(Const.CURRENT_USER, username);
         session.setAttribute("_password", password);
         session.setAttribute(Const.CURRENT_USER, userList.get(0).getUserId());
         System.out.println("***********shiro login  end**************");
