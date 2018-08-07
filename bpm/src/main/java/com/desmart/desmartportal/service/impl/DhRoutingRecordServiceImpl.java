@@ -104,6 +104,40 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     }
 
     @Override
+    public DhRoutingRecord generateFirstTaskNodeOfSubProcessRoutingData(DhTaskInstance taskInstance,
+                                                                               BpmRoutingData bpmRoutingData, String userUid) {
+        BpmActivityMeta taskNode = bpmActivityMetaService.queryByPrimaryKey(taskInstance.getTaskActivityId());
+
+        DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
+        dhRoutingRecord.setRouteUid(EntityIdPrefix.DH_ROUTING_RECORD + String.valueOf(UUID.randomUUID()));
+        dhRoutingRecord.setInsUid(taskInstance.getInsUid());
+        dhRoutingRecord.setActivityName(taskInstance.getTaskTitle());
+        dhRoutingRecord.setRouteType(DhRoutingRecord.ROUTE_TYPE_SUBMIT_TASK);
+        // 路由记录发生人
+        dhRoutingRecord.setUserUid(userUid);
+        dhRoutingRecord.setActivityId(taskInstance.getTaskActivityId());
+        dhRoutingRecord.setTaskUid(taskInstance.getTaskUid());
+        String activityTo = null;
+        StringBuilder activityToBuilder = new StringBuilder();
+
+        // token要移动的话，处理接下来的人员环节
+        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        for (BpmActivityMeta nextNode : normalNodes) {
+            if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
+                // 说明此环节和当前任务环节在同一个层级
+                activityToBuilder.append(nextNode.getActivityId()).append(",");
+            }
+        }
+        if (activityToBuilder.length() > 0) {
+            activityTo = activityToBuilder.toString();
+            activityTo = activityTo.substring(0, activityTo.length() - 1);
+        }
+        dhRoutingRecord.setActivityTo(activityTo);
+        return dhRoutingRecord;
+    }
+
+
+    @Override
     public DhRoutingRecord generateSystemTaskRoutingRecord(BpmActivityMeta taskNode, DhTaskInstance currTask,
                                                            String systemUser, BpmRoutingData bpmRoutingData) {
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();

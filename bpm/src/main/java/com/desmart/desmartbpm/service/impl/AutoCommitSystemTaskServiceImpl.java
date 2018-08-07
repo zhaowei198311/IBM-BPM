@@ -64,7 +64,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     @Autowired
     private DhTaskInstanceService dhTaskInstanceService;
 
-    @Scheduled(cron = "55 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     @Override
     public void startAutoCommitSystemTask() {
         logger.info("开始处理系统任务");
@@ -140,17 +140,20 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         }
 
         // 生成流转记录
-        DhRoutingRecord routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
-                currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
+        DhRoutingRecord routingRecord = null;
 
         // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
         if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
             DhTaskInstance taskSelective = new DhTaskInstance();
             taskSelective.setTaskUid(currTask.getTaskUid());
             taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
+            taskSelective.setTaskFinishDate(new Date());
             taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
             dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+            routingRecord = dhRoutingRecordService.generateFirstTaskNodeOfSubProcessRoutingData(currTask, bpmRoutingData, dhProcessInstance.getInsInitUser());
         } else {
+            routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
+                    currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
             // 如果只是普通的系统个任务，修改任务状态
             dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
         }
