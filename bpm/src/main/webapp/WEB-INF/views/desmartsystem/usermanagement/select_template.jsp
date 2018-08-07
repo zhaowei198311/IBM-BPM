@@ -267,7 +267,7 @@
 		function pageNotifyTemplate() {
 
 			$.ajax({
-				url : "dhNotifyTemplate/pageNotifyTemplateList",
+				url : '<%=request.getContextPath()%>/dhNotifyTemplate/pageNotifyTemplateList',
 				method : "post",
 				async : false,
 				dataType : 'json',

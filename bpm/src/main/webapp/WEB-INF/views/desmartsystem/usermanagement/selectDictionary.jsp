@@ -250,7 +250,7 @@
 		function getOnDicDataList(dicUid){
 			// 选中行id
 			$.ajax({
-				url: "sysDictionary/getOnSysDictionaryDataList",
+				url: '<%=request.getContextPath()%>/sysDictionary/getOnSysDictionaryDataList',
 				method: "post",
 				data: {
 					pageNum:pageConfig1.pageNum,
@@ -268,7 +268,7 @@
 		function getOnDictionaryList(){
 			layer.load(1);
 			$.ajax({
-				url: "sysDictionary/getOnSysDictionaryList",
+				url: '<%=request.getContextPath()%>/sysDictionary/getOnSysDictionaryList',
 				method: "post",
 				data: {
 					pageNum:pageConfig.pageNum,

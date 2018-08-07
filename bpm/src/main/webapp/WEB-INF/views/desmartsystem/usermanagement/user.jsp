@@ -472,14 +472,14 @@
 			    }   
 			});
 			
-			var url='sysDepartment/treeDisplay';
+			var url='<%=request.getContextPath()%>/sysDepartment/treeDisplay';
 			//tree展示
 			setting.callback={onClick: onClick1}
 			treeDisplay(url,'treeDemo2');
 			
 			pageBreak($('#pageNo').val());
 			
-			var url='sysDepartment/treeDisplay';
+			var url='<%=request.getContextPath()%>/sysDepartment/treeDisplay';
 			settings.callback={onClick: onClick}
 			/* treeDisplays(url,['treeDemo','departmentTree']); */
 			treeDisplays(url,['departmentTree']);
@@ -615,7 +615,7 @@
 		}
 		
 		function userDetail(userUid){
-			window.location.href="sysUser/userDetail?userUid="+userUid;
+			window.location.href='<%=request.getContextPath()%>/sysUser/userDetail?userUid='+userUid;
 		}
 		
 		
@@ -643,7 +643,7 @@
 			$("#businessRoleTable").empty();
 			$.ajax({
 				type:'POST',
-				url:'sysRoleUser/allSysRoleUser',
+				url:'<%=request.getContextPath()%>/sysRoleUser/allSysRoleUser',
 				dataType:"json",
 				data:{mapType:1,userUid:userUid},
 				cache: false,
@@ -651,7 +651,7 @@
 					
 					$.ajax({
 						type:'POST',
-						url:'sysRole/roleList',
+						url:'<%=request.getContextPath()%>/sysRole/roleList',
 						dataType:"json",
 						data:{roleName:roleName,roleType:1,isClosed:1},
 						cache: false,
@@ -745,14 +745,14 @@
 			
 			$.ajax({
 				type:'POST',
-				url:'sysRoleUser/allSysRoleUser?mapType=0&userUid='+userUid,
+				url:'<%=request.getContextPath()%>/sysRoleUser/allSysRoleUser?mapType=0&userUid='+userUid,
 				dataType:"json",
 				cache: false,
 				success: function(data1){
 					
 					$.ajax({
 						type:'POST',
-						url:'sysRole/roleList',
+						url:'<%=request.getContextPath()%>/sysRole/roleList',
 						dataType:"json",
 						cache: false,
 						data:{roleType:0,isClosed:1},

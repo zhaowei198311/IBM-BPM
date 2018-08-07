@@ -305,13 +305,13 @@
 		function openResourceDialog(roleUid){
 			$('#resource').empty();
 			$.ajax({  
-		        url: 'sysResource/resourceTree',    //后台webservice里的方法名称  
+		        url: '<%=request.getContextPath()%>/sysResource/resourceTree',    //后台webservice里的方法名称  
 		        type: "post",  
 		        dataType: "json",  
 		        success: function (data) {
 					$.fn.zTree.init($("#resourceTree"), settingResource, data);
 					$.ajax({  
-				        url: 'sysRoleResource/allSysRoleResource?roleUid='+roleUid,    //后台webservice里的方法名称  
+				        url: '<%=request.getContextPath()%>/sysRoleResource/allSysRoleResource?roleUid='+roleUid,    //后台webservice里的方法名称  
 				        type: "post",  
 				        dataType: "json",  
 				        success: function (data1) {
