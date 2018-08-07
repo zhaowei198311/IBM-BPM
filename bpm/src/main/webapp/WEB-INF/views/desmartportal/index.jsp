@@ -485,9 +485,7 @@
 					trs += '<li class="li2"><a style="width: 200px;" onclick="hideHead();" href="menus/processInstanceByUser?proUid=' +
 						list[i].proUid +
 						'&proAppId=' +
-						list[i].proAppId +
-						'&proName=' +
-						list[i].proName +
+						list[i].proAppId  +
 						'" target="iframe0">' +
 						list[i].proName +
 						'</a></li>' +
