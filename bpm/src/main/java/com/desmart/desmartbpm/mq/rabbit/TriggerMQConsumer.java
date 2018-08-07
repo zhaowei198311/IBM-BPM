@@ -129,7 +129,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 					DhTriggerException dhTriggerException = new DhTriggerException();
 			        dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
 			        dhTriggerException.setInsId(String.valueOf(dhProcessInstance.getInsId()));
-			        dhTriggerException.setMqMessage(String.valueOf(mqMessage));
+			        dhTriggerException.setMqMessage(String.valueOf(mqMessage));  // mq推送过来的信息
 			        dhTriggerException.setStepId(dhStep.getStepUid());
 			        dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
 			        dhTriggerException.setRequestParam(invokeResult.get("param")); // 记录调用参数

@@ -1513,4 +1513,15 @@ public class DhRouteServiceImpl implements DhRouteService {
         return false;
     }
 
+	public boolean isFirstTaskOfSubProcess(BpmActivityMeta taskNode, DhProcessInstance processInstance) {
+		if (DhProcessInstance.INS_PARENT_OF_MAIN_PROCESS.equals(processInstance.getInsParent())) {
+			// 如果节点是主流程上的，返回false
+			return false;
+		}
+		BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(processInstance.getTokenActivityId());
+		BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
+		// 校验是不是子流程第一个节点
+		return taskNode.getActivityId().equals(firstUserTaskMetaOfSubProcess.getActivityId());
+	}
+
 }

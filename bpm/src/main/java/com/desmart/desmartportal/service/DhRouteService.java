@@ -219,4 +219,12 @@ public interface DhRouteService {
 	 * @return
 	 */
 	boolean isFirstTaskOfSubProcessAndWasRejected(BpmActivityMeta taskNode, DhProcessInstance processInstance);
+
+	/**
+	 * 判断任务节点是否是子流程的第一个节点
+	 * @param taskNode 任务节点
+	 * @param processInstance 任务节点所属流程
+	 * @return
+	 */
+	boolean isFirstTaskOfSubProcess(BpmActivityMeta taskNode, DhProcessInstance processInstance);
 }
