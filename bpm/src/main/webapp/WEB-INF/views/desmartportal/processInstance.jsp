@@ -281,7 +281,7 @@
 		
 		// 按条件查询 流程实例
 		$.ajax({
-			url : 'processInstance/queryProcessInstanceByIds',
+			url : common.getPath() +'/processInstance/queryProcessInstanceByIds',
 			type : 'post',
 			dataType : 'json',
 			data : {
@@ -421,7 +421,7 @@
 		var proAppId = $('#proAppId').val();
 		var verUid = $('#verUid').val();
 		$.ajax({
-			url : "processInstance/checkedBusinesskey",
+			url : common.getPath() +"/processInstance/checkedBusinesskey",
 			type : 'POST',
 			dataType : 'json',
 			beforeSend : function() {
