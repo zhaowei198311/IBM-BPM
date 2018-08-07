@@ -93,7 +93,7 @@ public class SysUserServiceImpl implements SysUserService {
 	public ServerResponse allSysUserMove(String userUidArrStr, Integer pageNo, Integer pageSize, String condition) {
 		PageHelper.startPage(pageNo,pageSize);
 		String[] userUidArr = userUidArrStr.split(";");
-		if(userUidArr.length==1 && (null==userUidArr[0]||userUidArr[0]=="")) {
+		if(userUidArr.length==1 && (null==userUidArr[0]||userUidArr[0].equals(""))) {
 			userUidArr = null;
 		}
 		List<SysUser> userList = sysUserDao.allSysUserMove(userUidArr,condition);

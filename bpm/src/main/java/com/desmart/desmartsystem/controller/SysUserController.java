@@ -155,6 +155,7 @@ public class SysUserController {
 		try {
 			return sysUserService.allSysUserMove(userUidArrStr,pageNo,pageSize,condition);
 		}catch(Exception e) {
+			e.printStackTrace();
 			return ServerResponse.createByError();
 		}
 	}
