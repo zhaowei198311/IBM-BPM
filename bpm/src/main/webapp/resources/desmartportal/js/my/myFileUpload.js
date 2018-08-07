@@ -62,7 +62,7 @@ $(function(){
 			  var demoListView = $(".layui-upload-list").find('.fileList')
 			  ,uploadListIns = upload.render({
 			    elem: dragDiv
-			    ,url: 'accessoryFileUpload/saveFile.do'
+			    ,url: common.getPath() +'/accessoryFileUpload/saveFile.do'
 			    ,accept: 'file' //普通文件
 			    ,auto: false// 不自动上传
 			    ,exts: formatStr
@@ -502,7 +502,7 @@ function batchPost(URL, PARAMS) {
 function showHistoryFile(a){
 	var appDocIdCard = $(a).val();
 	$.ajax({
-		url : "accessoryFileUpload/loadHistoryFile.do",
+		url : common.getPath() +"/accessoryFileUpload/loadHistoryFile.do",
 		type : 'POST',
 		dataType : 'json',
 		data : {
