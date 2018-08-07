@@ -23,6 +23,7 @@
     <title>已办任务</title>
     <%@include file="common/mobile_head.jsp" %>
     <script type="text/javascript" src="resources/desmartportal/js/my/mobile_finished_detail.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 </head>
 <body style="background-color: #f2f2f2;margin-bottom:40px;">
     <div class="mobile_container">
