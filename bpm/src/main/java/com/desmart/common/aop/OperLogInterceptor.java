@@ -28,9 +28,9 @@ import org.springframework.web.servlet.View;
 
 import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.entity.DhOperLog;
 import com.desmart.desmartbpm.service.OperLogService;
-import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.SysUserService;
 
@@ -72,7 +72,7 @@ public class OperLogInterceptor {
 		String userName = null;
 		try {  
 			userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
-			userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
+			userName = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER_NAME).toString();
 		} catch (Exception e1) {
 			//空指针处理
 			userId = null;   
@@ -121,7 +121,7 @@ public class OperLogInterceptor {
 		//获取当前用户id及当前用户姓名
 		if(userId == null || userName == null) {
 			userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
-			userName = SecurityUtils.getSubject().getSession().getAttribute("userName").toString();
+			userName = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER_NAME).toString();
 		}
 		StringBuffer requestURL = request.getRequestURL();
 		String path = new String(requestURL);
