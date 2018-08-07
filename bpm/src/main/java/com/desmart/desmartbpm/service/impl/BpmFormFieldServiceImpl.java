@@ -66,15 +66,24 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 			//当查询的权限集合不存在某字段的权限
 			boolean flag = true;
 			List<String> opActionList = new ArrayList<>();
+			opActionList.add("false");
+			opActionList.add("false");
+			opActionList.add("false");
 			for(DhObjectPermission objPer:objPerList) {
 				if(field.getFldUid().equals(objPer.getOpObjUid())) {
-					opActionList.add(objPer.getOpAction());
+					if(objPer.getOpAction().equals("EDIT") || objPer.getOpAction().equals("HIDDEN")) {
+						opActionList.set(0,objPer.getOpAction());
+					}else if(objPer.getOpAction().equals("PRINT")){
+						opActionList.set(1,objPer.getOpAction());
+					}else if(objPer.getOpAction().equals("SKIP")) {
+						opActionList.set(2,objPer.getOpAction());
+					}
 					flag = false;
 				}
 			}
 			if(flag) {
 				//默认只读
-				opActionList.add("VIEW");
+				opActionList.set(0,"VIEW");
 			}
 			field.setOpActionList(opActionList);
 		}

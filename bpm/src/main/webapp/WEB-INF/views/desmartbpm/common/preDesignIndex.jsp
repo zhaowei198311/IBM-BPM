@@ -13,6 +13,7 @@
 <link href="<%=basePath%>/resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css" rel="stylesheet">
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/city.js"></script>
 <title>Insert title here</title>
 <style>
 	.layui-form-label {
