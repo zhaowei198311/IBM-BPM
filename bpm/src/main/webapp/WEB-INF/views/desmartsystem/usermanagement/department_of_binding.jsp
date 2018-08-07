@@ -86,7 +86,7 @@
 	function serachDeparmet(){
 		$.ajax({
 			type:'POST',
-			url:"sysDepartment/allSysDepartment",
+			url:'<%=request.getContextPath()%>/sysDepartment/allSysDepartment',
 			dataType:"json",
 			success: function(data){
 				laypage({
@@ -125,7 +125,7 @@
 		
 		$.ajax({
 			type:'POST',
-			url:"sysUserDepartment/selectAll?userUid="+userUid,
+			url:'<%=request.getContextPath()%>/sysUserDepartment/selectAll?userUid='+userUid,
 			dataType:"json",
 			success: function(data){
 				var dataList = data;

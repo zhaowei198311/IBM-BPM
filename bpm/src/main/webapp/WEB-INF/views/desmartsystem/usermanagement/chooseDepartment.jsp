@@ -91,7 +91,7 @@
 				onAsyncSuccess: zTreeOnAsyncSuccess
 			}
 			$.ajax({ 
-		        url: url,    //后台webservice里的方法名称  
+		        url: '<%=request.getContextPath()%>'+url,    //后台webservice里的方法名称  
 		        type: "post",  
 		        async:false,
 		        dataType: "json",  
@@ -105,7 +105,7 @@
 			var departNo = window.parent.document.getElementById(elementId).value;
 			if(departNo!=null && departNo!=""){
 				$.ajax({
-					url:"sysDepartment/queryDepartByNoAndName",
+					url:'<%=request.getContextPath()%>/sysDepartment/queryDepartByNoAndName',
 					method:"post",
 					async:false,
 					data:{
