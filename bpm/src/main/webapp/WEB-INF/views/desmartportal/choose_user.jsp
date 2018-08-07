@@ -143,6 +143,7 @@
 	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.core.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.excheck.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/tree/js/jquery.ztree.exedit.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 	<script>
 		layui.use(['laypage', 'layer'], function(){
 			var laypage = layui.laypage,layer = layui.layer;  
