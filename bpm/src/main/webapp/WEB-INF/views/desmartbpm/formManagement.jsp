@@ -1032,7 +1032,7 @@
 			var dynDescription = $(trObj.find("td")[2]).text().trim();
 			var formNoExpression = trObj.data("expression");
 			var formNoStatic = trObj.data("static");
-			var href = common.getPath() +"/formManage/designForm";
+			var href = "/formManage/designForm";
 			var param = {
 				formUid:formId,
 				formName:dynTitle,
