@@ -314,7 +314,7 @@
 			return false;
 		}
 
-		var url = 'sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle
+		var url = common.getPath() +'/sysUser/assign_personnel?id=' + id + '&isSingle=' + isSingle
 				+ '&actcCanChooseUser=' + actcCanChooseUser
 				+ '&actcAssignType=' + actcAssignType;
 		var index = layer.open({
@@ -340,7 +340,7 @@
 
 	function deleteDraftsInfo(id) {
 		$.ajax({
-			url : 'drafts/deleteDraftsById',
+			url : common.getPath() +'/drafts/deleteDraftsById',
 			type : 'POST',
 			dataType : 'text',
 			data : {
@@ -348,7 +348,7 @@
 			},
 			success : function(result) {
 				// 删除成功后 ajxa跳转 查询controller
-				window.location.href = "drafts/index";
+				window.location.href = common.getPath() +"/drafts/index";
 			}
 		})
 	}
@@ -362,7 +362,7 @@
 	 */
 	function clientSideInclude(dynUid) {
 		$.ajax({
-			url : "formSet/getFormFileByFormUid",
+			url : common.getPath() +"/formSet/getFormFileByFormUid",
 			method : "post",
 			async : false,
 			data : {
@@ -524,7 +524,7 @@
 	}
 	// 回退到上一页面
 	function back() {
-		window.location.href = 'drafts/index';
+		window.location.href = common.getPath() +'/drafts/index';
 	}
 </script>
 <script type="text/javascript"
