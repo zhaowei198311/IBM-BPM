@@ -7,7 +7,7 @@ public class Const {
     public static final String HTTP_CLIENT_CONNECTION_POOL = "_httpClientConnectionPool";
     
     public static final String CURRENT_USER = "currentUser";
-    
+    public static final String CURRENT_USER_NAME = "currentUserName";
     public interface TimeUnit {
         public static final String HOUR = "hour";
         public static final String DAY = "day";

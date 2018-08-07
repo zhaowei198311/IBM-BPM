@@ -4,6 +4,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.web.filter.AccessControlFilter;
 
+import com.desmart.desmartbpm.common.Const;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,7 @@ public class DocumentAclFilter extends AccessControlFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
         String servletPath = httpServletRequest.getServletPath();
         Session session = SecurityUtils.getSubject().getSession();
-        String username = (String)session.getAttribute("_currUserNum");
+        String username = (String)session.getAttribute(Const.CURRENT_USER_NAME);
         System.out.println("servletPath: " + servletPath);
 
         System.out.println("=====  DocumentAclFilter.isAccessAllowed() finish =====");
