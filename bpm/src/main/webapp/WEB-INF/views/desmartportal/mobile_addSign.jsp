@@ -232,6 +232,7 @@
 		$(".data-table").find("input[type='tel']").desNumber();
 	});
 </script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript">
 //初始化加载进度条
 $(function(){
