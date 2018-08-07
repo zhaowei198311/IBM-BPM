@@ -569,7 +569,7 @@
 	//add根据分类Id获得流程元集合数据
 	function getMetaInfo(categoryUid){
 		$.ajax({
-			url:"agent/listByCategoryUid",
+			url:common.getPath() +"/agent/listByCategoryUid",
 			method:"post",
 			beforeSend:function(){
 				layer.load(1);
@@ -606,7 +606,7 @@
 	//update根据分类Id获得流程元集合数据
 	function getUpdateMetaInfo(categoryUid){
 		$.ajax({
-			url:"agent/listByCategoryUid",
+			url:common.getPath() +"/agent/listByCategoryUid",
 			method:"post",
 			beforeSend:function(){
 				layer.load(1);
@@ -675,7 +675,7 @@
 				}
 				//添加代理信息
 				$.ajax({
-					url:"agent/addAgentInfo",
+					url:common.getPath() +"/agent/addAgentInfo",
 					method:"post",
 					beforeSend:function(){
 						layer.load(1);
@@ -738,7 +738,7 @@
 				}
 				//修改代理信息
 				$.ajax({
-					url:"agent/updateAgentInfo",
+					url:common.getPath() +"/agent/updateAgentInfo",
 					method:"post",
 					beforeSend:function(){
 						layer.load(1);
@@ -778,7 +778,7 @@
 	//查询代理信息
 	 function getAgentInfo() {
 		$.ajax({
-			url : 'agent/queryAgentByList',
+			url : common.getPath() +'/agent/queryAgentByList',
 			type : 'POST',
 			dataType : 'json',
 			data : {
@@ -1011,7 +1011,7 @@
 			    	agentStatus = "DISABLED";
 			    }
 				$.ajax({
-					url:"agent/updateAgentStatus",
+					url:common.getPath() +"/agent/updateAgentStatus",
 					method:"post",
 					traditional: true,
 					data:{
@@ -1121,7 +1121,7 @@
 		}, function(index) {
 			// 提交表单的代码，然后用 layer.close 关闭就可以了，取消可以省略 ajax请求
 			$.ajax({
-				url : 'agent/deleteAgentById',
+				url : common.getPath() +'/agent/deleteAgentById',
 				type : 'POST',
 				data : {
 					agentId : id
