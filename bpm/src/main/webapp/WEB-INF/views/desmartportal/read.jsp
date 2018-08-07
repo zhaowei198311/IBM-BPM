@@ -120,7 +120,7 @@
 	</body>
 	
 </html>
-	
+	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 	<script>
 		layui.use('laydate', function(){
 			var laydate = layui.laydate;
