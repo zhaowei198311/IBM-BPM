@@ -102,7 +102,7 @@ $(function () {
         }
         
         $.ajax({
-            url: "sysRoleUser/addRoleUser",
+            url: '<%=request.getContextPath()%>/sysRoleUser/addRoleUser',
             dataType: "json",
             type: "post",
             data: {roleUid:roleIds.join(","),mapType:1,userUid:userUid},
@@ -141,7 +141,7 @@ $(function () {
         }
         
         $.ajax({
-            url: "sysRoleUser/deleteSysRoleUsers",
+            url: '<%=request.getContextPath()%>/sysRoleUser/deleteSysRoleUsers',
             dataType: "json",
             type: "post",
             data: {mapUids:mapUids},
@@ -162,7 +162,7 @@ $(function () {
 
 function searchRole(){
 	$.ajax({
-        url: "sysRole/roleList",
+        url: '<%=request.getContextPath()%>/sysRole/roleList',
         dataType: "json",
         type: "post",
         data: {roleType:1,isClosed:1,roleName:$('#search_input').val()},
@@ -188,7 +188,7 @@ function searchRole(){
 function init() {
 	$.ajax({
 		type:'POST',
-		url:'sysRoleUser/allSysRoleUser',
+		url:'<%=request.getContextPath()%>/sysRoleUser/allSysRoleUser',
 		dataType:"json",
 		data:{mapType:1,userUid:userUid,isClosed:1},
 		cache: false,
@@ -202,7 +202,7 @@ function init() {
 			 
 			 
 			 $.ajax({
-		        url: "sysRole/roleList",
+		        url: '<%=request.getContextPath()%>/sysRole/roleList',
 		        dataType: "json",
 		        type: "post",
 		        data: {roleType:1,isClosed:1,roleName:$('#search_input').val()},

@@ -204,7 +204,7 @@
 				});
 				layer.confirm("确认删除数据字典？", function(){
 					$.ajax({
-						url:"sysDictionary/deleteSysDictionaryDataList",
+						url:'<%=request.getContextPath()%>/sysDictionary/deleteSysDictionaryDataList',
 						data:{dicDataUidArr:dicDataUidArr},
 						method:"post",
 						beforeSend:function(){
@@ -310,7 +310,7 @@
 				var upload = layui.upload;
 				upload.render({ //允许上传的文件后缀
 				    elem: $("#importButton")
-				    ,url: 'sysDictionary/importSysDictionaryData'
+				    ,url: '<%=request.getContextPath()%>/sysDictionary/importSysDictionaryData'
 				    ,accept: 'file' //普通文件
 				    ,exts: 'xls|xlsx' //只允许上传
 				    ,before: function(obj){
