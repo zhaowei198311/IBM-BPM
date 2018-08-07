@@ -120,7 +120,7 @@ function userAsync() {
 //查询用户的代办
 function getTaskInstanceInfo(){
 	$.ajax({
-		url : 'taskInstance/loadBackLog',
+		url :common.getPath() + '/taskInstance/loadBackLog',
 		type : 'post',
 		beforeSend:function(){
 			layer.load(1);
@@ -285,7 +285,7 @@ function taskProgerss(activityId,taskUid){
 //打开 代办的 详细页面
 function openApproval(taskUid){
 	layer.load(1);
-	window.location.href = 'menus/approval?taskUid='+taskUid;
+	window.location.href = common.getPath() +'/menus/approval?taskUid='+taskUid;
 	layer.closeAll("loading");
 }
 
