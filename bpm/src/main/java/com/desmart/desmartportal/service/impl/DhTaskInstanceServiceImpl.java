@@ -1188,7 +1188,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		String targetActivityBpdId = routeData.getString("activityBpdId");
 		String taskUid = taskData.getString("taskUid");
 
-
 		// 判断驳回的任务是否存在
 		if (StringUtils.isBlank(taskUid)) {
 			return ServerResponse.createByErrorMessage("缺少任务信息");

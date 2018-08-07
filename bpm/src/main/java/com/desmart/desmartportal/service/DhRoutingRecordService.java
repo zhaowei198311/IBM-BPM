@@ -122,6 +122,13 @@ public interface DhRoutingRecordService {
 	 */
 	List<DhRoutingRecord> getRoutingRecordOfTask(String taskUid);
 
+	/**
+	 * 查询流转到指定节点的最近的流转记录
+	 * @param activityTo  流转到的节点的 activityId
+	 * @param insUid  实例主键
+	 * @return
+	 */
+	DhRoutingRecord getLatestRoutingRecordByActivityToAndInsUid(String activityTo, String insUid);
 
 	/**
 	 * 为撤转流程实例生成流转信息

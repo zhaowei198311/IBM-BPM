@@ -31,6 +31,8 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhRoutingRecordService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.github.pagehelper.PageHelper;
+import org.springframework.util.CollectionUtils;
+
 @Service
 public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 
@@ -38,8 +40,6 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
     private BpmActivityMetaService bpmActivityMetaService;
 	@Autowired
 	private DhRoutingRecordMapper dhRoutingRecordMapper;
-    @Autowired
-    private DhTaskInstanceService taskInstanceService;
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
@@ -332,6 +332,20 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         dhRoutingRecord.setActivityTo(activityTo);
         dhRoutingRecord.setTaskUid(currTaskInstance.getTaskUid());
         return dhRoutingRecord;
+    }
+
+    @Override
+    public DhRoutingRecord getLatestRoutingRecordByActivityToAndInsUid(String activityTo, String insUid) {
+        DhRoutingRecord recordSelective = new DhRoutingRecord();
+        recordSelective.setInsUid(insUid);
+        recordSelective.setActivityTo(activityTo);
+        PageHelper.orderBy("create_time desc");
+        List<DhRoutingRecord> dhRoutingRecords = dhRoutingRecordMapper.listBySelective(recordSelective);
+        if (CollectionUtils.isEmpty(dhRoutingRecords)) {
+            return null;
+        } else {
+            return dhRoutingRecords.get(0);
+        }
     }
 
 }

@@ -14,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -23,7 +26,6 @@ import java.util.regex.Pattern;
 public class DhFormNoServiceImpl implements DhFormNoService {
     private Logger log = Logger.getLogger(DhFormNoServiceImpl.class);
 
-
     @Autowired
     private BpmFormManageMapper bpmFormManageMapper;
     @Autowired
@@ -31,6 +33,7 @@ public class DhFormNoServiceImpl implements DhFormNoService {
 
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public JSONArray updateFormNoListJsonObject(BpmForm bpmForm, JSONArray oldFormNoJSONArray) {
         JSONArray result = null;
         String formNo = null;
@@ -86,7 +89,7 @@ public class DhFormNoServiceImpl implements DhFormNoService {
      * @param formNoExpression 表单号生成表达式
      * @return
      */
-    private String generateFormNo(String formNoExpression) {
+    public String generateFormNo(String formNoExpression) {
         int affectRow = 0;
         // 检查是否包含需要替换的字符，如果不包含就直接返回原字符
         Pattern pattern = Pattern.compile("(\\{yyyy-MM-dd\\})|(\\{yyyyMMdd\\})|(\\{num\\d\\})");
@@ -148,7 +151,7 @@ public class DhFormNoServiceImpl implements DhFormNoService {
      * @param counter  当前的计数情况， 可传 null
      * @return
      */
-    private int getNextNumber(String formNoExpression, DhFormNoCounter counter) {
+    public int getNextNumber(String formNoExpression, DhFormNoCounter counter) {
         int count = 0;
         while (count < 3) {
             if (!(count == 0 && counter != null)) {
