@@ -114,7 +114,7 @@
 					};
 				}
 				$user_add.each(function(){
-					useruid+=$(this).attr('value')+";";
+					useruid+=$(this).attr('userUid')+";";
 					useruname+=$(this).text()+";";
 				});	
 				window.parent.document.getElementById(elementId).value=useruid;
@@ -140,7 +140,7 @@
 				if(name[i]!=''){
 					var newName = name[i].replace(/\(.*?\)/g,'');
 					var str='';
-					str+="<li value='"+id[i]+"' onclick='selectClick(this);'>"+newName+"("+id[i]+")</li>";
+					str+="<li userUid='"+id[i]+"' onclick='selectClick(this);'>"+newName+"("+id[i]+")</li>";
 					$user_li.append(str);
 				}
 			}
@@ -190,7 +190,7 @@
 			$("#usersul").empty();
 			$(data).each(function(index){
 				var str='';
-				str+='<li type="hidden" value="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'('+this.userUid+')</li>';
+				str+='<li type="hidden" userUid="'+this.userUid+'" departUid="'+this.departUid+'" onclick="selectClick(this)" name="userUid">'+this.userName+'('+this.userUid+')</li>';
 				$ul.append(str);
 			});
 		};
@@ -199,20 +199,20 @@
 		function add_user(){
 			var userids = [];
 			$("#user_add li").each(function(){//遍历 右边栏目的ID 
-				userids.push($(this).attr('value'));//获取 所有 已添加人员
+				userids.push($(this).attr('userUid'));//获取 所有 已添加人员
 			});
 			
 			$("#usersul li").each(function(){
 				var $userLi=$(this);
 				if($userLi.hasClass('colorli')){
 					//判断 已添加人员
-					var userUid=$userLi.attr('value');//用ID
+					var userUid=$userLi.attr('userUid');//用ID
 					var departUid=$userLi.attr('departUid');//部门
 					var roleUid=$userLi.attr('roleUid');
 					var name=$userLi.text();
 					if($.inArray(userUid, userids)==-1){
 						var str='';
-						str+="<li value='"+userUid+"' onclick='selectClick(this);'>"+name;
+						str+="<li userUid='"+userUid+"' onclick='selectClick(this);'>"+name;
 						str+="</li>";
 						$("#user_add").append(str);
 					}
