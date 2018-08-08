@@ -522,18 +522,18 @@ ul {
 						function(index) {
 							var str = '';
 							if (type == 'addUserRole') {
-								str += "<li value='" + this.userUid
+								str += "<li userUid='" + this.userUid
 										+ "' onclick='selectClick(this);'>"
 										+ this.userName;
 								str += "<input type='hidden' name='userUid' value='"+this.userUid+"'/>";
 								str += "</li>";
 							} else {
-								str += '<li type="hidden" value="'
+								str += '<li type="hidden" userUid="'
 										+ this.userUid
 										+ '" departUid="'
 										+ this.departUid
 										+ '" onclick="selectClick(this)" name="userUid">'
-										+ this.userName + '</li>';
+										+ this.userName+'('+this.userUid+')' + '</li>';
 							}
 							$ul.append(str);
 						});
@@ -542,7 +542,7 @@ ul {
 	function add_user() {
 		var userids = [];
 		$("#user_add li").each(function() {//遍历 右边栏目的ID 
-			userids.push($(this).attr('value'));//获取 所有 已添加人员
+			userids.push($(this).attr('userUid'));//获取 所有 已添加人员
 		});
 
 		var index = 0;
@@ -552,14 +552,14 @@ ul {
 							var $userLi = $(this);
 							if ($userLi.hasClass('colorli')) {
 								//判断 已添加人员
-								var userUid = $userLi.attr('value');//用ID
+								var userUid = $userLi.attr('userUid');//用ID
 								var departUid = $userLi.attr('departUid');//部门
 								var roleUid = $userLi.attr('roleUid');
 
 								var name = $userLi.text();
 								if ($.inArray(userUid, userids) == -1) {
 									var str = '';
-									str += "<li value='" + userUid
+									str += "<li userUid='" + userUid
 											+ "' onclick='selectClick(this);'>"
 											+ name;
 									str += "<input type='hidden' name='userUid' value='"+userUid+"'/>";
