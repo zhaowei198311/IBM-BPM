@@ -22,16 +22,22 @@
 	</head>
 	<body>
 		<div class="container">
-			<form class="form-inline" method="post" action="sysRole/allSysRole"  onsubmit="return search(this);">
-				<input type="hidden" name="pageNo" id="pageNo" value="1" >
-				<input type="hidden" name="roleType" value="1" >
-			</form>
 			<div class="search_area">
-				<div class="layui-row layui-form">					
-					<div class="layui-col-md1" style="text-align:right;">
-					        <button class="layui-btn create_btn" onclick="adddialog();" >新建</button>
-					</div>
-				</div>
+				<div class="layui-row">
+					<form class="form-inline" method="post" action="sysRole/allSysRole"  onsubmit="return search(this);">
+						<input type="hidden" name="pageNo" id="pageNo" value="1" />
+						
+						<div class="layui-col-md2">
+							<input type="text" name="roleName" placeholder="角色名称" class="layui-input"/>
+						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button class="layui-btn" type="button" onclick="pageBreak(1);">检索</button>
+						</div>
+						<div class="layui-col-md1" style="text-align:right;">
+							<button class="layui-btn create_btn" type="button"  onclick="adddialog();" >新建</button>
+						</div>
+					</form>
+				</div>						
 			</div>
 			<div>				
 				<table class="layui-table backlog_table" lay-even lay-skin="nob">
