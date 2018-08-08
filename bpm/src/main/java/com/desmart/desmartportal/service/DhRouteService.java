@@ -21,6 +21,7 @@ public interface DhRouteService {
 	
 	/**
 	 * 展示当前环节的下个环节与默认处理人信息
+	 * 未发起的流程通过insUid得到的流程实例id(insId)为:-1
 	 * @param insUid 流程实例id
 	 * @param  activityId 当前环节id
 	 * @param  departNo 部门

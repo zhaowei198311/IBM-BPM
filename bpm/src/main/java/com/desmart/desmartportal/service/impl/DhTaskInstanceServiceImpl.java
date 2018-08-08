@@ -925,6 +925,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				for (DhTaskInstance dti : dhTaskInstanceList) {
 					if (dhTaskInstance.getTaskUid().equals(dti.getTaskUid())) {
 						dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+						dhTaskInstance.setTaskFinishDate(new Date());
 						dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
 					}else {
 						dti.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
@@ -942,6 +943,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					dhTaskInstanceMapper.updateByPrimaryKeySelective(nextDhTaskInstance);
 					// 将当前任务关闭
 					dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+					dhTaskInstance.setTaskFinishDate(new Date());
 					dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
 				}else {
 					// 将主任务状态回归到正常状态
@@ -950,15 +952,17 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 					long dueDate = task.getTaskDueDate().getTime() + (long) (task.getRemainHours() * 60 * 60 * 1000);
 					task.setTaskDueDate(new Date(dueDate));
 					task.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
-					dhTaskInstanceMapper.updateByPrimaryKeySelective(task);
+					dhTaskInstanceMapper.updateByPrimaryKeySelective(task); // 更新源任务
 					// 将当前任务关闭
+					dhTaskInstance.setTaskFinishDate(new Date());
 					dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-					dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
+					dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance); //更新加签任务
 				}
 			}
 			// 说明：如果taskType为multiInstanceLoopAdd,则需要主任务所有会签任务都审批完，主任务方可回归正常状态
 			if (DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(type)) {
 				// 将当前任务关闭
+				dhTaskInstance.setTaskFinishDate(new Date());
 				dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 				dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
 				// 查询主任务的所有会签任务是否都已审批完成
@@ -1294,7 +1298,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
 	/**
-	 * 完成任务时，更新任务实例状态和提交内容
+	 * 完成任务时，
+	 * 1.更新任务实例状态为关闭
+	 * 2.更新提交内容
+	 * 3.更新任务完成时间
 	 * @param dhTaskInstance 任务实例
 	 * @param taskData 提交上来的所有数据
 	 * @return

@@ -88,14 +88,12 @@ public interface DhTaskInstanceService {
 	 * @return ServerResponse<?>  
 	 */
 	ServerResponse<?> queryProgressBar(String activityId, String taskUid);
-	
+
 	/**
-	 * 
-	 * @Title: addSure  
-	 * @Description: 加签确定  
-	 * @param @param dhTaskInstance
-	 * @param @return  
-	 * @return ServerResponse<?>  
+	 * 加签确定
+	 * @param dhTaskInstance  userUid属性存放 处理人， taskType属性定义加签类型， taskUid为当前任务主键
+	 * @param creator
+	 * @return
 	 */
 	ServerResponse<?> addSure(DhTaskInstance dhTaskInstance, String creator);
 
