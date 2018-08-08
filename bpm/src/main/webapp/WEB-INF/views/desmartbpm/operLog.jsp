@@ -230,16 +230,16 @@ function drawTable(pageInfo){
 				+ '<td>'
 				+ item.host
 				+ '</td>' 
-				+ '<td title="' + item.requestParam + '">'
+				+ '<td title=\'' + item.requestParam + '\'>'
 				+ requestParam
 			    +'</td>'
-				+ '<td title="' + item.responseParam + '">'
+				+ '<td title=\'' + item.responseParam + '\'>'
 				+ responseParam
 				+ '</td>'
-				+ '<td title="' + item.methodDescription + '">'
+				+ '<td title=\'' + item.methodDescription + '\'>'
 				+ methodDescription
 			    +'</td>'
-				+ '<td title="' + item.path + '">'
+				+ '<td title=\'' + item.path + '\'>'
 				+ path
 				+ '</td>'
 				+ '<td>'

@@ -381,16 +381,16 @@ function drawTable(pageInfo, data) {
 				+ '<td>'
 				+ item.insStatus
 				+ '</td>' 
-				+ '<td title='+item.insTitle+'>'
+				+ '<td title=\''+item.insTitle+'\'>'
 				+ insTitle
 				+ '</td>' 
 				+ '<td>'
 				+ item.initUserFullname
 				+ '</td>'
-				+ '<td title='+item.taskTitle+'>'
+				+ '<td title=\''+item.taskTitle+'\'>'
 				+taskTitle
 				+ '</td>'
-				+ '<td title='+item.handleUserName+'>'
+				+ '<td title=\''+item.handleUserName+'\'>'
 				+handleUserName
 				+ '</td>'					
 				+ '</tr>';
