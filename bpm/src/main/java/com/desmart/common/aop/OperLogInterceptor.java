@@ -151,12 +151,12 @@ public class OperLogInterceptor {
 		String result = "";
 		if(strings.length == args.length) {
 			for (int i = 0; i < strings.length; i++) {
-				result = result + strings[i] + ":" + args[i].toString() + ";" ; 
+				result = result + strings[i] + ":" + args[i]==null?"":args[i].toString() + ";" ; 
 			}
 		}else {
 			if(args != null) {
 				for (int i = 0; i < args.length; i++) {
-					result = args[i].toString() + result + ";";
+					result = args[i]==null?"":args[i].toString() + result + ";";
 				}
 			}
 		}
