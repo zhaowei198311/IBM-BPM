@@ -428,26 +428,26 @@ var common = {
 				tdArr.each(function(tdIndex){
 					if(tdIndex!=tdArr.length-1){
 						var tdName = $(this).data("label");
-						if(tdName!="" && tdName!=null){
+						if(tdName!="" && tdName!=null && $(this).find("input").length>0){
 							var tdValue = $(this).find("input").val();
-							var tdInputType = $(this).find("input").attr("type");
-							if(tdInputType=="number" || tdInputType=="tel"){
-								if(tdValue=="" || tdValue==null || isNaN(tdValue)){
-									tableJson += "\""+tdName+"\":\"\"";
+							if(tdValue!="undefined"){
+								var tdInputType = $(this).find("input").attr("type");
+								if(tdInputType=="number" || tdInputType=="tel"){
+									if(tdValue=="" || tdValue==null || isNaN(tdValue)){
+										tableJson += "\""+tdName+"\":\"\",";
+									}else{
+										tableJson += "\""+tdName+"\":"+tdValue+",";
+									}
 								}else{
-									tableJson += "\""+tdName+"\":"+tdValue+"";
-								}
-							}else{
-								if(tdValue!=null && tdValue!=""){
-									tableJson += "\""+tdName+"\":\""+tdValue+"\"";
+									if(tdValue!=null && tdValue!=""){
+										tableJson += "\""+tdName+"\":\""+tdValue+"\",";
+									}
 								}
 							}
-							if(tdIndex!=tdArr.length-2){
-								tableJson += ","
-							}
-						}
+						}//end tdName!=null
 					}
 				});
+				common.removeJsonStrComma(tableJson);
 				tableJson += "}";
 				if(trIndex!=trArr.length-1){
 					tableJson += ",";
@@ -458,6 +458,7 @@ var common = {
 				tableJson += ",";
 			}
 			json += tableJson;
+			console.log("表格数据:"+tableJson);
 		}
 		
 		//获得最后一位字符是否为","
@@ -468,8 +469,17 @@ var common = {
 			json = json.substring(0, json.length - 1);
 		}
 		json += "}";
+		console.log("表单数据："+json);
 		json = json.replace(/\t/g,"");
 		return json;
+	},
+	//去除json字符串后多余的逗号
+	removeJsonStrComma:function(json){
+		if (json.substring(json.length - 1,json.length) == ",") {
+			json = json.substring(0, json.length - 1);
+			common.removeJsonStrComma(json);
+		}
+		return;
 	},
 	//传入表单json数据给表单组件赋值
 	giveFormSetValue:function(jsonStr){
@@ -869,6 +879,9 @@ var common = {
 			var textareaObj = $(mustObj.parent().next().find("textarea")[0]);
 			var text = mustObj.parent().find("label").text();
 			if(inputObj.length == 1){
+				if(inputObj.is(":hidden")){
+					continue;
+				}
 				var type = inputObj.attr("type");
 				switch(type){
 					case "text":
@@ -888,9 +901,15 @@ var common = {
 					}
 				}
 			}else if(textareaObj.length == 1){
+				if(textareaObj.is(":hidden")){
+					continue;
+				}
 				value = textareaObj.val();
 				name = textareaObj.attr("name");
 			}else if(selectObj.length == 1){
+				if(selectObj.is(":hidden")){
+					continue;
+				}
 				value = selectObj.val();
 				name = selectObj.attr("name");
 			}
@@ -923,7 +942,7 @@ var common = {
 	//验证动态表单正则
 	validateRegx:function(){
 		var flag = true;
-		$("#formSet table:visible").find("input[type='text']").each(function () {
+		$("#formSet table:visible").find("input").each(function () {
 			if ($(this).attr("regx") != null && $(this).attr("regx") != "" &&
 				$(this).val() != null && $(this).val() != "") {
 				reg = new RegExp($(this).attr("regx").trim(), "g");

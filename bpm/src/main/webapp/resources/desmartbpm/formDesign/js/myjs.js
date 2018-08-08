@@ -193,6 +193,12 @@ function showNumberModal(obj) {
     var textCol = inputObj.attr("col");
     var textLabelCol = view.find(".labelDiv").attr("col");
     inputObj.desNumber();
+    
+    var regx = inputObj.attr("regx");
+    var regxCue = inputObj.attr("regx_cue");
+    $("#number-regx").val(regx);
+    $("#number-regx-cue").val(regxCue);
+    
     $("#number-label").val(label);
     $("#number-name").val(name);
     $("#number-name").onlyNumAlpha(); //只能输入英文
@@ -1189,37 +1195,126 @@ $(function () {
             $("#number-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
             $("#number-warn").modal('show');
         } else {
-            var label = $("#number-label").val();
-            var defaultVal = $("#number-default-value").val();
-            var place = $("#number-place").val();
-            var isMust = $("#number-must").is(':checked');
+        	var isRegx = false;
+        	var regx = $("#number-regx").val();
+        	if (regx != null && regx != "") {
+        		try {  
+        			isRegx = true;
+        			new  RegExp(regx);
+        		} catch (e) {  
+        			isRegx = false;
+        			$("#number-warn").html("<strong>警告！</strong>请输入有效正则表达式");
+        			$("#number-warn").modal('show');
+        		} 
+        	}
+        	if (isRegx) {
+        		var label = $("#number-label").val();
+        		var regxCue = $("#number-regx-cue").val();
+                var defaultVal = $("#number-default-value").val();
+                if(defaultVal != null && defaultVal != ""){
+                	try {
+                		var place = $("#number-place").val();
+                        var isMust = $("#number-must").is(':checked');
 
-            var textWidth = $("#number-width").val() * colWidth;
-            var textLabelWidth = $("#number-label-width").val() * colWidth;
+                        var textWidth = $("#number-width").val() * colWidth;
+                        var textLabelWidth = $("#number-label-width").val() * colWidth;
 
-            view.find("label").text(label);
-            var inputObj = view.find("input");
-            inputObj.attr("value", defaultVal);
-            inputObj.attr({
-                "id": id,
-                "placeholder": place,
-                "name": name
-            });
+                        view.find("label").text(label);
+                        var inputObj = view.find("input");
+                        inputObj.attr("value", defaultVal);
+                        inputObj.attr({
+                            "id": id,
+                            "placeholder": place,
+                            "name": name,
+                            "regx": regx,
+        					"regx_cue": regxCue
+                        });
 
-            view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#number-label-width").val());
-            inputObj.parent().css("width", textWidth - 18).attr("col", $("#number-width").val());
-            inputObj.css("width", textWidth - 18).attr("col", $("#number-width").val());
+                        view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#number-label-width").val());
+                        inputObj.parent().css("width", textWidth - 18).attr("col", $("#number-width").val());
+                        inputObj.css("width", textWidth - 18).attr("col", $("#number-width").val());
 
-            if (isMust) {
-                var num = view.find(".labelDiv").find("span").length;
-                if (num == 0) {
-                    view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                        if (isMust) {
+                            var num = view.find(".labelDiv").find("span").length;
+                            if (num == 0) {
+                                view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                            }
+                        } else {
+                            view.find(".labelDiv").find("span").remove();
+                        }
+                        $("#number-warn").modal('hide');
+                        $("#numberModal").modal("hide");
+                	}catch(e){
+                		$("#number-warn").html("<strong>警告！</strong>默认值和正则表达式不匹配");
+        				$("#number-warn").modal('show');
+                	}
+                }else{
+                	var place = $("#number-place").val();
+                    var isMust = $("#number-must").is(':checked');
+
+                    var textWidth = $("#number-width").val() * colWidth;
+                    var textLabelWidth = $("#number-label-width").val() * colWidth;
+
+                    view.find("label").text(label);
+                    var inputObj = view.find("input");
+                    inputObj.attr("value", defaultVal);
+                    inputObj.attr({
+                        "id": id,
+                        "placeholder": place,
+                        "name": name,
+                        "regx": regx,
+    					"regx_cue": regxCue
+                    });
+
+                    view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#number-label-width").val());
+                    inputObj.parent().css("width", textWidth - 18).attr("col", $("#number-width").val());
+                    inputObj.css("width", textWidth - 18).attr("col", $("#number-width").val());
+
+                    if (isMust) {
+                        var num = view.find(".labelDiv").find("span").length;
+                        if (num == 0) {
+                            view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                        }
+                    } else {
+                        view.find(".labelDiv").find("span").remove();
+                    }
+                    $("#number-warn").modal('hide');
+                    $("#numberModal").modal("hide");
                 }
-            } else {
-                view.find(".labelDiv").find("span").remove();
-            }
-            $("#number-warn").modal('hide');
-            $("#numberModal").modal("hide");
+        	}else{//正则为空
+        		var label = $("#number-label").val();
+                var defaultVal = $("#number-default-value").val();
+                var place = $("#number-place").val();
+                var isMust = $("#number-must").is(':checked');
+
+                var textWidth = $("#number-width").val() * colWidth;
+                var textLabelWidth = $("#number-label-width").val() * colWidth;
+
+                view.find("label").text(label);
+                var inputObj = view.find("input");
+                inputObj.attr("value", defaultVal);
+                inputObj.attr({
+                    "id": id,
+                    "placeholder": place,
+                    "name": name,
+					"regx_cue": regxCue
+                });
+
+                view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#number-label-width").val());
+                inputObj.parent().css("width", textWidth - 18).attr("col", $("#number-width").val());
+                inputObj.css("width", textWidth - 18).attr("col", $("#number-width").val());
+
+                if (isMust) {
+                    var num = view.find(".labelDiv").find("span").length;
+                    if (num == 0) {
+                        view.find(".labelDiv").prepend("<span style='color:red;float:right;'>*</span>");
+                    }
+                } else {
+                    view.find(".labelDiv").find("span").remove();
+                }
+                $("#number-warn").modal('hide');
+                $("#numberModal").modal("hide");
+        	}
         }
     });
 

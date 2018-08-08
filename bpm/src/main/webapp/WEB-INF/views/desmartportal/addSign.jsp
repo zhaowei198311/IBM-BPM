@@ -198,11 +198,11 @@
 			
 			<div id="formSet">${bpmForm.dynWebpage }</div>
 			
-			<div class="table_container">
-				<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-	            <div class="layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
-	                ${activityConf.actcResponsibility }
-	            </div>
+			<div class="table_container" <c:if test="${showResponsibility=='FALSE'}">style="display:none;"</c:if>>
+				<p class="title_p">本环节审批要求</p>
+				<div class="layui-form" style="padding:10px 20px 20px;">
+					${activityConf.actcResponsibility }
+				</div>
 			</div>
 			
 			<div class="table_container">

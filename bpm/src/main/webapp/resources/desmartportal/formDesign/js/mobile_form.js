@@ -98,7 +98,7 @@ function drawPage() {
 								+'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
 						}
 						if(thObj.text().trim()!="操作"){
-							trHtml += '<td data-label="' + thObj.text().trim() + '" style="display:none;">';
+							trHtml += '<td data-label="' + thObj.text().trim() + '">';
 						}
 						switch (thObj.attr("col-type")) {
 							case "text": {

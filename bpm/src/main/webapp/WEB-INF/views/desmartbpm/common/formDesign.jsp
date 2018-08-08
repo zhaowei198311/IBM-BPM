@@ -920,6 +920,40 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								正则表达式
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											请填写该组件需要验证的正则表达式</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="number-regx" placeholder="请输入组件验证的正则表达式">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								错误提示语
+								<div class="pull-right popover-info">
+									<i class="icon-question-sign "></i>
+									<div class="popover fade right">
+										<div class="arrow"></div>
+										<h3 class="popover-title">帮助</h3>
+										<div class="popover-content">
+											验证正则表达式不通过时的提示语</div>
+									</div>
+								</div>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="number-regx-cue" placeholder="验证正则表达式不通过的提示语">
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-xs-2 col-sm-offset-2 control-label">默认值</label>
 							<div class="col-xs-7">
 								<input type="text" class="form-control" id="number-default-value" placeholder="请输入组件默认值">

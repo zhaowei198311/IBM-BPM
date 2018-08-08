@@ -368,6 +368,27 @@
 <script type="text/javascript">
 	$(function(){
 		$(".data-table").find("input[type='tel']").desNumber();
+		
+		var dateInput = $("#formSet").find(".date");
+		dateInput.attr("type", "text");
+		dateInput.prop("readonly", true);
+		dateInput.each(function () {
+			$(this).next().remove();
+			var id = $(this).prop("id");
+			var isDatetime = $(this).attr("date_type");
+			var dateType = "date";
+			
+			var calendar = new lCalendar();
+			if(isDatetime=="true"){
+				dateType = "datetime";
+			}
+			var isChange = $(this).attr("onchange")==null || $(this).attr("onchange")=="" ? "false" : "true";
+			calendar.init({
+				'trigger': '#'+id,
+				'type': dateType,
+				'isChange':isChange
+			});
+		});
 	});
 </script>
 </html>
