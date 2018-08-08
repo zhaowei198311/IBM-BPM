@@ -36,13 +36,12 @@ public class FinishFormPrintController {
 		String path = "127.0.0.1:8088/bpm/finishFormPrint/toPrint?formUid="+formUid;
 		String pdfPath = request.getSession().getServletContext().getRealPath("/resources/form");
 		String pdfName = formUid + ".pdf";
-		if (HtmlToPdf.convert(path, pdfPath + "\\" + pdfName)) {
+		if (HtmlToPdf.getCommand(path, pdfPath + "\\" + pdfName)) {
 			String destPath = "http://127.0.0.1:8088/" + request.getContextPath() + "/resources/form/" + pdfName;
 			try {
 	            URL url=new URL(destPath);
 	            URLConnection conn=url.openConnection();
 	            String str=conn.getHeaderField(0);
-	            System.out.println(str);
 	            if (str.indexOf("200")> 0){
 	                return ServerResponse.createBySuccess(destPath);
 	            }else{
