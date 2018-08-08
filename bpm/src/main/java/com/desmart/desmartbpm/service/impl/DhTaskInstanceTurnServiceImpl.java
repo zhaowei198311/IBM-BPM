@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +67,65 @@ public class DhTaskInstanceTurnServiceImpl implements DhTaskInstanceTurnService 
 			return ServerResponse.createBySuccessMessage("任务移交成功");
 		} else {
 			return ServerResponse.createBySuccessMessage("任务移交失败");
+		}
+	}
+
+	@Override
+	@Transactional
+	public ServerResponse batchTransferTaskInstanceByUser(List<String> dhTaskUidList,
+			DhTurnTaskRecord dhTurnTaskRecord) {
+		List<DhTaskInstance> dhTaskInstances = dhTaskInstanceMapper.batchDhTaskInstancesByPrimaryKey(dhTaskUidList);
+		 for(Iterator<DhTaskInstance> iterator = dhTaskInstances.iterator(); iterator.hasNext();)
+	     {
+			DhTaskInstance dhTaskInstance = iterator.next();
+			dhTaskInstance.setTaskType(DhTaskInstance.TYPE_TRANSFER);
+			dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+			dhTaskInstance.setFromTaskUid(dhTaskInstance.getTaskUid());
+			dhTaskInstance.setTaskInitDate(new Date());
+			dhTaskInstance.setTaskDueDate(null);
+			dhTaskInstance.setUsrUid(dhTurnTaskRecord.getTargetUserUid());
+			DhTaskInstance taskExtis = dhTaskInstanceMapper.getBytaskTypeAndUsrUid(dhTaskInstance);
+			if (taskExtis != null) {
+				iterator.remove();//已经加签过给目标人员，则从列表移除
+			}else {
+				dhTaskInstance.setTaskUid("task_instance:" + UUID.randomUUID());
+			}	
+		}
+		if(dhTaskInstances != null && dhTaskInstances.size()>0) {
+			dhTaskInstanceMapper.insertBatch(dhTaskInstances);
+			return ServerResponse.createBySuccessMessage("批量传阅成功");
+		}else {
+			return ServerResponse.createBySuccessMessage("批量传阅成功,无新增传阅通知");
+		}
+	}
+
+	@Override
+	@Transactional
+	public ServerResponse allTransferTaskInstanceByUser(DhTurnTaskRecord dhTurnTaskRecord,
+			DhTaskInstance dhTaskInstance, String isAgent,Date startTime,Date endTime) {
+		dhTaskInstance.setTaskStatus("'32'");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance, isAgent);
+		for(Iterator<DhTaskInstance> iterator = resultList.iterator(); iterator.hasNext();)
+	     {
+			DhTaskInstance taskInstance = iterator.next();
+			taskInstance.setTaskType(DhTaskInstance.TYPE_TRANSFER);
+			taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+			taskInstance.setFromTaskUid(taskInstance.getTaskUid());
+			taskInstance.setTaskInitDate(new Date());
+			taskInstance.setTaskDueDate(null);
+			taskInstance.setUsrUid(dhTurnTaskRecord.getTargetUserUid());
+			DhTaskInstance taskExtis = dhTaskInstanceMapper.getBytaskTypeAndUsrUid(taskInstance);
+			if (taskExtis != null) {
+				iterator.remove();//已经加签过给目标人员，则从列表移除
+			}else {
+				taskInstance.setTaskUid("task_instance:" + UUID.randomUUID());
+			}	
+		}
+		if(resultList != null && resultList.size()>0) {
+			dhTaskInstanceMapper.insertBatch(resultList);
+			return ServerResponse.createBySuccessMessage("批量传阅成功");
+		}else {
+			return ServerResponse.createBySuccessMessage("批量传阅成功,无新增传阅通知");
 		}
 	}
 
