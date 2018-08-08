@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.util.IncrementIdByDateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartsystem.dao.DhInterfaceLogMapper;
@@ -27,9 +28,11 @@ import com.desmart.desmartsystem.service.DhInterfaceParameterService;
 import com.desmart.desmartsystem.service.DhInterfaceService;
 import com.desmart.desmartsystem.task.SAPConn;
 import com.desmart.desmartsystem.util.DateFmtUtils;
+import com.desmart.desmartsystem.util.DateUtil;
 import com.desmart.desmartsystem.util.HttpClientCallSoapUtil;
 import com.desmart.desmartsystem.util.HttpRequestUtils;
 import com.desmart.desmartsystem.util.Json;
+import com.desmart.desmartsystem.util.MyDateUtils;
 import com.desmart.desmartsystem.util.TestXML;
 import com.desmart.desmartsystem.util.XmlParsing;
 import com.desmart.desmartsystem.util.XmlToJsonUtils;
@@ -49,6 +52,9 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 
 	@Autowired
 	private DhInterfaceLogMapper dhInterfaceLogMapper;
+	
+	@Autowired
+	private IncrementIdByDateUtil incrementIdByDateUtil;
 
 	@Override
 	public Json interfaceSchedule(JSONObject jsonObject) throws Exception {
@@ -82,6 +88,12 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 		}
 
 		JSONObject inputParameter = (JSONObject) jsonObject.getJSONObject("inputParameter");
+		
+		//判断如果是批次号系统自动生成
+		if(inputParameter.get("PNO")!=null) {
+			inputParameter.put("PNO",incrementIdByDateUtil.createId());
+		}
+		
 
 		// 1.获取参数的配置信息
 		DhInterfaceParameter iptParameter = new DhInterfaceParameter();
@@ -122,7 +134,9 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 					}
 					if (paraType.equals(InterfaceParameterType.DATE.getCode())) {
 						if (StringUtils.isNoneBlank(value)) {
-							if (!DateFmtUtils.isValidDate(value, dateFmt)) {
+							Date  valueDate= DateUtil.strToDate(value, dateFmt);
+							String strDate = DateUtil.dateToStr(valueDate,dateFmt);
+							if (!DateFmtUtils.isValidDate(strDate, dateFmt)) {
 								json.setSuccess(false);
 								json.setMsg(value + "不是正确的日期格式！");
 								return json;
