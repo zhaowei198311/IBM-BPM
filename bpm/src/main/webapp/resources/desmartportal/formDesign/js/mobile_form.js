@@ -74,6 +74,7 @@ function drawPage() {
 				var subDivObj = column.find(".subDiv");
 				var tableObj = subDivObj.find("table");
 				var pObj = subDivObj.find("p");
+				var hiddenObj = subDivObj.find("input[title='hidden_text']");
 				if(tableObj.length!=0){
 					flag = false;
 					formHtml = formHtml.substring(0, formHtml.length - 4);
