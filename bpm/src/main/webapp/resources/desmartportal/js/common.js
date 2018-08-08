@@ -447,7 +447,8 @@ var common = {
 						}//end tdName!=null
 					}
 				});
-				common.removeJsonStrComma(tableJson);
+				console.log(tableJson);
+				tableJson = common.removeJsonStrComma(tableJson);
 				tableJson += "}";
 				if(trIndex!=trArr.length-1){
 					tableJson += ",";
@@ -479,7 +480,7 @@ var common = {
 			json = json.substring(0, json.length - 1);
 			common.removeJsonStrComma(json);
 		}
-		return;
+		return json;
 	},
 	//传入表单json数据给表单组件赋值
 	giveFormSetValue:function(jsonStr){

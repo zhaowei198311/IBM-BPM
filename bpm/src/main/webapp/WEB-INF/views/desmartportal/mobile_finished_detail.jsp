@@ -110,7 +110,10 @@
 	            <table class="layui-table">
 	                <tbody>
 	                    <tr>
-	                        <td class="td_title" colspan="1" style="width: 70px">流程标题</td>
+	                        <td class="td_title" colspan="1" style="width: 70px">
+	                        	流程标题
+	                        	<span class="tip_span">*</span>
+	                        </td>
 	                        <td class="sub_title" colspan="3">
 	                        	<input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled/>
 	                        </td>
