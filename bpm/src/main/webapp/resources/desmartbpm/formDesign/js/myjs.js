@@ -1143,7 +1143,8 @@ $(function () {
                 view.find(".labelDiv").css("width", textLabelWidth).attr("col", $("#text-label-width").val());
                 inputObj.parent().css("width", textWidth - 18).attr("col", $("#text-width").val());
                 inputObj.css("width", textWidth - 18).attr("col", $("#text-width").val()).attr({
-                    "regx_cue": regxCue
+                	"regx": "",
+                	"regx_cue": regxCue
                 });
 
                 if (isMust) {
@@ -1297,6 +1298,7 @@ $(function () {
                     "id": id,
                     "placeholder": place,
                     "name": name,
+                    "regx": "",
 					"regx_cue": regxCue
                 });
 
