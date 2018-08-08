@@ -265,7 +265,7 @@ function taskProgerss(activityId,taskUid){
             var percent = result.percent;
             if (data.status == 0) {
             	proHtml = '<div class="layui-progress layui-progress-big" lay-filter="progressBar" style="position: relative;">'
-            		+'<div class="layui-progress-bar" lay-percent="'+percent+'%"></div>';
+            		+'<div class="layui-progress-bar" lay-percent="'+(100-percent)+'%"></div>';
                 if (hour == -1) {
                 	proHtml += "<span class='progress_time' style='right: 1%;'>审批已超时</span>";
                 } else {
