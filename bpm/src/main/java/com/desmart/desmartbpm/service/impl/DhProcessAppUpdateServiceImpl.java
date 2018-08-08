@@ -586,7 +586,9 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
             newConf.setActivityId(newActivityId); // 将老配置关联的环节换为新环节
             newConfs.add(newConf);
         }
-        dhActivityConfMapper.insertBatch(newConfs); // 批量插入
+        if (!CollectionUtils.isEmpty(newConfs)) {
+            dhActivityConfMapper.insertBatch(newConfs); // 批量插入
+        }
     }
 
     /**

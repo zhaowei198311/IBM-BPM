@@ -344,7 +344,7 @@ function checkDraftsExtis(){
     var insTitle = $("#insTitle").val();
     $.ajax({
         url: common.getPath() +"/drafts/checkDraftsExtis",
-        method: "post",
+        type: "post",
         async: false,
         data: {
         	dfsTitle: insTitle,

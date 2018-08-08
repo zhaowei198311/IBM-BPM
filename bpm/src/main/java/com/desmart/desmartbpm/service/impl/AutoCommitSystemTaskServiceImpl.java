@@ -298,19 +298,6 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         }
     }
 
-//    public static void main(String[] args) throws ParseException {
-//       DhTaskInstance taskInstance = new DhTaskInstance();
-//       taskInstance.setTaskInitDate(DateTimeUtil.strToDate("2018-07-20", "yyyy-MM-dd"));
-//       DhActivityConf conf = new DhActivityConf();
-//       conf.setActcDelayTime(4);
-//       conf.setActcDelayTimeunit("day");
-//       conf.setActcDelayField("time");
-//       DhProcessInstance dhProcessInstance = new DhProcessInstance();
-//       String str = "{ formData: { time: { value: \"2018-07-24\" } } }";
-//        dhProcessInstance.setInsData(str);
-//        System.out.println(checkTime(taskInstance, conf, dhProcessInstance));
-//    }
-
 
     /**
      * 获得未处理的系统任务列表
@@ -325,7 +312,11 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         return dhTaskInstanceMapper.selectAllTask(taskSelective);
     }
 
-
+    /**
+     * 获得未处理的系统延迟任务列表
+     * @param bpmGlobalConfig
+     * @return
+     */
     private List<DhTaskInstance> getSystemDelayTaskListToAutoCommit(BpmGlobalConfig bpmGlobalConfig) {
         DhTaskInstance taskSelective = new DhTaskInstance();
         taskSelective.setUsrUid(bpmGlobalConfig.getBpmAdminName());
@@ -334,16 +325,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         return dhTaskInstanceMapper.selectAllTask(taskSelective);
     }
 
-    private boolean isFirstTaskNodeOfSubProcess(BpmActivityMeta taskNode, DhProcessInstance currProcessInstance) {
-        if (DhProcessInstance.INS_PARENT_OF_MAIN_PROCESS.equals(currProcessInstance.getInsParent())) {
-            // 如果是主流程
-            return false;
-        }
-        BpmActivityMeta subProcessNode = bpmActivityMetaService.queryByPrimaryKey(currProcessInstance.getTokenActivityId());
-        BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(subProcessNode);
 
-        return false;
-    }
 
 
 }

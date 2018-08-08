@@ -277,7 +277,6 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
      * @return
      */
     private ServerResponse updateChooseAbleHandleOfActivity(DhActivityConf dhActivityConf) {
-		// TODO Auto-generated method stub
     	String actcChooseableHandlerType = dhActivityConf.getActcChooseableHandlerType();
         DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcChooseableHandlerType);
         if (assignTypeEnum == null) {
