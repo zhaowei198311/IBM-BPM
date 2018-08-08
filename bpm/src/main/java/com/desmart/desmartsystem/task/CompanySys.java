@@ -21,7 +21,7 @@ import com.desmart.desmartsystem.entity.SysCompany;
 import com.desmart.desmartsystem.util.UUIDTool;
 
 public class CompanySys {
-	public InputStream getSapCompanyStream(){
+	public static InputStream getSapCompanyStream(){
 		HttpURLConnection conn = null;
 		InputStream in=null;
 		try{
@@ -57,7 +57,7 @@ public class CompanySys {
 			conn.setRequestProperty("Content-Length",String.valueOf(entity.length));
 			conn.getOutputStream().write(entity);
 			if (conn.getResponseCode() == 200) {
-				in = conn.getInputStream();				
+				in = conn.getInputStream();
 			} else {
 				System.out.println("连接出错！");
 				System.out.println(conn.getResponseMessage());
@@ -70,27 +70,14 @@ public class CompanySys {
 
 
 
-	private List <SysCompany> parseSapCompanyStream(InputStream in){
+	private static List <SysCompany> parseSapCompanyStream(InputStream in){
 		
-		//容器中获取SysCompanyMapper实例
-		WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-		SysCompanyMapper sysCompanyMapper = wac.getBean(SysCompanyMapper.class);
-		
-		
-		
-		Set<String> companySet=new HashSet<String>();
-		//查询数据库中已经
-		List<SysCompany>  companyList = sysCompanyMapper.selectAll(new SysCompany());
-		for (SysCompany sysCompany : companyList) {
-			companySet.add(sysCompany.getCompanyCode());
-		}
-		
-		List<SysCompany> intCompanyList=new ArrayList<SysCompany>();
 		
 		List <SysCompany> companyInfoList = new ArrayList<SysCompany>();
 		try{
 			SAXReader reader = new SAXReader();
 			Document document = reader.read(in);
+			System.out.println(document.asXML());
 			document.getRootElement();
 			Element root=document.getRootElement();
 			Element e1=root.element("Body");
@@ -100,7 +87,7 @@ public class CompanySys {
 			Iterator it1=e3.elementIterator();			
 			while(it1.hasNext()) {
 				SysCompany cib = new SysCompany();
-				cib.setCompanyUid("sysCompany:"+UUIDTool.getUUID());
+				
 				Element element=(Element)it1.next();
 				//读取一个item标签 
 				element.getName();
@@ -110,12 +97,10 @@ public class CompanySys {
 				cib.setCompanyName(element3.getText());
 				cib.setCreateDate(new Date());
 				cib.setEndDate(new Date());
+				System.out.println(element3.getText());
 				companyInfoList.add(cib);
-				if(!companySet.contains(cib.getCompanyCode())) {
-					intCompanyList.add(cib);
-				}
 			}
-			sysCompanyMapper.insertBatch(intCompanyList);
+			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -124,7 +109,12 @@ public class CompanySys {
 	}
 	
 	//执行同步部门
-	public void executeSysCompany() {
-		parseSapCompanyStream(getSapCompanyStream());
+	public static List<SysCompany> executeSysCompany() {
+		return parseSapCompanyStream(getSapCompanyStream());
+	}
+	
+	
+	public static void main(String[] args) {
+		executeSysCompany();
 	}
 }
