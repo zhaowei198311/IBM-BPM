@@ -126,7 +126,7 @@ public class JobController {
 	 */
 	@RequestMapping("datagrid.do")
 	@ResponseBody
-	public DatagridForLayUI datagrid(JobEntity jobEntity, int page, int limit) throws SchedulerException {
+	public DatagridForLayUI datagrid(JobEntity jobEntity, Integer page, Integer limit) throws SchedulerException {
 		// page 当前也
 		// limit 每页显示记录数
 		List<JobEntity> jobInfos = new ArrayList<JobEntity>();
@@ -135,8 +135,6 @@ public class JobController {
 		List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
 
 		for (String triggerGroupName : triggerGroupNames) {
-			
-			
 			String groupTypeName="";
 			SysDictionaryData sysDictionaryData = new SysDictionaryData();
 			sysDictionaryData.setDicDataCode(triggerGroupName);
@@ -177,23 +175,17 @@ public class JobController {
 				}
 			}
 		}
-		
-		
 		//根据查询条件对list
 		if(StringUtils.isNotBlank(jobEntity.getJobName())) {
 			jobInfos=search(jobEntity.getJobName(),jobInfos);
 		};
-		
-		
 		DatagridForLayUI datagridForLayUI = new DatagridForLayUI();
-
 		// 每页开始数
 		int star = (page - 1) * limit;
 		// 设置总页数
 		int count = jobInfos.size();
-
 		datagridForLayUI.setCount(Long.valueOf(count));
-		datagridForLayUI.setData(jobInfos.subList(star, count - star > limit ? star + limit : count));
+		datagridForLayUI.setData(jobInfos.subList(star > count ? 0  : star, count - star > limit ? star + limit : count));
 		return datagridForLayUI;
 	}
 	
