@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhTurnTaskRecordMapper">
+	
+	<sql id="base_column">
+		TURN_RECORD_UID,
+		SOURCE_USER_UID,
+		TARGET_USER_UID,
+		TURN_OBJECT_UID,
+		TURN_TASK_OPERATION,
+		TURN_TASK_DATE,
+		TURN_TASK_CAUSE
+	</sql>
+	<sql id="relation_column">
+		tr.TURN_RECORD_UID,
+		tr.SOURCE_USER_UID,
+		tr.TARGET_USER_UID,
+		tr.TURN_OBJECT_UID,
+		tr.TURN_TASK_OPERATION,
+		tr.TURN_TASK_DATE,
+		tr.TURN_TASK_CAUSE
+	</sql>
+
+	<insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTurnTaskRecord">
+		insert into DH_TURN_TASK_RECORD (
+		<include refid="base_column" />
+		) values (
+			#{turnRecordUid},#{sourceUserUid},#{targetUserUid},#{turnObjectUid},#{turnTaskOperation},
+			sysdate,#{turnTaskCause}
+		)
+	</insert>
+	<insert id="batchSave" parameterType="java.util.List">
+		insert into DH_TURN_TASK_RECORD (
+		<include refid="base_column" />)
+		<foreach collection="itemList" item="item" open="(" close=")" separator="union all">
+			select #{item.turnRecordUid},#{item.sourceUserUid},#{item.targetUserUid}
+			,#{item.turnObjectUid},#{item.turnTaskOperation},
+			sysdate,#{item.turnTaskCause}
+			form dual
+		</foreach>
+		
+	</insert>
+	
+</mapper>

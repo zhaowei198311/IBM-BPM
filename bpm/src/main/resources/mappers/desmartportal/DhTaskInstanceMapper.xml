@@ -985,4 +985,59 @@
     		and ti.task_status != '32' 
     		and ti.task_type !='transfer'
     </select>
+    
+    <select id="batchDhTaskInstancesByPrimaryKey" resultType="com.desmart.desmartportal.entity.DhTaskInstance"
+			parameterType="java.util.List">
+		SELECT <include refid="Base_Column_List" />
+		FROM DH_TASK_INSTANCE
+		<where>
+  		<foreach collection="itemList" index="index" item="item" open="(" separator="or" close=")">     
+  			task_uid=#{item}
+   		</foreach>
+  		</where>
+	</select>
+	
+	<update id="turnTaskByBatch" parameterType="java.util.List">
+		begin  
+        <foreach collection="itemList" item="item" index="index" separator=";" > 
+            update DH_TASK_INSTANCE 
+            <set>
+            <if test=" item.taskDelegateUser != null and !item.taskDelegateUser.trim().isEmpty() ">
+            	TASK_DELEGATE_USER = #{item.taskDelegateUser},
+            </if>
+            <if test=" item.usrUid != null and !item.usrUid.trim().isEmpty() ">
+            	USR_UID = #{item.usrUid},
+            </if>
+            TASK_INIT_DATE = sysdate,
+		    </set>
+            where task_uid = #{item.taskUid}
+            </foreach>
+        ;end;
+	</update>
+	<update id="turnDelegateBackLogTask" parameterType="map">
+		update dh_task_instance
+		<set>
+		<if test=" targetUserUid != null and !targetUserUid.trim().isEmpty() ">
+			TASK_DELEGATE_USER = #{targetUserUid},
+		</if>
+		TASK_INIT_DATE = sysdate,
+		</set>
+		where TASK_DELEGATE_USER = #{sourceUserUid}
+		AND TASK_STATUS IN ('12','-2')
+		AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+	</update>
+	<update id="turnDisposeBackLogTask" parameterType="map">
+		update dh_task_instance
+		<set>
+		<if test=" targetUserUid != null and !targetUserUid.trim().isEmpty() ">
+			USR_UID = #{targetUserUid},
+		</if>
+		TASK_INIT_DATE = sysdate,
+		</set>
+		where USR_UID = #{sourceUserUid} AND TASK_DELEGATE_USER is null 
+		AND TASK_STATUS IN ('12','-2')
+		AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+	</update>
 </mapper>

@@ -51,4 +51,7 @@ public class EntityIdPrefix {
 
     /** 网关规则前缀 */
     public static final String DAT_RULE = "datrule:";
+    
+    /**任务移交记录前缀**/
+    public static final String DH_TURN_TASK_RECORD = "turn_record:";
 }

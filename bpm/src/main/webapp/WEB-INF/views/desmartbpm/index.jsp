@@ -108,6 +108,7 @@
 						    <%-- <shiro:hasPermission name="sysUser:globalConfig"> --%>
 						      <dd><a href="operLog/index" target="iframe0">日志管理</a></dd>
 						    <%-- </shiro:hasPermission> --%>
+						    <dd><a href="dhTaskInstanceTurn/turnTaskInstance" target="iframe0">任务移交</a></dd>
 						    </dl>
 						</li>
                     </ul>

@@ -258,4 +258,30 @@ public interface DhTaskInstanceMapper {
      * @return
      */
 	List<String> queryNotFinishedAgentRecordListByAgentId(String agentId);
+	/**
+	 * 根据任务主键批量查询任务
+	 * @param dhTaskPrimaryKeys
+	 * @return
+	 */
+	List<DhTaskInstance> batchDhTaskInstancesByPrimaryKey(@Param("itemList")List<String> dhTaskPrimaryKeys);
+	/**
+	 * 任务批量移交
+	 * @param dhTaskInstances
+	 * @return
+	 */
+	Integer turnTaskByBatch(@Param("itemList")List<DhTaskInstance> dhTaskInstances);
+	/**
+	 * 移交代理人是sourceUserUid的待办任务
+	 * @param sourceUserUid
+	 * @param targetUserUid
+	 * @return
+	 */
+	Integer turnDelegateBackLogTask(@Param("sourceUserUid")String sourceUserUid,@Param("targetUserUid")String targetUserUid);
+	/**
+	 * 移交处理人是sourceUserUid且没有代理的待办任务
+	 * @param sourceUserUid
+	 * @param targetUserUid
+	 * @return
+	 */
+	Integer turnDisposeBackLogTask(@Param("sourceUserUid")String sourceUserUid,@Param("targetUserUid")String targetUserUid);
 }
