@@ -654,9 +654,11 @@ var common = {
 			$("[name='"+name+"']").attr("disabled","true");
 		}
 		if(tagType=="radio"){
-			$("[name='"+name+"']").attr("disabled","true");
+			$("[name='"+name+"']").attr("display","none");
 			var title = $("[name='"+name+"']:checked").attr("title");
-			$("[name='"+name+"']:checked").parent().html("<span style='margin-left:10px;'>"+title+"</span>");
+			if($("[name='"+name+"']:checked").parent().find(".radio_value").length==0){
+				$("[name='"+name+"']:checked").parent().append("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
+			}
 		}
 		if(tagName=="SELECT"){
 			$("[name='"+name+"']").attr("disabled","true");
