@@ -75,6 +75,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.queryFormByFormNameAndCode(formName,formCode);
 		}catch(Exception e) {
+			LOG.error("查询表单异常",e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
@@ -97,6 +98,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.isBindMainForm(formUids);
 		}catch(Exception e) {
+			LOG.error("查询公共表单是否被主表单绑定", e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
@@ -110,6 +112,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.saveForm(bpmPublicForm);
 		}catch(Exception e) {
+			LOG.error("保存子表单异常", e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
@@ -123,6 +126,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.upadteFormContent(bpmPublicForm);
 		}catch(Exception e) {
+			LOG.error("修改子表单异常", e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
@@ -136,8 +140,10 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.updateFormInfo(bpmPublicForm);
 		}catch(PlatformException e) {
+			LOG.error("修改子表单异常", e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}catch(Exception e) {
+			LOG.error("修改子表单异常", e);
 			return ServerResponse.createByErrorMessage("表单属性修改失败");
 		}
 	}
@@ -151,6 +157,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.deleteForm(formUids);
 		}catch(Exception e) {
+			LOG.error("删除子表单异常", e);
 			return ServerResponse.createByError();
 		}
 	}
@@ -189,7 +196,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.saveFormRelePublicForm(formUid,publicFormUidArr);
 		}catch(Exception e) {
-			e.printStackTrace();
+			LOG.error("增加子表单与主表单关联异常", e);
 			return ServerResponse.createByError();
 		}
 	}
@@ -203,6 +210,7 @@ public class BpmPublicFormController {
 		try {
 			return bpmPublicFormService.queryReleByFormUidAndPublicFormUid(formUid,publicFormUid);
 		}catch(Exception e) {
+			LOG.error("查询子表单与主表单关联异常", e);
 			return ServerResponse.createByError();
 		}
 	}

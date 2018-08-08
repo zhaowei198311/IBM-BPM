@@ -116,6 +116,7 @@
 	});
 	
 	function testData(){
+		common.validateRegx();
 		var json = common.getDesignFormData();
 		console.log(json);
 	}

@@ -30,7 +30,12 @@ public class DhRouteController {
 	public ServerResponse showRouteBar(@RequestParam Map<String, String> parameter) {
 		ServerResponse response=dhRouteService.showRouteBar(parameter.get("taskUid"), parameter.get("insUid"), parameter.get("activityId"), 
 												parameter.get("departNo"), parameter.get("companyNum"), parameter.get("formData"));
-        return response;
+        try {
+        	return response;
+        }catch(Exception e) {
+        	e.printStackTrace();
+        	return ServerResponse.createByError();
+        }
     }
 
 

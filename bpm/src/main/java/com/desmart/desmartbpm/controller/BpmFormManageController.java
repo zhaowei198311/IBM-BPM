@@ -196,6 +196,7 @@ public class BpmFormManageController {
 			return bpmFormManageService.saveFormContent(formJsonObj);
 		}catch(Exception e) {
 			e.printStackTrace();
+			LOG.error("保存表单数据异常",e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
 	}
@@ -274,6 +275,7 @@ public class BpmFormManageController {
 		try {
 			return bpmFormManageService.isBindStep(formUids);
 		}catch(Exception e) {
+			LOG.error("表单是否被步骤绑定",e);
 			return ServerResponse.createByError();
 		}
 	}

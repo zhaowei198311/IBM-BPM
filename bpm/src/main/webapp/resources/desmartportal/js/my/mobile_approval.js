@@ -1249,6 +1249,10 @@ function showDataTr(obj){
 	$("#tr_con_content title_p").text(tableTitle);
 	$("#tr_con_content #tr_table").html(trHtml);
 	$("#tr_con_content #tr_table").find("td").each(function(){
+		if($(this).find("input").length>0){
+			var oldId = $(this).find("input").attr("id");
+			$(this).find("input").prop("id","temp_"+oldId);
+		}
 		if($(this).css("display")=="none"){
 			var value = $(this).find("input").val();
 			$(this).find("input").val(value);
@@ -1258,6 +1262,23 @@ function showDataTr(obj){
 		}
 		if($(this).attr("data-label").trim()=="操作"){
 			$(this).remove();
+		}
+		if($(this).find(".date").length>0){
+			var dateObj = $(this).find(".date");
+			var id = dateObj.prop("id");
+			var isDatetime = dateObj.attr("date_type");
+			var dateType = "date";
+			
+			var calendar = new lCalendar();
+			if(isDatetime=="true"){
+				dateType = "datetime";
+			}
+			var isChange = dateObj.attr("onchange")==null || dateObj.attr("onchange")=="" ? "false" : "true";
+			calendar.init({
+				'trigger': '#'+id,
+				'type': dateType,
+				'isChange':isChange
+			});
 		}
 	});
 	$(".mobile_container").css("display","none");

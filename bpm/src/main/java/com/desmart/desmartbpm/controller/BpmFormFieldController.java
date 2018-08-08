@@ -89,6 +89,7 @@ public class BpmFormFieldController {
 		try {
 			return bpmFormFieldService.queryFormTabByFormUid(formUid);
 		}catch(Exception e) {
+			logger.error("查询表单表格类型字段异常",e);
 			return ServerResponse.createByError();
 		}
 	}
@@ -102,6 +103,7 @@ public class BpmFormFieldController {
 		try {
 			return bpmFormFieldService.queryFormTabFieldByFormUidAndTabName(formUid,tableName);
 		}catch(Exception e) {
+			logger.error("查询表单表格字段类型字段异常");
 			return ServerResponse.createByError();
 		}
 	}
