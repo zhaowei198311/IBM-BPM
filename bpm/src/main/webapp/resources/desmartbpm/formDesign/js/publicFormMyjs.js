@@ -165,7 +165,7 @@ function showHiddenModal(obj){
     view = $(obj).parent().next().next();
     var inputObj = view.find("input");
     var id = inputObj.attr("id");
-    var label = inputObj.attr("hidden_label");
+    var label = inputObj.attr("hidden-label");
     var name = inputObj.attr("name").replace(formCode+"_","");
     oldName = name;
 
@@ -836,6 +836,23 @@ function showChooseValueModal(obj){
     } else {
         $("#choose-value-must").attr("checked", "checked");
     }
+}
+
+//图片上传
+function showImgUploadModal(obj){
+	$("#imgUploadModal").modal("show");
+
+    view = $(obj).parent().next().next();
+    var subObj = view.find("div[title='img_upload']");
+    var id = subObj.attr("id");
+    var label = subObj.attr("img-upload-label");
+    var name = subObj.attr("name").replace(formCode+"_","");
+    oldName = name;
+
+    $("#img-upload-label").val(label);
+    $("#img-upload-name").val(name);
+    $("#img-upload-name").onlyNumAlpha(); //只能输入英文
+    $("#img-upload-id").val(id);	
 }
 
 var nameArr = new Array();
@@ -1878,7 +1895,31 @@ $(function () {
             $("#chooesValueModal").modal("hide");
         }
     });
+    
+    //保存图片上传属性
+    $("#save-img-upload-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#img-upload-id").val();
+        var name = $("#img-upload-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#img-upload-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#img-upload-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#img-upload-warn").modal('show');
+        } else {
+        	var label = $("#img-upload-label").val().trim();
+        	var subObj = view.find("div[title='choose_value']");
+        	subObj.attr({
+                "id": id,
+                "img-upload-label":label,
+                "name": formCode+"_"+name
+            });
 
+            $("#img-upload-warn").modal('hide');
+            $("#imgUploadModal").modal("hide");
+        }
+    });
+    
     //当demo div改变大小时触发的事件
     $(".demo").resize(function () {
         var souObj = $(".demo");

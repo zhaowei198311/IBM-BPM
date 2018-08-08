@@ -108,11 +108,13 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
 <script type="text/javascript">
 	$(function(){
-		var json = '{"choose_user_xD7n":{"value":"00055685;00054290;00056430;","description":"苏思佳;胡笛;王安永;"}}';
+		/* var json = '{"choose_user_xD7n":{"value":"00055685;00054290;00056430;","description":"苏思佳;胡笛;王安永;"}}';
 		common.giveFormSetValue(json);
 		
 		var perJson = '{"choose_user_xD7n":{"edit":"no"}}';
-		common.giveFormFieldPermission(perJson);
+		common.giveFormFieldPermission(perJson); */
+		var json = '{"province":{"value":"360000"},"city":{"value":"360300"},"county":{"value":"360313"}}';
+		common.againSetValue(json);
 	});
 	
 	function testData(){

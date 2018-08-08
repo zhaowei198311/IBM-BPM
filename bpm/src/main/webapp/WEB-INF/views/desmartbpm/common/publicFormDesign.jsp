@@ -585,6 +585,28 @@
 											</div>
 										</div>
 									</div>
+									<!-- 图片上传组件 -->
+									<div class="box box-element ui-draggable">
+										<a href="#close" class="remove label label-important">
+											<i class="icon-remove icon-white"></i>删除
+										</a>
+										<span class="drag label">
+											<i class="icon-move"></i>拖动
+										</span>
+										<span class="configuration">
+											<button type="button" class="btn btn-mini edit-attr" title="edit-text" onclick="showImgUploadModal(this);" role="button"
+											    data-toggle="modal">编辑
+											</button>
+										</span>
+										<div class="preview">图片上传组件</div>
+										<div class="view">
+											<div class="subDiv">
+												<div title="img_upload" col="12" img-upload-label="图片上传">
+													此组件是图片上传组件并且可预览图片，设计时不可见，预览可见，独占两行
+												</div>
+											</div>
+										</div>
+									</div>
 									<!-- 审批意见 -->
 									<!-- <div class="box box-element ui-draggable">
 										<a href="#close" class="remove label label-important">
@@ -2116,6 +2138,51 @@
 				<div class="modal-footer">
 					<a id="save-choose-depart-content" class="btn btn-primary">保存</a>
 					<a class="btn btn-primary" data-dismiss="modal" onclick='$("#choose-depart-warn").modal("hide");'>取消</a>
+				</div>
+			</div>
+			
+			<!-- 设置图片上传组件的属性 -->
+			<div class="modal hide fade" role="dialog" id="imgUploadModal">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>设置图片上传组件的属性</h3>
+				</div>
+				<div class="modal-body">
+					<div id="img-upload-warn" class="hide alert alert-warning">
+						<strong>警告！</strong>必须填写标
+						<span style="color:red;">*</span>的属性。
+					</div>
+
+					<form>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="img-upload-label" value="text" placeholder="请输入组件标签">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								ID
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="img-upload-id" placeholder="请输入组件ID" readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-xs-2 col-sm-offset-2 control-label">
+								name
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-7">
+								<input type="text" class="form-control" id="img-upload-name" placeholder="请输入组件name">
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<a id="save-img-upload-content" class="btn btn-primary">保存</a>
+					<a class="btn btn-primary" data-dismiss="modal" onclick='$("img-upload-warn").modal("hide");'>取消</a>
 				</div>
 			</div>
 			

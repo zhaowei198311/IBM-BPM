@@ -836,6 +836,23 @@ function showChooseValueModal(obj){
     }
 }
 
+//图片上传
+function showImgUploadModal(obj){
+	$("#imgUploadModal").modal("show");
+
+    view = $(obj).parent().next().next();
+    var subObj = view.find("div[title='img_upload']");
+    var id = subObj.attr("id");
+    var label = subObj.attr("img-upload-label");
+    var name = subObj.attr("name").replace(formCode+"_","");
+    oldName = name;
+
+    $("#img-upload-label").val(label);
+    $("#img-upload-name").val(name);
+    $("#img-upload-name").onlyNumAlpha(); //只能输入英文
+    $("#img-upload-id").val(id);	
+}
+
 //选择关联子表单
 function chooseFormModal(obj){
 	view = $(obj).parent().next().next();
