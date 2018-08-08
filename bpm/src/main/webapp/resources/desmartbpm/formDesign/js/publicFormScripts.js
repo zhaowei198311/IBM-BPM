@@ -622,6 +622,8 @@ $(document).ready(function () {
                 }
             } else if($("#" + temp).parent().parent().find(".subDiv").find("table").length > 0){
                 inputId = "table_" + inputId;
+            } else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").length > 0){
+            	inputId = "img_upload_" + inputId;
             }
 
             if ($("#" + temp).parent().parent().find(".subDiv").find("input[type='radio']").length > 0 ||
@@ -636,7 +638,9 @@ $(document).ready(function () {
             		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).find("th").each(function(){
             			$(this).attr({"id":inputId+"_"+_getRandomString(2),"name":inputId+"_"+_getRandomString(2)});
             		});
-            	}else{
+            	} else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").length > 0){
+            		$("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").attr({"id":inputId,"name":inputId});
+                } else{
             		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
             	}
             }

@@ -47,7 +47,6 @@ public class HtmlToPdf {
 	public static boolean getCommand(String sourceFilePath, String targetFilePath) {
 		String system = System.getProperty("os.name");
 		String command = "";
-		system = "Linux";
 		if (system.contains("Windows")) {
 			command = "D:\\wkhtmltox\\bin\\wkhtmltopdf.exe " + sourceFilePath + " " + targetFilePath;
 		} else if (system.contains("Linux")) {

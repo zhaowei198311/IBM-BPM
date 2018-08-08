@@ -968,6 +968,32 @@ var common = {
 			} //end if
 		});
 		return flag;
+	},
+	//省市区再次赋值的问题
+	againSetValue:function(jsonStr){
+		var json = JSON.parse(jsonStr);
+		var province = "";
+		var city = "";
+		var county = "";
+		for (var name in json) {
+			var paramObj = json[name];
+			var tagName = $("[name='" + name + "']").prop("tagName");
+			if (name == "province") {
+				province = paramObj["value"];
+			} else if (name == "city") {
+				city = paramObj["value"];
+			} else if (name == "county") {
+				county = paramObj["value"];
+			} else {
+				continue;
+			}
+		}
+		var cityJson = {
+			province: province,
+			city: city,
+			county: county
+		};
+		return cityJson;
 	}
 };
 
