@@ -43,6 +43,7 @@ import com.desmart.desmartbpm.service.BpmProcessSnapshotService;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
+import org.springframework.util.CollectionUtils;
 import sun.awt.PlatformFont;
 
 @Service
@@ -176,8 +177,13 @@ public class BpmProcessSnapshotServiceImpl implements BpmProcessSnapshotService 
             }
             sortNum++;
         }
-        bpmActivityMetaMapper.saveBatch(basicActivityMetaList);
-        dhActivityConfMapper.insertBatch(confListToInsert);
+
+        if (!CollectionUtils.isEmpty(basicActivityMetaList)) {
+            bpmActivityMetaMapper.saveBatch(basicActivityMetaList);
+        }
+        if (!CollectionUtils.isEmpty(confListToInsert)) {
+            dhActivityConfMapper.insertBatch(confListToInsert);
+        }
 
         // 引入外链流程的节点，找出所有外链节点
         if (externalNodeList.size() > 0) {
