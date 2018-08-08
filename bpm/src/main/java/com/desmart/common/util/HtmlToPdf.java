@@ -2,12 +2,15 @@ package com.desmart.common.util;
 
 import java.io.File;
 
-public class HtmlToPdf {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class HtmlToPdf {
+	private static Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 	//wkhtmltopdf在系统中的路径  
     private static final String toPdfTool = "D:\\wkhtmltox\\bin\\wkhtmltopdf.exe";  
       
-    public static boolean convert(String srcPath, String destPath){  
+    /*public static boolean convert(String srcPath, String destPath){  
     	File file = new File(destPath);
         File parent = file.getParentFile();
         //如果pdf保存路径不存在，则创建路径
@@ -35,28 +38,46 @@ public class HtmlToPdf {
             output.start();
             proc.waitFor();
         }catch(Exception e){
+        	logger.error("生成预览页失败",e);
             result = false;
-            e.printStackTrace();
         }
         return result;
-    }  
+    }  */
     
-	/*public String getCommand(String sourceFilePath, String targetFilePath) {
+	public static boolean getCommand(String sourceFilePath, String targetFilePath) {
 		String system = System.getProperty("os.name");
+		String command = "";
+		system = "Linux";
 		if (system.contains("Windows")) {
-			return "D:\\wkhtmltox\\bin\\wkhtmltopdf.exe " + sourceFilePath + " " + targetFilePath;
+			command = "D:\\wkhtmltox\\bin\\wkhtmltopdf.exe " + sourceFilePath + " " + targetFilePath;
 		} else if (system.contains("Linux")) {
-			return "wkhtmltopdf " + sourceFilePath + " " + targetFilePath;
+			command = "wkhtmltopdf " + sourceFilePath + " " + targetFilePath;
+			System.out.println(command);
 		}
-		return "";
+		boolean result = true;
+		Process process;
+		try {
+			process = Runtime.getRuntime().exec(command);
+			HtmlToPdfInterceptor error = new HtmlToPdfInterceptor(process.getErrorStream());
+            HtmlToPdfInterceptor output = new HtmlToPdfInterceptor(process.getInputStream());
+            error.start();
+            output.start();
+			process.waitFor();
+		} catch (Exception e) {
+			logger.error("生成打印预览页失败",e);
+			e.printStackTrace();
+			result = false;
+		}
+		return result;
 	}
 
 	public static void main(String[] args) throws Exception {
-		HtmlToPdf util = new HtmlToPdf();
-		String command = util.getCommand("http://172.19.55.73:8080/bpm/user/menus", "D:\\result.pdf");
-		Process process = Runtime.getRuntime().exec(command);
-		process.waitFor(); // 这个调用比较关键，就是等当前命令执行完成后再往下执行
-		System.out.println("执行完成");
-	}*/
+		boolean result = getCommand("http://10.2.7.155/bpm/user/menus", "/tmp/result.pdf");
+		if(result) {
+			System.out.println("执行成功");
+		}else {
+			System.out.println("执行失败");
+		}
+	}
 }
 
