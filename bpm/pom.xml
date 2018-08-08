@@ -51,6 +51,13 @@
 		</dependency>
 		
 		
+		<!--jxls -->
+		<dependency>
+			<groupId>net.sf.jxls</groupId>
+			<artifactId>jxls-core</artifactId>
+			<version>1.0.5</version>
+		</dependency>
+		
 		<!-- sapJco -->
 		<dependency>
 			<groupId>com.sap</groupId>
