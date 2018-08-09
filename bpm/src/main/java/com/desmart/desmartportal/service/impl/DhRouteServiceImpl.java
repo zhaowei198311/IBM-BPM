@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -143,7 +144,7 @@ public class DhRouteServiceImpl implements DhRouteService {
             }
         }
         // 获得当前节点
-		BpmActivityMeta taskNode = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
+		BpmActivityMeta currTaskNode = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
 		String insDate = currProcessInstance.getInsData();// 实例数据
 		JSONObject newObj = new JSONObject();
 		if (StringUtils.isNotBlank(formData)) {
@@ -153,7 +154,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         JSONObject mergedFormJson = FormDataUtil.formDataCombine(newObj, oldObj);
 
 		// 获得下个环节的信息
-        BpmRoutingData bpmRoutingData = this.getBpmRoutingData(taskNode, mergedFormJson);
+        BpmRoutingData bpmRoutingData = getBpmRoutingData(currTaskNode, mergedFormJson);
 
         List<BpmActivityMeta> taskNodesOnSameDeepLevel = bpmRoutingData.getTaskNodesOnSameDeepLevel();
         // 如果任务实例不存在，上个处理人就是本人， 如果任务存在，上个处理人就是任务所有者
@@ -176,6 +177,9 @@ public class DhRouteServiceImpl implements DhRouteService {
         List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
         for (BpmActivityMeta nodeIdentifyProcess : startProcessNodesOnSameDeepLevel) {
             BpmActivityMeta firstTaskNode = nodeIdentifyProcess.getFirstTaskNode();
+            if (firstTaskNode == null) { // 如果流程没有第一个任务节点，则跳过
+            	continue;
+			}
             List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode,
                     nodeIdentifyProcess);
             // 加入集合
@@ -944,7 +948,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	 * @return
 	 */
 	private List<BpmActivityMeta> findDirectNextNodesOfStartNodeBySubProcessNode(BpmActivityMeta subProcessNode) {
-		BpmActivityMeta startNode = bpmActivityMetaService.getStartMetaOfSubProcess(subProcessNode);
+		BpmActivityMeta startNode = bpmActivityMetaService.getStartNodeOfSubProcess(subProcessNode);
 		return findDirectNextNodes(startNode);
 	}
 
@@ -1414,6 +1418,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
     @Override
     public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
+    	formData = formData == null ? new JSONObject() : formData;
         BpmRoutingData routingData = this.getRoutingDataOfNextActivityTo(sourceNode, formData);
         threadBoolean.setFalse();
         /*  将noramalNodes整理为4类数据
@@ -1445,32 +1450,99 @@ public class DhRouteServiceImpl implements DhRouteService {
 
         if (!routingData.getStartProcessNodes().isEmpty()) {
         	// 遍历每一个代表子流程的节点
-            for (BpmActivityMeta processNode : routingData.getStartProcessNodes()) {
+            for (BpmActivityMeta nodeIdentitySubProcess : routingData.getStartProcessNodes()) {
                 for (BpmActivityMeta taskNode : normalNodes) {
-                    // 从所有的任务节点中，找到子流程的第一个任务节点
-                    if (taskNode.getParentActivityId().equals(processNode.getActivityId())) {
-                        processNode.setFirstTaskNode(taskNode);
+                    // 从所有的任务节点中，找到新
+                    if (taskNode.getParentActivityId().equals(nodeIdentitySubProcess.getActivityId())) {
+                        nodeIdentitySubProcess.setFirstTaskNode(taskNode);
                         normalNodes.remove(taskNode);
                         break;
                     }
                 }
 
-                if (processNode.getParentActivityId().equals(sourceNode.getParentActivityId())) {
+                if (nodeIdentitySubProcess.getParentActivityId().equals(sourceNode.getParentActivityId())) {
                     // 代表子流程的节点与任务节点平级
-                    routingData.getStartProcessNodesOnSameDeepLevel().add(processNode);
-                    routingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel().add(processNode.getFirstTaskNode());
+                    routingData.getStartProcessNodesOnSameDeepLevel().add(nodeIdentitySubProcess);
+                    if (nodeIdentitySubProcess.getFirstTaskNode() != null) {
+						routingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel().add(nodeIdentitySubProcess.getFirstTaskNode());
+					}
                 } else {
                     // 代表子流程的节点与任务节点不平级
-                    routingData.getStartProcessNodesOnOtherDeepLevel().add(processNode);
-                    routingData.getFirstTaskNodesOfStartProcessOnOtherDeepLevel().add(processNode.getFirstTaskNode());
+                    routingData.getStartProcessNodesOnOtherDeepLevel().add(nodeIdentitySubProcess);
+					if (nodeIdentitySubProcess.getFirstTaskNode() != null) {
+						routingData.getFirstTaskNodesOfStartProcessOnOtherDeepLevel().add(nodeIdentitySubProcess.getFirstTaskNode());
+					}
                 }
             }
         }// 装配完成子流程的起始任务节点，剩下的是与起始节点不平级的任务节点
         routingData.getTaskNodesOnOtherDeepLevel().addAll(normalNodes);
+        // 为如果同级的子流程没有任务，就给他任务
+        findTaskNodeForProcessWillStartOnSameLevel(routingData);
         return routingData;
     }
 
-	@Override
+    /**
+     * 为与起始节点平级的子流程发起人装配任务节点<br/>
+	 * 将其子流程下的任务提取上来
+     * @param bpmRoutingData
+     */
+    private void findTaskNodeForProcessWillStartOnSameLevel(BpmRoutingData bpmRoutingData) {
+        List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
+        if (startProcessNodesOnSameDeepLevel.isEmpty()) {
+            return;
+        }
+        List<BpmActivityMeta> nodesLackOfTask = new ArrayList<>();
+        Map<String, BpmActivityMeta> parentIdAndSelfMap = new HashMap<>();
+        for (BpmActivityMeta nodeIdentitySubProcess : startProcessNodesOnSameDeepLevel) {
+            parentIdAndSelfMap.put(nodeIdentitySubProcess.getParentActivityId(), nodeIdentitySubProcess);
+            if (nodeIdentitySubProcess.getFirstTaskNode() == null) {
+                nodesLackOfTask.add(nodeIdentitySubProcess);
+            }
+        }
+        if (nodesLackOfTask.isEmpty()) {
+            return;
+        }
+        // 记录父流程节点与自身的关系
+		for (BpmActivityMeta startProcessNodesOnOtherDeepLevel : bpmRoutingData.getStartProcessNodesOnOtherDeepLevel()) {
+			parentIdAndSelfMap.put(startProcessNodesOnOtherDeepLevel.getParentActivityId(), startProcessNodesOnOtherDeepLevel);
+		}
+
+        List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel = bpmRoutingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel();
+        List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel = bpmRoutingData.getFirstTaskNodesOfStartProcessOnOtherDeepLevel();
+
+        for (BpmActivityMeta nodeLackOfTask : nodesLackOfTask) {
+            BpmActivityMeta taskNode = fetchTaskNodeFromChild(nodeLackOfTask, parentIdAndSelfMap);
+            nodeLackOfTask.setFirstTaskNode(taskNode); // 为缺少环节的流程设置流程处理人
+            firstTaskNodesOfStartProcessOnSameDeepLevel.add(taskNode);
+            firstTaskNodesOfStartProcessOnOtherDeepLevel.remove(taskNode);
+        }
+
+    }
+
+	/**
+	 * 从子流程中得到任务节点
+	 * @param nodeLackOfTask
+	 * @param activityIdAndProcessNodeMap
+	 * @return
+	 */
+	private BpmActivityMeta fetchTaskNodeFromChild(BpmActivityMeta nodeLackOfTask, Map<String, BpmActivityMeta> activityIdAndProcessNodeMap) {
+        String activityId = nodeLackOfTask.getActivityId();
+        // 找到这个节点的子流程
+        BpmActivityMeta sonProcessNode = activityIdAndProcessNodeMap.get(activityId);
+        if (sonProcessNode == null) {
+            throw new PlatformException("查找新建子流程的任务节点失败");
+        }
+        BpmActivityMeta taskNode = sonProcessNode.getFirstTaskNode();
+        if (taskNode != null) {
+            sonProcessNode.setFirstTaskNode(null); // 将找到的这个子流程的第一个任务置空
+            return taskNode;
+        } else {
+            return fetchTaskNodeFromChild(sonProcessNode, activityIdAndProcessNodeMap);
+        }
+
+    }
+
+    @Override
 	public ServerResponse choosableHandlerMove(String insUid, String activityId, String departNo,
 			String companyNum, String formData, HttpServletRequest request, String taskUid,
 			String userUidArrStr,String condition) {
@@ -1497,7 +1569,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 			return false;
 		}
         BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(processInstance.getTokenActivityId());
-        BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
+        BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskNodeOfSubProcess(processNode);
         // 校验是不是子流程第一个节点
         if (!taskNode.getActivityId().equals(firstUserTaskMetaOfSubProcess.getActivityId())) {
             return false;
@@ -1521,9 +1593,24 @@ public class DhRouteServiceImpl implements DhRouteService {
 			return false;
 		}
 		BpmActivityMeta processNode = bpmActivityMetaMapper.queryByPrimaryKey(processInstance.getTokenActivityId());
-		BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(processNode);
+		BpmActivityMeta firstUserTaskMetaOfSubProcess = bpmActivityMetaService.getFirstUserTaskNodeOfSubProcess(processNode);
 		// 校验是不是子流程第一个节点
 		return taskNode.getActivityId().equals(firstUserTaskMetaOfSubProcess.getActivityId());
 	}
+
+	@Override
+	public ServerResponse<BpmActivityMeta> getActualFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid) {
+		BpmActivityMeta startNode = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
+		BpmRoutingData bpmRoutingData = getBpmRoutingData(startNode, null);
+		// 获得预测的下个人员环节
+		Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+		if (CollectionUtils.isEmpty(normalNodes)) {
+			return ServerResponse.createByErrorMessage("查找流程的第一个人员环节出错：找不到");
+		} else if (normalNodes.size() > 1) {
+			return ServerResponse.createByErrorMessage("查找流程的第一个人员环节出错：找到多个环节");
+		}
+		return ServerResponse.createBySuccess(normalNodes.iterator().next());
+	}
+
 
 }

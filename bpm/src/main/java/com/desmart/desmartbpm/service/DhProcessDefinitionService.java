@@ -66,7 +66,7 @@ public interface DhProcessDefinitionService {
      * @param proVerUid
      * @return
      */
-    ServerResponse isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid);
+    ServerResponse<DhProcessDefinition> isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid);
 
     /**
      * 更新流程定义
@@ -83,7 +83,7 @@ public interface DhProcessDefinitionService {
      * @param proVerUid
      * @return
      */
-    ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid);
+//    ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid);
     
     /**
      * 根据快照id，从引擎中获得版本信息

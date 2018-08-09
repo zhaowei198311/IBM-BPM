@@ -19,11 +19,11 @@ public class BpmRoutingData {
     private Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
     private Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
     private List<BpmActivityMeta> taskNodesOnSameDeepLevel = new ArrayList<>(); // 与起始节点平级的任务节点
-    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel = new ArrayList<>();  // 属于当前流程子流程的流程的第一个任务节点
     private List<BpmActivityMeta> taskNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始节点不平级的任务节点
-    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel = new ArrayList<>();  // 不属于当前流程子流程的流程的第一个任务节点
     private List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = new ArrayList<>();  // 与起始任务平级的代表子流程的节点 (内部维护了第一个任务节点信息)
     private List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始任务不平级的代表子流程的节点(内部维护了第一个任务节点信息)
+    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel = new ArrayList<>();  // 属于当前流程子流程的流程的第一个任务节点
+    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel = new ArrayList<>();  // 不属于当前流程子流程的流程的第一个任务节点
 
 
     public void includeAll(BpmRoutingData bpmRouteingData) {

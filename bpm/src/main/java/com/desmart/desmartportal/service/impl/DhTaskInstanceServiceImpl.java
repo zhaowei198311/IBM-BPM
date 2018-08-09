@@ -1161,13 +1161,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         BpmActivityMeta startNode = null;
         if (processInstance.getTokenActivityId() == null) {
             // 流程是主流程
-            startNode = bpmActivityMetaService.getStartMetaOfMainProcess(processInstance.getProAppId(),
+            startNode = bpmActivityMetaService.getStartNodeOfMainProcess(processInstance.getProAppId(),
                     processInstance.getProUid(), processInstance.getProVerUid());
         } else {
             // 流程是子流程
             BpmActivityMeta subProcessNode = bpmActivityMetaService.queryByPrimaryKey(processInstance.getTokenActivityId());
             if (subProcessNode == null) return false;
-            startNode = bpmActivityMetaService.getStartMetaOfSubProcess(subProcessNode);
+            startNode = bpmActivityMetaService.getStartNodeOfSubProcess(subProcessNode);
         }
 
         String activityTo = startNode.getActivityTo();
@@ -1269,6 +1269,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), taskOwner);
 		if (!serverResponse.isSuccess()) {
 			log.error("重新分配失败");
+			return ServerResponse.createByErrorMessage("驳回失败");
 		}
 		// 记录到重拉列表，等待再次拉取
 		saveTaskToRetryTable(taskIdList.get(0));
@@ -1500,8 +1501,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 
     /**
-     * 判断此环节是否需要填审批意见
-     * @param taskNode
+     * 判断指定任务环节是否需要填审批意见
+     * @param taskNode  任务所在环节
+	 * @param dhProcessInstance  任务所在流程实例
      * @return
      */
     private boolean needApprovalOpinion(BpmActivityMeta taskNode, DhProcessInstance dhProcessInstance) {
@@ -1509,16 +1511,20 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         // 如果是流程的第一个任务，不用填审批意见
         if ("0".equals(dhProcessInstance.getInsParent())) {
             // 任务属于主流程
-            firstNode = bpmActivityMetaService.getFirstUserTaskMetaOfMainProcess(dhProcessInstance.getProAppId(),
+            firstNode = bpmActivityMetaService.getFirstUserTaskNodeOfMainProcess(dhProcessInstance.getProAppId(),
                     dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
         } else {
-            firstNode = bpmActivityMetaService.getFirstUserTaskMetaOfSubProcess(
+        	// 任务属于子流程
+            firstNode = bpmActivityMetaService.getFirstUserTaskNodeOfSubProcess(
                     bpmActivityMetaMapper.queryByPrimaryKey(dhProcessInstance.getTokenActivityId()));
         }
+        if (firstNode == null) { // 如果此
+        	return true;
+		}
         if (firstNode.getActivityId().equals(taskNode.getActivityId())) {
             return false;
         }
-        // 其他情况看配置
+        // 不是起草环节的情况，根据配置看是否需要审批
         DhActivityConf dhActivityConf = taskNode.getDhActivityConf();
         return dhActivityConf.getActcCanApprove().equals("TRUE") ? true : false;
     }

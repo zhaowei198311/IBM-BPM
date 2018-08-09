@@ -3,6 +3,9 @@ package com.desmart.desmartbpm.service;
 import com.desmart.common.constant.ServerResponse;
 import org.springframework.amqp.core.Message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface DhTriggerStepService {
 
     /**
@@ -17,6 +20,7 @@ public interface DhTriggerStepService {
      * @return
      */
     ServerResponse retryErrorStepAndSubmitTask(String triggerExceptionId);
+
 
 
 }

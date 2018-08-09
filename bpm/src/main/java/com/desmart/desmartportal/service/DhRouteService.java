@@ -155,10 +155,10 @@ public interface DhRouteService {
 
 
 	/**
-	 * 为不能指定处理人的节点装配处理人
-	 * 提交人是子流程的最后一个人时
-	 * 1. 子流程衔接另一个子流程
-	 * 2. 子流程衔接普通节点
+	 * 为不能指定处理人的节点装配处理人<br/>
+	 * 提交人是子流程的最后一个人时<br/>
+	 * 1. 子流程衔接另一个子流程<br/>
+	 * 2. 子流程衔接普通节点<br/>
 	 * @param subProcessInstance
 	 * @param pubBo
 	 * @param routingData
@@ -168,9 +168,9 @@ public interface DhRouteService {
 															   CommonBusinessObject pubBo, BpmRoutingData routingData);
 
 	/**
-	 * 为系统任务装配下一步的默认处理人, 与assembleTaskOwnerForNodesCannotChoose互补
-	 * 1. firstTaskNodesOfStartProcessOnSameDeepLevel
-	 * 2. taskNodesOnSameDeepLevel
+	 * 为系统任务装配下一步的默认处理人, 与assembleTaskOwnerForNodesCannotChoose互补<br/>
+	 * 1. firstTaskNodesOfStartProcessOnSameDeepLevel<br/>
+	 * 2. taskNodesOnSameDeepLevel<br/>
 	 * @param currTask
 	 * @param currProcessInstance
 	 * @param pubBo
@@ -182,8 +182,8 @@ public interface DhRouteService {
 
 	/**
 	 * 获得下个环节的路由信息
-	 * @param sourceNode
-	 * @param formData
+	 * @param sourceNode  作为起始点的节点
+	 * @param formData  JSONObject格式的表单数据
 	 * @return
 	 */
 	BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData);
@@ -228,4 +228,14 @@ public interface DhRouteService {
 	 * @return
 	 */
 	boolean isFirstTaskOfSubProcess(BpmActivityMeta taskNode, DhProcessInstance processInstance);
+
+	/**
+	 * 获得主流程真实的第一个人工环节，会检索子流程节点<br/>
+	 * 与 BpmActivityMetaService.getFirstUserTaskNodeOfMainProcess()区别
+	 * @param proAppId
+	 * @param proUid
+	 * @param proVerUid
+	 * @return
+	 */
+	ServerResponse<BpmActivityMeta> getActualFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid);
 }

@@ -82,7 +82,7 @@ public interface BpmActivityMetaService {
      * @param bpdId
      * @return
      */
-    BpmActivityMeta getBpmActivityMeta(String proAppId,String activityBpdId, String snapshotId, String bpdId);
+    BpmActivityMeta getBpmActivityMeta(String proAppId, String activityBpdId, String snapshotId, String bpdId);
     /**
      * 根据元素id，流程图id和版本id以及activityType获得BpmActivityMeta
      * @param activityBpdId
@@ -110,36 +110,37 @@ public interface BpmActivityMetaService {
     BpmActivityMeta getByActBpdIdAndParentActIdAndProVerUid(String activityBpdId, String parentActivityId, String proVerUid);
 
     /**
-     * 根据代表子流程的节点找到它代表的子流程的开始节点
-     * @param subProcessNode  代表子流程的节点
+     * 根据代表子流程的节点找到它代表的子流程的开始节点（startNode）
+     * @param nodeIdentitySubProcess  代表子流程的节点
      * @return
      */
-    BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta subProcessNode);
+    BpmActivityMeta getStartNodeOfSubProcess(BpmActivityMeta nodeIdentitySubProcess);
 
     /**
-     * 根据代表子流程的节点找到它代表的子流程的第一个人员节点
-     * @param subProcessNode
+     * 根据代表子流程的节点找到它代表的子流程的第一个人员节点(局限于此子流程层面)
+     * @param nodeIdentitySubProcess
      * @return
      */
-    BpmActivityMeta getFirstUserTaskMetaOfSubProcess(BpmActivityMeta subProcessNode);
+    BpmActivityMeta getFirstUserTaskNodeOfSubProcess(BpmActivityMeta nodeIdentitySubProcess);
 
     /**
-     * 找到主流程的开始节点
+     * 找到主流程的开始节点（startNode）
      * @param proAppId 应用库id
      * @param proUid 图id
      * @param proVerUid 版本id
      * @return
      */
-    BpmActivityMeta getStartMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
+    BpmActivityMeta getStartNodeOfMainProcess(String proAppId, String proUid, String proVerUid);
 
     /**
-     * 找到主流程的第一个人工服务节点
+     * 找到主流程的第一个人工服务节点（局限于主流程层面）
+     * 如果要找发起流程真实的第一个环节，调用DhRouteService.getActualFirstUserTaskNodeOfMainProcess()
      * @param proAppId 应用库id
      * @param proUid 图id
      * @param proVerUid 版本id
      * @return
      */
-    BpmActivityMeta getFirstUserTaskMetaOfMainProcess(String proAppId, String proUid, String proVerUid);
+    BpmActivityMeta getFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid);
 
     /**
      * 列出一个流程定义的所有环节

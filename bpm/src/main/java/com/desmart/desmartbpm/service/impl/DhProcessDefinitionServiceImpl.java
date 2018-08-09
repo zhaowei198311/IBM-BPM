@@ -271,13 +271,13 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
      * @return
      */
     @Override
-    public ServerResponse isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid) {
+    public ServerResponse<DhProcessDefinition> isDhProcessDefinitionExist(String proAppId, String proUid, String proVerUid) {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return ServerResponse.createByErrorMessage("参数异常");
         }
         DhProcessDefinition definitionSelective = new DhProcessDefinition(proAppId, proUid, proVerUid);
         List<DhProcessDefinition> list = dhProcessDefinitionMapper.listBySelective(definitionSelective);
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return ServerResponse.createByErrorMessage("流程定义不存在");
         } else if (list.size() == 1) {
             return ServerResponse.createBySuccess(list.get(0));
@@ -421,24 +421,24 @@ public class DhProcessDefinitionServiceImpl implements DhProcessDefinitionServic
 
     }
     
-    public ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid) {
-        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
-            return ServerResponse.createByErrorMessage("参数异常");
-        }
-        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
-        selective.setActivityType("start");
-        selective.setDeepLevel(0);
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (list.size() != 1) {
-            return ServerResponse.createByErrorMessage("找不到开始环节(start event)");
-        }
-        BpmActivityMeta startMeta = list.get(0);
-        Set<BpmActivityMeta> nextActivities = dhRouteService.getActualNextActivities(startMeta, new JSONObject());
-        if (nextActivities.isEmpty()) {
-            return ServerResponse.createByErrorMessage("找不到第一个环节");
-        }
-        return ServerResponse.createBySuccess(new ArrayList<>(nextActivities).get(0));
-    }
+//    public ServerResponse<BpmActivityMeta> getFirstHumanBpmActivityMeta(String proAppId, String proUid, String proVerUid) {
+//        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
+//            return ServerResponse.createByErrorMessage("参数异常");
+//        }
+//        BpmActivityMeta selective = new BpmActivityMeta(proAppId, proUid, proVerUid);
+//        selective.setActivityType("start");
+//        selective.setDeepLevel(0);
+//        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
+//        if (list.size() != 1) {
+//            return ServerResponse.createByErrorMessage("找不到开始环节(start event)");
+//        }
+//        BpmActivityMeta startMeta = list.get(0);
+//        Set<BpmActivityMeta> nextActivities = dhRouteService.getActualNextActivities(startMeta, new JSONObject());
+//        if (nextActivities.isEmpty()) {
+//            return ServerResponse.createByErrorMessage("找不到第一个环节");
+//        }
+//        return ServerResponse.createBySuccess(new ArrayList<>(nextActivities).get(0));
+//    }
 
     @Override
     public LswSnapshot getLswSnapshotBySnapshotId(String snapshotId) {

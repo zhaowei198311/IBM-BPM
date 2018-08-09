@@ -33,7 +33,9 @@ public class BpmActivityMeta implements Serializable {
 	public static final String ACTIVITY_TYPE_END = "end";
 	/** 活动类型：并行网关 */
 	public static final String ACTIVITY_TYPE_GATEWAYAND = "gatewayAnd";
-	
+    /** 当前环节属于主流时，parentActivityId的值 */
+    public static final String PARENT_ACTIVITY_ID_OF_MAIN_PROCESS = "0";
+
     private String activityId;  // 主键
     private String noteType;
     private Date createTime;

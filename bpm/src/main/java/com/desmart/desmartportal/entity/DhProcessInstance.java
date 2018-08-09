@@ -15,8 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 * @author zhaowei  
 * @date 2018年5月9日  
 */
-public class
-DhProcessInstance {
+public class DhProcessInstance {
 	/** 未发起的草稿 */
     public static final String STATUS_DRAFT = "draft";
     public static final int STATUS_ID_DRAFT = -2; 
@@ -38,7 +37,7 @@ DhProcessInstance {
      /** 流程暂停 */
     public static final String STATUS_SUSPENDED = "6";
     public static final int STATUS_ID_SUSPENDED = 6;
-    /**  */
+    /** 当前流程实例是主流程时的insParent值 */
 	public static final String INS_PARENT_OF_MAIN_PROCESS = "0";
 
 
