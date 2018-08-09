@@ -44,6 +44,7 @@ import com.desmart.desmartportal.service.AccessoryFileUploadService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.SFTPUtil;
 import com.desmart.desmartportal.util.UUIDTool;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.jcraft.jsch.SftpException;
 
@@ -564,4 +565,41 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		}
 	}
 
+	@Override
+	public ServerResponse uploadImgFile(MultipartFile multipartFile) {
+		Map<String,String> resultMap = new HashMap<>();
+		try {
+			// 取得上传文件
+			MultipartFile file = multipartFile;
+			if (file != null) {
+				// 取得当前上传文件的文件名称
+				String myFileName = file.getOriginalFilename();
+				// 如果名称不为“”,说明该文件存在，否则说明该文件不存在
+				if (myFileName.trim() != "") {
+					String directory = DhInstanceDocument.DOC_IMG_DIRECTORY;
+					// 年/月/日/当前时间戳+文件名
+					String newFileName = (DateUtil.datetoString(new Date()) + myFileName).replaceAll(" ", "");
+					InputStream inputStream = file.getInputStream();
+					SFTPUtil sftp = new SFTPUtil();
+					BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+					sftp.upload(globalConfig, directory, newFileName, inputStream);
+					resultMap.put("fileName", newFileName);
+					resultMap.put("href", globalConfig.getSftpIp()+"/bpmdata"+directory+newFileName);
+				}
+			}
+		} catch (Exception e) {
+			LOG.error("保存附件失败", e);
+			return ServerResponse.createByErrorMessage("保存附件失败");
+		} 
+		return ServerResponse.createBySuccess(resultMap);
+	}
+
+	@Override
+	public ServerResponse deleteImgFile(String fileName) {
+		SFTPUtil sftp = new SFTPUtil();
+		String directory = DhInstanceDocument.DOC_IMG_DIRECTORY;
+		BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+		sftp.removeFile(globalConfig, directory, fileName);
+		return ServerResponse.createBySuccess();
+	}
 }

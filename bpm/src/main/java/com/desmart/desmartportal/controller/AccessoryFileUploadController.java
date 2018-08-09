@@ -336,4 +336,31 @@ public class AccessoryFileUploadController {
 						@RequestParam(value = "taskUid",required=false)String taskUid) {
 		return accessoryFileUploadServiceImpl.deleteDataFormFileList(dhInstanceDocument,taskUid);
 	}
+	
+	/**
+	 * 上传图片文件
+	 * @param multipartFile
+	 * @param dhInstanceDocument
+	 * @param taskUid
+	 * @param activityId
+	 * @return
+	 */
+	@RequestMapping(value = "/uploadImgFile")
+	@ResponseBody
+	public ServerResponse uploadImgFile(@RequestParam("file")MultipartFile multipartFile) {	
+		return accessoryFileUploadServiceImpl.uploadImgFile(multipartFile);
+	}
+	
+	/**
+	 * 删除图片文件
+	 */
+	@RequestMapping(value = "/deleteImgFile")
+	@ResponseBody
+	public ServerResponse deleteImgFile(String fileName) {
+		try {
+			return accessoryFileUploadServiceImpl.deleteImgFile(fileName);
+		}catch(Exception e) {
+			return ServerResponse.createByError();
+		}
+	}
 }

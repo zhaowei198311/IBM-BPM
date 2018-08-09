@@ -367,7 +367,9 @@ function downloadLayoutSrc() {
             ["isleading"],
             ["move-view"],
             ["date_type"],
-            ["single"]
+            ["single"],
+            ["hidden-label"],
+            ["img-upload-label"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -934,6 +936,13 @@ function saveHtml() {
                                                     filedAttr.multiValue = "false";
                                                     filedAttr.fldType = "string";
                                                     jsonArr.push(filedAttr);
+                                                }else if(subObj.attr("title") == "img_upload"){
+                                                	filedAttr.fldCodeName = subObj.attr("name");
+                                                	filedAttr.fldName = subObj.attr("img-upload-label");
+                                                	console.log(subObj.attr("img-upload-label"));
+                                                	filedAttr.multiValue = "false";
+                                                    filedAttr.fldType = "upload";
+                                                    jsonArr.push(filedAttr);
                                                 }
                                                 break;
                                             };
@@ -1102,6 +1111,13 @@ function saveHtml() {
                                                     filedAttr.fldName = subDivObj.prev().find("label").text().trim();
                                                     filedAttr.multiValue = "false";
                                                     filedAttr.fldType = "string";
+                                                    jsonArr.push(filedAttr);
+                                                }else if(subObj.attr("title") == "img_upload"){
+                                                	filedAttr.fldCodeName = subObj.attr("name");
+                                                	filedAttr.fldName = subObj.attr("img-upload-label");
+                                                	console.log(subObj.attr("img-upload-label"));
+                                                	filedAttr.multiValue = "false";
+                                                    filedAttr.fldType = "upload";
                                                     jsonArr.push(filedAttr);
                                                 }
                                                 break;

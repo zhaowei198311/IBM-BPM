@@ -367,7 +367,9 @@ function downloadLayoutSrc() {
             ["isleading"],
             ["move-view"],
             ["date_type"],
-            ["single"]
+            ["single"],
+            ["hidden-label"],
+            ["img-upload-label"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -640,6 +642,8 @@ $(document).ready(function () {
                 }
             } else if($("#" + temp).parent().parent().find(".subDiv").find("table").length > 0){
             	inputId = "table_" + inputId;
+            } else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").length > 0){
+            	inputId = "img_upload_" + inputId;
             }
 
             if ($("#" + temp).parent().parent().find(".subDiv").find("input[type='radio']").length > 0 ||
@@ -654,7 +658,9 @@ $(document).ready(function () {
             		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).find("th").each(function(){
             			$(this).attr({"id":inputId+"_"+_getRandomString(2),"name":inputId+"_"+_getRandomString(2)});
             		});
-            	}else{
+            	} else if($("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").length > 0){
+            		$("#" + temp).parent().parent().find(".subDiv").find("div[title='img_upload']").attr({"id":inputId,"name":inputId});
+                } else{
             		$($("#" + temp).parent().parent().find(".subDiv").children()[0]).attr("id", inputId).attr("name", inputId);
             	}
             }
@@ -935,7 +941,13 @@ function saveHtml() {
 						filedAttr.multiValue = "false";
 						filedAttr.fldType = "string";
 						jsonArr.push(filedAttr);
-					}
+					}else if(subObj.attr("title") == "img_upload"){
+                    	filedAttr.fldCodeName = subObj.attr("name");
+                    	filedAttr.fldName = subObj.attr("img-upload-label");
+                    	filedAttr.multiValue = "false";
+                        filedAttr.fldType = "upload";
+                        jsonArr.push(filedAttr);
+                    }
 					break;
 				};
 			case "P":

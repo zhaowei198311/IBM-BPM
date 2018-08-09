@@ -17,6 +17,7 @@ public class BpmFormField {
 	public static final String TYPE_OBJECT_NUMBER = "object_number";
 	public static final String TYPE_NUMBER = "number";
 	public static final String TYPE_OBJECT_TEXT = "object_text";
+	public static final String TYPE_UPLOAD = "upload";
 
 
 	private String fldUid;

@@ -844,7 +844,7 @@ function showImgUploadModal(obj){
     var subObj = view.find("div[title='img_upload']");
     var id = subObj.attr("id");
     var label = subObj.attr("img-upload-label");
-    var name = subObj.attr("name").replace(formCode+"_","");
+    var name = subObj.attr("name");
     oldName = name;
 
     $("#img-upload-label").val(label);
@@ -1904,7 +1904,31 @@ $(function () {
             $("#chooesValueModal").modal("hide");
         }
     });
+    
+  //保存图片上传属性
+    $("#save-img-upload-content").click(function (e) {
+        e.preventDefault();
+        var id = $("#img-upload-id").val();
+        var name = $("#img-upload-name").val().trim();
+        if (id == "" || id == null || name == null || name == "") {
+            $("#img-upload-warn").modal('show');
+        } else if (nameIsRepeat(name)) { //判断组件name是否重复
+            $("#img-upload-warn").html("<strong>警告！</strong>您输入的name重复，请重新输入");
+            $("#img-upload-warn").modal('show');
+        } else {
+        	var label = $("#img-upload-label").val().trim();
+        	var subObj = view.find("div[title='choose_value']");
+        	subObj.attr({
+                "id": id,
+                "img-upload-label":label,
+                "name": name
+            });
 
+            $("#img-upload-warn").modal('hide');
+            $("#imgUploadModal").modal("hide");
+        }
+    });
+    
     //当demo div改变大小时触发的事件
     $(".demo").resize(function () {
         var souObj = $(".demo");

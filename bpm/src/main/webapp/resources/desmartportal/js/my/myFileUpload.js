@@ -2,6 +2,42 @@ var form = null;
 var fileCount = 0;
 /* 动态表单渲染js */
 $(function(){
+	//图片文件上传
+	$("#formSet").find(".layui-upload-list").each(function(){
+		var id = $(this).prop("id");
+		//多图片上传
+		upload.render({
+		    elem: '#'+id+'_choose'
+		    ,url: '/upload/'
+		    ,bindAction: '#'+id+'_load'
+		    ,multiple: true
+		    ,acceptMime: 'image/*'
+		    ,auto: false
+		    ,choose: function(obj){
+		      var imgFiles = this.files = obj.pushFile();
+		      //预读本地文件示例，不支持ie8
+		      obj.preview(function(index, file, result){
+		    	  var imgHtml = '<div style="display:inline;margin-right:20px;">'
+		    	  		+'<img style="width:400px;" src="'+result+'" alt="'
+		    	  		+ file.name +'" class="layui-upload-img">'
+		    	  		+'<span style="cursor: pointer;"><i class="layui-icon delete_img_file" title="删除图片">&#x1007;</i></span>'
+		    	  		+'</div>';
+		          $('#'+id).append(imgHtml);
+		          $("#"+id).find(".delete_img_file").on('click', function(){
+		              delete imgFiles[index]; // 删除对应的文件
+		              $(this).parent().parent().remove();
+		          });
+		      });
+		    }
+		    ,done: function(res){
+			    /* var fileNameHtml = '<a style="color:#1E9FFF;" href="'
+		        		+result+'" onclick="imgUrlClick(event);">'
+		        		+ file.name +' <i class="layui-icon">&#xe64c;</i></a> <span style="color:red;" onclick="deleteFile()">删除</span><br/>';  
+		        $("#"+id+"_loc").find(".fileList").append(fileNameHtml); */
+		    }
+		});
+	});
+	
 	//表格上传文件
 	$("#formSet").find(".load_data_file").each(function(){
 		var appUid = $("#insUid").val();
@@ -867,4 +903,9 @@ function deleteDataFormFileList(a){
  */
 function editAccessoryFile(a){
 	loadImageData(a);
+}
+
+//图片上传后禁止图片链接默认事件
+function imgUrlClick(event){
+	event.preventDefault();
 }
