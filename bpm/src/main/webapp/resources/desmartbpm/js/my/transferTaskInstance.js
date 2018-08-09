@@ -195,7 +195,7 @@ function doPage() {
 				pageConfig.pageNum = obj.curr;
 				pageConfig.pageSize = obj.limit;
 				if (!first) {
-					getTaskInstanceInfo();
+					getClosedTaskInstanceByPage();
 				}
 			}
 		});
