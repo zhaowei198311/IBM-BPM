@@ -192,7 +192,7 @@
 						<tr>
 							<td class="td_title" colspan="1" style="width: 120px">
 								流程标题
-								<span class="tip_span">*</span>	
+								<span class="tip_span"> *</span>：
 							</td>
 							<td class="sub_title" colspan="5">
 								<input type="text" id="insTitle_input" class="layui-input" value="${processInstance.insTitle }" disabled />

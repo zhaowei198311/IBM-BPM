@@ -171,7 +171,8 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_user']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
-					labelDivObj.find("span").addClass("tip_span");
+					labelDivObj.find("span").remove();
+					labelDivObj.find("label").append('<span class="tip_span"> *</span>：');
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_user']");
 					subDivObj.find("input[title='choose_user']").attr("choose-type","choose_user");
@@ -197,7 +198,8 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_value']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
-					labelDivObj.find("span").addClass("tip_span");
+					labelDivObj.find("span").remove();
+					labelDivObj.find("label").append('<span class="tip_span"> *</span>：');
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_value']");
 					var subDivCol = subDivObj.attr("col");
@@ -220,7 +222,8 @@ function drawPage() {
 					}
 				} else if (column.find(".subDiv").find("div[title='choose_depart']").length != 0) {
 					var labelDivObj = column.find(".labelDiv");
-					labelDivObj.find("span").addClass("tip_span");
+					labelDivObj.find("span").remove();
+					labelDivObj.find("label").append('<span class="tip_span"> *</span>：');
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv div[title='choose_depart']");
 					var subDivCol = subDivObj.attr("col");
@@ -277,7 +280,8 @@ function drawPage() {
 						var subDivObj = $(column.find(".subDiv")[index]);
 						var subDivCol = subDivObj.attr("col");
 
-						labelDivObj.find("span").addClass("tip_span");
+						labelDivObj.find("span").remove();
+						labelDivObj.find("label").append('<span class="tip_span"> *</span>：');
 						var labelHtml = $(labelDivObj).html();
 						var subHtml = "";
 						if (subDivObj.find("label").length == 0) {
@@ -314,8 +318,9 @@ function drawPage() {
 					var labelDivCol = labelDivObj.attr("col");
 					var subDivObj = column.find(".subDiv");
 					var subDivCol = subDivObj.attr("col");
-
-					labelDivObj.find("span").addClass("tip_span");
+					
+					labelDivObj.find("span").remove();
+					labelDivObj.find("label").append('<span class="tip_span"> *</span>：');
 
 					var labelHtml = "";
 					var subHtml = "";

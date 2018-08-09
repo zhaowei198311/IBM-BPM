@@ -222,13 +222,7 @@ $(function () {
                         element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
                     // 延迟加载
                     setTimeout(function () {
-                    	if (percent > 50) {
-                            $('.layui-progress-bar').css('background-color', '#FFFF33');
-                        }
-                        if (percent > 80) {
-                            $('.layui-progress-bar').css('background-color', 'red');
-                        }
-                        element.progress('progressBar', percent + '%');
+                        element.progress('progressBar', (100-percent) + '%');
                     }, 500);
                 });
             } else {
