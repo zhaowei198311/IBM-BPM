@@ -260,7 +260,7 @@ function drawPage() {
 					formHtml += '<td col="1" class="td_title" stylt="width:120px;"><label>缩略图展示</label></td>'
 							+'<td col="11" class="td_sub">'
 							+'<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">'
-							+'<div class="layui-upload-list" data-title="img_upload" id="'+preViewImgId+'"></div>'
+							+'<div class="layui-upload-list" data-title="img_upload" name="'+preViewImgId+'" id="'+preViewImgId+'"></div>'
 							+'</blockquote></td></tr>'
 							+'<tr>'
 							+'<td col="1" class="td_title" stylt="width:120px;">附件</td>'
@@ -431,12 +431,14 @@ function drawPage() {
 		});
 		
 		view.find("select").each(function(){
-			$(this).attr("lay-filter",$(this).attr("name"));
 			var id = $(this).prop("id");
-			var filter = $(this).attr("lay-filter");
-			form.on('select('+filter+')',function(){
-				$("#"+id).trigger("change");
-			});
+			if($(this).attr("is-multi")!="true"){
+				$(this).attr("lay-filter",$(this).attr("name"));
+				var filter = $(this).attr("lay-filter");
+				form.on('select('+filter+')',function(){
+					$("#"+id).trigger("change");
+				});
+			}
 		});
 		
 		view.find(".editor_textarea").each(function () {

@@ -306,7 +306,12 @@ function showSelectModal(obj) {
     var name = selectObj.attr("name");
     var dataSource = selectObj.attr("data_source");
     var databaseType = selectObj.attr("database_type");
-
+    var isMulti = selectObj.attr("is-multi");
+    if(isMulti=="true"){
+    	$("#select-multi").prop("checked","checked");
+    }else{
+    	$("#select-multi").removeAttr("checked");
+    }
     var textWidth = selectObj.width();
     var textLabelWidth = view.find(".labelDiv").width();
     oldName = name;
@@ -1444,6 +1449,7 @@ $(function () {
             var label = $("#select-label").val();
             var name = $("#select-name").val();
             var isMust = $("#select-must").is(':checked');
+            var isMulti =  $("#select-multi").is(':checked');
             var optionTextArr = $(".option-text"); //下拉列表添加选项的输入框对象
             var optionValueArr = $(".option-value");
             
@@ -1457,7 +1463,8 @@ $(function () {
             selectObj.attr({
                 "id": id,
                 "name": name,
-                "data_source": dataSource
+                "data_source": dataSource,
+                "is-multi":isMulti
             });
 
             if (dataSource == "数据字典拉取") {

@@ -1209,9 +1209,14 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-4 col-xs-7">
-								<div class="checkbox">
+								<div class="checkbox col-xs-3">
 									<label>
 										<input type="checkbox" id="select-must">必须
+									</label>
+								</div>
+								<div class="checkbox col-xs-4">
+									<label>
+										<input type="checkbox" id="select-multi">是否多选
 									</label>
 								</div>
 							</div>

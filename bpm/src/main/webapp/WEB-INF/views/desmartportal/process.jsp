@@ -27,9 +27,11 @@
 	media="all">
 <link rel="stylesheet" href="resources/desmartportal/css/my.css" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+<link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
-<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
+<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.02"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/city.js"></script>

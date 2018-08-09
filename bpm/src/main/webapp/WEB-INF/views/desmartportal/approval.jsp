@@ -18,11 +18,13 @@
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+    <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script> -->
-    <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.1.8.2.min.js"></script>
-    <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
+    <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.02"></script>
     <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 
     <!-- jQuery -->
@@ -562,6 +564,30 @@
     $(function () {
         $(".data-table").find("input[type='tel']").desNumber();
         common.initTime();
+        
+        $("#formSet").find("select").each(function(){
+			var id = $(this).prop("id");
+			if($(this).attr("is-multi")=="true"){
+				/* if($(this).find(":selected").length==0){
+					// 
+				}else{
+					$(this).attr("xm-select","selectId");
+					formSelects.render(id);
+				} */
+				//$(this).attr("xm-select","selectId");
+				//formSelects.render(id);
+				/* formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
+				    //id:           点击select的id
+				    //vals:         当前select已选中的值
+				    //val:          当前select点击的值
+				    //isAdd:        当前操作选中or取消
+				    //isDisabled:   当前选项是否是disabled
+				    //如果return false, 那么将取消本次操作
+					$("#"+id).trigger("change");
+				    return true;   
+				}); */
+			}
+		});
     });
 </script>
 </html>
