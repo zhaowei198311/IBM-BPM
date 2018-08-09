@@ -98,19 +98,6 @@
 			left: 50%;
 			box-shadow: 0 0 10px #ccc;
 		}
-		.layui-progress-bar {
-            display: block;
-            min-width: 8px;
-            height: 12px;
-            background: #2067c5;
-            background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(left, #2067c5, #24c1fc);
-            background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -moz-linear-gradient(left, #2067c5, #24c1fc);
-            background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), -o-linear-gradient(left, #2067c5, #24c1fc);
-            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)), linear-gradient(to right, #2067c5, #24c1fc);
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-            box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-        }
     </style>
 </head>
 
@@ -154,27 +141,31 @@
             </div>
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-md4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
-            <div class="layui-col-md4" style="position: relative;">
-                <div class="layui-progress layui-progress-big" lay-filter="progressBar" style="position: relative;top: 5px;">
-                    <div class="layui-progress-bar" lay-percent="0%"></div>
-                    <!--<span class="progress_time">审批剩余时间6小时</span> -->
-                </div>
-            </div>
-            <div class="layui-col-md4" style="text-align: right;">
-            	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
+            <div class="layui-col-sm4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
+            <div class="layui-col-sm4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
+            <div class="layui-col-sm4">填写时间：
+                <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
-            <div class="layui-col-md4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
-            <div class="layui-col-md2">填写时间：
-                <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
+            <div class="layui-col-sm4">
+            	流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>
             </div>
-            <div class="layui-col-md6" style="text-align: right;">
-               	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+            <div class="layui-col-sm4">
 				<c:if test="${!empty bpmForm.formNo }">
 					表单流水号： <span style="color: #1890ff;">${bpmForm.formNo}</span>
 				</c:if>
+            </div>
+            <div class="layui-col-sm4">
+            	表单编号： <span style="color: #1890ff;">${bpmForm.formNoStatic}</span>
+            </div>
+        </div>
+        <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
+        	<div class="layui-col-sm11" style="position: relative;">
+                <div class="layui-progress layui-progress-big" lay-filter="progressBar" lay-showPercent="yes" style="position: relative;top: 5px;">
+                    <div class="layui-progress-bar" lay-percent="0%"></div>
+                    <!--<span class="progress_time">审批剩余时间6小时</span> -->
+                </div>
             </div>
         </div>
     </div>
@@ -188,7 +179,7 @@
 						<tr>
 							<td class="td_title" colspan="1" style="width: 120px">
 								流程标题
-								<span class="tip_span">*</span>
+								<span class="tip_span"> *</span>：
 							</td>
 							<td class="sub_title" colspan="5">
 								<input type="text" id="insTitle_input" class="layui-input"
@@ -379,7 +370,7 @@
 	                        if (percent > 80) {
 	                            $('.layui-progress-bar').css('background-color', 'red');
 	                        }
-	                        element.progress('progressBar', percent + '%');
+	                        element.progress('progressBar', (100-percent) + '%');
 	                    }, 500);
 	                });
 	            } else {

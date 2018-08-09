@@ -160,8 +160,6 @@ a {
 }
 
 .tip_span {
-    position: absolute;
-    right: 5px;
     color: red;
     top: 20px;
     font-size: 16px;
@@ -1075,7 +1073,7 @@ input[disabled],.layui-select-disabled .layui-disabled{
 }
 
 .layui-disabled, .layui-disabled:hover {
-    color: #6D6D6D!important;
+    color: #999!important;
     cursor: auto!important;
 }
 
@@ -1085,6 +1083,14 @@ input[disabled],.layui-select-disabled .layui-disabled{
 
 .layui-table td, .layui-table th {
     padding: 6px 15px;
+}
+
+.td_title{
+	font-weight: 550;
+}
+.td_sub,input:disabled, textarea:disabled, 
+.layui-select-disabled .layui-disabled {
+	color:#999!important;
 }
 
 .tip_span {
