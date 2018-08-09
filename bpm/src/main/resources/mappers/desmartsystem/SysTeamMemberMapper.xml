@@ -56,7 +56,7 @@
 			and depart_uid in (${departUid}) 
 		</if>
 		<if test="companyCode!=null">
-			and company_code = #{companyCode}
+			and (company_code = #{companyCode} or company_code = '1000' )
 		</if>
 		) team  WHERE team.TEAM_UID in (${teamUid}) group by team.team_uid
 		
