@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -40,7 +41,7 @@ import com.ibm.lyfwebservice.webservice.CommonInterfaceServiceLocator;
 //@ContextConfiguration(locations={"classpath*:applicationContext.xml"})
 public class UserSys implements Job{
 
-	
+	Logger log=Logger.getLogger(UserSys.class);
 //	@Autowired
 //	private SysUserMapper sysUserMapper;
 //	@Test
@@ -209,15 +210,20 @@ public class UserSys implements Job{
 		}
 		
 		//添加
-		sysUserMapper.insertBatch(insertSysUser);
+		if(insertSysUser.size()>0) {
+			log.info("------------------开始同步新用户------------------");
+			sysUserMapper.insertBatch(insertSysUser);
+		}
 		
 		//修改用户
 		for (SysUser sysUser : updateSysUser) {
 			sysUserMapper.update(sysUser);
+			log.info("------------------开始修改用户------------------工号"+sysUser.getUserUid()+"用户名"+sysUser.getUserName());
 		}
 		
 		//删除
 		for (SysUser sysUser : deleteSysUser) {
+			log.info("------------------开始删除------------------工号"+sysUser.getUserUid()+"用户名"+sysUser.getUserName());
 			sysUserMapper.delete(sysUser);
 		}
 	}
