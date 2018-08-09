@@ -73,7 +73,7 @@
 		var setting1 = {
 			async: {
 				enable: true,//是否开启异步加载模式
-				url: "sysDepartment/treeDisplay",
+				url: "/sysDepartment/treeDisplay",
 				autoParam: ["id"]
 			},
 			data: {simpleData: {enable: true}}
@@ -84,7 +84,7 @@
 		var selectedNode = "";
 		var expandNodes = "";
 		$(function(){
-			var url='sysDepartment/treeDisplay';
+			var url='/sysDepartment/treeDisplay';
 			//tree展示
 			setting1.callback={
 				onClick: onClick,
