@@ -124,8 +124,6 @@ public class OperLogInterceptor {
 				userId = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER).toString();
 				userName = SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER_NAME).toString();
 			} catch (Exception e) {
-				userId = null;
-				userName = null;
 				return proceed;  //此处return是因为执行方法后session中依然没有用户信息，一般为用户登录失败：如输错用户名
 			}
 		}
