@@ -136,7 +136,7 @@ public class CompanySys  implements Job{
 		SysCompanyMapper sysCompanyMapper = wac.getBean(SysCompanyMapper.class);
 		
 		//查询返回所有公司信息
-		logger.error("查询返回所有公司信息");
+		logger.error("查询返回所有公司信息-------------------------");
 		Map<String, SysCompany> sysCompanyMap=new HashMap<String, SysCompany>();
 		List<SysCompany> sysCompanys  = sysCompanyMapper.selectAll(new SysCompany());
 		for (SysCompany sysCompany : sysCompanys) {
@@ -145,7 +145,7 @@ public class CompanySys  implements Job{
 		
 		
 		//接口返回所有公司信息
-		logger.error("接口返回所有公司信息");
+		logger.error("接口返回所有公司信息进行同步-------------------------");
 		List<SysCompany>  sysCompanyList = executeSysCompany();
 		for (SysCompany sysCompany : sysCompanyList) {
 			SysCompany company = sysCompanyMap.get(sysCompany.getCompanyUid());
