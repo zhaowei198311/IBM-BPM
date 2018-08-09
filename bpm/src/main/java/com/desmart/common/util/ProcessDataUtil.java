@@ -125,7 +125,7 @@ public class ProcessDataUtil {
 	}
 
 	/**
-	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId
+	 * 根据代表子流程的节点和子流程第一个任务的元素的元素id查询子流程的tokenId<br/>
 	 * 为创建子流程的虚拟实例服务
 	 * @param json： 代表ProcessData的JSONObject对象
 	 * @param preFlowObjectId：代表子流程的节点的元素id
@@ -237,6 +237,12 @@ public class ProcessDataUtil {
 		return false;
 	}
 
+	/**
+	 * 返回执行树中是否包含指定的元素id
+	 * @param flowObjectId  指定的元素id
+	 * @param processData
+	 * @return
+	 */
 	public static boolean isExecutionTreeContainsFlowObjectId(String flowObjectId, JSONObject processData) {
         JSONObject data = processData.getJSONObject("data");
         String executionTreeStr = data.getString("executionTree");

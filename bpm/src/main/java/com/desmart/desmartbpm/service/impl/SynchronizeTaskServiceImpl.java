@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.desmart.common.util.TaskTokenInfoUtil;
+import com.desmart.common.util.TokenInfoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,7 +283,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
 
-        TaskTokenInfoUtil tokenUtil = new TaskTokenInfoUtil(taskId, processData);
+        TokenInfoUtil tokenUtil = new TokenInfoUtil(taskId, processData);
         String parentProcessTokenId = tokenUtil.getParentTokenId();
 
         if (tokenUtil.getTokenId() == null) {

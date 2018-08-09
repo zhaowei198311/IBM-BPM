@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import sun.security.util.Resources_pt_BR;
 
 import java.util.*;
 
@@ -855,14 +854,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     }
 
     @Override
-    public ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,
+    public ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData bpmRoutingData,
 																CommonBusinessObject pubBo, JSONObject processDataJson) {
-        Set<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodes();
+        Set<BpmActivityMeta> startProcessNodes = bpmRoutingData.getStartProcessNodes();
         if (startProcessNodes.isEmpty()) {
 	        return ServerResponse.createBySuccess();
         }
         int insId = currProcessInstance.getInsId();
-        // DhProcessInstance mainProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
 
         if (processDataJson == null) { // 如果没有传入流程实例信息, 主动获取
             BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -873,31 +871,62 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             }
             processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
         }
-		List<BpmActivityMeta> startProcessNodeList = routingData.getStartProcessNodesOnSameDeepLevel();
-        startProcessNodeList.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
 
-        for (BpmActivityMeta startProcessNode : startProcessNodeList) {
-            // 子流程的第一个人工环节
-            BpmActivityMeta firstUserTaskNode = startProcessNode.getFirstTaskNode();
+        // 所有需要创建的子流程节点
+		Set<BpmActivityMeta> startProcessNodeList = bpmRoutingData.getStartProcessNodes();
+        for (BpmActivityMeta nodeIdentitySubProcess : startProcessNodeList) {
             // 获得子流程的tokenId
-            String tokenId = ProcessDataUtil.getTokenIdIdentifySubProcess(processDataJson, startProcessNode.getActivityBpdId(),
-                    firstUserTaskNode.getActivityBpdId());
-
+			String parentProcessFlowObjectId = null; // 当前子流程的上级流程的元素id
+			if (!BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(nodeIdentitySubProcess.getParentActivityId())) {
+				// 如果代表子流程的节点不在主流程上
+                parentProcessFlowObjectId = bpmActivityMetaMapper.queryByPrimaryKey(nodeIdentitySubProcess.getParentActivityId()).getActivityBpdId();
+            }
+            TokenInfoUtil tokenInfoUtil = new TokenInfoUtil(nodeIdentitySubProcess.getActivityBpdId(), parentProcessFlowObjectId, processDataJson);
+            String tokenId = tokenInfoUtil.getTokenId();
+            if (tokenId == null) {
+                throw new PlatformException("找不到子流程对应的tokenId");
+            }
 			// 找到子流程的上级流程（不一定是当前流程）
 			DhProcessInstance parentProcessInstance = dhRouteService.getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(
-					currProcessInstance, startProcessNode);
+					currProcessInstance, nodeIdentitySubProcess);
 			
             // 从pubBo中获得流程发起人id
+            // 子流程的第一个人工环节
+            BpmActivityMeta firstUserTaskNode = nodeIdentitySubProcess.getFirstTaskNode();
+            if (firstUserTaskNode == null) {
+               firstUserTaskNode = getFirstTaskFromParentProcessNode(nodeIdentitySubProcess, bpmRoutingData.getActIdAndNodeIdentitySubProcessMap());
+               if (firstUserTaskNode == null) {
+                   throw new PlatformException("创建子流程时获取发起人失败");
+               }
+            }
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
-            // 创建子流程实例
-            DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, startProcessNode,
+            // 创建子流程实例, 流程发起人取分配人中的第一个用户
+            DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, nodeIdentitySubProcess,
                     tokenId, owners.get(0));
-
             dhProcessInstanceMapper.insertProcess(subProcessInstacne);
         }
 
 	    return ServerResponse.createBySuccess();
+    }
+
+    /**
+     * 从上级流程中查找流程发起后的第一个任务
+     * @param nodeIdentitySubProcess
+     * @param actIdAndNodeIdentitySubProcessMap
+     * @return
+     */
+    private BpmActivityMeta getFirstTaskFromParentProcessNode(BpmActivityMeta nodeIdentitySubProcess, Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap) {
+        if (nodeIdentitySubProcess.getFirstTaskNode() != null) {
+            return nodeIdentitySubProcess.getFirstTaskNode();
+        } else {
+            BpmActivityMeta parentProcessNode = actIdAndNodeIdentitySubProcessMap.get(nodeIdentitySubProcess.getParentActivityId());
+            if (parentProcessNode != null) {
+                return getFirstTaskFromParentProcessNode(parentProcessNode, actIdAndNodeIdentitySubProcessMap);
+            } else {
+                return null;
+            }
+        }
     }
 
     // 创建子流程实例的方法

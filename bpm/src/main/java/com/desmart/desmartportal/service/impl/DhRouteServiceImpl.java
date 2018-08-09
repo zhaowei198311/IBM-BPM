@@ -160,7 +160,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         // 如果任务实例不存在，上个处理人就是本人， 如果任务存在，上个处理人就是任务所有者
         String preTaskOwner = dhTaskInstance == null ? (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)
                 : dhTaskInstance.getUsrUid();
-
+		// 装配taskNodesOnSameDeepLevel的处理人
 		for (BpmActivityMeta nextTaskNode : taskNodesOnSameDeepLevel) {
             List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfTaskNode(nextTaskNode, preTaskOwner, currProcessInstance,
                     FormDataUtil.getFormDataJsonFromProcessInstance(currProcessInstance));
@@ -173,13 +173,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 				nextTaskNode.getDhActivityConf().setActcCanChooseUser(Const.Boolean.FALSE);
 			}
         }
-        // 为自己的子流程选择默认处理人
-        List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
-        for (BpmActivityMeta nodeIdentifyProcess : startProcessNodesOnSameDeepLevel) {
+        // 为自身的子流程选择默认处理人
+        List<BpmActivityMeta> nodesIdentitySubProcessOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
+        for (BpmActivityMeta nodeIdentifyProcess : nodesIdentitySubProcessOnSameDeepLevel) {
             BpmActivityMeta firstTaskNode = nodeIdentifyProcess.getFirstTaskNode();
-            if (firstTaskNode == null) { // 如果流程没有第一个任务节点，则跳过
-            	continue;
-			}
             List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode,
                     nodeIdentifyProcess);
             // 加入集合
@@ -383,11 +380,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 	}
 
-	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
-        BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
-        threadBoolean.setFalse();
-        return routingData.getNormalNodes();
-    }
+//	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
+//        BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
+//        threadBoolean.setFalse();
+//        return routingData.getNormalNodes();
+//    }
 
 
 	/**
@@ -1135,7 +1132,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		try { // 等待半秒给引擎处理处理时间
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfigService.getFirstActConfig());
 		// 获得流程详细信息
@@ -1160,7 +1157,6 @@ public class DhRouteServiceImpl implements DhRouteService {
         }
     }
 
-
     @Override
     public CommonBusinessObject assembleTaskOwnerForNodesCannotChoose(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
                                                                       CommonBusinessObject pubBo, BpmRoutingData routingData) {
@@ -1169,11 +1165,15 @@ public class DhRouteServiceImpl implements DhRouteService {
         List<String> adminUidList = new ArrayList<>();
         adminUidList.add(bpmGlobalConfig.getBpmAdminName());
 
-		// 找到满足条件的所有子流程, 代表子流程的节点和作为出发点的节点不是平级的
+		// 为startProcessNodesOnOtherDeepLevel的第一个任务分配处理人
         List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel = routingData.getStartProcessNodesOnOtherDeepLevel();
         for (BpmActivityMeta nodeIdentifySubProcess : startProcessNodesOnOtherDeepLevel) {
             // 找到发起节点
             BpmActivityMeta firstTaskNode = nodeIdentifySubProcess.getFirstTaskNode();
+            if (firstTaskNode == null) {
+            	// 当firstTaskNode为空，说明这个子流程没有人工环节或者这个子流程的人工环节被提取到上级去了，已经分配了处理人
+				continue;
+			}
             List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, nodeIdentifySubProcess);
             String actcAssignVariable = firstTaskNode.getDhActivityConf().getActcAssignVariable();
             if (defaultTaskOwners.isEmpty()) {
@@ -1184,7 +1184,7 @@ public class DhRouteServiceImpl implements DhRouteService {
             }
         }
 
-        // 为其他任务计算处理人
+        // 为其他已创建的流程的任务计算处理人
         List<BpmActivityMeta> taskNodesOnOtherDeepLevel = routingData.getTaskNodesOnOtherDeepLevel();
         if (!taskNodesOnOtherDeepLevel.isEmpty()) {
             for (BpmActivityMeta taskNode : taskNodesOnOtherDeepLevel) {
@@ -1217,12 +1217,15 @@ public class DhRouteServiceImpl implements DhRouteService {
 		adminUidList.add(bpmGlobalConfig.getBpmAdminName());
 
 		// 所有代表子流程的节点
-        List<BpmActivityMeta> startProcessNodes = routingData.getStartProcessNodesOnSameDeepLevel();
-        startProcessNodes.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
+        List<BpmActivityMeta> nodesIdentityStartSubProcess = routingData.getStartProcessNodesOnSameDeepLevel();
+        nodesIdentityStartSubProcess.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
 
-        for (BpmActivityMeta nodeIdentifySubProcess : startProcessNodes) {
+        for (BpmActivityMeta nodeIdentifySubProcess : nodesIdentityStartSubProcess) {
             // 找到发起节点
             BpmActivityMeta firstTaskNode = nodeIdentifySubProcess.getFirstTaskNode();
+            if (firstTaskNode == null) {
+            	continue;
+			}
             List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, nodeIdentifySubProcess);
             String actcAssignVariable = firstTaskNode.getDhActivityConf().getActcAssignVariable();
             if (defaultTaskOwners.isEmpty()) {
@@ -1232,9 +1235,10 @@ public class DhRouteServiceImpl implements DhRouteService {
                         DataListUtils.transformUserListToUserIdList(defaultTaskOwners));
             }
         }
-
-        List<BpmActivityMeta> taskNodesExcludeFirstTask = routingData.getTaskNodesOnSameDeepLevel();
-        taskNodesExcludeFirstTask.addAll(routingData.getStartProcessNodesOnOtherDeepLevel());
+		// 所有不是子流程第一个任务的需要装配的任务
+        List<BpmActivityMeta> taskNodesExcludeFirstTask = new ArrayList<>();
+		taskNodesExcludeFirstTask.addAll(routingData.getTaskNodesOnSameDeepLevel());
+        taskNodesExcludeFirstTask.addAll(routingData.getTaskNodesOnOtherDeepLevel());
         if (!taskNodesExcludeFirstTask.isEmpty()) {
             for (BpmActivityMeta taskNode : taskNodesExcludeFirstTask) {
                 // todo yao 需要修正为对的流程实例
@@ -1260,23 +1264,23 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	/**
 	 * 计算流程起草环节的默认处理人， 当没有时返回空集合
-	 * @param currProcessInstance  当前流程实例————当前流程实例的任务提交引发了，改子流程的创建
-	 * @param firstTaskNode  起草环节
-	 * @param nodeIdentifyProcess  代表这个流程的节点
+	 * @param currProcessInstance  当前流程实例————当前流程实例的任务提交引发了，这个子流程的创建
+	 * @param firstTaskNodeOfSubProcess  代表子流程的节点下的第一个任务
+	 * @param nodeIdentitySubProcess  代表子流程的节点
 	 * @return 当没有默认处理人时返回空集合
 	 */
-    private List<SysUser> getDefaultTaskOwnerOfFirstNodeOfProcess(DhProcessInstance currProcessInstance, BpmActivityMeta firstTaskNode,
-																  BpmActivityMeta nodeIdentifyProcess) {
+    private List<SysUser> getDefaultTaskOwnerOfFirstNodeOfProcess(DhProcessInstance currProcessInstance, BpmActivityMeta firstTaskNodeOfSubProcess,
+																  BpmActivityMeta nodeIdentitySubProcess) {
 		List<SysUser> result = new ArrayList<>();
-		// 先获取这个任务节点所属的尚未创建的流程的父级流程
+		// 获得nodeIdentitySubProcess这个流程的父级流程， 父流程的创建人、组织、部门编号作为选人的条件
         DhProcessInstance parentProcessInstance = getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(currProcessInstance,
-                nodeIdentifyProcess);
+				nodeIdentitySubProcess);
         if (parentProcessInstance == null) {
             log.error("查找父流程实例失败：当前流程：" + currProcessInstance.getInsUid()
-                    + " 代表子流程的节点id：" + nodeIdentifyProcess.getActivityId());
+                    + " 代表子流程的节点id：" + nodeIdentitySubProcess.getActivityId());
             return result;
         }
-        DhActivityConf dhActivityConf = firstTaskNode.getDhActivityConf();
+        DhActivityConf dhActivityConf = firstTaskNodeOfSubProcess.getDhActivityConf();
         String actcAssignType = dhActivityConf.getActcAssignType();
         DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
         if (assignTypeEnum == DhActivityConfAssignType.NONE
@@ -1295,7 +1299,7 @@ public class DhRouteServiceImpl implements DhRouteService {
         // 其余 的情况需要数据库关联表中有匹配的数据才能生效
         // 获得数据库中保存的  DH_ACTIVITY_ASSIGN 默认处理人
         DhActivityAssign selective = new DhActivityAssign();
-        selective.setActivityId(firstTaskNode.getSourceActivityId());
+        selective.setActivityId(firstTaskNodeOfSubProcess.getSourceActivityId());
         selective.setActaType(DhActivityAssignType.DEFAULT_HANDLER.getCode());
         List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
         if (assignList.isEmpty()) {
@@ -1397,21 +1401,22 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	public DhProcessInstance getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(DhProcessInstance currProcessInstance,
 																								  BpmActivityMeta nodeIdentifyProcess) {
-        /* 代表子流程的节点的父级节点，
+        /*  根据代表子流程的节点的父级节点，
             当这个节点是"0" 说明子流程的父级流程是主流程
             当这个节点是其它值，去查询哪个流程的TOKEN_ACTIVITY_ID是这个值即为子流程的父流程
          */
         String parentActivityId = nodeIdentifyProcess.getParentActivityId();
-        if ("0".equals(parentActivityId)) {
-            // 返回主流程
+        if (BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(parentActivityId)) {
+            // 这个代表子流程的节点位于主流程上
             if (currProcessInstance.getInsStatusId().intValue() == DhProcessInstance.STATUS_ID_DRAFT) {
                 // 如果当前流程是草稿状态， 父级流程就是当前流程
                 return currProcessInstance;
             } else {
+            	// 如果流程是已经发起的，父级流程就是主流程
                 return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());
             }
         }
-        // 返回TOKEN_ACTIVITY_ID是此值的流程
+        // 代表流程的节点不在主流程上，根据nodeIdentitySubProcesss的 parentActivityId 找tokenId是这个节点的流程
         return dhProcessInstanceMapper.getByInsIdAndTokenActivityId(currProcessInstance.getInsId(), parentActivityId);
     }
 
@@ -1450,7 +1455,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 
         if (!routingData.getStartProcessNodes().isEmpty()) {
         	// 遍历每一个代表子流程的节点
+			Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap = new HashMap<>();
             for (BpmActivityMeta nodeIdentitySubProcess : routingData.getStartProcessNodes()) {
+				actIdAndNodeIdentitySubProcessMap.put(nodeIdentitySubProcess.getActivityId(), nodeIdentitySubProcess);
                 for (BpmActivityMeta taskNode : normalNodes) {
                     // 从所有的任务节点中，找到新
                     if (taskNode.getParentActivityId().equals(nodeIdentitySubProcess.getActivityId())) {
@@ -1474,19 +1481,20 @@ public class DhRouteServiceImpl implements DhRouteService {
 					}
                 }
             }
+            routingData.setActIdAndNodeIdentitySubProcessMap(actIdAndNodeIdentitySubProcessMap);
         }// 装配完成子流程的起始任务节点，剩下的是与起始节点不平级的任务节点
         routingData.getTaskNodesOnOtherDeepLevel().addAll(normalNodes);
         // 为如果同级的子流程没有任务，就给他任务
-        findTaskNodeForProcessWillStartOnSameLevel(routingData);
+        assembleTaskNodeForProcessWillStartOnSameLevel(routingData);
         return routingData;
     }
 
     /**
      * 为与起始节点平级的子流程发起人装配任务节点<br/>
 	 * 将其子流程下的任务提取上来
-     * @param bpmRoutingData
-     */
-    private void findTaskNodeForProcessWillStartOnSameLevel(BpmRoutingData bpmRoutingData) {
+	 * @param bpmRoutingData
+	 */
+    private void assembleTaskNodeForProcessWillStartOnSameLevel(BpmRoutingData bpmRoutingData) {
         List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
         if (startProcessNodesOnSameDeepLevel.isEmpty()) {
             return;

@@ -1,7 +1,6 @@
 package com.desmart.desmartportal.service;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,15 +37,15 @@ public interface DhRouteService {
 	 * @param routeData
 	 * @return
 	 */
-	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
+	ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData);
 
-	/**
-	 * 根据表单数据和环节找到接下来会流转到的真实环节
-	 * @param sourceActivityMeta
-	 * @param formData
-	 * @return
-	 */
-	Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
+//	/**
+//	 * 根据表单数据和环节找到接下来会流转到的真实环节
+//	 * @param sourceActivityMeta
+//	 * @param formData
+//	 * @return
+//	 */
+//	Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData);
 
 	/**
 	 * 获取指定环节的可选处理人
@@ -69,9 +68,7 @@ public interface DhRouteService {
 	 * @param dhProcessInstance  流程实例
 	 * @param mergedFormData  当前的formData信息
 	 * @return 不会返回null
-	 * 返回值map包含的内容：
-	 * idList 处理人工号集合 不会为null
-	 * nameList 处理人对象集合  不会为null
+	 *
 	 */
 	List<SysUser> getDefaultTaskOwnerOfTaskNode(BpmActivityMeta taskNode, String preTaskOwner, DhProcessInstance dhProcessInstance, JSONObject mergedFormData);
 
@@ -119,7 +116,9 @@ public interface DhRouteService {
 	ServerResponse<String> getDhGatewayRouteResult(Integer insId, String activityBpdId);
 
 	/**
-	 *	查看提交上来的选人信息是否完整
+	 *	查看提交上来的选人信息是否完整<br/>
+	 *	routingData.getTaskNodesOnSameDeepLevel(); 检查集合中任务节点的处理人<br/>
+	 *  routingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel(); 检查集合中任务节点的处理人<br/>
 	 * @param currTaskNode  当前任务节点
 	 * @param routeData     提交的路由信息
 	 * @param routingData   下个环节路由结果
@@ -157,11 +156,12 @@ public interface DhRouteService {
 	/**
 	 * 为不能指定处理人的节点装配处理人<br/>
 	 * 提交人是子流程的最后一个人时<br/>
-	 * 1. 子流程衔接另一个子流程<br/>
-	 * 2. 子流程衔接普通节点<br/>
-	 * @param subProcessInstance
+	 * 1. StartProcessNodesOnOtherDeepLevel的第一个任务<br/>
+	 * 2. TaskNodesOnOtherDeepLevel已有流程的任务<br/>
+	 * @param currTask 当前任务
+	 * @param currProcessInstance  当前流程实例
 	 * @param pubBo
-	 * @param routingData
+	 * @param routingData 预测的环节走向
 	 * @return
 	 */
 	CommonBusinessObject assembleTaskOwnerForNodesCannotChoose(DhTaskInstance currTask, DhProcessInstance currProcessInstance,
@@ -189,7 +189,7 @@ public interface DhRouteService {
 	BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData);
 
 	/**
-	 * 异步查询符合条件的用户
+	 * 移动端查询符合条件的用户
 	 * @param insUid
 	 * @param activityId
 	 * @param departNo
@@ -205,7 +205,8 @@ public interface DhRouteService {
 			,HttpServletRequest request, String taskUid, String userUidArrStr,String condition);
 
 	/**
-	 * 根据当前流程和代表子流程的节点得到子流程的父流程实例
+	 * 根据当前流程和代表子流程的节得到子流程的父流程实例<br/>
+	 * 会使用到TokenActivityId
 	 * @param currProcessInstance  当前流程实例
 	 * @param nodeIdentifyProcess  代表子流程的节点
 	 * @return
@@ -214,7 +215,7 @@ public interface DhRouteService {
 																						  BpmActivityMeta nodeIdentifyProcess);
 
 	/**
-	 * 判断任务节点是否是子流程的第一个节点，而且是回退回来的
+	 * 判断任务节点是否是子流程的第一个节点(局限于此子流程层面)，而且是回退回来的
 	 * @param taskNode  任务节点
 	 * @param processInstance  任务节点所属流程
 	 * @return
@@ -222,7 +223,7 @@ public interface DhRouteService {
 	boolean isFirstTaskOfSubProcessAndWasRejected(BpmActivityMeta taskNode, DhProcessInstance processInstance);
 
 	/**
-	 * 判断任务节点是否是子流程的第一个节点
+	 * 判断任务节点是否是子流程的第一个节点(局限于此子流程层面)
 	 * @param taskNode 任务节点
 	 * @param processInstance 任务节点所属流程
 	 * @return
