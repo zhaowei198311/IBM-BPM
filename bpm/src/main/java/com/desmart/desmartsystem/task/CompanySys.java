@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -19,12 +20,16 @@ import org.quartz.JobExecutionException;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.desmart.desmartsystem.controller.BaseController;
 import com.desmart.desmartsystem.dao.SysCompanyMapper;
 import com.desmart.desmartsystem.entity.SysCompany;
 import com.desmart.desmartsystem.entity.SysDepartment;
 import com.desmart.desmartsystem.util.UUIDTool;
 
 public class CompanySys  implements Job{
+	
+	private Logger logger = Logger.getLogger(CompanySys.class);
+	
 	public static InputStream getSapCompanyStream(){
 		HttpURLConnection conn = null;
 		InputStream in=null;
@@ -131,13 +136,16 @@ public class CompanySys  implements Job{
 		SysCompanyMapper sysCompanyMapper = wac.getBean(SysCompanyMapper.class);
 		
 		//查询返回所有公司信息
+		logger.error("查询返回所有公司信息");
 		Map<String, SysCompany> sysCompanyMap=new HashMap<String, SysCompany>();
 		List<SysCompany> sysCompanys  = sysCompanyMapper.selectAll(new SysCompany());
 		for (SysCompany sysCompany : sysCompanys) {
 			sysCompanyMap.put(sysCompany.getCompanyUid(), sysCompany);
 		}
 		
+		
 		//接口返回所有公司信息
+		logger.error("接口返回所有公司信息");
 		List<SysCompany>  sysCompanyList = executeSysCompany();
 		for (SysCompany sysCompany : sysCompanyList) {
 			SysCompany company = sysCompanyMap.get(sysCompany.getCompanyUid());
@@ -148,5 +156,6 @@ public class CompanySys  implements Job{
 				sysCompanyMapper.insert(sysCompany);
 			}
 		}
+		
 	}
 }
