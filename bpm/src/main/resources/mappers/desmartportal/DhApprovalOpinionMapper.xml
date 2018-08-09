@@ -23,7 +23,7 @@
 			and ao.activity_id = #{activityId}
 		</if>
 		</where>
-		order by ao.APR_DATE desc
+		order by ao.APR_DATE asc
 	</select>
 
 	<insert id="insert"
