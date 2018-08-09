@@ -6,9 +6,9 @@ $(function(){
 	$("#formSet").find(".layui-upload-list").each(function(){
 		var id = $(this).prop("id");
 		//多图片上传
-		upload.render({
+		var uploadImgListIns = upload.render({
 		    elem: '#'+id+'_choose'
-		    ,url: '/upload/'
+		    ,url: common.getPath() +'/accessoryFileUpload/uploadImgFile'
 		    ,bindAction: '#'+id+'_load'
 		    ,multiple: true
 		    ,acceptMime: 'image/*'
@@ -18,22 +18,43 @@ $(function(){
 		      //预读本地文件示例，不支持ie8
 		      obj.preview(function(index, file, result){
 		    	  var imgHtml = '<div style="display:inline;margin-right:20px;">'
-		    	  		+'<img style="width:400px;" src="'+result+'" alt="'
+		    	  		+'<img id="img_'+index+'" style="width:400px;" src="'+result+'" alt="'
 		    	  		+ file.name +'" class="layui-upload-img">'
-		    	  		+'<span style="cursor: pointer;"><i class="layui-icon delete_img_file" title="删除图片">&#x1007;</i></span>'
+		    	  		+'<span style="cursor: pointer;"><i id="upload_'+index+'" class="layui-icon delete_img_file" title="删除图片">&#x1007;</i></span>'
 		    	  		+'</div>';
 		          $('#'+id).append(imgHtml);
 		          $("#"+id).find(".delete_img_file").on('click', function(){
 		              delete imgFiles[index]; // 删除对应的文件
 		              $(this).parent().parent().remove();
+		              uploadImgListIns.config.elem.next()[0].value = ''; 
 		          });
 		      });
 		    }
-		    ,done: function(res){
-			    /* var fileNameHtml = '<a style="color:#1E9FFF;" href="'
-		        		+result+'" onclick="imgUrlClick(event);">'
-		        		+ file.name +' <i class="layui-icon">&#xe64c;</i></a> <span style="color:red;" onclick="deleteFile()">删除</span><br/>';  
-		        $("#"+id+"_loc").find(".fileList").append(fileNameHtml); */
+			,before:function(){
+				if($("#"+id).find(".delete_img_file").length>0){
+					layer.load(1);
+				}
+		    }
+		    ,done: function(res, index, upload){
+		    	if(res.status==0){
+		    		var fileNameHtml = '<div><a style="color:#1E9FFF;" href="http://'
+		        		+ res.data.href +'" onclick="imgUrlClick(event);">'
+		        		+ res.data.fileName +' <i class="layui-icon">&#xe64c;</i></a> '
+		        		+'<span data-id="img_'+index+'" style="color:red;cursor: pointer;" onclick="deleteFile(\''+res.data.fileName+'\',this)">删除</span></div>';  
+		        	$("#"+id+"_loc").find(".fileList").append(fileNameHtml);
+		        	$("#upload_"+index).parent().remove();
+		        	layer.closeAll('loading');
+		        	return delete this.files[index];
+		    	}else{
+	        		this.error(index, upload);
+	        		if(res.msg!=null && res.msg.length>0){
+	        			layer.alert("上传图片失败");
+	        		}
+	        		layer.closeAll('loading');
+	        	}
+		    },
+		    allDone:function(){
+		    	layer.closeAll('loading');
 		    }
 		});
 	});
@@ -908,4 +929,33 @@ function editAccessoryFile(a){
 //图片上传后禁止图片链接默认事件
 function imgUrlClick(event){
 	event.preventDefault();
+}
+
+//删除图片附件的方法
+function deleteFile(fileName,obj){
+	layer.confirm('确认删除？', {
+		  btn: ['确定', '取消'] 
+	}, function(index){
+		$.ajax({
+			url:common.getPath()+"/accessoryFileUpload/deleteImgFile",
+			data:{
+				fileName:fileName
+			},
+			beforeSend:function(){
+				layer.load(1);
+			},
+			success:function(res){
+				if(res.status == 0){
+					var id = $(obj).attr("data-id");
+					$("#"+id).parent().remove();
+					$(obj).parent().remove();
+					$(obj).remove();
+					layer.alert("删除成功");
+				}else{
+					layer.alert("删除失败");
+				}
+				layer.closeAll("loading");
+			}
+		});
+	});
 }
