@@ -89,7 +89,9 @@ public class DepartmentSys  implements Job {
 		}
 		
 		//添加部门
-		sysDepartmentMapper.inserBatch(insertSysDepartment);
+		if(insertSysDepartment.size()>0) {
+			sysDepartmentMapper.inserBatch(insertSysDepartment);
+		}
 		
 		//修改部门
 		for (SysDepartment sysDepartment : updateSysDepartment) {
