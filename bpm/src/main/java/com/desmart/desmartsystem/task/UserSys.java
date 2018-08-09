@@ -35,8 +35,85 @@ import com.ibm.lyfwebservice.webservice.CommonInterfaceServiceLocator;
  * @author xsf
  * @since 2018-08-09
  */
+
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations={"classpath*:applicationContext.xml"})
 public class UserSys implements Job{
 
+	
+//	@Autowired
+//	private SysUserMapper sysUserMapper;
+//	@Test
+//	//同步全部用户信息
+//	public void runUserAll(){
+//		try {
+//			//获取所有部门数据
+//			CommonInterfaceService servie = new CommonInterfaceServiceLocator();
+//			CommonEmployeeField sendEmployee = servie.getCommonInterface(new URL("http://10.1.0.90/LyfWebService/services/CommonInterface")).sendEmployee("LYF_ALL_OFFICE","","TFlGX0FMTF9PRkZJQ0U=");
+//			List<SysUser> sysUsers=new ArrayList<SysUser>();
+//			EmployeeInfo[] emp = sendEmployee.getEmp();
+//			int i=0;
+//			for (EmployeeInfo employeeInfo : emp) {
+//				SysUser sysUser=new SysUser();
+//				sysUser.setUserUid(employeeInfo.getUid());//用户代码
+//				sysUser.setUserId(employeeInfo.getUid());//用户代码
+//				sysUser.setUserNo(employeeInfo.getUid());//用户代码
+//				
+//				sysUser.setUserName(employeeInfo.getCn());
+//				sysUser.setUserNameUs(employeeInfo.getLyfchinesepinyin());
+//				sysUser.setSn(employeeInfo.getSn());
+//				sysUser.setGivenname(employeeInfo.getGivenname());
+//				String sex=employeeInfo.getLyfsex();
+//				if(StringUtils.isNotBlank(sex)) {
+//					sysUser.setSex(Short.valueOf(sex));
+//				}
+//				sysUser.setHomeplace(employeeInfo.getLyfhomeplace());
+//				sysUser.setPassport(employeeInfo.getLyfpassport());
+//				sysUser.setBirthday(employeeInfo.getLyfbirthday());
+//				//sysUser.setOrderIndex(1);
+//				sysUser.setPassword("123456");
+//				
+//				sysUser.setDepartUid(employeeInfo.getDepartmentNumber());
+//				
+//				sysUser.setOfficeTel(employeeInfo.getTelephonenumber());
+//				sysUser.setOfficeFax(employeeInfo.getTelexnumber());
+//				sysUser.setMobile(employeeInfo.getMobile());
+//				sysUser.setEmail(employeeInfo.getMail());
+//				sysUser.setWorkStatus(employeeInfo.getErPersonStatus());
+//				sysUser.setSessionTime(30);
+//				sysUser.setStation(employeeInfo.getLyfstation());
+//				sysUser.setStationcode(employeeInfo.getLyfstationcode());
+//				sysUser.setManagernumber(employeeInfo.getLyfmanagernumber());
+//				sysUser.setCostCenter(employeeInfo.getLyfcostcenter());
+//				sysUser.setCompanynumber(employeeInfo.getLyfcompanynumber());
+//				sysUser.setDepartmetNumber(employeeInfo.getDepartmentNumber());
+//				String level=employeeInfo.getLyflevel();
+//				if(StringUtils.isNotBlank(level)) {
+//					sysUser.setLevels(employeeInfo.getLyflevel());
+//				}
+//				sysUser.setReportTo(employeeInfo.getLyfmanagernumber());
+//				if(StringUtils.isNotBlank(employeeInfo.getLyfhireday())) {
+//					DateUtil.strToDate(employeeInfo.getLyfhireday(), "yyyyMMdd");
+//				}
+//				if(StringUtils.isNotBlank(employeeInfo.getLyfbirthday())) {
+//					DateUtil.strToDate(employeeInfo.getLyfbirthday(), "yyyyMMdd");
+//				}
+//				sysUser.setCreateDate(new Date());
+//				sysUsers.add(sysUser);
+//				i++;
+//				if(i%1000==0) {
+//					sysUserMapper.insertBatch(sysUsers);
+//					sysUsers=new ArrayList<SysUser>();
+//				}
+//			}
+//			if(sysUsers.size()>0) {
+//				sysUserMapper.insertBatch(sysUsers);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
