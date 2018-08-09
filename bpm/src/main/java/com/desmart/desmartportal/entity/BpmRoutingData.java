@@ -1,11 +1,12 @@
 package com.desmart.desmartportal.entity;
 
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
 
 /**
  * 找寻下个环节信息时记录的信息
@@ -18,12 +19,13 @@ public class BpmRoutingData {
     private Set<BpmActivityMeta> endProcessNodes = new HashSet<>(); // 代表需要结束的子流程的节点
     private Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
     private Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
-    private List<BpmActivityMeta> taskNodesOnSameDeepLevel = new ArrayList<>(); // 与起始节点平级的任务节点
-    private List<BpmActivityMeta> taskNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始节点不平级的任务节点
-    private List<BpmActivityMeta> startProcessNodesOnSameDeepLevel = new ArrayList<>();  // 与起始任务平级的代表子流程的节点 (内部维护了第一个任务节点信息)
-    private List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel = new ArrayList<>(); // 与起始任务不平级的代表子流程的节点(内部维护了第一个任务节点信息)
-    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel = new ArrayList<>();  // 属于当前流程子流程的流程的第一个任务节点
-    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel = new ArrayList<>();  // 不属于当前流程子流程的流程的第一个任务节点
+    private List<BpmActivityMeta> taskNodesOnSameDeepLevel; // 与起始节点平级的任务节点
+    private List<BpmActivityMeta> taskNodesOnOtherDeepLevel; // 与起始节点不平级的任务节点
+    private List<BpmActivityMeta> startProcessNodesOnSameDeepLevel;  // 与起始任务平级的代表子流程的节点 (内部维护了第一个任务节点信息)
+    private List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel; // 与起始任务不平级的代表子流程的节点(内部维护了第一个任务节点信息)
+    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel;  // 属于当前流程子流程的流程的第一个任务节点
+    private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel;  // 不属于当前流程子流程的流程的第一个任务节点
+    private Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap; // activity_id -> 代表子流程的节点
 
 
     public void includeAll(BpmRoutingData bpmRouteingData) {
@@ -55,6 +57,9 @@ public class BpmRoutingData {
     }
 
     public List<BpmActivityMeta> getStartProcessNodesOnSameDeepLevel() {
+        if (startProcessNodesOnSameDeepLevel == null) {
+            startProcessNodesOnSameDeepLevel = new ArrayList<>();
+        }
         return startProcessNodesOnSameDeepLevel;
     }
 
@@ -63,6 +68,9 @@ public class BpmRoutingData {
     }
 
     public List<BpmActivityMeta> getStartProcessNodesOnOtherDeepLevel() {
+        if (startProcessNodesOnOtherDeepLevel == null) {
+            startProcessNodesOnOtherDeepLevel = new ArrayList<>();
+        }
         return startProcessNodesOnOtherDeepLevel;
     }
 
@@ -71,10 +79,16 @@ public class BpmRoutingData {
     }
 
     public List<BpmActivityMeta> getTaskNodesOnOtherDeepLevel() {
+        if (taskNodesOnOtherDeepLevel == null) {
+            taskNodesOnOtherDeepLevel = new ArrayList<>();
+        }
         return taskNodesOnOtherDeepLevel;
     }
 
     public List<BpmActivityMeta> getTaskNodesOnSameDeepLevel() {
+        if (taskNodesOnSameDeepLevel == null) {
+            taskNodesOnSameDeepLevel = new ArrayList<>();
+        }
         return taskNodesOnSameDeepLevel;
     }
 
@@ -83,6 +97,9 @@ public class BpmRoutingData {
     }
 
     public List<BpmActivityMeta> getFirstTaskNodesOfStartProcessOnSameDeepLevel() {
+        if (firstTaskNodesOfStartProcessOnSameDeepLevel == null) {
+            firstTaskNodesOfStartProcessOnSameDeepLevel = new ArrayList<>();
+        }
         return firstTaskNodesOfStartProcessOnSameDeepLevel;
     }
 
@@ -91,6 +108,9 @@ public class BpmRoutingData {
     }
 
     public List<BpmActivityMeta> getFirstTaskNodesOfStartProcessOnOtherDeepLevel() {
+        if (firstTaskNodesOfStartProcessOnOtherDeepLevel == null) {
+            firstTaskNodesOfStartProcessOnOtherDeepLevel = new ArrayList<>();
+        }
         return firstTaskNodesOfStartProcessOnOtherDeepLevel;
     }
 
@@ -134,6 +154,13 @@ public class BpmRoutingData {
         this.startProcessNodes = startProcessNodes;
     }
 
+    public Map<String, BpmActivityMeta> getActIdAndNodeIdentitySubProcessMap() {
+        return actIdAndNodeIdentitySubProcessMap;
+    }
+
+    public void setActIdAndNodeIdentitySubProcessMap(Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap) {
+        this.actIdAndNodeIdentitySubProcessMap = actIdAndNodeIdentitySubProcessMap;
+    }
 
     public Set<BpmActivityMeta> getEndProcessNodes() {
         return endProcessNodes;

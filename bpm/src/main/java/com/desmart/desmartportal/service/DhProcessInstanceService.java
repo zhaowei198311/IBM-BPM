@@ -157,12 +157,12 @@ public interface DhProcessInstanceService {
 	/**
 	 * 根据当前任务所在的流程实例、下个环节的路由信息、提交的pubBo来创建子流程，如果不需要创建返回sucess
 	 * @param currProcessInstance 流程实例编号
-	 * @param routingData 下个环节路由信息
+	 * @param bpmRoutingData 下个环节路由信息
 	 * @param pubBo  向引擎传值的对象
 	 * @param  processDataJson  流程实例信息，RESTful API获得
 	 * @return
 	 */
-	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData routingData,
+	ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData bpmRoutingData,
 														 CommonBusinessObject pubBo, JSONObject processDataJson);
 	
 	/**
