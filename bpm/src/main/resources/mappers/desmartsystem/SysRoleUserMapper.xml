@@ -106,7 +106,7 @@
   		</if>
   		
   		<if test="companyCode!=null">
-  			 and ud.company_code=#{companyCode}
+  			 and (ud.company_code=#{companyCode} or ud.company_code = '1000')
   		</if>
   		
   		 GROUP BY r.ROLE_UID
