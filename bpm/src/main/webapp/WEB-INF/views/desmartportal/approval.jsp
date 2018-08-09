@@ -22,7 +22,7 @@
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.1.8.2.min.js"></script>
-    <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
     <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 
     <!-- jQuery -->

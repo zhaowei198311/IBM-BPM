@@ -247,6 +247,7 @@ var common = {
 		var inputArr = $("#formSet .form-sub input");
 		var textareaArr = $("#formSet .form-sub textarea");
 		var tableArr = $("#formSet .data-table");
+		var uploadArr = $("#formSet .loc_div");
 		var control = true; //用于控制复选框出现重复值
 		var checkName = ""; //用于获得复选框的class值，分辨多个复选框
 		var json = "{";
@@ -460,6 +461,24 @@ var common = {
 			}
 			json += tableJson;
 			console.log("表格数据:"+tableJson);
+		}
+		
+		for(var i=0;i<uploadArr.length;i++){
+			var uploadObj = $(uploadArr[i]);
+			console.log(uploadObj.attr("id"));
+			var name = uploadObj.attr("id").replace("_loc","");
+			var value = "";
+			var aObj = uploadObj.find("a");
+			var uploadJson = "\"" + name + "\":{\"value\":[";
+			aObj.each(function(){
+				var aHref= $(this).attr("href");
+				uploadJson += "\""+aHref+"\",";
+			});
+			uploadJson = common.removeJsonStrComma(uploadJson);
+			uploadJson += "]},";
+			if (json.indexOf(uploadJson) == -1) {
+				json += uploadJson;
+			}
 		}
 		
 		//获得最后一位字符是否为","

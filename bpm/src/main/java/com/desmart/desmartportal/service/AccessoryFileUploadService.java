@@ -112,4 +112,18 @@ public interface AccessoryFileUploadService {
 	 * @return
 	 */
 	public ServerResponse deleteDataFormFileList(DhInstanceDocument dhInstanceDocument, String taskUid);
+	
+	/**
+	 * 上传图片文件
+	 * @param multipartFile
+	 * @return
+	 */
+	public ServerResponse uploadImgFile(MultipartFile multipartFile);
+	
+	/**
+	 * 删除图片文件
+	 * @param fileName
+	 * @return
+	 */
+	public ServerResponse deleteImgFile(String fileName);
 }

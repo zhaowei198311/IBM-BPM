@@ -105,9 +105,65 @@
 		$("#formSet").html(formHtml);
 	});
 </script>
-<script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
 <script type="text/javascript">
 	$(function(){
+		$("#formSet").find(".layui-upload-list").each(function(){
+			var id = $(this).prop("id");
+			//多图片上传
+			var uploadImgListIns = upload.render({
+			    elem: '#'+id+'_choose'
+			    ,url: common.getPath() +'/accessoryFileUpload/uploadImgFile'
+			    ,bindAction: '#'+id+'_load'
+			    ,multiple: true
+			    ,acceptMime: 'image/*'
+			    ,auto: false
+			    ,choose: function(obj){
+			      var imgFiles = this.files = obj.pushFile();
+			      //预读本地文件示例，不支持ie8
+			      obj.preview(function(index, file, result){
+			    	  var imgHtml = '<div style="display:inline;margin-right:20px;">'
+			    	  		+'<img id="img_'+index+'" style="width:400px;" src="'+result+'" alt="'
+			    	  		+ file.name +'" class="layui-upload-img">'
+			    	  		+'<span style="cursor: pointer;"><i id="upload_'+index+'" class="layui-icon delete_img_file" title="删除图片">&#x1007;</i></span>'
+			    	  		+'</div>';
+			          $('#'+id).append(imgHtml);
+			          $("#"+id).find(".delete_img_file").on('click', function(){
+			              delete imgFiles[index]; // 删除对应的文件
+			              $(this).parent().parent().remove();
+			              uploadImgListIns.config.elem.next()[0].value = ''; 
+			          });
+			      });
+			    }
+				,before:function(){
+					if($("#"+id).find(".delete_img_file").length>0){
+						layer.load(1);
+					}
+			    }
+			    ,done: function(res, index, upload){
+			    	if(res.status==0){
+			    		var fileNameHtml = '<div><a style="color:#1E9FFF;" href="http://'
+			        		+ res.data.href +'" onclick="imgUrlClick(event);">'
+			        		+ res.data.fileName +' <i class="layui-icon">&#xe64c;</i></a> '
+			        		+'<span data-id="img_'+index+'" style="color:red;cursor: pointer;" onclick="deleteFile(\''+res.data.fileName+'\',this)">删除</span></div>';  
+			        	$("#"+id+"_loc").find(".fileList").append(fileNameHtml);
+			        	$("#upload_"+index).parent().remove();
+			        	layer.closeAll('loading');
+			        	return delete this.files[index];
+			    	}else{
+		        		this.error(index, upload);
+		        		if(res.msg!=null && res.msg.length>0){
+		        			layer.alert("上传图片失败");
+		        		}
+		        		layer.closeAll('loading');
+		        	}
+			    },
+			    allDone:function(){
+			    	layer.closeAll('loading');
+			    }
+			});
+		});
+		
 		/* var json = '{"choose_user_xD7n":{"value":"00055685;00054290;00056430;","description":"苏思佳;胡笛;王安永;"}}';
 		common.giveFormSetValue(json);
 		
@@ -116,6 +172,38 @@
 		var json = '{"province":{"value":"360000"},"city":{"value":"360300"},"county":{"value":"360313"}}';
 		common.againSetValue(json);
 	});
+	
+	function deleteFile(fileName,obj){
+		layer.confirm('确认删除？', {
+			  btn: ['确定', '取消'] 
+		}, function(index){
+			$.ajax({
+				url:common.getPath()+"/accessoryFileUpload/deleteImgFile",
+				data:{
+					fileName:fileName
+				},
+				beforeSend:function(){
+					layer.load(1);
+				},
+				success:function(res){
+					if(res.status == 0){
+						var id = $(obj).attr("data-id");
+						$("#"+id).parent().remove();
+						$(obj).parent().remove();
+						$(obj).remove();
+						layer.alert("删除成功");
+					}else{
+						layer.alert("删除失败");
+					}
+					layer.closeAll("loading");
+				}
+			});
+		});
+	}
+	
+	function imgUrlClick(event){
+		event.preventDefault();
+	}
 	
 	function testData(){
 		common.validateRegx();
@@ -163,5 +251,16 @@
 		temp_form .submit();   
 		temp_form.remove();
 	} 
+	
+	function _getRandomString(len) {
+	    len = len || 32;
+	    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+	    var maxPos = $chars.length;
+	    var pwd = '';
+	    for (i = 0; i < len; i++) {
+	        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+	    }
+	    return pwd;
+	}
 </script>
 </html>
