@@ -103,9 +103,11 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 				insertObjPerList.add(objPer);
 			}
 		}
-		int countRow = dhObjectPermissionMapper.saveBatch(insertObjPerList);
-		if(countRow!=insertObjPerList.size()) {
-			throw new PlatformException("绑定字段权限失败");
+		if(!insertObjPerList.isEmpty()) {
+			int countRow = dhObjectPermissionMapper.saveBatch(insertObjPerList);
+			if(countRow!=insertObjPerList.size()) {
+				throw new PlatformException("绑定字段权限失败");
+			}
 		}
 		return ServerResponse.createBySuccess();
 	}
