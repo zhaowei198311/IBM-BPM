@@ -60,8 +60,8 @@
 					<div class="search_area">
 						<div class="layui-row layui-form">
 							<div class="layui-col-xs12" style="text-align:right;">
-								<div class="layui-col-md1">
-								<label class="layui-form-label layui-label-turn-user" style="width: 60%;">选择用户：</label>
+								<div class="layui-col-md2">
+								<label class="layui-form-label layui-label-turn-user" style="width: 80%;">选择用户：</label>
 								<input type="hidden" id="userId_view" name="userId_view" onchange="setLabelUserView(this)"/>
 								<i class="layui-icon-custom choose_user" id="choose_handle_user" title="选择用户">&#xe612;</i>
 								</div>
