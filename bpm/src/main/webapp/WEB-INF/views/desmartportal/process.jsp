@@ -386,7 +386,6 @@
 </html>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript">
 	//数据信息
 	var view = $(".container-fluid");

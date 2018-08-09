@@ -100,7 +100,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private DhFormNoService dhFormNoService;
 	@Autowired
     private DhStepMapper dhStepMapper;
-
+	@Autowired
+	private DhProcessMetaMapper dhprocessMetaMapper;
 
 	/**
 	 * 查询所有流程实例
@@ -975,7 +976,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	}
 
 	@Override
-	public ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
+	public ServerResponse<Object> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
 															Integer pageNum, Integer pageSize,
 															String usrUid, String proUid, String proAppId,String retrieveData) {
 		
@@ -983,7 +984,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		List<JSONObject> processInstanceList = 
 				insDataDao.queryInsData(status, processName, startTime, endTime, pageNum, pageSize
 										, usrUid, proUid, proAppId,jsonArray);
-		return ServerResponse.createBySuccess(processInstanceList);
+		DhProcessMeta dhProcessMeta = dhprocessMetaMapper.queryByProAppIdAndProUid(proAppId, proUid);
+		if(dhProcessMeta==null) {
+			return ServerResponse.createByErrorMessage("流程元数据不存在");
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("proName", dhProcessMeta.getProName());
+		map.put("insDataList", processInstanceList);
+		return ServerResponse.createBySuccess(map);
 	}
 
     

@@ -314,7 +314,8 @@
 		})
 	}
 
-	function drawTable(data) {
+	function drawTable(result) {
+		var data = result.insDataList;
 		// 查询结果总数
 		pageConfig.total = data[data.length - 1].count;
 		// 数据总数
@@ -330,7 +331,8 @@
 		data.pop();
 		var trs = "";
 		// 流程名称
-		var proName = $('#proName').val();
+		var proName = result.proName;
+		
 		$(data).each(function(i) {
 				var sortNum = i + 1;
 				var createDate = datetimeFormat_1(new Date(this.insCreateDate));

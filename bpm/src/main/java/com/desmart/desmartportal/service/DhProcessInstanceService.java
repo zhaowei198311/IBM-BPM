@@ -182,7 +182,7 @@ public interface DhProcessInstanceService {
 	 * @return ServerResponse<List<JSONObject>>  
 	 * @throws
 	 */
-	ServerResponse<List<JSONObject>> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
+	ServerResponse<Object> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,
 															Integer pageNum, Integer pageSize, 
 															String usrUid, String proUid, String proAppId,String retrieveData);
 
