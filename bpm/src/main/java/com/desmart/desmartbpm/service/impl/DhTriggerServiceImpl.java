@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -103,17 +104,17 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	 * @param e
 	 * @return
 	 */
-	private static String getStackMsg(Exception e) {  
-		StringBuffer sb = new StringBuffer();  
-        sb.append(e.toString() + "\n");
-        StackTraceElement[] stackArray = e.getStackTrace();  
-        for (int i = 0; i < stackArray.length; i++) {  
-            StackTraceElement element = stackArray[i];  
-            sb.append("\t"+element.toString() + "\n");  
-        }  
-        return sb.toString(); 
-    }  
-	
+	private static String getStackMsg(Throwable e) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(e.toString() + "\n");
+		StackTraceElement[] stackArray = e.getStackTrace();
+		for (int i = 0; i < stackArray.length; i++) {
+			StackTraceElement element = stackArray[i];
+			sb.append("\t"+element.toString() + "\n");
+		}
+		return sb.toString();
+	}
+
 	@Override
 	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep){
 		String triUid = dhStep.getStepObjectUid();
@@ -128,7 +129,12 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 						new Class[] { WebApplicationContext.class, String.class, JSONObject.class, DhStep.class });
 				md.invoke(obj, new Object[] { wac, insUid, jb, dhStep });
 				resultMap.put("status", "0");
-			}catch(Exception e) {
+			} catch (InvocationTargetException invokeException) {
+				logger.error("调用反射类异常，实例主键：" + insUid, invokeException);
+				resultMap.put("status", "1");
+				resultMap.put("msg", getStackMsg(invokeException.getTargetException()));
+				return ServerResponse.createBySuccess(resultMap);
+			} catch (Exception e) {
 				logger.error("调用反射类异常，实例主键：" + insUid, e);
 				resultMap.put("status", "1");
 				resultMap.put("msg", getStackMsg(e));

@@ -1,7 +1,9 @@
 // 页面加载完成
 $(function () {
 	initCollapse();
-	loadActivityConf(firstHumanMeteConf);
+	if (firstHumanMeteConf) {
+        loadActivityConf(firstHumanMeteConf);
+	}
 
 	// 校验规则
 	$('#config_form')

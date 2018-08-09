@@ -163,7 +163,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         if (steps.isEmpty()) { // 如果没有配置步骤
             //  调用api 完成任务
             BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(currTask.getTaskId(), pubBo);
+            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(currTask.getTaskId(), pubBo);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
                 // 判断实际TOKEN是否移动了

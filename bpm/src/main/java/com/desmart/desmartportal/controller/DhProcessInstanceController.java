@@ -28,7 +28,6 @@ import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.util.http.HttpClientUtils;
 
 /**
  * <p>
@@ -175,9 +174,9 @@ public class DhProcessInstanceController {
 	
 	@RequestMapping(value = "/checkedBusinesskey")
 	@ResponseBody
-	public ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance) {
+	public ServerResponse checkedBusinesskey(String proAppId, String proUid) {
 		try {
-			return dhProcessInstanceService.checkedBusinesskey(dhProcessInstance);
+			return dhProcessInstanceService.selectBusinessKeyToStartProcess(proAppId, proUid);
 		}catch (Exception e) {
 			return ServerResponse.createByError();
 		}

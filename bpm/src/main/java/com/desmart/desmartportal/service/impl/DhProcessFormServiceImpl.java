@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.desmart.desmartportal.service.DhRouteService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class DhProcessFormServiceImpl implements DhProcessFormService{
 	private DhStepMapper dhStepMapper;
 	
 	@Autowired
-	private DhObjectPermissionMapper dhObjectPermissionMapper;
+	private DhRouteService dhRouteService;
 	
 	private Logger log = Logger.getLogger(DhProcessFormServiceImpl.class);
 	
@@ -62,7 +63,7 @@ public class DhProcessFormServiceImpl implements DhProcessFormService{
 		Map<String,Object> stepMap = new HashMap<>();
 		try {
 			// 找到第一个环节的 流程bpdId 和 主键id
-			ServerResponse<BpmActivityMeta> bpmActivityMeta = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, verUid);
+			ServerResponse<BpmActivityMeta> bpmActivityMeta = dhRouteService.getActualFirstUserTaskNodeOfMainProcess(proAppId, proUid, verUid);
 			BpmActivityMeta bpmActivityMeta2 = bpmActivityMeta.getData();
 			String activityBpdId = bpmActivityMeta2.getActivityBpdId();
 			String activityId = bpmActivityMeta2.getActivityId();

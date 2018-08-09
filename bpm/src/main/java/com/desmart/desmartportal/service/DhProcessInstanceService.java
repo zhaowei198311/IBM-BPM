@@ -139,7 +139,12 @@ public interface DhProcessInstanceService {
 	DhProcessInstance generateSubProcessInstanceByParentInstance(DhProcessInstance parentInstance, DhProcessInstance currProcessInstance, BpmActivityMeta processNode,
 																 String tokenId, String creatorId);
 
-	ServerResponse checkedBusinesskey(DhProcessInstance dhProcessInstance);
+	/**
+	 *
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse selectBusinessKeyToStartProcess(String proAppId, String proUid);
 
 	/**
 	 * 根据下一个环节的路由信息，关闭流程（主流程，子流程）

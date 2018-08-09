@@ -1,13 +1,8 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+import com.desmart.desmartportal.entity.BpmRoutingData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -254,11 +249,12 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
     /**
      * 根据代表子流程的元素，获得这个子流程的启动事件元素
      * @return
+     * @param nodeIdentitySubProcess
      */
     @Override
-    public BpmActivityMeta getStartMetaOfSubProcess(BpmActivityMeta subProcessNode) {
+    public BpmActivityMeta getStartNodeOfSubProcess(BpmActivityMeta nodeIdentitySubProcess) {
         BpmActivityMeta selective = new BpmActivityMeta();
-        selective.setParentActivityId(subProcessNode.getActivityId());
+        selective.setParentActivityId(nodeIdentitySubProcess.getActivityId());
         selective.setActivityType("start");
         selective.setType("event");
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
@@ -270,15 +266,21 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
     }
 
     @Override
-    public BpmActivityMeta getFirstUserTaskMetaOfSubProcess(BpmActivityMeta subProcessNode) {
-        BpmActivityMeta startNode = getStartMetaOfSubProcess(subProcessNode);
-        return this.getByActBpdIdAndParentActIdAndProVerUid(startNode.getActivityTo(), subProcessNode.getActivityId(),
+    public BpmActivityMeta getFirstUserTaskNodeOfSubProcess(BpmActivityMeta nodeIdentitySubProcess) {
+        BpmActivityMeta startNode = getStartNodeOfSubProcess(nodeIdentitySubProcess);
+        BpmActivityMeta firstNode = getByActBpdIdAndParentActIdAndProVerUid(startNode.getActivityTo(), nodeIdentitySubProcess.getActivityId(),
                 startNode.getSnapshotId());
+        // 如果与发起环节相连的是人工环节才返回
+        if (BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(firstNode.getBpmTaskType())) {
+            return firstNode;
+        } else {
+            return null;
+        }
     }
 
 
     @Override
-    public BpmActivityMeta getStartMetaOfMainProcess(String proAppId, String proUid, String proVerUid) {
+    public BpmActivityMeta getStartNodeOfMainProcess(String proAppId, String proUid, String proVerUid) {
         BpmActivityMeta selective = new BpmActivityMeta();
         selective.setProAppId(proAppId);
         selective.setBpdId(proUid);
@@ -295,38 +297,31 @@ public class BpmActivityMetaServiceImpl implements BpmActivityMetaService {
     }
 
     @Override
-    public BpmActivityMeta getFirstUserTaskMetaOfMainProcess(String proAppId, String proUid, String proVerUid) {
-        BpmActivityMeta startNode = getStartMetaOfMainProcess(proAppId, proUid, proVerUid);
-        if (startNode == null) return null;
-        String activityBpdId = startNode.getActivityTo();
+    public BpmActivityMeta getFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid) {
+        BpmActivityMeta startNodeOfMainProcess = getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
+        if (startNodeOfMainProcess == null) {
+            return null;
+        }
+        // 与主流程相连的 元素id
+        String activityBpdId = startNodeOfMainProcess.getActivityTo();
         BpmActivityMeta metaSelective = new BpmActivityMeta();
-        metaSelective.setParentActivityId("0");
-        metaSelective.setSnapshotId(proVerUid);
-        metaSelective.setBpdId(proUid);
         metaSelective.setActivityBpdId(activityBpdId);
+        metaSelective.setParentActivityId("0");
+        metaSelective.setBpdId(proUid);
+        metaSelective.setSnapshotId(proVerUid);
         List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
         if (CollectionUtils.isEmpty(list)) {
             return null;
         } else {
-            return list.get(0);
+            BpmActivityMeta firstNode = list.get(0);
+            // 如果与发起环节相连的是人工环节才返回
+            if (BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(firstNode.getBpmTaskType())) {
+                return firstNode;
+            } else {
+                return null;
+            }
         }
     }
-
-
-    /**
-     * 获得指定元素的父元素
-     * @param bpmActivityMeta
-     * @return
-     */
-    private BpmActivityMeta getParentBpmActivityMeta(BpmActivityMeta bpmActivityMeta) {
-        String parentActivityId = bpmActivityMeta.getParentActivityId();
-        if ("0".equals(parentActivityId)) {
-            return null;
-        } else {
-            return bpmActivityMetaMapper.queryByPrimaryKey(parentActivityId);
-        }
-    }
-
 
 	@Override
 	public BpmActivityMeta queryByPrimaryKey(String activityId) {

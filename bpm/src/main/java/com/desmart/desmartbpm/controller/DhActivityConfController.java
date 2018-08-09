@@ -32,30 +32,31 @@ public class DhActivityConfController {
    
     
     /**
-     * 编辑环节配置
-     * @param proAppId
-     * @param proUid
-     * @param proVerUid
+     * 进入编辑环节配置的页面
+     * @param proAppId 应用库id
+     * @param proUid   流程id
+     * @param proVerUid  版本id
      * @return
      */
     @RequestMapping(value = "/edit")
     public ModelAndView editActivityConf(String proAppId, String proUid, String proVerUid) {
         ModelAndView mv = new ModelAndView("desmartbpm/activityConf");
-        ServerResponse response = dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
+        ServerResponse<DhProcessDefinition> response = dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
         if (response.isSuccess()) {
-            DhProcessDefinition definition = (DhProcessDefinition)response.getData();
+            DhProcessDefinition definition = response.getData();
             mv.addObject("processDefinition", definition);
             LswSnapshot lswSnapshot = dhProcessDefinitionService.getLswSnapshotBySnapshotId(definition.getProVerUid());
             mv.addObject("lswSnapshot", lswSnapshot);
         }
 
-        BpmActivityMeta firstHumanMeta = bpmActivityMetaService.getFirstUserTaskMetaOfMainProcess(proAppId, proUid, proVerUid);
-        //response = dhProcessDefinitionService.getFirstHumanBpmActivityMeta(proAppId, proUid, proVerUid);
-        mv.addObject("firstHumanMeta", firstHumanMeta.getActivityId());
-        mv.addObject("firstHumanMeteConf", firstHumanMeta.getDhActivityConf().getActcUid());
+        BpmActivityMeta firstHumanMeta = bpmActivityMetaService.getFirstUserTaskNodeOfMainProcess(proAppId, proUid, proVerUid);
+        if (firstHumanMeta != null) {
+            // 如果主流程存在第一个人工环节
+            mv.addObject("firstHumanMeta", firstHumanMeta.getActivityId()); // 第一个人工环节的activityId
+            mv.addObject("firstHumanMeteConf", firstHumanMeta.getDhActivityConf().getActcUid()); // 第一个人工环节的配置主键
+        }
         ServerResponse<List<BpmActivityMeta>> humanActivitiesResponse = bpmActivityMetaService.getHumanActivitiesOfDhProcessDefinition(proAppId, proUid, proVerUid);
         mv.addObject("humanActivities", humanActivitiesResponse.getData());
-        
         return mv;
     }
     
