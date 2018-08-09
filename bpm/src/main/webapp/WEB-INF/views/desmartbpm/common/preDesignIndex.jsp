@@ -12,8 +12,10 @@
 <%-- <link href="<%=basePath%>/resources/desmartportal/formDesign/css/bootstrap-combined.min.css" rel="stylesheet"> --%>
 <link href="<%=basePath%>/resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
 <link href="<%=basePath%>/resources/desmartbpm/css/my.css" rel="stylesheet">
+<link rel="stylesheet" href="<%=basePath%>/resources/desmartportal/selects/formSelects-v4.css">
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/city.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartportal/selects/formSelects-v4.js"></script>
 <title>Insert title here</title>
 <style>
 	.layui-form-label {
@@ -108,6 +110,26 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
 <script type="text/javascript">
 	$(function(){
+		$("#formSet").find("select").each(function(){
+			var id = $(this).prop("id");
+			if($(this).attr("is-multi")=="true"){
+				$(this).attr("xm-select",id);
+				//formSelects.render(id);
+				formSelects.value(id, ["book"], true); 
+				formSelects.render();
+				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
+				    //id:           点击select的id
+				    //vals:         当前select已选中的值
+				    //val:          当前select点击的值
+				    //isAdd:        当前操作选中or取消
+				    //isDisabled:   当前选项是否是disabled
+				    //如果return false, 那么将取消本次操作
+					$("#"+id).trigger("change");
+				    return true;   
+				});
+			}
+		});
+		
 		$("#formSet").find(".layui-upload-list").each(function(){
 			var id = $(this).prop("id");
 			//多图片上传

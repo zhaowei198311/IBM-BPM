@@ -369,7 +369,8 @@ function downloadLayoutSrc() {
             ["date_type"],
             ["single"],
             ["hidden-label"],
-            ["img-upload-label"]
+            ["img-upload-label"],
+            ["is-multi"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -889,11 +890,20 @@ function saveHtml() {
 				};
 			case "SELECT":
 				{
-					filedAttr.fldCodeName = subObj.attr("name");
-					filedAttr.fldName = subDivObj.prev().find("label").text().trim();
-					filedAttr.multiValue = "false";
-					filedAttr.fldType = "string";
-					jsonArr.push(filedAttr);
+					if(subObj.attr("is-mutli")!="" && subObj.attr("is-mutli")!=null){
+	        			filedAttr.fldCodeName = subObj.attr("name");
+	                    filedAttr.fldName = subDivObj.prev().find("label").text();
+	                    filedAttr.multiValue = "true";
+	                    filedAttr.multiSeparator = ",";
+	                    filedAttr.fldType = "array";
+	                    jsonArr.push(filedAttr);
+	        		}else{
+	        			filedAttr.fldCodeName = subObj.attr("name");
+	                    filedAttr.fldName = subDivObj.prev().find("label").text();
+	                    filedAttr.multiValue = "false";
+	                    filedAttr.fldType = "string";
+	                    jsonArr.push(filedAttr);
+	        		}
 					break;
 				};
 			case "LABEL":

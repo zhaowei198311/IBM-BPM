@@ -475,7 +475,7 @@ var common = {
 				uploadJson += "\""+aHref+"\",";
 			});
 			uploadJson = common.removeJsonStrComma(uploadJson);
-			uploadJson += "]},";
+			uploadJson += "],\"type\":\"upload\"},";
 			if (json.indexOf(uploadJson) == -1) {
 				json += uploadJson;
 			}
@@ -523,6 +523,26 @@ var common = {
 						}
 					});
 				}
+			}else if(type=="upload"){
+				var valueArr = paramObj.value;
+				for(var i=0;i<valueArr.length;i++){
+					var valueObj = valueArr[i];
+					if(valueObj!=null && valueObj!=""){
+						var fileName = "图片附件";
+						if(valueObj.lastIndexOf("/")!=-1){
+							fileName = valueObj.substring(valueObj.lastIndexOf("/")+1);
+						}
+						var imgHtml = '<div style="display:inline;margin-right:20px;">'
+			    	  		+'<img id="img_'+i+'" style="width:400px;" alt="'+fileName+'" src="'+valueObj+'" class="layui-upload-img">'
+			    	  		+'</div>';
+						$("#"+name).append(imgHtml);//预览图放置区
+						var fileNameHtml = '<div><a style="color:#1E9FFF;" href="'
+			        		+ valueObj +'" onclick="imgUrlClick(event);">'
+			        		+ fileName +' <i class="layui-icon">&#xe64c;</i></a> '
+			        		+'</div>';  
+						$("#"+name+"_loc").find(".fileList").append(fileNameHtml);//文件名放置区
+					}
+				}
 			}
 			var tagName = $("[name='"+name+"']").prop("tagName");
 			switch(tagName){
@@ -550,7 +570,12 @@ var common = {
 								$("[name='"+name+"']").val(description);
 								$("[name='"+name+"']").parent().find("input[type='hidden']").val(value);
 								break;
-							}
+							}/*else if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
+								console.log("xm-hide-input");
+								var value = paramObj["value"];
+								var arr = value.split(",");
+								formSelects.value(name, arr);    
+							}*/
 						};
 						case "tel":;
 						case "date":{
@@ -571,7 +596,16 @@ var common = {
 					}
 					break;
 				};
-				case "SELECT":;
+				case "SELECT":{
+					if($("[name='"+name+"']").attr("is-multi")=="true"){
+						console.log(name);
+						var value = paramObj["value"];
+						var arr = value.split(",");
+						$("[name='"+name+"']").attr("xm-select",name);
+						formSelects.value(name, arr); 
+						break;
+					}
+				}
 				case "TEXTAREA":{
 					$("[name='"+name+"']").val(paramObj["value"]);
 					break;
@@ -644,16 +678,21 @@ var common = {
 			var paramObj = json[name];
 			var display = paramObj["display"];
 			if(display=="none"){
+				var tagType = $("[name='"+name+"']").attr("type");
 				if(tagType=="radio" || tagType=="checkbox"){
 					$("[name='"+name+"']").parent().css("display","none");
 					$("[name='"+name+"']").parent().prev().css("display","none");
 					$("[name='"+name+"']").parent().prev().find(".tip_span").remove();
 					continue;
+				}else if($("[name='"+name+"']").attr("data-title")=="img_upload"){
+					$("[name='"+name+"']").parent().parent().parent().css("display","none");
+					$("[name='"+name+"']").parent().parent().parent().next().css("display","none");
+					continue;
+				}else{
+					$("[name='"+name+"']").parent().css("display","none");
+					$("[name='"+name+"']").parent().prev().css("display","none");
+					$("[name='"+name+"']").parent().prev().find(".tip_span").remove();
 				}
-				var tagType = $("[name='"+name+"']").attr("type");
-				$("[name='"+name+"']").parent().css("display","none");
-				$("[name='"+name+"']").parent().prev().css("display","none");
-				$("[name='"+name+"']").parent().prev().find(".tip_span").remove();
 			}
 			var edit = paramObj["edit"];
 			if(edit=="no"){
@@ -671,6 +710,7 @@ var common = {
 		var className = $("[name='"+name+"']").attr("class");
 		if(tagType=="checkbox"){
 			$("[name='"+name+"']").attr("disabled","true");
+			return;
 		}
 		if(tagType=="radio"){
 			$("[name='"+name+"']").attr("display","none");
@@ -678,24 +718,33 @@ var common = {
 			if($("[name='"+name+"']:checked").parent().find(".radio_value").length==0){
 				$("[name='"+name+"']:checked").parent().append("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
 			}
+			return;
 		}
 		if(tagName=="SELECT"){
 			$("[name='"+name+"']").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");
 			$("[name='"+name+"']").next().find(".layui-edge").css("display","none");
+			return;
 		}
 		if($("[name='"+name+"']").attr("title")=="choose_user" 
 			|| $("[name='"+name+"']").attr("title")=="choose_value"
 			|| $("[name='"+name+"']").attr("title")=="choose_depart"){
 			$("[name='"+name+"']").parent().find("i").css("display","none");
 			$("[name='"+name+"']").css("width","100%");
+			return;
 		}
 		if(className=="layui-input date"){
 			$("[name='"+name+"']").attr("disabled","true");
 			if($("[name='"+name+"']").val()=="" || $("[name='"+name+"']").val()==null){
 				$("[name='"+name+"']").prop("type","text");
 			}
+			return;
+		}
+		if($("[name='"+name+"']").attr("data-title")=="img_upload"){
+			$("#"+name+"_choose").attr("disabled","true").css("cursor","not-allowed");
+			$("#"+name+"_load").attr("disabled","true").css("cursor","not-allowed");
+			return;
 		}
 	},
 	//标题字段的可见性、可编辑性控制
