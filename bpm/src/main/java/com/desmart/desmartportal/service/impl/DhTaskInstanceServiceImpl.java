@@ -99,6 +99,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	private DhAgentMapper dhAgentMapper;
 	@Autowired
 	private DhAgentRecordMapper dhAgentRecordMapper;
+
+
 	/**
 	 * 查询所有流程实例
 	 */
@@ -235,6 +237,76 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	public int insertBatch(List<DhTaskInstance> list) {
 		return dhTaskInstanceMapper.insertBatch(list);
 	}
+
+
+    @Override
+    @Transactional
+    public ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance processContainFirstTask,
+                                          BpmRoutingData routingData,
+                                          CommonBusinessObject pubBo, JSONObject dataJson) {
+        // 获得流流程编号,和第一个任务的编号
+        int insId = processContainFirstTask.getInsId();
+        pubBo.setInstanceId(String.valueOf(insId));
+        JSONArray routeDataArr = dataJson.getJSONArray("routeData");
+        // 设置后续任务处理人
+        ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo,
+                routeDataArr);
+        if (!assembleResponse.isSuccess()) {
+            return assembleResponse;
+        }
+        // 创建第一个任务
+        DhTaskInstance taskInstance = generateFirstTaskOfMainProcess(taskId, firstHumanActivity, dataJson.toJSONString(), processContainFirstTask);
+        dhTaskInstanceMapper.insertTask(taskInstance); // 插入第一个任务
+
+        // 创建第一个任务的流转信息
+        DhRoutingRecord dhRoutingRecord =
+                dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
+
+        // 完成第一个任务
+        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
+        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstHumanActivity, processContainFirstTask.getInsBusinessKey());
+        DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
+
+        DataForSubmitTask dataForSubmitTask = new DataForSubmitTask();
+        dataForSubmitTask.setBpmGlobalConfig(globalConfig);
+        dataForSubmitTask.setCurrTaskInstance(taskInstance);
+        dataForSubmitTask.setCurrentProcessInstance(processContainFirstTask);
+        dataForSubmitTask.setPubBo(pubBo);
+        dataForSubmitTask.setBpmRoutingData(routingData);
+        dataForSubmitTask.setDhRoutingRecord(dhRoutingRecord);
+        dataForSubmitTask.setNextStep(nextStep);
+        return finishTaskOrSendToMq(dataForSubmitTask);
+    }
+
+    /**
+     * 生成主流程第一个环节的任务
+     * @param taskId  任务id
+     * @param taskNode  任务节点
+     * @param taskData  提交上来的数据
+     * @param mainProcess  主流程
+     * @return
+     */
+    private DhTaskInstance generateFirstTaskOfMainProcess(int taskId, BpmActivityMeta taskNode, String taskData, DhProcessInstance mainProcess) {
+        // 创建第一个任务实例，第一个任务一定属于主流程
+        DhTaskInstance taskInstance = new DhTaskInstance();
+        taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
+        taskInstance.setUsrUid(getCurrentUserUid());
+        taskInstance.setActivityBpdId(taskNode.getActivityBpdId());
+        taskInstance.setTaskData(taskData);
+        taskInstance.setTaskId(taskId);
+        taskInstance.setTaskTitle(taskNode.getActivityName());
+        taskInstance.setInsUid(mainProcess.getInsUid());
+        taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
+        taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+        taskInstance.setTaskInitDate(new Date());
+        taskInstance.setTaskFinishDate(new Date());
+        taskInstance.setTaskActivityId(taskNode.getActivityId());
+        return taskInstance;
+    }
+
+    private String getCurrentUserUid() {
+	    return String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+    }
 
 
 	/* 
@@ -389,69 +461,72 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         // 判断后续有没有触发器需要调用
         DhStep nextStep = dhStepService.getNextStepOfCurrStep(formStepOfTaskNode);
-        if (nextStep == null) {
-            // 没有后续步骤
-            //  调用api 完成任务
-            BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+        // 完成任务
+        DataForSubmitTask dataForSubmitTask = new DataForSubmitTask();
+        dataForSubmitTask.setBpmGlobalConfig(bpmGlobalConfig);
+        dataForSubmitTask.setCurrTaskInstance(currTask);
+        dataForSubmitTask.setCurrentProcessInstance(currProcessInstance);
+        dataForSubmitTask.setPubBo(pubBo);
+        dataForSubmitTask.setBpmRoutingData(bpmRoutingData);
+        dataForSubmitTask.setDhRoutingRecord(routingRecord);
+        dataForSubmitTask.setNextStep(nextStep);
+        return finishTaskOrSendToMq(dataForSubmitTask);
+    }
+
+    @Override
+	public ServerResponse finishTaskOrSendToMq(DataForSubmitTask dataForSubmitTask) {
+        DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
+        DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
+        int insId = currProcessInstance.getInsId();
+        int taskId = currTaskInstance.getTaskId();
+        String taskUid = currTaskInstance.getTaskUid();
+        DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
+        BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
+        CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
+
+        if (dataForSubmitTask.getNextStep() == null) {
+			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
+			Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
-				ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
+                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
                 if (didTokenMoveResponse.isSuccess()) {
                     JSONObject processData = didTokenMoveResponse.getData();
                     if (processData != null) {
                         // 确认Token移动了, 插入流转记录
-                        dhRoutingRecordMapper.insert(routingRecord);
+                        dhRoutingRecordMapper.insert(dhRoutingRecord);
                         // 关闭需要结束的流程
                         dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, processData);
                         // 创建需要创建的子流程
                         dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, bpmRoutingData, pubBo, processData);
                     } else {
                         // 确认Token没有移动, 更新流转信息
-                        routingRecord.setActivityTo(null);
-                        dhRoutingRecordMapper.insert(routingRecord);
+                        dhRoutingRecord.setActivityTo(null);
+                        dhRoutingRecordMapper.insert(dhRoutingRecord);
                     }
-					return ServerResponse.createBySuccess();
+                    return ServerResponse.createBySuccess();
                 } else {
                     log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
-					return ServerResponse.createByErrorMessage("判断TOKEN是否移动失败");
+                    return ServerResponse.createByErrorMessage("判断TOKEN是否移动失败");
                 }
             } else {
                 throw new PlatformException("调用RESTful API完成任务失败");
             }
-        } else {
+		} else {
             // 有后续步骤, MQ交互
             // 向队列发出消息
             Map<String, Object> map = new HashMap<>();
-			map.put("currProcessInstance", currProcessInstance);
-			map.put("currTaskInstance", currTask);
-			map.put("dhStep", nextStep);
-			map.put("pubBo", pubBo);
-			map.put("routingData", bpmRoutingData); // 预判的下个环节信息
-			map.put("routingRecord", routingRecord); // 流转记录
-            //String paramStr = JSON.toJSONString(map);
-            //mqProducerService.sendMessage("stepQueueKey", paramStr);
-			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
+            map.put("currProcessInstance", currProcessInstance);
+            map.put("currTaskInstance", currTaskInstance);
+            map.put("dhStep", dataForSubmitTask.getNextStep());
+            map.put("pubBo", pubBo);
+            map.put("routingData", bpmRoutingData); // 预判的下个环节信息
+            map.put("routingRecord", dhRoutingRecord); // 流转记录
+            mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
             return ServerResponse.createBySuccess();
-        }
-    }
-
-	/**
-	 *	设置流转到的节点activityId  逗号分隔
-	 * @param nextBpmActivityMetas
-	 * @param dhRoutingRecord
-	 */
-	private void setActivityToValues(Set<BpmActivityMeta> nextBpmActivityMetas, DhRoutingRecord dhRoutingRecord) {
-		StringBuffer stringBuffer = new StringBuffer();
-        Iterator<BpmActivityMeta> it = nextBpmActivityMetas.iterator();
-        while (it.hasNext()) {
-            BpmActivityMeta meta = it.next();
-            stringBuffer.append(meta.getActivityId()).append(",");
-        }
-        String str = stringBuffer.toString();
-        str = str.substring(0, str.length() - 1);
-        dhRoutingRecord.setActivityTo(str);
+		}
 	}
+
 
 	/**
 	 * 判断用户是否有权限向引擎提交任务
@@ -573,7 +648,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("dataForSkipFromReject", dataForSkipFromReject);
 	    resultMap.put("needApprovalOpinion", needApprovalOpinion(currTaskNode, dhprocessInstance));
 	    return ServerResponse.createBySuccess(resultMap);
-
 	}
 
 

@@ -40,24 +40,25 @@ public class InsDataUtil {
     }
 
     /**
-     * 从流程实例中获得下个流程的流程关键字
+     * 从流程实例中获得下个流程的流程关键字, 如果没有就使用下个子流程的父流程的关键字
      * 当找不到时返回 default
-     * @param dhProcessInstance
+     * @param currProcessInstance
+     * @param parentProcessInstance
      * @return
      */
-    public static String getBusinessKeyOfNextProcess(DhProcessInstance dhProcessInstance) {
-        String insData = dhProcessInstance.getInsData();
+    public static String getBusinessKeyOfNextProcess(DhProcessInstance currProcessInstance, DhProcessInstance parentProcessInstance) {
+        String insData = currProcessInstance.getInsData();
         JSONObject insDataJson = JSON.parseObject(insData);
         JSONObject processDataJson = insDataJson.getJSONObject("processData");
         if (processDataJson != null) {
             String nextBusinessKey = processDataJson.getString("nextBusinessKey");
             if (StringUtils.isBlank(nextBusinessKey)) {
-                return dhProcessInstance.getInsBusinessKey();
+                return parentProcessInstance.getInsBusinessKey();
             } else {
                 return nextBusinessKey;
             }
         } else {
-            return dhProcessInstance.getInsBusinessKey();
+            return parentProcessInstance.getInsBusinessKey();
         }
     }
 

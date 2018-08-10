@@ -492,7 +492,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, -2);
 		Date nowDate = calendar.getTime(); // 记录的时间减去两秒
-        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
         for (BpmActivityMeta normalNode : normalNodes) {
             String loopType = normalNode.getLoopType();
             if (DhTaskInstance.TYPE_SIMPLE_LOOP.equalsIgnoreCase(loopType)
@@ -707,7 +707,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
     @Override
     public ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData) {
-        Set<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
+		List<BpmActivityMeta> gatewayNodes = routingData.getGatewayNodes();
         // 删除这些网关对应的路由结果
         for (BpmActivityMeta gatewayNode : gatewayNodes) {
             dhGatewayRouteResultMapper.deleteByInsIdAndActivityBpdId(insId, gatewayNode.getActivityBpdId());
@@ -1407,24 +1407,21 @@ public class DhRouteServiceImpl implements DhRouteService {
          */
         String parentActivityId = nodeIdentifyProcess.getParentActivityId();
         if (BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(parentActivityId)) {
-            // 这个代表子流程的节点位于主流程上
-            if (currProcessInstance.getInsStatusId().intValue() == DhProcessInstance.STATUS_ID_DRAFT) {
-                // 如果当前流程是草稿状态， 父级流程就是当前流程
-                return currProcessInstance;
-            } else {
-            	// 如果流程是已经发起的，父级流程就是主流程
-                return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());
-            }
-        }
-        // 代表流程的节点不在主流程上，根据nodeIdentitySubProcesss的 parentActivityId 找tokenId是这个节点的流程
-        return dhProcessInstanceMapper.getByInsIdAndTokenActivityId(currProcessInstance.getInsId(), parentActivityId);
+			// 代表流程的节点在主流程上
+			return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());
+        } else {
+			// 代表流程的节点不在主流程上，根据nodeIdentitySubProcesss的 parentActivityId 找tokenId是这个节点的流程
+			return dhProcessInstanceMapper.getByInsIdAndTokenActivityId(currProcessInstance.getInsId(), parentActivityId);
+		}
+
     }
 
 
     @Override
     public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
     	formData = formData == null ? new JSONObject() : formData;
-        BpmRoutingData routingData = this.getRoutingDataOfNextActivityTo(sourceNode, formData);
+        BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceNode, formData);
+		routingData.removeAllDuplicate(); // 去除重复的元素
         threadBoolean.setFalse();
         /*  将noramalNodes整理为4类数据
          *  1. 与sourceNode平级的userTaskNode(要选人)
@@ -1611,7 +1608,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		BpmActivityMeta startNode = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
 		BpmRoutingData bpmRoutingData = getBpmRoutingData(startNode, null);
 		// 获得预测的下个人员环节
-		Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+		List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
 		if (CollectionUtils.isEmpty(normalNodes)) {
 			return ServerResponse.createByErrorMessage("查找流程的第一个人员环节出错：找不到");
 		} else if (normalNodes.size() > 1) {

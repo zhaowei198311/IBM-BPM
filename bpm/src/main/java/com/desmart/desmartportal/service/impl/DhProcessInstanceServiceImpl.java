@@ -6,6 +6,7 @@ package com.desmart.desmartportal.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
@@ -18,6 +19,7 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.*;
+import com.desmart.desmartbpm.util.BeanUtil;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
@@ -40,6 +42,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,24 +105,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Autowired
 	private DhProcessMetaMapper dhprocessMetaMapper;
 
-	/**
-	 * 查询所有流程实例
-	 */
-	@Override
-	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectAllProcess(DhProcessInstance processInstance,
-			Integer pageNum, Integer pageSize) {
-		logger.info("查询所有process开始");
-		try {
-			PageHelper.startPage(pageNum, pageSize);
-			List<DhProcessInstance> resultList = dhProcessInstanceMapper.queryBySelective(processInstance);
-			PageInfo<List<DhProcessInstance>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("查询所有process结束");
-		return null;
-	}
+
 
 	/**
 	 * 根据流程实例主键 查询流程
@@ -143,66 +129,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		return dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
 	}
 
-	/**
-	 * 根据流程实例主键 删除流程
-	 */
-	@Override
-	public int deleteByPrimaryKey(String insUid) {
-		logger.info("");
-		try {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("");
-		return 0;
-	}
-
-	/**
-	 * 添加新的流程实例
-	 */
-	@Override
-	public void insertProcess(DhProcessInstance processInstance) {
-		logger.info("添加新的流程实例 Start...");
-		try {
-			if (processInstance != null) {
-				dhProcessInstanceMapper.insertProcess(processInstance);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("添加新的流程实例 End...");
-	}
-
-	/**
-	 * 根据用户id 以及类型 查询用户所用有的流程 按条件 查询
-	 */
-	@Override
-	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectProcessByUserAndType(
-			DhProcessInstance processInstance, Integer pageNum, Integer pageSize) {
-		logger.info("通过用户查询流程实例 Start...");
-		List<DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
-		try {
-			PageHelper.startPage(pageNum, pageSize);
-			DhTaskInstance taskInstance = new DhTaskInstance();
-			taskInstance.setUsrUid(
-					String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-			List<DhTaskInstance> taskInstanceList = dhTaskInstanceMapper.selectAllTask(taskInstance);
-			for (DhTaskInstance dhTaskInstance1 : taskInstanceList) {
-				// 用户id
-				processInstance.setInsUid(dhTaskInstance1.getInsUid());
-				List<DhProcessInstance> processInstanceList = dhProcessInstanceMapper.queryBySelective(processInstance);
-				for (DhProcessInstance dhProcessInstance : processInstanceList) {
-					resultList.add(dhProcessInstance);
-				}
-			}
-			PageInfo<List<DhProcessInstance>> pageInfo = new PageInfo(resultList);
-			return ServerResponse.createBySuccess(pageInfo);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("通过用户查询流程实例 End...");
-		return null;
+	private String getCurrentUserUid() {
+		return String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
 	}
 
 	/*
@@ -216,8 +145,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		try {
 			PageHelper.startPage(pageNum, pageSize);
 			DhTaskInstance taskInstance = new DhTaskInstance();
-			taskInstance.setUsrUid(
-					String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+			taskInstance.setUsrUid(getCurrentUserUid());
 			List<DhTaskInstance> taskInstanceList = dhTaskInstanceMapper.selectAllTask(taskInstance);
 			for (DhTaskInstance dhTaskInstance1 : taskInstanceList) {
 				// 用户id
@@ -260,10 +188,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		String proUid = mainProcessInstance.getProUid();
 		String proVerUid = mainProcessInstance.getProVerUid();
 		String insDataStr = mainProcessInstance.getInsData();
+		DatInsData datInsData = JSONObject.parseObject(insDataStr,  new TypeReference<DatInsData>(){});
 
 		// 混合提交的表单内容和流程实例中的表单内容
-		JSONObject insDataJson = JSON.parseObject(insDataStr);
-		JSONObject formDataFromIns = insDataJson.getJSONObject("formData");
+		JSONObject formDataFromIns = datInsData.getFormData();
 		JSONObject mergedFromData = FormDataUtil.formDataCombine(formDataFromTask, formDataFromIns);
 
 		// 查看可供发起的流程定义版本
@@ -272,28 +200,30 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			ServerResponse.createByErrorMessage("草稿版本不符合当前可发起版本，请重新起草");
 		}
 
-        String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        String currentUserUid = getCurrentUserUid();
 		// 查看当前用户有没有发起流程的权限
         if (!checkPermissionStart(startableDefinition)) {
             return ServerResponse.createByErrorMessage("您没有发起该流程的权限");
         }
 
-        // 获得主流程开始节点
         BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
-        // 获得开始节点往后的路由信息
-        BpmRoutingData bpmRoutingDataFromMainStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, mergedFromData);
-        // 获得第一个人工节点
-        BpmActivityMeta firstHumanActivity = bpmRoutingDataFromMainStartNode.getNormalNodes().iterator().next();
+        // 获得主流程开始节点往后的下个环节信息（包含第一个任务节点）
+        BpmRoutingData bpmRoutingDataAfterStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, null);
+        if (bpmRoutingDataAfterStartNode.getNormalNodes().size() == 0 || bpmRoutingDataAfterStartNode.getNormalNodes().size() > 1) {
+            return ServerResponse.createByErrorMessage("获得主流程的第一个环节异常");
+        }
+        // 获得主流程第一个人员环节
+        BpmActivityMeta firstUserTaskNode = bpmRoutingDataAfterStartNode.getNormalNodes().get(0);
 
         // 获得第一个人工环节后的路由信息
-        BpmRoutingData routingData = dhRouteService.getBpmRoutingData(firstHumanActivity, mergedFromData);
+        BpmRoutingData bpmRoutingDataAfterFirstTask = dhRouteService.getBpmRoutingData(firstUserTaskNode, mergedFromData);
 		// 生成表单号
-        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstHumanActivity, mainProcessInstance.getInsBusinessKey());
+        DhStep formStepOfTaskNode = dhStepService.getFormStepOfTaskNode(firstUserTaskNode, mainProcessInstance.getInsBusinessKey());
         BpmForm bpmForm = bpmFormManageService.getByFormUid(formStepOfTaskNode.getStepObjectUid());
-        JSONArray formNoListJson = dhFormNoService.updateFormNoListJsonObject(bpmForm, insDataJson.getJSONArray("formNoList"));
+        JSONArray formNoListJson = dhFormNoService.updateFormNoListJsonObject(bpmForm, datInsData.getFormNoList());
 
         // 检查用户传递的选人信息是否全面
-        if (!dhRouteService.checkRouteData(firstHumanActivity, routeDataFromTask, routingData)) {
+        if (!dhRouteService.checkRouteData(firstUserTaskNode, routeDataFromTask, bpmRoutingDataAfterFirstTask)) {
             return ServerResponse.createByErrorMessage("缺少下个环节的用户信息");
         }
 
@@ -301,7 +231,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 传递第一个环节处理人信息
 		CommonBusinessObject pubBo = new CommonBusinessObject();
         pubBo.setSmartformsHost(bpmGlobalConfig.getBpmformsHost() + bpmGlobalConfig.getBpmformsWebContext());
-		String firstUserVarname = firstHumanActivity.getDhActivityConf().getActcAssignVariable();
+		String firstUserVarname = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
 		List<String> creatorIdList = new ArrayList<>();
 		creatorIdList.add(currentUserUid);
 		CommonBusinessObjectUtils.setNextOwners(firstUserVarname, pubBo, creatorIdList);
@@ -313,37 +243,49 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		// 如果获取API成功 将返回过来的流程数据
 		if (!BpmClientUtils.isErrorResult(result)) {
 			JSONObject startProcessDataJson = JSON.parseObject(result.getMsg());
-            int insId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getString("piid"));
-            int taskId = Integer.parseInt(startProcessDataJson.getJSONObject("data").getJSONArray("tasks").getJSONObject(0).getString("tkiid"));
+			JSONObject dataJson = startProcessDataJson.getJSONObject("data");
             // 锁住这个任务防止拉取
+            int taskId = Integer.parseInt(dataJson.getJSONArray("tasks").getJSONObject(0).getString("tkiid"));
             taskMongoDao.saveLockedTask(new LockedTask(taskId, new Date(), LockedTask.REASON_FIRST_TASK_OF_PROCESS));
-
+            int insId = Integer.parseInt(dataJson.getString("piid"));
 			// 在pubBo中设置实例编号，供网关环节决策使用
 			pubBo.setInstanceId(String.valueOf(insId));
+            // 更新网关决策服务中间表数据，为提交第一个任务做准备
+			if (!CollectionUtils.isEmpty(bpmRoutingDataAfterFirstTask.getRouteResults())) {
+				dhRouteService.updateGatewayRouteResult(insId, bpmRoutingDataAfterFirstTask);
+			}
+			// 如果有多实例循环，保存记录
+			dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingDataAfterFirstTask, pubBo);
+            // 更新流程实例的信息
+            mainProcessInstance.setInsUid(mainProcessInstance.getInsUid());
+            mainProcessInstance.setInsTitle(insTitle);
+            mainProcessInstance.setInsId(insId);
+            mainProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
+            mainProcessInstance.setInsInitDate(new Date());
+            mainProcessInstance.setCompanyNumber(companyNumber);
+            mainProcessInstance.setDepartNo(departNo);
+            DatProcessData datProcessData = datInsData.getProcessData();
+            BeanUtils.copyProperties(mainProcessInstance, datProcessData); // 设置processData的值
 
-			// 更新网关决策服务中间表数据
-            dhRouteService.updateGatewayRouteResult(insId, routingData);
-			dhRouteService.saveTaskHandlerOfLoopTask(insId, routingData, pubBo);
-
-            // 更新草稿流程实例的状态
-            DhProcessInstance instanceSelective = new DhProcessInstance();
-            instanceSelective.setInsUid(mainProcessInstance.getInsUid());
-            instanceSelective.setInsTitle(insTitle);
-            instanceSelective.setInsId(insId);
-            instanceSelective.setInsStatus(DhProcessInstance.STATUS_ACTIVE);
-            instanceSelective.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
-            instanceSelective.setInsInitDate(new Date());
-            instanceSelective.setCompanyNumber(companyNumber);
-            instanceSelective.setDepartNo(departNo);
-            // 装配insData
-            insDataJson.put("formData", mergedFromData);
-            processDataFromTask.put("insInitUser", currentUserUid);
-            insDataJson.put("processData", processDataFromTask);
-            insDataJson.put("formNoList", formNoListJson);
-
-            instanceSelective.setInsData(insDataJson.toJSONString());
-            dhProcessInstanceMapper.updateByPrimaryKeySelective(instanceSelective);
-            mainProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(mainProcessInstance.getInsUid());
+            // 判断发起操作后是否有子流程
+			boolean hasSubProcess = bpmRoutingDataAfterStartNode.getStartProcessNodes().size() > 0;
+            // 设置主流程的insData数据
+			if (hasSubProcess) { // 有子流程
+				datInsData.setFormNoList(new JSONArray());
+				datInsData.setFormData(new JSONObject());
+            } else {
+				// 如果不需要创建子流程， 就把表单数据保存到主流程实例中
+				datInsData.setFormNoList(formNoListJson);
+				datInsData.setFormData(mergedFromData);
+            }
+			mainProcessInstance.setInsData(JSON.toJSONString(datInsData));
+            dhProcessInstanceMapper.updateByPrimaryKeySelective(mainProcessInstance); // 更新主流程数据
+			DhProcessInstance processContainFirstTask = mainProcessInstance;
+			if (hasSubProcess) {
+				datInsData.setFormNoList(formNoListJson);
+				datInsData.setFormData(mergedFromData);
+				processContainFirstTask = createSubProcessAfterStartProcess(bpmRoutingDataAfterStartNode, mainProcessInstance, startProcessDataJson, datInsData);
+			}
 
             // 由于流程的第一个环节约定为起草，发起主流程不提交时，不会进入子流程
             // 从草稿箱删除这个流程的草稿
@@ -351,61 +293,59 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
             Map<String, Object> map = new HashMap<>();
             map.put("taskId", taskId);
-            map.put("firstHumanActivity", firstHumanActivity);
-            map.put("dhProcessInstance", mainProcessInstance);
-            map.put("routingData", routingData);
+            map.put("firstHumanActivity", firstUserTaskNode);
+            map.put("dhProcessInstance", processContainFirstTask); // 包含第一个任务的流程实例
+            map.put("routingData", bpmRoutingDataAfterFirstTask);
             map.put("pubBo", pubBo);
             map.put("dataJson", taskDataJson);
 			return ServerResponse.createBySuccess(map);
 		} else {
-            logger.error("发起流程失败，调用RESTFul API失败。" + result.getMsg());
+            logger.error("发起流程失败，调用RESTFul API失败：" + result.getMsg());
 			return ServerResponse.createByErrorMessage("发起流程失败");
 		}
 	}
 
-	@Override
-    @Transactional
-	public ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance mainProcessInstance,
-                                          BpmRoutingData routingData,
-                                          CommonBusinessObject pubBo, JSONObject dataJson) {
-        SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        // 获得流流程编号,和第一个任务的编号
-        int insId = mainProcessInstance.getInsId();
-        pubBo.setInstanceId(String.valueOf(insId));
-        JSONArray routeDataArr = dataJson.getJSONArray("routeData");
-        // 设置后续任务处理人
-        ServerResponse<CommonBusinessObject> assembleResponse = dhRouteService.assembleCommonBusinessObject(pubBo,
-                routeDataArr);
-        if (!assembleResponse.isSuccess()) {
-            return assembleResponse;
+    /**
+     * 发起流程动作，如果触发了子流程，则创建子流程的实例<br/>
+	 * 此方法在提交一个任务前执行
+	 * @return 最底层的流程实例
+     */
+	private DhProcessInstance createSubProcessAfterStartProcess(BpmRoutingData bpmRoutingData, DhProcessInstance mainProcessInstance,
+                                                   JSONObject bpmProcessData, DatInsData datInsData) {
+		DhProcessInstance result = null;
+        List<BpmActivityMeta> startProcessNodes = bpmRoutingData.getStartProcessNodes();
+        for (int i = 0, lastIndex = startProcessNodes.size() - 1; i < startProcessNodes.size(); i++) {
+            BpmActivityMeta nodeIdentitySubProcess = startProcessNodes.get(i);
+            // 获得子流程的tokenId
+            String parentProcessFlowObjectId = null; // 当前子流程的上级流程的元素id
+            if (!BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(nodeIdentitySubProcess.getParentActivityId())) {
+                // 如果代表子流程的节点不在主流程上
+                parentProcessFlowObjectId = bpmActivityMetaMapper.queryByPrimaryKey(nodeIdentitySubProcess.getParentActivityId()).getActivityBpdId();
+            }
+            TokenInfoUtil tokenInfoUtil = new TokenInfoUtil(nodeIdentitySubProcess.getActivityBpdId(), parentProcessFlowObjectId, bpmProcessData);
+            String tokenId = tokenInfoUtil.getTokenId();
+            if (tokenId == null) {
+                throw new PlatformException("找不到子流程对应的tokenId");
+            }
+            // 找到子流程的上级流程（不一定是当前流程）
+            DhProcessInstance parentProcessInstance = dhRouteService.getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(
+                    mainProcessInstance, nodeIdentitySubProcess);
+            // 子流程发起人就是主流程发起人
+            DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, mainProcessInstance, nodeIdentitySubProcess,
+                    tokenId, mainProcessInstance.getInsInitUser());
+            if (i == lastIndex) { // 最后一个即是最下层流程
+                DatProcessData datProcessData = datInsData.getProcessData();
+                datProcessData.setInsUid(subProcessInstacne.getInsUid());
+                subProcessInstacne.setInsData(JSON.toJSONString(datInsData));
+				result= subProcessInstacne;
+            }
+            dhProcessInstanceMapper.insertProcess(subProcessInstacne);
         }
-
-		DhTaskInstance taskInstance = generateFirstTaskOfMainProcess(taskId, firstHumanActivity, dataJson.toJSONString(), mainProcessInstance);
-		dhTaskInstanceMapper.insertTask(taskInstance);
-
-        // 任务完成后 保存到流转信息表里面
-        DhRoutingRecord dhRoutingRecord =
-                dhRoutingRecordService.generateSubmitTaskRoutingRecordByTaskAndRoutingData(taskInstance, routingData, true);
-        dhRoutingRecordMapper.insert(dhRoutingRecord);
-
-        // 完成第一个任务
-        BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
-        BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(globalConfig);
-        Map<String, HttpReturnStatus> commitTaskMap = bpmTaskUtil.commitTask(taskId, pubBo);
-        Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskMap);
-        if (errorMap.get("errorResult") != null) {
-            throw new PlatformException("提交第一个任务失败，流程实例id：" + insId);
-        }
-		try { // 等待半秒给引擎处理处理时间
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-        // 如果需要创建子流程，就创建
-        createSubProcessInstanceByRoutingData(mainProcessInstance, routingData, pubBo, null);
-		closeProcessInstanceByRoutingData(insId, routingData, null);
-        return ServerResponse.createBySuccess();
+		return result;
     }
+
+
+
 
 
 	@Override
@@ -422,16 +362,14 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		processInstance.setInsInitDate(new Date());
 		processInstance.setInsParent("0");
 		processInstance.setInsBusinessKey(insBusinessKey);
-		processInstance
-				.setInsInitUser((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		// processInstance.setCompanyNumber(currentUser.getCompanynumber());
-		JSONObject insData = new JSONObject();
-		insData.put("formData", new JSONObject());
-		JSONObject processData = new JSONObject();
-		processData.put("insUid", processInstance.getInsUid());
-		insData.put("processData", processData);
-
-		processInstance.setInsData(insData.toJSONString());
+		processInstance.setInsInitUser(getCurrentUserUid());
+		// 初始化insData数据
+		DatInsData datInsData = new DatInsData();
+		DatProcessData datProcessData = new DatProcessData();
+		BeanUtils.copyProperties(processInstance, datProcessData);
+		datInsData.setProcessData(datProcessData);
+		datInsData.setFormData(new JSONObject());
+		processInstance.setInsData(JSON.toJSONString(datInsData));
 		processInstance.setInsUpdateDate(new Date());
 		return processInstance;
 	}
@@ -446,8 +384,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Transactional
 	public ServerResponse<Map<String, Object>> toStartProcess(String proAppId, String proUid, String insUid,String insBusinessKey) {
 		Map<String, Object> resultMap = new HashMap<>();
-
-		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		String currentUserUid = getCurrentUserUid();
 		SysUser currentUser = sysUserMapper.queryByPrimaryKey(currentUserUid);
 
 		// 获得发起人部门信息和公司编码信息
@@ -465,10 +402,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if (processDefintion == null) {
 				return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
 			}
-			if(checkPermissionStart(processDefintion)) {
+			if (checkPermissionStart(processDefintion)) {
 				processInstance = this.generateDraftProcessInstance(processDefintion, insBusinessKey);
 				dhProcessInstanceMapper.insertProcess(processInstance);
-			}else {
+			} else {
 				return ServerResponse.createByErrorMessage("无权限发起当前流程");
 			}
 		} else {
@@ -486,8 +423,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			proUid = processInstance.getProUid();
 			dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
 			// 将草稿中选择的部门和组织信息带到页面上
-			JSONObject jsonObjDraft = JSONObject.parseObject(dhDrafts.getDfsData());
-			JSONObject processDataDraft = jsonObjDraft.getJSONObject("processData");
+			JSONObject dfsDataJson = JSONObject.parseObject(dhDrafts.getDfsData());
+			JSONObject processDataDraft = dfsDataJson.getJSONObject("processData");
 			resultMap.put("departNo", processDataDraft.getString("departNo"));
 			resultMap.put("companyNumber", processDataDraft.getString("companyNumber"));
 			// 将草稿中的insTitle带到页面上
@@ -499,12 +436,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (!metaResponse.isSuccess()) {
 			return ServerResponse.createByErrorMessage("找不到第一个人工环节");
 		}
+		// 获得主流程的第一个环节
 		BpmActivityMeta firstUserTaskNode = metaResponse.getData();
-
+        // 获得第一个环节的配置
 		DhActivityConf dhActivityConf = dhActivityConfMapper
 				.selectByPrimaryKey(firstUserTaskNode.getDhActivityConf().getActcUid());
 
-		// 根据步骤关键字，得到所有这个环节的步骤
+		// 根据步骤关键字，得到这个环节的步骤
 		List<DhStep> steps = dhStepService.getStepsWithFormByBpmActivityMetaAndStepBusinessKey(firstUserTaskNode, processInstance.getInsBusinessKey());
 
 		// 获得表单步骤
@@ -527,8 +465,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			processInstance = InsDataUtil.mergeDraftDataForStartProcess(dhDrafts, processInstance);
 		}
 
-		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService
-				.queryFieldPermissionByStepUid(formStep);
+		ServerResponse<String> fieldPermissionResponse = bpmFormFieldService.queryFieldPermissionByStepUid(formStep);
 		if (!fieldPermissionResponse.isSuccess()) {
 			return ServerResponse.createByErrorMessage("缺少表单权限信息");
 		}
@@ -549,7 +486,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		resultMap.put("fieldPermissionInfo", fieldPermissionInfo);
 		resultMap.put("processDefinition", processDefintion);
 		resultMap.put("formData", FormDataUtil.getFormDataStringFromProcessInstance(processInstance));
-		resultMap.put("bpmActivityMeta", firstUserTaskNode);
+		resultMap.put("bpmActivityMeta", firstUserTaskNode); // 当前环节
 		resultMap.put("dhActivityConf", dhActivityConf);
 		resultMap.put("userDepartmentList", userDepartmentList);
 		resultMap.put("dhStep", formStep);
@@ -564,7 +501,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
      */
 	public boolean checkPermissionStart(DhProcessDefinition processDefintion) {
 		boolean flag = false;
-		String user = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+		String userUid = getCurrentUserUid();
 		if(Const.Boolean.TRUE.equals(processDefintion.getIsAllUserStart())) {
 			flag = true;
 		}else {
@@ -577,13 +514,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			List<DhObjectPermission> list = dhObjectPermissionMapper.listByDhObjectPermissionSelective(dhObjectPermission);
 			// 根据用户id 去 查询 角色id
 			SysRoleUser sysRoleUser = new SysRoleUser();
-			sysRoleUser.setUserUid(user);
+			sysRoleUser.setUserUid(userUid);
 			List<SysRoleUser> result = sysRoleUserMapper.selectAll(sysRoleUser);
 			
 			for (DhObjectPermission dhObjectPermission2 : list) {
 				switch (dhObjectPermission2.getOpParticipateType()) {
 				case "USER":
-					if(user.equals(dhObjectPermission2.getOpParticipateUid())) {
+					if(userUid.equals(dhObjectPermission2.getOpParticipateUid())) {
 						flag = true;
 					}
 					break;
@@ -813,8 +750,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 
 	@Override
     public ServerResponse closeProcessInstanceByRoutingData(int insId, BpmRoutingData routingData, JSONObject processDataJson) {
-        Set<BpmActivityMeta> endProcessNodes = routingData.getEndProcessNodes();
-		Set<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
+        List<BpmActivityMeta> endProcessNodes = routingData.getEndProcessNodes();
+        List<BpmActivityMeta> mainEndNodes = routingData.getMainEndNodes();
 		if (CollectionUtils.isEmpty(endProcessNodes) && CollectionUtils.isEmpty(mainEndNodes)) {
 			return ServerResponse.createBySuccess();
 		}
@@ -856,7 +793,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     @Override
     public ServerResponse createSubProcessInstanceByRoutingData(DhProcessInstance currProcessInstance, BpmRoutingData bpmRoutingData,
 																CommonBusinessObject pubBo, JSONObject processDataJson) {
-        Set<BpmActivityMeta> startProcessNodes = bpmRoutingData.getStartProcessNodes();
+        List<BpmActivityMeta> startProcessNodes = bpmRoutingData.getStartProcessNodes();
         if (startProcessNodes.isEmpty()) {
 	        return ServerResponse.createBySuccess();
         }
@@ -873,7 +810,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         }
 
         // 所有需要创建的子流程节点
-		Set<BpmActivityMeta> startProcessNodeList = bpmRoutingData.getStartProcessNodes();
+        List<BpmActivityMeta> startProcessNodeList = bpmRoutingData.getStartProcessNodes();
         for (BpmActivityMeta nodeIdentitySubProcess : startProcessNodeList) {
             // 获得子流程的tokenId
 			String parentProcessFlowObjectId = null; // 当前子流程的上级流程的元素id
@@ -901,9 +838,10 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             }
             String assignVariable = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
             List<String> owners = CommonBusinessObjectUtils.getNextOwners(assignVariable, pubBo);
+            String processCreator = owners.get(0);
             // 创建子流程实例, 流程发起人取分配人中的第一个用户
             DhProcessInstance subProcessInstacne = generateSubProcessInstanceByParentInstance(parentProcessInstance, currProcessInstance, nodeIdentitySubProcess,
-                    tokenId, owners.get(0));
+                    tokenId, processCreator);
             dhProcessInstanceMapper.insertProcess(subProcessInstacne);
         }
 
@@ -957,52 +895,18 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         subInstance.setTokenId(tokenId);
 		subInstance.setTokenActivityId(processNode.getActivityId());
 		// 从当前流程中获得新实例的流程关键字
-		subInstance.setInsBusinessKey(InsDataUtil.getBusinessKeyOfNextProcess(currProcessInstance));  // 流程关键字
+		subInstance.setInsBusinessKey(InsDataUtil.getBusinessKeyOfNextProcess(currProcessInstance, parentInstance));  // 流程关键字
 
-		// 从父流程实例中获取自己表单中name相同的值作为子流程的数据
-        JSONObject insData = assembleInsDataForSubProcess(subInstance);
-        subInstance.setInsData(insData.toJSONString());
+		DatInsData datInsData = new DatInsData();
+		DatProcessData datProcessData = new DatProcessData();
+		BeanUtils.copyProperties(subInstance, datProcessData);
+		datInsData.setProcessData(datProcessData);
+		datInsData.setFormData(new JSONObject());
+		subInstance.setInsData(JSON.toJSONString(datInsData));
         return subInstance;
     }
 
-    /**
-     * 为子流程生成insData数据
-     * @param subInstance
-     * @return
-     */
-    private JSONObject assembleInsDataForSubProcess(DhProcessInstance subInstance) {
-        JSONObject insData = new JSONObject();
-        // processData部分
-        JSONObject processData = new JSONObject();
-        processData.put("insUid", subInstance.getInsUid());
-        processData.put("departNo", subInstance.getDepartNo());
-        processData.put("companyNumber", subInstance.getCompanyNumber());
-        processData.put("insTitle", subInstance.getInsTitle());
-        processData.put("insInitUser", subInstance.getInsInitUser());
-        insData.put("processData", processData);
-        // formData部分
-        JSONObject formData = new JSONObject();
-        insData.put("formData", formData);
-        return insData;
-    }
 
-    private DhTaskInstance generateFirstTaskOfMainProcess(int taskId, BpmActivityMeta taskNode, String taskData, DhProcessInstance mainProcess) {
-		// 创建第一个任务实例，第一个任务一定属于主流程
-		DhTaskInstance taskInstance = new DhTaskInstance();
-		taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
-		taskInstance.setUsrUid((String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
-		taskInstance.setActivityBpdId(taskNode.getActivityBpdId());
-		taskInstance.setTaskData(taskData);
-		taskInstance.setTaskId(taskId);
-		taskInstance.setTaskTitle(taskNode.getActivityName());
-		taskInstance.setInsUid(mainProcess.getInsUid());
-		taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
-		taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-		taskInstance.setTaskInitDate(new Date());
-		taskInstance.setTaskFinishDate(new Date());
-		taskInstance.setTaskActivityId(taskNode.getActivityId());
-		return taskInstance;
-	}
 
 	@Override
 	public ServerResponse<Object> queryProcessInstanceByIds(String status, String processName, Date startTime, Date endTime,

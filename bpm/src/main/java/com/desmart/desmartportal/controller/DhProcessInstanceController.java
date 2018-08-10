@@ -75,7 +75,7 @@ public class DhProcessInstanceController {
             BpmRoutingData routingData = (BpmRoutingData)map.get("routingData");
             CommonBusinessObject pubBo = (CommonBusinessObject)map.get("pubBo");
             JSONObject dataJson =(JSONObject)map.get("dataJson");
-            return dhProcessInstanceService.commitFirstTask(taskId, firstHumanActivity, dhProcessInstance, routingData, pubBo, dataJson);
+            return dhTaskInstanceService.commitFirstTask(taskId, firstHumanActivity, dhProcessInstance, routingData, pubBo, dataJson);
         } catch (Exception e) {
             log.error("发起流程失败", e);
             return ServerResponse.createByErrorMessage("发起流程失败");
