@@ -945,10 +945,10 @@ var common = {
 			if(mustObj.css("display")=="none"){
 				continue;
 			}
-			var inputObj = $(mustObj.parent().next().find("input")[0]);
-			var selectObj = $(mustObj.parent().next().find("select")[0]);
-			var textareaObj = $(mustObj.parent().next().find("textarea")[0]);
-			var text = mustObj.parent().find("label").text();
+			var inputObj = $(mustObj.parent().parent().next().find("input")[0]);
+			var selectObj = $(mustObj.parent().parent().next().find("select")[0]);
+			var textareaObj = $(mustObj.parent().parent().next().find("textarea")[0]);
+			var text = mustObj.parent().parent().find("label").text().replace("*","").replace("：","");
 			if(inputObj.length == 1){
 				if(inputObj.is(":hidden")){
 					continue;
