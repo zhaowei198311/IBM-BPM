@@ -87,7 +87,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 
         if (willTokenMove) {
             // 如果token要移动的话，处理接下来的人员环节
-            Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+            List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
             for (BpmActivityMeta nextNode : normalNodes) {
                 if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
                     // 说明此环节和当前任务环节在同一个层级
@@ -121,7 +121,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         StringBuilder activityToBuilder = new StringBuilder();
 
         // token要移动的话，处理接下来的人员环节
-        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
         for (BpmActivityMeta nextNode : normalNodes) {
             if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
                 // 说明此环节和当前任务环节在同一个层级
@@ -151,7 +151,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         String activityTo = null;
         StringBuilder activityToBuilder = new StringBuilder();
         // 如果token要移动的话，处理接下来的人员环节
-        Set<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
+        List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
         for (BpmActivityMeta nextNode : normalNodes) {
             if (nextNode.getParentActivityId().equals(taskNode.getParentActivityId())) {
                 // 说明此环节和当前任务环节在同一个层级

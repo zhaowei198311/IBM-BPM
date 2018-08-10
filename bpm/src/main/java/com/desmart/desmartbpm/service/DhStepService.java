@@ -105,7 +105,8 @@ public interface DhStepService {
     DhStep getFormStepOfTaskNode(BpmActivityMeta currTaskNode, String stepBusinessKey);
 
     /**
-     * 执行表单步骤前的步骤
+     * 执行表单步骤前的步骤<br/>
+     * 从这套关键字的第一个步骤开始执行，执行到表单步骤结束
      * @param firstStep
      * @return
      */

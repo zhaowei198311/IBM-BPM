@@ -1,23 +1,21 @@
 package com.desmart.desmartportal.entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * 找寻下个环节信息时记录的信息
  */
 public class BpmRoutingData {
     private BpmActivityMeta sourceNode;   // 作为起点的节点
-    private Set<BpmActivityMeta> normalNodes = new HashSet<>();  // 记录人工任务节点的集合
-    private Set<BpmActivityMeta> gatewayNodes = new HashSet<>(); // 记录遇到的排他网关
-    private Set<BpmActivityMeta> startProcessNodes = new HashSet<>(); // 代表需要创建的子流程的节点
-    private Set<BpmActivityMeta> endProcessNodes = new HashSet<>(); // 代表需要结束的子流程的节点
-    private Set<BpmActivityMeta> mainEndNodes = new HashSet<>(); // 记录结束节点的集合
+    private List<BpmActivityMeta> normalNodes = new ArrayList<>();  // 记录人工任务节点的集合
+    private List<BpmActivityMeta> gatewayNodes = new ArrayList<>(); // 记录遇到的排他网关
+    private List<BpmActivityMeta> startProcessNodes = new ArrayList<>(); // 代表需要创建的子流程的节点
+    private List<BpmActivityMeta> endProcessNodes = new ArrayList<>(); // 代表需要结束的子流程的节点
+    private List<BpmActivityMeta> mainEndNodes = new ArrayList<>(); // 记录结束节点的集合
     private Set<DhGatewayRouteResult> routeResults = new HashSet<>(); // 排他网关的计算结果
     private List<BpmActivityMeta> taskNodesOnSameDeepLevel; // 与起始节点平级的任务节点
     private List<BpmActivityMeta> taskNodesOnOtherDeepLevel; // 与起始节点不平级的任务节点
@@ -130,27 +128,27 @@ public class BpmRoutingData {
         this.sourceNode = sourceNode;
     }
 
-    public Set<BpmActivityMeta> getNormalNodes() {
+    public List<BpmActivityMeta> getNormalNodes() {
         return normalNodes;
     }
 
-    public void setNormalNodes(Set<BpmActivityMeta> normalNodes) {
+    public void setNormalNodes(List<BpmActivityMeta> normalNodes) {
         this.normalNodes = normalNodes;
     }
 
-    public Set<BpmActivityMeta> getGatewayNodes() {
+    public List<BpmActivityMeta> getGatewayNodes() {
         return gatewayNodes;
     }
 
-    public void setGatewayNodes(Set<BpmActivityMeta> gatewayNodes) {
+    public void setGatewayNodes(List<BpmActivityMeta> gatewayNodes) {
         this.gatewayNodes = gatewayNodes;
     }
 
-    public Set<BpmActivityMeta> getStartProcessNodes() {
+    public List<BpmActivityMeta> getStartProcessNodes() {
         return startProcessNodes;
     }
 
-    public void setStartProcessNodes(Set<BpmActivityMeta> startProcessNodes) {
+    public void setStartProcessNodes(List<BpmActivityMeta> startProcessNodes) {
         this.startProcessNodes = startProcessNodes;
     }
 
@@ -162,19 +160,19 @@ public class BpmRoutingData {
         this.actIdAndNodeIdentitySubProcessMap = actIdAndNodeIdentitySubProcessMap;
     }
 
-    public Set<BpmActivityMeta> getEndProcessNodes() {
+    public List<BpmActivityMeta> getEndProcessNodes() {
         return endProcessNodes;
     }
 
-    public void setEndProcessNodes(Set<BpmActivityMeta> endProcessNodes) {
+    public void setEndProcessNodes(List<BpmActivityMeta> endProcessNodes) {
         this.endProcessNodes = endProcessNodes;
     }
 
-    public Set<BpmActivityMeta> getMainEndNodes() {
+    public List<BpmActivityMeta> getMainEndNodes() {
         return mainEndNodes;
     }
 
-    public void setMainEndNodes(Set<BpmActivityMeta> mainEndNodes) {
+    public void setMainEndNodes(List<BpmActivityMeta> mainEndNodes) {
         this.mainEndNodes = mainEndNodes;
     }
 
@@ -185,4 +183,38 @@ public class BpmRoutingData {
     public void setRouteResults(Set<DhGatewayRouteResult> routeResults) {
         this.routeResults = routeResults;
     }
+
+    /**
+     * 去除重复的元素
+     */
+    public void removeAllDuplicate() {
+        if (CollectionUtils.isNotEmpty(normalNodes)) {
+            removeDuplicate(normalNodes);
+        }
+        if (!CollectionUtils.isEmpty(gatewayNodes)) {
+            removeDuplicate(gatewayNodes);
+        }
+        if (!CollectionUtils.isEmpty(startProcessNodes)) {
+            removeDuplicate(startProcessNodes);
+        }
+        if (!CollectionUtils.isEmpty(endProcessNodes)) {
+            removeDuplicate(endProcessNodes);
+        }
+        if (!CollectionUtils.isEmpty(mainEndNodes)) {
+            removeDuplicate(mainEndNodes);
+        }
+    }
+
+    private void removeDuplicate(List<BpmActivityMeta> bpmActivityMetas) {
+        Set<String> actvityIds = new HashSet<>();
+        Iterator<BpmActivityMeta> iterator = bpmActivityMetas.iterator();
+        while (iterator.hasNext()) {
+            BpmActivityMeta item = iterator.next();
+            if (!actvityIds.add(item.getActivityId())) {
+                iterator.remove();
+            }
+        }
+    }
+
+
 }

@@ -7,7 +7,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DataForSubmitTask;
+import com.desmart.desmartportal.entity.BpmRoutingData;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.github.pagehelper.PageInfo;
@@ -45,11 +50,32 @@ public interface DhTaskInstanceService {
 	 */
 	int insertBatch(List<DhTaskInstance> list);
 
-	
+	/**
+	 * 发起流程成功后，提交第一个任务
+	 * @param dhProcessInstance  主流程
+	 * @param taskId  任务id
+	 * @param firstHumanActivity   任务节点
+	 * @param processContainFirstTask
+	 * @param routingData  预测的下个环节信息
+	 * @param pubBo  引擎中对象
+	 * @param dataJson  发起流程时提交的信息
+	 * @return
+	 */
+	ServerResponse commitFirstTask(int taskId, BpmActivityMeta firstHumanActivity, DhProcessInstance processContainFirstTask,
+								   BpmRoutingData routingData,
+								   CommonBusinessObject pubBo, JSONObject dataJson);
+
 	/**
 	 * 完成任务
 	 */
-	public ServerResponse perform(String data);
+	ServerResponse perform(String data);
+
+	/**
+	 * 提交任务，如果没有下个步骤，就直接提交，如果有后续步骤就推送到MQ
+	 * @param dataForSubmitTask  提交任务需要的信息
+	 * @return
+	 */
+	ServerResponse finishTaskOrSendToMq(DataForSubmitTask dataForSubmitTask);
 	
 	/**
 	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录

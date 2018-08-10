@@ -38,8 +38,8 @@ public class DataListUtils {
                     BeanUtils.copyProperties(item, tmpObj);
                     tmpMetaList.add(tmpObj);
                 }
-            } catch (Exception var6) {
-                LOG.error("克隆数据列表时发生异常！", var6);
+            } catch (Exception e) {
+                LOG.error("克隆数据列表时发生异常！", e);
             }
         }
 
