@@ -564,30 +564,6 @@
     $(function () {
         $(".data-table").find("input[type='tel']").desNumber();
         common.initTime();
-        
-        $("#formSet").find("select").each(function(){
-			var id = $(this).prop("id");
-			if($(this).attr("is-multi")=="true"){
-				/* if($(this).find(":selected").length==0){
-					// 
-				}else{
-					$(this).attr("xm-select","selectId");
-					formSelects.render(id);
-				} */
-				//$(this).attr("xm-select","selectId");
-				//formSelects.render(id);
-				/* formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
-				    //id:           点击select的id
-				    //vals:         当前select已选中的值
-				    //val:          当前select点击的值
-				    //isAdd:        当前操作选中or取消
-				    //isDisabled:   当前选项是否是disabled
-				    //如果return false, 那么将取消本次操作
-					$("#"+id).trigger("change");
-				    return true;   
-				}); */
-			}
-		});
     });
 </script>
 </html>
