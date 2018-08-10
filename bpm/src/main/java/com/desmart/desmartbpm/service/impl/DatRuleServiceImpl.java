@@ -1,11 +1,8 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,14 +12,12 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.DatRuleMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DatRule;
@@ -32,9 +27,7 @@ import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DatRuleConditionService;
 import com.desmart.desmartbpm.service.DatRuleService;
 import com.desmart.desmartbpm.service.DhGatewayLineService;
-import com.desmart.desmartbpm.util.DateUtil;
 import com.desmart.desmartbpm.util.UUIDTool;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class DatRuleServiceImpl implements DatRuleService {
@@ -76,169 +69,6 @@ public class DatRuleServiceImpl implements DatRuleService {
 	public int deleteDatRule(DatRule datRule) {
 
 		return datRuleMapper.deleteDatRule(datRule);
-	}
-
-	@Override
-	@Transactional(rollbackFor = { RuntimeException.class, Exception.class })
-	public ServerResponse addDatRule(List<DatRuleCondition> itemList1, String activityId, String type,
-			String activityType) {
-
-		//activityId = "sa";
-		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-		//String routeVarname="result_0,result_5";
-		String ruleName =type+"_rule_"+activityId+"_";
-		// activityType = "gatewayor";
-		if(itemList1!=null && itemList1.size()>0) {
-		Map<String, List<DatRuleCondition>> map = groupListToMapByResult(itemList1);
-		//检查更新activity_meta及规则数据
-		check_Update_MetaAndRule(map,ruleName,activityType,activityId,type);
-		Integer num = 0;
-		Integer count = 0;
-		for (List<DatRuleCondition> itemList : map.values()) {
-			DatRule datRule = null;
-			ruleName = type+"_rule_"+activityId+"_" + itemList.get(0).getResult();
-			
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String dateTime = simpleDateFormat.format(new Date());
-				datRule = new DatRule();
-				datRule.setRuleName(ruleName);
-				datRule.setRuleId(EntityIdPrefix.DAT_RULE + UUIDTool.getUUID());
-				datRule.setBizType("wfCondCtrl");
-				datRule.setEditMode("STD");// 不明确
-				datRule.setIsActivate("on");
-				datRule.setReturnType("text");
-				datRule.setRuleStatus("on");
-				datRule.setCreateTime(dateTime);
-				datRule.setStartTime(dateTime);
-				try {
-					datRule.setEndTime(
-							simpleDateFormat.format(DateUtil.getDateAddYear(simpleDateFormat.parse(dateTime), 182)));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				datRule.setCreator(creator);
-				datRule.setRuleType("PARAMS");
-				datRule.setRuleVersion(1);// 规则版本
-				String ruleId = datRule.getRuleId();
-
-				LinkedList<DatRuleCondition> linkedList = new LinkedList<DatRuleCondition>();
-				for (DatRuleCondition datRuleCondition : itemList) {
-					datRuleCondition.setLeftValueType("");
-					String[] arr = datRuleCondition.getConditionOperator().split(":");
-					datRuleCondition.setConditionOperator(arr[0]);
-					datRuleCondition.setConditionOperatorName(arr[1]);
-					datRuleCondition.setCreateTime(dateTime);
-					datRuleCondition.setCreator(creator);
-					datRuleCondition.setRuleId(ruleId);
-					datRuleCondition.setRuleStatus("on");
-					datRuleCondition.setConditionId("rulecond:" + UUIDTool.getUUID());
-					if (datRuleCondition.getRuleVersion() == null) {
-						datRuleCondition.setRuleVersion(0);// 设置优先级默认为0
-					}
-					linkedList.addLast(datRuleCondition);
-				}
-				List<Map.Entry<String, List<DatRuleCondition>>> list2 = groupListToMap(linkedList);
-				StringBuffer sb = new StringBuffer("Map(");
-				for (int j = 0; j < list2.size(); j++) {
-					Entry<String, List<DatRuleCondition>> entry = list2.get(j);
-					StringBuffer sonSb = new StringBuffer("(");
-					for (int b = 0; b < entry.getValue().size(); b++) {
-						DatRuleCondition datRuleCondition2 = entry.getValue().get(b);
-						sonSb.append("this['");
-						sonSb.append(datRuleCondition2.getLeftValue());
-						sonSb.append("']");
-						sonSb.append(datRuleCondition2.getValueOperator());
-						sonSb.append(datRuleCondition2.getRightValue());
-						if ((b + 1) < entry.getValue().size()) {
-							sonSb.append(datRuleCondition2.getConditionOperator());
-						}
-					}
-					if ((j + 1) == list2.size()) {
-						sonSb.append(")");
-					} else if ((j + 1) < list2.size()) {
-						sonSb.append(")" + entry.getValue().get(entry.getValue().size() - 1).getConditionOperator());
-					}
-					sb.append(sonSb.toString());
-				}
-				sb.append(")");
-				datRule.setRuleProcess(sb.toString());
-				num +=  insertToDatRule(datRule);
-				count +=  datRuleConditionServiceImpl.inserToDatRuleCondition(itemList);
-		}
-		if (num > 0) {
-			if (count > 0) {
-				// 根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
-				List<DatRuleCondition> datRuleConditionList = datRuleConditionServiceImpl.loadDatruleConditionInRuleId(activityId);
-				// 根据当前activityId查询当前流程和当前type所有predictRules展示,需要按时间排序
-				List<DatRule> predictRules =  getPreRulesLikeRuleName(activityId);
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put("dataList", datRuleConditionList);
-				data.put("predictRule", predictRules);
-				return ServerResponse.createBySuccess("保存成功！", data);
-			} else {
-				return ServerResponse.createByErrorMessage("保存失败！网络繁忙");
-			}
-		} else {
-			return ServerResponse.createByErrorMessage("保存失败！网络繁忙");
-		}
-	}else {
-		DatRule datRule =null;
-		int num=0;
-		List<DatRule> datRules =  getPreRulesLikeRuleName(activityId);
-		for (DatRule datRule2 : datRules) {
-			datRule = datRule2;
-			num +=  deleteDatRule(datRule);
-			datRuleConditionServiceImpl.deleteDatRuleCondition(datRule);
-		}
-		
-		if(datRule!=null) {
-		if(num>0) {
-			//根据当前activityId查询当前流程所有dat_rule_condition展示,需要按照分组名排序
-    		List<DatRuleCondition> datRuleConditionList
-    		= datRuleConditionServiceImpl.loadDatruleConditionInRuleId(activityId);
-    		//根据当前activityId查询当前流程和当前type所有predictRules展示,需要按时间排序
-    		List<DatRule> predictRules =  getPreRulesLikeRuleName(activityId);
-    		Map<String, Object> data = new HashMap<String, Object>();
-    		data.put("dataList", datRuleConditionList);
-    		data.put("predictRule", predictRules);
-			return ServerResponse.createBySuccess("保存成功！", data);
-		}else {
-			return ServerResponse.createByErrorMessage("保存失败！网络繁忙");
-			}
-		}else {
-			return ServerResponse.createByErrorMessage("保存失败！请先新建网关规则条件");
-		}
-	}
-	}
-	/**
-	 * 根据result分组，不同result为不同datRule
-	 * 
-	 * @param list
-	 * @return
-	 */
-	private Map<String, List<DatRuleCondition>> groupListToMapByResult(List<DatRuleCondition> list) {
-
-		Map<String, List<DatRuleCondition>> map = new HashMap<>();
-		for (DatRuleCondition datRuleCondition : list) {
-			if(datRuleCondition!=null) {
-			String key = datRuleCondition.getResult();
-			List<DatRuleCondition> sonList = new ArrayList<>();
-			for (DatRuleCondition son : list) {
-				if(son!=null) {
-				if (key != null) {
-					if (key.equals(son.getResult())) {
-						sonList.add(son);
-					}
-				} else {
-					sonList.add(son);
-				}
-				}
-			}
-			map.put(key, sonList);
-		  }
-		}
-		return map;
 	}
 
 	/**
@@ -306,28 +136,6 @@ public class DatRuleServiceImpl implements DatRuleService {
 		return list1;
 	}
 	
-
-	private void check_Update_MetaAndRule(Map<String, List<DatRuleCondition>> map, String ruleName
-			, String activityType, String activityId,String type) {
-
-		BpmActivityMeta bpmActivityMeta = new BpmActivityMeta();
-		bpmActivityMeta.setActivityId(activityId);
-		bpmActivityMeta.setActivityType(activityType);
-		bpmActivityMeta.setType(type);
-		//不能修改
-		//int count =  updateActivityMeta(bpmActivityMeta);
-		//if(count>0) {
-		List<DatRule> datRules = getPreRulesLikeRuleName(activityId);
-		for (DatRule datRule : datRules) {
-			int num = datRuleConditionServiceImpl.deleteDatRuleCondition(datRule); 
-			if(num>0) {
-			     deleteDatRule(datRule);
-			}
-		}
-		//}
-		//return 1;
-	}
-
 	@Override
 	public ServerResponse loadGatewaySet(String proAppId, String snapshotId, String bpdId,
 			String activityType) {
