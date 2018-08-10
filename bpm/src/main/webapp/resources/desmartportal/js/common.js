@@ -598,11 +598,17 @@ var common = {
 				};
 				case "SELECT":{
 					if($("[name='"+name+"']").attr("is-multi")=="true"){
-						console.log(name);
 						var value = paramObj["value"];
 						var arr = value.split(",");
+						for(var k=0;k<arr.length;k++){
+							$("[name='"+name+"']").find("[value='"+arr[k]+"']").attr("selected","selected");
+						}
 						$("[name='"+name+"']").attr("xm-select",name);
-						formSelects.value(name, arr); 
+						formSelects.render(name);
+						formSelects.on(name, function(id, vals, val, isAdd, isDisabled){
+							$("#"+name).trigger("change");
+						    return true;   
+						});
 						break;
 					}
 				}
@@ -688,6 +694,11 @@ var common = {
 					$("[name='"+name+"']").parent().parent().parent().css("display","none");
 					$("[name='"+name+"']").parent().parent().parent().next().css("display","none");
 					continue;
+				}else if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
+					console.log(1);
+					$("[name='"+name+"']").parent().parent().parent().css("display","none");
+					$("[name='"+name+"']").parent().parent().parent().prev().css("display","none");
+					return;
 				}else{
 					$("[name='"+name+"']").parent().css("display","none");
 					$("[name='"+name+"']").parent().prev().css("display","none");
@@ -721,6 +732,7 @@ var common = {
 			return;
 		}
 		if(tagName=="SELECT"){
+			console.log($("[name='"+name+"']").attr("is-multi"));
 			$("[name='"+name+"']").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");
@@ -744,6 +756,12 @@ var common = {
 		if($("[name='"+name+"']").attr("data-title")=="img_upload"){
 			$("#"+name+"_choose").attr("disabled","true").css("cursor","not-allowed");
 			$("#"+name+"_load").attr("disabled","true").css("cursor","not-allowed");
+			return;
+		}
+		if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
+			var text = $("[name='"+name+"']").next().find(".xm-select").attr("title");
+			$("[name='"+name+"']").parent().parent().css("display","none");
+			$("[name='"+name+"']").parent().parent().parent().append("<span style='margin-left:10px;'>"+text+"</span>");
 			return;
 		}
 	},
