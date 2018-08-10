@@ -54,16 +54,6 @@ public interface DatRuleService {
 	int removeByRuleIdList(List<String> ruleIdList);
 
 	/**
-	 * 新增规则
-	 * @param itemList1
-	 * @param activityId
-	 * @param type
-	 * @param activityType
-	 * @return
-	 */
-	public ServerResponse addDatRule(List<DatRuleCondition> itemList1,String activityId,
-			 String type,String activityType);
-	/**
 	 * 初始化加载网关配置界面
 	 */
 	public ServerResponse loadGatewaySet(String proAppId,String snapshotId,String bpdId,String activityType);

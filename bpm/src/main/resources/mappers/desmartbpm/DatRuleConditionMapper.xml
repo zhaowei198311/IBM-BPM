@@ -24,7 +24,7 @@
     SELECT drc.*,dr.rule_Name as ruleName FROM 
     DAT_RULE_CONDITION drc left join DAT_RULE dr
     on drc.rule_id = dr.rule_id where drc.rule_id = #{ruleId}
-    order by CONDITION_GROUP_NAME
+    order by CONDITION_GROUP_NAME,drc.CREATE_TIME asc
    </select>
    
    <select id="getDatruleConditionInRuleId" parameterType="map"

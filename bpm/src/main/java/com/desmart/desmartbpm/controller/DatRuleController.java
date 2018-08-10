@@ -44,14 +44,6 @@ public class DatRuleController {
 	public ServerResponse loadGatewaySet(String proAppId,String snapshotId,String bpdId,String activityType) {
 		return datRuleServiceImpl.loadGatewaySet(proAppId, snapshotId, bpdId, activityType);
 	}
-
-	@RequestMapping("/addDatRule")
-	@ResponseBody
-	public ServerResponse addDatRule(@RequestBody List<DatRuleCondition> itemList1, @RequestParam String activityId,
-			 @RequestParam String type,
-			@RequestParam String activityType) throws ParseException {
-	    return datRuleServiceImpl.addDatRule(itemList1, activityId, type, activityType);
-	}
 	
 	@RequestMapping("/loadConditionArr")
 	@ResponseBody
