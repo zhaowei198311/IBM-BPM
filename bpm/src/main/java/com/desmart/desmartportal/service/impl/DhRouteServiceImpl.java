@@ -1407,8 +1407,14 @@ public class DhRouteServiceImpl implements DhRouteService {
          */
         String parentActivityId = nodeIdentifyProcess.getParentActivityId();
         if (BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(parentActivityId)) {
-			// 代表流程的节点在主流程上
-			return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());
+			// 这个代表子流程的节点位于主流程上
+			if (currProcessInstance.getInsStatusId().intValue() == DhProcessInstance.STATUS_ID_DRAFT) {
+				// 如果当前流程是草稿状态， 父级流程就是当前流程
+				return currProcessInstance;
+			} else {
+				// 如果流程是已经发起的，父级流程就是主流程
+				return dhProcessInstanceMapper.getMainProcessByInsId(currProcessInstance.getInsId());
+			}
         } else {
 			// 代表流程的节点不在主流程上，根据nodeIdentitySubProcesss的 parentActivityId 找tokenId是这个节点的流程
 			return dhProcessInstanceMapper.getByInsIdAndTokenActivityId(currProcessInstance.getInsId(), parentActivityId);
