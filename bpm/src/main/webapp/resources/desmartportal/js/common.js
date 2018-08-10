@@ -956,6 +956,7 @@ var common = {
 	validateFormMust:function(id){
 		var mustObjArr = $("#formSet table:visible").find(" .tip_span");
 		var value = "";
+		var selectVal = "";
 		var name = "";
 		var flag = true;
 		for(var i=0;i<mustObjArr.length;i++){
@@ -963,17 +964,23 @@ var common = {
 			if(mustObj.css("display")=="none"){
 				continue;
 			}
+			if(mustObj.parent().parent().css("display")=="none"){
+				continue;
+			}
 			var inputObj = $(mustObj.parent().parent().next().find("input")[0]);
 			var selectObj = $(mustObj.parent().parent().next().find("select")[0]);
 			var textareaObj = $(mustObj.parent().parent().next().find("textarea")[0]);
 			var text = mustObj.parent().parent().find("label").text().replace("*","").replace("：","");
 			if(inputObj.length == 1){
-				if(inputObj.is(":hidden")){
-					continue;
-				}
 				var type = inputObj.attr("type");
 				switch(type){
-					case "text":
+					case "text":{
+						if(inputObj.parent().attr("class")=="layui-select-title"){
+							value = inputObj.val();
+							name = inputObj.parent().parent().prev().attr("name");
+							break;
+						}
+					}
 					case "date":
 					case "tel":{
 						value = inputObj.val();
@@ -990,17 +997,8 @@ var common = {
 					}
 				}
 			}else if(textareaObj.length == 1){
-				if(textareaObj.is(":hidden")){
-					continue;
-				}
 				value = textareaObj.val();
 				name = textareaObj.attr("name");
-			}else if(selectObj.length == 1){
-				if(selectObj.is(":hidden")){
-					continue;
-				}
-				value = selectObj.val();
-				name = selectObj.attr("name");
 			}
 			$("[name='"+name+"']").attr({"required":"required","lay-verify":"required"});
 			layui.use('form', function(){
@@ -1020,6 +1018,19 @@ var common = {
 					layer.msg("请填写必填项 "+text, {icon: 2});
 				}else{
 					layer.msg("请填写必填项", {icon: 2});
+				}
+				$("[name='"+name+"']").focus();
+				flag = false; 
+				break;
+			}
+			if(value.indexOf("请选择")!=-1){
+				var eleId = $("[name='"+name+"']").prop("id");
+				var Y = $('#'+eleId).offset().top-170;
+				$("body,html").animate({scrollTop: Y}, 500);
+				if(text!=null && text!=""){
+					layer.msg("请选择必填项 "+text, {icon: 2});
+				}else{
+					layer.msg("请选择必填项", {icon: 2});
 				}
 				$("[name='"+name+"']").focus();
 				flag = false; 
