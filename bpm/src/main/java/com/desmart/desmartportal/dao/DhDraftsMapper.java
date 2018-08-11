@@ -36,14 +36,14 @@ public interface DhDraftsMapper {
 	 * @param dhDrafts
 	 * @return
 	 */
-	Integer updateByInsUid(DhDrafts dhDrafts);
+	int updateByPrimaryKeySelective(DhDrafts dhDrafts);
 
 	int deleteByTaskUid(String taskUid);
 	
 	/**
-	 * 根据条件查询草稿，包含关联映射
+	 * 查找用来展示的草稿
 	 * @param dhDrafts
 	 * @return
 	 */
-	List<DhDrafts> selectByCondition(DhDrafts dhDrafts);
+	List<DhDrafts> listDraftsToShow(DhDrafts dhDrafts);
 }

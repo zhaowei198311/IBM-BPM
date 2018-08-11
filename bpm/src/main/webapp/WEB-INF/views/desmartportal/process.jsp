@@ -236,7 +236,7 @@
 							<td class="td_title" colspan="1" style="width: 120px">流程标题<span class="tip_span"> *</span>：</td>
 							<td class="sub_title" colspan="5"><input type="text"
 								id="insTitle_input" class="layui-input"
-								value="${dhDrafts.dfsTitle }"></td>
+								value="${draftTitle}"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -336,7 +336,7 @@
 				</div>
 			</div>
 			<div class="foot_accessory_file">
-				<button type="button" onclick="checkDraftsExtis()" class="layui-btn listAction" >开始上传</button>
+				<button type="button" onclick="saveDraftIfNotExists();" class="layui-btn listAction" >开始上传</button>
 				<button class="layui-btn layui-btn-primary "
 					onclick="cancelClick(this)">关闭</button>
 			</div>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.desmart.desmartsystem.dao.SysCompanyMapper">
-
+	<sql id="baseColumnList">
+		COMPANY_UID, COMPANY_CODE, COMPANY_NAME, COMPANY_LOGO, COMPANY_TYPE, COMPANY_DESC, EXT1, EXT2, EXT3, EXT4, EXT5,
+		IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, UPDATE_DATE
+	</sql>
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysCompany">
 		<id column="COMPANY_UID" property="companyUid" />
@@ -36,4 +39,10 @@
 	<select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysCompany" resultMap="BaseResultMap" >
 		 select * from SYS_COMPANY
 	</select>
+
+    <select id="queryByCompanyCode" resultType="com.desmart.desmartsystem.entity.SysCompany">
+		select <include refid="baseColumnList"/> from SYS_COMPANY
+		where COMPANY_CODE = #{companyCode}
+	</select>
+
 </mapper>

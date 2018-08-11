@@ -56,9 +56,16 @@ public interface DhDraftsService {
 	Map<String, Object> selectDraftsAndFromInfo(String dfsId,String insUid);
 
 	/**
-	 * 根据insUid检查是否存在草稿数据，无草稿则保存一份草稿
+	 * 根据insUid检查是否存在草稿数据，无草稿则保存一份草稿, 有则不更新
 	 * @param dhDrafts
 	 * @return
 	 */
-	ServerResponse checkDraftsExtis(DhDrafts dhDrafts);
+	ServerResponse saveIfNotExists(DhDrafts dhDrafts);
+
+	/**
+	 * 保存起草环节的草稿
+	 * @param dhDrafts
+	 * @return
+	 */
+	ServerResponse saveProcessDraft(DhDrafts dhDrafts);
 }

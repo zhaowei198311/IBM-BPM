@@ -16,4 +16,6 @@ import com.desmart.desmartsystem.entity.SysCompany;
  */
 public interface SysCompanyMapper extends BaseMapper<SysCompany> {
 	int insertBatch(@Param("lists")List<SysCompany> lists);
+
+	SysCompany queryByCompanyCode(String companyUid);
 }

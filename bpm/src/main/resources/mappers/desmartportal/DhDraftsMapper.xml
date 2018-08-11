@@ -66,7 +66,7 @@
 	<select id="queryDraftsByInsUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhDrafts">
 		select <include refid="Base_Column_List"/>
 		from dh_drafts
-		where ins_uid = #{insUid}
+		where task_uid is null and ins_uid = #{insUid}
 	</select>
 	
 	<delete id="deleteByInsUid" parameterType="string">
@@ -77,22 +77,20 @@
 		delete from dh_drafts where task_uid = #{taskUid}
 	</delete>
 
-    <update id="updateByInsUid" parameterType="com.desmart.desmartportal.entity.DhDrafts">
+    <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		update dh_drafts 
 		<set>
-		<trim suffixOverrides=",">
 			<if test="taskUid != null and taskUid != '' ">
-			TASK_UID = #{taskUid},
+				TASK_UID = #{taskUid},
 			</if>
-			<if test="dfsTitle != null and dfsTitle != '' ">
-			DFS_TITLE = #{dfsTitle},
+			<if test="dfsTitle != null and !dfsTitle.trim().isEmpty()">
+				DFS_TITLE = #{dfsTitle},
 			</if>
-			<if test="dfsData != null and dfsData != '' ">
-			DFS_DATA = #{dfsData},
+			<if test="dfsData != null and !dfsData.trim().isEmpty()">
+				DFS_DATA = #{dfsData}
 			</if>
-			</trim>
 		</set>
-		where INS_UID = #{insUid}
+		where dfs_id = #{dfsId}
 	</update>
 	
 	<select id="queryDraftsByTaskUid" parameterType="String" resultType="com.desmart.desmartportal.entity.DhDrafts">
@@ -101,26 +99,26 @@
 		where task_uid = #{taskUid}
 	</select>
 	
-	<select id="selectByCondition" resultType="com.desmart.desmartportal.entity.DhDrafts"
+	<select id="listDraftsToShow" resultType="com.desmart.desmartportal.entity.DhDrafts"
 		parameterType="com.desmart.desmartportal.entity.DhDrafts">
 		SELECT 
-		<include refid="Relation_Column_List"/>,meta.pro_name proName
-		FROM
-		DH_DRAFTS d 
-		left join sys_user s on d.DFS_CREATOR = s.user_id
-		left join dh_process_instance ins on d.ins_uid = ins.ins_uid
+			<include refid="Relation_Column_List"/>, meta.pro_name proName
+		FROM DH_DRAFTS d
+		left join sys_user s
+			on d.DFS_CREATOR = s.user_id
+		left join dh_process_instance ins
+			on d.ins_uid = ins.ins_uid
 		left join dh_process_meta meta
-		on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
+			on ins.pro_App_Id = meta.pro_App_Id and ins.pro_Uid = meta.pro_Uid
 		<where>
-			<if test="dfsCreator != null and dfsCreator != ''">
-				and d.DFS_CREATOR =	#{dfsCreator}
-			</if>
-			<if test="dfsTitle != null and dfsTitle != ''">
+			task_uid is null
+			<if test="dfsTitle != null and !dfsTitle.trim().isEmpty()">
 				and d.dfs_title like '%'|| #{dfsTitle} ||'%'
 			</if>
-			<if test="proName != null and proName != ''">
+			<if test="proName != null and !proName.trim().isEmpty()">
 				and meta.pro_name like '%'|| #{proName} ||'%'
 			</if>
+			and d.DFS_CREATOR =	#{dfsCreator}
 		</where>
 	</select>
 </mapper>

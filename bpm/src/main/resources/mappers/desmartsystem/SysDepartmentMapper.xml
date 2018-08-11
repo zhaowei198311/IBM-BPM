@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.desmart.desmartsystem.dao.SysDepartmentMapper">
 
+	<sql id="baseColumnList">
+		DEPART_UID, DEPART_PARENT, DISPLAY_NAME, DEPART_NAME, ORDER_INDEX, DEPART_DESC, DEPART_NO,
+		DEPART_LAYER, DEPART_ADMINS, DEPART_ZONE, COMPANY_UID, EXT1, EXT2, WORK_CALENDAR, EXT3, EXT4,
+		EXT5, DEPART_TYPE, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, UPDATE_DATE
+	</sql>
+
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysDepartment">
 		<result column="DEPART_UID" property="departUid" />
@@ -333,4 +339,10 @@
 			   	where depart_uid = #{departUid}
 			)
 	  </select>
+
+    <select id="queryByPrimaryKey" resultType="com.desmart.desmartsystem.entity.SysDepartment">
+		select <include refid="baseColumnList"/>
+		from SYS_DEPARTMENT
+		where depart_uid = #{departUid}
+	</select>
 </mapper>
