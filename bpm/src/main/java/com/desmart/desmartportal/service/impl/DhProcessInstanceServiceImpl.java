@@ -19,7 +19,6 @@ import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.*;
-import com.desmart.desmartbpm.util.BeanUtil;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.dao.DhDraftsMapper;
@@ -27,13 +26,8 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartportal.service.DhFormNoService;
-import com.desmart.desmartportal.service.DhProcessInstanceService;
-import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhRoutingRecordService;
-import com.desmart.desmartsystem.dao.SysRoleUserMapper;
-import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
-import com.desmart.desmartsystem.dao.SysUserMapper;
+import com.desmart.desmartportal.service.*;
+import com.desmart.desmartsystem.dao.*;
 import com.desmart.desmartsystem.entity.*;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SysUserDepartmentService;
@@ -48,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 @Service
@@ -104,7 +99,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     private DhStepMapper dhStepMapper;
 	@Autowired
 	private DhProcessMetaMapper dhprocessMetaMapper;
-
+	@Autowired
+    private SysDepartmentMapper sysDepartmentMapper;
+	@Autowired
+    private SysCompanyMapper sysCompanyMapper;
+	@Autowired
+	private SysHolidayService sysHolidayService;
 
 
 	/**
@@ -284,7 +284,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if (hasSubProcess) {
 				datInsData.setFormNoList(formNoListJson);
 				datInsData.setFormData(mergedFromData);
-				processContainFirstTask = createSubProcessAfterStartProcess(bpmRoutingDataAfterStartNode, mainProcessInstance, startProcessDataJson, datInsData);
+				processContainFirstTask = createSubProcessAfterStartProcess(bpmRoutingDataAfterStartNode,
+						mainProcessInstance, startProcessDataJson, datInsData);
 			}
 
             // 由于流程的第一个环节约定为起草，发起主流程不提交时，不会进入子流程
@@ -424,20 +425,21 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			dhDrafts = dhDraftsMapper.queryDraftsByInsUid(insUid);
 			// 将草稿中选择的部门和组织信息带到页面上
 			JSONObject dfsDataJson = JSONObject.parseObject(dhDrafts.getDfsData());
-			JSONObject processDataDraft = dfsDataJson.getJSONObject("processData");
-			resultMap.put("departNo", processDataDraft.getString("departNo"));
-			resultMap.put("companyNumber", processDataDraft.getString("companyNumber"));
+            // 如果草稿中已选过部门和组织带到前台
+			JSONObject draftProcessData = dfsDataJson.getJSONObject("processData");
+			resultMap.put("departNo", draftProcessData.getString("departNo"));
+			resultMap.put("companyNumber", draftProcessData.getString("companyNumber"));
 			// 将草稿中的insTitle带到页面上
-			resultMap.put("dhDrafts", dhDrafts);
+			resultMap.put("draftTitle", dhDrafts.getDfsTitle()); // 草稿中填写的流程标题
 		}
 
-		ServerResponse<BpmActivityMeta> metaResponse = dhRouteService.getActualFirstUserTaskNodeOfMainProcess(proAppId,
+		ServerResponse<BpmActivityMeta> getFirstTaskNodeResponse = dhRouteService.getActualFirstUserTaskNodeOfMainProcess(proAppId,
 				proUid, processDefintion.getProVerUid());
-		if (!metaResponse.isSuccess()) {
+		if (!getFirstTaskNodeResponse.isSuccess()) {
 			return ServerResponse.createByErrorMessage("找不到第一个人工环节");
 		}
 		// 获得主流程的第一个环节
-		BpmActivityMeta firstUserTaskNode = metaResponse.getData();
+		BpmActivityMeta firstUserTaskNode = getFirstTaskNodeResponse.getData();
         // 获得第一个环节的配置
 		DhActivityConf dhActivityConf = dhActivityConfMapper
 				.selectByPrimaryKey(firstUserTaskNode.getDhActivityConf().getActcUid());
@@ -926,6 +928,137 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		map.put("insDataList", processInstanceList);
 		return ServerResponse.createBySuccess(map);
 	}
+
+
+    /**
+     * 根据条件发起一个流程，并停留在第一个节点上
+     * @param dhProcessInstance
+     * @return
+     */
+	public ServerResponse<DatLaunchProcessResult> launchProcess(DhProcessInstance dhProcessInstance) {
+        String proAppId = dhProcessInstance.getProAppId();
+        String proUid = dhProcessInstance.getProUid();
+        String insBusinessKey = dhProcessInstance.getInsBusinessKey();
+        String insInitUser = dhProcessInstance.getInsInitUser();
+        String departNo = dhProcessInstance.getDepartNo();
+        String companyNumber = dhProcessInstance.getCompanyNumber();
+        String insTitle = dhProcessInstance.getInsTitle();
+
+        if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(insInitUser)
+                || StringUtils.isBlank(departNo) || StringUtils.isBlank(companyNumber)) {
+            return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+
+        SysUser creator = sysUserMapper.queryByPrimaryKey(insInitUser);
+        if (creator == null) {
+            return ServerResponse.createByErrorMessage("流程发起人不存在");
+        } else if (sysDepartmentMapper.queryByPrimaryKey(departNo) == null) {
+            return ServerResponse.createByErrorMessage("指定的部门不存在");
+        } else if (sysCompanyMapper.queryByCompanyCode(companyNumber) == null) {
+            return ServerResponse.createByErrorMessage("指定的公司编码不存在");
+        }
+
+		if (StringUtils.isBlank(insBusinessKey)) {
+			dhProcessInstance.setInsBusinessKey("default");
+		}
+
+        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+
+        DhProcessDefinition startAbleProcessDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
+		if (startAbleProcessDefinition == null) {
+			ServerResponse.createByErrorMessage("指定流程没有可发起版本");
+		}
+		String proVerUid = startAbleProcessDefinition.getProVerUid();
+        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
+        // 获得主流程开始节点往后的下个环节信息（包含第一个任务节点）
+        BpmRoutingData bpmRoutingDataAfterStartNode = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, null);
+        if (bpmRoutingDataAfterStartNode.getNormalNodes().size() == 0 || bpmRoutingDataAfterStartNode.getNormalNodes().size() > 1) {
+            return ServerResponse.createByErrorMessage("获得主流程的第一个环节异常");
+        }
+        // 获得主流程第一个人员环节
+        BpmActivityMeta firstUserTaskNode = bpmRoutingDataAfterStartNode.getNormalNodes().get(0);
+		// 设置流程发起人
+        CommonBusinessObject pubBo = new CommonBusinessObject();
+        pubBo.setSmartformsHost(bpmGlobalConfig.getBpmformsHost() + bpmGlobalConfig.getBpmformsWebContext());
+        String firstUserVarname = firstUserTaskNode.getDhActivityConf().getActcAssignVariable();
+        List<String> creatorIdList = new ArrayList<>();
+        creatorIdList.add(insInitUser);
+        CommonBusinessObjectUtils.setNextOwners(firstUserVarname, pubBo, creatorIdList);
+
+        // 调用API 发起一个流程
+        BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(bpmGlobalConfig);
+        HttpReturnStatus result = bpmProcessUtil.startProcess(proAppId, proUid, proVerUid, pubBo);
+
+        // 如果获取API成功 将返回过来的流程数据
+        if (BpmClientUtils.isErrorResult(result)) {
+        	logger.error("调用RESTFul API发起流程失败，proAppId:" + proAppId + "proUid:" + proUid);
+        	return ServerResponse.createByErrorMessage("调用RESTFul API发起流程失败");
+		}
+		JSONObject startProcessDataJson = JSON.parseObject(result.getMsg());
+		JSONObject dataJson = startProcessDataJson.getJSONObject("data");
+		// 锁住这个任务防止拉取
+		int taskId = Integer.parseInt(dataJson.getJSONArray("tasks").getJSONObject(0).getString("tkiid"));
+		taskMongoDao.saveLockedTask(new LockedTask(taskId, new Date(), LockedTask.REASON_FIRST_TASK_OF_PROCESS));
+		int insId = Integer.parseInt(dataJson.getString("piid"));
+		// 在pubBo中设置实例编号，供网关环节决策使用
+		pubBo.setInstanceId(String.valueOf(insId));
+
+		// 将主流程保存到数据库
+		dhProcessInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + String.valueOf(UUID.randomUUID()));
+		if (StringUtils.isBlank(insTitle)) {
+			dhProcessInstance.setInsTitle(startAbleProcessDefinition.getProName());
+		}
+		dhProcessInstance.setInsId(insId);
+		dhProcessInstance.setInsStatus("status");
+		dhProcessInstance.setInsParent(DhProcessInstance.INS_PARENT_OF_MAIN_PROCESS);
+		dhProcessInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
+		dhProcessInstance.setInsInitDate(new Date());
+		dhProcessInstance.setProVerUid(startAbleProcessDefinition.getProVerUid());
+		// 装配insData
+		DatInsData datInsData = new DatInsData();
+		DatProcessData datProcessData = new DatProcessData();
+		BeanUtils.copyProperties(dhProcessInstance, datProcessData); // 设置processData的值
+		datInsData.setProcessData(datProcessData);
+		datInsData.setFormData(new JSONObject());
+		datInsData.setFormNoList(new JSONArray());
+		dhProcessInstance.setInsData(JSON.toJSONString(datInsData));
+		dhProcessInstanceMapper.insertProcess(dhProcessInstance);  // 保存到数据库
+		// 判断发起操作后是否有子流程
+		boolean hasSubProcess = bpmRoutingDataAfterStartNode.getStartProcessNodes().size() > 0;
+		DhProcessInstance processContainsFirstTask = dhProcessInstance;
+		if (hasSubProcess) {
+			processContainsFirstTask = createSubProcessAfterStartProcess(bpmRoutingDataAfterStartNode,
+					dhProcessInstance, startProcessDataJson, datInsData);
+		}
+		// 创建第一个任务
+		DhTaskInstance firstTaskInstance = new DhTaskInstance();
+		firstTaskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + String.valueOf(UUID.randomUUID()));
+		firstTaskInstance.setUsrUid(insInitUser);
+		firstTaskInstance.setActivityBpdId(firstUserTaskNode.getActivityBpdId());
+		firstTaskInstance.setTaskData("{}");
+		firstTaskInstance.setTaskId(taskId);
+		firstTaskInstance.setTaskTitle(firstUserTaskNode.getActivityName());
+		firstTaskInstance.setInsUid(processContainsFirstTask.getInsUid());
+		firstTaskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
+		firstTaskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);
+		firstTaskInstance.setTaskInitDate(new Date());
+		firstTaskInstance.setTaskActivityId(firstUserTaskNode.getActivityId());
+		DhActivityConf conf = firstUserTaskNode.getDhActivityConf();
+		Double timeAmount = 1.0;
+		String timeUnit = "day";
+		if (conf.getActcTime() != null && conf.getActcTime().doubleValue() != 1.0) {
+			timeAmount = conf.getActcTime();
+		}
+		if (StringUtils.isNotBlank(conf.getActcTimeunit())) {
+			timeUnit = conf.getActcTimeunit();
+		}
+		Date dueDate = sysHolidayService.calculateDueDate(firstTaskInstance.getTaskInitDate(), timeAmount, timeUnit);
+		firstTaskInstance.setTaskDueDate(dueDate);
+		dhTaskInstanceMapper.insertTask(firstTaskInstance);
+		DatLaunchProcessResult launchProcessResult = new DatLaunchProcessResult(dhProcessInstance,
+				processContainsFirstTask, firstTaskInstance);
+		return ServerResponse.createBySuccess(launchProcessResult);
+    }
 
     
 }

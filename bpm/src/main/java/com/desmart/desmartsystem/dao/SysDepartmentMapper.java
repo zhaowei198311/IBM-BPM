@@ -38,5 +38,8 @@ public interface SysDepartmentMapper extends BaseMapper<SysDepartment> {
 
 	//根据部门id查询其父部门id
 	public SysDepartment queryParentDepartByDepartId(@Param("departUid")String departUid);
+
+	SysDepartment queryByPrimaryKey(String departUid);
+
 	
 }

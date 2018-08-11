@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +38,12 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
-	
 	@Autowired
 	private DhProcessFormService dhProcessFormService;
-	
 	@Autowired
 	private DhProcessInstanceService dhProcessInstanceService;
+	@Autowired
+    private DhProcessInstanceMapper dhProcessInstanceMapper;
 	
 	private Logger log = Logger.getLogger(DhDraftsServiceImpl.class);
 	
@@ -70,13 +72,13 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		log.info("查询所有草稿数据开始...");
 		try {
 			DhDrafts dhDrafts = new DhDrafts();
-			String dfsCreator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			String dfsCreator = getCurrentUserUid();
 			dhDrafts.setDfsCreator(dfsCreator);
 			dhDrafts.setDfsTitle(insTitle);
 			dhDrafts.setProName(proName);
 			PageHelper.startPage(pageNum, pageSize);
 			PageHelper.orderBy("DFS_CREATEDATE desc");
-			List<DhDrafts> resultList = dhDraftsMapper.selectByCondition(dhDrafts);
+			List<DhDrafts> resultList = dhDraftsMapper.listDraftsToShow(dhDrafts);
 			if(null == resultList || resultList.size() == 0) {
 				log.info("查询所有草稿数据出错,出错类为{}"+DhDraftsServiceImpl.class);
 			}
@@ -95,9 +97,9 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	@Override
 	public int saveDrafts(DhDrafts drafts) {
 		if(dhDraftsMapper.queryDraftsByInsUid(drafts.getInsUid())!=null) {
-			return dhDraftsMapper.updateByInsUid(drafts);
+			return dhDraftsMapper.updateByPrimaryKeySelective(drafts);
 		}else {
-			String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+			String creator = getCurrentUserUid();
 			if(creator!=null) {
 			drafts.setDfsCreator(creator);
 			drafts.setDfsId(EntityIdPrefix.DH_DRAFTS_META+ UUID.randomUUID().toString());
@@ -145,14 +147,57 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	}
 
 	@Override
-	public ServerResponse checkDraftsExtis(DhDrafts dhDrafts) {
-		// TODO Auto-generated method stub
-		DhDrafts dhDrafts2 = dhDraftsMapper.queryDraftsByInsUid(dhDrafts.getInsUid());
-		Integer count = 0;
-		if(dhDrafts2==null) {
-			count = this.saveDrafts(dhDrafts);
-		}
-		return ServerResponse.createBySuccess(count);
+	public ServerResponse saveIfNotExists(DhDrafts dhDraft) {
+        String insUid = dhDraft.getInsUid(); // 流程实例主键
+        if (StringUtils.isBlank(insUid)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，缺少流程实例主键信息");
+        }
+        DhDrafts draftInDb = dhDraftsMapper.queryDraftsByInsUid(insUid);
+        if (draftInDb != null) {
+            return ServerResponse.createBySuccess();
+        }
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+        if (dhProcessInstance == null || (dhProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_DRAFT)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，流程实例状态异常");
+        }
+        dhDraft.setDfsId(EntityIdPrefix.DH_DRAFTS_META + UUID.randomUUID().toString());
+        dhDraft.setDfsCreator(getCurrentUserUid());
+        if (StringUtils.isBlank(dhDraft.getDfsTitle())) {
+            dhDraft.setDfsTitle("  ");
+        }
+        dhDraftsMapper.save(dhDraft);
+		return ServerResponse.createBySuccess();
 	}
-	
+
+	private String getCurrentUserUid() {
+        return String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER));
+    }
+
+	@Override
+	public ServerResponse saveProcessDraft(DhDrafts dhDraft) {
+        String insUid = dhDraft.getInsUid(); // 流程实例主键
+        if (StringUtils.isBlank(insUid)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，缺少流程实例主键信息");
+        }
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+        if (dhProcessInstance == null || (dhProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_DRAFT)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，流程实例状态异常");
+        }
+        DhDrafts draftInDb = dhDraftsMapper.queryDraftsByInsUid(insUid);
+        if (draftInDb != null) {
+            draftInDb.setDfsTitle(dhDraft.getDfsTitle());
+            draftInDb.setDfsData(dhDraft.getDfsData());
+            dhDraftsMapper.updateByPrimaryKeySelective(draftInDb);
+        } else {
+            dhDraft.setDfsId(EntityIdPrefix.DH_DRAFTS_META + UUID.randomUUID().toString());
+            dhDraft.setDfsCreator(getCurrentUserUid());
+            if (StringUtils.isBlank(dhDraft.getDfsTitle())) {
+                dhDraft.setDfsTitle("  ");
+            }
+            dhDraftsMapper.save(dhDraft);
+        }
+        return ServerResponse.createBySuccess();
+	}
+
+
 }

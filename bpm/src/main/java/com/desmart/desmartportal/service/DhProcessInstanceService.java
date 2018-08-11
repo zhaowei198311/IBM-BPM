@@ -13,6 +13,7 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DatLaunchProcessResult;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.github.pagehelper.PageInfo;
 
@@ -144,5 +145,17 @@ public interface DhProcessInstanceService {
 	 */
 	boolean checkPermissionStart(DhProcessDefinition processDefintion);
 
-
+	/**
+	 * 调用API发起一个流程
+	 * @param dhProcessInstance 其中需要设置的值： <br/>
+	 *                              proAppId: 应用库id<br/>
+	 *								proUid: 流程id<br/>
+	 *								insBusinessKey: 关键字<br/>
+	 *								insInitUser: 流程发起人工号<br/>
+	 *								departNo: 流程对应部门编号<br/>
+	 *								companyNumber: 流程对应公司编号<br/>
+	 *								insTitle: 流程标题<br/>
+	 * @return
+	 */
+	ServerResponse<DatLaunchProcessResult> launchProcess(DhProcessInstance dhProcessInstance);
 }

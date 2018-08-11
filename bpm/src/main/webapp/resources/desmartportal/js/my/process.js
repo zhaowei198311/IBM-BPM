@@ -64,79 +64,52 @@ function selectDepart(){
 /**
  * 保存草稿表单数据的方法
  */
-var index2 = null;
 var saveDraftsData = function () {
-    $("#saveInfoBtn")
-        .click(
-            function (e) {
-            	
-            	if($.trim($("#insTitle_input").val())==null || $.trim($("#insTitle_input").val())==""){
-            		layer.alert("流程标题不能为空");
-            		return;
-            	}            	
-                e.preventDefault();
-                var control = true; //用于控制复选框出现重复值
-                var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-                
-                // 发起流程             
-                var finalData = {};
-                // 表单数据
-                var jsonStr = common.getDesignFormData();
-                var formData = JSON.parse(jsonStr);
-                finalData.formData = formData;
-                // 流程数据
-                var processData = {};
-                processData.insUid = ""+$("#insUid").val();
-                processData.departNo = $("#departNo").val();
-                processData.companyNumber = $("#companyNum").val();
-                finalData.processData = processData;
+    $("#saveInfoBtn").click(function (e) {
+        e.preventDefault();
+        var finalData = {};
+        // 获得表单数据
+        var jsonStr = common.getDesignFormData();
+        var formData = JSON.parse(jsonStr);
+        finalData.formData = formData;
+        // 流程数据
+        var processData = {};
+        processData.insUid = "" + $("#insUid").val();
+        processData.departNo = $("#departNo").val();
+        processData.companyNumber = $("#companyNum").val();
+        finalData.processData = processData;
 
-                var activityId = ""
-                var userUid = ""
-                var insData = $("#insData").text();
-                // 路由数据
-                var routeData = [];
-                $('.getUser').each(function () {
-                    var item = {};
-                    item.activityId = $(this).attr('id');
-                    item.userUid = $(this).val();
-                    item.assignVarName = $(this).data("assignvarname");
-                    item.signCountVarName =  $(this).data("signcountvarname");
-                    item.loopType = $(this).data("looptype");
-                    routeData.push(item);
-                });
-                finalData.routeData = routeData;
-                // 保存草稿数据                   
-                var insUid = ""+$("#insUid").val();
-                var userId = ""+$("#userId").val();
-                var insTitle = $("#insTitle_input").val();
-                $.ajax({
-                    url: "drafts/saveDrafts",
-                    method: "post",
-                    async: false,
-                    data: {
-                    	dfsTitle: insTitle,
-                        dfsData: JSON.stringify(finalData),
-                        dfsCreator: userId,
-                        insUid: insUid
-                    },
-                    beforeSend: function () {
-                        index2 = layer.load(1);
-                    },
-                    success: function (result) {
-                        layer.close(index2);
-                        layer.alert('保存成功', function(index){
-                        	window.history.back();
-                        	  layer.close(index);
-                        	});  
-                    },
-                    error : function (result){
-                        layer.close(index2);
-                        layer.alert('保存失败')
-                    }
-                });
-            });
-    //end
+        // 保存草稿数据
+        var insUid = "" + $("#insUid").val();
+        var insTitle = $("#insTitle_input").val();
+        $.ajax({
+            url: common.getPath() + '/drafts/saveProcessDraft',
+            method: "post",
+            async: false,
+            data: {
+                dfsTitle: insTitle,
+                dfsData: JSON.stringify(finalData),
+                insUid: insUid
+            },
+            beforeSend: function () {
+                layer.load(1);
+            },
+            success: function (result) {
+                layer.closeAll('loading');
+                if (result.status == 0) {
+                    layer.alert('保存成功', function (index) {
+                        window.history.back();
+                    });
+                } else {
+                    layer.alert(result.msg);
+                }
+            },
+            error: function (result) {
+                layer.closeAll('loading');
+                layer.alert('保存草稿失败')
+            }
+        });
+    });
 }
 
 
@@ -303,74 +276,49 @@ function back() {
 	window.history.back();
 }
 
-//检查是否存在草稿数据，无草稿则保存一份草稿
-var checkDraftsIndex;
+// 检查是否保存过草稿，如果没有就保存一份草稿
 var checkCount = 0;
-function checkDraftsExtis(){
-	if(checkCount==0){//第一次点击开始上传时检查
-	var control = true; //用于控制复选框出现重复值
-    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-    
-    // 发起流程             
-    var finalData = {};
-    // 表单数据
-    var formData = common.getDesignFormData();
-    finalData.formData = formData;
-    // 流程数据
-    var processData = {};
-    processData.insUid = ""+$("#insUid").val();
-    processData.departNo = $("#departNo").val();
-    processData.companyNumber = $("#companyNum").val();
-    finalData.processData = processData;
-
-    var activityId = ""
-    var userUid = ""
-    var insData = $("#insData").text();
-    // 路由数据
-    var routeData = [];
-    $('.getUser').each(function () {
-        var item = {};
-        item.activityId = $(this).attr('id');
-        item.userUid = $(this).val();
-        item.assignVarName = $(this).data("assignvarname");
-        item.signCountVarName =  $(this).data("signcountvarname");
-        item.loopType = $(this).data("looptype");
-        routeData.push(item);
-    });
-    finalData.routeData = routeData;
-    // 保存草稿数据                   
-    var insUid = ""+$("#insUid").val();
-    var userId = $("#userId").val();
-    var insTitle = $("#insTitle").val();
-    $.ajax({
-        url: common.getPath() +"/drafts/checkDraftsExtis",
-        type: "post",
-        async: false,
-        data: {
-        	dfsTitle: insTitle,
-            dfsData: JSON.stringify(finalData),
-            dfsCreator: userId,
-            insUid: insUid
-        },
-        beforeSend: function () {
-        	checkDraftsIndex = layer.load(1);
-        },
-        success:function(result){
-        	checkCount = result.data;
-        	if(result.data<=0){
-        		layer.alert("保存草稿出现异常");
-        	}
-        	layer.close(checkDraftsIndex);
-        },error:function(){
-        	layer.close(checkDraftsIndex);
-        	layer.alert("检查草稿出现异常");
-        }
-		
-	});
-	}
+function saveDraftIfNotExists() {
+    if (checkCount == 0) { //第一次点击开始上传时检查
+        // 发起流程
+        var finalData = {};
+        // 表单数据
+        var formData = common.getDesignFormData();
+        finalData.formData = formData;
+        // 流程数据
+        var processData = {};
+        processData.insUid = "" + $("#insUid").val();
+        processData.departNo = $("#departNo").val();
+        processData.companyNumber = $("#companyNum").val();
+        finalData.processData = processData;
+        // 保存草稿数据
+        var insUid = "" + $("#insUid").val();
+        var insTitle = $("#insTitle").val().trim();
+        $.ajax({
+            url: common.getPath() + "/drafts/saveIfNotExists",
+            type: "post",
+            async: false,
+            data: {
+                dfsTitle: insTitle,
+                dfsData: JSON.stringify(finalData),
+                insUid: insUid
+            },
+            beforeSend: function () {
+                layer.load(1);
+            },
+            success: function (result) {
+                layer.closeAll('loading');
+                if (result.status == 0) {
+                    checkCount++;
+                }
+            }, error: function () {
+                layer.closeAll('loading');
+            }
+        });
+    }
 }
 
-//提交前验证方法
+//提交前验证方法，误删
 function check_before_submit(){
 	console.log("1");
 	return true;

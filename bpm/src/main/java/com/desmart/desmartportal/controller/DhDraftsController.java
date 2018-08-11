@@ -24,12 +24,11 @@ import com.desmart.desmartportal.service.DhDraftsService;
 @Controller
 @RequestMapping(value = "/drafts")
 public class DhDraftsController {
-	
+	private Logger Log = Logger.getLogger(DhDraftsController.class);
+
 	@Autowired
 	private DhDraftsService dhDraftsService;
-	
-	private Logger Log = Logger.getLogger(DhDraftsController.class);
-	
+
 	@RequestMapping(value = "/index")
 	public String index() {
 		return "desmartportal/drafts";
@@ -62,9 +61,32 @@ public class DhDraftsController {
 		return dhDraftsService.selectBydfsId(dfsId);
 	}
 	
-	@RequestMapping(value="checkDraftsExtis")
+	@RequestMapping(value="/saveIfNotExists")
 	@ResponseBody
-	public ServerResponse checkDraftsExtis(DhDrafts dhDrafts) {
-		return dhDraftsService.checkDraftsExtis(dhDrafts);
+	public ServerResponse saveIfNotExists(DhDrafts dhDrafts) {
+		return dhDraftsService.saveIfNotExists(dhDrafts);
 	}
+
+
+	/**
+	 * 保存起草草稿
+	 * @return
+	 */
+	@RequestMapping(value = "/saveProcessDraft")
+	@ResponseBody
+	public ServerResponse saveProcessDraft(DhDrafts dhDrafts) {
+		return dhDraftsService.saveProcessDraft(dhDrafts);
+	}
+
+	/**
+	 * 保存待办草稿
+	 * @return
+	 */
+	@RequestMapping(value = "/saveTaskDraft")
+	@ResponseBody
+	public ServerResponse saveTaskDraft() {
+		// todo
+		return null;
+	}
+
 }

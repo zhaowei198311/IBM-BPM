@@ -283,10 +283,10 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
      * @param taskId  任务id
      * @param taskNode  任务节点
      * @param taskData  提交上来的数据
-     * @param mainProcess  主流程
+     * @param processContainsFirstTask  含有第一个任务的流程，不一定是主流程
      * @return
      */
-    private DhTaskInstance generateFirstTaskOfMainProcess(int taskId, BpmActivityMeta taskNode, String taskData, DhProcessInstance mainProcess) {
+    private DhTaskInstance generateFirstTaskOfMainProcess(int taskId, BpmActivityMeta taskNode, String taskData, DhProcessInstance processContainsFirstTask) {
         // 创建第一个任务实例，第一个任务一定属于主流程
         DhTaskInstance taskInstance = new DhTaskInstance();
         taskInstance.setTaskUid(EntityIdPrefix.DH_TASK_INSTANCE + UUID.randomUUID().toString());
@@ -295,7 +295,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         taskInstance.setTaskData(taskData);
         taskInstance.setTaskId(taskId);
         taskInstance.setTaskTitle(taskNode.getActivityName());
-        taskInstance.setInsUid(mainProcess.getInsUid());
+        taskInstance.setInsUid(processContainsFirstTask.getInsUid());
         taskInstance.setTaskType(DhTaskInstance.TYPE_NORMAL);
         taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
         taskInstance.setTaskInitDate(new Date());
