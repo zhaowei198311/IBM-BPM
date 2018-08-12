@@ -47,7 +47,7 @@
 				</div>
 				<div class="layui-col-md8" style="text-align: left; padding-left:15px;">
 					<button class="layui-btn search_btn" id="searchMeat_btn">查询</button>
-					<button class="layui-btn create_btn" id="show_expose_btn">添加</button>
+					<button class="layui-btn create_btn" id="addTriBtn">添加</button>
 					<button class="layui-btn create_btn" id="importBtn">导入</button>
 				</div>
 			</div>
@@ -83,81 +83,74 @@
 		</div>
 		<div id="lay_page"></div>
 		
-		<div class="display_container">
-			<div class="display_content3">
-				<div class="top" style="color: red;">新增触发器</div>
-				<label class="layui-input-label" style="color: red;">带*为必填参数</label>
-				<form id="form1" class="layui-form" action=""
-					style="margin-top: 30px;">
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
-								<div class="layui-input-inline">
+		<div class="display_container" id="tri_container">
+			<div class="display_content3" style="width: 800px;height:466px;">
+				<div class="top" id="triTopDiv">新增触发器</div>
+				<form id="form1" class="layui-form" action="" >
+					<div class="layui-row">
+						<div class="layui-col-md5">
+							<div class="layui-form-item">
+								<label class="layui-form-label">触发器类型*:</label>
+								<div class="layui-input-inline" >
 									<select id="triType" name="triType" lay-filter="triType">
 										<option value="">请选择触发器类型</option>
-										<option value="script">script</option>
-										<option value="sql">sql</option>
+										<option value="javaclass" selected>javaclass</option>
 										<option value="interface">interface</option>
-										<option value="javaclass">javaclass</option>
 										<option value="chooseUser">chooseUser</option>
 										<option value="validate">validate</option>
+										<option value="sql">sql</option>
+										<option value="script">script</option>
 									</select>
 								</div>
 							</div>
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
-									<div class="layui-input-inline">
-										<input type="text" id="triTitle" name="triTitle"
-											lay-verify="triTitle" autocomplete="off" class="layui-input">
-									</div>
+						</div>
+						<div class="layui-col-md7">
+							<div class="layui-form-item">
+								<label class="layui-form-label">触发器名称*:</label>
+								<div class="layui-input-inline" style="width: 70%;">
+									<input type="text" id="triTitle" name="triTitle" lay-verify="triTitle" autocomplete="off" class="layui-input">
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器描述:</label>
-									<div class="layui-input-inline">
-										<input width="80%" type="text" id="triDescription" name="triDescription"
-											lay-verify="triTitle" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器参数:</label>
-								<div class="layui-input-inline">
-									<input type="text" id="triParam" name="triParam"
-										lay-verify="triParam" autocomplete="off" class="layui-input">
+					<div class="layui-row triWebbot" id="webbotRow">
+						<div class="layui-col-md12">
+							<!-- 填写java反射类名-->
+							<div class="layui-form-item ">
+								<label class="layui-form-label">触发器执行命令:</label>
+								<div class="layui-input-inline" style="width: 70%;">
+									<input id="triWebbot" name="triWebbot" type="text" lay-verify="triWebbot" autocomplete="off" class="layui-input" placeholder="若触发器为javaclass类型，请输入java反射类"
+									/>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="layui-form-item">
-						<div class="layui-form-item triWebbot">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
-								<div class="layui-input-inline" id="div_triWebbot">
-									<input id="triWebbot" name="triWebbot" type="text"
-										lay-verify="triWebbot" autocomplete="off"
-										class="layui-input paraDescription" style="width: 568px" placeholder="若触发器为javaclass类型，请输入java反射类"/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item ">
-						<div class="layui-form-item triInterface" style="display:none;">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
-								<div class="layui-input-inline" style="position: relative;">
+					<div class="layui-row triInterface" id="interfaceRow" style="display: none;">
+						<div class="layui-col-md12">
+							<!-- 选择接口-->
+							<div class="layui-form-item " >
+								<label class="layui-form-label">请选择接口*:</label>
+								<div class="layui-input-inline" style="width: 70%;" >
 									<input type="hidden" name="addInterface" id="addInterface" value="">
-									<input type="text" name="addInterface_view" id="addInterface_view"
-									class="layui-input" disabled="disabled">
+									<input type="text" name="addInterface_view" id="addInterface_view" class="layui-input" disabled="disabled">
 									<i class="layui-icon choose_interface" id="chooseInterface" title="选择接口">&#xe615;</i>
 								</div>
+							</div>
+						</div>
+					</div>
+					<div class="layui-row">
+						<div class="layui-col-md12">
+							<label class="layui-form-label">触发器参数:</label>
+							<div class="layui-input-block">
+								<textarea id="triParam" name="triParam" lay-verify="triParam" autocomplete="off" class="layui-textarea"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="layui-row" style="margin-top: 20px;">
+						<div class="layui-col-md12">
+							<label class="layui-form-label">触发器描述:</label>
+							<div class="layui-input-block">
+								<textarea placeholder="" class="layui-textarea" id="triDescription" name="triDescription"></textarea>
 							</div>
 						</div>
 					</div>
@@ -170,92 +163,9 @@
 		</div>
 		
 		
-		<div class="display_container2">
-		<input id="triUid" style="display: none;">
-			<div class="display_content3">
-				<div class="top" style="color: red;">修改触发器</div>
-				<form id="form2" class="layui-form" action=""
-					style="margin-top: 30px;">
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器类型*:</label>
-								<div class="layui-input-inline">
-									<select id="triType2" name="triType2" lay-filter="triType2">
-										<option value="script">script</option>
-										<option value="sql">sql</option>
-										<option value="interface">interface</option>
-										<option value="javaclass">javaclass</option>
-										<option value="chooseUser">chooseUser</option>
-										<option value="validate">validate</option>
-									</select>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器名称*:</label>
-									<div class="layui-input-inline">
-										<input type="text" id="triTitle2" name="triTitle2"
-											lay-verify="triTitle2" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-row">
-							<div class="layui-col-md6">
-								<div class="layui-inline">
-									<label class="layui-form-label" style="width: 100px">触发器描述:</label>
-									<div class="layui-input-inline">
-										<input width="80%" type="text" id="triDescription2" name="triDescription2"
-											lay-verify="triDescription2" autocomplete="off" class="layui-input">
-									</div>
-								</div>
-							</div>
-							<div class="layui-col-md6">
-								<label class="layui-form-label" style="width: 100px">触发器参数:</label>
-								<div class="layui-input-inline">
-									<input type="text" id="triParam2" name="triParam2"
-										lay-verify="triParam2" autocomplete="off" class="layui-input">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item">
-						<div class="layui-form-item triWebbot">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">触发器执行命令:</label>
-								<div class="layui-input-inline" id="div_triWebbot">
-									<input id="triWebbot2" name="triWebbot2" type="text"
-										lay-verify="triWebbot2" autocomplete="off"
-										class="layui-input trigerWebbot" style="width: 568px"/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="layui-form-item ">
-						<div class="layui-form-item triInterface" style="display:none;">
-							<div class="layui-inline">
-								<label class="layui-form-label" style="width: 100px">请选择接口*:</label>
-								<div class="layui-input-inline">
-									<select id="triWebbotType2" class="trigerWebbot" name="triWebbotType2"
-										lay-filter="triWebbotType2">
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</form>
-				<div class="foot">
-					<button id="update_btn" class="layui-btn layui-btn update_btn">确定</button>
-					<button id="cancel_btn" class="layui-btn layui-btn cancel_btn">取消</button>
-				</div>
-			</div>
-		</div>
 
-		<div class="display_container3">
-			<div class="display_content3">
+		<div class="display_container3" >
+			<div class="display_content3" style="width:800px;height:580px;">
 				<div class="search_area">
 					<input type="hidden" id="interfaceId" /> <input type="hidden"
 						id="interfaceType" />

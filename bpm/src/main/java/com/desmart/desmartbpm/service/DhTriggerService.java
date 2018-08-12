@@ -30,7 +30,7 @@ public interface DhTriggerService {
      * @param triUid
      * @return
      */
-    int deleteTrigger(String triUid);
+    ServerResponse deleteTrigger(String triUid);
     
     
     /**
@@ -38,7 +38,7 @@ public interface DhTriggerService {
      * @param dhTrigger
      * @return
      */
-    int saveTrigger(DhTrigger dhTrigger);
+    ServerResponse saveTrigger(DhTrigger dhTrigger);
 
     /**
      * 调用触发器
@@ -65,7 +65,7 @@ public interface DhTriggerService {
     /**
      * 触发器修改
      */
-    int updateTrigger(DhTrigger dhTrigger);
+    ServerResponse updateTrigger(DhTrigger dhTrigger);
 
     /**
      * 根据触发器id集合获取触发器

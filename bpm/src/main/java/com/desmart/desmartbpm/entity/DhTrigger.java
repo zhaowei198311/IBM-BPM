@@ -19,6 +19,8 @@ public class DhTrigger {
     private String updator; // 更新人
     private Date updateTime; // 更新时间
     private SysUser sysUser; // 用户实体类
+
+	private String interfaceTitle; // 当触发器是接口类型时，前端展示接口名
     
 	/**
 	 * @return the triUid
@@ -196,5 +198,11 @@ public class DhTrigger {
 				+ ", sysUser=" + sysUser + "]";
 	}
 
-  
+	public String getInterfaceTitle() {
+		return interfaceTitle;
+	}
+
+	public void setInterfaceTitle(String interfaceTitle) {
+		this.interfaceTitle = interfaceTitle;
+	}
 }
