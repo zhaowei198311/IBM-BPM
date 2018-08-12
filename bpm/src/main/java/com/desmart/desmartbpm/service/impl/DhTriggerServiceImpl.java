@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.desmart.desmartbpm.enums.DhTriggerType;
+import com.desmart.desmartsystem.dao.DhInterfaceMapper;
+import com.desmart.desmartsystem.entity.DhInterface;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -26,7 +29,6 @@ import com.desmart.desmartbpm.dao.BpmFormRelePublicFormMapper;
 import com.desmart.desmartbpm.dao.DhTriggerInterfaceMapper;
 import com.desmart.desmartbpm.dao.DhTriggerMapper;
 import com.desmart.desmartbpm.entity.BpmFormField;
-import com.desmart.desmartbpm.entity.BpmFormRelePublicForm;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
@@ -63,7 +65,8 @@ public class DhTriggerServiceImpl implements DhTriggerService {
     private DhInterfaceParameterService dhInterfaceParameterService;
     @Autowired
     private DhInterfaceExecuteService dhInterfaceExecuteService;
-
+    @Autowired
+    private DhInterfaceMapper dhInterfaceMapper;
 
     @Override
     public ServerResponse searchTrigger(DhTrigger dhTrigger, Integer pageNum, Integer pageSize) {
@@ -79,25 +82,43 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	 * @see com.desmart.desmartbpm.service.DhTriggerService#deleteTrigger(java.lang.String)
 	 */
 	@Override
-	public int deleteTrigger(String triUid) {
-		return dhTriggerMapper.delete(triUid);
+	public ServerResponse deleteTrigger(String triUid) {
+		if (StringUtils.isBlank(triUid)) {
+		    return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+	    dhTriggerMapper.delete(triUid);
+		return ServerResponse.createBySuccess();
 	}
 
 
-	/* (non-Javadoc)
-	 * @see com.desmart.desmartbpm.service.DhTriggerService#saveTrigger(com.desmart.desmartbpm.entity.DhTrigger)
-	 */
+
 	@Override
-	public int saveTrigger(DhTrigger dhTrigger) {
+	public ServerResponse saveTrigger(DhTrigger dhTrigger) {
 		// 触发器id
 		dhTrigger.setTriUid(EntityIdPrefix.DH_TRIGGER + UUID.randomUUID().toString());
-    	// 获得当前登录用户的身份
+        String triType = dhTrigger.getTriType();
+        DhTriggerType dhTriggerType = DhTriggerType.codeOf(triType);
+        if (dhTriggerType == null) {
+            return ServerResponse.createByErrorMessage("触发器类型不符合要求");
+        }
+        if (dhTriggerType == DhTriggerType.INTERFACE) {
+            String intUid = dhTrigger.getTriWebbot();
+            if (StringUtils.isBlank(intUid)) {
+                return ServerResponse.createByErrorMessage("接口类型的触发器缺少接口信息");
+            }
+            DhInterface dhInterface = dhInterfaceMapper.selectByintUid(intUid);
+            if (dhInterface == null) {
+                return ServerResponse.createByErrorMessage("触发器对应的接口不存在");
+            }
+        }
+        // 获得当前登录用户的身份
     	String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
     	dhTrigger.setCreator(creator);
     	dhTrigger.setUpdator(creator);
     	// 保存数据
-		return dhTriggerMapper.save(dhTrigger);
-	}
+		dhTriggerMapper.save(dhTrigger);
+        return ServerResponse.createBySuccess();
+    }
 
 	/**
 	 * 获得对应异常的详细信息用于保存
@@ -415,7 +436,20 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	 */
 	@Override
 	public ServerResponse getTriggerByPrimarkey(String triUid) {
+		if (StringUtils.isBlank(triUid)) {
+			return ServerResponse.createByErrorMessage("缺少必要的参数");
+		}
 		DhTrigger dhtrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+		if (DhTriggerType.INTERFACE.getCode().equals(dhtrigger.getTriType())) {
+		    // 当是接口类型时，查询接口的名称
+            String interfaceUid = dhtrigger.getTriWebbot();
+            if (StringUtils.isNotBlank(interfaceUid)) {
+                DhInterface dhInterface = dhInterfaceMapper.selectByintUid(interfaceUid);
+                if (dhInterface != null) {
+                    dhtrigger.setInterfaceTitle(dhInterface.getIntTitle());
+                }
+            }
+        }
 		return ServerResponse.createBySuccess(dhtrigger);
 	}
 
@@ -424,8 +458,21 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	 * 修改触发器
 	 */
 	@Override
-	public int updateTrigger(DhTrigger dhTrigger) {
-		return dhTriggerMapper.updateByPrimayKeySelective(dhTrigger);
+	public ServerResponse updateTrigger(DhTrigger dhTrigger) {
+        String triUid = dhTrigger.getTriUid();
+        if (StringUtils.isBlank(triUid)) {
+            return ServerResponse.createByErrorMessage("缺少必要的参数");
+        }
+        DhTrigger triggerInDb = dhTriggerMapper.getByPrimaryKey(triUid);
+        if (triggerInDb == null) {
+            return ServerResponse.createByErrorMessage("修改失败，触发器不存在");
+        }
+        if (!triggerInDb.getTriType().equals(dhTrigger.getTriType())) {
+            return ServerResponse.createByErrorMessage("修改失败，触发器类型不一致");
+        }
+        dhTrigger.setUpdator(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
+        dhTriggerMapper.updateByPrimayKeySelective(dhTrigger);
+		return ServerResponse.createBySuccess();
 	}
 
 

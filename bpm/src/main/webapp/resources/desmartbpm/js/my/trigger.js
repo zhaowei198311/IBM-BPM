@@ -4,7 +4,8 @@ var pageConfig = {
     pageSize: 10,
     total: 0
 }
-
+var triggerEditMode = '';
+var triUidToEdit = '';
 // 加载事件
 $(document).ready(function () {
     // 加载数据
@@ -22,6 +23,248 @@ $(document).ready(function () {
         }
     })
 })
+
+
+var triggerElemnts = {
+    triContainer: $('#tri_container'),
+    triTopDiv: $('#triTopDiv'),
+    triForm: $('#form1'),
+    triTypeSel: $('#triType'),
+    triTitleInput: $('#triTitle'),
+    triWebbotInput: $('#triWebbot'),
+    triParamTextArea: $('#triParam'),
+    triDescriptionTextArea: $('#triDescription'),
+    interfaceHidden: $('#addInterface'),
+    interfaceView: $('#addInterface_view'),
+    interfaceRow: $('#interfaceRow'),
+    webbotRow: $('#webbotRow'),
+    sureBtn: $('#sure_btn'),
+    cancelBtn: $('#cancel_btn')
+};
+
+
+// 切换到创建模式
+function switchToCreateMode() {
+    triggerEditMode = 'create';
+    triggerElemnts.triTopDiv.html('新增触发器');
+    triggerElemnts.triTitleInput.val('');
+    triggerElemnts.triTypeSel.val('javaclass');
+    triggerElemnts.triTypeSel.prop('disabled', false);
+    triggerElemnts.webbotRow.show();
+    triggerElemnts.interfaceRow.hide();
+    triggerElemnts.interfaceHidden.val('');
+    triggerElemnts.interfaceView.val('');
+    triggerElemnts.triWebbotInput.val('');
+    triggerElemnts.triParamTextArea.val('');
+    triggerElemnts.triParamTextArea.prop('disabled', false);
+    triggerElemnts.triDescriptionTextArea.val('');
+    triggerElemnts.interfaceHidden.val('');
+    layui.form.render();
+    triggerElemnts.triContainer.show();
+}
+
+function initTriContainerToEditMode(trigger) {
+    triggerEditMode = 'update';
+    triggerElemnts.triTopDiv.html('更新触发器');
+    triggerElemnts.triTitleInput.val(trigger.triTitle);
+    triggerElemnts.triDescriptionTextArea.val(trigger.triDescription);
+    triUidToEdit = trigger.triUid;
+    triggerElemnts.triTypeSel.val(trigger.triType);
+    triggerElemnts.triTypeSel.prop('disabled', true);
+    triggerElemnts.triWebbotInput.val(trigger.triWebbot);
+    triggerElemnts.triParamTextArea.val(trigger.triParam);
+    if (trigger.triType == 'interface') {
+        // 如果是接口类型
+        triggerElemnts.interfaceView.val(trigger.interfaceTitle);
+        triggerElemnts.interfaceHidden.val(trigger.triWebbot);
+        triggerElemnts.triParamTextArea.prop('disabled', true);
+        triggerElemnts.interfaceRow.show();
+        triggerElemnts.webbotRow.hide();
+    } else {
+        triggerElemnts.triParamTextArea.prop('disabled', false);
+        triggerElemnts.interfaceHidden.val('');
+        triggerElemnts.interfaceView.val('');
+        triggerElemnts.interfaceRow.hide();
+        triggerElemnts.webbotRow.show();
+    }
+    layui.form.render();
+    triggerElemnts.triContainer.show();
+}
+
+// 切换到编辑模式
+function switchToEditMode(triUid) {
+    $.ajax({
+        url: common.getPath() + '/trigger/serachByPrimarkey',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            triUid: triUid
+        },
+        success: function (result) {
+            if (result.status == 0) {
+                initTriContainerToEditMode(result.data);
+            } else {
+                layer.alert('获取触发器数据失败');
+            }
+        }
+    });
+}
+
+
+
+// 创建触发器
+function createTrigger() {
+    // 新增触发器
+    var triTitle = $("#triTitle").val().trim();
+    var triWebbot = $("#triWebbot").val().trim();
+    var triType = $("#triType").val().trim();
+    var triDescription = $("#triDescription").val().trim();
+    var triParam = $("#triParam").val().trim();
+    if (!triTitle) {
+        layer.alert('请填写触发器名称');
+        return;
+    }
+    if (!triType) {
+        layer.alert('请选择触发器类型');
+        return;
+    }
+    // 当初触发器类型是javaClass的时候验证
+    if (triType == 'javaclass') {
+        if (!triParam) {
+            triParam = '{}';
+        } else {
+            try {
+                JSON.parse(triParam);
+            } catch (e) {
+                layer.alert('javaclass的触发器参数需要符合JSON格式，请重新填写');
+                return;
+            }
+        }
+        if (!triWebbot) {
+            layer.alert('请填写java类的全限定名');
+            return;
+        }
+        if (!/^(\w+\.)+\w+$/.exec(triWebbot)) {
+            layer.alert("类名不符合规范，请重新填写");
+            return;
+        }
+    }
+    var webbot = "";
+    if ($("#triType").val() == "interface") {
+        webbot = $("#addInterface").val();
+    } else {
+        webbot = $("#triWebbot").val();
+    }
+    $.ajax({
+        url: common.getPath() + '/trigger/save',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            triTitle: triTitle,
+            triDescription: triDescription,
+            triType: triType,
+            triWebbot: webbot,
+            triParam: triParam
+        },
+        beforeSend: function() {
+            layer.load(1);
+        },
+        success: function (result) {
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                var tempIndex = layer.alert('创建成功', function () {
+                    getTriggerInfo();
+                    layer.close(tempIndex);
+                    triggerElemnts.triContainer.hide();
+                });
+            } else {
+                layer.alert(result.msg);
+            }
+        },
+        error: function (result) {
+            layer.closeAll('loading');
+            layer.alert('操作失败，请稍后再试');
+        }
+    });
+}
+
+// 更新触发器
+function updateTrigger() {
+    var triTitle = $("#triTitle").val().trim();
+    var triWebbot = $("#triWebbot").val().trim();
+    var triType = $("#triType").val().trim();
+    var triDescription = $("#triDescription").val().trim();
+    var triParam = $("#triParam").val().trim();
+    if (!triTitle) {
+        layer.alert('请填写触发器名称');
+        return;
+    }
+    if (!triType) {
+        layer.alert('请选择触发器类型');
+        return;
+    }
+    // 当初触发器类型是javaClass的时候验证
+    if (triType == 'javaclass') {
+        if (!triParam) {
+            triParam = '{}';
+        } else {
+            try {
+                JSON.parse(triParam);
+            } catch (e) {
+                layer.alert('javaclass的触发器参数需要符合JSON格式，请重新填写');
+                return;
+            }
+        }
+        if (!triWebbot) {
+            layer.alert('请填写java类的全限定名');
+            return;
+        }
+        if (!/^(\w+\.)+\w+$/.exec(triWebbot)) {
+            layer.alert("类名不符合规范，请重新填写");
+            return;
+        }
+    }
+    var webbot = "";
+    if (triType == 'interface') {
+        webbot = triggerElemnts.interfaceHidden.val();
+    } else {
+        webbot = triggerElemnts.triWebbotInput.val();
+    }
+    $.ajax({
+        url: common.getPath() + '/trigger/update',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            triUid: triUidToEdit,
+            triTitle: triTitle,
+            triDescription: triDescription,
+            triType: triType,
+            triWebbot: webbot,
+            triParam: triParam
+        },
+        beforeSend: function(){
+            layer.load(1);
+        },
+        success: function (result) {
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                var tempIndex = layer.alert('修改成功', function () {
+                    getTriggerInfo();
+                    triggerElemnts.triContainer.hide();
+                    layer.close(tempIndex);
+                });
+            } else {
+                layer.alert(result.msg);
+            }
+        },
+        error: function () {
+            layer.closeAll('loading');
+            layer.alert('修改失败，请稍后再试');
+        }
+    });
+
+}
+
 
 function getTriggerInfo() {
     $.ajax({
@@ -142,7 +385,7 @@ function drawTable(pageInfo) {
             + createTime
             + '</td>'
             + '<td>'
-            + '<i class="layui-icon"  title="修改触发器"  onclick=updatate("'
+            + '<i class="layui-icon"  title="修改触发器"  onclick=switchToEditMode("'
             + meta.triUid + '") >&#xe642;</i>'
             + '<i class="layui-icon"  title="导出触发器"  onclick=transferTrigger.exportTrigger("'
             + meta.triUid + '") >&#xe601;</i>'
@@ -253,87 +496,23 @@ function doPage() {
 
         form.on('select(triType)', function (data) {
             var value = data.value;
-            byParameterTypeHideAndShowElement(value, "");
-            if (data.value == 'interface') {
-                // 请求ajax 获取接口数据
-                $.ajax({
-                    url: common.getPath() + '/interfaces/queryDhInterfaceList',
-                    type: 'post',
-                    dataType: 'json',
-                    data: {
-                        intStatus: 'enabled'
-                    },
-                    success: function (result) {
-                        var data = result.data.list;
-                        for (var i = 0; i < data.length; i++) {
-                            var trs = '<option value="' + data[i].intUid + '">'
-                                + data[i].intTitle
-                                + '</option>';
-                            $("#triWebbotType").append(trs)
-                        }
-
-                        form.render();
-                    },
-                    error: function () {
-                        layer.msg('查询接口异常', {
-                            icon: 5
-                        });
-                    }
-                })
-                // 隐藏 参数
-
-                $("#triParam").attr('disabled', true)
-                $("#triParam").addClass("layui-disabled")
-                form.render();
+            if (value == 'interface') {
+                triggerElemnts.interfaceRow.show();
+                triggerElemnts.webbotRow.hide();
+                triggerElemnts.triParamTextArea.prop('disabled', true);
+                triggerElemnts.triParamTextArea.val('');
             } else {
-                $("#triParam").attr('disabled', false)
-                $("#triParam").removeClass("layui-disabled")
+                triggerElemnts.interfaceHidden.val('');
+                triggerElemnts.interfaceView.val('');
+                triggerElemnts.interfaceRow.hide();
+                triggerElemnts.webbotRow.show();
+                triggerElemnts.triParamTextArea.prop('disabled', false);
             }
+            layui.form.render();
         });
     });
 }
 
-
-function byParameterTypeHideAndShowElement(paraType, selector) {
-    var triWebbot = $('.triWebbot'); // 触发器执行命令
-    var trijiekou = $('.triInterface'); // 选择接口
-    var triParam = $('.triParam'); // 参数
-    var triType = $('.triType');
-    switch (paraType) {
-        case 'sql':
-            triWebbot.show();
-            triParam.show();
-            trijiekou.hide();
-            clearTableData();
-            break;
-        case 'javaclass':
-            triWebbot.show();
-            triParam.show();
-            trijiekou.hide();
-            clearTableData();
-            break;
-        case 'interface':
-            trijiekou.css("display", "block");
-            triParam.show();
-            triWebbot.hide();
-            $("#triWebbotType").empty();
-            clearTableData();
-            break;
-        case 'script':
-            triWebbot.show();
-            triParam.show();
-            trijiekou.hide();
-            clearTableData();
-            break;
-    }
-}
-
-function clearTableData() {
-    $("#triWebbot").val("");
-    $("#triParam").val("");
-    $("#triTitle").val("");
-    $("#triDescription").val("");
-}
 
 function searchInterfaceList(){
 	var intTitle = $("#interfaceName").val();
@@ -367,86 +546,29 @@ function del(triUid) {
         $.ajax({
             url: common.getPath() + '/trigger/delete',
             type: 'POST',
-            dataType: 'text',
+            dataType: 'json',
             data: {
                 triUid: triUid
             },
             success: function (result) {
-                window.location.href = common.getPath() + "/trigger/index";
+                if (result.status == 0) {
+                    var tempIndex = layer.alert('删除成功', function () {
+                        getTriggerInfo();
+                        layer.close(tempIndex);
+                    });
+                } else {
+                    layer.alert(result.msg);
+                }
+            },
+            error: function () {
+                layer.alert('删除失败，请稍后再试');
             }
         })
         layer.close(index);
     });
 }
 
-function updatate(triUid) {
-    $("#triUid").val(triUid)
-    $("#triWebbotType2").empty();
-    var triWebbot = "";
-    layui.use(['form', 'layer', 'jquery'], function () {
-        layer = layui.layer, form = layui.form;
-        var $ = layui.jquery;
-        $(".display_container2").css("display", "block");
-        $.ajax({
-            url: common.getPath() + '/trigger/serachByPrimarkey',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                triUid: triUid
-            },
-            success: function (result) {
-                console.info(result)
-                if (result.status == 0) {
-                    byParameterTypeHideAndShowElement(result.data.triType, "");
-                    $("#triType2").attr('disabled', true)
-                    $("#triType2").addClass("layui-disabled")
-                    triWebbot = result.data.triWebbot
-                    if (result.data.triType == "interface") {
-                        $("#triParam2").attr('disabled', true)
-                        $("#triParam2").addClass("layui-disabled")
-                        // 请求ajax 获取接口数据
-                        $.ajax({
-                            url: common.getPath() + '/interfaces/queryDhInterfaceList',
-                            type: 'post',
-                            dataType: 'json',
-                            data: {
-                            },
-                            success: function (result) {
-                                var data = result.data.list;
-                                for (var i = 0; i < data.length; i++) {
-                                    var trs = '<option value="' + data[i].intUid + '">'
-                                        + data[i].intTitle
-                                        + '</option>';
-                                    $("#triWebbotType2").append(trs)
-                                }
-                                // 添加完 接口后 默认选中 查出对应接口
-                                $("#triWebbotType2 option[value='" + triWebbot + "']").attr("selected", true);
-                                form.render();
-                            },
-                            error: function () {
-                                layer.msg('查询接口异常', {
-                                    icon: 5
-                                });
-                            }
-                        })
-                    } else {
-                        $("#triParam2").attr('disabled', false)
-                        $("#triParam2").removeClass("layui-disabled")
-                    }
-                    $("#triTitle2").val(result.data.triTitle);
-                    $("#triDescription2").val(result.data.triDescription);
-                    $("#triParam2").val(result.data.triParam);
-                    $("#triWebbot2").val(result.data.triWebbot);
-                    $("#triType2").val(result.data.triType);
-                    form.render();
-                }
-            },
-            error: function (result) {
-                layer.alert('查询失败')
-            }
-        })
-    })
-}
+
 
 $(".search_btn").click(function () {
     var name = document.getElementById("triggerName_input").value;
@@ -467,15 +589,13 @@ $(".search_btn").click(function () {
     })
 })
 
-$("#show_expose_btn").click(function () {
-    $(".display_container").css("display", "block");
-})
+$("#addTriBtn").click(function () {
+    switchToCreateMode();
+});
 
-$(".cancel_btn").click(function () {
-    $(".display_container").css("display", "none");
-    $(".display_container2").css("display", "none");
-    $("#form1").validate().resetForm();
-})
+triggerElemnts.cancelBtn.click(function () {
+   triggerElemnts.triContainer.hide();
+});
 
 $("#close").click(function(){
 	$(".display_container3").css("display", "none");
@@ -520,97 +640,17 @@ $("#chooseInterface").click(function(){
 		}
 	})
 	
-})
+});
 
-$(".sure_btn").click(function () {
-    // 新增触发器
-    var triTitle = $("#triTitle").val();
-    var triWebbot = $("#triWebbot").val();
-    var triType = $("#triType").val();
-    var triDescription = $("#triDescription").val();
-    var triParam = $("#triParam").val();
-    if (triTitle.replace(/(^s*)|(s*$)/g, "").length != 0 && triType != null) {
-        var webbot = "";
-        if ($("#triType").val() == "interface") {
-            webbot = $("#addInterface").val();
-        } else {
-            webbot = $("#triWebbot").val();
-        }
-        $.ajax({
-            url: common.getPath() + '/trigger/save',
-            type: 'POST',
-            dataType: 'text',
-            data: {
-                triTitle: triTitle,
-                triDescription: triDescription,
-                triType: triType,
-                triWebbot: webbot,
-                triParam: triParam
-            },
-            success: function (result) {
-                window.location.href = common.getPath() + '/trigger/index'
-            },
-            error: function (result) {
-                layer.msg('添加失败', {
-                    icon: 5
-                });
-            }
-        })
-    } else {
-        layer.alert('参数不能为空')
+triggerElemnts.sureBtn.click(function () {
+    if (triggerEditMode == 'create') {
+        createTrigger();
+    } else if (triggerEditMode == 'update') {
+        updateTrigger();
     }
-})
+});
 
-// 修改触发器
-$(".update_btn").click(function () {
-    if ($("#triType2").val() == "interface") {
-        $.ajax({
-            url: common.getPath() + '/trigger/update',
-            type: 'POST',
-            dataType: 'text',
-            data: {
-                triTitle: $("#triTitle2").val(),
-                triDescription: $("#triDescription2").val(),
-                triType: $("#triType2").val(),
-                triWebbot: $("#triWebbotType2").val(),
-                triParam: $("#triParam2").val(),
-                triUid: $("#triUid").val()
-            },
-            success: function (result) {
-                layer.alert('修改成功', function (index) {
-                    window.location.href = common.getPath() + '/trigger/index'
-                    layer.close(index);
-                });
-            },
-            error: function (result) {
-                layer.alert("修改失败");
-            }
-        })
-    } else {
-        $.ajax({
-            url: common.getPath() + '/trigger/update',
-            type: 'POST',
-            dataType: 'text',
-            data: {
-                triTitle: $("#triTitle2").val(),
-                triDescription: $("#triDescription2").val(),
-                triType: $("#triType2").val(),
-                triWebbot: $("#triWebbot2").val(),
-                triParam: $("#triParam2").val(),
-                triUid: $("#triUid").val()
-            },
-            success: function (result) {
-                layer.alert('修改成功', function (index) {
-                    window.location.href = common.getPath() + '/trigger/index'
-                    layer.close(index);
-                });
-            },
-            error: function (result) {
-                layer.alert("修改失败");
-            }
-        })
-    }
-})
+
 
 // 字符转换
 function beautySub(str, len) {
@@ -709,6 +749,5 @@ var transferTrigger = {
             }
         });
     }
-
 };
 

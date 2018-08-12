@@ -34,14 +34,14 @@ public class DhTriggerController {
     
     @RequestMapping(value = "/delete")
     @ResponseBody
-    public void deleteTrigger(@RequestParam(value="triUid")String triUid) {
-    	dhTriggerService.deleteTrigger(triUid);
+    public ServerResponse deleteTrigger(@RequestParam(value="triUid")String triUid) {
+        return dhTriggerService.deleteTrigger(triUid);
     }
     
     @RequestMapping(value = "/save")
     @ResponseBody
-    public void saveTrigger(DhTrigger dhTrigger) {
-    	dhTriggerService.saveTrigger(dhTrigger);
+    public ServerResponse saveTrigger(DhTrigger dhTrigger) {
+    	return dhTriggerService.saveTrigger(dhTrigger);
     }
     
     @RequestMapping(value = "/serachByPrimarkey")
@@ -49,11 +49,15 @@ public class DhTriggerController {
     public ServerResponse serachByPrimarkey(@RequestParam(value = "triUid")String triUid) {
     	return  dhTriggerService.getTriggerByPrimarkey(triUid);
     }
-    
+
+    /**
+     * 更新触发器
+     * @param dhTrigger
+     * @return
+     */
     @RequestMapping(value = "/update")
     @ResponseBody
-    public void updateTrigger(DhTrigger dhTrigger) {
-    	dhTrigger.setUpdator(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
-    	dhTriggerService.updateTrigger(dhTrigger);
+    public ServerResponse updateTrigger(DhTrigger dhTrigger) {
+    	return dhTriggerService.updateTrigger(dhTrigger);
     }
 }

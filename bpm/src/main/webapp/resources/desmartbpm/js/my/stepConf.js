@@ -641,6 +641,7 @@ function addStep() {
 			url: common.getPath() + "/step/create",
 			type: "post",
 			dataType: "json",
+            async : false,
 			data: {
 				"proAppId": proAppId,
 				"proUid": proUid,
@@ -682,6 +683,7 @@ function addStep() {
 			url: common.getPath() + "/step/create",
 			type: "post",
 			dataType: "json",
+			async: false,
 			data: {
 				"proAppId": proAppId,
 				"proUid": proUid,
@@ -730,6 +732,7 @@ function updateStep() {
 		url: common.getPath() + "/step/updateStep",
 		type: "post",
 		dataType: "json",
+		async: false,
 		data: {
 			"stepUid": $('#eidtstepUid').val(),
 			"stepObjectUid": stepObjectUid
@@ -761,6 +764,7 @@ function updateTriggerStep() {
 		url: common.getPath() + "/step/updateStep",
 		type: "post",
 		dataType: "json",
+		async: false,
 		data: {
 			"stepUid": stepUid,
 			"stepObjectUid": stepObjectUid
@@ -787,6 +791,7 @@ function deleteStep(stepUid) {
 		url: common.getPath() + "/step/delete",
 		type: "post",
 		dataType: "json",
+		async: false,
 		data: {
 			"stepUid": stepUid
 		},
@@ -809,6 +814,7 @@ function resortStep(stepUid, resortType) {
 		url: common.getPath() + "/step/resortStep",
 		type: "post",
 		dataType: "json",
+		async: false,
 		data: {
 			"stepUid": stepUid,
 			"resortType": resortType
