@@ -25,14 +25,14 @@
 	rel="stylesheet">
 <link rel="stylesheet" href="resources/desmartportal/css/layui.css"
 	media="all">
-<link rel="stylesheet" href="resources/desmartportal/css/my.css" />
+<link rel="stylesheet" href="resources/desmartportal/css/my.css?v=1.01" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
 <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.02"></script>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+<script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.01"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/process.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/city.js"></script>
 <style type="text/css">
@@ -47,7 +47,7 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 10;
+	z-index: 1001;
 	background: rgba(255, 255, 255, 0.8);
 	width: 100%;
 	height: 100%;
@@ -58,7 +58,7 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 10;
+	z-index: 1001;
 	background: rgba(255, 255, 255, 0.8);
 	width: 100%;
 	height: 100%;
@@ -190,13 +190,13 @@
         </div>
         <div class="layui-row" style="margin-left: 40px; padding-right: 40px;">
             <div class="layui-col-md4 layui-form">
-            	<label class="layui-form-label" style="padding: 9px 0px;text-align:left;width:42px;">部门：</label>
-				<div class="layui-input-block" style="margin-left:42px;">
 					<c:choose>
 						<c:when test="${fn:length(userDepartmentList)==1}">
-							${userDepartmentList[0].departName} - ${userDepartmentList[0].sysCompany.companyName }
+							部门：${userDepartmentList[0].departName} - ${userDepartmentList[0].sysCompany.companyName }
 						</c:when>
 						<c:otherwise>
+						<label class="layui-form-label" style="padding: 9px 0px;text-align:left;width:11%">部门：</label>
+						<div class="layui-input-block" style="margin-left:11%;">
 							<select id="creatorInfo" lay-filter="creatorInfo">
 								<option value="">请选择部门</option>
 								<c:forEach items="${userDepartmentList}" var="item">
@@ -210,9 +210,9 @@
 									</c:choose>
 								</c:forEach>
 							</select>
+							</div>
 						</c:otherwise>
 					</c:choose>
-				</div>
             </div>
 			<div class="layui-col-md4">
 				流程编号：<span style="color: #1890ff;">${processInstance.proNo}</span>

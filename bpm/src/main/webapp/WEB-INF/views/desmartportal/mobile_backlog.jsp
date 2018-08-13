@@ -49,7 +49,7 @@
 					<li id="end_li">办结(<span id="banjie_icon">10</span>)</li>
 				</ul>
 				<div class="layui-tab-content">
-					<div class="layui-tab-item handle_table layui-show" id="backlog_ul">
+					<div class="layui-tab-item layui-show" id="backlog_ul">
 						<ul class="tab_ul" id="backlog_list">
 							<!-- <li>
 								<div class="backlog_top">

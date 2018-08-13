@@ -18,8 +18,6 @@
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 <!-- 审批信息js -->
 <script src="resources/desmartportal/js/my/mobile_approval_opinion.js"></script>
-<script type="text/javascript"
-	src="resources/desmartportal/js/common.js"></script>
 
 <style type="text/css">
 .container-fluid {
