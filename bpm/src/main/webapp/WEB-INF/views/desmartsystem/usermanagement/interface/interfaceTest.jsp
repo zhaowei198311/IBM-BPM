@@ -28,12 +28,10 @@
 			<c:forEach items="${dhInterfaceParameterList}" var="dhInterfaceParameter">
 				<div class="layui-form-item">
 			       <c:if test="${dhInterfaceParameter.paraType!='Array' &&empty dhInterfaceParameter.paraParent}">
-				    <label class="layui-form-label">${dhInterfaceParameter.paraDescription}</label>
+				    <label class="layui-form-label">${dhInterfaceParameter.paraDescription}(${dhInterfaceParameter.paraName})</label>
 				    <div class="layui-input-inline">
 				      <input name="${dhInterfaceParameter.paraName}"  maxlength="${dhInterfaceParameter.paraSize}"    autocomplete="off" class="layui-input  
-				       <c:if test="${dhInterfaceParameter.isMust=='true'}">
-				       		required
-				       </c:if>
+
 				        <c:if test="${dhInterfaceParameter.paraType=='Interger'}">
 				       		digits
 				       </c:if>
