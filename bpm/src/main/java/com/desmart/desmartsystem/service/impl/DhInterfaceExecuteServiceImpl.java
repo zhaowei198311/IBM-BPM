@@ -120,25 +120,31 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 					if (isMust.equals("true")) {
 						if (StringUtils.isBlank(value)) {
 							json.setSuccess(false);
-							json.setMsg(paraDescription + "不能为空");
+							json.setMsg(paraDescription + "(不能为空)");
 							return json;
 						} else {
 							Integer paraSize = dhInterfaceParameter.getParaSize();
 							if (paraSize < value.getBytes().length
 									&& paraType.equals(InterfaceParameterType.STRING.getCode())) {
 								json.setSuccess(false);
-								json.setMsg(paraDescription + "参数长度过长!");
+								json.setMsg(paraDescription + "(参数长度过长!)");
 								return json;
 							}
 						}
 					}
 					if (paraType.equals(InterfaceParameterType.DATE.getCode())) {
 						if (StringUtils.isNoneBlank(value)) {
-							Date  valueDate= DateUtil.strToDate(value, dateFmt);
-							String strDate = DateUtil.dateToStr(valueDate,dateFmt);
-							if (!DateFmtUtils.isValidDate(strDate, dateFmt)) {
+							try {
+								Date  valueDate= DateUtil.strToDate(value, dateFmt);
+								String strDate = DateUtil.dateToStr(valueDate,dateFmt);
+								if (!DateFmtUtils.isValidDate(strDate, dateFmt)) {
+									json.setSuccess(false);
+									json.setMsg(value + "(不是正确的日期格式！)");
+									return json;
+								}
+							} catch (Exception e) {
 								json.setSuccess(false);
-								json.setMsg(value + "不是正确的日期格式！");
+								json.setMsg(value + "(不是正确的日期格式！)");
 								return json;
 							}
 						}
@@ -150,7 +156,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 						if (StringUtils.isNoneBlank(value)) {
 							if (!StringUtils.isNumeric(value)) {
 								json.setSuccess(false);
-								json.setMsg(value + "不是正确的数字类型!");
+								json.setMsg(value + "(不是正确的数字类型!)");
 								return json;
 							}
 						}
@@ -160,7 +166,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 		}
 
 		// 接口类型
-		if (intType.equals(InterfaceType.RPC.getCode())) {
+		if (intType.equals(InterfaceType.RFC.getCode())) {
 			SAPConn.sapConfiguration(intUrl, intLoginUser, intLoginPwd);
 			JCoFunction function = null;
 			JCoDestination destination = SAPConn.connect();
