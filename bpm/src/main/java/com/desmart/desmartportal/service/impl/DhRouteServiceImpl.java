@@ -380,13 +380,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 		}
 	}
 
-//	public Set<BpmActivityMeta> getActualNextActivities(BpmActivityMeta sourceActivityMeta, JSONObject formData) {
-//        BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceActivityMeta, formData);
-//        threadBoolean.setFalse();
-//        return routingData.getNormalNodes();
-//    }
-
-
 	/**
 	 * 从表单中取出网关判断需要的参数
 	 * 
@@ -433,7 +426,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	/**
-	 * 从所有连线中过的默认连线
+	 * 从所有连线中找到默认连线
 	 * 
 	 * @param lineList
 	 * @return
@@ -492,6 +485,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.SECOND, -2);
 		Date nowDate = calendar.getTime(); // 记录的时间减去两秒
+		// 获得预测到的所有任务
         List<BpmActivityMeta> normalNodes = bpmRoutingData.getNormalNodes();
         for (BpmActivityMeta normalNode : normalNodes) {
             String loopType = normalNode.getLoopType();
@@ -723,8 +717,7 @@ public class DhRouteServiceImpl implements DhRouteService {
     }
 
 	@Override
-	public ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance,
-			BpmActivityMeta bpmActivityMeta) {
+	public ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta) {
 		// 查找流转到这个环节的流转记录，上个环节处理人为流转记录的生成人
 		List<DhRoutingRecord> preRoutingRecordList = dhRoutingRecordMapper
 				.listPreRoutingRecord(dhProcessInstance.getInsUid(), bpmActivityMeta.getActivityId());

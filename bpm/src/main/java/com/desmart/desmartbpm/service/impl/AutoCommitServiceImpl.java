@@ -126,12 +126,12 @@ public class AutoCommitServiceImpl implements AutoCommitService {
             throw new PlatformException("自动提交失败，缺少默认处理人");
         }
         // 保存流转记录
-        DhRoutingRecord routingRecord = dhRoutingRecordService.generateAutoCommitRoutingRecord(currTask,
+        DhRoutingRecord dhRoutingRecord = dhRoutingRecordService.generateAutoCommitRoutingRecord(currTask,
                 nextTaskNode, bpmGlobalConfig.getBpmAdminName());
-        dhRoutingRecordService.saveDhRoutingRecord(routingRecord);
+        dhRoutingRecordService.saveDhRoutingRecord(dhRoutingRecord);
         // 如果需要填写审批意见，保存审批意见
         if ("TRUE".equals(currTaskConf.getActcCanApprove())) {
-            dhApprovalOpinionService.saveDhApprovalOpinionWhenAutoCommit(currTask, bpmGlobalConfig.getBpmAdminName());
+            dhApprovalOpinionService.saveDhApprovalOpinionWhenAutoCommitUserTask(currTask, bpmGlobalConfig.getBpmAdminName());
         }
         // 改变当前任务状态
         dhTaskInstanceService.updateDhTaskInstanceWhenAutoCommit(currTask, originalUser);
@@ -141,7 +141,7 @@ public class AutoCommitServiceImpl implements AutoCommitService {
         CommonBusinessObjectUtils.setNextOwners(assignVariable, pubBo, DataListUtils.transformUserListToUserIdList(defaultTaskOwnerList));
 
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> commitTaskReturn = taskUtil.commitTaskWithOutUserInSession(currTask.getTaskId(), pubBo);
+        Map<String, HttpReturnStatus> commitTaskReturn = taskUtil.commitTask(currTask.getTaskId(), pubBo, null);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(commitTaskReturn);
         if (errorMap.get("errorResult") != null) {
             throw new PlatformException("自动提交失败, 调用RESTful API 完成任务失败");

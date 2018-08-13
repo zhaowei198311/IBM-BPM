@@ -1,19 +1,13 @@
 package com.desmart.desmartbpm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.*;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
-import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
 import com.desmart.desmartbpm.service.AutoCommitSystemTaskService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
-import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
-import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.*;
@@ -26,12 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,23 +35,9 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
-    private DhRouteService dhRouteService;
-    @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
-    @Autowired
-    private DhRoutingRecordService dhRoutingRecordService;
-    @Autowired
-    private DhStepService dhStepService;
-    @Autowired
-    private ThreadPoolProvideService threadPoolProvideService;
-    @Autowired
-    private DhRoutingRecordMapper dhRoutingRecordMapper;
-    @Autowired
-    private DhProcessInstanceService dhProcessInstanceService;
-    @Autowired
-    private MqProducerService mqProducerService;
     @Autowired
     private DhTaskInstanceService dhTaskInstanceService;
 
@@ -73,7 +50,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit(bpmGlobalConfig);
         for (DhTaskInstance taskInstance : taskList) {
             try {
-                this.submitSystemTask(taskInstance, bpmGlobalConfig);
+                dhTaskInstanceService.submitSystemTask(taskInstance, bpmGlobalConfig);
             } catch (Exception e) {
                 logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
             }
@@ -82,6 +59,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     }
 
     @Scheduled(cron = "55 * * * * ?")
+    @Override
     public void startAutoCommitSystemDelayTask() {
         logger.info("开始处理系统延时任务");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
@@ -97,110 +75,6 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         logger.info("处理系统延时任务完成");
     }
 
-
-    /**
-     * 完成系统任务
-     * @param currTask 任务实例
-     * @param bpmGlobalConfig 全局配置
-     */
-    @Transactional
-    public void submitSystemTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
-        BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
-        if (currTaskNode == null) {
-            throw new PlatformException("系统任务处理失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
-        }
-        DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
-        if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
-            throw new PlatformException("系统任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
-        }
-        if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
-                || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
-            throw new PlatformException("系统任务任务类型异常，不能处理循环任务，taskUid：" + currTask.getTaskUid());
-        }
-        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
-        int insId = dhProcessInstance.getInsId();
-        if (dhProcessInstance == null) {
-            throw new PlatformException("系统任务处理失败，流程实例不存在");
-        }
-        JSONObject formDataJson = FormDataUtil.getFormDataJsonFromProcessInstance(dhProcessInstance);
-        // 获得下个环节的信息
-        BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(currTaskNode, formDataJson);
-        CommonBusinessObject pubBo = new CommonBusinessObject(insId);
-        // 装配默认处理人
-        dhRouteService.assembleTaskOwnerForSystemTask(currTask, dhProcessInstance, pubBo, bpmRoutingData);
-        // 如果下个环节有循环任务（保存/更新）处理人信息
-        dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
-
-        // 更新网关决策条件
-        if (bpmRoutingData.getGatewayNodes().size() > 0) {
-            ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
-            if (!updateResponse.isSuccess()) {
-                throw new PlatformException("系统任务处理失败，更新网关决策表失败，taskUid：" + currTask.getTaskUid());
-            }
-        }
-
-        // 生成流转记录
-        DhRoutingRecord routingRecord = null;
-
-        // 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
-        if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
-            DhTaskInstance taskSelective = new DhTaskInstance();
-            taskSelective.setTaskUid(currTask.getTaskUid());
-            taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
-            taskSelective.setTaskFinishDate(new Date());
-            taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-            dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
-            routingRecord = dhRoutingRecordService.generateFirstTaskNodeOfSubProcessRoutingData(currTask, bpmRoutingData, dhProcessInstance.getInsInitUser());
-        } else {
-            routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
-                    currTask, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
-            // 如果只是普通的系统个任务，修改任务状态
-            dhTaskInstanceService.updateDhTaskInstanceWhenFinishTask(currTask, "{}");
-        }
-
-        // 获得步骤
-        List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
-        if (steps.isEmpty()) { // 如果没有配置步骤
-            //  调用api 完成任务
-            BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(currTask.getTaskId(), pubBo);
-            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-            if (errorMap.get("errorResult") == null) {
-                // 判断实际TOKEN是否移动了
-                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
-                if (didTokenMoveResponse.isSuccess()) {
-                    JSONObject processData = didTokenMoveResponse.getData();
-                    if (processData != null) {
-                        // 确认Token移动了, 插入流转记录
-                        dhRoutingRecordMapper.insert(routingRecord);
-                        // 关闭需要结束的流程
-                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, processData);
-                        // 创建需要创建的子流程
-                        dhProcessInstanceService.createSubProcessInstanceByRoutingData(dhProcessInstance, bpmRoutingData, pubBo, processData);
-                    } else {
-                        // 确认Token没有移动, 更新流转信息
-                        routingRecord.setActivityTo(null);
-                        dhRoutingRecordMapper.insert(routingRecord);
-                    }
-                } else {
-                    logger.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + currTask.getTaskUid());
-                    throw new PlatformException("判断TOKEN是否移动失败");
-                }
-            } else {
-                throw new PlatformException("调用RESTful API完成任务失败");
-            }
-        } else {
-            // 有步骤, MQ交互, 向队列发出消息
-            Map<String, Object> map = new HashMap<>();
-            map.put("currProcessInstance", dhProcessInstance);
-            map.put("currTaskInstance", currTask);
-            map.put("dhStep", steps.get(0));
-            map.put("pubBo", pubBo);
-            map.put("routingData", bpmRoutingData); // 预判的下个环节信息
-            map.put("routingRecord", routingRecord); // 流转记录
-            mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
-        }
-    }
 
     /**
      * 检查延时任务是否到了提交的时间点
@@ -224,15 +98,15 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
         if (DhActivityConf.DELAY_TYPE_NONE.equals(currTaskConf.getActcDelayType())) {
             // 提交系统任务
-            this.submitSystemTask(currTask, bpmGlobalConfig);
+            dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
         } else if (DhActivityConf.DELAY_TYPE_TIME.equals(currTaskConf.getActcDelayType())) {
             // 计算是否到达提交时间: 任务接收时间 + 延时时间 < 当前时间 即处理
-            if (checkTime(currTask, currTaskConf)) {
-                this.submitSystemTask(currTask, bpmGlobalConfig);
+            if (checkTimeByDelayTime(currTask, currTaskConf)) {
+                dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
             }
         } else if (DhActivityConf.DELAY_TYPE_FIELD.equals(currTaskConf.getActcDelayType())) {
-            if (checkTime(currTask, currTaskConf, dhProcessInstance)) {
-                this.submitSystemTask(currTask, bpmGlobalConfig);
+            if (checkTimeByField(currTaskConf, dhProcessInstance)) {
+                dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
             }
         } else {
             throw new PlatformException("系统延时任务处理失败，延时类型异常，taskUid：" + currTask.getTaskUid());
@@ -246,7 +120,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
      * @param activityConf  环节配置
      * @return
      */
-    private boolean checkTime(DhTaskInstance taskInstance, DhActivityConf activityConf) {
+    private boolean checkTimeByDelayTime(DhTaskInstance taskInstance, DhActivityConf activityConf) {
         Date receiveDate = taskInstance.getTaskInitDate();
         DateTime dateTime = new DateTime(receiveDate);
         if (DhActivityConf.TIME_UNIT_HOUR.equals(activityConf.getActcDelayTimeunit())) {
@@ -264,12 +138,11 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
     /**
      * 检查现在能否提交任务
-     * @param taskInstance
      * @param activityConf
      * @param dhProcessInstance
      * @return
      */
-    private boolean checkTime(DhTaskInstance taskInstance, DhActivityConf activityConf, DhProcessInstance dhProcessInstance) {
+    private boolean checkTimeByField(DhActivityConf activityConf, DhProcessInstance dhProcessInstance) {
         String actcDelayField = activityConf.getActcDelayField();
         if (StringUtils.isBlank(actcDelayField)) {
             throw new PlatformException("描述时间的字段解析失败，缺少该字段");

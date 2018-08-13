@@ -13,12 +13,6 @@ public interface AutoCommitSystemTaskService {
      */
     void startAutoCommitSystemTask();
 
-    /**
-     * 提交一个系统任务
-     * @param currTask
-     * @param bpmGlobalConfig
-     */
-    void submitSystemTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig);
 
     /**
      * 开始处理系统延时任务

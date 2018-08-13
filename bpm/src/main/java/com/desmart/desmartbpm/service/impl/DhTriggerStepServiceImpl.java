@@ -8,6 +8,7 @@ import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmTaskUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
+import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.dao.DhTriggerExceptionMapper;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTriggerException;
@@ -59,6 +60,8 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
     private DhRoutingRecordMapper dhRoutingRecordMapper;
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
+    @Autowired
+    private DhStepMapper dhStepMapper;
 
     @Transactional
     @Override
@@ -71,6 +74,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         BpmRoutingData routingData = null;
         DhRoutingRecord dhRoutingRecord = null;
         String msgBody = null;
+        String applyUser = null;
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
         //jsonObject转javaBean对象
         try {
@@ -83,6 +87,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
             JSONObject pubBoJson = json.getJSONObject("pubBo");// CommonBusinessObject
             JSONObject routingDataJson = json.getJSONObject("routingData");
             JSONObject routingRecordJson = json.getJSONObject("routingRecord");
+            applyUser = json.getString("applyUser");
             // josnObject -> JavaBean
             dhTaskInstance = JSONObject.toJavaObject(taskInstanceJson, DhTaskInstance.class);
             dhStep = JSONObject.toJavaObject(dhStepJson, DhStep.class);
@@ -133,7 +138,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
 
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(taskId, pubBo);
+        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, applyUser);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
         if (errorMap.get("errorResult") == null) {
             // 判断实际TOKEN是否移动了
@@ -186,20 +191,21 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         CommonBusinessObject pubBo = null;
         BpmRoutingData routingData = null;
         DhRoutingRecord dhRoutingRecord = null;
+        String applyUser = null;
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
         //jsonObject转javaBean对象
         try {
             JSONObject json = JSONObject.parseObject(msgBody);
             // String -> jsonObject  解析数据
             JSONObject taskInstanceJson = json.getJSONObject("currTaskInstance");
-            JSONObject dhStepJson = json.getJSONObject("dhStep");
             JSONObject processInstanceJson = json.getJSONObject("currProcessInstance");
             JSONObject pubBoJson = json.getJSONObject("pubBo");// CommonBusinessObject
             JSONObject routingDataJson = json.getJSONObject("routingData");
             JSONObject routingRecordJson = json.getJSONObject("routingRecord");
+            applyUser = json.getString("applyUser");
             // josnObject -> JavaBean
             dhTaskInstance = JSONObject.toJavaObject(taskInstanceJson, DhTaskInstance.class);
-            dhStep = JSONObject.toJavaObject(dhStepJson, DhStep.class);
+            dhStep = dhStepMapper.selectByPrimaryKey(triggerException.getStepId()); // 从错误的步骤开始
             dhProcessInstance = JSONObject.toJavaObject(processInstanceJson, DhProcessInstance.class);
             pubBo = JSONObject.toJavaObject(pubBoJson, CommonBusinessObject.class);
             // 复杂对象特别处理
@@ -214,6 +220,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         }
 
         // 调用触发器方法, 如果是触发器步骤执行，遇到表单步骤略过
+        boolean isTriggerExceptionStep = true; // 记录是记录开始的步骤
         DhStep step = dhStep;
         while (step != null) {
             if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
@@ -234,9 +241,14 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                     // 修改流程实例状态为异常
                     setProcessStatusError(dhTaskInstance.getInsUid());
                     return ServerResponse.createByErrorMessage("重试触发器失败");
+                } else {
+                    if (isTriggerExceptionStep) { // 如果完成了错误记录的步骤，则将记录状态更新
+                        setTriggerExceptionDone(triggerExceptionId);
+                    }
                 }
             }
             step = dhStepService.getNextStepOfCurrStep(step);
+            isTriggerExceptionStep = false;
         }
 
         //  调用api 完成任务
@@ -247,7 +259,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
 
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(bpmGlobalConfig);
-        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTaskWithOutUserInSession(taskId, pubBo);
+        Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, applyUser);
         Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
         if (errorMap.get("errorResult") == null) {
             // 判断实际TOKEN是否移动了
@@ -318,7 +330,16 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         }
     }
 
-
+    /**
+     * 将指定异常记录的状态设为完成
+     * @param id 异常记录的主键
+     */
+    private void setTriggerExceptionDone(String id) {
+        DhTriggerException exceptionSelective = new DhTriggerException();
+        exceptionSelective.setId(id);
+        exceptionSelective.setStatus(DhTriggerException.STATUS_DONE);
+        dhTriggerExceptionMapper.updateByPrimaryKeySelective(exceptionSelective);
+    }
 
 
 }

@@ -66,5 +66,5 @@ public interface DhApprovalOpinionService {
 	 * @param adminUid 管理员id
 	 * @return
 	 */
-	ServerResponse saveDhApprovalOpinionWhenAutoCommit(DhTaskInstance currTask, String adminUid);
+	ServerResponse saveDhApprovalOpinionWhenAutoCommitUserTask(DhTaskInstance currTask, String adminUid);
 }

@@ -1,14 +1,12 @@
 package com.desmart.desmartportal.service.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartportal.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
 import com.desmart.desmartportal.dao.DhApprovalOpinionMapper;
-import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhApprovalOpinion;
 import com.desmart.desmartportal.service.DhApprovalOpinionService;
 import com.desmart.desmartportal.util.DateUtil;
@@ -143,7 +140,7 @@ public class DhApprovalOpinionServiceImpl implements DhApprovalOpinionService {
 	}
 
 	@Override
-	public ServerResponse saveDhApprovalOpinionWhenAutoCommit(DhTaskInstance currTask, String adminUid) {
+	public ServerResponse saveDhApprovalOpinionWhenAutoCommitUserTask(DhTaskInstance currTask, String adminUid) {
 		DhApprovalOpinion dhApprovalOpinion = new DhApprovalOpinion();
 		dhApprovalOpinion.setAprOpiId(EntityIdPrefix.DH_APPROVAL_OPINION + UUIDTool.getUUID());
 		dhApprovalOpinion.setAprDate(Timestamp.valueOf(DateUtil.datetoString(new Date())));
