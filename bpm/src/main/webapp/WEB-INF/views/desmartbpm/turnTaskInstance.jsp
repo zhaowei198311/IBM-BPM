@@ -80,7 +80,7 @@
 								</div> -->
 								<div class="layui-col-xs2" >
 								<!-- <button class="layui-btn layui-btn-sm" onclick="search();">查询</button> -->
-								<button class="layui-btn layui-btn-sm" value="byBatch" onclick="showTurnTaskIns(this);">移交</button>
+								<button class="layui-btn layui-btn-sm" value="byBatch" onclick="checkTurnBatchTaskIns(this);">移交</button>
 								<button class="layui-btn layui-btn-sm" value="byAll" onclick="showTurnTaskIns(this);">移交全部</button>
 								</div>
 								

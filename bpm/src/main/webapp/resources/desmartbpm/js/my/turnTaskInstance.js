@@ -211,6 +211,16 @@ function trunOffTaskIns(){
 	trunOffTaskInsOperation.operation = operation;
 	trunOffTaskInsOperation.trunOffTaskIns();
 }
+//检查批量移交任务是否选中要移交的任务
+function checkTurnBatchTaskIns(obj){
+	var checkedNodes= $("input[type='checkbox'][name='checkTaskIns']:checked");
+	if(checkedNodes.length<=0){
+		layer.alert("请选择要移交的任务");
+		return;
+	}else{
+		showTurnTaskIns(obj);
+	}
+}
 //提交任务移交处理
 var trunOffTaskInsOperation = {
 		operation : "",

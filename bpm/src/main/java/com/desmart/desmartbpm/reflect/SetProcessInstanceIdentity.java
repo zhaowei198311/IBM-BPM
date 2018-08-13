@@ -12,6 +12,7 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 
 /**
  * 设置主流程范围内交互数据用的标识
+ * {"identity": "identity"}
  */
 public class SetProcessInstanceIdentity implements DhJavaClassTriggerTemplate {
 
