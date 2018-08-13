@@ -144,7 +144,7 @@ public interface DhTaskInstanceMapper {
 			@Param("isAgent")String isAgent);
 	
 	/**
-	 * 根据条件查询已办
+	 * 根据条件查询已办(带流程实例状态)
 	 * @param startTime
 	 * @param endTime
 	 * @param dhTaskInstance
@@ -157,7 +157,37 @@ public interface DhTaskInstanceMapper {
 			@Param("endTime")Date endTime,
 			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
 			@Param("isAgent")String isAgent);
+	
+	/**
+	 * 根据条件查询移动端已办
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	List<DhTaskInstance> selectPageTaskByClosedByConditionMove(
+			@Param("startTime")Date startTime,
+			@Param("endTime")Date endTime,
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
+			@Param("isAgent")String isAgent);
 
+	/**
+	 * 根据条件查询移动端办结
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	List<DhTaskInstance> selectPageTaskByEndByConditionMove(
+			@Param("startTime")Date startTime,
+			@Param("endTime")Date endTime,
+			@Param("dhTaskInstance")DhTaskInstance dhTaskInstance,
+			@Param("isAgent")String isAgent);
+	
 	/**
 	 * 根据用户查询已办数量
 	 * @param userId

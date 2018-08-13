@@ -1,339 +1,15 @@
-/*布局样式*/
-.mobile_container{
-    width:100%;
-    margin:auto;
+body{
+	color:#727272;
 }
-
-.mobile_top{
-    width: 100%;
-    height: 40px;
-    position: fixed;
-    top:0px;
-    border-bottom: 1px solid #ccc;
-	box-shadow: 0 0 3px #f2f2f2;
-	padding-bottom: 2px;
-	z-index: 10;
-	background: #2E3238;
-    color: #F2f2f2;
-}
-
-.top_left{
-	width:17%;
-	text-align:left;
-	float:left;
-	margin:6px 0 0 10px;
-}
-.top_content{
-	width:60%;
-	float:left;
-	text-align: center;
-	font-size: 16px;
-	margin-top:8px;
-}
-.top_right{
-	width:17%;
-	text-align:right;
-	float:right;
-	margin:6px 10px 0 0;
-}
-
-.mobile_middle{
-	margin-top:50px;
-	width:100%;
-}
-
-.mobile_bottom{
-	color: #A0A0A0;
-    width: 100%;
-    height: 40px;
-    position: fixed;
-    bottom:0px;
-    float:right;
-    border-top: 1px solid #ccc;
-    box-shadow: 0 0 3px #f2f2f2;
-    z-index: 10;
-    background: #fff;
-}
-/*下面按钮样式*/
-.mobile_menu{
-	height:100%;
-}
-.mobile_menu li{
-	list-style:none;
-	float:left;
-	text-align:center;
-	width:25%;
-	height:100%;
-	font-size: 14px;
-	border-left: 1px solid #f2f2f2;
-	margin: 0 -1px 0 0;
-	z-index: 0;
-}
-.mobile_menu li p{
-	font-size: 10px;
-}
-.mobile_menu li:hover{ 
-	border-left: 1px solid #f2f2f2; 
-	z-index: 1; 
-}
-
-/*中间内容部分样式*/
-.middle_content{
-	display: none;
-	height:auto;
-}
-#form_content_div{
-	display: block;
-}
-#record_div{
-	padding:3px 10px;
-}
-
-/*操作按钮部分*/
-#child_menu{
-	display: none;
-	background: #3A3F45;
-    padding: 5px;
-    width: 30%;
-    position: absolute;
-    right: 0px;
-    top: 100%;
-    color:#f2f2f2;
-}
-#child_menu dd{
-	text-align: center;
-	padding: 13px 0;
-    border-bottom: 1px solid #CCC;
-}
-#child_menu a{
-	color:#f2f2f2;
-}
-#child_menu a:hover{
-	color:#009688;
-}
-
-/*审批意见*/
-#myApprovalOpinion{
-	resize:none;
-	height:150px;
-}
-#fu_label{
-	width:50px;
-	margin-left:10px;
-	padding:9px 0px;
-}
-#frequently_used{
-	margin-left:70px;
-	margin-right:10px;
-	margin-top:3px;
-}
-#approve_record li{
-	text-align: left;
-}
-#approve_record li table{
-	width:90%;
-	margin:auto;
-	margin-top:10px;
-	margin-bottom:10px;
-}
-#approve_record li table th{
-	width:30%;
-	padding:5px 0px;
-}
-#approve_record li table td{
-	width:70%;
-	padding:5px 0px;
-}
-
-.handle_div{
-	width:100%;
-	margin-bottom:10px;
-	background: #FBFBFB;
-	padding:10px 0;
-	border: 1px solid #e6e6e6;
-}
-.handle_div table,.handle_div tbody{
-	width:100%;
-}
-.handle_div table th{
-	width:30%;
-	padding-left:10px;
-	padding-right:10px;
-}
-.handle_div table td{
-	width:80%;
-}
-.handle_table{
-	width:100%;
-}
-#countersign_table{
-	display: none;
-}
-#reject_table{
-	display: none;
-}
-#transfer_table{
-	display: none;
-}
-.approve_demand{
-	margin-left:10px;
-}
-
-/*同意处理*/
-.handle_table tr{
-	height:40px;
-}
-#transfer_table input,#reject_table input,#submit_table input{
-	width:85%;
-	float: left;
-}
-#transfer_table i{
-	float: left;
-	padding-top:3px;
-	padding-left:2px;
-}
-#submit_table .choose_user1{
-	float: left;
-	padding-top:10px;
-	padding-left:2px;
-}
-#countersign_table #countersign_person_view{
-	width:85%;
-	float: left;
-}
-#countersign_table .choose_countersign_person{
-	float: left;
-	padding-top:3px;
-	padding-left:2px;
-}
-#countersign_table #countersign_type{
-	width:85%;
-	height:28px;
-}
-#countersign_table select{
-	height:100%;
-}
-.layui-layer-page{
-	width:100%;
-	left:0px;
-}
-/*驳回*/
-
-/*选人*/
-#choose_user_div{
-	display: none;
-}
-.choose_head{
-	border-bottom: 1px solid #f2f2f2;
-	height:40px;
-	margin:5px 0 0 0;
-	padding-bottom:3px;
-}
-.search_div{
-	float: left;
-	width: 70%;
-	margin-left:10px;
-}
-.sure_div{
-	float: right;
-	width: 20%;
-	text-align: center;
-}
-.choose_body{
-	display:none;
-	height:245px;
-	overflow-y:auto;
-}
-.choose_body table{
-	width:90%;
-	margin:auto;
-}
-.choose_body tr{
-	height:35px;
-	border-bottom:1px solid #f2f2f2;
-}
-.choose_body td{
-	text-align: center;
-}
-.choose_second_th{
-	width:50%;
-}
-.choose_three_th{
-	width:50%;
-}
-
-.choose_user_name_ul{
-	width:85%;
-	float: left;
-	min-height: 30px;
-}
-.choose_user_name_ul li{
-	list-style:none;
-	float:left;
-	text-align:center;
-	height:100%;
-	font-size: 14px;
-	margin:10px -5px 0px 0px;
-}
-.choose_user_name_span{
-	padding:5px 2px;
-	border-radius:2px;
-	border: 1px solid #CCC;
-	float: left;
-    width: 80px;
-}
-.delete_choose_user{
-	position: relative;
-	top:-10px;
-	right:10px;
-	font-size: 23px;
-}
-/*流转记录*/
-.tab_ul li{
-	width:99%;
-}
-
-/*表单内容*/
-.layui-table .list_title{
-	font-size: 14px;
-}
-#formTitle{
-	padding-bottom:0px;padding-top:5px;border-bottom:0px;
-}
-#formNum{
-	padding-top:0px;padding-bottom:3px;border-top:0px;
-}
-input[disabled], .layui-select-disabled .layui-disabled {
-    border-width: 0px;
-    background: #fbfbfb;
-}
-.mobile_container .layui-table td {
-    padding: 5px 10px;
-}
-.mobile_container .layui-table{
-	background: #fbfbfb;
-}
-.layui-input, .layui-select, .layui-textarea{
-	height:30px;
-}
-.layui-form-select dl dd, .layui-form-select dl dt{
-	line-height:33px;
-}
-
-/*表单中选择人员、部门以及数据字典数据的样式*/
-.choose_head{
-	display:none;
-}
-
 /*回到顶部的css*/
 .layui-fixbar {
     position: fixed;
-    right: 4px;
-    bottom: 45px;
+    right: 12px;
+    bottom: 12px;
     z-index: 9999;
 }
 .layui-fixbar .layui-fixbar-top {
-    font-size: 30px;
+    font-size: 40px;
     border-radius: 50%;
 }
 .layui-fixbar li {
@@ -347,53 +23,48 @@ input[disabled], .layui-select-disabled .layui-disabled {
     background-color: #9F9F9F;
     color: #fff;
     border-radius: 2px;
-    opacity: .95;
+    opacity: .80;
 }
 
-/*上传附件*/
-#loadFile_div li{
-	text-align: left;
+/*tab切换页的样式*/
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
+	border-color: #EF6301;
 }
-#loadFile_div li table {
-    width: 90%;
-    margin: auto;
+.layui-tab-brief>.layui-tab-title .layui-this {
+    color: #EF6301;
 }
-#loadFile_div th{
-	width:30%;
-    padding: 5px 0px;
+.layui-tab-title li{
+	width:33%;
 }
-#loadFile_div td{
-	width:70%;
-    padding: 5px 0px;
+.layui-tab-title {
+    background: #fff;
 }
 
-/*行详情*/
-#table_tr_container{
-	display:none;
-    margin-top: 50px;
+/*ul列表样式*/
+.tab_ul li{
+    background: #fff;
+    padding:10px;
+    margin-bottom:10px;
 }
-#tr_con_top{
-	width: 100%;
-    height: 40px;
-    position: fixed;
-    top: 0px;
-    border-bottom: 1px solid #ccc;
-    box-shadow: 0 0 3px #f2f2f2;
-    padding-bottom: 2px;
-    z-index: 10;
-    background: #2E3238;
-    color: #F2f2f2;
+.layui-tab-content {
+    padding: 10px 0;
 }
-#tr_top_left{
-    width: 17%;
-    text-align: left;
-    float: left;
-    margin: 6px;
+
+/*输入框中占位符的样式*/
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+color: #CCCCCC; 
 }
-#tr_top_right{
-    width: 60%;
-    float: left;
-    text-align: center;
-    font-size: 16px;
-    margin-top: 8px;
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+color: #CCCCCC;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+color: #CCCCCC;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+color: #CCCCCC;
 }

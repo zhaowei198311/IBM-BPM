@@ -74,6 +74,8 @@ public class MenusController {
 	@RequestMapping("/backlog")
 	public ModelAndView backlog() {
 		ModelAndView mv = new ModelAndView();
+		//取回过期的代理任务
+		dhTaskInstanceService.revokeAgentOutTask();
 		boolean isMobile = RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"));
 		if(isMobile) {
 			// 移动端普通的待办任务

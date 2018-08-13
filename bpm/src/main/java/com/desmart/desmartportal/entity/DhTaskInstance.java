@@ -1,6 +1,7 @@
 package com.desmart.desmartportal.entity;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.desmart.desmartsystem.entity.SysUser;
 
@@ -173,6 +174,8 @@ public class DhTaskInstance {
 	private String taskHandler;
 	//任务代理人姓名
 	private String taskAgentUserName;
+	//进度条参数 key--hour,percent,taskUid
+	private Map<String,Object> progerssParamMap;
 
 	/**
 	 * @return the taskUid
@@ -517,5 +520,12 @@ public class DhTaskInstance {
 	public void setTimeoutNotifyCount(Integer timeoutNotifyCount) {
 		this.timeoutNotifyCount = timeoutNotifyCount;
 	}
-	
+
+	public Map<String, Object> getProgerssParamMap() {
+		return progerssParamMap;
+	}
+
+	public void setProgerssParamMap(Map<String, Object> progerssParamMap) {
+		this.progerssParamMap = progerssParamMap;
+	}
 }

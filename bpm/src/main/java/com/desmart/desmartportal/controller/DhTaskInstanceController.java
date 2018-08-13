@@ -166,6 +166,19 @@ public class DhTaskInstanceController {
 		return dhTaskInstanceService.finishAdd(taskUid, activityId, approvalContent);
 	}
 	
+	/**
+	 * 初始化PC端待办列表
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param createProcessUserName
+	 * @param proName
+	 * @param isAgent
+	 * @return
+	 */
 	@RequestMapping("/loadBackLog")
 	@ResponseBody
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadBackLog(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
@@ -191,6 +204,57 @@ public class DhTaskInstanceController {
 				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
 	}
 	
+	/**
+	 * 初始化移动端待办列表
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param createProcessUserName
+	 * @param proName
+	 * @param isAgent
+	 * @return
+	 */
+	@RequestMapping("/loadBackLogMove")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadBackLogMove(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
+			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
+			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
+			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
+			,@RequestParam("proName")String proName,@RequestParam("isAgent")String isAgent) {
+		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhTaskInstance.setUsrUid(currentUserUid);
+        if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
+        	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        	dhProcessInstance.setInsTitle(insTitle);
+        	dhProcessInstance.setProName(proName);
+        	dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        }
+        if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        	SysUser sysUser = new SysUser();
+        	sysUser.setUserName(createProcessUserName);
+        	dhTaskInstance.setSysUser(sysUser);
+        }
+		return dhTaskInstanceService.selectBackLogTaskInfoByConditionMove(startTime
+				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+	}
+	
+	/**
+	 * 查询已办列表的数据
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param createProcessUserName
+	 * @param proName
+	 * @param isAgent
+	 * @return
+	 */
 	@RequestMapping("/loadPageTaskByClosed")
 	@ResponseBody
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosed(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
@@ -214,6 +278,92 @@ public class DhTaskInstanceController {
         }
         try{
         	return dhTaskInstanceService.loadPageTaskByClosedByCondition(startTime
+    				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+        }catch(Exception e){
+        	LOG.error("渲染任务列表失败", e);
+        	return ServerResponse.createByErrorMessage(e.getMessage());
+        }
+	}
+	
+	/**
+	 * 查询移动端已办列表的数据
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param createProcessUserName
+	 * @param proName
+	 * @param isAgent
+	 * @return
+	 */
+	@RequestMapping("/loadPageTaskByClosedMove")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedMove(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
+			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
+			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
+			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
+			,@RequestParam("proName")String proName,@RequestParam("isAgent")String isAgent) {
+		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhTaskInstance.setUsrUid(currentUserUid);
+        if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
+        	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        	dhProcessInstance.setInsTitle(insTitle);
+        	dhProcessInstance.setProName(proName);
+        	dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        }
+        if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        	SysUser sysUser = new SysUser();
+        	sysUser.setUserName(createProcessUserName);
+        	dhTaskInstance.setSysUser(sysUser);
+        }
+        try{
+        	return dhTaskInstanceService.loadPageTaskByClosedByConditionMove(startTime
+    				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
+        }catch(Exception e){
+        	LOG.error("渲染任务列表失败", e);
+        	return ServerResponse.createByErrorMessage(e.getMessage());
+        }
+	}
+	
+	/**
+	 * 查询移动端办结列表的数据
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param insTitle
+	 * @param createProcessUserName
+	 * @param proName
+	 * @param isAgent
+	 * @return
+	 */
+	@RequestMapping("/loadPageTaskByEndMove")
+	@ResponseBody
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByEndMove(@DateTimeFormat(pattern ="yyyy-MM-dd")Date startTime
+			, @DateTimeFormat(pattern ="yyyy-MM-dd")Date endTime,
+			DhTaskInstance dhTaskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum
+			,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+			,@RequestParam("insTitle")String insTitle,@RequestParam("createProcessUserName")String createProcessUserName
+			,@RequestParam("proName")String proName,@RequestParam("isAgent")String isAgent) {
+		String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+        dhTaskInstance.setUsrUid(currentUserUid);
+        if((insTitle!=null && !"".equals(insTitle))||(proName!=null&& !"".equals(proName))) {
+        	DhProcessInstance dhProcessInstance = new DhProcessInstance();
+        	dhProcessInstance.setInsTitle(insTitle);
+        	dhProcessInstance.setProName(proName);
+        	dhTaskInstance.setDhProcessInstance(dhProcessInstance);
+        }
+        if(createProcessUserName!=null && !"".equals(createProcessUserName)) {
+        	SysUser sysUser = new SysUser();
+        	sysUser.setUserName(createProcessUserName);
+        	dhTaskInstance.setSysUser(sysUser);
+        }
+        try{
+        	return dhTaskInstanceService.loadPageTaskByEndByConditionMove(startTime
     				, endTime, dhTaskInstance, pageNum, pageSize, isAgent);
         }catch(Exception e){
         	LOG.error("渲染任务列表失败", e);

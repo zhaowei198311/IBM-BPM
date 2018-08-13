@@ -695,7 +695,6 @@ var common = {
 					$("[name='"+name+"']").parent().parent().parent().next().css("display","none");
 					continue;
 				}else if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
-					console.log(1);
 					$("[name='"+name+"']").parent().parent().parent().css("display","none");
 					$("[name='"+name+"']").parent().parent().parent().prev().css("display","none");
 					return;
@@ -732,7 +731,6 @@ var common = {
 			return;
 		}
 		if(tagName=="SELECT"){
-			console.log($("[name='"+name+"']").attr("is-multi"));
 			$("[name='"+name+"']").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");

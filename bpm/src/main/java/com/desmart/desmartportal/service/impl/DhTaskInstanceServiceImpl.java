@@ -694,9 +694,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		log.info("根据任务实例查询任务数据和流程数据 END......");
 		return null;
 	}
-
+	
 	@Override
-	public ServerResponse<?> queryProgressBar(String activityId, String taskUid) {
+	public ServerResponse<Map<String,Object>> queryProgressBar(String activityId, String taskUid) {
 		// 创建时间
 		Date createDate = new Date();
 		// 时间个数
@@ -1061,11 +1061,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	}
 	
 	@Override
-	@Transactional
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByCondition(Date startTime, Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String isAgent) {
-		//取回过期的代理任务
-		revokeAgentOutTask();
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_INIT_DATE DESC");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance, isAgent);
@@ -1076,6 +1073,24 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			if(null!=resultTaskInstance.getTaskDelegateUser() && !"".equals(resultTaskInstance.getTaskDelegateUser())) {
 				String taskAgentUserName = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getTaskDelegateUser()).getUserName();
 				resultTaskInstance.setTaskAgentUserName(taskAgentUserName);
+			}
+		}
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+	
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByConditionMove(Date startTime, Date endTime,
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize,String isAgent) {
+		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("TASK_INIT_DATE DESC");
+		//分页查询待办列表
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectBackLogTaskInfoByCondition(startTime, endTime, dhTaskInstance, isAgent);
+		for(DhTaskInstance resultTaskInstance:resultList) {
+			if(resultTaskInstance.getTaskType().equals("normal")) {
+				Map<String,Object> progressMap = queryProgressBar(resultTaskInstance.getTaskActivityId()
+						,resultTaskInstance.getTaskUid()).getData();
+				resultTaskInstance.setProgerssParamMap(progressMap);
 			}
 		}
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
@@ -1101,11 +1116,35 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 		return ServerResponse.createBySuccess(pageInfo);
 	}
+	
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByConditionMove(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize, String isAgent) {
+		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("TASK_FINISH_DATE DESC");
+		dhTaskInstance.setTaskStatus("'32'");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByConditionMove(startTime, endTime, dhTaskInstance, isAgent);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+	
+	@Override
+	public ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByEndByConditionMove(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize, String isAgent) {
+		PageHelper.startPage(pageNum, pageSize);
+		PageHelper.orderBy("TASK_FINISH_DATE DESC");
+		dhTaskInstance.setTaskStatus("'32'");
+		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByEndByConditionMove(startTime, endTime, dhTaskInstance, isAgent);
+		PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
 
 	/**
 	 * 取回代理任务
 	 */
-	private void revokeAgentOutTask() {
+	@Transactional
+	@Override
+	public ServerResponse revokeAgentOutTask() {
 		//获得当前用户id
 		String currentUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		//根据当前用户id获得当前用户的代理信息(代理和被代理)
@@ -1121,11 +1160,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				throw new PlatformException("取回过期代理任务失败");
 			}
 		}
+		return ServerResponse.createBySuccess();
 	}
 
 	@Override
 	public Integer alreadyClosedTaskByusrUid(String userId) {
-		// TODO Auto-generated method stub
 		return dhTaskInstanceMapper.alreadyClosedTaskByusrUid(userId);
 	}
 

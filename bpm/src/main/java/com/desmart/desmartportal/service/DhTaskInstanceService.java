@@ -170,6 +170,30 @@ public interface DhTaskInstanceService {
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByCondition(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
 			Integer pageNum, Integer pageSize,String isAgent);
+	
+	/**
+	 * 根据条件查询移动端已办
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByClosedByConditionMove(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize,String isAgent);
+	
+	/**
+	 * 根据条件查询移动端办结
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> loadPageTaskByEndByConditionMove(Date startTime, Date endTime, DhTaskInstance dhTaskInstance,
+			Integer pageNum, Integer pageSize,String isAgent);
 
 	/**
 	 * 根据用户查询已办数量
@@ -289,4 +313,23 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	int updateDhTaskInstanceWhenAutoCommit(DhTaskInstance dhTaskInstance, String originalUser);
+
+	/**
+	 * 取回过期的代理任务
+	 * @return
+	 */
+	ServerResponse revokeAgentOutTask();
+
+	/**
+	 * 查询移动端代办列表
+	 * @param startTime
+	 * @param endTime
+	 * @param dhTaskInstance
+	 * @param pageNum
+	 * @param pageSize
+	 * @param isAgent
+	 * @return
+	 */
+	ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByConditionMove(Date startTime, Date endTime,
+			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize, String isAgent);
 }
