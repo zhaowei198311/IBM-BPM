@@ -240,10 +240,15 @@ function showDateModal(obj) {
     $("#date-label").val(label);
     $("#date-name").val(name);
     $("#date-id").val(id);
-    if(dateType=="true"){
-    	$("#date-type").prop("checked",true);
-    }else{
-    	$("#date-type").prop("checked",false);
+    if(dateType=="date"){
+    	$("#date-type-date").prop("checked",true);
+    	$("#date-type-time").prop("checked",false);
+    }else if(dateType=="time"){
+    	$("#date-type-date").prop("checked",false);
+    	$("#date-type-time").prop("checked",true);
+    }else if(dateType=="datetime"){
+    	$("#date-type-date").prop("checked",true);
+    	$("#date-type-time").prop("checked",true);
     }
     $("#date-place").val(place);
     $("#date-width").val(textCol);
@@ -1357,7 +1362,16 @@ $(function () {
             var defaultVal = $("#date-default-value").val();
             var place = $("#date-place").val();
             var isMust = $("#date-must").is(':checked');
-            var dateType = $("#date-type").prop("checked");
+            var dateType = "";
+            if($(".date-type:checked").length==2){
+            	dateType = "datetime";
+            }else if($(".date-type:checked").length==1){
+            	if($(".date-type:checked").prop("id")=="date-type-date"){
+            		dateType = "date";
+            	}else if($(".date-type:checked").prop("id")=="date-type-time"){
+            		dateType = "time";
+            	}
+            }
 
             var textWidth = $("#date-width").val() * colWidth;
             var textLabelWidth = $("#date-label-width").val() * colWidth;

@@ -224,8 +224,10 @@ var common = {
 				$(this)[0].type = "text";
 				var isDatetime = $(this).attr("date_type");
 				var dateType = "date";
-				if(isDatetime=="true"){
+				if(isDatetime=="datetime"){
 					dateType = "datetime";
+				}else if(isDatetime=="time"){
+					dateType = "time";
 				}
 				var dateInputId = $(this).prop("id");
 				// 日期

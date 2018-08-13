@@ -110,6 +110,8 @@
 <script type="text/javascript" src="<%=basePath%>/resources/desmartportal/formDesign/js/my.js?v=1.01"></script>
 <script type="text/javascript">
 	$(function(){
+		common.initTime();
+		
 		$("#formSet").find("select").each(function(){
 			var id = $(this).prop("id");
 			if($(this).attr("is-multi")=="true"){
