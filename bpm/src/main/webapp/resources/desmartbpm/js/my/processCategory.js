@@ -697,7 +697,7 @@ function doPage() {
 // 获取公开的流程数据
 function getExposedInfo() {
     $.ajax({
-        url: common.getPath() + "/processMeta/getExposedProcess",
+        url: common.getPath() + "/processMeta/getUnSynchronizedProcessMeta",
         type: "post",
         dataType: "json",
         data: {
@@ -732,15 +732,32 @@ function drawExposedTable(pageInfo) {
     for(var i=0; i<list.length; i++) {
         var item = list[i];
         var sortNum = startSort + i;
+        var bpdName = item.bpdName.length > 10 ? item.bpdName.substring(0, 10) + '...' : item.bpdName;
+        var proAppName = item.proAppName.length > 10 ? item.proAppName.substring(0, 10) + '...' : item.proAppName;
         trs += '<tr>'
-            + '<td><input type="checkbox" name="unbindMeta_checkbox"  lay-skin="primary" data-processAppId="'+item.processAppId+'" data-bpdId="'+item.bpdId+'">'+sortNum+'</td>'
-            + '<td>'+item.display+'</td>'
-            + '<td>'+item.processAppName+'</td>'
-            + '<td>'+item.processAppAcronym+'</td>'
-            +  '</tr>';
+            + '<td><input type="checkbox" name="unbindMeta_checkbox"  lay-skin="primary" data-processAppId="'+item.proAppId+'" data-bpdId="'+item.bpdId+'">'+sortNum+'</td>'
+            + '<td title="' + item.bpdName + '">' + bpdName + '</td>'
+            + '<td title="' + item.proAppName + '">' + proAppName + '</td>'
+            + '<td>'+item.bpdId+'</td>'
+            + '</tr>';
     }
     $("#exposed_table_tbody").html(trs);
 }
+
+// 点击tr排他选中checkbox
+$('#unsynProMetaTable').on('click', 'tr', function(event) {
+    var $ck = $(this).find(':checkbox');
+    var checked = $ck.prop('checked');
+    if (event.target.type == 'checkbox') {
+        checked = !checked;
+    }
+    if (checked) {
+        $ck.prop('checked', false);
+    } else {
+        $('#unsynProMetaTable :checkbox').prop('checked', false);
+        $ck.prop('checked', true);
+    }
+});
 
 // 分页
 function doPage2() {

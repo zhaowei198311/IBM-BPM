@@ -819,7 +819,11 @@ function resortStep(stepUid, resortType) {
 			"stepUid": stepUid,
 			"resortType": resortType
 		},
+		beforeSend: function(){
+			layer.load(1);
+		},
 		success: function (result) {
+			layer.closeAll('loading');
 			if (result.status == 0) {
 				loadActivityConf(getCurrentActcUid());
 			} else {
@@ -827,7 +831,8 @@ function resortStep(stepUid, resortType) {
 			}
 		},
 		error: function () {
-			layer.alert('操作失败');
+            layer.closeAll('loading');
+			layer.alert('操作失败，请稍后再试');
 		}
 	});
 }

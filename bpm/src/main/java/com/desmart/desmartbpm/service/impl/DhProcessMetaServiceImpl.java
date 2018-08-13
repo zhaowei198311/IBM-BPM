@@ -1,19 +1,17 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import com.desmart.common.exception.PlatformException;
+import com.desmart.desmartbpm.dao.*;
+import com.desmart.desmartbpm.service.BpmExposedItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.EntityIdPrefix;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
-import com.desmart.desmartbpm.dao.DatRuleConditionMapper;
-import com.desmart.desmartbpm.dao.DatRuleMapper;
-import com.desmart.desmartbpm.dao.DhActivityAssignMapper;
-import com.desmart.desmartbpm.dao.DhActivityConfMapper;
-import com.desmart.desmartbpm.dao.DhActivityRejectMapper;
-import com.desmart.desmartbpm.dao.DhGatewayLineMapper;
-import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
-import com.desmart.desmartbpm.dao.DhProcessCategoryMapper;
-import com.desmart.desmartbpm.dao.DhProcessDefinitionMapper;
-import com.desmart.desmartbpm.dao.DhProcessMetaMapper;
-import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhGatewayLine;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
@@ -46,9 +31,6 @@ import com.desmart.desmartbpm.entity.DhStep;
 
 import com.desmart.desmartbpm.service.BpmFormManageService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
-import com.desmart.desmartbpm.util.http.BpmClientUtils;
-import com.desmart.desmartbpm.util.rest.RestUtil;
-import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -85,166 +67,24 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     private DatRuleMapper datRuleMapper;
     @Autowired
     private DatRuleConditionMapper datRuleConditionMapper;
-    
-    public ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize) {
-        pageNum = pageNum == null ? 0 : (pageNum < 0 ? 0 : pageNum - 1);
-        pageSize = pageSize == null ? 0 : Math.abs(pageSize);
-        
-        BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
-        String url = bpmcfg.getBpmServerHost() + "rest/bpm/wle/v1/exposed/process";
-        
-        RestUtil restUtil = new RestUtil(bpmcfg);
-        HttpReturnStatus procStatus = restUtil.doGet(url, new HashMap<String, Object>());
-        restUtil.close();
-        
-        Map<String, Object> results = new HashMap<>();
-        List<Map<String, Object>> exposeItemList = new ArrayList<>();
-        int total = 0;
-        if (!BpmClientUtils.isErrorResult(procStatus)) {
-            JSONObject jsoMsg = new JSONObject(procStatus.getMsg());
-            JSONObject jsoData = jsoMsg.getJSONObject("data");
-            JSONArray jayExpoItems = jsoData.optJSONArray("exposedItemsList");
-            if (jayExpoItems != null) {
-                total = jayExpoItems.length();
-                int startRow = pageNum * pageSize;
-                Set<String> keyset = new HashSet<>();
-
-                for(int i = 0; i < jayExpoItems.length(); ++i) {
-                    if (i >= startRow) {
-                        JSONObject jsoItem = jayExpoItems.getJSONObject(i);
-                        Map<String, Object> itemData = new HashMap<>();
-                        String procAppId = jsoItem.optString("processAppID", "");
-                        if (StringUtils.isNotBlank(procAppId) && !keyset.contains(procAppId)) {
-                            itemData.put("procAppName", jsoItem.optString("processAppName", ""));
-                            itemData.put("procAppId", procAppId);
-                            itemData.put("bpdName", jsoItem.optString("display", ""));
-                            itemData.put("bpdId", jsoItem.optString("itemID", ""));
-                            itemData.put("snapshotId", jsoItem.optString("snapshotID", ""));
-                            itemData.put("snapshotCreated", jsoItem.optString("snapshotCreatedOn", ""));
-                            itemData.put("branchId", jsoItem.optString("branchID", ""));
-                            exposeItemList.add(itemData);
-                            keyset.add(procAppId);
-                        }
-                    }
-
-                    if (exposeItemList.size() >= pageSize) {
-                        break;
-                    }
-                }
-            }
-        }
-        results.put("total", total);
-        results.put("processList", exposeItemList);
-        return ServerResponse.createBySuccess(results);
-    }
+    @Autowired
+    private BpmExposedItemMapper bpmExposedItemMapper;
 
     
-    public ServerResponse getExposedProcess(Integer pageNum, Integer pageSize, String processAppName, 
-            String processAppAcronym, String display) {
-        pageNum = pageNum == null ? 0 : (pageNum < 0 ? 0 : pageNum - 1);
-        pageSize = pageSize == null ? 0 : Math.abs(pageSize);
-        
-        // 获取所有公开的流程 
-        BpmGlobalConfig bpmcfg = bpmGlobalConfigService.getFirstActConfig();
-        String url = bpmcfg.getBpmServerHost() + "rest/bpm/wle/v1/exposed/process";
-        RestUtil restUtil = new RestUtil(bpmcfg);
-        HttpReturnStatus procStatus = restUtil.doGet(url, new HashMap<String, Object>());
-        restUtil.close();
-        
-        // 满足条件的结果
-        List<Map<String, Object>> exposeItemList = new ArrayList<>();
-        Set<String> checkedItems = new HashSet<>(); // 已经检查的数据 snapshotId+bpdId
-        int total = 0;
-        
-        
-        if (!BpmClientUtils.isErrorResult(procStatus)) {
-            JSONObject jsoMsg = new JSONObject(procStatus.getMsg());
-            JSONObject jsoData = jsoMsg.getJSONObject("data");
-            JSONArray jayExpoItems = jsoData.optJSONArray("exposedItemsList");
-            if (jayExpoItems != null) {
-                // step1: 过滤掉重复的和不符合检索条件的流程
-                for(int i = 0; i < jayExpoItems.length(); ++i) {
-                    JSONObject jsoItem = jayExpoItems.getJSONObject(i);
-                    String procAppID = jsoItem.optString("processAppID", "");
-                    String itemID = jsoItem.optString("itemID", "");
-                    String identify = procAppID + itemID;
-                    if (checkedItems.contains(identify)) {// 检查过此种流程跳过
-                        continue;
-                    }
-                    String procAppName = jsoItem.optString("processAppName", "");
-                    String procAppAcronym = jsoItem.optString("processAppAcronym", "");
-                    String procDisplay = jsoItem.optString("display", "");
-                    
-                    if (StringUtils.isNotBlank(processAppName)) {
-                        // 检查应用名是否符合检索条件,不符合要求continue
-                        if (!StringUtils.containsIgnoreCase(procAppName, processAppName)) {
-                            checkedItems.add(identify);
-                            continue;
-                        }
-                    }
-                    
-                    if (StringUtils.isNotBlank(processAppAcronym)) {
-                        // 检查应用缩略名是否符合检索条件
-                        if (!StringUtils.containsIgnoreCase(procAppAcronym, processAppAcronym)) {
-                            checkedItems.add(identify);
-                            continue;
-                        }
-                    }
-                    
-                    if (StringUtils.isNotBlank(display)) {
-                        // 检查流程名是否符合检索条件
-                        if (!StringUtils.containsIgnoreCase(procDisplay, display)) {
-                            checkedItems.add(identify);
-                            continue;
-                        }
-                    }
-                    
-                    Map<String, Object> itemData = new HashMap<>();
-                    itemData.put("identify", identify);
-                    itemData.put("processAppId", procAppID);
-                    itemData.put("bpdId", itemID);
-                    itemData.put("processAppName", procAppName);
-                    itemData.put("processAppAcronym", procAppAcronym);
-                    itemData.put("display", procDisplay);
-                    exposeItemList.add(itemData);
-                    checkedItems.add(identify);
-                }
-                
-            } else {
-                return ServerResponse.createByErrorMessage("获取公开的流程失败");
-            }
+    public ServerResponse getUnSynchronizedProcessMeta(Integer pageNum, Integer pageSize, String processAppName,
+                                                       String processAppAcronym, String display) {
+        List<Map<String, String>> maps = bpmExposedItemMapper.listUnSynchronizedProcessMeta();
+        PageInfo<BpmExposedItem> pageInfo = null;
+        if (maps.isEmpty()) {
+            pageInfo = new PageInfo<>(new ArrayList());
+            pageInfo.setPageNum(1);
+            pageInfo.setPageSize(pageSize);
+            pageInfo.setTotal(0);
         } else {
-            return ServerResponse.createByErrorMessage("获取公开的流程失败");
+            PageHelper.startPage(pageNum, pageSize);
+            List<BpmExposedItem> exposedItems = bpmExposedItemMapper.listByProAppIdAndBpdId(maps);
+            pageInfo = new PageInfo(exposedItems);
         }
-        // step2: 检查其中没有绑定的元数据，并分页返回
-        
-        Set<String> identifyListInDB = getBindedProcessMetaIdentify();
-        Iterator<Map<String, Object>> iterator = exposeItemList.iterator();
-        while (iterator.hasNext()) {
-            Map<String, Object> item = iterator.next();
-            if (identifyListInDB.contains((String)item.get("identify"))) {
-                iterator.remove();
-            }
-        }
-        
-        total = exposeItemList.size();
-        List<Map<String, Object>> itemToShow = new ArrayList<>();
-        int startRow = pageNum * pageSize;
-        for (int i=0; i<exposeItemList.size(); i++) {
-            if (i >= startRow) {
-                itemToShow.add(exposeItemList.get(i));
-            }
-            
-            if (itemToShow.size() >= pageSize) {
-                break;
-            }
-        }
-        PageInfo pageInfo = new PageInfo(itemToShow);
-        pageInfo.setStartRow(startRow+1);
-        pageInfo.setTotal(total);
-        pageInfo.setPageNum(++pageNum);
-        pageInfo.setPageSize(pageSize);
-        
         return ServerResponse.createBySuccess(pageInfo);
     }
     

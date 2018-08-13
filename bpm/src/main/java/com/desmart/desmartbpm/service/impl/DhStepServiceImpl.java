@@ -59,18 +59,25 @@ public class DhStepServiceImpl implements DhStepService {
     private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
     
     @Override
+    @Transactional
     public ServerResponse create(DhStep dhStep,String actcUid) {
         if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
-                || StringUtils.isBlank(dhStep.getStepObjectUid())) {
+                || StringUtils.isBlank(dhStep.getStepObjectUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         } 
-        // 查看有没有这个配置
-        BpmActivityMeta selective = new BpmActivityMeta(dhStep.getProAppId(), dhStep.getProUid(), dhStep.getProVerUid(), dhStep.getActivityBpdId());
-        List<BpmActivityMeta> list = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(selective);
-        if (list.size() == 0) {
+        // 查看指定的环节是否存在
+        BpmActivityMeta metaSelective = new BpmActivityMeta(dhStep.getProAppId(), dhStep.getProUid(), dhStep.getProVerUid(), dhStep.getActivityBpdId());
+        List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
+        if (metaList.size() == 0) {
             return ServerResponse.createByErrorMessage("此环节不存在");
         }
+        BpmActivityMeta activityMeta = metaList.get(0);
+        if (!activityMeta.getActivityId().equals(activityMeta.getSourceActivityId())
+                || !BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(activityMeta.getBpmTaskType())) {
+            return ServerResponse.createByErrorMessage("此任务环节不符合要求，不能配置步骤");
+        }
+
         String stepUid = EntityIdPrefix.DH_STEP + UUID.randomUUID().toString();
         String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
@@ -78,18 +85,15 @@ public class DhStepServiceImpl implements DhStepService {
             return ServerResponse.createByErrorMessage("步骤类型不符合要求");
         }
         if (stepTypeEnum == DhStepType.FORM) {
-        	 //检查该环节配置中步骤关键字是否已经存在
-            DhStep selective1 = new DhStep(list.get(0).getProAppId()
-            		, list.get(0).getBpdId(), list.get(0).getSnapshotId());
-            selective1.setActivityBpdId(list.get(0).getActivityBpdId());
-            selective1.setStepBusinessKey(dhStep.getStepBusinessKey());
-            //selective1.setStepType(dhStep.getStepType());
-            selective1.setStepType(DhStepType.FORM.getCode());
-            List<DhStep> checkList = dhStepMapper.listBySelective(selective1);
-            if(checkList!=null&&checkList.size()>0) {
-            	return ServerResponse.createByErrorMessage("关键字已存在，请重新自定义关键字");
+            // 检查该环节配置中步骤关键字是否已经存在
+            DhStep stepSelective = new DhStep(activityMeta.getProAppId(), activityMeta.getBpdId(), activityMeta.getSnapshotId());
+            stepSelective.setActivityBpdId(activityMeta.getActivityBpdId());
+            stepSelective.setStepBusinessKey(dhStep.getStepBusinessKey());
+            stepSelective.setStepType(DhStepType.FORM.getCode());
+            List<DhStep> checkList = dhStepMapper.listBySelective(stepSelective);
+            if(!CollectionUtils.isEmpty(checkList)) {
+            	return ServerResponse.createByErrorMessage("创建失败，此环节的这个关键字已经配置了表单步骤");
             }
-            
             // form类型
             if (bpmFormManageMapper.queryFormByFormUid(dhStep.getStepObjectUid()) == null) {
                 return ServerResponse.createByErrorMessage("表单不存在");
@@ -97,7 +101,7 @@ public class DhStepServiceImpl implements DhStepService {
         } else {
             // 触发器类型
             if (dhTriggerMapper.getByPrimaryKey(dhStep.getStepObjectUid()) == null) {
-                return ServerResponse.createByErrorMessage("触发器不存在");
+                return ServerResponse.createByErrorMessage("步骤指定的触发器不存在");
             }
             // 触发器类型的话 需要给 参数映射配置 添加步骤id
             DhTriggerInterface dhTriggerInterface = new DhTriggerInterface();

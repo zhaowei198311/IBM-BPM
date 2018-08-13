@@ -561,6 +561,7 @@ function clickLi(li) {
 }
 
 // ajax获取配置文件信息
+var loadConfIndex = '';
 function loadActivityConf(actcUid) {
 	$.ajax({
 		url: common.getPath() + "/activityConf/getData",
@@ -569,9 +570,12 @@ function loadActivityConf(actcUid) {
 		data: {
 			"actcUid": actcUid
 		},
+		beforeSend: function () {
+            loadConfIndex = layer.load(1);
+        },
 		success: function (result) {
+			layer.close(loadConfIndex);
 			if (result.status == 0) {
-				console.log(result.data);
 				initConf(result.data);
 				document.getElementById("activityId").value = result.data.conf.activityId
 				step_table(result.data.stepList);

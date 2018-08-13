@@ -154,7 +154,7 @@
             新增流程元数据
         </div>
         <div class="middle1">
-            <table class="layui-table backlog_table" lay-even lay-skin="nob">
+            <table id="unsynProMetaTable" class="layui-table backlog_table" lay-even lay-skin="nob">
                 <colgroup>
                     <col>
                     <col>
@@ -165,7 +165,7 @@
                 <tr>
                     <th>序号</th>
                     <th>流程名称</th>
-                    <th>流程应用库id</th>
+                    <th>流程应用库名称</th>
                     <th>流程图id</th>
                 </tr>
                 </thead>
