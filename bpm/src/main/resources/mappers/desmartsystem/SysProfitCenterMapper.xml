@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.desmart.desmartsystem.mapper.SysProfitCenterMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysProfitCenter">
+		<result column="PROFIT_CENTER_NO" property="profitCenterNo" />
+		<result column="PROFIT_CENTER_NAME" property="profitCenterName" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List" >
+	    PROFIT_CENTER_NO, PROFIT_CENTER_NAME
+	</sql>
+
+	<insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysCostCenter" >
+		INSERT INTO  <include refid="Base_Column_List"></include> values (#{profitCenterNo},#{profitCenterName})
+	</insert>
+
+</mapper>
