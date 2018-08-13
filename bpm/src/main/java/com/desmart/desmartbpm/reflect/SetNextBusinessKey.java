@@ -12,6 +12,7 @@ import com.desmart.desmartportal.service.DhProcessInstanceService;
 
 /**
  * 设置发起下个流程时使用的关键字
+ * {"nextBusinessKey":"下一个流程的关键字"}
  */
 public class SetNextBusinessKey implements DhJavaClassTriggerTemplate {
 
