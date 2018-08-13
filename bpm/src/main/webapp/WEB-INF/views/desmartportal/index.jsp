@@ -110,10 +110,25 @@
 									</a>
 								</li>
 								<li class="layui-nav-item">
-									<a href="javascript:void(0)" target="iframe0" class="typeColor">
+									<a href="javascript:void(0)" >
 										<i class="layui-icon">&#xe629;</i>
 										<span> 报表管理</span>
 									</a>
+									<dl class="layui-nav-child">
+										<dd>
+											<a href="projectStatement/projectStatement" target="iframe0" class="typeColor" >
+												流程过程业务报表
+											</a>
+										</dd>
+										<dd>
+											<a href="statement/statement2" target="iframe0" class="typeColor">流程表单业务报表</a>
+										</dd>
+										<dd>
+											<a href="statement/statement3" target="iframe0"  title="门店全生命周期业务报表" class="typeColor">
+												门店全生命周期业务报表
+											</a>
+										</dd>
+									</dl>
 								</li>
 								<!-- <i class="layui-icon kit-side-fold" style="color:#ea6000;margin-left:20px;" title="收缩菜单">&#xe647;</i> -->
 							</ul>
