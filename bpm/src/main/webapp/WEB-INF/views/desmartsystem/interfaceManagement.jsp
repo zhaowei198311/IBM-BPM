@@ -17,11 +17,10 @@
 	rel="stylesheet" media="all" />
 <link href="resources/desmartsystem/styles/css/my.css" rel="stylesheet"
 	media="all" />
-<link
-	href="resources/desmartsystem/styles/css/modules/laydate/default/laydate.css"
-	rel="stylesheet" media="all" />
+<link href="resources/desmartsystem/styles/css/modules/laydate/default/laydate.css"  rel="stylesheet" media="all" />
 <title>接口管理</title>
 <style type="text/css">
+
 .display_content2 {
 	min-height: auto;
 }
@@ -30,14 +29,10 @@ table {
 	table-layout: fixed;
 }
 
-/
-#arryParameterDiv3 table { / /
+#arryParameterDiv3 table {
 	table-layout: auto;
-	/
-	/
 }
 
-/
 #arryParameterDiv table {
 	table-layout: auto;
 }
@@ -56,6 +51,7 @@ table {
 	text-overflow:ellipsis;
 	word-break:keep-all;
 }
+
 </style>
 </head>
 
