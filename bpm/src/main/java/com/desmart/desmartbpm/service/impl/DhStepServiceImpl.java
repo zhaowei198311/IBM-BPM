@@ -268,14 +268,14 @@ public class DhStepServiceImpl implements DhStepService {
         }
     }
     
-    public DhStep getNextStepOfCurrStep(DhStep dhStep) {
+    public DhStep getNextStepOfCurrStep(DhStep currStep) {
         DhStep selective = new DhStep();
-        selective.setProAppId(dhStep.getProAppId());
-        selective.setProUid(dhStep.getProUid());
-        selective.setProVerUid(dhStep.getProVerUid());
-        selective.setActivityBpdId(dhStep.getActivityBpdId());
-        selective.setStepBusinessKey(dhStep.getStepBusinessKey());
-        Integer stepSort = dhStep.getStepSort();
+        selective.setProAppId(currStep.getProAppId());
+        selective.setProUid(currStep.getProUid());
+        selective.setProVerUid(currStep.getProVerUid());
+        selective.setActivityBpdId(currStep.getActivityBpdId());
+        selective.setStepBusinessKey(currStep.getStepBusinessKey());
+        Integer stepSort = currStep.getStepSort();
         if (stepSort == null) {
             return null;
         }
@@ -290,7 +290,7 @@ public class DhStepServiceImpl implements DhStepService {
     }
     
     /**
-     * 生成一个StepSort
+     * 为要添加的步骤生成一个步骤序号
      * @return
      */
     private int generateStepSort(DhStep dhStep) {

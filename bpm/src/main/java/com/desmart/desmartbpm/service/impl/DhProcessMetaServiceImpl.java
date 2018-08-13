@@ -87,20 +87,6 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         }
         return ServerResponse.createBySuccess(pageInfo);
     }
-    
-    /**
-     * 获得已经绑定的流程元数据的标识（库名+流程图名）集合
-     * @return
-     */
-    private Set<String> getBindedProcessMetaIdentify() {
-        List<DhProcessMeta> metaListInDb = dhProcessMetaMapper.listAll();
-        Set<String> identifyList = new HashSet<>();
-        for (DhProcessMeta meta : metaListInDb) {
-            identifyList.add(meta.getProAppId() + meta.getProUid());
-        }
-        return identifyList;
-    }
-    
 
     public ServerResponse<PageInfo<List<DhProcessMeta>>> listDhProcessMetaByCategoryList(List<DhProcessCategory> categoryList, String proName, 
             Integer pageNum, Integer pageSize) {

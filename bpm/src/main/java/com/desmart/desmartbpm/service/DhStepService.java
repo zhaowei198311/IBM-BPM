@@ -55,16 +55,17 @@ public interface DhStepService {
     
     /**
      * 找到指定步骤的下一个步骤
-     * @param dhStep
+     * @param currStep
      * @return
      */
-    DhStep getNextStepOfCurrStep(DhStep dhStep);
+    DhStep getNextStepOfCurrStep(DhStep currStep);
     
     /**
-     * ******* 重要 ****************
-     * 根据step关键字，获得指定环节的可用步骤，如果指定关键字没有可用步骤，返回默认关键字的可用步骤，按步骤序号正序排序
-     * 如果这个环节这个关键字有form表单，就使用这个这个关键字，如果没有表单，而默认关键字下有表单返回default关键字的步骤
-     * @param bpmActivityMeta 环节
+     * ******* 重要 *******<br/>
+     * 根据环节和步骤关键字，获得一套包含表单步骤的步骤<br/>
+     * 如果这个环节指定关键字有表单步骤，就使用这个这个关键字的一套表单步骤<br/>
+     * 如果这个环节指定关键字没有表单步骤，而默认关键字下有表单步骤，返回default关键字的一套步骤<br/>
+     * @param bpmActivityMeta 指定环节
      * @param stepBusinessKey  步骤关键字
      * @return
      */
