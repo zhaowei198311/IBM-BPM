@@ -57,7 +57,7 @@ public class DhProcessMetaController {
     }
     
     /**
-     * 获得公开的流程元数据（没有绑定过的）
+     * 分页查询没有被纳入平台的流程元数据
      * @param pageNum 
      * @param pageSize 
      * @param request 
@@ -66,13 +66,12 @@ public class DhProcessMetaController {
      * @param display 流程名
      * @return
      */
-    @RequestMapping(value = "/getExposedProcess")
+    @RequestMapping(value = "/getUnSynchronizedProcessMeta")
     @ResponseBody
-    public ServerResponse getExposedProcess(@RequestParam(value="pageNum", defaultValue="1")Integer pageNum, 
+    public ServerResponse getUnSynchronizedProcessMeta(@RequestParam(value="pageNum", defaultValue="1")Integer pageNum,
             @RequestParam(value="pageSize", defaultValue="10")Integer pageSize, HttpServletRequest request,
             String processAppName, String processAppAcronym, String display) {
-        
-        return dhProcessMetaService.getExposedProcess(pageNum, pageSize, processAppName, processAppAcronym, display);
+        return dhProcessMetaService.getUnSynchronizedProcessMeta(pageNum, pageSize, processAppName, processAppAcronym, display);
     }
     
     /**

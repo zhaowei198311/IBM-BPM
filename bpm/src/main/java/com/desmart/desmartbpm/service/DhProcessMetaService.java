@@ -8,13 +8,19 @@ import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.github.pagehelper.PageInfo;
 
 public interface DhProcessMetaService {
-    
-    /** 获得所有公开的流程 */ 
-    ServerResponse getAllExposedProcess(Integer pageNum, Integer pageSize);
-    
-    /** 根据条件分页获得公开的流程, 其中没有绑定的流程 */
-    ServerResponse getExposedProcess(Integer pageNum, Integer pageSize, String processAppName, 
-            String processAppAcronym, String display); 
+
+
+    /**
+     * 分页查询没有被纳入平台的流程元数据
+     * @param pageNum
+     * @param pageSize
+     * @param processAppName
+     * @param processAppAcronym
+     * @param display
+     * @return
+     */
+    ServerResponse getUnSynchronizedProcessMeta(Integer pageNum, Integer pageSize, String processAppName,
+                                                String processAppAcronym, String display);
 
     /**
      * 根据分类id列出所有此分类和其子分类下的流程元数据

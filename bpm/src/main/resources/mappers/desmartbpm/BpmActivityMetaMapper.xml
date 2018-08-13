@@ -195,12 +195,7 @@
 		</where>
 	</select>
 
-	<select id="queryByActivityBpdIdAndSnapshotUid" resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
-		select
-		<include refid="Base_Column_List" />
-		from BPM_ACTIVITY_META
-		where activity_bpd_id = #{activityBpdId} and SNAPSHOT_UID = #{snapshotUid}
-	</select>
+
 
 	<delete id="batchRemoveByPrimaryKey" parameterType="list">
 		delete from BPM_ACTIVITY_META

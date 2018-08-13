@@ -36,7 +36,7 @@ public interface DhStepMapper {
                                               @Param("proVerUid") String proVerUid);
     
     /**
-     * 获得最大的步骤序号
+     * 获得特定环节的最大的步骤序号
      * @param dhStep
      * @return
      */

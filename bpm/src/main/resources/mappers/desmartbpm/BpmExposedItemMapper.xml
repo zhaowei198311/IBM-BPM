@@ -66,5 +66,21 @@
         order by e.SNAPSHOT_CREATE_TIME desc
     </select>
 
+    <select id="listUnSynchronizedProcessMeta" resultType="java.util.Map">
+        select distinct pro_app_id, bpd_id from bpm_exposed_item
+        MINUS
+        select distinct pro_app_id, pro_uid from dh_process_meta
+    </select>
+
+    <select id="listByProAppIdAndBpdId" resultType="com.desmart.desmartbpm.service.BpmExposedItem">
+        select pro_app_Id, bpd_id, pro_app_name, bpd_name
+        from bpm_exposed_item
+        where
+        <foreach collection="collection" item="item" separator="or">
+            PRO_APP_ID = #{item.PRO_APP_ID} and BPD_ID = #{item.BPD_ID}
+        </foreach>
+        group by pro_app_Id, bpd_id, pro_app_name, bpd_name
+    </select>
+
 
 </mapper>

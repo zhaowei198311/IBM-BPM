@@ -221,8 +221,8 @@
         PRO_APP_ID = #{proAppId} 
 	    and PRO_UID = #{proUid} 
 	    and PRO_VER_UID = #{proVerUid}
-	    and ACTIVITY_BPD_ID = #{activityBpdId}
 	    and Step_business_key = #{stepBusinessKey}
+	    and ACTIVITY_BPD_ID = #{activityBpdId}
   </select>
   
   <update id="updateStepSortOfRelationStep" parameterType="com.desmart.desmartbpm.entity.DhStep" >

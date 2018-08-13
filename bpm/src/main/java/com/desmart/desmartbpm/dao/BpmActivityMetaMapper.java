@@ -12,18 +12,11 @@ import com.desmart.desmartbpm.entity.BpmActivityMeta;
 public interface BpmActivityMetaMapper {
 	/** 
 	 * 查询出某流程版本的所有环节配置
-	 * @param bpmProcessSnapshotId
+	 * @param bpmActivityMeta
 	 * @return
 	 */
 	List<BpmActivityMeta> queryByBpmActivityMetaSelective(BpmActivityMeta bpmActivityMeta);
 
-	/**
-	 * 根据流程图上的元素id和快照版本
-	 * @param activityBpdId
-	 * @param snapshotUid
-	 * @return
-	 */
-    List<BpmActivityMeta> queryByActivityBpdIdAndSnapshotUid(@Param("activityBpdId") String activityBpdId, @Param("snapshotUid") String snapshotUid);
 
     /**
      * 新增一条记录
@@ -48,6 +41,7 @@ public interface BpmActivityMetaMapper {
      * @return
      */
     int updateByPrimaryKeySelective(BpmActivityMeta bpmActivityMeta);
+
     /**
      * 
      * @Title: queryByPrimaryKey  

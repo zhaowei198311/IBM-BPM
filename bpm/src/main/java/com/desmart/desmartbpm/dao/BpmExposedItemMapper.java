@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Repository
@@ -47,5 +48,25 @@ public interface BpmExposedItemMapper {
      */
     List<String> listDistinctProAppId();
 
+    /**
+     * 根据应用库id，列出没有同步过的快照版本
+     * @param proAppId
+     * @return
+     */
     List<LswSnapshot> listUnsynchronizedSnapshotByProAppId(String proAppId);
+
+    /**
+     * 列出没有同步的元数据
+     * @return
+     */
+    List<Map<String, String>> listUnSynchronizedProcessMeta();
+
+
+    /**
+     * 根据proAppId， bpdId批量查询
+     * @param mapList
+     * @return
+     */
+    List<BpmExposedItem> listByProAppIdAndBpdId(List<Map<String, String>> mapList);
+
 }
