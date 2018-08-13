@@ -208,4 +208,5 @@
     	text-align: left;
     }
 </style>
-<link href="resources/desmartportal/css/mymobile.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mymobile.css?v=1.01" rel="stylesheet" />
+<link href="resources/desmartportal/css/mobile_approval.css" rel="stylesheet" />

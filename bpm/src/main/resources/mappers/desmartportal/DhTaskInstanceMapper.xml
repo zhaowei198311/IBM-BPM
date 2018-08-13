@@ -80,6 +80,7 @@
 			<result column="INS_ROUTING_DATA" property="insRoutingData" />
 			<result column="COMPANY_NUMBER" property="companyNumber" />
 			<result column="PRO_NAME" property="proName" />
+			<result column="PRO_NO" property="proNo" />
 		</association>
 		<association property="sysUser" javaType="com.desmart.desmartsystem.entity.SysUser">
 			<result column="USER_UID" property="userUid" />
@@ -657,7 +658,7 @@
 	<select id="selectBackLogTaskInfoByCondition" 
 	parameterType="map"
 		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME,PM.PRO_NO
 		FROM
 		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
 		<where>
@@ -815,6 +816,193 @@
 		</where>
 		ORDER BY P.INS_CREATE_DATE DESC
 	</select>
+	
+	<!-- 移动端查询已办（带流程实例状态） -->
+	<select id="selectPageTaskByClosedByConditionMove" 
+	parameterType="map"
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME,PM.PRO_NO
+		FROM
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
+		<where>
+			T.INS_UID = P.INS_UID 
+			AND P.INS_INIT_USER = S.USER_ID
+			AND P.PRO_APP_ID = PM.PRO_APP_ID
+			AND P.PRO_UID = PM.PRO_UID
+			AND P.INS_STATUS != '2'
+			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">
+				AND T.INS_UID = #{dhTaskInstance.insUid}
+			</if>
+			<if test="dhTaskInstance.taskStatus != null and dhTaskInstance.taskStatus !='' ">
+				AND T.TASK_STATUS IN (${dhTaskInstance.taskStatus})
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance != null ">
+			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
+				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
+				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proName != null 
+				and dhTaskInstance.dhProcessInstance.proName!='' ">
+				AND PM.PRO_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.proName}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.insInitUser != null 
+				and dhTaskInstance.dhProcessInstance.insInitUser !='' ">
+				AND p.INS_INIT_USER = #{dhTaskInstance.dhProcessInstance.insInitUser}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proUid != null 
+				and dhTaskInstance.dhProcessInstance.proUid !=''">
+				AND p.pro_Uid = #{dhTaskInstance.dhProcessInstance.proUid}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proVerUid != null 
+				and dhTaskInstance.dhProcessInstance.proVerUid !=''">
+				AND p.pro_Ver_Uid = #{dhTaskInstance.dhProcessInstance.proVerUid}
+			</if>	
+			<if test="dhTaskInstance.dhProcessInstance.proAppId != null 
+				and dhTaskInstance.dhProcessInstance.proAppId !=''">
+				AND p.pro_App_Id = #{dhTaskInstance.dhProcessInstance.proAppId}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.insStatusId != null ">
+				AND p.ins_status_id = #{dhTaskInstance.dhProcessInstance.insStatusId}
+			</if>
+			</if>
+			<if test="dhTaskInstance.sysUser != null ">
+			<if test="dhTaskInstance.sysUser.userName != null 
+				and dhTaskInstance.sysUser.userName !='' ">
+				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
+			</if>
+			</if>
+			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
+				<choose>
+					<when test="isAgent=='false'">
+						AND T.TASK_DELEGATE_USER is null
+					</when>
+					<!-- 代理人是本人 -->
+					<when test="isAgent=='1' or isAgent==1">
+						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
+					</when>
+					<!-- 代理人是其他人 -->
+					<when test="isAgent=='2' or isAgent==2">
+						AND T.TASK_DELEGATE_USER is not null 
+						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
+					</when>
+				</choose>
+			</if>
+			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
+				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
+			</if>
+			<if test="startTime != null ">
+				AND TASK_FINISH_DATE &gt;=
+				to_date(concat(to_char(#{startTime},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="endTime != null ">
+				AND TASK_FINISH_DATE &lt;=
+				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="dhTaskInstance.usrUid != null and dhTaskInstance.usrUid !='' ">
+				AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+				or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			</if>
+		</where>
+		ORDER BY P.INS_CREATE_DATE DESC
+	</select>
+	
+	<!-- 移动端查询办结（带流程实例状态） -->
+	<select id="selectPageTaskByEndByConditionMove" 
+	parameterType="map"
+		resultMap="TaskInstanceByProcessAndUserMap">
+		SELECT <include refid="TaskAndProcess_Column_List"/>,PM.PRO_NAME,PM.PRO_NO
+		FROM
+		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S,DH_PROCESS_META PM
+		<where>
+			T.INS_UID = P.INS_UID 
+			AND P.INS_INIT_USER = S.USER_ID
+			AND P.PRO_APP_ID = PM.PRO_APP_ID
+			AND P.PRO_UID = PM.PRO_UID
+			AND P.INS_STATUS = '2'
+			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
+			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
+			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">
+				AND T.INS_UID = #{dhTaskInstance.insUid}
+			</if>
+			<if test="dhTaskInstance.taskStatus != null and dhTaskInstance.taskStatus !='' ">
+				AND T.TASK_STATUS IN (${dhTaskInstance.taskStatus})
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance != null ">
+			<if test="dhTaskInstance.dhProcessInstance.insTitle != null 
+				and dhTaskInstance.dhProcessInstance.insTitle !='' ">
+				AND p.ins_title like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.insTitle}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proName != null 
+				and dhTaskInstance.dhProcessInstance.proName!='' ">
+				AND PM.PRO_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.dhProcessInstance.proName}),'%')
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.insInitUser != null 
+				and dhTaskInstance.dhProcessInstance.insInitUser !='' ">
+				AND p.INS_INIT_USER = #{dhTaskInstance.dhProcessInstance.insInitUser}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proUid != null 
+				and dhTaskInstance.dhProcessInstance.proUid !=''">
+				AND p.pro_Uid = #{dhTaskInstance.dhProcessInstance.proUid}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.proVerUid != null 
+				and dhTaskInstance.dhProcessInstance.proVerUid !=''">
+				AND p.pro_Ver_Uid = #{dhTaskInstance.dhProcessInstance.proVerUid}
+			</if>	
+			<if test="dhTaskInstance.dhProcessInstance.proAppId != null 
+				and dhTaskInstance.dhProcessInstance.proAppId !=''">
+				AND p.pro_App_Id = #{dhTaskInstance.dhProcessInstance.proAppId}
+			</if>
+			<if test="dhTaskInstance.dhProcessInstance.insStatusId != null ">
+				AND p.ins_status_id = #{dhTaskInstance.dhProcessInstance.insStatusId}
+			</if>
+			</if>
+			<if test="dhTaskInstance.sysUser != null ">
+			<if test="dhTaskInstance.sysUser.userName != null 
+				and dhTaskInstance.sysUser.userName !='' ">
+				AND S.USER_NAME like CONCAT(CONCAT('%',#{dhTaskInstance.sysUser.userName}),'%')
+			</if>
+			</if>
+			<if test="isAgent!=null and !isAgent.trim().isEmpty()">
+				<choose>
+					<when test="isAgent=='false'">
+						AND T.TASK_DELEGATE_USER is null
+					</when>
+					<!-- 代理人是本人 -->
+					<when test="isAgent=='1' or isAgent==1">
+						AND T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid}
+					</when>
+					<!-- 代理人是其他人 -->
+					<when test="isAgent=='2' or isAgent==2">
+						AND T.TASK_DELEGATE_USER is not null 
+						AND T.TASK_DELEGATE_USER != #{dhTaskInstance.usrUid}
+					</when>
+				</choose>
+			</if>
+			<if test="dhTaskInstance.taskPreviousUsrUsername != null and dhTaskInstance.taskPreviousUsrUsername != ''">
+				AND T.TASK_PREVIOUS_USR_USERNAME like CONCAT(CONCAT('%',#{dhTaskInstance.taskPreviousUsrUsername}),'%')
+			</if>
+			<if test="startTime != null ">
+				AND TASK_FINISH_DATE &gt;=
+				to_date(concat(to_char(#{startTime},'yyyy-mm-dd'),'
+				00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="endTime != null ">
+				AND TASK_FINISH_DATE &lt;=
+				to_date(concat(to_char(#{endTime},'yyyy-mm-dd'),'
+				23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="dhTaskInstance.usrUid != null and dhTaskInstance.usrUid !='' ">
+				AND (T.USR_UID = #{dhTaskInstance.usrUid} 
+				or T.TASK_DELEGATE_USER = #{dhTaskInstance.usrUid})
+			</if>
+		</where>
+		ORDER BY P.INS_CREATE_DATE DESC
+	</select>
+	
 	<!-- 用户查询已办 -->
 	<select id="alreadyClosedTaskByusrUid" parameterType="java.lang.String"
 		resultType="java.lang.Integer">

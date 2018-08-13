@@ -9,20 +9,20 @@
     box-shadow: 0 0 3px #f2f2f2;
     padding-bottom: 2px;
     z-index: 10;
-    background: #2E3238;
+    background: #EF6301;
     color: #F2f2f2;
     position: fixed;
 }
 .mobile_middle{
 	width:100%;
 	height:auto;
-	margin-top: 50px;
+	margin-top: 44px;
 }
 
 /*顶部*/
 #operate_menu{
-	font-size: 20px;
-    vertical-align: -2px;
+	font-size: 25px;
+    vertical-align: 10px;
 }
 .top_content {
     width: 60%;
@@ -43,57 +43,64 @@
 	text-align: right;
 }
 
-/*列表内容*/
-.table_list{
-	margin:4px;
+/*任务列表详细*/
+.backlog_top{
+	border-bottom:1px solid #f2f2f2;
+	padding-bottom:15px;
 }
-.tab_ul li {
-    padding: 10px 0;
-    list-style: none;
-    width: 99%;
-    margin-bottom:7px;
-    text-align: center;
-    border: 1px solid #e6e6e6;
-    color: #777;
-    background: #FBFBFB;
-    position: relative;
+.backlog_process_name{
+	border-right: 1px solid #727272;
+	padding-right:5px;
 }
-#backlog_list table{
-	text-align: left;
-	width: 90%;
-    margin: auto;
-    font-size: 13px;
-}
-#backlog_list table tr{
-	height: 19px;
-}
-#backlog_list th{
-	width:40%;
-}
-#backlog_list td{
-	width:60%;
-}
-.is_agent span{
-	padding:5px 6px;
-	border: 1px solid #ccc;
-	background: #f2f2f2;
-	border-radius: 50%;
-}
-.is_agent{
+.backlog_task_status{
+	background: #FF9052;
+	padding:3px 12px;
+	border-radius:40px;
+	color: #fff;
 	position: absolute;
-	bottom:60px;
-	right:5px;
+	right: 10px;
 }
-.task_status{
+.backlog_content{
+	margin-top:10px;
+	position: relative;
+}
+.backlog_content table{
+	width:70%;
+}
+.backlog_content tbody tr{
+	height: 20px;
+    font-size: 12px;
+}
+.process_title_div{
+	padding-bottom:7px;
+}
+.process_title{
+	font-size: 16px;
+	color: #111;
+	font-weight: 550;
+}
+/*进度条*/
+.progress_bar_div{
 	position: absolute;
-	bottom: 60px;
-    right: 40px;
+    top: 0px;
+    right: 0px;
 }
-.task_status span{
-	padding:5px;
-	border: 1px solid #ccc;
-	background: #f2f2f2;
-	border-radius: 5px;
+.progress_time{
+	color:#FF9052;
+	font-size: 12px;
+}
+/*代理标签*/
+.task_agent_text{
+	background: #ff9052;
+	color:#fff;
+	font-size: 12px;	
+	padding: 9px 10px;
+    border-radius: 50%;
+}
+.task_agent_status{
+	position: absolute;
+    right: 0px;
+    top: 40px;
 }
 /*筛选条件div*/
 .layui-layer-page {
@@ -102,7 +109,7 @@
 }
 #filter_div {
 	display:none;
-	background: #fbfbfb;
+	background: #fff;
 	height:100%;
 	-webkit-overflow-scrolling : touch;
 }
@@ -112,10 +119,10 @@
 }
 #filter_div table tr{
 	height:49px;
-	border-bottom: 1px solid #CCC;
+	border-bottom: 1px solid #F3F3F3;
 }
 #filter_div input[type='text']{
-	background: #fbfbfb;
+	background: #fff;
 	border-width:0px;
 }
 #filter_div input[type='date']{
@@ -123,13 +130,34 @@
 	border-width:0px;
 }
 #filter_div table th{
-	text-align: right;
-	width:40%;
+	text-align: left;
+	width:30%;
 }
 #filter_div table td{
-	text-align: left;
-	width:60%;
+	text-align: right;
+	width:70%;
+}
+#filter_div table td input{
+	text-align: right;
 }
 .filter_btn{
-	width:100px;
+	width: 50%;
+    float: left;
+    height:100%;
+    line-height:56px;
+    margin:0px;
+    padding:0px;
+    float: left;
+    border-radius: 0px;
+}
+.filter_btn_div input[type='button']{
+	background: #FC9153;
+	color: #fff;
+}
+.filter_btn_div input[type='reset']{
+	background: #FFF;
+	color:#000;
+}
+.layui-btn+.layui-btn{
+	margin:0px;
 }

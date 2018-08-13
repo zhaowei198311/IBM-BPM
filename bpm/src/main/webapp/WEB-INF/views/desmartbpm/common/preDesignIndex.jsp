@@ -115,15 +115,8 @@
 			if($(this).attr("is-multi")=="true"){
 				$(this).attr("xm-select",id);
 				//formSelects.render(id);
-				formSelects.value(id, ["book"], true); 
-				formSelects.render();
+				formSelects.render(id);
 				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
-				    //id:           点击select的id
-				    //vals:         当前select已选中的值
-				    //val:          当前select点击的值
-				    //isAdd:        当前操作选中or取消
-				    //isDisabled:   当前选项是否是disabled
-				    //如果return false, 那么将取消本次操作
 					$("#"+id).trigger("change");
 				    return true;   
 				});

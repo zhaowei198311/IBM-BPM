@@ -41,5 +41,4 @@ public interface DhActivityConfMapper {
      * @return
      */
     List<DhActivityConf> listByPrimayKeyList(List<String> actcUidList);
-
 }
