@@ -166,7 +166,10 @@ public class UserSys implements Job{
 			sysUser.setStation(employeeInfo.getLyfstation());
 			sysUser.setStationcode(employeeInfo.getLyfstationcode());
 			sysUser.setManagernumber(employeeInfo.getLyfmanagernumber());
+			
+			//成本中心需要进行截取前边的0
 			sysUser.setCostCenter(employeeInfo.getLyfcostcenter());
+			
 			sysUser.setCompanynumber(employeeInfo.getLyfcompanynumber());
 			String level=employeeInfo.getLyflevel();
 			if(StringUtils.isNotBlank(level)) {
