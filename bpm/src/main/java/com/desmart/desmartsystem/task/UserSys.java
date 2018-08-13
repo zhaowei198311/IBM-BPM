@@ -216,7 +216,7 @@ public class UserSys implements Job{
 		if(insertSysUser.size()>0) {
 			log.info("------------------开始同步新用户------------------");
 			sysUserMapper.insertBatch(insertSysUser);
-		}
+		} 
 		
 		//修改用户
 		for (SysUser sysUser : updateSysUser) {
