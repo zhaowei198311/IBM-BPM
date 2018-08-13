@@ -17,7 +17,7 @@
     <link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
     <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
-    <link href="resources/desmartportal/css/my.css?v=1.01" rel="stylesheet" />
+    <link href="resources/desmartportal/css/my.css?v=1.02" rel="stylesheet" />
     <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
@@ -143,7 +143,7 @@
             </div>
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-sm4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
+            <div class="layui-col-sm4">发起人：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
             <div class="layui-col-sm4">部门：${processInstance.departName} - ${processInstance.companyName}</div>
             <div class="layui-col-sm4">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />

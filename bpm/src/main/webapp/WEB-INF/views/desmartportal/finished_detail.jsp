@@ -167,7 +167,7 @@
 			</div>
 		</div>
 		<div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-md4">姓名：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
+            <div class="layui-col-md4">发起人：${processInstance.initUserFullname}(${processInstance.insInitUser})</div>
         	<div class="layui-col-md4">填写时间：
                 <fmt:formatDate value="${processInstance.insInitDate}" type="date" pattern="yyyy-MM-dd" />
             </div>
