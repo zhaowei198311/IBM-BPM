@@ -263,7 +263,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			success : function(result) {
 				if(result.success==true){
 					layer.alert(result.msg);
-					closePopup('exposed_table2_container','id');
+					//closePopup('exposed_table2_container','id');
 					getParamersInfo(intUid);
 				}else{
 					layer.alert(result.msg);
