@@ -36,10 +36,10 @@ function submitUserDeaprtment(ts){
 	
 	
 	var departUid=$('#departUid_b').val();
-	if(departUid==''){
-		layer.alert('请选择部门');
-		return false;
-	}
+//	if(departUid==''){
+//		layer.alert('请选择部门');
+//		return false;
+//	}
 	
 	$.ajax({
 		url:'sysUserDepartment/userDepartmentExists',
@@ -78,10 +78,11 @@ function companySelect(url,select){
         type: "post",  
         dataType: "json",  
         success: function (data) {
+        	console.log(data);
         	var optionstring="";
         	optionstring+="<option value='' ></option>";
         	$(data).each(function(){
-        		optionstring+="<option value=\"" + this.companyCode + "\" >" + this.companyName + "</option>";
+        		optionstring+="<option value=\"" + this.companyCode + "\" >" +this.companyName+"("+this.companyCode+")"+ "</option>";
         	});
         	$(select).prepend(optionstring);
         	if(select!='.companyCode'){
@@ -139,6 +140,7 @@ function pageBreakDepartmet(curr){
 			var dataList = data.dataList;
 		 	$("#tabletr1").empty();//清空表格内容
 		    if (dataList.length > 0 ) {
+		    	alert(dataList);
 		    	/* tabledata(dataList,data); */
 		    	$(dataList).each(function(i){//重新生成
 					var str='<tr>';
@@ -169,6 +171,7 @@ function serachDeparmet(userUid){
 		dataType:"json",
 		success: function(data){
 			var dataList = data;
+			console.log(dataList);
 		 	$("#tabletr2").empty();//清空表格内容
 		    if (typeof(dataList) != "undefined" && dataList.length > 0 ) {
 		    	/* tabledata(dataList,data); */
@@ -182,8 +185,8 @@ function serachDeparmet(userUid){
 					}
 					str+='<td>' + companyName + '</td>';
 					str+='<td>' + isEmpty(this.companyCode) + '</td>';
-		         	str+='<td>' + this.departName + '</td>';
-		         	str+='<td>' + this.departNo + '</td>';
+		         	str+='<td>' + isEmpty(this.departName) + '</td>';
+		         	str+='<td>' + isEmpty(this.departNo) + '</td>';
 		         	if(this.isManager=='false'){
 			         	str+='<td>否</td>'; 
 		         	}else{
