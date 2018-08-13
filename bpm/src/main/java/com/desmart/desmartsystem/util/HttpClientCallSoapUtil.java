@@ -16,8 +16,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 public class HttpClientCallSoapUtil {
-	static int socketTimeout = 30000;// 请求超时时间
-	static int connectTimeout = 30000;// 传输超时时间
+	static int socketTimeout = 60000;// 请求超时时间
+	static int connectTimeout = 60000;// 传输超时时间
 	static Logger logger = Logger.getLogger(HttpClientCallSoapUtil.class);
 
 	/**
@@ -31,20 +31,20 @@ public class HttpClientCallSoapUtil {
 	public static String doPostSoap1_1(String postUrl, String soapXml,
 			String soapAction,String userName,String password) {
 		String retStr = "";
-		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(userName, password));
-		// HttpClient
-        CloseableHttpClient closeableHttpClient = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
-                .build();
-		HttpPost httpPost = new HttpPost(postUrl);
-                //  设置请求和传输超时时间
-		RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(socketTimeout)
-				.setConnectTimeout(connectTimeout).build();
-		httpPost.setConfig(requestConfig);
 		try {
+			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+	        credsProvider.setCredentials(AuthScope.ANY,
+	                new UsernamePasswordCredentials(userName, password));
+			// HttpClient
+	        CloseableHttpClient closeableHttpClient = HttpClients.custom()
+	                .setDefaultCredentialsProvider(credsProvider)
+	                .build();
+			HttpPost httpPost = new HttpPost(postUrl);
+	                //  设置请求和传输超时时间
+			RequestConfig requestConfig = RequestConfig.custom()
+					.setSocketTimeout(socketTimeout)
+					.setConnectTimeout(connectTimeout).build();
+			httpPost.setConfig(requestConfig);
 			httpPost.setHeader("Content-Type", "text/xml;charset=UTF-8");
 			httpPost.setHeader("SOAPAction", soapAction);
 			StringEntity data = new StringEntity(soapXml,
@@ -62,6 +62,7 @@ public class HttpClientCallSoapUtil {
 			// 释放资源
 			closeableHttpClient.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("exception in doPostSoap1_1", e);
 		}
 		return retStr;
@@ -122,7 +123,7 @@ public class HttpClientCallSoapUtil {
 				"         <ITB_IN>\n" + 
 				"            <!--Zero or more repetitions:-->\n" + 
 				"            <item>\n" + 
-				"               <PNO>20180726_000004</PNO>\n" + 
+				"               <PNO>20180810_000024</PNO>\n" + 
 				"			<NAME1>南昌市东湖区迪卡乐娱乐休闲中心</NAME1>\n" + 
 				"			<NAME2>AA01-江西省南昌市江大南路店</NAME2>\n" + 
 				"			<SORT1>AA01-南昌市东湖区迪卡乐娱乐休闲中心</SORT1>\n" + 
