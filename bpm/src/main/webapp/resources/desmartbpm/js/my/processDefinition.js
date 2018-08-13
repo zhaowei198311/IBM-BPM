@@ -456,10 +456,17 @@ $(function() {
     });
 
     // checkbox排他选择
-    $("#definitionList_tbody").on("click", ":checkbox", function(){
-        if ($(this).prop("checked")) {
-            $("#definitionList_tbody :checkbox").prop("checked", false);
-            $(this).prop("checked", true);
+    $("#definitionList_tbody").on("click", "tr", function(){
+        var $ck = $(this).find(':checkbox');
+        var checked = $ck.prop('checked');
+        if (event.target.type == 'checkbox') {
+            checked = !checked;
+        }
+        if (checked) {
+            $ck.prop('checked', false);
+        } else {
+            $('#definitionList_tbody :checkbox').prop('checked', false);
+            $ck.prop('checked', true);
         }
     });
 });

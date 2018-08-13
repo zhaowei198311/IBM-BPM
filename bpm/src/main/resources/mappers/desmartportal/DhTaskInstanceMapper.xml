@@ -391,8 +391,7 @@
 		insert into dh_task_instance (
 		<include refid="Base_Column_List" />
 		)
-		<foreach collection="list" item="item" index="index" close=")"
-			open="(" separator="union all">
+		<foreach collection="list" item="item" index="index" separator="union all">
 			select
 			#{item.taskUid},
 			#{item.insUid},
@@ -405,14 +404,14 @@
 			#{item.insUpdateDate},
 			#{item.taskPreviousUsrUid},
 			#{item.taskPreviousUsrUsername},
-			#{item.taskDelegateDate},
+			#{item.taskDelegateDate, jdbcType=TIMESTAMP},
 			#{item.taskInitDate},
 			#{item.taskFinishDate},
 			#{item.taskDueDate},
 			#{item.taskRiskDate},
 			#{item.taskPriority},
 			#{item.taskData},
-			#{item.taskDelegateUser},
+			#{item.taskDelegateUser, jdbcType=VARCHAR},
 			#{item.synNumber},
 			#{item.fromTaskUid},
 			#{item.toTaskUid},
