@@ -16,7 +16,7 @@
     <link href="resources/desmartportal/formDesign/css/layoutit.css" rel="stylesheet">
     <link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
-    <link href="resources/desmartportal/css/my.css" rel="stylesheet" />
+    <link href="resources/desmartportal/css/my.css?v=1.01" rel="stylesheet" />
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
     <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script> -->
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
     <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.03"></script>
-    <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.01"></script>
 
     <!-- jQuery -->
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.core.min.js"></script>
@@ -50,7 +50,7 @@
             zoom: 1;
         }
         .display_container_image_edit {
-            z-index: 11;
+            z-index: 1001;
             color: #717171;
             padding: 20px;
             width: 95%;
@@ -64,7 +64,7 @@
             display: none;
         }
         .display_content_image_edit {
-            z-index: 11;
+            z-index: 1001;
             width: 100%;
             height: 100%;
             background: #fff;
@@ -75,7 +75,7 @@
 		    position: fixed;
 		    top: 0;
 		    left: 0;
-		    z-index: 10;
+		    z-index: 1001;
 		    background: rgba(255, 255, 255, 0.8);
 		    width: 100%;
 		    height: 100%;
@@ -85,7 +85,7 @@
 		    position: fixed;
 		    top: 0;
 		    left: 0;
-		    z-index: 10;
+		    z-index: 1001;
 		    background: rgba(255, 255, 255, 0.8);
 		    width: 100%;
 		    height: 100%;
@@ -100,7 +100,7 @@
             left: 12.5%;
             top: 16%;
             box-shadow: 0 0 10px #ccc;
-            z-index: 100;
+            z-index: 1001;
         }
         .foot_accessory_file {
             text-align: right;
