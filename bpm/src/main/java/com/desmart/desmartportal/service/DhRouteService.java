@@ -82,10 +82,10 @@ public interface DhRouteService {
 	ServerResponse updateGatewayRouteResult(Integer insId, BpmRoutingData routingData);
 	
     /**
-     * 找流转到指定环节的上一环节（含有处理人信息）, 包含驳回的，跳转的
-	 * 并将任务处理人放入： userUid属性 和 userName属性
-     * @param dhProcessInstance
-     * @param bpmActivityMeta
+     * 找到指定环节的上一环节（含有处理人信息）, 包含驳回的，跳转的<br/>
+	 * 并将任务处理人放入： userUid属性 和 userName属性<br/>
+     * @param dhProcessInstance 流程实例
+     * @param bpmActivityMeta  指定环节
      * @return
      */
 	ServerResponse<BpmActivityMeta> getPreActivity(DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta);

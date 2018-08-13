@@ -42,7 +42,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 @Service
@@ -87,8 +86,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	private SysTeamMemberMapper sysTeamMemberMapper;
 	@Autowired
 	private BpmActivityMetaService bpmActivityMetaService;
-    @Autowired
-	private DhRoutingRecordService dhRoutingRecordService;
 	@Autowired
 	private TaskMongoDao taskMongoDao;
 	@Autowired

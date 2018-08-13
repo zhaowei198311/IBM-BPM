@@ -15,6 +15,7 @@ public class DataForSubmitTask {
     private DhStep nextStep;  // 下一个步骤
     private DhTaskInstance currTaskInstance;
     private BpmGlobalConfig bpmGlobalConfig;
+    private String applyUser; // 完成任务前尝试将任务分配给谁，为null则不分配
 
 
     public CommonBusinessObject getPubBo() {
@@ -47,6 +48,14 @@ public class DataForSubmitTask {
 
     public void setCurrentProcessInstance(DhProcessInstance currentProcessInstance) {
         this.currentProcessInstance = currentProcessInstance;
+    }
+
+    public String getApplyUser() {
+        return applyUser;
+    }
+
+    public void setApplyUser(String applyUser) {
+        this.applyUser = applyUser;
     }
 
     public DhStep getNextStep() {

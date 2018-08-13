@@ -15,6 +15,7 @@ import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.github.pagehelper.PageInfo;
 
 /**  
@@ -71,14 +72,16 @@ public interface DhTaskInstanceService {
 	ServerResponse perform(String data);
 
 	/**
-	 * 提交任务，如果没有下个步骤，就直接提交，如果有后续步骤就推送到MQ
+	 * 完成任务，根据是否存在下一个步骤区别处理：<br/>
+	 * 没有下个步骤：调用RESTFul API完成任务并创建/关闭流程 <br/>
+	 * 存在下个步骤：推送到MQ消息队列处理 <br/>
 	 * @param dataForSubmitTask  提交任务需要的信息
 	 * @return
 	 */
 	ServerResponse finishTaskOrSendToMq(DataForSubmitTask dataForSubmitTask);
 	
 	/**
-	 * 查看DH_TASK_INSTANCE表中有没有指定taskId的记录
+	 * 查看平台任务表中是否存在指定taskId的任务
 	 * @param taskId
 	 * @return
 	 */
@@ -332,4 +335,12 @@ public interface DhTaskInstanceService {
 	 */
 	ServerResponse<PageInfo<List<DhTaskInstance>>> selectBackLogTaskInfoByConditionMove(Date startTime, Date endTime,
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize, String isAgent);
+
+	/**
+	 * 完成一个系统任务
+	 * @param systemTaskInstance
+	 * @param bpmGlobalConfig
+	 * @return
+	 */
+	ServerResponse submitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig);
 }

@@ -41,8 +41,8 @@
         </div>
     </div>
     <div>
-        <p class="title_p">配置</p>
-        <form class="layui-form" action="" id="form1">
+        <p class="title_p" style="display: none;">配置</p>
+        <form class="layui-form" action="" id="form1" style="display: none;">
             <div class="layui-row">
                 <div class="layui-col-md6">
                     <div class="layui-form-item">

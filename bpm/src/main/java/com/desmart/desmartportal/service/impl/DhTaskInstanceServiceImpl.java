@@ -275,6 +275,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSubmitTask.setBpmRoutingData(routingData);
         dataForSubmitTask.setDhRoutingRecord(dhRoutingRecord);
         dataForSubmitTask.setNextStep(nextStep);
+        dataForSubmitTask.setApplyUser(getCurrentUserUid());
         return finishTaskOrSendToMq(dataForSubmitTask);
     }
 
@@ -486,7 +487,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
         if (dataForSubmitTask.getNextStep() == null) {
 			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
-			Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo);
+			Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") == null) {
                 ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
@@ -522,6 +523,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             map.put("pubBo", pubBo);
             map.put("routingData", bpmRoutingData); // 预判的下个环节信息
             map.put("routingRecord", dhRoutingRecord); // 流转记录
+			map.put("applyUser", dataForSubmitTask.getApplyUser());
             mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
             return ServerResponse.createBySuccess();
 		}
@@ -1850,5 +1852,76 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
     }
 
+
+	@Transactional
+	@Override
+	public ServerResponse submitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig) {
+		BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(systemTaskInstance.getTaskActivityId());
+		if (currTaskNode == null) {
+			throw new PlatformException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
+		}
+		DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
+		if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
+			throw new PlatformException("系统任务处理失败，任务不是系统任务，taskUid：" + systemTaskInstance.getTaskUid());
+		}
+		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
+				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
+			throw new PlatformException("系统任务任务类型异常，不能处理循环任务，taskUid：" + systemTaskInstance.getTaskUid());
+		}
+		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(systemTaskInstance.getInsUid());
+		int insId = dhProcessInstance.getInsId();
+		if (dhProcessInstance == null) {
+			throw new PlatformException("系统任务处理失败，流程实例不存在");
+		}
+		JSONObject formDataJson = FormDataUtil.getFormDataJsonFromProcessInstance(dhProcessInstance);
+		// 获得下个环节的信息
+		BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(currTaskNode, formDataJson);
+		CommonBusinessObject pubBo = new CommonBusinessObject(insId);
+		// 装配默认处理人
+		dhRouteService.assembleTaskOwnerForSystemTask(systemTaskInstance, dhProcessInstance, pubBo, bpmRoutingData);
+		// 如果下个环节有循环任务（保存/更新）处理人信息
+		dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
+
+		// 更新网关决策条件
+		if (bpmRoutingData.getGatewayNodes().size() > 0) {
+			ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
+			if (!updateResponse.isSuccess()) {
+				throw new PlatformException("系统任务处理失败，更新网关决策表失败，taskUid：" + systemTaskInstance.getTaskUid());
+			}
+		}
+
+		// 生成流转记录
+		DhRoutingRecord routingRecord = null;
+
+		// 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
+		if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
+			DhTaskInstance taskSelective = new DhTaskInstance();
+			taskSelective.setTaskUid(systemTaskInstance.getTaskUid());
+			taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
+			taskSelective.setTaskFinishDate(new Date());
+			taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+			dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+			routingRecord = dhRoutingRecordService.generateFirstTaskNodeOfSubProcessRoutingData(systemTaskInstance, bpmRoutingData, dhProcessInstance.getInsInitUser());
+		} else {
+			routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
+					systemTaskInstance, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
+			// 如果只是普通的系统个任务，修改任务状updateDhTaskInstanceWhenFinishTask(currTask, "{}");
+		}
+
+		// 获得步骤
+		List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
+
+		DhStep nextStep = steps.isEmpty() ? null : steps.get(0);
+		DataForSubmitTask dataForSubmitTask = new DataForSubmitTask();
+		dataForSubmitTask.setBpmGlobalConfig(bpmGlobalConfig);
+		dataForSubmitTask.setCurrTaskInstance(systemTaskInstance);
+		dataForSubmitTask.setCurrentProcessInstance(dhProcessInstance);
+		dataForSubmitTask.setPubBo(pubBo);
+		dataForSubmitTask.setBpmRoutingData(bpmRoutingData);
+		dataForSubmitTask.setDhRoutingRecord(routingRecord);
+		dataForSubmitTask.setNextStep(nextStep);
+		dataForSubmitTask.setApplyUser(null); // 系统任务不需要被认领
+		return finishTaskOrSendToMq(dataForSubmitTask);
+	}
 
 }

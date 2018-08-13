@@ -37,23 +37,23 @@ public class BpmTaskUtil {
     }
     
     /**
-     * 设置任务中的pubBo变量, 尝试将任务分配给当前用户，并完成任务
+     * 尝试将任务分配给指定用户，设置任务中的pubBo变量并完成任务
      * @param taskId 任务编号
      * @param pubBo  引擎中变量
+     * @param applyUser
      * @return  Map中的信息： 
      *              assignTaskResult
      */
-    public Map<String, HttpReturnStatus> commitTask(Integer taskId, CommonBusinessObject pubBo) {
+    public Map<String, HttpReturnStatus> commitTask(Integer taskId, CommonBusinessObject pubBo, String applyUser) {
         HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
         HttpReturnStatus result = null;
-        String currentUserUid = (String)SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
-        
+
         try {
-            // 将任务分配给当前用户
-            this.applyTask(taskId, currentUserUid);
-            /* //不管分配是否成功，将分配任务返回的信息放入返回值，继续下一步
-            resultMap.put("assignTaskResult", result);*/
+            // 如果分配人不为空，尝试将任务分配给指定人员
+            if (StringUtils.isNotBlank(applyUser)) {
+                this.applyTask(taskId, applyUser);
+            }
             Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
             resultMap.putAll(setDataResult);
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
@@ -64,44 +64,6 @@ public class BpmTaskUtil {
                     resultMap.put("errorResult", result);
                 }
             } else{
-                resultMap.put("errorResult", errorMap.get("errorResult"));
-            }
-
-        } catch (Exception e) {
-            log.error("完成任务失败，任务id：" + taskId, e);
-            HttpReturnStatus errorStatus = new HttpReturnStatus();
-            errorStatus.setCode(-1);
-            errorStatus.setMsg(e.toString());
-            resultMap.put("errorResult", errorStatus);
-        } finally {
-            restUtil.close();
-        }
-        return resultMap;
-    }
-
-
-    /**
-     * 设置任务中的pubBo变量，并完成任务，不分配用户
-     * @param taskId
-     * @param pubBo
-     * @return  Map中的信息：
-     *              assignTaskResult
-     */
-    public Map<String, HttpReturnStatus> commitTaskWithOutUserInSession(Integer taskId, CommonBusinessObject pubBo) {
-        HashMap<String, HttpReturnStatus> resultMap = new HashMap<>();
-        RestUtil restUtil = new RestUtil(bpmGlobalConfig);
-        HttpReturnStatus result = null;
-        try {
-            Map<String, HttpReturnStatus> setDataResult = setTaskData(taskId, pubBo);
-            resultMap.putAll(setDataResult);
-            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(setDataResult);
-            if (errorMap.isEmpty()) {
-                result = this.completeTask(taskId);
-                resultMap.put("commitTaskResult", result);
-                if (HttpReturnStatusUtil.isErrorResult(result)) {
-                    resultMap.put("errorResult", result);
-                }
-            } else {
                 resultMap.put("errorResult", errorMap.get("errorResult"));
             }
 

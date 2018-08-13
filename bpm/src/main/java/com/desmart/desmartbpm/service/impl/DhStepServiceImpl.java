@@ -60,12 +60,13 @@ public class DhStepServiceImpl implements DhStepService {
     
     @Override
     @Transactional
-    public ServerResponse create(DhStep dhStep,String actcUid) {
+    public ServerResponse create(DhStep dhStep, String actcUid) {
         if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
                 || StringUtils.isBlank(dhStep.getStepObjectUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
-        } 
+        }
+        dhStep.setStepBusinessKey(dhStep.getStepBusinessKey().trim()); // 去重
         // 查看指定的环节是否存在
         BpmActivityMeta metaSelective = new BpmActivityMeta(dhStep.getProAppId(), dhStep.getProUid(), dhStep.getProVerUid(), dhStep.getActivityBpdId());
         List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
@@ -77,7 +78,6 @@ public class DhStepServiceImpl implements DhStepService {
                 || !BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(activityMeta.getBpmTaskType())) {
             return ServerResponse.createByErrorMessage("此任务环节不符合要求，不能配置步骤");
         }
-
         String stepUid = EntityIdPrefix.DH_STEP + UUID.randomUUID().toString();
         String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
