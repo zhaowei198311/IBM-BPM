@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.desmart.desmartbpm.dao.DhNewStoreInfoMapper" >
+    <sql id="base_column">
+        PRO_UID, PRO_VER_UID, PRO_PARENT, PRO_TIME, PRO_TIME_UNIT, PRO_STATUS, PRO_TYPE_DAY, PRO_TYPE ,
+        PRO_ASSIGNMENT, PRO_SHOW_MAP, PRO_SHOW_MESSAGE, PRO_SUBPROCESS, PRO_TRI_START, PRO_TRI_DELETED,
+        PRO_TRI_CANCELED, PRO_TRI_PAUSED, PRO_TRI_UNPAUSED, PRO_TRI_REASSIGNED, PRO_TYPE_PROCESS ,
+        PRO_SHOW_DELEGATE, PRO_SHOW_DYNAFORM,  LAST_MODIFIED_DATE, LAST_MODIFIED_USER,
+        CREATE_DATE, CREATE_USER, PRO_HEIGHT, PRO_WIDTH, PRO_TITLE_X, PRO_TITLE_Y, PRO_DEBUG, PRO_DYNAFORMS,
+        PRO_DERIVATION_SCREEN_TPL, PRO_APP_ID , IS_ALL_USER_START
+    </sql>
+
+
+    
+
+
+    
+
+
+</mapper>
