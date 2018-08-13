@@ -81,7 +81,7 @@
 		<foreach collection="lists" index="index" item="item"
 			separator=" union all ">
 			SELECT
-			#{item.userUid,jdbcType=VARCHAR}, #{item.userNo,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR}, 
+			#{item.userUid,jdbcType=VARCHAR}, #{item.userUid,jdbcType=VARCHAR}, #{item.userUid,jdbcType=VARCHAR}, 
 		      #{item.userName,jdbcType=VARCHAR}, #{item.userNameUs,jdbcType=VARCHAR}, #{item.sn,jdbcType=VARCHAR}, 
 		      #{item.givenname,jdbcType=VARCHAR}, #{item.sex,jdbcType=DECIMAL}, #{item.homeplace,jdbcType=VARCHAR}, 
 		      #{item.passport,jdbcType=VARCHAR}, #{item.birthday,jdbcType=VARCHAR}, #{item.orderIndex,jdbcType=DECIMAL}, 
@@ -171,7 +171,7 @@
       BEGIN_DATE, END_DATE, CREATE_DATE, 
       UPDATE_DATE, COMPANYNUMBER, DEPARTMENTNUMBER, 
       ACCOUNT_TYPE,COSTCENTER)
-    values (#{userUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+    values (#{userUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, #{userUid,jdbcType=VARCHAR}, 
       #{userName,jdbcType=VARCHAR}, #{userNameUs,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, 
       #{givenname,jdbcType=VARCHAR}, #{sex,jdbcType=DECIMAL}, #{homeplace,jdbcType=VARCHAR}, 
       #{passport,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, 
