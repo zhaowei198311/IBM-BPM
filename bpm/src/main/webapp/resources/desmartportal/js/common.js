@@ -988,8 +988,11 @@ var common = {
 					case "radio":
 					case "checkbox":{
 						name = inputObj.attr("name");
+						console.log($("[name='"+name+"']:checked").length);
 						if($("[name='"+name+"']:checked").length<1){
 							value = "";
+						}else{
+							value = "checked";
 						}
 						break;
 					}
