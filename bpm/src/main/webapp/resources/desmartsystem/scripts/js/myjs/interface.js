@@ -284,6 +284,7 @@ function copyInterface(intUid){
 				intUid : intUid
 			},
 			success : function(result) {
+				textAreaBuild('intDescription','');
 				$("#intDescription").val("");
 				$('#intStatus').val('enabled');
 				$("#intType").val(result.intType);
