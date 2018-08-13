@@ -25,7 +25,7 @@
 	rel="stylesheet">
 <link rel="stylesheet" href="resources/desmartportal/css/layui.css"
 	media="all">
-<link rel="stylesheet" href="resources/desmartportal/css/my.css?v=1.01" />
+<link rel="stylesheet" href="resources/desmartportal/css/my.css?v=1.02" />
 <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
 <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
@@ -183,7 +183,7 @@
             </div>
         </div>
         <div class="layui-row" style="margin: 0px 0 0 40px; padding-right: 40px;">
-            <div class="layui-col-md4">姓名：${currentUser.userName}(${currentUser.userId})</div>
+            <div class="layui-col-md4">发起人：${currentUser.userName}(${currentUser.userId})</div>
             <div class="layui-col-md4" id="createDate">
             	
             </div>
