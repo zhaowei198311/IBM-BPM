@@ -6,7 +6,7 @@ package com.desmart.desmartsystem.enums;
 public enum InterfaceType {
 	WEBSERVICE("webservice", "webservice"),
 	RESTAPI("restapi", "restapi"),
-	RPC("rpc", "rpc");
+	RFC("rfc", "rfc");
 
     private final String code;
     private final String value;
