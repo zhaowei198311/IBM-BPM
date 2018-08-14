@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.desmart.desmartsystem.mapper.SysCostCenterMapper">
+<mapper namespace="com.desmart.desmartsystem.dao.SysCostCenterMapper">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.desmart.desmartsystem.entity.SysCostCenter">
@@ -14,6 +14,16 @@
 	</sql>
 
 	<insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysCostCenter" >
-		INSERT INTO  <include refid="Base_Column_List"></include> values (#{costCenterNo},#{costCenterName},#{profitCenterNo})
+		INSERT INTO  SYS_COST_CENTER values (#{costCenterNo},#{costCenterName},#{profitCenterNo})
 	</insert>
+	
+	 <select id="selectAll" parameterType="com.desmart.desmartsystem.entity.SysCostCenter"  resultMap="BaseResultMap">
+	 		 select  <include refid="Base_Column_List"></include> FROM  SYS_COST_CENTER
+	  </select>
+	  
+	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysCostCenter"  resultMap="BaseResultMap">
+	  		 select  <include refid="Base_Column_List"></include> FROM  SYS_COST_CENTER
+	  </select>
+	
+	
 </mapper>
