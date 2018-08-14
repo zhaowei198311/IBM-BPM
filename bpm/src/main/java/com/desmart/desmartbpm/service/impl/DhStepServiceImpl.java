@@ -1,9 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.DhTriggerService;
@@ -67,6 +64,9 @@ public class DhStepServiceImpl implements DhStepService {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         }
         dhStep.setStepBusinessKey(dhStep.getStepBusinessKey().trim()); // 去重
+        if (dhStep.getStepBusinessKey().contains(";")) {
+            return ServerResponse.createByErrorMessage("步骤关键字不能包含\";\"");
+        }
         // 查看指定的环节是否存在
         BpmActivityMeta metaSelective = new BpmActivityMeta(dhStep.getProAppId(), dhStep.getProUid(), dhStep.getProVerUid(), dhStep.getActivityBpdId());
         List<BpmActivityMeta> metaList = bpmActivityMetaMapper.queryByBpmActivityMetaSelective(metaSelective);
@@ -359,10 +359,16 @@ public class DhStepServiceImpl implements DhStepService {
 	public ServerResponse createStepToAll(DhStep dhStep) {
 		if (StringUtils.isBlank(dhStep.getProAppId()) || StringUtils.isBlank(dhStep.getProUid())
                 || StringUtils.isBlank(dhStep.getProVerUid()) || StringUtils.isBlank(dhStep.getStepType())
-                || StringUtils.isBlank(dhStep.getStepObjectUid())) {
+                || StringUtils.isBlank(dhStep.getStepObjectUid()) || StringUtils.isBlank(dhStep.getStepBusinessKey())) {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         }
-		String stepType = dhStep.getStepType();
+        String stepBusinessKey = dhStep.getStepBusinessKey();
+		if (stepBusinessKey.contains(";")) {
+		    return ServerResponse.createByErrorMessage("步骤关键字不能包含\";\"");
+        }
+        dhStep.setStepBusinessKey(stepBusinessKey.trim());
+
+        String stepType = dhStep.getStepType();
         DhStepType stepTypeEnum = DhStepType.codeOf(stepType);
         if (stepTypeEnum == null) {
             return ServerResponse.createByErrorMessage("步骤类型不符合要求");
@@ -493,6 +499,16 @@ public class DhStepServiceImpl implements DhStepService {
             return 0;
         }
         return dhStepMapper.insertBatchDhStep(stepList);
+    }
+
+    @Override
+    public Set<String> listStepBusinessKeyOfProcessDefinition(String proAppId, String proUid, String proVerUid) {
+        List<DhStep> dhSteps = listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
+        Set<String> set = new HashSet<>();
+        for (DhStep dhStep : dhSteps) {
+            set.add(dhStep.getStepBusinessKey());
+        }
+        return set;
     }
 
 }

@@ -700,12 +700,18 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			return ServerResponse.createByErrorMessage("缺少必要的参数");
 		}
 		// 获得可发起的版本
-		DhProcessDefinition enabledDefinition = dhProcessDefinitionService .getStartAbleProcessDefinition(proAppId, proUid);
-		if (enabledDefinition == null) {
-			return ServerResponse.createByErrorMessage("当前流程没有可发起的版本");
+		DhProcessDefinition startAbleDefinition = dhProcessDefinitionService .getStartAbleProcessDefinition(proAppId, proUid);
+		if (startAbleDefinition == null) {
+			return ServerResponse.createByErrorMessage("当前流程未启用可发起版本");
 		}
-		// 校验用户有没有发起流程的权限
-		if (!checkPermissionStart(enabledDefinition)) {
+        String proStartBusinessKey = startAbleDefinition.getProStartBusinessKey();
+		if (StringUtils.isBlank(proStartBusinessKey)) {
+            return ServerResponse.createByErrorMessage("当前流程未配置可发起的关键字");
+        }
+        List<String> startBusinessKeys = Arrays.asList(proStartBusinessKey.split(";"));
+
+        // 校验用户有没有发起流程的权限
+		if (!checkPermissionStart(startAbleDefinition)) {
 			return ServerResponse.createByErrorMessage("无权限发起当前流程");
 		}
 		/*  1. 获得流程发起后的第一个节点
@@ -713,7 +719,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			3. 获得那个流程对应的所有关键字
 		*/
         ServerResponse<BpmActivityMeta> getFirstNodeResponse = dhRouteService.getActualFirstUserTaskNodeOfMainProcess(proAppId,
-                proUid, enabledDefinition.getProVerUid());
+                proUid, startAbleDefinition.getProVerUid());
         if (!getFirstNodeResponse.isSuccess()) {
             return getFirstNodeResponse;
         }
@@ -721,19 +727,22 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         List<DhStep> steps = null;
         if (BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(firstUserTaskNode.getParentActivityId())) {
             // 第一个任务是主流程的任务
-            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, enabledDefinition.getProVerUid());
+            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, startAbleDefinition.getProVerUid());
         } else {
             // 第一个任务是子流程内的任务
             BpmActivityMeta nodeIdentitySubProcess = bpmActivityMetaMapper.queryByPrimaryKey(firstUserTaskNode.getParentActivityId());
             String externalId = nodeIdentitySubProcess.getExternalId();
-            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, externalId, enabledDefinition.getProVerUid());
+            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, externalId, startAbleDefinition.getProVerUid());
         }
-        if (steps.isEmpty()) {
-            return ServerResponse.createByErrorMessage("流程未配置步骤");
-        }
+
         Set<String> stepBusinessKeys = new HashSet<>();
         for (DhStep step : steps) {
-            stepBusinessKeys.add(step.getStepBusinessKey());
+            if (startBusinessKeys.contains(step.getStepBusinessKey())) {
+                stepBusinessKeys.add(step.getStepBusinessKey());
+            }
+        }
+        if (stepBusinessKeys.isEmpty()) {
+            return ServerResponse.createByErrorMessage("当前流程未配置可发起的关键字");
         }
         if (stepBusinessKeys.size() == 1) {
             // 只有一个关键字
