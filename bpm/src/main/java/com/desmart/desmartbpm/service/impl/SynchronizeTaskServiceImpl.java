@@ -1,9 +1,6 @@
 package com.desmart.desmartbpm.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -11,56 +8,27 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.desmart.common.util.TokenInfoUtil;
-import com.desmart.desmartbpm.service.AnalyseLswTaskService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.BpmProcessUtil;
-import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.desmartbpm.common.Const;
-import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
 import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
-import com.desmart.desmartbpm.service.BpmActivityMetaService;
+import com.desmart.desmartbpm.service.AnalyseLswTaskService;
 import com.desmart.desmartbpm.service.SynchronizeTaskService;
-import com.desmart.desmartportal.dao.DhAgentRecordMapper;
-import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
-import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.DhAgentRecord;
-import com.desmart.desmartportal.entity.DhProcessInstance;
-import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.DhAgentService;
-import com.desmart.desmartportal.service.DhProcessInstanceService;
-import com.desmart.desmartportal.service.DhRouteService;
-import com.desmart.desmartportal.service.DhTaskInstanceService;
-import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
-import com.desmart.desmartsystem.entity.SysEmailUtilBean;
-import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import com.desmart.desmartsystem.service.SendEmailService;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
@@ -126,6 +94,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 // 分析一个引擎任务并
                 analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
             } catch (Exception e) {
+                // 发生异常，删除创建任务的信息
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 LOG.error("拉取任务时分析任务出错：任务编号: " + lswTask.getTaskId(), e);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask);
@@ -149,6 +119,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 // 更新重试列表，完成此任务的重试拉取
                 completeRetrySynTask(lswTask.getTaskId());
             } catch (Exception e) {
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
                 // 更新重试次数
                 updateRetryCount(lswTask);
@@ -164,6 +135,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 // 分析一个引擎任务
                 analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
             } catch (Exception e) {
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask);
