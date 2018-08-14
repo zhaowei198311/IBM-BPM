@@ -24,6 +24,96 @@ layui.use('form', function(){
         }
    });
 });
+
+// 处理可启动的关键字模块
+var startBusinessKey = {
+    elements: {
+        showContinerI: $('#showContinerI'),
+        container: $('#chooseStartBusinessKeyContainer'),
+        unstartUl: $('#unstartUl'),
+        startUl: $('#startUl'),
+        toRightBtn: $('#toRightBtn'),
+        toLeftBtn: $('#toLeftBtn'),
+        sureBtn: $('#startBusinessKeySureBtn'),
+        valueInput: $('#proStartBusinessKey')  // 存放提交值的控件
+    },
+    init: function(stepBusinessKeyStr) {
+        startBusinessKey.elements.showContinerI.click(function(){
+            startBusinessKey.elements.container.show();
+        });
+        startBusinessKey.elements.container.on('click', 'li', function(event){
+            var $li = $(event.target);
+            $li.toggleClass('colorli');
+        });
+        startBusinessKey.elements.container.on('mouseenter', 'li', function(e){
+            var $li = $(e.target);
+            $li.addClass('tempColorli');
+        });
+        startBusinessKey.elements.container.on('mouseleave', 'li', function(e){
+            var $li = $(e.target);
+            $li.removeClass('tempColorli');
+        });
+        startBusinessKey.elements.sureBtn.click(function(){
+            var $lis = startBusinessKey.elements.startUl.find('li');
+            var str = '';
+            for (var i = 0; i < $lis.length; i++) {
+                str += $lis.eq(i).data('businesskey') + ';';
+            }
+            startBusinessKey.elements.valueInput.val(str);
+            startBusinessKey.elements.container.hide();
+            startBusinessKey.elements.container.find('li').each(function(){
+                $(this).removeClass('colorli');
+                $(this).removeClass('tempColorli');
+            });
+        });
+        startBusinessKey.elements.toRightBtn.click(function(){
+            startBusinessKey.elements.unstartUl.find('.colorli').each(function(){
+                $(this).appendTo(startBusinessKey.elements.startUl);
+                $(this).removeClass('colorli');
+            });
+        });
+        startBusinessKey.elements.toLeftBtn.click(function(){
+            startBusinessKey.elements.startUl.find('.colorli').each(function(){
+                $(this).appendTo(startBusinessKey.elements.unstartUl);
+                $(this).removeClass('colorli');
+            });
+        });
+        // 如果这个流程定义下存在步骤
+        var allBusinessKeyArr = [];
+        var startBusinessKeyArr = [];
+        if (stepBusinessKeyStr) {
+            stepBusinessKeyStr = stepBusinessKeyStr.substring(0, stepBusinessKeyStr.length - 1);
+            allBusinessKeyArr = stepBusinessKeyStr.split(';');
+        }
+        var startBusinessKeyStr = startBusinessKey.elements.valueInput.val();
+        if (startBusinessKeyStr) {
+            startBusinessKeyStr = startBusinessKeyStr.substring(0, startBusinessKeyStr.length - 1);
+            startBusinessKeyArr = startBusinessKeyStr.split(';');
+        }
+        console.log(allBusinessKeyArr);
+        console.log(startBusinessKeyArr);
+        if (allBusinessKeyArr.length) {
+            var leftStr = '';
+            var rightStr = '';
+            for (var i = 0; i < allBusinessKeyArr.length; i++) {
+                var businessKey = allBusinessKeyArr[i];
+                var businessKeyShow = businessKey.length > 10 ? businessKey.substring(0, 10) + '...' : businessKey;
+                if (startBusinessKeyArr.includes(businessKey)) {
+                    rightStr += '<li data-businesskey="'+businessKey+'" title="'+businessKey+'">' + businessKeyShow + '</li>';
+                } else {
+                    leftStr += '<li data-businesskey="'+businessKey+'" title="'+businessKey+'">' + businessKeyShow + '</li>';
+                }
+            }
+            startBusinessKey.elements.unstartUl.append(leftStr);
+            startBusinessKey.elements.startUl.append(rightStr);
+        }
+
+
+
+    }
+};
+
+
 $(function() {
 	var isAllUserStart = $("#isAllUserStart").val();
 	$("input[name='isAllUserStart']").each(function(){
@@ -41,7 +131,8 @@ $(function() {
 		}
 	})
 	getPermissionStart();
-	
+    startBusinessKey.init(stepBusinessKeyStr);
+
     $('#form1').validate({
         rules : {
             proTime : {
@@ -197,7 +288,7 @@ $(function() {
     $("#chooseTeam_btn").click(function(){
     	common.chooseTeam('permissionStartTeam', 'false');
     });
-    
+
 });
 
 // 获取页面上的数据
@@ -226,6 +317,7 @@ function getData() {
     data.permissionStartRole = $('[name="permissionStartRole"]').val();
     data.permissionStartTeam = $('[name="permissionStartTeam"]').val();
     data.isAllUserStart = $('[name="isAllUserStart"]:checked').val();
+    data.proStartBusinessKey = $('[name="proStartBusinessKey"]').val();
     // if(!/^[0-9]*[1-9][0-9]*$/.test(data.proHeight) || !/^[0-9]*[1-9][0-9]*$/.test(data.proWidth)
     //     || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleX) || !/^[0-9]*[1-9][0-9]*$/.test(data.proTitleY)){
     //     data.isOk = false;

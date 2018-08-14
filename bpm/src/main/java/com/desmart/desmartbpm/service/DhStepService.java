@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
@@ -136,4 +137,12 @@ public interface DhStepService {
      */
     int insertBatch(List<DhStep> stepList);
 
+    /**
+     * 列出指定流程定义的所有关键字（去重）
+     * @param proAppId
+     * @param proUid
+     * @param proVerUid
+     * @return
+     */
+    Set<String> listStepBusinessKeyOfProcessDefinition(String proAppId, String proUid, String proVerUid);
 }    

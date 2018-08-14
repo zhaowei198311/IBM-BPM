@@ -1,6 +1,8 @@
 package com.desmart.desmartbpm.controller;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,17 +36,11 @@ public class DhProcessDefinitionController {
     private static final Logger LOG = LoggerFactory.getLogger(DhProcessDefinitionController.class);
     
     @Autowired
-    private DhProcessCategoryService dhProcessCategoryService;
-    @Autowired
-    private DhProcessMetaService dhProcessMetaService;
-    @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
     @Autowired
-    private DhGatewayLineService dhGatewayLineService;
-    @Autowired
-    private DhTransferService dhTransferService;
-    @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
+    @Autowired
+    private DhStepService dhStepService;
 
     /**
      * 跳转到流程定义首页
@@ -135,6 +131,8 @@ public class DhProcessDefinitionController {
         ServerResponse serverResponse = dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
         if (serverResponse.isSuccess()) {
             mv.addObject("definition", serverResponse.getData());
+            Set<String> businessKeys = dhStepService.listStepBusinessKeyOfProcessDefinition(proAppId, proUid, proVerUid);
+            mv.addObject("businessKeys", businessKeys);
         }
         return mv;
     }

@@ -556,7 +556,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Transactional
 	public ServerResponse<Map<String, Object>> toDealTask(String taskUid) {
-		long start = System.currentTimeMillis();
 	    Map<String, Object> resultMap = new HashMap<>();
 	    if (StringUtils.isBlank(taskUid)) {
 	        return ServerResponse.createByErrorMessage("缺少必要的参数");
@@ -566,6 +565,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	        return ServerResponse.createByErrorMessage("任务不存在或任务状态异常");
 	    }
 		String currUserUid = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
+	    SysUser currentUser = sysUserMapper.queryByPrimaryKey(currUserUid);
 		if (!canUserSumbitTask(dhTaskInstance, currUserUid)) {
 			return ServerResponse.createByErrorMessage("您没有提交此任务的权限");
 		}
@@ -649,6 +649,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	    resultMap.put("canEditInsTitle", canEditInsTitle);
 	    resultMap.put("dataForSkipFromReject", dataForSkipFromReject);
 	    resultMap.put("needApprovalOpinion", needApprovalOpinion(currTaskNode, dhprocessInstance));
+	    resultMap.put("currentUser", currentUser);
 	    return ServerResponse.createBySuccess(resultMap);
 	}
 

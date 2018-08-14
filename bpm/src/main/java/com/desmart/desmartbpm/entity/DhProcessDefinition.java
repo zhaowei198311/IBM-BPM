@@ -95,6 +95,7 @@ public class DhProcessDefinition {
     private String permissionStartUser; // 人员发起权限
     private String permissionStartRole; // 角色发起权限
     private String permissionStartTeam; // 角色组发起权限
+    private String proStartBusinessKey;  // 可供发起的步骤关键字
 
     private DhProcessDefinition oldProcessDefinition;
 
@@ -485,7 +486,14 @@ public class DhProcessDefinition {
 		this.verName = verName;
 	}
 
-	
+    public String getProStartBusinessKey() {
+        return proStartBusinessKey;
+    }
+
+    public void setProStartBusinessKey(String proStartBusinessKey) {
+        this.proStartBusinessKey = proStartBusinessKey;
+    }
+
     public String getIsAllUserStart() {
 		return isAllUserStart;
 	}

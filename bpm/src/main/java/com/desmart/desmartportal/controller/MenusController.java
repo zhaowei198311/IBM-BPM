@@ -144,13 +144,7 @@ public class MenusController {
 	}
 	
 	/**
-	 * 
-	 * @Title: processInstance  
-	 * @Description: 门店生命周期-流程实例页面  
-	 * @param @param proUid
-	 * @param @param proAppId
-	 * @param @return  
-	 * @return ModelAndView  
+	 * 进入流程地图中的一个流程
 	 */
 	@RequestMapping("/processInstanceByUser")
 	public ModelAndView processInstance(@RequestParam(value = "proUid",required = false) String proUid,
@@ -167,7 +161,7 @@ public class MenusController {
 		if(definition!=null) {
 			flag = dhProcessInstanceService.checkPermissionStart(definition);
 		}
-		mv.addObject("startFlag",flag);
+		mv.addObject("startFlag", flag);
 		mv.addObject("proUid", proUid);
 		mv.addObject("proAppId", proAppId);
 		mv.addObject("proName", proName);

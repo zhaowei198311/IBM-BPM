@@ -23,6 +23,13 @@
 		.show_user_div,.select_ul{border:1px solid #ccc;}
 		.show_user_div ul li,.select_ul li{height:35px;line-height:35px;list-style:none;padding:0 10px}
 		.foot_temp{text-align:right;margin-top:20px}
+        .p1 { height: 30px; text-align: center; width: 280px; background-color: #f5f5f5; line-height: 30px; }
+        .startBusinessKeyUlDiv { color: black; height: 368px; width: 280px; margin: 0; padding: 0; overflow-y: auto; overflow-x: hidden; }
+        .startBusinessKeyUl { width: 280px; margin: 0; padding: 0; }
+        .colorli { background-color: #9DA5EC; color: white; }
+        .tempColorli { background-color: #9DA5EC; color: white; border-top: 1px solid green; border-bottom: 1px solid green; }
+        .startBusinessKeyUl li { height: 35px; line-height: 35px; list-style: none; padding: 0 10px; text-align: center; cursor: pointer; font-size: 14px; border-top: 1px solid white; border-bottom: 1px solid white; }
+        .chooseStartBusinessKeyDiv { float: left; width: 280px; height: 398px; margin: 0; padding: 0; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
@@ -174,6 +181,20 @@
                 </div>
             </div>
         </form>
+        <p class="title_p">可供发起的关键字</p>
+        <form class="layui-form" action="" id="businessKeyForm">
+            <div class="layui-row">
+                <div class="layui-col-md12">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">关键字</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="proStartBusinessKey" name="proStartBusinessKey" value="${definition.proStartBusinessKey}" autocomplete="off" class="layui-input" disabled="disabled"/>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"><i class="layui-icon choose_user"  style="margin-right:10px;" id="showContinerI">&#xe615;</i> </div>
+                    </div>
+                </div>
+            </div>
+        </form>
         <p class="title_p" style="display:none">流程图配置</p>
         <form class="layui-form" action="" id="form4" style="display:none">
             <div class="layui-row">
@@ -207,6 +228,7 @@
                 </div>
             </div>
         </form>
+
     </div>
 </div>
 <!-- 选择触发器弹框 -->
@@ -259,8 +281,47 @@
         </div>
     </div>
 </div>
+<!-- 选择可发起步骤关键字弹框 -->
+<div class="display_container6" id="chooseStartBusinessKeyContainer">
+    <div class="display_content6" style="height: 500px; width: 730px;color:black;">
+        <div class="top" style="font-size: 18px;">请选择可供发起的步骤关键字</div>
+        <div class="middle6" style="height: 400px; width: 715px;overflow-y: hidden;">
+            <div style="margin-left: 42.5px;" class="chooseStartBusinessKeyDiv">
+                <p class="p1">可供选择的关键字</p>
+                <div class="startBusinessKeyUlDiv" >
+                    <ul   class="startBusinessKeyUl" id="unstartUl"></ul>
+                </div>
+            </div>
+            <div class="middle_div">
+                <button id="toRightBtn"
+                        class="layui-btn layui-btn-sm" style="margin-top: 150px;">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</button>
+                <br> <br>
+                <button id="toLeftBtn"
+                        class="layui-btn layui-btn-sm">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</button>
+            </div>
+            <div   class="chooseStartBusinessKeyDiv" style="">
+                <p class="p1">可发起流程的关键字</p>
+                <div class="startBusinessKeyUlDiv" >
+                    <ul  class="startBusinessKeyUl" id="startUl"></ul>
+                </div>
+            </div>
+            <h1 style="clear: both;"></h1>
+        </div>
+        <div class="foot">
+            <button class="layui-btn layui-btn sure_btn"
+                    id="startBusinessKeySureBtn">确定</button>
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn"
+                    onclick="$('#chooseStartBusinessKeyContainer').hide();">取消</button>
+        </div>
+    </div>
+</div>
+
 </body>
 
+
+<script>
+    var stepBusinessKeyStr = '<c:forEach items="${businessKeys}" var="businssKey">${businssKey};</c:forEach>';
+</script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/processDefinitionSet.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>
@@ -279,9 +340,9 @@
             elem: '#test2'
         });
     });
-    $(function(){
 
-
-    })
 </script>
+<style>
+
+</style>
 </html>
