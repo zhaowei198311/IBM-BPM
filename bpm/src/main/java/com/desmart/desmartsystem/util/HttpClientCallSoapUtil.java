@@ -15,6 +15,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class HttpClientCallSoapUtil {
 	static int socketTimeout = 60000;// 请求超时时间
 	static int connectTimeout = 60000;// 传输超时时间
@@ -28,9 +30,10 @@ public class HttpClientCallSoapUtil {
 	 * @param soapAction
 	 * @return
 	 */
-	public static String doPostSoap1_1(String postUrl, String soapXml,
+	public static JSONObject doPostSoap1_1(String postUrl, String soapXml,
 			String soapAction,String userName,String password) {
 		String retStr = "";
+		JSONObject object = new JSONObject();
 		try {
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 	        credsProvider.setCredentials(AuthScope.ANY,
@@ -52,11 +55,14 @@ public class HttpClientCallSoapUtil {
 			httpPost.setEntity(data);
 			CloseableHttpResponse response = closeableHttpClient
 					.execute(httpPost);
+			int statusCode = response.getStatusLine().getStatusCode();
+			object.put("statusCode",statusCode);
+			
 			HttpEntity httpEntity = response.getEntity();
 			if (httpEntity != null) {
 				// 打印响应内容
 				retStr = EntityUtils.toString(httpEntity, "UTF-8");
-				System.out.println(retStr);
+				object.put("responseResult", retStr);
 				logger.info("response:" + retStr);
 			}
 			// 释放资源
@@ -65,7 +71,7 @@ public class HttpClientCallSoapUtil {
 			e.printStackTrace();
 			logger.error("exception in doPostSoap1_1", e);
 		}
-		return retStr;
+		return object;
 	}
 
 	/**
@@ -160,8 +166,7 @@ public class HttpClientCallSoapUtil {
 				"   </soapenv:Body>\n" + 
 				"</soapenv:Envelope>";
 		String postUrl = "http://10.1.0.102:50300/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_TBPM&receiverParty=&receiverService=&interface=SIO_TBPM_ZIFSD_TBPM_LIFNR&interfaceNamespace=http://laiyifen.com/xi/TBPM";
-		String str = doPostSoap1_1(postUrl, querySoapXml,"","rfc_user","password");
-		
-		System.out.println(str);
+		//String str = doPostSoap1_1(postUrl, querySoapXml,"","rfc_user","password");
+		//System.out.println(str);
 	}
 }
