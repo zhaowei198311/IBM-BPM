@@ -704,7 +704,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (startAbleDefinition == null) {
 			return ServerResponse.createByErrorMessage("当前流程未启用可发起版本");
 		}
-
+        // 开发起版本设置的可发起关键字
         String proStartBusinessKey = startAbleDefinition.getProStartBusinessKey();
 		if (StringUtils.isBlank(proStartBusinessKey)) {
             return ServerResponse.createByErrorMessage("当前流程未配置可发起的关键字");
@@ -715,9 +715,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (!checkPermissionStart(startAbleDefinition)) {
 			return ServerResponse.createByErrorMessage("无权限发起当前流程");
 		}
-
+        // 获得主流程发起相关的关键字
         Set<String> allBusinessKeySet = dhStepService.listStepBusinessKeyOfMainProcess(proAppId, proUid, startAbleDefinition.getProVerUid());
-
+        // 从所有相关的关键字中过滤出可发起的关键字
         Set<String> stepBusinessKeys = new HashSet<>();
         for (String businessKey : allBusinessKeySet) {
             if (startBusinessKeys.contains(businessKey)) {
