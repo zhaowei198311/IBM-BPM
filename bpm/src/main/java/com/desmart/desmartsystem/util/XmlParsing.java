@@ -91,7 +91,9 @@ public class XmlParsing {
 		SAXReader sax = new SAXReader();
 		Document document = sax.read(new ByteArrayInputStream(xml.getBytes("UTF-8")));
 		Element root = document.getRootElement();
-		getNodes(root,jsonObject);
+		//getNodes(root,jsonObject);
+		
+		root.remove(root.element("ITB_IN"));
 		System.out.println(document.getDocument().asXML());
 	}
 	
@@ -121,7 +123,7 @@ public class XmlParsing {
 	    //当前节点的名称、文本内容和属性  
 		String nodeName=node.getName();
 		String nodeValue=jsonObject.getString(nodeName);
-		System.out.println(nodeValue);
+		node.setText("");
 		if(StringUtils.isNotBlank(nodeValue)) {
 			if(isJson(nodeValue)) {
 				JSONArray josnArray1= (JSONArray) jsonObject.get(nodeName);
