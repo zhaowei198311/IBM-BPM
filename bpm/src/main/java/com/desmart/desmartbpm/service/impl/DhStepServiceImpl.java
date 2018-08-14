@@ -3,8 +3,11 @@ package com.desmart.desmartbpm.service.impl;
 import java.util.*;
 
 import com.desmart.desmartbpm.enums.DhTriggerType;
+import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartbpm.service.DhTriggerService;
+import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhRouteService;
 import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
@@ -54,6 +57,10 @@ public class DhStepServiceImpl implements DhStepService {
     private DhTriggerService dhTriggerService;
     @Autowired
     private DhTriggerInterfaceMapper dhTriggerInterfaceMapper;
+    @Autowired
+    private DhRouteService dhRouteService;
+    @Autowired
+    private BpmActivityMetaService bpmActivityMetaService;
     
     @Override
     @Transactional
@@ -502,7 +509,15 @@ public class DhStepServiceImpl implements DhStepService {
     }
 
     @Override
-    public Set<String> listStepBusinessKeyOfProcessDefinition(String proAppId, String proUid, String proVerUid) {
+    public Set<String> listStepBusinessKeyOfMainProcess(String proAppId, String proUid, String proVerUid) {
+        BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
+        BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, null);
+        // 如果主流程的第一个环节在子流程下，就查询该子流程的关键字
+        if (!CollectionUtils.isEmpty(bpmRoutingData.getStartProcessNodes())) {
+            List<BpmActivityMeta> startProcessNodes = bpmRoutingData.getStartProcessNodes();
+            BpmActivityMeta lastNodeIdentitySubProcess = startProcessNodes.get(startProcessNodes.size() - 1);
+            proUid = lastNodeIdentitySubProcess.getExternalId();
+        }
         List<DhStep> dhSteps = listAllStepsOfProcessDefinition(proAppId, proUid, proVerUid);
         Set<String> set = new HashSet<>();
         for (DhStep dhStep : dhSteps) {

@@ -138,11 +138,11 @@ public interface DhStepService {
     int insertBatch(List<DhStep> stepList);
 
     /**
-     * 列出指定流程定义的所有关键字（去重）
+     * 列出主流程发起使用的关键字（去重），如果主流程的第一个任务位于子流程内，列出那个子流程的关键字
      * @param proAppId
      * @param proUid
      * @param proVerUid
      * @return
      */
-    Set<String> listStepBusinessKeyOfProcessDefinition(String proAppId, String proUid, String proVerUid);
+    Set<String> listStepBusinessKeyOfMainProcess(String proAppId, String proUid, String proVerUid);
 }    
