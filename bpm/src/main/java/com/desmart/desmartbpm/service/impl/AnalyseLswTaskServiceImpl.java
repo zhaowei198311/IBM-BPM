@@ -6,6 +6,7 @@ import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.TokenInfoUtil;
 import com.desmart.desmartbpm.common.Const;
@@ -96,10 +97,10 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
 
         TokenInfoUtil tokenUtil = new TokenInfoUtil(taskId, processData);
         String parentProcessTokenId = tokenUtil.getParentTokenId();
-
-        if (tokenUtil.getTokenId() == null) {
-            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
-        }
+        parentProcessTokenId = "34";
+//        if (tokenUtil.getTokenId() == null) {
+//            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
+//        }
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
         BpmActivityMeta bpmActivityMeta = null; // 任务停留的环节
@@ -124,12 +125,6 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
         // 查看环节的任务类型
         if (bpmActivityMeta == null) {
             throw new PlatformException("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
-        }
-
-        // 查看任务表中是否已经有这个任务id的任务
-        boolean taskExists = dhTaskInstanceService.isTaskExists(taskId);
-        if (taskExists) {
-            return ServerResponse.createBySuccess();
         }
 
         // 引擎分配任务的人，再考虑代理情况
@@ -175,8 +170,13 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             }
         }
 
+        if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS) == null) {
+            return ServerResponse.createBySuccess();
+        }
+
         // 批量保存任务
         dhTaskInstanceMapper.insertBatch(dhTaskList);
+        commonMongoDao.set(String.valueOf(taskId), DateTimeUtil.dateToStr(new Date()), CommonMongoDao.CREATED_TASKS);
         // 批量保存代理信息
         if (!CollectionUtils.isEmpty(agentRecordList)) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
@@ -250,7 +250,6 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
                 synNumber = -1; // 自动提交任务标识
             }
         }
-
 
         // 为每个处理人创建任务
         for (String orgionUserUid : orgionUserUidList) {

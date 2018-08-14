@@ -444,14 +444,13 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	@Override
-	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo,
-			JSONArray routeData) {
+	public ServerResponse<CommonBusinessObject> assembleCommonBusinessObject(CommonBusinessObject pubBo, JSONArray routeData) {
 		if (pubBo == null) {
 			pubBo = new CommonBusinessObject();
 		}
 
 		for (int i = 0; i < routeData.size(); i++) {
-			JSONObject item = (JSONObject) routeData.get(i);
+			JSONObject item = routeData.getJSONObject(i);
 			String activityId = item.getString("activityId");
 			String userUids = item.getString("userUid");
 			String assignVarName = item.getString("assignVarName");
@@ -1051,10 +1050,14 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 	public boolean checkRouteData(BpmActivityMeta currTaskNode, JSONArray routeData, BpmRoutingData routingData) {
 	    // 保存activityId 与 处理人的对应关系
-        Map<String, String> assignMap = new HashMap<>();
+        Map<String, String> actIdAndUserMap = new HashMap<>();
 	    for (int i = 0; i < routeData.size(); i++) {
             JSONObject item = routeData.getJSONObject(i);
-            assignMap.put(item.getString("activityId"), item.getString("userUid"));
+            String userUid = item.getString("userUid");
+            if (StringUtils.isBlank(userUid)) {
+                return false;
+            }
+            actIdAndUserMap.put(item.getString("activityId"), userUid);
         }
         /*
         routingData.getTaskNodesOnSameDeepLevel();
@@ -1062,14 +1065,12 @@ public class DhRouteServiceImpl implements DhRouteService {
 	    这两个集合里的节点需要分配处理人
 	    */
         for (BpmActivityMeta taskNode : routingData.getTaskNodesOnSameDeepLevel()) {
-            if (assignMap.get(taskNode.getActivityId()) == null
-                    || StringUtils.isBlank(assignMap.get(taskNode.getActivityId()))) {
+            if (actIdAndUserMap.get(taskNode.getActivityId()) == null) {
                 return false;
             }
         }
         for (BpmActivityMeta taskNode : routingData.getFirstTaskNodesOfStartProcessOnSameDeepLevel()) {
-            if (assignMap.get(taskNode.getActivityId()) == null
-                    || StringUtils.isBlank(assignMap.get(taskNode.getActivityId()))) {
+            if (actIdAndUserMap.get(taskNode.getActivityId()) == null) {
                 return false;
             }
         }

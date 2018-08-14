@@ -161,7 +161,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                 logger.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + dhTaskInstance.getInsUid());
             }
         } else {
-            throw new PlatformException("调用RESTful API完成任务失败");
+            throw new PlatformException("调用RESTful API完成任务失败，任务id: " + taskId + "，taskUid: " + dhTaskInstance.getTaskUid());
         }
     }
 

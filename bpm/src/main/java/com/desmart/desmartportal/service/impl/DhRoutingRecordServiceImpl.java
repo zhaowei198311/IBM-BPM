@@ -243,6 +243,7 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
         DhRoutingRecord dhRoutingRecord = new DhRoutingRecord();
         dhRoutingRecord.setInsUid(insUid);
         List<DhRoutingRecord> dhRoutingRecords = this.getDhRoutingRecordListByCondition(dhRoutingRecord);
+
         List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();//获取当前流转到的所有环节
         List<DhTaskInstance> dhTaskHandlers = new ArrayList<DhTaskInstance>();//获得当前要处理的任务的信息
 
