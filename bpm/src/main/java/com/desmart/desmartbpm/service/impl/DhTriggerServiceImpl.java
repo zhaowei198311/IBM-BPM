@@ -284,7 +284,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				}
 			}
 			inputParameter += "}";
-			paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
+			paramJson = "{\"intUid\":\"" + intUid + "\",\"inputParameter\"" + inputParameter + "}";
 			JSONObject paramObj = JSONObject.parseObject(paramJson);
 			//调用接口处理数据并接收回调数据
 			Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
