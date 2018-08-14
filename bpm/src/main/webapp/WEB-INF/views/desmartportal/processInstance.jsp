@@ -59,7 +59,9 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
-		
+		#selectBusinessKeyTable tr{
+			text-align: center;
+		}
 </style>
 </head>
 <body>
@@ -200,14 +202,14 @@
 			<div class="upload_overflow_middle">
 				<div class="layui-upload">
 					<div class="layui-upload-list">
-						<table class="layui-table">
+						<table class="layui-table" id="selectBusinessKeyTable">
 							<colgroup>
 								<col width="10%">
 								<col>
 							</colgroup>
 							<thead>
 								<tr>
-									<th>序号</th>
+									<th style="text-align: center;">选择</th>
 									<th style="text-align: center;">业务关键字</th>
 								</tr>
 							</thead>
@@ -262,6 +264,21 @@
 // 		var sign = true;
 		// 加载数据
 		queryProcessInstance();
+
+        // 点击tr排他选中checkbox
+        $('#selectBusinessKeyTable').on('click', 'tr', function(event) {
+            var $ck = $(this).find(':checkbox');
+            var checked = $ck.prop('checked');
+            if (event.target.type == 'checkbox') {
+                checked = !checked;
+            }
+            if (checked) {
+                $ck.prop('checked', false);
+            } else {
+                $('#selectBusinessKeyTable :checkbox').prop('checked', false);
+                $ck.prop('checked', true);
+            }
+        });
 	});
 
 	var index;
@@ -443,11 +460,10 @@
 						$("#checkedBusinessKey").find(
 								".showBusinessList").empty();
 						for (var i = 0; i < result.data.length; i++) {
-							var info = '<tr onclick="busKeyOnclick(this)" style="cursor: pointer;"><td><input type="radio" name="insBusinessKey" '
+							var info = '<tr style="cursor: pointer;"><td><input type="checkbox" name="insBusinessKey" '
 									+'value="'
 									+ result.data[i]
 									+'" >'
-									+ (i + 1)
 									+ '</td>'
 									+ '<td style="text-align: center;">'
 									+ result.data[i] + '</td></tr>';
@@ -467,10 +483,7 @@
 			}
 		})
 	}
-	//选择关键字点击行选中
-	function busKeyOnclick(obj){
-		$(obj).find("input[type='radio']").prop("checked",true);
-	}
+
 	//金额数字正则
 	function doVersion(v){
 		if(!/^\d+(\.||\d+)(\.||\d+)$/.test(v.value)){

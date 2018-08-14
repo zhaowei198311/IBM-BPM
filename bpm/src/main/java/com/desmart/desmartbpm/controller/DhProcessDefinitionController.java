@@ -1,6 +1,5 @@
 package com.desmart.desmartbpm.controller;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -131,7 +130,7 @@ public class DhProcessDefinitionController {
         ServerResponse serverResponse = dhProcessDefinitionService.isDhProcessDefinitionExist(proAppId, proUid, proVerUid);
         if (serverResponse.isSuccess()) {
             mv.addObject("definition", serverResponse.getData());
-            Set<String> businessKeys = dhStepService.listStepBusinessKeyOfProcessDefinition(proAppId, proUid, proVerUid);
+            Set<String> businessKeys = dhStepService.listStepBusinessKeyOfMainProcess(proAppId, proUid, proVerUid);
             mv.addObject("businessKeys", businessKeys);
         }
         return mv;

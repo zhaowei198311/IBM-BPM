@@ -55,7 +55,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">流程所需时间（数量）</label>
                         <div class="layui-input-block">
-                            <input type="text" name="proTime"   lay-verify="required" value="${definition.proTime}" autocomplete="off" class="layui-input" />
+                            <input type="text" name="proTime"   lay-verify="required" value="1" autocomplete="off" class="layui-input" />
                         </div>
                     </div>
                     <div class="layui-form-item" style="display: none;">

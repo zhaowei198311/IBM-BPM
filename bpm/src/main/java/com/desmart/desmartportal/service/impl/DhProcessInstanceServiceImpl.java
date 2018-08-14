@@ -700,10 +700,11 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			return ServerResponse.createByErrorMessage("缺少必要的参数");
 		}
 		// 获得可发起的版本
-		DhProcessDefinition startAbleDefinition = dhProcessDefinitionService .getStartAbleProcessDefinition(proAppId, proUid);
+		DhProcessDefinition startAbleDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(proAppId, proUid);
 		if (startAbleDefinition == null) {
 			return ServerResponse.createByErrorMessage("当前流程未启用可发起版本");
 		}
+
         String proStartBusinessKey = startAbleDefinition.getProStartBusinessKey();
 		if (StringUtils.isBlank(proStartBusinessKey)) {
             return ServerResponse.createByErrorMessage("当前流程未配置可发起的关键字");
@@ -714,31 +715,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		if (!checkPermissionStart(startAbleDefinition)) {
 			return ServerResponse.createByErrorMessage("无权限发起当前流程");
 		}
-		/*  1. 获得流程发起后的第一个节点
-			2. 得到第一个节点所属的流程（主流程或子流程）
-			3. 获得那个流程对应的所有关键字
-		*/
-        ServerResponse<BpmActivityMeta> getFirstNodeResponse = dhRouteService.getActualFirstUserTaskNodeOfMainProcess(proAppId,
-                proUid, startAbleDefinition.getProVerUid());
-        if (!getFirstNodeResponse.isSuccess()) {
-            return getFirstNodeResponse;
-        }
-        BpmActivityMeta firstUserTaskNode = getFirstNodeResponse.getData();
-        List<DhStep> steps = null;
-        if (BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(firstUserTaskNode.getParentActivityId())) {
-            // 第一个任务是主流程的任务
-            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, startAbleDefinition.getProVerUid());
-        } else {
-            // 第一个任务是子流程内的任务
-            BpmActivityMeta nodeIdentitySubProcess = bpmActivityMetaMapper.queryByPrimaryKey(firstUserTaskNode.getParentActivityId());
-            String externalId = nodeIdentitySubProcess.getExternalId();
-            steps = dhStepMapper.listStepsOfProcessDefinition(proAppId, externalId, startAbleDefinition.getProVerUid());
-        }
+
+        Set<String> allBusinessKeySet = dhStepService.listStepBusinessKeyOfMainProcess(proAppId, proUid, startAbleDefinition.getProVerUid());
 
         Set<String> stepBusinessKeys = new HashSet<>();
-        for (DhStep step : steps) {
-            if (startBusinessKeys.contains(step.getStepBusinessKey())) {
-                stepBusinessKeys.add(step.getStepBusinessKey());
+        for (String businessKey : allBusinessKeySet) {
+            if (startBusinessKeys.contains(businessKey)) {
+                stepBusinessKeys.add(businessKey);
             }
         }
         if (stepBusinessKeys.isEmpty()) {
@@ -748,7 +731,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             // 只有一个关键字
             Map<String, Object> result = new HashMap<>();
             result.put("flag", 1);
-            result.put("stepBusinessKey", steps.get(0).getStepBusinessKey());
+            result.put("stepBusinessKey", stepBusinessKeys.iterator().next());
             return ServerResponse.createBySuccess(result);
         } else {
             // 有多个关键字
