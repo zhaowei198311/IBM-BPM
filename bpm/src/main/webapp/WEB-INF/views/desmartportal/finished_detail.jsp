@@ -31,6 +31,7 @@
 	
 	<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/my/finished_detail.js"></script>
+	<script type="text/javascript" src="resources/desmartportal/js/city.js"></script>
     <style type="text/css">
         .container-fluid {
             padding-right: 0px;
