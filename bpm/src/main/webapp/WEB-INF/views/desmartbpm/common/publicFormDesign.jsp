@@ -1018,7 +1018,7 @@
 								</div>
 								<div class="checkbox col-xs-2">
 									<label>
-										<input type="checkbox" id="date-type-date" class="date-type" checked>日期
+										<input type="checkbox" id="date-type-date" class="date-type" checked>年月日
 									</label>
 								</div>
 								<div class="checkbox col-xs-2">
