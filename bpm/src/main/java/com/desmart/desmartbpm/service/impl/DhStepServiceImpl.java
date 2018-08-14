@@ -488,7 +488,6 @@ public class DhStepServiceImpl implements DhStepService {
         if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid) || StringUtils.isBlank(proVerUid)) {
             return new ArrayList<>();
         }
-
         return dhStepMapper.listStepsOfProcessDefinition(proAppId, proUid, proVerUid);
     }
 
@@ -510,7 +509,9 @@ public class DhStepServiceImpl implements DhStepService {
 
     @Override
     public Set<String> listStepBusinessKeyOfMainProcess(String proAppId, String proUid, String proVerUid) {
+        // 获得主流程的start event node
         BpmActivityMeta startNodeOfMainProcess = bpmActivityMetaService.getStartNodeOfMainProcess(proAppId, proUid, proVerUid);
+        // 从start event node 出发找下个环节
         BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(startNodeOfMainProcess, null);
         // 如果主流程的第一个环节在子流程下，就查询该子流程的关键字
         if (!CollectionUtils.isEmpty(bpmRoutingData.getStartProcessNodes())) {
