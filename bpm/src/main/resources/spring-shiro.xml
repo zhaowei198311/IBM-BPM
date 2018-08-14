@@ -58,6 +58,7 @@
 			    /resources/desmartsystem/** = anon
                <!--  /user/login.do=anon -->
                 /user/logins=anon
+                /menus/mobile=anon
                 /user/index=anon
                 /test/mqtest=anon
                 /unauthorizedUrl.do=anon
