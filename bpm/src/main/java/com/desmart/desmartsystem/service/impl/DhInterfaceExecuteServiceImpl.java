@@ -245,12 +245,18 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 			json.setObj(jsonArray.toArray());
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
-			String xml = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
-			// 返回参数格式拼接
-			List<String> responseConfig = new ArrayList<String>();
-			TestXML.testGetRoot(responseXml, responseConfig);
-			json.setMsg(XmlToJsonUtils.xmlToJson(xml, responseConfig));
-
+			JSONObject jSONObject = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
+			String  statusCode = jSONObject.getString("statusCode");
+			if(!statusCode.equals("200")) {
+				json.setSuccess(false);
+				json.setMsg(jSONObject.getString("responseResult"));
+				return json;
+			}else {
+				// 返回参数格式拼接
+				List<String> responseConfig = new ArrayList<String>();
+				TestXML.testGetRoot(responseXml, responseConfig);
+				json.setMsg(XmlToJsonUtils.xmlToJson(jSONObject.getString("responseResult"), responseConfig));
+			}
 		} else if (intType.equals(InterfaceType.RESTAPI.getCode())) {
 			json.setSuccess(true);
 			json.setMsg(HttpRequestUtils.httpPost(intUrl + intCallMethod, inputParameter));
