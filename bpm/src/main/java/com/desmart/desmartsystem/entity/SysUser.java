@@ -116,6 +116,11 @@ public class SysUser implements Serializable {
 	
 	private String managerName;
 	
+	private String costCenterName;//成本中心名称
+	private String profitCenterNo;//利润中心
+	private String profitCenterName;//利润名称
+	
+	
 	public String getUserUid() {
 		return userUid;
 	}
@@ -530,5 +535,30 @@ public class SysUser implements Serializable {
 	public void setManagerName(String managerName) {
 		this.managerName = managerName;
 	}
+
+	public String getCostCenterName() {
+		return costCenterName;
+	}
+
+	public void setCostCenterName(String costCenterName) {
+		this.costCenterName = costCenterName;
+	}
+
+	public String getProfitCenterNo() {
+		return profitCenterNo;
+	}
+
+	public void setProfitCenterNo(String profitCenterNo) {
+		this.profitCenterNo = profitCenterNo;
+	}
+
+	public String getProfitCenterName() {
+		return profitCenterName;
+	}
+
+	public void setProfitCenterName(String profitCenterName) {
+		this.profitCenterName = profitCenterName;
+	}
+	
 	
 }
