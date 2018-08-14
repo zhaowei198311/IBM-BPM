@@ -3,11 +3,14 @@
  */
 package com.desmart.desmartportal.controller;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.util.Base64;
 import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.RSAEncrypt;
 import com.desmart.common.util.RequestSourceUtil;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
@@ -86,7 +91,36 @@ public class MenusController {
 		}
 		return mv;
 	}
-
+	
+	/**
+	 * 跳转到移动端待办列表页面
+	 * @return
+	 */
+	@RequestMapping("/mobile")
+	public ModelAndView mobile(HttpServletRequest request) {
+		ModelAndView mv = new ModelAndView();
+		try {
+			String token = request.getParameter("token");
+			//公钥
+			String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIiX+iUujlEhREMPp8iNNtyOLL69Sfe01bNt1e8qTx204R1CHI/xhMPRu/TGJ1dAd4x75SpMoanpZ+tvBf1MoXSk04xgeQWa8vwuKglSYakAlPBti2sBCF6iXom/T7k2CZ9R43RyXSlZ01TO4rTYip5CkPacpWTGPdD2ROAfUpTwIDAQAB";
+			byte[] cipherData = Base64.decode(token);
+			byte[] res = RSAEncrypt.decrypt(RSAEncrypt.loadPublicKeyByStr(publicKey),cipherData);  
+	        String username = new String(res);  
+			String password = "1";
+			Subject user = SecurityUtils.getSubject();
+			UsernamePasswordToken userToken = new UsernamePasswordToken(username, password);
+			user.login(userToken);
+			//取回过期的代理任务
+			dhTaskInstanceService.revokeAgentOutTask();
+			// 普通的待办任务
+			mv.setViewName("desmartportal/mobile_backlog");
+		}catch(Exception e) {
+			e.printStackTrace();
+			// 普通的待办任务
+			mv.setViewName("desmartbpm/error");
+		}
+		return mv;
+	}
 	
 	/**
 	 * 跳转到发起流程的页面
