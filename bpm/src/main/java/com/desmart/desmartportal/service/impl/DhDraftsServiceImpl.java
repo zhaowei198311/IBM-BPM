@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
+import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -37,7 +40,8 @@ import com.github.pagehelper.PageInfo;
 */
 @Service
 public class DhDraftsServiceImpl implements DhDraftsService {
-	
+    private Logger logger = Logger.getLogger(DhDraftsServiceImpl.class);
+
 	@Autowired
 	private DhDraftsMapper dhDraftsMapper;
 	@Autowired
@@ -48,15 +52,17 @@ public class DhDraftsServiceImpl implements DhDraftsService {
     private DhProcessInstanceMapper dhProcessInstanceMapper;
 	@Autowired
 	private DhProcessDefinitionService dhProcessDefinitionService;
+	@Autowired
+    private DhTaskInstanceMapper dhTaskInstanceMapper;
 	
-	private Logger log = Logger.getLogger(DhDraftsServiceImpl.class);
+
 	
 	/**
 	 * 根据草稿id 删除草稿箱数据
 	 */
 	@Override
 	public int deleteDraftsBydfsId(String dfsId) {
-		log.info("删除草稿箱数据开始...");
+		logger.info("删除草稿箱数据开始...");
 		int result = 0;
 		try {
 			result = dhDraftsMapper.deleteBydfsId(dfsId);
@@ -64,7 +70,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("删除草稿箱数据结束...");
+		logger.info("删除草稿箱数据结束...");
 		return result;
 	}
 
@@ -117,19 +123,19 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	 */
 	@Override
 	public DhDrafts selectBydfsId(String dfsId) {
-		log.info("根据草稿dfsid查询草稿数据开始...");
+		logger.info("根据草稿dfsid查询草稿数据开始...");
 		try {
 			return dhDraftsMapper.selectBydfsId(dfsId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("根据草稿dfsid查询草稿数据结束...");
+		logger.info("根据草稿dfsid查询草稿数据结束...");
 		return null;
 	}
 
 	@Override
 	public Map<String, Object> selectDraftsAndFromInfo(String dfsId, String insUid) {
-		log.info("根据草稿id和流程id查询数据开始...");
+		logger.info("根据草稿id和流程id查询数据开始...");
 		Map<String, Object> resultMap = new HashMap<>();
 		try {
 			// 查询草稿数据
@@ -139,11 +145,11 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 			DhProcessInstance dhProcessInstance = (DhProcessInstance) dhProcessInstanceService.selectByPrimaryKey(insUid).getData();
 			Map<String, Object> formMap = dhProcessFormService.queryProcessForm(dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(), dhProcessInstance.getProVerUid());
 			resultMap.put("formMap", formMap);
-			log.info("根据草稿id和流程id查询数据结束...");	
+			logger.info("根据草稿id和流程id查询数据结束...");
 			return resultMap;
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.info("查询异常");
+			logger.info("查询异常");
 			return null;
 		}
 	}
@@ -181,6 +187,13 @@ public class DhDraftsServiceImpl implements DhDraftsService {
         if (StringUtils.isBlank(insUid)) {
             return ServerResponse.createByErrorMessage("保存草稿失败，缺少流程实例主键信息");
         }
+        String dfsDataStr = dhDraft.getDfsData();
+        try {
+            JSON.parseObject(dfsDataStr);
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，数据异常");
+        }
+
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
         if (dhProcessInstance == null || (dhProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_DRAFT)) {
             return ServerResponse.createByErrorMessage("保存草稿失败，流程实例状态异常");
@@ -200,6 +213,44 @@ public class DhDraftsServiceImpl implements DhDraftsService {
         }
         return ServerResponse.createBySuccess();
 	}
+
+    @Override
+    public ServerResponse saveTaskDraft(DhDrafts dhDraft) {
+        String insUid = dhDraft.getInsUid(); // 流程实例主键
+        String dfsDataStr = dhDraft.getDfsData();
+        try {
+            JSON.parseObject(dfsDataStr);
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，数据异常");
+        }
+        if (StringUtils.isBlank(insUid)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，缺少流程实例主键信息");
+        }
+        DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+        if (currProcessInstance == null || (currProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_COMPLETED)) {
+            return ServerResponse.createByErrorMessage("保存草稿失败，流程实例状态异常");
+        }
+        String taskUid = dhDraft.getTaskUid();
+        DhTaskInstance currTaskInstance = dhTaskInstanceMapper.selectByPrimaryKey(taskUid);
+        if (currTaskInstance == null) {
+            return ServerResponse.createByErrorMessage("保存失败，当前任务不存在");
+        }
+        if (!DhTaskInstance.STATUS_RECEIVED.equals(currTaskInstance.getTaskStatus())) {
+            return ServerResponse.createByErrorMessage("保存失败，当前任务不是可提交状态");
+        }
+        dhDraft.setDfsTitle(currProcessInstance.getInsTitle());
+        // 根据任务主键获得指定的草稿
+        DhDrafts draftInDb = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
+        if (draftInDb == null) {
+            dhDraft.setDfsId(EntityIdPrefix.DH_DRAFTS_META + String.valueOf(UUID.randomUUID()));
+            dhDraft.setDfsCreator(getCurrentUserUid());
+            dhDraftsMapper.save(dhDraft);
+        } else {
+            draftInDb.setDfsData(dhDraft.getDfsData());
+            dhDraftsMapper.updateByPrimaryKeySelective(draftInDb);
+        }
+        return ServerResponse.createBySuccess();
+    }
 
 	@Override
 	public ServerResponse checkProcessDraftStatus(String dfsId) {
@@ -229,6 +280,8 @@ public class DhDraftsServiceImpl implements DhDraftsService {
         }
         return ServerResponse.createBySuccess(dhDraft);
 	}
+
+
 
 
 }

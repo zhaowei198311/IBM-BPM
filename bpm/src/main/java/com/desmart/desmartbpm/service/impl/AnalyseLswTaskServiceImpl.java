@@ -47,11 +47,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
     private static final Logger logger = LoggerFactory.getLogger(AnalyseLswTaskServiceImpl.class);
 
     @Autowired
-    private LswTaskMapper lswTaskMapper;
-    @Autowired
     private DhTaskInstanceMapper dhTaskInstanceMapper;
-    @Autowired
-    private DhTaskInstanceService dhTaskInstanceService;
     @Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
     @Autowired
@@ -68,12 +64,6 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
     private SendEmailService sendEmailService;
     @Autowired
     private BpmActivityMetaService bpmActivityMetaService;
-    @Autowired
-    private BpmGlobalConfigService bpmGlobalConfigService;
-    @Autowired
-    private DhSynTaskRetryMapper dhSynTaskRetryMapper;
-    @Autowired
-    private TaskMongoDao taskMongoDao;
     @Autowired
     private CommonMongoDao commonMongoDao;
 
@@ -170,10 +160,9 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             }
         }
 
-        if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS) == null) {
+        if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS) != null) {
             return ServerResponse.createBySuccess();
         }
-
         // 批量保存任务
         dhTaskInstanceMapper.insertBatch(dhTaskList);
         commonMongoDao.set(String.valueOf(taskId), DateTimeUtil.dateToStr(new Date()), CommonMongoDao.CREATED_TASKS);
@@ -212,8 +201,8 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
      * @param preMeta  上个环节
      * @return
      */
-    private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask,
-                                                        List<String> orgionUserUidList, DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta,
+    private List<DhTaskInstance> generateDhTaskInstance(LswTask lswTask, List<String> orgionUserUidList,
+                                                        DhProcessInstance dhProcessInstance, BpmActivityMeta bpmActivityMeta,
                                                         BpmActivityMeta preMeta, BpmGlobalConfig bpmGlobalConfig) {
         List<DhTaskInstance> taskList = new ArrayList<>();
         // 计算到期时间

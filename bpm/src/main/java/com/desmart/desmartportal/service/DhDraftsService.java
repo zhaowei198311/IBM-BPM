@@ -63,7 +63,7 @@ public interface DhDraftsService {
 	ServerResponse saveIfNotExists(DhDrafts dhDrafts);
 
 	/**
-	 * 保存起草环节的草稿
+	 * 保存起草流程的草稿
 	 * @param dhDrafts
 	 * @return
 	 */
@@ -75,4 +75,11 @@ public interface DhDraftsService {
 	 * @return
 	 */
     ServerResponse checkProcessDraftStatus(String dfsId);
+
+	/**
+	 * 保存任务的草稿
+	 * @param dhDraft
+	 * @return
+	 */
+	ServerResponse saveTaskDraft(DhDrafts dhDraft);
 }
