@@ -42,6 +42,9 @@ function loadDhApprovalOpinionList(){
 			},
 	     success : function(result){
 	    	 $("#approve_record").empty();
+	    	 if(result.data.length==0){
+	    		 $("#approve_record").parent().css("display","none");
+	    	 }
 	    	 var info = '';
 	    	 for (var i = 0; i < result.data.length; i++) {
 	    		 var lastName = "";//姓
@@ -60,7 +63,7 @@ function loadDhApprovalOpinionList(){
 	    		 info += '<div class="layui-timeline-content layui-text">'
 	    			 +'<h5 class="layui-timeline-title">'
 	    			 +'<span class="activity_name">'+result.data[i].activityName+'</span>'
-	    			 +'<span class="approval_time">8.18 16:47</span>'
+	    			 +'<span class="approval_time">'+datetimeFormat_1(result.data[i].aprDate)+'</span>'
 	    			 +'</h5>'
 	    			 +'<p class="timeline_p">'
 	    			 +'<span class="approval_person">';
@@ -197,7 +200,9 @@ function loadDhroutingRecords(){
 				+"<p>当前处理环节："+activityNameHtml+"</p>"
 				+"<p>当前处理到达时间："+dateStr+"</p>";
 	    	 $(".curr_activity").html(currActiHtml);
-	    	 
+	    	 if(result.data.dhRoutingRecords.length==0){
+	    		 $("#transferProcess").parent().css("display","none");
+	    	 }
 	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
 	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
 	    		var info = '<li class="layui-timeline-item">'

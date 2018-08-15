@@ -581,6 +581,7 @@ var common = {
 						};
 						case "tel":;
 						case "date":{
+							$("[name='"+name+"']").prop("type","text");
 							$("[name='"+name+"']").val(paramObj["value"]);
 							break;
 						};
@@ -605,7 +606,8 @@ var common = {
 						for(var k=0;k<arr.length;k++){
 							$("[name='"+name+"']").find("[value='"+arr[k]+"']").attr("selected","selected");
 						}
-						$("[name='"+name+"']").attr("xm-select",name);
+						$("[name='"+name+"']").attr({"xm-select":id,"xm-select-skin":"danger"});
+						var formSelects = layui.formSelects;
 						formSelects.render(name);
 						formSelects.on(name, function(id, vals, val, isAdd, isDisabled){
 							$("#"+name).trigger("change");

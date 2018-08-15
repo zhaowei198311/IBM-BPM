@@ -5,7 +5,7 @@ var backlogPageConfig = {
 	pageSize:8,
 	createProcessUserName : "",
 	taskPreviousUsrUsername: "",
-	insTitle : "测试移动端",
+	insTitle : "",
 	isAgent:"",
 	startTime : null,
 	endTime: null,

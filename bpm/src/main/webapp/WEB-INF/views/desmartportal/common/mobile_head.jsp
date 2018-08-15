@@ -6,11 +6,13 @@
 <link href="resources/desmartportal/css/mymobile.css?v=0.2" rel="stylesheet" />
 <link href="resources/desmartportal/lCalendar/css/lCalendar.css" rel="stylesheet" />
 <link href="resources/desmartportal/css/mobile_approval.css?v=1.01" rel="stylesheet" />
-
+<link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
+	
 <!-- jQuery -->
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+<script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/mymobile.js"></script>
 <script type="text/javascript" src="resources/desmartportal/lCalendar/js/lCalendar.js"></script>
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/mobile_form.js"></script>
@@ -176,4 +178,28 @@
     .td_title {
     	text-align: left;
     }
+    .xm-select-parent .xm-select:hover{
+   			border-width:0px;
+   		}
+   	.xm-select-parent .xm-input{
+   		border-width:0px;
+   	}
+   	/* .xm-select-parent .xm-form-select dl{
+	    position: fixed;
+	    left: 25%;
+	    top: 25%;
+	    padding: 5px 0;
+	    z-index: 999;
+	    min-width: 50%;
+	    border: 1px solid #d2d2d2;
+	    max-height: 25%;
+	    overflow-y: auto;
+	    background-color: #fff;
+	    border-radius: 2px;
+	    box-shadow: 0 2px 4px rgba(0, 0, 0, .12);
+	    box-sizing: border-box;
+   	} */
+    	div[xm-select-skin=danger].xm-form-selected .xm-select, div[xm-select-skin=danger].xm-form-selected .xm-select:hover{
+    		border-width:0px;
+    	}
 </style>

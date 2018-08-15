@@ -61,6 +61,7 @@
     height:56px;
     border-top:1px solid #ccc;
     box-shadow: 0 0 3px #f2f2f2;
+    background: #fff;
 }    
 .layui-fixbar{
     right: 10px;
@@ -293,11 +294,6 @@
 	border: 2px dashed #CCCCCC;
 	padding: 7px;
 }
-
-#transfer_table input,#reject_table input,#submit_table input{
-	width:85%;
-	float: left;
-}
 #transfer_table i{
 	float: left;
 	padding-top:3px;
@@ -405,8 +401,8 @@
 .choose_head{
 	border-bottom: 1px solid #f2f2f2;
 	height:40px;
-	margin:5px 0 0 0;
-	padding-bottom:3px;
+	/* margin:5px 0 0 0;
+	padding-bottom:3px; *//*2018-08-15*/
 }
 .search_div{
 	float: left;
@@ -415,8 +411,16 @@
 }
 .sure_div{
 	float: right;
-	width: 20%;
+	width: 25%;
 	text-align: center;
+	height: 100%;
+}
+.sure_div input[type='button']{
+	background: #FC9153;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    border-radius: 0px;
 }
 .choose_body{
 	display:none;

@@ -68,6 +68,7 @@
 					        <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
 					        <input id="insUid" value="${processInstance.insUid}" style="display: none;">
 					        <input id="insId" value="${processInstance.insId}" style="display: none;">
+					        <input id="userName" value="${currentUser.userName}" style="display: none;">
 					        <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
 					        <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
 					        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
@@ -225,13 +226,6 @@
 										<td>
 											<div class="handle_person_name">
 												<ul>
-													<li>
-														<span class="first_name">马</span>
-														<p class="person_name">马亚伟</p>
-														<span>
-															<i class="layui-icon delete_choose_user" value="00011178" onclick="deleteAssembleUser(this);">&#x1007;</i>
-														</span>
-													</li>
 													<li class="choose_user_li">
 														<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe654;</i>
 													</li>
@@ -261,24 +255,17 @@
 								<div class="layui-input-block" id="frequently_used">
 									<select class="layui-form" lay-filter="useselfChange">
 										<option value="-1">请选择</option>
-										<option value="通过">同意</option>
+										<option value="同意">同意</option>
 										<option value="驳回">驳回</option>
 									</select>
 								</div>
 							</div>
 						</div>
-						<div class="table_container">
-							<p class="title_p">审批记录
-								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
-							</p>
-							<ul class="layui-timeline" id="approve_record">
-							</ul>
-						</div>
 						<!-- 审批记录 -->
 					</div>
 					<div class="approval_btn_div">
-						<input type="button" class="layui-btn filter_btn" id="save_drafts_btn" value="保存草稿"/>
-						<input type="button" class="layui-btn filter_btn" id="save_submit_btn" value="提交审批"/>
+						<input type="button" class="layui-btn filter_btn" id="save_drafts_btn" value="保存草稿" onclick="saveDraftsInfo();"/>
+						<input type="button" class="layui-btn filter_btn" id="save_submit_btn" value="提交审批" onclick="submitTask()"/>
 					</div>
 				</div>
 				<!-- end 审批意见 -->
@@ -306,65 +293,6 @@
 			</div>
 		</div>
         
-        <%-- <div class="mobile_middle">
-			<div class="middle_content" id="approve_div">
-				<div class="layui-form">
-					<h1 style="clear: both;"></h1>
-					<div id="suggestion">
-						<p class="title_p" style="margin-top: 10px;<c:if test="${showResponsibility=='FALSE'}" >display:none;</c:if>">本环节审批要求</p>
-			            <div class="layui-form approve_demand" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
-			                ${activityConf.actcResponsibility }
-			            </div>
-			            <p class="title_p" id="approve_p" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>审批意见</p>
-                		<div class="layui-form" id="approve_div" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>
-							<textarea placeholder="意见留言" class="layui-textarea" id="myApprovalOpinion"></textarea>
-							<div style="padding: 10px 0px 5px 0px;">
-								<label class="layui-form-label" id="fu_label">常用语</label>
-								<div class="layui-input-block" id="frequently_used">
-									<select class="layui-form" lay-filter="useselfChange">
-										<option value="-1">--请选择--</option>
-										<option value="通过">通过</option>
-										<option value="驳回">驳回</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<p class="title_p" style="margin-top: 0px;">历史审批意见</p>
-				<ul id="approve_record" class="tab_ul">
-					
-				</ul>
-			</div>
-			<div class="middle_content" id="file_div">
-				<ul id="loadFile_div" class="tab_ul">
-					<h1 style="clear: both;"></h1>
-					<h1 style="clear: both;"></h1>
-				</ul>
-			</div>
-			<div class="middle_content" id="record_div">
-				<p class="title_p" style="margin-top: 0px;">当前环节：</p>
-				<div class="p">
-					<p>
-						<font>现在的环节号：</font> <span></span>
-					</p>
-					<p>
-						<font>当前处理人：</font> <span></span>
-					</p>
-					<p>
-						<font>当前处理环节：</font> <span></span>
-					</p>
-					<p>
-						<font>当前处理到达时间：</font> <span></span>
-					</p>
-				</div>
-				<p class="title_p">流转过程：</p>
-				<ul id="transferProcess" class="tab_ul">
-					<h1 style="clear: both;"></h1>
-					<h1 style="clear: both;"></h1>
-				</ul>
-			</div>
-        </div> --%>
         <div id="choose_div">
         	<div class="choose_head" id="choose_user_search_div">
         		<div class="search_div" >
@@ -466,7 +394,6 @@
 		</div>
 	</div>
 </body>
-<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript">
 	$(function(){
 		var t1 = window.setInterval(function(){
@@ -498,6 +425,18 @@
 				'type': dateType,
 				'isChange':isChange
 			});
+		});
+		var formSelects = layui.formSelects;
+		$("#formSet").find("select").each(function(){
+			var id = $(this).prop("id");
+			if($(this).attr("is-multi")=="true"){
+				$(this).attr({"xm-select":id,"xm-select-skin":"danger"});
+				formSelects.render(id);
+				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
+					$("#"+id).trigger("change");
+				    return true;   
+				});
+			}
 		});
 	});
 </script>
