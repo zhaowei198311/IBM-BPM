@@ -24,7 +24,7 @@ form.on('select(table_sel)', function (data) {
                 var indexs = startNum + i
                 // 获取 接口参数的数据
                 var trs = '<option value="' + result.data[i].fldCodeName + '">' +
-                    result.data[i].fldCodeName +
+                    result.data[i].fldCodeName +"("+result.data[i].fldName +")"
                     '</option>';
                 var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
                 for (var j = 0; j < dataTableList.length; j++) {
