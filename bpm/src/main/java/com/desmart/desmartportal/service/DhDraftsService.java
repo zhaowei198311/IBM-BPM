@@ -68,4 +68,11 @@ public interface DhDraftsService {
 	 * @return
 	 */
 	ServerResponse saveProcessDraft(DhDrafts dhDrafts);
+
+	/**
+	 * 检查起草流程时的草稿是否还能使用
+	 * @param dfsId
+	 * @return
+	 */
+    ServerResponse checkProcessDraftStatus(String dfsId);
 }
