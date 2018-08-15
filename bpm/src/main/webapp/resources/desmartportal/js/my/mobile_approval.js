@@ -146,7 +146,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 			type:'post',
 			url:common.getPath()+'/dhRoute/choosableHandlerMove',
 			beforeSend:function(){
-				layer.load(1);
+				layer.load();
 			},
 			data:{
 			    'insUid': insUid,
@@ -176,7 +176,7 @@ function queryUserByActc(actcChooseableHandlerType,activityId,elementId,isMulti,
 		$.ajax({
 			url:common.getPath()+"/sysUser/allSysUserMove",
 			beforeSend:function(){
-				layer.load(1);
+				layer.load();
 			},
 			method:'post',
 			data:{
@@ -451,15 +451,16 @@ function openChooseUserDiv(){
 function clickUserFun(obj,isMulti,elementId,activityId){
 	var userUid = $(obj).find("td:eq(0)").text().trim();
 	var userName = $(obj).find("td:eq(1)").text().trim();
-	var liHtml = '<li><div class="choose_user_name_span">'+userName+'('+userUid+")"
+	if(isMulti){
+		var liHtml = '<li><div class="choose_user_name_span">'+userName+'('+userUid+")"
 		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
 		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
-	if(isMulti){
 		if(elementId=="submit_table"){
 			var showActivityId = activityId.replace(":","");
-			$("#"+elementId).find("#"+showActivityId).find("ul").append(liHtml);
+			//在选人按钮之前插入
+			$(liHtml).insertBefore($("#"+elementId).find("#"+showActivityId).find(".choose_user_li"));
 		}else{
-			$("#"+elementId+" .choose_user_name_ul ul").append(liHtml);
+			$(liHtml).insertBefore($("#"+elementId+" .choose_user_li"));
 		}
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
@@ -670,7 +671,7 @@ function submitTask() {
             data: JSON.stringify(finalData)
         },
         beforeSend: function () {
-            layer.load(1);
+            layer.load();
         },
         success: function (result) {
         	layer.closeAll('loading'); 
@@ -732,7 +733,7 @@ function skipFromReject() {
             'data': JSON.stringify(finalData)
         },
         beforeSend: function () {
-            layer.load(1);
+            layer.load();
         },
         success: function(result) {
             layer.closeAll('loading');
@@ -766,7 +767,7 @@ function queryRejectByActivitiy() {
         	insUid : insUid
         },
         beforeSend: function () {
-            index = layer.load(1);
+            index = layer.load();
         },
         success: function (result) {
         	if(result.status==0){
@@ -854,7 +855,7 @@ function rejectSure(){
 	        	data : JSON.stringify(finalData)
 	        },
 	        beforeSend: function () {
-	            index = layer.load(1);
+	            index = layer.load();
 	        },
 	        success: function (result) {
 	            layer.close(index);
@@ -988,7 +989,7 @@ function showRouteBar() {
             "formData": common.getDesignFormData()
         },
         beforeSend: function(){
-            layer.load(1);
+            layer.load();
         }
         ,
         success:function(result){
@@ -1012,9 +1013,17 @@ function showRouteBar() {
                             +'<tr>'
                             +'<th class="approval_th">处理人：</th>'
                             +'<td id="'+showActivityId+'">';
+                        	
+                        	/*'<div class="handle_person_name">'
+	                        +'<ul>'
+	                        +'<li class="choose_user_li">'
+	                        +'<i class="layui-icon choose_handle_person" onclick="getUser(this)">&#xe654;</i>'
+	                        +'</li>'
+	                        +'</ul>'
+	                        +'</div>';*/
                         if(activityMeta.userName!=null && activityMeta.userName!=""){
                         	var userNameArr = activityMeta.userName.split(";");
-                        	chooseUserDiv += "<div class='choose_user_name_ul'><ul>";
+                        	chooseUserDiv += '<div class="handle_person_name"><ul>';
                         	for(var j=0;j<userNameArr.length;j++){
                         		var userName = userNameArr[j];
                         		var userUid = activityMeta.userUid.split(";")[j];
@@ -1030,19 +1039,27 @@ function showRouteBar() {
                         			}
                         		}
                         	}
-                        	chooseUserDiv += "</ul></div>";
+                        	chooseUserDiv += '<li class="choose_user_li">'
+		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
+	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
+	                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
+	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+	                            +'data-looptype="'+activityMeta.loopType+'" />'
+	                            +'</li></ul></div>';
                         }else{
-                        	chooseUserDiv += "<div class='choose_user_name_ul'><ul>"
-                        				+ '</ul></div>';
+                        	chooseUserDiv += '<div class="handle_person_name"><ul>'
+	                        		+'<li class="choose_user_li">'
+			                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
+		                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+		                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
+		                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
+		                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+		                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+		                            +'data-looptype="'+activityMeta.loopType+'" />'
+		                            +'</li></ul></div>';
                         }
-                        chooseUserDiv += '<i class="layui-icon choose_user1" onclick=getConductor("'+activityMeta.activityId
-                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe770;</i> '
-                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
-                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
-                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
-                            +'data-looptype="'+activityMeta.loopType+'" />'
-                            +'</td></tr>';
                     }//end for
                 }
                 $("#submit_table table").append(chooseUserDiv);
@@ -1117,7 +1134,7 @@ function saveDraftsInfo() {
             taskUid: taskUid
         },
         beforeSend: function () {
-            index2 = layer.load(1);
+            index2 = layer.load();
         },
         success: function (result) {
             if(result>0){
@@ -1310,4 +1327,9 @@ function backApproval(){
 function check_before_submit(){
 	console.log("1");
 	return true;
+}
+
+//显示隐藏div
+function showDiv(obj){
+	$(obj).parent().next().slideToggle(100);
 }

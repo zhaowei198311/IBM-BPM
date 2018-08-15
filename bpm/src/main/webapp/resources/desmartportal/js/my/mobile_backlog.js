@@ -5,7 +5,7 @@ var backlogPageConfig = {
 	pageSize:8,
 	createProcessUserName : "",
 	taskPreviousUsrUsername: "",
-	insTitle : "",
+	insTitle : "测试移动端",
 	isAgent:"",
 	startTime : null,
 	endTime: null,
@@ -270,7 +270,7 @@ function drawTable(data) {
 			+'</div>'
 			+'</div>'
 			+'<div class="backlog_content">'
-			+'<table>'
+			+'<table style="width:75%;">'
 			+'<thead>'
 			+'<tr>'
 			+'<td class="process_title_div">'

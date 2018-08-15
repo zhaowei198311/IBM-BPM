@@ -20,7 +20,7 @@
   	<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
   	<link href="resources/desmartportal/css/iconfont.css" rel="stylesheet" />
   	<link href="resources/desmartportal/css/mymobile.css" rel="stylesheet" />
-  	<link href="resources/desmartportal/css/mobile_backlog.css" rel="stylesheet" />
+  	<link href="resources/desmartportal/css/mobile_backlog.css?v=1.01" rel="stylesheet" />
   	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
   	<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/lCalendar/js/lCalendar.js"></script>
@@ -199,4 +199,14 @@
 		</div>
 	</div>
 </body>
+<script type="text/javascript">
+	$(function(){
+		var t1 = window.setInterval(function(){
+			if($(".mobile_top").is(":hidden")){
+				$(".mobile_middle").css("margin-top","-10px");
+				window.clearInterval(t1);
+			}
+		},50); 
+	})
+</script>
 </html>

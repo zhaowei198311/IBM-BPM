@@ -62,7 +62,10 @@
     border-top:1px solid #ccc;
     box-shadow: 0 0 3px #f2f2f2;
 }    
-
+.layui-fixbar{
+    right: 10px;
+    bottom: 60px;
+}
 /*提交按钮*/
 .filter_btn{
 	width: 50%;
@@ -269,13 +272,10 @@
 .task_activity_name{
 	color:#FF9559;
 }
-.handle_person_name{
-	margin-top: 5px;	
-}
 .handle_person_name li{
 	float: left;
 	text-align: center;
-	margin:10px 15px 5px 10px;
+	margin:10px 8px 5px 8px;
 	position: relative;
 }
 .first_name{
@@ -292,7 +292,6 @@
 .choose_user_li{
 	border: 2px dashed #CCCCCC;
 	padding: 7px;
-	bottom:7px;   
 }
 
 #transfer_table input,#reject_table input,#submit_table input{
@@ -357,10 +356,10 @@
 
 #approve_record .layui-timeline-axis {
     position: absolute;
-    left: -14px;
+    left: -15px;
     top: 0px;
     z-index: 10;
-    width: 20px;
+    width: 25px;
     height: 20px;
     line-height: 20px;
     background-color: #FF9052;
@@ -368,7 +367,7 @@
     border-radius: 50%;
     text-align: center;
     cursor: pointer;
-    padding: 10px;
+    padding: 10px 8px;
 }
 
 #approve_record .layui-timeline-content {
@@ -456,15 +455,18 @@
 	margin:10px -5px 0px 0px;
 }
 .choose_user_name_span{
-	padding:5px 2px;
-	border-radius:2px;
-	border: 1px solid #CCC;
-	float: left;
-    width: 80px;
+	padding: 5px 2px;
+    border-radius: 10px;
+    float: left;
+    width: 65px;
+    font-size: 12px;
+    border: 1px solid #EF6301;
+    color: #EF6301;
+    font-weight: bold;
 }
 .delete_choose_user{
 	position: absolute;
-    top: -13px;
+    top: -10px;
     right: -5px;
     font-size: 17px;
     color:#D31A31;
