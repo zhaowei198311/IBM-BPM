@@ -14,11 +14,11 @@ import java.util.Properties;
 public class PropertiesUtil {
 
     private static Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
-
     private static Properties props;
 
     static {
-        String fileName = "datasourceBeta.properties"; // datasourceBeta.properties
+        //String fileName = "datasourceDev.properties";
+        String fileName = "datasourceBeta.properties";
         props = new Properties();
         try {
             // 通过静态块获取classpath下的配置文件
