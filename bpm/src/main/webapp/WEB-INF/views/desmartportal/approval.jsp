@@ -25,7 +25,7 @@
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
     <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.03"></script>
-    <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.01"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.02"></script>
 
     <!-- jQuery -->
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.core.min.js"></script>

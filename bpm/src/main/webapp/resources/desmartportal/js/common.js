@@ -1015,8 +1015,8 @@ var common = {
 			
 			if(value=="" || value==null){
 				var eleId = $("[name='"+name+"']").prop("id");
-				var Y = $('#'+eleId).offset().top-170;
-				$("body,html").animate({scrollTop: Y}, 500);
+				//var Y = $('#'+eleId).offset().top-170;
+				//$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请填写必填项 "+text, {icon: 2});
 				}else{
@@ -1028,8 +1028,8 @@ var common = {
 			}
 			if(value.indexOf("请选择")!=-1){
 				var eleId = $("[name='"+name+"']").prop("id");
-				var Y = $('#'+eleId).offset().top-170;
-				$("body,html").animate({scrollTop: Y}, 500);
+				//var Y = $('#'+eleId).offset().top-170;
+				//$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请选择必填项 "+text, {icon: 2});
 				}else{
@@ -1057,12 +1057,12 @@ var common = {
 							icon: 2
 						});
 					} else {
-						layer.msg("输入框的值与正则表达式不匹配", {
+						layer.msg("输入的内容不正确", {
 							icon: 2
 						});
 					}
-					var Y = $(this).offset().top-190;
-					$("body,html").animate({scrollTop: Y}, 500);
+					//var Y = $(this).offset().top-190;
+					//$("body,html").animate({scrollTop: Y}, 500);
 					flag = false;
 				}
 			} //end if
