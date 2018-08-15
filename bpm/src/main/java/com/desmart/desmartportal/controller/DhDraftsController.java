@@ -89,4 +89,14 @@ public class DhDraftsController {
 		return null;
 	}
 
+	/**
+	 * 查看发起流程的草稿是否还有效
+	 * @return
+	 */
+	@RequestMapping(value = "/checkProcessDraftStatus")
+	@ResponseBody
+	public ServerResponse checkProcessDraftStatus(String dfsId) {
+		return dhDraftsService.checkProcessDraftStatus(dfsId);
+	}
+
 }

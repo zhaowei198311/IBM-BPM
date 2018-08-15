@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.service.DhProcessDefinitionService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,6 +46,8 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	private DhProcessInstanceService dhProcessInstanceService;
 	@Autowired
     private DhProcessInstanceMapper dhProcessInstanceMapper;
+	@Autowired
+	private DhProcessDefinitionService dhProcessDefinitionService;
 	
 	private Logger log = Logger.getLogger(DhDraftsServiceImpl.class);
 	
@@ -69,25 +73,23 @@ public class DhDraftsServiceImpl implements DhDraftsService {
 	 */
 	@Override
 	public ServerResponse<PageInfo<List<DhDrafts>>> selectDraftsList(Integer pageNum, Integer pageSize, String insTitle, String proName) {
-		log.info("查询所有草稿数据开始...");
 		try {
-			DhDrafts dhDrafts = new DhDrafts();
+			DhDrafts draftSelective = new DhDrafts();
 			String dfsCreator = getCurrentUserUid();
-			dhDrafts.setDfsCreator(dfsCreator);
-			dhDrafts.setDfsTitle(insTitle);
-			dhDrafts.setProName(proName);
+			draftSelective.setDfsCreator(dfsCreator);
+			draftSelective.setDfsTitle(insTitle);
+			draftSelective.setProName(proName);
 			PageHelper.startPage(pageNum, pageSize);
 			PageHelper.orderBy("DFS_CREATEDATE desc");
-			List<DhDrafts> resultList = dhDraftsMapper.listDraftsToShow(dhDrafts);
-			if(null == resultList || resultList.size() == 0) {
-				log.info("查询所有草稿数据出错,出错类为{}"+DhDraftsServiceImpl.class);
-			}
+			List<DhDrafts> resultList = dhDraftsMapper.listDraftsToShow(draftSelective);
 			PageInfo<List<DhDrafts>> pageInfo = new PageInfo(resultList);
+			for (DhDrafts draft : resultList) {
+				draft.setDfsData(null);
+			}
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("查询所有草稿数据结束...");
 		return null;
 	}
 
@@ -197,6 +199,35 @@ public class DhDraftsServiceImpl implements DhDraftsService {
             dhDraftsMapper.save(dhDraft);
         }
         return ServerResponse.createBySuccess();
+	}
+
+	@Override
+	public ServerResponse checkProcessDraftStatus(String dfsId) {
+		if (StringUtils.isBlank(dfsId)) {
+			return ServerResponse.createByErrorMessage("缺少必要的参数");
+		}
+        DhDrafts dhDraft = dhDraftsMapper.selectBydfsId(dfsId);
+		if (dhDraft == null) {
+            return ServerResponse.createByErrorMessage("此草稿数据不存在");
+        }
+        if (dhDraft.getTaskUid() != null) {
+            return ServerResponse.createByErrorMessage("此草稿不是起草的草稿");
+        }
+        DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhDraft.getInsUid());
+		if (dhProcessInstance == null || dhProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_DRAFT) {
+            return ServerResponse.createByErrorMessage("草稿状态异常");
+        }
+        // 草稿对应的流程定义是否是启用的版本
+        DhProcessDefinition startAbleProcessDefinition = dhProcessDefinitionService.getStartAbleProcessDefinition(dhProcessInstance.getProAppId(),
+                dhProcessInstance.getProUid());
+		if (!startAbleProcessDefinition.getProVerUid().equals(dhProcessInstance.getProVerUid())) {
+            return ServerResponse.createByErrorMessage("此草稿对应的流程版本已过时，请重新起草");
+        }
+        // 查看用户是否有发起此流程的权限
+        if (!dhProcessInstanceService.checkPermissionStart(startAbleProcessDefinition)) {
+            return ServerResponse.createByErrorMessage("您没有发起该流程的权限");
+        }
+        return ServerResponse.createBySuccess(dhDraft);
 	}
 
 

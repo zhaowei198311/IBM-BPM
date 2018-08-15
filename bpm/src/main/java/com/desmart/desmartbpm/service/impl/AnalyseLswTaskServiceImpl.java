@@ -97,10 +97,10 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
 
         TokenInfoUtil tokenUtil = new TokenInfoUtil(taskId, processData);
         String parentProcessTokenId = tokenUtil.getParentTokenId();
-        parentProcessTokenId = "34";
-//        if (tokenUtil.getTokenId() == null) {
-//            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
-//        }
+
+        if (tokenUtil.getTokenId() == null) {
+            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
+        }
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
         BpmActivityMeta bpmActivityMeta = null; // 任务停留的环节
