@@ -51,9 +51,13 @@ function loadDhApprovalOpinionList(){
 	    		 }else{
 	    			 lastName = common.splitName(taskHandleUserName);
 	    		 }
-	    		 info += '<li class="layui-timeline-item">'
-	    			 +'<i class="layui-icon layui-timeline-axis">'+lastName+'</i>'
-	    			 +'<div class="layui-timeline-content layui-text">'
+	    		 info += '<li class="layui-timeline-item">';
+	    		 if(lastName.length>1){
+	    			 info += '<i class="layui-icon layui-timeline-axis" style="font-size:12px;">'+lastName+'</i>';
+	    		 }else{
+	    			 info += '<i class="layui-icon layui-timeline-axis">'+lastName+'</i>';
+	    		 }
+	    		 info += '<div class="layui-timeline-content layui-text">'
 	    			 +'<h5 class="layui-timeline-title">'
 	    			 +'<span class="activity_name">'+result.data[i].activityName+'</span>'
 	    			 +'<span class="approval_time">8.18 16:47</span>'

@@ -36,29 +36,7 @@
 				</div>
 			</div>
             <div class="top_right">
-            	<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
-		    	<input id="departNo" type="hidden" value="${processInstance.departNo}"/>
-		    	<input id="companyNum" type="hidden" value="${processInstance.companyNumber}"/>
-		       	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
-		        <input id="proUid" value="${processInstance.proUid}" style="display: none;">
-		        <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
-		        <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
-		        <input id="insUid" value="${processInstance.insUid}" style="display: none;">
-		        <input id="insId" value="${processInstance.insId}" style="display: none;">
-		        <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
-		        <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
-		        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
-		        <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
-		        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
-		        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
-		        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
-		        <input id="isReject" value="${activityConf.actcCanReject}" style="display: none;"/>
-		        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}"/>
-		        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
-		        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}"/>
-		        <span id="formData" style="display: none;">${formData}</span>
-		        <span id="listStr" style="display: none;">${listStr}</span>
-		        <span id="approvalData" style="display: none;">${approvalData}</span>
+            	
             </div>
         </div>
         <div class="task_div layui-tab layui-tab-brief">
@@ -80,6 +58,31 @@
 				<!-- 表单详情 -->
 				<div class="layui-tab-item layui-show" id="form_content_div">
 					<div id="search_top">
+						<div>
+							<span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
+					    	<input id="departNo" type="hidden" value="${processInstance.departNo}"/>
+					    	<input id="companyNum" type="hidden" value="${processInstance.companyNumber}"/>
+					       	<input id="activityId" value="${activityMeta.activityId}" style="display: none;">
+					        <input id="proUid" value="${processInstance.proUid}" style="display: none;">
+					        <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
+					        <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
+					        <input id="insUid" value="${processInstance.insUid}" style="display: none;">
+					        <input id="insId" value="${processInstance.insId}" style="display: none;">
+					        <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
+					        <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
+					        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
+					        <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
+					        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
+					        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
+					        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;"/>
+					        <input id="isReject" value="${activityConf.actcCanReject}" style="display: none;"/>
+					        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}"/>
+					        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}"/>
+					        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}"/>
+					        <span id="formData" style="display: none;">${formData}</span>
+					        <span id="listStr" style="display: none;">${listStr}</span>
+					        <span id="approvalData" style="display: none;">${approvalData}</span>
+						</div>
 						<div class="backlog_top">
 							<div class="backlog_process">
 								<span class="process_title_div">${bpmForm.dynTitle}</span>
@@ -114,7 +117,7 @@
 						<p class="title_p">流程标题
 							<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
 						</p>
-						<table class="layui-table">
+						<table title="流程标题" class="layui-table">
 							<tbody>
 								<tr>
 									<td class="td_title" colspan="1" style="width: 70px;padding-right: 0px;">
@@ -145,7 +148,7 @@
 							流程基本信息 <i class="layui-icon arrow" style="float: right;"
 								onclick="showTable(this)">&#xe61a;</i>
 						</p>
-						<table style="margin-left:10px;margin-top:10px;">
+						<table title="流程基本信息" style="margin-left:10px;margin-top:10px;">
 							<tr>
 								<td>流程编号：${processInstance.proNo}</td>
 							</tr>
@@ -182,24 +185,36 @@
 							<!-- 会签 -->
 							<div class="handle_table" id="countersign_table">
 								<table>
+									<tr>
+										<th>会签方式</th>
+										<td>
+											<div id="countersign_type">
+												<select class="layui-form_1 layui-select" lay-filter="useselfChange">
+													<option value="normalAdd">随机会签</option>
+													<option value="simpleLoopAdd">顺序会签</option>
+													<option value="multiInstanceLoopAdd">并行会签</option>
+												</select>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>处理人</th>
+										<td>
+											<div class="handle_person_name">
+												<ul>
+													<li class="choose_user_li">
+														<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe654;</i>
+													</li>
+												</ul>
+											</div>
+										</td>
+									</tr>
 								</table>
 							</div>
 							<!-- 驳回 -->
 							<div class="handle_table" id="reject_table">
 								<table>
-									<tr>
-										<th>驳回至</th>
-										<td>
-											<select class="layui-select">
-												<option>
-													标准节点节点节点1————审批人:马亚伟
-												</option>
-												<option>
-													标准节点2————审批人:马亚伟
-												</option>
-											</select>
-										</td>
-									</tr>
+									
 								</table>
 							</div>
 							<!-- 抄送 -->
@@ -218,7 +233,7 @@
 														</span>
 													</li>
 													<li class="choose_user_li">
-														<i class="layui-icon choose_transfer_person" onclick="getUser(this)">&#xe654;</i>
+														<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe654;</i>
 													</li>
 												</ul>
 											</div>
@@ -228,9 +243,9 @@
 							</div>
 							<!-- end 抄送 -->
 						</div>
-						<div class="table_container layui-form" id="suggestion" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
+						<div class="table_container layui-form" <c:if test="${showResponsibility=='FALSE'}" >style="display:none;"</c:if>>
 							<p class="title_p">审批要求
-								<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 							</p>
 							<div class="layui-form approve_demand">
 				                ${activityConf.actcResponsibility }
@@ -238,7 +253,7 @@
 						</div>
 						<div class="table_container layui-form" id="suggestion">
 							<p class="title_p">审批意见
-								<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 							</p>
 							<div>
 								<textarea placeholder="请输入审批意见" class="layui-textarea" id="myApprovalOpinion"></textarea>
@@ -254,7 +269,7 @@
 						</div>
 						<div class="table_container">
 							<p class="title_p">审批记录
-								<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 							</p>
 							<ul class="layui-timeline" id="approve_record">
 							</ul>
@@ -275,14 +290,14 @@
 				<div class="layui-tab-item" id="record_div">
 					<div class="table_container" style="margin-top:0px;">
 						<p class="title_p">当前环节
-							<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+							<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 						</p>
 						<div class="curr_activity">
 						</div>
 					</div>
 					<div class="table_container">
 						<p class="title_p">流转过程
-							<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+							<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 						</p>
 						<ul class="layui-timeline" id="transferProcess">
 						</ul>
@@ -454,6 +469,14 @@
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <script type="text/javascript">
 	$(function(){
+		var t1 = window.setInterval(function(){
+			if($(".mobile_top").is(":hidden")){
+				$(".mobile_btn").css("top","0px");
+				$(".mobile_middle").css("margin-top","40px");
+				window.clearInterval(t1);
+			}
+		},100); 
+		
 		$(".data-table").find("input[type='tel']").desNumber();
 		
 		var dateInput = $("#formSet").find(".date");
