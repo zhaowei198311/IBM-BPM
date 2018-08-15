@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.desmart.common.annotation.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,7 @@ public class DhProcessMetaController {
      * @param proNo   流程编号
      * @return
      */
+    @Log(description = "更新流程元数据")
     @RequestMapping(value = "/update")
     @ResponseBody
     public ServerResponse updateDhProcessMeta(String metaUid, String newName, String proNo) {
@@ -102,6 +104,7 @@ public class DhProcessMetaController {
      * @param metaUid
      * @return
      */
+    @Log(description = "删除流程元数据")
     @RequestMapping(value = "/remove")
     @ResponseBody
     public ServerResponse removeProcessMeta(String metaUid) {

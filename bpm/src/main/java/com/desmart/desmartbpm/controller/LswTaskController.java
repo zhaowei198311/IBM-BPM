@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/lswTask")
 public class LswTaskController {
-    private static final Logger LOG = LoggerFactory.getLogger(LswTaskController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LswTaskController.class);
 
     @Autowired
     private LswTaskService lswTaskService;
@@ -38,6 +38,7 @@ public class LswTaskController {
             String userUid = dataJson.getString("userUid");
             return lswTaskService.changeOwnerOfLswTask(taskId, userUid);
         } catch (Exception e) {
+            logger.error("修改引擎任务表中的处理人失败，", e);
             return ServerResponse.createByErrorMessage("修改任务处理人失败");
         }
     }

@@ -32,7 +32,7 @@ import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 @Controller
 @RequestMapping(value = "/processDefinition")
 public class DhProcessDefinitionController {
-    private static final Logger LOG = LoggerFactory.getLogger(DhProcessDefinitionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DhProcessDefinitionController.class);
     
     @Autowired
     private DhProcessDefinitionService dhProcessDefinitionService;
@@ -79,6 +79,7 @@ public class DhProcessDefinitionController {
      * @param proVerUid 版本快照id
      * @return
      */
+    @Log(description = "创建一个流程定义")
     @RequestMapping(value = "/create")
     @ResponseBody
     public ServerResponse synchronizeDhProcessDefinition(String proAppId, String proUid, String proVerUid) {
@@ -87,10 +88,10 @@ public class DhProcessDefinitionController {
             ServerResponse serverResponse = dhProcessDefinitionService.createDhProcessDefinition(proAppId, proUid, proVerUid);
             return serverResponse;
         } catch (PlatformException pe) {
-            LOG.error("同步环节失败", pe);
+            logger.error("同步环节失败", pe);
             return ServerResponse.createByErrorMessage(pe.getMessage());
         } catch (Exception e) {
-            LOG.error("同步环节失败", e);
+            logger.error("同步环节失败", e);
             return ServerResponse.createByErrorMessage("同步环节失败");
         }
     }
@@ -102,7 +103,7 @@ public class DhProcessDefinitionController {
         try {
             return dhProcessDefinitionService.getSynchronizedDhProcessDefinitionWithSnapshotInfo(proAppId, proUid, proVerUid);
         } catch (Exception e) {
-            LOG.error("获取流程定义信息失败", e);
+            logger.error("获取流程定义信息失败", e);
             return ServerResponse.createByErrorMessage("获取流程定义信息失败");
         }
     }
@@ -136,6 +137,7 @@ public class DhProcessDefinitionController {
         return mv;
     }
 
+    @Log(description = "更新流程定义")
     @RequestMapping(value = "/update")
     @ResponseBody
     public ServerResponse updateDhProcessDefinition(DhProcessDefinition definition) {
@@ -143,7 +145,7 @@ public class DhProcessDefinitionController {
         try {
             return dhProcessDefinitionService.updateDhProcessDefinition(definition);
         } catch(Exception e) {
-            LOG.error("更新流程定义失败", e);
+            logger.error("更新流程定义失败", e);
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
     }
@@ -152,7 +154,7 @@ public class DhProcessDefinitionController {
     @RequestMapping(value = "/snapshotFlowChart")
     @ResponseBody
     public String viewFlowChart (String proAppId, String proUid, String proVerUid, HttpServletRequest request) {
-    	LOG.info("请求查看流程图"+proAppId);  
+    	logger.info("请求查看流程图"+proAppId);
     	BpmGlobalConfig gcfg = bpmGlobalConfigService.getFirstActConfig();
     	String url = gcfg.getBpmServerHost()+"rest/bpm/wle/v1/visual/processModel/"+proUid+"?snapshotId="+proVerUid+"&image=true";
     	HttpClientUtils httpUtils = new HttpClientUtils();
@@ -211,13 +213,14 @@ public class DhProcessDefinitionController {
      * @param proVerUid
      * @return
      */
+    @Log(description = "启用一个流程定义的版本")
     @RequestMapping(value = "/enableDefinition")
     @ResponseBody
     public ServerResponse enableDefinition(String proAppId, String proUid, String proVerUid) {
         try {
             return dhProcessDefinitionService.enableProcessDefinition(proAppId, proUid, proVerUid);
         } catch(Exception e) {
-            LOG.error("启用流程失败", e);
+            logger.error("启用流程失败", e);
             return ServerResponse.createByErrorMessage("启用流程失败");
         }
     }
@@ -229,13 +232,14 @@ public class DhProcessDefinitionController {
      * @param proVerUid
      * @return
      */
+    @Log(description = "停用一个流程定义版本")
     @RequestMapping(value = "/disableDefinition")
     @ResponseBody
     public ServerResponse disableDefinition(String proAppId, String proUid, String proVerUid) {
         try {
             return dhProcessDefinitionService.disableProcessDefinition(proAppId, proUid, proVerUid);
         } catch(Exception e) {
-            LOG.error("启用流程失败", e);
+            logger.error("启用流程失败", e);
             return ServerResponse.createByErrorMessage("启用流程失败");
         }
     }
@@ -245,6 +249,7 @@ public class DhProcessDefinitionController {
      * 刷新公开的流程
      * @return
      */
+    @Log(description = "重新获取公开的流程数据")
     @RequestMapping(value = "/reloadExposedItems")
     @ResponseBody
     public ServerResponse reloadExposedItems() {

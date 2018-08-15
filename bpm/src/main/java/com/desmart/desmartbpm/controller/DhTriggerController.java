@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.controller;
 
+import com.desmart.common.annotation.log.Log;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,19 +32,22 @@ public class DhTriggerController {
                                         @RequestParam(value="pageSize", defaultValue="10")Integer pageSize) {
         return dhTriggerService.searchTrigger(dhTrigger, pageNum, pageSize);
     }
-    
+
+    @Log(description = "删除一个触发器")
     @RequestMapping(value = "/delete")
     @ResponseBody
     public ServerResponse deleteTrigger(@RequestParam(value="triUid")String triUid) {
         return dhTriggerService.deleteTrigger(triUid);
     }
-    
+
+    @Log(description = "新增一个触发器")
     @RequestMapping(value = "/save")
     @ResponseBody
     public ServerResponse saveTrigger(DhTrigger dhTrigger) {
     	return dhTriggerService.saveTrigger(dhTrigger);
     }
-    
+
+
     @RequestMapping(value = "/serachByPrimarkey")
     @ResponseBody
     public ServerResponse serachByPrimarkey(@RequestParam(value = "triUid")String triUid) {
@@ -55,6 +59,7 @@ public class DhTriggerController {
      * @param dhTrigger
      * @return
      */
+    @Log(description = "更新一个触发器")
     @RequestMapping(value = "/update")
     @ResponseBody
     public ServerResponse updateTrigger(DhTrigger dhTrigger) {

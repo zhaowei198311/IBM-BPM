@@ -604,19 +604,19 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 触发器调用过后重新获取流程实例
 		dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());
 		// 结合草稿中的数据
-		DhDrafts dhDrafts = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
+		DhDrafts dhDraft = dhDraftsMapper.queryDraftsByTaskUid(taskUid);
 		JSONObject approvalData = null;
 		String insDataStr = dhprocessInstance.getInsData();
 		JSONObject insDataJson = JSON.parseObject(insDataStr);
 		JSONObject formData = insDataJson.getJSONObject("formData"); // 做页面展示
-		if(dhDrafts != null &&  StringUtils.isNotBlank(dhDrafts.getDfsData())) {
-			JSONObject dfsData = JSON.parseObject(dhDrafts.getDfsData());
+		if(dhDraft != null &&  StringUtils.isNotBlank(dhDraft.getDfsData())) {
+			JSONObject dfsDataJson = JSON.parseObject(dhDraft.getDfsData());
 			// 获得草稿中的表单信息
-			JSONObject dfsFormData = dfsData.getJSONObject("formData");
+			JSONObject dfsFormData = dfsDataJson.getJSONObject("formData");
 			// 将流程实例中的表单信息集合草稿中的信息，但不需要更新到流程实例对象中
 			insDataJson.put("formData", FormDataUtil.formDataCombine(dfsFormData, formData));
 			dhprocessInstance.setInsData(insDataJson.toJSONString());
-			approvalData = dfsData.getJSONObject("approvalData");
+			approvalData = dfsDataJson.getJSONObject("approvalData");
 		}
 	    // 查看此环节特有的操作
 	    // 查看能否编辑insTitle

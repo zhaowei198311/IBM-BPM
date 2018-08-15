@@ -6,6 +6,7 @@ package com.desmart.desmartportal.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.desmart.common.annotation.log.Log;
 import net.sf.jsqlparser.schema.Server;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -26,12 +27,7 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageInfo;
 
-/**  
-* <p>Title: TaskInstanceController</p>  
-* <p>Description: </p>  
-* @author zhaowei  
-* @date 2018年5月9日  
-*/
+
 @Controller
 @RequestMapping(value = "/taskInstance")
 public class DhTaskInstanceController {
@@ -76,10 +72,11 @@ public class DhTaskInstanceController {
 		taskInstance.setTaskDueDate(dueTime);
 		return dhTaskInstanceService.selectAllTask(taskInstance, pageNum, pageSize);
 	}
-	
+
 	@RequestMapping(value = "/finshedTask")
 	@ResponseBody
-	private ServerResponse finshedTask(@RequestParam(value="data") String data) {		
+	@Log(description = "提交一个任务")
+	private ServerResponse finshedTask(@RequestParam(value="data") String data) {
 		try {
 			return dhTaskInstanceService.perform(data);
 		} catch (Exception e) {
@@ -94,6 +91,7 @@ public class DhTaskInstanceController {
 	 * @param data
 	 * @return
 	 */
+	@Log(description = "驳回一个任务")
 	@RequestMapping(value = "/rejectTask")
 	@ResponseBody
 	public ServerResponse rejectTask(@RequestParam(value = "data") String data) {
@@ -110,6 +108,7 @@ public class DhTaskInstanceController {
 	 * @param data
 	 * @return
 	 */
+	@Log(description = "跳转到驳回的环节")
 	@RequestMapping(value = "/skipFromReject")
 	@ResponseBody
 	public ServerResponse skipFromReject(@RequestParam(value = "data") String data) {
@@ -145,6 +144,7 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
+	@Log(description = "进行加签操作")
 	@RequestMapping(value = "/addSure")
 	@ResponseBody
 	public ServerResponse<?> addSure(DhTaskInstance dhTaskInstance){
@@ -160,6 +160,7 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
+	@Log(description = "提交一个任务")
 	@RequestMapping(value = "/finishAdd")
 	@ResponseBody
 	public ServerResponse<?> finishAdd(String taskUid, String activityId, String approvalContent){
@@ -458,6 +459,7 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
+	@Log(description = "进行传阅")
 	@RequestMapping(value = "/transferSure")
 	@ResponseBody
 	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId){
@@ -489,6 +491,7 @@ public class DhTaskInstanceController {
 		return dhTaskInstanceService.loadPageTaskByClosedByStartProcess(pageNum, pageSize, insUid, usrUid);
 	}
 
+	@Log(description = "取回任务")
 	@RequestMapping("/revokeTask")
 	@ResponseBody
 	public ServerResponse revokeTask(String taskUid) {
