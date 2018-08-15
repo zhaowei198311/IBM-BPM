@@ -14,8 +14,8 @@ public class SysDictionaryDataForm {
 	private String dicDataName;
 	@ExcelField(name="字典类型代码",sort=3,nullable=false)
 	private String dicCode;
-	//@ExcelField(name="字典说明",sort=4,nullable=true)
-	private String dicDataDescription;
+	/*@ExcelField(name="字典说明",sort=4,nullable=true)
+	private String dicDataDescription;*/
 	@ExcelField(name="排序号",sort=0,nullable=false)
 	private Double dicDataSort;
 	public String getDicDataCode() {
@@ -36,22 +36,17 @@ public class SysDictionaryDataForm {
 	public void setDicCode(String dicCode) {
 		this.dicCode = dicCode;
 	}
-	public String getDicDataDescription() {
+	/*public String getDicDataDescription() {
 		return dicDataDescription;
 	}
 	public void setDicDataDescription(String dicDataDescription) {
 		this.dicDataDescription = dicDataDescription;
-	}
+	}*/
 	public Double getDicDataSort() {
 		return dicDataSort;
 	}
 	public void setDicDataSort(Double dicDataSort) {
 		this.dicDataSort = dicDataSort;
-	}
-	@Override
-	public String toString() {
-		return "SysDictionaryDataForm [dicDataCode=" + dicDataCode + ", dicDataName=" + dicDataName + ", dicCode="
-				+ dicCode + ", dicDataDescription=" + dicDataDescription + ", dicDataSort=" + dicDataSort + "]";
 	}
 	
 }

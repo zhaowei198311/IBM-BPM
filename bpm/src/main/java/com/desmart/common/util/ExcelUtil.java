@@ -266,6 +266,8 @@ public class ExcelUtil {
 					f.set(t, getValue(cellRow.getCell(j)).toString());
 				} else if (Integer.class.isAssignableFrom(helper.getClazz())) {
 					f.set(t, Integer.valueOf(getValue(cellRow.getCell(j)).toString()));
+				} else if (Double.class.isAssignableFrom(helper.getClazz())) {
+					f.set(t,Double.valueOf(getValue(cellRow.getCell(j)).toString()));
 				}
 			}
 			list.add(t);
