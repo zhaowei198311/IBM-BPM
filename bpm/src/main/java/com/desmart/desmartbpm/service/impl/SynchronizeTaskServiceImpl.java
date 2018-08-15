@@ -97,9 +97,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             } catch (Exception e) {
                 // 发生异常，删除创建任务的信息
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
-                LOG.error("拉取任务时分析任务出错：任务编号: " + lswTask.getTaskId(), e);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask);
+                LOG.error("拉取任务时分析任务出错：任务编号: " + lswTask.getTaskId(), e);
             }
         }
         // 记录最后一个同步的任务
@@ -146,9 +146,9 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 }
             } catch (Exception e) {
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
-                LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask);
+                LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
             }
         }
     }
