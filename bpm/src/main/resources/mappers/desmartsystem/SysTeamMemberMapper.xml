@@ -51,14 +51,28 @@
 		SELECT  tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='role') tm LEFT JOIN SYS_ROLE_USER ru on tm.USER_UID =ru.ROLE_UID LEFT JOIN SYS_USER u on ru.USER_UID=u.USER_UID 
 		union all
 		SELECT tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='user') tm LEFT JOIN SYS_USER u  on tm.USER_UID=u.USER_UID
-		) teamuser LEFT JOIN SYS_USER_DEPARTMENT ud on teamuser.USER_UID=ud.USER_UID  where 1=1 
-		<if test="departUid!=null">
-			and depart_uid in (${departUid}) 
-		</if>
+		) teamuser LEFT JOIN SYS_USER_DEPARTMENT ud on teamuser.USER_UID=ud.USER_UID  
+		<where>
+		<if test=" sysDepartmentList != null and sysDepartmentList.size() >0 ">
+  			and 
+  			<foreach collection="sysDepartmentList" item="sysDepartment" open="(" separator="or" close=")">
+  		      depart_uid = #{sysDepartment.departUid}
+  		     </foreach>
+  		</if>
 		<if test="companyCode!=null">
 			and (company_code = #{companyCode} or company_code = '1000' )
 		</if>
-		) team  WHERE team.TEAM_UID in (${teamUid}) group by team.team_uid
+		</where>
+		) team  
+		<where>
+		<if test=" teamUidList != null and teamUidList.size() > 0 ">
+		and
+		<foreach collection="teamUidList" item = "teamUid" open="(" separator="or" close=")">
+			team.TEAM_UID = #{teamUid}
+		</foreach>
+		</if>
+		</where>
+		 group by team.team_uid
 		
   </select>
   

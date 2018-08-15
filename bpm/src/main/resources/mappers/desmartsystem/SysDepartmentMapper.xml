@@ -345,4 +345,11 @@
 		from SYS_DEPARTMENT
 		where depart_uid = #{departUid}
 	</select>
+	
+	<select id="queryByConditionToParentTree" parameterType="com.desmart.desmartsystem.entity.SysDepartment"
+		resultMap="BaseResultMap">
+		SELECT * FROM SYS_DEPARTMENT
+		start with depart_uid = #{departUid}
+		connect by prior depart_parent = depart_uid
+	</select>
 </mapper>

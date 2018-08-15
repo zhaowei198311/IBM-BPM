@@ -28,6 +28,9 @@ public class SysRoleUser {
     
     private String isClosed;
     
+    //不在表内
+    private List<SysDepartment> sysDepartmentList;
+    private List<String> roleIdList; 
     
 
     public List<SysUser> getUsers() {
@@ -124,6 +127,22 @@ public class SysRoleUser {
 
 	public void setIsClosed(String isClosed) {
 		this.isClosed = isClosed;
+	}
+
+	public List<SysDepartment> getSysDepartmentList() {
+		return sysDepartmentList;
+	}
+
+	public void setSysDepartmentList(List<SysDepartment> sysDepartmentList) {
+		this.sysDepartmentList = sysDepartmentList;
+	}
+
+	public List<String> getRoleIdList() {
+		return roleIdList;
+	}
+
+	public void setRoleIdList(List<String> roleIdList) {
+		this.roleIdList = roleIdList;
 	}
 	
 	

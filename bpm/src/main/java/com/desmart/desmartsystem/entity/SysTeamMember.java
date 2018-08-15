@@ -1,5 +1,6 @@
 package com.desmart.desmartsystem.entity;
 
+import java.util.List;
 
 public class SysTeamMember {
     private String memberUid;
@@ -19,6 +20,9 @@ public class SysTeamMember {
     
     private String roleName;
 
+    //不在表内
+    List<SysDepartment> sysDepartmentList;
+    List<String> teamUidList;
     
     public String getUserName() {
 		return userName;
@@ -90,6 +94,22 @@ public class SysTeamMember {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
+	}
+
+	public List<SysDepartment> getSysDepartmentList() {
+		return sysDepartmentList;
+	}
+
+	public void setSysDepartmentList(List<SysDepartment> sysDepartmentList) {
+		this.sysDepartmentList = sysDepartmentList;
+	}
+
+	public List<String> getTeamUidList() {
+		return teamUidList;
+	}
+
+	public void setTeamUidList(List<String> teamUidList) {
+		this.teamUidList = teamUidList;
 	}
     
 }

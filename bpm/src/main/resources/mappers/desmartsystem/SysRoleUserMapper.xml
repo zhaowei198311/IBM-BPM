@@ -97,18 +97,26 @@
   <select id="selectByRoleUser" resultType="com.desmart.desmartsystem.entity.SysRoleUser" parameterType="com.desmart.desmartsystem.entity.SysRoleUser" >
   		SELECT  r.ROLE_UID as roleUid,listagg(u.USER_NAME,';') within group(order by u.USER_UID) as userName,listagg(u.USER_UID,';') within group(order by u.USER_UID) as userUid from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID
   		left join SYS_USER_DEPARTMENT_VW ud on u.user_uid = ud.user_uid
-  		where role_uid in (${roleUid})
+  		<where>
+  		<if test=" roleIdList != null and roleIdList.size() > 0 ">
+  		     and
+  		     <foreach collection="roleIdList" item="roleId" open="(" separator="or" close=")">
+  		      role_uid = #{roleId}
+  		     </foreach>
+  		</if>
   		<if test="userUid!=null">
   			and u.user_Uid = #{userUid}
   		</if>
-  		<if test="departUid!=null">
-			 and ud.depart_Uid in (${departUid})
+  		<if test=" sysDepartmentList != null and sysDepartmentList.size() >0 ">
+  			and 
+  			<foreach collection="sysDepartmentList" item="sysDepartment" open="(" separator="or" close=")">
+  		      ud.depart_Uid = #{sysDepartment.departUid}
+  		     </foreach>
   		</if>
-  		
-  		<if test="companyCode!=null">
-  			 and (ud.company_code=#{companyCode} or ud.company_code = '1000')
+  		<if test="companyCode!=null and companyCode.trim() != '' ">
+  			and (ud.company_code=#{companyCode} or ud.company_code = '1000')
   		</if>
-  		
+  		</where>
   		 GROUP BY r.ROLE_UID
   </select>
   
