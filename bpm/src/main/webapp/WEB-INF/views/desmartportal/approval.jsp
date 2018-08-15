@@ -18,6 +18,8 @@
     <link href="resources/desmartportal/css/layui.css" rel="stylesheet" />
     <link href="resources/desmartportal/css/my.css?v=1.02" rel="stylesheet" />
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+    <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css" />
+    <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/inc/wColorPicker.css" />
     <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script> -->
 
@@ -25,7 +27,7 @@
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
     <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.03"></script>
-    <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.02"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.03"></script>
 
     <!-- jQuery -->
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.core.min.js"></script>
@@ -34,11 +36,9 @@
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.ui.draggable.min.js"></script>
 
     <!-- wColorPicker -->
-    <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/inc/wColorPicker.css" />
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/wColorPicker.js"></script>
 
     <!-- wPaint -->
-    <link rel="Stylesheet" type="text/css" href="resources/desmartportal/wPaint-master/wPaint.css" />
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/wPaint.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/my/approval.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/city.js"></script>
@@ -574,6 +574,18 @@
 			layer.alert("获得数据失败，不能进行操作");
 		}
         common.initTime();
+        
+        $("#formSet").find("select").each(function(){
+			var id = $(this).prop("id");
+			if($(this).attr("is-multi")=="true"){
+				$(this).attr("xm-select",id);
+				formSelects.render(id);
+				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
+					$("#"+id).trigger("change");
+				    return true;   
+				});
+			}
+		});
     });
 </script>
 </html>

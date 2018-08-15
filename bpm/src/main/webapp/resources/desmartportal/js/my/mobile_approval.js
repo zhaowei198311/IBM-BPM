@@ -41,9 +41,6 @@ $(function () {
     
     //加载已上传的附件
     loadFileList();
-    
-    //驳回环节复选框只选择一个
-    checkOne();
 });
 
 //用于异步加载数据的参数
@@ -773,22 +770,27 @@ function queryRejectByActivitiy() {
         	if(result.status==0){
         		$("#reject_table table").empty();
             	var rejectMapList = result.data;
-            	var rejectDiv = "";
+            	var rejectDiv = '<tr>'
+					+'<th>驳回至</th>'
+					+'<td>';
+            	if(rejectMapList.length==0){
+            		rejectDiv += '没有可驳回的环节';
+            	}else{
+            		rejectDiv += '<select id="reject_select"><option value="0">请选择</option>';
+            	}
             	for(var i=0;i<rejectMapList.length;i++){
-            		rejectDiv += '<tr>'
-								+'<th>驳回至：</th>'
-								+'<td>'
-								+'<span style="float:left;width:10%;">'
-								+'<input type="checkbox" name="check" lay-filter="rejectCheck" lay-skin="primary" '
-								+'value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId
-									+'+'+rejectMapList[i].userId+'"/>'
-								+'</span> '
-								+'<span style="float:left;width:80%;">'
-								+rejectMapList[i].activityName+'————审批人:'+rejectMapList[i].userName
-								+'</span>'
-								+'</td>'
-								+'</tr>';
+            		rejectDiv += '<option value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId+'+'+rejectMapList[i].userId+'"">'
+            				+rejectMapList[i].activityName+'————审批人:'+rejectMapList[i].userName
+            				+'</option>';
+					if(i==0){
+						;		
+			        }
                 }//end for
+            	if(rejectMapList.length!=0){
+            		rejectDiv += '</select>';
+            	}
+            	rejectDiv += '</td>'
+            				+'</tr>'
             	$("#reject_table table").append(rejectDiv);
             	form.render();
         	}
@@ -803,16 +805,9 @@ function queryRejectByActivitiy() {
     });
 }
 
-function checkOne(){
-	form.on('checkbox(rejectCheck)', function(data){
-		$("input[name='check']").prop("checked",false);
-		$(data.elem).prop("checked",true);
-		form.render();
-	});  
-}
-
 function rejectSure(){
-	$('input[name="check"]:checked').each(function(){ 
+	var rejectVal = $("#reject_select").val();
+	if(rejectVal!="0" && rejectVal!=null && rejectVal!=""){
 		var aprOpiComment = $("#myApprovalOpinion").val();
 	    var taskId = $("#taskId").val();
 	    var taskUid = $("#taskUid").val();
@@ -838,7 +833,7 @@ function rejectSure(){
 	    // 路由数据
 	    var routeData = {};
 	    var item = {};
-	    var str = $(this).val();
+	    var str = rejectVal;
 	    var insId = str.substring(0,str.indexOf("+"));
 	    var userUid = str.substring(str.lastIndexOf("+") + 1);
 	    var activityBpdId = str.substring(str.indexOf("+")+1,str.lastIndexOf("+"));
@@ -879,7 +874,7 @@ function rejectSure(){
 	            });
 	        }
 	    });
-	 }) 
+	}
 }
 
 // 加签确定
@@ -1007,20 +1002,13 @@ function showRouteBar() {
                         var activityMeta = activityMetaList[i];
                         var showActivityId = activityMeta.activityId.replace(":","");
                         chooseUserDiv += '<tr>'
-                            +'<th class="approval_th">下一环节：</th>'
+                            +'<th class="approval_th">下一环节</th>'
                             +'<td>'+activityMeta.activityName+'</td>'
                             +'</tr>'
                             +'<tr>'
-                            +'<th class="approval_th">处理人：</th>'
+                            +'<th class="approval_th">处理人</th>'
                             +'<td id="'+showActivityId+'">';
                         	
-                        	/*'<div class="handle_person_name">'
-	                        +'<ul>'
-	                        +'<li class="choose_user_li">'
-	                        +'<i class="layui-icon choose_handle_person" onclick="getUser(this)">&#xe654;</i>'
-	                        +'</li>'
-	                        +'</ul>'
-	                        +'</div>';*/
                         if(activityMeta.userName!=null && activityMeta.userName!=""){
                         	var userNameArr = activityMeta.userName.split(";");
                         	chooseUserDiv += '<div class="handle_person_name"><ul>';
@@ -1100,31 +1088,26 @@ function showRouteBarForSkipFromReject() {
 /**
  * 保存草稿表单数据的方法
  */
-var index2 = null;
 function saveDraftsInfo() {
-    var control = true; //用于控制复选框出现重复值
-    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-
-    // 发起流程
     var finalData = {};
     // 表单数据
-    var jsonStr = common.getDesignFormData();
-    var formData = JSON.parse(jsonStr);
-
+    var formDataJsonStr = common.getDesignFormData();
+    var formData = JSON.parse(formDataJsonStr);
     finalData.formData = formData;
-
     var aprOpiComment = $("#myApprovalOpinion").val();
     aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
     var taskUid = $("#taskUid").val();
-    var taskId = $("#taskId").val();
-    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
-    finalData.approvalData = {"aprOpiComment":aprOpiComment};
+    finalData.taskData = {
+        "taskUid": taskUid
+    };
+    finalData.approvalData = {
+        "aprOpiComment": aprOpiComment
+    };
     // 保存草稿数据
-    var insUid = $("#insUid").val();
-
+    var insUid = ""+$("#insUid").val();
     var insTitle = $("#insTitle_input").val();
     $.ajax({
-        url: common.getPath()+"/drafts/saveDrafts",
+        url: common.getPath() + "/drafts/saveTaskDraft",
         method: "post",
         async: false,
         data: {
@@ -1134,20 +1117,19 @@ function saveDraftsInfo() {
             taskUid: taskUid
         },
         beforeSend: function () {
-            index2 = layer.load();
+            layer.load(1);
         },
         success: function (result) {
-            if(result>0){
-            layer.close(index2);
-            layer.alert('保存成功')
-            }else{
-                layer.close(index2);
-                layer.alert('保存失败')
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                layer.alert('保存成功')
+            } else {
+                layer.alert(result.msg)
             }
         },
         error: function (){
-            layer.close(index2);
-            layer.alert('保存异常')
+            layer.closeAll('loading');
+            layer.alert('保存草稿异常')
         }
     });
     //end

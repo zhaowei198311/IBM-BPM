@@ -18,7 +18,7 @@ public class PropertiesUtil {
 
     static {
         // 获得配置文件
-        String fileName = "datasourceBeta.properties";
+        String fileName = "datasourceDev.properties";
         
         props = new Properties();
         try {
