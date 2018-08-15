@@ -43,6 +43,10 @@
 	text-align: right;
 }
 
+.layui-tab-title li{
+	width:33%;
+}
+
 /*任务列表详细*/
 .backlog_top{
 	border-bottom:1px solid #f2f2f2;
@@ -63,9 +67,6 @@
 .backlog_content{
 	margin-top:10px;
 	position: relative;
-}
-.backlog_content table{
-	width:70%;
 }
 .backlog_content tbody tr{
 	height: 20px;

@@ -42,82 +42,77 @@ function loadDhApprovalOpinionList(){
 			},
 	     success : function(result){
 	    	 $("#approve_record").empty();
-	    	 var info = '<h1 style="clear: both;"></h1>';
+	    	 var info = '';
 	    	 for (var i = 0; i < result.data.length; i++) {
-	    		 //var aprOpiComment = result.data[i].aprOpiComment.replace(reg,"\n");
-	    		 info += '<li>'
-						+'<table>'
-						+'<tr>'
-							+'<th>环节名称：</th>'
-							+'<td>'+result.data[i].activityName+'</td>'
-						+'</tr>'
-						+'<tr>'
-							+'<th>审批状态：</th>'
-							+'<td>'+result.data[i].aprStatus+'</td>'
-						+'</tr>'
-						+'<tr>'
-							+'<th>审批人：</th>'
-							+'<td>';
+	    		 var lastName = "";//姓
 	    		 var taskHandleUserName = result.data[i].taskHandleUserName;
+	    		 if(taskHandleUserName==null || taskHandleUserName==""){
+	    			 lastName = common.splitName(result.data[i].aprUserName);
+	    		 }else{
+	    			 lastName = common.splitName(taskHandleUserName);
+	    		 }
+	    		 info += '<li class="layui-timeline-item">'
+	    			 +'<i class="layui-icon layui-timeline-axis">'+lastName+'</i>'
+	    			 +'<div class="layui-timeline-content layui-text">'
+	    			 +'<h5 class="layui-timeline-title">'
+	    			 +'<span class="activity_name">'+result.data[i].activityName+'</span>'
+	    			 +'<span class="approval_time">8.18 16:47</span>'
+	    			 +'</h5>'
+	    			 +'<p class="timeline_p">'
+	    			 +'<span class="approval_person">';
 	    		 if(taskHandleUserName==null || taskHandleUserName==""){
 	    			 info += result.data[i].aprUserName;
 	    		 }else{
 	    			 info += taskHandleUserName+"("+result.data[i].aprUserName+"代理)";
 	    		 }
-	    		 info += '</td>'
-						+'</tr>'
-						+'<tr>'
-							+'<th>岗位：</th>'
-							+'<td>'+result.data[i].aprStation+'</td>'
-						+'</tr>'
-						+'<tr>'
-							+'<th>审批时间：</th>'
-							+'<td>'+datetimeFormat_1(result.data[i].aprDate)+'</td>'
-						+'</tr>'
-						+'<tr>'
-							+'<th valign=top>审批意见：</th>'
-							+'<td><pre style="background-color: #fbfbfb;border: 0px;">'
-				if(result.data[i].aprOpiComment.length>50){
-					info += '<span class="partComment">'
-						+result.data[i].aprOpiComment.substring(0,50)
-						+"......"
-						+'</span>'
-						+'<span class="hiddenAprOpiComment" style="display:none">'
-						+result.data[i].aprOpiComment
-						+'<p>&nbsp;</p><p class="retractAllComment" style="color:#009688" onclick="retractAllFun(this);">'
-						+'点击收起 <i class="layui-icon" style="font-size:14px">&#xe619;</i></p>'
-						+'</span>'
-						+'<p>&nbsp;</p><p class="extendAllComment" style="color:#009688" onclick="extendAllFun(this);">'
-						+'展开全部 <i class="layui-icon" style="font-size:14px">&#xe61a;</i></p>';
-				}else{
-					info += result.data[i].aprOpiComment
-				}
-	    		info +='</pre></td>'
-						+'</tr>'
-						+'</table>'
-						+'</li>';
+	    		 info += '</span>'
+	    			 +'<span class="person_despart">'+result.data[i].aprStation+'</span>'
+	    			 +'<span class="approval_status">'+result.data[i].aprStatus+'</span>'
+	    			 +'</p>'
+	    			 +'<p>'
+	    			 +'<span class="approval_sugg">';
+	    		 if(result.data[i].aprOpiComment.length>25){
+	    			 info += '<span class="partComment">'
+						 +result.data[i].aprOpiComment.substring(0,25)
+						 +'......</span>'
+		    			 +'<span class="hiddenAprOpiComment" style="display:none;">'
+						 +result.data[i].aprOpiComment
+						 +'</span>'
+		    			 +'<p class="retractAllComment allComment" style="display:none;" onclick="retractAllFun(this);">'
+		    			 +'点击收起 <i class="layui-icon" style="font-size:14px">&#xe619;</i>'
+		    			 +'</p>'
+		    			 +'<p class="extendAllComment allComment" onclick="extendAllFun(this);">'
+		    			 +'展开全部 <i class="layui-icon" style="font-size:14px">&#xe61a;</i>'
+		    			 +'</p>';
+	    		 }else{
+	    			 info += result.data[i].aprOpiComment
+	    		 }
+	    		 info += '</span>'
+	    			 +'</p>'
+	    			 +'</div>'
+					+'</li>';
 	    	 }
-	    	 info += '<h1 style="clear: both;"></h1>';
 	    	 $("#approve_record").append(info);
 	     },error : function (){
 	    	 layer.alert("网络异常！");
 	     }
 	});
-	
 }
 
 //展开一条审批意见的方法
 function extendAllFun(obj){
-	$(obj).css("display","none");
-	$(obj).parent().find(".partComment").css("display","none");
-	$(obj).parent().find(".hiddenAprOpiComment").css("display","block");
+	$(obj).hide();
+	$(obj).parent().find(".partComment").hide();
+	$(obj).parent().find(".hiddenAprOpiComment").show();
+	$(obj).parent().find(".retractAllComment").show();
 }
 
 //收起一条审批意见的方法
 function retractAllFun(obj){
-	$(obj).parent().css("display","none");
-	$(obj).parent().parent().find(".partComment").css("display","block");
-	$(obj).parent().parent().find(".extendAllComment").css("display","block");
+	$(obj).hide();
+	$(obj).parent().find(".partComment").show();
+	$(obj).parent().find(".hiddenAprOpiComment").hide();
+	$(obj).parent().find(".extendAllComment").show();
 }
 
 function save(){
@@ -166,8 +161,6 @@ function loadDhroutingRecords(){
 	     dataType:'json',
 	     async: false, 
 	     success : function(result){
-	    	 $(".p").find("p").find("span").empty();
-	    	 //$(".p").find("p").eq(0).find("span").html(result.data.bpmActivityMeta.sortNum);环节序号
 	    	 var h="";
 	    	 var activityNameHtml = "";
 	    	 for (var i = 0; i < result.data.bpmActivityMetaList.length; i++) {
@@ -179,67 +172,76 @@ function loadDhroutingRecords(){
 					 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName+"、";
 				 }
 			 }
-	    	 $(".p").find("p").eq(0).find("span").html(h);
-	    	 $(".p").find("p").eq(2).find("span").html(activityNameHtml);
 	    	 var dhTaskHandlerHtml = "";
-	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {//当前处理人
+	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {
 	    		 if(i==(result.data.dhTaskHandlers.length-1)){
 					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName;
 				 }else{
 					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName+"、";
 				 }
 	    	 }
-	    	 $(".p").find("p").eq(1).find("span").html(dhTaskHandlerHtml);
-	    	 //$(".p").find("p").eq(2).find("span").html(result.data.bpmActivityMeta.activityName);
+	    	 var dateStr = "";
 	    	 if(result.data.dhRoutingRecords!=null){
-	    	 var index = result.data.dhRoutingRecords.length-1;
-	    	 	if(index>=0){
+	    		 var index = result.data.dhRoutingRecords.length-1;
+	    	 	 if(index>=0){
 	    	 		var date = new Date(result.data.dhRoutingRecords[index].createTime);
-	    	 		$(".p").find("p").eq(3).find("span").html(datetimeFormat_1(date));
-	    	 	}
+	    	 		dateStr = datetimeFormat_1(date);//当前处理到达时间
+	    	 	 }
 	    	 }
-	    	 $("#transferProcess").find("li").remove();
+	    	 var currActiHtml = "<p>当前的环节号："+h+"</p>"
+				+"<p>当前处理人："+dhTaskHandlerHtml+"</p>"
+				+"<p>当前处理环节："+activityNameHtml+"</p>"
+				+"<p>当前处理到达时间："+dateStr+"</p>";
+	    	 $(".curr_activity").html(currActiHtml);
+	    	 
 	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
 	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
-	    		var info = "<li>"
-	    			+"<div>("+(i+1)+")</div>";
+	    		var info = '<li class="layui-timeline-item">'
+					+'<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
+					+'<div class="layui-timeline-content layui-text">'
+					+'<h5 class="layui-timeline-title">'
+					+'<span class="activity_name">'+result.data.dhRoutingRecords[i].activityName+'</span>'
+					+'<span class="approval_time">'+datetimeFormat_1(date)+'</span>'
+					+'</h5>'
+					+'<p class="timeline_p">'
+					+'<span class="approval_person">';
 	    		var taskHandleUserName = result.data.dhRoutingRecords[i].taskHandleUserName;
 	    		if(taskHandleUserName==null || taskHandleUserName==""){
 	    			info += result.data.dhRoutingRecords[i].userName;
 	    		}else{
 	    			info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
 	    		}
-	    		info += "</div>"
-					+"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
-					+"<div>"+result.data.dhRoutingRecords[i].activityName+"</div>";
-				switch(result.data.dhRoutingRecords[i].routeType){
+	    		info += '</span>'
+					+'<span class="person_despart">'+result.data.dhRoutingRecords[i].station+'</span>';
+	    		switch(result.data.dhRoutingRecords[i].routeType){
 					case "submitTask":
-						info += "<div>通过</div>";
+						info += "<span class='approval_status'>通过</span>";
 						break;
 					case "revokeTask":
-						info += "<div>取回任务</div>";
+						info += "<span class='approval_status' style='color:#FC9153'>取回</span>";
 						break;
 					case "transferTask":
-						info += "<div>发起传阅</div>";
+						info += "<span class='approval_status' style='color:#FC9153'>传阅</span>";
 						break;
 					case "rejectTask":
-						info += "<div>驳回</div>";
+						info += "<span class='approval_status' style='color:#f33640'>驳回</span>";
 						break;
 					case "addTask":
-						info += "<div>发起会签任务</div>";
+						info += "<span class='approval_status' style='color:#FC9153'>发起会签</span>";
 						break;
 					case "finishAddTask":
-						info += "<div>完成会签任务</div>";
+						info += "<span class='approval_status' style='color:#FC9153'>完成会签</span>";
 						break;
 					case "trunOffTask":
-						info += "<div>管理员撤转任务</div>";
+						info += "<span class='approval_status' style='color:#f33640'>撤转</span>";
 						break;
-				}
-	    		info += "<div>"+datetimeFormat_1(date)+"</div>"
-				+"</li>";
+	    		}
+	    		info += '</span>'
+					+'</p>'
+					+'</div>'
+					+'</li>';
 	    		$("#transferProcess").append(info);
 			}
-	    	 $("#transferProcess").append("<h1 style='clear: both;'></h1>");
 	     },error : function (){
 	    	 layer.alert("审批意见出现异常！");
 	     }

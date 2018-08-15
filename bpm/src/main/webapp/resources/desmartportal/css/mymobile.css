@@ -33,9 +33,6 @@ body{
 .layui-tab-brief>.layui-tab-title .layui-this {
     color: #EF6301;
 }
-.layui-tab-title li{
-	width:33%;
-}
 .layui-tab-title {
     background: #fff;
 }

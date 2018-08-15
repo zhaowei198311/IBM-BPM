@@ -22,17 +22,10 @@ window.onclick=function(){
 	$("#child_menu").css("display","none");
 }
 
-//切换tab的方法
-function menuBtnClick(obj){
-	$(".mobile_menu li").css({"color":"#A0A0A0"});
-	$(obj).parent().css({"color":"#009688"});
-	var id = $(obj).attr("title");
-	$(".middle_content").css("display","none");
-	$("#"+id+"_div").css("display","block");
-}
-
 //选择处理方式
 function handleBtnClick(obj){
+	$(".handle_btn").css({"background":"#fff","color":"#111","border-color":"#ccc"});
+	$(obj).css({"background":"#FEE9DD","color":"#FC9E69","border-color":"#FDBD98"});
 	$(".handle_table").css("display","none");
 	var handleType = $(obj).text();
 	switch(handleType){

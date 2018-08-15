@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<link href="resources/desmartportal/css/modules/laydate/default/laydate.css" rel="stylesheet">
-<link href="resources/desmartportal/css/mymobile_layui.css" rel="stylesheet" />
-<link href="resources/desmartportal/css/mobile_my.css" rel="stylesheet" />
-<link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mymobile_layui.css" rel="stylesheet"/>
+<link rel="stylesheet" href="resources/desmartportal/css/modules/laydate/default/laydate.css" />
+<link href="resources/desmartportal/css/iconfont.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mymobile.css?v=0.2" rel="stylesheet" />
+<link href="resources/desmartportal/lCalendar/css/lCalendar.css" rel="stylesheet" />
+<link href="resources/desmartportal/css/mobile_approval.css?v=1.01" rel="stylesheet" />
 
 <!-- jQuery -->
 <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
@@ -11,14 +13,12 @@
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/my/mymobile.js"></script>
 <script type="text/javascript" src="resources/desmartportal/lCalendar/js/lCalendar.js"></script>
-<link href="resources/desmartportal/lCalendar/css/lCalendar.css" rel="stylesheet" />
 <script type="text/javascript" src="resources/desmartportal/formDesign/js/mobile_form.js"></script>
 <script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 <!-- 附件上传js -->
 <script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 <!-- 审批信息js -->
 <script src="resources/desmartportal/js/my/mobile_approval_opinion.js"></script>
-
 <style type="text/css">
 .container-fluid {
 	padding-right: 0px;
@@ -113,41 +113,12 @@
 	left: 50%;
 	box-shadow: 0 0 10px #ccc;
 }
-
-.layui-progress-bar {
-	display: block;
-	min-width: 8px;
-	height: 12px;
-	background: #2067c5;
-	background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3),
-		rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)),
-		-webkit-linear-gradient(left, #2067c5, #24c1fc);
-	background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3),
-		rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)),
-		-moz-linear-gradient(left, #2067c5, #24c1fc);
-	background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3),
-		rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)),
-		-o-linear-gradient(left, #2067c5, #24c1fc);
-	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3),
-		rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.2)),
-		linear-gradient(to right, #2067c5, #24c1fc);
-	border-radius: 4px;
-	-webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px
-		rgba(0, 0, 0, 0.2);
-	box-shadow: inset 0 1px rgba(0, 0, 0, 0.2), inset 0 0 0 1px
-		rgba(0, 0, 0, 0.2);
-}
-
 .display_content6 {
 	width: 40%;
 	height: 100px;
 	left: 70%;
 	margin-top: 10%;
 }
-    .layui-table td{
-    	padding:7px 15px;
-    	height: 30px;
-    }
     input[lay-key][readonly]{
    	 	cursor: pointer;
     }
@@ -206,5 +177,3 @@
     	text-align: left;
     }
 </style>
-<link href="resources/desmartportal/css/mymobile.css?v=1.01" rel="stylesheet" />
-<link href="resources/desmartportal/css/mobile_approval.css" rel="stylesheet" />
