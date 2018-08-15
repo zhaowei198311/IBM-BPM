@@ -37,7 +37,7 @@ function addPublicFormContent(view) {
 var chooseInputWidth = new Array();
 //渲染页面的方法
 function drawPage() {
-	var tableHead = '<table class="layui-table form-sub">' + '<tbody>';
+	var tableHead = '<div class="table_container"><table class="layui-table form-sub">' + '<tbody>';
 	var formHtml = tableHead;
 	view = $(".container-fluid");
 	//将关联子表单内容添加进来
@@ -56,7 +56,7 @@ function drawPage() {
 				flag = false;
 				if (column.find("p").length != 0) {
 					column.find("p").addClass("title_p");
-					column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
+					column.find("p").append('<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>');
 					var pText = column.find("p")[0].firstChild.data.trim();
 					pHtml = column.html();
 					console.log(pHtml);
@@ -139,7 +139,7 @@ function drawPage() {
 					if (pObj.attr("title") == "table_title") {
 						//表单块标题
 						column.find("p").addClass("title_p");
-						column.find("p").append('<i class="layui-icon arrow" style="margin-left:10px;" onclick="showTable(this)">&#xe625;</i>');
+						column.find("p").append('<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>');
 						pHtml = column.find(".subDiv").html();
 						var pText = column.find("p")[0].firstChild.data.trim();
 						flag = false;
@@ -311,7 +311,7 @@ function drawPage() {
 			}
 		} //end for
 	}); //end rowObj for	
-	formHtml += "</tbody></table>";
+	formHtml += "</tbody></table></div>";
 	view.html(formHtml);
 	var userAgent = navigator.userAgent;
 	if (userAgent.indexOf("compatible") == -1 && userAgent.indexOf("Edge") == -1) {

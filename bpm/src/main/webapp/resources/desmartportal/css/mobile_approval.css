@@ -13,15 +13,15 @@
 	box-shadow: 0 0 3px #f2f2f2;
 	padding-bottom: 2px;
 	z-index: 10;
-	background: #2E3238;
-    color: #F2f2f2;
+	background: #EF6301;
+    color: #fff;
 }
 
 .top_left{
 	width:17%;
 	text-align:left;
 	float:left;
-	margin:6px 0 0 10px;
+	margin:3% 0 0 10px;
 }
 .top_content{
 	width:60%;
@@ -38,23 +38,56 @@
 }
 
 .mobile_middle{
-	margin-top:50px;
 	width:100%;
+	margin-top: 82px;
 }
-
-.mobile_bottom{
+.mobile_btn{
 	color: #A0A0A0;
     width: 100%;
-    height: 40px;
     position: fixed;
-    bottom:0px;
+    top:40px;
     float:right;
-    border-top: 1px solid #ccc;
+    border-bottom: 2px solid #f2f2f2;
     box-shadow: 0 0 3px #f2f2f2;
     z-index: 10;
     background: #fff;
 }
-/*下面按钮样式*/
+
+.approval_btn_div{
+	position: fixed;
+    bottom: 0px;
+    z-index:11;
+    width:100%;
+    height:56px;
+    border-top:1px solid #ccc;
+    box-shadow: 0 0 3px #f2f2f2;
+}    
+
+/*提交按钮*/
+.filter_btn{
+	width: 50%;
+    float: left;
+    height:100%;
+    line-height:56px;
+    margin:0px;
+    padding:0px;
+    float: left;
+    border-radius: 0px;
+}
+.approval_btn_div #save_submit_btn{
+	background: #FC9153;
+	color: #fff;
+	margin:0px;
+}
+.approval_btn_div #save_drafts_btn{
+	background: #FFF;
+	margin:0px;
+	color:#000;
+}
+/*tab按钮样式*/
+.layui-tab-title li{
+	width:25%;
+}
 .mobile_menu{
 	height:100%;
 }
@@ -78,15 +111,55 @@
 }
 
 /*中间内容部分样式*/
-.middle_content{
-	display: none;
-	height:auto;
+/* #record_div,#file_div{
+	padding:5px 0px;
+} */
+
+/*任务列表详细*/
+#search_top{
+	background: #fff;
+	color:#9C9C9C;
+	padding:10px;
 }
-#form_content_div{
-	display: block;
+.backlog_top{
+	border-bottom:1px solid #f2f2f2;
+	padding-bottom:13px;
 }
-#record_div{
-	padding:3px 10px;
+.backlog_process_title{
+	border-right: 1px solid #727272;
+	padding-right:5px;
+}
+.backlog_task_status{
+	background: #FF9052;
+	padding:3px 12px;
+	border-radius:40px;
+	color: #fff;
+	position: absolute;
+	right: 10px;
+}
+.backlog_content{
+	margin-top:10px;
+	position: relative;
+}
+.backlog_content tbody tr{
+	height: 20px;
+    font-size: 12px;
+}
+.process_title_div{
+	padding-bottom:7px;
+	font-size: 15px;
+	color: #111;
+	font-weight: 550;
+}
+/*进度条*/
+.progress_bar_div{
+	position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.progress_time{
+	color:#FF9052;
+	font-size: 12px;
 }
 
 /*操作按钮部分*/
@@ -113,9 +186,24 @@
 }
 
 /*审批意见*/
+.handle_btn{
+	background: #fff;
+	color:#111;
+	width: 20%;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #CCCCCC;
+}
+#submit_btn{
+	background: #FEE9DD;
+	color:#FC9E69;
+	border: 1px solid #FDBD98;
+}
+
 #myApprovalOpinion{
 	resize:none;
 	height:150px;
+	    border-bottom: 1px solid #F3F3F3;
 }
 #fu_label{
 	width:50px;
@@ -126,39 +214,26 @@
 	margin-left:70px;
 	margin-right:10px;
 	margin-top:3px;
-}
-#approve_record li{
-	text-align: left;
-}
-#approve_record li table{
-	width:90%;
-	margin:auto;
-	margin-top:10px;
-	margin-bottom:10px;
-}
-#approve_record li table th{
-	width:30%;
-	padding:5px 0px;
-}
-#approve_record li table td{
-	width:70%;
-	padding:5px 0px;
+	color:#FF9559;
 }
 
 .handle_div{
 	width:100%;
 	margin-bottom:10px;
-	background: #FBFBFB;
-	padding:10px 0;
+	background: #FFF;
+	padding:0;
 	border: 1px solid #e6e6e6;
+}
+#handle_type_table{
+	background: #F5F4F9;
+	height:65px;
+	border-bottom: 1px solid #F0EFF2;
 }
 .handle_div table,.handle_div tbody{
 	width:100%;
 }
 .handle_div table th{
-	width:30%;
-	padding-left:10px;
-	padding-right:10px;
+	width:26%;
 }
 .handle_div table td{
 	width:80%;
@@ -176,13 +251,50 @@
 	display: none;
 }
 .approve_demand{
-	margin-left:10px;
+	padding: 10px;
 }
 
 /*同意处理*/
+.handle_table{
+	width:92%;
+	margin:auto;
+}
+.handle_table th{
+	text-align: left;
+}
 .handle_table tr{
 	height:40px;
+	border-bottom: 1px solid #F3F3F3;
 }
+.task_activity_name{
+	color:#FF9559;
+}
+.handle_person_name{
+	margin-top: 5px;	
+}
+.handle_person_name li{
+	float: left;
+	text-align: center;
+	margin:10px 15px 5px 10px;
+	position: relative;
+}
+.first_name{
+	background: #FF9052;
+    padding: 10px 11px;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+}
+.person_name{
+	font-size: 12px;
+	margin-top: 10px;
+}
+.choose_user_li{
+	border: 2px dashed #CCCCCC;
+	padding: 7px;
+	bottom:7px;   
+}
+
 #transfer_table input,#reject_table input,#submit_table input{
 	width:85%;
 	float: left;
@@ -218,6 +330,74 @@
 	left:0px;
 }
 /*驳回*/
+
+/*审批记录时间线*/
+#approve_record {
+	padding: 10px 0px;
+    width: 90%;
+    margin: auto;
+}
+#approve_record .layui-timeline-title{
+	color: #D3D3D3;
+}
+.timeline_p span{
+	margin-right:5px;
+}
+#approve_record .layui-timeline {
+    padding-left: 5px;
+    width: 90%;
+    margin: auto;
+    padding-top: 10px;
+}
+
+#approve_record .layui-timeline-item {
+    position: relative;
+    padding-bottom: 20px
+}
+
+#approve_record .layui-timeline-axis {
+    position: absolute;
+    left: -14px;
+    top: 0px;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    background-color: #FF9052;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+#approve_record .layui-timeline-content {
+    padding-left: 40px;
+}
+
+.approval_time{
+	float: right;
+}
+.person_despart{
+	font-size: 12px;
+} 
+.approval_status{
+	font-size:13px;
+	color:#A4E063;
+}
+.timeline_p{
+	font-weight: bold;
+}
+.approval_sugg{
+	font-size: 15px;
+	font-weight: bold;
+}
+.allComment{
+	color:#F49368;
+	font-weight: normal;
+	text-align: right;
+	font-size: 12px;
+}
 
 /*选人*/
 #choose_user_div{
@@ -283,17 +463,51 @@
     width: 80px;
 }
 .delete_choose_user{
-	position: relative;
-	top:-10px;
-	right:10px;
-	font-size: 23px;
+	position: absolute;
+    top: -13px;
+    right: -5px;
+    font-size: 17px;
+    color:#D31A31;
 }
 /*流转记录*/
-.tab_ul li{
-	width:99%;
+.curr_activity{
+	padding:5px 10px;
+	color:#AAAAAA;
+}
+.curr_activity p{
+	margin:5px 0px;
+	font-size: 12px;
+}
+#transferProcess{
+    width: 90%;
+    margin: auto;
+    padding-top: 10px;
+}
+#transferProcess .layui-timeline-axis{
+	color:#EF6301;
 }
 
-/*表单内容*/
+/*表单内容详情*/
+.tip_span{
+	color: red;
+    float: left;
+}
+.table_container{
+	margin: 10px 0;
+    background: #fff;
+    padding: 0px 10px;
+}
+.form-sub tr{
+	border-bottom:1px solid #F3F3F3;
+}
+.title_p{
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #F3F3F3;
+}	
+.layui-table{
+	margin-top:0px;
+}
 .layui-table .list_title{
 	font-size: 14px;
 }
@@ -305,13 +519,7 @@
 }
 input[disabled], .layui-select-disabled .layui-disabled {
     border-width: 0px;
-    background: #fbfbfb;
-}
-.mobile_container .layui-table td {
-    padding: 5px 10px;
-}
-.mobile_container .layui-table{
-	background: #fbfbfb;
+    background: #fff;
 }
 .layui-input, .layui-select, .layui-textarea{
 	height:30px;
@@ -371,4 +579,8 @@ input[disabled], .layui-select-disabled .layui-disabled {
     text-align: center;
     font-size: 16px;
     margin-top: 8px;
+}
+
+.layui-btn+.layui-btn {
+    margin-left: 5px;
 }
