@@ -85,9 +85,7 @@ public class DhDraftsController {
 	@RequestMapping(value = "/saveTaskDraft")
 	@ResponseBody
 	public ServerResponse saveTaskDraft(DhDrafts dhDraft) {
-		System.out.println(dhDraft);
-		dhDraftsService.saveTaskDraft(dhDraft);
-		return ServerResponse.createBySuccess();
+		return dhDraftsService.saveTaskDraft(dhDraft);
 	}
 
 	/**

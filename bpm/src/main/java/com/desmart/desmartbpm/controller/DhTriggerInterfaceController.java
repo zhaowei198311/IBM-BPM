@@ -34,7 +34,7 @@ public class DhTriggerInterfaceController {
 	
 	@RequestMapping(value = "/insertBatch")
 	@ResponseBody
-	private ServerResponse insertBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
+	public ServerResponse insertBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
 		List<DhTriggerInterface> tinList = new ArrayList<>();
 		for (DhTriggerInterface dhTriggerInterface : dhTriggerInterfaceList) {
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
@@ -47,13 +47,13 @@ public class DhTriggerInterfaceController {
 	
 	@RequestMapping(value = "/selectTriggerAndForm")
 	@ResponseBody
-	private ServerResponse selectByTriggerAndForm(DhTriggerInterface dhTriggerInterface) {
+	public ServerResponse selectByTriggerAndForm(DhTriggerInterface dhTriggerInterface) {
 		return dhTriggerInterfaceService.selectByTriggerActivity(dhTriggerInterface);
 	}
 	
 	@RequestMapping(value = "/updateBatch")
 	@ResponseBody
-	private ServerResponse updateBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
+	public ServerResponse updateBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
 		return dhTriggerInterfaceService.updateBatch(dhTriggerInterfaceList);
 	}
 }
