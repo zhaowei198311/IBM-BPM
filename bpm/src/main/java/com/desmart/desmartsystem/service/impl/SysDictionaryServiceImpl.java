@@ -255,7 +255,7 @@ public class SysDictionaryServiceImpl implements SysDictionaryService{
 								sysDictionaryData.setDicDataUid("dic_data"+uuId);
 								sysDictionaryData.setDicUid(checkList.get(0).getDicUid());
 								sysDictionaryData.setDicDataName(dictionaryDataFormList.get(i).getDicDataName());
-								sysDictionaryData.setDicDataDescription(dictionaryDataFormList.get(i).getDicDataDescription());
+								//sysDictionaryData.setDicDataDescription(dictionaryDataFormList.get(i).getDicDataDescription());
 								sysDictionaryData.setDicDataSort(dictionaryDataFormList.get(i).getDicDataSort());
 								sysDictionaryData.setDicDataCode(dictionaryDataFormList.get(i).getDicDataCode());
 								sysDictionaryData.setCreateBy(creator);
