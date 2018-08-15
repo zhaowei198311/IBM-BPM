@@ -129,48 +129,46 @@
 		})
 	}
 
-	function drawTable(pageInfo, data) {
-		pageConfig.pageNum = pageInfo.pageNum;
-		pageConfig.pageSize = pageInfo.pageSize;
-		pageConfig.total = pageInfo.total;
-		doPage();
-		// 渲染数据
-		$("#drafts_table_tbody").html('');
-		if (pageInfo.total == 0) {
-			return;
-		}
-		var list = pageInfo.list;
-		var startSort = pageInfo.startRow;//开始序号
-		var trs = "";
-		for (var i = 0; i < list.length; i++) {
-			var meta = list[i];
-			var sortNum = startSort + i;
-			var agentOdate = new Date(meta.dfsCreatedate);
-			var showDate = datetimeFormat_1(agentOdate);
-				/* agentOdate.getFullYear() + "-"
-					+ (agentOdate.getMonth() + 1) + "-" + agentOdate.getDate(); */
-			trs += '<tr><td id="aa">'
-					+ sortNum
-					+ '</td>'
-					+ '<td>'
-					+ meta.proName
-					+ '</td>'
-					+ '<td>'
-					+ meta.dfsTitle
-					+ '</td>'
-					+ '<td>'
-					+ meta.userName
-					+ '</td>'
-					+ '<td>'
-					+ showDate
-					+ '</td>'
-					+ '<td>'
-					+ "<i class='layui-icon'  title='查看详情'  onclick=\"showinfo('" + meta.proUid + "','" + meta.proAppId + "','" + meta.insUid + "')\">&#xe60a;</i>"
-					+ '<i class="layui-icon"  title="删除草稿"  onclick=del("'
-					+ meta.dfsId + '") >&#xe640;</i>' + '</td>' + '</tr>';
-		}
-		$("#drafts_table_tbody").append(trs);
-	}
+    function drawTable(pageInfo, data) {
+        pageConfig.pageNum = pageInfo.pageNum;
+        pageConfig.pageSize = pageInfo.pageSize;
+        pageConfig.total = pageInfo.total;
+        doPage();
+        // 渲染数据
+        $("#drafts_table_tbody").html('');
+        if (pageInfo.total == 0) {
+            return;
+        }
+        var list = pageInfo.list;
+        var startSort = pageInfo.startRow; // 开始序号
+        var trs = '';
+        for (var i = 0; i < list.length; i++) {
+            var draft = list[i];
+            var sortNum = startSort + i;
+            var agentOdate = new Date(draft.dfsCreatedate);
+            var showDate = datetimeFormat_1(agentOdate);
+            trs += '<tr data-dfsId="' + draft.dfsId + '"><td>'
+                + sortNum
+                + '</td>'
+                + '<td>'
+                + draft.proName
+                + '</td>'
+                + '<td>'
+                + draft.dfsTitle
+                + '</td>'
+                + '<td>'
+                + draft.userName
+                + '</td>'
+                + '<td>'
+                + showDate
+                + '</td>'
+                + '<td>'
+                + '<i class="layui-icon"  title="继续发起"  onclick="checkStatus(\'' + draft.dfsId + '\');">&#xe60a;</i>'
+                + '<i class="layui-icon"  title="删除草稿"  onclick=del("' + draft.dfsId + '") >&#xe640;</i>' + '</td>'
+                + '</tr>';
+        }
+        $("#drafts_table_tbody").append(trs);
+    }
 
 	// 分页
 	function doPage() {
@@ -226,13 +224,35 @@
 		});
 	}
 
-	function showinfo(proUid,proAppId,insUid) {
-		window.location.href = common.getPath() +'/menus/startProcess?proUid=' + ""
-		+ '&proAppId=' + "" + '&insUid=' + insUid
-	}
-
 	function cancel() {
 		$(".display_container").css("display", "none");
+	}
+
+
+	function checkStatus(dfsId) {
+		$.ajax({
+		    url : common.getPath() + '/drafts/checkProcessDraftStatus',
+		    type : 'post',
+		    dataType : 'json',
+		    data : {
+                "dfsId": dfsId
+		    },
+			beforSend: function(){
+		        layer.load(1);
+			},
+		    success : function (result) {
+		        layer.closeAll('loading');
+		        if(result.status == 0 ){
+                    window.location.href = common.getPath() +'/menus/startProcess?insUid=' + result.data.insUid;
+		        }else{
+		            layer.alert(result.msg);
+		        }
+		    },
+		    error : function () {
+                layer.closeAll('loading');
+                layer.alert('操作失败，请稍后再试');
+		    }
+		});
 	}
 </script>
 

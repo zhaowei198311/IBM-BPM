@@ -620,30 +620,27 @@ function showRouteBarForSkipFromReject() {
  */
 var index2 = null;
 function saveDraftsInfo() {
-    var control = true; //用于控制复选框出现重复值
-    var checkName = ""; //用于获得复选框的class值，分辨多个复选框
-
- // 发起流程
     var finalData = {};
     // 表单数据
-    var jsonStr = common.getDesignFormData();
-    var formData = JSON.parse(jsonStr);
-
+    var formDataJsonStr = common.getDesignFormData();
+    var formData = JSON.parse(formDataJsonStr);
     finalData.formData = formData;
-
     var aprOpiComment = $("#myApprovalOpinion").val();
-    console.log($("#myApprovalOpinion").val());
     aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
     var taskUid = $("#taskUid").val();
     var taskId = $("#taskId").val();
-    finalData.taskData = {"taskId":taskId,"taskUid":taskUid};
-    finalData.approvalData = {"aprOpiComment":aprOpiComment};
+    finalData.taskData = {
+        "taskId": taskId,
+        "taskUid": taskUid
+    };
+    finalData.approvalData = {
+        "aprOpiComment": aprOpiComment
+    };
     // 保存草稿数据
     var insUid = ""+$("#insUid").val();
-
     var insTitle = $("#insTitle_input").val();
     $.ajax({
-        url: common.getPath()+"/drafts/saveDrafts",
+        url: common.getPath() + "/drafts/saveTaskDraft",
         method: "post",
         async: false,
         data: {
@@ -653,20 +650,19 @@ function saveDraftsInfo() {
             taskUid: taskUid
         },
         beforeSend: function () {
-            index2 = layer.load(1);
+            layer.load(1);
         },
         success: function (result) {
-            if(result>0){
-            layer.close(index2);
-            layer.alert('保存成功')
-            }else{
-                layer.close(index2);
-                layer.alert('保存失败')
+            layer.closeAll('loading');
+            if (result.status == 0) {
+                layer.alert('保存成功')
+            } else {
+                layer.alert(result.msg)
             }
         },
         error: function (){
-            layer.close(index2);
-            layer.alert('保存异常')
+            layer.closeAll('loading');
+            layer.alert('保存草稿异常')
         }
     });
     //end

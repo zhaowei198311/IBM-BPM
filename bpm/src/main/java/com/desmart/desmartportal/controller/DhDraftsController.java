@@ -84,9 +84,10 @@ public class DhDraftsController {
 	 */
 	@RequestMapping(value = "/saveTaskDraft")
 	@ResponseBody
-	public ServerResponse saveTaskDraft() {
-		// todo
-		return null;
+	public ServerResponse saveTaskDraft(DhDrafts dhDraft) {
+		System.out.println(dhDraft);
+		dhDraftsService.saveTaskDraft(dhDraft);
+		return ServerResponse.createBySuccess();
 	}
 
 	/**

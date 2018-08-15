@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.common.constant.ServerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,14 +116,18 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         for (LswTask lswTask : newLswTaskList) {
             try {
                 // 分析一个引擎任务
-                analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
-                // 更新重试列表，完成此任务的重试拉取
-                completeRetrySynTask(lswTask.getTaskId());
+                ServerResponse analyseResponse = analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
+                if (analyseResponse.isSuccess()) {
+                    // 更新重试列表，完成此任务的重试拉取
+                    completeRetrySynTask(lswTask.getTaskId());
+                } else {
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    updateRetryCount(lswTask);
+                }
             } catch (Exception e) {
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
-                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
-                // 更新重试次数
                 updateRetryCount(lswTask);
+                LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
             }
         }
     }
@@ -133,7 +138,12 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         for (LswTask lswTask : newLswTaskList) {
             try {
                 // 分析一个引擎任务
-                analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
+                ServerResponse analyseResponse = analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
+                if (analyseResponse.isSuccess()) {
+                    completeRetrySynTask(lswTask.getTaskId());
+                } else {
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                }
             } catch (Exception e) {
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
