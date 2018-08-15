@@ -1,10 +1,9 @@
 package com.desmart.desmartbpm.controller;
 
+import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessDefinitionBo;
 import com.desmart.desmartbpm.service.DhProcessAppUpdateService;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 import java.util.Queue;
 
 @Controller
@@ -24,7 +21,7 @@ public class DhProcessAppUpdateController {
     @Autowired
     private DhProcessAppUpdateService dhProcessAppUpdateService;
 
-
+    @Log(description = "升级应用库")
     @RequestMapping(value = "/updateToNewVersion")
     @ResponseBody
     public ServerResponse updateToNewVersion(String proAppId, String oldProVerUid, String newProVerUid) {
@@ -42,6 +39,7 @@ public class DhProcessAppUpdateController {
         }
     }
 
+    @Log(description = "同步应用库")
     @RequestMapping(value = "/pullDefintionByAppIdAndSnapshotId")
     @ResponseBody
     public ServerResponse pullProcessDefinitionByProAppIdAndProVerUid(String proAppId, String proVerUid) {

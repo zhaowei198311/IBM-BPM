@@ -3,12 +3,7 @@ package com.desmart.desmartsystem.entity;
 import java.io.Serializable;
 
 /**
- * <p>
- * 
- * </p>
- *
- * @author xsf
- * @since 2018-04-27
+ * 描述人员外挂部门
  */
 public class SysUserDepartment implements Serializable {
 
@@ -17,10 +12,10 @@ public class SysUserDepartment implements Serializable {
     public static final String IS_MANAGER_TRUE = "true";
     public static final String IS_MANAGER_FALSE = "false";
 
-	private String uduid;
-	private String userUid; 
-	private String isManager;
-	private String departUid;
+	private String uduid;  // 主键
+	private String userUid;  // 人员主键
+	private String isManager;  // 是否作为经理 "true" / "false"
+	private String departUid;  // 外挂部门号
 	private String userName;
 	private String departName;
 	private String departNo;

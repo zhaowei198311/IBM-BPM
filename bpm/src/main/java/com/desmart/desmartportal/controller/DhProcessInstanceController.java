@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.annotation.log.Log;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
@@ -29,17 +30,7 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 
-/**
- * <p>
- * Title: ProcessInstanceController
- * </p>
- * <p>
- * Description:
- * </p>
- * 
- * @author zhaowei
- * @date 2018年5月9日
- */
+
 @Controller
 @RequestMapping(value = "/processInstance")
 public class DhProcessInstanceController {
@@ -57,6 +48,7 @@ public class DhProcessInstanceController {
      * @param data
      * @return
      */
+	@Log(description = "发起一个流程")
 	@RequestMapping(value = "/startProcess")
 	@ResponseBody
 	public ServerResponse startProcess(String data) {
@@ -81,13 +73,7 @@ public class DhProcessInstanceController {
             return ServerResponse.createByErrorMessage("发起流程失败");
         }
 	}
-	
-	@RequestMapping(value = "/queryProcessByUser")
-	@ResponseBody
-	public ServerResponse queryProcessByUser() {
-		
-		return null;	
-	}
+
 
     /**
      * 返回引擎提供的展示指定流程实例图的url

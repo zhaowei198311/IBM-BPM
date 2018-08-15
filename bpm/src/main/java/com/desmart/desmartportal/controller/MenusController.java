@@ -228,14 +228,14 @@ public class MenusController {
 		String taskType = checkDhTaskInstance.getTaskType();
 		if (DhTaskInstance.TYPE_NORMAL_ADD.equals(taskType) || DhTaskInstance.TYPE_SIMPLE_LOOPADD.equals(taskType)
 				|| DhTaskInstance.TYPE_MULTI_INSTANCE_LOOPADD.equals(taskType)) {
+			// 如果是会签的任务
 			if(RequestSourceUtil.isMobileDevice(request.getHeader("user-Agent"))) {
-				// 如果是会签的任务
+				// 如果是移动端
 				mv.setViewName("desmartportal/mobile_addSign");
 			}else {
-				// 如果是会签的任务
+				// 如果是浏览器
 				mv.setViewName("desmartportal/addSign");
 			}
-			
 			ServerResponse<Map<String, Object>> serverResponse = dhTaskInstanceService.toAddSign(taskUid);
 			if (serverResponse.isSuccess()) {
 	            mv.addAllObjects(serverResponse.getData());

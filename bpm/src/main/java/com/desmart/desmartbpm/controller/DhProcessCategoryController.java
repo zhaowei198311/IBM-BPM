@@ -3,6 +3,7 @@ package com.desmart.desmartbpm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.desmart.common.annotation.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,13 +33,15 @@ public class DhProcessCategoryController {
     }
     
     // 删除指定的分类
+    @Log(description = "删除分类")
     @RequestMapping(value = "/removeCategory")
     @ResponseBody
     public ServerResponse removeDhProceeeCategory(String categoryUid) {
         
         return dhProcessCategoryService.removeDhProcessCategory(categoryUid);
     }
-    
+
+    @Log(description = "重命名分类")
     @RequestMapping(value = "/renameCategory")
     @ResponseBody
     public ServerResponse renameDhProceeeCategory(String categoryUid, String newName) {
@@ -50,6 +53,7 @@ public class DhProcessCategoryController {
      * @param dhProcessCategory
      * @return
      */
+    @Log(description = "增加流程分类")
     @RequestMapping(value = "/addCategory")
     @ResponseBody
     public ServerResponse addCategory(DhProcessCategory dhProcessCategory) {
@@ -89,6 +93,7 @@ public class DhProcessCategoryController {
      * @return: ServerResponse<?>
      * @throws
      */
+    @Log(description = "改变元数据在分类树的位置")
     @RequestMapping(value = "/changeTheCategoryOfProcessMeta")
     @ResponseBody
     public ServerResponse<?> changeThePosition(String metaUid, String categoryUid){
@@ -104,6 +109,7 @@ public class DhProcessCategoryController {
      * @return: ServerResponse<?>
      * @throws
      */
+    @Log(description = "改变元数据状态")
     @RequestMapping(value = "/changeStatus")
     @ResponseBody
     public ServerResponse<?> changeStatus(String metaUid){

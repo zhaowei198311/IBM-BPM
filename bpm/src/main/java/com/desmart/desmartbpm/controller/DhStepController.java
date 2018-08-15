@@ -1,5 +1,6 @@
 package com.desmart.desmartbpm.controller;
 
+import com.desmart.common.annotation.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class DhStepController {
     
     @Autowired
     private DhStepService dhStepService;
-    
-    
+
+    @Log(description = "创建一个步骤")
     @RequestMapping(value = "/create")
     @ResponseBody
     public ServerResponse createStep(DhStep dhStep,@RequestParam(value="actcUid")String actcUid) {
@@ -32,7 +33,8 @@ public class DhStepController {
         }
         
     }
-    
+
+    @Log(description = "批量创建步骤")
     @RequestMapping(value = "/createStepToAll")
     @ResponseBody
     public ServerResponse createStepToAll(DhStep dhStep) {
@@ -43,7 +45,8 @@ public class DhStepController {
              return ServerResponse.createByErrorMessage("创建步骤失败");
          }
     }
-    
+
+    @Log(description = "更新步骤")
     @RequestMapping(value = "/updateStep")
     @ResponseBody
     public ServerResponse updateTriggerStep(DhStep dhStep) {
@@ -60,6 +63,7 @@ public class DhStepController {
      * @param stepUid
      * @return
      */
+    @Log(description = "删除步骤")
     @RequestMapping(value = "/delete")
     @ResponseBody
     public ServerResponse deleteStep(String stepUid) {
@@ -77,6 +81,7 @@ public class DhStepController {
      * @param resortType 重排类型：减少步骤，增加步骤   increase/reduce
      * @return
      */
+    @Log(description = "重新排序步骤")
     @RequestMapping(value = "/resortStep")
     @ResponseBody
     public ServerResponse resortStep(String stepUid, String resortType) {

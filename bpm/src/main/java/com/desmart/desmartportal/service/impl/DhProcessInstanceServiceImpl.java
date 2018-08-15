@@ -93,8 +93,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 	@Autowired
 	private DhFormNoService dhFormNoService;
 	@Autowired
-    private DhStepMapper dhStepMapper;
-	@Autowired
 	private DhProcessMetaMapper dhprocessMetaMapper;
 	@Autowired
     private SysDepartmentMapper sysDepartmentMapper;
@@ -788,9 +786,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
         if (startProcessNodes.isEmpty()) {
 	        return ServerResponse.createBySuccess();
         }
-        int insId = currProcessInstance.getInsId();
+        int insId = currProcessInstance.getInsId(); // 流程实例号
 
-        if (processDataJson == null) { // 如果没有传入流程实例信息, 主动获取
+        if (processDataJson == null) { // 如果没有传入流程实例信息, 根据流程实例号主动获取信息
             BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
             BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
             HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);

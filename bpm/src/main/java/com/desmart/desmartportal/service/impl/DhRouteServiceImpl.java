@@ -1546,6 +1546,15 @@ public class DhRouteServiceImpl implements DhRouteService {
     @Override
     public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
     	formData = formData == null ? new JSONObject() : formData;
+    	//
+			JSONObject obj1 = new JSONObject();
+			obj1.put("value", "0");
+			formData.put("contractType", obj1);
+			JSONObject obj2 = new JSONObject();
+			obj2.put("value", "true");
+			formData.put("isContract", obj2);
+		//
+
         BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceNode, formData);
 		routingData.removeAllDuplicate(); // 去除重复的元素
         threadBoolean.setFalse();
