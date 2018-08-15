@@ -8,15 +8,15 @@ import com.desmart.common.annotation.excel.ExcelField;
  *
  */
 public class SysDictionaryDataForm {
-	@ExcelField(name="字典代码",sort=0,nullable=false)
+	@ExcelField(name="字典代码",sort=1,nullable=false)
 	private String dicDataCode;
-	@ExcelField(name="字典名称",sort=1,nullable=false)
+	@ExcelField(name="字典名称",sort=2,nullable=false)
 	private String dicDataName;
-	@ExcelField(name="字典类型代码",sort=2,nullable=false)
+	@ExcelField(name="字典类型代码",sort=3,nullable=false)
 	private String dicCode;
-	@ExcelField(name="字典说明",sort=3,nullable=true)
+	//@ExcelField(name="字典说明",sort=4,nullable=true)
 	private String dicDataDescription;
-	@ExcelField(name="排序号",sort=4,nullable=false)
+	@ExcelField(name="排序号",sort=0,nullable=false)
 	private Double dicDataSort;
 	public String getDicDataCode() {
 		return dicDataCode;
