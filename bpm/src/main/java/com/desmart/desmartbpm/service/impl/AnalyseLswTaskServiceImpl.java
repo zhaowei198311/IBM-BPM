@@ -161,6 +161,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
         }
 
         if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS) != null) {
+            // 说明任务已经被插入数据库了
             return ServerResponse.createBySuccess();
         }
         // 批量保存任务
@@ -171,21 +172,24 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             dhAgentRecordMapper.insertBatch(agentRecordList);
         }
 
-        // 查看是否需要邮件通知
-        if(Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
-            if(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate()!=null
-                    &&!"".equals(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate())&&sendMailToList.size()>0) {
-                //设置邮箱模板以及邮件收件人工号集合
-                SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
-                sysEmailUtilBean.setNotifyTemplateUid(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
-                sysEmailUtilBean.setToUserNoList(sendMailToList);
-                result.put("sysEmailUtilBean", sysEmailUtilBean);
-                // 发送通知邮件
-                String bpmformsHost = globalConfig.getBpmformsHost();
-                sysEmailUtilBean.setDhTaskInstance(dhTaskList.get(0));
-                sysEmailUtilBean.setBpmformsHost(bpmformsHost);
-                sendEmailService.dhSendEmail(sysEmailUtilBean);
+        try {
+            // 查看是否需要邮件通知
+            if (Const.Boolean.TRUE.equals(bpmActivityMeta.getDhActivityConf().getActcCanMailNotify())) {
+                if (StringUtils.isNotBlank(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate()) && sendMailToList.size() > 0) {
+                    //设置邮箱模板以及邮件收件人工号集合
+                    SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
+                    sysEmailUtilBean.setNotifyTemplateUid(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
+                    sysEmailUtilBean.setToUserNoList(sendMailToList);
+                    result.put("sysEmailUtilBean", sysEmailUtilBean);
+                    // 发送通知邮件
+                    String bpmformsHost = globalConfig.getBpmformsHost();
+                    sysEmailUtilBean.setDhTaskInstance(dhTaskList.get(0));
+                    sysEmailUtilBean.setBpmformsHost(bpmformsHost);
+                    sendEmailService.dhSendEmail(sysEmailUtilBean);
+                }
             }
+        } catch (Exception e) {
+            logger.error("拉取任务时，发送邮件通知异常， 任务ID：" + taskId, e);
         }
         result.put("dhTaskList", dhTaskList);
         result.put("agentRecordList", agentRecordList);
