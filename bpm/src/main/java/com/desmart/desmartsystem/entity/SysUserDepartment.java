@@ -13,6 +13,9 @@ import java.io.Serializable;
 public class SysUserDepartment implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    public static final String IS_MANAGER_TRUE = "true";
+    public static final String IS_MANAGER_FALSE = "false";
 
 	private String uduid;
 	private String userUid; 
