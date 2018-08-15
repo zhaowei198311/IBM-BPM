@@ -1,5 +1,6 @@
 package com.desmart.desmartsystem.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -18,10 +19,14 @@ import com.desmart.desmartsystem.entity.SysUser;
 @Repository
 public interface SysUserMapper extends BaseMapper<SysUser> {
 	
-	public List<SysUser> listByPrimaryKeyList(List<String> list);
+	List<SysUser> listByPrimaryKeyList(Collection<String> uidList);
+
 	int insertBatch(@Param("lists")List<SysUser> lists);
+
 	SysUser queryByPrimaryKey(String userUid);
-	public List<SysUser> login(@Param(value="username")String username, @Param(value="password")String password);
-	public List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
-	public SysUser selectById(@Param(value="userId")String userId);
+
+	List<SysUser> login(@Param(value="username")String username, @Param(value="password")String password);
+
+	List<SysUser> allSysUserMove(@Param("userUidArr")String[] userUidArr, @Param("condition")String condition);
+
 }

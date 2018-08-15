@@ -599,7 +599,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		// 调用表单前的触发器
 		ServerResponse executeStepResponse = dhStepService.executeStepBeforeFormStep(steps.get(0), dhTaskInstance);
 		if (!executeStepResponse.isSuccess()) {
-			return executeStepResponse;
+			// 调用失败
+			resultMap.put("didTriggerBeforeFormError", true);
 		}
 		// 触发器调用过后重新获取流程实例
 		dhprocessInstance = dhProcessInstanceMapper.selectByPrimaryKey(dhTaskInstance.getInsUid());

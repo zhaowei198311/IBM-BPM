@@ -255,36 +255,21 @@ public class DhRouteServiceImpl implements DhRouteService {
 		switch (assignTypeEnum) {
 			// 角色相关
 			case ROLE:
+				return this.searchByRole(objIdList);
 			case ROLE_AND_DEPARTMENT:
+				return this.searchByRoleAndDepartment(objIdList,departNo);
 			case ROLE_AND_COMPANY:
-				if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
-					//根据角色加公司编码查询用户数据
-					return this.searchByRoleAndCompany(objIdList,companyNum);
-				}else if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
-                    return this.searchByRoleAndDepartment(objIdList,departNo);
-				}else {
-					return this.searchByRole(objIdList);
-				}
+				return this.searchByRoleAndCompany(objIdList,companyNum);
 			// 角色组相关
 			case TEAM:
+				return this.searchByTeam(objIdList);
 			case TEAM_AND_DEPARTMENT:
+				return this.searchbyTeamAndDepartment(objIdList,departNo);
 			case TEAM_AND_COMPANY:
-				if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
-				    return this.searchByTeamAndCompany(objIdList,companyNum);
-				}else if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
-                    return this.searchbyTeamAndDepartment(objIdList,departNo);
-				}else {
-					return this.searchByTeam(objIdList);
-				}
+				return this.searchByTeamAndCompany(objIdList,companyNum);
 			// 指定处理人
 			case USERS:
-				List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(objIdList);
-				for (SysUser sysUser : userList) {
-				    if (!result.contains(sysUser)) {
-				        result.add(sysUser);
-                    }
-				}
-				break;
+				return this.searchByUserUidList(objIdList);
 			// 根据表单字段选
 			case BY_FIELD:
                 String field = objIdList.get(0);
@@ -327,39 +312,39 @@ public class DhRouteServiceImpl implements DhRouteService {
     
     /**
      * 根据角色组uid集合查询用户数据
-     * @param objIdList
+     * @param teamUidList
      * @return
      */
-    private List<SysUser> searchByTeam(List<String> objIdList) {
+    private List<SysUser> searchByTeam(List<String> teamUidList) {
     	SysTeamMember sysTeamMember = new SysTeamMember();
-		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
+		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
     	List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
+		Set<String> userUidSet = new HashSet<>();
 		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
+            userUidSet.add(member.getUserUid());
 		}
-		return transformTempIdStrToUserList(tempIdStr);
+		return searchByUserUidSet(userUidSet);
 	}
     /**
      * 根据角色组uid集合和部门编号查询
-     * @param objIdList
+     * @param teamUidList
      * @param departNo
      * @return
      */
-	private List<SysUser> searchbyTeamAndDepartment(List<String> objIdList, String departNo) {
+	private List<SysUser> searchbyTeamAndDepartment(List<String> teamUidList, String departNo) {
 		SysTeamMember sysTeamMember = new SysTeamMember();
-		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
+		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
 		SysDepartment selective = new SysDepartment();
 		selective.setDepartUid(departNo);
 		//查询当前departNo的父级树节点，包括自己
 		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
 		sysTeamMember.setSysDepartmentList(sysDepartmentList);
 		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
-		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        Set<String> userUidSet = new HashSet<>();
+        for (SysTeamMember member : sysTeamMembers) {
+            userUidSet.add(member.getUserUid());
+        }
+        return searchByUserUidSet(userUidSet);
 	}
 	/**
 	 * 根据角色组uid集合和公司编码查询
@@ -372,38 +357,38 @@ public class DhRouteServiceImpl implements DhRouteService {
 		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
 		sysTeamMember.setCompanyCode(companyNum);
 		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		String tempIdStr = "";
-		for (SysTeamMember member : sysTeamMembers) {
-			tempIdStr += member.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        Set<String> userUidSet = new HashSet<>();
+        for (SysTeamMember member : sysTeamMembers) {
+            userUidSet.add(member.getUserUid());
+        }
+        return searchByUserUidSet(userUidSet);
 	}
 
 	/**
      * 根据角色id集合查询角色用户数据
-     * @param objIdList
+     * @param roleUidList 角色id集合
      * @return
      */
-    private List<SysUser> searchByRole(List<String> objIdList) {
+    private List<SysUser> searchByRole(List<String> roleUidList) {
     	SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(objIdList);//设置角色id集合的查询条件
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//根据角色id集合查询角色用户映射关系数据
 		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
+        Set<String> userUidSet = new HashSet<>();
 		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
+            userUidSet.add(sysRoleUser.getUserUid());
 		}
-		return transformTempIdStrToUserList(tempIdStr);
+		return searchByUserUidSet(userUidSet);
 	}
     /**
      * 根据角色id集合加部门uid查询
-     * @param objIdList
+     * @param roleUidList
      * @param departNo
      * @return
      */
-	private List<SysUser> searchByRoleAndDepartment(List<String> objIdList, String departNo) {
+	private List<SysUser> searchByRoleAndDepartment(List<String> roleUidList, String departNo) {
 		SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(objIdList);//设置角色id集合的查询条件
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
 		SysDepartment selective = new SysDepartment();
 		selective.setDepartUid(departNo);
 		//查询当前departNo的父级树节点，包括自己
@@ -411,32 +396,59 @@ public class DhRouteServiceImpl implements DhRouteService {
 		roleUser.setSysDepartmentList(sysDepartmentList);
 		//根据角色id集合加部门uid查询角色用户映射关系数据
 		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
-		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+		Set<String> userUidSet = new HashSet<>();
+        for (SysRoleUser sysRoleUser : roleUsers) {
+            userUidSet.add(sysRoleUser.getUserUid());
+        }
+		return searchByUserUidSet(userUidSet);
 	}
 
 	/**
      * 根据角色id集合加公司编码查询
-     * @param objIdList
+     * @param roleUidList
      * @param companyNum
      * @return
      */
-    private List<SysUser> searchByRoleAndCompany(List<String> objIdList, String companyNum) {
+    private List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
     	SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(objIdList);//设置角色id集合的查询条件
+		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//设置公司编码查询条件
     	roleUser.setCompanyCode(companyNum);
     	//根据角色id集合加公司编码查询角色用户映射关系数据
     	List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
-		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        Set<String> userUidSet = new HashSet<>();
+        for (SysRoleUser sysRoleUser : roleUsers) {
+            userUidSet.add(sysRoleUser.getUserUid());
+        }
+        return searchByUserUidSet(userUidSet);
 	}
+
+	/**
+	 * 根据指定员工号列表，获得用户列表
+	 * @param userUidList  指定的员工号列表
+	 * @return
+	 */
+	private List<SysUser> searchByUserUidList(List<String> userUidList) {
+		if (CollectionUtils.isEmpty(userUidList)) {
+			return new ArrayList<>();
+		}
+		Set<String> userUidSet = new HashSet<>();
+		userUidSet.addAll(userUidList);
+        return sysUserMapper.listByPrimaryKeyList(userUidSet);
+    }
+
+    /**
+     * 根据指定员工号列表，获得用户列表
+     * @param userUidSet  指定的员工号列表
+     * @return
+     */
+    private List<SysUser> searchByUserUidSet(Set<String> userUidSet) {
+        if (CollectionUtils.isEmpty(userUidSet)) {
+            return new ArrayList<>();
+        }
+        return sysUserMapper.listByPrimaryKeyList(userUidSet);
+    }
+
 
 	/**
      * 根据用户查询上级用户
@@ -492,7 +504,8 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	/**
-	 * 将包含重复id的字符串转换为用户列表，并去除重复
+	 * 将包含重复id的字符串转换为用户列表，并去除重复<br/>
+	 * @param tempIdStr  uid1;uid2uid3;
 	 * @return
 	 */
 	private List<SysUser> transformTempIdStrToUserList(String tempIdStr) {
@@ -512,7 +525,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 			}
 		}
-		return resultList == null ? new ArrayList<SysUser>() : resultList;
+		return resultList == null ? new ArrayList<>() : resultList;
 	}
 
 	private String recursionSelectDepartMent(String departNo,StringBuffer str) {
@@ -558,6 +571,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return param;
 	}
 
+    /**
+     * 从连接线集合中找到所有非默认的连接线
+     * @param lineList
+     * @return
+     */
 	private List<DhGatewayLine> getUnDefaultLines(List<DhGatewayLine> lineList) {
 		List<DhGatewayLine> unDefaultLines = new ArrayList<>();
 		Iterator<DhGatewayLine> iterator = lineList.iterator();
@@ -571,8 +589,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	}
 
 	/**
-	 * 从所有连线中找到默认连线
-	 * 
+	 * 从连线集合中找到默认连线
 	 * @param lineList
 	 * @return
 	 */
@@ -692,7 +709,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 
 		List<SysUser> resultList = new ArrayList<>();
         // 如果任务实例不存在，上个处理人就是本人， 如果任务存在，上个处理人就是任务所有者
-        String preTaskOwner = dhTaskInstance == null ? (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)
+        String preTaskOwner = (dhTaskInstance == null) ? (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)
                 : dhTaskInstance.getUsrUid();
 
 		BpmActivityMeta taskNode = bpmActivityMetaMapper.queryByPrimaryKey(activityId);
@@ -716,7 +733,7 @@ public class DhRouteServiceImpl implements DhRouteService {
             return ServerResponse.createBySuccess(resultList);
         }
 
-        // 全体人员
+        // 全体人员, 从设计角度不会访问这个service，而是自行处理
         if (assignTypeEnum == DhActivityConfAssignType.ALL_USER) {
             return ServerResponse.createBySuccess(resultList);
         }
@@ -731,37 +748,19 @@ public class DhRouteServiceImpl implements DhRouteService {
         String tempIdStr = "";  // 保存重复的员工id, ";"分隔，";"结尾
 		switch (assignTypeEnum) {
 		case ROLE:
+			return ServerResponse.createBySuccess(this.searchByRole(objIdList));
 		case ROLE_AND_DEPARTMENT:
+			return ServerResponse.createBySuccess(this.searchByRoleAndDepartment(objIdList, departNo));
 		case ROLE_AND_COMPANY:
-			if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
-				//根据角色加公司编码查询用户数据
-				return ServerResponse.createBySuccess(this.searchByRoleAndCompany(objIdList,companyNum));
-			}else if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
-                return ServerResponse.createBySuccess(this.searchByRoleAndDepartment(objIdList,departNo));
-			}else {
-				return ServerResponse.createBySuccess(this.searchByRole(objIdList));
-			}
+			return ServerResponse.createBySuccess(this.searchByRoleAndCompany(objIdList,companyNum));
 		case TEAM:
+			return ServerResponse.createBySuccess(this.searchByTeam(objIdList));
 		case TEAM_AND_DEPARTMENT:
+			return ServerResponse.createBySuccess(this.searchbyTeamAndDepartment(objIdList,departNo));
 		case TEAM_AND_COMPANY:
-			if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
-			    return ServerResponse.createBySuccess(this.searchByTeamAndCompany(objIdList,companyNum));
-			}else if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
-                return ServerResponse.createBySuccess(this.searchbyTeamAndDepartment(objIdList,departNo));
-			}else {
-				return ServerResponse.createBySuccess(this.searchByTeam(objIdList));
-			}
+			return ServerResponse.createBySuccess(this.searchByTeamAndCompany(objIdList,companyNum));
 		case USERS:
-			List<SysUser> userItem = sysUserMapper.listByPrimaryKeyList(objIdList);
-			for (SysUser sysUser : userItem) {
-				if (!resultList.contains(sysUser)) {
-				    SysUser user = new SysUser();
-				    user.setUserUid(sysUser.getUserUid());
-				    user.setUserName(sysUser.getUserName());
-				    resultList.add(sysUser);
-                }
-			}
-			break;
+			return ServerResponse.createBySuccess(this.searchByUserUidList(objIdList));
 		case BY_FIELD:// 根据表单字段选
             JSONObject formJson = new JSONObject();
             JSONObject newObj = new JSONObject();
@@ -1433,51 +1432,21 @@ public class DhRouteServiceImpl implements DhRouteService {
         switch (assignTypeEnum) {
             // 角色相关
             case ROLE:
+                return this.searchByRole(objIdList);
             case ROLE_AND_DEPARTMENT:
+                return this.searchByRoleAndDepartment(objIdList, departNo);
             case ROLE_AND_COMPANY:
-                SysRoleUser roleUser = new SysRoleUser();
-                roleUser.setRoleUid(ArrayUtil.toArrayString(objIdList));
-                if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_COMPANY)) {
-                    roleUser.setCompanyCode(companyNum);
-                }
-                if (assignTypeEnum.equals(DhActivityConfAssignType.ROLE_AND_DEPARTMENT)) {
-                    StringBuffer str = new StringBuffer(departNo);
-                    String str2 = recursionSelectDepartMent(departNo, str);
-                    roleUser.setDepartUid(str2);
-                }
-                List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-                for (SysRoleUser sysRoleUser : roleUsers) {
-                    tempIdStr += sysRoleUser.getUserUid() + ";";
-                }
-                break;
+                return this.searchByRoleAndCompany(objIdList, companyNum);
             // 角色组相关
             case TEAM:
+                return this.searchByTeam(objIdList);
             case TEAM_AND_DEPARTMENT:
+                return this.searchbyTeamAndDepartment(objIdList, departNo);
             case TEAM_AND_COMPANY:
-                SysTeamMember sysTeamMember = new SysTeamMember();
-                if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_COMPANY)) {
-                    sysTeamMember.setCompanyCode(companyNum);
-                }
-                if (assignTypeEnum.equals(DhActivityConfAssignType.TEAM_AND_DEPARTMENT)) {
-                    StringBuffer str = new StringBuffer(departNo);
-                    String str2 = recursionSelectDepartMent(departNo, str);
-                    sysTeamMember.setDepartUid(str2);
-                }
-                sysTeamMember.setTeamUid(ArrayUtil.toArrayString(objIdList));
-                List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-                for (SysTeamMember member : sysTeamMembers) {
-                    tempIdStr += member.getUserUid() + ";";
-                }
-                break;
+                return this.searchByTeamAndCompany(objIdList, companyNum);
             // 指定处理人
             case USERS:
-                List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(objIdList);
-                for (SysUser sysUser : userList) {
-                    if (!result.contains(sysUser)) {
-                        result.add(sysUser);
-                    }
-                }
-                break;
+                return this.searchByUserUidList(objIdList);
             // 根据表单字段选，
             case BY_FIELD:
                 String field = objIdList.get(0);
@@ -1546,15 +1515,6 @@ public class DhRouteServiceImpl implements DhRouteService {
     @Override
     public BpmRoutingData getBpmRoutingData(BpmActivityMeta sourceNode, JSONObject formData) {
     	formData = formData == null ? new JSONObject() : formData;
-    	//
-			JSONObject obj1 = new JSONObject();
-			obj1.put("value", "0");
-			formData.put("contractType", obj1);
-			JSONObject obj2 = new JSONObject();
-			obj2.put("value", "true");
-			formData.put("isContract", obj2);
-		//
-
         BpmRoutingData routingData = getRoutingDataOfNextActivityTo(sourceNode, formData);
 		routingData.removeAllDuplicate(); // 去除重复的元素
         threadBoolean.setFalse();
@@ -1660,7 +1620,7 @@ public class DhRouteServiceImpl implements DhRouteService {
     }
 
 	/**
-	 * 从子流程中得到任务节点
+	 * 将子流程下的第一个任务，转到缺少第一个任务的上级流程
 	 * @param nodeLackOfTask
 	 * @param activityIdAndProcessNodeMap
 	 * @return

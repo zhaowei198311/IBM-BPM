@@ -48,7 +48,7 @@ public class DhTaskInstanceController {
 	 */
 	@RequestMapping(value = "/queryTaskByReceived")
 	@ResponseBody
-	private ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,@DateTimeFormat(pattern ="yyyy-MM-dd")Date initTime) {
+	public ServerResponse queryTaskByReceived(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize,@DateTimeFormat(pattern ="yyyy-MM-dd")Date initTime) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskInitDate(initTime);
 		taskInstance.setTaskStatus(DhTaskInstance.STATUS_RECEIVED);		
@@ -64,7 +64,7 @@ public class DhTaskInstanceController {
 	 */
 	@RequestMapping(value = "/queryTaskByClosed")
 	@ResponseBody
-	private ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
+	public ServerResponse queryTaskByClosed(DhTaskInstance taskInstance,@RequestParam(value="pageNum", defaultValue="1") Integer pageNum,@RequestParam(value="pageSize", defaultValue="10")Integer pageSize
 			,@DateTimeFormat(pattern ="yyyy-MM-dd")Date initTime,@DateTimeFormat(pattern ="yyyy-MM-dd")Date dueTime) {
 		taskInstance.setUsrUid(String.valueOf(SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER)));
 		taskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
@@ -76,7 +76,7 @@ public class DhTaskInstanceController {
 	@RequestMapping(value = "/finshedTask")
 	@ResponseBody
 	@Log(description = "提交一个任务")
-	private ServerResponse finshedTask(@RequestParam(value="data") String data) {
+	public ServerResponse finshedTask(@RequestParam(value="data") String data) {
 		try {
 			return dhTaskInstanceService.perform(data);
 		} catch (Exception e) {

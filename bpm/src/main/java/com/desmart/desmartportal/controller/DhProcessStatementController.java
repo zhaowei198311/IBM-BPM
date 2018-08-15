@@ -65,7 +65,7 @@ public class DhProcessStatementController {
 	 */
 	@RequestMapping(value = "/queryTaskInstance")
 	@ResponseBody
-	private ServerResponse queryTaskInstance(@RequestParam Map<String, String> parameter, Integer pageNum,
+	public ServerResponse queryTaskInstance(@RequestParam Map<String, String> parameter, Integer pageNum,
 			Integer pageSize) {
 		System.out.println(pageNum);
 		System.out.println(pageSize);
@@ -75,7 +75,7 @@ public class DhProcessStatementController {
 
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/queryExportTaskInstance")
-	private void queryExportTaskInstance(@RequestParam Map<String, String> parameter,HttpServletResponse response) throws Exception {
+	public void queryExportTaskInstance(@RequestParam Map<String, String> parameter,HttpServletResponse response) throws Exception {
 		List<DhTaskInstance> dhTaskInstanceList  = dhProcessStatementService.selectAllTask(parameter);
 		Map bean = new HashMap();
 		bean.put("createDate",MyDateUtils.getCurrentDate());

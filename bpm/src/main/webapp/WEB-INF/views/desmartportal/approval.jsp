@@ -158,32 +158,34 @@
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
     <div class="search_area top_btn" id="layerDemo" style="height:113px">
-        <span id="fieldPermissionInfo" style="display: none;">${fieldPermissionInfo}</span>
-        <input id="departNo" type="hidden" value="${processInstance.departNo}" />
-        <input id="companyNum" type="hidden" value="${processInstance.companyNumber}" />
-        <input id="activityId" value="${activityMeta.activityId}" style="display: none;">
-        <input id="activityName" value="${activityMeta.activityName}" style="display: none;">
-        <input id="proUid" value="${processInstance.proUid}" style="display: none;">
-        <input id="proAppId" value="${processInstance.proAppId}" style="display: none;">
-        <input id="proVerUid" value="${processInstance.proVerUid}" style="display: none;">
-        <input id="insUid" value="${processInstance.insUid}" style="display: none;">
-        <input id="insId" value="${processInstance.insId}" style="display: none;">
-        <input id="userName" value="${currentUser.userName}" style="display: none;">
-        <input id="insBusinessKey" style="display: none;" value="${processInstance.insBusinessKey}" />
-        <input id="taskId" value="${taskInstance.taskId}" style="display: none;">
-        <input id="taskUid" value="${taskInstance.taskUid}" style="display: none;">
-        <input id="taskStatus" value="${taskInstance.taskStatus}" style="display: none;">
-        <input id="actcCanReject" value="${activityConf.actcCanReject}" style="display: none;">
-        <input id="actcCanTransfer" value="${activityConf.actcCanTransfer}" style="display: none;">
-        <input id="actcCanAdd" value="${activityConf.actcCanAdd}" style="display: none;">
-        <input id="canEditInsTitle" value="${canEditInsTitle}" style="display: none;" />
-        <input id="skipFromReject_newTaskOwnerName" type="hidden" value="${dataForSkipFromReject.newTaskOwnerName}" />
-        <input id="skipFromReject_targetNodeName" type="hidden" value="${dataForSkipFromReject.targetNode.activityName}" />
-        <input id="needApprovalOpinion" type="hidden" value="${needApprovalOpinion}" />
-        <span id="formData" style="display: none;">${formData}</span>
-        <span id="listStr" style="display: none;">${listStr}</span>
-        <span id="approvalData" style="display: none;">${approvalData}</span>
-        <span style="padding-left: 10px; color: #777; font-size: 18px;display: none;">${processInstance.proName}</span>
+		<div id="bpmInfoDiv" style="display:none;">
+			<input id="taskUid" value="${taskInstance.taskUid}"/>
+			<input id="taskId" value="${taskInstance.taskId}"/>
+			<input id="insUid" value="${processInstance.insUid}"/>
+			<input id="insId" value="${processInstance.insId}"/>
+			<input id="proAppId" value="${processInstance.proAppId}"/>
+			<input id="proUid" value="${processInstance.proUid}"/>
+			<input id="proVerUid" value="${processInstance.proVerUid}"/>
+			<input id="insBusinessKey" value="${processInstance.insBusinessKey}"/>
+			<input id="departNo" value="${processInstance.departNo}"/>
+			<input id="companyNum" value="${processInstance.companyNumber}"/>
+			<input id="activityId" value="${activityMeta.activityId}"/>
+			<input id="activityName" value="${activityMeta.activityName}"/>
+			<input id="userName" value="${currentUser.userName}"/>
+			<input id="taskStatus" value="${taskInstance.taskStatus}"/>
+			<input id="actcCanReject" value="${activityConf.actcCanReject}"/>
+			<input id="actcCanTransfer" value="${activityConf.actcCanTransfer}"/>
+			<input id="actcCanAdd" value="${activityConf.actcCanAdd}"/>
+			<input id="canEditInsTitle" value="${canEditInsTitle}"/>
+			<input id="skipFromReject_newTaskOwnerName" value="${dataForSkipFromReject.newTaskOwnerName}"/>
+			<input id="skipFromReject_targetNodeName" value="${dataForSkipFromReject.targetNode.activityName}"/>
+			<input id="needApprovalOpinion" value="${needApprovalOpinion}"/>
+			<span id="formData">${formData}</span>
+			<span id="fieldPermissionInfo">${fieldPermissionInfo}</span>
+			<span id="listStr">${listStr}</span>
+			<span id="approvalData">${approvalData}</span>
+			<span>${processInstance.proName}</span>
+		</div>
         <div class="layui-row">
             <div class="layui-col-sm6">
                 <img src="resources/desmartportal/images/icon.png" class="icon"/>
@@ -191,13 +193,17 @@
             </div>
             <div class="layui-col-sm6">
                 <span style="float: right; padding-right: 40px;">
-                    <button class="layui-btn layui-btn-sm layui-btn-normal chart" onclick="processView(${processInstance.insId})">流程图</button>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-normal submit_btn" onclick="checkUserData()">提交</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-normal turn_down" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}">style="display:none;"</c:if>>驳回</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}">style="display:none;"</c:if>>传阅</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-normal countersign" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}">style="display:none;"</c:if>>会签</button>
-                    <button class="layui-btn layui-btn-normal layui-btn-sm back_btn" onclick="back()">退出</button>
+					<span <c:if test="${didTriggerBeforeFormError == true}" >style="display: none;"</c:if>>
+						<button class="layui-btn layui-btn-sm layui-btn-normal chart" onclick="processView(${processInstance.insId})">流程图</button>
+						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
+						<button class="layui-btn layui-btn-sm layui-btn-normal submit_btn" onclick="checkUserData()">提交</button>
+						<button class="layui-btn layui-btn-sm layui-btn-normal turn_down" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}">style="display:none;"</c:if>>驳回</button>
+						<button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}">style="display:none;"</c:if>>传阅</button>
+						<button class="layui-btn layui-btn-sm layui-btn-normal countersign" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}">style="display:none;"</c:if>>会签</button>
+					</span>
+					<span >
+                    	<button class="layui-btn layui-btn-normal layui-btn-sm back_btn" onclick="back()">退出</button>
+					</span>
                 </span>
             </div>
         </div>
@@ -561,8 +567,12 @@
 <!-- 审批信息js -->
 <script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
 <script type="text/javascript">
+	var didTriggerBeforeFormError = '${didTriggerBeforeFormError}';
     $(function () {
         $(".data-table").find("input[type='tel']").desNumber();
+        if (didTriggerBeforeFormError == 'true') {
+			layer.alert("获得数据失败，不能进行操作");
+		}
         common.initTime();
     });
 </script>

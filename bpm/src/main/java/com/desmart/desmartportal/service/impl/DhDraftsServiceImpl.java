@@ -227,7 +227,7 @@ public class DhDraftsServiceImpl implements DhDraftsService {
             return ServerResponse.createByErrorMessage("保存草稿失败，缺少流程实例主键信息");
         }
         DhProcessInstance currProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-        if (currProcessInstance == null || (currProcessInstance.getInsStatusId() != DhProcessInstance.STATUS_ID_COMPLETED)) {
+        if (currProcessInstance == null || (currProcessInstance.getInsStatusId() == DhProcessInstance.STATUS_ID_COMPLETED)) {
             return ServerResponse.createByErrorMessage("保存草稿失败，流程实例状态异常");
         }
         String taskUid = dhDraft.getTaskUid();

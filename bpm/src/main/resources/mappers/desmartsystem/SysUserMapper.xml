@@ -140,15 +140,12 @@
 	  	order by u.user_uid
 	  </select>
 	  
-	  <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
+	  <select id="listByPrimaryKeyList" parameterType="collection"  resultMap="BaseResultMap">
 	  		select * from sys_user 
 	  		<where>
-	  		<if test=" list != null and list.size() >0 ">
-	  		and 
-			<foreach item="item" collection="list" open="(" separator="or" close=")">
-				user_uid = #{item}
-			</foreach>
-	  		</if>
+                <foreach collection="collection" item="item" open="(" separator="or" close=")">
+                    user_uid = #{item}
+                </foreach>
 	  		</where> 
 	  </select>
 	  

@@ -618,7 +618,6 @@ function showRouteBarForSkipFromReject() {
 /**
  * 保存草稿表单数据的方法
  */
-var index2 = null;
 function saveDraftsInfo() {
     var finalData = {};
     // 表单数据
@@ -628,9 +627,7 @@ function saveDraftsInfo() {
     var aprOpiComment = $("#myApprovalOpinion").val();
     aprOpiComment = aprOpiComment.replace('/\n|\r\n/g',"<br>");
     var taskUid = $("#taskUid").val();
-    var taskId = $("#taskId").val();
     finalData.taskData = {
-        "taskId": taskId,
         "taskUid": taskUid
     };
     finalData.approvalData = {
