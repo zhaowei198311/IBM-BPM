@@ -231,8 +231,6 @@ function drawUpRoutingRecord(result){
 		+"<p>当前处理环节："+activityNameHtml+"</p>"
 		+"<p>当前处理到达时间："+dateStr+"</p>";
 	 $(".curr_activity").html(currActiHtml);
-	 console.log($(".curr_activity").html());
-	 console.log(result.data.dhRoutingRecords.length);
 	 if(result.data.dhRoutingRecords.length==0){
 		 $("#transferProcess").parent().css("display","none");
 	 }

@@ -1131,6 +1131,17 @@ var common = {
             chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
             realen = slice.length * 2 - chineseCharNum;
         return str.substr(0, realen) + (realen < str.length ? "..." : "");
+    },
+    //生成随机字符
+    getRandomString:function(len){
+    	len = len || 32;
+    	var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; // 默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1  
+    	var maxPos = $chars.length;
+    	var pwd = '';
+    	for (i = 0; i < len; i++) {
+    		pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    	}
+    	return pwd;
     }
 };
 function rmoney(s)  

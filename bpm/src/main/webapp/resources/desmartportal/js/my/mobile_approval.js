@@ -44,6 +44,8 @@ $(function () {
     
     //加载已上传的附件
     loadFileList();
+    
+    //touchStartPerson();
 });
 
 //用于异步加载数据的参数
@@ -427,7 +429,7 @@ function openChooseUserDiv(){
     	,shade: 0.3
     	,anim:2
     	,resize:false
-    	,area: ['width:100%', '300px']
+    	,area: ['width:100%', '350px']
 		,success:function(){
 			
 		}
@@ -454,7 +456,8 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 	if(isMulti){
 		userName = userName.replace(/\(.*?\)/g,'');
 		var lastName = common.splitName(userName);
-		var liHtml = '<li touchstart="touchStartPerson(this);" touchmove="thouchMovePerson(this)">';
+		var userLiId = common.getRandomString(2);
+		var liHtml = '<li class="sys_user_li" id="'+userLiId+'">';
 		if(lastName.length==1){
 			liHtml += '<p class="first_name">'+lastName+'</p>';
 		}else{
@@ -489,6 +492,7 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 				$("#"+elementId).find(".choose_user_li").prev().addClass("show_user");
 			}
 		}
+		touchStartPerson(userLiId);
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
 			pageConfig.pageSize = 1;
@@ -1015,13 +1019,13 @@ function showRouteBar() {
         },
         beforeSend: function(){
             layer.load();
-        }
-        ,
+        },
         success:function(result){
             if(result.status==0){
                 $("#submit_table table").empty();
                 var activityMetaList = result.data;
                 var chooseUserDiv = "";
+                var userLiId = common.getRandomString(2);
                 if(activityMetaList.length==0){
                 	chooseUserDiv += '<p class="title_p" style="min-height: 15px;">下一环节<span class="task_activity_name">流程结束</span>'
 						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
@@ -1047,9 +1051,9 @@ function showRouteBar() {
                         			var lastName = common.splitName(userName);
                         			//下标从0开始
                         			if(j>maxShowPersonCount-1){
-                        				chooseUserDiv += '<li style="display:none">';
+                        				chooseUserDiv += '<li class="sys_user_li" id="'+userLiId+'" style="display:none">';
                         			}else{
-                        				chooseUserDiv += '<li>';
+                        				chooseUserDiv += '<li class="sys_user_li" id="'+userLiId+'">';
                         			}
                         			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){//不可以选择用户
                         				if(lastName.length==1){
@@ -1129,6 +1133,7 @@ function showRouteBar() {
                 chooseUserDiv += "</td></tr></table>";
                 $("#submit_table").append(chooseUserDiv);
                 layer.closeAll("loading");
+                touchStartPerson(userLiId);
             }else {
                 layer.closeAll("loading");
                 layer.alert(result.msg);
@@ -1149,7 +1154,6 @@ function deleteAssembleUser(obj){
 	}
 	$(obj).parent().parent().remove();
 	ulObj.find(".delete_choose_user").each(function(index){
-		console.log(index);
 		if(index<4){
 			$(this).parent().parent().removeClass("show_user");
 		}
@@ -1424,4 +1428,56 @@ function showManyPerson(obj){
 function imgLoad(obj){
 	$(obj).show();
 	$(obj).next().hide();
+}
+
+//选人之后长按事件
+function touchStartPerson(userLiId){
+	var timeOutEvent=0;
+	var liObj = $("#"+userLiId);
+	liObj.on({
+		touchstart: function(e){
+			timeOutEvent = setTimeout(function(){
+				var userUid = liObj.find(".delete_choose_user").attr("value");
+				var userName = liObj.find(".person_name").text().trim();
+				if(userUid!=null && userUid!=""){
+					$.ajax({
+						url:common.getPath()+"/sysUserDepartment/selectAll",
+						type:"post",
+						method:"post",
+						data:{
+							"userUid":userUid
+						},success:function(result){
+							if(result.length!=0){
+								var departName = "";
+								var companyName = "";
+								for(var i=0;i<result.length;i++){
+									departName += result[i].departName;
+									companyName += result[i].sysCompany.companyName;
+									if(i!=result.length-1){
+										departName += ",";
+										companyName += ",";
+									}
+								}
+								var userHtml = "<p>"+userName+"("+userUid+")</p>"
+									+"<p>部门："+departName+"</p>"
+									+"<p>公司："+companyName+"</p>";
+								layer.tips(userHtml, liObj, {
+									tips: [3,"#EF6301"]
+								});
+							}
+						}
+					});
+				}
+			},500);
+		 	e.preventDefault();
+		},
+		touchmove: function(){
+            clearTimeout(timeOutEvent); 
+		    timeOutEvent = 0; 
+		},
+		touchend: function(){
+	   		clearTimeout(timeOutEvent);
+			return false; 
+		}
+	});
 }
