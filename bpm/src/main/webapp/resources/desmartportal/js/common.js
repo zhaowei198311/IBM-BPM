@@ -1126,6 +1126,35 @@ var common = {
     }  
 };
 
+function checkAndfomartNumber(obj,integer,decimal){
+	let num = $(obj).val();
+	let l = num.split(".")[0];
+	if(l.length>integer){
+		layer.alert("格式错误,正确格式为:F"+integer+"."+decimal);
+		$(obj).val("");
+	}else{
+		decimal = decimal > 0 && decimal <= 20 ? decimal : 2;
+		num = parseFloat((num + "").replace(/[^\d\.-]/g, "")).toFixed(decimal) + "";
+		$(obj).val(num);
+	}
+}
+function fmoney(obj, n)
+{
+   var s = $(obj).val();
+if(s!=null&&s.length>0){
+   n = n > 0 && n <= 20 ? n : 2;
+   s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+   var l = s.split(".")[0].split("").reverse(),
+   r = s.split(".")[1];
+   t = "";
+   for(i = 0; i < l.length; i ++ )
+   {
+      t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");
+   }
+   $(obj).val(t.split("").reverse().join("") + "." + r);
+}
+}
+
 function datetimeFormat_1(longTypeDate){  
     var datetimeType = "";  
     var date = new Date();  
