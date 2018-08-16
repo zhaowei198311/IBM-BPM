@@ -999,14 +999,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				dhTaskInstanceMapper.updateByPrimaryKeySelective(task);
 				// 将当前任务关闭，其他会签人任务作废
 				List<DhTaskInstance> dhTaskInstanceList = dhTaskInstanceMapper.getByFromTaskUid(dhTaskInstance.getFromTaskUid());
-				for (DhTaskInstance dti : dhTaskInstanceList) {
-					if (dhTaskInstance.getTaskUid().equals(dti.getTaskUid())) {
+				for (DhTaskInstance taskInstance : dhTaskInstanceList) {
+					if (dhTaskInstance.getTaskUid().equals(taskInstance.getTaskUid())) {
 						dhTaskInstance.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
 						dhTaskInstance.setTaskFinishDate(new Date());
 						dhTaskInstanceMapper.updateByPrimaryKeySelective(dhTaskInstance);
 					}else {
-						dti.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
-						dhTaskInstanceMapper.updateByPrimaryKeySelective(dti);
+						taskInstance.setTaskStatus(DhTaskInstance.STATUS_DISCARD);
+						dhTaskInstanceMapper.updateByPrimaryKeySelective(taskInstance);
 					}
 				}
 			}

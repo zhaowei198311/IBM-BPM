@@ -71,7 +71,6 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
     @Transactional
     public ServerResponse analyseLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
         System.out.println("开始分析任务编号：" + lswTask.getTaskId());
-        Map<String, Object> result = new HashMap<>();
 
         int taskId = lswTask.getTaskId();
         int insId = lswTask.getBpdInstanceId().intValue(); // 流程实例id
@@ -81,7 +80,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
         BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
         HttpReturnStatus processDataResult = bpmProcessUtil.getProcessData(insId);
         if (HttpReturnStatusUtil.isErrorResult(processDataResult)) {
-            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
+            return ServerResponse.createByErrorMessage("拉取任务失败, 通过RESTful API 获得流程数据失败，实例编号： " + insId);
         }
         JSONObject processData = JSON.parseObject(processDataResult.getMsg());
 
@@ -89,7 +88,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
         String parentProcessTokenId = tokenUtil.getParentTokenId();
 
         if (tokenUtil.getTokenId() == null) {
-            throw new PlatformException("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
+            return ServerResponse.createByErrorMessage("拉取任务失败, 通过RESTful API 获得流程数据失败，任务编号： " + lswTask.getTaskId());
         }
 
         DhProcessInstance dhProcessInstance = null; // 流程实例
@@ -98,7 +97,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             // 如果父token是null，说明当前任务属于主流程
             dhProcessInstance = dhProcessInstanceMapper.getMainProcessByInsId(insId);
             if (dhProcessInstance == null) {
-                throw new PlatformException("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+                return ServerResponse.createByErrorMessage("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
             }
             bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, "0",
                     dhProcessInstance.getProVerUid());
@@ -106,7 +105,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             // 如果父token是存在，说明当前任务属于子流程
             dhProcessInstance = dhProcessInstanceService.queryByInsIdAndTokenId(insId, parentProcessTokenId);
             if (dhProcessInstance == null) {
-                throw new PlatformException("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
+                return ServerResponse.createByErrorMessage("拉取任务失败,找不到流程实例：" + insId + "对应的流程！");
             }
             bpmActivityMeta = bpmActivityMetaService.getByActBpdIdAndParentActIdAndProVerUid(activityBpdId, dhProcessInstance.getTokenActivityId(),
                     dhProcessInstance.getProVerUid());
@@ -114,7 +113,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
 
         // 查看环节的任务类型
         if (bpmActivityMeta == null) {
-            throw new PlatformException("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
+            return ServerResponse.createByErrorMessage("找不到任务停留的环节，实例编号：" + insId + "， 任务编号：" + lswTask.getTaskId());
         }
 
         // 引擎分配任务的人，再考虑代理情况
@@ -180,7 +179,6 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
                     SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
                     sysEmailUtilBean.setNotifyTemplateUid(bpmActivityMeta.getDhActivityConf().getActcMailNotifyTemplate());
                     sysEmailUtilBean.setToUserNoList(sendMailToList);
-                    result.put("sysEmailUtilBean", sysEmailUtilBean);
                     // 发送通知邮件
                     String bpmformsHost = globalConfig.getBpmformsHost();
                     sysEmailUtilBean.setDhTaskInstance(dhTaskList.get(0));
@@ -191,9 +189,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
         } catch (Exception e) {
             logger.error("拉取任务时，发送邮件通知异常， 任务ID：" + taskId, e);
         }
-        result.put("dhTaskList", dhTaskList);
-        result.put("agentRecordList", agentRecordList);
-        return ServerResponse.createBySuccess(result);
+        return ServerResponse.createBySuccess();
     }
 
     /**

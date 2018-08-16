@@ -1,6 +1,7 @@
 package com.desmart.desmartbpm.dao;
 
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface DhSynTaskRetryMapper {
      * @param taskId
      * @return
      */
-    int updateRetryCountByTaskId(int taskId);
+    int updateRetryCountByTaskId(@Param("taskId") int taskId, @Param("errorMessage") String errorMessage);
 
     /**
      * 成功拉取后的更新
@@ -37,5 +38,8 @@ public interface DhSynTaskRetryMapper {
      * @return
      */
     int completeRetrySynTask(int taskId);
+    
+    /** 根据主键删除   */
+    int removeByPrimaryKey(String id);
 
 }

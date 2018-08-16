@@ -254,7 +254,6 @@ public class DhRouteServiceImpl implements DhRouteService {
         String companyNum = dhProcessInstance.getCompanyNumber();
 		// 获得被分配[人|角色|角色组]的 主键数据
 		List<String> objIdList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-		String tempIdStr = "";
 		switch (assignTypeEnum) {
 			// 角色相关
 			case ROLE:
@@ -276,44 +275,47 @@ public class DhRouteServiceImpl implements DhRouteService {
 			// 根据表单字段选
 			case BY_FIELD:
                 String field = objIdList.get(0);
-                JSONObject fieldJson = mergedFormData.getJSONObject(field);
-                if (fieldJson == null) {
-                    return result;
-                }
-                String idValue = fieldJson.getString("value");
-                if (idValue == null) {
-                    return result;
-                }
-                String[] strArr = idValue.split(";");
-                List<String> tempValueList = new ArrayList<>();
-                for (String str : strArr) {
-                    if (StringUtils.isNotBlank(str)) {
-                        tempValueList.add(str.trim());
-                    }
-                }
-                if (tempValueList.isEmpty()) {
-                    return result;
-                }
-                List<SysUser> sysUsers = sysUserMapper.listByPrimaryKeyList(tempValueList);
-                if (sysUsers.isEmpty()) {
-                    return result;
-                }
-                for (SysUser sysUser : sysUsers) {
-                    if (!result.contains(sysUser)) {
-                        result.add(sysUser);
-                    }
-                }
-                break;
+				return searchByField(mergedFormData, field);
 			default:
 				break;
 		}
-		if (StringUtils.isNotBlank(tempIdStr)) {
-            result = transformTempIdStrToUserList(tempIdStr);
-        }
         return result;
 	}
-    
-    /**
+
+	/**
+	 * 根据字段来选择
+	 * @param mergedFormData  表单内容
+	 * @param field  指定字段  如user1;user2;user3;
+	 * @return
+	 */
+	private List<SysUser> searchByField(JSONObject mergedFormData, String field) {
+		List<SysUser> sysUserList = new ArrayList<>();
+		if (StringUtils.isBlank(field) || mergedFormData == null) {
+			return sysUserList;
+		}
+		JSONObject fieldJson = mergedFormData.getJSONObject(field);
+		if (fieldJson == null) {
+			return sysUserList;
+        }
+		String idValue = fieldJson.getString("value");
+		if (StringUtils.isBlank(idValue)) {
+			return sysUserList;
+        }
+		String[] strArr = idValue.split(";");
+		Set<String> tempValues = new HashSet<>();
+		for (String str : strArr) {
+            if (StringUtils.isNotBlank(str)) {
+                tempValues.add(str.trim());
+            }
+        }
+		if (tempValues.isEmpty()) {
+			return sysUserList;
+        } else {
+            return sysUserMapper.listByPrimaryKeyList(tempValues);
+        }
+	}
+
+	/**
      * 根据角色组uid集合查询用户数据
      * @param teamUidList
      * @return
@@ -1436,7 +1438,6 @@ public class DhRouteServiceImpl implements DhRouteService {
         String companyNum = parentProcessInstance.getCompanyNumber();
         // 获得被分配[人|角色|角色组]的 主键数据
         List<String> objIdList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-        String tempIdStr = "";
         switch (assignTypeEnum) {
             // 角色相关
             case ROLE:
@@ -1458,39 +1459,9 @@ public class DhRouteServiceImpl implements DhRouteService {
             // 根据表单字段选，
             case BY_FIELD:
                 String field = objIdList.get(0);
-                JSONObject fieldJson = FormDataUtil.getFormDataJsonFromProcessInstance(parentProcessInstance).getJSONObject(field);
-                if (fieldJson == null) {
-                    return result;
-                }
-                String idValue = fieldJson.getString("value");
-                if (idValue == null) {
-                    return result;
-                }
-                String[] strArr = idValue.split(";");
-                List<String> tempValueList = new ArrayList<>();
-                for (String str : strArr) {
-                    if (StringUtils.isNotBlank(str)) {
-                        tempValueList.add(str.trim());
-                    }
-                }
-                if (tempValueList.isEmpty()) {
-                    return result;
-                }
-                List<SysUser> sysUsers = sysUserMapper.listByPrimaryKeyList(tempValueList);
-                if (sysUsers.isEmpty()) {
-                    return result;
-                }
-                for (SysUser sysUser : sysUsers) {
-                    if (!result.contains(sysUser)) {
-                        result.add(sysUser);
-                    }
-                }
-                break;
+                return searchByField(FormDataUtil.getFormDataJsonFromProcessInstance(parentProcessInstance), field);
             default:
                 break;
-        }
-        if (StringUtils.isNotBlank(tempIdStr)) {
-            result = transformTempIdStrToUserList(tempIdStr);
         }
         return result;
 	}
