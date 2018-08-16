@@ -84,9 +84,9 @@ public class DhSubmitSeal extends DhOneTimeJavaClassTrigger{
 		//接口调用
 		DhInterfaceExecuteService dhInterfaceExecuteService = ac.getBean(DhInterfaceExecuteService.class);
 		try {
-			Json responseJson = dhInterfaceExecuteService.interfaceSchedule(json);
-			String msg =  responseJson.getMsg();
-			System.out.println(msg);
+//			Json responseJson = dhInterfaceExecuteService.interfaceSchedule(json);
+//			String msg =  responseJson.getMsg();
+//			System.out.println(msg);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
