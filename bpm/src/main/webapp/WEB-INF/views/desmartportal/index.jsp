@@ -121,10 +121,10 @@
 											</a>
 										</dd>
 										<dd>
-											<a href="statement/statement2" target="iframe0" class="typeColor">流程表单业务报表</a>
+											<a href="projectStatement/formBusinessReport" target="iframe0" class="typeColor">流程表单业务报表</a>
 										</dd>
 										<dd>
-											<a href="statement/statement3" target="iframe0"  title="门店全生命周期业务报表" class="typeColor">
+											<a href="projectStatement/storeBusinessReport" target="iframe0"  title="门店全生命周期业务报表" class="typeColor">
 												门店全生命周期业务报表
 											</a>
 										</dd>
