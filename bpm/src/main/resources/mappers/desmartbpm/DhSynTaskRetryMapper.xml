@@ -8,11 +8,16 @@
     <result column="STATUS" property="status" />
     <result column="LAST_RETRY_TIME" property="lastRetryTime" />
     <result column="CREATE_TIME" property="createTime" />
+    <result column="ERROR_MESSAGE" property="errorMessage" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME
+    ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME, ERROR_MESSAGE
   </sql>
+
+  <delete id="removeByPrimaryKey" parameterType="string">
+      delete from DH_SYN_TASK_RETRY where id = #{id}
+  </delete>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -34,8 +39,8 @@
   </select>
 
   <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
-    insert into DH_SYN_TASK_RETRY (ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME)
-    values (#{id}, #{taskId}, #{retryCount}, #{status}, #{lastRetryTime}, sysdate)
+    insert into DH_SYN_TASK_RETRY (ID, TASK_ID, RETRY_COUNT, STATUS, LAST_RETRY_TIME, CREATE_TIME, ERROR_MESSAGE)
+    values (#{id}, #{taskId}, #{retryCount}, #{status}, #{lastRetryTime}, sysdate, #{errorMessage})
   </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhSynTaskRetry" >
@@ -53,6 +58,9 @@
       <if test="lastRetryTime != null" >
         LAST_RETRY_TIME = #{lastRetryTime},
       </if>
+      <if test="errorMessage != null" >
+        ERROR_MESSAGE = #{errorMessage},
+      </if>
     </set>
     where ID = #{id}
   </update>
@@ -62,15 +70,17 @@
     set TASK_ID = #{taskId},
       RETRY_COUNT = #{retryCount},
       STATUS = #{status},
-      LAST_RETRY_TIME = #{lastRetryTime}
+      LAST_RETRY_TIME = #{lastRetryTime},
+      ERROR_MESSAGE = #{errorMessage}
     where ID = #{id}
   </update>
 
-  <update id="updateRetryCountByTaskId" parameterType="int">
+  <update id="updateRetryCountByTaskId" parameterType="map">
     update DH_SYN_TASK_RETRY
     set
       RETRY_COUNT = RETRY_COUNT + 1,
-      LAST_RETRY_TIME = sysdate
+      LAST_RETRY_TIME = sysdate,
+      ERROR_MESSAGE = #{errorMessage}
     where task_id = #{taskId}
   </update>
 

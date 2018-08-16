@@ -93,12 +93,16 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         for (LswTask lswTask : newLswTaskList) {
             try {
                 // 分析一个引擎任务并
-                analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
+                ServerResponse analyseResponse = analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
+                if (!analyseResponse.isSuccess()) {
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    saveTaskToRetryTable(lswTask, analyseResponse.getMsg());
+                }
             } catch (Exception e) {
                 // 发生异常，删除创建任务的信息
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 // 将任务记录到重试表中
-                saveTaskToRetryTable(lswTask);
+                saveTaskToRetryTable(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号: " + lswTask.getTaskId(), e);
             }
         }
@@ -122,11 +126,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     completeRetrySynTask(lswTask.getTaskId());
                 } else {
                     commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
-                    updateRetryCount(lswTask);
+                    updateRetryCount(lswTask, analyseResponse.getMsg());
                 }
             } catch (Exception e) {
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
-                updateRetryCount(lswTask);
+                updateRetryCount(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
             }
         }
@@ -143,11 +147,12 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     completeRetrySynTask(lswTask.getTaskId());
                 } else {
                     commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    saveTaskToRetryTable(lswTask, analyseResponse.getMsg());
                 }
             } catch (Exception e) {
                 commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
                 // 将任务记录到重试表中
-                saveTaskToRetryTable(lswTask);
+                saveTaskToRetryTable(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
             }
         }
@@ -194,7 +199,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @param lswTask 引擎中的任务
      * @return
      */
-    private int saveTaskToRetryTable(LswTask lswTask) {
+    private int saveTaskToRetryTable(LswTask lswTask, String errorMessage) {
         int taskId = lswTask.getTaskId();
         if (dhSynTaskRetryMapper.queryByTaskId(taskId) == null) {
             DhSynTaskRetry dhSynTaskRetry = new DhSynTaskRetry();
@@ -202,9 +207,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             dhSynTaskRetry.setTaskId(lswTask.getTaskId());
             dhSynTaskRetry.setRetryCount(0);
             dhSynTaskRetry.setStatus(0);
+            dhSynTaskRetry.setErrorMessage(errorMessage);
             return dhSynTaskRetryMapper.insert(dhSynTaskRetry);
         } else {
-            return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
+            return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId(), errorMessage);
         }
     }
 
@@ -213,8 +219,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
      * @param lswTask 平台中的任务
      * @return
      */
-    private int updateRetryCount(LswTask lswTask) {
-        return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId());
+    private int updateRetryCount(LswTask lswTask, String errorMessage) {
+        return dhSynTaskRetryMapper.updateRetryCountByTaskId(lswTask.getTaskId(), errorMessage);
     }
 
     /**

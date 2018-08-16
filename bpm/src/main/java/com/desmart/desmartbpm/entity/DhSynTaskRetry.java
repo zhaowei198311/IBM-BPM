@@ -10,17 +10,19 @@ public class DhSynTaskRetry {
     /** 作废  */
     public static final int STATUS_ABANDON = -1;
 
-    private String id;
+    private String id;  // 主键
 
-    private Integer taskId;
+    private Integer taskId;  // 任务id
 
-    private Integer retryCount;
+    private Integer retryCount; // 重试计数
 
-    private Integer status;
+    private Integer status;  // 状态
 
-    private Date lastRetryTime;
+    private Date lastRetryTime;  // 最后重试时间
 
-    private Date createTime;
+    private Date createTime;   // 创建时间
+
+    private String errorMessage;  // 错误信息
 
     public String getId() {
         return id;
@@ -68,6 +70,14 @@ public class DhSynTaskRetry {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     @Override
