@@ -91,6 +91,10 @@
 	  		<if test="departUid!=null">
 	  			and ud.depart_uid=#{departUid}
 	  		</if>
+	  		
+	  		<if test="companyCode!=null">
+	  			and ud.companyCode=#{companyCode}
+	  		</if>
 	  </select>
 		
 	 <insert id="insert" parameterType="com.desmart.desmartsystem.entity.SysUserDepartment" >
