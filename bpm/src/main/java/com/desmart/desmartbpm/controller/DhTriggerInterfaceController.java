@@ -56,4 +56,12 @@ public class DhTriggerInterfaceController {
 	public ServerResponse updateBatch(@RequestBody List<DhTriggerInterface> dhTriggerInterfaceList) {
 		return dhTriggerInterfaceService.updateBatch(dhTriggerInterfaceList);
 	}
+	
+	@RequestMapping(value = "/deleteParamerByStepId")
+	@ResponseBody
+	private int deleteParamer(String stepUid) {
+		List<String> stepUidList = new ArrayList<>();
+		stepUidList.add(stepUid);
+		return dhTriggerInterfaceService.removeByStepUidList(stepUidList);
+	}
 }
