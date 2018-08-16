@@ -26,6 +26,10 @@ public class DhProcessStatementServiceImpl implements DhProcessStatementService{
 		try {
 			PageHelper.startPage(pageNum, pageSize,"task_init_date desc");
 			List<DhTaskInstance> resultList = dhProcessStatementMapper.selectAllTask(parameter);
+			for (DhTaskInstance dhTaskInstance : resultList) {
+					String taskHandler = dhTaskInstance.getSysUser().getUserName();
+					dhTaskInstance.setTaskHandler(taskHandler);
+			}
 			PageInfo<List<DhTaskInstance>> pageInfo = new PageInfo(resultList);
 			return ServerResponse.createBySuccess(pageInfo);
 		} catch (Exception e) {
