@@ -2,11 +2,12 @@ package com.desmart.desmartbpm.service.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.desmart.desmartbpm.enums.DhTriggerType;
-import com.desmart.desmartsystem.dao.DhInterfaceMapper;
-import com.desmart.desmartsystem.entity.DhInterface;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -32,9 +33,12 @@ import com.desmart.desmartbpm.entity.BpmFormField;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartbpm.entity.DhTrigger;
 import com.desmart.desmartbpm.entity.DhTriggerInterface;
+import com.desmart.desmartbpm.enums.DhTriggerType;
 import com.desmart.desmartbpm.service.DhTriggerService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartsystem.dao.DhInterfaceMapper;
+import com.desmart.desmartsystem.entity.DhInterface;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.DhInterfaceExecuteService;
 import com.desmart.desmartsystem.service.DhInterfaceParameterService;
@@ -151,7 +155,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				md.invoke(obj, new Object[] { wac, insUid, jb, dhStep });
 				resultMap.put("status", "0");
 			} catch (InvocationTargetException invokeException) {
-				logger.error("调用反射类异常，实例主键：" + insUid, invokeException);
+                logger.error("调用反射类异常，实例主键：" + insUid, invokeException);
 				resultMap.put("status", "1");
 				resultMap.put("msg", getStackMsg(invokeException.getTargetException()));
 				return ServerResponse.createBySuccess(resultMap);
@@ -164,6 +168,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 		}else if("interface".equals(dhTrigger.getTriType())) {
 			return transferInterface(insUid, dhStep, dhTrigger);
 		}else{
+		    logger.error("触发器类型异常");
 			resultMap.put("status", "1");
 			resultMap.put("msg", "触发器类型为："+dhTrigger.getTriType());
 			return ServerResponse.createBySuccess(resultMap);

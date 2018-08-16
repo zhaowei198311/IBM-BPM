@@ -146,30 +146,31 @@
       <div id="Progress" data-dimension="180" data-text="0%" data-info="下载进度" data-width="30" data-fontsize="38" data-percent="0" data-fgcolor="#009688" data-bgcolor="#eee"></div>
  	</div>
 	<div class="search_area top_btn" id="layerDemo">
-		<c:choose>
-			<c:when test="${fn:length(userDepartmentList)==1}">
-				<input type="hidden" id="departNo" value="${userDepartmentList[0].departNo}" />
-				<input type="hidden" id="companyNum" value="${userDepartmentList[0].sysCompany.companyCode}" />
-			</c:when>
-			<c:otherwise>
-				<input type="hidden" id="departNo" value="${departNo}" />
-				<input type="hidden" id="companyNum" value="${companyNumber}" />
-			</c:otherwise>
-		</c:choose>
-	    <input type="hidden" id="insUid" value="${processInstance.insUid}" />
-	    <input id="insTitle" value="${processInstance.insTitle}" style="display: none;">
-	    <input id="formId" value="${dhStep.stepObjectUid}" style="display: none;">
-	    <input id="proUid" value="${processDefinition.proUid}" style="display: none;">
-	    <input id="proAppId" value="${processDefinition.proAppId}" style="display: none;">
-	    <input id="verUid" value="${processDefinition.proVerUid}" style="display: none;">
-	    <input id="proName" value="${processDefinition.proName}" style="display: none;">
-	    <input id="userId" value="${currentUser.userId}" style="display: none;">
-	    <input id="userName" value="${currentUser.userName}" style="display: none;">
-	    <input id="activityId" value="${bpmActivityMeta.activityId}" style="display: none;" />
-	    <input id="activityName" value="${bpmActivityMeta.activityName}" style="display: none;">
-	    <span id="formData" style="display: none;">${ formData }</span>
-	    <span id="fieldPermissionInfo" style="display: none;">${ fieldPermissionInfo }</span>
-	    <span style="padding-left: 10px; color: #777; font-size: 18px;display: none;">${processDefinition.proName}</span>
+		<div id="bpmInfoDiv" style="display: none;">
+			<c:choose>
+				<c:when test="${fn:length(userDepartmentList)==1}">
+					<input id="departNo" value="${userDepartmentList[0].departNo}" />
+					<input id="companyNum" value="${userDepartmentList[0].sysCompany.companyCode}" />
+				</c:when>
+				<c:otherwise>
+					<input id="departNo" value="${departNo}" />
+					<input id="companyNum" value="${companyNumber}" />
+				</c:otherwise>
+			</c:choose>
+			<input id="insUid" value="${processInstance.insUid}" />
+			<input id="proAppId" value="${processDefinition.proAppId}"/>
+			<input id="proUid" value="${processDefinition.proUid}"/>
+			<input id="verUid" value="${processDefinition.proVerUid}"/>
+			<input id="insTitle" value="${processInstance.insTitle}"/>
+			<input id="formId" value="${dhStep.stepObjectUid}"/>
+			<input id="proName" value="${processDefinition.proName}"/>
+			<input id="userId" value="${currentUser.userId}"/>
+			<input id="userName" value="${currentUser.userName}"/>
+			<input id="activityId" value="${bpmActivityMeta.activityId}"/>
+			<input id="activityName" value="${bpmActivityMeta.activityName}"/>
+			<span id="formData">${formData}</span>
+			<span id="fieldPermissionInfo">${ fieldPermissionInfo}</span>
+		</div>
         <div class="layui-row">
             <div class="layui-col-md8">
                 <img src="resources/desmartportal/images/icon.png" class="icon"/>
