@@ -44,13 +44,30 @@ public class DhProcessStatementController {
 	private DhProcessStatementService dhProcessStatementService;
 
 	/**
-	 * 流程报表1页面跳转
+	 * 流程过程业务报表页面跳转
 	 */
 	@RequestMapping(value = "/projectStatement")
 	public String projectStatement() {
 		return "desmartportal/statement/projectStatement";
 	}
 
+	/**
+	 * 流程表单业务报表页面跳转
+	 */
+	@RequestMapping(value = "/formBusinessReport")
+	public String formBusinessReport() {
+		return "desmartportal/statement/formBusinessReport";
+	}
+	
+	/**
+	 * 门店生命周期业务报表页面跳转
+	 */
+	@RequestMapping(value = "/storeBusinessReport")
+	public String storeBusinessReport() {
+		return "desmartportal/statement/storeBusinessReport";
+	}
+	
+	
 	/**
 	 * 
 	 * 根据条件查询流程带分页
@@ -73,11 +90,10 @@ public class DhProcessStatementController {
 		return dhProcessStatementService.selectAllTask(parameter, pageNum, pageSize);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/queryExportTaskInstance")
 	public void queryExportTaskInstance(@RequestParam Map<String, String> parameter,HttpServletResponse response) throws Exception {
 		List<DhTaskInstance> dhTaskInstanceList  = dhProcessStatementService.selectAllTask(parameter);
-		Map bean = new HashMap();
+		Map<String,Object> bean = new HashMap<String,Object>();
 		bean.put("createDate",MyDateUtils.getCurrentDate());
 		bean.put("dhTaskInstanceList", dhTaskInstanceList);
 		ExcelReport   excelReport=new ExcelReport();
