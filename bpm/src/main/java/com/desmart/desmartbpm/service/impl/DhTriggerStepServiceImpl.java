@@ -106,7 +106,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         while (step != null) {
             if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
                 // 调用触发器
-                ServerResponse invokeTriggerResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), step);
+                ServerResponse<Map<String, String>> invokeTriggerResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), step);
                 if (!invokeTriggerResponse.isSuccess()) {
                     // 记录调用异常
                     DhTriggerException dhTriggerException = new DhTriggerException();
@@ -120,7 +120,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                     dhTriggerException.setStatus(DhTriggerException.STATUS_STEP_ERROR); // 记录状态
                     if (invokeTriggerResponse.getStatus() == 2) {
                         // 如果状态码是2，说明是调用接口错误，记录调用接口的日志主键
-                        dhTriggerException.setRequestParam(String.valueOf(invokeTriggerResponse.getData()));
+                        dhTriggerException.setRequestParam(invokeTriggerResponse.getData().get("dilUid"));
                     }
                     dhTriggerExceptionMapper.save(dhTriggerException);
                     // 修改流程实例状态为异常

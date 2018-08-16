@@ -239,4 +239,6 @@ public interface DhRouteService {
 	 * @return
 	 */
 	ServerResponse<BpmActivityMeta> getActualFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid);
+
+	List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum);
 }

@@ -1919,13 +1919,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
 					systemTaskInstance, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
 			// 如果只是普通的系统个任务，修改任务状
-			updateDhTaskInstanceWhenFinishTask(systemTaskInstance, "{}");
+            updateDhTaskInstanceWhenFinishTask(systemTaskInstance, "{}");
 		}
 
 		// 获得步骤
 		List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
-
 		DhStep nextStep = steps.isEmpty() ? null : steps.get(0);
+
 		DataForSubmitTask dataForSubmitTask = new DataForSubmitTask();
 		dataForSubmitTask.setBpmGlobalConfig(bpmGlobalConfig);
 		dataForSubmitTask.setCurrTaskInstance(systemTaskInstance);
