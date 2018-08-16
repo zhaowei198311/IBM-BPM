@@ -274,7 +274,7 @@
 				</div>
 				<!-- end 审批意见 -->
 				<!-- 附件 -->
-				<div class="layui-tab-item" id="file_div">
+				<div class="layui-tab-item" id="loadFile_div">
 					<p>附件</p>
 				</div>
 				<!-- 流转信息 -->

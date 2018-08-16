@@ -1918,7 +1918,8 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		} else {
 			routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
 					systemTaskInstance, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
-			// 如果只是普通的系统个任务，修改任务状updateDhTaskInstanceWhenFinishTask(currTask, "{}");
+			// 如果只是普通的系统个任务，修改任务状
+			updateDhTaskInstanceWhenFinishTask(systemTaskInstance, "{}");
 		}
 
 		// 获得步骤
