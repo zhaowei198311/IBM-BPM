@@ -301,7 +301,7 @@
 }
 .choose_user_li,.show_many_li{
 	border: 2px dashed #CCCCCC;
-	padding: 7px;
+	padding: 7px 8px;
 	margin-bottom: 15px;
 }
 #transfer_table i{
@@ -555,6 +555,8 @@ input[disabled], .layui-select-disabled .layui-disabled {
 /*上传附件*/
 #loadFile_div li{
 	text-align: left;
+	background: #fff;
+    margin-top: 10px;
 }
 #loadFile_div li table {
     width: 90%;

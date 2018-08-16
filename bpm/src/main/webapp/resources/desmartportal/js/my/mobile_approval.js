@@ -454,7 +454,7 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 	if(isMulti){
 		userName = userName.replace(/\(.*?\)/g,'');
 		var lastName = common.splitName(userName);
-		var liHtml = '<li>';
+		var liHtml = '<li touchstart="touchStartPerson(this);" touchmove="thouchMovePerson(this)">';
 		if(lastName.length==1){
 			liHtml += '<p class="first_name">'+lastName+'</p>';
 		}else{
@@ -1053,13 +1053,13 @@ function showRouteBar() {
                         			}
                         			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){//不可以选择用户
                         				if(lastName.length==1){
-                        					//chooseUserDiv += '<span class="first_name">'+lastName+'</span>';
-                        					if(j==0){
-                        						//chooseUserDiv += '<img src="resource/desmartportal/images/timg.jpg" onload="imgLoad(this);" style="display:none;" class="first_img" alt="'+lastName+'"/>';
+                        					chooseUserDiv += '<p class="first_name">'+lastName+'</p>';
+                        					/*if(j==0){
+                        						chooseUserDiv += '<img src="resource/desmartportal/images/timg.jpg" onload="imgLoad(this);" style="display:none;" class="first_img" alt="'+lastName+'"/>';
                         						chooseUserDiv += '<p class="first_name">'+lastName+'</p>'
                         					}else{
                         						chooseUserDiv += '<p class="first_name">'+lastName+'</p>'
-                        					}
+                        					}*/
                         				}else{
                         					chooseUserDiv += '<p class="first_name" style="font-size:12px;padding-bottom: 12px;padding-left: 6px;padding-right: 6px;line-height: 19px;">'+lastName+'</p>'
                         				}
@@ -1085,7 +1085,7 @@ function showRouteBar() {
                         	//判断默认处理人的数量  下标从0开始
                         	if(userNameArr.length>maxShowPersonCount-1){
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                            		chooseUserDiv += '<li style="display:none;margin-bottom: 15px;" class="choose_user_li" id="'+showActivityId+'">'
+                            		chooseUserDiv += '<li style="display:none;margin: 15px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
     	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
     	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1098,7 +1098,7 @@ function showRouteBar() {
                         		chooseUserDiv += '<li class="show_many_li" style="margin: 15px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>';
                         	}else{
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                            		chooseUserDiv += '<li style="margin-bottom: 15px;" class="choose_user_li" id="'+showActivityId+'">'
+                            		chooseUserDiv += '<li style="margin: 15px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
     	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
     	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1113,7 +1113,7 @@ function showRouteBar() {
                         }else{//用户名为空，只渲染选人组件
                         	chooseUserDiv += '<div class="handle_person_name"><ul>';
                         	if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                        		chooseUserDiv += '<li style="margin-bottom: 15px;" class="choose_user_li">'
+                        		chooseUserDiv += '<li style="margin: 15px 8px;" class="choose_user_li">'
 			                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
 		                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
 		                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1261,7 +1261,7 @@ function loadFileList(){
 		,{"appUid":appUid}
 		,function(result){
 		$("#loadFile_div").empty();
-		var info = '<h1 style="clear: both;"></h1>';
+		var info = '<h1 style="clear: both;"></h1><ul>';
 		for (var i = 0; i < result.data.length; i++) {
 			info += '<li>'
 				+'<table>'
@@ -1280,12 +1280,12 @@ function loadFileList(){
 					+'<tr>'
 						+'<th>操作：</th>'
 						+'<td value="'+result.data[i].appDocUid
-						+'" onclick="singleDown(this)" style="color:#009688;">下载附件<i class="layui-icon">&#xe601;</i></td>'
+						+'" onclick="singleDown(this)" style="color:#EF6301;">下载附件<i class="layui-icon">&#xe601;</i></td>'
 					+'</tr>'
 				+'</table>'
 				+'</li>';
 		}
-		info+='<h1 style="clear: both;"></h1>';
+		info+='</ul><h1 style="clear: both;"></h1>';
 		$("#loadFile_div").append(info);
 	});
 }
