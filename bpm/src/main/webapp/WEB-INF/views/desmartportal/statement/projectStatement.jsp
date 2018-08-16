@@ -34,7 +34,7 @@
         			<form action="#" method="post"  id="form" >
         				<div class="layui-form-item">
 						    <div class="layui-inline">
-						      <label class="layui-form-label">时间</label>
+						      <label class="layui-form-label" style="width: 130px;">任务接收时间</label>
 						      <div class="layui-input-inline" style="width: 120px;">
 						      	<input type="text" placeholder="开始时间" class="layui-input" name="startTime" id="init-startTime-search" />
 						      </div>
@@ -75,15 +75,15 @@
 					<thead>
 					    <tr>
 					      <th>序号</th>
-					      <th>流程名称</th>
-					      <th>流程标题</th>
-					      <th>环节名称</th>
-					      <th>任务所属</th>
+                          <th>流程名称</th>
+                          <th>流程标题</th>
+                          <th>环节名称</th>
+                          <th>任务所属</th>
                           <th>代理人</th>
-					      <th>上一环节提交人</th>
-					      <th>环节名称</th>
-					      <th>接收时间</th>
-					      <th>处理时间</th>
+                          <th>任务状态</th>
+                          <th>上一环节处理人</th>
+                          <th>流程创建人</th>
+                          <th>任务接收时间</th>
 					    </tr> 
 					</thead>
 					<tbody id="proMet_table_tbody" />
@@ -213,10 +213,6 @@
             }
             var agentOdate = new Date(meta.taskInitDate);
             var InitDate = datetimeFormat_1(agentOdate);
-            //agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
-            /* var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
-            var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds(); */
-            //ondblclick=openApproval("' + meta.taskUid + '")
             trs += '<tr>' +
                 '<td>' +
                 sortNum +
@@ -224,7 +220,7 @@
                 '<td>' +
                 meta.dhProcessInstance.proName +
                 '</td>'+
-                '<td style= "cursor:pointer;" onclick="openApproval(\'' + meta.taskUid + '\');">' +
+                '<td>' +
                 meta.dhProcessInstance.insTitle +
                 '</td>' +
                 '<td>' +
@@ -260,10 +256,6 @@
 
     }
 
-    // 打开 代办的 详细页面
-    function openApproval(taskUid) {
-        window.location.href = 'menus/approval?taskUid=' + taskUid;
-    }
     //模糊查询
     function search() {
     	var formArray = $('#form').serializeArray();
@@ -274,11 +266,15 @@
     }
     
     function exportData() {
-    	$('#form').attr('action',"projectStatement/queryExportTaskInstance");
-    	$('#form').submit();
-    	$('#form').attr('action',"#");
+    	layer.confirm('确定要导出?', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            layer.close(index);
+//             $('#form').attr('action',"projectStatement/queryExportTaskInstance");
+//         	$('#form').submit();
+//         	$('#form').attr('action',"#");
+        }); 
     }
-    
 </script>
 </body>
 </html>
