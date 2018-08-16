@@ -568,18 +568,24 @@ function showHistoryFile(a){
 		success : function(result) {
 			var tbody = $("#showHistoryModal").find(".showHistoryList");
 			tbody.empty();
-			for (var i = 0; i < result.data.length; i++) {
-				var info = "<tr><td>"
-					+"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
-					+result.data[i].docVersion+"</td>"
-					+"<td>"+result.data[i].appDocFileName+"</td>"
-					+"<td>"+result.data[i].appUserName+"</td>"
-					+"<td>"+result.data[i].updateUserName+"</td>"
-					+"<td>"+datetimeFormat_1(result.data[i].appDocUpdateDate)+"</td>"
-					+"<td><button value ='"+result.data[i].appDocUid+"' onclick='singleDown(this)'" 
-					+" class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
-					+"</td></tr>";
-					tbody.append(info);
+			if(result.data.length>0){
+				for (var i = 0; i < result.data.length; i++) {
+					var info = "<tr><td>"
+						+"<input style='display: none;' name='appDocFileUrl' value='"+result.data[i].appDocFileUrl+"' />"
+						+result.data[i].docVersion+"</td>"
+						+"<td>"+result.data[i].appDocFileName+"</td>"
+						+"<td>"+result.data[i].appUserName+"</td>"
+						+"<td>"+result.data[i].updateUserName+"</td>"
+						+"<td>"+datetimeFormat_1(result.data[i].appDocUpdateDate)+"</td>"
+						+"<td><button value ='"+result.data[i].appDocUid+"' onclick='singleDown(this)'" 
+						+" class='layui-btn layui-btn-primary layui-btn-sm down' style='margin-left:20px;'>下载附件</button>"
+						+"</td></tr>";
+						tbody.append(info);
+				}
+			}else{
+				var info ='<tr><td colspan="6" style="text-align: center;"><li>该附件暂无历史版本'
+					+'</td></tr>';
+				tbody.append(info);
 			}
 		},
 		error : function(data) {
