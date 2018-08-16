@@ -437,7 +437,7 @@
 }
 .choose_body{
 	display:none;
-	height:245px;
+	height:295px;
 	overflow-y:auto;
 }
 .choose_body table{
@@ -445,7 +445,7 @@
 	margin:auto;
 }
 .choose_body tr{
-	height:35px;
+	height:38px;
 	border-bottom:1px solid #f2f2f2;
 }
 .choose_body td{

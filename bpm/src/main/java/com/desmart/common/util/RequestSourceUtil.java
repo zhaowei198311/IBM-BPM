@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @since 2018/07/02
  */
 public class RequestSourceUtil {
-	private final static String[] agent = { "Android", "iPhone", "iPod", "Windows Phone", "MQQBrowser" }; //定义移动端请求的所有可能类型
+	private final static String[] agent = { "Android", "iPhone", "iPod","iPad", "Windows Phone", "MQQBrowser" }; //定义移动端请求的所有可能类型
 
 	/**
 	 * 根据请求头判断请求来源

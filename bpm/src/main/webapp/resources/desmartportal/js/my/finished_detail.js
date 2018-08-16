@@ -30,6 +30,10 @@ $(function () {
     $("#choose_handle_user1").click(function() {
     	common.chooseUser('handleUser1', 'false');
     });
+    
+    $(".cancel_btn").click(function() {
+    	$(".display_container6").css("display","none");
+    });
 });
 
 function back() {
