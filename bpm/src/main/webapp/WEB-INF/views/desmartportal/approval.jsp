@@ -184,7 +184,6 @@
 			<span id="fieldPermissionInfo">${fieldPermissionInfo}</span>
 			<span id="listStr">${listStr}</span>
 			<span id="approvalData">${approvalData}</span>
-			<span>${processInstance.proName}</span>
 		</div>
         <div class="layui-row">
             <div class="layui-col-sm6">
@@ -571,7 +570,7 @@
     $(function () {
         $(".data-table").find("input[type='tel']").desNumber();
         if (didTriggerBeforeFormError == 'true') {
-			layer.alert("获得数据失败，不能进行操作");
+			layer.msg("获得数据失败，请联系管理员");
 		}
         common.initTime();
         
