@@ -138,23 +138,16 @@
 		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
 		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,T.TO_TASK_UID,T.REMAIN_HOURS,
 		T.TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT,
-		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,P.INS_STATUS,S.USER_NAME,S.USER_ID
+		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,P.INS_STATUS,S.USER_NAME,S.USER_ID,PM.PRO_NAME,PM.PRO_NO
 	</sql>
 	
 	<select id="selectAllTask" parameterType="java.util.Map" resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT 
-		<include refid="TaskAndProcess_Column_List"/>
-		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S 
-		<where>
-			T.INS_UID = P.INS_UID 
-			AND
-			P.INS_INIT_USER = S.USER_ID
-			
-			<if test="taskTitle!=null and taskTitle!='' ">
-				AND  T.TASK_TITLE = #{taskTitle}
-			</if>
-		</where>
+		SELECT <include refid="TaskAndProcess_Column_List"></include>  FROM
+		DH_TASK_INSTANCE T LEFT JOIN DH_PROCESS_INSTANCE P  on  T.INS_UID = P.INS_UID  LEFT JOIN  SYS_USER s on P.INS_INIT_USER = S.USER_ID
+		LEFT JOIN  DH_PROCESS_META pm  on P.PRO_APP_ID = PM.PRO_APP_ID AND P.PRO_UID = PM.PRO_UID where 1=1
+		<if test="taskTitle!=null and taskTitle!='' ">
+			AND  T.TASK_TITLE = #{taskTitle}
+		</if>
 	</select>
 
 </mapper>
