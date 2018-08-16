@@ -93,7 +93,7 @@
 	  		</if>
 	  		
 	  		<if test="companyCode!=null">
-	  			and ud.companyCode=#{companyCode}
+	  			and ud.COMPANY_CODE=#{companyCode}
 	  		</if>
 	  </select>
 		
