@@ -1123,7 +1123,15 @@ var common = {
             lastname = fullname;  
         }  
         return lastname;  
-    }  
+    },
+    //字符转换,截取指定字符长度
+    interceptStr : function (str, len) {
+        var reg = /[\u4e00-\u9fa5]/g,    //匹配中文
+            slice = str.substring(0, len),
+            chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
+            realen = slice.length * 2 - chineseCharNum;
+        return str.substr(0, realen) + (realen < str.length ? "..." : "");
+    }
 };
 function rmoney(s)  
 {  

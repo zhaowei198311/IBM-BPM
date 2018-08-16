@@ -370,12 +370,13 @@
 				}else if(this.insStatusId=='6'){
 					this.insStatus = '暂停';
 				}
+				var insTitle = common.interceptStr(this.insTitle,20);
 				trs += '<tr style = "cursor:pointer;" ondblclick=openTaskInstance("'+ this._id +'")>'
 						+ '<td>'+ sortNum +'</td>'
 						+ '<td>'+ proName +'</td>'
 						+ '<td>'+ this.insId +'</td>'
 						+ '<td>'+ this.insStatus +'</td>'
-						+ '<td>'+ this.insTitle +'</td>'
+						+ '<td title =\"'+this.insTitle+'\">'+ insTitle +'</td>'
 // 						+ '<td>'+ this.initUserFullname +'</td>'
 						+ '<td>'+ createDate +'</td>'
 						+ '<td>'+ finishDate +'</td>'
