@@ -24,8 +24,8 @@
     <!-- <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script> -->
 
     <script type="text/javascript" src="resources/desmartportal/wPaint-master/inc/jquery.1.8.2.min.js"></script>
-    <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
     <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
     <script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js?v=1.03"></script>
     <script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.03"></script>
 
@@ -582,6 +582,7 @@
 			var id = $(this).prop("id");
 			if($(this).attr("is-multi")=="true"){
 				$(this).attr("xm-select",id);
+				var formSelects = layui.formSelects;
 				formSelects.render(id);
 				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
 					$("#"+id).trigger("change");

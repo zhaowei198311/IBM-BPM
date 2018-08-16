@@ -214,6 +214,22 @@ function drawPage() {
 					var subDivId = $(subDivObj).attr("id");
 					var subHtml = $(subDivObj).parent().html();
 					formHtml += '<td class="td_sub" style="display:none">' + subHtml + '</td>';
+				}else if(column.find(".subDiv").find("div[title='img_upload']").length != 0){
+					var preViewImgId = column.find(".subDiv").find("div[title='img_upload']").attr("name");
+					formHtml += '<td col="1" class="td_title" stylt="width:120px;"><label>缩略图展示：</label></td>'
+							+'<td col="11" class="td_sub">'
+							+'<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">'
+							+'<div class="layui-upload-list" data-title="img_upload" name="'+preViewImgId+'" id="'+preViewImgId+'"></div>'
+							+'</blockquote></td></tr>'
+							+'<tr>'
+							+'<td col="1" class="td_title" stylt="width:120px;">附件：</td>'
+							+'<td col="11" class="td_sub">'
+								+'<div class="loc_div" id="'+preViewImgId+'_loc" style="float: left;width: 100%;min-height: 85px;border: 1px solid #e6e6e6;">'
+								+'<h5 style="margin: 5px 5px 10px 5px;">文件名称：<span style="color:red">(PS:鼠标右击文件名复制链接并用浏览器打开，即可浏览或下载图片)</span></h5>'
+								+'<div style="margin:10px" class="fileList"></div>'
+								+'</div>'
+								+'</td>'
+							+'</tr>';
 				}
 			} else {//普通组件
 				flag = true;
