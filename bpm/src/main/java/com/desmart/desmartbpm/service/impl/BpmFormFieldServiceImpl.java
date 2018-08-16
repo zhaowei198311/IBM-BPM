@@ -64,9 +64,8 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 		List<DhObjectPermission> objPerList = dhObjectPermissionMapper.queryFieldPerByStepId(stepUid);
 		for(BpmFormField field:fieldList) {
 			//当查询的权限集合不存在某字段的权限
-			boolean flag = true;
 			List<String> opActionList = new ArrayList<>();
-			opActionList.add("false");
+			opActionList.add("VIEW");//默认只读
 			opActionList.add("false");
 			opActionList.add("false");
 			for(DhObjectPermission objPer:objPerList) {
@@ -78,12 +77,7 @@ public class BpmFormFieldServiceImpl implements BpmFormFieldService{
 					}else if(objPer.getOpAction().equals("SKIP")) {
 						opActionList.set(2,objPer.getOpAction());
 					}
-					flag = false;
 				}
-			}
-			if(flag) {
-				//默认只读
-				opActionList.set(0,"VIEW");
 			}
 			field.setOpActionList(opActionList);
 		}

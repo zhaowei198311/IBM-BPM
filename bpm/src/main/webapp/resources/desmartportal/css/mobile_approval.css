@@ -55,7 +55,7 @@
 
 .approval_btn_div{
 	position: fixed;
-    bottom: 0px;
+    bottom: -2px;
     z-index:11;
     width:100%;
     height:56px;
@@ -237,7 +237,7 @@
 	width:100%;
 }
 .handle_div table th{
-	width:26%;
+	width:20%;
 }
 .handle_div table td{
 	width:80%;
@@ -272,6 +272,8 @@
 }
 .task_activity_name{
 	color:#FF9559;
+    margin-left: 65px;
+    width: 70%;
 }
 .handle_person_name li{
 	float: left;
@@ -281,23 +283,34 @@
 }
 .first_name{
 	background: #FF9052;
-    padding: 10px 11px;
+    padding: 9px 11px;
     border-radius: 50%;
     color: #fff;
     text-align: center;
 }
+.first_img{
+	background: #FF9052;
+	border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    width: 37px;
+    height: 37px;
+}
 .person_name{
 	font-size: 12px;
-	margin-top: 10px;
 }
-.choose_user_li{
+.choose_user_li,.show_many_li{
 	border: 2px dashed #CCCCCC;
 	padding: 7px;
+	margin-bottom: 15px;
 }
 #transfer_table i{
 	float: left;
-	padding-top:3px;
 	padding-left:2px;
+}
+#submit_table{
+	width:94%;
+	margin-top: 0px;
 }
 #submit_table .choose_user1{
 	float: left;
