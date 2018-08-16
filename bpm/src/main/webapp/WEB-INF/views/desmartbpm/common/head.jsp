@@ -16,8 +16,7 @@
 
 
 <!-- 全局js -->
-<%-- <script src="<%=basePath%>/resources/desmartbpm/js/jquery-3.3.1.js"></script> --%>
-<script src="<%=basePath%>/resources/desmartportal/wPaint-master/inc/jquery.1.8.2.min.js"></script>
+<script src="<%=basePath%>/resources/desmartbpm/js/jquery-3.3.1.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/jquery.validate.min.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/dwz.regional.zh_CN.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
