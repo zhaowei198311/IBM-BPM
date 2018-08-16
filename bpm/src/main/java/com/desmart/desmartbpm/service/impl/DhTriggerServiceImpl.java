@@ -203,6 +203,13 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				String fieldCodeName = triInt.getFldCodeName();
 				//获得接口参数name
 				String paramName = triInt.getParaName();
+				if(fieldCodeName==null ||fieldCodeName.equals("")) {
+					inputParameter += "\""+paramName+"\":\"\"";
+					if (i != dhTriggerInterfaceList.size() - 1) {
+						inputParameter += ",";
+					}
+					continue;
+				}
 				BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
 						fieldCodeName);
 				if (null == formField) {
@@ -289,7 +296,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				}
 			}
 			inputParameter += "}";
-			paramJson = "{\"intUid\":\"" + intUid + "\",\"inputParameter\"" + inputParameter + "}";
+			paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
 			JSONObject paramObj = JSONObject.parseObject(paramJson);
 			//调用接口处理数据并接收回调数据
 			Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
