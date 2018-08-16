@@ -117,4 +117,10 @@ public interface BpmActivityMetaMapper {
      * @return
      */
     int removeByActivityIdList(List<String> activityIdList);
+    /**
+     * 根据环节
+     * @param activityIdList
+     * @return
+     */
+    public List<BpmActivityMeta> queryPrimaryKeyByBatch(List<String> activityIdList);
 }

@@ -48,7 +48,7 @@ public interface DhTaskInstanceMapper {
 	int countByTaskId(int taskId);
 	
 	/**
-	 * 根据条件查询任务
+	 * 根据条件查询任务（包含了处理人、代理人的uid和姓名岗位）
 	 * @param dhTaskInstance
 	 * @return
 	 */

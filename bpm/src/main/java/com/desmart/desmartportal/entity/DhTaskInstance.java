@@ -172,8 +172,12 @@ public class DhTaskInstance {
 	
 	//任务处理人姓名
 	private String taskHandler;
+	//任务处理人岗位
+	private String handlerStation;
 	//任务代理人姓名
 	private String taskAgentUserName;
+	//任务代理人岗位
+	private String agentStation;
 	//进度条参数 key--hour,percent,taskUid
 	private Map<String,Object> progerssParamMap;
 
@@ -527,5 +531,21 @@ public class DhTaskInstance {
 
 	public void setProgerssParamMap(Map<String, Object> progerssParamMap) {
 		this.progerssParamMap = progerssParamMap;
+	}
+
+	public String getHandlerStation() {
+		return handlerStation;
+	}
+
+	public void setHandlerStation(String handlerStation) {
+		this.handlerStation = handlerStation;
+	}
+
+	public String getAgentStation() {
+		return agentStation;
+	}
+
+	public void setAgentStation(String agentStation) {
+		this.agentStation = agentStation;
 	}
 }
