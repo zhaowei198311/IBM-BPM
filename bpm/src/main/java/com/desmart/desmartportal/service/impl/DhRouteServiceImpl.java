@@ -194,8 +194,11 @@ public class DhRouteServiceImpl implements DhRouteService {
         List<BpmActivityMeta> nodesIdentitySubProcessOnSameDeepLevel = bpmRoutingData.getStartProcessNodesOnSameDeepLevel();
         for (BpmActivityMeta nodeIdentifyProcess : nodesIdentitySubProcessOnSameDeepLevel) {
             BpmActivityMeta firstTaskNode = nodeIdentifyProcess.getFirstTaskNode();
+            // 从bpmRoutingData找到任务真实的父节点
+			BpmActivityMeta realParentNodeOfFirstTaskNode = bpmRoutingData.getActIdAndNodeIdentitySubProcessMap().get(firstTaskNode.getParentActivityId());
+
             List<SysUser> defaultTaskOwnerList = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode,
-                    nodeIdentifyProcess);
+					realParentNodeOfFirstTaskNode);
             // 加入集合
             resultNodeList.add(firstTaskNode);
             firstTaskNode.setUserUid(DataListUtils.transformUserListToUserIdStr(defaultTaskOwnerList));
@@ -319,11 +322,11 @@ public class DhRouteServiceImpl implements DhRouteService {
     	SysTeamMember sysTeamMember = new SysTeamMember();
 		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
     	List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-		Set<String> userUidSet = new HashSet<>();
+		String tempIdStr = "";
 		for (SysTeamMember member : sysTeamMembers) {
-            userUidSet.add(member.getUserUid());
+			tempIdStr += member.getUserUid() + ";";
 		}
-		return searchByUserUidSet(userUidSet);
+		return transformTempIdStrToUserList(tempIdStr);
 	}
     /**
      * 根据角色组uid集合和部门编号查询
@@ -340,11 +343,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
 		sysTeamMember.setSysDepartmentList(sysDepartmentList);
 		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-        Set<String> userUidSet = new HashSet<>();
-        for (SysTeamMember member : sysTeamMembers) {
-            userUidSet.add(member.getUserUid());
-        }
-        return searchByUserUidSet(userUidSet);
+		String tempIdStr = "";
+		for (SysTeamMember member : sysTeamMembers) {
+			tempIdStr += member.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
 	}
 	/**
 	 * 根据角色组uid集合和公司编码查询
@@ -357,11 +360,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
 		sysTeamMember.setCompanyCode(companyNum);
 		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
-        Set<String> userUidSet = new HashSet<>();
-        for (SysTeamMember member : sysTeamMembers) {
-            userUidSet.add(member.getUserUid());
-        }
-        return searchByUserUidSet(userUidSet);
+		String tempIdStr = "";
+		for (SysTeamMember member : sysTeamMembers) {
+			tempIdStr += member.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
 	}
 
 	/**
@@ -374,11 +377,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//根据角色id集合查询角色用户映射关系数据
 		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-        Set<String> userUidSet = new HashSet<>();
+		String tempIdStr = "";
 		for (SysRoleUser sysRoleUser : roleUsers) {
-            userUidSet.add(sysRoleUser.getUserUid());
+			tempIdStr += sysRoleUser.getUserUid() + ";";
 		}
-		return searchByUserUidSet(userUidSet);
+		return transformTempIdStrToUserList(tempIdStr);
 	}
     /**
      * 根据角色id集合加部门uid查询
@@ -396,11 +399,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 		roleUser.setSysDepartmentList(sysDepartmentList);
 		//根据角色id集合加部门uid查询角色用户映射关系数据
 		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		Set<String> userUidSet = new HashSet<>();
-        for (SysRoleUser sysRoleUser : roleUsers) {
-            userUidSet.add(sysRoleUser.getUserUid());
-        }
-		return searchByUserUidSet(userUidSet);
+		String tempIdStr = "";
+		for (SysRoleUser sysRoleUser : roleUsers) {
+			tempIdStr += sysRoleUser.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
 	}
 
 	/**
@@ -409,18 +412,18 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @param companyNum
      * @return
      */
-    private List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
+    public List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
     	SysRoleUser roleUser = new SysRoleUser();
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//设置公司编码查询条件
     	roleUser.setCompanyCode(companyNum);
     	//根据角色id集合加公司编码查询角色用户映射关系数据
     	List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-        Set<String> userUidSet = new HashSet<>();
-        for (SysRoleUser sysRoleUser : roleUsers) {
-            userUidSet.add(sysRoleUser.getUserUid());
-        }
-        return searchByUserUidSet(userUidSet);
+		String tempIdStr = "";
+		for (SysRoleUser sysRoleUser : roleUsers) {
+			tempIdStr += sysRoleUser.getUserUid() + ";";
+		}
+		return transformTempIdStrToUserList(tempIdStr);
 	}
 
 	/**
@@ -1293,7 +1296,10 @@ public class DhRouteServiceImpl implements DhRouteService {
             	// 当firstTaskNode为空，说明这个子流程没有人工环节或者这个子流程的人工环节被提取到上级去了，已经分配了处理人
 				continue;
 			}
-            List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, nodeIdentifySubProcess);
+			// 从bpmRoutingData找到任务真实的父节点
+			BpmActivityMeta realParentNodeOfFirstTaskNode = routingData.getActIdAndNodeIdentitySubProcessMap().get(firstTaskNode.getParentActivityId());
+
+            List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, realParentNodeOfFirstTaskNode);
             String actcAssignVariable = firstTaskNode.getDhActivityConf().getActcAssignVariable();
             if (defaultTaskOwners.isEmpty()) {
                 CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
@@ -1345,7 +1351,10 @@ public class DhRouteServiceImpl implements DhRouteService {
             if (firstTaskNode == null) {
             	continue;
 			}
-            List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, nodeIdentifySubProcess);
+			// 从bpmRoutingData找到任务真实的父节点
+			BpmActivityMeta realParentNodeOfFirstTaskNode = routingData.getActIdAndNodeIdentitySubProcessMap().get(firstTaskNode.getParentActivityId());
+
+            List<SysUser> defaultTaskOwners = getDefaultTaskOwnerOfFirstNodeOfProcess(currProcessInstance, firstTaskNode, realParentNodeOfFirstTaskNode);
             String actcAssignVariable = firstTaskNode.getDhActivityConf().getActcAssignVariable();
             if (defaultTaskOwners.isEmpty()) {
                 CommonBusinessObjectUtils.setNextOwners(actcAssignVariable, pubBo, adminUidList);
@@ -1395,9 +1404,8 @@ public class DhRouteServiceImpl implements DhRouteService {
         DhProcessInstance parentProcessInstance = getParentProcessInstanceByCurrProcessInstanceAndNodeIdentifyProcess(currProcessInstance,
 				nodeIdentitySubProcess);
         if (parentProcessInstance == null) {
-            log.error("查找父流程实例失败：当前流程：" + currProcessInstance.getInsUid()
-                    + " 代表子流程的节点id：" + nodeIdentitySubProcess.getActivityId());
-            return result;
+            // 当找不到的时候说明他的父流程实例还没有被创建，在提交后才会被创建
+			parentProcessInstance = currProcessInstance;
         }
         DhActivityConf dhActivityConf = firstTaskNodeOfSubProcess.getDhActivityConf();
         String actcAssignType = dhActivityConf.getActcAssignType();
