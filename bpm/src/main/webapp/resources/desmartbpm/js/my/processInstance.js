@@ -182,7 +182,7 @@ function trunOffProcessIns(){
 function showProcessInsMap(){
 	if(checkChecked()){
 		var insId = $("input[type='checkbox'][name='checkProcessIns']:checked").data("insid");
-		window.parent.openProView(insId);
+		common.openProView(insId);
 	}else{
 		return;
 	}

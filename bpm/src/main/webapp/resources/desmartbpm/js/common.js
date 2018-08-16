@@ -294,7 +294,33 @@ var common = {
         form.submit();
         // 表单提交后,就可以删除这个表单,不影响下次的数据发送.
         document.body.removeChild(form);
-    }
+    },
+    openProView : function(insId){
+		$.ajax({
+	        url: common.getPath() +'/processInstance/viewProcess',
+	        type: 'post',
+	        dataType: 'text',
+	        data: {
+	            insId: insId
+	        },
+	        success: function (result) {
+	            var index = layer.open({
+	                type: 2,
+	                title: '流程图',
+	                shadeClose: true,
+	                offset: ['50px', '20%'],
+	                shade: 0.3,
+	                maxmin:true,
+	                area: ['890px', '570px'],
+	                content: result
+	            });
+	            layer.style(index, {
+	            	zoom:1.1
+	            });
+	        }
+	    });
+	}
+	
 	
 };
 // 如果要设置过期时间以秒为单位
