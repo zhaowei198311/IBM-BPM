@@ -163,7 +163,14 @@ function drawUpRoutingRecord(result){
 			 }else if(dhTaskInstance.taskHandler != null && dhTaskInstance.taskHandler.trim()!=''){
 				 tr+=dhTaskInstance.taskHandler;
 			 }
-			 tr+="</td><td>"+currActivityMeta.activityName+"</td>"
+			 tr+="</td><td>";
+			 if(dhTaskInstance.agentStation != null && dhTaskInstance.agentStation.trim()!=''){
+				 tr+=dhTaskInstance.agentStation;
+			 }else if(dhTaskInstance.handlerStation != null && dhTaskInstance.handlerStation.trim()!=''){
+				 tr+=dhTaskInstance.handlerStation;
+			 }
+			 tr+="</td>"
+			 +"<td>"+currActivityMeta.activityName+"</td>"
 			 +"<td>"
 			 +common.dateToString(new Date(dhTaskInstance.taskInitDate))
 			 +"</td>";
