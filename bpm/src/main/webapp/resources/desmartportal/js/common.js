@@ -1135,7 +1135,10 @@ function checkAndfomartNumber(obj,integer,decimal){
 	if(l.length>integer){
 		layer.alert("格式错误,正确格式为:F"+integer+"."+decimal);
 		$(obj).val("");
-	}else{
+	}else if(decimal==0){
+		$(obj).val(l);
+	}
+	else{
 		decimal = decimal > 0 && decimal <= 20 ? decimal : 2;
 		num = parseFloat((num + "").replace(/[^\d\.-]/g, "")).toFixed(decimal) + "";
 		$(obj).val(num);
