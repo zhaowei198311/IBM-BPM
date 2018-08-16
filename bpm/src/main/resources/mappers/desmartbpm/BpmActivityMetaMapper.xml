@@ -359,4 +359,14 @@
 			AND BPM_TASK_TYPE = #{bpmTaskType}
 		</if>
   	</select>
+  	<select id="queryPrimaryKeyByBatch" parameterType="list" 
+  		resultType="com.desmart.desmartbpm.entity.BpmActivityMeta">
+  		select <include refid="Base_Column_List" /> from bpm_activity_meta
+  		<where>
+  			and
+  				<foreach collection="list" item = "activityId" open="(" close=")" separator="or" >
+  					activity_id = #{activityId}
+  				</foreach>
+  		</where>
+  	</select>
 </mapper>

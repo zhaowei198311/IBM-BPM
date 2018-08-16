@@ -357,21 +357,23 @@
 							</div>
 							<div class="layui-tab-item">
 								<div class="p">
-									<p>
-										<font>现在的环节号：</font> <span></span>
-									</p>
-									<p>
-										<font>当前处理人：</font> <span></span>
-									</p>
-									<p>
-										<font>当前处理环节：</font> <span></span>
-									</p>
-									<p>
-										<font>当前处理到达时间：</font> <span></span>
-									</p>
-									<p>
-										<font>流转过程：</font>
-									</p>
+									<table class="layui-table" lay-even lay-skin="nob" lay-size="sm">
+ 									<colgroup>
+										<col width="10%">
+										<col width="30%">
+										<col width="30%">
+										<col width="30%">
+									</colgroup>
+									<thead>
+									<tr><th>现在的环节号</th>
+									<th>当前处理人</th>
+									<th>当前处理环节</th>
+									<th>当前处理到达时间</th></tr>
+									</thead>
+									<tbody id="routingRecordTbody">
+									
+									</tbody>
+									</table>
 								</div>
 								<ul id="transferProcess" class="tab_ul">
 									<h1 style="clear: both;"></h1>

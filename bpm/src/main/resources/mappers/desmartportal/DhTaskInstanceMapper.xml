@@ -132,6 +132,15 @@
 		TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT
 	</sql>
 	
+	<sql id="Relation_Column_List">
+		T.TASK_UID,T.INS_UID,T.TASK_ID,T.USR_UID,
+		T.ACTIVITY_BPD_ID,T.TASK_TYPE,T.TASK_STATUS,T.TASK_TITLE,
+		T.INS_UPDATE_DATE,T.TASK_PREVIOUS_USR_UID,T.TASK_PREVIOUS_USR_USERNAME,T.TASK_DELEGATE_DATE,
+		T.TASK_INIT_DATE,T.TASK_FINISH_DATE,T.TASK_DUE_DATE,T.TASK_RISK_DATE,
+		T.TASK_PRIORITY,T.TASK_DATA,T.TASK_DELEGATE_USER,T.SYN_NUMBER,T.FROM_TASK_UID,T.TO_TASK_UID,T.REMAIN_HOURS,
+		T.TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT
+	</sql>
+	
 	<sql id="TaskAndProcess_Column_List">
 		T.TASK_UID,T.INS_UID,T.TASK_ID,T.USR_UID,
 		T.ACTIVITY_BPD_ID,T.TASK_TYPE,T.TASK_STATUS,T.TASK_TITLE,
@@ -636,14 +645,14 @@
 	</select>
 	
 	<select id="selectByCondition" parameterType="com.desmart.desmartportal.entity.DhTaskInstance"
-		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>
+		resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		SELECT <include refid="Relation_Column_List"/>,s.user_name as task_handler,s.station as handler_Station
+		,taskAgent.user_name as task_Agent_User_Name,taskAgent.station as agent_Station
 		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
+		DH_TASK_INSTANCE T
+		left join SYS_USER S on T.USR_UID = S.USER_ID
+		left join SYS_USER taskAgent on T.TASK_DELEGATE_USER = taskAgent.USER_ID
 		<where>
-			T.INS_UID = P.INS_UID 
-			AND
-			T.USR_UID = S.USER_ID
 			<if test="insUid != null and insUid != '' ">
 			AND
 			T.INS_UID = #{insUid}
