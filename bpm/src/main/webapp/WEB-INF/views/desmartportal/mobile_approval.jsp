@@ -166,7 +166,6 @@
 				<!-- 审批意见 -->
 				<div class="layui-tab-item" id="approve_div">
 					<div class="layui-form">
-						<h1 style="clear: both;"></h1>
 						<div class="handle_div">
 							<table id="handle_type_table">
 								<tr>
@@ -179,9 +178,7 @@
 								</tr>
 							</table>
 							<!-- 同意 -->
-							<div class="handle_table" id="submit_table">
-								<table>
-								</table>
+							<div class="handle_table table_container layui-form" id="submit_table">
 							</div>
 							<!-- 会签 -->
 							<div class="handle_table" id="countersign_table">
@@ -203,7 +200,7 @@
 										<td>
 											<div class="handle_person_name">
 												<ul>
-													<li class="choose_user_li">
+													<li class="choose_user_li" style="margin-bottom: 15px;">
 														<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe654;</i>
 													</li>
 												</ul>
@@ -226,7 +223,7 @@
 										<td>
 											<div class="handle_person_name">
 												<ul>
-													<li class="choose_user_li">
+													<li class="choose_user_li" style="margin-bottom: 15px;">
 														<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe654;</i>
 													</li>
 												</ul>
@@ -262,6 +259,13 @@
 							</div>
 						</div>
 						<!-- 审批记录 -->
+						<div class="table_container">
+							<p class="title_p">审批记录
+								<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+							</p>
+							<ul class="layui-timeline" id="approve_record">
+							</ul>
+						</div>
 					</div>
 					<div class="approval_btn_div">
 						<input type="button" class="layui-btn filter_btn" id="save_drafts_btn" value="保存草稿" onclick="saveDraftsInfo();"/>
@@ -395,6 +399,7 @@
 	</div>
 </body>
 <script type="text/javascript">
+	var didTriggerBeforeFormError = '${didTriggerBeforeFormError}';
 	$(function(){
 		var t1 = window.setInterval(function(){
 			if($(".mobile_top").is(":hidden")){
@@ -403,7 +408,9 @@
 				window.clearInterval(t1);
 			}
 		},100); 
-		
+		if (didTriggerBeforeFormError == 'true') {
+			layer.alert("获得数据失败，不能进行操作");
+		}
 		$(".data-table").find("input[type='tel']").desNumber();
 		
 		var dateInput = $("#formSet").find(".date");

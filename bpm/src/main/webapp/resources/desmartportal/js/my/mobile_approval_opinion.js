@@ -168,92 +168,121 @@ function loadDhroutingRecords(){
 	     dataType:'json',
 	     async: false, 
 	     success : function(result){
-	    	 var h="";
-	    	 var activityNameHtml = "";
-	    	 for (var i = 0; i < result.data.bpmActivityMetaList.length; i++) {
-				 if(i==(result.data.bpmActivityMetaList.length-1)){
-					 h += result.data.bpmActivityMetaList[i].sortNum;
-					 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName;
-				 }else{
-					 h += result.data.bpmActivityMetaList[i].sortNum+"、";
-					 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName+"、";
-				 }
-			 }
-	    	 var dhTaskHandlerHtml = "";
-	    	 for (var i = 0; i < result.data.dhTaskHandlers.length; i++) {
-	    		 if(i==(result.data.dhTaskHandlers.length-1)){
-					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName;
-				 }else{
-					 dhTaskHandlerHtml +=result.data.dhTaskHandlers[i].sysUser.userName+"、";
-				 }
+	    	 if(result.status==0){
+	    		 drawUpRoutingRecord(result);//画出当前实例的流转记录及当前正在处理的环节信息
 	    	 }
-	    	 var dateStr = "";
-	    	 if(result.data.dhRoutingRecords!=null){
-	    		 var index = result.data.dhRoutingRecords.length-1;
-	    	 	 if(index>=0){
-	    	 		var date = new Date(result.data.dhRoutingRecords[index].createTime);
-	    	 		dateStr = datetimeFormat_1(date);//当前处理到达时间
-	    	 	 }
-	    	 }
-	    	 var currActiHtml = "<p>当前的环节号："+h+"</p>"
-				+"<p>当前处理人："+dhTaskHandlerHtml+"</p>"
-				+"<p>当前处理环节："+activityNameHtml+"</p>"
-				+"<p>当前处理到达时间："+dateStr+"</p>";
-	    	 $(".curr_activity").html(currActiHtml);
-	    	 if(result.data.dhRoutingRecords.length==0){
-	    		 $("#transferProcess").parent().css("display","none");
-	    	 }
-	    	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
-	    		var date = new Date(result.data.dhRoutingRecords[i].createTime);
-	    		var info = '<li class="layui-timeline-item">'
-					+'<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
-					+'<div class="layui-timeline-content layui-text">'
-					+'<h5 class="layui-timeline-title">'
-					+'<span class="activity_name">'+result.data.dhRoutingRecords[i].activityName+'</span>'
-					+'<span class="approval_time">'+datetimeFormat_1(date)+'</span>'
-					+'</h5>'
-					+'<p class="timeline_p">'
-					+'<span class="approval_person">';
-	    		var taskHandleUserName = result.data.dhRoutingRecords[i].taskHandleUserName;
-	    		if(taskHandleUserName==null || taskHandleUserName==""){
-	    			info += result.data.dhRoutingRecords[i].userName;
-	    		}else{
-	    			info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
-	    		}
-	    		info += '</span>'
-					+'<span class="person_despart">'+result.data.dhRoutingRecords[i].station+'</span>';
-	    		switch(result.data.dhRoutingRecords[i].routeType){
-					case "submitTask":
-						info += "<span class='approval_status'>通过</span>";
-						break;
-					case "revokeTask":
-						info += "<span class='approval_status' style='color:#FC9153'>取回</span>";
-						break;
-					case "transferTask":
-						info += "<span class='approval_status' style='color:#FC9153'>传阅</span>";
-						break;
-					case "rejectTask":
-						info += "<span class='approval_status' style='color:#f33640'>驳回</span>";
-						break;
-					case "addTask":
-						info += "<span class='approval_status' style='color:#FC9153'>发起会签</span>";
-						break;
-					case "finishAddTask":
-						info += "<span class='approval_status' style='color:#FC9153'>完成会签</span>";
-						break;
-					case "trunOffTask":
-						info += "<span class='approval_status' style='color:#f33640'>撤转</span>";
-						break;
-	    		}
-	    		info += '</span>'
-					+'</p>'
-					+'</div>'
-					+'</li>';
-	    		$("#transferProcess").append(info);
-			}
 	     },error : function (){
-	    	 layer.alert("审批意见出现异常！");
+	    	 layer.alert("流转信息出现异常！");
 	     }
 	});
+}
+
+/**
+ * 画出当前实例的流转记录及当前正在处理的环节信息
+ * @param result
+ * @returns
+ */
+function drawUpRoutingRecord(result){
+	var h="";
+	 var activityNameHtml = "";
+	 for (var i = 0; i < result.data.bpmActivityMetaList.length; i++) {
+		 if(i==(result.data.bpmActivityMetaList.length-1)){
+			 h += result.data.bpmActivityMetaList[i].sortNum;
+			 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName;
+		 }else{
+			 h += result.data.bpmActivityMetaList[i].sortNum+"、";
+			 activityNameHtml +=result.data.bpmActivityMetaList[i].activityName+"、";
+		 }
+	 }
+	 var dhTaskHandlerHtml = "";
+	 
+	 var currentTaskMap = result.data.currentTaskMap;
+	 for(var k of Object.keys(currentTaskMap)){
+		 var datDhRoutingRecord = currentTaskMap[k];
+		 var currActivityMeta = datDhRoutingRecord.bpmActivityMeta;//获得环节信息
+		 var currDhTaskInstanceList = datDhRoutingRecord.dhTaskInstanceList;//获得环节对应的任务信息
+		 for (var i = 0; i < currDhTaskInstanceList.length; i++) {
+			 var dhTaskInstance = currDhTaskInstanceList[i];
+			 if(i==(currDhTaskInstanceList.length-1)){
+				 if(dhTaskInstance.taskAgentUserName != null && dhTaskInstance.taskAgentUserName.trim()!=''){
+					 dhTaskHandlerHtml += dhTaskInstance.taskAgentUserName;
+				 }else if(dhTaskInstance.taskHandler != null && dhTaskInstance.taskHandler.trim()!=''){
+					 dhTaskHandlerHtml += dhTaskInstance.taskHandler;
+				 }
+			 }else{
+				 if(dhTaskInstance.taskAgentUserName != null && dhTaskInstance.taskAgentUserName.trim()!=''){
+					 tr+=dhTaskInstance.taskAgentUserName+"、";
+				 }else if(dhTaskInstance.taskHandler != null && dhTaskInstance.taskHandler.trim()!=''){
+					 tr+=dhTaskInstance.taskHandler+"、";
+				 }
+			 }
+		 }
+	 }
+	 var dateStr = "";
+	 if(result.data.dhRoutingRecords!=null){
+		 var index = result.data.dhRoutingRecords.length-1;
+	 	 if(index>=0){
+	 		var date = new Date(result.data.dhRoutingRecords[index].createTime);
+	 		dateStr = datetimeFormat_1(date);//当前处理到达时间
+	 	 }
+	 }
+	 var currActiHtml = "<p>当前的环节号："+h+"</p>"
+		+"<p>当前处理人："+dhTaskHandlerHtml+"</p>"
+		+"<p>当前处理环节："+activityNameHtml+"</p>"
+		+"<p>当前处理到达时间："+dateStr+"</p>";
+	 $(".curr_activity").html(currActiHtml);
+	 console.log($(".curr_activity").html());
+	 console.log(result.data.dhRoutingRecords.length);
+	 if(result.data.dhRoutingRecords.length==0){
+		 $("#transferProcess").parent().css("display","none");
+	 }
+	 for (var i = 0; i < result.data.dhRoutingRecords.length; i++) {
+		var date = new Date(result.data.dhRoutingRecords[i].createTime);
+		var info = '<li class="layui-timeline-item">'
+			+'<i class="layui-icon layui-timeline-axis">&#xe63f;</i>'
+			+'<div class="layui-timeline-content layui-text">'
+			+'<h5 class="layui-timeline-title">'
+			+'<span class="activity_name">'+result.data.dhRoutingRecords[i].activityName+'</span>'
+			+'<span class="approval_time">'+datetimeFormat_1(date)+'</span>'
+			+'</h5>'
+			+'<p class="timeline_p">'
+			+'<span class="approval_person">';
+		var taskHandleUserName = result.data.dhRoutingRecords[i].taskHandleUserName;
+		if(taskHandleUserName==null || taskHandleUserName==""){
+			info += result.data.dhRoutingRecords[i].userName;
+		}else{
+			info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
+		}
+		info += '</span>'
+			+'<span class="person_despart">'+result.data.dhRoutingRecords[i].station+'</span>';
+		switch(result.data.dhRoutingRecords[i].routeType){
+			case "submitTask":
+				info += "<span class='approval_status'>通过</span>";
+				break;
+			case "revokeTask":
+				info += "<span class='approval_status' style='color:#FC9153'>取回</span>";
+				break;
+			case "transferTask":
+				info += "<span class='approval_status' style='color:#FC9153'>传阅</span>";
+				break;
+			case "rejectTask":
+				info += "<span class='approval_status' style='color:#f33640'>驳回</span>";
+				break;
+			case "addTask":
+				info += "<span class='approval_status' style='color:#FC9153'>发起会签</span>";
+				break;
+			case "finishAddTask":
+				info += "<span class='approval_status' style='color:#FC9153'>完成会签</span>";
+				break;
+			case "trunOffTask":
+				info += "<span class='approval_status' style='color:#f33640'>撤转</span>";
+				break;
+		}
+		info += '</span>'
+			+'</p>'
+			+'</div>'
+			+'</li>';
+		$("#transferProcess").append(info);
+	}
 }
 

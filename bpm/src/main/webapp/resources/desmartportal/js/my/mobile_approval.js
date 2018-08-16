@@ -3,6 +3,9 @@ var needApprovalOpinion = "";
 // bool值记录是否能直接跳跃提交 回到驳回处
 var canSkipFromReject = false;
 
+//选人显示最多数量 (4个人)
+var maxShowPersonCount = 4;
+
 //优化处理方式
 var refurbish = true;
 
@@ -449,15 +452,42 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 	var userUid = $(obj).find("td:eq(0)").text().trim();
 	var userName = $(obj).find("td:eq(1)").text().trim();
 	if(isMulti){
-		var liHtml = '<li><div class="choose_user_name_span">'+userName+'('+userUid+")"
-		+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
-		+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+		userName = userName.replace(/\(.*?\)/g,'');
+		var lastName = common.splitName(userName);
+		var liHtml = '<li>';
+		if(lastName.length==1){
+			liHtml += '<p class="first_name">'+lastName+'</p>';
+		}else{
+			liHtml += '<p class="first_name" style="font-size:12px;">'+lastName+'</p>'
+		}
+		liHtml += '<p class="person_name">'+userName+'</p>'
+			+'<span>'
+			+'<i class="layui-icon delete_choose_user" value="'+userUid+'" onclick="deleteAssembleUser(this);">&#x1007;</i>'
+			+'</span>'
+			+'</li>';
+		var showLiHtml = '<li class="show_many_li" style="margin: 15px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>'
 		if(elementId=="submit_table"){
 			var showActivityId = activityId.replace(":","");
 			//在选人按钮之前插入
 			$(liHtml).insertBefore($("#"+elementId).find("#"+showActivityId).find(".choose_user_li"));
+			if($("#"+elementId).find("#"+showActivityId).find(".delete_choose_user").length>maxShowPersonCount){
+				if($("#"+elementId).find("#"+showActivityId).find(".show_many_person").length==0){
+					$(showLiHtml).insertAfter($("#"+elementId).find("#"+showActivityId).find(".choose_user_li"));
+				}else{
+					$("#"+elementId).find(".show_many_li").show();
+				}
+				$("#"+elementId).find("#"+showActivityId).find(".choose_user_li").prev().addClass("show_user");
+			}
 		}else{
 			$(liHtml).insertBefore($("#"+elementId+" .choose_user_li"));
+			if($("#"+elementId).find(".delete_choose_user").length>maxShowPersonCount){
+				if($("#"+elementId).find(".show_many_person").length==0){
+					$(showLiHtml).insertAfter($("#"+elementId).find(".choose_user_li"));
+				}else{
+					$("#"+elementId).find(".show_many_li").show();
+				}
+				$("#"+elementId).find(".choose_user_li").prev().addClass("show_user");
+			}
 		}
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
@@ -993,64 +1023,111 @@ function showRouteBar() {
                 var activityMetaList = result.data;
                 var chooseUserDiv = "";
                 if(activityMetaList.length==0){
-                    chooseUserDiv += '<tr>'
-                        +'<th class="approval_th">下一环节：</th>'
-                        +'<td>流程结束</td>'
-                        +'</tr>';
+                	chooseUserDiv += '<p class="title_p" style="min-height: 15px;">下一环节<span class="task_activity_name">流程结束</span>'
+						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
+						+'</p>';
                 }else{
                     for(var i=0;i<activityMetaList.length;i++){
                         var activityMeta = activityMetaList[i];
                         var showActivityId = activityMeta.activityId.replace(":","");
-                        chooseUserDiv += '<tr>'
-                            +'<th class="approval_th">下一环节</th>'
-                            +'<td>'+activityMeta.activityName+'</td>'
-                            +'</tr>'
-                            +'<tr>'
-                            +'<th class="approval_th">处理人</th>'
-                            +'<td id="'+showActivityId+'">';
-                        	
-                        if(activityMeta.userName!=null && activityMeta.userName!=""){
+                        chooseUserDiv += '<div class="title_p" style="min-height: 15px;">'
+                        	+'<div style="float:left">下一环节</div>'
+							+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
+							+'<div class="task_activity_name">'+activityMeta.activityName+'</div>'
+							+'</div>'
+							+'<table style="display:none;"><tr><th style="padding-left: 10px;">处理人</th><td>';
+                        if(activityMeta.userName!=null && activityMeta.userName!=""){//用户名不为空
                         	var userNameArr = activityMeta.userName.split(";");
-                        	chooseUserDiv += '<div class="handle_person_name"><ul>';
+                        	chooseUserDiv += '<div class="handle_person_name" id="'+showActivityId+'"><ul>';
                         	for(var j=0;j<userNameArr.length;j++){
                         		var userName = userNameArr[j];
                         		var userUid = activityMeta.userUid.split(";")[j];
                         		if(userName != "" && userName != null){
-                        			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){
-                        				chooseUserDiv += '<li style="margin-right:15px;"><div class="choose_user_name_span">'+userName
-                        				+'</div><span><i class="layui-icon delete_choose_user" style="display:none" value="'+userUid
-                        				+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+                        			userName = userName.replace(/\(.*?\)/g,'');
+                        			var lastName = common.splitName(userName);
+                        			//下标从0开始
+                        			if(j>maxShowPersonCount-1){
+                        				chooseUserDiv += '<li style="display:none">';
                         			}else{
-                        				chooseUserDiv += '<li><div class="choose_user_name_span">'+userName
-                        				+'</div><span><i class="layui-icon delete_choose_user" value="'+userUid
-                        				+'" onclick="deleteAssembleUser(this);">&#x1007;</i></span></li>';
+                        				chooseUserDiv += '<li>';
+                        			}
+                        			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){//不可以选择用户
+                        				if(lastName.length==1){
+                        					//chooseUserDiv += '<span class="first_name">'+lastName+'</span>';
+                        					if(j==0){
+                        						//chooseUserDiv += '<img src="resource/desmartportal/images/timg.jpg" onload="imgLoad(this);" style="display:none;" class="first_img" alt="'+lastName+'"/>';
+                        						chooseUserDiv += '<p class="first_name">'+lastName+'</p>'
+                        					}else{
+                        						chooseUserDiv += '<p class="first_name">'+lastName+'</p>'
+                        					}
+                        				}else{
+                        					chooseUserDiv += '<p class="first_name" style="font-size:12px;padding-bottom: 12px;padding-left: 6px;padding-right: 6px;line-height: 19px;">'+lastName+'</p>'
+                        				}
+                        				chooseUserDiv += '<p class="person_name">'+userName+'</p>'
+											+'<span>'
+											+'<i class="layui-icon delete_choose_user" style="display:none" value="'+userUid+'" onclick="deleteAssembleUser(this);">&#x1007;</i>'
+											+'</span>'
+											+'</li>';
+                        			}else{//可以选择用户
+                        				if(lastName.length==1){
+                        					chooseUserDiv += '<p class="first_name">'+lastName+'</p>';
+                        				}else{
+                        					chooseUserDiv += '<p class="first_name" style="font-size:12px;">'+lastName+'</p>'
+                        				}
+                        				chooseUserDiv += '<p class="person_name">'+userName+'</p>'
+											+'<span>'
+											+'<i class="layui-icon delete_choose_user" value="'+userUid+'" onclick="deleteAssembleUser(this);">&#x1007;</i>'
+											+'</span>'
+											+'</li>';
                         			}
                         		}
                         	}
-                        	chooseUserDiv += '<li class="choose_user_li">'
-		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
-	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
-	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
-	                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
-	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
-	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
-	                            +'data-looptype="'+activityMeta.loopType+'" />'
-	                            +'</li></ul></div>';
-                        }else{
-                        	chooseUserDiv += '<div class="handle_person_name"><ul>'
-	                        		+'<li class="choose_user_li">'
+                        	//判断默认处理人的数量  下标从0开始
+                        	if(userNameArr.length>maxShowPersonCount-1){
+                        		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
+                            		chooseUserDiv += '<li style="display:none;margin-bottom: 15px;" class="choose_user_li" id="'+showActivityId+'">'
+    		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
+    	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+    	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
+    	                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
+    	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+    	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+    	                            +'data-looptype="'+activityMeta.loopType+'" />'
+    	                            +'</li>';
+                            	}
+                        		chooseUserDiv += '<li class="show_many_li" style="margin: 15px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>';
+                        	}else{
+                        		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
+                            		chooseUserDiv += '<li style="margin-bottom: 15px;" class="choose_user_li" id="'+showActivityId+'">'
+    		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
+    	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
+    	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
+    	                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
+    	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+    	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+    	                            +'data-looptype="'+activityMeta.loopType+'" />'
+    	                            +'</li>';
+                            	}
+                        	}
+                        	chooseUserDiv += '</ul></div>';
+                        }else{//用户名为空，只渲染选人组件
+                        	chooseUserDiv += '<div class="handle_person_name"><ul>';
+                        	if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
+                        		chooseUserDiv += '<li style="margin-bottom: 15px;" class="choose_user_li">'
 			                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
 		                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
 		                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
 		                            +'<input type="hidden" class="getUser" id="'+activityMeta.activityId
 		                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
-		                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
-		                            +'data-looptype="'+activityMeta.loopType+'" />'
+		                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname
+		                            +'" data-looptype="'+activityMeta.loopType+'" />'
 		                            +'</li></ul></div>';
+                        	}
                         }
                     }//end for
                 }
-                $("#submit_table table").append(chooseUserDiv);
+                chooseUserDiv += "</td></tr></table>";
+                $("#submit_table").append(chooseUserDiv);
                 layer.closeAll("loading");
             }else {
                 layer.closeAll("loading");
@@ -1062,7 +1139,21 @@ function showRouteBar() {
 
 //删除已选处理人
 function deleteAssembleUser(obj){
+	var ulObj = $(obj).parent().parent().parent();
+	ulObj.find(".choose_user_li").show();
+	ulObj.find("li:hidden").addClass("show_user");
+	ulObj.find("li:hidden").show();
+	//删除当前用户后，判断剩余用户数量
+	if(ulObj.find(".delete_choose_user").length-1 <= maxShowPersonCount){
+		ulObj.find(".show_many_li").hide();
+	}
 	$(obj).parent().parent().remove();
+	ulObj.find(".delete_choose_user").each(function(index){
+		console.log(index);
+		if(index<4){
+			$(this).parent().parent().removeClass("show_user");
+		}
+	});
 }
 
 // 为直接跳转到驳回人显示环节栏
@@ -1314,4 +1405,23 @@ function check_before_submit(){
 //显示隐藏div
 function showDiv(obj){
 	$(obj).parent().next().slideToggle(100);
+}
+
+//显示隐藏多余的用户
+function showManyPerson(obj){
+	if($(obj).parent().parent().find(".show_user").length==0){
+		$(obj).parent().parent().find("li:hidden").addClass("show_user");
+		$(obj).parent().parent().find(".choose_user_li").show();
+		$(obj).parent().parent().find("li:hidden").show();
+	}else{
+		$(obj).parent().parent().find(".show_user").hide();
+		$(obj).parent().parent().find(".choose_user_li").hide();
+		$(obj).parent().parent().find(".show_user").removeClass("show_user");
+	}
+}
+
+//图片加载成功事件
+function imgLoad(obj){
+	$(obj).show();
+	$(obj).next().hide();
 }
