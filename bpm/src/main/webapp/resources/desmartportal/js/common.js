@@ -1179,6 +1179,7 @@ if(s!=null&&s.length>0){
    }
    $(obj).val(t.split("").reverse().join("") + "." + r);
 }else{
+	$(obj).val("");
 	return;
 }
 }
