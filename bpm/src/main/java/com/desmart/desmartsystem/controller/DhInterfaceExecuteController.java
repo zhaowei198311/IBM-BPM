@@ -1,5 +1,6 @@
 package com.desmart.desmartsystem.controller;
 
+import com.desmart.common.constant.ServerResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.desmartsystem.service.DhInterfaceExecuteService;
 import com.desmart.desmartsystem.util.Json;
+
+import java.util.Map;
 
 /**
  * 
@@ -43,11 +46,15 @@ public class DhInterfaceExecuteController extends  BaseController{
 	public Json interfaceSchedule(@RequestBody JSONObject jsonObject) {
 		Json j=new Json();
 		try {
-			j.setSuccess(true);
-			j.setMsg("接口调用成功");
-			j=dhInterfaceExecuteService.interfaceSchedule(jsonObject);
+			ServerResponse<Map<String, String>> interfaceScheduleResponse = dhInterfaceExecuteService.interfaceSchedule(jsonObject);
+			if (interfaceScheduleResponse.isSuccess()) {
+				j.setSuccess(true);
+				j.setMsg("接口调用成功");
+			} else {
+				j.setSuccess(false);
+				j.setMsg(interfaceScheduleResponse.getMsg());
+			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
 			j.setSuccess(false);
 			e.printStackTrace();

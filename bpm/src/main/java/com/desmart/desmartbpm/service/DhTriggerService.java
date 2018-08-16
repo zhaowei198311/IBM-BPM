@@ -46,12 +46,11 @@ public interface DhTriggerService {
      * @param insUid 流程实例主键
      * @param dhStep  步骤
      * @return
-     *   map中的参数：
-     *   "status": 0 调用成功 1 调用失败
-     *   "msg" 错误信息
-     *   "param" 出错时的接口参数
+     * status: 0  成功<br/>
+     * status: 1  java代码异常，没有调用接口<br/>
+     * status: 2  接口有返回之后的异常 data中存放的是接口调用的log主键<br/>
      */
-    ServerResponse<Map<String, String>> invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep);
+    ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep);
     
     /**
      * 反射调用选人触发器
@@ -60,7 +59,7 @@ public interface DhTriggerService {
      * @param triUid
      * @return
      */
-    public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid);
+    ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid);
     
     /**
      * 触发器修改
