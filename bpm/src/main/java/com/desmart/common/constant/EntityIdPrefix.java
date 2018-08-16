@@ -105,4 +105,8 @@ public class EntityIdPrefix {
      * 触发器调用记录前缀
      */
     public static final String DH_TRIGGER_INVOKE_RECORD = "tri_invoke:";
+
+    /** 接口调用日志 */
+    public static final String DH_INTERFACE_LOG = "inter_log:";
+
 }

@@ -1,12 +1,9 @@
 package com.desmart.desmartsystem.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.common.constant.ServerResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,17 +54,18 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 	private IncrementIdByDateUtil incrementIdByDateUtil;
 
 	@Override
-	public Json interfaceSchedule(JSONObject jsonObject) throws Exception {
-		Json json = new Json();
-
+	public ServerResponse<Map<String, String>> interfaceSchedule(JSONObject jsonObject) throws Exception{
+		ServerResponse<Map<String, String>> serverResponse = null;
 		String intUid = jsonObject.getString("intUid");
 		if (StringUtils.isBlank(intUid)) {
-			json.setSuccess(false);
-			json.setMsg("接口未找到");
-			return json;
+			return ServerResponse.createByErrorMessage("接口调用失败，缺少接口主键信息");
 		}
 
 		DhInterface dhInterface = dhInterfaceService.getByIntUid(intUid);
+        if (dhInterface == null) {
+			return ServerResponse.createByErrorMessage("接口调用失败，指定的接口不存在");
+        }
+
 		jsonObject.put("dhinterface", dhInterface);
 		String intType = dhInterface.getIntType();
 
@@ -82,12 +80,9 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 		String status = dhInterface.getIntStatus();
 		// 判断接口是否为停用状态
 		if (status.equals(Const.INATERFACE_DISABLED_STATUS)) {
-			json.setSuccess(false);
-			json.setMsg("接口为停用状态！");
-			return json;
+			return ServerResponse.createByErrorMessage("接口调用失败，接口为停用状态");
 		}
-
-		JSONObject inputParameter = (JSONObject) jsonObject.getJSONObject("inputParameter");
+		JSONObject inputParameter = jsonObject.getJSONObject("inputParameter");
 		
 		//判断如果是批次号系统自动生成
 		if(inputParameter.get("PNO")!=null) {
@@ -119,16 +114,12 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 				if (key.equals(paraName) && para_intUid.equals(intUid)) {// 根据传入参数名和接口Uid获取参数对应的配置信息
 					if (isMust.equals("true")) {
 						if (StringUtils.isBlank(value)) {
-							json.setSuccess(false);
-							json.setMsg(paraDescription + "(不能为空)");
-							return json;
+							return ServerResponse.createByErrorMessage(paraDescription + "(不能为空)");
 						} else {
 							Integer paraSize = dhInterfaceParameter.getParaSize();
 							if (paraSize < value.getBytes().length
 									&& paraType.equals(InterfaceParameterType.STRING.getCode())) {
-								json.setSuccess(false);
-								json.setMsg(paraDescription + "(参数长度过长!)");
-								return json;
+								return ServerResponse.createByErrorMessage(paraDescription + "(参数长度过长!)");
 							}
 						}
 					}
@@ -138,14 +129,10 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 								Date  valueDate= DateUtil.strToDate(value, dateFmt);
 								String strDate = DateUtil.dateToStr(valueDate,dateFmt);
 								if (!DateFmtUtils.isValidDate(strDate, dateFmt)) {
-									json.setSuccess(false);
-									json.setMsg(value + "(不是正确的日期格式！)");
-									return json;
+									return ServerResponse.createByErrorMessage(value + "(不是正确的日期格式！)");
 								}
 							} catch (Exception e) {
-								json.setSuccess(false);
-								json.setMsg(value + "(不是正确的日期格式！)");
-								return json;
+								return ServerResponse.createByErrorMessage(value + "(不是正确的日期格式！)");
 							}
 						}
 					}
@@ -155,9 +142,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 							|| paraType.equals(InterfaceParameterType.DOUBLE.getCode())) {
 						if (StringUtils.isNoneBlank(value)) {
 							if (!StringUtils.isNumeric(value)) {
-								json.setSuccess(false);
-								json.setMsg(value + "(不是正确的数字类型!)");
-								return json;
+								return ServerResponse.createByErrorMessage(value + "(不是正确的数字类型!)");
 							}
 						}
 					}
@@ -240,38 +225,61 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 					}
 				}
 			}
-			json.setSuccess(true);
-			json.setMsg(JSON.toJSONString(jsonArray.toArray()));
-			json.setObj(jsonArray.toArray());
+            String responseBody = JSON.toJSONString(jsonArray.toArray());
+            DhInterfaceLog interfaceLog = saveDhInterfaceLog(intUid, inputParameter.toJSONString(), responseBody);
+            Map<String, String> map = new HashMap<>();
+            map.put("dilUid", interfaceLog.getDilUid());
+            map.put("responseBody", responseBody);
+            return ServerResponse.createBySuccess(map);
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
 			JSONObject jSONObject = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
 			String  statusCode = jSONObject.getString("statusCode");
-			if(!statusCode.equals("200")) {
-				json.setSuccess(false);
-				json.setMsg(jSONObject.getString("responseResult"));
-				return json;
-			}else {
+			// 保存调用记录
+            DhInterfaceLog interfaceLog = saveDhInterfaceLog(intUid, inputParameter.toJSONString(), jSONObject.getString("responseResult"));
+            Map<String, String> map = new HashMap<>();
+            map.put("dilUid", interfaceLog.getDilUid()); // 调用日志的主键
+
+			if(statusCode.equals("200")) {
 				// 返回参数格式拼接
 				List<String> responseConfig = new ArrayList<String>();
 				TestXML.testGetRoot(responseXml, responseConfig);
-				json.setMsg(XmlToJsonUtils.xmlToJson(jSONObject.getString("responseResult"), responseConfig));
+                String responseBody = XmlToJsonUtils.xmlToJson(jSONObject.getString("responseResult"), responseConfig);
+                map.put("responseBody", responseBody);
+                return ServerResponse.createBySuccess(map);
+            }else {
+                return ServerResponse.createByErrorCodeAndData(2, "接口返回异常", map);
 			}
 		} else if (intType.equals(InterfaceType.RESTAPI.getCode())) {
-			json.setSuccess(true);
-			json.setMsg(HttpRequestUtils.httpPost(intUrl + intCallMethod, inputParameter));
-		}
-
-		DhInterfaceLog dhInterfaceLog = new DhInterfaceLog();
-		dhInterfaceLog.setDilUid("dhinterfacelog:" + UUIDTool.getUUID());
-		dhInterfaceLog.setCreatedate(new Date());
-		dhInterfaceLog.setCreateuser("interfaceAdmin");
-		dhInterfaceLog.setDilRequest(inputParameter.toJSONString());
-		dhInterfaceLog.setDilResponse(json.getMsg());
-		dhInterfaceLog.setIntUid(intUid);
-		dhInterfaceLogMapper.insert(dhInterfaceLog);
-		return json;
+            String postResponse = HttpRequestUtils.httpPost(intUrl + intCallMethod, inputParameter);
+		    DhInterfaceLog interfaceLog = saveDhInterfaceLog(intUid, inputParameter.toJSONString(), postResponse);
+            Map<String, String> map = new HashMap<>();
+            map.put("dilUid", interfaceLog.getDilUid());
+            map.put("responseBody", postResponse);
+            return ServerResponse.createBySuccess(map);
+		} else {
+		    return ServerResponse.createByErrorMessage("接口类型异常：" + intType);
+        }
 	}
+
+    /**
+     * 保存接口调用日志
+     * @param dilRequest
+     * @param dilResponse
+     * @return
+     */
+	private DhInterfaceLog saveDhInterfaceLog(String intUid, String dilRequest, String dilResponse) {
+        DhInterfaceLog dhInterfaceLog = new DhInterfaceLog();
+        dhInterfaceLog.setDilUid(EntityIdPrefix.DH_INTERFACE_LOG + String.valueOf(UUID.randomUUID()));
+        dhInterfaceLog.setCreatedate(new Date());
+        dhInterfaceLog.setCreateuser("interfaceAdmin");
+        dhInterfaceLog.setDilRequest(dilRequest);
+        dhInterfaceLog.setDilResponse(dilResponse);
+        dhInterfaceLog.setIntUid(intUid);
+        dhInterfaceLogMapper.insert(dhInterfaceLog);
+        return dhInterfaceLog;
+    }
+
 
 	@Override
 	public Json executeRpcInterface(JSONObject jsonObject) throws Exception {

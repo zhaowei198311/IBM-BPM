@@ -10,8 +10,10 @@ import java.util.Date;
  */
 public class DhTriggerException implements Serializable{
 	private static final long serialVersionUID = -7803852253465310676L;
-	/** 状态：出错 */
-	public static final String STATUS_ERROR = "error";
+	/** 状态：步骤出错 */
+	public static final String STATUS_STEP_ERROR = "stepError";
+	/** 状态：提交出错 */
+	public static final String STATUS_SUBMIT_ERROR = "submitError";
 	/** 状态：已修复 */
 	public static final String STATUS_DONE = "done";
 

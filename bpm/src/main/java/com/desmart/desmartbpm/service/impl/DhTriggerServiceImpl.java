@@ -144,8 +144,8 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep){
 		String triUid = dhStep.getStepObjectUid();
 		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
-		Map<String,String> resultMap = new HashMap<>();
-		if ("javaclass".equals(dhTrigger.getTriType())) {
+		if (DhTriggerType.JAVACLASS.getCode().equals(dhTrigger.getTriType())) {
+		    // 调用java反射类
 			try {
 				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
 				Object obj = clz.newInstance();
@@ -153,36 +153,30 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 				Method md = obj.getClass().getMethod("execute",
 						new Class[] { WebApplicationContext.class, String.class, JSONObject.class, DhStep.class });
 				md.invoke(obj, new Object[] { wac, insUid, jb, dhStep });
-				resultMap.put("status", "0");
+				return ServerResponse.createBySuccess();
 			} catch (InvocationTargetException invokeException) {
                 logger.error("调用反射类异常，实例主键：" + insUid, invokeException);
-				resultMap.put("status", "1");
-				resultMap.put("msg", getStackMsg(invokeException.getTargetException()));
-				return ServerResponse.createBySuccess(resultMap);
+                Throwable targetException = invokeException.getTargetException();
+                return ServerResponse.createByErrorMessage(getStackMsg(targetException));
 			} catch (Exception e) {
 				logger.error("调用反射类异常，实例主键：" + insUid, e);
-				resultMap.put("status", "1");
-				resultMap.put("msg", getStackMsg(e));
-				return ServerResponse.createBySuccess(resultMap);
+                return ServerResponse.createByErrorMessage(getStackMsg(e));
 			}
-		}else if("interface".equals(dhTrigger.getTriType())) {
+		}else if(DhTriggerType.INTERFACE.getCode().equals(dhTrigger.getTriType())) {
 			return transferInterface(insUid, dhStep, dhTrigger);
 		}else{
-		    logger.error("触发器类型异常");
-			resultMap.put("status", "1");
-			resultMap.put("msg", "触发器类型为："+dhTrigger.getTriType());
-			return ServerResponse.createBySuccess(resultMap);
+		    logger.error("触发器类型异常，类型为：" + dhTrigger.getTriType());
+            return ServerResponse.createByErrorMessage("触发器类型异常，类型为：" + dhTrigger.getTriType());
 		}
-		return ServerResponse.createBySuccess(resultMap);
 	}
 
 	/**
 	 * 调用接口传递参数并接收返回值
-	    map中的参数：
-	 *   "status": 0 调用成功 1 调用失败
-	 *   "msg" 错误信息
+     * status: 0  成功<br/>
+     * status: 1  java代码异常，没有调用接口<br/>
+     * status: 2  接口有返回之后的异常 data中存放的是接口调用的log主键<br/>
 	 */
-	private ServerResponse<Map<String, String>> transferInterface(String insUid, DhStep dhStep, DhTrigger dhTrigger){
+	private ServerResponse transferInterface(String insUid, DhStep dhStep, DhTrigger dhTrigger) {
 		String paramJson = "";
 		String triUid = dhStep.getStepObjectUid();
 		String stepUid = dhStep.getStepUid();
@@ -299,148 +293,147 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 			paramJson = "{\"intUid\":\"" + intUid + "\"," + inputParameter + "}";
 			JSONObject paramObj = JSONObject.parseObject(paramJson);
 			//调用接口处理数据并接收回调数据
-			Json json = dhInterfaceExecuteService.interfaceSchedule(paramObj);
-			//处理回调数据
-			handleInterfaceData(json, insUid, dhStep);
-			resultMap.put("status", "0");
+            ServerResponse<Map<String, String>> interfaceScheduleResponse = dhInterfaceExecuteService.interfaceSchedule(paramObj);
+            //处理回调数据
+			if (interfaceScheduleResponse.isSuccess()) {
+				return handleInterfaceData(interfaceScheduleResponse.getData(), insUid, dhStep);
+			} else {
+                return interfaceScheduleResponse;
+			}
 		}catch(Exception e) {
 			logger.error("调用接口失败, 实例uid" + insUid, e);
-			resultMap.put("status", "1");
-			resultMap.put("msg", getStackMsg(e));
-			resultMap.put("param", paramJson);
-			return ServerResponse.createBySuccess(resultMap);
+			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
-		return ServerResponse.createBySuccess(resultMap);
 	}
 	
 	/**
 	 * 处理接口json返回值更新对应的formData
 	 */
-	private void handleInterfaceData(Json json,String insUid, DhStep dhStep) throws Exception {
-		if(!json.isSuccess()) {
-			throw new PlatformException(json.getMsg());
-		}
-		String triUid = dhStep.getStepObjectUid();
-		String stepUid = dhStep.getStepUid();
-		String jsonStr = json.getMsg();
-		JSONObject jsonObj = JSONObject.parseObject(jsonStr);
-		//获得输出类型的触发器接口映射对象集合
-		List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid,stepUid,"outputParameter");
-		String formDataStr = "{";
-		for(int i=0;i<dhTriggerInterfaceList.size();i++) {
-			DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
-			//获得接口的参数name
-			String paramName = triInt.getParaName();
-			//获得参数对应的value
-			String returnValue = jsonObj.getString(paramName);
-			//获得对应的字段name
-			String fieldCodeName = triInt.getFldCodeName();
-			BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
-					fieldCodeName);
-			if (null == formField) {
-				//查询字段是否为子表单中的字段
-				List<String> publicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(triInt.getDynUid());
-				for (String publicFormUid : publicFormUidList) {
-					formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
-					if (null != formField) {
-						break;
-					}
-				}
-			}
-			//判断表单字段类型
-			if ("object".equals(formField.getFldType())) {
-				if(null==returnValue || "".equals(returnValue)) {
-					continue;
-				}
-				//返回的参数为list
-				JSONArray tableData = JSONArray.parseArray(returnValue);
-				formDataStr += "\""+fieldCodeName+"\":{\"value\":[";
-				for(int k=0;k<tableData.size();k++) {
-					JSONObject tableJson = tableData.getJSONObject(k);
-					//获得表格中字段集合
-					List<BpmFormField> tableFieldList = bpmFormFieldMapper
-							.queryFormTabFieldByFormUidAndTabName(triInt.getDynUid(),formField.getFldCodeName());
-					formDataStr += "{";
-					for (int j = 0; j < tableFieldList.size(); j++) {
-						BpmFormField tableField = tableFieldList.get(j);
-						String tableFieldCodeName = tableField.getFldCodeName();
-						//获得参数对应的触发器接口映射对象
-						DhTriggerInterface childTriInter = dhTriggerInterfaceMapper.queryTriIntByOutCondition(triUid,
-								tableFieldCodeName,"outputParameter");
-						if(null==childTriInter) {
-							continue;
-						}
-						String tableFieldValue = tableJson.getString(childTriInter.getParaName());
-						formDataStr += "\""+tableFieldCodeName+"\":\""+tableFieldValue+"\"";
-						if(j!=tableFieldList.size()-1) {
-							formDataStr += ",";
-						}
-					}
-					formDataStr += "}";
-					if(k!=tableData.size()-1) {
-						formDataStr += ",";
-					}
-				}
-				formDataStr += "]}";
-				//表格中的字段
-			} else if (formField.getFldType().indexOf("object_")!=-1) {
-				continue;
-			} else {
-				if(null == returnValue) {
-					returnValue = "";
-				}
-				//拼接insData中的json
-				formDataStr += "\""+fieldCodeName+"\":{\"value\":\""+returnValue+"\"}";
-				if (i != dhTriggerInterfaceList.size() - 1) {
-					formDataStr += ",";
-				}
-			}
-		}//end for
-		formDataStr += "}";
-		//获得流程实例对象
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
-		String insData = dhProcessInstance.getInsData();
-		JSONObject oldObj = JSONObject.parseObject(insData).getJSONObject("formData");
-		JSONObject formDataObj = FormDataUtil.formDataCombine(JSONObject.parseObject(formDataStr), oldObj);
-		JSONObject insDataObj = JSONObject.parseObject(insData);
-		//将新的json数据放入insData中
-		insDataObj.put("formData", formDataObj);
-		String newInsData = insDataObj.toJSONString();
-		dhProcessInstance.setInsData(newInsData);
-		int updateRow = dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
-		if(1!=updateRow) {
-			throw new PlatformException("接口数据插入失败");
-		}
-	}
+	private ServerResponse handleInterfaceData(Map<String, String> data, String insUid, DhStep dhStep) {
+        String triUid = dhStep.getStepObjectUid();
+        String stepUid = dhStep.getStepUid();
+        String dilUid = data.get("dilUid");
+        String jsonStr = data.get("responseBody");
+        try {
+            JSONObject jsonObj = JSONObject.parseObject(jsonStr);
+            // 获得输出类型的触发器接口映射对象集合
+            List<DhTriggerInterface> dhTriggerInterfaceList = dhTriggerInterfaceMapper.queryTriIntByTriUidAndType(triUid, stepUid, "outputParameter");
+            StringBuilder formDataStr = new StringBuilder();
+            formDataStr.append("{");
+            for (int i = 0; i < dhTriggerInterfaceList.size(); i++) {
+                DhTriggerInterface triInt = dhTriggerInterfaceList.get(i);
+                //获得接口的参数name
+                String paramName = triInt.getParaName();
+                //获得参数对应的value
+                String returnValue = jsonObj.getString(paramName);
+                //获得对应的字段name
+                String fieldCodeName = triInt.getFldCodeName();
+                BpmFormField formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(triInt.getDynUid(),
+                        fieldCodeName);
+                if (null == formField) {
+                    //查询字段是否为子表单中的字段
+                    List<String> publicFormUidList = bpmFormRelePublicFormMapper.queryFormReleByFormUid(triInt.getDynUid());
+                    for (String publicFormUid : publicFormUidList) {
+                        formField = bpmFormFieldMapper.queryFieldByFldUidAndCodeName(publicFormUid, fieldCodeName);
+                        if (null != formField) {
+                            break;
+                        }
+                    }
+                }
+                //判断表单字段类型
+                if ("object".equals(formField.getFldType())) {
+                    if (null == returnValue || "".equals(returnValue)) {
+                        continue;
+                    }
+                    //返回的参数为list
+                    JSONArray tableData = JSONArray.parseArray(returnValue);
+                    formDataStr.append("\"").append(fieldCodeName).append("\":{\"value\":[");
+                    for (int k = 0; k < tableData.size(); k++) {
+                        JSONObject tableJson = tableData.getJSONObject(k);
+                        //获得表格中字段集合
+                        List<BpmFormField> tableFieldList = bpmFormFieldMapper
+                                .queryFormTabFieldByFormUidAndTabName(triInt.getDynUid(), formField.getFldCodeName());
+                        formDataStr.append("{");
+                        for (int j = 0; j < tableFieldList.size(); j++) {
+                            BpmFormField tableField = tableFieldList.get(j);
+                            String tableFieldCodeName = tableField.getFldCodeName();
+                            //获得参数对应的触发器接口映射对象
+                            DhTriggerInterface childTriInter = dhTriggerInterfaceMapper.queryTriIntByOutCondition(triUid,
+                                    tableFieldCodeName, "outputParameter");
+                            if (null == childTriInter) {
+                                continue;
+                            }
+                            String tableFieldValue = tableJson.getString(childTriInter.getParaName());
+                            formDataStr.append("\"").append(tableFieldCodeName).append("\":\"").append(tableFieldValue).append("\"");
+                            if (j != tableFieldList.size() - 1) {
+                                formDataStr.append(",");
+                            }
+                        }
+                        formDataStr.append("}");
+                        if (k != tableData.size() - 1) {
+                            formDataStr.append(",");
+                        }
+                    }
+                    formDataStr.append("]}");
+                    //表格中的字段
+                } else if (formField.getFldType().indexOf("object_") != -1) {
+                    continue;
+                } else {
+                    if (null == returnValue) {
+                        returnValue = "";
+                    }
+                    //拼接insData中的json
+                    formDataStr.append("\"").append(fieldCodeName).append("\":{\"value\":\"").append(returnValue).append("\"}");
+                    if (i != dhTriggerInterfaceList.size() - 1) {
+                        formDataStr.append(",");
+                    }
+                }
+            }//end for
+            formDataStr.append("}");
+            //获得流程实例对象
+            DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(insUid);
+            String insData = dhProcessInstance.getInsData();
+            JSONObject oldObj = JSONObject.parseObject(insData).getJSONObject("formData");
+            JSONObject formDataObj = FormDataUtil.formDataCombine(JSONObject.parseObject(formDataStr.toString()), oldObj);
+            JSONObject insDataObj = JSONObject.parseObject(insData);
+            //将新的json数据放入insData中
+            insDataObj.put("formData", formDataObj);
+            String newInsData = insDataObj.toJSONString();
+            dhProcessInstance.setInsData(newInsData);
+            int updateRow = dhProcessInstanceMapper.updateByPrimaryKeySelective(dhProcessInstance);
+            if (updateRow == 1) {
+                return ServerResponse.createBySuccess();
+            } else {
+                return ServerResponse.createByErrorCodeAndData(2, "处理接口返回值异常", dilUid);
+            }
+        } catch (Exception e) {
+            logger.error("处理接口回调异常", e);
+            return ServerResponse.createByErrorCodeAndData(2, "处理接口返回值异常", dilUid);
+        }
+    }
 
 	@Override
-	public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid){
-		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
-		if ("javaclass".equals(dhTrigger.getTriType())) {
-			try {
-				Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
-				Object obj = clz.newInstance();
-				JSONObject jb = null;
-					try {
-						if (dhTrigger.getTriParam()!=null) {
-							jb = JSONObject.parseObject(dhTrigger.getTriParam());
-						}
-						Method md = obj.getClass().getDeclaredMethod("execute", 
-								new Class []{WebApplicationContext.class, String.class,
-										JSONObject.class});
-						return ServerResponse.createBySuccess((List<String>)md.invoke(obj, new Object[]{wac, insUid, jb}));
-					} catch (Exception e) {
-						// TODO: handle exception
-						return ServerResponse.createByErrorMessage("触发器执行异常，"+e.getMessage());
-					}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return ServerResponse.createByErrorMessage("触发器调用异常，"+e.getMessage());
-			}
-		}
-		return ServerResponse.createByErrorMessage("触发器调用异常，该触发器目前只开放javaClass调用");
-	}
+	public ServerResponse<List<String>> invokeChooseUserTrigger(WebApplicationContext wac, String insUid, String triUid) {
+        DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);
+        if (DhTriggerType.JAVACLASS.getCode().equals(dhTrigger.getTriType())) {
+            try {
+                Class<?> clz = Class.forName(dhTrigger.getTriWebbot());
+                Object obj = clz.newInstance();
+                JSONObject triggerParamJson = null;
+                if (dhTrigger.getTriParam() != null) {
+                    triggerParamJson = JSONObject.parseObject(dhTrigger.getTriParam());
+                }
+                Method md = obj.getClass().getDeclaredMethod("execute",
+                        new Class[]{WebApplicationContext.class, String.class,
+                                JSONObject.class});
+                return ServerResponse.createBySuccess((List<String>) md.invoke(obj, new Object[]{wac, insUid, triggerParamJson}));
+            } catch (Exception e) {
+                logger.error("调用选人触发器失败", e);
+                return ServerResponse.createByErrorMessage("触发器调用异常，" + e.getMessage());
+            }
+        }
+        return ServerResponse.createByErrorMessage("选人触发器调用异常，该触发器类型只能是java反射类");
+    }
 
 
 	/**

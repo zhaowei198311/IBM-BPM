@@ -33,8 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,20 +105,23 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         DhStep step = dhStep;
         while (step != null) {
             if (DhStep.TYPE_TRIGGER.equals(step.getStepType()) && StringUtils.isNotBlank(step.getStepObjectUid())) {
-                ServerResponse<Map<String, String>> invokeResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), step);
-                Map<String,String> invokeResult = invokeResponse.getData();
-                if(invokeResult.get("status").equals("1")) {
-                    // status == 1 表示调用出现异常
+                // 调用触发器
+                ServerResponse invokeTriggerResponse = dhTriggerService.invokeTrigger(wac, dhProcessInstance.getInsUid(), step);
+                if (!invokeTriggerResponse.isSuccess()) {
+                    // 记录调用异常
                     DhTriggerException dhTriggerException = new DhTriggerException();
-                    dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
+                    dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()));
                     dhTriggerException.setInsId(String.valueOf(dhProcessInstance.getInsId()));
                     dhTriggerException.setMqMessage(msgBody);  // mq推送过来的信息的主体内容
                     dhTriggerException.setStepId(dhStep.getStepUid());
                     dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
                     dhTriggerException.setTaskUid(dhTaskInstance.getTaskUid());
-                    dhTriggerException.setRequestParam(invokeResult.get("param")); // 记录调用参数
-                    dhTriggerException.setErrorMessage(invokeResult.get("msg"));   // 记录错误信息
-                    dhTriggerException.setStatus(DhTriggerException.STATUS_ERROR); // 记录状态
+                    dhTriggerException.setErrorMessage(invokeTriggerResponse.getMsg());   // 记录错误信息
+                    dhTriggerException.setStatus(DhTriggerException.STATUS_STEP_ERROR); // 记录状态
+                    if (invokeTriggerResponse.getStatus() == 2) {
+                        // 如果状态码是2，说明是调用接口错误，记录调用接口的日志主键
+                        dhTriggerException.setRequestParam(String.valueOf(invokeTriggerResponse.getData()));
+                    }
                     dhTriggerExceptionMapper.save(dhTriggerException);
                     // 修改流程实例状态为异常
                     setProcessStatusError(dhTaskInstance.getInsUid());
@@ -161,7 +162,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                 logger.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + dhTaskInstance.getInsUid());
             }
         } else {
-            throw new PlatformException("调用RESTful API完成任务失败，任务id: " + taskId + "，taskUid: " + dhTaskInstance.getTaskUid());
+            logger.error("调用RESTful API完成任务失败，任务id: " + taskId + "，taskUid: " + dhTaskInstance.getTaskUid());
         }
     }
 
@@ -176,7 +177,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         if (triggerException == null) {
             return ServerResponse.createByErrorMessage("找不到这条记录");
         }
-        if (!DhTriggerException.STATUS_ERROR.equals(triggerException.getStatus())) {
+        if (!DhTriggerException.STATUS_STEP_ERROR.equals(triggerException.getStatus())) {
             return ServerResponse.createByErrorMessage("此错误已经被重试成功");
         }
 
@@ -236,7 +237,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                     dhTriggerException.setTaskId(String.valueOf(dhTaskInstance.getTaskId()));
                     dhTriggerException.setRequestParam(invokeResult.get("param")); // 记录调用参数
                     dhTriggerException.setErrorMessage(invokeResult.get("msg"));   // 记录错误信息
-                    dhTriggerException.setStatus(DhTriggerException.STATUS_ERROR); // 记录状态
+                    dhTriggerException.setStatus(DhTriggerException.STATUS_STEP_ERROR); // 记录状态
                     this.saveOrUpdateTriggerExceptionWhenFail(dhTriggerException);
                     // 修改流程实例状态为异常
                     setProcessStatusError(dhTaskInstance.getInsUid());
