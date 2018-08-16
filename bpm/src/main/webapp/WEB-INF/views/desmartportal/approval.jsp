@@ -360,13 +360,15 @@
 									<table class="layui-table" lay-even lay-skin="nob" lay-size="sm">
  									<colgroup>
 										<col width="10%">
-										<col width="30%">
-										<col width="30%">
-										<col width="30%">
+										<col width="22.5%">
+										<col width="22.5%">
+										<col width="22.5%">
+										<col width="22.5%">
 									</colgroup>
 									<thead>
 									<tr><th>现在的环节号</th>
 									<th>当前处理人</th>
+									<th>当前处理人岗位</th>
 									<th>当前处理环节</th>
 									<th>当前处理到达时间</th></tr>
 									</thead>
