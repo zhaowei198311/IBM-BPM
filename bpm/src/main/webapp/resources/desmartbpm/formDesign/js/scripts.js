@@ -362,6 +362,7 @@ function downloadLayoutSrc() {
             ["onkeypress"],
             ["value"],
             ["name"],
+            ["placeholder"],
             ["title"],
             ["table-label"],
             ["isleading"],
