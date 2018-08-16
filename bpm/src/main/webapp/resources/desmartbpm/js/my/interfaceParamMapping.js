@@ -39,6 +39,17 @@ form.on('select(table_sel)', function (data) {
                     $(inputArr).append(trs);
                 }
             }
+            var trs2 = '<option value="null">无参数</option>'
+            var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
+            for (var i = 0; i < dataTableList.length; i++) {
+            	var inputArr = $(dataTableList[i]).find("select");
+            	$(inputArr).append(trs2);
+            }
+            var dataTableList2 = $("#col_md6").find(".layui-form-item").find(".layui-row");
+            for (var j = 0; j < dataTableList2.length; j++) {
+            	 var inputArr = $(dataTableList2[j]).find("select");
+            	$(inputArr).append(trs2);
+            }
             form.render();
         },
         error: function (result) {
@@ -130,6 +141,7 @@ form.on('select(table_sel)', function (data) {
         var formId = data.substring(0, data.indexOf('|')); // 表单ID
         var intUid = data.substring(data.indexOf('i')); // 参数ID
         var arr = new Array();
+        var arr2 = new Array();
         // 判断是 输入还是输出 保存
         if ($("#paramterType").val() == 'outputParameter') {
             // 输出
@@ -162,7 +174,7 @@ form.on('select(table_sel)', function (data) {
                     arr.push(info);
                 }
             }
-            var outputList = $(".list_mod").find(".layui-form-item").find(".layui-row");
+           /* var outputList = $(".list_mod").find(".layui-form-item").find(".layui-row");
             for (var i = 0; i < outputList.length; i++) {
                 var paraUid = $(outputList[i]).find(".paraUid").val();
                 var paraName = $(outputList[i]).find(".paraName").val();
@@ -190,7 +202,7 @@ form.on('select(table_sel)', function (data) {
                     };
                     arr.push(info);
                 }
-            }
+            }*/
             console.info(arr)
             $.ajax({
                 url: common.getPath() + '/dhTriggerInterface/insertBatch',
@@ -217,7 +229,7 @@ form.on('select(table_sel)', function (data) {
                     layer.alert('表单参数不能为空')
                     return;
                 } else {
-                    var info = {
+                    var info2 = {
                         triUid: triUid,
                         intUid: $("#triContent").val(),
                         dynUid: formId,
@@ -227,10 +239,10 @@ form.on('select(table_sel)', function (data) {
                         paraUid: paraUid,
                         fldCodeName: $(dataList[i]).find("option:selected").val()
                     };
-                    arr.push(info);
+                    arr2.push(info2);
                 }
             }
-            var inputList = $(".list_mod").find(".layui-form-item").find(".layui-row");
+           /* var inputList = $(".list_mod").find(".layui-form-item").find(".layui-row");
             for (var i = 0; i < inputList.length; i++) {
                 var paraUid = $(inputList[i]).find(".paraUid").val();
                 var paraName = $(inputList[i]).find(".paraName").val();
@@ -249,19 +261,19 @@ form.on('select(table_sel)', function (data) {
                         paraUid: paraUid,
                         fldCodeName: $(inputList[i]).find("option:selected").val()
                     };
-                    arr.push(info);
+                    arr2.push(info);
                 }
-            }
-            console.info(arr)
+            }*/
+            console.info(arr2)
             $.ajax({
                 url: common.getPath() + '/dhTriggerInterface/insertBatch',
                 type: 'post',
                 dataType: 'json',
                 contentType: "application/json",
-                data: JSON.stringify(arr),
+                data: JSON.stringify(arr2),
                 success: function (result) {
                     layer.alert('参数映射成功')
-                    //$("#triggerInterface_container").css("display","none");
+                    $("#triggerInterface_container").css("display","none");
                     //loadActivityConf(actcUid);
                 },
                 error: function (result) {
