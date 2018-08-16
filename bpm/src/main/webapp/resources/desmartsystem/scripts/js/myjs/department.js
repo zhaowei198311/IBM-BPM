@@ -45,7 +45,7 @@ function submitUserDeaprtment(ts){
 		url:'sysUserDepartment/userDepartmentExists',
 		type:'post',
 		dataType:'json',
-		data:{userUid:userUid,departUid:departUid},
+		data:{userUid:userUid,departUid:departUid,companyCode:companyCode},
 		success:function(data){
 			if(data){
 				$(ts).submit();
