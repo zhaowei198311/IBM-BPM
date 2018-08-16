@@ -1154,6 +1154,7 @@ function checkAndfomartNumber(obj,integer,decimal){
 	if(l.length>integer){
 		layer.alert("格式错误,正确格式为:F"+integer+"."+decimal);
 		$(obj).val("");
+		return;
 	}else if(decimal==0){
 		$(obj).val(l);
 	}
