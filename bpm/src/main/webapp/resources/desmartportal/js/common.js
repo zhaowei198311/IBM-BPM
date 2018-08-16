@@ -1125,7 +1125,10 @@ var common = {
         return lastname;  
     }  
 };
-
+function rmoney(s)  
+{  
+   return parseFloat(s.replace(/[^\d\.-]/g, ""));  
+} 
 function checkAndfomartNumber(obj,integer,decimal){
 	let num = $(obj).val();
 	let l = num.split(".")[0];
