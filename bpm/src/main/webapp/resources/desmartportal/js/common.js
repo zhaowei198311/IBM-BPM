@@ -848,12 +848,7 @@ var common = {
 						}
 					}
 				}else if($("[name='"+name+"']").prop("tagName")=="TABLE"){
-					$("[name='"+name+"']").css("display","none");
-					var talbeTitle = $("[name='"+name+"']").attr("title");
-					var pTitle = $("[name='"+name+"']").prev()[0].firstChild.data.trim();
-					if(talbeTitle==pTitle){
-						$("[name='"+name+"']").prev().css("display","none");
-					}
+					$("[name='"+name+"']").parent().parent().css("display","none");
 				}
 			}//end display
 		}
