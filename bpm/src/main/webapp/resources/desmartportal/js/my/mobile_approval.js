@@ -44,8 +44,6 @@ $(function () {
     
     //加载已上传的附件
     loadFileList();
-    
-    //touchStartPerson();
 });
 
 //用于异步加载数据的参数
@@ -456,8 +454,7 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 	if(isMulti){
 		userName = userName.replace(/\(.*?\)/g,'');
 		var lastName = common.splitName(userName);
-		var userLiId = common.getRandomString(2);
-		var liHtml = '<li class="sys_user_li" id="'+userLiId+'">';
+		var liHtml = '<li class="sys_user_li" onclick="personClick(this,event)">';
 		if(lastName.length==1){
 			liHtml += '<p class="first_name">'+lastName+'</p>';
 		}else{
@@ -492,7 +489,6 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 				$("#"+elementId).find(".choose_user_li").prev().addClass("show_user");
 			}
 		}
-		touchStartPerson(userLiId);
 		if(asyncActcChooseableHandlerType=='allUser'){
 			pageConfig.pageNum = $(obj).parent().find("tr").length+1;
 			pageConfig.pageSize = 1;
@@ -1024,7 +1020,6 @@ function showRouteBar() {
                 $("#submit_table table").empty();
                 var activityMetaList = result.data;
                 var chooseUserDiv = "";
-                var userLiId = common.getRandomString(2);
                 if(activityMetaList.length==0){
                 	chooseUserDiv += '<div class="title_p" style="min-height: 15px;"><div style="float:left">下一环节</div>'
 						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
@@ -1034,7 +1029,7 @@ function showRouteBar() {
                     for(var i=0;i<activityMetaList.length;i++){
                         var activityMeta = activityMetaList[i];
                         var showActivityId = activityMeta.activityId.replace(":","");
-                        chooseUserDiv += '<div class="title_p" style="min-height: 15px;">'
+                        chooseUserDiv = '<div class="title_p" style="min-height: 15px;">'
                         	+'<div style="float:left">下一环节</div>'
 							+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
 							+'<div class="task_activity_name">'+activityMeta.activityName+'</div>'
@@ -1053,9 +1048,9 @@ function showRouteBar() {
                         			var lastName = common.splitName(userName);
                         			//下标从0开始
                         			if(j>maxShowPersonCount-1){
-                        				chooseUserDiv += '<li class="sys_user_li" id="'+userLiId+'" style="display:none">';
+                        				chooseUserDiv += '<li class="sys_user_li" style="display:none" onclick="personClick(this,event)">';
                         			}else{
-                        				chooseUserDiv += '<li class="sys_user_li" id="'+userLiId+'">';
+                        				chooseUserDiv += '<li class="sys_user_li" onclick="personClick(this,event)">';
                         			}
                         			if(activityMeta.dhActivityConf.actcCanChooseUser=="FALSE"){//不可以选择用户
                         				if(lastName.length==1){
@@ -1146,11 +1141,10 @@ function showRouteBar() {
                         	}
                         }
                         chooseUserDiv += "</td></tr></table>";
+                        $("#submit_table").append(chooseUserDiv);
                     }//end for
                 }
-                $("#submit_table").append(chooseUserDiv);
                 layer.closeAll("loading");
-                touchStartPerson(userLiId);
             }else {
                 layer.closeAll("loading");
                 layer.alert(result.msg);
@@ -1447,60 +1441,42 @@ function imgLoad(obj){
 	$(obj).next().hide();
 }
 
-//选人之后长按事件
-function touchStartPerson(userLiId){
-	var timeOutEvent=0;
-	var liObj = $("#"+userLiId);
-	liObj.on({
-		touchstart: function(e){
-			var target = e.target;
-			if($(target).prop("tagName")=="I"){
-				deleteAssembleUser(target);
-				return;
-			}
-			timeOutEvent = setTimeout(function(){
-				var userUid = liObj.find(".delete_choose_user").attr("value");
-				var userName = liObj.find(".person_name").text().trim();
-				if(userUid!=null && userUid!=""){
-					$.ajax({
-						url:common.getPath()+"/sysUserDepartment/selectAll",
-						type:"post",
-						method:"post",
-						data:{
-							"userUid":userUid
-						},success:function(result){
-							if(result.length!=0){
-								var departName = "";
-								var companyName = "";
-								for(var i=0;i<result.length;i++){
-									departName += result[i].departName;
-									companyName += result[i].sysCompany.companyName;
-									if(i!=result.length-1){
-										departName += ",";
-										companyName += ",";
-									}
-								}
-								var userHtml = "<p>"+userName+"("+userUid+")</p>"
-									+"<p>部门："+departName+"</p>"
-									+"<p>公司："+companyName+"</p>";
-								layer.tips(userHtml, liObj, {
-									tips: [3,"#EF6301"]
-								});
-							}
+//人员点击事件
+function personClick(obj,e){
+	var target = e.target;
+	if($(target).prop("tagName")=="I"){
+		//deleteAssembleUser(target);
+		return;
+	}
+	var userUid = $(obj).find(".delete_choose_user").attr("value");
+	var userName = $(obj).find(".person_name").text().trim();
+	if(userUid!=null && userUid!=""){
+		$.ajax({
+			url:common.getPath()+"/sysUserDepartment/selectAll",
+			type:"post",
+			method:"post",
+			data:{
+				"userUid":userUid
+			},success:function(result){
+				if(result.length!=0){
+					var departName = "";
+					var companyName = "";
+					for(var i=0;i<result.length;i++){
+						departName += result[i].departName;
+						companyName += result[i].sysCompany.companyName;
+						if(i!=result.length-1){
+							departName += ",";
+							companyName += ",";
 						}
+					}
+					var userHtml = "<p>"+userName+"("+userUid+")</p>"
+						+"<p>部门："+departName+"</p>"
+						+"<p>公司："+companyName+"</p>";
+					layer.tips(userHtml, $(obj), {
+						tips: [3,"#EF6301"]
 					});
 				}
-			},500);
-		 	e.preventDefault();
-		},
-		touchmove: function(){
-			
-            clearTimeout(timeOutEvent); 
-		    timeOutEvent = 0; 
-		},
-		touchend: function(){
-	   		clearTimeout(timeOutEvent);
-			return false; 
-		}
-	});
+			}
+		});
+	}
 }

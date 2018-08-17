@@ -6,7 +6,7 @@ body{
     position: fixed;
     right: 12px;
     bottom: 12px;
-    z-index: 9999;
+    z-index: 99;
 }
 .layui-fixbar .layui-fixbar-top {
     font-size: 40px;
