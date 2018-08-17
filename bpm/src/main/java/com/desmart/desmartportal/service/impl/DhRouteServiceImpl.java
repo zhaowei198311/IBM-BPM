@@ -414,7 +414,7 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @param companyNum
      * @return
      */
-    public List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
+    private List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
     	SysRoleUser roleUser = new SysRoleUser();
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//设置公司编码查询条件
@@ -459,7 +459,7 @@ public class DhRouteServiceImpl implements DhRouteService {
      * 根据用户查询上级用户
      * @param sysUser
      */
-	public List<SysUser> searchByLeaderOfPreActivityUser(SysUser sysUser) {
+	private List<SysUser> searchByLeaderOfPreActivityUser(SysUser sysUser) {
 		String departNo = sysUser.getDepartUid();
 		SysUserDepartment selective = new SysUserDepartment();
 		selective.setDepartUid(departNo);
@@ -476,8 +476,11 @@ public class DhRouteServiceImpl implements DhRouteService {
 				userUidList.add(sysUserDepartment.getUserUid());
 			}
 		}
+		if (CollectionUtils.isEmpty(userUidList)) {
+			return new ArrayList<>();
+		}
 		List<SysUser> managerList = sysUserMapper.listByPrimaryKeyList(userUidList);//获取到根据userUid查询到的人员集合
-		if(managerList!=null&&managerList.size()>0) {//上级用户存在人，则直接返回
+		if(managerList != null && managerList.size() > 0) {//上级用户存在人，则直接返回
 			return managerList;
 		}else {
 			//根据部门id查询其父部门id
