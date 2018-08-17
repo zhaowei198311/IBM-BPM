@@ -57,7 +57,7 @@ function fiterDivShow(){
     	,closeBtn:0
     	,shade: 0.3
     	,anim:2
-    	,zIndex:100
+    	,zIndex:1000
     	,resize:false
     	,area: ['width:100%', '350px']
 		,end:function(){

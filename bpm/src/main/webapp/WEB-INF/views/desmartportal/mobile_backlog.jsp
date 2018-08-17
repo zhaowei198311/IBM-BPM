@@ -98,7 +98,7 @@
 					</div>
 					<div class="layui-tab-item handle_table" id="finished_ul">
 						<ul class="tab_ul" id="finised_list">
-							<li>
+							<!-- <li>
 								<div class="backlog_top">
 									<div class="backlog_process">
 										<span class="backlog_process_name">门店新开店流程</span>
@@ -133,7 +133,7 @@
 										<span class="task_agent_text">代</span>
 									</div>
 								</div>
-							</li>
+							</li> -->
 						</ul>
 					</div>
 					<div class="layui-tab-item handle_table" id="end_ul">
