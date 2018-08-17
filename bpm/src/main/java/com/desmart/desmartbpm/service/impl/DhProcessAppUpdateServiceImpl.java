@@ -22,14 +22,8 @@ import com.desmart.desmartbpm.entity.engine.LswSnapshot;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.ModelMongoDao;
 import com.desmart.desmartbpm.service.*;
-import com.desmart.desmartsystem.dao.DhInterfaceMapper;
-import com.desmart.desmartsystem.dao.DhInterfaceParameterMapper;
 import com.desmart.desmartsystem.entity.DhInterfaceParameter;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import com.desmart.desmartsystem.service.DhInterfaceParameterService;
-import com.desmart.desmartsystem.service.DhInterfaceService;
-import com.github.pagehelper.PageHelper;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
@@ -167,7 +161,7 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
     public ServerResponse<Queue<DhProcessDefinitionBo>> prepareData(String proAppId, String newProVerUid) {
         // 检查此应用库是否已经被同步过
         String updateIdentity = proAppId + "|" + newProVerUid; // 查看是否有更新记录
-        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD);
+        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD_COLLECTION);
         if (updateTime != null) {
             return ServerResponse.createByErrorMessage("应用库此版本已经同步过，不能再次同步，同步时间：" + updateTime);
         }
@@ -268,11 +262,11 @@ public class DhProcessAppUpdateServiceImpl implements DhProcessAppUpdateService 
         }
         // 检查是否重复操作
         String updateIdentity = proAppId + "|" + newProVerUid; // 查看是否有更新记录
-        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD);
+        String updateTime = commonMongoDao.getStringValue(updateIdentity, CommonMongoDao.APP_UPDATE_RECORD_COLLECTION);
         if (updateTime != null) {
             return ServerResponse.createByErrorMessage("应用库此版本已经同步过，不能再次同步，同步时间：" + updateTime);
         }
-        commonMongoDao.set(updateIdentity, DateTimeUtil.dateToStr(new Date()), CommonMongoDao.APP_UPDATE_RECORD);
+        commonMongoDao.set(updateIdentity, DateTimeUtil.dateToStr(new Date()), CommonMongoDao.APP_UPDATE_RECORD_COLLECTION);
         // 拉取新版本的环节并生成流程定义
         ServerResponse<List<DhProcessDefinition>> newDefinitionResponse = pullAllProcessActivityMeta(definitionBoQueue);
         if (!newDefinitionResponse.isSuccess()) {

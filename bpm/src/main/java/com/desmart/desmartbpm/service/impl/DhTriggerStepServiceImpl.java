@@ -178,7 +178,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
             return ServerResponse.createByErrorMessage("找不到这条记录");
         }
         if (!DhTriggerException.STATUS_STEP_ERROR.equals(triggerException.getStatus())) {
-            return ServerResponse.createByErrorMessage("此错误已经被重试成功");
+            return ServerResponse.createBySuccess("此错误已经被重试成功");
         }
 
         String msgBody = triggerException.getMqMessage();

@@ -4,20 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.BpmProcessUtil;
 import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.HttpReturnStatusUtil;
 import com.desmart.common.util.TokenInfoUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
-import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
-import com.desmart.desmartbpm.enginedao.LswTaskMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
-import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.AnalyseLswTaskService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartportal.dao.DhAgentRecordMapper;
@@ -30,7 +26,6 @@ import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysEmailUtilBean;
 import com.desmart.desmartsystem.entity.SysUser;
-import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.desmart.desmartsystem.service.SendEmailService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +64,7 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
 
     @Override
     @Transactional
-    public ServerResponse analyseLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig) {
+    public ServerResponse analyseLswTask(LswTask lswTask, Map<Integer, List<String>> groupInfo, BpmGlobalConfig globalConfig) {
         System.out.println("开始分析任务编号：" + lswTask.getTaskId());
 
         int taskId = lswTask.getTaskId();
@@ -159,13 +154,13 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             }
         }
 
-        if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS) != null) {
+        if (commonMongoDao.getStringValue(String.valueOf(taskId), CommonMongoDao.CREATED_TASKS_COLLECTION) != null) {
             // 说明任务已经被插入数据库了
             return ServerResponse.createBySuccess();
         }
         // 批量保存任务
         dhTaskInstanceMapper.insertBatch(dhTaskList);
-        commonMongoDao.set(String.valueOf(taskId), DateTimeUtil.dateToStr(new Date()), CommonMongoDao.CREATED_TASKS);
+        commonMongoDao.set(String.valueOf(taskId), DateTimeUtil.dateToStr(new Date()), CommonMongoDao.CREATED_TASKS_COLLECTION);
         // 批量保存代理信息
         if (!CollectionUtils.isEmpty(agentRecordList)) {
             dhAgentRecordMapper.insertBatch(agentRecordList);
@@ -323,20 +318,17 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
      * @param groupInfo  引擎中群组信息
      * @return
      */
-    private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, String> groupInfo) {
-        List<String> uidList = Lists.newArrayList();
+    private List<String> getHandlerListOfTask(LswTask lswTask, Map<Integer, List<String>> groupInfo) {
+        List<String> uidList = new ArrayList<>();
         if (lswTask.getUserId() != -1) {
             // 引擎中分配到个人
             uidList.add(lswTask.getUserName());
+            return uidList;
         } else {
             // 引擎中分配给临时组
             Long groupId = lswTask.getGroupId();
-            String uidStr = groupInfo.get(groupId.intValue());
-            if (StringUtils.isNotBlank(uidStr)) {
-                uidList.addAll(Arrays.asList(uidStr.split(",")));
-            }
+            return groupInfo.get(groupId.intValue());
         }
-        return uidList;
     }
 
 

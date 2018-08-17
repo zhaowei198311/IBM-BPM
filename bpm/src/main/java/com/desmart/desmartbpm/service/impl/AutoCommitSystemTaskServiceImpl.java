@@ -1,10 +1,12 @@
 package com.desmart.desmartbpm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.*;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.service.AutoCommitSystemTaskService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
@@ -40,6 +42,8 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
     private DhTaskInstanceService dhTaskInstanceService;
+    @Autowired
+    private CommonMongoDao commonMongoDao;
 
     @Scheduled(cron = "0/10 * * * * ?")
     @Override
@@ -49,13 +53,29 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         // 获得待处理列表
         List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit(bpmGlobalConfig);
         for (DhTaskInstance taskInstance : taskList) {
-            try {
-                dhTaskInstanceService.submitSystemTask(taskInstance, bpmGlobalConfig);
-            } catch (Exception e) {
-                logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
-            }
+            this.doFirstSubmit(taskInstance, bpmGlobalConfig);
         }
         logger.info("处理系统任务完成");
+    }
+
+    /**
+     * 处理系统任务的第一次提交并处理过程
+     * @param taskInstance
+     * @param bpmGlobalConfig
+     * @return
+     */
+    private ServerResponse doFirstSubmit(DhTaskInstance taskInstance, BpmGlobalConfig bpmGlobalConfig) {
+        try {
+            ServerResponse submitSystemTaskResponse = dhTaskInstanceService.submitSystemTask(taskInstance, bpmGlobalConfig);
+            if (!submitSystemTaskResponse.isSuccess()) {
+                // todo 失败时的逻辑
+                logger.error("系统任务提交失败", submitSystemTaskResponse.getMsg());
+            }
+            return submitSystemTaskResponse;
+        } catch (Exception e) {
+            logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
+            return ServerResponse.createByErrorMessage(e.getMessage());
+        }
     }
 
     @Scheduled(cron = "55 * * * * ?")
@@ -67,7 +87,13 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit(bpmGlobalConfig);
         for (DhTaskInstance taskInstance : taskList) {
             try {
-                this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
+                ServerResponse checkResponse = this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
+                if (!checkResponse.isSuccess()) {
+                    if (checkResponse.getStatus() != 2) {
+                        // 如果出错不是因为未到提交时间
+                        // todo 记录到异常表
+                    }
+                }
             } catch (Exception e) {
                 logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
             }
@@ -77,36 +103,40 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
 
     /**
-     * 检查延时任务是否到了提交的时间点
+     * 检查延时任务是否到了提交的时间点, 如果到了提交点就进行提交
      * @param currTask  任务实例
      * @param bpmGlobalConfig  全局配置
      */
-    public void checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
+    public ServerResponse checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
         BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
         if (currTaskNode == null) {
-            throw new PlatformException("系统延时任务处理失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
+            return ServerResponse.createByErrorMessage("系统延时任务处理失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
         }
         DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
         if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
-            throw new PlatformException("系统延时任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
+            return ServerResponse.createByErrorMessage("系统延时任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
         }
         if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
                 || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
-            throw new PlatformException("系统延时任务任务类型异常，不能处理循环任务，taskUid：" + currTask.getTaskUid());
+            return ServerResponse.createByErrorMessage("系统延时任务任务类型异常，不能处理循环任务，taskUid：" + currTask.getTaskUid());
         }
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
 
         if (DhActivityConf.DELAY_TYPE_NONE.equals(currTaskConf.getActcDelayType())) {
             // 提交系统任务
-            dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
+            return this.doFirstSubmit(currTask, bpmGlobalConfig);
         } else if (DhActivityConf.DELAY_TYPE_TIME.equals(currTaskConf.getActcDelayType())) {
             // 计算是否到达提交时间: 任务接收时间 + 延时时间 < 当前时间 即处理
             if (checkTimeByDelayTime(currTask, currTaskConf)) {
-                dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
+                return this.doFirstSubmit(currTask, bpmGlobalConfig);
+            } else {
+                return ServerResponse.createByErrorCodeMessage(2, "任务未到提交时间");
             }
         } else if (DhActivityConf.DELAY_TYPE_FIELD.equals(currTaskConf.getActcDelayType())) {
             if (checkTimeByField(currTaskConf, dhProcessInstance)) {
-                dhTaskInstanceService.submitSystemTask(currTask, bpmGlobalConfig);
+                return this.doFirstSubmit(currTask, bpmGlobalConfig);
+            } else {
+                return ServerResponse.createByErrorCodeMessage(2, "任务未到提交时间");
             }
         } else {
             throw new PlatformException("系统延时任务处理失败，延时类型异常，taskUid：" + currTask.getTaskUid());
