@@ -56,6 +56,36 @@ public class FinishFormPrintController {
 		}
 	}
 	
+	@RequestMapping("/toPDFTest")
+	@ResponseBody
+	public ServerResponse toPDFTest(HttpServletRequest request,String webpage) {
+		//这里ip和端口号暂时先写在这
+		String formUid = UUID.randomUUID().toString();
+		finishFormPrintService.saveFormPrintContent(formUid, webpage);
+		String path = "127.0.0.1:8088/bpm/finishFormPrint/toPrint?formUid="+formUid;
+		//String pdfPath = request.getSession().getServletContext().getRealPath("/resources/form");
+		String pdfPath = "/data/opt/IBM/HTTPServer/htdocs/bpmdata";
+		String pdfName = formUid + ".pdf";
+		if (HtmlToPdf.getCommand(path, pdfPath + "\\" + pdfName)) {
+			String destPath = "/data/opt/IBM/HTTPServer/htdocs/bpmdata/" + pdfName;
+			try {
+	            URL url=new URL(destPath);
+	            URLConnection conn=url.openConnection();
+	            String str=conn.getHeaderField(0);
+	            if (str.indexOf("200")> 0){
+	                return ServerResponse.createBySuccess(destPath);
+	            }else{
+	                return ServerResponse.createByError();
+	            }
+	        } catch (Exception ex) {
+	        	ex.printStackTrace();
+	            return ServerResponse.createByError();
+	        }
+		}else {
+			return ServerResponse.createByError();
+		}
+	}
+	
 	@RequestMapping(value = "/toPrint")
 	public ModelAndView toPrint(String formUid) {
 		ModelAndView mv = new ModelAndView("desmartportal/print");

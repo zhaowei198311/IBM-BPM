@@ -22,7 +22,7 @@
 	<![endif]-->
     <title>待办任务</title>
     <%@include file="common/mobile_head.jsp" %>
-    <script type="text/javascript" src="resources/desmartportal/js/my/mobile_approval.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/my/mobile_approval.js?v=1.01"></script>
 </head>
 <body style="background-color: #f2f2f2;margin-bottom:40px;">
     <div class="mobile_container">
@@ -269,7 +269,7 @@
 					</div>
 					<div class="approval_btn_div">
 						<input type="button" class="layui-btn filter_btn" id="save_drafts_btn" value="保存草稿" onclick="saveDraftsInfo();"/>
-						<input type="button" class="layui-btn filter_btn" id="save_submit_btn" value="提交审批" onclick="submitTask()"/>
+						<input type="button" class="layui-btn filter_btn" id="save_submit_btn" value="提交审批" onclick="submitTaskByHandleType()"/>
 					</div>
 				</div>
 				<!-- end 审批意见 -->

@@ -581,8 +581,7 @@ $(function () {
 //提交按钮的触发事件
 function submitTaskByHandleType(){
 	$(".handle_table").each(function(){
-		var display = $(this).css("display");
-		if(display=="block"){
+		if($(this).is(":visible")){
 			var id = $(this).prop("id");
 			switch(id){
 				case "submit_table":{
@@ -1027,9 +1026,10 @@ function showRouteBar() {
                 var chooseUserDiv = "";
                 var userLiId = common.getRandomString(2);
                 if(activityMetaList.length==0){
-                	chooseUserDiv += '<p class="title_p" style="min-height: 15px;">下一环节<span class="task_activity_name">流程结束</span>'
+                	chooseUserDiv += '<div class="title_p" style="min-height: 15px;"><div style="float:left">下一环节</div>'
 						+'<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>'
-						+'</p>';
+						+'<div class="task_activity_name">流程结束</div>'
+						+'</div>';
                 }else{
                     for(var i=0;i<activityMetaList.length;i++){
                         var activityMeta = activityMetaList[i];
@@ -1043,10 +1043,12 @@ function showRouteBar() {
                         if(activityMeta.userName!=null && activityMeta.userName!=""){//用户名不为空
                         	var userNameArr = activityMeta.userName.split(";");
                         	chooseUserDiv += '<div class="handle_person_name" id="'+showActivityId+'"><ul>';
+                        	var showUserNameCount = 0;
                         	for(var j=0;j<userNameArr.length;j++){
                         		var userName = userNameArr[j];
                         		var userUid = activityMeta.userUid.split(";")[j];
                         		if(userName != "" && userName != null){
+                        			showUserNameCount++;
                         			userName = userName.replace(/\(.*?\)/g,'');
                         			var lastName = common.splitName(userName);
                         			//下标从0开始
@@ -1087,7 +1089,7 @@ function showRouteBar() {
                         		}
                         	}
                         	//判断默认处理人的数量  下标从0开始
-                        	if(userNameArr.length>maxShowPersonCount-1){
+                        	if(showUserNameCount>maxShowPersonCount){
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
                             		chooseUserDiv += '<li style="display:none;margin: 17px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
@@ -1098,11 +1100,16 @@ function showRouteBar() {
     	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
     	                            +'data-looptype="'+activityMeta.loopType+'" />'
     	                            +'</li>';
+                            	}else{
+                            		chooseUserDiv += '<input type="hidden" class="getUser" id="'+activityMeta.activityId
+    	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+    	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+    	                            +'data-looptype="'+activityMeta.loopType+'" />';
                             	}
                         		chooseUserDiv += '<li class="show_many_li" style="margin: 17px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>';
                         	}else{
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                            		chooseUserDiv += '<li style="margin: 7px 8px;" class="choose_user_li" id="'+showActivityId+'">'
+                            		chooseUserDiv += '<li style="margin: 17px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
     	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
     	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1111,11 +1118,16 @@ function showRouteBar() {
     	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
     	                            +'data-looptype="'+activityMeta.loopType+'" />'
     	                            +'</li>';
+                            	}else{
+                            		chooseUserDiv += '<input type="hidden" class="getUser" id="'+activityMeta.activityId
+    	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+    	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+    	                            +'data-looptype="'+activityMeta.loopType+'" />';
                             	}
                         	}
                         	chooseUserDiv += '</ul></div>';
                         }else{//用户名为空，只渲染选人组件
-                        	chooseUserDiv += '<div class="handle_person_name"><ul>';
+                        	chooseUserDiv += '<div class="handle_person_name" id="'+showActivityId+'"><ul>';
                         	if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
                         		chooseUserDiv += '<li style="margin: 17px 8px;" class="choose_user_li">'
 			                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
@@ -1126,11 +1138,16 @@ function showRouteBar() {
 		                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname
 		                            +'" data-looptype="'+activityMeta.loopType+'" />'
 		                            +'</li></ul></div>';
+                        	}else{
+                        		chooseUserDiv += '<input type="hidden" class="getUser" id="'+activityMeta.activityId
+	                            +'" data-assignvarname="'+activityMeta.dhActivityConf.actcAssignVariable
+	                            +'" data-signcountvarname="'+activityMeta.dhActivityConf.signCountVarname +'"'
+	                            +'data-looptype="'+activityMeta.loopType+'" />';
                         	}
                         }
+                        chooseUserDiv += "</td></tr></table>";
                     }//end for
                 }
-                chooseUserDiv += "</td></tr></table>";
                 $("#submit_table").append(chooseUserDiv);
                 layer.closeAll("loading");
                 touchStartPerson(userLiId);
@@ -1436,6 +1453,11 @@ function touchStartPerson(userLiId){
 	var liObj = $("#"+userLiId);
 	liObj.on({
 		touchstart: function(e){
+			var target = e.target;
+			if($(target).prop("tagName")=="I"){
+				deleteAssembleUser(target);
+				return;
+			}
 			timeOutEvent = setTimeout(function(){
 				var userUid = liObj.find(".delete_choose_user").attr("value");
 				var userName = liObj.find(".person_name").text().trim();
@@ -1472,6 +1494,7 @@ function touchStartPerson(userLiId){
 		 	e.preventDefault();
 		},
 		touchmove: function(){
+			
             clearTimeout(timeOutEvent); 
 		    timeOutEvent = 0; 
 		},
