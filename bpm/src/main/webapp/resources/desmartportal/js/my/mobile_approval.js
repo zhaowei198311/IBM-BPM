@@ -468,7 +468,7 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 			+'<i class="layui-icon delete_choose_user" value="'+userUid+'" onclick="deleteAssembleUser(this);">&#x1007;</i>'
 			+'</span>'
 			+'</li>';
-		var showLiHtml = '<li class="show_many_li" style="margin: 15px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>'
+		var showLiHtml = '<li class="show_many_li" style="margin: 17px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>'
 		if(elementId=="submit_table"){
 			var showActivityId = activityId.replace(":","");
 			//在选人按钮之前插入
@@ -1089,7 +1089,7 @@ function showRouteBar() {
                         	//判断默认处理人的数量  下标从0开始
                         	if(userNameArr.length>maxShowPersonCount-1){
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                            		chooseUserDiv += '<li style="display:none;margin: 15px 8px;" class="choose_user_li" id="'+showActivityId+'">'
+                            		chooseUserDiv += '<li style="display:none;margin: 17px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
     	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
     	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1099,10 +1099,10 @@ function showRouteBar() {
     	                            +'data-looptype="'+activityMeta.loopType+'" />'
     	                            +'</li>';
                             	}
-                        		chooseUserDiv += '<li class="show_many_li" style="margin: 15px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>';
+                        		chooseUserDiv += '<li class="show_many_li" style="margin: 17px 8px;"><i class="layui-icon show_many_person" onclick="showManyPerson(this)">&#xe65f;</i></li>';
                         	}else{
                         		if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                            		chooseUserDiv += '<li style="margin: 15px 8px;" class="choose_user_li" id="'+showActivityId+'">'
+                            		chooseUserDiv += '<li style="margin: 7px 8px;" class="choose_user_li" id="'+showActivityId+'">'
     		                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
     	                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
     	                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'
@@ -1117,7 +1117,7 @@ function showRouteBar() {
                         }else{//用户名为空，只渲染选人组件
                         	chooseUserDiv += '<div class="handle_person_name"><ul>';
                         	if(activityMeta.dhActivityConf.actcCanChooseUser!="FALSE"){
-                        		chooseUserDiv += '<li style="margin: 15px 8px;" class="choose_user_li">'
+                        		chooseUserDiv += '<li style="margin: 17px 8px;" class="choose_user_li">'
 			                        +'<i class="layui-icon choose_handle_person" onclick=getConductor("'+activityMeta.activityId
 		                            +'","'+activityMeta.dhActivityConf.actcCanChooseUser+'","'
 		                            +activityMeta.dhActivityConf.actcAssignType+'","'+activityMeta.dhActivityConf.actcChooseableHandlerType+'"); >&#xe654;</i>'

@@ -1023,7 +1023,7 @@
 								</div>
 								<div class="checkbox col-xs-2">
 									<label>
-										<input type="checkbox" id="date-type-time" class="date-type">时分秒
+										<input type="checkbox" id="date-type-time" class="date-type">时间
 									</label>
 								</div>
 							</div>
