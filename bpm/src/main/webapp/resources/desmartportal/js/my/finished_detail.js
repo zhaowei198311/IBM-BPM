@@ -52,7 +52,7 @@ function prePrintIndex(){
 	var webpage = $("#preViewForm").html();
 	layer.load(1);
 	$.ajax({
-		url:common.getPath()+"/finishFormPrint/toPDF",
+		url:common.getPath()+"/finishFormPrint/toPDFTest",
 		method:"post",
 		async:false,
 		data:{

@@ -5,7 +5,7 @@
 <link href="resources/desmartportal/css/iconfont.css" rel="stylesheet" />
 <link href="resources/desmartportal/css/mymobile.css?v=0.2" rel="stylesheet" />
 <link href="resources/desmartportal/lCalendar/css/lCalendar.css" rel="stylesheet" />
-<link href="resources/desmartportal/css/mobile_approval.css?v=1.01" rel="stylesheet" />
+<link href="resources/desmartportal/css/mobile_approval.css?v=1.02" rel="stylesheet" />
 <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
 	
 <!-- jQuery -->

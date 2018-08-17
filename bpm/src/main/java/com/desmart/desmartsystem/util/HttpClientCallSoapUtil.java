@@ -166,7 +166,7 @@ public class HttpClientCallSoapUtil {
 				"   </soapenv:Body>\n" + 
 				"</soapenv:Envelope>";
 		String postUrl = "http://10.1.0.102:50300/XISOAPAdapter/MessageServlet?senderParty=&senderService=BC_TBPM&receiverParty=&receiverService=&interface=SIO_TBPM_ZIFSD_TBPM_LIFNR&interfaceNamespace=http://laiyifen.com/xi/TBPM";
-		//String str = doPostSoap1_1(postUrl, querySoapXml,"","rfc_user","password");
-		//System.out.println(str);
+		String str = doPostSoap1_1(postUrl, querySoapXml,"","rfc_user","password").getString("responseResult");
+		System.out.println(str);
 	}
 }

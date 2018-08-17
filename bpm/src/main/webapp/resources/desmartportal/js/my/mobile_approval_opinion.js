@@ -211,9 +211,9 @@ function drawUpRoutingRecord(result){
 				 }
 			 }else{
 				 if(dhTaskInstance.taskAgentUserName != null && dhTaskInstance.taskAgentUserName.trim()!=''){
-					 tr+=dhTaskInstance.taskAgentUserName+"、";
+					 dhTaskHandlerHtml+=dhTaskInstance.taskAgentUserName+"、";
 				 }else if(dhTaskInstance.taskHandler != null && dhTaskInstance.taskHandler.trim()!=''){
-					 tr+=dhTaskInstance.taskHandler+"、";
+					 dhTaskHandlerHtml+=dhTaskInstance.taskHandler+"、";
 				 }
 			 }
 		 }
