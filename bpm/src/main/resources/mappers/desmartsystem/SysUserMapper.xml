@@ -142,11 +142,10 @@
 	  
 	  <select id="listByPrimaryKeyList" parameterType="collection"  resultMap="BaseResultMap">
 	  		select * from sys_user 
-	  		<where>
-                <foreach collection="collection" item="item" open="(" separator="or" close=")">
-                    user_uid = #{item}
-                </foreach>
-	  		</where> 
+	  		where
+            <foreach collection="collection" item="item" open="(" separator="or" close=")">
+                user_uid = #{item}
+            </foreach>
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysUser"  resultMap="BaseResultMap">
