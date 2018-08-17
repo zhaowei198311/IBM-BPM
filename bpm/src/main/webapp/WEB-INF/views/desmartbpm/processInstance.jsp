@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/modules/laydate/default/laydate.css" />
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/jquery-3.3.1.js" ></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
-<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/common.js"></script>
+<script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/common.js?v=1"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/js/my/processInstance.js"></script>
 <style type="text/css">
 .display_container5_custom{

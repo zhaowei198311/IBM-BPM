@@ -98,7 +98,7 @@
   		SELECT  r.ROLE_UID as roleUid,listagg(u.USER_NAME,';') within group(order by u.USER_UID) as userName,listagg(u.USER_UID,';') within group(order by u.USER_UID) as userUid from SYS_ROLE_USER  r left join Sys_USER u on u.USER_UID=r.USER_UID
   		left join SYS_USER_DEPARTMENT_VW ud on u.user_uid = ud.user_uid
   		<where>
-  		<if test=" roleIdList != null and roleIdList.size() > 0 ">
+  		<if test=" roleIdList != null ">
   		     and
   		     <foreach collection="roleIdList" item="roleId" open="(" separator="or" close=")">
   		      role_uid = #{roleId}
@@ -107,7 +107,7 @@
   		<if test="userUid!=null">
   			and u.user_Uid = #{userUid}
   		</if>
-  		<if test=" sysDepartmentList != null and sysDepartmentList.size() >0 ">
+  		<if test=" sysDepartmentList != null ">
   			and 
   			<foreach collection="sysDepartmentList" item="sysDepartment" open="(" separator="or" close=")">
   		      ud.depart_Uid = #{sysDepartment.departUid}

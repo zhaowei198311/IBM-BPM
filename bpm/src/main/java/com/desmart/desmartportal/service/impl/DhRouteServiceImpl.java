@@ -321,6 +321,9 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @return
      */
     private List<SysUser> searchByTeam(List<String> teamUidList) {
+    	if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
     	SysTeamMember sysTeamMember = new SysTeamMember();
 		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
     	List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
@@ -337,12 +340,18 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @return
      */
 	private List<SysUser> searchbyTeamAndDepartment(List<String> teamUidList, String departNo) {
+		if(CollectionUtils.isEmpty(teamUidList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
 		SysTeamMember sysTeamMember = new SysTeamMember();
 		sysTeamMember.setTeamUidList(teamUidList);//设置角色组uid集合查询条件
 		SysDepartment selective = new SysDepartment();
 		selective.setDepartUid(departNo);
 		//查询当前departNo的父级树节点，包括自己
 		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
+		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
+				return new ArrayList<>();
+		}
 		sysTeamMember.setSysDepartmentList(sysDepartmentList);
 		List<SysTeamMember> sysTeamMembers = sysTeamMemberMapper.selectTeamUser(sysTeamMember);
 		String tempIdStr = "";
@@ -358,6 +367,9 @@ public class DhRouteServiceImpl implements DhRouteService {
 	 * @return
 	 */
 	private List<SysUser> searchByTeamAndCompany(List<String> objIdList, String companyNum) {
+		if(CollectionUtils.isEmpty(objIdList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
 		SysTeamMember sysTeamMember = new SysTeamMember();
 		sysTeamMember.setTeamUidList(objIdList);//设置角色组uid集合查询条件
 		sysTeamMember.setCompanyCode(companyNum);
@@ -375,6 +387,9 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @return
      */
     private List<SysUser> searchByRole(List<String> roleUidList) {
+    	if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
     	SysRoleUser roleUser = new SysRoleUser();
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//根据角色id集合查询角色用户映射关系数据
@@ -392,12 +407,18 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @return
      */
 	private List<SysUser> searchByRoleAndDepartment(List<String> roleUidList, String departNo) {
+		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
 		SysRoleUser roleUser = new SysRoleUser();
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
 		SysDepartment selective = new SysDepartment();
 		selective.setDepartUid(departNo);
 		//查询当前departNo的父级树节点，包括自己
 		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
+		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
 		roleUser.setSysDepartmentList(sysDepartmentList);
 		//根据角色id集合加部门uid查询角色用户映射关系数据
 		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
@@ -415,6 +436,9 @@ public class DhRouteServiceImpl implements DhRouteService {
      * @return
      */
     private List<SysUser> searchByRoleAndCompany(List<String> roleUidList, String companyNum) {
+    	if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
+    		return new ArrayList<>();
+    	}
     	SysRoleUser roleUser = new SysRoleUser();
 		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
     	//设置公司编码查询条件
@@ -477,7 +501,10 @@ public class DhRouteServiceImpl implements DhRouteService {
 			}
 		}
 		if (CollectionUtils.isEmpty(userUidList)) {
-			return new ArrayList<>();
+			//根据部门id查询其父部门id
+			SysDepartment parentDepartment = sysDepartmentMapper.queryParentDepartByDepartId(departNo);
+			sysUser.setDepartUid(parentDepartment.getDepartUid());
+			return searchByLeaderOfPreActivityUser(sysUser);//继续递归查询上级部门的用户
 		}
 		List<SysUser> managerList = sysUserMapper.listByPrimaryKeyList(userUidList);//获取到根据userUid查询到的人员集合
 		if(managerList != null && managerList.size() > 0) {//上级用户存在人，则直接返回
@@ -752,7 +779,6 @@ public class DhRouteServiceImpl implements DhRouteService {
 		selective.setActaType(DhActivityAssignType.CHOOSEABLE_HANDLER.getCode());
 		List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
 		List<String> objIdList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
-
         String tempIdStr = "";  // 保存重复的员工id, ";"分隔，";"结尾
 		switch (assignTypeEnum) {
 		case ROLE:

@@ -53,7 +53,7 @@
 		SELECT tm.TEAM_UID,u.USER_UID,u.USER_NAME from(SELECT * FROM SYS_TEAM_MEMBER WHERE MEMBER_TYPE='user') tm LEFT JOIN SYS_USER u  on tm.USER_UID=u.USER_UID
 		) teamuser LEFT JOIN SYS_USER_DEPARTMENT ud on teamuser.USER_UID=ud.USER_UID  
 		<where>
-		<if test=" sysDepartmentList != null and sysDepartmentList.size() >0 ">
+		<if test=" sysDepartmentList != null ">
   			and 
   			<foreach collection="sysDepartmentList" item="sysDepartment" open="(" separator="or" close=")">
   		      depart_uid = #{sysDepartment.departUid}
@@ -65,7 +65,7 @@
 		</where>
 		) team  
 		<where>
-		<if test=" teamUidList != null and teamUidList.size() > 0 ">
+		<if test=" teamUidList != null ">
 		and
 		<foreach collection="teamUidList" item = "teamUid" open="(" separator="or" close=")">
 			team.TEAM_UID = #{teamUid}
