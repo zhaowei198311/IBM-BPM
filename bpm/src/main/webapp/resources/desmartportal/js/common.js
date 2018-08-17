@@ -224,10 +224,13 @@ var common = {
 				$(this)[0].type = "text";
 				var isDatetime = $(this).attr("date_type");
 				var dateType = "date";
+				var format = "yyyy-MM-dd";
 				if(isDatetime=="datetime"){
 					dateType = "datetime";
+					format = "yyyy-MM-dd HH:mm";
 				}else if(isDatetime=="time"){
 					dateType = "time";
+					format = "HH:mm";
 				}
 				var dateInputId = $(this).prop("id");
 				// 日期
@@ -236,6 +239,7 @@ var common = {
 					trigger: 'click',
 					type: dateType,
 					position: 'fixed',
+					format: format,
 					done:function(value){
 						$("#"+dateInputId).val(value);
 						$("#"+dateInputId).trigger("change");

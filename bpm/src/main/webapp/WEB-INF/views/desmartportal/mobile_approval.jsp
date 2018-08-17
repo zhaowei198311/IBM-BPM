@@ -200,7 +200,7 @@
 										<td>
 											<div class="handle_person_name">
 												<ul>
-													<li class="choose_user_li" style="margin-bottom: 15px;">
+													<li class="choose_user_li" style="margin: 17px 8px;">
 														<i class="layui-icon choose_countersign_person" onclick="getUser(this,true,'countersign_table')">&#xe654;</i>
 													</li>
 												</ul>
@@ -223,7 +223,7 @@
 										<td>
 											<div class="handle_person_name">
 												<ul>
-													<li class="choose_user_li" style="margin-bottom: 15px;">
+													<li class="choose_user_li" style="margin: 17px 8px;">
 														<i class="layui-icon choose_transfer_person" onclick="getUser(this,true,'transfer_table')">&#xe654;</i>
 													</li>
 												</ul>
@@ -261,7 +261,7 @@
 						<!-- 审批记录 -->
 						<div class="table_container">
 							<p class="title_p">审批记录
-								<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
+								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 							</p>
 							<ul class="layui-timeline" id="approve_record">
 							</ul>
