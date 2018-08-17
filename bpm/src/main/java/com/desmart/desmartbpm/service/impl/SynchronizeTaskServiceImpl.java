@@ -52,7 +52,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Scheduled(cron = "0/8 * * * * ?")
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
-        List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
+       /* List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
         List<Set> groupIdList = new ArrayList<>();
 
 
@@ -60,18 +60,18 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
         Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
         newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startFirstSynchronize(newLswTaskList, groupInfo); // 开始同步任务
-        LOG.info("==================  拉取任务结束  ===============");
+*/        LOG.info("==================  拉取任务结束  ===============");
     }
 
     @Scheduled(cron = "0 * * * * ?")
     public void retrySynchronizeTask() {
         LOG.info("==================  开始重试拉取任务  ===============");
-        List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
+       /* List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
         Map<Integer, List<String>> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
         Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
         newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startRetrySynchronize(newLswTaskList, groupInfo); // 开始同步任务
-        LOG.info("==================  重试拉取任务结束  ===============");
+*/        LOG.info("==================  重试拉取任务结束  ===============");
     }
 
     public void SynchronizeTask(int taskId) {
