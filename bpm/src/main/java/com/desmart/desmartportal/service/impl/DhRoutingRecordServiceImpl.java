@@ -416,9 +416,9 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 				,List<BpmActivityMeta> bpmActivityMetaList) {
 
 		Map<String, DatDhRoutingRecord> map = new HashMap<>();
-		DatDhRoutingRecord datDhRoutingRecord = new DatDhRoutingRecord();
 		
 		for (DhTaskInstance dhTaskInstance : list) {
+			DatDhRoutingRecord datDhRoutingRecord = new DatDhRoutingRecord();
 			if(dhTaskInstance!=null) {
 			String key = dhTaskInstance.getTaskActivityId();
 			if(map.keySet()!=null&&map.keySet().size()>0) {
