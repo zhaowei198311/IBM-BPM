@@ -4,6 +4,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.engine.LswTask;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +12,6 @@ import java.util.Map;
  */
 public interface AnalyseLswTaskService {
 
-    ServerResponse analyseLswTask(LswTask lswTask, Map<Integer, String> groupInfo, BpmGlobalConfig globalConfig);
+    ServerResponse analyseLswTask(LswTask lswTask, Map<Integer, List<String>> groupInfo, BpmGlobalConfig globalConfig);
 
 }

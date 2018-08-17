@@ -25,11 +25,7 @@ public interface LswTaskMapper {
      */
     List<LswTask> listNewTasks(int taskId);
     
-    /**
-     * 获得所有临时组，和组成员的信息, 使用","分隔成员信息
-     * @return
-     */
-    List<GroupAndMember> getGroupInfo();
+
 
     /**
      * 根据重试记录查询引擎中指定的任务

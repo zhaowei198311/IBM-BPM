@@ -1874,9 +1874,9 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			throw new PlatformException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
 		}
 		DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
-		if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
-			throw new PlatformException("系统任务处理失败，任务不是系统任务，taskUid：" + systemTaskInstance.getTaskUid());
-		}
+//		if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
+//			throw new PlatformException("系统任务处理失败，任务不是系统任务，taskUid：" + systemTaskInstance.getTaskUid());
+//		}
 		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
 				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
 			throw new PlatformException("系统任务任务类型异常，不能处理循环任务，taskUid：" + systemTaskInstance.getTaskUid());

@@ -1,28 +1,15 @@
 package com.desmart.desmartbpm.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import com.desmart.common.constant.ServerResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
 import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.enginedao.LswTaskMapper;
+import com.desmart.desmartbpm.enginedao.LswUsrGrpMemXrefMapper;
 import com.desmart.desmartbpm.entity.DhSynTaskRetry;
 import com.desmart.desmartbpm.entity.LockedTask;
-import com.desmart.desmartbpm.entity.engine.GroupAndMember;
 import com.desmart.desmartbpm.entity.engine.LswTask;
+import com.desmart.desmartbpm.entity.engine.LswUsrGrpMemXref;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.AnalyseLswTaskService;
@@ -30,6 +17,13 @@ import com.desmart.desmartbpm.service.SynchronizeTaskService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
@@ -37,6 +31,8 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
     @Autowired
     private LswTaskMapper lswTaskMapper;
+    @Autowired
+    private LswUsrGrpMemXrefMapper lswUsrGrpMemXrefMapper;
     @Autowired
     private BpmGlobalConfigService bpmGlobalConfigService;
     @Autowired
@@ -48,6 +44,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     @Autowired
     private AnalyseLswTaskService analyseLswTaskService;
 
+
     
     /**
      * 从引擎同步任务
@@ -56,7 +53,10 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
-        Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        List<Set> groupIdList = new ArrayList<>();
+
+
+        Map<Integer, List<String>> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
         Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
         newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startFirstSynchronize(newLswTaskList, groupInfo); // 开始同步任务
@@ -67,7 +67,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     public void retrySynchronizeTask() {
         LOG.info("==================  开始重试拉取任务  ===============");
         List<LswTask> newLswTaskList = getNewTasksForRetry(); // 获得未同步过的任务
-        Map<Integer, String> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
+        Map<Integer, List<String>> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
         Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
         newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);
         startRetrySynchronize(newLswTaskList, groupInfo); // 开始同步任务
@@ -82,25 +82,25 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
             return;
         }
         newLswTaskList.add(lswTask);
-        Map<Integer, String> groupInfo = getGroupInfo();
+        Map<Integer, List<String>> groupInfo = getGroupInfo();
         synchronizeSingleTask(newLswTaskList, groupInfo);
         LOG.info("==================  拉取单个任务结束 ===============");
     }
 
 
-    public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+    public void startFirstSynchronize(List<LswTask> newLswTaskList, Map<Integer, List<String>> groupInfo) {
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             try {
                 // 分析一个引擎任务并
                 ServerResponse analyseResponse = analyseLswTaskService.analyseLswTask(lswTask, groupInfo, globalConfig);
                 if (!analyseResponse.isSuccess()) {
-                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                     saveTaskToRetryTable(lswTask, analyseResponse.getMsg());
                 }
             } catch (Exception e) {
                 // 发生异常，删除创建任务的信息
-                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号: " + lswTask.getTaskId(), e);
@@ -115,7 +115,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
 
 
 
-    public void startRetrySynchronize(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+    public void startRetrySynchronize(List<LswTask> newLswTaskList, Map<Integer, List<String>> groupInfo) {
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             try {
@@ -125,11 +125,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                     // 更新重试列表，完成此任务的重试拉取
                     completeRetrySynTask(lswTask.getTaskId());
                 } else {
-                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                     updateRetryCount(lswTask, analyseResponse.getMsg());
                 }
             } catch (Exception e) {
-                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                 updateRetryCount(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号" + lswTask.getTaskId(), e);
             }
@@ -137,7 +137,7 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     }
 
 
-    public void synchronizeSingleTask(List<LswTask> newLswTaskList, Map<Integer, String> groupInfo) {
+    public void synchronizeSingleTask(List<LswTask> newLswTaskList, Map<Integer, List<String>> groupInfo) {
         BpmGlobalConfig globalConfig = bpmGlobalConfigService.getFirstActConfig();
         for (LswTask lswTask : newLswTaskList) {
             try {
@@ -146,11 +146,11 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
                 if (analyseResponse.isSuccess()) {
                     completeRetrySynTask(lswTask.getTaskId());
                 } else {
-                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                    commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                     saveTaskToRetryTable(lswTask, analyseResponse.getMsg());
                 }
             } catch (Exception e) {
-                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS);
+                commonMongoDao.remove(String.valueOf(lswTask.getTaskId()), CommonMongoDao.CREATED_TASKS_COLLECTION);
                 // 将任务记录到重试表中
                 saveTaskToRetryTable(lswTask, e.getMessage());
                 LOG.error("拉取任务时分析任务出错：任务编号：" + lswTask.getTaskId(), e);
@@ -182,14 +182,24 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     }
 
     /**
-     * 获得人与临时组的映射关系
-     * @return   key: 临时组id, value: 成员1,成员2,成员3...
+     * 获得组与人的映射关系
+     * @return   key: 临时组id<br/>
+     *  value: List<String> 工号集合
      */
-    private Map<Integer, String> getGroupInfo() {
-        List<GroupAndMember> groupInfoList = lswTaskMapper.getGroupInfo();
-        Map<Integer, String> map = Maps.newHashMap();
-        for (GroupAndMember groupAndMember : groupInfoList) {
-            map.put(groupAndMember.getGroupId(), groupAndMember.getMembers());
+    private Map<Integer, List<String>> getGroupInfo() {
+        List<LswUsrGrpMemXref> lswUsrGrpMemXrefs = lswUsrGrpMemXrefMapper.listAll();
+
+        Map<Integer, List<String>> map = Maps.newHashMap();
+        for (LswUsrGrpMemXref lswUsrGrpMemXref : lswUsrGrpMemXrefs) {
+            int groupId = lswUsrGrpMemXref.getGroupId();
+            String userUid = lswUsrGrpMemXref.getUserUid();
+            if (map.get(groupId) == null) {
+                List<String> list = new ArrayList<>();
+                list.add(userUid);
+                map.put(groupId, list);
+            } else {
+                map.get(groupId).add(userUid);
+            }
         }
         return map;
     }
