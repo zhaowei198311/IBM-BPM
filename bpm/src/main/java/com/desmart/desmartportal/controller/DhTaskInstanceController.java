@@ -459,7 +459,7 @@ public class DhTaskInstanceController {
 	 * @return ServerResponse<?>  
 	 * @throws
 	 */
-	@Log(description = "进行传阅")
+	@Log(description = "进行抄送")
 	@RequestMapping(value = "/transferSure")
 	@ResponseBody
 	public ServerResponse<?> transferSure(String taskUid, String usrUid, String activityId){

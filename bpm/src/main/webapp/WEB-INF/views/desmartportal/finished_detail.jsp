@@ -155,7 +155,7 @@
             	<span style="float: right; padding-right: 40px;">
 		        	<button class="layui-btn layui-btn-sm layui-btn-normal chart" onclick="processView(${processInstance.insId})">流程图</button>
 		            <c:if test="${activityConf.actcCanTransfer !='FALSE' && taskInstance.taskStatus=='32'}">
-		            <button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer">传阅</button>
+		            <button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer">抄送</button>
 		            </c:if>
 		            <c:if test="${canBeRevoke == 'TRUE'}" >
 		            <button class="layui-btn layui-btn-normal layui-btn-sm" onclick="revokeTask('${taskInstance.taskUid}');">取回</button>

@@ -85,7 +85,7 @@ public class DhTaskInstanceTurnController {
 				, dhTaskInstance, pageNum, pageSize, isAgent);
 	}
 	@RequestMapping("/batchTransferTaskInstanceByUser")
-	@Log(description="批量传阅用户任务")
+	@Log(description="批量抄送用户任务")
 	@ResponseBody
 	public ServerResponse batchTransferTaskInstanceByUser(@RequestParam("dhTaskUidList")List<String> dhTaskUidList
 				,DhTurnTaskRecord dhTurnTaskRecord) {
@@ -93,7 +93,7 @@ public class DhTaskInstanceTurnController {
 		return dhTaskInstanceTurnServiceImpl.batchTransferTaskInstanceByUser(dhTaskUidList,dhTurnTaskRecord);
 	}
 	@RequestMapping("/allTransferTaskInstanceByUser")
-	/*@Log(description="传阅用户所有任务")*/
+	/*@Log(description="抄送用户所有任务")*/
 	@ResponseBody
 	public ServerResponse allTransferTaskInstanceByUser(DhTurnTaskRecord dhTurnTaskRecord,String isAgent,String proName
 			,@DateTimeFormat(pattern ="yyyy-MM-dd HH:mm:ss")Date startTime

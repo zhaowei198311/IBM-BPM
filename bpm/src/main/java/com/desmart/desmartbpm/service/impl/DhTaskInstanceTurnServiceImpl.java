@@ -93,9 +93,9 @@ public class DhTaskInstanceTurnServiceImpl implements DhTaskInstanceTurnService 
 		}
 		if(dhTaskInstances != null && dhTaskInstances.size()>0) {
 			dhTaskInstanceMapper.insertBatch(dhTaskInstances);
-			return ServerResponse.createBySuccessMessage("批量传阅成功");
+			return ServerResponse.createBySuccessMessage("批量抄送成功");
 		}else {
-			return ServerResponse.createBySuccessMessage("批量传阅成功,无新增传阅通知");
+			return ServerResponse.createBySuccessMessage("批量抄送成功,无新增抄送通知");
 		}
 	}
 
@@ -123,9 +123,9 @@ public class DhTaskInstanceTurnServiceImpl implements DhTaskInstanceTurnService 
 		}
 		if(resultList != null && resultList.size()>0) {
 			dhTaskInstanceMapper.insertBatch(resultList);
-			return ServerResponse.createBySuccessMessage("批量传阅成功");
+			return ServerResponse.createBySuccessMessage("批量抄送成功");
 		}else {
-			return ServerResponse.createBySuccessMessage("批量传阅成功,无新增传阅通知");
+			return ServerResponse.createBySuccessMessage("批量抄送成功,无新增抄送通知");
 		}
 	}
 

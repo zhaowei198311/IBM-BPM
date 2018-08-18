@@ -23,7 +23,7 @@ public interface DhTaskInstanceTurnService {
 	 */
 	public ServerResponse allTurnTaskInstanceByUser(DhTurnTaskRecord dhTurnTaskRecord);
 	/**
-	 * 批量传阅用户任务
+	 * 批量抄送用户任务
 	 * @param dhTaskUidList
 	 * @param dhTurnTaskRecord
 	 * @return
@@ -31,7 +31,7 @@ public interface DhTaskInstanceTurnService {
 	public ServerResponse batchTransferTaskInstanceByUser(List<String> dhTaskUidList,
 			DhTurnTaskRecord dhTurnTaskRecord);
 	/**
-	 * 传阅用户所有任务
+	 * 抄送用户所有任务
 	 * @param dhTurnTaskRecord
 	 * @param dhTaskInstance
 	 * @param isAgent

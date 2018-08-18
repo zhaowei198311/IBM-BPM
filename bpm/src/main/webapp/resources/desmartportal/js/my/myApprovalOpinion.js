@@ -204,7 +204,7 @@ function drawUpRoutingRecord(result){
 				info += "<div>取回任务</div>";
 				break;
 			case "transferTask":
-				info += "<div>发起传阅</div>";
+				info += "<div>发起抄送</div>";
 				break;
 			case "rejectTask":
 				info += "<div>驳回</div>";

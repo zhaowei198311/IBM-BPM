@@ -8,14 +8,14 @@ import com.desmart.desmartsystem.entity.BpmGlobalConfig;
  */
 public class DataForSubmitTask {
 
-    private CommonBusinessObject pubBo;
-    private BpmRoutingData bpmRoutingData;
-    private DhRoutingRecord dhRoutingRecord; // 流转信息
-    private DhProcessInstance currentProcessInstance;
-    private DhStep nextStep;  // 下一个步骤
     private DhTaskInstance currTaskInstance;
+    private DhProcessInstance currentProcessInstance;  // 任务所属的流程实例
     private BpmGlobalConfig bpmGlobalConfig;
+    private CommonBusinessObject pubBo;  // 传递给引擎的参数
+    private BpmRoutingData bpmRoutingData;   // 预测的下个环节信息
+    private DhRoutingRecord dhRoutingRecord; // 流转记录
     private String applyUser; // 完成任务前尝试将任务分配给谁，为null则不分配
+    private DhStep nextStep;  // 下一个步骤
 
 
     public CommonBusinessObject getPubBo() {

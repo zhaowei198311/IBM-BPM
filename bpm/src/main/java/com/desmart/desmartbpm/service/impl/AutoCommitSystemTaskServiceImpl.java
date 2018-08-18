@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -51,7 +52,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         logger.info("开始处理系统任务");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         // 获得待处理列表
-        List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit(bpmGlobalConfig);
+        List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit();
         for (DhTaskInstance taskInstance : taskList) {
             this.doFirstSubmit(taskInstance, bpmGlobalConfig);
         }
@@ -84,7 +85,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         logger.info("开始处理系统延时任务");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         // 获得待处理列表
-        List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit(bpmGlobalConfig);
+        List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit();
         for (DhTaskInstance taskInstance : taskList) {
             try {
                 ServerResponse checkResponse = this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
@@ -96,7 +97,11 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
                 }
             } catch (Exception e) {
                 logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
+                // todo 记录到异常表
             }
+        }
+        if (CollectionUtils.isEmpty(taskList)) {
+            commonMongoDao.set(CommonMongoDao.LAST_SCAN_SYSTEM_TASK_KEY, taskList.get(taskList.size() - 1).getTaskId());
         }
         logger.info("处理系统延时任务完成");
     }
@@ -204,25 +209,22 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
     /**
      * 获得未处理的系统任务列表
-     * @param bpmGlobalConfig
      * @return
      */
-    private List<DhTaskInstance> getSystemTaskListToAutoCommit(BpmGlobalConfig bpmGlobalConfig) {
-        DhTaskInstance taskSelective = new DhTaskInstance();
-        taskSelective.setUsrUid(bpmGlobalConfig.getBpmAdminName());
-        taskSelective.setSynNumber(-2); // synNumer为-2的是系统任务
-        taskSelective.setTaskStatus(DhTaskInstance.STATUS_RECEIVED); // 状态是已收到
-        return dhTaskInstanceMapper.selectAllTask(taskSelective);
+    private List<DhTaskInstance> getSystemTaskListToAutoCommit() {
+        Integer lastTaskId = commonMongoDao.getIntValue(CommonMongoDao.LAST_SCAN_SYSTEM_TASK_KEY);
+        if (lastTaskId == null) {
+            lastTaskId = 0;
+        }
+        return dhTaskInstanceMapper.listRecivedSystemTasksLargerThanTaskId(lastTaskId);
     }
 
     /**
      * 获得未处理的系统延迟任务列表
-     * @param bpmGlobalConfig
      * @return
      */
-    private List<DhTaskInstance> getSystemDelayTaskListToAutoCommit(BpmGlobalConfig bpmGlobalConfig) {
+    private List<DhTaskInstance> getSystemDelayTaskListToAutoCommit() {
         DhTaskInstance taskSelective = new DhTaskInstance();
-        taskSelective.setUsrUid(bpmGlobalConfig.getBpmAdminName());
         taskSelective.setSynNumber(-3); // synNumer为-3的是系统延时任务
         taskSelective.setTaskStatus(DhTaskInstance.STATUS_RECEIVED); // 状态是已收到
         return dhTaskInstanceMapper.selectAllTask(taskSelective);

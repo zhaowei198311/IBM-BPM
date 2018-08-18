@@ -229,9 +229,9 @@ function showTurnTaskIns(obj){
 	$("#task-trun-operation").val(operation);
 	$("#task-trun-title").empty();
 	if(operation=="byBatch"){
-		$("#task-trun-title").text("批量传阅")
+		$("#task-trun-title").text("批量抄送")
 	}else if(operation=="byAll"){
-		$("#task-trun-title").text("传阅全部")
+		$("#task-trun-title").text("抄送全部")
 	}else{
 		return;
 	}
@@ -256,7 +256,7 @@ var trunOffTaskInsOperation = {
 		},
 		trunTaskInsByBatch : function trunTaskInsByBatch(){
 			
-			//批量传阅任务
+			//批量抄送任务
 			var checkedNodes= $("input[type='checkbox'][name='checkTaskIns']:checked");
 			var checkedTaskUidList = new Array();
 			for (var i = 0; i < checkedNodes.length; i++) {
@@ -296,11 +296,11 @@ var trunOffTaskInsOperation = {
 					layer.alert("请选择任务的接收人")
 				}
 			}else{
-				layer.alert("请选择要传阅的任务");
+				layer.alert("请选择要抄送的任务");
 			}
 		},
 		trunTaskInsByAll : function trunTaskInsByAll(){
-			//传阅用户所有任务
+			//抄送用户所有任务
 			var sourceUserUid = $("#userId").val().split(";")[0];//第一次加载，没有分号，选人后有分号
 			var targetUserUid = $("#targetUser").val();
 			pageConfig.startTime = $("#taskInitDate-search").val().split(" - ")[0];
@@ -310,7 +310,7 @@ var trunOffTaskInsOperation = {
 			
 			if(targetUserUid!=null && targetUserUid.length >0){
 				targetUserUid = targetUserUid.substring(0,targetUserUid.length-1);
-				layer.confirm("传阅全部数据量过大,颇为耗时,是否继续？", function () {
+				layer.confirm("抄送全部数据量过大,颇为耗时,是否继续？", function () {
 				$.ajax({
 					url:common.getPath() + "/dhTaskInstanceTurn/allTransferTaskInstanceByUser",
 					type:"post",

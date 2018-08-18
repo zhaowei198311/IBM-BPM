@@ -21,13 +21,19 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 */
 @Repository
 public interface DhTaskInstanceMapper {
+    /**
+     * 根据条件查询出指定的任务，只含有dh_task_instance表中的信息
+     * @param taskInstance
+     * @return
+     */
+    List<DhTaskInstance> listBySelectiveWithBaseColumn(DhTaskInstance taskInstance);
 
 	/**
 	 * 检索满足 条件的任务实例
 	 * @param taskInstance
 	 * @return
 	 */
-	List <DhTaskInstance> selectAllTask(DhTaskInstance taskInstance);
+	List<DhTaskInstance> selectAllTask(DhTaskInstance taskInstance);
 	
 	DhTaskInstance selectByPrimaryKey(String taskUid);
 	
@@ -198,7 +204,7 @@ public interface DhTaskInstanceMapper {
 	/**
 	 * 
 	 * @Title: queryTransferByTypeAndStatus  
-	 * @Description: 查询传阅任务（未读/已读）  
+	 * @Description: 查询抄送任务（未读/已读）  
 	 * @param @param dhTaskInstance
 	 * @param @return  
 	 * @return List<DhTaskInstance>  
@@ -243,7 +249,7 @@ public interface DhTaskInstanceMapper {
 	/*
 	 * 通过insUid集合批量的查询任务
 	 */
-	public List<DhTaskInstance> getDhTaskInstancesByBatch(@Param("itemList")List<DhProcessInstance> itemList);
+	List<DhTaskInstance> getDhTaskInstancesByBatch(@Param("itemList")List<DhProcessInstance> itemList);
 
 	/**
 	 * 批量修改任务状态
@@ -251,7 +257,7 @@ public interface DhTaskInstanceMapper {
 	 * @param dhTaskInstance 用来传递任务状态
 	 * @return
 	 */
-	public Integer updateTaskStatusByBatch(@Param("itemList")List<DhTaskInstance> itemList
+	int updateTaskStatusByBatch(@Param("itemList")List<DhTaskInstance> itemList
 								,@Param("dhTaskInstance")DhTaskInstance dhTaskInstance);
 	/**
 	 * 批量修改任务
@@ -314,4 +320,21 @@ public interface DhTaskInstanceMapper {
 	 * @return
 	 */
 	Integer turnDisposeBackLogTask(@Param("sourceUserUid")String sourceUserUid,@Param("targetUserUid")String targetUserUid);
+
+	/**
+	 * 获得taskId大于指定id的未被完成的系统任务<br/>
+	 * 根据 task_id 升序排序
+	 * @param taskId
+	 * @return
+	 */
+	List<DhTaskInstance> listRecivedSystemTasksLargerThanTaskId(int taskId);
+
+    /**
+     * 根据任务主键修改任务的状态
+     * @param taskUid
+     * @param taskStatus
+     * @return
+     */
+	int updateTaskStatus(@Param("taskUid") String taskUid, @Param("taskStatus") String taskStatus);
+
 }

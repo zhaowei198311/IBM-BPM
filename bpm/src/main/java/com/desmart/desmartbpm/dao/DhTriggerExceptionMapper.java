@@ -37,4 +37,14 @@ public interface DhTriggerExceptionMapper {
 	 */
 	int updateByPrimaryKeySelective(DhTriggerException dhTriggerException);
 
+	/**
+	 * 根据主键全量更新
+	 * @param dhTriggerException
+	 * @return
+	 */
+	int updateByPrimaryKey(DhTriggerException dhTriggerException);
+
+
+	int removeByPrimaryKey(String id);
+
 }

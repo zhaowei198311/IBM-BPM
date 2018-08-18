@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>批量传阅</title>
+<title>批量抄送</title>
 <%@include file="common/head.jsp" %>
 <%@include file="common/tag.jsp" %>
 <link rel="stylesheet" href="<%=basePath%>/resources/desmartbpm/css/my.css" media="all">
@@ -81,8 +81,8 @@
 								</div>
 								<div class="layui-col-xs2" >
 							    <button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
-								<button class="layui-btn layui-btn-sm" value="byBatch" onclick="showTurnTaskIns(this);">传阅</button>
-								<button class="layui-btn layui-btn-sm" value="byAll" onclick="showTurnTaskIns(this);">传阅全部</button>
+								<button class="layui-btn layui-btn-sm" value="byBatch" onclick="showTurnTaskIns(this);">抄送</button>
+								<button class="layui-btn layui-btn-sm" value="byAll" onclick="showTurnTaskIns(this);">抄送全部</button>
 								</div>
 								
 							</div>
@@ -124,7 +124,7 @@
 		  	</div>
 		</div>
 
-	<!-- 任务传阅 -->
+	<!-- 任务抄送 -->
 	<div id="task-trun-off-div" class="display_container5_custom">
 		<div class="display_content5_custom" style="height: 300px;">
 			<div class="top"><label id="task-trun-title"></label></div>
@@ -132,7 +132,7 @@
 			<input id="task-trun-operation" type="hidden">
 				<div class="layui-form" style="padding-top: 4%;padding-right: 4%;">
 					<div class="layui-form-item">
-						<label class="layui-form-label">传阅给</label>
+						<label class="layui-form-label">抄送给</label>
 						<div class="layui-input-block" style="position: relative;">
 							 <input type="text" name="targetUser_view" 
 								 id="targetUser_view" autocomplete="off"
@@ -144,10 +144,10 @@
 						<input type="hidden" id="targetUser" name="targetUser" />
 					</div>
 					<div class="layui-form-item">
-						<label class="layui-form-label">任务传阅</label>
+						<label class="layui-form-label">任务抄送</label>
 						<div class="layui-input-block">
 							<pre style="width: 100%;height: 50px;">
-								将业务传阅他人查看,员工离职,职位调用可利用任务传阅功能进行任务传阅
+								将业务抄送他人查看,员工离职,职位调用可利用任务抄送功能进行任务抄送
 							</pre>
 						</div>
 					</div>

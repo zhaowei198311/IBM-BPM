@@ -1239,7 +1239,7 @@ public class DhRouteServiceImpl implements DhRouteService {
 	public boolean willFinishTaskMoveToken(DhTaskInstance currTask, int insId) {
         String taskType = currTask.getTaskType();
         if (taskType.endsWith("Add") || taskType.equals(DhTaskInstance.TYPE_TRANSFER)) {
-            // 加签的任务, 传阅任务
+            // 加签的任务, 抄送任务
             return false;
         } else if (taskType.equals(DhTaskInstance.TYPE_NORMAL)) {
             // 普通任务

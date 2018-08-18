@@ -10,7 +10,7 @@ public class DhRoutingRecord {
 	public static final String ROUTE_TYPE_SUBMIT_TASK = "submitTask";
 	/**流转类型 取回任务 */
 	public static final String ROUTE_TYPE_REVOKE_TASK = "revokeTask";
-	/**流转类型 传阅 */
+	/**流转类型 抄送 */
 	public static final String ROUTE_TYPE_TRANSFER_TASK = "transferTask";
 	/**流传类型 驳回 */
 	public static final String ROUTE_TYPE_REJECT_TASK = "rejectTask";

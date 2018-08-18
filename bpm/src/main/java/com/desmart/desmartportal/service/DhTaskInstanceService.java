@@ -71,15 +71,18 @@ public interface DhTaskInstanceService {
 	 */
 	ServerResponse perform(String data);
 
+
+
 	/**
-	 * 完成任务，根据是否存在下一个步骤区别处理：<br/>
-	 * 没有下个步骤：调用RESTFul API完成任务并创建/关闭流程 <br/>
-	 * 存在下个步骤：推送到MQ消息队列处理 <br/>
-	 * @param dataForSubmitTask  提交任务需要的信息
+	 * 调用Restful api完成任务， 并创建相应的子流程
+	 * @param dataForSubmitTask
 	 * @return
+	 * status:0 成功<br/>
+	 * status:1 调用restfual api 完成任务失败<br/>
+	 * status:2 提交成功，判断token是否移动失败
 	 */
-	ServerResponse finishTaskOrSendToMq(DataForSubmitTask dataForSubmitTask);
-	
+	ServerResponse finishTask(DataForSubmitTask dataForSubmitTask);
+
 	/**
 	 * 查看平台任务表中是否存在指定taskId的任务
 	 * @param taskId
@@ -343,4 +346,11 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	ServerResponse submitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig);
+
+	/**
+	 * 根据流程实例主键找出异常的任务
+	 * @param insUid
+	 * @return
+	 */
+	List<DhTaskInstance> listErrorTasksByInsUid(String insUid);
 }

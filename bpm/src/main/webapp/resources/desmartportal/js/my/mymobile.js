@@ -44,7 +44,7 @@ function handleBtnClick(obj){
 			$("#suggestion").css("display","block");
 			break;
 		};
-		case "传阅":{
+		case "抄送":{
 			$("#transfer_table").css("display","block");
 			$("#suggestion").css("display","none");
 			break;

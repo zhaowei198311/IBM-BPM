@@ -150,7 +150,51 @@
 		T.TASK_ACTIVITY_ID,TIMEOUT_NOTIFY_COUNT,
 		P.INS_TITLE,P.INS_CREATE_DATE,P.INS_ID,P.INS_STATUS,S.USER_NAME,S.USER_ID
 	</sql>
-	
+
+	<select id="listBySelectiveWithBaseColumn" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+		select <include refid="Base_Column_List"/>
+		from dh_task_instance
+		<where>
+			<if test="taskUid != null and taskUid != ''">
+				AND TASK_UID = #{taskUid}
+			</if>
+			<if test="insUid != null and insUid != ''">
+				AND INS_UID = #{insUid}
+			</if>
+			<if test="taskId != null and taskId != ''">
+				AND TASK_ID = #{taskId}
+			</if>
+			<if test="usrUid != null and usrUid != ''">
+				AND USR_UID = #{usrUid}
+			</if>
+			<if test="activityBpdId != null and activityBpdId != ''">
+				AND ACTIVITY_BPD_ID = #{activityBpdId}
+			</if>
+			<if test="taskType != null and taskType != ''">
+				AND TASK_TYPE = #{taskType}
+			</if>
+			<if test="taskStatus != null and taskStatus != ''">
+				AND TASK_STATUS = #{taskStatus}
+			</if>
+			<if test="taskTitle != null and taskTitle != ''">
+				AND TASK_TITLE = #{taskTitle}
+			</if>
+			<if test="taskPreviousUsrUid != null and taskPreviousUsrUid != ''">
+				AND TASK_PREVIOUS_USR_UID = #{taskPreviousUsrUid}
+			</if>
+			<if test="taskDelegateUser != null and taskDelegateUser != ''">
+				AND TASK_DELEGATE_USER = #{taskDelegateUser}
+			</if>
+			<if test="synNumber != null">
+				AND SYN_NUMBER = #{synNumber}
+			</if>
+			<if test="taskActivityId != null">
+				AND TASK_ACTIVITY_ID = #{taskActivityId}
+			</if>
+		</where>
+	</select>
+
+
 	<select id="selectAllTask" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultMap="TaskInstanceByProcessAndUserMap">
 		SELECT 
 		<include refid="TaskAndProcess_Column_List"/>
@@ -387,10 +431,7 @@
 		)
 	</insert>
 
-	<select id="getMaxTaskId" resultType="int">
-		select nvl(max(task_id), 0)
-		from dh_task_instance
-	</select>
+
 
     <select id="getMaxSynNumber" resultType="int">
        select nvl(max(SYN_NUMBER), 0) from dh_task_instance
@@ -436,19 +477,7 @@
 		where task_id = #{taskId}
 	</select>
 
-	<select id="selectByInsUidAndTaskTypeCondition" parameterType="java.lang.String" 
-		resultMap="TaskInstanceByProcessAndUserMap">
-		SELECT <include refid="TaskAndProcess_Column_List"/>
-		FROM
-		DH_TASK_INSTANCE T, DH_PROCESS_INSTANCE P, SYS_USER S
-		<where>
-			T.INS_UID = P.INS_UID 
-			AND
-			T.USR_UID = S.USER_ID
-			AND
-			T.INS_UID = #{insUid}
-		</where>
-	</select>
+
 	
 	<select id="selectByTaskIdAndUser" parameterType="com.desmart.desmartportal.entity.DhTaskInstance" resultType="com.desmart.desmartportal.entity.DhTaskInstance">
 		SELECT 
@@ -572,23 +601,7 @@
 	   where task_id = #{taskId} AND TASK_UID != #{taskUid} and task_status != '32'
 	</update>
 	
-	<update id="updateTaskStatusByTaskUid" parameterType="map">
-	   update dh_task_instance 
-	   <set>
-	   <trim suffixOverrides=",">
-	   <if test="taskStatus != null and taskStatus != '' ">
-	    task_Status = #{taskStatus}
-	   </if>
-	   <if test="taskFinishDate != null ">
-	    task_Finish_Date = #{taskFinishDate}
-	   </if>
-	   <if test="taskData != null and taskData != '' ">
-	    task_Data = #{taskData}
-	   </if>
-	   </trim>
-	   </set>
-	   where TASK_UID = #{taskUid}
-	</update>
+
 
 	<update id="abandonOtherUnfinishedTasksOnTaskActivityId" parameterType="map">
 		update
@@ -1192,7 +1205,16 @@
    		</foreach>
   		</where>
 	</select>
-	
+
+	<select id="listRecivedSystemTasksLargerThanTaskId"
+            resultType="com.desmart.desmartportal.entity.DhTaskInstance">
+        select <include refid="Base_Column_List"/>
+		from dh_task_instance
+		where syn_number = -2 and task_status = 12 and task_id > #{taskId}
+		order by task_id asc
+	</select>
+
+
 	<update id="turnTaskByBatch" parameterType="java.util.List">
 		begin  
         <foreach collection="itemList" item="item" index="index" separator=";" > 
@@ -1236,4 +1258,13 @@
 		AND TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 	</update>
+
+    <update id="updateTaskStatus" parameterType="map">
+		update dh_task_instance
+		set task_status = #{taskStatus}
+		where task_uid = #{taskUid}
+	</update>
+
+
+
 </mapper>

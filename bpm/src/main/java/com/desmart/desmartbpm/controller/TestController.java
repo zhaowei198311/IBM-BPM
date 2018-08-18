@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.util.DateTimeUtil;
 import com.desmart.desmartbpm.entity.DhTransferData;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
@@ -56,6 +60,10 @@ public class TestController extends BaseWebController {
     private DhTransferService dhTransferService;
     @Autowired
     private DhTriggerStepService dhTriggerStepService;
+    @Autowired
+    private DhProcessInstanceService dhProcessInstanceService;
+
+
     
     @RequestMapping(value = "/test")
     @ResponseBody
@@ -343,4 +351,18 @@ public class TestController extends BaseWebController {
         return dhTriggerStepService.retryErrorStepAndSubmitTask(id);
     }
 
+
+    @RequestMapping(value = "/testCreateAProcess")
+    @ResponseBody
+    public ServerResponse testCreateAProcess() {
+        DhProcessInstance lauchTemplate = new DhProcessInstance();
+        lauchTemplate.setProAppId("2066.16a6eec4-b3b5-4211-986c-31a94841e288");
+        lauchTemplate.setProUid("25.f12891f9-5734-4c07-be13-57d6cfc7e423");
+        lauchTemplate.setInsInitUser("00011178");
+        lauchTemplate.setDepartNo("10010962");
+        lauchTemplate.setCompanyNumber("2120");
+        lauchTemplate.setInsTitle("合同备案:" + DateTimeUtil.dateToStr(new Date()));
+        lauchTemplate.setInsBusinessKey("合同用印申请表");
+        return dhProcessInstanceService.launchProcess(lauchTemplate);
+    }
 }
