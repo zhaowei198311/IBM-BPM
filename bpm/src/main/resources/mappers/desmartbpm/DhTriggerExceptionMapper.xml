@@ -3,18 +3,22 @@
 <mapper namespace="com.desmart.desmartbpm.dao.DhTriggerExceptionMapper" >
 
     <sql id="base_column">
-        ID, TASK_ID, STEP_ID, INS_ID, CREATE_TIME,
-        MQ_MESSAGE, ERROR_MESSAGE, REQUEST_PARAM,
-        STATUS, RETRY_COUNT, task_uid
+        ID, TASK_UID, STEP_UID, INS_UID, CREATE_TIME,
+        MQ_MESSAGE, ERROR_MESSAGE, DIL_UID,
+        STATUS, RETRY_COUNT, last_retry_time
     </sql>
 
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
         insert into DH_TRIGGER_EXCEPTION
         (<include refid="base_column"/>)
         values (
-        #{id}, #{taskId}, #{stepId}, #{insId}, sysdate, #{mqMessage}, #{errorMessage}, #{requestParam}, #{status}, 0, #{taskUid}
+        #{id}, #{taskUid}, #{stepUid}, #{insUid}, sysdate, #{mqMessage}, #{errorMessage}, #{dilUid}, #{status}, 0, sysdate
         )
     </insert>
+    <delete id="removeByPrimaryKey" parameterType="string">
+        delete from DH_TRIGGER_EXCEPTION
+        where id = #{id}
+    </delete>
 
 
     <select id="qureyByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTriggerException">
@@ -24,17 +28,20 @@
 
     <select id="queryByTaskUidAndStepUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTriggerException">
         select <include refid="base_column"/> from DH_TRIGGER_EXCEPTION
-        where task_uid = #{taskUid} and step_id = #{stepUid}
+        where task_uid = #{taskUid} and step_uid = #{stepUid}
     </select>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
         update DH_TRIGGER_EXCEPTION
         <set>
+            <if test="stepUid != null">
+                step_uid = #{stepUid},
+            </if>
             <if test="errorMessage != null">
                 error_message = #{errorMessage},
             </if>
-            <if test="requestParam != null">
-                request_param = #{requestParam},
+            <if test="dilUid != null">
+                dil_uid = #{dilUid},
             </if>
             <if test="status != null">
                 status = #{status},
@@ -42,8 +49,28 @@
             <if test="retryCount != null">
                 retry_Count = #{retryCount},
             </if>
+            last_retry_time = sysdate
         </set>
         where id = #{id}
     </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTriggerException">
+        update dh_trigger_exception
+        set
+            TASK_UID = #{taskUid},
+            STEP_UID = #{stepUid},
+            INS_UID = #{insUid},
+            CREATE_TIME = #{createTime},
+            MQ_MESSAGE = #{mqMessage},
+            ERROR_MESSAGE = #{errorMessage},
+            DIL_UID = #{dilUid},
+            STATUS = #{status},
+            RETRY_COUNT = #{retryCount},
+            last_retry_time = sysdate
+        where id = #{id}
+    </update>
+
+
+
 
 </mapper>

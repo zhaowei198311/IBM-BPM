@@ -18,7 +18,7 @@ public class DhTaskInstance {
     public static final String TYPE_SIMPLE_LOOP = "simpleLoop";
     /** 多实例循环任务 跟随引擎中的描述M大写不要改动 */
     public static final String TYPE_MULT_IINSTANCE_LOOP = "MultiInstanceLoop";
-    /** 传阅任务 */
+    /** 抄送任务 */
     public static final String TYPE_TRANSFER = "transfer";
     /** 普通加签任务，一人完成即可 */
     public static final String TYPE_NORMAL_ADD = "normalAdd";
@@ -30,6 +30,18 @@ public class DhTaskInstance {
     public static final String STATUS_WAIT_ALL_ADD_FINISH = "-2";
     /**  等待上一个人加签结束 **/
 	public static final String STATUS_WAIT_TO_ADD = "-3";
+	/**  任务关闭 */
+	public static final String STATUS_CLOSED = "32";
+	/** 任务提交前异常（推送到队列前） */
+	public static final String STATUS_ERROR_BEFORE_SUBMIT = "22";
+	/** 任务任务提交后异常（推送到队列后） */
+	public static final String STATUS_ERROR_AFTER_SUBMIT = "42";
+
+	/**
+	 *  警报任务
+	 */
+	public static final String 	STATUS_ALERT = "61";
+
 	/**
 	 *  新任务
 	 */
@@ -54,10 +66,7 @@ public class DhTaskInstance {
 	 *  
 	 */
 	public static final String 	STATUS_ACTIONED = "31";
-	/**
-	 *  任务关闭
-	 */
-	public static final String 	STATUS_CLOSED = "32";
+
 	/**
 	 *  任务废弃
 	 */
@@ -71,10 +80,7 @@ public class DhTaskInstance {
 	 *  删除任务
 	 */
 	public static final String 	STATUS_DELETED = "91";
-	/**
-	 *  警报任务
-	 */
-	public static final String 	STATUS_ALERT = "61";
+
 	
 	/**
 	 *  帮助请求任务

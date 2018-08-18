@@ -446,7 +446,7 @@
 													<div class="layui-col-md6">
 
 														<div class="layui-form-item">
-															<label class="layui-form-label">是否允许传阅</label>
+															<label class="layui-form-label">是否允许抄送</label>
 															<div class="layui-input-block">
 																<input type="radio" name="actcCanTransfer" value="TRUE"
 																	title="允许"> <input type="radio"

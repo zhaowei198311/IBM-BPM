@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSON;
@@ -141,6 +142,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 	}
 
 	@Override
+	@Transactional
 	public ServerResponse invokeTrigger(WebApplicationContext wac, String insUid, DhStep dhStep){
 		String triUid = dhStep.getStepObjectUid();
 		DhTrigger dhTrigger = dhTriggerMapper.getByPrimaryKey(triUid);

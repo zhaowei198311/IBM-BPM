@@ -173,7 +173,7 @@
 										<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="submit_btn">同意</button>
 										<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="countersign_btn" <c:if test="${activityConf.actcCanAdd =='FALSE'}" >style="display:none;"</c:if>>会签</button>
 										<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="reject_btn" <c:if test="${activityConf.actcCanReject =='FALSE'}" >style="display:none;"</c:if>>驳回</button>
-										<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>传阅</button>
+										<button class="layui-btn layui-btn-sm handle_btn" onclick="handleBtnClick(this)" id="transfer_btn" <c:if test="${activityConf.actcCanTransfer =='FALSE'}" >style="display:none;"</c:if>>抄送</button>
 									</td>
 								</tr>
 							</table>

@@ -1,7 +1,10 @@
 package com.desmart.desmartbpm.entity;
 
+import com.desmart.common.constant.EntityIdPrefix;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * mq执行触发器产生的异常类
@@ -10,121 +13,128 @@ import java.util.Date;
  */
 public class DhTriggerException implements Serializable{
 	private static final long serialVersionUID = -7803852253465310676L;
-	/** 状态：步骤出错 */
-	public static final String STATUS_STEP_ERROR = "stepError";
+	/** 状态：步骤执行出错 */
+	public static final String STATUS_ERROR_IN_STEP = "inStep";
 	/** 状态：提交出错 */
-	public static final String STATUS_SUBMIT_ERROR = "submitError";
+	public static final String STATUS_ERROR_WHEN_SUBMIT = "whenSubmit";
+	/** 状态：提交成功后出错  */
+	public static final String STATUS_ERROR_AFTER_SUBMIT = "afterSubmit";
 	/** 状态：已修复 */
 	public static final String STATUS_DONE = "done";
 
 	private String id;  //id主键
-	
-	private String taskId;   //任务id
-	
-	private String stepId;   //步骤id
-	
-	private String insId;    //流程实例id
-	
-	private Date  createTime; //异常产生的时间
-	
-	private String mqMessage;   //mq内容
-	
-	private String errorMessage;  //错误内容
-	
-	private String requestParam;  //请求参数
-	
-	private String status;//异常数据状态
-
-	private Integer retryCount; // 重试次数 初始为0
-
 	private String taskUid;  // 任务主键
+	private String stepUid;   //步骤id
+	private String insUid;    //流程实例主键
+	private String mqMessage;   //mq内容
+	private String errorMessage;  //错误内容
+	private String dilUid;   // 接口调用日志主键
+	private String status; //异常数据状态
+	private Integer retryCount; // 重试次数 初始为0
+	private Date createTime; //异常产生的时间
+	private Date lastRetryTime; // 最后重试时间
 
-	
+	public DhTriggerException(){}
+
+
+
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public DhTriggerException setId(String id) {
 		this.id = id;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getStepId() {
-		return stepId;
-	}
-
-	public void setStepId(String stepId) {
-		this.stepId = stepId;
-	}
-
-	public String getInsId() {
-		return insId;
-	}
-
-	public void setInsId(String insId) {
-		this.insId = insId;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getMqMessage() {
-		return mqMessage;
-	}
-
-	public void setMqMessage(String mqMessage) {
-		this.mqMessage = mqMessage;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	public String getRequestParam() {
-		return requestParam;
-	}
-
-	public void setRequestParam(String requestParam) {
-		this.requestParam = requestParam;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Integer getRetryCount() {
-		return retryCount;
+		return this;
 	}
 
 	public String getTaskUid() {
 		return taskUid;
 	}
 
-	public void setTaskUid(String taskUid) {
+	public DhTriggerException setTaskUid(String taskUid) {
 		this.taskUid = taskUid;
+		return this;
 	}
 
-	public void setRetryCount(Integer retryCount) {
-		this.retryCount = retryCount;
+	public String getStepUid() {
+		return stepUid;
 	}
+
+	public DhTriggerException setStepUid(String stepUid) {
+		this.stepUid = stepUid;
+		return this;
+	}
+
+	public String getInsUid() {
+		return insUid;
+	}
+
+	public DhTriggerException setInsUid(String insUid) {
+		this.insUid = insUid;
+		return this;
+	}
+
+	public String getMqMessage() {
+		return mqMessage;
+	}
+
+	public DhTriggerException setMqMessage(String mqMessage) {
+		this.mqMessage = mqMessage;
+		return this;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public DhTriggerException setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+		return this;
+	}
+
+	public String getDilUid() {
+		return dilUid;
+	}
+
+	public DhTriggerException setDilUid(String dilUid) {
+		this.dilUid = dilUid;
+		return this;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public DhTriggerException setStatus(String status) {
+		this.status = status;
+		return this;
+	}
+
+	public Integer getRetryCount() {
+		return retryCount;
+	}
+
+	public DhTriggerException setRetryCount(Integer retryCount) {
+		this.retryCount = retryCount;
+		return this;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public DhTriggerException setCreateTime(Date createTime) {
+		this.createTime = createTime;
+		return this;
+	}
+
+	public Date getLastRetryTime() {
+		return lastRetryTime;
+	}
+
+	public DhTriggerException setLastRetryTime(Date lastRetryTime) {
+		this.lastRetryTime = lastRetryTime;
+		return this;
+	}
+
 }

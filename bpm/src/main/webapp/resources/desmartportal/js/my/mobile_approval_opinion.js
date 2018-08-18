@@ -261,7 +261,7 @@ function drawUpRoutingRecord(result){
 				info += "<span class='approval_status' style='color:#FC9153'>取回</span>";
 				break;
 			case "transferTask":
-				info += "<span class='approval_status' style='color:#FC9153'>传阅</span>";
+				info += "<span class='approval_status' style='color:#FC9153'>抄送</span>";
 				break;
 			case "rejectTask":
 				info += "<span class='approval_status' style='color:#f33640'>驳回</span>";

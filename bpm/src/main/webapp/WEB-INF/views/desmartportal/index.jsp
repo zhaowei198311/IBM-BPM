@@ -88,7 +88,7 @@
 								<li class="layui-nav-item">
 									<a href="menus/notRedProcess" target="iframe0" class="typeColor">
 										<i class="layui-icon">&#xe645;</i>
-										<span> 传阅</span>
+										<span> 抄送</span>
 									</a>
 								</li>
 								<li class="layui-nav-item">

@@ -750,7 +750,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
 			HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
 			if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
-				return ServerResponse.createByErrorMessage("通过RESTful API获得流程实例信息失败");
+				throw new PlatformException("通过RESTful API获得流程实例信息失败");
 			}
 			processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
 		}
@@ -761,7 +761,6 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 			if (ProcessDataUtil.containsTokenId(subInstance.getTokenId(), processDataJson)) {
 				continue;
 			}
-
             // 更新实例状态
             DhProcessInstance selective = new DhProcessInstance(subInstance.getInsUid());
             selective.setInsFinishDate(new Date());
@@ -793,7 +792,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             BpmProcessUtil bpmProcessUtil = new BpmProcessUtil(globalConfig);
             HttpReturnStatus processDataReturnStatus = bpmProcessUtil.getProcessData(insId);
             if (HttpReturnStatusUtil.isErrorResult(processDataReturnStatus)) {
-                return ServerResponse.createByErrorMessage("通过RESTful API获得流程实例信息失败");
+                throw new PlatformException("通过RESTful API获得流程实例信息失败");
             }
             processDataJson = JSON.parseObject(processDataReturnStatus.getMsg());
         }

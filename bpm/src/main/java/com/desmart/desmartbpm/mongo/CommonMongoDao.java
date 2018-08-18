@@ -12,6 +12,7 @@ public interface CommonMongoDao {
 	public static final String EXPOSED_ITEM_RELOAD_TIME = "exposedItemReloadTime";
 	public static final String APP_UPDATE_RECORD_COLLECTION = "appUpdateRecord";
 	public static final String CREATED_TASKS_COLLECTION = "createdTasks";
+	public static final String LAST_SCAN_SYSTEM_TASK_KEY = "lastScanSystemTaskId";
 
 
 	/**

@@ -53,9 +53,6 @@ public class SynchronizeTaskServiceImpl implements SynchronizeTaskService {
     public void synchronizeTaskFromEngine() {
         LOG.info("==================  开始拉取任务  ===============");
        /* List<LswTask> newLswTaskList = getNewTasks(); // 获得未同步过的任务
-        List<Set> groupIdList = new ArrayList<>();
-
-
         Map<Integer, List<String>> groupInfo = getGroupInfo(); // 获得临时组与成员对应关系
         Set<Integer> allLockedTaskIds = getAllLockedTaskIds(); // 获得所有被锁的任务
         newLswTaskList = excludeLockedTasks(newLswTaskList, allLockedTaskIds);

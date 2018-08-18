@@ -40,6 +40,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -276,7 +277,14 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSubmitTask.setDhRoutingRecord(dhRoutingRecord);
         dataForSubmitTask.setNextStep(nextStep);
         dataForSubmitTask.setApplyUser(getCurrentUserUid());
-        return finishTaskOrSendToMq(dataForSubmitTask);
+
+		if (nextStep == null) {
+			return ((DhTaskInstanceService) AopContext.currentProxy()).finishTask(dataForSubmitTask);
+		} else {
+			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
+			return ServerResponse.createBySuccess();
+		}
+
     }
 
     /**
@@ -314,7 +322,6 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 * 完成任务
 	 */
 	@Override
-	@Transactional
 	public ServerResponse perform(String data) {
 		if (StringUtils.isBlank(data)) {
 			return ServerResponse.createByErrorMessage("缺少必要参数");
@@ -387,6 +394,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (!dhRouteService.checkRouteData(currTaskNode, routeData, bpmRoutingData)) {
 			return ServerResponse.createByErrorMessage("缺少下个环节的处理人信息");
 		}
+
 
         // 根据配置保存审批意见
 		if (needApprovalOpinion(currTaskNode, currProcessInstance)) {
@@ -471,62 +479,56 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSubmitTask.setBpmRoutingData(bpmRoutingData);
         dataForSubmitTask.setDhRoutingRecord(routingRecord);
         dataForSubmitTask.setNextStep(nextStep);
-        return finishTaskOrSendToMq(dataForSubmitTask);
+        dataForSubmitTask.setApplyUser(getCurrentUserUid());
+
+		if (nextStep == null) {
+			return ((DhTaskInstanceService) AopContext.currentProxy()).finishTask(dataForSubmitTask);
+		} else {
+			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
+			return ServerResponse.createBySuccess();
+		}
     }
 
-    @Override
-	public ServerResponse finishTaskOrSendToMq(DataForSubmitTask dataForSubmitTask) {
-        DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
-        DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
-        int insId = currProcessInstance.getInsId();
-        int taskId = currTaskInstance.getTaskId();
-        String taskUid = currTaskInstance.getTaskUid();
-        DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
-        BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
-        CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
 
-        if (dataForSubmitTask.getNextStep() == null) {
-			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
-			Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
-            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-            if (errorMap.get("errorResult") == null) {
-                ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
-                if (didTokenMoveResponse.isSuccess()) {
-                    JSONObject processData = didTokenMoveResponse.getData();
-                    if (processData != null) {
-                        // 确认Token移动了, 插入流转记录
-                        dhRoutingRecordMapper.insert(dhRoutingRecord);
-                        // 关闭需要结束的流程
-                        dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, processData);
-                        // 创建需要创建的子流程
-                        dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, bpmRoutingData, pubBo, processData);
-                    } else {
-                        // 确认Token没有移动, 更新流转信息
-                        dhRoutingRecord.setActivityTo(null);
-                        dhRoutingRecordMapper.insert(dhRoutingRecord);
-                    }
-                    return ServerResponse.createBySuccess();
-                } else {
-                    log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
-                    return ServerResponse.createByErrorMessage("判断TOKEN是否移动失败");
-                }
-            } else {
-                throw new PlatformException("调用RESTful API完成任务失败");
-            }
-		} else {
-            // 有后续步骤, MQ交互
-            // 向队列发出消息
-            Map<String, Object> map = new HashMap<>();
-            map.put("currProcessInstance", currProcessInstance);
-            map.put("currTaskInstance", currTaskInstance);
-            map.put("dhStep", dataForSubmitTask.getNextStep());
-            map.put("pubBo", pubBo);
-            map.put("routingData", bpmRoutingData); // 预判的下个环节信息
-            map.put("routingRecord", dhRoutingRecord); // 流转记录
-			map.put("applyUser", dataForSubmitTask.getApplyUser());
-            mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep", "triggerStepKey"), map);
-            return ServerResponse.createBySuccess();
+	@Transactional
+	@Override
+	public ServerResponse finishTask(DataForSubmitTask dataForSubmitTask) {
+		DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
+		DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
+		int insId = currProcessInstance.getInsId();
+		int taskId = currTaskInstance.getTaskId();
+		String taskUid = currTaskInstance.getTaskUid();
+		DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
+		BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
+		CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
+
+		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
+		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
+		Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+		if (errorMap.get("errorResult") != null) {
+			return ServerResponse.createByErrorMessage("调用RESTful API完成任务失败" + errorMap.get("errorResult").getMsg());
 		}
+
+		ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
+		if (!didTokenMoveResponse.isSuccess()) {
+			log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+			return ServerResponse.createByErrorCodeMessage(2, "提交成功，判断token是否移动失败");
+		}
+
+		JSONObject processData = didTokenMoveResponse.getData();
+		if (processData != null) {
+			// data不为null，表示Token移动了, 插入流转记录
+			dhRoutingRecordMapper.insert(dhRoutingRecord);
+			// 关闭需要结束的流程
+			dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, processData);
+			// 创建需要创建的子流程
+			dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, bpmRoutingData, pubBo, processData);
+		} else {
+			// 确认Token没有移动, 更新流转信息
+			dhRoutingRecord.setActivityTo(null);
+			dhRoutingRecordMapper.insert(dhRoutingRecord);
+		}
+		return ServerResponse.createBySuccess();
 	}
 
 
@@ -1873,7 +1875,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		if (currTaskNode == null) {
 			throw new PlatformException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
 		}
-		DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
+//		DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
 //		if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
 //			throw new PlatformException("系统任务处理失败，任务不是系统任务，taskUid：" + systemTaskInstance.getTaskUid());
 //		}
@@ -1935,7 +1937,29 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		dataForSubmitTask.setDhRoutingRecord(routingRecord);
 		dataForSubmitTask.setNextStep(nextStep);
 		dataForSubmitTask.setApplyUser(null); // 系统任务不需要被认领
-		return finishTaskOrSendToMq(dataForSubmitTask);
+
+		if (nextStep == null) {
+			return ((DhTaskInstanceService) AopContext.currentProxy()).finishTask(dataForSubmitTask);
+		} else {
+			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
+			return ServerResponse.createBySuccess();
+		}
 	}
+
+	@Override
+	public List<DhTaskInstance> listErrorTasksByInsUid(String insUid) {
+		DhTaskInstance taskSelective = new DhTaskInstance();
+		taskSelective.setInsUid(insUid);
+        List<DhTaskInstance> dhTaskInstances = dhTaskInstanceMapper.listBySelectiveWithBaseColumn(taskSelective);
+        Iterator<DhTaskInstance> iterator = dhTaskInstances.iterator();
+        while (iterator.hasNext()) {
+            DhTaskInstance taskInstance = iterator.next();
+            if (!DhTaskInstance.STATUS_ERROR_BEFORE_SUBMIT.equals(taskInstance.getTaskStatus())
+                    && !DhTaskInstance.STATUS_ERROR_AFTER_SUBMIT.equals(taskInstance.getTaskStatus())) {
+                iterator.remove();
+            }
+        }
+        return dhTaskInstances;
+    }
 
 }

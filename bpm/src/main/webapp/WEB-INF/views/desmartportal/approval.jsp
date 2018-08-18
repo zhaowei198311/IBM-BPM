@@ -197,7 +197,7 @@
 						<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveDraftsInfo()">保存草稿</button>
 						<button class="layui-btn layui-btn-sm layui-btn-normal submit_btn" onclick="checkUserData()">提交</button>
 						<button class="layui-btn layui-btn-sm layui-btn-normal turn_down" id="reject" onclick="queryRejectByActivitiy()" <c:if test="${activityConf.actcCanReject =='FALSE'}">style="display:none;"</c:if>>驳回</button>
-						<button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}">style="display:none;"</c:if>>传阅</button>
+						<button class="layui-btn layui-btn-sm layui-btn-normal turn_btn" id="transfer" <c:if test="${activityConf.actcCanTransfer =='FALSE'}">style="display:none;"</c:if>>抄送</button>
 						<button class="layui-btn layui-btn-sm layui-btn-normal countersign" id="add" <c:if test="${activityConf.actcCanAdd =='FALSE'}">style="display:none;"</c:if>>会签</button>
 					</span>
 					<span >
