@@ -33,21 +33,23 @@
         		<div class="layui-row layui-form">
         			<form action="#" method="post"  id="form" >
         				<div class="layui-form-item">
-						    <div class="layui-inline">
-						      <label class="layui-form-label" style="width: 130px;">任务接收时间</label>
-						      <div class="layui-input-inline" style="width: 120px;">
-						      	<input type="text" placeholder="开始时间" class="layui-input" name="startTime" id="init-startTime-search" />
+        						 <div class="layui-inline">
+							      	<label class="layui-form-label">公司</label>
+									<div class="layui-input-block">
+										<input type="text" placeholder="公司" class="layui-input"  name="taskTitle" />
+									</div>
 						      </div>
-						      <div class="layui-form-mid">-</div>
-						      <div class="layui-input-inline" style="width: 120px;">
-						      <input type="text" placeholder="结束时间" class="layui-input" name="endTime" id="init-endTime-search" />
+						       <div class="layui-inline">
+							      	<label class="layui-form-label">部门</label>
+									<div class="layui-input-block">
+										<input type="text" placeholder="部门" class="layui-input"  name="taskTitle" />
+									</div>
 						      </div>
-						    </div>
-						      <div class="layui-inline">
-						      	<label class="layui-form-label">环节名称</label>
-								<div class="layui-input-block">
-									<input type="text" placeholder="环节名称" class="layui-input"  name="taskTitle" />
-								</div>
+							   <div class="layui-inline">
+							      	<label class="layui-form-label">SAP编码</label>
+									<div class="layui-input-block">
+										<input type="text" placeholder="SAP编码" class="layui-input"  name="taskTitle" />
+									</div>
 						      </div>
 						     <div class="layui-inline" style="margin-top: -6px;"> 
 								<button class="layui-btn layui-btn-normal layui-btn-sm" type="button" onclick="search();">查询</button>
