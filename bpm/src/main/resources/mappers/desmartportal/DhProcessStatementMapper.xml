@@ -148,6 +148,14 @@
 		<if test="taskTitle!=null and taskTitle!='' ">
 			AND  T.TASK_TITLE = #{taskTitle}
 		</if>
+		<if test="taskInitStartDate!=null and taskInitStartDate!='' ">
+			AND to_char(TASK_INIT_DATE,'yyyy-MM-dd')  = #{taskInitStartDate}
+		</if>
+		<if test="taskInitEndDate!=null and taskInitEndDate!='' ">
+			AND to_char(TASK_INIT_DATE,'yyyy-MM-dd')  = #{taskInitEndDate}
+		</if>
+		
+		
 	</select>
 
 </mapper>
