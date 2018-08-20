@@ -850,7 +850,7 @@
 			AND P.INS_INIT_USER = S.USER_ID
 			AND P.PRO_APP_ID = PM.PRO_APP_ID
 			AND P.PRO_UID = PM.PRO_UID
-			AND P.INS_STATUS != '2'
+			AND P.INS_STATUS_ID != '2'
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">
@@ -943,7 +943,7 @@
 			AND P.INS_INIT_USER = S.USER_ID
 			AND P.PRO_APP_ID = PM.PRO_APP_ID
 			AND P.PRO_UID = PM.PRO_UID
-			AND P.INS_STATUS = '2'
+			AND P.INS_STATUS_ID = '2'
 			AND T.TASK_TYPE IN ('normal','simpleLoop','MultiInstanceLoop'
 			 	,'add','normalAdd','simpleLoopAdd','multiInstanceLoopAdd')
 			<if test="dhTaskInstance.insUid != null and dhTaskInstance.insUid != ''">

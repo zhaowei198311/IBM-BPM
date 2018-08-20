@@ -25,7 +25,7 @@
     <script type="text/javascript" src="resources/desmartportal/js/my/mobile_approval.js?v=1.01"></script>
 </head>
 <body style="background-color: #f2f2f2;margin-bottom:40px;">
-    <div class="mobile_container">
+    <div class="mobile_container" id="approval">
         <div class="mobile_top">
         	<div>
 				<div class="top_left">
@@ -368,43 +368,50 @@
 			</li>
 		</ul>
 	</div>
-	<div id="table_tr_container">
-		<div id="tr_con_top">
-			<div id="tr_top_left">
-				<i class="layui-icon" onclick="backApproval()">&#xe65c;</i>
+	<div class="mobile_container" id="table_tr_container">
+        <div class="mobile_top">
+        	<div>
+				<div class="top_left">
+					<i class="layui-icon" onclick="backApproval()">&#xe65c;</i>
+				</div>
+				<div class="top_content">
+					<span>${processInstance.proName}</span>
+				</div>
 			</div>
-			<div id="tr_top_right">
-				<span>数据详情</span>
+            <div class="top_right">
+            </div>
+        </div>
+        <div id="tr_con_content" class="mobile_middle" style="margin-top:40px">
+        	<div class="table_container" style="margin-top:0px">
+				<p class="title_p"><label>数据表格</label><i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i></p>
+				<table id="tr_table" class="layui-table data-table">
+					<tr>
+					    <td data-label="1">
+					        <input type="tel" class="layui-input">
+					    </td>
+					    <td data-label="2">
+					        <input type="text" class="layui-input">
+					    </td>
+					    <td data-label="3">
+					        <input type="text" class="layui-input">
+					    </td>
+					    <td data-label="4">
+					        <input type="tel" class="layui-input">
+					    </td>
+					</tr>
+				</table>
 			</div>
 		</div>
-		<div id="tr_con_content">
-			<p class="title_p">数据表格</p>
-			<table id="tr_table" class="layui-table">
-				<tr>
-				    <td data-label="1">
-				        <input type="tel" class="layui-input">
-				    </td>
-				    <td data-label="2">
-				        <input type="text" class="layui-input">
-				    </td>
-				    <td data-label="3">
-				        <input type="text" class="layui-input">
-				    </td>
-				    <td data-label="4">
-				        <input type="tel" class="layui-input">
-				    </td>
-				</tr>
-			</table>
-		</div>
-	</div>
+    </div>
 </body>
 <script type="text/javascript">
 	var didTriggerBeforeFormError = '${didTriggerBeforeFormError}';
 	$(function(){
+		//$(".mobile_top").css("display","none");
 		var t1 = window.setInterval(function(){
-			if($(".mobile_top").is(":hidden")){
-				$(".mobile_btn").css("top","0px");
-				$(".mobile_middle").css("margin-top","40px");
+			if($("#approval .mobile_top").is(":hidden")){
+				$("#approval .mobile_btn").css("top","0px");
+				$("#approval .mobile_middle").css("margin-top","40px");
 				window.clearInterval(t1);
 			}
 		},100); 
@@ -413,7 +420,7 @@
 		}
 		$(".data-table").find("input[type='tel']").desNumber();
 		
-		var dateInput = $("#formSet").find(".date");
+		/*var dateInput = $("#formSet").find(".date");
 		dateInput.attr("type", "text");
 		dateInput.prop("readonly", true);
 		dateInput.each(function () {
@@ -432,7 +439,7 @@
 				'type': dateType,
 				'isChange':isChange
 			});
-		});
+		}); */
 		var formSelects = layui.formSelects;
 		$("#formSet").find("select").each(function(){
 			var id = $(this).prop("id");

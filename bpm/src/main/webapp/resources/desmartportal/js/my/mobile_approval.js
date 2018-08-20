@@ -497,7 +497,7 @@ function clickUserFun(obj,isMulti,elementId,activityId){
 	}else{
 		pageConfig.pageNum = 1;
 		pageConfig.pageSize = 14;
-		$(eleObj).parent().find("input[type='text']").val(userName);
+		$(eleObj).parent().find("input[type='text']").val(userName+"("+userUid+")");
 		var inputObj = $(eleObj).parent().find("input[type='text']");
 		if(inputObj.attr("onchange")!=null && inputObj.attr("onchange")!=""){
 			inputObj.trigger("change");
@@ -1334,6 +1334,12 @@ var scrollTop = 0;
 var tdObj = null;
 //点击行到行详情页面
 function showDataTr(obj){
+	var t2 = window.setInterval(function(){
+		if($("#table_tr_container .mobile_top").is(":hidden")){
+			$("#table_tr_container .mobile_middle").css("margin-top","0px");
+			window.clearInterval(t2);
+		}
+	},100); 
 	tdObj = $(obj);
 	scrollTop = $(obj).offset().top;
 	$(obj).parent().find("td").each(function(){
@@ -1343,7 +1349,7 @@ function showDataTr(obj){
 	});
 	var trHtml = $(obj).parent().html();
 	var tableTitle = $(obj).parent().parent().parent().attr("title");
-	$("#tr_con_content title_p").text(tableTitle);
+	$("#tr_con_content title_p").find("label").text(tableTitle);
 	$("#tr_con_content #tr_table").html(trHtml);
 	$("#tr_con_content #tr_table").find("td").each(function(){
 		if($(this).find("input").length>0){
@@ -1380,6 +1386,13 @@ function showDataTr(obj){
 	});
 	$(".mobile_container").css("display","none");
 	$("#table_tr_container").css("display","block");
+	var t3 = window.setInterval(function(){
+		if($("#approval .mobile_top").is(":hidden")){
+			$("#approval .mobile_btn").css("top","40px");
+			$("#approval .mobile_middle").css("margin-top","82px");
+			window.clearInterval(t3);
+		}
+	},100); 
 }
 
 function backApproval(){

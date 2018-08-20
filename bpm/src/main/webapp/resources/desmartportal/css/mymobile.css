@@ -1,6 +1,9 @@
 body{
 	color:#727272;
 }
+.layui-select-disabled .layui-edge, .layui-radio-disbaled, .layui-checkbox-disbaled {
+    visibility:hidden;
+}
 /*回到顶部的css*/
 .layui-fixbar {
     position: fixed;

@@ -12,7 +12,7 @@
     border-bottom: 1px solid #ccc;
 	box-shadow: 0 0 3px #f2f2f2;
 	padding-bottom: 2px;
-	z-index: 10;
+	z-index: 100;
 	background: #EF6301;
     color: #fff;
 }
@@ -49,7 +49,7 @@
     float:right;
     border-bottom: 2px solid #f2f2f2;
     box-shadow: 0 0 3px #f2f2f2;
-    z-index: 10;
+    z-index: 100;
     background: #fff;
 }
 
@@ -66,6 +66,13 @@
 .layui-fixbar{
     right: 10px;
     bottom: 60px;
+}
+/*数据表格*/
+.data-table td{
+	background: #fff;
+	border-bottom: 1px solid #F3F3F3;
+	min-height: 28px;
+    line-height: 28px;
 }
 /*提交按钮*/
 .filter_btn{
@@ -574,7 +581,6 @@ input[disabled], .layui-select-disabled .layui-disabled {
 /*行详情*/
 #table_tr_container{
 	display:none;
-    margin-top: 50px;
 }
 #tr_con_top{
 	width: 100%;
