@@ -33,18 +33,8 @@
         		<div class="layui-row layui-form">
         			<form action="#" method="post"  id="form" >
         				<div class="layui-form-item">
-						    <div class="layui-inline">
-						      <label class="layui-form-label" style="width: 130px;">任务接收时间</label>
-						      <div class="layui-input-inline" style="width: 120px;">
-						      	<input type="text" placeholder="开始时间" class="layui-input" name="startTime" id="init-startTime-search" />
-						      </div>
-						      <div class="layui-form-mid">-</div>
-						      <div class="layui-input-inline" style="width: 120px;">
-						      <input type="text" placeholder="结束时间" class="layui-input" name="endTime" id="init-endTime-search" />
-						      </div>
-						    </div>
 						      <div class="layui-inline">
-						      	<label class="layui-form-label">环节名称</label>
+						      	<label class="layui-form-label">SAP编码</label>
 								<div class="layui-input-block">
 									<input type="text" placeholder="环节名称" class="layui-input"  name="taskTitle" />
 								</div>
@@ -270,9 +260,9 @@
             btn : [ '确定', '取消' ]//按钮
         }, function(index) {
             layer.close(index);
-//             $('#form').attr('action',"projectStatement/queryExportTaskInstance");
-//         	$('#form').submit();
-//         	$('#form').attr('action',"#");
+            $('#form').attr('action',"projectStatement/queryExportTaskInstance");
+        	$('#form').submit();
+        	$('#form').attr('action',"#");
         }); 
     }
 </script>

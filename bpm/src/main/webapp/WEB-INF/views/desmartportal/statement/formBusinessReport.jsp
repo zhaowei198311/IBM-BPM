@@ -270,9 +270,9 @@
             btn : [ '确定', '取消' ]//按钮
         }, function(index) {
             layer.close(index);
-//             $('#form').attr('action',"projectStatement/queryExportTaskInstance");
-//         	$('#form').submit();
-//         	$('#form').attr('action',"#");
+            $('#form').attr('action',"projectStatement/queryExportTaskInstance");
+        	$('#form').submit();
+        	$('#form').attr('action',"#");
         }); 
     }
 </script>
