@@ -47,35 +47,27 @@ public class SysGlobalConfigController {
 	
 	@RequestMapping(value = "/saveGlobalConfig")
 	@ResponseBody
-	public String saveAgent(@RequestParam(value="bpmAdminName") String bpmAdminName,@RequestParam(value="bpmAdminPsw")String bpmAdminPsw,
-			@RequestParam(value="bpmClientTimeout")String bpmClientTimeout,@RequestParam(value="bpmServerHost")String bpmServerHost,
-			@RequestParam(value="bpmformsHost")String bpmformsHost,@RequestParam(value="bpmformsWebContext")String bpmformsWebContext,
-			@RequestParam(value="configName")String configName,@RequestParam(value="configId")String configId,
-			@RequestParam(value="sftpPath")String sftpPath,@RequestParam(value="sftpUserName")String sftpUserName,
-			@RequestParam(value="sftpPassword")String sftpPassword,@RequestParam(value="sftpIp")String sftpIp,
-			@RequestParam("fileFormat")String fileFormat) {
+	public String saveAgent(BpmGlobalConfig sysGlobalConfig) {
 		try {	
-			BpmGlobalConfig sysGlobalConfig = new BpmGlobalConfig();
-			sysGlobalConfig.setBpmAdminName(bpmAdminName);
+			//BpmGlobalConfig sysGlobalConfig = new BpmGlobalConfig();
+			/*sysGlobalConfig.setBpmAdminName(bpmAdminName);
 			sysGlobalConfig.setBpmAdminPsw(bpmAdminPsw);
 			sysGlobalConfig.setBpmClientTimeout(Integer.valueOf(bpmClientTimeout));
 			sysGlobalConfig.setBpmServerHost(bpmServerHost);
 			sysGlobalConfig.setBpmformsHost(bpmformsHost);
 			sysGlobalConfig.setBpmformsWebContext(bpmformsWebContext);
-			sysGlobalConfig.setConfigName(configName);
+			sysGlobalConfig.setConfigName(configName);*/
 			sysGlobalConfig.setConfigStatus("on");
 			sysGlobalConfig.setUpdateTime(new Timestamp(new Date().getTime()));
-			sysGlobalConfig.setSftpPath(sftpPath);
+			/*sysGlobalConfig.setSftpPath(sftpPath);
 			sysGlobalConfig.setSftpUserName(sftpUserName);
 			sysGlobalConfig.setSftpPassword(sftpPassword);
 			sysGlobalConfig.setSftpIp(sftpIp);
-			sysGlobalConfig.setFileFormat(fileFormat);
-			if(configId == null || configId == "") {
-				configId="bpm_gcfg:"+UUIDTool.getUUID();
-				sysGlobalConfig.setConfigId(configId);
+			sysGlobalConfig.setFileFormat(fileFormat);*/
+			if(sysGlobalConfig.getConfigId() == null || sysGlobalConfig.getConfigId() == "") {
+				sysGlobalConfig.setConfigId("bpm_gcfg:"+UUIDTool.getUUID());
 				systemGlobalConfigService.insert(sysGlobalConfig);
 			}else {
-				sysGlobalConfig.setConfigId(configId);
 				systemGlobalConfigService.updateByPrimaryKeySelective(sysGlobalConfig);
 			}
 			return "{\"msg\":\"success\"}";
