@@ -4,9 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -28,6 +30,7 @@ import com.desmart.desmartbpm.entity.DhProcessRetrieve;
 import com.desmart.desmartbpm.mongo.InsDataDao;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.mongodb.BasicDBObject;
 
 @Repository
 public class InsDataDaoImpl implements InsDataDao{
@@ -229,6 +232,20 @@ public class InsDataDaoImpl implements InsDataDao{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public List<DhProcessInstance> quartInsData(Map<String, String> insData) {
+		// TODO Auto-generated method stub
+		//根据SAP编码查询
+		Query query = new Query();
+		Criteria criteria  =  new Criteria();
+		String SAPCode = insData.get("SAPCode");
+		if(StringUtils.isNotBlank(insData.get("SAPCode"))) {
+			criteria.and("insData$.formData.sapNum.value").regex(".*" + SAPCode + ".*");
+		}
+		query.addCriteria(criteria);
+		List<DhProcessInstance> jSONObjectList =mongoTemplate.find(query, DhProcessInstance.class,Const.INS_DATA);
+		return jSONObjectList;
 	}
 
 }

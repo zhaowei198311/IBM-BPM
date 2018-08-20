@@ -2,9 +2,11 @@ package com.desmart.desmartbpm.mongo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.desmartportal.entity.DhProcessInstance;
 
 public interface InsDataDao {
 	
@@ -34,4 +36,14 @@ public interface InsDataDao {
 	 * @return void
 	 */
 	void insertInsData();
+	
+	
+	/**
+	 * 
+	 * @Title: 查询interface  
+	 * @Description: 
+	 * @return  
+	 * @return List<JSONObject>
+	 */
+	List<DhProcessInstance> quartInsData(Map<String,String> insData);
 }

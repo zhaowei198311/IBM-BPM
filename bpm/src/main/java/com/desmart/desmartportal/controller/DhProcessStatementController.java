@@ -84,9 +84,6 @@ public class DhProcessStatementController {
 	@ResponseBody
 	public ServerResponse queryTaskInstance(@RequestParam Map<String, String> parameter, Integer pageNum,
 			Integer pageSize) {
-		System.out.println(pageNum);
-		System.out.println(pageSize);
-
 		return dhProcessStatementService.selectAllTask(parameter, pageNum, pageSize);
 	}
 

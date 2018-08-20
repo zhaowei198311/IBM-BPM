@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.mongo.impl.InsDataDaoImpl;
 import com.desmart.desmartportal.dao.DhProcessStatementMapper;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessStatementService;
@@ -20,10 +21,18 @@ public class DhProcessStatementServiceImpl implements DhProcessStatementService{
 	@Autowired
 	private DhProcessStatementMapper dhProcessStatementMapper;
 	
+	@Autowired
+	private InsDataDaoImpl dnsDataDaoImpl;
+	
+	
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectAllTask(Map<String, String> parameter, Integer pageNum,
 			Integer pageSize) {
 		try {
+			
+			
+			//String	dnsDataDaoImpl.quartInsData(parameter);
+			
 			PageHelper.startPage(pageNum, pageSize,"task_init_date desc");
 			List<DhTaskInstance> resultList = dhProcessStatementMapper.selectAllTask(parameter);
 			for (DhTaskInstance dhTaskInstance : resultList) {
@@ -44,4 +53,9 @@ public class DhProcessStatementServiceImpl implements DhProcessStatementService{
 		// TODO Auto-generated method stub
 		return dhProcessStatementMapper.selectAllTask(parameter);
 	}
+	
+	
+	
+	
+	
 }
