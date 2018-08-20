@@ -126,11 +126,9 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 					if (paraType.equals(InterfaceParameterType.DATE.getCode())) {
 						if (StringUtils.isNoneBlank(value)) {
 							try {
-								Date  valueDate= DateUtil.strToDate(value, dateFmt);
+								Date  valueDate= DateUtil.strToDate(value, "");
 								String strDate = DateUtil.dateToStr(valueDate,dateFmt);
-								if (!DateFmtUtils.isValidDate(strDate, dateFmt)) {
-									return ServerResponse.createByErrorMessage(value + "(不是正确的日期格式！)");
-								}
+								inputParameter.put(key, strDate);
 							} catch (Exception e) {
 								return ServerResponse.createByErrorMessage(value + "(不是正确的日期格式！)");
 							}
@@ -232,6 +230,7 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
             map.put("responseBody", responseBody);
             return ServerResponse.createBySuccess(map);
 		} else if (intType.equals(InterfaceType.WEBSERVICE.getCode())) {
+			//把请求的参数装进requst模版里边
 			String soapRequestData = XmlParsing.getSaopParameter(requestXml, inputParameter); // soap协议的格式，定义了方法和参数
 			JSONObject jSONObject = HttpClientCallSoapUtil.doPostSoap1_1(intUrl, soapRequestData, "", intLoginUser, intLoginPwd);
 			String  statusCode = jSONObject.getString("statusCode");
@@ -239,7 +238,6 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
             DhInterfaceLog interfaceLog = saveDhInterfaceLog(intUid, inputParameter.toJSONString(), jSONObject.getString("responseResult"));
             Map<String, String> map = new HashMap<>();
             map.put("dilUid", interfaceLog.getDilUid()); // 调用日志的主键
-
 			if(statusCode.equals("200")) {
 				// 返回参数格式拼接
 				List<String> responseConfig = new ArrayList<String>();
