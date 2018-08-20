@@ -296,7 +296,8 @@
 					,shade : 0.3
 					,content: '保存成功！',
 					end: function () {
-						window.location.href = "globalConfig/globalConfig";
+						//window.location.href = "globalConfig/globalConfig";
+						getGlobalConfigInfo();
 				      }
 				}); 
 				layer.style(index, {
