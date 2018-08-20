@@ -4,6 +4,7 @@ package com.desmart.desmartsystem.controller;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,7 +52,8 @@ public class SysGlobalConfigController {
 			@RequestParam(value="bpmformsHost")String bpmformsHost,@RequestParam(value="bpmformsWebContext")String bpmformsWebContext,
 			@RequestParam(value="configName")String configName,@RequestParam(value="configId")String configId,
 			@RequestParam(value="sftpPath")String sftpPath,@RequestParam(value="sftpUserName")String sftpUserName,
-			@RequestParam(value="sftpPassword")String sftpPassword,@RequestParam(value="sftpIp")String sftpIp) {
+			@RequestParam(value="sftpPassword")String sftpPassword,@RequestParam(value="sftpIp")String sftpIp,
+			@RequestParam("fileFormat")String fileFormat) {
 		try {	
 			BpmGlobalConfig sysGlobalConfig = new BpmGlobalConfig();
 			sysGlobalConfig.setBpmAdminName(bpmAdminName);
@@ -67,6 +69,7 @@ public class SysGlobalConfigController {
 			sysGlobalConfig.setSftpUserName(sftpUserName);
 			sysGlobalConfig.setSftpPassword(sftpPassword);
 			sysGlobalConfig.setSftpIp(sftpIp);
+			sysGlobalConfig.setFileFormat(fileFormat);
 			if(configId == null || configId == "") {
 				configId="bpm_gcfg:"+UUIDTool.getUUID();
 				sysGlobalConfig.setConfigId(configId);
