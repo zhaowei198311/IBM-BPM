@@ -248,7 +248,7 @@ window.lCalendar = (function() {
 					'<div>分</div>' +
 					'</div>' +
 					'</div>' +
-					'<div>' +
+					'<div style="display:none;">' +
 					'<div class="gear time_ss" data-datetype="time_ss"></div>' +
 					'<div class="date_grid">' +
 					'<div>秒</div>' +
@@ -288,11 +288,16 @@ window.lCalendar = (function() {
 					mm: d.getMinutes(),
 					ss: d.getSeconds()
 				};
-				if (/^\d{2}:\d{2}:\d{2}$/.test(_self.trigger.value)) {
+				var timeVal = _self.trigger.value;
+				if (/^\d{2}:\d{2}:\d{2}$/.test(timeVal)) {
 					rs = _self.trigger.value.match(/(^|:)\d{2}/g);
 					e.hh = parseInt(rs[0].replace(/^0?/g, ""));
 					e.mm = parseInt(rs[1].replace(/:0?/g, ""));
 					e.ss = parseInt(rs[2].replace(/:0?/g, ""));
+				}else if(/^\d{2}:\d{2}$/.test(timeVal)){
+					rs = _self.trigger.value.match(/(^|:)\d{2}/g);
+					e.hh = parseInt(rs[0].replace(/^0?/g, ""));
+					e.mm = parseInt(rs[1].replace(/:0?/g, ""));
 				}
 				
 				//alert(e.ss);   测试用
@@ -733,7 +738,7 @@ window.lCalendar = (function() {
 				time_ss = time_ss > 9 ? time_ss : '0' + time_ss;
 				
 				
-				_self.trigger.value = (time_hh.length < 2 ? "0" : "") + time_hh + (time_mm.length < 2 ? ":0" : ":") + time_mm+ (time_ss.length < 2 ? ":0" : ":") + time_ss;
+				_self.trigger.value = (time_hh.length < 2 ? "0" : "") + time_hh + (time_mm.length < 2 ? ":0" : ":") + time_mm;//+ (time_ss.length < 2 ? ":0" : ":") + time_ss;
 				if(_self.isChange=="true"){
 					_self.trigger.onchange();
 				}

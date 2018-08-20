@@ -77,7 +77,7 @@ function drawPage() {
 				if(tableObj.length!=0){
 					flag = false;
 					formHtml = formHtml.substring(0, formHtml.length - 4);
-					formHtml += "</tbody></table>";
+					formHtml += "</tbody></table></div>";
 					tableObj.find("thead tr").append("<th col-type='tool'>操作</th>");
 					var thObjArr = tableObj.find("thead th");
 					var trHtml = '<tr>';
@@ -91,14 +91,14 @@ function drawPage() {
 						if(colFlag){
 							colFlag = false;
 							trHtml += '<td data-label="' + thObj.text().trim() + '" onclick="showDataTr(this)">'
-								+'<span style="color:#009688">查看详情  &gt;&gt;</span>'
+								+'<span style="color:#EF6301">查看详情  &gt;&gt;</span>'
 								+'</td>'
 								+'<td data-label="操作">'
 								+'<i class="layui-icon" title="添加新的一行" onclick="addDataRow(this)">&#xe654;</i>' 
 								+'<i class="layui-icon" title="删除本行" onclick="removeDataRow(this)">&#xe640;</i></td>'
 						}
 						if(thObj.text().trim()!="操作"){
-							trHtml += '<td data-label="' + thObj.text().trim() + '">';
+							trHtml += '<td data-label="' + thObj.text().trim() + '" style="display:none">';
 						}
 						switch (thObj.attr("col-type")) {
 							case "text": {
@@ -129,11 +129,12 @@ function drawPage() {
 					trHtml += '</tr>';
 					tableObj.append("<tbody>" + trHtml + "</tbody>");
 					var tableLabel = tableObj.attr("table-label");
-					formHtml += "<p class='title_p'>" + tableLabel
-						+ "<i class='layui-icon arrow' style='margin-left:10px;' onclick='showTable(this)'>&#xe625;</i></p><div class='table_container'><table class='layui-table data-table' name='"
+					formHtml += "<div class='table_container'><p class='title_p'>" + tableLabel
+						+ "<i class='layui-icon arrow' style='float:right;' onclick='showTable(this)'>&#xe61a;</i></p>"
+						+"<table class='layui-table data-table' name='"
 						+ tableObj.attr("name") + "' title='" + tableLabel + "'>" + tableObj.html()
-						+ "</table>";
-					formHtml += tableHead;
+						+ "</table></div>";
+					formHtml += "<div class='table_container'>"+tableHead;
 				} else if (pObj.length != 0) {
 					if (pObj.attr("title") == "table_title") {
 						//表单块标题
@@ -435,7 +436,11 @@ function drawPage() {
 			var id = $(this).prop("id");
 			var isDatetime = $(this).attr("date_type");
 			var dateType = "date";
-			
+			if(isDatetime=="datetime"){
+				dateType = "datetime";
+			}else if(isDatetime=="time"){
+				dateType = "time";
+			}
 			var calendar = new lCalendar();
 			if(isDatetime=="true"){
 				dateType = "datetime";

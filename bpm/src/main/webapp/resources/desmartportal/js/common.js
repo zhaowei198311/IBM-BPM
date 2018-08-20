@@ -727,14 +727,22 @@ var common = {
 		var tagType = $("[name='"+name+"']").attr("type");
 		var className = $("[name='"+name+"']").attr("class");
 		if(tagType=="checkbox"){
-			$("[name='"+name+"']").attr("disabled","true");
+			$("[name='"+name+"']").attr("display","none");
+			var title = "";
+			$("[name='"+name+"']:checked").each(function(){
+				title += $(this).attr("title");
+			});
+			if($("[name='"+name+"']:checked").parent().find(".radio_value").length==0){
+				$("[name='"+name+"']:checked").parent().prepend("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
+			}
+			return;
 			return;
 		}
 		if(tagType=="radio"){
 			$("[name='"+name+"']").attr("display","none");
 			var title = $("[name='"+name+"']:checked").attr("title");
 			if($("[name='"+name+"']:checked").parent().find(".radio_value").length==0){
-				$("[name='"+name+"']:checked").parent().append("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
+				$("[name='"+name+"']:checked").parent().prepend("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
 			}
 			return;
 		}
