@@ -75,7 +75,7 @@
 					<input id="proName" value="${proName}" style="display: none;">
 				</div>
 				<div class="layui-col-md2">
-					<label class="layui-form-label">实例状态</label>
+					<label class="layui-form-label">查询条件</label>
 					<div class="layui-input-block">
 						<select id="searchType" class="layui-input-block group_select"
 							name="group" lay-verify="required">
@@ -95,12 +95,14 @@
 				<div class="layui-col-md3">
 						<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
 				</div>
-				<div class="layui-col-md3" style="text-align: center;"> 
+				<div class="layui-col-md1" style="text-align: center;"> 
 					<button class="layui-btn layui-btn-normal layui-btn-sm" onclick="queryProcessInstance()">查询</button>
-					<c:if test="${startFlag != null && startFlag == true }">
-						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="checkedBusinesskey()">发起新流程</button>
-					</c:if>
 				</div>
+				<c:if test="${startFlag != null && startFlag == true }">
+				<div class="layui-col-md1" style="text-align: right;">
+						<button class="layui-btn layui-btn-primary layui-btn-sm" onclick="checkedBusinesskey()">起草</button>
+				</div>
+				</c:if>
 			</div>
 			<div class="layui-row layui-form">
 				<c:forEach var="item" items="${processRetrieveList }" varStatus="st">
