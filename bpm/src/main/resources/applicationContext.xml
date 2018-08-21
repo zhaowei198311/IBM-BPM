@@ -20,7 +20,7 @@
     </context:component-scan>
 
     <!-- 支持aop注解 -->
-    <aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy expose-proxy="true"/>
 
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -28,7 +28,7 @@
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
             <list>
-                <value>classpath:datasourceDev.properties</value>
+                <value>classpath:datasourceBeta.properties</value> <!--  datasourceDev.properties -->
             </list>
         </property>
         <property name="fileEncoding" value="UTF-8"/>

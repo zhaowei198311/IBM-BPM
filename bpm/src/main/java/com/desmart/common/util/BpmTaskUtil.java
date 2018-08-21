@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSON;
 import com.desmart.common.constant.ServerResponse;
 import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,8 @@ import com.desmart.desmartsystem.entity.BpmGlobalConfig;
  */
 public class BpmTaskUtil {
     private static final Logger log = LoggerFactory.getLogger(BpmTaskUtil.class);
-    
+    public static final String TASK_STATUS_RECEIVED = "Received";
+    public static final String TASK_STATUS_CLOSED = "Closed";
     private BpmGlobalConfig bpmGlobalConfig;
     
     public BpmTaskUtil(BpmGlobalConfig bpmGlobalConfig) {
@@ -126,7 +128,7 @@ public class BpmTaskUtil {
      * @param taskId
      * @return
      */
-    public HttpReturnStatus getTaskData(Integer taskId) {
+    public HttpReturnStatus getTaskData(int taskId) {
         HttpReturnStatus result = null;
         RestUtil restUtil = new RestUtil(bpmGlobalConfig);
         try {
@@ -146,6 +148,33 @@ public class BpmTaskUtil {
         }
         return result;
     }
+
+    /**
+     * 获得指定任务的状态，失败时返回null
+     * @param taskId
+     * @return  预期的值： "Closed" / "Received"
+     */
+    public String getTaskStatus(int taskId) {
+        RestUtil restUtil = new RestUtil(bpmGlobalConfig);
+        try {
+            String host = this.bpmGlobalConfig.getBpmServerHost();
+            String url = host + "rest/bpm/wle/v1/task" + "/" + taskId;
+            Map<String, Object> params = new HashMap();
+            params.put("parts", "viewTask");
+            HttpReturnStatus httpReturnStatus = restUtil.doGet(url, params);
+            if (HttpReturnStatusUtil.isErrorResult(httpReturnStatus)) {
+                return null;
+            } else {
+                return JSON.parseObject(httpReturnStatus.getMsg()).getJSONObject("data").getString("status");
+            }
+        } catch (Exception e) {
+            log.error("获得指定任务状态失败,任务ID：" + taskId, e);
+            return null;
+        } finally {
+            restUtil.close();
+        }
+    }
+
     
     /**
      * 将引擎中pubBo的数据更新

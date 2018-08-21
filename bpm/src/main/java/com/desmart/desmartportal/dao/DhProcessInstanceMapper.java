@@ -97,4 +97,13 @@ public interface DhProcessInstanceMapper {
 	 * @return
 	 */
 	List<DhProcessInstance> queryBatchByProMetaList(@Param("list")List<DhProcessMeta> metaList);
+
+	/**
+	 * 根据流程实例主键，修改流程实例状态
+	 * @param insStatusId
+	 * @param insUid
+	 * @return
+	 */
+	int updateInsStatusIdByInsUid(@Param("insStatusId") int insStatusId, @Param("insUid") String insUid);
+
 }

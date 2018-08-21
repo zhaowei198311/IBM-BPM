@@ -2,17 +2,20 @@ package com.desmart.desmartbpm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.DhTaskCheckException;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.*;
-import com.desmart.desmartbpm.entity.BpmActivityMeta;
-import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.common.util.DateTimeUtil;
+import com.desmart.common.util.FormDataUtil;
+import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
+import com.desmart.desmartbpm.entity.*;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.service.AutoCommitSystemTaskService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartportal.service.*;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -45,36 +48,38 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     private DhTaskInstanceService dhTaskInstanceService;
     @Autowired
     private CommonMongoDao commonMongoDao;
+    @Autowired
+    private DhTaskExceptionMapper dhTaskExceptionMapper;
 
     @Scheduled(cron = "0/10 * * * * ?")
     @Override
     public void startAutoCommitSystemTask() {
         logger.info("开始处理系统任务");
         BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
-        // 获得待处理列表
         List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit();
         for (DhTaskInstance taskInstance : taskList) {
-            this.doFirstSubmit(taskInstance, bpmGlobalConfig);
+            this.submitSystemTaskFirstTime(taskInstance, bpmGlobalConfig);
         }
         logger.info("处理系统任务完成");
     }
 
     /**
      * 处理系统任务的第一次提交并处理过程
-     * @param taskInstance
+     * @param dhTaskInstance
      * @param bpmGlobalConfig
      * @return
      */
-    private ServerResponse doFirstSubmit(DhTaskInstance taskInstance, BpmGlobalConfig bpmGlobalConfig) {
+    private ServerResponse submitSystemTaskFirstTime(DhTaskInstance dhTaskInstance, BpmGlobalConfig bpmGlobalConfig) {
+        DataForSubmitTask dataForSubmitTask = null;
         try {
-            ServerResponse submitSystemTaskResponse = dhTaskInstanceService.submitSystemTask(taskInstance, bpmGlobalConfig);
-            if (!submitSystemTaskResponse.isSuccess()) {
-                // todo 失败时的逻辑
-                logger.error("系统任务提交失败", submitSystemTaskResponse.getMsg());
-            }
-            return submitSystemTaskResponse;
+            dataForSubmitTask = dhTaskInstanceService.perpareDataForSubmitSystemTask(dhTaskInstance, bpmGlobalConfig);
+            return dhTaskInstanceService.finishTask(dataForSubmitTask);
+        } catch (DhTaskCheckException checkEx) {
+            dhTaskExceptionMapper.save(DhTaskException.createCheckTaskException(dhTaskInstance, checkEx.getMessage()));
+            dhTaskInstanceMapper.updateTaskStatus(dhTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR);
+            return ServerResponse.createByErrorMessage(checkEx.getMessage());
         } catch (Exception e) {
-            logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
+            logger.error("处理系统失败：taskUid：" + dhTaskInstance.getTaskUid(), e);
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
     }
@@ -88,19 +93,21 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit();
         for (DhTaskInstance taskInstance : taskList) {
             try {
-                ServerResponse checkResponse = this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
-                if (!checkResponse.isSuccess()) {
-                    if (checkResponse.getStatus() != 2) {
-                        // 如果出错不是因为未到提交时间
-                        // todo 记录到异常表
-                    }
+                ServerResponse<Boolean> checkSystemResponse = this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
+                if (checkSystemResponse.isSuccess() && checkSystemResponse.getData()) {
+                    // 时间到了
+                    submitSystemTaskFirstTime(taskInstance, bpmGlobalConfig);
+                } else {
+                    // 计算时间出错, 将任务状态置为错误
+                    dhTaskInstanceMapper.updateTaskStatus(taskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR);
+                    //DhTaskException.createCheckTriggerException();
                 }
             } catch (Exception e) {
                 logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
                 // todo 记录到异常表
             }
         }
-        if (CollectionUtils.isEmpty(taskList)) {
+        if (!CollectionUtils.isEmpty(taskList)) {
             commonMongoDao.set(CommonMongoDao.LAST_SCAN_SYSTEM_TASK_KEY, taskList.get(taskList.size() - 1).getTaskId());
         }
         logger.info("处理系统延时任务完成");
@@ -111,40 +118,44 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
      * 检查延时任务是否到了提交的时间点, 如果到了提交点就进行提交
      * @param currTask  任务实例
      * @param bpmGlobalConfig  全局配置
+     * return  status: 0 时  data可能为 true或false
+     *         status: 1  检测错误
      */
-    public ServerResponse checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
+    public ServerResponse<Boolean> checkSystemDelayTask(DhTaskInstance currTask, BpmGlobalConfig bpmGlobalConfig) {
         BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(currTask.getTaskActivityId());
         if (currTaskNode == null) {
             return ServerResponse.createByErrorMessage("系统延时任务处理失败，找不到任务节点，taskUid：" + currTask.getTaskUid());
         }
         DhActivityConf currTaskConf = currTaskNode.getDhActivityConf();
-        if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
-            return ServerResponse.createByErrorMessage("系统延时任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
-        }
+//        if (!"TRUE".equals(currTaskConf.getActcIsSystemTask())) {
+//            return ServerResponse.createByErrorMessage("系统延时任务处理失败，任务不是系统任务，taskUid：" + currTask.getTaskUid());
+//        }
         if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
                 || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
             return ServerResponse.createByErrorMessage("系统延时任务任务类型异常，不能处理循环任务，taskUid：" + currTask.getTaskUid());
         }
         DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currTask.getInsUid());
-
+        if (dhProcessInstance == null) {
+            return ServerResponse.createByErrorMessage("流程实例不存在，" + currTask.getInsUid());
+        }
         if (DhActivityConf.DELAY_TYPE_NONE.equals(currTaskConf.getActcDelayType())) {
             // 提交系统任务
-            return this.doFirstSubmit(currTask, bpmGlobalConfig);
-        } else if (DhActivityConf.DELAY_TYPE_TIME.equals(currTaskConf.getActcDelayType())) {
+            return ServerResponse.createBySuccess(true);
+        } else if (DhActivityConf.DELAY_TYPE_BY_TIME.equals(currTaskConf.getActcDelayType())) {
             // 计算是否到达提交时间: 任务接收时间 + 延时时间 < 当前时间 即处理
             if (checkTimeByDelayTime(currTask, currTaskConf)) {
-                return this.doFirstSubmit(currTask, bpmGlobalConfig);
+                return ServerResponse.createBySuccess(true);
             } else {
-                return ServerResponse.createByErrorCodeMessage(2, "任务未到提交时间");
+                return ServerResponse.createBySuccess(false);
             }
-        } else if (DhActivityConf.DELAY_TYPE_FIELD.equals(currTaskConf.getActcDelayType())) {
+        } else if (DhActivityConf.DELAY_TYPE_BY_FIELD.equals(currTaskConf.getActcDelayType())) {
             if (checkTimeByField(currTaskConf, dhProcessInstance)) {
-                return this.doFirstSubmit(currTask, bpmGlobalConfig);
+                return ServerResponse.createBySuccess(true);
             } else {
-                return ServerResponse.createByErrorCodeMessage(2, "任务未到提交时间");
+                return ServerResponse.createBySuccess(false);
             }
         } else {
-            throw new PlatformException("系统延时任务处理失败，延时类型异常，taskUid：" + currTask.getTaskUid());
+            return ServerResponse.createByErrorMessage("系统延时任务处理失败，延时类型异常，taskUid：" + currTask.getTaskUid());
         }
 
     }

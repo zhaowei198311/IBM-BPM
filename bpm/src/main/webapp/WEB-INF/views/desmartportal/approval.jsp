@@ -250,7 +250,7 @@
 							<td class="sub_title" colspan="5"><c:choose>
 									<%-- 可编辑标题 --%>
 									<c:when test="${canEditInsTitle == true}">
-										<input type="text" id="insTitle_input" class="layui-input" />
+										<input type="text" id="insTitle_input" value="${processInstance.insTitle }" class="layui-input" />
 									</c:when>
 									<%-- 不可编辑标题 --%>
 									<c:otherwise>

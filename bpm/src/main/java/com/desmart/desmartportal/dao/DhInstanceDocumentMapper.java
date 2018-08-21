@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 @Repository
-public interface AccessoryFileUploadMapper {
+public interface DhInstanceDocumentMapper {
 	/**
 	 * 循环新增附件数据
 	 * @param dhInstanceDocuments
 	 * @return
 	 */
-	public Integer insertDhInstanceDocuments(@Param("dhInstanceDocuments")List<DhInstanceDocument> dhInstanceDocuments);
+	int insertDhInstanceDocuments(@Param("dhInstanceDocuments")List<DhInstanceDocument> dhInstanceDocuments);
 	/**
 	 * 判断文件在当前流程是否已经上传
 	 * @param appUid
@@ -21,42 +21,50 @@ public interface AccessoryFileUploadMapper {
 	 * @param appDocUid
 	 * @return
 	 */
-	public List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName
+	List<DhInstanceDocument> checkFileActivityIdByName(@Param("appUid")String appUid, @Param("myFileName")String myFileName
 			,@Param("appDocUid")String appDocUid);
 	/**
 	 * 根据条件查询文件列表
 	 * @param dhInstanceDocument
 	 * @return
 	 */
-	public List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument);
+	List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument);
 	/**
 	 * 批量修改
 	 * @param dhInstanceDocuments
 	 * @return
 	 */
-	public Integer updateFileByKeys(@Param("dhInstanceDocuments")List<DhInstanceDocument> dhInstanceDocuments);
+	int updateFileByKeys(@Param("dhInstanceDocuments")List<DhInstanceDocument> dhInstanceDocuments);
 	/**
 	 * 删除
 	 * @param appDocUid
 	 * @return
 	 */
-	public Integer deleteFileByAppDocUid(String appDocUid);
+	int deleteFileByAppDocUid(String appDocUid);
 	/**
 	 * 根据文件标识修改文件
 	 * @param dhInstanceDocument
 	 * @return
 	 */
-	public Integer updateFileByFileCard(DhInstanceDocument dhInstanceDocument);
+	int updateFileByFileCard(DhInstanceDocument dhInstanceDocument);
 	/**
 	 * 根据主键查询
 	 * @param appDocUid
 	 * @return
 	 */
-	public DhInstanceDocument selectByPrimaryKey(String appDocUid);
+	DhInstanceDocument selectByPrimaryKey(String appDocUid);
 	/**
 	 * 更新文件时根据主键修改
 	 * @param dhInstanceDocument
 	 * @return
 	 */
-	public Integer updateFileByPrimaryKey(DhInstanceDocument dhInstanceDocument);
+	int updateFileByPrimaryKey(DhInstanceDocument dhInstanceDocument);
+
+	/**
+	 * 将一个流程实例下的附件转移到另一个流程实例下
+	 * @param oldInsUid
+	 * @param newInsUid
+	 * @return
+	 */
+	int updateInsUidToNewValue(@Param("oldInsUid") String oldInsUid, @Param("newInsUid") String newInsUid);
 }

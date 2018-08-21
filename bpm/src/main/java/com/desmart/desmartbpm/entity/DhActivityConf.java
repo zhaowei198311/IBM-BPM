@@ -7,9 +7,12 @@ public class DhActivityConf {
     public static final String TIME_UNIT_HOUR = "hour";
     public static final String TIME_UNIT_DAY = "day";
     public static final String TIME_UNIT_MONTH = "month";
+    /** 不延时   */
     public static final String DELAY_TYPE_NONE = "none";
-    public static final String DELAY_TYPE_TIME = "time";
-    public static final String DELAY_TYPE_FIELD = "field";
+    /** 指定时间段后执行   */
+    public static final String DELAY_TYPE_BY_TIME = "time";
+    /** 指定字段的时间点后执行   */
+    public static final String DELAY_TYPE_BY_FIELD = "field";
 
     private String actcUid;
 

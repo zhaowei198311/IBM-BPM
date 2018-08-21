@@ -21,10 +21,7 @@ import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.service.*;
 import com.desmart.desmartbpm.util.http.BpmClientUtils;
 import com.desmart.desmartportal.common.Const;
-import com.desmart.desmartportal.dao.DhDraftsMapper;
-import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
-import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
-import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
+import com.desmart.desmartportal.dao.*;
 import com.desmart.desmartportal.entity.*;
 import com.desmart.desmartportal.service.*;
 import com.desmart.desmartsystem.dao.*;
@@ -100,6 +97,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
     private SysCompanyMapper sysCompanyMapper;
 	@Autowired
 	private SysHolidayService sysHolidayService;
+	@Autowired
+	private DhInstanceDocumentMapper dhInstanceDocumentMapper;
 
 
 	/**
@@ -277,10 +276,13 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             dhProcessInstanceMapper.updateByPrimaryKeySelective(mainProcessInstance); // 更新主流程数据
 			DhProcessInstance processContainFirstTask = mainProcessInstance;
 			if (hasSubProcess) {
+				// 将表单信息设置到子流程
 				datInsData.setFormNoList(formNoListJson);
 				datInsData.setFormData(mergedFromData);
 				processContainFirstTask = createSubProcessAfterStartProcess(bpmRoutingDataAfterStartNode,
 						mainProcessInstance, startProcessDataJson, datInsData);
+				// 将主流程上传的附件转移给子流程
+				transferDocumentsToProcessContainsFirstTask(mainProcessInstance.getInsUid(), processContainFirstTask.getInsUid());
 			}
 
             // 由于流程的第一个环节约定为起草，发起主流程不提交时，不会进入子流程
@@ -301,7 +303,12 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
 		}
 	}
 
-    /**
+
+	private void transferDocumentsToProcessContainsFirstTask(String sourceInsUid, String targetInsUid) {
+		dhInstanceDocumentMapper.updateInsUidToNewValue(sourceInsUid, targetInsUid);
+	}
+
+	/**
      * 发起流程动作，如果触发了子流程，则创建子流程的实例<br/>
 	 * 此方法在提交一个任务前执行
 	 * @return 最底层的流程实例
@@ -316,7 +323,8 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
             String parentProcessFlowObjectId = null; // 当前子流程的上级流程的元素id
             if (!BpmActivityMeta.PARENT_ACTIVITY_ID_OF_MAIN_PROCESS.equals(nodeIdentitySubProcess.getParentActivityId())) {
                 // 如果代表子流程的节点不在主流程上
-                parentProcessFlowObjectId = bpmActivityMetaMapper.queryByPrimaryKey(nodeIdentitySubProcess.getParentActivityId()).getActivityBpdId();
+                //parentProcessFlowObjectId = bpmActivityMetaMapper.queryByPrimaryKey();
+                parentProcessFlowObjectId = bpmRoutingData.getNodeIdentitySubProcessByActivityId(nodeIdentitySubProcess.getParentActivityId()).getActivityBpdId();
             }
             TokenInfoUtil tokenInfoUtil = new TokenInfoUtil(nodeIdentitySubProcess.getActivityBpdId(), parentProcessFlowObjectId, bpmProcessData);
             String tokenId = tokenInfoUtil.getTokenId();
@@ -333,6 +341,7 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                 DatProcessData datProcessData = datInsData.getProcessData();
                 datProcessData.setInsUid(subProcessInstacne.getInsUid());
                 subProcessInstacne.setInsData(JSON.toJSONString(datInsData));
+                subProcessInstacne.setInsTitle(mainProcessInstance.getInsTitle());
 				result= subProcessInstacne;
             }
             dhProcessInstanceMapper.insertProcess(subProcessInstacne);
@@ -861,8 +870,9 @@ public class DhProcessInstanceServiceImpl implements DhProcessInstanceService {
                                                                         String tokenId, String creatorId) {
         DhProcessInstance subInstance = new DhProcessInstance();
         subInstance.setInsUid(EntityIdPrefix.DH_PROCESS_INSTANCE + UUID.randomUUID().toString());
+        DhProcessMeta processMeta = dhprocessMetaMapper.queryByProAppIdAndProUid(processNode.getProAppId(), processNode.getExternalId());
         // 新流程的title是 父流程的title
-        subInstance.setInsTitle(parentInstance.getInsTitle()); // 流程标题与父流程相同
+        subInstance.setInsTitle(parentInstance.getInsTitle() + "-" + processMeta.getProName()); // 设置子流程标题
         subInstance.setInsId(parentInstance.getInsId());
         subInstance.setInsStatusId(DhProcessInstance.STATUS_ID_ACTIVE);
         subInstance.setInsStatus(DhProcessInstance.STATUS_ACTIVE);

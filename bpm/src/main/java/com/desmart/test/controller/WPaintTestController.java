@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartportal.common.EntityIdPrefix;
-import com.desmart.desmartportal.dao.AccessoryFileUploadMapper;
+import com.desmart.desmartportal.dao.DhInstanceDocumentMapper;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartportal.util.SFTPUtil;
@@ -41,7 +41,7 @@ public class WPaintTestController {
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Autowired
-	private AccessoryFileUploadMapper accessoryFileUploadMapper;
+	private DhInstanceDocumentMapper dhInstanceDocumentMapper;
 	
 	@RequestMapping("/toWPaintTest")
 	public ModelAndView toWPaintTest() {
@@ -54,7 +54,7 @@ public class WPaintTestController {
 	@ResponseBody
 	public ServerResponse loadImageData(DhInstanceDocument dhInstanceDocument,
 				HttpServletRequest request) {
-		dhInstanceDocument = accessoryFileUploadMapper
+		dhInstanceDocument = dhInstanceDocumentMapper
 					.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
 		try {
 		SFTPUtil sftp = new SFTPUtil();
@@ -98,7 +98,7 @@ public class WPaintTestController {
 	@ResponseBody
 	public ServerResponse uploadEditData(@RequestBody Map map) {
 		String appDocUid = map.get("appDocUid").toString();
-		DhInstanceDocument dhInstanceDocument = accessoryFileUploadMapper.selectByPrimaryKey(appDocUid);
+		DhInstanceDocument dhInstanceDocument = dhInstanceDocumentMapper.selectByPrimaryKey(appDocUid);
 		
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -113,7 +113,7 @@ public class WPaintTestController {
         dhInstanceDocument.setUpdateUserUid(creator);
 		dhInstanceDocument.setAppDocUpdateDate(currentDate);
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
-		Integer count = accessoryFileUploadMapper.updateFileByPrimaryKey(dhInstanceDocument);
+		Integer count = dhInstanceDocumentMapper.updateFileByPrimaryKey(dhInstanceDocument);
         
 		// 年/月/日/当前时间戳+文件名------上传新文件
 		String newFileName = DateUtil.datetoString(new Date())+dhInstanceDocument.getAppDocFileName();
@@ -136,7 +136,7 @@ public class WPaintTestController {
 		newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
 		List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 		insert.add(newDhInstanceDocument);
-		accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
+		dhInstanceDocumentMapper.insertDhInstanceDocuments(insert);
 		
 		String imageData = map.get("image").toString();
 		byte[] decoder = Base64.decodeBase64(imageData.replace("data:image/png;base64,","").getBytes());
