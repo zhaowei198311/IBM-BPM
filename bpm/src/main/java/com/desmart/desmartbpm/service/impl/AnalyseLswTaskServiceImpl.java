@@ -1,5 +1,19 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.EntityIdPrefix;
@@ -22,21 +36,15 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
-import com.desmart.desmartportal.service.*;
+import com.desmart.desmartportal.entity.DhUserAgent;
+import com.desmart.desmartportal.service.DhAgentService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
+import com.desmart.desmartportal.service.SysHolidayService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.entity.SysEmailUtilBean;
 import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.SendEmailService;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.util.*;
 @Service
 public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
     private static final Logger logger = LoggerFactory.getLogger(AnalyseLswTaskServiceImpl.class);
@@ -133,23 +141,26 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
 
         // 查看是否允许代理
         if ("TRUE".equals(bpmActivityMeta.getDhActivityConf().getActcCanDelegate())) {
-            // 查看这个流程有没有代理人
-            for (DhTaskInstance task : dhTaskList) {
-                Map<String, String> delegateResult = dhAgentService.getDelegateResult(bpmActivityMeta.getProAppId(), bpmActivityMeta.getBpdId(), task.getUsrUid());
-                if (delegateResult != null) {
-                    task.setTaskDelegateUser(delegateResult.get("delegateUser"));// 代理人工号
-                    task.setTaskDelegateDate(new Date());
-                    DhAgentRecord agentRecord = new DhAgentRecord();
-                    agentRecord.setAgentDetailId(EntityIdPrefix.DH_AGENT_RECORD + UUID.randomUUID().toString());
-                    agentRecord.setAgentId(delegateResult.get("agentId"));
-                    agentRecord.setAgentUser(delegateResult.get("delegateUser"));
-                    agentRecord.setProName(dhProcessInstance.getProName());
-                    agentRecord.setTaskTitle(bpmActivityMeta.getActivityName());
-                    agentRecord.setTaskUid(task.getTaskUid());
-                    agentRecordList.add(agentRecord);
-                    sendMailToList.add(delegateResult.get("delegateUser"));
-                }else {
-                    sendMailToList.add(task.getUsrUid());
+            Map<String, DhUserAgent> delegateInfoMap = dhAgentService.getBatchDelegateResult(dhProcessInstance.getProAppId(), dhProcessInstance.getProUid(),
+                    getUidList(dhTaskList));
+            if (!delegateInfoMap.isEmpty()) {
+                for (DhTaskInstance dhTaskInstance : dhTaskList) {
+                    DhUserAgent dhUserAgent = delegateInfoMap.get(dhTaskInstance.getUsrUid());
+                    if (dhUserAgent == null) {
+                        sendMailToList.add(dhTaskInstance.getUsrUid());
+                    } else {
+                        dhTaskInstance.setTaskDelegateUser(dhUserAgent.getDelegateUserUid());
+                        dhTaskInstance.setTaskDelegateDate(new Date());
+                        DhAgentRecord agentRecord = new DhAgentRecord();
+                        agentRecord.setAgentDetailId(EntityIdPrefix.DH_AGENT_RECORD + UUID.randomUUID().toString());
+                        agentRecord.setAgentId(dhUserAgent.getAgentId());
+                        agentRecord.setAgentUser(dhUserAgent.getDelegateUserUid());
+                        agentRecord.setProName(dhProcessInstance.getProName());
+                        agentRecord.setTaskTitle(bpmActivityMeta.getActivityName());
+                        agentRecord.setTaskUid(dhTaskInstance.getTaskUid());
+                        agentRecordList.add(agentRecord);
+                        sendMailToList.add(dhUserAgent.getDelegateUserUid());
+                    }
                 }
             }
         }
@@ -185,6 +196,14 @@ public class AnalyseLswTaskServiceImpl implements AnalyseLswTaskService {
             logger.error("拉取任务时，发送邮件通知异常， 任务ID：" + taskId, e);
         }
         return ServerResponse.createBySuccess();
+    }
+
+    private List<String> getUidList(List<DhTaskInstance> taskList) {
+        List<String> result = new ArrayList<>();
+        for (DhTaskInstance dhTaskInstance : taskList) {
+            result.add(dhTaskInstance.getUsrUid());
+        }
+        return result;
     }
 
     /**
