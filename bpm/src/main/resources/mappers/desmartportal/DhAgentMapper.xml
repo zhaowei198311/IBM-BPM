@@ -131,6 +131,21 @@
 		  and a.agent_status = 'ENABLED'
 	</select>
 	
+	<select id="getBatchDelegateResult" parameterType="map" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select a.agent_operator,a.agent_id,a.agent_clientele
+		from dh_agent_agentinfo a left join dh_agent_proinfo p
+		on a.agent_id = p.agent_id
+		where p.pro_app_id = #{proAppId}
+		  and p.pro_uid = #{proUid}
+		  and a.agent_sdate &lt;= sysdate
+		  and a.agent_edate >= sysdate
+		  and a.agent_status = 'ENABLED'
+		  and 
+		  <foreach collection="userUidList" item="item" separator="or" open="(" close=")">
+		  	a.agent_operator = #{item}
+		  </foreach>
+	</select>
+	
 	<select id="getDelegateByUserId" parameterType="string" resultType="com.desmart.desmartportal.entity.DhAgent">
 		select <include refid="insert_column_List"/>
 		from dh_agent_agentinfo
@@ -138,6 +153,20 @@
 		  and agent_sdate &lt;= sysdate
 		  and agent_edate >= sysdate
 		  and agent_status = 'ENABLED'
+	</select>
+	
+	<select id="getBatchDelegateResultByUserIdList" parameterType="java.util.List" resultType="com.desmart.desmartportal.entity.DhAgent">
+		select <include refid="insert_column_List"/>
+		from dh_agent_agentinfo
+		<where> 
+			<foreach collection="userUidList" item="item" separator="or" open="(" close=")">
+				agent_operator = #{item}
+			</foreach>
+			and agent_sdate &lt;= sysdate
+			and agent_edate >= sysdate
+			and agent_status = 'ENABLED'
+			and agent_is_all = 'TRUE'
+		</where>
 	</select>
 	
 	<insert id="insertBatch" parameterType="java.util.List">
