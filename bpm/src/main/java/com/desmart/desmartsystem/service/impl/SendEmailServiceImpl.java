@@ -39,6 +39,7 @@ import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -73,6 +74,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private DhActivityConfService dhActivityConfService;
     @Autowired
     private SysRoleUserMapper sysRoleUserMapper;
+    @Autowired
+    private DhRouteService dhRouteService;
     /**
      * 初始化方法，使用配置中的用户名密码
      */
@@ -249,34 +252,30 @@ public class SendEmailServiceImpl implements SendEmailService {
 		BpmActivityMeta currActivityMeta = bpmActivityMetaService.getBpmActivityMeta(dhProcessInstance.getProAppId()
 					, dhStep.getActivityBpdId(), dhProcessInstance.getProVerUid(), dhProcessInstance.getProUid());
 		String bpmformsHost = bpmGlobalConfigService.getFirstActConfig().getBpmformsHost();
+		ServerResponse<List<SysUser>> interiorNotifyUserServerResponse = null;
 		if(currActivityMeta!=null) {
 			DhActivityConf dhActivityConf = 
 					dhActivityConfMapper.selectByPrimaryKey(currActivityMeta.getDhActivityConf().getActcUid());
-			  //加载通知指定人信息
-			ServerResponse serverResponse = dhActivityConfService.loadInteriorNotifyOfActivity(dhActivityConf);
-			if(!serverResponse.isSuccess()) {
-				return serverResponse;
-			}
-			serverResponse = dhActivityConfService.loadExteriorNotifyOfActivity(dhActivityConf);
-			if(!serverResponse.isSuccess()) {
-				return serverResponse;
-			}
-			
-			//因为内部通知和外部通知模板不同，所以需要分别发送通知
-			List<String> interiorUserList = new ArrayList<>();
-			if(StringUtils.isNotBlank(dhActivityConf.getInteriorNotifyRole())) {
-				String[] roleNos = dhActivityConf.getInteriorNotifyRole().split(";");
-				for (int i = 0; i < roleNos.length; i++) {
-					List<SysRoleUser> sysRoleUsers = sysRoleUserMapper.selectByRoleUid(roleNos[i]);
-					for (SysRoleUser sysRoleUser : sysRoleUsers) {
-						interiorUserList.add(sysRoleUser.getUserUid());
-					}
+			if(dhActivityConf.getActcInteriorNotifyType()!=null) {
+				//加载通知指定人信息
+				interiorNotifyUserServerResponse 
+						= dhRouteService.getInteriorNotifyUserOfActivity(currActivityMeta, dhProcessInstance);
+				if(!interiorNotifyUserServerResponse.isSuccess()) {
+					return interiorNotifyUserServerResponse;
 				}
 			}
-			if (StringUtils.isNotBlank(dhActivityConf.getInteriorNotifyUser())) {
-				String[] userNos = dhActivityConf.getInteriorNotifyUser().split(";");
-				for (int i = 0; i < userNos.length; i++) {
-					interiorUserList.add(userNos[i]);
+			if(dhActivityConf.getActcExteriorNotifyType()!=null) {
+				ServerResponse serverResponse = dhActivityConfService.loadExteriorNotifyOfActivity(dhActivityConf);
+				if(!serverResponse.isSuccess()) {
+					return serverResponse;
+				}
+			}
+			//因为内部通知和外部通知模板不同，所以需要分别发送通知
+			List<String> interiorUserList = new ArrayList<>();
+			if(interiorNotifyUserServerResponse!=null) {
+				List<SysUser> sysUsers = interiorNotifyUserServerResponse.getData();
+				for (SysUser sysUser : sysUsers) {
+					interiorUserList.add(sysUser.getUserUid());
 				}
 			}
 			if(interiorUserList.size()>0) {
@@ -301,7 +300,7 @@ public class SendEmailServiceImpl implements SendEmailService {
 				
 				this.dhSendEmail(sysEmailUtilBean);
 			}
-			return serverResponse.createBySuccessMessage("邮件通知发送成功");
+			return ServerResponse.createBySuccessMessage("邮件通知发送成功");
 		}else {
 			return ServerResponse.createByErrorMessage("获取环节配置信息失败");
 		}
