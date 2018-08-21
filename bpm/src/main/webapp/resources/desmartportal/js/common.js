@@ -1193,7 +1193,17 @@ if(s!=null&&s.length>0){
 	return;
 }
 }
-
+function CompareDate(startDateId,endDateId)
+{
+	var d1 = $("#"+startDateId).val();
+	var d2 = $("#"+endDateId).val();
+    if((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/")))){
+    	layer.msg("日期填写错误,起始日期不能大于结束日期", {
+			icon: 2
+		});
+    	$("#"+endDateId).val("");
+    }
+}
 function datetimeFormat_1(longTypeDate){  
     var datetimeType = "";  
     var date = new Date();  
