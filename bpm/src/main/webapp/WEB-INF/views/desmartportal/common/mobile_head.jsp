@@ -9,7 +9,14 @@
 <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
 	
 <!-- jQuery -->
-<script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<link rel="stylesheet" href="resources/desmartportal/mobiscroll/css/mobiscroll.scroller.css?v=1.01"/>
+<link rel="stylesheet" href="resources/desmartportal/mobiscroll/css/mobiscroll.frame.css">
+<script src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="resources/desmartportal/mobiscroll/js/mobiscroll.core.js"></script>
+<script type="text/javascript" src="resources/desmartportal/mobiscroll/js/mobiscroll.frame.js"></script>
+<script type="text/javascript" src="resources/desmartportal/mobiscroll/js/mobiscroll.scroller.js"></script>
+<script type="text/javascript" src="resources/desmartportal/mobiscroll/js/mobiscroll.select.js"></script>
+<script type="text/javascript" src="resources/desmartportal/mobiscroll/js/mobiscroll.i18n.zh.js"></script>
 
 <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>

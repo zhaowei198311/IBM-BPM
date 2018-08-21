@@ -16,6 +16,9 @@ var pageConfig = {
 
 var form = null;
 $(function () {
+	//初始化各个审批下拉选
+	initSelect();
+	
 	needApprovalOpinion = $('#needApprovalOpinion').val() == 'true';
 	if ($('#skipFromReject_newTaskOwnerName').val() && $('#skipFromReject_targetNodeName').val()) {
 	    canSkipFromReject = true;
@@ -45,6 +48,30 @@ $(function () {
     //加载已上传的附件
     loadFileList();
 });
+
+var theme = $.mobiscroll.defaults.theme;
+var mode = "scroller";
+var display = "modal";
+
+//初始化审批下拉选
+function initSelect(){
+	$('#countersign_type_select').mobiscroll().select({
+        theme: theme,      
+        mode: mode,       
+        display: display,  
+        lang: "zh"
+    }); 
+	
+	$('#frequently_used_select').mobiscroll().select({
+        theme: theme,      
+        mode: mode,       
+        display: display,  
+        lang: "zh",
+        onChange: function (event, inst) {
+        	event.valueText;
+	    }
+    }); 
+}
 
 //用于异步加载数据的参数
 var asyncActcChooseableHandlerType = "";
@@ -805,7 +832,7 @@ function queryRejectByActivitiy() {
             	if(rejectMapList.length==0){
             		rejectDiv += '没有可驳回的环节';
             	}else{
-            		rejectDiv += '<select id="reject_select"><option value="0">请选择</option>';
+            		rejectDiv += '<select id="reject_select" lay-ignore><option value="0">请选择</option>';
             	}
             	for(var i=0;i<rejectMapList.length;i++){
             		rejectDiv += '<option value="'+rejectMapList[i].insId+'+'+rejectMapList[i].activityBpdId+'+'+rejectMapList[i].userId+'"">'
@@ -822,6 +849,12 @@ function queryRejectByActivitiy() {
             				+'</tr>'
             	$("#reject_table table").append(rejectDiv);
             	form.render();
+            	$('#reject_select').mobiscroll().select({
+                    theme: theme,      
+                    mode: mode,       
+                    display: display,  
+                    lang: "zh"
+                }); 
         	}
         	layer.close(index);
         },

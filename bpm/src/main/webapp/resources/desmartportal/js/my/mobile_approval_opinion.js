@@ -1,23 +1,19 @@
 var editIndex;
-layui.use('form', function(){
-    var form = layui.form;
-	form.on('select(useselfChange)', function(data) {
-		$("#myApprovalOpinion").val("");
-		if (data.value != '-1') {
-			if ($("#myApprovalOpinion").val() == null
-					|| $("#myApprovalOpinion").val() == '') {
-				$("#myApprovalOpinion").val(data.value);
-			} else {
-				var info = $("#myApprovalOpinion").val() + data.value;
-				$("#myApprovalOpinion").val(info);
-			}
-		}
-	});
-    
-});
 
 var reg=new RegExp("<br>","g"); // 创建正则RegExp对象
 $(function(){
+	$("#frequently_used_select").change(function(){
+    	$("#myApprovalOpinion").val("");
+		if ($(this).val() != '-1') {
+			if ($("#myApprovalOpinion").val() == null
+					|| $("#myApprovalOpinion").val() == '') {
+				$("#myApprovalOpinion").val($(this).val());
+			} else {
+				var info = $("#myApprovalOpinion").val() + $(this).val();
+				$("#myApprovalOpinion").val(info);
+			}
+		}
+    });
 	var approvalJsonStr = $("#approvalData").text();
 	if(approvalJsonStr!=null && approvalJsonStr!=''){
 		var approvalData = JSON.parse(approvalJsonStr);

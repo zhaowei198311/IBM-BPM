@@ -610,7 +610,7 @@ var common = {
 						for(var k=0;k<arr.length;k++){
 							$("[name='"+name+"']").find("[value='"+arr[k]+"']").attr("selected","selected");
 						}
-						$("[name='"+name+"']").attr({"xm-select":id,"xm-select-skin":"danger"});
+						$("[name='"+name+"']").attr({"xm-select":name,"xm-select-skin":"danger"});
 						var formSelects = layui.formSelects;
 						formSelects.render(name);
 						formSelects.on(name, function(id, vals, val, isAdd, isDisabled){
@@ -705,7 +705,7 @@ var common = {
 				}else if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
 					$("[name='"+name+"']").parent().parent().parent().css("display","none");
 					$("[name='"+name+"']").parent().parent().parent().prev().css("display","none");
-					return;
+					continue;
 				}else{
 					$("[name='"+name+"']").parent().css("display","none");
 					$("[name='"+name+"']").parent().prev().css("display","none");
@@ -726,6 +726,9 @@ var common = {
 		var tagName = $("[name='"+name+"']").prop("tagName");
 		var tagType = $("[name='"+name+"']").attr("type");
 		var className = $("[name='"+name+"']").attr("class");
+		if(name == "modeOfRentPayment"){
+			console.log(tagName);
+		}
 		if(tagType=="checkbox"){
 			$("[name='"+name+"']").attr("display","none");
 			var title = "";
@@ -735,7 +738,6 @@ var common = {
 			if($("[name='"+name+"']:checked").parent().find(".radio_value").length==0){
 				$("[name='"+name+"']:checked").parent().prepend("<span class='radio_value' style='margin-left:10px;'>"+title+"</span>");
 			}
-			return;
 			return;
 		}
 		if(tagType=="radio"){
@@ -747,6 +749,9 @@ var common = {
 			return;
 		}
 		if(tagName=="SELECT"){
+			if($("[name='"+name+"']").attr("is-multi")=="true"){
+				
+			}
 			$("[name='"+name+"']").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");
@@ -772,10 +777,13 @@ var common = {
 			$("#"+name+"_load").attr("disabled","true").css("cursor","not-allowed");
 			return;
 		}
-		if($("[name='"+name+"']").attr("class")=="xm-hide-input"){
+		if(className=="xm-hide-input"){
+			console.log(name);
 			var text = $("[name='"+name+"']").next().find(".xm-select").attr("title");
 			$("[name='"+name+"']").parent().parent().css("display","none");
-			$("[name='"+name+"']").parent().parent().parent().append("<span style='margin-left:10px;'>"+text+"</span>");
+			if($("[name='"+name+"']").parent().parent().parent().find(".select_val").length==0){
+				$("[name='"+name+"']").parent().parent().parent().append("<span class='select_val' style='margin-left:10px;'>"+text+"</span>");
+			}
 			return;
 		}
 	},
