@@ -242,7 +242,7 @@
 				                ${activityConf.actcResponsibility }
 				            </div>
 						</div>
-						<div class="table_container layui-form" id="suggestion">
+						<div class="table_container layui-form" id="suggestion" <c:if test="${needApprovalOpinion == false}">style="display:none;"</c:if>>
 							<p class="title_p">审批意见
 								<i class="layui-icon arrow" style="float:right;" onclick="showDiv(this)">&#xe61a;</i>
 							</p>
