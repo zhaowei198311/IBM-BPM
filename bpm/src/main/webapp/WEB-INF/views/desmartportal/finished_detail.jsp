@@ -21,14 +21,13 @@
     <link href="resources/desmartportal/js/css/myFileUpload.css" rel="stylesheet" />
     <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/common.js"></script>
 	<!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
 	<!-- 审批信息js -->
 	<script src="resources/desmartportal/js/my/myApprovalOpinion.js"></script>
-	
 	<script type="text/javascript" src="resources/desmartportal/formDesign/js/my.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/my/finished_detail.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/city.js"></script>

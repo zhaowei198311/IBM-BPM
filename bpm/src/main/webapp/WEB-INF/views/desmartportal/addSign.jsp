@@ -20,8 +20,8 @@
     <link href="resources/desmartportal/css/my.css?v=1.02" rel="stylesheet" />
     <link rel="stylesheet" href="resources/desmartportal/selects/formSelects-v4.css">
     <script type="text/javascript" src="resources/desmartportal/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
     <script type="text/javascript" src="resources/desmartportal/selects/formSelects-v4.js"></script>
-	<script type="text/javascript" src="resources/desmartportal/js/layui.all.js"></script>
 	<script type="text/javascript" src="resources/desmartportal/js/common.js?v=1.01"></script>
 	<!-- 附件上传js -->
 	<script src="resources/desmartportal/js/my/myFileUpload.js"></script>
