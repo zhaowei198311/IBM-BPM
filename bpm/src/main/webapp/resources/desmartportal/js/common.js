@@ -1269,3 +1269,31 @@ function getSeconds(date){
     }  
     return second;  
 }
+function getSysUser(userUid,name){
+	$.ajax({
+		url:common.getPath()+"/sysUser/getSysUser",
+		dataType:"json",
+		type:"post",
+		data: {userUid : userUid},
+		beforeSend:function(){
+			layer.load(1);
+		},
+		success:function(result){
+			if(result!=null){
+				$("input[name='"+name+"']").val(result.mobile)
+			}
+			layer.closeAll("loading");
+		},
+		error:function(){
+			layer.closeAll("loading");
+		}
+	});
+	
+}
+//选择人员事件
+function chooseUsersChange(obj,name){
+	var startIndex = $(obj).val().indexOf("(");
+	var endIndex = $(obj).val().indexOf(")", startIndex);
+	var userUid = $(obj).val().substring(startIndex + 1, endIndex);
+	getSysUser(userUid,name);
+}
