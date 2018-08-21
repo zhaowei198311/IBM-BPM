@@ -82,18 +82,11 @@ $(document).ready(function() {
 		layui.use('layedit', function(){
 			var layedit = layui.layedit;
 			for (var i = 0; i < formArray.length; i++) {
-				
 				if(formArray[i].name=='intDescription'){
 					formArray[i].value=layedit.getContent(layeditIndex);
 				}
-				
 			}
-			
 		});
-		
-		if (intStatus == 'disabled' || intStatus=='on') {
-			formArray[formArray.length]={name:'intStatus',value:'disabled'}
-		}
 		
 		$.ajax({
 			url : 'interfaces/update',
