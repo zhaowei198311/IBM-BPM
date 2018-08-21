@@ -54,17 +54,25 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     @Scheduled(cron = "0/10 * * * * ?")
     @Override
     public void startAutoCommitSystemTask() {
-        logger.info("开始处理系统任务");
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        logger.info("开始处理系统任务...");
         List<DhTaskInstance> taskList = this.getSystemTaskListToAutoCommit();
         for (DhTaskInstance taskInstance : taskList) {
-            this.submitSystemTaskFirstTime(taskInstance, bpmGlobalConfig);
+            this.submitSystemTaskFirstTime(taskInstance, bpmGlobalConfigService.getFirstActConfig());
         }
+        markLastSystemTask(taskList);
         logger.info("处理系统任务完成");
     }
 
+    private void markLastSystemTask(List<DhTaskInstance> taskList) {
+        if (CollectionUtils.isEmpty(taskList)) {
+            return;
+        }
+        int lastIndex = taskList.size() - 1;
+        commonMongoDao.set(CommonMongoDao.LAST_SCAN_SYSTEM_TASK_KEY, taskList.get(lastIndex).getTaskId());
+    }
+
     /**
-     * 处理系统任务的第一次提交并处理过程
+     * 处理系统任务的第一次提交并处理过程， 其中已经做了异常处理
      * @param dhTaskInstance
      * @param bpmGlobalConfig
      * @return
@@ -73,7 +81,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         DataForSubmitTask dataForSubmitTask = null;
         try {
             dataForSubmitTask = dhTaskInstanceService.perpareDataForSubmitSystemTask(dhTaskInstance, bpmGlobalConfig);
-            return dhTaskInstanceService.finishTask(dataForSubmitTask);
+            return dhTaskInstanceService.finishTaskFirstTime(dataForSubmitTask);
         } catch (DhTaskCheckException checkEx) {
             dhTaskExceptionMapper.save(DhTaskException.createCheckTaskException(dhTaskInstance, checkEx.getMessage()));
             dhTaskInstanceMapper.updateTaskStatus(dhTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR);
@@ -84,32 +92,48 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
         }
     }
 
+    @Override
+    public ServerResponse retrySubmitSystemTask(DhTaskException dhTaskException) {
+        DataForSubmitTask dataForSubmitTask = null;
+        try {
+            dataForSubmitTask = dhTaskInstanceService.perpareDataForSubmitSystemTask(dhTaskException.getDhTaskInstance(),
+                    bpmGlobalConfigService.getFirstActConfig());
+        } catch (Exception e) {
+            logger.error("重试系统任务失败", e);
+            return ServerResponse.createByErrorCodeAndData(1, e.getMessage(),
+                    DhTaskException.createCheckTaskException(dhTaskException.getDhTaskInstance(), e.getMessage()));
+        }
+        return dhTaskInstanceService.finishTask(dataForSubmitTask);
+    }
+
+
     @Scheduled(cron = "55 * * * * ?")
     @Override
     public void startAutoCommitSystemDelayTask() {
         logger.info("开始处理系统延时任务");
-        BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
+        final BpmGlobalConfig bpmGlobalConfig = bpmGlobalConfigService.getFirstActConfig();
         // 获得待处理列表
-        List<DhTaskInstance> taskList = this.getSystemDelayTaskListToAutoCommit();
-        for (DhTaskInstance taskInstance : taskList) {
+        List<DhTaskInstance> systemDelayTaskList = this.getSystemDelayTaskListToAutoCommit();
+        for (DhTaskInstance taskInstance : systemDelayTaskList) {
             try {
                 ServerResponse<Boolean> checkSystemResponse = this.checkSystemDelayTask(taskInstance, bpmGlobalConfig);
-                if (checkSystemResponse.isSuccess() && checkSystemResponse.getData()) {
-                    // 时间到了
-                    submitSystemTaskFirstTime(taskInstance, bpmGlobalConfig);
+                if (checkSystemResponse.isSuccess()) {
+                    if (checkSystemResponse.getData() == true) {
+                        // 时间到了
+                        submitSystemTaskFirstTime(taskInstance, bpmGlobalConfig);
+                    }
                 } else {
                     // 计算时间出错, 将任务状态置为错误
                     dhTaskInstanceMapper.updateTaskStatus(taskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR);
-                    //DhTaskException.createCheckTriggerException();
+                    dhTaskExceptionMapper.save(DhTaskException.createCheckTaskException(taskInstance,
+                            checkSystemResponse.getMsg()));
                 }
             } catch (Exception e) {
                 logger.error("处理系统失败：taskUid：" + taskInstance.getTaskUid(), e);
                 // todo 记录到异常表
             }
         }
-        if (!CollectionUtils.isEmpty(taskList)) {
-            commonMongoDao.set(CommonMongoDao.LAST_SCAN_SYSTEM_TASK_KEY, taskList.get(taskList.size() - 1).getTaskId());
-        }
+
         logger.info("处理系统延时任务完成");
     }
 

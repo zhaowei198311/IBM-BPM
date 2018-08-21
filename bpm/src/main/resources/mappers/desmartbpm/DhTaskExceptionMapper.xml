@@ -8,11 +8,67 @@
         STATUS, RETRY_COUNT, last_retry_time
     </sql>
 
+    <sql id="taskRelationColumn">
+        te.ID, te.TASK_UID, te.STEP_UID, te.INS_UID, te.CREATE_TIME,
+        te.DATA_FOR_SUBMIT_TASK, te.ERROR_MESSAGE, te.DIL_UID,
+        te.STATUS, te.RETRY_COUNT, te.last_retry_time,
+        t.TASK_UID ttuid, t.INS_UID tiuid, t.TASK_ID, t.USR_UID,
+        t.ACTIVITY_BPD_ID, t.TASK_TYPE, t.TASK_STATUS, t.TASK_TITLE,
+        t.INS_UPDATE_DATE, t.TASK_PREVIOUS_USR_UID, t.TASK_PREVIOUS_USR_USERNAME, t.TASK_DELEGATE_DATE,
+        t.TASK_INIT_DATE, t.TASK_FINISH_DATE, t.TASK_DUE_DATE, t.TASK_RISK_DATE,
+        t.TASK_PRIORITY, t.TASK_DATA, t.TASK_DELEGATE_USER, t.SYN_NUMBER, t.FROM_TASK_UID, t.TO_TASK_UID, t.REMAIN_HOURS,
+        t.TASK_ACTIVITY_ID,  t.TIMEOUT_NOTIFY_COUNT
+    </sql>
+
+    <!-- 关联查询出任务实例的map -->
+    <resultMap id="withTaskResultMap" type="com.desmart.desmartbpm.entity.DhTaskException">
+        <id property="id" column="id" />
+        <result property="taskUid" column="task_uid"/>
+        <result property="stepUid" column="step_Uid"/>
+        <result property="insUid" column="ins_uid"/>
+        <result property="dataForSubmitTask" column="data_for_submit_task"/>
+        <result property="errorMessage" column="error_message"/>
+        <result property="dilUid" column="dil_uid"/>
+        <result property="status" column="status"/>
+        <result property="retryCount" column="retry_Count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastRetryTime" column="last_Retry_Time"/>
+        <association property="dhTaskInstance" javaType="com.desmart.desmartportal.entity.DhTaskInstance">
+            <id property="taskUid" column="ttuid"/>
+            <result property="insUid" column="tiuid" />
+            <result property="taskId" column="TASK_ID"/>
+            <result property="usrUid" column="USR_UID"/>
+            <result property="activityBpdId" column="ACTIVITY_BPD_ID"/>
+            <result property="taskType" column="TASK_TYPE"/>
+            <result property="taskStatus" column="TASK_STATUS"/>
+            <result property="taskTitle" column="TASK_TITLE"/>
+            <result property="insUpdateDate" column="INS_UPDATE_DATE"/>
+            <result property="taskPreviousUsrUid" column="TASK_PREVIOUS_USR_UID"/>
+            <result property="taskPreviousUsrUsername" column="TASK_PREVIOUS_USR_USERNAME"/>
+            <result property="taskDelegateDate" column="TASK_DELEGAT_EDATE"/>
+            <result property="taskInitDate" column="TASK_INIT_DATE"/>
+            <result property="taskFinishDate" column="TASK_FINISH_DATE"/>
+            <result property="taskDueDate" column="TASK_DUED_ATE"/>
+            <result property="taskRiskDate" column="TASK_RISK_DATE"/>
+            <result property="taskPriority" column="TASK_PRIORITY"/>
+            <result property="taskData" column="TASK_DATA"/>
+            <result property="taskDelegateUser" column="TASK_DELEGATE_USER"/>
+            <result property="synNumber" column="SYN_NUMBER"/>
+            <result property="fromTaskUid" column="FROM_TASK_UID"/>
+            <result property="toTaskUid" column="TO_TASK_UID"/>
+            <result property="remainHours" column="REMAIN_HOURS"/>
+            <result property="taskActivityId" column="TASK_ACTIVITY_ID"/>
+            <result property="timeoutNotifyCount" column="TIMEOUT_NOTIFY_COUNT"/>
+        </association>
+
+    </resultMap>
+    
+    
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTaskException">
         insert into DH_TASK_EXCEPTION
         (<include refid="base_column"/>)
         values (
-        #{id}, #{taskUid}, #{stepUid}, #{insUid}, sysdate, #{dataForSubmitTask}, #{errorMessage}, #{dilUid}, #{status}, 0, sysdate
+        #{id}, #{taskUid}, #{stepUid}, #{insUid}, sysdate, #{dataForSubmitTask}, #{errorMessage}, #{dilUid}, #{status}, #{retryCount}, sysdate
         )
     </insert>
     <delete id="removeByPrimaryKey" parameterType="string">
@@ -29,6 +85,15 @@
     <select id="queryByTaskUidAndStepUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTaskException">
         select <include refid="base_column"/> from DH_TASK_EXCEPTION
         where task_uid = #{taskUid} and step_uid = #{stepUid}
+    </select>
+
+
+
+    <select id="listByTaskUid" resultType="com.desmart.desmartbpm.entity.DhTaskException">
+        select <include refid="base_column"/>
+        from dh_task_exception
+        where task_uid = #{taskUid}
+        order by create_time desc
     </select>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTaskException">

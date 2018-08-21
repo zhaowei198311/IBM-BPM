@@ -1,10 +1,8 @@
 package com.desmart.desmartbpm.service;
 
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import org.springframework.amqp.core.Message;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public interface DhTriggerStepService {
 
@@ -16,10 +14,10 @@ public interface DhTriggerStepService {
 
     /**
      * 重试一个发生错误的步骤并提交任务
-     * @param triggerExceptionId  记录在异常表中的数据主键
-     * @return
+     * @param dhTaskException  记录在异常表中的数据主键
+     * @return 当失败时，data为新发生的DhTaskException
      */
-    ServerResponse retryErrorStepAndSubmitTask(String triggerExceptionId);
+    ServerResponse retryErrorStep(DhTaskException dhTaskException);
 
 
 

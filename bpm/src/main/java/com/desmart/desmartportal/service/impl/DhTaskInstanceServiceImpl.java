@@ -6,6 +6,7 @@ package com.desmart.desmartportal.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.DhTaskCommitException;
@@ -54,8 +55,8 @@ import java.util.*;
 
 @Service
 public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
-
 	private Logger log = Logger.getLogger(DhTaskInstanceServiceImpl.class);
+
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
 	@Autowired
@@ -281,7 +282,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSubmitTask.setNextStep(dhStepService.getNextStepOfCurrStep(formStepOfTaskNode));
         dataForSubmitTask.setApplyUser(getCurrentUserUid());
 
-		return finishTask(dataForSubmitTask);
+		return finishTaskFirstTime(dataForSubmitTask);
 
     }
 
@@ -481,11 +482,11 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         dataForSubmitTask.setNextStep(dhStepService.getNextStepOfCurrStep(formStepOfTaskNode));
         dataForSubmitTask.setApplyUser(getCurrentUserUid());
 
-		return finishTask(dataForSubmitTask);
+		return finishTaskFirstTime(dataForSubmitTask);
     }
 
     @Override
-    public ServerResponse finishTask(DataForSubmitTask dataForSubmitTask) {
+    public ServerResponse finishTaskFirstTime(DataForSubmitTask dataForSubmitTask) {
 		if (dataForSubmitTask.getNextStep() == null) {
 			try {
 				return ((DhTaskInstanceService) AopContext.currentProxy()).commitTask(dataForSubmitTask);
@@ -506,6 +507,25 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			return ServerResponse.createBySuccess();
 		}
 	}
+
+
+    @Override
+    public ServerResponse finishTask(DataForSubmitTask dataForSubmitTask) {
+        if (dataForSubmitTask.getNextStep() == null) {
+            try {
+                return ((DhTaskInstanceService) AopContext.currentProxy()).commitTask(dataForSubmitTask);
+            } catch (Exception e) {
+                log.error("提交任务时失败", e);
+                return ServerResponse.createByErrorCodeAndData(1, e.getMessage(),
+                        DhTaskException.createCommitTaskrException(dataForSubmitTask.getCurrTaskInstance(),
+                                JSON.toJSONString(dataForSubmitTask), e.getMessage()));
+            }
+        } else {
+            mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
+            return ServerResponse.createBySuccess();
+        }
+    }
+
 
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -534,7 +554,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		}
 
 		try {
-			if (didTokenMoveResponse.getData() != null) {
+			if (tokenWasMoved(didTokenMoveResponse)) {
                 // data不为null，表示Token移动了, 插入流转记录
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
                 // 关闭需要结束的流程
@@ -548,11 +568,90 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
             }
 		} catch (Exception e) {
-			log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
-			throw new DhTaskCommitException("创建");
+			log.error("token移动后操作失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+			throw new DhTaskCommitException("token移动后操作失败");
 		}
 		return ServerResponse.createBySuccess();
 	}
+
+
+	@Transactional
+	@Override
+	public ServerResponse retryCommitTask(DhTaskException dhTaskException) throws DhTaskCommitException {
+		DhTaskException newTaskException = dhTaskException;
+		String dataForSubmitTaskStr = dhTaskException.getDataForSubmitTask();
+		if (StringUtils.isBlank(dataForSubmitTaskStr)) {
+			return ServerResponse.createByErrorMessage("缺少消息体");
+		}
+		// 初始化
+		DataForSubmitTask dataForSubmitTask = null;
+		try {
+			dataForSubmitTask = JSONObject.parseObject(dataForSubmitTaskStr, new TypeReference<DataForSubmitTask>() {});
+		} catch (Exception e) {
+			log.error("解析消息出错：消息体" + dataForSubmitTaskStr, e);
+			newTaskException.setErrorMessage("缺少用来提交的JSON数据");
+			return ServerResponse.createByErrorCodeAndData(1, "缺少用来提交的JSON数据", newTaskException);
+		}
+
+		DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
+		DhTaskInstance currTaskInstance = dhTaskException.getDhTaskInstance();
+		final int insId = currProcessInstance.getInsId();
+		final int taskId = currTaskInstance.getTaskId();
+		final String taskUid = currTaskInstance.getTaskUid();
+		DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
+		BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
+		CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
+
+		// 检查任务状态
+		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
+        String taskStatus = bpmTaskUtil.getTaskStatus(taskId);
+        if (taskStatus == null) {
+            newTaskException.setErrorMessage("通过RESTFul API获得任务状态失败");
+            return ServerResponse.createByErrorCodeAndData(1, "通过RESTFul API获得任务状态失败", newTaskException);
+        }
+
+        // 如果任务没有提交过，执行提交操作
+        if (taskStatus.equals(BpmTaskUtil.TASK_STATUS_RECEIVED)) {
+            Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
+            Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+            if (errorMap.get("errorResult") != null) {
+                newTaskException.setErrorMessage("通过RESTFul API完成任务失败" + errorMap.get("errorResult").getMsg());
+                return ServerResponse.createByErrorCodeAndData(1, "通过RESTFul API完成任务失败"
+                        + errorMap.get("errorResult").getMsg(), newTaskException);
+            }
+        }
+
+		ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
+		if (!didTokenMoveResponse.isSuccess()) {
+            newTaskException.setErrorMessage(didTokenMoveResponse.getMsg());
+            return ServerResponse.createByErrorCodeAndData(1, didTokenMoveResponse.getMsg(), newTaskException);
+		}
+
+		try {
+			if (tokenWasMoved(didTokenMoveResponse)) {
+				// data不为null，表示Token移动了, 插入流转记录
+				dhRoutingRecordMapper.insert(dhRoutingRecord);
+				// 关闭需要结束的流程
+				dhProcessInstanceService.closeProcessInstanceByRoutingData(insId, bpmRoutingData, didTokenMoveResponse.getData());
+				// 创建需要创建的子流程
+				dhProcessInstanceService.createSubProcessInstanceByRoutingData(currProcessInstance, bpmRoutingData,
+						pubBo, didTokenMoveResponse.getData());
+			} else {
+				// 确认Token没有移动, 更新流转信息
+				dhRoutingRecord.setActivityTo(null);
+				dhRoutingRecordMapper.insert(dhRoutingRecord);
+			}
+		} catch (Exception e) {
+			log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+            newTaskException.setErrorMessage(e.getMessage());
+            return ServerResponse.createByErrorCodeAndData(1, e.getMessage(), newTaskException);
+		}
+		return ServerResponse.createBySuccess();
+	}
+
+    private boolean tokenWasMoved(ServerResponse didTokenMoveResponse) {
+        return didTokenMoveResponse.getData() != null;
+    }
 
 
 	/**
@@ -1898,7 +1997,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		DataForSubmitTask dataForSubmitTask = null;
 		BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(systemTaskInstance.getTaskActivityId());
 		if (currTaskNode == null) {
-			throw new PlatformException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
+			throw new DhTaskCheckException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
 		}
 		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
 				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {

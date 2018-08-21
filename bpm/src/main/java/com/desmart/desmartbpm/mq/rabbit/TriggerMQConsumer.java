@@ -52,7 +52,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
             log.error("解析失败", e);
         }
         DhTaskException dhTriggerException = new DhTaskException();
-		dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
+		dhTriggerException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + UUID.randomUUID());
 		dhTriggerException.setDataForSubmitTask(msgBody);  // mq推送过来的信息的主体内容
 		dhTriggerException.setStatus("mark"); // 记录状态
 		dhTaskExceptionMapper.save(dhTriggerException);

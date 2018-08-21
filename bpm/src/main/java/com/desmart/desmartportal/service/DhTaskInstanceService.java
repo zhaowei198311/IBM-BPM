@@ -12,6 +12,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.DhTaskCommitException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DataForSubmitTask;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import com.desmart.desmartportal.entity.BpmRoutingData;
 import com.desmart.desmartportal.entity.CommonBusinessObject;
 import com.desmart.desmartportal.entity.DhProcessInstance;
@@ -74,10 +75,18 @@ public interface DhTaskInstanceService {
 
 	/**
 	 * 完成一个任务，根据有没有下个步骤 调用RESTFul API完成任务或推送到队列<br/>
+	 * 只返回成功状态，失败时自动处理异常<br/>
 	 * 失败时如下操作： <br/>
 	 * 1. 创建或更新一条异常记录<br/>
 	 * 2. 修改任务状态为异常<br/>
 	 * 3. 修改流程实例状态为异常<br/>
+	 * @param dataForSubmitTask
+	 * @return
+	 */
+	ServerResponse finishTaskFirstTime(DataForSubmitTask dataForSubmitTask);
+
+	/**
+	 * 完成一个任务，失败时返回数据中包含 DhTaskException
 	 * @param dataForSubmitTask
 	 * @return
 	 */
@@ -89,6 +98,14 @@ public interface DhTaskInstanceService {
 	 * @return
 	 */
 	ServerResponse commitTask(DataForSubmitTask dataForSubmitTask) throws DhTaskCommitException;
+
+	/**
+	 * 重新提交任务
+	 * @param dhTaskException
+	 * @return
+	 * @throws DhTaskCommitException
+	 */
+	ServerResponse retryCommitTask(DhTaskException dhTaskException) throws DhTaskCommitException;
 
 	/**
 	 * 查看平台任务表中是否存在指定taskId的任务
@@ -347,7 +364,7 @@ public interface DhTaskInstanceService {
 			DhTaskInstance dhTaskInstance, Integer pageNum, Integer pageSize, String isAgent);
 
 	/**
-	 * 完成一个系统任务
+	 * 为完成一个系统任务准备提交数据
 	 * @param systemTaskInstance
 	 * @param bpmGlobalConfig
 	 * @return
