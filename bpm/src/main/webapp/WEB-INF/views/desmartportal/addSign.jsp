@@ -175,6 +175,12 @@
     
     <div class="layui-fluid" style="padding-top: 120px;">
 		<div class="table_content">
+			<div class="table_container" <c:if test="${showResponsibility=='FALSE'}">style="display:none;"</c:if>>
+				<p class="title_p">本环节审批要求</p>
+				<div class="layui-form" style="padding:10px 20px 20px;">
+					${activityConf.actcResponsibility }
+				</div>
+			</div>
 			<div class="table_container">
 				<p class="title_p">流程标题</p>
 				<table class="layui-table basic_information" lay-skin="nob">
@@ -194,13 +200,6 @@
 			</div>
 			
 			<div id="formSet">${bpmForm.dynWebpage }</div>
-			
-			<div class="table_container" <c:if test="${showResponsibility=='FALSE'}">style="display:none;"</c:if>>
-				<p class="title_p">本环节审批要求</p>
-				<div class="layui-form" style="padding:10px 20px 20px;">
-					${activityConf.actcResponsibility }
-				</div>
-			</div>
 			
 			<div class="table_container">
 				<p class="title_p" <c:if test="${activityConf.actcCanApprove =='FALSE'}">style="dislay:none;"</c:if>>审批意见</p>
