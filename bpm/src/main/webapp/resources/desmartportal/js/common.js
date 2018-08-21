@@ -1159,7 +1159,9 @@ function checkAndfomartNumber(obj,integer,decimal){
 	let num = $(obj).val();
 	let l = num.split(".")[0];
 	if(l.length>integer){
-		layer.alert("格式错误,正确格式为:F"+integer+"."+decimal);
+		layer.msg("格式错误,正确格式为:F"+integer+"."+decimal, {
+			icon: 2
+		});
 		$(obj).val("");
 		return;
 	}else if(decimal==0){
