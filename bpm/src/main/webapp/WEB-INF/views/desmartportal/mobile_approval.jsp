@@ -187,8 +187,8 @@
 										<th>会签方式</th>
 										<td>
 											<div id="countersign_type">
-												<select class="layui-form_1 layui-select" lay-filter="useselfChange">
-													<option value="normalAdd">随机会签</option>
+												<select class="layui-form_1 layui-select" lay-ignore lay-filter="useselfChange" id="countersign_type_select">
+													<option value="normalAdd" selected>随机会签</option>
 													<option value="simpleLoopAdd">顺序会签</option>
 													<option value="multiInstanceLoopAdd">并行会签</option>
 												</select>
@@ -250,7 +250,7 @@
 								<textarea placeholder="请输入审批意见" class="layui-textarea" id="myApprovalOpinion"></textarea>
 								<label class="layui-form-label" id="fu_label">常用语</label>
 								<div class="layui-input-block" id="frequently_used">
-									<select class="layui-form" lay-filter="useselfChange">
+									<select class="layui-form" lay-ignore lay-filter="useselfChange" id="frequently_used_select">
 										<option value="-1">请选择</option>
 										<option value="同意">同意</option>
 										<option value="不同意">不同意</option>
