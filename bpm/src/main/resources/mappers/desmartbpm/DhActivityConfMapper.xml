@@ -43,7 +43,7 @@
     <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="ACTC_CAN_CHOOSE_USER" property="actcCanChooseUser" jdbcType="VARCHAR" />
     <result column="ACTC_CAN_TRANSFER" property="actcCanTransfer" jdbcType="VARCHAR" />
-    <result column="ACTC_RESPONSIBILITY" property="actcResponsibility" jdbcType="VARCHAR" />
+    <result column="ACTC_RESPONSIBILITY" property="actcResponsibility" jdbcType="CLOB" />
     <result column="ACTC_MESSAGE_NOTIFY_TEMPLATE" property="actcMessageNotifyTemplate" jdbcType="VARCHAR" />
     <result column="ACTC_CAN_SKIP_FROM_REJECT" property="actcCanSkipFromReject" jdbcType="VARCHAR"/>
   	<result column="ACTC_OUTTIME_NOTIFY_TYPE" property="actcOuttimeNotifyType" jdbcType="VARCHAR"/>
@@ -290,7 +290,7 @@
         actc_Can_Transfer = #{actcCanTransfer,jdbcType=VARCHAR},
       </if>
       <if test="actcResponsibility != null" >
-        actc_Responsibility = #{actcResponsibility,jdbcType=VARCHAR},
+        actc_Responsibility = #{actcResponsibility,jdbcType=CLOB},
       </if>
       <if test="actcChooseableHandlerType != null" >
         ACTC_CHOOSEABLE_HANDLER_TYPE = #{actcChooseableHandlerType,jdbcType=VARCHAR},

@@ -36,12 +36,29 @@ public class DhTaskException implements Serializable {
 	private Date createTime;      // 异常产生的时间
 	private Date lastRetryTime;   // 最后重试时间
 
+    private DhTaskInstance dhTaskInstance;  // 关联的任务实例
+
 	public DhTaskException(){}
 
 
+	public static DhTaskException createStepTaskException(DhTaskInstance dhTaskInstance, String stepUid, String dataForSubmitTask,
+														  String errorMessage, String dilUid) {
+		DhTaskException dhTaskException = new DhTaskException();
+		dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
+				.setInsUid(dhTaskInstance.getInsUid())
+				.setDataForSubmitTask(dataForSubmitTask)
+				.setStepUid(stepUid)
+				.setTaskUid(dhTaskInstance.getTaskUid())
+				.setErrorMessage(errorMessage)   // 记录错误信息
+				.setRetryCount(0)
+				.setDilUid(dilUid)
+				.setStatus(DhTaskException.STATUS_STEP_EXCEPTION); // 记录状态
+		return dhTaskException;
+	}
+
 	public static DhTaskException createCommitTaskrException(DhTaskInstance dhTaskInstance, String dataForSubmitTask, String errorMessage) {
-		DhTaskException dhTriggerException = new DhTaskException();
-		dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()))
+		DhTaskException dhTaskException = new DhTaskException();
+		dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
 				.setTaskUid(dhTaskInstance.getTaskUid())
 				.setStepUid(null)
 				.setInsUid(dhTaskInstance.getInsUid())
@@ -49,12 +66,12 @@ public class DhTaskException implements Serializable {
 				.setErrorMessage(errorMessage)
 				.setRetryCount(0)
 				.setStatus(DhTaskException.STATUS_COMMIT_EXCEPTION);
-		return dhTriggerException;
+		return dhTaskException;
 	}
 
 	public static DhTaskException createCheckTaskException(DhTaskInstance dhTaskInstance, String errorMessage) {
-		DhTaskException dhTriggerException = new DhTaskException();
-		dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()))
+		DhTaskException dhTaskException = new DhTaskException();
+		dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
 				.setTaskUid(dhTaskInstance.getTaskUid())
 				.setStepUid(null)
 				.setInsUid(dhTaskInstance.getInsUid())
@@ -62,7 +79,7 @@ public class DhTaskException implements Serializable {
 				.setErrorMessage(errorMessage)
 				.setRetryCount(0)
 				.setStatus(DhTaskException.STATUS_CHECK_EXCEPTION);
-		return dhTriggerException;
+		return dhTaskException;
 	}
 
 
@@ -167,13 +184,47 @@ public class DhTaskException implements Serializable {
 		return this;
 	}
 
+    public DhTaskInstance getDhTaskInstance() {
+        return dhTaskInstance;
+    }
 
-	public static void main(String[] args){
-	    DhTaskInstance dhTaskInstance = new DhTaskInstance();
-	    dhTaskInstance.setTaskUid("uid");
-	    dhTaskInstance.setInsUid("insUid");
-		DhTaskException commitTriggerException = DhTaskException.createCommitTaskrException(dhTaskInstance, "{dfddf}", "ERROR-MESSAGE");
-		System.out.println("done");
+    public void setDhTaskInstance(DhTaskInstance dhTaskInstance) {
+        this.dhTaskInstance = dhTaskInstance;
+    }
+
+    /**
+     * 判断是否描述同一个异常
+     * @param dhTaskException
+     * @return
+     */
+    public boolean isSameException(DhTaskException dhTaskException) {
+
+	    if (!this.taskUid.equals(dhTaskException.getTaskUid())) {
+	        return false;
+        }
+        if (!this.status.equals(dhTaskException.getStatus())) {
+            return false;
+        }
+        if (this.status.equals(DhTaskException.STATUS_STEP_EXCEPTION)) {
+            // 如果都是步骤异常，要求步骤号一致
+            if (!this.stepUid.equals(dhTaskException.getStepUid())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args){
+		DhTaskInstance dhTaskInstance = new DhTaskInstance();
+		dhTaskInstance.setInsUid("aInsUid");
+		dhTaskInstance.setTaskUid("aTaskUid");
+        DhTaskException stepTaskException = DhTaskException.createStepTaskException(dhTaskInstance, "dfdtet",
+                "{jsondata}", "MESSAGe", "dilUid");
+
+        DhTaskException e2 = DhTaskException.createCheckTaskException(dhTaskInstance, "dd");
+
+        System.out.println(e2.isSameException(stepTaskException));
+        System.out.println(stepTaskException);
 	}
 
 }

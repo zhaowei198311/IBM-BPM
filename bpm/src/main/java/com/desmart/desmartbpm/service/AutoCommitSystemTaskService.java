@@ -1,5 +1,7 @@
 package com.desmart.desmartbpm.service;
 
+import com.desmart.common.constant.ServerResponse;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 
@@ -19,5 +21,11 @@ public interface AutoCommitSystemTaskService {
      */
     void startAutoCommitSystemDelayTask();
 
+    /**
+     * 重试提交系统任务
+     * @param dhTaskException
+     * @return
+     */
+    ServerResponse retrySubmitSystemTask(DhTaskException dhTaskException);
 
 }

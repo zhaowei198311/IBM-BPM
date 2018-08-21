@@ -4,14 +4,16 @@ import com.desmart.desmartbpm.entity.DhTaskException;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface DhTaskExceptionMapper {
 	/**
 	 * 新增记录
-	 * @param dhTriggerException
+	 * @param dhTaskException
 	 * @return
 	 */
-	int save(DhTaskException dhTriggerException);
+	int save(DhTaskException dhTaskException);
 
 	/**
 	 * 根据主键查询
@@ -30,19 +32,26 @@ public interface DhTaskExceptionMapper {
 
 	/**
 	 * 根据主键选择性更新
-	 * @param dhTriggerException
+	 * @param dhTaskException
 	 * @return
 	 */
-	int updateByPrimaryKeySelective(DhTaskException dhTriggerException);
+	int updateByPrimaryKeySelective(DhTaskException dhTaskException);
 
 	/**
 	 * 根据主键全量更新
-	 * @param dhTriggerException
+	 * @param dhTaskException
 	 * @return
 	 */
-	int updateByPrimaryKey(DhTaskException dhTriggerException);
+	int updateByPrimaryKey(DhTaskException dhTaskException);
 
 
 	int removeByPrimaryKey(String id);
+
+	/**
+	 * 根据任务主键查询该任务的异常记录，按创建时间倒序排列
+	 * @param taskUid
+	 * @return
+	 */
+	List<DhTaskException> listByTaskUid(String taskUid);
 
 }

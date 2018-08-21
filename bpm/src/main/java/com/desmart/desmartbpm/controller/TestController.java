@@ -62,6 +62,8 @@ public class TestController extends BaseWebController {
     private DhTriggerStepService dhTriggerStepService;
     @Autowired
     private DhProcessInstanceService dhProcessInstanceService;
+    @Autowired
+    private DhTaskExceptionResolverService dhTaskExceptionResolverService;
 
 
     
@@ -344,11 +346,11 @@ public class TestController extends BaseWebController {
         return null;
     }
 
-
-    @RequestMapping(value = "/testRetryException")
+    // http://localhost:8088/bpm/test/recoverTask?taskUid=task_instance:561b3321-bef1-470e-8abb-cd5ad5458313
+    @RequestMapping(value = "/recoverTask")
     @ResponseBody
-    public ServerResponse testRetryException(String id) {
-        return dhTriggerStepService.retryErrorStepAndSubmitTask(id);
+    public ServerResponse testRetryException(String taskUid) {
+        return dhTaskExceptionResolverService.recoverTask(taskUid);
     }
 
 
