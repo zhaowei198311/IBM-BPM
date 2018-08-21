@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -36,7 +34,7 @@ import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartportal.common.EntityIdPrefix;
-import com.desmart.desmartportal.dao.AccessoryFileUploadMapper;
+import com.desmart.desmartportal.dao.DhInstanceDocumentMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhInstanceDocument;
 import com.desmart.desmartportal.entity.DhTaskInstance;
@@ -54,7 +52,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Autowired
 	private BpmGlobalConfigService bpmGlobalConfigService;
 	@Resource
-	private AccessoryFileUploadMapper accessoryFileUploadMapper;
+	private DhInstanceDocumentMapper dhInstanceDocumentMapper;
 	@Autowired
 	private BpmActivityMetaMapper bpmActivityMetaMapper;
 	@Autowired
@@ -62,27 +60,27 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	
 	@Override
 	public Integer insertDhInstanceDocuments(List<DhInstanceDocument> dhInstanceDocuments) {
-		return accessoryFileUploadMapper.insertDhInstanceDocuments(dhInstanceDocuments);
+		return dhInstanceDocumentMapper.insertDhInstanceDocuments(dhInstanceDocuments);
 	}
 
 	@Override
 	public List<DhInstanceDocument> checkFileActivityIdByName(String appUid, String myFileName,String appDocUid) {
-		return accessoryFileUploadMapper.checkFileActivityIdByName(appUid, myFileName,	appDocUid);
+		return dhInstanceDocumentMapper.checkFileActivityIdByName(appUid, myFileName,	appDocUid);
 	}
 
 	@Override
 	public List<DhInstanceDocument> loadFileListByCondition(DhInstanceDocument dhInstanceDocument) {
-		return accessoryFileUploadMapper.loadFileListByCondition(dhInstanceDocument);
+		return dhInstanceDocumentMapper.loadFileListByCondition(dhInstanceDocument);
 	}
 
 	@Override
 	public Integer updateFileByKeys(List<DhInstanceDocument> dhInstanceDocuments) {
-		return accessoryFileUploadMapper.updateFileByKeys(dhInstanceDocuments);
+		return dhInstanceDocumentMapper.updateFileByKeys(dhInstanceDocuments);
 	}
 
 	@Override
 	public Integer deleteFileByAppDocUid(String appDocUid) {
-		return accessoryFileUploadMapper.deleteFileByAppDocUid(appDocUid);
+		return dhInstanceDocumentMapper.deleteFileByAppDocUid(appDocUid);
 	}
 
 	@Override
@@ -233,7 +231,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	    selectCondition.setAppDocIdCard(dhInstanceDocument.getAppDocIdCard());
 	    selectCondition.setAppDocIsHistory(Const.Boolean.TRUE);
 	    selectCondition.setAppDocTags(DhInstanceDocument.DOC_TAGS_PROCESS);//表示是流程附件
-	    list = accessoryFileUploadMapper.loadFileListByCondition(selectCondition);//得到当前标识的历史版本文件，将其也一并修改
+	    list = dhInstanceDocumentMapper.loadFileListByCondition(selectCondition);//得到当前标识的历史版本文件，将其也一并修改
 	    //dhInstanceDocument.setAppDocFileUrl("null");
 	    list.add(dhInstanceDocument);
 	    String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
@@ -264,7 +262,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		//取得当前上传文件的文件名称  
         String myFileName = multipartFile.getOriginalFilename();
         /** 检查更新文件在最新版本是否重名 **/
-        List<DhInstanceDocument> checkList = accessoryFileUploadMapper
+        List<DhInstanceDocument> checkList = dhInstanceDocumentMapper
         		.checkFileActivityIdByName(dhInstanceDocument.getAppUid(), myFileName, dhInstanceDocument.getAppDocUid());
 		if(checkList!=null && checkList.size()>0) {
 			return ServerResponse.createByErrorMessage("文件名与其它文件名冲突，请选择相应的文件更新或重命名后上传！");
@@ -277,8 +275,8 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			dhInstanceDocument.setUpdateUserUid(creator);
 			dhInstanceDocument.setAppDocUpdateDate(currentDate);
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
-		Integer count = accessoryFileUploadMapper.updateFileByPrimaryKey(dhInstanceDocument);//对当前文件修改-修改人-修改时间-历史
-		DhInstanceDocument oldDhInstanceDocument = accessoryFileUploadMapper.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
+		Integer count = dhInstanceDocumentMapper.updateFileByPrimaryKey(dhInstanceDocument);//对当前文件修改-修改人-修改时间-历史
+		DhInstanceDocument oldDhInstanceDocument = dhInstanceDocumentMapper.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
 		if(count > 0 ) {
 			//当前新增文件
 			InputStream inputStream;
@@ -309,7 +307,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 			newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
 			List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 			insert.add(newDhInstanceDocument);
-			accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
+			dhInstanceDocumentMapper.insertDhInstanceDocuments(insert);
 			try {
 				SFTPUtil sftp = new SFTPUtil();
 	        	sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName, inputStream);
@@ -338,12 +336,12 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 
 	@Override
 	public DhInstanceDocument selectByPrimaryKey(String appDocUid) {
-		return accessoryFileUploadMapper.selectByPrimaryKey(appDocUid);
+		return dhInstanceDocumentMapper.selectByPrimaryKey(appDocUid);
 	}
 
 	@Override
 	public ServerResponse loadImageData(DhInstanceDocument dhInstanceDocument, String demoImagePath) {
-		dhInstanceDocument = accessoryFileUploadMapper
+		dhInstanceDocument = dhInstanceDocumentMapper
 				.selectByPrimaryKey(dhInstanceDocument.getAppDocUid());
 	try {
 	SFTPUtil sftp = new SFTPUtil();
@@ -384,7 +382,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 	@Override
 	public ServerResponse uploadEditData(Map map) {
 		String appDocUid = map.get("appDocUid").toString();
-		DhInstanceDocument dhInstanceDocument = accessoryFileUploadMapper.selectByPrimaryKey(appDocUid);
+		DhInstanceDocument dhInstanceDocument = dhInstanceDocumentMapper.selectByPrimaryKey(appDocUid);
 		
 		String creator = (String) SecurityUtils.getSubject().getSession().getAttribute(Const.CURRENT_USER);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -399,7 +397,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
         dhInstanceDocument.setUpdateUserUid(creator);
 		dhInstanceDocument.setAppDocUpdateDate(currentDate);
 		dhInstanceDocument.setAppDocIsHistory(Const.Boolean.TRUE);
-		Integer count = accessoryFileUploadMapper.updateFileByPrimaryKey(dhInstanceDocument);
+		Integer count = dhInstanceDocumentMapper.updateFileByPrimaryKey(dhInstanceDocument);
         
 		// 年/月/日/当前时间戳+文件名------上传新文件
 		String newFileName = DateUtil.datetoString(new Date())+dhInstanceDocument.getAppDocFileName();
@@ -423,7 +421,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 		newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);//是否被删除
 		List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 		insert.add(newDhInstanceDocument);
-		accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
+		dhInstanceDocumentMapper.insertDhInstanceDocuments(insert);
 		
 		String imageData = map.get("image").toString();
 		byte[] decoder = Base64.decodeBase64(imageData.replace("data:image/png;base64,","").getBytes());
@@ -512,7 +510,7 @@ public class AccessoryFileUploadServiceImpl implements AccessoryFileUploadServic
 						newDhInstanceDocument.setAppDocStatus(Const.FileStatus.NORMAL);// 是否被删除
 						List<DhInstanceDocument> insert = new ArrayList<DhInstanceDocument>();
 						insert.add(newDhInstanceDocument);
-						accessoryFileUploadMapper.insertDhInstanceDocuments(insert);
+						dhInstanceDocumentMapper.insertDhInstanceDocuments(insert);
 						try {
 							SFTPUtil sftp = new SFTPUtil();
 							sftp.upload(bpmGlobalConfigService.getFirstActConfig(), directory, newFileName,

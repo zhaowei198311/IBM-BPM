@@ -32,10 +32,9 @@ public class DhTaskInstance {
 	public static final String STATUS_WAIT_TO_ADD = "-3";
 	/**  任务关闭 */
 	public static final String STATUS_CLOSED = "32";
-	/** 任务提交前异常（推送到队列前） */
-	public static final String STATUS_ERROR_BEFORE_SUBMIT = "22";
-	/** 任务任务提交后异常（推送到队列后） */
-	public static final String STATUS_ERROR_AFTER_SUBMIT = "42";
+	/** 任务异常 */
+	public static final String STATUS_ERROR = "42";
+
 
 	/**
 	 *  警报任务

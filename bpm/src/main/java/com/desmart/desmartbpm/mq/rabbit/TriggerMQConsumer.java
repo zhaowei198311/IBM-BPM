@@ -1,8 +1,8 @@
 package com.desmart.desmartbpm.mq.rabbit;
 
 import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.desmartbpm.dao.DhTriggerExceptionMapper;
-import com.desmart.desmartbpm.entity.DhTriggerException;
+import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import com.desmart.desmartbpm.service.DhTriggerStepService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
 	@Autowired
 	private DhTriggerStepService dhTriggerStepService;
 	@Autowired
-	private DhTriggerExceptionMapper dhTriggerExceptionMapper;
+	private DhTaskExceptionMapper dhTaskExceptionMapper;
 
 
 	// 监听新消息
@@ -51,11 +51,11 @@ public class TriggerMQConsumer implements ChannelAwareMessageListener {
         } catch (UnsupportedEncodingException e) {
             log.error("解析失败", e);
         }
-        DhTriggerException dhTriggerException = new DhTriggerException();
+        DhTaskException dhTriggerException = new DhTaskException();
 		dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + UUID.randomUUID());
-		dhTriggerException.setMqMessage(msgBody);  // mq推送过来的信息的主体内容
+		dhTriggerException.setDataForSubmitTask(msgBody);  // mq推送过来的信息的主体内容
 		dhTriggerException.setStatus("mark"); // 记录状态
-		dhTriggerExceptionMapper.save(dhTriggerException);
+		dhTaskExceptionMapper.save(dhTriggerException);
 	}
 
 

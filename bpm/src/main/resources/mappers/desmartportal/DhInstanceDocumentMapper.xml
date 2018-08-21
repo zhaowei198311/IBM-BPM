@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.desmart.desmartportal.dao.AccessoryFileUploadMapper" >
+<mapper namespace="com.desmart.desmartportal.dao.DhInstanceDocumentMapper" >
    <insert id="insertDhInstanceDocuments" parameterType="java.util.List">
    	INSERT INTO DH_INSTANCE_DOCUMENT 
    	(APP_DOC_UID,APP_DOC_FILENAME,APP_DOC_TITLE,APP_DOC_COMMENT
@@ -210,4 +210,10 @@
             </set>
             where APP_DOC_UID = #{appDocUid}
    </update>
+
+    <update id="updateInsUidToNewValue">
+        update dh_instance_document
+        set app_uid = #{newInsUid}
+        where app_uid = #{oldInsUid}
+    </update>
 </mapper>

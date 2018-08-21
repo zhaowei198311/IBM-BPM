@@ -23,7 +23,7 @@ public class BpmRoutingData {
     private List<BpmActivityMeta> startProcessNodesOnOtherDeepLevel; // 与起始任务不平级的代表子流程的节点(内部维护了第一个任务节点信息)
     private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnSameDeepLevel;  // 属于当前流程子流程的流程的第一个任务节点
     private List<BpmActivityMeta> firstTaskNodesOfStartProcessOnOtherDeepLevel;  // 不属于当前流程子流程的流程的第一个任务节点
-    private Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap; // activity_id -> 代表子流程的节点
+    private Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap; // （代表子流程的节点的activityId） -> 代表子流程的节点
 
 
     public void includeAll(BpmRoutingData bpmRouteingData) {
@@ -52,6 +52,15 @@ public class BpmRoutingData {
     }
     public void addRouteResult(DhGatewayRouteResult routeResult) {
         this.routeResults.add(routeResult);
+    }
+
+    /**
+     * 根据activityId获得代表子流程的节点
+     * @param activityId
+     * @return
+     */
+    public BpmActivityMeta getNodeIdentitySubProcessByActivityId(String activityId) {
+        return actIdAndNodeIdentitySubProcessMap.get(activityId);
     }
 
     public List<BpmActivityMeta> getStartProcessNodesOnSameDeepLevel() {
@@ -159,6 +168,8 @@ public class BpmRoutingData {
     public void setActIdAndNodeIdentitySubProcessMap(Map<String, BpmActivityMeta> actIdAndNodeIdentitySubProcessMap) {
         this.actIdAndNodeIdentitySubProcessMap = actIdAndNodeIdentitySubProcessMap;
     }
+
+
 
     public List<BpmActivityMeta> getEndProcessNodes() {
         return endProcessNodes;

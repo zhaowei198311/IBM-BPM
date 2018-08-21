@@ -394,7 +394,12 @@
             where ins_id = #{insId}
         
     </update>
-    
+    <update id="updateInsStatusIdByInsUid">
+		update dh_process_instance
+		set ins_status_id = #{insStatusId}, ins_update_date = sysdate
+		where ins_uid = #{insUid}
+	</update>
+
     <select id="queryBatchByProMetaList" parameterType="list" 
     	resultType="com.desmart.desmartportal.entity.DhProcessInstance">
     	select <include refid="Base_Column_List"/> from dh_process_instance

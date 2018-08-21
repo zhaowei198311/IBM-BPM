@@ -1,121 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.desmart.desmartbpm.dao.DhTaskExceptionMapper" >
-  <resultMap id="BaseResultMap" type="com.desmart.desmartbpm.entity.DhTaskException" >
-    <id column="TASK_UID" property="taskUid" jdbcType="VARCHAR" />
-    <result column="TASK_TYPE" property="taskType" jdbcType="INTEGER" />
-    <result column="STATUS" property="status" jdbcType="INTEGER" />
-    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="LAST_RETRY_TIME" property="lastRetryTime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.desmart.desmartbpm.entity.DhTaskException" extends="BaseResultMap" >
-    <result column="ERROR_MESSAGE" property="errorMessage" jdbcType="CLOB" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    TASK_UID, TASK_TYPE, STATUS, CREATE_TIME, LAST_RETRY_TIME
-  </sql>
-  <sql id="Blob_Column_List" >
-    ERROR_MESSAGE
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from DH_TASK_EXCEPTION
-    where TASK_UID = #{taskUid,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from DH_TASK_EXCEPTION
-    where TASK_UID = #{taskUid,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" parameterType="com.desmart.desmartbpm.entity.DhTaskException" >
-    insert into DH_TASK_EXCEPTION (TASK_UID, TASK_TYPE, STATUS, 
-      CREATE_TIME, LAST_RETRY_TIME, ERROR_MESSAGE
-      )
-    values (#{taskUid,jdbcType=VARCHAR}, #{taskType,jdbcType=INTEGER}, 0,
-      sysdate, sysdate, #{errorMessage,jdbcType=CLOB}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.desmart.desmartbpm.entity.DhTaskException" >
-    insert into DH_TASK_EXCEPTION
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="taskUid != null" >
-        TASK_UID,
-      </if>
-      <if test="taskType != null" >
-        TASK_TYPE,
-      </if>
-      <if test="status != null" >
-        STATUS,
-      </if>
-      <if test="createTime != null" >
-        CREATE_TIME,
-      </if>
-      <if test="lastRetryTime != null" >
-        LAST_RETRY_TIME,
-      </if>
-      <if test="errorMessage != null" >
-        ERROR_MESSAGE,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="taskUid != null" >
-        #{taskUid,jdbcType=VARCHAR},
-      </if>
-      <if test="taskType != null" >
-        #{taskType,jdbcType=INTEGER},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lastRetryTime != null" >
-        #{lastRetryTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="errorMessage != null" >
-        #{errorMessage,jdbcType=CLOB},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTaskException" >
-    update DH_TASK_EXCEPTION
-    <set >
-      <if test="taskType != null" >
-        TASK_TYPE = #{taskType,jdbcType=INTEGER},
-      </if>
-      <if test="status != null" >
-        STATUS = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lastRetryTime != null" >
-        LAST_RETRY_TIME = #{lastRetryTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="errorMessage != null" >
-        ERROR_MESSAGE = #{errorMessage,jdbcType=CLOB},
-      </if>
-    </set>
-    where TASK_UID = #{taskUid,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.desmart.desmartbpm.entity.DhTaskException" >
-    update DH_TASK_EXCEPTION
-    set TASK_TYPE = #{taskType,jdbcType=INTEGER},
-      STATUS = #{status,jdbcType=INTEGER},
-      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      LAST_RETRY_TIME = #{lastRetryTime,jdbcType=TIMESTAMP},
-      ERROR_MESSAGE = #{errorMessage,jdbcType=CLOB}
-    where TASK_UID = #{taskUid,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTaskException" >
-    update DH_TASK_EXCEPTION
-    set TASK_TYPE = #{taskType,jdbcType=INTEGER},
-      STATUS = #{status,jdbcType=INTEGER},
-      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      LAST_RETRY_TIME = #{lastRetryTime,jdbcType=TIMESTAMP}
-    where TASK_UID = #{taskUid,jdbcType=VARCHAR}
-  </update>
+
+    <sql id="base_column">
+        ID, TASK_UID, STEP_UID, INS_UID, CREATE_TIME,
+        DATA_FOR_SUBMIT_TASK, ERROR_MESSAGE, DIL_UID,
+        STATUS, RETRY_COUNT, last_retry_time
+    </sql>
+
+    <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhTaskException">
+        insert into DH_TASK_EXCEPTION
+        (<include refid="base_column"/>)
+        values (
+        #{id}, #{taskUid}, #{stepUid}, #{insUid}, sysdate, #{dataForSubmitTask}, #{errorMessage}, #{dilUid}, #{status}, 0, sysdate
+        )
+    </insert>
+    <delete id="removeByPrimaryKey" parameterType="string">
+        delete from DH_TASK_EXCEPTION
+        where id = #{id}
+    </delete>
+
+
+    <select id="qureyByPrimaryKey" parameterType="string" resultType="com.desmart.desmartbpm.entity.DhTaskException">
+        select <include refid="base_column"/> from DH_TASK_EXCEPTION
+        where id = #{id}
+    </select>
+
+    <select id="queryByTaskUidAndStepUid" parameterType="map" resultType="com.desmart.desmartbpm.entity.DhTaskException">
+        select <include refid="base_column"/> from DH_TASK_EXCEPTION
+        where task_uid = #{taskUid} and step_uid = #{stepUid}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartbpm.entity.DhTaskException">
+        update DH_TASK_EXCEPTION
+        <set>
+            <if test="stepUid != null">
+                step_uid = #{stepUid},
+            </if>
+            <if test="errorMessage != null">
+                error_message = #{errorMessage},
+            </if>
+            <if test="dilUid != null">
+                dil_uid = #{dilUid},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="retryCount != null">
+                retry_Count = #{retryCount},
+            </if>
+            last_retry_time = sysdate
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.desmart.desmartbpm.entity.DhTaskException">
+        update DH_TASK_EXCEPTION
+        set
+            TASK_UID = #{taskUid},
+            STEP_UID = #{stepUid},
+            INS_UID = #{insUid},
+            DATA_FOR_SUBMIT_TASK = #{dataForSubmitTask},
+            ERROR_MESSAGE = #{errorMessage},
+            DIL_UID = #{dilUid},
+            STATUS = #{status},
+            RETRY_COUNT = #{retryCount},
+            last_retry_time = sysdate
+        where id = #{id}
+    </update>
+
+
+
+
 </mapper>

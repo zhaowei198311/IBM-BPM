@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.DhTaskCommitException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DataForSubmitTask;
 import com.desmart.desmartportal.entity.BpmRoutingData;
@@ -67,21 +68,27 @@ public interface DhTaskInstanceService {
 								   CommonBusinessObject pubBo, JSONObject dataJson);
 
 	/**
-	 * 完成任务
+	 * 提交一个待办任务
 	 */
 	ServerResponse perform(String data);
 
-
+	/**
+	 * 完成一个任务，根据有没有下个步骤 调用RESTFul API完成任务或推送到队列<br/>
+	 * 失败时如下操作： <br/>
+	 * 1. 创建或更新一条异常记录<br/>
+	 * 2. 修改任务状态为异常<br/>
+	 * 3. 修改流程实例状态为异常<br/>
+	 * @param dataForSubmitTask
+	 * @return
+	 */
+	ServerResponse finishTask(DataForSubmitTask dataForSubmitTask);
 
 	/**
 	 * 调用Restful api完成任务， 并创建相应的子流程
 	 * @param dataForSubmitTask
 	 * @return
-	 * status:0 成功<br/>
-	 * status:1 调用restfual api 完成任务失败<br/>
-	 * status:2 提交成功，判断token是否移动失败
 	 */
-	ServerResponse finishTask(DataForSubmitTask dataForSubmitTask);
+	ServerResponse commitTask(DataForSubmitTask dataForSubmitTask) throws DhTaskCommitException;
 
 	/**
 	 * 查看平台任务表中是否存在指定taskId的任务
@@ -345,7 +352,7 @@ public interface DhTaskInstanceService {
 	 * @param bpmGlobalConfig
 	 * @return
 	 */
-	ServerResponse submitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig);
+	DataForSubmitTask perpareDataForSubmitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig);
 
 	/**
 	 * 根据流程实例主键找出异常的任务

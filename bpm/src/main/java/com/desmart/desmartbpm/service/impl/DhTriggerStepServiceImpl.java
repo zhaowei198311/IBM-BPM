@@ -5,10 +5,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.DhStepMapper;
-import com.desmart.desmartbpm.dao.DhTriggerExceptionMapper;
+import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
 import com.desmart.desmartbpm.entity.DataForSubmitTask;
 import com.desmart.desmartbpm.entity.DhStep;
-import com.desmart.desmartbpm.entity.DhTriggerException;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import com.desmart.desmartbpm.service.DhStepService;
 import com.desmart.desmartbpm.service.DhTriggerService;
 import com.desmart.desmartbpm.service.DhTriggerStepService;
@@ -27,7 +27,6 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,7 +39,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
     @Autowired
     DhTaskInstanceService dhTaskInstanceService;
     @Autowired
-    private DhTriggerExceptionMapper dhTriggerExceptionMapper;
+    private DhTaskExceptionMapper dhTaskExceptionMapper;
     @Autowired
     private DhTriggerService dhTriggerService;
     @Autowired
@@ -75,21 +74,21 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                 ServerResponse<Map<String, String>> invokeTriggerResponse = dhTriggerService.invokeTrigger(wac, currentProcessInstance.getInsUid(), invokeStep);
                 if (!invokeTriggerResponse.isSuccess()) {
                     // 记录调用异常
-                    DhTriggerException dhTriggerException = new DhTriggerException();
+                    DhTaskException dhTriggerException = new DhTaskException();
                     dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()))
                             .setInsUid(currentProcessInstance.getInsUid())
-                            .setMqMessage(msgBody)  // mq推送过来的信息的主体内容
+                            .setDataForSubmitTask(msgBody)  // mq推送过来的信息的主体内容
                             .setStepUid(invokeStep.getStepUid())
                             .setTaskUid(currTaskInstance.getTaskUid())
                             .setErrorMessage(invokeTriggerResponse.getMsg())   // 记录错误信息
-                            .setStatus(DhTriggerException.STATUS_ERROR_IN_STEP); // 记录状态
+                            .setStatus(DhTaskException.STATUS_STEP_EXCEPTION); // 记录状态
                     if (invokeTriggerResponse.getStatus() == 2) {
                         // 如果状态码是2，说明是调用接口错误，记录调用接口的日志主键
                         dhTriggerException.setDilUid(invokeTriggerResponse.getData().get("dilUid"));
                     }
-                    dhTriggerExceptionMapper.save(dhTriggerException);
+                    dhTaskExceptionMapper.save(dhTriggerException);
                     // 将任务的状态标记为异常
-                    dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR_AFTER_SUBMIT);
+                    dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR);
                     // 修改流程实例状态为异常
                     setProcessStatusError(currTaskInstance.getInsUid());
                     return;
@@ -101,43 +100,8 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         // 由于调用了触发器，重新查询一次流程实例信息，因为其中的 nextBusinessKey可能会影响子流程的创建
         currentProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(currentProcessInstance.getInsUid());
         dataForSubmitTask.setCurrentProcessInstance(currentProcessInstance);
-
-        try {
-            ServerResponse finishResponse = dhTaskInstanceService.finishTask(dataForSubmitTask);
-            // 完成任务成功，不需要额外处理
-            if (!finishResponse.isSuccess()) {
-                // 完成任务失败，记录错误记录
-                DhTriggerException dhTriggerException = new DhTriggerException();
-                dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()))
-                        .setTaskUid(currTaskInstance.getTaskUid())
-                        .setStepUid(null)
-                        .setInsUid(currentProcessInstance.getInsUid())
-                        .setMqMessage(msgBody)  // mq推送过来的信息的主体内容
-                        .setErrorMessage(finishResponse.getMsg());   // 记录错误信息
-                if (finishResponse.getStatus() == 1) {
-                    // 调用restfual api 失败
-                    dhTriggerException.setStatus(DhTriggerException.STATUS_ERROR_WHEN_SUBMIT);
-                } else if (finishResponse.getStatus() == 2) {
-                    // 提交成功，判断token是否移动失败
-                    dhTriggerException.setStatus(DhTriggerException.STATUS_ERROR_AFTER_SUBMIT);
-                }
-                dhTriggerExceptionMapper.save(dhTriggerException);
-                dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR_AFTER_SUBMIT);
-            }
-        } catch (Exception e) {
-            logger.error("步骤执行后，完成任务失败", e);
-            DhTriggerException dhTriggerException = new DhTriggerException();
-            dhTriggerException.setId(EntityIdPrefix.DH_TRIGGER_EXCEPTION + String.valueOf(UUID.randomUUID()))
-                    .setTaskUid(currTaskInstance.getTaskUid())
-                    .setStepUid(null)
-                    .setInsUid(currentProcessInstance.getInsUid())
-                    .setMqMessage(msgBody)  // mq推送过来的信息的主体内容
-                    .setErrorMessage("步骤执行后，完成任务失败")
-                    .setStatus(DhTriggerException.STATUS_ERROR_AFTER_SUBMIT);
-            dhTriggerExceptionMapper.save(dhTriggerException);
-            dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_ERROR_AFTER_SUBMIT);
-        }
-
+        dataForSubmitTask.setNextStep(null);
+        dhTaskInstanceService.finishTask(dataForSubmitTask);
 
     }
 
@@ -149,15 +113,15 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
             return ServerResponse.createByErrorMessage("缺少必要的参数");
         }
         // 获得出错的数据
-        DhTriggerException dhTriggerException = dhTriggerExceptionMapper.qureyByPrimaryKey(triggerExceptionId);
+        DhTaskException dhTriggerException = dhTaskExceptionMapper.qureyByPrimaryKey(triggerExceptionId);
         if (dhTriggerException == null) {
             return ServerResponse.createByErrorMessage("找不到这条记录");
         }
-        if (DhTriggerException.STATUS_DONE.equals(dhTriggerException.getStatus())) {
+        if (DhTaskException.STATUS_DONE.equals(dhTriggerException.getStatus())) {
             return ServerResponse.createBySuccess("此错误已经被重试成功");
         }
 
-        String msgBody = dhTriggerException.getMqMessage();
+        String msgBody = dhTriggerException.getDataForSubmitTask();
         if (StringUtils.isBlank(msgBody)) {
             return ServerResponse.createByErrorMessage("缺少消息体");
         }
@@ -169,7 +133,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         } catch (Exception e) {
             logger.error("解析消息出错：消息体" + msgBody, e);
             this.updateTriggerExceptionWhenFailed(dhTriggerException, dhTriggerException.getStepUid(), "解析消息出错：消息体",
-                    null, DhTriggerException.STATUS_ERROR_IN_STEP);
+                    null, DhTaskException.STATUS_STEP_EXCEPTION);
         }
         DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
         DhProcessInstance currentProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
@@ -190,11 +154,11 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                     // 调用触发器失败
                     if (invokeTriggerResponse.getStatus() == 1) {
                         updateTriggerExceptionWhenFailed(dhTriggerException, invokeStep.getStepUid(), invokeTriggerResponse.getMsg(),
-                                null, DhTriggerException.STATUS_ERROR_IN_STEP);
+                                null, DhTaskException.STATUS_STEP_EXCEPTION);
                     } else if (invokeTriggerResponse.getStatus() == 2) {
                         // 如果状态码是2，说明是调用接口错误，记录调用接口的日志主键
                         updateTriggerExceptionWhenFailed(dhTriggerException, invokeStep.getStepUid(), invokeTriggerResponse.getMsg(),
-                                invokeTriggerResponse.getData().get("dilUid"), DhTriggerException.STATUS_ERROR_IN_STEP);
+                                invokeTriggerResponse.getData().get("dilUid"), DhTaskException.STATUS_STEP_EXCEPTION);
                     }
                     return invokeTriggerResponse; // 终止继续调用
                 }
@@ -207,28 +171,17 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         dataForSubmitTask.setCurrentProcessInstance(currentProcessInstance);
 
         try {
-            ServerResponse finishResponse = dhTaskInstanceService.finishTask(dataForSubmitTask);
-            if (finishResponse.isSuccess()) {
-                // 完成任务成功: 1. 修改异常表中状态  2. 修改任务实例状态 3. 修改流程实例状态
-                this.setTriggerExceptionDone(dhTriggerException.getId());
-                dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_CLOSED);
-                recoverProcessStatus(currentProcessInstance.getInsUid());
-            } else {
-                if (finishResponse.getStatus() == 1) {
-                    // 调用restfual api 失败
-                    updateTriggerExceptionWhenFailed(dhTriggerException, null, finishResponse.getMsg(),
-                            null, DhTriggerException.STATUS_ERROR_WHEN_SUBMIT);
-                } else if (finishResponse.getStatus() == 2) {
-                    // 提交成功，判断token是否移动失败
-                    updateTriggerExceptionWhenFailed(dhTriggerException, null, finishResponse.getMsg(),
-                            null, DhTriggerException.STATUS_ERROR_AFTER_SUBMIT);
-                }
-            }
-            return finishResponse;
+            dhTaskInstanceService.commitTask(dataForSubmitTask);
+            // 完成任务成功: 1. 修改异常表中状态  2. 修改任务实例状态 3. 修改流程实例状态
+            this.setTriggerExceptionDone(dhTriggerException.getId());
+            dhTaskInstanceMapper.updateTaskStatus(currTaskInstance.getTaskUid(), DhTaskInstance.STATUS_CLOSED);
+            recoverProcessStatus(currentProcessInstance.getInsUid());
+
+            return ServerResponse.createBySuccess();
         } catch (Exception e) {
             logger.error("步骤执行完成后提交出错", e);
             this.updateTriggerExceptionWhenFailed(dhTriggerException, null, e.getMessage(), null,
-                    DhTriggerException.STATUS_ERROR_AFTER_SUBMIT);
+                    DhTaskException.STATUS_COMMIT_EXCEPTION);
             return ServerResponse.createByErrorMessage(e.getMessage());
         }
     }
@@ -272,7 +225,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
      * @param dilUid   接口调用日志主键
      * @param status   错误状态
      */
-    private void updateTriggerExceptionWhenFailed(DhTriggerException oldTriggerException, String stepUid, String errorMessage,
+    private void updateTriggerExceptionWhenFailed(DhTaskException oldTriggerException, String stepUid, String errorMessage,
                                                   String dilUid, String status) {
         oldTriggerException.setStatus(status)
                 .setStepUid(stepUid).setDilUid(dilUid).setErrorMessage(errorMessage).setLastRetryTime(new Date());
@@ -284,7 +237,7 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
             // 不同步骤发生错误，更新重试次数为0
             oldTriggerException.setRetryCount(0);
         }
-        dhTriggerExceptionMapper.updateByPrimaryKey(oldTriggerException);
+        dhTaskExceptionMapper.updateByPrimaryKey(oldTriggerException);
     }
 
 
@@ -294,9 +247,9 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
      * @param id 异常记录的主键
      */
     private void setTriggerExceptionDone(String id) {
-        DhTriggerException exceptionSelective = new DhTriggerException();
-        exceptionSelective.setId(id).setLastRetryTime(new Date()).setStepUid(DhTriggerException.STATUS_DONE);
-        dhTriggerExceptionMapper.updateByPrimaryKeySelective(exceptionSelective);
+        DhTaskException exceptionSelective = new DhTaskException();
+        exceptionSelective.setId(id).setLastRetryTime(new Date()).setStepUid(DhTaskException.STATUS_DONE);
+        dhTaskExceptionMapper.updateByPrimaryKeySelective(exceptionSelective);
     }
 
 

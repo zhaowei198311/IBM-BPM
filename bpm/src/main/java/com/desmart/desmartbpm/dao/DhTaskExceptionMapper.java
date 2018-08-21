@@ -1,19 +1,48 @@
 package com.desmart.desmartbpm.dao;
 
 import com.desmart.desmartbpm.entity.DhTaskException;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface DhTaskExceptionMapper {
-    int deleteByPrimaryKey(String taskUid);
+	/**
+	 * 新增记录
+	 * @param dhTriggerException
+	 * @return
+	 */
+	int save(DhTaskException dhTriggerException);
 
-    int insert(DhTaskException record);
+	/**
+	 * 根据主键查询
+	 * @param id
+	 * @return
+	 */
+	DhTaskException qureyByPrimaryKey(String id);
 
-    int insertSelective(DhTaskException record);
+	/**
+	 * 根据任务id加步骤号查询
+	 * @param taskUid
+	 * @param stepUid
+	 * @return
+	 */
+	DhTaskException queryByTaskUidAndStepUid(@Param("taskUid") String taskUid, @Param("stepUid") String stepUid);
 
-    DhTaskException selectByPrimaryKey(String taskUid);
+	/**
+	 * 根据主键选择性更新
+	 * @param dhTriggerException
+	 * @return
+	 */
+	int updateByPrimaryKeySelective(DhTaskException dhTriggerException);
 
-    int updateByPrimaryKeySelective(DhTaskException record);
+	/**
+	 * 根据主键全量更新
+	 * @param dhTriggerException
+	 * @return
+	 */
+	int updateByPrimaryKey(DhTaskException dhTriggerException);
 
-    int updateByPrimaryKeyWithBLOBs(DhTaskException record);
 
-    int updateByPrimaryKey(DhTaskException record);
+	int removeByPrimaryKey(String id);
+
 }
