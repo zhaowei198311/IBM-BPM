@@ -205,9 +205,6 @@ $(function () {
 
 	$('#sla_form').validate({
 		rules: {
-			actcResponsibility: {
-				maxlength: 666
-			},
 			actcTime: {
 				positiveInteger5: true
 			},
