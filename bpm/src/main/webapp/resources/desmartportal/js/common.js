@@ -1193,7 +1193,7 @@ if(s!=null&&s.length>0){
 	return;
 }
 }
-function CompareDate(startDateId,endDateId)
+function compareDate(startDateId,endDateId)
 {
 	var d1 = $("#"+startDateId).val();
 	var d2 = $("#"+endDateId).val();
