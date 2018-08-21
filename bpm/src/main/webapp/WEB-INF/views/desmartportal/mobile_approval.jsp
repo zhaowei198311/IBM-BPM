@@ -129,7 +129,7 @@
 										<c:choose>
 			                                <%-- 可编辑标题 --%>
 			                                <c:when test="${canEditInsTitle == true}">
-			                                    <input type="text" id="insTitle_input" placeholder="请输入流程标题" class="layui-input" />
+			                                    <input type="text" id="insTitle_input" value="${processInstance.insTitle }" placeholder="请输入流程标题" class="layui-input" />
 			                                </c:when>
 			                                <%-- 不可编辑标题 --%>
 			                                <c:otherwise>
@@ -253,7 +253,7 @@
 									<select class="layui-form" lay-filter="useselfChange">
 										<option value="-1">请选择</option>
 										<option value="同意">同意</option>
-										<option value="驳回">驳回</option>
+										<option value="不同意">不同意</option>
 									</select>
 								</div>
 							</div>

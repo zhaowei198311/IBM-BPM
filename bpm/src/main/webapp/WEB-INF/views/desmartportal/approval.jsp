@@ -281,8 +281,8 @@
 							<div class="layui-input-block">
 								<select class="layui-form" lay-filter="useselfChange">
 									<option value="-1">--请选择--</option>
-									<option value="通过">通过</option>
-									<option value="驳回">驳回</option>
+									<option value="同意">同意</option>
+									<option value="不同意">不同意</option>
 								</select>
 							</div>
 						</div>
