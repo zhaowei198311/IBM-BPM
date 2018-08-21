@@ -715,6 +715,7 @@
 																	lay-verify="required">
 																	<option value="">-请选择-</option>
 																	<option value="role">角色</option>
+																	<option value="roleAndCompany">角色 + 公司编码</option>
 																	<option value="users">指定人员</option>
 																</select>
 															</div>

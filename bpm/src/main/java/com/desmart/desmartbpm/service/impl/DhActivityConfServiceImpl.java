@@ -736,6 +736,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
 				}
 				break;
 			case ROLE:
+			case ROLE_AND_COMPANY:
 		            String interiorNotifyRole = dhActivityConf.getInteriorNotifyRole();
 		            if (StringUtils.isBlank(interiorNotifyRole)) {
 		                return ServerResponse.createByErrorMessage("缺少通知人信息");
@@ -886,6 +887,7 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
         String strView = "";
         switch (assignTypeEnum) {
         case ROLE:
+        case ROLE_AND_COMPANY:
         	selective.setActaAssignType(DhActivityAssignAssignType.ROLE.getCode());
         	assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
             if (assignList.size() == 0) {

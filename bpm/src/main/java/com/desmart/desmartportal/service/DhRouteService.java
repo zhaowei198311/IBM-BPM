@@ -240,4 +240,11 @@ public interface DhRouteService {
 	 */
 	ServerResponse<BpmActivityMeta> getActualFirstUserTaskNodeOfMainProcess(String proAppId, String proUid, String proVerUid);
 
+	/**
+	 * 获取环节的内部通知人员集合
+	 * @param bpmActivityMeta
+	 * @param dhProcessInstance
+	 * @return
+	 */
+	ServerResponse<List<SysUser>> getInteriorNotifyUserOfActivity(BpmActivityMeta bpmActivityMeta,DhProcessInstance dhProcessInstance);
 }

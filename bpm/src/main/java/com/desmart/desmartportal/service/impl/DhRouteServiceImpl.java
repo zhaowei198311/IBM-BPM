@@ -1720,5 +1720,37 @@ public class DhRouteServiceImpl implements DhRouteService {
 		return ServerResponse.createBySuccess(normalNodes.iterator().next());
 	}
 
+	@Override
+	public ServerResponse<List<SysUser>> getInteriorNotifyUserOfActivity(BpmActivityMeta bpmActivityMeta,DhProcessInstance dhProcessInstance) {
+		// 初始化返回值，设置为空集合
+	    List<SysUser> result = new ArrayList<>();
+	    DhActivityConf dhActivityConf = bpmActivityMeta.getDhActivityConf();
+	    String actcAssignType = dhActivityConf.getActcAssignType();
+		DhActivityConfAssignType assignTypeEnum = DhActivityConfAssignType.codeOf(actcAssignType);
+		DhActivityAssign selective = new DhActivityAssign();
+		selective.setActivityId(bpmActivityMeta.getSourceActivityId());
+		selective.setActaType(DhActivityAssignType.SEND_MAIL_ON_TASK_NODE.getCode());
+		List<DhActivityAssign> assignList = dhActivityAssignMapper.listByDhActivityAssignSelective(selective);
+        if (assignList.isEmpty()) {
+            return ServerResponse.createByErrorMessage("内部通知人配置异常");
+        }
+        String companyNum = dhProcessInstance.getCompanyNumber();
+		// 获得被分配[人|角色]的 主键数据
+		List<String> objIdList = ArrayUtil.getIdListFromDhActivityAssignList(assignList);
+		switch (assignTypeEnum) {
+			// 角色相关
+			case ROLE:
+				return ServerResponse.createBySuccess(this.searchByRole(objIdList));
+			case ROLE_AND_COMPANY:
+				return ServerResponse.createBySuccess(this.searchByRoleAndCompany(objIdList,companyNum));
+			// 指定处理人
+			case USERS:
+				return ServerResponse.createBySuccess(this.searchByUserUidList(objIdList));
+			default:
+				break;
+		}
+        return ServerResponse.createBySuccess(result);
+	}
+
 
 }
