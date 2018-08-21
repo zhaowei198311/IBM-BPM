@@ -126,9 +126,12 @@
         }
         .choose_user {
             position: absolute;
-            right: 10px;
+            right: 0px;
             top: 8px;
             z-index: 1;
+            width: 35px;
+	    	background: #fff;
+	    	text-align: center;
         }
         #formSet {
             display: none;
@@ -507,8 +510,8 @@
                 </div>
             </div>
             <div class="layui-row" style="margin-top:30px;">
-	            <label class="layui-form-label" style="width: 30px;">人员</label>
-	            <div class="layui-input-block" style="position:relative;margin-left: 60px;">
+	            <label class="layui-form-label" style="width: 60px;">人员</label>
+	            <div class="layui-input-block" style="position:relative;">
 	                <input type="hidden" id="handleUser" name="handleUser" />
 	                <input type="text" name="handleUser_view" id="handleUser_view" autocomplete="off" class="layui-input" disabled="disabled">
 	                <i class="layui-icon choose_user" id="choose_handle_user" title="选择人员">&#xe612;</i>

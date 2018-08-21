@@ -730,7 +730,7 @@ function submitTask() {
         	layer.closeAll('loading'); 
             if (result.status == 0) {
                 layer.alert('提交成功', function(){
-                	window.history.back();
+                	window.location.href = common.getPath()+"/menus/backlog";
                 });
             }else{
                 layer.alert(result.msg);
