@@ -193,6 +193,9 @@ function drawUpRoutingRecord(result){
 		 }else{
 			 info += taskHandleUserName+"("+result.data.dhRoutingRecords[i].userName+"代理)";
 		 }
+		 if(result.data.dhRoutingRecords[i].routeType=="finishAddTask"){
+			 info += "(会签)";
+		 }
 		 info += "</div>"
 			 +"<div>岗位："+result.data.dhRoutingRecords[i].station+"</div>"
 			 +"<div style='height: 36px;'>"+result.data.dhRoutingRecords[i].activityName+"</div>";
