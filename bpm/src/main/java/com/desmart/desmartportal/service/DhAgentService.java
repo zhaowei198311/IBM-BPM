@@ -11,6 +11,7 @@ import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartportal.entity.DhAgent;
+import com.desmart.desmartportal.entity.DhUserAgent;
 import com.github.pagehelper.PageInfo;
 
 /**  
@@ -34,6 +35,15 @@ public interface DhAgentService {
 	 */
 	Map<String, String> getDelegateResult(String proAppId, String proUid, String userUid);
 
+	/**
+	 * 批量获得指定任务的代理人和代理,没有代理人时返回null
+	 * @param proAppid
+	 * @param proUid
+	 * @param userUidList
+	 * @return 
+	 */
+	Map<String,DhUserAgent> getBatchDelegateResult(String proAppId, String proUid, List<String> userUidList);
+	
 	/**
 	 * 根据分类集合查询分类下所有的流程元数据
 	 */

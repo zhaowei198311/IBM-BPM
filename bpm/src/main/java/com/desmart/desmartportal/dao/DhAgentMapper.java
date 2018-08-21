@@ -113,4 +113,21 @@ public interface DhAgentMapper {
 	 * @return
 	 */
 	List<DhAgent> queryAgentOutByUserUid(@Param("userUid")String currentUserUid);
+
+	/**
+	 * 根据用户id集合、流程库id以及流程定义id批量查询当前时间的代理信息
+	 * @param proAppid 流程库id
+	 * @param proUid 流程id
+	 * @param userUidList 用户id集合
+	 * @return 代理信息
+	 */
+	List<DhAgent> getBatchDelegateResult(@Param("proAppId")String proAppId, @Param("proUid")String proUid,
+			@Param("userUidList")List<String> userUidList);
+
+	/**
+	 * 根据用户id集合查询当前时间段代理所有流程的代理信息
+	 * @param userUidList 用户id集合
+	 * @return
+	 */
+	List<DhAgent> getBatchDelegateResultByUserIdList(@Param("userUidList")List<String> userUidList);
 }

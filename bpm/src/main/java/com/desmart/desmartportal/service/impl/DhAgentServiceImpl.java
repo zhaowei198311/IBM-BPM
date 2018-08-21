@@ -30,6 +30,7 @@ import com.desmart.desmartportal.entity.DhAgentProInfo;
 import com.desmart.desmartportal.entity.DhAgentRecord;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.entity.DhUserAgent;
 import com.desmart.desmartportal.service.DhAgentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -172,6 +173,47 @@ public class DhAgentServiceImpl implements DhAgentService {
 		}else{
 			return null;
 		}
+	}
+	
+	@Override
+	public Map<String,DhUserAgent> getBatchDelegateResult(String proAppId, String proUid, List<String> userUidList){
+		Map<String,DhUserAgent> map = new HashMap<>();
+		if(userUidList.isEmpty()) {
+			return map;
+		}
+		//先查询这些用户中当前时间代理所有流程的代理信息
+		List<DhAgent> dhAgentAllProList = dhAgentMapper.getBatchDelegateResultByUserIdList(userUidList);
+		List<String> removeUserUidList = new ArrayList<>();
+		for(DhAgent dhAgentAllPro:dhAgentAllProList) {
+			for(String userUid:userUidList) {
+				//判断用户id和代理信息中的操作人id一致
+				if(userUid.equals(dhAgentAllPro.getAgentOperator())) {
+					DhUserAgent userAgent = new DhUserAgent();
+					userAgent.setUserUid(userUid);
+					userAgent.setAgentId(dhAgentAllPro.getAgentId());
+					userAgent.setDelegateUserUid(dhAgentAllPro.getAgentClientele());
+					map.put(userUid, userAgent);
+					removeUserUidList.add(userUid);
+					break;
+				}
+			}
+		}
+		userUidList.removeAll(removeUserUidList);
+		if(userUidList.isEmpty()) {
+			return map;
+		}
+		//根据没有代理全部流程的剩余用户以及流程信息查询对应的代理信息
+		List<DhAgent> dhAgentList = dhAgentMapper.getBatchDelegateResult(proAppId,proUid,userUidList);
+		for(DhAgent dhAgent:dhAgentList) {
+			DhUserAgent userAgent = new DhUserAgent();
+			String userUid = dhAgent.getAgentOperator();
+			userAgent.setUserUid(userUid);
+			userAgent.setAgentId(dhAgent.getAgentId());
+			userAgent.setDelegateUserUid(dhAgent.getAgentClientele());
+			map.put(userUid, userAgent);
+			removeUserUidList.add(userUid);
+		}
+		return map;
 	}
 
 	@Override
