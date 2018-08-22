@@ -90,7 +90,7 @@
 					</div>
 				</div>
 				<div class="layui-col-md2">
-						<input id="processName" type="text" placeholder="流程实例标题" class="layui-input">
+						<input id="processName" type="text" placeholder="流程主题" class="layui-input">
 				</div>
 				<div class="layui-col-md3">
 						<input type="text" placeholder="流程实例创建时间" class="layui-input" id="init-startTime-search">
@@ -185,7 +185,7 @@
 						<th>流程名称</th>
 						<th>实例ID</th>
 						<th>实例状态</th>
-					    <th>流程实例标题</th>
+					    <th>流程主题</th>
 					    <th>流程实例创建时间</th>
 					    <th>流程实例完成时间</th>
 					    <th>操作</th>

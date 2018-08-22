@@ -84,7 +84,7 @@
 								<input type="text" placeholder="发起人姓名"  class="layui-input" id="process-initUserFullname-search">
 								</div>
 								<div class="layui-col-xs2">
-								<input type="text" placeholder="流程实例标题"  class="layui-input" id="process-insTitle-search">
+								<input type="text" placeholder="流程主题"  class="layui-input" id="process-insTitle-search">
 								</div>
 								<div class="layui-col-xs1" style="width: 4%;">
 								<button class="layui-btn layui-btn-sm" onclick="search();">查询</button>
@@ -119,7 +119,7 @@
 							      <th>流程名称</th>
 							      <th>实例ID</th>
 							      <th>状态</th>
-							      <th>流程实例标题</th>
+							      <th>流程主题</th>
 							      <th>发起人</th>
 							      <th>当前活动任务</th>
 							      <th>任务处理人</th>

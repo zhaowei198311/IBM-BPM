@@ -54,7 +54,7 @@
 					<div class="layui-col-sm3">
 						<label class="layui-form-label">流程主题</label>
 						<div class="layui-input-block">
-							<input type="text" placeholder="流程实例标题" class="layui-input" id="task-insTitle-search">
+							<input type="text" placeholder="流程主题" class="layui-input" id="task-insTitle-search">
 						</div>
 					</div>
 					<div class="layui-col-sm3" style="text-align: center;"> 
