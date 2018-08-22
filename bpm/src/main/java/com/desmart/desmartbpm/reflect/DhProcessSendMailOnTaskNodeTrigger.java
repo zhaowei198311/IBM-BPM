@@ -13,10 +13,10 @@ import com.desmart.desmartsystem.service.SendEmailService;
  * @author lys
  *
  */
-public class DhProcessSendMailOnTaskNodeTrigger implements DhJavaClassTriggerTemplate{
+public class DhProcessSendMailOnTaskNodeTrigger extends DhOneTimeJavaClassTrigger{
 
 	@Override
-	public void execute(WebApplicationContext ac, String insUid, JSONObject jsonObject, DhStep dhStep) {
+	public void doOneTime(WebApplicationContext ac, String insUid, JSONObject jsonObject, DhStep dhStep) {
 		SendEmailService sendEmailService = ac.getBean(SendEmailService.class);
 		ServerResponse serverResponse = sendEmailService.analyseBpmActivityMetaConfToSendMail(insUid, dhStep);
 		if (!serverResponse.isSuccess()) {
