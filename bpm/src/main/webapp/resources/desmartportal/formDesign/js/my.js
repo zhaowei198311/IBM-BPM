@@ -114,10 +114,10 @@ function drawPage() {
 							var layKey = _getRandomString(2);
 							switch (thObj.attr("col-type")) {
 								case "text": {
-									if(tableThRegx=="undefined"){
+									if(typeof(tableThRegx)=="undefined"){
 										tableThRegx = "";
 									}
-									if(tableThRegxCue=="undefined"){
+									if(typeof(tableThRegxCue)=="undefined"){
 										tableThRegxCue = "";
 									}
 									trHtml += '<input type="text" regx="'+tableThRegx+'" regx_cue="'+tableThRegxCue+'" id="'+layKey+'" class="layui-input"/>';
