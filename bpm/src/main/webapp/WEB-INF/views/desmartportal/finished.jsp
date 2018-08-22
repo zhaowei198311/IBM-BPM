@@ -51,7 +51,7 @@
 							</div>
 						</div>
 						<div class="layui-col-md3">
-							<label class="layui-form-label">流程标题</label>
+							<label class="layui-form-label">流程主题</label>
 							<div class="layui-input-block">
 								<input type="text" placeholder="流程实例标题" class="layui-input" id="task-insTitle-search">
 							</div>
@@ -113,7 +113,7 @@
 						    <tr>
 						      <th>序号</th>
 						      <th>流程名称</th>
-						      <th>流程标题</th>
+						      <th>流程主题</th>
 						      <th>环节名称</th>
 						      <th>任务所属</th>
                               <th>代理人</th>

@@ -660,7 +660,7 @@ function submitTask() {
     	var id = $(".mobile_menu #form_content").attr("title");
     	$(".middle_content").css("display","none");
     	$("#"+id+"_div").css("display","block");
-        layer.alert("流程标题过长或未填写");
+        layer.alert("流程主题过长或未填写");
         return
     }
     //必填项验证，勿删
@@ -762,7 +762,7 @@ function skipFromReject() {
     	var id = $(".mobile_menu #form_content").attr("title");
     	$(".middle_content").css("display","none");
     	$("#"+id+"_div").css("display","block");
-        layer.alert("流程标题过长或未填写");
+        layer.alert("流程主题过长或未填写");
         return
     }
     // 发起流程
@@ -888,7 +888,7 @@ function rejectSure(){
 	    	var id = $(".mobile_menu #form_content").attr("title");
 	    	$(".middle_content").css("display","none");
 	    	$("#"+id+"_div").css("display","block");
-	        layer.alert("流程标题过长或未填写");
+	        layer.alert("流程主题过长或未填写");
 	        return
 	    }
 	    var finalData = {};
@@ -1274,7 +1274,7 @@ function saveDraftsInfo() {
     //end
 }
 
-// 检查流程标题有没有填写
+// 检查流程主题有没有填写
 function checkInsTitle() {
     if ($('#canEditInsTitle').val() == 'true') {
         var insTitle = $("#insTitle_input").val();

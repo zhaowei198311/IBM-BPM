@@ -126,11 +126,11 @@ function toShowRouteBar() {
         }
         var insTitle = $("#insTitle_input").val();
         if (!insTitle || insTitle.trim() == '') {
-            layer.alert("缺少流程标题");
+            layer.alert("缺少流程主题");
             return;
         }
         if (!insTitle.length > 60) {
-            layer.alert("流程标题过长，请重新填写");
+            layer.alert("流程主题过长，请重新填写");
             return;
         }
         //必填项验证，勿删

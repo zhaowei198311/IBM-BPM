@@ -111,12 +111,12 @@
 	                </tbody>
 	            </table>
 	            
-	            <p class="title_p">流程标题</p>
+	            <p class="title_p">流程主题</p>
 	            <table class="layui-table">
 	                <tbody>
 	                    <tr>
 	                        <td class="td_title" colspan="1" style="width: 70px">
-	                        	流程标题
+	                        	流程主题
 	                        	<span class="tip_span">*</span>
 	                        </td>
 	                        <td class="sub_title" colspan="3">

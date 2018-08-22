@@ -248,12 +248,12 @@
 				</div>
 			</div>
 			<div class="table_container">
-				<p class="title_p">流程标题</p>
+				<p class="title_p">流程主题</p>
 				<table class="layui-table basic_information" lay-skin="nob">
 					<tbody>
 						<tr>
 							<td class="td_title" colspan="1" style="width: 120px">
-								流程标题
+								流程主题
 								<span class="tip_span"> *</span>：
 							</td>
 							<td class="sub_title" colspan="5"><c:choose>

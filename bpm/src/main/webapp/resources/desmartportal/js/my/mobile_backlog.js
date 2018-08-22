@@ -274,7 +274,7 @@ function drawTable(data) {
 			+'<thead>'
 			+'<tr>'
 			+'<td class="process_title_div">'
-			+'<span class="process_title">'+meta.dhProcessInstance.insTitle+'</span>'//流程标题
+			+'<span class="process_title">'+meta.dhProcessInstance.insTitle+'</span>'//流程主题
 			+'</td>'
 			+'</tr>'
 			+'</thead>'

@@ -76,9 +76,9 @@
 						</div>
 					</div>
 					<div class="layui-col-md3">
-						<label class="layui-form-label">流程标题</label>
+						<label class="layui-form-label">流程主题</label>
 						<div class="layui-input-block">
-							<input id="processName" type="text" placeholder="流程标题" class="layui-input">
+							<input id="processName" type="text" placeholder="流程主题" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md3">
