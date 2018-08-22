@@ -368,7 +368,7 @@
 			</li>
 		</ul>
 	</div>
-	<div class="mobile_container" id="table_tr_container">
+	<div class="mobile_container layui-form" id="table_tr_container">
         <div class="mobile_top">
         	<div>
 				<div class="top_left">

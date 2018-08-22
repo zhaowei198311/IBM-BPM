@@ -148,7 +148,12 @@ public class DhProcessCategoryController {
     
     @RequestMapping(value = "/queryByParent")
     @ResponseBody
-    public List<DhProcessCategory> queryByParent(@RequestParam("categoryParent")String categoryParent){
-    	return dhProcessCategoryService.listByCategoryParent(categoryParent);
+    public ServerResponse<?> queryByParent(@RequestParam("categoryParent")String categoryParent){
+    	try{
+    		return dhProcessCategoryService.listByCategoryParent(categoryParent);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		return ServerResponse.createByError();
+    	}
     }
 }

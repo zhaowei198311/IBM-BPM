@@ -84,11 +84,12 @@ function drawPage() {
 					var colFlag = true;
 					for (var i = 0; i < thObjArr.length; i++) {
 						var thObj = $(thObjArr[i]);
-						if(thObj.attr("move-view")=="flase"){
-							thObj.css("display","none");
-							break;
-						}
-						if(colFlag){
+						var tableThRegx = thObj.attr("col-regx");
+	                    var tableThRegxCue = thObj.attr("col-regx-cue");
+	                    var tableThDicUid = thObj.attr("database_type");
+	                    var tableThDataSource = thObj.attr("data_source");
+	                    var layKey = _getRandomString(2);
+	                    if(colFlag){
 							colFlag = false;
 							trHtml += '<td data-label="' + thObj.text().trim() + '" onclick="showDataTr(this)">'
 								+'<span style="color:#EF6301">查看详情  &gt;&gt;</span>'
@@ -102,20 +103,31 @@ function drawPage() {
 						}
 						switch (thObj.attr("col-type")) {
 							case "text": {
-								trHtml += '<input type="text" class="layui-input"/>';
+								if(typeof(tableThRegx)=="undefined"){
+									tableThRegx = "";
+								}
+								if(typeof(tableThRegxCue)=="undefined"){
+									tableThRegxCue = "";
+								}
+								trHtml += '<input type="text" regx="'+tableThRegx+'" regx_cue="'+tableThRegxCue+'" id="'+layKey+'" class="layui-input"/>';
 								break;
 							}
 							case "number": {
-								trHtml += '<input type="tel" class="layui-input"/>';
+								if(typeof(tableThRegx)=="undefined"){
+									tableThRegx = "";
+								}
+								if(typeof(tableThRegxCue)=="undefined"){
+									tableThRegxCue = "";
+								}
+								trHtml += '<input type="tel" regx="'+tableThRegx+'" regx_cue="'+tableThRegxCue+'" id="'+layKey+'" class="layui-input"/>';
 								break;
 							}
 							case "date": {
-								var layKey = _getRandomString(2);
-								trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'"/>';
+								trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'" lay-key="'+layKey+'"/>';
 								break;
 							}
 							case "select": {
-								trHtml += '<select></select>';
+								trHtml += '<select class="table_select" database_type="'+tableThDicUid+'" id="'+layKey+'" data_source="'+tableThDataSource+'"></select>';
 								break;
 							}
 							/*case "tool": {
@@ -381,8 +393,6 @@ function drawPage() {
 	layui.use(['form', 'layedit', 'laydate'], function () {
 		form = layui.form, layer = layui.layer, layedit = layui.layedit, laydate = layui.laydate;
 
-		form.render();
-
 		view.find("input[type='radio']").each(function(){
 			$(this).attr("lay-filter",$(this).attr("name"));
 			var filter = $(this).attr("lay-filter");
@@ -467,36 +477,46 @@ function showTable(obj) {
  * 根据下拉列表的组件对象，和数据字典的id，动态生成下拉组件
  */
 function getDataToSelect(obj, dicUid) {
-	$(obj).children().remove();
-	$.ajax({
-		url: common.getPath() + "/sysDictionary/listOnDicDataBydicUid",
-		method: "post",
-		data: {
-			dicUid: dicUid
-		},
-		success: function (result) {
-			if (result.status == 0) {
-				var dicDataList = result.data;
-				for (var i = 0; i < dicDataList.length; i++) {
-					var dicDataObj = dicDataList[i];
-					var optionObj = '<option value="' + dicDataObj.dicDataCode + '">' + dicDataObj.dicDataName + '</option>';
+	if(dicUid!=null && dicUid!="" && typeof(dicUid)!="undefined"){
+		$(obj).children().remove();
+		$.ajax({
+			url: common.getPath() + "/sysDictionary/listOnDicDataBydicUid",
+			method: "post",
+			async:false,
+			data: {
+				dicUid: dicUid
+			},
+			success: function (result) {
+				if (result.status == 0) {
+					var dicDataList = result.data;
+					var optionObj = '<option value="请选择">请选择</option>';
 					$(obj).append(optionObj);
+					for (var i = 0; i < dicDataList.length; i++) {
+						var dicDataObj = dicDataList[i];
+						var optionObj = '<option value="' + dicDataObj.dicDataCode + '">' + dicDataObj.dicDataName + '</option>';
+						$(obj).append(optionObj);
+					}
 				}
-				form.render();
 			}
-		}
-	});
+		});
+	}
 }
 
 function addDataRow(obj) {
 	var trHtml = $(obj).parent().parent().html();
-	var trNum = $(obj).parent().parent().parent().find("tr").length + 1;
-	var layKey = parseInt($(obj).parent().parent().find(".date").attr("lay-key")) + 1;
+	var layKey = _getRandomString(2);
 	$(obj).parent().parent().parent().append("<tr>" + trHtml + "</tr>");
 	$(obj).parent().parent().parent().find("tr:last").find(".layui-input").val("");
-	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + trNum).attr("lay-key", layKey);
+	$(obj).parent().parent().parent().find("tr:last").find("input").prop("id","select_"+layKey);
+	$(obj).parent().parent().parent().find("tr:last").find("select").prop("id","select_"+layKey);
+	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + layKey).attr("lay-key", layKey);
 	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
-
+	//给动态表单中的下拉列表赋值
+	var selectArr = $(obj).parent().parent().parent().find("tr:last").find("select[data_source='数据字典拉取']");
+	selectArr.each(function () {
+		getDataToSelect(this, $(this).attr("database_type"));
+	});
+	form.render();
 	var dateInput = $(obj).parent().parent().parent().find(".date");
 	if ($(window).width() < 568) {
 		dateInput.attr("type", "text");
