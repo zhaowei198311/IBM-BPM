@@ -170,7 +170,7 @@ form.on('select(outtimeNotifyType)',function(data){
 });
 //内部通知人的类型
 form.on('select(interiorNotifyType)',function(data){
-    if(data.value == 'role'){
+    if(data.value == 'role'||data.value == 'roleAndCompany'){
         $("#interiorNotifyRole_div").show();
         $("#interiorNotifyUser_div").hide();
     }else if(data.value == 'users'){

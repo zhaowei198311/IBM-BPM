@@ -831,7 +831,7 @@ function initConf(map) {
 			$("#interiorNotifyUser_view").val(conf.interiorNotifyUserView);
 			$("#interiorNotifyUser_div").show();
 			$("#interiorNotifyRole_div").hide();
-		} else if (conf.actcInteriorNotifyType == "role") {
+		} else if (conf.actcInteriorNotifyType == "role"|| conf.actcInteriorNotifyType=="roleAndCompany") {
 			$("#interiorNotifyRole").val(conf.interiorNotifyRole);
 			$("#interiorNotifyRole_view").val(conf.interiorNotifyRoleView);
 			$("#interiorNotifyUser_div").hide();
