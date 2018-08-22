@@ -583,7 +583,7 @@
 		}
         common.initTime();
         
-        /* $("#formSet").find("select").each(function(){
+        $("#formSet").find("select").each(function(){
 			var id = $(this).prop("id");
 			if($(this).attr("is-multi")=="true"){
 				$(this).attr("xm-select",id);
@@ -594,7 +594,7 @@
 				    return true;   
 				});
 			}
-		}); */
+		});
     });
 </script>
 </html>
