@@ -105,7 +105,7 @@
 		                        <tr>
 		                            <th><!-- 序号 --><input type="checkbox" id="checked-All-ins"/></th>
 		                            <th>流程名称</th>
-		                            <th>流程标题</th>
+		                            <th>流程主题</th>
 		                            <th>环节名称</th>
 		                            <th>任务所属人</th>
 		                            <th>代理人</th>

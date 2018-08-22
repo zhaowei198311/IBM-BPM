@@ -38,9 +38,9 @@
 						</div>
 					</div>
 					<div class="layui-col-md3">
-						<label class="layui-form-label">流程标题</label>
+						<label class="layui-form-label">流程主题</label>
 						<div class="layui-input-block">
-							<input id="dfsTitle" type="text" placeholder="流程标题" class="layui-input">
+							<input id="dfsTitle" type="text" placeholder="流程主题" class="layui-input">
 						</div>
 					</div>
 					<div class="layui-col-md3" style="text-align: center;"> 
@@ -64,7 +64,7 @@
 						<tr>
 							<th>序号</th>
 							<th>流程名称</th>
-							<th>流程标题</th>
+							<th>流程主题</th>
 							<th>创建人</th>
 							<th>创建日期</th>
 							<th>操作</th>

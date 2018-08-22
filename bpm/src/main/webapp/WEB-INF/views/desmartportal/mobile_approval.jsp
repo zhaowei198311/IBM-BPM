@@ -115,21 +115,21 @@
 						</div>
 					</div>
 					<div class="table_container layui-form">
-						<p class="title_p">流程标题
+						<p class="title_p">流程主题
 							<i class="layui-icon arrow" style="float:right;" onclick="showTable(this)">&#xe61a;</i>
 						</p>
-						<table title="流程标题" class="layui-table">
+						<table title="流程主题" class="layui-table">
 							<tbody>
 								<tr>
 									<td class="td_title" colspan="1" style="width: 70px;padding-right: 0px;">
-										<label>流程标题</label>
+										<label>流程主题</label>
 										<span class="tip_span">*</span>
 									</td>
 									<td class="td_sub" colspan="1">
 										<c:choose>
 			                                <%-- 可编辑标题 --%>
 			                                <c:when test="${canEditInsTitle == true}">
-			                                    <input type="text" id="insTitle_input" value="${processInstance.insTitle }" placeholder="请输入流程标题" class="layui-input" />
+			                                    <input type="text" id="insTitle_input" value="${processInstance.insTitle }" placeholder="请输入流程主题" class="layui-input" />
 			                                </c:when>
 			                                <%-- 不可编辑标题 --%>
 			                                <c:otherwise>

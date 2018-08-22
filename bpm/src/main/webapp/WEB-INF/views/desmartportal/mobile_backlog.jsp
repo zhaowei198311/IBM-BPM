@@ -167,9 +167,9 @@
 					</td>
 				</tr>
 				<tr>
-					<th>流程标题：</th>
+					<th>流程主题：</th>
 					<td>
-						<input type="text" class="layui-input" id="process_instance_title" placeholder="请输入流程标题"/>
+						<input type="text" class="layui-input" id="process_instance_title" placeholder="请输入流程主题"/>
 					</td>
 				</tr>
 				<tr>

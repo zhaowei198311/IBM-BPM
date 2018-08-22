@@ -328,7 +328,7 @@ function submitTask() {
     }
     // 校验标题有没有填写
     if (!checkInsTitle()) {
-        layer.alert("流程标题过长或未填写");
+        layer.alert("流程主题过长或未填写");
         return
     }
     // 发起流程             
@@ -509,7 +509,7 @@ function checkUserData() {
     	return;
     }
     if (!checkInsTitle()) {
-        layer.alert("流程标题过长或未填写");
+        layer.alert("流程主题过长或未填写");
         return
     }
     //必填项验证，勿删
@@ -665,7 +665,7 @@ function saveDraftsInfo() {
     //end
 }
 
-// 检查流程标题有没有填写
+// 检查流程主题有没有填写
 function checkInsTitle() {
     if ($('#canEditInsTitle').val() == 'true') {
         var insTitle = $("#insTitle_input").val();
