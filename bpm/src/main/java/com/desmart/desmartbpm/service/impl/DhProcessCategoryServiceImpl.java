@@ -233,8 +233,9 @@ public class DhProcessCategoryServiceImpl implements DhProcessCategoryService {
 	}
 
 	@Override
-	public List<DhProcessCategory> listByCategoryParent(String categoryParent) {
-		return dhProcessCategoryMapper.listByCategoryParent(categoryParent);
+	public ServerResponse<?> listByCategoryParent(String categoryParent) {
+		List<DhProcessCategory> cateList = dhProcessCategoryMapper.listByCategoryParent(categoryParent);
+		return ServerResponse.createBySuccess(cateList);
 	}
 
     /**

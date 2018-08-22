@@ -664,6 +664,12 @@ function showDataTableModal(obj) {
 	            {
 	        	var thRegx = thObj.attr("col-regx");
 	        	var thRegxCue = thObj.attr("col-regx-cue");
+	        	if(typeof(thRegx)=="undefined"){
+            		thRegx = "";
+				}
+				if(typeof(thRegxCue)=="undefined"){
+					thRegxCue = "";
+				}
 	        	thSetHtml += '<label class="col-xs-1 table-offset th-type-text control-label">'
 	            	+'正则验证'
 	            	+'</label>'

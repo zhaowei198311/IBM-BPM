@@ -288,8 +288,6 @@ var common = {
 						var userNameArr = $(inputArr[i]).val().trim();
 						var userIdArr = $(inputArr[i]).parent().find("input[type='hidden']")
 									.val().trim().replace(";","");
-						console.log(userNameArr);
-						console.log(userIdArr);
 						textJson = "\"" + name + "\":{\"value\":\""
 							+ userIdArr + "\",\"description\":\"" + userNameArr + "\"}";
 						break;
@@ -463,7 +461,6 @@ var common = {
 						}//end tdName!=null
 					}
 				});
-				console.log(tableJson);
 				tableJson = common.removeJsonStrComma(tableJson);
 				tableJson += "}";
 				if(trIndex!=trArr.length-1){
@@ -480,7 +477,6 @@ var common = {
 		
 		for(var i=0;i<uploadArr.length;i++){
 			var uploadObj = $(uploadArr[i]);
-			console.log(uploadObj.attr("id"));
 			var name = uploadObj.attr("id").replace("_loc","");
 			var value = "";
 			var aObj = uploadObj.find("a");
@@ -535,7 +531,6 @@ var common = {
 						if(index!=tdArr.length-1){
 							var key = $(this).data("label");
 							$(this).find("input").val(valueObj[key]);
-							console.log(valueObj[key]);
 							$(this).find("select").val(valueObj[key]);
 						}
 					});
@@ -862,7 +857,7 @@ var common = {
 									tabInputObj.get(0).setAttribute("type","text");
 								}
 							}
-						}else{
+						}else if($(this).attr("data-source")=="pc"){
 							$(this).remove();
 						}
 					});

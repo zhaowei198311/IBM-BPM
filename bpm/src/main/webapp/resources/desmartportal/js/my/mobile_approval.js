@@ -442,7 +442,7 @@ function departAsync() {
 
 //打开选择层
 function openChooseUserDiv(){
-	$("body").css({"position":"fixed","width":"100%"});
+	//$("body").css({"position":"fixed","width":"100%"});
 	//页面层
 	index = layer.open({
 		type: 1
@@ -1379,11 +1379,19 @@ function showDataTr(obj){
 		if($(this).find("input").val()!=null && $(this).find("input").val()!=""){
 			$(this).find("input").attr("value",$(this).find("input").val().trim());
 		}
+		if($(this).find("select").length>0){
+			var selVal = $(this).find("select").val();
+			$(this).find("select").next().remove();
+			var layKey = _getRandomString(2);
+			$(this).find("select").prop("id","select_"+layKey);
+			$(this).find("select").find("option[value='"+selVal+"']").attr("selected","selected");
+		}
 	});
 	var trHtml = $(obj).parent().html();
 	var tableTitle = $(obj).parent().parent().parent().attr("title");
 	$("#tr_con_content title_p").find("label").text(tableTitle);
 	$("#tr_con_content #tr_table").html(trHtml);
+	form.render();
 	$("#tr_con_content #tr_table").find("td").each(function(){
 		if($(this).find("input").length>0){
 			var oldId = $(this).find("input").attr("id");
@@ -1446,8 +1454,9 @@ function backApproval(){
 			if($(td).find("input").val()!="" && $(td).find("input").val()!=null){
 				tdVal = $(td).find("input").val().trim();
 			}
-			console.log(tdVal);
 			tdObj.parent().find("td:eq('"+i+"')").next().find("input").attr("value",tdVal);
+			var selVal = "";
+			tdObj.parent().find("td:eq('"+i+"')").next().find("select").val(selVal);
 		}
 	}catch(e){
 		console.log(e);
