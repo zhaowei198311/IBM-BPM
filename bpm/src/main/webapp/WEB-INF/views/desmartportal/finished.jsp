@@ -291,7 +291,7 @@
 				if(meta.taskStatus==12){
 					status = "待处理";
 				}
-				trs += '<tr ondblclick=openApproval("'+meta.taskUid+'")>' 
+				trs += '<tr>' 
 					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>' + sortNum + '</td>'
 					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>' 
 	                + meta.dhProcessInstance.proName 
