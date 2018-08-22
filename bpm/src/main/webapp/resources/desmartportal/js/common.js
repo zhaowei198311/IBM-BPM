@@ -1085,6 +1085,7 @@ var common = {
 				reg = new RegExp($(this).attr("regx").trim(), "g");
 				if (!reg.test($(this).val())) {
 					var regxCue = $(this).attr("regx_cue");
+					console.log($(this).parent().html());
 					$(this).focus();
 					if (regxCue != null && regxCue != "") {
 						layer.msg(regxCue, {

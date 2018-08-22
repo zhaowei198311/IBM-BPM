@@ -111,22 +111,33 @@ function drawPage() {
 		                    var tableThDicUid = thObj.attr("database_type");
 		                    var tableThDataSource = thObj.attr("data_source");
 							trHtml += '<td data-label="' + thObj.text().trim() + '">';
+							var layKey = _getRandomString(2);
 							switch (thObj.attr("col-type")) {
 								case "text": {
-									trHtml += '<input type="text" class="layui-input"/>';
+									if(tableThRegx=="undefined"){
+										tableThRegx = "";
+									}
+									if(tableThRegxCue=="undefined"){
+										tableThRegxCue = "";
+									}
+									trHtml += '<input type="text" regx="'+tableThRegx+'" regx_cue="'+tableThRegxCue+'" id="'+layKey+'" class="layui-input"/>';
 									break;
 								}
 								case "number": {
-									trHtml += '<input type="tel" class="layui-input"/>';
+									if(typeof(tableThRegx)=="undefined"){
+										tableThRegx = "";
+									}
+									if(typeof(tableThRegxCue)=="undefined"){
+										tableThRegxCue = "";
+									}
+									trHtml += '<input type="tel" regx="'+tableThRegx+'" regx_cue="'+tableThRegxCue+'" id="'+layKey+'" class="layui-input"/>';
 									break;
 								}
 								case "date": {
-									var layKey = _getRandomString(2);
 									trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'" lay-key="'+layKey+'"/>';
 									break;
 								}
 								case "select":{
-									var layKey = _getRandomString(2);
 									trHtml += '<select class="table_select" database_type="'+tableThDicUid+'" id="'+layKey+'" data_source="'+tableThDataSource+'"></select>';
 									break;
 								}
@@ -518,27 +529,29 @@ function showTable(obj) {
  * 根据下拉列表的组件对象，和数据字典的id，动态生成下拉组件
  */
 function getDataToSelect(obj, dicUid) {
-	$(obj).children().remove();
-	$.ajax({
-		url: common.getPath() + "/sysDictionary/listOnDicDataBydicUid",
-		method: "post",
-		async:false,
-		data: {
-			dicUid: dicUid
-		},
-		success: function (result) {
-			if (result.status == 0) {
-				var dicDataList = result.data;
-				var optionObj = '<option value="请选择">请选择</option>';
-				$(obj).append(optionObj);
-				for (var i = 0; i < dicDataList.length; i++) {
-					var dicDataObj = dicDataList[i];
-					var optionObj = '<option value="' + dicDataObj.dicDataCode + '">' + dicDataObj.dicDataName + '</option>';
+	if(dicUid!=null && dicUid!="" && typeof(dicUid)!="undefined"){
+		$(obj).children().remove();
+		$.ajax({
+			url: common.getPath() + "/sysDictionary/listOnDicDataBydicUid",
+			method: "post",
+			async:false,
+			data: {
+				dicUid: dicUid
+			},
+			success: function (result) {
+				if (result.status == 0) {
+					var dicDataList = result.data;
+					var optionObj = '<option value="请选择">请选择</option>';
 					$(obj).append(optionObj);
+					for (var i = 0; i < dicDataList.length; i++) {
+						var dicDataObj = dicDataList[i];
+						var optionObj = '<option value="' + dicDataObj.dicDataCode + '">' + dicDataObj.dicDataName + '</option>';
+						$(obj).append(optionObj);
+					}
 				}
 			}
-		}
-	});
+		});
+	}
 }
 
 //动态选人的方法
