@@ -3,23 +3,57 @@
  */
 package com.desmart.desmartportal.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
-import com.desmart.common.exception.DhTaskCommitException;
 import com.desmart.common.exception.DhTaskCheckException;
+import com.desmart.common.exception.DhTaskCommitException;
+import com.desmart.common.exception.DhTaskLifeCycleException;
+import com.desmart.common.exception.DhTaskPushToMQException;
 import com.desmart.common.exception.PlatformException;
-import com.desmart.common.util.*;
+import com.desmart.common.util.BpmProcessUtil;
+import com.desmart.common.util.BpmTaskUtil;
+import com.desmart.common.util.FormDataUtil;
+import com.desmart.common.util.HttpReturnStatusUtil;
+import com.desmart.common.util.ProcessDataUtil;
+import com.desmart.common.util.PropertiesUtil;
 import com.desmart.desmartbpm.common.Const;
 import com.desmart.desmartbpm.common.HttpReturnStatus;
 import com.desmart.desmartbpm.dao.BpmActivityMetaMapper;
 import com.desmart.desmartbpm.dao.DhActivityConfMapper;
 import com.desmart.desmartbpm.dao.DhSynTaskRetryMapper;
 import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
-import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.BpmForm;
+import com.desmart.desmartbpm.entity.DataForRevoke;
+import com.desmart.desmartbpm.entity.DataForSkipFromReject;
+import com.desmart.desmartbpm.entity.DataForSubmitTask;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhStep;
+import com.desmart.desmartbpm.entity.DhSynTaskRetry;
+import com.desmart.desmartbpm.entity.DhTaskException;
+import com.desmart.desmartbpm.entity.LockedTask;
+import com.desmart.desmartbpm.entity.OpenedTask;
 import com.desmart.desmartbpm.mongo.TaskMongoDao;
 import com.desmart.desmartbpm.mq.rabbit.MqProducerService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -32,8 +66,21 @@ import com.desmart.desmartportal.dao.DhDraftsMapper;
 import com.desmart.desmartportal.dao.DhProcessInstanceMapper;
 import com.desmart.desmartportal.dao.DhRoutingRecordMapper;
 import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
-import com.desmart.desmartportal.entity.*;
-import com.desmart.desmartportal.service.*;
+import com.desmart.desmartportal.entity.BpmRoutingData;
+import com.desmart.desmartportal.entity.CommonBusinessObject;
+import com.desmart.desmartportal.entity.DhAgent;
+import com.desmart.desmartportal.entity.DhDrafts;
+import com.desmart.desmartportal.entity.DhProcessInstance;
+import com.desmart.desmartportal.entity.DhRoutingRecord;
+import com.desmart.desmartportal.entity.DhTaskInstance;
+import com.desmart.desmartportal.service.DhApprovalOpinionService;
+import com.desmart.desmartportal.service.DhFormNoService;
+import com.desmart.desmartportal.service.DhProcessInstanceService;
+import com.desmart.desmartportal.service.DhRouteService;
+import com.desmart.desmartportal.service.DhRoutingRecordService;
+import com.desmart.desmartportal.service.DhTaskInstanceService;
+import com.desmart.desmartportal.service.SysHolidayService;
+import com.desmart.desmartportal.service.ThreadPoolProvideService;
 import com.desmart.desmartportal.util.DateUtil;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
@@ -41,21 +88,11 @@ import com.desmart.desmartsystem.entity.SysUser;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.aop.framework.AopContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 
 @Service
 public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
-	private Logger log = Logger.getLogger(DhTaskInstanceServiceImpl.class);
+	private Logger logger = Logger.getLogger(DhTaskInstanceServiceImpl.class);
 
 	@Autowired
 	private DhTaskInstanceMapper dhTaskInstanceMapper;
@@ -114,7 +151,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectAllTask(DhTaskInstance taskInstance, Integer pageNum,
 			Integer pageSize) {
-		log.info("查询taskInstance开始......");
+		logger.info("查询taskInstance开始......");
 		try {
 			// 查询用户
 			/*
@@ -130,7 +167,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("查询taskInstance结束......");
+		logger.info("查询taskInstance结束......");
 		return null;
 	}
 
@@ -140,13 +177,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectByPrimaryKey(String taskUid, Integer pageNum,
 			Integer pageSize) {
-		log.info("");
+		logger.info("");
 		try {
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		logger.info("");
 		return null;
 	}
 
@@ -155,13 +192,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public int updateByPrimaryKey(String taskUid) {
-		log.info("");
+		logger.info("");
 		try {
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		logger.info("");
 		return 0;
 	}
 
@@ -170,13 +207,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public int deleteByPrimaryKey(String taskUid) {
-		log.info("");
+		logger.info("");
 		try {
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		logger.info("");
 		return 0;
 	}
 
@@ -185,13 +222,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public void insertTask(DhTaskInstance taskInstance) {
-		log.info("");
+		logger.info("");
 		try {
 			dhTaskInstanceMapper.insertTask(taskInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("");
+		logger.info("");
 	}
 
 	/*
@@ -199,7 +236,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public int selectByusrUid(String usrUid) {
-		log.info("======定时查询用户有多少代办=======");
+		logger.info("======定时查询用户有多少代办=======");
 		return dhTaskInstanceMapper.selectByusrUid(usrUid);
 	}
 
@@ -209,7 +246,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhProcessInstance>>> selectTaskByUser(DhTaskInstance taskInstance,
 			Integer pageNum, Integer pageSize) {
-		log.info("根据用户id查询有哪些流程.开始......");
+		logger.info("根据用户id查询有哪些流程.开始......");
 		List<DhProcessInstance> resultList = new ArrayList<DhProcessInstance>();
 		try {
 			PageHelper.startPage(pageNum, pageSize);
@@ -486,74 +523,103 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
     }
 
     @Override
-    public ServerResponse finishTaskFirstTime(DataForSubmitTask dataForSubmitTask) {
-		if (dataForSubmitTask.getNextStep() == null) {
-			try {
-				return ((DhTaskInstanceService) AopContext.currentProxy()).commitTask(dataForSubmitTask);
-			} catch (Exception e) {
-				log.error("提交任务时失败", e);
-				// 创建异常记录
-				dhTaskExceptionMapper.save(DhTaskException.createCommitTaskrException(dataForSubmitTask.getCurrTaskInstance(),
-						JSON.toJSONString(dataForSubmitTask), e.getMessage()));
-				// 修改任务实例状态
-				dhTaskInstanceMapper.updateTaskStatus(dataForSubmitTask.getCurrTaskInstance().getTaskUid(), DhTaskInstance.STATUS_ERROR);
-				// 修改流程实例状态
-				dhProcessInstanceMapper.updateInsStatusIdByInsUid(DhProcessInstance.STATUS_ID_FAILED,
-						dataForSubmitTask.getCurrTaskInstance().getInsUid());
-				return ServerResponse.createByErrorMessage("提交任务失败，请联系管理员");
+	public ServerResponse finishTaskFirstTime(DataForSubmitTask dataForSubmitTask) {
+		try {
+			return finishTask(dataForSubmitTask);
+		} catch (DhTaskLifeCycleException te) {
+			logger.error(te.getMessage(), te);
+			DhTaskException dhTaskException = null;
+			if (te instanceof DhTaskCommitException) {
+				dhTaskException = DhTaskException.createCommitTaskrException(dataForSubmitTask.getCurrTaskInstance(),
+						((DhTaskCommitException) te).getDataForSubmitTaskStr(), te.getMessage());
+			} else if (te instanceof DhTaskPushToMQException) {
+				dhTaskException = DhTaskException.createPushToMQTaskException(dataForSubmitTask.getCurrTaskInstance(),
+						((DhTaskPushToMQException) te).getDataForSubmitTaskStr(), te.getMessage());
 			}
-		} else {
-			mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
-			return ServerResponse.createBySuccess();
+			dhTaskExceptionMapper.save(dhTaskException);
+			// 修改任务实例状态
+			dhTaskInstanceMapper.updateTaskStatus(dataForSubmitTask.getCurrTaskInstance().getTaskUid(), DhTaskInstance.STATUS_ERROR);
+			// 修改流程实例状态
+			dhProcessInstanceMapper.updateInsStatusIdByInsUid(DhProcessInstance.STATUS_ID_FAILED,
+					dataForSubmitTask.getCurrTaskInstance().getInsUid());
+			return ServerResponse.createByErrorMessage("提交任务失败，请联系管理员");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return ServerResponse.createByErrorMessage("提交任务失败，请联系管理员");
 		}
+
 	}
 
 
     @Override
-    public ServerResponse finishTask(DataForSubmitTask dataForSubmitTask) {
+    public ServerResponse finishTask(DataForSubmitTask dataForSubmitTask) throws DhTaskCommitException, DhTaskPushToMQException{
         if (dataForSubmitTask.getNextStep() == null) {
-            try {
                 return ((DhTaskInstanceService) AopContext.currentProxy()).commitTask(dataForSubmitTask);
-            } catch (Exception e) {
-                log.error("提交任务时失败", e);
-                return ServerResponse.createByErrorCodeAndData(1, e.getMessage(),
-                        DhTaskException.createCommitTaskrException(dataForSubmitTask.getCurrTaskInstance(),
-                                JSON.toJSONString(dataForSubmitTask), e.getMessage()));
-            }
         } else {
-            mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
-            return ServerResponse.createBySuccess();
+            if (pushTaskToMQ(dataForSubmitTask)) {
+				return ServerResponse.createBySuccess();
+			} else {
+				throw new DhTaskPushToMQException("推送到消息队列时出错", JSON.toJSONString(dataForSubmitTask));
+			}
         }
     }
+
+    private boolean pushTaskToMQ(DataForSubmitTask dataForSubmitTask) {
+		return mqProducerService.sendMessage(PropertiesUtil.getProperty("rabbitmq.routingKey.triggerStep"), dataForSubmitTask);
+	}
+
+	@Override
+    public ServerResponse<DhTaskException> retryPushToMQ(DhTaskException dhTaskException) {
+	    DhTaskException newTaskException = null;
+        String dataForSubmitTaskStr = dhTaskException.getDataForSubmitTask();
+        if (StringUtils.isBlank(dataForSubmitTaskStr)) {
+            newTaskException = dhTaskException;
+            newTaskException.setErrorMessage("缺少用来提交的JSON数据");
+            return ServerResponse.createByErrorCodeAndData(1, "缺少用来提交的JSON数据", newTaskException);
+        }
+        DataForSubmitTask dataForSubmitTask = dhTaskException.getDataForSubmitTaskJavaObject();
+        if (dataForSubmitTask == null) {
+            newTaskException = dhTaskException;
+            newTaskException.setErrorMessage("解析提交任务的数据出错");
+            return ServerResponse.createByErrorCodeAndData(1, "解析提交任务的数据出错", newTaskException);
+        }
+
+        if (pushTaskToMQ(dataForSubmitTask)) {
+            return ServerResponse.createBySuccess();
+        } else {
+            newTaskException = dhTaskException;
+            newTaskException.setErrorMessage("推送到消息队列时出错");
+            return ServerResponse.createByErrorCodeAndData(1, "推送到消息队列时出错", newTaskException);
+        }
+	}
 
 
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public ServerResponse commitTask(DataForSubmitTask dataForSubmitTask) throws DhTaskCommitException {
-		DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
-		DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
-		final int insId = currProcessInstance.getInsId();
-		final int taskId = currTaskInstance.getTaskId();
-		final String taskUid = currTaskInstance.getTaskUid();
-		DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
-		BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
-		CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
-
-		BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
-		Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
-		Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
-		if (errorMap.get("errorResult") != null) {
-			throw new DhTaskCommitException("调用RESTful API完成任务失败" + errorMap.get("errorResult").getMsg());
-		}
-
-		ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
-		if (!didTokenMoveResponse.isSuccess()) {
-			log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
-			throw new DhTaskCommitException("提交成功，判断token是否移动失败");
-		}
-
 		try {
+			DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
+			DhTaskInstance currTaskInstance = dataForSubmitTask.getCurrTaskInstance();
+			final int insId = currProcessInstance.getInsId();
+			final int taskId = currTaskInstance.getTaskId();
+			final String taskUid = currTaskInstance.getTaskUid();
+			DhRoutingRecord dhRoutingRecord = dataForSubmitTask.getDhRoutingRecord();
+			BpmRoutingData bpmRoutingData = dataForSubmitTask.getBpmRoutingData();
+			CommonBusinessObject pubBo = dataForSubmitTask.getPubBo();
+
+			BpmTaskUtil bpmTaskUtil = new BpmTaskUtil(dataForSubmitTask.getBpmGlobalConfig());
+			Map<String, HttpReturnStatus> resultMap = bpmTaskUtil.commitTask(taskId, pubBo, dataForSubmitTask.getApplyUser());
+			Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
+			if (errorMap.get("errorResult") != null) {
+				throw new DhTaskCommitException("调用RESTful API完成任务失败" + errorMap.get("errorResult").getMsg());
+			}
+
+			ServerResponse<JSONObject> didTokenMoveResponse = dhRouteService.didTokenMove(insId, bpmRoutingData);
+			if (!didTokenMoveResponse.isSuccess()) {
+				logger.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+				throw new DhTaskCommitException("提交成功，判断token是否移动失败");
+			}
 			if (tokenWasMoved(didTokenMoveResponse)) {
                 // data不为null，表示Token移动了, 插入流转记录
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
@@ -567,30 +633,23 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
                 dhRoutingRecord.setActivityTo(null);
                 dhRoutingRecordMapper.insert(dhRoutingRecord);
             }
+			return ServerResponse.createBySuccess();
 		} catch (Exception e) {
-			log.error("token移动后操作失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
-			throw new DhTaskCommitException("token移动后操作失败");
+			logger.error("提交任务失败", e);
+			throw new DhTaskCommitException(e.getMessage(), JSONObject.toJSONString(dataForSubmitTask));
 		}
-		return ServerResponse.createBySuccess();
 	}
 
 
 	@Transactional
 	@Override
-	public ServerResponse retryCommitTask(DhTaskException dhTaskException) throws DhTaskCommitException {
+	public ServerResponse retryCommitTask(DhTaskException dhTaskException) {
 		DhTaskException newTaskException = dhTaskException;
-		String dataForSubmitTaskStr = dhTaskException.getDataForSubmitTask();
-		if (StringUtils.isBlank(dataForSubmitTaskStr)) {
-			return ServerResponse.createByErrorMessage("缺少消息体");
-		}
-		// 初始化
-		DataForSubmitTask dataForSubmitTask = null;
-		try {
-			dataForSubmitTask = JSONObject.parseObject(dataForSubmitTaskStr, new TypeReference<DataForSubmitTask>() {});
-		} catch (Exception e) {
-			log.error("解析消息出错：消息体" + dataForSubmitTaskStr, e);
+
+		DataForSubmitTask dataForSubmitTask = dhTaskException.getDataForSubmitTaskJavaObject();
+		if (dataForSubmitTask == null) {
 			newTaskException.setErrorMessage("缺少用来提交的JSON数据");
-			return ServerResponse.createByErrorCodeAndData(1, "缺少用来提交的JSON数据", newTaskException);
+			return ServerResponse.createByErrorCodeAndData(1, newTaskException.getErrorMessage(), newTaskException);
 		}
 
 		DhProcessInstance currProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
@@ -607,7 +666,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         String taskStatus = bpmTaskUtil.getTaskStatus(taskId);
         if (taskStatus == null) {
             newTaskException.setErrorMessage("通过RESTFul API获得任务状态失败");
-            return ServerResponse.createByErrorCodeAndData(1, "通过RESTFul API获得任务状态失败", newTaskException);
+            return ServerResponse.createByErrorCodeAndData(1, newTaskException.getErrorMessage(), newTaskException);
         }
 
         // 如果任务没有提交过，执行提交操作
@@ -616,8 +675,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
             Map<String, HttpReturnStatus> errorMap = HttpReturnStatusUtil.findErrorResult(resultMap);
             if (errorMap.get("errorResult") != null) {
                 newTaskException.setErrorMessage("通过RESTFul API完成任务失败" + errorMap.get("errorResult").getMsg());
-                return ServerResponse.createByErrorCodeAndData(1, "通过RESTFul API完成任务失败"
-                        + errorMap.get("errorResult").getMsg(), newTaskException);
+                return ServerResponse.createByErrorCodeAndData(1, newTaskException.getErrorMessage(), newTaskException);
             }
         }
 
@@ -642,7 +700,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 				dhRoutingRecordMapper.insert(dhRoutingRecord);
 			}
 		} catch (Exception e) {
-			log.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
+			logger.error("判断TOKEN是否移动失败，流程实例编号：" + insId + " 任务主键：" + taskUid);
             newTaskException.setErrorMessage(e.getMessage());
             return ServerResponse.createByErrorCodeAndData(1, e.getMessage(), newTaskException);
 		}
@@ -789,13 +847,13 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	 */
 	@Override
 	public int selectByusrUidFinsh(String usrUid) {
-		log.info("已办任务总数查询开始......");
+		logger.info("已办任务总数查询开始......");
 		try {
 			return dhTaskInstanceMapper.selectByusrUidFinsh(usrUid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("已办任务总数查询结束......");
+		logger.info("已办任务总数查询结束......");
 		return 0;
 	}
 
@@ -805,7 +863,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 	@Override
 	public ServerResponse<PageInfo<List<DhTaskInstance>>> selectTaskAndProcessInfo(DhTaskInstance taskInstance,
 			Integer pageNum, Integer pageSize) {
-		log.info("根据任务实例查询任务数据和流程数据 Start......");
+		logger.info("根据任务实例查询任务数据和流程数据 Start......");
 		try {
 			PageHelper.startPage(pageNum, pageSize);
 			// 这里查询的是待办
@@ -818,7 +876,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("根据任务实例查询任务数据和流程数据 END......");
+		logger.info("根据任务实例查询任务数据和流程数据 END......");
 		return null;
 	}
 	
@@ -1520,7 +1578,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 		BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
 		ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), taskOwner);
 		if (!serverResponse.isSuccess()) {
-			log.error("重新分配失败");
+			logger.error("重新分配失败");
 			return ServerResponse.createByErrorMessage("驳回失败");
 		}
 		// 记录到重拉列表，等待再次拉取
@@ -1645,7 +1703,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
         ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), currUserUid);
         if (!serverResponse.isSuccess()) {
-            log.error("重新分配失败");
+            logger.error("重新分配失败");
         }
 
         saveTaskToRetryTable(taskIdList.get(0));
@@ -1743,7 +1801,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
         BpmTaskUtil taskUtil = new BpmTaskUtil(bpmGlobalConfig);
         ServerResponse serverResponse = taskUtil.changeOwnerOfLaswTask(taskIdList.get(0), currentUserUid);
         if (!serverResponse.isSuccess()) {
-            log.error("重新分配失败");
+            logger.error("重新分配失败");
         }
 
         saveTaskToRetryTable(taskIdList.get(0));
@@ -1992,73 +2050,91 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 
 	@Transactional
 	@Override
-	public DataForSubmitTask perpareDataForSubmitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig) {
-		DhStep nextStep = null;
-		DataForSubmitTask dataForSubmitTask = null;
-		BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(systemTaskInstance.getTaskActivityId());
-		if (currTaskNode == null) {
-			throw new DhTaskCheckException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
-		}
-		if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
-				|| !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
-			throw new DhTaskCheckException("系统任务任务类型异常，不能处理循环任务，taskUid：" + systemTaskInstance.getTaskUid());
-		}
-		DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(systemTaskInstance.getInsUid());
-		int insId = dhProcessInstance.getInsId();
-		if (dhProcessInstance == null) {
-			throw new DhTaskCheckException("系统任务处理失败，流程实例不存在");
-		}
-		JSONObject formDataJson = FormDataUtil.getFormDataJsonFromProcessInstance(dhProcessInstance);
-		// 获得下个环节的信息
-		BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(currTaskNode, formDataJson);
-		CommonBusinessObject pubBo = new CommonBusinessObject(insId);
-		// 装配默认处理人
-		dhRouteService.assembleTaskOwnerForSystemTask(systemTaskInstance, dhProcessInstance, pubBo, bpmRoutingData);
-		// 如果下个环节有循环任务（保存/更新）处理人信息
-		dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
+	public DataForSubmitTask prepareDataForSubmitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig)
+			throws DhTaskCheckException{
+		try {
+			DhStep nextStep = null;
+			DataForSubmitTask dataForSubmitTask = null;
+			BpmActivityMeta currTaskNode = bpmActivityMetaService.queryByPrimaryKey(systemTaskInstance.getTaskActivityId());
+			if (currTaskNode == null) {
+                throw new DhTaskCheckException("系统任务处理失败，找不到任务节点，taskUid：" + systemTaskInstance.getTaskUid());
+            }
+			if (!BpmActivityMeta.BPM_TASK_TYPE_USER_TASK.equals(currTaskNode.getBpmTaskType())
+                    || !BpmActivityMeta.LOOP_TYPE_NONE.equals(currTaskNode.getLoopType())) {
+                throw new DhTaskCheckException("系统任务任务类型异常，不能处理循环任务，taskUid：" + systemTaskInstance.getTaskUid());
+            }
 
-		// 更新网关决策条件
-		if (bpmRoutingData.getGatewayNodes().size() > 0) {
-			ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
-			if (!updateResponse.isSuccess()) {
-				throw new DhTaskCheckException("系统任务处理失败，更新网关决策表失败，taskUid：" + systemTaskInstance.getTaskUid());
-			}
+			DhProcessInstance dhProcessInstance = dhProcessInstanceMapper.selectByPrimaryKey(systemTaskInstance.getInsUid());
+			int insId = dhProcessInstance.getInsId();
+			if (dhProcessInstance == null) {
+                throw new DhTaskCheckException("系统任务处理失败，流程实例不存在");
+            }
+			JSONObject formDataJson = FormDataUtil.getFormDataJsonFromProcessInstance(dhProcessInstance);
+			// 获得下个环节的信息
+			BpmRoutingData bpmRoutingData = dhRouteService.getBpmRoutingData(currTaskNode, formDataJson);
+			CommonBusinessObject pubBo = new CommonBusinessObject(insId);
+			// 装配默认处理人
+			dhRouteService.assembleTaskOwnerForSystemTask(systemTaskInstance, dhProcessInstance, pubBo, bpmRoutingData);
+			// 如果下个环节有循环任务（保存/更新）处理人信息
+			dhRouteService.saveTaskHandlerOfLoopTask(insId, bpmRoutingData, pubBo);
+
+			// 更新网关决策条件
+			if (bpmRoutingData.getGatewayNodes().size() > 0) {
+                ServerResponse updateResponse = threadPoolProvideService.updateRouteResult(insId, bpmRoutingData);
+                if (!updateResponse.isSuccess()) {
+                    throw new DhTaskCheckException("系统任务处理失败，更新网关决策表失败，taskUid：" + systemTaskInstance.getTaskUid());
+                }
+            }
+
+			// 生成流转记录
+			DhRoutingRecord routingRecord = null;
+
+			// 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
+			if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
+                DhTaskInstance taskSelective = new DhTaskInstance();
+                taskSelective.setTaskUid(systemTaskInstance.getTaskUid());
+                taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
+                taskSelective.setTaskFinishDate(new Date());
+                taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
+                dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
+                routingRecord = dhRoutingRecordService.generateFirstTaskNodeOfSubProcessRoutingData(systemTaskInstance, bpmRoutingData, dhProcessInstance.getInsInitUser());
+            } else {
+                routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
+                        systemTaskInstance, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
+                // 如果只是普通的系统个任务，修改任务状
+                updateDhTaskInstanceWhenFinishTask(systemTaskInstance, "{}");
+            }
+
+			// 获得指定关键字在此环节上的步骤
+			List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
+			nextStep = steps.isEmpty() ? null : steps.get(0);
+
+			dataForSubmitTask = new DataForSubmitTask();
+			dataForSubmitTask.setBpmGlobalConfig(bpmGlobalConfig);
+			dataForSubmitTask.setCurrTaskInstance(systemTaskInstance);
+			dataForSubmitTask.setCurrentProcessInstance(dhProcessInstance);
+			dataForSubmitTask.setPubBo(pubBo);
+			dataForSubmitTask.setBpmRoutingData(bpmRoutingData);
+			dataForSubmitTask.setDhRoutingRecord(routingRecord);
+			dataForSubmitTask.setNextStep(nextStep);
+			dataForSubmitTask.setApplyUser(null); // 系统任务不需要被认领
+			return dataForSubmitTask;
+		} catch (DhTaskCheckException e) {
+			logger.error("准备提交系统任务的数据异常", e);
+			throw new DhTaskCheckException(e.getMessage());
 		}
-
-		// 生成流转记录
-		DhRoutingRecord routingRecord = null;
-
-		// 判断是否是子流程的第一个节点，如果是第一个节点，就把任务还给流程发起人
-		if (dhRouteService.isFirstTaskOfSubProcess(currTaskNode, dhProcessInstance)) {
-			DhTaskInstance taskSelective = new DhTaskInstance();
-			taskSelective.setTaskUid(systemTaskInstance.getTaskUid());
-			taskSelective.setUsrUid(dhProcessInstance.getInsInitUser()); // 将任务给流程发起人
-			taskSelective.setTaskFinishDate(new Date());
-			taskSelective.setTaskStatus(DhTaskInstance.STATUS_CLOSED);
-			dhTaskInstanceMapper.updateByPrimaryKeySelective(taskSelective);
-			routingRecord = dhRoutingRecordService.generateFirstTaskNodeOfSubProcessRoutingData(systemTaskInstance, bpmRoutingData, dhProcessInstance.getInsInitUser());
-		} else {
-			routingRecord = dhRoutingRecordService.generateSystemTaskRoutingRecord(currTaskNode,
-					systemTaskInstance, bpmGlobalConfig.getBpmAdminName(), bpmRoutingData);
-			// 如果只是普通的系统个任务，修改任务状
-			updateDhTaskInstanceWhenFinishTask(systemTaskInstance, "{}");
-		}
-
-		// 获得指定关键字在此环节上的步骤
-		List<DhStep> steps = dhStepService.getStepsByBpmActivityMetaAndStepBusinessKey(currTaskNode, dhProcessInstance.getInsBusinessKey());
-		nextStep = steps.isEmpty() ? null : steps.get(0);
-
-		dataForSubmitTask = new DataForSubmitTask();
-		dataForSubmitTask.setBpmGlobalConfig(bpmGlobalConfig);
-		dataForSubmitTask.setCurrTaskInstance(systemTaskInstance);
-		dataForSubmitTask.setCurrentProcessInstance(dhProcessInstance);
-		dataForSubmitTask.setPubBo(pubBo);
-		dataForSubmitTask.setBpmRoutingData(bpmRoutingData);
-		dataForSubmitTask.setDhRoutingRecord(routingRecord);
-		dataForSubmitTask.setNextStep(nextStep);
-		dataForSubmitTask.setApplyUser(null); // 系统任务不需要被认领
-		return dataForSubmitTask;
 	}
+
+	// todo yao
+//	public DataForSubmitTask prepareDataForSubmitAutoCommitTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig)
+//		throws DhTaskCheckException {
+//
+//
+//
+//
+//	}
+
+
 
 	@Override
 	public List<DhTaskInstance> listErrorTasksByInsUid(String insUid) {

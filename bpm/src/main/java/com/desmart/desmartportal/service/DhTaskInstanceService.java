@@ -9,7 +9,9 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.DhTaskCheckException;
 import com.desmart.common.exception.DhTaskCommitException;
+import com.desmart.common.exception.DhTaskPushToMQException;
 import com.desmart.desmartbpm.entity.BpmActivityMeta;
 import com.desmart.desmartbpm.entity.DataForSubmitTask;
 import com.desmart.desmartbpm.entity.DhTaskException;
@@ -75,7 +77,6 @@ public interface DhTaskInstanceService {
 
 	/**
 	 * 完成一个任务，根据有没有下个步骤 调用RESTFul API完成任务或推送到队列<br/>
-	 * 只返回成功状态，失败时自动处理异常<br/>
 	 * 失败时如下操作： <br/>
 	 * 1. 创建或更新一条异常记录<br/>
 	 * 2. 修改任务状态为异常<br/>
@@ -86,26 +87,38 @@ public interface DhTaskInstanceService {
 	ServerResponse finishTaskFirstTime(DataForSubmitTask dataForSubmitTask);
 
 	/**
-	 * 完成一个任务，失败时返回数据中包含 DhTaskException
+	 * 完成一个任务，失败时抛出指定异常
 	 * @param dataForSubmitTask
 	 * @return
+	 * @throws DhTaskCommitException
+	 * @throws DhTaskPushToMQException
 	 */
-	ServerResponse finishTask(DataForSubmitTask dataForSubmitTask);
+	ServerResponse finishTask(DataForSubmitTask dataForSubmitTask)  throws DhTaskCommitException, DhTaskPushToMQException;
 
 	/**
 	 * 调用Restful api完成任务， 并创建相应的子流程
 	 * @param dataForSubmitTask
 	 * @return
+	 * @throws DhTaskCommitException
 	 */
 	ServerResponse commitTask(DataForSubmitTask dataForSubmitTask) throws DhTaskCommitException;
 
 	/**
-	 * 重新提交任务
+	 * 重试推送到消息队列
 	 * @param dhTaskException
 	 * @return
-	 * @throws DhTaskCommitException
 	 */
-	ServerResponse retryCommitTask(DhTaskException dhTaskException) throws DhTaskCommitException;
+	ServerResponse<DhTaskException> retryPushToMQ(DhTaskException dhTaskException);
+
+
+	/**
+	 * 重新提交任务<br/>
+	 * 成功时返回Success<br/>
+	 * 失败时ServerResponse包含DhTaskException
+	 * @param dhTaskException
+	 * @return
+	 */
+	ServerResponse retryCommitTask(DhTaskException dhTaskException);
 
 	/**
 	 * 查看平台任务表中是否存在指定taskId的任务
@@ -369,7 +382,8 @@ public interface DhTaskInstanceService {
 	 * @param bpmGlobalConfig
 	 * @return
 	 */
-	DataForSubmitTask perpareDataForSubmitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig);
+	DataForSubmitTask prepareDataForSubmitSystemTask(DhTaskInstance systemTaskInstance, BpmGlobalConfig bpmGlobalConfig)
+		throws DhTaskCheckException;
 
 	/**
 	 * 根据流程实例主键找出异常的任务

@@ -1,21 +1,21 @@
 package com.desmart.common.exception;
 
 /**
- * 提交任务异常
+ * 检查任务异常
  */
-public class DhTaskCommitException extends DhTaskLifeCycleException {
+public class DhTaskPushToMQException extends DhTaskLifeCycleException {
     private String dataForSubmitTaskStr;
 
 
-    public DhTaskCommitException(String message, Throwable cause) {
+    public DhTaskPushToMQException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public DhTaskCommitException(String message) {
+    public DhTaskPushToMQException(String message) {
         super(message);
     }
 
-    public DhTaskCommitException(String message, String dataForSubmitTaskStr) {
+    public DhTaskPushToMQException(String message, String dataForSubmitTaskStr) {
         super(message);
         this.dataForSubmitTaskStr = dataForSubmitTaskStr;
     }
@@ -23,6 +23,4 @@ public class DhTaskCommitException extends DhTaskLifeCycleException {
     public String getDataForSubmitTaskStr() {
         return dataForSubmitTaskStr;
     }
-
-
 }

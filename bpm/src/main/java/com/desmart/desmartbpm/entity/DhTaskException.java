@@ -1,11 +1,15 @@
 package com.desmart.desmartbpm.entity;
 
-import com.desmart.common.constant.EntityIdPrefix;
-import com.desmart.desmartportal.entity.DhTaskInstance;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.desmart.common.constant.EntityIdPrefix;
+import com.desmart.desmartportal.entity.DhTaskInstance;
 
 /**
  * mq执行触发器产生的异常类
@@ -21,6 +25,8 @@ public class DhTaskException implements Serializable {
 	public static final String STATUS_STEP_EXCEPTION = "stepEx";
 	/** 状态：提交出错  */
 	public static final String STATUS_COMMIT_EXCEPTION = "commitEx";
+	/** 状态：推送到队列出错  */
+	public static final String STATUS_PUSH_TO_MQ_EXCEPTION = "pushEx";
 	/** 状态：已修复 */
 	public static final String STATUS_DONE = "done";
 
@@ -40,6 +46,18 @@ public class DhTaskException implements Serializable {
 
 	public DhTaskException(){}
 
+    public static DhTaskException createCheckTaskException(DhTaskInstance dhTaskInstance, String errorMessage) {
+        DhTaskException dhTaskException = new DhTaskException();
+        dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
+                .setTaskUid(dhTaskInstance.getTaskUid())
+                .setStepUid(null)
+                .setInsUid(dhTaskInstance.getInsUid())
+                .setDataForSubmitTask(null)
+                .setErrorMessage(errorMessage)
+                .setRetryCount(0)
+                .setStatus(DhTaskException.STATUS_CHECK_EXCEPTION);
+        return dhTaskException;
+    }
 
 	public static DhTaskException createStepTaskException(DhTaskInstance dhTaskInstance, String stepUid, String dataForSubmitTask,
 														  String errorMessage, String dilUid) {
@@ -69,21 +87,33 @@ public class DhTaskException implements Serializable {
 		return dhTaskException;
 	}
 
-	public static DhTaskException createCheckTaskException(DhTaskInstance dhTaskInstance, String errorMessage) {
-		DhTaskException dhTaskException = new DhTaskException();
-		dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
-				.setTaskUid(dhTaskInstance.getTaskUid())
-				.setStepUid(null)
-				.setInsUid(dhTaskInstance.getInsUid())
-				.setDataForSubmitTask(null)
-				.setErrorMessage(errorMessage)
-				.setRetryCount(0)
-				.setStatus(DhTaskException.STATUS_CHECK_EXCEPTION);
-		return dhTaskException;
+
+
+    public static DhTaskException createPushToMQTaskException(DhTaskInstance dhTaskInstance, String errorMessage,
+                                                              String dataForSubmitTaskStr) {
+        DhTaskException dhTaskException = new DhTaskException();
+        dhTaskException.setId(EntityIdPrefix.DH_TASK_EXCEPTION + String.valueOf(UUID.randomUUID()))
+                .setTaskUid(dhTaskInstance.getTaskUid())
+                .setStepUid(null)
+                .setInsUid(dhTaskInstance.getInsUid())
+                .setDataForSubmitTask(dataForSubmitTaskStr)
+                .setErrorMessage(errorMessage)
+                .setRetryCount(0)
+                .setStatus(DhTaskException.STATUS_PUSH_TO_MQ_EXCEPTION);
+        return dhTaskException;
+    }
+
+
+	public DataForSubmitTask getDataForSubmitTaskJavaObject() {
+		if (StringUtils.isBlank(this.dataForSubmitTask)) {
+			return null;
+		}
+		try {
+			return JSONObject.parseObject(this.dataForSubmitTask, new TypeReference<DataForSubmitTask>() {});
+		} catch (Exception e) {
+			return null;
+		}
 	}
-
-
-
 
 	public String getId() {
 		return id;
