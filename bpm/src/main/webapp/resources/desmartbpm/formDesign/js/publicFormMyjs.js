@@ -675,7 +675,7 @@ function showDataTableModal(obj) {
                 	+'验证错误提示'
                 	+'</label>'
                 	+'<div class="col-xs-1 th-type-text">'
-                	+'<input type="text" value="'+thRegx+'" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
+                	+'<input type="text" value="'+thRegxCue+'" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
                 	+'</div>'
             		+'<div class="checkbox col-xs-2 th-type-date" style="display:none;margin: 0px 0px 20px 20px;">'
 					+'<label>'
@@ -1958,7 +1958,6 @@ $(function () {
                     	case "number":{
                     		tableThRegx = $($(".data-table-head-regx")[i]).val();
                     		tableThRegxCue = $($(".data-table-head-regx-cue")[i]).val();
-                    		thHtml += " col-regx='"+tableThRegx+"' col-regxCue";
                     		break;
                     	}
                     	case "date":{//data-table-type-date
