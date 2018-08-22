@@ -583,6 +583,8 @@ function addDataRow(obj) {
 	var layKey = _getRandomString(2);
 	$(obj).parent().parent().parent().append("<tr>" + trHtml + "</tr>");
 	$(obj).parent().parent().parent().find("tr:last").find(".layui-input").val("");
+	$(obj).parent().parent().parent().find("tr:last").find("select").prop("id","select_"+layKey);
+	//$(obj).parent().parent().parent().find("tr:last").find("select").next().remove();
 	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + layKey).attr("lay-key", layKey);
 	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
 	//给动态表单中的下拉列表赋值
@@ -590,6 +592,7 @@ function addDataRow(obj) {
 	selectArr.each(function () {
 		getDataToSelect(this, $(this).attr("database_type"));
 	});
+	form.render();
 	var dateInput = $(obj).parent().parent().parent().find(".date");
 	if ($(window).width() < 568) {
 		dateInput.attr("type", "text");
