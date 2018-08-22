@@ -603,7 +603,6 @@ function showDataTableModal(obj) {
         var thObj = $(thObjArr[i]);
         var thText = thObj.text();
         var thName = thObj.attr("name");
-        var moveView = thObj.attr("move-view");
         var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
             '<label class="col-xs-1 control-label">' +
             '列头文本<span style="color:red;float:left;">*</span>' +
@@ -612,58 +611,175 @@ function showDataTableModal(obj) {
             '<input type="text" class="col-xs-12 col data-table-head"' +
             ' style="width:70px;" value="' + thText + '">' +
             '</div>' +
-            '<label class="col-xs-1 col-sm-offset-1 control-label">' +
+            '<label class="col-xs-1 table-offset control-label">' +
 			'列头name<span style="color:red;float:left;">*</span>' +
 			'</label>' +
 			'<div class="col-xs-1">' +
 			'<input type="text" class="col-xs-12 col data-table-head-name"'+
-			' style="width:70px;" value="' + thName + '">' +
+			' style="width:80px;" value="' + thName + '">' +
 			'</div>' +
-            '<label class="col-xs-1 col-sm-offset-1 control-label">' +
+            '<label class="col-xs-1 table-offset control-label">' +
             '列组件类型' +
             '</label>' +
-            '<div class="col-xs-2">' +
-            '<select class="data-table-type col-xs-12">';
+            '<div class="col-xs-1">' +
+            '<select class="data-table-type col-xs-12" onchange="thTypeChange(this);">';
         var thType = thObj.attr("col-type");
         switch (thType) {
             case "text":
                 {
                     thSetHtml += '<option value="text" selected>文本框</option>' +
                     '<option value="number">数字框</option>' +
-                    '<option value="date">日期文本框</option>';
+                    '<option value="date">日期文本框</option>'+
+                    '<option value="select">下拉列表</option>';
                     break;
                 }
             case "number":
                 {
                     thSetHtml += '<option value="text">文本框</option>' +
                     '<option value="number" selected>数字框</option>' +
-                    '<option value="date">日期文本框</option>';
+                    '<option value="date">日期文本框</option>'+
+                    '<option value="select">下拉列表</option>';
                     break;
                 }
             case "date":
                 {
                     thSetHtml += '<option value="text">文本框</option>' +
                     '<option value="number">数字框</option>' +
-                    '<option value="date" selected>日期文本框</option>' ;
+                    '<option value="date" selected>日期文本框</option>' +
+                    '<option value="select">下拉列表</option>';
                     break;
                 }
+            case "select":
+	            {
+	                thSetHtml += '<option value="text">文本框</option>' +
+	                '<option value="number">数字框</option>' +
+	                '<option value="date">日期文本框</option>' +
+	                '<option value="select" selected>下拉列表</option>';
+	                break;
+	            }
         }
-        thSetHtml += '</select></div>'
-        	+'<label class="col-xs-1 control-label">'
-        	+'移动端显示'
-        	+'</label>'
-        	+'<div class="col-xs-1">'
-        	+'<select class="data-table-move-view col-xs-12" style="width: 50px;">';
-        if(moveView=="true"){
-        	thSetHtml += '<option value="true" selected>是</option>'
-        		+'<option value="false">否</option>'
-        }else{
-        	thSetHtml += '<option value="true">是</option>'
-        		+'<option value="false" selected>否</option>'
+        thSetHtml += '</select></div>';
+        switch (thType) {
+            case "text":
+            case "number":
+                {
+            	var thRegx = thObj.attr("col-regx");
+            	var thRegxCue = thObj.attr("col-regx-cue");
+            	thSetHtml += '<label class="col-xs-1 table-offset th-type-text control-label">'
+                	+'正则验证'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text">'
+                	+'<input type="text" value="'+thRegx+'" class="col-xs-12 data-table-head-regx" placeholder="正则表达式" style="width:70px;">'
+                	+'</div>'
+                	+'<label class="col-xs-1 table-offset th-type-text control-label">'
+                	+'验证错误提示'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text">'
+                	+'<input type="text" value="'+thRegx+'" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
+                	+'</div>'
+            		+'<div class="checkbox col-xs-2 th-type-date" style="display:none;margin: 0px 0px 20px 20px;">'
+					+'<label>'
+					+'<input type="checkbox" class="date-type data-table-type-date" checked>年月日'
+					+'</label>'
+					+'</div>'
+					+'<div class="checkbox col-xs-2 th-type-date" style="display:none;">'
+					+'<label>'
+					+'<input type="checkbox" class="date-type data-table-type-time">时间'
+					+'</label>'
+					+'</div>'
+					+'<label class="col-xs-1 table-offset th-type-select control-label" style="display:none;">'
+                	+'选择数据分类'
+                	+'</label>'
+                	+'<div class="col-xs-4 th-type-select" style="display:none;">'
+                	+'<input type="text" id="table_dicUid'+i+'_view" readonly/>'
+                	+'<input type="hidden" id="table_dicUid'+i+'" />'
+                	+'<span class="glyphicon glyphicon-search" onclick="selectData(this)" style="font-size:25px;cursor:pointer;margin-left:5px;"></span>'
+                	+'</div>'
+                	+'</div>';
+                    break;
+                }
+            case "date":
+                {
+            	var thDateType = thObj.attr("date_type");
+            	thSetHtml += '<label class="col-xs-1 table-offset th-type-text control-label" style="display:none;">'
+                	+'正则验证'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text" style="display:none;">'
+                	+'<input type="text" class="col-xs-12 data-table-head-regx" placeholder="正则表达式" style="width:70px;">'
+                	+'</div>'
+                	+'<label class="col-xs-1 table-offset th-type-text control-label" style="display:none;">'
+                	+'验证错误提示'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text" style="display:none;">'
+                	+'<input type="text" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
+                	+'</div>'
+            		+'<div class="checkbox col-xs-2 th-type-date" style="margin: 0px 0px 20px 20px;">'
+					+'<label>';
+				if(thDateType=="time"){
+					thSetHtml += '<input type="checkbox" class="date-type data-table-type-date">年月日';
+				}else{
+					thSetHtml += '<input type="checkbox" class="date-type data-table-type-date" checked>年月日';
+				}
+            	thSetHtml += '</label>'
+					+'</div>'
+					+'<div class="checkbox col-xs-2 th-type-date">'
+					+'<label>';
+				if(thDateType=="time"){
+					thSetHtml += '<input type="checkbox" class="date-type data-table-type-time" checked>时间';
+				}else{
+					thSetHtml += '<input type="checkbox" class="date-type data-table-type-time">时间';
+				}
+            	thSetHtml += '</label>'
+					+'</div>'
+					+'<label class="col-xs-1 table-offset th-type-select control-label" style="display:none;">'
+                	+'选择数据分类'
+                	+'</label>'
+                	+'<div class="col-xs-4 th-type-select" style="display:none;">'
+                	+'<input type="text" id="table_dicUid'+i+'_view" readonly/>'
+                	+'<input type="hidden" id="table_dicUid'+i+'" />'
+                	+'<span class="glyphicon glyphicon-search" onclick="selectData(this)" style="font-size:25px;cursor:pointer;margin-left:5px;"></span>'
+                	+'</div>'
+                	+'</div>';
+                    break;
+                }
+            case "select":{
+            	var thDatabaseType = thObj.attr("database_type");
+            	var dictionaryName = getDictionaryByDicUid(thDatabaseType);
+            	thSetHtml += '<label class="col-xs-1 table-offset th-type-text control-label" style="display:none;">'
+                	+'正则验证'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text" style="display:none;">'
+                	+'<input type="text" class="col-xs-12 data-table-head-regx" placeholder="正则表达式" style="width:70px;">'
+                	+'</div>'
+                	+'<label class="col-xs-1 table-offset th-type-text control-label" style="display:none;">'
+                	+'验证错误提示'
+                	+'</label>'
+                	+'<div class="col-xs-1 th-type-text" style="display:none;">'
+                	+'<input type="text" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
+                	+'</div>'
+            		+'<div class="checkbox col-xs-2 th-type-date" style="display:none;margin: 0px 0px 20px 20px;">'
+					+'<label>'
+					+'<input type="checkbox" class="date-type data-table-type-date" checked>年月日'
+					+'</label>'
+					+'</div>'
+					+'<div class="checkbox col-xs-2 th-type-date" style="display:none;">'
+					+'<label>'
+					+'<input type="checkbox" class="date-type data-table-type-time">时间'
+					+'</label>'
+					+'</div>'
+					+'<label class="col-xs-1 table-offset th-type-select control-label">'
+                	+'选择数据分类'
+                	+'</label>'
+                	+'<div class="col-xs-4 th-type-select">'
+                	+'<input type="text" id="table_dicUid'+i+'_view" readonly value="'+dictionaryName+'"/>'
+                	+'<input type="hidden" id="table_dicUid'+i+'" value="'+thDatabaseType+'"/>'
+                	+'<span class="glyphicon glyphicon-search" onclick="selectData(this)" style="font-size:25px;cursor:pointer;margin-left:5px;"></span>'
+                	+'</div>'
+                	+'</div>';
+            	break;
+            }
         }
-        thSetHtml += '</select>'
-        	+'</div>'
-        	+'</div>';
+        thSetHtml += '</div>';
         $("#dataTableModal form").append(thSetHtml);
     }
 
@@ -671,39 +787,52 @@ function showDataTableModal(obj) {
         var forNum = $("#data-table-number").val();
         $("#dataTableModal .data-table-set").remove();
         for (var i = 0; i < forNum; i++) {
-            var thSetHtml = '<div class="form-group col-xs-12 data-table-set">' +
-                '<label class="col-xs-1 control-label">' +
-                '列头文本<span style="color:red;float:left;">*</span>' +
-                '</label>' +
-                '<div class="col-xs-1">' +
-                '<input type="text" class="col-xs-12 col data-table-head"' +
-                ' style="width:70px;">' +
-                '</div>' +
-                '<label class="col-xs-1 col-sm-offset-1 control-label">' +
-    			'列头name<span style="color:red;float:left;">*</span>' +
-    			'</label>' +
-    			'<div class="col-xs-1">' +
-    			'<input type="text" class="col-xs-12 col data-table-head-name" style="width:70px;">' +
-    			'</div>' +
-                '<label class="col-xs-1 col-sm-offset-1 control-label">' +
-                '列组件类型' +
-                '</label>' +
-                '<div class="col-xs-2">' +
-                '<select class="data-table-type col-xs-12">' +
-                '<option value="text">文本框</option>' +
-                '<option value="number">数字框</option>' +
-                '<option value="date">日期文本框</option>' +
-                '</select></div>'+
-                '<label class="col-xs-1 control-label">'+
-				'移动端显示'+
-				'</label>'+
-				'<div class="col-xs-1">'+
-					'<select class="data-table-move-view col-xs-12" style="width: 50px;">'+
-						'<option value="true" selected>是</option>'+
-						'<option value="false">否</option>'+
-					'</select>'+
-				'</div>'+
-                '</div>';
+        	var thSetHtml = '<div class="form-group col-xs-12 data-table-set">'
+            	+'<label class="col-xs-1 control-label">列头文本'
+            	+'<span style="color:red;float:left;">*</span>'
+            	+'</label>'
+            	+'<div class="col-xs-1">'
+            	+'<input type="text" class="col-xs-12 col data-table-head" style="width:70px;">'
+            	+'</div>'
+            	+'<label class="col-xs-1 table-offset control-label">列头name'
+            	+'<span style="color:red;float:left;">*</span>'
+            	+'</label>'
+            	+'<div class="col-xs-1">'
+            	+'<input type="text" class="col-xs-12 col data-table-head-name" style="width:80px;">'
+            	+'</div>'
+            	+'<label class="col-xs-1 table-offset control-label">列组件类型</label>'
+            	+'<div class="col-xs-1">'
+            	+'<select class="data-table-type col-xs-12" onchange="thTypeChange(this);">'
+            	+'<option value="text" selected="">文本框</option>'
+            	+'<option value="number">数字框</option>'
+            	+'<option value="date">日期文本框</option>'
+            	+'<option value="select">下拉列表</option>'
+            	+'</select>'
+            	+'</div>'
+            	+'<label class="col-xs-1 table-offset th-type-text control-label">正则验证</label>'
+            	+'<div class="col-xs-1 th-type-text">'
+            	+'<input type="text" class="col-xs-12 data-table-head-regx" placeholder="正则表达式" style="width:70px;">'
+            	+'</div>'
+            	+'<label class="col-xs-1 table-offset th-type-text control-label">验证错误提示</label>'
+            	+'<div class="col-xs-1 th-type-text">'
+            	+'<input type="text" class="col-xs-12 data-table-head-regx-cue" placeholder="错误提示语" style="width:70px;">'
+            	+'</div>'
+            	+'<div class="checkbox col-xs-2 th-type-date" style="display:none;margin: 0px 0px 20px 20px;">'
+            	+'<label>'
+            	+'<input type="checkbox" class="date-type data-table-type-date" checked="">年月日</label>'
+            	+'</div>'
+            	+'<div class="checkbox col-xs-2 th-type-date" style="display:none;">'
+            	+'<label>'
+            	+'<input type="checkbox" class="date-type data-table-type-time">时间</label>'
+            	+'</div>'
+            	+'<label class="col-xs-1 table-offset th-type-select control-label" style="display:none;">选择数据分类</label>'
+            	+'<div class="col-xs-4 th-type-select" style="display:none;">'
+            	+'<input type="text" id="table_dicUid0_view" readonly="">'
+            	+'<input type="hidden" id="table_dicUid0">'
+            	+'<span class="glyphicon glyphicon-search" onclick="selectData(this)" style="font-size:25px;cursor:pointer;margin-left:5px;"></span>'
+            	+'</div>'
+            	+'</div>'
+                +'</div>';
             $("#dataTableModal form").append(thSetHtml);
         } //end for
 
@@ -711,7 +840,38 @@ function showDataTableModal(obj) {
             var thObj = $(thObjArr[i]);
             $($(".data-table-head")[i]).val(thObj.text());
             $($(".data-table-head-name")[i]).val(thObj.attr("name"));
-            $($(".data-table-type")[i]).val(thObj.attr("col-type"));
+            var thType = thObj.attr("col-type");
+            $($(".data-table-type")[i]).val(thType);
+            $($(".data-table-head-regx")[i]).val(thObj.attr("col-regx"));
+            $($(".data-table-head-regx-cue")[i]).val(thObj.attr("col-regx-cue"));
+            var thDatabaseType = thObj.attr("database_type");
+        	var dictionaryName = getDictionaryByDicUid(thDatabaseType);
+            $("#table_dicUid"+i+"").val(thObj.attr(thDatabaseType));
+            $("#table_dicUid"+i+"_view").val(thObj.attr(dictionaryName));
+            switch (thType) {
+	    	    case "text":
+	    	    case "number":
+	    	        {
+	    		    	$(obj).parent().parent().find(".th-type-text").show();
+	    	            $(obj).parent().parent().find(".th-type-date").hide();
+	    	            $(obj).parent().parent().find(".th-type-select").hide();
+	    	            break;
+	    	        }
+	    	    case "date":
+	    	        {
+	    		    	$(obj).parent().parent().find(".th-type-text").hide();
+	    	            $(obj).parent().parent().find(".th-type-date").show();
+	    	            $(obj).parent().parent().find(".th-type-select").hide();
+	    	            break;
+	    	        }
+	    	    case "select":
+	    	        {
+	    		    	$(obj).parent().parent().find(".th-type-text").hide();
+	    	            $(obj).parent().parent().find(".th-type-date").hide();
+	    	            $(obj).parent().parent().find(".th-type-select").show();
+	    	            break;
+	    	        }
+	    	}
         }
     }); //end blur
 
@@ -722,6 +882,35 @@ function showDataTableModal(obj) {
     $("#data-table-name").val(name);
     $("#data-table-number").val(thNum);
     $("#data-table-label").val(tableLabel);
+}
+
+//数据表格列头数据类型
+function thTypeChange(obj){
+	var thType = $(obj).val();
+	switch (thType) {
+	    case "text":
+	    case "number":
+	        {
+		    	$(obj).parent().parent().find(".th-type-text").show();
+	            $(obj).parent().parent().find(".th-type-date").hide();
+	            $(obj).parent().parent().find(".th-type-select").hide();
+	            break;
+	        }
+	    case "date":
+	        {
+		    	$(obj).parent().parent().find(".th-type-text").hide();
+	            $(obj).parent().parent().find(".th-type-date").show();
+	            $(obj).parent().parent().find(".th-type-select").hide();
+	            break;
+	        }
+	    case "select":
+	        {
+		    	$(obj).parent().parent().find(".th-type-text").hide();
+	            $(obj).parent().parent().find(".th-type-date").hide();
+	            $(obj).parent().parent().find(".th-type-select").show();
+	            break;
+	        }
+	}
 }
 
 //根据数据字典id获得数据字典名称
@@ -1758,11 +1947,46 @@ $(function () {
                 for (var i = 0; i < tableThArr.length; i++) {
                     var tableThObj = $(tableThArr[i]);
                     var tableThName = $(tableThNameArr[i]);
-                    var tableThType = $($(".data-table-type")[i]);
-                    var moveView = $($(".data-table-move-view")[i]);
-                    var thHtml = "<th col-type='" + tableThType.val() 
-                    	+ "' name='"+tableThName.val().trim()+"' move-view='"+moveView.val()+"'>" 
-                    	+ tableThObj.val() + "</th>";
+                    var tableThType = $($(".data-table-type")[i]).val();
+                    var tableThRegx = "";
+                    var tableThRegxCue = "";
+                    var tableThDateType = "date";
+                    var tableThDicUid = "";
+                    var tableThDataSource = "";
+                    switch(tableThType){
+                    	case "text":
+                    	case "number":{
+                    		tableThRegx = $($(".data-table-head-regx")[i]).val();
+                    		tableThRegxCue = $($(".data-table-head-regx-cue")[i]).val();
+                    		thHtml += " col-regx='"+tableThRegx+"' col-regxCue";
+                    		break;
+                    	}
+                    	case "date":{//data-table-type-date
+                    		tableThDateType = "date";
+                    		if($($(".data-table-type-date")[i]).is(":checked") && $($(".data-table-type-time")[i]).is(":checked")){
+                    			tableThDateType = "datetime";
+                    			break;
+                    		}
+                    		if($($(".data-table-type-date")[i]).is(":checked")){
+                    			tableThDateType = "date";
+                    			break;
+                    		}
+                    		if($($(".data-table-type-time")[i]).is(":checked")){
+                    			tableThDateType = "time";
+                    			break;
+                    		}
+                    		break;
+                    	}
+                    	case "select":{//table_dicUid0
+                    		tableThDataSource = "数据字典拉取"
+                    		tableThDicUid = $("#table_dicUid"+i+"").val();
+                    		break;
+                    	}
+                    }
+                    var thHtml = "<th col-type='"+tableThType+"' name='"+tableThName.val()
+                    		+ "' col-regx='"+tableThRegx+"' col-regx-cue='"+tableThRegxCue
+                    		+ "' date_type='"+tableThDateType+"' data_source='"+tableThDataSource
+                    		+ "' database_type='"+tableThDicUid+"'>"+tableThObj.val() + "</th>";
                     tableObj.find("thead tr").append(thHtml);
                 }
 

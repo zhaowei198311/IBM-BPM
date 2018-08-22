@@ -371,7 +371,9 @@ function downloadLayoutSrc() {
             ["single"],
             ["hidden-label"],
             ["img-upload-label"],
-            ["is-multi"]
+            ["is-multi"],
+            ["col-regx"],
+            ["col-regx-cue"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -691,8 +693,13 @@ $(document).ready(function () {
         return false
     });
     $("#clear").click(function (e) {
-        e.preventDefault();
-        clearDemo()
+    	e.preventDefault();
+    	layer.confirm('是否确认清空？',{
+            btn: ['确定', '取消'] //按钮
+        }, function(index){
+        	clearDemo();
+    		layer.close(index);
+    	});     
     });
     $("#devpreview").click(function () {
         $("body").removeClass("edit sourcepreview");

@@ -106,6 +106,10 @@ function drawPage() {
 						var trHtml = '<tr>';
 						for (var i = 0; i < thObjArr.length; i++) {
 							var thObj = $(thObjArr[i]);
+							var tableThRegx = thObj.attr("col-regx");
+		                    var tableThRegxCue = thObj.attr("col-regx-cue");
+		                    var tableThDicUid = thObj.attr("database_type");
+		                    var tableThDataSource = thObj.attr("data_source");
 							trHtml += '<td data-label="' + thObj.text().trim() + '">';
 							switch (thObj.attr("col-type")) {
 								case "text": {
@@ -119,6 +123,11 @@ function drawPage() {
 								case "date": {
 									var layKey = _getRandomString(2);
 									trHtml += '<input type="date" class="layui-input date" id="date_'+layKey+'" lay-key="'+layKey+'"/>';
+									break;
+								}
+								case "select":{
+									var layKey = _getRandomString(2);
+									trHtml += '<select class="table_select" database_type="'+tableThDicUid+'" id="'+layKey+'" data_source="'+tableThDataSource+'"></select>';
 									break;
 								}
 								case "tool": {
@@ -513,18 +522,20 @@ function getDataToSelect(obj, dicUid) {
 	$.ajax({
 		url: common.getPath() + "/sysDictionary/listOnDicDataBydicUid",
 		method: "post",
+		async:false,
 		data: {
 			dicUid: dicUid
 		},
 		success: function (result) {
 			if (result.status == 0) {
 				var dicDataList = result.data;
+				var optionObj = '<option value="请选择">请选择</option>';
+				$(obj).append(optionObj);
 				for (var i = 0; i < dicDataList.length; i++) {
 					var dicDataObj = dicDataList[i];
 					var optionObj = '<option value="' + dicDataObj.dicDataCode + '">' + dicDataObj.dicDataName + '</option>';
 					$(obj).append(optionObj);
 				}
-				form.render();
 			}
 		}
 	});
@@ -561,7 +572,11 @@ function addDataRow(obj) {
 	$(obj).parent().parent().parent().find("tr:last").find(".layui-input").val("");
 	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + layKey).attr("lay-key", layKey);
 	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
-
+	//给动态表单中的下拉列表赋值
+	var selectArr = $(obj).parent().parent().parent().find("tr:last").find("select[data_source='数据字典拉取']");
+	selectArr.each(function () {
+		getDataToSelect(this, $(this).attr("database_type"));
+	});
 	var dateInput = $(obj).parent().parent().parent().find(".date");
 	if ($(window).width() < 568) {
 		dateInput.attr("type", "text");

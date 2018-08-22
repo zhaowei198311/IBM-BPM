@@ -371,7 +371,9 @@ function downloadLayoutSrc() {
             ["single"],
             ["hidden-label"],
             ["img-upload-label"],
-            ["is-multi"]
+            ["is-multi"],
+            ["col-regx"],
+            ["col-regx-cue"]
         ]
     });
     $("#download-layout").html(formatSrc);
@@ -709,8 +711,13 @@ $(document).ready(function () {
         return false
     });
     $("#clear").click(function (e) {
-        e.preventDefault();
-        clearDemo()
+    	e.preventDefault();
+    	layer.confirm('是否确认清空？',{
+            btn: ['确定', '取消'] //按钮
+        }, function(index){
+        	clearDemo();
+    		layer.close(index);
+    	});     
     });
     $("#devpreview").click(function () {
         $("body").removeClass("edit sourcepreview");
@@ -989,6 +996,9 @@ function saveFormContent(json) {
 		url: common.getPath() + "/formManage/saveFormContent",
 		method: "post",
 		dataType: "json",
+		beforSend:function(){
+			layer.load(1);
+		},
 		contentType: "application/json",
 		traditional: true, 
 		data: JSON.stringify(json),
@@ -1001,6 +1011,7 @@ function saveFormContent(json) {
 			} else {
 				layer.alert("添加失败");
 			}
+			layer.closeAll("loading");
 		}
 	});
 }
@@ -1009,6 +1020,9 @@ function updateFormContent(json) {
 	$.ajax({
 		url: common.getPath() + "/formManage/upadteFormContent",
 		method: "post",
+		beforSend:function(){
+			layer.load(1);
+		},
 		traditional: true, //传递数组给后台
 		contentType: "application/json",
 		data:JSON.stringify(json),
@@ -1021,6 +1035,7 @@ function updateFormContent(json) {
 			} else {
 				layer.alert("修改失败");
 			}
+			layer.closeAll("loading");
 		}
 	});
 }
