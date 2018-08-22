@@ -7,6 +7,14 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Insert title here</title>
 		<%@include file="publicFormDesHead.jsp" %>
+		<style type="text/css">
+			.table-offset{
+				margin-left:20px;
+			}
+			.data-table-set{
+				margin-left:15px;
+			}
+		</style>
 	</head>
 
 	<body style="min-height: 660px; cursor: auto; zoom:0.9;
@@ -17,7 +25,6 @@
 				<div class="container-fluid">
 					<div class="nav-collapse collapse">
 						<ul class="nav" id="menu-layoutit">
-							<!-- <li class="divider-vertical"></li> -->
 							<li>
 								<div class="btn-group" data-toggle="buttons-radio">
 									<button type="button" id="edit" class="btn btn-primary active">
@@ -485,10 +492,10 @@
 												<table class="table table-bordered" table-label="数据表格">
 													<thead>
 														<tr>
-															<th col-type="text">1</th>
-															<th col-type="text">2</th>
-															<th col-type="text">3</th>
-															<th col-type="text">4</th>
+															<th col-type="text" col-regx="" col-regx-cue="">1</th>
+															<th col-type="text" col-regx="" col-regx-cue="">2</th>
+															<th col-type="text" col-regx="" col-regx-cue="">3</th>
+															<th col-type="text" col-regx="" col-regx-cue="">4</th>
 														</tr>
 													</thead>
 												</table>
@@ -1778,7 +1785,7 @@
 				</div>
 			</div>
 			<!-- 设置数据表格的属性 -->
-			<div class="modal hide fade" role="dialog" id="dataTableModal">
+			<div class="modal hide fade" role="dialog" id="dataTableModal" style="width: 1000px;left: 33%;">
 				<div class="modal-header">
 					<a class="close" data-dismiss="modal">×</a>
 					<h3>设置数据表格的属性</h3>
@@ -1791,45 +1798,42 @@
 
 					<form>
 						<div class="form-group">
-							<label class="col-xs-2 col-sm-offset-2 control-label">标签</label>
-							<div class="col-xs-7">
+							<label class="col-xs-1 col-sm-offset-1 control-label">标签</label>
+							<div class="col-xs-4">
 								<input type="text" class="form-control" id="data-table-label" value="text" placeholder="请输入组件标签">
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-xs-2 col-sm-offset-2 control-label">
+							<label class="col-xs-1 control-label">
 								ID
 								<span style="color:red;float:left;">*</span>
 							</label>
-							<div class="col-xs-7">
+							<div class="col-xs-4">
 								<input type="text" class="form-control" id="data-table-id" placeholder="请输入组件ID" readonly>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-xs-2 col-sm-offset-2 control-label">
+							<label class="col-xs-1 col-sm-offset-1 control-label">
 								name
 								<span style="color:red;float:left;">*</span>
 							</label>
-							<div class="col-xs-7">
+							<div class="col-xs-4">
 								<input type="text" class="form-control" id="data-table-name" placeholder="请输入组件name">
+							</div>
+							
+							<label class="col-xs-1 control-label">
+								表格列数
+								<span style="color:red;float:left;">*</span>
+							</label>
+							<div class="col-xs-4">
+								<input type="text" class="form-control col" id="data-table-number" placeholder="请输入表格列数">
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-sm-offset-4 col-xs-7">
+							<div class="col-sm-offset-1 col-xs-4">
 								<div class="checkbox">
 									<label>
 										<input type="checkbox" id="data-table-isleading">是否可以导入数据
 									</label>
 								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-xs-2 col-sm-offset-2 control-label">
-								表格列数
-								<span style="color:red;float:left;">*</span>
-							</label>
-							<div class="col-xs-7">
-								<input type="text" class="form-control col" id="data-table-number" placeholder="请输入表格列数">
 							</div>
 						</div>
 						<div class="form-group col-xs-12 data-table-set">
@@ -1856,7 +1860,7 @@
 									<option value="date">日期文本框</option>
 								</select>
 							</div>
-							<label class="col-xs-1 col-sm-offset-1 control-label">
+							<!-- <label class="col-xs-1 col-sm-offset-1 control-label">
 								移动端显示
 							</label>
 							<div class="col-xs-2">
@@ -1864,7 +1868,7 @@
 									<option value="true" selected>是</option>
 									<option value="false">否</option>
 								</select>
-							</div>
+							</div> -->
 						</div>
 					</form>
 				</div>

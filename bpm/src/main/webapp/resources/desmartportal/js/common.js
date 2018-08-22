@@ -270,7 +270,8 @@ var common = {
 						if(name==null || name==""){
 							break;
 						}
-						if($("[name='" + name + "']").val()==null || $("[name='" + name + "']").val()==""){
+						if($("[name='" + name + "']").val()==null || $("[name='" + name + "']").val()=="" 
+								|| $("[name='" + name + "']").val()=="请选择"){
 							break;
 						}
 						var value = $("[name='" + name + "']")
@@ -437,13 +438,21 @@ var common = {
 						var tdName = $(this).data("label");
 						if(tdName!="" && tdName!=null && $(this).find("input").length>0){
 							var tdValue = $(this).find("input").val();
+							var tdSelVal = $(this).find("select").val();
 							if(tdValue!="undefined"){
-								var tdInputType = $(this).find("input").attr("type");
+								var tabInputObj = $(this).find("input");
+								var tdInputType = tabInputObj.attr("type");
 								if(tdInputType=="number" || tdInputType=="tel"){
 									if(tdValue=="" || tdValue==null || isNaN(tdValue)){
 										tableJson += "\""+tdName+"\":\"\",";
 									}else{
 										tableJson += "\""+tdName+"\":"+tdValue+",";
+									}
+								}else if (tabInputObj.prop("class") == "layui-input layui-unselect" 
+									|| tabInputObj.prop("class") == "layui-input layui-unselect layui-disabled") {
+									if(tdSelVal!=null && tdSelVal!="" && tdSelVal!="请选择"){
+										tableJson += "\"" + tdName
+											+ "\":\"" + tdSelVal + "\"}";
 									}
 								}else{
 									if(tdValue!=null && tdValue!=""){
@@ -526,6 +535,8 @@ var common = {
 						if(index!=tdArr.length-1){
 							var key = $(this).data("label");
 							$(this).find("input").val(valueObj[key]);
+							console.log(valueObj[key]);
+							$(this).find("select").val(valueObj[key]);
 						}
 					});
 				}
@@ -749,9 +760,6 @@ var common = {
 			return;
 		}
 		if(tagName=="SELECT"){
-			if($("[name='"+name+"']").attr("is-multi")=="true"){
-				
-			}
 			$("[name='"+name+"']").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").attr("disabled","true");
 			$("[name='"+name+"']").next().find("input").removeAttr("placeholder");
@@ -840,10 +848,19 @@ var common = {
 					var fieldCodeName = "";
 					tdArr.each(function(){
 						if($(this).find("input").length != 0){
-							$(this).find("input").attr("disabled","true");
-							var type = $(this).find("input").get(0).getAttribute("type");
-							if(type="date"){
-								$(this).find("input").get(0).setAttribute("type","text");
+							var tabInputObj = $(this).find("input");
+							if (tabInputObj.prop("class") == "layui-input layui-unselect" 
+								|| tabInputObj.prop("class") == "layui-input layui-unselect layui-disabled"){
+								tabInputObj.parent().parent().prev().attr("disabled","true");
+								tabInputObj.attr("disabled","true");
+								tabInputObj.removeAttr("placeholder");
+								tabInputObj.parent().find(".layui-edge").css("display","none");
+							}else{
+								tabInputObj.attr("disabled","true");
+								var type = tabInputObj.get(0).getAttribute("type");
+								if(type="date"){
+									tabInputObj.get(0).setAttribute("type","text");
+								}
 							}
 						}else{
 							$(this).remove();
