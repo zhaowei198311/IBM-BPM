@@ -778,8 +778,8 @@ public class DhActivityConfServiceImpl implements DhActivityConfService {
     private ServerResponse updateExteriorNotifyInfo(DhActivityConf dhActivityConf) {
     	String activityId = dhActivityConf.getActivityId();
     	List<DhActivityAssign> assignList = Lists.newArrayList();
-    	dhActivityConf.setActcExteriorNotifyType(DhActivityConfAssignType.BY_EMAIL.getCode());
     	if(dhActivityConf.getExteriorNotifyMailList()!=null&&dhActivityConf.getExteriorNotifyMailList().size()>0) {
+    		dhActivityConf.setActcExteriorNotifyType(DhActivityConfAssignType.BY_EMAIL.getCode());
     		List<String> emailList = dhActivityConf.getExteriorNotifyMailList();
     		for (String emailAddress : emailList) {
 				DhActivityAssign assign = new DhActivityAssign();
