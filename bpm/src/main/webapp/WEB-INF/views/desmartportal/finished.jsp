@@ -291,35 +291,35 @@
 				if(meta.taskStatus==12){
 					status = "待处理";
 				}
-				trs += '<tr ondblclick=openFinishedDetail("'+meta.taskUid+'")>' 
-					+ '<td>' + sortNum + '</td>'
-					+ '<td>' 
+				trs += '<tr ondblclick=openApproval("'+meta.taskUid+'")>' 
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>' + sortNum + '</td>'
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>' 
 	                + meta.dhProcessInstance.proName 
 					+ '</td>'
 					+'<td><span style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'+insTitle+'</span></td>'
-					+ '<td>'
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'
 					+ meta.taskTitle 
 					+ '</td>' 
-					+ '<td>' 
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>' 
 					+ meta.taskHandler
 	                + '</td>' 
-					+ '<td>';
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>';
 				if(meta.taskAgentUserName!=null && meta.taskAgentUserName!=""){
 		           	trs += meta.taskAgentUserName;
 		        }
-				trs += '</td><td>';
+				trs += '</td><td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>';
 				if(meta.taskPreviousUsrUsername!=null && meta.taskPreviousUsrUsername!=""){
 					trs += meta.taskPreviousUsrUsername;
 				}
-				trs += '</td><td>';
+				trs += '</td><td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>';
 				if(meta.sysUser.userName!=null && meta.sysUser.userName!=""){
 					trs += meta.sysUser.userName;
 				}
 				trs += '</td>'
-					+ '<td>'
+					+ '<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'
 					+ InitDate
 					+'</td>' 
-					+'<td>'
+					+'<td style="cursor:pointer;" onclick=openFinishedDetail("'+meta.taskUid+'")>'
 					+finishDate
 					+'</td>'
 					+ '<td>'
