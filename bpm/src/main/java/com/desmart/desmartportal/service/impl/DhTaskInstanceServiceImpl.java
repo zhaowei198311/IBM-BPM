@@ -1229,7 +1229,7 @@ public class DhTaskInstanceServiceImpl implements DhTaskInstanceService {
 			Integer pageNum, Integer pageSize, String isAgent) {
 		PageHelper.startPage(pageNum, pageSize);
 		PageHelper.orderBy("TASK_FINISH_DATE DESC");
-		dhTaskInstance.setTaskStatus("'32'");
+		dhTaskInstance.setTaskStatus("'32','42'");
 		List<DhTaskInstance> resultList = dhTaskInstanceMapper.selectPageTaskByClosedByCondition(startTime, endTime, dhTaskInstance, isAgent);
 		for(DhTaskInstance resultTaskInstance:resultList) {
 			String taskHandler = sysUserMapper.queryByPrimaryKey(resultTaskInstance.getUsrUid()).getUserName();
