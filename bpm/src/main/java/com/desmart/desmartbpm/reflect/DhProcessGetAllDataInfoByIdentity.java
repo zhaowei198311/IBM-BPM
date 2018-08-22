@@ -46,7 +46,7 @@ public class DhProcessGetAllDataInfoByIdentity extends DhOneTimeJavaClassTrigger
 					// 根据设置的标识符和流程实例编号，获得需要的流程实例主键
 					String targetInsUid = dataExchangeMapper.getInsUidByInsIdAndIdentity(insId, identity);
 					if (targetInsUid == null) {
-						throw new PlatformException("获取数据失败");
+						throw new PlatformException("获取数据失败，通过标识符找目标实例失败：identity:"+identity+",insId:"+insId);
 					}
 					for (int j = 0; j < exchangeArr.size(); j++) {
 						String isOverrides = exchangeArr.getJSONObject(j).getString("isOverrides");
