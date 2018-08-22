@@ -297,14 +297,14 @@
             //agentOdate.getFullYear()+"-"+(agentOdate.getMonth()+1)+"-"+agentOdate.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds();
             /* var agentOdate2 = new Date(meta.dhProcessInstance.insCreateDate);
             var taskDueDate = agentOdate2.getFullYear()+"-"+(agentOdate2.getMonth()+1)+"-"+agentOdate2.getDate()+"   "+agentOdate.getHours()+":"+agentOdate.getMinutes()+":"+agentOdate.getSeconds(); */
-            trs += '<tr ondblclick=openApproval("' + meta.taskUid + '")>' +
+            trs += '<tr style= "cursor:pointer;" onclick="openApproval(\'' + meta.taskUid + '\');">' +
                 '<td>' +
                 sortNum +
                 '</td>'+
                 '<td>' +
                 meta.dhProcessInstance.proName +
                 '</td>'+
-                '<td style= "cursor:pointer;" onclick="openApproval(\'' + meta.taskUid + '\');">' +
+                '<td>' +
                 meta.dhProcessInstance.insTitle +
                 '</td>' +
                 '<td>' +
