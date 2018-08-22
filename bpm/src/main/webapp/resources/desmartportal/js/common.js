@@ -1049,8 +1049,8 @@ var common = {
 			
 			if(value=="" || value==null){
 				var eleId = $("[name='"+name+"']").prop("id");
-				//var Y = $('#'+eleId).offset().top-170;
-				//$("body,html").animate({scrollTop: Y}, 500);
+				var Y = $('#'+eleId).offset().top-210;
+				$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请填写必填项 "+text, {icon: 2});
 				}else{
@@ -1062,8 +1062,8 @@ var common = {
 			}
 			if(value.indexOf("请选择")!=-1){
 				var eleId = $("[name='"+name+"']").prop("id");
-				//var Y = $('#'+eleId).offset().top-170;
-				//$("body,html").animate({scrollTop: Y}, 500);
+				var Y = $('#'+eleId).offset().top-210;
+				$("body,html").animate({scrollTop: Y}, 500);
 				if(text!=null && text!=""){
 					layer.msg("请选择必填项 "+text, {icon: 2});
 				}else{
@@ -1085,7 +1085,8 @@ var common = {
 				reg = new RegExp($(this).attr("regx").trim(), "g");
 				if (!reg.test($(this).val())) {
 					var regxCue = $(this).attr("regx_cue");
-					console.log($(this).parent().html());
+					var Y = $(this).offset().top-210;
+					$("body,html").animate({scrollTop: Y}, 500);
 					$(this).focus();
 					if (regxCue != null && regxCue != "") {
 						layer.msg(regxCue, {
