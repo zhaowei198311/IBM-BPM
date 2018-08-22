@@ -34,7 +34,7 @@ public class GetDataFromRelationProcessDemo implements DhJavaClassTriggerTemplat
         // 根据设置的标识符和流程实例编号，获得需要的流程实例主键
         String targetInsUid = dataExchangeMapper.getInsUidByInsIdAndIdentity(insId, identity);
         if (targetInsUid == null) {
-            throw new PlatformException("获取数据失败");
+        	throw new PlatformException("获取数据失败，通过标识符找目标实例失败：identity:"+identity+",insId:"+insId);
         }
         // 得到目标实例并获得数据
         DhProcessInstance targetProcessInstance = dhProcessInstanceService.getByInsUid(targetInsUid);
