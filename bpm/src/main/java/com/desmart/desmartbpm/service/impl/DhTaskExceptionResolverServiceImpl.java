@@ -1,5 +1,16 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.desmart.common.constant.EntityIdPrefix;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
@@ -12,16 +23,6 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DhTaskExceptionResolverServiceImpl implements DhTaskExceptionResolverService {
@@ -72,19 +73,21 @@ public class DhTaskExceptionResolverServiceImpl implements DhTaskExceptionResolv
                 // 重试提交
                 retryResponse = dhTaskInstanceService.retryCommitTask(dhTaskException);
                 break;
+            case DhTaskException.STATUS_PUSH_TO_MQ_EXCEPTION:
+                // 重试推送
+                retryResponse = dhTaskInstanceService.retryPushToMQ(dhTaskException);
+                break;
             case DhTaskException.STATUS_CHECK_EXCEPTION:
                 if (dhTaskInstance.getSynNumber() == -1) {
-                // 再次尝试执行
+                    // 再次尝试执行
 
-            } else if (dhTaskInstance.getSynNumber() == -2) {
-                // 再次尝试执行
-                retryResponse = autoCommitSystemTaskService.retrySubmitSystemTask(dhTaskException);
-                break;
-            } else if (dhTaskInstance.getSynNumber() == -3) {
-                // 再次验证时间，并执行
-
-            }
-
+                } else if (dhTaskInstance.getSynNumber() == -2) {
+                    // 再次尝试执行
+                    retryResponse = autoCommitSystemTaskService.retrySubmitSystemTask(dhTaskException);
+                } else if (dhTaskInstance.getSynNumber() == -3) {
+                    // 再次验证时间，并执行
+                    retryResponse = autoCommitSystemTaskService.retrySubmitSystemDelayTask(dhTaskException);
+                }
                 break;
             default:
                 return ServerResponse.createByErrorMessage("异常类型非法");

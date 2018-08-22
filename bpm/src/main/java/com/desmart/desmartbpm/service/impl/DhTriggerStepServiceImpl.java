@@ -1,8 +1,21 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.Date;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.desmart.common.constant.ServerResponse;
+import com.desmart.common.exception.DhTaskCommitException;
 import com.desmart.desmartbpm.dao.DhStepMapper;
 import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
 import com.desmart.desmartbpm.entity.DataForSubmitTask;
@@ -16,17 +29,6 @@ import com.desmart.desmartportal.dao.DhTaskInstanceMapper;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Date;
-import java.util.Map;
 
 @Service
 public class DhTriggerStepServiceImpl implements DhTriggerStepService {
@@ -102,27 +104,17 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
     @Override
     public ServerResponse retryErrorStep(DhTaskException dhTaskException) {
         DhTaskException newTaskException = null;
-        String dataForSubmitTaskStr = dhTaskException.getDataForSubmitTask();
-        if (StringUtils.isBlank(dataForSubmitTaskStr)) {
+
+        DataForSubmitTask dataForSubmitTask = dhTaskException.getDataForSubmitTaskJavaObject();
+        if (dataForSubmitTask == null) {
             newTaskException = dhTaskException;
-            newTaskException.setErrorMessage("缺少用来提交的JSON数据");
-            return ServerResponse.createByErrorCodeAndData(1, "缺少用来提交的JSON数据", newTaskException);
-        }
-        // 初始化
-        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-        DataForSubmitTask dataForSubmitTask = null;
-        try {
-            dataForSubmitTask = JSONObject.parseObject(dataForSubmitTaskStr, new TypeReference<DataForSubmitTask>() {});
-        } catch (Exception e) {
-            logger.error("解析消息出错：消息体" + dataForSubmitTaskStr, e);
-            newTaskException = dhTaskException;
-            newTaskException.setErrorMessage("解析消息出错");
-            return ServerResponse.createByErrorCodeAndData(1, "解析消息出错", newTaskException);
+            newTaskException.setErrorMessage("解析用来提交任务的信息出错");
+            return ServerResponse.createByErrorCodeAndData(1, newTaskException.getErrorMessage(), newTaskException);
         }
 
         DhTaskInstance currTaskInstance = dhTaskException.getDhTaskInstance();
         DhProcessInstance currentProcessInstance = dataForSubmitTask.getCurrentProcessInstance();
-
+        WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
         // 调用触发器方法, 如果是触发器步骤执行，遇到表单步骤略过
         boolean isFirstStepOfRetry = true; // 记录是记录开始的步骤
         // 从错误步骤开始
@@ -138,12 +130,13 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
                 } else {
                     // 调用触发器失败
                     if (isCommonError(invokeTriggerResponse)) {
-                        newTaskException = DhTaskException.createStepTaskException(currTaskInstance, invokeStep.getStepUid(), dataForSubmitTaskStr,
-                                invokeTriggerResponse.getMsg(), null);
+                        newTaskException = DhTaskException.createStepTaskException(currTaskInstance, invokeStep.getStepUid(),
+                                dhTaskException.getDataForSubmitTask(), invokeTriggerResponse.getMsg(), null);
                     } else if (isInterfaceError(invokeTriggerResponse)) {
                         // 如果状态码是2，说明是调用接口错误，记录调用接口的日志主键
-                        newTaskException = DhTaskException.createStepTaskException(currTaskInstance, invokeStep.getStepUid(), dataForSubmitTaskStr,
-                                invokeTriggerResponse.getMsg(), invokeTriggerResponse.getData().get("dilUid"));
+                        newTaskException = DhTaskException.createStepTaskException(currTaskInstance, invokeStep.getStepUid(),
+                                dhTaskException.getDataForSubmitTask(), invokeTriggerResponse.getMsg(),
+                                invokeTriggerResponse.getData().get("dilUid"));
                     }
                     return ServerResponse.createByErrorCodeAndData(1, invokeTriggerResponse.getMsg(), newTaskException); // 终止继续调用
                 }
@@ -157,13 +150,11 @@ public class DhTriggerStepServiceImpl implements DhTriggerStepService {
         dataForSubmitTask.setNextStep(null);
 
         try {
-            dhTaskInstanceService.commitTask(dataForSubmitTask);
-            // 完成任务成功: 1. 修改异常表中状态  2. 修改任务实例状态 3. 修改流程实例状态
-            return ServerResponse.createBySuccess();
-        } catch (Exception e) {
+            return dhTaskInstanceService.commitTask(dataForSubmitTask);
+        } catch (DhTaskCommitException e) {
             logger.error("步骤执行完成后提交出错", e);
             return ServerResponse.createByErrorCodeAndData(1, e.getMessage(),
-                    DhTaskException.createCommitTaskrException(currTaskInstance, dataForSubmitTaskStr, e.getMessage()));
+                    DhTaskException.createCommitTaskrException(currTaskInstance, dhTaskException.getDataForSubmitTask(), e.getMessage()));
         }
     }
 

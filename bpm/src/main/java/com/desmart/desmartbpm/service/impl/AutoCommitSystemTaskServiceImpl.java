@@ -1,13 +1,32 @@
 package com.desmart.desmartbpm.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.common.exception.DhTaskCheckException;
+import com.desmart.common.exception.DhTaskCommitException;
+import com.desmart.common.exception.DhTaskPushToMQException;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.common.util.DateTimeUtil;
 import com.desmart.common.util.FormDataUtil;
 import com.desmart.desmartbpm.dao.DhTaskExceptionMapper;
-import com.desmart.desmartbpm.entity.*;
+import com.desmart.desmartbpm.entity.BpmActivityMeta;
+import com.desmart.desmartbpm.entity.DataForSubmitTask;
+import com.desmart.desmartbpm.entity.DhActivityConf;
+import com.desmart.desmartbpm.entity.DhTaskException;
 import com.desmart.desmartbpm.mongo.CommonMongoDao;
 import com.desmart.desmartbpm.service.AutoCommitSystemTaskService;
 import com.desmart.desmartbpm.service.BpmActivityMetaService;
@@ -18,19 +37,6 @@ import com.desmart.desmartportal.entity.DhTaskInstance;
 import com.desmart.desmartportal.service.DhTaskInstanceService;
 import com.desmart.desmartsystem.entity.BpmGlobalConfig;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskService {
@@ -80,7 +86,7 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     private ServerResponse submitSystemTaskFirstTime(DhTaskInstance dhTaskInstance, BpmGlobalConfig bpmGlobalConfig) {
         DataForSubmitTask dataForSubmitTask = null;
         try {
-            dataForSubmitTask = dhTaskInstanceService.perpareDataForSubmitSystemTask(dhTaskInstance, bpmGlobalConfig);
+            dataForSubmitTask = dhTaskInstanceService.prepareDataForSubmitSystemTask(dhTaskInstance, bpmGlobalConfig);
             return dhTaskInstanceService.finishTaskFirstTime(dataForSubmitTask);
         } catch (DhTaskCheckException checkEx) {
             dhTaskExceptionMapper.save(DhTaskException.createCheckTaskException(dhTaskInstance, checkEx.getMessage()));
@@ -96,14 +102,44 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
     public ServerResponse retrySubmitSystemTask(DhTaskException dhTaskException) {
         DataForSubmitTask dataForSubmitTask = null;
         try {
-            dataForSubmitTask = dhTaskInstanceService.perpareDataForSubmitSystemTask(dhTaskException.getDhTaskInstance(),
+            dataForSubmitTask = dhTaskInstanceService.prepareDataForSubmitSystemTask(dhTaskException.getDhTaskInstance(),
                     bpmGlobalConfigService.getFirstActConfig());
-        } catch (Exception e) {
-            logger.error("重试系统任务失败", e);
-            return ServerResponse.createByErrorCodeAndData(1, e.getMessage(),
-                    DhTaskException.createCheckTaskException(dhTaskException.getDhTaskInstance(), e.getMessage()));
+            return dhTaskInstanceService.finishTask(dataForSubmitTask);
+        } catch (DhTaskCheckException ckEx) {
+            logger.error(ckEx.getMessage(), ckEx);
+            return ServerResponse.createByErrorCodeAndData(1, ckEx.getMessage(),
+                    DhTaskException.createCheckTaskException(dhTaskException.getDhTaskInstance(), ckEx.getMessage()));
+        } catch (DhTaskPushToMQException pEx) {
+            logger.error(pEx.getMessage(), pEx);
+            return ServerResponse.createByErrorCodeAndData(1, pEx.getMessage(),
+                    DhTaskException.createPushToMQTaskException(dhTaskException.getDhTaskInstance(), pEx.getMessage(),
+                            pEx.getDataForSubmitTaskStr()));
+        } catch (DhTaskCommitException coEx) {
+            logger.error(coEx.getMessage(), coEx);
+            return ServerResponse.createByErrorCodeAndData(1, coEx.getMessage(),
+                    DhTaskException.createCommitTaskrException(dhTaskException.getDhTaskInstance(), coEx.getMessage(),
+                            coEx.getDataForSubmitTaskStr()));
         }
-        return dhTaskInstanceService.finishTask(dataForSubmitTask);
+
+    }
+
+    @Override
+    public ServerResponse retrySubmitSystemDelayTask(DhTaskException dhTaskException) {
+        final DhTaskInstance dhTaskInstance = dhTaskException.getDhTaskInstance();
+        ServerResponse<Boolean> checkResponse = this.checkSystemDelayTask(dhTaskException.getDhTaskInstance(),
+                bpmGlobalConfigService.getFirstActConfig());
+
+        if (checkResponse.isSuccess()) {
+            if (checkResponse.getData()) {
+                return retrySubmitSystemTask(dhTaskException);
+            } else { // 没到时间，不执行，返回成功
+                return checkResponse;
+            }
+        } else {
+            return ServerResponse.createByErrorCodeAndData(1, checkResponse.getMsg(),
+                    DhTaskException.createCheckTaskException(dhTaskInstance, checkResponse.getMsg()));
+        }
+
     }
 
 
@@ -136,6 +172,9 @@ public class AutoCommitSystemTaskServiceImpl implements AutoCommitSystemTaskServ
 
         logger.info("处理系统延时任务完成");
     }
+
+
+
 
 
     /**
