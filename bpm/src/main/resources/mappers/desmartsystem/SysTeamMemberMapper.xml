@@ -60,7 +60,7 @@
   		     </foreach>
   		</if>
 		<if test="companyCode!=null">
-			and (company_code = #{companyCode} or company_code = '1000' )
+			and company_code = #{companyCode}
 		</if>
 		</where>
 		) team  
