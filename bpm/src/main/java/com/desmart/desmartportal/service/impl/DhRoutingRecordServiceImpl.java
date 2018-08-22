@@ -235,35 +235,32 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 		List<BpmActivityMeta> bpmActivityMetaList = new ArrayList<BpmActivityMeta>();// 保存当前流转到的所有环节
 		List<DhTaskInstance> currentDhTaskHandlers = new ArrayList<DhTaskInstance>();// 保存当前要处理的任务相关的信息
 		Map<String, DatDhRoutingRecord> currentTaskMap = new HashMap<>();//保存组装界面展示的数据
-		// 从流转记录中找到最后条流转信息记录
-		DhRoutingRecord lastDhRoutingRecord = getLastRoutingRecordWithActivityTo(dhRoutingRecords);
-		if (lastDhRoutingRecord != null) {
-			String activityToStr = lastDhRoutingRecord.getActivityTo();
-			String[] activityTo = activityToStr.split(",");
-			List<String> activityIdList = Arrays.asList(activityTo);
-			if (activityIdList != null && activityIdList.size() > 0) {
-				//根据最后一条流转信息，取得当前活动的流程环节集合
-				bpmActivityMetaList = bpmActivityMetaMapper.queryPrimaryKeyByBatch(activityIdList);
-
+		
 				DhTaskInstance dhTaskInstanceSelect = new DhTaskInstance();
 				dhTaskInstanceSelect.setInsUid(insUid);
 
 				// 获得当前流程实例的所有任务（包含了处理人、代理人的uid和姓名岗位）
 				List<DhTaskInstance> dhTaskInstances = dhTaskInstanceMapper.selectByCondition(dhTaskInstanceSelect);
-
+				//保存当前活动的流程环节集合
+				List<String> activityIdList = new ArrayList<>();
 				// 过滤出当前的任务
 				for (DhTaskInstance taskInstance : dhTaskInstances) {
-					String taskActivityId = taskInstance.getTaskActivityId();
+					
 					String taskStatus = taskInstance.getTaskStatus();
 					String taskType = taskInstance.getTaskType();
 					String matchedTaskType = DhTaskInstance.TYPE_NORMAL + ";" + DhTaskInstance.TYPE_SIMPLE_LOOP + ";"
 							+ DhTaskInstance.TYPE_MULT_IINSTANCE_LOOP;
-					if (activityToStr.contains(taskActivityId) && matchedTaskType.contains(taskType)
+					if (DhTaskInstance.STATUS_RECEIVED.equals(taskInstance.getTaskStatus()) && matchedTaskType.contains(taskType)
 							&& (taskStatus.equals(DhTaskInstance.STATUS_RECEIVED))) {
 						currentDhTaskHandlers.add(taskInstance);
+						//根据当前的任务取得当前活动的流程环节Id
+						activityIdList.add(taskInstance.getTaskActivityId());
 					}
 				}
-				
+				//取得当前活动的流程环节集合
+				if (activityIdList != null && activityIdList.size() > 0) {
+					bpmActivityMetaList = bpmActivityMetaMapper.queryPrimaryKeyByBatch(activityIdList);
+				}
 				//组装流转记录数据开始
 				for (DhRoutingRecord oldRoutingRecord : dhRoutingRecords) {
 					// 判读流转信息中的操作人id是否和代理人id相同.
@@ -285,8 +282,8 @@ public class DhRoutingRecordServiceImpl implements DhRoutingRecordService {
 				//按照TASK_ACTIVITY_ID分组当前任务的集合和环节
 				 currentTaskMap = 
 						groupListToMapByTaskActivityId(currentDhTaskHandlers,bpmActivityMetaList);
-			}
-		}
+			//}
+		//}
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("bpmActivityMetaList", bpmActivityMetaList);
