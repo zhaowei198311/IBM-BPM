@@ -287,7 +287,9 @@ public class SendEmailServiceImpl implements SendEmailService {
 				sysEmailUtilBean.setBpmformsHost(bpmformsHost);
 				sysEmailUtilBean.setNotifyTemplateUid(dhActivityConf.getActcInteriorNotifyTemplate());
 				
-				this.dhSendEmail(sysEmailUtilBean);
+				if(!this.dhSendEmail(sysEmailUtilBean).isSuccess()) {
+					return this.dhSendEmail(sysEmailUtilBean);
+				};
 			}
 			if(dhActivityConf.getExteriorNotifyMailList()!=null&&dhActivityConf.getExteriorNotifyMailList().size()>0) {
 				SysEmailUtilBean sysEmailUtilBean = new SysEmailUtilBean();
@@ -298,7 +300,9 @@ public class SendEmailServiceImpl implements SendEmailService {
 				sysEmailUtilBean.setBpmformsHost(bpmformsHost);
 				sysEmailUtilBean.setNotifyTemplateUid(dhActivityConf.getActcExteriorNotifyTemplate());
 				
-				this.dhSendEmail(sysEmailUtilBean);
+				if(!this.dhSendEmail(sysEmailUtilBean).isSuccess()) {
+					return this.dhSendEmail(sysEmailUtilBean);
+				};
 			}
 			return ServerResponse.createBySuccessMessage("邮件通知发送成功");
 		}else {

@@ -157,7 +157,7 @@ public class SendMail {
             transport.sendMessage(message, message
                     .getRecipients(Message.RecipientType.TO));
             transport.close();
-            logger.error("邮件发送成功");
+            logger.info("邮件发送成功");
             return true;
         } catch (Exception e) {
             logger.warn("邮件发送失败", e);
