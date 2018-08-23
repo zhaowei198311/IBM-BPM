@@ -50,6 +50,7 @@ public class DhInterfaceExecuteController extends  BaseController{
 			if (interfaceScheduleResponse.isSuccess()) {
 				j.setSuccess(true);
 				j.setMsg("接口调用成功");
+				j.setObj(interfaceScheduleResponse.getData());
 			} else {
 				j.setSuccess(false);
 				j.setMsg(interfaceScheduleResponse.getMsg());
@@ -62,5 +63,32 @@ public class DhInterfaceExecuteController extends  BaseController{
 		}
 		return 	j;
 	}
+	
+	
+	@RequestMapping(value = "/bySAPCodeQuery")
+	@ResponseBody
+	public Json bySAPCodeQuery(@RequestBody JSONObject jsonObject) {
+		Json j = new Json();
+		jsonObject.put("inputParameter", jsonObject);
+		jsonObject.put("intUid","int_meta:6dfb068f-cf0a-4296-b235-e56f06a4aa27");
+		try {
+			ServerResponse<Map<String, String>> interfaceScheduleResponse = dhInterfaceExecuteService.interfaceSchedule(jsonObject);
+			if (interfaceScheduleResponse.isSuccess()) {
+				j.setSuccess(true);
+				j.setMsg("接口调用成功");
+				j.setObj(interfaceScheduleResponse.getData());
+			} else {
+				j.setSuccess(false);
+				j.setMsg(interfaceScheduleResponse.getMsg());
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			j.setSuccess(false);
+			e.printStackTrace();
+			j.setMsg("接口调用失败");
+		}
+		return j;
+	}
+	
 	
 }
