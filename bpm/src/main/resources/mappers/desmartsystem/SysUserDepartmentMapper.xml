@@ -129,4 +129,13 @@
 	  		update SYS_USER_DEPARTMENT set DEPART_UID=#{departUid}   where DEPART_UID=#{departUid} and USER_UID = #{userUid}
 	  </update>
 
+	  <select id="listByUserUids" resultType="com.desmart.desmartsystem.entity.SysUserDepartment">
+	      select <include refid="Base_Column_List"/>
+          from SYS_USER_DEPARTMENT_VW ud
+		  where
+		  <foreach collection="collection" item="userUid" separator="or">
+			  ud.user_uid = #{userUid}
+		  </foreach>
+	  </select>
+
 </mapper>

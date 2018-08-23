@@ -1,6 +1,9 @@
 package com.desmart.desmartsystem.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述人员外挂部门
@@ -22,7 +25,8 @@ public class SysUserDepartment implements Serializable {
 	private String isDelete;
 	private String companyCode;
 	private String companyName;
-	
+
+
 	//是否可以删除
 	private String canDelete;
 	
@@ -143,5 +147,6 @@ public class SysUserDepartment implements Serializable {
 	public void setCanDelete(String canDelete) {
 		this.canDelete = canDelete;
 	}
-	
+
+
 }

@@ -2,9 +2,11 @@ package com.desmart.desmartsystem.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,11 +19,13 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartsystem.dao.SysDepartmentMapper;
+import com.desmart.desmartsystem.dao.SysRoleMapper;
 import com.desmart.desmartsystem.dao.SysRoleUserMapper;
 import com.desmart.desmartsystem.dao.SysTeamMemberMapper;
 import com.desmart.desmartsystem.dao.SysUserDepartmentMapper;
 import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysDepartment;
+import com.desmart.desmartsystem.entity.SysRole;
 import com.desmart.desmartsystem.entity.SysRoleUser;
 import com.desmart.desmartsystem.entity.SysTeamMember;
 import com.desmart.desmartsystem.entity.SysUser;
@@ -50,6 +54,8 @@ public class SysUserServiceImpl implements SysUserService {
 	private SysUserDepartmentMapper sysUserDepartmentMapper;
 	@Autowired
 	private SysDepartmentMapper sysDepartmentMapper;
+	@Autowired
+    private SysRoleMapper sysRoleMapper;
 
 	
 	@Override
@@ -124,69 +130,219 @@ public class SysUserServiceImpl implements SysUserService {
 		if (CollectionUtils.isEmpty(userUids)) {
 			return new ArrayList<>();
 		}
-		Set<String> userUidSet = new HashSet<>();
-		userUidSet.addAll(userUids);
-		return sysUserMapper.listByPrimaryKeyList(userUidSet);
+		if (userUids instanceof Set) {
+            return sysUserMapper.listByPrimaryKeyList(userUids);
+        } else {
+            Set<String> userUidSet = new HashSet<>();
+            userUidSet.addAll(userUids);
+            return sysUserMapper.listByPrimaryKeyList(userUids);
+        }
 	}
-
 
 	@Override
 	public List<SysUser> searchByRoleUidList(List<String> roleUidList) {
+	    List<SysUser> result = new ArrayList<>();
 		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
+			return result;
 		}
-		SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
-		//根据角色id集合查询角色用户映射关系数据
-		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
-		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        List<SysRoleUser> sysRoleUsers = sysRoleUserMapper.listByRoleUidsWithStation(roleUidList);
+		List<String> roleUidsNeedSearch = null; // 需要从SYS_ROLE中查STATION的数据
+        if (sysRoleUsers.isEmpty()) {
+            roleUidsNeedSearch = roleUidList;
+        } else {
+            roleUidsNeedSearch = roleUidsNeedSearch(roleUidList, sysRoleUsers);
+        }
+        Set<String> userUidSet = extractUserUidsFromSysRoleUsers(sysRoleUsers);
+        Set<String> stationSet = extractStationsFromSysRoleUsers(sysRoleUsers);
+        if (!roleUidsNeedSearch.isEmpty()) {
+            List<SysRole> sysRoles = sysRoleMapper.listByPrimaryKeyList(roleUidsNeedSearch);
+            stationSet.addAll(extractStationsFromSysRoles(sysRoles));
+        }
+
+        if (CollectionUtils.isEmpty(userUidSet) && CollectionUtils.isEmpty(stationSet)) {
+            return result;
+        }
+        result = sysUserMapper.listByUserUidsOrStations(userUidSet, stationSet);
+        return result;
 	}
+
+	private List<String> roleUidsNeedSearch(List<String> roleUidList, List<SysRoleUser> sysRoleUsers) {
+	    List<String> copyedRoleUids = new ArrayList<>();
+        for (String roleUid : roleUidList) {
+            copyedRoleUids.add(roleUid);
+        }
+        Set<String> containedRoleUids = new HashSet<>();
+        for (SysRoleUser sysRoleUser : sysRoleUsers) {
+            containedRoleUids.add(sysRoleUser.getRoleUid());
+        }
+        Iterator<String> iterator = copyedRoleUids.iterator();
+        while (iterator.hasNext()) {
+            String roleUid = iterator.next();
+            if (containedRoleUids.contains(roleUid)) {
+                iterator.remove();
+            }
+        }
+        return copyedRoleUids;
+    }
+
+    private Set<String> extractUserUidsFromSysRoleUsers(List<SysRoleUser> sysRoleUsers) {
+        Set<String> result = new HashSet<>();
+        for (SysRoleUser sysRoleUser : sysRoleUsers) {
+            result.add(sysRoleUser.getUserUid());
+        }
+        return result;
+    }
+
+	private Set<String> extractStationsFromSysRoleUsers(List<SysRoleUser> sysRoleUsers) {
+        Set<String> result = new HashSet<>();
+	    if (CollectionUtils.isEmpty(sysRoleUsers)) {
+            return result;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (SysRoleUser sysRoleUser : sysRoleUsers) {
+            if (StringUtils.isNotBlank(sysRoleUser.getStation())) {
+                builder.append(sysRoleUser.getStation());
+                if (!sysRoleUser.getStation().endsWith(";")) {
+                    builder.append(";");
+                }
+            }
+        }
+        if (builder.length() == 0) {
+            return result;
+        }
+
+        String[] stationArr = builder.toString().split(";");
+        for (String station : stationArr) {
+            if (StringUtils.isNotBlank(station)) {
+                result.add(station);
+            }
+        }
+        return result;
+    }
+
+    private Set<String> extractStationsFromSysRoles(List<SysRole> sysRoles) {
+        Set<String> result = new HashSet<>();
+	    if (CollectionUtils.isEmpty(sysRoles)) {
+            return result;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (SysRole sysRole : sysRoles) {
+            if (StringUtils.isNotBlank(sysRole.getStation())) {
+                builder.append(sysRole.getStation());
+                if (!sysRole.getStation().endsWith(";")) {
+                    builder.append(";");
+                }
+            }
+        }
+        if (builder.length() == 0) {
+            return result;
+        }
+        String[] stationArr = builder.toString().split(";");
+        for (String station : stationArr) {
+            if (StringUtils.isNotBlank(station)) {
+                result.add(station);
+            }
+        }
+        return result;
+    }
 
 	@Override
 	public List<SysUser> searchByRoleUidListAndDepartment(List<String> roleUidList, String departNo) {
-		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
-		SysDepartment selective = new SysDepartment();
-		selective.setDepartUid(departNo);
-		//查询当前departNo的父级树节点，包括自己
-		List<SysDepartment> sysDepartmentList =  sysDepartmentMapper.queryByConditionToParentTree(selective);
-		if(CollectionUtils.isEmpty(sysDepartmentList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		roleUser.setSysDepartmentList(sysDepartmentList);
-		//根据角色id集合加部门uid查询角色用户映射关系数据
-		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
-		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        List<SysUser> sysUsers = searchByRoleUidList(roleUidList);
+        return filterUserByDepartNo(sysUsers, departNo);
 	}
+
+	private List<SysUser> filterUserByDepartNo(List<SysUser> sysUsers, String departNo) {
+        if (StringUtils.isBlank(departNo) || CollectionUtils.isEmpty(sysUsers)) {
+            return new ArrayList<>();
+        }
+        List<SysUserDepartment> sysUserDepartments = sysUserDepartmentMapper.listByUserUids(extractUserUidsFromSysUsers(sysUsers));
+        assembleDepartNumberListToUserList(sysUsers, sysUserDepartments);
+        List<String> relationDepartNumbers = relationDepartNumbers(departNo);
+        Iterator<SysUser> iterator = sysUsers.iterator();
+        while (iterator.hasNext()) {
+            SysUser sysUser = iterator.next();
+            if (!sysUser.isMemberOfRelationDepartments(relationDepartNumbers)) {
+                iterator.remove();
+            }
+        }
+        return sysUsers;
+    }
+
+    private List<String> relationDepartNumbers(String departNo) {
+	    List<String> result = new ArrayList<>();
+	    if (StringUtils.isBlank(departNo)) {
+	        return result;
+        }
+	    SysDepartment sysDepartment = new SysDepartment();
+	    sysDepartment.setDepartUid(departNo);
+        List<SysDepartment> sysDepartments = sysDepartmentMapper.queryByConditionToParentTree(sysDepartment);
+        if (CollectionUtils.isEmpty(sysDepartments)) {
+            return result;
+        }
+        for (SysDepartment department : sysDepartments) {
+            result.add(department.getDepartUid());
+        }
+        return result;
+    }
+
+    private void assembleDepartNumberListToUserList(List<SysUser> sysUsers, List<SysUserDepartment> sysUserDepartments) {
+        Map<String, SysUser> userUidAndUserMap = new HashMap<>();
+        for (SysUser sysUser : sysUsers) {
+            userUidAndUserMap.put(sysUser.getUserUid(), sysUser);
+        }
+        for (SysUserDepartment data : sysUserDepartments) {
+            if (userUidAndUserMap.get(data.getUserUid()) != null) {
+                userUidAndUserMap.get(data.getUserUid()).addToDepartNumberList(data.getDepartUid());
+            }
+        }
+    }
 
 	@Override
 	public List<SysUser> searchByRoleUidListAndCompany(List<String> roleUidList, String companyNum) {
-		if(CollectionUtils.isEmpty(roleUidList)) {//查询条件集合为空，则直接返回空集合
-			return new ArrayList<>();
-		}
-		SysRoleUser roleUser = new SysRoleUser();
-		roleUser.setRoleIdList(roleUidList);//设置角色id集合的查询条件
-		//设置公司编码查询条件
-		roleUser.setCompanyCode(companyNum);
-		//根据角色id集合加公司编码查询角色用户映射关系数据
-		List<SysRoleUser> roleUsers = sysRoleUserMapper.selectByRoleUser(roleUser);
-		String tempIdStr = "";
-		for (SysRoleUser sysRoleUser : roleUsers) {
-			tempIdStr += sysRoleUser.getUserUid() + ";";
-		}
-		return transformTempIdStrToUserList(tempIdStr);
+        List<SysUser> sysUsers = searchByRoleUidList(roleUidList);
+        return filterUserByCompanyNum(sysUsers, companyNum);
 	}
+
+	private List<SysUser> filterUserByCompanyNum(List<SysUser> sysUsers, String companyNum) {
+	    if (StringUtils.isBlank(companyNum) || CollectionUtils.isEmpty(sysUsers)) {
+            return new ArrayList<>();
+        }
+        List<SysUserDepartment> sysUserDepartments = sysUserDepartmentMapper.listByUserUids(extractUserUidsFromSysUsers(sysUsers));
+
+        assembleCompayCodeListToUserList(sysUsers, sysUserDepartments);
+        Iterator<SysUser> iterator = sysUsers.iterator();
+        while (iterator.hasNext()) {
+            SysUser sysUser = iterator.next();
+            if (!sysUser.isMemberOfCompany(companyNum)) {
+                iterator.remove();
+            }
+        }
+        return sysUsers;
+    }
+
+    private void assembleCompayCodeListToUserList(List<SysUser> sysUsers, List<SysUserDepartment> sysUserDepartments) {
+        Map<String, SysUser> userUidAndUserMap = new HashMap<>();
+        for (SysUser sysUser : sysUsers) {
+            userUidAndUserMap.put(sysUser.getUserUid(), sysUser);
+        }
+        for (SysUserDepartment data : sysUserDepartments) {
+            if (userUidAndUserMap.get(data.getUserUid()) != null) {
+                userUidAndUserMap.get(data.getUserUid()).addToCompanyNumberList(data.getCompanyCode());
+            }
+        }
+    }
+
+	private Set<String> extractUserUidsFromSysUsers(List<SysUser> sysUsers) {
+        Set<String> result = new HashSet<>();
+        if (CollectionUtils.isEmpty(sysUsers)) {
+            return result;
+        }
+        for (SysUser sysUser : sysUsers) {
+            result.add(sysUser.getUserUid());
+        }
+        return result;
+    }
 
 	@Override
 	public List<SysUser> searchByTeam(List<String> teamUidList) {
@@ -335,8 +491,4 @@ public class SysUserServiceImpl implements SysUserService {
 		return resultList == null ? new ArrayList<>() : resultList;
 	}
 	
-	private List<SysUser> listByUserUidsOrStaions(Collection<String> userUids, Collection<String> stations){
-	    // todo auron
-        return null;
-	}
 }
