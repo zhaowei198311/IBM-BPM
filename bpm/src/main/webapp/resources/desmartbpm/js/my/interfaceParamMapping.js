@@ -39,11 +39,11 @@ form.on('select(table_sel)', function (data) {
                     $(inputArr).append(trs);
                 }
             }
-            var trs2 = '<option value="null">无参数</option>'
+            var trs2 = '<option value="null"  selected="selected" >无参数</option>'
             var dataTableList = $("#col_md5").find(".layui-form-item").find(".layui-row");
             for (var i = 0; i < dataTableList.length; i++) {
             	var inputArr = $(dataTableList[i]).find("select");
-            	$(inputArr).append(trs2);
+            	$(inputArr).prepend(trs2);
             }
             var dataTableList2 = $("#col_md6").find(".layui-form-item").find(".layui-row");
             for (var j = 0; j < dataTableList2.length; j++) {
