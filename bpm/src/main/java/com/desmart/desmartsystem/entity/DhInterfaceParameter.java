@@ -36,11 +36,13 @@ public class DhInterfaceParameter {
 	private String  paraParent;//父参数
 	
 
-	private String paraParentName; 
+	private String paraParentName;//父参数名称
+	
+	private String paraDefault;//参数默认值
 	
 	private String dateFormat;//时间格式
 	
-	private String	paraInOut;
+	private String	paraInOut; //输入或输出
 	
 	private List<DhInterfaceParameter> dhInterfaceParameters;
 
@@ -238,6 +240,15 @@ public class DhInterfaceParameter {
 
 	public String getCascadeParaName() {
 		return cascadeParaName;
+	}
+	
+
+	public String getParaDefault() {
+		return paraDefault;
+	}
+
+	public void setParaDefault(String paraDefault) {
+		this.paraDefault = paraDefault;
 	}
 
 	@Override
