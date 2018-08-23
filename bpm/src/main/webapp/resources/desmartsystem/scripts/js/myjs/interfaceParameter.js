@@ -56,6 +56,9 @@ function byParameterTypeHideAndShowElement(paraType,selector){
 	var isMust=$('.isMust'+selector);
 	var paraSize=$('.paraSize'+selector);
 	var dateFormat=$('.dateFormat'+selector);
+	
+	var paraDefault=$('.paraDefault'+selector);
+	
 	var arryParameterDiv=$('#arryParameterDiv'+selector);
 	var $table=$('#childNodeParameterTbody'+selector);
 	switch (paraType) {
@@ -65,19 +68,28 @@ function byParameterTypeHideAndShowElement(paraType,selector){
 		isMust.show();
 		arryParameterDiv.hide();
 		$table.empty();
+		paraDefault.show();
+		$('input',paraSize).val('');
 		break;
 	case 'Array':
 		paraSize.hide();
 		dateFormat.hide();
 		isMust.hide();
 		arryParameterDiv.show();
+		paraDefault.hide();
+		
+		$('input',dateFormat).val('');
+		$('input',paraSize).val('');
+		$('input',paraDefault).val('');
 		break;
 	default:
+		paraDefault.show();
 		paraSize.show();
 		isMust.show();
 		dateFormat.hide();
 		arryParameterDiv.hide();
 		$table.empty();
+		$('input',dateFormat).val('');
 		break;
 	}
 }
@@ -401,9 +413,7 @@ function getParameter(paraUid){
 			},
 			success : function(result) {
 				byParameterTypeHideAndShowElement(result.paraType,'3');
-				
 				//$(".display_container6").css("display", "block");
-				
 				$("#paraUid3").val(result.paraUid);
 				$("#paraIndex3").val(result.paraIndex);
 				$("#paraName3").val(result.paraName);
@@ -412,7 +422,7 @@ function getParameter(paraUid){
 				$("#multiSeparator3").val(result.multiSeparator);
 				$("#dateFormat3").val(result.dateFormat);
 				$("#intUid3").val(result.intUid);
-				
+				$("#paraDefault3").val(result.paraDefault);
 				checkboxChecked(result,'display_container6');
 				
 				$("#paraType3").val(result.paraType);
