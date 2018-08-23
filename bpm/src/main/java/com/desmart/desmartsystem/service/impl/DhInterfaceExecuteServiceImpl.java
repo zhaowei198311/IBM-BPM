@@ -89,7 +89,6 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 			inputParameter.put("PNO",incrementIdByDateUtil.createId());
 		}
 		
-
 		// 1.获取参数的配置信息
 		DhInterfaceParameter iptParameter = new DhInterfaceParameter();
 		iptParameter.setIntUid(intUid);
@@ -107,11 +106,14 @@ public class DhInterfaceExecuteServiceImpl implements DhInterfaceExecuteService 
 				String para_intUid = dhInterfaceParameter.getIntUid();
 				String paraDescription = dhInterfaceParameter.getParaDescription();
 				String isMust = dhInterfaceParameter.getIsMust();
-
 				String paraType = dhInterfaceParameter.getParaType();
 				String dateFmt = dhInterfaceParameter.getDateFormat();
-
 				if (key.equals(paraName) && para_intUid.equals(intUid)) {// 根据传入参数名和接口Uid获取参数对应的配置信息
+					//判断接口参数默认值如果不等于null就装进map中
+					String paraDefault = dhInterfaceParameter.getParaDefault();//接口参数默认值
+					if(StringUtils.isNotBlank(paraDefault)) {
+						inputParameter.put(key, value+paraDefault);
+					};
 					if (isMust.equals("true")) {
 						if (StringUtils.isBlank(value)) {
 							return ServerResponse.createByErrorMessage(paraDescription + "(不能为空)");
