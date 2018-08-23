@@ -219,6 +219,12 @@ public class DhTriggerServiceImpl implements DhTriggerService {
 						}
 					}
 				}
+				
+				if(formField==null) {
+					formField=new BpmFormField();
+					formField.setFldType("");
+				};
+				
 				//判断表单字段类型
 				if ("object".equals(formField.getFldType())) {
 					//获得对应输入list类型的参数下所有普通参数集合
@@ -303,6 +309,7 @@ public class DhTriggerServiceImpl implements DhTriggerService {
                 return interfaceScheduleResponse;
 			}
 		}catch(Exception e) {
+			e.printStackTrace();
 			logger.error("调用接口失败, 实例uid" + insUid, e);
 			return ServerResponse.createByErrorMessage(e.getMessage());
 		}
