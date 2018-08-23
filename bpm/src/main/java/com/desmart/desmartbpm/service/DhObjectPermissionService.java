@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
+import com.github.pagehelper.PageInfo;
 
 public interface DhObjectPermissionService {
     
@@ -101,5 +103,49 @@ public interface DhObjectPermissionService {
      */
     int removeByProAppIdAndProUidAndProVerUid(String proAppId, String proUid, String proVerUid);
 
+    /**
+     * 更新流程元数据权限
+     * @param dhProcessMeta
+     * @param ids
+     * @param participateType
+     * @param action
+     * @return
+     */
+    public ServerResponse updatePermissionOfMeta(DhProcessMeta dhProcessMeta, String ids, String participateType,
+			String action);
+    /**
+     * 查询指定流程元数据的查看权限
+     * @param opUid 应用库id
+     * @return ServerResponse中的data(map类型)描述
+     *    key: permissionUser 人员  uid1;uid2;
+     *    key: permissionUserView  人员显示名   张三;李四;
+     *    key: permissionRole 角色 
+     *    key: permissionRoleView  角色显示
+     *    key: permissionTeam  角色组
+     *    key: permissionTeamView  角色组显示
+     */
+    public ServerResponse getPermissionReadOfMeta(String opUid);
 
+    /**
+     * 
+     * @param proAppId
+     * @param proUid
+     * @param pageNum
+     * @param pageSize
+     *    key: permissionUser 人员  uid1;uid2;
+     *    key: permissionUserView  人员显示名   张三;李四;
+     *    key: permissionRole 角色 
+     *    key: permissionRoleView  角色显示
+     *    key: permissionTeam  角色组
+     *    key: permissionTeamView  角色组显示
+     * @return
+     */
+	ServerResponse<PageInfo<List<DhObjectPermission>>> getPermissionReadOfMetaByPage(Integer pageNum,Integer pageSize
+			,String proAppId, String proUid);
+	/**
+	 * 根据传入的对象权限集合批量删除
+	 * @param primaryKeys
+	 * @return
+	 */
+	ServerResponse deleteBatchByPrimaryKeys(List<String> primaryKeys);
 }

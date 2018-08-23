@@ -8,7 +8,8 @@ public enum DhObjectPermissionAction {
     UPLOAD("UPLOAD", "上传"),
     DOWNLOAD("DOWNLOAD", "下载"),
     SKIP("SKIP", "跳过必填验证"),
-    PRINT("PRINT", "打印");
+    PRINT("PRINT", "打印"),
+    READ("READ","查看流程");
 
     private final String code;
     private final String value;

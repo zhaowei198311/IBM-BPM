@@ -5,6 +5,11 @@
         OP_UID, PRO_APP_ID, PRO_UID, PRO_VER_UID, STEP_UID, OP_PARTICIPATE_TYPE, OP_PARTICIPATE_UID, 
         OP_OBJ_TYPE, OP_OBJ_UID, OP_ACTION
     </sql>
+    
+    <sql id="relation_column">
+    	o.OP_UID, o.PRO_APP_ID, o.PRO_UID, o.PRO_VER_UID, o.STEP_UID, o.OP_PARTICIPATE_TYPE, o.OP_PARTICIPATE_UID, 
+        o.OP_OBJ_TYPE, o.OP_OBJ_UID, o.OP_ACTION
+    </sql>
   
     <insert id="save" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" >
         insert into DH_OBJECT_PERMISSION (<include refid="base_column"/>)
@@ -38,34 +43,34 @@
     	delete from dh_object_permission
     	<where>
 	    	<foreach collection="list" item="item" separator="or">
-	    		<if test="opUid != null">
+	    		<if test="item.opUid != null">
 	                OP_UID = #{item.opUid}
 	            </if>
-	            <if test="proAppId != null">
+	            <if test="item.proAppId != null">
 	                and pro_app_id = #{item.proAppId}
 	            </if>
-	            <if test="proUid != null">
+	            <if test="item.proUid != null">
 	                and pro_uid = #{item.proUid}
 	            </if>
-	            <if test="proVerUid != null">
+	            <if test="item.proVerUid != null">
 	                and pro_ver_uid  = #{item.proVerUid}
 	            </if>
-	            <if test="stepUid != null">
+	            <if test="item.stepUid != null">
 	                and STEP_UID = #{item.stepUid}
 	            </if>
-	            <if test="opParticipateType != null">
+	            <if test="item.opParticipateType != null">
 	                and op_participate_type = #{item.opParticipateType}
 	            </if>
-	            <if test="opParticipateUid != null">
+	            <if test="item.opParticipateUid != null">
 	                and op_participate_uid = #{item.opParticipateUid}
 	            </if>
-	            <if test="opObjType != null">
+	            <if test="item.opObjType != null">
 	                and op_obj_type = #{item.opObjType}
 	            </if>
-	            <if test="opObjUid != null">
+	            <if test="item.opObjUid != null">
 	                and op_obj_uid = #{item.opObjUid}
 	            </if>
-	            <if test="opAction != null">
+	            <if test="item.opAction != null">
 	                and op_action = #{item.opAction}
 	            </if>
 	    	</foreach>
@@ -142,7 +147,51 @@
                 and op_action = #{opAction}
             </if>
         </where>
-    </select>   
+    </select>
+    
+    <select id="listByDhObjectPermissionSelectiveOfRelation" parameterType="com.desmart.desmartbpm.entity.DhObjectPermission" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
+        select <include refid="relation_column"/>,m.pro_name,
+		(CASE WHEN o.op_participate_type = 'USER' THEN s.user_name 
+		WHEN o.op_participate_type = 'ROLE' THEN r.role_name
+		WHEN o.op_participate_type = 'TEAM' THEN t.team_name end) as op_participate_view
+		from dh_object_permission o
+		inner join dh_process_meta m on o.pro_App_Id = m.pro_App_Id and o.pro_Uid = m.pro_Uid 
+		left join sys_user s on o.op_participate_uid = s.user_uid
+		left join sys_role r on o.op_participate_uid = r.role_uid
+		left join sys_team t on o.op_participate_uid = t.team_uid
+        <where>
+            <if test="opUid != null">
+                and o.OP_UID = #{opUid}
+            </if>
+            <if test="proAppId != null">
+                and o.pro_app_id = #{proAppId}
+            </if>
+            <if test="proUid != null">
+                and o.pro_uid = #{proUid}
+            </if>
+            <if test="proVerUid != null">
+                and o.pro_ver_uid  = #{proVerUid}
+            </if>
+            <if test="stepUid != null">
+                and o.STEP_UID = #{stepUid}
+            </if>
+            <if test="opParticipateType != null">
+                and o.op_participate_type = #{opParticipateType}
+            </if>
+            <if test="opParticipateUid != null">
+                and o.op_participate_uid = #{opParticipateUid}
+            </if>
+            <if test="opObjType != null">
+                and o.op_obj_type = #{opObjType}
+            </if>
+            <if test="opObjUid != null">
+                and o.op_obj_uid = #{opObjUid}
+            </if>
+            <if test="opAction != null">
+                and o.op_action = #{opAction}
+            </if>
+        </where>
+    </select>      
     
     <select id="getDhObjectPermissionByFldUid" parameterType="String" resultType="com.desmart.desmartbpm.entity.DhObjectPermission">
     	select 

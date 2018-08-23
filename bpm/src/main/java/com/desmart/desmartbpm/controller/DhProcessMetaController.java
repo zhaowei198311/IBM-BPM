@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.desmart.common.annotation.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.desmart.common.annotation.log.Log;
 import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
@@ -178,6 +178,22 @@ public class DhProcessMetaController {
             return ServerResponse.createByErrorMessage("查询流程元数据失败");
         }
     }
-
-
+    
+    /**
+     * 更新流程元数据查看权限
+     * @param dhProcessMeta
+     * @return
+     */
+    @Log(description = "更新流程元数据查看权限")
+    @RequestMapping(value = "/updateDhProcessMetaPower")
+    @ResponseBody
+    public ServerResponse updateDhProcessMetaPower(DhProcessMeta dhProcessMeta){
+    	try {
+			return dhProcessMetaService.updateDhProcessMetaPower(dhProcessMeta);
+		} catch (Exception e) {
+			LOG.error("更新流程元数据查看权限失败",e);
+			return ServerResponse.createByErrorMessage("更新流程元数据查看权限失败");
+		}
+    }
+    
 }

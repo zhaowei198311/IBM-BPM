@@ -55,7 +55,8 @@
                         <button class="layui-btn hide_btn" id="hide_btn">隐藏</button>
                         <button class="layui-btn close_btn" id="close_btn">关闭</button>
                         <button class="layui-btn enable_btn" id="enable_btn">启用</button>
-                        <button class="layui-btn " id="reloadExposedItem_btn">同步公开的流程</button>
+                        <button class="layui-btn " id="reloadExposedItem_btn">同步</button>
+                        <button class="layui-btn " id="readPower_btn">权限</button>
                     </div>
                 </div>
             </div>
@@ -217,6 +218,102 @@
         </div>
     </div>
 </div>
+<!-- 流程查看权限配置开始 -->
+<div class="display_container3" id="read_power_Container" >
+    <div class="display_content3" style="height: 460px;margin-top: 5%;">
+        <div class="top">
+            	流程查看权限配置
+        </div>
+        <div class="middle1" style="height: 300px;">
+            <table id="unsynProMetaTable" class="layui-table backlog_table" lay-even lay-skin="nob">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="all_read_power_checkbox">全选</th>
+                    <th>流程名称</th>
+                    <th>公司编码</th>
+                    <th style="text-align: center;">权限所有者</th>
+                </tr>
+                </thead>
+                <tbody id="power_table_tbody"></tbody>
+            </table>
+        </div>
+        <div id="lay_page_power"></div>
+        <div class="foot">
+       		<button class="layui-btn create_btn" onclick="showAddReadPower()">添加</button>
+            <button class="layui-btn delete_btn" onclick="deleteReadPower()" style="background: #FF5151">删除</button>
+            <button class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#read_power_Container').hide();">关闭</button>
+        </div>
+    </div>
+</div>
+<div class="display_container5" id="add_read_power_Container" >
+		<div class="display_content5" style="height: 430px;">
+			<div class="top">配置查看权限</div>
+			<div class="middle1" style="height: 320px;">
+				<form id="deployReadPower" class="layui-form" action="">
+					<input id="add_read_proAppId" name="proAppId" style="display: none;"/>
+					<input id="add_read_proUid" name="proUid" style="display: none;"/>
+					<div class="layui-form-item">
+						<label class="layui-form-label">流程名</label>
+						<div class="layui-input-block">
+							<input id="power_proName_view" type="text" required
+								lay-verify="required" autocomplete="off" readonly="readonly"
+								class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">请选择公司</label>
+						<div class="layui-input-block">
+							<select id="companyData" name="companyCode"
+								lay-verify="required">
+								
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item">
+                        <label class="layui-form-label">个人</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="permissionUser_view" id="permissionUser_view"  
+                            lay-verify="required" value="" autocomplete="off" class="layui-input"
+                            palceholder="请选择权限持有人" disabled="disabled"/>
+                            <i class="layui-icon choose_user" title="选择权限持有人" id="chooseUser_btn">&#xe612;</i>
+                            <input type="hidden" name="permissionUser" id="permissionUser"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色</label>
+                        <div class="layui-input-block" >
+                            <input type="text"  name="permissionRole_view" id="permissionRole_view"  lay-verify="required" 
+							 autocomplete="off" class="layui-input" disabled="disabled"
+							 palceholder="请选择权限持有角色"/>
+                            <i class="layui-icon choose_user" title="选择权限持有角色"  id="chooseRole_btn">&#xe612;</i>
+                            <input type="hidden" name="permissionRole" id="permissionRole"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">角色组</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="permissionTeam_view" id="permissionTeam_view"   
+                            lay-verify="required" value="" autocomplete="off" class="layui-input" 
+                            palceholder="请选择权限持有角色组"disabled="disabled"/>
+                            <i class="layui-icon choose_user" title="选择权限持有角色组" id="chooseTeam_btn">&#xe612;</i>
+                            <input type="hidden" name="permissionTeam" id="permissionTeam"/>
+                        </div>
+                    </div>
+				</form>
+			</div>
+			<div class="foot">
+				<button id="submitDeployReadPower" type="button" class="layui-btn layui-btn sure_btn" onclick="submitDeployReadPower()">确定</button>
+				<button id="cancel_btn_read_power" class="layui-btn layui-btn layui-btn-primary cancel_btn" onclick="$('#add_read_power_Container').hide()">取消</button>
+			</div>
+		</div>
+	</div>
+<!-- 流程查看权限配置结束 -->
 <script src="<%=basePath%>/resources/desmartbpm/js/layui.all.js"></script>
 <script src="<%=basePath%>/resources/desmartbpm/js/my/processCategory.js"></script>
 <script type="text/javascript" src="<%=basePath%>/resources/desmartbpm/tree/js/jquery.ztree.core.js"></script>

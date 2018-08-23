@@ -4,7 +4,8 @@ public enum DhObjectPermissionObjType {
     FORM("FORM", "表单"),
     PROCESS("PROCESS", "流程"),
     FIELD("FIELD", "字段"),
-    ATTACHMENT("ATTACHMENT", "附件");
+    ATTACHMENT("ATTACHMENT", "附件"),
+    META("META","元数据");
 
     private final String code;
     private final String value;
