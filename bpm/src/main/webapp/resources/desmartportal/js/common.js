@@ -1335,7 +1335,7 @@ function bySAPCodeQuery(I_WERKS,parameterMap){
 	$.ajax({
 		    type:'POST',//默认以get提交，以get提交如果是中文后台会出现乱码
 		    dataType : 'json',
-		    url : common.getPath()+'interfaceExecute/bySAPCodeQuery',
+		    url : common.getPath()+'/interfaceExecute/bySAPCodeQuery',
 		    data :JSON.stringify({"I_WERKS":I_WERKS}),
 		    contentType:'application/json;charset=UTF-8',
 		    success : function(result) {
