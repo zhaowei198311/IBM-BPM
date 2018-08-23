@@ -26,7 +26,12 @@ public interface DhObjectPermissionMapper {
      * @return
      */
     List<DhObjectPermission> listByDhObjectPermissionSelective(DhObjectPermission selective);
-    
+    /**
+     * 关联查询符合条件的权限记录(proName)
+     * @param selective
+     * @return
+     */
+    List<DhObjectPermission> listByDhObjectPermissionSelectiveOfRelation(DhObjectPermission selective);
     /**
      * 
      * @Title: getDhObjectPermissionByFldUid  

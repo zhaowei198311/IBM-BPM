@@ -4,7 +4,7 @@ package com.desmart.desmartbpm.entity;
  * 对象权限
  * 1. 流程发起权限
  * 2. 表单字段(区段)显示/编辑权限
- *
+ * 3. 流程的查看权限
  * @author yaoyunqing
  *
  */
@@ -23,13 +23,16 @@ public class DhObjectPermission {
 
     private String opParticipateUid;  // 权限所有者ID
 
-    private String opObjType; // 对象类型：FORM，PROCESS，FIELD，ATTACHMENT
+    private String opObjType; // 对象类型：FORM，PROCESS，FIELD，ATTACHMENT，META
 
-    private String opObjUid;  // 对象ID
+    private String opObjUid;  // 对象ID，元数据查看权限中的公司编码字段
 
-    private String opAction; // 权限类型：EDIT，VIEW，HIDDEN，START，UPLOAD，DOWNLOAD
+    private String opAction; // 权限类型：EDIT，VIEW，HIDDEN，START，UPLOAD，DOWNLOAD，READ	
     
-
+    //不在表内
+    private String proName;//流程名
+    private String opParticipateView;//权限所有者显示
+       
     public String getOpUid() {
         return opUid;
     }
@@ -110,15 +113,29 @@ public class DhObjectPermission {
         this.opAction = opAction;
     }
 
-    @Override
-    public String toString() {
-        return "DhObjectPermission [opUid=" + opUid + ", proAppId=" + proAppId
-                + ", proUid=" + proUid + ", proVerUid=" + proVerUid
-                + ", stepUid=" + stepUid + ", opParticipateType="
-                + opParticipateType + ", opParticipateUid=" + opParticipateUid
-                + ", opObjType=" + opObjType + ", opObjUid=" + opObjUid
-                + ", opAction=" + opAction + "]";
-    }
+    public String getProName() {
+		return proName;
+	}
+
+	public void setProName(String proName) {
+		this.proName = proName;
+	}
+	
+	public String getOpParticipateView() {
+		return opParticipateView;
+	}
+
+	public void setOpParticipateView(String opParticipateView) {
+		this.opParticipateView = opParticipateView;
+	}
+	
+	@Override
+	public String toString() {
+		return "DhObjectPermission [opUid=" + opUid + ", proAppId=" + proAppId + ", proUid=" + proUid + ", proVerUid="
+				+ proVerUid + ", stepUid=" + stepUid + ", opParticipateType=" + opParticipateType
+				+ ", opParticipateUid=" + opParticipateUid + ", opObjType=" + opObjType + ", opObjUid=" + opObjUid
+				+ ", opAction=" + opAction + ", proName=" + proName + ", opParticipateView=" + opParticipateView + "]";
+	}
     
     
     

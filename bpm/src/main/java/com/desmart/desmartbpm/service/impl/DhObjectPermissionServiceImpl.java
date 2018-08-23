@@ -19,6 +19,7 @@ import com.desmart.desmartbpm.common.EntityIdPrefix;
 import com.desmart.desmartbpm.dao.DhObjectPermissionMapper;
 import com.desmart.desmartbpm.entity.DhObjectPermission;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
+import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
 import com.desmart.desmartbpm.enums.DhObjectPermissionObjType;
 import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
@@ -29,6 +30,8 @@ import com.desmart.desmartsystem.dao.SysUserMapper;
 import com.desmart.desmartsystem.entity.SysRole;
 import com.desmart.desmartsystem.entity.SysTeam;
 import com.desmart.desmartsystem.entity.SysUser;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class DhObjectPermissionServiceImpl implements DhObjectPermissionService {
@@ -252,7 +255,174 @@ public class DhObjectPermissionServiceImpl implements DhObjectPermissionService 
         return dhObjectPermissionMapper.delectByDhObjectPermissionSelective(permissionSelective);
     }
 
+    @Transactional
+	@Override
+	public ServerResponse updatePermissionOfMeta(DhProcessMeta dhProcessMeta, String ids, String participateType,
+			String action) {
+    	if (StringUtils.isBlank(action) || dhProcessMeta == null || DhObjectPermissionParticipateType.codeOf(participateType) == null
+                || DhObjectPermissionAction.codeOf(action) == null || StringUtils.isBlank(dhProcessMeta.getProAppId())
+                || StringUtils.isBlank(dhProcessMeta.getProUid())) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        // 先把现有的权限删除
+        DhObjectPermission selective = new DhObjectPermission();
+        selective.setProAppId(dhProcessMeta.getProAppId());
+        selective.setProUid(dhProcessMeta.getProUid());
+        selective.setOpObjType(DhObjectPermissionObjType.META.getCode());
+        selective.setOpAction(action);
+        selective.setOpParticipateType(participateType);
+        int countRow = dhObjectPermissionMapper.delectByDhObjectPermissionSelective(selective);
+        
+        if (StringUtils.isBlank(ids)) {
+            return ServerResponse.createBySuccess();
+        }
+        
+        String[] objIdArr = ids.split(";");
+        List<DhObjectPermission> permissionList = new ArrayList<>();
+        
+        for (String objId : objIdArr) {
+            DhObjectPermission permission = new DhObjectPermission();
+            
+            if (DhObjectPermissionParticipateType.USER.getCode().equals(participateType)) {
+                SysUser sysUser = new SysUser();
+                sysUser.setUserUid(objId);
+                SysUser user = sysUserMapper.findById(sysUser);
+                if (user == null) {
+                    return ServerResponse.createByErrorMessage("设置权限失败，用户不存在");
+                }
+                permission.setOpParticipateType(DhObjectPermissionParticipateType.USER.getCode());
+            } else if (DhObjectPermissionParticipateType.ROLE.getCode().equals(participateType)) {
+                SysRole sysRole = sysRoleMapper.selectByPrimaryKey(objId);
+                if (sysRole == null) {
+                    return ServerResponse.createByErrorMessage("设置权限失败，角色不存在");
+                }
+                permission.setOpParticipateType(DhObjectPermissionParticipateType.ROLE.getCode());
+            } else if (DhObjectPermissionParticipateType.TEAM.getCode().equals(participateType)) {
+                SysTeam sysTeam = sysTeamMapper.selectByPrimaryKey(objId);
+                if (sysTeam == null) {
+                    return ServerResponse.createByErrorMessage("设置权限失败，角色组不存在");
+                }
+                permission.setOpParticipateType(DhObjectPermissionParticipateType.TEAM.getCode());
+            }
+            
+            permission.setOpUid(EntityIdPrefix.DH_OBJECT_PERMISSION + UUID.randomUUID().toString());
+            permission.setProAppId(dhProcessMeta.getProAppId());
+            permission.setProUid(dhProcessMeta.getProUid());
+            permission.setOpObjType(DhObjectPermissionObjType.META.getCode());
+            permission.setOpAction(action);
+            permission.setOpParticipateUid(objId);
+            permission.setOpObjUid(dhProcessMeta.getCompanyCode());//保存权限对应的公司编码
+            permissionList.add(permission);
+        }
+        countRow = dhObjectPermissionMapper.saveBatch(permissionList);
+        if (countRow == permissionList.size()) {
+            return ServerResponse.createBySuccessMessage("设置权限成功");
+        } else {
+            return ServerResponse.createByErrorMessage("设置权限失败");
+        }
+	}
 
+	@Override
+	public ServerResponse getPermissionReadOfMeta(String opUid) {
+		if (StringUtils.isBlank(opUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+        }
+        
+        DhObjectPermission selective = new DhObjectPermission();
+        
+        selective.setOpUid(opUid);
+        selective.setOpObjType(DhObjectPermissionObjType.META.getCode());
+        selective.setOpAction(DhObjectPermissionAction.READ.getCode());
+        return this.searcherPermissionView(selective);
+	}
+	/**
+	 * 根据条件查询组装界面显示的权限数据
+	 * @param selective
+	 * @return
+	 */
+	public ServerResponse searcherPermissionView(DhObjectPermission selective) {
+		Map<String, String> map = new HashMap<String, String>();
+		// 查人员
+        selective.setOpParticipateType(DhObjectPermissionParticipateType.USER.getCode());
+        List<DhObjectPermission> permissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(selective);
+        String userStr = "";
+        String userViewStr = "";
+        if (permissionList.size() > 0) {
+            List<String> idList = getIdListByPermissionList(permissionList);
+            List<SysUser> userList = sysUserMapper.listByPrimaryKeyList(idList); 
+            for (SysUser user : userList) {
+                userStr += user.getUserUid() + ";";
+                userViewStr += user.getUserName() + ";";
+            }
+        }
+        map.put("permissionUser", userStr);
+        map.put("permissionUserView", userViewStr);
+        
+        // 查角色
+        selective.setOpParticipateType(DhObjectPermissionParticipateType.ROLE.getCode());
+        permissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(selective);
+        String roleStr = "";
+        String roleViewStr = "";
+        if (permissionList.size() > 0) {
+            List<String> idList = getIdListByPermissionList(permissionList);
+            List<SysRole> roleList = sysRoleMapper.listByPrimaryKeyList(idList); 
+            for (SysRole role : roleList) {
+                roleStr += role.getRoleUid() + ";";
+                roleViewStr += role.getRoleName() + ";";
+            }
+        }
+        map.put("permissionRole", roleStr);
+        map.put("permissionRoleView", roleViewStr);
+        
+        // 查角色组
+        selective.setOpParticipateType(DhObjectPermissionParticipateType.TEAM.getCode());
+        permissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelective(selective);
+        String teamStr = "";
+        String teamViewStr = "";
+        if (permissionList.size() > 0) {
+            List<String> idList = getIdListByPermissionList(permissionList);
+            List<SysTeam> sysTeamList = sysTeamMapper.listByPrimaryKeyList(idList); 
+            for (SysTeam team : sysTeamList) {
+                teamStr += team.getTeamUid() + ";";
+                teamViewStr += team.getTeamName() + ";";
+            }
+        }
+        map.put("permissionTeam", teamStr);
+        map.put("permissionTeamView", teamViewStr);
+        
+        return ServerResponse.createBySuccess(map);
+	}
 
+	@Override
+	public ServerResponse<PageInfo<List<DhObjectPermission>>> getPermissionReadOfMetaByPage(Integer pageNum,
+			Integer pageSize, String proAppId, String proUid) {
+		if (StringUtils.isBlank(proAppId) || StringUtils.isBlank(proUid)) {
+            return ServerResponse.createByErrorMessage("参数异常");
+		}
+        DhObjectPermission selective = new DhObjectPermission();
+        
+        selective.setProAppId(proAppId);
+        selective.setProUid(proUid);
+        selective.setOpObjType(DhObjectPermissionObjType.META.getCode());
+        selective.setOpAction(DhObjectPermissionAction.READ.getCode());
+        PageHelper.startPage(pageNum, pageSize);
+        List<DhObjectPermission> permissionList = dhObjectPermissionMapper.listByDhObjectPermissionSelectiveOfRelation(selective);
+        PageInfo<List<DhObjectPermission>> pageInfo = new PageInfo(permissionList);
+		return ServerResponse.createBySuccess(pageInfo);
+	}
+
+	@Override
+	public ServerResponse deleteBatchByPrimaryKeys(List<String> primaryKeys) {
+		List<DhObjectPermission> list = new ArrayList<>();
+		for (String opUid : primaryKeys) {
+			DhObjectPermission selective = new DhObjectPermission();
+			selective.setOpUid(opUid);
+			list.add(selective);
+		}
+		if(list!=null&&list.size()>0) {
+			dhObjectPermissionMapper.deleteBatchSelective(list);
+		}
+		return ServerResponse.createBySuccessMessage("删除成功");
+	}
 
 }

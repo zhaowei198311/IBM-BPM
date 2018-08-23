@@ -33,6 +33,11 @@ public class DhProcessMeta {
     private String creatorFullName;
     private String updatorFullName;
     
+    private String permissionUser; // 人员权限
+    private String permissionRole; // 角色权限
+    private String permissionTeam; // 角色权限
+    private String companyCode;//公司编码对应的权限
+    
     public String getProMetaUid() {
         return proMetaUid;
     }
@@ -121,20 +126,42 @@ public class DhProcessMeta {
     public void setProDisplay(String proDisplay) {
         this.proDisplay = proDisplay;
     }
-    @Override
-    public String toString() {
-        return "DhProcessMeta [proMetaUid=" + proMetaUid + ", proAppId="
-                + proAppId + ", proUid=" + proUid + ", proName=" + proName
-                + ", creator=" + creator + ", createTime=" + createTime
-                + ", updateUser=" + updateUser + ", lastUpdateTime="
-                + lastUpdateTime + ", categoryUid=" + categoryUid
-                + ", proDisplay=" + proDisplay + ", proMetaStatus="
-                + proMetaStatus + ", creatorFullName=" + creatorFullName
-                + ", updatorFullName=" + updatorFullName + "]";
-    }
-
-
-    /**
+	public String getPermissionUser() {
+		return permissionUser;
+	}
+	public void setPermissionUser(String permissionUser) {
+		this.permissionUser = permissionUser;
+	}
+	public String getPermissionRole() {
+		return permissionRole;
+	}
+	public void setPermissionRole(String permissionRole) {
+		this.permissionRole = permissionRole;
+	}
+	public String getPermissionTeam() {
+		return permissionTeam;
+	}
+	public void setPermissionTeam(String permissionTeam) {
+		this.permissionTeam = permissionTeam;
+	}
+	public String getCompanyCode() {
+		return companyCode;
+	}
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+	
+	@Override
+	public String toString() {
+		return "DhProcessMeta [proMetaUid=" + proMetaUid + ", proAppId=" + proAppId + ", proUid=" + proUid
+				+ ", proName=" + proName + ", categoryUid=" + categoryUid + ", proDisplay=" + proDisplay
+				+ ", proMetaStatus=" + proMetaStatus + ", proNo=" + proNo + ", creator=" + creator + ", createTime="
+				+ createTime + ", updateUser=" + updateUser + ", lastUpdateTime=" + lastUpdateTime
+				+ ", creatorFullName=" + creatorFullName + ", updatorFullName=" + updatorFullName + ", permissionUser="
+				+ permissionUser + ", permissionRole=" + permissionRole + ", permissionTeam=" + permissionTeam
+				+ ", companyCode=" + companyCode + "]";
+	}
+	/**
      * 比较规则， proAppId与proUid都相等，则视为相等
      * @param o
      * @return

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.desmart.common.exception.PermissionException;
 import com.desmart.common.exception.PlatformException;
 import com.desmart.desmartbpm.dao.*;
 import com.desmart.desmartbpm.service.BpmExposedItem;
@@ -28,8 +29,10 @@ import com.desmart.desmartbpm.entity.DhProcessCategory;
 import com.desmart.desmartbpm.entity.DhProcessDefinition;
 import com.desmart.desmartbpm.entity.DhProcessMeta;
 import com.desmart.desmartbpm.entity.DhStep;
-
+import com.desmart.desmartbpm.enums.DhObjectPermissionAction;
+import com.desmart.desmartbpm.enums.DhObjectPermissionParticipateType;
 import com.desmart.desmartbpm.service.BpmFormManageService;
+import com.desmart.desmartbpm.service.DhObjectPermissionService;
 import com.desmart.desmartbpm.service.DhProcessMetaService;
 import com.desmart.desmartsystem.service.BpmGlobalConfigService;
 import com.github.pagehelper.PageHelper;
@@ -69,6 +72,8 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
     private DatRuleConditionMapper datRuleConditionMapper;
     @Autowired
     private BpmExposedItemMapper bpmExposedItemMapper;
+    @Autowired
+    private DhObjectPermissionService dhObjectPermissionService;
 
     
     public ServerResponse getUnSynchronizedProcessMeta(Integer pageNum, Integer pageSize, String processAppName,
@@ -298,5 +303,40 @@ public class DhProcessMetaServiceImpl implements DhProcessMetaService {
         }
         return processMetaList.get(0);
     }
+
+	@Override
+	public ServerResponse updateDhProcessMetaPower(DhProcessMeta dhProcessMeta) {
+		if(StringUtils.isBlank(dhProcessMeta.getProAppId())||StringUtils.isBlank(dhProcessMeta.getProUid())) {
+			return ServerResponse.createByErrorMessage("参数异常");
+		}
+		DhProcessMeta checkDhProcessMeta = this.getByProAppIdAndProUid(dhProcessMeta.getProAppId(), dhProcessMeta.getProUid());
+		if(checkDhProcessMeta==null) {
+			return ServerResponse.createByErrorMessage("流程元数据不存在");
+		}
+		 // 人员权限
+        String permissionUser = dhProcessMeta.getPermissionUser();
+        ServerResponse response = dhObjectPermissionService.updatePermissionOfMeta(dhProcessMeta, permissionUser, 
+                DhObjectPermissionParticipateType.USER.getCode(), DhObjectPermissionAction.READ.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+       
+        // 角色权限
+        String permissionRole = dhProcessMeta.getPermissionRole();
+        response = dhObjectPermissionService.updatePermissionOfMeta(dhProcessMeta, permissionRole, 
+                DhObjectPermissionParticipateType.ROLE.getCode(), DhObjectPermissionAction.READ.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+        
+        // 角色组权限
+        String permissionTeam = dhProcessMeta.getPermissionTeam();
+        response = dhObjectPermissionService.updatePermissionOfMeta(dhProcessMeta, permissionTeam, 
+                DhObjectPermissionParticipateType.TEAM.getCode(), DhObjectPermissionAction.READ.getCode());
+        if (!response.isSuccess()) {
+            throw new PermissionException(response.getMsg());
+        }
+        return ServerResponse.createBySuccessMessage("更新流程元数据权限成功");
+	}
 
 }

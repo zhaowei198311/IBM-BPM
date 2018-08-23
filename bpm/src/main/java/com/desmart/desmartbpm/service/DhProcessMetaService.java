@@ -76,4 +76,10 @@ public interface DhProcessMetaService {
      * @return
      */
     DhProcessMeta getByProAppIdAndProUid(String proAppId, String proUid);
+    /**
+     * 更新流程元数据查看权限
+     * @param dhProcessMeta
+     * @return
+     */
+    public ServerResponse updateDhProcessMetaPower(DhProcessMeta dhProcessMeta);
 }

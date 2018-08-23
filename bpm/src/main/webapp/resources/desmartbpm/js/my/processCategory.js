@@ -23,6 +23,14 @@ var pageConfig = {
     categoryUid: "rootCategory",
     proName: ""
 }
+//为权限配置分页提供支持
+var pageConfigByPower = {
+	pageNum: 1,
+	pageSize: 10,
+	total: 0,
+	proAppId: "",
+	proUid: ""
+}
 // 为弹出框的分页控件服务
 var pageConfig2 = {
     pageNum: 1,
@@ -800,4 +808,260 @@ function reloadExposedItems() {
     };
     common.doPostAjax(param);
 
+}
+
+//权限配置
+//分页
+function doPageByPower() {
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage,layer = layui.layer;
+        //完整功能
+        laypage.render({
+            elem: 'lay_page_power',
+            curr: pageConfigByPower.pageNum,
+            count: pageConfigByPower.total,
+            limit: pageConfigByPower.pageSize,
+            layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+            jump: function(obj, first){
+                // obj包含了当前分页的所有参数
+                pageConfigByPower.pageNum = obj.curr;
+                pageConfigByPower.pageSize = obj.limit;
+                if (!first) {
+                	getProcessReadOfMeta();
+                }
+            }
+        });
+    });
+}
+//字符转换,截取指定字符长度
+function interceptStr(str, len) {
+    var reg = /[\u4e00-\u9fa5]/g,    //匹配中文字符
+        slice = str.substring(0, len),
+        chineseCharNum = (~~(slice.match(reg) && slice.match(reg).length)),
+        realen = slice.length * 2 - chineseCharNum;
+    return str.substr(0, realen) + (realen < str.length ? "..." : "");
+}
+//画出权限列表
+function drawProcessPowerTable(pageInfo){
+	//渲染分页
+	pageConfigByPower.pageNum = pageInfo.pageNum;
+	pageConfigByPower.pageSize = pageInfo.pageSize;
+	pageConfigByPower.total = pageInfo.total;
+    doPageByPower();
+    $("#power_table_tbody").empty();
+    if (pageInfo.total == 0) {
+        return;
+    }
+    //渲染数据
+    let trs = "";
+    let list = pageInfo.list;
+    let startSort = pageInfo.startRow;// 开始序号
+    for (var i = 0; i < list.length; i++) {
+    	let item = list[i];
+    	let sortNum = startSort+i;
+    	 trs += '<tr>'
+             + '<td><input onclick = "metaPowerCheckbox(this)" type="checkbox" name="metaPower_checkbox"  lay-skin="primary" value = "'
+             +item.opUid+'">'+sortNum+'</td>'
+             + '<td onclick = "metaPowerCheckbox(this)">' + item.proName + '</td>'
+             + '<td onclick = "metaPowerCheckbox(this)">'; 
+    	 	if(item.opObjUid!=null){
+    	 		trs+=item.opObjUid;
+    	 	}
+          trs+='</td><td style="text-align: center;" >'
+             + item.opParticipateView
+             + '</td></tr>';
+	}
+    $("#power_table_tbody").append(trs);
+}
+
+//点击tr选中checkbox
+function metaPowerCheckbox(obj){
+	var $ck = null;
+	if($(obj).attr("type")=="checkbox"){//因为可能点击的是checkbox
+		$ck = $(obj);
+	}else{
+		var $tr = $(obj).parent();
+		$ck = $tr.find("input[name='metaPower_checkbox']");
+	}
+		
+    let checked = $ck.prop("checked");
+    if($(obj).attr("type")!="checkbox"){//如果选中的不是checkbox,则取反
+    	checked=!checked;
+    }
+    $ck.prop('checked', checked);
+    
+    let checkboxNodes = $("input[name='metaPower_checkbox']");
+    let checkedNodes = $("input[name='metaPower_checkbox']:checked");
+    if(checkboxNodes.length==checkedNodes.length){
+    	$("#all_read_power_checkbox").prop("checked",true);
+    }else{
+    	$("#all_read_power_checkbox").prop("checked",false);
+    }
+};
+//全选
+$("#all_read_power_checkbox").on('click',function(){
+	let flag = $(this).prop("checked");
+	$("input[name='metaPower_checkbox']").prop("checked",flag);
+})
+
+$(function(){
+	//流程元数据查看权限配置
+	$("#readPower_btn").click(function(){
+		var checkedNode = $("input[name='proMeta_check']:checked");
+		if(checkedNode!=null&&checkedNode.length==1){
+			let proAppId = checkedNode.parent().next().next().text();//获得流程库id
+			let proUid = checkedNode.parent().next().next().next().text();//获得流程图id
+			let proName = checkedNode.parent().next().text();//获得元数据名称
+			$("#add_read_proAppId").val(proAppId);
+			$("#add_read_proUid").val(proUid);
+			//设置新增时显示的流程名
+			$("#power_proName_view").val(proName);
+			pageConfigByPower.proAppId = proAppId;
+			pageConfigByPower.proUid = proUid;
+			//查询该流程元数据下的权限配置
+			getProcessReadOfMeta();
+			$("#read_power_Container").show();
+		}else{
+			layer.alert("请选择一个流程定义进行权限配置");
+		}
+	});
+	//加载配置界面公司数据
+	$.ajax({
+		url : common.getPath() + '/sysCompany/allCompany',
+		type : 'post',
+		dataType : 'json',
+		data : {}, 
+		beforeSend : function(){
+			layer.load(1);
+		},
+		success : function(result){
+			for (var i = 0; i < result.length - 1; i++) {
+				if(result[i].companyName.indexOf("Country") < 0){
+					$("#companyData").append("<option value="+result[i].companyCode+">"+result[i].companyName+"</option>");	
+				}
+			}
+			layer.closeAll("loading");
+			layui.form.render("select");
+		},
+		error : function(result){
+			layer.closeAll("loading");
+		}
+	})
+	// 选择查看人员
+    $("#chooseUser_btn").click(function () {
+    	common.chooseUser('permissionUser', 'false');
+    });
+    
+    // 选择查看角色
+    $("#chooseRole_btn").click(function(){
+    	common.chooseRole('permissionRole', 'false');
+    });
+    
+    // 选择查看角色组
+    $("#chooseTeam_btn").click(function(){
+    	common.chooseTeam('permissionTeam', 'false');
+    });
+
+});
+//分页查询该流程元数据下的权限配置
+function getProcessReadOfMeta(){
+	 $.ajax({
+	        url:common.getPath()+"/permission/processReadByPage",
+	        type: "post",
+	        dataType: "json",
+	        data: {
+	        	"pageNum": pageConfigByPower.pageNum,
+	        	"pageSize": pageConfigByPower.pageSize,
+	            "proAppId": pageConfigByPower.proAppId,
+	            "proUid": pageConfigByPower.proUid
+	        },
+	        beforeSend : function(){
+	        	layer.load(1);
+	        },
+	        success: function(result) {
+	            if (result.status == 0) {
+	                drawProcessPowerTable(result.data);
+	            }
+	            layer.closeAll("loading");
+	        },
+	        error:function(result){
+	        	layer.alert(result.msg);
+	        	layer.closeAll("loading");
+	        }
+	    });
+}
+
+//显示新增流程元数据查看权限model
+function showAddReadPower(){
+	$("#deployReadPower").find("input").removeAttr("readonly");
+	$("#deployReadPower").find("select").removeAttr("readonly");
+	$("#add_read_power_Container").show();
+}
+//查看流程元数据权限详细
+function showReadPowerView(){
+	$("#deployReadPower").find("input").attr("readonly","readonly");
+	$("#deployReadPower").find("select").attr("readonly","readonly");
+	$("#add_read_power_Container").show();
+}
+//提交新增/更新的流程元数据的查看权限
+function submitDeployReadPower(){
+	let data = $("#deployReadPower").serialize();
+	$.ajax({
+		url:common.getPath()+"/processMeta/updateDhProcessMetaPower",
+		type:"post",
+		data:data,
+		dataType:"json",
+		beforeSend : function(){
+			layer.load(1);
+		},
+		success : function(result){
+			if(result.status==0){
+				//查询该流程元数据下的权限配置
+				getProcessReadOfMeta();
+				$("#add_read_power_Container").hide();
+			}else{
+				layer.alert(result.msg);
+			}
+			layer.closeAll("loading");
+		},
+		error : function(){
+			layer.alert("更新流程元数据查询权限配置异常");
+			layer.closeAll("loading");
+		}
+	});
+}
+//删除流程元数据查看权限
+function deleteReadPower(){
+	var checkedNodes = $("input[name='metaPower_checkbox']:checked");
+	if(checkedNodes==null||checkedNodes.length==0){
+		layer.alert("请选择要删除的权限");
+		return;
+	}else{
+		let primaryKeyList = new Array();
+		for (var i = 0; i < checkedNodes.length; i++) {
+			primaryKeyList.push($(checkedNodes[i]).val());
+		}
+		$.ajax({
+			url: common.getPath()+'/permission/deleteBatchByPrimaryKeys',
+			type:"post",
+			data:{"primaryKeys":primaryKeyList},
+			dataType:"json",
+			traditional: true,
+			beforeSend : function(){
+				layer.load(1);
+			},
+			success : function(result){
+				if(result.status==0){
+					//批量删除权限配置
+					getProcessReadOfMeta();
+				}
+				layer.alert(result.msg);
+				layer.closeAll("loading");
+			},
+			error : function(){
+				layer.alert("删除权限配置异常");
+				layer.closeAll("loading");
+			}
+		});
+	}
 }
