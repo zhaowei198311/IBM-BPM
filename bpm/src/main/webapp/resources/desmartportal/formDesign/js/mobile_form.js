@@ -511,11 +511,6 @@ function addDataRow(obj) {
 	$(obj).parent().parent().parent().find("tr:last").find("select").prop("id","select_"+layKey);
 	$(obj).parent().parent().parent().find("tr:last").find(".date").prop("id", "date_" + layKey).attr("lay-key", layKey);
 	$(obj).parent().parent().parent().find("input[type='tel']").desNumber();
-	//给动态表单中的下拉列表赋值
-	var selectArr = $(obj).parent().parent().parent().find("tr:last").find("select[data_source='数据字典拉取']");
-	selectArr.each(function () {
-		getDataToSelect(this, $(this).attr("database_type"));
-	});
 	form.render();
 	var dateInput = $(obj).parent().parent().parent().find(".date");
 	if ($(window).width() < 568) {
