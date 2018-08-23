@@ -117,6 +117,15 @@ public class DhInterfaceServiceImpl implements DhInterfaceService {
 			dhInterface.setIntRequestXml("");
 			dhInterface.setIntResponseXml("");
 		}
+		//接口状态修改
+		String intStatus  = dhInterface.getIntStatus();
+		if(StringUtils.isNotBlank(intStatus)) {
+			if(intStatus.equals("on")) {
+				dhInterface.setIntStatus("enabled");
+			};
+		}else {
+			dhInterface.setIntStatus("disabled");
+		}
 		int result = dhInterfaceMapper.update(dhInterface);
 		return result;
 	}
