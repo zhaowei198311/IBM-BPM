@@ -148,6 +148,7 @@
 		<include refid="Base_Column_List1" />
 		from SYS_DICTIONARY_DATA
 		where DIC_DATA_CODE = #{dicDataCode}
+		and DIC_UID = #{dicUid}
 	</select>
 	
 	<insert id="saveSysDictionaryData" parameterType="com.desmart.desmartsystem.entity.SysDictionaryData">
