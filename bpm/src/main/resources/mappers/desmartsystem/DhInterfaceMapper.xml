@@ -27,6 +27,13 @@
 		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
 		CREATE_DATE, UPDATE_DATE,INT_REQUEST_XML,INT_RESPONSE_XML,INT_DESCRIPTION
 	</sql>
+	
+	<sql id="Select_Base_Column_List">
+		INT_UID, INT_TITLE,INT_LABEL,
+		INT_TYPE, INT_URL, INT_CALL_METHOD,
+		INT_LOGIN_USER, INT_LOGIN_PWD, INT_STATUS,
+		CREATE_DATE, UPDATE_DATE
+	</sql>
 
 	<select id="listAll" resultType="com.desmart.desmartsystem.entity.DhInterface">
 		SELECT
@@ -76,7 +83,7 @@
 	
 	<select id="selectByCondition" resultType="com.desmart.desmartsystem.entity.DhInterface" parameterType="java.util.Map">
 		SELECT
-		<include refid="Base_Column_List" />
+		<include refid="Select_Base_Column_List" />
 		FROM DH_INTERFACE
 		<where>
 			<if test="intTitle != null and intTitle!=''">
