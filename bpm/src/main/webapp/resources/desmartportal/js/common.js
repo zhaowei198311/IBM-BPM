@@ -1,3 +1,6 @@
+layui.use(['form'], function () {
+        form = layui.form;
+    });
 var common = {
 	getPath : function(){
 		var curWwwPath = window.document.location.href;
@@ -40,7 +43,7 @@ var common = {
     	    title: '选择人员',
     	    shadeClose: true,
     	    shade: 0.3,
-    	    area: ['620px', '480px'],
+    	    area: ['750px', '480px'],
     	    content: common.chooseUserPath(elementId, isSingle),
     	    success: function (layero, lockIndex) {
     	        var body = layer.getChildFrame('body', lockIndex);
@@ -246,6 +249,17 @@ var common = {
 					}
 				});
 			});
+		});
+	},
+	//初始化下拉框控件
+	initSelect:function(){
+		var selectArr = $("#formSet").find("select");
+		selectArr.each(function(){
+			var value = $(this).attr("data-value");
+			if(typeof(value)!="undefined" && value != null && value!=""){
+				$(this).val(value);
+				form.render();
+			}
 		});
 	},
 	//抽取页面中动态表单的数据
@@ -532,6 +546,7 @@ var common = {
 							var key = $(this).data("label");
 							$(this).find("input").val(valueObj[key]);
 							$(this).find("select").val(valueObj[key]);
+							$(this).find("select").attr("data-value",valueObj[key]);
 						}
 					});
 				}
