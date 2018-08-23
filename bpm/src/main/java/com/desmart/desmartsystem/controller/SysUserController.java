@@ -45,11 +45,6 @@ public class SysUserController {
 	@Autowired
 	private SysUserDepartmentService sysUserDepartmentService;
 	
-	@RequestMapping(value="/index")
-	public String drafts(){
-		return "desmartsystem/usermanagement/index";
-	}
-	
 	
 	/**
 	 * 全局管理配置页面跳转
