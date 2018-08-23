@@ -44,9 +44,9 @@
 							</div>
 						</div>
 						<div class="layui-col-md3">
-							<label class="layui-form-label">上一环节处理人</label>
+							<label class="layui-form-label">抄送人员</label>
 							<div class="layui-input-block">
-								<input type="text" placeholder="上一环节处理人姓名" class="layui-input" id="task-taskPreviousUsrUsername-search">
+								<input type="text" placeholder="抄送人员" class="layui-input" id="task-taskPreviousUsrUsername-search">
 							</div>
 						</div>
 						<div class="layui-col-md3">
@@ -364,6 +364,7 @@ function doPage() {
     function resetSearch(){
     	 $("#task-createProcessUserName-search").val("");
          $("#task-taskPreviousUsrUsername-search").val("");
+         $("#task-proName-search").val("");
          $("#task-insTitle-search").val("");
          $("#init-startTime-search").val("");
          $("#init-endTime-search").val("");

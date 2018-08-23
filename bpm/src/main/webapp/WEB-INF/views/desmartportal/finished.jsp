@@ -381,6 +381,7 @@
 	    function resetSearch(){
 	    	 $("#task-createProcessUserName-search").val("");
 	         $("#task-taskPreviousUsrUsername-search").val("");
+	         $("#task-proName-search").val("");
 	         $("#task-insTitle-search").val("");
 	         $("#init-startTime-search").val("");
 	         $("#init-endTime-search").val("");
