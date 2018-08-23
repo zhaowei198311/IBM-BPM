@@ -417,6 +417,7 @@
 			var id = $(this).prop("id");
 			if($(this).attr("is-multi")=="true"){
 				$(this).attr("xm-select",id);
+				var formSelects = layui.formSelects;
 				formSelects.render(id);
 				formSelects.on(id, function(id, vals, val, isAdd, isDisabled){
 					$("#"+id).trigger("change");
