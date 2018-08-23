@@ -450,7 +450,7 @@ var common = {
 									|| tabInputObj.prop("class") == "layui-input layui-unselect layui-disabled") {
 									if(tdSelVal!=null && tdSelVal!="" && tdSelVal!="请选择"){
 										tableJson += "\"" + tdName
-											+ "\":\"" + tdSelVal + "\"}";
+											+ "\":\"" + tdSelVal + "\",";
 									}
 								}else{
 									if(tdValue!=null && tdValue!=""){
