@@ -42,6 +42,9 @@ public class SysRole {
     
     private String describe;
 
+    private String station;  // 匹配的岗位
+
+
     public String getRoleUid() {
         return roleUid;
     }
@@ -72,6 +75,14 @@ public class SysRole {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName == null ? null : categoryName.trim();
+    }
+
+    public String getStation() {
+        return station;
+    }
+
+    public void setStation(String station) {
+        this.station = station;
     }
 
     public String getRoleNo() {

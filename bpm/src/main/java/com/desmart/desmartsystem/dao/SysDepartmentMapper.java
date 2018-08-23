@@ -42,10 +42,12 @@ public interface SysDepartmentMapper extends BaseMapper<SysDepartment> {
 	SysDepartment queryByPrimaryKey(String departUid);
 
 	/**
-	 * 根据条件查询部门的父级树列表
+	 * 根据条件查询部门级其所有父级部门
 	 * @param sysDepartment
 	 * @return
 	 */
-	public List<SysDepartment> queryByConditionToParentTree(SysDepartment sysDepartment);
+	List<SysDepartment> queryByConditionToParentTree(SysDepartment sysDepartment);
+
+
 	
 }

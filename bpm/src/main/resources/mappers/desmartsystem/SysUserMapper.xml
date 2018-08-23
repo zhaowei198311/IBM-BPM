@@ -340,5 +340,25 @@
 	  <select id="login" resultType="com.desmart.desmartsystem.entity.SysUser">
 	        SELECT USER_ID,PASSWORD,USER_NAME from SYS_USER_VW WHERE USER_UID = #{username} <!-- and PASSWORD = #{password} -->
 	  </select>
-	  
+
+    <select id="listByUserUidsOrStations" resultType="com.desmart.desmartsystem.entity.SysUser">
+        select user_uid, user_name, depart_uid, companyNumber
+        from sys_user
+        <where>
+            <if test="userUids != null and !userUids.isEmpty()">
+                <foreach collection="userUids" item="userUid" separator="or">
+                    user_uid = #{userUid}
+                </foreach>
+            </if>
+            <if test="stations != null and !stations.isEmpty()">
+                <if test="userUids != null and !userUids.isEmpty()">
+                    or
+                </if>
+                <foreach collection="stations" item="station" separator="or">
+                    station = #{station}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
 </mapper>

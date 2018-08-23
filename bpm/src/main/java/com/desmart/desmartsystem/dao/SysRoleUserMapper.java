@@ -1,8 +1,8 @@
 package com.desmart.desmartsystem.dao;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.desmart.desmartsystem.entity.SysRoleUser;
@@ -35,4 +35,11 @@ public interface SysRoleUserMapper {
      * @return
      */
     List<SysRoleUser> selectByRoleUid(String roleUid);
+
+    /**
+     * 根据角色主键列表查询出相关的关联信息（带角色的关联岗位）
+     * @param roleUids
+     * @return
+     */
+    List<SysRoleUser> listByRoleUidsWithStation(Collection<String> roleUids);
 }

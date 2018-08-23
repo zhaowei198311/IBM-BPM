@@ -21,11 +21,12 @@
     <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
     <result column="UPDATE_DATE" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="DESCRIBE" property="describe" />
+    <result column="STATION" property="station" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List" >
     ROLE_UID, ROLE_NAME, ORDER_INDEX, CATEGORY_NAME, ROLE_NO, ROLE_DESC, ROLE_TYPE, EXT1, 
     EXT2, EXT3, EXT4, EXT5, IS_CLOSED, CLOSE_DATE, BEGIN_DATE, END_DATE, CREATE_DATE, 
-    UPDATE_DATE,DESCRIBE
+    UPDATE_DATE,DESCRIBE, STATION
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -62,12 +63,12 @@
   </select>
   
     <select id="listByPrimaryKeyList" parameterType="java.util.List"  resultMap="BaseResultMap">
-	  		select * from SYS_ROLE u 
-	  		WHERE role_uid in
-			<foreach item="item" collection="list" open="(" separator="," close=")">
-				#{item}
-			</foreach>
-	  </select>
+        select <include refid="Base_Column_List"/> from SYS_ROLE
+        WHERE
+        <foreach item="item" collection="list" open="(" separator="or" close=")">
+            role_uid = #{item}
+        </foreach>
+    </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from SYS_ROLE
@@ -79,13 +80,13 @@
       ROLE_TYPE, EXT1, EXT2, 
       EXT3, EXT4, EXT5, IS_CLOSED, 
       CLOSE_DATE, BEGIN_DATE, END_DATE, 
-      CREATE_DATE, UPDATE_DATE,DESCRIBE)
+      CREATE_DATE, UPDATE_DATE,DESCRIBE,STATION)
     values (#{roleUid,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{orderIndex,jdbcType=DECIMAL}, 
       #{categoryName,jdbcType=VARCHAR}, #{roleNo,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, 
       #{roleType,jdbcType=DECIMAL}, #{ext1,jdbcType=VARCHAR}, #{ext2,jdbcType=VARCHAR}, 
       #{ext3,jdbcType=VARCHAR}, #{ext4,jdbcType=VARCHAR}, #{ext5,jdbcType=VARCHAR}, #{isClosed,jdbcType=DECIMAL}, 
       #{closeDate,jdbcType=TIMESTAMP}, #{beginDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP},#{describe})
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP},#{describe}, #{station})
   </insert>
   <insert id="insertSelective" parameterType="com.desmart.desmartsystem.entity.SysRole" >
     insert into SYS_ROLE
@@ -144,6 +145,9 @@
       <if test="updateDate != null" >
         UPDATE_DATE,
       </if>
+      <if test="station != null">
+        station,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="roleUid != null" >
@@ -200,6 +204,9 @@
       <if test="updateDate != null" >
         #{updateDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="station != null" >
+        #{station,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.desmart.desmartsystem.entity.SysRole" >
@@ -253,6 +260,9 @@
       <if test="updateDate != null" >
         UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="station != null">
+        station = #{station},
+      </if>
     </set>
     where ROLE_UID = #{roleUid,jdbcType=VARCHAR}
   </update>
@@ -273,9 +283,9 @@
       CLOSE_DATE = #{closeDate,jdbcType=TIMESTAMP},
       BEGIN_DATE = #{beginDate,jdbcType=TIMESTAMP},
       END_DATE = #{endDate,jdbcType=TIMESTAMP},
-<!--       CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}, -->
       UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
-      DESCRIBE = #{describe,jdbcType=VARCHAR}
+      DESCRIBE = #{describe,jdbcType=VARCHAR},
+      station = #{station}
     where ROLE_UID = #{roleUid,jdbcType=VARCHAR}
   </update>
 </mapper>

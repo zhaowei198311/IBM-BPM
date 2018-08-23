@@ -112,9 +112,10 @@
 	  </select>
 	  
 	  <select id="select" parameterType="com.desmart.desmartsystem.entity.SysDepartment"  resultMap="BaseResultMap">
-	  		select * from Sys_Department  d
+	  		select <include refid="baseColumnList"/>
+		  	from Sys_Department
 	  		<if test="departUid != null">
-	  			DEPART_UID = #{departUid}
+	  			where DEPART_UID = #{departUid}
 	  		</if>
 	  </select>
 		
@@ -348,8 +349,10 @@
 	
 	<select id="queryByConditionToParentTree" parameterType="com.desmart.desmartsystem.entity.SysDepartment"
 		resultMap="BaseResultMap">
-		SELECT * FROM SYS_DEPARTMENT
+		SELECT <include refid="baseColumnList"/> FROM SYS_DEPARTMENT
 		start with depart_uid = #{departUid}
 		connect by prior depart_parent = depart_uid
 	</select>
+
+
 </mapper>
