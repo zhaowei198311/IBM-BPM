@@ -367,8 +367,18 @@ table {
 									class="layui-input">
 							</div>
 						</div>
+						<div class="layui-col-md6 paraDefault">
+							<label class="layui-form-label">参数默认值:</label>
+							<div class="layui-input-inline">
+								<input type="text" name="paraDefault" 
+									class="layui-input">
+							</div>
+						</div>
+					</div>
+				</div>
 
-
+				<div class="layui-form-item">
+					<div class="layui-row">
 						<div class="layui-col-md6  isMust">
 							<label class="layui-form-label">是否必须:</label>
 							<div class="layui-input-inline">
@@ -377,15 +387,12 @@ table {
 									value="false">
 							</div>
 						</div>
-					</div>
-				</div>
-
-				<div class="layui-form-item">
-					<div class="layui-col-md6 ">
-						<label class="layui-form-label">输入/输出:</label>
-						<div class="layui-input-inline">
-							<input type="checkbox" name="paraInOut" lay-skin="switch"
-								lay-filter="paraInOut" lay-text="输出|输入" />
+						<div class="layui-col-md6 ">
+							<label class="layui-form-label">输入/输出:</label>
+							<div class="layui-input-inline">
+								<input type="checkbox" name="paraInOut" lay-skin="switch"
+									lay-filter="paraInOut" lay-text="输出|输入" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -603,8 +610,6 @@ table {
 									class="layui-input digits">
 							</div>
 						</div>
-
-
 						<div class="layui-col-md6 dateFormat3" style="display: none;">
 							<label class="layui-form-label">日期格式:</label>
 							<div class="layui-input-inline">
@@ -613,8 +618,18 @@ table {
 									autocomplete="off" class="layui-input">
 							</div>
 						</div>
+						<div class="layui-col-md6 paraDefault3">
+							<label class="layui-form-label">参数默认值:</label>
+							<div class="layui-input-inline">
+								<input type="text" id="paraDefault3" name="paraDefault" 
+									class="layui-input">
+							</div>
+						</div>
+					</div>
+				</div>
 
-
+				<div class="layui-form-item" id="paraInOut">
+					<div class="layui-row">
 						<div class="layui-col-md6">
 							<label class="layui-form-label">是否必须:</label>
 							<div class="layui-input-inline">
@@ -622,15 +637,13 @@ table {
 									lay-skin="switch" lay-filter="switch4" lay-text="true|false" />
 							</div>
 						</div>
-					</div>
-				</div>
-
-				<div class="layui-form-item" id="paraInOut">
-					<div class="layui-col-md6 ">
-						<label class="layui-form-label">输入/输出:</label>
-						<div class="layui-input-inline">
-							<input type="checkbox" name="paraInOut" lay-skin="switch"
-								lay-filter="paraInOut" lay-text="输出|输入" />
+					
+						<div class="layui-col-md6 ">
+							<label class="layui-form-label">输入/输出:</label>
+							<div class="layui-input-inline">
+								<input type="checkbox" name="paraInOut" lay-skin="switch"
+									lay-filter="paraInOut" lay-text="输出|输入" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -740,12 +753,21 @@ table {
 							lay-verify="paraSize" autocomplete="off" class="layui-input">
 					</div>
 				</div>
-
+				
+				<div class="layui-inline paraDefault1">
+					<label class="layui-form-label">参数默认值:</label>
+					<div class="layui-input-inline">
+						<input type="text" name="paraDefault" 
+							class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<div class="layui-inline isMust1">
 					<label class="layui-form-label">是否必须:</label>
 					<div class="layui-input-inline">
 						<input type="checkbox" name="isMust" lay-skin="switch"
-							lay-filter="isMustCheck" lay-text="true|false">
+							lay-filter="isMustCheck" lay-text="true|false" />
 					</div>
 				</div>
 			</div>
@@ -814,7 +836,16 @@ table {
 							lay-verify="paraSize" autocomplete="off" class="layui-input">
 					</div>
 				</div>
-
+				
+				<div class="layui-inline paraDefault2">
+					<label class="layui-form-label">参数默认值:</label>
+					<div class="layui-input-inline">
+						<input type="text" name="paraDefault" 
+							class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
 				<div class="layui-inline isMust2">
 					<label class="layui-form-label">是否必须:</label>
 					<div class="layui-input-inline">
