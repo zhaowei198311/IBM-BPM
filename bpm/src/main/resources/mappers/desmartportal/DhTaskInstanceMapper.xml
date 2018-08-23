@@ -438,38 +438,39 @@
     </select>
 
 	<insert id="insertBatch" parameterType="list">
+		begin
+		<foreach collection="list" item="item" index="index" separator=";">
 		insert into dh_task_instance (
 		<include refid="Base_Column_List" />
-		)
-		<foreach collection="list" item="item" index="index" separator="union all">
-			select
-			#{item.taskUid},
-			#{item.insUid},
-			#{item.taskId},
-			#{item.usrUid},
-			#{item.activityBpdId},
-			#{item.taskType},
-			#{item.taskStatus},
-			#{item.taskTitle},
-			#{item.insUpdateDate},
-			#{item.taskPreviousUsrUid},
-			#{item.taskPreviousUsrUsername},
+		)values(
+			#{item.taskUid,jdbcType=VARCHAR},
+			#{item.insUid,jdbcType=VARCHAR},
+			#{item.taskId,jdbcType=NUMERIC},
+			#{item.usrUid,jdbcType=VARCHAR},
+			#{item.activityBpdId,jdbcType=VARCHAR},
+			#{item.taskType,jdbcType=VARCHAR},
+			#{item.taskStatus,jdbcType=VARCHAR},
+			#{item.taskTitle,jdbcType=VARCHAR},
+			#{item.insUpdateDate, jdbcType=TIMESTAMP},
+			#{item.taskPreviousUsrUid,jdbcType=VARCHAR},
+			#{item.taskPreviousUsrUsername,jdbcType=VARCHAR},
 			#{item.taskDelegateDate, jdbcType=TIMESTAMP},
-			#{item.taskInitDate},
-			#{item.taskFinishDate},
-			#{item.taskDueDate},
-			#{item.taskRiskDate},
-			#{item.taskPriority},
-			#{item.taskData},
+			#{item.taskInitDate, jdbcType=TIMESTAMP},
+			#{item.taskFinishDate, jdbcType=TIMESTAMP},
+			#{item.taskDueDate, jdbcType=TIMESTAMP},
+			#{item.taskRiskDate, jdbcType=TIMESTAMP},
+			#{item.taskPriority,jdbcType=VARCHAR},
+			#{item.taskData,jdbcType=CLOB},
 			#{item.taskDelegateUser, jdbcType=VARCHAR},
-			#{item.synNumber},
-			#{item.fromTaskUid},
-			#{item.toTaskUid},
-			#{item.remainHours},
-			#{item.taskActivityId},
+			#{item.synNumber,jdbcType=NUMERIC},
+			#{item.fromTaskUid,jdbcType=VARCHAR},
+			#{item.toTaskUid,jdbcType=VARCHAR},
+			#{item.remainHours,jdbcType=FLOAT},
+			#{item.taskActivityId,jdbcType=VARCHAR},
 			0
-			from dual
+			)
 		</foreach>
+		;end;
 	</insert>
 
 	<select id="countByTaskId" parameterType="int" resultType="int">
