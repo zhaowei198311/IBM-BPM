@@ -1,10 +1,11 @@
 package com.desmart.desmartsystem.entity;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+
 import java.io.Serializable;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * <p>
@@ -107,8 +108,8 @@ public class SysUser implements Serializable {
 	private String accountType;
 	private SysDepartment sysDepartment;
 	
-	private List<SysUserDepartment> sysUserDepartmentList; 
-	
+	private List<SysUserDepartment> sysUserDepartmentList;
+
 	private String costCenter;
 
 	private String departName;
@@ -119,8 +120,78 @@ public class SysUser implements Serializable {
 	private String costCenterName;//成本中心名称
 	private String profitCenterNo;//利润中心
 	private String profitCenterName;//利润名称
-	
-	
+
+	private List<String> companyNumberList;   // 员工所属的公司，可能属于多个公司
+	private List<String> departmetNumberList; // 员工所属的部门，可能属于多个部门
+
+
+
+
+	public void addToDepartNumberList(String departmetNumber) {
+		if (StringUtils.isBlank(departmetNumber)) {
+			return;
+		}
+		if (CollectionUtils.isEmpty(this.departmetNumberList)) {
+			this.departmetNumberList = new ArrayList<>();
+		}
+		this.departmetNumberList.add(departmetNumber);
+	}
+
+	public void addToCompanyNumberList(String companyNumber) {
+		if (StringUtils.isBlank(companyNumber)) {
+			return;
+		}
+		if (CollectionUtils.isEmpty(this.companyNumberList)) {
+			this.companyNumberList = new ArrayList<>();
+		}
+		this.companyNumberList.add(companyNumber);
+	}
+
+	/**
+	 * 用户是否是指定公司编码的成员<br/>
+	 * 使用此方法前，需要装配companyNumberList属性
+	 * @param companyNumber
+	 * @return
+	 */
+	public boolean isMemberOfCompany(String companyNumber) {
+		if (StringUtils.isBlank(companyNumber)) {
+			return false;
+		}
+		if (companyNumber.equals(this.companynumber)) {
+			return true;
+		}
+		if (this.companyNumberList == null) {
+			return false;
+		}
+		return this.companyNumberList.contains(companyNumber);
+	}
+
+	/**
+	 * 判断用户是否是关联部门中的一员
+	 * @param relationDepartmentNumbers 相关部门uid集合
+	 * @return
+	 */
+	public boolean isMemberOfRelationDepartments(List<String> relationDepartmentNumbers) {
+		if (CollectionUtils.isEmpty(relationDepartmentNumbers)) {
+			return false;
+		}
+		if (relationDepartmentNumbers.contains(this.departUid)) {
+			return true;
+		}
+		if (CollectionUtils.isEmpty(this.departmetNumberList)) {
+			return false;
+		}
+		for (String departmetNumber : this.departmetNumberList) {
+			if (relationDepartmentNumbers.contains(departmetNumber)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
+
 	public String getUserUid() {
 		return userUid;
 	}
@@ -155,6 +226,14 @@ public class SysUser implements Serializable {
 
 	public String getUserNameUs() {
 		return userNameUs;
+	}
+
+	public List<String> getCompanyNumberList() {
+		return companyNumberList;
+	}
+
+	public void setCompanyNumberList(List<String> companyNumberList) {
+		this.companyNumberList = companyNumberList;
 	}
 
 	public void setUserNameUs(String userNameUs) {
@@ -526,6 +605,14 @@ public class SysUser implements Serializable {
 	public int hashCode() {
 
 		return Objects.hash(userUid);
+	}
+
+	public List<String> getDepartmetNumberList() {
+		return departmetNumberList;
+	}
+
+	public void setDepartmetNumberList(List<String> departmetNumberList) {
+		this.departmetNumberList = departmetNumberList;
 	}
 
 	public String getManagerName() {

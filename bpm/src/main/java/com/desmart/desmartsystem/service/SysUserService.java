@@ -117,7 +117,7 @@ public interface SysUserService extends BaseService<SysUser> {
 	/**
 	 * 根据指定员工号列表，获得用户列表
 	 * @param userUids  指定的员工号列表
-	 * @return
+	 * @return 不含重复数据
 	 */
 	List<SysUser> searchByUserUids(Collection<String> userUids);
 
