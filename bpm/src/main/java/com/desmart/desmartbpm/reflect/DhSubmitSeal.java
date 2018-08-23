@@ -1,11 +1,13 @@
 package com.desmart.desmartbpm.reflect;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.alibaba.fastjson.JSONObject;
+import com.desmart.common.constant.ServerResponse;
 import com.desmart.desmartbpm.entity.DhStep;
 import com.desmart.desmartportal.entity.DhProcessInstance;
 import com.desmart.desmartportal.service.DhProcessInstanceService;
@@ -63,20 +65,24 @@ public class DhSubmitSeal extends DhOneTimeJavaClassTrigger{
 				};
 			};
 		}
-		//人员信息
-		insParaJson.put("applicantNo", sysUser.getUserUid());
-		insParaJson.put("applicantName", sysUser.getUserName());
-		insParaJson.put("positionNo", sysUser.getStation());
-		insParaJson.put("positionName", sysUser.getStationcode());
-		insParaJson.put("departmentNo", sysUser.getDepartName());
-		insParaJson.put("departmentName", sysUser.getDepartmetNumber());
-		insParaJson.put("costCenterNo", sysUser.getCostCenter());
-		insParaJson.put("costCenterName", sysUser.getCostCenterName());
-		insParaJson.put("profitCenterNo", sysUser.getProfitCenterNo());
-		insParaJson.put("profitCenterName", sysUser.getProfitCenterName());
-		insParaJson.put("phoneNumber", sysUser.getMobile());
-		insParaJson.put("paidAmount", 0);
 		
+		//String str = "网点房租类合同";
+		//人员信息
+		insParaJson.put("applicantNo", sysUser.getUserUid());//提交人工号
+		insParaJson.put("applicantName", sysUser.getUserName());//提交人姓名
+		insParaJson.put("positionNo", sysUser.getStation());//提交人职位编码
+		insParaJson.put("positionName", sysUser.getStationcode());//提交人职位名称
+		insParaJson.put("departmentNo", dhProcessInstance.getDepartNo());//提交人部门编码
+		insParaJson.put("departmentName", dhProcessInstance.getDepartName());//成本中心编码
+		insParaJson.put("costCenterNo", sysUser.getCostCenter());//成本中心编码
+		insParaJson.put("costCenterName", sysUser.getCostCenterName());//成本中心名称
+		insParaJson.put("profitCenterNo", sysUser.getProfitCenterNo());//提交人利润中心编码
+		insParaJson.put("profitCenterName", sysUser.getProfitCenterName());//提交人利润中心名称
+		insParaJson.put("phoneNumber", sysUser.getOfficeFax());//提交人分机号
+		insParaJson.put("paidAmount", 0);//已付金额
+		insParaJson.put("contractSigner", sysUser.getUserName()); //合同签订人
+		insParaJson.put("companyNo", dhProcessInstance.getCompanyNumber());//公司代码
+		insParaJson.put("companyNamecontact", dhProcessInstance.getCompanyName());//公司名称
 		//接口参数请求
 		JSONObject json = new JSONObject();
 		json.put("intUid", intUid);
@@ -84,9 +90,7 @@ public class DhSubmitSeal extends DhOneTimeJavaClassTrigger{
 		//接口调用
 		DhInterfaceExecuteService dhInterfaceExecuteService = ac.getBean(DhInterfaceExecuteService.class);
 		try {
-//			Json responseJson = dhInterfaceExecuteService.interfaceSchedule(json);
-//			String msg =  responseJson.getMsg();
-//			System.out.println(msg);
+			ServerResponse<Map<String, String>>  map = dhInterfaceExecuteService.interfaceSchedule(json);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
